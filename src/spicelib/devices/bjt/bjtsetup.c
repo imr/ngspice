@@ -420,28 +420,28 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
-            TSTALLOC(BJTcolColPrimePtr,BJTcolNode,BJTcolPrimeNode)
-            TSTALLOC(BJTbaseBasePrimePtr,BJTbaseNode,BJTbasePrimeNode)
-            TSTALLOC(BJTemitEmitPrimePtr,BJTemitNode,BJTemitPrimeNode)
-            TSTALLOC(BJTcolPrimeColPtr,BJTcolPrimeNode,BJTcolNode)
-            TSTALLOC(BJTcolPrimeBasePrimePtr,BJTcolPrimeNode,BJTbasePrimeNode)
-            TSTALLOC(BJTcolPrimeEmitPrimePtr,BJTcolPrimeNode,BJTemitPrimeNode)
-            TSTALLOC(BJTbasePrimeBasePtr,BJTbasePrimeNode,BJTbaseNode)
-            TSTALLOC(BJTbasePrimeColPrimePtr,BJTbasePrimeNode,BJTcolPrimeNode)
-            TSTALLOC(BJTbasePrimeEmitPrimePtr,BJTbasePrimeNode,BJTemitPrimeNode)
-            TSTALLOC(BJTemitPrimeEmitPtr,BJTemitPrimeNode,BJTemitNode)
-            TSTALLOC(BJTemitPrimeColPrimePtr,BJTemitPrimeNode,BJTcolPrimeNode)
-            TSTALLOC(BJTemitPrimeBasePrimePtr,BJTemitPrimeNode,BJTbasePrimeNode)
-            TSTALLOC(BJTcolColPtr,BJTcolNode,BJTcolNode)
-            TSTALLOC(BJTbaseBasePtr,BJTbaseNode,BJTbaseNode)
-            TSTALLOC(BJTemitEmitPtr,BJTemitNode,BJTemitNode)
-            TSTALLOC(BJTcolPrimeColPrimePtr,BJTcolPrimeNode,BJTcolPrimeNode)
-            TSTALLOC(BJTbasePrimeBasePrimePtr,BJTbasePrimeNode,BJTbasePrimeNode)
-            TSTALLOC(BJTemitPrimeEmitPrimePtr,BJTemitPrimeNode,BJTemitPrimeNode)
-            TSTALLOC(BJTsubstSubstPtr,BJTsubstNode,BJTsubstNode)
+} } while(0)
+            TSTALLOC(BJTcolColPrimePtr,BJTcolNode,BJTcolPrimeNode);
+            TSTALLOC(BJTbaseBasePrimePtr,BJTbaseNode,BJTbasePrimeNode);
+            TSTALLOC(BJTemitEmitPrimePtr,BJTemitNode,BJTemitPrimeNode);
+            TSTALLOC(BJTcolPrimeColPtr,BJTcolPrimeNode,BJTcolNode);
+            TSTALLOC(BJTcolPrimeBasePrimePtr,BJTcolPrimeNode,BJTbasePrimeNode);
+            TSTALLOC(BJTcolPrimeEmitPrimePtr,BJTcolPrimeNode,BJTemitPrimeNode);
+            TSTALLOC(BJTbasePrimeBasePtr,BJTbasePrimeNode,BJTbaseNode);
+            TSTALLOC(BJTbasePrimeColPrimePtr,BJTbasePrimeNode,BJTcolPrimeNode);
+            TSTALLOC(BJTbasePrimeEmitPrimePtr,BJTbasePrimeNode,BJTemitPrimeNode);
+            TSTALLOC(BJTemitPrimeEmitPtr,BJTemitPrimeNode,BJTemitNode);
+            TSTALLOC(BJTemitPrimeColPrimePtr,BJTemitPrimeNode,BJTcolPrimeNode);
+            TSTALLOC(BJTemitPrimeBasePrimePtr,BJTemitPrimeNode,BJTbasePrimeNode);
+            TSTALLOC(BJTcolColPtr,BJTcolNode,BJTcolNode);
+            TSTALLOC(BJTbaseBasePtr,BJTbaseNode,BJTbaseNode);
+            TSTALLOC(BJTemitEmitPtr,BJTemitNode,BJTemitNode);
+            TSTALLOC(BJTcolPrimeColPrimePtr,BJTcolPrimeNode,BJTcolPrimeNode);
+            TSTALLOC(BJTbasePrimeBasePrimePtr,BJTbasePrimeNode,BJTbasePrimeNode);
+            TSTALLOC(BJTemitPrimeEmitPrimePtr,BJTemitPrimeNode,BJTemitPrimeNode);
+            TSTALLOC(BJTsubstSubstPtr,BJTsubstNode,BJTsubstNode);
             if (model -> BJTsubs == LATERAL) {
               here -> BJTsubstConNode = here -> BJTbasePrimeNode;
               here -> BJTsubstConSubstConPtr = here -> BJTbasePrimeBasePrimePtr;
@@ -449,10 +449,10 @@ if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
               here -> BJTsubstConNode = here -> BJTcolPrimeNode;
               here -> BJTsubstConSubstConPtr = here -> BJTcolPrimeColPrimePtr;
             }
-            TSTALLOC(BJTsubstConSubstPtr,BJTsubstConNode,BJTsubstNode)
-            TSTALLOC(BJTsubstSubstConPtr,BJTsubstNode,BJTsubstConNode)
-            TSTALLOC(BJTbaseColPrimePtr,BJTbaseNode,BJTcolPrimeNode)
-            TSTALLOC(BJTcolPrimeBasePtr,BJTcolPrimeNode,BJTbaseNode)
+            TSTALLOC(BJTsubstConSubstPtr,BJTsubstConNode,BJTsubstNode);
+            TSTALLOC(BJTsubstSubstConPtr,BJTsubstNode,BJTsubstConNode);
+            TSTALLOC(BJTbaseColPrimePtr,BJTbaseNode,BJTcolPrimeNode);
+            TSTALLOC(BJTcolPrimeBasePtr,BJTcolPrimeNode,BJTbaseNode);
         }
     }
     return(OK);

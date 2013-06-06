@@ -101,14 +101,14 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(CAPposPosptr,CAPposNode,CAPposNode)
-            TSTALLOC(CAPnegNegptr,CAPnegNode,CAPnegNode)
-            TSTALLOC(CAPposNegptr,CAPposNode,CAPnegNode)
-            TSTALLOC(CAPnegPosptr,CAPnegNode,CAPposNode)
+            TSTALLOC(CAPposPosptr,CAPposNode,CAPposNode);
+            TSTALLOC(CAPnegNegptr,CAPnegNode,CAPnegNode);
+            TSTALLOC(CAPposNegptr,CAPposNode,CAPnegNode);
+            TSTALLOC(CAPnegPosptr,CAPnegNode,CAPposNode);
         }
     }
     return(OK);

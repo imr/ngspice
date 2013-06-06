@@ -363,38 +363,38 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-  TSTALLOC(HFETAdrainDrainPrimePtr,HFETAdrainNode,HFETAdrainPrimeNode)
-  TSTALLOC(HFETAgatePrimeDrainPrimePtr,HFETAgatePrimeNode,HFETAdrainPrimeNode)
-  TSTALLOC(HFETAgatePrimeSourcePrimePtr,HFETAgatePrimeNode,HFETAsourcePrimeNode)
-  TSTALLOC(HFETAsourceSourcePrimePtr,HFETAsourceNode,HFETAsourcePrimeNode)
-  TSTALLOC(HFETAdrainPrimeDrainPtr,HFETAdrainPrimeNode,HFETAdrainNode)
-  TSTALLOC(HFETAdrainPrimeGatePrimePtr,HFETAdrainPrimeNode,HFETAgatePrimeNode)
-  TSTALLOC(HFETAdrainPrimeSourcePrimePtr,HFETAdrainPrimeNode,HFETAsourcePrimeNode)
-  TSTALLOC(HFETAsourcePrimeGatePrimePtr,HFETAsourcePrimeNode,HFETAgatePrimeNode)
-  TSTALLOC(HFETAsourcePrimeSourcePtr,HFETAsourcePrimeNode,HFETAsourceNode)
-  TSTALLOC(HFETAsourcePrimeDrainPrimePtr,HFETAsourcePrimeNode,HFETAdrainPrimeNode)
-  TSTALLOC(HFETAdrainDrainPtr,HFETAdrainNode,HFETAdrainNode)
-  TSTALLOC(HFETAgatePrimeGatePrimePtr,HFETAgatePrimeNode,HFETAgatePrimeNode)
-  TSTALLOC(HFETAsourceSourcePtr,HFETAsourceNode,HFETAsourceNode)
-  TSTALLOC(HFETAdrainPrimeDrainPrimePtr,HFETAdrainPrimeNode,HFETAdrainPrimeNode)
-  TSTALLOC(HFETAsourcePrimeSourcePrimePtr,HFETAsourcePrimeNode,HFETAsourcePrimeNode)
-  TSTALLOC(HFETAdrainPrimeDrainPrmPrmPtr,HFETAdrainPrimeNode,HFETAdrainPrmPrmNode)
-  TSTALLOC(HFETAdrainPrmPrmDrainPrimePtr,HFETAdrainPrmPrmNode,HFETAdrainPrimeNode)
-  TSTALLOC(HFETAdrainPrmPrmGatePrimePtr,HFETAdrainPrmPrmNode,HFETAgatePrimeNode)
-  TSTALLOC(HFETAgatePrimeDrainPrmPrmPtr,HFETAgatePrimeNode,HFETAdrainPrmPrmNode)
-  TSTALLOC(HFETAdrainPrmPrmDrainPrmPrmPtr,HFETAdrainPrmPrmNode,HFETAdrainPrmPrmNode)
-  TSTALLOC(HFETAsourcePrimeSourcePrmPrmPtr,HFETAsourcePrimeNode,HFETAsourcePrmPrmNode)
-  TSTALLOC(HFETAsourcePrmPrmSourcePrimePtr,HFETAsourcePrmPrmNode,HFETAsourcePrimeNode)
-  TSTALLOC(HFETAsourcePrmPrmGatePrimePtr,HFETAsourcePrmPrmNode,HFETAgatePrimeNode)
-  TSTALLOC(HFETAgatePrimeSourcePrmPrmPtr,HFETAgatePrimeNode,HFETAsourcePrmPrmNode)
-  TSTALLOC(HFETAsourcePrmPrmSourcePrmPrmPtr,HFETAsourcePrmPrmNode,HFETAsourcePrmPrmNode)
-  TSTALLOC(HFETAgateGatePtr,HFETAgateNode,HFETAgateNode)
-  TSTALLOC(HFETAgateGatePrimePtr,HFETAgateNode,HFETAgatePrimeNode)
-  TSTALLOC(HFETAgatePrimeGatePtr,HFETAgatePrimeNode,HFETAgateNode)
+  TSTALLOC(HFETAdrainDrainPrimePtr,HFETAdrainNode,HFETAdrainPrimeNode);
+  TSTALLOC(HFETAgatePrimeDrainPrimePtr,HFETAgatePrimeNode,HFETAdrainPrimeNode);
+  TSTALLOC(HFETAgatePrimeSourcePrimePtr,HFETAgatePrimeNode,HFETAsourcePrimeNode);
+  TSTALLOC(HFETAsourceSourcePrimePtr,HFETAsourceNode,HFETAsourcePrimeNode);
+  TSTALLOC(HFETAdrainPrimeDrainPtr,HFETAdrainPrimeNode,HFETAdrainNode);
+  TSTALLOC(HFETAdrainPrimeGatePrimePtr,HFETAdrainPrimeNode,HFETAgatePrimeNode);
+  TSTALLOC(HFETAdrainPrimeSourcePrimePtr,HFETAdrainPrimeNode,HFETAsourcePrimeNode);
+  TSTALLOC(HFETAsourcePrimeGatePrimePtr,HFETAsourcePrimeNode,HFETAgatePrimeNode);
+  TSTALLOC(HFETAsourcePrimeSourcePtr,HFETAsourcePrimeNode,HFETAsourceNode);
+  TSTALLOC(HFETAsourcePrimeDrainPrimePtr,HFETAsourcePrimeNode,HFETAdrainPrimeNode);
+  TSTALLOC(HFETAdrainDrainPtr,HFETAdrainNode,HFETAdrainNode);
+  TSTALLOC(HFETAgatePrimeGatePrimePtr,HFETAgatePrimeNode,HFETAgatePrimeNode);
+  TSTALLOC(HFETAsourceSourcePtr,HFETAsourceNode,HFETAsourceNode);
+  TSTALLOC(HFETAdrainPrimeDrainPrimePtr,HFETAdrainPrimeNode,HFETAdrainPrimeNode);
+  TSTALLOC(HFETAsourcePrimeSourcePrimePtr,HFETAsourcePrimeNode,HFETAsourcePrimeNode);
+  TSTALLOC(HFETAdrainPrimeDrainPrmPrmPtr,HFETAdrainPrimeNode,HFETAdrainPrmPrmNode);
+  TSTALLOC(HFETAdrainPrmPrmDrainPrimePtr,HFETAdrainPrmPrmNode,HFETAdrainPrimeNode);
+  TSTALLOC(HFETAdrainPrmPrmGatePrimePtr,HFETAdrainPrmPrmNode,HFETAgatePrimeNode);
+  TSTALLOC(HFETAgatePrimeDrainPrmPrmPtr,HFETAgatePrimeNode,HFETAdrainPrmPrmNode);
+  TSTALLOC(HFETAdrainPrmPrmDrainPrmPrmPtr,HFETAdrainPrmPrmNode,HFETAdrainPrmPrmNode);
+  TSTALLOC(HFETAsourcePrimeSourcePrmPrmPtr,HFETAsourcePrimeNode,HFETAsourcePrmPrmNode);
+  TSTALLOC(HFETAsourcePrmPrmSourcePrimePtr,HFETAsourcePrmPrmNode,HFETAsourcePrimeNode);
+  TSTALLOC(HFETAsourcePrmPrmGatePrimePtr,HFETAsourcePrmPrmNode,HFETAgatePrimeNode);
+  TSTALLOC(HFETAgatePrimeSourcePrmPrmPtr,HFETAgatePrimeNode,HFETAsourcePrmPrmNode);
+  TSTALLOC(HFETAsourcePrmPrmSourcePrmPrmPtr,HFETAsourcePrmPrmNode,HFETAsourcePrmPrmNode);
+  TSTALLOC(HFETAgateGatePtr,HFETAgateNode,HFETAgateNode);
+  TSTALLOC(HFETAgateGatePrimePtr,HFETAgateNode,HFETAgatePrimeNode);
+  TSTALLOC(HFETAgatePrimeGatePtr,HFETAgatePrimeNode,HFETAgateNode);
  }
  }
  return(OK);

@@ -566,94 +566,94 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 /* macro to make elements with built in test for out of memory */
 
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
 
-            TSTALLOC(SOI3D_dPtr,SOI3dNode,SOI3dNode)
-            TSTALLOC(SOI3D_dpPtr,SOI3dNode,SOI3dNodePrime)
-            TSTALLOC(SOI3DP_dPtr,SOI3dNodePrime,SOI3dNode)
+            TSTALLOC(SOI3D_dPtr,SOI3dNode,SOI3dNode);
+            TSTALLOC(SOI3D_dpPtr,SOI3dNode,SOI3dNodePrime);
+            TSTALLOC(SOI3DP_dPtr,SOI3dNodePrime,SOI3dNode);
 
-            TSTALLOC(SOI3S_sPtr,SOI3sNode,SOI3sNode)
-            TSTALLOC(SOI3S_spPtr,SOI3sNode,SOI3sNodePrime)
-            TSTALLOC(SOI3SP_sPtr,SOI3sNodePrime,SOI3sNode)
+            TSTALLOC(SOI3S_sPtr,SOI3sNode,SOI3sNode);
+            TSTALLOC(SOI3S_spPtr,SOI3sNode,SOI3sNodePrime);
+            TSTALLOC(SOI3SP_sPtr,SOI3sNodePrime,SOI3sNode);
 
-            TSTALLOC(SOI3GF_gfPtr,SOI3gfNode,SOI3gfNode)
-            TSTALLOC(SOI3GF_gbPtr,SOI3gfNode,SOI3gbNode)
-            TSTALLOC(SOI3GF_dpPtr,SOI3gfNode,SOI3dNodePrime)
-            TSTALLOC(SOI3GF_spPtr,SOI3gfNode,SOI3sNodePrime)
-            TSTALLOC(SOI3GF_bPtr,SOI3gfNode,SOI3bNode)
+            TSTALLOC(SOI3GF_gfPtr,SOI3gfNode,SOI3gfNode);
+            TSTALLOC(SOI3GF_gbPtr,SOI3gfNode,SOI3gbNode);
+            TSTALLOC(SOI3GF_dpPtr,SOI3gfNode,SOI3dNodePrime);
+            TSTALLOC(SOI3GF_spPtr,SOI3gfNode,SOI3sNodePrime);
+            TSTALLOC(SOI3GF_bPtr,SOI3gfNode,SOI3bNode);
 
-            TSTALLOC(SOI3GB_gfPtr,SOI3gbNode,SOI3gfNode)
-            TSTALLOC(SOI3GB_gbPtr,SOI3gbNode,SOI3gbNode)
-            TSTALLOC(SOI3GB_dpPtr,SOI3gbNode,SOI3dNodePrime)
-            TSTALLOC(SOI3GB_spPtr,SOI3gbNode,SOI3sNodePrime)
-            TSTALLOC(SOI3GB_bPtr,SOI3gbNode,SOI3bNode)
+            TSTALLOC(SOI3GB_gfPtr,SOI3gbNode,SOI3gfNode);
+            TSTALLOC(SOI3GB_gbPtr,SOI3gbNode,SOI3gbNode);
+            TSTALLOC(SOI3GB_dpPtr,SOI3gbNode,SOI3dNodePrime);
+            TSTALLOC(SOI3GB_spPtr,SOI3gbNode,SOI3sNodePrime);
+            TSTALLOC(SOI3GB_bPtr,SOI3gbNode,SOI3bNode);
             
-            TSTALLOC(SOI3B_gfPtr,SOI3bNode,SOI3gfNode)
-            TSTALLOC(SOI3B_gbPtr,SOI3bNode,SOI3gbNode)
-            TSTALLOC(SOI3B_dpPtr,SOI3bNode,SOI3dNodePrime)
-            TSTALLOC(SOI3B_spPtr,SOI3bNode,SOI3sNodePrime)
-            TSTALLOC(SOI3B_bPtr,SOI3bNode,SOI3bNode)
+            TSTALLOC(SOI3B_gfPtr,SOI3bNode,SOI3gfNode);
+            TSTALLOC(SOI3B_gbPtr,SOI3bNode,SOI3gbNode);
+            TSTALLOC(SOI3B_dpPtr,SOI3bNode,SOI3dNodePrime);
+            TSTALLOC(SOI3B_spPtr,SOI3bNode,SOI3sNodePrime);
+            TSTALLOC(SOI3B_bPtr,SOI3bNode,SOI3bNode);
 
-            TSTALLOC(SOI3DP_gfPtr,SOI3dNodePrime,SOI3gfNode)
-            TSTALLOC(SOI3DP_gbPtr,SOI3dNodePrime,SOI3gbNode)
-            TSTALLOC(SOI3DP_dpPtr,SOI3dNodePrime,SOI3dNodePrime)
-            TSTALLOC(SOI3DP_spPtr,SOI3dNodePrime,SOI3sNodePrime)
-            TSTALLOC(SOI3DP_bPtr,SOI3dNodePrime,SOI3bNode)
+            TSTALLOC(SOI3DP_gfPtr,SOI3dNodePrime,SOI3gfNode);
+            TSTALLOC(SOI3DP_gbPtr,SOI3dNodePrime,SOI3gbNode);
+            TSTALLOC(SOI3DP_dpPtr,SOI3dNodePrime,SOI3dNodePrime);
+            TSTALLOC(SOI3DP_spPtr,SOI3dNodePrime,SOI3sNodePrime);
+            TSTALLOC(SOI3DP_bPtr,SOI3dNodePrime,SOI3bNode);
 
-            TSTALLOC(SOI3SP_gfPtr,SOI3sNodePrime,SOI3gfNode)
-            TSTALLOC(SOI3SP_gbPtr,SOI3sNodePrime,SOI3gbNode)
-            TSTALLOC(SOI3SP_dpPtr,SOI3sNodePrime,SOI3dNodePrime)
-            TSTALLOC(SOI3SP_spPtr,SOI3sNodePrime,SOI3sNodePrime)
-            TSTALLOC(SOI3SP_bPtr,SOI3sNodePrime,SOI3bNode)
+            TSTALLOC(SOI3SP_gfPtr,SOI3sNodePrime,SOI3gfNode);
+            TSTALLOC(SOI3SP_gbPtr,SOI3sNodePrime,SOI3gbNode);
+            TSTALLOC(SOI3SP_dpPtr,SOI3sNodePrime,SOI3dNodePrime);
+            TSTALLOC(SOI3SP_spPtr,SOI3sNodePrime,SOI3sNodePrime);
+            TSTALLOC(SOI3SP_bPtr,SOI3sNodePrime,SOI3bNode);
 
             if (here->SOI3rt == 0)
             {
-              TSTALLOC(SOI3TOUT_ibrPtr,SOI3toutNode,SOI3branch)
-              TSTALLOC(SOI3IBR_toutPtr,SOI3branch,SOI3toutNode)
+              TSTALLOC(SOI3TOUT_ibrPtr,SOI3toutNode,SOI3branch);
+              TSTALLOC(SOI3IBR_toutPtr,SOI3branch,SOI3toutNode);
             }
             else
             {
-              TSTALLOC(SOI3TOUT_toutPtr,SOI3toutNode,SOI3toutNode)
+              TSTALLOC(SOI3TOUT_toutPtr,SOI3toutNode,SOI3toutNode);
               if (here->SOI3numThermalNodes > 1)
               {
-                TSTALLOC(SOI3TOUT_tout1Ptr,SOI3toutNode,SOI3tout1Node)
-                TSTALLOC(SOI3TOUT1_toutPtr,SOI3tout1Node,SOI3toutNode)
-                TSTALLOC(SOI3TOUT1_tout1Ptr,SOI3tout1Node,SOI3tout1Node)
+                TSTALLOC(SOI3TOUT_tout1Ptr,SOI3toutNode,SOI3tout1Node);
+                TSTALLOC(SOI3TOUT1_toutPtr,SOI3tout1Node,SOI3toutNode);
+                TSTALLOC(SOI3TOUT1_tout1Ptr,SOI3tout1Node,SOI3tout1Node);
               }
               if (here->SOI3numThermalNodes > 2)
               {
-                TSTALLOC(SOI3TOUT1_tout2Ptr,SOI3tout1Node,SOI3tout2Node)
-                TSTALLOC(SOI3TOUT2_tout1Ptr,SOI3tout2Node,SOI3tout1Node)
-                TSTALLOC(SOI3TOUT2_tout2Ptr,SOI3tout2Node,SOI3tout2Node)
+                TSTALLOC(SOI3TOUT1_tout2Ptr,SOI3tout1Node,SOI3tout2Node);
+                TSTALLOC(SOI3TOUT2_tout1Ptr,SOI3tout2Node,SOI3tout1Node);
+                TSTALLOC(SOI3TOUT2_tout2Ptr,SOI3tout2Node,SOI3tout2Node);
               }
               if (here->SOI3numThermalNodes > 3)
               {
-                TSTALLOC(SOI3TOUT2_tout3Ptr,SOI3tout2Node,SOI3tout3Node)
-                TSTALLOC(SOI3TOUT3_tout2Ptr,SOI3tout3Node,SOI3tout2Node)
-                TSTALLOC(SOI3TOUT3_tout3Ptr,SOI3tout3Node,SOI3tout3Node)
+                TSTALLOC(SOI3TOUT2_tout3Ptr,SOI3tout2Node,SOI3tout3Node);
+                TSTALLOC(SOI3TOUT3_tout2Ptr,SOI3tout3Node,SOI3tout2Node);
+                TSTALLOC(SOI3TOUT3_tout3Ptr,SOI3tout3Node,SOI3tout3Node);
               }
               if (here->SOI3numThermalNodes > 4)
               {
-                TSTALLOC(SOI3TOUT3_tout4Ptr,SOI3tout3Node,SOI3tout4Node)
-                TSTALLOC(SOI3TOUT4_tout3Ptr,SOI3tout4Node,SOI3tout3Node)
-                TSTALLOC(SOI3TOUT4_tout4Ptr,SOI3tout4Node,SOI3tout4Node)
+                TSTALLOC(SOI3TOUT3_tout4Ptr,SOI3tout3Node,SOI3tout4Node);
+                TSTALLOC(SOI3TOUT4_tout3Ptr,SOI3tout4Node,SOI3tout3Node);
+                TSTALLOC(SOI3TOUT4_tout4Ptr,SOI3tout4Node,SOI3tout4Node);
               }
 
-              TSTALLOC(SOI3TOUT_toutPtr,SOI3toutNode,SOI3toutNode)
-              TSTALLOC(SOI3TOUT_gfPtr,SOI3toutNode,SOI3gfNode)
-              TSTALLOC(SOI3TOUT_gbPtr,SOI3toutNode,SOI3gbNode)
-              TSTALLOC(SOI3TOUT_dpPtr,SOI3toutNode,SOI3dNodePrime)
-              TSTALLOC(SOI3TOUT_spPtr,SOI3toutNode,SOI3sNodePrime)
-              TSTALLOC(SOI3TOUT_bPtr,SOI3toutNode,SOI3bNode)
+              TSTALLOC(SOI3TOUT_toutPtr,SOI3toutNode,SOI3toutNode);
+              TSTALLOC(SOI3TOUT_gfPtr,SOI3toutNode,SOI3gfNode);
+              TSTALLOC(SOI3TOUT_gbPtr,SOI3toutNode,SOI3gbNode);
+              TSTALLOC(SOI3TOUT_dpPtr,SOI3toutNode,SOI3dNodePrime);
+              TSTALLOC(SOI3TOUT_spPtr,SOI3toutNode,SOI3sNodePrime);
+              TSTALLOC(SOI3TOUT_bPtr,SOI3toutNode,SOI3bNode);
 
-              TSTALLOC(SOI3GF_toutPtr,SOI3gfNode,SOI3toutNode)
-              TSTALLOC(SOI3GB_toutPtr,SOI3gbNode,SOI3toutNode)
-              TSTALLOC(SOI3DP_toutPtr,SOI3dNodePrime,SOI3toutNode)
-              TSTALLOC(SOI3SP_toutPtr,SOI3sNodePrime,SOI3toutNode)
-              TSTALLOC(SOI3B_toutPtr,SOI3bNode,SOI3toutNode)
+              TSTALLOC(SOI3GF_toutPtr,SOI3gfNode,SOI3toutNode);
+              TSTALLOC(SOI3GB_toutPtr,SOI3gbNode,SOI3toutNode);
+              TSTALLOC(SOI3DP_toutPtr,SOI3dNodePrime,SOI3toutNode);
+              TSTALLOC(SOI3SP_toutPtr,SOI3sNodePrime,SOI3toutNode);
+              TSTALLOC(SOI3B_toutPtr,SOI3bNode,SOI3toutNode);
             }
         }
     }

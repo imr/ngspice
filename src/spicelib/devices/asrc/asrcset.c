@@ -54,14 +54,14 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
 #define MY_TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
             /* For each controlling variable set the entries
             in the vector of the positions of the SMP */

@@ -1213,120 +1213,120 @@ IFuid tmpName;
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
 
         if ((model->B3SOIFDshMod == 1) && (here->B3SOIFDrth0!=0.0)) {
-            TSTALLOC(B3SOIFDTemptempPtr, B3SOIFDtempNode, B3SOIFDtempNode)
-            TSTALLOC(B3SOIFDTempdpPtr, B3SOIFDtempNode, B3SOIFDdNodePrime)
-            TSTALLOC(B3SOIFDTempspPtr, B3SOIFDtempNode, B3SOIFDsNodePrime)
-            TSTALLOC(B3SOIFDTempgPtr, B3SOIFDtempNode, B3SOIFDgNode)
-            TSTALLOC(B3SOIFDTempbPtr, B3SOIFDtempNode, B3SOIFDbNode)
-            TSTALLOC(B3SOIFDTempePtr, B3SOIFDtempNode, B3SOIFDeNode)
+            TSTALLOC(B3SOIFDTemptempPtr, B3SOIFDtempNode, B3SOIFDtempNode);
+            TSTALLOC(B3SOIFDTempdpPtr, B3SOIFDtempNode, B3SOIFDdNodePrime);
+            TSTALLOC(B3SOIFDTempspPtr, B3SOIFDtempNode, B3SOIFDsNodePrime);
+            TSTALLOC(B3SOIFDTempgPtr, B3SOIFDtempNode, B3SOIFDgNode);
+            TSTALLOC(B3SOIFDTempbPtr, B3SOIFDtempNode, B3SOIFDbNode);
+            TSTALLOC(B3SOIFDTempePtr, B3SOIFDtempNode, B3SOIFDeNode);
 
-            TSTALLOC(B3SOIFDGtempPtr, B3SOIFDgNode, B3SOIFDtempNode)
-            TSTALLOC(B3SOIFDDPtempPtr, B3SOIFDdNodePrime, B3SOIFDtempNode)
-            TSTALLOC(B3SOIFDSPtempPtr, B3SOIFDsNodePrime, B3SOIFDtempNode)
-            TSTALLOC(B3SOIFDEtempPtr, B3SOIFDeNode, B3SOIFDtempNode)
-            TSTALLOC(B3SOIFDBtempPtr, B3SOIFDbNode, B3SOIFDtempNode)
+            TSTALLOC(B3SOIFDGtempPtr, B3SOIFDgNode, B3SOIFDtempNode);
+            TSTALLOC(B3SOIFDDPtempPtr, B3SOIFDdNodePrime, B3SOIFDtempNode);
+            TSTALLOC(B3SOIFDSPtempPtr, B3SOIFDsNodePrime, B3SOIFDtempNode);
+            TSTALLOC(B3SOIFDEtempPtr, B3SOIFDeNode, B3SOIFDtempNode);
+            TSTALLOC(B3SOIFDBtempPtr, B3SOIFDbNode, B3SOIFDtempNode);
 
             if (here->B3SOIFDbodyMod == 1) {
-                TSTALLOC(B3SOIFDPtempPtr, B3SOIFDpNode, B3SOIFDtempNode)
+                TSTALLOC(B3SOIFDPtempPtr, B3SOIFDpNode, B3SOIFDtempNode);
             }
         }
         if (here->B3SOIFDbodyMod == 2) {
             /* Don't create any Jacobian entry for pNode */
         }
         else if (here->B3SOIFDbodyMod == 1) {
-            TSTALLOC(B3SOIFDBpPtr, B3SOIFDbNode, B3SOIFDpNode)
-            TSTALLOC(B3SOIFDPbPtr, B3SOIFDpNode, B3SOIFDbNode)
-            TSTALLOC(B3SOIFDPpPtr, B3SOIFDpNode, B3SOIFDpNode)
-            TSTALLOC(B3SOIFDPgPtr, B3SOIFDpNode, B3SOIFDgNode)
-            TSTALLOC(B3SOIFDPdpPtr, B3SOIFDpNode, B3SOIFDdNodePrime)
-            TSTALLOC(B3SOIFDPspPtr, B3SOIFDpNode, B3SOIFDsNodePrime)
-            TSTALLOC(B3SOIFDPePtr, B3SOIFDpNode, B3SOIFDeNode)
+            TSTALLOC(B3SOIFDBpPtr, B3SOIFDbNode, B3SOIFDpNode);
+            TSTALLOC(B3SOIFDPbPtr, B3SOIFDpNode, B3SOIFDbNode);
+            TSTALLOC(B3SOIFDPpPtr, B3SOIFDpNode, B3SOIFDpNode);
+            TSTALLOC(B3SOIFDPgPtr, B3SOIFDpNode, B3SOIFDgNode);
+            TSTALLOC(B3SOIFDPdpPtr, B3SOIFDpNode, B3SOIFDdNodePrime);
+            TSTALLOC(B3SOIFDPspPtr, B3SOIFDpNode, B3SOIFDsNodePrime);
+            TSTALLOC(B3SOIFDPePtr, B3SOIFDpNode, B3SOIFDeNode);
         }
 
-        TSTALLOC(B3SOIFDEgPtr, B3SOIFDeNode, B3SOIFDgNode)
-        TSTALLOC(B3SOIFDEdpPtr, B3SOIFDeNode, B3SOIFDdNodePrime)
-        TSTALLOC(B3SOIFDEspPtr, B3SOIFDeNode, B3SOIFDsNodePrime)
-        TSTALLOC(B3SOIFDGePtr, B3SOIFDgNode, B3SOIFDeNode)
-        TSTALLOC(B3SOIFDDPePtr, B3SOIFDdNodePrime, B3SOIFDeNode)
-        TSTALLOC(B3SOIFDSPePtr, B3SOIFDsNodePrime, B3SOIFDeNode)
+        TSTALLOC(B3SOIFDEgPtr, B3SOIFDeNode, B3SOIFDgNode);
+        TSTALLOC(B3SOIFDEdpPtr, B3SOIFDeNode, B3SOIFDdNodePrime);
+        TSTALLOC(B3SOIFDEspPtr, B3SOIFDeNode, B3SOIFDsNodePrime);
+        TSTALLOC(B3SOIFDGePtr, B3SOIFDgNode, B3SOIFDeNode);
+        TSTALLOC(B3SOIFDDPePtr, B3SOIFDdNodePrime, B3SOIFDeNode);
+        TSTALLOC(B3SOIFDSPePtr, B3SOIFDsNodePrime, B3SOIFDeNode);
 
-        TSTALLOC(B3SOIFDEbPtr, B3SOIFDeNode, B3SOIFDbNode)
-        TSTALLOC(B3SOIFDEePtr, B3SOIFDeNode, B3SOIFDeNode)
+        TSTALLOC(B3SOIFDEbPtr, B3SOIFDeNode, B3SOIFDbNode);
+        TSTALLOC(B3SOIFDEePtr, B3SOIFDeNode, B3SOIFDeNode);
 
-        TSTALLOC(B3SOIFDGgPtr, B3SOIFDgNode, B3SOIFDgNode)
-        TSTALLOC(B3SOIFDGdpPtr, B3SOIFDgNode, B3SOIFDdNodePrime)
-        TSTALLOC(B3SOIFDGspPtr, B3SOIFDgNode, B3SOIFDsNodePrime)
+        TSTALLOC(B3SOIFDGgPtr, B3SOIFDgNode, B3SOIFDgNode);
+        TSTALLOC(B3SOIFDGdpPtr, B3SOIFDgNode, B3SOIFDdNodePrime);
+        TSTALLOC(B3SOIFDGspPtr, B3SOIFDgNode, B3SOIFDsNodePrime);
 
-        TSTALLOC(B3SOIFDDPgPtr, B3SOIFDdNodePrime, B3SOIFDgNode)
-        TSTALLOC(B3SOIFDDPdpPtr, B3SOIFDdNodePrime, B3SOIFDdNodePrime)
-        TSTALLOC(B3SOIFDDPspPtr, B3SOIFDdNodePrime, B3SOIFDsNodePrime)
-        TSTALLOC(B3SOIFDDPdPtr, B3SOIFDdNodePrime, B3SOIFDdNode)
+        TSTALLOC(B3SOIFDDPgPtr, B3SOIFDdNodePrime, B3SOIFDgNode);
+        TSTALLOC(B3SOIFDDPdpPtr, B3SOIFDdNodePrime, B3SOIFDdNodePrime);
+        TSTALLOC(B3SOIFDDPspPtr, B3SOIFDdNodePrime, B3SOIFDsNodePrime);
+        TSTALLOC(B3SOIFDDPdPtr, B3SOIFDdNodePrime, B3SOIFDdNode);
 
-        TSTALLOC(B3SOIFDSPgPtr, B3SOIFDsNodePrime, B3SOIFDgNode)
-        TSTALLOC(B3SOIFDSPdpPtr, B3SOIFDsNodePrime, B3SOIFDdNodePrime)
-        TSTALLOC(B3SOIFDSPspPtr, B3SOIFDsNodePrime, B3SOIFDsNodePrime)
-        TSTALLOC(B3SOIFDSPsPtr, B3SOIFDsNodePrime, B3SOIFDsNode)
+        TSTALLOC(B3SOIFDSPgPtr, B3SOIFDsNodePrime, B3SOIFDgNode);
+        TSTALLOC(B3SOIFDSPdpPtr, B3SOIFDsNodePrime, B3SOIFDdNodePrime);
+        TSTALLOC(B3SOIFDSPspPtr, B3SOIFDsNodePrime, B3SOIFDsNodePrime);
+        TSTALLOC(B3SOIFDSPsPtr, B3SOIFDsNodePrime, B3SOIFDsNode);
 
-        TSTALLOC(B3SOIFDDdPtr, B3SOIFDdNode, B3SOIFDdNode)
-        TSTALLOC(B3SOIFDDdpPtr, B3SOIFDdNode, B3SOIFDdNodePrime)
+        TSTALLOC(B3SOIFDDdPtr, B3SOIFDdNode, B3SOIFDdNode);
+        TSTALLOC(B3SOIFDDdpPtr, B3SOIFDdNode, B3SOIFDdNodePrime);
 
-        TSTALLOC(B3SOIFDSsPtr, B3SOIFDsNode, B3SOIFDsNode)
-        TSTALLOC(B3SOIFDSspPtr, B3SOIFDsNode, B3SOIFDsNodePrime)
+        TSTALLOC(B3SOIFDSsPtr, B3SOIFDsNode, B3SOIFDsNode);
+        TSTALLOC(B3SOIFDSspPtr, B3SOIFDsNode, B3SOIFDsNodePrime);
 
 /* here for debugging purpose only */
          if ((here->B3SOIFDdebugMod > 1) || (here->B3SOIFDdebugMod == -1))
          {
-            TSTALLOC(B3SOIFDVbsPtr, B3SOIFDvbsNode, B3SOIFDvbsNode) 
-            TSTALLOC(B3SOIFDIdsPtr, B3SOIFDidsNode, B3SOIFDidsNode)
-            TSTALLOC(B3SOIFDIcPtr, B3SOIFDicNode, B3SOIFDicNode)
-            TSTALLOC(B3SOIFDIbsPtr, B3SOIFDibsNode, B3SOIFDibsNode)
-            TSTALLOC(B3SOIFDIbdPtr, B3SOIFDibdNode, B3SOIFDibdNode)
-            TSTALLOC(B3SOIFDIiiPtr, B3SOIFDiiiNode, B3SOIFDiiiNode)
-            TSTALLOC(B3SOIFDIgidlPtr, B3SOIFDigidlNode, B3SOIFDigidlNode)
-            TSTALLOC(B3SOIFDItunPtr, B3SOIFDitunNode, B3SOIFDitunNode)
-            TSTALLOC(B3SOIFDIbpPtr, B3SOIFDibpNode, B3SOIFDibpNode)
-            TSTALLOC(B3SOIFDAbeffPtr, B3SOIFDabeffNode, B3SOIFDabeffNode)
-            TSTALLOC(B3SOIFDVbs0effPtr, B3SOIFDvbs0effNode, B3SOIFDvbs0effNode)
-            TSTALLOC(B3SOIFDVbseffPtr, B3SOIFDvbseffNode, B3SOIFDvbseffNode)
-            TSTALLOC(B3SOIFDXcPtr, B3SOIFDxcNode, B3SOIFDxcNode)
-            TSTALLOC(B3SOIFDCbbPtr, B3SOIFDcbbNode, B3SOIFDcbbNode)
-            TSTALLOC(B3SOIFDCbdPtr, B3SOIFDcbdNode, B3SOIFDcbdNode)
-            TSTALLOC(B3SOIFDCbgPtr, B3SOIFDcbgNode, B3SOIFDcbgNode)
-            TSTALLOC(B3SOIFDqbPtr, B3SOIFDqbNode, B3SOIFDqbNode)
-            TSTALLOC(B3SOIFDQbfPtr, B3SOIFDqbfNode, B3SOIFDqbfNode)
-            TSTALLOC(B3SOIFDQjsPtr, B3SOIFDqjsNode, B3SOIFDqjsNode)
-            TSTALLOC(B3SOIFDQjdPtr, B3SOIFDqjdNode, B3SOIFDqjdNode)
+            TSTALLOC(B3SOIFDVbsPtr, B3SOIFDvbsNode, B3SOIFDvbsNode) ;
+            TSTALLOC(B3SOIFDIdsPtr, B3SOIFDidsNode, B3SOIFDidsNode);
+            TSTALLOC(B3SOIFDIcPtr, B3SOIFDicNode, B3SOIFDicNode);
+            TSTALLOC(B3SOIFDIbsPtr, B3SOIFDibsNode, B3SOIFDibsNode);
+            TSTALLOC(B3SOIFDIbdPtr, B3SOIFDibdNode, B3SOIFDibdNode);
+            TSTALLOC(B3SOIFDIiiPtr, B3SOIFDiiiNode, B3SOIFDiiiNode);
+            TSTALLOC(B3SOIFDIgidlPtr, B3SOIFDigidlNode, B3SOIFDigidlNode);
+            TSTALLOC(B3SOIFDItunPtr, B3SOIFDitunNode, B3SOIFDitunNode);
+            TSTALLOC(B3SOIFDIbpPtr, B3SOIFDibpNode, B3SOIFDibpNode);
+            TSTALLOC(B3SOIFDAbeffPtr, B3SOIFDabeffNode, B3SOIFDabeffNode);
+            TSTALLOC(B3SOIFDVbs0effPtr, B3SOIFDvbs0effNode, B3SOIFDvbs0effNode);
+            TSTALLOC(B3SOIFDVbseffPtr, B3SOIFDvbseffNode, B3SOIFDvbseffNode);
+            TSTALLOC(B3SOIFDXcPtr, B3SOIFDxcNode, B3SOIFDxcNode);
+            TSTALLOC(B3SOIFDCbbPtr, B3SOIFDcbbNode, B3SOIFDcbbNode);
+            TSTALLOC(B3SOIFDCbdPtr, B3SOIFDcbdNode, B3SOIFDcbdNode);
+            TSTALLOC(B3SOIFDCbgPtr, B3SOIFDcbgNode, B3SOIFDcbgNode);
+            TSTALLOC(B3SOIFDqbPtr, B3SOIFDqbNode, B3SOIFDqbNode);
+            TSTALLOC(B3SOIFDQbfPtr, B3SOIFDqbfNode, B3SOIFDqbfNode);
+            TSTALLOC(B3SOIFDQjsPtr, B3SOIFDqjsNode, B3SOIFDqjsNode);
+            TSTALLOC(B3SOIFDQjdPtr, B3SOIFDqjdNode, B3SOIFDqjdNode);
 
             /* clean up last */
-            TSTALLOC(B3SOIFDGmPtr, B3SOIFDgmNode, B3SOIFDgmNode)
-            TSTALLOC(B3SOIFDGmbsPtr, B3SOIFDgmbsNode, B3SOIFDgmbsNode)
-            TSTALLOC(B3SOIFDGdsPtr, B3SOIFDgdsNode, B3SOIFDgdsNode)
-            TSTALLOC(B3SOIFDGmePtr, B3SOIFDgmeNode, B3SOIFDgmeNode)
-            TSTALLOC(B3SOIFDVbs0teffPtr, B3SOIFDvbs0teffNode, B3SOIFDvbs0teffNode)
-            TSTALLOC(B3SOIFDVthPtr, B3SOIFDvthNode, B3SOIFDvthNode)
-            TSTALLOC(B3SOIFDVgsteffPtr, B3SOIFDvgsteffNode, B3SOIFDvgsteffNode)
-            TSTALLOC(B3SOIFDXcsatPtr, B3SOIFDxcsatNode, B3SOIFDxcsatNode)
-            TSTALLOC(B3SOIFDVcscvPtr, B3SOIFDvcscvNode, B3SOIFDvcscvNode)
-            TSTALLOC(B3SOIFDVdscvPtr, B3SOIFDvdscvNode, B3SOIFDvdscvNode)
-            TSTALLOC(B3SOIFDCbePtr, B3SOIFDcbeNode, B3SOIFDcbeNode)
-            TSTALLOC(B3SOIFDDum1Ptr, B3SOIFDdum1Node, B3SOIFDdum1Node)
-            TSTALLOC(B3SOIFDDum2Ptr, B3SOIFDdum2Node, B3SOIFDdum2Node)
-            TSTALLOC(B3SOIFDDum3Ptr, B3SOIFDdum3Node, B3SOIFDdum3Node)
-            TSTALLOC(B3SOIFDDum4Ptr, B3SOIFDdum4Node, B3SOIFDdum4Node)
-            TSTALLOC(B3SOIFDDum5Ptr, B3SOIFDdum5Node, B3SOIFDdum5Node)
-            TSTALLOC(B3SOIFDQaccPtr, B3SOIFDqaccNode, B3SOIFDqaccNode)
-            TSTALLOC(B3SOIFDQsub0Ptr, B3SOIFDqsub0Node, B3SOIFDqsub0Node)
-            TSTALLOC(B3SOIFDQsubs1Ptr, B3SOIFDqsubs1Node, B3SOIFDqsubs1Node)
-            TSTALLOC(B3SOIFDQsubs2Ptr, B3SOIFDqsubs2Node, B3SOIFDqsubs2Node)
-            TSTALLOC(B3SOIFDqePtr, B3SOIFDqeNode, B3SOIFDqeNode)
-            TSTALLOC(B3SOIFDqdPtr, B3SOIFDqdNode, B3SOIFDqdNode)
-            TSTALLOC(B3SOIFDqgPtr, B3SOIFDqgNode, B3SOIFDqgNode)
+            TSTALLOC(B3SOIFDGmPtr, B3SOIFDgmNode, B3SOIFDgmNode);
+            TSTALLOC(B3SOIFDGmbsPtr, B3SOIFDgmbsNode, B3SOIFDgmbsNode);
+            TSTALLOC(B3SOIFDGdsPtr, B3SOIFDgdsNode, B3SOIFDgdsNode);
+            TSTALLOC(B3SOIFDGmePtr, B3SOIFDgmeNode, B3SOIFDgmeNode);
+            TSTALLOC(B3SOIFDVbs0teffPtr, B3SOIFDvbs0teffNode, B3SOIFDvbs0teffNode);
+            TSTALLOC(B3SOIFDVthPtr, B3SOIFDvthNode, B3SOIFDvthNode);
+            TSTALLOC(B3SOIFDVgsteffPtr, B3SOIFDvgsteffNode, B3SOIFDvgsteffNode);
+            TSTALLOC(B3SOIFDXcsatPtr, B3SOIFDxcsatNode, B3SOIFDxcsatNode);
+            TSTALLOC(B3SOIFDVcscvPtr, B3SOIFDvcscvNode, B3SOIFDvcscvNode);
+            TSTALLOC(B3SOIFDVdscvPtr, B3SOIFDvdscvNode, B3SOIFDvdscvNode);
+            TSTALLOC(B3SOIFDCbePtr, B3SOIFDcbeNode, B3SOIFDcbeNode);
+            TSTALLOC(B3SOIFDDum1Ptr, B3SOIFDdum1Node, B3SOIFDdum1Node);
+            TSTALLOC(B3SOIFDDum2Ptr, B3SOIFDdum2Node, B3SOIFDdum2Node);
+            TSTALLOC(B3SOIFDDum3Ptr, B3SOIFDdum3Node, B3SOIFDdum3Node);
+            TSTALLOC(B3SOIFDDum4Ptr, B3SOIFDdum4Node, B3SOIFDdum4Node);
+            TSTALLOC(B3SOIFDDum5Ptr, B3SOIFDdum5Node, B3SOIFDdum5Node);
+            TSTALLOC(B3SOIFDQaccPtr, B3SOIFDqaccNode, B3SOIFDqaccNode);
+            TSTALLOC(B3SOIFDQsub0Ptr, B3SOIFDqsub0Node, B3SOIFDqsub0Node);
+            TSTALLOC(B3SOIFDQsubs1Ptr, B3SOIFDqsubs1Node, B3SOIFDqsubs1Node);
+            TSTALLOC(B3SOIFDQsubs2Ptr, B3SOIFDqsubs2Node, B3SOIFDqsubs2Node);
+            TSTALLOC(B3SOIFDqePtr, B3SOIFDqeNode, B3SOIFDqeNode);
+            TSTALLOC(B3SOIFDqdPtr, B3SOIFDqdNode, B3SOIFDqdNode);
+            TSTALLOC(B3SOIFDqgPtr, B3SOIFDqgNode, B3SOIFDqgNode);
          }
 
         }

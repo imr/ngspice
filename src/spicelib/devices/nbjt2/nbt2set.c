@@ -244,19 +244,19 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
+do { if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
-}
+} } while(0)
 
-      TSTALLOC(NBJT2colColPtr, NBJT2colNode, NBJT2colNode)
-      TSTALLOC(NBJT2colBasePtr, NBJT2colNode, NBJT2baseNode)
-      TSTALLOC(NBJT2colEmitPtr, NBJT2colNode, NBJT2emitNode)
-      TSTALLOC(NBJT2baseColPtr, NBJT2baseNode, NBJT2colNode)
-      TSTALLOC(NBJT2baseBasePtr, NBJT2baseNode, NBJT2baseNode)
-      TSTALLOC(NBJT2baseEmitPtr, NBJT2baseNode, NBJT2emitNode)
-      TSTALLOC(NBJT2emitColPtr, NBJT2emitNode, NBJT2colNode)
-      TSTALLOC(NBJT2emitBasePtr, NBJT2emitNode, NBJT2baseNode)
-      TSTALLOC(NBJT2emitEmitPtr, NBJT2emitNode, NBJT2emitNode)
+      TSTALLOC(NBJT2colColPtr, NBJT2colNode, NBJT2colNode);
+      TSTALLOC(NBJT2colBasePtr, NBJT2colNode, NBJT2baseNode);
+      TSTALLOC(NBJT2colEmitPtr, NBJT2colNode, NBJT2emitNode);
+      TSTALLOC(NBJT2baseColPtr, NBJT2baseNode, NBJT2colNode);
+      TSTALLOC(NBJT2baseBasePtr, NBJT2baseNode, NBJT2baseNode);
+      TSTALLOC(NBJT2baseEmitPtr, NBJT2baseNode, NBJT2emitNode);
+      TSTALLOC(NBJT2emitColPtr, NBJT2emitNode, NBJT2colNode);
+      TSTALLOC(NBJT2emitBasePtr, NBJT2emitNode, NBJT2baseNode);
+      TSTALLOC(NBJT2emitEmitPtr, NBJT2emitNode, NBJT2emitNode);
     }
     /* Clean up lists */
     killCoordInfo(xCoordList);
