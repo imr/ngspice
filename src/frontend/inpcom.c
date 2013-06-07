@@ -667,7 +667,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
         if (ciprefix(".end", buffer))
-            if ((buffer[4] == '\0') || (isspace(buffer[4]))) {
+            if ((buffer[4] == '\0') || isspace(buffer[4])) {
                 found_end = TRUE;
                 *buffer   = '*';
             }
@@ -972,7 +972,7 @@ inp_fix_gnd_name(struct line *c)
     for (; c; c = c->li_next) {
         char *gnd = c->li_line;
         // if there is a comment or no gnd, go to next line
-        if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL))
+        if ((*gnd == '*') || !strstr(gnd, "gnd"))
             continue;
 
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
@@ -1329,7 +1329,7 @@ static char*
 get_model_type(char *line)
 {
     char *beg_ptr;
-    if (!(ciprefix(".model", line)))
+    if (!ciprefix(".model", line))
         return NULL;
     beg_ptr = skip_non_ws(line); /* eat .model */
     beg_ptr = skip_ws(beg_ptr);
@@ -1671,12 +1671,12 @@ inp_fix_ternary_operator_str(char *line, bool all)
         else
             str_ptr = strchr(line, ')');
 
-        if ((str_ptr == NULL) && all == FALSE) {
+        if (!str_ptr && all == FALSE) {
             fprintf(stderr, "ERROR: mal formed .param, .func or .meas line:\n  %s\n", line);
             controlled_exit(EXIT_FAILURE);
         }
 
-        if ((str_ptr == NULL) && all == TRUE) {
+        if (!str_ptr && all == TRUE) {
             fprintf(stderr, "ERROR: mal formed expression in line:\n  %s\n", line);
             fprintf(stderr, "  We need parentheses around 'if' clause and nested ternary functions\n");
             fprintf(stderr, "  like:  Rtern4 1 0 '(ut > 0.7) ? 2k : ((ut < 0.3) ? 500 : 1k)'\n");
@@ -2267,7 +2267,7 @@ inp_remove_excess_ws(struct line *c)
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if ((found_control) && (ciprefix("echo", c->li_line)))
+        if (found_control && ciprefix("echo", c->li_line))
             continue;
 
         c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
@@ -4137,7 +4137,7 @@ inp_compat(struct line *card)
                 tfree(str_ptr);
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
-                if ((!expression) || (!str_ptr)) {
+                if (!expression || !str_ptr) {
                     fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
@@ -4329,7 +4329,7 @@ inp_compat(struct line *card)
                 tfree(str_ptr);
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
-                if ((!expression) || (!str_ptr)) {
+                if (!expression || !str_ptr) {
                     fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
                         card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
