@@ -3348,26 +3348,22 @@ inp_fix_param_values(struct line *c)
 static char*
 get_param_name(char *line)
 {
-    char *name = NULL, *equal_ptr, *beg;
-    char keep;
+    char *beg;
+    char *equal_ptr = strchr(line, '=');
 
-    if ((equal_ptr = strchr(line, '=')) != NULL) {
-        equal_ptr = skip_back_ws(equal_ptr);
-
-        beg = equal_ptr - 1;
-        while (!isspace(*beg) && beg != line)
-            beg--;
-        if (beg != line)
-            beg++;
-        keep       = *equal_ptr;
-        *equal_ptr = '\0';
-        name       = strdup(beg);
-        *equal_ptr = keep;
-    } else {
+    if (!equal_ptr) {
         fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line);
         controlled_exit(EXIT_FAILURE);
+        return NULL;
     }
-    return name;
+
+    equal_ptr = skip_back_ws(equal_ptr);
+
+    beg = equal_ptr;
+    while (beg > line && !isspace(beg[-1]))
+        beg--;
+
+    return copy_substring(beg, equal_ptr);
 }
 
 
