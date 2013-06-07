@@ -3760,9 +3760,12 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
     char        *new_line, *param_ptr, *subckt_name, *end_ptr;
 
     for (; card; card = card->li_next) {
+
         char *curr_line = card->li_line;
+
         if (!ciprefix(".param", curr_line))
             break;
+
         param_ptr = strchr(curr_line, ' ');
         param_ptr = skip_ws(param_ptr);
 
@@ -3770,7 +3773,7 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
             new_line = TMALLOC(char, strlen(subckt_line) + strlen("params: ") + strlen(param_ptr) + 2);
             sprintf(new_line, "%s params: %s", subckt_line, param_ptr);
 
-            subckt_name = skip_non_ws(subckt_card->li_line);
+            subckt_name = skip_non_ws(subckt_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
             add_name(subckt_w_params, copy_substring(subckt_name, end_ptr));
@@ -3780,10 +3783,12 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
         }
 
         tfree(subckt_line);
-        subckt_card->li_line = subckt_line = new_line;
+        subckt_line = new_line;
 
         *curr_line = '*';
     }
+
+    subckt_card->li_line = subckt_line;
 }
 
 
