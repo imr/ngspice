@@ -162,11 +162,9 @@ find_lib(char *name)
 
 
 static struct line *
-find_section_definition(struct line *deck, char *name)
+find_section_definition(struct line *c, char *name)
 {
-    struct line *c;
-
-    for (c = deck; c; c = c->li_next) {
+    for (; c; c = c->li_next) {
         char *line = c->li_line;
         if (ciprefix(".lib", line)) {
             char *s, *t, *y;
@@ -897,7 +895,7 @@ inp_pathopen(char *name, char *mode)
         return (fopen(name, mode));
 #endif
 
-    while (v) {
+    for (; v; v = v->va_next) {
         switch (v->va_type) {
         case CP_STRING:
             cp_wstrip(v->va_string);
@@ -916,7 +914,6 @@ inp_pathopen(char *name, char *mode)
         }
         if ((fp = fopen(buf, mode)) != NULL)
             return (fp);
-        v = v->va_next;
     }
     return (NULL);
 }
@@ -2570,8 +2567,6 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 {
     struct line *c;
     struct line *d, *p = NULL;
-    char *inst_line;
-    char *subckt_line;
     char *subckt_name;
     char *subckt_param_names[1000];
     char *subckt_param_values[1000];
@@ -2588,7 +2583,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
     for (c = deck; c; c = c->li_next) {
-        inst_line = c->li_line;
+        char *inst_line = c->li_line;
 
         if (*inst_line == '*')
             continue;
@@ -2601,7 +2596,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                 flag = FALSE;
                 // iterate through the deck to find the subckt (last one defined wins)
                 for (d = deck; d; d = d->li_next) {
-                    subckt_line = d->li_line;
+                    char *subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
                         subckt_line = skip_ws(subckt_line);
@@ -2633,12 +2628,10 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
         }
     }
 
-    c = deck;
-    while (c != NULL) {
-        inst_line = c->li_line;
+    for (c = deck; c; c = c->li_next) {
+        char *inst_line = c->li_line;
 
         if (*inst_line == '*') {
-            c = c->li_next;
             continue;
         }
         if (ciprefix("x", inst_line)) {
@@ -2652,7 +2645,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 
                     d = deck;
                     while (d != NULL) {
-                        subckt_line = d->li_line;
+                        char *subckt_line = d->li_line;
                         if (ciprefix(".subckt", subckt_line)) {
                             subckt_line = skip_non_ws(subckt_line);
                             subckt_line = skip_ws(subckt_line);
@@ -2707,7 +2700,6 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             }
             tfree(subckt_name);
         }
-        c = c->li_next;
     }
 }
 
@@ -3122,17 +3114,16 @@ inp_expand_macros_in_deck(struct function_env *env, struct line *c)
  * May be obsolete?
  */
 static void
-inp_fix_param_values(struct line *deck)
+inp_fix_param_values(struct line *c)
 {
-    struct line *c = deck;
-    char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
+    char *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
     char *vec_str, *tmp_str, *natok, *buffer, *newvec, *whereisgt;
     bool control_section = FALSE;
     wordlist *nwl;
     int parens;
 
     for (; c; c = c->li_next) {
-        line = c->li_line;
+        char *line = c->li_line;
 
         if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{')))
             continue;
@@ -3546,7 +3537,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     bool found_in_list = FALSE;
 
     struct line *ptr;
-    char *curr_line;
     char *str_ptr, *beg, *end, *new_str;
     int  skipped = 0;
     int arr_size = 12000;
@@ -3659,30 +3649,25 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     }
 
     /* look for unquoted parameters and quote them */
-    ptr = s_c;
     in_control = FALSE;
-    while (ptr != NULL && ptr != e_c) {
-        curr_line = ptr->li_line;
+    for (ptr = s_c; ptr && ptr != e_c; ptr = ptr->li_next) {
+        char *curr_line = ptr->li_line;
 
         if (ciprefix(".control", curr_line)) {
             in_control = TRUE;
-            ptr = ptr->li_next;
             continue;
         }
         if (ciprefix(".endc", curr_line)) {
             in_control = FALSE;
-            ptr = ptr->li_next;
             continue;
         }
         if (in_control || curr_line[0] == '.' || curr_line[0] == '*') {
-            ptr = ptr->li_next;
             continue;
         }
 
         num_terminals = get_number_terminals(curr_line);
 
         if (num_terminals <= 0) {
-            ptr = ptr->li_next;
             continue;
         }
 
@@ -3724,7 +3709,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 str_ptr++;
             }
         }
-        ptr = ptr->li_next;
     }
 
     ind = 0;
@@ -3772,11 +3756,13 @@ static void
 inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card)
 {
     struct line *card        = subckt_card->li_next;
-    char        *curr_line   = card->li_line;
     char        *subckt_line = subckt_card->li_line;
     char        *new_line, *param_ptr, *subckt_name, *end_ptr;
 
-    while (card != NULL && ciprefix(".param", curr_line)) {
+    for (; card; card = card->li_next) {
+        char *curr_line = card->li_line;
+        if (!ciprefix(".param", curr_line))
+            break;
         param_ptr = strchr(curr_line, ' ');
         param_ptr = skip_ws(param_ptr);
 
@@ -3797,9 +3783,6 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
         subckt_card->li_line = subckt_line = new_line;
 
         *curr_line = '*';
-
-        card      = card->li_next;
-        curr_line = card->li_line;
     }
 }
 
@@ -5625,11 +5608,9 @@ tprint(struct line *t)
 /* prepare .if and .elseif for numparam
    .if(expression) --> .if{expression} */
 static void
-inp_dot_if(struct line *deck)
+inp_dot_if(struct line *card)
 {
-    struct line *card;
-
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
         char *curr_line = card->li_line;
         if (*curr_line == '*')
             continue;
