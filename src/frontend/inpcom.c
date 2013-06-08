@@ -157,9 +157,11 @@ static struct library *
 find_lib(char *name)
 {
     int i;
+
     for (i = 0; i < num_libraries; i++)
         if (cieq(libraries[i].name, name))
             return & libraries[i];
+
     return NULL;
 }
 
@@ -168,9 +170,13 @@ static struct line *
 find_section_definition(struct line *c, char *name)
 {
     for (; c; c = c->li_next) {
+
         char *line = c->li_line;
+
         if (ciprefix(".lib", line)) {
+
             char *s, *t, *y;
+
             s = skip_non_ws(line);
             while (isspace(*s) || isquote(*s))
                 s++;
@@ -403,6 +409,7 @@ find_assignment(char *str)
    ...
  debug printout to debug-out.txt
  *-------------------------------------------------------------------------*/
+
 struct line *
 inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
@@ -839,6 +846,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                     (int) max_line_length, no_braces, dynmaxline);
         }
     }
+
     return cc;
 }
 
@@ -848,6 +856,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
   if the file isn't in . and it isn't an abs path name.
   For MS Windows: First try the path of the source file.
  *-------------------------------------------------------------------------*/
+
 FILE *
 inp_pathopen(char *name, char *mode)
 {
@@ -857,6 +866,7 @@ inp_pathopen(char *name, char *mode)
 
 #if defined(HAS_WINGUI)
     char buf2[BSIZE_SP];
+
     /* search in the path where the source (input) file has been found,
        but only if "name" is just a file name */
     if (!strchr(name, DIR_TERM) && !strchr(name, DIR_TERM_LINUX) && cp_getvar("sourcefile", CP_STRING, buf2)) {
@@ -878,6 +888,7 @@ inp_pathopen(char *name, char *mode)
         if ((fp = fopen(buf2, mode)) != NULL)
             return (fp);
     }
+
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.
      */
@@ -886,15 +897,16 @@ inp_pathopen(char *name, char *mode)
         return (fopen(name, mode));
 #else
 
-
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.
      */
     if (strchr(name, DIR_TERM) || !cp_getvar("sourcepath", CP_LIST, &v))
         return (fopen(name, mode));
+
 #endif
 
     for (; v; v = v->va_next) {
+
         switch (v->va_type) {
         case CP_STRING:
             cp_wstrip(v->va_string);
@@ -906,16 +918,19 @@ inp_pathopen(char *name, char *mode)
         case CP_REAL:           /* This is foolish */
             (void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
             break;
-        default: {
+        default:
             fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in inp_pathopen\nAborting...\n");
             controlled_exit(EXIT_FAILURE);
+            break;
         }
-        }
+
         if ((fp = fopen(buf, mode)) != NULL)
             return (fp);
     }
+
     return (NULL);
 }
+
 
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
@@ -924,6 +939,7 @@ inp_pathopen(char *name, char *mode)
  *  From: jason@ucbopal.BERKELEY.EDU (Jason Venner)                        *
  *  Newsgroups: net.sources                                                *
  *-------------------------------------------------------------------------*/
+
 #define STRGROW 256
 
 static char *
@@ -938,38 +954,48 @@ readline(FILE *fd)
     memlen = STRGROW;
     strptr = TMALLOC(char, memlen);
     memlen -= 1;                /* Save constant -1's in while loop */
+
     while ((c = getc(fd)) != EOF) {
+
         if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
             continue;
+
         strptr[strlen++] = (char) c;
+
         if (strlen >= memlen) {
             memlen += STRGROW;
             if ((strptr = TREALLOC(char, strptr, memlen + 1)) == NULL)
                 return (NULL);
         }
+
         if (c == '\n')
             break;
     }
+
     if (!strlen) {
         tfree(strptr);
         return (NULL);
     }
+
     // strptr[strlen] = '\0';
     /* Trim the string */
     strptr = TREALLOC(char, strptr, strlen + 1);
     strptr[strlen] = '\0';
+
     return (strptr);
 }
 
 
 /* replace "gnd" by " 0 "
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
+
 static void
 inp_fix_gnd_name(struct line *c)
 {
-
     for (; c; c = c->li_next) {
+
         char *gnd = c->li_line;
+
         // if there is a comment or no gnd, go to next line
         if ((*gnd == '*') || !strstr(gnd, "gnd"))
             continue;
@@ -982,6 +1008,7 @@ inp_fix_gnd_name(struct line *c)
             }
             gnd += 3;
         }
+
         // now remove the extra white spaces around 0
         c->li_line = inp_remove_ws(c->li_line);
     }
@@ -994,6 +1021,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
     int skip_control = 0;
 
     for (; c; c = c->li_next) {
+
         char *line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
@@ -1114,19 +1142,24 @@ inp_add_control_section(struct line *deck, int *line_number)
     char        *op_line  = NULL, rawfile[1000], *line;
 
     for (c = deck; c; c = c->li_next) {
+
         if (*c->li_line == '*')
             continue;
+
         if (ciprefix(".op ", c->li_line)) {
             *c->li_line = '*';
             op_line = c->li_line + 1;
         }
+
         if (ciprefix(".end", c->li_line))
             found_end = TRUE;
+
         if (found_control && ciprefix("run", c->li_line))
             found_run = TRUE;
 
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
+
         if (ciprefix(".endc", c->li_line)) {
             found_control = FALSE;
 
@@ -1135,6 +1168,7 @@ inp_add_control_section(struct line *deck, int *line_number)
                 prev_card = prev_card->li_next;
                 found_run = TRUE;
             }
+
             if (cp_getvar("rawfile", CP_STRING, rawfile)) {
                 line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
                 sprintf(line, "write %s", rawfile);
@@ -1142,6 +1176,7 @@ inp_add_control_section(struct line *deck, int *line_number)
                 prev_card = prev_card->li_next;
             }
         }
+
         prev_card = c;
     }
 
@@ -1167,10 +1202,12 @@ inp_add_control_section(struct line *deck, int *line_number)
 
 
 // look for shell-style end-of-line continuation '\\'
+
 static bool
 chk_for_line_continuation(char *line)
 {
     if (*line != '*' && *line != '$') {
+
         char *ptr = skip_back_ws_(strchr(line, '\0'), line);
 
         if ((ptr - 2 >= line) && (ptr[-1] == '\\') && (ptr[-2] == '\\')) {
@@ -1237,6 +1274,7 @@ inp_fix_macro_param_func_paren_io(struct line *card)
                 card->li_line = inp_remove_ws(card->li_line); /* remove the extra white spaces just introduced */
             }
         }
+
         if (ciprefix(".param", card->li_line)) {
             bool is_func = FALSE;
             str_ptr = skip_non_ws(card->li_line);  // skip over .param
@@ -1280,6 +1318,7 @@ get_instance_subckt(char *line)
     end_ptr = skip_back_ws_(end_ptr, line);
 
     inst_name_ptr = skip_back_non_ws_(end_ptr, line);
+
     return copy_substring(inst_name_ptr, end_ptr);
 }
 
@@ -1293,6 +1332,7 @@ get_subckt_model_name(char *line)
     name = skip_ws(name);
 
     end_ptr = skip_non_ws(name);
+
     return copy_substring(name, end_ptr);
 }
 
@@ -1310,6 +1350,7 @@ get_model_name(char *line, int num_terminals)
         beg_ptr = skip_non_ws(beg_ptr);
         beg_ptr = skip_ws(beg_ptr);
     }
+
     if (*line == 'r')           /* special dealing for r models */
         if ((*beg_ptr == '+') || (*beg_ptr == '-') || isdigit(*beg_ptr)) { /* looking for a value before model */
             beg_ptr = skip_non_ws(beg_ptr); /* skip the value */
@@ -1317,6 +1358,7 @@ get_model_name(char *line, int num_terminals)
         }
 
     end_ptr = skip_non_ws(beg_ptr);
+
     return copy_substring(beg_ptr, end_ptr);
 }
 
@@ -1325,12 +1367,16 @@ static char*
 get_model_type(char *line)
 {
     char *beg_ptr;
+
     if (!ciprefix(".model", line))
         return NULL;
+
     beg_ptr = skip_non_ws(line); /* eat .model */
     beg_ptr = skip_ws(beg_ptr);
+
     beg_ptr = skip_non_ws(beg_ptr); /* eat model name */
     beg_ptr = skip_ws(beg_ptr);
+
     return gettok(&beg_ptr);
 }
 
@@ -1342,6 +1388,7 @@ get_adevice_model_name(char *line)
 
     ptr_end = skip_back_ws_(strchr(line, '\0'), line);
     ptr_beg = skip_back_non_ws_(ptr_end, line);
+
     return copy_substring(ptr_beg, ptr_end);
 }
 
@@ -1358,6 +1405,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
     int  i, num_terminals = 0, tmp_cnt = 0;
 
     for (card = start_card; card; card = card->li_next) {
+
         char *line = card->li_line;
 
         if (*line == '*')
@@ -1374,6 +1422,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 
             tfree(curr_subckt_name);
         }
+
         if (found_subckt) {
             if (*line == 'x') {
                 inst_subckt_name = get_instance_subckt(line);
@@ -1431,6 +1480,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
             }
         }
     }
+
     // now make recursive call on instances just found above
     for (i = 0; i < tmp_cnt; i++)
         get_subckts_for_subckt(start_card, new_names[i], used_subckt_names, num_used_subckt_names,
@@ -1441,6 +1491,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 /*
   check if current token matches model bin name -- <token>.[0-9]+
  */
+
 static bool
 model_bin_match(char *token, char *model_name)
 {
@@ -1469,6 +1520,7 @@ model_bin_match(char *token, char *model_name)
   (don't want to waste time processing everything)
   also comment out .param lines with no parameters defined
  */
+
 static void
 comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 {
@@ -1482,6 +1534,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
     with 1000, but increase, if number of lines in deck is larger */
     if (no_of_lines < 1000)
         no_of_lines = 1000;
+
     used_subckt_names = TMALLOC(char*, no_of_lines);
     used_model_names = TMALLOC(char*, no_of_lines);
 
@@ -1495,6 +1548,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
     }
 
     for (card = start_card; card; card = card->li_next) {
+
         char *line = card->li_line;
 
         if (*line == '*')
@@ -1578,6 +1632,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             } /* if (has_models)  */
         } /* if (!processing_subckt) */
     } /* for loop through all cards */
+
     for (i = 0; i < tmp_cnt; i++)
         get_subckts_for_subckt
             (start_card, used_subckt_names[i],
@@ -1586,6 +1641,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 
     /* comment out any unused subckts, currently only at top level */
     for (card = start_card; card; card = card->li_next) {
+
         char *line = card->li_line;
 
         if (*line == '*')
@@ -1603,6 +1659,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             }
             tfree(subckt_name);
         }
+
         if (ciprefix(".ends", line) || ciprefix(".eom", line)) {
             nested_subckt--;
             if (remove_subckt)
@@ -1610,6 +1667,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             if (nested_subckt == 0)
                 remove_subckt = FALSE;
         }
+
         if (remove_subckt)
             *line = '*';
         else if (has_models &&
@@ -1638,6 +1696,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             tfree(model_name);
         }
     }
+
     for (i = 0; i < num_used_subckt_names; i++)
         tfree(used_subckt_names[i]);
     for (i = 0; i < num_used_model_names;  i++)
@@ -1649,6 +1708,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 
 /* replace ternary operator ? : by fcn ternary_fcn() in .param, .func, and .meas lines,
    if all is FALSE, for all lines if all is TRUE */
+
 static char*
 inp_fix_ternary_operator_str(char *line, bool all)
 {
@@ -1685,6 +1745,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     } else {
         return line;
     }
+
     all = TRUE;
     // get conditional
     question = strchr(str_ptr, '?');
@@ -1821,21 +1882,25 @@ inp_fix_ternary_operator(struct line *card)
     bool found_control = FALSE;
 
     for (; card; card = card->li_next) {
+
         char *line = card->li_line;
 
         if (*line == '*')
             continue;
+
         /* exclude replacement of ternary function between .control and .endc */
         if (ciprefix(".control", line))
             found_control = TRUE;
         if (ciprefix(".endc", line))
             found_control = FALSE;
+
         if (found_control)
             continue;
 
         /* ternary operator for B source done elsewhere */
         if (*line == 'B' || *line == 'b')
             continue;
+
         /* .param, .func, and .meas lines handled here (2nd argument FALSE) */
         if (strchr(line, '?') && strchr(line, ':'))
             card->li_line = inp_fix_ternary_operator_str(line, FALSE);
@@ -1847,6 +1912,7 @@ inp_fix_ternary_operator(struct line *card)
    removes  " " quotes, returns lower case letters,
    replaces non-printable characterss with '_'                                                                       *
  *-------------------------------------------------------------------------*/
+
 void
 inp_casefix(char *string)
 {
@@ -1904,6 +1970,7 @@ inp_stripcomments_deck(struct line *c)
    the whole line is converted to a normal comment line (i.e. one that
    begins with a '*').
    BUG: comment characters in side of string literals are not ignored. */
+
 static void
 inp_stripcomments_line(char *s)
 {
@@ -2150,6 +2217,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
         s = buffer;
     }
+
     return s;
 }
 
@@ -2214,12 +2282,14 @@ inp_remove_ws(char *s)
    modify .subckt lines by calling inp_fix_subckt()
    No changes to lines in .control section !
 */
+
 static void
 inp_fix_for_numparam(struct names *subckt_w_params, struct line *c)
 {
     bool found_control = FALSE;
 
     for (; c; c = c->li_next) {
+
         if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line))
             continue;
 
@@ -2228,6 +2298,7 @@ inp_fix_for_numparam(struct names *subckt_w_params, struct line *c)
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
+
         if (found_control)
             continue;
 
@@ -2251,7 +2322,9 @@ static void
 inp_remove_excess_ws(struct line *c)
 {
     bool found_control = FALSE;
+
     for (; c; c = c->li_next) {
+
         if (*c->li_line == '*')
             continue;
 
@@ -2260,6 +2333,7 @@ inp_remove_excess_ws(struct line *c)
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
+
         if (found_control && ciprefix("echo", c->li_line))
             continue;
 
@@ -2487,9 +2561,11 @@ inp_fix_inst_line(char *inst_line,
     return curr_line;
 }
 
+
 /* If multiplier parameter 'm' is found on a X line, flag is set
    to TRUE.
    Function is called from inp_fix_inst_calls_for_numparam()*/
+
 static bool
 found_mult_param(int num_params, char *param_names[])
 {
@@ -2502,6 +2578,7 @@ found_mult_param(int num_params, char *param_names[])
     return FALSE;
 }
 
+
 /* If a subcircuit invocation (X-line) is found, which contains the
    multiplier parameter 'm', m is added to all lines inside
    the corresponding subcircuit except of some excluded in the code below
@@ -2509,6 +2586,7 @@ found_mult_param(int num_params, char *param_names[])
    for all devices that are not supporting the 'm' parameter).
 
    Function is called from inp_fix_inst_calls_for_numparam()*/
+
 static int
 inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_card,
                           int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
@@ -2586,6 +2664,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             if (found_mult_param(num_inst_params, inst_param_names)) {
                 flag = FALSE;
                 // iterate through the deck to find the subckt (last one defined wins)
+
                 for (d = deck; d; d = d->li_next) {
                     char *subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
@@ -2622,9 +2701,9 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
     for (c = deck; c; c = c->li_next) {
         char *inst_line = c->li_line;
 
-        if (*inst_line == '*') {
+        if (*inst_line == '*')
             continue;
-        }
+
         if (ciprefix("x", inst_line)) {
             subckt_name = inp_get_subckt_name(inst_line);
 
@@ -2843,12 +2922,14 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
         return strdup(fcn->macro);
 
     for (i = 0; i < fcn->num_parameters; i++) {
+
         if (curr_str == NULL) {
             search_ptr = curr_ptr = fcn->macro;
         } else {
             search_ptr = curr_ptr = curr_str;
             curr_str = NULL;
         }
+
         while ((param_ptr = strstr(search_ptr, fcn->params[i])) != NULL) {
 
             /* make sure actually have the parameter name */
@@ -2884,6 +2965,7 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
             *param_ptr = keep;
             search_ptr = curr_ptr = param_ptr + strlen(fcn->params[i]);
         }
+
         if (param_ptr == NULL) {
             if (curr_str == NULL) {
                 curr_str = curr_ptr;
@@ -2895,6 +2977,7 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
             }
         }
     }
+
     return curr_str;
 }
 
@@ -3087,6 +3170,7 @@ inp_expand_macros_in_deck(struct function_env *env, struct line *c)
     }
 
     env = delete_function_env(env);
+
     return c;
 }
 
@@ -3104,6 +3188,7 @@ inp_expand_macros_in_deck(struct function_env *env, struct line *c)
  * Usage of numparam requires {} around the parameters in the .cmodel line.
  * May be obsolete?
  */
+
 static void
 inp_fix_param_values(struct line *c)
 {
@@ -3123,6 +3208,7 @@ inp_fix_param_values(struct line *c)
             control_section = TRUE;
             continue;
         }
+
         if (ciprefix(".endc", line)) {
             control_section = FALSE;
             continue;
@@ -3369,7 +3455,6 @@ get_param_str(char *line)
 
 
 static int
-//inp_get_param_level(int param_num, char *depends_on[12000][100], char *param_names[12000], char *param_strs[12000], int total_params, int *level)
 inp_get_param_level(int param_num, char ***depends_on, char **param_names, char **param_strs, int total_params, int *level)
 {
     int index1 = 0, comp_level = 0, temp_level = 0;
@@ -3395,7 +3480,9 @@ inp_get_param_level(int param_num, char ***depends_on, char **param_names, char 
             comp_level = temp_level;
         index1++;
     }
+
     level[param_num] = comp_level;
+
     return comp_level;
 }
 
@@ -3512,6 +3599,7 @@ get_number_terminals(char *c)
 
 
 /* sort parameters based on parameter dependencies */
+
 static void
 inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
@@ -3540,6 +3628,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         return;
 
     /* determine the number of lines with .param */
+
     for (ptr = start_card; ptr; ptr = ptr->li_next)
         if (strchr(ptr->li_line, '='))
             num_params++;
@@ -3634,27 +3723,29 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     }
 
     /* look for unquoted parameters and quote them */
+
     in_control = FALSE;
     for (ptr = s_c; ptr && ptr != e_c; ptr = ptr->li_next) {
+
         char *curr_line = ptr->li_line;
 
         if (ciprefix(".control", curr_line)) {
             in_control = TRUE;
             continue;
         }
+
         if (ciprefix(".endc", curr_line)) {
             in_control = FALSE;
             continue;
         }
-        if (in_control || curr_line[0] == '.' || curr_line[0] == '*') {
+
+        if (in_control || curr_line[0] == '.' || curr_line[0] == '*')
             continue;
-        }
 
         num_terminals = get_number_terminals(curr_line);
 
-        if (num_terminals <= 0) {
+        if (num_terminals <= 0)
             continue;
-        }
 
         for (i = 0; i < num_params; i++) {
             str_ptr = curr_line;
@@ -3906,6 +3997,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line
 //
 // split line up into multiple lines and place those new lines immediately
 // afetr the current multi-param line in the deck
+
 static int
 inp_split_multi_param_lines(struct line *card, int line_num)
 {
@@ -4043,6 +4135,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
       Bxxx n1 n2 V = v(n-aux) * 1e-16
 
      */
+
 static void
 inp_compat(struct line *card)
 {
@@ -5073,8 +5166,10 @@ inp_compat(struct line *card)
     }
 }
 
+
 /* replace a token (length 4 char) in string by spaces, if it is found
     at the correct position and the total number of tokens is o.k. */
+
 static void
 replace_token(char *string, char *token, int wherereplace, int total)
 {
@@ -5540,18 +5635,24 @@ inp_add_series_resistor(struct line *deck)
     tfree(rval);
 }
 
+
 /* If XSPICE option is not selected, run this function to alert and exit
    if the 'poly' option is found in e, g, f, or h controlled sources. */
 
 #ifndef XSPICE
+
 static void
 inp_poly_err(struct line *card)
 {
     size_t skip_control = 0;
+
     for (; card; card = card->li_next) {
+
         char *curr_line = card->li_line;
+
         if (*curr_line == '*')
             continue;
+
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
             skip_control ++;
@@ -5562,6 +5663,7 @@ inp_poly_err(struct line *card)
         } else if (skip_control > 0) {
             continue;
         }
+
         /* get the fourth token in a controlled source line and exit,
         if it is 'poly' */
         if ((ciprefix("e", curr_line)) || (ciprefix("g", curr_line)) ||
@@ -5581,26 +5683,36 @@ inp_poly_err(struct line *card)
         }
     }
 }
+
 #endif
+
+
 static void
 tprint(struct line *t)
 {
     /*debug: print into file*/
     FILE *fd = fopen("tprint-out.txt", "w");
+
     for (; t; t = t->li_next)
         fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+
     fclose(fd);
 }
 
+
 /* prepare .if and .elseif for numparam
    .if(expression) --> .if{expression} */
+
 static void
 inp_dot_if(struct line *card)
 {
     for (; card; card = card->li_next) {
+
         char *curr_line = card->li_line;
+
         if (*curr_line == '*')
             continue;
+
         if (ciprefix(".if", curr_line) || ciprefix(".elseif", curr_line)) {
             char* firstbr = strchr(curr_line, '(');
             char* lastbr = strrchr(curr_line, ')');
