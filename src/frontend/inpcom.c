@@ -115,6 +115,9 @@ static char *skip_back_ws(char *d)     { while (isspace(d[-1]))           d--; r
 static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
 static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
 
+static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace(d[-1])) d--; return d; }
+static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace(d[-1])) d--; return d; }
+
 static void tprint(struct line *deck);
 
 #ifndef XSPICE
@@ -3358,9 +3361,7 @@ get_param_name(char *line)
 
     equal_ptr = skip_back_ws(equal_ptr);
 
-    beg = equal_ptr;
-    while (beg > line && !isspace(beg[-1]))
-        beg--;
+    beg = skip_back_non_ws_(equal_ptr, line);
 
     return copy_substring(beg, equal_ptr);
 }
