@@ -1275,15 +1275,15 @@ get_instance_subckt(char *line)
 
     // see if instance has parameters
     if (equal_ptr) {
-        end_ptr = skip_back_ws(equal_ptr);
-        end_ptr = skip_back_non_ws(end_ptr);
+        end_ptr = skip_back_ws_(equal_ptr, line);
+        end_ptr = skip_back_non_ws_(end_ptr, line);
     } else {
         end_ptr = line + strlen(line);
     }
 
-    end_ptr = skip_back_ws(end_ptr);
+    end_ptr = skip_back_ws_(end_ptr, line);
 
-    inst_name_ptr = skip_back_non_ws(end_ptr);
+    inst_name_ptr = skip_back_non_ws_(end_ptr, line);
     return copy_substring(inst_name_ptr, end_ptr);
 }
 
@@ -1344,8 +1344,8 @@ get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
 
-    ptr_end = skip_back_ws(line + strlen(line));
-    ptr_beg = skip_back_non_ws(ptr_end);
+    ptr_end = skip_back_ws_(line + strlen(line), line);
+    ptr_beg = skip_back_non_ws_(ptr_end, line);
     return copy_substring(ptr_beg, ptr_end);
 }
 
@@ -2031,9 +2031,9 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        beg = skip_back_ws(equal);
-        beg = skip_back_non_ws(beg);
-        beg[-1] = '\0';
+        beg = skip_back_ws_(equal, s);
+        beg = skip_back_non_ws_(beg, s);
+        beg[-1] = '\0';         /* fixme can be < s */
 
         head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
@@ -2042,8 +2042,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
             ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws(ptr1);
-            ptr1 = skip_back_non_ws(ptr1);
+            ptr1 = skip_back_ws_(ptr1, beg);
+            ptr1 = skip_back_non_ws_(ptr1, beg);
             /* ptr1 points to beginning of parameter */
 
             /* if parameter is an expression and starts with '{', find closing '}'
@@ -2381,14 +2381,14 @@ inp_get_subckt_name(char *s)
     char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
-        end_ptr = skip_back_ws(end_ptr);
-        end_ptr = skip_back_non_ws(end_ptr);
+        end_ptr = skip_back_ws_(end_ptr, s);
+        end_ptr = skip_back_non_ws_(end_ptr, s);
     } else {
         end_ptr = s + strlen(s);
     }
 
-    end_ptr = skip_back_ws(end_ptr);
-    subckt_name = skip_back_non_ws(end_ptr);
+    end_ptr = skip_back_ws_(end_ptr, s);
+    subckt_name = skip_back_non_ws_(end_ptr, s);
 
     return copy_substring(subckt_name, end_ptr);
 }
@@ -2409,8 +2409,8 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         is_expression = FALSE;
 
         /* get parameter name */
-        end = skip_back_ws(equal_ptr);
-        name = skip_back_non_ws(end);
+        end = skip_back_ws_(equal_ptr, line);
+        name = skip_back_non_ws_(end, line);
 
         param_names[num_params++] = copy_substring(name, end);
 
@@ -2460,9 +2460,9 @@ inp_fix_inst_line(char *inst_line,
 
     end = strchr(inst_line, '=');
     if (end) {
-        end = skip_back_ws(end);
-        end = skip_back_non_ws(end);
-        end[-1] = '\0';
+        end = skip_back_ws_(end, inst_line);
+        end = skip_back_non_ws_(end, inst_line);
+        end[-1] = '\0';         /* fixme can be < inst_line */
     }
 
     for (i = 0; i < num_subckt_params; i++)
@@ -3356,7 +3356,7 @@ get_param_name(char *line)
         return NULL;
     }
 
-    equal_ptr = skip_back_ws(equal_ptr);
+    equal_ptr = skip_back_ws_(equal_ptr, line);
 
     beg = skip_back_non_ws_(equal_ptr, line);
 
@@ -3948,8 +3948,8 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                 bool get_expression = FALSE;
                 bool get_paren_expression = FALSE;
 
-                beg_param = skip_back_ws(equal_ptr);
-                beg_param = skip_back_non_ws(beg_param);
+                beg_param = skip_back_ws_(equal_ptr, curr_line);
+                beg_param = skip_back_non_ws_(beg_param, curr_line);
                 end_param = skip_ws(equal_ptr + 1);
                 while (*end_param != '\0' && (!isspace(*end_param) || get_expression || get_paren_expression)) {
                     if (*end_param == '{')
