@@ -2085,7 +2085,6 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
             prev_card = end_card;
             num_params++;
-        }
 #else
             /* patch provided by Ivan Riis Nielsen */
             bool done = FALSE;
@@ -2125,8 +2124,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 else
                     p2 = p1;
             }
-        }
 #endif
+        }
         /* now sort parameters in order of dependencies */
         inp_sort_params(start_card, end_card, head, start_card, end_card);
 
