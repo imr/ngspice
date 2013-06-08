@@ -1174,15 +1174,12 @@ inp_add_control_section(struct line *deck, int *line_number)
 static bool
 chk_for_line_continuation(char *line)
 {
-    char *ptr = line + strlen(line) - 1;
-
     if (*line != '*' && *line != '$') {
-        while (ptr >= line && *ptr && isspace(*ptr))
-            ptr--;
+        char *ptr = skip_back_ws_(line + strlen(line), line);
 
-        if ((ptr-1) >= line && *ptr == '\\' && *(ptr-1) && *(ptr-1) == '\\') {
-            *ptr = ' ';
-            *(ptr-1) = ' ';
+        if ((ptr - 2 >= line) && (ptr[-1] == '\\') && (ptr[-2] == '\\')) {
+            ptr[-1] = ' ';
+            ptr[-2] = ' ';
             return TRUE;
         }
     }
