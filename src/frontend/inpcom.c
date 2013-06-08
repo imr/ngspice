@@ -1175,7 +1175,7 @@ static bool
 chk_for_line_continuation(char *line)
 {
     if (*line != '*' && *line != '$') {
-        char *ptr = skip_back_ws_(line + strlen(line), line);
+        char *ptr = skip_back_ws_(strchr(line, '\0'), line);
 
         if ((ptr - 2 >= line) && (ptr[-1] == '\\') && (ptr[-2] == '\\')) {
             ptr[-1] = ' ';
@@ -1278,7 +1278,7 @@ get_instance_subckt(char *line)
         end_ptr = skip_back_ws_(equal_ptr, line);
         end_ptr = skip_back_non_ws_(end_ptr, line);
     } else {
-        end_ptr = line + strlen(line);
+        end_ptr = strchr(line, '\0');
     }
 
     end_ptr = skip_back_ws_(end_ptr, line);
@@ -1344,7 +1344,7 @@ get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
 
-    ptr_end = skip_back_ws_(line + strlen(line), line);
+    ptr_end = skip_back_ws_(strchr(line, '\0'), line);
     ptr_beg = skip_back_non_ws_(ptr_end, line);
     return copy_substring(ptr_beg, ptr_end);
 }
@@ -2384,7 +2384,7 @@ inp_get_subckt_name(char *s)
         end_ptr = skip_back_ws_(end_ptr, s);
         end_ptr = skip_back_non_ws_(end_ptr, s);
     } else {
-        end_ptr = s + strlen(s);
+        end_ptr = strchr(s, '\0');
     }
 
     end_ptr = skip_back_ws_(end_ptr, s);
