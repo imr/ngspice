@@ -7,6 +7,12 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
 
+/* xmu=0:    Backward Euler
+ * xmu=0.5:  trapezoidal (standard)
+ * xmu=0.48: good damping of current ringing, e.g. in R.O.s.
+ */
+#define xmu 0.5
+
 
 int
 NIcomCof(CKTcircuit *ckt)
@@ -35,10 +41,8 @@ NIcomCof(CKTcircuit *ckt)
             break;
 
         case 2:
-            ckt->CKTag[0]=1.0/ckt->CKTdelta/(1.0-0.5) ;
-            ckt->CKTag[1]=0.5/(1.0 - 0.5) ;
-            /* above lines should have 'xmu' instead of .5 eventually */
-            /* (in all three places) */
+            ckt->CKTag[0] = 1.0 / ckt->CKTdelta / (1.0 - xmu);
+            ckt->CKTag[1] = xmu / (1.0 - xmu);
             break;
 
         default:
