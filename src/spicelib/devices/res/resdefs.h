@@ -104,6 +104,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     double RESshort;        /* amount by which device is shorter than drawn */
     double RESfNcoef;       /* Flicker noise coefficient */
     double RESfNexp;        /* Flicker noise exponent */
+    double RESres;          /* Default model resistance */
     unsigned REStnomGiven       :1; /* flag to indicate nominal temp. was given */
     unsigned REStc1Given        :1; /* flag to indicate tc1 was specified */
     unsigned REStc2Given        :1; /* flag to indicate tc2 was specified */
@@ -114,6 +115,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     unsigned RESshortGiven      :1; /* flag to indicate short effect given */
     unsigned RESfNcoefGiven     :1; /* flag to indicate kf given */
     unsigned RESfNexpGiven      :1; /* flag to indicate af given */
+    unsigned RESresGiven        :1; /* flag to indicate model resistance given */
 } RESmodel;
 
 /* device parameters */
