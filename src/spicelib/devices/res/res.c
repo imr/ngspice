@@ -54,7 +54,8 @@ IFparm RESmPTable[] = { /* model parameters */
     IOPQ(  "kf",     RES_MOD_KF,       IF_REAL,"Flicker noise coefficient"),
     IOPQ(  "af",     RES_MOD_AF,       IF_REAL,"Flicker noise exponent"),
     IOPXU( "tnom",   RES_MOD_TNOM,     IF_REAL,"Parameter measurement temperature"),
-    IP(    "r",      RES_MOD_R,        IF_FLAG,"Device is a resistor model")
+    IOP(   "r",      RES_MOD_R,        IF_REAL,"Resistor model default value"),
+    IOPR(  "res",    RES_MOD_R,        IF_REAL,"Resistor model default value")
 };
 
 char *RESnames[] = {

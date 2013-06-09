@@ -60,6 +60,9 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
             else
                 value->rValue = 0.0;
             return(OK);
+        case RES_MOD_R:
+            value->rValue = model->RESres;
+            return(OK);
         default:
             return(E_BADPARM);
     }

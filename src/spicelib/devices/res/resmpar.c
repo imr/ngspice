@@ -59,8 +59,10 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
         model->RESfNexpGiven = TRUE;
         break;
     case RES_MOD_R:
-        /* just being reassured by user that this is a resistor model */
-        /* no-op */
+        if ( value->rValue > 1e-03 ) {
+            model->RESres = value->rValue;
+            model->RESresGiven = TRUE;
+        }
         break;
     default:
         return(E_BADPARM);

@@ -62,14 +62,17 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             if(!here->RESmGiven)       here->RESm      = 1.0;
             if(!here->RESnoisyGiven)   here->RESnoisy  = 1;
             if(!here->RESresGiven)  {
-                if(model->RESsheetResGiven && (model->RESsheetRes != 0) &&
-                        (here->RESlength != 0)) {
+                if(here->RESlength * here->RESwidth * model->RESsheetRes > 0.0) {
                     here->RESresist = model->RESsheetRes * (here->RESlength -
                                                             model->RESshort) / (here->RESwidth - model->RESnarrow);
                 } else {
-                    SPfrontEnd->IFerror (ERR_WARNING,
-                                         "%s: resistance = 0 ohm, set to 1000 ohm",&(here->RESname));
-                    here->RESresist=1000;
+                    if(model->RESresGiven) {
+                        here->RESresist = model->RESres;
+                    } else {
+                        SPfrontEnd->IFerror (ERR_WARNING,
+                                             "%s: resistance to low, set to 1 mOhm", &(here->RESname));
+                        here->RESresist = 1e-03;
+                    }
                 }
             }
 

@@ -29,8 +29,7 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         break;
     case RES_RESIST:
         /* 0 valued resistor causes ngspice to hang -- can't solve for initial voltage */
-        if ( AlmostEqualUlps( value->rValue, 0, 3 ) ) value->rValue = 0.001; /* 0.0001 should be sufficiently small */
-        /* it's the value that smartspice uses */
+        if ( AlmostEqualUlps( value->rValue, 0, 3 ) ) value->rValue = 0.001; /* 0.001 should be sufficiently small */
         here->RESresist = value->rValue;
         here->RESresGiven = TRUE;
         break;
