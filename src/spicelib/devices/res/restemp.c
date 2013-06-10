@@ -70,8 +70,8 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                         here->RESresist = model->RESres;
                     } else {
                         SPfrontEnd->IFerror (ERR_WARNING,
-                                             "%s: resistance = 0 ohm, set to 1000 ohm",&(here->RESname));
-                        here->RESresist=1000;
+                                             "%s: resistance to low, set to 1 mOhm",&(here->RESname));
+                        here->RESresist=1e-03;
                     }
                 }
             }

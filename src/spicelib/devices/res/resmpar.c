@@ -58,10 +58,11 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
         model->RESfNexp = value->rValue;
         model->RESfNexpGiven = TRUE;
         break;
-
     case RES_MOD_R:
-        model->RESres = value->rValue;
-        model->RESresGiven = TRUE;
+        if ( value->rValue > 1e-03 ) {
+            model->RESres = value->rValue;
+            model->RESresGiven = TRUE;
+        }
         break;
     default:
         return(E_BADPARM);
