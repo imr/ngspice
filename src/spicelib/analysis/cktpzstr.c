@@ -635,12 +635,12 @@ CKTpzRunTrial(CKTcircuit *ckt, PZtrial **new_trialp, PZtrial **set)
 	if (!(p->flags & ISAROOT) && CKTpzTrapped == 3
 		&& NIpzK != 0.0 && NIpzK_mag > -10) {
 #ifdef notdef
-	    if (p->flags & ISAROOT) {
-		/* Ugh! muller doesn't work right */
-		new_trial->flags = ISAMINIMA;
-		new_trial->s.imag = scalb(NIpzK, (int) (NIpzK_mag / 2));
-		pretest = 0;
-	    } else {
+//	    if (p->flags & ISAROOT) {
+//	        /* Ugh! muller doesn't work right */
+//	        new_trial->flags = ISAMINIMA;
+//	        new_trial->s.imag = scalb(NIpzK, (int) (NIpzK_mag / 2));
+//	        pretest = 0;
+//	    } else {
 #endif
 	    p->flags |= ISAMINIMA;
 	    tfree(new_trial);
