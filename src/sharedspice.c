@@ -135,10 +135,8 @@ typedef pthread_t threadId_t;
 #include <frontend/com_measure2.h>
 #include <frontend/misccoms.h>
 
-#ifndef HAVE_GETRUSAGE
 #ifdef HAVE_FTIME
 #include <sys/timeb.h>
-#endif
 #endif
 
 /* To interupt a spice run */
@@ -1266,6 +1264,7 @@ void SetAnalyse(
    int DecaPercent /*in: 10 times the progress [%]*/
    /*HWND hwAnalyse, in: global handle to analysis window */
 ) {
+#ifdef HAVE_FTIME
    static int OldPercent = -2;     /* Previous progress value */
    static char OldAn[128];         /* Previous analysis type */
    char* s;                        /* outputs to callback function */
@@ -1329,6 +1328,17 @@ void SetAnalyse(
       result = statfcn(s, userptr);
    }
    tfree(s);
+#else
+   char* s;
+   int result;
+   static bool havesent = FALSE;
+   if (!havesent) {
+       s = copy("No usage info available");
+       result = statfcn(s, userptr);
+       tfree(s);
+       havesent = TRUE;
+   }
+#endif
 }
 
 /* a dll or shared library should never exit, if loaded dynamically,
@@ -1372,8 +1382,23 @@ void shared_exit(int status)
         tfree(outsend);
     }
 #endif
+    // if we are in a worker thread, we exit it here
+    // detaching then has to be done explicitely by the caller
+    if (fl_running && !fl_exited) {
+        fl_exited = TRUE;
+        bgtr(fl_exited, userptr);
+        // set a flag that ngspice wants to be detached
+        ngexit(status, FALSE, coquit, userptr);
+        // finish and exit the worker thread
+#ifdef HAVE_LIBPTHREAD
+        pthread_exit(1);
+#elif defined _MSC_VER || defined __MINGW32__
+        _endthreadex(1);
+#endif
+    }
     // set a flag in caller to detach ngspice.dll
     ngexit(status, immediate, coquit, userptr);
+
     // jump back to finish the calling function
     if (!intermj)
         longjmp(errbufm,1); /* jump back to ngSpice_Circ() */
