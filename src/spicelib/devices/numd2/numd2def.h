@@ -77,6 +77,9 @@ typedef struct sNUMD2model {	/* model structure for a diode */
 				 * this model */
   IFuid NUMD2modName;		/* pointer to character string naming this
 				 * model */
+
+  /* --- end of generic struct GENmodel --- */
+
   /* Everything below here is numerical-device-specific */
   MESHcard *NUMD2xMeshes;	/* list of xmesh cards */
   MESHcard *NUMD2yMeshes;	/* list of ymesh cards */

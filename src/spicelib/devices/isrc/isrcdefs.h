@@ -78,6 +78,9 @@ typedef struct sISRCmodel {
     ISRCinstance * ISRCinstances;    /* pointer to list of instances
                                       * that have this model */
     IFuid ISRCmodName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
 } ISRCmodel;
 
 

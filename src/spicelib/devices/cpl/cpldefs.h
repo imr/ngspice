@@ -70,6 +70,8 @@ typedef struct sCPLmodel {       /* model structure for a cpl */
                                  * model */
     IFuid CPLmodName;       /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
 	double *Rm;
         int Rm_counter;
 	double *Gm;

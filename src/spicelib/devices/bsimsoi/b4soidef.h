@@ -1081,6 +1081,9 @@ typedef struct sB4SOImodel
     struct sB4SOImodel *B4SOInextModel;
     B4SOIinstance *B4SOIinstances;
     IFuid B4SOImodName;
+
+    /* --- end of generic struct GENmodel --- */
+
     int B4SOItype;
 
     int    B4SOImobMod;

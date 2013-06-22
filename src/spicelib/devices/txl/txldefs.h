@@ -62,6 +62,8 @@ typedef struct sTXLmodel {       /* model structure for a txl */
                                  * model */
     IFuid TXLmodName;       /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
 	double R;
 	double L;
 	double G;

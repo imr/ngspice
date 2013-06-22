@@ -80,6 +80,8 @@ typedef struct sLTRAmodel {       /* model structure for a transmission lines */
                                  * model */
     IFuid LTRAmodName;       /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
 	double LTRAh1dashFirstVal; /* first needed value of h1dasg at 
 									current timepoint */
 	double LTRAh2FirstVal;	 /* first needed value of h2 at current 

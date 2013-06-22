@@ -63,6 +63,8 @@ typedef struct sSWmodel {      /* model structure for a switch */
                                  * model */
     IFuid SWmodName;   /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     double SWonResistance;  /* switch "on" resistance */
     double SWoffResistance; /* switch "off" resistance */
     double SWvThreshold;    /* switching threshold voltage */

@@ -588,6 +588,9 @@ typedef struct sB3SOIPDmodel
     struct sB3SOIPDmodel *B3SOIPDnextModel;
     B3SOIPDinstance *B3SOIPDinstances;
     IFuid B3SOIPDmodName; 
+
+    /* --- end of generic struct GENmodel --- */
+
     int B3SOIPDtype;
 
     int    B3SOIPDmobMod;

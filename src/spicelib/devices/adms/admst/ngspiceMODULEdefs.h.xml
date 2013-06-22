@@ -270,6 +270,8 @@ typedef struct s$(module)model {         /* model structure */
   $(module)instance * $(module)instances;  /* pointer to list of instances that have this model */
   IFuid $(module)modName;         /* pointer to the name of this model */
 
+  /* --- end of generic struct GENmodel --- */
+
   /* model parameters */
   <admst:for-each select="variable[parametertype='model' and input='yes']">
     <admst:value-of select="name"/>

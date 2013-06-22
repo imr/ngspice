@@ -44,6 +44,8 @@ typedef struct sURCmodel {       /* model structure for a resistor */
                                  * model */
     IFuid URCmodName;       /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     double URCk;        /* propagation constant for URC */
     double URCfmax;     /* max frequence of interest */
     double URCrPerL;    /* resistance per unit length */

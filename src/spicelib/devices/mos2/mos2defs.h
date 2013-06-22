@@ -326,6 +326,9 @@ typedef struct sMOS2model {       /* model structure for a resistor */
     MOS2instance * MOS2instances; /* pointer to list of instances 
                                    * that have this model */
     IFuid MOS2modName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
     int MOS2type;       /* device type : 1 = nmos,  -1 = pmos */
     int MOS2gateType;
 

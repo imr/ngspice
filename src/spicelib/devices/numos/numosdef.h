@@ -122,6 +122,9 @@ typedef struct sNUMOSmodel {	/* model structure for a numerical device */
   struct sNUMOSmodel *NUMOSnextModel;	/* pointer to next model in list */
   NUMOSinstance *NUMOSinstances;/* pointer to list of instances */
   IFuid NUMOSmodName;		/* pointer to string naming this model */
+
+  /* --- end of generic struct GENmodel --- */
+
   /* Everything below here is numerical-device-specific */
   MESHcard *NUMOSxMeshes;	/* list of xmesh cards */
   MESHcard *NUMOSyMeshes;	/* list of ymesh cards */

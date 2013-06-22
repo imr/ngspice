@@ -169,6 +169,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
                                 * that have this model */
     IFuid DIOmodName; /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     unsigned DIOlevelGiven : 1;
     unsigned DIOsatCurGiven : 1;
     unsigned DIOsatSWCurGiven : 1;

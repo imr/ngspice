@@ -53,6 +53,9 @@ typedef struct sCCCSmodel {       /* model structure for a source */
     CCCSinstance * CCCSinstances;       /* pointer to list of instances 
                                              that have this model */
     IFuid CCCSmodName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
 } CCCSmodel;
 
 /* device parameters */

@@ -96,6 +96,8 @@ typedef struct sRESmodel {       /* model structure for a resistor */
                                  * model */
     IFuid RESmodName;       /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     double REStnom;         /* temperature at which resistance measured */
     double REStempCoeff1;   /* first temperature coefficient of resistors */
     double REStempCoeff2;   /* second temperature coefficient of resistors */

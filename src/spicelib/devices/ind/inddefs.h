@@ -82,6 +82,8 @@ typedef struct sINDmodel {       /* model structure for an inductor */
                                  * model */
     IFuid INDmodName;       /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     double INDmInd;        /* Model inductance */
     double INDtnom;        /* temperature at which inductance measured */
     double INDtempCoeff1;  /* first temperature coefficient */
@@ -142,6 +144,9 @@ struct sMUTmodel *MUTnextModel; /* pointer to next possible model in
 MUTinstance * MUTinstances; /* pointer to list of instances that have this
                                  * model */
 IFuid MUTmodName;       /* pointer to character string naming this model */
+
+/* --- end of generic struct GENmodel --- */
+
 } MUTmodel;
 
 #endif /*MUTUAL*/

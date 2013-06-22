@@ -403,6 +403,9 @@ typedef struct sBSIM3model
     struct sBSIM3model *BSIM3nextModel;
     BSIM3instance *BSIM3instances;
     IFuid BSIM3modName;
+
+    /* --- end of generic struct GENmodel --- */
+
     int BSIM3type;
 
     int    BSIM3mobMod;

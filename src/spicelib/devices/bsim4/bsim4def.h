@@ -815,6 +815,9 @@ typedef struct sBSIM4model
     struct sBSIM4model *BSIM4nextModel;
     BSIM4instance *BSIM4instances;
     IFuid BSIM4modName;
+
+    /* --- end of generic struct GENmodel --- */
+
     int BSIM4type;
 
     int    BSIM4mobMod;

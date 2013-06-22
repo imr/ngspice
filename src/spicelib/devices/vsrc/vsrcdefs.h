@@ -87,6 +87,9 @@ typedef struct sVSRCmodel {
     VSRCinstance * VSRCinstances;    /* pointer to list of instances
                                       * that have this model */
     IFuid VSRCmodName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
 } VSRCmodel;
 
 /* source function types (shared with current sources) */

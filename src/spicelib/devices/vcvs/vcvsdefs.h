@@ -65,6 +65,9 @@ typedef struct sVCVSmodel {       /* model structure for a source */
     VCVSinstance * VCVSinstances;    /* pointer to list of instances 
                                       * that have this model */
     IFuid VCVSmodName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
 } VCVSmodel;
 
 /* device parameters */

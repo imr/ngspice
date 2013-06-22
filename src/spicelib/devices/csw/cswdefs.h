@@ -64,6 +64,8 @@ typedef struct sCSWmodel {      /* model structure for a switch */
                                  * model */
     IFuid CSWmodName;   /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     double CSWonResistance;  /* switch "on" resistance */
     double CSWoffResistance; /* switch "off" resistance */
     double CSWiThreshold;    /* switching threshold current */

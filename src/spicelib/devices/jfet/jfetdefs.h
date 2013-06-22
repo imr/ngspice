@@ -174,6 +174,9 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     JFETinstance * JFETinstances; /* pointer to list of instances 
                                    * that have this model */
     IFuid JFETmodName; /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
     int JFETtype;
 
     double JFETthreshold;

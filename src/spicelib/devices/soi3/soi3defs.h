@@ -422,6 +422,9 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
     SOI3instance * SOI3instances; /* pointer to list of instances
                                    * that have this model */
     IFuid SOI3modName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
     int SOI3type;       /* device type : 1 = nsoi,  -1 = psoi */
     double SOI3tnom;        /* temperature at which parameters measured */
     double SOI3latDiff;

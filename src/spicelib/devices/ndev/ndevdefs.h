@@ -49,6 +49,9 @@ typedef struct sNDEVmodel {	/* model structure for a diode */
   struct sNDEVmodel *NDEVnextModel;	/* pointer to next possible model in linked list */
   NDEVinstance *NDEVinstances;	/* pointer to list of instances that have this model */
   IFuid NDEVmodName;		/* pointer to character string naming this model */
+
+  /* --- end of generic struct GENmodel --- */
+
   /* here can be freely defined as your wish*/
   
   char * NDEVmodelfile;

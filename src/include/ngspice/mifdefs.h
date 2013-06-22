@@ -93,6 +93,8 @@ typedef struct sMIFmodel {
     MIFinstance      *MIFinstances;   /* pointer to list of instances that have this model */
     IFuid            MIFmodName;      /* pointer to character string naming this model */
 
+    /* --- end of generic struct GENmodel --- */
+
     int              num_param;       /* number of parameters on the code model */
     Mif_Param_Data_t **param;         /* array of structs for each parameter */
 

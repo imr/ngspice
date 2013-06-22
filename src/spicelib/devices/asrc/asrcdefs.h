@@ -56,6 +56,9 @@ typedef struct sASRCmodel {       /* model structure for a source */
     ASRCinstance * ASRCinstances;    /* pointer to list of instances 
                                       * that have this model */
     IFuid ASRCmodName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
 } ASRCmodel;
 
 /* device parameters */

@@ -322,6 +322,9 @@ typedef struct sMOS3model {       /* model structure for a resistor */
     MOS3instance * MOS3instances; /* pointer to list of instances 
                                    * that have this model */
     IFuid MOS3modName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
     int MOS3type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS3tnom;        /* temperature at which parameters measured */
     double MOS3latDiff;

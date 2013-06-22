@@ -321,6 +321,9 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
     B1instance * B1instances; /* pointer to list of instances 
                                    * that have this model */
     IFuid B1modName;       /* pointer to character string naming this model */
+
+    /* --- end of generic struct GENmodel --- */
+
     int B1type;       /* device type : 1 = nmos,  -1 = pmos */
 
     double B1vfb0;
