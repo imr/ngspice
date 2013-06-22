@@ -237,8 +237,8 @@ int set_param(sgen *sg)
 }
 
 #ifdef notdef
-sgen_suspend(sg)
-	sgen	*sg;
+void
+sgen_suspend(sgen *sg)
 {
 	sg->devlist[sg->dev] = sg->first_model;
 	sg->model->GENnextModel = sg->next_model;
@@ -246,8 +246,8 @@ sgen_suspend(sg)
 	sg->model->GENinstances = sg->first_instance;
 }
 
-sgen_restore(sg)
-	sgen	*sg;
+void
+sgen_restore(sgen *sg)
 {
 	sg->devlist[sg->dev] = sg->model;
 	sg->model->GENnextModel = NULL;
