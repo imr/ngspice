@@ -26,7 +26,7 @@ CKTmkNode(CKTcircuit *ckt, CKTnode **node)
     mynode = TMALLOC(CKTnode, 1);
     if(mynode == NULL) return(E_NOMEM);
     mynode->next = NULL;
-    mynode->name = (IFuid) 0;
+    mynode->name = NULL;
 
     if(node) *node = mynode;
     return(OK);
