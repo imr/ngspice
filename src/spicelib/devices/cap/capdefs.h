@@ -59,6 +59,11 @@ typedef struct sCAPinstance {
     int    CAPsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+#endif
+
 } CAPinstance ;
 
 #define CAPqcap CAPstate    /* charge on the capacitor */

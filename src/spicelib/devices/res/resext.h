@@ -20,3 +20,7 @@ extern void RESsPrint(GENmodel*,CKTcircuit*);
 extern int RESsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int REStemp(GENmodel*,CKTcircuit*);
 extern int RESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+#ifdef KIRCHHOFF
+extern int RESnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

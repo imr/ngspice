@@ -23,3 +23,6 @@ extern int CAPsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int CAPtemp(GENmodel*,CKTcircuit*);
 extern int CAPtrunc(GENmodel*,CKTcircuit*,double*);
 
+#ifdef KIRCHHOFF
+extern int CAPnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

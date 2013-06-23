@@ -79,8 +79,11 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhs+here->CAPnegNode) += m * ceq;
 
 #ifdef KIRCHHOFF
-                    *(ckt->CKTfvk+here->CAPposNode) += m * *(ckt->CKTstate0+here->CAPqcap+1) ;
-                    *(ckt->CKTfvk+here->CAPnegNode) -= m * *(ckt->CKTstate0+here->CAPqcap+1) ;
+                    *(ckt->CKTfvk+here->CAPposNode) += m * *(ckt->CKTstate0+here->CAPccap) ;
+                    *(ckt->CKTfvk+here->CAPnegNode) -= m * *(ckt->CKTstate0+here->CAPccap) ;
+
+                    *(here->KCLcurrentPos) = m * *(ckt->CKTstate0+here->CAPccap) ;
+                    *(here->KCLcurrentNeg) = -(m * *(ckt->CKTstate0+here->CAPccap)) ;
 #endif
 
                 } else

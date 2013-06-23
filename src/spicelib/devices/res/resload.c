@@ -38,6 +38,9 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 #ifdef KIRCHHOFF
             *(ckt->CKTfvk+here->RESposNode) += here->REScurrent ;
             *(ckt->CKTfvk+here->RESnegNode) -= here->REScurrent ;
+
+            *(here->KCLcurrentPos) = here->REScurrent ;
+            *(here->KCLcurrentNeg) = -(here->REScurrent) ;
 #endif
 
         }

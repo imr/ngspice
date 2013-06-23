@@ -30,6 +30,9 @@ libcap_la_SOURCES =	\
 	captrunc.c
 
 
+if KIRCHHOFF_WANTED
+libcap_la_SOURCES += capnode.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
