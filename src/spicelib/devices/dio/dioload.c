@@ -408,6 +408,17 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOnegPosPrimePtr) -= gd;
             *(here->DIOposPrimePosPtr) -= gspr;
             *(here->DIOposPrimeNegPtr) -= gd;
+
+#ifdef KIRCHHOFF
+            *(ckt->CKTfvk+here->DIOposNode) += gspr * (*(ckt->CKTrhsOld+here->DIOposNode) - *(ckt->CKTrhsOld+here->DIOposPrimeNode)) ;
+            *(ckt->CKTfvk+here->DIOnegNode) -= cd ;
+            *(ckt->CKTfvk+here->DIOposPrimeNode) += (cd - gspr * (*(ckt->CKTrhsOld+here->DIOposNode) - *(ckt->CKTrhsOld+here->DIOposPrimeNode))) ;
+
+            *(here->KCLcurrentPos) = gspr * (*(ckt->CKTrhsOld+here->DIOposNode) - *(ckt->CKTrhsOld+here->DIOposPrimeNode)) ;
+            *(here->KCLcurrentNeg) = -cd ;
+            *(here->KCLcurrentPosPrime) = cd - gspr * (*(ckt->CKTrhsOld+here->DIOposNode) - *(ckt->CKTrhsOld+here->DIOposPrimeNode)) ;
+#endif
+
         }
     }
     return(OK);

@@ -569,6 +569,39 @@ typedef struct sBSIM4instance
         double **BSIM4nVar;
 #endif /* NONOISE */
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentdNodePrime_1 ;
+    double *KCLcurrentdNodePrime_2 ;
+    double *KCLcurrentdNodePrime_3 ;
+    double *KCLcurrentdNodePrime_4 ;
+    double *KCLcurrentdNodePrime_5 ;
+    double *KCLcurrentgNodePrime_1 ;
+    double *KCLcurrentgNodePrime_2 ;
+    double *KCLcurrentgNodeMid ;
+    double *KCLcurrentbNodePrime_1 ;
+    double *KCLcurrentbNodePrime_2 ;
+    double *KCLcurrentbNodePrime_3 ;
+    double *KCLcurrentbNodePrime_4 ;
+    double *KCLcurrentbNodePrime_5 ;
+    double *KCLcurrentbNodePrime_6 ;
+    double *KCLcurrentsNodePrime_1 ;
+    double *KCLcurrentsNodePrime_2 ;
+    double *KCLcurrentsNodePrime_3 ;
+    double *KCLcurrentsNodePrime_4 ;
+    double *KCLcurrentsNodePrime_5 ;
+    double *KCLcurrentsNodePrime_6 ;
+    double *KCLcurrentsNodePrime_7 ;
+    double *KCLcurrentsNodePrime_8 ;
+    double *KCLcurrentsNodePrime_9 ;
+    double *KCLcurrentsNodePrime_10 ;
+    double *KCLcurrentdbNode_1 ;
+    double *KCLcurrentdbNode_2 ;
+    double *KCLcurrentsbNode_1 ;
+    double *KCLcurrentsbNode_2 ;
+    double *KCLcurrentqNode_1 ;
+    double *KCLcurrentqNode_2 ;
+#endif
+
 } BSIM4instance ;
 
 struct bsim4SizeDependParam

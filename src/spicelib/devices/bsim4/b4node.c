@@ -12,6 +12,7 @@ BSIM4nodeIsNonLinear (GENmodel *inModel, CKTcircuit *ckt)
 {
     BSIM4model *model = (BSIM4model *)inModel ;
     BSIM4instance *here ;
+    int error ;
 
     /* loop through all the BSIM4 models */
     for ( ; model != NULL ; model = model->BSIM4nextModel)
@@ -39,6 +40,59 @@ BSIM4nodeIsNonLinear (GENmodel *inModel, CKTcircuit *ckt)
             ckt->CKTnodeIsLinear [here->BSIM4bNodePrime] = 0 ;
             ckt->CKTnodeIsLinear [here->BSIM4sbNode] = 0 ;
             ckt->CKTnodeIsLinear [here->BSIM4qNode] = 0 ;
+
+
+            error = CKTmkCurKCL (ckt, here->BSIM4dNodePrime, &(here->KCLcurrentdNodePrime_1)) ;
+            error = CKTmkCurKCL (ckt, here->BSIM4dNodePrime, &(here->KCLcurrentdNodePrime_2)) ;
+            error = CKTmkCurKCL (ckt, here->BSIM4dNodePrime, &(here->KCLcurrentdNodePrime_3)) ;
+            error = CKTmkCurKCL (ckt, here->BSIM4dNodePrime, &(here->KCLcurrentdNodePrime_4)) ;
+            error = CKTmkCurKCL (ckt, here->BSIM4dNodePrime, &(here->KCLcurrentdNodePrime_5)) ;
+            error = CKTmkCurKCL (ckt, here->BSIM4gNodePrime, &(here->KCLcurrentgNodePrime_1)) ;
+            error = CKTmkCurKCL (ckt, here->BSIM4gNodePrime, &(here->KCLcurrentgNodePrime_2)) ;
+
+            if (here->BSIM4rgateMod == 3)
+                error = CKTmkCurKCL (ckt, here->BSIM4gNodeMid, &(here->KCLcurrentgNodeMid)) ;
+
+            if (!here->BSIM4rbodyMod)
+            {
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_2)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_3)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_4)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_5)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_6)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_2)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_3)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_4)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_5)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_6)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_7)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_8)) ;
+            } else {
+                error = CKTmkCurKCL (ckt, here->BSIM4dbNode, &(here->KCLcurrentdbNode_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4dbNode, &(here->KCLcurrentdbNode_2)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_2)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_3)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4bNodePrime, &(here->KCLcurrentbNodePrime_4)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sbNode, &(here->KCLcurrentsbNode_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sbNode, &(here->KCLcurrentsbNode_2)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_2)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_3)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_4)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_5)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_6)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_7)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_8)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_9)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4sNodePrime, &(here->KCLcurrentsNodePrime_10)) ;
+            }
+
+            if (here->BSIM4trnqsMod)
+                error = CKTmkCurKCL (ckt, here->BSIM4qNode, &(here->KCLcurrentqNode_1)) ;
+                error = CKTmkCurKCL (ckt, here->BSIM4qNode, &(here->KCLcurrentqNode_2)) ;
         }
     }
 

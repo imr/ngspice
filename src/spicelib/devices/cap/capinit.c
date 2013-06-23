@@ -74,7 +74,7 @@ SPICEdev CAPinfo = {
  /* DEVmodSize    */ &CAPmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ CAPnodeIsNonLinear
 #endif
 
 };

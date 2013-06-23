@@ -142,6 +142,12 @@ typedef struct sDIOinstance {
         double **DIOnVar;
 #endif /* NONOISE */
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+    double *KCLcurrentPosPrime ;
+#endif
+
 } DIOinstance ;
 
 #define DIOsenGeq DIOsens /* stores the perturbed values of geq */

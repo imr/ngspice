@@ -15,6 +15,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/smpdefs.h"
 
 
+
 int
 NIconvTest(CKTcircuit *ckt)
 {
@@ -80,20 +81,10 @@ NIconvTest(CKTcircuit *ckt)
 		ckt->CKTtroubleElt = NULL;
                 return(1);
             }
-#endif
-
+#else
+        /* KCL Verification */
         }
-    }
-
-#ifdef KIRCHHOFF
-    node = ckt->CKTnodes;
-
-    /* KCL Verification */
-    node = ckt->CKTnodes ;
-    for (i = 1 ; i <= size ; i++)
-    {
-        node = node->next ;
-        if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]) && (ckt->CKTvoltCurNode [i]))
+        else if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]) && (ckt->CKTvoltCurNode [i]))
         {
             maximum = 0 ;
             ptr = ckt->CKTmkCurKCLarray [i] ;
@@ -108,7 +99,7 @@ NIconvTest(CKTcircuit *ckt)
                     maximum = fabs (ptr->KCLcurrent) ;
 
 #ifdef STEPDEBUG
-                fprintf (stderr, "Index KCL Array: %d\tValue: %-.9g\tMaximum: %-.9g\n", j, fabs(ptr->KCLcurrent), maximum) ;
+                fprintf (stderr, "Index KCL Array: %d\tValue: %-.9g\tMaximum: %-.9g\n", j, fabs (ptr->KCLcurrent), maximum) ;
                 j++ ;
 #endif
 
@@ -122,9 +113,10 @@ NIconvTest(CKTcircuit *ckt)
 
             if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
                 return 1 ;
+#endif
+
         }
     }
-#endif
 
 #ifdef NEWCONV
     i = CKTconvTest(ckt);

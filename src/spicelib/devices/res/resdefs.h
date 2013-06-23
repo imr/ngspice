@@ -81,6 +81,11 @@ typedef struct sRESinstance {
     double **RESnVar;
 #endif /* NONOISE */
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+#endif
+
 } RESinstance ;
 
 
