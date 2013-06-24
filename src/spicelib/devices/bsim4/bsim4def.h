@@ -570,36 +570,41 @@ typedef struct sBSIM4instance
 #endif /* NONOISE */
 
 #ifdef KIRCHHOFF
-    double *KCLcurrentdNodePrime_1 ;
-    double *KCLcurrentdNodePrime_2 ;
-    double *KCLcurrentdNodePrime_3 ;
-    double *KCLcurrentdNodePrime_4 ;
-    double *KCLcurrentdNodePrime_5 ;
-    double *KCLcurrentgNodePrime_1 ;
-    double *KCLcurrentgNodePrime_2 ;
-    double *KCLcurrentgNodeMid ;
-    double *KCLcurrentbNodePrime_1 ;
-    double *KCLcurrentbNodePrime_2 ;
-    double *KCLcurrentbNodePrime_3 ;
-    double *KCLcurrentbNodePrime_4 ;
-    double *KCLcurrentbNodePrime_5 ;
-    double *KCLcurrentbNodePrime_6 ;
-    double *KCLcurrentsNodePrime_1 ;
-    double *KCLcurrentsNodePrime_2 ;
-    double *KCLcurrentsNodePrime_3 ;
-    double *KCLcurrentsNodePrime_4 ;
-    double *KCLcurrentsNodePrime_5 ;
-    double *KCLcurrentsNodePrime_6 ;
-    double *KCLcurrentsNodePrime_7 ;
-    double *KCLcurrentsNodePrime_8 ;
-    double *KCLcurrentsNodePrime_9 ;
-    double *KCLcurrentsNodePrime_10 ;
-    double *KCLcurrentdbNode_1 ;
-    double *KCLcurrentdbNode_2 ;
-    double *KCLcurrentsbNode_1 ;
-    double *KCLcurrentsbNode_2 ;
-    double *KCLcurrentqNode_1 ;
-    double *KCLcurrentqNode_2 ;
+    double *KCLcurrentdNodePrimeRHS_1 ;
+    double *KCLcurrentdNodePrimeRHS_2 ;
+    double *KCLcurrentdNodePrimeRHS_3 ;
+    double *KCLcurrentdNodePrimeRHS_4 ;
+    double *KCLcurrentdNodePrimeRHS_5 ;
+    double *KCLcurrentgNodePrimeRHS_1 ;
+    double *KCLcurrentgNodePrimeRHS_2 ;
+    double *KCLcurrentgNodeMidRHS ;
+    double *KCLcurrentbNodePrimeRHS_1 ;
+    double *KCLcurrentbNodePrimeRHS_2 ;
+    double *KCLcurrentbNodePrimeRHS_3 ;
+    double *KCLcurrentbNodePrimeRHS_4 ;
+    double *KCLcurrentbNodePrimeRHS_5 ;
+    double *KCLcurrentbNodePrimeRHS_6 ;
+    double *KCLcurrentsNodePrimeRHS_1 ;
+    double *KCLcurrentsNodePrimeRHS_2 ;
+    double *KCLcurrentsNodePrimeRHS_3 ;
+    double *KCLcurrentsNodePrimeRHS_4 ;
+    double *KCLcurrentsNodePrimeRHS_5 ;
+    double *KCLcurrentsNodePrimeRHS_6 ;
+    double *KCLcurrentsNodePrimeRHS_7 ;
+    double *KCLcurrentsNodePrimeRHS_8 ;
+    double *KCLcurrentsNodePrimeRHS_9 ;
+    double *KCLcurrentsNodePrimeRHS_10 ;
+    double *KCLcurrentdbNodeRHS_1 ;
+    double *KCLcurrentdbNodeRHS_2 ;
+    double *KCLcurrentsbNodeRHS_1 ;
+    double *KCLcurrentsbNodeRHS_2 ;
+    double *KCLcurrentqNodeRHS_1 ;
+    double *KCLcurrentqNodeRHS_2 ;
+
+    double *KCLcurrentdNodePrime ;
+    double *KCLcurrentdNode ;
+    double *KCLcurrentsNodePrime ;
+    double *KCLcurrentsNode ;
 #endif
 
 } BSIM4instance ;
