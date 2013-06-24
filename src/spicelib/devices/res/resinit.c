@@ -75,7 +75,7 @@ SPICEdev RESinfo = {
  /* DEVmodSize    */ &RESmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ RESnodeIsNonLinear
 #endif
 
 };
