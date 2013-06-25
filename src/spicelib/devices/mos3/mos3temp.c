@@ -53,6 +53,12 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
                                                  CONSTKoverQ);
         ni_temp=1.45e16*nifact;
 
+        if (model->MOS3phi <= 0.0) {
+            SPfrontEnd->IFerror (ERR_FATAL,
+               "%s: Phi is not positive.", &model->MOS3modName);
+            return(E_BADPARM);
+        }
+
         model->MOS3oxideCapFactor = 3.9 * 8.854214871e-12/
                 model->MOS3oxideThickness;
         if(!model->MOS3surfaceMobilityGiven) model->MOS3surfaceMobility=600;

@@ -53,6 +53,11 @@ MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
         arg1 = -egfet1/(kt1+kt1)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
 
+        if (model->MOS2phi <= 0.0) {
+            SPfrontEnd->IFerror (ERR_FATAL,
+               "%s: Phi is not positive.", &model->MOS2modName);
+            return(E_BADPARM);
+        }
 
         if(!model->MOS2oxideThicknessGiven) {
             model->MOS2oxideThickness = 1e-7;

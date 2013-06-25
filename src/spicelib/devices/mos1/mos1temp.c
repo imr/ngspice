@@ -52,6 +52,12 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
 
     /* now model parameter preprocessing */
 
+        if (model->MOS1phi <= 0.0) {
+            SPfrontEnd->IFerror (ERR_FATAL,
+               "%s: Phi is not positive.", &model->MOS1modName);
+            return(E_BADPARM);
+        }
+
         if(!model->MOS1oxideThicknessGiven || model->MOS1oxideThickness == 0) {
             model->MOS1oxideCapFactor = 0;
         } else {
