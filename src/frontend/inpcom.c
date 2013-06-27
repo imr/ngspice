@@ -5434,7 +5434,7 @@ inp_bsource_compat(struct line *card)
                         }
                     }
                     ustate = 0; /* we have a number */
-                } else if (isdigit(actchar)) {
+                } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
                     /* allow 100p, 5MEG etc. */
                     double dvalue = INPevaluate(&str_ptr, &error1, 0);
                     char   cvalue[19];
