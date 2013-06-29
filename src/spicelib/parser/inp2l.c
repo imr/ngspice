@@ -16,7 +16,7 @@ void INP2L(CKTcircuit *ckt, INPtables * tab, card * current)
 /* parse an inductor card */
 /* Lname <node> <node> [<val>] [<mname>] [IC=<val>] */
 
-    int mytype;          /* the type we determine inductors are */
+    int mytype = -1;     /* the type we determine inductors are */
     int type = 0;        /* the type the model says it is */
     char *line;          /* the part of the current line left to parse */
     char *saveline;      /* ... just in case we need to go back... */
@@ -41,10 +41,11 @@ void INP2L(CKTcircuit *ckt, INPtables * tab, card * current)
     printf("In INP2L, Current line: %s\n", current->line);
 #endif
 
-    mytype = INPtypelook("Inductor");
     if (mytype < 0) {
-      LITERR("Device type Inductor not supported by this binary\n");
-      return;
+        if ((mytype = INPtypelook("Inductor")) < 0) {
+            LITERR("Device type Inductor not supported by this binary\n");
+            return;
+        }
     }
     line = current->line;
     INPgetTok(&line, &name, 1);

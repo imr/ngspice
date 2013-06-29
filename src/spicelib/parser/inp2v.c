@@ -17,7 +17,7 @@ void INP2V(CKTcircuit *ckt, INPtables * tab, card * current)
     /* Vname <node> <node> [ [DC] <val>] [AC [<val> [<val> ] ] ]
      *       [<tran function>] */
 
-    int type;			/* the type the model says it is */
+    static int type = -1;	/* the type the model says it is */
     char *line;			/* the part of the current line left to parse */
     char *name;			/* the resistor's name */
     char *nname1;		/* the first node's name */
@@ -31,10 +31,11 @@ void INP2V(CKTcircuit *ckt, INPtables * tab, card * current)
     double leadval;		/* actual value of unlabeled number */
     IFuid uid;			/* uid for default model */
 
-    type = INPtypelook("Vsource");
     if (type < 0) {
-	LITERR("Device type Vsource not supported by this binary\n");
-	return;
+        if ((type = INPtypelook("Vsource")) < 0) {
+            LITERR("Device type Vsource not supported by this binary\n");
+            return;
+        }
     }
     line = current->line;
     INPgetTok(&line, &name, 1);

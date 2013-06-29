@@ -16,7 +16,7 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, card * current)
 /* parse a capacitor card */
 /* Cname <node> <node> [<val>] [<mname>] [IC=<val>] */
 
-    int mytype;          /* the type we determine capacitors are */
+    static int mytype = -1; /* the type we determine capacitors are */
     int type = 0;        /* the type the model says it is */
     char *line;          /* the part of the current line left to parse */
     char *saveline;      /* ... just in case we need to go back... */
@@ -41,10 +41,11 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, card * current)
     printf("In INP2C, Current line: %s\n", current->line);
 #endif
 
-    mytype = INPtypelook("Capacitor");
     if (mytype < 0) {
-      LITERR("Device type Capacitor not supported by this binary\n");
-      return;
+        if ((mytype = INPtypelook("Capacitor")) < 0) {
+            LITERR("Device type Capacitor not supported by this binary\n");
+            return;
+        }
     }
     line = current->line;
     INPgetTok(&line, &name, 1);
