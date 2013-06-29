@@ -4208,7 +4208,7 @@ inp_compat(struct line *card)
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
                 if (!cieq(str_ptr, "table")) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4216,7 +4216,7 @@ inp_compat(struct line *card)
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4238,7 +4238,7 @@ inp_compat(struct line *card)
                 str_ptr = cut_line;
                 ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4260,7 +4260,7 @@ inp_compat(struct line *card)
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4400,7 +4400,7 @@ inp_compat(struct line *card)
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
                 if (!cieq(str_ptr, "table")) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4408,7 +4408,7 @@ inp_compat(struct line *card)
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4430,7 +4430,7 @@ inp_compat(struct line *card)
                 str_ptr = cut_line;
                 ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
@@ -4452,7 +4452,7 @@ inp_compat(struct line *card)
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
