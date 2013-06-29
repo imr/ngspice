@@ -243,6 +243,11 @@ modernizeex(SPICE_DSTRINGPTR dstr_p)
     state = 0;
     ls = spice_dstring_length(dstr_p);
     s = spice_dstring_value(dstr_p);
+
+    /* check if string might need modernizing */
+    if (!memchr(s, Intro, (size_t) ls))
+        return;
+
     spice_dstring_init(&t);
 
     while (i < ls) {
