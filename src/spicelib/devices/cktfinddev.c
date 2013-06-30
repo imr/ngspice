@@ -22,7 +22,7 @@ find_instance(GENinstance *here, IFuid name)
 
 
 int
-CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast, IFuid modname)
+CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast)
 {
     GENinstance *here;
     GENmodel *mods;
@@ -54,16 +54,14 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         /* look through all models */
         for (mods = ckt->CKThead[*type]; mods ; mods = mods->GENnextModel) {
             /* and all instances */
-            if (!modname || mods->GENmodName == modname) {
                 here = find_instance(mods->GENinstances, name);
                 if (here) {
                     if (fast)
                         *fast = here;
                     return OK;
                 }
-                if (mods->GENmodName == modname)
+                if (mods->GENmodName == NULL)
                     return E_NODEV;
-            }
         }
         return E_NOMOD;
     }
@@ -74,16 +72,14 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
             /* look through all models */
             for (mods = ckt->CKThead[*type]; mods; mods = mods->GENnextModel) {
                 /* and all instances */
-                if (!modname || mods->GENmodName == modname) {
                     here = find_instance(mods->GENinstances, name);
                     if (here) {
                         if (fast)
                             *fast = here;
                         return OK;
                     }
-                    if (mods->GENmodName == modname)
+                    if (mods->GENmodName == NULL)
                         return E_NODEV;
-                }
             }
         }
         *type = -1;
