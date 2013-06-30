@@ -27,9 +27,7 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
     GENinstance *here;
     GENmodel *mods;
 
-    if (fast &&
-       *fast)
-    {
+    if (fast && *fast) {
         /* already have fast, so nothing much to do just get & set type */
         if (type)
             *type = (*fast)->GENmodPtr->GENmodType;
@@ -55,10 +53,7 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
     if (*type >= 0 && *type < DEVmaxnum) {
         /* have device type, need to find model & device */
         /* look through all models */
-        for (mods = ckt->CKThead[*type];
-             mods ;
-             mods = mods->GENnextModel)
-        {
+        for (mods = ckt->CKThead[*type]; mods ; mods = mods->GENnextModel) {
             /* and all instances */
             if (!modname || mods->GENmodName == modname) {
                 here = find_instance(mods->GENinstances, name);
@@ -72,14 +67,14 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
             }
         }
         return E_NOMOD;
-    } else if (*type == -1) {
+    }
+
+    if (*type == -1) {
         /* look through all types (UGH - worst case - take forever) */
         for (*type = 0; *type < DEVmaxnum; (*type)++) {
             /* need to find model & device */
             /* look through all models */
-            for (mods = ckt->CKThead[*type]; mods;
-                 mods = mods->GENnextModel)
-            {
+            for (mods = ckt->CKThead[*type]; mods; mods = mods->GENnextModel) {
                 /* and all instances */
                 if (!modname || mods->GENmodName == modname) {
                     here = find_instance(mods->GENinstances, name);
@@ -95,6 +90,7 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         }
         *type = -1;
         return E_NODEV;
-    } else
-        return E_BADPARM;
+    }
+
+    return E_BADPARM;
 }
