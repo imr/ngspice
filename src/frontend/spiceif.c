@@ -81,10 +81,10 @@ static IFvalue *doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel 
                        IFparm *opt, int ind);
 static int doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod,
                  IFparm *opt, struct dvec *val);
-static int finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr);
+static int finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr);
 
 /* espice fix integration */
-static int finddev_special(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
+static int finddev_special(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
 
 
 /* Input a single deck, and return a pointer to the circuit. */
@@ -1212,19 +1212,19 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
  */
 
 static int
-finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
+finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
 {
     int err;
     int type = -1;
 
-    err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
+    err = ft_sim->findInstance (ckt, &type, devptr, name, NULL, NULL);
     if (err == OK)
         return (type);
 
     type = -1;
     *devptr = NULL;
 
-    err = ft_sim->findModel (ck, &type, modptr, name);
+    err = ft_sim->findModel (ckt, &type, modptr, name);
     if (err == OK)
         return (type);
 
