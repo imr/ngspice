@@ -37,8 +37,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
         if (inInstPtr)
 	    *inInstPtr = instPtr;
         return E_EXISTS;
-    } else if (error != E_NODEV)
-	return error;
+    }
 
 #ifdef TRACE
     /*------  SDB debug statement  -------*/
