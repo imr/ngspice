@@ -36,14 +36,13 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
 
     /* we know the model `modfast', but need to find the device instance */
     if (modfast) {
-        mods = modfast;
-        here = find_instance(mods->GENinstances, name);
+        here = find_instance(modfast->GENinstances, name);
         if (here) {
             if (fast)
                 *fast = here;
 
             if (type)
-                *type = mods->GENmodType;
+                *type = modfast->GENmodType;
 
             return OK;
         }
