@@ -27,8 +27,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
     GENinstance *here;
     GENmodel *mods;
 
-    if (fast != NULL &&
-       *fast != NULL)
+    if (fast &&
+       *fast)
     {
         /* already have fast, so nothing much to do just get & set type */
         if (type)
@@ -41,7 +41,7 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         mods = modfast;
         here = find_instance(mods->GENinstances, name);
         if (here) {
-            if (fast != NULL)
+            if (fast)
                 *fast = here;
 
             if (type)
@@ -56,14 +56,14 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         /* have device type, need to find model & device */
         /* look through all models */
         for (mods = ckt->CKThead[*type];
-             mods != NULL ;
+             mods ;
              mods = mods->GENnextModel)
         {
             /* and all instances */
-            if (modname == NULL || mods->GENmodName == modname) {
+            if (!modname || mods->GENmodName == modname) {
                 here = find_instance(mods->GENinstances, name);
                 if (here) {
-                    if (fast != 0)
+                    if (fast)
                         *fast = here;
                     return OK;
                 }
@@ -77,14 +77,14 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         for (*type = 0; *type < DEVmaxnum; (*type)++) {
             /* need to find model & device */
             /* look through all models */
-            for (mods = ckt->CKThead[*type]; mods != NULL;
+            for (mods = ckt->CKThead[*type]; mods;
                  mods = mods->GENnextModel)
             {
                 /* and all instances */
-                if (modname == NULL || mods->GENmodName == modname) {
+                if (!modname || mods->GENmodName == modname) {
                     here = find_instance(mods->GENinstances, name);
                     if (here) {
-                        if (fast != 0)
+                        if (fast)
                             *fast = here;
                         return OK;
                     }
