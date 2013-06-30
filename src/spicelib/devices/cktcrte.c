@@ -29,15 +29,15 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
     if(!modPtr)
 	return E_NOMOD;
 
-    type = modPtr->GENmodType;
-
-    error = CKTfndDev(ckt, &type, &instPtr, name);
+    error = CKTfndDev(ckt, NULL, &instPtr, name);
 
     if (error == OK) { 
         if (inInstPtr)
 	    *inInstPtr = instPtr;
         return E_EXISTS;
     }
+
+    type = modPtr->GENmodType;
 
 #ifdef TRACE
     /*------  SDB debug statement  -------*/
