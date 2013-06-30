@@ -48,7 +48,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     inst = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
-        error = CKTfndDev(ckt, &code, &inst, job->input, NULL);
+        error = CKTfndDev(ckt, &code, &inst, job->input);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
 	    strcpy(errMsg,noacinput);
@@ -58,7 +58,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
-        error = CKTfndDev(ckt, &code, &inst, job->input, NULL);
+        error = CKTfndDev(ckt, &code, &inst, job->input);
         if (error) {
 	    /* XXX ??? */
             SPfrontEnd->IFerror (ERR_WARNING,

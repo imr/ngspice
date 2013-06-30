@@ -31,7 +31,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
 
     type = modPtr->GENmodType;
 
-    error = CKTfndDev(ckt, &type, &instPtr, name, modPtr);
+    error = CKTfndDev(ckt, &type, &instPtr, name);
 
     if (error == OK) { 
         if (inInstPtr)
