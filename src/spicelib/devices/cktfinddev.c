@@ -33,7 +33,7 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         /* already have fast, so nothing much to do just get & set type */
         if (type)
             *type = (*fast)->GENmodPtr->GENmodType;
-        return(OK);
+        return OK;
     }
 
     if (modfast) {
@@ -67,9 +67,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
                         *fast = here;
                     return OK;
                 }
-                if (mods->GENmodName == modname) {
+                if (mods->GENmodName == modname)
                     return E_NODEV;
-                }
             }
         }
         return E_NOMOD;
@@ -89,9 +88,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
                             *fast = here;
                         return OK;
                     }
-                    if (mods->GENmodName == modname) {
+                    if (mods->GENmodName == modname)
                         return E_NODEV;
-                    }
                 }
             }
         }
