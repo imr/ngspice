@@ -10,6 +10,17 @@ Author: 1985 Thomas L. Quarles
 #include "string.h"
 
 
+static GENinstance *
+find_instance(GENinstance *here, IFuid name)
+{
+    for (; here; here = here->GENnextInstance)
+        if (here->GENname == name)
+            return here;
+
+    return NULL;
+}
+
+
 int
 CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast, IFuid modname)
 {
@@ -28,8 +39,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
    if(modfast) {
       /* have model, just need device */
       mods = modfast;
-      for (here = mods->GENinstances; here != NULL; here = here->GENnextInstance) {
-         if (here->GENname == name) {
+         here = find_instance(mods->GENinstances, name);
+         if (here) {
             if (fast != NULL)
                *fast = here;
 
@@ -38,7 +49,6 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
 
             return OK;
          }
-      }
       return E_NODEV;
    }
 
@@ -51,16 +61,12 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
       {
          /* and all instances */
          if (modname == NULL || mods->GENmodName == modname) {
-            for (here = mods->GENinstances;
-               here != NULL; 
-               here = here->GENnextInstance) 
-            {
-               if (here->GENname == name) {
+               here = find_instance(mods->GENinstances, name);
+               if (here) {
                   if (fast != 0)
                      *fast = here;
                   return OK;
                }
-            }
             if(mods->GENmodName == modname) {
                return E_NODEV;
             }
@@ -77,16 +83,12 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
          {
             /* and all instances */
             if(modname == NULL || mods->GENmodName == modname) {
-               for (here = mods->GENinstances;
-                  here != NULL; 
-                  here = here->GENnextInstance) 
-               {
-                  if (here->GENname == name) {
+                  here = find_instance(mods->GENinstances, name);
+                  if (here) {
                      if(fast != 0)
                         *fast = here;
                      return OK;
                   }
-               }
                if(mods->GENmodName == modname) {
                   return E_NODEV;
                }
