@@ -11,7 +11,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast)
+CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name)
 {
     GENinstance *here;
 
