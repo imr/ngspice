@@ -616,26 +616,36 @@ typedef struct sBSIM4instance
     double *KCLcurrentqNodeRHS_2 ;
 
 //Matrix
-    double *KCLcurrentdNodePrime ;
-    double *KCLcurrentdNode ;
-    double *KCLcurrentsNodePrime ;
-    double *KCLcurrentsNode ;
+    double *KCLcurrentdNodePrime_1 ;
+    double *KCLcurrentdNodePrime_2 ;
+
+    double *KCLcurrentdNode_1 ;
+    double *KCLcurrentdNode_2 ;
+
+    double *KCLcurrentsNodePrime_1 ;
+    double *KCLcurrentsNodePrime_2 ;
+
+    double *KCLcurrentsNode_1 ;
+    double *KCLcurrentsNode_2 ;
 
     double *KCLcurrentgNodeExt ;
-
-    double *KCLcurrentgNodePrime ;
 
     double *KCLcurrentgNodeMid_1 ;
     double *KCLcurrentgNodeMid_2 ;
 
+    double *KCLcurrentgNodePrime ;
+
     double *KCLcurrentdbNode_1 ;
     double *KCLcurrentdbNode_2 ;
+
     double *KCLcurrentbNodePrime_1 ;
     double *KCLcurrentbNodePrime_2 ;
     double *KCLcurrentbNodePrime_3 ;
+
     double *KCLcurrentbNode_1 ;
     double *KCLcurrentbNode_2 ;
     double *KCLcurrentbNode_3 ;
+
     double *KCLcurrentsbNode_1 ;
     double *KCLcurrentsbNode_2 ;
 #endif
