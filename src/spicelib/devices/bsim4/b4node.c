@@ -25,10 +25,14 @@ BSIM4nodeIsNonLinear (GENmodel *inModel, CKTcircuit *ckt)
             fprintf (stderr, "here->BSIM4dNodePrime: %d\n", here->BSIM4dNodePrime) ;
             fprintf (stderr, "here->BSIM4sNodePrime: %d\n", here->BSIM4sNodePrime) ;
             fprintf (stderr, "here->BSIM4gNodePrime: %d\n", here->BSIM4gNodePrime) ;
-            fprintf (stderr, "here->BSIM4gNodeMid: %d\n", here->BSIM4gNodeMid) ;
-            fprintf (stderr, "here->BSIM4dbNode: %d\n", here->BSIM4dbNode) ;
             fprintf (stderr, "here->BSIM4bNodePrime: %d\n", here->BSIM4bNodePrime) ;
+            fprintf (stderr, "here->BSIM4dNode: %d\n", here->BSIM4dNode) ;
+            fprintf (stderr, "here->BSIM4sNode: %d\n", here->BSIM4sNode) ;
+            fprintf (stderr, "here->BSIM4gNodeExt: %d\n", here->BSIM4gNodeExt) ;
+            fprintf (stderr, "here->BSIM4bNode: %d\n", here->BSIM4bNode) ;
+            fprintf (stderr, "here->BSIM4dbNode: %d\n", here->BSIM4dbNode) ;
             fprintf (stderr, "here->BSIM4sbNode: %d\n", here->BSIM4sbNode) ;
+            fprintf (stderr, "here->BSIM4gNodeMid: %d\n", here->BSIM4gNodeMid) ;
             fprintf (stderr, "here->BSIM4qNode: %d\n", here->BSIM4qNode) ;
 #endif
 
@@ -37,7 +41,14 @@ BSIM4nodeIsNonLinear (GENmodel *inModel, CKTcircuit *ckt)
             ckt->CKTnodeIsLinear [here->BSIM4gNodePrime] = 0 ;
             ckt->CKTnodeIsLinear [here->BSIM4bNodePrime] = 0 ;
 
-            if (!here->BSIM4rbodyMod)
+            if (here->BSIM4rgateMod == 2)
+            {
+                ckt->CKTnodeIsLinear [here->BSIM4gNodeExt] = 0 ;
+            } else if (here->BSIM4rgateMod == 3) {
+                ckt->CKTnodeIsLinear [here->BSIM4gNodeMid] = 0 ;
+            }
+
+            if (here->BSIM4rbodyMod)
             {
                 ckt->CKTnodeIsLinear [here->BSIM4dbNode] = 0 ;
                 ckt->CKTnodeIsLinear [here->BSIM4sbNode] = 0 ;
