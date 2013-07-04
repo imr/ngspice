@@ -52,7 +52,7 @@ TFanal(CKTcircuit *ckt, int restart)
     Vtype = CKTtypelook("Vsource");
     if(Itype != -1) {
         // assert(third && *third == NULL);
-        error = CKTfndDev(ckt, NULL, &ptr, job->TFinSrc);
+        ptr = CKTfndDev(ckt, NULL, &ptr, job->TFinSrc);
         error = ptr ? OK : E_NODEV;
         if(error ==0) {
             job->TFinIsI = 1;
@@ -64,7 +64,7 @@ TFanal(CKTcircuit *ckt, int restart)
 
     if( (Vtype != -1) && (ptr==NULL) ) {
         // assert(third && *third == NULL);
-        error = CKTfndDev(ckt, NULL, &ptr, job->TFinSrc);
+        ptr = CKTfndDev(ckt, NULL, &ptr, job->TFinSrc);
         error = ptr ? OK : E_NODEV;
         job->TFinIsV = 1;
         job->TFinIsI = 0;
