@@ -44,7 +44,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             // assert(third);
-            error = CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind1), here->MUTindName1);
+            here->MUTind1 = (INDinstance *) CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind1), here->MUTindName1);
             error = here->MUTind1 ? OK : E_NODEV;
             if(error) {
                 IFuid namarray[2];
@@ -55,7 +55,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     namarray);
             }
             // assert(third);
-            error = CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind2), here->MUTindName2);
+            here->MUTind2 = (INDinstance *) CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind2), here->MUTindName2);
             error = here->MUTind2 ? OK : E_NODEV;
             if(error) {
                 IFuid namarray[2];

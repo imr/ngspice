@@ -10,7 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "string.h"
 
 
-int
+GENinstance *
 CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name)
 {
     GENinstance *here;
@@ -19,7 +19,7 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name)
     if (fast && *fast) {
         if (type)
             *type = (*fast)->GENmodPtr->GENmodType;
-        return OK;
+        return *fast;
     }
 
     here = nghash_find(ckt->DEVnameHash, name);
@@ -32,8 +32,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name)
         if (type)
             *type = here->GENmodPtr->GENmodType;
 
-        return OK;
+        return here;
     }
 
-    return E_NODEV;
+    return NULL;
 }
