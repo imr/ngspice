@@ -44,9 +44,11 @@ SENstartup(CKTcircuit *ckt, int restart)
         fast = NULL;
 
         // assert(third && *third == NULL);
-        fast = CKTfndDev(ckt, &type, &fast, ckt->CKTsenInfo->SENdevices[i]);
+        fast = CKTfndDev(ckt, NULL, &fast, ckt->CKTsenInfo->SENdevices[i]);
         if (!fast)
             return E_NODEV;
+
+        type = fast->GENmodPtr->GENmodType;
 
 #ifdef SENSDEBUG
         printf("SENstartup Instance: %s Design parameter: %s\n", ckt->CKTsenInfo->SENdevices[i], 
