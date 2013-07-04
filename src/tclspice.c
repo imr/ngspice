@@ -1395,12 +1395,13 @@ get_mod_param TCL_CMDPROCARGS(clientData, interp, argc, argv)
     /* get the unique IFuid for name (device/model) */
     INPretrieve(&name, ft_curckt->ci_symtab);
     // assert(third && *third == NULL);
-    devptr = ft_sim->findInstance (ft_curckt->ci_ckt, &typecode, &devptr, name);
+    devptr = ft_sim->findInstance (ft_curckt->ci_ckt, NULL, &devptr, name);
     if (!devptr) {
         typecode = -1;
         devptr   = NULL;
         err = ft_sim->findModel (ft_curckt->ci_ckt, &typecode, &modptr, name);
     } else {
+        typecode = devptr->GENmodPtr->GENmodType;
         err = OK;
     }
     if (err != OK) {
