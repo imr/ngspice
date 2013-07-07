@@ -30,8 +30,8 @@ char *buf; /* temporary buffer for parsing */
 char *model;    /* the name of the resistor's model */
 char *nname1;   /* the first node's name */
 char *nname2;   /* the second node's name */
-char rname1[10], rname2[10], rname3[10];
-char cname1[10], cname2[10], cname3[10], cname4[10];
+char *rname1, *rname2, *rname3;
+char *cname1, *cname2, *cname3, *cname4;
 char *internal1, *internal2;
 char *ground1, *ground2;
 CKTnode *node1; /* the first node's node pointer */
@@ -115,15 +115,16 @@ int lenvalgiven = 0;
                             INPgetTok(&line,&buf,1);
                     }
                     if (lenval && rval && lval && rval/lval > 1.6e10) {
-                            /* use 3-pi model */
+                            /* use 3-pi model for high resistance as fall back */
                             rval = 3.0 / (rval * lenval);
                             cval = cval * lenval / 6.0;
 
                             type = INPtypelook("Resistor");
 
                             /* resistor between node1 and internal1 */
-                            internal1 = TMALLOC(char, 10);
+                            internal1 = TMALLOC(char, 10 + strlen(name));
                             strcpy(internal1, "txlnd1");
+                            strcat(internal1, name);
                             INPtermInsert(ckt, &internal1, tab, &inode1);
                             if(!tab->defRmod) {
                                     /* create default R model */
@@ -131,7 +132,10 @@ int lenvalgiven = 0;
                                     IFC(newModel, (ckt,type,&(tab->defRmod),uid))
                             }
                             mdfast = tab->defRmod;
+                            rname1 = TMALLOC(char, 10 + strlen(name));
                             strcpy(rname1, "txlres1");
+                            strcat(rname1, name);
+                            INPinsert(&rname1, tab);
                             IFC(newInstance,(ckt,mdfast,&fast,rname1))
                             IFC(bindNode,(ckt,fast,1,node1))
                             IFC(bindNode,(ckt,fast,2,inode1))
@@ -139,10 +143,14 @@ int lenvalgiven = 0;
                             GCA(INPpName,("resistance",&ptemp,ckt,type,fast))
 
                             /* resistor between internal1 and internal2 */
-                            internal2 = TMALLOC(char, 10);
+                            internal2 = TMALLOC(char, 10 + strlen(name));
                             strcpy(internal2, "txlnd2");
+                            strcat(internal2, name);
                             INPtermInsert(ckt, &internal2, tab, &inode2);
+                            rname2 = TMALLOC(char, 10 + strlen(name));
                             strcpy(rname2, "txlres2");
+                            strcat(rname2, name);
+                            INPinsert(&rname2, tab);
                             mdfast2 = tab->defRmod;
                             IFC(newInstance,(ckt,mdfast2,&fast2,rname2))
                             IFC(bindNode,(ckt,fast2,1,inode1))
@@ -151,7 +159,10 @@ int lenvalgiven = 0;
                             GCA(INPpName,("resistance",&ptemp,ckt,type,fast2))
 
                             /* resistor between internal2 and node2 */
+                            rname3 = TMALLOC(char, 10 + strlen(name));
                             strcpy(rname3, "txlres3");
+                            strcat(rname3, name);
+                            INPinsert(&rname3, tab);
                             mdfast3 = tab->defRmod;
                             IFC(newInstance,(ckt,mdfast3,&fast3,rname3))
                             IFC(bindNode,(ckt,fast3,1,inode2))
@@ -166,7 +177,10 @@ int lenvalgiven = 0;
                                     IFC(newModel,(ckt,type,&(tab->defCmod),uid))
                             }
                             mdfast4 = tab->defCmod;
+                            cname1 = TMALLOC(char, 10 + strlen(name));
                             strcpy(cname1, "txlcap1");
+                            strcat(cname1, name);
+                            INPinsert(&cname1, tab);
                             IFC(newInstance,(ckt,mdfast4,&fast4,cname1))
                             IFC(bindNode,(ckt,fast4,1,node1))
                             IFC(bindNode,(ckt,fast4,2,gnode1))
@@ -174,7 +188,10 @@ int lenvalgiven = 0;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4))
 
                             /* capacitor on internal1 */
+                            cname2 = TMALLOC(char, 10 + strlen(name));
                             strcpy(cname2, "txlcap2");
+                            strcat(cname2, name);
+                            INPinsert(&cname2, tab);
                             mdfast4 = tab->defCmod;
                             IFC(newInstance,(ckt,mdfast4,&fast4,cname2))
                             IFC(bindNode,(ckt,fast4,1,inode1))
@@ -183,7 +200,10 @@ int lenvalgiven = 0;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4))
 
                             /* capacitor on internal2 */
+                            cname3 = TMALLOC(char, 10 + strlen(name));
                             strcpy(cname3, "txlcap3");
+                            strcat(cname3, name);
+                            INPinsert(&cname3, tab);
                             mdfast5 = tab->defCmod;
                             IFC(newInstance,(ckt,mdfast5,&fast5,cname3))
                             IFC(bindNode,(ckt,fast5,1,inode2))
@@ -192,7 +212,10 @@ int lenvalgiven = 0;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast5))
 
                             /* capacitor on node2 */
+                            cname4 = TMALLOC(char, 10 + strlen(name));
                             strcpy(cname4, "txlcap4");
+                            strcat(cname4, name);
+                            INPinsert(&cname4, tab);
                             mdfast6 = tab->defCmod;
                             IFC(newInstance,(ckt,mdfast6,&fast6,cname4))
                             IFC(bindNode,(ckt,fast6,1,node2))
