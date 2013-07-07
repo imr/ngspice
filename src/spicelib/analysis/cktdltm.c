@@ -33,10 +33,14 @@ CKTdltMod(CKTcircuit *ckt, GENmodel *m)
 
     for (h = m->GENinstances; h; h = next_i) {
 	    next_i = h->GENnextInstance;
+            if (h != nghash_delete(ckt->DEVnameHash, h->GENname))
+                fprintf(stderr, "ERROR, ouch nasal daemons ...\n");
 	    error = SPfrontEnd->IFdelUid (ckt, h->GENname,
 		    UID_INSTANCE);
 	    tfree(h);
     }
+    if (m != nghash_delete(ckt->MODnameHash, m->GENmodName))
+        fprintf(stderr, "ERROR, ouch nasal daemons ...\n");
     error = SPfrontEnd->IFdelUid (ckt, m->GENmodName, UID_MODEL);
     tfree(m);
     return(OK);
