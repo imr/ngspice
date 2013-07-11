@@ -65,8 +65,6 @@ datestring(void)
 
 /* return time interval in seconds and milliseconds */
 
-#ifndef HAVE_GETRUSAGE
-#ifndef HAVE_TIMES
 #ifdef HAVE_FTIME
 
 struct timeb timebegin;
@@ -84,8 +82,6 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
 
 }
 
-#endif
-#endif
 #endif
 
 /* 
