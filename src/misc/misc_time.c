@@ -32,6 +32,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #  endif
 #endif
 
+#ifdef HAVE_FTIME
+#  include <sys/timeb.h>
+#endif
 
 
 /* Return the date. Return value is static data. */
@@ -65,8 +68,6 @@ datestring(void)
 
 /* return time interval in seconds and milliseconds */
 
-#ifndef HAVE_GETRUSAGE
-#ifndef HAVE_TIMES
 #ifdef HAVE_FTIME
 
 struct timeb timebegin;
@@ -84,8 +85,6 @@ void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
 
 }
 
-#endif
-#endif
 #endif
 
 /* 

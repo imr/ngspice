@@ -9,16 +9,12 @@
 char * datestring(void);
 double seconds(void);
 
-#ifndef HAVE_GETRUSAGE
-#ifndef HAVE_TIMES
 #ifdef HAVE_FTIME
 
 extern struct timeb timebegin;
 
 void timediff(struct timeb *, struct timeb *, int *, int *);
 
-#endif
-#endif
 #endif
 
 #endif
