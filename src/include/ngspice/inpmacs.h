@@ -44,5 +44,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 /* and now a special one for calling INPdevParse which returns an
  * already concatenated list of error messages or NUL
  */
-#define PARSECALL(args)\
-current->error = INPerrCat(current->error,INPdevParse args );
+
+#define PARSECALL(args)                                                 \
+    do {                                                                \
+        current->error = INPerrCat(current->error, INPdevParse args);   \
+    } while(0)
