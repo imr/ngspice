@@ -81,7 +81,7 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, card * current)
 
 #ifdef CIDER
     	if( type == INPtypelook("NUMD2") ) {
-            LITERR(" error:  no unlabelled parameter permitted on NUMD2\n")
+            LITERR(" error:  no unlabelled parameter permitted on NUMD2\n");
 	} else {
 #endif
 	ptemp.rValue = leadval;

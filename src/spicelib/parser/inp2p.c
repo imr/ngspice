@@ -43,7 +43,7 @@ int num, i;
 
     mytype = INPtypelook("CplLines");
     if(mytype < 0 ) {
-        LITERR("Device type CplLines not supported by this binary\n")
+        LITERR("Device type CplLines not supported by this binary\n");
         return;
     }
     line = current->line;
@@ -87,7 +87,7 @@ int num, i;
             current->error = INPgetMod(ckt,model,&thismodel,tab);
             if(thismodel != NULL) {
                     if(mytype != thismodel->INPmodType) {
-                            LITERR("incorrect model type")
+                            LITERR("incorrect model type");
                             return;
                     }
                     mdfast = thismodel->INPmodfast;
@@ -108,7 +108,7 @@ int num, i;
                 lenvalgiven = 1;
             }
     } else  {
-            LITERR("model name is not found")
+            LITERR("model name is not found");
             return;
     }
 

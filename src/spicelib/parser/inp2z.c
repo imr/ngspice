@@ -62,7 +62,7 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
     		    && thismodel->INPmodType != INPtypelook("HFET1")
     		    && thismodel->INPmodType != INPtypelook("HFET2")) 
     	{
-            LITERR("incorrect model type")
+            LITERR("incorrect model type");
             return;
         }
 	
