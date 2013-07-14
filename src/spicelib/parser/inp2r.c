@@ -200,7 +200,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
 
     if (error1 == 0) {		/* got a resistance above */
       ptemp.rValue = val;
-      GCA(INPpName, ("resistance", &ptemp, ckt, type, fast))
+      GCA(INPpName, ("resistance", &ptemp, ckt, type, fast));
     }
 
     IFC(bindNode, (ckt, fast, 1, node1));

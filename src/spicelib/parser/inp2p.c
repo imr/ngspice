@@ -115,14 +115,14 @@ int num, i;
     /* IFC(bindNode,(ckt,fast,1,fakename)); */
 
     ptemp.iValue = num;
-    GCA(INPpName,("dimension", &ptemp,ckt,type,fast))
+    GCA(INPpName,("dimension", &ptemp,ckt,type,fast));
     ptemp.v.vec.sVec = nname1;
-    GCA(INPpName,("pos_nodes", &ptemp,ckt,type,fast))
+    GCA(INPpName,("pos_nodes", &ptemp,ckt,type,fast));
     ptemp.v.vec.sVec = nname2;
-    GCA(INPpName,("neg_nodes", &ptemp,ckt,type,fast))
+    GCA(INPpName,("neg_nodes", &ptemp,ckt,type,fast));
     if (error1 == 0 && lenvalgiven) {
             ptemp.rValue = lenval;
-            GCA(INPpName,("length",&ptemp,ckt,type,fast))
+            GCA(INPpName,("length",&ptemp,ckt,type,fast));
     }
 
     return;

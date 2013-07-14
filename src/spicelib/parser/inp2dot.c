@@ -58,7 +58,7 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			INPgetNetTok(&line, &nname1, 0);
 			INPtermInsert(ckt, &nname1, tab, &node1);
 			ptemp.nValue = node1;
-			GCA(INPapName, (ckt, which, foo, "output", &ptemp))
+			GCA(INPapName, (ckt, which, foo, "output", &ptemp));
 
 			if (*line != ')') {
 				INPgetNetTok(&line, &nname2, 1);
@@ -67,12 +67,12 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			} else {
 				ptemp.nValue = gnode;
 			}
-			GCA(INPapName, (ckt, which, foo, "outputref", &ptemp))
+			GCA(INPapName, (ckt, which, foo, "outputref", &ptemp));
 
 			INPgetTok(&line, &name, 1);
 			INPinsert(&name, tab);
 			ptemp.uValue = name;
-			GCA(INPapName, (ckt, which, foo, "input", &ptemp))
+			GCA(INPapName, (ckt, which, foo, "input", &ptemp));
 
 			INPgetTok(&line, &steptype, 1);
 			ptemp.iValue = 1;
@@ -501,7 +501,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 		INPgetNetTok(&line, &nname1, 0);
 		INPtermInsert(ckt, &nname1, tab, &node1);
 		ptemp.nValue = node1;
-		GCA(INPapName, (ckt, which, foo, "outpos", &ptemp))
+		GCA(INPapName, (ckt, which, foo, "outpos", &ptemp));
 
 		if (*line != ')') {
 			INPgetNetTok(&line, &nname2, 1);
@@ -532,7 +532,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	INPgetTok(&line, &name, 1);
 	if (name && !strcmp(name, "pct")) {
 		ptemp.iValue = 1;
-		GCA(INPapName, (ckt, which, foo, "pct", &ptemp))
+		GCA(INPapName, (ckt, which, foo, "pct", &ptemp));
 		INPgetTok(&line, &name, 1);
 	}
 	if (name && !strcmp(name, "ac")) {
@@ -669,7 +669,7 @@ dot_pss(char *line, void *ckt, INPtables *tab, card *current,
 	INPgetNetTok(&line, &nname, 0);
 	INPtermInsert(ckt, &nname, tab, &nnode);
 	ptemp.nValue = nnode;
-	GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp))	/* OscNode given as string */
+	GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));	/* OscNode given as string */
 
 	parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
 	GCA(INPapName, (ckt, which, foo, "points", parm));
