@@ -97,11 +97,11 @@ int num, i;
                     if(!tab->defPmod) {
                             /* create default P model */
                             IFnewUid(ckt, &uid, NULL, "P", UID_MODEL, NULL);
-                            IFC(newModel, (ckt,type,&(tab->defPmod),uid))
+                            IFC(newModel, (ckt,type,&(tab->defPmod),uid));
                     }
                     mdfast = tab->defPmod;
             }
-            IFC(newInstance,(ckt,mdfast,&fast,name))
+            IFC(newInstance,(ckt,mdfast,&fast,name));
             INPgetTok(&line,&model,1);
             if ((strcmp(model, "length") == 0) || (strcmp(model, "len") == 0)) {
                 lenval = INPevaluate(&line,&error1,1);
@@ -112,7 +112,7 @@ int num, i;
             return;
     }
 
-    /* IFC(bindNode,(ckt,fast,1,fakename)) */
+    /* IFC(bindNode,(ckt,fast,1,fakename)); */
 
     ptemp.iValue = num;
     GCA(INPpName,("dimension", &ptemp,ckt,type,fast))

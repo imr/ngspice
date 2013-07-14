@@ -129,16 +129,16 @@ int lenvalgiven = 0;
                             if(!tab->defRmod) {
                                     /* create default R model */
                                     IFnewUid(ckt, &uid, NULL, "R", UID_MODEL, NULL);
-                                    IFC(newModel, (ckt,type,&(tab->defRmod),uid))
+                                    IFC(newModel, (ckt,type,&(tab->defRmod),uid));
                             }
                             mdfast = tab->defRmod;
                             rname1 = TMALLOC(char, 10 + strlen(name));
                             strcpy(rname1, "txlres1");
                             strcat(rname1, name);
                             INPinsert(&rname1, tab);
-                            IFC(newInstance,(ckt,mdfast,&fast,rname1))
-                            IFC(bindNode,(ckt,fast,1,node1))
-                            IFC(bindNode,(ckt,fast,2,inode1))
+                            IFC(newInstance,(ckt,mdfast,&fast,rname1));
+                            IFC(bindNode,(ckt,fast,1,node1));
+                            IFC(bindNode,(ckt,fast,2,inode1));
                             ptemp.rValue = rval;
                             GCA(INPpName,("resistance",&ptemp,ckt,type,fast))
 
@@ -152,9 +152,9 @@ int lenvalgiven = 0;
                             strcat(rname2, name);
                             INPinsert(&rname2, tab);
                             mdfast2 = tab->defRmod;
-                            IFC(newInstance,(ckt,mdfast2,&fast2,rname2))
-                            IFC(bindNode,(ckt,fast2,1,inode1))
-                            IFC(bindNode,(ckt,fast2,2,inode2))
+                            IFC(newInstance,(ckt,mdfast2,&fast2,rname2));
+                            IFC(bindNode,(ckt,fast2,1,inode1));
+                            IFC(bindNode,(ckt,fast2,2,inode2));
                             ptemp.rValue = rval;
                             GCA(INPpName,("resistance",&ptemp,ckt,type,fast2))
 
@@ -164,9 +164,9 @@ int lenvalgiven = 0;
                             strcat(rname3, name);
                             INPinsert(&rname3, tab);
                             mdfast3 = tab->defRmod;
-                            IFC(newInstance,(ckt,mdfast3,&fast3,rname3))
-                            IFC(bindNode,(ckt,fast3,1,inode2))
-                            IFC(bindNode,(ckt,fast3,2,node2))
+                            IFC(newInstance,(ckt,mdfast3,&fast3,rname3));
+                            IFC(bindNode,(ckt,fast3,1,inode2));
+                            IFC(bindNode,(ckt,fast3,2,node2));
                             ptemp.rValue = rval;
                             GCA(INPpName,("resistance",&ptemp,ckt,type,fast3))
 
@@ -174,16 +174,16 @@ int lenvalgiven = 0;
                             type = INPtypelook("Capacitor");
                             if(!tab->defCmod) {
                                     IFnewUid(ckt, &uid, NULL, "C", UID_MODEL, NULL);
-                                    IFC(newModel,(ckt,type,&(tab->defCmod),uid))
+                                    IFC(newModel,(ckt,type,&(tab->defCmod),uid));
                             }
                             mdfast4 = tab->defCmod;
                             cname1 = TMALLOC(char, 10 + strlen(name));
                             strcpy(cname1, "txlcap1");
                             strcat(cname1, name);
                             INPinsert(&cname1, tab);
-                            IFC(newInstance,(ckt,mdfast4,&fast4,cname1))
-                            IFC(bindNode,(ckt,fast4,1,node1))
-                            IFC(bindNode,(ckt,fast4,2,gnode1))
+                            IFC(newInstance,(ckt,mdfast4,&fast4,cname1));
+                            IFC(bindNode,(ckt,fast4,1,node1));
+                            IFC(bindNode,(ckt,fast4,2,gnode1));
                             ptemp.rValue = cval;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4))
 
@@ -193,9 +193,9 @@ int lenvalgiven = 0;
                             strcat(cname2, name);
                             INPinsert(&cname2, tab);
                             mdfast4 = tab->defCmod;
-                            IFC(newInstance,(ckt,mdfast4,&fast4,cname2))
-                            IFC(bindNode,(ckt,fast4,1,inode1))
-                            IFC(bindNode,(ckt,fast4,2,gnode1))
+                            IFC(newInstance,(ckt,mdfast4,&fast4,cname2));
+                            IFC(bindNode,(ckt,fast4,1,inode1));
+                            IFC(bindNode,(ckt,fast4,2,gnode1));
                             ptemp.rValue = cval * 2;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4))
 
@@ -205,9 +205,9 @@ int lenvalgiven = 0;
                             strcat(cname3, name);
                             INPinsert(&cname3, tab);
                             mdfast5 = tab->defCmod;
-                            IFC(newInstance,(ckt,mdfast5,&fast5,cname3))
-                            IFC(bindNode,(ckt,fast5,1,inode2))
-                            IFC(bindNode,(ckt,fast5,2,gnode1))
+                            IFC(newInstance,(ckt,mdfast5,&fast5,cname3));
+                            IFC(bindNode,(ckt,fast5,1,inode2));
+                            IFC(bindNode,(ckt,fast5,2,gnode1));
                             ptemp.rValue = cval * 2;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast5))
 
@@ -217,9 +217,9 @@ int lenvalgiven = 0;
                             strcat(cname4, name);
                             INPinsert(&cname4, tab);
                             mdfast6 = tab->defCmod;
-                            IFC(newInstance,(ckt,mdfast6,&fast6,cname4))
-                            IFC(bindNode,(ckt,fast6,1,node2))
-                            IFC(bindNode,(ckt,fast6,2,gnode1))
+                            IFC(newInstance,(ckt,mdfast6,&fast6,cname4));
+                            IFC(bindNode,(ckt,fast6,1,node2));
+                            IFC(bindNode,(ckt,fast6,2,gnode1));
                             ptemp.rValue = cval;
                             GCA(INPpName,("capacitance",&ptemp,ckt,type,fast6))
                             return;
@@ -234,11 +234,11 @@ int lenvalgiven = 0;
                     if(!tab->defYmod) {
                             /* create default Y model */
                             IFnewUid(ckt, &uid, NULL, "Y", UID_MODEL, NULL);
-                            IFC(newModel, (ckt,type,&(tab->defYmod),uid))
+                            IFC(newModel, (ckt,type,&(tab->defYmod),uid));
                     }
                     mdfast = tab->defYmod;
             }
-            IFC(newInstance,(ckt,mdfast,&fast,name))
+            IFC(newInstance,(ckt,mdfast,&fast,name));
     } else  {
             LITERR("model name is not found")
             return;
@@ -249,8 +249,8 @@ int lenvalgiven = 0;
             GCA(INPpName,("length",&ptemp,ckt,type,fast))
     }
 
-    IFC(bindNode,(ckt,fast,1,node1))
-    IFC(bindNode,(ckt,fast,2,node2))
+    IFC(bindNode,(ckt,fast,1,node1));
+    IFC(bindNode,(ckt,fast,2,node2));
 
     txl = /*fixme*/ fast;
 

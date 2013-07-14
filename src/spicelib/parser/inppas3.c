@@ -124,7 +124,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                         fprintf(stderr,
                                 "Warning : IC on non-existant node - %s\n", name);
                     ptemp.rValue = INPevaluate(&line,&error,1);
-                    IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL))
+                    IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     continue;
                 }
                 LITERR(" Error: .ic syntax error.\n")
