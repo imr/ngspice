@@ -622,18 +622,7 @@ resume:
     }
 
 /* gtri - end - wbk - Modify Breakpoint stuff */
-#else /* !XSPICE */
 
-#ifdef CLUSTER
-    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
-      printf("Sync error!\n");
-      exit(0);
-    }
-#endif
-
-#endif /* XSPICE */
-
-#ifdef XSPICE
 /* gtri - begin - wbk - Do event solution */
 
     if(ckt->evt->counts.num_insts > 0) {
@@ -676,6 +665,15 @@ resume:
     } /* end if there are event instances */
 
 /* gtri - end - wbk - Do event solution */
+#else
+
+#ifdef CLUSTER
+    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
+      printf("Sync error!\n");
+      exit(0);
+    }
+#endif /* CLUSTER */
+
 #endif
     for(i=5; i>=0; i--)
         ckt->CKTdeltaOld[i+1] = ckt->CKTdeltaOld[i];
