@@ -1213,6 +1213,17 @@ resume:
 
     }
 
+#ifndef XSPICE
+    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
+        /* fprintf (stderr, "delta cut to %g to hit breakpoint\n" ,ckt->CKTdelta) ; */
+        fflush(stdout);
+        ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
+    }
+#endif /* !XSPICE */
+
+
 #ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
@@ -1256,13 +1267,6 @@ resume:
 /* gtri - end - wbk - Modify Breakpoint stuff */
 #else /* !XSPICE */
 
-    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
-        ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
-        /* fprintf (stderr, "delta cut to %g to hit breakpoint\n" ,ckt->CKTdelta) ; */
-        fflush(stdout);
-        ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
-    }
 #ifdef CLUSTER
     if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
       fprintf (stderr, "Sync error!\n");
