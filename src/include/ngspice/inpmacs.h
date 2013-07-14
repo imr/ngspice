@@ -22,9 +22,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 /* and one for calling more General functions that still return an
  * error code as above
  */
-#define GCA(func,args)\
-error=func args;\
-if(error)current->error = INPerrCat(current->error,INPerror(error));
+
+#define GCA(func, args)                                                 \
+    do {                                                                \
+        error = func args;                                              \
+        if (error)                                                      \
+            current->error = INPerrCat(current->error, INPerror(error)); \
+    } while(0)
+
 
 /* and one for putting our own error messages onto the current 
  * line's error string

@@ -140,7 +140,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast,1,node1));
                             IFC(bindNode,(ckt,fast,2,inode1));
                             ptemp.rValue = rval;
-                            GCA(INPpName,("resistance",&ptemp,ckt,type,fast))
+                            GCA(INPpName,("resistance",&ptemp,ckt,type,fast));
 
                             /* resistor between internal1 and internal2 */
                             internal2 = TMALLOC(char, 10 + strlen(name));
@@ -156,7 +156,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast2,1,inode1));
                             IFC(bindNode,(ckt,fast2,2,inode2));
                             ptemp.rValue = rval;
-                            GCA(INPpName,("resistance",&ptemp,ckt,type,fast2))
+                            GCA(INPpName,("resistance",&ptemp,ckt,type,fast2));
 
                             /* resistor between internal2 and node2 */
                             rname3 = TMALLOC(char, 10 + strlen(name));
@@ -168,7 +168,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast3,1,inode2));
                             IFC(bindNode,(ckt,fast3,2,node2));
                             ptemp.rValue = rval;
-                            GCA(INPpName,("resistance",&ptemp,ckt,type,fast3))
+                            GCA(INPpName,("resistance",&ptemp,ckt,type,fast3));
 
                             /* capacitor on node1 */
                             type = INPtypelook("Capacitor");
@@ -185,7 +185,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast4,1,node1));
                             IFC(bindNode,(ckt,fast4,2,gnode1));
                             ptemp.rValue = cval;
-                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4))
+                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4));
 
                             /* capacitor on internal1 */
                             cname2 = TMALLOC(char, 10 + strlen(name));
@@ -197,7 +197,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast4,1,inode1));
                             IFC(bindNode,(ckt,fast4,2,gnode1));
                             ptemp.rValue = cval * 2;
-                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4))
+                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast4));
 
                             /* capacitor on internal2 */
                             cname3 = TMALLOC(char, 10 + strlen(name));
@@ -209,7 +209,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast5,1,inode2));
                             IFC(bindNode,(ckt,fast5,2,gnode1));
                             ptemp.rValue = cval * 2;
-                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast5))
+                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast5));
 
                             /* capacitor on node2 */
                             cname4 = TMALLOC(char, 10 + strlen(name));
@@ -221,7 +221,7 @@ int lenvalgiven = 0;
                             IFC(bindNode,(ckt,fast6,1,node2));
                             IFC(bindNode,(ckt,fast6,2,gnode1));
                             ptemp.rValue = cval;
-                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast6))
+                            GCA(INPpName,("capacitance",&ptemp,ckt,type,fast6));
                             return;
 
                     }
@@ -246,7 +246,7 @@ int lenvalgiven = 0;
 
     if (error1 == 0 && lenvalgiven) {
             ptemp.rValue = lenval;
-            GCA(INPpName,("length",&ptemp,ckt,type,fast))
+            GCA(INPpName,("length",&ptemp,ckt,type,fast));
     }
 
     IFC(bindNode,(ckt,fast,1,node1));
