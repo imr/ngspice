@@ -523,8 +523,7 @@ time1 = SPfrontEnd->IFseconds();
                                    numNames, nameList, IF_COMPLEX,
                                    &acPlot);
         if (job->DstepType != LINEAR) {
-	    SPfrontEnd->OUTattributes (acPlot, NULL,
-		OUT_SCALE_LOG, NULL);
+	    SPfrontEnd->OUTattributes (acPlot, NULL, OUT_SCALE_LOG, NULL);
 	}
        for (i=0; i< displacement ; i++)
        {

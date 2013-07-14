@@ -137,8 +137,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	if (error) return(error);
 
         if (job->NstpType != LINEAR) {
-	    SPfrontEnd->OUTattributes (data->NplotPtr, NULL,
-		    OUT_SCALE_LOG, NULL);
+	    SPfrontEnd->OUTattributes (data->NplotPtr, NULL, OUT_SCALE_LOG, NULL);
 	}
 
     } else {   /* we must have paused before.  pick up where we left off */
