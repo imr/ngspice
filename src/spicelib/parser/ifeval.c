@@ -29,7 +29,7 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
        double *derivs)
 {
     int i, err;
-    INPparseTree *myTree = (INPparseTree *) tree;;
+    INPparseTree *myTree = (INPparseTree *) tree;
 
 #ifdef TRACE
     INPptPrint("calling PTeval, tree = ", tree);

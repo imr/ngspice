@@ -171,7 +171,7 @@ void cm_potentiometer (ARGS)
         PARTIAL(r0,wiper) = -1.0 / r_lower;
 
         PARTIAL(r1,r0) = 0.0;
-        PARTIAL(r1,r1) = 1.0 / r_upper;;
+        PARTIAL(r1,r1) = 1.0 / r_upper;
         PARTIAL(r1,wiper) = -1.0 / r_upper;
 
         PARTIAL(wiper,r0) = -1.0 / r_lower;

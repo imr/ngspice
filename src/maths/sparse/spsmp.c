@@ -501,7 +501,7 @@ SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col)
 
     Addend = Matrix->FirstInCol[Addend_Col];
     Prev = &Matrix->FirstInCol[Accum_Col];
-    Accum = *Prev;;
+    Accum = *Prev;
 
     while (Addend != NULL) {
 	while (Accum && Accum->Row < Addend->Row) {
