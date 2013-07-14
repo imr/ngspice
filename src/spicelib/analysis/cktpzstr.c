@@ -254,9 +254,9 @@ PZeval(int strat, PZtrial **set, PZtrial **new_trial_p)
 	    else
 		Guess_Param = -1.0;
 	}
-	if (Guess_Param > High_Guess)
+	if (High_Guess < Guess_Param)
 	    High_Guess = Guess_Param;
-	if (Guess_Param < Low_Guess)
+	if (Low_Guess > Guess_Param)
 	    Low_Guess = Guess_Param;
 	new_trial->s.real = Guess_Param;
 	if (set[1])
