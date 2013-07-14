@@ -94,7 +94,7 @@ PZinit(CKTcircuit *ckt)
 		i = CKTtypelook("LTRA");
     }
     if (i != -1 && ckt->CKThead[i] != NULL)
-	MERROR(E_XMISSIONLINE, "Transmission lines not supported")
+	MERROR(E_XMISSIONLINE, "Transmission lines not supported");
 
     job->PZpoleList = NULL;
     job->PZzeroList = NULL;
@@ -102,19 +102,19 @@ PZinit(CKTcircuit *ckt)
     job->PZnZeros = 0;
 
     if (job->PZin_pos == job->PZin_neg)
-	MERROR(E_SHORT, "Input is shorted")
+	MERROR(E_SHORT, "Input is shorted");
 
     if (job->PZout_pos == job->PZout_neg)
-	MERROR(E_SHORT, "Output is shorted")
+	MERROR(E_SHORT, "Output is shorted");
 
     if (job->PZin_pos == job->PZout_pos
         && job->PZin_neg == job->PZout_neg
 	&& job->PZinput_type == PZ_IN_VOL)
-	MERROR(E_INISOUT, "Transfer function is unity")
+	MERROR(E_INISOUT, "Transfer function is unity");
     else if (job->PZin_pos == job->PZout_neg
         && job->PZin_neg == job->PZout_pos
 	&& job->PZinput_type == PZ_IN_VOL)
-	MERROR(E_INISOUT, "Transfer function is -1")
+	MERROR(E_INISOUT, "Transfer function is -1");
 
     return(OK);
 }

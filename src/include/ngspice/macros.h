@@ -43,11 +43,12 @@
 #define NIL(type) ((type *)0) 
 #define ABORT() fflush(stderr);fflush(stdout);abort();
 
-#define MERROR(CODE,MESSAGE)	{			      \
-	errMsg = TMALLOC(char, strlen(MESSAGE) + 1);     \
-	strcpy(errMsg, (MESSAGE));			      \
-	return (CODE);					      \
-	}
+#define MERROR(CODE, MESSAGE) \
+    do {                                                      \
+        errMsg = TMALLOC(char, strlen(MESSAGE) + 1);          \
+        strcpy(errMsg, (MESSAGE));                            \
+        return (CODE);                                        \
+    } while(0)
 
 #define	NEW(TYPE)	(TMALLOC(TYPE, 1))
 #define	NEWN(TYPE,COUNT) (TMALLOC(TYPE, COUNT))
