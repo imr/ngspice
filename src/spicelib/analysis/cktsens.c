@@ -209,8 +209,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			output_values = NULL;
 			output_cvalues = NEWN(IFcomplex, num_vars);
 			if (job->step_type != SENS_LINEAR)
-			    SPfrontEnd->OUTattributes (sen_data,
-				    NULL, OUT_SCALE_LOG, NULL);
+			    SPfrontEnd->OUTattributes (sen_data, NULL, OUT_SCALE_LOG, NULL);
 
 		}
 

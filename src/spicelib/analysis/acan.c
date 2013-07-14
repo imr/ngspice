@@ -195,8 +195,7 @@ ACan(CKTcircuit *ckt, int restart)
 	if(error) return(error);
 
         if (job->ACstepType != LINEAR) {
-	    SPfrontEnd->OUTattributes (acPlot, NULL,
-		    OUT_SCALE_LOG, NULL);
+	    SPfrontEnd->OUTattributes (acPlot, NULL, OUT_SCALE_LOG, NULL);
 	}
         freq = job->ACstartFreq;
 
