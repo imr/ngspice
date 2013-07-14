@@ -561,6 +561,12 @@ resume:
 #endif
         }
 
+#ifndef XSPICE
+        /* don't want to get below delmin for no reason */
+        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
+    }
+#endif
+
 #ifdef XSPICE
     }
 
@@ -606,9 +612,6 @@ resume:
 /* gtri - end - wbk - Modify Breakpoint stuff */
 #else /* !XSPICE */
 
-        /* don't want to get below delmin for no reason */
-        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
-    }
     else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
         ckt->CKTsaveDelta = ckt->CKTdelta;
         ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
