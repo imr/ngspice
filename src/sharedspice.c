@@ -192,6 +192,7 @@ int  sh_vfprintf(FILE *f, const char *fmt, va_list args);
 int sh_fputsll(const char *input, FILE* outf);
 
 int sh_ExecutePerLoop(void);
+double getvsrcval(double, char*);
 int sh_vecinit(runDesc *run);
 
 void shared_exit(int status);
@@ -199,6 +200,8 @@ void shared_exit(int status);
 void sighandler_sharedspice(int num);
 
 void wl_delete_first(wordlist **wlstart, wordlist **wlend);
+
+int add_bkpt(void);
 
 #if !defined(low_latency)
 static char* outstorage(char*, bool);
@@ -214,6 +217,7 @@ static ControlledExit* ngexit;
 static SendData* datfcn;
 static SendInitData* datinitfcn;
 static BGThreadRunning* bgtr;
+static GetVSRCData* getvdat;
 static pvector_info myvec = NULL;
 char **allvecs = NULL;
 char **allplots = NULL;
@@ -222,6 +226,7 @@ static bool nostatuswanted = FALSE;
 static bool nodatawanted = FALSE;
 static bool nodatainitwanted = FALSE;
 static bool nobgtrwanted = FALSE;
+static bool wantvdat = FALSE;
 static bool immediate = FALSE;
 static bool coquit = FALSE;
 static jmp_buf errbufm, errbufc;
@@ -240,6 +245,9 @@ mutexType fputsMutex;
 /* initialization status */
 static bool is_initialized = FALSE;
 static char* no_init = "Error: ngspice is not initialized!\n   Run ngSpice_Init first";
+
+/* identifier for this ngspice invocation */
+static int ng_ident = 0;
 
 
 static struct plot *
@@ -475,6 +483,26 @@ ngSpice_running (void)
     return (fl_running && !fl_exited);
 }
 #endif
+
+
+/* Initialise external voltage source */
+IMPEXP
+int
+ngSpice_Init_Sync(GetVSRCData* vsrcdat, int *ident, void *userData)
+{
+    getvdat = vsrcdat;
+    /* set userdata, but don't overwrite with NULL */
+    if (userData)
+        userptr = userData;
+    /* set ngspice shared lib identification number */
+    ng_ident = *ident;
+    /* if caller sends NULL, don't try to retrieve voltage */
+    if (getvdat) {
+        wantvdat = TRUE;
+        return 0;
+    }
+    return 1;
+}
 
 
 /* Initialise ngspice and setup native methods */
@@ -800,6 +828,67 @@ char** ngSpice_AllVecs(char* plotname)
     allvecs[len] = NULL;
 
     return allvecs;
+}
+
+
+static double *bkpttmp = NULL;
+static int bkpttmpsize = 0;
+
+/* set a breakpoint in ngspice */
+IMPEXP
+bool ngSpice_SetBkpt(double time)
+{
+    int error;
+    CKTcircuit *ckt = NULL;
+
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return(FALSE);
+    }
+
+    ckt = ft_curckt->ci_ckt;
+    if (ckt->CKTbreakSize == 0) {
+    /* breakpoints have not yet been set up, so store here preliminary
+    and add with fcn add_bkpt() called from DCTran() */
+        if (bkpttmp == NULL) {
+            bkpttmp = TMALLOC(double, bkpttmpsize + 1);
+            if(bkpttmp == NULL)
+                return(FALSE);
+            bkpttmpsize++;
+        }
+        else {
+            bkpttmp = TREALLOC(double, bkpttmp, bkpttmpsize + 1);
+            bkpttmpsize++;
+        }
+        bkpttmp[bkpttmpsize-1] = time;
+        error = 0;
+    }
+    else
+        error = CKTsetBreak(ckt, time);
+    if(error)
+        return(FALSE);
+    return(TRUE);
+}
+
+
+/* add the preliminary breakpoints to the list.
+   called from dctran.c */
+int
+add_bkpt(void)
+{
+    int i;
+    int error = 0;
+    CKTcircuit *ckt =  ft_curckt->ci_ckt;
+
+    if((bkpttmp) && (bkpttmpsize > 0)) {
+        for (i = 0; i < bkpttmpsize; i++)
+            error = CKTsetBreak(ckt, bkpttmp[i]);
+        FREE(bkpttmp);
+        bkpttmpsize = 0;
+    }
+    if(error)
+        return(error);
+    return(OK);
 }
 
 
@@ -1591,3 +1680,20 @@ int sh_vecinit(runDesc *run)
     return 0;
 }
 
+
+/* issue callback to request external voltage data for source vname */
+double
+getvsrcval(double time, char *vname)
+{
+    double vval;
+    if (!wantvdat) {
+        fprintf(stderr, "Error: No callback supplied for source %s\n", vname);
+        shared_exit(EXIT_BAD);
+        return(EXIT_BAD);
+    }
+    else {
+        /* callback fcn */
+        getvdat(&vval, time, vname, userptr);
+        return vval;
+    }
+}

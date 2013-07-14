@@ -209,6 +209,18 @@ typedef int (BGThreadRunning)(bool, void*);
    void*       return pointer received from caller
 */
 
+/* callback functions
+   addresses received from caller with ngSpice_Init_Sync() function
+*/
+
+/* ask for VSRC EXTERNAL value */
+typedef int (GetVSRCData)(double*, double, char*, void*);
+/*
+   double*     return voltage value
+   double      actual time
+   char*       node name
+   void*       return pointer received from caller
+*/
 
 /* ngspice initialization,
 printfcn: pointer to callback function for reading printf, fprintf
@@ -223,6 +235,12 @@ IMPEXP
 int  ngSpice_Init(SendChar* printfcn, SendStat* statfcn, ControlledExit* ngexit,
                   SendData* sdata, SendInitData* sinitdata, BGThreadRunning* bgtrun, void* userData);
 
+/* initialization of synchronizing functions
+vsrcdat: pointer to callback function for retrieving a voltage source value
+ident: pointer to integer unique to this shared library (defaults to 0)
+*/
+IMPEXP
+int  ngSpice_Init_Sync(GetVSRCData *vsrcdat, int *ident, void *userData);
 
 /* Caller may send ngspice commands to ngspice.dll.
 Commands are executed immediately */
@@ -262,6 +280,10 @@ char** ngSpice_AllVecs(char* plotname);
 /* returns TRUE if ngspice is running in a second (background) thread */
 IMPEXP
 bool ngSpice_running(void);
+
+/* set a breakpoint in ngspice */
+IMPEXP
+bool ngSpice_SetBkpt(double time);
 
 
 #ifdef __cplusplus
