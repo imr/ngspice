@@ -118,8 +118,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	/* the current front-end needs the namelist to be fully
 		declared before an OUTpBeginplot */
 
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
 
 	data->numPlots = 0;                /* we don't have any plots  yet */
         error = CKTnoise(ckt,N_DENS,N_OPEN,data);

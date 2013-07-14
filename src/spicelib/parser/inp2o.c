@@ -76,8 +76,7 @@ void INP2O(CKTcircuit *ckt, INPtables * tab, card * current)
     } else {
 	if (!tab->defOmod) {
 	    /* create default O model */
-	    IFnewUid(ckt, &uid, NULL, "O", UID_MODEL,
-		     NULL);
+	    IFnewUid(ckt, &uid, NULL, "O", UID_MODEL, NULL);
 	    IFC(newModel, (ckt, type, &(tab->defOmod), uid));
 	}
 	mdfast = tab->defOmod;

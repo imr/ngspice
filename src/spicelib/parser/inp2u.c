@@ -62,8 +62,7 @@ void INP2U(CKTcircuit *ckt, INPtables * tab, card * current)
 	type = mytype;
 	if (!tab->defUmod) {
 	    /* create deafult U model */
-	    IFnewUid(ckt, &uid, NULL, "U", UID_MODEL,
-		     NULL);
+	    IFnewUid(ckt, &uid, NULL, "U", UID_MODEL, NULL);
 	    IFC(newModel, (ckt, type, &(tab->defUmod), uid));
 	}
 	mdfast = tab->defUmod;

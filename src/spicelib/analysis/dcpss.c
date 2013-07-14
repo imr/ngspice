@@ -237,8 +237,7 @@ DCpss(CKTcircuit *ckt,
 	/* Time Domain plot start and prepared to be filled in later */
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
-                "time", UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                            "Time Domain Periodic Steady State Analysis",
                                            timeUid, IF_REAL,

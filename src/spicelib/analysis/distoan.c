@@ -516,8 +516,7 @@ time1 = SPfrontEnd->IFseconds();
 	if (! job->Df2wanted) {
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                    "DISTORTION - 2nd harmonic",
                                    freqUid, IF_REAL,
@@ -542,8 +541,7 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                    "DISTORTION - 3rd harmonic",
                                    freqUid, IF_REAL,
@@ -566,8 +564,7 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                    "DISTORTION - IM: f1+f2",
                                    freqUid, IF_REAL,
@@ -588,8 +585,7 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                    "DISTORTION - IM: f1-f2",
                                    freqUid, IF_REAL,
@@ -611,8 +607,7 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                    "DISTORTION - IM: 2f1-f2",
                                    freqUid, IF_REAL,

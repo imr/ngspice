@@ -91,23 +91,19 @@ TFanal(CKTcircuit *ckt, int restart)
     ckt->CKTrhs[0]=0;
 
     /* make a UID for the transfer function output */
-    SPfrontEnd->IFnewUid (ckt, &tfuid, NULL, "Transfer_function",
-            UID_OTHER, NULL);
+    SPfrontEnd->IFnewUid (ckt, &tfuid, NULL, "Transfer_function", UID_OTHER, NULL);
 
     /* make a UID for the input impedance */
-    SPfrontEnd->IFnewUid (ckt, &inuid, job->TFinSrc,
-            "Input_impedance", UID_OTHER, NULL);
+    SPfrontEnd->IFnewUid (ckt, &inuid, job->TFinSrc, "Input_impedance", UID_OTHER, NULL);
 
     /* make a UID for the output impedance */
     if (job->TFoutIsI) {
-        SPfrontEnd->IFnewUid (ckt, &outuid, job->TFoutSrc
-                ,"Output_impedance", UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid (ckt, &outuid, job->TFoutSrc ,"Output_impedance", UID_OTHER, NULL);
     } else {
         name = TMALLOC(char, strlen(job->TFoutName) + 22);
         (void)sprintf(name,"output_impedance_at_%s",
                 job->TFoutName);
-        SPfrontEnd->IFnewUid (ckt, &outuid, NULL,
-                name, UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid (ckt, &outuid, NULL, name, UID_OTHER, NULL);
     }
 
     error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,

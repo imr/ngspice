@@ -193,27 +193,22 @@ found:;
     
     
     if (job->TRCVvType[i] == vcode)
-         SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-            "v-sweep", UID_OTHER, NULL);
+         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "v-sweep", UID_OTHER, NULL);
         
     else {
         if (job->TRCVvType[i] == icode)
-            SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                 "i-sweep", UID_OTHER, NULL);
+            SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "i-sweep", UID_OTHER, NULL);
                      
         else {
             if (job->TRCVvType[i] == TEMP_CODE)
-                SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                   "temp-sweep", UID_OTHER, NULL);
+                SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "temp-sweep", UID_OTHER, NULL);
        
             else {
                 if (job->TRCVvType[i] == rcode)
-                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                        "res-sweep", UID_OTHER, NULL);
+                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "res-sweep", UID_OTHER, NULL);
                                 
                 else
-                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                        "?-sweep", UID_OTHER, NULL);
+                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "?-sweep", UID_OTHER, NULL);
             } /* icode */
         } /* TEMP_CODE */
     } /* rcode*/

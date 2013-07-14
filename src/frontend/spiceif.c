@@ -252,8 +252,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         /*CDHW Create an interactive task AAA with a new UID.
           ci_specTask will point to it CDHW*/
 
-        err = IFnewUid(ft_curckt->ci_ckt, &specUid, NULL, "special",
-                       UID_TASK, NULL);
+        err = IFnewUid(ft_curckt->ci_ckt, &specUid, NULL, "special", UID_TASK, NULL);
         if (err) {
             ft_sperror(err, "newUid");
             return (2);
@@ -281,8 +280,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
             }
 
         if (which != -1) { /*CDHW options are available CDHW*/
-            err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options",
-                           UID_ANALYSIS, NULL);
+            err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options", UID_ANALYSIS, NULL);
             if (err) {
                 ft_sperror(err, "newUid");
                 return (2);
@@ -1273,8 +1271,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     if (which == -1)
         return (FALSE);
 
-    err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis",
-                   UID_ANALYSIS, NULL);
+    err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis", UID_ANALYSIS, NULL);
     if (err != OK)
         return (FALSE);
 
