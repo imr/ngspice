@@ -564,12 +564,11 @@ resume:
 #ifndef XSPICE
         /* don't want to get below delmin for no reason */
         ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
-    }
 #endif
 
-#ifdef XSPICE
     }
 
+#ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
     if(ckt->CKTtime + ckt->CKTdelta >= g_mif_info.breakpoint.current) {
