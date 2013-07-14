@@ -156,11 +156,11 @@ DCtran(CKTcircuit *ckt,
         if(error) return(error);
         SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
                 "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            ckt->CKTcurJob->JOBname,
-            timeUid, IF_REAL,
-            numNames, nameList, IF_REAL, &(job->TRANplot));
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           ckt->CKTcurJob->JOBname,
+                                           timeUid, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &(job->TRANplot));
         tfree(nameList);
         if(error) return(error);
 
@@ -350,11 +350,11 @@ DCtran(CKTcircuit *ckt,
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
         /* To get rawfile working saj*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &(job->TRANplot));
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &(job->TRANplot));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;

@@ -67,11 +67,11 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         /* continuing */
         i = job->TRCVnestState;
         /* resume to work? saj*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &plot);
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &plot);
         goto resume;
     }
     ckt->CKTtime = 0;
@@ -218,11 +218,11 @@ found:;
         } /* TEMP_CODE */
     } /* rcode*/
     
-    error = SPfrontEnd->OUTpBeginPlot (
-        ckt, ckt->CKTcurJob,
-        ckt->CKTcurJob->JOBname,
-        varUid, IF_REAL,
-        numNames, nameList, IF_REAL, &plot);
+    error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                       ckt->CKTcurJob->JOBname,
+                                       varUid, IF_REAL,
+                                       numNames, nameList, IF_REAL,
+                                       &plot);
     tfree(nameList);
     
     if(error) return(error);

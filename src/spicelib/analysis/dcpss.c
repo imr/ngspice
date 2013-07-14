@@ -239,11 +239,11 @@ DCpss(CKTcircuit *ckt,
         if(error) return(error);
         SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
                 "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "Time Domain Periodic Steady State Analysis",
-            timeUid, IF_REAL,
-            numNames, nameList, IF_REAL, &(job->PSSplot_td));
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           "Time Domain Periodic Steady State Analysis",
+                                           timeUid, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &(job->PSSplot_td));
         tfree(nameList);
         if(error) return(error);
 
@@ -406,11 +406,11 @@ DCpss(CKTcircuit *ckt,
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
         /* To get rawfile working saj*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &(job->PSSplot_td));
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &(job->PSSplot_td));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
@@ -1039,8 +1039,11 @@ DCpss(CKTcircuit *ckt,
             if (error)
                 return (error) ;
             SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL) ;
-            error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob, "Frequency Domain Periodic Steady State Analysis",
-                                               freqUid, IF_REAL, numNames, nameList, IF_REAL, &(job->PSSplot_fd)) ;
+            error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                               "Frequency Domain Periodic Steady State Analysis",
+                                               freqUid, IF_REAL,
+                                               numNames, nameList, IF_REAL,
+                                               &(job->PSSplot_fd)) ;
             tfree (nameList) ;
             SPfrontEnd->OUTattributes (job->PSSplot_fd, NULL, PLOT_COMB, NULL) ;
 

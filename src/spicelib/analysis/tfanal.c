@@ -110,11 +110,11 @@ TFanal(CKTcircuit *ckt, int restart)
                 name, UID_OTHER, NULL);
     }
 
-    error = SPfrontEnd->OUTpBeginPlot (
-        ckt, ckt->CKTcurJob,
-        job->JOBname,
-        NULL, 0,
-        3, uids, IF_REAL, &plotptr);
+    error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                       job->JOBname,
+                                       NULL, 0,
+                                       3, uids, IF_REAL,
+                                       &plotptr);
     if(error) return(error);
 
     /*find transfer function */
