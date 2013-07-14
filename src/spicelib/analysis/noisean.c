@@ -1,13 +1,14 @@
-/* Patch to noisean.c by Richard D. McRoberts.
- * Patched with modifications from Weidong Liu (2000)
- * Patched with modifications ftom Weidong Liu 
- * in bsim4.1.0 code
- */
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
 Modified: 2001 AlansFixes
 **********/
+
+/* Patch to noisean.c by Richard D. McRoberts.
+ * Patched with modifications from Weidong Liu (2000)
+ * Patched with modifications ftom Weidong Liu
+ * in bsim4.1.0 code
+ */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/acdefs.h"
