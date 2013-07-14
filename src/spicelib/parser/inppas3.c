@@ -61,7 +61,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
             }
 
             if(which == -1) {
-                LITERR("nodeset unknown to simulator. \n")
+                LITERR("nodeset unknown to simulator. \n");
                 goto quit;
             }
 
@@ -91,7 +91,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     continue;
                 }
-                LITERR(" Error: .nodeset syntax error.\n")
+                LITERR(" Error: .nodeset syntax error.\n");
                 break;
             }
         } else if ((strcmp(token,".ic") == 0)) {
@@ -105,7 +105,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
             }
 
             if(which==-1) {
-                LITERR("ic unknown to simulator. \n")
+                LITERR("ic unknown to simulator. \n");
                 goto quit;
             }
 
@@ -127,7 +127,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     continue;
                 }
-                LITERR(" Error: .ic syntax error.\n")
+                LITERR(" Error: .ic syntax error.\n");
                 break;
             }
         }

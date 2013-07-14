@@ -129,7 +129,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 #endif
          && (thismodel->INPmodType != INPtypelook("VBIC")))
         {
-            LITERR("incorrect model type")
+            LITERR("incorrect model type");
             return;
         }
 #ifdef ADMS
@@ -137,7 +137,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
          && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
          && (nodeflag && (thismodel->INPmodType != INPtypelook("bjt504t"))))
         {
-            LITERR("Too much nodes for this model type")
+            LITERR("Too much nodes for this model type");
             return;
         }
 #endif
@@ -182,7 +182,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     if (waslead) {
 #ifdef CIDER
         if( type == INPtypelook("NBJT2") ) {
-            LITERR(" error: no unlabeled parameter permitted on NBJT2\n")
+            LITERR(" error: no unlabeled parameter permitted on NBJT2\n");
         } else {
 #endif
             ptemp.rValue = leadval;

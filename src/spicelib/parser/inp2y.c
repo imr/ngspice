@@ -54,7 +54,7 @@ int lenvalgiven = 0;
     mytype2 = INPtypelook("CplLines");
 
     if(mytype < 0 ) {
-        LITERR("Device type TransLine not supported by this binary\n")
+        LITERR("Device type TransLine not supported by this binary\n");
         return;
     }
     line = current->line;
@@ -85,7 +85,7 @@ int lenvalgiven = 0;
                             return;
                     }
                     else if (mytype != thismodel->INPmodType) {
-                            LITERR("incorrect model type")
+                            LITERR("incorrect model type");
                             return;
                     }
                     line = thismodel->INPmodLine->line;
@@ -240,7 +240,7 @@ int lenvalgiven = 0;
             }
             IFC(newInstance,(ckt,mdfast,&fast,name));
     } else  {
-            LITERR("model name is not found")
+            LITERR("model name is not found");
             return;
     }
 

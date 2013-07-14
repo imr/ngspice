@@ -124,7 +124,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                   )
                 {
                   /*  if model is not variable node B3SOIPD/FD/DD model, error!  */
-                  LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes") return;
+                    LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
+                    return;
                 }
               else
                 {      /*  if looking at B3SOIPD/FD/DD or B4SOI model, allocate the 7th node  */
@@ -155,7 +156,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                 )
             {
               /*  if model is not variable node B3SOIPD/FD/DD or STAG model, error!  */
-              LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes") return;
+                LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
+                return;
             }
             else
             {      /*  if looking at B3SOIPD/FD/DD, B4SOI, STAG (SOI3) or HiSIMHV model, allocate the 6th node  */
@@ -176,7 +178,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             )
           {
             /*  if model is not variable node B3SOIPD/FD/DD  model, error!  */
-            LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes") return;
+              LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
+              return;
           }
         else
           {            /*  if looking at B3SOIPD/FD/DD, B4SOI, STAG (SOI3) or HiSIMHV model, allocate the 5th node  */

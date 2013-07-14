@@ -31,10 +31,14 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
     } while(0)
 
 
-/* and one for putting our own error messages onto the current 
+/* and one for putting our own error messages onto the current
  * line's error string
  */
-#define LITERR(text) current->error=INPerrCat(current->error,INPmkTemp(text));
+
+#define LITERR(text)                                                    \
+    do {                                                                \
+        current->error = INPerrCat(current->error, INPmkTemp(text));    \
+    } while(0)
 
 
 /* and now a special one for calling INPdevParse which returns an
