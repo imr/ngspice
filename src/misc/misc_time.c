@@ -32,6 +32,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #  endif
 #endif
 
+#ifdef HAVE_FTIME
+#  include <sys/timeb.h>
+#endif
 
 
 /* Return the date. Return value is static data. */
