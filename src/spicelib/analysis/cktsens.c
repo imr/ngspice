@@ -197,11 +197,11 @@ int sens_sens(CKTcircuit *ckt, int restart)
 				"frequency", UID_OTHER, NULL);
 		}
 
-                error = SPfrontEnd->OUTpBeginPlot (
-                    ckt, ckt->CKTcurJob,
-                    ckt->CKTcurJob->JOBname,
-                    freq_name, IF_REAL,
-                    num_vars, output_names, type, &sen_data);
+                error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                                   ckt->CKTcurJob->JOBname,
+                                                   freq_name, IF_REAL,
+                                                   num_vars, output_names, type,
+                                                   &sen_data);
 		if (error)
 			return error;
 
