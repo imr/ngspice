@@ -18,6 +18,10 @@ Modified: 2000 AlansFixes
 /* gtri - end   - wbk - modify for supply ramping option */
 #endif
 
+#ifdef SHARED_MODULE
+extern double getvsrcval(double, char*);
+#endif
+
 int
 VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current value into the
@@ -384,6 +388,15 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                             value += here->VSRCdcValue;
                     }
                     break;
+
+#ifdef SHARED_MODULE
+                    case EXTERNAL: {
+                        value = getvsrcval(time, here->VSRCname);
+                        if(here -> VSRCdcGiven)
+                            value += here->VSRCdcValue;
+                    }
+                    break;
+#endif
 
                 } // switch
             } // else (line 48)

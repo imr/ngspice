@@ -23,7 +23,7 @@ IFparm VSRCpTable[] = { /* parameters */
  IOP ("am",      VSRC_AM,        IF_REALVEC,"Amplitude modulation description"),
  IOP ("trnoise", VSRC_TRNOISE,   IF_REALVEC,"Transient noise description"),
  IOP ("trrandom", VSRC_TRRANDOM, IF_REALVEC,"random source description"),
-
+ IOP ("external", VSRC_EXTERNAL, IF_REALVEC,"external source description"),
  OPU ("pos_node",VSRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ("neg_node",VSRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ("function",VSRC_FCN_TYPE,  IF_INTEGER,"Function of the source"),
