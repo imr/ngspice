@@ -154,8 +154,7 @@ DCtran(CKTcircuit *ckt,
 #endif
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
-                "time", UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                            ckt->CKTcurJob->JOBname,
                                            timeUid, IF_REAL,

@@ -141,13 +141,11 @@ PZpost(CKTcircuit *ckt)
     j = 0;
     for (i = 0; i < job->PZnPoles; i++) {
 	sprintf(name, "pole(%-u)", i+1);
-	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL,
-		name, UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL, name, UID_OTHER, NULL);
     }
     for (i = 0; i < job->PZnZeros; i++) {
 	sprintf(name, "zero(%-u)", i+1);
-	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL,
-		name, UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL, name, UID_OTHER, NULL);
     }
 
     SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,

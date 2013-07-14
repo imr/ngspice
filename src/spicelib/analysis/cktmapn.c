@@ -35,12 +35,8 @@ CKTmapNode(CKTcircuit *ckt, CKTnode **node, IFuid name)
     /* not found, so must be a new one */
     error = CKTmkNode(ckt,&mynode); /*allocate the node*/
     if(error) return(error);
-    error = SPfrontEnd->IFnewUid (ckt,
-				      &uid,
-				      NULL,
-				      name,
-				      UID_SIGNAL,
-				      &mynode);  /* get a uid for it */
+    /* get a uid for it */
+    error = SPfrontEnd->IFnewUid (ckt, &uid, NULL, name, UID_SIGNAL, &mynode);
     if(error) return(error);
     mynode->name = uid;     /* set the info we have */
     mynode->type = SP_VOLTAGE;

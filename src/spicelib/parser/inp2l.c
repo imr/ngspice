@@ -81,8 +81,7 @@ void INP2L(CKTcircuit *ckt, INPtables * tab, card * current)
           line = saveline;    /* go back */
           type = mytype;
           if (!tab->defLmod) {    /* create default L model */
-          IFnewUid(ckt, &uid, NULL, "L", UID_MODEL,
-               NULL);
+          IFnewUid(ckt, &uid, NULL, "L", UID_MODEL, NULL);
           IFC(newModel, (ckt, type, &(tab->defLmod), uid));
           }
           mdfast = tab->defLmod;
@@ -94,8 +93,7 @@ void INP2L(CKTcircuit *ckt, INPtables * tab, card * current)
       type = mytype;
       if (!tab->defLmod) {
           /* create default L model */
-          IFnewUid(ckt, &uid, NULL, "L", UID_MODEL,
-               NULL);
+          IFnewUid(ckt, &uid, NULL, "L", UID_MODEL, NULL);
           IFC(newModel, (ckt, type, &(tab->defLmod), uid));
       }
       IFC(newInstance, (ckt, tab->defLmod, &fast, name));

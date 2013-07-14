@@ -186,8 +186,7 @@ ACan(CKTcircuit *ckt, int restart)
 	    plot = NULL;
 	}
 
-        SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-                "frequency", UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                            ckt->CKTcurJob->JOBname,
                                            freqUid, IF_REAL,
