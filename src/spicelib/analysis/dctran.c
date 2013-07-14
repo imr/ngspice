@@ -34,6 +34,9 @@ extern struct dbcomm *dbs;
 #include "ngspice/cluster.h"
 #endif
 
+#ifdef SHARED_MODULE
+extern int add_bkpt(void);
+#endif
 
 #define INIT_STATS() \
 do { \
@@ -131,6 +134,10 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTbreaks[0] = 0;
         ckt->CKTbreaks[1] = ckt->CKTfinalTime;
         ckt->CKTbreakSize = 2;
+
+#ifdef SHARED_MODULE
+        add_bkpt();
+#endif
 
 #ifdef XSPICE
 /* gtri - begin - wbk - 12/19/90 - Modify setting of CKTminBreak */
