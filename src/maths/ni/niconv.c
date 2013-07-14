@@ -84,7 +84,7 @@ NIconvTest(CKTcircuit *ckt)
 #else
         /* KCL Verification */
         }
-        else if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]) && (ckt->CKTvoltCurNode [i]))
+        if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]) && (ckt->CKTvoltCurNode [i]))
         {
             maximum = 0 ;
             ptr = ckt->CKTmkCurKCLarray [i] ;
