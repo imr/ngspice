@@ -47,7 +47,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
 
     for(current = data; current != NULL; current = current->nextcard) {
         line = current->line;
-        FREE(token)
+        FREE(token);
         INPgetTok(&line,&token,1);
 
         if (strcmp(token,".nodeset")==0) {
