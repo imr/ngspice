@@ -1011,10 +1011,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                     if (t) {
                         bxx_printf(&buffer, "%s ", t);
                     } else {
-                        if (name[0] == 'v' || name[0] == 'V')
-                            bxx_printf(&buffer, "v.%s.%s ", scname, name);
-                        else
-                            bxx_printf(&buffer, "%s.%s ", scname, name);
+                        bxx_printf(&buffer, "%s.%s ", scname, name);
                     }
                     break;
 
