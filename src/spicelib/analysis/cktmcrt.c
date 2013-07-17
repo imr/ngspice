@@ -35,7 +35,6 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
         if(modfast) *modfast=mymodfast;
         return(OK);
     } else {
-        type = mymodfast->GENmodType;  /* unused */
         if(modfast) *modfast=mymodfast;
         return(E_EXISTS);
     }
