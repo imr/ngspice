@@ -313,6 +313,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    modfast = CKTfndMod(ckt, &type, &modfast, varUid);
 	    if (!modfast)
 		return E_NOMOD;
+            type = modfast->GENmodType; /* unused */
 
 	    for (in = modfast->GENinstances; in; in = in->GENnextInstance)
 		CKTdltNNum(ckt, in->GENnode1);
@@ -333,6 +334,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    if (!modfast)
 		return E_NOMOD;
 
+            type = modfast->GENmodType; /* unused */
 	    CKTdltMod(ckt, modfast);
 	}
     }
