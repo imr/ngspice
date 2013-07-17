@@ -24,7 +24,6 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance *here;
     int ktype;
-    int error;
 
     NG_IGNORE(states);
 
@@ -45,8 +44,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             // assert(third);
             here->MUTind1 = (INDinstance *) CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind1), here->MUTindName1);
-            error = here->MUTind1 ? OK : E_NODEV;
-            if(error) {
+            if (!here->MUTind1) {
                 IFuid namarray[2];
                 namarray[0]=here->MUTname;
                 namarray[1]=here->MUTindName1;
@@ -56,8 +54,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
             // assert(third);
             here->MUTind2 = (INDinstance *) CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind2), here->MUTindName2);
-            error = here->MUTind2 ? OK : E_NODEV;
-            if(error) {
+            if (!here->MUTind2) {
                 IFuid namarray[2];
                 namarray[0]=here->MUTname;
                 namarray[1]=here->MUTindName2;

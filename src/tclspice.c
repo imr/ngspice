@@ -1396,11 +1396,12 @@ get_mod_param TCL_CMDPROCARGS(clientData, interp, argc, argv)
     INPretrieve(&name, ft_curckt->ci_symtab);
     // assert(third && *third == NULL);
     devptr = ft_sim->findInstance (ft_curckt->ci_ckt, &typecode, &devptr, name);
-    err = devptr ? OK : E_NODEV;
-    if (err != OK) {
+    if (!devptr) {
         typecode = -1;
         devptr   = NULL;
         err = ft_sim->findModel (ft_curckt->ci_ckt, &typecode, &modptr, name);
+    } else {
+        err = OK;
     }
     if (err != OK) {
         sprintf(buf, "No such device or model name %s", name);

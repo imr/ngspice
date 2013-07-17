@@ -53,8 +53,7 @@ TFanal(CKTcircuit *ckt, int restart)
     if(Itype != -1) {
         // assert(third && *third == NULL);
         ptr = CKTfndDev(ckt, NULL, &ptr, job->TFinSrc);
-        error = ptr ? OK : E_NODEV;
-        if(error ==0) {
+        if (ptr) {
             job->TFinIsI = 1;
             job->TFinIsV = 0;
         } else {
@@ -65,10 +64,9 @@ TFanal(CKTcircuit *ckt, int restart)
     if( (Vtype != -1) && (ptr==NULL) ) {
         // assert(third && *third == NULL);
         ptr = CKTfndDev(ckt, NULL, &ptr, job->TFinSrc);
-        error = ptr ? OK : E_NODEV;
         job->TFinIsV = 1;
         job->TFinIsI = 0;
-        if(error !=0) {
+        if (!ptr) {
             SPfrontEnd->IFerror (ERR_WARNING,
                     "Transfer function source %s not in circuit",
                     &(job->TFinSrc));
