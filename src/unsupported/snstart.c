@@ -40,8 +40,6 @@ SENstartup(CKTcircuit *ckt, int restart)
     parmtemp.rValue = 1.0;
 
     for (i = 0; i < ckt->CKTsenInfo->SENnumVal; i++) {
-        type = -1;
-        fast = NULL;
 
         fast = CKTfndDev(ckt, ckt->CKTsenInfo->SENdevices[i]);
         if (!fast)

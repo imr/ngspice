@@ -55,8 +55,6 @@ TFanal(CKTcircuit *ckt, int restart)
         if (ptr) {
             job->TFinIsI = 1;
             job->TFinIsV = 0;
-        } else {
-            ptr = NULL;
         }
     }
 
