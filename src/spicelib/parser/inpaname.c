@@ -41,7 +41,8 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
      * WILL be set on return unless error is not OK
      */
     // assert(third) for all invocations
-    *fast = sim->findInstance (ckt, NULL, fast, devnam);
+    if (*fast == NULL)
+        *fast = sim->findInstance (ckt, NULL, NULL, devnam);
     if (*fast == NULL)
 	return (E_NODEV);
 
