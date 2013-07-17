@@ -29,6 +29,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
     if(!modPtr)
 	return E_NOMOD;
 
+    // assert(third && *third == NULL);
     error = CKTfndDev(ckt, NULL, &instPtr, name);
 
     if (error == OK) { 
