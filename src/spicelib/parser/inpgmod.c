@@ -132,7 +132,6 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 #ifdef CIDER
   } /* analytical vs. numerical model parsing */
 #endif
-  modtmp->INPmodUsed = 1;
   modtmp->INPmodLine->error = err;
 
   return 0;
@@ -244,7 +243,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
 
     if ( strncmp( modtmp->INPmodName, name, strlen( name ) ) == 0 &&
       in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
-        if ( !modtmp->INPmodUsed ) {
+        if ( !modtmp->INPmodfast ) {
             error = create_model( ckt, modtmp, tab );
             if ( error ) return NULL;
         }
@@ -291,7 +290,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
         return (err);
       }  /* end of checking for illegal model */
 
-      if (! modtmp->INPmodUsed) {   /* Check if model is already defined */
+      if (! modtmp->INPmodfast) {   /* Check if model is already defined */
         error = create_model( ckt, modtmp, tab );
         if ( error ) return INPerror(error);
       }

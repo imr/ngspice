@@ -75,7 +75,6 @@ struct INPmodel{
     IFuid INPmodName;   /* uid of model */
     int INPmodType;     /* type index of device type */
     INPmodel *INPnextModel;  /* link to next model */
-    int INPmodUsed;     /* flag to indicate it has already been used */
     card *INPmodLine;   /* pointer to line describing model */
     GENmodel *INPmodfast;   /* high speed pointer to model for access */
 };
