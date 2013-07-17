@@ -43,7 +43,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             // assert(third);
-            here->MUTind1 = (INDinstance *) CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind1), here->MUTindName1);
+            if (!here->MUTind1)
+                here->MUTind1 = (INDinstance *) CKTfndDev(ckt, NULL, NULL, here->MUTindName1);
             if (!here->MUTind1) {
                 IFuid namarray[2];
                 namarray[0]=here->MUTname;
@@ -53,7 +54,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     namarray);
             }
             // assert(third);
-            here->MUTind2 = (INDinstance *) CKTfndDev(ckt, NULL, (GENinstance **) &(here->MUTind2), here->MUTindName2);
+            if (!here->MUTind2)
+                here->MUTind2 = (INDinstance *) CKTfndDev(ckt, NULL, NULL, here->MUTindName2);
             if (!here->MUTind2) {
                 IFuid namarray[2];
                 namarray[0]=here->MUTname;
