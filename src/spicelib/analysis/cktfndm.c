@@ -14,7 +14,7 @@ Author: 1985 Thomas L. Quarles
 
 
 GENmodel *
-CKTfndMod(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid modname)
+CKTfndMod(CKTcircuit *ckt, IFuid modname)
 {
     return nghash_find(ckt->MODnameHash, modname);
 }
