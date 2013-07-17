@@ -611,7 +611,6 @@ finddev_special(
     GENmodel **modptr,
     int *device_or_model)
 {
-    int err;
     int type = -1;
 
     *devptr = ft_sim->findInstance (ckt, name);
@@ -625,8 +624,7 @@ finddev_special(
     // assert(second && *second == -1)
     // assert(third && *third == NULL)
     *modptr = ft_sim->findModel (ckt, &type, modptr, name);
-    err = *modptr ? OK : E_NOMOD;
-    if (err == OK) {
+    if (*modptr) {
         *device_or_model = 1;
         return (type);
     }
@@ -1214,7 +1212,6 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 static int
 finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
 {
-    int err;
     int type = -1;
 
     *devptr = ft_sim->findInstance (ckt, name);
@@ -1226,8 +1223,7 @@ finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
     // assert(second && *second == -1)
     // assert(third && *third == NULL)
     *modptr = ft_sim->findModel (ckt, &type, modptr, name);
-    err = *modptr ? OK : E_NOMOD;
-    if (err == OK)
+    if (*modptr)
         return (type);
 
     *modptr = NULL;
