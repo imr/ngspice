@@ -21,7 +21,6 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
   GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
 
     SPICEdev **DEVices;
-    int error;
     int type;
 
     DEVices = devices();
@@ -31,9 +30,8 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
 
     // assert(third && *third == NULL);
     instPtr = CKTfndDev(ckt, NULL, &instPtr, name);
-    error = instPtr ? OK : E_NODEV;
 
-    if (error == OK) { 
+    if (instPtr) { 
         if (inInstPtr)
 	    *inInstPtr = instPtr;
         return E_EXISTS;

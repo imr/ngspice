@@ -42,9 +42,8 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
      */
     // assert(third) for all invocations
     *fast = sim->findInstance (ckt, dev, fast, devnam);
-    error = *fast ? OK : E_NODEV;
-    if (error)
-	return (error);
+    if (*fast == NULL)
+	return (E_NODEV);
 
     /* now find the parameter - hunt through the parameter tables for
      * this device type and look for a name match of an 'ask'able
