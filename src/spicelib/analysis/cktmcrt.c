@@ -30,11 +30,11 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
         mymodfast->GENmodName = name;
         mymodfast->GENnextModel = ckt->CKThead[type];
         ckt->CKThead[type] = mymodfast;
-        if(modfast) *modfast=mymodfast;
         nghash_insert(ckt->MODnameHash, name, mymodfast);
+        *modfast = mymodfast;
         return(OK);
     } else {
-        if(modfast) *modfast=mymodfast;
+        *modfast = mymodfast;
         return(E_EXISTS);
     }
     /*NOTREACHED*/
