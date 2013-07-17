@@ -1395,22 +1395,17 @@ get_mod_param TCL_CMDPROCARGS(clientData, interp, argc, argv)
     /* get the unique IFuid for name (device/model) */
     INPretrieve(&name, ft_curckt->ci_symtab);
     devptr = ft_sim->findInstance (ft_curckt->ci_ckt, name);
-    if (!devptr) {
-        typecode = -1;
-        modptr = ft_sim->findModel (ft_curckt->ci_ckt, name);
-        err = modptr ? OK : E_NOMOD;
-        if (modptr)
-            typecode = modptr->GENmodType;
-        else
-            typecode = -1;
-    } else {
+    if (devptr) {
         typecode = devptr->GENmodPtr->GENmodType;
-        err = OK;
-    }
-    if (err != OK) {
-        sprintf(buf, "No such device or model name %s", name);
-        Tcl_SetResult(interp, buf, TCL_VOLATILE);
-        return TCL_ERROR;
+    } else  {
+        modptr = ft_sim->findModel (ft_curckt->ci_ckt, name);
+        if (modptr) {
+            typecode = modptr->GENmodType;
+        } else {
+            sprintf(buf, "No such device or model name %s", name);
+            Tcl_SetResult(interp, buf, TCL_VOLATILE);
+            return TCL_ERROR;
+        }
     }
     device = ft_sim->devices[typecode];
     found = FALSE;
