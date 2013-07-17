@@ -25,7 +25,7 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 
     // assert(second)
     // assert(third && *third == NULL)
-    error = CKTfndMod(ckt, &type, &mymodfast, name);
+    mymodfast = CKTfndMod(ckt, &type, &mymodfast, name);
     error = mymodfast ? OK : E_NOMOD;
     if(error == E_NOMOD) {
         mymodfast = (GENmodel *) tmalloc((size_t) *(DEVices[type]->DEVmodSize));
