@@ -74,6 +74,7 @@ CKTdestroy(CKTcircuit *ckt)
     FREE(ckt->evt);
 #endif
 
+    nghash_free(ckt->DEVnameHash, NULL, NULL);
     FREE(ckt);
     return(OK);
 }

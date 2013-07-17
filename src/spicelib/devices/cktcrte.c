@@ -66,6 +66,8 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
 
     modPtr->GENinstances = instPtr;
 
+    nghash_insert(ckt->DEVnameHash, name, instPtr);
+
     if(inInstPtr != NULL)
 	*inInstPtr = instPtr;
 
