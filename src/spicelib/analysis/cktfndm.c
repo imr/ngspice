@@ -49,5 +49,5 @@ CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
         }
         *type = -1;
         return(E_NOMOD);
-    } else return(E_BADPARM);
+    } else return(E_NOMOD);
 }
