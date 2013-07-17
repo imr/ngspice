@@ -320,7 +320,7 @@ extern void CKTncDump(CKTcircuit *);
 extern int CKTfndAnal(CKTcircuit *, int *, JOB **, IFuid , TSKtask *, IFuid);
 extern int CKTfndBranch(CKTcircuit *, IFuid);
 extern GENinstance *CKTfndDev(CKTcircuit *, IFuid);
-extern GENmodel *CKTfndMod(CKTcircuit *, int *, GENmodel **, IFuid);
+extern GENmodel *CKTfndMod(CKTcircuit *, int, GENmodel **, IFuid);
 extern int CKTfndNode(CKTcircuit *, CKTnode **, IFuid);
 extern int CKTfndTask(CKTcircuit *, TSKtask **, IFuid );
 extern int CKTground(CKTcircuit *, CKTnode **, IFuid);

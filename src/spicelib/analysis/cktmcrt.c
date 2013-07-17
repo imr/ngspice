@@ -24,7 +24,7 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 
     // assert(second)
     // assert(third && *third == NULL)
-    mymodfast = CKTfndMod(ckt, &type, &mymodfast, name);
+    mymodfast = CKTfndMod(ckt, type, &mymodfast, name);
     if(!mymodfast) {
         mymodfast = (GENmodel *) tmalloc((size_t) *(DEVices[type]->DEVmodSize));
         if(mymodfast == NULL) return(E_NOMEM);

@@ -14,33 +14,32 @@ Author: 1985 Thomas L. Quarles
 
 
 GENmodel *
-CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
+CKTfndMod(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid modname)
 {
     GENmodel *mods;
 
-    if(*type >=0 && *type < DEVmaxnum) {
+    if(type >=0 && type < DEVmaxnum) {
         /* have device type, need to find model */
         /* look through all models */
-        for(mods=ckt->CKThead[*type]; mods != NULL ; 
+        for(mods=ckt->CKThead[type]; mods != NULL ; 
                 mods = mods->GENnextModel) {
             if(mods->GENmodName == modname) {
                 return mods;
             }
         }
         return NULL;
-    } else if(*type == -1) {
+    } else if(type == -1) {
         /* look through all types (UGH - worst case - take forever) */ 
-        for(*type = 0;*type <DEVmaxnum;(*type)++) {
+        for(type = 0;type <DEVmaxnum;(type)++) {
             /* need to find model & device */
             /* look through all models */
-            for(mods=ckt->CKThead[*type];mods!=NULL;
+            for(mods=ckt->CKThead[type];mods!=NULL;
                     mods = mods->GENnextModel) {
                 if(mods->GENmodName == modname) {
                     return mods;
                 }
             }
         }
-        *type = -1;
         return NULL;
     } else return NULL;
 }

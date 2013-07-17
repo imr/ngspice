@@ -1399,7 +1399,7 @@ get_mod_param TCL_CMDPROCARGS(clientData, interp, argc, argv)
         typecode = -1;
         // assert(second && *second == -1)
         // assert(third && *third == NULL)
-        modptr = ft_sim->findModel (ft_curckt->ci_ckt, &typecode, &modptr, name);
+        modptr = ft_sim->findModel (ft_curckt->ci_ckt, typecode, &modptr, name);
         err = modptr ? OK : E_NOMOD;
         if (modptr)
             typecode = modptr->GENmodType;
