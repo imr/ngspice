@@ -284,6 +284,7 @@ struct CKTcircuit {
                                  during AC simulation */
 
     NGHASHPTR DEVnameHash;
+    NGHASHPTR MODnameHash;
 };
 
 

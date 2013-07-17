@@ -916,6 +916,8 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
 
                 INPgetMod(ckt, mods->GENmodName, &inpmod, ft_curckt->ci_symtab);
                 inpmod->INPmodUsed = 0;
+                if (curMod != nghash_delete(ckt->MODnameHash, curMod->GENmodName))
+                    fprintf(stderr, "ERROR, ouch nasal daemons ...\n");
                 FREE(mods);
 
                 break;

@@ -91,6 +91,7 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTrelDv = 2.0;
     sckt->CKTvarHertz = 0;
     sckt->DEVnameHash = nghash_init_pointer(100);
+    sckt->MODnameHash = nghash_init_pointer(100);
 
 #ifdef XSPICE
 /* gtri - begin - wbk - allocate/initialize substructs */
