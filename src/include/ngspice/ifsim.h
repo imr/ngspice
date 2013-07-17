@@ -370,7 +370,7 @@ struct IFsimulator {
                                     /* set a parameter on an instance */
     int (*askInstanceQuest) (CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
                                     /* ask a question about an instance */
-    GENinstance *(*findInstance) (CKTcircuit *, int *, GENinstance **, IFuid);
+    GENinstance *(*findInstance) (CKTcircuit *, IFuid);
                                     /* find a specific instance */
     int (*deleteInstance) (CKTcircuit *, void *);
                                     /* delete an instance from the circuit */
