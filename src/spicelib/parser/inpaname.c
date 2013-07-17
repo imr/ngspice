@@ -40,6 +40,7 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
      * (name, type, direct pointer) - the type and direct pointer
      * WILL be set on return unless error is not OK
      */
+    // assert(third) for all invocations
     error = sim->findInstance (ckt, dev, fast, devnam);
     if (error)
 	return (error);

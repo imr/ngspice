@@ -48,6 +48,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     inst = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
+        // assert(third && *third == NULL);
         error = CKTfndDev(ckt, NULL, &inst, job->input);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
@@ -58,6 +59,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
+        // assert(third && *third == NULL);
         error = CKTfndDev(ckt, NULL, &inst, job->input);
         if (error) {
 	    /* XXX ??? */
