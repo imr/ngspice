@@ -308,6 +308,8 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
 	    modfast = NULL;
 	    type = -1;
+            // assert(second && *second == -1)
+            // assert(third && *third == NULL)
 	    error = CKTfndMod(ckt, &type, &modfast, varUid);
 	    if (error)
 		return error;
@@ -325,6 +327,8 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
 	    modfast = NULL;
 	    type = -1;
+            // assert(second && *second == -1)
+            // assert(third && *third == NULL)
 	    error = CKTfndMod(ckt, &type, &modfast, varUid);
 	    if (error)
 		return error;

@@ -1397,6 +1397,8 @@ get_mod_param TCL_CMDPROCARGS(clientData, interp, argc, argv)
     devptr = ft_sim->findInstance (ft_curckt->ci_ckt, name);
     if (!devptr) {
         typecode = -1;
+        // assert(second && *second == -1)
+        // assert(third && *third == NULL)
         err = ft_sim->findModel (ft_curckt->ci_ckt, &typecode, &modptr, name);
     } else {
         typecode = devptr->GENmodPtr->GENmodType;
