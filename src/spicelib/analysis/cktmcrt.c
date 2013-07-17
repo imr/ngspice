@@ -20,22 +20,25 @@ Author: 1985 Thomas L. Quarles
 int
 CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 {
-    GENmodel *mymodfast = NULL;
+    GENmodel *model = CKTfndMod(ckt, name);
 
-    mymodfast = CKTfndMod(ckt, name);
-    if(!mymodfast) {
-        mymodfast = (GENmodel *) tmalloc((size_t) *(DEVices[type]->DEVmodSize));
-        if(mymodfast == NULL) return(E_NOMEM);
-        mymodfast->GENmodType = type;
-        mymodfast->GENmodName = name;
-        mymodfast->GENnextModel = ckt->CKThead[type];
-        ckt->CKThead[type] = mymodfast;
-        nghash_insert(ckt->MODnameHash, name, mymodfast);
-        *modfast = mymodfast;
-        return(OK);
-    } else {
-        *modfast = mymodfast;
-        return(E_EXISTS);
+    if (model) {
+        *modfast = model;
+        return E_EXISTS;
     }
-    /*NOTREACHED*/
+
+    model = (GENmodel *) tmalloc((size_t) *(DEVices[type]->DEVmodSize));
+    if (!model)
+        return E_NOMEM;
+
+    model->GENmodType = type;
+    model->GENmodName = name;
+    model->GENnextModel = ckt->CKThead[type];
+    ckt->CKThead[type] = model;
+
+    nghash_insert(ckt->MODnameHash, name, model);
+
+    *modfast = model;
+
+    return OK;
 }
