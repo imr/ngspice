@@ -611,19 +611,15 @@ finddev_special(
     GENmodel **modptr,
     int *device_or_model)
 {
-    int type = -1;
-
     *devptr = ft_sim->findInstance (ckt, name);
     if (*devptr) {
         *device_or_model = 0;
         return (*devptr)->GENmodPtr->GENmodType;
     }
 
-    type = -1;
-
     // assert(second && *second == -1)
     // assert(third && *third == NULL)
-    *modptr = ft_sim->findModel (ckt, type, modptr, name);
+    *modptr = ft_sim->findModel (ckt, -1, NULL, name);
     if (*modptr) {
         *device_or_model = 1;
         return (*modptr)->GENmodType;
@@ -1211,17 +1207,13 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
 static int
 finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
 {
-    int type = -1;
-
     *devptr = ft_sim->findInstance (ckt, name);
     if (*devptr)
         return (*devptr)->GENmodPtr->GENmodType;
 
-    type = -1;
-
     // assert(second && *second == -1)
     // assert(third && *third == NULL)
-    *modptr = ft_sim->findModel (ckt, type, modptr, name);
+    *modptr = ft_sim->findModel (ckt, -1, modptr, name);
     if (*modptr)
         return (*modptr)->GENmodType;
 

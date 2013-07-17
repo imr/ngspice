@@ -280,7 +280,6 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     URCmodel *model = (URCmodel *) inModel;
     GENinstance *in;
     GENmodel *modfast;
-    int type;
 
     /* Delete models, devices, and intermediate nodes; */
 
@@ -306,11 +305,9 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    if (error && error != E_EXISTS)
 		return error;
 
-	    modfast = NULL;
-	    type = -1;
             // assert(second && *second == -1)
             // assert(third && *third == NULL)
-	    modfast = CKTfndMod(ckt, type, &modfast, varUid);
+	    modfast = CKTfndMod(ckt, -1, NULL, varUid);
 	    if (!modfast)
 		return E_NOMOD;
 
@@ -325,11 +322,9 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    if (error && error != E_EXISTS)
 		return error;
 
-	    modfast = NULL;
-	    type = -1;
             // assert(second && *second == -1)
             // assert(third && *third == NULL)
-	    modfast = CKTfndMod(ckt, type, &modfast, varUid);
+	    modfast = CKTfndMod(ckt, -1, NULL, varUid);
 	    if (!modfast)
 		return E_NOMOD;
 	    CKTdltMod(ckt, modfast);
