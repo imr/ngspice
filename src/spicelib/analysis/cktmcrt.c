@@ -21,13 +21,11 @@ int
 CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 {
     GENmodel *mymodfast = NULL;
-    int error;
 
     // assert(second)
     // assert(third && *third == NULL)
     mymodfast = CKTfndMod(ckt, &type, &mymodfast, name);
-    error = mymodfast ? OK : E_NOMOD;
-    if(error == E_NOMOD) {
+    if(!mymodfast) {
         mymodfast = (GENmodel *) tmalloc((size_t) *(DEVices[type]->DEVmodSize));
         if(mymodfast == NULL) return(E_NOMEM);
         mymodfast->GENmodType = type;
@@ -36,11 +34,9 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
         ckt->CKThead[type] = mymodfast;
         if(modfast) *modfast=mymodfast;
         return(OK);
-    } else if (error==0) {
+    } else {
         if(modfast) *modfast=mymodfast;
         return(E_EXISTS);
-    } else {
-        return(error);
     }
     /*NOTREACHED*/
 }
