@@ -319,7 +319,7 @@ extern void NDEVacct(CKTcircuit *ckt, FILE *file);
 extern void CKTncDump(CKTcircuit *);
 extern int CKTfndAnal(CKTcircuit *, int *, JOB **, IFuid , TSKtask *, IFuid);
 extern int CKTfndBranch(CKTcircuit *, IFuid);
-extern GENinstance *CKTfndDev(CKTcircuit *, int *, GENinstance **, IFuid);
+extern GENinstance *CKTfndDev(CKTcircuit *, IFuid);
 extern int CKTfndMod(CKTcircuit *, int *, GENmodel **, IFuid);
 extern int CKTfndNode(CKTcircuit *, CKTnode **, IFuid);
 extern int CKTfndTask(CKTcircuit *, TSKtask **, IFuid );

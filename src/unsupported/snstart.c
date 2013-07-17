@@ -43,8 +43,7 @@ SENstartup(CKTcircuit *ckt, int restart)
         type = -1;
         fast = NULL;
 
-        // assert(third && *third == NULL);
-        fast = CKTfndDev(ckt, NULL, NULL, ckt->CKTsenInfo->SENdevices[i]);
+        fast = CKTfndDev(ckt, ckt->CKTsenInfo->SENdevices[i]);
         if (!fast)
             return E_NODEV;
 

@@ -40,9 +40,8 @@ INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
      * (name, type, direct pointer) - the type and direct pointer
      * WILL be set on return unless error is not OK
      */
-    // assert(third) for all invocations
     if (*fast == NULL)
-        *fast = sim->findInstance (ckt, NULL, NULL, devnam);
+        *fast = sim->findInstance (ckt, devnam);
     if (*fast == NULL)
 	return (E_NODEV);
 
