@@ -10,17 +10,6 @@ Author: 1985 Thomas L. Quarles
 #include "string.h"
 
 
-static GENinstance *
-find_instance(GENinstance *here, IFuid name)
-{
-    for (; here; here = here->GENnextInstance)
-        if (here->GENname == name)
-            return here;
-
-    return NULL;
-}
-
-
 int
 CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast)
 {
@@ -36,8 +25,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
 
     /* we know the model `modfast', but need to find the device instance */
     if (modfast) {
-        here = find_instance(modfast->GENinstances, name);
-        if (here) {
+        here = nghash_find(ckt->DEVnameHash, name);
+        if (here && here->GENmodPtr == modfast) {
             if (fast)
                 *fast = here;
 
@@ -54,8 +43,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
         /* look through all models */
         for (mods = ckt->CKThead[*type]; mods ; mods = mods->GENnextModel) {
             /* and all instances */
-                here = find_instance(mods->GENinstances, name);
-                if (here) {
+                here = nghash_find(ckt->DEVnameHash, name);
+                if (here && here->GENmodPtr == mods) {
                     if (fast)
                         *fast = here;
                     return OK;
@@ -72,8 +61,8 @@ CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *
             /* look through all models */
             for (mods = ckt->CKThead[*type]; mods; mods = mods->GENnextModel) {
                 /* and all instances */
-                    here = find_instance(mods->GENinstances, name);
-                    if (here) {
+                    here = nghash_find(ckt->DEVnameHash, name);
+                    if (here && here->GENmodPtr == mods) {
                         if (fast)
                             *fast = here;
                         return OK;
