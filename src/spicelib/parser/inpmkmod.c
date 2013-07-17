@@ -46,7 +46,6 @@ int INPmakeMod(char *token, int type, card * line)
    (*i)->INPmodName = token;                 /* model name */
    (*i)->INPmodType = type;                  /* model type */
    (*i)->INPnextModel = NULL;   /* pointer to next model (end of list) */
-   (*i)->INPmodUsed = 0;                     /* model is unused */
    (*i)->INPmodLine = line;                  /* model line */
    (*i)->INPmodfast = NULL;
    return (OK);

@@ -158,7 +158,7 @@ char *MIFgetMod(
             }
 
             /* check to see if this model's parameters have been processed */
-            if(! modtmp->INPmodUsed) {
+            if(! modtmp->INPmodfast) {
 
                 /* not already processed, so create data struct */
                 error = ft_sim->newModel ( ckt, modtmp->INPmodType,
@@ -235,7 +235,6 @@ char *MIFgetMod(
 
                 }  /* end while end of line not reached */
 
-                modtmp->INPmodUsed = 1;
                 modtmp->INPmodLine->error = err;
 
             }  /* end if model parameters not processed yet */
