@@ -311,6 +311,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
             // assert(second && *second == -1)
             // assert(third && *third == NULL)
 	    error = CKTfndMod(ckt, &type, &modfast, varUid);
+            error = modfast ? OK : E_NOMOD;
 	    if (error)
 		return error;
 
@@ -330,6 +331,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
             // assert(second && *second == -1)
             // assert(third && *third == NULL)
 	    error = CKTfndMod(ckt, &type, &modfast, varUid);
+            error = modfast ? OK : E_NOMOD;
 	    if (error)
 		return error;
 
