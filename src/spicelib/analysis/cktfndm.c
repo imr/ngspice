@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 
-int
+GENmodel *
 CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
 {
     GENmodel *mods;
@@ -21,7 +21,7 @@ CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
     if(modfast != NULL && *modfast != NULL) {
         /* already have  modfast, so nothing to do */
         if(type) *type = (*modfast)->GENmodType;
-        return(OK);
+        return *modfast;
     } 
     if(*type >=0 && *type < DEVmaxnum) {
         /* have device type, need to find model */
@@ -30,10 +30,10 @@ CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
                 mods = mods->GENnextModel) {
             if(mods->GENmodName == modname) {
                 *modfast = mods;
-                return(OK);
+                return *modfast;
             }
         }
-        return(E_NOMOD);
+        return NULL;
     } else if(*type == -1) {
         /* look through all types (UGH - worst case - take forever) */ 
         for(*type = 0;*type <DEVmaxnum;(*type)++) {
@@ -43,11 +43,11 @@ CKTfndMod(CKTcircuit *ckt, int *type, GENmodel **modfast, IFuid modname)
                     mods = mods->GENnextModel) {
                 if(mods->GENmodName == modname) {
                     *modfast = mods;
-                    return(OK);
+                    return *modfast;
                 }
             }
         }
         *type = -1;
-        return(E_NOMOD);
-    } else return(E_NOMOD);
+        return NULL;
+    } else return NULL;
 }
