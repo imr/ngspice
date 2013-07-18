@@ -37,7 +37,7 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   /* generate the work array for setting up nodes and elements */
   XCALLOC(nodeArray, ONEnode *, 1 + pDevice->numNodes);
 
-  for (pC = pCoord; pC != NIL(ONEcoord); pC = pC->next) {
+  for (pC = pCoord; pC != NULL; pC = pC->next) {
     xPos = pC->location;
     XCALLOC(pNode, ONEnode, 1);
     pNode->x = xPos;
@@ -46,12 +46,12 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   }
 
   /* mark the domain info on the nodes */
-  if (pDomain == NIL(ONEdomain)) {
+  if (pDomain == NULL) {
     fprintf(stderr, "Error: domains not defined for device\n");
     exit(-1);
   }
-  for (pD = pDomain; pD != NIL(ONEdomain); pD = pD->next) {
-    for (pM = pMaterial; pM != NIL(ONEmaterial); pM = pM->next) {
+  for (pD = pDomain; pD != NULL; pD = pD->next) {
+    for (pM = pMaterial; pM != NULL; pM = pM->next) {
       if (pD->material == pM->id) {
 	break;
       }
@@ -109,8 +109,8 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   }
 
   /* mark the domain info on the elements */
-  for (pD = pDomain; pD != NIL(ONEdomain); pD = pD->next) {
-    for (pM = pMaterial; pM != NIL(ONEmaterial); pM = pM->next) {
+  for (pD = pDomain; pD != NULL; pD = pD->next) {
+    for (pM = pMaterial; pM != NULL; pM = pM->next) {
       if (pD->material == pM->id) {
 	break;
       }

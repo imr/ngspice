@@ -60,7 +60,7 @@ static void
     /* Find this node's owner element. */
     for ( i = 0; i <= 3; i++ ) {
       pElem = pNode->pElems[ i ];
-      if ( pElem != NIL(TWOelem) && pElem->evalNodes[ (i+2)%4 ] ) {
+      if ( pElem != NULL && pElem->evalNodes[ (i+2)%4 ] ) {
 	break; /* got it */
       }
     }

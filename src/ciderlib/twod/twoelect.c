@@ -51,12 +51,12 @@ checkElectrodes(TWOelectrode *pElectrode, int idHigh)
    */
   pElectrode = TWOsortElectrodes( pElectrode, TWOcmpElectrode );
   id = 1;
-  for (pE = pElectrode; pE != NIL(TWOelectrode); pE = pE->next) {
+  for (pE = pElectrode; pE != NULL; pE = pE->next) {
     if (pE->id == -1) pE->id = id++;
   }
   pElectrode = TWOsortElectrodes( pElectrode, TWOcmpElectrode );
 
-  for (pE = pElectrode, id = 1; pE != NIL(TWOelectrode); pE = pE->next) {
+  for (pE = pElectrode, id = 1; pE != NULL; pE = pE->next) {
   /* Check id's */
     if ( pE->id < 1 || pE->id > idHigh) {
       fprintf(stderr, "Error: electrode %d out of range\n",pE->id);
@@ -105,7 +105,7 @@ setupContacts(TWOdevice *pDevice, TWOelectrode *pElectrode,
    * 2. Compute number of nodes in each electrode
    * 3. Overwrite SEMICON or INSULATOR nodeType at electrodes
    */
-  for ( pE = pElectrode; pE != NIL(TWOelectrode); pE = pE->next ) {
+  for ( pE = pElectrode; pE != NULL; pE = pE->next ) {
     if (pE->id != id) { /* Found the next electrode */
       id = pE->id;
       electrodeSize[id] = 0;
@@ -114,7 +114,7 @@ setupContacts(TWOdevice *pDevice, TWOelectrode *pElectrode,
     for ( xIndex = pE->ixLo; xIndex <= pE->ixHi; xIndex++ ) {
       for ( yIndex = pE->iyLo; yIndex <= pE->iyHi; yIndex++ ) {
         pNode = nodeArray[ xIndex ][ yIndex ];
-        if ( pNode != NIL( TWOnode ) ) {
+        if ( pNode != NULL ) {
           pNode->nodeType = CONTACT;
 
 	  /* Assign each node to an electrode only once */
@@ -144,17 +144,17 @@ setupContacts(TWOdevice *pDevice, TWOelectrode *pElectrode,
   printElectrodes( pDevice->pFirstContact );
 */
   id = 0;
-  pDevice->pFirstContact = pTail = NIL(TWOcontact);
-  for ( pE = pElectrode; pE != NIL(TWOelectrode); pE = pE->next ) {
+  pDevice->pFirstContact = pTail = NULL;
+  for ( pE = pElectrode; pE != NULL; pE = pE->next ) {
     if (pE->id != id) { /* Found the next electrode */
-      if ( pDevice->pFirstContact == NIL(TWOcontact) ) {
+      if ( pDevice->pFirstContact == NULL ) {
 	XCALLOC( pNew, TWOcontact, 1 );
 	pDevice->pFirstContact = pTail = pNew;
       } else {
 	XCALLOC( pNew->next, TWOcontact, 1 );
 	pTail = pNew = pNew->next;
       }
-      pNew->next = NIL(TWOcontact);
+      pNew->next = NULL;
       id = pNew->id = pE->id;
       pNew->workf = pE->workf;
       pNew->numNodes = electrodeSize[id];
@@ -164,7 +164,7 @@ setupContacts(TWOdevice *pDevice, TWOelectrode *pElectrode,
     for ( xIndex = pE->ixLo; xIndex <= pE->ixHi; xIndex++ ) {
       for ( yIndex = pE->iyLo; yIndex <= pE->iyHi; yIndex++ ) {
         pNode = nodeArray[ xIndex ][ yIndex ];
-        if ( pNode != NIL( TWOnode ) ) {
+        if ( pNode != NULL ) {
 	  /* Make sure node belongs to this electrode, then
 	   * clear ELCT_ID so that it is not grabbed again.
 	   */

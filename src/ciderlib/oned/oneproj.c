@@ -52,7 +52,7 @@ NUMDproject(ONEdevice *pDevice, double delV)
     pDevice->rhs[pNode->pEqn] = -pEdge->dJpDpsiP1;
   }
   incVpn = pDevice->dcDeltaSolution;
-  spSolve(pDevice->matrix, pDevice->rhs, incVpn, NIL(spREAL), NIL(spREAL));
+  spSolve(pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL);
 
   for (index = 1; index < pDevice->numNodes; index++) {
     pElem = pDevice->elemArray[index];
@@ -128,7 +128,7 @@ NBJTproject(ONEdevice *pDevice, double delVce, double delVbe,
       pDevice->rhs[pNode->pEqn] = -pEdge->dJpDpsiP1;
     }
     incVce = pDevice->dcDeltaSolution;
-    spSolve(pDevice->matrix, pDevice->rhs, incVce, NIL(spREAL), NIL(spREAL));
+    spSolve(pDevice->matrix, pDevice->rhs, incVce, NULL, NULL);
 
     for (index = 1; index < pDevice->numNodes; index++) {
       pElem = pDevice->elemArray[index];
@@ -179,7 +179,7 @@ NBJTproject(ONEdevice *pDevice, double delVce, double delVbe,
     }
 
     incVbe = pDevice->copiedSolution;
-    spSolve(pDevice->matrix, pDevice->rhs, incVbe, NIL(spREAL), NIL(spREAL));
+    spSolve(pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL);
 
     for (index = 1; index < pDevice->numNodes; index++) {
       pElem = pDevice->elemArray[index];

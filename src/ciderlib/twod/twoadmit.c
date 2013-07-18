@@ -687,7 +687,7 @@ TWOsorSolve(TWOdevice *pDevice, double *xReal, double *xImag,
     }
 
     /* compute xReal(k+1). solution stored in rhsImag */
-    spSolve(pDevice->matrix, rhsSOR, rhsSOR, NIL(spREAL), NIL(spREAL));
+    spSolve(pDevice->matrix, rhsSOR, rhsSOR, NULL, NULL);
     /* modify solution when wRelax is not 1 */
     if (wRelax != 1) {
       for (index = 1; index <= numEqns; index++) {
@@ -729,7 +729,7 @@ TWOsorSolve(TWOdevice *pDevice, double *xReal, double *xImag,
       }
     }
     /* compute xImag(k+1) */
-    spSolve(pDevice->matrix, rhsSOR, rhsSOR, NIL(spREAL), NIL(spREAL));
+    spSolve(pDevice->matrix, rhsSOR, rhsSOR, NULL, NULL);
     /* modify solution when wRelax is not 1 */
     if (wRelax != 1) {
       for (index = 1; index <= numEqns; index++) {
@@ -775,7 +775,7 @@ contactAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
     pNode = pContact->pNodes[index];
     for (i = 0; i <= 3; i++) {
       pElem = pNode->pElems[i];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	switch (i) {
 	case 0:
 	  /* the TL element */
@@ -976,7 +976,7 @@ oxideAdmittance(TWOdevice *pDevice, TWOcontact *pContact, BOOLEAN delVContact,
     pNode = pContact->pNodes[index];
     for (i = 0; i <= 3; i++) {
       pElem = pNode->pElems[i];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	switch (i) {
 	case 0:
 	  /* the TL element */

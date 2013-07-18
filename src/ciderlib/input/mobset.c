@@ -34,26 +34,26 @@ MOBcheck(MOBcard *cardList, MaterialInfo *matlList)
   int error = OK;
   char ebuf[512];		/* error message buffer */
 
-  for ( card = cardList; card != NIL(MOBcard); card = card->MOBnextCard ) {
+  for ( card = cardList; card != NULL; card = card->MOBnextCard ) {
     cardNum++;
     if (!card->MOBmaterialGiven) {
       sprintf( ebuf,
 	  "mobility card %d is missing a material index",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
       error = E_PRIVATE;
     } else {
       /* Make sure the material exists */
-      for ( matl = matlList; matl != NIL(MATLmaterial); matl = matl->next ) {
+      for ( matl = matlList; matl != NULL; matl = matl->next ) {
 	if ( card->MOBmaterial == matl->id ) {
 	  break;
 	}
       }
-      if (matl == NIL(MATLmaterial)) {
+      if (matl == NULL) {
 	sprintf( ebuf,
 	    "mobility card %d specifies a non-existent material",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	error = E_PRIVATE;
       }
     }
@@ -94,10 +94,10 @@ MOBsetup(MOBcard *cardList, MaterialInfo *materialList)
 /* Check the card list */
   if ((error = MOBcheck( cardList, materialList )) != 0) return( error );
 
-  for ( card = cardList; card != NIL(MOBcard); card = card->MOBnextCard ) {
+  for ( card = cardList; card != NULL; card = card->MOBnextCard ) {
 
     /* Find the right material */
-    for ( matl = materialList; matl != NIL(MATLmaterial); matl = matl->next ) {
+    for ( matl = materialList; matl != NULL; matl = matl->next ) {
       if ( card->MOBmaterial == matl->id ) {
 	break;
       }

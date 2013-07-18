@@ -30,7 +30,7 @@ void
    */
   incVpn = pDevice->dcDeltaSolution;
   storeNewRhs( pDevice, pDevice->pLastContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVpn, NIL(spREAL), NIL(spREAL));
+  spSolve( pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL);
   
   incVpn = pDevice->dcDeltaSolution;
   *gd = contactConductance( pDevice, pContact, deltaVContact, incVpn,
@@ -58,9 +58,9 @@ void
   incVce = pDevice->dcDeltaSolution;
   incVbe = pDevice->copiedSolution;
   storeNewRhs( pDevice, pColContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVce, NIL(spREAL), NIL(spREAL));
+  spSolve( pDevice->matrix, pDevice->rhs, incVce, NULL, NULL);
   storeNewRhs( pDevice, pBaseContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVbe, NIL(spREAL), NIL(spREAL));
+  spSolve( pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL);
   
   *dIeDVce = contactConductance( pDevice, pEmitContact, FALSE, incVce,
 				tranAnalysis, intCoeff );
@@ -96,11 +96,11 @@ void
   incVsb = pDevice->copiedSolution;
   incVgb = pDevice->rhsImag;
   storeNewRhs( pDevice, pDContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVdb, NIL(spREAL), NIL(spREAL));
+  spSolve( pDevice->matrix, pDevice->rhs, incVdb, NULL, NULL);
   storeNewRhs( pDevice, pSContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVsb, NIL(spREAL), NIL(spREAL));
+  spSolve( pDevice->matrix, pDevice->rhs, incVsb, NULL, NULL);
   storeNewRhs( pDevice, pGContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVgb, NIL(spREAL), NIL(spREAL));
+  spSolve( pDevice->matrix, pDevice->rhs, incVgb, NULL, NULL);
   
   dIdV->dIdDVdb = contactConductance( pDevice, pDContact, TRUE,
 				     incVdb, tranAnalysis, intCoeff );
@@ -149,7 +149,7 @@ double
     pNode = pContact->pNodes[ index ];
     for ( i = 0; i <= 3; i++ ) {
       pElem = pNode->pElems[ i ];
-      if ( pElem != NIL(TWOelem) ) {
+      if ( pElem != NULL ) {
 	dx = 0.5 * pElem->dx;
 	dy = 0.5 * pElem->dy;
 	switch ( i ) {
@@ -222,7 +222,7 @@ double
     pNode = pContact->pNodes[ index ];
     for ( i = 0; i <= 3; i++ ) {
       pElem = pNode->pElems[ i ];
-      if ( pElem != NIL(TWOelem) ) {
+      if ( pElem != NULL ) {
 	dx = 0.5 * pElem->dx;
 	dy = 0.5 * pElem->dy;
 	switch ( i ) {
@@ -290,7 +290,7 @@ double
     pNode = pContact->pNodes[ index ];
     for ( i = 0; i <= 3; i++ ) {
       pElem = pNode->pElems[ i ];
-      if ( pElem != NIL(TWOelem) ) {
+      if ( pElem != NULL ) {
 	switch ( i ) {
 	case 0:
 	  /* the TL element */
@@ -445,7 +445,7 @@ double
     pNode = pContact->pNodes[ index ];
     for ( i = 0; i <= 3; i++ ) {
       pElem = pNode->pElems[ i ];
-      if ( pElem != NIL(TWOelem) ) {
+      if ( pElem != NULL ) {
 	switch ( i ) {
 	case 0:
 	  /* the TL element */

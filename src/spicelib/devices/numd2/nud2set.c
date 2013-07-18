@@ -17,7 +17,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/ciderinp.h"
 #include "ngspice/suffix.h"
 
-#define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\
 if (size && (var =(type *)calloc(1, (unsigned)(size)*sizeof(type))) == NULL) {\
    return(E_NOMEM);\
@@ -41,13 +40,13 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   int error, xIndex;
   int xMeshSize, yMeshSize;
   TWOdevice *pDevice;
-  TWOcoord *xCoordList = NIL(TWOcoord);
-  TWOcoord *yCoordList = NIL(TWOcoord);
-  TWOdomain *domainList = NIL(TWOdomain);
-  TWOelectrode *electrodeList = NIL(TWOelectrode);
-  TWOmaterial *pM, *pMaterial = NIL(TWOmaterial), *materialList = NIL(TWOmaterial);
-  DOPprofile *profileList = NIL(DOPprofile);
-  DOPtable *dopTableList = NIL(DOPtable);
+  TWOcoord *xCoordList = NULL;
+  TWOcoord *yCoordList = NULL;
+  TWOdomain *domainList = NULL;
+  TWOelectrode *electrodeList = NULL;
+  TWOmaterial *pM, *pMaterial = NULL, *materialList = NULL;
+  DOPprofile *profileList = NULL;
+  DOPtable *dopTableList = NULL;
   double startTime;
 
 
@@ -211,9 +210,9 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	}
 
 	/* Create a copy of material data that can change with temperature. */
-	pDevice->pMaterials = NIL(TWOmaterial);
-	for (pM = materialList; pM != NIL(TWOmaterial); pM = pM->next) {
-	  if (pDevice->pMaterials == NIL(TWOmaterial)) {
+	pDevice->pMaterials = NULL;
+	for (pM = materialList; pM != NULL; pM = pM->next) {
+	  if (pDevice->pMaterials == NULL) {
 	    TSCALLOC(pMaterial, 1, TWOmaterial);
 	    pDevice->pMaterials = pMaterial;
 	  } else {
@@ -222,7 +221,7 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
 	  bcopy(pM, pMaterial, sizeof(TWOmaterial));
-	  pMaterial->next = NIL(TWOmaterial);
+	  pMaterial->next = NULL;
 	}
 
 	/* Generate the mesh structure for the device. */

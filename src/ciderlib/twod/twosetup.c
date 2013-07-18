@@ -130,7 +130,7 @@ void TWOsetup(TWOdevice *pDevice)
     }
   }
 
-  for ( pC = pDevice->pFirstContact; pC != NIL(TWOcontact); pC = pC->next ) {
+  for ( pC = pDevice->pFirstContact; pC != NULL; pC = pC->next ) {
     numContactNodes = pC->numNodes;
     for ( index = 0; index < numContactNodes; index++ ) {
       pNode = pC->pNodes[ index ];
@@ -169,7 +169,7 @@ TWOcopyBCinfo(TWOdevice *pDevice, TWOelem *pElem, BDRYcard *card, int index )
     area = 0.0;
     for (eIndex = 0; eIndex <= 3; eIndex++) {
       pNElem = pNode->pElems[eIndex];
-      if (pNElem != NIL(TWOelem) && pElem->elemType == SEMICON) {
+      if (pNElem != NULL && pElem->elemType == SEMICON) {
 	area += 0.25 * pElem->dx * pElem->dy;
       }
     }
@@ -205,12 +205,12 @@ TWOcopyBCinfo(TWOdevice *pDevice, TWOelem *pElem, BDRYcard *card, int index )
     newChannel->pSeed = pElem;
     newChannel->pNElem = pNElem;
     newChannel->type = index;
-    if (pDevice->pChannel != NIL(TWOchannel)) {
+    if (pDevice->pChannel != NULL) {
       newChannel->id = pDevice->pChannel->id + 1;
       newChannel->next = pDevice->pChannel;
     } else {
       newChannel->id = 1;
-      newChannel->next = NIL(TWOchannel);
+      newChannel->next = NULL;
     }
     pDevice->pChannel = newChannel;
 
@@ -252,11 +252,11 @@ void TWOsetBCparams(TWOdevice *pDevice, BDRYcard *cardList)
   TWOelem *pElem, *pNElem;
   BDRYcard *card;
 
-  for ( card = cardList; card != NIL(BDRYcard); card = card->BDRYnextCard ) {
+  for ( card = cardList; card != NULL; card = card->BDRYnextCard ) {
     for (xIndex = card->BDRYixLow; xIndex < card->BDRYixHigh; xIndex++) {
       for (yIndex = card->BDRYiyLow; yIndex < card->BDRYiyHigh; yIndex++) {
 	pElem = pDevice->elemArray[ xIndex ][ yIndex ];
-	if (pElem != NIL(TWOelem)) {
+	if (pElem != NULL) {
 	  if (pElem->domain == card->BDRYdomain) {
 	    for (index = 0; index <= 3; index++) {
 	      if (pElem->evalEdges[index]) {

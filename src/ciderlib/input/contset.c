@@ -32,13 +32,13 @@ CONTcheck(CONTcard *cardList)
   int error = OK;
   char ebuf[512];		/* error message buffer */
 
-  for ( card = cardList; card != NIL(CONTcard); card = card->CONTnextCard ) {
+  for ( card = cardList; card != NULL; card = card->CONTnextCard ) {
     cardNum++;
     if (!card->CONTnumberGiven) {
       sprintf( ebuf,
 	  "contact card %d is missing an electrode index",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
       error = E_PRIVATE;
     }
 
@@ -69,10 +69,10 @@ CONTsetup(CONTcard *cardList, ELCTelectrode *electrodeList)
 /* Check the card list */
   if ((error = CONTcheck( cardList )) != 0) return( error );
 
-  for ( card = cardList; card != NIL(CONTcard); card = card->CONTnextCard ) {
+  for ( card = cardList; card != NULL; card = card->CONTnextCard ) {
 
     /* Copy workfunction to all matching electrodes */
-    for ( electrode = electrodeList; electrode != NIL(ELCTelectrode);
+    for ( electrode = electrodeList; electrode != NULL;
 	electrode = electrode->next ) {
       if ( card->CONTnumber == electrode->id ) {
 	if ( card->CONTworkfunGiven ) {

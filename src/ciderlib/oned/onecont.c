@@ -272,7 +272,7 @@ ONE_jacLoad(ONEdevice *pDevice)
 
 
   /* first compute the currents and their derivatives */
-  ONE_commonTerms(pDevice, FALSE, FALSE, NIL(ONEtranInfo));
+  ONE_commonTerms(pDevice, FALSE, FALSE, NULL);
 
   /* zero the matrix */
   spClear(pDevice->matrix);

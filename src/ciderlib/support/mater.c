@@ -283,7 +283,7 @@ printMaterialInfo(MaterialInfo *info)
   char *name;
 
 
-  if (info == NIL(MaterialInfo)) {
+  if (info == NULL) {
     fprintf(stderr, "Error: tried to print NIL MaterialInfo\n");
     exit(-1);
   }

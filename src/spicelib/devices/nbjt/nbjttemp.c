@@ -14,7 +14,6 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
-#define NIL(type)   ((type *)0)
 extern int ONEdcDebug;
 
 int 
@@ -45,7 +44,7 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     if (!options->OPTNtnomGiven) {
       options->OPTNtnom = ckt->CKTnomTemp;
     }
-    for (pM = model->NBJTmatlInfo; pM != NIL(ONEmaterial); pM = pM->next) {
+    for (pM = model->NBJTmatlInfo; pM != NULL; pM = pM->next) {
       pM->tnom = options->OPTNtnom;
     }
 

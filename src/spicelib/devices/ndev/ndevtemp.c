@@ -12,7 +12,6 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#define NIL(type)   ((type *)0)
 
 int 
 NDEVtemp(

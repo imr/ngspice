@@ -34,13 +34,13 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
   pElemBR = pNode->pBRElem;
 
   /* Null edge pointers */
-  pEdgeT = pEdgeB = pEdgeL = pEdgeR = NIL(TWOedge);
+  pEdgeT = pEdgeB = pEdgeL = pEdgeR = NULL;
 
   /* Zero mobilities */
   *mun = *mup = 0.0;
 
   /* Find edges next to node */
-  if (pElemTL != NIL(TWOelem)) {
+  if (pElemTL != NULL) {
     numFound++;
     *mun += pElemTL->mun0;
     *mup += pElemTL->mup0;
@@ -57,7 +57,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
       epsL = pElemTL->epsRel;
     }
   }
-  if (pElemTR != NIL(TWOelem)) {
+  if (pElemTR != NULL) {
     numFound++;
     *mun += pElemTR->mun0;
     *mup += pElemTR->mup0;
@@ -73,7 +73,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
       epsR = pElemTR->epsRel;
     }
   }
-  if (pElemBR != NIL(TWOelem)) {
+  if (pElemBR != NULL) {
     numFound++;
     *mun += pElemBR->mun0;
     *mup += pElemBR->mup0;
@@ -90,7 +90,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
       epsR = pElemBR->epsRel;
     }
   }
-  if (pElemBL != NIL(TWOelem)) {
+  if (pElemBL != NULL) {
     numFound++;
     *mun += pElemBL->mun0;
     *mup += pElemBL->mup0;
@@ -112,7 +112,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
   /* compute horizontal vector components */
   /* No more than one of Left Edge or Right Edge is absent */
   /* If one is absent the other is guaranteed to be from silicon */
-  if (pEdgeL == NIL(TWOedge)) {
+  if (pEdgeL == NULL) {
     if (pNode->nodeType == CONTACT) {
       *jnx = pEdgeR->jn;
       *jpx = pEdgeR->jp;
@@ -122,7 +122,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
       *jpx = 0.0;
       *jdx = 0.0;
     }
-  } else if (pEdgeR == NIL(TWOedge)) {
+  } else if (pEdgeR == NULL) {
     if (pNode->nodeType == CONTACT) {
       *jnx = pEdgeL->jn;
       *jpx = pEdgeL->jp;
@@ -149,7 +149,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
   /* compute vertical vector components */
   /* No more than one of Top Edge or Bottom Edge is absent */
   /* If one is absent the other is guaranteed to be from silicon */
-  if (pEdgeT == NIL(TWOedge)) {
+  if (pEdgeT == NULL) {
     if (pNode->nodeType == CONTACT) {
       *jny = pEdgeB->jn;
       *jpy = pEdgeB->jp;
@@ -159,7 +159,7 @@ nodeCurrents(TWOelem *pElem, TWOnode *pNode, double *mun, double *mup,
       *jpy = 0.0;
       *jdy = 0.0;
     }
-  } else if (pEdgeB == NIL(TWOedge)) {
+  } else if (pEdgeB == NULL) {
     if (pNode->nodeType == CONTACT) {
       *jny = pEdgeT->jn;
       *jpy = pEdgeT->jp;

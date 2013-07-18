@@ -15,7 +15,6 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
-#define NIL(type)   ((type *)0)
 
 int
 NUMOStemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -43,7 +42,7 @@ NUMOStemp(GENmodel *inModel, CKTcircuit *ckt)
     if (!options->OPTNtnomGiven) {
       options->OPTNtnom = ckt->CKTnomTemp;
     }
-    for (pM = model->NUMOSmatlInfo; pM != NIL(TWOmaterial);
+    for (pM = model->NUMOSmatlInfo; pM != NULL;
 	pM = pM->next) {
       pM->tnom = options->OPTNtnom;
     }

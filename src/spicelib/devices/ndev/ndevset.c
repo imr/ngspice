@@ -13,7 +13,6 @@ University of Science and Technology of China
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\
 if (size && (var =(type *)calloc(1, (unsigned)(size)*sizeof(type))) == NULL) {\
    return(E_NOMEM);\

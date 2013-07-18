@@ -34,34 +34,34 @@ ELCTcheck(ELCTcard *cardList)
   int error = OK;
   char ebuf[512];		/* error message buffer */
 
-  for ( card = cardList; card != NIL(ELCTcard); card = card->ELCTnextCard ) {
+  for ( card = cardList; card != NULL; card = card->ELCTnextCard ) {
     cardNum++;
     if (card->ELCTxLowGiven && card->ELCTixLowGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
       card->ELCTxLowGiven = FALSE;
     }
     if (card->ELCTxHighGiven && card->ELCTixHighGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
       card->ELCTxHighGiven = FALSE;
     }
     if (card->ELCTyLowGiven && card->ELCTiyLowGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
       card->ELCTyLowGiven = FALSE;
     }
     if (card->ELCTyHighGiven && card->ELCTiyHighGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
       card->ELCTyHighGiven = FALSE;
     }
     if (!card->ELCTnumberGiven) {
@@ -98,7 +98,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
   char ebuf[512];		/* error message buffer */
 
 /* Initialize list of electrodes */
-  *electrodeList = NIL(ELCTelectrode);
+  *electrodeList = NULL;
 
 /* Check the card list */
   if ((error = ELCTcheck( cardList )) != 0) return( error );
@@ -108,17 +108,17 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
   MESHiBounds( yMeshList, &iyMin, &iyMax );
 
   error = OK;
-  for ( card = cardList; card != NIL(ELCTcard); card = card->ELCTnextCard ) {
+  for ( card = cardList; card != NULL; card = card->ELCTnextCard ) {
     cardNum++;
 
-    if (*electrodeList == NIL(ELCTelectrode)) {
+    if (*electrodeList == NULL) {
       RALLOC( newElectrode, ELCTelectrode, 1 );
       *electrodeList = newElectrode;
     } else {
       RALLOC( newElectrode->next, ELCTelectrode, 1 );
       newElectrode = newElectrode->next;
     }
-    newElectrode->next = NIL(ELCTelectrode);
+    newElectrode->next = NULL;
     newElectrode->id = card->ELCTnumber;
     newElectrode->workf = 4.10 /* electron volts */;
 
@@ -144,7 +144,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
       sprintf( ebuf,
 	  "electrode card %d has low x index (%d) > high x index (%d)",
 	  cardNum, newElectrode->ixLo, newElectrode->ixHi );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
       error = E_PRIVATE;
     }
     if (card->ELCTiyLowGiven) {
@@ -169,7 +169,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
       sprintf( ebuf,
 	  "electrode card %d has low y index (%d) > high y index (%d)",
 	  cardNum, newElectrode->iyLo, newElectrode->iyHi );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
       error = E_PRIVATE;
     }
   }

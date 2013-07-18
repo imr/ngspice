@@ -37,17 +37,17 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
   int error = OK;
   char ebuf[512];		/* error message buffer */
 
-  for ( card = cardList; card != NIL(DOPcard); card = card->DOPnextCard ) {
+  for ( card = cardList; card != NULL; card = card->DOPnextCard ) {
     cardNum++;
     if (!card->DOPdomainsGiven) {
       card->DOPnumDomains = 0;
-      card->DOPdomains = NIL(int);
+      card->DOPdomains = NULL;
     }
     if (!card->DOPprofileTypeGiven) {
       sprintf( ebuf,
 	  "doping card %d does not specify profile type",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
       error = E_PRIVATE;
     } else switch (card->DOPprofileType) {
       case DOP_UNIF:
@@ -55,7 +55,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs conc of uniform distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -64,7 +64,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of linear distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -73,7 +73,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of gaussian distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -82,7 +82,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of error-function distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -91,7 +91,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of exponential distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -101,7 +101,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs input-file name of suprem3 data",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -110,7 +110,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs input-file name of ascii data",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -118,7 +118,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	sprintf( ebuf,
 	    "doping card %d has unrecognized profile type",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_FATAL, ebuf, NIL(IFuid) );
+	SPfrontEnd->IFerror( ERR_FATAL, ebuf, NULL );
 	error = E_NOTFOUND;
 	break;
     }
@@ -203,7 +203,7 @@ DOPsetup(DOPcard *cardList, DOPprofile **profileList, DOPtable **tableList,
   int error, xProfUnif, yProfUnif;
 
 /* Initialize list of profiles */
-  *profileList = endProfile = NIL(DOPprofile);
+  *profileList = endProfile = NULL;
 
 /* Check the card list */
   if ((error = DOPcheck( cardList, xMeshList, yMeshList )) != 0) return( error );
@@ -212,9 +212,9 @@ DOPsetup(DOPcard *cardList, DOPprofile **profileList, DOPtable **tableList,
   MESHlBounds( xMeshList, &xMin, &xMax );
   MESHlBounds( yMeshList, &yMin, &yMax );
 
-  for ( card = cardList; card != NIL(DOPcard); card = card->DOPnextCard ) {
+  for ( card = cardList; card != NULL; card = card->DOPnextCard ) {
 
-    if (*profileList == NIL(DOPprofile)) {
+    if (*profileList == NULL) {
       RALLOC( newProfile, DOPprofile, 1 );
       *profileList = newProfile;
     }
@@ -222,7 +222,7 @@ DOPsetup(DOPcard *cardList, DOPprofile **profileList, DOPtable **tableList,
       RALLOC( newProfile->next, DOPprofile, 1 );
       newProfile = newProfile->next;
     }
-    newProfile->next = NIL(DOPprofile);
+    newProfile->next = NULL;
 
     newProfile->numDomains = card->DOPnumDomains;
     if ( newProfile->numDomains > 0 ) {
@@ -233,7 +233,7 @@ DOPsetup(DOPcard *cardList, DOPprofile **profileList, DOPtable **tableList,
       }
     }
     else {
-      newProfile->domains = NIL(int);
+      newProfile->domains = NULL;
     }
 
     if ( card->DOPimpurityType == IMP_P_TYPE ) {
