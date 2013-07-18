@@ -175,13 +175,7 @@ char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr,char *string,int length)
  * ----------------------------------------------------------------- */
 char *spice_dstring_append_char( SPICE_DSTRINGPTR dstr_p, char c)
 {
-  char tmp_str[2] ;			/* temporary string for append */
-  char *val_p ;				/* return value */
-
-  tmp_str[0] = c ;
-  tmp_str[1] = '\0' ;
-  val_p = spice_dstring_append( dstr_p, tmp_str, -1 ) ;
-  return(val_p) ;
+  return spice_dstring_append( dstr_p, &c, 1 ) ;
 } /* end spice_dstring_append_char() */
 
 static int spice_format_length( va_list args, char *fmt )
