@@ -29,7 +29,7 @@ int
   OUTPcard *card;
   int cardNum = 0;
   
-  for ( card = cardList; card != NIL(OUTPcard); card = card->OUTPnextCard ) {
+  for ( card = cardList; card != NULL; card = card->OUTPnextCard ) {
     cardNum++;
 
     card->OUTPnumVars = -1;

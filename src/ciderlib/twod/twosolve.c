@@ -122,7 +122,7 @@ TWOdcSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN newSolver,
 
     /* SOLVE */
     startTime = SPfrontEnd->IFseconds();
-    spSolve(pDevice->matrix, rhs, delta, NIL(spREAL), NIL(spREAL));
+    spSolve(pDevice->matrix, rhs, delta, NULL, NULL);
     solveTime += SPfrontEnd->IFseconds() - startTime;
 
     /* UPDATE */
@@ -1120,7 +1120,7 @@ TWOnuNorm(TWOdevice *pDevice)
   /* the LU Decomposed matrix is available. use it to calculate x */
 
   spSolve(pDevice->matrix, pDevice->rhs, pDevice->rhsImag,
-      NIL(spREAL), NIL(spREAL));
+      NULL, NULL);
 
   /* the solution is in the rhsImag vector */
   /* compute L2-norm of the rhsImag vector */
@@ -1179,7 +1179,7 @@ TWOjacCheck(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
       for (rIndex = 1; rIndex <= pDevice->numEqns; rIndex++) {
 	diff = (pDevice->rhsImag[rIndex] - pDevice->rhs[rIndex]) / del;
 	dptr = spFindElement(pDevice->matrix, rIndex, index);
-	if (dptr != NIL(double)) {
+	if (dptr != NULL) {
 	  tol = (1e-4 * pDevice->abstol) + (1e-2 * MAX(ABS(diff), ABS(*dptr)));
 	  if ((diff != 0.0) && (ABS(diff - *dptr) > tol)) {
 	    fprintf(stderr, "Mismatch[%d][%d]: FD = %11.4e, AJ = %11.4e\n\t FD-AJ = %11.4e vs. %11.4e\n",

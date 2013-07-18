@@ -133,7 +133,7 @@ ONEcopyBCinfo(ONEdevice *pDevice, ONEelem *pElem, BDRYcard *bdry, int index)
   length = 0.0;
   for (eIndex = 0; eIndex <= 3; eIndex++) {
     pNElem = pNode->pElems[eIndex];
-    if ((pNElem != NIL(ONEelem)) && (pElem->elemType == SEMICON)) {
+    if ((pNElem != NULL) && (pElem->elemType == SEMICON)) {
       length += 0.5 * pElem->dx;
     }
   }
@@ -158,10 +158,10 @@ ONEsetBCparams(ONEdevice *pDevice, BDRYcard *bdryList, CONTcard *contList)
   BDRYcard *bdry;
   CONTcard *cont;
 
-  for (bdry = bdryList; bdry != NIL(BDRYcard); bdry = bdry->BDRYnextCard) {
+  for (bdry = bdryList; bdry != NULL; bdry = bdry->BDRYnextCard) {
     for (xIndex = bdry->BDRYixLow; xIndex < bdry->BDRYixHigh; xIndex++) {
       pElem = pDevice->elemArray[xIndex];
-      if (pElem != NIL(ONEelem)) {
+      if (pElem != NULL) {
 	if (pElem->domain == bdry->BDRYdomain) {
 	  for (index = 0; index <= 1; index++) {
 	    if (pElem->evalNodes[index]) {
@@ -183,7 +183,7 @@ ONEsetBCparams(ONEdevice *pDevice, BDRYcard *bdryList, CONTcard *contList)
       }
     }
   }
-  for (cont = contList; cont != NIL(CONTcard); cont = cont->CONTnextCard) {
+  for (cont = contList; cont != NULL; cont = cont->CONTnextCard) {
     if (!cont->CONTworkfunGiven) {
       cont->CONTworkfun = PHI_METAL;
     }

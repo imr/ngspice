@@ -76,7 +76,7 @@ TWOreadState(TWOdevice *pDevice, char *fileName, int numVolts, double *pV1,
   for (xIndex = 1; xIndex < pDevice->numXNodes; xIndex++) {
     for (yIndex = 1; yIndex < pDevice->numYNodes; yIndex++) {
       pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	if (refPsi == 0.0 && pElem->matlInfo->type == SEMICON) {
 	  refPsi = pElem->matlInfo->refPsi;
 	}
@@ -94,7 +94,7 @@ TWOreadState(TWOdevice *pDevice, char *fileName, int numVolts, double *pV1,
     for (yIndex = 1; yIndex <= pDevice->numYNodes; yIndex++) {
       pNode = nodeArray[xIndex][yIndex];
       index++;
-      if (pNode != NIL(TWOnode)) {
+      if (pNode != NULL) {
 	pNode->psi = psiData[index-1]/VNorm + refPsi;
 	pNode->nConc = nData[index-1]/NNorm;
 	pNode->pConc = pData[index-1]/NNorm;

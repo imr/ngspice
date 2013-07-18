@@ -36,10 +36,10 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
     pElemBR = pNode->pBRElem;
 
     /* Null edge pointers */
-    pEdgeT = pEdgeB = pEdgeL = pEdgeR = NIL(TWOedge);
+    pEdgeT = pEdgeB = pEdgeL = pEdgeR = NULL;
 
     /* Find edges next to node */
-    if ( pElemTL != NIL(TWOelem) ) {
+    if ( pElemTL != NULL ) {
       if (pElemTL->evalEdges[1]) {
 	pEdgeT = pElemTL->pRightEdge;
 	materT = pElemTL->elemType;
@@ -51,7 +51,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 	dxL = pElemTL->dx;
       }
     }
-    if ( pElemTR != NIL(TWOelem) ) {
+    if ( pElemTR != NULL ) {
       if (pElemTR->evalEdges[3]) {
 	pEdgeT = pElemTR->pLeftEdge;
 	materT = pElemTR->elemType;
@@ -63,7 +63,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 	dxR = pElemTR->dx;
       }
     }
-    if ( pElemBR != NIL(TWOelem) ) {
+    if ( pElemBR != NULL ) {
       if (pElemBR->evalEdges[3]) {
 	pEdgeB = pElemBR->pLeftEdge;
 	materB = pElemBR->elemType;
@@ -75,7 +75,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 	dxR = pElemBR->dx;
       }
     }
-    if ( pElemBL != NIL(TWOelem) ) {
+    if ( pElemBL != NULL ) {
       if (pElemBL->evalEdges[1]) {
 	pEdgeB = pElemBL->pRightEdge;
 	materB = pElemBL->elemType;
@@ -91,7 +91,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
     /* compute horizontal vector components */
     /* No more than one of Left Edge or Right Edge is absent */
     /* If one is absent the other is guaranteed to be from silicon */
-    if (pEdgeL == NIL(TWOedge)) {
+    if (pEdgeL == NULL) {
       if ( pNode->nodeType == CONTACT ) {
 	enx = -(pEdgeR->dPsi + pEdgeR->dCBand) / dxR;
 	epx = -(pEdgeR->dPsi - pEdgeR->dVBand) / dxR;
@@ -103,7 +103,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 	jnx = 0.0;
 	jpx = 0.0;
       }
-    } else if (pEdgeR == NIL(TWOedge)) {
+    } else if (pEdgeR == NULL) {
       if ( pNode->nodeType == CONTACT ) {
 	enx = -(pEdgeL->dPsi + pEdgeL->dCBand) / dxL;
 	epx = -(pEdgeL->dPsi - pEdgeL->dVBand) / dxL;
@@ -136,7 +136,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
     /* compute vertical vector components */
     /* No more than one of Top Edge or Bottom Edge is absent */
     /* If one is absent the other is guaranteed to be from silicon */
-    if (pEdgeT == NIL(TWOedge)) {
+    if (pEdgeT == NULL) {
       if ( pNode->nodeType == CONTACT ) {
 	eny = -(pEdgeB->dPsi + pEdgeB->dCBand) / dyB;
 	epy = -(pEdgeB->dPsi - pEdgeB->dVBand) / dyB;
@@ -148,7 +148,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 	jny = 0.0;
 	jpy = 0.0;
       }
-    } else if (pEdgeB == NIL(TWOedge)) {
+    } else if (pEdgeB == NULL) {
       if ( pNode->nodeType == CONTACT ) {
 	eny = -(pEdgeT->dPsi + pEdgeT->dCBand) / dyT;
 	epy = -(pEdgeT->dPsi - pEdgeT->dVBand) / dyT;

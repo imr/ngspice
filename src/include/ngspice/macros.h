@@ -40,7 +40,6 @@
 #define  SWAP(type, a, b)   {type swapx; swapx = a; a = b; b = swapx;}
  
  
-#define NIL(type) ((type *)0) 
 #define ABORT() fflush(stderr);fflush(stdout);abort();
 
 #define MERROR(CODE, MESSAGE) \

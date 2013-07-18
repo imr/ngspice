@@ -33,7 +33,7 @@ int
   int error = OK;
   char ebuf[512];		/* error message buffer */
   
-  for ( card = cardList; card != NIL(MATLcard); card = card->MATLnextCard ) {
+  for ( card = cardList; card != NULL; card = card->MATLnextCard ) {
     cardNum++;
 
     if( !card->MATLmaterialGiven ) {
@@ -43,7 +43,7 @@ int
       sprintf( ebuf,
 	  "material card %d is missing an id number",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
       error = E_PRIVATE;
     }
 
@@ -58,7 +58,7 @@ int
 	sprintf( ebuf,
 	    "material cards %d and %d use same id %d",
 	    cardNum2, cardNum, card->MATLnumber );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NIL(IFuid) );
+	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
 	error = E_PRIVATE;
       }
     }
@@ -87,14 +87,14 @@ int
   int error;
 
 /* Initialize list of electrodes */
-  *materialList = NIL(MATLmaterial);
+  *materialList = NULL;
   
   /* Check the card list */
   if ((error = MATLcheck( cardList )) != 0) return( error );
   
-  for ( card = cardList; card != NIL(MATLcard); card = card->MATLnextCard ) {
+  for ( card = cardList; card != NULL; card = card->MATLnextCard ) {
 
-    if (*materialList == NIL(MATLmaterial)) {
+    if (*materialList == NULL) {
       RALLOC( newMaterial, MATLmaterial, 1 );
       *materialList = newMaterial;
     }
@@ -102,7 +102,7 @@ int
       RALLOC( newMaterial->next, MATLmaterial, 1 );
       newMaterial = newMaterial->next;
     }
-    newMaterial->next = NIL(MATLmaterial);
+    newMaterial->next = NULL;
     newMaterial->id = card->MATLnumber;
     newMaterial->material = card->MATLmaterial;
 

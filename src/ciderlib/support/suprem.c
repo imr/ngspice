@@ -53,11 +53,11 @@ readAsciiData( char *fileName, int impType, DOPtable **ppTable )
 
     /* Now create a new lookup table */
     XCALLOC( tmpTable, DOPtable, 1 );
-    if ( *ppTable == NIL(DOPtable) ) {
+    if ( *ppTable == NULL ) {
       /* First Entry */
       tmpTable->impId = 1;
       tmpTable->dopData = profileData;
-      tmpTable->next = NIL(DOPtable);
+      tmpTable->next = NULL;
       *ppTable = tmpTable;
     } else {
       tmpTable->impId = (*ppTable)->impId + 1;
@@ -142,11 +142,11 @@ readSupremData(char *fileName, int fileType, int impType, DOPtable **ppTable)
 
     /* Now create a new lookup table */
     XCALLOC( tmpTable, DOPtable, 1 );
-    if ( *ppTable == NIL(DOPtable) ) {
+    if ( *ppTable == NULL ) {
       /* First Entry */
       tmpTable->impId = 1;
       tmpTable->dopData = profileData;
-      tmpTable->next = NIL(DOPtable);
+      tmpTable->next = NULL;
       *ppTable = tmpTable;
     } else {
       tmpTable->impId = (*ppTable)->impId + 1;
@@ -172,7 +172,7 @@ main(ac, av)
 char **av;
 {
     void readSupremData();
-    DOPtable *supTable = NIL(DOPtable);
+    DOPtable *supTable = NULL;
     double **supInput;
     int numPoints, index;
     char *impName;
@@ -192,7 +192,7 @@ char **av;
 	readSupremData( av[index], 1, impType, &supTable );
       }
     }
-    for ( ; supTable ISNOT NIL(DOPtable); supTable = supTable->next ) {
+    for ( ; supTable ISNOT NULL; supTable = supTable->next ) {
       fprintf( stdout, "\"Impurity Number: %d\n", supTable->impId );
       supInput = supTable->dopData;
       numPoints = supInput[0][0];

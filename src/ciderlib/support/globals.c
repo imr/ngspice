@@ -76,7 +76,7 @@ void GLOBcomputeGlobals(GLOBvalues *pGlobals, double temp)
 
 void GLOBputGlobals(GLOBvalues *values)
 {
-  if ( values == NIL(GLOBvalues) ) {
+  if ( values == NULL ) {
     fprintf( stderr, "Error: tried to get from NIL GLOBvalues\n");
     exit(-1);
   }
@@ -106,7 +106,7 @@ void GLOBputGlobals(GLOBvalues *values)
  */
 void GLOBgetGlobals(GLOBvalues *values)
 {
-  if ( values == NIL(GLOBvalues) ) {
+  if ( values == NULL ) {
     fprintf( stderr, "Error: tried to get from NIL GLOBvalues\n");
     exit(-1);
   }
@@ -135,7 +135,7 @@ void GLOBprnGlobals(FILE *file, GLOBvalues *values)
   static const char tabformat[] = "%12s: % .4e %-12s\t";
   static const char newformat[] = "%12s: % .4e %-12s\n";
 
-  if ( values == NIL( GLOBvalues ) ) {
+  if ( values == NULL ) {
     fprintf( stderr, "Error: tried to print NIL GLOBvalues\n");
     exit(-1);
   }

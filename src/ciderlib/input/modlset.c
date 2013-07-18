@@ -27,7 +27,7 @@ int
   MODLcard *card;
   int cardNum = 0;
   
-  for ( card = cardList; card != NIL(MODLcard); card = card->MODLnextCard ) {
+  for ( card = cardList; card != NULL; card = card->MODLnextCard ) {
     cardNum++;
 
     if ( !card->MODLbandGapNarrowingGiven ) {

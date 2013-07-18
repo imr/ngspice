@@ -52,7 +52,7 @@ void NUMD2project(TWOdevice *pDevice, double delV)
   }
   incVpn = pDevice->dcDeltaSolution;
   storeNewRhs( pDevice, pContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVpn, NIL(spREAL), NIL(spREAL) );
+  spSolve( pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL );
   
   for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
     pElem = pDevice->elements[ eIndex ];
@@ -131,7 +131,7 @@ void NBJT2project(TWOdevice *pDevice, double delVce, double delVbe)
   if ( ABS( delVce ) > MIN_DELV ) {
     incVce = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pColContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVce, NIL(spREAL), NIL(spREAL));
+    spSolve( pDevice->matrix, pDevice->rhs, incVce, NULL, NULL);
     
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
@@ -175,7 +175,7 @@ void NBJT2project(TWOdevice *pDevice, double delVce, double delVbe)
   if ( ABS( delVbe ) > MIN_DELV ) {
     incVbe = pDevice->copiedSolution;
     storeNewRhs( pDevice, pBaseContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVbe, NIL(spREAL), NIL(spREAL));
+    spSolve( pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL);
     
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
@@ -265,7 +265,7 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
     
     incVdb = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pDContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVdb, NIL(spREAL), NIL(spREAL));
+    spSolve( pDevice->matrix, pDevice->rhs, incVdb, NULL, NULL);
     
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
@@ -310,7 +310,7 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
     
     incVsb = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pSContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVsb, NIL(spREAL), NIL(spREAL));
+    spSolve( pDevice->matrix, pDevice->rhs, incVsb, NULL, NULL);
     
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
@@ -354,7 +354,7 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
     
     incVgb = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pGContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVgb, NIL(spREAL), NIL(spREAL));
+    spSolve( pDevice->matrix, pDevice->rhs, incVgb, NULL, NULL);
     
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
@@ -610,7 +610,7 @@ void storeNewRhs(TWOdevice *pDevice, TWOcontact *pContact)
     pNode = pContact->pNodes[ index ];
     for ( i = 0; i <= 3; i++ ) {
       pElem = pNode->pElems[ i ];
-      if ( pElem != NIL(TWOelem)) {
+      if ( pElem != NULL) {
 	/* found an element to which this node belongs */
 	switch ( i ) {
 	case 0:

@@ -418,7 +418,7 @@ ONEsorSolve(ONEdevice *pDevice, double *xReal, double *xImag, double omega)
       rhsSOR[index] += pDevice->rhs[index];
     }
     /* compute xReal(k+1). solution stored in rhsSOR */
-    spSolve(pDevice->matrix, rhsSOR, rhsSOR, NIL(spREAL), NIL(spREAL));
+    spSolve(pDevice->matrix, rhsSOR, rhsSOR, NULL, NULL);
 
     /* modify solution when wRelax is not 1 */
     if (wRelax != 1) {
@@ -455,7 +455,7 @@ ONEsorSolve(ONEdevice *pDevice, double *xReal, double *xImag, double omega)
     }
     /* compute xImag(k+1) */
     spSolve(pDevice->matrix, rhsSOR, rhsSOR,
-	NIL(spREAL), NIL(spREAL));
+	NULL, NULL);
     /* modify solution when wRelax is not 1 */
     if (wRelax != 1) {
       for (index = 1; index <= numEqns; index++) {
@@ -665,7 +665,7 @@ computeAdmittance(ONEnode *pNode, BOOLEAN delVContact, double *xReal,
 
   for (i = 0; i <= 1; i++) {
     pElem = pNode->pElems[i];
-    if (pElem != NIL(ONEelem)) {
+    if (pElem != NULL) {
       switch (i) {
       case 0:
 	/* the right node of the element */

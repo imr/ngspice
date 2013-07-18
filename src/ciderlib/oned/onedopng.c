@@ -25,7 +25,7 @@ ONEdopingValue(DOPprofile *pProfile, DOPtable *pTable, double x)
 
   /* Find the appropriate lookup table if necessary */
   if (pProfile->type == LOOKUP) {
-    while (pTable != NIL(DOPtable)) {
+    while (pTable != NULL) {
       if (pTable->impId == pProfile->IMPID) {
 	/* Found it */
 	break;
@@ -33,7 +33,7 @@ ONEdopingValue(DOPprofile *pProfile, DOPtable *pTable, double x)
 	pTable = pTable->next;
       }
     }
-    if (pTable == NIL(DOPtable)) {
+    if (pTable == NULL) {
       fprintf(stderr, "Error: unknown impurity profile %d\n",
 	  ((int)pProfile->IMPID));
       exit(1);
@@ -129,7 +129,7 @@ ONEsetDoping(ONEdevice *pDevice, DOPprofile *pProfile, DOPtable *pTable)
     }
   }
   /* Now compute the contribution to the total doping from each profile. */
-  for (pP = pProfile; pP != NIL(DOPprofile); pP = pP->next) {
+  for (pP = pProfile; pP != NULL; pP = pP->next) {
     for (eIndex = 1; eIndex < pDevice->numNodes; eIndex++) {
       pElem = pDevice->elemArray[eIndex];
       if (pElem->elemType == SEMICON) {

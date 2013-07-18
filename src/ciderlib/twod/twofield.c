@@ -30,10 +30,10 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
   pElemBR = pNode->pBRElem;
 
   /* Null edge pointers */
-  pEdgeT = pEdgeB = pEdgeL = pEdgeR = NIL(TWOedge);
+  pEdgeT = pEdgeB = pEdgeL = pEdgeR = NULL;
 
   /* Find edges next to node */
-  if (pElemTL != NIL(TWOelem)) {
+  if (pElemTL != NULL) {
     if (pElemTL->evalEdges[1]) {
       pEdgeT = pElemTL->pRightEdge;
       materT = pElemTL->elemType;
@@ -45,7 +45,7 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
       dxL = pElemTL->dx;
     }
   }
-  if (pElemTR != NIL(TWOelem)) {
+  if (pElemTR != NULL) {
     if (pElemTR->evalEdges[3]) {
       pEdgeT = pElemTR->pLeftEdge;
       materT = pElemTR->elemType;
@@ -57,7 +57,7 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
       dxR = pElemTR->dx;
     }
   }
-  if (pElemBR != NIL(TWOelem)) {
+  if (pElemBR != NULL) {
     if (pElemBR->evalEdges[3]) {
       pEdgeB = pElemBR->pLeftEdge;
       materB = pElemBR->elemType;
@@ -69,7 +69,7 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
       dxR = pElemBR->dx;
     }
   }
-  if (pElemBL != NIL(TWOelem)) {
+  if (pElemBL != NULL) {
     if (pElemBL->evalEdges[1]) {
       pEdgeB = pElemBL->pRightEdge;
       materB = pElemBL->elemType;
@@ -83,13 +83,13 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
   }
   /* compute horizontal vector components */
   /* No more than one of Left Edge or Right Edge is absent */
-  if (pEdgeL == NIL(TWOedge)) {
+  if (pEdgeL == NULL) {
     if (pNode->nodeType == CONTACT) {
       *ex = -pEdgeR->dPsi / dxR;
     } else {
       *ex = 0.0;
     }
-  } else if (pEdgeR == NIL(TWOedge)) {
+  } else if (pEdgeR == NULL) {
     if (pNode->nodeType == CONTACT) {
       *ex = -pEdgeL->dPsi / dxL;
     } else {
@@ -105,13 +105,13 @@ nodeFields(TWOelem *pElem, TWOnode *pNode, double *ex, double *ey)
 
   /* compute vertical vector components */
   /* No more than one of Top Edge or Bottom Edge is absent */
-  if (pEdgeT == NIL(TWOedge)) {
+  if (pEdgeT == NULL) {
     if (pNode->nodeType == CONTACT) {
       *ey = -pEdgeB->dPsi / dyB;
     } else {
       *ey = 0.0;
     }
-  } else if (pEdgeB == NIL(TWOedge)) {
+  } else if (pEdgeB == NULL) {
     if (pNode->nodeType == CONTACT) {
       *ey = -pEdgeT->dPsi / dyT;
     } else {

@@ -62,12 +62,12 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   }
 
   /* Mark the semiconductor/insulator domains. */
-  if (pDomain == NIL(TWOdomain)) {
+  if (pDomain == NULL) {
     fprintf(stderr, "Error: domains not defined for device\n");
     exit(-1);
   }
-  for (pD = pDomain; pD != NIL(TWOdomain); pD = pD->next) {
-    for (pM = pMaterial; pM != NIL(TWOmaterial); pM = pM->next) {
+  for (pD = pDomain; pD != NULL; pD = pD->next) {
+    for (pM = pMaterial; pM != NULL; pM = pM->next) {
       if (pD->material == pM->id) {
 	break;
       }
@@ -81,7 +81,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
     }
   }
   /* Now mark all the metallic domains */
-  for (pE = pElectrode; pE != NIL(TWOelectrode); pE = pE->next) {
+  for (pE = pElectrode; pE != NULL; pE = pE->next) {
     for (xIndex = pE->ixLo; xIndex <= pE->ixHi; xIndex++) {
       for (yIndex = pE->iyLo; yIndex <= pE->iyHi; yIndex++) {
 	pNode = nodeArray[xIndex][yIndex];
@@ -140,7 +140,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
       pNode = nodeArray[xIndex][yIndex];
       if (pNode->nodeType == 0) {
 	/* This node doesn't belong to a domain so delete it. */
-	nodeArray[xIndex][yIndex] = NIL(TWOnode);
+	nodeArray[xIndex][yIndex] = NULL;
 	FREE(pNode);
       } else {
 	numNodes++;
@@ -164,8 +164,8 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
     for (xIndex = 1; xIndex < numXNodes; xIndex++) {
       pNode = nodeArray[xIndex][yIndex];
       pNextHNode = nodeArray[xIndex + 1][yIndex];
-      if (pNode != NIL(TWOnode) &&
-	  pNextHNode != NIL(TWOnode)) {
+      if (pNode != NULL &&
+	  pNextHNode != NULL) {
 	XCALLOC(pEdge, TWOedge, 1);
 	numEdges++;
 	edgeArrayH[xIndex][yIndex] = pEdge;
@@ -182,8 +182,8 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
     for (yIndex = 1; yIndex < numYNodes; yIndex++) {
       pNode = nodeArray[xIndex][yIndex];
       pNextVNode = nodeArray[xIndex][yIndex + 1];
-      if (pNode != NIL(TWOnode) &&
-	  pNextVNode != NIL(TWOnode)) {
+      if (pNode != NULL &&
+	  pNextVNode != NULL) {
 	XCALLOC(pEdge, TWOedge, 1);
 	numEdges++;
 	edgeArrayV[xIndex][yIndex] = pEdge;
@@ -200,10 +200,10 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
       pNextHNode = nodeArray[xIndex + 1][yIndex];
       pNextVNode = nodeArray[xIndex][yIndex + 1];
       pNextDNode = nodeArray[xIndex + 1][yIndex + 1];
-      if (pNode != NIL(TWOnode) &&
-	  pNextHNode != NIL(TWOnode) &&
-	  pNextVNode != NIL(TWOnode) &&
-	  pNextDNode != NIL(TWOnode)) {
+      if (pNode != NULL &&
+	  pNextHNode != NULL &&
+	  pNextVNode != NULL &&
+	  pNextDNode != NULL) {
 	numElem++;
 	XCALLOC(pElem, TWOelem, 1);
 	pElem->pTLNode = pNode;
@@ -216,7 +216,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
 	pElem->pRightEdge = edgeArrayV[xIndex + 1][yIndex];
 	pDevice->elemArray[xIndex][yIndex] = pElem;
       } else {
-	pDevice->elemArray[xIndex][yIndex] = NIL(TWOelem);
+	pDevice->elemArray[xIndex][yIndex] = NULL;
       }
     }
   }
@@ -228,7 +228,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   for (yIndex = 1; yIndex < numYNodes; yIndex++) {
     for (xIndex = 1; xIndex < numXNodes; xIndex++) {
       pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	pDevice->elements[numElem++] = pElem;
       }
     }
@@ -238,7 +238,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   for (yIndex = 1; yIndex < numYNodes; yIndex++) {
     for (xIndex = 1; xIndex < numXNodes; xIndex++) {
       pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	pElem->pTLNode->pBRElem = pElem;
 	pElem->pTRNode->pBLElem = pElem;
 	pElem->pBLNode->pTRElem = pElem;
@@ -260,8 +260,8 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   }
 
   /* Establish the element types using domain info. */
-  for (pD = pDomain; pD != NIL(TWOdomain); pD = pD->next) {
-    for (pM = pMaterial; pM != NIL(TWOmaterial); pM = pM->next) {
+  for (pD = pDomain; pD != NULL; pD = pD->next) {
+    for (pM = pMaterial; pM != NULL; pM = pM->next) {
       if (pD->material == pM->id) {
 	break;
       }
@@ -270,7 +270,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
     for (yIndex = pD->iyLo; yIndex < pD->iyHi; yIndex++) {
       for (xIndex = pD->ixLo; xIndex < pD->ixHi; xIndex++) {
 	pElem = pDevice->elemArray[xIndex][yIndex];
-	if (pElem != NIL(TWOelem)) {
+	if (pElem != NULL) {
 	  pElem->domain = pD->id;
 	  pElem->elemType = elemType;
 	  pElem->matlInfo = pM;
@@ -283,7 +283,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   for (yIndex = 1; yIndex < numYNodes; yIndex++) {
     for (xIndex = 1; xIndex < numXNodes; xIndex++) {
       pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	for (index = 0; index <= 3; index++) {
 	  pEdge = pElem->pEdges[index];
 	  pNode = pElem->pNodes[index];
@@ -298,7 +298,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
 	      pNode1->nodeType == SCHOTTKY) {
 	    /* Schottky edge */
 	    pEdge->edgeType = SCHOTTKY;
-	  } else if (pElem1 == NIL(TWOelem)) {
+	  } else if (pElem1 == NULL) {
 	    /* Neumann edge */
 	    pEdge->edgeType = pElem->elemType;
 	  } else if (pElem->elemType != pElem1->elemType) {
@@ -319,7 +319,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   for (yIndex = 1; yIndex < numYNodes; yIndex++) {
     for (xIndex = 1; xIndex < numXNodes; xIndex++) {
       pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	pElem->dx = xScale[xIndex + 1] - xScale[xIndex];
 	pElem->dy = yScale[yIndex + 1] - yScale[yIndex];
 	pElem->dxOverDy = pElem->dx / pElem->dy;
@@ -358,7 +358,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   for (yIndex = 1; yIndex < numYNodes; yIndex++) {
     for (xIndex = 1; xIndex < numXNodes; xIndex++) {
       pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	pElem->direction = 0;
 	pElem->channel = 0;
 	pElem->surface = FALSE;
@@ -573,7 +573,7 @@ doMobCoeffs(TWOelem *pElem, int index)
   pEdge = pElem->pEdges[ index ];
 
   /* If neighbor is not SEMICON, assign and return */
-  if ( (pNElem == NIL(TWOelem)) || (pNElem->elemType == INSULATOR) ) {
+  if ( (pNElem == NULL) || (pNElem->elemType == INSULATOR) ) {
     if ( index == 0 || index == 3 ) {
       pEdge->kNeg = 0.0;
       pEdge->kPos = 1.0;

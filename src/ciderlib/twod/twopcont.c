@@ -161,7 +161,7 @@ void
    * Don't need these pointers if SurfaceMobility isn't set.
    */
   if ( MobDeriv && SurfaceMobility ) {
-    for ( pCh = pDevice->pChannel; pCh != NIL(TWOchannel);
+    for ( pCh = pDevice->pChannel; pCh != NULL;
 	 pCh = pCh->next ) {
       pElem = pCh->pNElem;
       switch (pCh->type) {
@@ -391,7 +391,7 @@ void
   
   /* Calculate the Inversion-Layer Mobility Dependent Terms in Jac. */
   if ( MobDeriv && SurfaceMobility ) {
-    for ( pCh = pDevice->pChannel; pCh != NIL(TWOchannel);
+    for ( pCh = pDevice->pChannel; pCh != NULL;
 	 pCh = pCh->next ) {
       /* Find effective height of oxide element at interface. */
       if ( pCh->type%2 == 0 ) { /* Vertical slice */
@@ -405,7 +405,7 @@ void
 	TWOPmobDeriv( pElem, pCh->type, ds );
 	pElem = pElem->pElems[ nextIndex ];
       }
-    } /* endfor pCh != NIL */
+    } /* endfor pCh != NULL */
   } /* endif MobDeriv and SurfaceMobility */
 }
 
@@ -429,7 +429,7 @@ void
   double nConc;
   
   /* first compute the currents and derivatives */
-  TWOPcommonTerms( pDevice, FALSE, FALSE, NIL(TWOtranInfo) );
+  TWOPcommonTerms( pDevice, FALSE, FALSE, NULL );
   
   /* zero the matrix */
   spClear( pDevice->matrix );
@@ -528,7 +528,7 @@ void
 
   /* Calculate the Inversion-Layer Mobility Dependent Terms in Jac. */
   if ( MobDeriv && SurfaceMobility ) {
-    for ( pCh = pDevice->pChannel; pCh != NIL(TWOchannel);
+    for ( pCh = pDevice->pChannel; pCh != NULL;
 	 pCh = pCh->next ) {
       /* Find effective height of oxide element at interface. */
       if ( pCh->type%2 == 0 ) { /* Vertical slice */
@@ -542,7 +542,7 @@ void
 	TWOPmobDeriv( pElem, pCh->type, ds );
 	pElem = pElem->pElems[ nextIndex ];
       }
-    } /* endfor pCh != NIL */
+    } /* endfor pCh != NULL */
   } /* endif MobDeriv and SurfaceMobility */
 }
 
@@ -779,7 +779,7 @@ void
   /* DAG: calculate mobilities for channel elems */
   if ( SurfaceMobility ) {
     for ( pCh = pDevice->pChannel;
-	 pCh != NIL(TWOchannel); pCh = pCh->next ) {
+	 pCh != NULL; pCh = pCh->next ) {
       pElem = pCh->pNElem;
       switch (pCh->type) {
       case 0:
@@ -810,7 +810,7 @@ void
 	TWOPmobility( pElem, eSurf );
 	pElem = pElem->pElems[ nextIndex ];
       }
-    } /* endfor pCH != NIL */
+    } /* endfor pCH != NULL */
   } /* endif SurfaceMobility */
   
   /* calculate the current densities assuming mobility value depend on Ex,Ey*/

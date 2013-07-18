@@ -15,7 +15,6 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
-#define NIL(type)   ((type *)0)
 
 int
 NUMD2temp(GENmodel *inModel, CKTcircuit *ckt)
@@ -42,7 +41,7 @@ NUMD2temp(GENmodel *inModel, CKTcircuit *ckt)
     if (!options->OPTNtnomGiven) {
       options->OPTNtnom = ckt->CKTnomTemp;
     }
-    for (pM = model->NUMD2matlInfo; pM != NIL(TWOmaterial);
+    for (pM = model->NUMD2matlInfo; pM != NULL;
 	pM = pM->next) {
       pM->tnom = options->OPTNtnom;
     }

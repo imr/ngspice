@@ -107,7 +107,7 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   for (xIndex = 1; xIndex < pDevice->numXNodes; xIndex++) {
     for (yIndex = 1; yIndex < pDevice->numYNodes; yIndex++) {
       TWOelem *pElem = pDevice->elemArray[xIndex][yIndex];
-      if (pElem != NIL(TWOelem)) {
+      if (pElem != NULL) {
 	if (refPsi == 0.0 && pElem->matlInfo->type == SEMICON) {
 	  refPsi = pElem->matlInfo->refPsi;
 	}
@@ -210,12 +210,12 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   for (xIndex = 1; xIndex <= pDevice->numXNodes; xIndex++) {
     for (yIndex = 1; yIndex <= pDevice->numYNodes; yIndex++) {
       pNode = nodeArray[xIndex][yIndex];
-      if (pNode != NIL(TWOnode)) {
+      if (pNode != NULL) {
 	TWOelem *pElem = NULL;
 	/* Find the element to which this node belongs. */
 	for (index = 0; index < 4; index++) {
 	  pElem = pNode->pElems[index];
-	  if (pElem != NIL(TWOelem) && pElem->evalNodes[(index + 2) % 4])
+	  if (pElem != NULL && pElem->evalNodes[(index + 2) % 4])
 	      break;
 	}
 	nodeFields(pElem, pNode, &ex, &ey);

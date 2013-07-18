@@ -16,7 +16,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/suffix.h"
 #include "ngspice/meshext.h"
 
-#define NIL(type)   ((type *)0)
 #define TSCALLOC(var, size, type)\
 if (size && (var =(type *)calloc(1, (unsigned)(size)*sizeof(type))) == NULL) {\
    return(E_NOMEM);\
@@ -40,11 +39,11 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   int error;
   int xMeshSize;
   ONEdevice *pDevice;
-  ONEcoord *xCoordList = NIL(ONEcoord);
-  ONEdomain *domainList = NIL(ONEdomain);
-  DOPprofile *profileList = NIL(DOPprofile);
-  DOPtable *dopTableList = NIL(DOPtable);
-  ONEmaterial *pM, *pMaterial = NULL, *materialList = NIL(ONEmaterial);
+  ONEcoord *xCoordList = NULL;
+  ONEdomain *domainList = NULL;
+  DOPprofile *profileList = NULL;
+  DOPtable *dopTableList = NULL;
+  ONEmaterial *pM, *pMaterial = NULL, *materialList = NULL;
   double startTime;
 
 
@@ -134,15 +133,15 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     if ((error = MESHsetup('x', model->NBJTxMeshes, &xCoordList, &xMeshSize)) != 0)
       return (error);
     if ((error = DOMNsetup(model->NBJTdomains, &domainList,
-	    xCoordList, NIL(ONEcoord), materialList)) != 0)
+	    xCoordList, NULL, materialList)) != 0)
       return (error);
     if ((error = BDRYsetup(model->NBJTboundaries,
-	    xCoordList, NIL(ONEcoord), domainList)) != 0)
+	    xCoordList, NULL, domainList)) != 0)
       return (error);
     if ((error = CONTsetup(model->NBJTcontacts, NULL)) != 0)
       return (error);
     if ((error = DOPsetup(model->NBJTdopings, &profileList,
-	    &dopTableList, xCoordList, NIL(ONEcoord))) != 0)
+	    &dopTableList, xCoordList, NULL)) != 0)
       return (error);
     model->NBJTmatlInfo = materialList;
     model->NBJTprofiles = profileList;
@@ -187,13 +186,13 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	pDevice->numNodes = xMeshSize;
 	pDevice->abstol = methods->METHdabstol;
 	pDevice->reltol = methods->METHdreltol;
-	pDevice->rhsImag = NIL(double);
+	pDevice->rhsImag = NULL;
 	TSCALLOC(pDevice->elemArray, pDevice->numNodes, ONEelem *);
 
 	/* Create a copy of material data that can change with temperature. */
-	pDevice->pMaterials = NIL(ONEmaterial);
-	for (pM = materialList; pM != NIL(ONEmaterial); pM = pM->next) {
-	  if (pDevice->pMaterials == NIL(ONEmaterial)) {
+	pDevice->pMaterials = NULL;
+	for (pM = materialList; pM != NULL; pM = pM->next) {
+	  if (pDevice->pMaterials == NULL) {
 	    TSCALLOC(pMaterial, 1, ONEmaterial);
 	    pDevice->pMaterials = pMaterial;
 	  } else {
@@ -202,7 +201,7 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
 	  bcopy(pM, pMaterial, sizeof(ONEmaterial));
-	  pMaterial->next = NIL(ONEmaterial);
+	  pMaterial->next = NULL;
 	}
 
 	/* generate the mesh structure for the device */
