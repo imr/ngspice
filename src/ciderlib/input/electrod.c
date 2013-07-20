@@ -14,8 +14,8 @@ Modified: 2001 Paolo Nenzi
 
 #define UM_TO_CM 1.0e-4
 
-extern int ELCTnewCard(void**,void*);
-extern int ELCTparam(int,IFvalue*,void*);
+extern int ELCTnewCard(GENcard**,GENmodel*);
+extern int ELCTparam(int,IFvalue*,GENcard*);
 
 
 IFparm ELCTpTable[] = {
@@ -42,7 +42,7 @@ IFcardInfo ELCTinfo = {
 };
 
 int
-ELCTnewCard(void **inCard, void *inModel)
+ELCTnewCard(GENcard **inCard, GENmodel *inModel)
 {
     ELCTcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -53,7 +53,7 @@ ELCTnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->ELCTnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENelectrodes;
     if (!tmpCard) { /* First in list */
@@ -69,7 +69,7 @@ ELCTnewCard(void **inCard, void *inModel)
 
 
 int
-ELCTparam(int param, IFvalue *value, void *inCard)
+ELCTparam(int param, IFvalue *value, GENcard *inCard)
 {
     ELCTcard *card = (ELCTcard *)inCard;
 

@@ -39,11 +39,11 @@ typedef struct sIFcardInfo {
     int numParms;		/* number of parameter descriptors */
     IFparm *cardParms;		/* array  of parameter descriptors */
 
-    int (*newCard)(void**,void*);
+    int (*newCard)(GENcard**,GENmodel*);
 	/* routine to add a new card to a numerical device model */
-    int (*setCardParm)(int,IFvalue*,void*);
+    int (*setCardParm)(int,IFvalue*,GENcard*);
 	/* routine to input a parameter to a card instance */
-    int (*askCardQuest)(int,IFvalue*,void*);
+    int (*askCardQuest)(int,IFvalue*,GENcard*);
 	/* routine to find out about a card's details */
 } IFcardInfo;
 

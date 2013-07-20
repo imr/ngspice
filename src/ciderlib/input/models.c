@@ -12,8 +12,8 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-extern int MODLnewCard(void**,void*);
-extern int MODLparam(int,IFvalue*,void*);
+extern int MODLnewCard(GENcard**,GENmodel*);
+extern int MODLparam(int,IFvalue*,GENcard*);
 
 
 IFparm MODLpTable[] = {
@@ -54,7 +54,7 @@ IFcardInfo MODLinfo = {
 };
 
 int
-MODLnewCard(void **inCard, void *inModel)
+MODLnewCard(GENcard **inCard, GENmodel *inModel)
 {
     MODLcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -67,16 +67,16 @@ MODLnewCard(void **inCard, void *inModel)
             return(E_NOMEM);
         }
         newCard->MODLnextCard = NULL;
-        *inCard = (void *)newCard;
+        *inCard = (GENcard *) newCard;
         model->GENmodels = newCard;
     } else { /* Only one card of this type allowed */
-	*inCard = (void *)tmpCard;
+	*inCard = (GENcard *) tmpCard;
     }
     return(OK);
 }
 
 int
-MODLparam(int param, IFvalue *value, void *inCard)
+MODLparam(int param, IFvalue *value, GENcard *inCard)
 {
     MODLcard *card = (MODLcard *)inCard;
 

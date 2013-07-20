@@ -14,8 +14,8 @@ Modified: 2001 Paolo Nenzi
 
 #define UM_TO_CM 1.0e-4
 
-extern int BDRYnewCard(void**,void*);
-extern int BDRYparam(int,IFvalue*,void*);
+extern int BDRYnewCard(GENcard**,GENmodel*);
+extern int BDRYparam(int,IFvalue*,GENcard*);
 
 IFparm BDRYpTable[] = {
   IP("domain", 	BDRY_DOMAIN,	IF_INTEGER,	"Primary domain"),
@@ -62,7 +62,7 @@ IFcardInfo INTFinfo = {
 };
 
 int
-BDRYnewCard(void **inCard, void *inModel)
+BDRYnewCard(GENcard **inCard, GENmodel *inModel)
 {
     BDRYcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -73,7 +73,7 @@ BDRYnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->BDRYnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENboundaries;
     if (!tmpCard) { /* First in list */
@@ -88,7 +88,7 @@ BDRYnewCard(void **inCard, void *inModel)
 }
 
 int
-BDRYparam(int param, IFvalue *value, void *inCard)
+BDRYparam(int param, IFvalue *value, GENcard *inCard)
 {
     BDRYcard *card = (BDRYcard *)inCard;
 

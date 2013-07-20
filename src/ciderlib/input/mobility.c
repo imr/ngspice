@@ -13,8 +13,8 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
-extern int MOBnewCard(void**,void*);
-extern int MOBparam(int,IFvalue*,void*);
+extern int MOBnewCard(GENcard**,GENmodel*);
+extern int MOBparam(int,IFvalue*,GENcard*);
 
 
 
@@ -50,7 +50,7 @@ IFcardInfo MOBinfo = {
 };
 
 int
-MOBnewCard(void **inCard, void *inModel)
+MOBnewCard(GENcard **inCard, GENmodel *inModel)
 {
     MOBcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -61,7 +61,7 @@ MOBnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->MOBnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENmobility;
     if (!tmpCard) { /* First in list */
@@ -76,7 +76,7 @@ MOBnewCard(void **inCard, void *inModel)
 }
 
 int
-MOBparam(int param, IFvalue *value, void *inCard)
+MOBparam(int param, IFvalue *value, GENcard *inCard)
 {
     MOBcard *card = (MOBcard *)inCard;
 

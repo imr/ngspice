@@ -12,9 +12,9 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-extern int XMSHnewCard(void**,void*);
-extern int YMSHnewCard(void**,void*);
-extern int MESHparam(int,IFvalue*,void*);
+extern int XMSHnewCard(GENcard**,GENmodel*);
+extern int YMSHnewCard(GENcard**,GENmodel*);
+extern int MESHparam(int,IFvalue*,GENcard*);
 
 
 
@@ -55,7 +55,7 @@ IFcardInfo YMSHinfo = {
 };
 
 int
-XMSHnewCard(void **inCard, void *inModel)
+XMSHnewCard(GENcard **inCard, GENmodel *inModel)
 {
     MESHcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -66,7 +66,7 @@ XMSHnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->MESHnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENxMeshes;
     if (!tmpCard) { /* First in list */
@@ -81,7 +81,7 @@ XMSHnewCard(void **inCard, void *inModel)
 }
 
 int
-YMSHnewCard(void **inCard, void *inModel)
+YMSHnewCard(GENcard **inCard, GENmodel *inModel)
 {
     MESHcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -92,7 +92,7 @@ YMSHnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->MESHnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENyMeshes;
     if (!tmpCard) { /* First in list */
@@ -107,7 +107,7 @@ YMSHnewCard(void **inCard, void *inModel)
 }
 
 int
-MESHparam(int param, IFvalue *value, void *inCard)
+MESHparam(int param, IFvalue *value, GENcard *inCard)
 {
     MESHcard *card = (MESHcard *)inCard;
 

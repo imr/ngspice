@@ -14,8 +14,8 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/suffix.h"
 
 
-extern int METHnewCard(void**,void*);
-extern int METHparam(int,IFvalue*,void*);
+extern int METHnewCard(GENcard**,GENmodel*);
+extern int METHparam(int,IFvalue*,GENcard*);
 
 
 IFparm METHpTable[] = {
@@ -42,7 +42,7 @@ IFcardInfo METHinfo = {
 };
 
 int
-METHnewCard(void **inCard, void *inModel)
+METHnewCard(GENcard **inCard, GENmodel *inModel)
 {
     METHcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -55,16 +55,16 @@ METHnewCard(void **inCard, void *inModel)
             return(E_NOMEM);
         }
         newCard->METHnextCard = NULL;
-        *inCard = (void *)newCard;
+        *inCard = (GENcard *) newCard;
         model->GENmethods = newCard;
     } else { /* Only one card of this type allowed */
-	*inCard = (void *)tmpCard;
+	*inCard = (GENcard *)tmpCard;
     }
     return(OK);
 }
 
 int
-METHparam(int param, IFvalue *value, void *inCard)
+METHparam(int param, IFvalue *value, GENcard *inCard)
 {
     METHcard *card = (METHcard *)inCard;
 

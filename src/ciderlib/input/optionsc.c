@@ -17,8 +17,8 @@ Modified: 2001 Paolo Nenzi
 #define UM_TO_CM 1.0e-4
 #define UM2_TO_CM2 (UM_TO_CM * UM_TO_CM)
 
-extern int OPTNnewCard(void**,void*);
-extern int OPTNparam(int,IFvalue*,void*);
+extern int OPTNnewCard(GENcard**,GENmodel*);
+extern int OPTNparam(int,IFvalue*,GENcard*);
 
 
 
@@ -61,7 +61,7 @@ IFcardInfo OPTNinfo = {
 };
 
 int
-OPTNnewCard(void **inCard, void *inModel)
+OPTNnewCard(GENcard **inCard, GENmodel *inModel)
 {
     OPTNcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -74,16 +74,16 @@ OPTNnewCard(void **inCard, void *inModel)
             return(E_NOMEM);
         }
         newCard->OPTNnextCard = NULL;
-        *inCard = (void *)newCard;
+        *inCard = (GENcard *) newCard;
         model->GENoptions = newCard;
     } else { /* Only one card of this type allowed */
-	*inCard = (void *)tmpCard;
+	*inCard = (GENcard *) tmpCard;
     }
     return(OK);
 }
 
 int
-OPTNparam(int param, IFvalue *value, void *inCard)
+OPTNparam(int param, IFvalue *value, GENcard *inCard)
 {
     OPTNcard *card = (OPTNcard *)inCard;
 

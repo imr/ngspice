@@ -12,8 +12,8 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-extern int CONTnewCard(void**,void*);
-extern int CONTparam(int,IFvalue*,void*);
+extern int CONTnewCard(GENcard**,GENmodel*);
+extern int CONTparam(int,IFvalue*,GENcard*);
 
 
 IFparm CONTpTable[] = {
@@ -37,7 +37,7 @@ IFcardInfo CONTinfo = {
 };
 
 int
-CONTnewCard(void **inCard, void *inModel)
+CONTnewCard(GENcard **inCard, GENmodel *inModel)
 {
     CONTcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -48,7 +48,7 @@ CONTnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->CONTnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENcontacts;
     if (!tmpCard) { /* First in list */
@@ -63,7 +63,7 @@ CONTnewCard(void **inCard, void *inModel)
 }
 
 int
-CONTparam(int param, IFvalue *value, void *inCard)
+CONTparam(int param, IFvalue *value, GENcard *inCard)
 {
     CONTcard *card = (CONTcard *)inCard;
 

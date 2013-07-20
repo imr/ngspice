@@ -14,8 +14,8 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/suffix.h"
 
 
-extern int MATLnewCard(void**,void *);
-extern int MATLparam(int,IFvalue*,void *);
+extern int MATLnewCard(GENcard**,GENmodel *);
+extern int MATLparam(int,IFvalue*,GENcard *);
 
 
 IFparm MATLpTable[] = {
@@ -97,7 +97,7 @@ IFcardInfo PHYSinfo = {
 };
 
 int
-MATLnewCard(void **inCard, void *inModel)
+MATLnewCard(GENcard **inCard, GENmodel *inModel)
 {
     MATLcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -108,7 +108,7 @@ MATLnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->MATLnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENmaterials;
     if (!tmpCard) { /* First in list */
@@ -123,7 +123,7 @@ MATLnewCard(void **inCard, void *inModel)
 }
 
 int
-MATLparam(int param, IFvalue *value, void *inCard)
+MATLparam(int param, IFvalue *value, GENcard *inCard)
 {
     MATLcard *card = (MATLcard *)inCard;
 
