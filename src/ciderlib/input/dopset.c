@@ -17,9 +17,6 @@ Modifed: 2001 Paolo Nenzi
 #include "ngspice/carddefs.h"
 #include "ngspice/ciderinp.h"
 
-extern int DOPnewCard(void**,void*);
-extern int DOPparam(int,IFvalue*,void*);
-
 
 /*
  * Name:	DOPcheck

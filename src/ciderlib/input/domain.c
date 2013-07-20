@@ -15,8 +15,8 @@ Modified: 2001 Paolo Nenzi
 
 #define UM_TO_CM 1.0e-4
 
-extern int DOMNnewCard(void**,void*);
-extern int DOMNparam(int,IFvalue*,void*);
+extern int DOMNnewCard(GENcard**,GENmodel*);
+extern int DOMNparam(int,IFvalue*,GENcard*);
 
 
 IFparm DOMNpTable[] = {
@@ -54,7 +54,7 @@ IFcardInfo REGNinfo = {
 };
 
 int
-DOMNnewCard(void **inCard, void *inModel)
+DOMNnewCard(GENcard **inCard, GENmodel *inModel)
 {
     DOMNcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -65,7 +65,7 @@ DOMNnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->DOMNnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *)newCard;
 
     tmpCard = model->GENdomains;
     if (!tmpCard) { /* First in list */
@@ -80,7 +80,7 @@ DOMNnewCard(void **inCard, void *inModel)
 }
 
 int
-DOMNparam(int param, IFvalue *value, void *inCard)
+DOMNparam(int param, IFvalue *value, GENcard *inCard)
 {
     DOMNcard *card = (DOMNcard *)inCard;
 

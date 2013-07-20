@@ -391,8 +391,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     if (cardType >= 0) {
                         /* Add card structure to model */
                         info = INPcardTab[cardType];
-                        error = info->newCard ((void **) &tmpCard,
-                                model->INPmodfast );
+                        error = info->newCard (&tmpCard, model->INPmodfast );
                         if (error) return(error);
                     /* Handle parameter-less cards */
                     } else if (cinprefix( cardName, "title", 3 ) ) {

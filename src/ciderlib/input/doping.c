@@ -14,8 +14,8 @@ Modified: 2001 Paolo Nenzi
 
 #define UM_TO_CM 1.0e-4
 
-extern int DOPnewCard(void**,void*);
-extern int DOPparam(int,IFvalue*,void*);
+extern int DOPnewCard(GENcard**,GENmodel*);
+extern int DOPparam(int,IFvalue*,GENcard*);
 
 
 IFparm DOPpTable[] = {
@@ -71,7 +71,7 @@ IFcardInfo DOPinfo = {
 };
 
 int
-DOPnewCard(void **inCard, void *inModel)
+DOPnewCard(GENcard **inCard, GENmodel *inModel)
 {
     DOPcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -82,7 +82,7 @@ DOPnewCard(void **inCard, void *inModel)
         return(E_NOMEM);
     }
     newCard->DOPnextCard = NULL;
-    *inCard = (void *)newCard;
+    *inCard = (GENcard *) newCard;
 
     tmpCard = model->GENdopings;
     if (!tmpCard) { /* First in list */
@@ -98,7 +98,7 @@ DOPnewCard(void **inCard, void *inModel)
 
 
 int
-DOPparam(int param, IFvalue *value, void *inCard)
+DOPparam(int param, IFvalue *value, GENcard *inCard)
 {
     int i;
     DOPcard *card = (DOPcard *)inCard;

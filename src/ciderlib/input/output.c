@@ -14,8 +14,8 @@ Modified: 2001 Paolo Nenzi
 #include "ngspice/suffix.h"
 #include "../misc/tilde.h"
 
-extern int OUTPnewCard(void**,void*);
-extern int OUTPparam(int,IFvalue*,void*);
+extern int OUTPnewCard(GENcard**,GENmodel*);
+extern int OUTPparam(int,IFvalue*,GENcard*);
 
 
 IFparm OUTPpTable[] = {
@@ -84,7 +84,7 @@ IFcardInfo OUTPinfo = {
 };
 
 int
-OUTPnewCard(void **inCard, void *inModel)
+OUTPnewCard(GENcard **inCard, GENmodel *inModel)
 {
     OUTPcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
@@ -97,16 +97,16 @@ OUTPnewCard(void **inCard, void *inModel)
             return(E_NOMEM);
         }
         newCard->OUTPnextCard = NULL;
-        *inCard = (void *)newCard;
+        *inCard = (GENcard *) newCard;
         model->GENoutputs = newCard;
     } else { /* Only one card of this type allowed */
-	*inCard = (void *)tmpCard;
+	*inCard = (GENcard *) tmpCard;
     }
     return(OK);
 }
 
 int
-OUTPparam(int param, IFvalue *value, void *inCard)
+OUTPparam(int param, IFvalue *value, GENcard *inCard)
 {
     OUTPcard *card = (OUTPcard *)inCard;
 
