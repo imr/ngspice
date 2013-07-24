@@ -23,11 +23,9 @@ INPapName(CKTcircuit *ckt, int type, JOB *analPtr, char *parmname,
 		       ft_sim->analyses[type]->analysisParms[i].keyword) ==
 		0) {
 		return ft_sim->setAnalysisParm (ckt, analPtr,
-						     ft_sim->
-						     analyses[type]->
-						     analysisParms[i].id,
-						     value,
-						     NULL);
+						ft_sim->analyses[type]->analysisParms[i].id,
+						value,
+						NULL);
 	    }
     }
     return (E_BADPARM);
