@@ -466,13 +466,13 @@ com_measure_when(
 
         /* 'dc' is special: it may start at an arbitrary scale value.
            Use m_td to store this value, a delay TD does not make sense */
-        if ((dc_check) && (i == 0))
+        if (dc_check && (i == 0))
             meas->m_td = scaleValue;
         /* if analysis tran, suppress values below TD */
-        if ((tran_check) && (scaleValue < meas->m_td))
+        if (tran_check && (scaleValue < meas->m_td))
             continue;
         /* if analysis ac, sp, suppress values below 0 */
-        else if (((ac_check)||(sp_check)) && (scaleValue < 0))
+        else if ((ac_check || sp_check) && (scaleValue < 0))
             continue;
 
         /* if 'dc': reset first if scale jumps back to origin */

@@ -963,7 +963,7 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
        Call only if CKTtime > 0 to avoid conflict with previous 'reset' command.
        May contain side effects because called from many places.  h_vogt 110101
     */
-    if ((do_model) && (ckt->CKTtime > 0)) {
+    if (do_model && (ckt->CKTtime > 0)) {
         int error = 0;
         error = CKTtemp(ckt);
         if (error)

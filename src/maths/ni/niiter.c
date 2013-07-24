@@ -222,9 +222,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 damp_factor=10/maxdiff;
                 if (damp_factor<0.1) damp_factor=0.1;
                 for (node = ckt->CKTnodes->next; node; node = node->next) {
-                    diff = (ckt->CKTrhs)[node->number] -
-                           (ckt->CKTrhsOld)[node->number];
-                    (ckt->CKTrhs)[node->number]=(ckt->CKTrhsOld)[node->number] +
+                    diff = ckt->CKTrhs[node->number] -
+                           ckt->CKTrhsOld[node->number];
+                    ckt->CKTrhs[node->number] = ckt->CKTrhsOld[node->number] +
                                                 (damp_factor * diff);
                 }
                 for(i=0; i<ckt->CKTnumStates; i++) {

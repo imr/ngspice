@@ -31,8 +31,8 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 /* gtri - begin - dynamically allocate the array of model lists */
 /* CKThead used to be statically sized in CKTdefs.h, but has been changed */
 /* to a ** pointer */
-    (sckt)->CKThead = TMALLOC(GENmodel *, DEVmaxnum);
-    if((sckt)->CKThead == NULL) return(E_NOMEM);
+    sckt->CKThead = TMALLOC(GENmodel *, DEVmaxnum);
+    if(sckt->CKThead == NULL) return(E_NOMEM);
 /* gtri - end   - dynamically allocate the array of model lists */
 
 
@@ -97,26 +97,26 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
 /* gtri - begin - wbk - allocate/initialize substructs */
 
     /* Allocate evt data structure */
-    (sckt)->evt = TMALLOC(Evt_Ckt_Data_t, 1);
-    if(! (sckt)->evt)
+    sckt->evt = TMALLOC(Evt_Ckt_Data_t, 1);
+    if(! sckt->evt)
         return(E_NOMEM);
 
     /* Initialize options data */
-    (sckt)->evt->options.op_alternate = MIF_TRUE;
+    sckt->evt->options.op_alternate = MIF_TRUE;
 
     /* Allocate enh data structure */
-    (sckt)->enh = TMALLOC(Enh_Ckt_Data_t, 1);
-    if(! (sckt)->enh)
+    sckt->enh = TMALLOC(Enh_Ckt_Data_t, 1);
+    if(! sckt->enh)
         return(E_NOMEM);
 
     /* Initialize non-zero, non-NULL data */
-    (sckt)->enh->breakpoint.current = 1.0e30;
-    (sckt)->enh->breakpoint.last = 1.0e30;
-    (sckt)->enh->ramp.ramptime = 0.0;
-    (sckt)->enh->conv_limit.enabled = MIF_TRUE;
-    (sckt)->enh->conv_limit.step = 0.25;
-    (sckt)->enh->conv_limit.abs_step = 0.1;
-    (sckt)->enh->rshunt_data.enabled = MIF_FALSE;
+    sckt->enh->breakpoint.current = 1.0e30;
+    sckt->enh->breakpoint.last = 1.0e30;
+    sckt->enh->ramp.ramptime = 0.0;
+    sckt->enh->conv_limit.enabled = MIF_TRUE;
+    sckt->enh->conv_limit.step = 0.25;
+    sckt->enh->conv_limit.abs_step = 0.1;
+    sckt->enh->rshunt_data.enabled = MIF_FALSE;
 
 /* gtri - end - wbk - allocate/initialize substructs */
 
