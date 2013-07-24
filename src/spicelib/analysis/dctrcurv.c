@@ -346,16 +346,17 @@ resume:
 
         /* first get the current step in the analysis */
             if (job->TRCVvType[0] == vcode) {
-                g_mif_info.circuit.evt_step = ((VSRCinstance *)(job->TRCVvElt[i]))
-                    ->VSRCdcValue ;
+                g_mif_info.circuit.evt_step =
+                    ((VSRCinstance *)(job->TRCVvElt[i]))->VSRCdcValue ;
             } else if (job->TRCVvType[0] == icode) {
-                g_mif_info.circuit.evt_step = ((ISRCinstance *)(job->TRCVvElt[i]))
-                    ->ISRCdcValue ;
+                g_mif_info.circuit.evt_step =
+                    ((ISRCinstance *)(job->TRCVvElt[i]))->ISRCdcValue ;
             } else if (job->TRCVvType[0] == rcode) {
-                g_mif_info.circuit.evt_step =  ((RESinstance*)(job->TRCVvElt[i]->GENmodPtr))
-                    ->RESresist;
+                g_mif_info.circuit.evt_step =
+                    ((RESinstance*)(job->TRCVvElt[i]->GENmodPtr))->RESresist;
             } else if (job->TRCVvType[0] == TEMP_CODE) {
-                g_mif_info.circuit.evt_step =  ckt->CKTtemp - CONSTCtoK;
+                g_mif_info.circuit.evt_step =
+                    ckt->CKTtemp - CONSTCtoK;
             }
 
             /* if first time through, call EVTop immediately and save event results */
@@ -394,14 +395,11 @@ resume:
 
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEDCTRANCURVE | MODEINITPRED ;
         if (job->TRCVvType[0] == vcode) {
-            ckt->CKTtime = ((VSRCinstance *)(job->TRCVvElt[i]))
-                    ->VSRCdcValue ;
+            ckt->CKTtime = ((VSRCinstance *)(job->TRCVvElt[i]))->VSRCdcValue ;
         } else if (job->TRCVvType[0] == icode) {
-            ckt->CKTtime = ((ISRCinstance *)(job->TRCVvElt[i]))
-                    ->ISRCdcValue ;
+            ckt->CKTtime = ((ISRCinstance *)(job->TRCVvElt[i]))->ISRCdcValue ;
         } else if (job->TRCVvType[0] == rcode) {
-            ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[i]))
-                    ->RESresist;
+            ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[i]))->RESresist;
         } 
         /* PN Temp sweep */
         else 

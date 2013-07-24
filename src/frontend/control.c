@@ -773,8 +773,7 @@ cp_evloop(char *string)
         } else if (eq(wlist->wl_word, "continue")) {
             cend[stackp]->co_type = CO_CONTINUE;
             if (wlist->wl_next) {
-                cend[stackp]->co_numtimes = scannum(wlist->
-                                                    wl_next->wl_word);
+                cend[stackp]->co_numtimes = scannum(wlist->wl_next->wl_word);
                 if (wlist->wl_next->wl_next)
                     fprintf(cp_err,
                             "Warning: ignored extra junk after continue %d.\n",
@@ -785,8 +784,7 @@ cp_evloop(char *string)
         } else if (eq(wlist->wl_word, "break")) {
             cend[stackp]->co_type = CO_BREAK;
             if (wlist->wl_next) {
-                cend[stackp]->co_numtimes = scannum(wlist->
-                                                    wl_next->wl_word);
+                cend[stackp]->co_numtimes = scannum(wlist->wl_next->wl_word);
                 if (wlist->wl_next->wl_next)
                     fprintf(cp_err,
                             "Warning: ignored extra junk after break %d.\n",

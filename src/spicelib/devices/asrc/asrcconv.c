@@ -40,8 +40,7 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
                      branch = CKTfndBranch(ckt,here->ASRCtree->vars[i].uValue);
                      asrc_vals[i] = *(ckt->CKTrhsOld+branch);
                 } else {
-                    node_num = (here->ASRCtree->vars[i].nValue)
-                            ->number;
+                    node_num = here->ASRCtree->vars[i].nValue->number;
                     asrc_vals[i] = *(ckt->CKTrhsOld+node_num);
                 }
             }

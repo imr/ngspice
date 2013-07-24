@@ -394,8 +394,7 @@ d_p.d3_pqr = 0.0;
 	    InvDeriv(&d_onfbdy,&d_onfbdy);
             qbonco =gammas*sqphbs+model->MOS9narrowFactor*phibs/EffectiveWidth;
 	    EqualDeriv(&d_dummy,&d_phibs);
-	    TimesDeriv(&d_dummy,&d_dummy,model->
-	    						MOS9narrowFactor*EffectiveWidth);
+	    TimesDeriv(&d_dummy,&d_dummy,model->MOS9narrowFactor*EffectiveWidth);
 	    MultDeriv(&d_qbonco,&d_gammas,&d_sqphbs);
 	    PlusDeriv(&d_qbonco,&d_qbonco,&d_dummy);
             /*
