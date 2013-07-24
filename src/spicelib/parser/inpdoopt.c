@@ -41,7 +41,6 @@ INPdoOpts(
             which = i;
             break;
         }
-        i++;
     }
     if(which == -1) {
         optCard->error = INPerrCat(optCard->error,INPmkTemp(
