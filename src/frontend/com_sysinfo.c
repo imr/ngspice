@@ -335,7 +335,7 @@ tesCreateSystemInfo(TesSystemInfo *info)
          * if (info->numLogicalProcessors == 0) {
          *     char *token;
          *     char *cpustr = copy(inStr);
-         *     while ((cpustr) && !*cpustr)
+         *     while (cpustr && !*cpustr)
          *         if (cieq(gettok(&cpustr), "processor")) {
          *             gettok(&cpustr);
          *             token = gettok(&cpustr);

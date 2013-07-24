@@ -880,7 +880,7 @@ add_bkpt(void)
     int error = 0;
     CKTcircuit *ckt =  ft_curckt->ci_ckt;
 
-    if((bkpttmp) && (bkpttmpsize > 0)) {
+    if(bkpttmp && (bkpttmpsize > 0)) {
         for (i = 0; i < bkpttmpsize; i++)
             error = CKTsetBreak(ckt, bkpttmp[i]);
         FREE(bkpttmp);

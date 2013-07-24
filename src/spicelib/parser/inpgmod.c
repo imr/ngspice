@@ -441,9 +441,9 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                         err = INPerrCat(err, tmp);
                     } else {
                         value = INPgetValue( ckt, &line,
-                            ((info->cardParms)[idx]).dataType, tab );
+                            info->cardParms[idx].dataType, tab );
                         if (invert) { /* invert if it's a boolean entry */
-                          if (((((info->cardParms)[idx]).dataType)&IF_VARTYPES)
+                          if ((info->cardParms[idx].dataType & IF_VARTYPES)
                               == IF_FLAG) {
                             value->iValue = 0;
                           } else {
@@ -455,7 +455,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                           }
                         }
                         error = info->setCardParm (
-                            ((info->cardParms)[idx]).id, value, tmpCard );
+                            info->cardParms[idx].id, value, tmpCard );
                         if (error) return(error);
                     }
                     FREE(parm);
