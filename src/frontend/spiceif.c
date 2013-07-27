@@ -93,7 +93,7 @@ CKTcircuit *
 if_inpdeck(struct line *deck, INPtables **tab)
 {
     CKTcircuit *ckt;
-    int err, i, j;
+    int err, i;
     struct line *ll;
     IFuid taskUid;
     IFuid optUid;
@@ -130,11 +130,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     /*CDHW which options available for this simulator? CDHW*/
 
-    for (j = 0; j < ft_sim->numAnalyses; j++)
-        if (strcmp(ft_sim->analyses[j]->name, "options") == 0) {
-            which = j;
-            break;
-        }
+    which = ft_find_analysis("options");
 
     if (which != -1) {
         err = IFnewUid(ckt, &optUid, NULL, "options", UID_ANALYSIS, NULL);
@@ -201,7 +197,6 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
     int err;
     struct line deck;
     char buf[BSIZE_SP];
-    int j;
     int which = -1;
     IFuid specUid, optUid;
     char *s;
@@ -273,11 +268,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
         /*CDHW which options available for this simulator? CDHW*/
 
-        for (j = 0; j < ft_sim->numAnalyses; j++)
-            if (strcmp(ft_sim->analyses[j]->name, "options") == 0) {
-                which = j;
-                break;
-            }
+        which = ft_find_analysis("options");
 
         if (which != -1) { /*CDHW options are available CDHW*/
             err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options", UID_ANALYSIS, NULL);
@@ -429,11 +420,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         return 0;
     }
 
-    for (i = 0; i < ft_sim->numAnalyses; i++)
-        if (strcmp(ft_sim->analyses[i]->name, "options") == 0) {
-            which = i;
-            break;
-        }
+    which = ft_find_analysis("options");
 
     if (which == -1) {
         fprintf(cp_err, "Warning:  .options line unsupported\n");
@@ -1243,18 +1230,13 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     IFvalue tmp;
     int err;
     int which = -1;
-    int i;
     JOB *anal;
     IFuid tranUid;
 
     if (!ci->ci_curTask)
         return (FALSE);
 
-    for (i = 0; i < ft_sim->numAnalyses; i++)
-        if (strcmp(ft_sim->analyses[i]->name, "TRAN") == 0) {
-            which = i;
-            break;
-        }
+    which = ft_find_analysis("TRAN");
 
     if (which == -1)
         return (FALSE);
@@ -1301,11 +1283,7 @@ if_getstat(CKTcircuit *ckt, char *name)
     IFvalue parm;
     int which = -1;
 
-    for (i = 0; i < ft_sim->numAnalyses; i++)
-        if (strcmp(ft_sim->analyses[i]->name, "options") == 0) {
-            which = i;
-            break;
-        }
+    which = ft_find_analysis("options");
 
     if (which == -1) {
         fprintf(cp_err, "Warning:  statistics unsupported\n");
@@ -1739,4 +1717,15 @@ void com_snsave(wordlist *wl)
 
     fclose(file);
     fprintf(stdout, "Snapshot saved to %s.\n", wl->wl_word);
+}
+
+
+int
+ft_find_analysis(char *name)
+{
+    int j;
+    for (j = 0; j < ft_sim->numAnalyses; j++)
+        if (strcmp(ft_sim->analyses[j]->name, name) == 0)
+            return j;
+    return -1;
 }

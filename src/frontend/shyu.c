@@ -40,7 +40,6 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     char *line;
     card deck;
     int i;
-    int j;
     int error;
     int save;
     int flag = 0;
@@ -73,11 +72,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
         return (0); /* temporary */
     }
 
-    for (j = 0; j < ft_sim->numAnalyses; j++)
-        if (strcmp(ft_sim->analyses[j]->name, "options") == 0) {
-            which = j;
-            break;
-        }
+    which = ft_find_analysis("options");
 
     if (which == -1) {
         /* in DEEP trouble */
@@ -95,12 +90,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     ft_curckt->ci_curOpt  = ft_curckt->ci_specOpt;
     ft_curckt->ci_curTask = ft_curckt->ci_specTask;
 
-    which = -1;
-    for (j = 0; j < ft_sim->numAnalyses; j++)
-        if (strcmp(ft_sim->analyses[j]->name, "SEN") == 0) {
-            which = j;
-            break;
-        }
+    which = ft_find_analysis("SEN");
 
     if (which == -1) {
         current->error = INPerrCat(
@@ -122,12 +112,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
 
     if (strcmp(token, "ac") == 0) {
         JOB *acJob;
-        which = -1;
-        for (j = 0; j < ft_sim->numAnalyses; j++)
-            if (strcmp(ft_sim->analyses[j]->name, "AC") == 0) {
-                which = j;
-                break;
-            }
+        which = ft_find_analysis("AC");
         if (which == -1) {
             current->error = INPerrCat
                 (current->error,
@@ -162,12 +147,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     }
 
     if (strcmp(token, "op") == 0) {
-        which = -1;
-        for (i = 0; i < ft_sim->numAnalyses; i++)
-            if (strcmp(ft_sim->analyses[i]->name, "DCOP") == 0) {
-                which = i;
-                break;
-            }
+        which = ft_find_analysis("DCOP");
         if (which == -1) {
             current->error = INPerrCat
                 (current->error,
@@ -186,12 +166,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
         JOB *dcJob;
         /* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
         /*        Vstop2 Vinc2 */
-        which = -1;
-        for (i = 0; i < ft_sim->numAnalyses; i++)
-            if (strcmp(ft_sim->analyses[i]->name, "DCTransfer") == 0) {
-                which = i;
-                break;
-            }
+        which = ft_find_analysis("DCTransfer");
         if (which == -1) {
             current->error = INPerrCat
                 (current->error,
@@ -248,12 +223,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
 
     if (strcmp(token, "tran") == 0) {
         JOB *tranJob;
-        which = -1;
-        for (j = 0; j < ft_sim->numAnalyses; j++)
-            if (strcmp(ft_sim->analyses[j]->name, "TRAN") == 0) {
-                which = j;
-                break;
-            }
+        which = ft_find_analysis("TRAN");
         if (which == -1) {
             current->error = INPerrCat
                 (current->error,
@@ -309,12 +279,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     /* *********************** */
     if (strcmp(token, "pss") == 0) {
         JOB *pssJob;
-        which = -1;
-        for (j = 0; j < ft_sim->numAnalyses; j++)
-            if (strcmp(ft_sim->analyses[j]->name, "PSS") == 0) {
-                which = j;
-                break;
-            }
+        which = ft_find_analysis("PSS");
         if (which == -1) {
             current->error = INPerrCat
                 (current->error,

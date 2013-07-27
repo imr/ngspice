@@ -19,7 +19,6 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
           TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	int error;			/* error code temporary */
 	char *name;			/* the resistor's name */
 	char *nname1;		/* the first node's name */
@@ -34,13 +33,7 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	char *point;
 
 	/* .noise V(OUTPUT,REF) SRC {DEC OCT LIN} NP FSTART FSTOP <PTSPRSUM> */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "NOISE") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("NOISE");
 	if (which == -1) {
 		LITERR("Noise analysis unsupported.\n");
 		return (0);
@@ -125,7 +118,6 @@ dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
        TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	int error;			/* error code temporary */
 
 	NG_IGNORE(line);
@@ -133,13 +125,7 @@ dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	NG_IGNORE(gnode);
 
 	/* .op */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "OP") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("OP");
 	if (which == -1) {
 		LITERR("DC operating point analysis unsupported\n");
 		return (0);
@@ -154,7 +140,6 @@ dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
           TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	int error;			/* error code temporary */
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
@@ -163,13 +148,7 @@ dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	NG_IGNORE(gnode);
 
 	/* .disto {DEC OCT LIN} NP FSTART FSTOP <F2OVERF1> */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "DISTO") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("DISTO");
 	if (which == -1) {
 		LITERR("Small signal distortion analysis unsupported.\n");
 		return (0);
@@ -200,19 +179,12 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	char *steptype;		/* ac analysis, type of stepping function */
 
 	NG_IGNORE(gnode);
 
 	/* .ac {DEC OCT LIN} NP FSTART FSTOP */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "AC") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("AC");
 	if (which == -1) {
 		LITERR("AC small signal analysis unsupported.\n");
 		return (0);
@@ -239,19 +211,12 @@ dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	char *steptype;		/* ac analysis, type of stepping function */
 
 	NG_IGNORE(gnode);
 
 	/* .pz nodeI nodeG nodeJ nodeK {V I} {POL ZER PZ} */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "PZ") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("PZ");
 	if (which == -1) {
 		LITERR("Pole-zero analysis unsupported.\n");
 		return (0);
@@ -284,19 +249,12 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 
 	NG_IGNORE(gnode);
 
 	/* .dc SRC1NAME Vstart1 Vstop1 Vinc1 [SRC2NAME Vstart2 */
 	/*        Vstop2 Vinc2 */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "DC") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("DC");
 	if (which == -1) {
 		LITERR("DC transfer curve analysis unsupported\n");
 		return (0);
@@ -336,7 +294,6 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	int error;			/* error code temporary */
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	char *nname1;		/* the first node's name */
 	char *nname2;		/* the second node's name */
 	CKTnode *node1;		/* the first node's node pointer */
@@ -344,13 +301,7 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 	/* .tf v( node1, node2 ) src */
 	/* .tf vsrc2             src */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "TF") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("TF");
 	if (which == -1) {
 		LITERR("Transfer Function analysis unsupported.\n");
 		return (0);
@@ -408,20 +359,13 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	double dtemp;		/* random double precision temporary */
 	char *word;			/* something to stick a word of input into */
 
 	NG_IGNORE(gnode);
 
 	/* .tran Tstep Tstop <Tstart <Tmax> > <UIC> */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "TRAN") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("TRAN");
 	if (which == -1) {
 		LITERR("Transient analysis unsupported.\n");
 		return (0);
@@ -465,20 +409,13 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	char *nname1;		/* the first node's name */
 	char *nname2;		/* the second node's name */
 	CKTnode *node1;		/* the first node's node pointer */
 	CKTnode *node2;		/* the second node's node pointer */
 	char *steptype;		/* ac analysis, type of stepping function */
 
-	which = -1;			/* Bug fix from Glao Dezai */
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "SENS") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("SENS");
 	if (which == -1) {
 		LITERR("Sensitivity unsupported.\n");
 		return (0);
@@ -570,13 +507,7 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	NG_IGNORE(gnode);
 
 	/* .sens {AC} {DC} {TRAN} [dev=nnn parm=nnn]* */
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "SENS2") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("SENS2");
 	if (which == -1) {
 		LITERR("Sensitivity-2 analysis unsupported\n");
 		return (0);
@@ -639,19 +570,12 @@ dot_pss(char *line, void *ckt, INPtables *tab, card *current,
 	char *nname;		/* the oscNode name */
 	CKTnode *nnode;		/* the oscNode node */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	char *word;			/* something to stick a word of input into */
 
 	NG_IGNORE(gnode);
 
 	/* .pss Fguess StabTime OscNode <UIC>*/
-	which = -1;
-	for (i = 0; i < ft_sim->numAnalyses; i++) {
-		if (strcmp(ft_sim->analyses[i]->name, "PSS") == 0) {
-			which = i;
-			break;
-		}
-	}
+	which = ft_find_analysis("PSS");
 	if (which == -1) {
 		LITERR("Periodic steady state analysis unsupported.\n");
 		return (0);
