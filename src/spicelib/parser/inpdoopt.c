@@ -33,20 +33,13 @@ INPdoOpts(
     int which;
     IFanalysis *prm = NULL;
 
-    which = -1;
-    i=0;
-    for(i=0;i<ft_sim->numAnalyses;i++) {
-        prm = ft_sim->analyses[i];
-        if(strcmp(prm->name,"options")==0) {
-            which = i;
-            break;
-        }
-    }
+    which = ft_find_analysis("options");
     if(which == -1) {
         optCard->error = INPerrCat(optCard->error,INPmkTemp(
                 "error:  analysis options table not found\n"));
         return;
     }
+    prm = ft_sim->analyses[which];
     line = optCard->line;
     INPgetTok(&line,&token,1);    /* throw away '.option' */
     while (*line) {
