@@ -1927,7 +1927,7 @@ nupa_subcktcall(tdico *dico, char *s, char *x, bool err)
    x= a matching subckt call line, with actual params
 */
 {
-    int n, i, j, k, g, h, narg = 0, ls, nest;
+    int n, i, j, found_j, k, g, h, narg = 0, ls, nest;
     SPICE_DSTRING subname;
     SPICE_DSTRING tstr;
     SPICE_DSTRING ustr;
@@ -2042,18 +2042,19 @@ nupa_subcktcall(tdico *dico, char *s, char *x, bool err)
         scopyd(&parsebuf, &tstr);
         buf = spice_dstring_value(&parsebuf);
 
-        found = 0;
+        found = found_j = 0;
         token = strtok(buf, " "); /* a bit more exact - but not sufficient everytime */
         j = j + (int) strlen(token) + 1;
         if (strcmp(token, spice_dstring_value(&subname)))
             while ((token = strtok(NULL, " ")) != NULL) {
                 if (!strcmp(token, spice_dstring_value(&subname))) {
                     found = 1;
-                    break;
+                    found_j = j;
                 }
                 j = j + (int) strlen(token) + 1;
             }
 
+        j = found_j; /* last occurence of subname in buf */
         spice_dstring_free(&parsebuf);
 
         /*  make sure that subname followed by space */
