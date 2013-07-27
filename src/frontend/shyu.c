@@ -323,9 +323,16 @@ next:
         else
             flag = 1;
 
-        for (i = 0; i < ft_sim->analyses[save]->numParms; i++) {
-            /* find the parameter */
-            if (0 == strcmp(token, ft_sim->analyses[save]->analysisParms[i].keyword)) {
+        i = ft_find_analysis_parm(save, token);
+
+        if (i < 0) {
+            /* didn't find it! */
+            current->error = INPerrCat
+                (current->error,
+                 INPmkTemp(" Error: unknown parameter on .sens - ignored \n"));
+            continue;
+        }
+
                 /* found it, analysis which, parameter i */
                 if (ft_sim->analyses[save]->analysisParms[i].dataType & IF_FLAG) {
                     /* one of the keywords! */
@@ -345,16 +352,6 @@ next:
                     if (error)
                         current->error = INPerrCat(current->error, INPerror(error));
                 }
-                break;
-            }
-        }
-
-        if (i == ft_sim->analyses[save]->numParms) {
-            /* didn't find it! */
-            current->error = INPerrCat
-                (current->error,
-                 INPmkTemp(" Error: unknown parameter on .sens - ignored \n"));
-        }
     }
 
     if ((err = ft_sim->doAnalyses (ckt, 1, ft_curckt->ci_curTask)) != OK) {

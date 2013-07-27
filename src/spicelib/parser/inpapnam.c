@@ -17,16 +17,19 @@ INPapName(CKTcircuit *ckt, int type, JOB *analPtr, char *parmname,
 {
     int i;
 
-    if (parmname && ft_sim->analyses[type]) {
-	for (i = 0; i < ft_sim->analyses[type]->numParms; i++)
-	    if (strcmp(parmname,
-		       ft_sim->analyses[type]->analysisParms[i].keyword) ==
-		0) {
-		return ft_sim->setAnalysisParm (ckt, analPtr,
-						ft_sim->analyses[type]->analysisParms[i].id,
-						value,
-						NULL);
-	    }
-    }
-    return (E_BADPARM);
+    if (!parmname)
+	return (E_BADPARM);
+
+    if (!ft_sim->analyses[type])
+	return (E_BADPARM);
+
+    i = ft_find_analysis_parm(type, parmname);
+
+    if (i < 0)
+	return (E_BADPARM);
+
+    return ft_sim->setAnalysisParm (ckt, analPtr,
+				    ft_sim->analyses[type]->analysisParms[i].id,
+				    value,
+				    NULL);
 }

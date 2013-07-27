@@ -307,6 +307,7 @@ extern void if_setparam_model(CKTcircuit *ckt, char **name, char *val );
 extern void if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_model);
 extern struct variable *if_getstat(CKTcircuit *ckt, char *name);
 extern int ft_find_analysis(char *name);
+extern int ft_find_analysis_parm(int which, char *name);
 
 /* typesdef.c */
 

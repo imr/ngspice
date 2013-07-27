@@ -427,11 +427,8 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         return 0;
     }
 
-    for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
-        if (eq(ft_sim->analyses[which]->analysisParms[i].keyword, name) &&
-            (ft_sim->analyses[which]->analysisParms[i].dataType & IF_SET))
-            break;
-    if (i == ft_sim->analyses[which]->numParms) {
+    i = ft_find_analysis_parm(which, name);
+    if (i < 0 || !(ft_sim->analyses[which]->analysisParms[i].dataType & IF_SET)) {
         /* See if this is unsupported or obsolete. */
         for (vv = unsupported; *vv; vv++)
             if (eq(name, *vv)) {
@@ -1212,11 +1209,12 @@ int
 if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
 {
     int i;
-    for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
-        if (strcmp(ft_sim->analyses[which]->analysisParms[i].keyword, name) == 0)
-            return (ft_sim->askAnalysisQuest
-                   (ckt, anal, ft_sim->analyses[which]->analysisParms[i].id, parm, NULL));
-    return (E_BADPARM);
+    i = ft_find_analysis_parm(which, name);
+    if (i < 0)
+        return (E_BADPARM);
+
+    return (ft_sim->askAnalysisQuest
+            (ckt, anal, ft_sim->analyses[which]->analysisParms[i].id, parm, NULL));
 }
 
 
@@ -1291,10 +1289,8 @@ if_getstat(CKTcircuit *ckt, char *name)
     }
 
     if (name) {
-        for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
-            if (eq(ft_sim->analyses[which]->analysisParms[i].keyword, name))
-                break;
-        if (i == ft_sim->analyses[which]->numParms)
+        i = ft_find_analysis_parm(which, name);
+        if (i < 0)
             return (NULL);
         if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
                                       ft_sim->analyses[which]->analysisParms[i].id, &parm,
@@ -1727,5 +1723,16 @@ ft_find_analysis(char *name)
     for (j = 0; j < ft_sim->numAnalyses; j++)
         if (strcmp(ft_sim->analyses[j]->name, name) == 0)
             return j;
+    return -1;
+}
+
+
+int
+ft_find_analysis_parm(int which, char *name)
+{
+    int i;
+    for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
+        if (!strcmp(ft_sim->analyses[which]->analysisParms[i].keyword, name))
+            return i;
     return -1;
 }
