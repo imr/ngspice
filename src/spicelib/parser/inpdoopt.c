@@ -44,8 +44,8 @@ INPdoOpts(
     INPgetTok(&line,&token,1);    /* throw away '.option' */
     while (*line) {
         INPgetTok(&line,&token,1);
-        for(i=0;i<prm->numParms;i++) {
-            if(strcmp(token,prm->analysisParms[i].keyword) == 0) {
+        i = ft_find_analysis_parm(which, token);
+        if(i >= 0) {
                 if(!(prm->analysisParms[i].dataType & IF_UNIMP_MASK)) {
                     errmsg = TMALLOC(char, 45 + strlen(token));
                     (void) sprintf(errmsg,
@@ -53,8 +53,10 @@ INPdoOpts(
                     optCard->error = INPerrCat(optCard->error,errmsg);
                     val = INPgetValue(ckt,&line,
                             prm->analysisParms[i].dataType, tab);
-                    break;
+                    continue;
                 }
+        }
+        if(i >= 0) {
                 if(prm->analysisParms[i].dataType & IF_SET) {
                     val = INPgetValue(ckt,&line,
                             prm->analysisParms[i].dataType&IF_VARTYPES, tab);
@@ -66,15 +68,12 @@ INPdoOpts(
                                 "Warning:  can't set option %s\n", token);
                         optCard->error = INPerrCat(optCard->error, errmsg);
                     }
-                    break;
+                    continue;
                 }
-            }
         }
-        if(i == prm->numParms) {
             errmsg = TMALLOC(char, 100);
             (void) strcpy(errmsg," Error: unknown option - ignored\n");
             optCard->error = INPerrCat(optCard->error,errmsg);
             fprintf(stderr, "%s\n", optCard->error);
-        }
     }
 }

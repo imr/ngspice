@@ -516,10 +516,12 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	while (*line) {
 		/* read the entire line */
 		INPgetTok(&line, &token, 1);
-		for (i = 0; i < ft_sim->analyses[which]->numParms; i++) {
-			/* find the parameter */
-			if (0 == strcmp(token,
-			                ft_sim->analyses[which]->analysisParms[i].keyword)) {
+		i = ft_find_analysis_parm(which, token);
+		if (i < 0) {
+			/* didn't find it! */
+			LITERR(" Error: unknown parameter on .sens-ignored \n");
+			continue;
+		}
 				/* found it, analysis which, parameter i */
 				if (ft_sim->analyses[which]->analysisParms[i].dataType & IF_FLAG) {
 					/* one of the keywords! */
@@ -546,13 +548,6 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 						    INPerrCat(current->error, INPerror(error));
 
 				}
-				break;
-			}
-		}
-		if (i == ft_sim->analyses[which]->numParms) {
-			/* didn't find it! */
-			LITERR(" Error: unknown parameter on .sens-ignored \n");
-		}
 	}
 	return (0);
 }
