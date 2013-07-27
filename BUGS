@@ -18,20 +18,21 @@ tracking system or on the mailing lists is public. If you need to send
 sensitive information, send them to a developer directly but still write non
 sensitive data on the bug tracking system to keep track of bug history.
 
+* please refer to the sourceforge bug tracker at
+  http://sourceforge.net/p/ngspice/bugs/
+
 ------------------------------------------------------------------------------
 OPEN BUGS:
 ------------------------------------------------------------------------------
-* return value:
+* pole-zero analysis
 
-  When ngspice is called in batch mode it returns 1 even if the simulations
-  are run. The problem arises when there is a .control section but no
-  .print, .plot or .fourier lines. Ngspice outputs:
+  The pole-zero (.pz) analysis, which still uses the original spice3f5
+  algorithms, does not give correct results for all tested input files.
+  The effort to correct that issue seems to be large.
   
-    Note: No ".plot", ".print", or ".fourier" lines; no simulations run 
-  
-  and exits returning 1.
-  
-  Workaround: add -r <dummyfile> to the command line to avoid this. 
-  
-* please refer to the sourceforge bug tracker at 
-  http://sourceforge.net/tracker/?group_id=38962&atid=423915  
+
+* voltage (and current) controlled switches need better timing
+
+  The controlled switches (SW, CSW), which still stem from the original
+  spice3f5 implementation, sometimes lead to wrong results when on and off
+  ramp times differ considerably.
