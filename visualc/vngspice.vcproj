@@ -4561,6 +4561,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\cap\capnode.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\cap\capparam.c"
 				>
 			</File>
@@ -4858,6 +4862,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\analysis\cktmkcur.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmkcurKCL.c"
 				>
 			</File>
 			<File
@@ -6038,6 +6046,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\ind\indmpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\ind\indnode.c"
 				>
 			</File>
 			<File
@@ -8069,6 +8081,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\res\resnode.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\res\resnoise.c"
 				>
 			</File>
@@ -8874,6 +8890,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\vsrc\vsrcmdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\vsrc\vsrcnode.c"
 				>
 			</File>
 			<File
