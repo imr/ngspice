@@ -1276,51 +1276,59 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
 struct variable *
 if_getstat(CKTcircuit *ckt, char *name)
 {
-    int i;
-    struct variable *v, *vars;
-    IFvalue parm;
-    int which = -1;
+    int         options_idx, i;
+    IFanalysis *options;
+    IFvalue     parm;
 
-    which = ft_find_analysis("options");
+     options_idx = ft_find_analysis("options");
 
-    if (which == -1) {
+    if (options_idx == -1) {
         fprintf(cp_err, "Warning:  statistics unsupported\n");
         return (NULL);
     }
 
+    options = ft_sim->analyses[options_idx];
+
     if (name) {
-        i = ft_find_analysis_parm(which, name);
+
+        i = ft_find_analysis_parm(options_idx, name);
+
         if (i < 0)
             return (NULL);
-        if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
-                                      ft_sim->analyses[which]->analysisParms[i].id, &parm,
+
+        if (ft_sim->askAnalysisQuest (ckt,
+                                      &(ft_curckt->ci_curTask->taskOptions),
+                                      options->analysisParms[i].id, &parm,
                                       NULL) == -1)
         {
             fprintf(cp_err, "if_getstat: Internal Error: can't get %s\n", name);
             return (NULL);
         }
-        return (parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i])));
+
+        return (parmtovar(&parm, &(options->analysisParms[i])));
+
     } else {
-        for (i = 0, vars = v = NULL; i < ft_sim->analyses[which]->numParms; i++) {
-            if (!(ft_sim->analyses[which]->analysisParms[i].dataType & IF_ASK))
+
+        struct variable *vars = NULL, **v = &vars;
+
+        for (i = 0; i < options->numParms; i++) {
+
+            if (!(options->analysisParms[i].dataType & IF_ASK))
                 continue;
-            if (ft_sim->askAnalysisQuest (ckt, &(ft_curckt->ci_curTask->taskOptions),
-                                          ft_sim->analyses[which]->analysisParms[i].id,
-                                          &parm, NULL) == -1) {
-                fprintf(cp_err,
-                        "if_getstat: Internal Error: can't get %s\n",
-                        name);
+
+            if (ft_sim->askAnalysisQuest (ckt,
+                                          &(ft_curckt->ci_curTask->taskOptions),
+                                          options->analysisParms[i].id, &parm,
+                                          NULL) == -1)
+            {
+                fprintf(cp_err, "if_getstat: Internal Error: can't get %s\n", name);
                 return (NULL);
             }
-            if (v) {
-                v->va_next =
-                    parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i]));
-                v = v->va_next;
-            } else {
-                vars = v =
-                    parmtovar(&parm, &(ft_sim->analyses[which]->analysisParms[i]));
-            }
+
+            *v = parmtovar(&parm, &(options->analysisParms[i]));
+            v = &((*v)->va_next);
         }
+
         return (vars);
     }
 }
