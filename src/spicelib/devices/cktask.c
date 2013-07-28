@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 
 #include "dev.h"
-#include "ngspice/fteext.h" /* controlled_exit() */
+#include "ngspice/fteext.h"
 
 int
 CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalue *selector)

@@ -12,7 +12,6 @@ Author: 1992 Charles Hough
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#include "ngspice/fteext.h" /* controlled_exit() */
 
 static int 		ReadTxL(TXLinstance*, CKTcircuit*);
 /*static int 		multC();*/

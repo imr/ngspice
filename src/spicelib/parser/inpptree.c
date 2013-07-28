@@ -11,7 +11,6 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/inpptree.h"
 #include "inpxx.h"
 
-extern void controlled_exit(int status);
 
 static INPparseNode *mkcon(double value);
 static INPparseNode *mkb(int type, INPparseNode * left,

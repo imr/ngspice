@@ -26,7 +26,7 @@ Todo:
 #include "general.h"
 #include "numparam.h"
 
-#include "ngspice/fteext.h" /* controlled_exit() */
+#include "ngspice/fteext.h"
 
 
 extern bool ft_batchmode;

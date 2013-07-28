@@ -4,6 +4,8 @@
  *  Free software under the terms of the GNU Lesser General Public License
  */
 
+#include "ngspice/ngspice.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -18,8 +20,6 @@
 #endif
 
 #include "general.h"
-
-#include "ngspice/fteext.h" /* controlled_exit() */
 
 
 /*

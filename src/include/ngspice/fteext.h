@@ -350,6 +350,5 @@ extern bool ft_intrpt;
 extern bool ft_setflag;
 
 /* error.c */
-extern void controlled_exit(int status);
 
 #endif

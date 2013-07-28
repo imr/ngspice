@@ -21,7 +21,6 @@ File: b3soifdld.c          98/5/01
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
-#include "ngspice/fteext.h" /* controlled_exit() */
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15

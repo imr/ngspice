@@ -12,11 +12,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  */
 #include "ngspice/ngspice.h"
 
-/* We need this because some tests in cmaths and some executables other
-   than ngspice and ngnutmeg under LINUX don't know about controlled_exit */
-#if defined HAS_WINGUI || defined SHARED_MODULE
-extern void controlled_exit(int status);
-#endif
 
 #ifdef SHARED_MODULE
 #ifndef HAVE_LIBPTHREAD

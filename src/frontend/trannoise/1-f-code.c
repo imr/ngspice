@@ -19,8 +19,6 @@
 #include "fftw3.h"
 #endif
 
-extern void controlled_exit(int status);
-
 
 void
 f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)

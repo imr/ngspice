@@ -299,6 +299,13 @@ extern void SetAnalyse(char *analyse, int percent);
 
 void soa_printf(CKTcircuit *ckt, GENinstance *instance, const char *fmt, ...);
 
+#ifdef __GNUC__
+extern void controlled_exit(int status) __attribute__ ((noreturn));
+#else
+extern void controlled_exit(int status);
+#endif
+
+
 /* macro to ignore unused variables and parameters */
 #define NG_IGNORE(x)  (void)x
 #define NG_IGNOREABLE(x)  (void)x
