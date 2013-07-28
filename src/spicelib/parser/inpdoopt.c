@@ -43,25 +43,24 @@ INPdoOpts(
     line = optCard->line;
     INPgetTok(&line,&token,1);    /* throw away '.option' */
     while (*line) {
+        IFparm *if_parm;
         INPgetTok(&line,&token,1);
         i = ft_find_analysis_parm(which, token);
-        if(i >= 0) {
-                if(!(prm->analysisParms[i].dataType & IF_UNIMP_MASK)) {
+        if_parm = (i >= 0) ? &(prm->analysisParms[i]) : NULL;
+        if(if_parm && !(if_parm->dataType & IF_UNIMP_MASK)) {
                     errmsg = TMALLOC(char, 45 + strlen(token));
                     (void) sprintf(errmsg,
                         " Warning: %s not yet implemented - ignored \n",token);
                     optCard->error = INPerrCat(optCard->error,errmsg);
                     val = INPgetValue(ckt,&line,
-                            prm->analysisParms[i].dataType, tab);
+                            if_parm->dataType, tab);
                     continue;
-                }
         }
-        if(i >= 0) {
-                if(prm->analysisParms[i].dataType & IF_SET) {
+        if(if_parm && (if_parm->dataType & IF_SET)) {
                     val = INPgetValue(ckt,&line,
-                            prm->analysisParms[i].dataType&IF_VARTYPES, tab);
+                            if_parm->dataType&IF_VARTYPES, tab);
                     error = ft_sim->setAnalysisParm (ckt, anal,
-                            prm->analysisParms[i].id, val, NULL);
+                            if_parm->id, val, NULL);
                     if(error) {
                         errmsg = TMALLOC(char, 35 + strlen(token));
                         (void) sprintf(errmsg,
@@ -69,7 +68,6 @@ INPdoOpts(
                         optCard->error = INPerrCat(optCard->error, errmsg);
                     }
                     continue;
-                }
         }
             errmsg = TMALLOC(char, 100);
             (void) strcpy(errmsg," Error: unknown option - ignored\n");

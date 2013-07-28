@@ -318,6 +318,8 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
 next:
     while (*line) { /* read the entire line */
 
+        IFparm *if_parm;
+
         if (flag)
             INPgetTok(&line, &token, 1);
         else
@@ -333,22 +335,24 @@ next:
             continue;
         }
 
+        if_parm = &(ft_sim->analyses[save]->analysisParms[i]);
+
                 /* found it, analysis which, parameter i */
-                if (ft_sim->analyses[save]->analysisParms[i].dataType & IF_FLAG) {
+                if (if_parm->dataType & IF_FLAG) {
                     /* one of the keywords! */
                     ptemp.iValue = 1;
                     error = ft_sim->setAnalysisParm
                         (ckt, senseJob,
-                         ft_sim->analyses[save]->analysisParms[i].id, &ptemp, NULL);
+                         if_parm->id, &ptemp, NULL);
                     if (error)
                         current->error = INPerrCat(current->error, INPerror(error));
                 } else {
                     parm = INPgetValue
                         (ckt, &line,
-                         ft_sim->analyses[save]->analysisParms[i].dataType, tab);
+                         if_parm->dataType, tab);
                     error = ft_sim->setAnalysisParm
                         (ckt, senseJob,
-                         ft_sim->analyses[save]->analysisParms[i].id, parm, NULL);
+                         if_parm->id, parm, NULL);
                     if (error)
                         current->error = INPerrCat(current->error, INPerror(error));
                 }
