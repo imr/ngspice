@@ -47,8 +47,7 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
         }
         if (ft_stricterror)
             controlled_exit(EXIT_BAD);
-        else
-            return (err);
+        return err;
     }
 
     for (i = 0; i < myTree->p.numVars; i++)
@@ -61,8 +60,7 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
             }
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
-            else
-                return (err);
+            return err;
         }
 
 #ifdef TRACE
