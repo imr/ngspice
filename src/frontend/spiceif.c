@@ -1210,13 +1210,12 @@ finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
 int
 if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
 {
-    IFparm *if_parm;
-    if_parm = ft_find_analysis_parm(which, name);
+    IFparm *if_parm = ft_find_analysis_parm(which, name);
+
     if (!if_parm)
         return (E_BADPARM);
 
-    return (ft_sim->askAnalysisQuest
-            (ckt, anal, if_parm->id, parm, NULL));
+    return (ft_sim->askAnalysisQuest (ckt, anal, if_parm->id, parm, NULL));
 }
 
 
@@ -1283,7 +1282,7 @@ if_getstat(CKTcircuit *ckt, char *name)
     IFvalue     parm;
     IFparm     *if_parm;
 
-     options_idx = ft_find_analysis("options");
+    options_idx = ft_find_analysis("options");
 
     if (options_idx == -1) {
         fprintf(cp_err, "Warning:  statistics unsupported\n");

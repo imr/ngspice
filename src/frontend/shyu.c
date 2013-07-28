@@ -334,25 +334,21 @@ next:
             continue;
         }
 
-                /* found it, analysis which, parameter i */
-                if (if_parm->dataType & IF_FLAG) {
-                    /* one of the keywords! */
-                    ptemp.iValue = 1;
-                    error = ft_sim->setAnalysisParm
-                        (ckt, senseJob,
-                         if_parm->id, &ptemp, NULL);
-                    if (error)
-                        current->error = INPerrCat(current->error, INPerror(error));
-                } else {
-                    parm = INPgetValue
-                        (ckt, &line,
-                         if_parm->dataType, tab);
-                    error = ft_sim->setAnalysisParm
-                        (ckt, senseJob,
-                         if_parm->id, parm, NULL);
-                    if (error)
-                        current->error = INPerrCat(current->error, INPerror(error));
-                }
+        /* found it, analysis which, parameter i */
+        if (if_parm->dataType & IF_FLAG) {
+            /* one of the keywords! */
+            ptemp.iValue = 1;
+            error = ft_sim->setAnalysisParm (ckt, senseJob,
+                                             if_parm->id, &ptemp, NULL);
+            if (error)
+                current->error = INPerrCat(current->error, INPerror(error));
+        } else {
+            parm = INPgetValue (ckt, &line, if_parm->dataType, tab);
+            error = ft_sim->setAnalysisParm (ckt, senseJob,
+                                             if_parm->id, parm, NULL);
+            if (error)
+                current->error = INPerrCat(current->error, INPerror(error));
+        }
     }
 
     if ((err = ft_sim->doAnalyses (ckt, 1, ft_curckt->ci_curTask)) != OK) {
