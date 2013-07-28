@@ -511,45 +511,48 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 		LITERR("Sensitivity-2 analysis unsupported\n");
 		return (0);
 	}
+
 	IFC(newAnalysis, (ckt, which, "Sensitivity-2 Analysis", &foo, task));
+
 	while (*line) {
-		IFparm *if_parm;
-		/* read the entire line */
-		INPgetTok(&line, &token, 1);
-		if_parm = ft_find_analysis_parm(which, token);
-		if (!if_parm) {
-			/* didn't find it! */
-			LITERR(" Error: unknown parameter on .sens-ignored \n");
-			continue;
-		}
 
-				/* found it, analysis which, parameter i */
-				if (if_parm->dataType & IF_FLAG) {
-					/* one of the keywords! */
-					ptemp.iValue = 1;
-					error =
-					    ft_sim->setAnalysisParm (ckt, foo,
-					                             if_parm->id,
-					                             &ptemp,
-					                             NULL);
-					if (error)
-						current->error =
-						    INPerrCat(current->error, INPerror(error));
-				} else {
-					parm =
-					    INPgetValue(ckt, &line,
-					                if_parm->dataType, tab);
-					error =
-					    ft_sim->setAnalysisParm (ckt, foo,
-					                             if_parm->id,
-					                             parm,
-					                             NULL);
-					if (error)
-						current->error =
-						    INPerrCat(current->error, INPerror(error));
+            IFparm *if_parm;
 
-				}
+            /* read the entire line */
+            INPgetTok(&line, &token, 1);
+
+            if_parm = ft_find_analysis_parm(which, token);
+
+            if (!if_parm) {
+                /* didn't find it! */
+                LITERR(" Error: unknown parameter on .sens-ignored \n");
+                continue;
+            }
+
+            /* found it, analysis which, parameter i */
+            if (if_parm->dataType & IF_FLAG) {
+
+                /* one of the keywords! */
+                ptemp.iValue = 1;
+                error = ft_sim->setAnalysisParm (ckt, foo,
+                                                 if_parm->id,
+                                                 &ptemp,
+                                                 NULL);
+                if (error)
+                    current->error = INPerrCat(current->error, INPerror(error));
+
+            } else {
+
+                parm = INPgetValue(ckt, &line, if_parm->dataType, tab);
+                error = ft_sim->setAnalysisParm (ckt, foo,
+                                                 if_parm->id,
+                                                 parm,
+                                                 NULL);
+                if (error)
+                    current->error = INPerrCat(current->error, INPerror(error));
+            }
 	}
+
 	return (0);
 }
 #endif
