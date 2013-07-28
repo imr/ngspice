@@ -39,7 +39,6 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     char *name;
     char *line;
     card deck;
-    int i;
     int error;
     int save;
     int flag = 0;
@@ -325,17 +324,15 @@ next:
         else
             flag = 1;
 
-        i = ft_find_analysis_parm(save, token);
+        if_parm = ft_find_analysis_parm(save, token);
 
-        if (i < 0) {
+        if (!if_parm) {
             /* didn't find it! */
             current->error = INPerrCat
                 (current->error,
                  INPmkTemp(" Error: unknown parameter on .sens - ignored \n"));
             continue;
         }
-
-        if_parm = &(ft_sim->analyses[save]->analysisParms[i]);
 
                 /* found it, analysis which, parameter i */
                 if (if_parm->dataType & IF_FLAG) {

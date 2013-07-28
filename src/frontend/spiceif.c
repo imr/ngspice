@@ -390,7 +390,7 @@ int
 if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 {
     IFvalue pval;
-    int err, i;
+    int err;
     char **vv;
     int which = -1;
     IFparm *if_parm;
@@ -428,8 +428,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         return 0;
     }
 
-    i = ft_find_analysis_parm(which, name);
-    if_parm = (i >= 0) ? &(ft_sim->analyses[which]->analysisParms[i]) : NULL;
+    if_parm = ft_find_analysis_parm(which, name);
 
     if (!if_parm || !(if_parm->dataType & IF_SET)) {
         /* See if this is unsupported or obsolete. */
@@ -1211,13 +1210,10 @@ finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
 int
 if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
 {
-    int i;
     IFparm *if_parm;
-    i = ft_find_analysis_parm(which, name);
-    if (i < 0)
+    if_parm = ft_find_analysis_parm(which, name);
+    if (!if_parm)
         return (E_BADPARM);
-
-    if_parm = &(ft_sim->analyses[which]->analysisParms[i]);
 
     return (ft_sim->askAnalysisQuest
             (ckt, anal, if_parm->id, parm, NULL));
@@ -1298,12 +1294,10 @@ if_getstat(CKTcircuit *ckt, char *name)
 
     if (name) {
 
-        i = ft_find_analysis_parm(options_idx, name);
+        if_parm = ft_find_analysis_parm(options_idx, name);
 
-        if (i < 0)
+        if (!if_parm)
             return (NULL);
-
-        if_parm = &(options->analysisParms[i]);
 
         if (ft_sim->askAnalysisQuest (ckt,
                                       &(ft_curckt->ci_curTask->taskOptions),
@@ -1746,12 +1740,12 @@ ft_find_analysis(char *name)
 }
 
 
-int
+IFparm *
 ft_find_analysis_parm(int which, char *name)
 {
     int i;
     for (i = 0; i < ft_sim->analyses[which]->numParms; i++)
         if (!strcmp(ft_sim->analyses[which]->analysisParms[i].keyword, name))
-            return i;
-    return -1;
+            return &(ft_sim->analyses[which]->analysisParms[i]);
+    return NULL;
 }
