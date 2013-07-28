@@ -393,6 +393,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     int err, i;
     char **vv;
     int which = -1;
+    IFparm *if_parm;
 
     if (eq(name, "acct")) {
         ft_acctprint = TRUE;
@@ -428,7 +429,9 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     }
 
     i = ft_find_analysis_parm(which, name);
-    if (i < 0 || !(ft_sim->analyses[which]->analysisParms[i].dataType & IF_SET)) {
+    if_parm = (i >= 0) ? &(ft_sim->analyses[which]->analysisParms[i]) : NULL;
+
+    if (!if_parm || !(if_parm->dataType & IF_SET)) {
         /* See if this is unsupported or obsolete. */
         for (vv = unsupported; *vv; vv++)
             if (eq(name, *vv)) {
@@ -443,7 +446,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         return 0;
     }
 
-    switch (ft_sim->analyses[which]->analysisParms[i].dataType & IF_VARTYPES) {
+    switch (if_parm->dataType & IF_VARTYPES) {
     case IF_REAL:
         if (type == CP_REAL)
             pval.rValue = *((double *) value);
@@ -477,7 +480,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
     default:
         fprintf(cp_err,
                 "if_option: Internal Error: bad option type %d.\n",
-                ft_sim->analyses[which]->analysisParms[i].dataType);
+                if_parm->dataType);
     }
 
     if (!ckt) {
@@ -490,12 +493,12 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 
 #if (0)
     if ((err = ft_sim->setAnalysisParm (ckt, ft_curckt->ci_curOpt,
-                                        ft_sim->analyses[which]->analysisParms[i].id, &pval,
+                                        if_parm->id, &pval,
                                         NULL)) != OK)
         ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
 #else /*CDHW*/
     if ((err = ft_sim->setAnalysisParm (ckt, ft_curckt->ci_defOpt,
-                                        ft_sim->analyses[which]->analysisParms[i].id, &pval,
+                                        if_parm->id, &pval,
                                         NULL)) != OK)
         ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
     return 1;
@@ -525,7 +528,7 @@ badtype:
         break;
     }
     fprintf(cp_err, ", type expected was ");
-    switch (ft_sim->analyses[which]->analysisParms[i].dataType & IF_VARTYPES) {
+    switch (if_parm->dataType & IF_VARTYPES) {
     case IF_REAL:
         fputs("real.\n", cp_err);
         break;
@@ -1209,12 +1212,15 @@ int
 if_analQbyName(CKTcircuit *ckt, int which, JOB *anal, char *name, IFvalue *parm)
 {
     int i;
+    IFparm *if_parm;
     i = ft_find_analysis_parm(which, name);
     if (i < 0)
         return (E_BADPARM);
 
+    if_parm = &(ft_sim->analyses[which]->analysisParms[i]);
+
     return (ft_sim->askAnalysisQuest
-            (ckt, anal, ft_sim->analyses[which]->analysisParms[i].id, parm, NULL));
+            (ckt, anal, if_parm->id, parm, NULL));
 }
 
 
@@ -1279,6 +1285,7 @@ if_getstat(CKTcircuit *ckt, char *name)
     int         options_idx, i;
     IFanalysis *options;
     IFvalue     parm;
+    IFparm     *if_parm;
 
      options_idx = ft_find_analysis("options");
 
@@ -1296,16 +1303,18 @@ if_getstat(CKTcircuit *ckt, char *name)
         if (i < 0)
             return (NULL);
 
+        if_parm = &(options->analysisParms[i]);
+
         if (ft_sim->askAnalysisQuest (ckt,
                                       &(ft_curckt->ci_curTask->taskOptions),
-                                      options->analysisParms[i].id, &parm,
+                                      if_parm->id, &parm,
                                       NULL) == -1)
         {
             fprintf(cp_err, "if_getstat: Internal Error: can't get %s\n", name);
             return (NULL);
         }
 
-        return (parmtovar(&parm, &(options->analysisParms[i])));
+        return (parmtovar(&parm, if_parm));
 
     } else {
 
@@ -1313,19 +1322,21 @@ if_getstat(CKTcircuit *ckt, char *name)
 
         for (i = 0; i < options->numParms; i++) {
 
-            if (!(options->analysisParms[i].dataType & IF_ASK))
+            if_parm = &(options->analysisParms[i]);
+
+            if (!(if_parm->dataType & IF_ASK))
                 continue;
 
             if (ft_sim->askAnalysisQuest (ckt,
                                           &(ft_curckt->ci_curTask->taskOptions),
-                                          options->analysisParms[i].id, &parm,
+                                          if_parm->id, &parm,
                                           NULL) == -1)
             {
                 fprintf(cp_err, "if_getstat: Internal Error: can't get %s\n", name);
                 return (NULL);
             }
 
-            *v = parmtovar(&parm, &(options->analysisParms[i]));
+            *v = parmtovar(&parm, if_parm);
             v = &((*v)->va_next);
         }
 

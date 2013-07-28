@@ -514,6 +514,7 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	}
 	IFC(newAnalysis, (ckt, which, "Sensitivity-2 Analysis", &foo, task));
 	while (*line) {
+		IFparm *if_parm;
 		/* read the entire line */
 		INPgetTok(&line, &token, 1);
 		i = ft_find_analysis_parm(which, token);
@@ -522,13 +523,16 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			LITERR(" Error: unknown parameter on .sens-ignored \n");
 			continue;
 		}
+
+		if_parm = &(ft_sim->analyses[which]->analysisParms[i]);
+
 				/* found it, analysis which, parameter i */
-				if (ft_sim->analyses[which]->analysisParms[i].dataType & IF_FLAG) {
+				if (if_parm->dataType & IF_FLAG) {
 					/* one of the keywords! */
 					ptemp.iValue = 1;
 					error =
 					    ft_sim->setAnalysisParm (ckt, foo,
-					                             ft_sim->analyses[which]->analysisParms[i].id,
+					                             if_parm->id,
 					                             &ptemp,
 					                             NULL);
 					if (error)
@@ -537,10 +541,10 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 				} else {
 					parm =
 					    INPgetValue(ckt, &line,
-					                ft_sim->analyses[which]->analysisParms[i].dataType, tab);
+					                if_parm->dataType, tab);
 					error =
 					    ft_sim->setAnalysisParm (ckt, foo,
-					                             ft_sim->analyses[which]->analysisParms[i].id,
+					                             if_parm->id,
 					                             parm,
 					                             NULL);
 					if (error)
