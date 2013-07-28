@@ -501,7 +501,6 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 	IFvalue ptemp;		/* a value structure to package resistance into */
 	IFvalue *parm;		/* a pointer to a value struct for function returns */
 	int which;			/* which analysis we are performing */
-	int i;			/* generic loop variable */
 	char *token;		/* a token from the line */
 
 	NG_IGNORE(gnode);
@@ -517,14 +516,12 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 		IFparm *if_parm;
 		/* read the entire line */
 		INPgetTok(&line, &token, 1);
-		i = ft_find_analysis_parm(which, token);
-		if (i < 0) {
+		if_parm = ft_find_analysis_parm(which, token);
+		if (!if_parm) {
 			/* didn't find it! */
 			LITERR(" Error: unknown parameter on .sens-ignored \n");
 			continue;
 		}
-
-		if_parm = &(ft_sim->analyses[which]->analysisParms[i]);
 
 				/* found it, analysis which, parameter i */
 				if (if_parm->dataType & IF_FLAG) {

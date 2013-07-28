@@ -29,9 +29,7 @@ INPdoOpts(
     char *errmsg;
     IFvalue *val;
     int error;
-    int i;
     int which;
-    IFanalysis *prm = NULL;
 
     which = ft_find_analysis("options");
     if(which == -1) {
@@ -39,14 +37,12 @@ INPdoOpts(
                 "error:  analysis options table not found\n"));
         return;
     }
-    prm = ft_sim->analyses[which];
     line = optCard->line;
     INPgetTok(&line,&token,1);    /* throw away '.option' */
     while (*line) {
         IFparm *if_parm;
         INPgetTok(&line,&token,1);
-        i = ft_find_analysis_parm(which, token);
-        if_parm = (i >= 0) ? &(prm->analysisParms[i]) : NULL;
+        if_parm = ft_find_analysis_parm(which, token);
         if(if_parm && !(if_parm->dataType & IF_UNIMP_MASK)) {
                     errmsg = TMALLOC(char, 45 + strlen(token));
                     (void) sprintf(errmsg,
