@@ -109,6 +109,7 @@ static void inp_add_control_section(struct line *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
+static void subckt_params_to_param(struct line *deck);
 
 static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace(d[-1])) d--; return d; }
 static char *skip_back_ws(char *d)     { while (isspace(d[-1]))           d--; return d; }
@@ -767,6 +768,9 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         struct names *subckt_w_params = new_names();
 
         inp_fix_for_numparam(subckt_w_params, working);
+
+        subckt_params_to_param(working);
+// tprint(cc); /* test printout to file tprint-out.txt */
         inp_remove_excess_ws(working);
 
         comment_out_unused_subckt_models(working, line_number);
@@ -784,7 +788,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         if (working)
             for (end = working; end->li_next; end = end->li_next)
                 ;
-// tprint(cc);
+
         inp_reorder_params(subckt_w_params, working, cc, end);
 
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
@@ -5637,6 +5641,38 @@ inp_add_series_resistor(struct line *deck)
     }
 
     tfree(rval);
+}
+
+
+/*
+ * rewrite
+ *   .subckt node1 node2 node3 name params: l={x} w={y}
+ * to
+ *   .subckt node1 node2 node3 name
+ *   .param l={x} w={y}
+ */
+
+static void
+subckt_params_to_param(struct line *card)
+{
+    for (; card; card = card->li_next) {
+        char *curr_line = card->li_line;
+        if (ciprefix(".subckt", curr_line)) {
+            char *cut_line, *new_line;
+            cut_line = strstr(curr_line, "params:");
+            if (!cut_line)
+                continue;
+            /* new_line starts with "params: " */
+            new_line = copy(cut_line);
+            /* replace "params:" by ".param " */
+            memcpy(new_line, ".param ", 7);
+            /* card->li_line ends with subcircuit name */
+            cut_line[-1] = '\0';
+            /* insert new_line after card->li_line */
+            card->li_next = xx_new_line(card->li_next, new_line,
+                                        card->li_linenum + 1, 0);
+        }
+    }
 }
 
 
