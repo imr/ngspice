@@ -691,13 +691,11 @@ cp_variablesubst(wordlist *wlist)
             while (t < s)
                 wbuf[i++] = *t++;
             wbuf[i] = '\0';
-            (void) strcpy(buf, ++t);
+            t++;
             s = buf;
-            while (*s && (isalphanum(*s) || strchr(VALIDCHARS, *s))) {
-                /* Get s and t past the end of the var name. */
-                t++;
-                s++;
-            }
+            /* Get s and t past the end of the var name. */
+            while (*t && (isalphanum(*t) || strchr(VALIDCHARS, *t)))
+                *s++ = *t++;
             *s = '\0';
             nwl = vareval(buf);
             if (i) {

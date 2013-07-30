@@ -37,12 +37,11 @@ cp_bquote(wordlist *wlist)
         while (t < s)
             wbuf[i++] = *t++;
         wbuf[i] = '\0';
-        (void) strcpy(buf, ++t);
+        t++;
         s = buf;
-        while (*s && (*s != cp_back)) {
-            t++;    /* Get s and t past the next backquote. */
-            s++;
-        }
+        /* Get s and t past the next backquote. */
+        while (*t && (*t != cp_back))
+            *s++ = *t++;
         /* What the heck, let "echo `foo" work... */
         *s = '\0';
         t++;    /* Get past the second ` */
