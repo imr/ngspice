@@ -37,9 +37,8 @@ cp_bquote(wordlist *wlist)
         while (t < s)
             wbuf[i++] = *t++;
         wbuf[i] = '\0';
-        (void) strcpy(buf, ++s);
+        (void) strcpy(buf, ++t);
         s = buf;
-        t++;
         while (*s && (*s != cp_back)) {
             t++;    /* Get s and t past the next backquote. */
             s++;
