@@ -846,6 +846,24 @@ vareval(char *string)
 
     /* Now parse and deal with 'range' ... */
     if (range) {
+        /* rather crude fix when range itself is a $expression */
+        wordlist *r = NULL;
+        if (*range == '$') {
+            char *t = ++range;
+            if (*t == '&')
+                t++;
+            while (isalphanum(*t))
+                t++;
+            *t = '\0';
+            r = vareval(range);
+            if (!r || r->wl_next) {
+                fprintf(cp_err, "Error: %s: illegal index.\n", string);
+                tfree(oldstring);
+                wl_free(r);
+                return NULL;
+            }
+            range = r->wl_word;
+        }
         for (low = 0; isdigit(*range); range++)
             low = low * 10 + *range - '0';
         if ((*range == '-') && isdigit(range[1]))
@@ -857,6 +875,7 @@ vareval(char *string)
             up = low;
         up--, low--;
         wl = wl_range(wl, low, up);
+        wl_free(r);
     }
     tfree(oldstring);
     return (wl);
