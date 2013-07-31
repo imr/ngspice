@@ -2344,8 +2344,10 @@ inp_remove_excess_ws(struct line *c)
 
 
 static struct line *
-expand_section_ref(struct line *c, char *line, char *dir_name)
+expand_section_ref(struct line *c, char *dir_name)
 {
+    char *line = c->li_line;
+
     char *s, *t, *y;
 
     s = skip_non_ws(line);
@@ -2444,14 +2446,9 @@ expand_section_ref(struct line *c, char *line, char *dir_name)
 static void
 expand_section_references(struct line *c, char *dir_name)
 {
-    for (; c; c = c->li_next) {
-
-        char *line = c->li_line;
-
-        if (ciprefix(".lib", line)) {
-            c = expand_section_ref(c, line, dir_name);
-        }
-    }
+    for (; c; c = c->li_next)
+        if (ciprefix(".lib", c->li_line))
+            c = expand_section_ref(c, dir_name);
 }
 
 
