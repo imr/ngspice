@@ -98,7 +98,7 @@ static void inp_stripcomments_deck(struct line *deck, bool cs);
 static void inp_stripcomments_line(char *s, bool cs);
 static void inp_fix_for_numparam(struct names *subckt_w_params, struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
-static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
+static void expand_section_references(struct line *deck, char *dir_name);
 static void inp_grab_func(struct function_env *, struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck);
 static void inp_expand_macros_in_func(struct function_env *);
@@ -765,7 +765,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             inp_compat_mode == COMPATMODE_NATIVE)
         {
             /* process all library section references */
-            expand_section_references(cc, call_depth, dir_name);
+            expand_section_references(cc, dir_name);
         }
     }
 
@@ -2461,7 +2461,7 @@ inp_remove_excess_ws(struct line *c)
  */
 
 static void
-expand_section_references(struct line *c, int call_depth, char *dir_name)
+expand_section_references(struct line *c, char *dir_name)
 {
     for (; c; c = c->li_next) {
 
@@ -2501,7 +2501,7 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                         s = copys;
                 }
 
-                lib = read_a_lib(s, call_depth, dir_name);
+                lib = read_a_lib(s, 0, dir_name);
 
                 if (!lib) {
                     fprintf(stderr, "ERROR, library file %s not found\n", s);
