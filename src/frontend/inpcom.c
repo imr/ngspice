@@ -240,7 +240,7 @@ find_section_definition(struct line *c, char *name)
 
 
 static struct library *
-read_a_lib(char *y, int call_depth, char *dir_name)
+read_a_lib(char *y, char *dir_name)
 {
     bool dir_name_flag = FALSE;
     FILE *newfp;
@@ -276,10 +276,10 @@ read_a_lib(char *y, int call_depth, char *dir_name)
 
     if (dir_name_flag == FALSE) {
         char *y_dir_name = ngdirname(y);
-        lib->deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
+        lib->deck = inp_readall(newfp, 1 /*dummy*/, y_dir_name, FALSE, FALSE);
         tfree(y_dir_name);
     } else {
-        lib->deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
+        lib->deck = inp_readall(newfp, 1 /*dummy*/, dir_name, FALSE, FALSE);
     }
 
     fclose(newfp);
@@ -2501,7 +2501,7 @@ expand_section_references(struct line *c, char *dir_name)
                         s = copys;
                 }
 
-                lib = read_a_lib(s, 0, dir_name);
+                lib = read_a_lib(s, dir_name);
 
                 if (!lib) {
                     fprintf(stderr, "ERROR, library file %s not found\n", s);
