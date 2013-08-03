@@ -145,6 +145,7 @@ static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !issp
 static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace(d[-1])) d--; return d; }
 
 static char *inp_pathresolve(const char *name);
+static char *inp_pathresolve_at(char *name, char *dir);
 void tprint(struct line *deck);
 
 struct inp_read_t
@@ -1049,6 +1050,41 @@ inp_pathresolve(const char *name)
     }
 
     return (NULL);
+}
+
+
+static char *
+inp_pathresolve_at(char *name, char *dir)
+{
+    char buf[BSIZE_SP], *end;
+
+    /* if name is an absolute path name,
+     *   or if we haven't anything to prepend anyway
+     */
+
+    if (is_absolute_pathname(name) || !dir || !dir[0])
+        return inp_pathresolve(name);
+
+    if (name[0] == '~' && name[1] == '/') {
+        char *y = cp_tildexpand(name);
+        if (y) {
+            char *r = inp_pathresolve(y);
+            tfree(y);
+            return r;
+        }
+    }
+
+    /* concatenate them */
+
+    strcpy(buf, dir);
+
+    end = strchr(buf, '\0');
+    if (end[-1] != DIR_TERM)
+        *end++ = DIR_TERM;
+
+    strcpy(end, name);
+
+    return inp_pathresolve(buf);
 }
 
 
