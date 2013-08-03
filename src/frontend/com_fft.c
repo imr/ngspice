@@ -36,6 +36,8 @@ com_fft(wordlist *wl)
     int     fpts, i, j, tlen, ngood;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
+    char   window[BSIZE_SP];
+    double maxt;
 
 #ifdef GREEN
     int mm;
@@ -43,7 +45,7 @@ com_fft(wordlist *wl)
 
     double *reald = NULL, *imagd = NULL;
     int size, sign, order;
-    double scale, sigma;
+    double scale;
 
     if (!plot_cur || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
@@ -76,84 +78,17 @@ com_fft(wordlist *wl)
     /* output vector has length of size/2 */
     fpts = size/2;
 
-    /* window functions - should have an average of one */
     win = TMALLOC(double, tlen);
-    {
-        char   window[BSIZE_SP];
-        double maxt = time[tlen-1];
-        if (!cp_getvar("specwindow", CP_STRING, window))
-            strcpy(window, "blackman");
-        if (eq(window, "none"))
-            for (i = 0; i < tlen; i++)
-                win[i] = 1.0;
-        else if (eq(window, "rectangular"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0.0;
-                else
-                    win[i] = 1.0;
-            }
-        else if (eq(window, "triangle") || eq(window, "bartlet") || eq(window, "bartlett"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0.0;
-                else
-                    win[i] = 2.0 - fabs(2+4*(time[i]-maxt)/span);
-            }
-        else if (eq(window, "hann") || eq(window, "hanning") || eq(window, "cosine"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0.0;
-                else
-                    win[i] = 1.0 - cos(2*M_PI*(time[i]-maxt)/span);
-            }
-        else if (eq(window, "hamming"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0.0;
-                else
-                    win[i] = 1.0 - 0.46/0.54*cos(2*M_PI*(time[i]-maxt)/span);
-            }
-        else if (eq(window, "blackman"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span) {
-                    win[i] = 0;
-                } else {
-                    win[i]  = 1.0;
-                    win[i] -= 0.50/0.42*cos(2*M_PI*(time[i]-maxt)/span);
-                    win[i] += 0.08/0.42*cos(4*M_PI*(time[i]-maxt)/span);
-                }
-            }
-        else if (eq(window, "flattop"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span) {
-                    win[i] = 0;
-                } else {
-                    win[i]  = 1.0;
-                    win[i] -= 1.93*cos(2*M_PI*(time[i]-maxt)/span);
-                    win[i] += 1.29*cos(4*M_PI*(time[i]-maxt)/span);
-                    win[i] -= 0.388*cos(6*M_PI*(time[i]-maxt)/span);
-                    win[i] += 0.032*cos(8*M_PI*(time[i]-maxt)/span);
-                }
-            }
-        else if (eq(window, "gaussian")) {
-            if (!cp_getvar("specwindoworder", CP_NUM, &order))
-                order = 2;
-            if (order < 2)
-                order = 2;
-            sigma = 1.0/order;
-            scale = 0.83/sigma;
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0;
-                else
-                    win[i] = scale*exp(-0.5 * pow((time[i]-maxt/2)/(sigma*maxt/2), 2));
-            }
-        } else {
-            fprintf(cp_err, "Warning: unknown window type %s\n", window);
-            goto done;
-        }
-    }
+    maxt = time[tlen-1];
+    if (!cp_getvar("specwindow", CP_STRING, window))
+        strcpy(window, "blackman");
+    if (!cp_getvar("specwindoworder", CP_NUM, &order))
+        order = 2;
+    if (order < 2)
+        order = 2;
+
+    if (fft_windows(window, win, time, tlen, maxt, span, order) == 0)
+        goto done;
 
     names = ft_getpnames(wl, TRUE);
     vlist = NULL;

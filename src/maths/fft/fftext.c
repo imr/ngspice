@@ -9,10 +9,15 @@
 	#define FFT(a,n) if(!fftInit(roundtol(LOG2(n)))) ffts(a,roundtol(LOG2(n)),1);else printf("fft error\n");
 *******************************************************************/
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
 #include "fftlib.h"
 #include "matlib.h"
 #include "ngspice/fftext.h"
 #include "ngspice/memory.h"
+
+#define eq(a,b)  (!strcmp((a), (b)))
 
 // pointers to storage of Utbl's and  BRLow's
 static double *UtblArray[8*sizeof(int)] =
@@ -81,6 +86,83 @@ void fftFree(void)
             UtblArray[i1] = 0;
         }
     }
+}
+
+int
+fft_windows(char *window, double *win, double *time, double length, double maxt, double span, int order)
+{
+    int i;
+    double sigma, scale;
+
+    /* window functions - should have an average of one */
+    if (eq(window, "none"))
+        for (i = 0; i < length; i++)
+            win[i] = 1.0;
+    else if (eq(window, "rectangular"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span)
+                win[i] = 0.0;
+            else
+                win[i] = 1.0;
+        }
+    else if (eq(window, "triangle") || eq(window, "bartlet") || eq(window, "bartlett"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span)
+                win[i] = 0.0;
+            else
+                win[i] = 2.0 - fabs(2+4*(time[i]-maxt)/span);
+        }
+    else if (eq(window, "hann") || eq(window, "hanning") || eq(window, "cosine"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span)
+                win[i] = 0.0;
+            else
+                win[i] = 1.0 - cos(2*M_PI*(time[i]-maxt)/span);
+        }
+    else if (eq(window, "hamming"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span)
+                win[i] = 0.0;
+            else
+                win[i] = 1.0 - 0.46/0.54*cos(2*M_PI*(time[i]-maxt)/span);
+        }
+    else if (eq(window, "blackman"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span) {
+                win[i] = 0;
+            } else {
+                win[i]  = 1.0;
+                win[i] -= 0.50/0.42*cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] += 0.08/0.42*cos(4*M_PI*(time[i]-maxt)/span);
+            }
+        }
+    else if (eq(window, "flattop"))
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span) {
+                win[i] = 0;
+            } else {
+                win[i]  = 1.0;
+                win[i] -= 1.93*cos(2*M_PI*(time[i]-maxt)/span);
+                win[i] += 1.29*cos(4*M_PI*(time[i]-maxt)/span);
+                win[i] -= 0.388*cos(6*M_PI*(time[i]-maxt)/span);
+                win[i] += 0.032*cos(8*M_PI*(time[i]-maxt)/span);
+            }
+        }
+    else if (eq(window, "gaussian")) {
+        sigma = 1.0/order;
+        scale = 0.83/sigma;
+        for (i = 0; i < length; i++) {
+            if (maxt-time[i] > span)
+                win[i] = 0;
+            else
+                win[i] = scale*exp(-0.5 * pow((time[i]-maxt/2)/(sigma*maxt/2), 2));
+        }
+    } else {
+        printf( "Warning: unknown window type %s\n", window);
+        return 0;
+    }
+
+    return 1;
 }
 
 /*************************************************

@@ -19,6 +19,10 @@ int fftInit(int M);
 void fftFree(void);
 // release storage for all private cosine and bit reversed tables
 
+int
+fft_windows(char *window, double *win, double *time, double length, double maxt, double span, int order);
+// computes some popular window functions
+
 void ffts(double *data, int M, int Rows);
 /* Compute in-place complex fft on the rows of the input array	*/
 /* INPUTS */
