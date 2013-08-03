@@ -729,7 +729,6 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         /* now handle .include statements */
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
 
-            char *copyy = NULL;
             char *y = NULL;
             char *s, *t;
 
@@ -747,49 +746,35 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 controlled_exit(EXIT_FAILURE);
             }
 
-            if (*y == '~') {
-                copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
-                if (copyy)
-                    y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
-            }
-
             {
-                bool dir_name_flag = FALSE;
-                FILE *newfp = inp_pathopen(y, "r");
+                char *y_resolved = inp_pathresolve_at(y, dir_name);
+                char *y_dir_name;
+                FILE *newfp;
+
+                if (!y_resolved) {
+                    fprintf(cp_err, "Error: Could not find include file %s\n", y);
+                    rv . line_number = line_number;
+                    rv . cc = NULL;
+                    return rv;
+                }
+
+                newfp = fopen(y_resolved, "r");
 
                 if (!newfp) {
-                    char big_buff2[5000];
-
-                    /* open file specified by  .include statement */
-                    if (dir_name)
-                        sprintf(big_buff2, "%s/%s", dir_name, y);
-                    else
-                        sprintf(big_buff2, "./%s", y);
-
-                    newfp = inp_pathopen(big_buff2, "r");
-                    if (!newfp) {
-                        perror(y);
-                        tfree(copyy);       /* allocated by the cp_tildexpand() above */
-                        fprintf(cp_err, "Error: .include statement failed.\n");
-                        tfree(buffer);          /* allocated by readline() above */
-                        controlled_exit(EXIT_FAILURE);
-                    }
-
-                    dir_name_flag = TRUE;
+                    fprintf(cp_err, "Error: .include statement failed.\n");
+                    tfree(buffer);          /* allocated by readline() above */
+                    controlled_exit(EXIT_FAILURE);
                 }
 
-                if (dir_name_flag == FALSE) {
-                    char *y_dir_name = ngdirname(y);
-                    newcard = inp_read(newfp, call_depth+1, y_dir_name, FALSE, FALSE) . cc;  /* read stuff in include file into netlist */
-                    tfree(y_dir_name);
-                } else {
-                    newcard = inp_read(newfp, call_depth+1, dir_name, FALSE, FALSE) . cc;  /* read stuff in include file into netlist */
-                }
+                y_dir_name = ngdirname(y_resolved);
+
+                newcard = inp_read(newfp, call_depth+1, y_dir_name, FALSE, FALSE) . cc;  /* read stuff in include file into netlist */
+
+                tfree(y_dir_name);
+                tfree(y_resolved);
 
                 (void) fclose(newfp);
             }
-
-            tfree(copyy);           /* allocated by the cp_tildexpand() above */
 
             /* Make the .include a comment */
             *buffer = '*';
