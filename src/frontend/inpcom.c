@@ -2346,88 +2346,88 @@ inp_remove_excess_ws(struct line *c)
 static struct line *
 expand_section_ref(struct line *c, char *line, char *dir_name)
 {
-            char *s, *t, *y;
+    char *s, *t, *y;
 
-            s = skip_non_ws(line);
-            while (isspace(*s) || isquote(*s))
-                s++;
-            for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
-                ;
-            y = t;
-            while (isspace(*y) || isquote(*y))
-                y++;
+    s = skip_non_ws(line);
+    while (isspace(*s) || isquote(*s))
+        s++;
+    for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+        ;
+    y = t;
+    while (isspace(*y) || isquote(*y))
+        y++;
 
-            if (*y) {
-                /* library section reference: `.lib <library-file> <section-name>' */
+    if (*y) {
+        /* library section reference: `.lib <library-file> <section-name>' */
 
-                struct line *section_def;
-                char keep_char1, keep_char2;
-                char *z, *copys = NULL;
-                struct library *lib;
+        struct line *section_def;
+        char keep_char1, keep_char2;
+        char *z, *copys = NULL;
+        struct library *lib;
 
-                for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
-                    ;
-                keep_char1 = *t;
-                keep_char2 = *z;
-                *t = '\0';
-                *z = '\0';
+        for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
+            ;
+        keep_char1 = *t;
+        keep_char2 = *z;
+        *t = '\0';
+        *z = '\0';
 
-                if (*s == '~') {
-                    copys = cp_tildexpand(s);
-                    if (copys)
-                        s = copys;
+        if (*s == '~') {
+            copys = cp_tildexpand(s);
+            if (copys)
+                s = copys;
+        }
+
+        lib = read_a_lib(s, dir_name);
+
+        if (!lib) {
+            fprintf(stderr, "ERROR, library file %s not found\n", s);
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        section_def = find_section_definition(lib->deck, y);
+
+        if (!section_def) {
+            fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        if (copys) {
+            tfree(copys);   /* allocated by the cp_tildexpand() above */
+            s = NULL;
+        }
+
+        /* insert the library section definition into `c' */
+        {
+            struct line *cend = NULL, *newl;
+            struct line *rest = c->li_next;
+            struct line *t = section_def;
+            for (; t; t=t->li_next) {
+                newl = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+                if (cend)
+                    cend->li_next = newl;
+                else {
+                    c->li_next = newl;
+                    newl->li_line[0] = '*';
+                    newl->li_line[1] = '<';
                 }
-
-                lib = read_a_lib(s, dir_name);
-
-                if (!lib) {
-                    fprintf(stderr, "ERROR, library file %s not found\n", s);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                section_def = find_section_definition(lib->deck, y);
-
-                if (!section_def) {
-                    fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                if (copys) {
-                    tfree(copys);   /* allocated by the cp_tildexpand() above */
-                    s = NULL;
-                }
-
-                /* insert the library section definition into `c' */
-                {
-                    struct line *cend = NULL, *newl;
-                    struct line *rest = c->li_next;
-                    struct line *t = section_def;
-                    for (; t; t=t->li_next) {
-                        newl = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
-                        if (cend)
-                            cend->li_next = newl;
-                        else {
-                            c->li_next = newl;
-                            newl->li_line[0] = '*';
-                            newl->li_line[1] = '<';
-                        }
-                        cend = newl;
-                        if(ciprefix(".endl", t->li_line))
-                            break;
-                    }
-                    if (!t) {
-                        fprintf(stderr, "ERROR, .endl not found\n");
-                        controlled_exit(EXIT_FAILURE);
-                    }
-                    cend->li_line[0] = '*';
-                    cend->li_line[1] = '>';
-                    cend->li_next = rest;
-                }
-
-                *line = '*';  /* comment out .lib line */
-                *t = keep_char1;
-                *z = keep_char2;
+                cend = newl;
+                if(ciprefix(".endl", t->li_line))
+                    break;
             }
+            if (!t) {
+                fprintf(stderr, "ERROR, .endl not found\n");
+                controlled_exit(EXIT_FAILURE);
+            }
+            cend->li_line[0] = '*';
+            cend->li_line[1] = '>';
+            cend->li_next = rest;
+        }
+
+        *line = '*';  /* comment out .lib line */
+        *t = keep_char1;
+        *z = keep_char2;
+    }
 
     return c;
 }
