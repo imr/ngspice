@@ -18,6 +18,9 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/fteinp.h"
 #include "ngspice/compatmode.h"
 
+#include <limits.h>
+#include <stdlib.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -51,7 +54,8 @@ Author: 1985 Wayne A. Christopher
 #define VALIDCHARS "!$%_#?@.[]&"
 
 static struct library {
-    char *name;
+    char *realpath;
+    char *habitat;
     struct line *deck;
 } libraries[N_LIBRARIES];
 
@@ -195,7 +199,8 @@ delete_libs(void)
     int i;
 
     for (i = 0; i < num_libraries; i++) {
-        tfree(libraries[i].name);
+        tfree(libraries[i].realpath);
+        tfree(libraries[i].habitat);
         line_free_x(libraries[i].deck, TRUE);
     }
 }
@@ -207,7 +212,7 @@ find_lib(char *name)
     int i;
 
     for (i = 0; i < num_libraries; i++)
-        if (cieq(libraries[i].name, name))
+        if (cieq(libraries[i].realpath, name))
             return & libraries[i];
 
     return NULL;
@@ -257,47 +262,52 @@ find_section_definition(struct line *c, char *name)
 static struct library *
 read_a_lib(char *y, char *dir_name)
 {
-    bool dir_name_flag = FALSE;
-    FILE *newfp;
+    char *yy, *y_resolved;
 
     struct library *lib;
 
-    lib = find_lib(y);
-    if (lib)
-        return lib;
+    y_resolved = inp_pathresolve_at(y, dir_name);
 
-    newfp = inp_pathopen(y, "r");
-    if (!newfp) {
-        char big_buff2[5000];
+    if (!y_resolved) {
+        fprintf(cp_err, "Error: Could not find library file %s\n", y);
+        return NULL;
+    }
 
-        if (dir_name)
-            sprintf(big_buff2, "%s/%s", dir_name, y);
-        else
-            sprintf(big_buff2, "./%s", y);
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    yy = _fullpath(NULL, y_resolved, 0);
+#else
+    yy = realpath(y_resolved, NULL);
+#endif
 
-        newfp = inp_pathopen(big_buff2, "r");
+    if (!yy) {
+        fprintf(cp_err, "Error: Could not `realpath' library file %s\n", y);
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    lib = find_lib(yy);
+
+    if (!lib) {
+
+        FILE *newfp = fopen(y_resolved, "r");
+
         if (!newfp) {
-            fprintf(cp_err, "Error: Could not find library file %s\n", y);
+            fprintf(cp_err, "Error: Could not open library file %s\n", y);
             return NULL;
         }
 
-        dir_name_flag = TRUE;
+        /* lib points to a new entry in global lib array libraries[N_LIBRARIES] */
+        lib = new_lib();
+
+        lib->realpath = strdup(yy);
+        lib->habitat = ngdirname(yy);
+
+        lib->deck = inp_read(newfp, 1 /*dummy*/, lib->habitat, FALSE, FALSE) . cc;
+
+        fclose(newfp);
     }
 
-    /* lib points to a new entry in global lib array libraries[N_LIBRARIES] */
-    lib = new_lib();
-
-    lib->name = strdup(y);
-
-    if (dir_name_flag == FALSE) {
-        char *y_dir_name = ngdirname(y);
-        lib->deck = inp_read(newfp, 1 /*dummy*/, y_dir_name, FALSE, FALSE) . cc;
-        tfree(y_dir_name);
-    } else {
-        lib->deck = inp_read(newfp, 1 /*dummy*/, dir_name, FALSE, FALSE) . cc;
-    }
-
-    fclose(newfp);
+    free(yy);
+    free(y_resolved);
 
     return lib;
 }
@@ -2406,7 +2416,7 @@ expand_section_ref(struct line *c, char *dir_name)
                 if (ciprefix(".endl", t->li_line))
                     break;
                 if (ciprefix(".lib", t->li_line))
-                    t = expand_section_ref(t, dir_name);
+                    t = expand_section_ref(t, lib->habitat);
             }
             if (!t) {
                 fprintf(stderr, "ERROR, .endl not found\n");
