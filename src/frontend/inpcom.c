@@ -174,6 +174,18 @@ new_lib(void)
 }
 
 
+static void
+delete_libs(void)
+{
+    int i;
+
+    for (i = 0; i < num_libraries; i++) {
+        tfree(libraries[i].name);
+        line_free_x(libraries[i].deck, TRUE);
+    }
+}
+
+
 static struct library *
 find_lib(char *name)
 {
@@ -275,18 +287,6 @@ read_a_lib(char *y, int call_depth, char *dir_name)
     return lib;
 }
 
-/* remove all library entries from global libraries[] */
-static void
-delete_libs(void)
-{
-    int i;
-    for (i = 0; i < N_LIBRARIES; i++) {
-        if (libraries[i].name == NULL)
-            continue;
-        tfree(libraries[i].name);
-        line_free_x(libraries[i].deck, TRUE);
-    }
-}
 
 static struct names *
 new_names(void)
