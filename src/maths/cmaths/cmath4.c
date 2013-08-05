@@ -32,6 +32,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 extern bool cx_degrees;
 
+
 void *
 cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length)
 {
@@ -69,6 +70,7 @@ cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int l
     }
     return ((void *) d);
 }
+
 
 void *
 cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int length)
@@ -108,6 +110,7 @@ cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int le
     return ((void *) d);
 }
 
+
 void *
 cx_not(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -133,7 +136,6 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
 }
 
 
-
 /* This is a strange function. What we do is fit a polynomial to the
  * curve, of degree $polydegree, and then evaluate it at the points
  * in the time scale.  What we do is this: for every set of points that
@@ -142,7 +144,9 @@ cx_not(void *data, short int type, int length, int *newlength, short int *newtyp
  * one). At the ends we just use what we have...  We have to detect
  * badness here too...
  *
- * Note that we pass arguments differently for this one cx_ function...  */
+ * Note that we pass arguments differently for this one cx_ function...
+ */
+
 void *
 cx_interpolate(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
@@ -153,7 +157,7 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
     int base;
 
     if (grouping == 0)
-	grouping = length;
+        grouping = length;
 
     /* First do some sanity checks. */
     if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
@@ -211,17 +215,18 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
         degree = 1;
 
     for (base = 0; base < length; base += grouping) {
-	if (!ft_interpolate((double *) data + base, d + base,
-	    os->v_realdata + base, grouping,
+        if (!ft_interpolate((double *) data + base, d + base,
+            os->v_realdata + base, grouping,
             ns->v_realdata + base, grouping, degree))
-	{
-	    tfree(d);
-	    return (NULL);
-	}
+        {
+            tfree(d);
+            return (NULL);
+        }
     }
 
     return ((void *) d);
 }
+
 
 void *
 cx_deriv(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
@@ -230,11 +235,11 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     double *spare;
     double x;
     int i, j, k;
-    int	degree;
+    int degree;
     int n, base;
 
     if (grouping == 0)
-	grouping = length;
+        grouping = length;
     /* First do some sanity checks. */
     if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
         fprintf(cp_err, "Internal error: cx_deriv: bad scale\n");
@@ -242,9 +247,9 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     }
 
     if (!cp_getvar("dpolydegree", CP_NUM, &degree))
-	degree = 2; /* default quadratic */
+        degree = 2; /* default quadratic */
 
-    n = degree +  1;
+    n = degree + 1;
 
     spare = alloc_d(n);
     scratch = alloc_d(n * (n + 1));
@@ -253,169 +258,168 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
     *newtype = type;
 
     if (type == VF_COMPLEX) {
-	ngcomplex_t *c_outdata, *c_indata;
-	double *r_coefs, *i_coefs;
-	double *scale;
+        ngcomplex_t *c_outdata, *c_indata;
+        double *r_coefs, *i_coefs;
+        double *scale;
 
-	r_coefs = alloc_d(n);
-	i_coefs = alloc_d(n);
-	c_indata = (ngcomplex_t *) data;
-	c_outdata = alloc_c(length);
-	scale = alloc_d(length);	/* XXX */
-	if (pl->pl_scale->v_type == VF_COMPLEX)
-	    /* Not ideal */
-	  for (i = 0; i < length; i++)
-		   scale[i] = realpart(pl->pl_scale->v_compdata[i]);
-	 else
-	    for (i = 0; i < length; i++)
-		   scale[i] = pl->pl_scale->v_realdata[i];
+        r_coefs = alloc_d(n);
+        i_coefs = alloc_d(n);
+        c_indata = (ngcomplex_t *) data;
+        c_outdata = alloc_c(length);
+        scale = alloc_d(length);        /* XXX */
+        if (pl->pl_scale->v_type == VF_COMPLEX)
+            /* Not ideal */
+            for (i = 0; i < length; i++)
+                scale[i] = realpart(pl->pl_scale->v_compdata[i]);
+        else
+            for (i = 0; i < length; i++)
+                scale[i] = pl->pl_scale->v_realdata[i];
 
-	 for (base = 0; base < length; base += grouping)
-    {
-	    k = 0;
-	    for (i = degree; i < grouping; i += 1)
-       {
-
-		  /* real */
-		  for (j = 0; j < n; j++)
-		    spare[j] = c_indata[j + i + base].cx_real;
-		  if (!ft_polyfit(scale + i + base - degree,
-		    spare, r_coefs, degree, scratch))
-		   {
-		    fprintf(stderr, "ft_polyfit @ %d failed\n", i);
-		   }
-		  ft_polyderiv(r_coefs, degree);
-
-		  /* for loop gets the beginning part */
-		  for (j = k; j <= i + degree / 2; j++)
+        for (base = 0; base < length; base += grouping)
         {
-		    x = scale[j + base];
-		    c_outdata[j + base].cx_real =
-			ft_peval(x, r_coefs, degree - 1);
-		  }
+            k = 0;
+            for (i = degree; i < grouping; i += 1)
+            {
 
-		  /* imag */
-		  for (j = 0; j < n; j++)
-		    spare[j] = c_indata[j + i + base].cx_imag;
-		  if (!ft_polyfit(scale + i - degree + base,
-		    spare, i_coefs, degree, scratch))
-		  {
-		    fprintf(stderr, "ft_polyfit @ %d failed\n", i);
-		  }
-		  ft_polyderiv(i_coefs, degree);
+                /* real */
+                for (j = 0; j < n; j++)
+                    spare[j] = c_indata[j + i + base].cx_real;
+                if (!ft_polyfit(scale + i + base - degree,
+                  spare, r_coefs, degree, scratch))
+                {
+                    fprintf(stderr, "ft_polyfit @ %d failed\n", i);
+                }
+                ft_polyderiv(r_coefs, degree);
 
-		  /* for loop gets the beginning part */
-        for (j = k; j <= i - degree / 2; j++)
-        {
-		    x = scale[j + base];
-		    c_outdata[j + base].cx_imag =
-		    ft_peval(x, i_coefs, degree - 1);
-		  }
-		 k = j;
-	   }
+                /* for loop gets the beginning part */
+                for (j = k; j <= i + degree / 2; j++)
+                {
+                    x = scale[j + base];
+                    c_outdata[j + base].cx_real =
+                        ft_peval(x, r_coefs, degree - 1);
+                }
 
-	    /* get the tail */
-	    for (j = k; j < length; j++)
-       {
-		  x = scale[j + base];
-		  /* real */
-		  c_outdata[j + base].cx_real = ft_peval(x, r_coefs, degree - 1);
-		  /* imag */
-		  c_outdata[j + base].cx_imag = ft_peval(x, i_coefs, degree - 1);
-	    }
+                /* imag */
+                for (j = 0; j < n; j++)
+                    spare[j] = c_indata[j + i + base].cx_imag;
+                if (!ft_polyfit(scale + i - degree + base,
+                  spare, i_coefs, degree, scratch))
+                {
+                    fprintf(stderr, "ft_polyfit @ %d failed\n", i);
+                }
+                ft_polyderiv(i_coefs, degree);
+
+                /* for loop gets the beginning part */
+                for (j = k; j <= i - degree / 2; j++)
+                {
+                    x = scale[j + base];
+                    c_outdata[j + base].cx_imag =
+                    ft_peval(x, i_coefs, degree - 1);
+                }
+                k = j;
+            }
+
+            /* get the tail */
+            for (j = k; j < length; j++)
+            {
+                x = scale[j + base];
+                /* real */
+                c_outdata[j + base].cx_real = ft_peval(x, r_coefs, degree - 1);
+                /* imag */
+                c_outdata[j + base].cx_imag = ft_peval(x, i_coefs, degree - 1);
+            }
+        }
+
+        tfree(r_coefs);
+        tfree(i_coefs);
+        tfree(scale);
+        return (void *) c_outdata;
+
     }
+    else
+    {
+        /* all-real case */
+        double *coefs;
 
-	tfree(r_coefs);
-	tfree(i_coefs);
-	tfree(scale);
-	return (void *) c_outdata;
+        double *outdata, *indata;
+        double *scale;
 
-  }
-  else
-  {
-	/* all-real case */
-	double *coefs;
+        coefs = alloc_d(n);
+        indata = (double *) data;
+        outdata = alloc_d(length);
+        scale = alloc_d(length);        /* XXX */
 
-	double *outdata, *indata;
-	double *scale;
-
-	coefs = alloc_d(n);
-	indata = (double *) data;
-	outdata = alloc_d(length);
-	scale = alloc_d(length);	/* XXX */
-
-   /* Here I encountered a problem because when we issue an instruction like this:
-    * plot -deriv(vp(3)) to calculate something similar to the group delay, the code
-    * detects that vector vp(3) is real and it is believed that the frequency is also 
-    * real. The frequency is COMPLEX and the program aborts so I'm going to put the 
-    * check that the frequency is complex vector not to abort.
-    */
+        /* Here I encountered a problem because when we issue an instruction like this:
+         * plot -deriv(vp(3)) to calculate something similar to the group delay, the code
+         * detects that vector vp(3) is real and it is believed that the frequency is also
+         * real. The frequency is COMPLEX and the program aborts so I'm going to put the
+         * check that the frequency is complex vector not to abort.
+         */
 
 
-   /* Original problematic code
-	* for (i = 0; i < length; i++)
-	*    scale[i] = pl->pl_scale->v_realdata[i];
-    */
+        /* Original problematic code
+            * for (i = 0; i < length; i++)
+            *    scale[i] = pl->pl_scale->v_realdata[i];
+        */
 
-   /* Modified to deal with complex frequency vector */
-   if (pl->pl_scale->v_type == VF_COMPLEX)
-	  for (i = 0; i < length; i++)
-		   scale[i] = realpart(pl->pl_scale->v_compdata[i]);
-	else
-	    for (i = 0; i < length; i++)
-		   scale[i] = pl->pl_scale->v_realdata[i];
+        /* Modified to deal with complex frequency vector */
+        if (pl->pl_scale->v_type == VF_COMPLEX)
+            for (i = 0; i < length; i++)
+                scale[i] = realpart(pl->pl_scale->v_compdata[i]);
+        else
+            for (i = 0; i < length; i++)
+                scale[i] = pl->pl_scale->v_realdata[i];
 
 
-
-	for (base = 0; base < length; base += grouping)
-   {
-	    k = 0;
-	    for (i = degree; i < grouping; i += 1)
-       {
-		  if (!ft_polyfit(scale + i - degree + base,
-		    indata + i - degree + base, coefs, degree, scratch))
-		   {
-		    fprintf(stderr, "ft_polyfit @ %d failed\n", i + base);
-	    	}
-        ft_polyderiv(coefs, degree);
-
-		  /* for loop gets the beginning part */
-		  for (j = k; j <= i - degree / 2; j++)
+        for (base = 0; base < length; base += grouping)
         {
-          /* Seems the same problem because the frequency vector is complex
-           * and the real part of the complex should be accessed because if we 
-           * run x = pl-> pl_scale-> v_realdata [base + j]; the execution will 
-           * abort.
-           */
+            k = 0;
+            for (i = degree; i < grouping; i += 1)
+            {
+                if (!ft_polyfit(scale + i - degree + base,
+                    indata + i - degree + base, coefs, degree, scratch))
+                {
+                    fprintf(stderr, "ft_polyfit @ %d failed\n", i + base);
+                }
+                ft_polyderiv(coefs, degree);
 
-          if (pl->pl_scale->v_type == VF_COMPLEX)
-            x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
-          else
-            x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
+                /* for loop gets the beginning part */
+                for (j = k; j <= i - degree / 2; j++)
+                {
+                    /* Seems the same problem because the frequency vector is complex
+                     * and the real part of the complex should be accessed because if we
+                     * run x = pl-> pl_scale-> v_realdata [base + j]; the execution will
+                     * abort.
+                     */
 
-		    outdata[j + base] = ft_peval(x, coefs, degree - 1);
-		  }
-	    	k = j;
-	    }
+                    if (pl->pl_scale->v_type == VF_COMPLEX)
+                        x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
+                    else
+                        x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
 
-	    for (j = k; j < length; j++)
-       {
-          /* Again the same error */
-		  /* x = pl->pl_scale->v_realdata[j + base]; */
-          if (pl->pl_scale->v_type == VF_COMPLEX)
-            x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
-          else
-            x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
+                    outdata[j + base] = ft_peval(x, coefs, degree - 1);
+                }
+                k = j;
+            }
 
-		    outdata[j + base] = ft_peval(x, coefs, degree - 1);
-	    }
-   }
+            for (j = k; j < length; j++)
+            {
+                /* Again the same error */
+                        /* x = pl->pl_scale->v_realdata[j + base]; */
+                if (pl->pl_scale->v_type == VF_COMPLEX)
+                    x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
+                else
+                    x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
+
+                outdata[j + base] = ft_peval(x, coefs, degree - 1);
+            }
+        }
 
 
-	tfree(coefs);
-	tfree(scale);	/* XXX */
-	return (char *) outdata;
- }
+        tfree(coefs);
+        tfree(scale);        /* XXX */
+        return (char *) outdata;
+    }
 
 }
 
@@ -433,20 +437,20 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
     /* Check to see if we have the frequency vector for the derivative */
     if (!eq(pl->pl_scale->v_name, "frequency"))
     {
-      fprintf(cp_err, "Internal error: cx_group_delay: need frequency based complex vector.\n");
-      return (NULL);
+        fprintf(cp_err, "Internal error: cx_group_delay: need frequency based complex vector.\n");
+        return (NULL);
     }
 
 
     if (type == VF_COMPLEX)
-     for (i = 0; i < length; i++)
-     {
-      v_phase[i] = radtodeg(cph(cc[i]));
-     }
+        for (i = 0; i < length; i++)
+        {
+            v_phase[i] = radtodeg(cph(cc[i]));
+        }
     else
     {
-      fprintf(cp_err, "Signal must be complex to calculate group delay\n");
-      return (NULL);
+        fprintf(cp_err, "Signal must be complex to calculate group delay\n");
+        return (NULL);
     }
 
 
@@ -456,7 +460,7 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
      * datos = (double *) datos_aux;
      */
     datos = (double *)cx_deriv((char *)v_phase, type, length, newlength, newtype, pl, newpl, grouping);
-    
+
     /* With this global variable I will change how to obtain the group delay because
      * it is defined as:
      *
@@ -469,29 +473,28 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
      */
 
     if(cx_degrees)
-     {
-       adjust_final=1.0/360;
-     }
-     else
-     {
-       adjust_final=1.0/(2*M_PI);
-     }
+    {
+        adjust_final=1.0/360;
+    }
+    else
+    {
+        adjust_final=1.0/(2*M_PI);
+    }
 
 
     for (i = 0; i < length; i++)
     {
-     group_delay[i] = -datos[i]*adjust_final;
+        group_delay[i] = -datos[i]*adjust_final;
     }
 
     /* Adjust to Real because the result is Real */
     *newtype = VF_REAL;
 
-    	
+
     /* Set the type of Vector to "Time" because the speed of group units' s'
      * The different types of vectors are INCLUDE \ Fte_cons.h
      */
     pl->pl_dvecs->v_type= SV_TIME;
 
-   return ((char *) group_delay);
-
+    return ((char *) group_delay);
 }
