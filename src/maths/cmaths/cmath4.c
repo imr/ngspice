@@ -29,8 +29,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath4.h"
 
 #include "ngspice/sim.h" /* To get SV_TIME */
+#include "ngspice/fftext.h"
 
 extern bool cx_degrees;
+extern void vec_new(struct dvec *d);
 
 
 void *
@@ -497,4 +499,254 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
     pl->pl_dvecs->v_type= SV_TIME;
 
     return ((char *) group_delay);
+}
+
+
+void *
+cx_fft(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
+{
+    int i, size, mm, fpts, order;
+    double span, scale, maxt;
+    double *indata;
+    double *time, *xscale, *win = NULL;
+    ngcomplex_t *outdata;
+    double *reald = NULL;
+    struct dvec  *sv;
+    char   window[BSIZE_SP];
+
+    if (grouping == 0)
+        grouping = length;
+
+    /* First do some sanity checks. */
+    if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
+        fprintf(cp_err, "Internal error cx_fft: bad scale\n");
+        return (NULL);
+    }
+    if ((type != VF_REAL) && (type != VF_COMPLEX)) {
+        fprintf(cp_err, "Internal error cx_fft: argument has wrong data\n");
+        return (NULL);
+    }
+
+    /* size of fft input vector is power of two and larger than spice vector */
+    size = 1;
+    mm = 0;
+    while (size < length) {
+        size <<= 1;
+        mm++;
+    }
+    /* output vector has length of size/2 */
+    fpts = size/2;
+
+    *newlength = fpts;
+    *newtype = VF_COMPLEX;
+
+    indata = (double *) data;
+    outdata = alloc_c(fpts);
+    time = alloc_d(length);
+
+    xscale = TMALLOC(double, fpts);
+
+    if (pl->pl_scale->v_type == SV_TIME) { /* calculate the frequency from time */
+
+        span = pl->pl_scale->v_realdata[length-1] - pl->pl_scale->v_realdata[0];
+
+        for (i = 0; i<fpts; i++)
+            xscale[i] = i*1.0/span*length/size;
+
+        for (i = 0; i<length; i++)
+            time[i] = pl->pl_scale->v_realdata[i];
+
+    } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* take the frequency from ac data and calculate time */
+
+        /* Deal with complex frequency vector */
+        if (pl->pl_scale->v_type == VF_COMPLEX) {
+            span = realpart(pl->pl_scale->v_compdata[fpts-1]) - realpart(pl->pl_scale->v_compdata[0]);
+            for (i = 0; i<fpts; i++)
+                xscale[i] = realpart(pl->pl_scale->v_compdata[i]);
+        } else {
+            span = pl->pl_scale->v_realdata[fpts-1] - pl->pl_scale->v_realdata[0];
+            for (i = 0; i<fpts; i++)
+                xscale[i] = pl->pl_scale->v_realdata[i];
+        }
+
+        for (i = 0; i < length; i++)
+            time[i] = i*1.0/span*length/size;
+
+        span = time[length-1] - time[0];
+
+    } else {
+
+        fprintf(cp_err, "Internal error cx_fft: wrong analysis data\n");
+        return (NULL);
+
+    }
+
+    win = TMALLOC(double, length);
+    maxt = time[length-1];
+    if (!cp_getvar("specwindow", CP_STRING, window))
+        strcpy(window, "blackman");
+    if (!cp_getvar("specwindoworder", CP_NUM, &order))
+        order = 2;
+    if (order < 2)
+        order = 2;
+
+    if (fft_windows(window, win, time, length, maxt, span, order) == 0)
+        goto done;
+
+    /* create a new scale vector */
+    sv = alloc(struct dvec);
+    ZERO(sv, struct dvec);
+    sv->v_name = copy("fft_scale");
+    sv->v_type = SV_FREQUENCY;
+    sv->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);
+    sv->v_length = fpts;
+    sv->v_realdata = xscale;
+    vec_new(sv);
+
+    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-length);
+    printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*length/size, fpts);
+
+    reald = TMALLOC(double, size);
+    for (i = 0; i < length; i++)
+        reald[i] = indata[i] * win[i];
+    for (i = length; i < size; i++)
+        reald[i] = 0.0;
+
+    fftInit(mm);
+    rffts(reald, mm, 1);
+    fftFree();
+
+    scale = size;
+    /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
+    for (i = 0; i < fpts; i++) {
+        outdata[i].cx_real = reald[2*i]/scale;
+        outdata[i].cx_imag = reald[2*i+1]/scale;
+    }
+
+done:
+    tfree(reald);
+    tfree(time);
+    tfree(win);
+
+    return ((void *) outdata);
+}
+
+
+void *
+cx_ifft(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
+{
+    ngcomplex_t *indata = (ngcomplex_t *) data;
+    int i, size, mm, tpts, order;
+    double span, scale, maxt;
+    double *xscale, *win = NULL;
+    double *outdata;
+    double *reald = NULL;
+    struct dvec  *sv;
+    char   window[BSIZE_SP];
+
+    if (grouping == 0)
+        grouping = length;
+
+    /* First do some sanity checks. */
+    if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
+        fprintf(cp_err, "Internal error cx_ifft: bad scale\n");
+        return (NULL);
+    }
+    if ((type != VF_REAL) && (type != VF_COMPLEX)) {
+        fprintf(cp_err, "Internal error cx_ifft: argument has wrong data\n");
+        return (NULL);
+    }
+
+    /* size of ifft input vector is power of two and larger than spice vector */
+    size = 1;
+    mm = 0;
+    while (size <= length) {
+        size <<= 1;
+        mm++;
+    }
+
+    /* output vector has same length as the plot scale vector */
+    tpts = pl->pl_scale->v_length;
+
+    *newlength = tpts;
+    *newtype = VF_REAL;
+
+    outdata = alloc_d(tpts);
+
+    xscale = TMALLOC(double, tpts);
+
+    if (pl->pl_scale->v_type == SV_TIME) { /* take the time from transient */
+
+        for (i = 0; i<tpts; i++)
+            xscale[i] = pl->pl_scale->v_realdata[i];
+
+    } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* calculate the time from frequency */
+
+        /* Deal with complex frequency vector */
+        if (pl->pl_scale->v_type == VF_COMPLEX)
+            span = realpart(pl->pl_scale->v_compdata[tpts-1]) - realpart(pl->pl_scale->v_compdata[0]);
+        else
+            span = pl->pl_scale->v_realdata[tpts-1] - pl->pl_scale->v_realdata[0];
+
+        for (i = 0; i<tpts; i++)
+            xscale[i] = i*1.0/span*length/size;
+
+    } else {
+
+        fprintf(cp_err, "Internal error cx_ifft: wrong analysis data\n");
+        return (NULL);
+
+    }
+
+    span = xscale[tpts-1] - xscale[0];
+
+    /* create a new scale vector */
+    sv = alloc(struct dvec);
+    ZERO(sv, struct dvec);
+    sv->v_name = copy("ifft_scale");
+    sv->v_type = SV_TIME;
+    sv->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);
+    sv->v_length = tpts;
+    sv->v_realdata = xscale;
+    vec_new(sv);
+
+    win = TMALLOC(double, tpts);
+    maxt = xscale[tpts-1];
+    if (!cp_getvar("specwindow", CP_STRING, window))
+        strcpy(window, "blackman");
+    if (!cp_getvar("specwindoworder", CP_NUM, &order))
+        order = 2;
+    if (order < 2)
+        order = 2;
+
+    if (fft_windows(window, win, xscale, tpts, maxt, span, order) == 0)
+        goto done;
+
+    printf("IFFT: Time span: %g s, output length: %d\n", span, tpts);
+    printf("IFFT: Freq. resolution: %g Hz, input length: %d\n", 1.0/span*tpts/(2*length), length);
+
+    reald = TMALLOC(double, 2*size);
+    /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
+    for (i = 0; i < length; i++) {
+        reald[2*i] = indata[i].cx_real;
+        reald[2*i+1] = indata[i].cx_imag;
+    }
+    for (i = length; i < size; i++) {
+        reald[2*i] = 0.0;
+        reald[2*i+1] = 0.0;
+    }
+
+    fftInit(mm);
+    riffts(reald, mm, 1);
+    fftFree();
+
+    scale = 2*length;
+    for (i = 0; i < tpts; i++)
+        outdata[i] = reald[i] * scale/win[i];
+
+done:
+    tfree(reald);
+    tfree(win);
+
+    return ((void *) outdata);
 }

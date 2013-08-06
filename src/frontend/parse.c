@@ -181,6 +181,8 @@ struct func ft_funcs[] = {
     { "vecd",        cx_d },
     { "interpolate", (cx_function_t*) cx_interpolate },
     { "deriv",       (cx_function_t*) cx_deriv },
+    { "fft",         (cx_function_t*) cx_fft },
+    { "ifft",        (cx_function_t*) cx_ifft },
     { "v",           NULL },
     { NULL,          NULL }
 };
