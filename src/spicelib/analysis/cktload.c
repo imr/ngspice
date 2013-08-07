@@ -128,7 +128,7 @@ CKTload(CKTcircuit *ckt)
         /* Francesco Lannutti */
 #ifdef KLU
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] &&
-            DEVices[i]->DEVisLinear && (!(*DEVices[i]->DEVisLinear) || !(DEVices[i]->DEVisLinear))) {
+            ((DEVices[i]->DEVisLinear && !(*DEVices[i]->DEVisLinear)) || !(DEVices[i]->DEVisLinear))) {
 #else
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
 #endif
