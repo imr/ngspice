@@ -93,7 +93,7 @@ void fftFree(void)
 }
 
 int
-fft_windows(char *window, double *win, double *time, double length, double maxt, double span, int order)
+fft_windows(char *window, double *win, double *time, int length, double maxt, double span, int order)
 {
     int i;
     double sigma, scale;
