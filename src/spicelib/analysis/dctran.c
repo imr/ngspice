@@ -36,6 +36,9 @@ extern struct dbcomm *dbs;
 
 #ifdef SHARED_MODULE
 extern int add_bkpt(void);
+extern int sharedsync(double*, double*, double, double, int, int*, int);
+extern int ng_ident;      /* for debugging */
+static double del_before; /* for debugging */
 #endif
 
 #define INIT_STATS() \
@@ -102,7 +105,7 @@ DCtran(CKTcircuit *ckt,
     double         ipc_last_delta = 0.0;
 /* gtri - end - wbk - 12/19/90 - Add IPC stuff */
 #endif
-#ifdef CLUSTER
+#if defined CLUSTER || defined SHARED_MODULE
     int redostep;
 #endif
     if(restart || ckt->CKTtime == 0) {
@@ -623,6 +626,12 @@ resume:
 
 /* gtri - end - wbk - Modify Breakpoint stuff */
 
+#ifdef SHARED_MODULE
+        /* Either directly go to next time step, or modify ckt->CKTdelta depending on
+           synchronization requirements. sharedsync() returns 0. */
+    sharedsync(&ckt->CKTtime, &ckt->CKTdelta, 0, ckt->CKTfinalTime, 0, &ckt->CKTstat->STATrejected, 0);
+#endif
+
 /* gtri - begin - wbk - Do event solution */
 
     if(ckt->evt->counts.num_insts > 0) {
@@ -674,6 +683,13 @@ resume:
     }
 #endif /* CLUSTER */
 
+#ifdef SHARED_MODULE
+    /* Either directly go to next time step, or modify ckt->CKTdelta depending on
+       synchronization requirements. sharedsync() returns 0.
+    */
+    sharedsync(&ckt->CKTtime, &ckt->CKTdelta, 0, 0, &ckt->CKTstat->STATrejected, 0);
+#endif
+
 #endif
     for(i=5; i>=0; i--)
         ckt->CKTdeltaOld[i+1] = ckt->CKTdeltaOld[i];
@@ -687,7 +703,7 @@ resume:
 
 /* 600 */
     for (;;) {
-#ifdef CLUSTER
+#if defined CLUSTER || defined SHARED_MODULE
         redostep = 1;
 #endif
 #ifdef XSPICE
@@ -766,8 +782,12 @@ resume:
 
         if(converged != 0) {
 #ifndef CLUSTER
+#ifndef SHARED_MODULE
             ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
             ckt->CKTstat->STATrejected ++;
+#else
+            redostep = 1;
+#endif
 #endif
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
@@ -814,7 +834,7 @@ resume:
                 }
 #endif
                 firsttime = 0;
-#ifndef CLUSTER
+#if !defined CLUSTER && !defined SHARED_MODULE
                 goto nextTime;  /* no check on
                                  * first time point
                                  */
@@ -877,7 +897,7 @@ resume:
                 }
 #endif
 
-#ifndef CLUSTER
+#if !defined CLUSTER && !defined SHARED_MODULE
                 /* go to 650 - trapezoidal */
                 goto nextTime;
 #else
@@ -886,8 +906,12 @@ resume:
 #endif
             } else {
 #ifndef CLUSTER
+#ifndef SHARED_MODULE
                 ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;
                 ckt->CKTstat->STATrejected ++;
+#else
+                redostep = 1;
+#endif
 #endif
                 ckt->CKTdelta = newdelta;
 #ifdef STEPDEBUG
@@ -926,6 +950,25 @@ resume:
             ckt->CKTstat->STATrejected ++;
         }
 #endif
+
+#ifdef SHARED_MODULE
+        /* redostep == 0:
+           Either directly go to next time step, or modify ckt->CKTdelta depending on
+           synchronization requirements. sharedsync() returns 0.
+           redostep == 1:
+           No convergence, or too large truncation error.
+           Redo the last time step by subtracting olddelta, and modify ckt->CKTdelta
+           depending on synchronization requirements. sharedsync() returns 1.
+           User-supplied redo request:
+           sharedsync() may return 1 if the user has decided to do so in the callback
+           function.
+        */
+chkStep:
+        if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta, ckt->CKTfinalTime, redostep,
+            &ckt->CKTstat->STATrejected, 1) == 0)
+            goto nextTime;
+#endif
+
     }
     /* NOTREACHED */
 }
