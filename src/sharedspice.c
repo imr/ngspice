@@ -202,6 +202,7 @@ void sighandler_sharedspice(int num);
 void wl_delete_first(wordlist **wlstart, wordlist **wlend);
 
 int add_bkpt(void);
+int sharedsync(double*, double*, double, double, int, int*, int);
 
 #if !defined(low_latency)
 static char* outstorage(char*, bool);
@@ -218,6 +219,8 @@ static SendData* datfcn;
 static SendInitData* datinitfcn;
 static BGThreadRunning* bgtr;
 static GetVSRCData* getvdat;
+static GetISRCData* getidat;
+static GetSyncData* getsync;
 static pvector_info myvec = NULL;
 char **allvecs = NULL;
 char **allplots = NULL;
@@ -227,6 +230,8 @@ static bool nodatawanted = FALSE;
 static bool nodatainitwanted = FALSE;
 static bool nobgtrwanted = FALSE;
 static bool wantvdat = FALSE;
+static bool wantidat = FALSE;
+static bool wantsync = FALSE;
 static bool immediate = FALSE;
 static bool coquit = FALSE;
 static jmp_buf errbufm, errbufc;
@@ -247,7 +252,7 @@ static bool is_initialized = FALSE;
 static char* no_init = "Error: ngspice is not initialized!\n   Run ngSpice_Init first";
 
 /* identifier for this ngspice invocation */
-static int ng_ident = 0;
+int ng_ident = 0;
 
 
 static struct plot *
@@ -296,7 +301,7 @@ _thread_run(void *string)
     fl_exited = FALSE;
     /* notify caller that thread is running */
     if (!nobgtrwanted)
-        bgtr(fl_exited, userptr);
+        bgtr(fl_exited, ng_ident, userptr);
     bgtid = thread_self();
     cp_evloop((char *)string);
     FREE(string);
@@ -309,7 +314,7 @@ _thread_run(void *string)
     fl_exited = TRUE;
     /* notify caller that thread has exited */
     if (!nobgtrwanted)
-        bgtr(fl_exited, userptr);
+        bgtr(fl_exited, ng_ident, userptr);
     return NULL;
 }
 
@@ -485,23 +490,33 @@ ngSpice_running (void)
 #endif
 
 
-/* Initialise external voltage source */
+/* Initialise external voltage source and synchronization */
 IMPEXP
 int
-ngSpice_Init_Sync(GetVSRCData* vsrcdat, int *ident, void *userData)
+ngSpice_Init_Sync(GetVSRCData *vsrcdat, GetISRCData *isrcdat, GetSyncData *syncdat, int *ident, void *userData)
 {
     getvdat = vsrcdat;
+    getidat = isrcdat;
+    getsync = syncdat;
     /* set userdata, but don't overwrite with NULL */
     if (userData)
         userptr = userData;
     /* set ngspice shared lib identification number */
-    ng_ident = *ident;
+    if (ident)
+        ng_ident = *ident;
     /* if caller sends NULL, don't try to retrieve voltage */
     if (getvdat) {
         wantvdat = TRUE;
-        return 0;
     }
-    return 1;
+    /* if caller sends NULL, don't try to retrieve current */
+    if (getidat) {
+        wantidat = TRUE;
+    }
+    /* if caller sends NULL, don't synchronize */
+    if (getsync) {
+        wantsync = TRUE;
+    }
+    return 0;
 }
 
 
@@ -1097,7 +1112,7 @@ sh_fputsll(const char *input, FILE* outf)
                 strcat(prstring, "stderr ");
                 strcat(prstring, newstring);
 
-                result = pfcn(prstring, userptr);
+                result = pfcn(prstring, ng_ident, userptr);
                 tfree(newstring);
                 tfree(prstring);
             }
@@ -1110,7 +1125,7 @@ sh_fputsll(const char *input, FILE* outf)
             return result;
         }
         else if (strchr(input, '\r')) {
-            result = pfcn(outstringerr, userptr);
+            result = pfcn(outstringerr, ng_ident, userptr);
             tfree(outstringerr);
             return result;
         }
@@ -1131,7 +1146,7 @@ sh_fputsll(const char *input, FILE* outf)
                 prstring = TMALLOC(char, 7 + strlen(newstring) + 1);
                 strcat(prstring, "stdout ");
                 strcat(prstring, newstring);
-                result = pfcn(prstring, userptr);
+                result = pfcn(prstring, ng_ident, userptr);
                 tfree(newstring);
                 tfree(prstring);
             }
@@ -1144,7 +1159,7 @@ sh_fputsll(const char *input, FILE* outf)
             return result;
         }
         else if (strchr(input, '\r')) {
-            result = pfcn(outstringout, userptr);
+            result = pfcn(outstringout, ng_ident, userptr);
             tfree(outstringout);
             return result;
         }
@@ -1376,7 +1391,7 @@ void SetAnalyse(
 
    if (DecaPercent >= 1000){
        sprintf( s, "--ready--");
-       result = statfcn(s, userptr);
+       result = statfcn(s, ng_ident, userptr);
        tfree(s);
        return;
    }
@@ -1414,7 +1429,7 @@ void SetAnalyse(
          strncpy(OldAn, Analyse, 127);
       }
 
-      result = statfcn(s, userptr);
+      result = statfcn(s, ng_ident, userptr);
    }
    tfree(s);
 #else
@@ -1423,7 +1438,7 @@ void SetAnalyse(
    static bool havesent = FALSE;
    if (!havesent) {
        s = copy("No usage info available");
-       result = statfcn(s, userptr);
+       result = statfcn(s, ng_ident, userptr);
        tfree(s);
        havesent = TRUE;
    }
@@ -1467,7 +1482,7 @@ void shared_exit(int status)
     if (outsend) {
         /* requires outsend to be copied by the caller,
         because it is freed immediately */
-        pfcn(outsend, userptr);
+        pfcn(outsend, ng_ident, userptr);
         tfree(outsend);
     }
 #endif
@@ -1475,9 +1490,9 @@ void shared_exit(int status)
     // detaching then has to be done explicitely by the caller
     if (fl_running && !fl_exited) {
         fl_exited = TRUE;
-        bgtr(fl_exited, userptr);
+        bgtr(fl_exited, ng_ident, userptr);
         // set a flag that ngspice wants to be detached
-        ngexit(status, FALSE, coquit, userptr);
+        ngexit(status, FALSE, coquit, ng_ident, userptr);
         // finish and exit the worker thread
 #ifdef HAVE_LIBPTHREAD
         pthread_exit(1);
@@ -1486,7 +1501,7 @@ void shared_exit(int status)
 #endif
     }
     // set a flag in caller to detach ngspice.dll
-    ngexit(status, immediate, coquit, userptr);
+    ngexit(status, immediate, coquit, ng_ident, userptr);
 
     // jump back to finish the calling function
     if (!intermj)
@@ -1559,7 +1574,7 @@ int sh_ExecutePerLoop_old(void)
     }
     /* now call the callback function to return the data to the caller */
     if (!nodatawanted)
-  //      datfcn(curvecvals, len, userptr);
+  //      datfcn(curvecvals, len, ng_ident, userptr);
 
     return 0;
 }
@@ -1594,7 +1609,7 @@ int sh_ExecutePerLoop(void)
         }
     }
     /* now call the callback function to return the data to the caller */
-    datfcn(curvecvalsall, len, userptr);
+    datfcn(curvecvalsall, len, ng_ident, userptr);
 
     return 0;
 }
@@ -1653,7 +1668,7 @@ int sh_vecinit(runDesc *run)
     // the data
     pvca->vecs = pvc;
     /* now call the callback function to return the data to the caller */
-    datinitfcn(pvca, userptr);
+    datinitfcn(pvca, ng_ident, userptr);
 
     /* generate the data tranfer structure,
        data will be sent from sh_ExecutePerLoop() via datfcn() */
@@ -1693,7 +1708,102 @@ getvsrcval(double time, char *vname)
     }
     else {
         /* callback fcn */
-        getvdat(&vval, time, vname, userptr);
+        getvdat(&vval, time, vname, ng_ident, userptr);
         return vval;
+    }
+}
+
+
+/* issue callback to request external current data for source iname*/
+double
+getisrcval(double time, char *iname)
+{
+    double ival;
+    if (!wantidat) {
+        fprintf(stderr, "Error: No callback supplied for source %s\n", iname);
+        shared_exit(EXIT_BAD);
+        return(EXIT_BAD);
+    }
+    else {
+        /* callback fcn */
+        getidat(&ival, time, iname, ng_ident, userptr);
+        return ival;
+    }
+}
+
+
+/*
+    return value 1: continue with new time step, ckt->CKTtime + ckt->CKTdelta will be
+                    done next automatically.
+                    For time synchronization we may choose our own ckt->CKTdelta, being
+                    smaller than the one suggested by ngspice.
+    return value 0: will redo the most recent time step. We may subtract olddelta and
+                    continue with new ckt-CKTdelta.
+                    This is necessary if non-convergence has been detected (redostep = 1).
+                    The newly suggested ckt-CKTdelta has already been divided by 8.
+                    This is also enforced if the truncation error is too large.
+                    The newly suggested ckt-CKTdelta may be accompanied by an increase
+                    of integration order.
+                    For time synchronization, if the actual, converged ckt-CKTtime is
+                    beyond the optimum common time, we subtract olddelta and then choose
+                    our own ckt->CKTdelta, being smaller than olddelta.
+    Whereas redostep is set by ngspice, the user may decide via the callback function,
+    to redo the most recent step because of other reasons. This is accomplished by
+    returning a 1 with the callback function.
+
+*/
+
+/*
+    ckttime   pointer to ckt->CKTtime, which already has been used trying to achieve
+              convergence, after olddelta had been added in the previous step.
+    cktdelta  pointer to newly defined ckt->CKTdelta, e.g. by recognizing truncation errors
+    olddelta  old ckt->CKTdelta, has already been added in the previous step.
+    finalt    final time
+    redostep  if 0, converged,
+              if 1, either no convergence, need to redo with new ckt->CKTdelta
+              or ckt->CKTdelta has been reduced by tuncation errors too large.
+    rejected  pointer to ckt->CKTstat->STATrejected, counts rejected time points.
+    loc       location of function call in dctran.c: 0: after breakpoint handling, 1: at end of for loop
+*/
+
+int
+sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt, int redostep, int *rejected, int loc)
+{
+    /* standard procedure, cktdelta has been provided by ngspice */
+    if (!wantsync) {
+        if (redostep) {
+            *pckttime -= olddelta;
+            (*rejected)++;
+            return 1;
+        }
+        else
+            return 0;
+    /* synchronization required, to be done by changing cktdelta */
+    } else {
+        if (redostep) {
+            *pckttime -= olddelta;
+            (*rejected)++;
+            /* use cktdelta as suggested by ngspice or acquire new cktdelta
+            via pointer pcktdelta in user supplied callback */
+            getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
+            return 1;
+        }
+        else {
+            /* Use cktdelta as suggested by ngspice or acquire new cktdelta
+               via pointer pcktdelta in user supplied callback. Redo the previous
+               step if return value from getsync is 1. */
+            int retval = getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
+            /* never move beyond final time */
+            if (*pckttime + *pcktdelta > finalt)
+                *pcktdelta = finalt - *pckttime;
+
+            /* user has decided to redo the step, ignoring redostep being set to 0
+            by ngspice. */
+            if (retval) {
+                *pckttime -= olddelta;
+                (*rejected)++;
+            }
+            return retval;
+        }
     }
 }

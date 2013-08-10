@@ -168,44 +168,50 @@ typedef struct vecinfoall
 addresses received from caller with ngSpice_Init() function
 */
 /* sending output from stdout, stderr to caller */
-typedef int (SendChar)(char*, void*);
+typedef int (SendChar)(char*, int, void*);
 /*
    char* string to be sent to caller output
+   int   identification number of calling ngspice shared lib
    void* return pointer received from caller, e.g. pointer to object having sent the request
 */
 /* sending simulation status to caller */
-typedef int (SendStat)(char*, void*);
+typedef int (SendStat)(char*, int, void*);
 /*
    char* simulation status and value (in percent) to be sent to caller
+   int   identification number of calling ngspice shared lib
    void* return pointer received from caller
 */
 /* asking for controlled exit */
-typedef int (ControlledExit)(int, bool, bool, void*);
+typedef int (ControlledExit)(int, bool, bool, int, void*);
 /*
    int   exit status
    bool  if true: immediate unloading dll, if false: just set flag, unload is done when function has returned
    bool  if true: exit upon 'quit', if false: exit due to ngspice.dll error
+   int   identification number of calling ngspice shared lib
    void* return pointer received from caller
 */
 /* send back actual vector data */
-typedef int (SendData)(pvecvaluesall, int, void*);
+typedef int (SendData)(pvecvaluesall, int, int, void*);
 /*
    vecvaluesall* pointer to array of structs containing actual values from all vectors
    int           number of structs (one per vector)
+   int           identification number of calling ngspice shared lib
    void*         return pointer received from caller
 */
 
 /* send back initailization vector data */
-typedef int (SendInitData)(pvecinfoall, void*);
+typedef int (SendInitData)(pvecinfoall, int, void*);
 /*
    vecinfoall* pointer to array of structs containing data from all vectors right after initialization
+   int         identification number of calling ngspice shared lib
    void*       return pointer received from caller
 */
 
 /* indicate if background thread is running */
-typedef int (BGThreadRunning)(bool, void*);
+typedef int (BGThreadRunning)(bool, int, void*);
 /*
    bool        true if background thread is running
+   int         identification number of calling ngspice shared lib
    void*       return pointer received from caller
 */
 
@@ -214,11 +220,34 @@ typedef int (BGThreadRunning)(bool, void*);
 */
 
 /* ask for VSRC EXTERNAL value */
-typedef int (GetVSRCData)(double*, double, char*, void*);
+typedef int (GetVSRCData)(double*, double, char*, int, void*);
 /*
    double*     return voltage value
    double      actual time
    char*       node name
+   int         identification number of calling ngspice shared lib
+   void*       return pointer received from caller
+*/
+
+/* ask for ISRC EXTERNAL value */
+typedef int (GetISRCData)(double*, double, char*, int, void*);
+/*
+   double*     return current value
+   double      actual time
+   char*       node name
+   int         identification number of calling ngspice shared lib
+   void*       return pointer received from caller
+*/
+
+/* ask for new delta time depending on synchronization requirements */
+typedef int (GetSyncData)(double, double*, double, int, int, int, void*);
+/*
+   double      actual time (ckt->CKTtime)
+   double*     delta time (ckt->CKTdelta)
+   double      old delta time (olddelta)
+   int         redostep (as set by ngspice)
+   int         identification number of calling ngspice shared lib
+   int         location of call for synchronization in dctran.c
    void*       return pointer received from caller
 */
 
@@ -236,11 +265,17 @@ int  ngSpice_Init(SendChar* printfcn, SendStat* statfcn, ControlledExit* ngexit,
                   SendData* sdata, SendInitData* sinitdata, BGThreadRunning* bgtrun, void* userData);
 
 /* initialization of synchronizing functions
-vsrcdat: pointer to callback function for retrieving a voltage source value
+vsrcdat: pointer to callback function for retrieving a voltage source value from caller
+isrcdat: pointer to callback function for retrieving a current source value from caller
+syncdat: pointer to callback function for synchronization
 ident: pointer to integer unique to this shared library (defaults to 0)
+userData: pointer to user-defined data, will not be modified, but
+          handed over back to caller during Callback, e.g. address of calling object.
+          If NULL is sent here, userdata info from ngSpice_Init() will be kept, otherwise
+          userdata will be overridden by new value from here.
 */
 IMPEXP
-int  ngSpice_Init_Sync(GetVSRCData *vsrcdat, int *ident, void *userData);
+int  ngSpice_Init_Sync(GetVSRCData *vsrcdat, GetISRCData *isrcdat, GetSyncData *syncdat, int *ident, void *userData);
 
 /* Caller may send ngspice commands to ngspice.dll.
 Commands are executed immediately */
