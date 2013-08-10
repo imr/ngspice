@@ -92,6 +92,7 @@ typedef struct sISRCmodel {
 #define AM 6
 #define TRNOISE 7
 #define TRRANDOM 8
+#define EXTERNAL 9
 #endif /*PULSE*/
 
 /* device parameters */
@@ -126,6 +127,7 @@ typedef struct sISRCmodel {
 /* gtri - end - add define for current source value */
 #define ISRC_TRNOISE 25
 #define ISRC_TRRANDOM 26
+#define ISRC_EXTERNAL 27
 
 /* model parameters */
 

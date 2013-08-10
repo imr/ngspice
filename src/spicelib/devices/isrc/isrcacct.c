@@ -290,6 +290,13 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     }
                     break;
 
+#ifdef SHARED_MODULE
+                    case EXTERNAL: {
+                        /* no  breakpoints (yet) */
+                    }
+                    break;
+#endif
+
                 } // switch
             } // if ... else
 bkptset: ;

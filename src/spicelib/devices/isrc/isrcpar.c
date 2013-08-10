@@ -238,6 +238,17 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         }
         break;
 
+#ifdef SHARED_MODULE
+        case ISRC_EXTERNAL: {
+            here->ISRCfunctionType = EXTERNAL;
+            here->ISRCfuncTGiven = TRUE;
+            /* no coefficients
+            copy_coeffs(here, value);
+            */
+        }
+        break;
+#endif
+
         default:
             return(E_BADPARM);
     }

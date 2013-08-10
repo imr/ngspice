@@ -24,7 +24,9 @@ IFparm ISRCpTable[] = { /* parameters */
  IOP ("am",      ISRC_AM,        IF_REALVEC,"Amplitude modulation description"),
  IOP ("trnoise", ISRC_TRNOISE,   IF_REALVEC,"Transient noise description"),
  IOP ("trrandom", ISRC_TRRANDOM, IF_REALVEC,"random source description"),
-
+#ifdef SHARED_MODULE
+ IOP ("external", ISRC_EXTERNAL, IF_REALVEC,"external source description"),
+#endif
  OPU ("pos_node",ISRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ("neg_node",ISRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ("function",ISRC_FCN_TYPE,  IF_INTEGER,"Function of the source"),
