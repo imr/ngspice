@@ -120,7 +120,6 @@ struct CKTcircuit {
 #ifdef KIRCHHOFF
     double *CKTfvk ;            /* KCL Verification array */
     int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
-    int *CKTvoltCurNode ;       /* Flag to indicate if a node contains some direct unknown currents */
     CKTmkCurKCLnode **CKTmkCurKCLarray ; /* Array of KCL Currents */
 #endif
 
