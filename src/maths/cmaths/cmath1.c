@@ -93,6 +93,29 @@ cx_cph(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
+/* Modified from above but with real phase vector in degrees as input */
+void *
+cx_unwrap(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    double *d = alloc_d(length);
+    double *dd = (double *) data;
+    int i;
+
+    *newlength = length;
+    *newtype = VF_REAL;
+    if (type == VF_REAL) {
+        double last_ph = degtorad(dd[0]);
+        d[0] = last_ph;
+        for (i = 1; i < length; i++) {
+            double ph = degtorad(dd[i]);
+            last_ph = ph - (2*M_PI) * floor((ph - last_ph)/(2*M_PI) + 0.5);
+            d[i] = radtodeg(last_ph);
+        }
+    }
+    /* Otherwise it is 0, but tmalloc zeros the stuff already. */
+    return ((void *) d);
+}
+
 /* If this is pure imaginary we might get real, but never mind... */
 
 void *

@@ -55,6 +55,7 @@ extern bool cx_degrees;
 extern void *cx_mag(void *, short int , int , int *, short int *);
 extern void *cx_ph(void *, short int , int , int *, short int *);
 extern void *cx_cph(void *, short int , int , int *, short int *);
+extern void *cx_unwrap(void *, short int , int , int *, short int *);
 extern void *cx_j(void *, short int , int , int *, short int *);
 extern void *cx_real(void *, short int , int , int *, short int *);
 extern void *cx_imag(void *, short int , int , int *, short int *);

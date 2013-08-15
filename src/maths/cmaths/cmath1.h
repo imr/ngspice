@@ -10,6 +10,7 @@
 void * cx_mag(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_ph(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_cph(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_unwrap(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_j(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_real(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_imag(void *data, short int type, int length, int *newlength, short int *newtype);

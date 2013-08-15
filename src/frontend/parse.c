@@ -140,6 +140,7 @@ struct func ft_funcs[] = {
     { "magnitude",   cx_mag },
     { "cph",         cx_cph },  /* SJdV */
     { "cphase",      cx_cph },  /* SJdV Continious phase*/
+    { "unwrap",      cx_unwrap },
     { "ph",          cx_ph },
     { "phase",       cx_ph },
     { "j",           cx_j },
@@ -177,7 +178,9 @@ struct func ft_funcs[] = {
     { "unitvec",     cx_unitvec },
     { "length",      cx_length },
     { "vecmin",      cx_min },
+    { "minimum",     cx_min },
     { "vecmax",      cx_max },
+    { "maximum",     cx_max },
     { "vecd",        cx_d },
     { "interpolate", (cx_function_t*) cx_interpolate },
     { "deriv",       (cx_function_t*) cx_deriv },
