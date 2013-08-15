@@ -34,6 +34,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 extern bool cx_degrees;
 extern void vec_new(struct dvec *d);
 
+bool doubledouble(double *, int, double *);
+
 
 void *
 cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int length)
@@ -507,8 +509,8 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     int i, size, mm, fpts, order;
     double span, scale, maxt;
-    double *indata;
-    double *time, *xscale, *win = NULL;
+    double *indata, *xscale;
+    double *time = NULL, *xtime = NULL, *win = NULL;
     ngcomplex_t *outdata;
     double *reald = NULL;
     struct dvec  *sv;
@@ -530,7 +532,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     /* size of fft input vector is power of two and larger than spice vector */
     size = 1;
     mm = 0;
-    while (size < length) {
+    while (size < 2*length) {
         size <<= 1;
         mm++;
     }
@@ -551,12 +553,12 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         span = pl->pl_scale->v_realdata[length-1] - pl->pl_scale->v_realdata[0];
 
         for (i = 0; i<fpts; i++)
-            xscale[i] = i*1.0/span*length/size;
+            xscale[i] = i*1.0/span*(2*length)/size;
 
         for (i = 0; i<length; i++)
             time[i] = pl->pl_scale->v_realdata[i];
 
-    } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* take the frequency from ac data and calculate time */
+    } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* take frequency from ac data and calculate time */
 
         /* Deal with complex frequency vector */
         if (pl->pl_scale->v_type == VF_COMPLEX) {
@@ -570,27 +572,46 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         }
 
         for (i = 0; i < length; i++)
-            time[i] = i*1.0/span*length/size;
+            time[i] = i*1.0/span*(2*length)/size;
 
         span = time[length-1] - time[0];
 
     } else {
 
-        fprintf(cp_err, "Internal error cx_fft: wrong analysis data\n");
-        return (NULL);
+        span = length;
+
+        for (i = 0; i < fpts; i++)
+            xscale[i] = i;
+
+        for (i = 0; i < length; i++)
+            time[i] = i*1.0/span;
+
+        span = time[length-1] - time[0];
 
     }
 
-    win = TMALLOC(double, length);
+    reald = TMALLOC(double, size);
+    xtime = TMALLOC(double, 2*length);
+    /* Now interpolate the data... */
+    if (!doubledouble(indata, length, reald)) {
+        fprintf(cp_err, "Error: can't interpolate\n");
+        goto done;
+    }
+    if (!doubledouble(time, length, xtime)) {
+        fprintf(cp_err, "Error: can't interpolate\n");
+        goto done;
+    }
+
+    win = TMALLOC(double, 2*length);
     maxt = time[length-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
-        strcpy(window, "blackman");
+        strcpy(window, "none");
     if (!cp_getvar("specwindoworder", CP_NUM, &order))
         order = 2;
     if (order < 2)
         order = 2;
 
-    if (fft_windows(window, win, time, length, maxt, span, order) == 0)
+    if (fft_windows(window, win, xtime, 2*length, maxt, span, order) == 0)
         goto done;
 
     /* create a new scale vector */
@@ -603,13 +624,12 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     sv->v_realdata = xscale;
     vec_new(sv);
 
-    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-length);
-    printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*length/size, fpts);
+    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, size/2-length);
+    printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span*(2*length)/size, fpts);
 
-    reald = TMALLOC(double, size);
-    for (i = 0; i < length; i++)
-        reald[i] = indata[i] * win[i];
-    for (i = length; i < size; i++)
+    for (i = 0; i < 2*length; i++)
+        reald[i] = reald[i] * win[i];
+    for (i = 2*length; i < size; i++)
         reald[i] = 0.0;
 
     fftInit(mm);
@@ -625,6 +645,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 
 done:
     tfree(reald);
+    tfree(xtime);
     tfree(time);
     tfree(win);
 
@@ -657,30 +678,30 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
         return (NULL);
     }
 
-    /* size of ifft input vector is power of two and larger than spice vector */
+    /* size of ifft input vector is power of two and larger or equal than spice vector */
     size = 1;
     mm = 0;
-    while (size <= length) {
+    while (size < length) {
         size <<= 1;
         mm++;
     }
 
-    /* output vector has same length as the plot scale vector */
-    tpts = pl->pl_scale->v_length;
-
-    *newlength = tpts;
-    *newtype = VF_REAL;
-
-    outdata = alloc_d(tpts);
-
-    xscale = TMALLOC(double, tpts);
-
     if (pl->pl_scale->v_type == SV_TIME) { /* take the time from transient */
+
+        /* output vector has same length as the plot scale vector */
+        tpts = pl->pl_scale->v_length;
+
+        xscale = TMALLOC(double, tpts);
 
         for (i = 0; i<tpts; i++)
             xscale[i] = pl->pl_scale->v_realdata[i];
 
-    } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* calculate the time from frequency */
+    } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* calculate time from frequency */
+
+        /* output vector has same length as the plot scale vector */
+        tpts = pl->pl_scale->v_length;
+
+        xscale = TMALLOC(double, tpts);
 
         /* Deal with complex frequency vector */
         if (pl->pl_scale->v_type == VF_COMPLEX)
@@ -693,12 +714,22 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
 
     } else {
 
-        fprintf(cp_err, "Internal error cx_ifft: wrong analysis data\n");
-        return (NULL);
+        /* output vector has same length as input  vector */
+        tpts = length;
+
+        xscale = TMALLOC(double, tpts);
+
+        for (i = 0; i < tpts; i++)
+            xscale[i] = i;
 
     }
 
     span = xscale[tpts-1] - xscale[0];
+
+    *newlength = tpts;
+    *newtype = VF_REAL;
+
+    outdata = alloc_d(tpts);
 
     /* create a new scale vector */
     sv = alloc(struct dvec);
@@ -713,7 +744,7 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     win = TMALLOC(double, tpts);
     maxt = xscale[tpts-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
-        strcpy(window, "blackman");
+        strcpy(window, "none");
     if (!cp_getvar("specwindoworder", CP_NUM, &order))
         order = 2;
     if (order < 2)
@@ -722,8 +753,8 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     if (fft_windows(window, win, xscale, tpts, maxt, span, order) == 0)
         goto done;
 
-    printf("IFFT: Time span: %g s, output length: %d\n", span, tpts);
-    printf("IFFT: Freq. resolution: %g Hz, input length: %d\n", 1.0/span*tpts/(2*length), length);
+    printf("IFFT: Frequency span: %g Hz, input length: %d\n", 1/span*tpts/size*(length-1), length);
+    printf("IFFT: Time resolution: %g s, output length: %d\n", span/(tpts-1), tpts);
 
     reald = TMALLOC(double, 2*size);
     /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
@@ -740,13 +771,38 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     riffts(reald, mm, 1);
     fftFree();
 
-    scale = 2*length;
+    scale = length;
     for (i = 0; i < tpts; i++)
-        outdata[i] = reald[i] * scale/win[i];
+        outdata[i] = reald[i] * scale/MAX(1e-03, win[i]); /* makes dewindowing sense? */
 
 done:
     tfree(reald);
     tfree(win);
 
     return ((void *) outdata);
+}
+
+
+bool
+doubledouble(double *indata, int len, double *outdata)
+{
+    int i, j;
+
+    if (len < 2) {
+        fprintf(cp_err, "Error: lengths too small to interpolate.\n");
+        return (FALSE);
+    }
+
+    outdata[0] = indata[0];
+    j = 1;
+    for (i = 1; i < 2*len-1; i++)
+        if (i == 2*j) {
+            outdata[i] = indata[j];
+            j = j + 1;
+        } else {
+            outdata[i] = indata[j-1] + (indata[j]-indata[j-1])/2.0;
+        }
+    outdata[2*len-1] = indata[len-1] + (indata[len-1]-outdata[2*len-2]);
+
+    return (TRUE);
 }
