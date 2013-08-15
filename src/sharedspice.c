@@ -1130,7 +1130,7 @@ sh_fputsll(const char *input, FILE* outf)
             return result;
         }
     }
-    if (outf == stdout) {
+    else if (outf == stdout) {
         if (!outstringout)
             delstring = outstringout = copy(input);
         else {
