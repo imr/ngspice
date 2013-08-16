@@ -81,6 +81,8 @@ NIconvTest (CKTcircuit *ckt)
                      ckt->CKTreltol * maximum + ckt->CKTabstol, maximum) ;
 #endif
 
+            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+                return 1 ;
         }
 #else
         new = ckt->CKTrhs [i] ;
