@@ -57,7 +57,7 @@ void
 ft_dotsaves(void)
 {
     wordlist *iline, *wl = NULL;
-    char *s;
+    char *s, *fr;
 
     if (!ft_curckt) /* Shouldn't happen. */
         return;
@@ -65,11 +65,14 @@ ft_dotsaves(void)
     for (iline = ft_curckt->ci_commands; iline; iline = iline->wl_next)
         if (ciprefix(".save", iline->wl_word)) {
             s = iline->wl_word;
-            (void) gettok(&s);
+            /* skip .save */
+            fr = gettok(&s);
+            tfree(fr);
             wl = wl_append(wl, gettoks(s));
         }
 
     com_save(wl);
+    wl_free(wl);
 }
 
 
@@ -561,7 +564,7 @@ fixem(char *string)
 wordlist *
 gettoks(char *s)
 {
-    char        *t;
+    char        *t, *s0;
     char        *l, *r, *c;     /* left, right, center/comma */
     wordlist    *wl, *list, **prevp;
 
@@ -569,15 +572,25 @@ gettoks(char *s)
     list = NULL;
     prevp = &list;
 
-    if (strstr(s, "(")) s = stripWhiteSpacesInsideParens(s);
+    /* stripWhite.... uses copy() to return a malloc'ed s, so we have to free it,
+       using s0 as its starting address */
+    if (strstr(s, "("))
+        s0 = s = stripWhiteSpacesInsideParens(s);
+    else
+        s0 = s = copy(s);
+
     while ((t = gettok(&s)) != NULL) {
-        if (*t == '(')
+        if (*t == '(') {
+            /* gettok uses copy() to return a malloc'ed t, so we have to free it */
+            tfree(t);
             continue;
+        }
         l = strrchr(t, '('/*)*/);
         if (!l) {
             wl = wl_cons(copy(t), NULL);
             *prevp = wl;
             prevp = &wl->wl_next;
+            tfree(t);
             continue;
         }
 
@@ -609,6 +622,8 @@ gettoks(char *s)
             *prevp = wl;
             prevp = &wl->wl_next;
         }
+        tfree(t);
     }
+    tfree(s0);
     return list;
 }
