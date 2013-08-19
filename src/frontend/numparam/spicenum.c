@@ -472,6 +472,26 @@ nupa_init(char *srcfile)
 }
 
 
+/* free dicoS (called from do_measure() in measure.c or
+   immediately from inp_spsource() in inp.c) */
+void
+nupa_del_dicoS(void)
+{
+    int i;
+
+    if(!dicoS)
+        return;
+
+    for (i = dynmaxline; i >= 0; i--)
+        dispose(dicoS->dynrefptr[i]);
+
+    dispose(dicoS->dynrefptr);
+    dispose(dicoS->dyncategory);
+    dispose(dicoS);
+    dicoS = NULL;
+}
+
+
 static void
 nupa_done(void)
 {
@@ -490,22 +510,9 @@ nupa_done(void)
     nerrors = dicoS->errcount;
     dictsize = donedico(dicoS);
 
-    /* We cannot remove dico here because numparam is usedby
-       the .measure statement, which is invoked only after the
-       simulation has finished */
-    /*
-     *  for (i = dynmaxline; i >= 0; i--) {
-     *      dispose(dico->dynrefptr[i]);
-     *  }
-     *  dispose(dico->dynrefptr);
-     *  dispose(dico->dyncategory);
-     *  dispose(dico->dyndat);
-     *  dispose(dico);
-     *  dico = NULL;
-     *  dispose(inst_dico->dyndat);
-     *  dispose(inst_dico);
-     *  inst_dico = NULL;
-    */
+    /* We cannot remove dicoS here because numparam is used by
+       the .measure statements, which are invoked only after the
+       simulation has finished. */
 
     if (nerrors) {
         /* debug: ask if spice run really wanted */
