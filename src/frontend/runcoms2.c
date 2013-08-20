@@ -206,6 +206,8 @@ com_remcirc(wordlist *wl)
     }
 
     dbfree(ft_curckt->ci_dbs);
+    ft_curckt->ci_dbs = NULL;
+    dbs = NULL;
 
     /* The next lines stem from com_rset */
     INPkillMods();
