@@ -292,15 +292,23 @@ com_sttus(wordlist *wl)
 }
 
 
+/* free the dbcomm structure which has been defined in
+ *   function settrace() in breakp2.c
+ */
+
 void
 dbfree(struct dbcomm *db)
 {
     struct dbcomm *dd, *dn;
 
     for (dd = db; dd; dd = dn) {
-        dn = dd->db_also;
+        dn = dd->db_next;
         tfree(dd->db_nodename1);
         tfree(dd->db_nodename2);
+        if (dd->db_also) {
+            dbfree(dd->db_also);
+            dd->db_also = NULL;
+        }
         tfree(dd);
     }
 }
