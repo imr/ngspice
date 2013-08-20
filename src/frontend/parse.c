@@ -162,6 +162,7 @@ struct func ft_funcs[] = {
     { "cosh",        cx_cosh },
     { "tanh",        cx_tanh },
     { "atan",        cx_atan },
+    { "sortorder",   cx_sortorder },
     { "norm",        cx_norm },
     { "rnd",         cx_rnd },
     { "sunif",       cx_sunif },

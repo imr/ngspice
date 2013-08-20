@@ -709,3 +709,61 @@ cx_atan(void *data, short int type, int length, int *newlength, short int *newty
     }
     return ((void *) d);
 }
+
+/* Struct to store and order the values of the amplitudes preserving the index in the original array */
+typedef struct {
+    double amplitude;
+    int index;
+} amplitude_index_t;
+
+static int compare_structs (const void *a, const void *b);
+
+/*
+ *  Returns the positions of the elements in a real vector
+ *  after they have been sorted into increasing order using a stable method (qsort).
+ */
+
+void *
+cx_sortorder(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    double *d = alloc_d(length);
+    double *dd = (double *) data;
+    int i;
+
+    amplitude_index_t *array_amplitudes;
+    array_amplitudes = (amplitude_index_t *) malloc(sizeof(amplitude_index_t) * (size_t) length);
+
+    *newlength = length;
+    *newtype = VF_REAL;
+    if (type == VF_REAL) {
+
+        for(i = 0; i < length; i++){
+            array_amplitudes[i].amplitude = dd[i];
+            array_amplitudes[i].index = i;
+        }
+
+        qsort(array_amplitudes, (size_t) length, sizeof(array_amplitudes[0]), compare_structs);
+
+        for(i = 0; i < length; i++)
+            d[i] = array_amplitudes[i].index;
+    }
+
+    free(array_amplitudes);
+
+    /* Otherwise it is 0, but tmalloc zeros the stuff already. */
+    return ((void *) d);
+}
+
+static int
+compare_structs(const void *a, const void *b)
+{
+    amplitude_index_t *aa = (amplitude_index_t *) a;
+    amplitude_index_t *bb = (amplitude_index_t *) b;
+
+    if (aa->amplitude > bb->amplitude)
+        return 1;
+    else if (aa->amplitude == bb->amplitude)
+        return 0;
+    else
+        return -1;
+}

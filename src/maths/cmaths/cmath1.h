@@ -27,6 +27,7 @@ void * cx_cosh(void *data, short int type, int length, int *newlength, short int
 void * cx_tan(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_tanh(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_atan(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_sortorder(void *data, short int type, int length, int *newlength, short int *newtype);
 
 
 #endif
