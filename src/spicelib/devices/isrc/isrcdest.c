@@ -24,7 +24,10 @@ ISRCdestroy(GENmodel **inModel)
         oldmod = mod;
         prev = NULL;
         for(here = mod->ISRCinstances ; here ; here = here->ISRCnextInstance) {
-            if(prev) FREE(prev);
+            if(prev) {
+                tfree(prev->ISRCcoeffs);
+                FREE(prev);
+            }
             prev = here;
         }
         if(prev) FREE(prev);
