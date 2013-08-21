@@ -224,6 +224,8 @@ com_remcirc(wordlist *wl)
     dd = ft_curckt->ci_param;
     line_free(dd, TRUE);
 
+    wl_free(ft_curckt->ci_commands);
+
     tfree(ft_curckt->FTEstats);
 
     ft_sim->deleteTask (ft_curckt->ci_ckt, ft_curckt->ci_defTask);
