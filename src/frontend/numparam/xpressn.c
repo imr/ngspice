@@ -439,6 +439,21 @@ attrib(tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
 }
 
 
+/* user defined delete function:
+ *   free the dictionary entries malloc'ed above
+ * will be called by nghash_free() in nupa_del_dicoS()
+ */
+
+void
+del_attrib(entry *entry_p)
+{
+    if(entry_p) {
+        tfree(entry_p->symbol);
+        tfree(entry_p);
+    }
+}
+
+
 static bool
 define(tdico *dico,
        char *t,                 /* identifier to define */

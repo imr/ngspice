@@ -489,7 +489,7 @@ nupa_del_dicoS(void)
     dispose(dicoS->dyncategory);
     dispose(dicoS->inst_name);
     dispose(dicoS->local_symbols);
-    nghash_free(dicoS->global_symbols, NULL, NULL);
+    nghash_free(dicoS->global_symbols, del_attrib, NULL);
     dispose(dicoS);
     dicoS = NULL;
 }

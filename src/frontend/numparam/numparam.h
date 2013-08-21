@@ -77,3 +77,4 @@ void nupa_subcktexit(tdico *dico);
 tdico *nupa_fetchinstance(void);
 char getidtype(tdico *d, char *s);
 entry *attrib(tdico *d, NGHASHPTR htable, char *t, char op);
+void del_attrib(entry *);
