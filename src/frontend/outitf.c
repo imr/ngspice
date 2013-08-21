@@ -333,6 +333,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 tfree(saves[i].analysis);
                 tfree(saves[i].name);
             }
+            tfree(saves);
             tfree(savesused);
         }
 
