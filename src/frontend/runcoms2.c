@@ -225,7 +225,8 @@ com_remcirc(wordlist *wl)
     line_free(dd, TRUE);
 
     tfree(ft_curckt->FTEstats);
-    tfree(ft_curckt->ci_defTask);
+
+    ft_sim->deleteTask (ft_curckt->ci_ckt, ft_curckt->ci_defTask);
 
     if (ft_curckt->ci_name)
         tfree(ft_curckt->ci_name);
