@@ -215,6 +215,7 @@ com_remcirc(wordlist *wl)
     if_cktfree(ft_curckt->ci_ckt, ft_curckt->ci_symtab);
     for (v = ft_curckt->ci_vars; v; v = next) {
         next = v->va_next;
+        tfree(v->va_name);
         tfree(v);
     }
     ft_curckt->ci_vars = NULL;
