@@ -219,10 +219,12 @@ com_remcirc(wordlist *wl)
         tfree(v);
     }
     ft_curckt->ci_vars = NULL;
-    /* delete the deck and parameter list in ft_curckt */
+    /* delete the deck, parameter list, and options list in ft_curckt */
     dd = ft_curckt->ci_deck;
     line_free(dd, TRUE);
     dd = ft_curckt->ci_param;
+    line_free(dd, TRUE);
+    dd = ft_curckt->ci_options;
     line_free(dd, TRUE);
 
     wl_free(ft_curckt->ci_commands);
