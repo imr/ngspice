@@ -69,7 +69,7 @@ IFuid tmpName;
          * we always choose the most recent.
          */
         if (!model->BSIM3v32versionGiven)
-                model->BSIM3v32version = "3.2.4";
+                model->BSIM3v32version = copy("3.2.4");
 
         /* I have added below the code that translate model string
          * into an integer. This trick is meant to speed up the

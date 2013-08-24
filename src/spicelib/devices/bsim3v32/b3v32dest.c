@@ -35,7 +35,10 @@ BSIM3v32destroy (GENmodel **inModel)
         FREE(pParamOld);
         pParam = NULL;
      /** end of extra code **/
-        if(oldmod) FREE(oldmod);
+        if(oldmod) {
+            FREE(oldmod->BSIM3v32version);
+            FREE(oldmod);
+        }
         oldmod = mod;
         prev = NULL;
         for (here = mod->BSIM3v32instances; here; here = here->BSIM3v32nextInstance) {
@@ -44,7 +47,10 @@ BSIM3v32destroy (GENmodel **inModel)
         }
         if(prev) FREE(prev);
     }
-    if(oldmod) FREE(oldmod);
+    if(oldmod) {
+        FREE(oldmod->BSIM3v32version);
+        FREE(oldmod);
+    }
     *model = NULL;
     return;
 }
