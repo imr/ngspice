@@ -80,7 +80,7 @@ BSIM3instance **InstArray;
             printf("Warning: acnqsMod has been set to its default value: 0.\n");
         }
         if (!model->BSIM3versionGiven)
-            model->BSIM3version = "3.3.0";
+            model->BSIM3version = copy("3.3.0");
         if (!model->BSIM3toxGiven)
             model->BSIM3tox = 150.0e-10;
         model->BSIM3cox = 3.453133e-11 / model->BSIM3tox;
