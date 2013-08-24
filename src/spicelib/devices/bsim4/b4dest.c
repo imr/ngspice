@@ -37,7 +37,10 @@ BSIM4destroy(
         FREE(pParamOld);
         pParam = NULL;
      /** end of extra code **/
-        if(oldmod) FREE(oldmod);
+        if(oldmod) {
+            FREE(oldmod->BSIM4version);
+            FREE(oldmod);
+        }
         oldmod = mod;
         prev = (BSIM4instance *)NULL;
         for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance) {
@@ -51,6 +54,8 @@ BSIM4destroy(
         /* free just once for all models */
         FREE(oldmod->BSIM4InstanceArray);
 #endif
+        /* oldmod->BSIM4modName to be freed in INPtabEnd() */
+        FREE(oldmod->BSIM4version);
         FREE(oldmod);
     }
     *model = NULL;

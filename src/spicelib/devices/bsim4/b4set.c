@@ -208,7 +208,7 @@ BSIM4instance **InstArray;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = "4.7.0";
+            model->BSIM4version = copy("4.7.0");
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
