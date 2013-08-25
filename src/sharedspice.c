@@ -1377,6 +1377,11 @@ void SetAnalyse(
    int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
    int result;                     /* return value from callback function */
 
+   CKTcircuit *ckt = NULL;
+
+   if (ft_curckt)
+       ckt = ft_curckt->ci_ckt;
+
    /* If caller has sent NULL address for statfcn */
    if (nostatuswanted)
        return;
@@ -1389,7 +1394,19 @@ void SetAnalyse(
    timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
    s = TMALLOC(char, 128);
 
+   if (!strcmp(Analyse, "tran")) {
+       if (ckt && (ckt->CKTtime > ckt->CKTfinalTime - ckt->CKTmaxStep)) {
+          sprintf(s, "--ready--");
+          result = statfcn(s, ng_ident, userptr);
+          tfree(s);
+          return;
+       }
+   }
+
    if (DecaPercent >= 1000){
+       /* Because CKTmaxStep may be smaller than 0.1%, we print only when CKTtime is large enough. */
+       if (!strcmp(Analyse, "tran") && ckt && (ckt->CKTtime < ckt->CKTfinalTime - ckt->CKTmaxStep))
+           return;
        sprintf( s, "--ready--");
        result = statfcn(s, ng_ident, userptr);
        tfree(s);
