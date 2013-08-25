@@ -18,6 +18,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "../misc/ivars.h"
 #include "com_alias.h"
 #include "define.h"
+#include "runcoms2.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
@@ -57,12 +58,12 @@ com_quit(wordlist *wl)
 
     /* start to clean up the mess */
 
-#if 0
+#ifdef SHARED_MODULE
     {
         wordlist all = { "all", NULL, NULL };
         wordlist star = { "*", NULL, NULL };
 
-        com_remcirc(NULL);
+//      com_remcirc(NULL);
         com_destroy(&all);
         com_unalias(&star);
         com_undefine(&star);
@@ -86,18 +87,26 @@ com_quit(wordlist *wl)
     }
 #endif
 
+#ifdef SHARED_MODULE
+    /* Destroy CKT when quit. */
+    if (!ft_nutmeg) {
+        while(ft_curckt)
+            com_remcirc(NULL);
+    }
+#endif
+
     DevSwitch(NULL);
     DevSwitch(NULL);
 
     /* then go away */
 
-#if 0
+#ifdef SHARED_MODULE
     cp_destroy_keywords();
     destroy_ivars();
 #endif
 
     byemesg();
-#if 0
+#ifdef SHARED_MODULE
     destroy_const_plot();
     spice_destroy_devices();
 #endif
@@ -146,7 +155,7 @@ com_bug(wordlist *wl)
 
     fprintf(cp_out,
             "Please use the ngspice bug tracker at:\n"
-            "http://sourceforge.net/tracker/?group_id=38962&atid=423915\n");
+            "http://sourceforge.net/p/ngspice/bugs/\n");
 }
 
 #endif
