@@ -486,6 +486,7 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
 #endif
         SPfrontEnd->OUTendPlot (job->TRANplot);
+        job->TRANplot = NULL;
         UPDATE_STATS(0);
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){

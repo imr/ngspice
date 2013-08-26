@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedev.h"
 #include "ngspice/ftedebug.h"
 #include "ngspice/dvec.h"
+#include "ngspice/trandefs.h"
 
 #include "circuits.h"
 #include "runcoms2.h"
@@ -21,6 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "breakp2.h"
 #include "plotting/graf.h"
 #include "spiceif.h"
+#include "outitf.h"
 
 #include "ngspice/inpdefs.h"
 
@@ -197,6 +199,15 @@ com_remcirc(wordlist *wl)
     struct variable *v, *next;
     struct line *dd;     /*in: the spice deck */
     struct circ *p, *prev = NULL;
+
+#ifdef SHARED_MODULE
+    /* This may happen only with shared ngspice during transient analysis,
+       if simulation is stopped with 'bg_halt'
+       and then circuit shall be removed prematurely. */
+    TRANan *job = (TRANan *) ft_curckt->ci_ckt->CKTcurJob;
+    if ((job->JOBtype == 4) && (job->TRANplot))
+        SPfrontEnd->OUTendPlot (job->TRANplot);
+#endif
 
     NG_IGNORE(wl);
 
