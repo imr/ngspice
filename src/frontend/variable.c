@@ -676,6 +676,41 @@ char cp_dol = '$';
 
 #define VALIDCHARS "$-_<#?@.()[]&"
 
+char *
+span_var_expr(char *t)
+{
+    int parenthesis = 0;
+    int brackets = 0;
+
+    while (*t && (isalphanum(*t) || strchr(VALIDCHARS, *t)))
+        switch (*t++)
+        {
+        case '[':
+            brackets++;
+            break;
+        case '(':
+            parenthesis++;
+            break;
+        case ']':
+            if (brackets <= 0)
+                return t-1;
+            if (--brackets <= 0)
+                return t;
+            break;
+        case ')':
+            if (parenthesis <= 0)
+                return t-1;
+            if (--parenthesis <= 0)
+                return t;
+            break;
+        default:
+            break;
+        }
+
+    return t;
+}
+
+
 wordlist *
 cp_variablesubst(wordlist *wlist)
 {
@@ -694,8 +729,11 @@ cp_variablesubst(wordlist *wlist)
             t++;
             s = buf;
             /* Get s and t past the end of the var name. */
-            while (*t && (isalphanum(*t) || strchr(VALIDCHARS, *t)))
-                *s++ = *t++;
+            {
+                char *end = span_var_expr(t);
+                while (t < end)
+                    *s++ = *t++;
+            }
             *s = '\0';
             nwl = vareval(buf);
             if (i) {
