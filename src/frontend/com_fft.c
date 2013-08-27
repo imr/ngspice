@@ -224,12 +224,13 @@ com_psd(wordlist *wl)
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
+    char   window[BSIZE_SP];
+    double maxt;
 
     double *reald = NULL, *imagd = NULL;
     int sign;
     double scaling, sum;
     int order;
-    double scale, sigma;
 
     if (!plot_cur || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors loaded.\n");
@@ -268,95 +269,17 @@ com_psd(wordlist *wl)
     // output vector has length of size/2
     fpts = size>>1;
 
-    // window function
     win = TMALLOC(double, tlen);
-    {
-        char   window[BSIZE_SP];
-        double maxt = time[tlen-1];
-        if (!cp_getvar("specwindow", CP_STRING, window))
-            strcpy(window, "blackman");
-        if (eq(window, "none"))
-            for (i = 0; i < tlen; i++)
-                win[i] = 1;
-        else if (eq(window, "rectangular"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0;
-                else
-                    win[i] = 1;
-            }
-        else if (eq(window, "hanning") || eq(window, "cosine"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0;
-                else
-                    win[i] = 1 - cos(2*M_PI*(time[i]-maxt)/span);
-            }
-        else if (eq(window, "hamming"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0;
-                else
-                    win[i] = 1 - 0.92/1.08*cos(2*M_PI*(time[i]-maxt)/span);
-            }
-        else if (eq(window, "triangle") || eq(window, "bartlet"))
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0;
-                else
-                    win[i] = 2 - fabs(2+4*(time[i]-maxt)/span);
-            }
-        else if (eq(window, "blackman")) {
-            int order;
-            if (!cp_getvar("specwindoworder", CP_NUM, &order))
-                order = 2;
-            if (order < 2)
-                order = 2;  /* only order 2 supported here */
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span) {
-                    win[i] = 0;
-                } else {
-                    win[i]  = 1;
-                    win[i] -= 0.50/0.42*cos(2*M_PI*(time[i]-maxt)/span);
-                    win[i] += 0.08/0.42*cos(4*M_PI*(time[i]-maxt)/span);
-                }
-            }
-        } else if (eq(window, "gaussian")) {
-            if (!cp_getvar("specwindoworder", CP_NUM, &order))
-                order = 2;
-            if (order < 2)
-                order = 2;
-            sigma = 1.0/order;
-            scale = 0.83/sigma;
-            for (i = 0; i < tlen; i++) {
-                if (maxt-time[i] > span)
-                    win[i] = 0;
-                else
-                    win[i] = scale*exp(-0.5 * pow((time[i]-maxt/2)/(sigma*maxt/2), 2));
-            }
-            /*
-             * int order;
-             * double scale;
-             * extern double erfc(double);
-             * if (!cp_getvar("specwindoworder", CP_NUM, &order))
-             *     order = 2;
-             * if (order < 2)
-             *     order = 2;
-             * scale = pow(2*M_PI/order, 0.5)*(0.5-erfc(pow(order, 0.5)));
-             * for (i = 0; i < tlen; i++) {
-             *     if (maxt-time[i] > span) {
-             *         win[i] = 0;
-             *     } else {
-             *         win[i] = exp(-0.5*order*(1-2*(maxt-time[i])/span)
-             *                      *(1-2*(maxt-time[i])/span))/scale;
-             *     }
-             * }
-            */
-        } else {
-            fprintf(cp_err, "Warning: unknown window type %s\n", window);
-            goto done;
-        }
-    }
+    maxt = time[tlen-1];
+    if (!cp_getvar("specwindow", CP_STRING, window))
+        strcpy(window, "blackman");
+    if (!cp_getvar("specwindoworder", CP_NUM, &order))
+        order = 2;
+    if (order < 2)
+        order = 2;
+
+    if (fft_windows(window, win, time, tlen, maxt, span, order) == 0)
+        goto done;
 
     names = ft_getpnames(wl, TRUE);
     vlist = NULL;
