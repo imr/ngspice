@@ -3,6 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 /*
+  Concatenate two strings, which have to be defined on the heap.
+  If either is NULL, the other is returned. If both are defined,
+  a new string is malloced, they are combined, both input strings
+  are freed, and the new string is returned.
  */
 
 #include "ngspice/ngspice.h"
@@ -13,22 +17,20 @@ Author: 1985 Thomas L. Quarles
 
 char *INPerrCat(char *a, char *b)
 {
-
     if (a != NULL) {
-	if (b == NULL) {	/* a valid, b null, return a */
-	    return (a);
-	} else {		/* both valid  - hard work... */
-	    register char *errtmp;
-	    errtmp =
-		TMALLOC(char, strlen(a) + strlen(b) + 2);
-	    (void) strcpy(errtmp, a);
-	    (void) strcat(errtmp, "\n");
-	    (void) strcat(errtmp, b);
-	    FREE(a);
-	    FREE(b);
-	    return (errtmp);
-	}
-    } else {			/* a null, so return b */
-	return (b);
-    }
+        if (b == NULL) {        /* a valid, b null, return a */
+            return (a);
+        } else {                /* both valid  - hard work... */
+            register char *errtmp;
+            errtmp =
+                TMALLOC(char, strlen(a) + strlen(b) + 2);
+            (void) strcpy(errtmp, a);
+            (void) strcat(errtmp, "\n");
+            (void) strcat(errtmp, b);
+            FREE(a);
+            FREE(b);
+            return (errtmp);
+        }
+    } else                      /* a null, so return b */
+        return (b);
 }
