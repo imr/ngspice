@@ -220,7 +220,7 @@ com_psd(wordlist *wl)
     double  *freq, *win = NULL, *time, *ave;
     double  span, noipower;
     int     mm;
-    unsigned long size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
+    int size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
@@ -366,7 +366,7 @@ com_psd(wordlist *wl)
         for (; vec; vec = vec->v_link2) {
 
             if (vec->v_length != (int)tlen) {
-                fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %lu\n",
+                fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %d\n",
                         vec->v_name, vec->v_length, tlen);
                 continue;
             }
@@ -429,8 +429,8 @@ com_psd(wordlist *wl)
         vec = vec->v_link2;
     }
 
-    printf("PSD: Time span: %g s, input length: %lu, zero padding: %lu\n", span, size, size-tlen);
-    printf("PSD: Freq. resolution: %g Hz, output length: %lu\n", 1.0/span*tlen/size, fpts);
+    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-tlen);
+    printf("PSD: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/size, fpts);
 
     sign = 1;
 
