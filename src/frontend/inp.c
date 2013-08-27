@@ -814,8 +814,14 @@ inp_dodeck(
 
     ft_curckt->FTEstats->FTESTATdeckNumLines = 0;
     /*----------------------------------------------------
-     * Now run through the deck and look to see if there are
-     * errors on any line.
+     Now run through the deck and look to see if there are
+     errors on any line (message contained in li_error).
+
+     Error messages have been generated either by writing
+     directly to ->li_error from a struct line or to
+     ->error from a struct card , or by using one of the
+     macros as defined in inpmacs.h. Functions INPerror(),
+     INPerrCat(), and SPerror() are invoked.
      *---------------------------------------------------*/
     for (dd = deck; dd; dd = dd->li_next) {
 
