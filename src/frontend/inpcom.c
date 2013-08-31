@@ -5214,10 +5214,9 @@ replace_token(char *string, char *token, int wherereplace, int total)
    To achive this, do the following:
    Remove all '{' and '}' --> no parsing of equations in numparam
    Place '{' and '}' directly around all potential parameters,
-   thus skip function names like exp (search for exp(to detect fcn name),
+   but skip function names like exp (search for 'exp(' to detect fcn name),
    functions containing nodes like v(node), v(node1, node2), i(branch)
-   and other keywords. --> Only parameter replacement in numparam
-
+   and other keywords like TEMPER. --> Only parameter replacement in numparam
 */
 
 static void
