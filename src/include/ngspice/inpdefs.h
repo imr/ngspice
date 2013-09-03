@@ -95,6 +95,7 @@ char *INPdevParse(char **, CKTcircuit *, int, GENinstance *, double *, int *, IN
 char *INPdomodel(CKTcircuit *, card *, INPtables *);
 void INPdoOpts(CKTcircuit *, JOB *, card *, INPtables *);
 char *INPerrCat(char *, char *);
+char *INPstrCat(char *, char *, char *);
 char *INPerror(int);
 double INPevaluate(char **, int *, int);
 char *INPfindLev(char *, int *);

@@ -34,3 +34,24 @@ char *INPerrCat(char *a, char *b)
     } else                      /* a null, so return b */
         return (b);
 }
+
+
+char *INPstrCat(char *a, char *b, char *c)
+{
+    if (a != NULL) {
+        if (b == NULL) {        /* a valid, b null, return a */
+            return (a);
+        } else {                /* both valid  - hard work... */
+            register char *strtmp;
+            strtmp =
+                TMALLOC(char, strlen(a) + strlen(b) + 2);
+            (void) strcpy(strtmp, a);
+            (void) strcat(strtmp, c); /* single character only! */
+            (void) strcat(strtmp, b);
+            FREE(a);
+            FREE(b);
+            return (strtmp);
+        }
+    } else                      /* a null, so return b */
+        return (b);
+}
