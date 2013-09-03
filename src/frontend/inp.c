@@ -31,6 +31,7 @@ Author: 1985 Wayne A. Christopher
 #include "subckt.h"
 #include "spiceif.h"
 #include "com_let.h"
+#include "com_commands.h"
 
 #ifdef XSPICE
 #include "ngspice/ipctiein.h"
@@ -51,10 +52,25 @@ static bool doedit(char *filename);
 static struct line *com_options = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 static void dotifeval(struct line *deck);
+static int inp_parse_temper(struct line *deck);
+static void inp_parse_temper_trees(void);
 
 void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
 
+void inp_evaluate_temper(void);
+
+/* structure used to save expression parse trees for .model and
+ * device instance lines
+ */
+
+struct pt_temper {
+    char *expression;
+    wordlist *wl;
+    wordlist *wlend;
+    INPparseTree *pt;
+    struct pt_temper *next;
+};
 
 /*
  * create an unique artificial *unusable* FILE ptr
@@ -572,6 +588,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 tmp_options->li_next = options;
             }
 
+            /* prepare parse trees from 'temper' expressions */
+            if (expr_w_temper)
+                inp_parse_temper(deck);
+
             /* now load deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
             /* inp_dodeck did take ownership */
@@ -662,6 +682,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             for (tmp_ptr1 = deck; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next)
                 fprintf(fdo, "%s\n", tmp_ptr1->li_line);
             (void) fclose(fdo);
+        }
+
+        if (expr_w_temper) {
+            /* Now the circuit is defined, so generate the parse trees */
+            inp_parse_temper_trees();
+            /* Get the actual data for model and device instance parameters */
+            inp_evaluate_temper();
         }
 
        /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
@@ -1284,5 +1311,216 @@ dotifeval(struct line *deck)
             }
         }
         tfree(dottoken);
+    }
+}
+
+
+/* List of all expressions found in .model lines */
+static struct pt_temper *modtlist = NULL;
+
+/* List of all expressions found in device instance lines */
+static struct pt_temper *devtlist = NULL;
+
+/*
+    Evaluate expressions containing 'temper' keyword, found in
+    .model lines or device instance lines.
+    Activity has four steps:
+    1) Prepare the expressions to survive numparam expansion
+       (see function inp_temper_compat() in inpcom.c). A global
+       variable expr_w_temper is set TRUE if any expression with
+       'temper' has been found.
+    2) After numparam insertion and subcircuit expansion,
+       get the expressions, store them with a place holder for the
+       pointer to the expression parse tree and a wordlist containing
+       device/model name, parameter name and a placeholder for the
+       evaluation result ready to be used by com_alter(mod) functions,
+       in linked lists modtlist (model) or devtlist (device instance).
+       (done function inp_parse_temper()).
+    3) After the circuit structure has been established, generate
+       the parse trees. We can do it only then because pointers to
+       ckt->CKTtemp and others are stored in the trees.
+       (done in function inp_parse_temper_trees()).
+    4) Evaluation  of the parse trees is requested by calling function
+       inp_evaluate_temper(). The B Source parser is invoked here.
+       ckt->CKTtemp is used to replace the 'temper' token by the actual
+       circuit temperature. The evaluation results are added to the
+       wordlist, com_alter(mod) is called to set the new parameters
+       to the model parameters or device instance parameters.
+*/
+
+static int
+inp_parse_temper(struct line *card)
+{
+    int error = 0;
+    char *end_tstr, *beg_tstr, *beg_pstr, *str_ptr, *devmodname, *paramname, *expression;
+
+    /* skip title line */
+    card = card->li_next;
+    for (; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude some elements */
+        if ((*curr_line == '*') || (*curr_line == 'v') || (*curr_line == 'b') || (*curr_line == 'i') ||
+            (*curr_line == 'e') || (*curr_line == 'g') || (*curr_line == 'f') || (*curr_line == 'h'))
+            continue;
+        /* exclude all dot commands except .model */
+        if ((*curr_line == '.') && (!prefix(".model", curr_line)))
+            continue;
+        /* exclude lines not containing 'temper' */
+        if (strstr(curr_line, "temper") == NULL)
+            continue;
+        /* now start processing of the remaining lines containing 'temper' */
+        if (prefix(".model", curr_line)) {
+            struct pt_temper *modtlistnew = NULL;
+            /* remove '.model' */
+            str_ptr = gettok(&curr_line);
+            tfree(str_ptr);
+            devmodname = gettok(&curr_line);
+            beg_tstr = curr_line;
+            while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
+                wordlist *wl = NULL, *wlend = NULL;
+                modtlistnew = TMALLOC(struct pt_temper, 1);
+                while ((*beg_tstr) != '=')
+                    beg_tstr--;
+                beg_pstr = beg_tstr;
+                /* go back over param name */
+                while(isspace(*beg_pstr))
+                    beg_pstr--;
+                while(!isspace(*beg_pstr))
+                    beg_pstr--;
+                /* get parameter name */
+                paramname = copy_substring(beg_pstr + 1, beg_tstr);
+                /* find end of expression string */
+                while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
+                    end_tstr++;
+                /* go back over next param name */
+                if (*end_tstr == '=') {
+                    end_tstr--;
+                    while(isspace(*end_tstr))
+                        end_tstr--;
+                    while(!isspace(*end_tstr))
+                        end_tstr--;
+                }
+                expression = copy_substring(beg_tstr + 1, end_tstr);
+                modtlistnew->expression = copy(expression);
+                /* now remove this parameter entry by overwriting with ' '
+                   ngspice then will use the default parameter to set up the circuit */
+                for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
+                    *str_ptr = ' ';
+
+                modtlistnew->next = NULL;
+                /* create wordlist suitable for com_altermod */
+                wl_append_word(&wl, &wlend, devmodname);
+                wl_append_word(&wl, &wlend, paramname);
+                wl_append_word(&wl, &wlend, copy("="));
+                /* to be filled in by evaluation function */
+                wl_append_word(&wl, &wlend, NULL);
+                modtlistnew->wl = wl;
+                modtlistnew->wlend = wlend;
+
+                /* fill in the linked parse tree list */
+                if (modtlist) {
+                    struct pt_temper *modtlisttmp = modtlist;
+                    modtlist = modtlistnew;
+                    modtlist->next = modtlisttmp;
+                } else {
+                    modtlist = modtlistnew;
+                }
+            }
+        } else { /* instance expression with 'temper' */
+            struct pt_temper *devtlistnew = NULL;
+            /* get device name */
+            devmodname = gettok(&curr_line);
+            beg_tstr = curr_line;
+            while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
+                wordlist *wl = NULL, *wlend = NULL;
+                devtlistnew = TMALLOC(struct pt_temper, 1);
+                while ((*beg_tstr) != '=')
+                    beg_tstr--;
+                beg_pstr = beg_tstr;
+                /* go back over param name */
+                while(isspace(*beg_pstr))
+                    beg_pstr--;
+                while(!isspace(*beg_pstr))
+                    beg_pstr--;
+                /* get parameter name */
+                paramname = copy_substring(beg_pstr + 1, beg_tstr);
+                /* find end of expression string */
+                while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
+                    end_tstr++;
+                /* go back over next param name */
+                if (*end_tstr == '=') {
+                    end_tstr--;
+                    while(isspace(*end_tstr))
+                        end_tstr--;
+                    while(!isspace(*end_tstr))
+                        end_tstr--;
+                }
+                expression = copy_substring(beg_tstr + 1, end_tstr);
+                devtlistnew->expression = copy(expression);
+                /* now remove this parameter entry by overwriting with ' '
+                   ngspice then will use the default parameter to set up the circuit */
+                for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
+                    *str_ptr = ' ';
+
+                devtlistnew->next = NULL;
+                /* create wordlist suitable for com_altermod */
+                wl_append_word(&wl, &wlend, devmodname);
+                wl_append_word(&wl, &wlend, paramname);
+                wl_append_word(&wl, &wlend, copy("="));
+                /* to be filled in by evaluation function */
+                wl_append_word(&wl, &wlend, NULL);
+                devtlistnew->wl = wl;
+                devtlistnew->wlend = wlend;
+
+                /* fill in the linked parse tree list */
+                if (devtlist) {
+                    struct pt_temper *devtlisttmp = devtlist;
+                    devtlist = devtlistnew;
+                    devtlist->next = devtlisttmp;
+                } else {
+                    devtlist = devtlistnew;
+                }
+            }
+        }
+    }
+
+    return error;
+}
+
+
+static void
+inp_parse_temper_trees(void)
+{
+    struct pt_temper *d;
+
+    for(d = devtlist; d; d = d->next)
+        INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+
+    for(d = modtlist; d; d = d->next)
+        INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+}
+
+
+void
+inp_evaluate_temper(void)
+{
+    struct pt_temper *d;
+    double result;
+    char fts[128];
+
+    for(d = devtlist; d; d = d->next) {
+        IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
+        sprintf(fts, "%g", result);
+        d->wlend->wl_word = copy(fts);
+        com_alter(d->wl);
+    }
+
+    for(d = modtlist; d; d = d->next) {
+        IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
+        sprintf(fts, "%g", result);
+        d->wlend->wl_word = copy(fts);
+        com_altermod(d->wl);
     }
 }

@@ -66,6 +66,14 @@ struct function_env
     } *functions;
 };
 
+struct func_temper
+{
+    char* funcname;
+    int subckt_depth;
+    int subckt_count;
+    struct func_temper *next;
+};
+
 
 static COMPATMODE_T inp_compat_mode;
 
@@ -76,6 +84,9 @@ int dynmaxline;  /* inpcom.c 1529 */
 int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
 long dynsubst; /* spicenum.c 221 */
+
+/* Expression handling with 'temper' parameter required */
+bool expr_w_temper = FALSE;
 
 
 static char *readline(FILE *fd);
@@ -96,7 +107,12 @@ static void inp_sort_params(struct line *start_card, struct line *end_card, stru
 static char *inp_remove_ws(char *s);
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
+static void inp_temper_compat(struct line *card);
 static void inp_dot_if(struct line *deck);
+static char *inp_modify_exp(char* expression);
+static void inp_new_func(char *funcname, char *funcbody, struct line *card,
+                         struct func_temper **new_func, int *sub_count, int subckt_depth);
+static void inp_rem_func(struct func_temper **new_func);
 
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct line *start_card, int no_of_lines);
@@ -110,6 +126,7 @@ static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 static void subckt_params_to_param(struct line *deck);
+static void inp_fix_temper_in_param(struct line *deck);
 
 static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace(d[-1])) d--; return d; }
 static char *skip_back_ws(char *d)     { while (isspace(d[-1]))           d--; return d; }
@@ -779,6 +796,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
+        inp_fix_temper_in_param(working);
 
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
@@ -813,6 +831,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             /* B source numparam compatibility transformation */
             inp_bsource_compat(working);
             inp_dot_if(working);
+            inp_temper_compat(working);
         }
 
         inp_add_series_resistor(working);
@@ -5504,6 +5523,263 @@ inp_bsource_compat(struct line *card)
 }
 
 
+/* Find all expression containing the keyword 'temper',
+ * except for B lines and some other exclusions. Prepare
+ * these expressions by calling inp_modify_exp() and return
+ * a modified card->li_line
+ */
+
+static void
+inp_temper_compat(struct line *card)
+{
+    int skip_control = 0;
+    char *beg_str, *end_str, *new_str = NULL, *beg_tstr, *end_tstr, *exp_str;
+    char actchar;
+
+    for (; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control ++;
+            continue;
+        } else if (ciprefix(".endc", curr_line)) {
+            skip_control --;
+            continue;
+        } else if (skip_control > 0) {
+            continue;
+        }
+        /* exclude some elements */
+        if ((*curr_line == '*') || (*curr_line == 'v') || (*curr_line == 'b') || (*curr_line == 'i') ||
+            (*curr_line == 'e') || (*curr_line == 'g') || (*curr_line == 'f') || (*curr_line == 'h'))
+            continue;
+        /* exclude all dot commands except .model */
+        if ((*curr_line == '.') && (!prefix(".model", curr_line)))
+            continue;
+        /* exclude lines not containing 'temper' */
+        if (strstr(curr_line, "temper") == NULL)
+            continue;
+        /* now start processing of the remaining lines containing 'temper' */
+        /* remove white spaces of everything inside {}*/
+        card->li_line = inp_remove_ws(card->li_line);
+        curr_line = card->li_line;
+        /* now check if 'temper' is a token or just a substring of another string, e.g. mytempers */
+        /* we may have multiple temper and mytempers in multiple expressions in a line */
+        beg_str = beg_tstr = curr_line;
+        while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
+            actchar = *(beg_tstr - 1);
+            if (!isspace(actchar) && !is_arith_char(actchar)) {
+                beg_tstr++;
+                continue;
+            }
+            actchar = *(beg_tstr + 6);
+            if (!isspace(actchar) && !is_arith_char(actchar))
+                continue;
+            /* we have found a true 'temper' */
+            /* set the global variable */
+            expr_w_temper = TRUE;
+            /* find the expression: first go back to the opening '{',
+               then find the closing '}' */
+            while ((*beg_tstr) != '{')
+                beg_tstr--;
+            end_str = end_tstr = beg_tstr;
+            exp_str = gettok_char(&end_tstr, '}', TRUE, TRUE);
+            /* modify the expression string */
+            exp_str = inp_modify_exp(exp_str);
+            /* add the intermediate string between previous and next expression to the new line */
+            new_str = INPstrCat(new_str, copy_substring(beg_str, end_str), " ");
+            /* add the modified expression string to the new line */
+            new_str = INPstrCat(new_str, exp_str, " ");
+            new_str = INPstrCat(new_str, copy(" "), " ");
+            /* move on to the next intermediate string */
+            beg_str = beg_tstr = end_tstr;
+        }
+        if (*beg_str)
+            new_str = INPstrCat(new_str, copy(beg_str), " ");
+        tfree(card->li_line);
+        new_str = inp_remove_ws(new_str);
+        card->li_line = new_str;
+    }
+}
+
+
+/* lines containing expressions with keyword 'temper':
+ * no parsing in numparam code, just replacement of parameters.
+ * Parsing done with B source parser in function inp_parse_temper
+ * in inp.c. Evaluation is the done with fcn inp_evaluate_temper
+ * from inp.c, taking the actual temperature into account.
+ * To achive this, do the following here:
+ * Remove all '{' and '}' --> no parsing of equations in numparam
+ * Place '{' and '}' directly around all potential parameters,
+ * but skip function names like exp (search for 'exp(' to detect fcn name),
+ * functions containing nodes like v(node), v(node1, node2), i(branch)
+ * and other keywords like TEMPER. --> Only parameter replacement in numparam
+ */
+
+static char *
+inp_modify_exp(char* expr)
+{
+    char * str_ptr, *tmp_char, *new_str;
+    char actchar;
+    wordlist *wl = NULL, *wlist = NULL;
+    char buf[512];
+    size_t i, xlen, ustate = 0;
+    int error1;
+
+    /* scan the expression and remove all '{' and '}' */
+    str_ptr = expr;
+    while (*str_ptr) {
+        if ((*str_ptr == '{') || (*str_ptr == '}'))
+            *str_ptr = ' ';
+        str_ptr++;
+    }
+    /* scan the expression */
+    str_ptr = expr;
+    while (*str_ptr != '\0') {
+        str_ptr = skip_ws(str_ptr);
+        if (*str_ptr == '\0')
+            break;
+        actchar = *str_ptr;
+        wl_append_word(&wlist, &wl, NULL);
+        if ((actchar == ',') || (actchar == '(') || (actchar == ')') ||
+            (actchar == '*') || (actchar == '/') || (actchar == '^') ||
+            (actchar == '+') || (actchar == '?') || (actchar == ':'))
+        {
+            if ((actchar == '*') && (str_ptr[1] == '*')) {
+                actchar = '^';
+                str_ptr++;
+            }
+            buf[0] = actchar;
+            buf[1] = '\0';
+            wl->wl_word = copy(buf);
+            str_ptr++;
+            if (actchar == ')')
+                ustate = 0;
+            else
+                ustate = 1; /* we have an operator */
+        } else if ((actchar == '>') || (actchar == '<') ||
+                   (actchar == '!') || (actchar == '='))
+        {
+            /* >=, <=, !=, ==, <>, ... */
+            char *beg = str_ptr++;
+            if ((*str_ptr == '=') || (*str_ptr == '<') || (*str_ptr == '>'))
+                str_ptr++;
+            wl->wl_word = copy_substring(beg, str_ptr);
+            ustate = 1; /* we have an operator */
+        } else if ((actchar == '|') || (actchar == '&')) {
+            char *beg = str_ptr++;
+            if ((*str_ptr == '|') || (*str_ptr == '&'))
+                str_ptr++;
+            wl->wl_word = copy_substring(beg, str_ptr);
+            ustate = 1; /* we have an operator */
+        } else if ((actchar == '-') && (ustate == 0)) {
+            buf[0] = actchar;
+            buf[1] = '\0';
+            wl->wl_word = copy(buf);
+            str_ptr++;
+            ustate = 1; /* we have an operator */
+        } else if ((actchar == '-') && (ustate == 1)) {
+            wl->wl_word = copy("");
+            str_ptr++;
+            ustate = 2; /* place a '-' in front of token */
+        } else if (isalpha(actchar)) {
+            /* unary -, change sign */
+            if (ustate == 2) {
+                i = 1;
+                buf[0] = '-';
+            } else {
+                i = 0;
+            }
+
+            if (((actchar == 'v') || (actchar == 'i')) && (str_ptr[1] == '(')) {
+                while (*str_ptr != ')') {
+                    buf[i] = *str_ptr;
+                    i++;
+                    str_ptr++;
+                }
+                buf[i] = *str_ptr;
+                buf[i+1] = '\0';
+                wl->wl_word = copy(buf);
+                str_ptr++;
+            } else {
+                while (isalnum(*str_ptr) ||
+                       (*str_ptr == '!') || (*str_ptr == '#') ||
+                       (*str_ptr == '$') || (*str_ptr == '%') ||
+                       (*str_ptr == '_') || (*str_ptr == '[') ||
+                       (*str_ptr == ']'))
+                {
+                    buf[i] = *str_ptr;
+                    i++;
+                    str_ptr++;
+                }
+                buf[i] = '\0';
+                /* no parens {} around time, hertz, temper, the constants
+                   pi and e which are defined in inpptree.c, around pwl and temp. coeffs */
+                if ((*str_ptr == '(') ||
+                    cieq(buf, "hertz") || cieq(buf, "temper") ||
+                    cieq(buf, "time") || cieq(buf, "pi") ||
+                    cieq(buf, "e") || cieq(buf, "pwl"))
+                {
+                    wl->wl_word = copy(buf);
+
+                } else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
+                           cieq(buf, "reciproctc"))
+                {
+                    str_ptr = skip_ws(str_ptr);
+                    /* no {} around tc1 = or tc2 = , these are temp coeffs. */
+                    if (str_ptr[0] == '='  &&  str_ptr[1] != '=') {
+                        buf[i++] = '=';
+                        buf[i] = '\0';
+                        str_ptr++;
+                        wl->wl_word = copy(buf);
+                    } else {
+                        xlen = strlen(buf);
+                        tmp_char = TMALLOC(char, xlen + 3);
+                        sprintf(tmp_char, "{%s}", buf);
+                        wl->wl_word = tmp_char;
+                    }
+
+                } else {
+                    /* {} around all other tokens */
+                    xlen = strlen(buf);
+                    tmp_char = TMALLOC(char, xlen + 3);
+                    sprintf(tmp_char, "{%s}", buf);
+                    wl->wl_word = tmp_char;
+                }
+            }
+            ustate = 0; /* we have a number */
+        } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
+            /* allow 100p, 5MEG etc. */
+            double dvalue = INPevaluate(&str_ptr, &error1, 0);
+            char   cvalue[19];
+            /* unary -, change sign */
+            if (ustate == 2)
+                dvalue *= -1;
+            sprintf(cvalue, "%18.10e", dvalue);
+            wl->wl_word = copy(cvalue);
+            ustate = 0; /* we have a number */
+            /* skip the `unit', FIXME INPevaluate() should do this */
+            while (isalpha(*str_ptr))
+                str_ptr++;
+        } else { /* strange char */
+            printf("Preparing expression for numparam\nWhat is this?\n%s\n", str_ptr);
+            buf[0] = *str_ptr;
+            buf[1] = '\0';
+            wl->wl_word = copy(buf);
+            str_ptr++;
+        }
+    }
+
+    new_str = wl_flatten(wlist);
+    wl_free(wlist);
+    wlist = NULL;
+    wl = NULL;
+    tfree(expr);
+    return(new_str);
+}
+
+
 /*
  * destructively fetch a token from the input string
  *   token is either quoted, or a plain nonwhitespace sequence
@@ -5775,4 +6051,271 @@ inp_dot_if(struct line *card)
             *lastbr = '}';
         }
     }
+}
+
+
+/* Convert .param lines containing keyword 'temper' into .func lines:
+ * .param xxx1 = 'temper + 25'  --->  .func xxx1() 'temper + 25'
+ * Add info about the functions (name, subcircuit depth, number of
+ * subckt) to linked list new_func.
+ * Then scan new_func, for each xxx1 scan all lines of deck,
+ * find all xxx1 and convert them to a function:
+ * xxx1   --->  xxx1()
+ * If this happens to be in another .param line, convert it to .func,
+ * add info to end of new_func and continue scanning.
+ */
+
+static void
+inp_fix_temper_in_param(struct line *deck)
+{
+    int skip_control = 0, subckt_depth = 0, j, *sub_count;
+    char *beg_pstr, *beg_tstr, *end_tstr, *funcbody, *funcname;
+    char actchar;
+    struct func_temper *new_func = NULL, *beg_func;
+    struct line *card;
+
+    sub_count = TMALLOC(int, 16);
+    for(j = 0; j < 16; j++)
+        sub_count[j] = 0;
+
+    /* first pass: determine all .param with temper inside and replace by .func
+       .param xxx1 = 'temper + 25'
+       will become
+       .func xxx1() 'temper + 25'
+    */
+    card = deck;
+    for (; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        if (*curr_line == '*')
+            continue;
+
+        /* determine nested depths of subcircuits */
+        if (ciprefix(".subckt", curr_line)) {
+            subckt_depth ++;
+            sub_count[subckt_depth]++;
+            continue;
+        } else if (ciprefix(".ends", curr_line)) {
+            subckt_depth --;
+            continue;
+        }
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control ++;
+            continue;
+        } else if (ciprefix(".endc", curr_line)) {
+            skip_control --;
+            continue;
+        } else if (skip_control > 0) {
+            continue;
+        }
+
+        if (ciprefix(".param", curr_line)) {
+            /* check if we have a true 'temper' */
+            beg_tstr = curr_line;
+            while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
+                actchar = *(beg_tstr - 1);
+                if (!(actchar == '{') && !isspace(actchar) && !is_arith_char(actchar)) {
+                    beg_tstr++;
+                    continue;
+                }
+                actchar = *(beg_tstr + 6);
+                if (!(actchar == '}') && !isspace(actchar) && !is_arith_char(actchar))
+                   continue;
+                /* we have found a true 'temper', so start conversion */
+                /* find function name and function body: We may have multiple
+                   params in a linie!
+                */
+                while ((*beg_tstr) != '=')
+                    beg_tstr--;
+                beg_pstr = beg_tstr;
+                /* go back over param name */
+                while(isspace(*beg_pstr))
+                    beg_pstr--;
+                while(!isspace(*beg_pstr))
+                    beg_pstr--;
+                /* get function name from parameter name */
+                funcname = copy_substring(beg_pstr + 1, beg_tstr);
+                /* find end of function body */
+                while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
+                    end_tstr++;
+                /* go back over next param name */
+                if (*end_tstr == '=') {
+                    end_tstr--;
+                    while(isspace(*end_tstr))
+                        end_tstr--;
+                    while(!isspace(*end_tstr))
+                        end_tstr--;
+                }
+
+                funcbody = copy_substring(beg_tstr + 1, end_tstr);
+                inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+
+                beg_tstr = end_tstr;
+            }
+        }
+    }
+
+    /* second pass */
+    /* for each .func entry in new_func start the insertion operation:
+       search each line from the deck, which has the suitable subcircuit nesting data,
+       for tokens xxx equalling the funcname, replace xxx by xxx(). After insertion,
+       remove the respective entry in new_fuc. If the replacement is done in a
+       .param line, convert it to a .func line and add an entry to new_func.
+       Continue until new_func is empty.
+     */
+
+    beg_func = new_func;
+    for (; new_func; new_func = new_func->next) {
+
+        for(j = 0; j < 16; j++)
+            sub_count[j] = 0;
+
+        card = deck;
+        for (; card; card = card->li_next) {
+
+            char *new_str = NULL; /* string we assemble here */
+            char *curr_str;/* where we are in curr_line */
+            char *add_str;/* what we add */
+            char *curr_line = card->li_line;
+            char * new_tmp_str, *tmp_str;
+
+            if (*curr_line == '*')
+                continue;
+
+            /* determine nested depths of subcircuits */
+            if (ciprefix(".subckt", curr_line)) {
+                subckt_depth ++;
+                sub_count[subckt_depth]++;
+                continue;
+            } else if (ciprefix(".ends", curr_line)) {
+                subckt_depth --;
+                continue;
+            }
+
+            /* exclude any command inside .control ... .endc */
+            if (ciprefix(".control", curr_line)) {
+                skip_control ++;
+                continue;
+            } else if (ciprefix(".endc", curr_line)) {
+                skip_control --;
+                continue;
+            } else if (skip_control > 0) {
+                continue;
+            }
+
+            /* exclude lines which do not have the same subcircuit
+               nesting depth and number as found in new_func */
+            if (subckt_depth != new_func->subckt_depth)
+                continue;
+            if (sub_count[subckt_depth] != new_func->subckt_count)
+                continue;
+
+            curr_str = curr_line;
+            while ((beg_tstr = strstr(curr_str, new_func->funcname)) != NULL) {
+                /* start of token */
+                actchar = *(beg_tstr - 1);
+                if (!(actchar == '{') && !isspace(actchar) && !is_arith_char(actchar)) {
+                    curr_str++;
+                    continue;
+                }
+                /* end of token */
+                end_tstr = beg_tstr + strlen(new_func->funcname);
+                actchar = *(end_tstr);
+                if (!(actchar == '}') && !isspace(actchar) && !is_arith_char(actchar)) {
+                    curr_str++;
+                    continue;
+                }
+                if (actchar == '(') {
+                    curr_str++;
+                    continue; /* not the .func xxx() itself */
+                }
+                /* we have found a true token equaling funcname, so start insertion */
+                add_str = copy_substring(curr_str, end_tstr);
+                new_str = INPstrCat(new_str, add_str, "");
+                new_str = INPstrCat(new_str, copy("()"), "");
+                curr_str = end_tstr;
+            }
+            if (new_str) /* add final part of line */
+                new_str = INPstrCat(new_str, copy(curr_str), "");
+            else
+                continue;
+
+            /* if we have inserted into a .param line, convert to .func */
+            new_tmp_str = new_str;
+            if (prefix(".param", new_tmp_str)) {
+                tmp_str = gettok(&new_tmp_str);
+                tfree(tmp_str);
+                funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
+                funcbody = copy(new_tmp_str + 1);
+                inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+            } else {
+                /* Or just enter new line into deck */
+                card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
+                *card->li_line = '*';
+            }
+        }
+    }
+
+    /* final memory clearance */
+    tfree(sub_count);
+    /* remove new_func */
+    inp_rem_func(&beg_func);
+}
+
+
+/* enter function name, nested .subckt depths, and
+ * number of .subckt at given level into struct new_func
+ * and add line to deck
+ */
+
+static void
+inp_new_func(char *funcname, char *funcbody, struct line *card, struct func_temper **new_func,
+             int *sub_count, int subckt_depth)
+{
+    struct func_temper *new_func_tmp;
+    static struct func_temper *new_func_end;
+    char *new_str;
+
+    new_func_tmp = TMALLOC(struct func_temper, 1);
+    new_func_tmp->funcname = funcname;
+    new_func_tmp->next = NULL;
+    new_func_tmp->subckt_depth = subckt_depth;
+    new_func_tmp->subckt_count = sub_count[subckt_depth];
+
+    /* Insert at the back */
+    if (*new_func == NULL) {
+        *new_func = new_func_end = new_func_tmp;
+    } else {
+        new_func_end->next = new_func_tmp;
+        new_func_end = new_func_tmp;
+    }
+
+/*
+    if (*new_func == NULL)
+        *new_func = new_func_tmp;
+    else {
+        new_func_tmp->next = *new_func;
+        *new_func = new_func_tmp;
+    }
+*/
+    /* replace line in deck */
+    new_str = TMALLOC(char, strlen(funcname) + strlen(funcbody) + 10);
+    sprintf(new_str, ".func %s() %s", funcname, funcbody);
+    card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
+    *card->li_line = '*';
+}
+
+
+static void
+inp_rem_func(struct func_temper **beg_func)
+{
+    struct func_temper *b = *beg_func;
+
+    for(; b; b = b->next)
+        tfree(b->funcname);
+
+    tfree(*beg_func);
 }

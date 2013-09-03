@@ -434,5 +434,6 @@ extern int NIpred(CKTcircuit *ckt);
 #endif
 
 extern IFfrontEnd *SPfrontEnd;
+extern bool expr_w_temper;
 
 #endif

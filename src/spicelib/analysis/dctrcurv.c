@@ -28,6 +28,8 @@ Modified: 1999 Paolo Nenzi
 static double actval, actdiff; 
 #endif
 
+extern void inp_evaluate_temper(void);
+
 int
 DCtrCurv(CKTcircuit *ckt, int restart) 
                 
@@ -157,6 +159,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             job->TRCVvType[i] = TEMP_CODE;    /* Set the sweep type code */
             ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK; /* Set the new circuit temp */
             CKTtemp(ckt);
+            if (expr_w_temper)
+                inp_evaluate_temper();
             goto found;
         }
 
@@ -298,6 +302,8 @@ resume:
             } else if (job->TRCVvType[i] == TEMP_CODE) {
                 ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK;
                 CKTtemp(ckt); 
+                if (expr_w_temper)
+                    inp_evaluate_temper();
        
             } else if (job->TRCVvType[i] == rcode) {
                 ((RESinstance *)(job->TRCVvElt[i]))->RESresist =
@@ -508,6 +514,8 @@ nextstep:;
         {
             ckt->CKTtemp += job->TRCVvStep[i];
             CKTtemp(ckt);	    
+            if (expr_w_temper)
+                inp_evaluate_temper();
         } /* else not possible */
         
         if(SPfrontEnd->IFpauseTest()) {
@@ -551,6 +559,8 @@ nextstep:;
         else if (job->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = job->TRCVvSave[i];
             CKTtemp(ckt);
+            if (expr_w_temper)
+                inp_evaluate_temper();
         } /* else not possible */
     }
     SPfrontEnd->OUTendPlot (plot);
