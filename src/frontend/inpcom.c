@@ -6152,6 +6152,7 @@ inp_fix_temper_in_param(struct line *deck)
 
                 funcbody = copy_substring(beg_tstr + 1, end_tstr);
                 inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+                tfree(funcbody);
 
                 beg_tstr = end_tstr;
             }
@@ -6251,6 +6252,8 @@ inp_fix_temper_in_param(struct line *deck)
                 funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
                 funcbody = copy(new_tmp_str + 1);
                 inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+                tfree(new_str);
+                tfree(funcbody);
             } else {
                 /* Or just enter new line into deck */
                 card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
@@ -6312,10 +6315,11 @@ inp_new_func(char *funcname, char *funcbody, struct line *card, struct func_temp
 static void
 inp_rem_func(struct func_temper **beg_func)
 {
-    struct func_temper *b = *beg_func;
+    struct func_temper *next_func;
 
-    for(; b; b = b->next)
-        tfree(b->funcname);
-
-    tfree(*beg_func);
+    for(; *beg_func; *beg_func = next_func) {
+        next_func = (*beg_func)->next;
+        tfree((*beg_func)->funcname);
+        tfree((*beg_func));
+    }
 }
