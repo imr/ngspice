@@ -708,6 +708,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             buffer = new_buffer;
         }
 
+        /* If \\ at end of line is found, next line in loop will get + (see code above) */
         shell_eol_continuation = chk_for_line_continuation(buffer);
 
         {
