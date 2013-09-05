@@ -1352,7 +1352,7 @@ static int
 inp_parse_temper(struct line *card)
 {
     int error = 0;
-    char *end_tstr, *beg_tstr, *beg_pstr, *str_ptr, *devmodname, *paramname, *expression;
+    char *end_tstr, *beg_tstr, *beg_pstr, *str_ptr, *devmodname, *paramname;
 
     /* skip title line */
     card = card->li_next;
@@ -1402,8 +1402,8 @@ inp_parse_temper(struct line *card)
                     while(!isspace(*end_tstr))
                         end_tstr--;
                 }
-                expression = copy_substring(beg_tstr + 1, end_tstr);
-                modtlistnew->expression = copy(expression);
+                /* copy the expression */
+                modtlistnew->expression = copy_substring(beg_tstr + 1, end_tstr);
                 /* now remove this parameter entry by overwriting with ' '
                    ngspice then will use the default parameter to set up the circuit */
                 for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
@@ -1457,8 +1457,8 @@ inp_parse_temper(struct line *card)
                     while(!isspace(*end_tstr))
                         end_tstr--;
                 }
-                expression = copy_substring(beg_tstr + 1, end_tstr);
-                devtlistnew->expression = copy(expression);
+                /* copy the expression */
+                devtlistnew->expression = copy_substring(beg_tstr + 1, end_tstr);
                 /* now remove this parameter entry by overwriting with ' '
                    ngspice then will use the default parameter to set up the circuit */
                 for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
