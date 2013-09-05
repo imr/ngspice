@@ -2329,7 +2329,7 @@ inp_fix_for_numparam(struct names *subckt_w_params, struct line *c)
 
     for (; c; c = c->li_next) {
 
-        if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line))
+        if (*(c->li_line) == '*' || ciprefix(".lib", c->li_line))
             continue;
 
         /* exclude lines between .control and .endc from getting quotes changed */
