@@ -786,11 +786,12 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_for_numparam(subckt_w_params, working);
 
-        subckt_params_to_param(working);
 // tprint(cc); /* test printout to file tprint-out.txt */
         inp_remove_excess_ws(working);
 
         comment_out_unused_subckt_models(working, line_number);
+
+        subckt_params_to_param(working);
 
         line_number = inp_split_multi_param_lines(working, line_number);
 
