@@ -3710,7 +3710,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         param_skip[i] = 0;
 
     for (i = 0; i < num_params; i++)
-        for (j = num_params-1; j >= 0; j--)
+        for (j = num_params-1; j >= 0 && !param_skip[i]; j--)
             if (i != j && i < j && strcmp(param_names[i], param_names[j]) == 0) {
                 // skip earlier one in list
                 param_skip[i] = 1;
@@ -3782,6 +3782,10 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         if (in_control || curr_line[0] == '.' || curr_line[0] == '*')
             continue;
 
+/* FIXME: useless and potentially buggy code, when called from line 2225:
+   we check parameters like l={length}, but not complete lines: We just
+   live from the fact, that there are device names for all characters
+   of the alphabet */
         num_terminals = get_number_terminals(curr_line);
 
         if (num_terminals <= 0)
@@ -3790,11 +3794,17 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         for (i = 0; i < num_params; i++) {
             str_ptr = curr_line;
 
+/* FIXME: useless and potentially buggy code, when called from line 2225:
+   we check parameters like
+   l={length}, but not complete lines: this will always lead to str_ptr = "" */
             for (j = 0; j < num_terminals+1; j++) {
                 str_ptr = skip_non_ws(str_ptr);
                 str_ptr = skip_ws(str_ptr);
             }
 
+/* FIXME: useless and potentially buggy code: we check parameters like
+   l={length}, but the following will not work for such a parameter string.
+   We just live from the fact that str_ptr = "". */
             while ((str_ptr = strstr(str_ptr, param_names[i])) != NULL) {
                 /* make sure actually have the parameter name */
                 char before = *(str_ptr-1);
