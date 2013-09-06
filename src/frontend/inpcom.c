@@ -74,6 +74,7 @@ struct func_temper
     struct func_temper *next;
 };
 
+extern void line_free_x(struct line *deck, bool recurse);
 
 static COMPATMODE_T inp_compat_mode;
 
@@ -2469,6 +2470,7 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                     }
                     t->li_line[0] = '*';
                     t->li_line[1] = '>';
+                    line_free_x(t->li_next, TRUE);
                     t->li_next = rest;
                 }
 
