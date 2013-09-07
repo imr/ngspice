@@ -2456,22 +2456,28 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
 
                 /* insert the library section definition into `c' */
                 {
-                    struct line *t = inp_deckcopy(section_def);
+                    struct line *corig = c;
+                    struct line *cend = c;
                     struct line *rest = c->li_next;
-                    c->li_next = t;
-                    t->li_line[0] = '*';
-                    t->li_line[1] = '<';
-                    for (; t; t=t->li_next)
+                    struct line *t = section_def;
+                    cend = c->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+                    cend->li_line[0] = '*';
+                    cend->li_line[1] = '<';
+                    t = t->li_next;
+                    for (; t; t=t->li_next) {
+                        cend->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+                        cend = cend->li_next;
                         if(ciprefix(".endl", t->li_line))
                             break;
+                    }
                     if (!t) {
                         fprintf(stderr, "ERROR, .endl not found\n");
                         controlled_exit(EXIT_FAILURE);
                     }
-                    t->li_line[0] = '*';
-                    t->li_line[1] = '>';
-                    line_free_x(t->li_next, TRUE);
-                    t->li_next = rest;
+                    cend->li_line[0] = '*';
+                    cend->li_line[1] = '>';
+                    c = corig;
+                    cend->li_next = rest;
                 }
 
                 *line = '*';  /* comment out .lib line */
