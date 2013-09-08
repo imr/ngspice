@@ -295,6 +295,9 @@ new_names(void)
 static void
 delete_names(struct names *p)
 {
+    int i;
+    for (i = 0; i < p->num_names; i++)
+        tfree(p->names[i]);
     tfree(p);
 }
 
