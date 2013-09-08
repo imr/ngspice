@@ -82,8 +82,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef TRACE
   printf("INP2M: checking for 4 node device\n");
 #endif
-  INPgetMod (ckt, nname5, &thismodel, tab);
-  
+  err_msg = INPgetMod (ckt, nname5, &thismodel, tab);
+  tfree(err_msg);
   /* check if using model binning -- pass in line since need 'l' and 'w' */
   if ( thismodel == NULL ) {
     INPgetModBin( ckt, nname5, &thismodel, tab, line );
@@ -97,7 +97,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef TRACE
       printf("INP2M: checking for 5 node device\n");
 #endif
-      INPgetMod (ckt, nname6, &thismodel, tab);
+      err_msg = INPgetMod (ckt, nname6, &thismodel, tab);
+      tfree(err_msg);
       if (thismodel == NULL)
       {                  /*  6th token is not a model in the table  */
         nodeflag = 2;              /*  now specify a 6 node device  */
@@ -106,7 +107,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef TRACE
         printf("INP2M: checking for 6 node device\n");
 #endif
-        INPgetMod (ckt, nname7, &thismodel, tab);
+        err_msg = INPgetMod (ckt, nname7, &thismodel, tab);
+        tfree(err_msg);
         if (thismodel == NULL)
           {                  /*  7th token is not a model in the table  */
             nodeflag = 3;              /*  now specify a 7 node device  */
@@ -114,7 +116,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef TRACE
             printf("INP2M: checking for 7 node device\n");
 #endif
-            INPgetMod (ckt, model, &thismodel, tab);      /*  get pointer to the model  */
+            err_msg = INPgetMod (ckt, model, &thismodel, tab);      /*  get pointer to the model  */
+            tfree(err_msg);
             if (thismodel != NULL)
             {
               if ((thismodel->INPmodType != INPtypelook ("B4SOI"))   &&
