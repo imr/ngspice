@@ -3131,6 +3131,7 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
             sprintf(curr_str + curr_str_len, "%s(%s)", str, macro_str);
         }
         *fcn_name = keep;
+        tfree(macro_str);
 
         search_ptr = str = close_paren_ptr + 1;
     }
@@ -3870,7 +3871,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         ptr_array_ordered[i]->li_next = ptr_array_ordered[i+1];
 
     // clean up memory
-    for (i = 0; i < num_params; i++) {
+    for (i = 0; i < arr_size; i++) {
         tfree(param_names[i]);
         tfree(param_strs[i]);
     }
