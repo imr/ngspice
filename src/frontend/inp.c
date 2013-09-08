@@ -533,13 +533,23 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* print out the expanded deck into debug-out2.txt */
             if (ft_ngdebug) {
-                FILE *fdo;
-                struct line *tmp_ptr1 = NULL;
                 /*debug: print into file*/
-                fdo = fopen("debug-out2.txt", "w");
-                for (tmp_ptr1 = deck; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next)
-                    fprintf(fdo, "%s\n", tmp_ptr1->li_line);
-                (void) fclose(fdo);
+                FILE *fdo = fopen("debug-out2.txt", "w");
+                struct line *t = NULL;
+                fprintf(fdo, "**************** uncommented deck **************\n\n");
+                /* always print first line */
+                fprintf(fdo, "%6d  %6d  %s\n", deck->li_linenum_orig, deck->li_linenum, deck->li_line);
+                /* here without out-commented lines */
+                for (t = deck->li_next; t; t = t->li_next) {
+                    if (*(t->li_line) == '*')
+                        continue;
+                    fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                }
+                fprintf(fdo, "\n****************** complete deck ***************\n\n");
+                /* now completely */
+                for (t = deck; t; t = t->li_next)
+                    fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                fclose(fdo);
             }
             for (dd = deck; dd; dd = dd->li_next) {
                 /* get csparams and create vectors, being
@@ -675,13 +685,23 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         /* print out the expanded deck into debug-out3.txt */
         if (ft_ngdebug) {
-            FILE *fdo;
-            struct line *tmp_ptr1 = NULL;
             /*debug: print into file*/
-            fdo = fopen("debug-out3.txt", "w");
-            for (tmp_ptr1 = deck; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next)
-                fprintf(fdo, "%s\n", tmp_ptr1->li_line);
-            (void) fclose(fdo);
+            FILE *fdo = fopen("debug-out3.txt", "w");
+            struct line *t = NULL;
+            fprintf(fdo, "**************** uncommented deck **************\n\n");
+            /* always print first line */
+            fprintf(fdo, "%6d  %6d  %s\n", deck->li_linenum_orig, deck->li_linenum, deck->li_line);
+            /* here without out-commented lines */
+            for (t = deck->li_next; t; t = t->li_next) {
+                if (*(t->li_line) == '*')
+                    continue;
+                fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            }
+            fprintf(fdo, "\n****************** complete deck ***************\n\n");
+            /* now completely */
+            for (t = deck; t; t = t->li_next)
+                fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            fclose(fdo);
         }
 
         if (expr_w_temper) {
