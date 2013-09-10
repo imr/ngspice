@@ -2459,17 +2459,26 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
 
                 /* insert the library section definition into `c' */
                 {
-                    struct line *corig = c;
-                    struct line *cend = c;
+//                  struct line *corig = c;
+                    struct line *cend = NULL, *newl;
                     struct line *rest = c->li_next;
                     struct line *t = section_def;
-                    cend = c->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
-                    cend->li_line[0] = '*';
-                    cend->li_line[1] = '<';
-                    t = t->li_next;
+//                  cend = c->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+//                  cend->li_line[0] = '*';
+//                  cend->li_line[1] = '<';
+//                  t = t->li_next;
                     for (; t; t=t->li_next) {
-                        cend->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
-                        cend = cend->li_next;
+//                      cend->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+                        newl = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+                        if (cend)
+                            cend->li_next = newl;
+                        else {
+                            c->li_next = newl;
+                            newl->li_line[0] = '*';
+                            newl->li_line[1] = '<';
+                        }
+                        cend = newl;
+//                      cend = cend->li_next;
                         if(ciprefix(".endl", t->li_line))
                             break;
                     }
@@ -2479,7 +2488,7 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                     }
                     cend->li_line[0] = '*';
                     cend->li_line[1] = '>';
-                    c = corig;
+//                  c = corig;
                     cend->li_next = rest;
                 }
 
@@ -5562,13 +5571,16 @@ static void
 inp_temper_compat(struct line *card)
 {
     int skip_control = 0;
-    char *beg_str, *end_str, *new_str = NULL, *beg_tstr, *end_tstr, *exp_str;
+    char *beg_str, *end_str, *beg_tstr, *end_tstr, *exp_str;
     char actchar;
 
     for (; card; card = card->li_next) {
 
+        char *new_str = NULL;
         char *curr_line = card->li_line;
 
+        if (curr_line == NULL)
+            continue;
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
             skip_control ++;
@@ -5598,12 +5610,12 @@ inp_temper_compat(struct line *card)
         beg_str = beg_tstr = curr_line;
         while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
             actchar = *(beg_tstr - 1);
-            if (!isspace(actchar) && !is_arith_char(actchar)) {
+            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',')) {
                 beg_tstr++;
                 continue;
             }
             actchar = *(beg_tstr + 6);
-            if (!isspace(actchar) && !is_arith_char(actchar))
+            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ','))
                 continue;
             /* we have found a true 'temper' */
             /* set the global variable */
@@ -5627,8 +5639,7 @@ inp_temper_compat(struct line *card)
         if (*beg_str)
             new_str = INPstrCat(new_str, copy(beg_str), " ");
         tfree(card->li_line);
-        new_str = inp_remove_ws(new_str);
-        card->li_line = new_str;
+        card->li_line = inp_remove_ws(new_str);
     }
 }
 
@@ -6045,11 +6056,16 @@ inp_poly_err(struct line *card)
 void
 tprint(struct line *t)
 {
+    struct line *tmp;
+
     /*debug: print into file*/
     FILE *fd = fopen("tprint-out.txt", "w");
-
-    for (; t; t = t->li_next)
-        fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+    for (tmp = t; tmp; tmp = tmp->li_next)
+        if (*(tmp->li_line) != '*')
+            fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+    fprintf(fd, "\n*********************************************************************************\n\n");
+    for (tmp = t; tmp; tmp = tmp->li_next)
+        fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
 
     fclose(fd);
 }
@@ -6146,13 +6162,21 @@ inp_fix_temper_in_param(struct line *deck)
             beg_tstr = curr_line;
             while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
                 actchar = *(beg_tstr - 1);
-                if (!(actchar == '{') && !isspace(actchar) && !is_arith_char(actchar)) {
+                if (!(actchar == '{') && !isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',')) {
                     beg_tstr++;
                     continue;
                 }
                 actchar = *(beg_tstr + 6);
-                if (!(actchar == '}') && !isspace(actchar) && !is_arith_char(actchar))
-                   continue;
+                if (actchar == '=') {
+                    fprintf(stderr, "Error: you cannot assign a value to TEMPER\n");
+                    fprintf(stderr, "  Line no. %d, %s\n", card->li_linenum, curr_line);
+                    controlled_exit(EXIT_BAD);
+                }
+
+                if (!(actchar == '}') && !isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',')) {
+                    beg_tstr++;
+                    continue;
+                }
                 /* we have found a true 'temper', so start conversion */
                 /* find function name and function body: We may have multiple
                    params in a linie!
@@ -6209,8 +6233,9 @@ inp_fix_temper_in_param(struct line *deck)
             char *new_str = NULL; /* string we assemble here */
             char *curr_str;/* where we are in curr_line */
             char *add_str;/* what we add */
+
             char *curr_line = card->li_line;
-            char * new_tmp_str, *tmp_str;
+            char * new_tmp_str, *tmp_str, *beg_str;
 
             if (*curr_line == '*')
                 continue;
@@ -6242,31 +6267,32 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
             if (sub_count[subckt_depth] != new_func->subckt_count)
                 continue;
-
-            curr_str = curr_line;
+ //         if (*curr_line != 'b')
+ //             continue;
+            beg_str = curr_str = curr_line;
             while ((beg_tstr = strstr(curr_str, new_func->funcname)) != NULL) {
                 /* start of token */
                 actchar = *(beg_tstr - 1);
-                if (!(actchar == '{') && !isspace(actchar) && !is_arith_char(actchar)) {
-                    curr_str++;
-                    continue;
-                }
                 /* end of token */
                 end_tstr = beg_tstr + strlen(new_func->funcname);
+                if (!(actchar == '{') && !(actchar == ',') && !isspace(actchar) && !is_arith_char(actchar)) {
+                    curr_str = end_tstr;
+                    continue;
+                }
                 actchar = *(end_tstr);
-                if (!(actchar == '}') && !isspace(actchar) && !is_arith_char(actchar)) {
-                    curr_str++;
+                if (!(actchar == '}') && !(actchar == ',')  && !isspace(actchar) && !is_arith_char(actchar)) {
+                    curr_str = end_tstr;
                     continue;
                 }
                 if (actchar == '(') {
-                    curr_str++;
+                    curr_str = end_tstr;
                     continue; /* not the .func xxx() itself */
                 }
                 /* we have found a true token equaling funcname, so start insertion */
-                add_str = copy_substring(curr_str, end_tstr);
+                add_str = copy_substring(beg_str, end_tstr);
                 new_str = INPstrCat(new_str, add_str, "");
                 new_str = INPstrCat(new_str, copy("()"), "");
-                curr_str = end_tstr;
+                beg_str = curr_str = end_tstr;
             }
             if (new_str) /* add final part of line */
                 new_str = INPstrCat(new_str, copy(curr_str), "");
