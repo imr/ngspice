@@ -1749,14 +1749,17 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 }
 
 
-/* replace ternary operator ? : by fcn ternary_fcn() in .param, .func, and .meas lines,
-   if all is FALSE, for all lines if all is TRUE */
+/* replace ternary operator 'conditional ? if : else' by function
+ * 'ternary_fcn(conditional, if, else)'
+ * in .param, .func, and .meas lines, if all is FALSE,
+ * for all lines if all is TRUE
+ */
 
 static char*
 inp_fix_ternary_operator_str(char *line, bool all)
 {
-    char *conditional, *if_str, *else_str, *question, *colon, keep, *str_ptr, *str_ptr2, *new_str;
-    char *paren_ptr = NULL, *end_str = NULL, *beg_str = NULL;
+    char *conditional, *if_str, *else_str, *question, *colon, keep, *str_ptr, *str_ptr2, *str_ptr3, *new_str;
+    char *end_str = NULL, *beg_str = NULL;
     int  count = 0;
 
     if (!strchr(line, '?') && !strchr(line, ':'))
@@ -1794,6 +1797,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     // get conditional
     question = strchr(str_ptr, '?');
     str_ptr2 = skip_back_ws(question);
+    /* test for (conditional)?... */
     if (str_ptr2[-1] == ')') {
         count = 1;
         str_ptr = str_ptr2 - 1;
@@ -1803,6 +1807,17 @@ inp_fix_ternary_operator_str(char *line, bool all)
                 count--;
             if (*str_ptr == ')')
                 count++;
+        }
+    }
+    /* test for (conditional?... */
+    else {
+        str_ptr3 = str_ptr2 - 1;
+        while (str_ptr3 != line) {
+            str_ptr3--;
+            if (*str_ptr3 == '('){
+                str_ptr = ++str_ptr3;
+                break;
+            }
         }
     }
     keep = *str_ptr2;
@@ -1854,8 +1869,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
 
     // get else
     str_ptr = skip_ws(colon + 1);
-    paren_ptr = strchr(question, '(');
-    if (paren_ptr) {
+    /* ... : (else) */
+    if (*str_ptr == '(') {
         // find end paren ')'
         bool found_paren = FALSE;
         count = 0;
@@ -1882,6 +1897,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
             end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
         else
             end_str = strdup(str_ptr2);
+    /* ... : else */
     } else {
         if ((str_ptr2 = strchr(str_ptr, '}')) != NULL) {
             else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
