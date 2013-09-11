@@ -6063,10 +6063,17 @@ tprint(struct line *t)
     for (tmp = t; tmp; tmp = tmp->li_next)
         if (*(tmp->li_line) != '*')
             fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
-    fprintf(fd, "\n*********************************************************************************\n\n");
+    fprintf(fd, "\n*********************************************************************************\n");
+    fprintf(fd, "*********************************************************************************\n");
+    fprintf(fd, "*********************************************************************************\n\n");
     for (tmp = t; tmp; tmp = tmp->li_next)
         fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
-
+    fprintf(fd, "\n*********************************************************************************\n");
+    fprintf(fd, "*********************************************************************************\n");
+    fprintf(fd, "*********************************************************************************\n\n");
+    for (tmp = t; tmp; tmp = tmp->li_next)
+        if (*(tmp->li_line) != '*')
+            fprintf(fd, "%s\n",tmp->li_line);
     fclose(fd);
 }
 
@@ -6267,8 +6274,7 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
             if (sub_count[subckt_depth] != new_func->subckt_count)
                 continue;
- //         if (*curr_line != 'b')
- //             continue;
+
             beg_str = curr_str = curr_line;
             while ((beg_tstr = strstr(curr_str, new_func->funcname)) != NULL) {
                 /* start of token */
@@ -6351,14 +6357,6 @@ inp_new_func(char *funcname, char *funcbody, struct line *card, struct func_temp
         new_func_end = new_func_tmp;
     }
 
-/*
-    if (*new_func == NULL)
-        *new_func = new_func_tmp;
-    else {
-        new_func_tmp->next = *new_func;
-        *new_func = new_func_tmp;
-    }
-*/
     /* replace line in deck */
     new_str = TMALLOC(char, strlen(funcname) + strlen(funcbody) + 10);
     sprintf(new_str, ".func %s() %s", funcname, funcbody);
