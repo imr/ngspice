@@ -4074,7 +4074,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
         if (ciprefix(".param", curr_line)) {
 
             struct line *param_end, *param_beg;
-            char *equal_ptr, *array[5000];
+            char *equal_ptr, **array;
             int i, counter = 0;
 
             while ((equal_ptr = find_assignment(curr_line)) != NULL) {
@@ -4084,6 +4084,8 @@ inp_split_multi_param_lines(struct line *card, int line_num)
 
             if (counter <= 1)
                 continue;
+
+            array = TMALLOC(char *, counter);
 
             // need to split multi param line
             curr_line = card->li_line;
@@ -4130,6 +4132,8 @@ inp_split_multi_param_lines(struct line *card, int line_num)
 
                 param_end = x;
             }
+
+            tfree(array);
 
             // comment out current multi-param line
             *(card->li_line)   = '*';
