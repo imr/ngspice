@@ -3000,7 +3000,7 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
     for (i = 0; i < fcn->num_parameters; i++) {
 
         if (curr_str == NULL) {
-            search_ptr = curr_ptr = fcn->macro;
+            search_ptr = curr_ptr = strdup(fcn->macro);
         } else {
             search_ptr = curr_ptr = curr_str;
             curr_str = NULL;
