@@ -3147,6 +3147,7 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
         }
 
         macro_str = inp_do_macro_param_replace(function, params);
+        macro_str = inp_expand_macro_in_str(env, macro_str);
         keep  = *fcn_name;
         *fcn_name = '\0';
         {
