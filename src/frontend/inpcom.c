@@ -4044,6 +4044,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line
         char *curr_line = c->li_line;
 
         if (*curr_line == '*') {
+            prev_card = c;
             c = c->li_next;
             continue;
         }
