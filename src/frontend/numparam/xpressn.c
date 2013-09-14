@@ -445,8 +445,9 @@ attrib(tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
  */
 
 void
-del_attrib(entry *entry_p)
+del_attrib(void *e_p)
 {
+    entry *entry_p = (entry*)e_p;
     if(entry_p) {
         tfree(entry_p->symbol);
         tfree(entry_p);
