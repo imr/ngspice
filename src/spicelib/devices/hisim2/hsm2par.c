@@ -20,6 +20,7 @@
 #include "hsm2def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int HSM2param(
      int param,
@@ -27,33 +28,38 @@ int HSM2param(
      GENinstance *inst,
      IFvalue *select)
 {
+  double scale;
+
   HSM2instance *here = (HSM2instance*)inst;
 
   NG_IGNORE(select);
 
+  if (!cp_getvar("scale", CP_REAL, &scale))
+      scale = 1;
+
   switch (param) {
   case HSM2_W:
-    here->HSM2_w = value->rValue;
+    here->HSM2_w = value->rValue * scale;
     here->HSM2_w_Given = TRUE;
     break;
   case HSM2_L:
-    here->HSM2_l = value->rValue;
+    here->HSM2_l = value->rValue * scale;
     here->HSM2_l_Given = TRUE;
     break;
   case HSM2_AS:
-    here->HSM2_as = value->rValue;
+    here->HSM2_as = value->rValue * scale * scale;
     here->HSM2_as_Given = TRUE;
     break;
   case HSM2_AD:
-    here->HSM2_ad = value->rValue;
+    here->HSM2_ad = value->rValue * scale * scale;
     here->HSM2_ad_Given = TRUE;
     break;
   case HSM2_PS:
-    here->HSM2_ps = value->rValue;
+    here->HSM2_ps = value->rValue * scale;
     here->HSM2_ps_Given = TRUE;
     break;
   case HSM2_PD:
-    here->HSM2_pd = value->rValue;
+    here->HSM2_pd = value->rValue * scale;
     here->HSM2_pd_Given = TRUE;
     break;
   case HSM2_NRS:

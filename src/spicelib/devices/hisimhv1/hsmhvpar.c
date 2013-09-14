@@ -20,6 +20,7 @@
 #include "hsmhvdef.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int HSMHVparam(
      int param,
@@ -27,9 +28,14 @@ int HSMHVparam(
      GENinstance *inst,
      IFvalue *select)
 {
+  double scale;
+
   HSMHVinstance *here = (HSMHVinstance*)inst;
 
   NG_IGNORE(select);
+
+  if (!cp_getvar("scale", CP_REAL, &scale))
+      scale = 1;
 
   switch (param) {
   case HSMHV_COSELFHEAT:
@@ -41,27 +47,27 @@ int HSMHVparam(
     here->HSMHV_cosubnode_Given = TRUE;
     break;
   case HSMHV_W:
-    here->HSMHV_w = value->rValue;
+    here->HSMHV_w = value->rValue * scale;
     here->HSMHV_w_Given = TRUE;
     break;
   case HSMHV_L:
-    here->HSMHV_l = value->rValue;
+    here->HSMHV_l = value->rValue * scale;
     here->HSMHV_l_Given = TRUE;
     break;
   case HSMHV_AS:
-    here->HSMHV_as = value->rValue;
+    here->HSMHV_as = value->rValue * scale * scale;
     here->HSMHV_as_Given = TRUE;
     break;
   case HSMHV_AD:
-    here->HSMHV_ad = value->rValue;
+    here->HSMHV_ad = value->rValue * scale * scale;
     here->HSMHV_ad_Given = TRUE;
     break;
   case HSMHV_PS:
-    here->HSMHV_ps = value->rValue;
+    here->HSMHV_ps = value->rValue * scale;
     here->HSMHV_ps_Given = TRUE;
     break;
   case HSMHV_PD:
-    here->HSMHV_pd = value->rValue;
+    here->HSMHV_pd = value->rValue * scale;
     here->HSMHV_pd_Given = TRUE;
     break;
   case HSMHV_NRS:

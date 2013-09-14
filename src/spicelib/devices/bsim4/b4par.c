@@ -19,6 +19,7 @@
 #include "bsim4def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 BSIM4param(
@@ -27,17 +28,22 @@ IFvalue *value,
 GENinstance *inst,
 IFvalue *select)
 {
+    double scale;
+
     BSIM4instance *here = (BSIM4instance*)inst;
 
     NG_IGNORE(select);
 
+    if (!cp_getvar("scale", CP_REAL, &scale))
+        scale = 1;
+
     switch(param) 
     {   case BSIM4_W:
-            here->BSIM4w = value->rValue;
+            here->BSIM4w = value->rValue * scale;
             here->BSIM4wGiven = TRUE;
             break;
         case BSIM4_L:
-            here->BSIM4l = value->rValue;
+            here->BSIM4l = value->rValue * scale;
             here->BSIM4lGiven = TRUE;
             break;
         case BSIM4_M:
@@ -53,19 +59,19 @@ IFvalue *select)
             here->BSIM4minGiven = TRUE;
             break;
         case BSIM4_AS:
-            here->BSIM4sourceArea = value->rValue;
+            here->BSIM4sourceArea = value->rValue * scale * scale;
             here->BSIM4sourceAreaGiven = TRUE;
             break;
         case BSIM4_AD:
-            here->BSIM4drainArea = value->rValue;
+            here->BSIM4drainArea = value->rValue * scale * scale;
             here->BSIM4drainAreaGiven = TRUE;
             break;
         case BSIM4_PS:
-            here->BSIM4sourcePerimeter = value->rValue;
+            here->BSIM4sourcePerimeter = value->rValue * scale;
             here->BSIM4sourcePerimeterGiven = TRUE;
             break;
         case BSIM4_PD:
-            here->BSIM4drainPerimeter = value->rValue;
+            here->BSIM4drainPerimeter = value->rValue * scale;
             here->BSIM4drainPerimeterGiven = TRUE;
             break;
         case BSIM4_NRS:

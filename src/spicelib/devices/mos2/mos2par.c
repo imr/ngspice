@@ -12,6 +12,7 @@ Modified: 2000 AlansFixes
 #include "mos2defs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 
 /* ARGSUSED */
@@ -19,9 +20,14 @@ int
 MOS2param(int param, IFvalue *value, GENinstance *inst,
           IFvalue *select)
 {
+    double scale;
+
     MOS2instance *here = (MOS2instance *)inst;
 
     NG_IGNORE(select);
+
+    if (!cp_getvar("scale", CP_REAL, &scale))
+        scale = 1;
 
     switch(param) {
         case MOS2_TEMP:
@@ -37,27 +43,27 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
             here->MOS2mGiven = TRUE;
             break;   
         case MOS2_W:
-            here->MOS2w = value->rValue;
+            here->MOS2w = value->rValue * scale;
             here->MOS2wGiven = TRUE;
             break;
         case MOS2_L:
-            here->MOS2l = value->rValue;
+            here->MOS2l = value->rValue * scale;
             here->MOS2lGiven = TRUE;
             break;
         case MOS2_AS:
-            here->MOS2sourceArea = value->rValue;
+            here->MOS2sourceArea = value->rValue * scale * scale;
             here->MOS2sourceAreaGiven = TRUE;
             break;
         case MOS2_AD:
-            here->MOS2drainArea = value->rValue;
+            here->MOS2drainArea = value->rValue * scale * scale;
             here->MOS2drainAreaGiven = TRUE;
             break;
         case MOS2_PS:
-            here->MOS2sourcePerimiter = value->rValue;
+            here->MOS2sourcePerimiter = value->rValue * scale;
             here->MOS2sourcePerimiterGiven = TRUE;
             break;
         case MOS2_PD:
-            here->MOS2drainPerimiter = value->rValue;
+            here->MOS2drainPerimiter = value->rValue * scale;
             here->MOS2drainPerimiterGiven = TRUE;
             break;
         case MOS2_NRS:
