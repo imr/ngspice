@@ -803,11 +803,10 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         unsigned int no_braces; /* number of '{' */
         size_t max_line_length; /* max. line length in input deck */
-
         struct line *tmp_ptr1;
-
         struct names *subckt_w_params = new_names();
 
+        delete_libs();
         inp_fix_for_numparam(subckt_w_params, working);
 
 // tprint(cc); /* test printout to file tprint-out.txt */
@@ -2535,7 +2534,6 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
         }
 
     }
-    delete_libs();
 }
 
 
