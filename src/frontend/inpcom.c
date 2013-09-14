@@ -690,11 +690,14 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
            error and zap the line. */
         {
             char *s;
-
+            /* no lower case letters for lines beginning with: */
             if ( !ciprefix("write", buffer) &&
+                 !ciprefix("wrdata", buffer) &&
                  !ciprefix(".lib", buffer) &&
+                 !ciprefix(".inc", buffer) &&
                  !ciprefix("codemodel", buffer) &&
-                 !ciprefix("use", buffer) &&
+                 !ciprefix("echo", buffer) &&
+                 !ciprefix("source", buffer) &&
                  !ciprefix("load", buffer)
                 )
             {
