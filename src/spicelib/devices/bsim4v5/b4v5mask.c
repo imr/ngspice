@@ -76,6 +76,9 @@ IFvalue *value)
         case BSIM4v5_MOD_GEOMOD :
             value->iValue = model->BSIM4v5geoMod;
             return(OK);
+        case BSIM4v5_MOD_RGEOMOD :
+            value->iValue = model->BSIM4v5rgeoMod;
+            return(OK);
         case BSIM4v5_MOD_IGCMOD :
             value->iValue = model->BSIM4v5igcMod;
             return(OK);

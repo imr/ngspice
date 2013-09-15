@@ -132,25 +132,25 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(MESdrainDrainPrimePtr,MESdrainNode,MESdrainPrimeNode)
-            TSTALLOC(MESgateDrainPrimePtr,MESgateNode,MESdrainPrimeNode)
-            TSTALLOC(MESgateSourcePrimePtr,MESgateNode,MESsourcePrimeNode)
-            TSTALLOC(MESsourceSourcePrimePtr,MESsourceNode,MESsourcePrimeNode)
-            TSTALLOC(MESdrainPrimeDrainPtr,MESdrainPrimeNode,MESdrainNode)
-            TSTALLOC(MESdrainPrimeGatePtr,MESdrainPrimeNode,MESgateNode)
-            TSTALLOC(MESdrainPrimeSourcePrimePtr,MESdrainPrimeNode,MESsourcePrimeNode)
-            TSTALLOC(MESsourcePrimeGatePtr,MESsourcePrimeNode,MESgateNode)
-            TSTALLOC(MESsourcePrimeSourcePtr,MESsourcePrimeNode,MESsourceNode)
-            TSTALLOC(MESsourcePrimeDrainPrimePtr,MESsourcePrimeNode,MESdrainPrimeNode)
-            TSTALLOC(MESdrainDrainPtr,MESdrainNode,MESdrainNode)
-            TSTALLOC(MESgateGatePtr,MESgateNode,MESgateNode)
-            TSTALLOC(MESsourceSourcePtr,MESsourceNode,MESsourceNode)
-            TSTALLOC(MESdrainPrimeDrainPrimePtr,MESdrainPrimeNode,MESdrainPrimeNode)
-            TSTALLOC(MESsourcePrimeSourcePrimePtr,MESsourcePrimeNode,MESsourcePrimeNode)
+            TSTALLOC(MESdrainDrainPrimePtr,MESdrainNode,MESdrainPrimeNode);
+            TSTALLOC(MESgateDrainPrimePtr,MESgateNode,MESdrainPrimeNode);
+            TSTALLOC(MESgateSourcePrimePtr,MESgateNode,MESsourcePrimeNode);
+            TSTALLOC(MESsourceSourcePrimePtr,MESsourceNode,MESsourcePrimeNode);
+            TSTALLOC(MESdrainPrimeDrainPtr,MESdrainPrimeNode,MESdrainNode);
+            TSTALLOC(MESdrainPrimeGatePtr,MESdrainPrimeNode,MESgateNode);
+            TSTALLOC(MESdrainPrimeSourcePrimePtr,MESdrainPrimeNode,MESsourcePrimeNode);
+            TSTALLOC(MESsourcePrimeGatePtr,MESsourcePrimeNode,MESgateNode);
+            TSTALLOC(MESsourcePrimeSourcePtr,MESsourcePrimeNode,MESsourceNode);
+            TSTALLOC(MESsourcePrimeDrainPrimePtr,MESsourcePrimeNode,MESdrainPrimeNode);
+            TSTALLOC(MESdrainDrainPtr,MESdrainNode,MESdrainNode);
+            TSTALLOC(MESgateGatePtr,MESgateNode,MESgateNode);
+            TSTALLOC(MESsourceSourcePtr,MESsourceNode,MESsourceNode);
+            TSTALLOC(MESdrainPrimeDrainPrimePtr,MESdrainPrimeNode,MESdrainPrimeNode);
+            TSTALLOC(MESsourcePrimeSourcePrimePtr,MESsourcePrimeNode,MESsourcePrimeNode);
         }
     }
     return(OK);

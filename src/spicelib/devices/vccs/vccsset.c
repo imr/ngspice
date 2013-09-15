@@ -36,14 +36,14 @@ VCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(VCCSposContPosptr, VCCSposNode, VCCScontPosNode)
-            TSTALLOC(VCCSposContNegptr, VCCSposNode, VCCScontNegNode)
-            TSTALLOC(VCCSnegContPosptr, VCCSnegNode, VCCScontPosNode)
-            TSTALLOC(VCCSnegContNegptr, VCCSnegNode, VCCScontNegNode)
+            TSTALLOC(VCCSposContPosptr, VCCSposNode, VCCScontPosNode);
+            TSTALLOC(VCCSposContNegptr, VCCSposNode, VCCScontNegNode);
+            TSTALLOC(VCCSnegContPosptr, VCCSnegNode, VCCScontPosNode);
+            TSTALLOC(VCCSnegContNegptr, VCCSnegNode, VCCScontNegNode);
         }
     }
     return(OK);

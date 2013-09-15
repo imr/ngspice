@@ -642,6 +642,87 @@ typedef struct sBSIM4instance
     BindElement *BSIM4SbpStructPtr ;
 #endif
 
+#ifdef KIRCHHOFF
+//RHS
+    double *KCLcurrentdNodePrimeRHS_1 ;
+    double *KCLcurrentdNodePrimeRHS_2 ;
+    double *KCLcurrentdNodePrimeRHS_3 ;
+    double *KCLcurrentdNodePrimeRHS_4 ;
+    double *KCLcurrentdNodePrimeRHS_5 ;
+    double *KCLcurrentdNodePrimeRHS_6 ;
+
+    double *KCLcurrentgNodePrimeRHS_1 ;
+    double *KCLcurrentgNodePrimeRHS_2 ;
+
+    double *KCLcurrentgNodeMidRHS ;
+
+    double *KCLcurrentbNodePrimeRHS_1 ;
+    double *KCLcurrentbNodePrimeRHS_2 ;
+    double *KCLcurrentbNodePrimeRHS_3 ;
+    double *KCLcurrentbNodePrimeRHS_4 ;
+    double *KCLcurrentbNodePrimeRHS_5 ;
+    double *KCLcurrentbNodePrimeRHS_6 ;
+
+    double *KCLcurrentsNodePrimeRHS_1 ;
+    double *KCLcurrentsNodePrimeRHS_2 ;
+    double *KCLcurrentsNodePrimeRHS_3 ;
+    double *KCLcurrentsNodePrimeRHS_4 ;
+    double *KCLcurrentsNodePrimeRHS_5 ;
+    double *KCLcurrentsNodePrimeRHS_6 ;
+    double *KCLcurrentsNodePrimeRHS_7 ;
+    double *KCLcurrentsNodePrimeRHS_8 ;
+    double *KCLcurrentsNodePrimeRHS_9 ;
+    double *KCLcurrentsNodePrimeRHS_10 ;
+    double *KCLcurrentsNodePrimeRHS_11 ;
+
+    double *KCLcurrentdbNodeRHS_1 ;
+    double *KCLcurrentdbNodeRHS_2 ;
+
+    double *KCLcurrentsbNodeRHS_1 ;
+    double *KCLcurrentsbNodeRHS_2 ;
+
+    double *KCLcurrentdNodeRHS ;
+
+    double *KCLcurrentsNodeRHS ;
+
+    double *KCLcurrentqNodeRHS_1 ;
+    double *KCLcurrentqNodeRHS_2 ;
+
+//Matrix
+    double *KCLcurrentdNodePrime_1 ;
+    double *KCLcurrentdNodePrime_2 ;
+
+    double *KCLcurrentdNode_1 ;
+    double *KCLcurrentdNode_2 ;
+
+    double *KCLcurrentsNodePrime_1 ;
+    double *KCLcurrentsNodePrime_2 ;
+
+    double *KCLcurrentsNode_1 ;
+    double *KCLcurrentsNode_2 ;
+
+    double *KCLcurrentgNodeExt ;
+
+    double *KCLcurrentgNodeMid_1 ;
+    double *KCLcurrentgNodeMid_2 ;
+
+    double *KCLcurrentgNodePrime ;
+
+    double *KCLcurrentdbNode_1 ;
+    double *KCLcurrentdbNode_2 ;
+
+    double *KCLcurrentbNodePrime_1 ;
+    double *KCLcurrentbNodePrime_2 ;
+    double *KCLcurrentbNodePrime_3 ;
+
+    double *KCLcurrentbNode_1 ;
+    double *KCLcurrentbNode_2 ;
+    double *KCLcurrentbNode_3 ;
+
+    double *KCLcurrentsbNode_1 ;
+    double *KCLcurrentsbNode_2 ;
+#endif
+
 } BSIM4instance ;
 
 struct bsim4SizeDependParam
@@ -903,6 +984,7 @@ typedef struct sBSIM4model
     int    BSIM4rgateMod;
     int    BSIM4perMod;
     int    BSIM4geoMod;
+    int    BSIM4rgeoMod;
     int    BSIM4mtrlMod;
     int    BSIM4mtrlCompatMod; /* v4.7 */
     int    BSIM4gidlMod; /* v4.7 New GIDL/GISL */
@@ -1854,6 +1936,7 @@ typedef struct sBSIM4model
     unsigned  BSIM4rgateModGiven :1;
     unsigned  BSIM4perModGiven :1;
     unsigned  BSIM4geoModGiven :1;
+    unsigned  BSIM4rgeoModGiven :1;
     unsigned  BSIM4paramChkGiven :1;
     unsigned  BSIM4trnqsModGiven :1;
     unsigned  BSIM4acnqsModGiven :1;
@@ -2805,30 +2888,31 @@ typedef struct sBSIM4model
 #define BSIM4_M                   38
 
 /* Global parameters */
-#define BSIM4_MOD_TEMPEOT         66
-#define BSIM4_MOD_LEFFEOT         67
-#define BSIM4_MOD_WEFFEOT         68
-#define BSIM4_MOD_UCSTE           69
-#define BSIM4_MOD_LUCSTE          70
-#define BSIM4_MOD_WUCSTE          71
-#define BSIM4_MOD_PUCSTE          72
-#define BSIM4_MOD_UCS             73
-#define BSIM4_MOD_LUCS            74
-#define BSIM4_MOD_WUCS            75
-#define BSIM4_MOD_PUCS            76
-#define BSIM4_MOD_CVCHARGEMOD     77
-#define BSIM4_MOD_ADOS            78
-#define BSIM4_MOD_BDOS            79
-#define BSIM4_MOD_TEMPMOD         80
-#define BSIM4_MOD_MTRLMOD         81
-#define BSIM4_MOD_IGCMOD          82
-#define BSIM4_MOD_IGBMOD          83
-#define BSIM4_MOD_ACNQSMOD        84
-#define BSIM4_MOD_FNOIMOD         85
-#define BSIM4_MOD_RDSMOD          86
-#define BSIM4_MOD_DIOMOD          87
-#define BSIM4_MOD_PERMOD          88
-#define BSIM4_MOD_GEOMOD          89
+#define BSIM4_MOD_TEMPEOT         65
+#define BSIM4_MOD_LEFFEOT         66
+#define BSIM4_MOD_WEFFEOT         67
+#define BSIM4_MOD_UCSTE           68
+#define BSIM4_MOD_LUCSTE          69
+#define BSIM4_MOD_WUCSTE          70
+#define BSIM4_MOD_PUCSTE          71
+#define BSIM4_MOD_UCS             72
+#define BSIM4_MOD_LUCS            73
+#define BSIM4_MOD_WUCS            74
+#define BSIM4_MOD_PUCS            75
+#define BSIM4_MOD_CVCHARGEMOD     76
+#define BSIM4_MOD_ADOS            77
+#define BSIM4_MOD_BDOS            78
+#define BSIM4_MOD_TEMPMOD         79
+#define BSIM4_MOD_MTRLMOD         80
+#define BSIM4_MOD_IGCMOD          81
+#define BSIM4_MOD_IGBMOD          82
+#define BSIM4_MOD_ACNQSMOD        83
+#define BSIM4_MOD_FNOIMOD         84
+#define BSIM4_MOD_RDSMOD          85
+#define BSIM4_MOD_DIOMOD          86
+#define BSIM4_MOD_PERMOD          87
+#define BSIM4_MOD_GEOMOD          88
+#define BSIM4_MOD_RGEOMOD         89
 #define BSIM4_MOD_RGATEMOD        90
 #define BSIM4_MOD_RBODYMOD        91
 #define BSIM4_MOD_CAPMOD          92

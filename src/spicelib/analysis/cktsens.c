@@ -184,9 +184,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					sg->ptable[sg->param].keyword);
 			}
 
-			SPfrontEnd->IFnewUid (ckt,
-				output_names + k, NULL,
-				namebuf, UID_OTHER, NULL);
+			SPfrontEnd->IFnewUid (ckt, output_names + k, NULL, namebuf, UID_OTHER, NULL);
 			k += 1;
 		}
 
@@ -195,16 +193,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			freq_name = NULL;
 		} else {
 			type = IF_COMPLEX;
-			SPfrontEnd->IFnewUid (ckt,
-				&freq_name, NULL,
-				"frequency", UID_OTHER, NULL);
+			SPfrontEnd->IFnewUid (ckt, &freq_name, NULL, "frequency", UID_OTHER, NULL);
 		}
 
-                error = SPfrontEnd->OUTpBeginPlot (
-                    ckt, ckt->CKTcurJob,
-                    ckt->CKTcurJob->JOBname,
-                    freq_name, IF_REAL,
-                    num_vars, output_names, type, &sen_data);
+                error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                                   ckt->CKTcurJob->JOBname,
+                                                   freq_name, IF_REAL,
+                                                   num_vars, output_names, type,
+                                                   &sen_data);
 		if (error)
 			return error;
 
@@ -216,8 +212,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			output_values = NULL;
 			output_cvalues = NEWN(IFcomplex, num_vars);
 			if (job->step_type != SENS_LINEAR)
-			    SPfrontEnd->OUTattributes (sen_data,
-				    NULL, OUT_SCALE_LOG, NULL);
+			    SPfrontEnd->OUTattributes (sen_data, NULL, OUT_SCALE_LOG, NULL);
 
 		}
 

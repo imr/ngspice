@@ -56,17 +56,17 @@ NON-STANDARD FEATURES
 
 /* define macro for easy creation of matrix entries/pointers for outputs */
 #define TSTALLOC(ptr,first,second) \
-        if((smp_data_out->ptr = \
+    do { if((smp_data_out->ptr = \
             SMPmakeElt(matrix, smp_data_out->first, smp_data_out->second)) == NULL) { \
             return(E_NOMEM); \
-        }
+    } } while(0)
 
 /* define macro for easy creation of matrix entries/pointers for inputs */
 #define CTSTALLOC(ptr,first,second) \
-        if((smp_data_out->input[k].port[l].ptr = \
+    do { if((smp_data_out->input[k].port[l].ptr = \
             SMPmakeElt(matrix, smp_data_out->first, smp_data_cntl->second)) == NULL) { \
             return(E_NOMEM); \
-        }
+    } } while(0)
 
 
 

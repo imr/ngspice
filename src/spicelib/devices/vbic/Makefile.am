@@ -39,6 +39,10 @@ if UMFPACK_WANTED
 libvbic_la_SOURCES += vbicbindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libvbic_la_SOURCES += vbicnode.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

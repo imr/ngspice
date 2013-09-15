@@ -28,3 +28,7 @@ extern int CAPbindCSC (GENmodel*, CKTcircuit*) ;
 extern int CAPbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int CAPbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int CAPnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

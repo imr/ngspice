@@ -73,10 +73,15 @@ SPICEdev MESAinfo = {
 #endif                        
  /* DEVinstSize   */ &MESAiSize,
  /* DEVmodSize    */ &MESAmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MESAbindCSC,
  /* DEVbindCSCComplex */   MESAbindCSCComplex,
  /* DEVbindCSCComplexToReal */  MESAbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ MESAnodeIsNonLinear
 #endif
 
 };

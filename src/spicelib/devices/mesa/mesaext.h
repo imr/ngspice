@@ -24,3 +24,7 @@ extern int MESAbindCSC (GENmodel*, CKTcircuit*) ;
 extern int MESAbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int MESAbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int MESAnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

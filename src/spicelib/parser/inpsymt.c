@@ -273,10 +273,11 @@ void INPtabEnd(INPtables * tab)
 
 static int hash(char *name, int tsize)
 {
-    char *s;
-    register int i = 0;
+    unsigned int hash = 5381;
+    char c;
 
-    for (s = name; *s; s++)
-        i += *s;
-    return (i % tsize);
+    while ((c = *name++) != '\0')
+        hash = (hash * 33) ^ (unsigned) c;
+
+    return (int) (hash % (unsigned) tsize);
 }

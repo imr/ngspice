@@ -46,11 +46,11 @@ PZan(CKTcircuit *ckt, int reset)
 	/* Dump operating point. */
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "Distortion Operating Point",
-            NULL, IF_REAL,
-            numNames, nameList, IF_REAL, &plot);
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           "Distortion Operating Point",
+                                           NULL, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &plot);
 	if(error) return(error);
 	CKTdump(ckt, 0.0, plot);
 	SPfrontEnd->OUTendPlot (plot);
@@ -94,7 +94,7 @@ PZinit(CKTcircuit *ckt)
 		i = CKTtypelook("LTRA");
     }
     if (i != -1 && ckt->CKThead[i] != NULL)
-	MERROR(E_XMISSIONLINE, "Transmission lines not supported")
+	MERROR(E_XMISSIONLINE, "Transmission lines not supported");
 
     job->PZpoleList = NULL;
     job->PZzeroList = NULL;
@@ -102,19 +102,19 @@ PZinit(CKTcircuit *ckt)
     job->PZnZeros = 0;
 
     if (job->PZin_pos == job->PZin_neg)
-	MERROR(E_SHORT, "Input is shorted")
+	MERROR(E_SHORT, "Input is shorted");
 
     if (job->PZout_pos == job->PZout_neg)
-	MERROR(E_SHORT, "Output is shorted")
+	MERROR(E_SHORT, "Output is shorted");
 
     if (job->PZin_pos == job->PZout_pos
         && job->PZin_neg == job->PZout_neg
 	&& job->PZinput_type == PZ_IN_VOL)
-	MERROR(E_INISOUT, "Transfer function is unity")
+	MERROR(E_INISOUT, "Transfer function is unity");
     else if (job->PZin_pos == job->PZout_neg
         && job->PZin_neg == job->PZout_pos
 	&& job->PZinput_type == PZ_IN_VOL)
-	MERROR(E_INISOUT, "Transfer function is -1")
+	MERROR(E_INISOUT, "Transfer function is -1");
 
     return(OK);
 }
@@ -141,20 +141,18 @@ PZpost(CKTcircuit *ckt)
     j = 0;
     for (i = 0; i < job->PZnPoles; i++) {
 	sprintf(name, "pole(%-u)", i+1);
-	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL,
-		name, UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL, name, UID_OTHER, NULL);
     }
     for (i = 0; i < job->PZnZeros; i++) {
 	sprintf(name, "zero(%-u)", i+1);
-	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL,
-		name, UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &(namelist[j++]), NULL, name, UID_OTHER, NULL);
     }
 
-    SPfrontEnd->OUTpBeginPlot (
-        ckt, ckt->CKTcurJob,
-        ckt->CKTcurJob->JOBname,
-        NULL, 0,
-        job->PZnPoles + job->PZnZeros, namelist, IF_COMPLEX, &pzPlotPtr);
+    SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                               ckt->CKTcurJob->JOBname,
+                               NULL, 0,
+                               job->PZnPoles + job->PZnZeros, namelist, IF_COMPLEX,
+                               &pzPlotPtr);
 
     j = 0;
     if (job->PZnPoles > 0) {

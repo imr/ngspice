@@ -35,3 +35,7 @@ extern int B1bindCSC (GENmodel*, CKTcircuit*) ;
 extern int B1bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int B1bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int B1nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

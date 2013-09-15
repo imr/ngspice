@@ -124,7 +124,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                   )
                 {
                   /*  if model is not variable node B3SOIPD/FD/DD model, error!  */
-                  LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes") return;
+                    LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
+                    return;
                 }
               else
                 {      /*  if looking at B3SOIPD/FD/DD or B4SOI model, allocate the 7th node  */
@@ -155,7 +156,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                 )
             {
               /*  if model is not variable node B3SOIPD/FD/DD or STAG model, error!  */
-              LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes") return;
+                LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
+                return;
             }
             else
             {      /*  if looking at B3SOIPD/FD/DD, B4SOI, STAG (SOI3) or HiSIMHV model, allocate the 6th node  */
@@ -176,7 +178,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             )
           {
             /*  if model is not variable node B3SOIPD/FD/DD  model, error!  */
-            LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes") return;
+              LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
+              return;
           }
         else
           {            /*  if looking at B3SOIPD/FD/DD, B4SOI, STAG (SOI3) or HiSIMHV model, allocate the 5th node  */
@@ -282,19 +285,19 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
         fast->GENnode7 = -1;
         break;
       case 1:
-        IFC (bindNode, (ckt, fast, 5, node5))
+        IFC (bindNode, (ckt, fast, 5, node5));
         fast->GENnode6 = -1;
         fast->GENnode7 = -1;
         break;
       case 2:
-        IFC (bindNode, (ckt, fast, 5, node5))
-        IFC (bindNode, (ckt, fast, 6, node6))
+        IFC (bindNode, (ckt, fast, 5, node5));
+        IFC (bindNode, (ckt, fast, 6, node6));
         fast->GENnode7 = -1;
         break;
       case 3:
-        IFC (bindNode, (ckt, fast, 5, node5))
-        IFC (bindNode, (ckt, fast, 6, node6))
-        IFC (bindNode, (ckt, fast, 7, node7))
+        IFC (bindNode, (ckt, fast, 5, node5));
+        IFC (bindNode, (ckt, fast, 6, node6));
+        IFC (bindNode, (ckt, fast, 7, node7));
         break;
       default:
         break;

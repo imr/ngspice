@@ -73,10 +73,15 @@ SPICEdev SOI3info = {
 #endif                        
  /* DEVinstSize   */ &SOI3iSize,
  /* DEVmodSize    */ &SOI3mSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   SOI3bindCSC,
  /* DEVbindCSCComplex */   SOI3bindCSCComplex,
  /* DEVbindCSCComplexToReal */  SOI3bindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ SOI3nodeIsNonLinear
 #endif
 
 };

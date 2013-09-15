@@ -89,15 +89,15 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(INDposIbrptr,INDposNode,INDbrEq)
-            TSTALLOC(INDnegIbrptr,INDnegNode,INDbrEq)
-            TSTALLOC(INDibrNegptr,INDbrEq,INDnegNode)
-            TSTALLOC(INDibrPosptr,INDbrEq,INDposNode)
-            TSTALLOC(INDibrIbrptr,INDbrEq,INDbrEq)
+            TSTALLOC(INDposIbrptr,INDposNode,INDbrEq);
+            TSTALLOC(INDnegIbrptr,INDnegNode,INDbrEq);
+            TSTALLOC(INDibrNegptr,INDbrEq,INDnegNode);
+            TSTALLOC(INDibrPosptr,INDbrEq,INDposNode);
+            TSTALLOC(INDibrIbrptr,INDbrEq,INDbrEq);
         }
     }
     return(OK);

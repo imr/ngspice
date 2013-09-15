@@ -21,6 +21,11 @@ Modified: 2000  AlansFixes
 int
 DCop(CKTcircuit *ckt, int notused)
 {
+#ifdef WANT_SENSE2
+    int i, senmode, size;
+    long save;
+#endif
+
     int converged;
     int error;
     IFuid *nameList; /* va: tmalloc'ed list */
@@ -45,11 +50,11 @@ DCop(CKTcircuit *ckt, int notused)
 
     error = CKTnames(ckt,&numNames,&nameList);
     if(error) return(error);
-    error = SPfrontEnd->OUTpBeginPlot (
-        ckt, ckt->CKTcurJob,
-        ckt->CKTcurJob->JOBname,
-        NULL, IF_REAL,
-        numNames, nameList, IF_REAL, &plot);
+    error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                       ckt->CKTcurJob->JOBname,
+                                       NULL, IF_REAL,
+                                       numNames, nameList, IF_REAL,
+                                       &plot);
     tfree(nameList); /* va: nameList not used any longer, it was a memory leak */
     if(error) return(error);
 
@@ -133,7 +138,10 @@ DCop(CKTcircuit *ckt, int notused)
          for(i = 1; i<=size ; i++){
              ckt->CKTrhsOp[i] = ckt->CKTrhsOld[i];
          }
-         if(error = CKTsenDCtran(ckt)) return(error);
+         error = CKTsenDCtran(ckt);
+         if (error)
+             return(error);
+
          ckt->CKTmode = save;
          ckt->CKTsenInfo->SENmode = senmode;
 

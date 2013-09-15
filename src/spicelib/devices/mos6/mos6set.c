@@ -189,32 +189,32 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             }
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(MOS6DdPtr,MOS6dNode,MOS6dNode)
-            TSTALLOC(MOS6GgPtr,MOS6gNode,MOS6gNode)
-            TSTALLOC(MOS6SsPtr,MOS6sNode,MOS6sNode)
-            TSTALLOC(MOS6BbPtr,MOS6bNode,MOS6bNode)
-            TSTALLOC(MOS6DPdpPtr,MOS6dNodePrime,MOS6dNodePrime)
-            TSTALLOC(MOS6SPspPtr,MOS6sNodePrime,MOS6sNodePrime)
-            TSTALLOC(MOS6DdpPtr,MOS6dNode,MOS6dNodePrime)
-            TSTALLOC(MOS6GbPtr,MOS6gNode,MOS6bNode)
-            TSTALLOC(MOS6GdpPtr,MOS6gNode,MOS6dNodePrime)
-            TSTALLOC(MOS6GspPtr,MOS6gNode,MOS6sNodePrime)
-            TSTALLOC(MOS6SspPtr,MOS6sNode,MOS6sNodePrime)
-            TSTALLOC(MOS6BdpPtr,MOS6bNode,MOS6dNodePrime)
-            TSTALLOC(MOS6BspPtr,MOS6bNode,MOS6sNodePrime)
-            TSTALLOC(MOS6DPspPtr,MOS6dNodePrime,MOS6sNodePrime)
-            TSTALLOC(MOS6DPdPtr,MOS6dNodePrime,MOS6dNode)
-            TSTALLOC(MOS6BgPtr,MOS6bNode,MOS6gNode)
-            TSTALLOC(MOS6DPgPtr,MOS6dNodePrime,MOS6gNode)
-            TSTALLOC(MOS6SPgPtr,MOS6sNodePrime,MOS6gNode)
-            TSTALLOC(MOS6SPsPtr,MOS6sNodePrime,MOS6sNode)
-            TSTALLOC(MOS6DPbPtr,MOS6dNodePrime,MOS6bNode)
-            TSTALLOC(MOS6SPbPtr,MOS6sNodePrime,MOS6bNode)
-            TSTALLOC(MOS6SPdpPtr,MOS6sNodePrime,MOS6dNodePrime)
+            TSTALLOC(MOS6DdPtr,MOS6dNode,MOS6dNode);
+            TSTALLOC(MOS6GgPtr,MOS6gNode,MOS6gNode);
+            TSTALLOC(MOS6SsPtr,MOS6sNode,MOS6sNode);
+            TSTALLOC(MOS6BbPtr,MOS6bNode,MOS6bNode);
+            TSTALLOC(MOS6DPdpPtr,MOS6dNodePrime,MOS6dNodePrime);
+            TSTALLOC(MOS6SPspPtr,MOS6sNodePrime,MOS6sNodePrime);
+            TSTALLOC(MOS6DdpPtr,MOS6dNode,MOS6dNodePrime);
+            TSTALLOC(MOS6GbPtr,MOS6gNode,MOS6bNode);
+            TSTALLOC(MOS6GdpPtr,MOS6gNode,MOS6dNodePrime);
+            TSTALLOC(MOS6GspPtr,MOS6gNode,MOS6sNodePrime);
+            TSTALLOC(MOS6SspPtr,MOS6sNode,MOS6sNodePrime);
+            TSTALLOC(MOS6BdpPtr,MOS6bNode,MOS6dNodePrime);
+            TSTALLOC(MOS6BspPtr,MOS6bNode,MOS6sNodePrime);
+            TSTALLOC(MOS6DPspPtr,MOS6dNodePrime,MOS6sNodePrime);
+            TSTALLOC(MOS6DPdPtr,MOS6dNodePrime,MOS6dNode);
+            TSTALLOC(MOS6BgPtr,MOS6bNode,MOS6gNode);
+            TSTALLOC(MOS6DPgPtr,MOS6dNodePrime,MOS6gNode);
+            TSTALLOC(MOS6SPgPtr,MOS6sNodePrime,MOS6gNode);
+            TSTALLOC(MOS6SPsPtr,MOS6sNodePrime,MOS6sNode);
+            TSTALLOC(MOS6DPbPtr,MOS6dNodePrime,MOS6bNode);
+            TSTALLOC(MOS6SPbPtr,MOS6sNodePrime,MOS6bNode);
+            TSTALLOC(MOS6SPdpPtr,MOS6sNodePrime,MOS6dNodePrime);
 
         }
     }

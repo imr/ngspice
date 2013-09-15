@@ -219,17 +219,17 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(DIOposPosPrimePtr,DIOposNode,DIOposPrimeNode)
-            TSTALLOC(DIOnegPosPrimePtr,DIOnegNode,DIOposPrimeNode)
-            TSTALLOC(DIOposPrimePosPtr,DIOposPrimeNode,DIOposNode)
-            TSTALLOC(DIOposPrimeNegPtr,DIOposPrimeNode,DIOnegNode)
-            TSTALLOC(DIOposPosPtr,DIOposNode,DIOposNode)
-            TSTALLOC(DIOnegNegPtr,DIOnegNode,DIOnegNode)
-            TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode)
+            TSTALLOC(DIOposPosPrimePtr,DIOposNode,DIOposPrimeNode);
+            TSTALLOC(DIOnegPosPrimePtr,DIOnegNode,DIOposPrimeNode);
+            TSTALLOC(DIOposPrimePosPtr,DIOposPrimeNode,DIOposNode);
+            TSTALLOC(DIOposPrimeNegPtr,DIOposPrimeNode,DIOnegNode);
+            TSTALLOC(DIOposPosPtr,DIOposNode,DIOposNode);
+            TSTALLOC(DIOnegNegPtr,DIOnegNode,DIOnegNode);
+            TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode);
         }
     }
     return(OK);

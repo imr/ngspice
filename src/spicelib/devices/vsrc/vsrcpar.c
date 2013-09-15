@@ -261,6 +261,17 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         }
         break;
 
+#ifdef SHARED_MODULE
+        case VSRC_EXTERNAL: {
+            here->VSRCfunctionType = EXTERNAL;
+            here->VSRCfuncTGiven = TRUE;
+            /* no coefficients
+            copy_coeffs(here, value);
+            */
+        }
+        break;
+#endif
+
         default:
             return(E_BADPARM);
     }

@@ -36,6 +36,8 @@ CCCSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case CCCS_CONTROL:
             value->uValue = here->CCCScontName;
             return (OK);
+        case CCCS_M:
+            value->rValue = here->CCCSmValue;
         case CCCS_POS_NODE:
             value->iValue = here->CCCSposNode;
             return (OK);

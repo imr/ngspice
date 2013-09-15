@@ -43,7 +43,7 @@ int num, i;
 
     mytype = INPtypelook("CplLines");
     if(mytype < 0 ) {
-        LITERR("Device type CplLines not supported by this binary\n")
+        LITERR("Device type CplLines not supported by this binary\n");
         return;
     }
     line = current->line;
@@ -87,7 +87,7 @@ int num, i;
             current->error = INPgetMod(ckt,model,&thismodel,tab);
             if(thismodel != NULL) {
                     if(mytype != thismodel->INPmodType) {
-                            LITERR("incorrect model type")
+                            LITERR("incorrect model type");
                             return;
                     }
                     mdfast = thismodel->INPmodfast;
@@ -97,32 +97,32 @@ int num, i;
                     if(!tab->defPmod) {
                             /* create default P model */
                             IFnewUid(ckt, &uid, NULL, "P", UID_MODEL, NULL);
-                            IFC(newModel, (ckt,type,&(tab->defPmod),uid))
+                            IFC(newModel, (ckt,type,&(tab->defPmod),uid));
                     }
                     mdfast = tab->defPmod;
             }
-            IFC(newInstance,(ckt,mdfast,&fast,name))
+            IFC(newInstance,(ckt,mdfast,&fast,name));
             INPgetTok(&line,&model,1);
             if ((strcmp(model, "length") == 0) || (strcmp(model, "len") == 0)) {
                 lenval = INPevaluate(&line,&error1,1);
                 lenvalgiven = 1;
             }
     } else  {
-            LITERR("model name is not found")
+            LITERR("model name is not found");
             return;
     }
 
-    /* IFC(bindNode,(ckt,fast,1,fakename)) */
+    /* IFC(bindNode,(ckt,fast,1,fakename)); */
 
     ptemp.iValue = num;
-    GCA(INPpName,("dimension", &ptemp,ckt,type,fast))
+    GCA(INPpName,("dimension", &ptemp,ckt,type,fast));
     ptemp.v.vec.sVec = nname1;
-    GCA(INPpName,("pos_nodes", &ptemp,ckt,type,fast))
+    GCA(INPpName,("pos_nodes", &ptemp,ckt,type,fast));
     ptemp.v.vec.sVec = nname2;
-    GCA(INPpName,("neg_nodes", &ptemp,ckt,type,fast))
+    GCA(INPpName,("neg_nodes", &ptemp,ckt,type,fast));
     if (error1 == 0 && lenvalgiven) {
             ptemp.rValue = lenval;
-            GCA(INPpName,("length",&ptemp,ckt,type,fast))
+            GCA(INPpName,("length",&ptemp,ckt,type,fast));
     }
 
     return;

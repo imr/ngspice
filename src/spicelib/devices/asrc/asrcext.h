@@ -16,3 +16,7 @@ extern int ASRCacLoad(GENmodel*,CKTcircuit*);
 extern int ASRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int ASRCunsetup(GENmodel*,CKTcircuit*);
 extern int ASRCtemp(GENmodel*,CKTcircuit*);
+
+#ifdef KIRCHHOFF
+extern int ASRCnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

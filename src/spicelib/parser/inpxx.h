@@ -43,6 +43,7 @@ double PTminus(double arg1, double arg2);
 double PTtimes(double arg1, double arg2);
 double PTdivide(double arg1, double arg2);
 double PTpower(double arg1, double arg2);
+double PTpwr(double arg1, double arg2);
 double PTacos(double arg);
 double PTacosh(double arg);
 double PTasin(double arg);

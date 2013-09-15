@@ -1,13 +1,14 @@
-/* Patch to noisean.c by Richard D. McRoberts.
- * Patched with modifications from Weidong Liu (2000)
- * Patched with modifications ftom Weidong Liu 
- * in bsim4.1.0 code
- */
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Gary W. Ng
 Modified: 2001 AlansFixes
 **********/
+
+/* Patch to noisean.c by Richard D. McRoberts.
+ * Patched with modifications from Weidong Liu (2000)
+ * Patched with modifications ftom Weidong Liu 
+ * in bsim4.1.0 code
+ */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/acdefs.h"
@@ -47,8 +48,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     inst = NULL;
     code = CKTtypelook("Vsource");
     if (code != -1) {
-        error = CKTfndDev(ckt, &code, &inst,
-                job->input, NULL, NULL);
+        error = CKTfndDev(ckt, &code, &inst, job->input, NULL);
 	if (!error && !((VSRCinstance *)inst)->VSRCacGiven) {
 	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
 	    strcpy(errMsg,noacinput);
@@ -58,8 +58,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     code = CKTtypelook("Isource");
     if (code != -1 && inst==NULL) {
-        error = CKTfndDev(ckt, &code, &inst,
-                job->input, NULL, NULL);
+        error = CKTfndDev(ckt, &code, &inst, job->input, NULL);
         if (error) {
 	    /* XXX ??? */
             SPfrontEnd->IFerror (ERR_WARNING,
@@ -119,8 +118,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	/* the current front-end needs the namelist to be fully
 		declared before an OUTpBeginplot */
 
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
 
 	data->numPlots = 0;                /* we don't have any plots  yet */
         error = CKTnoise(ckt,N_DENS,N_OPEN,data);
@@ -131,16 +129,15 @@ NOISEan (CKTcircuit *ckt, int restart)
 	 * plot
 	 */
 
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
-            freqUid, IF_REAL,
-            data->numPlots, data->namelist, IF_REAL, &(data->NplotPtr));
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
+                                           freqUid, IF_REAL,
+                                           data->numPlots, data->namelist, IF_REAL,
+                                           &(data->NplotPtr));
 	if (error) return(error);
 
         if (job->NstpType != LINEAR) {
-	    SPfrontEnd->OUTattributes (data->NplotPtr, NULL,
-		    OUT_SCALE_LOG, NULL);
+	    SPfrontEnd->OUTattributes (data->NplotPtr, NULL, OUT_SCALE_LOG, NULL);
 	}
 
     } else {   /* we must have paused before.  pick up where we left off */
@@ -166,11 +163,11 @@ NOISEan (CKTcircuit *ckt, int restart)
 	data->outNoiz = job->NsavOnoise;
 	data->inNoise = job->NsavInoise;
 	/* saj resume rawfile fix*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &(data->NplotPtr));
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &(data->NplotPtr));
 	/*saj*/
     }
 
@@ -278,11 +275,11 @@ NOISEan (CKTcircuit *ckt, int restart)
 
 	if (error) return(error);
 
-        SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "Integrated Noise - V^2 or A^2",
-            NULL, 0,
-            data->numPlots, data->namelist, IF_REAL, &(data->NplotPtr));
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                   "Integrated Noise - V^2 or A^2",
+                                   NULL, 0,
+                                   data->numPlots, data->namelist, IF_REAL,
+                                   &(data->NplotPtr));
 
 	error = CKTnoise(ckt,INT_NOIZ,N_CALC,data);
 	if (error) return(error);

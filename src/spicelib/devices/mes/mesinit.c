@@ -73,10 +73,15 @@ SPICEdev MESinfo = {
 #endif                        
  /* DEVinstSize   */ &MESiSize,
  /* DEVmodSize    */ &MESmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MESbindCSC,
  /* DEVbindCSCComplex */   MESbindCSCComplex,
  /* DEVbindCSCComplexToReal */  MESbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ MESnodeIsNonLinear
 #endif
 
 };

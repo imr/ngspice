@@ -2,16 +2,14 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 /* CKTsenUpdate(ckt)
  * this is a driver program to iterate through all the various
- * sensitivity update functions provided for the circuit elements 
- * in the given circuit 
+ * sensitivity update functions provided for the circuit elements
+ * in the given circuit
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -22,18 +20,17 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTsenUpdate(ckt)
-register CKTcircuit *ckt;
+CKTsenUpdate(CKTcircuit *ckt)
 {
-    register int i;
+    int i;
     int error;
 
-
-    for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i]->DEVsenUpdate && ckt->CKThead[i] ) {
+    for (i = 0; i < DEVmaxnum; i++)
+        if (DEVices[i] && DEVices[i]->DEVsenUpdate && ckt->CKThead[i]) {
             error = DEVices[i]->DEVsenUpdate (ckt->CKThead[i], ckt);
-            if(error) return(error);
+            if (error)
+                return error;
         }
-    }
-    return(OK);
+
+    return OK;
 }

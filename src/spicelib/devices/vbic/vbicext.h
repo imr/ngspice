@@ -26,6 +26,9 @@ extern int VBICtemp(GENmodel*,CKTcircuit*);
 extern int VBICtrunc(GENmodel*,CKTcircuit*,double*);
 extern int VBICnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 
+#ifdef KIRCHHOFF
+extern int VBICnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif
 #endif
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)

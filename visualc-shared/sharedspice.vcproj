@@ -26,6 +26,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(ConfigurationName)\conf.obj"
+				Outputs="$(ConfigurationName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -113,6 +116,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(ConfigurationName)\conf.obj"
+				Outputs="$(ConfigurationName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -200,6 +206,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Custom defined Build: Recompile conf.c with actual date"
+				CommandLine="del $(ConfigurationName)\conf.obj"
+				Outputs="$(ConfigurationName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"

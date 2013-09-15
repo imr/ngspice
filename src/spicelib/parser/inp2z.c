@@ -62,7 +62,7 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
     		    && thismodel->INPmodType != INPtypelook("HFET1")
     		    && thismodel->INPmodType != INPtypelook("HFET2")) 
     	{
-            LITERR("incorrect model type")
+            LITERR("incorrect model type");
             return;
         }
 	
@@ -79,8 +79,7 @@ void INP2Z(CKTcircuit *ckt, INPtables * tab, card * current)
 		
 	if (!tab->defZmod) {
 	    /* create default Z model */
-	    IFnewUid(ckt, &uid, NULL, "Z", UID_MODEL,
-		     NULL);
+	    IFnewUid(ckt, &uid, NULL, "Z", UID_MODEL, NULL);
 	    IFC(newModel, (ckt, type, &(tab->defZmod), uid));
 	}
 	mdfast = tab->defZmod;

@@ -28,10 +28,21 @@ double limitJunctionVoltage( double, double, int * );
 double limitVbe( double, double, int * );
 double limitVce( double, double, int * );
 double limitVgb( double, double, int * );
- 
- 
 
-
+/* Area Calculation Method (ACM) for MOS models (devsup.c) */
+int
+ACM_SourceDrainResistances(int, double, double, double, double, double, 
+                           double, double, int, double, double, double, 
+                           int, double, double, double, double *, double *);
+int
+ACM_saturationCurrents(int, int, int, double, double, double, double, double,
+                       double, int, double, int, double, int, double, int, 
+                       double, double *, double *);
+int
+ACM_junctionCapacitances(int, int, int, double, double, double, double, int, 
+                         double, int, double, int, double, int, double, 
+                         double, double, double, double *, double *,
+                         double *, double *, double *, double *);
 
 typedef struct SPICEdev {
     IFdevice DEVpublic;
@@ -108,6 +119,12 @@ typedef struct SPICEdev {
         /* routine to convert Real CSC array to Complex CSC array */
     int (*DEVbindCSCComplexToReal)(GENmodel *, CKTcircuit *) ;
         /* routine to convert Complex CSC array to Real CSC array */
+#endif
+
+#ifdef KIRCHHOFF
+    /* Francesco Lannutti */
+    int (*DEVnodeIsNonLinear)(GENmodel *, CKTcircuit *) ;
+        /* Routine to declare a node as NonLinear */
 #endif
 
 } SPICEdev;  /* instance of structure for each possible type of device */

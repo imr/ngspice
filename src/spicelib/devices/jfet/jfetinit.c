@@ -73,10 +73,15 @@ SPICEdev JFETinfo = {
 #endif                        
  /* DEVinstSize   */ &JFETiSize,
  /* DEVmodSize    */ &JFETmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   JFETbindCSC,
  /* DEVbindCSCComplex */   JFETbindCSCComplex,
  /* DEVbindCSCComplexToReal */  JFETbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ JFETnodeIsNonLinear
 #endif
 
 };

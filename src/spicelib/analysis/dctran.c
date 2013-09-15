@@ -34,6 +34,9 @@ extern struct dbcomm *dbs;
 #include "ngspice/cluster.h"
 #endif
 
+#ifdef SHARED_MODULE
+extern int add_bkpt(void);
+#endif
 
 #define INIT_STATS() \
 do { \
@@ -78,9 +81,8 @@ DCtran(CKTcircuit *ckt,
     int firsttime;
     int error;
 #ifdef WANT_SENSE2
-#ifdef SENSDEBUG
-    FILE *outsen;
-#endif /* SENSDEBUG */
+    int save, save2, size;
+    long save1;
 #endif
     int save_order;
     long save_mode;
@@ -132,7 +134,9 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTbreaks[0] = 0;
         ckt->CKTbreaks[1] = ckt->CKTfinalTime;
         ckt->CKTbreakSize = 2;
-
+#ifdef SHARED_MODULE
+        add_bkpt();
+#endif
 #ifdef XSPICE
 /* gtri - begin - wbk - 12/19/90 - Modify setting of CKTminBreak */
         /* Set to 10 times delmin for ATESSE 1 compatibity */
@@ -155,13 +159,12 @@ DCtran(CKTcircuit *ckt,
 #endif
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
-                "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            ckt->CKTcurJob->JOBname,
-            timeUid, IF_REAL,
-            numNames, nameList, IF_REAL, &(job->TRANplot));
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           ckt->CKTcurJob->JOBname,
+                                           timeUid, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &(job->TRANplot));
         tfree(nameList);
         if(error) return(error);
 
@@ -316,7 +319,10 @@ DCtran(CKTcircuit *ckt,
             save2 = ckt->CKTorder;
             ckt->CKTmode = save_mode;
             ckt->CKTorder = save_order;
-            if(error = CKTsenDCtran(ckt)) return(error);
+            error = CKTsenDCtran(ckt);
+            if (error)
+                return(error);
+
             ckt->CKTmode = save1;
             ckt->CKTorder = save2;
         }
@@ -348,11 +354,11 @@ DCtran(CKTcircuit *ckt,
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
         /* To get rawfile working saj*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &(job->TRANplot));
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &(job->TRANplot));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
@@ -479,9 +485,6 @@ DCtran(CKTcircuit *ckt,
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
             ckt->CKTsenInfo->SENmode = save;
-#ifdef SENSDEBUG
-            fclose(outsen);
-#endif /* SENSDEBUG */
         }
 #endif
         return(OK);
@@ -508,7 +511,7 @@ resume:
     if (ckt->CKTtime == 0.)
         SetAnalyse( "tran init", 0);
     else
-        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime) + 0.5);
+        SetAnalyse( "tran", (int)((ckt->CKTtime * 1000.) / ckt->CKTfinalTime + 0.5));
 #endif
     ckt->CKTdelta =
             MIN(ckt->CKTdelta,ckt->CKTmaxStep);
@@ -546,15 +549,37 @@ resume:
             ckt->CKTbreaks[1] - ckt->CKTbreaks[0]));
 
         if(firsttime) {
+            /* set a breakpoint to reduce ringing of current in devices */
+            if (ckt->CKTmode&MODEUIC)
+                CKTsetBreak(ckt,ckt->CKTstep);
+
             ckt->CKTdelta /= 10;
 #ifdef STEPDEBUG
             (void)printf("delta cut for initial timepoint\n");
 #endif
         }
 
-#ifdef XSPICE
+#ifndef XSPICE
+        /* don't want to get below delmin for no reason */
+        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
+#endif
+
     }
 
+#ifndef XSPICE
+    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
+#ifdef STEPDEBUG
+        (void)printf("delta cut to %g to hit breakpoint\n",ckt->CKTdelta);
+        fflush(stdout);
+#endif
+        ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
+    }
+#endif /* !XSPICE */
+
+
+#ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
     if(ckt->CKTtime + ckt->CKTdelta >= g_mif_info.breakpoint.current) {
@@ -595,30 +620,7 @@ resume:
     }
 
 /* gtri - end - wbk - Modify Breakpoint stuff */
-#else /* !XSPICE */
 
-        /* don't want to get below delmin for no reason */
-        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
-    }
-    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
-        ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
-#ifdef STEPDEBUG
-        (void)printf("delta cut to %g to hit breakpoint\n",ckt->CKTdelta);
-        fflush(stdout);
-#endif
-        ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
-    }
-#ifdef CLUSTER
-    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
-      printf("Sync error!\n");
-      exit(0);
-    }
-#endif
-
-#endif /* XSPICE */
-
-#ifdef XSPICE
 /* gtri - begin - wbk - Do event solution */
 
     if(ckt->evt->counts.num_insts > 0) {
@@ -661,6 +663,15 @@ resume:
     } /* end if there are event instances */
 
 /* gtri - end - wbk - Do event solution */
+#else
+
+#ifdef CLUSTER
+    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
+      printf("Sync error!\n");
+      exit(0);
+    }
+#endif /* CLUSTER */
+
 #endif
     for(i=5; i>=0; i--)
         ckt->CKTdeltaOld[i+1] = ckt->CKTdeltaOld[i];
@@ -792,7 +803,10 @@ resume:
                     save2 = ckt->CKTorder;
                     ckt->CKTmode = save_mode;
                     ckt->CKTorder = save_order;
-                    if(error = CKTsenDCtran(ckt)) return(error);
+                    error = CKTsenDCtran (ckt);
+                    if (error)
+                        return(error);
+
                     ckt->CKTmode = save1;
                     ckt->CKTorder = save2;
                 }
@@ -852,7 +866,10 @@ resume:
                     save2 = ckt->CKTorder;
                     ckt->CKTmode = save_mode;
                     ckt->CKTorder = save_order;
-                    if(error = CKTsenDCtran(ckt)) return(error);
+                    error = CKTsenDCtran(ckt);
+                    if (error)
+                        return (error);
+
                     ckt->CKTmode = save1;
                     ckt->CKTorder = save2;
                 }

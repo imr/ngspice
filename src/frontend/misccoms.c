@@ -189,6 +189,11 @@ com_version(wordlist *wl)
             fprintf(cp_out, "** %s\n", Spice_Notice);
         if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
             fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
+
+#ifdef KIRCHHOFF
+            fprintf(cp_out, "** KCL Verification enabled.\n");
+#endif
+
         fprintf(cp_out, "******\n");
 
     } else {
@@ -279,6 +284,9 @@ com_version(wordlist *wl)
 #endif
 #ifdef EXP_DEV
             fprintf(cp_out, "** Experimental devices enabled.\n");
+#endif
+#ifdef KIRCHHOFF
+            fprintf(cp_out, "** KCL Verification enabled.\n");
 #endif
             fprintf(cp_out, "******\n");
 

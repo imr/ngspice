@@ -29,6 +29,7 @@ libcap_la_SOURCES =	\
 	captemp.c	\
 	captrunc.c
 
+
 if KLU_WANTED
 libcap_la_SOURCES += capbindCSC.c
 endif
@@ -39,6 +40,10 @@ endif
 
 if UMFPACK_WANTED
 libcap_la_SOURCES += capbindCSC.c
+endif
+
+if KIRCHHOFF_WANTED
+libcap_la_SOURCES += capnode.c
 endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

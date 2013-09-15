@@ -106,7 +106,7 @@ extern double scalbn(double, int);
 extern double logb(double);
 #endif
 
-static void LoadGmin(SMPmatrix *eMatrix, double Gmin);
+static void LoadGmin(SMPmatrix *Matrix, double Gmin);
 
 /*
  * SMPaddElt()
@@ -183,7 +183,7 @@ SMPcReorder(SMPmatrix *Matrix, double PivTol, double PivRel,
     *NumSwaps = 1;
     spSetComplex( Matrix->SPmatrix );
     return spOrderAndFactor( Matrix->SPmatrix, NULL,
-                             (spREAL)PivRel, (spREAL)PivTol, YES );
+                             PivRel, PivTol, YES );
 }
 
 /*
@@ -195,7 +195,7 @@ SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     spSetReal( Matrix->SPmatrix );
     LoadGmin( Matrix, Gmin );
     return spOrderAndFactor( Matrix->SPmatrix, NULL,
-                             (spREAL)PivRel, (spREAL)PivTol, YES );
+                             PivRel, PivTol, YES );
 }
 
 /*
@@ -504,7 +504,7 @@ SMPcAddCol(SMPmatrix *eMatrix, int Accum_Col, int Addend_Col)
 
     Addend = Matrix->FirstInCol[Addend_Col];
     Prev = &Matrix->FirstInCol[Accum_Col];
-    Accum = *Prev;;
+    Accum = *Prev;
 
     while (Addend != NULL) {
 	while (Accum && Accum->Row < Addend->Row) {

@@ -107,11 +107,11 @@ time1 = SPfrontEnd->IFseconds();
 
 	if (ckt->CKTkeepOpInfo) {
 	    /* Dump operating point. */
-            error = SPfrontEnd->OUTpBeginPlot (
-                ckt, ckt->CKTcurJob,
-                "Distortion Operating Point",
-                NULL, IF_REAL,
-                numNames, nameList, IF_REAL, &acPlot);
+            error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                               "Distortion Operating Point",
+                                               NULL, IF_REAL,
+                                               numNames, nameList, IF_REAL,
+                                               &acPlot);
 	    if(error) return(error);
 	    CKTdump(ckt, 0.0, acPlot);
 	    SPfrontEnd->OUTendPlot (acPlot);
@@ -516,16 +516,14 @@ time1 = SPfrontEnd->IFseconds();
 	if (! job->Df2wanted) {
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
-        SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "DISTORTION - 2nd harmonic",
-            freqUid, IF_REAL,
-            numNames, nameList, IF_COMPLEX, &acPlot);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                   "DISTORTION - 2nd harmonic",
+                                   freqUid, IF_REAL,
+                                   numNames, nameList, IF_COMPLEX,
+                                   &acPlot);
         if (job->DstepType != LINEAR) {
-	    SPfrontEnd->OUTattributes (acPlot, NULL,
-		OUT_SCALE_LOG, NULL);
+	    SPfrontEnd->OUTattributes (acPlot, NULL, OUT_SCALE_LOG, NULL);
 	}
        for (i=0; i< displacement ; i++)
        {
@@ -542,13 +540,12 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
-        SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "DISTORTION - 3rd harmonic",
-            freqUid, IF_REAL,
-            numNames, nameList, IF_COMPLEX, &acPlot);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                   "DISTORTION - 3rd harmonic",
+                                   freqUid, IF_REAL,
+                                   numNames, nameList, IF_COMPLEX,
+                                   &acPlot);
        for (i=0; i< displacement ; i++)
        {
 	DkerProc(D_THRF1,job->r3H11stor[i],
@@ -566,13 +563,12 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
-        SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "DISTORTION - IM: f1+f2",
-            freqUid, IF_REAL,
-            numNames, nameList, IF_COMPLEX, &acPlot);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                   "DISTORTION - IM: f1+f2",
+                                   freqUid, IF_REAL,
+                                   numNames, nameList, IF_COMPLEX,
+                                   &acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {
 	DkerProc(D_F1PF2,job->r2H12stor[i],
@@ -588,13 +584,12 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
-        SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "DISTORTION - IM: f1-f2",
-            freqUid, IF_REAL,
-            numNames, nameList, IF_COMPLEX, &acPlot);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                   "DISTORTION - IM: f1-f2",
+                                   freqUid, IF_REAL,
+                                   numNames, nameList, IF_COMPLEX,
+                                   &acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {
 	DkerProc(D_F1MF2,
@@ -611,13 +606,12 @@ time1 = SPfrontEnd->IFseconds();
 
 	error = CKTnames(ckt,&numNames,&nameList);
 	if(error) return(error);
-	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL,
-		"frequency", UID_OTHER, NULL);
-        SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "DISTORTION - IM: 2f1-f2",
-            freqUid, IF_REAL,
-            numNames, nameList, IF_COMPLEX, &acPlot);
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                   "DISTORTION - IM: 2f1-f2",
+                                   freqUid, IF_REAL,
+                                   numNames, nameList, IF_COMPLEX,
+                                   &acPlot);
 	   for (i=0; i< displacement ; i++)
 	   {
 	DkerProc(D_2F1MF2,

@@ -10,91 +10,81 @@ Author: 1985 Thomas L. Quarles
 #include "string.h"
 
 
-int
-CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast, IFuid modname)
+static GENinstance *
+find_instance(GENinstance *here, IFuid name)
 {
-   GENinstance *here;
-   GENmodel *mods;
+    for (; here; here = here->GENnextInstance)
+        if (here->GENname == name)
+            return here;
 
-   if(fast != NULL && 
-      *fast != NULL) 
-   {
-   /* already have fast, so nothing much to do just get & set type */
-      if (type)
-         *type = (*fast)->GENmodPtr->GENmodType;
-      return(OK);
-   }
+    return NULL;
+}
 
-   if(modfast) {
-      /* have model, just need device */
-      mods = modfast;
-      for (here = mods->GENinstances; here != NULL; here = here->GENnextInstance) {
-         if (here->GENname == name) {
-            if (fast != NULL)
-               *fast = here;
+
+int
+CKTfndDev(CKTcircuit *ckt, int *type, GENinstance **fast, IFuid name, GENmodel *modfast)
+{
+    GENinstance *here;
+    GENmodel *mods;
+
+    /* we know the device instance `fast' */
+    if (fast && *fast) {
+        if (type)
+            *type = (*fast)->GENmodPtr->GENmodType;
+        return OK;
+    }
+
+    /* we know the model `modfast', but need to find the device instance */
+    if (modfast) {
+        here = find_instance(modfast->GENinstances, name);
+        if (here) {
+            if (fast)
+                *fast = here;
 
             if (type)
-               *type = mods->GENmodType;
+                *type = modfast->GENmodType;
 
             return OK;
-         }
-      }
-      return E_NODEV;
-   }
+        }
+        return E_NODEV;
+    }
 
-   if (*type >= 0 && *type < DEVmaxnum) {
-      /* have device type, need to find model & device */
-      /* look through all models */
-      for (mods = ckt->CKThead[*type];
-             mods != NULL ; 
-             mods = mods->GENnextModel) 
-      {
-         /* and all instances */
-         if (modname == NULL || mods->GENmodName == modname) {
-            for (here = mods->GENinstances;
-               here != NULL; 
-               here = here->GENnextInstance) 
-            {
-               if (here->GENname == name) {
-                  if (fast != 0)
-                     *fast = here;
-                  return OK;
-               }
-            }
-            if(mods->GENmodName == modname) {
-               return E_NODEV;
-            }
-         }
-     }
-     return E_NOMOD;
-   } else if (*type == -1) {
-      /* look through all types (UGH - worst case - take forever) */ 
-      for(*type = 0; *type < DEVmaxnum; (*type)++) {
-         /* need to find model & device */
-         /* look through all models */
-         for(mods = ckt->CKThead[*type]; mods != NULL;
-            mods = mods->GENnextModel) 
-         {
+    /* we know device `type', but need to find model and device instance */
+    if (*type >= 0 && *type < DEVmaxnum) {
+        /* look through all models */
+        for (mods = ckt->CKThead[*type]; mods ; mods = mods->GENnextModel) {
             /* and all instances */
-            if(modname == NULL || mods->GENmodName == modname) {
-               for (here = mods->GENinstances;
-                  here != NULL; 
-                  here = here->GENnextInstance) 
-               {
-                  if (here->GENname == name) {
-                     if(fast != 0)
+                here = find_instance(mods->GENinstances, name);
+                if (here) {
+                    if (fast)
                         *fast = here;
-                     return OK;
-                  }
-               }
-               if(mods->GENmodName == modname) {
-                  return E_NODEV;
-               }
+                    return OK;
+                }
+                if (mods->GENmodName == NULL)
+                    return E_NODEV;
+        }
+        return E_NOMOD;
+    }
+
+    /* we don't even know `type', search all of them */
+    if (*type == -1) {
+        for (*type = 0; *type < DEVmaxnum; (*type)++) {
+            /* look through all models */
+            for (mods = ckt->CKThead[*type]; mods; mods = mods->GENnextModel) {
+                /* and all instances */
+                    here = find_instance(mods->GENinstances, name);
+                    if (here) {
+                        if (fast)
+                            *fast = here;
+                        return OK;
+                    }
+                    if (mods->GENmodName == NULL)
+                        return E_NODEV;
             }
-         }
-      }
-      *type = -1;
-      return E_NODEV;
-   } else
-   return E_BADPARM;
+        }
+        *type = -1;
+        return E_NODEV;
+    }
+
+    return E_BADPARM;
 }

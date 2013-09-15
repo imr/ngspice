@@ -237,13 +237,12 @@ DCpss(CKTcircuit *ckt,
 	/* Time Domain plot start and prepared to be filled in later */
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL,
-                "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            "Time Domain Periodic Steady State Analysis",
-            timeUid, IF_REAL,
-            numNames, nameList, IF_REAL, &(job->PSSplot_td));
+        SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           "Time Domain Periodic Steady State Analysis",
+                                           timeUid, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &(job->PSSplot_td));
         tfree(nameList);
         if(error) return(error);
 
@@ -406,11 +405,11 @@ DCpss(CKTcircuit *ckt,
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
         firsttime=0;
         /* To get rawfile working saj*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &(job->PSSplot_td));
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &(job->PSSplot_td));
         if(error) {
             fprintf(stderr, "Couldn't relink rawfile\n");
             return error;
@@ -1039,8 +1038,11 @@ DCpss(CKTcircuit *ckt,
             if (error)
                 return (error) ;
             SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL) ;
-            error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob, "Frequency Domain Periodic Steady State Analysis",
-                                               freqUid, IF_REAL, numNames, nameList, IF_REAL, &(job->PSSplot_fd)) ;
+            error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                               "Frequency Domain Periodic Steady State Analysis",
+                                               freqUid, IF_REAL,
+                                               numNames, nameList, IF_REAL,
+                                               &(job->PSSplot_fd)) ;
             tfree (nameList) ;
             SPfrontEnd->OUTattributes (job->PSSplot_fd, NULL, PLOT_COMB, NULL) ;
 
@@ -1204,9 +1206,25 @@ resume:
 #endif
         }
 
-#ifdef XSPICE
+#ifndef XSPICE
+        /* don't want to get below delmin for no reason */
+        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
+#endif
+
     }
 
+#ifndef XSPICE
+    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
+        ckt->CKTsaveDelta = ckt->CKTdelta;
+        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
+        /* fprintf (stderr, "delta cut to %g to hit breakpoint\n" ,ckt->CKTdelta) ; */
+        fflush(stdout);
+        ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
+    }
+#endif /* !XSPICE */
+
+
+#ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
     if(ckt->CKTtime + ckt->CKTdelta >= g_mif_info.breakpoint.current) {
@@ -1247,28 +1265,7 @@ resume:
     }
 
 /* gtri - end - wbk - Modify Breakpoint stuff */
-#else /* !XSPICE */
 
-        /* don't want to get below delmin for no reason */
-        ckt->CKTdelta = MAX(ckt->CKTdelta, ckt->CKTdelmin*2.0);
-    }
-    else if(ckt->CKTtime + ckt->CKTdelta >= ckt->CKTbreaks[0]) {
-        ckt->CKTsaveDelta = ckt->CKTdelta;
-        ckt->CKTdelta = ckt->CKTbreaks[0] - ckt->CKTtime;
-        /* fprintf (stderr, "delta cut to %g to hit breakpoint\n" ,ckt->CKTdelta) ; */
-        fflush(stdout);
-        ckt->CKTbreak = 1; /* why? the current pt. is not a bkpt. */
-    }
-#ifdef CLUSTER
-    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
-      fprintf (stderr, "Sync error!\n");
-      exit(0);
-    }
-#endif
-
-#endif /* XSPICE */
-
-#ifdef XSPICE
 /* gtri - begin - wbk - Do event solution */
 
     if(ckt->evt->counts.num_insts > 0) {
@@ -1311,6 +1308,15 @@ resume:
     } /* end if there are event instances */
 
 /* gtri - end - wbk - Do event solution */
+#else
+
+#ifdef CLUSTER
+    if(!CLUsync(ckt->CKTtime,&ckt->CKTdelta,0)) {
+      fprintf (stderr, "Sync error!\n");
+      exit(0);
+    }
+#endif /* CLUSTER */
+
 #endif
 
     /* What is that??? */

@@ -4,10 +4,10 @@ Author: 1985 Wayne A. Christopher
 **********/
 
 /*
-   For dealing with spice input decks and command scripts
+  For dealing with spice input decks and command scripts
 
-   Central function is inp_readall()
- */
+  Central function is inp_readall()
+*/
 
 #include "ngspice/ngspice.h"
 
@@ -20,6 +20,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "inpcom.h"
 #include "variable.h"
+#include "subckt.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "ngspice/stringutil.h"
 #include "ngspice/wordlist.h"
@@ -35,20 +36,37 @@ Author: 1985 Wayne A. Christopher
 /*#define TRACE*/
 
 /* globals -- wanted to avoid complicating inp_readall interface */
-static char *library_name[1000];
-static char *section_name[1000][1000];
-static struct line *section_ref[1000][1000];
-static struct line *library_deck[1000];
+#define N_LIBRARIES       1000
+#define N_SECTIONS        1000
+#define N_PARAMS          1000
+#define N_SUBCKT_W_PARAMS 4000
+
+static struct library {
+    char *name;
+    struct line *deck;
+} libraries[N_LIBRARIES];
+
 static int  num_libraries;
-static int  num_sections[1000];
-static      char *global;
-static char *subckt_w_params[1000];
-static int  num_subckt_w_params;
-static char *func_names[1000];
-static char *func_params[1000][1000];
-static char *func_macro[5000];
-static int  num_functions;
-static int  num_parameters[1000];
+
+struct names {
+    char *names[N_SUBCKT_W_PARAMS];
+    int  num_names;
+};
+
+struct function_env
+{
+    struct function_env *up;
+
+    struct function {
+        struct function *next;
+        char *name;
+        char *macro;
+        char *params[N_PARAMS];
+        int   num_parameters;
+    } *functions;
+};
+
+
 static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
@@ -64,21 +82,21 @@ static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char *s);
-static void inp_fix_for_numparam(struct line *deck);
+static void inp_fix_for_numparam(struct names *subckt_w_params, struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
-static void collect_section_references(struct line *deck, char *section_name_);
-static void inp_init_lib_data(void);
-static void inp_grab_func(struct line *deck);
-static void inp_fix_inst_calls_for_numparam(struct line *deck);
-static void inp_expand_macros_in_func(void);
-static void inp_expand_macros_in_deck(struct line *deck);
+static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
+static void inp_grab_func(struct function_env *, struct line *deck);
+static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck);
+static void inp_expand_macros_in_func(struct function_env *);
+static struct line *inp_expand_macros_in_deck(struct function_env *, struct line *deck);
 static void inp_fix_param_values(struct line *deck);
-static void inp_reorder_params(struct line *deck, struct line *list_head, struct line *end);
+static void inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line *list_head, struct line *end);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
 static void inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c);
 static char *inp_remove_ws(char *s);
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
+static void inp_dot_if(struct line *deck);
 
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct line *start_card, int no_of_lines);
@@ -92,42 +110,99 @@ static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 
-static char *skip_back_non_ws(char *d) { while (*d && !isspace(*d)) d--; return d; }
+static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace(d[-1])) d--; return d; }
+static char *skip_back_ws(char *d)     { while (isspace(d[-1]))           d--; return d; }
 static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
-static char *skip_back_ws(char *d)     { while (isspace(*d))        d--; return d; }
 static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
+
+static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace(d[-1])) d--; return d; }
+static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace(d[-1])) d--; return d; }
+
+static void tprint(struct line *deck);
 
 #ifndef XSPICE
 static void inp_poly_err(struct line *deck);
 #endif
 
 
-static int
+static struct line *
+xx_new_line(struct line *next, char *line, int linenum, int linenum_orig)
+{
+    struct line *x = TMALLOC(struct line, 1);
+
+    x->li_next = next;
+    x->li_error = NULL;
+    x->li_actual = NULL;
+    x->li_line = line;
+    x->li_linenum = linenum;
+    x->li_linenum_orig = linenum_orig;
+
+    return x;
+}
+
+
+static struct library *
+new_lib(void)
+{
+    if (num_libraries >= N_LIBRARIES) {
+        fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    return & libraries[num_libraries++];
+}
+
+
+static struct library *
 find_lib(char *name)
 {
     int i;
+
     for (i = 0; i < num_libraries; i++)
-        if (cieq(library_name[i], name))
-            return i;
-    return -1;
+        if (cieq(libraries[i].name, name))
+            return & libraries[i];
+
+    return NULL;
 }
 
 
-static int
-find_section(int lib_idx, char *section_name_) {
-    int j;
-    for (j = 0; j < num_sections[lib_idx]; j++)
-        if (strcmp(section_name[lib_idx][j], section_name_) == 0)
-            return j;
-    return -1;
-}
+static struct line *
+find_section_definition(struct line *c, char *name)
+{
+    for (; c; c = c->li_next) {
 
+        char *line = c->li_line;
 
-static void
-remember_section_ref(int lib_idx, char *section_name_, struct line *deck) {
-    int section_idx = num_sections[lib_idx]++;
-    section_ref[lib_idx][section_idx] = deck;
-    section_name[lib_idx][section_idx] = strdup(section_name_);
+        if (ciprefix(".lib", line)) {
+
+            char *s, *t, *y;
+
+            s = skip_non_ws(line);
+            while (isspace(*s) || isquote(*s))
+                s++;
+            for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+                ;
+            y = t;
+            while (isspace(*y) || isquote(*y))
+                y++;
+
+            if (!*y) {
+                /* library section definition: `.lib <section-name>' .. `.endl' */
+
+                char keep_char = *t;
+                *t = '\0';
+
+                if (strcasecmp(name, s) == 0) {
+                    *t = keep_char;
+                    return c;
+                }
+
+                *t = keep_char;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 
@@ -142,7 +217,9 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
     }
 
-    if (find_lib(y) < 0) {
+    if (!find_lib(y)) {
+
+        struct library *lib;
 
         bool dir_name_flag = FALSE;
         FILE *newfp = inp_pathopen(y, "r");
@@ -158,179 +235,181 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             newfp = inp_pathopen(big_buff2, "r");
             if (!newfp) {
                 fprintf(cp_err, "Error: Could not find library file %s\n", y);
-                if (copyy)
-                    tfree(copyy); /* allocated by the cp_tildexpand() above */
+                tfree(copyy); /* allocated by the cp_tildexpand() above */
                 return FALSE;
             }
 
             dir_name_flag = TRUE;
         }
 
-        library_name[num_libraries++] = strdup(y);
+        lib = new_lib();
+
+        lib->name = strdup(y);
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
+            lib->deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
             tfree(y_dir_name);
         } else {
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
+            lib->deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
         }
 
         fclose(newfp);
     }
 
-    if (copyy)
-        tfree(copyy);   /* allocated by the cp_tildexpand() above */
+    tfree(copyy);   /* allocated by the cp_tildexpand() above */
 
     return TRUE;
 }
 
 
-static int
-expand_section_references(int line_number)
+static struct names *
+new_names(void)
 {
-    struct line *tmp_ptr = NULL, *next;
-    int lib_idx;
+    struct names *p = TMALLOC(struct names, 1);
+    p -> num_names = 0;
 
-    for (lib_idx = 0; lib_idx < num_libraries; lib_idx++) {
-        bool found_section = FALSE;
-        struct line *working = library_deck[lib_idx];
-        while (working) {
-            char *buffer = working->li_line;
+    return p;
+}
 
-            if (found_section && ciprefix(".endl", buffer)) {
 
-                struct line *next = working->li_next;
+static void
+delete_names(struct names *p)
+{
+    tfree(p);
+}
 
-                /* Make the .endl a comment */
-                *buffer = '*';
-                found_section = FALSE;
 
-                /* append the line following the library section reference */
-                working->li_next = tmp_ptr;
+static void
+inp_stitch_continuation_lines(struct line *working)
+{
+    struct line *prev = NULL;
 
-                /* and continue with the line following */
-                /* the .endl of this section definition */
-                working = next;
+    while (working) {
+        char *s, c, *buffer;
+
+        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
+#endif
+
+        switch (c) {
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* this used to be commented out.  Why? */
+            /*  prev = NULL; */
+            working = working->li_next;  /* for these chars, go to next card */
+            break;
+
+        case '+':   /* handle continuation */
+            if (!prev) {
+                working->li_error = copy("Illegal continuation line: ignored.");
+                working = working->li_next;
+                break;
+            }
+
+            /* create buffer and write last and current line into it. */
+            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
+            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
+
+            s = prev->li_line;
+            prev->li_line = buffer;
+            prev->li_next = working->li_next;
+            working->li_next = NULL;
+            if (prev->li_actual) {
+                struct line *end;
+                for (end = prev->li_actual; end->li_next; end = end->li_next)
+                    ;
+                end->li_next = working;
+                tfree(s);
+            } else {
+                prev->li_actual = xx_new_line(working, s, prev->li_linenum, 0);
+            }
+            working = prev->li_next;
+            break;
+
+        default:  /* regular one-line card */
+            prev = working;
+            working = working->li_next;
+            break;
+        }
+    }
+}
+
+
+/*
+ * search for `=' assignment operator
+ *   take care of `!=' `<=' `==' and `>='
+ */
+
+static char *
+find_assignment(char *str)
+{
+    char *p = str;
+
+    while ((p = strchr(p, '=')) != NULL) {
+
+        // check for equality '=='
+        if (p[1] == '=') {
+            p += 2;
+            continue;
+        }
+
+        // check for '!=', '<=', '>='
+        if (p > str)
+            if (p[-1] == '!' || p[-1] == '<' || p[-1] == '>') {
+                p += 1;
                 continue;
             }
 
-            if (ciprefix(".lib", buffer)) {
-
-                /* here we expect a libray section definition */
-                /* library section definition: `.lib <section-name>' .. `.endl' */
-
-                char keep_char;
-                int section_idx;
-                char *s, *t;
-
-                if (found_section) {
-                    fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                s = skip_non_ws(buffer);           /* skip over .lib */
-                while (isspace(*s) || isquote(*s))
-                    s++;                           /* advance past space chars */
-                for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
-                    ;                              /* skip to end of word */
-                keep_char = *t;
-                *t = '\0';
-
-                /* check if we remember this section having been referenced somewhere */
-                section_idx = find_section(lib_idx, s);
-
-                *t = keep_char;
-
-                found_section = (section_idx >= 0);
-
-                if (found_section) {
-
-                    struct line *c;
-                    int line_number_lib;
-
-                    /* make the .lib of this library section definition a comment */
-                    *buffer = '*';
-
-                    /* tmp_ptr is the line following the library section reference */
-                    tmp_ptr = section_ref[lib_idx][section_idx]->li_next;
-
-                    /* insert the section definition here, */
-                    /* just behind the remembered section reference */
-                    section_ref[lib_idx][section_idx]->li_next = working;
-
-                    /* renumber lines */
-                    line_number_lib = 1;
-                    for (c = working; !ciprefix(".endl", c->li_line); c = c->li_next) {
-                        c->li_linenum = line_number++;
-                        c->li_linenum_orig = line_number_lib++;
-                    }
-                    c->li_linenum = line_number++;  // renumber endl line
-                    c->li_linenum_orig = line_number_lib++;
-                }
-            }
-
-            next = working->li_next;
-
-            /* drop this line in the current library file, if
-             *   it is outside a library section definition
-             * or
-             *   it is part of an unused library section definition
-             */
-
-            if (!found_section) {
-                tfree(working->li_line);
-                tfree(working);
-            }
-
-            working = next;
-        }
-
-        if (found_section) {
-            fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-            controlled_exit(EXIT_FAILURE);
-        }
+        return p;
     }
 
-    return line_number;
+    return NULL;
 }
 
 
 /*-------------------------------------------------------------------------
- Read the entire input file and return  a pointer to the first line of
- the linked list of 'card' records in data.  The pointer is stored in
- *data.
- Called from fcn inp_spsource() in inp.c to load circuit or command files.
- Called from fcn com_alter_mod() in device.c to load model files.
- Called from here to load .library or .include files.
+  Read the entire input file and return  a pointer to the first line of
+  the linked list of 'card' records in data.  The pointer is stored in
+  *data.
+  Called from fcn inp_spsource() in inp.c to load circuit or command files.
+  Called from fcn com_alter_mod() in device.c to load model files.
+  Called from here to load .library or .include files.
 
- Procedure:
- read in all lines & put them in the struct cc
-   read next line
-   process .TITLE line
-     store contents in string new_title
-   process .lib lines
-     read file and library name, open file using fcn inp_pathopen()
-     read file contents and put into struct library_deck[], one entry per .lib line
-   process .inc lines
-     read file and library name, open file using fcn inp_pathopen()
-     read file contents and add lines to cc
-   make line entry lower case
-   allow for shell end of line continuation (\\)
-     add '+' to beginning of next line
-   add line entry to list cc
- add '.global gnd'
- add libraries
-   find library section
-   add lines
- add .end card
- strip end-of-line comments
- make continuation lines a single line
-*** end of processing for command files ***
- start preparation of input deck for numparam
-   ...
- debug printout to debug-out.txt
- *-------------------------------------------------------------------------*/
+  Procedure:
+  read in all lines & put them in the struct cc
+  read next line
+  process .TITLE line
+  store contents in string new_title
+  process .lib lines
+  read file and library name, open file using fcn inp_pathopen()
+  read file contents and put into struct libraries[].deck, one entry per .lib line
+  process .inc lines
+  read file and library name, open file using fcn inp_pathopen()
+  read file contents and add lines to cc
+  make line entry lower case
+  allow for shell end of line continuation (\\)
+  add '+' to beginning of next line
+  add line entry to list cc
+  add '.global gnd'
+  add libraries
+  find library section
+  add lines
+  add .end card
+  strip end-of-line comments
+  make continuation lines a single line
+  *** end of processing for command files ***
+  start preparation of input deck for numparam
+  ...
+  debug printout to debug-out.txt
+  *-------------------------------------------------------------------------*/
+
 struct line *
 inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
@@ -340,8 +419,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
    intfile: in, TRUE if deck is generated from internal circarray
 */
 {
-    struct line *end = NULL, *cc = NULL, *prev, *working, *newcard, *global_card;
-    char *buffer = NULL, c;
+    struct line *end = NULL, *cc = NULL, *working;
+    char *buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
     char big_buff[5000];
@@ -352,21 +431,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 #endif
     char *new_title = NULL;
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
-    int line_number_orig = 1, line_number_inc = 1;
-    unsigned int no_braces = 0; /* number of '{' */
+    int line_number_orig = 1;
     int cirlinecount = 0; /* length of circarray */
-
-    size_t max_line_length; /* max. line length in input deck */
-
-    struct line *tmp_ptr1 = NULL;
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
 
     if (call_depth == 0) {
-        num_subckt_w_params = 0;
         num_libraries       = 0;
-        num_functions       = 0;
-        global              = NULL;
         found_end           = FALSE;
         inp_compat_mode = ngspice_compat_mode();
     }
@@ -415,7 +486,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 }
             }
 
-        /* gtri - end - 12/12/90 */
+            /* gtri - end - 12/12/90 */
 #else
             buffer = readline(fp);
             if(!buffer)
@@ -451,8 +522,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             s = skip_ws(s);            /* advance past space chars */
 
             /* only the last title line remains valid */
-            if (new_title != NULL)
-                tfree(new_title);
+            tfree(new_title);
             new_title = copy(s);
             if ((s = strchr(new_title, '\n')) != NULL)
                 *s = ' ';
@@ -461,50 +531,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* now handle .lib statements */
         if (ciprefix(".lib", buffer)) {
-
-            char *y = NULL;     /* filename */
-            char *z = NULL;     /* libname */
-            char *s, *t;
-
-            inp_stripcomments_line(buffer);
-            s = skip_non_ws(buffer);   /* skip over .lib */
-
-            s = strdup(s);
-
-            t = get_quoted_token(s, &y);
-
-            if (!y) {
-                fprintf(cp_err, "Error: .lib filename missing\n");
-                tfree(buffer);         /* was allocated by readline() */
-                controlled_exit(EXIT_FAILURE);
-            }
-
-            t = get_quoted_token(t, &z);
-
-            if (z && (inp_compat_mode == COMPATMODE_ALL ||
-                      inp_compat_mode == COMPATMODE_HS  ||
-                      inp_compat_mode == COMPATMODE_NATIVE))
-            {
-                /* here we have a */
-                /* library section reference: `.lib <library-file> <section-name>' */
-
-                if(!read_a_lib(y, call_depth, dir_name)) {
-                    tfree(s);
-                    tfree(buffer);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                tfree(s);
-
-                /* Make the .lib a comment */
-                *buffer = '*';
-            } else if (inp_compat_mode == COMPATMODE_PS) {
+            if (inp_compat_mode == COMPATMODE_PS) {
                 /* compatibility mode,
                  *   this is neither a libray section definition nor a reference
                  * interpret as old style
                  *   .lib <file name> (no lib name given)
                  */
-                fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
+                char *s = skip_non_ws(buffer); /* skip over .lib */
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc", 4);
             }
@@ -517,6 +550,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             char *copyy = NULL;
             char *y = NULL;
             char *s, *t;
+
+            struct line *newcard;
 
             inp_stripcomments_line(buffer);
 
@@ -552,8 +587,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                     newfp = inp_pathopen(big_buff2, "r");
                     if (!newfp) {
                         perror(y);
-                        if (copyy)
-                            tfree(copyy);       /* allocated by the cp_tildexpand() above */
+                        tfree(copyy);       /* allocated by the cp_tildexpand() above */
                         fprintf(cp_err, "Error: .include statement failed.\n");
                         tfree(buffer);          /* allocated by readline() above */
                         controlled_exit(EXIT_FAILURE);
@@ -573,32 +607,29 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 (void) fclose(newfp);
             }
 
-            if (copyy)
-                tfree(copyy);           /* allocated by the cp_tildexpand() above */
+            tfree(copyy);           /* allocated by the cp_tildexpand() above */
 
             /* Make the .include a comment */
             *buffer = '*';
 
-            /* now check if this is the first pass (i.e. end points to null) */
-            if (end) {                             /* end already exists */
-                end->li_next = alloc(struct line);  /* create next card */
-                end = end->li_next;                 /* make end point to next card */
-            } else {
-                end = cc = alloc(struct line);   /* create the deck & end.  cc will
-                                                    point to beginning of deck, end to
-                                                    the end */
+            /* append `buffer' to the (cc, end) chain of decks */
+            {
+                struct line *x = xx_new_line(NULL, copy(buffer), line_number, line_number);
+
+                if (end)
+                    end->li_next = x;
+                else
+                    cc = x;
+
+                end = x;
+
+                line_number++;
             }
 
-            /* now fill out rest of struct end. */
-            end->li_next = NULL;
-            end->li_error = NULL;
-            end->li_actual = NULL;
-            end->li_line = copy(buffer);
-            end->li_linenum = end->li_linenum_orig = line_number++;
             if (newcard) {
+                int line_number_inc = 1;
                 end->li_next = newcard;
                 /* Renumber the lines */
-                line_number_inc = 1;
                 for (end = newcard; end && end->li_next; end = end->li_next) {
                     end->li_linenum = line_number++;
                     end->li_linenum_orig = line_number_inc++;
@@ -612,12 +643,26 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         }   /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached.  Then test for
-         premature end.  If premature end is reached, spew
-         error and zap the line. */
-        if (!ciprefix("write", buffer)) {    // exclude 'write' command so filename case preserved
+           premature end.  If premature end is reached, spew
+           error and zap the line. */
+        {
             char *s;
-            for (s = buffer; *s && (*s != '\n'); s++)
-                *s = (char) tolower(*s);
+
+            if ( !ciprefix("write", buffer) &&
+                 !ciprefix(".lib", buffer) &&
+                 !ciprefix("codemodel", buffer) &&
+                 !ciprefix("use", buffer) &&
+                 !ciprefix("load", buffer)
+                )
+            {
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    *s = (char) tolower(*s);
+            } else {
+                // exclude some commands to preserve filename case
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    ;
+            }
+
             if (!*s) {
                 // fprintf(cp_err, "Warning: premature EOF\n");
             }
@@ -629,7 +674,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
         if (ciprefix(".end", buffer))
-            if ((buffer[4] == '\0') || (isspace(buffer[4]))) {
+            if ((buffer[4] == '\0') || isspace(buffer[4])) {
                 found_end = TRUE;
                 *buffer   = '*';
             }
@@ -644,22 +689,17 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         shell_eol_continuation = chk_for_line_continuation(buffer);
 
-        /* now check if this is the first pass (i.e. end points to null) */
-        if (end) {                             /* end already exists */
-            end->li_next = alloc(struct line); /* create next card */
-            end = end->li_next;                /* point to next card */
-        } else {                           /* End doesn't exist.  Create it. */
-            end = cc = alloc(struct line); /* note that cc points to beginning
-                                              of deck, end to the end */
+        {
+            struct line *x = xx_new_line(NULL, copy(buffer), line_number++, line_number_orig++);
+
+            if (end)
+                end->li_next = x;
+            else
+                cc = x;
+
+            end = x;
         }
 
-        /* now put buffer into li */
-        end->li_next = NULL;
-        end->li_error = NULL;
-        end->li_actual = NULL;
-        end->li_line = copy(buffer);
-        end->li_linenum = line_number++;
-        end->li_linenum_orig = line_number_orig++;
         tfree(buffer);
     }  /* end while ((buffer = readline(fp)) != NULL) */
 
@@ -667,31 +707,15 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         return NULL;
 
     if (call_depth == 0 && found_end == TRUE) {
-        struct line *prev;
-        if (global == NULL) {
-            global = TMALLOC(char, strlen(".global gnd") + 1);
-            sprintf(global, ".global gnd");
+        cc->li_next = xx_new_line(cc->li_next, copy(".global gnd"), 1, 0);
+
+        if (inp_compat_mode == COMPATMODE_ALL ||
+            inp_compat_mode == COMPATMODE_HS  ||
+            inp_compat_mode == COMPATMODE_NATIVE)
+        {
+            /* process all library section references */
+            expand_section_references(cc, call_depth, dir_name);
         }
-        global_card = alloc(struct line);
-        global_card->li_error   = NULL;
-        global_card->li_actual  = NULL;
-        global_card->li_line    = global;
-        global_card->li_linenum = 1;
-
-        prev                 = cc->li_next;
-        cc->li_next          = global_card;
-        global_card->li_next = prev;
-
-        inp_init_lib_data();
-        collect_section_references(cc, NULL);
-    }
-
-    /*
-       add libraries
-    */
-
-    if (call_depth == 0) {
-        line_number = expand_section_references(line_number);
     }
 
     /*
@@ -700,96 +724,28 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     if (call_depth == 0) {
         if (found_end == TRUE) {
-            end->li_next = alloc(struct line);    /* create next card */
-            end = end->li_next;                   /* point to next card */
-
-            /* now put buffer into li */
-            end->li_next = NULL;
-            end->li_error = NULL;
-            end->li_actual = NULL;
-            end->li_line = copy(".end");
-            end->li_linenum = end->li_linenum_orig = line_number++;
-            end->li_linenum_orig = line_number_orig++;
+            struct line *x = xx_new_line(NULL, copy(".end"), line_number++, line_number_orig++);
+            end->li_next = x;
+            end = x;
         }
     }
 
     /* Replace first line with the new title, if available */
     if (new_title != NULL) {
-        if (cc->li_line) tfree(cc->li_line);
+        tfree(cc->li_line);
         cc->li_line = new_title;
     }
 
     /* Now clean up li: remove comments & stitch together continuation lines. */
-    working = cc->li_next;      /* cc points to head of deck.  Start with the
-                                   next card. */
 
     /* sjb - strip or convert end-of-line comments.
-        This must be cone before stitching continuation lines.
-        If the line only contains an end-of-line comment then it is converted
-        into a normal comment with a '*' at the start.  This will then get
-        stripped in the following code. */
-    inp_stripcomments_deck(working);
+       This must be cone before stitching continuation lines.
+       If the line only contains an end-of-line comment then it is converted
+       into a normal comment with a '*' at the start.  This will then get
+       stripped in the following code. */
+    inp_stripcomments_deck(cc->li_next);
 
-    prev = NULL;
-    while (working) {
-        char *s;
-
-        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
-            ;
-
-#ifdef TRACE
-        /* SDB debug statement */
-        printf("In inp_readall, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
-#endif
-
-        switch (c) {
-        case '#':
-        case '$':
-        case '*':
-        case '\0':
-            /* this used to be commented out.  Why? */
-            /*  prev = NULL; */
-            working = working->li_next;  /* for these chars, go to next card */
-            break;
-
-        case '+':   /* handle continuation */
-            if (!prev) {
-                working->li_error = copy("Illegal continuation line: ignored.");
-                working = working->li_next;
-                break;
-            }
-
-            /* create buffer and write last and current line into it. */
-            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
-            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
-
-            s = prev->li_line;
-            prev->li_line = buffer;
-            prev->li_next = working->li_next;
-            working->li_next = NULL;
-            if (prev->li_actual) {
-                for (end = prev->li_actual; end->li_next; end = end->li_next)
-                    ;
-                end->li_next = working;
-                tfree(s);
-            } else {
-                newcard = alloc(struct line);
-                newcard->li_linenum = prev->li_linenum;
-                newcard->li_line = s;
-                newcard->li_next = working;
-                newcard->li_error = NULL;
-                newcard->li_actual = NULL;
-                prev->li_actual = newcard;
-            }
-            working = prev->li_next;
-            break;
-
-        default:  /* regular one-line card */
-            prev = working;
-            working = working->li_next;
-            break;
-        }
-    }
+    inp_stitch_continuation_lines(cc->li_next);
 
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
@@ -798,10 +754,17 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
     working = cc->li_next;
 
-    inp_fix_for_numparam(working);
-    inp_remove_excess_ws(working);
-
     if (call_depth == 0) {
+
+        unsigned int no_braces; /* number of '{' */
+        size_t max_line_length; /* max. line length in input deck */
+
+        struct line *tmp_ptr1;
+
+        struct names *subckt_w_params = new_names();
+
+        inp_fix_for_numparam(subckt_w_params, working);
+        inp_remove_excess_ws(working);
 
         comment_out_unused_subckt_models(working, line_number);
 
@@ -809,19 +772,23 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
-        inp_grab_func(working);
 
-        inp_expand_macros_in_func();
-        inp_expand_macros_in_deck(working);
+        inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
         /* get end card as last card in list; end card pntr does not appear to always
            be correct at this point */
-        for (newcard = working; newcard != NULL; newcard = newcard->li_next)
-            end = newcard;
+        if (working)
+            for (end = working; end->li_next; end = end->li_next)
+                ;
+// tprint(cc);
+        inp_reorder_params(subckt_w_params, working, cc, end);
 
-        inp_reorder_params(working, cc, end);
-        inp_fix_inst_calls_for_numparam(working);
+        inp_fix_inst_calls_for_numparam(subckt_w_params, working);
+
+        delete_names(subckt_w_params);
+        subckt_w_params = NULL;
+
         inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &line_number);
 
@@ -838,44 +805,46 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             working = cc->li_next;
             /* B source numparam compatibility transformation */
             inp_bsource_compat(working);
+            inp_dot_if(working);
         }
 
         inp_add_series_resistor(working);
-    }
 
-    /* get max. line length and number of lines in input deck,
-       and renumber the lines,
-       count the number of '{' per line as an upper estimate of the number
-       of parameter substitutions in a line*/
-    dynmaxline = 0;
-    max_line_length = 0;
-    for (tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
-        char *s;
-        unsigned int braces_per_line = 0;
-        /* count number of lines */
-        dynmaxline++;
-        /* renumber the lines of the processed input deck */
-        tmp_ptr1->li_linenum = dynmaxline;
-        if (max_line_length < strlen(tmp_ptr1->li_line))
-            max_line_length = strlen(tmp_ptr1->li_line);
-        /* count '{' */
-        for (s = tmp_ptr1->li_line; *s; s++)
-            if (*s == '{')
-                braces_per_line++;
-        if (no_braces <  braces_per_line)
-            no_braces = braces_per_line;
-    }
+        /* get max. line length and number of lines in input deck,
+           and renumber the lines,
+           count the number of '{' per line as an upper estimate of the number
+           of parameter substitutions in a line*/
+        dynmaxline = 0;
+        max_line_length = 0;
+        no_braces = 0;
+        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
+            char *s;
+            unsigned int braces_per_line = 0;
+            /* count number of lines */
+            dynmaxline++;
+            /* renumber the lines of the processed input deck */
+            tmp_ptr1->li_linenum = dynmaxline;
+            if (max_line_length < strlen(tmp_ptr1->li_line))
+                max_line_length = strlen(tmp_ptr1->li_line);
+            /* count '{' */
+            for (s = tmp_ptr1->li_line; *s; s++)
+                if (*s == '{')
+                    braces_per_line++;
+            if (no_braces <  braces_per_line)
+                no_braces = braces_per_line;
+        }
 
-    if (ft_ngdebug) {
-        /*debug: print into file*/
-        FILE *fd = fopen("debug-out.txt", "w");
-        struct line *t;
-        for (t = cc; t; t = t->li_next)
-            fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-        fclose(fd);
+        if (ft_ngdebug) {
+            /*debug: print into file*/
+            FILE *fd = fopen("debug-out.txt", "w");
+            struct line *t;
+            for (t = cc; t; t = t->li_next)
+                fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            fclose(fd);
 
-        fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                (int) max_line_length, no_braces, dynmaxline);
+            fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
+                    (int) max_line_length, no_braces, dynmaxline);
+        }
     }
 
     return cc;
@@ -886,7 +855,8 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
   Look up the variable sourcepath and try everything in the list in order
   if the file isn't in . and it isn't an abs path name.
   For MS Windows: First try the path of the source file.
- *-------------------------------------------------------------------------*/
+  *-------------------------------------------------------------------------*/
+
 FILE *
 inp_pathopen(char *name, char *mode)
 {
@@ -896,11 +866,12 @@ inp_pathopen(char *name, char *mode)
 
 #if defined(HAS_WINGUI)
     char buf2[BSIZE_SP];
+
     /* search in the path where the source (input) file has been found,
        but only if "name" is just a file name */
     if (!strchr(name, DIR_TERM) && !strchr(name, DIR_TERM_LINUX) && cp_getvar("sourcefile", CP_STRING, buf2)) {
         /* If pathname is found, get path.
-        (char *dirname(const char *name) might have been used here) */
+           (char *dirname(const char *name) might have been used here) */
         if (substring(DIR_PATHSEP, buf2) || substring(DIR_PATHSEP_LINUX, buf2)) {
             int i, j = 0;
             for (i = 0; i < BSIZE_SP-1; i++) {
@@ -917,6 +888,7 @@ inp_pathopen(char *name, char *mode)
         if ((fp = fopen(buf2, mode)) != NULL)
             return (fp);
     }
+
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.
      */
@@ -925,15 +897,16 @@ inp_pathopen(char *name, char *mode)
         return (fopen(name, mode));
 #else
 
-
     /* If this is an abs pathname, or there is no sourcepath var, just
      * do an fopen.
      */
     if (strchr(name, DIR_TERM) || !cp_getvar("sourcepath", CP_LIST, &v))
         return (fopen(name, mode));
+
 #endif
 
-    while (v) {
+    for (; v; v = v->va_next) {
+
         switch (v->va_type) {
         case CP_STRING:
             cp_wstrip(v->va_string);
@@ -945,17 +918,19 @@ inp_pathopen(char *name, char *mode)
         case CP_REAL:           /* This is foolish */
             (void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
             break;
-        default: {
+        default:
             fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in inp_pathopen\nAborting...\n");
             controlled_exit(EXIT_FAILURE);
+            break;
         }
-        }
+
         if ((fp = fopen(buf, mode)) != NULL)
             return (fp);
-        v = v->va_next;
     }
+
     return (NULL);
 }
+
 
 /*-------------------------------------------------------------------------*
  *  This routine reads a line (of arbitrary length), up to a '\n' or 'EOF' *
@@ -964,6 +939,7 @@ inp_pathopen(char *name, char *mode)
  *  From: jason@ucbopal.BERKELEY.EDU (Jason Venner)                        *
  *  Newsgroups: net.sources                                                *
  *-------------------------------------------------------------------------*/
+
 #define STRGROW 256
 
 static char *
@@ -974,51 +950,56 @@ readline(FILE *fd)
     char *strptr;
     int strlen;
 
-    strptr = NULL;
     strlen = 0;
     memlen = STRGROW;
     strptr = TMALLOC(char, memlen);
     memlen -= 1;                /* Save constant -1's in while loop */
+
     while ((c = getc(fd)) != EOF) {
+
         if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
             continue;
-        strptr[strlen] = (char) c;
-        strlen++;
+
+        strptr[strlen++] = (char) c;
+
         if (strlen >= memlen) {
             memlen += STRGROW;
             if ((strptr = TREALLOC(char, strptr, memlen + 1)) == NULL)
                 return (NULL);
         }
+
         if (c == '\n')
             break;
     }
+
     if (!strlen) {
         tfree(strptr);
         return (NULL);
     }
+
     // strptr[strlen] = '\0';
     /* Trim the string */
     strptr = TREALLOC(char, strptr, strlen + 1);
     strptr[strlen] = '\0';
+
     return (strptr);
 }
 
 
 /* replace "gnd" by " 0 "
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
-static void
-inp_fix_gnd_name(struct line *deck)
-{
-    struct line *c = deck;
-    char *gnd;
 
-    while (c != NULL) {
-        gnd = c->li_line;
+static void
+inp_fix_gnd_name(struct line *c)
+{
+    for (; c; c = c->li_next) {
+
+        char *gnd = c->li_line;
+
         // if there is a comment or no gnd, go to next line
-        if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL)) {
-            c = c->li_next;
+        if ((*gnd == '*') || !strstr(gnd, "gnd"))
             continue;
-        }
+
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
             if ((isspace(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
@@ -1027,39 +1008,21 @@ inp_fix_gnd_name(struct line *deck)
             }
             gnd += 3;
         }
+
         // now remove the extra white spaces around 0
         c->li_line = inp_remove_ws(c->li_line);
-        c = c->li_next;
     }
-}
-
-static struct line*
-create_new_card(char *card_str, int *line_number) {
-    char        *str = strdup(card_str);
-    struct line *newcard = alloc(struct line);
-
-    newcard->li_line    = str;
-    newcard->li_linenum = *line_number;
-    newcard->li_error   = NULL;
-    newcard->li_actual  = NULL;
-
-    *line_number = *line_number + 1;
-
-    return newcard;
 }
 
 
 static void
-inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
+inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 {
-    struct line *c, *a_card, *model_card, *next_card;
-    char *line, *bool_ptr, *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-    char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
-    char big_buf[1000];
-    int  xy_count1 = 0, xy_count2 = 0, skip_control = 0;
+    int skip_control = 0;
 
-    for (c = deck; c != NULL; c = c->li_next) {
-        line = c->li_line;
+    for (; c; c = c->li_next) {
+
+        char *line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
         if (ciprefix(".control", line)) {
@@ -1073,43 +1036,49 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
         }
 
         if (*line == 'e') {
+
+            char *bool_ptr;
+
             if ((bool_ptr = strstr(line, "nand(")) != NULL ||
                 (bool_ptr = strstr(line, "and(")) != NULL ||
                 (bool_ptr = strstr(line, "nor(")) != NULL ||
                 (bool_ptr = strstr(line, "or(")) != NULL)
             {
+                struct line *a_card, *model_card, *next_card;
+                char *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
+                char big_buf[1000];
+                int  xy_count1, xy_count2;
+
                 str_ptr1 = skip_non_ws(line);
                 model_name = copy_substring(line, str_ptr1);
 
                 str_ptr1 = skip_ws(str_ptr1);
-                str_ptr2 = skip_back_ws(bool_ptr - 1) + 1;
+                str_ptr2 = skip_back_ws(bool_ptr);
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
                 node_str  = strdup(str_ptr1);
                 *str_ptr2 = keep;
 
-                str_ptr1 = bool_ptr + 1;
-                while (*str_ptr1 != '(')
-                    str_ptr1++;
+                str_ptr1 = bool_ptr;
+                while (*++str_ptr1 != '(')
+                    ;
                 fcn_name = copy_substring(bool_ptr, str_ptr1);
                 str_ptr1  = strchr(str_ptr1, ')');
-                comma_ptr = str_ptr2 = strchr(line, ',');
-                if ((str_ptr1 == NULL)|| (str_ptr1 == NULL)) {
+                comma_ptr = strchr(line, ',');
+                if (!str_ptr1 || !comma_ptr) {
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
-                str_ptr2 = skip_back_ws(str_ptr2 - 1);
                 str_ptr1 = skip_ws(str_ptr1 + 1);
-                if (*str_ptr2 == '}') {
-                    while (*str_ptr2 != '{')
-                        str_ptr2--;
-                    xy_str1 = str_ptr2;
-                    str_ptr2 = skip_back_ws(str_ptr2 - 1) + 1;
+                xy_str1 = skip_back_ws(comma_ptr);
+                if (xy_str1[-1] == '}') {
+                    while (*--xy_str1 != '{')
+                        ;
                 } else {
-                    str_ptr2 = skip_back_non_ws(str_ptr2);
-                    xy_str1 = str_ptr2 + 1;
-                    str_ptr2 = skip_back_ws(str_ptr2) + 1;
+                    xy_str1 = skip_back_non_ws(xy_str1);
                 }
+                str_ptr2 = skip_back_ws(xy_str1);
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
                 ctrl_node_str = strdup(str_ptr1);
@@ -1117,9 +1086,8 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
 
                 str_ptr1 = skip_ws(comma_ptr + 1);
                 if (*str_ptr1 == '{') {
-                    while (*str_ptr1 != '}')
-                        str_ptr1++;
-                    str_ptr1++;
+                    while (*str_ptr1++ != '}')
+                        ;
                 } else {
                     str_ptr1 = skip_non_ws(str_ptr1);
                 }
@@ -1137,13 +1105,13 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
 
                 sprintf(big_buf, "%s %%vd[ %s ] %%vd( %s ) %s",
                         model_name, ctrl_node_str, node_str, model_name);
-                a_card = create_new_card(big_buf, line_number);
+                a_card = xx_new_line(NULL, copy(big_buf), *(line_number)++, 0);
                 *a_card->li_line = 'a';
 
                 sprintf(big_buf, ".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
-                         model_name, xy_values1[0], xy_values2[0],
-                         xy_values1[1], xy_values2[1], fcn_name);
-                model_card = create_new_card(big_buf, line_number);
+                        model_name, xy_values1[0], xy_values2[0],
+                        xy_values1[1], xy_values2[1], fcn_name);
+                model_card = xx_new_line(NULL, copy(big_buf), (*line_number)++, 0);
 
                 tfree(model_name);
                 tfree(node_str);
@@ -1168,96 +1136,83 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
 static void
 inp_add_control_section(struct line *deck, int *line_number)
 {
-    struct line *c, *newcard, *prev_card = NULL;
+    struct line *c, *prev_card = NULL;
     bool        found_control = FALSE, found_run = FALSE;
     bool        found_end = FALSE;
     char        *op_line  = NULL, rawfile[1000], *line;
 
-    for (c = deck; c != NULL; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {
+
         if (*c->li_line == '*')
             continue;
+
         if (ciprefix(".op ", c->li_line)) {
             *c->li_line = '*';
             op_line = c->li_line + 1;
         }
+
         if (ciprefix(".end", c->li_line))
             found_end = TRUE;
+
         if (found_control && ciprefix("run", c->li_line))
             found_run = TRUE;
 
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
+
         if (ciprefix(".endc", c->li_line)) {
             found_control = FALSE;
 
             if (!found_run) {
-                newcard            = create_new_card("run", line_number);
-                prev_card->li_next = newcard;
-                newcard->li_next   = c;
-                prev_card          = newcard;
-                found_run          = TRUE;
+                prev_card->li_next = xx_new_line(c, copy("run"), (*line_number)++, 0);
+                prev_card = prev_card->li_next;
+                found_run = TRUE;
             }
+
             if (cp_getvar("rawfile", CP_STRING, rawfile)) {
                 line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
                 sprintf(line, "write %s", rawfile);
-                newcard            = create_new_card(line, line_number);
-                prev_card->li_next = newcard;
-                newcard->li_next   = c;
-                prev_card          = newcard;
-                tfree(line);
+                prev_card->li_next = xx_new_line(c, line, (*line_number)++, 0);
+                prev_card = prev_card->li_next;
             }
         }
+
         prev_card = c;
     }
+
     // check if need to add control section
     if (!found_run && found_end) {
-        prev_card        = deck->li_next;
-        newcard          = create_new_card(".endc", line_number);
-        deck->li_next    = newcard;
-        newcard->li_next = prev_card;
+
+        deck->li_next = xx_new_line(deck->li_next, copy(".endc"), (*line_number)++, 0);
 
         if (cp_getvar("rawfile", CP_STRING, rawfile)) {
             line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
             sprintf(line, "write %s", rawfile);
-            prev_card        = deck->li_next;
-            newcard          = create_new_card(line, line_number);
-            deck->li_next    = newcard;
-            newcard->li_next = prev_card;
-            tfree(line);
-        }
-        if (op_line != NULL) {
-            prev_card        = deck->li_next;
-            newcard          = create_new_card(op_line, line_number);
-            deck->li_next    = newcard;
-            newcard->li_next = prev_card;
+            deck->li_next = xx_new_line(deck->li_next, line, (*line_number)++, 0);
         }
 
-        prev_card        = deck->li_next;
-        newcard          = create_new_card("run", line_number);
-        deck->li_next    = newcard;
-        newcard->li_next = prev_card;
+        if (op_line)
+            deck->li_next = xx_new_line(deck->li_next, copy(op_line), (*line_number)++, 0);
 
-        prev_card        = deck->li_next;
-        newcard          = create_new_card(".control", line_number);
-        deck->li_next    = newcard;
-        newcard->li_next = prev_card;
+        deck->li_next = xx_new_line(deck->li_next, copy("run"), (*line_number)++, 0);
+
+        deck->li_next = xx_new_line(deck->li_next, copy(".control"), (*line_number)++, 0);
     }
 }
 
 
 // look for shell-style end-of-line continuation '\\'
+
 static bool
 chk_for_line_continuation(char *line)
 {
-    char *ptr = line + strlen(line) - 1;
-
     if (*line != '*' && *line != '$') {
-        while (ptr >= line && *ptr && isspace(*ptr))
-            ptr--;
 
-        if ((ptr-1) >= line && *ptr == '\\' && *(ptr-1) && *(ptr-1) == '\\') {
-            *ptr = ' ';
-            *(ptr-1) = ' ';
+        char *ptr = skip_back_ws_(strchr(line, '\0'), line);
+
+        if ((ptr - 2 >= line) && (ptr[-1] == '\\') && (ptr[-2] == '\\')) {
+            ptr[-1] = ' ';
+            ptr[-2] = ' ';
             return TRUE;
         }
     }
@@ -1275,13 +1230,11 @@ chk_for_line_continuation(char *line)
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
 
 static void
-inp_fix_macro_param_func_paren_io(struct line *begin_card)
+inp_fix_macro_param_func_paren_io(struct line *card)
 {
-    struct line *card;
     char        *str_ptr, *new_str;
-    bool        is_func = FALSE;
 
-    for (card = begin_card; card != NULL; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         if (*card->li_line == '*')
             continue;
@@ -1311,7 +1264,7 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
             }
             if (*str_ptr == '(') {
                 *str_ptr = ' ';
-                while (*str_ptr && *str_ptr != '\0') {
+                while (*str_ptr != '\0') {
                     if (*str_ptr == ')') {
                         *str_ptr = ' ';
                         break;
@@ -1321,8 +1274,9 @@ inp_fix_macro_param_func_paren_io(struct line *begin_card)
                 card->li_line = inp_remove_ws(card->li_line); /* remove the extra white spaces just introduced */
             }
         }
-        is_func = FALSE;
+
         if (ciprefix(".param", card->li_line)) {
+            bool is_func = FALSE;
             str_ptr = skip_non_ws(card->li_line);  // skip over .param
             str_ptr = skip_ws(str_ptr);
             while (!isspace(*str_ptr) && *str_ptr != '=') {
@@ -1355,15 +1309,16 @@ get_instance_subckt(char *line)
 
     // see if instance has parameters
     if (equal_ptr) {
-        end_ptr = skip_back_ws(equal_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr) + 1;
+        end_ptr = skip_back_ws_(equal_ptr, line);
+        end_ptr = skip_back_non_ws_(end_ptr, line);
     } else {
-        end_ptr = line + strlen(line);
+        end_ptr = strchr(line, '\0');
     }
 
-    end_ptr = skip_back_ws(end_ptr - 1) + 1;
+    end_ptr = skip_back_ws_(end_ptr, line);
 
-    inst_name_ptr = skip_back_non_ws(end_ptr - 1) + 1;
+    inst_name_ptr = skip_back_non_ws_(end_ptr, line);
+
     return copy_substring(inst_name_ptr, end_ptr);
 }
 
@@ -1377,6 +1332,7 @@ get_subckt_model_name(char *line)
     name = skip_ws(name);
 
     end_ptr = skip_non_ws(name);
+
     return copy_substring(name, end_ptr);
 }
 
@@ -1394,6 +1350,7 @@ get_model_name(char *line, int num_terminals)
         beg_ptr = skip_non_ws(beg_ptr);
         beg_ptr = skip_ws(beg_ptr);
     }
+
     if (*line == 'r')           /* special dealing for r models */
         if ((*beg_ptr == '+') || (*beg_ptr == '-') || isdigit(*beg_ptr)) { /* looking for a value before model */
             beg_ptr = skip_non_ws(beg_ptr); /* skip the value */
@@ -1401,6 +1358,7 @@ get_model_name(char *line, int num_terminals)
         }
 
     end_ptr = skip_non_ws(beg_ptr);
+
     return copy_substring(beg_ptr, end_ptr);
 }
 
@@ -1408,15 +1366,18 @@ get_model_name(char *line, int num_terminals)
 static char*
 get_model_type(char *line)
 {
-    char *model_type, *beg_ptr;
-    if (!(ciprefix(".model", line)))
+    char *beg_ptr;
+
+    if (!ciprefix(".model", line))
         return NULL;
+
     beg_ptr = skip_non_ws(line); /* eat .model */
     beg_ptr = skip_ws(beg_ptr);
+
     beg_ptr = skip_non_ws(beg_ptr); /* eat model name */
     beg_ptr = skip_ws(beg_ptr);
-    model_type = gettok(&beg_ptr);
-    return model_type;
+
+    return gettok(&beg_ptr);
 }
 
 
@@ -1425,25 +1386,27 @@ get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
 
-    ptr_end = skip_back_ws(line + strlen(line) - 1) + 1;
-    ptr_beg = skip_back_non_ws(ptr_end - 1) + 1;
+    ptr_end = skip_back_ws_(strchr(line, '\0'), line);
+    ptr_beg = skip_back_non_ws_(ptr_end, line);
+
     return copy_substring(ptr_beg, ptr_end);
 }
 
 
 static void
 get_subckts_for_subckt(struct line *start_card, char *subckt_name,
-                        char *used_subckt_names[], int *num_used_subckt_names,
-                        char *used_model_names[], int *num_used_model_names,
-                        bool has_models)
+                       char *used_subckt_names[], int *num_used_subckt_names,
+                       char *used_model_names[], int *num_used_model_names,
+                       bool has_models)
 {
     struct line *card;
-    char *line = NULL, *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
+    char *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
     bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
     int  i, num_terminals = 0, tmp_cnt = 0;
 
-    for (card = start_card; card != NULL; card = card->li_next) {
-        line = card->li_line;
+    for (card = start_card; card; card = card->li_next) {
+
+        char *line = card->li_line;
 
         if (*line == '*')
             continue;
@@ -1459,6 +1422,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 
             tfree(curr_subckt_name);
         }
+
         if (found_subckt) {
             if (*line == 'x') {
                 inst_subckt_name = get_instance_subckt(line);
@@ -1468,7 +1432,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         have_subckt = TRUE;
                 if (!have_subckt) {
                     new_names[tmp_cnt++] = used_subckt_names[*num_used_subckt_names] = inst_subckt_name;
-                    *num_used_subckt_names = *num_used_subckt_names + 1;
+                    *num_used_subckt_names += 1;
                 } else {
                     tfree(inst_subckt_name);
                 }
@@ -1480,7 +1444,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         found_model = TRUE;
                 if (!found_model) {
                     used_model_names[*num_used_model_names] = model_name;
-                    *num_used_model_names = *num_used_model_names + 1;
+                    *num_used_model_names += 1;
                 } else {
                     tfree(model_name);
                 }
@@ -1492,20 +1456,20 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     tmp_name1 = tmp_name = model_name = get_model_name(line, num_terminals);
 
                     if (isalpha(*model_name) ||
-                            /* first character is digit, second is alpha, third is digit,
-                            e.g. 1N4002 */
-                            ((strlen(model_name) > 2) && isdigit(*tmp_name) &&
-                             isalpha(*(++tmp_name)) && isdigit(*(++tmp_name))) ||
-                            /* first character is is digit, second is alpha, third is alpha, fourth is digit
-                            e.g. 2SK456 */
-                            ((strlen(model_name) > 3) && isdigit(*tmp_name1) && isalpha(*(++tmp_name1)) &&
-                             isalpha(*(++tmp_name1)) && isdigit(*(++tmp_name1)))) {
+                        /* first character is digit, second is alpha, third is digit,
+                           e.g. 1N4002 */
+                        ((strlen(model_name) > 2) && isdigit(*tmp_name) &&
+                         isalpha(*(++tmp_name)) && isdigit(*(++tmp_name))) ||
+                        /* first character is is digit, second is alpha, third is alpha, fourth is digit
+                           e.g. 2SK456 */
+                        ((strlen(model_name) > 3) && isdigit(*tmp_name1) && isalpha(*(++tmp_name1)) &&
+                         isalpha(*(++tmp_name1)) && isdigit(*(++tmp_name1)))) {
                         found_model = FALSE;
                         for (i = 0; i < *num_used_model_names; i++)
                             if (strcmp(used_model_names[i], model_name) == 0) found_model = TRUE;
                         if (!found_model) {
                             used_model_names[*num_used_model_names] = model_name;
-                            *num_used_model_names = *num_used_model_names + 1;
+                            *num_used_model_names += 1;
                         } else {
                             tfree(model_name);
                         }
@@ -1516,16 +1480,18 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
             }
         }
     }
+
     // now make recursive call on instances just found above
     for (i = 0; i < tmp_cnt; i++)
         get_subckts_for_subckt(start_card, new_names[i], used_subckt_names, num_used_subckt_names,
-                                used_model_names, num_used_model_names, has_models);
+                               used_model_names, num_used_model_names, has_models);
 }
 
 
 /*
   check if current token matches model bin name -- <token>.[0-9]+
- */
+*/
+
 static bool
 model_bin_match(char *token, char *model_name)
 {
@@ -1553,24 +1519,26 @@ model_bin_match(char *token, char *model_name)
   iterate through the deck and comment out unused subckts, models
   (don't want to waste time processing everything)
   also comment out .param lines with no parameters defined
- */
+*/
+
 static void
 comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 {
     struct line *card;
-    char **used_subckt_names, **used_model_names, *line = NULL, *subckt_name, *model_name;
+    char **used_subckt_names, **used_model_names, *subckt_name, *model_name;
     int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
     bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
     int skip_control = 0, nested_subckt = 0;
 
     /* generate arrays of *char for subckt or model names. Start
-    with 1000, but increase, if number of lines in deck is larger */
+       with 1000, but increase, if number of lines in deck is larger */
     if (no_of_lines < 1000)
         no_of_lines = 1000;
+
     used_subckt_names = TMALLOC(char*, no_of_lines);
     used_model_names = TMALLOC(char*, no_of_lines);
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         if (ciprefix(".model", card->li_line))
             has_models = TRUE;
         if (ciprefix(".cmodel", card->li_line))
@@ -1579,8 +1547,9 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             *card->li_line = '*';
     }
 
-    for (card = start_card; card != NULL; card = card->li_next) {
-        line = card->li_line;
+    for (card = start_card; card; card = card->li_next) {
+
+        char *line = card->li_line;
 
         if (*line == '*')
             continue;
@@ -1624,8 +1593,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                     tfree(model_name);
             } else if (has_models) {
                 /* This is a preliminary version, until we have found a reliable
-                method to detect the model name out of the input line (Many
-                options have to be taken into account.). */
+                   method to detect the model name out of the input line (Many
+                   options have to be taken into account.). */
                 num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
                     bool model_ok = FALSE;
@@ -1635,18 +1604,18 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                     if (isalpha(*model_name))
                         model_ok = TRUE;
                     /* first character is digit, second is alpha, third is digit,
-                    e.g. 1N4002 */
+                       e.g. 1N4002 */
                     else if ((strlen(model_name) > 2) && isdigit(*tmp_name) &&
                              isalpha(*(++tmp_name)) && isdigit(*(++tmp_name)))
                         model_ok = TRUE;
                     /* first character is is digit, second is alpha, third is alpha, fourth is digit
-                    e.g. 2SK456 */
+                       e.g. 2SK456 */
                     else if ((strlen(model_name) > 3) && isdigit(*tmp_name1) &&
                              isalpha(*(++tmp_name1)) && isalpha(*(++tmp_name1)) &&
                              isdigit(*(++tmp_name1)))
                         model_ok = TRUE;
                     /* Check if model has already been recognized, if not, add its name to
-                    list used_model_names[i] */
+                       list used_model_names[i] */
                     if (model_ok) {
                         found_model = FALSE;
                         for (i = 0; i < num_used_model_names; i++)
@@ -1663,6 +1632,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             } /* if (has_models)  */
         } /* if (!processing_subckt) */
     } /* for loop through all cards */
+
     for (i = 0; i < tmp_cnt; i++)
         get_subckts_for_subckt
             (start_card, used_subckt_names[i],
@@ -1670,8 +1640,9 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
              used_model_names, &num_used_model_names, has_models);
 
     /* comment out any unused subckts, currently only at top level */
-    for (card = start_card; card != NULL; card = card->li_next) {
-        line = card->li_line;
+    for (card = start_card; card; card = card->li_next) {
+
+        char *line = card->li_line;
 
         if (*line == '*')
             continue;
@@ -1688,6 +1659,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             }
             tfree(subckt_name);
         }
+
         if (ciprefix(".ends", line) || ciprefix(".eom", line)) {
             nested_subckt--;
             if (remove_subckt)
@@ -1695,6 +1667,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             if (nested_subckt == 0)
                 remove_subckt = FALSE;
         }
+
         if (remove_subckt)
             *line = '*';
         else if (has_models &&
@@ -1717,13 +1690,13 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                         model_bin_match(used_model_names[i], model_name))
                         found_model = TRUE;
             }
-            if (model_type)
-                tfree(model_type);
+            tfree(model_type);
             if (!found_model)
                 *line = '*';
             tfree(model_name);
         }
     }
+
     for (i = 0; i < num_used_subckt_names; i++)
         tfree(used_subckt_names[i]);
     for (i = 0; i < num_used_model_names;  i++)
@@ -1735,6 +1708,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 
 /* replace ternary operator ? : by fcn ternary_fcn() in .param, .func, and .meas lines,
    if all is FALSE, for all lines if all is TRUE */
+
 static char*
 inp_fix_ternary_operator_str(char *line, bool all)
 {
@@ -1753,12 +1727,12 @@ inp_fix_ternary_operator_str(char *line, bool all)
         else
             str_ptr = strchr(line, ')');
 
-        if ((str_ptr == NULL) && all == FALSE) {
+        if (!str_ptr && all == FALSE) {
             fprintf(stderr, "ERROR: mal formed .param, .func or .meas line:\n  %s\n", line);
             controlled_exit(EXIT_FAILURE);
         }
 
-        if ((str_ptr == NULL) && all == TRUE) {
+        if (!str_ptr && all == TRUE) {
             fprintf(stderr, "ERROR: mal formed expression in line:\n  %s\n", line);
             fprintf(stderr, "  We need parentheses around 'if' clause and nested ternary functions\n");
             fprintf(stderr, "  like:  Rtern4 1 0 '(ut > 0.7) ? 2k : ((ut < 0.3) ? 500 : 1k)'\n");
@@ -1772,12 +1746,13 @@ inp_fix_ternary_operator_str(char *line, bool all)
         return line;
     }
 
+    all = TRUE;
     // get conditional
     question = strchr(str_ptr, '?');
-    str_ptr2 = skip_back_ws(question - 1);
-    if (*str_ptr2 == ')') {
+    str_ptr2 = skip_back_ws(question);
+    if (str_ptr2[-1] == ')') {
         count = 1;
-        str_ptr = str_ptr2;
+        str_ptr = str_ptr2 - 1;
         while ((count != 0) && (str_ptr != line)) {
             str_ptr--;
             if (*str_ptr == '(')
@@ -1786,7 +1761,6 @@ inp_fix_ternary_operator_str(char *line, bool all)
                 count++;
         }
     }
-    str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     conditional = strdup(str_ptr);
@@ -1822,14 +1796,13 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary string (finding ':') %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        str_ptr2 = skip_back_ws(colon - 1);
+        str_ptr2 = skip_back_ws(colon);
     } else if ((colon = strchr(str_ptr, ':')) != NULL) {
-        str_ptr2 = skip_back_ws(colon - 1);
+        str_ptr2 = skip_back_ws(colon);
     } else {
         fprintf(stderr, "ERROR: problem parsing ternary string (missing ':') %s!\n", line);
         controlled_exit(EXIT_FAILURE);
     }
-    str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     if_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
@@ -1858,6 +1831,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
+        if (*str_ptr2 == '\0')
+            str_ptr2--;
         else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
         if (*str_ptr2 != '}')
             end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
@@ -1894,38 +1869,38 @@ inp_fix_ternary_operator_str(char *line, bool all)
     tfree(conditional);
     tfree(if_str);
     tfree(else_str);
-    if (beg_str != NULL)
-        tfree(beg_str);
-    if (end_str != NULL)
-        tfree(end_str);
+    tfree(beg_str);
+    tfree(end_str);
 
     return new_str;
 }
 
 
 static void
-inp_fix_ternary_operator(struct line *start_card)
+inp_fix_ternary_operator(struct line *card)
 {
-    struct line *card;
-    char        *line;
     bool found_control = FALSE;
 
-    for (card = start_card; card != NULL; card = card->li_next) {
-        line = card->li_line;
+    for (; card; card = card->li_next) {
+
+        char *line = card->li_line;
+
+        if (*line == '*')
+            continue;
 
         /* exclude replacement of ternary function between .control and .endc */
         if (ciprefix(".control", line))
             found_control = TRUE;
         if (ciprefix(".endc", line))
             found_control = FALSE;
+
         if (found_control)
             continue;
 
         /* ternary operator for B source done elsewhere */
         if (*line == 'B' || *line == 'b')
             continue;
-        if (*line == '*')
-            continue;
+
         /* .param, .func, and .meas lines handled here (2nd argument FALSE) */
         if (strchr(line, '?') && strchr(line, ':'))
             card->li_line = inp_fix_ternary_operator_str(line, FALSE);
@@ -1934,9 +1909,10 @@ inp_fix_ternary_operator(struct line *start_card)
 
 
 /*-------------------------------------------------------------------------*
-   removes  " " quotes, returns lower case letters,
-   replaces non-printable characterss with '_'                                                                       *
- *-------------------------------------------------------------------------*/
+  removes  " " quotes, returns lower case letters,
+  replaces non-printable characterss with '_'                                                                       *
+  *-------------------------------------------------------------------------*/
+
 void
 inp_casefix(char *string)
 {
@@ -1968,13 +1944,10 @@ inp_casefix(char *string)
 
 /* Strip all end-of-line comments from a deck */
 static void
-inp_stripcomments_deck(struct line *deck)
+inp_stripcomments_deck(struct line *c)
 {
-    struct line *c = deck;
-    while (c != NULL) {
+    for (; c; c = c->li_next)
         inp_stripcomments_line(c->li_line);
-        c = c->li_next;
-    }
 }
 
 
@@ -1993,10 +1966,11 @@ inp_stripcomments_deck(struct line *deck)
  * Lines that contain only an end-of-line comment with or without leading white
  * space are also allowed.
 
-   If there is only white space before the end-of-line comment the
-   the whole line is converted to a normal comment line (i.e. one that
-   begins with a '*').
-   BUG: comment characters in side of string literals are not ignored. */
+ If there is only white space before the end-of-line comment the
+ the whole line is converted to a normal comment line (i.e. one that
+ begins with a '*').
+ BUG: comment characters in side of string literals are not ignored. */
+
 static void
 inp_stripcomments_line(char *s)
 {
@@ -2027,7 +2001,7 @@ inp_stripcomments_line(char *s)
         return;
     }
 
-    if (d>s) {
+    if (d > s) {
         d--;
         /* d now points to character just before comment */
 
@@ -2059,7 +2033,7 @@ inp_change_quotes(char *s)
 {
     bool first_quote = FALSE;
 
-    while (*s) {
+    for (; *s; s++)
         if (*s == '\'') {
             if (first_quote == FALSE) {
                 *s = '{';
@@ -2069,16 +2043,39 @@ inp_change_quotes(char *s)
                 first_quote = FALSE;
             }
         }
-        s++;
+}
+
+
+static void
+add_name(struct names *p, char *name)
+{
+    if (p->num_names >= N_SUBCKT_W_PARAMS) {
+        fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+        controlled_exit(EXIT_FAILURE);
     }
+
+    p->names[p->num_names++] = name;
+}
+
+
+static char **
+find_name(struct names *p, char *name)
+{
+    int i;
+
+    for (i = 0; i < p->num_names; i++)
+        if (strcmp(p->names[i], name) == 0)
+            return & p->names[i];
+
+    return NULL;
 }
 
 
 static char*
-inp_fix_subckt(char *s)
+inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
-    struct line *head = NULL, *newcard = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
-    char *equal, *beg, *buffer, *ptr1, *ptr2, *str, *new_str = NULL;
+    struct line *head = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
+    char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
     char keep;
     int  num_params = 0, i = 0, bracedepth = 0;
     /* find first '=' */
@@ -2090,25 +2087,24 @@ inp_fix_subckt(char *s)
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
-        subckt_w_params[num_subckt_w_params++] = copy_substring(ptr1, ptr2);
+        add_name(subckt_w_params, copy_substring(ptr1, ptr2));
 
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        beg = skip_back_ws(equal - 1);
-        beg = skip_back_non_ws(beg);
-        *beg = '\0';
-        beg++;
+        beg = skip_back_ws_(equal, s);
+        beg = skip_back_non_ws_(beg, s);
+        beg[-1] = '\0';         /* fixme can be < s */
 
-        head = alloc(struct line);
+        head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
         while (*beg && (ptr1 = strchr(beg, '=')) != NULL) {
 #ifndef NOBRACE
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
             ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws(ptr1 - 1);
-            ptr1 = skip_back_non_ws(ptr1) + 1;
+            ptr1 = skip_back_ws_(ptr1, beg);
+            ptr1 = skip_back_non_ws_(ptr1, beg);
             /* ptr1 points to beginning of parameter */
 
             /* if parameter is an expression and starts with '{', find closing '}'
@@ -2129,7 +2125,7 @@ inp_fix_subckt(char *s)
                 ptr2++;/* ptr2 points past end of parameter {...} */
             }
             else
-            /* take only the next token (separated by space) as the parameter */
+                /* take only the next token (separated by space) as the parameter */
                 ptr2 = skip_non_ws(ptr2); /* ptr2 points past end of parameter       */
 
             keep  = *ptr2;
@@ -2138,23 +2134,18 @@ inp_fix_subckt(char *s)
                 beg = ptr2;
             } else {
                 *ptr2 = '\0';
-                beg   = ptr2+1;
+                beg = ptr2 + 1;
             }
 
-            newcard = alloc(struct line);
-            str     = strdup(ptr1);
-
-            newcard->li_line = str;
-            newcard->li_next = NULL;
+            end_card = xx_new_line(NULL, strdup(ptr1), 0, 0);
 
             if (start_card == NULL)
-                head->li_next = start_card = newcard;
+                head->li_next = start_card = end_card;
             else
-                prev_card->li_next = newcard;
+                prev_card->li_next = end_card;
 
-            prev_card = end_card = newcard;
+            prev_card = end_card;
             num_params++;
-        }
 #else
             /* patch provided by Ivan Riis Nielsen */
             bool done = FALSE;
@@ -2179,18 +2170,14 @@ inp_fix_subckt(char *s)
                     buf[buf_idx++] = '\0';
                     beg = p1;
 
-                    newcard = alloc(struct line);
-                    str     = buf;
-
-                    newcard->li_line = str;
-                    newcard->li_next = NULL;
+                    end_card = xx_new_line(NULL, buf, 0, 0);
 
                     if (start_card == NULL)
-                        head->li_next = start_card = newcard;
+                        head->li_next = start_card = end_card;
                     else
-                        prev_card->li_next = newcard;
+                        prev_card->li_next = end_card;
 
-                    prev_card = end_card = newcard;
+                    prev_card = end_card;
                     num_params++;
 
                     done = TRUE;
@@ -2198,8 +2185,8 @@ inp_fix_subckt(char *s)
                 else
                     p2 = p1;
             }
-        }
 #endif
+        }
         /* now sort parameters in order of dependencies */
         inp_sort_params(start_card, end_card, head, start_card, end_card);
 
@@ -2210,10 +2197,10 @@ inp_fix_subckt(char *s)
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
             } else {
-                str     = new_str;
-                new_str = TMALLOC(char, strlen(str) + strlen(c->li_line) + 2);
-                sprintf(new_str, "%s %s", str, c->li_line);
-                tfree(str);
+                char *x = TMALLOC(char, strlen(new_str) + strlen(c->li_line) + 2);
+                sprintf(x, "%s %s", new_str, c->li_line);
+                tfree(new_str);
+                new_str = x;
             }
             tfree(c->li_line);
             head = c;
@@ -2230,6 +2217,7 @@ inp_fix_subckt(char *s)
 
         s = buffer;
     }
+
     return s;
 }
 
@@ -2290,79 +2278,72 @@ inp_remove_ws(char *s)
 /*
   change quotes from '' to {}
   .subckt name 1 2 3 params: l=1 w=2 --> .subckt name 1 2 3 l=1 w=2
-   x1 1 2 3 params: l=1 w=2 --> x1 1 2 3 l=1 w=2
-   modify .subckt lines by calling inp_fix_subckt()
-   No changes to lines in .control section !
+  x1 1 2 3 params: l=1 w=2 --> x1 1 2 3 l=1 w=2
+  modify .subckt lines by calling inp_fix_subckt()
+  No changes to lines in .control section !
 */
+
 static void
-inp_fix_for_numparam(struct line *deck)
+inp_fix_for_numparam(struct names *subckt_w_params, struct line *c)
 {
     bool found_control = FALSE;
-    struct line *c = deck;
-    char *str_ptr;
 
-    while (c != NULL) {
-        if (ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
-            c = c->li_next;
+    for (; c; c = c->li_next) {
+
+        if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line))
             continue;
-        }
 
         /* exclude lines between .control and .endc from getting quotes changed */
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if (found_control) {
-            c = c->li_next;
+
+        if (found_control)
             continue;
-        }
 
         inp_change_quotes(c->li_line);
 
         if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS))
             if (ciprefix(".subckt", c->li_line) || ciprefix("x", c->li_line)) {
-               /* remove params: */
-                str_ptr = strstr(c->li_line, "params:");
+                /* remove params: */
+                char *str_ptr = strstr(c->li_line, "params:");
                 if (str_ptr)
                     memcpy(str_ptr, "       ", 7);
             }
 
         if (ciprefix(".subckt", c->li_line))
-            c->li_line = inp_fix_subckt(c->li_line);
-
-        c = c->li_next;
+            c->li_line = inp_fix_subckt(subckt_w_params, c->li_line);
     }
 }
 
 
 static void
-inp_remove_excess_ws(struct line *deck)
+inp_remove_excess_ws(struct line *c)
 {
-    struct line *c = deck;
     bool found_control = FALSE;
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
             continue;
-        }
 
         /* exclude echo lines between .control and .endc from removing white spaces */
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if ((found_control) && (ciprefix("echo", c->li_line))) {
-            c = c->li_next;
+
+        if (found_control && ciprefix("echo", c->li_line))
             continue;
-        }
+
         c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
-        c = c->li_next;
     }
 }
 
 
 /*
- * recursively collect library section references,
+ * recursively expand library section references,
  * either
  *    every library section reference (when the given section_name_ === NULL)
  * or
@@ -2370,20 +2351,13 @@ inp_remove_excess_ws(struct line *deck)
  */
 
 static void
-collect_section_references(struct line *deck, char *section_name_)
+expand_section_references(struct line *c, int call_depth, char *dir_name)
 {
-    bool read_line = (section_name_ == NULL);
-
-    struct line *c;
-
-    for (c = deck; c; c = c->li_next) {
+    for (; c; c = c->li_next) {
 
         char *line = c->li_line;
 
-        if (ciprefix(".endl", line) && section_name_ != NULL)
-            read_line = FALSE;
-
-        if (ciprefix("*lib", line) || ciprefix(".lib", line)) {
+        if (ciprefix(".lib", line)) {
 
             char *s, *t, *y;
 
@@ -2396,22 +2370,13 @@ collect_section_references(struct line *deck, char *section_name_)
             while (isspace(*y) || isquote(*y))
                 y++;
 
-            if (!*y) {
-                /* library section definition: `.lib <section-name>' .. `.endl' */
-
-                char keep_char = *t;
-                *t = '\0';
-
-                if (section_name_ != NULL && strcmp(section_name_, s) == 0)
-                    read_line = TRUE;
-                *t = keep_char;
-            }
-            else if (read_line == TRUE) {
+            if (*y) {
                 /* library section reference: `.lib <library-file> <section-name>' */
 
+                struct line *section_def;
                 char keep_char1, keep_char2;
                 char *z, *copys = NULL;
-                int lib_idx;
+                struct library *lib;
 
                 for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
                     ;
@@ -2425,14 +2390,48 @@ collect_section_references(struct line *deck, char *section_name_)
                     if (copys)
                         s = copys;
                 }
-                lib_idx = find_lib(s);
-                if (lib_idx >= 0)
-                    if (find_section(lib_idx, y) < 0) {
-                        /* remember this section having been referenced */
-                        remember_section_ref(lib_idx, y, c);
-                        /* recursively check for nested section references */
-                        collect_section_references(library_deck[lib_idx], y);
+
+                lib = find_lib(s);
+
+                if (!lib) {
+
+                    if(!read_a_lib(s, call_depth, dir_name))
+                        controlled_exit(EXIT_FAILURE);
+
+                    lib = find_lib(s);
+                }
+
+                if (!lib) {
+                    fprintf(stderr, "ERROR, library file %s not found\n", s);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                section_def = find_section_definition(lib->deck, y);
+
+                if (!section_def) {
+                    fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                /* insert the library section definition into `c' */
+                {
+                    struct line *t = inp_deckcopy(section_def);
+                    struct line *rest = c->li_next;
+                    c->li_next = t;
+                    t->li_line[0] = '*';
+                    t->li_line[1] = '<';
+                    for (; t; t=t->li_next)
+                        if(ciprefix(".endl", t->li_line))
+                            break;
+                    if (!t) {
+                        fprintf(stderr, "ERROR, .endl not found\n");
+                        controlled_exit(EXIT_FAILURE);
                     }
+                    t->li_line[0] = '*';
+                    t->li_line[1] = '>';
+                    t->li_next = rest;
+                }
+
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
                 *z = keep_char2;
@@ -2444,30 +2443,20 @@ collect_section_references(struct line *deck, char *section_name_)
 }
 
 
-static void
-inp_init_lib_data(void)
-{
-    int i;
-
-    for (i = 0; i < num_libraries; i++)
-        num_sections[i] = 0;
-}
-
-
 static char*
 inp_get_subckt_name(char *s)
 {
     char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
-        end_ptr = skip_back_ws(end_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr) + 1;
+        end_ptr = skip_back_ws_(end_ptr, s);
+        end_ptr = skip_back_non_ws_(end_ptr, s);
     } else {
-        end_ptr = s + strlen(s);
+        end_ptr = strchr(s, '\0');
     }
 
-    end_ptr = skip_back_ws(end_ptr - 1) + 1;
-    subckt_name = skip_back_non_ws(end_ptr - 1) + 1;
+    end_ptr = skip_back_ws_(end_ptr, s);
+    subckt_name = skip_back_non_ws_(end_ptr, s);
 
     return copy_substring(subckt_name, end_ptr);
 }
@@ -2483,25 +2472,13 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
     char keep;
     bool is_expression = FALSE;
 
-    while ((equal_ptr = strchr(line, '=')) != NULL) {
-
-        // check for equality '=='
-        if (equal_ptr[1] == '=') {
-            line = equal_ptr+2;
-            continue;
-        }
-        // check for '!=', '<=', '>='
-        if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-            line = equal_ptr+1;
-            continue;
-        }
+    while ((equal_ptr = find_assignment(line)) != NULL) {
 
         is_expression = FALSE;
 
         /* get parameter name */
-        name = skip_back_ws(equal_ptr - 1);
-        end  = name + 1;
-        name = skip_back_non_ws(name) + 1;
+        end = skip_back_ws_(equal_ptr, line);
+        name = skip_back_non_ws_(end, line);
 
         param_names[num_params++] = copy_substring(name, end);
 
@@ -2539,8 +2516,8 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
 
 static char*
 inp_fix_inst_line(char *inst_line,
-                   int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[],
-                   int num_inst_params, char *inst_param_names[], char *inst_param_values[])
+                  int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[],
+                  int num_inst_params, char *inst_param_names[], char *inst_param_values[])
 {
     char *end, *inst_name, *inst_name_end;
     char *curr_line = inst_line, *new_line = NULL;
@@ -2551,9 +2528,9 @@ inp_fix_inst_line(char *inst_line,
 
     end = strchr(inst_line, '=');
     if (end) {
-        end = skip_back_ws(end - 1);
-        end = skip_back_non_ws(end);
-        *end = '\0';
+        end = skip_back_ws_(end, inst_line);
+        end = skip_back_non_ws_(end, inst_line);
+        end[-1] = '\0';         /* fixme can be < inst_line */
     }
 
     for (i = 0; i < num_subckt_params; i++)
@@ -2585,22 +2562,33 @@ inp_fix_inst_line(char *inst_line,
 }
 
 
+/* If multiplier parameter 'm' is found on a X line, flag is set
+   to TRUE.
+   Function is called from inp_fix_inst_calls_for_numparam()*/
+
 static bool
 found_mult_param(int num_params, char *param_names[])
 {
-    bool found_mult = FALSE;
     int i;
 
     for (i = 0; i < num_params; i++)
         if (strcmp(param_names[i], "m") == 0)
-            found_mult = TRUE;
+            return TRUE;
 
-    return found_mult;
+    return FALSE;
 }
 
 
+/* If a subcircuit invocation (X-line) is found, which contains the
+   multiplier parameter 'm', m is added to all lines inside
+   the corresponding subcircuit except of some excluded in the code below
+   (FIXME: It may be necessary to exclude more of them, at least
+   for all devices that are not supporting the 'm' parameter).
+
+   Function is called from inp_fix_inst_calls_for_numparam()*/
+
 static int
-inp_fix_subckt_multiplier(struct line *subckt_card,
+inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_card,
                           int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
 {
     struct line *card;
@@ -2608,12 +2596,12 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
 
     subckt_param_names[num_subckt_params]  = strdup("m");
     subckt_param_values[num_subckt_params] = strdup("1");
-    num_subckt_params = num_subckt_params + 1;
+    num_subckt_params ++;
 
     if (!strstr(subckt_card->li_line, "params:")) {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
         sprintf(new_str, "%s params: m=1", subckt_card->li_line);
-        subckt_w_params[num_subckt_w_params++] = get_subckt_model_name(subckt_card->li_line);
+        add_name(subckt_w_params, get_subckt_model_name(subckt_card->li_line));
     } else {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 5);
         sprintf(new_str, "%s m=1", subckt_card->li_line);
@@ -2623,10 +2611,11 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     subckt_card->li_line = new_str;
 
     for (card = subckt_card->li_next;
-         card != NULL && !ciprefix(".ends", card->li_line);
+         card && !ciprefix(".ends", card->li_line);
          card = card->li_next) {
-        /* no 'm' for B line or comment line */
-        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b'))
+        /* no 'm' for B, V, E, H or comment line */
+        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b') || (*(card->li_line) == 'v') ||
+            (*(card->li_line) == 'e') || (*(card->li_line) == 'h'))
             continue;
         /* no 'm' for model cards */
         if (ciprefix(".model", card->li_line))
@@ -2643,12 +2632,10 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
 
 
 static void
-inp_fix_inst_calls_for_numparam(struct line *deck)
+inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck)
 {
-    struct line *c = deck;
+    struct line *c;
     struct line *d, *p = NULL;
-    char *inst_line;
-    char *subckt_line;
     char *subckt_name;
     char *subckt_param_names[1000];
     char *subckt_param_values[1000];
@@ -2664,8 +2651,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
-    for (c = deck; c != NULL; c = c->li_next) {
-        inst_line = c->li_line;
+    for (c = deck; c; c = c->li_next) {
+        char *inst_line = c->li_line;
 
         if (*inst_line == '*')
             continue;
@@ -2677,9 +2664,9 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
             if (found_mult_param(num_inst_params, inst_param_names)) {
                 flag = FALSE;
                 // iterate through the deck to find the subckt (last one defined wins)
-                d = deck;
-                while (d != NULL) {
-                    subckt_line = d->li_line;
+
+                for (d = deck; d; d = d->li_next) {
+                    char *subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
                         subckt_line = skip_ws(subckt_line);
@@ -2690,13 +2677,12 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                             flag = TRUE;
                         }
                     }
-                    d = d->li_next;
                 }
                 if (flag) {
                     num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
 
                     if (num_subckt_params == 0 || !found_mult_param(num_subckt_params, subckt_param_names))
-                        inp_fix_subckt_multiplier(p, num_subckt_params, subckt_param_names, subckt_param_values);
+                        inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
                 }
             }
             tfree(subckt_name);
@@ -2712,213 +2698,246 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
         }
     }
 
-    c = deck;
-    while (c != NULL) {
-        inst_line = c->li_line;
+    for (c = deck; c; c = c->li_next) {
+        char *inst_line = c->li_line;
 
-        if (*inst_line == '*') {
-            c = c->li_next;
+        if (*inst_line == '*')
             continue;
-        }
+
         if (ciprefix("x", inst_line)) {
             subckt_name = inp_get_subckt_name(inst_line);
-            for (i = 0; i < num_subckt_w_params; i++) {
-                if (strcmp(subckt_w_params[i], subckt_name) == 0) {
-                    sprintf(name_w_space, "%s ", subckt_name);
 
-                    /* find .subckt line */
-                    found_subckt = FALSE;
+            if (find_name(subckt_w_params, subckt_name)) {
+                sprintf(name_w_space, "%s ", subckt_name);
 
-                    d = deck;
-                    while (d != NULL) {
-                        subckt_line = d->li_line;
-                        if (ciprefix(".subckt", subckt_line)) {
-                            subckt_line = skip_non_ws(subckt_line);
-                            subckt_line = skip_ws(subckt_line);
+                /* find .subckt line */
+                found_subckt = FALSE;
 
-                            if (strncmp(subckt_line, name_w_space, strlen(name_w_space)) == 0) {
-                                num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
-                                num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
+                d = deck;
+                while (d != NULL) {
+                    char *subckt_line = d->li_line;
+                    if (ciprefix(".subckt", subckt_line)) {
+                        subckt_line = skip_non_ws(subckt_line);
+                        subckt_line = skip_ws(subckt_line);
 
-                                // make sure that if have inst params that one matches subckt
-                                found_param_match = FALSE;
-                                if (num_inst_params == 0) {
-                                    found_param_match = TRUE;
-                                } else {
-                                    for (j = 0; j < num_inst_params; j++) {
-                                        for (k = 0; k < num_subckt_params; k++)
-                                            if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
-                                                found_param_match = TRUE;
-                                                break;
-                                            }
-                                        if (found_param_match)
+                        if (strncmp(subckt_line, name_w_space, strlen(name_w_space)) == 0) {
+                            num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
+                            num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
+
+                            // make sure that if have inst params that one matches subckt
+                            found_param_match = FALSE;
+                            if (num_inst_params == 0) {
+                                found_param_match = TRUE;
+                            } else {
+                                for (j = 0; j < num_inst_params; j++) {
+                                    for (k = 0; k < num_subckt_params; k++)
+                                        if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
+                                            found_param_match = TRUE;
                                             break;
-                                    }
-                                }
-
-                                if (!found_param_match) {
-                                    // comment out .subckt and continue
-                                    while (d != NULL && !ciprefix(".ends", d->li_line)) {
-                                        *(d->li_line) = '*';
-                                        d = d->li_next;
-                                    }
-                                    *(d->li_line) = '*';
-                                    d = d->li_next;
-                                    continue;
-                                }
-
-                                c->li_line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
-                                found_subckt = TRUE;
-                                for (i = 0; i < num_subckt_params; i++) {
-                                    tfree(subckt_param_names[i]);
-                                    tfree(subckt_param_values[i]);
-                                }
-                                for (i = 0; i < num_inst_params; i++) {
-                                    tfree(inst_param_names[i]);
-                                    tfree(inst_param_values[i]);
+                                        }
+                                    if (found_param_match)
+                                        break;
                                 }
                             }
+
+                            if (!found_param_match) {
+                                // comment out .subckt and continue
+                                while (d != NULL && !ciprefix(".ends", d->li_line)) {
+                                    *(d->li_line) = '*';
+                                    d = d->li_next;
+                                }
+                                *(d->li_line) = '*';
+                                d = d->li_next;
+                                continue;
+                            }
+
+                            c->li_line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
+                            found_subckt = TRUE;
+                            for (i = 0; i < num_subckt_params; i++) {
+                                tfree(subckt_param_names[i]);
+                                tfree(subckt_param_values[i]);
+                            }
+                            for (i = 0; i < num_inst_params; i++) {
+                                tfree(inst_param_names[i]);
+                                tfree(inst_param_values[i]);
+                            }
                         }
-                        if (found_subckt)
-                            break;
-                        d = d->li_next;
                     }
-                    break;
+                    if (found_subckt)
+                        break;
+                    d = d->li_next;
                 }
             }
             tfree(subckt_name);
         }
-        c = c->li_next;
     }
 }
 
 
-static void
-inp_get_func_from_line(char *line)
+static struct function *
+new_function(struct function_env *env, char *name)
 {
-    char *ptr, *end;
-    char keep;
-    char temp_buf[5000];
-    int  num_params = 0;
-    int  str_len = 0;
-    int  i = 0;
+    struct function *f = TMALLOC(struct function, 1);
 
-    /* get function name */
+    f -> name = name;
+    f -> num_parameters = 0;
+
+    f -> next = env->functions;
+    env -> functions  = f;
+
+    return f;
+}
+
+
+static struct function *
+find_function(struct function_env *env, char *name)
+{
+    struct function *f;
+
+    for (; env; env = env->up)
+        for (f = env->functions; f; f = f->next)
+            if (strcmp(f->name, name) == 0)
+                return f;
+
+    return NULL;
+}
+
+
+static void
+free_function(struct function *fcn)
+{
+    int i;
+
+    tfree(fcn->name);
+    tfree(fcn->macro);
+
+    for (i = 0; i < fcn->num_parameters; i++)
+        tfree(fcn->params[i]);
+}
+
+
+static void
+new_function_parameter(struct function *fcn, char *parameter)
+{
+    if (fcn->num_parameters >= N_PARAMS) {
+        fprintf(stderr, "ERROR, N_PARAMS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    fcn->params[fcn->num_parameters++] = parameter;
+}
+
+
+static void
+inp_get_func_from_line(struct function_env *env, char *line)
+{
+    char *end;
+    char temp_buf[5000];
+    int  str_len = 0;
+    struct function *function;
+
+    /* skip `.func' */
     line = skip_non_ws(line);
     line = skip_ws(line);
+
+    /* get function name */
     end = line;
-    while (!isspace(*end) && *end != '(')
+    while (*end && !isspace(*end) && *end != '(')
         end++;
-    keep = *end;
-    *end = '\0';
 
-    /* see if already encountered this function */
-    for (i = 0; i < num_functions; i++)
-        if (strcmp(func_names[i], line) == 0)
-            break;
+    function = new_function(env, copy_substring(line, end));
 
-    func_names[num_functions++] = strdup(line);
-    *end = keep;
-
-    num_params = 0;
+    while (*end && *end != '(')
+        end++;
 
     /* get function parameters */
-    while (*end != '(')
-        end++;
-    while (*end != ')') {
-        end = skip_ws(end + 1);
-        ptr = end;
-        while (!isspace(*end) && *end != ',' && *end != ')')
+    while (*end && *end != ')') {
+        char *beg = skip_ws(end + 1);
+        end = beg;
+        while (*end && !isspace(*end) && *end != ',' && *end != ')')
             end++;
-        if (end > ptr)
-            func_params[num_functions-1][num_params++] = copy_substring(ptr, end);
+        if (end > beg)
+            new_function_parameter(function, copy_substring(beg, end));
     }
-    num_parameters[num_functions-1] = num_params;
 
-    /* get function macro */
+
+    /* skip to the beinning of the function body */
+    while (*end && *end++ != '{')
+        ;
+
+    /* get function body */
     str_len = 0;
-    while (*end != '{')
-        end++;
-    end++;
-    while (*end  &&  *end != '}') {
+    while (*end  && *end != '}') {
         if (!isspace(*end))
             temp_buf[str_len++] = *end;
         end++;
     }
     temp_buf[str_len++] = '\0';
 
-    func_macro[num_functions-1] = strdup(temp_buf);
+    function->macro = strdup(temp_buf);
 }
 
 
-//
-// only grab global functions; skip subckt functions
-//
-static void
-inp_grab_func(struct line *deck)
-{
-    struct line *c        = deck;
-    bool        is_subckt = FALSE;
+/*
+ * grab functions at the current .subckt nesting level
+ */
 
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+static void
+inp_grab_func(struct function_env *env, struct line *c)
+{
+    int nesting = 0;
+
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
             continue;
-        }
+
         if (ciprefix(".subckt", c->li_line))
-            is_subckt = TRUE;
+            nesting++;
         if (ciprefix(".ends", c->li_line))
-            is_subckt = FALSE;
+            nesting--;
 
-        if (!is_subckt && ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(c->li_line);
-            *c->li_line = '*';
-        }
-        c = c->li_next;
-    }
-}
+        if (nesting < 0)
+            break;
 
+        if (nesting > 0)
+            continue;
 
-static void
-inp_grab_subckt_func(struct line *subckt)
-{
-    struct line *c = subckt;
-
-    while (!ciprefix(".ends", c->li_line)) {
         if (ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(c->li_line);
+            inp_get_func_from_line(env, c->li_line);
             *c->li_line = '*';
         }
-        c = c->li_next;
     }
 }
 
 
 static char*
-inp_do_macro_param_replace(int fcn_number, char *params[])
+inp_do_macro_param_replace(struct function *fcn, char *params[])
 {
     char *param_ptr, *curr_ptr, *new_str, *curr_str = NULL, *search_ptr;
     char keep, before, after;
     int  i;
 
-    if (num_parameters[fcn_number] == 0)
-        return strdup(func_macro[fcn_number]);
+    if (fcn->num_parameters == 0)
+        return strdup(fcn->macro);
 
-    for (i = 0; i < num_parameters[fcn_number]; i++) {
+    for (i = 0; i < fcn->num_parameters; i++) {
+
         if (curr_str == NULL) {
-            search_ptr = curr_ptr = func_macro[fcn_number];
+            search_ptr = curr_ptr = fcn->macro;
         } else {
             search_ptr = curr_ptr = curr_str;
             curr_str = NULL;
         }
-        while ((param_ptr = strstr(search_ptr, func_params[fcn_number][i])) != NULL) {
+
+        while ((param_ptr = strstr(search_ptr, fcn->params[i])) != NULL) {
 
             /* make sure actually have the parameter name */
             if (param_ptr == search_ptr) /* no valid 'before' */
                 before = '\0';
             else
                 before = *(param_ptr-1);
-            after  = param_ptr [ strlen(func_params[fcn_number][i]) ];
+            after  = param_ptr [ strlen(fcn->params[i]) ];
             if (!(is_arith_char(before) || isspace(before) ||
                   before == ',' || before == '=' || (param_ptr-1) < curr_ptr) ||
                 !(is_arith_char(after) || isspace(after) ||
@@ -2944,8 +2963,9 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
             }
 
             *param_ptr = keep;
-            search_ptr = curr_ptr = param_ptr + strlen(func_params[fcn_number][i]);
+            search_ptr = curr_ptr = param_ptr + strlen(fcn->params[i]);
         }
+
         if (param_ptr == NULL) {
             if (curr_str == NULL) {
                 curr_str = curr_ptr;
@@ -2957,14 +2977,15 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
             }
         }
     }
+
     return curr_str;
 }
 
 
 static char*
-inp_expand_macro_in_str(char *str)
+inp_expand_macro_in_str(struct function_env *env, char *str)
 {
-    int  i;
+    struct function *function;
     char *c;
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
     char *curr_ptr, *macro_str, *curr_str = NULL;
@@ -2987,13 +3008,11 @@ inp_expand_macro_in_str(char *str)
 
         *open_paren_ptr = '\0';
 
-        for (i = 0; i < num_functions; i++)
-            if (strcmp(func_names[i], fcn_name) == 0)
-                break;
+        function = find_function(env, fcn_name);
 
         *open_paren_ptr = '(';
 
-        if (i >= num_functions)
+        if (!function)
             continue;
 
         /* find the closing paren */
@@ -3043,15 +3062,15 @@ inp_expand_macro_in_str(char *str)
                     break;
             }
             params[num_params++] =
-                inp_expand_macro_in_str(copy_substring(beg_parameter, curr_ptr));
+                inp_expand_macro_in_str(env, copy_substring(beg_parameter, curr_ptr));
         }
 
-        if (num_parameters[i] != num_params) {
+        if (function->num_parameters != num_params) {
             fprintf(stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_str);
             controlled_exit(EXIT_FAILURE);
         }
 
-        macro_str = inp_do_macro_param_replace(i, params);
+        macro_str = inp_do_macro_param_replace(function, params);
         keep  = *fcn_name;
         *fcn_name = '\0';
         {
@@ -3085,48 +3104,74 @@ inp_expand_macro_in_str(char *str)
 
 
 static void
-inp_expand_macros_in_func(void)
+inp_expand_macros_in_func(struct function_env *env)
 {
-    int  i;
+    struct function *f;
 
-    for (i = 0; i < num_functions; i++)
-        func_macro[i] = inp_expand_macro_in_str(func_macro[i]);
+    for (f = env->functions; f ; f = f->next)
+        f->macro = inp_expand_macro_in_str(env, f->macro);
 }
 
 
-static void
-inp_expand_macros_in_deck(struct line *deck)
+static struct function_env *
+new_function_env(struct function_env *up)
 {
-    struct line *c = deck;
-    int         prev_num_functions = 0, i, j;
+    struct function_env *env = TMALLOC(struct function_env, 1);
 
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+    env -> up = up;
+    env -> functions = NULL;
+
+    return env;
+}
+
+
+static struct function_env *
+delete_function_env(struct function_env *env)
+{
+    struct function_env *up = env -> up;
+    struct function *f;
+
+    for (f = env -> functions; f; ) {
+        struct function *here = f;
+        f = f -> next;
+        free_function(here);
+    }
+
+    tfree(env -> functions);
+    tfree(env);
+
+    return up;
+}
+
+
+static struct line *
+inp_expand_macros_in_deck(struct function_env *env, struct line *c)
+{
+    env = new_function_env(env);
+
+    inp_grab_func(env, c);
+
+    inp_expand_macros_in_func(env);
+
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
+            continue;
+
+        if (ciprefix(".subckt", c->li_line)) {
+            c = inp_expand_macros_in_deck(env, c->li_next);
             continue;
         }
-        if (ciprefix(".subckt", c->li_line)) {
-            prev_num_functions = num_functions;
-            inp_grab_subckt_func(c);
-            if (prev_num_functions != num_functions)
-                inp_expand_macros_in_func();
-        }
-        if (ciprefix(".ends", c->li_line)) {
-            if (prev_num_functions != num_functions) {
-                for (i = prev_num_functions; i < num_functions; i++) {
-                    tfree(func_names[i]);
-                    tfree(func_macro[i]);
-                    for (j = 0; j < num_parameters[i]; j++)
-                        tfree(func_params[i][j]);
-                    num_functions = prev_num_functions;
-                }
-            }
-        }
 
-        if (*c->li_line != '*')
-            c->li_line = inp_expand_macro_in_str(c->li_line);
-        c = c->li_next;
+        if (ciprefix(".ends", c->li_line))
+            break;
+
+        c->li_line = inp_expand_macro_in_str(env, c->li_line);
     }
+
+    env = delete_function_env(env);
+
+    return c;
 }
 
 
@@ -3137,52 +3182,49 @@ inp_expand_macros_in_deck(struct line *deck)
    Special handling of vectors with [] and complex values with < >
 
    h_vogt 20 April 2008
- * For xspice and num_pram compatibility .cmodel added
- * .cmodel will be replaced by .model in inp_fix_param_values()
- * and then the entire line is skipped (will not be changed by this function).
- * Usage of numparam requires {} around the parameters in the .cmodel line.
- * May be obsolete?
- */
+   * For xspice and num_pram compatibility .cmodel added
+   * .cmodel will be replaced by .model in inp_fix_param_values()
+   * and then the entire line is skipped (will not be changed by this function).
+   * Usage of numparam requires {} around the parameters in the .cmodel line.
+   * May be obsolete?
+   */
+
 static void
-inp_fix_param_values(struct line *deck)
+inp_fix_param_values(struct line *c)
 {
-    struct line *c = deck;
-    char *line, *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
+    char *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
     char *vec_str, *tmp_str, *natok, *buffer, *newvec, *whereisgt;
     bool control_section = FALSE;
     wordlist *nwl;
     int parens;
 
-    while (c != NULL) {
-        line = c->li_line;
+    for (; c; c = c->li_next) {
+        char *line = c->li_line;
 
-        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{'))) {
-            c = c->li_next;
+        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{')))
             continue;
-        }
 
         if (ciprefix(".control", line)) {
             control_section = TRUE;
-            c = c->li_next;
             continue;
         }
+
         if (ciprefix(".endc", line)) {
             control_section = FALSE;
-            c = c->li_next;
             continue;
         }
-        if (control_section || ciprefix(".option", line)) {
-            c = c->li_next;    /* no handling of params in "option" lines */
+
+        /* no handling of params in "option" lines */
+        if (control_section || ciprefix(".option", line))
             continue;
-        }
-        if (ciprefix("set", line)) {
-            c = c->li_next;    /* no handling of params in "set" lines */
+
+        /* no handling of params in "set" lines */
+        if (ciprefix("set", line))
             continue;
-        }
-        if (*line == 'b') {
-            c = c->li_next;    /* no handling of params in B source lines */
+
+        /* no handling of params in B source lines */
+        if (*line == 'b')
             continue;
-        }
 
         /* for xspice .cmodel: replace .cmodel with .model and skip entire line) */
         if (ciprefix(".cmodel", line)) {
@@ -3192,24 +3234,22 @@ inp_fix_param_values(struct line *deck)
             *(++line) = 'e';
             *(++line) = 'l';
             *(++line) = ' ';
-            c = c->li_next;
             continue;
         }
 
         /* exclude CIDER models */
         if (ciprefix(".model", line) && (strstr(line, "numos") || strstr(line, "numd") ||
                                          strstr(line, "nbjt") || strstr(line, "nbjt2") ||
-                                         strstr(line, "numd2"))) {
-            c = c->li_next;
-            continue;
-        }
-        /* exclude CIDER devices with ic.file parameter */
-        if (strstr(line, "ic.file")) {
-            c = c->li_next;
+                                         strstr(line, "numd2")))
+        {
             continue;
         }
 
-        while ((equal_ptr = strchr(line, '=')) != NULL) {
+        /* exclude CIDER devices with ic.file parameter */
+        if (strstr(line, "ic.file"))
+            continue;
+
+        while ((equal_ptr = find_assignment(line)) != NULL) {
 
             // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
             // no braces around out_variable3. out_variable3 may be v(...) or i(...)
@@ -3223,18 +3263,6 @@ inp_fix_param_values(struct line *deck)
                     line = equal_ptr + 1;
                     continue;
                 }
-
-            // skip over equality '=='
-            if (equal_ptr[1] == '=') {
-                line += 2;
-                continue;
-            }
-            // check for '!=', '<=', '>='
-            if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>')
-            {
-                line += 1;
-                continue;
-            }
 
             beg_of_str = skip_ws(equal_ptr + 1);
             /* all cases where no {} have to be put around selected token */
@@ -3250,7 +3278,7 @@ inp_fix_param_values(struct line *deck)
                 line = equal_ptr + 1;
             } else if (*beg_of_str == '[') {
                 /* A vector following the '=' token: code to put curly brackets around all params
-                inside a pair of square brackets */
+                   inside a pair of square brackets */
                 end_of_str = beg_of_str;
                 while (*end_of_str != ']')
                     end_of_str++;
@@ -3317,7 +3345,7 @@ inp_fix_param_values(struct line *deck)
                 tfree(old_str);
             } else if (*beg_of_str == '<') {
                 /* A complex value following the '=' token: code to put curly brackets around all params
-                inside a pair < > */
+                   inside a pair < > */
                 end_of_str = beg_of_str;
                 while (*end_of_str != '>')
                     end_of_str++;
@@ -3390,7 +3418,6 @@ inp_fix_param_values(struct line *deck)
                 tfree(old_str);
             }
         }
-        c = c->li_next;
     }
 }
 
@@ -3398,26 +3425,20 @@ inp_fix_param_values(struct line *deck)
 static char*
 get_param_name(char *line)
 {
-    char *name = NULL, *equal_ptr, *beg;
-    char keep;
+    char *beg;
+    char *equal_ptr = strchr(line, '=');
 
-    if ((equal_ptr = strchr(line, '=')) != NULL) {
-        equal_ptr = skip_back_ws(equal_ptr - 1) + 1;
-
-        beg = equal_ptr - 1;
-        while (!isspace(*beg) && beg != line)
-            beg--;
-        if (beg != line)
-            beg++;
-        keep       = *equal_ptr;
-        *equal_ptr = '\0';
-        name       = strdup(beg);
-        *equal_ptr = keep;
-    } else {
+    if (!equal_ptr) {
         fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line);
         controlled_exit(EXIT_FAILURE);
+        return NULL;
     }
-    return name;
+
+    equal_ptr = skip_back_ws_(equal_ptr, line);
+
+    beg = skip_back_non_ws_(equal_ptr, line);
+
+    return copy_substring(beg, equal_ptr);
 }
 
 
@@ -3434,7 +3455,6 @@ get_param_str(char *line)
 
 
 static int
-//inp_get_param_level(int param_num, char *depends_on[12000][100], char *param_names[12000], char *param_strs[12000], int total_params, int *level)
 inp_get_param_level(int param_num, char ***depends_on, char **param_names, char **param_strs, int total_params, int *level)
 {
     int index1 = 0, comp_level = 0, temp_level = 0;
@@ -3460,7 +3480,9 @@ inp_get_param_level(int param_num, char ***depends_on, char **param_names, char 
             comp_level = temp_level;
         index1++;
     }
+
     level[param_num] = comp_level;
+
     return comp_level;
 }
 
@@ -3551,8 +3573,8 @@ get_number_terminals(char *c)
             bool only_digits = TRUE;
             char *nametmp = name[k];
             /* MNAME has to contain at least one alpha character. AREA may be assumed
-            if we have a token with only digits, and where the previous token does not
-            end with a ',' */
+               if we have a token with only digits, and where the previous token does not
+               end with a ',' */
             while (*nametmp) {
                 if (isalpha(*nametmp) || (*nametmp == ','))
                     only_digits = FALSE;
@@ -3577,6 +3599,7 @@ get_number_terminals(char *c)
 
 
 /* sort parameters based on parameter dependencies */
+
 static void
 inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
@@ -3587,7 +3610,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     bool found_in_list = FALSE;
 
     struct line *ptr;
-    char *curr_line;
     char *str_ptr, *beg, *end, *new_str;
     int  skipped = 0;
     int arr_size = 12000;
@@ -3606,12 +3628,10 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         return;
 
     /* determine the number of lines with .param */
-    ptr = start_card;
-    while (ptr != NULL) {
+
+    for (ptr = start_card; ptr; ptr = ptr->li_next)
         if (strchr(ptr->li_line, '='))
             num_params++;
-        ptr = ptr->li_next;
-    }
 
     arr_size = num_params;
     num_params = 0; /* This is just to keep the code in row 2907ff. */
@@ -3633,7 +3653,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ptr_array_ordered = TMALLOC(struct line *, arr_size);
 
     ptr = start_card;
-    while (ptr != NULL) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next)
         // ignore .param lines without '='
         if (strchr(ptr->li_line, '=')) {
             depends_on[num_params][0] = NULL;
@@ -3643,8 +3663,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
             ptr_array[num_params++]   = ptr;
         }
-        ptr = ptr->li_next;
-    }
+
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
     for (i = 0; i < num_params; i++)
@@ -3704,32 +3723,29 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     }
 
     /* look for unquoted parameters and quote them */
-    ptr = s_c;
+
     in_control = FALSE;
-    while (ptr != NULL && ptr != e_c) {
-        curr_line = ptr->li_line;
+    for (ptr = s_c; ptr && ptr != e_c; ptr = ptr->li_next) {
+
+        char *curr_line = ptr->li_line;
 
         if (ciprefix(".control", curr_line)) {
             in_control = TRUE;
-            ptr = ptr->li_next;
             continue;
         }
+
         if (ciprefix(".endc", curr_line)) {
             in_control = FALSE;
-            ptr = ptr->li_next;
             continue;
         }
-        if (in_control || curr_line[0] == '.' || curr_line[0] == '*') {
-            ptr = ptr->li_next;
+
+        if (in_control || curr_line[0] == '.' || curr_line[0] == '*')
             continue;
-        }
 
         num_terminals = get_number_terminals(curr_line);
 
-        if (num_terminals <= 0) {
-            ptr = ptr->li_next;
+        if (num_terminals <= 0)
             continue;
-        }
 
         for (i = 0; i < num_params; i++) {
             str_ptr = curr_line;
@@ -3744,8 +3760,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 char before = *(str_ptr-1);
                 char after  = *(str_ptr+strlen(param_names[i]));
                 if (!(is_arith_char(before) || isspace(before) || (str_ptr-1) < curr_line) ||
-                        !(is_arith_char(after)  || isspace(after)  || after == '\0')) {
-                    str_ptr = str_ptr + 1;
+                    !(is_arith_char(after)  || isspace(after)  || after == '\0')) {
+                    str_ptr ++;
                     continue;
                 }
                 beg = str_ptr - 1;
@@ -3769,7 +3785,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 str_ptr++;
             }
         }
-        ptr = ptr->li_next;
     }
 
     ind = 0;
@@ -3814,14 +3829,19 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
 
 static void
-inp_add_params_to_subckt(struct line *subckt_card)
+inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card)
 {
     struct line *card        = subckt_card->li_next;
-    char        *curr_line   = card->li_line;
     char        *subckt_line = subckt_card->li_line;
     char        *new_line, *param_ptr, *subckt_name, *end_ptr;
 
-    while (card != NULL && ciprefix(".param", curr_line)) {
+    for (; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        if (!ciprefix(".param", curr_line))
+            break;
+
         param_ptr = strchr(curr_line, ' ');
         param_ptr = skip_ws(param_ptr);
 
@@ -3829,23 +3849,22 @@ inp_add_params_to_subckt(struct line *subckt_card)
             new_line = TMALLOC(char, strlen(subckt_line) + strlen("params: ") + strlen(param_ptr) + 2);
             sprintf(new_line, "%s params: %s", subckt_line, param_ptr);
 
-            subckt_name = skip_non_ws(subckt_card->li_line);
+            subckt_name = skip_non_ws(subckt_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
-            subckt_w_params[num_subckt_w_params++] = copy_substring(subckt_name, end_ptr);
+            add_name(subckt_w_params, copy_substring(subckt_name, end_ptr));
         } else {
             new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
             sprintf(new_line, "%s %s", subckt_line, param_ptr);
         }
 
         tfree(subckt_line);
-        subckt_card->li_line = subckt_line = new_line;
+        subckt_line = new_line;
 
         *curr_line = '*';
-
-        card      = card->li_next;
-        curr_line = card->li_line;
     }
+
+    subckt_card->li_line = subckt_line;
 }
 
 
@@ -3865,7 +3884,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
  */
 
 static struct line *
-inp_reorder_params_subckt(struct line *subckt_card)
+inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_card)
 {
     struct line *first_param_card = NULL;
     struct line *last_param_card = NULL;
@@ -3884,7 +3903,7 @@ inp_reorder_params_subckt(struct line *subckt_card)
         }
 
         if (ciprefix(".subckt", curr_line)) {
-            prev_card = inp_reorder_params_subckt(c);
+            prev_card = inp_reorder_params_subckt(subckt_w_params, c);
             c         = prev_card->li_next;
             continue;
         }
@@ -3892,7 +3911,7 @@ inp_reorder_params_subckt(struct line *subckt_card)
         if (ciprefix(".ends", curr_line)) {
             if (first_param_card) {
                 inp_sort_params(first_param_card, last_param_card, subckt_card, subckt_card, c);
-                inp_add_params_to_subckt(subckt_card);
+                inp_add_params_to_subckt(subckt_w_params, subckt_card);
             }
             return c;
         }
@@ -3922,7 +3941,7 @@ inp_reorder_params_subckt(struct line *subckt_card)
 
 
 static void
-inp_reorder_params(struct line *deck, struct line *list_head, struct line *end)
+inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line *list_head, struct line *end)
 {
     struct line *first_param_card = NULL;
     struct line *last_param_card = NULL;
@@ -3941,7 +3960,7 @@ inp_reorder_params(struct line *deck, struct line *list_head, struct line *end)
         }
 
         if (ciprefix(".subckt", curr_line)) {
-            prev_card = inp_reorder_params_subckt(c);
+            prev_card = inp_reorder_params_subckt(subckt_w_params, c);
             c         = prev_card->li_next;
             continue;
         }
@@ -3978,62 +3997,43 @@ inp_reorder_params(struct line *deck, struct line *list_head, struct line *end)
 //
 // split line up into multiple lines and place those new lines immediately
 // afetr the current multi-param line in the deck
+
 static int
-inp_split_multi_param_lines(struct line *deck, int line_num)
+inp_split_multi_param_lines(struct line *card, int line_num)
 {
-    struct line *card = deck, *param_end = NULL, *param_beg = NULL, *prev = NULL, *tmp_ptr;
-    char *curr_line, *equal_ptr, *beg_param, *end_param, *new_line;
-    char *array[5000];
-    int  counter = 0, i;
-    bool get_expression = FALSE, get_paren_expression = FALSE;
-    char keep;
+    for (; card; card = card->li_next) {
 
-    while (card != NULL) {
-        curr_line = card->li_line;
+        char *curr_line = card->li_line;
 
-        if (*curr_line == '*') {
-            card = card->li_next;
+        if (*curr_line == '*')
             continue;
-        }
 
         if (ciprefix(".param", curr_line)) {
-            counter = 0;
-            while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
-                // check for equality '=='
-                if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr+2;
-                    continue;
-                }
-                // check for '!=', '<=', '>='
-                if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr+1;
-                    continue;
-                }
+
+            struct line *param_end, *param_beg;
+            char *equal_ptr, *array[5000];
+            int i, counter = 0;
+
+            while ((equal_ptr = find_assignment(curr_line)) != NULL) {
                 counter++;
                 curr_line = equal_ptr + 1;
             }
-            if (counter <= 1) {
-                card = card->li_next;
+
+            if (counter <= 1)
                 continue;
-            }
 
             // need to split multi param line
             curr_line = card->li_line;
             counter   = 0;
-            while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
-                // check for equality '=='
-                if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr+2;
-                    continue;
-                }
-                // check for '!=', '<=', '>='
-                if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr+1;
-                    continue;
-                }
+            while ((equal_ptr = find_assignment(curr_line)) != NULL) {
 
-                beg_param = skip_back_ws(equal_ptr - 1);
-                beg_param = skip_back_non_ws(beg_param);
+                char keep, *beg_param, *end_param, *new_line;
+
+                bool get_expression = FALSE;
+                bool get_paren_expression = FALSE;
+
+                beg_param = skip_back_ws_(equal_ptr, curr_line);
+                beg_param = skip_back_non_ws_(beg_param, curr_line);
                 end_param = skip_ws(equal_ptr + 1);
                 while (*end_param != '\0' && (!isspace(*end_param) || get_expression || get_paren_expression)) {
                     if (*end_param == '{')
@@ -4046,7 +4046,6 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                         get_paren_expression = FALSE;
                     end_param++;
                 }
-                beg_param++;
                 keep       = *end_param;
                 *end_param = '\0';
                 new_line   = TMALLOC(char, strlen(".param ") + strlen(beg_param) + 1);
@@ -4055,38 +4054,30 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                 *end_param = keep;
                 curr_line = end_param;
             }
-            tmp_ptr = card->li_next;
+
+            param_beg = param_end = NULL;
+
             for (i = 0; i < counter; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = array[i];
-                param_end->li_linenum = line_num++;
+                struct line *x = xx_new_line(NULL, array[i], line_num++, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
+
             // comment out current multi-param line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
-
-            param_beg = param_end = NULL;
-        } // if (ciprefix(".param", curr_line))
-        prev = card;
-        card = card->li_next;
-    } // while (card != NULL)
-    if (param_end) {
-        prev->li_next = param_beg;
-        prev          = param_end;
+        }
     }
+
     return line_num;
 }
 
@@ -4132,36 +4123,36 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
    resistance may be lost.
 
    Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
-      -->
-      Exxx  n-aux 0  n1 n2  1
-      Cxxx  n-aux 0         1
-      Bxxx  n2 n1  I = i(Exxx) * equation
+   -->
+   Exxx  n-aux 0  n1 n2  1
+   Cxxx  n-aux 0         1
+   Bxxx  n2 n1  I = i(Exxx) * equation
 
    Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
-      -->
-      Fxxx n-aux 0  Bxxx -1
-      Lxxx n-aux 0      1
-      Bxxx n1 n2 V = v(n-aux) * 1e-16
+   -->
+   Fxxx n-aux 0  Bxxx -1
+   Lxxx n-aux 0      1
+   Bxxx n1 n2 V = v(n-aux) * 1e-16
 
-     */
+*/
+
 static void
-inp_compat(struct line *deck)
+inp_compat(struct line *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
     char *xline;
     size_t xlen, i, pai = 0, paui = 0, ii;
     char *ckt_array[100];
-    struct line *new_line, *tmp_ptr;
+    struct line *new_line;
 
     struct line  *param_end = NULL, *param_beg = NULL;
-    struct line *card;
     int skip_control = 0;
 
     char *equation, *tc1_ptr = NULL, *tc2_ptr = NULL;
     double tc1 = 0.0, tc2 = 0.0;
 
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
 
@@ -4198,7 +4189,7 @@ inp_compat(struct line *deck)
                -->
                Exxx n1 n2 int1 0 1
                BExxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2)
-             */
+            */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
                 double fnumber, lnumber, delta;
@@ -4210,28 +4201,26 @@ inp_compat(struct line *deck)
                 node2 =  gettok(&cut_line);
                 // Exxx  n1 n2 int1 0 1
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + 1;
+                    + 20 - 4*2 + 1;
                 ckt_array[0] = TMALLOC(char, xlen);
                 sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
                         title_tok, node1, node2, title_tok);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
-                if (cieq(str_ptr, "table")) {
-                    tfree(str_ptr);
-                } else {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
+                if (!cieq(str_ptr, "table")) {
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
+                tfree(str_ptr);
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
-                if ((!expression) || (!str_ptr)) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
+                if (!expression || !str_ptr) {
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                else
-                    tfree(str_ptr);
+                tfree(str_ptr);
                 /* remove '{' and '}' from expression */
                 if ((str_ptr = strchr(expression, '{')) != NULL)
                     *str_ptr = ' ';
@@ -4249,8 +4238,8 @@ inp_compat(struct line *deck)
                 str_ptr = cut_line;
                 ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
                 firstno = copy(ffirstno);
@@ -4271,8 +4260,8 @@ inp_compat(struct line *deck)
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
                 xlen = 2*strlen(title_tok) + strlen(expression) + 14 + strlen(firstno) +
@@ -4284,26 +4273,21 @@ inp_compat(struct line *deck)
                         midline, lnumber + delta, lastlastno);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable e line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4334,38 +4318,33 @@ inp_compat(struct line *deck)
 
                 // Exxx  n1 n2 int1 0 1
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + 1;
+                    + 20 - 4*2 + 1;
                 ckt_array[0] = TMALLOC(char, xlen);
                 sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
                         title_tok, node1, node2, title_tok);
                 // BExxx int1 0 V = {equation}
                 xlen = 2*strlen(title_tok) + strlen(str_ptr)
-                       + 20 - 3*2 + 1;
+                    + 20 - 3*2 + 1;
                 ckt_array[1] = TMALLOC(char, xlen);
                 sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
                         title_tok, title_tok, str_ptr);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable e line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4391,9 +4370,10 @@ inp_compat(struct line *deck)
                -->
                Gxxx n1 n2 int1 0 1
                BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2)
-             */
+            */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
+                char *m_ptr, *m_token;
                 double fnumber, lnumber, delta;
                 int nerror;
                 cut_line = curr_line;
@@ -4402,29 +4382,37 @@ inp_compat(struct line *deck)
                 node1 =  gettok(&cut_line);
                 node2 =  gettok(&cut_line);
                 // Gxxx  n1 n2 int1 0 1
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + 1;
-                ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
-                        title_tok, node1, node2, title_tok);
-                // get the expression
-                str_ptr = gettok(&cut_line); /* ignore 'table' */
-                if (cieq(str_ptr, "table")) {
-                    tfree(str_ptr);
-                } else {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
-                    controlled_exit(EXIT_BAD);
-                }
-                str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
-                expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
-                if ((!expression) || (!str_ptr)) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
-                    controlled_exit(EXIT_BAD);
+                // or
+                // Gxxx  n1 n2 int1 0 m='expr'
+                /* find multiplier m at end of line */
+                m_ptr = strstr(cut_line, "m=");
+                if (m_ptr) {
+                    m_token = copy(m_ptr+2);  //get only the expression
+                    *m_ptr = '\0';
                 }
                 else
-                    tfree(str_ptr);
+                    m_token = copy("1");
+                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
+                    + 20 - 4*2 + strlen(m_token);
+                ckt_array[0] = TMALLOC(char, xlen);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
+                        title_tok, node1, node2, title_tok, m_token);
+                // get the expression
+                str_ptr = gettok(&cut_line); /* ignore 'table' */
+                if (!cieq(str_ptr, "table")) {
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                tfree(str_ptr);
+                str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
+                expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
+                if (!expression || !str_ptr) {
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
+                tfree(str_ptr);
                 /* remove '{' and '}' from expression */
                 if ((str_ptr = strchr(expression, '{')) != NULL)
                     *str_ptr = ' ';
@@ -4442,8 +4430,8 @@ inp_compat(struct line *deck)
                 str_ptr = cut_line;
                 ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
                 firstno = copy(ffirstno);
@@ -4464,8 +4452,8 @@ inp_compat(struct line *deck)
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad sytax in line %d\n  %s\n",
-                        card->li_linenum_orig, card->li_line);
+                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
                 /* BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2) */
@@ -4478,26 +4466,21 @@ inp_compat(struct line *deck)
                         midline, lnumber + delta, lastlastno);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable e line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -4507,14 +4490,16 @@ inp_compat(struct line *deck)
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
+                tfree(m_token);
             }
             /*
-               Gxxx n1 n2 CUR = {equation}
-               -->
-               Gxxx n1 n2 int1 0 1
-               BGxxx int1 0 V = {equation}
+              Gxxx n1 n2 CUR = {equation}
+              -->
+              Gxxx n1 n2 int1 0 1
+              BGxxx int1 0 V = {equation}
             */
             if ((str_ptr = strstr(curr_line, "cur")) != NULL) {
+                char *m_ptr, *m_token;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4526,45 +4511,51 @@ inp_compat(struct line *deck)
                     fprintf(stderr, "ERROR: mal formed G line: %s\n", curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
+                /* find multiplier m at end of line */
+                m_ptr = strstr(cut_line, "m=");
+                if (m_ptr) {
+                    m_token = copy(m_ptr + 2); //get only the expression
+                    *m_ptr = '\0';
+                }
+                else
+                    m_token = copy("1");
                 // Gxxx  n1 n2 int1 0 1
+                // or
+                // Gxxx  n1 n2 int1 0 m='expr'
                 xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                       + 20 - 4*2 + 1;
+                    + 20 - 4*2 + strlen(m_token);
                 ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
-                        title_tok, node1, node2, title_tok);
+                sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
+                        title_tok, node1, node2, title_tok, m_token);
                 // BGxxx int1 0 V = {equation}
                 xlen = 2*strlen(title_tok) + strlen(str_ptr)
-                       + 20 - 3*2 + 1;
+                    + 20 - 3*2 + 1;
                 ckt_array[1] = TMALLOC(char, xlen);
                 sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
                         title_tok, title_tok, str_ptr);
 
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (i = 0; i < 2; i++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[i];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable g line
                 *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
                 param_beg = param_end = NULL;
                 tfree(title_tok);
+                tfree(m_token);
                 tfree(node1);
                 tfree(node2);
             }
@@ -4634,40 +4625,34 @@ inp_compat(struct line *deck)
             }
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                       strlen(node1) + strlen(node2) + strlen(equation)  +
-                       28 - 6*2 + 1;
+                    strlen(node1) + strlen(node2) + strlen(equation)  +
+                    28 - 6*2 + 1;
                 xline = TMALLOC(char, xlen);
                 sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
                         node1, node2, equation);
             } else if (tc2_ptr == NULL) {
                 xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                       strlen(node1) + strlen(node2) + strlen(equation)  +
-                       28 - 6*2 + 1 + 21 + 13;
+                    strlen(node1) + strlen(node2) + strlen(equation)  +
+                    28 - 6*2 + 1 + 21 + 13;
                 xline = TMALLOC(char, xlen);
                 sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
                         node1, node2, equation, tc1);
             } else {
                 xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                       strlen(node1) + strlen(node2) + strlen(equation)  +
-                       28 - 6*2 + 1 + 21 + 21 + 13;
+                    strlen(node1) + strlen(node2) + strlen(equation)  +
+                    28 - 6*2 + 1 + 21 + 21 + 13;
                 xline = TMALLOC(char, xlen);
                 sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
                         node1, node2, equation, tc1, tc2);
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
-            new_line = alloc(struct line);
-            new_line->li_next    = NULL;
-            new_line->li_error   = NULL;
-            new_line->li_actual  = NULL;
-            new_line->li_line    = xline;
-            new_line->li_linenum = 0;
+            new_line = xx_new_line(card->li_next, xline, 0, 0);
+
             // comment out current old R line
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
-            tmp_ptr           = card->li_next;
             card->li_next     = new_line;
-            new_line->li_next = tmp_ptr;
             // point 'card' pointer to the new line
             card              = new_line;
             tfree(title_tok);
@@ -4680,7 +4665,7 @@ inp_compat(struct line *deck)
            Exxx  n-aux 0  n1 n2  1
            Cxxx  n-aux 0         1
            Bxxx  n2 n1  I = i(Exxx) * equation
-         */
+        */
         else if (*curr_line == 'c') {
             cut_line = curr_line;
             title_tok = gettok(&cut_line);
@@ -4728,31 +4713,31 @@ inp_compat(struct line *deck)
             }
             // Exxx  n-aux 0  n1 n2  1
             xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                   + 21 - 4*2 + 1;
+                + 21 - 4*2 + 1;
             ckt_array[0] = TMALLOC(char, xlen);
             sprintf(ckt_array[0], "e%s %s_int2 0 %s %s 1",
                     title_tok, title_tok, node1, node2);
             // Cxxx  n-aux 0  1
             xlen = 2*strlen(title_tok)
-                   + 15 - 2*2 + 1;
+                + 15 - 2*2 + 1;
             ckt_array[1] = TMALLOC(char, xlen);
             sprintf(ckt_array[1], "c%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n2 n1  I = i(Exxx) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                       + strlen(equation) + 27 - 2*5 + 1;
+                    + strlen(equation) + 27 - 2*5 + 1;
                 ckt_array[2] = TMALLOC(char, xlen);
                 sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s)",
                         title_tok, node2, node1, title_tok, equation);
             } else if (tc2_ptr == NULL) {
                 xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                       + strlen(equation) + 27 - 2*5 + 1 + 21 + 13;
+                    + strlen(equation) + 27 - 2*5 + 1 + 21 + 13;
                 ckt_array[2] = TMALLOC(char, xlen);
                 sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
                         title_tok, node2, node1, title_tok, equation, tc1);
             } else {
                 xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                       + strlen(equation) + 27 - 2*5 + 1 + 21 + 21 + 13;
+                    + strlen(equation) + 27 - 2*5 + 1 + 21 + 21 + 13;
                 ckt_array[2] = TMALLOC(char, xlen);
                 sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=1",
                         title_tok, node2, node1, title_tok, equation, tc1, tc2);
@@ -4760,26 +4745,21 @@ inp_compat(struct line *deck)
             tc1_ptr = NULL;
             tc2_ptr = NULL;
             // insert new B source line immediately after current line
-            tmp_ptr = card->li_next;
             for (i = 0; i < 3; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = ckt_array[i];
-                param_end->li_linenum = 0;
+                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current variable capacitor line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
@@ -4795,7 +4775,7 @@ inp_compat(struct line *deck)
            Fxxx n-aux 0  Bxxx -1
            Lxxx n-aux 0      1
            Bxxx n1 n2 V = v(n-aux) * equation
-         */
+        */
         else if (*curr_line == 'l') {
             cut_line = curr_line;
             /* title and nodes */
@@ -4843,31 +4823,31 @@ inp_compat(struct line *deck)
             }
             // Fxxx  n-aux 0  Bxxx  1
             xlen = 3*strlen(title_tok)
-                   + 20 - 3*2 + 1;
+                + 20 - 3*2 + 1;
             ckt_array[0] = TMALLOC(char, xlen);
             sprintf(ckt_array[0], "f%s %s_int2 0 b%s -1",
                     title_tok, title_tok, title_tok);
             // Lxxx  n-aux 0  1
             xlen = 2*strlen(title_tok)
-                   + 15 - 2*2 + 1;
+                + 15 - 2*2 + 1;
             ckt_array[1] = TMALLOC(char, xlen);
             sprintf(ckt_array[1], "l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                       + strlen(equation) + 31 - 2*5 + 1;
+                    + strlen(equation) + 31 - 2*5 + 1;
                 ckt_array[2] = TMALLOC(char, xlen);
                 sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s)",
                         title_tok, node1, node2, title_tok, equation);
             } else if (tc2_ptr == NULL) {
                 xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                       + strlen(equation) + 31 - 2*5 + 1 + 21 + 13;
+                    + strlen(equation) + 31 - 2*5 + 1 + 21 + 13;
                 ckt_array[2] = TMALLOC(char, xlen);
                 sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e reciproctc=0",
                         title_tok, node2, node1, title_tok, equation, tc1);
             } else {
                 xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                       + strlen(equation) + 31 - 2*5 + 1 + 21 + 21 + 13;
+                    + strlen(equation) + 31 - 2*5 + 1 + 21 + 21 + 13;
                 ckt_array[2] = TMALLOC(char, xlen);
                 sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=0",
                         title_tok, node2, node1, title_tok, equation, tc1, tc2);
@@ -4875,26 +4855,21 @@ inp_compat(struct line *deck)
             tc1_ptr = NULL;
             tc2_ptr = NULL;
             // insert new B source line immediately after current line
-            tmp_ptr = card->li_next;
             for (i = 0; i < 3; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = ckt_array[i];
-                param_end->li_linenum = 0;
+                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current variable inductor line
             *(card->li_line)   = '*';
             // insert new param lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
@@ -5049,25 +5024,20 @@ inp_compat(struct line *deck)
                 // remove white spaces
                 card->li_line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (ii = paui; ii < pai; ii++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[ii];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
 
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -5170,26 +5140,21 @@ inp_compat(struct line *deck)
                 // remove white spaces
                 card->li_line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
-                tmp_ptr = card->li_next;
                 for (ii = paui; ii < pai; ii++) {
-                    if (param_end) {
-                        param_end->li_next = alloc(struct line);
-                        param_end          = param_end->li_next;
-                    } else {
-                        param_end = param_beg = alloc(struct line);
-                    }
-                    param_end->li_next    = NULL;
-                    param_end->li_error   = NULL;
-                    param_end->li_actual  = NULL;
-                    param_end->li_line    = ckt_array[ii];
-                    param_end->li_linenum = 0;
+                    struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
                 }
                 // comment out current variable capacitor line
                 // *(ckt_array[0])   = '*';
                 // insert new param lines immediately after current line
-                tmp_ptr            = card->li_next;
+                param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
-                param_end->li_next = tmp_ptr;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
@@ -5201,8 +5166,10 @@ inp_compat(struct line *deck)
     }
 }
 
+
 /* replace a token (length 4 char) in string by spaces, if it is found
-    at the correct position and the total number of tokens is o.k. */
+   at the correct position and the total number of tokens is o.k. */
+
 static void
 replace_token(char *string, char *token, int wherereplace, int total)
 {
@@ -5246,18 +5213,18 @@ replace_token(char *string, char *token, int wherereplace, int total)
 */
 
 static void
-inp_bsource_compat(struct line *deck)
+inp_bsource_compat(struct line *card)
 {
     char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
     char actchar;
-    struct line *card, *new_line, *tmp_ptr;
+    struct line *new_line;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
     int error1;
 
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
 
@@ -5384,8 +5351,8 @@ inp_bsource_compat(struct line *deck)
                                Put braces around tokens and around expressions, use ','
                                as separator like:
                                pwl(i(Vin), {x0-1},{y0},
-                                  {x0},{y0},{x1},{y1}, {x2},{y2},{x3},{y3},
-                                  {x3+1},{y3})
+                               {x0},{y0},{x1},{y1}, {x2},{y2},{x3},{y3},
+                               {x3+1},{y3})
                             */
                             /*
                              * if (cieq(buf, "pwl")) {
@@ -5463,7 +5430,7 @@ inp_bsource_compat(struct line *deck)
                         }
                     }
                     ustate = 0; /* we have a number */
-                } else if (isdigit(actchar)) {
+                } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
                     /* allow 100p, 5MEG etc. */
                     double dvalue = INPevaluate(&str_ptr, &error1, 0);
                     char   cvalue[19];
@@ -5502,20 +5469,13 @@ inp_bsource_compat(struct line *deck)
             final_str = TMALLOC(char, xlen);
             sprintf(final_str, "%s %s", tmp_char, new_str);
 
-            new_line = alloc(struct line);
-            new_line->li_next    = NULL;
-            new_line->li_error   = NULL;
-            new_line->li_actual  = NULL;
-            new_line->li_line    = final_str;
             /* Copy old line numbers into new B source line */
-            new_line->li_linenum = card->li_linenum;
-            new_line->li_linenum_orig = card->li_linenum_orig;
+            new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
+
             // comment out current line (old B source line)
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
-            tmp_ptr           = card->li_next;
             card->li_next     = new_line;
-            new_line->li_next = tmp_ptr;
             // point 'card' pointer to the new line
             card              = new_line;
 
@@ -5580,7 +5540,7 @@ get_quoted_token(char *string, char **token)
  * -->
  * Lxxx n1 n2_intern__ Lval
  * RLxxx_n2_intern__ n2_intern__ n2 rval
-*/
+ */
 
 static void
 inp_add_series_resistor(struct line *deck)
@@ -5590,7 +5550,7 @@ inp_add_series_resistor(struct line *deck)
     struct line *card;
     char *tmp_p, *title_tok, *node1, *node2, *rval = NULL;
     char *ckt_array[10];
-    struct line  *tmp_ptr, *param_end = NULL, *param_beg = NULL;
+    struct line  *param_end = NULL, *param_beg = NULL;
 
     for (card = deck; card; card = card->li_next) {
         char *curr_line = card->li_line;
@@ -5648,26 +5608,21 @@ inp_add_series_resistor(struct line *deck)
             sprintf(ckt_array[1], "R%s_intern__ %s_intern__ %s %s",
                     title_tok, node2, node2, rval);
             /* assemble new L and R lines */
-            tmp_ptr = card->li_next;
             for (i = 0; i < 2; i++) {
-                if (param_end) {
-                    param_end->li_next = alloc(struct line);
-                    param_end          = param_end->li_next;
-                } else {
-                    param_end = param_beg = alloc(struct line);
-                }
-                param_end->li_next    = NULL;
-                param_end->li_error   = NULL;
-                param_end->li_actual  = NULL;
-                param_end->li_line    = ckt_array[i];
-                param_end->li_linenum = 0;
+                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                if (param_end)
+                    param_end->li_next = x;
+                else
+                    param_beg = x;
+
+                param_end = x;
             }
             // comment out current L line
             *(card->li_line)   = '*';
             // insert new new L and R lines immediately after current line
-            tmp_ptr            = card->li_next;
+            param_end->li_next = card->li_next;
             card->li_next      = param_beg;
-            param_end->li_next = tmp_ptr;
             // point 'card' pointer to last in scalar list
             card               = param_end;
             param_beg = param_end = NULL;
@@ -5680,20 +5635,24 @@ inp_add_series_resistor(struct line *deck)
     tfree(rval);
 }
 
+
 /* If XSPICE option is not selected, run this function to alert and exit
    if the 'poly' option is found in e, g, f, or h controlled sources. */
 
 #ifndef XSPICE
-static void
-inp_poly_err(struct line *deck)
-{
-    struct line *card;
 
+static void
+inp_poly_err(struct line *card)
+{
     size_t skip_control = 0;
-    for (card = deck; card; card = card->li_next) {
+
+    for (; card; card = card->li_next) {
+
         char *curr_line = card->li_line;
+
         if (*curr_line == '*')
             continue;
+
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
             skip_control ++;
@@ -5704,17 +5663,19 @@ inp_poly_err(struct line *deck)
         } else if (skip_control > 0) {
             continue;
         }
+
         /* get the fourth token in a controlled source line and exit,
-        if it is 'poly' */
+           if it is 'poly' */
         if ((ciprefix("e", curr_line)) || (ciprefix("g", curr_line)) ||
-            (ciprefix("f", curr_line)) || (ciprefix("h", curr_line))) {
+            (ciprefix("f", curr_line)) || (ciprefix("h", curr_line)))
+        {
             txfree(gettok(&curr_line));
             txfree(gettok(&curr_line));
             txfree(gettok(&curr_line));
             if (ciprefix("poly", curr_line)) {
                 fprintf(stderr,
-                    "\nError: XSPICE is required to run the 'poly' option in line %d\n",
-                    card->li_linenum_orig);
+                        "\nError: XSPICE is required to run the 'poly' option in line %d\n",
+                        card->li_linenum_orig);
                 fprintf(stderr, "  %s\n", card->li_line);
                 fprintf(stderr, "\nSee manual chapt. 31 for installation instructions\n");
                 controlled_exit(EXIT_BAD);
@@ -5722,4 +5683,46 @@ inp_poly_err(struct line *deck)
         }
     }
 }
+
 #endif
+
+
+static void
+tprint(struct line *t)
+{
+    /*debug: print into file*/
+    FILE *fd = fopen("tprint-out.txt", "w");
+
+    for (; t; t = t->li_next)
+        fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+
+    fclose(fd);
+}
+
+
+/* prepare .if and .elseif for numparam
+   .if(expression) --> .if{expression} */
+
+static void
+inp_dot_if(struct line *card)
+{
+    for (; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        if (*curr_line == '*')
+            continue;
+
+        if (ciprefix(".if", curr_line) || ciprefix(".elseif", curr_line)) {
+            char* firstbr = strchr(curr_line, '(');
+            char* lastbr = strrchr(curr_line, ')');
+            if ((!firstbr) || (!lastbr)) {
+                fprintf(cp_err, "Error in netlist line %d\n", card->li_linenum_orig);
+                fprintf(cp_err, "   Bad syntax: %s\n\n", curr_line);
+                controlled_exit(EXIT_BAD);
+            }
+            *firstbr = '{';
+            *lastbr = '}';
+        }
+    }
+}

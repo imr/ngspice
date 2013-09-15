@@ -74,10 +74,15 @@ SPICEdev SWinfo = {
 #endif /* CIDER */                        
  /* DEVinstSize   */ &SWiSize,
  /* DEVmodSize    */ &SWmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   SWbindCSC,
  /* DEVbindCSCComplex */   SWbindCSCComplex,
  /* DEVbindCSCComplexToReal */  SWbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

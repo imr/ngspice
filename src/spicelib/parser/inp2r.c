@@ -22,7 +22,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
 /* parse a resistor card */
 /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>][ac=<val>] */
 
-    int mytype;			/* the type we determine resistors are */
+    static int mytype = -1;	/* the type we determine resistors are */
     int type = 0;		/* the type the model says it is */
     char *line;			/* the part of the current line left to parse */
     char *saveline;		/* ... just in case we need to go back... */
@@ -49,10 +49,11 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
     printf("In INP2R, Current line: %s\n", current->line);
 #endif
 
-    mytype = INPtypelook("Resistor");
     if (mytype < 0) {
-      LITERR("Device type Resistor not supported by this binary\n");
-      return;
+        if ((mytype = INPtypelook("Resistor")) < 0) {
+            LITERR("Device type Resistor not supported by this binary\n");
+            return;
+        }
     }
     line = current->line;
     INPgetTok(&line, &name, 1);			/* Rname */
@@ -171,8 +172,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
           line = saveline;	/* go back */
           type = mytype;
           if (!tab->defRmod) {	/* create default R model */
-            IFnewUid(ckt, &uid, NULL, "R", UID_MODEL,
-                NULL);
+            IFnewUid(ckt, &uid, NULL, "R", UID_MODEL, NULL);
             IFC(newModel, (ckt, type, &(tab->defRmod), uid));
           }
           mdfast = tab->defRmod;
@@ -184,8 +184,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
       type = mytype;
       if (!tab->defRmod) {
           /* create default R model */
-          IFnewUid(ckt, &uid, NULL, "R", UID_MODEL,
-              NULL);
+          IFnewUid(ckt, &uid, NULL, "R", UID_MODEL, NULL);
           IFC(newModel, (ckt, type, &(tab->defRmod), uid));
       }
       IFC(newInstance, (ckt, tab->defRmod, &fast, name));
@@ -199,7 +198,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
 
     if (error1 == 0) {		/* got a resistance above */
       ptemp.rValue = val;
-      GCA(INPpName, ("resistance", &ptemp, ckt, type, fast))
+      GCA(INPpName, ("resistance", &ptemp, ckt, type, fast));
     }
 
     IFC(bindNode, (ckt, fast, 1, node1));

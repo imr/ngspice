@@ -39,24 +39,30 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case RES_MOD_DEFWIDTH:
             value->rValue = model->RESdefWidth;
             return(OK);
+        case RES_MOD_DEFLENGTH:
+            value->rValue = model->RESdefLength;
+            return(OK);
         case RES_MOD_NARROW: 
             value->rValue = model->RESnarrow;
             return(OK);
         case RES_MOD_SHORT: 
             value->rValue = model->RESshort;
             return(OK);
-	case RES_MOD_KF:
-	    if (model->RESfNcoefGiven)
-	        value->rValue = model->RESfNcoef;
-	    else
-	        value->rValue = 0.0;
-	    return(OK);
-	case RES_MOD_AF: 
-	    if (model->RESfNexpGiven)
-	        value->rValue = model->RESfNexp;
-	    else
-	        value->rValue = 0.0;
-            return(OK);		    
+        case RES_MOD_KF:
+            if (model->RESfNcoefGiven)
+                value->rValue = model->RESfNcoef;
+            else
+                value->rValue = 0.0;
+            return(OK);
+        case RES_MOD_AF: 
+            if (model->RESfNexpGiven)
+                value->rValue = model->RESfNexp;
+            else
+                value->rValue = 0.0;
+            return(OK);                    
+        case RES_MOD_R:
+            value->rValue = model->RESres;
+            return(OK);
         default:
             return(E_BADPARM);
     }

@@ -23,10 +23,16 @@ CCCSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     switch(param) {
         case CCCS_GAIN:
             here->CCCScoeff = value->rValue;
+            if (here->CCCSmGiven)
+                here->CCCScoeff *= here->CCCSmValue;
             here->CCCScoeffGiven = TRUE;
             break;
         case CCCS_CONTROL:
             here->CCCScontName = value->uValue;
+            break;
+        case CCCS_M:
+            here->CCCSmValue = value->rValue;
+            here->CCCSmGiven = TRUE;
             break;
         case CCCS_GAIN_SENS:
             here->CCCSsenParmNo = value->iValue;

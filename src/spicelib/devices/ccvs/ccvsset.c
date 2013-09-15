@@ -54,15 +54,15 @@ CCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(CCVSposIbrptr, CCVSposNode, CCVSbranch)
-            TSTALLOC(CCVSnegIbrptr, CCVSnegNode, CCVSbranch)
-            TSTALLOC(CCVSibrNegptr, CCVSbranch, CCVSnegNode)
-            TSTALLOC(CCVSibrPosptr, CCVSbranch, CCVSposNode)
-            TSTALLOC(CCVSibrContBrptr, CCVSbranch, CCVScontBranch)
+            TSTALLOC(CCVSposIbrptr, CCVSposNode, CCVSbranch);
+            TSTALLOC(CCVSnegIbrptr, CCVSnegNode, CCVSbranch);
+            TSTALLOC(CCVSibrNegptr, CCVSbranch, CCVSnegNode);
+            TSTALLOC(CCVSibrPosptr, CCVSbranch, CCVSposNode);
+            TSTALLOC(CCVSibrContBrptr, CCVSbranch, CCVScontBranch);
         }
     }
     return(OK);

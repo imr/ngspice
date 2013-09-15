@@ -81,10 +81,10 @@ static IFvalue *doask(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel 
                        IFparm *opt, int ind);
 static int doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod,
                  IFparm *opt, struct dvec *val);
-static int finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr);
+static int finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr);
 
 /* espice fix integration */
-static int finddev_special(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
+static int finddev_special(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
 
 
 /* Input a single deck, and return a pointer to the circuit. */
@@ -252,8 +252,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         /*CDHW Create an interactive task AAA with a new UID.
           ci_specTask will point to it CDHW*/
 
-        err = IFnewUid(ft_curckt->ci_ckt, &specUid, NULL, "special",
-                       UID_TASK, NULL);
+        err = IFnewUid(ft_curckt->ci_ckt, &specUid, NULL, "special", UID_TASK, NULL);
         if (err) {
             ft_sperror(err, "newUid");
             return (2);
@@ -281,8 +280,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
             }
 
         if (which != -1) { /*CDHW options are available CDHW*/
-            err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options",
-                           UID_ANALYSIS, NULL);
+            err = IFnewUid(ft_curckt->ci_ckt, &optUid, NULL, "options", UID_ANALYSIS, NULL);
             if (err) {
                 ft_sperror(err, "newUid");
                 return (2);
@@ -616,7 +614,7 @@ finddev_special(
     int err;
     int type = -1;
 
-    err = ft_sim->findInstance (ckt, &type, devptr, name, NULL, NULL);
+    err = ft_sim->findInstance (ckt, &type, devptr, name, NULL);
     if (err == OK) {
         *device_or_model = 0;
         return (type);
@@ -1212,19 +1210,19 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
  */
 
 static int
-finddev(CKTcircuit *ck, char *name, GENinstance **devptr, GENmodel **modptr)
+finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr)
 {
     int err;
     int type = -1;
 
-    err = ft_sim->findInstance (ck, &type, devptr, name, NULL, NULL);
+    err = ft_sim->findInstance (ckt, &type, devptr, name, NULL);
     if (err == OK)
         return (type);
 
     type = -1;
     *devptr = NULL;
 
-    err = ft_sim->findModel (ck, &type, modptr, name);
+    err = ft_sim->findModel (ckt, &type, modptr, name);
     if (err == OK)
         return (type);
 
@@ -1273,8 +1271,7 @@ if_tranparams(struct circ *ci, double *start, double *stop, double *step)
     if (which == -1)
         return (FALSE);
 
-    err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis",
-                   UID_ANALYSIS, NULL);
+    err = IFnewUid(ci->ci_ckt, &tranUid, NULL, "Transient Analysis", UID_ANALYSIS, NULL);
     if (err != OK)
         return (FALSE);
 
@@ -1616,11 +1613,11 @@ void com_snload(wordlist *wl)
             return;
         }
         SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
-        error = SPfrontEnd->OUTpBeginPlot (
-            ckt, ckt->CKTcurJob,
-            ckt->CKTcurJob->JOBname,
-            timeUid, IF_REAL,
-            numNames, nameList, IF_REAL, &(((TRANan*)ckt->CKTcurJob)->TRANplot));
+        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                           ckt->CKTcurJob->JOBname,
+                                           timeUid, IF_REAL,
+                                           numNames, nameList, IF_REAL,
+                                           &(((TRANan*)ckt->CKTcurJob)->TRANplot));
         if (error) {
             fprintf(cp_err, "error in CKTnames\n");
             return;

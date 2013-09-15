@@ -78,10 +78,15 @@ SPICEdev VBICinfo = {
 #endif                                                         
     &VBICiSize,   /* DEVinstSize    */
     &VBICmSize,   /* DEVmodSize     */
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   VBICbindCSC,
  /* DEVbindCSCComplex */   VBICbindCSCComplex,
  /* DEVbindCSCComplexToReal */  VBICbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+    VBICnodeIsNonLinear /* DEVnodeIsNonLinear */
 #endif
 
 };

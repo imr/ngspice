@@ -39,6 +39,10 @@ if UMFPACK_WANTED
 libsoi3_la_SOURCES += soi3bindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libsoi3_la_SOURCES += soi3node.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

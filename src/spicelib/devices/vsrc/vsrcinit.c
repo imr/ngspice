@@ -73,10 +73,15 @@ SPICEdev VSRCinfo = {
 #endif                        
  /* DEVinstSize   */ &VSRCiSize,
  /* DEVmodSize    */ &VSRCmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */ VSRCbindCSC,
  /* DEVbindCSCComplex */ VSRCbindCSCComplex,
  /* DEVbindCSCComplexToReal */  VSRCbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ VSRCnodeIsNonLinear
 #endif
 
 };

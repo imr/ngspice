@@ -56,12 +56,12 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 
 	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
-		    NULL, "onoise_spectrum", UID_OTHER, NULL);
+                                  NULL, "onoise_spectrum", UID_OTHER, NULL);
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 
 	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
-		    NULL, "inoise_spectrum", UID_OTHER, NULL);
+                                  NULL, "inoise_spectrum", UID_OTHER, NULL);
 
 	    /* we've added two more plots */
 
@@ -73,11 +73,11 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
-		NULL, "onoise_total", UID_OTHER, NULL);
+                                  NULL, "onoise_total", UID_OTHER, NULL);
 
 	    data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	    SPfrontEnd->IFnewUid (ckt, &(data->namelist[data->numPlots++]),
-		NULL, "inoise_total", UID_OTHER, NULL);
+                                  NULL, "inoise_total", UID_OTHER, NULL);
 	    /* we've added two more plots */
 
 	    data->outpVector =

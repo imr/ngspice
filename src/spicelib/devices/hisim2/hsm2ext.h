@@ -43,3 +43,7 @@ extern int HSM2bindCSC (GENmodel*, CKTcircuit*) ;
 extern int HSM2bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int HSM2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int HSM2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

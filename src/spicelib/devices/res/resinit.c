@@ -73,10 +73,15 @@ SPICEdev RESinfo = {
 #endif                        
  /* DEVinstSize   */ &RESiSize,
  /* DEVmodSize    */ &RESmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   RESbindCSC,
  /* DEVbindCSCComplex */   RESbindCSCComplex,
  /* DEVbindCSCComplexToReal */  RESbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ RESnodeIsNonLinear
 #endif
 
 };

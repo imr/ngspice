@@ -39,6 +39,10 @@ if UMFPACK_WANTED
 libres_la_SOURCES += resbindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libres_la_SOURCES += resnode.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

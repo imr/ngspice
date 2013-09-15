@@ -76,12 +76,17 @@ SPICEdev TXLinfo = {
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,  
 #endif
-    &TXLiSize,
-    &TXLmSize,
+ /* DEVinstSize   */ &TXLiSize,
+ /* DEVmodSize    */ &TXLmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   TXLbindCSC,
  /* DEVbindCSCComplex */   TXLbindCSCComplex,
  /* DEVbindCSCComplexToReal */  TXLbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

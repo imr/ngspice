@@ -32,6 +32,9 @@ extern int BJTdisto(int,GENmodel*,CKTcircuit*);
 extern int BJTnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 
+#ifdef KIRCHHOFF
+extern int BJTnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif
 #endif
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)

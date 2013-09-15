@@ -23,9 +23,12 @@ extern int MESdisto(int,GENmodel*,CKTcircuit*);
 extern int MESnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MESdSetup(GENmodel*,CKTcircuit*);
 
-
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int MESbindCSC (GENmodel*, CKTcircuit*) ;
 extern int MESbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int MESbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
+#ifdef KIRCHHOFF
+extern int MESnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
 #endif

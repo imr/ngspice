@@ -189,10 +189,9 @@ static int  ZeroPivot( MatrixPtr, int );
  */
 
 int
-spOrderAndFactor(MatrixPtr eMatrix, RealNumber RHS[], RealNumber RelThreshold,
+spOrderAndFactor(MatrixPtr Matrix, RealNumber RHS[], RealNumber RelThreshold,
                  RealNumber AbsThreshold, int DiagPivoting)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pPivot;
     int  Step, Size, ReorderingRequired;
     RealNumber LargestInCol;
@@ -321,9 +320,8 @@ Done:
  *  Error is cleared in this function.  */
 
 int
-spFactor(MatrixPtr eMatrix)
+spFactor(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pElement;
     ElementPtr  pColumn;
     int  Step, Size;
@@ -333,10 +331,10 @@ spFactor(MatrixPtr eMatrix)
     assert( IS_VALID(Matrix) && !Matrix->Factored);
 
     if (Matrix->NeedsOrdering) {
-        return spOrderAndFactor( eMatrix, NULL,
+        return spOrderAndFactor( Matrix, NULL,
                                  0.0, 0.0, DIAG_PIVOTING_AS_DEFAULT );
     }
-    if (!Matrix->Partitioned) spPartition( eMatrix, spDEFAULT_PARTITION );
+    if (!Matrix->Partitioned) spPartition( Matrix, spDEFAULT_PARTITION );
     if (Matrix->Complex)
         return FactorComplexMatrix( Matrix );
 
@@ -569,9 +567,8 @@ FactorComplexMatrix( MatrixPtr Matrix )
  *      spINDIRECT_PARTITION, or spAUTO_PARTITION.  */
 
 void
-spPartition(MatrixPtr eMatrix, int Mode)
+spPartition(MatrixPtr Matrix, int Mode)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pElement, pColumn;
     int  Step, Size;
     int  *Nc, *No, *Nm;
@@ -603,8 +600,8 @@ spPartition(MatrixPtr eMatrix, int Mode)
         assert( Mode == spAUTO_PARTITION );
 
     /* Otherwise, count all operations needed in when factoring matrix. */
-    Nc = (int *)Matrix->MarkowitzRow;
-    No = (int *)Matrix->MarkowitzCol;
+    Nc = Matrix->MarkowitzRow;
+    No = Matrix->MarkowitzCol;
     Nm = (int *)Matrix->MarkowitzProd;
 
     /* Start mock-factorization. */

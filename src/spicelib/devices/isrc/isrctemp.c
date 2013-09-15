@@ -47,6 +47,8 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                             &(here->ISRCname));
                 }
             }
+            if(!here->ISRCmGiven)
+                here->ISRCmValue = 1;
             radians = here->ISRCacPhase * M_PI / 180.0;
             here->ISRCacReal = here->ISRCacMag * cos(radians);
             here->ISRCacImag = here->ISRCacMag * sin(radians);

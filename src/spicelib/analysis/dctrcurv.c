@@ -50,6 +50,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     static runDesc *plot = NULL;
 
 #ifdef WANT_SENSE2
+    long save;
 #ifdef SENSDEBUG
     if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode&DCSEN) ){
         printf("\nDC Sensitivity Results\n\n");
@@ -66,11 +67,11 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         /* continuing */
         i = job->TRCVnestState;
         /* resume to work? saj*/
-        error = SPfrontEnd->OUTpBeginPlot (
-            NULL, NULL,
-            NULL,
-            NULL, 0,
-            666, NULL, 666, &plot);
+        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &plot);
         goto resume;
     }
     ckt->CKTtime = 0;
@@ -192,36 +193,31 @@ found:;
     
     
     if (job->TRCVvType[i] == vcode)
-         SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-            "v-sweep", UID_OTHER, NULL);
+         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "v-sweep", UID_OTHER, NULL);
         
     else {
         if (job->TRCVvType[i] == icode)
-            SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                 "i-sweep", UID_OTHER, NULL);
+            SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "i-sweep", UID_OTHER, NULL);
                      
         else {
             if (job->TRCVvType[i] == TEMP_CODE)
-                SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                   "temp-sweep", UID_OTHER, NULL);
+                SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "temp-sweep", UID_OTHER, NULL);
        
             else {
                 if (job->TRCVvType[i] == rcode)
-                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                        "res-sweep", UID_OTHER, NULL);
+                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "res-sweep", UID_OTHER, NULL);
                                 
                 else
-                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL,
-                        "?-sweep", UID_OTHER, NULL);
+                    SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "?-sweep", UID_OTHER, NULL);
             } /* icode */
         } /* TEMP_CODE */
     } /* rcode*/
     
-    error = SPfrontEnd->OUTpBeginPlot (
-        ckt, ckt->CKTcurJob,
-        ckt->CKTcurJob->JOBname,
-        varUid, IF_REAL,
-        numNames, nameList, IF_REAL, &plot);
+    error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
+                                       ckt->CKTcurJob->JOBname,
+                                       varUid, IF_REAL,
+                                       numNames, nameList, IF_REAL,
+                                       &plot);
     tfree(nameList);
     
     if(error) return(error);
@@ -450,7 +446,7 @@ resume:
             }
        if (job->TRCVvType[i] == TEMP_CODE) { /* Temperature */
                 printf("Current Circuit Temperature : %.5e C\n",
-                        ckt-CKTtemp - CONSTCtoK);
+                        ckt->CKTtemp - CONSTCtoK);
             }
        
 #endif /* SENSDEBUG */
@@ -458,7 +454,10 @@ resume:
             senmode = ckt->CKTsenInfo->SENmode;
             save = ckt->CKTmode;
             ckt->CKTsenInfo->SENmode = DCSEN;
-            if(error = CKTsenDCtran(ckt)) return (error);
+            error = CKTsenDCtran(ckt);
+            if (error)
+                return(error);
+
             ckt->CKTmode = save;
             ckt->CKTsenInfo->SENmode = senmode;
 

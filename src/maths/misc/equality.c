@@ -24,6 +24,11 @@ bool AlmostEqualUlps(double A, double B, int maxUlps)
 {
     int64_t aInt, bInt, intDiff;
 
+    union {
+        double d;
+        int64_t i;
+    } uA, uB;
+
     if (A == B)
         return TRUE;
 
@@ -34,12 +39,14 @@ bool AlmostEqualUlps(double A, double B, int maxUlps)
     /* default NAN won't compare as equal to anything. */
     assert(maxUlps > 0 && maxUlps < 4 * 1024 * 1024);
 
-    aInt = *(int64_t*)&A;
+    uA.d = A;
+    aInt = uA.i;
     /* Make aInt lexicographically ordered as a twos-complement int */
     if (aInt < 0)
         aInt = int64_min - aInt;
 
-    bInt = *(int64_t*)&B;
+    uB.d = B;
+    bInt = uB.i;
     /* Make bInt lexicographically ordered as a twos-complement int */
     if (bInt < 0)
         bInt = int64_min - bInt;

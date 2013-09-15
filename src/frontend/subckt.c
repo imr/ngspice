@@ -1815,6 +1815,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
 
         case 'r':
         case 'c':
+        case 'l':
             name = gettok(&t);  /* get refdes */
             (void) sprintf(buffer, "%s ", name);
             tfree(name);
@@ -1967,7 +1968,7 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
             name = gettok(&t);
 
             found = 0;
-            while (*t && !found) {
+            while (!found) {
                 /* Now, is this a subcircuit model? */
                 for (wlsub = submod; wlsub; wlsub = wlsub->wl_next) {
                     /* FIXME, probably too unspecific */
@@ -1994,6 +1995,10 @@ devmodtranslate(struct line *deck, char *subname, wordlist * const submod)
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
                     tfree(name);
                     name = gettok(&t);
+                    if (name == NULL) {
+                        name = copy(""); /* allow 'tfree' */
+                        break;
+                    }
                 }
             }  /* while  */
 

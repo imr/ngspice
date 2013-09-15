@@ -34,6 +34,12 @@ CCCSload(GENmodel *inModel, CKTcircuit *ckt)
 
             *(here->CCCSposContBrptr) += here->CCCScoeff ;
             *(here->CCCSnegContBrptr) -= here->CCCScoeff ;
+
+#ifdef KIRCHHOFF
+            *(ckt->CKTfvk+here->CCCSposNode) += here->CCCScoeff * *(ckt->CKTrhsOld+here->CCCScontBranch) ;
+            *(ckt->CKTfvk+here->CCCSnegNode) -= here->CCCScoeff * *(ckt->CKTrhsOld+here->CCCScontBranch) ;
+#endif
+
         }
     }
     return(OK);

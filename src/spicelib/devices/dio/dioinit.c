@@ -74,10 +74,15 @@ SPICEdev DIOinfo = {
 #endif                     
  /* DEVinstSize   */ &DIOiSize,
  /* DEVmodSize    */ &DIOmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   DIObindCSC,
  /* DEVbindCSCComplex */   DIObindCSCComplex,
  /* DEVbindCSCComplexToReal */  DIObindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ DIOnodeIsNonLinear
 #endif
 
 };

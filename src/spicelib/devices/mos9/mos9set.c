@@ -227,32 +227,32 @@ MOS9setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-            TSTALLOC(MOS9DdPtr, MOS9dNode, MOS9dNode)
-            TSTALLOC(MOS9GgPtr, MOS9gNode, MOS9gNode)
-            TSTALLOC(MOS9SsPtr, MOS9sNode, MOS9sNode)
-            TSTALLOC(MOS9BbPtr, MOS9bNode, MOS9bNode)
-            TSTALLOC(MOS9DPdpPtr, MOS9dNodePrime, MOS9dNodePrime)
-            TSTALLOC(MOS9SPspPtr, MOS9sNodePrime, MOS9sNodePrime)
-            TSTALLOC(MOS9DdpPtr, MOS9dNode, MOS9dNodePrime)
-            TSTALLOC(MOS9GbPtr, MOS9gNode, MOS9bNode)
-            TSTALLOC(MOS9GdpPtr, MOS9gNode, MOS9dNodePrime)
-            TSTALLOC(MOS9GspPtr, MOS9gNode, MOS9sNodePrime)
-            TSTALLOC(MOS9SspPtr, MOS9sNode, MOS9sNodePrime)
-            TSTALLOC(MOS9BdpPtr, MOS9bNode, MOS9dNodePrime)
-            TSTALLOC(MOS9BspPtr, MOS9bNode, MOS9sNodePrime)
-            TSTALLOC(MOS9DPspPtr, MOS9dNodePrime, MOS9sNodePrime)
-            TSTALLOC(MOS9DPdPtr, MOS9dNodePrime, MOS9dNode)
-            TSTALLOC(MOS9BgPtr, MOS9bNode, MOS9gNode)
-            TSTALLOC(MOS9DPgPtr, MOS9dNodePrime, MOS9gNode)
-            TSTALLOC(MOS9SPgPtr, MOS9sNodePrime, MOS9gNode)
-            TSTALLOC(MOS9SPsPtr, MOS9sNodePrime, MOS9sNode)
-            TSTALLOC(MOS9DPbPtr, MOS9dNodePrime, MOS9bNode)
-            TSTALLOC(MOS9SPbPtr, MOS9sNodePrime, MOS9bNode)
-            TSTALLOC(MOS9SPdpPtr, MOS9sNodePrime, MOS9dNodePrime)
+            TSTALLOC(MOS9DdPtr, MOS9dNode, MOS9dNode);
+            TSTALLOC(MOS9GgPtr, MOS9gNode, MOS9gNode);
+            TSTALLOC(MOS9SsPtr, MOS9sNode, MOS9sNode);
+            TSTALLOC(MOS9BbPtr, MOS9bNode, MOS9bNode);
+            TSTALLOC(MOS9DPdpPtr, MOS9dNodePrime, MOS9dNodePrime);
+            TSTALLOC(MOS9SPspPtr, MOS9sNodePrime, MOS9sNodePrime);
+            TSTALLOC(MOS9DdpPtr, MOS9dNode, MOS9dNodePrime);
+            TSTALLOC(MOS9GbPtr, MOS9gNode, MOS9bNode);
+            TSTALLOC(MOS9GdpPtr, MOS9gNode, MOS9dNodePrime);
+            TSTALLOC(MOS9GspPtr, MOS9gNode, MOS9sNodePrime);
+            TSTALLOC(MOS9SspPtr, MOS9sNode, MOS9sNodePrime);
+            TSTALLOC(MOS9BdpPtr, MOS9bNode, MOS9dNodePrime);
+            TSTALLOC(MOS9BspPtr, MOS9bNode, MOS9sNodePrime);
+            TSTALLOC(MOS9DPspPtr, MOS9dNodePrime, MOS9sNodePrime);
+            TSTALLOC(MOS9DPdPtr, MOS9dNodePrime, MOS9dNode);
+            TSTALLOC(MOS9BgPtr, MOS9bNode, MOS9gNode);
+            TSTALLOC(MOS9DPgPtr, MOS9dNodePrime, MOS9gNode);
+            TSTALLOC(MOS9SPgPtr, MOS9sNodePrime, MOS9gNode);
+            TSTALLOC(MOS9SPsPtr, MOS9sNodePrime, MOS9sNode);
+            TSTALLOC(MOS9DPbPtr, MOS9dNodePrime, MOS9bNode);
+            TSTALLOC(MOS9SPbPtr, MOS9sNodePrime, MOS9bNode);
+            TSTALLOC(MOS9SPdpPtr, MOS9sNodePrime, MOS9dNodePrime);
 
         }
     }

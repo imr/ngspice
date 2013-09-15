@@ -37,6 +37,10 @@ if UMFPACK_WANTED
 libhfet2_la_SOURCES += hfet2bindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libhfet2_la_SOURCES += hfet2node.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

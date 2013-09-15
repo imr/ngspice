@@ -47,6 +47,10 @@ if UMFPACK_WANTED
 libbjt_la_SOURCES += bjtbindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libbjt_la_SOURCES += bjtnode.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

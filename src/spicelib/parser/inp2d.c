@@ -67,8 +67,7 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, card * current)
 	type = mytype;
 	if (!tab->defDmod) {
 	    /* create default D model */
-	    IFnewUid(ckt, &uid, NULL, "D", UID_MODEL,
-		     NULL);
+	    IFnewUid(ckt, &uid, NULL, "D", UID_MODEL, NULL);
 	    IFC(newModel, (ckt, type, &(tab->defDmod), uid));
 	}
 	mdfast = tab->defDmod;
@@ -81,7 +80,7 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, card * current)
 
 #ifdef CIDER
     	if( type == INPtypelook("NUMD2") ) {
-            LITERR(" error:  no unlabelled parameter permitted on NUMD2\n")
+            LITERR(" error:  no unlabelled parameter permitted on NUMD2\n");
 	} else {
 #endif
 	ptemp.rValue = leadval;

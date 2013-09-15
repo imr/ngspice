@@ -177,25 +177,25 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-    TSTALLOC(HFET2drainDrainPrimePtr,HFET2drainNode,HFET2drainPrimeNode)
-    TSTALLOC(HFET2gateDrainPrimePtr,HFET2gateNode,HFET2drainPrimeNode)
-    TSTALLOC(HFET2gateSourcePrimePtr,HFET2gateNode,HFET2sourcePrimeNode)
-    TSTALLOC(HFET2sourceSourcePrimePtr,HFET2sourceNode,HFET2sourcePrimeNode)
-    TSTALLOC(HFET2drainPrimeDrainPtr,HFET2drainPrimeNode,HFET2drainNode)
-    TSTALLOC(HFET2drainPrimeGatePtr,HFET2drainPrimeNode,HFET2gateNode)
-    TSTALLOC(HFET2drainPriHFET2ourcePrimePtr,HFET2drainPrimeNode,HFET2sourcePrimeNode)
-    TSTALLOC(HFET2sourcePrimeGatePtr,HFET2sourcePrimeNode,HFET2gateNode)
-    TSTALLOC(HFET2sourcePriHFET2ourcePtr,HFET2sourcePrimeNode,HFET2sourceNode)
-    TSTALLOC(HFET2sourcePrimeDrainPrimePtr,HFET2sourcePrimeNode,HFET2drainPrimeNode)
-    TSTALLOC(HFET2drainDrainPtr,HFET2drainNode,HFET2drainNode)
-    TSTALLOC(HFET2gateGatePtr,HFET2gateNode,HFET2gateNode)
-    TSTALLOC(HFET2sourceSourcePtr,HFET2sourceNode,HFET2sourceNode)
-    TSTALLOC(HFET2drainPrimeDrainPrimePtr,HFET2drainPrimeNode,HFET2drainPrimeNode)
-    TSTALLOC(HFET2sourcePriHFET2ourcePrimePtr,HFET2sourcePrimeNode,HFET2sourcePrimeNode)
+    TSTALLOC(HFET2drainDrainPrimePtr,HFET2drainNode,HFET2drainPrimeNode);
+    TSTALLOC(HFET2gateDrainPrimePtr,HFET2gateNode,HFET2drainPrimeNode);
+    TSTALLOC(HFET2gateSourcePrimePtr,HFET2gateNode,HFET2sourcePrimeNode);
+    TSTALLOC(HFET2sourceSourcePrimePtr,HFET2sourceNode,HFET2sourcePrimeNode);
+    TSTALLOC(HFET2drainPrimeDrainPtr,HFET2drainPrimeNode,HFET2drainNode);
+    TSTALLOC(HFET2drainPrimeGatePtr,HFET2drainPrimeNode,HFET2gateNode);
+    TSTALLOC(HFET2drainPriHFET2ourcePrimePtr,HFET2drainPrimeNode,HFET2sourcePrimeNode);
+    TSTALLOC(HFET2sourcePrimeGatePtr,HFET2sourcePrimeNode,HFET2gateNode);
+    TSTALLOC(HFET2sourcePriHFET2ourcePtr,HFET2sourcePrimeNode,HFET2sourceNode);
+    TSTALLOC(HFET2sourcePrimeDrainPrimePtr,HFET2sourcePrimeNode,HFET2drainPrimeNode);
+    TSTALLOC(HFET2drainDrainPtr,HFET2drainNode,HFET2drainNode);
+    TSTALLOC(HFET2gateGatePtr,HFET2gateNode,HFET2gateNode);
+    TSTALLOC(HFET2sourceSourcePtr,HFET2sourceNode,HFET2sourceNode);
+    TSTALLOC(HFET2drainPrimeDrainPrimePtr,HFET2drainPrimeNode,HFET2drainPrimeNode);
+    TSTALLOC(HFET2sourcePriHFET2ourcePrimePtr,HFET2sourcePrimeNode,HFET2sourcePrimeNode);
   
     }
   }

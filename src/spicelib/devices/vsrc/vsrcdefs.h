@@ -83,6 +83,11 @@ typedef struct sVSRCinstance {
     BindElement *VSRCibrPosptrStructPtr ;
 #endif
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+#endif
+
 } VSRCinstance ;
 
 
@@ -107,6 +112,7 @@ typedef struct sVSRCmodel {
 #define AM 6
 #define TRNOISE 7
 #define TRRANDOM 8
+#define EXTERNAL 9
 #endif /*PULSE*/
 
 /* device parameters */
@@ -137,6 +143,7 @@ typedef struct sVSRCmodel {
 #define VSRC_TD 24
 #define VSRC_TRNOISE 25
 #define VSRC_TRRANDOM 26
+#define VSRC_EXTERNAL 27
 
 /* model parameters */
 

@@ -472,62 +472,62 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
+do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
-}
-            TSTALLOC(VBICcollCollPtr,VBICcollNode,VBICcollNode)
-            TSTALLOC(VBICbaseBasePtr,VBICbaseNode,VBICbaseNode)
-            TSTALLOC(VBICemitEmitPtr,VBICemitNode,VBICemitNode)
-            TSTALLOC(VBICsubsSubsPtr,VBICsubsNode,VBICsubsNode)
-            TSTALLOC(VBICcollCXCollCXPtr,VBICcollCXNode,VBICcollCXNode)
-            TSTALLOC(VBICcollCICollCIPtr,VBICcollCINode,VBICcollCINode)
-            TSTALLOC(VBICbaseBXBaseBXPtr,VBICbaseBXNode,VBICbaseBXNode)
-            TSTALLOC(VBICbaseBIBaseBIPtr,VBICbaseBINode,VBICbaseBINode)
-            TSTALLOC(VBICemitEIEmitEIPtr,VBICemitEINode,VBICemitEINode)
-            TSTALLOC(VBICbaseBPBaseBPPtr,VBICbaseBPNode,VBICbaseBPNode)
-            TSTALLOC(VBICsubsSISubsSIPtr,VBICsubsSINode,VBICsubsSINode)
+} } while(0)
+            TSTALLOC(VBICcollCollPtr,VBICcollNode,VBICcollNode);
+            TSTALLOC(VBICbaseBasePtr,VBICbaseNode,VBICbaseNode);
+            TSTALLOC(VBICemitEmitPtr,VBICemitNode,VBICemitNode);
+            TSTALLOC(VBICsubsSubsPtr,VBICsubsNode,VBICsubsNode);
+            TSTALLOC(VBICcollCXCollCXPtr,VBICcollCXNode,VBICcollCXNode);
+            TSTALLOC(VBICcollCICollCIPtr,VBICcollCINode,VBICcollCINode);
+            TSTALLOC(VBICbaseBXBaseBXPtr,VBICbaseBXNode,VBICbaseBXNode);
+            TSTALLOC(VBICbaseBIBaseBIPtr,VBICbaseBINode,VBICbaseBINode);
+            TSTALLOC(VBICemitEIEmitEIPtr,VBICemitEINode,VBICemitEINode);
+            TSTALLOC(VBICbaseBPBaseBPPtr,VBICbaseBPNode,VBICbaseBPNode);
+            TSTALLOC(VBICsubsSISubsSIPtr,VBICsubsSINode,VBICsubsSINode);
 
-            TSTALLOC(VBICbaseEmitPtr,VBICbaseNode,VBICemitNode)
-            TSTALLOC(VBICemitBasePtr,VBICemitNode,VBICbaseNode)
-            TSTALLOC(VBICbaseCollPtr,VBICbaseNode,VBICcollNode)
-            TSTALLOC(VBICcollBasePtr,VBICcollNode,VBICbaseNode)
-            TSTALLOC(VBICcollCollCXPtr,VBICcollNode,VBICcollCXNode)
-            TSTALLOC(VBICbaseBaseBXPtr,VBICbaseNode,VBICbaseBXNode)
-            TSTALLOC(VBICemitEmitEIPtr,VBICemitNode,VBICemitEINode)
-            TSTALLOC(VBICsubsSubsSIPtr,VBICsubsNode,VBICsubsSINode)
-            TSTALLOC(VBICcollCXCollCIPtr,VBICcollCXNode,VBICcollCINode)
-            TSTALLOC(VBICcollCXBaseBXPtr,VBICcollCXNode,VBICbaseBXNode)
-            TSTALLOC(VBICcollCXBaseBIPtr,VBICcollCXNode,VBICbaseBINode)
-            TSTALLOC(VBICcollCXBaseBPPtr,VBICcollCXNode,VBICbaseBPNode)
-            TSTALLOC(VBICcollCIBaseBIPtr,VBICcollCINode,VBICbaseBINode)
-            TSTALLOC(VBICcollCIEmitEIPtr,VBICcollCINode,VBICemitEINode)
-            TSTALLOC(VBICbaseBXBaseBIPtr,VBICbaseBXNode,VBICbaseBINode)
-            TSTALLOC(VBICbaseBXEmitEIPtr,VBICbaseBXNode,VBICemitEINode)
-            TSTALLOC(VBICbaseBXBaseBPPtr,VBICbaseBXNode,VBICbaseBPNode)
-            TSTALLOC(VBICbaseBXSubsSIPtr,VBICbaseBXNode,VBICsubsSINode)
-            TSTALLOC(VBICbaseBIEmitEIPtr,VBICbaseBINode,VBICemitEINode)
-            TSTALLOC(VBICbaseBPSubsSIPtr,VBICbaseBPNode,VBICsubsSINode)
+            TSTALLOC(VBICbaseEmitPtr,VBICbaseNode,VBICemitNode);
+            TSTALLOC(VBICemitBasePtr,VBICemitNode,VBICbaseNode);
+            TSTALLOC(VBICbaseCollPtr,VBICbaseNode,VBICcollNode);
+            TSTALLOC(VBICcollBasePtr,VBICcollNode,VBICbaseNode);
+            TSTALLOC(VBICcollCollCXPtr,VBICcollNode,VBICcollCXNode);
+            TSTALLOC(VBICbaseBaseBXPtr,VBICbaseNode,VBICbaseBXNode);
+            TSTALLOC(VBICemitEmitEIPtr,VBICemitNode,VBICemitEINode);
+            TSTALLOC(VBICsubsSubsSIPtr,VBICsubsNode,VBICsubsSINode);
+            TSTALLOC(VBICcollCXCollCIPtr,VBICcollCXNode,VBICcollCINode);
+            TSTALLOC(VBICcollCXBaseBXPtr,VBICcollCXNode,VBICbaseBXNode);
+            TSTALLOC(VBICcollCXBaseBIPtr,VBICcollCXNode,VBICbaseBINode);
+            TSTALLOC(VBICcollCXBaseBPPtr,VBICcollCXNode,VBICbaseBPNode);
+            TSTALLOC(VBICcollCIBaseBIPtr,VBICcollCINode,VBICbaseBINode);
+            TSTALLOC(VBICcollCIEmitEIPtr,VBICcollCINode,VBICemitEINode);
+            TSTALLOC(VBICbaseBXBaseBIPtr,VBICbaseBXNode,VBICbaseBINode);
+            TSTALLOC(VBICbaseBXEmitEIPtr,VBICbaseBXNode,VBICemitEINode);
+            TSTALLOC(VBICbaseBXBaseBPPtr,VBICbaseBXNode,VBICbaseBPNode);
+            TSTALLOC(VBICbaseBXSubsSIPtr,VBICbaseBXNode,VBICsubsSINode);
+            TSTALLOC(VBICbaseBIEmitEIPtr,VBICbaseBINode,VBICemitEINode);
+            TSTALLOC(VBICbaseBPSubsSIPtr,VBICbaseBPNode,VBICsubsSINode);
 
-            TSTALLOC(VBICcollCXCollPtr,VBICcollCXNode,VBICcollNode)
-            TSTALLOC(VBICbaseBXBasePtr,VBICbaseBXNode,VBICbaseNode)
-            TSTALLOC(VBICemitEIEmitPtr,VBICemitEINode,VBICemitNode)
-            TSTALLOC(VBICsubsSISubsPtr,VBICsubsSINode,VBICsubsNode)
-            TSTALLOC(VBICcollCICollCXPtr,VBICcollCINode,VBICcollCXNode)
-            TSTALLOC(VBICbaseBICollCXPtr,VBICbaseBINode,VBICcollCXNode)
-            TSTALLOC(VBICbaseBPCollCXPtr,VBICbaseBPNode,VBICcollCXNode)
-            TSTALLOC(VBICbaseBXCollCIPtr,VBICbaseBXNode,VBICcollCINode)
-            TSTALLOC(VBICbaseBICollCIPtr,VBICbaseBINode,VBICcollCINode)
-            TSTALLOC(VBICemitEICollCIPtr,VBICemitEINode,VBICcollCINode)
-            TSTALLOC(VBICbaseBPCollCIPtr,VBICbaseBPNode,VBICcollCINode)
-            TSTALLOC(VBICbaseBIBaseBXPtr,VBICbaseBINode,VBICbaseBXNode)
-            TSTALLOC(VBICemitEIBaseBXPtr,VBICemitEINode,VBICbaseBXNode)
-            TSTALLOC(VBICbaseBPBaseBXPtr,VBICbaseBPNode,VBICbaseBXNode)
-            TSTALLOC(VBICsubsSIBaseBXPtr,VBICsubsSINode,VBICbaseBXNode)
-            TSTALLOC(VBICemitEIBaseBIPtr,VBICemitEINode,VBICbaseBINode)
-            TSTALLOC(VBICbaseBPBaseBIPtr,VBICbaseBPNode,VBICbaseBINode)
-            TSTALLOC(VBICsubsSICollCIPtr,VBICsubsSINode,VBICcollCINode)
-            TSTALLOC(VBICsubsSIBaseBIPtr,VBICsubsSINode,VBICbaseBINode)
-            TSTALLOC(VBICsubsSIBaseBPPtr,VBICsubsSINode,VBICbaseBPNode)
+            TSTALLOC(VBICcollCXCollPtr,VBICcollCXNode,VBICcollNode);
+            TSTALLOC(VBICbaseBXBasePtr,VBICbaseBXNode,VBICbaseNode);
+            TSTALLOC(VBICemitEIEmitPtr,VBICemitEINode,VBICemitNode);
+            TSTALLOC(VBICsubsSISubsPtr,VBICsubsSINode,VBICsubsNode);
+            TSTALLOC(VBICcollCICollCXPtr,VBICcollCINode,VBICcollCXNode);
+            TSTALLOC(VBICbaseBICollCXPtr,VBICbaseBINode,VBICcollCXNode);
+            TSTALLOC(VBICbaseBPCollCXPtr,VBICbaseBPNode,VBICcollCXNode);
+            TSTALLOC(VBICbaseBXCollCIPtr,VBICbaseBXNode,VBICcollCINode);
+            TSTALLOC(VBICbaseBICollCIPtr,VBICbaseBINode,VBICcollCINode);
+            TSTALLOC(VBICemitEICollCIPtr,VBICemitEINode,VBICcollCINode);
+            TSTALLOC(VBICbaseBPCollCIPtr,VBICbaseBPNode,VBICcollCINode);
+            TSTALLOC(VBICbaseBIBaseBXPtr,VBICbaseBINode,VBICbaseBXNode);
+            TSTALLOC(VBICemitEIBaseBXPtr,VBICemitEINode,VBICbaseBXNode);
+            TSTALLOC(VBICbaseBPBaseBXPtr,VBICbaseBPNode,VBICbaseBXNode);
+            TSTALLOC(VBICsubsSIBaseBXPtr,VBICsubsSINode,VBICbaseBXNode);
+            TSTALLOC(VBICemitEIBaseBIPtr,VBICemitEINode,VBICbaseBINode);
+            TSTALLOC(VBICbaseBPBaseBIPtr,VBICbaseBPNode,VBICbaseBINode);
+            TSTALLOC(VBICsubsSICollCIPtr,VBICsubsSINode,VBICcollCINode);
+            TSTALLOC(VBICsubsSIBaseBIPtr,VBICsubsSINode,VBICbaseBINode);
+            TSTALLOC(VBICsubsSIBaseBPPtr,VBICsubsSINode,VBICbaseBPNode);
 
         }
     }

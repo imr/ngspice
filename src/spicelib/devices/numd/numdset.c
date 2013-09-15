@@ -217,14 +217,14 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
+do { if ((inst->ptr = SMPmakeElt(matrix, inst->first, inst->second)) == NULL){\
   return(E_NOMEM);\
-}
+} } while(0)
 
-      TSTALLOC(NUMDposPosPtr, NUMDposNode, NUMDposNode)
-      TSTALLOC(NUMDnegNegPtr, NUMDnegNode, NUMDnegNode)
-      TSTALLOC(NUMDnegPosPtr, NUMDnegNode, NUMDposNode)
-      TSTALLOC(NUMDposNegPtr, NUMDposNode, NUMDnegNode)
+      TSTALLOC(NUMDposPosPtr, NUMDposNode, NUMDposNode);
+      TSTALLOC(NUMDnegNegPtr, NUMDnegNode, NUMDnegNode);
+      TSTALLOC(NUMDnegPosPtr, NUMDnegNode, NUMDposNode);
+      TSTALLOC(NUMDposNegPtr, NUMDposNode, NUMDnegNode);
     }
     /* Clean up lists */
     killCoordInfo(xCoordList);

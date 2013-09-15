@@ -182,6 +182,10 @@ AC_ARG_WITH([tcl],
 AC_ARG_WITH([ngshared],
     [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
 
+# --enable-kirchhoff: enable KCL
+AC_ARG_ENABLE([kirchhoff],
+    [AS_HELP_STRING([--enable-kirchhoff], [Enables the Kirchhoff Current Law Verification])])
+
 # readline and editline cannot both be enabled
 if test "x$with_editline" = xyes; then
     if test "x$with_readline" = xyes; then
@@ -801,6 +805,7 @@ AC_MSG_RESULT([Settings which were chosen:])
 if test "x$enable_sense2" = xyes; then
     AC_DEFINE([WANT_SENSE2], [], [Define if we want spice2 sensitivity analysis])
     AC_MSG_RESULT([Spice2 sensitivity analysis enabled])
+    AC_MSG_WARN([This feature is UNSUPPORTED])
 fi
 if test "x$enable_nobypass" = xyes; then
     AC_DEFINE([NOBYPASS], [], [Define if we want NOBYPASS])
@@ -856,7 +861,7 @@ if test "x$enable_pzdebug" = xyes; then
 fi
 if test "x$enable_pss" = xyes; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
-    AC_MSG_RESULT(WARNING: PSS analysis enabled)
+    AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
@@ -878,6 +883,12 @@ fi
 
 AC_SUBST([XGRAPHDIR])
 AC_SUBST([NOTXGRAPH])
+
+if test "x$enable_kirchhoff" = xyes; then
+    AC_DEFINE([KIRCHHOFF], [], [Define if we want to enable the Kirchhoff Current Law Verification])
+    AC_MSG_RESULT([WARNING: Kirchhoff Current Law Verification Enabled (experimental)])
+fi
+AM_CONDITIONAL([KIRCHHOFF_WANTED], [test "x$enable_kirchhoff" = xyes])
 
 AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc])
 
@@ -944,6 +955,8 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
 
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
+
+AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 
 # adms option
 if test "x$enable_adms" = xyes ; then
@@ -1216,6 +1229,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/enh/Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
+                 src/unsupported/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile

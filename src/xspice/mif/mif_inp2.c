@@ -219,7 +219,7 @@ MIF_INP2A (
 
     /* create a new structure for this instance in ckt */
     mdfast = (MIFmodel*) thismodel->INPmodfast;
-    IFC(newInstance, (ckt, (GENmodel*)mdfast, (GENinstance **)fast, name))
+    IFC(newInstance, (ckt, (GENmodel*)mdfast, (GENinstance **)fast, name));
 
 
     /* initialize the code model specific elements of the inst struct */
@@ -746,9 +746,6 @@ MIFget_port_type(
 
         *status = MIF_OK;
     }
-
-    if (temp)
-        tfree(temp);
 }
 
 

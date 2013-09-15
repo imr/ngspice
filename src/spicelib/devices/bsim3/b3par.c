@@ -31,7 +31,7 @@ IFvalue *select)
     if (!cp_getvar("scale", CP_REAL, &scale))
         scale = 1;
 
-    switch(param) 
+    switch(param)
     {   case BSIM3_W:
             here->BSIM3w = value->rValue*scale;
             here->BSIM3wGiven = TRUE;
@@ -40,10 +40,10 @@ IFvalue *select)
             here->BSIM3l = value->rValue*scale;
             here->BSIM3lGiven = TRUE;
             break;
-	case BSIM3_M:
-	    here->BSIM3m = value->rValue;
-	    here->BSIM3mGiven = TRUE;
-	    break;
+        case BSIM3_M:
+            here->BSIM3m = value->rValue;
+            here->BSIM3mGiven = TRUE;
+            break;
         case BSIM3_AS:
             here->BSIM3sourceArea = value->rValue*scale*scale;
             here->BSIM3sourceAreaGiven = TRUE;
@@ -90,6 +90,18 @@ IFvalue *select)
         case BSIM3_ACNQSMOD:
             here->BSIM3acnqsMod = value->iValue;
             here->BSIM3acnqsModGiven = TRUE;
+            break;
+        case BSIM3_GEO:
+            here->BSIM3geo = value->iValue;
+            here->BSIM3geoGiven = TRUE;
+            break;
+        case BSIM3_DELVTO:
+            here->BSIM3delvto = value->rValue;
+            here->BSIM3delvtoGiven = TRUE;
+            break;
+        case BSIM3_MULU0:
+            here->BSIM3mulu0 = value->rValue;
+            here->BSIM3mulu0Given = TRUE;
             break;
         case BSIM3_IC:
             switch(value->v.numValue){

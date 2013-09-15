@@ -17,28 +17,27 @@
 
 int
 BSIM4v4getic(
-GENmodel *inModel,
-CKTcircuit *ckt)
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
-BSIM4v4model *model = (BSIM4v4model*)inModel;
-BSIM4v4instance *here;
+    BSIM4v4model *model = (BSIM4v4model*)inModel;
+    BSIM4v4instance *here;
 
-    for (; model ; model = model->BSIM4v4nextModel) 
-    {    for (here = model->BSIM4v4instances; here; here = here->BSIM4v4nextInstance)
-	       {
-	           if (!here->BSIM4v4icVDSGiven) 
-	      {   here->BSIM4v4icVDS = *(ckt->CKTrhs + here->BSIM4v4dNode) 
-				   - *(ckt->CKTrhs + here->BSIM4v4sNode);
-              }
-              if (!here->BSIM4v4icVGSGiven) 
-	      {   here->BSIM4v4icVGS = *(ckt->CKTrhs + here->BSIM4v4gNodeExt) 
-				   - *(ckt->CKTrhs + here->BSIM4v4sNode);
-              }
-              if(!here->BSIM4v4icVBSGiven)
-              {  here->BSIM4v4icVBS = *(ckt->CKTrhs + here->BSIM4v4bNode)
-                                  - *(ckt->CKTrhs + here->BSIM4v4sNode);
-              }
-         }
+    for (; model ; model = model->BSIM4v4nextModel) {
+        for (here = model->BSIM4v4instances; here; here = here->BSIM4v4nextInstance) {
+            if (!here->BSIM4v4icVDSGiven) {
+                here->BSIM4v4icVDS = *(ckt->CKTrhs + here->BSIM4v4dNode)
+                                     - *(ckt->CKTrhs + here->BSIM4v4sNode);
+            }
+            if (!here->BSIM4v4icVGSGiven) {
+                here->BSIM4v4icVGS = *(ckt->CKTrhs + here->BSIM4v4gNodeExt)
+                                     - *(ckt->CKTrhs + here->BSIM4v4sNode);
+            }
+            if(!here->BSIM4v4icVBSGiven) {
+                here->BSIM4v4icVBS = *(ckt->CKTrhs + here->BSIM4v4bNode)
+                                     - *(ckt->CKTrhs + here->BSIM4v4sNode);
+            }
+        }
     }
     return(OK);
 }

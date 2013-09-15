@@ -73,10 +73,15 @@ SPICEdev BSIM4v5info = {
 #endif
     &BSIM4v5iSize,   /* DEVinstSize    */
     &BSIM4v5mSize,   /* DEVmodSize     */
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
     BSIM4v5bindCSC, /* DEVbindCSC        */
     BSIM4v5bindCSCComplex, /* DEVbindCSCComplex */
     BSIM4v5bindCSCComplexToReal, /* DEVbindCSCComplexToReal */
+#endif
+
+#ifdef KIRCHHOFF
+    BSIM4v5nodeIsNonLinear /* DEVnodeIsNonLinear */
 #endif
 
 };
