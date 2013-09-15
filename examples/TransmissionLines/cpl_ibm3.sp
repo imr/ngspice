@@ -53,10 +53,12 @@ P1    4 2 13 17   0   5 14 15 18   0   PLINE1
 +                           1.5e-9
 +length = 0.02
 
-D1   5  0 
-D2  14  0 
-D3  15  0 
-D4  18  0 
+D1   5  0 dmod
+D2  14  0 dmod
+D3  15  0 dmod
+D4  18  0 dmod
+
+.model dmod d
 
 VES in 0 PULSE (0 5 0 1.1ns 0.1ns 0.9ns 200ns)
 
