@@ -28,4 +28,7 @@ extern int B3SOIDDtemp(GENmodel*,CKTcircuit*);
 extern int B3SOIDDtrunc(GENmodel*,CKTcircuit*,double*);
 extern int B3SOIDDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIDDunsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KIRCHHOFF
 extern int B3SOIDDnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

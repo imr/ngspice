@@ -16,4 +16,3 @@ extern int CCCSsLoad(GENmodel*,CKTcircuit*);
 extern void CCCSsPrint(GENmodel*,CKTcircuit*);
 extern int CCCSsSetup(SENstruct*,GENmodel*);
 extern int CCCSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
-

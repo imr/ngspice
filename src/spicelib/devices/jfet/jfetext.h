@@ -22,4 +22,7 @@ extern int JFETtrunc(GENmodel*,CKTcircuit*,double*);
 extern int JFETdisto(int,GENmodel*,CKTcircuit*);
 extern int JFETnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int JFETdSetup(GENmodel*,CKTcircuit*);
+
+#ifdef KIRCHHOFF
 extern int JFETnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

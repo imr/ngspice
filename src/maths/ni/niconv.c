@@ -81,6 +81,7 @@ NIconvTest (CKTcircuit *ckt)
                      ckt->CKTreltol * maximum + ckt->CKTabstol, maximum) ;
 #endif
 
+            /* Check Convergence */
             if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
                 return 1 ;
         }

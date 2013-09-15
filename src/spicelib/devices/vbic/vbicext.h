@@ -25,6 +25,8 @@ extern int VBICunsetup(GENmodel*,CKTcircuit*);
 extern int VBICtemp(GENmodel*,CKTcircuit*);
 extern int VBICtrunc(GENmodel*,CKTcircuit*,double*);
 extern int VBICnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-extern int VBICnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
 
+#ifdef KIRCHHOFF
+extern int VBICnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif
 #endif

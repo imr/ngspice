@@ -37,4 +37,7 @@ extern int HSM2unsetup(GENmodel*,CKTcircuit*);
 extern int HSM2temp(GENmodel*,CKTcircuit*);
 extern int HSM2trunc(GENmodel*,CKTcircuit*,double*);
 extern int HSM2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+
+#ifdef KIRCHHOFF
 extern int HSM2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

@@ -17,4 +17,3 @@ extern int VCVSsSetup(SENstruct*,GENmodel*);
 extern void VCVSsPrint(GENmodel*,CKTcircuit*);
 extern int VCVSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VCVSunsetup(GENmodel*,CKTcircuit*);
-

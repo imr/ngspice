@@ -18,4 +18,7 @@ extern int HFETAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int HFETAtemp(GENmodel*,CKTcircuit*);
 extern int HFETAtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HFETAunsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KIRCHHOFF
 extern int HFETAnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

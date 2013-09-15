@@ -27,4 +27,7 @@ extern int BSIM3v0temp(GENmodel*,CKTcircuit*);
 extern int BSIM3v0trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM3v0noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM3v0unsetup(GENmodel *, CKTcircuit *);
+
+#ifdef KIRCHHOFF
 extern int BSIM3v0nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

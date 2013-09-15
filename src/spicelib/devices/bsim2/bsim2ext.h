@@ -25,4 +25,7 @@ extern int B2setup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int B2unsetup(GENmodel*,CKTcircuit*);
 extern int B2temp(GENmodel*,CKTcircuit*);
 extern int B2trunc(GENmodel*,CKTcircuit*,double*);
+
+#ifdef KIRCHHOFF
 extern int B2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif
