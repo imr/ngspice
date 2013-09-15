@@ -540,11 +540,11 @@ load:
                     ,cbe,icbe,cce,icce);
 
             printf("cc = %.7e + j%.7e , ce = %.7e + j%.7e,",
-                    ,cc,icc,ce,ice);
+                    cc,icc,ce,ice);
             printf("ccprm = %.7e + j%.7e , ceprm = %.7e + j%.7e",
                     ccprm,iccprm,ceprm,iceprm);
             printf("cb = %.7e + j%.7e , cbprm = %.7e + j%.7e , ",
-                    cb,icb,cbprm,icbprm)
+                    cb,icb,cbprm,icbprm);
             printf("cs = %.7e + j%.7e\n",
                     cs,ics);
 #endif /* SENSDEBUG */

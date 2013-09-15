@@ -26,11 +26,14 @@ extern int BSIM3v0setup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int BSIM3v0temp(GENmodel*,CKTcircuit*);
 extern int BSIM3v0trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM3v0noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-extern int  BSIM3v0unsetup(GENmodel *, CKTcircuit *);
-
+extern int BSIM3v0unsetup(GENmodel *, CKTcircuit *);
 
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int BSIM3v0bindCSC (GENmodel*, CKTcircuit*) ;
 extern int BSIM3v0bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int BSIM3v0bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
+#ifdef KIRCHHOFF
+extern int BSIM3v0nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
 #endif

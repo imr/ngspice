@@ -71,10 +71,15 @@ SPICEdev HSMHVinfo = {
 #endif
  /* DEVinstSize   */ &HSMHViSize,
  /* DEVmodSize    */ &HSMHVmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HSMHVbindCSC,
  /* DEVbindCSCComplex */   HSMHVbindCSCComplex,
  /* DEVbindCSCComplexToReal */  HSMHVbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ HSMHVnodeIsNonLinear
 #endif
 
 };

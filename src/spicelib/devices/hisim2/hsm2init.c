@@ -71,10 +71,15 @@ SPICEdev HSM2info = {
 #endif
  /* DEVinstSize   */ &HSM2iSize,
  /* DEVmodSize    */ &HSM2mSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HSM2bindCSC,
  /* DEVbindCSCComplex */   HSM2bindCSCComplex,
  /* DEVbindCSCComplexToReal */  HSM2bindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ HSM2nodeIsNonLinear
 #endif
 
 };

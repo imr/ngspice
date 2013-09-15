@@ -73,10 +73,15 @@ SPICEdev CCVSinfo = {
 #endif
  /* DEVinstSize   */ &CCVSiSize,
  /* DEVmodSize    */ &CCVSmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   CCVSbindCSC,
  /* DEVbindCSCComplex */   CCVSbindCSCComplex,
  /* DEVbindCSCComplexToReal */  CCVSbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

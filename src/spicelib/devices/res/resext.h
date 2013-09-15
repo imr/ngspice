@@ -26,3 +26,7 @@ extern int RESbindCSC (GENmodel*, CKTcircuit*) ;
 extern int RESbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int RESbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int RESnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

@@ -40,6 +40,10 @@ if UMFPACK_WANTED
 libmes_la_SOURCES += mesbindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libmes_la_SOURCES += mesnode.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

@@ -72,10 +72,15 @@ SPICEdev CAPinfo = {
 #endif    
  /* DEVinstSize   */ &CAPiSize,
  /* DEVmodSize    */ &CAPmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */  CAPbindCSC,
  /* DEVbindCSCComplex */  CAPbindCSCComplex,
  /* DEVbindCSCComplexToReal */  CAPbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ CAPnodeIsNonLinear
 #endif
 
 };

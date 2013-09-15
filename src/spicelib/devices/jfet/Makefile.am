@@ -40,6 +40,10 @@ if UMFPACK_WANTED
 libjfet_la_SOURCES += jfetbindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libjfet_la_SOURCES += jfetnode.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

@@ -74,7 +74,7 @@
 /* Alternate initialisation file name */
 #define ALT_INITSTR	"spice.rc"	
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(_MSC_VER) || defined (HAS_WINGUI)
 #define DIR_PATHSEP	"\\"
 #define DIR_TERM	'\\'
 #define DIR_PATHSEP_LINUX	"/"

@@ -35,6 +35,14 @@ VCCSload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VCCSposContNegptr) -= here->VCCScoeff ;
             *(here->VCCSnegContPosptr) -= here->VCCScoeff ;
             *(here->VCCSnegContNegptr) += here->VCCScoeff ;
+
+#ifdef KIRCHHOFF
+            *(ckt->CKTfvk+here->VCCSposNode) += here->VCCScoeff * *(ckt->CKTrhsOld+here->VCCScontPosNode) ;
+            *(ckt->CKTfvk+here->VCCSposNode) -= here->VCCScoeff * *(ckt->CKTrhsOld+here->VCCScontNegNode) ;
+            *(ckt->CKTfvk+here->VCCSnegNode) -= here->VCCScoeff * *(ckt->CKTrhsOld+here->VCCScontPosNode) ;
+            *(ckt->CKTfvk+here->VCCSnegNode) += here->VCCScoeff * *(ckt->CKTrhsOld+here->VCCScontNegNode) ;
+#endif
+
         }
     }
     return(OK);

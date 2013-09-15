@@ -54,8 +54,16 @@ IFuid tmpName;
             model->BSIM3v32capMod = 3;
         if (!model->BSIM3v32acmModGiven)
             model->BSIM3v32acmMod = 0;
+        if (!model->BSIM3v32calcacmGiven)
+            model->BSIM3v32calcacm = 0;
         if (!model->BSIM3v32noiModGiven)
             model->BSIM3v32noiMod = 1;
+        if (!model->BSIM3v32nqsModGiven)
+            model->BSIM3v32nqsMod = 0;
+        else if ((model->BSIM3v32nqsMod != 0) && (model->BSIM3v32nqsMod != 1))
+        {   model->BSIM3v32nqsMod = 0;
+            printf("Warning: nqsMod has been set to its default value: 0.\n");
+        }
 
         /* If the user does not provide the model revision,
          * we always choose the most recent.
@@ -259,7 +267,7 @@ IFuid tmpName;
         if (!model->BSIM3v32tpbswgGiven)
             model->BSIM3v32tpbswg = 0.0;
 
-        /* acm model */
+        /* ACM model */
         if (!model->BSIM3v32hdifGiven)
           model->BSIM3v32hdif = 0.0;
         if (!model->BSIM3v32ldifGiven)
@@ -274,6 +282,8 @@ IFuid tmpName;
           model->BSIM3v32rdc = 0.0;
         if (!model->BSIM3v32rscGiven)
           model->BSIM3v32rsc = 0.0;
+        if (!model->BSIM3v32wmltGiven)
+          model->BSIM3v32wmlt = 1.0;
 
         /* Length dependence */
         if (!model->BSIM3v32lcdscGiven)
@@ -938,7 +948,14 @@ IFuid tmpName;
             if (!here->BSIM3v32wGiven)
                 here->BSIM3v32w = 5.0e-6;
             if (!here->BSIM3v32nqsModGiven)
-                here->BSIM3v32nqsMod = 0;
+                here->BSIM3v32nqsMod = model->BSIM3v32nqsMod;
+            else if ((here->BSIM3v32nqsMod != 0) && (here->BSIM3v32nqsMod != 1))
+            {   here->BSIM3v32nqsMod = model->BSIM3v32nqsMod;
+                printf("Warning: nqsMod has been set to its global value %d.\n",
+                model->BSIM3v32nqsMod);
+            }
+            if (!here->BSIM3v32geoGiven)
+                here->BSIM3v32geo = 0;
 
             if (!here->BSIM3v32mGiven)
                 here->BSIM3v32m = 1;
@@ -995,14 +1012,14 @@ IFuid tmpName;
             {  here->BSIM3v32sNodePrime = here->BSIM3v32sNode;
             }
 
- /* internal charge node */
+            /* internal charge node */
 
             if (here->BSIM3v32nqsMod)
             {   if(here->BSIM3v32qNode == 0)
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM3v32name,"charge");
-                if(error) return(error);
-                here->BSIM3v32qNode = tmp->number;
-            }
+                {   error = CKTmkVolt(ckt,&tmp,here->BSIM3v32name,"charge");
+                    if(error) return(error);
+                    here->BSIM3v32qNode = tmp->number;
+                }
             }
             else
             {   here->BSIM3v32qNode = 0;

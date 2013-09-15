@@ -73,10 +73,15 @@ SPICEdev ISRCinfo = {
 #endif                        
  /* DEVinstSize   */ &ISRCiSize,
  /* DEVmodSize    */ &ISRCmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
  /* DEVbindCSCComplexToReal */  NULL,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

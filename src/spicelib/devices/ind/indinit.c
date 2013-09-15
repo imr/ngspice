@@ -72,10 +72,15 @@ SPICEdev INDinfo = {
 #endif                       
  /* DEVinstSize   */ &INDiSize,
  /* DEVmodSize    */ &INDmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   INDbindCSC,
  /* DEVbindCSCComplex */   INDbindCSCComplex,
  /* DEVbindCSCComplexToReal */  INDbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ INDnodeIsNonLinear
 #endif
 
 };
@@ -143,13 +148,18 @@ SPICEdev MUTinfo = {
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
-#endif  
-    &MUTiSize,
-    &MUTmSize,
+#endif
+ /* DEVinstSize   */ &MUTiSize,
+ /* DEVmodSize    */ &MUTmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MUTbindCSC,
  /* DEVbindCSCComplex */   MUTbindCSCComplex,
  /* DEVbindCSCComplexToReal */  MUTbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

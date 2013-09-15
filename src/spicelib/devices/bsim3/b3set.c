@@ -61,8 +61,18 @@ BSIM3instance **InstArray;
             model->BSIM3paramChk = 0;
         if (!model->BSIM3capModGiven)
             model->BSIM3capMod = 3;
+        if (!model->BSIM3acmModGiven)
+            model->BSIM3acmMod = 0;
+        if (!model->BSIM3calcacmGiven)
+            model->BSIM3calcacm = 0;
         if (!model->BSIM3noiModGiven)
             model->BSIM3noiMod = 1;
+        if (!model->BSIM3nqsModGiven)
+            model->BSIM3nqsMod = 0;
+        else if ((model->BSIM3nqsMod != 0) && (model->BSIM3nqsMod != 1))
+        {   model->BSIM3nqsMod = 0;
+            printf("Warning: nqsMod has been set to its default value: 0.\n");
+        }
         if (!model->BSIM3acnqsModGiven)
             model->BSIM3acnqsMod = 0;
         else if ((model->BSIM3acnqsMod != 0) && (model->BSIM3acnqsMod != 1))
@@ -246,6 +256,24 @@ BSIM3instance **InstArray;
             model->BSIM3tcjswg = 0.0;
         if (!model->BSIM3tpbswgGiven)
             model->BSIM3tpbswg = 0.0;
+
+        /* ACM model */
+        if (!model->BSIM3hdifGiven)
+          model->BSIM3hdif = 0.0;
+        if (!model->BSIM3ldifGiven)
+          model->BSIM3ldif = 0.0;
+        if (!model->BSIM3ldGiven)
+          model->BSIM3ld = 0.0;
+        if (!model->BSIM3rdGiven)
+          model->BSIM3rd = 0.0;
+        if (!model->BSIM3rsGiven)
+          model->BSIM3rs = 0.0;
+        if (!model->BSIM3rdcGiven)
+          model->BSIM3rdc = 0.0;
+        if (!model->BSIM3rscGiven)
+          model->BSIM3rsc = 0.0;
+        if (!model->BSIM3wmltGiven)
+          model->BSIM3wmlt = 1.0;
 
         /* Length dependence */
         if (!model->BSIM3lcdscGiven)
@@ -780,6 +808,12 @@ BSIM3instance **InstArray;
            model->BSIM3dwc = model->BSIM3Wint;
         if (!model->BSIM3dlcGiven)
            model->BSIM3dlc = model->BSIM3Lint;
+
+        if (!model->BSIM3xlGiven)
+           model->BSIM3xl = 0.0;
+        if (!model->BSIM3xwGiven)
+           model->BSIM3xw = 0.0;
+
         if (!model->BSIM3cfGiven)
             model->BSIM3cf = 2.0 * EPSOX / PI
                            * log(1.0 + 0.4e-6 / model->BSIM3tox);
@@ -874,7 +908,16 @@ BSIM3instance **InstArray;
             if (!here->BSIM3drainPerimeterGiven)
                 here->BSIM3drainPerimeter = 0.0;
             if (!here->BSIM3drainSquaresGiven)
-                here->BSIM3drainSquares = 1.0;
+            {
+                if (model->BSIM3acmMod == 0)
+                  here->BSIM3drainSquares = 1.0;
+                else
+                  here->BSIM3drainSquares = 0.0;
+            }
+            if (!here->BSIM3delvtoGiven)
+                here->BSIM3delvto = 0.0;
+            if (!here->BSIM3mulu0Given)
+                here->BSIM3mulu0 = 1.0;
             if (!here->BSIM3icVBSGiven)
                 here->BSIM3icVBS = 0.0;
             if (!here->BSIM3icVDSGiven)
@@ -888,11 +931,21 @@ BSIM3instance **InstArray;
             if (!here->BSIM3sourcePerimeterGiven)
                 here->BSIM3sourcePerimeter = 0.0;
             if (!here->BSIM3sourceSquaresGiven)
-                here->BSIM3sourceSquares = 1.0;
+            {
+                if (model->BSIM3acmMod == 0)
+                  here->BSIM3sourceSquares = 1.0;
+                else
+                  here->BSIM3sourceSquares = 0.0;
+            }
             if (!here->BSIM3wGiven)
                 here->BSIM3w = 5.0e-6;
             if (!here->BSIM3nqsModGiven)
-                here->BSIM3nqsMod = 0;
+                here->BSIM3nqsMod = model->BSIM3nqsMod;
+            else if ((here->BSIM3nqsMod != 0) && (here->BSIM3nqsMod != 1))
+            {   here->BSIM3nqsMod = model->BSIM3nqsMod;
+                printf("Warning: nqsMod has been set to its global value %d.\n",
+                model->BSIM3nqsMod);
+            }
             if (!here->BSIM3acnqsModGiven)
                 here->BSIM3acnqsMod = model->BSIM3acnqsMod;
             else if ((here->BSIM3acnqsMod != 0) && (here->BSIM3acnqsMod != 1))
@@ -900,14 +953,19 @@ BSIM3instance **InstArray;
                 printf("Warning: acnqsMod has been set to its global value %d.\n",
                 model->BSIM3acnqsMod);
             }
-
+            if (!here->BSIM3geoGiven)
+                here->BSIM3geo = 0;
 
             if (!here->BSIM3mGiven)
                 here->BSIM3m = 1;
 
             /* process drain series resistance */
-            if ((model->BSIM3sheetResistance > 0.0) && 
-                (here->BSIM3drainSquares > 0.0 ))
+            if (  ((model->BSIM3sheetResistance > 0.0) && (here->BSIM3drainSquares > 0.0))
+                ||((model->BSIM3sheetResistance > 0.0) && (model->BSIM3hdif > 0.0))
+                ||((model->BSIM3rd > 0.0) && (model->BSIM3ldif > 0.0))
+                ||((model->BSIM3rd > 0.0) && (model->BSIM3ld > 0.0))
+                ||((model->BSIM3rdc > 0.0))
+               )
             {
               if(here->BSIM3dNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
@@ -928,8 +986,12 @@ BSIM3instance **InstArray;
             }
 
             /* process source series resistance */
-            if ((model->BSIM3sheetResistance > 0.0) && 
-                (here->BSIM3sourceSquares > 0.0 ))
+            if (  ((model->BSIM3sheetResistance > 0.0) && (here->BSIM3sourceSquares > 0.0))
+                ||((model->BSIM3sheetResistance > 0.0) && (model->BSIM3hdif > 0.0))
+                ||((model->BSIM3rs > 0.0) && (model->BSIM3ldif > 0.0))
+                ||((model->BSIM3rs > 0.0) && (model->BSIM3ld > 0.0))
+                ||((model->BSIM3rsc > 0.0))
+               )
             {
               if(here->BSIM3sNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");

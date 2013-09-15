@@ -43,6 +43,10 @@ if UMFPACK_WANTED
 libbsim1_la_SOURCES += b1bindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libbsim1_la_SOURCES += b1node.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

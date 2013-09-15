@@ -1,6 +1,6 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
-Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group 
+Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -20,11 +20,11 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #ifndef HAVE_ATANH
 extern double asinh(), acosh(), atanh();
-#endif 
+#endif
 
 double PTfudge_factor;
 
-#define	MODULUS(NUM,LIMIT)	((NUM) - ((int) ((NUM) / (LIMIT))) * (LIMIT))
+#define MODULUS(NUM,LIMIT) ((NUM) - ((int) ((NUM) / (LIMIT))) * (LIMIT))
 
 double
 PTabs(double arg)
@@ -56,13 +56,13 @@ PTtimes(double arg1, double arg2)
     return (arg1 * arg2);
 }
 
-double 
+double
 PTdivide(double arg1, double arg2)
 {
     if (arg2 >= 0.0)
-	arg2 += PTfudge_factor;
+        arg2 += PTfudge_factor;
     else
-	arg2 -= PTfudge_factor;
+        arg2 -= PTfudge_factor;
 
     if (arg2 == 0.0)
         return (HUGE);
@@ -74,11 +74,11 @@ double
 PTpower(double arg1, double arg2)
 {
     if (arg1 < 0.0) {
-	if (fabs(arg2 - ((int) arg2)) / (arg2 + 0.001) < 0.000001) {
-	    arg2 = (int) arg2;
-	} else {
-	    arg1 = -arg1;
-	}
+        if (fabs(arg2 - ((int) arg2)) / (arg2 + 0.001) < 0.000001) {
+            arg2 = (int) arg2;
+        } else {
+            arg1 = -arg1;
+        }
     }
     return (pow(arg1, arg2));
 }
@@ -108,9 +108,9 @@ PTacosh(double arg)
     return (acosh(arg));
 #else
     if (arg < 1.0)
-	arg = 1.0;
+        arg = 1.0;
     return (log(arg + sqrt(arg*arg-1.0)));
-#endif 
+#endif
 }
 
 double
@@ -126,7 +126,7 @@ PTasinh(double arg)
     return (asinh(arg));
 #else
     return log(arg + sqrt(arg * arg + 1.0));
-#endif 
+#endif
 }
 
 double
@@ -142,22 +142,22 @@ PTatanh(double arg)
     return (atanh(arg));
 #else
     if (arg < -1.0)
-	arg = -1.0 + PTfudge_factor + 1e-10;
+        arg = -1.0 + PTfudge_factor + 1e-10;
     else if (arg > 1.0)
-	arg = 1.0 - PTfudge_factor - 1e-10;
+        arg = 1.0 - PTfudge_factor - 1e-10;
     return (log((1.0 + arg) / (1.0 - arg)) / 2.0);
-#endif 
+#endif
 }
 
 double
 PTustep(double arg)
 {
     if (arg < 0.0)
-	return 0.0;
+        return 0.0;
     else if (arg > 0.0)
-	return 1.0;
+        return 1.0;
     else
-	return 0.5; /* Ick! */
+        return 0.5; /* Ick! */
 }
 
 /* MW. PTcif is like "C" if - 0 for (arg<=0), 1 elsewhere */
@@ -165,12 +165,12 @@ PTustep(double arg)
 double
 PTustep2(double arg)
 {
-    if (arg <= 0.0) 
-	return 0.0;
+    if (arg <= 0.0)
+        return 0.0;
     else if (arg <= 1.0)
-	return arg;
+        return arg;
     else /* if (arg > 1.0) */
-	return 1.0;
+        return 1.0;
 }
 
 double
@@ -213,9 +213,9 @@ double
 PTuramp(double arg)
 {
     if (arg < 0.0)
-	return 0.0;
+        return 0.0;
     else
-	return arg;
+        return arg;
 }
 
 double

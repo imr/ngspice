@@ -3,11 +3,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"
-#include "util.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
@@ -17,8 +16,7 @@ Author: 1985 Thomas L. Quarles
  */
 
 int
-SENstartup(ckt)
-    CKTcircuit *ckt;
+SENstartup(CKTcircuit *ckt, int restart)
 {
     int i;
     int err;
@@ -26,31 +24,47 @@ SENstartup(ckt)
     int type;
     GENinstance *fast;
 
-#ifdef SENSDEBUG 
+    if (restart) {
+        fprintf(stdout, "Sensitivity-2 analysis: unsupported code\n");
+    }
+
+#ifdef SENSDEBUG
     printf("SENstartup\n");
-#endif /* SENSDEBUG */ 
+#endif
+
     ckt->CKTsenInfo->SENstatus = NORMAL;
     ckt->CKTsenInfo->SENpertfac = 1e-4;
-    ckt->CKTsenInfo->SENinitflag = ON;/* allocate memory in
-    NIsenReinit */
+    ckt->CKTsenInfo->SENinitflag = ON; /* allocate memory in NIsenReinit */
 
     parmtemp.iValue = 1;
-    for(i=0;i<ckt->CKTsenInfo->SENnumVal;i++) {
+    parmtemp.rValue = 1.0;
+
+    for (i = 0; i < ckt->CKTsenInfo->SENnumVal; i++) {
         type = -1;
         fast = NULL;
-        err = CKTfndDev((GENERIC*)ckt,&type,(GENERIC**)&fast,
-            ((ckt->CKTsenInfo->SENdevices)[i]), 
-            NULL, NULL);
-        if(err != OK) return(err);
+
+        err = CKTfndDev(ckt, &type, &fast,
+                        ckt->CKTsenInfo->SENdevices[i],
+                        NULL, NULL);
+        if (err != OK)
+            return err;
+
+#ifdef SENSDEBUG
+        printf("SENstartup Instance: %s Design parameter: %s\n", ckt->CKTsenInfo->SENdevices[i], 
+		                                                         ckt->CKTsenInfo->SENparmNames[i]);
+#endif
         err = CKTpName(
-        ((ckt->CKTsenInfo->SENparmNames)[i]),
-            &parmtemp,ckt ,type,
-            ((ckt->CKTsenInfo->SENdevices)[i]),
+            ckt->CKTsenInfo->SENparmNames[i],
+            &parmtemp, ckt, type,
+            ckt->CKTsenInfo->SENdevices[i],
             &fast);
-        if(err != OK) return(err);
+        if (err != OK)
+            return err;
     }
-#ifdef SENSDEBUG 
+
+#ifdef SENSDEBUG
     printf("SENstartup end\n");
-#endif /* SENSDEBUG */ 
-    return(OK);
+#endif
+
+    return OK;
 }

@@ -46,6 +46,10 @@ if UMFPACK_WANTED
 libdio_la_SOURCES += diobindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libdio_la_SOURCES += dionode.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

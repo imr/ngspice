@@ -20,7 +20,7 @@ extern void BSIM3v32mosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,
         double, double, double, double, double, double, double*,
         double*, double*, double*, double*, double*, double*, double*,
-        double*, double*, double*, double*, double*, double*, double*, 
+        double*, double*, double*, double*, double*, double*, double*,
         double*);
 extern int BSIM3v32param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int BSIM3v32pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
@@ -34,4 +34,8 @@ extern int BSIM3v32unsetup(GENmodel*,CKTcircuit*);
 extern int BSIM3v32bindCSC (GENmodel*, CKTcircuit*) ;
 extern int BSIM3v32bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int BSIM3v32bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
+#ifdef KIRCHHOFF
+extern int BSIM3v32nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
 #endif

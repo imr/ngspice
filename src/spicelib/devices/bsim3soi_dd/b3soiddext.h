@@ -34,3 +34,7 @@ extern int B3SOIDDbindCSC (GENmodel*, CKTcircuit*) ;
 extern int B3SOIDDbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int B3SOIDDbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int B3SOIDDnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

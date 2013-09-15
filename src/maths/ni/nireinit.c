@@ -22,9 +22,10 @@ int
 NIreinit( CKTcircuit *ckt)
 {
     int size;
-#ifdef PREDICTOR
+
+#if defined(PREDICTOR) || defined(KIRCHHOFF)
     int i;
-#endif    
+#endif
 
     size = SMPmatSize(ckt->CKTmatrix);
     CKALLOC(CKTrhs,size+1,double);
@@ -33,6 +34,20 @@ NIreinit( CKTcircuit *ckt)
     CKALLOC(CKTirhs,size+1,double);
     CKALLOC(CKTirhsOld,size+1,double);
     CKALLOC(CKTirhsSpare,size+1,double);
+
+#ifdef KIRCHHOFF
+    CKALLOC(CKTfvk,size+1,double);
+    CKALLOC(CKTnodeIsLinear,size+1,int);
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTnodeIsLinear [i] = 1 ;
+    CKALLOC(CKTvoltCurNode,size+1,int);
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTvoltCurNode [i] = 0 ;
+    CKALLOC(CKTmkCurKCLarray,size+1,CKTmkCurKCLnode*);
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTmkCurKCLarray [i] = NULL ;
+#endif
+
 #ifdef PREDICTOR
     CKALLOC(CKTpred,size+1,double);
     for( i=0;i<8;i++) {

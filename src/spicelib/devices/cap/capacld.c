@@ -19,16 +19,17 @@ CAPacLoad(GENmodel *inModel, CKTcircuit *ckt)
     CAPmodel *model = (CAPmodel*)inModel;
     double val;
     double m;
+
     CAPinstance *here;
 
     for( ; model != NULL; model = model->CAPnextModel) {
-        for( here = model->CAPinstances;here != NULL; 
+        for( here = model->CAPinstances; here != NULL;
                 here = here->CAPnextInstance) {
-	    
-	    m = here -> CAPm;
-    
+
+            m = here->CAPm;
+
             val = ckt->CKTomega * here->CAPcapac;
-	    
+
             *(here->CAPposPosptr +1) += m * val;
             *(here->CAPnegNegptr +1) += m * val;
             *(here->CAPposNegptr +1) -= m * val;

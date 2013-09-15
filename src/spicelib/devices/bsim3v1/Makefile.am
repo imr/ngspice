@@ -40,6 +40,10 @@ if UMFPACK_WANTED
 libbsim3v1_la_SOURCES += b3v1bindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libbsim3v1_la_SOURCES += b3v1node.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

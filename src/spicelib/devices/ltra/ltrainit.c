@@ -73,10 +73,15 @@ SPICEdev LTRAinfo = {
 #endif                        
  /* DEVinstSize   */ &LTRAiSize,
  /* DEVmodSize    */ &LTRAmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   LTRAbindCSC,
  /* DEVbindCSCComplex */   LTRAbindCSCComplex,
  /* DEVbindCSCComplexToReal */  LTRAbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ NULL
 #endif
 
 };

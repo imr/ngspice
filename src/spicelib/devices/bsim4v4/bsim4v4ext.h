@@ -30,10 +30,12 @@ extern int BSIM4v4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4v4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v4unsetup(GENmodel*,CKTcircuit*);
 
-
-
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
 extern int BSIM4v4bindCSC (GENmodel*, CKTcircuit*) ;
 extern int BSIM4v4bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int BSIM4v4bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
+#ifdef KIRCHHOFF
+extern int BSIM4v4nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
 #endif

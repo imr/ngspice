@@ -88,8 +88,7 @@ initkeys(void)
 {
     spice_dstring_init(&keyS);
     scopy_up(&keyS,
-             "and or not div mod if else end while macro funct defined"
-             " include for to downto is var");
+             "and or not div mod defined");
     scopy_up(&fmathS,
              "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh"
              " tanh ternary_fcn v agauss sgn gauss unif aunif limit ceil floor");
@@ -935,7 +934,7 @@ opfunctkey(tdico *dico,
     /*if kw operator keyword, c=token*/
     switch (kw)
     {
-                                /* & | ~ DIV MOD  Defined */
+                                /* & | ~ DIV MOD Defined */
     case 1:
         c = '&';
         state = 2;

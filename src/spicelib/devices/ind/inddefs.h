@@ -15,14 +15,14 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/gendefs.h"
 #include "ngspice/cktdefs.h"
 
-        /* structures used to descrive inductors */
+/* structures used to descrive inductors */
 
 
 /* information needed for each instance */
 
 typedef struct sINDinstance {
     struct sINDmodel *INDmodPtr;    /* backpointer to model */
-    struct sINDinstance *INDnextInstance;   /* pointer to next instance of 
+    struct sINDinstance *INDnextInstance;   /* pointer to next instance of
                                              * current model*/
     IFuid INDname;  /* pointer to character string naming this instance */
     int INDstate;   /* pointer to beginning of state vector for inductor */
@@ -32,26 +32,30 @@ typedef struct sINDinstance {
     int INDbrEq;    /* number of the branch equation added for current */
     double INDinduct;    /* inductance */
     double INDm;         /* Parallel multiplier */
+    double INDtc1;       /* first temperature coefficient of resistors */
+    double INDtc2;       /* second temperature coefficient of resistors */
     double INDtemp;      /* Instance operating temperature */
     double INDdtemp;     /* Delta temp. of instance */
     double INDscale;     /* Scale factor */
     double INDnt;        /* Number of turns */
     double INDinitCond; /* initial inductor voltage if specified */
 
-    double *INDposIbrptr;    /* pointer to sparse matrix diagonal at 
+    double *INDposIbrptr;    /* pointer to sparse matrix diagonal at
                               * (positive,branch eq) */
-    double *INDnegIbrptr;    /* pointer to sparse matrix diagonal at 
+    double *INDnegIbrptr;    /* pointer to sparse matrix diagonal at
                               * (negative,branch eq) */
-    double *INDibrNegptr;    /* pointer to sparse matrix offdiagonal at 
+    double *INDibrNegptr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,negative) */
-    double *INDibrPosptr;    /* pointer to sparse matrix offdiagonal at 
+    double *INDibrPosptr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,positive) */
-    double *INDibrIbrptr;    /* pointer to sparse matrix offdiagonal at 
+    double *INDibrIbrptr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,branch eq) */
-   
+
     unsigned INDindGiven   : 1;   /* flag to indicate inductance was specified */
     unsigned INDicGiven    : 1;   /* flag to indicate init. cond. was specified */
     unsigned INDmGiven     : 1;   /* flag to indicate multiplier given */
+    unsigned INDtc1Given   : 1;   /* indicates tc1 parameter specified */
+    unsigned INDtc2Given   : 1;   /* indicates tc2 parameter specified */
     unsigned INDtempGiven  : 1;   /* flag to indicate operating temp. given */
     unsigned INDdtempGiven : 1;   /* flag to indicate delta temp. given */
     unsigned INDscaleGiven : 1;   /* flag to indicate scale factor given */
@@ -67,25 +71,30 @@ typedef struct sINDinstance {
     BindElement *INDibrIbrptrStructPtr ;
 #endif
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+#endif
+
 } INDinstance ;
 
 #define INDflux INDstate    /* flux in the inductor */
 #define INDvolt INDstate+1  /* voltage - save an entry in table */
 #define INDsensxp INDstate+2 /* charge sensitivities and their derivatives.
-                                +3 for the derivatives - pointer to the
-                beginning of the array */
++3 for the derivatives - pointer to the
+beginning of the array */
 
 
 /* per model data */
 
 typedef struct sINDmodel {       /* model structure for an inductor */
     int INDmodType; /* type index of this device type */
-    struct sINDmodel *INDnextModel; /* pointer to next possible model in 
+    struct sINDmodel *INDnextModel; /* pointer to next possible model in
                                      * linked list */
     INDinstance * INDinstances; /* pointer to list of instances that have this
                                  * model */
     IFuid INDmodName;       /* pointer to character string naming this model */
-    
+
     double INDmInd;        /* Model inductance */
     double INDtnom;        /* temperature at which inductance measured */
     double INDtempCoeff1;  /* first temperature coefficient */
@@ -94,8 +103,8 @@ typedef struct sINDmodel {       /* model structure for an inductor */
     double INDlength;      /* Mean length of magnetic path */
     double INDmodNt;       /* Model number of turns */
     double INDmu;          /* Relative magnetic permeability */
-   
-    unsigned INDtnomGiven  : 1; /* flag to indicate nominal temp was given */ 
+
+    unsigned INDtnomGiven  : 1; /* flag to indicate nominal temp was given */
     unsigned INDtc1Given   : 1; /* flag to indicate tc1 was specified */
     unsigned INDtc2Given   : 1; /* flag to indicate tc2 was specified */
     unsigned INDcsectGiven : 1; /* flag to indicate cross section given */
@@ -110,27 +119,27 @@ typedef struct sINDmodel {       /* model structure for an inductor */
 
 #ifdef MUTUAL
 
-        /* structures used to describe mutual inductors */
+/* structures used to describe mutual inductors */
 
 
 /* information needed for each instance */
 
 typedef struct sMUTinstance {
-    struct sMUTmodel *MUTmodPtr;    /* backpointer to model */
-    struct sMUTinstance *MUTnextInstance;   /* pointer to next instance of 
+struct sMUTmodel *MUTmodPtr;    /* backpointer to model */
+struct sMUTinstance *MUTnextInstance;   /* pointer to next instance of
                                              * current model*/
-    IFuid MUTname;  /* pointer to character string naming this instance */
-    double MUTcoupling;     /* mutual inductance input by user */
-    double MUTfactor;       /* mutual inductance scaled for internal use */
-    IFuid MUTindName1;  /* name of coupled inductor 1 */
-    IFuid MUTindName2;  /* name of coupled inductor 2 */
-    INDinstance *MUTind1;   /* pointer to coupled inductor 1 */
-    INDinstance *MUTind2;   /* pointer to coupled inductor 2 */
-    double *MUTbr1br2;  /* pointers to off-diagonal intersections of */
-    double *MUTbr2br1;  /* current branch equations in matrix */
+IFuid MUTname;  /* pointer to character string naming this instance */
+double MUTcoupling;     /* mutual inductance input by user */
+double MUTfactor;       /* mutual inductance scaled for internal use */
+IFuid MUTindName1;  /* name of coupled inductor 1 */
+IFuid MUTindName2;  /* name of coupled inductor 2 */
+INDinstance *MUTind1;   /* pointer to coupled inductor 1 */
+INDinstance *MUTind2;   /* pointer to coupled inductor 2 */
+double *MUTbr1br2;  /* pointers to off-diagonal intersections of */
+double *MUTbr2br1;  /* current branch equations in matrix */
 
-    unsigned MUTindGiven : 1;   /* flag to indicate inductance was specified */
-    int  MUTsenParmNo;   /* parameter # for sensitivity use;
+unsigned MUTindGiven : 1;   /* flag to indicate inductance was specified */
+int  MUTsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
 #ifdef KLU
@@ -144,12 +153,12 @@ typedef struct sMUTinstance {
 /* per model data */
 
 typedef struct sMUTmodel {       /* model structure for a mutual inductor */
-    int MUTmodType; /* type index of this device type */
-    struct sMUTmodel *MUTnextModel; /* pointer to next possible model in 
+int MUTmodType; /* type index of this device type */
+struct sMUTmodel *MUTnextModel; /* pointer to next possible model in
                                      * linked list */
-    MUTinstance * MUTinstances; /* pointer to list of instances that have this
+MUTinstance * MUTinstances; /* pointer to list of instances that have this
                                  * model */
-    IFuid MUTmodName;       /* pointer to character string naming this model */
+IFuid MUTmodName;       /* pointer to character string naming this model */
 } MUTmodel;
 
 #endif /*MUTUAL*/
@@ -167,6 +176,8 @@ typedef struct sMUTmodel {       /* model structure for a mutual inductor */
 #define IND_DTEMP 10
 #define IND_SCALE 11
 #define IND_NT 12
+#define IND_TC1 13
+#define IND_TC2 14
 
 /* model parameters */
 #define IND_MOD_IND    100

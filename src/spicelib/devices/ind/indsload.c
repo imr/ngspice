@@ -47,8 +47,8 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
     if((info->SENmode == TRANSEN) && (ckt->CKTmode & MODEINITTRAN))  return(OK);
 
 #ifdef SENSDEBUG
-    fprintf(file,"INDsenLoad\n");
-    fprintf(file,"time = %.5e\n",ckt->CKTtime);
+    fprintf(stdout,"INDsenLoad\n");
+    fprintf(stdout,"time = %.5e\n",ckt->CKTtime);
 #endif /* SENSDEBUG */
 
 
@@ -109,7 +109,7 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
             }
 
 #ifdef  SENSDEBUG 
-            fprintf(file,"cind1 = %.5e,cind2 = %.5e\n",cind1,cind2);
+            fprintf(stdout,"cind1 = %.5e,cind2 = %.5e\n",cind1,cind2);
 #endif /* SENSDEBUG */
 
         }
@@ -125,8 +125,8 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* MUTUAL */
             cind = *(ckt->CKTrhsOld + here->INDbrEq);
 #ifdef SENSDEBUG
-            fprintf(file,"\n cind=%.5e\n",cind);
-            fprintf(file,"\n tag0=%.5e,tag1=%.5e\n",tag0,tag1);
+            fprintf(stdout,"\n cind=%.5e\n",cind);
+            fprintf(stdout,"\n tag0=%.5e,tag1=%.5e\n",tag0,tag1);
 #endif /* SENSDEBUG */
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
                 Osxp = tag0 * *(ckt->CKTstate1 + here->INDsensxp
@@ -135,7 +135,7 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
                         + 2*(iparmno - 1) + 1);
                 if(iparmno == here->INDsenParmNo) Osxp = Osxp - tag0 * cind;
 #ifdef SENSDEBUG
-                fprintf(file,"\n Osxp=%.5e\n",Osxp);
+                fprintf(stdout,"\n Osxp=%.5e\n",Osxp);
 #endif /* SENSDEBUG */
 
                 *(info->SEN_RHS[here->INDbrEq] + iparmno) -= Osxp;

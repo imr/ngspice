@@ -37,6 +37,12 @@ VCVSload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VCVSibrNegptr) -= 1.0 ;
             *(here->VCVSibrContPosptr) -= here->VCVScoeff ;
             *(here->VCVSibrContNegptr) += here->VCVScoeff ;
+
+#ifdef KIRCHHOFF
+            *(ckt->CKTfvk+here->VCVSposNode) += *(ckt->CKTrhsOld+here->VCVSbranch) ;
+            *(ckt->CKTfvk+here->VCVSnegNode) -= *(ckt->CKTrhsOld+here->VCVSbranch) ;
+#endif
+
         }
     }
     return(OK);

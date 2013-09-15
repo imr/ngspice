@@ -2,10 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
@@ -20,28 +18,29 @@ Author: 1985 Thomas L. Quarles
  */
 
 int
-CKTsenAC(ckt)
-register CKTcircuit *ckt;
+CKTsenAC(CKTcircuit *ckt)
 {
     int error;
 
 #ifdef SENSDEBUG
     printf("CKTsenAC\n");
-#endif /* SENSDEBUG */
+#endif
 
-
-    if(error = CKTsenLoad(ckt)) return(error);
+    error = CKTsenLoad(ckt);
+    if (error)
+        return error;
 
 #ifdef SENSDEBUG
     printf("after CKTsenLoad\n");
-#endif /* SENSDEBUG */
+#endif
 
-    if(error = CKTsenComp(ckt)) return(error);
+    error = CKTsenComp(ckt);
+    if (error)
+        return error;
 
 #ifdef SENSDEBUG
     printf("after CKTsenComp\n");
-#endif /* SENSDEBUG */
+#endif
 
-    return(OK);
+    return OK;
 }
-

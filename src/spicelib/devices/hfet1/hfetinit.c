@@ -73,10 +73,15 @@ SPICEdev HFETAinfo = {
 #endif    
  /* DEVinstSize   */ &HFETAiSize,
  /* DEVmodSize    */ &HFETAmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HFETAbindCSC,
  /* DEVbindCSCComplex */   HFETAbindCSC,
  /* DEVbindCSCComplexToReal */  HFETAbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ HFETAnodeIsNonLinear
 #endif
 
 };

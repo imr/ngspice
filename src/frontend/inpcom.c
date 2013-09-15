@@ -20,6 +20,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "inpcom.h"
 #include "variable.h"
+#include "subckt.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "ngspice/stringutil.h"
 #include "ngspice/wordlist.h"
@@ -35,20 +36,37 @@ Author: 1985 Wayne A. Christopher
 /*#define TRACE*/
 
 /* globals -- wanted to avoid complicating inp_readall interface */
-static char *library_name[1000];
-static char *section_name[1000][1000];
-static struct line *section_ref[1000][1000];
-static struct line *library_deck[1000];
+#define N_LIBRARIES       1000
+#define N_SECTIONS        1000
+#define N_PARAMS          1000
+#define N_SUBCKT_W_PARAMS 4000
+
+static struct library {
+    char *name;
+    struct line *deck;
+} libraries[N_LIBRARIES];
+
 static int  num_libraries;
-static int  num_sections[1000];
-static      char *global;
-static char *subckt_w_params[1000];
+
+static char *subckt_w_params[N_SUBCKT_W_PARAMS];
 static int  num_subckt_w_params;
-static char *func_names[1000];
-static char *func_params[1000][1000];
-static char *func_macro[5000];
-static int  num_functions;
-static int  num_parameters[1000];
+
+struct function_env
+{
+    struct function_env *up;
+
+    struct function {
+        struct function *next;
+        char *name;
+        char *macro;
+        char *params[N_PARAMS];
+        int   num_parameters;
+    } *functions;
+};
+
+
+static  char *global;
+
 static COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
@@ -66,12 +84,11 @@ static void inp_stripcomments_deck(struct line *deck);
 static void inp_stripcomments_line(char *s);
 static void inp_fix_for_numparam(struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
-static void collect_section_references(struct line *deck, char *section_name_);
-static void inp_init_lib_data(void);
-static void inp_grab_func(struct line *deck);
+static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
+static void inp_grab_func(struct function_env *, struct line *deck);
 static void inp_fix_inst_calls_for_numparam(struct line *deck);
-static void inp_expand_macros_in_func(void);
-static void inp_expand_macros_in_deck(struct line *deck);
+static void inp_expand_macros_in_func(struct function_env *);
+static struct line *inp_expand_macros_in_deck(struct function_env *, struct line *deck);
 static void inp_fix_param_values(struct line *deck);
 static void inp_reorder_params(struct line *deck, struct line *list_head, struct line *end);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
@@ -92,42 +109,76 @@ static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 
-static char *skip_back_non_ws(char *d) { while (*d && !isspace(*d)) d--; return d; }
+static char *skip_back_non_ws(char *d) { --d; while (*d && !isspace(*d)) d--; return d + 1; }
+static char *skip_back_ws(char *d)     { --d; while (isspace(*d))        d--; return d + 1; }
 static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
-static char *skip_back_ws(char *d)     { while (isspace(*d))        d--; return d; }
 static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
+
+static void tprint(struct line *deck);
 
 #ifndef XSPICE
 static void inp_poly_err(struct line *deck);
 #endif
 
 
-static int
+static struct library *
+new_lib(void)
+{
+    if (num_libraries >= N_LIBRARIES) {
+        fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    return & libraries[num_libraries++];
+}
+
+
+static struct library *
 find_lib(char *name)
 {
     int i;
     for (i = 0; i < num_libraries; i++)
-        if (cieq(library_name[i], name))
-            return i;
-    return -1;
+        if (cieq(libraries[i].name, name))
+            return & libraries[i];
+    return NULL;
 }
 
 
-static int
-find_section(int lib_idx, char *section_name_) {
-    int j;
-    for (j = 0; j < num_sections[lib_idx]; j++)
-        if (strcmp(section_name[lib_idx][j], section_name_) == 0)
-            return j;
-    return -1;
-}
+static struct line *
+find_section_definition(struct line *deck, char *name)
+{
+    struct line *c;
 
+    for (c = deck; c; c = c->li_next) {
+        char *line = c->li_line;
+        if (ciprefix(".lib", line)) {
+            char *s, *t, *y;
+            s = skip_non_ws(line);
+            while (isspace(*s) || isquote(*s))
+                s++;
+            for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+                ;
+            y = t;
+            while (isspace(*y) || isquote(*y))
+                y++;
 
-static void
-remember_section_ref(int lib_idx, char *section_name_, struct line *deck) {
-    int section_idx = num_sections[lib_idx]++;
-    section_ref[lib_idx][section_idx] = deck;
-    section_name[lib_idx][section_idx] = strdup(section_name_);
+            if (!*y) {
+                /* library section definition: `.lib <section-name>' .. `.endl' */
+
+                char keep_char = *t;
+                *t = '\0';
+
+                if (strcasecmp(name, s) == 0) {
+                    *t = keep_char;
+                    return c;
+                }
+
+                *t = keep_char;
+            }
+        }
+    }
+
+    return NULL;
 }
 
 
@@ -142,7 +193,9 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
     }
 
-    if (find_lib(y) < 0) {
+    if (!find_lib(y)) {
+
+        struct library *lib;
 
         bool dir_name_flag = FALSE;
         FILE *newfp = inp_pathopen(y, "r");
@@ -166,14 +219,16 @@ read_a_lib(char *y, int call_depth, char *dir_name)
             dir_name_flag = TRUE;
         }
 
-        library_name[num_libraries++] = strdup(y);
+        lib = new_lib();
+
+        lib->name = strdup(y);
 
         if (dir_name_flag == FALSE) {
             char *y_dir_name = ngdirname(y);
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
+            lib->deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
             tfree(y_dir_name);
         } else {
-            library_deck[num_libraries-1] = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
+            lib->deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
         }
 
         fclose(newfp);
@@ -183,116 +238,6 @@ read_a_lib(char *y, int call_depth, char *dir_name)
         tfree(copyy);   /* allocated by the cp_tildexpand() above */
 
     return TRUE;
-}
-
-
-static int
-expand_section_references(int line_number)
-{
-    struct line *tmp_ptr = NULL, *next;
-    int lib_idx;
-
-    for (lib_idx = 0; lib_idx < num_libraries; lib_idx++) {
-        bool found_section = FALSE;
-        struct line *working = library_deck[lib_idx];
-        while (working) {
-            char *buffer = working->li_line;
-
-            if (found_section && ciprefix(".endl", buffer)) {
-
-                struct line *next = working->li_next;
-
-                /* Make the .endl a comment */
-                *buffer = '*';
-                found_section = FALSE;
-
-                /* append the line following the library section reference */
-                working->li_next = tmp_ptr;
-
-                /* and continue with the line following */
-                /* the .endl of this section definition */
-                working = next;
-                continue;
-            }
-
-            if (ciprefix(".lib", buffer)) {
-
-                /* here we expect a libray section definition */
-                /* library section definition: `.lib <section-name>' .. `.endl' */
-
-                char keep_char;
-                int section_idx;
-                char *s, *t;
-
-                if (found_section) {
-                    fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                s = skip_non_ws(buffer);           /* skip over .lib */
-                while (isspace(*s) || isquote(*s))
-                    s++;                           /* advance past space chars */
-                for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
-                    ;                              /* skip to end of word */
-                keep_char = *t;
-                *t = '\0';
-
-                /* check if we remember this section having been referenced somewhere */
-                section_idx = find_section(lib_idx, s);
-
-                *t = keep_char;
-
-                found_section = (section_idx >= 0);
-
-                if (found_section) {
-
-                    struct line *c;
-                    int line_number_lib;
-
-                    /* make the .lib of this library section definition a comment */
-                    *buffer = '*';
-
-                    /* tmp_ptr is the line following the library section reference */
-                    tmp_ptr = section_ref[lib_idx][section_idx]->li_next;
-
-                    /* insert the section definition here, */
-                    /* just behind the remembered section reference */
-                    section_ref[lib_idx][section_idx]->li_next = working;
-
-                    /* renumber lines */
-                    line_number_lib = 1;
-                    for (c = working; !ciprefix(".endl", c->li_line); c = c->li_next) {
-                        c->li_linenum = line_number++;
-                        c->li_linenum_orig = line_number_lib++;
-                    }
-                    c->li_linenum = line_number++;  // renumber endl line
-                    c->li_linenum_orig = line_number_lib++;
-                }
-            }
-
-            next = working->li_next;
-
-            /* drop this line in the current library file, if
-             *   it is outside a library section definition
-             * or
-             *   it is part of an unused library section definition
-             */
-
-            if (!found_section) {
-                tfree(working->li_line);
-                tfree(working);
-            }
-
-            working = next;
-        }
-
-        if (found_section) {
-            fprintf(stderr, "ERROR: .lib is missing .endl!\n");
-            controlled_exit(EXIT_FAILURE);
-        }
-    }
-
-    return line_number;
 }
 
 
@@ -311,7 +256,7 @@ expand_section_references(int line_number)
      store contents in string new_title
    process .lib lines
      read file and library name, open file using fcn inp_pathopen()
-     read file contents and put into struct library_deck[], one entry per .lib line
+     read file contents and put into struct libraries[].deck, one entry per .lib line
    process .inc lines
      read file and library name, open file using fcn inp_pathopen()
      read file contents and add lines to cc
@@ -356,7 +301,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     unsigned int no_braces = 0; /* number of '{' */
     int cirlinecount = 0; /* length of circarray */
 
-    size_t max_line_length; /* max. line length in input deck */
+    size_t max_line_length = 0; /* max. line length in input deck */
 
     struct line *tmp_ptr1 = NULL;
 
@@ -365,7 +310,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     if (call_depth == 0) {
         num_subckt_w_params = 0;
         num_libraries       = 0;
-        num_functions       = 0;
         global              = NULL;
         found_end           = FALSE;
         inp_compat_mode = ngspice_compat_mode();
@@ -461,50 +405,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         /* now handle .lib statements */
         if (ciprefix(".lib", buffer)) {
-
-            char *y = NULL;     /* filename */
-            char *z = NULL;     /* libname */
-            char *s, *t;
-
-            inp_stripcomments_line(buffer);
-            s = skip_non_ws(buffer);   /* skip over .lib */
-
-            s = strdup(s);
-
-            t = get_quoted_token(s, &y);
-
-            if (!y) {
-                fprintf(cp_err, "Error: .lib filename missing\n");
-                tfree(buffer);         /* was allocated by readline() */
-                controlled_exit(EXIT_FAILURE);
-            }
-
-            t = get_quoted_token(t, &z);
-
-            if (z && (inp_compat_mode == COMPATMODE_ALL ||
-                      inp_compat_mode == COMPATMODE_HS  ||
-                      inp_compat_mode == COMPATMODE_NATIVE))
-            {
-                /* here we have a */
-                /* library section reference: `.lib <library-file> <section-name>' */
-
-                if(!read_a_lib(y, call_depth, dir_name)) {
-                    tfree(s);
-                    tfree(buffer);
-                    controlled_exit(EXIT_FAILURE);
-                }
-
-                tfree(s);
-
-                /* Make the .lib a comment */
-                *buffer = '*';
-            } else if (inp_compat_mode == COMPATMODE_PS) {
+            if (inp_compat_mode == COMPATMODE_PS) {
                 /* compatibility mode,
                  *   this is neither a libray section definition nor a reference
                  * interpret as old style
                  *   .lib <file name> (no lib name given)
                  */
-                fprintf(cp_err, "Warning: library name missing in line\n  %s", buffer);
+                char *s = skip_non_ws(buffer); /* skip over .lib */
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
                 memcpy(buffer, ".inc", 4);
             }
@@ -614,10 +521,24 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         /* loop through 'buffer' until end is reached.  Then test for
          premature end.  If premature end is reached, spew
          error and zap the line. */
-        if (!ciprefix("write", buffer)) {    // exclude 'write' command so filename case preserved
+        {
             char *s;
-            for (s = buffer; *s && (*s != '\n'); s++)
-                *s = (char) tolower(*s);
+
+            if ( !ciprefix("write", buffer) &&
+                 !ciprefix(".lib", buffer) &&
+                 !ciprefix("codemodel", buffer) &&
+                 !ciprefix("use", buffer) &&
+                 !ciprefix("load", buffer)
+                )
+            {
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    *s = (char) tolower(*s);
+            } else {
+                // exclude some commands to preserve filename case
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    ;
+            }
+
             if (!*s) {
                 // fprintf(cp_err, "Warning: premature EOF\n");
             }
@@ -682,16 +603,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         cc->li_next          = global_card;
         global_card->li_next = prev;
 
-        inp_init_lib_data();
-        collect_section_references(cc, NULL);
-    }
-
-    /*
-       add libraries
-    */
-
-    if (call_depth == 0) {
-        line_number = expand_section_references(line_number);
+        if (inp_compat_mode == COMPATMODE_ALL ||
+            inp_compat_mode == COMPATMODE_HS  ||
+            inp_compat_mode == COMPATMODE_NATIVE)
+        {
+            /* process all library section references */
+            expand_section_references(cc, call_depth, dir_name);
+        }
     }
 
     /*
@@ -809,15 +727,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
         inp_fix_macro_param_func_paren_io(working);
         inp_fix_ternary_operator(working);
-        inp_grab_func(working);
-
-        inp_expand_macros_in_func();
-        inp_expand_macros_in_deck(working);
+//tprint(working);
+        inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
         /* get end card as last card in list; end card pntr does not appear to always
            be correct at this point */
-        for (newcard = working; newcard != NULL; newcard = newcard->li_next)
+        for (newcard = working; newcard; newcard = newcard->li_next)
             end = newcard;
 
         inp_reorder_params(working, cc, end);
@@ -841,43 +757,42 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         }
 
         inp_add_series_resistor(working);
+
+        /* get max. line length and number of lines in input deck,
+           and renumber the lines,
+           count the number of '{' per line as an upper estimate of the number
+           of parameter substitutions in a line*/
+        dynmaxline = 0;
+        max_line_length = 0;
+        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
+            char *s;
+            unsigned int braces_per_line = 0;
+            /* count number of lines */
+            dynmaxline++;
+            /* renumber the lines of the processed input deck */
+            tmp_ptr1->li_linenum = dynmaxline;
+            if (max_line_length < strlen(tmp_ptr1->li_line))
+                max_line_length = strlen(tmp_ptr1->li_line);
+            /* count '{' */
+            for (s = tmp_ptr1->li_line; *s; s++)
+                if (*s == '{')
+                    braces_per_line++;
+            if (no_braces <  braces_per_line)
+                no_braces = braces_per_line;
+        }
+
+        if (ft_ngdebug) {
+            /*debug: print into file*/
+            FILE *fd = fopen("debug-out.txt", "w");
+            struct line *t;
+            for (t = cc; t; t = t->li_next)
+                fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            fclose(fd);
+
+            fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
+                    (int) max_line_length, no_braces, dynmaxline);
+        }
     }
-
-    /* get max. line length and number of lines in input deck,
-       and renumber the lines,
-       count the number of '{' per line as an upper estimate of the number
-       of parameter substitutions in a line*/
-    dynmaxline = 0;
-    max_line_length = 0;
-    for (tmp_ptr1 = cc; tmp_ptr1 != NULL; tmp_ptr1 = tmp_ptr1->li_next) {
-        char *s;
-        unsigned int braces_per_line = 0;
-        /* count number of lines */
-        dynmaxline++;
-        /* renumber the lines of the processed input deck */
-        tmp_ptr1->li_linenum = dynmaxline;
-        if (max_line_length < strlen(tmp_ptr1->li_line))
-            max_line_length = strlen(tmp_ptr1->li_line);
-        /* count '{' */
-        for (s = tmp_ptr1->li_line; *s; s++)
-            if (*s == '{')
-                braces_per_line++;
-        if (no_braces <  braces_per_line)
-            no_braces = braces_per_line;
-    }
-
-    if (ft_ngdebug) {
-        /*debug: print into file*/
-        FILE *fd = fopen("debug-out.txt", "w");
-        struct line *t;
-        for (t = cc; t; t = t->li_next)
-            fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-        fclose(fd);
-
-        fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                (int) max_line_length, no_braces, dynmaxline);
-    }
-
     return cc;
 }
 
@@ -1007,18 +922,16 @@ readline(FILE *fd)
 /* replace "gnd" by " 0 "
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
 static void
-inp_fix_gnd_name(struct line *deck)
+inp_fix_gnd_name(struct line *c)
 {
-    struct line *c = deck;
     char *gnd;
 
-    while (c != NULL) {
+    for (; c; c = c->li_next) {
         gnd = c->li_line;
         // if there is a comment or no gnd, go to next line
-        if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL)) {
-            c = c->li_next;
+        if ((*gnd == '*') || (strstr(gnd, "gnd") == NULL))
             continue;
-        }
+
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
             if ((isspace(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
@@ -1029,7 +942,6 @@ inp_fix_gnd_name(struct line *deck)
         }
         // now remove the extra white spaces around 0
         c->li_line = inp_remove_ws(c->li_line);
-        c = c->li_next;
     }
 }
 
@@ -1043,23 +955,19 @@ create_new_card(char *card_str, int *line_number) {
     newcard->li_error   = NULL;
     newcard->li_actual  = NULL;
 
-    *line_number = *line_number + 1;
+    *line_number += 1;
 
     return newcard;
 }
 
 
 static void
-inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
+inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 {
-    struct line *c, *a_card, *model_card, *next_card;
-    char *line, *bool_ptr, *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-    char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
-    char big_buf[1000];
-    int  xy_count1 = 0, xy_count2 = 0, skip_control = 0;
+    int skip_control = 0;
 
-    for (c = deck; c != NULL; c = c->li_next) {
-        line = c->li_line;
+    for (; c; c = c->li_next) {
+        char *line = c->li_line;
 
         /* there is no e source inside .control ... .endc */
         if (ciprefix(".control", line)) {
@@ -1073,43 +981,49 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
         }
 
         if (*line == 'e') {
+
+            char *bool_ptr;
+
             if ((bool_ptr = strstr(line, "nand(")) != NULL ||
                 (bool_ptr = strstr(line, "and(")) != NULL ||
                 (bool_ptr = strstr(line, "nor(")) != NULL ||
                 (bool_ptr = strstr(line, "or(")) != NULL)
             {
+                struct line *a_card, *model_card, *next_card;
+                char *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
+                char big_buf[1000];
+                int  xy_count1, xy_count2;
+
                 str_ptr1 = skip_non_ws(line);
                 model_name = copy_substring(line, str_ptr1);
 
                 str_ptr1 = skip_ws(str_ptr1);
-                str_ptr2 = skip_back_ws(bool_ptr - 1) + 1;
+                str_ptr2 = skip_back_ws(bool_ptr);
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
                 node_str  = strdup(str_ptr1);
                 *str_ptr2 = keep;
 
-                str_ptr1 = bool_ptr + 1;
-                while (*str_ptr1 != '(')
-                    str_ptr1++;
+                str_ptr1 = bool_ptr;
+                while (*++str_ptr1 != '(')
+                    ;
                 fcn_name = copy_substring(bool_ptr, str_ptr1);
                 str_ptr1  = strchr(str_ptr1, ')');
-                comma_ptr = str_ptr2 = strchr(line, ',');
-                if ((str_ptr1 == NULL)|| (str_ptr1 == NULL)) {
+                comma_ptr = strchr(line, ',');
+                if (!str_ptr1 || !comma_ptr) {
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
-                str_ptr2 = skip_back_ws(str_ptr2 - 1);
                 str_ptr1 = skip_ws(str_ptr1 + 1);
-                if (*str_ptr2 == '}') {
-                    while (*str_ptr2 != '{')
-                        str_ptr2--;
-                    xy_str1 = str_ptr2;
-                    str_ptr2 = skip_back_ws(str_ptr2 - 1) + 1;
+                xy_str1 = skip_back_ws(comma_ptr);
+                if (xy_str1[-1] == '}') {
+                    while (*--xy_str1 != '{')
+                        ;
                 } else {
-                    str_ptr2 = skip_back_non_ws(str_ptr2);
-                    xy_str1 = str_ptr2 + 1;
-                    str_ptr2 = skip_back_ws(str_ptr2) + 1;
+                    xy_str1 = skip_back_non_ws(xy_str1);
                 }
+                str_ptr2 = skip_back_ws(xy_str1);
                 keep = *str_ptr2;
                 *str_ptr2 = '\0';
                 ctrl_node_str = strdup(str_ptr1);
@@ -1117,9 +1031,8 @@ inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number)
 
                 str_ptr1 = skip_ws(comma_ptr + 1);
                 if (*str_ptr1 == '{') {
-                    while (*str_ptr1 != '}')
-                        str_ptr1++;
-                    str_ptr1++;
+                    while (*str_ptr1++ != '}')
+                        ;
                 } else {
                     str_ptr1 = skip_non_ws(str_ptr1);
                 }
@@ -1173,7 +1086,7 @@ inp_add_control_section(struct line *deck, int *line_number)
     bool        found_end = FALSE;
     char        *op_line  = NULL, rawfile[1000], *line;
 
-    for (c = deck; c != NULL; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {
         if (*c->li_line == '*')
             continue;
         if (ciprefix(".op ", c->li_line)) {
@@ -1275,13 +1188,12 @@ chk_for_line_continuation(char *line)
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
 
 static void
-inp_fix_macro_param_func_paren_io(struct line *begin_card)
+inp_fix_macro_param_func_paren_io(struct line *card)
 {
-    struct line *card;
     char        *str_ptr, *new_str;
     bool        is_func = FALSE;
 
-    for (card = begin_card; card != NULL; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         if (*card->li_line == '*')
             continue;
@@ -1355,15 +1267,15 @@ get_instance_subckt(char *line)
 
     // see if instance has parameters
     if (equal_ptr) {
-        end_ptr = skip_back_ws(equal_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr) + 1;
+        end_ptr = skip_back_ws(equal_ptr);
+        end_ptr = skip_back_non_ws(end_ptr);
     } else {
         end_ptr = line + strlen(line);
     }
 
-    end_ptr = skip_back_ws(end_ptr - 1) + 1;
+    end_ptr = skip_back_ws(end_ptr);
 
-    inst_name_ptr = skip_back_non_ws(end_ptr - 1) + 1;
+    inst_name_ptr = skip_back_non_ws(end_ptr);
     return copy_substring(inst_name_ptr, end_ptr);
 }
 
@@ -1425,8 +1337,8 @@ get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
 
-    ptr_end = skip_back_ws(line + strlen(line) - 1) + 1;
-    ptr_beg = skip_back_non_ws(ptr_end - 1) + 1;
+    ptr_end = skip_back_ws(line + strlen(line));
+    ptr_beg = skip_back_non_ws(ptr_end);
     return copy_substring(ptr_beg, ptr_end);
 }
 
@@ -1442,7 +1354,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
     bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
     int  i, num_terminals = 0, tmp_cnt = 0;
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         if (*line == '*')
@@ -1468,7 +1380,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         have_subckt = TRUE;
                 if (!have_subckt) {
                     new_names[tmp_cnt++] = used_subckt_names[*num_used_subckt_names] = inst_subckt_name;
-                    *num_used_subckt_names = *num_used_subckt_names + 1;
+                    *num_used_subckt_names += 1;
                 } else {
                     tfree(inst_subckt_name);
                 }
@@ -1480,7 +1392,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                         found_model = TRUE;
                 if (!found_model) {
                     used_model_names[*num_used_model_names] = model_name;
-                    *num_used_model_names = *num_used_model_names + 1;
+                    *num_used_model_names += 1;
                 } else {
                     tfree(model_name);
                 }
@@ -1505,7 +1417,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                             if (strcmp(used_model_names[i], model_name) == 0) found_model = TRUE;
                         if (!found_model) {
                             used_model_names[*num_used_model_names] = model_name;
-                            *num_used_model_names = *num_used_model_names + 1;
+                            *num_used_model_names += 1;
                         } else {
                             tfree(model_name);
                         }
@@ -1570,7 +1482,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
     used_subckt_names = TMALLOC(char*, no_of_lines);
     used_model_names = TMALLOC(char*, no_of_lines);
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         if (ciprefix(".model", card->li_line))
             has_models = TRUE;
         if (ciprefix(".cmodel", card->li_line))
@@ -1579,7 +1491,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             *card->li_line = '*';
     }
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         if (*line == '*')
@@ -1670,7 +1582,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
              used_model_names, &num_used_model_names, has_models);
 
     /* comment out any unused subckts, currently only at top level */
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (card = start_card; card; card = card->li_next) {
         line = card->li_line;
 
         if (*line == '*')
@@ -1771,13 +1683,13 @@ inp_fix_ternary_operator_str(char *line, bool all)
     } else {
         return line;
     }
-
+    all = TRUE;
     // get conditional
     question = strchr(str_ptr, '?');
-    str_ptr2 = skip_back_ws(question - 1);
-    if (*str_ptr2 == ')') {
+    str_ptr2 = skip_back_ws(question);
+    if (str_ptr2[-1] == ')') {
         count = 1;
-        str_ptr = str_ptr2;
+        str_ptr = str_ptr2 - 1;
         while ((count != 0) && (str_ptr != line)) {
             str_ptr--;
             if (*str_ptr == '(')
@@ -1786,7 +1698,6 @@ inp_fix_ternary_operator_str(char *line, bool all)
                 count++;
         }
     }
-    str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     conditional = strdup(str_ptr);
@@ -1822,14 +1733,13 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary string (finding ':') %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        str_ptr2 = skip_back_ws(colon - 1);
+        str_ptr2 = skip_back_ws(colon);
     } else if ((colon = strchr(str_ptr, ':')) != NULL) {
-        str_ptr2 = skip_back_ws(colon - 1);
+        str_ptr2 = skip_back_ws(colon);
     } else {
         fprintf(stderr, "ERROR: problem parsing ternary string (missing ':') %s!\n", line);
         controlled_exit(EXIT_FAILURE);
     }
-    str_ptr2++;
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     if_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
@@ -1858,6 +1768,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
+        if (*str_ptr2 == '\0')
+            str_ptr2--;
         else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
         if (*str_ptr2 != '}')
             end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
@@ -1904,13 +1816,12 @@ inp_fix_ternary_operator_str(char *line, bool all)
 
 
 static void
-inp_fix_ternary_operator(struct line *start_card)
+inp_fix_ternary_operator(struct line *card)
 {
-    struct line *card;
     char        *line;
     bool found_control = FALSE;
 
-    for (card = start_card; card != NULL; card = card->li_next) {
+    for (; card; card = card->li_next) {
         line = card->li_line;
 
         /* exclude replacement of ternary function between .control and .endc */
@@ -1968,13 +1879,10 @@ inp_casefix(char *string)
 
 /* Strip all end-of-line comments from a deck */
 static void
-inp_stripcomments_deck(struct line *deck)
+inp_stripcomments_deck(struct line *c)
 {
-    struct line *c = deck;
-    while (c != NULL) {
+    for (; c; c = c->li_next)
         inp_stripcomments_line(c->li_line);
-        c = c->li_next;
-    }
 }
 
 
@@ -2027,7 +1935,7 @@ inp_stripcomments_line(char *s)
         return;
     }
 
-    if (d>s) {
+    if (d > s) {
         d--;
         /* d now points to character just before comment */
 
@@ -2074,6 +1982,31 @@ inp_change_quotes(char *s)
 }
 
 
+static void
+new_subckt_w_params(char *str)
+{
+    if (num_subckt_w_params >= N_SUBCKT_W_PARAMS) {
+        fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    subckt_w_params[num_subckt_w_params++] = str;
+}
+
+
+static char **
+find_subckt_w_params(char *subckt_name)
+{
+    int i;
+
+    for (i = 0; i < num_subckt_w_params; i++)
+        if (strcmp(subckt_w_params[i], subckt_name) == 0)
+            return & subckt_w_params[i];
+
+    return NULL;
+}
+
+
 static char*
 inp_fix_subckt(char *s)
 {
@@ -2090,15 +2023,14 @@ inp_fix_subckt(char *s)
         for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
-        subckt_w_params[num_subckt_w_params++] = copy_substring(ptr1, ptr2);
+        new_subckt_w_params(copy_substring(ptr1, ptr2));
 
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        beg = skip_back_ws(equal - 1);
+        beg = skip_back_ws(equal);
         beg = skip_back_non_ws(beg);
-        *beg = '\0';
-        beg++;
+        beg[-1] = '\0';
 
         head = alloc(struct line);
         /* create list of parameters that need to get sorted */
@@ -2107,8 +2039,8 @@ inp_fix_subckt(char *s)
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
             ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws(ptr1 - 1);
-            ptr1 = skip_back_non_ws(ptr1) + 1;
+            ptr1 = skip_back_ws(ptr1);
+            ptr1 = skip_back_non_ws(ptr1);
             /* ptr1 points to beginning of parameter */
 
             /* if parameter is an expression and starts with '{', find closing '}'
@@ -2138,7 +2070,7 @@ inp_fix_subckt(char *s)
                 beg = ptr2;
             } else {
                 *ptr2 = '\0';
-                beg   = ptr2+1;
+                beg = ptr2 + 1;
             }
 
             newcard = alloc(struct line);
@@ -2295,27 +2227,22 @@ inp_remove_ws(char *s)
    No changes to lines in .control section !
 */
 static void
-inp_fix_for_numparam(struct line *deck)
+inp_fix_for_numparam(struct line *c)
 {
     bool found_control = FALSE;
-    struct line *c = deck;
     char *str_ptr;
 
-    while (c != NULL) {
-        if (ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line)) {
-            c = c->li_next;
+    for (; c; c = c->li_next) {
+        if (ciprefix(".lib", c->li_line) || ciprefix("*lib", c->li_line) || ciprefix("*inc", c->li_line))
             continue;
-        }
 
         /* exclude lines between .control and .endc from getting quotes changed */
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if (found_control) {
-            c = c->li_next;
+        if (found_control)
             continue;
-        }
 
         inp_change_quotes(c->li_line);
 
@@ -2329,40 +2256,33 @@ inp_fix_for_numparam(struct line *deck)
 
         if (ciprefix(".subckt", c->li_line))
             c->li_line = inp_fix_subckt(c->li_line);
-
-        c = c->li_next;
     }
 }
 
 
 static void
-inp_remove_excess_ws(struct line *deck)
+inp_remove_excess_ws(struct line *c)
 {
-    struct line *c = deck;
     bool found_control = FALSE;
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+    for (; c; c = c->li_next) {
+        if (*c->li_line == '*')
             continue;
-        }
 
         /* exclude echo lines between .control and .endc from removing white spaces */
         if (ciprefix(".control", c->li_line))
             found_control = TRUE;
         if (ciprefix(".endc", c->li_line))
             found_control = FALSE;
-        if ((found_control) && (ciprefix("echo", c->li_line))) {
-            c = c->li_next;
+        if ((found_control) && (ciprefix("echo", c->li_line)))
             continue;
-        }
+
         c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
-        c = c->li_next;
     }
 }
 
 
 /*
- * recursively collect library section references,
+ * recursively expand library section references,
  * either
  *    every library section reference (when the given section_name_ === NULL)
  * or
@@ -2370,20 +2290,13 @@ inp_remove_excess_ws(struct line *deck)
  */
 
 static void
-collect_section_references(struct line *deck, char *section_name_)
+expand_section_references(struct line *c, int call_depth, char *dir_name)
 {
-    bool read_line = (section_name_ == NULL);
-
-    struct line *c;
-
-    for (c = deck; c; c = c->li_next) {
+    for (; c; c = c->li_next) {
 
         char *line = c->li_line;
 
-        if (ciprefix(".endl", line) && section_name_ != NULL)
-            read_line = FALSE;
-
-        if (ciprefix("*lib", line) || ciprefix(".lib", line)) {
+        if (ciprefix(".lib", line)) {
 
             char *s, *t, *y;
 
@@ -2396,22 +2309,13 @@ collect_section_references(struct line *deck, char *section_name_)
             while (isspace(*y) || isquote(*y))
                 y++;
 
-            if (!*y) {
-                /* library section definition: `.lib <section-name>' .. `.endl' */
-
-                char keep_char = *t;
-                *t = '\0';
-
-                if (section_name_ != NULL && strcmp(section_name_, s) == 0)
-                    read_line = TRUE;
-                *t = keep_char;
-            }
-            else if (read_line == TRUE) {
+            if (*y) {
                 /* library section reference: `.lib <library-file> <section-name>' */
 
+                struct line *section_def;
                 char keep_char1, keep_char2;
                 char *z, *copys = NULL;
-                int lib_idx;
+                struct library *lib;
 
                 for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
                     ;
@@ -2425,14 +2329,48 @@ collect_section_references(struct line *deck, char *section_name_)
                     if (copys)
                         s = copys;
                 }
-                lib_idx = find_lib(s);
-                if (lib_idx >= 0)
-                    if (find_section(lib_idx, y) < 0) {
-                        /* remember this section having been referenced */
-                        remember_section_ref(lib_idx, y, c);
-                        /* recursively check for nested section references */
-                        collect_section_references(library_deck[lib_idx], y);
+
+                lib = find_lib(s);
+
+                if (!lib) {
+
+                    if(!read_a_lib(s, call_depth, dir_name))
+                        controlled_exit(EXIT_FAILURE);
+
+                    lib = find_lib(s);
+                }
+
+                if (!lib) {
+                    fprintf(stderr, "ERROR, library file %s not found\n", s);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                section_def = find_section_definition(lib->deck, y);
+
+                if (!section_def) {
+                    fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
+                    controlled_exit(EXIT_FAILURE);
+                }
+
+                /* insert the library section definition into `c' */
+                {
+                    struct line *t = inp_deckcopy(section_def);
+                    struct line *rest = c->li_next;
+                    c->li_next = t;
+                    t->li_line[0] = '*';
+                    t->li_line[1] = '<';
+                    for (; t; t=t->li_next)
+                        if(ciprefix(".endl", t->li_line))
+                            break;
+                    if (!t) {
+                        fprintf(stderr, "ERROR, .endl not found\n");
+                        controlled_exit(EXIT_FAILURE);
                     }
+                    t->li_line[0] = '*';
+                    t->li_line[1] = '>';
+                    t->li_next = rest;
+                }
+
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
                 *z = keep_char2;
@@ -2444,30 +2382,20 @@ collect_section_references(struct line *deck, char *section_name_)
 }
 
 
-static void
-inp_init_lib_data(void)
-{
-    int i;
-
-    for (i = 0; i < num_libraries; i++)
-        num_sections[i] = 0;
-}
-
-
 static char*
 inp_get_subckt_name(char *s)
 {
     char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
-        end_ptr = skip_back_ws(end_ptr - 1);
-        end_ptr = skip_back_non_ws(end_ptr) + 1;
+        end_ptr = skip_back_ws(end_ptr);
+        end_ptr = skip_back_non_ws(end_ptr);
     } else {
         end_ptr = s + strlen(s);
     }
 
-    end_ptr = skip_back_ws(end_ptr - 1) + 1;
-    subckt_name = skip_back_non_ws(end_ptr - 1) + 1;
+    end_ptr = skip_back_ws(end_ptr);
+    subckt_name = skip_back_non_ws(end_ptr);
 
     return copy_substring(subckt_name, end_ptr);
 }
@@ -2487,21 +2415,20 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
 
         // check for equality '=='
         if (equal_ptr[1] == '=') {
-            line = equal_ptr+2;
+            line = equal_ptr + 2;
             continue;
         }
         // check for '!=', '<=', '>='
         if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-            line = equal_ptr+1;
+            line = equal_ptr + 1;
             continue;
         }
 
         is_expression = FALSE;
 
         /* get parameter name */
-        name = skip_back_ws(equal_ptr - 1);
-        end  = name + 1;
-        name = skip_back_non_ws(name) + 1;
+        end = skip_back_ws(equal_ptr);
+        name = skip_back_non_ws(end);
 
         param_names[num_params++] = copy_substring(name, end);
 
@@ -2551,9 +2478,9 @@ inp_fix_inst_line(char *inst_line,
 
     end = strchr(inst_line, '=');
     if (end) {
-        end = skip_back_ws(end - 1);
+        end = skip_back_ws(end);
         end = skip_back_non_ws(end);
-        *end = '\0';
+        end[-1] = '\0';
     }
 
     for (i = 0; i < num_subckt_params; i++)
@@ -2584,7 +2511,9 @@ inp_fix_inst_line(char *inst_line,
     return curr_line;
 }
 
-
+/* If multiplier parameter 'm' is found on a X line, flag is set
+   to TRUE.
+   Function is called from inp_fix_inst_calls_for_numparam()*/
 static bool
 found_mult_param(int num_params, char *param_names[])
 {
@@ -2598,7 +2527,13 @@ found_mult_param(int num_params, char *param_names[])
     return found_mult;
 }
 
+/* If a subcircuit invocation (X-line) is found, which contains the
+   multiplier parameter 'm', m is added to all lines inside
+   the corresponding subcircuit except of some excluded in the code below
+   (FIXME: It may be necessary to exclude more of them, at least
+   for all devices that are not supporting the 'm' parameter).
 
+   Function is called from inp_fix_inst_calls_for_numparam()*/
 static int
 inp_fix_subckt_multiplier(struct line *subckt_card,
                           int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
@@ -2608,12 +2543,12 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
 
     subckt_param_names[num_subckt_params]  = strdup("m");
     subckt_param_values[num_subckt_params] = strdup("1");
-    num_subckt_params = num_subckt_params + 1;
+    num_subckt_params ++;
 
     if (!strstr(subckt_card->li_line, "params:")) {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
         sprintf(new_str, "%s params: m=1", subckt_card->li_line);
-        subckt_w_params[num_subckt_w_params++] = get_subckt_model_name(subckt_card->li_line);
+        new_subckt_w_params(get_subckt_model_name(subckt_card->li_line));
     } else {
         new_str = TMALLOC(char, strlen(subckt_card->li_line) + 5);
         sprintf(new_str, "%s m=1", subckt_card->li_line);
@@ -2623,10 +2558,11 @@ inp_fix_subckt_multiplier(struct line *subckt_card,
     subckt_card->li_line = new_str;
 
     for (card = subckt_card->li_next;
-         card != NULL && !ciprefix(".ends", card->li_line);
+         card && !ciprefix(".ends", card->li_line);
          card = card->li_next) {
-        /* no 'm' for B line or comment line */
-        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b'))
+        /* no 'm' for B, V, E, H or comment line */
+        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b') || (*(card->li_line) == 'v') ||
+            (*(card->li_line) == 'e') || (*(card->li_line) == 'h'))
             continue;
         /* no 'm' for model cards */
         if (ciprefix(".model", card->li_line))
@@ -2664,7 +2600,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
-    for (c = deck; c != NULL; c = c->li_next) {
+    for (c = deck; c; c = c->li_next) {
         inst_line = c->li_line;
 
         if (*inst_line == '*')
@@ -2677,8 +2613,7 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
             if (found_mult_param(num_inst_params, inst_param_names)) {
                 flag = FALSE;
                 // iterate through the deck to find the subckt (last one defined wins)
-                d = deck;
-                while (d != NULL) {
+                for (d = deck; d; d = d->li_next) {
                     subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
@@ -2690,7 +2625,6 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                             flag = TRUE;
                         }
                     }
-                    d = d->li_next;
                 }
                 if (flag) {
                     num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
@@ -2722,8 +2656,8 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
         }
         if (ciprefix("x", inst_line)) {
             subckt_name = inp_get_subckt_name(inst_line);
-            for (i = 0; i < num_subckt_w_params; i++) {
-                if (strcmp(subckt_w_params[i], subckt_name) == 0) {
+
+            if (find_subckt_w_params(subckt_name)) {
                     sprintf(name_w_space, "%s ", subckt_name);
 
                     /* find .subckt line */
@@ -2783,8 +2717,6 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
                             break;
                         d = d->li_next;
                     }
-                    break;
-                }
             }
             tfree(subckt_name);
         }
@@ -2793,132 +2725,168 @@ inp_fix_inst_calls_for_numparam(struct line *deck)
 }
 
 
-static void
-inp_get_func_from_line(char *line)
+static struct function *
+new_function(struct function_env *env, char *name)
 {
-    char *ptr, *end;
-    char keep;
-    char temp_buf[5000];
-    int  num_params = 0;
-    int  str_len = 0;
-    int  i = 0;
+    struct function *f = TMALLOC(struct function, 1);
 
-    /* get function name */
+    f -> name = name;
+    f -> num_parameters = 0;
+
+    f -> next = env->functions;
+    env -> functions  = f;
+
+    return f;
+}
+
+
+static struct function *
+find_function(struct function_env *env, char *name)
+{
+    struct function *f;
+
+    for (; env; env = env->up)
+        for (f = env->functions; f; f = f->next)
+            if (strcmp(f->name, name) == 0)
+                return f;
+
+    return NULL;
+}
+
+
+static void
+free_function(struct function *fcn)
+{
+    int i;
+
+    tfree(fcn->name);
+    tfree(fcn->macro);
+
+    for (i = 0; i < fcn->num_parameters; i++)
+        tfree(fcn->params[i]);
+}
+
+
+static void
+new_function_parameter(struct function *fcn, char *parameter)
+{
+    if (fcn->num_parameters >= N_PARAMS) {
+        fprintf(stderr, "ERROR, N_PARAMS overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    fcn->params[fcn->num_parameters++] = parameter;
+}
+
+
+static void
+inp_get_func_from_line(struct function_env *env, char *line)
+{
+    char *end;
+    char temp_buf[5000];
+    int  str_len = 0;
+    struct function *function;
+
+    /* skip `.func' */
     line = skip_non_ws(line);
     line = skip_ws(line);
+
+    /* get function name */
     end = line;
-    while (!isspace(*end) && *end != '(')
+    while (*end && !isspace(*end) && *end != '(')
         end++;
-    keep = *end;
-    *end = '\0';
 
-    /* see if already encountered this function */
-    for (i = 0; i < num_functions; i++)
-        if (strcmp(func_names[i], line) == 0)
-            break;
+    function = new_function(env, copy_substring(line, end));
 
-    func_names[num_functions++] = strdup(line);
-    *end = keep;
-
-    num_params = 0;
+    while (*end && *end != '(')
+        end++;
 
     /* get function parameters */
-    while (*end != '(')
-        end++;
-    while (*end != ')') {
-        end = skip_ws(end + 1);
-        ptr = end;
-        while (!isspace(*end) && *end != ',' && *end != ')')
+    while (*end && *end != ')') {
+        char *beg = skip_ws(end + 1);
+        end = beg;
+        while (*end && !isspace(*end) && *end != ',' && *end != ')')
             end++;
-        if (end > ptr)
-            func_params[num_functions-1][num_params++] = copy_substring(ptr, end);
+        if (end > beg)
+            new_function_parameter(function, copy_substring(beg, end));
     }
-    num_parameters[num_functions-1] = num_params;
 
-    /* get function macro */
+
+    /* skip to the beinning of the function body */
+    while (*end && *end++ != '{')
+        ;
+
+    /* get function body */
     str_len = 0;
-    while (*end != '{')
-        end++;
-    end++;
-    while (*end  &&  *end != '}') {
+    while (*end  && *end != '}') {
         if (!isspace(*end))
             temp_buf[str_len++] = *end;
         end++;
     }
     temp_buf[str_len++] = '\0';
 
-    func_macro[num_functions-1] = strdup(temp_buf);
+    function->macro = strdup(temp_buf);
 }
 
 
-//
-// only grab global functions; skip subckt functions
-//
-static void
-inp_grab_func(struct line *deck)
-{
-    struct line *c        = deck;
-    bool        is_subckt = FALSE;
+/*
+* grab functions at the current .subckt nesting level
+*/
 
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+static void
+inp_grab_func(struct function_env *env, struct line *c)
+{
+    int nesting = 0;
+
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
             continue;
-        }
+
         if (ciprefix(".subckt", c->li_line))
-            is_subckt = TRUE;
+            nesting++;
         if (ciprefix(".ends", c->li_line))
-            is_subckt = FALSE;
+            nesting--;
 
-        if (!is_subckt && ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(c->li_line);
-            *c->li_line = '*';
-        }
-        c = c->li_next;
-    }
-}
+        if (nesting < 0)
+            break;
 
+        if (nesting > 0)
+            continue;
 
-static void
-inp_grab_subckt_func(struct line *subckt)
-{
-    struct line *c = subckt;
-
-    while (!ciprefix(".ends", c->li_line)) {
         if (ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(c->li_line);
+            inp_get_func_from_line(env, c->li_line);
             *c->li_line = '*';
         }
-        c = c->li_next;
     }
 }
 
 
 static char*
-inp_do_macro_param_replace(int fcn_number, char *params[])
+inp_do_macro_param_replace(struct function *fcn, char *params[])
 {
     char *param_ptr, *curr_ptr, *new_str, *curr_str = NULL, *search_ptr;
     char keep, before, after;
     int  i;
 
-    if (num_parameters[fcn_number] == 0)
-        return strdup(func_macro[fcn_number]);
+    if (fcn->num_parameters == 0)
+        return strdup(fcn->macro);
 
-    for (i = 0; i < num_parameters[fcn_number]; i++) {
+    for (i = 0; i < fcn->num_parameters; i++) {
         if (curr_str == NULL) {
-            search_ptr = curr_ptr = func_macro[fcn_number];
+            search_ptr = curr_ptr = fcn->macro;
         } else {
             search_ptr = curr_ptr = curr_str;
             curr_str = NULL;
         }
-        while ((param_ptr = strstr(search_ptr, func_params[fcn_number][i])) != NULL) {
+        while ((param_ptr = strstr(search_ptr, fcn->params[i])) != NULL) {
 
             /* make sure actually have the parameter name */
             if (param_ptr == search_ptr) /* no valid 'before' */
                 before = '\0';
             else
                 before = *(param_ptr-1);
-            after  = param_ptr [ strlen(func_params[fcn_number][i]) ];
+            after  = param_ptr [ strlen(fcn->params[i]) ];
             if (!(is_arith_char(before) || isspace(before) ||
                   before == ',' || before == '=' || (param_ptr-1) < curr_ptr) ||
                 !(is_arith_char(after) || isspace(after) ||
@@ -2944,7 +2912,7 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
             }
 
             *param_ptr = keep;
-            search_ptr = curr_ptr = param_ptr + strlen(func_params[fcn_number][i]);
+            search_ptr = curr_ptr = param_ptr + strlen(fcn->params[i]);
         }
         if (param_ptr == NULL) {
             if (curr_str == NULL) {
@@ -2962,9 +2930,9 @@ inp_do_macro_param_replace(int fcn_number, char *params[])
 
 
 static char*
-inp_expand_macro_in_str(char *str)
+inp_expand_macro_in_str(struct function_env *env, char *str)
 {
-    int  i;
+    struct function *function;
     char *c;
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
     char *curr_ptr, *macro_str, *curr_str = NULL;
@@ -2987,13 +2955,11 @@ inp_expand_macro_in_str(char *str)
 
         *open_paren_ptr = '\0';
 
-        for (i = 0; i < num_functions; i++)
-            if (strcmp(func_names[i], fcn_name) == 0)
-                break;
+        function = find_function(env, fcn_name);
 
         *open_paren_ptr = '(';
 
-        if (i >= num_functions)
+        if (!function)
             continue;
 
         /* find the closing paren */
@@ -3043,15 +3009,15 @@ inp_expand_macro_in_str(char *str)
                     break;
             }
             params[num_params++] =
-                inp_expand_macro_in_str(copy_substring(beg_parameter, curr_ptr));
+                inp_expand_macro_in_str(env, copy_substring(beg_parameter, curr_ptr));
         }
 
-        if (num_parameters[i] != num_params) {
+        if (function->num_parameters != num_params) {
             fprintf(stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_str);
             controlled_exit(EXIT_FAILURE);
         }
 
-        macro_str = inp_do_macro_param_replace(i, params);
+        macro_str = inp_do_macro_param_replace(function, params);
         keep  = *fcn_name;
         *fcn_name = '\0';
         {
@@ -3085,48 +3051,73 @@ inp_expand_macro_in_str(char *str)
 
 
 static void
-inp_expand_macros_in_func(void)
+inp_expand_macros_in_func(struct function_env *env)
 {
-    int  i;
+    struct function *f;
 
-    for (i = 0; i < num_functions; i++)
-        func_macro[i] = inp_expand_macro_in_str(func_macro[i]);
+    for (f = env->functions; f ; f = f->next)
+        f->macro = inp_expand_macro_in_str(env, f->macro);
 }
 
 
-static void
-inp_expand_macros_in_deck(struct line *deck)
+static struct function_env *
+new_function_env(struct function_env *up)
 {
-    struct line *c = deck;
-    int         prev_num_functions = 0, i, j;
+    struct function_env *env = TMALLOC(struct function_env, 1);
 
-    while (c != NULL) {
-        if (*c->li_line == '*') {
-            c = c->li_next;
+    env -> up = up;
+    env -> functions = NULL;
+
+    return env;
+}
+
+
+static struct function_env *
+delete_function_env(struct function_env *env)
+{
+    struct function_env *up = env -> up;
+    struct function *f;
+
+    for (f = env -> functions; f; ) {
+        struct function *here = f;
+        f = f -> next;
+        free_function(here);
+    }
+
+    tfree(env -> functions);
+    tfree(env);
+
+    return up;
+}
+
+
+static struct line *
+inp_expand_macros_in_deck(struct function_env *env, struct line *c)
+{
+    env = new_function_env(env);
+
+    inp_grab_func(env, c);
+
+    inp_expand_macros_in_func(env);
+
+    for (; c; c = c->li_next) {
+
+        if (*c->li_line == '*')
+            continue;
+
+        if (ciprefix(".subckt", c->li_line)) {
+            c = inp_expand_macros_in_deck(env, c->li_next);
             continue;
         }
-        if (ciprefix(".subckt", c->li_line)) {
-            prev_num_functions = num_functions;
-            inp_grab_subckt_func(c);
-            if (prev_num_functions != num_functions)
-                inp_expand_macros_in_func();
-        }
-        if (ciprefix(".ends", c->li_line)) {
-            if (prev_num_functions != num_functions) {
-                for (i = prev_num_functions; i < num_functions; i++) {
-                    tfree(func_names[i]);
-                    tfree(func_macro[i]);
-                    for (j = 0; j < num_parameters[i]; j++)
-                        tfree(func_params[i][j]);
-                    num_functions = prev_num_functions;
-                }
-            }
-        }
 
-        if (*c->li_line != '*')
-            c->li_line = inp_expand_macro_in_str(c->li_line);
-        c = c->li_next;
+        if (ciprefix(".ends", c->li_line))
+            break;
+
+        c->li_line = inp_expand_macro_in_str(env, c->li_line);
     }
+
+    env = delete_function_env(env);
+    return c;
 }
 
 
@@ -3153,36 +3144,32 @@ inp_fix_param_values(struct line *deck)
     wordlist *nwl;
     int parens;
 
-    while (c != NULL) {
+    for (; c; c = c->li_next) {
         line = c->li_line;
 
-        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{'))) {
-            c = c->li_next;
+        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{')))
             continue;
-        }
 
         if (ciprefix(".control", line)) {
             control_section = TRUE;
-            c = c->li_next;
             continue;
         }
         if (ciprefix(".endc", line)) {
             control_section = FALSE;
-            c = c->li_next;
             continue;
         }
-        if (control_section || ciprefix(".option", line)) {
-            c = c->li_next;    /* no handling of params in "option" lines */
+
+        /* no handling of params in "option" lines */
+        if (control_section || ciprefix(".option", line))
             continue;
-        }
-        if (ciprefix("set", line)) {
-            c = c->li_next;    /* no handling of params in "set" lines */
+
+        /* no handling of params in "set" lines */
+        if (ciprefix("set", line))
             continue;
-        }
-        if (*line == 'b') {
-            c = c->li_next;    /* no handling of params in B source lines */
+
+        /* no handling of params in B source lines */
+        if (*line == 'b')
             continue;
-        }
 
         /* for xspice .cmodel: replace .cmodel with .model and skip entire line) */
         if (ciprefix(".cmodel", line)) {
@@ -3192,22 +3179,20 @@ inp_fix_param_values(struct line *deck)
             *(++line) = 'e';
             *(++line) = 'l';
             *(++line) = ' ';
-            c = c->li_next;
             continue;
         }
 
         /* exclude CIDER models */
         if (ciprefix(".model", line) && (strstr(line, "numos") || strstr(line, "numd") ||
                                          strstr(line, "nbjt") || strstr(line, "nbjt2") ||
-                                         strstr(line, "numd2"))) {
-            c = c->li_next;
+                                         strstr(line, "numd2")))
+        {
             continue;
         }
+
         /* exclude CIDER devices with ic.file parameter */
-        if (strstr(line, "ic.file")) {
-            c = c->li_next;
+        if (strstr(line, "ic.file"))
             continue;
-        }
 
         while ((equal_ptr = strchr(line, '=')) != NULL) {
 
@@ -3390,7 +3375,6 @@ inp_fix_param_values(struct line *deck)
                 tfree(old_str);
             }
         }
-        c = c->li_next;
     }
 }
 
@@ -3402,7 +3386,7 @@ get_param_name(char *line)
     char keep;
 
     if ((equal_ptr = strchr(line, '=')) != NULL) {
-        equal_ptr = skip_back_ws(equal_ptr - 1) + 1;
+        equal_ptr = skip_back_ws(equal_ptr);
 
         beg = equal_ptr - 1;
         while (!isspace(*beg) && beg != line)
@@ -3606,12 +3590,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         return;
 
     /* determine the number of lines with .param */
-    ptr = start_card;
-    while (ptr != NULL) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next)
         if (strchr(ptr->li_line, '='))
             num_params++;
-        ptr = ptr->li_next;
-    }
 
     arr_size = num_params;
     num_params = 0; /* This is just to keep the code in row 2907ff. */
@@ -3633,7 +3614,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ptr_array_ordered = TMALLOC(struct line *, arr_size);
 
     ptr = start_card;
-    while (ptr != NULL) {
+    for (ptr = start_card; ptr; ptr = ptr->li_next)
         // ignore .param lines without '='
         if (strchr(ptr->li_line, '=')) {
             depends_on[num_params][0] = NULL;
@@ -3643,8 +3624,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
             ptr_array[num_params++]   = ptr;
         }
-        ptr = ptr->li_next;
-    }
+
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
     for (i = 0; i < num_params; i++)
@@ -3745,7 +3725,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 char after  = *(str_ptr+strlen(param_names[i]));
                 if (!(is_arith_char(before) || isspace(before) || (str_ptr-1) < curr_line) ||
                         !(is_arith_char(after)  || isspace(after)  || after == '\0')) {
-                    str_ptr = str_ptr + 1;
+                    str_ptr ++;
                     continue;
                 }
                 beg = str_ptr - 1;
@@ -3832,7 +3812,7 @@ inp_add_params_to_subckt(struct line *subckt_card)
             subckt_name = skip_non_ws(subckt_card->li_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
-            subckt_w_params[num_subckt_w_params++] = copy_substring(subckt_name, end_ptr);
+            new_subckt_w_params(copy_substring(subckt_name, end_ptr));
         } else {
             new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
             sprintf(new_line, "%s %s", subckt_line, param_ptr);
@@ -4001,12 +3981,12 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             while ((equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr+2;
+                    curr_line = equal_ptr + 2;
                     continue;
                 }
                 // check for '!=', '<=', '>='
                 if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr+1;
+                    curr_line = equal_ptr + 1;
                     continue;
                 }
                 counter++;
@@ -4023,16 +4003,16 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
             while (curr_line < card->li_line+strlen(card->li_line) && (equal_ptr = strchr(curr_line, '=')) != NULL) {
                 // check for equality '=='
                 if (equal_ptr[1] == '=') {
-                    curr_line = equal_ptr+2;
+                    curr_line = equal_ptr + 2;
                     continue;
                 }
                 // check for '!=', '<=', '>='
                 if (*(equal_ptr-1) == '!' || *(equal_ptr-1) == '<' || *(equal_ptr-1) == '>') {
-                    curr_line = equal_ptr+1;
+                    curr_line = equal_ptr + 1;
                     continue;
                 }
 
-                beg_param = skip_back_ws(equal_ptr - 1);
+                beg_param = skip_back_ws(equal_ptr);
                 beg_param = skip_back_non_ws(beg_param);
                 end_param = skip_ws(equal_ptr + 1);
                 while (*end_param != '\0' && (!isspace(*end_param) || get_expression || get_paren_expression)) {
@@ -4046,7 +4026,6 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
                         get_paren_expression = FALSE;
                     end_param++;
                 }
-                beg_param++;
                 keep       = *end_param;
                 *end_param = '\0';
                 new_line   = TMALLOC(char, strlen(".param ") + strlen(beg_param) + 1);
@@ -4145,7 +4124,7 @@ inp_split_multi_param_lines(struct line *deck, int line_num)
 
      */
 static void
-inp_compat(struct line *deck)
+inp_compat(struct line *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
@@ -4155,13 +4134,12 @@ inp_compat(struct line *deck)
     struct line *new_line, *tmp_ptr;
 
     struct line  *param_end = NULL, *param_beg = NULL;
-    struct line *card;
     int skip_control = 0;
 
     char *equation, *tc1_ptr = NULL, *tc2_ptr = NULL;
     double tc1 = 0.0, tc2 = 0.0;
 
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
 
@@ -5246,18 +5224,18 @@ replace_token(char *string, char *token, int wherereplace, int total)
 */
 
 static void
-inp_bsource_compat(struct line *deck)
+inp_bsource_compat(struct line *card)
 {
     char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
     char actchar;
-    struct line *card, *new_line, *tmp_ptr;
+    struct line *new_line, *tmp_ptr;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
     size_t i, xlen, ustate = 0;
     int skip_control = 0;
     int error1;
 
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
 
@@ -5685,12 +5663,10 @@ inp_add_series_resistor(struct line *deck)
 
 #ifndef XSPICE
 static void
-inp_poly_err(struct line *deck)
+inp_poly_err(struct line *card)
 {
-    struct line *card;
-
     size_t skip_control = 0;
-    for (card = deck; card; card = card->li_next) {
+    for (; card; card = card->li_next) {
         char *curr_line = card->li_line;
         if (*curr_line == '*')
             continue;
@@ -5723,3 +5699,12 @@ inp_poly_err(struct line *deck)
     }
 }
 #endif
+static void
+tprint(struct line *t)
+{
+    /*debug: print into file*/
+    FILE *fd = fopen("tprint-out.txt", "w");
+    for (; t; t = t->li_next)
+        fprintf(fd, "%d  %d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+    fclose(fd);
+}

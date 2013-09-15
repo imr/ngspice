@@ -52,7 +52,7 @@ SPICEdev BSIM3v32info = {
  /* DEVaccept     */ NULL,
  /* DEVdestroy    */ BSIM3v32destroy,
  /* DEVmodDelete  */ BSIM3v32mDelete,
- /* DEVdelete     */ BSIM3v32delete, 
+ /* DEVdelete     */ BSIM3v32delete,
  /* DEVsetic      */ BSIM3v32getic,
  /* DEVask        */ BSIM3v32ask,
  /* DEVmodAsk     */ BSIM3v32mAsk,
@@ -69,13 +69,18 @@ SPICEdev BSIM3v32info = {
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
-#endif                       
+#endif
  /* DEVinstSize   */ &BSIM3v32iSize,
  /* DEVmodSize    */ &BSIM3v32mSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   BSIM3v32bindCSC,
  /* DEVbindCSCComplex */   BSIM3v32bindCSCComplex,
  /* DEVbindCSCComplexToReal */  BSIM3v32bindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ BSIM3v32nodeIsNonLinear
 #endif
 
 };

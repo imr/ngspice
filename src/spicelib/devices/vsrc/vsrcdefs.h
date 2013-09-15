@@ -83,6 +83,11 @@ typedef struct sVSRCinstance {
     BindElement *VSRCibrPosptrStructPtr ;
 #endif
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+#endif
+
 } VSRCinstance ;
 
 

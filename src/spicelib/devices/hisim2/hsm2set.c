@@ -87,7 +87,7 @@ int HSM2setup(
     } else {
       if (model->HSM2_version != 270) {
 	model->HSM2_version = 270; /* default 270 */
-	printf("           270 is only available for VERSION. \n");
+	printf("           270 is the only available VERSION. \n");
 	printf("           270 is selected for VERSION. (default) \n");
       } else {
 	printf("           %d is selected for VERSION \n", (int)model->HSM2_version);

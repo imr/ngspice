@@ -46,6 +46,10 @@ if UMFPACK_WANTED
 libmos2_la_SOURCES += mos2bindCSC.c
 endif
 
+if KIRCHHOFF_WANTED
+libmos2_la_SOURCES += mos2node.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

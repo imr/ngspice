@@ -72,10 +72,15 @@ SPICEdev B3SOIPDinfo = {
 #endif
  /* DEVinstSize*/   &B3SOIPDiSize,
  /* DEVmodSize*/    &B3SOIPDmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   B3SOIPDbindCSC,
  /* DEVbindCSCComplex */   B3SOIPDbindCSCComplex,
  /* DEVbindCSCComplexToReal */  B3SOIPDbindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ B3SOIPDnodeIsNonLinear
 #endif
 
 };

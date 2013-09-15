@@ -24,3 +24,7 @@ extern int HFET2bindCSC (GENmodel*, CKTcircuit*) ;
 extern int HFET2bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int HFET2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int  HFET2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

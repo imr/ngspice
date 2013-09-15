@@ -13,20 +13,20 @@ Modified: September 2003 Paolo Nenzi
 #include "ngspice/gendefs.h"
 #include "ngspice/cktdefs.h"
 
-    /* structures used to describe capacitors */
+/* structures used to describe capacitors */
 
 
 /* information to describe each instance */
 
 typedef struct sCAPinstance {
     struct sCAPmodel *CAPmodPtr;    /* backpointer to model */
-    struct sCAPinstance *CAPnextInstance;   /* pointer to next instance of 
+    struct sCAPinstance *CAPnextInstance;   /* pointer to next instance of
                                              * current model*/
     IFuid CAPname;  /* pointer to character string naming this instance */
     int CAPstate;   /* pointer to start of capacitor state vector */
     int CAPposNode; /* number of positive node of capacitor */
     int CAPnegNode; /* number of negative node of capacitor */
-    
+
     double CAPtemp;     /* temperature at which this capacitor operates */
     double CAPdtemp;    /* delta-temperature of this instance */
     double CAPcapac;    /* capacitance */
@@ -35,14 +35,16 @@ typedef struct sCAPinstance {
     double CAPlength;   /* length of the capacitor */
     double CAPscale;    /* scale factor */
     double CAPm;        /* parallel multiplier */
+    double CAPtc1;      /* first temperature coefficient of capacitors */
+    double CAPtc2;      /* second temperature coefficient of capacitors */
 
-    double *CAPposPosptr;    /* pointer to sparse matrix diagonal at 
+    double *CAPposPosptr;    /* pointer to sparse matrix diagonal at
                               * (positive,positive) */
-    double *CAPnegNegptr;    /* pointer to sparse matrix diagonal at 
+    double *CAPnegNegptr;    /* pointer to sparse matrix diagonal at
                               * (negative,negative) */
-    double *CAPposNegptr;    /* pointer to sparse matrix offdiagonal at 
+    double *CAPposNegptr;    /* pointer to sparse matrix offdiagonal at
                               * (positive,negative) */
-    double *CAPnegPosptr;    /* pointer to sparse matrix offdiagonal at 
+    double *CAPnegPosptr;    /* pointer to sparse matrix offdiagonal at
                               * (negative,positive) */
     unsigned CAPcapGiven    : 1;   /* flag to indicate capacitance was specified */
     unsigned CAPicGiven     : 1;   /* flag to indicate init. cond. was specified */
@@ -51,7 +53,9 @@ typedef struct sCAPinstance {
     unsigned CAPtempGiven   : 1;   /* flag to indicate operating temp given */
     unsigned CAPdtempGiven  : 1;   /* flag to indicate delta temp given */
     unsigned CAPscaleGiven  : 1;   /* flag to indicate scale factor given */
-    unsigned CAPmGiven      : 1;   /* flag to indicate parallel multiplier given */ 
+    unsigned CAPmGiven      : 1;   /* flag to indicate parallel multiplier given */
+    unsigned CAPtc1Given    : 1;    /* flag indicates tc1 was specified */
+    unsigned CAPtc2Given    : 1;    /* flag indicates tc2 was specified */
     int    CAPsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
 
@@ -62,25 +66,30 @@ typedef struct sCAPinstance {
     BindElement *CAPnegPosptrStructPtr ;
 #endif
 
+#ifdef KIRCHHOFF
+    double *KCLcurrentPos ;
+    double *KCLcurrentNeg ;
+#endif
+
 } CAPinstance ;
 
 #define CAPqcap CAPstate    /* charge on the capacitor */
 #define CAPccap CAPstate+1  /* current through the capacitor */
 #define CAPsensxp CAPstate+2 /* charge sensitivities and their derivatives.
-                                +3 for the derivatives - pointer to the
-                beginning of the array */
-                            
++3 for the derivatives - pointer to the
+beginning of the array */
+
 
 /* data per model */
 
 typedef struct sCAPmodel {      /* model structure for a capacitor */
     int CAPmodType; /* type index of this device type */
-    struct sCAPmodel *CAPnextModel; /* pointer to next possible model in 
+    struct sCAPmodel *CAPnextModel; /* pointer to next possible model in
                                      * linked list */
     CAPinstance * CAPinstances; /* pointer to list of instances that have this
                                  * model */
     IFuid CAPmodName;   /* pointer to character string naming this model */
-    
+
     double CAPtnom;       /* temperature at which capacitance measured */
     double CAPtempCoeff1; /* linear temperature coefficient */
     double CAPtempCoeff2; /* quadratic temperature coefficient */
@@ -91,6 +100,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     double CAPdefLength;  /* the default length of a capacitor */
     double CAPnarrow;     /* amount by which width are less than drawn */
     double CAPshort;      /* amount by which length are less than drawn */
+    double CAPdel;        /* amount by which length and width are less than drawn */
     double CAPdi;         /* Relative dielectric constant */
     double CAPthick;      /* Insulator thickness */
     unsigned CAPmCapGiven      : 1;    /* flag indicates default capacitance given */
@@ -100,12 +110,13 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     unsigned CAPdefLengthGiven : 1;    /* flag indicates deafult lenght given */
     unsigned CAPnarrowGiven    : 1;    /* flag indicates narrowing factor given */
     unsigned CAPshortGiven     : 1;    /* flag indicates shortening factor given */
+    unsigned CAPdelGiven       : 1;    /* flag indicates del factor given */
     unsigned CAPtnomGiven      : 1;    /* flag indicates nominal temp. given */
     unsigned CAPtc1Given       : 1;    /* flag indicates tc1 was specified */
     unsigned CAPtc2Given       : 1;    /* flag indicates tc2 was specified */
     unsigned CAPdiGiven        : 1;    /* flag indicates epsilon-ins given */
     unsigned CAPthickGiven     : 1;    /* flags indicates insulator thickness given */
-         
+
 } CAPmodel;
 
 /* device parameters */
@@ -118,8 +129,10 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAP_POWER 7
 #define CAP_TEMP 8
 #define CAP_DTEMP 9
-#define CAP_SCALE 10 
+#define CAP_SCALE 10
 #define CAP_M 11
+#define CAP_TC1 12
+#define CAP_TC2 13
 
 /* model parameters */
 #define CAP_MOD_CJ 101
@@ -128,13 +141,14 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAP_MOD_C 104
 #define CAP_MOD_NARROW 105
 #define CAP_MOD_SHORT 106
-#define CAP_MOD_TC1 107
-#define CAP_MOD_TC2 108
-#define CAP_MOD_TNOM 109
-#define CAP_MOD_DI 110
-#define CAP_MOD_THICK 111
-#define CAP_MOD_CAP 112
-#define CAP_MOD_DEFLENGTH 113
+#define CAP_MOD_DEL 107
+#define CAP_MOD_TC1 108
+#define CAP_MOD_TC2 109
+#define CAP_MOD_TNOM 110
+#define CAP_MOD_DI 111
+#define CAP_MOD_THICK 112
+#define CAP_MOD_CAP 113
+#define CAP_MOD_DEFLENGTH 114
 
 /* device questions */
 #define CAP_QUEST_SENS_REAL      201

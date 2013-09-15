@@ -16,7 +16,7 @@ typedef enum {Nodekey = '#'} _nNodekey;  /* Introduces node symbol */
 typedef enum {Intro   = '&'} _nIntro;    /* Introduces preprocessor tokens */
 typedef enum {Comment = '*'} _nComment;  /* Spice Comment lines */
 typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
-typedef enum {Defd    = 15} _nDefd;      /* serial numb. of 'defined' keyword.
+typedef enum {Defd    = 6} _nDefd;      /* serial numb. of 'defined' keyword.
                                             The others are not used (yet) */
 
 typedef char *auxtable;         /* dummy */

@@ -642,6 +642,87 @@ typedef struct sBSIM4instance
     BindElement *BSIM4SbpStructPtr ;
 #endif
 
+#ifdef KIRCHHOFF
+//RHS
+    double *KCLcurrentdNodePrimeRHS_1 ;
+    double *KCLcurrentdNodePrimeRHS_2 ;
+    double *KCLcurrentdNodePrimeRHS_3 ;
+    double *KCLcurrentdNodePrimeRHS_4 ;
+    double *KCLcurrentdNodePrimeRHS_5 ;
+    double *KCLcurrentdNodePrimeRHS_6 ;
+
+    double *KCLcurrentgNodePrimeRHS_1 ;
+    double *KCLcurrentgNodePrimeRHS_2 ;
+
+    double *KCLcurrentgNodeMidRHS ;
+
+    double *KCLcurrentbNodePrimeRHS_1 ;
+    double *KCLcurrentbNodePrimeRHS_2 ;
+    double *KCLcurrentbNodePrimeRHS_3 ;
+    double *KCLcurrentbNodePrimeRHS_4 ;
+    double *KCLcurrentbNodePrimeRHS_5 ;
+    double *KCLcurrentbNodePrimeRHS_6 ;
+
+    double *KCLcurrentsNodePrimeRHS_1 ;
+    double *KCLcurrentsNodePrimeRHS_2 ;
+    double *KCLcurrentsNodePrimeRHS_3 ;
+    double *KCLcurrentsNodePrimeRHS_4 ;
+    double *KCLcurrentsNodePrimeRHS_5 ;
+    double *KCLcurrentsNodePrimeRHS_6 ;
+    double *KCLcurrentsNodePrimeRHS_7 ;
+    double *KCLcurrentsNodePrimeRHS_8 ;
+    double *KCLcurrentsNodePrimeRHS_9 ;
+    double *KCLcurrentsNodePrimeRHS_10 ;
+    double *KCLcurrentsNodePrimeRHS_11 ;
+
+    double *KCLcurrentdbNodeRHS_1 ;
+    double *KCLcurrentdbNodeRHS_2 ;
+
+    double *KCLcurrentsbNodeRHS_1 ;
+    double *KCLcurrentsbNodeRHS_2 ;
+
+    double *KCLcurrentdNodeRHS ;
+
+    double *KCLcurrentsNodeRHS ;
+
+    double *KCLcurrentqNodeRHS_1 ;
+    double *KCLcurrentqNodeRHS_2 ;
+
+//Matrix
+    double *KCLcurrentdNodePrime_1 ;
+    double *KCLcurrentdNodePrime_2 ;
+
+    double *KCLcurrentdNode_1 ;
+    double *KCLcurrentdNode_2 ;
+
+    double *KCLcurrentsNodePrime_1 ;
+    double *KCLcurrentsNodePrime_2 ;
+
+    double *KCLcurrentsNode_1 ;
+    double *KCLcurrentsNode_2 ;
+
+    double *KCLcurrentgNodeExt ;
+
+    double *KCLcurrentgNodeMid_1 ;
+    double *KCLcurrentgNodeMid_2 ;
+
+    double *KCLcurrentgNodePrime ;
+
+    double *KCLcurrentdbNode_1 ;
+    double *KCLcurrentdbNode_2 ;
+
+    double *KCLcurrentbNodePrime_1 ;
+    double *KCLcurrentbNodePrime_2 ;
+    double *KCLcurrentbNodePrime_3 ;
+
+    double *KCLcurrentbNode_1 ;
+    double *KCLcurrentbNode_2 ;
+    double *KCLcurrentbNode_3 ;
+
+    double *KCLcurrentsbNode_1 ;
+    double *KCLcurrentsbNode_2 ;
+#endif
+
 } BSIM4instance ;
 
 struct bsim4SizeDependParam

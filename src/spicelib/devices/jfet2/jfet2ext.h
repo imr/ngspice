@@ -28,3 +28,7 @@ extern int JFET2bindCSC (GENmodel*, CKTcircuit*) ;
 extern int JFET2bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int JFET2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int JFET2nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

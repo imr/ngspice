@@ -746,9 +746,6 @@ MIFget_port_type(
 
         *status = MIF_OK;
     }
-
-    if (temp)
-        tfree(temp);
 }
 
 

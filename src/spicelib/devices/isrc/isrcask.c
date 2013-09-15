@@ -34,6 +34,9 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case ISRC_DC:
             value->rValue = here->ISRCdcValue;
             return (OK);
+        case ISRC_M:
+            value->rValue = here->ISRCmValue;
+            return (OK);
         case ISRC_AC_MAG:
             value->rValue = here->ISRCacMag;
             return (OK);

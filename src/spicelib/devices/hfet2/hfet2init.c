@@ -73,10 +73,15 @@ SPICEdev HFET2info = {
 #endif    
  /* DEVinstSize   */ &HFET2iSize,
  /* DEVmodSize    */ &HFET2mSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   HFET2bindCSC,
  /* DEVbindCSCComplex */   HFET2bindCSCComplex,
  /* DEVbindCSCComplexToReal */  HFET2bindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ HFET2nodeIsNonLinear
 #endif
 
 };

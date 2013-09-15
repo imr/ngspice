@@ -1,0 +1,22 @@
+DBj_gidl_n
+
+.INCLUDE 45nm_MGK_car2_gidlgisl.pm
+.OPTIONS GMIN=1e-18 abstol=1e-19
+
+*Definizione dei parametri  
+.PARAM Lmin=45n   
+.PARAM Wmin=45n 
+.PARAM Ldiff=90n 
+	  
+*Descrizione della cella
+Mp drain gate source body nmos W={Wmin} L={Lmin} AS={Wmin*Ldiff} AD={Wmin*Ldiff} PS={2*(Ldiff+Wmin)} PD={2*(Ldiff+Wmin)}
+Vd 	drain	alim   	0V
+Vg 	gate	0	0V  
+Vs 	source	alim	0V   
+Vb 	body	0	0V 
+Vdd 	alim	0	0.05V
+
+*Definizione del tipo di analisi
+.dc Vdd 0.0 1.2 0.1
+.print all
+.END

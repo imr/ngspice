@@ -24,3 +24,7 @@ extern int VSRCbindCSC (GENmodel*, CKTcircuit*) ;
 extern int VSRCbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int VSRCbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int VSRCnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

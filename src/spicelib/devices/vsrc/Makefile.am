@@ -23,6 +23,7 @@ libvsrc_la_SOURCES =	\
 	vsrcset.c	\
 	vsrctemp.c
 
+
 if KLU_WANTED
 libvsrc_la_SOURCES += vsrcbindCSC.c
 endif
@@ -33,6 +34,10 @@ endif
 
 if UMFPACK_WANTED
 libvsrc_la_SOURCES += vsrcbindCSC.c
+endif
+
+if KIRCHHOFF_WANTED
+libvsrc_la_SOURCES += vsrcnode.c
 endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

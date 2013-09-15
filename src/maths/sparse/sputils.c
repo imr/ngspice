@@ -151,7 +151,7 @@ static void ComplexTransposedMatrixMultiply( MatrixPtr, RealVector, RealVector,
  *  Tom Quarles.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix to be preordered.
  *
  *  >>> Local variables;
@@ -174,9 +174,8 @@ static void ComplexTransposedMatrixMultiply( MatrixPtr, RealVector, RealVector,
  */
 
 void
-spMNA_Preorder(MatrixPtr eMatrix)
+spMNA_Preorder(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
     int  J, Size;
     ElementPtr  pTwin1, pTwin2;
     int  Twins, StartAt = 1;
@@ -346,7 +345,7 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
  *  should not be executed before the function spMNA_Preorder.
  *
  *  >>> Arguments:
- *  eMatrix  <input> (char *)
+ *  Matrix  <input> (char *)
  *      Pointer to the matrix to be scaled.
  *  SolutionScaleFactors  <input>  (RealVector)
  *      The array of Solution scale factors.  These factors scale the columns.
@@ -368,9 +367,8 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
  */
 
 void
-spScale(MatrixPtr eMatrix, RealVector RHS_ScaleFactors, RealVector SolutionScaleFactors)
+spScale(MatrixPtr Matrix, RealVector RHS_ScaleFactors, RealVector SolutionScaleFactors)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pElement;
     int  I, lSize, *pExtOrder;
     RealNumber  ScaleFactor;
@@ -556,7 +554,7 @@ MatrixPtr  Matrix;
  *  before spMNA_Preorder().
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  RHS  <output>  (RealVector)
  *      RHS is the right hand side. This is what is being solved for.
@@ -571,14 +569,13 @@ MatrixPtr  Matrix;
  */
 
 void
-spMultiply(MatrixPtr eMatrix, RealVector RHS, RealVector Solution,
+spMultiply(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 	   RealVector iRHS, RealVector iSolution)
 {
     ElementPtr  pElement;
     RealVector  Vector;
     RealNumber  Sum;
     int  I, *pExtOrder;
-    MatrixPtr  Matrix = eMatrix;
 
     /* Begin `spMultiply'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
@@ -702,7 +699,7 @@ ComplexMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector Solution , R
  *  before spMNA_Preorder().
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  RHS  <output>  (RealVector)
  *      RHS is the right hand side. This is what is being solved for.
@@ -717,14 +714,13 @@ ComplexMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector Solution , R
  */
 
 void
-spMultTransposed(MatrixPtr eMatrix, RealVector RHS, RealVector Solution,
+spMultTransposed(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
 		 RealVector iRHS, RealVector iSolution)
 {
     ElementPtr  pElement;
     RealVector  Vector;
     RealNumber  Sum;
     int  I, *pExtOrder;
-    MatrixPtr  Matrix = eMatrix;
 
     /* Begin `spMultTransposed'. */
     assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
@@ -854,7 +850,7 @@ ComplexTransposedMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector So
  *  reasonable value and the logarithm of the scale factor is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      A pointer to the matrix for which the determinant is desired.
  *  pExponent  <output>  (int *)
  *      The logarithm base 10 of the scale factor for the determinant.  To find
@@ -878,10 +874,9 @@ ComplexTransposedMatrixMultiply( MatrixPtr Matrix, RealVector RHS, RealVector So
  */
 
 void
-spDeterminant(MatrixPtr eMatrix, int *pExponent, RealNumber *pDeterminant,
+spDeterminant(MatrixPtr Matrix, int *pExponent, RealNumber *pDeterminant,
 	      RealNumber *piDeterminant)
 {
-    MatrixPtr  Matrix = eMatrix;
     int I, Size;
     RealNumber Norm, nr, ni;
     ComplexNumber Pivot, cDeterminant;
@@ -1037,9 +1032,8 @@ spDeterminant(MatrixPtr eMatrix, int *pExponent, RealNumber *pDeterminant,
  */
 
 void
-spStripFills(MatrixPtr eMatrix)
+spStripFills(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
     struct FillinListNodeStruct  *pListNode;
 
     /* Begin `spStripFills'. */
@@ -1109,10 +1103,8 @@ spStripFills(MatrixPtr eMatrix)
  * frame.  This assumes that the matrix will be replaced with one of
  * the same size.  */
 void
-spStripMatrix(MatrixPtr eMatrix)
+spStripMatrix(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
-
     /* Begin `spStripMatrix'. */
     assert( IS_SPARSE( Matrix ) );
     if (Matrix->Elements == 0) return;
@@ -1124,7 +1116,6 @@ spStripMatrix(MatrixPtr eMatrix)
 
     /* Reset the element lists. */
     {
-	ElementPtr  pElement;
 	struct ElementListNodeStruct  *pListNode;
 
         pListNode = Matrix->LastElementListNode = Matrix->FirstElementListNode;
@@ -1134,7 +1125,6 @@ spStripMatrix(MatrixPtr eMatrix)
 
     /* Reset the fill-in lists. */
     {
-	ElementPtr  pFillin;
 	struct FillinListNodeStruct  *pListNode;
 
         pListNode = Matrix->LastFillinListNode = Matrix->FirstFillinListNode;
@@ -1171,7 +1161,7 @@ spStripMatrix(MatrixPtr eMatrix)
  *  doesn't exist.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix in which the row and column are to be deleted.
  *  Row  <input>  (int)
  *      Row to be deleted.
@@ -1197,9 +1187,8 @@ spStripMatrix(MatrixPtr eMatrix)
  */
 
 void
-spDeleteRowAndCol(MatrixPtr eMatrix, int Row, int Col)
+spDeleteRowAndCol(MatrixPtr Matrix, int Row, int Col)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr  pElement, *ppElement, pLastElement;
     int  Size, ExtRow, ExtCol;
     ElementPtr  spcFindElementInCol();
@@ -1306,13 +1295,12 @@ spDeleteRowAndCol(MatrixPtr eMatrix, int Row, int Col)
  *  previous factorization.  If the matrix was singular, zero is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.  */
 
 RealNumber
-spPseudoCondition(MatrixPtr eMatrix)
+spPseudoCondition(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
     int I;
     ArrayOfElementPtrs Diag;
     RealNumber MaxPivot, MinPivot, Mag;
@@ -1388,7 +1376,7 @@ spPseudoCondition(MatrixPtr eMatrix)
  *  zero is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  NormOfMatrix  <input>  (RealNumber)
  *      The L-infinity norm of the unfactored matrix as computed by
@@ -1401,9 +1389,8 @@ spPseudoCondition(MatrixPtr eMatrix)
  *  spNO_MEMORY */
 
 RealNumber
-spCondition(MatrixPtr eMatrix, RealNumber NormOfMatrix, int *pError)
+spCondition(MatrixPtr Matrix, RealNumber NormOfMatrix, int *pError)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr pElement;
     RealVector T, Tm;
     int I, K, Row;
@@ -1824,14 +1811,13 @@ int *pError;
  *  The largest absolute row sum of matrix.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  */
 
 RealNumber
-spNorm(MatrixPtr eMatrix)
+spNorm(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr pElement;
     int I;
     RealNumber Max = 0.0, AbsRowSum;
@@ -1942,14 +1928,13 @@ spNorm(MatrixPtr eMatrix)
  *  largest element in any of the reduced submatrices is returned.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  */
 
 RealNumber
-spLargestElement(MatrixPtr eMatrix)
+spLargestElement(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
     int I;
     RealNumber Mag, AbsColSum, Max = 0.0, MaxRow = 0.0, MaxCol = 0.0;
     RealNumber Pivot;
@@ -2066,7 +2051,7 @@ spLargestElement(MatrixPtr eMatrix)
  *  Returns a bound on the magnitude of the largest element in E = A - LU.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *      Pointer to the matrix.
  *  Rho  <input>  (RealNumber)
  *      The bound on the magnitude of the largest element in any of the
@@ -2076,9 +2061,8 @@ spLargestElement(MatrixPtr eMatrix)
  */
 
 RealNumber
-spRoundoff(MatrixPtr eMatrix, RealNumber Rho)
+spRoundoff(MatrixPtr Matrix, RealNumber Rho)
 {
-    MatrixPtr  Matrix = eMatrix;
     ElementPtr pElement;
     int Count, I, MaxCount = 0;
     RealNumber Reid, Gear;
@@ -2087,7 +2071,7 @@ spRoundoff(MatrixPtr eMatrix, RealNumber Rho)
     assert( IS_SPARSE(Matrix) && IS_FACTORED(Matrix) );
 
     /* Compute Barlow's bound if it is not given. */
-    if (Rho < 0.0) Rho = spLargestElement( eMatrix );
+    if (Rho < 0.0) Rho = spLargestElement( Matrix );
 
     /* Find the maximum number of off-diagonals in L if not previously computed. */
     if (Matrix->MaxRowCountInLowerTri < 0)
@@ -2133,7 +2117,7 @@ spRoundoff(MatrixPtr eMatrix, RealNumber Rho)
  *  error state of sparse.  No message is produced if there is no error.
  *
  *  >>> Arguments:
- *  eMatrix  <input>  (char *)
+ *  Matrix  <input>  (char *)
  *	Matrix for which the error message is to be printed.
  *  Stream  <input>  (FILE *)
  *	Stream to which the error message is to be printed.
@@ -2143,17 +2127,17 @@ spRoundoff(MatrixPtr eMatrix, RealNumber Rho)
  */
 
 void
-spErrorMessage(MatrixPtr eMatrix, FILE *Stream, char *Originator)
+spErrorMessage(MatrixPtr Matrix, FILE *Stream, char *Originator)
 {
     int Row, Col, Error;
 
     /* Begin `spErrorMessage'. */
-    if (eMatrix == NULL)
+    if (Matrix == NULL)
 	Error = spNO_MEMORY;
     else
     {
-	assert(eMatrix->ID == SPARSE_ID);
-	Error = eMatrix->Error;
+	assert(Matrix->ID == SPARSE_ID);
+	Error = Matrix->Error;
     }
 
     if (Error == spOKAY) return;
@@ -2172,13 +2156,13 @@ spErrorMessage(MatrixPtr eMatrix, FILE *Stream, char *Originator)
 	fprintf( Stream, "insufficient memory available.\n");
     else if (Error == spSINGULAR)
     {
-	spWhereSingular( eMatrix, &Row, &Col );
+	spWhereSingular( Matrix, &Row, &Col );
 	fprintf( Stream, "singular matrix detected at row %d and column %d.\n",
 		 Row, Col);
     }
     else if (Error == spZERO_DIAG)
     {
-	spWhereSingular( eMatrix, &Row, &Col );
+	spWhereSingular( Matrix, &Row, &Col );
 	fprintf( Stream, "zero diagonal detected at row %d and column %d.\n",
 		 Row, Col);
     }

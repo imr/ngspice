@@ -73,10 +73,15 @@ SPICEdev MOS2info = {
 #endif    
  /* DEVinstSize   */ &MOS2iSize,
  /* DEVmodSize    */ &MOS2mSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   MOS2bindCSC,
  /* DEVbindCSCComplex */   MOS2bindCSCComplex,
  /* DEVbindCSCComplexToReal */  MOS2bindCSCComplexToReal,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ MOS2nodeIsNonLinear
 #endif
 
 };

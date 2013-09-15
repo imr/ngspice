@@ -74,10 +74,15 @@ SPICEdev ASRCinfo = {
 #endif                    
  /* DEVinstSize   */ &ASRCiSize,
  /* DEVmodSize    */ &ASRCmSize,
+
 #if defined(KLU) || defined(SuperLU) || defined(UMFPACK)
  /* DEVbindCSC        */   NULL,
  /* DEVbindCSCComplex */   NULL,
  /* DEVbindCSCComplexToReal */  NULL,
+#endif
+
+#ifdef KIRCHHOFF
+ /* DEVnodeIsNonLinear */ ASRCnodeIsNonLinear
 #endif
 
 };

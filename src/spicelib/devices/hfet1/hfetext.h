@@ -24,3 +24,7 @@ extern int HFETAbindCSC (GENmodel*, CKTcircuit*) ;
 extern int HFETAbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int HFETAbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int HFETAnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

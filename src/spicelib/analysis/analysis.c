@@ -20,6 +20,10 @@ extern SPICEanalysis SENSinfo;
 extern SPICEanalysis PSSinfo;
 #endif
 
+#ifdef WANT_SENSE2
+extern SPICEanalysis SEN2info;
+#endif
+
 SPICEanalysis *analInfo[] = {
     &OPTinfo,
     &ACinfo,
@@ -33,6 +37,9 @@ SPICEanalysis *analInfo[] = {
     &SENSinfo,
 #ifdef WITH_PSS
     &PSSinfo,
+#endif
+#ifdef WANT_SENSE2
+    &SEN2info,
 #endif
 };
 

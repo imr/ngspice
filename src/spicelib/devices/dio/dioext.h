@@ -34,3 +34,7 @@ extern int DIObindCSC (GENmodel*, CKTcircuit*) ;
 extern int DIObindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int DIObindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int DIOnodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

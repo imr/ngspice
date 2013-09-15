@@ -17,13 +17,16 @@ INDacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
     INDmodel *model = (INDmodel*)inModel;
     double val;
+    double m;
     INDinstance *here;
 
     for( ; model != NULL; model = model->INDnextModel) {
         for( here = model->INDinstances;here != NULL; 
                 here = here->INDnextInstance) {
     
-            val = ckt->CKTomega * here->INDinduct;
+            m = (here->INDm);
+
+            val = ckt->CKTomega * here->INDinduct / m;
 	    
             *(here->INDposIbrptr) +=  1;
             *(here->INDnegIbrptr) -=  1;

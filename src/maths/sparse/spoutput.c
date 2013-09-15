@@ -133,9 +133,8 @@ int Printer_Width = PRINTER_WIDTH;
  */
 
 void
-spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
+spPrint(MatrixPtr Matrix, int PrintReordered, int Data, int Header)
 {
-    MatrixPtr  Matrix = eMatrix;
     int  J = 0;
     int I, Row, Col, Size, Top;
     int StartCol = 1, StopCol, Columns, ElementCount = 0;
@@ -295,7 +294,7 @@ spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
                 {
 		    /* Case where element exists */
 		    if (Data)
-                        printf(" %9.3g", (double)pElement->Real);
+                        printf(" %9.3g", pElement->Real);
                     else
                         putchar('x');
 
@@ -326,7 +325,7 @@ spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
 		    if (pImagElements[J - StartCol] != NULL)
                     {
 			printf(" %8.2gj",
-                               (double)pImagElements[J-StartCol]->Imag);
+                               pImagElements[J-StartCol]->Imag);
                     }
                     else printf("          ");
                 }
@@ -436,10 +435,9 @@ spPrint(MatrixPtr eMatrix, int PrintReordered, int Data, int Header)
  */
 
 int
-spFileMatrix(MatrixPtr eMatrix, char *File, char *Label, int Reordered,
+spFileMatrix(MatrixPtr Matrix, char *File, char *Label, int Reordered,
 	     int Data, int Header)
 {
-    MatrixPtr  Matrix = eMatrix;
     int  I, Size;
     ElementPtr  pElement;
     int  Row, Col, Err;
@@ -518,7 +516,7 @@ spFileMatrix(MatrixPtr eMatrix, char *File, char *Label, int Reordered,
                 }
                 Err = fprintf
 		    (   pMatrixFile,"%d\t%d\t%-.15g\t%-.15g\n",
-			Row, Col, (double)pElement->Real, (double)pElement->Imag
+			Row, Col, pElement->Real, pElement->Imag
 			);
                 if (Err < 0) return 0;
                 pElement = pElement->NextInCol;
@@ -541,7 +539,7 @@ spFileMatrix(MatrixPtr eMatrix, char *File, char *Label, int Reordered,
                 Col = Matrix->IntToExtColMap[I];
                 Err = fprintf
 		    (   pMatrixFile,"%d\t%d\t%-.15g\n",
-			Row, Col, (double)pElement->Real
+			Row, Col, pElement->Real
 			);
                 if (Err < 0) return 0;
                 pElement = pElement->NextInCol;
@@ -595,9 +593,8 @@ spFileMatrix(MatrixPtr eMatrix, char *File, char *Label, int Reordered,
  */
 
 int
-spFileVector(MatrixPtr eMatrix, char *File, RealVector RHS, RealVector iRHS)
+spFileVector(MatrixPtr Matrix, char *File, RealVector RHS, RealVector iRHS)
 {
-    MatrixPtr  Matrix = eMatrix;
     int  I, Size, Err;
     FILE  *pMatrixFile;
 
@@ -621,7 +618,7 @@ spFileVector(MatrixPtr eMatrix, char *File, RealVector RHS, RealVector iRHS)
         {
 	    Err = fprintf
 		(   pMatrixFile, "%-.15g\t%-.15g\n",
-		    (double)RHS[I], (double)iRHS[I]
+		    RHS[I], iRHS[I]
 		    );
             if (Err < 0) return 0;
         }
@@ -630,7 +627,7 @@ spFileVector(MatrixPtr eMatrix, char *File, RealVector RHS, RealVector iRHS)
     {
 	for (I = 1; I <= Size; I++)
         {
-	    if (fprintf(pMatrixFile, "%-.15g\n", (double)RHS[I]) < 0)
+	    if (fprintf(pMatrixFile, "%-.15g\n", RHS[I]) < 0)
                 return 0;
         }
     }
@@ -686,9 +683,8 @@ spFileVector(MatrixPtr eMatrix, char *File, RealVector RHS, RealVector iRHS)
  */
 
 int
-spFileStats(MatrixPtr eMatrix, char *File, char *Label)
+spFileStats(MatrixPtr Matrix, char *File, char *Label)
 {
-    MatrixPtr  Matrix = eMatrix;
     int  Size, I;
     ElementPtr  pElement;
     int NumberOfElements;

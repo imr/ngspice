@@ -34,3 +34,7 @@ extern int MOS9bindCSC (GENmodel*, CKTcircuit*) ;
 extern int MOS9bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int MOS9bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef KIRCHHOFF
+extern int MOS9nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+#endif

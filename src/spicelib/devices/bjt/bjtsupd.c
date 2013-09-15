@@ -55,9 +55,8 @@ BJTsUpdate(GENmodel *inModel, CKTcircuit *ckt)
             sxpbx = 0;
 #ifdef SENSDEBUG
             printf("senupdate Instance name: %s\n",here->BJTname);
-            printf("iparmno = %d,CKTag[0] = %.2e,CKTag[1] = %.2e\n",
-                    iparmno,ckt->CKTag[0],ckt->CKTag[1]);
-
+            printf("CKTag[0] = %.2e,CKTag[1] = %.2e\n",
+                    ckt->CKTag[0],ckt->CKTag[1]);
             printf("capbe = %.7e\n",here->BJTcapbe);
             printf("capbc = %.7e\n",here->BJTcapbc);
             printf("capsub = %.7e\n",here->BJTcapsub);

@@ -93,9 +93,8 @@ static void ExpandTranslationArrays( MatrixPtr, int );
  */
 
 void
-spClear(MatrixPtr eMatrix)
+spClear(MatrixPtr Matrix)
 {
-    MatrixPtr  Matrix = eMatrix;
      ElementPtr  pElement;
      int  I;
 
@@ -180,10 +179,9 @@ spClear(MatrixPtr eMatrix)
  */
 
 RealNumber *
-spFindElement(MatrixPtr eMatrix, int Row, int Col)
+spFindElement(MatrixPtr Matrix, int Row, int Col)
 {
-MatrixPtr  Matrix = eMatrix;
-RealNumber  *pElement;
+ElementPtr pElement;
 
 /* Begin `spFindElement'. */
     assert( IS_SPARSE( Matrix ) && Row >= 0 && Col >= 0 );
@@ -210,7 +208,7 @@ RealNumber  *pElement;
  * is the first record in the MatrixElement structure.
  */
 
-    if ((Row != Col) || ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
+    if ((Row != Col) || ((pElement = Matrix->Diag[Row]) == NULL))
     {
 /*
  * Element does not exist or does not reside along diagonal.  Search
@@ -218,11 +216,11 @@ RealNumber  *pElement;
  * element which is returned by spcFindElementInCol is cast into a
  * pointer to Real, a RealNumber.
  */
-        pElement = (RealNumber*)spcFindElementInCol( Matrix,
+        pElement = spcFindElementInCol( Matrix,
                                                      &(Matrix->FirstInCol[Col]),
                                                      Row, Col, NO );
     }
-    return pElement;
+    return & pElement->Real;
 }
 
 
@@ -263,10 +261,9 @@ RealNumber  *pElement;
  */
 
 RealNumber *
-spGetElement(MatrixPtr eMatrix, int Row, int Col)
+spGetElement(MatrixPtr Matrix, int Row, int Col)
 {
-    MatrixPtr  Matrix = eMatrix;
-    RealNumber  *pElement;
+    ElementPtr pElement;
 
     /* Begin `spGetElement'. */
     assert( IS_SPARSE( Matrix ) && Row >= 0 && Col >= 0 );
@@ -305,18 +302,18 @@ spGetElement(MatrixPtr eMatrix, int Row, int Col)
      * statement depends on the fact that Real is the first record in
      * the MatrixElement structure.  */
 
-    if ((Row != Col) || ((pElement = (RealNumber *)Matrix->Diag[Row]) == NULL))
+    if ((Row != Col) || ((pElement = Matrix->Diag[Row]) == NULL))
     {
 	/* Element does not exist or does not reside along diagonal.
 	 * Search column for element.  As in the if statement above,
 	 * the pointer to the element which is returned by
 	 * spcFindElementInCol is cast into a pointer to Real, a
 	 * RealNumber.  */
-	pElement = (RealNumber*)spcFindElementInCol( Matrix,
+	pElement = spcFindElementInCol( Matrix,
 						     &(Matrix->FirstInCol[Col]),
 						     Row, Col, YES );
     }
-    return pElement;
+    return & pElement->Real;
 }
 
 
@@ -644,7 +641,7 @@ spGetQuad(MatrixPtr Matrix, int  Row1, int Row2, int Col1, int Col2,
         (Template->Element4Negated == NULL))
 	return spNO_MEMORY;
 
-    if (Template->Element1 == &((MatrixPtr)Matrix)->TrashCan.Real)
+    if (Template->Element1 == & Matrix->TrashCan.Real)
         SWAP( RealNumber *, Template->Element1, Template->Element2 );
 
     return spOKAY;
@@ -1145,9 +1142,8 @@ spGetInitInfo(RealNumber *pElement)
 
 
 int
-spInitialize(MatrixPtr eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , int Col))
+spInitialize(MatrixPtr Matrix, int (*pInit)(RealNumber*, void *InitInfo, int , int Col))
 {
-    MatrixPtr Matrix = eMatrix;
     ElementPtr pElement;
     int J, Error, Col;
 
@@ -1182,7 +1178,7 @@ spInitialize(MatrixPtr eMatrix, int (*pInit)(RealNumber*, void *InitInfo, int , 
             }
             else
             {
-		Error = pInit ((RealNumber *)pElement, pElement->pInitInfo,
+		Error = pInit (& pElement->Real, pElement->pInitInfo,
                                  Matrix->IntToExtRowMap[pElement->Row], Col);
                 if (Error)
                 {

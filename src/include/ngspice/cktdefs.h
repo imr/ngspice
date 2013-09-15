@@ -56,6 +56,12 @@ struct CKTnode {
 #define PARM_IC        2
 #define PARM_NODETYPE  3
 
+#ifdef KIRCHHOFF
+typedef struct sCKTmkCurKCLnode {
+    double KCLcurrent ;
+    struct sCKTmkCurKCLnode *next ;
+} CKTmkCurKCLnode ;
+#endif
 
 struct CKTcircuit {
 
@@ -110,6 +116,14 @@ struct CKTcircuit {
     double *CKTrhs;             /* current rhs value - being loaded */
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
+
+#ifdef KIRCHHOFF
+    double *CKTfvk ;            /* KCL Verification array */
+    int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
+    int *CKTvoltCurNode ;       /* Flag to indicate if a node contains some direct unknown currents */
+    CKTmkCurKCLnode **CKTmkCurKCLarray ; /* Array of KCL Currents */
+#endif
+
     double *CKTrhsSpare;        /* spare rhs value for reordering */
     double *CKTirhs;            /* current rhs value - being loaded
                                    (imag) */
@@ -289,7 +303,11 @@ struct CKTcircuit {
 };
 
 
-/* Now function prottypes */
+/* Now function prototypes */
+
+#ifdef KIRCHHOFF
+extern int CKTmkCurKCL (CKTcircuit *, int, double **) ;
+#endif
 
 extern int ACan(CKTcircuit *, int);
 extern int ACaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
@@ -387,10 +405,14 @@ extern int PZinit(CKTcircuit *);
 extern int PZpost(CKTcircuit *);
 extern int PZaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PZsetParm(CKTcircuit *, JOB *, int , IFvalue *);
+
+#ifdef WANT_SENSE2
 extern int SENaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern void SENdestroy(SENstruct *);
 extern int SENsetParm(CKTcircuit *, JOB *, int , IFvalue *);
-extern int SENstartup(CKTcircuit *);
+extern int SENstartup(CKTcircuit *, int);
+#endif
+
 extern int SPIinit(IFfrontEnd *, IFsimulator **);
 extern int TFanal(CKTcircuit *, int);
 extern int TFaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
