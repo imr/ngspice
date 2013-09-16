@@ -10,13 +10,19 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "resdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/missing_math.h"
+#include "ngspice/fteext.h"
 
 int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
+    double scale;
+
     RESinstance *here = (RESinstance *)inst;
 
     NG_IGNORE(select);
+
+    if (!cp_getvar("scale", CP_REAL, &scale))
+        scale = 1;
 
     switch(param) {
     case RES_TEMP:
@@ -38,11 +44,11 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         here->RESacresGiven = TRUE;
         break;
     case RES_WIDTH:
-        here->RESwidth = value->rValue;
+        here->RESwidth = value->rValue * scale;
         here->RESwidthGiven = TRUE;
         break;
     case RES_LENGTH:
-        here->RESlength = value->rValue;
+        here->RESlength = value->rValue * scale;
         here->RESlengthGiven = TRUE;
         break;
     case RES_SCALE:

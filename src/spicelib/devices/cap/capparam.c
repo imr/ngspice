@@ -11,15 +11,21 @@ Modified: September 2003 Paolo Nenzi
 #include "capdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 
 /* ARGSUSED */
 int
 CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
+    double scale;
+
     CAPinstance *here = (CAPinstance*)inst;
 
     NG_IGNORE(select);
+
+    if (!cp_getvar("scale", CP_REAL, &scale))
+        scale = 1;
 
     switch(param) {
     case CAP_CAP:
@@ -41,11 +47,11 @@ CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         here->CAPdtempGiven = TRUE;
         break;
     case CAP_WIDTH:
-        here->CAPwidth = value->rValue;
+        here->CAPwidth = value->rValue * scale;
         here->CAPwidthGiven = TRUE;
         break;
     case CAP_LENGTH:
-        here->CAPlength = value->rValue;
+        here->CAPlength = value->rValue * scale;
         here->CAPlengthGiven = TRUE;
         break;
     case CAP_M:

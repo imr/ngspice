@@ -12,15 +12,21 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "diodefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 
 /* ARGSUSED */
 int
 DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
+    double scale;
+
     DIOinstance *here = (DIOinstance*)inst;
 
     NG_IGNORE(select);
+
+    if (!cp_getvar("scale", CP_REAL, &scale))
+        scale = 1;
 
     switch(param) {
         case DIO_AREA:
@@ -32,11 +38,11 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOpjGiven = TRUE;
             break;
         case DIO_W:
-            here->DIOw = value->rValue;
+            here->DIOw = value->rValue * scale;
             here->DIOwGiven = TRUE;
             break;
         case DIO_L:
-            here->DIOl = value->rValue;
+            here->DIOl = value->rValue * scale;
             here->DIOlGiven = TRUE;
             break;
         case DIO_M:
