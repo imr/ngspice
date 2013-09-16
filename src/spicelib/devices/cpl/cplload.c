@@ -251,10 +251,10 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 						}
 					}
 
-					for (i = 0; i <	cp->noL; i++) {
-						vi->i_i[i] = vi->i_o[i]	= 0.0;
-						vi->v_i[i] = cp->dc1[i];
-						vi->v_o[i] = cp->dc2[i];
+					for (j = 0; j <	cp->noL; j++) {
+						vi->i_i[j] = vi->i_o[j]	= 0.0;
+						vi->v_i[j] = cp->dc1[j];
+						vi->v_o[j] = cp->dc2[j];
 					}
 				}
 
