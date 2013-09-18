@@ -83,7 +83,12 @@ NIconvTest (CKTcircuit *ckt)
 
             /* Check Convergence */
             if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+            {
+		ckt->CKTtroubleNode = i ;
+		ckt->CKTtroubleElt = NULL ;
+
                 return 1 ;
+            }
         }
 #else
         new = ckt->CKTrhs [i] ;

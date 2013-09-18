@@ -170,7 +170,7 @@ SMPluFac(SMPmatrix *Matrix, double PivTol, double Gmin)
 {
     NG_IGNORE(PivTol);
     spSetReal( Matrix );
-    LoadGmin( Matrix, Gmin );
+//    LoadGmin( Matrix, Gmin );
     return spFactor( Matrix );
 }
 
@@ -194,7 +194,7 @@ int
 SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     spSetReal( Matrix );
-    LoadGmin( Matrix, Gmin );
+//    LoadGmin( Matrix, Gmin );
     return spOrderAndFactor( Matrix, NULL,
                              PivRel, PivTol, YES );
 }
