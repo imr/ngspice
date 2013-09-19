@@ -76,13 +76,17 @@ NIconvTest (CKTcircuit *ckt)
                 ptr = ptr->next ;
             }
 
+            if (maximum < fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]))
+                maximum = fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]) ;
+
+
 #ifdef STEPDEBUG
             fprintf (stderr, "Index: %d\tValue: %-.9g\tThreshold: %-.9g\tMaximum: %-.9g\n", i, fabs (ckt->CKTfvk [i]),
                      ckt->CKTreltol * maximum + ckt->CKTabstol, maximum) ;
 #endif
 
             /* Check Convergence */
-            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+            if (fabs (ckt->CKTfvk [i] + ckt->CKTgmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
             {
 		ckt->CKTtroubleNode = i ;
 		ckt->CKTtroubleElt = NULL ;

@@ -79,6 +79,16 @@ CKTload(CKTcircuit *ckt)
         }
     }
 
+#ifdef KIRCHHOFF
+    /* GMIN Stepping */
+    for (i = 1 ; i <= size ; i++)
+    {
+        if (ckt->CKTdiag [i] != NULL)
+        {
+            *(ckt->CKTdiag [i]) += ckt->CKTgmin ;
+        }
+    }
+#endif
 
 #ifdef XSPICE
     /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */

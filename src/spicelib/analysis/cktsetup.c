@@ -129,6 +129,19 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
 #ifdef KIRCHHOFF
+    CKTnode *node ;
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
+    {
+        node = node->next ;
+
+        if (node->type == SP_VOLTAGE)
+        {
+            ckt->CKTdiag [i] = SMPmakeElt (ckt->CKTmatrix, i, i) ;
+        }
+    }
+
     /** Marking node as Non-Linear when needed
      *  By default every node is Linear
      */

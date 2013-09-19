@@ -121,6 +121,7 @@ struct CKTcircuit {
     double *CKTfvk ;            /* KCL Verification array */
     int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
     CKTmkCurKCLnode **CKTmkCurKCLarray ; /* Array of KCL Currents */
+    double **CKTdiag ;
 #endif
 
     double *CKTrhsSpare;        /* spare rhs value for reordering */

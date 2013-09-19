@@ -43,6 +43,9 @@ NIreinit( CKTcircuit *ckt)
     CKALLOC(CKTmkCurKCLarray,size+1,CKTmkCurKCLnode*);
     for (i = 0 ; i <= size ; i++)
         ckt->CKTmkCurKCLarray [i] = NULL ;
+    CKALLOC(CKTdiag,size+1,double*);
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTdiag [i] = NULL ;
 #endif
 
 #ifdef PREDICTOR
