@@ -22,6 +22,7 @@ NIconvTest (CKTcircuit *ckt)
     int i ; /* generic loop variable */
     int size ;  /* size of the matrix */
     CKTnode *node ; /* current matrix entry */
+    double old, new, tol ;
 
 #ifdef KIRCHHOFF
     double maximum ;
@@ -30,8 +31,6 @@ NIconvTest (CKTcircuit *ckt)
 #ifdef STEPDEBUG
     int j ;
 #endif
-#else
-    double old, new, tol ;
 #endif
 
     size = SMPmatSize (ckt->CKTmatrix) ;
@@ -53,9 +52,27 @@ NIconvTest (CKTcircuit *ckt)
         node = node->next ;
 
 #ifdef KIRCHHOFF
-        /* KCL Verification */
         if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]))
         {
+            new = ckt->CKTrhs [i] ;
+            old = ckt->CKTrhsOld [i] ;
+            tol = ckt->CKTreltol * (MAX (fabs (old), fabs (new))) + ckt->CKTvoltTol ;
+            if (fabs (new - old) > tol)
+            {
+
+#ifdef STEPDEBUG
+                fprintf (err, " non-convergence at node (type=3) %s (fabs(new-old)>tol --> fabs(%g-%g)>%g)\n", CKTnodName (ckt, i), new, old, tol) ;
+		fprintf (err, "    reltol: %g    voltTol: %g   (tol=reltol*(MAX(fabs(old),fabs(new))) + voltTol)\n", ckt->CKTreltol, ckt->CKTvoltTol) ;
+#endif /* STEPDEBUG */
+
+		ckt->CKTtroubleNode = i ;
+		ckt->CKTtroubleElt = NULL ;
+                return 1 ;
+            }
+
+
+            /* KCL Verification */
+
             maximum = 0 ;
             ptr = ckt->CKTmkCurKCLarray [i] ;
 
@@ -87,6 +104,7 @@ NIconvTest (CKTcircuit *ckt)
 
             /* Check Convergence */
             if (fabs (ckt->CKTfvk [i] + ckt->CKTgmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+//            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
             {
 		ckt->CKTtroubleNode = i ;
 		ckt->CKTtroubleElt = NULL ;
