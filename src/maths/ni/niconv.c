@@ -93,8 +93,8 @@ NIconvTest (CKTcircuit *ckt)
                 ptr = ptr->next ;
             }
 
-            if (maximum < fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]))
-                maximum = fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]) ;
+//            if (maximum < fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]))
+//                maximum = fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]) ;
 
 
 #ifdef STEPDEBUG
@@ -103,8 +103,8 @@ NIconvTest (CKTcircuit *ckt)
 #endif
 
             /* Check Convergence */
-            if (fabs (ckt->CKTfvk [i] + ckt->CKTgmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
-//            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+//            if (fabs (ckt->CKTfvk [i] + ckt->CKTgmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+            if (fabs (ckt->CKTfvk [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
             {
 		ckt->CKTtroubleNode = i ;
 		ckt->CKTtroubleElt = NULL ;
