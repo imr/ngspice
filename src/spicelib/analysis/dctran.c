@@ -36,7 +36,7 @@ extern struct dbcomm *dbs;
 
 #ifdef SHARED_MODULE
 extern int add_bkpt(void);
-extern int sharedsync(double*, double*, double, double, int, int*, int);
+extern int sharedsync(double*, double*, double, double, double, int, int*, int);
 extern int ng_ident;      /* for debugging */
 static double del_before; /* for debugging */
 #endif
@@ -630,7 +630,8 @@ resume:
 #ifdef SHARED_MODULE
         /* Either directly go to next time step, or modify ckt->CKTdelta depending on
            synchronization requirements. sharedsync() returns 0. */
-    sharedsync(&ckt->CKTtime, &ckt->CKTdelta, 0, ckt->CKTfinalTime, 0, &ckt->CKTstat->STATrejected, 0);
+    sharedsync(&ckt->CKTtime, &ckt->CKTdelta, 0, ckt->CKTfinalTime,
+        ckt->CKTdelmin, 0, &ckt->CKTstat->STATrejected, 0);
 #endif
 
 /* gtri - begin - wbk - Do event solution */
@@ -965,8 +966,8 @@ resume:
            function.
         */
 chkStep:
-        if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta, ckt->CKTfinalTime, redostep,
-            &ckt->CKTstat->STATrejected, 1) == 0)
+        if(sharedsync(&ckt->CKTtime, &ckt->CKTdelta, olddelta, ckt->CKTfinalTime,
+                 ckt->CKTdelmin, redostep, &ckt->CKTstat->STATrejected, 1) == 0)
             goto nextTime;
 #endif
 

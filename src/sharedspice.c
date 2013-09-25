@@ -202,7 +202,7 @@ void sighandler_sharedspice(int num);
 void wl_delete_first(wordlist **wlstart, wordlist **wlend);
 
 int add_bkpt(void);
-int sharedsync(double*, double*, double, double, int, int*, int);
+int sharedsync(double*, double*, double, double, double, int, int*, int);
 
 #if !defined(low_latency)
 static char* outstorage(char*, bool);
@@ -1775,7 +1775,8 @@ getisrcval(double time, char *iname)
               convergence, after olddelta had been added in the previous step.
     cktdelta  pointer to newly defined ckt->CKTdelta, e.g. by recognizing truncation errors
     olddelta  old ckt->CKTdelta, has already been added in the previous step.
-    finalt    final time
+    finalt    final time CKTfinaltime
+    delmin    minimum delta CKTdelmin
     redostep  if 0, converged,
               if 1, either no convergence, need to redo with new ckt->CKTdelta
               or ckt->CKTdelta has been reduced by tuncation errors too large.
@@ -1784,7 +1785,8 @@ getisrcval(double time, char *iname)
 */
 
 int
-sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt, int redostep, int *rejected, int loc)
+sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
+           double delmin, int redostep, int *rejected, int loc)
 {
     /* standard procedure, cktdelta has been provided by ngspice */
     if (!wantsync) {
@@ -1803,6 +1805,9 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt, 
             /* use cktdelta as suggested by ngspice or acquire new cktdelta
             via pointer pcktdelta in user supplied callback */
             getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
+            /* never move beyond final time */
+            if (*pckttime + *pcktdelta > finalt)
+                *pcktdelta = finalt - *pckttime - 1.1 * delmin;
             return 1;
         }
         else {
@@ -1812,7 +1817,7 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt, 
             int retval = getsync(*pckttime, pcktdelta, olddelta, redostep, ng_ident, loc, userptr);
             /* never move beyond final time */
             if (*pckttime + *pcktdelta > finalt)
-                *pcktdelta = finalt - *pckttime;
+                *pcktdelta = finalt - *pckttime - 1.1 * delmin;
 
             /* user has decided to redo the step, ignoring redostep being set to 0
             by ngspice. */
