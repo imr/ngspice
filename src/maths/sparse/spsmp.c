@@ -106,6 +106,7 @@ extern double scalbn(double, int);
 extern double logb(double);
 #endif
 
+/*!!*/
 static void LoadGmin(SMPmatrix *Matrix, double Gmin);
 
 
@@ -170,7 +171,10 @@ SMPluFac(SMPmatrix *Matrix, double PivTol, double Gmin)
 {
     NG_IGNORE(PivTol);
     spSetReal( Matrix );
-    LoadGmin( Matrix, Gmin );
+
+/*!!*/
+//    LoadGmin( Matrix, Gmin );
+
     return spFactor( Matrix );
 }
 
@@ -194,7 +198,10 @@ int
 SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     spSetReal( Matrix );
-    LoadGmin( Matrix, Gmin );
+
+/*!!*/
+//    LoadGmin( Matrix, Gmin );
+
     return spOrderAndFactor( Matrix, NULL,
                              PivRel, PivTol, YES );
 }
@@ -419,6 +426,7 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
  *  for compatibility with Spice3.
  */
 
+/*!!*/
 static void
 LoadGmin(SMPmatrix *Matrix, double Gmin)
 {

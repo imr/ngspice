@@ -33,6 +33,14 @@ NIreinit( CKTcircuit *ckt)
     CKALLOC(CKTirhs,size+1,double);
     CKALLOC(CKTirhsOld,size+1,double);
     CKALLOC(CKTirhsSpare,size+1,double);
+
+/*!!*/
+    /* GMIN Stepping */
+    int i ;
+    CKALLOC(CKTdiag,size+1,double*);
+    for (i = 0 ; i <= size ; i++)
+        ckt->CKTdiag [i] = NULL ;
+
 #ifdef PREDICTOR
     CKALLOC(CKTpred,size+1,double);
     for( i=0;i<8;i++) {

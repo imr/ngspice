@@ -127,6 +127,22 @@ CKTsetup(CKTcircuit *ckt)
 
     /* gtri - end - Setup for adding rshunt option resistors */
 #endif
+
+/*!!*/
+    /* GMIN Stepping */
+    CKTnode *node ;
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
+    {
+        node = node->next ;
+
+        if (node->type == SP_VOLTAGE)
+        {
+            ckt->CKTdiag [i] = SMPmakeElt (ckt->CKTmatrix, i, i) ;
+        }
+    }
+
     return(OK);
 }
 

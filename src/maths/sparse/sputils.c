@@ -294,8 +294,10 @@ SwapCols( MatrixPtr Matrix, ElementPtr pTwin1, ElementPtr pTwin2 )
     Matrix->ExtToIntColMap[Matrix->IntToExtColMap[Col1]]=Col1;
 #endif
 
+/*!!*/
     Matrix->Diag[Col1] = pTwin2;
     Matrix->Diag[Col2] = pTwin1;
+
     Matrix->NumberOfInterchangesIsOdd = !Matrix->NumberOfInterchangesIsOdd;
     return;
 }

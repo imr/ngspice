@@ -107,6 +107,11 @@ struct CKTcircuit {
 #define GEAR 2
 
     SMPmatrix *CKTmatrix;       /* pointer to sparse matrix */
+
+/*!!*/
+    /* GMIN Stepping */
+    double **CKTdiag ;          /* Vector of pointers to the real diagonal elements */
+
     int CKTniState;             /* internal state */
     double *CKTrhs;             /* current rhs value - being loaded */
     double *CKTrhsOld;          /* previous rhs value for convergence
