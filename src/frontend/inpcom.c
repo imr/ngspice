@@ -812,7 +812,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         delete_libs();
         inp_fix_for_numparam(subckt_w_params, working);
 
-// tprint(cc); /* test printout to file tprint-out.txt */
+
         inp_remove_excess_ws(working);
 
         comment_out_unused_subckt_models(working, line_number);
@@ -835,7 +835,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 ;
 
         inp_reorder_params(subckt_w_params, working, cc, end);
-
+// tprint(cc); /* test printout to file tprint-out.txt */
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
         delete_names(subckt_w_params);
@@ -4008,6 +4008,7 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
         char *curr_line = c->li_line;
 
         if (*curr_line == '*') {
+            prev_card = c;
             c = c->li_next;
             continue;
         }
@@ -4464,6 +4465,9 @@ inp_compat(struct line *card)
                 card               = param_end;
 
                 param_beg = param_end = NULL;
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
             }
         } else if (*curr_line == 'g') {
             /* Gxxx n1 n2 VCCS n3 n4 tr --> Gxxx n1 n2 n3 n4 tr
