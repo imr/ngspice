@@ -198,8 +198,13 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     err_msg = INPgetMod (ckt, model, &thismodel, tab);
     if ( thismodel == NULL ) {
         INPgetModBin( ckt, model, &thismodel, tab, save );
-        if ( thismodel == NULL ) current->error = err_msg;
+        if ( thismodel == NULL )
+            current->error = err_msg;
+        else
+            tfree(err_msg);
     }
+    else
+        tfree(err_msg);
 
     if (thismodel != NULL) {
         if (thismodel->INPmodType != INPtypelook ("Mos1")
