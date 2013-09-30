@@ -41,10 +41,12 @@ com_fft(wordlist *wl)
 
 #ifdef GREEN
     int mm;
+#else
+    int sign;
 #endif
 
     double *reald = NULL, *imagd = NULL;
-    int size, sign, order;
+    int size, order;
     double scale;
 
     if (!plot_cur || !plot_cur->pl_scale) {
@@ -161,8 +163,6 @@ com_fft(wordlist *wl)
         vec = vec->v_link2;
     }
 
-    sign = 1;
-
     printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-tlen);
     printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/size, fpts);
 
@@ -190,6 +190,7 @@ com_fft(wordlist *wl)
         }
         fdvec[i][0].cx_imag = 0;
 #else
+        sign = 1;
         fftext(reald, imagd, size, tlen, sign);
         scale = 0.66;
 
@@ -228,7 +229,6 @@ com_psd(wordlist *wl)
     double maxt;
 
     double *reald = NULL, *imagd = NULL;
-    int sign;
     double scaling, sum;
     int order;
 
@@ -354,8 +354,6 @@ com_psd(wordlist *wl)
 
     printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-tlen);
     printf("PSD: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/size, fpts);
-
-    sign = 1;
 
     reald = TMALLOC(double, size);
     imagd = TMALLOC(double, size);
