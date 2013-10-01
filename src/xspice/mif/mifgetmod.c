@@ -224,7 +224,7 @@ char *MIFgetMod(
 
 						sprintf(temp, "MIF: unrecognized parameter (%s) - ignored\n", parm);
 
-						fprintf(stdout,temp);
+						fprintf(stdout, "%s", temp);
 						err = TMALLOC(char, 2 * strlen(temp) + 2);// K.A. added 5 March 2000
                   
 						*err = '\0';// K.A. added 5 March 2000

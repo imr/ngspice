@@ -222,7 +222,7 @@ static int EVTcheck_nodes(
                                           event_node->name,
                                           err_collide);
 
-		fprintf(stdout,errMsg);
+		fprintf(stdout, "%s", errMsg);
 
                 return(E_PRIVATE);
             }
