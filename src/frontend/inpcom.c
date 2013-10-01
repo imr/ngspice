@@ -825,7 +825,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         size_t max_line_length; /* max. line length in input deck */
         struct line *tmp_ptr1;
         struct names *subckt_w_params = new_names();
-// tprint(cc); /* test printout to file tprint-out.txt */
+
         delete_libs();
         inp_fix_for_numparam(subckt_w_params, working);
 
@@ -852,7 +852,6 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 ;
 
         inp_reorder_params(subckt_w_params, working, cc, end);
-
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
         delete_names(subckt_w_params);
@@ -2492,7 +2491,6 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                 lib = find_lib(s);
 
                 if (!lib) {
-
                     if(!read_a_lib(s, call_depth, dir_name))
                         controlled_exit(EXIT_FAILURE);
 
@@ -2513,16 +2511,10 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
 
                 /* insert the library section definition into `c' */
                 {
-//                  struct line *corig = c;
                     struct line *cend = NULL, *newl;
                     struct line *rest = c->li_next;
                     struct line *t = section_def;
-//                  cend = c->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
-//                  cend->li_line[0] = '*';
-//                  cend->li_line[1] = '<';
-//                  t = t->li_next;
                     for (; t; t=t->li_next) {
-//                      cend->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
                         newl = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
                         if (cend)
                             cend->li_next = newl;
@@ -2532,7 +2524,6 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                             newl->li_line[1] = '<';
                         }
                         cend = newl;
-//                      cend = cend->li_next;
                         if(ciprefix(".endl", t->li_line))
                             break;
                     }
@@ -2542,7 +2533,6 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                     }
                     cend->li_line[0] = '*';
                     cend->li_line[1] = '>';
-//                  c = corig;
                     cend->li_next = rest;
                 }
 
@@ -2552,7 +2542,6 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                 /* FIXME, copys not freed ?! */
             }
         }
-
     }
 }
 
