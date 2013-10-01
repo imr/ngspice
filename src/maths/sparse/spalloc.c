@@ -127,10 +127,17 @@ spCreate(int Size, int Complex, int *pError)
     *pError = spOKAY;
 
     /* Test for valid size. */
-    if ((Size < 0) || (Size == 0 && !EXPANDABLE)) {
+#if EXPANDABLE
+    if (Size < 0) {
 	*pError = spPANIC;
         return NULL;
     }
+#else
+    if (Size <= 0) {
+	*pError = spPANIC;
+        return NULL;
+    }
+#endif
 
 
 #if 0  /* pn: skipped for cider */
