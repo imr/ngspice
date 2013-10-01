@@ -321,6 +321,14 @@ delete_names(struct names *p)
 }
 
 
+
+/* line1
+   + line2
+   ---->
+   line1 line 2
+   Proccedure: store regular card in prev, skip comment lines (*..) and some others
+   */
+
 static void
 inp_stitch_continuation_lines(struct line *working)
 {
@@ -342,8 +350,7 @@ inp_stitch_continuation_lines(struct line *working)
         case '$':
         case '*':
         case '\0':
-            /* this used to be commented out.  Why? */
-            /*  prev = NULL; */
+            /* skip these cards, and keep prev as the last regular card */
             working = working->li_next;  /* for these chars, go to next card */
             break;
 
@@ -354,14 +361,24 @@ inp_stitch_continuation_lines(struct line *working)
                 break;
             }
 
+            /* We now may have lept over some comment lines, which are located among
+            the continuation lines. We have to delete them here to prevent a memory leak */
+            while (prev->li_next != working) {
+                struct line *tmpl = prev->li_next->li_next;
+                line_free_x(prev->li_next, FALSE);
+                prev->li_next = tmpl;
+            }
+
             /* create buffer and write last and current line into it. */
             buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
             (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
 
+            /* replace prev->li_line by buffer */
             s = prev->li_line;
             prev->li_line = buffer;
             prev->li_next = working->li_next;
             working->li_next = NULL;
+            /* add original line to prev->li_actual */
             if (prev->li_actual) {
                 struct line *end;
                 for (end = prev->li_actual; end->li_next; end = end->li_next)
@@ -682,7 +699,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
             }
 
             /* Fix the buffer up a bit. */
-            (void) strncpy(buffer + 1, "end of:", 7);
+            (void) strncpy(buffer + 1, "end of: ", 8);
         }   /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached.  Then test for
@@ -808,7 +825,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
         size_t max_line_length; /* max. line length in input deck */
         struct line *tmp_ptr1;
         struct names *subckt_w_params = new_names();
-
+// tprint(cc); /* test printout to file tprint-out.txt */
         delete_libs();
         inp_fix_for_numparam(subckt_w_params, working);
 
@@ -835,7 +852,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
                 ;
 
         inp_reorder_params(subckt_w_params, working, cc, end);
-// tprint(cc); /* test printout to file tprint-out.txt */
+
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
         delete_names(subckt_w_params);
