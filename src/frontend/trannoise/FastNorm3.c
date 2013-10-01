@@ -64,6 +64,7 @@ Normal  (a very fast routine)
 #ifndef NOSPICE
 #include "ngspice/ngspice.h"
 #endif
+#include <stdint.h>
 #include <math.h>
 #include "ngspice/FastNorm3.h"
 
@@ -250,18 +251,18 @@ static Sw mt [128] = {
 double
 c7rand(Sw *is)
 {
-    Sw it, leh;
+    int32_t it, leh;
 
     it = is [0];
     leh = is [1];
     /* Do a 7-place right cyclic shift of it */
     it = ((it >> 7) & 0x01FFFFFF) + ((it & 0x7F) << 25);
-    if (!(it & 0x80000000))
+    if (it >= 0)
         it = it ^ MASK;
-    leh = (leh * mt[it & 127] + it) & 0xFFFFFFFF;
+    leh = leh * mt[it & 127] + it;
     is [0] = it;    is [1] = leh;
-    if (leh & 0x80000000)
-        leh = leh ^ 0xFFFFFFFF;
+    if (leh < 0)
+        leh = ~leh;
     return (SCALE * leh);
 }
 
@@ -269,18 +270,18 @@ c7rand(Sw *is)
 Sw
 irandm(Sw *is)
 {
-    Sw it, leh;
+    int32_t it, leh;
 
     it = is [0];
     leh = is [1];
     /* Do a 7-place right cyclic shift of it */
     it = ((it >> 7) & 0x01FFFFFF) + ((it & 0x7F) << 25);
-    if (!(it & 0x80000000))
+    if (it >= 0)
         it = it ^ MASK;
-    leh = (leh * mt[it & 127] + it) & 0xFFFFFFFF;
+    leh = leh * mt[it & 127] + it;
     is [0] = it;    is [1] = leh;
-    if (leh & 0x80000000)
-        leh = leh ^ 0xFFFFFFFF;
+    if (leh < 0)
+        leh = ~leh;
     return (leh);
 }
 
@@ -288,17 +289,17 @@ irandm(Sw *is)
 unsigned int
 urandm(Sw *is)
 {
-    Sw it, leh;
+    int32_t it, leh;
 
     it = is [0];
     leh = is [1];
     /* Do a 7-place right cyclic shift of it */
     it = ((it >> 7) & 0x01FFFFFF) + ((it & 0x7F) << 25);
-    if (!(it & 0x80000000))
+    if (it >= 0)
         it = it ^ MASK;
-    leh = (leh * mt[it & 127] + it) & 0xFFFFFFFF;
+    leh = leh * mt[it & 127] + it;
     is [0] = it;    is [1] = leh;
-    return (leh);
+    return (uint32_t) leh;
 }
 
 
