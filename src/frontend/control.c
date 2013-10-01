@@ -862,10 +862,6 @@ cp_evloop(char *string)
         if (string)
             return (1); /* The return value is irrelevant. */
     }
-
-    wl_free(wlist);
-    wlist = NULL;
-    return (0); /* va: which value? */
 }
 
 

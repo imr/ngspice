@@ -1321,7 +1321,4 @@ main(int argc, char **argv)
             cp_interactive = TRUE;
             app_rl_readlines();
         }
-
-    sp_shutdown(EXIT_NORMAL);
-    return 0;
 }
