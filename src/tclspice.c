@@ -962,7 +962,7 @@ plot_get_value TCL_CMDPROCARGS(clientData, interp, argc, argv)
         return TCL_ERROR;
     }
     for (v = pl->pl_dvecs; v; v = v->v_next)
-        if (!strcmp(v->v_name, name))
+        if (!strcmp(v->v_name, name)) {
             if (index < v->v_length) {
                 Tcl_SetObjResult(interp, Tcl_NewDoubleObj((double) v->v_realdata[index]));
                 return TCL_OK;
@@ -970,6 +970,7 @@ plot_get_value TCL_CMDPROCARGS(clientData, interp, argc, argv)
                 Tcl_SetResult(interp, "Bad index", TCL_STATIC);
                 return TCL_ERROR;
             }
+        }
 
     Tcl_SetResult(interp, "variable not found", TCL_STATIC);
     return TCL_ERROR;
@@ -1458,8 +1459,7 @@ delta TCL_CMDPROCARGS(clientData, interp, argc, argv)
     if (argc == 2)
         (ft_curckt->ci_ckt)->CKTdelta = atof(argv[1]);
 
-    /*Ok, as log as string less than 200 chars*/
-    sprintf(interp->result, "%G", (ft_curckt->ci_ckt)->CKTdelta);
+    Tcl_SetObjResult(interp, Tcl_NewDoubleObj((ft_curckt->ci_ckt)->CKTdelta));
     return TCL_OK;
 }
 
@@ -1486,8 +1486,7 @@ maxstep TCL_CMDPROCARGS(clientData, interp, argc, argv)
     if (argc == 2)
         job->TRANmaxStep = atof(argv[1]);
 
-    /*Ok, as log as string less than 200 chars*/
-    sprintf(interp->result, "%G", job->TRANmaxStep);
+    Tcl_SetObjResult(interp, Tcl_NewDoubleObj(job->TRANmaxStep));
     return TCL_OK;
 }
 
@@ -1497,8 +1496,6 @@ static int
 get_initTime TCL_CMDPROCARGS(clientData, interp, argc, argv)
 {
     TRANan *job;
-    double itime;
-    char buf[128];
     NG_IGNORE(argv);
     NG_IGNORE(clientData);
 
@@ -1512,9 +1509,7 @@ get_initTime TCL_CMDPROCARGS(clientData, interp, argc, argv)
     }
 
     job = (TRANan*)(ft_curckt->ci_ckt)->CKTcurJob;
-    itime = job->TRANinitTime;
-    sprintf(buf, "%g", itime);
-    Tcl_SetResult(interp, buf, TCL_VOLATILE);
+    Tcl_SetObjResult(interp, Tcl_NewDoubleObj(job->TRANinitTime));
     return TCL_OK;
 }
 
@@ -1524,8 +1519,6 @@ static int
 get_finalTime TCL_CMDPROCARGS(clientData, interp, argc, argv)
 {
     TRANan *job;
-    double ftime;
-    char buf[128];
     NG_IGNORE(argv);
     NG_IGNORE(clientData);
 
@@ -1539,9 +1532,7 @@ get_finalTime TCL_CMDPROCARGS(clientData, interp, argc, argv)
     }
 
     job = (TRANan*)(ft_curckt->ci_ckt)->CKTcurJob;
-    ftime = job->TRANfinalTime;
-    sprintf(buf, "%g", ftime);
-    Tcl_SetResult(interp, buf, TCL_VOLATILE);
+    Tcl_SetObjResult(interp, Tcl_NewDoubleObj(job->TRANfinalTime));
     return TCL_OK;
 }
 
