@@ -1802,7 +1802,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     if (!strchr(line, '?') && !strchr(line, ':'))
         return line;
 
-    if (all || ciprefix(".param", line) ||
+    if (ciprefix(".param", line) ||
         ciprefix(".func", line) || ciprefix(".meas", line))
     {
         if (ciprefix(".param", line) || ciprefix(".meas", line))
@@ -1825,9 +1825,10 @@ inp_fix_ternary_operator_str(char *line, bool all)
         str_ptr = skip_ws(str_ptr + 1);
         if (*str_ptr == '{')
             str_ptr = skip_ws(str_ptr + 1);
-    } else {
+    } else if (!all){
         return line;
-    }
+    } else
+		str_ptr = line;
 
     all = TRUE;
 
@@ -1930,7 +1931,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
         if (*str_ptr2 == '\0')
             str_ptr2--;
         else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
-        if (*str_ptr2 != '}')
+        if ((*str_ptr2 != '}') && (*str_ptr2 != ')'))
             end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
         else
             end_str = strdup(str_ptr2);
