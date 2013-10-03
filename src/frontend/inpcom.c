@@ -1844,10 +1844,11 @@ inp_fix_ternary_operator_str(char *line, bool all)
         str_ptr = skip_ws(str_ptr + 1);
         if (*str_ptr == '{')
             str_ptr = skip_ws(str_ptr + 1);
-    } else if (!all){
+    } else if (!all) {
         return line;
-    } else
-		str_ptr = line;
+    } else {
+        str_ptr = line;
+    }
 
     all = TRUE;
 
@@ -1968,11 +1969,11 @@ inp_fix_ternary_operator_str(char *line, bool all)
 }
 
 
-
 /* a>b?c:b ---> ternary_fcn(a>b, c, d)
    for .func, .param, and .meas lines.
    ternary functions for r, l, and c lines are handled in inp_compat(),
    ternary functions in B-source are handled by the B-source parser */
+
 static void
 inp_fix_ternary_operator(struct line *card)
 {
