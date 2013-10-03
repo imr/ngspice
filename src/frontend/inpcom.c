@@ -1810,17 +1810,19 @@ inp_search_closing_paren(char *s)
 static char *
 inp_search_opening_paren(char *s, char *start)
 {
-    int count = 1;
+    int count = 0;
     // assert(*s == ')')
-    while ((count != 0) && (s != start)) {
-        s--;
+    while (s >= start) {
         if (*s == '(')
             count--;
         if (*s == ')')
             count++;
+        if (count == 0)
+            return s;
+        s--;
     }
 
-    return s;
+    return NULL;
 }
 
 
@@ -1876,6 +1878,10 @@ inp_fix_ternary_operator_str(char *line, bool all)
     /* test for (conditional)?... */
     if (str_ptr2[-1] == ')') {
         str_ptr = inp_search_opening_paren(str_ptr2 - 1, line);
+        if (!str_ptr) {
+            fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
+            controlled_exit(EXIT_FAILURE);
+        }
     }
     /* test for (conditional?... */
     else {
