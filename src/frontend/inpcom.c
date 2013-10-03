@@ -1806,6 +1806,23 @@ inp_search_closing_paren(char *s)
 }
 
 
+/* search backwards for opening paren */
+static char *
+inp_search_opening_paren(char *str_ptr, char *line)
+{
+    int count = 1;
+    // assert(*str_ptr == ')')
+    while ((count != 0) && (str_ptr != line)) {
+        str_ptr--;
+        if (*str_ptr == '(')
+            count--;
+        if (*str_ptr == ')')
+            count++;
+    }
+    return str_ptr;
+}
+
+
 /* replace ternary operator 'conditional ? if : else' by function
  * 'ternary_fcn(conditional, if, else)'
  * in .param, .func, and .meas lines, if all is FALSE,
@@ -1857,17 +1874,6 @@ inp_fix_ternary_operator_str(char *line, bool all)
     str_ptr2 = skip_back_ws(question);
     /* test for (conditional)?... */
     if (str_ptr2[-1] == ')') {
-      char *inp_search_opening_paren(char *str_ptr, char *line) {
-        int count = 1;
-        while ((count != 0) && (str_ptr != line)) {
-            str_ptr--;
-            if (*str_ptr == '(')
-                count--;
-            if (*str_ptr == ')')
-                count++;
-        }
-        return str_ptr;
-      }
         str_ptr = inp_search_opening_paren(str_ptr2 - 1, line);
     }
     /* test for (conditional?... */
