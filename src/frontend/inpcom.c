@@ -1816,9 +1816,9 @@ inp_search_for_closing_paren2(char *s)
             count++;
         if (*s == ')')
             count--;
-        s++;
         if (count == 0)
-            return s;
+            return s + 1;
+        s++;
     }
 
     return NULL;
