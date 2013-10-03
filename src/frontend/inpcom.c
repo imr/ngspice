@@ -1792,12 +1792,14 @@ inp_search_closing_paren1(char *s)
 {
     int count = 1;
     // assert(*s == '(')
-    while (count != 0 && *s != '\0') {
+    while (*s != '\0') {
         s++;
         if (*s == '(')
             count++;
         if (*s == ')')
             count--;
+        if (count == 0)
+            break;
     }
     if (count != 0)
         return NULL;
