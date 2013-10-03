@@ -1914,12 +1914,11 @@ inp_fix_ternary_operator_str(char *line, bool all)
     // get if
     str_ptr = skip_ws(question + 1);
     if (*str_ptr == '(') {
-        str_ptr2 = inp_search_closing_paren1(str_ptr /* +1 */);
-        if (!str_ptr2) {
+        colon = inp_search_closing_paren1(str_ptr) + 1;
+        if (!colon) {
             fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        colon = str_ptr2 + 1;
         while (*colon != ':' && *colon != '\0')
             colon++;
         if (*colon != ':') {
