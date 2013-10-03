@@ -1808,21 +1808,18 @@ inp_search_closing_paren1(char *s)
 static char *
 inp_search_for_closing_paren2(char *s)
 {
-    bool found_paren = FALSE;
     int count = 0;
     // assert(*s == '(')
     while (*s != '\0') {
-        if (*s == '(') {
+        if (*s == '(')
             count++;
-            found_paren = TRUE;
-        }
         if (*s == ')')
             count--;
         s++;
-        if (found_paren && count == 0)
+        if (count == 0)
             break;
     }
-    if (found_paren && count != 0)
+    if (count != 0)
         return NULL;
     return s;
 }
