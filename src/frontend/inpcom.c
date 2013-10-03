@@ -1857,8 +1857,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
     str_ptr2 = skip_back_ws(question);
     /* test for (conditional)?... */
     if (str_ptr2[-1] == ')') {
+      char *inp_search_opening_paren(char *str_ptr, char *line) {
         int count = 1;
-        str_ptr = str_ptr2 - 1;
         while ((count != 0) && (str_ptr != line)) {
             str_ptr--;
             if (*str_ptr == '(')
@@ -1866,6 +1866,9 @@ inp_fix_ternary_operator_str(char *line, bool all)
             if (*str_ptr == ')')
                 count++;
         }
+        return str_ptr;
+      }
+        str_ptr = inp_search_opening_paren(str_ptr2 - 1, line);
     }
     /* test for (conditional?... */
     else {
