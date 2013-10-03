@@ -1799,7 +1799,7 @@ inp_search_closing_paren1(char *s)
         if (*s == ')')
             count--;
         if (count == 0)
-            return s;
+            return s + 1;
     }
 
     return NULL;
@@ -1910,7 +1910,7 @@ inp_fix_ternary_operator_str(char *line, bool all)
     // get if
     str_ptr = skip_ws(question + 1);
     if (*str_ptr == '(') {
-        colon = inp_search_closing_paren1(str_ptr) + 1;
+        colon = inp_search_closing_paren1(str_ptr);
         if (!colon) {
             fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
             controlled_exit(EXIT_FAILURE);
