@@ -1896,9 +1896,8 @@ inp_fix_ternary_operator_str(char *line, bool all)
             fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        while (*colon != ':' && *colon != '\0')
-            colon++;
-        if (*colon != ':') {
+        colon = strchr(colon, ':');
+        if (!colon) {
             fprintf(stderr, "ERROR: problem parsing ternary string (finding ':') %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
