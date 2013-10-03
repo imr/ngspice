@@ -1788,44 +1788,43 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 
 // find closing paren
 static char *
-inp_search_closing_paren1(char *str_ptr2)
+inp_search_closing_paren1(char *s)
 {
     int count = 1;
-    // assert(*str_ptr2 == '(')
-    while (count != 0 && *str_ptr2 != '\0') {
-        str_ptr2++;
-        if (*str_ptr2 == '(')
+    // assert(*s == '(')
+    while (count != 0 && *s != '\0') {
+        s++;
+        if (*s == '(')
             count++;
-        if (*str_ptr2 == ')')
+        if (*s == ')')
             count--;
     }
     if (count != 0)
-        str_ptr2 = NULL;
-    return str_ptr2;
+        return NULL;
+    return s;
 }
 
 
 static char *
-inp_search_for_closing_paren2(char *str_ptr2)
+inp_search_for_closing_paren2(char *s)
 {
-    // find end paren ')'
     bool found_paren = FALSE;
     int count = 0;
-    // assert(*str_ptr2 == '(')
-    while (*str_ptr2 != '\0') {
-        if (*str_ptr2 == '(') {
+    // assert(*s == '(')
+    while (*s != '\0') {
+        if (*s == '(') {
             count++;
             found_paren = TRUE;
         }
-        if (*str_ptr2 == ')')
+        if (*s == ')')
             count--;
-        str_ptr2++;
+        s++;
         if (found_paren && count == 0)
             break;
     }
     if (found_paren && count != 0)
-        str_ptr2 = NULL;
-    return str_ptr2;
+        return NULL;
+    return s;
 }
 
 
