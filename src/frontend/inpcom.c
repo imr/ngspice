@@ -1808,18 +1808,19 @@ inp_search_closing_paren(char *s)
 
 /* search backwards for opening paren */
 static char *
-inp_search_opening_paren(char *str_ptr, char *line)
+inp_search_opening_paren(char *s, char *start)
 {
     int count = 1;
-    // assert(*str_ptr == ')')
-    while ((count != 0) && (str_ptr != line)) {
-        str_ptr--;
-        if (*str_ptr == '(')
+    // assert(*s == ')')
+    while ((count != 0) && (s != start)) {
+        s--;
+        if (*s == '(')
             count--;
-        if (*str_ptr == ')')
+        if (*s == ')')
             count++;
     }
-    return str_ptr;
+
+    return s;
 }
 
 
