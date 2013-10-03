@@ -1957,22 +1957,19 @@ inp_fix_ternary_operator_str(char *line, bool all)
         }
     }
 
-    if (end_str != NULL) {
-        if (beg_str != NULL) {
-            new_str = TMALLOC(char, strlen(beg_str) + strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + strlen(end_str) + 5);
-            sprintf(new_str, "%sternary_fcn(%s,%s,%s)%s", beg_str, conditional, if_str, else_str, end_str);
-        } else {
-            new_str = TMALLOC(char, strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + strlen(end_str) + 5);
-            sprintf(new_str, "ternary_fcn(%s,%s,%s)%s", conditional, if_str, else_str, end_str);
-        }
-    } else {
-        if (beg_str != NULL) {
-            new_str = TMALLOC(char, strlen(beg_str) + strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + 5);
-            sprintf(new_str, "%sternary_fcn(%s,%s,%s)", beg_str, conditional, if_str, else_str);
-        } else {
-            new_str = TMALLOC(char, strlen("ternary_fcn") + strlen(conditional) + strlen(if_str) + strlen(else_str) + 5);
-            sprintf(new_str, "ternary_fcn(%s,%s,%s)", conditional, if_str, else_str);
-        }
+    {
+        char *prolog = beg_str ? beg_str : "";
+        char *epilog = end_str ? end_str : "";
+
+        size_t len =
+            strlen(prolog) +
+            strlen("ternary_fcn(,,)") +
+            strlen(conditional) + strlen(if_str) + strlen(else_str) +
+            strlen(epilog);
+
+        new_str = TMALLOC(char, len + 1);
+
+        sprintf(new_str, "%sternary_fcn(%s,%s,%s)%s", prolog, conditional, if_str, else_str, epilog);
     }
 
     tfree(line);
