@@ -1968,6 +1968,11 @@ inp_fix_ternary_operator_str(char *line, bool all)
 }
 
 
+
+/* a>b?c:b ---> ternary_fcn(a>b, c, d)
+   for .func, .param, and .meas lines.
+   ternary functions for r, l, and c lines are handled in inp_compat(),
+   ternary functions in B-source are handled by the B-source parser */
 static void
 inp_fix_ternary_operator(struct line *card)
 {
@@ -1977,25 +1982,17 @@ inp_fix_ternary_operator(struct line *card)
 
         char *line = card->li_line;
 
-        if (*line == '*')
+        if (*line != '.')
             continue;
 
-        /* exclude replacement of ternary function between .control and .endc */
-        if (ciprefix(".control", line))
-            found_control = TRUE;
-        if (ciprefix(".endc", line))
-            found_control = FALSE;
-
-        if (found_control)
-            continue;
-
-        /* ternary operator for B source done elsewhere */
-        if (*line == 'B' || *line == 'b')
-            continue;
-
-        /* .param, .func, and .meas lines handled here (2nd argument FALSE) */
-        if (strchr(line, '?') && strchr(line, ':'))
+        /* .param, .func, and .meas lines handled here (2nd argument FALSE).
+           The while loop cares for two or more ternary functions at top level,
+           nesting is taken care of by recursive action inside of
+           inp_fix_ternary_operator_str */
+        while (strchr(line, '?') && strchr(line, ':')) {
             card->li_line = inp_fix_ternary_operator_str(line, FALSE);
+            line = card->li_line;
+        }
     }
 }
 
