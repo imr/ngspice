@@ -1790,16 +1790,16 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 static char *
 inp_search_closing_paren1(char *s)
 {
-    int count = 1;
+    int count = 0;
     // assert(*s == '(')
     while (*s) {
-        s++;
         if (*s == '(')
             count++;
         if (*s == ')')
             count--;
         if (count == 0)
             return s + 1;
+        s++;
     }
 
     return NULL;
