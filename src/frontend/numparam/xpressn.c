@@ -91,7 +91,8 @@ initkeys(void)
              "and or not div mod defined");
     scopy_up(&fmathS,
              "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh"
-             " tanh ternary_fcn v agauss sgn gauss unif aunif limit ceil floor");
+             " tanh ternary_fcn v agauss sgn gauss unif aunif limit ceil floor"
+             " asin acos atan asinh acosh atanh tan");
 }
 
 
@@ -130,7 +131,7 @@ mathfunction(int f, double z, double x)
         y = pow(z, x);
         break;
     case 10:
-        y = exp(x * ln(fabs(z)));
+        y = pow(fabs(z), x);
         break;
     case 11:
         y = MAX(x, z);
@@ -151,7 +152,7 @@ mathfunction(int f, double z, double x)
         y = cosh(x);
         break;
     case 17:
-        y = sinh(x)/cosh(x);
+        y = tanh(x);
         break;
     case 21: /* sgn */
         if (x > 0)
@@ -166,6 +167,27 @@ mathfunction(int f, double z, double x)
         break;
     case 27:
         y = floor(x);
+        break;
+    case 28:
+        y = asin(x);
+        break;
+    case 29:
+        y = acos(x);
+        break;
+    case 30:
+        y = atan(x);
+        break;
+    case 31:
+        y = asinh(x);
+        break;
+    case 32:
+        y = acosh(x);
+        break;
+    case 33:
+        y = atanh(x);
+        break;
+    case 34:
+        y = tan(x);
         break;
     default:
         y = x;
