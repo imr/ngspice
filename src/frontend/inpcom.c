@@ -1917,11 +1917,9 @@ inp_fix_ternary_operator_str(char *line, bool all)
         fprintf(stderr, "ERROR: problem parsing ternary string %s!\n", line);
         controlled_exit(EXIT_FAILURE);
     }
-    str_ptr2 = skip_back_ws_(colon, str_ptr);
-    keep = *str_ptr2;
-    *str_ptr2 = '\0';
-    if_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
-    *str_ptr2 = keep;
+    if_str = inp_fix_ternary_operator_str (
+        copy_substring(str_ptr, skip_back_ws_(colon, str_ptr)),
+        all);
 
     // get else
     str_ptr = skip_ws(colon + 1);
