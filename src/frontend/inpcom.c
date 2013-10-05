@@ -1908,24 +1908,16 @@ inp_fix_ternary_operator_str(char *line, bool all)
 
     // get if
     str_ptr = skip_ws(question + 1);
-    if (*str_ptr == '(') {
-        colon = inp_search_closing_paren(str_ptr);
-        if (!colon) {
-            fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
-            controlled_exit(EXIT_FAILURE);
-        }
+    colon = str_ptr;
+    if (*colon == '(')
+        colon = inp_search_closing_paren(colon);
+    if (colon)
         colon = strchr(colon, ':');
-        if (!colon) {
-            fprintf(stderr, "ERROR: problem parsing ternary string (finding ':') %s!\n", line);
-            controlled_exit(EXIT_FAILURE);
-        }
-        str_ptr2 = skip_back_ws(colon);
-    } else if ((colon = strchr(str_ptr, ':')) != NULL) {
-        str_ptr2 = skip_back_ws(colon);
-    } else {
-        fprintf(stderr, "ERROR: problem parsing ternary string (missing ':') %s!\n", line);
+    if (!colon) {
+        fprintf(stderr, "ERROR: problem parsing ternary string %s!\n", line);
         controlled_exit(EXIT_FAILURE);
     }
+    str_ptr2 = skip_back_ws(colon);
     keep = *str_ptr2;
     *str_ptr2 = '\0';
     if_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
