@@ -1873,6 +1873,10 @@ inp_fix_ternary_operator_str(char *line, bool all)
     all = TRUE;
 
     // get conditional
+#warning "FIXME, this is search for beginning of the `conditional' expression is buggy."
+    /* FIXME, `question' might point to the end of this, for example
+     *   "(a>2)||(b<4)?"
+     */
     question = strchr(str_ptr, '?');
     str_ptr2 = skip_back_ws(question);
     /* test for (conditional)?... */
@@ -1907,6 +1911,10 @@ inp_fix_ternary_operator_str(char *line, bool all)
     *str_ptr = keep;
 
     // get if
+#warning "FIXME, this search for a matching ':' is buggy."
+    /* FIXME, str_ptr might look like this here
+     *   "(foo+b)*(c?d:e):"
+     */
     str_ptr = skip_ws(question + 1);
     colon = str_ptr;
     if (*colon == '(')
@@ -1925,11 +1933,17 @@ inp_fix_ternary_operator_str(char *line, bool all)
     str_ptr = skip_ws(colon + 1);
     /* ... : (else) */
     if (*str_ptr == '(') {
+#warning "FIXME, this search for end of `else' expression is buggy."
+        /* FIXME, str_ptr might look like this here
+         *   "(foo*2)+3"
+         */
         char *s = inp_search_closing_paren(str_ptr);
         if (!s) {
             fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
+        /* FIXME, this is most probably a bug, destroying semantics of `s'
+         *    which is `pointing to the first char after the else expression' */
         if (*s == '\0')
             s--;
         else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, s), all);
