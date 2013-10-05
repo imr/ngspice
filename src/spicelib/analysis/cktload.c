@@ -81,13 +81,13 @@ CKTload(CKTcircuit *ckt)
 
 #ifdef KIRCHHOFF
     /* GMIN Stepping */
-/*    for (i = 1 ; i <= size ; i++)
+    for (i = 1 ; i <= size ; i++)
     {
         if (ckt->CKTdiag [i] != NULL)
         {
             *(ckt->CKTdiag [i]) += ckt->CKTdiagGmin ;
         }
-    }*/
+    }
 #endif
 
 #ifdef XSPICE

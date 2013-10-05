@@ -106,7 +106,7 @@ extern double scalbn(double, int);
 extern double logb(double);
 #endif
 
-static void LoadGmin(SMPmatrix *Matrix, double Gmin);
+//static void LoadGmin(SMPmatrix *Matrix, double Gmin);
 
 
 /*
@@ -169,6 +169,7 @@ int
 SMPluFac(SMPmatrix *Matrix, double PivTol, double Gmin)
 {
     NG_IGNORE(PivTol);
+    NG_IGNORE(Gmin);
     spSetReal( Matrix );
 //    LoadGmin( Matrix, Gmin );
     return spFactor( Matrix );
@@ -194,6 +195,7 @@ int
 SMPreorder(SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     spSetReal( Matrix );
+    NG_IGNORE(Gmin);
 //    LoadGmin( Matrix, Gmin );
     return spOrderAndFactor( Matrix, NULL,
                              PivRel, PivTol, YES );
@@ -419,25 +421,25 @@ SMPcDProd(SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
  *  for compatibility with Spice3.
  */
 
-static void
-LoadGmin(SMPmatrix *Matrix, double Gmin)
-{
-    int I;
-    ArrayOfElementPtrs Diag;
-    ElementPtr diag;
+//static void
+//LoadGmin(SMPmatrix *Matrix, double Gmin)
+//{
+//    int I;
+//    ArrayOfElementPtrs Diag;
+//    ElementPtr diag;
 
     /* Begin `LoadGmin'. */
-    assert( IS_SPARSE( Matrix ) );
+//    assert( IS_SPARSE( Matrix ) );
 
-    if (Gmin != 0.0) {
-	Diag = Matrix->Diag;
-	for (I = Matrix->Size; I > 0; I--) {
-	    if ((diag = Diag[I]) != NULL)
-		diag->Real += Gmin;
-	}
-    }
-    return;
-}
+//    if (Gmin != 0.0) {
+//	Diag = Matrix->Diag;
+//	for (I = Matrix->Size; I > 0; I--) {
+//	    if ((diag = Diag[I]) != NULL)
+//		diag->Real += Gmin;
+//	}
+//    }
+//    return;
+//}
 
 
 
