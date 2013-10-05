@@ -1836,7 +1836,7 @@ static char*
 inp_fix_ternary_operator_str(char *line, bool all)
 {
     char *conditional, *if_str, *else_str, *question, *colon, keep, *str_ptr, *str_ptr2, *new_str;
-    char *end_str = NULL, *beg_str = NULL;
+    char *end_str, *beg_str = NULL;
 
     if (!strchr(line, '?') && !strchr(line, ':'))
         return line;
@@ -1925,25 +1925,27 @@ inp_fix_ternary_operator_str(char *line, bool all)
     str_ptr = skip_ws(colon + 1);
     /* ... : (else) */
     if (*str_ptr == '(') {
-        str_ptr2 = inp_search_closing_paren(str_ptr);
-        if (!str_ptr2) {
+        char *s = inp_search_closing_paren(str_ptr);
+        if (!s) {
             fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
             controlled_exit(EXIT_FAILURE);
         }
-        if (*str_ptr2 == '\0')
-            str_ptr2--;
-        else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
-        if ((*str_ptr2 != '}') && (*str_ptr2 != ')'))
-            end_str = inp_fix_ternary_operator_str(strdup(str_ptr2+1), all);
+        if (*s == '\0')
+            s--;
+        else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, s), all);
+        if ((*s != '}') && (*s != ')'))
+            end_str = inp_fix_ternary_operator_str(strdup(s+1), all);
         else
-            end_str = strdup(str_ptr2);
+            end_str = strdup(s);
     /* ... : else */
     } else {
-        if ((str_ptr2 = strchr(str_ptr, '}')) != NULL) {
-            else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, str_ptr2), all);
-            end_str = strdup(str_ptr2);
+        char *s = strchr(str_ptr, '}');
+        if (s) {
+            else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, s), all);
+            end_str = strdup(s);
         } else {
             else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
+            end_str = NULL;
         }
     }
 
