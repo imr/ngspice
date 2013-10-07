@@ -1309,7 +1309,7 @@ formula(tdico *dico, char *s, bool *perror)
                 topop = level;
         }
 
-        if (state > 0)
+        if (state != 0)
             oldstate = state;
     }
 
