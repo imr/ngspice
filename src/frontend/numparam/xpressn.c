@@ -32,6 +32,12 @@ extern long dynsubst;           /* see inpcom.c */
 #define ACT_CHARACTS 17      /* actual string length to be inserted and replaced */
 #define EXP_LENGTH 5
 
+#define  S_init   0
+#define  S_atom   1
+#define  S_binop  2
+#define  S_unop   3
+#define  S_stop   4
+
 
 static double
 ternary_fcn(int conditional, double if_value, double else_value)
@@ -924,27 +930,27 @@ fetchoperator(tdico *dico,
     } else if ((c == '|') && (d == '|')) {
         i++;
     } if ((c == '+') || (c == '-')) {
-        state = 2;              /* pending operator */
+        state = S_binop;        /* pending operator */
         level = 4;
     } else if ((c == '*') || (c == '/') || (c == '%') || (c == '\\')) {
-        state = 2;
+        state = S_binop;
         level = 3;
     } else if (c == '^') {
-        state = 2;
+        state = S_binop;
         level = 2;
     } else if (cpos(c, "=<>#GL") >= 0) {
-        state = 2;
+        state = S_binop;
         level = 5;
     } else if (c == '&') {
-        state = 2;
+        state = S_binop;
         level = 6;
     } else if (c == '|') {
-        state = 2;
+        state = S_binop;
         level = 7;
     } else if (c == '!') {
-        state = 3;
+        state = S_unop;
     } else {
-        state = 0;
+        state = S_init;
         if (c > ' ')
             error = message(dico, "Syntax error: letter [%c]", c);
     }
@@ -975,36 +981,36 @@ opfunctkey(tdico *dico,
                                 /* & | ~ DIV MOD Defined */
     case 1:
         c = '&';
-        state = 2;
+        state = S_binop;
         level = 6;
         break;
     case 2:
         c = '|';
-        state = 2;
+        state = S_binop;
         level = 7;
         break;
     case 3:
         c = '!';
-        state = 3;
+        state = S_unop;
         level = 1;
         break;
     case 4:
         c = '\\';
-        state = 2;
+        state = S_binop;
         level = 3;
         break;
     case 5:
         c = '%';
-        state = 2;
+        state = S_binop;
         level = 3;
         break;
     case Defd:
         c = '?';
-        state = 1;
+        state = S_atom;
         level = 0;
         break;
     default:
-        state = 0;
+        state = S_init;
         error = message(dico, " Unexpected Keyword");
         break;
     }
@@ -1153,11 +1159,11 @@ formula(tdico *dico, char *s, bool *perror)
     while ((ls > 0) && (s[ls - 1] <= ' '))
         ls--;                   /* clean s */
 
-    state = 0;
+    state = S_init;
     natom = 0;
     ustack = 0;
     topop = 0;
-    oldstate = 0;
+    oldstate = S_init;
     fu = 0;
     error = 0;
     level = 0;
@@ -1212,7 +1218,7 @@ formula(tdico *dico, char *s, bool *perror)
                 }
                 pscopy(&tstr, s, i, k - i - 1);
                 u = formula(dico, spice_dstring_value(&tstr), &error);
-                state = 1;      /* atom */
+                state = S_atom;
                 if (fu > 0) {
                     if ((fu == 18))
                         u = ternary_fcn((int) v, w, u);
@@ -1234,7 +1240,7 @@ formula(tdico *dico, char *s, bool *perror)
             fu = 0;
         } else if (alfa(c)) {
             i = fetchid(s, &tstr, ls, i); /* user id, but sort out keywords */
-            state = 1;
+            state = S_atom;
             i--;
             kw = keyword(&keyS, &tstr); /* debug ws('[',kw,']'); */
             if (kw == 0) {
@@ -1242,7 +1248,7 @@ formula(tdico *dico, char *s, bool *perror)
                 if (fu == 0)
                     u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 else
-                    state = 0;  /* state==0 means: ignore for the moment */
+                    state = S_init;  /* S_init means: ignore for the moment */
             } else {
                 c = opfunctkey(dico, kw, c, &state, &level, &error);
             }
@@ -1255,7 +1261,7 @@ formula(tdico *dico, char *s, bool *perror)
                 u = -1 * u;
                 negate = 0;
             }
-            state = 1;
+            state = S_atom;
         } else {
             c = fetchoperator(dico, s, ls, &i, &state, &level, &error);
         }
@@ -1263,11 +1269,11 @@ formula(tdico *dico, char *s, bool *perror)
         /* may change c to some other operator char! */
         /* control chars <' '  ignored */
 
-        ok = (oldstate == 0) || (state == 0) ||
-            ((oldstate == 1) && (state == 2)) ||
-            ((oldstate != 1) && (state != 2));
+        ok = (oldstate == S_init) || (state == S_init) ||
+            ((oldstate == S_atom) && (state == S_binop)) ||
+            ((oldstate != S_atom) && (state != S_binop));
 
-        if (oldstate == 2 && state == 2 && c == '-') {
+        if (oldstate == S_binop && state == S_binop && c == '-') {
             ok = 1;
             negate = 1;
             continue;
@@ -1276,15 +1282,15 @@ formula(tdico *dico, char *s, bool *perror)
         if (!ok)
             error = message(dico, " Misplaced operator");
 
-        if (state == 3) {
+        if (state == S_unop) {
             /* push unary operator */
             ustack++;
             uop[ustack] = c;
-        } else if (state == 1) {
+        } else if (state == S_atom) {
             /* atom pending */
             natom++;
             if (i >= ls) {
-                state = 4;
+                state = S_stop;
                 level = topop;
             } /* close all ops below */
 
@@ -1295,7 +1301,7 @@ formula(tdico *dico, char *s, bool *perror)
             accu[0] = u;        /* done: all pending unary operators */
         }
 
-        if ((state == 2) || (state == 4)) {
+        if ((state == S_binop) || (state == S_stop)) {
             /* do pending binaries of priority Upto "level" */
             for (k = 1; k <= level; k++) {
                 /* not yet speed optimized! */
@@ -1309,11 +1315,11 @@ formula(tdico *dico, char *s, bool *perror)
                 topop = level;
         }
 
-        if (state != 0)
+        if (state != S_init)
             oldstate = state;
     }
 
-    if ((natom == 0) || (oldstate != 4))
+    if ((natom == 0) || (oldstate != S_stop))
         error = message(dico, " Expression err: %s", s);
 
     if (negate == 1)
