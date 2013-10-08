@@ -765,19 +765,19 @@ parseunit(const char *s)
 }
 
 
-static int
-fetchid(const char *s, SPICE_DSTRINGPTR t, int ls, int i)
+static const char *
+fetchid(SPICE_DSTRINGPTR t, const char *s_end, const char *iptr)
 /* copy next identifier from s into t, advance and return scan index i */
 {
     char c;
     bool ok;
 
-    c = s[i];
-    i++;
+    c = *iptr;
+    iptr++;
 
-    while (!alfa(c) && (i < ls)) {
-        i++;
-        c = s[i - 1];
+    while (!alfa(c) && (iptr < s_end)) {
+        iptr++;
+        c = iptr[-1];
     }
 
     spice_dstring_reinit(t);
@@ -785,9 +785,9 @@ fetchid(const char *s, SPICE_DSTRINGPTR t, int ls, int i)
 
     do
     {
-        i++;
-        if (i <= ls)
-            c = s[i - 1];
+        iptr++;
+        if (iptr <= s_end)
+            c = iptr[-1];
         else
             c = '\0';
 
@@ -799,33 +799,31 @@ fetchid(const char *s, SPICE_DSTRINGPTR t, int ls, int i)
 
     } while (ok);
 
-    return i;                   /* return updated i */
+    return iptr;                /* return updated iptr */
 }
 
 
 static double
-exists(tdico *d, const char *s, int *pi, bool *perror)
+exists(tdico *d, const char *s_end, const char **pi, bool *perror)
 /* check if s in simboltable 'defined': expect (ident) and return 0 or 1 */
 {
     bool error = *perror;
-    int i = *pi;
+    const char *iptr = *pi;
     double x;
-    int ls;
     char c;
     bool ok;
     SPICE_DSTRING t;
 
-    ls = length(s);
     spice_dstring_init(&t);
     x = 0.0;
 
     do
     {
-        i++;
-        if (i > ls)
+        iptr++;
+        if (iptr > s_end)
             c = '\0';
         else
-            c = s[i - 1];
+            c = iptr[-1];
 
         ok = (c == '(');
 
@@ -833,20 +831,20 @@ exists(tdico *d, const char *s, int *pi, bool *perror)
 
     if (ok)
     {
-        i--;
-        i = fetchid(s, &t, ls, i);
-        i--;
+        iptr--;
+        iptr = fetchid(&t, s_end, iptr);
+        iptr--;
         if (entrynb(d, spice_dstring_value(&t)))
             x = 1.0;
 
         do
         {
-            i++;
+            iptr++;
 
-            if (i > ls)
+            if (iptr > s_end)
                 c = '\0';
             else
-                c = s[i - 1];
+                c = iptr[-1];
 
             ok = (c == ')');
 
@@ -859,7 +857,7 @@ exists(tdico *d, const char *s, int *pi, bool *perror)
     /* keep pointer on last closing ")" */
 
     *perror = error;
-    *pi = i;
+    *pi = iptr;
     spice_dstring_free(&t);
 
     return x;
@@ -867,13 +865,13 @@ exists(tdico *d, const char *s, int *pi, bool *perror)
 
 
 static double
-fetchnumber(tdico *dico, const char *s, int *pi, bool *perror)
+fetchnumber(tdico *dico, const char **pi, bool *perror)
 /* parse a Spice number in string s */
 {
     double u;
     int n = 0;
 
-    s += *pi;
+    const char *s = *pi;
 
     if (1 != sscanf(s, "%lG%n", &u, &n)) {
 
@@ -901,49 +899,49 @@ fetchnumber(tdico *dico, const char *s, int *pi, bool *perror)
 
 static char
 fetchoperator(tdico *dico,
-              const char *s, int ls,
-              int *pi,
+              const char *s_end,
+              const char **pi,
               unsigned char *pstate, unsigned char *plevel,
               bool *perror)
 /* grab an operator from string s and advance scan index pi.
    each operator has: one-char alias, precedence level, new interpreter state.
 */
 {
-    int i = *pi;
+    const char *iptr = *pi;
     unsigned char state = *pstate;
     unsigned char level = *plevel;
     bool error = *perror;
     char c, d;
 
-    c = s[i];
-    i++;
+    c = *iptr;
+    iptr++;
 
-    if (i < ls)
-        d = s[i];
+    if (iptr < s_end)
+        d = iptr[0];
     else
         d = '\0';
 
     if ((c == '!') && (d == '=')) {
         c = '#';
-        i++;
+        iptr++;
     } else if ((c == '<') && (d == '>')) {
         c = '#';
-        i++;
+        iptr++;
     } else if ((c == '<') && (d == '=')) {
         c = 'L';
-        i++;
+        iptr++;
     } else if ((c == '>') && (d == '=')) {
         c = 'G';
-        i++;
+        iptr++;
     } else if ((c == '*') && (d == '*')) {
         c = '^';
-        i++;
+        iptr++;
     } else if ((c == '=') && (d == '=')) {
-        i++;
+        iptr++;
     } else if ((c == '&') && (d == '&')) {
-        i++;
+        iptr++;
     } else if ((c == '|') && (d == '|')) {
-        i++;
+        iptr++;
     } if ((c == '+') || (c == '-')) {
         state = S_binop;        /* pending operator */
         level = 4;
@@ -970,7 +968,7 @@ fetchoperator(tdico *dico,
             error = message(dico, "Syntax error: letter [%c]", c);
     }
 
-    *pi = i;
+    *pi = iptr;
     *pstate = state;
     *plevel = level;
     *perror = error;
@@ -1137,7 +1135,7 @@ operate(char op, double x, double y)
 
 
 static double
-formula(tdico *dico, const char *s, bool *perror)
+formula(tdico *dico, const char *s, const char *s_end, bool *perror)
 {
     /* Expression parser.
        s is a formula with parentheses and math ops +-* / ...
@@ -1156,10 +1154,14 @@ formula(tdico *dico, const char *s, bool *perror)
     double accu[nprece + 1];
     char oper[nprece + 1];
     char uop[nprece + 1];
-    int i, k, ls, natom, arg2, arg3;
+    int i, k, natom;
     char c, d;
     bool ok;
     SPICE_DSTRING tstr;
+    const char *iptr;
+    const char *kptr;
+    const char *arg2;
+    const char *arg3;
 
     spice_dstring_init(&tstr);
 
@@ -1168,11 +1170,11 @@ formula(tdico *dico, const char *s, bool *perror)
         oper[i] = ' ';
     }
 
-    i = 0;
-    ls = length(s);
+    iptr = s;
 
-    while ((ls > 0) && (s[ls - 1] <= ' '))
-        ls--;                   /* clean s */
+    /* trim trailing whitespace */
+    while ((s_end > s) && (s_end[-1] <= ' '))
+        s_end--;
 
     state = S_init;
     natom = 0;
@@ -1183,25 +1185,25 @@ formula(tdico *dico, const char *s, bool *perror)
     error = 0;
     level = 0;
 
-    while ((i < ls) && !error) {
-        i++;
-        c = s[i - 1];
+    while ((iptr < s_end) && !error) {
+        iptr++;
+        c = iptr[-1];
         if (c == '(') {
             /* sub-formula or math function */
             level = 1;
             /* new: must support multi-arg functions */
-            k = i;
-            arg2 = 0;
+            kptr = iptr;
+            arg2 = NULL;
             v = 1.0;
-            arg3 = 0;
+            arg3 = NULL;
 
             do
             {
-                k++;
-                if (k > ls)
+                kptr++;
+                if (kptr > s_end)
                     d = '\0';
                 else
-                    d = s[k - 1];
+                    d = kptr[-1];
 
                 if (d == '(')
                     level++;
@@ -1209,30 +1211,27 @@ formula(tdico *dico, const char *s, bool *perror)
                     level--;
 
                 if ((d == ',') && (level == 1)) {
-                    if (arg2 == 0)
-                        arg2 = k;
+                    if (arg2 == NULL)
+                        arg2 = kptr;
                     else
-                        arg3 = k; /* kludge for more than 2 args (ternary expression) */
+                        arg3 = kptr; /* kludge for more than 2 args (ternary expression) */
                 }                 /* comma list? */
 
-            } while ((k <= ls) && !((d == ')') && (level <= 0)));
+            } while ((kptr <= s_end) && !((d == ')') && (level <= 0)));
 
-            if (k > ls) {
+            if (kptr > s_end) {
                 error = message(dico, "Closing \")\" not found.");
                 natom++;        /* shut up other error message */
             } else {
-                if (arg2 > i) {
-                    pscopy(&tstr, s, i, arg2 - i - 1);
-                    v = formula(dico, spice_dstring_value(&tstr), &error);
-                    i = arg2;
+                if (arg2 > iptr) {
+                    v = formula(dico, iptr, arg2 - 1, &error);
+                    iptr = arg2;
                 }
-                if (arg3 > i) {
-                    pscopy(&tstr, s, i, arg3 - i - 1);
-                    w = formula(dico, spice_dstring_value(&tstr), &error);
-                    i = arg3;
+                if (arg3 > iptr) {
+                    w = formula(dico, iptr, arg3 - 1, &error);
+                    iptr = arg3;
                 }
-                pscopy(&tstr, s, i, k - i - 1);
-                u = formula(dico, spice_dstring_value(&tstr), &error);
+                u = formula(dico, iptr, kptr - 1, &error);
                 state = S_atom;
                 if (fu > 0) {
                     if ((fu == 18))
@@ -1251,13 +1250,13 @@ formula(tdico *dico, const char *s, bool *perror)
                         u = mathfunction(fu, v, u);
                 }
             }
-            i = k;
+            iptr = kptr;
             fu = 0;
         } else if (alfa(c)) {
-            i--;
-            i = fetchid(s, &tstr, ls, i); /* user id, but sort out keywords */
+            iptr--;
+            iptr = fetchid(&tstr, s_end, iptr); /* user id, but sort out keywords */
             state = S_atom;
-            i--;
+            iptr--;
             kw = keyword(&keyS, &tstr); /* debug ws('[',kw,']'); */
             if (kw == 0) {
                 fu = keyword(&fmathS, &tstr); /* numeric function? */
@@ -1269,19 +1268,20 @@ formula(tdico *dico, const char *s, bool *perror)
                 c = opfunctkey(dico, kw, c, &state, &level, &error);
             }
 
-            if (kw == Defd)
-                u = exists(dico, s, &i, &error);
+            if (kw == Defd) {
+                u = exists(dico, s_end, &iptr, &error);
+            }
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
-            i--;
-            u = fetchnumber(dico, s, &i, &error);
+            iptr--;
+            u = fetchnumber(dico, &iptr, &error);
             if (negate) {
                 u = -1 * u;
                 negate = 0;
             }
             state = S_atom;
         } else {
-            i--;
-            c = fetchoperator(dico, s, ls, &i, &state, &level, &error);
+            iptr--;
+            c = fetchoperator(dico, s_end, &iptr, &state, &level, &error);
         }
 
         /* may change c to some other operator char! */
@@ -1307,7 +1307,7 @@ formula(tdico *dico, const char *s, bool *perror)
         } else if (state == S_atom) {
             /* atom pending */
             natom++;
-            if (i >= ls) {
+            if (iptr >= s_end) {
                 state = S_stop;
                 level = topop;
             } /* close all ops below */
@@ -1416,7 +1416,7 @@ evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
                           "\"%s\" not evaluated.%s", t,
                           nolookup ? " Lookup failure." : "");
     } else {
-        u = formula(dico, t, &err);
+        u = formula(dico, t, t + strlen(t), &err);
         numeric = 1;
     }
 
@@ -1956,7 +1956,8 @@ nupa_assignment(tdico *dico, char *s, char mode)
             dtype = getexpress(s, &ustr, &i);
 
             if (dtype == 'R') {
-                rval = formula(dico, spice_dstring_value(&ustr), &error);
+                const char *tmp = spice_dstring_value(&ustr);
+                rval = formula(dico, tmp, tmp + strlen(tmp), &error);
                 if (error) {
                     message(dico, " Formula() error.");
                     fprintf(stderr, "      %s\n", s);
