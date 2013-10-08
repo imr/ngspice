@@ -736,7 +736,7 @@ keyword(SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
 
 
 static double
-parseunit(char *s)
+parseunit(const char *s)
 /* the Spice suffixes */
 {
     switch (toupper(s[0]))
@@ -754,7 +754,7 @@ parseunit(char *s)
 
 
 static int
-fetchid(char *s, SPICE_DSTRINGPTR t, int ls, int i)
+fetchid(const char *s, SPICE_DSTRINGPTR t, int ls, int i)
 /* copy next identifier from s into t, advance and return scan index i */
 {
     char c;
@@ -791,7 +791,7 @@ fetchid(char *s, SPICE_DSTRINGPTR t, int ls, int i)
 
 
 static double
-exists(tdico *d, char *s, int *pi, bool *perror)
+exists(tdico *d, const char *s, int *pi, bool *perror)
 /* check if s in simboltable 'defined': expect (ident) and return 0 or 1 */
 {
     bool error = *perror;
@@ -853,7 +853,7 @@ exists(tdico *d, char *s, int *pi, bool *perror)
 
 
 static double
-fetchnumber(tdico *dico, char *s, int *pi, bool *perror)
+fetchnumber(tdico *dico, const char *s, int *pi, bool *perror)
 /* parse a Spice number in string s */
 {
     double u;
@@ -887,7 +887,7 @@ fetchnumber(tdico *dico, char *s, int *pi, bool *perror)
 
 static char
 fetchoperator(tdico *dico,
-              char *s, int ls,
+              const char *s, int ls,
               int *pi,
               unsigned char *pstate, unsigned char *plevel,
               bool *perror)
@@ -1122,7 +1122,7 @@ operate(char op, double x, double y)
 
 
 static double
-formula(tdico *dico, char *s, bool *perror)
+formula(tdico *dico, const char *s, bool *perror)
 {
     /* Expression parser.
        s is a formula with parentheses and math ops +-* / ...

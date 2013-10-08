@@ -25,7 +25,7 @@
 /***** primitive input-output ***/
 
 bool
-ci_prefix(register char *p, register char *s)
+ci_prefix(const char *p, const char *s)
 {
     while (*p) {
         if ((isupper(*p) ? tolower(*p) : *p) !=
@@ -93,7 +93,7 @@ sfix(SPICE_DSTRINGPTR dstr_p, int len)
 
 
 int
-length(char *s)
+length(const char *s)
 {
     return (int) strlen(s);
 }
@@ -103,7 +103,7 @@ length(char *s)
  * Function: add string t to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
 bool
-sadd(SPICE_DSTRINGPTR dstr_p, char *t)
+sadd(SPICE_DSTRINGPTR dstr_p, const char *t)
 {
     spice_dstring_append(dstr_p, t, -1);
     return 1;
@@ -148,7 +148,7 @@ cins(SPICE_DSTRINGPTR dstr_p, char c)
  * Function: insert string t at front of dynamic string dstr_p
  * ----------------------------------------------------------------- */
 bool
-sins(SPICE_DSTRINGPTR dstr_p, char *t)
+sins(SPICE_DSTRINGPTR dstr_p, const char *t)
 {
     int i;
     int ls;
@@ -214,7 +214,7 @@ scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)  /* returns success flag */
  * are always NULLterminated.
  * ----------------------------------------------------------------- */
 bool
-scopys(SPICE_DSTRINGPTR s, char *t)     /* returns success flag */
+scopys(SPICE_DSTRINGPTR s, const char *t)     /* returns success flag */
 {
     spice_dstring_reinit(s);
     spice_dstring_append(s, t, -1);
@@ -227,10 +227,10 @@ scopys(SPICE_DSTRINGPTR s, char *t)     /* returns success flag */
  * Dynamic strings are always NULL * terminated.
  * ----------------------------------------------------------------- */
 bool
-scopy_up(SPICE_DSTRINGPTR dstr_p, char *str)    /* returns success flag */
+scopy_up(SPICE_DSTRINGPTR dstr_p, const char *str)    /* returns success flag */
 {
     char up[2];                 /* short string */
-    char *ptr;                  /* position in string */
+    const char *ptr;            /* position in string */
 
     spice_dstring_reinit(dstr_p);
     up[1] = '\0';
@@ -247,10 +247,10 @@ scopy_up(SPICE_DSTRINGPTR dstr_p, char *str)    /* returns success flag */
  * Dynamic strings are always NULL * terminated.
  * ----------------------------------------------------------------- */
 bool
-scopy_lower(SPICE_DSTRINGPTR dstr_p, char *str) /* returns success flag */
+scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
 {
     char low[2];                /* short string */
-    char *ptr;                  /* position in string */
+    const char *ptr;            /* position in string */
 
     spice_dstring_reinit(dstr_p);
     low[1] = '\0';
@@ -275,7 +275,7 @@ ccopy(SPICE_DSTRINGPTR dstr_p, char c)  /* returns success flag */
 
 
 char *
-pscopy(SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
+pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 /* partial string copy, with C-based start - Because we now have a 0 based
  * start and string may copy outselves, we may need to restore the first
  * character of the original dstring because resetting string will wipe
@@ -313,7 +313,7 @@ pscopy(SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
 
 
 char *
-pscopy_up(SPICE_DSTRINGPTR dstr_p, char *t, int start, int leng)
+pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 /* partial string copy to upper case, with C convention for start. */
 {
     int i;                      /* counter */
@@ -439,14 +439,14 @@ stri(long n, SPICE_DSTRINGPTR dstr_p)
 
 
 bool
-steq(char *a, char *b)          /* string a==b test */
+steq(const char *a, const char *b)  /* string a==b test */
 {
     return strcmp(a, b) == 0;
 }
 
 
 bool
-stne(char *s, char *t)
+stne(const char *s, const char *t)
 {
     return strcmp(s, t) != 0;
 }
@@ -576,7 +576,7 @@ absi(long i)
 
 
 int
-spos_(char *sub, char *s)
+spos_(char *sub, const char *s)
 /* equivalent to Turbo Pascal pos().
    BUG: counts 1 ... length(s), not from 0 like C
 */

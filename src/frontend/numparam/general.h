@@ -13,25 +13,25 @@ typedef char string[258];
 
 
 void sfix(SPICE_DSTRINGPTR dstr_p, int len);
-char *pscopy(SPICE_DSTRINGPTR s, char *a, int i, int j);
-char *pscopy_up(SPICE_DSTRINGPTR s, char *a, int i, int j);
+char *pscopy(SPICE_DSTRINGPTR s, const char *a, int i, int j);
+char *pscopy_up(SPICE_DSTRINGPTR s, const char *a, int i, int j);
 bool scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
-bool scopys(SPICE_DSTRINGPTR a, char *b);
-bool scopy_up(SPICE_DSTRINGPTR a, char *str);
-bool scopy_lower(SPICE_DSTRINGPTR a, char *str);
+bool scopys(SPICE_DSTRINGPTR a, const char *b);
+bool scopy_up(SPICE_DSTRINGPTR a, const char *str);
+bool scopy_lower(SPICE_DSTRINGPTR a, const char *str);
 bool ccopy(SPICE_DSTRINGPTR a, char c);
-bool sadd(SPICE_DSTRINGPTR s, char *t);
+bool sadd(SPICE_DSTRINGPTR s, const char *t);
 bool nadd(SPICE_DSTRINGPTR s, long n);
 bool cadd(SPICE_DSTRINGPTR s, char c);
 bool naddll(SPICE_DSTRINGPTR s, long long n);
 bool cins(SPICE_DSTRINGPTR s, char c);
-bool sins(SPICE_DSTRINGPTR s, char *t);
+bool sins(SPICE_DSTRINGPTR s, const char *t);
 int cpos(char c, char *s);
-int spos_(char *sub, char *s);
-bool ci_prefix(register char *p, register char *s);
-int length(char *s);
-bool steq(char *s, char *t);
-bool stne(char *s, char *t);
+int spos_(char *sub, const char *s);
+bool ci_prefix(const char *p, const char *s);
+int length(const char *s);
+bool steq(const char *s, const char *t);
+bool stne(const char *s, const char *t);
 void stri(long n, SPICE_DSTRINGPTR s);
 
 char upcase(char c);

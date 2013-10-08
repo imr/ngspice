@@ -25,10 +25,10 @@ typedef struct spice_dstring {
  * spice_dstring_xxxx routines.  Used to manipulate dynamic strings.
 ----------------------------------------------------------------- */
 extern void spice_dstring_init(SPICE_DSTRINGPTR dsPtr) ;
-extern char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length) ;
-extern char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr,char *string,int length) ;
+extern char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,const char *string,int length) ;
+extern char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr,const char *string,int length) ;
 extern char *spice_dstring_append_char(SPICE_DSTRINGPTR dsPtr,char c) ;
-extern char *spice_dstring_print(SPICE_DSTRINGPTR dsPtr,char *format, ... ) ;
+extern char *spice_dstring_print(SPICE_DSTRINGPTR dsPtr,const char *format, ... ) ;
 extern char *spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length) ;
 extern char *_spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length) ;
 extern void spice_dstring_free(SPICE_DSTRINGPTR dsPtr) ;

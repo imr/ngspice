@@ -59,12 +59,12 @@ void spice_dstring_init(SPICE_DSTRINGPTR dsPtr)
  *
  *----------------------------------------------------------------------
  */
-char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
+char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr, const char *string, int length)
 {
     int newSize ;			/* needed size */
     char *newString ;			/* newly allocated string buffer */
     char *dst ;				/* destination */
-    char *end ;				/* end of string */
+    const char *end ;				/* end of string */
 
     if( length < 0){
 	length = (int) strlen(string) ;
@@ -124,12 +124,12 @@ char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr,char *string,int length)
  *
  *----------------------------------------------------------------------
  */
-char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr,char *string,int length)
+char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr, const char *string, int length)
 {
     int newSize ;                       /* needed size */
     char *newString ;                   /* newly allocated string buffer */
     char *dst ;                         /* destination */
-    char *end ;                         /* end of string */
+    const char *end ;                   /* end of string */
 
     if( length < 0){
         length = (int) strlen(string) ;
@@ -178,7 +178,7 @@ char *spice_dstring_append_char( SPICE_DSTRINGPTR dstr_p, char c)
   return spice_dstring_append( dstr_p, &c, 1 ) ;
 } /* end spice_dstring_append_char() */
 
-static int spice_format_length( va_list args, char *fmt )
+static int spice_format_length( va_list args, const char *fmt )
 {
     int i ;					/* integer */
     int len ;					/* length of format */
@@ -263,7 +263,7 @@ static int spice_format_length( va_list args, char *fmt )
 } /* end Ymessage_format_length() */
 
 
-char *spice_dstring_print( SPICE_DSTRINGPTR dsPtr,char *format, ... )
+char *spice_dstring_print( SPICE_DSTRINGPTR dsPtr, const char *format, ... )
 {
     va_list args ;
     int format_len ;				/* length of format */
