@@ -184,13 +184,25 @@ mathfunction(int f, double z, double x)
         y = atan(x);
         break;
     case 31:
+#ifdef HAVE_ASINH
         y = asinh(x);
+#else
+        y = ((x > 0) ? log(x + sqrt(x * x + 1.0)) : -log(-x + sqrt(x * x + 1.0)));
+#endif
         break;
     case 32:
+#ifdef HAVE_ACOSH
         y = acosh(x);
+#else
+        y = (log(x + sqrt(x*x-1.0)));
+#endif
         break;
     case 33:
+#ifdef HAVE_ATANH
         y = atanh(x);
+#else
+        y = (log((1.0 + x) / (1.0 - x)) / 2.0);
+#endif
         break;
     case 34:
         y = tan(x);
