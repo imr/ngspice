@@ -760,7 +760,8 @@ fetchid(const char *s, SPICE_DSTRINGPTR t, int ls, int i)
     char c;
     bool ok;
 
-    c = s[i - 1];
+    c = s[i];
+    i++;
 
     while (!alfa(c) && (i < ls)) {
         i++;
@@ -820,6 +821,7 @@ exists(tdico *d, const char *s, int *pi, bool *perror)
 
     if (ok)
     {
+        i--;
         i = fetchid(s, &t, ls, i);
         i--;
         if (entrynb(d, spice_dstring_value(&t)))
@@ -859,7 +861,7 @@ fetchnumber(tdico *dico, const char *s, int *pi, bool *perror)
     double u;
     int n = 0;
 
-    s += *pi - 1;               /* broken semantic !! */
+    s += *pi;
 
     if (1 != sscanf(s, "%lG%n", &u, &n)) {
 
@@ -879,7 +881,7 @@ fetchnumber(tdico *dico, const char *s, int *pi, bool *perror)
     while (s[n] && alfa(s[n]))
         n++;
 
-    *pi += n-1;                 /* very broken semantic !!! */
+    *pi += n;
 
     return u;
 }
@@ -901,7 +903,8 @@ fetchoperator(tdico *dico,
     bool error = *perror;
     char c, d;
 
-    c = s[i - 1];
+    c = s[i];
+    i++;
 
     if (i < ls)
         d = s[i];
@@ -1239,6 +1242,7 @@ formula(tdico *dico, const char *s, bool *perror)
             i = k;
             fu = 0;
         } else if (alfa(c)) {
+            i--;
             i = fetchid(s, &tstr, ls, i); /* user id, but sort out keywords */
             state = S_atom;
             i--;
@@ -1256,6 +1260,7 @@ formula(tdico *dico, const char *s, bool *perror)
             if (kw == Defd)
                 u = exists(dico, s, &i, &error);
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
+            i--;
             u = fetchnumber(dico, s, &i, &error);
             if (negate) {
                 u = -1 * u;
@@ -1263,6 +1268,7 @@ formula(tdico *dico, const char *s, bool *perror)
             }
             state = S_atom;
         } else {
+            i--;
             c = fetchoperator(dico, s, ls, &i, &state, &level, &error);
         }
 
