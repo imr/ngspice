@@ -1038,7 +1038,6 @@ operate(char op, double x, double y)
     /* bug:   x:=x op y or simply x:=y for empty op?  No error signalling! */
     double u = 1.0;
     double z = 0.0;
-    double epsi = 1e-30;
     double t;
 
     switch (op)
@@ -1060,11 +1059,7 @@ operate(char op, double x, double y)
         x = x / y;
         break;
     case '^':                   /* power */
-        t = absf(x);
-        if (t < epsi)
-            x = z;
-        else
-            x = exp(y * ln(t));
+        x = pow(fabs(x), y);
         break;
     case '&':                   /* && */
         if (y < x)
