@@ -780,23 +780,18 @@ fetchid(SPICE_DSTRINGPTR t, const char *s_end, const char *iptr)
     char c;
     bool ok;
 
-    c = *iptr;
-    iptr++;
+    c = *iptr++;
 
-    while (!alfa(c) && (iptr < s_end)) {
-        iptr++;
-        c = iptr[-1];
-    }
+    while (!alfa(c) && (iptr < s_end))
+        c = *iptr++;
 
     spice_dstring_reinit(t);
     cadd(t, upcase(c));
 
     do
     {
-        iptr++;
-        if (iptr <= s_end)
-            c = iptr[-1];
-        else
+        c = *iptr++;
+        if (iptr > s_end)
             c = '\0';
 
         c = upcase(c);
@@ -807,7 +802,7 @@ fetchid(SPICE_DSTRINGPTR t, const char *s_end, const char *iptr)
 
     } while (ok);
 
-    return iptr;                /* return updated iptr */
+    return iptr - 1;             /* return updated iptr */
 }
 
 
@@ -827,11 +822,9 @@ exists(tdico *d, const char *s_end, const char **pi, bool *perror)
 
     do
     {
-        iptr++;
+        c = *iptr++;
         if (iptr > s_end)
             c = '\0';
-        else
-            c = iptr[-1];
 
         ok = (c == '(');
 
@@ -841,18 +834,14 @@ exists(tdico *d, const char *s_end, const char **pi, bool *perror)
     {
         iptr--;
         iptr = fetchid(&t, s_end, iptr);
-        iptr--;
         if (entrynb(d, spice_dstring_value(&t)))
             x = 1.0;
 
         do
         {
-            iptr++;
-
+            c = *iptr++;
             if (iptr > s_end)
                 c = '\0';
-            else
-                c = iptr[-1];
 
             ok = (c == ')');
 
@@ -921,12 +910,10 @@ fetchoperator(tdico *dico,
     bool error = *perror;
     char c, d;
 
-    c = *iptr;
-    iptr++;
+    c = *iptr++;
 
-    if (iptr < s_end)
-        d = iptr[0];
-    else
+    d = *iptr;
+    if (iptr >= s_end)
         d = '\0';
 
     if ((c == '!') && (d == '=')) {
@@ -1158,18 +1145,14 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
     bool error = *perror;
     bool negate = 0;
     unsigned char state, oldstate, topop, ustack, level, kw, fu;
-    double u = 0.0, v, w = 0.0;
+    double u = 0.0;
     double accu[nprece + 1];
     char oper[nprece + 1];
     char uop[nprece + 1];
-    int i, k, natom;
-    char c, d;
+    int i, natom;
     bool ok;
     SPICE_DSTRING tstr;
-    const char *iptr;
-    const char *kptr;
-    const char *arg2;
-    const char *arg3;
+    const char *s_orig = s;
 
     spice_dstring_init(&tstr);
 
@@ -1177,8 +1160,6 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
         accu[i] = 0.0;
         oper[i] = ' ';
     }
-
-    iptr = s;
 
     /* trim trailing whitespace */
     while ((s_end > s) && (s_end[-1] <= ' '))
@@ -1193,25 +1174,23 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
     error = 0;
     level = 0;
 
-    while ((iptr < s_end) && !error) {
-        iptr++;
-        c = iptr[-1];
+    while ((s < s_end) && !error) {
+        char c = *s;
         if (c == '(') {
             /* sub-formula or math function */
-            level = 1;
+            double v = 1.0, w = 0.0;
             /* new: must support multi-arg functions */
-            kptr = iptr;
-            arg2 = NULL;
-            v = 1.0;
-            arg3 = NULL;
+            const char *kptr = ++s;
+            const char *arg2 = NULL;
+            const char *arg3 = NULL;
+            char d;
 
+            level = 1;
             do
             {
-                kptr++;
+                d = *kptr++;
                 if (kptr > s_end)
                     d = '\0';
-                else
-                    d = kptr[-1];
 
                 if (d == '(')
                     level++;
@@ -1227,19 +1206,21 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
 
             } while ((kptr <= s_end) && !((d == ')') && (level <= 0)));
 
+            // fixme, here level = 0 !!!!! (almost)
+
             if (kptr > s_end) {
                 error = message(dico, "Closing \")\" not found.");
                 natom++;        /* shut up other error message */
             } else {
-                if (arg2 > iptr) {
-                    v = formula(dico, iptr, arg2 - 1, &error);
-                    iptr = arg2;
+                if (arg2 > s) {
+                    v = formula(dico, s, arg2 - 1, &error);
+                    s = arg2;
                 }
-                if (arg3 > iptr) {
-                    w = formula(dico, iptr, arg3 - 1, &error);
-                    iptr = arg3;
+                if (arg3 > s) {
+                    w = formula(dico, s, arg3 - 1, &error);
+                    s = arg3;
                 }
-                u = formula(dico, iptr, kptr - 1, &error);
+                u = formula(dico, s, kptr - 1, &error);
                 state = S_atom;
                 if (fu > 0) {
                     if ((fu == 18))
@@ -1258,13 +1239,11 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
                         u = mathfunction(fu, v, u);
                 }
             }
-            iptr = kptr;
+            s = kptr;
             fu = 0;
         } else if (alfa(c)) {
-            iptr--;
-            iptr = fetchid(&tstr, s_end, iptr); /* user id, but sort out keywords */
+            s = fetchid(&tstr, s_end, s); /* user id, but sort out keywords */
             state = S_atom;
-            iptr--;
             kw = keyword(&keyS, &tstr); /* debug ws('[',kw,']'); */
             if (kw == 0) {
                 fu = keyword(&fmathS, &tstr); /* numeric function? */
@@ -1277,19 +1256,17 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
             }
 
             if (kw == Defd) {
-                u = exists(dico, s_end, &iptr, &error);
+                u = exists(dico, s_end, &s, &error);
             }
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
-            iptr--;
-            u = fetchnumber(dico, &iptr, &error);
+            u = fetchnumber(dico, &s, &error);
             if (negate) {
                 u = -1 * u;
                 negate = 0;
             }
             state = S_atom;
         } else {
-            iptr--;
-            c = fetchoperator(dico, s_end, &iptr, &state, &level, &error);
+            c = fetchoperator(dico, s_end, &s, &state, &level, &error);
         }
 
         /* may change c to some other operator char! */
@@ -1310,30 +1287,28 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
 
         if (state == S_unop) {
             /* push unary operator */
-            ustack++;
-            uop[ustack] = c;
+            uop[++ustack] = c;
         } else if (state == S_atom) {
             /* atom pending */
             natom++;
-            if (iptr >= s_end) {
+            if (s >= s_end) {
                 state = S_stop;
                 level = topop;
             } /* close all ops below */
 
-            for (k = ustack; k >= 1; k--)
-                u = operate(uop[k], u, u);
+            while (ustack > 0)
+                u = operate(uop[ustack--], u, u);
 
-            ustack = 0;
             accu[0] = u;        /* done: all pending unary operators */
         }
 
         if ((state == S_binop) || (state == S_stop)) {
             /* do pending binaries of priority Upto "level" */
-            for (k = 1; k <= level; k++) {
+            for (i = 1; i <= level; i++) {
                 /* not yet speed optimized! */
-                accu[k] = operate(oper[k], accu[k], accu[k - 1]);
-                accu[k - 1] = 0.0;
-                oper[k] = ' ';  /* reset intermediates */
+                accu[i] = operate(oper[i], accu[i], accu[i - 1]);
+                accu[i - 1] = 0.0;
+                oper[i] = ' ';  /* reset intermediates */
             }
             oper[level] = c;
 
@@ -1346,7 +1321,7 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
     }
 
     if ((natom == 0) || (oldstate != S_stop))
-        error = message(dico, " Expression err: %s", s);
+        error = message(dico, " Expression err: %s", s_orig);
 
     if (negate == 1)
         error = message(dico,
