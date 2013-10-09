@@ -194,14 +194,22 @@ mathfunction(int f, double z, double x)
 #ifdef HAVE_ACOSH
         y = acosh(x);
 #else
-        y = (log(x + sqrt(x*x-1.0)));
+        /* domain check (HUGE_VAL like gnu libc) */
+        if (x < 1.)
+            y = HUGE_VAL;
+        else
+            y = (log(x + sqrt(x*x-1.0)));
 #endif
         break;
     case 33:
 #ifdef HAVE_ATANH
         y = atanh(x);
 #else
-        y = (log((1.0 + x) / (1.0 - x)) / 2.0);
+        /* domain check (HUGE_VAL like gnu libc) */
+        if (fabs(x) >= 1.)
+            y = HUGE_VAL;
+        else
+            y = (log((1.0 + x) / (1.0 - x)) / 2.0);
 #endif
         break;
     case 34:
