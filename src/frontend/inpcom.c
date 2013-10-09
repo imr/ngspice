@@ -5660,12 +5660,12 @@ inp_temper_compat(struct line *card)
         beg_str = beg_tstr = curr_line;
         while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
             actchar = *(beg_tstr - 1);
-            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',')) {
+            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '{')) {
                 beg_tstr++;
                 continue;
             }
             actchar = *(beg_tstr + 6);
-            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ','))
+            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}'))
                 continue;
             /* we have found a true 'temper' */
             /* set the global variable */
