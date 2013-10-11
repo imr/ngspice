@@ -71,6 +71,9 @@ NIpred(CKTcircuit * ckt)
         default:
             return(E_ORDER);
         }
+    }
+    break;
+
     case GEAR: 
         node = ckt->CKTnodes;
         switch(ckt->CKTorder) {
@@ -137,8 +140,6 @@ NIpred(CKTcircuit * ckt)
         default:
             return(E_ORDER);
         }
-
-    }
     break;
 
     default:
