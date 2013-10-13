@@ -51,8 +51,6 @@ ft_sigintr(void)
     /* Reinstall ft_signintr as the signal handler. */
     (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
 
-    gr_clean();  /* Clean up plot window */
-
     if (ft_intrpt) {    /* check to see if we're being interrupted repeatedly */
         fprintf(cp_err, "\nInterrupted again (ouch)\n");
     } else {
@@ -63,6 +61,8 @@ ft_sigintr(void)
     if (ft_setflag) {
         return;     /* just return without aborting simulation if ft_setflag = TRUE */
     }
+
+    gr_clean();  /* Clean up plot window */
 
     /* sjb - what to do for editline???
        The following are not supported in editline */
