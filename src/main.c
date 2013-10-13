@@ -624,7 +624,8 @@ app_rl_readlines(void)
     for (;;) {
        history_set_pos(history_length);
 
-       SETJMP(jbuf, 1);    /* Set location to jump to after handling SIGINT (ctrl-C)  */
+       if (SETJMP(jbuf, 1))    /* Set location to jump to after handling SIGINT (ctrl-C)  */
+           ft_sigintr_cleanup();
 
        line = readline(prompt());
 
@@ -1067,6 +1068,7 @@ main(int argc, char **argv)
     /* To catch interrupts during .spiceinit... */
     if (SETJMP(jbuf, 1)) {
 
+        ft_sigintr_cleanup();
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
 
     } else {
@@ -1105,6 +1107,7 @@ main(int argc, char **argv)
 
     if (SETJMP(jbuf, 1)) {
 
+        ft_sigintr_cleanup();
         fprintf(cp_err, "Warning: error executing during ngspice startup.\n");
 
     } else {
@@ -1245,8 +1248,10 @@ main(int argc, char **argv)
         /* If we get back here in batch mode then something is wrong,
          * so exit.  */
 
-        if (SETJMP(jbuf, 1))
+        if (SETJMP(jbuf, 1)) {
+            ft_sigintr_cleanup();
             sp_shutdown(EXIT_BAD);
+        }
 
 
         if (ft_servermode) {
@@ -1293,6 +1298,7 @@ main(int argc, char **argv)
 
     if (SETJMP(jbuf, 1)) {
 
+        ft_sigintr_cleanup();
         fprintf(cp_err, "Warning: error executing during ft_loadfile().\n");
 
     } else {
@@ -1320,5 +1326,7 @@ main(int argc, char **argv)
             /*  enter the command processing loop  */
             cp_interactive = TRUE;
             app_rl_readlines();
+        } else {
+            ft_sigintr_cleanup();
         }
 }

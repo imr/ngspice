@@ -768,6 +768,7 @@ _run(int argc, char **argv)
 #ifndef _MSC_VER_
     oldHandler = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
     if (SETJMP(jbuf, 1) != 0) {
+        ft_sigintr_cleanup();
         signal(SIGINT, oldHandler);
         return TCL_OK;
     }
@@ -2517,6 +2518,7 @@ Spice_Init(Tcl_Interp *interp)
         /* To catch interrupts during .spiceinit... */
         old_sigint = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
         if (SETJMP(jbuf, 1) == 1) {
+            ft_sigintr_cleanup();
             fprintf(cp_err, "Warning: error executing .spiceinit.\n");
             goto bot;
         }

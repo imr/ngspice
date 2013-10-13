@@ -89,8 +89,6 @@ ft_sigintr(void)
         return;     /* just return without aborting simulation if ft_setflag = TRUE */
     }
 
-    ft_sigintr_cleanup();
-
     /* here we jump to the start of command processing in main() after resetting everything.  */
     LONGJMP(jbuf, 1);
 }
@@ -101,7 +99,6 @@ sigfloat(int sig, int code)
 {
     NG_IGNORE(sig);
 
-    gr_clean();
     fperror("Error", code);
     rewind(cp_out);
     (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);

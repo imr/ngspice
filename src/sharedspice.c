@@ -422,6 +422,7 @@ runc(char* command)
 #if 1 //!defined(_MSC_VER) /*&& !defined(__MINGW32__) */
     oldHandler = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
     if (SETJMP(jbuf, 1) != 0) {
+        ft_sigintr_cleanup();
         signal(SIGINT, oldHandler);
         return 0;
     }
@@ -605,6 +606,7 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /* To catch interrupts during .spiceinit... */
     old_sigint = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
     if (SETJMP(jbuf, 1) == 1) {
+        ft_sigintr_cleanup();
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");
         goto bot;
     }
