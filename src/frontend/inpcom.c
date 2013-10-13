@@ -4369,6 +4369,11 @@ inp_compat(struct line *card)
                 secondno = gettok_node(&cut_line);
                 midline = cut_line;
                 cut_line = strrchr(str_ptr, '(');
+                if (!cut_line) {
+                    fprintf(stderr, "Error: bad syntax in line %d (missing parentheses)\n  %s\n",
+                            card->li_linenum_orig, card->li_line);
+                    controlled_exit(EXIT_BAD);
+                }
                 /* replace '(' with ',' and ')' with ' ' */
                 for (; *str_ptr; str_ptr++)
                     if (*str_ptr == '(')
