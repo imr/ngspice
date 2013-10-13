@@ -443,6 +443,9 @@ gettok_node(char **s)
     char *token ;				/* return token */
     SPICE_DSTRING buf ;				/* allow any length string */
 
+    if (*s == NULL)
+        return NULL;
+
     while (isspace(**s) ||
            ( **s == '(' ) ||
            ( **s == ')' ) ||
