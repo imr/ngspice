@@ -42,6 +42,33 @@ JMP_BUF jbuf;
  * is TRUE.
  */
 
+
+/* The purpose of ft_sigintr_cleanup() is to handle all processing of asynchronous
+ * signals which require user process context. Some kernel services are not
+ * allowed to be called from asynchronous signal handlers. (e.g. mutexes)
+ */
+
+void
+ft_sigintr_cleanup(void)
+{
+    gr_clean();  /* Clean up plot window */
+
+    /* sjb - what to do for editline???
+       The following are not supported in editline */
+#if defined(HAVE_GNUREADLINE)
+    /*  Clean up readline after catching signals  */
+    /*  One or all of these might be superfluous  */
+    (void) rl_free_line_state();
+    (void) rl_cleanup_after_signal();
+    (void) rl_reset_after_signal();
+#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
+
+    /* To restore screen after an interrupt to a plot for instance */
+    cp_interactive = TRUE;
+    cp_resetcontrol();
+}
+
+
 /*  invoke this function upon keyboard interrupt  */
 RETSIGTYPE
 ft_sigintr(void)
@@ -62,21 +89,7 @@ ft_sigintr(void)
         return;     /* just return without aborting simulation if ft_setflag = TRUE */
     }
 
-    gr_clean();  /* Clean up plot window */
-
-    /* sjb - what to do for editline???
-       The following are not supported in editline */
-#if defined(HAVE_GNUREADLINE)
-    /*  Clean up readline after catching signals  */
-    /*  One or all of these might be superfluous  */
-    (void) rl_free_line_state();
-    (void) rl_cleanup_after_signal();
-    (void) rl_reset_after_signal();
-#endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
-
-    /* To restore screen after an interrupt to a plot for instance */
-    cp_interactive = TRUE;
-    cp_resetcontrol();
+    ft_sigintr_cleanup();
 
     /* here we jump to the start of command processing in main() after resetting everything.  */
     LONGJMP(jbuf, 1);

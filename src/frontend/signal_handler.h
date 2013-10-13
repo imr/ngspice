@@ -17,4 +17,6 @@ RETSIGTYPE sig_sys(void);
 
 extern JMP_BUF jbuf;
 
+extern void ft_sigintr_cleanup(void);
+
 #endif
