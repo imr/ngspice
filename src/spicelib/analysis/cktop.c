@@ -155,11 +155,11 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
     factor = ckt->CKTgminFactor;
     OldGmin = 1e-2;
     gtarget = MAX (ckt->CKTgmin, ckt->CKTgshunt);
-    ckt->CKTdiagGmin = OldGmin / factor;
+    ckt->CKTgmin = OldGmin / factor;
     success = failed = 0;
 
     while ((!success) && (!failed)) {
-        fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
+        fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTgmin);
         ckt->CKTnoncon = 1;
         iters = ckt->CKTstat->STATnumIter;
 
@@ -171,7 +171,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
             SPfrontEnd->IFerror (ERR_INFO,
                                  "One successful gmin step", NULL);
 
-            if (ckt->CKTdiagGmin <= gtarget) {
+            if (ckt->CKTgmin <= gtarget) {
                 success = 1;
             } else {
                 i = 0;
@@ -193,13 +193,13 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                 if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
                     factor = sqrt (factor);
 
-                OldGmin = ckt->CKTdiagGmin;
+                OldGmin = ckt->CKTgmin;
 
-                if ((ckt->CKTdiagGmin) < (factor * gtarget)) {
-                    factor = ckt->CKTdiagGmin / gtarget;
-                    ckt->CKTdiagGmin = gtarget;
+                if ((ckt->CKTgmin) < (factor * gtarget)) {
+                    factor = ckt->CKTgmin / gtarget;
+                    ckt->CKTgmin = gtarget;
                 } else {
-                    ckt->CKTdiagGmin /= factor;
+                    ckt->CKTgmin /= factor;
                 }
             }
         } else {
@@ -213,7 +213,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                                      "Further gmin increment",
                                      NULL);
                 factor = sqrt (sqrt (factor));
-                ckt->CKTdiagGmin = OldGmin / factor;
+                ckt->CKTgmin = OldGmin / factor;
 
                 i = 0;
                 for (n = ckt->CKTnodes; n; n = n->next) {
@@ -228,7 +228,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
         }
     }
 
-    ckt->CKTdiagGmin = ckt->CKTgshunt;
+//    ckt->CKTdiagGmin = ckt->CKTgshunt;
     FREE (OldRhsOld);
     FREE (OldCKTstate0);
 

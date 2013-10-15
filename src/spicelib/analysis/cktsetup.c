@@ -129,18 +129,21 @@ CKTsetup(CKTcircuit *ckt)
 #endif
 
 #ifdef KIRCHHOFF
-    CKTnode *node ;
+    /**
+     * Gmin Stepping
+     */
+//    CKTnode *node ;
 
-    node = ckt->CKTnodes ;
-    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
-    {
-        node = node->next ;
+//    node = ckt->CKTnodes ;
+//    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
+//    {
+//        node = node->next ;
 
-        if (node->type == SP_VOLTAGE)
-        {
-            ckt->CKTdiag [i] = SMPmakeElt (ckt->CKTmatrix, i, i) ;
-        }
-    }
+//        if (node->type == SP_VOLTAGE)
+//        {
+//            ckt->CKTdiag [i] = SMPmakeElt (ckt->CKTmatrix, i, i) ;
+//        }
+//    }
 
     /** Marking node as Non-Linear when needed
      *  By default every node is Linear
@@ -154,6 +157,56 @@ CKTsetup(CKTcircuit *ckt)
                 return (error) ;
         }
     }
+
+    /**
+     * Reordering nodes for convergence tests
+     */
+    int j, non_linear_nodes ;
+    non_linear_nodes = 0 ;
+    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
+    {
+        if (!ckt->CKTnodeIsLinear [i])
+        {
+            non_linear_nodes++ ;
+        }
+    }
+
+    CKALLOC (ckt->CKTrhsOrdered, non_linear_nodes, double*) ;
+    CKALLOC (ckt->CKTrhsOldOrdered, non_linear_nodes, double*) ;
+    CKALLOC (ckt->CKTmkCurKCLarrayOrdered, non_linear_nodes, CKTmkCurKCLnode*) ;
+    CKALLOC (ckt->CKTfvkOrdered, non_linear_nodes, double*) ;
+    j = 0 ;
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
+    {
+        node = node->next ;
+
+        if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]))
+        {
+            ckt->CKTrhsOrdered [j] = &(ckt->CKTrhs [i]) ;
+            ckt->CKTrhsOldOrdered [j] = &(ckt->CKTrhsOld [i]) ;
+            ckt->CKTmkCurKCLarrayOrdered [j] = ckt->CKTmkCurKCLarray [i] ;
+            ckt->CKTfvkOrdered [j] = &(ckt->CKTfvk [i]) ;
+            j++ ;
+        }
+    }
+    ckt->CKTvoltageNonLinearNodes = j ;
+
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
+    {
+        node = node->next ;
+
+        if ((node->type == SP_CURRENT) && (!ckt->CKTnodeIsLinear [i]))
+        {
+            ckt->CKTrhsOrdered [j] = &(ckt->CKTrhs [i]) ;
+            ckt->CKTrhsOldOrdered [j] = &(ckt->CKTrhsOld [i]) ;
+            j++ ;
+        }
+    }
+    ckt->CKTcurrentNonLinearNodes = j - ckt->CKTvoltageNonLinearNodes ;
+
+
 #endif
 
     return(OK);
