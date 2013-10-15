@@ -132,7 +132,7 @@ CKTsetup(CKTcircuit *ckt)
     /**
      * Gmin Stepping
      */
-//    CKTnode *node ;
+    CKTnode *node ;
 
 //    node = ckt->CKTnodes ;
 //    for (i = 1 ; i <= SMPmatSize (ckt->CKTmatrix) ; i++)
