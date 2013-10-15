@@ -973,6 +973,12 @@ fetchoperator(tdico *dico,
         level = 7;
     } else if (c == '!') {
         state = S_unop;
+    } else if (c == '?') {
+        state = S_binop;
+        level = 9;
+    } else if (c == ':') {
+        state = S_binop;
+        level = 8;
     } else {
         state = S_init;
         if (c > ' ')
@@ -1322,10 +1328,30 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
         if ((state == S_binop) || (state == S_stop)) {
             /* do pending binaries of priority Upto "level" */
             for (i = 1; i <= level; i++) {
+                if (i < level && oper[i] == ':' && (oper[i+1] == '?' || oper[i+1] == 'x')) {
+                    if (oper[i+1] == 'x') {
+                        /* this is a `first-of-triple' op */
+                        accu[i+1] = accu[i+1];
+                        c = 'x';  /* transform next '?' to 'first-of-triple' */
+                    } else if (accu[i+1] != 0.0) {
+                        /* this is a `true' ternary */
+                        accu[i+1] = accu[i];
+                        c = 'x';  /* transform next '?' to `first-of-triple' */
+                    } else {
+                        /* this is a `false' ternary */
+                        accu[i+1] = accu[i-1];
+                    }
+                    accu[i-1] = 0.0;
+                    oper[i] = ' ';  /* reset intermediates */
+                    i++;
+                    accu[i-1] = 0.0;
+                    oper[i] = ' ';  /* reset intermediates */
+                } else {
                 /* not yet speed optimized! */
                 accu[i] = operate(oper[i], accu[i], accu[i - 1]);
                 accu[i - 1] = 0.0;
                 oper[i] = ' ';  /* reset intermediates */
+                }
             }
             oper[level] = c;
 
