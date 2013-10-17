@@ -2055,7 +2055,6 @@ inp_stripcomments_deck(struct line *c)
  *   ';'
  *   '$ '
  *   '//' (like in c++ and as per the numparam code)
- *   '--' (as per the numparam code)
  * Any following text to the end of the line is ignored.
  * Note requirement for $ to be followed by a space. This is to avoid conflict
  * with use in front of a variable.
@@ -2086,7 +2085,7 @@ inp_stripcomments_line(char *s)
         } else if ((c == '$') && (*d == ' ')) {
             d--;                /* move d back to first comment character */
             break;
-        } else if ((*d == c) && ((c == '/') || (c == '-'))) {
+        } else if ((c == '/') && (*d == '/')) {
             d--;                /* move d back to first comment character */
             break;
         }
