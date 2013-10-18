@@ -6293,10 +6293,14 @@ inp_fix_temper_in_param(struct line *deck)
 
             char *new_str = NULL; /* string we assemble here */
             char *curr_str;/* where we are in curr_line */
-            char *add_str;/* what we add */
-
             char *curr_line = card->li_line;
             char * new_tmp_str, *tmp_str, *beg_str;
+            /* Some new variables... */
+            char *chp;
+            char *chp_start;
+            char *var_name;
+            char ch;
+            int state;
 
             if (*curr_line == '*')
                 continue;
@@ -6330,32 +6334,42 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
 
             beg_str = curr_str = curr_line;
-            while ((beg_tstr = strstr(curr_str, new_func->funcname)) != NULL) {
-                /* start of token */
-                actchar = *(beg_tstr - 1);
-                /* end of token */
-                end_tstr = beg_tstr + strlen(new_func->funcname);
-                if (!(actchar == '{') && !(actchar == ',') && !isspace(actchar) && !is_arith_char(actchar)) {
-                    curr_str = end_tstr;
-                    continue;
+
+            /* This is the new code - it finds each variable name and checks it against new_func->funcname */
+            for (state = 0, var_name = chp_start = chp = curr_line; *chp; chp++) {
+                switch(state)
+                {
+                case 0:
+                    /* in state 0 we are looking for the first character of a variable name,
+                       which has to be an alphabetic character. */
+                    if (*chp >= 'a' && *chp <= 'z')
+                    {
+                        state = 1;
+                        var_name = chp;
+                    }
+                    break;
+                case 1:
+                    /* In state 1 we are looking for the last character of a variable name.
+                       The variable name consists of alphanumeric characters and _ .
+                       What about the Special characters to be found elsewhere:
+                       ~ ! @ # $ % & _ ? | . ;
+                       Numparam only aknowledges _ */
+                    state = (*chp >= 'a' && *chp <= 'z') || (*chp == '_') || (*chp >= '0' && *chp <= '9');
+                    if (!state) {
+                        ch = *chp;
+                        *chp = 0;
+                        if (strcmp(var_name, new_func->funcname) == 0 && ch != '(') {
+                            new_str = INPstrCat(new_str, copy(chp_start), "");
+                            new_str = INPstrCat(new_str, copy("()"), "");
+                            chp_start=chp;
+                        }
+                        *chp = ch;
+                    }
+                    break;
                 }
-                actchar = *(end_tstr);
-                if (!(actchar == '}') && !(actchar == ',')  && !isspace(actchar) && !is_arith_char(actchar)) {
-                    curr_str = end_tstr;
-                    continue;
-                }
-                if (actchar == '(') {
-                    curr_str = end_tstr;
-                    continue; /* not the .func xxx() itself */
-                }
-                /* we have found a true token equaling funcname, so start insertion */
-                add_str = copy_substring(beg_str, end_tstr);
-                new_str = INPstrCat(new_str, add_str, "");
-                new_str = INPstrCat(new_str, copy("()"), "");
-                beg_str = curr_str = end_tstr;
             }
             if (new_str) /* add final part of line */
-                new_str = INPstrCat(new_str, copy(curr_str), "");
+                new_str = INPstrCat(new_str, copy(chp_start), "");
             else
                 continue;
 
