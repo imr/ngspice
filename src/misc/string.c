@@ -441,7 +441,6 @@ gettok_node(char **s)
 {
     char c;
     char *token ;				/* return token */
-    SPICE_DSTRING buf ;				/* allow any length string */
 
     if (*s == NULL)
         return NULL;
@@ -456,15 +455,17 @@ gettok_node(char **s)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
-    spice_dstring_init(&buf) ;
+    token = *s;
     while ((c = **s) != '\0' && 
 	   !isspace(c) && 
 	   ( **s != '(' ) &&
 	   ( **s != ')' ) &&
 	   ( **s != ',') 
 	   )  {           /* collect chars until whitespace or ( , ) */
-        spice_dstring_append_char( &buf, *(*s)++ ) ;
+        (*s)++;
     }
+
+    token = copy_substring(token, *s);
 
     /* Now iterate up to next non-whitespace char */
     while (isspace(**s) ||
@@ -474,8 +475,6 @@ gettok_node(char **s)
           )
         (*s)++;   /* iterate over whitespace and ( , ) */
 
-    token = copy( spice_dstring_value(&buf) ) ;
-    spice_dstring_free(&buf) ;
     return ( token ) ;
 }
 
