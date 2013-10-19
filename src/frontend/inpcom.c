@@ -94,8 +94,8 @@ bool expr_w_temper = FALSE;
 
 static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
-static void inp_stripcomments_deck(struct line *deck);
-static void inp_stripcomments_line(char *s);
+static void inp_stripcomments_deck(struct line *deck, bool cs);
+static void inp_stripcomments_line(char *s, bool cs);
 static void inp_fix_for_numparam(struct names *subckt_w_params, struct line *deck);
 static void inp_remove_excess_ws(struct line *deck);
 static void expand_section_references(struct line *deck, int call_depth, char *dir_name);
@@ -608,7 +608,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
 
             struct line *newcard;
 
-            inp_stripcomments_line(buffer);
+            inp_stripcomments_line(buffer, FALSE);
 
             s = skip_non_ws(buffer);               /* advance past non-space chars */
 
@@ -803,12 +803,13 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
        If the line only contains an end-of-line comment then it is converted
        into a normal comment with a '*' at the start.  This will then get
        stripped in the following code. */
-    inp_stripcomments_deck(cc->li_next);
+    inp_stripcomments_deck(cc->li_next, comfile);
 
     inp_stitch_continuation_lines(cc->li_next);
 
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
+
 
     if (call_depth == 0 && !comfile) {
 
@@ -2042,25 +2043,36 @@ inp_casefix(char *string)
 }
 
 
-/* Strip all end-of-line comments from a deck */
+/* Strip all end-of-line comments from a deck
+   For cf == TRUE (script files, command files like spinit, .spiceinit)
+   and for .control sections only '$ ' is accepted as end-of-line comment,
+   to avoid conflict with $variable definition, otherwise we accept '$'. */
 static void
-inp_stripcomments_deck(struct line *c)
+inp_stripcomments_deck(struct line *c, bool cf)
 {
-    for (; c; c = c->li_next)
-        inp_stripcomments_line(c->li_line);
+	bool found_control = FALSE;
+    for (; c; c = c->li_next) {
+        /* exclude lines between .control and .endc from removing white spaces */
+		if (ciprefix(".control", c->li_line))
+			found_control = TRUE;
+		if (ciprefix(".endc", c->li_line))
+			found_control = FALSE;
+        inp_stripcomments_line(c->li_line, found_control|cf);
+    }
 }
 
 
 /*
- * SJB 21 April 2005
- * Added support for end-of-line comments that begin with any of the following:
+ * Support for end-of-line comments that begin with any of the following:
  *   ';'
+ *   '$' (only outside of a .control section)
  *   '$ '
  *   '//' (like in c++ and as per the numparam code)
  * Any following text to the end of the line is ignored.
- * Note requirement for $ to be followed by a space. This is to avoid conflict
- * with use in front of a variable.
- * Comments on a contunuation line (i.e. line begining with '+') are allowed
+ * Note requirement for $ to be followed by a space, if we are inside of a
+ * .control section or in a command file. This is to avoid conflict
+ * with use of $ in front of a variable.
+ * Comments on a continuation line (i.e. line begining with '+') are allowed
  * and are removed before lines are stitched.
  * Lines that contain only an end-of-line comment with or without leading white
  * space are also allowed.
@@ -2068,10 +2080,11 @@ inp_stripcomments_deck(struct line *c)
  If there is only white space before the end-of-line comment the
  the whole line is converted to a normal comment line (i.e. one that
  begins with a '*').
- BUG: comment characters in side of string literals are not ignored. */
+ BUG: comment characters in side of string literals are not ignored
+ ('$' outside of .control section is o.k. however). */
 
 static void
-inp_stripcomments_line(char *s)
+inp_stripcomments_line(char *s, bool cs)
 {
     char c = ' ';               /* anything other than a comment character */
     char *d = s;
@@ -2084,7 +2097,14 @@ inp_stripcomments_line(char *s)
         d++;
         if (*d == ';') {
             break;
-        } else if ((c == '$') && (*d == ' ')) {
+		} else if (!cs && (c == '$')) { /* outside of .control section */
+            /* The character before '&' has to be ',' or ' ' or tab.
+               A valid numerical expression directly before '$' is not yet supported. */
+            if ((d - 2 >= s) && ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
+                d--;
+			    break;
+            }
+        } else if (cs && (c == '$') && (*d == ' ')) {/* inside of .control section or command file */
             d--;                /* move d back to first comment character */
             break;
         } else if ((c == '/') && (*d == '/')) {
@@ -2092,7 +2112,7 @@ inp_stripcomments_line(char *s)
             break;
         }
     }
-    /* d now points to the first comment character of the null at the string end */
+    /* d now points to the first comment character or the null at the string end */
 
     /* check for special case of comment at start of line */
     if (d == s) {
@@ -2104,7 +2124,7 @@ inp_stripcomments_line(char *s)
         d--;
         /* d now points to character just before comment */
 
-        /* eat white space at end of line */
+        /* eat white space at new end of line */
         while (d >= s) {
             if ((*d != ' ') && (*d != '\t'))
                 break;
