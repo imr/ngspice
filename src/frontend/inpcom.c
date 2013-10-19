@@ -41,6 +41,8 @@ Author: 1985 Wayne A. Christopher
 #define N_PARAMS          1000
 #define N_SUBCKT_W_PARAMS 4000
 
+#define VALIDCHARS "!$%_#?@.[]&"
+
 static struct library {
     char *name;
     struct line *deck;
@@ -3101,7 +3103,8 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
 
         fcn_name = open_paren_ptr;
         while (--fcn_name >= search_ptr)
-            if (!isalnum(*fcn_name) && *fcn_name != '_')
+        /* function name consists of numbers, letters and special characters (VALIDCHARS) */
+            if (!isalnum(*fcn_name) && !strchr(VALIDCHARS, *fcn_name))
                 break;
         fcn_name++;
 
@@ -5669,8 +5672,10 @@ inp_temper_compat(struct line *card)
                 continue;
             }
             actchar = *(beg_tstr + 6);
-            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}'))
+            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}')) {
+                beg_tstr++;
                 continue;
+            }
             /* we have found a true 'temper' */
             /* set the global variable */
             expr_w_temper = TRUE;
@@ -6339,7 +6344,7 @@ inp_fix_temper_in_param(struct line *deck)
                 case 0:
                     /* in state 0 we are looking for the first character of a variable name,
                        which has to be an alphabetic character. */
-                    if (*chp >= 'a' && *chp <= 'z')
+                    if (isalpha(*chp))
                     {
                         state = 1;
                         var_name = chp;
@@ -6347,11 +6352,9 @@ inp_fix_temper_in_param(struct line *deck)
                     break;
                 case 1:
                     /* In state 1 we are looking for the last character of a variable name.
-                       The variable name consists of alphanumeric characters and _ .
-                       What about the Special characters to be found elsewhere:
-                       ~ ! @ # $ % & _ ? | . ;
-                       Numparam only aknowledges _ */
-                    state = (*chp >= 'a' && *chp <= 'z') || (*chp == '_') || (*chp >= '0' && *chp <= '9');
+                       The variable name consists of alphanumeric characters and special characters,
+                       which are defined above as VALIDCHARS. */
+                    state = (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
                     if (!state) {
                         ch = *chp;
                         *chp = 0;
