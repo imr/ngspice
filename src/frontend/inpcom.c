@@ -6292,9 +6292,8 @@ inp_fix_temper_in_param(struct line *deck)
         for (; card; card = card->li_next) {
 
             char *new_str = NULL; /* string we assemble here */
-            char *curr_str;/* where we are in curr_line */
             char *curr_line = card->li_line;
-            char * new_tmp_str, *tmp_str, *beg_str;
+            char * new_tmp_str, *tmp_str;
             /* Some new variables... */
             char *chp;
             char *chp_start;
@@ -6332,8 +6331,6 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
             if (sub_count[subckt_depth] != new_func->subckt_count)
                 continue;
-
-            beg_str = curr_str = curr_line;
 
             /* This is the new code - it finds each variable name and checks it against new_func->funcname */
             for (state = 0, var_name = chp_start = chp = curr_line; *chp; chp++) {
