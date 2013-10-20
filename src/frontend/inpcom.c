@@ -3894,8 +3894,23 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 beg = str_ptr - 1;
                 end = str_ptr + strlen(param_names[i]);
                 if ((isspace(*beg) || *beg == '=') &&
-                    (isspace(*end) || *end == '\0' || *end == ')'))
-                { /* ')' added, any risks? h_vogt */
+                    (isspace(*end) || *end == '\0' || *end == ')')) {
+                    if (isspace(*beg)) {
+                        while (isspace(*beg))
+                            beg--;
+                        if (*beg != '{')
+                            beg++;
+                        str_ptr = beg;
+                    }
+                    if (isspace(*end)) {
+                        /* possible case: "{  length }" -> {length} */
+                        while (*end && isspace(*end))
+                            end++;
+                        if (*end == '}')
+                            end++;
+                        else
+                            end--;
+                    }
                     *str_ptr = '\0';
                     if (*end != '\0') {
                         new_str = TMALLOC(char, strlen(curr_line) + strlen(param_names[i]) + strlen(end) + 3);
