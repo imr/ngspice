@@ -227,61 +227,52 @@ find_section_definition(struct line *c, char *name)
 }
 
 
-static bool
+static struct library *
 read_a_lib(char *y, int call_depth, char *dir_name)
 {
-    char *copyy = NULL;
+    bool dir_name_flag = FALSE;
+    FILE *newfp;
 
-    if (*y == '~') {
-        copyy = cp_tildexpand(y); /* allocates memory, but can also return NULL */
-        if (copyy)
-            y = copyy; /* reuse y, but remember, buffer still points to allocated memory */
-    }
+    struct library *lib;
 
-    if (!find_lib(y)) {
+    lib = find_lib(y);
+    if (lib)
+        return lib;
 
-        struct library *lib;
+    newfp = inp_pathopen(y, "r");
+    if (!newfp) {
+        char big_buff2[5000];
 
-        bool dir_name_flag = FALSE;
-        FILE *newfp = inp_pathopen(y, "r");
+        if (dir_name)
+            sprintf(big_buff2, "%s/%s", dir_name, y);
+        else
+            sprintf(big_buff2, "./%s", y);
 
+        newfp = inp_pathopen(big_buff2, "r");
         if (!newfp) {
-            char big_buff2[5000];
-
-            if (dir_name)
-                sprintf(big_buff2, "%s/%s", dir_name, y);
-            else
-                sprintf(big_buff2, "./%s", y);
-
-            newfp = inp_pathopen(big_buff2, "r");
-            if (!newfp) {
-                fprintf(cp_err, "Error: Could not find library file %s\n", y);
-                tfree(copyy); /* allocated by the cp_tildexpand() above */
-                return FALSE;
-            }
-
-            dir_name_flag = TRUE;
+            fprintf(cp_err, "Error: Could not find library file %s\n", y);
+            return NULL;
         }
 
-        /* lib points to a new entry in global lib array libraries[N_LIBRARIES] */
-        lib = new_lib();
-
-        lib->name = strdup(y);
-
-        if (dir_name_flag == FALSE) {
-            char *y_dir_name = ngdirname(y);
-            lib->deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
-            tfree(y_dir_name);
-        } else {
-            lib->deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
-        }
-
-        fclose(newfp);
+        dir_name_flag = TRUE;
     }
 
-    tfree(copyy);   /* allocated by the cp_tildexpand() above */
+    /* lib points to a new entry in global lib array libraries[N_LIBRARIES] */
+    lib = new_lib();
 
-    return TRUE;
+    lib->name = strdup(y);
+
+    if (dir_name_flag == FALSE) {
+        char *y_dir_name = ngdirname(y);
+        lib->deck = inp_readall(newfp, call_depth+1, y_dir_name, FALSE, FALSE);
+        tfree(y_dir_name);
+    } else {
+        lib->deck = inp_readall(newfp, call_depth+1, dir_name, FALSE, FALSE);
+    }
+
+    fclose(newfp);
+
+    return lib;
 }
 
 /* remove all library entries from global libraries[] */
@@ -2510,14 +2501,7 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                         s = copys;
                 }
 
-                lib = find_lib(s);
-
-                if (!lib) {
-                    if(!read_a_lib(s, call_depth, dir_name))
-                        controlled_exit(EXIT_FAILURE);
-
-                    lib = find_lib(s);
-                }
+                lib = read_a_lib(s, call_depth, dir_name);
 
                 if (!lib) {
                     fprintf(stderr, "ERROR, library file %s not found\n", s);
@@ -2529,6 +2513,11 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                 if (!section_def) {
                     fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
                     controlled_exit(EXIT_FAILURE);
+                }
+
+                if (copys) {
+                    tfree(copys);   /* allocated by the cp_tildexpand() above */
+                    s = NULL;
                 }
 
                 /* insert the library section definition into `c' */
@@ -2561,7 +2550,6 @@ expand_section_references(struct line *c, int call_depth, char *dir_name)
                 *line = '*';  /* comment out .lib line */
                 *t = keep_char1;
                 *z = keep_char2;
-                /* FIXME, copys not freed ?! */
             }
         }
     }
