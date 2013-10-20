@@ -2050,13 +2050,13 @@ inp_casefix(char *string)
 static void
 inp_stripcomments_deck(struct line *c, bool cf)
 {
-	bool found_control = FALSE;
+    bool found_control = FALSE;
     for (; c; c = c->li_next) {
         /* exclude lines between .control and .endc from removing white spaces */
-		if (ciprefix(".control", c->li_line))
-			found_control = TRUE;
-		if (ciprefix(".endc", c->li_line))
-			found_control = FALSE;
+        if (ciprefix(".control", c->li_line))
+            found_control = TRUE;
+        if (ciprefix(".endc", c->li_line))
+            found_control = FALSE;
         inp_stripcomments_line(c->li_line, found_control|cf);
     }
 }
@@ -2097,12 +2097,12 @@ inp_stripcomments_line(char *s, bool cs)
         d++;
         if (*d == ';') {
             break;
-		} else if (!cs && (c == '$')) { /* outside of .control section */
+        } else if (!cs && (c == '$')) { /* outside of .control section */
             /* The character before '&' has to be ',' or ' ' or tab.
                A valid numerical expression directly before '$' is not yet supported. */
             if ((d - 2 >= s) && ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
                 d--;
-			    break;
+                break;
             }
         } else if (cs && (c == '$') && (*d == ' ')) {/* inside of .control section or command file */
             d--;                /* move d back to first comment character */
