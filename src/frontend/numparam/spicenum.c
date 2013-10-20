@@ -472,8 +472,7 @@ nupa_init(char *srcfile)
 }
 
 
-/* free dicoS (called from do_measure() in measure.c or
-   immediately from inp_spsource() in inp.c) */
+/* free dicoS (called from com_remcirc()) */
 void
 nupa_del_dicoS(void)
 {
@@ -594,6 +593,11 @@ nupa_list_params(FILE *cp_out)
     NGHASHPTR htable_p;         /* current hash table */
 
     dico_p = dicoS;
+    if (dico_p == NULL) {
+        fprintf(cp_err, "\nWarning: No symbol table available for 'listing param'\n");
+        return;
+    }
+
     fprintf(cp_out, "\n\n");
 
     /* -----------------------------------------------------------------

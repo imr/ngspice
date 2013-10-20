@@ -666,11 +666,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             prev_card = dd;
         }  //end of for-loop
 
-        /* If we don't have .meas lines, we free the dicoS structure now.
-           If we have .meas lines, dicoS is freed in do_measure() */
-        if (ft_curckt && !ft_curckt->ci_meas)
-            nupa_del_dicoS();
-
         /* set temperature, if defined, to new value.
            cp_vset will set the variable "temp" and also set CKTtemp,
            so we can do it only here because the circuit has to be already there */

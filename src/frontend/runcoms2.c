@@ -23,6 +23,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "plotting/graf.h"
 #include "spiceif.h"
 #include "outitf.h"
+#include "numparam/numpaif.h"
 
 #include "ngspice/inpdefs.h"
 
@@ -215,6 +216,9 @@ com_remcirc(wordlist *wl)
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
     }
+
+    /* delete numparam data structure dicoS */
+    nupa_del_dicoS();
 
     dbfree(ft_curckt->ci_dbs);
     ft_curckt->ci_dbs = NULL;

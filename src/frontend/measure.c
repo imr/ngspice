@@ -431,9 +431,6 @@ do_measure(
 
     txfree(an_name);
 
-    /* numparam data structure dicoS is no longer needed */
-    nupa_del_dicoS();
-
     fflush(stdout);
 
     return(measures_passed);
