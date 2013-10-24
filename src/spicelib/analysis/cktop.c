@@ -228,7 +228,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
         }
     }
 
-    ckt->CKTdiagGmin = ckt->CKTgshunt;
+//    ckt->CKTdiagGmin = ckt->CKTgshunt;
     FREE (OldRhsOld);
     FREE (OldCKTstate0);
 

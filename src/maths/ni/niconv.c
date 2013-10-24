@@ -111,7 +111,7 @@ NIconvTest (CKTcircuit *ckt)
 
                 return 1 ;
             }
-        } else {
+        } else if ((node->type == SP_CURRENT) && (!ckt->CKTnodeIsLinear [i])) {
             new = ckt->CKTrhs [i] ;
             old = ckt->CKTrhsOld [i] ;
             tol = ckt->CKTreltol * (MAX (fabs (old), fabs (new))) + ckt->CKTabstol ;
