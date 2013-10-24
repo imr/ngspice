@@ -10,6 +10,11 @@ Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 #include <pwd.h>
 #endif
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#undef BOOLEAN
+#include <windows.h> /* win32 functions */
+#include "Shlobj.h"  /* SHGetFolderPath */
+#endif
 
 /* XXX To prevent a name collision with `readline's `tilde_expand',
    the original name: `tilde_expand' has changed to `tildexpand'. This
@@ -28,6 +33,9 @@ tildexpand(char *string)
 #ifdef HAVE_PWD_H
     char buf[BSIZE_SP];
     char *k, c;
+#endif
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    char buf2[BSIZE_SP];
 #endif
     char *result = NULL;
 
@@ -82,6 +90,18 @@ tildexpand(char *string)
        /* Emulate the old behavior to prevent side effects. -- ro */
        return copy(string);
     }
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    else if(SUCCEEDED(SHGetFolderPath(NULL,
+                             CSIDL_PERSONAL,
+                             NULL,
+                             0,
+                             buf2)))
+    {
+        if (*string)
+            strcat(buf2, string);
+        return copy(buf2);
+    }
+#endif
     return NULL;
 #endif
 }
