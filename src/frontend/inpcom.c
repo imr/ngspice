@@ -982,6 +982,18 @@ inp_pathopen(char *name, char *mode)
     char buf[BSIZE_SP];
     struct variable *v;
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+
+    /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
+    if (cp_getvar("mingwpath", CP_BOOL, NULL) && name[0] == DIR_TERM_LINUX && isalpha(name[1]) && name[2] == DIR_TERM_LINUX) {
+        strcpy(buf, name);
+        buf[0] = buf[1];
+        buf[1] = ':';
+        return inp_pathopen(buf, mode);
+    }
+
+#endif
+
     /* just try it */
     if ((fp = fopen(name, mode)) != NULL)
         return fp;
