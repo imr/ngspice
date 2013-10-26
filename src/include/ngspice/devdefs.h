@@ -116,6 +116,8 @@ typedef struct SPICEdev {
     /* Francesco Lannutti */
     int (*DEVnodeIsNonLinear)(GENmodel *, CKTcircuit *) ;
         /* Routine to declare a node as NonLinear */
+    int (*DEVloadKCL)(GENmodel *, CKTcircuit *) ;
+        /* Routine to load currents for KCL */
 #endif
 
 } SPICEdev;  /* instance of structure for each possible type of device */

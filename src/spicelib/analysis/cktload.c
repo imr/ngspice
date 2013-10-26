@@ -198,3 +198,20 @@ ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum)
 
     return currents;
 }
+
+int
+CKTloadKCL (CKTcircuit *ckt)
+{
+/*    for (i = 0 ; i < DEVmaxnum ; i++)
+    {
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i])
+        {
+            error = DEVices[i]->DEVload (ckt->CKThead[i], ckt) ;
+            if (error)
+                return (error) ;
+        }
+    }*/
+    DEVices[10]->DEVloadKCL (ckt->CKThead[10], ckt) ;
+
+    return (OK) ;
+}

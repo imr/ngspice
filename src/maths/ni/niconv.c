@@ -26,6 +26,7 @@ NIconvTest (CKTcircuit *ckt)
 
 #ifdef KIRCHHOFF
     double maximum ;
+    int error ;
     CKTmkCurKCLnode *ptr ;
 
 #ifdef STEPDEBUG
@@ -47,11 +48,11 @@ NIconvTest (CKTcircuit *ckt)
 #endif /* STEPDEBUG */
 #endif
 
+#ifdef KIRCHHOFF
     for (i = 1 ; i <= size ; i++)
     {
         node = node->next ;
 
-#ifdef KIRCHHOFF
         if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]))
         {
             new = ckt->CKTrhs [i] ;
@@ -70,10 +71,35 @@ NIconvTest (CKTcircuit *ckt)
 		ckt->CKTtroubleElt = NULL ;
                 return 1 ;
             }
+        } else if ((node->type == SP_CURRENT) && (!ckt->CKTnodeIsLinear [i])) {
+            new = ckt->CKTrhs [i] ;
+            old = ckt->CKTrhsOld [i] ;
+            tol = ckt->CKTreltol * (MAX (fabs (old), fabs (new))) + ckt->CKTabstol ;
+            if (fabs (new - old) > tol)
+            {
 
+#ifdef STEPDEBUG
+                fprintf (err, " non-convergence at node (type=%d) %s (fabs(new-old)>tol --> fabs(%g-%g)>%g)\n",
+                         node->type, CKTnodName (ckt, i), new, old, tol) ;
+		fprintf (err, "    reltol: %g    abstol: %g   (tol=reltol*(MAX(fabs(old),fabs(new))) + abstol)\n", ckt->CKTreltol, ckt->CKTabstol) ;
+#endif /* STEPDEBUG */
 
-            /* KCL Verification */
+		ckt->CKTtroubleNode = i ;
+		ckt->CKTtroubleElt = NULL ;
+                return 1 ;
+            }
+        }
+    }
 
+    /* KCL Verification */
+    error = CKTloadKCL (ckt) ;
+    node = ckt->CKTnodes ;
+    for (i = 1 ; i <= size ; i++)
+    {
+        node = node->next ;
+
+        if ((node->type == SP_VOLTAGE) && (!ckt->CKTnodeIsLinear [i]))
+        {
             maximum = 0 ;
             ptr = ckt->CKTmkCurKCLarray [i] ;
 
@@ -111,25 +137,12 @@ NIconvTest (CKTcircuit *ckt)
 
                 return 1 ;
             }
-        } else if ((node->type == SP_CURRENT) && (!ckt->CKTnodeIsLinear [i])) {
-            new = ckt->CKTrhs [i] ;
-            old = ckt->CKTrhsOld [i] ;
-            tol = ckt->CKTreltol * (MAX (fabs (old), fabs (new))) + ckt->CKTabstol ;
-            if (fabs (new - old) > tol)
-            {
-
-#ifdef STEPDEBUG
-                fprintf (err, " non-convergence at node (type=%d) %s (fabs(new-old)>tol --> fabs(%g-%g)>%g)\n",
-                         node->type, CKTnodName (ckt, i), new, old, tol) ;
-		fprintf (err, "    reltol: %g    abstol: %g   (tol=reltol*(MAX(fabs(old),fabs(new))) + abstol)\n", ckt->CKTreltol, ckt->CKTabstol) ;
-#endif /* STEPDEBUG */
-
-		ckt->CKTtroubleNode = i ;
-		ckt->CKTtroubleElt = NULL ;
-                return 1 ;
-            }
         }
+    }
 #else
+    for (i = 1 ; i <= size ; i++)
+    {
+        node = node->next ;
         new = ckt->CKTrhs [i] ;
         old = ckt->CKTrhsOld [i] ;
         if (node->type == SP_VOLTAGE)
@@ -164,9 +177,8 @@ NIconvTest (CKTcircuit *ckt)
                 return 1 ;
             }
         }
-#endif /* KIRCHHOFF */
-
     }
+#endif /* KIRCHHOFF */
 
 #ifdef KIRCHHOFF
     return 0 ;

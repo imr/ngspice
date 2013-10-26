@@ -30,7 +30,7 @@ libbsim4_la_SOURCES =	\
 
 
 if KIRCHHOFF_WANTED
-libbsim4_la_SOURCES += b4node.c
+libbsim4_la_SOURCES += b4node.c b4ldKCL.c
 endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

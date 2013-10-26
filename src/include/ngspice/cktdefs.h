@@ -302,6 +302,7 @@ struct CKTcircuit {
 
 #ifdef KIRCHHOFF
 extern int CKTmkCurKCL (CKTcircuit *, int, double **) ;
+extern int CKTloadKCL (CKTcircuit *) ;
 #endif
 
 extern int ACan(CKTcircuit *, int);

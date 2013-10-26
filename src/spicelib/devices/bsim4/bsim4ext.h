@@ -31,4 +31,5 @@ extern int BSIM4unsetup(GENmodel*,CKTcircuit*);
 
 #ifdef KIRCHHOFF
 extern int BSIM4nodeIsNonLinear (GENmodel *, CKTcircuit *) ;
+extern int BSIM4loadKCL (GENmodel *, CKTcircuit *) ;
 #endif
