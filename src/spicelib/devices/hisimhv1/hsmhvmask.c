@@ -1850,6 +1850,25 @@ int HSMHVmAsk(
     value->rValue = model->HSMHV_pvover;
     return(OK);
 
+  case HSMHV_MOD_VGS_MAX:
+      value->rValue = model->HSMHVvgsMax;
+      return(OK);
+  case HSMHV_MOD_VGD_MAX:
+      value->rValue = model->HSMHVvgdMax;
+      return(OK);
+  case HSMHV_MOD_VGB_MAX:
+      value->rValue = model->HSMHVvgbMax;
+      return(OK);
+  case HSMHV_MOD_VDS_MAX:
+      value->rValue = model->HSMHVvdsMax;
+      return(OK);
+  case HSMHV_MOD_VBS_MAX:
+      value->rValue = model->HSMHVvbsMax;
+      return(OK);
+  case HSMHV_MOD_VBD_MAX:
+      value->rValue = model->HSMHVvbdMax;
+      return(OK);
+
   default:
     return(E_BADPARM);
   }

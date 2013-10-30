@@ -5937,6 +5937,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvsoachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvtemp.c"
 				>
 			</File>

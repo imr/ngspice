@@ -718,7 +718,14 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("prdvg11", HSMHV_MOD_PRDVG11, IF_REAL, "Cross-term dependence of rdvg11"),
   IOP("prs", HSMHV_MOD_PRS, IF_REAL, "Cross-term dependence of rs"),
   IOP("prth0", HSMHV_MOD_PRTH0, IF_REAL, "Cross-term dependence of rth0"),
-  IOP("pvover", HSMHV_MOD_PVOVER, IF_REAL, "Cross-term dependence of vover")
+  IOP("pvover", HSMHV_MOD_PVOVER, IF_REAL, "Cross-term dependence of vover"),
+
+  IOP("vgs_max", HSMHV_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
+  IOP("vgd_max", HSMHV_MOD_VGD_MAX, IF_REAL, "maximum voltage G-D branch"),
+  IOP("vgb_max", HSMHV_MOD_VGB_MAX, IF_REAL, "maximum voltage G-B branch"),
+  IOP("vds_max", HSMHV_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
+  IOP("vbs_max", HSMHV_MOD_VBS_MAX, IF_REAL, "maximum voltage B-S branch"),
+  IOP("vbd_max", HSMHV_MOD_VBD_MAX, IF_REAL, "maximum voltage B-D branch")
 
 };
 

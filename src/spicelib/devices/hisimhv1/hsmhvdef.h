@@ -1549,6 +1549,13 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_qme12 ;
   double HSMHV_ktnom ;
 
+  double HSMHVvgsMax;
+  double HSMHVvgdMax;
+  double HSMHVvgbMax;
+  double HSMHVvdsMax;
+  double HSMHVvbsMax;
+  double HSMHVvbdMax;
+
   HSMHVmodelMKSParam modelMKS ; /* unit-converted parameters */
 
 
@@ -2174,6 +2181,13 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_prs_Given :1;
   unsigned HSMHV_prth0_Given :1;
   unsigned HSMHV_pvover_Given :1;
+
+  unsigned  HSMHVvgsMaxGiven  :1;
+  unsigned  HSMHVvgdMaxGiven  :1;
+  unsigned  HSMHVvgbMaxGiven  :1;
+  unsigned  HSMHVvdsMaxGiven  :1;
+  unsigned  HSMHVvbsMaxGiven  :1;
+  unsigned  HSMHVvbdMaxGiven  :1;
 
 } HSMHVmodel;
 
@@ -2926,6 +2940,12 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_TCJBDSWG      96   
 #define HSMHV_MOD_TCJBSSWG      97   
 
+#define HSMHV_MOD_VGS_MAX            4001
+#define HSMHV_MOD_VGD_MAX            4002
+#define HSMHV_MOD_VGB_MAX            4003
+#define HSMHV_MOD_VDS_MAX            4004
+#define HSMHV_MOD_VBS_MAX            4005
+#define HSMHV_MOD_VBD_MAX            4006
 
 #include "hsmhvext.h"
 

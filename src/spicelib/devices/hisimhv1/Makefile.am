@@ -27,6 +27,7 @@ libhisimhv1_la_SOURCES = hisimhv.h	\
 			hsmhvpar.c 	\
 			hsmhvpzld.c 	\
 			hsmhvset.c 	\
+			hsmhvsoachk.c 	\
 			hsmhvtemp.c 	\
 			hsmhvtemp_eval.h \
 			hsmhvtrunc.c

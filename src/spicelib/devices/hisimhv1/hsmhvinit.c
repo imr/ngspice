@@ -65,7 +65,7 @@ SPICEdev HSMHVinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ HSMHVnoise,
- /* DEVsoaCheck   */ NULL,
+ /* DEVsoaCheck   */ HSMHVsoaCheck,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
