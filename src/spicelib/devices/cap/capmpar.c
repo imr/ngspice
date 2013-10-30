@@ -70,6 +70,10 @@ CAPmParam(int param, IFvalue *value, GENmodel *inModel)
         mod->CAPthick = value->rValue;
         mod->CAPthickGiven = TRUE;
         break;
+    case CAP_MOD_BV_MAX:
+        mod->CAPbv_max = value->rValue;
+        mod->CAPbv_maxGiven = TRUE;
+        break;
     case CAP_MOD_C:
         /* just being reassured by the user that we are a capacitor */
         /* no-op */

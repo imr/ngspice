@@ -22,6 +22,7 @@ IFparm CAPpTable[] = { /* parameters */
     IOPU( "m",           CAP_M,               IF_REAL, "Parallel multiplier"),
     IOPU( "tc1",         CAP_TC1,             IF_REAL, "First order temp. coefficient"),
     IOPU( "tc2",         CAP_TC2,             IF_REAL, "Second order temp. coefficient"),
+    IOP(  "bv_max",      CAP_BV_MAX,          IF_REAL, "maximum voltage over capacitance"),
     IOPU( "scale",       CAP_SCALE,           IF_REAL, "Scale factor"),
     IP(   "sens_cap",    CAP_CAP_SENS,        IF_FLAG, "flag to request sens. WRT cap."),
     OP(   "i",           CAP_CURRENT,         IF_REAL, "Device current"),
@@ -53,6 +54,7 @@ IFparm CAPmPTable[] = { /* names of model parameters */
     IOPXU("tnom",   CAP_MOD_TNOM,     IF_REAL, "Parameter measurement temperature"),
     IOPA( "di",     CAP_MOD_DI,       IF_REAL, "Relative dielectric constant"),
     IOPA( "thick",  CAP_MOD_THICK,    IF_REAL, "Insulator thickness"),
+    IOP(  "bv_max", CAP_MOD_BV_MAX,   IF_REAL, "maximum voltage over capacitance"),
     IP( "c",        CAP_MOD_C,        IF_FLAG, "Capacitor model")
 };
 

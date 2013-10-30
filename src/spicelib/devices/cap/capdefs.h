@@ -37,6 +37,7 @@ typedef struct sCAPinstance {
     double CAPm;        /* parallel multiplier */
     double CAPtc1;      /* first temperature coefficient of capacitors */
     double CAPtc2;      /* second temperature coefficient of capacitors */
+    double CAPbv_max;   /* Maximum capacitor voltage */
 
     double *CAPposPosptr;    /* pointer to sparse matrix diagonal at
                               * (positive,positive) */
@@ -56,6 +57,7 @@ typedef struct sCAPinstance {
     unsigned CAPmGiven      : 1;   /* flag to indicate parallel multiplier given */
     unsigned CAPtc1Given    : 1;    /* flag indicates tc1 was specified */
     unsigned CAPtc2Given    : 1;    /* flag indicates tc2 was specified */
+    unsigned CAPbv_maxGiven : 1;    /* flags indicates maximum voltage is given */
     int    CAPsenParmNo;         /* parameter # for sensitivity use;
                 set equal to  0 if not a design parameter*/
 
@@ -91,6 +93,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     double CAPdel;        /* amount by which length and width are less than drawn */
     double CAPdi;         /* Relative dielectric constant */
     double CAPthick;      /* Insulator thickness */
+    double CAPbv_max;     /* Maximum capacitor voltage */
     unsigned CAPmCapGiven      : 1;    /* flag indicates default capacitance given */
     unsigned CAPcjGiven        : 1;    /* Unit Area Capacitance ( F/ M**2 ) */
     unsigned CAPcjswGiven      : 1;    /* Unit Length Sidewall Capacitance( F/M )*/
@@ -104,6 +107,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     unsigned CAPtc2Given       : 1;    /* flag indicates tc2 was specified */
     unsigned CAPdiGiven        : 1;    /* flag indicates epsilon-ins given */
     unsigned CAPthickGiven     : 1;    /* flags indicates insulator thickness given */
+    unsigned CAPbv_maxGiven    : 1;    /* flags indicates maximum voltage is given */
 
 } CAPmodel;
 
@@ -121,6 +125,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAP_M 11
 #define CAP_TC1 12
 #define CAP_TC2 13
+#define CAP_BV_MAX 14
 
 /* model parameters */
 #define CAP_MOD_CJ 101
@@ -137,6 +142,7 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAP_MOD_THICK 112
 #define CAP_MOD_CAP 113
 #define CAP_MOD_DEFLENGTH 114
+#define CAP_MOD_BV_MAX 115
 
 /* device questions */
 #define CAP_QUEST_SENS_REAL      201

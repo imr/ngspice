@@ -23,6 +23,7 @@ libcap_la_SOURCES =	\
 	capsacl.c	\
 	capsetup.c	\
 	capsload.c	\
+	capsoachk.c	\
 	capsprt.c	\
 	capsset.c	\
 	capsupd.c	\

@@ -64,6 +64,9 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->CAPthickGiven) {
             model->CAPthick = 0.0;
         }
+        if (!model->CAPbv_maxGiven) {
+            model->CAPbv_max = 1e99;
+        }
 
         if (!model->CAPcjGiven) {
             if((model->CAPthickGiven)
@@ -91,6 +94,9 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             /* Default Value Processing for Capacitor Instance */
             if (!here->CAPlengthGiven) {
                 here->CAPlength = 0;
+            }
+            if (!here->CAPbv_maxGiven) {
+                here->CAPbv_max = model->CAPbv_max;
             }
 
             here->CAPqcap = *states;

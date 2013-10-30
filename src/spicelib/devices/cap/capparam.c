@@ -73,6 +73,10 @@ CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         here->CAPtc2 = value->rValue;
         here->CAPtc2Given = TRUE;
         break;
+    case CAP_BV_MAX:
+        here->CAPbv_max = value->rValue;
+        here->CAPbv_maxGiven = TRUE;
+        break;
     default:
         return(E_BADPARM);
     }

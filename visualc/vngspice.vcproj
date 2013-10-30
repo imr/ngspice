@@ -4517,6 +4517,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\cap\capsoachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\cap\capsprt.c"
 				>
 			</File>

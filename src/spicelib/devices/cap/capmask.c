@@ -63,6 +63,9 @@ CAPmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     case CAP_MOD_THICK:
         value->rValue = here->CAPthick;
         return(OK);
+    case CAP_MOD_BV_MAX:
+        value->rValue = here->CAPbv_max;
+        return(OK);
     default:
         return(E_BADPARM);
     }

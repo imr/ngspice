@@ -48,6 +48,9 @@ CAPask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case CAP_SCALE:
             value->rValue = here->CAPscale;
             return(OK);
+	case CAP_BV_MAX:
+	    value->rValue = here->CAPbv_max;
+	    return(OK);
         case CAP_M:
             value->rValue = here->CAPm;
             return(OK);
