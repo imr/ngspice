@@ -1103,6 +1103,13 @@ IOP( "pngidl", B4SOI_MOD_PNGIDL, IF_REAL, "Cross-term dependence of ngidl"),
 
 /* Added for binning - END */
 
+IOP("vgs_max", B4SOI_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
+IOP("vgd_max", B4SOI_MOD_VGD_MAX, IF_REAL, "maximum voltage G-D branch"),
+IOP("vgb_max", B4SOI_MOD_VGB_MAX, IF_REAL, "maximum voltage G-B branch"),
+IOP("vds_max", B4SOI_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
+IOP("vbs_max", B4SOI_MOD_VBS_MAX, IF_REAL, "maximum voltage B-S branch"),
+IOP("vbd_max", B4SOI_MOD_VBD_MAX, IF_REAL, "maximum voltage B-D branch"),
+
 IP( "nmos", B4SOI_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", B4SOI_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 };

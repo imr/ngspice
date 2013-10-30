@@ -2053,6 +2053,20 @@ B4SOIinstance **InstArray;
         if (!model->B4SOIlodeta0Given)
             model->B4SOIlodeta0 = 1.0;
 /* stress effect end */
+
+        if (!model->B4SOIvgsMaxGiven)
+            model->B4SOIvgsMax = 1e99;
+        if (!model->B4SOIvgdMaxGiven)
+            model->B4SOIvgdMax = 1e99;
+        if (!model->B4SOIvgbMaxGiven)
+            model->B4SOIvgbMax = 1e99;
+        if (!model->B4SOIvdsMaxGiven)
+            model->B4SOIvdsMax = 1e99;
+        if (!model->B4SOIvbsMaxGiven)
+            model->B4SOIvbsMax = 1e99;
+        if (!model->B4SOIvbdMaxGiven)
+            model->B4SOIvbdMax = 1e99;
+
         if (!model->B4SOIfdModGiven)
             model->B4SOIfdMod = 0;
         if (!model->B4SOIvsceGiven)

@@ -2800,6 +2800,25 @@ IFvalue *value)
             return(OK); /* v3.2 */
 /* Added for binning - END */
 
+        case B4SOI_MOD_VGS_MAX:
+            value->rValue = model->B4SOIvgsMax;
+            return(OK);
+        case B4SOI_MOD_VGD_MAX:
+            value->rValue = model->B4SOIvgdMax;
+            return(OK);
+        case B4SOI_MOD_VGB_MAX:
+            value->rValue = model->B4SOIvgbMax;
+            return(OK);
+        case B4SOI_MOD_VDS_MAX:
+            value->rValue = model->B4SOIvdsMax;
+            return(OK);
+        case B4SOI_MOD_VBS_MAX:
+            value->rValue = model->B4SOIvbsMax;
+            return(OK);
+        case B4SOI_MOD_VBD_MAX:
+            value->rValue = model->B4SOIvbdMax;
+            return(OK);
+
         default:
             return(E_BADPARM);
     }

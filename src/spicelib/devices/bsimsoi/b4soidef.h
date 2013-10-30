@@ -2107,6 +2107,19 @@ typedef struct sB4SOImodel
     unsigned  B4SOIwngidlGiven   :1;
     unsigned  B4SOIpngidlGiven   :1;
 
+    double B4SOIvgsMax;
+    double B4SOIvgdMax;
+    double B4SOIvgbMax;
+    double B4SOIvdsMax;
+    double B4SOIvbsMax;
+    double B4SOIvbdMax;
+    unsigned  B4SOIvgsMaxGiven  :1;
+    unsigned  B4SOIvgdMaxGiven  :1;
+    unsigned  B4SOIvgbMaxGiven  :1;
+    unsigned  B4SOIvdsMaxGiven  :1;
+    unsigned  B4SOIvbsMaxGiven  :1;
+    unsigned  B4SOIvbdMaxGiven  :1;
+
     struct b4soiSizeDependParam *pSizeDependParamKnot;
 
 #ifdef USE_OMP
@@ -4241,6 +4254,13 @@ typedef struct sB4SOImodel
 #define B4SOI_MOD_LNLX            2105
 #define B4SOI_MOD_WNLX            2106
 #define B4SOI_MOD_PNLX            2107
+
+#define B4SOI_MOD_VGS_MAX            2201
+#define B4SOI_MOD_VGD_MAX            2202
+#define B4SOI_MOD_VGB_MAX            2203
+#define B4SOI_MOD_VDS_MAX            2204
+#define B4SOI_MOD_VBS_MAX            2205
+#define B4SOI_MOD_VBD_MAX            2206
 
 #include "b4soiext.h"
 
