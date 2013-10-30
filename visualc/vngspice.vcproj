@@ -4217,6 +4217,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\bsim4v5\b4v5soachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\bsim4v5\b4v5temp.c"
 				>
 			</File>

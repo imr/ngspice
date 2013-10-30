@@ -1470,6 +1470,13 @@ typedef struct sBSIM4v5model
     double BSIM4v5af;  
     double BSIM4v5kf;  
 
+    double BSIM4v5vgsMax;
+    double BSIM4v5vgdMax;
+    double BSIM4v5vgbMax;
+    double BSIM4v5vdsMax;
+    double BSIM4v5vbsMax;
+    double BSIM4v5vbdMax;
+
     struct bsim4v5SizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
@@ -2191,6 +2198,13 @@ typedef struct sBSIM4v5model
     unsigned  BSIM4v5efGiven  :1;     
     unsigned  BSIM4v5afGiven  :1;     
     unsigned  BSIM4v5kfGiven  :1;     
+
+    unsigned  BSIM4v5vgsMaxGiven  :1;
+    unsigned  BSIM4v5vgdMaxGiven  :1;
+    unsigned  BSIM4v5vgbMaxGiven  :1;
+    unsigned  BSIM4v5vdsMaxGiven  :1;
+    unsigned  BSIM4v5vbsMaxGiven  :1;
+    unsigned  BSIM4v5vbdMaxGiven  :1;
 
     unsigned  BSIM4v5LintGiven   :1;
     unsigned  BSIM4v5LlGiven   :1;
@@ -3163,6 +3177,13 @@ typedef struct sBSIM4v5model
 #define BSIM4v5_MOD_RBSDBYL             1124
 #define BSIM4v5_MOD_RBSDBYW             1125
 #define BSIM4v5_MOD_RBSDBYNF            1126
+
+#define BSIM4v5_MOD_VGS_MAX            1201
+#define BSIM4v5_MOD_VGD_MAX            1202
+#define BSIM4v5_MOD_VGB_MAX            1203
+#define BSIM4v5_MOD_VDS_MAX            1204
+#define BSIM4v5_MOD_VBS_MAX            1205
+#define BSIM4v5_MOD_VBD_MAX            1206
 
 #include "bsim4v5ext.h"
 

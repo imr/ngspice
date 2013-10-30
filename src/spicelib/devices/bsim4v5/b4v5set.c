@@ -1567,6 +1567,19 @@ JOB   *job;
         if (!model->BSIM4v5kfGiven)
             model->BSIM4v5kf = 0.0;
 
+        if (!model->BSIM4v5vgsMaxGiven)
+            model->BSIM4v5vgsMax = 1e99;
+        if (!model->BSIM4v5vgdMaxGiven)
+            model->BSIM4v5vgdMax = 1e99;
+        if (!model->BSIM4v5vgbMaxGiven)
+            model->BSIM4v5vgbMax = 1e99;
+        if (!model->BSIM4v5vdsMaxGiven)
+            model->BSIM4v5vdsMax = 1e99;
+        if (!model->BSIM4v5vbsMaxGiven)
+            model->BSIM4v5vbsMax = 1e99;
+        if (!model->BSIM4v5vbdMaxGiven)
+            model->BSIM4v5vbdMax = 1e99;
+
         /* stress effect */
         if (!model->BSIM4v5sarefGiven)
             model->BSIM4v5saref = 1e-6; /* m */
