@@ -861,6 +861,13 @@ typedef struct sBSIM3model
     double BSIM3kf;
     double BSIM3lintnoi;  /* lint offset for noise calculation  */
 
+    double BSIM3vgsMax;
+    double BSIM3vgdMax;
+    double BSIM3vgbMax;
+    double BSIM3vdsMax;
+    double BSIM3vbsMax;
+    double BSIM3vbdMax;
+
     struct bsim3SizeDependParam *pSizeDependParamKnot;
 
 
@@ -1281,6 +1288,13 @@ typedef struct sBSIM3model
     unsigned  BSIM3afGiven  :1;
     unsigned  BSIM3kfGiven  :1;
     unsigned  BSIM3lintnoiGiven  :1;
+
+    unsigned  BSIM3vgsMaxGiven  :1;
+    unsigned  BSIM3vgdMaxGiven  :1;
+    unsigned  BSIM3vgbMaxGiven  :1;
+    unsigned  BSIM3vdsMaxGiven  :1;
+    unsigned  BSIM3vbsMaxGiven  :1;
+    unsigned  BSIM3vbdMaxGiven  :1;
 
     unsigned  BSIM3LintGiven   :1;
     unsigned  BSIM3LlGiven   :1;
@@ -1864,6 +1878,12 @@ typedef struct sBSIM3model
 #define BSIM3_CBDB                 792
 #define BSIM3_CBSB                 793
 
+#define BSIM3_MOD_VGS_MAX            801
+#define BSIM3_MOD_VGD_MAX            802
+#define BSIM3_MOD_VGB_MAX            803
+#define BSIM3_MOD_VDS_MAX            804
+#define BSIM3_MOD_VBS_MAX            805
+#define BSIM3_MOD_VBD_MAX            806
 
 #include "bsim3ext.h"
 

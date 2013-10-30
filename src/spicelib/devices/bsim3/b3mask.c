@@ -1283,6 +1283,26 @@ IFvalue *value)
         case BSIM3_MOD_KF:
             value->rValue = model->BSIM3kf;
             return(OK);
+
+        case BSIM3_MOD_VGS_MAX:
+            value->rValue = model->BSIM3vgsMax;
+            return(OK);
+        case BSIM3_MOD_VGD_MAX:
+            value->rValue = model->BSIM3vgdMax;
+            return(OK);
+        case BSIM3_MOD_VGB_MAX:
+            value->rValue = model->BSIM3vgbMax;
+            return(OK);
+        case BSIM3_MOD_VDS_MAX:
+            value->rValue = model->BSIM3vdsMax;
+            return(OK);
+        case BSIM3_MOD_VBS_MAX:
+            value->rValue = model->BSIM3vbsMax;
+            return(OK);
+        case BSIM3_MOD_VBD_MAX:
+            value->rValue = model->BSIM3vbdMax;
+            return(OK);
+
         default:
             return(E_BADPARM);
     }
