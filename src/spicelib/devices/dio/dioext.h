@@ -28,4 +28,5 @@ extern int DIOtrunc(GENmodel*,CKTcircuit*,double*);
 extern int DIOdisto(int,GENmodel*,CKTcircuit*);
 extern int DIOnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int DIOdSetup(DIOmodel*,CKTcircuit*);
+extern int DIOsoaCheck(CKTcircuit *, GENmodel *);
 

@@ -217,6 +217,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOtunEmissionCoeffGiven : 1;
     unsigned DIOtunSaturationCurrentExpGiven : 1;
     unsigned DIOtunEGcorrectionFactorGiven : 1;
+    unsigned DIOfv_maxGiven : 1;
+    unsigned DIObv_maxGiven : 1;
 
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
@@ -268,6 +270,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOtunEmissionCoeff; /* tunneling emission coefficient (NTUN) */
     double DIOtunSaturationCurrentExp; /* exponent for the tunneling current temperature (XTITUN) */
     double DIOtunEGcorrectionFactor; /* EG correction factor for tunneling (KEG) */
+    double DIOfv_max; /* maximum voltage in forward direction */
+    double DIObv_max; /* maximum voltage in reverse direction */
 
 } DIOmodel;
 
@@ -344,6 +348,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIO_MOD_NTUN 144
 #define DIO_MOD_XTITUN 145
 #define DIO_MOD_KEG 146
+#define DIO_MOD_FV_MAX 147
+#define DIO_MOD_BV_MAX 148
 
 #include "dioext.h"
 #endif /*DIO*/

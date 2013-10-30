@@ -104,6 +104,10 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "ib", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOP( "tcv", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),
+
+ IOP( "fv_max",   DIO_MOD_FV_MAX,  IF_REAL, "maximum voltage in forward direction"),
+ IOP( "bv_max",   DIO_MOD_BV_MAX,  IF_REAL, "maximum voltage in reverse direction"),
+
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
 };
 

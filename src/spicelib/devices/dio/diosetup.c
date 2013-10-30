@@ -153,6 +153,12 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOtunEGcorrectionFactorGiven) {
             model->DIOtunEGcorrectionFactor = 1.0;
         }
+        if(!model->DIOfv_maxGiven) {
+            model->DIOfv_max = 1e99;
+        }
+        if(!model->DIObv_maxGiven) {
+            model->DIObv_max = 1e99;
+        }
 
         /* loop through all the instances of the model */
         for (here = model->DIOinstances; here != NULL ;

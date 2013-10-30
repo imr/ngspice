@@ -201,6 +201,14 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOtunEGcorrectionFactor = value->rValue;
             model->DIOtunEGcorrectionFactorGiven = TRUE;
             break;
+        case DIO_MOD_FV_MAX:
+            model->DIOfv_max = value->rValue;
+            model->DIOfv_maxGiven = TRUE;
+            break;
+        case DIO_MOD_BV_MAX:
+            model->DIObv_max = value->rValue;
+            model->DIObv_maxGiven = TRUE;
+            break;
         case DIO_MOD_D:
             /* no action - we already know we are a diode, but this */
             /* makes life easier for spice-2 like parsers */

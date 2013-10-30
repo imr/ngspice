@@ -27,6 +27,7 @@ libdio_la_SOURCES =	\
 	diosacl.c	\
 	diosetup.c	\
 	diosload.c	\
+	diosoachk.c	\
 	diosprt.c	\
 	diosset.c	\
 	diosupd.c	\

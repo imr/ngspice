@@ -164,6 +164,12 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_KEG:
             value->rValue = model->DIOtunEGcorrectionFactor;
             return(OK);
+        case DIO_MOD_FV_MAX:
+            value->rValue = model->DIOfv_max;
+            return(OK);
+        case DIO_MOD_BV_MAX:
+            value->rValue = model->DIObv_max;
+            return(OK);
         default:
             return(E_BADPARM);
         }
