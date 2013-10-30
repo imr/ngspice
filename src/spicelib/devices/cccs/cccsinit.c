@@ -66,6 +66,7 @@ SPICEdev CCCSinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,	/* DISTO */
  /* DEVnoise      */ NULL,	/* NOISE */
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

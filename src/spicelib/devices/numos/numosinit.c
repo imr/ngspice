@@ -67,6 +67,7 @@ SPICEdev NUMOSinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ NULL,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NUMOSdump,
  /* DEVacct       */ NUMOSacct,

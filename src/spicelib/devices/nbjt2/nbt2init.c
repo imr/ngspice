@@ -67,6 +67,7 @@ SPICEdev NBJT2info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ NULL,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NBJT2dump,
  /* DEVacct       */ NBJT2acct,

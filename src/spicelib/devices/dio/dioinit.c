@@ -68,6 +68,7 @@ SPICEdev DIOinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ DIOdisto,
  /* DEVnoise      */ DIOnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

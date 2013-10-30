@@ -65,6 +65,7 @@ SPICEdev BSIM3v1info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,        
  /* DEVnoise      */ BSIM3v1noise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER    
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

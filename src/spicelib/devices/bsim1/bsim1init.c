@@ -67,6 +67,7 @@ SPICEdev B1info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ B1disto,
  /* DEVnoise      */ B1noise,	/* NOISE */
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

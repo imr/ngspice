@@ -102,6 +102,8 @@ typedef struct SPICEdev {
     	/* procedure to do distortion operations */
     int (*DEVnoise)(int, int, GENmodel*,CKTcircuit*, Ndata *, double *);
 	/* noise routine */
+    int (*DEVsoaCheck)(CKTcircuit*,GENmodel*);
+	/* subroutine to call on soa check */
 #ifdef CIDER 	
     void (*DEVdump)(GENmodel *, CKTcircuit *);
     void (*DEVacct)(GENmodel *, CKTcircuit *, FILE *);

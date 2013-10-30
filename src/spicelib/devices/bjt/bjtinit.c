@@ -67,6 +67,7 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ BJTdisto,
  /* DEVnoise      */ BJTnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump	  */ NULL,
  /* DEVacct       */ NULL,

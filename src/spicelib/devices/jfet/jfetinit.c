@@ -67,6 +67,7 @@ SPICEdev JFETinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ JFETdisto,
  /* DEVnoise      */ JFETnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

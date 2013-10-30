@@ -942,6 +942,7 @@ static void  write_SPICEdev(
     fprintf(fp, "NULL,          \n");  /* DEVsenTrunc */
     fprintf(fp, "NULL,          \n");  /* DEVdisto */
     fprintf(fp, "NULL,          \n");  /* DEVnoise */
+    fprintf(fp, "NULL,          \n");  /* DEVsoaCheck */
     fprintf(fp, "#ifdef CIDER   \n");  /* CIDER enhancements */
     fprintf(fp, "NULL,          \n");  /* DEVdump */
     fprintf(fp, "NULL,          \n");  /* DEVacct */

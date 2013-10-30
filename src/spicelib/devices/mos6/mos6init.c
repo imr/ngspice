@@ -67,6 +67,7 @@ SPICEdev MOS6info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL, /* Distortion routine */
  /* DEVnoise      */ NULL, /* Noise routine */
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

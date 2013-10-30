@@ -67,6 +67,7 @@ SPICEdev MESinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ MESdisto,
  /* DEVnoise      */ MESnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

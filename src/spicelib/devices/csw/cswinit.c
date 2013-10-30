@@ -69,6 +69,7 @@ SPICEdev CSWinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,	/* DISTO */
  /* DEVnoise      */ CSWnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

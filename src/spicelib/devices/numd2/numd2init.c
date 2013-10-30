@@ -67,6 +67,7 @@ SPICEdev NUMD2info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ NULL,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NUMD2dump,
  /* DEVacct       */ NUMD2acct,

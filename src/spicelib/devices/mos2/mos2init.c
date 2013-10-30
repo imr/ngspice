@@ -67,6 +67,7 @@ SPICEdev MOS2info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ MOS2disto,
  /* DEVnoise      */ MOS2noise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

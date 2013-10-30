@@ -66,6 +66,7 @@ SPICEdev B3SOIPDinfo = {
  /* DEVsenTrunc*/    NULL,
  /* DEVdisto*/       NULL,
  /* DEVnoise*/       B3SOIPDnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump*/        NULL,
  /* DEVacct*/        NULL,

@@ -67,6 +67,7 @@ SPICEdev MOS9info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ MOS9disto,
  /* DEVnoise      */ MOS9noise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

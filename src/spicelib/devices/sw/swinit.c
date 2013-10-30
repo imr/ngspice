@@ -68,6 +68,7 @@ SPICEdev SWinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL, /* DISTO */
  /* DEVnoise      */ SWnoise,
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

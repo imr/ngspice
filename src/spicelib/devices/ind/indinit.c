@@ -66,6 +66,7 @@ SPICEdev INDinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,	/* DISTO */
  /* DEVnoise      */ NULL,	/* NOISE */
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
@@ -135,6 +136,7 @@ SPICEdev MUTinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,	/* DISTO */
  /* DEVnoise      */ NULL,	/* NOISE */
+ /* DEVsoaCheck   */ NULL,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

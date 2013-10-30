@@ -88,6 +88,7 @@ SPICEdev $(module)info = {
     NULL,         /* DEVsenTrunc    */
     NULL,         /* DEVdisto       */
     NULL,         /* DEVnoise       */
+    NULL,         /* DEVsoaCheck    */
 #ifdef CIDER
     NULL,         /* DEVdump       */
     NULL,         /* DEVacct       */
