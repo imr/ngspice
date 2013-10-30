@@ -974,6 +974,13 @@ IOP( "ef", BSIM4v6_MOD_EF, IF_REAL, "Flicker noise frequency exponent"),
 IOP( "af", BSIM4v6_MOD_AF, IF_REAL, "Flicker noise exponent"),
 IOP( "kf", BSIM4v6_MOD_KF, IF_REAL, "Flicker noise coefficient"),
 
+IOP("vgs_max", BSIM4v6_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
+IOP("vgd_max", BSIM4v6_MOD_VGD_MAX, IF_REAL, "maximum voltage G-D branch"),
+IOP("vgb_max", BSIM4v6_MOD_VGB_MAX, IF_REAL, "maximum voltage G-B branch"),
+IOP("vds_max", BSIM4v6_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
+IOP("vbs_max", BSIM4v6_MOD_VBS_MAX, IF_REAL, "maximum voltage B-S branch"),
+IOP("vbd_max", BSIM4v6_MOD_VBD_MAX, IF_REAL, "maximum voltage B-D branch"),
+
 IP( "nmos", BSIM4v6_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM4v6_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 };

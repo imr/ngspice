@@ -67,7 +67,7 @@ SPICEdev BSIM4v6info = {
     NULL,          /* DEVsenTrunc    */
     NULL,          /* DEVdisto       */
     BSIM4v6noise,    /* DEVnoise       */
-    NULL,            /* DEVsoaCheck    */
+    BSIM4v6soaCheck,/* DEVsoaCheck    */
 #ifdef CIDER
     NULL,          /* DEVdump        */
     NULL,          /* DEVacct        */

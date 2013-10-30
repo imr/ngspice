@@ -1937,6 +1937,19 @@ BSIM4v6instance **InstArray;
         if (!model->BSIM4v6kfGiven)
             model->BSIM4v6kf = 0.0;
 
+        if (!model->BSIM4v6vgsMaxGiven)
+            model->BSIM4v6vgsMax = 1e99;
+        if (!model->BSIM4v6vgdMaxGiven)
+            model->BSIM4v6vgdMax = 1e99;
+        if (!model->BSIM4v6vgbMaxGiven)
+            model->BSIM4v6vgbMax = 1e99;
+        if (!model->BSIM4v6vdsMaxGiven)
+            model->BSIM4v6vdsMax = 1e99;
+        if (!model->BSIM4v6vbsMaxGiven)
+            model->BSIM4v6vbsMax = 1e99;
+        if (!model->BSIM4v6vbdMaxGiven)
+            model->BSIM4v6vbdMax = 1e99;
+
         /* stress effect */
         if (!model->BSIM4v6sarefGiven)
             model->BSIM4v6saref = 1e-6; /* m */
