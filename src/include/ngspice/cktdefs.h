@@ -282,6 +282,9 @@ struct CKTcircuit {
                                    contains only linear elements */
     unsigned int CKTnoopac:1; /* flag to indicate that OP will not be evaluated
                                  during AC simulation */
+    int CKTsoaCheck;    /* flag to indicate that in certain device models
+                           a safe operating area (SOA) check is executed */
+    int CKTsoaMaxWarns; /* specifies the maximum number of SOA warnings */
 
     NGHASHPTR DEVnameHash;
     NGHASHPTR MODnameHash;
@@ -314,6 +317,7 @@ extern int CKTdltNNum(CKTcircuit *, int);
 extern int CKTdltNod(CKTcircuit *, CKTnode *);
 extern int CKTdoJob(CKTcircuit *, int , TSKtask *);
 extern void CKTdump(CKTcircuit *, double, void *);
+extern int CKTsoaCheck(CKTcircuit *);
 #ifdef CIDER
 extern void NDEVacct(CKTcircuit *ckt, FILE *file);
 #endif /* CIDER */

@@ -4897,6 +4897,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\cktsoachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\analysis\cktsopt.c"
 				>
 			</File>

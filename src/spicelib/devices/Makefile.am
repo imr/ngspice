@@ -130,6 +130,7 @@ libdev_la_SOURCES =	\
 	cktcrte.c	\
 	cktfinddev.c	\
 	cktinit.c	\
+	cktsoachk.c	\
 	limit.c
 
 EXTRA_DIST = @NOTVLADEVDIR@

@@ -396,6 +396,9 @@ DCtran(CKTcircuit *ckt,
     /* check if current breakpoint is outdated; if so, clear */
     if (ckt->CKTtime > ckt->CKTbreaks[0]) CKTclrBreak(ckt);
 
+    if (ckt->CKTsoaCheck)
+        error = CKTsoaCheck(ckt);
+
     /*
  * Breakpoint handling scheme:
  * When a timepoint t is accepted (by CKTaccept), clear all previous

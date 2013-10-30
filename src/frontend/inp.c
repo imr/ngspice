@@ -767,6 +767,8 @@ inp_dodeck(
     bool noparse, ii;
     int print_listing;
     bool have_err = FALSE;
+    int warn;          /* whether SOA check should be performed */
+    int maxwarns = 0;  /* specifies the maximum number of SOA warnings */
     double startTime;
 
     /* First throw away any old error messages there might be and fix
@@ -858,6 +860,16 @@ inp_dodeck(
         cktislinear(ckt, deck);
     /* set some output terminal data */
     out_init();
+
+    if (cp_getvar("warn", CP_NUM, &warn))
+        ckt->CKTsoaCheck = warn;
+    else
+        ckt->CKTsoaCheck = 0;
+
+    if (cp_getvar("maxwarns", CP_NUM, &maxwarns))
+        ckt->CKTsoaMaxWarns = maxwarns;
+    else
+        ckt->CKTsoaMaxWarns = 5;
 
     ft_curckt->FTEstats->FTESTATdeckNumLines = 0;
     /*----------------------------------------------------

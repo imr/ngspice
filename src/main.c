@@ -102,6 +102,8 @@ char *ft_rawfile = "rawspice.raw";
  FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
 #endif
 
+FILE *slogp = NULL;          /* soa log file ('--soa-log file' command line option) */
+
 /* Frontend and circuit options */
 IFsimulator *ft_sim = NULL;
 
@@ -674,6 +676,7 @@ show_help(void)
        "  -p, --pipe                run in I/O pipe mode\n"
        "  -q, --completion          activate command completion\n"
        "  -r, --rawfile=FILE        set the rawfile output\n"
+       "      --soa-log=FILE        set the outputfile for SOA warnings\n"
        "  -s, --server              run spice as a server process\n"
        "  -t, --term=TERM           set the terminal type\n"
        "  -h, --help                display this help and exit\n"
@@ -793,6 +796,7 @@ int
 main(int argc, char **argv)
 {
     char log_file[BSIZE_SP];
+    char soa_log_file[BSIZE_SP];
     volatile bool readinit = TRUE;
     bool istty = TRUE;
     bool iflag = FALSE;
@@ -800,6 +804,7 @@ main(int argc, char **argv)
 
     FILE * volatile circuit_file;
     bool orflag = FALSE;
+    bool srflag = FALSE;
 
 #ifdef TRACE
     /* this is used to detect memory leaks during debugging */
@@ -859,6 +864,7 @@ main(int argc, char **argv)
 
     /* --- Process command line options --- */
     for(;;) {
+        enum { soa_log = 1001, };
 
         static struct option long_options[] = {
             {"help",         no_argument,       0, 'h'},
@@ -874,6 +880,7 @@ main(int argc, char **argv)
             {"rawfile",      required_argument, 0, 'r'},
             {"server",       no_argument,       0, 's'},
             {"terminal",     required_argument, 0, 't'},
+            {"soa-log",      required_argument, 0, soa_log},
             {0, 0, 0, 0}
         };
 
@@ -964,6 +971,13 @@ main(int argc, char **argv)
                   cp_vset("term", CP_STRING, optarg);
               break;
 
+            case soa_log:
+              if (optarg) {
+                  sprintf (soa_log_file, "%s", optarg);
+                  srflag = TRUE;
+              }
+              break;
+
             case '?':
               break;
 
@@ -1006,6 +1020,18 @@ main(int argc, char **argv)
         }
 #endif
     } /* orflag */
+
+    if (srflag) {   /* --soa-log option has been set */
+
+        fprintf(stdout, "\nSOA warnings go to log-file: %s\n", soa_log_file);
+
+        /* Open the soa log file */
+        slogp = fopen(soa_log_file, "w");
+        if (!slogp) {
+            perror (soa_log_file);
+            sp_shutdown (EXIT_BAD);
+        }
+    } /* srflag */
 
 #ifdef SIMULATOR
     if_getparam = spif_getparam_special;

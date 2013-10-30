@@ -477,6 +477,9 @@ resume:
 
         CKTdump(ckt,ckt->CKTtime,plot);
 
+        if (ckt->CKTsoaCheck)
+            error = CKTsoaCheck(ckt);
+
 #ifdef XSPICE
         if(g_ipc.enabled)
             ipc_send_data_suffix();
