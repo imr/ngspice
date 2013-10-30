@@ -58,6 +58,10 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
         model->RESfNexp = value->rValue;
         model->RESfNexpGiven = TRUE;
         break;
+    case RES_MOD_BV_MAX:
+        model->RESbv_max = value->rValue;
+        model->RESbv_maxGiven = TRUE;
+        break;
     case RES_MOD_R:
         if ( value->rValue > 1e-03 ) {
             model->RESres = value->rValue;

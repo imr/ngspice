@@ -74,6 +74,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         here->RESnoisy = value->iValue;
         here->RESnoisyGiven = TRUE;
         break;
+    case RES_BV_MAX:
+        here->RESbv_max = value->rValue;
+        here->RESbv_maxGiven = TRUE;
+        break;
     default:
         return(E_BADPARM);
     }

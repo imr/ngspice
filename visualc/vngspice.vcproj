@@ -7985,6 +7985,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\res\ressoachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\res\ressprt.c"
 				>
 			</File>

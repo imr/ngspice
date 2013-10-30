@@ -67,7 +67,7 @@ SPICEdev RESinfo = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ RESnoise,
- /* DEVsoaCheck   */ NULL,
+ /* DEVsoaCheck   */ RESsoaCheck,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

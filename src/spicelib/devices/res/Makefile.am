@@ -21,6 +21,7 @@ libres_la_SOURCES =	\
 	respzld.c	\
 	ressacl.c	\
 	ressetup.c	\
+	ressoachk.c	\
 	ressload.c	\
 	ressprt.c	\
 	ressset.c	\
