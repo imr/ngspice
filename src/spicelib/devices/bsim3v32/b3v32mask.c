@@ -1274,6 +1274,26 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3v32_MOD_KF:
             value->rValue = model->BSIM3v32kf;
             return(OK);
+
+        case BSIM3v32_MOD_VGS_MAX:
+            value->rValue = model->BSIM3v32vgsMax;
+            return(OK);
+        case BSIM3v32_MOD_VGD_MAX:
+            value->rValue = model->BSIM3v32vgdMax;
+            return(OK);
+        case BSIM3v32_MOD_VGB_MAX:
+            value->rValue = model->BSIM3v32vgbMax;
+            return(OK);
+        case BSIM3v32_MOD_VDS_MAX:
+            value->rValue = model->BSIM3v32vdsMax;
+            return(OK);
+        case BSIM3v32_MOD_VBS_MAX:
+            value->rValue = model->BSIM3v32vbsMax;
+            return(OK);
+        case BSIM3v32_MOD_VBD_MAX:
+            value->rValue = model->BSIM3v32vbdMax;
+            return(OK);
+
         default:
             return(E_BADPARM);
     }

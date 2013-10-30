@@ -902,6 +902,20 @@ IFuid tmpName;
             model->BSIM3v32af = 1.0;
         if (!model->BSIM3v32kfGiven)
             model->BSIM3v32kf = 0.0;
+
+        if (!model->BSIM3v32vgsMaxGiven)
+            model->BSIM3v32vgsMax = 1e99;
+        if (!model->BSIM3v32vgdMaxGiven)
+            model->BSIM3v32vgdMax = 1e99;
+        if (!model->BSIM3v32vgbMaxGiven)
+            model->BSIM3v32vgbMax = 1e99;
+        if (!model->BSIM3v32vdsMaxGiven)
+            model->BSIM3v32vdsMax = 1e99;
+        if (!model->BSIM3v32vbsMaxGiven)
+            model->BSIM3v32vbsMax = 1e99;
+        if (!model->BSIM3v32vbdMaxGiven)
+            model->BSIM3v32vbdMax = 1e99;
+
         /* loop through all the instances of the model */
         for (here = model->BSIM3v32instances; here != NULL ;
              here=here->BSIM3v32nextInstance)

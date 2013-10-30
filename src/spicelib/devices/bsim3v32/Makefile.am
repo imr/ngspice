@@ -19,6 +19,7 @@ libbsim3v32_la_SOURCES = \
 	b3v32par.c	\
 	b3v32pzld.c	\
 	b3v32set.c	\
+	b3v32soachk.c	\
 	b3v32temp.c	\
 	b3v32trunc.c	\
 	bsim3v32def.h	\
