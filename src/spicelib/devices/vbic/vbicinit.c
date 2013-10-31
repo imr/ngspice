@@ -72,7 +72,7 @@ SPICEdev VBICinfo = {
     NULL,         /* DEVsenTrunc    */
     NULL,         /* DEVdisto       */
     VBICnoise,    /* DEVnoise       */
-    NULL,         /* DEVsoaCheck    */
+    VBICsoaCheck, /* DEVsoaCheck    */
 #ifdef CIDER
     NULL,         /* DEVdump       */
     NULL,         /* DEVacct       */

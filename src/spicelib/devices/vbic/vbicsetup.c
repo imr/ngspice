@@ -369,6 +369,16 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICrefVersion = 0.0;
         }
 
+        if(!model->VBICvbeMaxGiven) {
+            model->VBICvbeMax = 1e99;
+        }
+        if(!model->VBICvbcMaxGiven) {
+            model->VBICvbcMax = 1e99;
+        }
+        if(!model->VBICvceMaxGiven) {
+            model->VBICvceMax = 1e99;
+        }
+
         /* loop through all the instances of the model */
         for (here = model->VBICinstances; here != NULL ;
                 here=here->VBICnextInstance) {

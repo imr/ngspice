@@ -8637,6 +8637,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\vbic\vbicsoachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\vbic\vbictemp.c"
 				>
 			</File>

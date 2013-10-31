@@ -354,6 +354,15 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_VREF:
             value->rValue = here->VBICrefVersion;
             return(OK);
+        case VBIC_MOD_VBE_MAX:
+            value->rValue = here->VBICvbeMax;
+            return(OK);
+        case VBIC_MOD_VBC_MAX:
+            value->rValue = here->VBICvbcMax;
+            return(OK);
+        case VBIC_MOD_VCE_MAX:
+            value->rValue = here->VBICvceMax;
+            return(OK);
         case VBIC_MOD_TYPE:
             if (here->VBICtype == NPN)
                 value->sValue = "npn";

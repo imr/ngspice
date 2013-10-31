@@ -183,7 +183,10 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("ebbe",  VBIC_MOD_EBBE,  IF_REAL, "exp(-VBBE/(NBBE*Vtv))"),
  IOP("dtemp", VBIC_MOD_DTEMP, IF_REAL, "Locale Temperature difference"),
  IOP("vers",  VBIC_MOD_VERS,  IF_REAL, "Revision Version"),
- IOP("vref",  VBIC_MOD_VREF,  IF_REAL, "Reference Version")
+ IOP("vref",  VBIC_MOD_VREF,  IF_REAL, "Reference Version"),
+ IOP("vbe_max", VBIC_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
+ IOP("vbc_max", VBIC_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
+ IOP("vce_max", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
 };
 
 char *VBICnames[] = {

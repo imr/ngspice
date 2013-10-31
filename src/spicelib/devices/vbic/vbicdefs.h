@@ -475,6 +475,10 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICemitterConduct;   /* emitter conductance */
     double VBICsubstrateConduct; /* substrate conductance */
 
+    double VBICvbeMax; /* maximum voltage over B-E junction */
+    double VBICvbcMax; /* maximum voltage over B-C junction */
+    double VBICvceMax; /* maximum voltage over C-E branch */
+
     unsigned VBICtnomGiven : 1;
     unsigned VBICextCollResistGiven : 1;
     unsigned VBICintCollResistGiven : 1;
@@ -585,6 +589,9 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBIClocTempDiffGiven : 1;
     unsigned VBICrevVersionGiven : 1;
     unsigned VBICrefVersionGiven : 1;
+    unsigned VBICvbeMaxGiven : 1;
+    unsigned VBICvbcMaxGiven : 1;
+    unsigned VBICvceMaxGiven : 1;
 } VBICmodel;
 
 #ifndef NPN
@@ -715,6 +722,9 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
 #define VBIC_MOD_DTEMP  210 
 #define VBIC_MOD_VERS   211
 #define VBIC_MOD_VREF   212
+#define VBIC_MOD_VBE_MAX 213
+#define VBIC_MOD_VBC_MAX 214
+#define VBIC_MOD_VCE_MAX 215
 
                               
 /* device questions */        

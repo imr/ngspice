@@ -482,6 +482,18 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICrefVersion = value->rValue;
             mods->VBICrefVersionGiven = TRUE;
             break;
+        case VBIC_MOD_VBE_MAX:
+            mods->VBICvbeMax = value->rValue;
+            mods->VBICvbeMaxGiven = TRUE;
+            break;
+        case VBIC_MOD_VBC_MAX:
+            mods->VBICvbcMax = value->rValue;
+            mods->VBICvbcMaxGiven = TRUE;
+            break;
+        case VBIC_MOD_VCE_MAX:
+            mods->VBICvceMax = value->rValue;
+            mods->VBICvceMaxGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

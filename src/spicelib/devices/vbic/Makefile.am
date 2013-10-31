@@ -23,6 +23,7 @@ libvbic_la_SOURCES =	\
 	vbicparam.c	\
 	vbicpzld.c	\
 	vbicsetup.c	\
+	vbicsoachk.c	\
 	vbictemp.c	\
 	vbictrunc.c
 
