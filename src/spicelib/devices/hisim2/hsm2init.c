@@ -65,7 +65,7 @@ SPICEdev HSM2info = {
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
  /* DEVnoise      */ HSM2noise,
- /* DEVsoaCheck   */ NULL,
+ /* DEVsoaCheck   */ HSM2soaCheck,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,

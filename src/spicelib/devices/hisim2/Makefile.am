@@ -27,6 +27,7 @@ libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2par.c	\
 			hsm2pzld.c	\
 			hsm2set.c	\
+			hsm2soachk.c	\
 			hsm2temp.c	\
 			hsm2trunc.c
 

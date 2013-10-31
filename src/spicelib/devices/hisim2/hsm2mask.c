@@ -1567,6 +1567,25 @@ int HSM2mAsk(
     value->rValue = model->HSM2_pibpc2;
     return(OK);
 
+  case HSM2_MOD_VGS_MAX:
+      value->rValue = model->HSM2vgsMax;
+      return(OK);
+  case HSM2_MOD_VGD_MAX:
+      value->rValue = model->HSM2vgdMax;
+      return(OK);
+  case HSM2_MOD_VGB_MAX:
+      value->rValue = model->HSM2vgbMax;
+      return(OK);
+  case HSM2_MOD_VDS_MAX:
+      value->rValue = model->HSM2vdsMax;
+      return(OK);
+  case HSM2_MOD_VBS_MAX:
+      value->rValue = model->HSM2vbsMax;
+      return(OK);
+  case HSM2_MOD_VBD_MAX:
+      value->rValue = model->HSM2vbdMax;
+      return(OK);
+
   default:
     return(E_BADPARM);
   }

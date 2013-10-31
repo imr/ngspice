@@ -5861,6 +5861,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\hisim2\hsm2soachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\hisim2\hsm2temp.c"
 				>
 			</File>

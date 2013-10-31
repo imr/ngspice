@@ -641,6 +641,12 @@ int HSM2setup(
     if ( !model->HSM2_pibpc1_Given ) model->HSM2_pibpc1 = 0.0 ;
     if ( !model->HSM2_pibpc2_Given ) model->HSM2_pibpc2 = 0.0 ;
 
+    if (!model->HSM2vgsMaxGiven) model->HSM2vgsMax = 1e99;
+    if (!model->HSM2vgdMaxGiven) model->HSM2vgdMax = 1e99;
+    if (!model->HSM2vgbMaxGiven) model->HSM2vgbMax = 1e99;
+    if (!model->HSM2vdsMaxGiven) model->HSM2vdsMax = 1e99;
+    if (!model->HSM2vbsMaxGiven) model->HSM2vbsMax = 1e99;
+    if (!model->HSM2vbdMaxGiven) model->HSM2vbdMax = 1e99;
 
     if ( model->HSM2_corecip == 1 ){
       model->HSM2_sc2 =  0.0 ; model->HSM2_lsc2 =  0.0 ; model->HSM2_wsc2 =  0.0 ; model->HSM2_psc2 =  0.0 ;

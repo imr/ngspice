@@ -2071,6 +2071,31 @@ int HSM2mParam(
     mod->HSM2_pibpc2_Given = TRUE;
     break;
 
+  case HSM2_MOD_VGS_MAX:
+      mod->HSM2vgsMax = value->rValue;
+      mod->HSM2vgsMaxGiven = TRUE;
+      break;
+  case HSM2_MOD_VGD_MAX:
+      mod->HSM2vgdMax = value->rValue;
+      mod->HSM2vgdMaxGiven = TRUE;
+      break;
+  case HSM2_MOD_VGB_MAX:
+      mod->HSM2vgbMax = value->rValue;
+      mod->HSM2vgbMaxGiven = TRUE;
+      break;
+  case HSM2_MOD_VDS_MAX:
+      mod->HSM2vdsMax = value->rValue;
+      mod->HSM2vdsMaxGiven = TRUE;
+      break;
+  case HSM2_MOD_VBS_MAX:
+      mod->HSM2vbsMax = value->rValue;
+      mod->HSM2vbsMaxGiven = TRUE;
+      break;
+  case HSM2_MOD_VBD_MAX:
+      mod->HSM2vbdMax = value->rValue;
+      mod->HSM2vbdMaxGiven = TRUE;
+      break;
+
   default:
     return(E_BADPARM);
   }

@@ -619,7 +619,14 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("pnfalp", HSM2_MOD_PNFALP, IF_REAL, "Cross-term dependence of nfalp"),
   IOP("pvdiffj", HSM2_MOD_PVDIFFJ, IF_REAL, "Cross-term dependence of vdiffj"),
   IOP("pibpc1", HSM2_MOD_PIBPC1, IF_REAL, "Cross-term dependence of ibpc1"),
-  IOP("pibpc2", HSM2_MOD_PIBPC2, IF_REAL, "Cross-term dependence of ibpc2")
+  IOP("pibpc2", HSM2_MOD_PIBPC2, IF_REAL, "Cross-term dependence of ibpc2"),
+
+  IOP("vgs_max", HSM2_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
+  IOP("vgd_max", HSM2_MOD_VGD_MAX, IF_REAL, "maximum voltage G-D branch"),
+  IOP("vgb_max", HSM2_MOD_VGB_MAX, IF_REAL, "maximum voltage G-B branch"),
+  IOP("vds_max", HSM2_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
+  IOP("vbs_max", HSM2_MOD_VBS_MAX, IF_REAL, "maximum voltage B-S branch"),
+  IOP("vbd_max", HSM2_MOD_VBD_MAX, IF_REAL, "maximum voltage B-D branch")
 
 };
 
