@@ -952,6 +952,8 @@ is_absolute_pathname(const char *p)
 }
 
 
+#if 0
+
 static bool
 is_plain_filename(const char *p)
 {
@@ -964,6 +966,8 @@ is_plain_filename(const char *p)
         !strchr(p, DIR_TERM);
 #endif
 }
+
+#endif
 
 
 /*-------------------------------------------------------------------------*
@@ -1006,10 +1010,10 @@ inp_pathopen(char *name, char *mode)
 
 #endif
 
-    /* If this is not a plain basename, or there is no sourcepath var, just
+    /* If this is an absolute filename, or there is no sourcepath var, just
      * do an fopen.
      */
-    if (!is_plain_filename(name) || !cp_getvar("sourcepath", CP_LIST, &v))
+    if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
         return (fopen(name, mode));
 
     for (; v; v = v->va_next) {
