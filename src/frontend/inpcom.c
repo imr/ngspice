@@ -18,6 +18,13 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/fteinp.h"
 #include "ngspice/compatmode.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#include <unistd.h>
+#endif
+
 #include "inpcom.h"
 #include "variable.h"
 #include "subckt.h"
@@ -137,6 +144,7 @@ static char *skip_ws(char *d)          { while (isspace(*d))        d++; return 
 static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace(d[-1])) d--; return d; }
 static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace(d[-1])) d--; return d; }
 
+static char *inp_pathresolve(const char *name);
 void tprint(struct line *deck);
 
 struct inp_read_t
@@ -970,17 +978,32 @@ is_plain_filename(const char *p)
 #endif
 
 
+FILE *
+inp_pathopen(char *name, char *mode)
+{
+    char *path = inp_pathresolve(name);
+
+    if (path) {
+        FILE *fp = fopen(path, mode);
+        tfree(path);
+        return fp;
+    }
+
+    return NULL;
+}
+
+
 /*-------------------------------------------------------------------------*
   Look up the variable sourcepath and try everything in the list in order
   if the file isn't in . and it isn't an abs path name.
   *-------------------------------------------------------------------------*/
 
-FILE *
-inp_pathopen(char *name, char *mode)
+static char *
+inp_pathresolve(const char *name)
 {
-    FILE *fp;
     char buf[BSIZE_SP];
     struct variable *v;
+    struct stat st;
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
@@ -989,14 +1012,14 @@ inp_pathopen(char *name, char *mode)
         strcpy(buf, name);
         buf[0] = buf[1];
         buf[1] = ':';
-        return inp_pathopen(buf, mode);
+        return inp_pathresolve(buf);
     }
 
 #endif
 
     /* just try it */
-    if ((fp = fopen(name, mode)) != NULL)
-        return fp;
+    if (stat(name, &st) == 0)
+        return copy(name);
 
     /* fail if this was an absolute filename or if there is no sourcepath var */
     if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
@@ -1016,13 +1039,13 @@ inp_pathopen(char *name, char *mode)
             (void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
             break;
         default:
-            fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in inp_pathopen\nAborting...\n");
+            fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in inp_pathresolve\nAborting...\n");
             controlled_exit(EXIT_FAILURE);
             break;
         }
 
-        if ((fp = fopen(buf, mode)) != NULL)
-            return (fp);
+        if (stat(buf, &st) == 0)
+            return copy(buf);
     }
 
     return (NULL);
