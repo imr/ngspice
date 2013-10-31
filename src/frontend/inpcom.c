@@ -1010,11 +1010,13 @@ inp_pathopen(char *name, char *mode)
 
 #endif
 
-    /* If this is an absolute filename, or there is no sourcepath var, just
-     * do an fopen.
-     */
+    /* just try it */
+    if ((fp = fopen(name, mode)) != NULL)
+        return fp;
+
+    /* fail if this was an absolute filename or if there is no sourcepath var */
     if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
-        return (fopen(name, mode));
+        return NULL;
 
     for (; v; v = v->va_next) {
 
