@@ -934,8 +934,10 @@ fetchoperator(tdico *dico,
     } else if ((c == '=') && (d == '=')) {
         iptr++;
     } else if ((c == '&') && (d == '&')) {
+        c = 'A';
         iptr++;
     } else if ((c == '|') && (d == '|')) {
+        c = 'O';
         iptr++;
     }
 
@@ -951,10 +953,10 @@ fetchoperator(tdico *dico,
     } else if (cpos(c, "=<>#GL") >= 0) {
         state = S_binop;
         level = 5;
-    } else if (c == '&') {
+    } else if (c == '&' || c == 'A') {
         state = S_binop;
         level = 6;
-    } else if (c == '|') {
+    } else if (c == '|' || c == 'O') {
         state = S_binop;
         level = 7;
     } else if (c == '!') {
@@ -990,12 +992,12 @@ opfunctkey(tdico *dico,
     {
                                 /* & | ~ DIV MOD Defined */
     case 1:
-        c = '&';
+        c = 'A';
         state = S_binop;
         level = 6;
         break;
     case 2:
-        c = '|';
+        c = 'O';
         state = S_binop;
         level = 7;
         break;
@@ -1063,11 +1065,17 @@ operate(char op, double x, double y)
     case '^':                   /* power */
         x = pow(fabs(x), y);
         break;
-    case '&':                   /* && */
+    case 'A':                   /* && */
+        x = ((x != 0.0) && (y != 0.0)) ? 1.0 : 0.0;
+        break;
+    case 'O':                   /* || */
+        x = ((x != 0.0) || (y != 0.0)) ? 1.0 : 0.0;
+        break;
+    case '&':
         if (y < x)
             x = y;              /*=Min*/
         break;
-    case '|':                   /* || */
+    case '|':
         if (y > x)
             x = y;              /*=Max*/
         break;
