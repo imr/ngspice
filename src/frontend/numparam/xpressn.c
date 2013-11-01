@@ -937,7 +937,9 @@ fetchoperator(tdico *dico,
         iptr++;
     } else if ((c == '|') && (d == '|')) {
         iptr++;
-    } if ((c == '+') || (c == '-')) {
+    }
+
+    if ((c == '+') || (c == '-')) {
         state = S_binop;        /* pending operator */
         level = 4;
     } else if ((c == '*') || (c == '/') || (c == '%') || (c == '\\')) {
@@ -1354,7 +1356,7 @@ evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         entry_p = entrynb(dico, t);
         nolookup = !entry_p;
 
-       while (entry_p && (entry_p->tp == 'P'))
+        while (entry_p && (entry_p->tp == 'P'))
             entry_p = entry_p->pointer; /* follow pointer chain */
 
         /* pointer chain */
