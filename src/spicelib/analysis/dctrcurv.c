@@ -225,6 +225,11 @@ found:;
     tfree(nameList);
     
     if(error) return(error);
+
+    /* initialize CKTsoaCheck `warn' counters */
+    if (ckt->CKTsoaCheck)
+        error = CKTsoaInit();
+
     /* now have finished the initialization - can start doing hard part */
     
     i = 0;

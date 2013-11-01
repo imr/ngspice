@@ -317,6 +317,7 @@ extern int CKTdltNNum(CKTcircuit *, int);
 extern int CKTdltNod(CKTcircuit *, CKTnode *);
 extern int CKTdoJob(CKTcircuit *, int , TSKtask *);
 extern void CKTdump(CKTcircuit *, double, void *);
+extern int CKTsoaInit(void);
 extern int CKTsoaCheck(CKTcircuit *);
 #ifdef CIDER
 extern void NDEVacct(CKTcircuit *ckt, FILE *file);

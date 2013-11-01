@@ -58,6 +58,9 @@ DCop(CKTcircuit *ckt, int notused)
     tfree(nameList); /* va: nameList not used any longer, it was a memory leak */
     if(error) return(error);
 
+    /* initialize CKTsoaCheck `warn' counters */
+    if (ckt->CKTsoaCheck)
+        error = CKTsoaInit();
 
 #ifdef XSPICE
 /* gtri - begin - wbk - 6/10/91 - Call EVTop if event-driven instances exist */
