@@ -40,9 +40,9 @@ extern long dynsubst;           /* see inpcom.c */
 
 
 static double
-ternary_fcn(int conditional, double if_value, double else_value)
+ternary_fcn(double conditional, double if_value, double else_value)
 {
-    if (conditional)
+    if (conditional != 0.0)
         return if_value;
     else
         return else_value;
@@ -1219,7 +1219,7 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
                 state = S_atom;
                 if (fu > 0) {
                     if ((fu == 18))
-                        u = ternary_fcn((int) v, w, u);
+                        u = ternary_fcn(v, w, u);
                     else if ((fu == 20))
                         u = agauss(v, w, u);
                     else if ((fu == 22))
