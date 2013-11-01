@@ -4381,6 +4381,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsoachk.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\bjt\bjtsprt.c"
 				>
 			</File>

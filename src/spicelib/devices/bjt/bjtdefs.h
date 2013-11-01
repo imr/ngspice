@@ -448,6 +448,9 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTtise2;
     double BJTtisc1;
     double BJTtisc2;
+    double BJTvbeMax; /* maximum voltage over B-E junction */
+    double BJTvbcMax; /* maximum voltage over B-C junction */
+    double BJTvceMax; /* maximum voltage over C-E branch */
 
     unsigned BJTsubsGiven : 1;
     unsigned BJTtnomGiven : 1;
@@ -554,6 +557,9 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTtise2Given : 1;
     unsigned BJTtisc1Given : 1;
     unsigned BJTtisc2Given : 1;
+    unsigned BJTvbeMaxGiven : 1;
+    unsigned BJTvbcMaxGiven : 1;
+    unsigned BJTvceMaxGiven : 1;
 } BJTmodel;
 
 #ifndef NPN
@@ -691,6 +697,9 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJT_MOD_TISE2 205
 #define BJT_MOD_TISC1 206
 #define BJT_MOD_TISC2 207
+#define BJT_MOD_VBE_MAX 208
+#define BJT_MOD_VBC_MAX 209
+#define BJT_MOD_VCE_MAX 210
 
 /* device questions */
 #define BJT_QUEST_FT             211

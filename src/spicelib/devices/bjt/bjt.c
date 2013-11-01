@@ -212,7 +212,10 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("tise1", BJT_MOD_TISE1, IF_REAL, "ISE 1. temperature coefficient"),
  IOP("tise2", BJT_MOD_TISE2, IF_REAL, "ISE 2. temperature coefficient"),
  IOP("tisc1", BJT_MOD_TISC1, IF_REAL, "ISC 1. temperature coefficient"),
- IOP("tisc2", BJT_MOD_TISC2, IF_REAL, "ISC 2. temperature coefficient")
+ IOP("tisc2", BJT_MOD_TISC2, IF_REAL, "ISC 2. temperature coefficient"),
+ IOP("vbe_max", BJT_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
+ IOP("vbc_max", BJT_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
+ IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
 };
 
 char *BJTnames[] = {

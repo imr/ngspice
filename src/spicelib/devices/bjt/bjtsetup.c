@@ -322,6 +322,15 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtisc2Given) {
             model->BJTtisc2 = 0.0;
         }
+        if(!model->BJTvbeMaxGiven) {
+            model->BJTvbeMax = 1e99;
+        }
+        if(!model->BJTvbcMaxGiven) {
+            model->BJTvbcMax = 1e99;
+        }
+        if(!model->BJTvceMaxGiven) {
+            model->BJTvceMax = 1e99;
+        }
 
 /*
  * COMPATABILITY WARNING!

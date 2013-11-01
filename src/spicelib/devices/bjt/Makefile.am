@@ -28,6 +28,7 @@ libbjt_la_SOURCES =	\
 	bjtsacl.c	\
 	bjtsetup.c	\
 	bjtsload.c	\
+	bjtsoachk.c	\
 	bjtsprt.c	\
 	bjtsset.c	\
 	bjtsupd.c	\

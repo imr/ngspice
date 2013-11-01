@@ -378,6 +378,15 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_TISC2:
             value->rValue = here->BJTtisc2;
             return(OK);
+        case BJT_MOD_VBE_MAX:
+            value->rValue = here->BJTvbeMax;
+            return(OK);
+        case BJT_MOD_VBC_MAX:
+            value->rValue = here->BJTvbcMax;
+            return(OK);
+        case BJT_MOD_VCE_MAX:
+            value->rValue = here->BJTvceMax;
+            return(OK);
         default:
             return(E_BADPARM);
     }
