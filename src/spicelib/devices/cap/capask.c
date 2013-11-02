@@ -51,6 +51,12 @@ CAPask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case CAP_M:
             value->rValue = here->CAPm;
             return(OK);
+        case CAP_TC1:
+            value->rValue = here->CAPtc1;
+            return(OK);
+        case CAP_TC2:
+            value->rValue = here->CAPtc2;
+            return(OK);
         case CAP_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = TMALLOC(char, strlen(msg) + 1);

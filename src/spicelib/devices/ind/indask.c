@@ -45,6 +45,12 @@ INDask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case IND_M:
             value->rValue = here->INDm;
             return(OK);
+        case IND_TC1:
+            value->rValue = here->INDtc1;
+            return(OK);
+        case IND_TC2:
+            value->rValue = here->INDtc2;
+            return(OK);
         case IND_SCALE:
             value->rValue = here->INDscale;
             return(OK);
