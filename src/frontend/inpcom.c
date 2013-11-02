@@ -782,7 +782,7 @@ inp_readall(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile
     }
 
     /* Replace first line with the new title, if available */
-    if (new_title != NULL) {
+    if (call_depth == 0 && new_title) {
         tfree(cc->li_line);
         cc->li_line = new_title;
     }
