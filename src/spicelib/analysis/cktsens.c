@@ -620,7 +620,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 double
 inc_freq(double freq, int type, double step_size)
 {
-	if (type != LINEAR)
+	if (type != SENS_LINEAR)
 		freq *= step_size;
 	else
 		freq += step_size;
