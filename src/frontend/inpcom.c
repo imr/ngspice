@@ -907,7 +907,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
       add a terminal ".end" card
     */
 
-    if (call_depth == 0) {
+    if (call_depth == 0 && !comfile) {
         if (found_end == TRUE) {
             struct line *x = xx_new_line(NULL, copy(".end"), line_number++, line_number_orig++);
             end->li_next = x;
@@ -916,7 +916,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     }
 
     /* Replace first line with the new title, if available */
-    if (call_depth == 0 && new_title) {
+    if (call_depth == 0 && !comfile && new_title) {
         tfree(cc->li_line);
         cc->li_line = new_title;
     }
