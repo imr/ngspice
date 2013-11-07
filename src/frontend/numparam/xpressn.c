@@ -22,7 +22,6 @@ extern double drand(void);
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
-static const char *keyS;      /* all my keywords */
 static const char *fmathS;    /* all math functions */
 
 extern char *nupa_inst_name;    /* see spicenum.c */
@@ -92,16 +91,10 @@ static void
 initkeys(void)
 /* the list of reserved words */
 {
-    keyS = "AND OR NOT DIV MOD DEFINED";
     fmathS = "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG SINH COSH"
              " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
              " ASIN ACOS ATAN ASINH ACOSH ATANH TAN";
 }
-
-
-enum {
-    XKEY_AND = 1, XKEY_OR, XKEY_NOT, XKEY_DIV, XKEY_MOD, XKEY_DEFINED
-};
 
 
 enum {
@@ -812,61 +805,6 @@ fetchid(SPICE_DSTRINGPTR t, const char *s_end, const char *iptr)
 
 
 static double
-exists(tdico *d, const char *s_end, const char **pi, bool *perror)
-/* check if s in simboltable 'defined': expect (ident) and return 0 or 1 */
-{
-    bool error = *perror;
-    const char *iptr = *pi;
-    double x;
-    char c;
-    bool ok;
-    SPICE_DSTRING t;
-
-    spice_dstring_init(&t);
-    x = 0.0;
-
-    do
-    {
-        c = *iptr++;
-        if (iptr > s_end)
-            c = '\0';
-
-        ok = (c == '(');
-
-    } while (!ok && (c != '\0'));
-
-    if (ok)
-    {
-        iptr--;
-        iptr = fetchid(&t, s_end, iptr);
-        if (entrynb(d, spice_dstring_value(&t)))
-            x = 1.0;
-
-        do
-        {
-            c = *iptr++;
-            if (iptr > s_end)
-                c = '\0';
-
-            ok = (c == ')');
-
-        } while (!ok && (c != '\0'));
-    }
-
-    if (!ok)
-        error = message(d, " Defined() syntax");
-
-    /* keep pointer on last closing ")" */
-
-    *perror = error;
-    *pi = iptr;
-    spice_dstring_free(&t);
-
-    return x;
-}
-
-
-static double
 fetchnumber(tdico *dico, const char **pi, bool *perror)
 /* parse a Spice number in string s */
 {
@@ -987,65 +925,6 @@ fetchoperator(tdico *dico,
 }
 
 
-static char
-opfunctkey(tdico *dico,
-           unsigned char kw, char c,
-           unsigned char *pstate, unsigned char *plevel,
-           bool *perror)
-/* handle operator and built-in keywords */
-{
-    unsigned char state = *pstate;
-    unsigned char level = *plevel;
-    bool error = *perror;
-
-    /*if kw operator keyword, c=token*/
-    switch (kw)
-    {
-                                /* & | ~ DIV MOD Defined */
-    case XKEY_AND:
-        c = 'A';
-        state = S_binop;
-        level = 6;
-        break;
-    case XKEY_OR:
-        c = 'O';
-        state = S_binop;
-        level = 7;
-        break;
-    case XKEY_NOT:
-        c = '!';
-        state = S_unop;
-        level = 1;
-        break;
-    case XKEY_DIV:
-        c = '\\';
-        state = S_binop;
-        level = 3;
-        break;
-    case XKEY_MOD:
-        c = '%';
-        state = S_binop;
-        level = 3;
-        break;
-    case XKEY_DEFINED:
-        c = '?';
-        state = S_atom;
-        level = 0;
-        break;
-    default:
-        state = S_init;
-        error = message(dico, " Unexpected Keyword");
-        break;
-    }
-
-    *pstate = state;
-    *plevel = level;
-    *perror = error;
-
-    return c;
-}
-
-
 static double
 operate(char op, double x, double y)
 {
@@ -1152,7 +1031,7 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
     typedef enum {nprece = 9} _nnprece; /* maximal nb of precedence levels */
     bool error = *perror;
     bool negate = 0;
-    unsigned char state, oldstate, topop, ustack, level, kw, fu;
+    unsigned char state, oldstate, topop, ustack, level, fu;
     double u = 0.0;
     double accu[nprece + 1];
     char oper[nprece + 1];
@@ -1252,19 +1131,12 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
         } else if (alfa(c)) {
             s = fetchid(&tstr, s_end, s); /* user id, but sort out keywords */
             state = S_atom;
-            kw = keyword(keyS, spice_dstring_value(&tstr)); /* debug ws('[',kw,']'); */
-            if (kw == 0) {
+            {
                 fu = keyword(fmathS, spice_dstring_value(&tstr)); /* numeric function? */
                 if (fu == 0)
                     u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 else
                     state = S_init;  /* S_init means: ignore for the moment */
-            } else {
-                c = opfunctkey(dico, kw, c, &state, &level, &error);
-            }
-
-            if (kw == XKEY_DEFINED) {
-                u = exists(dico, s_end, &s, &error);
             }
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
             u = fetchnumber(dico, &s, &error);
@@ -1780,14 +1652,12 @@ nupa_substitute(tdico *dico, char *s, char *r, bool err)
 }
 
 
-static unsigned char
+static void
 getword(char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
     int i = *pi;
     int ls;
-    unsigned char key;
-    char *t_p;
 
     i = after;
     ls = length(s);
@@ -1803,16 +1673,7 @@ getword(char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
         i++;
     }
 
-    t_p = spice_dstring_value(tstr_p);
-
-    if (t_p[0])
-        key = keyword(keyS, spice_dstring_value(tstr_p));
-    else
-        key = 0;
-
     *pi = i;
-
-    return key;
 }
 
 
@@ -1917,7 +1778,6 @@ nupa_assignment(tdico *dico, char *s, char mode)
 {
     /* s has the format: ident = expression; ident= expression ...  */
     int i, j, ls;
-    unsigned char key;
     bool error, err;
     char dtype;
     int wval = 0;
@@ -1951,9 +1811,9 @@ nupa_assignment(tdico *dico, char *s, char mode)
 
     while ((i < ls) && !error) {
 
-        key = getword(s, &tstr, i, &i);
+        getword(s, &tstr, i, &i);
         t_p = spice_dstring_value(&tstr);
-        if ((t_p[0] == '\0') || (key > 0))
+        if (t_p[0] == '\0')
             error = message(dico, " Identifier expected");
 
         if (!error) {
