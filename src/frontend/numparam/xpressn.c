@@ -21,9 +21,6 @@ extern double drand(void);
 
 /************ keywords ************/
 
-/* SJB - 150 chars is ample for this - see initkeys() */
-static const char *fmathS;    /* all math functions */
-
 extern char *nupa_inst_name;    /* see spicenum.c */
 extern long dynsubst;           /* see inpcom.c */
 
@@ -87,14 +84,10 @@ limit(double nominal_val, double abs_variation)
 }
 
 
-static void
-initkeys(void)
-/* the list of reserved words */
-{
-    fmathS = "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG SINH COSH"
-             " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
-             " ASIN ACOS ATAN ASINH ACOSH ATANH TAN";
-}
+static const char *fmathS =     /* all math functions */
+    "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG SINH COSH"
+    " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
+    " ASIN ACOS ATAN ASINH ACOSH ATANH TAN";
 
 
 enum {
@@ -284,8 +277,6 @@ initdico(tdico *dico)
     dico->local_symbols = TMALLOC(NGHASHPTR, asize);
     dico->inst_name = TMALLOC(char*, asize);
     dico->inst_symbols = NULL;          /* instance qualified are lazily allocated */
-
-    initkeys();
 
     compat_mode = ngspice_compat_mode();
 
