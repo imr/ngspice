@@ -1790,6 +1790,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 }
 
 
+#if 0
 // find closing paren
 static char *
 inp_search_closing_paren(char *s)
@@ -1808,8 +1809,10 @@ inp_search_closing_paren(char *s)
 
     return NULL;
 }
+#endif
 
 
+#if 0
 /* search backwards for opening paren */
 static char *
 inp_search_opening_paren(char *s, char *start)
@@ -1828,6 +1831,7 @@ inp_search_opening_paren(char *s, char *start)
 
     return NULL;
 }
+#endif
 
 
 /*-------------------------------------------------------------------------*
