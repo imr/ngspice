@@ -1347,10 +1347,10 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
                     accu[i-1] = 0.0;
                     oper[i] = ' ';  /* reset intermediates */
                 } else {
-                /* not yet speed optimized! */
-                accu[i] = operate(oper[i], accu[i], accu[i - 1]);
-                accu[i - 1] = 0.0;
-                oper[i] = ' ';  /* reset intermediates */
+                    /* not yet speed optimized! */
+                    accu[i] = operate(oper[i], accu[i], accu[i-1]);
+                    accu[i-1] = 0.0;
+                    oper[i] = ' ';  /* reset intermediates */
                 }
             }
             oper[level] = c;
