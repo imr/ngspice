@@ -965,10 +965,10 @@ fetchoperator(tdico *dico,
     } else if (cpos(c, "=<>#GL") >= 0) {
         state = S_binop;
         level = 5;
-    } else if (c == '&' || c == 'A') {
+    } else if (c == 'A') {
         state = S_binop;
         level = 6;
-    } else if (c == '|' || c == 'O') {
+    } else if (c == 'O') {
         state = S_binop;
         level = 7;
     } else if (c == '!') {
@@ -1088,14 +1088,6 @@ operate(char op, double x, double y)
         break;
     case 'O':                   /* || */
         x = ((x != 0.0) || (y != 0.0)) ? 1.0 : 0.0;
-        break;
-    case '&':
-        if (y < x)
-            x = y;              /*=Min*/
-        break;
-    case '|':
-        if (y > x)
-            x = y;              /*=Max*/
         break;
     case '=':
         if (x == y)
