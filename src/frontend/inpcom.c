@@ -120,8 +120,6 @@ static void inp_rem_func(struct func_temper **new_func);
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct line *start_card, int no_of_lines);
 static void inp_fix_macro_param_func_paren_io(struct line *begin_card);
-static char *inp_fix_ternary_operator_str(char *line, bool all);
-static void inp_fix_ternary_operator(struct line *start_card);
 static void inp_fix_gnd_name(struct line *deck);
 static void inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number);
 static void inp_add_control_section(struct line *deck, int *line_number);
@@ -500,7 +498,6 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         rv . line_number = inp_split_multi_param_lines(working, rv . line_number);
 
         inp_fix_macro_param_func_paren_io(working);
-        inp_fix_ternary_operator(working);
         inp_fix_temper_in_param(working);
 
         inp_expand_macros_in_deck(NULL, working);
@@ -1830,196 +1827,6 @@ inp_search_opening_paren(char *s, char *start)
     }
 
     return NULL;
-}
-
-
-/* replace ternary operator 'conditional ? if : else' by function
- * 'ternary_fcn(conditional, if, else)'
- * in .param, .func, and .meas lines, if all is FALSE,
- * for all lines if all is TRUE
- */
-
-static char*
-inp_fix_ternary_operator_str(char *line, bool all)
-{
-    char *conditional, *if_str, *else_str, *question, *colon, keep, *str_ptr, *str_ptr2, *new_str;
-    char *end_str, *beg_str = NULL;
-
-    if (!strchr(line, '?') && !strchr(line, ':'))
-        return line;
-
-    if (ciprefix(".param", line) ||
-        ciprefix(".func", line) || ciprefix(".meas", line))
-    {
-        if (ciprefix(".param", line) || ciprefix(".meas", line))
-            str_ptr = strchr(line, '=');
-        else
-            str_ptr = strchr(line, ')');
-
-        if (!str_ptr && all == FALSE) {
-            fprintf(stderr, "ERROR: mal formed .param, .func or .meas line:\n  %s\n", line);
-            controlled_exit(EXIT_FAILURE);
-        }
-
-        if (!str_ptr && all == TRUE) {
-            fprintf(stderr, "ERROR: mal formed expression in line:\n  %s\n", line);
-            fprintf(stderr, "  We need parentheses around 'if' clause and nested ternary functions\n");
-            fprintf(stderr, "  like:  Rtern4 1 0 '(ut > 0.7) ? 2k : ((ut < 0.3) ? 500 : 1k)'\n");
-            controlled_exit(EXIT_FAILURE);
-        }
-
-        str_ptr = skip_ws(str_ptr + 1);
-        if (*str_ptr == '{')
-            str_ptr = skip_ws(str_ptr + 1);
-    } else if (!all) {
-        return line;
-    } else {
-        str_ptr = line;
-    }
-
-    all = TRUE;
-
-    // get conditional
-//#warning "FIXME, this is search for beginning of the `conditional' expression is buggy."
-    /* FIXME, `question' might point to the end of this, for example
-     *   "(a>2)||(b<4)?"
-     */
-    question = strchr(str_ptr, '?');
-    str_ptr2 = skip_back_ws(question);
-    /* test for (conditional)?... */
-    if (str_ptr2[-1] == ')') {
-        str_ptr = inp_search_opening_paren(str_ptr2 - 1, line);
-        if (!str_ptr) {
-            fprintf(stderr, "ERROR: problem parsing 'if' of ternary string %s!\n", line);
-            controlled_exit(EXIT_FAILURE);
-        }
-    }
-    /* test for (conditional?... */
-    else {
-        char *str_ptr3;
-        str_ptr3 = str_ptr2 - 1;
-        while (str_ptr3 != line) {
-            str_ptr3--;
-            if (*str_ptr3 == '('){
-                str_ptr = ++str_ptr3;
-                break;
-            }
-        }
-    }
-    keep = *str_ptr2;
-    *str_ptr2 = '\0';
-    conditional = strdup(str_ptr);
-    *str_ptr2 = keep;
-
-    // get beginning (whatever is left before the conditional)
-    keep = *str_ptr;
-    *str_ptr = '\0';
-    beg_str = strdup(line);
-    *str_ptr = keep;
-
-    // get if
-//#warning "FIXME, this search for a matching ':' is buggy."
-    /* FIXME, str_ptr might look like this here
-     *   "(foo+b)*(c?d:e):"
-     */
-    str_ptr = skip_ws(question + 1);
-    colon = str_ptr;
-    if (*colon == '(')
-        colon = inp_search_closing_paren(colon);
-    if (colon)
-        colon = strchr(colon, ':');
-    if (!colon) {
-        fprintf(stderr, "ERROR: problem parsing ternary string %s!\n", line);
-        controlled_exit(EXIT_FAILURE);
-    }
-    if_str = inp_fix_ternary_operator_str (
-        copy_substring(str_ptr, skip_back_ws_(colon, str_ptr)),
-        all);
-
-    // get else
-    str_ptr = skip_ws(colon + 1);
-    /* ... : (else) */
-    if (*str_ptr == '(') {
-//#warning "FIXME, this search for end of `else' expression is buggy."
-        /* FIXME, str_ptr might look like this here
-         *   "(foo*2)+3"
-         */
-        char *s = inp_search_closing_paren(str_ptr);
-        if (!s) {
-            fprintf(stderr, "ERROR: problem parsing ternary line %s!\n", line);
-            controlled_exit(EXIT_FAILURE);
-        }
-        /* FIXME, this is most probably a bug, destroying semantics of `s'
-         *    which is `pointing to the first char after the else expression' */
-        if (*s == '\0')
-            s--;
-        else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, s), all);
-        if ((*s != '}') && (*s != ')'))
-            end_str = inp_fix_ternary_operator_str(strdup(s+1), all);
-        else
-            end_str = strdup(s);
-    /* ... : else */
-    } else {
-        char *s = strchr(str_ptr, '}');
-        if (s) {
-            else_str = inp_fix_ternary_operator_str(copy_substring(str_ptr, s), all);
-            end_str = strdup(s);
-        } else {
-            else_str = inp_fix_ternary_operator_str(strdup(str_ptr), all);
-            end_str = NULL;
-        }
-    }
-
-    {
-        char *prolog = beg_str ? beg_str : "";
-        char *epilog = end_str ? end_str : "";
-
-        size_t len =
-            strlen(prolog) +
-            strlen("ternary_fcn(,,)") +
-            strlen(conditional) + strlen(if_str) + strlen(else_str) +
-            strlen(epilog);
-
-        new_str = TMALLOC(char, len + 1);
-
-        sprintf(new_str, "%sternary_fcn(%s,%s,%s)%s", prolog, conditional, if_str, else_str, epilog);
-    }
-
-    tfree(line);
-    tfree(conditional);
-    tfree(if_str);
-    tfree(else_str);
-    tfree(beg_str);
-    tfree(end_str);
-
-    return new_str;
-}
-
-
-/* a>b?c:b ---> ternary_fcn(a>b, c, d)
-   for .func, .param, and .meas lines.
-   ternary functions for r, l, and c lines are handled in inp_compat(),
-   ternary functions in B-source are handled by the B-source parser */
-
-static void
-inp_fix_ternary_operator(struct line *card)
-{
-    for (; card; card = card->li_next) {
-
-        char *line = card->li_line;
-
-        if (*line != '.')
-            continue;
-
-        /* .param, .func, and .meas lines handled here (2nd argument FALSE).
-           The while loop cares for two or more ternary functions at top level,
-           nesting is taken care of by recursive action inside of
-           inp_fix_ternary_operator_str */
-        while (strchr(line, '?') && strchr(line, ':')) {
-            card->li_line = inp_fix_ternary_operator_str(line, FALSE);
-            line = card->li_line;
-        }
-    }
 }
 
 
@@ -4767,10 +4574,6 @@ inp_compat(struct line *card)
             if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) &&
                 (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz")) &&
                 (!strstr(cut_line, "time"))) {
-                /* no handling in B-Source, so we have to prepare ternary fcn
-                   for numparam */
-                if (strchr(curr_line, '?') && strchr(curr_line, ':'))
-                    card->li_line = inp_fix_ternary_operator_str(curr_line, TRUE);
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
@@ -4855,10 +4658,6 @@ inp_compat(struct line *card)
                 (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz")) &&
                 (!strstr(cut_line, "time")))
             {
-                /* no handling in B-Source, so we have to prepare ternary fcn
-                   for numparam */
-                if (strchr(curr_line, '?') && strchr(curr_line, ':'))
-                    card->li_line = inp_fix_ternary_operator_str(curr_line, TRUE);
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
@@ -4965,10 +4764,6 @@ inp_compat(struct line *card)
                 (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz")) &&
                 (!strstr(cut_line, "time")))
             {
-                /* no handling in B-Source, so we have to prepare ternary fcn
-                   for numparam */
-                if (strchr(curr_line, '?') && strchr(curr_line, ':'))
-                    card->li_line = inp_fix_ternary_operator_str(curr_line, TRUE);
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
