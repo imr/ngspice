@@ -22,8 +22,8 @@ extern double drand(void);
 /************ keywords ************/
 
 /* SJB - 150 chars is ample for this - see initkeys() */
-static SPICE_DSTRING keyS;      /* all my keywords */
-static SPICE_DSTRING fmathS;    /* all math functions */
+static const char *keyS;      /* all my keywords */
+static const char *fmathS;    /* all math functions */
 
 extern char *nupa_inst_name;    /* see spicenum.c */
 extern long dynsubst;           /* see inpcom.c */
@@ -92,13 +92,10 @@ static void
 initkeys(void)
 /* the list of reserved words */
 {
-    spice_dstring_init(&keyS);
-    scopy_up(&keyS,
-             "and or not div mod defined");
-    scopy_up(&fmathS,
-             "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh"
-             " tanh ternary_fcn agauss sgn gauss unif aunif limit ceil floor"
-             " asin acos atan asinh acosh atanh tan");
+    keyS = "AND OR NOT DIV MOD DEFINED";
+    fmathS = "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG SINH COSH"
+             " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
+             " ASIN ACOS ATAN ASINH ACOSH ATANH TAN";
 }
 
 
@@ -723,19 +720,15 @@ deffuma(                        /* define function or macro entry. */
 /************ input scanner stuff **************/
 
 static unsigned char
-keyword(SPICE_DSTRINGPTR keys_p, SPICE_DSTRINGPTR tstr_p)
+keyword(const char *keys, const char *t)
 {
     /* return 0 if t not found in list keys, else the ordinal number */
     unsigned char i, j, k;
     int lt, lk;
     bool ok;
-    char *t;
-    char *keys;
 
-    lt = spice_dstring_length(tstr_p);
-    t = spice_dstring_value(tstr_p);
-    lk = spice_dstring_length(keys_p);
-    keys = spice_dstring_value(keys_p);
+    lt = (int) strlen(t);
+    lk = (int) strlen(keys);
     k = 0;
     j = 0;
 
@@ -1259,9 +1252,9 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
         } else if (alfa(c)) {
             s = fetchid(&tstr, s_end, s); /* user id, but sort out keywords */
             state = S_atom;
-            kw = keyword(&keyS, &tstr); /* debug ws('[',kw,']'); */
+            kw = keyword(keyS, spice_dstring_value(&tstr)); /* debug ws('[',kw,']'); */
             if (kw == 0) {
-                fu = keyword(&fmathS, &tstr); /* numeric function? */
+                fu = keyword(fmathS, spice_dstring_value(&tstr)); /* numeric function? */
                 if (fu == 0)
                     u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 else
@@ -1813,7 +1806,7 @@ getword(char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
     t_p = spice_dstring_value(tstr_p);
 
     if (t_p[0])
-        key = keyword(&keyS, tstr_p);
+        key = keyword(keyS, spice_dstring_value(tstr_p));
     else
         key = 0;
 
