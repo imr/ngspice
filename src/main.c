@@ -1212,8 +1212,6 @@ main(int argc, char **argv)
 #if defined(HAS_WINGUI)
                 /* write source file name into source window */
                 SetSource(dname);
-                /* write source file name into a variable */
-                cp_vset("sourcefile", CP_STRING, dname);
 #endif
 
                 append_to_stream(tempfile, tp);
