@@ -1,0 +1,261 @@
+check precision of some functions
+
+* do not change this file, its generated
+* (exec-spice "ngspice -b %s")
+
+v0 n0 0 'sin(1.0e-9)'
+v1 n1 0 'sin(1.0e-1)'
+v2 n2 0 'sin(7.0e-1)'
+v3 n3 0 'cos(1.0e-9)'
+v4 n4 0 'cos(1.0e-1)'
+v5 n5 0 'cos(7.0e-1)'
+v6 n6 0 'tan(1.0e-9)'
+v7 n7 0 'tan(1.0e-1)'
+v8 n8 0 'tan(7.0e-1)'
+v9 n9 0 'asin(1.0e-9)'
+v10 n10 0 'asin(1.0e-1)'
+v11 n11 0 'asin(7.0e-1)'
+v12 n12 0 'acos(1.0e-9)'
+v13 n13 0 'acos(1.0e-1)'
+v14 n14 0 'acos(7.0e-1)'
+v15 n15 0 'atan(1.0e-9)'
+v16 n16 0 'atan(1.0e-1)'
+v17 n17 0 'atan(7.0e-1)'
+v18 n18 0 'sinh(1.0e-9)'
+v19 n19 0 'sinh(1.0e-1)'
+v20 n20 0 'sinh(7.0e-1)'
+v21 n21 0 'cosh(1.0e-9)'
+v22 n22 0 'cosh(1.0e-1)'
+v23 n23 0 'cosh(7.0e-1)'
+v24 n24 0 'tanh(1.0e-9)'
+v25 n25 0 'tanh(1.0e-1)'
+v26 n26 0 'tanh(7.0e-1)'
+v27 n27 0 'asinh(1.0e-9)'
+v28 n28 0 'asinh(1.0e-1)'
+v29 n29 0 'asinh(7.0e-1)'
+v30 n30 0 'acosh(1.2e+0)'
+v31 n31 0 'atanh(1.0e-9)'
+v32 n32 0 'atanh(1.0e-1)'
+v33 n33 0 'atanh(7.0e-1)'
+
+
+.control
+
+op
+
+let eps = 1.1102230246251568e-16
+
+define mismatch(y,gold,err) abs(y-gold)>(err*gold)
+
+define relerr_(y,gold) (y-gold)/(gold*eps)
+
+
+if mismatch(v(n0), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n0), 1.0e-9)
+  echo "ERROR, sin(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n1), 9.983341664682815e-2, 10*eps)
+  let relerr = relerr_(v(n1), 9.983341664682815e-2)
+  echo "ERROR, sin(1.0e-1) versus 9.983341664682815e-2 mismatch"
+  print relerr
+end
+
+if mismatch(v(n2), 6.44217687237691e-1, 10*eps)
+  let relerr = relerr_(v(n2), 6.44217687237691e-1)
+  echo "ERROR, sin(7.0e-1) versus 6.44217687237691e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n3), 1.0e+0, 10*eps)
+  let relerr = relerr_(v(n3), 1.0e+0)
+  echo "ERROR, cos(1.0e-9) versus 1.0e+0 mismatch"
+  print relerr
+end
+
+if mismatch(v(n4), 9.950041652780258e-1, 10*eps)
+  let relerr = relerr_(v(n4), 9.950041652780258e-1)
+  echo "ERROR, cos(1.0e-1) versus 9.950041652780258e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n5), 7.648421872844885e-1, 10*eps)
+  let relerr = relerr_(v(n5), 7.648421872844885e-1)
+  echo "ERROR, cos(7.0e-1) versus 7.648421872844885e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n6), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n6), 1.0e-9)
+  echo "ERROR, tan(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n7), 1.0033467208545055e-1, 10*eps)
+  let relerr = relerr_(v(n7), 1.0033467208545055e-1)
+  echo "ERROR, tan(1.0e-1) versus 1.0033467208545055e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n8), 8.422883804630794e-1, 10*eps)
+  let relerr = relerr_(v(n8), 8.422883804630794e-1)
+  echo "ERROR, tan(7.0e-1) versus 8.422883804630794e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n9), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n9), 1.0e-9)
+  echo "ERROR, asin(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n10), 1.0016742116155979e-1, 10*eps)
+  let relerr = relerr_(v(n10), 1.0016742116155979e-1)
+  echo "ERROR, asin(1.0e-1) versus 1.0016742116155979e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n11), 7.753974966107529e-1, 10*eps)
+  let relerr = relerr_(v(n11), 7.753974966107529e-1)
+  echo "ERROR, asin(7.0e-1) versus 7.753974966107529e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n12), 1.5707963257948965e+0, 10*eps)
+  let relerr = relerr_(v(n12), 1.5707963257948965e+0)
+  echo "ERROR, acos(1.0e-9) versus 1.5707963257948965e+0 mismatch"
+  print relerr
+end
+
+if mismatch(v(n13), 1.470628905633337e+0, 10*eps)
+  let relerr = relerr_(v(n13), 1.470628905633337e+0)
+  echo "ERROR, acos(1.0e-1) versus 1.470628905633337e+0 mismatch"
+  print relerr
+end
+
+if mismatch(v(n14), 7.953988301841437e-1, 10*eps)
+  let relerr = relerr_(v(n14), 7.953988301841437e-1)
+  echo "ERROR, acos(7.0e-1) versus 7.953988301841437e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n15), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n15), 1.0e-9)
+  echo "ERROR, atan(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n16), 9.966865249116206e-2, 10*eps)
+  let relerr = relerr_(v(n16), 9.966865249116206e-2)
+  echo "ERROR, atan(1.0e-1) versus 9.966865249116206e-2 mismatch"
+  print relerr
+end
+
+if mismatch(v(n17), 6.107259643892086e-1, 10*eps)
+  let relerr = relerr_(v(n17), 6.107259643892086e-1)
+  echo "ERROR, atan(7.0e-1) versus 6.107259643892086e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n18), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n18), 1.0e-9)
+  echo "ERROR, sinh(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n19), 1.0016675001984403e-1, 10*eps)
+  let relerr = relerr_(v(n19), 1.0016675001984403e-1)
+  echo "ERROR, sinh(1.0e-1) versus 1.0016675001984403e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n20), 7.585837018395335e-1, 10*eps)
+  let relerr = relerr_(v(n20), 7.585837018395335e-1)
+  echo "ERROR, sinh(7.0e-1) versus 7.585837018395335e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n21), 1.0e+0, 10*eps)
+  let relerr = relerr_(v(n21), 1.0e+0)
+  echo "ERROR, cosh(1.0e-9) versus 1.0e+0 mismatch"
+  print relerr
+end
+
+if mismatch(v(n22), 1.0050041680558035e+0, 10*eps)
+  let relerr = relerr_(v(n22), 1.0050041680558035e+0)
+  echo "ERROR, cosh(1.0e-1) versus 1.0050041680558035e+0 mismatch"
+  print relerr
+end
+
+if mismatch(v(n23), 1.255169005630943e+0, 10*eps)
+  let relerr = relerr_(v(n23), 1.255169005630943e+0)
+  echo "ERROR, cosh(7.0e-1) versus 1.255169005630943e+0 mismatch"
+  print relerr
+end
+
+if mismatch(v(n24), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n24), 1.0e-9)
+  echo "ERROR, tanh(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n25), 9.966799462495581e-2, 10*eps)
+  let relerr = relerr_(v(n25), 9.966799462495581e-2)
+  echo "ERROR, tanh(1.0e-1) versus 9.966799462495581e-2 mismatch"
+  print relerr
+end
+
+if mismatch(v(n26), 6.043677771171635e-1, 10*eps)
+  let relerr = relerr_(v(n26), 6.043677771171635e-1)
+  echo "ERROR, tanh(7.0e-1) versus 6.043677771171635e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n27), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n27), 1.0e-9)
+  echo "ERROR, asinh(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n28), 9.983407889920759e-2, 10*eps)
+  let relerr = relerr_(v(n28), 9.983407889920759e-2)
+  echo "ERROR, asinh(1.0e-1) versus 9.983407889920759e-2 mismatch"
+  print relerr
+end
+
+if mismatch(v(n29), 6.526665660823557e-1, 10*eps)
+  let relerr = relerr_(v(n29), 6.526665660823557e-1)
+  echo "ERROR, asinh(7.0e-1) versus 6.526665660823557e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n30), 6.223625037147784e-1, 10*eps)
+  let relerr = relerr_(v(n30), 6.223625037147784e-1)
+  echo "ERROR, acosh(1.2e+0) versus 6.223625037147784e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n31), 1.0e-9, 10*eps)
+  let relerr = relerr_(v(n31), 1.0e-9)
+  echo "ERROR, atanh(1.0e-9) versus 1.0e-9 mismatch"
+  print relerr
+end
+
+if mismatch(v(n32), 1.0033534773107558e-1, 10*eps)
+  let relerr = relerr_(v(n32), 1.0033534773107558e-1)
+  echo "ERROR, atanh(1.0e-1) versus 1.0033534773107558e-1 mismatch"
+  print relerr
+end
+
+if mismatch(v(n33), 8.673005276940532e-1, 10*eps)
+  let relerr = relerr_(v(n33), 8.673005276940532e-1)
+  echo "ERROR, atanh(7.0e-1) versus 8.673005276940532e-1 mismatch"
+  print relerr
+end
+
+
+quit 0
+
+
+.endc

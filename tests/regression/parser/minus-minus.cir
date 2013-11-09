@@ -1,0 +1,36 @@
+test dash dash
+
+* (exec-spice "ngspice -b %s")
+
+v1  1 0  '2--3'
+b2  2 0  v = 2--3
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+let foo = 2--3
+
+if mismatch(v(1), 5.0, 1e-9)
+  echo "ERROR: v(1) failed"
+end
+
+if mismatch(v(2), 5.0, 1e-9)
+  echo "ERROR: v(2) failed"
+end
+
+if mismatch(foo, 5.0, 1e-9)
+  echo "ERROR: foo failed"
+end
+
+print v(1) v(2) foo
+
+echo "INFO: -- yes we can, print dash dash --"
+echo "INFO: -- yes we can, print upper and lower case --"
+quit 0
+
+.endc
+
+.end
