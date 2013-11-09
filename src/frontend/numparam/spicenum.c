@@ -59,7 +59,7 @@ extern int dynmaxline; /* inpcom.c:1529 */
     overwrite any line pointers, or we start a new set after each sig=0 ?
     Anyway, we neutralize all & and .param lines  (category[] array!)
     and we substitute all {} &() and &id placeholders by dummy identifiers.
-    those look like numparm__XXXXXXXX (8 hexadecimal digits)
+    those look like numparm__________XXXXXXXX (8 hexadecimal digits)
 
 */
 /**********  string handling ***********/
@@ -135,8 +135,8 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
             cadd(&tstr, ' ');
             {
-                char buf[17+1];
-                sprintf(buf, "numparm__%08lx", placeholder);
+                char buf[25+1];
+                sprintf(buf, "numparm__________%08lx", placeholder);
                 sadd(&tstr, buf);
             }
             cadd(&tstr, ' ');

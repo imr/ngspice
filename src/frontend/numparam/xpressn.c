@@ -24,9 +24,7 @@ extern double drand(void);
 extern char *nupa_inst_name;    /* see spicenum.c */
 extern long dynsubst;           /* see inpcom.c */
 
-#define MAX_STRING_INSERT 17 /* max. string length to be inserted and replaced */
-#define ACT_CHARACTS 17      /* actual string length to be inserted and replaced */
-#define EXP_LENGTH 5
+#define ACT_CHARACTS 25      /* actual string length to be inserted and replaced */
 
 #define  S_init   0
 #define  S_atom   1
@@ -1295,14 +1293,14 @@ evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     }
 
     if (numeric) {
-        /* we want *exactly* 17 chars, we have
+        /* we want *exactly* 25 chars, we have
          *   sign, leading digit, '.', 'e', sign, upto 3 digits exponent
-         * ==> 8 chars, thus we have 9 left for precision
+         * ==> 8 chars, thus we have 17 left for precision
          * don't print a leading '+', something choked
          */
 
-        char buf[17+1];
-        if (snprintf(buf, sizeof(buf), "% 17.9e", u) != 17) {
+        char buf[ACT_CHARACTS + 1];
+        if (snprintf(buf, sizeof(buf), "% 25.17e", u) != ACT_CHARACTS) {
             fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
             controlled_exit(1);
         }
@@ -1486,13 +1484,13 @@ insertnumber(tdico *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
     long id = 0;
     int  n  = 0;
 
-    char *p = strstr(s+i, "numparm__");
+    char *p = strstr(s+i, "numparm__________");
 
     if (p &&
-        (1 == sscanf(p, "numparm__%8lx%n", &id, &n)) &&
+        (1 == sscanf(p, "numparm__________%8lx%n", &id, &n)) &&
         (n == ACT_CHARACTS) &&
         (id > 0) && (id < dynsubst + 1) &&
-        (snprintf(buf, sizeof(buf), "%-17s", u) == ACT_CHARACTS))
+        (snprintf(buf, sizeof(buf), "%-25s", u) == ACT_CHARACTS))
     {
         memcpy(p, buf, ACT_CHARACTS);
         return (int)(p - s) + ACT_CHARACTS;
