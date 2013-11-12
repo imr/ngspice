@@ -1195,7 +1195,7 @@ insertnumber(dico_t *dico, const int i, char *s, SPICE_DSTRINGPTR ustr_p)
         (snprintf(buf, sizeof(buf), "%-25s", u) == ACT_CHARACTS))
     {
         memcpy(p, buf, ACT_CHARACTS);
-        return i + (int)(p - s - i) + ACT_CHARACTS;
+        return (int)(p - s - i) + ACT_CHARACTS;
     }
 
     message
@@ -1205,7 +1205,7 @@ insertnumber(dico_t *dico, const int i, char *s, SPICE_DSTRINGPTR ustr_p)
          s+i, u, id);
 
     /* swallow everything on failure */
-    return i + (int) strlen(s+i);
+    return (int) strlen(s+i);
 }
 
 
@@ -1262,7 +1262,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             s = kptr;
             if (!err)
-                ir = insertnumber(dico, ir, r, &qstr);
+                ir = ir + insertnumber(dico, ir, r, &qstr);
             else
                 err = message(dico, "Cannot compute substitute\n");
 
@@ -1327,7 +1327,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             }
 
             if (!err)
-                ir = insertnumber(dico, ir, r, &qstr);
+                ir = ir + insertnumber(dico, ir, r, &qstr);
             else
                 message(dico, "Cannot compute &(expression)\n");
         }
