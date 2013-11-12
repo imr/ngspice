@@ -1176,7 +1176,7 @@ evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char *t, const char *
 /********* interface functions for spice3f5 extension ***********/
 
 static int
-insertnumber(dico_t *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
+insertnumber(dico_t *dico, const int i, char *s, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
     const char *u = spice_dstring_value(ustr_p);
