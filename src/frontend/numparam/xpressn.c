@@ -1340,7 +1340,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
 
 static void
-getword(char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
+getword(const char * const s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
     int i = *pi;
