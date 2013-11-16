@@ -28,6 +28,6 @@ isinf (const double x)
 
 #endif /* HAVE_FINITE */
 #else /* HAVE_ISINF */
-int Dummy_Symbol_5;
+int Dummy_Symbol_7;
 #endif /* HAVE_ISINF */
 #endif /* HAVE_DECL_ISINF */

@@ -16,5 +16,5 @@ dup2(int oldd, int newd)
 	return 0;
 }
 #else
-int Dummy_Symbol_2;
+int Dummy_Symbol_6;
 #endif
