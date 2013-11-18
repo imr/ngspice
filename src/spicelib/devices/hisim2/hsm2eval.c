@@ -131,7 +131,7 @@ to others."
 #define C_IDD_MIN    1.0e-15
 
 /* local variables used in macro functions */
-double TMF1 , TMF2 , TMF3 , TMF4 ; 
+static double TMF1 , TMF2 , TMF3 , TMF4 ; 
 /*===========================================================*
 * pow
 *=================*/
