@@ -96,8 +96,8 @@
 %right  ','
 %left   '-' '+'
 %left   '*' '/' '%'
-%right  '^'      /* exponentiation */
 %left   NEG      /* negation--unary minus */
+%right  '^'      /* exponentiation */
 %left   '[' ']'
 %left   TOK_LRANGE TOK_RRANGE
 
