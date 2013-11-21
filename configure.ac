@@ -715,6 +715,10 @@ AC_MSG_RESULT([Checking mathematical features of the system:])
 # Look for math library:
 AC_CHECK_LIB([m], [sqrt])
 AC_CHECK_HEADERS([float.h limits.h values.h ieeefp.h])
+AC_CHECK_HEADERS([fftw3.h])
+AC_CHECK_LIB([fftw3], [fftw_plan_dft_1d],
+        [AC_DEFINE([HAVE_LIBFFTW3], [], [Have fft routines in libfftw3])
+         LIBS="$LIBS -lfftw3"])
 
 # Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])

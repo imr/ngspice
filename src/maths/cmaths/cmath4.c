@@ -35,6 +35,9 @@ extern bool cx_degrees;
 extern void vec_new(struct dvec *d);
 
 bool doubledouble(double *, int, double *);
+#ifdef HAVE_LIBFFTW3
+#include "fftw3.h"
+#endif
 
 
 void *
@@ -507,14 +510,24 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
 void *
 cx_fft(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
-    int i, N, M, fpts, order;
+    int i, fpts, order;
     double span, scale, maxt;
-    double *indata, *xscale;
-    double *time = NULL, *xtime = NULL, *win = NULL;
-    ngcomplex_t *outdata;
-    double *reald = NULL;
+    double *xscale;
+    double *time = NULL, *win = NULL;
+    ngcomplex_t *outdata = NULL;
     struct dvec  *sv;
     char   window[BSIZE_SP];
+
+#ifdef HAVE_LIBFFTW3
+    fftw_complex *inc;
+    double *ind;
+    fftw_complex *out = NULL;
+    fftw_plan plan_forward = NULL;
+#else
+    int N, M;
+    double *datax = NULL;
+    double *realdata;
+#endif
 
     if (grouping == 0)
         grouping = length;
@@ -529,80 +542,79 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         return (NULL);
     }
 
+#ifdef HAVE_LIBFFTW3
+    if (type == VF_COMPLEX)
+        fpts = length;
+    else
+        fpts = length/2 + 1;
+#else
     /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
-    while (N < 2*length) {
+    while (N < length) {
         N <<= 1;
         M++;
     }
-    /* output vector has length of N/2 */
-    fpts = N/2;
+    if (type == VF_COMPLEX)
+        fpts = N;
+    else
+        fpts = N/2;
+#endif
 
-    *newlength = fpts;
     *newtype = VF_COMPLEX;
 
-    indata = (double *) data;
-    outdata = alloc_c(fpts);
     time = alloc_d(length);
 
-    xscale = TMALLOC(double, fpts);
+    xscale = TMALLOC(double, length);
 
     if (pl->pl_scale->v_type == SV_TIME) { /* calculate the frequency from time */
 
         span = pl->pl_scale->v_realdata[length-1] - pl->pl_scale->v_realdata[0];
 
-        for (i = 0; i<fpts; i++)
-            xscale[i] = i*1.0/span*(2*length)/N;
-
         for (i = 0; i<length; i++)
+#ifdef HAVE_LIBFFTW3
+            xscale[i] = i*1.0/span;
+#else
+            xscale[i] = i*1.0/span*length/N;
+#endif
+        for (i = 0; i<pl->pl_scale->v_length; i++)
             time[i] = pl->pl_scale->v_realdata[i];
 
     } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* take frequency from ac data and calculate time */
 
         /* Deal with complex frequency vector */
         if (pl->pl_scale->v_type == VF_COMPLEX) {
-            span = realpart(pl->pl_scale->v_compdata[fpts-1]) - realpart(pl->pl_scale->v_compdata[0]);
-            for (i = 0; i<fpts; i++)
+            span = realpart(pl->pl_scale->v_compdata[pl->pl_scale->v_length-1]) - realpart(pl->pl_scale->v_compdata[0]);
+            for (i = 0; i<pl->pl_scale->v_length; i++)
                 xscale[i] = realpart(pl->pl_scale->v_compdata[i]);
         } else {
-            span = pl->pl_scale->v_realdata[fpts-1] - pl->pl_scale->v_realdata[0];
-            for (i = 0; i<fpts; i++)
+            span = pl->pl_scale->v_realdata[pl->pl_scale->v_length-1] - pl->pl_scale->v_realdata[0];
+            for (i = 0; i<pl->pl_scale->v_length; i++)
                 xscale[i] = pl->pl_scale->v_realdata[i];
         }
 
         for (i = 0; i < length; i++)
-            time[i] = i*1.0/span*(2*length)/N;
+#ifdef HAVE_LIBFFTW3
+            time[i] = i*1.0/span;
+#else
+            time[i] = i*1.0/span*length/N;
+#endif
 
         span = time[length-1] - time[0];
 
-    } else {
-
-        span = length;
+    } else { /* there is no usable plot vector - using simple bins */
 
         for (i = 0; i < fpts; i++)
             xscale[i] = i;
 
         for (i = 0; i < length; i++)
-            time[i] = i*1.0/span;
+            time[i] = i;
 
         span = time[length-1] - time[0];
 
     }
 
-    reald = TMALLOC(double, N);
-    xtime = TMALLOC(double, 2*length);
-    /* Now interpolate the data... */
-    if (!doubledouble(indata, length, reald)) {
-        fprintf(cp_err, "Error: can't interpolate\n");
-        goto done;
-    }
-    if (!doubledouble(time, length, xtime)) {
-        fprintf(cp_err, "Error: can't interpolate\n");
-        goto done;
-    }
-
-    win = TMALLOC(double, 2*length);
+    win = TMALLOC(double, length);
     maxt = time[length-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
         strcpy(window, "none");
@@ -611,7 +623,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     if (order < 2)
         order = 2;
 
-    if (fft_windows(window, win, xtime, 2*length, maxt, span, order) == 0)
+    if (fft_windows(window, win, time, length, maxt, span, order) == 0)
         goto done;
 
     /* create a new scale vector */
@@ -624,28 +636,138 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     sv->v_realdata = xscale;
     vec_new(sv);
 
-    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, N/2-length);
-    printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span*(2*length)/N, fpts);
+    if (type == VF_COMPLEX) { /* input vector is complex */
 
-    for (i = 0; i < 2*length; i++)
-        reald[i] = reald[i] * win[i];
-    for (i = 2*length; i < N; i++)
-        reald[i] = 0.0;
+        ngcomplex_t *indata = (ngcomplex_t *) data;
 
-    fftInit(M);
-    rffts(reald, M, 1);
-    fftFree();
+#ifdef HAVE_LIBFFTW3
 
-    scale = N;
-    /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
-    for (i = 0; i < fpts; i++) {
-        outdata[i].cx_real = reald[2*i]/scale;
-        outdata[i].cx_imag = reald[2*i+1]/scale;
+        printf("FFT: Time span: %g s, input length: %d\n", span, length);
+        printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
+
+        inc = fftw_malloc(sizeof(fftw_complex) * (unsigned int) length);
+        out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
+
+        for (i = 0; i < length; i++) {
+            inc[i][0] = indata[i].cx_real * win[i];
+            inc[i][1] = indata[i].cx_imag * win[i];
+        }
+
+        plan_forward = fftw_plan_dft_1d(fpts, inc, out, FFTW_FORWARD, FFTW_ESTIMATE);
+
+        fftw_execute(plan_forward);
+
+        *newlength = fpts;
+        outdata = alloc_c(fpts);
+
+        scale = (double) fpts;
+        for (i = 0; i < fpts; i++) {
+            outdata[i].cx_real = out[i][0]/scale;
+            outdata[i].cx_imag = out[i][1]/scale;
+        }
+
+        fftw_free(inc);
+
+#else /* Green's FFT */
+
+        printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, N-length);
+        printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, N);
+
+        datax = TMALLOC(double, 2*N);
+
+        for (i = 0; i < length; i++) {
+            datax[2*i] = indata[i].cx_real * win[i];
+            datax[2*i+1] = indata[i].cx_imag * win[i];
+        }
+        for (i = length; i < N; i++) {
+            datax[2*i] = 0.0;
+            datax[2*i+1] = 0.0;
+        }
+
+        fftInit(M);
+        ffts(datax, M, 1);
+        fftFree();
+
+        *newlength = N;
+        outdata = alloc_c(N);
+
+        scale = (double) N;
+        for (i = 0; i < N; i++) {
+            outdata[i].cx_real = datax[2*i]/scale;
+            outdata[i].cx_imag = datax[2*i+1]/scale;
+        }
+
+#endif
+
+    } else { /* input vector is real */
+
+        double *indata = (double *) data;
+
+#ifdef HAVE_LIBFFTW3
+
+        printf("FFT: Time span: %g s, input length: %d\n", span, length);
+        printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
+
+        ind = fftw_malloc(sizeof(double) * (unsigned int) length);
+        out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
+
+        for (i = 0; i < length; i++)
+            ind[i] = indata[i] * win[i];
+
+        plan_forward = fftw_plan_dft_r2c_1d(length, ind, out, FFTW_ESTIMATE);
+
+        fftw_execute(plan_forward);
+
+        *newlength = fpts;
+        outdata = alloc_c(fpts);
+
+        scale = (double) length;
+        for (i = 0; i < fpts; i++) {
+            outdata[i].cx_real = out[i][0]/scale;
+            outdata[i].cx_imag = out[i][1]/scale;
+        }
+
+        fftw_free(ind);
+
+#else /* Green's FFT */
+
+        printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, N-length);
+        printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, N/2);
+
+        realdata = (double *) data;
+
+        datax = TMALLOC(double, N);
+
+        for (i = 0; i < length; i++)
+            datax[i] = realdata[i] * win[i];
+        for (i = length; i < N; i++)
+            datax[i] = 0.0;
+
+        fftInit(M);
+        rffts(datax, M, 1);
+        fftFree();
+
+        *newlength = N/2;
+        outdata = alloc_c(N/2);
+
+        scale = (double) N;
+        /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
+        for (i = 0; i < N/2; i++) {
+            outdata[i].cx_real = datax[2*i]/scale;
+            outdata[i].cx_imag = datax[2*i+1]/scale;
+        }
+
+#endif
+
     }
 
 done:
-    tfree(reald);
-    tfree(xtime);
+#ifdef HAVE_LIBFFTW3
+    fftw_free(out);
+    fftw_destroy_plan(plan_forward);
+#else
+    tfree(datax);
+#endif
     tfree(time);
     tfree(win);
 
@@ -657,13 +779,20 @@ void *
 cx_ifft(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
     ngcomplex_t *indata = (ngcomplex_t *) data;
-    int i, N, M, tpts, order;
-    double span, scale, maxt;
-    double *xscale, *win = NULL;
-    double *outdata;
-    double *reald = NULL;
+    int i, tpts;
+    double span, scale;
+    double *xscale;
+    ngcomplex_t *outdata = NULL;
     struct dvec  *sv;
-    char   window[BSIZE_SP];
+
+#ifdef HAVE_LIBFFTW3
+    fftw_complex *in;
+    fftw_complex *out = NULL;
+    fftw_plan plan_backward = NULL;
+#else
+    int N, M;
+    double *datax = NULL;
+#endif
 
     if (grouping == 0)
         grouping = length;
@@ -678,6 +807,9 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
         return (NULL);
     }
 
+#ifdef HAVE_LIBFFTW3
+    tpts = length;
+#else
     /* size of ifft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
@@ -685,6 +817,8 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
         N <<= 1;
         M++;
     }
+    tpts = N;
+#endif
 
     if (pl->pl_scale->v_type == SV_TIME) { /* take the time from transient */
 
@@ -710,7 +844,11 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
             span = pl->pl_scale->v_realdata[tpts-1] - pl->pl_scale->v_realdata[0];
 
         for (i = 0; i<tpts; i++)
+#ifdef HAVE_LIBFFTW3
+            xscale[i] = i*1.0/span;
+#else
             xscale[i] = i*1.0/span*length/N;
+#endif
 
     } else {
 
@@ -726,11 +864,6 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
 
     span = xscale[tpts-1] - xscale[0];
 
-    *newlength = tpts;
-    *newtype = VF_REAL;
-
-    outdata = alloc_d(tpts);
-
     /* create a new scale vector */
     sv = alloc(struct dvec);
     ZERO(sv, struct dvec);
@@ -741,43 +874,70 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     sv->v_realdata = xscale;
     vec_new(sv);
 
-    win = TMALLOC(double, tpts);
-    maxt = xscale[tpts-1];
-    if (!cp_getvar("specwindow", CP_STRING, window))
-        strcpy(window, "none");
-    if (!cp_getvar("specwindoworder", CP_NUM, &order))
-        order = 2;
-    if (order < 2)
-        order = 2;
+#ifdef HAVE_LIBFFTW3
 
-    if (fft_windows(window, win, xscale, tpts, maxt, span, order) == 0)
-        goto done;
-
-    printf("IFFT: Frequency span: %g Hz, input length: %d\n", 1/span*tpts/N*(length-1), length);
+    printf("IFFT: Frequency span: %g Hz, input length: %d\n", 1/span*length, length);
     printf("IFFT: Time resolution: %g s, output length: %d\n", span/(tpts-1), tpts);
 
-    reald = TMALLOC(double, 2*N);
-    /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
+    in = fftw_malloc(sizeof(fftw_complex) * (unsigned int) length);
+    out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) tpts);
+
     for (i = 0; i < length; i++) {
-        reald[2*i] = indata[i].cx_real;
-        reald[2*i+1] = indata[i].cx_imag;
+        in[i][0] = indata[i].cx_real;
+        in[i][1] = indata[i].cx_imag;
+    }
+
+    plan_backward = fftw_plan_dft_1d(tpts, in, out, FFTW_BACKWARD, FFTW_ESTIMATE);
+
+    fftw_execute(plan_backward);
+
+    *newtype = VF_COMPLEX;
+    *newlength = tpts;
+    outdata = alloc_c(tpts);
+
+    scale = (double) tpts;
+    for (i = 0; i < tpts; i++) {
+        outdata[i].cx_real = out[i][0] * scale;
+        outdata[i].cx_imag = out[i][1] * scale;
+    }
+
+    fftw_free(in);
+    fftw_destroy_plan(plan_backward);
+    fftw_free(out);
+
+#else /* Green's IFFT */
+
+    printf("IFFT: Frequency span: %g Hz, input length: %d, zero padding: %d\n", 1/span*length, length, N-length);
+    printf("IFFT: Time resolution: %g s, output length: %d\n", span/(tpts-1), tpts);
+
+    datax = TMALLOC(double, 2*N);
+
+    for (i = 0; i < length; i++) {
+        datax[2*i] = indata[i].cx_real;
+        datax[2*i+1] = indata[i].cx_imag;
     }
     for (i = length; i < N; i++) {
-        reald[2*i] = 0.0;
-        reald[2*i+1] = 0.0;
+        datax[2*i] = 0.0;
+        datax[2*i+1] = 0.0;
     }
 
     fftInit(M);
-    riffts(reald, M, 1);
+    iffts(datax, M, 1);
     fftFree();
 
-    scale = length;
-    for (i = 0; i < tpts; i++)
-        outdata[i] = reald[i] * scale/MAX(1e-03, win[i]); /* makes dewindowing sense? */
+    *newtype = VF_COMPLEX;
+    *newlength = N;
+    outdata = alloc_c(N);
 
-done:
-    tfree(reald);
-    tfree(win);
+    scale = (double) N;
+    for (i = 0; i < N; i++) {
+        outdata[i].cx_real = datax[2*i] * scale;
+        outdata[i].cx_imag = datax[2*i+1] * scale;
+    }
+
+    tfree(datax);
+
+#endif
 
     return ((void *) outdata);
 }
