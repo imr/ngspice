@@ -34,7 +34,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 extern bool cx_degrees;
 extern void vec_new(struct dvec *d);
 
-bool doubledouble(double *, int, double *);
 #ifdef HAVE_LIBFFTW3
 #include "fftw3.h"
 #endif
@@ -934,29 +933,4 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
 #endif
 
     return ((void *) outdata);
-}
-
-
-bool
-doubledouble(double *indata, int len, double *outdata)
-{
-    int i, j;
-
-    if (len < 2) {
-        fprintf(cp_err, "Error: lengths too small to interpolate.\n");
-        return (FALSE);
-    }
-
-    outdata[0] = indata[0];
-    j = 1;
-    for (i = 1; i < 2*len-1; i++)
-        if (i == 2*j) {
-            outdata[i] = indata[j];
-            j = j + 1;
-        } else {
-            outdata[i] = indata[j-1] + (indata[j]-indata[j-1])/2.0;
-        }
-    outdata[2*len-1] = indata[len-1] + (indata[len-1]-outdata[2*len-2]);
-
-    return (TRUE);
 }
