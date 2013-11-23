@@ -1,5 +1,3 @@
-EXTRA_DIST = 1-f-code_d.c
-
 noinst_LTLIBRARIES = libtrannoise.la
 
 libtrannoise_la_SOURCES = \
