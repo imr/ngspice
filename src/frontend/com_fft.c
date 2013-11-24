@@ -40,13 +40,13 @@ com_fft(wordlist *wl)
     double maxt;
 
 #ifdef GREEN
-    int mm;
+    int M;
 #else
     int sign;
 #endif
 
     double *reald = NULL, *imagd = NULL;
-    int size, order;
+    int N, order;
     double scale;
 
     if (!plot_cur || !plot_cur->pl_scale) {
@@ -65,20 +65,20 @@ com_fft(wordlist *wl)
 
 #ifdef GREEN
     // size of input vector is power of two and larger than spice vector
-    size = 1;
-    mm = 0;
-    while (size < tlen) {
-        size <<= 1;
-        mm++;
+    N = 1;
+    M = 0;
+    while (N < tlen) {
+        N <<= 1;
+        M++;
     }
 #else
     /* size of input vector is power of two and larger than spice vector */
-    size = 1;
-    while (size < tlen)
-        size *= 2;
+    N = 1;
+    while (N < tlen)
+        N *= 2;
 #endif
-    /* output vector has length of size/2 */
-    fpts = size/2;
+    /* output vector has length of N/2 */
+    fpts = N/2;
 
     win = TMALLOC(double, tlen);
     maxt = time[tlen-1];
@@ -145,7 +145,7 @@ com_fft(wordlist *wl)
     vec_new(f);
 
     for (i = 0; i<fpts; i++)
-        freq[i] = i*1.0/span*tlen/size;
+        freq[i] = i*1.0/span*tlen/N;
 
     tdvec = TMALLOC(double  *, ngood);
     fdvec = TMALLOC(ngcomplex_t *, ngood);
@@ -163,26 +163,26 @@ com_fft(wordlist *wl)
         vec = vec->v_link2;
     }
 
-    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-tlen);
-    printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/size, fpts);
+    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-tlen);
+    printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/N, fpts);
 
-    reald = TMALLOC(double, size);
-    imagd = TMALLOC(double, size);
+    reald = TMALLOC(double, N);
+    imagd = TMALLOC(double, N);
     for (i = 0; i<ngood; i++) {
         for (j = 0; j < tlen; j++) {
             reald[j] = tdvec[i][j]*win[j];
             imagd[j] = 0.0;
         }
-        for (j = tlen; j < size; j++) {
+        for (j = tlen; j < N; j++) {
             reald[j] = 0.0;
             imagd[j] = 0.0;
         }
 #ifdef GREEN
         // Green's FFT
-        fftInit(mm);
-        rffts(reald, mm, 1);
+        fftInit(M);
+        rffts(reald, M, 1);
         fftFree();
-        scale = size;
+        scale = N;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         for (j = 0; j < fpts; j++) {
             fdvec[i][j].cx_real = reald[2*j]/scale;
@@ -191,7 +191,7 @@ com_fft(wordlist *wl)
         fdvec[i][0].cx_imag = 0;
 #else
         sign = 1;
-        fftext(reald, imagd, size, tlen, sign);
+        fftext(reald, imagd, N, tlen, sign);
         scale = 0.66;
 
         for (j = 0; j < fpts; j++) {
@@ -220,8 +220,8 @@ com_psd(wordlist *wl)
     double  **tdvec = NULL;
     double  *freq, *win = NULL, *time, *ave;
     double  span, noipower;
-    int     mm;
-    int size, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
+    int     M;
+    int N, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
@@ -259,15 +259,15 @@ com_psd(wordlist *wl)
     wl = wl->wl_next;
 
     // size of input vector is power of two and larger than spice vector
-    size = 1;
-    mm = 0;
-    while (size < tlen) {
-        size <<= 1;
-        mm++;
+    N = 1;
+    M = 0;
+    while (N < tlen) {
+        N <<= 1;
+        M++;
     }
 
-    // output vector has length of size/2
-    fpts = size>>1;
+    // output vector has length of N/2
+    fpts = N>>1;
 
     win = TMALLOC(double, tlen);
     maxt = time[tlen-1];
@@ -334,7 +334,7 @@ com_psd(wordlist *wl)
     vec_new(f);
 
     for (i = 0; i <= fpts; i++)
-        freq[i] = i*1./span*tlen/size;
+        freq[i] = i*1./span*tlen/N;
 
     tdvec = TMALLOC(double*, ngood);
     fdvec = TMALLOC(ngcomplex_t*, ngood);
@@ -352,11 +352,11 @@ com_psd(wordlist *wl)
         vec = vec->v_link2;
     }
 
-    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, size, size-tlen);
-    printf("PSD: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/size, fpts);
+    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-tlen);
+    printf("PSD: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/N, fpts);
 
-    reald = TMALLOC(double, size);
-    imagd = TMALLOC(double, size);
+    reald = TMALLOC(double, N);
+    imagd = TMALLOC(double, N);
 
     // scale = 0.66;
 
@@ -366,19 +366,19 @@ com_psd(wordlist *wl)
             reald[j] = (tdvec[i][j]*win[j]);
             imagd[j] = 0.;
         }
-        for (j = tlen; j < size; j++) {
+        for (j = tlen; j < N; j++) {
             reald[j] = 0.;
             imagd[j] = 0.;
         }
 
         // Green's FFT
-        fftInit(mm);
-        rffts(reald, mm, 1);
+        fftInit(M);
+        rffts(reald, M, 1);
         fftFree();
-        scaling = size;
+        scaling = N;
 
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
-        intres = (double)size * (double)size;
+        intres = (double)N * (double)N;
         noipower = fdvec[i][0].cx_real = reald[0]*reald[0]/intres;
         fdvec[i][fpts].cx_real = reald[1]*reald[1]/intres;
         noipower += fdvec[i][fpts-1].cx_real;
@@ -459,11 +459,11 @@ fftext(double *x, double *y, long int n, long int nn, int dir)
 
     long i, i1, j, k, i2, l, l1, l2;
     double c1, c2, tx, ty, t1, t2, u1, u2, z;
-    int m = 0, mm = 1;
+    int m = 0, M = 1;
 
     /* get the exponent to the base of 2 from the number of points */
-    while (mm < n) {
-        mm *= 2;
+    while (M < n) {
+        M *= 2;
         m++;
     }
 

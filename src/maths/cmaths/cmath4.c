@@ -507,7 +507,7 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
 void *
 cx_fft(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
-    int i, size, mm, fpts, order;
+    int i, N, M, fpts, order;
     double span, scale, maxt;
     double *indata, *xscale;
     double *time = NULL, *xtime = NULL, *win = NULL;
@@ -530,14 +530,14 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 
     /* size of fft input vector is power of two and larger than spice vector */
-    size = 1;
-    mm = 0;
-    while (size < 2*length) {
-        size <<= 1;
-        mm++;
+    N = 1;
+    M = 0;
+    while (N < 2*length) {
+        N <<= 1;
+        M++;
     }
-    /* output vector has length of size/2 */
-    fpts = size/2;
+    /* output vector has length of N/2 */
+    fpts = N/2;
 
     *newlength = fpts;
     *newtype = VF_COMPLEX;
@@ -553,7 +553,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         span = pl->pl_scale->v_realdata[length-1] - pl->pl_scale->v_realdata[0];
 
         for (i = 0; i<fpts; i++)
-            xscale[i] = i*1.0/span*(2*length)/size;
+            xscale[i] = i*1.0/span*(2*length)/N;
 
         for (i = 0; i<length; i++)
             time[i] = pl->pl_scale->v_realdata[i];
@@ -572,7 +572,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         }
 
         for (i = 0; i < length; i++)
-            time[i] = i*1.0/span*(2*length)/size;
+            time[i] = i*1.0/span*(2*length)/N;
 
         span = time[length-1] - time[0];
 
@@ -590,7 +590,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 
     }
 
-    reald = TMALLOC(double, size);
+    reald = TMALLOC(double, N);
     xtime = TMALLOC(double, 2*length);
     /* Now interpolate the data... */
     if (!doubledouble(indata, length, reald)) {
@@ -624,19 +624,19 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     sv->v_realdata = xscale;
     vec_new(sv);
 
-    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, size/2-length);
-    printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span*(2*length)/size, fpts);
+    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, N/2-length);
+    printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span*(2*length)/N, fpts);
 
     for (i = 0; i < 2*length; i++)
         reald[i] = reald[i] * win[i];
-    for (i = 2*length; i < size; i++)
+    for (i = 2*length; i < N; i++)
         reald[i] = 0.0;
 
-    fftInit(mm);
-    rffts(reald, mm, 1);
+    fftInit(M);
+    rffts(reald, M, 1);
     fftFree();
 
-    scale = size;
+    scale = N;
     /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
     for (i = 0; i < fpts; i++) {
         outdata[i].cx_real = reald[2*i]/scale;
@@ -657,7 +657,7 @@ void *
 cx_ifft(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
 {
     ngcomplex_t *indata = (ngcomplex_t *) data;
-    int i, size, mm, tpts, order;
+    int i, N, M, tpts, order;
     double span, scale, maxt;
     double *xscale, *win = NULL;
     double *outdata;
@@ -679,11 +679,11 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     }
 
     /* size of ifft input vector is power of two and larger or equal than spice vector */
-    size = 1;
-    mm = 0;
-    while (size < length) {
-        size <<= 1;
-        mm++;
+    N = 1;
+    M = 0;
+    while (N < length) {
+        N <<= 1;
+        M++;
     }
 
     if (pl->pl_scale->v_type == SV_TIME) { /* take the time from transient */
@@ -710,7 +710,7 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
             span = pl->pl_scale->v_realdata[tpts-1] - pl->pl_scale->v_realdata[0];
 
         for (i = 0; i<tpts; i++)
-            xscale[i] = i*1.0/span*length/size;
+            xscale[i] = i*1.0/span*length/N;
 
     } else {
 
@@ -753,22 +753,22 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
     if (fft_windows(window, win, xscale, tpts, maxt, span, order) == 0)
         goto done;
 
-    printf("IFFT: Frequency span: %g Hz, input length: %d\n", 1/span*tpts/size*(length-1), length);
+    printf("IFFT: Frequency span: %g Hz, input length: %d\n", 1/span*tpts/N*(length-1), length);
     printf("IFFT: Time resolution: %g s, output length: %d\n", span/(tpts-1), tpts);
 
-    reald = TMALLOC(double, 2*size);
+    reald = TMALLOC(double, 2*N);
     /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
     for (i = 0; i < length; i++) {
         reald[2*i] = indata[i].cx_real;
         reald[2*i+1] = indata[i].cx_imag;
     }
-    for (i = length; i < size; i++) {
+    for (i = length; i < N; i++) {
         reald[2*i] = 0.0;
         reald[2*i+1] = 0.0;
     }
 
-    fftInit(mm);
-    riffts(reald, mm, 1);
+    fftInit(M);
+    riffts(reald, M, 1);
     fftFree();
 
     scale = length;
