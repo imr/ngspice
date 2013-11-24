@@ -124,8 +124,8 @@ mathfunction(int f, double z, double x)
     case 5:
         y = exp(x);
         break;
-    case 6:
-        y = ln(x);
+    case 6:                     /* ln(x) */
+        y = log(x);
         break;
     case 7:
         y = atan(x);
@@ -145,7 +145,7 @@ mathfunction(int f, double z, double x)
     case 12:
         y = MIN(x, z);
         break;
-    case 13:
+    case 13:                    /* int(x) */
         y = trunc(x);
         break;
     case 14:
