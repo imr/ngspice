@@ -250,7 +250,7 @@ void rspectprod(double *data1, double *data2, double *outdata, int N)
 }
 
 
-#ifndef GREEN
+#ifdef BOURKE
 
 static void
 fftext(double *x, double *y, long int n, long int nn, int dir)
@@ -339,4 +339,4 @@ fftext(double *x, double *y, long int n, long int nn, int dir)
     }
 }
 
-#endif /* GREEN */
+#endif /* BOURKE */

@@ -110,6 +110,6 @@ void rspectprod(double *data1, double *data2, double *outdata, int N);
 //#define CACHEFILLMALLOC(n) malloc((n)+CACHELINEFILL)
 
 
-#ifndef GREEN
-static void fftext(double*, double*, long int, long int, int);
+#ifdef BOURKE
+static void fftext(double *x, double *y, long int n, long int nn, int dir);
 #endif
