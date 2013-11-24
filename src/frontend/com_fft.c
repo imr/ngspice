@@ -41,8 +41,6 @@ com_fft(wordlist *wl)
 
 #ifdef GREEN
     int M;
-#else
-    int sign;
 #endif
 
     double *reald = NULL, *imagd = NULL;
@@ -64,7 +62,7 @@ com_fft(wordlist *wl)
     span = time[tlen-1] - time[0];
 
 #ifdef GREEN
-    // size of input vector is power of two and larger than spice vector
+    /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
     while (N < tlen) {
@@ -182,7 +180,8 @@ com_fft(wordlist *wl)
         fftInit(M);
         rffts(reald, M, 1);
         fftFree();
-        scale = N;
+
+        scale = (double) N;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         for (j = 0; j < fpts; j++) {
             fdvec[i][j].cx_real = reald[2*j]/scale;
@@ -190,8 +189,7 @@ com_fft(wordlist *wl)
         }
         fdvec[i][0].cx_imag = 0;
 #else
-        sign = 1;
-        fftext(reald, imagd, N, tlen, sign);
+        fftext(reald, imagd, N, tlen, 1 /* forward */);
         scale = 0.66;
 
         for (j = 0; j < fpts; j++) {
@@ -258,7 +256,7 @@ com_psd(wordlist *wl)
 
     wl = wl->wl_next;
 
-    // size of input vector is power of two and larger than spice vector
+    /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
     while (N < tlen) {
@@ -267,7 +265,7 @@ com_psd(wordlist *wl)
     }
 
     // output vector has length of N/2
-    fpts = N>>1;
+    fpts = N/2;
 
     win = TMALLOC(double, tlen);
     maxt = time[tlen-1];
@@ -375,7 +373,8 @@ com_psd(wordlist *wl)
         fftInit(M);
         rffts(reald, M, 1);
         fftFree();
-        scaling = N;
+
+        scaling = (double) N;
 
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         intres = (double)N * (double)N;

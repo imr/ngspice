@@ -529,7 +529,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         return (NULL);
     }
 
-    /* size of fft input vector is power of two and larger than spice vector */
+    /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
     while (N < 2*length) {
@@ -714,7 +714,7 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
 
     } else {
 
-        /* output vector has same length as input  vector */
+        /* output vector has same length as input vector */
         tpts = length;
 
         xscale = TMALLOC(double, tpts);
