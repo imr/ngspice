@@ -21,11 +21,6 @@ Author:   2008 Holger Vogt
 #include "ngspice/fftext.h"
 
 
-#ifndef GREEN
-static void fftext(double*, double*, long int, long int, int);
-#endif
-
-
 void
 com_fft(wordlist *wl)
 {
@@ -434,95 +429,3 @@ done:
 
     free_pnode(names);
 }
-
-
-#ifndef GREEN
-
-static void
-fftext(double *x, double *y, long int n, long int nn, int dir)
-{
-    /*
-      http://local.wasp.uwa.edu.au/~pbourke/other/dft/
-      download 22.05.08
-      Used with permission from the author Paul Bourke
-    */
-
-    /*
-      This computes an in-place complex-to-complex FFT
-      x and y are the real and imaginary arrays
-      n is the number of points, has to be to the power of 2
-      nn is the number of points w/o zero padded values
-      dir =  1 gives forward transform
-      dir = -1 gives reverse transform
-    */
-
-    long i, i1, j, k, i2, l, l1, l2;
-    double c1, c2, tx, ty, t1, t2, u1, u2, z;
-    int m = 0, M = 1;
-
-    /* get the exponent to the base of 2 from the number of points */
-    while (M < n) {
-        M *= 2;
-        m++;
-    }
-
-    /* Do the bit reversal */
-    i2 = n >> 1;
-    j = 0;
-    for (i = 0; i < n-1; i++) {
-        if (i < j) {
-            tx = x[i];
-            ty = y[i];
-            x[i] = x[j];
-            y[i] = y[j];
-            x[j] = tx;
-            y[j] = ty;
-        }
-        k = i2;
-        while (k <= j) {
-            j -= k;
-            k >>= 1;
-        }
-        j += k;
-    }
-
-    /* Compute the FFT */
-    c1 = -1.0;
-    c2 = 0.0;
-    l2 = 1;
-    for (l = 0; l < m; l++) {
-        l1 = l2;
-        l2 <<= 1;
-        u1 = 1.0;
-        u2 = 0.0;
-        for (j = 0; j < l1; j++) {
-            for (i = j; i < n; i += l2) {
-                i1 = i + l1;
-                t1 = u1 * x[i1] - u2 * y[i1];
-                t2 = u1 * y[i1] + u2 * x[i1];
-                x[i1] = x[i] - t1;
-                y[i1] = y[i] - t2;
-                x[i] += t1;
-                y[i] += t2;
-            }
-            z =  u1 * c1 - u2 * c2;
-            u2 = u1 * c2 + u2 * c1;
-            u1 = z;
-        }
-        c2 = sqrt((1.0 - c1) / 2.0);
-        if (dir == 1)
-            c2 = -c2;
-        c1 = sqrt((1.0 + c1) / 2.0);
-    }
-
-    /* Scaling for forward transform */
-    if (dir == 1) {
-        double scale = 1.0 / nn;
-        for (i = 0; i < n; i++) {
-            x[i] *= scale; /* don't consider zero padded values */
-            y[i] *= scale;
-        }
-    }
-}
-
-#endif /* GREEN */

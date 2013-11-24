@@ -108,3 +108,8 @@ void rspectprod(double *data1, double *data2, double *outdata, int N);
 //#define CACHELINEFILL (CACHELINESIZE-1)
 //#define CEILCACHELINE(p) ((((unsigned long)p+CACHELINEFILL)/CACHELINESIZE)*CACHELINESIZE)
 //#define CACHEFILLMALLOC(n) malloc((n)+CACHELINEFILL)
+
+
+#ifndef GREEN
+static void fftext(double*, double*, long int, long int, int);
+#endif
