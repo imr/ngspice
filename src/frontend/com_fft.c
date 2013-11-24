@@ -7,8 +7,6 @@ Author:   2008 Holger Vogt
  * Code to do fast fourier transform on data.
  */
 
-#define GREEN /* select fast Green's fft */
-
 #include "ngspice/ngspice.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
@@ -19,6 +17,10 @@ Author:   2008 Holger Vogt
 #include "parse.h"
 #include "../misc/misc_time.h"
 #include "ngspice/fftext.h"
+
+#ifdef HAVE_LIBFFTW3
+#include "fftw3.h"
+#endif
 
 
 void
@@ -33,13 +35,16 @@ com_fft(wordlist *wl)
     struct pnode *pn, *names = NULL;
     char   window[BSIZE_SP];
     double maxt;
+    double *in = NULL;
 
-#ifdef GREEN
-    int M;
+#ifdef HAVE_LIBFFTW3
+    fftw_complex *out = NULL;
+    fftw_plan plan_forward = NULL;
+#else
+    int N, M;
 #endif
 
-    double *reald = NULL, *imagd = NULL;
-    int N, order;
+    int order;
     double scale;
 
     if (!plot_cur || !plot_cur->pl_scale) {
@@ -56,7 +61,9 @@ com_fft(wordlist *wl)
     time = (plot_cur->pl_scale)->v_realdata;
     span = time[tlen-1] - time[0];
 
-#ifdef GREEN
+#ifdef HAVE_LIBFFTW3
+    fpts = tlen/2 + 1;
+#else
     /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
@@ -64,14 +71,8 @@ com_fft(wordlist *wl)
         N <<= 1;
         M++;
     }
-#else
-    /* size of input vector is power of two and larger than spice vector */
-    N = 1;
-    while (N < tlen)
-        N *= 2;
-#endif
-    /* output vector has length of N/2 */
     fpts = N/2;
+#endif
 
     win = TMALLOC(double, tlen);
     maxt = time[tlen-1];
@@ -138,7 +139,11 @@ com_fft(wordlist *wl)
     vec_new(f);
 
     for (i = 0; i<fpts; i++)
+#ifdef HAVE_LIBFFTW3
+        freq[i] = i*1.0/span;
+#else
         freq[i] = i*1.0/span*tlen/N;
+#endif
 
     tdvec = TMALLOC(double  *, ngood);
     fdvec = TMALLOC(ngcomplex_t *, ngood);
@@ -156,48 +161,69 @@ com_fft(wordlist *wl)
         vec = vec->v_link2;
     }
 
-    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-tlen);
-    printf("FFT: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/N, fpts);
+#ifdef HAVE_LIBFFTW3
 
-    reald = TMALLOC(double, N);
-    imagd = TMALLOC(double, N);
+    printf("FFT: Time span: %g s, input length: %d\n", span, tlen);
+    printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
+
     for (i = 0; i<ngood; i++) {
+
+        in = fftw_malloc(sizeof(double) * (unsigned int) tlen);
+        out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
+
+        for (j = 0; j < tlen; j++)
+            in[j] = tdvec[i][j]*win[j];
+
+        plan_forward = fftw_plan_dft_r2c_1d(tlen, in, out, FFTW_ESTIMATE);
+
+        fftw_execute(plan_forward);
+
+        scale = (double) tlen;
+        for (j = 0; j < fpts; j++) {
+            fdvec[i][j].cx_real = out[j][0]/scale;
+            fdvec[i][j].cx_imag = out[j][1]/scale;
+        }
+
+        fftw_free(in);
+        fftw_free(out);
+
+#else /* Green's FFT */
+
+    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, tlen, N-tlen);
+    printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
+
+    for (i = 0; i<ngood; i++) {
+
+        in = TMALLOC(double, N);
         for (j = 0; j < tlen; j++) {
-            reald[j] = tdvec[i][j]*win[j];
-            imagd[j] = 0.0;
+            in[j] = tdvec[i][j]*win[j];
         }
         for (j = tlen; j < N; j++) {
-            reald[j] = 0.0;
-            imagd[j] = 0.0;
+            in[j] = 0.0;
         }
-#ifdef GREEN
-        // Green's FFT
+
         fftInit(M);
-        rffts(reald, M, 1);
+        rffts(in, M, 1);
         fftFree();
 
         scale = (double) N;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         for (j = 0; j < fpts; j++) {
-            fdvec[i][j].cx_real = reald[2*j]/scale;
-            fdvec[i][j].cx_imag = reald[2*j+1]/scale;
+            fdvec[i][j].cx_real = in[2*j]/scale;
+            fdvec[i][j].cx_imag = in[2*j+1]/scale;
         }
         fdvec[i][0].cx_imag = 0;
-#else
-        fftext(reald, imagd, N, tlen, 1 /* forward */);
-        scale = 0.66;
 
-        for (j = 0; j < fpts; j++) {
-            fdvec[i][j].cx_real = reald[j]/scale;
-            fdvec[i][j].cx_imag = imagd[j]/scale;
-        }
+        tfree(in);
+
 #endif
+
     }
 
 done:
-    tfree(reald);
-    tfree(imagd);
-
+#ifdef HAVE_LIBFFTW3
+    fftw_destroy_plan(plan_forward);
+#endif
     tfree(tdvec);
     tfree(fdvec);
     tfree(win);
@@ -213,15 +239,22 @@ com_psd(wordlist *wl)
     double  **tdvec = NULL;
     double  *freq, *win = NULL, *time, *ave;
     double  span, noipower;
-    int     M;
-    int N, ngood, fpts, i, j, tlen, jj, smooth, hsmooth;
+    int ngood, fpts, i, j, jj, tlen, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
     char   window[BSIZE_SP];
-    double maxt;
+    double maxt, intres;
 
-    double *reald = NULL, *imagd = NULL;
+#ifdef HAVE_LIBFFTW3
+    double *in = NULL;
+    fftw_complex *out = NULL;
+    fftw_plan plan_forward = NULL;
+#else
+    int N, M;
+#endif
+
+    double *reald = NULL;
     double scaling, sum;
     int order;
 
@@ -251,6 +284,9 @@ com_psd(wordlist *wl)
 
     wl = wl->wl_next;
 
+#ifdef HAVE_LIBFFTW3
+    fpts = tlen/2 + 1;
+#else
     /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
@@ -258,9 +294,8 @@ com_psd(wordlist *wl)
         N <<= 1;
         M++;
     }
-
-    // output vector has length of N/2
     fpts = N/2;
+#endif
 
     win = TMALLOC(double, tlen);
     maxt = time[tlen-1];
@@ -326,8 +361,13 @@ com_psd(wordlist *wl)
     f->v_realdata = freq;
     vec_new(f);
 
+#ifdef HAVE_LIBFFTW3
+    for (i = 0; i <= fpts; i++)
+        freq[i] = i*1./span;
+#else
     for (i = 0; i <= fpts; i++)
         freq[i] = i*1./span*tlen/N;
+#endif
 
     tdvec = TMALLOC(double*, ngood);
     fdvec = TMALLOC(ngcomplex_t*, ngood);
@@ -345,26 +385,55 @@ com_psd(wordlist *wl)
         vec = vec->v_link2;
     }
 
-    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-tlen);
-    printf("PSD: Freq. resolution: %g Hz, output length: %d\n", 1.0/span*tlen/N, fpts);
+#ifdef HAVE_LIBFFTW3
 
-    reald = TMALLOC(double, N);
-    imagd = TMALLOC(double, N);
+    printf("PSD: Time span: %g s, input length: %d\n", span, tlen);
+    printf("PSD: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
 
-    // scale = 0.66;
+    reald = TMALLOC(double, fpts);
+
+    in = fftw_malloc(sizeof(double) * (unsigned int) tlen);
+    out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
 
     for (i = 0; i<ngood; i++) {
-        double intres;
+
+        for (j = 0; j < tlen; j++)
+            in[j] = tdvec[i][j]*win[j];
+
+        plan_forward = fftw_plan_dft_r2c_1d(tlen, in, out, FFTW_ESTIMATE);
+
+        fftw_execute(plan_forward);
+
+        scaling = (double) tlen;
+
+        intres = (double)tlen * (double)tlen;
+        noipower = fdvec[i][0].cx_real = out[0][0]*out[0][0]/intres;
+        fdvec[i][fpts].cx_real = out[1][0]*out[1][0]/intres;
+        noipower += fdvec[i][fpts-1].cx_real;
+        for (j = 1; j < fpts; j++) {
+            fdvec[i][j].cx_real = 2.* (out[j][0]*out[j][0] + out[j+1][0]*out[j+1][0])/intres;
+            fdvec[i][j].cx_imag = 0;
+            noipower += fdvec[i][j].cx_real;
+            if (!finite(noipower))
+                break;
+        }
+
+#else /* Green's FFT */
+
+    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-tlen);
+    printf("PSD: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
+
+    reald = TMALLOC(double, N);
+
+    for (i = 0; i<ngood; i++) {
+
         for (j = 0; j < tlen; j++) {
             reald[j] = (tdvec[i][j]*win[j]);
-            imagd[j] = 0.;
         }
         for (j = tlen; j < N; j++) {
             reald[j] = 0.;
-            imagd[j] = 0.;
         }
 
-        // Green's FFT
         fftInit(M);
         rffts(reald, M, 1);
         fftFree();
@@ -384,6 +453,8 @@ com_psd(wordlist *wl)
             if (!finite(noipower))
                 break;
         }
+
+#endif
 
         printf("Total noise power up to Nyquist frequency %5.3e Hz:\n%e V^2 (or A^2), \nnoise voltage or current %e V (or A)\n",
                freq[fpts], noipower, sqrt(noipower));
@@ -420,12 +491,16 @@ com_psd(wordlist *wl)
     }
 
 done:
-    free(reald);
-    free(imagd);
-
+#ifdef HAVE_LIBFFTW3
+    fftw_free(in);
+    fftw_free(out);
+    fftw_destroy_plan(plan_forward);
+#endif
     tfree(tdvec);
     tfree(fdvec);
     tfree(win);
+
+    free(reald);
 
     free_pnode(names);
 }
