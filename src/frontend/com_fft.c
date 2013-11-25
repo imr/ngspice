@@ -71,7 +71,7 @@ com_fft(wordlist *wl)
         N <<= 1;
         M++;
     }
-    fpts = N/2;
+    fpts = N/2 + 1;
 #endif
 
     win = TMALLOC(double, tlen);
@@ -208,11 +208,14 @@ com_fft(wordlist *wl)
 
         scale = (double) N;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
-        for (j = 0; j < fpts; j++) {
+        fdvec[i][0].cx_real = in[0]/scale;
+        fdvec[i][0].cx_imag = 0.0;
+        for (j = 1; j < fpts-1; j++) {
             fdvec[i][j].cx_real = in[2*j]/scale;
             fdvec[i][j].cx_imag = in[2*j+1]/scale;
         }
-        fdvec[i][0].cx_imag = 0;
+        fdvec[i][fpts-1].cx_real = in[1]/scale;
+        fdvec[i][fpts-1].cx_imag = 0.0;
 
         tfree(in);
 
@@ -294,7 +297,7 @@ com_psd(wordlist *wl)
         N <<= 1;
         M++;
     }
-    fpts = N/2;
+    fpts = N/2 + 1;
 #endif
 
     win = TMALLOC(double, tlen);
@@ -351,7 +354,7 @@ com_psd(wordlist *wl)
     plot_cur->pl_name = copy("PSD");
     plot_cur->pl_date = copy(datestring());
 
-    freq = TMALLOC(double, fpts + 1);
+    freq = TMALLOC(double, fpts);
     f = alloc(struct dvec);
     ZERO(f, struct dvec);
     f->v_name = copy("frequency");
@@ -373,13 +376,13 @@ com_psd(wordlist *wl)
     fdvec = TMALLOC(ngcomplex_t*, ngood);
     for (i = 0, vec = vlist; i<ngood; i++) {
         tdvec[i] = vec->v_realdata; /* real input data */
-        fdvec[i] = TMALLOC(ngcomplex_t, fpts + 1); /* complex output data */
+        fdvec[i] = TMALLOC(ngcomplex_t, fpts); /* complex output data */
         f = alloc(struct dvec);
         ZERO(f, struct dvec);
         f->v_name = vec_basename(vec);
         f->v_type = SV_NOTYPE; //vec->v_type;
         f->v_flags = (VF_COMPLEX | VF_PERMANENT);
-        f->v_length = fpts + 1;
+        f->v_length = fpts;
         f->v_compdata = fdvec[i];
         vec_new(f);
         vec = vec->v_link2;
@@ -407,11 +410,9 @@ com_psd(wordlist *wl)
         scaling = (double) tlen;
 
         intres = (double)tlen * (double)tlen;
-        noipower = fdvec[i][0].cx_real = out[0][0]*out[0][0]/intres;
-        fdvec[i][fpts].cx_real = out[1][0]*out[1][0]/intres;
-        noipower += fdvec[i][fpts-1].cx_real;
-        for (j = 1; j < fpts; j++) {
-            fdvec[i][j].cx_real = 2.* (out[j][0]*out[j][0] + out[j+1][0]*out[j+1][0])/intres;
+        noipower = 0.0;
+        for (j = 0; j < fpts; j++) {
+            fdvec[i][j].cx_real = 2.* (out[j][0]*out[j][0] + out[j][1]*out[j][1])/intres;
             fdvec[i][j].cx_imag = 0;
             noipower += fdvec[i][j].cx_real;
             if (!finite(noipower))
@@ -442,10 +443,10 @@ com_psd(wordlist *wl)
 
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         intres = (double)N * (double)N;
-        noipower = fdvec[i][0].cx_real = reald[0]*reald[0]/intres;
-        fdvec[i][fpts].cx_real = reald[1]*reald[1]/intres;
-        noipower += fdvec[i][fpts-1].cx_real;
-        for (j = 1; j < fpts; j++) {
+        fdvec[i][0].cx_real = reald[0]*reald[0]/intres;
+        fdvec[i][0].cx_imag = 0;
+        noipower = fdvec[i][0].cx_real;
+        for (j = 1; j < fpts-1; j++) {
             jj = j<<1;
             fdvec[i][j].cx_real = 2.* (reald[jj]*reald[jj] + reald[jj + 1]*reald[jj + 1])/intres;
             fdvec[i][j].cx_imag = 0;
@@ -453,6 +454,9 @@ com_psd(wordlist *wl)
             if (!finite(noipower))
                 break;
         }
+        fdvec[i][fpts-1].cx_real = reald[1]*reald[1]/intres;
+        fdvec[i][fpts-1].cx_imag = 0;
+        noipower += fdvec[i][fpts-1].cx_real;
 
 #endif
 
