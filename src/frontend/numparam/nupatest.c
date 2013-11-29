@@ -141,26 +141,6 @@ void gluepluslines( int imax)
   }
 }
 
-#if 0	/* sjb - this is in mystring.c */
-void rs(char * s) /*  78 coumn limit */
-{
-  int i; 
-  unsigned char done; 
-  char c;
-  int max=maxlen(s);
-  if ( max>78 ) { max=78 ;}
-  i=0; done=0; 
-  scopy(s,"");
-  while ( ! done ) {
-    c=fgetc(stdin);
-    if ( (c>=' ')&&(c<='~') && (i<max) ) { 
-      cadd(s,c); Inc(i); 
-    }
-    done= (c=='\n') || (c=='\r');
-  }
-}
-#endif
-
 void fwrites(FILE * f, char * s)
 { 
   fputs(s,f); 

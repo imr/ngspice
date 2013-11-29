@@ -42,7 +42,7 @@ bool alfanum(char c);
 char *stupcase(char *s);
 
 /***** primitive input-output ***/
-void rs(SPICE_DSTRINGPTR s);
+int yes_or_no(void);
 char rc(void);
 
 int freadstr(FILE *f, SPICE_DSTRINGPTR dstr_p);

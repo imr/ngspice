@@ -22,7 +22,35 @@
 #include "ngspice/fteext.h" /* controlled_exit() */
 
 
-/***** primitive input-output ***/
+/*
+ * fetch a human answer to a y/n question from stdin
+ * insist on a single non white-space char on a '\n' terminated line
+ * return this char or '\n' or EOF
+ * return '\0' if the answer doesn't fit this pattern
+ */
+
+int
+yes_or_no(void)
+{
+    int first;
+
+    do {
+        first = getchar();
+        if (first == '\n' || first == EOF)
+            return first;
+    } while (isspace(first));
+
+    for (;;) {
+        int c = getchar();
+        if (c == EOF)
+            return c;
+        if (c == '\n')
+            return tolower(first);
+        if (!isspace(c))
+            first = '\0';
+    }
+}
+
 
 bool
 ci_prefix(const char *p, const char *s)
@@ -36,22 +64,6 @@ ci_prefix(const char *p, const char *s)
     }
 
     return (1);
-}
-
-
-void
-rs(SPICE_DSTRINGPTR dstr_p)
-{
-    /* basic line input, limit= 80 chars */
-    char c;
-
-    spice_dstring_reinit(dstr_p);
-    do
-    {
-        c = (char) fgetc(stdin);
-        cadd(dstr_p, c);
-    }
-    while (!((c == '\r') || (c == '\n')));
 }
 
 

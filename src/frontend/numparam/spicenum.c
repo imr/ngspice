@@ -29,6 +29,8 @@ Todo:
 #include "ngspice/fteext.h" /* controlled_exit() */
 
 
+extern bool ft_batchmode;
+
 void dump_symbols(tdico *dico_p);
 
 char *nupa_inst_name;
@@ -498,7 +500,6 @@ static void
 nupa_done(void)
 {
     /* int i; not needed so far, see below */
-    char *reply;                /* user reply */
     SPICE_DSTRING rep;          /* dynamic report */
     int dictsize, nerrors;
 
@@ -530,12 +531,17 @@ nupa_done(void)
         nadd(&rep, nerrors);
         cadd(&rep, '\n');
         printf("%s", spice_dstring_value(&rep));
-        printf("Numparam expansion errors: Run Spice anyway? y/n ?\n");
-        spice_dstring_reinit(&rep);
-        rs(&rep);
-        reply = spice_dstring_value(&rep);
-        if (upcase(reply[0]) != 'Y')
+        if (ft_batchmode)
             controlled_exit(EXIT_FAILURE);
+        for (;;) {
+            int c;
+            printf("Numparam expansion errors: Run Spice anyway? y/n ?\n");
+            c = yes_or_no();
+            if (c == 'n' || c == EOF)
+                controlled_exit(EXIT_FAILURE);
+            if (c == 'y')
+                break;
+        }
     }
 
     linecountS = 0;
