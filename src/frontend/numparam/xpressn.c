@@ -102,6 +102,18 @@ initkeys(void)
 }
 
 
+enum {
+    XKEY_AND = 1, XKEY_OR, XKEY_NOT, XKEY_DIV, XKEY_MOD, XKEY_DEFINED
+};
+
+
+enum {
+    XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_SINH, XFU_COSH,
+    XFU_TANH, XFU_TERNARY_FCN, XFU_V, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
+    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN,
+};
+
+
 static double
 mathfunction(int f, double z, double x)
 /* the list of built-in functions. Patch 'fmath', here and near line 888 to get more ...*/
@@ -109,58 +121,58 @@ mathfunction(int f, double z, double x)
     double y;
     switch (f)
     {
-    case 1:
+    case XFU_SQR:
         y = x * x;
         break;
-    case 2:
+    case XFU_SQRT:
         y = sqrt(x);
         break;
-    case 3:
+    case XFU_SIN:
         y = sin(x);
         break;
-    case 4:
+    case XFU_COS:
         y = cos(x);
         break;
-    case 5:
+    case XFU_EXP:
         y = exp(x);
         break;
-    case 6:                     /* ln(x) */
+    case XFU_LN:
         y = log(x);
         break;
-    case 7:
+    case XFU_ARCTAN:
         y = atan(x);
         break;
-    case 8:
+    case XFU_ABS:
         y = fabs(x);
         break;
-    case 9:
+    case XFU_POW:
         y = pow(z, x);
         break;
-    case 10:
+    case XFU_PWR:
         y = pow(fabs(z), x);
         break;
-    case 11:
+    case XFU_MAX:
         y = MAX(x, z);
         break;
-    case 12:
+    case XFU_MIN:
         y = MIN(x, z);
         break;
-    case 13:                    /* int(x) */
+    case XFU_INT:
         y = trunc(x);
         break;
-    case 14:
+    case XFU_LOG:
         y = log(x);
         break;
-    case 15:
+    case XFU_SINH:
         y = sinh(x);
         break;
-    case 16:
+    case XFU_COSH:
         y = cosh(x);
         break;
-    case 17:
+    case XFU_TANH:
         y = tanh(x);
         break;
-    case 21: /* sgn */
+    case XFU_SGN:
         if (x > 0)
             y = 1.;
         else if (x == 0)
@@ -168,29 +180,29 @@ mathfunction(int f, double z, double x)
         else
             y = -1.;
         break;
-    case 26:
+    case XFU_CEIL:
         y = ceil(x);
         break;
-    case 27:
+    case XFU_FLOOR:
         y = floor(x);
         break;
-    case 28:
+    case XFU_ASIN:
         y = asin(x);
         break;
-    case 29:
+    case XFU_ACOS:
         y = acos(x);
         break;
-    case 30:
+    case XFU_ATAN:
         y = atan(x);
         break;
-    case 31:
+    case XFU_ASINH:
 #ifdef HAVE_ASINH
         y = asinh(x);
 #else
         y = ((x > 0) ? log(x + sqrt(x * x + 1.0)) : -log(-x + sqrt(x * x + 1.0)));
 #endif
         break;
-    case 32:
+    case XFU_ACOSH:
 #ifdef HAVE_ACOSH
         y = acosh(x);
 #else
@@ -201,7 +213,7 @@ mathfunction(int f, double z, double x)
             y = (log(x + sqrt(x*x-1.0)));
 #endif
         break;
-    case 33:
+    case XFU_ATANH:
 #ifdef HAVE_ATANH
         y = atanh(x);
 #else
@@ -212,7 +224,7 @@ mathfunction(int f, double z, double x)
             y = (log((1.0 + x) / (1.0 - x)) / 2.0);
 #endif
         break;
-    case 34:
+    case XFU_TAN:
         y = tan(x);
         break;
     default:
@@ -991,32 +1003,32 @@ opfunctkey(tdico *dico,
     switch (kw)
     {
                                 /* & | ~ DIV MOD Defined */
-    case 1:
+    case XKEY_AND:
         c = 'A';
         state = S_binop;
         level = 6;
         break;
-    case 2:
+    case XKEY_OR:
         c = 'O';
         state = S_binop;
         level = 7;
         break;
-    case 3:
+    case XKEY_NOT:
         c = '!';
         state = S_unop;
         level = 1;
         break;
-    case 4:
+    case XKEY_DIV:
         c = '\\';
         state = S_binop;
         level = 3;
         break;
-    case 5:
+    case XKEY_MOD:
         c = '%';
         state = S_binop;
         level = 3;
         break;
-    case 6:
+    case XKEY_DEFINED:
         c = '?';
         state = S_atom;
         level = 0;
@@ -1228,17 +1240,17 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
                 u = formula(dico, s, kptr - 1, &error);
                 state = S_atom;
                 if (fu > 0) {
-                    if ((fu == 18))
+                    if ((fu == XFU_TERNARY_FCN))
                         u = ternary_fcn(v, w, u);
-                    else if ((fu == 20))
+                    else if ((fu == XFU_AGAUSS))
                         u = agauss(v, w, u);
-                    else if ((fu == 22))
+                    else if ((fu == XFU_GAUSS))
                         u = gauss(v, w, u);
-                    else if ((fu == 23))
+                    else if ((fu == XFU_UNIF))
                         u = unif(v, u);
-                    else if ((fu == 24))
+                    else if ((fu == XFU_AUNIF))
                         u = aunif(v, u);
-                    else if ((fu == 25))
+                    else if ((fu == XFU_LIMIT))
                         u = limit(v, u);
                     else
                         u = mathfunction(fu, v, u);
@@ -1260,7 +1272,7 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
                 c = opfunctkey(dico, kw, c, &state, &level, &error);
             }
 
-            if (kw == 6) {
+            if (kw == XKEY_DEFINED) {
                 u = exists(dico, s_end, &s, &error);
             }
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
