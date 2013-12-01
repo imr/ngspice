@@ -1016,7 +1016,7 @@ opfunctkey(tdico *dico,
         state = S_binop;
         level = 3;
         break;
-    case Defd:
+    case 6:
         c = '?';
         state = S_atom;
         level = 0;
@@ -1260,7 +1260,7 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
                 c = opfunctkey(dico, kw, c, &state, &level, &error);
             }
 
-            if (kw == Defd) {
+            if (kw == 6) {
                 u = exists(dico, s_end, &s, &error);
             }
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
