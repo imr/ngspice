@@ -97,7 +97,7 @@ initkeys(void)
              "and or not div mod defined");
     scopy_up(&fmathS,
              "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log sinh cosh"
-             " tanh ternary_fcn v agauss sgn gauss unif aunif limit ceil floor"
+             " tanh ternary_fcn agauss sgn gauss unif aunif limit ceil floor"
              " asin acos atan asinh acosh atanh tan");
 }
 
@@ -109,7 +109,7 @@ enum {
 
 enum {
     XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_SINH, XFU_COSH,
-    XFU_TANH, XFU_TERNARY_FCN, XFU_V, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
+    XFU_TANH, XFU_TERNARY_FCN, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
     XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN,
 };
 
