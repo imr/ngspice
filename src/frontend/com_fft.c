@@ -30,7 +30,7 @@ com_fft(wordlist *wl)
     double  **tdvec = NULL;
     double  *freq, *win = NULL, *time;
     double  span;
-    int     fpts, i, j, tlen, ngood;
+    int     fpts, i, j, length, ngood;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
     char   window[BSIZE_SP];
@@ -57,25 +57,25 @@ com_fft(wordlist *wl)
         goto done;
     }
 
-    tlen = (plot_cur->pl_scale)->v_length;
+    length = (plot_cur->pl_scale)->v_length;
     time = (plot_cur->pl_scale)->v_realdata;
-    span = time[tlen-1] - time[0];
+    span = time[length-1] - time[0];
 
 #ifdef HAVE_LIBFFTW3
-    fpts = tlen/2 + 1;
+    fpts = length/2 + 1;
 #else
     /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
-    while (N < tlen) {
+    while (N < length) {
         N <<= 1;
         M++;
     }
     fpts = N/2 + 1;
 #endif
 
-    win = TMALLOC(double, tlen);
-    maxt = time[tlen-1];
+    win = TMALLOC(double, length);
+    maxt = time[length-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
         strcpy(window, "blackman");
     if (!cp_getvar("specwindoworder", CP_NUM, &order))
@@ -83,7 +83,7 @@ com_fft(wordlist *wl)
     if (order < 2)
         order = 2;
 
-    if (fft_windows(window, win, time, tlen, maxt, span, order) == 0)
+    if (fft_windows(window, win, time, length, maxt, span, order) == 0)
         goto done;
 
     names = ft_getpnames(wl, TRUE);
@@ -93,9 +93,9 @@ com_fft(wordlist *wl)
         vec = ft_evaluate(pn);
         for (; vec; vec = vec->v_link2) {
 
-            if (vec->v_length != tlen) {
+            if (vec->v_length != length) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %d\n",
-                        vec->v_name, vec->v_length, tlen);
+                        vec->v_name, vec->v_length, length);
                 continue;
             }
 
@@ -142,7 +142,7 @@ com_fft(wordlist *wl)
 #ifdef HAVE_LIBFFTW3
         freq[i] = i*1.0/span;
 #else
-        freq[i] = i*1.0/span*tlen/N;
+        freq[i] = i*1.0/span*length/N;
 #endif
 
     tdvec = TMALLOC(double  *, ngood);
@@ -163,22 +163,22 @@ com_fft(wordlist *wl)
 
 #ifdef HAVE_LIBFFTW3
 
-    printf("FFT: Time span: %g s, input length: %d\n", span, tlen);
+    printf("FFT: Time span: %g s, input length: %d\n", span, length);
     printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
 
     for (i = 0; i<ngood; i++) {
 
-        in = fftw_malloc(sizeof(double) * (unsigned int) tlen);
+        in = fftw_malloc(sizeof(double) * (unsigned int) length);
         out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
 
-        for (j = 0; j < tlen; j++)
+        for (j = 0; j < length; j++)
             in[j] = tdvec[i][j]*win[j];
 
-        plan_forward = fftw_plan_dft_r2c_1d(tlen, in, out, FFTW_ESTIMATE);
+        plan_forward = fftw_plan_dft_r2c_1d(length, in, out, FFTW_ESTIMATE);
 
         fftw_execute(plan_forward);
 
-        scale = (double) tlen;
+        scale = (double) length;
         for (j = 0; j < fpts; j++) {
             fdvec[i][j].cx_real = out[j][0]/scale;
             fdvec[i][j].cx_imag = out[j][1]/scale;
@@ -189,16 +189,16 @@ com_fft(wordlist *wl)
 
 #else /* Green's FFT */
 
-    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, tlen, N-tlen);
+    printf("FFT: Time span: %g s, input length: %d, zero padding: %d\n", span, length, N-length);
     printf("FFT: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
 
     for (i = 0; i<ngood; i++) {
 
         in = TMALLOC(double, N);
-        for (j = 0; j < tlen; j++) {
+        for (j = 0; j < length; j++) {
             in[j] = tdvec[i][j]*win[j];
         }
-        for (j = tlen; j < N; j++) {
+        for (j = length; j < N; j++) {
             in[j] = 0.0;
         }
 
@@ -242,7 +242,7 @@ com_psd(wordlist *wl)
     double  **tdvec = NULL;
     double  *freq, *win = NULL, *time, *ave;
     double  span, noipower;
-    int ngood, fpts, i, j, jj, tlen, smooth, hsmooth;
+    int ngood, fpts, i, j, jj, length, smooth, hsmooth;
     char    *s;
     struct dvec  *f, *vlist, *lv = NULL, *vec;
     struct pnode *pn, *names = NULL;
@@ -271,9 +271,9 @@ com_psd(wordlist *wl)
         goto done;
     }
 
-    tlen = (plot_cur->pl_scale)->v_length;
+    length = (plot_cur->pl_scale)->v_length;
     time = (plot_cur->pl_scale)->v_realdata;
-    span = time[tlen-1] - time[0];
+    span = time[length-1] - time[0];
 
     // get filter length from parameter input
     s = wl->wl_word;
@@ -288,20 +288,20 @@ com_psd(wordlist *wl)
     wl = wl->wl_next;
 
 #ifdef HAVE_LIBFFTW3
-    fpts = tlen/2 + 1;
+    fpts = length/2 + 1;
 #else
     /* size of fft input vector is power of two and larger or equal than spice vector */
     N = 1;
     M = 0;
-    while (N < tlen) {
+    while (N < length) {
         N <<= 1;
         M++;
     }
     fpts = N/2 + 1;
 #endif
 
-    win = TMALLOC(double, tlen);
-    maxt = time[tlen-1];
+    win = TMALLOC(double, length);
+    maxt = time[length-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
         strcpy(window, "blackman");
     if (!cp_getvar("specwindoworder", CP_NUM, &order))
@@ -309,7 +309,7 @@ com_psd(wordlist *wl)
     if (order < 2)
         order = 2;
 
-    if (fft_windows(window, win, time, tlen, maxt, span, order) == 0)
+    if (fft_windows(window, win, time, length, maxt, span, order) == 0)
         goto done;
 
     names = ft_getpnames(wl, TRUE);
@@ -319,9 +319,9 @@ com_psd(wordlist *wl)
         vec = ft_evaluate(pn);
         for (; vec; vec = vec->v_link2) {
 
-            if (vec->v_length != (int)tlen) {
+            if (vec->v_length != (int)length) {
                 fprintf(cp_err, "Error: lengths of %s vectors don't match: %d, %d\n",
-                        vec->v_name, vec->v_length, tlen);
+                        vec->v_name, vec->v_length, length);
                 continue;
             }
 
@@ -369,7 +369,7 @@ com_psd(wordlist *wl)
         freq[i] = i*1./span;
 #else
     for (i = 0; i <= fpts; i++)
-        freq[i] = i*1./span*tlen/N;
+        freq[i] = i*1./span*length/N;
 #endif
 
     tdvec = TMALLOC(double*, ngood);
@@ -390,26 +390,26 @@ com_psd(wordlist *wl)
 
 #ifdef HAVE_LIBFFTW3
 
-    printf("PSD: Time span: %g s, input length: %d\n", span, tlen);
+    printf("PSD: Time span: %g s, input length: %d\n", span, length);
     printf("PSD: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
 
     reald = TMALLOC(double, fpts);
 
-    in = fftw_malloc(sizeof(double) * (unsigned int) tlen);
+    in = fftw_malloc(sizeof(double) * (unsigned int) length);
     out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
 
     for (i = 0; i<ngood; i++) {
 
-        for (j = 0; j < tlen; j++)
+        for (j = 0; j < length; j++)
             in[j] = tdvec[i][j]*win[j];
 
-        plan_forward = fftw_plan_dft_r2c_1d(tlen, in, out, FFTW_ESTIMATE);
+        plan_forward = fftw_plan_dft_r2c_1d(length, in, out, FFTW_ESTIMATE);
 
         fftw_execute(plan_forward);
 
-        scaling = (double) tlen;
+        scaling = (double) length;
 
-        intres = (double)tlen * (double)tlen;
+        intres = (double)length * (double)length;
         noipower = 0.0;
         for (j = 0; j < fpts; j++) {
             fdvec[i][j].cx_real = 2.* (out[j][0]*out[j][0] + out[j][1]*out[j][1])/intres;
@@ -421,17 +421,17 @@ com_psd(wordlist *wl)
 
 #else /* Green's FFT */
 
-    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-tlen);
+    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-length);
     printf("PSD: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
 
     reald = TMALLOC(double, N);
 
     for (i = 0; i<ngood; i++) {
 
-        for (j = 0; j < tlen; j++) {
+        for (j = 0; j < length; j++) {
             reald[j] = (tdvec[i][j]*win[j]);
         }
-        for (j = tlen; j < N; j++) {
+        for (j = length; j < N; j++) {
             reald[j] = 0.;
         }
 
