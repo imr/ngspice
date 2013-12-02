@@ -15,6 +15,9 @@
 #include "ngspice/fftext.h"
 #include "ngspice/wallace.h"
 
+#ifdef HAVE_LIBFFTW3
+#include "fftw3.h"
+#endif
 
 extern void controlled_exit(int status);
 
@@ -22,15 +25,27 @@ extern void controlled_exit(int status);
 void
 f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
 {
-    int i;
-    double *hfa, *wfa;
+    int i, length;
     double ha;
+    double *hfa, *wfa;
 
-    ha = alpha/2.0f;
+#ifdef HAVE_LIBFFTW3
+    fftw_complex *out = NULL;
+    fftw_plan plan_forward = NULL;
+    fftw_plan plan_backward = NULL;
+#endif
+
+    ha = alpha/2.0;
     // Q_d = sqrt(Q_d); /* find the deviation of the noise */
-    hfa = TMALLOC(double,n_pts);
-    wfa = TMALLOC(double,n_pts);
-    hfa[0] = 1.0f;
+#ifdef HAVE_LIBFFTW3
+    length = 2 * (n_pts/2 + 1);
+#else
+    length = n_pts;
+#endif
+    hfa = TMALLOC(double, length);
+    wfa = TMALLOC(double, length);
+
+    hfa[0] = 1.0;
     wfa[0] = Q_d * GaussWa;
     /* generate the coefficients hk */
     for (i = 1; i < n_pts; i++) {
@@ -40,8 +55,42 @@ f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
         wfa[i] = Q_d * GaussWa;
     }
 
-    // for (i = 0; i < n_pts; i++)
-    //    printf("rnd %e, hk %e\n", wfa[i], hfa[i]);
+#ifdef HAVE_LIBFFTW3
+
+    /* in-place transformation needs zero padding on the end */
+    hfa[n_pts] = 0.0;
+    wfa[n_pts] = 0.0;
+    hfa[n_pts+1] = 0.0;
+    wfa[n_pts+1] = 0.0;
+
+    /* perform the discrete Fourier transform */
+    plan_forward = fftw_plan_dft_r2c_1d(n_pts, hfa, (fftw_complex *)hfa, FFTW_ESTIMATE);
+    fftw_execute(plan_forward);
+    fftw_destroy_plan(plan_forward);
+
+    plan_forward = fftw_plan_dft_r2c_1d(n_pts, wfa, (fftw_complex *)wfa, FFTW_ESTIMATE);
+    fftw_execute(plan_forward);
+    fftw_destroy_plan(plan_forward);
+
+    out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) (n_pts/2 + 1));
+    /* multiply the two complex vectors */
+    for (i = 0; i < n_pts/2 + 1; i++) {
+        out[i][0] = hfa[i]*wfa[i] - hfa[i+1]*wfa[i+1];
+        out[i][1] = hfa[i]*wfa[i+1] + hfa[i+1]*wfa[i];
+    }
+
+    /* inverse transform */
+    plan_backward = fftw_plan_dft_c2r_1d(n_pts, out, X, FFTW_ESTIMATE);
+    fftw_execute(plan_backward);
+    fftw_destroy_plan(plan_backward);
+
+    for (i = 0; i < n_pts; i++) {
+        X[i] = X[i] / (double) n_pts;
+    }
+
+    fftw_free(out);
+
+#else /* Green's FFT */
 
     /* perform the discrete Fourier transform */
     fftInit(n_exp);
@@ -50,8 +99,11 @@ f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
 
     /* multiply the two complex vectors */
     rspectprod(hfa, wfa, X, n_pts);
+
     /* inverse transform */
     riffts(X, n_exp, 1);
+
+#endif
 
     free(hfa);
     free(wfa);
@@ -80,11 +132,16 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
             size_t newsteps = 1;
             int newexp = 0;
 
+#ifdef HAVE_LIBFFTW3
+            newsteps = nosteps;
+            newexp = 1;
+#else
             // generate number of steps as power of 2
             while (newsteps < nosteps) {
                 newsteps <<= 1;
                 newexp++;
             }
+#endif
 
             this->oneof = TMALLOC(double, newsteps);
             this->oneof_length = newsteps;
