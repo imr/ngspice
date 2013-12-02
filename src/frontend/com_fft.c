@@ -77,7 +77,7 @@ com_fft(wordlist *wl)
     win = TMALLOC(double, length);
     maxt = time[length-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
-        strcpy(window, "blackman");
+        strcpy(window, "hanning");
     if (!cp_getvar("specwindoworder", CP_NUM, &order))
         order = 2;
     if (order < 2)
@@ -303,7 +303,7 @@ com_psd(wordlist *wl)
     win = TMALLOC(double, length);
     maxt = time[length-1];
     if (!cp_getvar("specwindow", CP_STRING, window))
-        strcpy(window, "blackman");
+        strcpy(window, "hanning");
     if (!cp_getvar("specwindoworder", CP_NUM, &order))
         order = 2;
     if (order < 2)
