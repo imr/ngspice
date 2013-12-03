@@ -33,6 +33,7 @@ f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
     fftw_complex *out = NULL;
     fftw_plan plan_forward = NULL;
     fftw_plan plan_backward = NULL;
+    NG_IGNORE(n_exp);
 #endif
 
     ha = alpha/2.0;
@@ -109,7 +110,7 @@ f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
     free(wfa);
     /* fft tables will be freed in vsrcaccept.c and isrcaccept.c
        fftFree(); */
-    fprintf(stdout, "%d (2e%d) one over f values created\n", n_pts, n_exp);
+    fprintf(stdout, "%d 1/f noise values in time domain created\n", n_pts);
 }
 
 
