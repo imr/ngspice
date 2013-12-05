@@ -234,14 +234,19 @@ MIFgetValue (
 
 static int MIFget_boolean(char *token, char **err)
 {
+    int i;
     *err = NULL;
 
     if((strcmp(token, "t") == 0) || (strcmp(token, "true") == 0))
         return(1);
-    else if((strcmp(token, "f") == 0) || (strcmp(token, "false") == 0))
+    if((strcmp(token, "f") == 0) || (strcmp(token, "false") == 0))
         return(0);
-    else
-        *err = "Bad boolean value";
+
+    i = MIFget_integer(token, err); // Try integer
+    if(!*err && (i == 1 || i == 0))
+        return i;
+
+    *err = "Bad boolean value";
 
     return(-1);
 }
