@@ -47,7 +47,6 @@ Copyright 2008 Holger Vogt
 #else
 #include <unistd.h>
 #endif
-#include <sys/timeb.h>
 #include <stdarg.h>			// var. argumente
 
 /* Tausworthe state variables for double variates*/
