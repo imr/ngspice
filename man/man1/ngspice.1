@@ -18,7 +18,7 @@
 .ds = \-\^\-
 .ds ngspice \s-2NGSPICE\s+2
 .SH "NAME"
-ngspice \- circuit simulator derived from \*[spice]\&3f5
+ngspice \- circuit simulator derived from SPICE3f5
 .SH "SYNOPSIS"
 \fBngspice\fP [\fIoptions\fP] [\fIfile\fP ...]
 .SH "DESCRIPTION"
@@ -39,21 +39,25 @@ Enable command completion. (defect)
 The program is being run on a terminal with \fBmfb\fP name \fIterm\fP.
 .TP
 \fB\-b\fP  or  \fB\*=batch\fP
-Run in batch mode. \*[ngspice] will read the standard input or the specified
-input file and do the simulation. Note that if the standard input
-is not a terminal, \*[ngspice] will default to batch mode, unless the
-\-i flag is given.
+Run in batch mode.
+\*[ngspice] will read the standard input or the specified
+input file and do the simulation.
+Note that if the standard input is not a terminal, \*[ngspice] will default
+to batch mode, unless the \-i flag is given.
 .TP
 \fB\-s\fP  or  \fB\*=server\fP
-Run in server mode. This is like batch mode, except that a temporary
-rawfile is used and then written to the standard output, preceded by
-a line with a single "@", after the simulation is done. This mode
-is used by the ngspice daemon.
+Run in server mode.
+This is like batch mode, except that a temporary rawfile is used and then
+written to the standard output, preceded by a line with a single "@", after
+the simulation is done.
+This mode is used by the ngspice daemon.
 .TP
 \fB\-i\fP  or  \fB\*=interactive\fP
-Run in interactive mode. This is useful if the standard input is
-not a terminal but interactive mode is desired. Command completion is
-not available unless the standard input is a terminal, however.
+Run in interactive mode.
+This is useful if the standard input is not a terminal but interactive mode
+is desired.
+Command completion is not available unless the standard input is a terminal,
+however.
 .TP
 \fB\-r\fP \fIrawfile\fP  or  \fB\*=rawfile=\fP\fIfile\fP
 Use \fIrawfile\fP as the default file into which the results of
@@ -76,11 +80,13 @@ All logs generated during a batch run (\fB\-b\fP) will be saved in \fIoutfile\fP
 .TP
 \fB\-p\fP  or  \fB\*=pipe\fP
 Allow a program (e.g., xcircuit) to act as a GUI frontend for
-ngspice through a pipe. Thus ngspice will assume that the pipe
-is a tty and allows one to run in interactive mode.
+ngspice through a pipe.
+Thus ngspice will assume that the pipe is a tty and allows one to run in
+interactive mode.
 .PP
-Further arguments are taken to be \*[spice] input decks, which are read
-and saved. (If batch mode is requested then they are run immediately.)
+Further arguments are taken to be SPICE input decks, which are read
+and saved.
+(If batch mode is requested then they are run immediately.)
 .SH "ENVIRONMENT"
 .TP
 \fBSPICE_LIB_DIR\fP
@@ -94,7 +100,8 @@ and saved. (If batch mode is requested then they are run immediately.)
 \fBSPICE_EDITOR\fP
 .TP
 \fBSPICE_ASCIIRAWFILE\fP  default  \fI0\fP
-Format of the rawfile. \fI0\fP for binary, and \fI1\fP for ascii.
+Format of the rawfile.
+\fI0\fP for binary, and \fI1\fP for ascii.
 .TP
 \fBSPICE_NEWS\fP  default  \fI$SPICE_LIB_DIR/news\fP
 A file which is copied verbatim to stdout when ngspice starts in interactive mode.

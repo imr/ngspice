@@ -24,14 +24,14 @@ and `a' for the new ascii format.
 specifies the format to be read, and
 .B totype
 specifies the format to be written.
-If 
+If
 .B fromfile
-and 
+and
 .B tofile
 are given, then they are used as the input and output, otherwise
-standard input and output are used.  (Note that this second option is
-only available on \s-2UNIX\s+2 systems \- on VMS and other systems you must
-supply the filenames.)
+standard input and output are used.
+(Note that this second option is only available on \s-2UNIX\s+2 systems
+\- on VMS and other systems you must supply the filenames.)
 If no arguments are given, the parameters are prompted for.
 .PP
 Binary format is the preferred format for general use, as it is
@@ -39,7 +39,8 @@ the most economical in terms of space and speed of access, and ascii is
 provided to make it easy to modify data files and transfer them
 between machines with different floating-point formats.
 The old format is provided only
-for backward compatibility. The three formats are as follows:
+for backward compatibility.
+The three formats are as follows:
 .br
 .nf
 
@@ -65,7 +66,7 @@ for backward compatibility. The three formats are as follows:
 	Date: \fIDate\fR
 	[ Plotname: \fIPlot Name\fR
 	  Flags: \fIcomplex\fR or \fIreal\fR
-	  No. Variables: \fInumoutputs\fR 
+	  No. Variables: \fInumoutputs\fR
 	  No. Points: \fInumpoints\fR
 	  Command: \fInutmeg command\fR
 	  Variables:	0 \fIvarname1\fR \fItypename1\fR
@@ -76,13 +77,14 @@ for backward compatibility. The three formats are as follows:
 	    1	n	n	n	n	...
 	    And so forth...
 	] repeated one or more times
-
+.fi
 .PP
 If one of the flags is \fIcomplex\fR, the points look like r,i where r and i
-are floating point (in %e format). Otherwise they are in %e format. 
+are floating point (in %e format).
+Otherwise they are in %e format.
 Only one of \fIreal\fR and \fIcomplex\fR should appear.
 .PP
-The lines are guaranteed to be less than 80 columns wide (unless the 
+The lines are guaranteed to be less than 80 columns wide (unless the
 plot title or variable names are very long), so this format is safe
 to mail between systems like CMS.
 .PP
@@ -95,7 +97,7 @@ and the \fBVariables:\fR lines, and whenever the plot is loaded into
 
 	\fITitle Card\fR		  (a NULL terminated string)
 	\fIDate, Time\fR		  (a NULL terminated string)
-	[ 
+	[
 	  \fIPlot title\fR 		  (a NULL terminated string)
 	  \fINumber of variables\fR   (an int)
 	  \fINumber of data points\fR (an int)
@@ -103,9 +105,9 @@ and the \fBVariables:\fR lines, and whenever the plot is loaded into
 	  \fIvariable header struct\fR (repeated numoutputs times)
 		\fIvariable name\fR	  (a NULL terminated string)
 		\fIvariable type\fR	  (an int)
-	  \fIset of outputs\fR	  (repeated numpoints times) 
+	  \fIset of outputs\fR	  (repeated numpoints times)
 	] repeated one or more times.
-
+.fi
 .PP
 A set of outputs is a vector of doubles of length numoutputs, or
 a vector of real-imaginary pairs of doubles if the data is complex.
@@ -114,12 +116,11 @@ nutmeg(1), spice(1), writedata(3)
 .SH AUTHOR
 Wayne Christopher (faustus@cad.berkeley.edu)
 .SH BUGS
-If variable names and the title 
+If variable names and the title
 and plotname strings have trailing
 blanks in them they will be stripped off when the file is read, if
 it is in ascii format.
 .PP
 If a plot title begins with "Title:" \fBnutmeg\fR will be fooled into thinking
-that this is an ascii format file. \fBSconvert\fR always requires the
-type to be specified, however.
-
+that this is an ascii format file.
+\fBSconvert\fR always requires the type to be specified, however.

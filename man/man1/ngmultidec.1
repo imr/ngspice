@@ -40,8 +40,9 @@ following assumptions are made: 1. The self-inductance l, the
 self-capacitance ctot (note: not c), the series resistance r and the
 parallel capacitance g are the same for all lines, and 2. Each line
 is coupled only to the two lines adjacent to it, with the same
-coupling parameters cm and lm. The first assumption implies that edge
-effects have to be neglected. The utility of these assumptions is
+coupling parameters cm and lm.
+The first assumption implies that edge effects have to be neglected.
+The utility of these assumptions is
 that they make the sL+R and sC+G matrices symmetric, tridiagonal and
 Toeplitz, with useful consequences (see the paper referenced below).
 .LP
@@ -85,7 +86,7 @@ Set the number of conductors.
 Write a usage message to standard error.
 .SH EXAMPLE
 .RS
-.B "ngmultidec -n4 -l9e9 -c20e-12 -r5.3 -x5e12 -k0.7 -otest -L5.4 > test.cir
+.B ngmultidec -n4 -l9e9 -c20e-12 -r5.3 -x5e12 -k0.7 -otest -L5.4 > test.cir
 .RE
 .SH SEE ALSO
 .nf
