@@ -6445,6 +6445,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\visualc\msvc-compat.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\maths\deriv\multder.c"
 				>
 			</File>

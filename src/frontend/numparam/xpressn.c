@@ -177,33 +177,13 @@ mathfunction(int f, double z, double x)
         y = atan(x);
         break;
     case XFU_ASINH:
-#ifdef HAVE_ASINH
         y = asinh(x);
-#else
-        y = ((x > 0) ? log(x + sqrt(x * x + 1.0)) : -log(-x + sqrt(x * x + 1.0)));
-#endif
         break;
     case XFU_ACOSH:
-#ifdef HAVE_ACOSH
         y = acosh(x);
-#else
-        /* domain check (HUGE_VAL like gnu libc) */
-        if (x < 1.)
-            y = HUGE_VAL;
-        else
-            y = (log(x + sqrt(x*x-1.0)));
-#endif
         break;
     case XFU_ATANH:
-#ifdef HAVE_ATANH
         y = atanh(x);
-#else
-        /* domain check (HUGE_VAL like gnu libc) */
-        if (fabs(x) >= 1.)
-            y = HUGE_VAL;
-        else
-            y = (log((1.0 + x) / (1.0 - x)) / 2.0);
-#endif
         break;
     case XFU_TAN:
         y = tan(x);
