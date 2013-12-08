@@ -89,7 +89,7 @@ cm-clean :
 #-----
 
 $(cm)/$(cm).cm : $(cm-objs)
-	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 
 # "order-only" prerequisites
 #   (info "(make) Prerequisite Types")
