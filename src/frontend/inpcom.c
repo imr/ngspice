@@ -935,6 +935,37 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 }
 
 
+static bool
+is_absolute_pathname(const char *p)
+{
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    /* /... or \... or D:\... or D:/... */
+    return
+        p[0] == DIR_TERM  ||
+        p[0] == DIR_TERM_LINUX  ||
+        (isalpha(p[0]) && p[1] == ':' &&
+         (p[2] == DIR_TERM_LINUX || p[2] == DIR_TERM));
+#else
+    return
+        p[0] == DIR_TERM;
+#endif
+}
+
+
+static bool
+is_plain_filename(const char *p)
+{
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    return
+        !strchr(p, DIR_TERM) &&
+        !strchr(p, DIR_TERM_LINUX);
+#else
+    return
+        !strchr(p, DIR_TERM);
+#endif
+}
+
+
 /*-------------------------------------------------------------------------*
   Look up the variable sourcepath and try everything in the list in order
   if the file isn't in . and it isn't an abs path name.
