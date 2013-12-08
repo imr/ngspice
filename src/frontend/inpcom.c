@@ -1004,21 +1004,13 @@ inp_pathopen(char *name, char *mode)
             return (fp);
     }
 
-    /* If this is an abs pathname, or there is no sourcepath var, just
-     * do an fopen.
-     */
-    if (strchr(name, DIR_TERM) || strchr(name, DIR_TERM_LINUX) ||
-        !cp_getvar("sourcepath", CP_LIST, &v))
-        return (fopen(name, mode));
-#else
-
-    /* If this is an abs pathname, or there is no sourcepath var, just
-     * do an fopen.
-     */
-    if (strchr(name, DIR_TERM) || !cp_getvar("sourcepath", CP_LIST, &v))
-        return (fopen(name, mode));
-
 #endif
+
+    /* If this is not a plain basename, or there is no sourcepath var, just
+     * do an fopen.
+     */
+    if (!is_plain_filename(name) || !cp_getvar("sourcepath", CP_LIST, &v))
+        return (fopen(name, mode));
 
     for (; v; v = v->va_next) {
 
