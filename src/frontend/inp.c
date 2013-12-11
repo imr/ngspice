@@ -60,6 +60,8 @@ void create_circbyline(char *line);
 
 void inp_evaluate_temper(void);
 
+extern bool ft_batchmode;
+
 /* structure used to save expression parse trees for .model and
  * device instance lines
  */
@@ -764,7 +766,7 @@ inp_dodeck(
     wordlist *wl;
     bool noparse, ii;
     int print_listing;
-
+    bool have_err = FALSE;
     double startTime;
 
     /* First throw away any old error messages there might be and fix
@@ -879,7 +881,7 @@ inp_dodeck(
 
         if (dd->li_error) {
             char *p, *q;
-
+            have_err = TRUE;
 #ifdef XSPICE
             /* add setting of ipc syntax error flag */
             g_ipc.syntax_error = IPC_TRUE;
@@ -895,7 +897,7 @@ inp_dodeck(
                         out_printf("Model issue on line %d : %.*s ...\n%s\n",
                                    dd->li_linenum_orig, 56, dd->li_line, dd->li_error);
                     else
-                        out_printf("Error on line %d : %s\n%s\n",
+                        out_printf("Error on line %d : %s\n  %s\n",
                                    dd->li_linenum_orig, dd->li_line, dd->li_error);
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
@@ -911,8 +913,11 @@ inp_dodeck(
 
     }   /* for (dd = deck; dd; dd = dd->li_next) */
 
-    /* Only print out netlist if brief is FALSE */
+    /* Stop here and exit if error occurred in batch mode */
+    if (have_err && ft_batchmode)
+        controlled_exit(EXIT_BAD);
 
+    /* Only print out netlist if brief is FALSE */
     if (!cp_getvar("brief", CP_BOOL, NULL)) {
         /* output deck */
         out_printf("\nProcessed Netlist\n");

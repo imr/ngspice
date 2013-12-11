@@ -221,9 +221,7 @@ static int EVTcheck_nodes(
                 sprintf(errMsg, "%s%s%s", err_prefix,
                                           event_node->name,
                                           err_collide);
-
-		fprintf(stdout, "%s", errMsg);
-
+                fprintf(stdout, "%s\n", errMsg);
                 return(E_PRIVATE);
             }
             analog_node = analog_node->next;
