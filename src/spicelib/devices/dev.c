@@ -46,9 +46,6 @@ typedef void *  funptr_t;
 #else /* ifdef HAS_WINGUI */
 #undef BOOLEAN
 #include <windows.h>
-#ifdef HAS_WINGUI
-#include "ngspice/wstdio.h"
-#endif
 typedef FARPROC funptr_t;
 void *dlopen (const char *, int);
 funptr_t dlsym (void *, const char *);
