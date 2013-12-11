@@ -852,7 +852,8 @@ inp_dodeck(
     }
 
     /* set ckt->CKTisLinear=1 if circuit only contains R, L, C */
-    cktislinear(ckt, deck);
+    if (ckt)
+        cktislinear(ckt, deck);
     /* set some output terminal data */
     out_init();
 
