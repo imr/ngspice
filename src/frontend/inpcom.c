@@ -4631,9 +4631,83 @@ inp_compat(struct line *card)
 
         /* F element compatibility */
         else if (*curr_line == 'f') {
+            char actchar, *beg_tstr, *equastr, *vnamstr;
             /* Fxxx n1 n2 CCCS vnam gain --> Fxxx n1 n2 vnam gain
                remove cccs */
             replace_token(curr_line, "cccs", 4, 6);
+            /* Deal with
+               Fxxx n1 n2 vnam {equation}
+               if equation contains the 'temper' token */
+            beg_tstr = curr_line;
+            while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
+                actchar = *(beg_tstr - 1);
+                if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '{')) {
+                    beg_tstr++;
+                    continue;
+                }
+                actchar = *(beg_tstr + 6);
+                if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}')) {
+                    beg_tstr++;
+                    continue;
+                }
+                /* we have found a true 'temper' */
+                cut_line = curr_line;
+                title_tok = gettok(&cut_line);
+                node1 =  gettok(&cut_line);
+                node2 =  gettok(&cut_line);
+                vnamstr = gettok(&cut_line);
+                equastr = gettok(&cut_line);
+                /*
+                Fxxx n1 n2 vnam {equation}
+                -->
+                Fxxx n1 n2 vbFxxx -1
+                bFxxx int1 0 i = i(vnam)*{equation}
+                vbFxxx int1 0 0
+                */
+                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2) + 9;
+                ckt_array[0] = TMALLOC(char, xlen);
+                //Fxxx n1 n2 VBFxxx -1
+                sprintf(ckt_array[0], "%s %s %s vb%s -1",
+                        title_tok, node1, node2, title_tok);
+                //BFxxx BFxxx_int1 0 I = I(vnam)*{equation}
+                xlen = 2*strlen(title_tok) + strlen(vnamstr) + strlen(equastr)
+                    + 23;
+                ckt_array[1] = TMALLOC(char, xlen);
+                sprintf(ckt_array[1], "b%s %s_int1 0 i = i(%s) * (%s)",
+                        title_tok, title_tok, vnamstr, equastr);
+                //VBFxxx int1 0 0
+                xlen = 2*strlen(title_tok)
+                    + 16;
+                ckt_array[2] = TMALLOC(char, xlen);
+                sprintf(ckt_array[2], "vb%s %s_int1 0 dc 0",
+                        title_tok, title_tok);
+                // insert new three lines immediately after current line
+                for (i = 0; i < 3; i++) {
+                    struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+
+                    if (param_end)
+                        param_end->li_next = x;
+                    else
+                        param_beg = x;
+
+                    param_end = x;
+                }
+                // comment out current variable f line
+                *(card->li_line)   = '*';
+                // insert new param lines immediately after current line
+                param_end->li_next = card->li_next;
+                card->li_next      = param_beg;
+                // point 'card' pointer to last in scalar list
+                card               = param_end;
+
+                param_beg = param_end = NULL;
+                tfree(title_tok);
+                tfree(vnamstr);
+                tfree(equastr);
+                tfree(node1);
+                tfree(node2);
+                break;
+            }
         }
         /* H element compatibility */
         else if (*curr_line == 'h') {
@@ -4677,9 +4751,9 @@ inp_compat(struct line *card)
                         title_tok, node1, node2, title_tok);
                 //BHxxx BHxxx_int1 0 I = I(vnam)*{equation}
                 xlen = 2*strlen(title_tok) + strlen(vnamstr) + strlen(equastr)
-                    + 21;
+                    + 23;
                 ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 i = i(%s) * %s",
+                sprintf(ckt_array[1], "b%s %s_int1 0 i = i(%s) * (%s)",
                         title_tok, title_tok, vnamstr, equastr);
                 //VBHxxx int1 0 0
                 xlen = 2*strlen(title_tok)
