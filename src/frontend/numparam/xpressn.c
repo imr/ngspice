@@ -85,13 +85,13 @@ limit(double nominal_val, double abs_variation)
 static const char *fmathS =     /* all math functions */
     "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG SINH COSH"
     " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
-    " ASIN ACOS ATAN ASINH ACOSH ATANH TAN";
+    " ASIN ACOS ATAN ASINH ACOSH ATANH TAN NINT";
 
 
 enum {
     XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_SINH, XFU_COSH,
     XFU_TANH, XFU_TERNARY_FCN, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
-    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN,
+    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT
 };
 
 
@@ -140,6 +140,13 @@ mathfunction(int f, double z, double x)
         break;
     case XFU_INT:
         y = trunc(x);
+        break;
+    case XFU_NINT:
+        /* round to "nearest integer",
+         *   round half-integers to the nearest even integer
+         *   rely on default rounding mode of IEEE 754 to do so
+         */
+        y = nearbyint(x);
         break;
     case XFU_LOG:
         y = log(x);

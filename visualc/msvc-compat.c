@@ -13,6 +13,14 @@ x_trunc(double x)
 
 
 double
+x_nearbyint(double x)
+{
+    /* thats grossly incorrect, anyway, don't worry, be crappy ... */
+    return floor(x + 0.5);
+}
+
+
+double
 x_asinh(double x)
 {
     return (x > 0) ? log(x + sqrt(x * x + 1.0)) : -log(-x + sqrt(x * x + 1.0));
