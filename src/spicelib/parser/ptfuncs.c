@@ -18,10 +18,6 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* XXX These should be in math.h */
 
 
-#ifndef HAVE_ATANH
-extern double asinh(), acosh(), atanh();
-#endif
-
 double PTfudge_factor;
 
 #define MODULUS(NUM,LIMIT) ((NUM) - ((int) ((NUM) / (LIMIT))) * (LIMIT))
@@ -113,13 +109,7 @@ PTacos(double arg)
 double
 PTacosh(double arg)
 {
-#ifdef HAVE_ACOSH
     return (acosh(arg));
-#else
-    if (arg < 1.0)
-        arg = 1.0;
-    return (log(arg + sqrt(arg*arg-1.0)));
-#endif
 }
 
 double
@@ -131,11 +121,7 @@ PTasin(double arg)
 double
 PTasinh(double arg)
 {
-#ifdef HAVE_ASINH
     return (asinh(arg));
-#else
-    return log(arg + sqrt(arg * arg + 1.0));
-#endif
 }
 
 double
@@ -147,15 +133,7 @@ PTatan(double arg)
 double
 PTatanh(double arg)
 {
-#ifdef HAVE_ATANH
     return (atanh(arg));
-#else
-    if (arg < -1.0)
-        arg = -1.0 + PTfudge_factor + 1e-10;
-    else if (arg > 1.0)
-        arg = 1.0 - PTfudge_factor - 1e-10;
-    return (log((1.0 + arg) / (1.0 - arg)) / 2.0);
-#endif
 }
 
 double
