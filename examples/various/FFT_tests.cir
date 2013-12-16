@@ -1,0 +1,123 @@
+FFT_tests http://www.idea2ic.com/
+.control
+set units=degrees
+let a = vector(16)
+*plot a vs a
+set pensize = 2
+*=========Need_a_complex_input====================
+let ac = a+j(0)
+print a ac
+*plot fft(a) vs a
+*plot real(fft(ac)) imag(fft(ac)) vs a
+* fft(a) fft(ac)
+
+*=========DC_Works====================
+let b = unitvec(16)
+let bc = b+j(0)
+*plot fft(b) vs a                             title DC_WORKS
+*print fft(b) fft(bc)
+
+*=========DC_Plus_cos_Remove_AC====================
+let     numb = length(b)
+print   numb
+
+let     indx = 0
+repeat  $&numb
+let     ac[indx]= cos(indx*360/8)+1 +j(0)
+let     indx = indx +1
+end
+
+let     fftac=fft(ac)
+plot    real(fftac)          imag(fftac)  vs a   title DC_Plus_COS
+
+let     fftac[2]=(0,0)
+let     fftac[14]=(0,0)
+let     ifftac = ifft(fftac)
+plot    ifftac ac vs a                        title COS_REMOVED
+
+*=========DC_Plus_cos_Remove_DC====================
+let     indx = 0
+repeat  $&numb
+let     ac[indx]= cos(indx*360/8)+1 +j(0)
+let     indx = indx +1
+end
+
+let     fftac=fft(ac)
+let     fftac[0]=(0,0)
+let     ifftac = ifft(fftac)
+plot    ifftac ac  vs a                       title COS_With_DC_REMOVED
+
+*=========DC_Plus_sin_Remove_AC====================
+let indx = 0
+repeat $&numb
+let ac[indx]= sin(indx*360/8)+1 +j(0)
+let indx = indx +1
+end
+
+let fftac=fft(ac)
+plot real(fftac) imag(fftac)  vs a           title DC_Plus_SIN
+
+let fftac[2]=(0,0)
+let fftac[14]=(0,0)
+let ifftac = ifft(fftac)
+plot ifft(fftac) ac  vs a                       title SIN_REMOVED
+
+*=========DC_Plus_sin_Remove_DC====================
+let indx = 0
+repeat $&numb
+let ac[indx]= sin(indx*360/8)+1 +j(0)
+let indx = indx +1
+end
+
+let fftac=fft(ac)
+let fftac[0]=(0,0)
+let ifftac = ifft(fftac)
+plot ifft(fftac) ac  vs a                        title SIN_With_DC_REMOVED
+
+*=========DC_Plus_cos_Nyqusit_Remove_DC====================
+let indx = 0
+repeat $&numb
+let ac[indx]= cos(indx*360/2)+1 +j(0)
+let indx = indx +1
+end
+
+plot ac vs a                                 title Nyq_COS
+
+let fftac=fft(ac)
+plot real(fftac)  imag(fftac)  vs a           title Nyq_FREQ_COS
+let fftac[0]=(0,0)
+let ifftac = ifft(fftac)
+plot ifft(fftac) ac  vs a                       title COS_With_DC_REMOVED
+*=========DC_Plus_sin_Nyqusit_Remove_DC====================
+let indx = 0
+repeat $&numb
+let ac[indx]= sin(indx*360/2)+1 +j(0)
+let indx = indx +1
+end
+
+plot ac vs a                                title Nyq_SIN
+
+let fftac=fft(ac)
+plot real(fftac)  imag(fftac)  vs a         title Nyq_FREQ_SIN
+let fftac[0]=(0,0)
+let ifftac = ifft(fftac)
+plot ifft(fftac)  ac vs a                      title COS_With_DC_REMOVED
+
+*=========DC_Plus_COS_Remove_One_BIN====================
+let indx = 0
+repeat $&numb
+let ac[indx]= cos(indx*360/8)+1 +j(0)
+let indx = indx +1
+end
+
+let fftac=fft(ac)
+let fftac[2]=(0,0)
+plot real(fftac) imag(fftac)  vs a             title DC_Plus_Cos
+
+let ifftac = ifft(fftac)
+plot ifft(fftac) ac  vs a                       title ONE_BIN_REMOVED
+
+plot real(ifft(fftac)) imag(ifft(fftac))   vs a      title ONE_BIN_REMOVED
+
+.endc
+.end

@@ -1,0 +1,53 @@
+FFT_Leakage_tests http://www.idea2ic.com/
+*=========Create_Signal==================
+VTime     VTime  0      DC     0      PWL(   0      0    1      1)
+Vfreq     Vfreq  0      DC     5.5k
+BVAC      IN     0      V  =   sin( 6.283185307179586*V(VFreq)*V(VTime))
+.control
+*TRAN     TSTEP  TSTOP  TSTART TMAX   ?UIC?
+tran      1u     .999m  0       1u
+set       pensize = 2
+linearize
+let       numb2 = length(in)
+print     numb2
+
+*=========Do_FFT_and_Plot_As_dB_Freq==================
+let       ac = in +j(0)
+let       ac_fft=fft(ac)
+let       numb_f2 =  (numb2)/2 -1
+compose   freq   start = 1 stop = $&numb_f2  step =1
+compose   vreal  start = 1 stop = $&numb_f2  step =1
+compose   vimag  start = 1 stop = $&numb_f2  step =1
+let       j = 0
+repeat    $&numb_f2
+let       freq[j] =  freq[j]
+let       vreal[j] = 2*real(ac_fft[j+1])
+let       vimag[j] = 2*imag(ac_fft[j+1])
+let       j = j +1
+end
+plot      dB(abs(vreal+1f)) dB(abs(vimag+1f)) vs freq xlog
+
+*=========Extract_Error_Signal=========================
+let       funBin                 = 5k/1000
+let       unvect                 = unitvec(numb2)
+let       fundspec               = unvect*0 +j(0)
+let       fundspec[funBin]       = real(ac_fft[funBin])        +j(imag(ac_fft[funBin] ))
+let       fundspec[numb2-funBin] = real(ac_fft[numb2-funBin])  +j(imag(ac_fft[numb2-funBin] ))
+let       fund                   = ifft(fundspec)
+let       dc_ofset               = real(ac_fft[0])
+let       thdspec                = ac_fft
+let       thdspec[0]             = 0        +j(0)
+let       thdspec[funBin]        = 0        +j(0)
+let       thdspec[numb2-funBin]  = 0        +j(0)
+let       thd                    = ifft(thdspec)
+plot      norm(in) norm(fund) norm(thd)/2
+
+*=========Calc_Values=========================
+let       rms_Fund               = sqrt(mean(fund*fund))
+let       rms_THD                = sqrt(mean(thd*thd))
+let       THD_percent            = 100*rms_THD/rms_Fund
+let       FREQ_Hz                = VFreq[0]
+echo      "Freq_Hz=$&FREQ_Hz THD_percent=$&THD_percent Fund_rms=$&rms_Fund THD_rms=$&rms_THD "
+
+.endc
+.end
