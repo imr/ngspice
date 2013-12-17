@@ -696,7 +696,8 @@ resume:
     /* Either directly go to next time step, or modify ckt->CKTdelta depending on
        synchronization requirements. sharedsync() returns 0.
     */
-    sharedsync(&ckt->CKTtime, &ckt->CKTdelta, 0, 0, &ckt->CKTstat->STATrejected, 0);
+    sharedsync(&ckt->CKTtime, &ckt->CKTdelta, 0, ckt->CKTfinalTime,
+        ckt->CKTdelmin, 0, &ckt->CKTstat->STATrejected, 0);
 #endif
 
 #endif
