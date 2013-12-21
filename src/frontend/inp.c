@@ -1553,6 +1553,10 @@ inp_evaluate_temper(void)
     }
 
     for(d = modtlist; d; d = d->next) {
+        /* only evaluate models which have been entered into the
+           hash table ckt->MODnameHash */
+        if (ft_sim->findModel (ft_curckt->ci_ckt, d->wl->wl_word) == NULL)
+            continue;
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         sprintf(fts, "%g", result);
         d->wlend->wl_word = copy(fts);
