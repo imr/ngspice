@@ -5689,7 +5689,7 @@ inp_bsource_compat(struct line *card)
 }
 
 
-/* Find all expression containing the keyword 'temper',
+/* Find all expressions containing the keyword 'temper',
  * except for B lines and some other exclusions. Prepare
  * these expressions by calling inp_modify_exp() and return
  * a modified card->li_line
@@ -6369,7 +6369,7 @@ inp_fix_temper_in_param(struct line *deck)
 
             char *new_str = NULL; /* string we assemble here */
             char *curr_line = card->li_line;
-            char * new_tmp_str, *tmp_str;
+            char * new_tmp_str, *tmp_str, *firsttok_str;
             /* Some new variables... */
             char *chp;
             char *chp_start;
@@ -6408,8 +6408,15 @@ inp_fix_temper_in_param(struct line *deck)
             if (sub_count[subckt_depth] != new_func->subckt_count)
                 continue;
 
+            /* remove first token, ignore it here, restore it later */
+            firsttok_str = gettok(&curr_line);
+            if (*curr_line == '\0') {
+                tfree(firsttok_str);
+                continue;
+            }
+
             /* This is the new code - it finds each variable name and checks it against new_func->funcname */
-            for (state = 0, var_name = chp_start = chp = curr_line; *chp; chp++) {
+            for (state = 0, var_name = chp_start = chp = curr_line; ; chp++) {
                 switch(state)
                 {
                 case 0:
@@ -6425,7 +6432,7 @@ inp_fix_temper_in_param(struct line *deck)
                     /* In state 1 we are looking for the last character of a variable name.
                        The variable name consists of alphanumeric characters and special characters,
                        which are defined above as VALIDCHARS. */
-                    state = (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
+                    state = (*chp) && (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
                     if (!state) {
                         ch = *chp;
                         *chp = 0;
@@ -6438,9 +6445,16 @@ inp_fix_temper_in_param(struct line *deck)
                     }
                     break;
                 }
+                if (!(*chp))
+                    break;
             }
-            if (new_str) /* add final part of line */
+            if (new_str) {
+                /* add final part of line */
                 new_str = INPstrCat(new_str, copy(chp_start), "");
+                /* restore first part of the line */
+                new_str = INPstrCat(firsttok_str, new_str, " ");
+                new_str = inp_remove_ws(new_str);
+            }
             else
                 continue;
 
