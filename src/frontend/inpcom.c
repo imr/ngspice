@@ -4813,10 +4813,16 @@ inp_compat(struct line *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
-                controlled_exit(EXIT_FAILURE);
+                /* if not, equation may start with a '(' */
+                str_ptr = strchr(cut_line, '(');
+                if (str_ptr == NULL) {
+                    fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
+                    controlled_exit(EXIT_FAILURE);
+                }
+                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
             }
-            equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
+            else
+                equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
@@ -4897,10 +4903,16 @@ inp_compat(struct line *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
-                controlled_exit(EXIT_FAILURE);
+                /* if not, equation may start with a '(' */
+                str_ptr = strchr(cut_line, '(');
+                if (str_ptr == NULL) {
+                    fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
+                    controlled_exit(EXIT_FAILURE);
+                }
+                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
             }
-            equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
+            else
+                equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
@@ -5003,10 +5015,16 @@ inp_compat(struct line *card)
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
-                controlled_exit(EXIT_FAILURE);
+                /* if not, equation may start with a '(' */
+                str_ptr = strchr(cut_line, '(');
+                if (str_ptr == NULL) {
+                    fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
+                    controlled_exit(EXIT_FAILURE);
+                }
+                equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
             }
-            equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
+            else
+                equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
