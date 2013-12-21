@@ -279,15 +279,14 @@ gettok(char **s)
 {
     char c;
     int paren;
-    char *token ;				/* return token */
-    SPICE_DSTRING buf ;				/* allow any length string */
+    char *beg, *token ;				/* return token */
 
     paren = 0;
     while (isspace(**s))
         (*s)++;
     if (!**s)
         return (NULL);
-    spice_dstring_init(&buf) ;
+    beg = *s ;
     while ((c = **s) != '\0' && !isspace(c)) {
 	if (c == '('/*)*/)
 	    paren += 1;
@@ -295,12 +294,11 @@ gettok(char **s)
 	    paren -= 1;
 	else if (c == ',' && paren < 1)
 	    break;
-        spice_dstring_append_char( &buf, *(*s)++ ) ;
+        (*s)++ ;
     }
+    token = copy_substring(beg, *s) ;
     while (isspace(**s) || **s == ',')
         (*s)++;
-    token = copy( spice_dstring_value(&buf) ) ;
-    spice_dstring_free(&buf) ;
     return ( token ) ;
 }
 
@@ -357,8 +355,7 @@ char *
 gettok_noparens(char **s)
 {
     char c;
-    char *token ;				/* return token */
-    SPICE_DSTRING buf ;				/* allow any length string */
+    char *beg, *token ;				/* return token */
 
     while ( isspace(**s) )
         (*s)++;   /* iterate over whitespace */
@@ -366,22 +363,22 @@ gettok_noparens(char **s)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
-    spice_dstring_init(&buf) ;
+    beg = *s ;
     while ((c = **s) != '\0' && 
 	   !isspace(c) && 
 	   ( **s != '(' ) &&
 	   ( **s != ')' ) &&
 	   ( **s != ',') 
 	  )  {
-        spice_dstring_append_char( &buf, *(*s)++ ) ;
+        *(*s)++ ;
     }
+
+    token = copy_substring(beg, *s) ;
 
     /* Now iterate up to next non-whitespace char */
     while ( isspace(**s) )
         (*s)++;  
 
-    token = copy( spice_dstring_value(&buf) ) ;
-    spice_dstring_free(&buf) ;
     return ( token ) ;
 }
 
@@ -389,8 +386,7 @@ char *
 gettok_instance(char **s)
 {
     char c;
-    char *token ;				/* return token */
-    SPICE_DSTRING buf ;				/* allow any length string */
+    char *beg, *token ;				/* return token */
 
     while ( isspace(**s) )
         (*s)++;   /* iterate over whitespace */
@@ -398,21 +394,21 @@ gettok_instance(char **s)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
-    spice_dstring_init(&buf) ;
+    beg = *s ;
     while ((c = **s) != '\0' && 
          !isspace(c) && 
          ( **s != '(' ) &&
          ( **s != ')' )
         )  {
-        spice_dstring_append_char( &buf, *(*s)++ ) ;
+        *(*s)++ ;
     }
+
+    token = copy_substring(beg, *s) ;
 
     /* Now iterate up to next non-whitespace char */
     while ( isspace(**s) )
         (*s)++;  
 
-    token = copy( spice_dstring_value(&buf) ) ;
-    spice_dstring_free(&buf) ;
     return ( token ) ;
 }
 
@@ -426,8 +422,7 @@ char *
 gettok_char(char **s, char p, bool inc_p, bool nested)
 {
     char c;
-    char *token ;				/* return token */
-    SPICE_DSTRING buf ;				/* allow any length string */
+    char *beg, *token ;				/* return token */
 
     while ( isspace(**s) )
         (*s)++;   /* iterate over whitespace */
@@ -435,7 +430,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
     if (!**s)
         return (NULL);  /* return NULL if we come to end of line */
 
-    spice_dstring_init(&buf) ;
+    beg = *s ;
     if (nested && (( p == '}' ) || ( p == ')' ) || ( p == ']'))) {
         char q;
         int count = 0;
@@ -448,7 +443,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
             q = '(';
         /* add string in front of q, excluding q */
         while ((c = **s) != '\0' && ( **s != q ))  {
-            spice_dstring_append_char( &buf, *(*s)++ ) ;
+            *(*s)++ ;
         }
         /* return if nested bracket found, excluding its character */
         while ((c = **s) != '\0')  {
@@ -457,13 +452,13 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
             if (count == 0) {
                 break;
             }
-            spice_dstring_append_char( &buf, *(*s)++ ) ;
+            *(*s)++ ;
         }
     }
     else
         /* just look for p and return string, excluding p */
         while ((c = **s) != '\0' && ( **s != p ))  {
-            spice_dstring_append_char( &buf, *(*s)++ ) ;
+            *(*s)++ ;
         }
 
     if (c == '\0')
@@ -472,14 +467,14 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
 
     if (inc_p)
         /* add p */
-        spice_dstring_append_char( &buf, *(*s)++ ) ;
+        *(*s)++ ;
+
+    token = copy_substring(beg, *s) ;
 
     /* Now iterate up to next non-whitespace char */
     while ( isspace(**s) )
         (*s)++;  
 
-    token = copy( spice_dstring_value(&buf) ) ;
-    spice_dstring_free(&buf) ;
     return ( token ) ;
 }
 
