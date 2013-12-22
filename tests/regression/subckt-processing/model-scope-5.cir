@@ -1,0 +1,84 @@
+check scoping of nested .model definitions
+
+* (exec-spice "ngspice -b %s")
+* (tests-aux-renumber)
+
+
+i1  n1001_t 0  dc=-1
+i2  n1002_t 0  dc=-1
+i3  n1003_t 0  dc=-1
+i4  n1004_t 0  dc=-1
+i5  n1005_t 0  dc=-1
+i6  n1006_t 0  dc=-1
+i7  n1007_t 0  dc=-1
+
+x1    n1001_t  sub1
+v1_g  n1001_g 0  2k
+
+x2    n1002_t n1003_t n1004_t n1005_t n1006_t n1007_t  sub2
+v2_g  n1002_g 0  4k
+v3_g  n1003_g 0  1k
+v4_g  n1004_g 0  8k
+v5_g  n1005_g 0  1k
+v6_g  n1006_g 0  8k
+v7_g  n1007_g 0  43
+
+.subckt sub1 2
+  .model my r r=2k
+  r1  2 0  my
+.ends
+
+.subckt sub2 3 41a 41b 42a 42b 5
+  r2  3 0   my
+
+  x31  41a 41b  sub3
+  x32  42a 42b  sub3
+
+  .subckt sub3 4 5
+    .model my  r r=8k
+    .model any r r=42
+    r5  4 0  1k
+    r6  5 0  my
+  .ends
+
+  .model just r r=43
+  r5  5 0  just
+.ends
+
+.model my r r=4k
+
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+let total_count = 0
+let fail_count = 0
+
+let tests = 1001 + vector(7)
+
+foreach n $&tests
+  set n_test = "n{$n}_t"
+  set n_gold = "n{$n}_g"
+  if mismatch(v($n_test), v($n_gold), 1e-9)
+    let v_test = v($n_test)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, v($n_test) = $&v_test but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end

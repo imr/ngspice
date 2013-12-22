@@ -212,12 +212,24 @@ inp_subcktexpand(struct line *deck) {
     /* Get all the model names so we can deal with BJTs, etc.
      *  Stick all the model names into the doubly-linked wordlist modnames.
      */
-    for (c = deck; c; c = c->li_next)
-        if (ciprefix(model, c->li_line)) {
-            s = c->li_line;
-            txfree(gettok(&s)); /* discard the model keyword */
-            modnames = wl_cons(gettok(&s), modnames);
-        } /* model name finding routine */
+    {
+        int nest = 0;
+        for (c = deck; c; c = c->li_next) {
+
+            if (ciprefix(".subckt", c->li_line))
+                nest++;
+            else if (ciprefix(".ends", c->li_line))
+                nest--;
+            else if (nest > 0)
+                continue;
+
+            if (ciprefix(model, c->li_line)) {
+                s = c->li_line;
+                txfree(gettok(&s)); /* discard the model keyword */
+                modnames = wl_cons(gettok(&s), modnames);
+            } /* model name finding routine */
+        }
+    }
 
 #ifdef TRACE
     {
@@ -595,8 +607,10 @@ doit(struct line *deck, wordlist *modnames) {
                 lcc = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
+                submod = NULL;
                 if (modtranslate(lcc, scname, &submod, &modnames))    /* this translates the model name in the .model line */
                     devmodtranslate(lcc, scname, submod); /* This translates the model name on all components in the deck */
+                wl_free(submod);
 
                 {
                     char *s = sss->su_args;
@@ -664,7 +678,6 @@ doit(struct line *deck, wordlist *modnames) {
 #endif
 
     wl_delete_slice(modnames, xmodnames);
-    wl_free(submod);
 
     if (error)
         return NULL;    /* error message already reported; should free() */
