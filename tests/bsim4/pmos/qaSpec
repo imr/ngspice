@@ -210,7 +210,7 @@ freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
 instanceParameters          w=10.0e-6 l=0.06e-6
 modelParameters             parameters/pmosParameters
-modelParameters             modmod=1
+modelParameters             mobmod=1
 
 test                        acFreq_capmod
 temperature                 27
