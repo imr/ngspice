@@ -626,6 +626,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
     int line_number_orig = 1;
     int cirlinecount = 0; /* length of circarray */
+    static int is_control = 0; /* We are reading from a .control section */
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
 
@@ -707,6 +708,12 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             tfree(buffer);      /* was allocated by readline() */
             break;
         }
+
+        /* now check if we are in a .control section */
+        if (ciprefix(".control", buffer))
+            is_control++;
+        else if (ciprefix(".endc", buffer))
+            is_control--;
 
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
@@ -922,14 +929,12 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         cc->li_line = new_title;
     }
 
-    /* Now clean up li: remove comments & stitch together continuation lines. */
-
-    /* sjb - strip or convert end-of-line comments.
-       This must be cone before stitching continuation lines.
+    /* Strip or convert end-of-line comments.
+       Afterwards stitch the continuation lines.
        If the line only contains an end-of-line comment then it is converted
-       into a normal comment with a '*' at the start.  This will then get
-       stripped in the following code. */
-    inp_stripcomments_deck(cc->li_next, comfile);
+       into a normal comment with a '*' at the start.  Some special handling
+       if this is a command file or called from within a .control section. */
+    inp_stripcomments_deck(cc->li_next, comfile || is_control);
 
     inp_stitch_continuation_lines(cc->li_next);
 
