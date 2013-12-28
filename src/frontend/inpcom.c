@@ -2961,6 +2961,8 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
         }
 
         while ((param_ptr = strstr(search_ptr, fcn->params[i])) != NULL) {
+            char *op_ptr = NULL, *cp_ptr = NULL;
+            int is_vi = 0;
 
             /* make sure actually have the parameter name */
             if (param_ptr == search_ptr) /* no valid 'before' */
@@ -2975,6 +2977,47 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
             {
                 search_ptr = param_ptr + 1;
                 continue;
+            }
+
+            /* exclude v(nn, parameter), v(parameter, nn), v(parameter),
+            and i(parameter) if here 'parameter' is also a node name */
+            if (before != '\0') {
+                /* go backwards from 'parameter' and find '(' */
+                for (op_ptr = param_ptr-1; op_ptr > curr_ptr; op_ptr--) {
+                    if (*op_ptr == ')') {
+                        is_vi = 0;
+                        break;
+                    }
+                    if ((*op_ptr == '(') && (op_ptr - 2 > curr_ptr) &&
+                       ((*(op_ptr - 1) == 'v') || (*(op_ptr - 1) == 'i')) &&
+                       (is_arith_char(*(op_ptr - 2)) || isspace(*(op_ptr - 2)) ||
+                       *(op_ptr - 2) == ',' || *(op_ptr - 2) == '=' )) {
+                        is_vi = 1;
+                        break;
+                    }
+                }
+                /* We have a true v( or i( */
+                if (is_vi) {
+                    cp_ptr = param_ptr;
+                    /* go forward and find closing ')' */
+                    while (*cp_ptr) {
+                       cp_ptr++;
+                       if (*cp_ptr == '(') {
+                           is_vi = 0;
+                           break;
+                       }
+                       if (*cp_ptr == ')')
+                           break;
+                    }
+                    if (*cp_ptr == '\0')
+                        is_vi = 0;
+                }
+                /* We have a true v(...) or i(...),
+                   so skip it, and continue searching for new 'parameter' */
+                if (is_vi) {
+                    search_ptr = cp_ptr;
+                    continue;
+                }
             }
 
             keep       = *param_ptr;
