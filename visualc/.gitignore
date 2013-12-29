@@ -10,6 +10,7 @@
 
 !/.gitignore
 !/how-to-ngspice-vstudio.txt
+!/visualc/fftw3/fftw-*/README-ngspice.txt
 
 !/*.c
 !/*.sln

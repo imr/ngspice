@@ -27,7 +27,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib"
 				ExcludedFromBuild="false"
 			/>
 			<Tool
@@ -48,8 +48,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;HAVE_LIBFFTW3"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -73,10 +73,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_d.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Visual Leak Detector\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Visual Leak Detector\lib&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -108,6 +108,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -118,7 +119,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib&#x0D;&#x0A;"
 				ExcludedFromBuild="false"
 			/>
 			<Tool
@@ -140,8 +141,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONFIG64"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONFIG64;HAVE_LIBFFTW3"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -164,9 +165,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_d.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -198,6 +200,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -209,6 +212,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -231,8 +235,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -257,9 +261,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				HeapReserveSize="0"
@@ -293,6 +298,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -304,6 +310,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -327,8 +334,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONFIG64;RELBUILD64"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONFIG64;RELBUILD64;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -352,9 +359,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				HeapReserveSize="0"
@@ -388,6 +396,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -398,7 +407,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib"
 				ExcludedFromBuild="false"
 			/>
 			<Tool
@@ -419,8 +428,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;XSPICE"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;XSPICE;HAVE_LIBFFTW3"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -443,9 +452,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_cd.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -477,6 +487,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -487,7 +498,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine="lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib"
 				ExcludedFromBuild="false"
 			/>
 			<Tool
@@ -509,8 +520,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;CONFIG64"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;CONFIG64;HAVE_LIBFFTW3"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -533,9 +544,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_cd.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -567,6 +579,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -578,6 +591,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -600,8 +614,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -625,9 +639,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_c.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				HeapReserveSize="0"
@@ -661,6 +676,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -672,6 +688,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -695,8 +712,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -720,9 +737,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_c.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				HeapReserveSize="0"
@@ -756,6 +774,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -767,6 +786,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -789,8 +809,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -815,9 +835,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_omp.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				HeapReserveSize="0"
@@ -851,6 +872,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -862,6 +884,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -885,8 +908,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64;RELBUILD64"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64;RELBUILD64;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -911,9 +934,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_omp.exe"
 				LinkIncremental="0"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				HeapReserveSize="0"
@@ -947,6 +971,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -958,6 +983,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -980,8 +1006,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;USE_OMP"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;USE_OMP;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="0"
@@ -1006,9 +1032,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_omp_c.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				HeapReserveSize="0"
@@ -1042,6 +1069,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -1053,6 +1081,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -1076,8 +1105,8 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;RELBUILD64;USE_OMP"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;RELBUILD64;USE_OMP;HAVE_LIBFFTW3"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -1101,9 +1130,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				UseUnicodeResponseFiles="false"
-				AdditionalDependencies="psapi.lib"
+				AdditionalDependencies="psapi.lib libfftw3-3.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_omp_c.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				HeapReserveSize="0"
@@ -1137,6 +1167,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy /y &quot;$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll&quot; &quot;$(OutDir)\libfftw3-3.dll&quot;"
 			/>
 		</Configuration>
 	</Configurations>
