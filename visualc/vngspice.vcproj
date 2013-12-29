@@ -112,8 +112,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)64"
+			IntermediateDirectory="$(ConfigurationName)64\$(PlatformName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -124,8 +124,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
-				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)64\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -297,8 +297,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)64"
+			IntermediateDirectory="$(ConfigurationName)64\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -308,8 +308,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
-				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)64\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -481,8 +481,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_debug|x64"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)64"
+			IntermediateDirectory="$(ConfigurationName)64\$(PlatformName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -493,8 +493,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
-				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)64\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -665,8 +665,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_release|x64"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)64"
+			IntermediateDirectory="$(ConfigurationName)64\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -676,8 +676,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
-				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)64\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -855,8 +855,8 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseOMP|x64"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)64"
+			IntermediateDirectory="$(ConfigurationName)64\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -866,8 +866,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
-				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)64\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -1046,8 +1046,8 @@
 		</Configuration>
 		<Configuration
 			Name="console_release_omp|x64"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)\$(PlatformName)"
+			OutputDirectory="$(ConfigurationName)64"
+			IntermediateDirectory="$(ConfigurationName)64\$(PlatformName)"
 			ConfigurationType="1"
 			WholeProgramOptimization="1"
 			>
@@ -1057,8 +1057,8 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Custom defined Build: Recompile conf.c with actual date"
-				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj"
-				Outputs="$(ConfigurationName)\$(PlatformName)\conf.obj"
+				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj"
+				Outputs="$(ConfigurationName)64\$(PlatformName)\conf.obj"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
