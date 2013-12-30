@@ -17,6 +17,13 @@ ft_polyfit(double *xdata, double *ydata, double *result,
     double *mat2 = scratch + n * n; /* XXX These guys are hacks! */
     double d;
 
+    /* speed up fitting process, e.g. for command 'linearize' */
+    if (degree == 1) {
+        result[0] = (xdata[1] * ydata[0] - xdata[0] * ydata[1]) / (xdata[1] - xdata[0]);
+        result[1] = (ydata[1] - ydata[0]) / (xdata[1] - xdata[0]);
+        return (TRUE);
+    }
+
     memset(result, 0,   (size_t) (n)     * sizeof(double));
     memset(mat1, 0,     (size_t) (n * n) * sizeof(double));
     memcpy(mat2, ydata, (size_t) (n)     * sizeof(double));
