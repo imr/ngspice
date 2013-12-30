@@ -52,10 +52,20 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 #include <stdlib.h>
-#include "square.h"
 
 
 /*=== CONSTANTS ========================*/
+
+char *square_allocation_error = "\n**** Error ****\nSQUARE: Error allocating square block storage \n";
+char *square_limit_error = "\n**** Error ****\nSQUARE: Smoothing domain value too large \n";
+char *square_freq_clamp = "\n**** WARNING  ****\nSQUARE: Frequency extrapolation limited to 1e-16 \n";
+char *square_array_error = "\n**** Error ****\nSQUARE: Size of control array different than frequency array \n";
+
+#define INT1 1
+#define T1   2
+#define T2   3
+#define T3   4
+#define T4   5
 
 
 /*=== MACROS ===========================*/

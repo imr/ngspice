@@ -53,10 +53,18 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 #include <stdlib.h>
-#include "triangle.h"
 
 
 /*=== CONSTANTS ========================*/
+
+char *triangle_allocation_error = "\n**** Error ****\nTRIANGLE: Error allocating triangle block storage \n";
+char *triangle_freq_clamp = "\n**** Warning ****\nTRIANGLE: Extrapolated Minimum Frequency Set to 1e-16 Hz \n";
+char *triangle_array_error = "\n**** Error ****\nTRIANGLE: Size of control array different than frequency array \n";
+
+#define INT1 1
+#define T1   2
+#define T2   3
+#define T3   4
 
 
 /*=== MACROS ===========================*/

@@ -50,10 +50,15 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 #include <stdlib.h>
-#include "core.h"
 
 
 /*=== CONSTANTS ========================*/
+
+#define HYST 1
+#define X_RISING TRUE
+#define X_FALLING FALSE
+#define PWL 1
+#define HYSTERESIS 2
 
 
 /*=== MACROS ===========================*/
