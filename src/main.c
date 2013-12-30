@@ -100,6 +100,8 @@ char *ft_rawfile = "rawspice.raw";
  extern void SetSource( char *Name);    /* display the source file name in the source window */
  extern int  xmain(int argc, char **argv);
  FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
+#else
+ bool orflag = FALSE; /* global for -o option */
 #endif
 
 FILE *slogp = NULL;          /* soa log file ('--soa-log file' command line option) */
@@ -803,7 +805,7 @@ main(int argc, char **argv)
     bool qflag = FALSE;
 
     FILE * volatile circuit_file;
-    bool orflag = FALSE;
+    bool oflag = FALSE;
     bool srflag = FALSE;
 
 #ifdef TRACE
@@ -942,7 +944,7 @@ main(int argc, char **argv)
                   /* switch to line buffering for stdout */
                   setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
                   sprintf (log_file, "%s", optarg);
-                  orflag = TRUE;
+                  oflag = TRUE;
               }
               break;
 
@@ -989,7 +991,7 @@ main(int argc, char **argv)
     }  /* --- End of command line option processing (While(1)-loop) --- */
 
 
-    if (orflag) {   /* -o option has been set */
+    if (oflag) {   /* -o option has been set */
 
         com_version(NULL);
 
@@ -1013,8 +1015,8 @@ main(int argc, char **argv)
             perror (log_file);
             sp_shutdown (EXIT_BAD);
         }
-//        oflag = TRUE; /* All further output to -o log file */
 #else
+        orflag = TRUE;
         /* Connect stdout and stderr to file log_file and log stdout */
         if (!freopen (log_file, "w", stdout)) {
             perror (log_file);

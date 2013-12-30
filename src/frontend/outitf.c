@@ -57,14 +57,18 @@ static bool name_eq(char *n1, char *n2);
 static bool getSpecial(dataDesc *desc, runDesc *run, IFvalue *val);
 static void freeRun(runDesc *run);
 
-/*Output data to spice module saj*/
+/*Output data to spice module*/
 #ifdef TCL_MODULE
 #include "ngspice/tclspice.h"
 #elif defined SHARED_MODULE
 extern int sh_ExecutePerLoop(void);
 extern void sh_vecinit(runDesc *run);
 #endif
-/*saj*/
+
+/*Suppressing progress info in -o option */
+#ifndef HAS_WINGUI
+extern bool orflag;
+#endif
 
 
 #define DOUBLE_PRECISION    15
@@ -465,11 +469,13 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
 #ifndef HAS_WINGUI
-                currclock = clock();
-                if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                    fprintf(stderr, " Reference value : % 12.5e\r",
-                            refValue->cValue.real);
-                    lastclock = currclock;
+                if (!orflag) {
+                    currclock = clock();
+                    if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
+                        fprintf(stderr, " Reference value : % 12.5e\r",
+                                refValue->cValue.real);
+                        lastclock = currclock;
+                    }
                 }
 #endif
             } else {
@@ -478,11 +484,13 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
-                currclock = clock();
-                if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-                    fprintf(stderr, " Reference value : % 12.5e\r",
-                            refValue->rValue);
-                    lastclock = currclock;
+                if (!orflag) {
+                    currclock = clock();
+                    if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
+                        fprintf(stderr, " Reference value : % 12.5e\r",
+                                refValue->rValue);
+                        lastclock = currclock;
+                    }
                 }
 #endif
             }
@@ -559,16 +567,18 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             variable just the same  */
 
 #ifndef HAS_WINGUI
-        currclock = clock();
-        if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
-            if (run->isComplex) {
-                fprintf(stderr, " Reference value : % 12.5e\r",
-                        refValue ? refValue->cValue.real : NAN);
-            } else {
-                fprintf(stderr, " Reference value : % 12.5e\r",
-                        refValue ? refValue->rValue : NAN);
+        if (!orflag) {
+            currclock = clock();
+            if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
+                if (run->isComplex) {
+                    fprintf(stderr, " Reference value : % 12.5e\r",
+                            refValue ? refValue->cValue.real : NAN);
+                } else {
+                    fprintf(stderr, " Reference value : % 12.5e\r",
+                            refValue ? refValue->rValue : NAN);
+                }
+                lastclock = currclock;
             }
-            lastclock = currclock;
         }
 #endif
 
