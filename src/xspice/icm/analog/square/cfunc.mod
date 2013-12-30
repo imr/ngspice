@@ -181,9 +181,6 @@ cm_square(ARGS)
 
     Mif_Complex_t ac_gain;
 
-    Local_Data_t *loc;          /* Pointer to local static data, not to be included
-                                   in the state vector */
-
     /**** Retrieve frequently used parameters... ****/
 
     cntl_size = PARAM_SIZE(cntl_array);
@@ -210,11 +207,7 @@ cm_square(ARGS)
         cm_analog_alloc(T3, sizeof(double));
         cm_analog_alloc(T4, sizeof(double));
 
-        /*** allocate static storage for *loc ***/
-        STATIC_VAR(locdata) = calloc(1, sizeof(Local_Data_t));
-        loc = STATIC_VAR(locdata);
-
-        loc->tran_init = FALSE;
+        STATIC_VAR(tran_init) = MIF_FALSE;
     }
 
     x = (Mif_Value_t*) &PARAM(cntl_array[0]);
@@ -253,11 +246,9 @@ cm_square(ARGS)
         time3 = *t3;
         time4 = *t4;
 
-        loc = STATIC_VAR(locdata);
-
-        if (!loc->tran_init) {
+        if (STATIC_VAR(tran_init) == MIF_FALSE) {
             *phase1 = 0.0;
-            loc->tran_init = TRUE;
+            STATIC_VAR(tran_init) = MIF_TRUE;
         }
 
         /* Retrieve cntl_input value. */

@@ -72,10 +72,6 @@ char *triangle_array_error = "\n**** Error ****\nTRIANGLE: Size of control array
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
-typedef struct {
-    int tran_init;              /* for initialization of phase1) */
-} Local_Data_t;
-
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
@@ -176,9 +172,6 @@ cm_triangle(ARGS)
 
     Mif_Complex_t ac_gain;
 
-    Local_Data_t *loc;     /* Pointer to local static data, not to be included
-                              in the state vector */
-
     /**** Retrieve frequently used parameters... ****/
 
 
@@ -201,11 +194,7 @@ cm_triangle(ARGS)
         cm_analog_alloc(T2, sizeof(double));
         cm_analog_alloc(T3, sizeof(double));
 
-        /*** allocate static storage for *loc ***/
-        STATIC_VAR(locdata) = calloc(1, sizeof(Local_Data_t));
-        loc = STATIC_VAR(locdata);
-
-        loc->tran_init = FALSE;
+        STATIC_VAR(tran_init) = MIF_FALSE;
     }
 
     x = (Mif_Value_t*) &PARAM(cntl_array[0]);
@@ -241,11 +230,9 @@ cm_triangle(ARGS)
         time2   = *t2;
         t_start = *t_end;
 
-        loc = STATIC_VAR(locdata);
-
-        if (! loc->tran_init) {
+        if (STATIC_VAR(tran_init) == MIF_FALSE) {
             *phase1 = 0.0;
-            loc->tran_init = TRUE;
+            STATIC_VAR(tran_init) = MIF_TRUE;
         }
 
         /* Retrieve cntl_input value. */
