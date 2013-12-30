@@ -4,18 +4,18 @@ Copyright 1991
 Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
 
-AUTHORS                      
+AUTHORS
 
     27 Sept 1991     Jeffrey P. Murray
 
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     analog core code model.
 
 ===============================================================================*/
- 
+
 NAME_TABLE:
 
 
@@ -27,109 +27,109 @@ Description:           "magnetic core"
 PORT_TABLE:
 
 
-Port_Name:             mc                               
-Description:           "magnetic core"      
-Direction:             inout                    
-Default_Type:          gd                    
-Allowed_Types:         [g,gd]      
-Vector:                 no                   
-Vector_Bounds:          -                      
-Null_Allowed:          no                    
+Port_Name:             mc
+Description:           "magnetic core"
+Direction:             inout
+Default_Type:          gd
+Allowed_Types:         [g,gd]
+Vector:                 no
+Vector_Bounds:          -
+Null_Allowed:          no
 
 PARAMETER_TABLE:
 
-Parameter_Name:     h_array                     b_array 
+Parameter_Name:     h_array                     b_array
 Description:        "magnetic field array"      "flux density array"
-Data_Type:          real                        real   
-Default_Value:      -                           -   
-Limits:             -                           -       
-Vector:              yes                         yes     
-Vector_Bounds:       [2 -]                       [2 -]      
-Null_Allowed:       no                          no     
+Data_Type:          real                        real
+Default_Value:      -                           -
+Limits:             -                           -
+Vector:              yes                         yes
+Vector_Bounds:       [2 -]                       [2 -]
+Null_Allowed:       no                          no
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     area                        length 
+Parameter_Name:     area                        length
 Description:        "cross-sectional area"      "core length"
-Data_Type:          real                        real   
-Default_Value:      -                           -   
-Limits:             -                           -       
-Vector:              no                          no     
-Vector_Bounds:       -                           -      
-Null_Allowed:       no                          no     
+Data_Type:          real                        real
+Default_Value:      -                           -
+Limits:             -                           -
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       no                          no
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     input_domain           
-Description:        "input sm. domain"     
-Data_Type:          real                   
-Default_Value:      0.01                   
-Limits:             [1e-12 0.5]	          
-Vector:              no                     
-Vector_Bounds:       -                      
-Null_Allowed:       yes                    
+Parameter_Name:     input_domain
+Description:        "input sm. domain"
+Data_Type:          real
+Default_Value:      0.01
+Limits:             [1e-12 0.5]
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:    fraction 
+Parameter_Name:    fraction
 Description:       "smoothing fractional/abs switch"
-Data_Type:         boolean 
-Default_Value:     TRUE                    
-Limits:            -	                 
-Vector:             no                   
-Vector_Bounds:      -                   
-Null_Allowed:      yes                
+Data_Type:         boolean
+Default_Value:     TRUE
+Limits:            -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:      yes
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:    mode 
+Parameter_Name:    mode
 Description:       "mode switch (1 = pwl, 2 = hyst)"
 Data_Type:         int
-Default_Value:     1                    
-Limits:            [1 2]	                 
-Vector:             no                   
-Vector_Bounds:      -                   
-Null_Allowed:      yes                
+Default_Value:     1
+Limits:            [1 2]
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:      yes
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     in_low                  in_high	
+Parameter_Name:     in_low                  in_high
 Description:        "input low value"       "input high value"
-Data_Type:          real                    real   
-Default_Value:      0.0                     1.0 
-Limits:             -                       -       
-Vector:              no                      no 
-Vector_Bounds:       -                       -     
-Null_Allowed:       yes                     yes     
+Data_Type:          real                    real
+Default_Value:      0.0                     1.0
+Limits:             -                       -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                     yes
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     hyst                    out_lower_limit 
+Parameter_Name:     hyst                    out_lower_limit
 Description:        "hysteresis"            "output lower limit"
-Data_Type:          real                    real 
-Default_Value:      0.1                     0.0 
-Limits:             [0 -]                   -       
-Vector:              no                      no     
-Vector_Bounds:       -                       -      
-Null_Allowed:       yes                     yes    
+Data_Type:          real                    real
+Default_Value:      0.1                     0.0
+Limits:             [0 -]                   -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                     yes
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     out_upper_limit 
+Parameter_Name:     out_upper_limit
 Description:        "output upper limit"
-Data_Type:          real                  
-Default_Value:      1.0                    
-Limits:              -	                
-Vector:              no                    
-Vector_Bounds:       -                     
-Null_Allowed:       yes                   
+Data_Type:          real
+Default_Value:      1.0
+Limits:              -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
 
 
 STATIC_VAR_TABLE:

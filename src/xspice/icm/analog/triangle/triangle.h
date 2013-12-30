@@ -8,17 +8,17 @@ Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
 
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+
+AUTHORS
 
     12 Apr 1991     Harry Li
 
 
-MODIFICATIONS   
+MODIFICATIONS
 
      2 Oct 1991    Jeffrey P. Murray
-                                   
+
 
 SUMMARY
 
@@ -26,9 +26,9 @@ SUMMARY
     triangle (controlled trianglewave oscillator) code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     N/A                  N/A
 
@@ -36,7 +36,7 @@ INTERFACES
 REFERENCED FILES
 
     NONE
-                     
+
 
 NON-STANDARD FEATURES
 
@@ -47,7 +47,7 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 
-                                      
+
 
 /*=== CONSTANTS ========================*/
 
@@ -55,7 +55,7 @@ char *triangle_allocation_error = "\n**** Error ****\nTRIANGLE: Error allocating
 char *triangle_freq_clamp = "\n**** Warning ****\nTRIANGLE: Extrapolated Minimum Frequency Set to 1e-16 Hz \n";
 char *triangle_array_error = "\n**** Error ****\nTRIANGLE: Size of control array different than frequency array \n";
 
-                                    
+
 #define INT1 1
 #define T1 2
 #define T2 3
@@ -67,12 +67,12 @@ char *triangle_array_error = "\n**** Error ****\nTRIANGLE: Size of control array
 
 
 
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
-    
-           
+
+
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 

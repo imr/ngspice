@@ -4,18 +4,18 @@ Copyright 1991
 Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
 
-AUTHORS                      
+AUTHORS
 
     12 Apr 1991     Harry Li
 
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     analog square (controlled squarewave oscillator) code model.
 
 ===============================================================================*/
- 
+
 NAME_TABLE:
 
 
@@ -26,56 +26,56 @@ Description:           "controlled square wave oscillator"
 
 PORT_TABLE:
 
-Port_Name:             cntl_in              out            
+Port_Name:             cntl_in              out
 Description:           "input"              "output"
-Direction:             in                   out 
+Direction:             in                   out
 Default_Type:          v                    v
-Allowed_Types:         [v,vd,i,id,vnam]     [v,vd,i,id] 
+Allowed_Types:         [v,vd,i,id,vnam]     [v,vd,i,id]
 Vector:                 no                   no
-Vector_Bounds:          -                    -  
-Null_Allowed:          no                   no 
+Vector_Bounds:          -                    -
+Null_Allowed:          no                   no
 
 PARAMETER_TABLE:
 
-Parameter_Name:     cntl_array            freq_array 
+Parameter_Name:     cntl_array            freq_array
 Description:        "control in array"    "frequency array"
-Data_Type:          real                  real   
-Default_Value:      0.0                   1.0e3   
-Limits:             -                     [0 -]       
-Vector:              yes                   yes     
-Vector_Bounds:       [2 -]                 [2 -]      
-Null_Allowed:       no                    no     
+Data_Type:          real                  real
+Default_Value:      0.0                   1.0e3
+Limits:             -                     [0 -]
+Vector:              yes                   yes
+Vector_Bounds:       [2 -]                 [2 -]
+Null_Allowed:       no                    no
 
 
 PARAMETER_TABLE:
 
 Parameter_Name:     out_low                out_high
 Description:        "output low value"     "output high value"
-Data_Type:          real                   real 
-Default_Value:      -1.0                   1.0 
-Limits:             -       	           -       
-Vector:              no                     no     
-Vector_Bounds:       -                      -      
-Null_Allowed:       yes                    yes    
+Data_Type:          real                   real
+Default_Value:      -1.0                   1.0
+Limits:             -                      -
+Vector:              no                     no
+Vector_Bounds:       -                      -
+Null_Allowed:       yes                    yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     duty_cycle             rise_time 
+Parameter_Name:     duty_cycle             rise_time
 Description:        "duty cycle"           "rise time"
-Data_Type:          real                   real 
-Default_Value:      0.5                    1.0e-9 
-Limits:             [1e-6 .999999]         -       
-Vector:              no                     no     
-Vector_Bounds:       -                      -      
-Null_Allowed:       yes                    yes    
+Data_Type:          real                   real
+Default_Value:      0.5                    1.0e-9
+Limits:             [1e-6 .999999]         -
+Vector:              no                     no
+Vector_Bounds:       -                      -
+Null_Allowed:       yes                    yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     fall_time 
+Parameter_Name:     fall_time
 Description:        "fall time"
-Data_Type:          real 
-Default_Value:      1.0e-9 
-Limits:             -       
+Data_Type:          real
+Default_Value:      1.0e-9
+Limits:             -
 Vector:              no
 Vector_Bounds:       -
 Null_Allowed:       yes

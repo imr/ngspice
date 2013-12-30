@@ -8,17 +8,17 @@ Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
 
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+
+AUTHORS
 
     20 Mar 1991     Harry Li
 
 
-MODIFICATIONS   
+MODIFICATIONS
 
      2 Oct 1991    Jeffrey P. Murray
-                                   
+
 
 SUMMARY
 
@@ -26,9 +26,9 @@ SUMMARY
     sine code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     N/A                  N/A
 
@@ -36,7 +36,7 @@ INTERFACES
 REFERENCED FILES
 
     NONE
-                     
+
 
 NON-STANDARD FEATURES
 
@@ -47,12 +47,12 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 
-                                      
+
 
 /*=== CONSTANTS ========================*/
 
 #define PI 3.141592654;
-                                    
+
 #define INT1 1
 
 char *allocation_error = "\n**** Error ****\nSINE: Error allocating sine block storage \n";
@@ -66,14 +66,10 @@ char *array_error = "\n**** Error ****\nSINE: Size of control array different th
 
 
 
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
-    
-           
+
+
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
-
-
-
-

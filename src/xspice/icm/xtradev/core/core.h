@@ -1,4 +1,4 @@
-                                    
+
 
 /******************************************************/
 /******  Structures, etc. for core model.        ******/
@@ -12,7 +12,7 @@
 #define X_FALLING FALSE
 #define PWL 1
 #define HYSTERESIS 2
-                                         
+
 
 
 
@@ -25,12 +25,12 @@
 
 
 /*****  Structure Definitions *************************************/
-  
 
 
 
 
-                                   
+
+
 /***** Function Definitions ***************************************/
 
 

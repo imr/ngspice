@@ -51,42 +51,28 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ====================*/
 
+#include <stdlib.h>
 #include "square.h"
-
 
 
 /*=== CONSTANTS ========================*/
 
 
-
-
 /*=== MACROS ===========================*/
-
-
 
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
-
-
 typedef struct {
-
-    double   *control;   /* the storage array for the
-                            control vector (cntl_array)   */
-
-    double   *freq;   /* the storage array for the
-                         pulse width array (pw_array)   */
-
-    Boolean_t tran_init; /* for initialization of phase1) */
-
+    double   *control;          /* the storage array for the
+                                   control vector (cntl_array)   */
+    double   *freq;             /* the storage array for the
+                                   pulse width array (pw_array)   */
+    Boolean_t tran_init;        /* for initialization of phase1) */
 } Local_Data_t;
 
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
-
-
-
-
 
 /*==============================================================================
 
@@ -129,7 +115,6 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
-#include <stdlib.h>
 
 /*=== CM_SQUARE ROUTINE ===*/
 
@@ -156,43 +141,42 @@ NON-STANDARD FEATURES
 *                                                          *
 ***********************************************************/
 
-void cm_square(ARGS)  /* structure holding parms,
-                                   inputs, outputs, etc.     */
+void
+cm_square(ARGS)
 {
-    int i;            /* generic loop counter index */
-    int cntl_size;    /* control array size         */
-    int freq_size;    /* frequency array size       */
-    int int_cycle;    /* integer number of cycles   */
+    int i;                      /* generic loop counter index */
+    int cntl_size;              /* control array size         */
+    int freq_size;              /* frequency array size       */
+    int int_cycle;              /* integer number of cycles   */
 
-    double *x;        /* pointer to the control array values */
-    double *y;        /* pointer to the frequecy array values */
-    double cntl_input; /* control input                       */
-    /*double out;*/        /* output */
-    double dout_din;   /* slope of the frequency array wrt the control
-                          array.  Used to extrapolate a frequency above
-                          and below the control input high and low level */
-    double output_low; /* output low */
-    double output_hi;  /* output high */
-    double dphase;     /* fractional part into cycle */
-    double *phase;     /* pointer to the phase value */
-    double *phase1;    /* pointer to the old phase value */
-    double freq=0.0;       /* frequency of the wave           */
-    double d_cycle;    /* duty cycle   */
-    double *t1;        /* pointer containing the value of time1 */
-    double *t2;        /* pointer containing the value of time2 */
-    double *t3;        /* pointer containing the value of time3 */
-    double *t4;        /* pointer containing the value of time4 */
-    double time1;      /* time1 = duty_cycle * period of the wave */
-    double time2;      /* time2 = time1 + risetime */
-    double time3;      /* time3 = current time+time to end of period*/
-    double time4;      /* time4 = time3 + falltime */
-    double t_rise;     /* risetime */
-    double t_fall;     /* falltime */
+    double *x;                  /* pointer to the control array values */
+    double *y;                  /* pointer to the frequecy array values */
+    double cntl_input;          /* control input                       */
+    double dout_din;            /* slope of the frequency array wrt the control
+                                   array.  Used to extrapolate a frequency above
+                                   and below the control input high and low level */
+    double output_low;          /* output low */
+    double output_hi;           /* output high */
+    double dphase;              /* fractional part into cycle */
+    double *phase;              /* pointer to the phase value */
+    double *phase1;             /* pointer to the old phase value */
+    double freq = 0.0;          /* frequency of the wave */
+    double d_cycle;             /* duty cycle */
+    double *t1;                 /* pointer containing the value of time1 */
+    double *t2;                 /* pointer containing the value of time2 */
+    double *t3;                 /* pointer containing the value of time3 */
+    double *t4;                 /* pointer containing the value of time4 */
+    double time1;               /* time1 = duty_cycle * period of the wave */
+    double time2;               /* time2 = time1 + risetime */
+    double time3;               /* time3 = current time+time to end of period*/
+    double time4;               /* time4 = time3 + falltime */
+    double t_rise;              /* risetime */
+    double t_fall;              /* falltime */
 
     Mif_Complex_t ac_gain;
 
-    Local_Data_t *loc;        /* Pointer to local static data, not to be included
-                                       in the state vector */
+    Local_Data_t *loc;          /* Pointer to local static data, not to be included
+                                   in the state vector */
 
     /**** Retrieve frequently used parameters... ****/
 
@@ -207,22 +191,22 @@ void cm_square(ARGS)  /* structure holding parms,
     /* check and make sure that the control array is the
        same size as the frequency array */
 
-    if(cntl_size != freq_size) {
+    if (cntl_size != freq_size) {
         cm_message_send(square_array_error);
         return;
     }
 
     /* First time throught allocate memory */
-    if(INIT==1) {
-        cm_analog_alloc(INT1,sizeof(double));
-        cm_analog_alloc(T1,sizeof(double));
-        cm_analog_alloc(T2,sizeof(double));
-        cm_analog_alloc(T3,sizeof(double));
-        cm_analog_alloc(T4,sizeof(double));
+    if (INIT == 1) {
+        cm_analog_alloc(INT1, sizeof(double));
+        cm_analog_alloc(T1, sizeof(double));
+        cm_analog_alloc(T2, sizeof(double));
+        cm_analog_alloc(T3, sizeof(double));
+        cm_analog_alloc(T4, sizeof(double));
 
         /*** allocate static storage for *loc ***/
-        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
-        loc = STATIC_VAR (locdata);
+        STATIC_VAR(locdata) = calloc(1, sizeof(Local_Data_t));
+        loc = STATIC_VAR(locdata);
 
         /* Allocate storage for breakpoint domain & pulse width values */
         x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
@@ -237,16 +221,15 @@ void cm_square(ARGS)  /* structure holding parms,
         }
 
         loc->tran_init = FALSE;
-
     }
 
-    if(ANALYSIS == MIF_DC) {
+    if (ANALYSIS == MIF_DC) {
 
         /* initialize time values */
-        t1 = (double *) cm_analog_get_ptr(T1,0);
-        t2 = (double *) cm_analog_get_ptr(T2,0);
-        t3 = (double *) cm_analog_get_ptr(T3,0);
-        t4 = (double *) cm_analog_get_ptr(T4,0);
+        t1 = (double *) cm_analog_get_ptr(T1, 0);
+        t2 = (double *) cm_analog_get_ptr(T2, 0);
+        t3 = (double *) cm_analog_get_ptr(T3, 0);
+        t4 = (double *) cm_analog_get_ptr(T4, 0);
 
         *t1 = -1;
         *t2 = -1;
@@ -254,25 +237,26 @@ void cm_square(ARGS)  /* structure holding parms,
         *t4 = -1;
 
         OUTPUT(out) = output_low;
-        PARTIAL(out,cntl_in) = 0;
+        PARTIAL(out, cntl_in) = 0;
 
-    } else if(ANALYSIS == MIF_TRAN) {
+    } else if (ANALYSIS == MIF_TRAN) {
 
         /* Retrieve previous values */
 
-        phase = (double *) cm_analog_get_ptr(INT1,0);
-        phase1 = (double *) cm_analog_get_ptr(INT1,1);
-        t1 = (double *) cm_analog_get_ptr(T1,1);
-        t2 = (double *) cm_analog_get_ptr(T2,1);
-        t3 = (double *) cm_analog_get_ptr(T3,1);
-        t4 = (double *) cm_analog_get_ptr(T4,1);
+        phase  = (double *) cm_analog_get_ptr(INT1, 0);
+        phase1 = (double *) cm_analog_get_ptr(INT1, 1);
+
+        t1 = (double *) cm_analog_get_ptr(T1, 1);
+        t2 = (double *) cm_analog_get_ptr(T2, 1);
+        t3 = (double *) cm_analog_get_ptr(T3, 1);
+        t4 = (double *) cm_analog_get_ptr(T4, 1);
 
         time1 = *t1;
         time2 = *t2;
         time3 = *t3;
         time4 = *t4;
 
-        loc = STATIC_VAR (locdata);
+        loc = STATIC_VAR(locdata);
         x = loc->control;
         y = loc->freq;
 
@@ -282,7 +266,7 @@ void cm_square(ARGS)  /* structure holding parms,
         }
 
         /* Retrieve x and y values. */
-        for (i=0; i<cntl_size; i++) {
+        for (i = 0; i < cntl_size; i++) {
             x[i] = PARAM(cntl_array[i]);
             y[i] = PARAM(freq_array[i]);
         }
@@ -293,127 +277,128 @@ void cm_square(ARGS)  /* structure holding parms,
         /* Determine segment boundaries within which cntl_input resides */
         /*** cntl_input below lowest cntl_voltage ***/
         if (cntl_input <= *x) {
-            dout_din = (y[1] - y[0])/(x[1] - x[0]);
+            dout_din = (y[1] - y[0]) / (x[1] - x[0]);
             freq = *y + (cntl_input - *x) * dout_din;
 
-            if(freq <= 0) {
+            if (freq <= 0) {
                 cm_message_send(square_freq_clamp);
                 freq = 1e-16;
             }
-            /* freq = *y; */
-            /*** cntl_input above highest cntl_voltage ***/
+
         } else if (cntl_input >= x[cntl_size-1]) {
+            /*** cntl_input above highest cntl_voltage ***/
             dout_din = (y[cntl_size-1] - y[cntl_size-2]) /
-                       (x[cntl_size-1] - x[cntl_size-2]);
+                (x[cntl_size-1] - x[cntl_size-2]);
             freq = y[cntl_size-1] + (cntl_input - x[cntl_size-1]) * dout_din;
-            /* freq = y[cntl_size-1]; */
 
         } else {
             /*** cntl_input within bounds of end midpoints...
-                    must determine position progressively & then
-                    calculate required output.                    ***/
+                 must determine position progressively & then
+                 calculate required output. ***/
 
-            for (i=0; i<cntl_size-1; i++) {
+            for (i = 0; i < cntl_size - 1; i++) {
 
                 if ((cntl_input < x[i+1]) && (cntl_input >= x[i])) {
 
                     /* Interpolate to the correct frequency value */
 
-                    freq = ((cntl_input - x[i])/(x[i+1] - x[i]))*
-                           (y[i+1]-y[i]) + y[i];
+                    freq = ((cntl_input - x[i])/(x[i+1] - x[i])) *
+                        (y[i+1]-y[i]) + y[i];
                 }
 
             }
+
         }
+
         /* calculate the instantaneous phase */
         *phase = *phase1 + freq*(TIME - T(1));
 
         /* convert the phase to an integer */
-        int_cycle = (int)*phase1;
+        int_cycle = (int) *phase1;
 
         /* dphase is the percent into the cycle for
            the period */
         dphase = *phase1 - int_cycle;
 
         /* Calculate the time variables and the output value
-            for this iteration */
+           for this iteration */
 
-        if((time1 <= TIME) && (TIME <= time2)) {
-            time3 = T(1) + (1 - dphase)/freq;
+        if ((time1 <= TIME) && (TIME <= time2)) {
+
+            time3 = T(1) + (1 - dphase) / freq;
             time4 = time3 + t_fall;
 
-            if(TIME < time2) {
+            if (TIME < time2)
                 cm_analog_set_temp_bkpt(time2);
-            }
 
             cm_analog_set_temp_bkpt(time3);
             cm_analog_set_temp_bkpt(time4);
 
-            OUTPUT(out) = output_low + ((TIME - time1)/(time2 - time1))*
-                          (output_hi - output_low);
+            OUTPUT(out) = output_low + ((TIME - time1) / (time2 - time1)) *
+                (output_hi - output_low);
 
-        } else if((time2 <= TIME) && (TIME <= time3)) {
+        } else if ((time2 <= TIME) && (TIME <= time3)) {
 
-            time3 = T(1) + (1.0 - dphase)/freq;
+            time3 = T(1) + (1.0 - dphase) / freq;
             time4 = time3 + t_fall;
-            if(TIME < time3) {
+
+            if (TIME < time3)
                 cm_analog_set_temp_bkpt(time3);
-            }
+
             cm_analog_set_temp_bkpt(time4);
+
             OUTPUT(out) = output_hi;
 
-        } else if((time3 <= TIME) && (TIME <= time4)) {
+        } else if ((time3 <= TIME) && (TIME <= time4)) {
 
-            if(dphase > 1-d_cycle) {
+            if (dphase > 1 - d_cycle)
                 dphase = dphase - 1.0;
-            }
 
             /* subtract d_cycle from 1 because my initial definition
-            of duty cyle was that part of the cycle which the output
-            is low.  The more standard definition is the part of the
-            cycle where the output is high. */
-            time1 = T(1) + ((1-d_cycle) - dphase)/freq;
+               of duty cyle was that part of the cycle which the output
+               is low.  The more standard definition is the part of the
+               cycle where the output is high. */
+            time1 = T(1) + ((1-d_cycle) - dphase) / freq;
             time2 = time1 + t_rise;
 
-            if(TIME < time4) {
+            if (TIME < time4)
                 cm_analog_set_temp_bkpt(time4);
-            }
 
             cm_analog_set_temp_bkpt(time1);
             cm_analog_set_temp_bkpt(time2);
 
-            OUTPUT(out) = output_hi + ((TIME - time3)/(time4 - time3))*
-                          (output_low - output_hi);
+            OUTPUT(out) = output_hi + ((TIME - time3) / (time4 - time3)) *
+                (output_low - output_hi);
 
         } else {
 
-            if(dphase > 1-d_cycle) {
+            if (dphase > 1 - d_cycle)
                 dphase = dphase - 1.0;
-            }
 
             /* subtract d_cycle from 1 because my initial definition
-            of duty cyle was that part of the cycle which the output
-            is low.  The more standard definition is the part of the
-            cycle where the output is high. */
-            time1 = T(1) + ((1-d_cycle) - dphase)/freq;
+               of duty cyle was that part of the cycle which the output
+               is low.  The more standard definition is the part of the
+               cycle where the output is high. */
+            time1 = T(1) + ((1-d_cycle) - dphase) / freq;
             time2 = time1 + t_rise;
 
-            if((TIME < time1) || (T(1) == 0)) {
+            if ((TIME < time1) || (T(1) == 0))
                 cm_analog_set_temp_bkpt(time1);
-            }
 
             cm_analog_set_temp_bkpt(time2);
+
             OUTPUT(out) = output_low;
+
         }
 
-        PARTIAL(out,cntl_in) = 0.0;
+        PARTIAL(out, cntl_in) = 0.0;
 
         /* set the time values for storage */
 
-        t1 = (double *) cm_analog_get_ptr(T1,0);
-        t2 = (double *) cm_analog_get_ptr(T2,0);
-        t3 = (double *) cm_analog_get_ptr(T3,0);
-        t4 = (double *) cm_analog_get_ptr(T4,0);
+        t1 = (double *) cm_analog_get_ptr(T1, 0);
+        t2 = (double *) cm_analog_get_ptr(T2, 0);
+        t3 = (double *) cm_analog_get_ptr(T3, 0);
+        t4 = (double *) cm_analog_get_ptr(T4, 0);
 
         *t1 = time1;
         *t2 = time2;
@@ -425,8 +410,7 @@ void cm_square(ARGS)  /* structure holding parms,
         /* This model has no AC capabilities */
 
         ac_gain.real = 0.0;
-        ac_gain.imag= 0.0;
-        AC_GAIN(out,cntl_in) = ac_gain;
+        ac_gain.imag = 0.0;
+        AC_GAIN(out, cntl_in) = ac_gain;
     }
 }
-
