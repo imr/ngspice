@@ -73,10 +73,6 @@ char *triangle_array_error = "\n**** Error ****\nTRIANGLE: Size of control array
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 typedef struct {
-    double   *control;          /* the storage array for the
-                                   control vector (cntl_array) */
-    double   *freq;             /* the storage array for the
-                                   pulse width array (pw_array) */
     int tran_init;              /* for initialization of phase1) */
 } Local_Data_t;
 
@@ -159,8 +155,8 @@ cm_triangle(ARGS)
     int freq_size;         /* size of the frequency array                     */
     int int_cycle;         /* the number of cycles rounded to the nearest int */
 
-    double *x;             /* pointer holds the values of the control array */
-    double *y;             /* pointer holds the values of the freq array    */
+    Mif_Value_t *x;        /* pointer holds the values of the control array */
+    Mif_Value_t *y;        /* pointer holds the values of the freq array    */
     double cntl_input;     /* control input                                 */
 
     double dout_din;       /* partial out wrt to control input              */
@@ -209,20 +205,11 @@ cm_triangle(ARGS)
         STATIC_VAR(locdata) = calloc(1, sizeof(Local_Data_t));
         loc = STATIC_VAR(locdata);
 
-        /* Allocate storage for breakpoint domain & pulse width values */
-        x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
-        if (!x) {
-            cm_message_send(triangle_allocation_error);
-            return;
-        }
-        y = loc->freq = (double *) calloc((size_t) freq_size, sizeof(double));
-        if (!y) {
-            cm_message_send(triangle_allocation_error);
-            return;
-        }
-
         loc->tran_init = FALSE;
     }
+
+    x = (Mif_Value_t*) &PARAM(cntl_array[0]);
+    y = (Mif_Value_t*) &PARAM(freq_array[0]);
 
     if (ANALYSIS == MIF_DC) {
 
@@ -255,18 +242,10 @@ cm_triangle(ARGS)
         t_start = *t_end;
 
         loc = STATIC_VAR(locdata);
-        x = loc->control;
-        y = loc->freq;
 
         if (! loc->tran_init) {
             *phase1 = 0.0;
             loc->tran_init = TRUE;
-        }
-
-        /* Retrieve x and y values. */
-        for (i = 0; i < cntl_size; i++) {
-            x[i] = PARAM(cntl_array[i]);
-            y[i] = PARAM(freq_array[i]);
         }
 
         /* Retrieve cntl_input value. */
@@ -275,22 +254,22 @@ cm_triangle(ARGS)
         /* Determine segment boundaries within which cntl_input resides */
 
         /*** cntl_input below lowest cntl_voltage ***/
-        if (cntl_input <= *x) {
+        if (cntl_input <= x[0].rvalue) {
 
-            dout_din = (y[1] - y[0]) / (x[1] - x[0]);
-            freq = *y + (cntl_input - *x) * dout_din;
+            dout_din = (y[1].rvalue - y[0].rvalue) / (x[1].rvalue - x[0].rvalue);
+            freq = y[0].rvalue + (cntl_input - x[0].rvalue) * dout_din;
 
             if (freq <= 0) {
                 cm_message_send(triangle_freq_clamp);
                 freq = 1e-16;
             }
 
-        } else if (cntl_input >= x[cntl_size-1]) {
+        } else if (cntl_input >= x[cntl_size-1].rvalue) {
             /*** cntl_input above highest cntl_voltage ***/
-            dout_din = (y[cntl_size-1] - y[cntl_size-2]) /
-                (x[cntl_size-1] - x[cntl_size-2]);
-            freq = y[cntl_size-1] + (cntl_input - x[cntl_size-1]) * dout_din;
-            /* freq = y[cntl_size-1]; */
+            dout_din = (y[cntl_size-1].rvalue - y[cntl_size-2].rvalue) /
+                (x[cntl_size-1].rvalue - x[cntl_size-2].rvalue);
+            freq = y[cntl_size-1].rvalue + (cntl_input - x[cntl_size-1].rvalue) * dout_din;
+            /* freq = y[cntl_size-1].rvalue; */
 
         } else {
             /*** cntl_input within bounds of end midpoints...
@@ -299,12 +278,12 @@ cm_triangle(ARGS)
 
             for (i = 0; i < cntl_size - 1; i++) {
 
-                if ((cntl_input < x[i+1]) && (cntl_input >= x[i])) {
+                if ((cntl_input < x[i+1].rvalue) && (cntl_input >= x[i].rvalue)) {
 
                     /* Interpolate to the correct frequency value */
 
-                    freq = ((cntl_input - x[i]) / (x[i+1] - x[i])) *
-                        (y[i+1] - y[i]) + y[i];
+                    freq = ((cntl_input - x[i].rvalue) / (x[i+1].rvalue - x[i].rvalue)) *
+                        (y[i+1].rvalue - y[i].rvalue) + y[i].rvalue;
                 }
             }
         }

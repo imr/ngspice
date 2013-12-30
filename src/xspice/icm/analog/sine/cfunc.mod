@@ -72,13 +72,6 @@ char *array_error = "\n**** Error ****\nSINE: Size of control array different th
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
-typedef struct {
-    double *control;            /* the storage array for the
-                                   control vector (cntl_array) */
-    double *freq;               /* the storage array for the
-                                   frequency vector (freq_array) */
-} Local_Data_t;
-
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
@@ -133,8 +126,8 @@ cm_sine(ARGS)
     int cntl_size;     /* control array size                            */
     int freq_size;     /* frequency array size                          */
 
-    double *x;         /* pointer to the control array values           */
-    double *y;         /* pointer to the frequency array values         */
+    Mif_Value_t *x;    /* pointer to the control array values           */
+    Mif_Value_t *y;    /* pointer to the frequency array values         */
     double cntl_input; /* control input                                 */
     double dout_din;   /* partial derivative of output wrt control in   */
     double output_low; /* output low value                              */
@@ -147,9 +140,6 @@ cm_sine(ARGS)
     double radian;     /* phase value in radians                        */
 
     Mif_Complex_t ac_gain;
-
-    Local_Data_t *loc; /* Pointer to local static data, not to be included
-                          in the state vector */
 
     /**** Retrieve frequently used parameters... ****/
 
@@ -167,23 +157,10 @@ cm_sine(ARGS)
 
         cm_analog_alloc(INT1, sizeof(double));
 
-        /*** allocate static storage for *loc ***/
-        STATIC_VAR(locdata) = calloc(1, sizeof(Local_Data_t));
-        loc = STATIC_VAR(locdata);
-
-        /* Allocate storage for breakpoint domain & freq. range values */
-        x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
-        if (!x) {
-            cm_message_send(allocation_error);
-            return;
-        }
-        y = loc->freq = (double *) calloc((size_t) freq_size, sizeof(double));
-        if (!y) {
-            cm_message_send(allocation_error);
-            return;
-        }
-
     }
+
+    x = (Mif_Value_t*) &PARAM(cntl_array[0]);
+    y = (Mif_Value_t*) &PARAM(freq_array[0]);
 
     if (ANALYSIS == MIF_DC) {
 
@@ -197,38 +174,27 @@ cm_sine(ARGS)
         phase  = (double *) cm_analog_get_ptr(INT1, 0);
         phase1 = (double *) cm_analog_get_ptr(INT1, 1);
 
-        loc = STATIC_VAR(locdata);
-
-        x = loc->control;
-        y = loc->freq;
-
-        /* Retrieve x and y values. */
-        for (i = 0; i < cntl_size; i++) {
-            x[i] = PARAM(cntl_array[i]);
-            y[i] = PARAM(freq_array[i]);
-        }
-
         /* Retrieve cntl_input value. */
         cntl_input = INPUT(cntl_in);
 
         /* Determine segment boundaries within which cntl_input resides */
-        if (cntl_input <= *x) {
+        if (cntl_input <= x[0].rvalue) {
 
             /*** cntl_input below lowest cntl_voltage ***/
-            dout_din = (y[1] - y[0]) / (x[1] - x[0]);
-            freq = *y + (cntl_input - *x) * dout_din;
+            dout_din = (y[1].rvalue - y[0].rvalue) / (x[1].rvalue - x[0].rvalue);
+            freq = y[0].rvalue + (cntl_input - x[0].rvalue) * dout_din;
 
             if (freq <= 0) {
                 cm_message_send(sine_freq_clamp);
                 freq = 1e-16;
             }
 
-        } else if (cntl_input >= x[cntl_size-1]) {
+        } else if (cntl_input >= x[cntl_size-1].rvalue) {
 
             /*** cntl_input above highest cntl_voltage ***/
-            dout_din = (y[cntl_size-1] - y[cntl_size-2]) /
-                (x[cntl_size-1] - x[cntl_size-2]);
-            freq = y[cntl_size-1] + (cntl_input - x[cntl_size-1]) * dout_din;
+            dout_din = (y[cntl_size-1].rvalue - y[cntl_size-2].rvalue) /
+                (x[cntl_size-1].rvalue - x[cntl_size-2].rvalue);
+            freq = y[cntl_size-1].rvalue + (cntl_input - x[cntl_size-1].rvalue) * dout_din;
 
         } else {
 
@@ -237,10 +203,10 @@ cm_sine(ARGS)
                  calculate required output. ***/
 
             for (i = 0; i < cntl_size - 1; i++)
-                if ((cntl_input < x[i+1]) && (cntl_input >= x[i])) {
+                if ((cntl_input < x[i+1].rvalue) && (cntl_input >= x[i].rvalue)) {
                     /* Interpolate to the correct frequency value */
-                    freq = ((cntl_input - x[i]) / (x[i+1] - x[i])) *
-                        (y[i+1] - y[i]) + y[i];
+                    freq = ((cntl_input - x[i].rvalue) / (x[i+1].rvalue - x[i].rvalue)) *
+                        (y[i+1].rvalue - y[i].rvalue) + y[i].rvalue;
                 }
         }
 

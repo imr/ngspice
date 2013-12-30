@@ -66,14 +66,6 @@ NON-STANDARD FEATURES
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
-typedef struct {
-    double   *H_array;          /* the storage array for the
-                                   control vector (cntl_array) */
-    double   *B_array;          /* the storage array for the
-                                   pulse width array (pw_array) */
-    Boolean_t tran_init;        /* for initialization of phase1) */
-} Local_Data_t;
-
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
@@ -197,8 +189,8 @@ cm_core(ARGS)
 
 
     double input_domain;      /* smoothing range */
-    double *H;                /* pointer to the H-field array */
-    double *B;                /* pointer to the B-field array */
+    Mif_Value_t *H;           /* pointer to the H-field array */
+    Mif_Value_t *B;           /* pointer to the B-field array */
     double lower_seg;         /* x segment below which input resides */
     double upper_seg;         /* x segment above which the input resides */
     double lower_slope;       /* slope of the lower segment */
@@ -216,7 +208,6 @@ cm_core(ARGS)
 
     Mif_Complex_t ac_gain;
 
-    char *allocation_error="\n***ERROR***\nCORE: Allocation calloc failed!\n";
     char *limit_error="\n***ERROR***\nCORE: Violation of 50% rule in breakpoints!\n";
 
 
@@ -250,9 +241,6 @@ cm_core(ARGS)
                                      in_low - hyst and +infinity */
         *old_hyst_state;          /* previous value of *hyst_state */
 
-    Local_Data_t  *loc;           /* Pointer to local static data, not to be included
-                                     in the state vector */
-
     /* Retrieve mode parameter... */
 
     mode = PARAM(mode);
@@ -270,40 +258,14 @@ cm_core(ARGS)
 
         size = PARAM_SIZE(H_array);
 
-        if (INIT == 1) {
-
-            /*** allocate static storage for *loc ***/
-            STATIC_VAR(locdata) = calloc(1, sizeof(Local_Data_t));
-            loc = STATIC_VAR(locdata);
-
-            /* Allocate storage for breakpoint domain & range values */
-            H = loc->H_array = (double *) calloc((size_t) size, sizeof(double));
-            if (!H) {
-                cm_message_send(allocation_error);
-                return;
-            }
-            B = loc->B_array = (double *) calloc((size_t) size, sizeof(double));
-            if (!B) {
-                cm_message_send(allocation_error);
-                return;
-            }
-        }
-
-        loc = STATIC_VAR(locdata);
-        H = loc->H_array;
-        B = loc->B_array;
-
-        /* Retrieve H and B values. */
-        for (i = 0; i < size; i++) {
-            H[i] = PARAM(H_array[i]);
-            B[i] = PARAM(B_array[i]);
-        }
+        H = (Mif_Value_t*) &PARAM(H_array[0]);
+        B = (Mif_Value_t*) &PARAM(B_array[0]);
 
         /* See if input_domain is absolute...if so, test against   */
         /* breakpoint segments for violation of 50% rule...        */
         if (PARAM(fraction) == MIF_FALSE)
             for (i = 0; i < size - 1; i++)
-                if ((H[i+1] - H[i]) < 2.0 * input_domain) {
+                if ((H[i+1].rvalue - H[i].rvalue) < 2.0 * input_domain) {
                     cm_message_send(limit_error);
                     return;
                 }
@@ -316,28 +278,31 @@ cm_core(ARGS)
 
         /* Determine segment boundaries within which H_input resides */
 
-        if (H_input <= (H[1] + H[0]) / 2.0) {/*** H_input below lowest midpoint ***/
+        if (H_input <= (H[1].rvalue + H[0].rvalue) / 2.0) {/*** H_input below lowest midpoint ***/
 
-            dout_din = (B[1] - B[0]) / (H[1] - H[0]);
-            B_out = *B + (H_input - *H) * dout_din;
+            dout_din = (B[1].rvalue - B[0].rvalue) / (H[1].rvalue - H[0].rvalue);
+            B_out = B[0].rvalue + (H_input - H[0].rvalue) * dout_din;
 
-        } else if (H_input >= (H[size-2] + H[size-1]) / 2.0) {
+        } else if (H_input >= (H[size-2].rvalue + H[size-1].rvalue) / 2.0) {
 
             /*** H_input above highest midpoint ***/
-            dout_din = (B[size-1] - B[size-2]) / (H[size-1] - H[size-2]);
-            B_out = B[size-1] + (H_input - H[size-1]) * dout_din;
+            dout_din = (B[size-1].rvalue - B[size-2].rvalue) / (H[size-1].rvalue - H[size-2].rvalue);
+            B_out = B[size-1].rvalue + (H_input - H[size-1].rvalue) * dout_din;
 
         } else { /*** H_input within bounds of end midpoints... ***/
 
             /*** must determine position progressively & then ***/
             /*** calculate required output. ***/
 
+            dout_din = 0.0 / 0.0;
+            B_out    = 0.0 / 0.0;
+
             for (i = 1; i < size; i++)
-                if (H_input < (H[i] + H[i+1]) / 2.0) {
+                if (H_input < (H[i].rvalue + H[i+1].rvalue) / 2.0) {
                     /* approximate position known... */
 
-                    lower_seg = (H[i] - H[i-1]);
-                    upper_seg = (H[i+1] - H[i]);
+                    lower_seg = (H[i].rvalue - H[i-1].rvalue);
+                    upper_seg = (H[i+1].rvalue - H[i].rvalue);
 
                     /* Calculate input_domain about this region's breakpoint.*/
 
@@ -354,27 +319,27 @@ cm_core(ARGS)
                     }
 
                     /* Set up threshold values about breakpoint... */
-                    threshold_lower = H[i] - input_domain;
-                    threshold_upper = H[i] + input_domain;
+                    threshold_lower = H[i].rvalue - input_domain;
+                    threshold_upper = H[i].rvalue + input_domain;
 
                     /* Determine where H_input is within region & determine     */
                     /* output and partial values....                            */
                     if (H_input < threshold_lower) { /* Lower linear region     */
 
-                        dout_din = (B[i] - B[i-1]) / lower_seg;
-                        B_out = B[i] + (H_input - H[i]) * dout_din;
+                        dout_din = (B[i].rvalue - B[i-1].rvalue) / lower_seg;
+                        B_out = B[i].rvalue + (H_input - H[i].rvalue) * dout_din;
 
                     } else if (H_input < threshold_upper) { /* Parabolic region */
 
-                        lower_slope = (B[i] - B[i-1]) / lower_seg;
-                        upper_slope = (B[i+1] - B[i]) / upper_seg;
-                        cm_smooth_corner(H_input, H[i], B[i], input_domain,
+                        lower_slope = (B[i].rvalue - B[i-1].rvalue) / lower_seg;
+                        upper_slope = (B[i+1].rvalue - B[i].rvalue) / upper_seg;
+                        cm_smooth_corner(H_input, H[i].rvalue, B[i].rvalue, input_domain,
                                          lower_slope, upper_slope, &B_out, &dout_din);
 
                     } else {      /* Upper linear region */
 
-                        dout_din = (B[i+1] - B[i]) / upper_seg;
-                        B_out = B[i] + (H_input - H[i]) * dout_din;
+                        dout_din = (B[i+1].rvalue - B[i].rvalue) / upper_seg;
+                        B_out = B[i].rvalue + (H_input - H[i].rvalue) * dout_din;
 
                     }
 
