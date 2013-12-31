@@ -32,6 +32,7 @@ Makefile.in
 /m4
 /missing
 /ylwrap
+/ar-lib
 
 /src/include/ngspice/config.h.in
 /src/include/ngspice/config.h
@@ -52,16 +53,6 @@ Makefile.in
 /src/spinit
 
 !/xgraph/Makefile.in
-
-/visualc/console_debug
-/visualc/console_release
-/visualc/console_release_omp
-/visualc/Debug
-/visualc/Release
-/visualc/ReleaseOMP
-/visualc/vngspice.vcproj.*
-/visualc/vngspice.suo
-/visualc/vngspice.ncb
 
 /release*
 /debug*

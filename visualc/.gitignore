@@ -1,0 +1,16 @@
+# NOTE! Please use 'git ls-files -i --exclude-standard'
+# command after changing this file, to see if there are
+# any tracked files which get ignored after the change.
+#
+# (compile "git ls-files -i --exclude-standard")
+
+/*
+
+!/include
+
+!/.gitignore
+!/how-to-ngspice-vstudio.txt
+
+!/*.c
+!/*.sln
+!/*.vcproj
