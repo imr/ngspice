@@ -13,7 +13,7 @@ Ngspice-26, Jan 4th, 2014
     + asinh, acosh, atanh functions
     + shared ngspice option added: ngspice optionally compiles as
       a shared object or dynamic link library
-    + use a hash table to massively speeding up finding a model
+    + use a hash table to massively speed up parsing the netlist
     + implement a very basic .if/.else block
     + implement a signed power function `pwr' for controlled sources
     + implement multiplier `m' in F, G source
