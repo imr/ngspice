@@ -1,4 +1,3 @@
-#ifndef X_DISPLAY_MISSING
 #include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
 #include "ngspice/bool.h"
@@ -7,7 +6,6 @@
 #include "ngspice/cpextern.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/hlpdefs.h"
-#endif
 
 #include "com_ghelp.h"
 #include "com_help.h"
@@ -21,6 +19,15 @@ com_ghelp(wordlist *wl)
 #ifndef X_DISPLAY_MISSING
     int i;
 #endif /* X_DISPLAY_MISSING 1  */
+
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) || defined(X_DISPLAY_MISSING)
+    printf("Internal help is no longer avaialable!\n");
+    printf("Please check for the actual ngspice manual at\n");
+    printf("http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n");
+    printf("or for help on spice3 at\n");
+    printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
+    return;
+#else
 
     if (cp_getvar("helppath", CP_STRING, buf))
         path = copy(buf);
@@ -72,12 +79,8 @@ com_ghelp(wordlist *wl)
         hlp_displayname = NULL;
     hlp_main(path, wl);
     return;
+#else
+    com_help(wl);
 #endif /* X_DISPLAY_MISSING 1  */
-#ifdef HAS_WINGUI
-    printf("Internal help is no longer avaialable!\n");
-    printf("Please check for the actual ngspice manual at\n");
-    printf("http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n");
-    printf("or for help on spice3 at\n");
-    printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
 #endif
 }
