@@ -33,8 +33,6 @@ TFanal(CKTcircuit *ckt, int restart)
     runDesc *plotptr = NULL;   /* pointer to out plot */
     GENinstance *ptr = NULL;
     IFuid uids[3];
-    int Itype;
-    int Vtype;
     char *name;
 #define tfuid (uids[0]) /* unique id for the transfer function output */
 #define inuid (uids[1]) /* unique id for the transfer function input imp. */
@@ -48,27 +46,28 @@ TFanal(CKTcircuit *ckt, int restart)
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
 
-    Itype = CKTtypelook("Isource");
-    Vtype = CKTtypelook("Vsource");
-    if(Itype != -1) {
-        ptr = CKTfndDev(ckt, job->TFinSrc);
-        if (ptr) {
-            job->TFinIsI = 1;
-            job->TFinIsV = 0;
-        }
+    ptr = CKTfndDev(ckt, job->TFinSrc);
+
+    if (!ptr || ptr->GENmodPtr->GENmodType < 0) {
+        SPfrontEnd->IFerror (ERR_WARNING,
+                             "Transfer function source %s not in circuit",
+                             &job->TFinSrc);
+        job->TFinIsV = 0;
+        job->TFinIsI = 0;
+        return E_NOTFOUND;
     }
 
-    if( (Vtype != -1) && (ptr==NULL) ) {
-        ptr = CKTfndDev(ckt, job->TFinSrc);
+    if (ptr->GENmodPtr->GENmodType == CKTtypelook("Vsource")) {
         job->TFinIsV = 1;
         job->TFinIsI = 0;
-        if (!ptr) {
-            SPfrontEnd->IFerror (ERR_WARNING,
-                    "Transfer function source %s not in circuit",
-                    &(job->TFinSrc));
-            job->TFinIsV = 0;
-            return(E_NOTFOUND);
-        }
+    } else if (ptr->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
+        job->TFinIsV = 0;
+        job->TFinIsI = 1;
+    } else {
+        SPfrontEnd->IFerror (ERR_WARNING,
+                             "Transfer function source %s not of proper type",
+                             &job->TFinSrc);
+        return E_NOTFOUND;
     }
 
     size = SMPmatSize(ckt->CKTmatrix);

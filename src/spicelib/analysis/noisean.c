@@ -32,45 +32,44 @@ NOISEan (CKTcircuit *ckt, int restart)
     int error;
     int posOutNode;
     int negOutNode;
-    int code;
     int step;
     IFuid freqUid;
-    GENinstance *inst;  
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
     NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
-    static char *noacinput =    "noise input source has no AC value";
 
     posOutNode = (job->output) -> number;
     negOutNode = (job->outputRef) -> number;
 
     /* see if the source specified is AC */
-    inst = NULL;
-    code = CKTtypelook("Vsource");
-    if (code != -1) {
-        inst = CKTfndDev(ckt, job->input);
-	if (inst && !((VSRCinstance *)inst)->VSRCacGiven) {
-	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
-	    strcpy(errMsg,noacinput);
-	    return (E_NOACINPUT);
-	}
-    }
+    {
+        GENinstance *inst = CKTfndDev(ckt, job->input);
+        bool ac_given = FALSE;
 
-    code = CKTtypelook("Isource");
-    if (code != -1 && inst==NULL) {
-        inst = CKTfndDev(ckt, job->input);
-        if (!inst) {
-	    /* XXX ??? */
+        if (!inst || inst->GENmodPtr->GENmodType < 0) {
             SPfrontEnd->IFerror (ERR_WARNING,
-                    "Noise input source %s not in circuit",
-                    &job->input);
-		return (E_NOTFOUND);
-	    }
-	if (!((ISRCinstance *)inst)->ISRCacGiven) {
-	    errMsg = TMALLOC(char, strlen(noacinput) + 1);
-	    strcpy(errMsg,noacinput);
-	    return (E_NOACINPUT);
-	}
+                                 "Noise input source %s not in circuit",
+                                 &job->input);
+            return E_NOTFOUND;
+        }
+
+        if (inst->GENmodPtr->GENmodType == CKTtypelook("Vsource")) {
+            ac_given = ((VSRCinstance *)inst) -> VSRCacGiven;
+        } else if(inst->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
+            ac_given = ((ISRCinstance *)inst) -> ISRCacGiven;
+        } else {
+            SPfrontEnd->IFerror (ERR_WARNING,
+                                 "Noise input source %s is not of proper type",
+                                 &job->input);
+            return E_NOTFOUND;
+        }
+
+        if (!ac_given) {
+            SPfrontEnd->IFerror (ERR_WARNING,
+                                 "Noise input source %s has no AC value",
+                                 &job->input);
+            return E_NOACINPUT;
+        }
     }
 
     if ( (job->NsavFstp == 0.0) || restart) { /* va, NsavFstp is double */
