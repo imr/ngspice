@@ -14,7 +14,7 @@ $netlistFile="ngspiceCkt";
 use strict;
 
 sub version {
-    return("25"); # the version only seems to be printed in interactive mode
+    return("26"); # the version only seems to be printed in interactive mode
 }
 
 sub runNoiseTest {

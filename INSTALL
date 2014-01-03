@@ -160,7 +160,7 @@ This file describes the procedures to install ngspice from sources.
  --enable-adms
         ADMS is an experimental model compiler that translates
         Verilog-A compact models into C code that can be compiled into
-        ngspice. This is (as of ngspice-25) still experimental, some
+        ngspice. This is (as of ngspice-26) still experimental, some
         features (e.g. noise) are missing. If you want to use it, please
         refer to the ADMS section on ngspice web site.
 
