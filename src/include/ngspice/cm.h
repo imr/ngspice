@@ -39,9 +39,9 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
+#include "ngspice/config.h"
 #include "ngspice/cmtypes.h"
-#include "ngspice/cmconstants.h" /* K.A. wrong name */
-/*#include "Cmconsta.h" */
+#include "ngspice/cmconstants.h"
 #include "ngspice/cmproto.h"
 #include "ngspice/mifcmdat.h"
 
