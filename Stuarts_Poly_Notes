@@ -1,5 +1,11 @@
 SPICE 2 POLY CODEMODEL
 
+WARNING!
+
+The text in this document has been prepared in 2003 and is outdated. It is
+provided here only for reference and may provide some (historical)
+information.
+
 SPICE2 POLY attributes are now available for controlled sources.  To
 use POLY attributes, configure tclspice/ngspice with the
 --enable-xspice flag set as described above.  After compilation of

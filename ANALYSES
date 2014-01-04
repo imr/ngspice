@@ -8,9 +8,10 @@ This file lists the analyses currently implemented into ngspice.
 Table of Contents
 
  1 Noise analysis (NOISE)
+   1.1 Small signal noise
+   1.2 Transient noise
  2 Operating point analysis (OP)
  3 Operating point sweep Analysis (DC)
-  3.1 Enhancements
  4 Pole-zero analysis (PZ)
  5 Small-Signal distortion analysis (DISTO)
  6 Small Signal frequency response analysis (AC)
@@ -23,6 +24,8 @@ Table of Contents
 
 1 Noise analysis (NOISE)
 
+ 1.1 Small signal noise
+
     The noise analysis does analysis device-generated noise for the given
  circuit. When provided with an input source and an output port, the analysis
  calculates the noise contributions of each device (and each noise generator
@@ -31,6 +34,12 @@ Table of Contents
  specified input source. This is done for every frequency point in a specified
  range - the calculated value of the noise corresponds to the spectral density
  of the circuit variable viewed as a stationary gaussian stochastic process.
+
+ 1.2 Transient noise
+
+    Time domain noise analysis during transient simulation is enabled by
+ providing voltage (and current) source options with white, 1/f and
+ random telegraph signal noise signals.
 
 
 2 Operating point analysis (OP)
@@ -44,11 +53,8 @@ Table of Contents
     The operating point sweep analysis determines the values of output
  variables while one or two specified independent voltage or current source is
  stepped over a user-specified range and the dc output variables are stored
- for each sequential source value.
-
- 3.1 Enhancements
-
-  Added resistance and temperature sweep.
+ for each sequential source value. Resistance and temperature sweep are
+ included.
 
 
 4 Pole-zero analysis (PZ)
@@ -57,7 +63,8 @@ Table of Contents
  ac transfer function. The program first computes the dc operating point and
  then determines the linearized, small-signal models for all the nonlinear
  devices in the circuit. This circuit is then used to find the poles and zeros
- of the transfer function.
+ of the transfer function. Unfortunately this code is (since its inception in
+ spice3) not free of bugs.
 
 
 5 Small-Signal distortion analysis (DISTO)

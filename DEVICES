@@ -66,6 +66,7 @@ Table of contents
  13.3 HICUM0 Bipolar Model
  13.4 HICUM2 Bipolar Model
  13.5 Mextram Bipolar Model
+14. XSPICE code models
 
                              ------------------
 
@@ -849,3 +850,5 @@ will be updated every time the device specific code is altered or changed to ref
       Status: TO BE TESTED
 
       Web site at: http://mextram.ewi.tudelft.nl/ and http://mextram.sourceforge.net/
+
+ 14. XSpice code models, see ngspice manual chapt. 12

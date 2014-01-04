@@ -19,6 +19,13 @@
 *Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.*
 *********************************************************************************
 
+WARNING!
+
+The text in this document has been prepared in 2006 and is partially outdated.
+It is provided here only for reference and may provide some (historical)
+information.
+
+
 Welcome to tclspice README_tcl
 
 This file acompanies ngspice sources starting with ngspice-rework-18. It
@@ -57,7 +64,7 @@ tk  : the graphical extension of tcl, to represent data graphically and for GUIs
 blt : BLT toolkit gives number handling and plotting features to tcl/tk
 
 The most tested configuration is the latest:
-tclspice-25
+tclspice-26
 tcl 8.4
 tk 8.4
 blt 2.4

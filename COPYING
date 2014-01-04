@@ -1,47 +1,51 @@
 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-Ngspice-25
-Copyright (c) 2012,
+Ngspice 26
+Copyright (c) 2014,
 All rights reserved.
 
 
 Foreword:
-Spice's name was originally chosen at the University of California, Berkeley.
-As it is the basis of almost all circuit simulators, the major part of the
+The name 'Spice' (Simulation Program with Integrated Circuit Emphasis)
+was originally chosen at the University of California, Berkeley. The
+original Berkeley code is covered under the modified BSD license and
+thus sets the basis for all other code added.
+As Spice is the basis of almost all circuit simulators, the major part of the
 analogue and mixed signals simulation's code is designed to fit with it.
 The *spices (generic name for its forks) are heterogeneous in many points due
 to the work of researchers, electronic designers, software editors, etc.
 The Ngspice team tries to collect work from the different sources and
 contribute new functionalities. Thus, the material we manipulate is
-heterogeneous in licenses. Keeping the licenses as is, is the way to live with
-that diversity. For release 25 as well, we choose not to relicense.
+heterogeneous in licenses. Keeping the licenses as is, but also keep it
+compatible with the new BSD license, is the way to live with that diversity.
 
 Copyleft is a fundamental question in FOSS development. The choice of a
 copylefted contribution, or a non copylefted contribution is an important
 choice that should be respected. Ngspice branch as a whole will not be covered
 by a specific license. The Ngspice team wants to encourage contributions to
-ngspice. We let each new developper choose its position regarding copyleft,
-as we respect the position of the former developpers. In order to keep things
+ngspice. We let each new developer choose its position regarding copyleft,
+as we respect the position of the former developers. In order to keep things
 clear ngspice team proposes to follow the following guidelines:
 
   Each piece of code should be kept under its original contributor's license.
   As for any project, modifications made in sources covered by a less
-  restrictive license can be covered by a more restrictive license, such as
-  GPL. We do not encourage it.
+  restrictive license can be covered by a more restrictive license than new BSD.
+  We do not encourage it.
 
   If you feel to add code in a file under a different license than the rest of
   the file, please use comments to mark the boundaries of the modification, and
-  edit the comments at the begining of the file with correct license and
+  edit the comments at the beginning of the file with correct license and
   copyright information.
 
   We encourage restrictive licenses to be chosen only for new functionalities,
-  written in distinct files, leading to distinct libraries that links depending
+  written in distinct files, leading to distinct libraries that link depending
   on a specific configure flag.
 
-  We encourage non proliferation of licenses (e.g. choosing either GPL, LGPL or
-  new BSD).
+  We encourage non proliferation of licenses (e.g. choosing either LGPL or
+  new BSD). GPL is not suitable for code to be directly linked into ngspice,
+  but may be used in shared object libraries only.
 
-This heterogenous license status makes it difficult to know which license
-applies. Please take care of knowing which license aplies to the code you are
+This heterogeneous license status requires some effort to keep track on licenses
+applied. Please take care of knowing which license applies to the code you are
 editing, or conveying and not to commit license infringements, especially to
 GPL and LGPL which are quite restrictive.
 

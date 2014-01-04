@@ -13,11 +13,11 @@ Cider couples Spice3f5 circuit level simulator to DSIM device simulator
 to provide greater simulation accuracy of critical devices. DSIM
 devices are described in terms of their structures and materials.
 
-Xspice is an extension to Spice3C1 that provides code modeling support
+Xspice is an extension to Spice3C1 that provides code modelling support
 and simulation of digital components through an embedded event driven
 algorithm.
 
-Ngspice is, anyway, a little more than the simple sum of the packages
+Ngspice is, anyway, much more than the simple sum of the packages
 above, as many people contributed to the project with their experience,
 their bug fixes and their improvements. If you are interested, browse
 the site and discover what ngspice offers and what needs. If you think
@@ -44,12 +44,6 @@ MAILING LISTS:
    <ngspice-users-subscribe@lists.sourceforge.net>
    <ngspice-devel-subscribe@lists.sourceforge.net>
 
-
-OBSOLETE MAILING LISTS:
--------------
- * ngspice-bugs@list.sourceforge.net:
-   This list is no longer used by the ngspice maintainers. Bug reports should
-   go to the ngspice bug tracker.
 
 
 WEB SITEs:

@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 1.9 (rework-25 release)
+  Ngspice F.A.Q.Version 2.0 (ngspice 26 release)
   Maintained by Paolo Nenzi, Holger Vogt
-  Last update: 22-12-2012
+  Last update: 02-01-2014
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -11,17 +11,18 @@
 
   1. INTRODUCTION AND GENERAL INFORMATION
      1.1 What is ngspice?
-     1.2 What is tclspice ?
-     1.3 Why resurrecting Berkeley's Spice?
-     1.4 What is the project's goal?
-     1.5 What you are going to do?
-     1.6 Legal issues
-     1.7 What mailing lists exist for ngspice?
-     1.8 Are the mailing lists archived anywhere?
-     1.9 What newsgroups exist for ngspice?
-     1.10 Where can I get a copy of ngspice?
-     1.11 Where should I look on the World Wide Web for ngspice stuff?
-     1.12 Where should I look on the World Wide Web for Spice documentation?
+         1.2 What is sharedspice?
+     1.3 What is tclspice ?
+     1.4 Why resurrecting Berkeley's Spice?
+     1.5 What is the project's goal?
+     1.6 What you are going to do?
+     1.7 Legal issues
+     1.8 What mailing lists exist for ngspice?
+     1.9 Are the mailing lists archived anywhere?
+     1.10 What newsgroups exist for ngspice?
+     1.11 Where can I get a copy of ngspice?
+     1.12 Where should I look on the World Wide Web for ngspice stuff?
+     1.13 Where should I look on the World Wide Web for Spice documentation?
 
   2. DEVELOPMENT
      2.1 What is the current version?
@@ -52,8 +53,9 @@
 
  1.1 What is ngspice ?
 
-  Ngspice is a mixed-level/mixed-signal circuit simulator based on three
-  open source software packages: Spice3f5, Cider1b1 and Xspice:
+  Ngspice is a mixed-level/mixed-signal circuit simulator, based on three
+  open source software packages: Spice3f5, Cider1b1 and Xspice, and
+  including many bug fixes and enhancements:
 
   - Spice3 is a widely used circuit simulator. It was developed by the
     University of California at Berkeley (UCB), by "a cast of thousand"
@@ -73,20 +75,28 @@
 
   The NG prefix has lot of meanings: Next Generation, New Good, etc.
   Choose or invent the one you prefer. The heart of the project is the
-  ngspice program.
+  ngspice program, with its tremendous advancements.
 
 
- 1.2 What is tclspice ?
+ 1.2 What is sharedspice ?
 
-  Tclspice is a circuit simulator that embeds ngspice and provides a
-  tcl/tk interface to the user. Tclspice is both a batch and interactive
-  simulator and a building block for simulator applications. Analyses can
-  be run from a tcl script and vector plotted or post processed using tcl
-  or a small GUI can be built to analyze a circuit or a set of circuits.
+  Sharedspice is an interface option to ngspice. It compiles the simulator
+  into a shared object (or dynamic link library), providing full control
+  of ngspice to any suitable controlling program (GUI, optimizer,
+  development system, etc., to be provided by the user).
+
+
+ 1.3 What is tclspice ?
+
+  Tclspice is a another interface option of ngspice, providing a tcl/tk
+  interface to the user. Tclspice is both a batch and interactive simulator
+  and a building block for simulator applications. Analyses can be run
+  from a tcl script and vector plotted or post processed using tcl. A small
+  GUI may be built by the user to analyze a circuit or a set of circuits.
   Tclspice is obtained compiling ngspice activating an additional option.
 
 
- 1.3 Why resurrecting Berkeley's Spice?
+ 1.4 Why resurrecting Berkeley's Spice?
 
   Berkeley's Spice can be considered the father of most circuit
   simulators available today. It is an old but still good piece of
@@ -99,7 +109,7 @@
   its source code in the past made this simulator the de-facto standard.
 
 
- 1.4 What is the project's goal?
+ 1.5 What is the project's goal?
 
   Ngspice is both a maintenance and enhancement project. It is a maintenance
   project because it aims to provide the free EDA community the best spice3
@@ -110,7 +120,7 @@
   capabilities) and user interface are other goals.
 
 
- 1.5 What you are going to do?
+ 1.6 What you are going to do?
 
   An official roadmap for ngspice was never drawn. Contributions made by
   developers drive ngspice development and the roadmap is built day by
@@ -119,7 +129,7 @@
 
   + Compatibility: Ngspice should be compatible with commercial products,
     thus allowing people to use the netlist generated for such tools. As
-    most of the commercial simulators avaiable tracked each other in netlist
+    most of the commercial simulators available tracked each other in netlist
     language, this should not be an impossible task. The most important goal
     here is to provide a reliable support for model libraries coming from
     foundries.
@@ -135,28 +145,29 @@
     Spice3f manual, available on the Internet has been used as the basis
     for the new manual. It will be constantly improved during ngspice
     development and integrated with the documentation accompanying Xspice
-    and Cider. This is a very time consuming task and probably the
-    documentation will always be left slightly behind.
+    and Cider. The ngspice manual today contains description of all
+        features ngspice is offering. It is however not a tutorial of ngspice
+        usage, but there are now several good ones available on the internet
+        (see http://ngspice.sourceforge.net/tutorials.html).
 
 
- 1.6 Legal issues
+ 1.7 Legal issues
 
-  Ngspice, starting from release rework-18 is released under BSD/LGPL
-  license. Part of the code are covered by other compatible licenses:
-  spice3 and cider are BSD, xspice is Public Domain and TCLSPICE is
-  LGPL and the copyright is of their respective owners (need to write better)
+  The ngspice base license is new BSD, as provided by UCB. For some parts
+  of the code other compatible licences apply. Please see file COPYING
+  for details.
 
 
- 1.7.  What mailing lists exist for ngspice?
+ 1.8  What mailing lists exist for ngspice?
 
   There are two general mailing lists dedicated to the ngspice project.
 
   Users mailing list: <ngspice-users@lists.sourceforge.net>
-  This list is for ngspice users, examples, problems, bug reports
+  This list is for ngspice users. Examples, problems, bug reports
   and general discussion on ngspice can be sent here.
 
   Developers mailing list: <ngspice-devel@lists.sourceforge.net>
-  The list dedicated to ngspice development. Developers shold
+  The list is dedicated to ngspice development. Developers should
   subscribe here, to follow the program development. May be used
   to send patches, and technical discussion on ngspice.
 
@@ -176,64 +187,49 @@
      http://www.gnu.org/software/mailman/mailman-member
 
 
- 1.8.  Are the mailing lists archived anywhere ?
+ 1.9   Are the mailing lists archived anywhere ?
 
   Yes, the lists are archived. There are two places where to look for
   archives. The project started on the IEEE Central and South Italy
   web server and then moved to sourceforge. Sourceforge provides an
   archiving service that cam be accessed via the summary page:
 
-                     http://sourceforge.net/projects/ngspice
-
-  (look for the "Lists" link). Old messages from the pre-sourceforge
-  age are available at:
-
-                    http://ngspice.sourceforge.net/lists.html
+  http://sourceforge.net/p/ngspice/mailman/
 
 
- 1.9.  What newsgroups exist for ngspice?
 
-  There is no ngspice specific newsgroup. Anyway ngspice threads appear
-  on newsgroups dedicated to circuit simulation and electronic design.
-  An (incomplete) list is:
+ 1.10  What newsgroups exist for ngspice?
 
-  sci.electronics.cad
-  comp.lsi.cad
+  There is no ngspice specific newsgroup. Sourceforge offers additional
+  discussion groups for ngspice, please see
+
+  http://sourceforge.net/p/ngspice/discussion/
+
+  ngspice threads may appear on newsgroups dedicated to circuit
+  simulation and electronic design.
 
 
- 1.10.  Where can I get a copy of ngspice?
+ 1.11  Where can I get a copy of ngspice?
 
   You can download ngspice from:
 
-                      http://sourceforge.net/projects/ngspice
+  http://sourceforge.net/projects/ngspice/files/ng-spice-rework/
 
 
- 1.11.  Where should I look on the World Wide Web for ngspice stuff?
+ 1.12  Where should I look on the World Wide Web for ngspice stuff?
 
   Look at the official Ngpice Web Page:
 
   http://ngspice.sourceforge.net
 
 
- 1.12.  Where should I look on the World Wide Web for Spice documentation?
+ 1.13  Where should I look on the World Wide Web for Spice documentation?
 
   There is a detailed ngspice manual available at:
   http://ngspice.sourceforge.net/docs.html
 
-  There are a lot of Internet sites that have information on spice. The
-  best way is to ask your preferred search engine. Some interesting
-  sites are:
-
-  Pages on Spice:
-   http://bwrc.eecs.berkeley.edu/Classes/IcBook/SPICE/
-   http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm
-   http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/index.html#toc
-
-  Xspice Page:
-   http://users.ece.gatech.edu/~mrichard/Xspice
-
-  Cider Page:
-   http://embedded.eecs.berkeley.edu/pubs/downloads/cider/index.htm
+  Others docs are assembled at:
+  http://ngspice.sourceforge.net/literature.html
 
 
 
@@ -244,7 +240,7 @@
 
   The latest version released is:
 
-  * ngspice-rework-25 (released on 04/01/2013)
+  * ngspice-26 (released on 04/01/2013)
 
 
  2.2.  What are the latest features in the current release?
@@ -288,7 +284,7 @@
  2.3.  What does it look like?
 
   Ngspice, as the original Spice3 (and Xspice and Cider) is a command
-  line simulator.
+  line simulator, but with a graphics output capability.
 
 
  2.4.  Who are the authors of ngspice?

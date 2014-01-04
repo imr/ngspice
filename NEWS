@@ -1,3 +1,32 @@
+Ngspice-26, Jan 4th, 2014
+============
+
+- New features:
+    + fft command may (optionally) use fftw3 library
+    + add nint() rounding function
+    + usage of 'temper' in behavioral devices
+    + check for soa (safe operating area) in several device models
+    + library processing rewritten completely to enhance ngspice
+      compatibility (.lib)
+    + include file processing rewritten to allow nesting and various
+      absolute and relative path names (.inc)
+    + asinh, acosh, atanh functions
+    + shared ngspice option added: ngspice optionally compiles as
+      a shared object or dynamic link library
+    + use a hash table to massively speeding up finding a model
+    + implement a very basic .if/.else block
+    + implement a signed power function `pwr' for controlled sources
+    + implement multiplier `m' in F, G source
+    + apply Area Calculation Method (ACM) to the bsim3v3.3 model
+    + implement `tc1', `tc2' instance parameters
+
+- Bug fixes:
+    + many, many ... please see
+      http://sourceforge.net/p/ngspice/ngspice/ci/master/tree/
+      and check the 'history' button on the upper right.
+    + removed memory leaks
+
+
 Ngspice-25, Jan 4th, 2013
 ============
 
