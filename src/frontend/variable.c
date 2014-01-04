@@ -711,12 +711,13 @@ span_var_expr(char *t)
 }
 
 
+/* Substitute variable name by its value and restore to wordlist */
 wordlist *
 cp_variablesubst(wordlist *wlist)
 {
     wordlist *wl, *nwl;
     char *s, *t, buf[BSIZE_SP], wbuf[BSIZE_SP], tbuf[BSIZE_SP];
-    /* MW. tbuf holds current word after wl_splice() calls free() on it */
+    /* tbuf holds current word after wl_splice() calls free() on it */
     int i;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
@@ -747,17 +748,20 @@ cp_variablesubst(wordlist *wlist)
                 }
             }
 
-            (void) strcpy(tbuf, t); /* MW. Save t*/
-            if ((wl = wl_splice(wl, nwl)) == NULL) {/*CDHW this frees wl CDHW*/
+            (void) strcpy(tbuf, t); /* Save t*/
+            if ((wl = wl_splice(wl, nwl)) == NULL) {/* this frees wl */
                 wl_free(nwl);
                 return (NULL);
             }
-            /* This is bad... */
+            /* Go back to beginning of wlist */
             for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
                 ;
-            (void) strcpy(buf, wl->wl_word);
+            /* limit copying to buffer of size BSIZE_SP */
+            (void) strncpy(buf, wl->wl_word, BSIZE_SP - 1 - strlen(tbuf));
             i = (int) strlen(buf);
-            (void) strcat(buf, tbuf); /* MW. tbuf is used here only */
+            if (i == BSIZE_SP - 1)
+                fprintf(stderr, "\nWarning: output truncated to %d characters!\n\n", i);
+            (void) strcat(buf, tbuf); /* tbuf is used here only */
 
             tfree(wl->wl_word);
             wl->wl_word = copy(buf);
