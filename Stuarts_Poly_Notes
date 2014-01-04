@@ -31,7 +31,7 @@ DEBUGGING SPICE
 To avoid a segmentation fault in the initial run, use the following
 command in gdb:
 
-	setenv SPICE_NO_DATASEG_CHECK "1"
+        setenv SPICE_NO_DATASEG_CHECK "1"
 
 Or, the comparable command in your shell before running gdb.  This
 disable accurate tracking of how much memory is used.

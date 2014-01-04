@@ -39,8 +39,8 @@ Holger Vogt, May 2013
 
 INTRODUCTION
 
-In this document we will provide a guideline on how to auto-generate the 
-ready-to compile C code for the ngspice API of a compact device model 
+In this document we will provide a guideline on how to auto-generate the
+ready-to compile C code for the ngspice API of a compact device model
 defined in the Verilog-AMS language.
 
 Condition:
@@ -61,9 +61,9 @@ Goal:
   using the Verilog-AMS source code available at:
     http://www.iee.et.tu-dresden.de/~schroter/Hicum_PD/Hicumna/hicumL0V1p11.va
 
-Limitations: 
-  The adms ngspice interface supports a limited set of Verilog-AMS language 
-  constructs. See the home page of adms (http://mot-adms.sourceforge.net/) 
+Limitations:
+  The adms ngspice interface supports a limited set of Verilog-AMS language
+  constructs. See the home page of adms (http://mot-adms.sourceforge.net/)
   for more info.
   Feel free to contribute to the adms ngspice interface so that more
   constructs can be supported.
@@ -72,42 +72,42 @@ Limitations:
 01- ngspice Files
 
   Ngspice does not (yet) have support for loading models at run time, every
-  model must be included at compile time. Then, adding a new model into 
+  model must be included at compile time. Then, adding a new model into
   ngspice is a process that cannot be completely automated. Some files need
   to be edited by hand.
-  
+
   01.01 What ngspice need to know of a new model ?
-  
+
   First you have to assign your new model a "device type". As you probably
-  know, ngspice recognizes the type of a device by the first letter in 
+  know, ngspice recognizes the type of a device by the first letter in
   device's name in the netlists ("r" for resistors, "q" for BJT, "m" for
   mosfets and so on). Then the first thing you have to find is the correct
   type for your new device (let's call this device_type).
-  
+
   Since there can be more than one model for each device type, another
   parameter you have to set is the device_level, which must be unique
   for each device type.
-  
+
   Once you have found the (device_type, device_level) couple you have
-  identified the files you have to edit:  
+  identified the files you have to edit:
 
     <ngspice-data-tree>/configure.ac
-     Here you have to add the entries in adms section for your new directory 
-     and library. 
+     Here you have to add the entries in adms section for your new directory
+     and library.
 
-    <ngspice-data-tree>/src/spicelib/parser/inp2<device_type>.c 
+    <ngspice-data-tree>/src/spicelib/parser/inp2<device_type>.c
     Substitute <device_type> with the letter corresponding to the
-    type of you new model. Here you have to add the interface code for your 
+    type of you new model. Here you have to add the interface code for your
     new device. In the case of hicum (a BJT model and thus a "q" device type)
-    you have to edit inp2q.c 
-    
+    you have to edit inp2q.c
+
     <ngspice-data-tree>/src/spicelib/parser/inpdomod.c
     Here you have to add a switch for the level of your new device.
 
     <ngspice-data-tree>/src/spicelib/devices/dev.c
-    Follow the structure of the files and add information on your new 
+    Follow the structure of the files and add information on your new
     model. In dev.c you have to adjust some macro.
-    
+
   See existing examples to make the modifications for your own implementation.
   <ngspice-data-tree> is the path to the ngspice source installation.
   For instance <ngspice-data-tree> can be /tools/ng-spice-rework-17
@@ -120,7 +120,7 @@ Limitations:
     <ngspice-data-tree>/src/spicelib/devices/adms/admst/ngspice*.xml
   adms creates the ready-to-compile C code from a set of admst code
   generators. admst is a subset of the XML language which has been created
-  specifically for the purpose of C code generation. The syntax of admst is 
+  specifically for the purpose of C code generation. The syntax of admst is
   very close to the XSLT language (it includes some extensions.)
 
 03- Create the data file structure
@@ -130,7 +130,7 @@ Limitations:
     -b <ngspice-data-tree>/src/spicelib/devices/adms/hicum0/admsva
 
   There is no convention on the way to choice the last directory name in -a.
-  However in -b 'admsva' is mandatory. 
+  However in -b 'admsva' is mandatory.
 
 04- Save the Verilog-AMS source code
 
@@ -166,7 +166,7 @@ Limitations:
     adms:
             admsXml.exe -Iadmsva admsva/hic0_full.va \
 
-06- Update/Create the auto-tools files (configure, Makefile.in, Makefile)  
+06- Update/Create the auto-tools files (configure, Makefile.in, Makefile)
 
   06.01 Manual changes
     In directory <ngspice-data-tree> edit file configure.ac, add new device 'hicum0'
@@ -444,7 +444,7 @@ Appendix 01: Comments on spice3-flavoured flags like npn, pnp, nmos, pmos and so
       .model mybjtmodel npn
       +  pnp=1
       +  level=5
-  
+
   In both cases flag 'npn' is just ignored.
   In section 'Update manually the ngspice parser files' it is recommended
   to use flag 'adms' instead.

@@ -52,117 +52,117 @@
 
  1.1 What is ngspice ?
 
-  Ngspice is a mixed-level/mixed-signal circuit simulator based on three 
-  open source software packages: Spice3f5, Cider1b1 and Xspice: 
-  
-  - Spice3 is a widely used circuit simulator. It was developed by the 
-    University of California at Berkeley (UCB), by "a cast of thousand" 
+  Ngspice is a mixed-level/mixed-signal circuit simulator based on three
+  open source software packages: Spice3f5, Cider1b1 and Xspice:
+
+  - Spice3 is a widely used circuit simulator. It was developed by the
+    University of California at Berkeley (UCB), by "a cast of thousand"
     (as they say) initially under the guide of Donald O. Peterson.
-  
-  - Cider is a mixed-level simulator that already includes Spice3f5 and 
-    adds a device simulator to it: DSIM. Cider couples the circuit level 
-    simulator to the device simulator to provide greater simulation 
-    accuracy (at the expense of greater simulation time). Critical 
-    devices can be described with technology parameters (numerical 
-    models) and non critical ones with the original spice's compact 
+
+  - Cider is a mixed-level simulator that already includes Spice3f5 and
+    adds a device simulator to it: DSIM. Cider couples the circuit level
+    simulator to the device simulator to provide greater simulation
+    accuracy (at the expense of greater simulation time). Critical
+    devices can be described with technology parameters (numerical
+    models) and non critical ones with the original spice's compact
     models.
 
-  - Xspice is an extension to Spice3 that provides code modeling support 
-    and simulation of digital components through an embedded event 
+  - Xspice is an extension to Spice3 that provides code modeling support
+    and simulation of digital components through an embedded event
     driven algorithm.
 
-  The NG prefix has lot of meanings: Next Generation, New Good, etc. 
-  Choose or invent the one you prefer. The heart of the project is the 
+  The NG prefix has lot of meanings: Next Generation, New Good, etc.
+  Choose or invent the one you prefer. The heart of the project is the
   ngspice program.
 
 
  1.2 What is tclspice ?
 
-  Tclspice is a circuit simulator that embeds ngspice and provides a 
+  Tclspice is a circuit simulator that embeds ngspice and provides a
   tcl/tk interface to the user. Tclspice is both a batch and interactive
-  simulator and a building block for simulator applications. Analyses can 
+  simulator and a building block for simulator applications. Analyses can
   be run from a tcl script and vector plotted or post processed using tcl
   or a small GUI can be built to analyze a circuit or a set of circuits.
   Tclspice is obtained compiling ngspice activating an additional option.
 
-  
+
  1.3 Why resurrecting Berkeley's Spice?
-  
+
   Berkeley's Spice can be considered the father of most circuit
   simulators available today. It is an old but still good piece of
   software, it may not be the fastest or the most reliable but it's
   free, it's available in source code and most of the electrical
-  simulators inherited it's syntax. Spice3 is based on proven numerical 
-  algorithms (most commercial implementations have only strengthened 
-  them), implements most of the models for MOSFET submicron design 
+  simulators inherited it's syntax. Spice3 is based on proven numerical
+  algorithms (most commercial implementations have only strengthened
+  them), implements most of the models for MOSFET submicron design
   and has a powerful set of analyses. The readily availability of
   its source code in the past made this simulator the de-facto standard.
 
- 
+
  1.4 What is the project's goal?
 
   Ngspice is both a maintenance and enhancement project. It is a maintenance
   project because it aims to provide the free EDA community the best spice3
   simulator available. This means fixing bugs, adding new features but always
-  in the spice3 framework. Achieving compatibility with commercial spice based 
+  in the spice3 framework. Achieving compatibility with commercial spice based
   simulators and provide users the latest devices models are important goals
-  of the project. Improvements in the postprocessing (data handling 
-  capabilities) and user interface are other goals.  
+  of the project. Improvements in the postprocessing (data handling
+  capabilities) and user interface are other goals.
 
 
- 1.5 What you are going to do?  
+ 1.5 What you are going to do?
 
   An official roadmap for ngspice was never drawn. Contributions made by
-  developers drive ngspice development and the roadmap is built day by 
+  developers drive ngspice development and the roadmap is built day by
   day by developers writing on the lists. Ngspice development activity
   can be summarized in 3 points:
 
   + Compatibility: Ngspice should be compatible with commercial products,
-    thus allowing people to use the netlist generated for such tools. As 
+    thus allowing people to use the netlist generated for such tools. As
     most of the commercial simulators avaiable tracked each other in netlist
     language, this should not be an impossible task. The most important goal
     here is to provide a reliable support for model libraries coming from
-    foundries.  
-  
+    foundries.
+
   + Compact models:  The interest in using ngspice is intimately connected
-    to the available models. To provide the latest models available for 
+    to the available models. To provide the latest models available for
     active and passive devices is a fundamental goal of the project. In
     this direction we are integrating ADMS model compiler into ngspice.
 
-  + Documentation: Commercial simulators come with very good manuals 
-    containing tutorials, description of models equations, example of 
-    use, suggestions, etc. Spice came with little documentation. The 
+  + Documentation: Commercial simulators come with very good manuals
+    containing tutorials, description of models equations, example of
+    use, suggestions, etc. Spice came with little documentation. The
     Spice3f manual, available on the Internet has been used as the basis
-    for the new manual. It will be constantly improved during ngspice 
-    development and integrated with the documentation accompanying Xspice 
-    and Cider. This is a very time consuming task and probably the 
+    for the new manual. It will be constantly improved during ngspice
+    development and integrated with the documentation accompanying Xspice
+    and Cider. This is a very time consuming task and probably the
     documentation will always be left slightly behind.
-   
+
 
  1.6 Legal issues
 
-  Ngspice, starting from release rework-18 is released under BSD/LGPL 
+  Ngspice, starting from release rework-18 is released under BSD/LGPL
   license. Part of the code are covered by other compatible licenses:
-  spice3 and cider are BSD, xspice is Public Domain and TCLSPICE is 
+  spice3 and cider are BSD, xspice is Public Domain and TCLSPICE is
   LGPL and the copyright is of their respective owners (need to write better)
 
 
  1.7.  What mailing lists exist for ngspice?
 
-  There are two general mailing lists dedicated to the ngspice project. 
-  
+  There are two general mailing lists dedicated to the ngspice project.
+
   Users mailing list: <ngspice-users@lists.sourceforge.net>
   This list is for ngspice users, examples, problems, bug reports
-  and general discussion on ngspice can be sent here. 
-  
+  and general discussion on ngspice can be sent here.
+
   Developers mailing list: <ngspice-devel@lists.sourceforge.net>
-  The list dedicated to ngspice development. Developers shold 
+  The list dedicated to ngspice development. Developers shold
   subscribe here, to follow the program development. May be used
-  to send patches, and technical discussion on ngspice. 
-  
+  to send patches, and technical discussion on ngspice.
+
   Send an empty message with Subject "help" to the following addresses
   to get instructions.
-  
+
   <ngspice-users-request@lists.sourceforge.net>
   <ngspice-devel-request@lists.sourceforge.net>
 
@@ -182,13 +182,13 @@
   archives. The project started on the IEEE Central and South Italy
   web server and then moved to sourceforge. Sourceforge provides an
   archiving service that cam be accessed via the summary page:
-  
+
                      http://sourceforge.net/projects/ngspice
-  
-  (look for the "Lists" link). Old messages from the pre-sourceforge 
+
+  (look for the "Lists" link). Old messages from the pre-sourceforge
   age are available at:
-  
-                    http://ngspice.sourceforge.net/lists.html    
+
+                    http://ngspice.sourceforge.net/lists.html
 
 
  1.9.  What newsgroups exist for ngspice?
@@ -196,9 +196,9 @@
   There is no ngspice specific newsgroup. Anyway ngspice threads appear
   on newsgroups dedicated to circuit simulation and electronic design.
   An (incomplete) list is:
-  
+
   sci.electronics.cad
-  comp.lsi.cad 
+  comp.lsi.cad
 
 
  1.10.  Where can I get a copy of ngspice?
@@ -211,24 +211,24 @@
  1.11.  Where should I look on the World Wide Web for ngspice stuff?
 
   Look at the official Ngpice Web Page:
-  
-                           http://ngspice.sourceforge.net
+
+  http://ngspice.sourceforge.net
 
 
  1.12.  Where should I look on the World Wide Web for Spice documentation?
 
   There is a detailed ngspice manual available at:
   http://ngspice.sourceforge.net/docs.html
- 
+
   There are a lot of Internet sites that have information on spice. The
   best way is to ask your preferred search engine. Some interesting
-  sites are: 
- 
+  sites are:
+
   Pages on Spice:
    http://bwrc.eecs.berkeley.edu/Classes/IcBook/SPICE/
    http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm
    http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/index.html#toc
-  
+
   Xspice Page:
    http://users.ece.gatech.edu/~mrichard/Xspice
 
@@ -242,42 +242,42 @@
 
  2.1.  What is the current version?
 
-  The latest version released is: 
-  
+  The latest version released is:
+
   * ngspice-rework-25 (released on 04/01/2013)
-  
+
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-	+ add temperature coefficients for B source
-	+ commands "mdump", "mrdump" to dump matrix to file
-	+ allow `time', `temper', and `hertz' in expressions with behavioral R, L, C 
-	+ Enable ctrl-c to interrupt a simulation also for Windows GUI
-	+ tests/bsim4: use the standard CMC model check
-	+ implement exit code for command "quit"
-	+ .nodeset all = value
-	+ memristor code model in extradev
-	+ new scalable diode model including tunnel component
-	+ variable xtrtol may override the XSPICE reduction of trtol
-	+ XSPICE example: delta-sigma converter
-	+ XSPICE: new d_source model
-	+ new option noopac
-	+ bsim3: make additonal parameters accessible with @mxx[par]
-	+ enable Mac OS X compilation
-	+ option reseries = val
-	+ commands "snsave", "snload"
-	+ update hisim to version 2.7.0, new qa tests
-	+ hisimhv update to version 1.2.3, new qa tests
-	+ allow Ctrl-d to quit
-	+ jfet model temperature extension, tcv and bex parameter
-	+ speed up vector handling by hash table for vector address storage and retrieval
-	+ update PSS code
+        + add temperature coefficients for B source
+        + commands "mdump", "mrdump" to dump matrix to file
+        + allow `time', `temper', and `hertz' in expressions with behavioral R, L, C
+        + Enable ctrl-c to interrupt a simulation also for Windows GUI
+        + tests/bsim4: use the standard CMC model check
+        + implement exit code for command "quit"
+        + .nodeset all = value
+        + memristor code model in extradev
+        + new scalable diode model including tunnel component
+        + variable xtrtol may override the XSPICE reduction of trtol
+        + XSPICE example: delta-sigma converter
+        + XSPICE: new d_source model
+        + new option noopac
+        + bsim3: make additonal parameters accessible with @mxx[par]
+        + enable Mac OS X compilation
+        + option reseries = val
+        + commands "snsave", "snload"
+        + update hisim to version 2.7.0, new qa tests
+        + hisimhv update to version 1.2.3, new qa tests
+        + allow Ctrl-d to quit
+        + jfet model temperature extension, tcv and bex parameter
+        + speed up vector handling by hash table for vector address storage and retrieval
+        + update PSS code
 
 
 - Bug fixes:
-    + many, many ... please see 
-	  http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
+    + many, many ... please see
+          http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
     + remove memory leaks
     + update tclspice for MS Windows
     + adms3 removed due to licensing issues
@@ -293,11 +293,11 @@
 
  2.4.  Who are the authors of ngspice?
 
-  The development is open to anyone who wish to contribute. If the 
-  original Spice3 was made with the contribution of "a cast of 
+  The development is open to anyone who wish to contribute. If the
+  original Spice3 was made with the contribution of "a cast of
   thousand", ngspice can only increase that number. An incomplete
   list of contributor makes the "acknowledgements" page of the ngspice
-  manual.  
+  manual.
 
 
  2.5.  How can I report a bug/request for a feature?
@@ -308,14 +308,14 @@
   it allows to track all necessary actions upon a bug. The web site at
   http://ngspice.sourceforge.net/bugrep.html will give you more details.
 
- 
+
  2.6.  How can I join the development?
 
   To join the development just code the feature you want to add and send
   your patch in the mailing list.  Before you start coding check the
   latest development release of ngspice from our git repository.
   It might be that your feature has already been implemented.
-  
+
   There is no bureaucracy here.
 
 
@@ -327,21 +327,21 @@
 
   Ngspice is written in C, and uses some GNU extensions, then you need
   a GNU C compiler and a UNIX environment to compile it. Ngspice can
-  be compiled under Windows using  the mingw or cygwin environment as
+  be compiled under Windows using the mingw or cygwin environment as
   well as MS Visual Studio.
-  
+
 
  3.2.  I get errors when I try to compile the source code, why?
-  
-  This is a one-million-euros question :). 
-  
+
+  This is a one-million-euros question :).
+
   Write a mail to the user's list describing the problem and providing
   information on the type of hardware, the flavour of operating system.
 
 
  3.3.  This document didn't answer my question. Where else can I look
         for an answer?
-	
+
   Read old messages from the mailing list archive, search the web site
   or read the docs.  Upgrade to the latest version of ngspice, many
   problems are fixed in the new versions.  If you still can't find an

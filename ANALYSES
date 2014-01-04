@@ -7,7 +7,7 @@ This file lists the analyses currently implemented into ngspice.
 
 Table of Contents
 
- 1 Noise analysis (NOISE) 
+ 1 Noise analysis (NOISE)
  2 Operating point analysis (OP)
  3 Operating point sweep Analysis (DC)
   3.1 Enhancements
@@ -24,85 +24,85 @@ Table of Contents
 1 Noise analysis (NOISE)
 
     The noise analysis does analysis device-generated noise for the given
- circuit. When provided with an input source and an output port, the analysis 
- calculates the noise contributions of each device (and each noise generator 
- within the device) to the output port voltage. It also calculates the input 
- noise to the circuit, equivalent to the output noise referred to the 
- specified input source. This is done for every frequency point in a specified 
- range - the calculated value of the noise corresponds to the spectral density 
+ circuit. When provided with an input source and an output port, the analysis
+ calculates the noise contributions of each device (and each noise generator
+ within the device) to the output port voltage. It also calculates the input
+ noise to the circuit, equivalent to the output noise referred to the
+ specified input source. This is done for every frequency point in a specified
+ range - the calculated value of the noise corresponds to the spectral density
  of the circuit variable viewed as a stationary gaussian stochastic process.
- 
+
 
 2 Operating point analysis (OP)
 
-    The operating point analysis determines the dc operating point of the 
+    The operating point analysis determines the dc operating point of the
  circuit with inductors shorted and capacitors opened.
 
 
 3 Operating point sweep Analysis (DC)
 
-    The operating point sweep analysis determines the values of output 
- variables while one or two specified independent voltage or current source is 
- stepped over a user-specified range and the dc output variables are stored 
+    The operating point sweep analysis determines the values of output
+ variables while one or two specified independent voltage or current source is
+ stepped over a user-specified range and the dc output variables are stored
  for each sequential source value.
 
  3.1 Enhancements
-  
+
   Added resistance and temperature sweep.
 
 
 4 Pole-zero analysis (PZ)
 
-    The pole-zero analysis computes the poles and/or zeros in the small-signal 
- ac transfer function. The program first computes the dc operating point and 
- then determines the linearized, small-signal models for all the nonlinear 
- devices in the circuit. This circuit is then used to find the poles and zeros 
- of the transfer function. 
+    The pole-zero analysis computes the poles and/or zeros in the small-signal
+ ac transfer function. The program first computes the dc operating point and
+ then determines the linearized, small-signal models for all the nonlinear
+ devices in the circuit. This circuit is then used to find the poles and zeros
+ of the transfer function.
 
 
 5 Small-Signal distortion analysis (DISTO)
 
-    The distortion analysis computes steady-state harmonic and intermodulation 
+    The distortion analysis computes steady-state harmonic and intermodulation
  products for small input signal magnitudes. Not all devices are supported.
 
 
 6 Small Signal frequency response analysis (AC)
 
-    The ac small-signal computes the ac output variables as a function of 
- frequency. The program first computes the dc operating point of the circuit 
- and determines linearized, small-signal models for all of the nonlinear 
- devices in the circuit. The resultant linear circuit is then analyzed over a 
+    The ac small-signal computes the ac output variables as a function of
+ frequency. The program first computes the dc operating point of the circuit
+ and determines linearized, small-signal models for all of the nonlinear
+ devices in the circuit. The resultant linear circuit is then analyzed over a
  user-specified range of frequencies.
 
 
 7 Sensitivity analysis (SENS)
 
     Ngspice will calculate either the DC operating-point sensitivity or the AC
- small-signal sensitivity of an output variable with respect to all circuit 
- variables, including model parameters. Spice calculates the difference in an 
- output variable (either a node voltage or a branch current) by perturbing 
+ small-signal sensitivity of an output variable with respect to all circuit
+ variables, including model parameters. Spice calculates the difference in an
+ output variable (either a node voltage or a branch current) by perturbing
  each parameter of each device independently.
 
 
 8 Transfer function analysis (TF)
 
     The (small signal) transfer function analysis computes the dc small-signal
- value of a transfer function (ratio of output variable to input source), 
- input resistance, and output resistance is also computed as a part of the dc 
+ value of a transfer function (ratio of output variable to input source),
+ input resistance, and output resistance is also computed as a part of the dc
  solution.
 
 
 9 Transient analysis (TRAN)
 
     The transient analysis computes the transient output variables as a
- function of time over a user-specified time interval. The initial conditions 
- are automatically determined by a dc analysis. All sources which are not time 
+ function of time over a user-specified time interval. The initial conditions
+ are automatically determined by a dc analysis. All sources which are not time
  dependent (for example, power supplies) are set to their dc value.
- 
- 
- 10 Periodic steady state analysis (PSS)
- 
-     The periodic steady state analysis computes solutions for oscillating 
-	 circuits. Currently only the autonomous case is implemented.
+
+
+10 Periodic steady state analysis (PSS)
+
+    The periodic steady state analysis computes solutions for oscillating
+ circuits. Currently only the autonomous case is implemented.
 
 

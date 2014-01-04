@@ -21,7 +21,7 @@
 
 Welcome to tclspice README_tcl
 
-This file acompanies ngspice sources starting with ngspice-rework-18. It 
+This file acompanies ngspice sources starting with ngspice-rework-18. It
 describes what tclspice is, its installation, and points to resources that will
 help you to start with it. It also contains usefull datas to keep informed,
 get help, or get involved in the project.
@@ -34,16 +34,16 @@ Lionel (saintel@users.sourceforge.net)
 
 What is tclspice:
 
-tclspice is a variant of ngspice. It share 95% of its code (approx). The 
-different between plain NGspice and tclspice is the type of binary it produces, 
-and the way to access it. NGspice is a standalone program that you can execute 
-and which can either automatically process a spice directives script. It can 
+tclspice is a variant of ngspice. It share 95% of its code (approx). The
+different between plain NGspice and tclspice is the type of binary it produces,
+and the way to access it. NGspice is a standalone program that you can execute
+and which can either automatically process a spice directives script. It can
 also propose you a command line interface.
-tclspice is a tcl package name. It is based on libspice shared library. This 
-library is specifically designed to be loaded in tcl interpreters such as tclsh 
+tclspice is a tcl package name. It is based on libspice shared library. This
+library is specifically designed to be loaded in tcl interpreters such as tclsh
 or wish. Then all spice directives are available as tcl functions. libspice also
-feature some new commands that are usefull for the integration into the tcl 
-environment. 
+feature some new commands that are usefull for the integration into the tcl
+environment.
 
 tclspice differs from ngspice by its printf (bundled to tcl printf), malloc (tcl
  malloc), data handling and plotting (BLT toolkit extensions to tcl/tk).
@@ -62,7 +62,7 @@ tcl 8.4
 tk 8.4
 blt 2.4
 
-Tclspice is built and installed the same way as ngspice. Then, after reading this 
+Tclspice is built and installed the same way as ngspice. Then, after reading this
 paragraph, the information you lack will probably be in README file in this directory.
 There is a configuration flag to set in order to compile tclspice library rather than
 plain ngspice, that is a standalone program. This flag is --with-tcl. It accepts an

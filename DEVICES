@@ -27,7 +27,7 @@ Table of contents
  5.2 SW - Voltage controlled switch
 6. Diodes
  6.1 DIO - Junction Diode
-7. Bipolar devices 
+7. Bipolar devices
  7.1 BJT - Bipolar Junction Transistor
  7.2 BJT2 - Bipolar Junction Transistor
  7.3 VBIC - Bipolar Junction Transistor
@@ -79,7 +79,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  2.1 CAP - Linear capacitor
-     
+
      Ver:    N/A
      Class:  C
      Level:  1 (and only)
@@ -96,7 +96,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  2.2 IND - Linear Inductor
-      
+
      Ver:    N/A
      Class:  L
      Level:  1 (and only)
@@ -163,7 +163,7 @@ will be updated every time the device specific code is altered or changed to ref
      - Does not implement parallel code switches.
 
  3.3 TRA  - Transmission line
-  
+
      Ver:    N/A
      Class:  T
      Level:  1 (and only)
@@ -206,7 +206,7 @@ will be updated every time the device specific code is altered or changed to ref
 4. Voltage and current sources
 
  4.1 ASRC - Arbitrary Source
-     
+
      Ver:    N/A
      Class:  B
      Level:  1 (and only)
@@ -218,7 +218,7 @@ will be updated every time the device specific code is altered or changed to ref
      current of current-controlled generators.
 
  4.2 CCCS - Current Controlled Current Source
-        
+
       Ver:    N/A
       Class:  F
       Level:  1 (and only)
@@ -228,7 +228,7 @@ will be updated every time the device specific code is altered or changed to ref
       - Original spice model.
 
  4.3 CCVS - Current Controlled Voltage Source
-        
+
      Ver:    N/A
      Class:  H
      Level:  1 (and only)
@@ -239,7 +239,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  4.4 ISRC - Independent Current Source
-        
+
      Ver:    N/A
      Class:  I
      Level:  1 (and only)
@@ -292,7 +292,7 @@ will be updated every time the device specific code is altered or changed to ref
 5. Switches
 
  5.1 CSW - Current controlled switch
-     
+
       Ver:    N/A
       Class:  W
       Level:  1 (and only)
@@ -331,7 +331,7 @@ will be updated every time the device specific code is altered or changed to ref
      - Temperature correction of some parameters
 
 
-7. Bipolar devices 
+7. Bipolar devices
 
  7.1 BJT - Bipolar Junction Transistor
 
@@ -365,14 +365,14 @@ will be updated every time the device specific code is altered or changed to ref
      - Different area parameters for collector, base and emitter
 
  7.3 VBIC - Bipolar Junction Transistor
-        
+
      Ver:    N/A
      Class:  Q
      Level:  4 & 9
      Dir:    devices/vbic
      Status:
 
-     This is the Vertical Bipolar InterCompany model in version 1.2. The author 
+     This is the Vertical Bipolar InterCompany model in version 1.2. The author
      of VBIC is Colin McAndrew mcandrew@ieee.org.
      Spice3 Implementation: Dietmar Warning DAnalyse GmbH
      Web Site: http://www.designers-guide.com/VBIC/index.html
@@ -417,10 +417,10 @@ will be updated every time the device specific code is altered or changed to ref
 
 9. HFET Devices
 
-   Added code from macspice3f4 HFET1&2 and MESA model 
+   Added code from macspice3f4 HFET1&2 and MESA model
    Original note:
      Added device calls for Mesfet models and HFET models
-     provided by Trond Ytterdal as of Nov 98 
+     provided by Trond Ytterdal as of Nov 98
 
  9.1 HFET1 - Heterostructure Field Effect Transistor Level 1
 
@@ -432,7 +432,7 @@ will be updated every time the device specific code is altered or changed to ref
 
      This is the Heterostructure Field Effect Transistor model from:
      K. Lee, M. Shur, T. A. Fjeldly and T. Ytterdal
-     "Semiconductor Device Modeling in VLSI", 
+     "Semiconductor Device Modeling in VLSI",
      1993, Prentice Hall, New Jersey
 
      Enhancements over the original model:
@@ -460,7 +460,7 @@ will be updated every time the device specific code is altered or changed to ref
 10. MES devices
 
  10.1 MES - MESFET model
-      
+
       Ver:    N/A
       Class:  Z
       Level:  1
@@ -474,10 +474,10 @@ will be updated every time the device specific code is altered or changed to ref
       - Alan Gillespie junction diodes implementation
 
 
-  Added code from macspice3f4 HFET1&2 and MESA model 
+  Added code from macspice3f4 HFET1&2 and MESA model
   Original note:
   Added device calls for Mesfet models and HFET models
-  provided by Trond Ytterdal as of Nov 98 
+  provided by Trond Ytterdal as of Nov 98
 
 10.2 MESA - MESFET model (MacSpice3f4)
 
@@ -500,7 +500,7 @@ will be updated every time the device specific code is altered or changed to ref
 11. MOS devices
 
  11.1 MOS1 - Level 1 MOS model
-             
+
       Ver:    N/A
       Class:  M
       Level:  1
@@ -514,7 +514,7 @@ will be updated every time the device specific code is altered or changed to ref
       - Temperature difference from circuit temperature
 
  11.2 MOS2 - Level 2 MOS model
-        
+
       Ver:    N/A
       Class:  M
       Level:  2
@@ -562,9 +562,9 @@ will be updated every time the device specific code is altered or changed to ref
       Dir:    devices/mos9
       Status:
 
-      This is a slightly modified Level 3 MOSFET model. 
+      This is a slightly modified Level 3 MOSFET model.
       (Whatever the implementer have had in mind.)
-      Not to confuse with Philips level 9. 
+      Not to confuse with Philips level 9.
       Enhancements over the original model:
       - Temperature difference from circuit temperature
 
@@ -576,7 +576,7 @@ will be updated every time the device specific code is altered or changed to ref
       Level:  4
       Dir:    devices/bsim1
       Status:
- 
+
       Enhancements over the original model:
       - Parallel multiplier
       - Noise analysis
@@ -589,7 +589,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  11.7 BSIM2 - BSIM model level 2
-       
+
       Ver:    N/A
       Class:  M
       Level:  5
@@ -602,7 +602,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  11.8 BSIM3v0 - BSIM model level 3
-      
+
       Ver:    3.0
       Class:  M
       Level:  8 & 49, version = 3.0
@@ -644,7 +644,7 @@ will be updated every time the device specific code is altered or changed to ref
         - Multirevision code (supports all 3v3.2 minor revisions)
         - NodesetFix
 
-		
+
  11.11 BSIM3 - BSIM model level 3
 
        Ver:    3.3.0
@@ -668,7 +668,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  11.12 BSIM4 - BSIM model level 4
- 
+
        Ver:    4.2.0 - 4.6.5
        Class:  M
        Level:  14 & 54, version = 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6
@@ -684,10 +684,10 @@ will be updated every time the device specific code is altered or changed to ref
         - Parallel Multiplier
         - NodesetFix
         - Support for Multi-core processors using OpenMP
-		
+
 
  11.13 HiSIM2 - Hiroshima-university STARC IGFET Model
-      
+
        Ver:    2.7.0
        Class:  M
        Level:  61, 68
@@ -701,7 +701,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
-      
+
        Ver:    1.2.3
        Class:  M
        Level:  62, 73
@@ -733,7 +733,7 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  12.2 BSIM3SOI_DD - SOI Model (dynamic depletion model)
- 
+
       Ver:    2.1
       Class:  M
       Level:  56
@@ -755,7 +755,7 @@ will be updated every time the device specific code is altered or changed to ref
       Dir:    devices/bsim3soi_pd
       Status: TO BE TESTED.
 
-      PD model has been integrated. There is a bsim3soipd directory 
+      PD model has been integrated. There is a bsim3soipd directory
       under the test hierarchy. Test circuits come from the bsim3soi
 
       Web site at: http://www-device.eecs.berkeley.edu/~bsimsoi
@@ -763,27 +763,27 @@ will be updated every time the device specific code is altered or changed to ref
 
 
  12.4 BSIMSOI - Berkeley SOI model (partially/full depleted devices)
-               
+
       Ver:    4.3.1
       Class:  M
       Level:  10 & 58
       Dir:    devices/bsim3soi
       Status: o.k.
 
-      This is the actual version from Berkeley. This version is 
+      This is the actual version from Berkeley. This version is
       backward compatible with its previous versions BSIMSOI3.x.
       Usable for partially/full depleted devices.
 
       Web site at: http://www-device.eecs.berkeley.edu/~bsimsoi
 
        Enhancements over the original model:
-       - Parallel Multiplier	  
-	   - Support for Multi-core processors using OpenMP	  
+       - Parallel Multiplier
+           - Support for Multi-core processors using OpenMP
 
-		
+
 
  12.5 SOI3 - STAG SOI3 Model
-          
+
       Ver:    2.6
       Class:  M
       Level:  61
@@ -794,9 +794,9 @@ will be updated every time the device specific code is altered or changed to ref
 
 13. Verilog-A models
 
-      Configuring ngspice with ADMS (see Readme.adms) following 
+      Configuring ngspice with ADMS (see Readme.adms) following
       devices are available:
-      
+
  13.1 EKV MOS Model
 
       Ver:    2.6
@@ -806,9 +806,9 @@ will be updated every time the device specific code is altered or changed to ref
 
       EKV version based on a contribution of Ivan Riis Nielsen 11/2006
 
-      Web site at: http://legwww.epfl.ch/ekv/ 
+      Web site at: http://legwww.epfl.ch/ekv/
       (but EPFL is not publishing any usefull code)
-      
+
 
  13.2 PSP MOS Model
 

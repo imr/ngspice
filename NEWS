@@ -2,99 +2,99 @@ Ngspice-25, Jan 4th, 2013
 ============
 
 - New features:
-	+ add temperature coefficients for B source
-	+ commands "mdump", "mrdump" to dump matrix to file
-	+ allow `time', `temper', and `hertz' in expressions with behavioral R, L, C 
-	+ Enable ctrl-c to interrupt a simulation also for Windows GUI
-	+ tests/bsim4: use the standard CMC model qa check
-	+ implement exit code for command "quit"
-	+ .nodeset all = value
-	+ memristor code model in extradev
-	+ new scalable diode model including tunnel component
-	+ variable xtrtol may override the XSPICE reduction of trtol
-	+ XSPICE example: delta-sigma converter
-	+ XSPICE: new d_source model
-	+ new option noopac
-	+ bsim3: make additonal parameters accessible with @mxx[par]
-	+ enable Mac OS X compilation
-	+ option reseries = val
-	+ commands "snsave", "snload"
-	+ update hisim to version 2.7.0, new qa tests
-	+ hisimhv update to version 1.2.3, new qa tests
-	+ allow Ctrl-d to quit
-	+ jfet model temperature extension, tcv and bex parameter
-	+ speed up vector handling by hash table for vector address storage and retrieval
-	+ update PSS code
+    + add temperature coefficients for B source
+    + commands "mdump", "mrdump" to dump matrix to file
+    + allow `time', `temper', and `hertz' in expressions with behavioral R, L, C
+    + Enable ctrl-c to interrupt a simulation also for Windows GUI
+    + tests/bsim4: use the standard CMC model qa check
+    + implement exit code for command "quit"
+    + .nodeset all = value
+    + memristor code model in extradev
+    + new scalable diode model including tunnel component
+    + variable xtrtol may override the XSPICE reduction of trtol
+    + XSPICE example: delta-sigma converter
+    + XSPICE: new d_source model
+    + new option noopac
+    + bsim3: make additonal parameters accessible with @mxx[par]
+    + enable Mac OS X compilation
+    + option reseries = val
+    + commands "snsave", "snload"
+    + update hisim to version 2.7.0, new qa tests
+    + hisimhv update to version 1.2.3, new qa tests
+    + allow Ctrl-d to quit
+    + jfet model temperature extension, tcv and bex parameter
+    + speed up vector handling by hash table for vector address storage and retrieval
+    + update PSS code
 
 
 - Bug fixes:
-    + many, many ... please see 
-	  http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
+    + many, many ... please see
+      http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
     + remove memory leaks
     + update tclspice for MS Windows
     + adms3 removed due to licensing issues
-	
+
 
 Ngspice-24, Jan 29th, 2012
 ============
 
 - New features:
     + .csparam allows to tranfer a param into a vector in .control ... .endc
-	+ functions floor and ceil
-	+ syntax Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
-	+ syntax Gxxx n1 n2 value={equation} or Exxx n1 n2 value={equation}
-	+ variable strict_errorhandling to exit ngspice with exit code 1
+    + functions floor and ceil
+    + syntax Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
+    + syntax Gxxx n1 n2 value={equation} or Exxx n1 n2 value={equation}
+    + variable strict_errorhandling to exit ngspice with exit code 1
       if any error occurs during circuit parsing
-	+ command altermod allows reading from file
-	+ command "devhelp" to show available devices and describe device parameters
+    + command altermod allows reading from file
+    + command "devhelp" to show available devices and describe device parameters
     + command "inventory" to print the number of istances of each device.
-	+ function cph(vec) delivers phase from a vector without jumps at +-PI
+    + function cph(vec) delivers phase from a vector without jumps at +-PI
     + enable 64 bit compilation in MS Visual Studio
     + --adms3 flag to compile with (experimental) adms code
-	+ still very experimental pss code
+    + still very experimental pss code
     + command 'remcirc' to remove a circuit from the list
-	+ command 'wrdata' aknowledges appendwrite and prints complex variables
-	+ allow comment lines inside of command files
-	+ path variable NGSPICE_INPUT
+    + command 'wrdata' aknowledges appendwrite and prints complex variables
+    + allow comment lines inside of command files
+    + path variable NGSPICE_INPUT
     + 'Filesource' code model
-	
+
 - Bug fixes:
     + More on prototypes, type casts, reordering of functions, compiler warnings
-	+ fix a numerical problem in the hisim2 and hisimhv models
-	+ plot i(vdd) from a loaded rawfile
-	+ fix the guard for device generated internal nodes (via CKTmkVolt())
-	+ reduce memory leaks for command 'reset'
-	+ parameter processing for nested .subckt
-	+ bsim4/b4noi.c: correct init the correlated noise slot in noiseDens and lnNdens vector
-	+ Many small bugs	
-	
+    + fix a numerical problem in the hisim2 and hisimhv models
+    + plot i(vdd) from a loaded rawfile
+    + fix the guard for device generated internal nodes (via CKTmkVolt())
+    + reduce memory leaks for command 'reset'
+    + parameter processing for nested .subckt
+    + bsim4/b4noi.c: correct init the correlated noise slot in noiseDens and lnNdens vector
+    + Many small bugs
+
 Ngspice-23, June 5th, 2011
 ============
 
 - New features:
     + Reduction of trtol to 1 only if 'A' devices in the circuit and xspice is enabled
     + command wrs2p to write a s-parameter file using Touchstone vers. 1 format
-	+ d_source d_state d_ram, test cases for those xspice codemodels
-	+ transient noise simulation added to independent voltage and current sources
-	+ Random telegraph noise added to independent voltage and current sources
-	+ 'time = nnn' in stop command added
-	+ random voltage generator option trrandom to independent voltage and current sources
-	+ ngspice build possible in a separate directory (e.g. in ng-spice-rework/release)
-	+ update FIND .. WHEN measurements
-	+ diode & bjt temperature model update with tlev and tlevc
-	+ merge bsim3v1a code with bsim3v0 and bsim3v1s code with bsim3v1
-	+ bjt2: removed - all GP extensions of this model are now in the bjt model
-	+ HiSIM_HV model vers. 1.2.1 added
-	+ bsim3v32: delvto and mulu0 as instance parameters
-	+ Replace HiSIM1 by HiSIM_2.5.1_Release_20110407
+    + d_source d_state d_ram, test cases for those xspice codemodels
+    + transient noise simulation added to independent voltage and current sources
+    + Random telegraph noise added to independent voltage and current sources
+    + 'time = nnn' in stop command added
+    + random voltage generator option trrandom to independent voltage and current sources
+    + ngspice build possible in a separate directory (e.g. in ng-spice-rework/release)
+    + update FIND .. WHEN measurements
+    + diode & bjt temperature model update with tlev and tlevc
+    + merge bsim3v1a code with bsim3v0 and bsim3v1s code with bsim3v1
+    + bjt2: removed - all GP extensions of this model are now in the bjt model
+    + HiSIM_HV model vers. 1.2.1 added
+    + bsim3v32: delvto and mulu0 as instance parameters
+    + Replace HiSIM1 by HiSIM_2.5.1_Release_20110407
 
 - Bug fixes:
     + More on prototypes, type casts, reordering of functions, compiler warnings
-	+ allow models like 2N2904 or 2SK136 also in subcircuits
-	+ fix sensitvity calculation (for the dc-2+.cir testcase)
-	+ allow multiple call to setup w/ correct node collapsing
-	+ Many small bugs
-	
+    + allow models like 2N2904 or 2SK136 also in subcircuits
+    + fix sensitvity calculation (for the dc-2+.cir testcase)
+    + allow multiple call to setup w/ correct node collapsing
+    + Many small bugs
+
 Ngspice-22, Sept 26th, 2010
 ============
 
@@ -107,11 +107,11 @@ Ngspice-22, Sept 26th, 2010
     + command 'option' for use in spinit, .spiceinit, and in scripts
     + adms procedure updated
     + new random number generator, random functions sunif() and sgauss()
-    + ngspice manual updated 
+    + ngspice manual updated
 
 - Bug fixes:
-    + Major code cleanup to reduce compiler/linker warnings: ansi function prototypes, 
-      void/char pointers to named pointers, explicit type casts and many more  
+    + Major code cleanup to reduce compiler/linker warnings: ansi function prototypes,
+      void/char pointers to named pointers, explicit type casts and many more
     + Many small bugs
 
 
@@ -119,16 +119,16 @@ Ng-spice-rework-21, Jun3, 13th 2010
 ============
 
 - Updated Devices: BSIMSOI 4.3.1
-	
-- New features:	
-    + Compatibility: C, L, R, devices and E, G sources with expressions 
-	  Variables HERTZ, TIME, TEMPER added
+
+- New features:
+    + Compatibility: C, L, R, devices and E, G sources with expressions
+      Variables HERTZ, TIME, TEMPER added
     + E, G sources with pwl function
     + New manual
-	+ Plotting with Gnuplot, 
-	+ Writing wrdata for simple text table to file
-	+ .measure improved
-	+ transmission line models improved
+    + Plotting with Gnuplot,
+    + Writing wrdata for simple text table to file
+    + .measure improved
+    + transmission line models improved
 
 - Bug fixes:
     + Many small bugs, memory leaks, memory overflows
@@ -138,28 +138,28 @@ Ng-spice-rework-20, November, 16th 2009
 
 Ngspice release 20 is the second release of the simulator in 2009.
 
-- Fixes: model names starting with a number (1n4001) are now correctly parsed. 
-  The .global command has been reinstated (it was previously disabled) and 
+- Fixes: model names starting with a number (1n4001) are now correctly parsed.
+  The .global command has been reinstated (it was previously disabled) and
   error messages now display the corresponding line numberin the input deck.
-- New Features: .measure command for transient, ac and dc analyses (still not 
+- New Features: .measure command for transient, ac and dc analyses (still not
   complete, e.g. DERIV is missing).
-- Devices: Updated BISM4 model to revision 4.6.5. Added PWL (PieceWise Linear) 
+- Devices: Updated BISM4 model to revision 4.6.5. Added PWL (PieceWise Linear)
   functionality for B (arbitrary generator) sources.
 
-	
+
 Ng-spice-rework-19, April, 23rd 2009
 ============
 
-Ngspice release 19 came early after release 18. It reveals an important work 
+Ngspice release 19 came early after release 18. It reveals an important work
 in compile scripts, many bug fixes in memory management, interface, and work in device models.
 
-- Compile scripts: tclspice and ADMS compiling fixes. Architecture compiling 
+- Compile scripts: tclspice and ADMS compiling fixes. Architecture compiling
   fixes for SunOS, MS Visual Studio, MINGW, Cygwin.
-- Memory management: fixed memory leaks, modifies memory management for 
-  MS Windows, integration of espice bugfixes and enhancements, bug fixes in 
+- Memory management: fixed memory leaks, modifies memory management for
+  MS Windows, integration of espice bugfixes and enhancements, bug fixes in
   plots and cli interface.
-- Rework of BSim models, integration of EPFL-EKV model V2.63, ADMS models 
-  mextram, hicum0, hicum2. 
+- Rework of BSim models, integration of EPFL-EKV model V2.63, ADMS models
+  mextram, hicum0, hicum2.
 
 
 Ng-spice-rework-18
@@ -187,7 +187,7 @@ into the simulator.
 Ng-spice-rework-17
 ============
 
-This is a bug fix release. Previous release tarball did not included 
+This is a bug fix release. Previous release tarball did not included
 an include file necessary for compiling numparam library.
 
 
@@ -198,51 +198,51 @@ Rework-16 comes out after almost one year of CVS development (from
 15-fixedRC3). This release improves ngspice in three ways:
 
 - Bug fixing: most of the bugs that affected rework-15 have been fixed,
-    thus ngspice is more stable, especially the xspice extension, the 
+    thus ngspice is more stable, especially the xspice extension, the
     subcircuit (X devices) handling and the numparam library.
-    
+
 - New features: netlist syntax has been expandend allowing for end-of-line
-    comments. A ".global" card has beed added to define global nodes, i.e. 
-    nodes that are not expanded in subcircuits. It is possible to define TC 
+    comments. A ".global" card has beed added to define global nodes, i.e.
+    nodes that are not expanded in subcircuits. It is possible to define TC
     for resistors on the instance line. The editline library can be used
     instead of readline (no more GPL license violation).
 
-- Porting: ngspice now works (with xspice extension) on Windows using 
-           MINGW/MSYS.     
-        
+- Porting: ngspice now works (with xspice extension) on Windows using
+           MINGW/MSYS.
+
 
 Ng-spice-rework-15
 ============
 
-Rework-15 release is a giant leap forward for ngspice. It incorporates 
-many (read most) of the improvements implemented in tclspice during the 
-two years long "sleep" of ngspice and adds many others. The incomplete 
-list of new features incorporated are:  
+Rework-15 release is a giant leap forward for ngspice. It incorporates
+many (read most) of the improvements implemented in tclspice during the
+two years long "sleep" of ngspice and adds many others. The incomplete
+list of new features incorporated are:
 
   - Xspice simulator (with codemodel dynamic loading support):
      a mixed signal simulator built upon spice3.
-     
+
   - Cider simulator:
      a mixed level simulator built upon spice3.
-     
+
   - Numparam library:
      a library that allows for parameter substitution at netlist level.
-     
+
   - Improved models:
      Diode model includes periphery effects and high level of injection effects,
      BJT and BJT2 enhanced.
      BSIM3 now includes ACM.
      BSIM4 implementation corrected.
-     
+
    -New models:
      VBIC (3 Terminals, no excess phase and thermal network),
      HiSIM.
-     
+
    - Frontend leaks closed.
       Now frontend works as it should.
-      
+
    - Many new example file.
-   
+
    - Xgraph plotting program included.
 
 
@@ -250,11 +250,11 @@ Ng-spice-rework-14
 ============
 
 This is a major release in terms of bug-fixes. Some enhancements
-have been included: BSIM4 model and support for EKV model. The 
+have been included: BSIM4 model and support for EKV model. The
 source code for the latter must be obtained from EKV web site
 (see DEVICE for more info). To enable EKV support you have
 to obtain the code first and then use the configure switch
-"--enable-ekv". 
+"--enable-ekv".
 
 The spice code contains an option to debug frontend code, now
 this is available in configure as "--enable-ftedebug".
@@ -266,17 +266,17 @@ Ng-spice-rework-13
 
 This is a major release in terms of fixes and enhancements.
 A garbage collector support has been added. If the configuration
-script detects that you have installed GC (Bohem-Weiser conservative 
-garbage collector), it will use it. Some memory leaks have been 
+script detects that you have installed GC (Bohem-Weiser conservative
+garbage collector), it will use it. Some memory leaks have been
 fixed too.
 
-Enhancements to the code comes from Alan's contribute code, a 
+Enhancements to the code comes from Alan's contribute code, a
 description of improvements follows (extracted form Alan's mail):
 
 Output File Format Changes -
 
-  (NOTE: Do not rely on this, we may revert to the old format 
-   in the next release). 
+  (NOTE: Do not rely on this, we may revert to the old format
+   in the next release).
 
   Text mode .OP results even though "rawfile" written.
 
@@ -363,7 +363,7 @@ New Model Parameters -
   A device multiplier instance parameter "M" (i.e. M devices in
   parallel) was added to the MOS1,2,3 and BSIM3 mosfet models.
 
- 
+
 Input Read-in and Checking -
 
   Numbers beginning with a + sign got the input routine confused.
@@ -377,7 +377,7 @@ Input Read-in and Checking -
   Previously each time-point was checked as it was reached during
   the simulation, which could be very annoying if you made a mistake
   which caused the simulation to fail after hours of run-time.
-  
+
   A check which was performed at the end of each sub-circuit expansion
   was moved to the top level. This check makes sure that all sub-circuits
   have been defined, but in its original position, it meant that if a
@@ -404,7 +404,7 @@ Miscellaneous Fixes/Enhancements -
   The "rawfile" writing routines have been modified to print the
   "reference value" to the console during the simulation. This lets
   the user see exactly how far and how fast the simulation is
-  proceeding. 
+  proceeding.
 
   .OP printout tidied up a lot to make the printout clearer.
 
@@ -424,17 +424,17 @@ Etc. -
 Ng-spice-rework-12
 ============
 Arno did a great work this summer!
-The pole-zero analysis has been corrected. The error was introduced 
-in an attempt to eliminate compiler warnings. The source has been 
-reworked and info file have been updated. As you may see, a new dir 
+The pole-zero analysis has been corrected. The error was introduced
+in an attempt to eliminate compiler warnings. The source has been
+reworked and info file have been updated. As you may see, a new dir
 called "spicelib" has been created, another step toward the separation
-of the simulator from the frontend. 
+of the simulator from the frontend.
 
 Ng-spice-rework-11
 ============
 
-Resistor code (device) has been modified to conform to spice3 device 
-coding standard. 
+Resistor code (device) has been modified to conform to spice3 device
+coding standard.
 A new step function (U2) has been introduced.
 Documentation updated.
 
@@ -483,7 +483,7 @@ Usage of this patch, once incorporated:
 
   # create a working tree to work from
   cp -a ng-spice-rework-x ng-spice
-  
+
   [ Changes made to ng-spice ]
 
   # clean up all the automatically generated files
@@ -528,7 +528,7 @@ AC resistance.
 Ng-spice-rework-5 and 5_2  (Jan 2000)
 ============
 
-Internal development release, buggy and not working. 
+Internal development release, buggy and not working.
 
 Ng-spice-rework-4  (22/12/99)
 ============
@@ -540,10 +540,10 @@ for the future GPL simulator. Thanks to Arno Peters and Manu Rouat.
 
 2) Patched the following bug (thanks to Andrew Tuckey for having
 supplied the patch).
-   
+
     * Wsw (current controlled switch) in subckt, parsing bug.
     * scale factor in arbitrary source.
     * bug in noise analysis.
     * save segmentation faults.
-    
-    
+
+
