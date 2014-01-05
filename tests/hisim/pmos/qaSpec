@@ -200,7 +200,7 @@ biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
 biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
 instanceParameters          W=10e-6 L=100e-9
-modelParameters             WPEB=-1200 WPEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=1E16 NPEXTWPE=1E16 
+modelParameters             WEB=-1200 WEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=1E16 NPEXTWPE=1E16 
 instanceParameters	    SCA=4.244122e-01 SCB=2.561023e-09 SCC=3.215142e-18
 
 test                        19_dcSweep_CORG=0
@@ -210,8 +210,8 @@ biases                      V(s)=0 V(b)=0
 biasList                    V(g)=-0.4,-0.6,-0.8,-1.0,-1.2,-1.5,-1.8
 biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     I(d)
-instanceParameters          W=10e-6 L=100e-9
-modelParameters             CORG=0 RSHG=10 NGCON=0.1
+instanceParameters          W=10e-6 L=100e-9 NGCON=0.1
+modelParameters             CORG=0 RSHG=10
 
 test                        20_dcSweep_CORG=1
 temperature                 -55 27 150
@@ -309,7 +309,7 @@ biases                      V(s)=0 V(b)=-0.5 V(g)=-1.2
 biasSweep                   V(d)=-0.2,-1.800000000001,-0.1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
 instanceParameters          W=10e-6 L=100e-9
-modelParameters             WPEB=-1200 WPEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=2E16 NPEXTWPE=3E16 
+modelParameters             WEB=-1200 WEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=2E16 NPEXTWPE=3E16 
 instanceParameters	    SCA=4.25e-01 SCB=2.56e-09 SCC=3.2e-18
 
 test                        39_acVd_VFBCL
@@ -392,7 +392,7 @@ biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
 instanceParameters          W=10e-6 L=100e-9
-modelParameters             COSTI=0
+modelParameters             COISTI=0
 
 test                        53_acFreq_COSTI=1
 temperature                 -55 27 150
@@ -401,7 +401,7 @@ biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
 instanceParameters          W=10e-6 L=100e-9
-modelParameters             COSTI=1
+modelParameters             COISTI=1
 
 test                        54_acFreq_COADOV=0
 temperature                 -55 27 150
@@ -536,7 +536,7 @@ biases                      V(s)=0 V(b)=0 V(d)=-1.5 V(g)=-1.5
 freq                        dec 10 1e3 1e8
 outputs                     C(g,g) C(g,s) C(g,d)
 instanceParameters          W=10e-6 L=100e-9
-modelParameters             WPEB=-1200 WPEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=1E16 NPEXTWPE=1E16 
+modelParameters             WEB=-1200 WEC=-1200 NSUBCWPE=1E-16 NSUBPWPE=1E16 NPEXTWPE=1E16 
 instanceParameters	    SCA=4.25e-01 SCB=2.56e-09 SCC=3.2e-18
 
 test                        69_acFreq_CODFM=0

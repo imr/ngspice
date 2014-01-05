@@ -243,7 +243,7 @@ biasSweep                   V(d)=-1,-20,-1
 outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
 instanceParameters          W=10e-6 L=5.0e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
 modelParameters             parameters/pmosParameters
-modelParameters             CDSOVER=0.2
+modelParameters             CVDSOVER=0.2
 
 test                        acFreq
 temperature                 27
