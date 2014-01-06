@@ -893,7 +893,6 @@ inp_dodeck(
 
         if (dd->li_error) {
             char *p, *q;
-            have_err = TRUE;
 #ifdef XSPICE
             /* add setting of ipc syntax error flag */
             g_ipc.syntax_error = IPC_TRUE;
@@ -906,11 +905,13 @@ inp_dodeck(
 
                 if (p == dd->li_error) {
                     if (strstr(dd->li_line, ".model"))
-                        out_printf("Model issue on line %d : %.*s ...\n%s\n",
+                        out_printf("Warning: Model issue on line %d : %.*s ...\n  %s\n",
                                    dd->li_linenum_orig, 56, dd->li_line, dd->li_error);
-                    else
+                    else {
                         out_printf("Error on line %d : %s\n  %s\n",
                                    dd->li_linenum_orig, dd->li_line, dd->li_error);
+                        have_err = TRUE;
+                    }
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
                 } else {
