@@ -927,8 +927,10 @@ inp_dodeck(
     }   /* for (dd = deck; dd; dd = dd->li_next) */
 
     /* Stop here and exit if error occurred in batch mode */
-    if (have_err && ft_batchmode)
+    if (have_err && ft_batchmode) {
+        fprintf(stderr, "\nngspice stopped due to error, no simulation run!\n");
         controlled_exit(EXIT_BAD);
+    }
 
     /* Only print out netlist if brief is FALSE */
     if (!cp_getvar("brief", CP_BOOL, NULL)) {
