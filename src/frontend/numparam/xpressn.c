@@ -735,6 +735,7 @@ parseunit(const char *s)
 {
     switch (toupper(s[0]))
     {
+    case 'T':  return 1e12;
     case 'G':  return 1e9;
     case 'K':  return 1e3;
     case 'M':  return ci_prefix("MEG", s) ? 1e6 : 1e-3;
