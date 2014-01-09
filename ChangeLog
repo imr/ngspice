@@ -1,3 +1,4393 @@
+2014-01-03  h_vogt <h_vogt>
+ * INSTALL,
+ * configure.ac,
+ * tests/bin/ngspice.pm,
+ * visualc-shared/include/ngspice/config.h,
+ * visualc/include/ngspice/config.h:
+    ngspice-26: substitute 25 --> 26
+
+2014-01-02  h_vogt <h_vogt>
+ * AUTHORS,
+ * NEWS:
+    ngspice-26: Henrik Forstén
+
+2014-01-04  h_vogt <h_vogt>
+ * ANALYSES,
+ * AUTHORS,
+ * COPYING,
+ * DEVICES,
+ * FAQ,
+ * INSTALL,
+ * NEWS,
+ * README,
+ * README.tcl,
+ * Stuarts_Poly_Notes:
+    ngspice-26: update documentation
+
+2014-01-04  h_vogt <h_vogt>
+ * ANALYSES,
+ * AUTHORS,
+ * BUGS,
+ * COPYING,
+ * DEVICES,
+ * FAQ,
+ * INSTALL,
+ * NEWS,
+ * README,
+ * README.adms,
+ * README.tcl,
+ * Stuarts_Poly_Notes:
+    whitespace
+
+2014-01-11  h_vogt <h_vogt>
+ * tests/mos6/simpleinv.cir:
+    mos6/simple inverter: true inverter circuit
+
+2014-01-10  h_vogt <h_vogt>
+ * examples/Monte_Carlo/MC_2_circ.sp,
+ * examples/Monte_Carlo/MC_2_control.sp:
+    monte carlo with control script and MOS parameter set containing AGAUSS parameter variations (like commercial parameter libraries)
+
+2014-01-10  rlar <rlar>
+ * src/frontend/plotting/x11.c:
+    set X11 window title from `graph->plotname'
+
+    in response to a bug report by Dominique Michel
+      "#272 no title in plots"
+      http://sourceforge.net/p/ngspice/bugs/272/
+
+2014-01-10  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: E, G source, improved search for 'vol' and 'cur'
+
+    in response to a bug report by Marlize Schoeman
+      "#274 VCVS Exxxx name and node names do not allow VOL as text"
+      http://sourceforge.net/p/ngspice/bugs/274/
+
+2014-01-09  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    parseunit(), support 'T' for "Tera"
+
+    in response to a bug report by Andy Fierman
+      "#273 T = Tera = 1e12 suffix is ignored when used in a parameter in a subcircuit."
+      http://sourceforge.net/p/ngspice/bugs/273/
+
+2014-01-08  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/spicelib/parser/inp2q.c:
+    inp.c, inp2q.c improve error message
+
+    when we exit() in batch mode due to a missing model definition
+
+2014-01-06  rlar <rlar>
+ * src/frontend/inp.c:
+    workaround, avoid batch termination when there are .model issues
+
+    these were introduced by commit
+      "inp.c, evtinit.c: improved error message suggested by Calin Andrian"
+    and caused ngspice checks to fail unexpectedly
+
+2014-01-05  dwarning <dwarning>
+ * tests/hisim/nmos/qaSpec,
+ * tests/hisim/pmos/qaSpec,
+ * tests/hisimhv1/nmos/qaSpec.basic,
+ * tests/hisimhv1/pmos/qaSpec.basic:
+    correct parameter names for hisim qa checks
+
+2014-01-05  h_vogt <h_vogt>
+ * src/frontend/plotting/gnuplot.c:
+    gnuplot.c: enable correct terminal for non MINGW/MSVC
+
+2014-01-03  rlar <rlar>
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c:
+    tfanal.c noisean.c, bug fix which was introduced in "CKTfndDev(), rewrite"
+
+    the original CKTfndDev() was able to limit its search
+      for an instance with given name
+      to instances of a certain "type"
+    (this was a speed optimisation which is of no use anymore,
+      because we use a hashtable now)
+
+    the new CKTfndDev() does not consider "type"
+
+    thus, here in tfanal.c and noisean.c we have to check the "type"
+      after CKTfndDev() since we no longer can limit its search
+      to the given "type"
+
+2014-01-04  h_vogt <h_vogt>
+ * src/frontend/variable.c:
+    variable.c: prevent buffer overflow by limiting variable output to BSIZE_SP characters
+
+2014-01-03  h_vogt <h_vogt>
+ * src/include/ngspice/cm.h:
+    cm.h: add config.h to access #defines
+
+2014-01-03  h_vogt <h_vogt>
+ * src/frontend/com_ghelp.c:
+    com_ghelp.c: add info on non-availability of help to console versions w/o X display.
+
+2013-12-30  rlar <rlar>
+ * src/xspice/icm/analog/square/cfunc.mod,
+ * src/xspice/icm/analog/square/ifspec.ifs,
+ * src/xspice/icm/analog/triangle/cfunc.mod,
+ * src/xspice/icm/analog/triangle/ifspec.ifs:
+    analog/{square,triangle}, store boolean tran_init in STATIC_VAR itself
+
+2013-12-30  rlar <rlar>
+ * src/xspice/icm/analog/sine/cfunc.mod,
+ * src/xspice/icm/analog/sine/ifspec.ifs,
+ * src/xspice/icm/analog/square/cfunc.mod,
+ * src/xspice/icm/analog/triangle/cfunc.mod,
+ * src/xspice/icm/xtradev/core/cfunc.mod,
+ * src/xspice/icm/xtradev/core/ifspec.ifs:
+    analog/{sine,square,triangle}, xtradev/core, change array access
+
+    avoid copy of parameter array,
+    which would need to be freed to avoid a memory leak
+
+    this is a modified and partial version of a patch provided by
+    Krzysztof Blaszkowski <kb@sysmikro.com.pl>
+
+2013-12-30  rlar <rlar>
+ * src/xspice/icm/analog/sine/cfunc.mod,
+ * src/xspice/icm/analog/sine/sin.h,
+ * src/xspice/icm/analog/square/cfunc.mod,
+ * src/xspice/icm/analog/square/square.h,
+ * src/xspice/icm/analog/triangle/cfunc.mod,
+ * src/xspice/icm/analog/triangle/triangle.h,
+ * src/xspice/icm/xtradev/core/cfunc.mod,
+ * src/xspice/icm/xtradev/core/core.h:
+    analog/{sine,square,triangle}, xtradev/core, drop .h files
+
+2013-12-30  rlar <rlar>
+ * src/xspice/icm/analog/sine/cfunc.mod,
+ * src/xspice/icm/analog/sine/ifspec.ifs,
+ * src/xspice/icm/analog/sine/sin.h,
+ * src/xspice/icm/analog/square/cfunc.mod,
+ * src/xspice/icm/analog/square/ifspec.ifs,
+ * src/xspice/icm/analog/square/square.h,
+ * src/xspice/icm/analog/triangle/cfunc.mod,
+ * src/xspice/icm/analog/triangle/ifspec.ifs,
+ * src/xspice/icm/analog/triangle/triangle.h,
+ * src/xspice/icm/xtradev/core/cfunc.mod,
+ * src/xspice/icm/xtradev/core/core.h,
+ * src/xspice/icm/xtradev/core/ifspec.ifs:
+    analog/{sine,square,triangle}, xtradev/core, whitespace cleanup
+
+2013-12-16  dwarning <dwarning>
+ * examples/various/FFT_Leakage.cir,
+ * examples/various/FFT_tests.cir:
+    two examples to show fft/ifft vector command
+
+2013-12-03  dwarning <dwarning>
+ * src/frontend/trannoise/1-f-code.c:
+    1-f-code.c, correct the printout for noise generation
+
+2013-12-02  dwarning <dwarning>
+ * src/frontend/trannoise/1-f-code.c,
+ * src/spicelib/devices/isrc/isrcacct.c,
+ * src/spicelib/devices/vsrc/vsrcacct.c:
+    1-f-code.c, use fftw3
+
+2013-12-02  dwarning <dwarning>
+ * src/frontend/com_fft.c:
+    com_fft.c, set hanning as default window
+
+2013-12-02  dwarning <dwarning>
+ * src/frontend/com_fft.c:
+    com_fft.c, rename variable `tlen' --> `length'
+
+2013-11-25  dwarning <dwarning>
+ * src/frontend/com_fft.c:
+    com_fft.c, correct array size and relay to specific array order for r2c transformation
+
+2013-11-24  dwarning <dwarning>
+ * src/frontend/com_fft.c:
+    com_fft.c, use FFTW3 for com_fft() and com_psd()
+
+2013-11-24  dwarning <dwarning>
+ * src/include/ngspice/fftext.h,
+ * src/maths/fft/fftext.c:
+    fftext.c, move the Bourke FFT code to fftext.c (rename macro)
+
+2013-11-24  dwarning <dwarning>
+ * src/frontend/com_fft.c,
+ * src/include/ngspice/fftext.h,
+ * src/maths/fft/fftext.c:
+    fftext.c, move the Bourke FFT code to fftext.c (as a backup)
+
+2013-11-21  dwarning <dwarning>
+ * src/maths/cmaths/cmath4.c:
+    cmath4.c, drop unused doubledouble()
+
+2013-11-25  dwarning <dwarning>
+ * src/maths/cmaths/cmath4.c:
+    cmath4.c, correct array size and relay to specific array order for r2c transformation
+
+2013-11-21  dwarning <dwarning>
+ * src/maths/cmaths/cmath4.c:
+    cmath4.c, correct scale for ifft
+
+2013-11-21  dwarning <dwarning>
+ * configure.ac,
+ * src/maths/cmaths/cmath4.c:
+    cmath4.c, use FFTW3 for cx_fft() and cx_ifft()
+
+2013-12-29  h_vogt <h_vogt>
+ * visualc/.gitignore,
+ * visualc/fftw3/fftw-3.3.3-dll32/README-ngspice.txt,
+ * visualc/fftw3/fftw-3.3.3-dll64/README-ngspice.txt,
+ * visualc/vngspice_fftw.sln,
+ * visualc/vngspice_fftw.vcproj:
+    VC project with FFTW3 library enabled
+
+2013-11-21  dwarning <dwarning>
+ * visualc/vngspice_fftw.sln,
+ * visualc/vngspice_fftw.vcproj:
+    visualc, copy to new project which uses the FFTW3 library
+
+2013-11-24  dwarning <dwarning>
+ * src/frontend/com_fft.c,
+ * src/maths/cmaths/cmath4.c:
+    cmath4.c, com_fft.c, cleanup
+
+2013-11-24  dwarning <dwarning>
+ * src/frontend/com_fft.c,
+ * src/maths/cmaths/cmath4.c:
+    cmath4.c, com_fft.c, rename `size' --> `N' and  `mm' --> `M'
+
+2013-12-31  rlar <rlar>
+ * .gitignore,
+ * visualc-shared/.gitignore,
+ * visualc/.gitignore:
+    polish .gitignore
+
+2013-12-31  h_vogt <h_vogt>
+ * visualc/vngspice.vcproj:
+    bugfix: add CONFIG64 to console64/debug
+
+2013-12-29  h_vogt <h_vogt>
+ * visualc/vngspice.sln,
+ * visualc/vngspice.vcproj:
+    VC project, output directory "64"
+
+2013-12-30  h_vogt <h_vogt>
+ * src/maths/poly/polyfit.c:
+    polyfit.c, speed up fitting process when degree == 1
+
+    this patch war provided by Henrik Forstén in
+      "#14 Special case for polyfit, move initw()"
+      http://sourceforge.net/p/ngspice/patches/14/
+
+2013-12-28  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: allow node names and .func parameters having
+    equal string representation
+
+2013-12-30  h_vogt <h_vogt>
+ * src/frontend/outitf.c,
+ * src/main.c:
+    main.c, suppress progress report when '-o' is used to redirect output
+
+2013-12-30  h_vogt <h_vogt>
+ * src/main.c:
+    main.c, fix stdout and stderr redirection and buffering with regard to '-o' and '-p'
+
+    in response to a bug report from  Johann Glaser
+      "#259 Pipe mode: buffering"
+      http://sourceforge.net/p/ngspice/bugs/259/
+
+2013-12-27  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: enable .include with $end-of-line in .control section
+
+2013-12-27  dwarning <dwarning>
+ * tests/bsim4/nmos/qaSpec,
+ * tests/bsim4/pmos/qaSpec:
+    correct bsim4 parameter mobmod
+
+2013-12-22  h_vogt <h_vogt>
+ * src/include/ngspice/ngspice.h:
+    C99 functions are only available in MSVC 2013 and newer. Still needs testing!
+
+2013-12-16  rlar <rlar>
+ * src/spicelib/parser/ptfuncs.c:
+    ptfuncs.c, drop inaccurate replacements for ashinh() acosh() and atanh()
+
+2013-12-16  rlar <rlar>
+ * src/frontend/numparam/xpressn.c,
+ * src/include/ngspice/ngspice.h,
+ * tests/regression/parser/xpressn-1.cir,
+ * visualc/msvc-compat.c:
+    xpressn.c, introduce fortran style nint() rounding function
+
+2013-12-22  rlar <rlar>
+ * configure.ac,
+ * src/frontend/subckt.c,
+ * tests/regression/Makefile.am,
+ * tests/regression/subckt-processing/Makefile.am,
+ * tests/regression/subckt-processing/model-scope-5.cir,
+ * tests/regression/subckt-processing/model-scope-5.out:
+    subckt.c, fix .model processing (scope)
+
+2013-12-21  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    enable parameter replacement in R, L, C lines, if equation is
+    without {} and not in a subcircuit
+
+2013-12-21  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: allow proper 'temper' substitution
+
+    if device name and parameter name are the same,
+    or if parameter name is the last token in the line.
+
+2013-12-21  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: evaluate for 'temper' only the models which have
+    been entered into the hash table ckt->MODnameHash
+
+2013-12-17  h_vogt <h_vogt>
+ * src/spicelib/analysis/dctran.c:
+    dctran.c bug fix, reported by Berk Özer
+
+2013-12-14  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c remove bug: parens around equation h, f
+    add equation + temper capability to gain of F-Source
+
+2013-12-13  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: H Source with equation and temper in transresistance
+
+2013-12-17  h_vogt <h_vogt>
+ * visualc-shared/sharedspice.vcproj:
+    sharedspice.vcproj, add soa
+
+2013-12-07  dwarning <dwarning>
+ * examples/various/modelcard.nmos,
+ * examples/various/modelcard.pmos,
+ * examples/various/nic_soa.cir:
+    soa check example
+
+2013-10-31  dwarning <dwarning>
+ * src/spicelib/devices/vbic/Makefile.am,
+ * src/spicelib/devices/vbic/vbic.c,
+ * src/spicelib/devices/vbic/vbicdefs.h,
+ * src/spicelib/devices/vbic/vbicext.h,
+ * src/spicelib/devices/vbic/vbicinit.c,
+ * src/spicelib/devices/vbic/vbicmask.c,
+ * src/spicelib/devices/vbic/vbicmpar.c,
+ * src/spicelib/devices/vbic/vbicsetup.c,
+ * src/spicelib/devices/vbic/vbicsoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/vbic, implement VBICsoaCheck()
+
+2013-10-31  dwarning <dwarning>
+ * src/spicelib/devices/hisim2/Makefile.am,
+ * src/spicelib/devices/hisim2/hsm2.c,
+ * src/spicelib/devices/hisim2/hsm2def.h,
+ * src/spicelib/devices/hisim2/hsm2ext.h,
+ * src/spicelib/devices/hisim2/hsm2init.c,
+ * src/spicelib/devices/hisim2/hsm2mask.c,
+ * src/spicelib/devices/hisim2/hsm2mpar.c,
+ * src/spicelib/devices/hisim2/hsm2set.c,
+ * src/spicelib/devices/hisim2/hsm2soachk.c,
+ * visualc/vngspice.vcproj:
+    devices/hisim2, implement HSM2soaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/hisimhv1/Makefile.am,
+ * src/spicelib/devices/hisimhv1/hsmhv.c,
+ * src/spicelib/devices/hisimhv1/hsmhvdef.h,
+ * src/spicelib/devices/hisimhv1/hsmhvext.h,
+ * src/spicelib/devices/hisimhv1/hsmhvinit.c,
+ * src/spicelib/devices/hisimhv1/hsmhvmask.c,
+ * src/spicelib/devices/hisimhv1/hsmhvmpar.c,
+ * src/spicelib/devices/hisimhv1/hsmhvset.c,
+ * src/spicelib/devices/hisimhv1/hsmhvsoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/hisimhv1, implement HSMHVsoaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/bsimsoi/Makefile.am,
+ * src/spicelib/devices/bsimsoi/b4soi.c,
+ * src/spicelib/devices/bsimsoi/b4soidef.h,
+ * src/spicelib/devices/bsimsoi/b4soiext.h,
+ * src/spicelib/devices/bsimsoi/b4soiinit.c,
+ * src/spicelib/devices/bsimsoi/b4soimask.c,
+ * src/spicelib/devices/bsimsoi/b4soimpar.c,
+ * src/spicelib/devices/bsimsoi/b4soiset.c,
+ * src/spicelib/devices/bsimsoi/b4soisoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/bsimsoi, implement B4SOIsoaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/bsim4v6/Makefile.am,
+ * src/spicelib/devices/bsim4v6/b4v6.c,
+ * src/spicelib/devices/bsim4v6/b4v6mask.c,
+ * src/spicelib/devices/bsim4v6/b4v6mpar.c,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsim4v6/b4v6soachk.c,
+ * src/spicelib/devices/bsim4v6/bsim4v6def.h,
+ * src/spicelib/devices/bsim4v6/bsim4v6ext.h,
+ * src/spicelib/devices/bsim4v6/bsim4v6init.c,
+ * visualc/vngspice.vcproj:
+    devices/bsim4v6, implement BSIM4v6soaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/bsim4v5/Makefile.am,
+ * src/spicelib/devices/bsim4v5/b4v5.c,
+ * src/spicelib/devices/bsim4v5/b4v5mask.c,
+ * src/spicelib/devices/bsim4v5/b4v5mpar.c,
+ * src/spicelib/devices/bsim4v5/b4v5set.c,
+ * src/spicelib/devices/bsim4v5/b4v5soachk.c,
+ * src/spicelib/devices/bsim4v5/bsim4v5def.h,
+ * src/spicelib/devices/bsim4v5/bsim4v5ext.h,
+ * src/spicelib/devices/bsim4v5/bsim4v5init.c,
+ * visualc/vngspice.vcproj:
+    devices/bsim4v5, implement BSIM4v5soaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/bsim4/Makefile.am,
+ * src/spicelib/devices/bsim4/b4.c,
+ * src/spicelib/devices/bsim4/b4mask.c,
+ * src/spicelib/devices/bsim4/b4mpar.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4/b4soachk.c,
+ * src/spicelib/devices/bsim4/bsim4def.h,
+ * src/spicelib/devices/bsim4/bsim4ext.h,
+ * src/spicelib/devices/bsim4/bsim4init.c,
+ * visualc/vngspice.vcproj:
+    devices/bsim4, implement BSIM4soaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/Makefile.am,
+ * src/spicelib/devices/bsim3v32/b3v32.c,
+ * src/spicelib/devices/bsim3v32/b3v32mask.c,
+ * src/spicelib/devices/bsim3v32/b3v32mpar.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim3v32/b3v32soachk.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32def.h,
+ * src/spicelib/devices/bsim3v32/bsim3v32ext.h,
+ * src/spicelib/devices/bsim3v32/bsim3v32init.c,
+ * visualc/vngspice.vcproj:
+    devices/bsim3v32, implement BSIM3v32soaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/Makefile.am,
+ * src/spicelib/devices/bsim3/b3.c,
+ * src/spicelib/devices/bsim3/b3mask.c,
+ * src/spicelib/devices/bsim3/b3mpar.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3soachk.c,
+ * src/spicelib/devices/bsim3/bsim3def.h,
+ * src/spicelib/devices/bsim3/bsim3ext.h,
+ * src/spicelib/devices/bsim3/bsim3init.c,
+ * visualc/vngspice.vcproj:
+    devices/bsim3, implement BSIM3soaCheck()
+
+2013-11-01  dwarning <dwarning>
+ * src/spicelib/devices/bjt/Makefile.am,
+ * src/spicelib/devices/bjt/bjt.c,
+ * src/spicelib/devices/bjt/bjtdefs.h,
+ * src/spicelib/devices/bjt/bjtext.h,
+ * src/spicelib/devices/bjt/bjtinit.c,
+ * src/spicelib/devices/bjt/bjtmask.c,
+ * src/spicelib/devices/bjt/bjtmpar.c,
+ * src/spicelib/devices/bjt/bjtsetup.c,
+ * src/spicelib/devices/bjt/bjtsoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/bjt, implement BJTsoaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/dio/Makefile.am,
+ * src/spicelib/devices/dio/dio.c,
+ * src/spicelib/devices/dio/diodefs.h,
+ * src/spicelib/devices/dio/dioext.h,
+ * src/spicelib/devices/dio/dioinit.c,
+ * src/spicelib/devices/dio/diomask.c,
+ * src/spicelib/devices/dio/diompar.c,
+ * src/spicelib/devices/dio/diosetup.c,
+ * src/spicelib/devices/dio/diosoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/dio, implement DIOsoaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/cap/Makefile.am,
+ * src/spicelib/devices/cap/cap.c,
+ * src/spicelib/devices/cap/capask.c,
+ * src/spicelib/devices/cap/capdefs.h,
+ * src/spicelib/devices/cap/capext.h,
+ * src/spicelib/devices/cap/capinit.c,
+ * src/spicelib/devices/cap/capmask.c,
+ * src/spicelib/devices/cap/capmpar.c,
+ * src/spicelib/devices/cap/capparam.c,
+ * src/spicelib/devices/cap/capsetup.c,
+ * src/spicelib/devices/cap/capsoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/cap, implement CAPsoaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/spicelib/devices/res/Makefile.am,
+ * src/spicelib/devices/res/res.c,
+ * src/spicelib/devices/res/resask.c,
+ * src/spicelib/devices/res/resdefs.h,
+ * src/spicelib/devices/res/resext.h,
+ * src/spicelib/devices/res/resinit.c,
+ * src/spicelib/devices/res/resmask.c,
+ * src/spicelib/devices/res/resmpar.c,
+ * src/spicelib/devices/res/resparam.c,
+ * src/spicelib/devices/res/ressetup.c,
+ * src/spicelib/devices/res/ressoachk.c,
+ * visualc/vngspice.vcproj:
+    devices/res, implement RESsoaCheck()
+
+2013-11-01  rlar <rlar>
+ * src/include/ngspice/cktdefs.h,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/devices/cktsoachk.c:
+    introduce CKTsoaInit()
+
+2013-10-30  dwarning <dwarning>
+ * src/frontend/inp.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ngspice.h,
+ * src/main.c,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/devices/Makefile.am,
+ * src/spicelib/devices/cktsoachk.c,
+ * src/spicelib/devices/devsup.c,
+ * visualc/vngspice.vcproj:
+    implement CKTsoaCheck()
+
+2013-10-30  dwarning <dwarning>
+ * src/include/ngspice/devdefs.h,
+ * src/spicelib/devices/adms/admst/ngspiceMODULEinit.c.xml,
+ * src/spicelib/devices/asrc/asrcinit.c,
+ * src/spicelib/devices/bjt/bjtinit.c,
+ * src/spicelib/devices/bsim1/bsim1init.c,
+ * src/spicelib/devices/bsim2/bsim2init.c,
+ * src/spicelib/devices/bsim3/bsim3init.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddinit.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdinit.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdinit.c,
+ * src/spicelib/devices/bsim3v0/bsim3v0init.c,
+ * src/spicelib/devices/bsim3v1/bsim3v1init.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32init.c,
+ * src/spicelib/devices/bsim4/bsim4init.c,
+ * src/spicelib/devices/bsim4v4/bsim4v4init.c,
+ * src/spicelib/devices/bsim4v5/bsim4v5init.c,
+ * src/spicelib/devices/bsim4v6/bsim4v6init.c,
+ * src/spicelib/devices/bsimsoi/b4soiinit.c,
+ * src/spicelib/devices/cap/capinit.c,
+ * src/spicelib/devices/cccs/cccsinit.c,
+ * src/spicelib/devices/ccvs/ccvsinit.c,
+ * src/spicelib/devices/cpl/cplinit.c,
+ * src/spicelib/devices/csw/cswinit.c,
+ * src/spicelib/devices/dio/dioinit.c,
+ * src/spicelib/devices/hfet1/hfetinit.c,
+ * src/spicelib/devices/hfet2/hfet2init.c,
+ * src/spicelib/devices/hisim2/hsm2init.c,
+ * src/spicelib/devices/hisimhv1/hsmhvinit.c,
+ * src/spicelib/devices/ind/indinit.c,
+ * src/spicelib/devices/isrc/isrcinit.c,
+ * src/spicelib/devices/jfet/jfetinit.c,
+ * src/spicelib/devices/jfet2/jfet2init.c,
+ * src/spicelib/devices/ltra/ltrainit.c,
+ * src/spicelib/devices/mes/mesinit.c,
+ * src/spicelib/devices/mesa/mesainit.c,
+ * src/spicelib/devices/mos1/mos1init.c,
+ * src/spicelib/devices/mos2/mos2init.c,
+ * src/spicelib/devices/mos3/mos3init.c,
+ * src/spicelib/devices/mos6/mos6init.c,
+ * src/spicelib/devices/mos9/mos9init.c,
+ * src/spicelib/devices/nbjt/nbjtinit.c,
+ * src/spicelib/devices/nbjt2/nbt2init.c,
+ * src/spicelib/devices/ndev/ndevinit.c,
+ * src/spicelib/devices/numd/numdinit.c,
+ * src/spicelib/devices/numd2/numd2init.c,
+ * src/spicelib/devices/numos/numosinit.c,
+ * src/spicelib/devices/res/resinit.c,
+ * src/spicelib/devices/soi3/soi3init.c,
+ * src/spicelib/devices/sw/swinit.c,
+ * src/spicelib/devices/tra/trainit.c,
+ * src/spicelib/devices/txl/txlinit.c,
+ * src/spicelib/devices/urc/urcinit.c,
+ * src/spicelib/devices/vbic/vbicinit.c,
+ * src/spicelib/devices/vccs/vccsinit.c,
+ * src/spicelib/devices/vcvs/vcvsinit.c,
+ * src/spicelib/devices/vsrc/vsrcinit.c,
+ * src/xspice/cmpp/writ_ifs.c:
+    introduce new SPICEdev operation `DEVsoaCheck()'
+
+2013-08-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop cp_tildexpand() in expand_this(), inp_pathresolve_at() shall do this
+
+2013-08-04  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite .lib reading
+
+    use canonical file names to remember known .lib files
+    remember their directories in `habitat'
+    use inp_pathresolve_at() to find .lib files with regard to `searchpath' and current directory
+
+2013-07-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, recurse expand_section_ref()
+
+2013-07-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-08-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, whitespace cleanup
+
+2013-08-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, reorder
+
+2013-08-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, introduce expand_section_ref()
+
+2013-08-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, simplify `.include' file processing using inp_pathresolve_at()
+
+2013-08-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, introduce inp_pathresolve_at()
+
+2013-10-24  h_vogt <h_vogt>
+ * src/misc/tilde.c:
+    tilde.c, enable search for home dir under MS Windows
+
+2013-10-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, introduce inp_pathresolve(), rewrite inp_pathopen() using this
+
+2013-10-25  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c, for mingw absolute pathnames may begin with /d/
+
+    allow this when variable 'mingwpath' is set in .spinit
+
+2013-11-09  h_vogt <h_vogt>
+ * src/frontend/inpcom.c,
+ * src/main.c:
+    inpcom.c, remove variable "sourcefile" and references to "sourcefile"
+
+    this will no longer be required for access to input file residing
+    in the executable's directory
+
+2013-10-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, fix inp_pathopen(), always try to fopen() relative to the current working directory first
+
+2013-10-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, fix inp_pathopen(), relative path shall be expanded regarding "sourcepath"
+
+2013-12-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, simplify using is_plain_filename(), fix incorrect comments
+
+2013-12-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, implement is_absolute_pathname() and is_plain_filename()
+
+2013-12-11  h_vogt <h_vogt>
+ * src/spicelib/devices/dev.c:
+    remove redundant #include
+
+2013-12-11  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/xspice/evt/evtinit.c:
+    inp.c, evtinit.c: improved error message
+    suggested by Calin Andrian
+
+2013-12-11  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    prevent crash, if due to input bug ckt is not created,
+    reported by  Andrian
+
+2013-12-08  rlar <rlar>
+ * src/xspice/icm/GNUmakefile.in,
+ * src/xspice/icm/makedefs.in:
+    xspice, move `-lm' to the end of the linker command line
+
+2013-12-07  h_vogt <h_vogt>
+ * src/frontend/numparam/xpressn.c,
+ * src/include/ngspice/ngspice.h,
+ * visualc-shared/sharedspice.vcproj,
+ * visualc/msvc-compat.c,
+ * visualc/vngspice.vcproj:
+    replacements for functions missing in the msvc world
+
+2013-12-05  Calin Andrian <calin.andrian@gmail.com>
+ * src/xspice/mif/mifgetvalue.c:
+    MIFget_boolean(), allow numeric values 0 and 1 too
+
+2013-12-05  Anthony J. Bentley <anthony@cathet.us>
+ * src/maths/misc/randnumb.c:
+    remove unnecessary include of sys/timeb.h.
+
+2013-12-05  Anthony J. Bentley <anthony@cathet.us>
+ * man/man1/ngmultidec.1,
+ * man/man1/ngnutmeg.1,
+ * man/man1/ngsconvert.1,
+ * man/man1/ngspice.1:
+    man page fixes.
+
+    - Start new sentences on a new line, so that troff gets inter-sentence
+      spacing correct.
+
+    - Remove unterminated quotation mark.
+
+    - Replace no-longer-defined "spice" macro with a literal string.
+
+    - Remove trailing whitespace.
+
+    - Close literal contexts instead of letting them propagate throughout an
+      entire section.
+
+2013-11-09  rlar <rlar>
+ * configure.ac,
+ * tests/regression/Makefile.am,
+ * tests/regression/parser/Makefile.am,
+ * tests/regression/parser/minus-minus.cir,
+ * tests/regression/parser/minus-minus.out,
+ * tests/regression/parser/xpressn-1.cir,
+ * tests/regression/parser/xpressn-1.out,
+ * tests/regression/parser/xpressn-2.cir,
+ * tests/regression/parser/xpressn-2.out:
+    tests/regression/parser
+
+    check xpressn.c parser capability to parse {2--3}
+    check .control parser capability to parse 2--3
+    check B parser capability to parse 2--3
+
+    check echo commands capability to print "--"
+    check echo commands capability to print upper and lower case
+
+    check xpressn.c parser capabilities
+
+    check precision of some transcendental functions
+
+2013-11-08  rlar <rlar>
+ * tests/regression/lib-processing/ex1a.out,
+ * tests/regression/lib-processing/ex1b.out,
+ * tests/regression/lib-processing/ex2a.out,
+ * tests/regression/lib-processing/ex3a.out:
+    tests/regression/lib-processing, fix upper/lower case
+
+2013-11-09  rlar <rlar>
+ * src/frontend/numparam/spicenum.c,
+ * src/frontend/numparam/xpressn.c:
+    numparam, almost full precision for stringified double float numbers
+
+2013-11-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, drop initkeys()
+
+2013-11-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, drop "AND OR NOT DIV MOD DEFINED" keywords
+
+2013-11-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, use C strings for the arguments of `keywords()'
+
+2013-11-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, drop '&' and '|' operators, (we have '&&' and '||')
+
+2013-11-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, exclude currently unused functions
+
+2013-11-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop ternary_fcn code in inpcom.c, the extended "formula" shall process ternary expressions
+
+2013-11-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, whitespace cleanup
+
+2013-10-15  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, implement a?b:c in the "formula" parser
+
+2013-12-01  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, drop XFU_V
+
+    probably accidentally introduced in commit
+
+    > Author: h_vogt <h_vogt>
+    > Date:   Sun Feb 7 11:27:59 2010 +0000
+    >
+    >     improved numparam error message
+
+2013-12-01  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, use enums instead of literals
+
+2013-12-01  rlar <rlar>
+ * src/frontend/numparam/numparam.h,
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, drop "Defd" enum, to be incorporated into a bigger enum
+
+2013-11-24  rlar <rlar>
+ * src/frontend/numparam/numparam.h,
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, fix semantics of `int(x)' and remove dangerous macros
+
+    int(x) most probably shall be trunc(x) instead of floor(x)
+      note trunc(x) was #defined beeing floor(x)
+      note ln(x) was #defined beeing log(x)
+
+2013-11-29  rlar <rlar>
+ * src/frontend/numparam/general.h,
+ * src/frontend/numparam/mystring.c,
+ * src/frontend/numparam/nupatest.c,
+ * src/frontend/numparam/spicenum.c:
+    fix an endless loop waiting for y/n when the input is at EOF
+
+    reported by Calin Andrian
+      Subject: [Ngspice-devel] Invaild number bug
+
+2013-11-01  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, fix semantics of '&&' and '||'
+
+    these shall interpret a value as a bool according to (value != 0)
+    and these shall evaluate to either 1.0 or 0.0
+
+2013-11-01  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, whitespace cleanup
+
+2013-11-01  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, fix `truth' for ternary_fcn()
+
+    0.0 is `false', everything else is `true'
+
+2013-11-23  rlar <rlar>
+ * src/frontend/parse-bison.c,
+ * src/frontend/parse-bison.h,
+ * src/spicelib/parser/inpptree-parser.c,
+ * src/spicelib/parser/inpptree-parser.h:
+    update bison generated files
+
+2013-11-20  rlar <rlar>
+ * src/frontend/parse-bison.y,
+ * src/spicelib/parser/inpptree-parser.y:
+    .control and `B' parser, fix precedence of '-' versus '^'
+
+    -2^2 shall be -(2^2) instead of (-2)^2
+
+2013-11-23  h_vogt <h_vogt>
+ * src/frontend/trannoise/1-f-code_d.c,
+ * src/frontend/trannoise/Makefile.am:
+    remove unused code
+
+2013-11-18  rlar <rlar>
+ * src/spicelib/devices/hisim2/hsm2eval.c,
+ * src/spicelib/devices/hisimhv1/hsmhveval.c:
+    devices/hisimhv1, devices/hisim2, avoid overlapping globals TMF1 ... TMF6
+
+    reported by James Jackson in message:
+      [Ngspice-users] Problem building git head --with-ngspice Mac OS X
+
+2013-11-16  rlar <rlar>
+ * src/maths/misc/isinf.c,
+ * src/misc/dup2.c:
+    avoid overlapping "Dummy" symbols
+
+    reported by James Jackson in message:
+      [Ngspice-users] Problem building git head --with-ngspice Mac OS X
+
+2013-11-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, add missing condition `!comfile' for .title and .end processing
+
+2013-11-03  dwarning <dwarning>
+ * src/spicelib/analysis/cktsens.c:
+    correct the step incrementing type to SENS_LINEAR
+
+2013-11-02  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    fix criterion to start `.lib' and `.global gnd' processing
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: MSVC compatibility
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_readall() #7/7, drop misleading comment
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_readall() #6/7, tautology `call_depth == 0'
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_readall() #5/7, use `rv . line_number' itself
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_readall() #4/7, move inp_read() epilog to inp_readall()
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_readall() #3/7, return `line_number' too
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_readall() #2/7, move inp_read() prolog to inp_readall()
+
+2013-06-02  rlar <rlar>
+ * src/frontend/device.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/nutinp.c,
+ * src/include/ngspice/fteext.h:
+    inpcom.c, cleanup inp_readall() #1/7, introduce inp_read()
+
+2013-11-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    bug fix, .include and .lib files don't have a `title' line
+
+2013-11-02  dwarning <dwarning>
+ * src/spicelib/devices/cap/capask.c,
+ * src/spicelib/devices/ind/indask.c:
+    add missing tc1 and tc2 parameter entries in ask function
+
+2013-11-02  dwarning <dwarning>
+ * src/spicelib/devices/cap/capask.c,
+ * src/spicelib/devices/ind/indask.c:
+    whitespaces
+
+2013-10-31  dwarning <dwarning>
+ * src/spicelib/devices/vbic/vbicdefs.h:
+    fix an overlap in parameter definitions
+
+2013-10-28  rlar <rlar>
+ * src/main.c:
+    cleanup getopt_long() options
+
+2013-07-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    read_a_lib(), drop call_depth, its always zero
+
+2013-07-31  rlar <rlar>
+ * src/frontend/inpcom.c:
+    expand_section_references(), drop call_depth, its always zero
+
+2013-08-04  rlar <rlar>
+ * src/frontend/inpcom.c:
+    harmonize delete_libs()
+
+2013-10-20  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/measure.c,
+ * src/frontend/numparam/spicenum.c,
+ * src/frontend/runcoms2.c:
+    bug reported by Yamamaya: revert deleting dicoS structure in inp.c and measure.c:
+    still to be used by 'listing param'
+    deletion moved to com_remcirc()
+
+2013-10-20  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: patch provided by Krzysztof Blaszkowski
+    Allow spaces like { token } during parameter substitution
+
+2013-10-20  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite, collapsing find_lib() into read_a_lib()
+
+2013-10-20  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: '$' as end-of-line comment delimiter outside of .control section, '$ ' inside of .control section, # untabify
+
+2013-10-20  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: '$' as end-of-line comment delimiter
+    outside of .control section,
+    '$ ' inside of .control section
+
+2013-10-19  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: allow special characters in function names
+
+2013-10-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: patch provided by Simon Chang: correct function name substitution #2
+
+2013-10-19  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: patch provided by Simon Chang: correct function name substitution
+
+2013-10-18  rlar <rlar>
+ * src/misc/string.c:
+    gettok_node(), use copy_substring()
+
+2013-10-13  Krzysztof Blaszkowski <kb@sysmikro.com.pl>
+ * src/misc/string.c:
+    gettok_node(), avoid segfault when *s == NULL
+
+2013-10-13  Krzysztof Blaszkowski <kb@sysmikro.com.pl>
+ * src/frontend/inpcom.c:
+    inpcom.c: avoid segfault when `TABLE' is used without parentheses
+
+2013-10-17  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_stripcomments_line(), drop support for '--' comment style
+
+    seems to be not common in the spice world,
+    and interferes too much with mathematical expressions like
+       {3--2}
+
+2013-10-13  Krzysztof Blaszkowski <kb@sysmikro.com.pl>
+ * src/frontend/signal_handler.c,
+ * src/main.c,
+ * src/sharedspice.c,
+ * src/tclspice.c:
+    execute ft_sigintr_cleanup() outside of the signal handler
+
+    to avoid execution of non-reentrant functions
+
+2013-10-13  Krzysztof Blaszkowski <kb@sysmikro.com.pl>
+ * src/frontend/signal_handler.c,
+ * src/frontend/signal_handler.h:
+    abstraction, introduce ft_sigintr_cleanup()
+
+2013-10-13  Krzysztof Blaszkowski <kb@sysmikro.com.pl>
+ * src/frontend/signal_handler.c:
+    ft_sigintr(), reorder, side effect: if `ft_setflag' then gr_clean() won't be invoked
+
+    and can't be invoked anyway
+      from inside of the signal handler
+
+2013-10-14  dwarning <dwarning>
+ * src/spicelib/devices/bjt/bjtdefs.h:
+    fix an overlap in parameter definitions
+
+2013-10-11  Krzysztof Blaszkowski <kblaszkowski>
+ * src/maths/ni/nipred.c:
+    nipred.c, cleanup
+
+2013-10-11  Krzysztof Blaszkowski <kblaszkowski>
+ * src/maths/ni/nipred.c:
+    nipred.c, bug fix NIpred() when running 'TRAPEZOIDAL'
+
+    a long standing serious bug, allready in the very first commit from
+      Date:   Thu Apr 27 20:03:57 2000 +0000
+
+    Nipred() after evaluating TRAPEZOIDAL case fell through into GEAR case.
+
+    see:
+      http://sourceforge.net/p/ngspice/support-requests/18/
+
+2013-10-10  rlar <rlar>
+ * src/frontend/inpcom.c:
+    revert, msvc doesn't support `#warning'
+
+2013-10-09  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: improved character check around 'temper'
+
+2013-10-08  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    numparm, fix pow() implementation
+
+2013-10-08  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    numparm, cleanup formula()
+
+2013-10-09  h_vogt <h_vogt>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c: add domain check for acosh, atanh replacement functions
+
+2013-10-08  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    numparm, cleanup rewrite formula()
+
+2013-10-08  h_vogt <h_vogt>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c: asinh, acosh, atanh replacement functions added
+
+2013-06-02  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, cleanup `maximize' operation
+
+2013-10-08  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, cleanup char index bistromatic
+
+2013-10-08  rlar <rlar>
+ * src/frontend/numparam/general.h,
+ * src/frontend/numparam/mystring.c,
+ * src/frontend/numparam/xpressn.c,
+ * src/include/ngspice/dstring.h,
+ * src/misc/dstring.c:
+    sprinkle some constness
+
+2013-10-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, use symbolic `state' constants
+
+2013-10-07  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, prepare
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, emphasize the inp_readall() tail processing
+
+2013-03-06  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, delete_libs() can use line_free_x() now
+
+2013-03-06  rlar <rlar>
+ * src/frontend/inp.c:
+    line_free_x(), prevent stack overflow due to non-trivial recursion
+
+2013-03-06  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, local scope for `ipc_status'
+
+2013-10-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str, pinpoint serious bugs
+
+2013-10-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str, use a local variable to improve readability
+
+2013-10-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str, use `copy_substring()'
+
+2013-10-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str, limit backward search
+
+2013-10-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str, cleanup
+
+2013-10-04  rlar <rlar>
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, tan, asin, acos, atan, asinh, acosh, atanh, pwr, tanh
+
+    add tan() asin() acos() atan() asinh() acosh() atanh()
+    rewrite pwr() and tanh()
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), rewrite
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_opening_paren(), rewrite
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_opening_paren(), cleanup
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_opening_paren(), static scope instead of local C99 scope
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), abstraction, new function inp_search_opening_paren()
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), local scope for str_ptr3
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    cleanup
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    cleanup
+
+2013-10-03  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: repeated call to inp_fix_ternary_operator_str
+    in inp_fix_ternary_operator, only lines beginning with .
+    selected, comments updated
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), rewrite using strchr()
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), finally fold them
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), rewrite, considering the assertion
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), increase similarity
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), rewrite
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), rewrite
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), rewrite
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), cleanup
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), drop found_paren, its always true
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), cleanup
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), cleanup
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_search_closing_paren(), static scope instead of local C99 scope
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), abstraction, new function inp_search_closing_paren()
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), prepare for abstraction
+
+2013-10-03  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_fix_ternary_operator_str(), local scope for `count'
+
+2013-10-02  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: hot fix for ternary function for numparam
+
+2013-10-02  rlar <rlar>
+ * src/tclspice.c:
+    use Tcl_SetObjResult() instead of poking into Tcl_Interp.result
+
+2013-10-01  rlar <rlar>
+ * src/frontend/outitf.c:
+    avoid `enumerated type mixed with another type' compiler warning
+
+2013-10-01  rlar <rlar>
+ * src/maths/sparse/spalloc.c:
+    avoid a `constant expression' compiler warning
+
+2013-10-01  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: some cleanups
+
+2013-10-01  rlar <rlar>
+ * src/frontend/control.c,
+ * src/main.c:
+    avoid `unreachable code' warnings
+
+2013-10-01  rlar <rlar>
+ * src/frontend/trannoise/FastNorm3.c:
+    FastNorm3.c, use int32_t for some 32 bit specific operations
+
+2013-10-01  rlar <rlar>
+ * src/xspice/evt/evtinit.c,
+ * src/xspice/mif/mifgetmod.c:
+    fix incorrect fprintf() usage
+
+2013-10-01  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug a memory leak, add some comments
+
+2013-09-30  dwarning <dwarning>
+ * src/frontend/com_fft.c:
+    remove unused variable sign
+
+2013-09-29  h_vogt <h_vogt>
+ * src/spicelib/parser/inp2m.c:
+    inp2m.c: plug memory leak
+
+2013-09-29  h_vogt <h_vogt>
+ * src/spicelib/parser/inp2m.c:
+    inp2m.c: indentation
+
+2013-09-29  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug two memory leaks
+
+2013-09-25  h_vogt <h_vogt>
+ * src/sharedspice.c,
+ * src/spicelib/analysis/dctran.c:
+    dctran.c, sharedspice.c: function sharedsync has modified parameter list
+
+2013-09-16  dwarning <dwarning>
+ * src/spicelib/devices/cap/capparam.c,
+ * src/spicelib/devices/dio/dioparam.c,
+ * src/spicelib/devices/res/resparam.c:
+    allow geometry scaling by option `scale'
+
+2013-09-16  dwarning <dwarning>
+ * src/spicelib/devices/cpl/cplload.c:
+    index `i' was definitively overwritten
+
+2013-09-15  dwarning <dwarning>
+ * examples/TransmissionLines/cpl_ibm3.sp:
+    suppress a warning by inserting the default diode model
+
+2013-09-14  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: exclude command 'echo' and some others
+    from lower case letter transformation
+
+2013-09-14  h_vogt <h_vogt>
+ * src/frontend/numparam/numparam.h,
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c, numparam.h: fcn del_attrib with void* argument,
+    required by nghash_free()
+
+2013-09-14  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: move delete_libs to a safer place outside of recursions
+
+2013-09-14  dwarning <dwarning>
+ * src/spicelib/devices/bsim4/b4par.c,
+ * src/spicelib/devices/bsimsoi/b4soipar.c,
+ * src/spicelib/devices/hisim2/hsm2par.c,
+ * src/spicelib/devices/hisimhv1/hsmhvpar.c,
+ * src/spicelib/devices/mos1/mos1par.c,
+ * src/spicelib/devices/mos2/mos2par.c,
+ * src/spicelib/devices/mos3/mos3par.c:
+    allow geometry scaling by option `scale'
+
+2013-09-14  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: add fcn delete_libs to free libraries[]
+
+2013-09-13  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug memory leak
+
+2013-09-12  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_expand_macro_in_str() needs recursive invocation to expand macros
+
+2013-09-12  rlar <rlar>
+ * src/frontend/inpcom.c:
+    counteract the tfree(macro_str) introduced in 'inpcom.c: plug memory leaks'
+
+    this one:
+    commit 810f72f850f8177275f17fc635d97b71b911ec0d
+    Author: h_vogt <h_vogt>
+    Date:   Sun Sep 8 13:01:26 2013 +0200
+
+        inpcom.c: plug memory leaks
+
+2013-09-11  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: fix a bug in ternary function
+
+2013-09-11  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: cleanup
+
+2013-09-10  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: further inprovement of 'temper', but still not there: problem with replacement of .func (nesting?)
+
+2013-09-11  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: dynamic array size in `inp_split_multi_param_lines()'
+
+2013-09-08  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: remove name_buf length limitation
+
+2013-09-08  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c:
+    inp.c, inpcom.c: improved debug printout debug-outx.txt
+
+2013-09-08  h_vogt <h_vogt>
+ * src/spicelib/parser/inp2m.c:
+    inp2m.c: plug a small memory leak
+
+2013-09-08  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug memory leaks
+
+2013-09-08  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug a memory leak
+
+2013-09-07  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: `rewrite expand_section_references()'
+
+2013-09-07  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: fix huge memory leak during library handling
+
+2013-09-07  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug memory leak
+
+2013-09-05  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: patch by Simon Chang added, severe trash code identified, to be repaired.
+
+2013-09-05  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: comment added
+
+2013-09-05  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: inp_parse_temper(), plug memory leak
+
+2013-09-05  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: simplify a condition in `inp_fix_for_numparam()'
+
+2013-09-05  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: modify only subckt used
+
+2013-09-04  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: plug memory leaks in new TEMPER code
+
+2013-09-04  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/spicelib/analysis/dctrcurv.c:
+    allow 'temper' keyword in .param, .model and device instance lines
+
+    inpcom.c: fcns inp_fix_temper_in_param(), inp_new_func(), inp_rem_func()
+      to convert .param with 'temper' to .func, and replace all affected
+      parameter tokens xxx by their func counterpart xxx()
+
+    inpcom.c; fcns inp_temper_compat(), inp_modify_exp() added
+      to prepare expression with 'temper' for numparam
+
+    inp.c: fcns inp_parse_temper(), inp_parse_temper_trees() added
+
+    inp_evaluate_temper()
+      to prepare, parse and evaluate the expressions containing 'temper'
+
+    cktdefs.h: add global variable to expressions with 'temper'
+
+    dctrcurv.c: add fcn inp_evaluate_temper()
+       when temp has changed
+
+2013-09-03  h_vogt <h_vogt>
+ * src/include/ngspice/inpdefs.h,
+ * src/spicelib/parser/inperrc.c:
+    inperrc.c: new function `INPstrCat()' to concatenate two strings
+
+2013-08-31  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: debug printout to debug-out.txt improved
+
+2013-08-31  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: update some comments
+
+2013-08-27  dwarning <dwarning>
+ * src/frontend/com_fft.c:
+    com_psd(), reuse the window function `fft_windows()'
+
+2013-08-27  dwarning <dwarning>
+ * src/frontend/com_fft.c,
+ * src/frontend/inpcom.c:
+    cleanup some compiler warnings
+
+2013-08-27  dwarning <dwarning>
+ * src/frontend/variable.c,
+ * src/include/ngspice/cpextern.h:
+    allow cshell $variable substitution with and without $&var
+
+2013-08-27  h_vogt <h_vogt>
+ * src/spicelib/parser/inperrc.c:
+    inperrc.c: comments added, white spaces
+
+2013-08-27  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: comments added
+
+2013-08-26  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c,
+ * src/spicelib/analysis/dctran.c:
+    dctran.c, runcoms2.c: shared ngspice: remove plot data upon 'bg_halt' and 'remcirc'
+
+2013-08-25  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: improve progress analysis
+
+2013-08-25  h_vogt <h_vogt>
+ * src/frontend/misccoms.c:
+    misccoms.c: add more deleting function in 'quit' for shared ngspice
+
+2013-08-24  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c:
+    runcoms2.c: remove ci_options upon remcirc
+
+2013-08-24  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c:
+    runcoms2.c: plug memory leak during remcirc
+
+2013-08-24  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim4/b4dest.c,
+ * src/spicelib/devices/bsim4/b4set.c:
+    BSIM 4.7.0 plug memory leak during remcirc
+
+2013-08-24  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim3v32/b3v32dest.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c:
+    BSIM 3.2.4 plug memory leak during remcirc
+
+2013-08-24  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim3/b3dest.c,
+ * src/spicelib/devices/bsim3/b3set.c:
+    BSIM 3.3.0 plug memory leak during remcirc
+
+2013-08-21  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c:
+    runcoms2.c: plug memory leak during 'remcirc'
+
+2013-08-21  h_vogt <h_vogt>
+ * src/frontend/outitf.c:
+    outitf.c: plug memory leak
+
+2013-08-21  h_vogt <h_vogt>
+ * src/frontend/numparam/numparam.h,
+ * src/frontend/numparam/spicenum.c,
+ * src/frontend/numparam/xpressn.c:
+    spicenum.c, xpressn.c: plug setup memory leak
+
+    by adding user defined delete function for hash table entries
+
+2013-08-21  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c:
+    runcoms2.c: plug setup memory leak
+
+2013-08-20  h_vogt <h_vogt>
+ * src/spicelib/devices/isrc/isrcdest.c,
+ * src/spicelib/devices/vsrc/vsrcdest.c:
+    vsrcdest.c, isrcdest.c: fix memory leak by freeing VSRCcoeffs, ISRCcoeffs
+
+2013-08-20  dwarning <dwarning>
+ * src/frontend/parse.c,
+ * src/include/ngspice/fteext.h,
+ * src/maths/cmaths/cmath1.c,
+ * src/maths/cmaths/cmath1.h:
+    introduce `cx_sortorder()' function
+
+2013-08-20  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c:
+    runcoms2.c: set freed pointers to NULL
+
+2013-08-20  h_vogt <h_vogt>
+ * src/frontend/breakp2.c:
+    breakp2.c: plug some tiny memory leaks
+
+2013-08-20  h_vogt <h_vogt>
+ * src/frontend/breakp.c:
+    breakp.c: repair nonworking function dbfree()
+
+2013-08-20  h_vogt <h_vogt>
+ * src/frontend/dotcards.c:
+    dotcards.c: plug some memory leaks
+
+2013-08-19  h_vogt <h_vogt>
+ * src/frontend/numparam/spicenum.c:
+    spicenum.c: fix memory leak completely
+
+2013-08-19  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/measure.c,
+ * src/frontend/numparam/numpaif.h,
+ * src/frontend/numparam/spicenum.c:
+    remove memory leak freeing dicoS
+
+    reported by Jonathan Knott
+
+2013-08-15  dwarning <dwarning>
+ * src/frontend/parse.c,
+ * src/include/ngspice/fteext.h,
+ * src/maths/cmaths/cmath1.c,
+ * src/maths/cmaths/cmath1.h:
+    introduce unwrap, minimum and maximum function
+
+2013-08-15  dwarning <dwarning>
+ * src/sharedspice.c:
+    fix a bug on spurious output to console during fprintf reported by Evan Lavelle
+
+2013-08-15  dwarning <dwarning>
+ * src/maths/cmaths/cmath4.c:
+    preserve vector length for fft by interpolation, window by default: none
+
+2013-08-11  h_vogt <h_vogt>
+ * tests/bin/check.sh:
+    apply patch `#17 Enable regression tests on OpenBSD'
+
+    provided by Anthony J. Bentley on
+    http://sourceforge.net/p/ngspice/patches/17/
+
+2013-08-10  h_vogt <h_vogt>
+ * src/include/ngspice/sharedspice.h,
+ * src/sharedspice.c:
+    sharedspice.c: modified callback interface
+
+    enhanced function ngSpice_Init_Sync()
+    three new callback functions for synchronization
+
+2013-08-10  h_vogt <h_vogt>
+ * src/spicelib/analysis/dctran.c:
+    dctran.c: synchronization option for shared library
+
+2013-08-10  h_vogt <h_vogt>
+ * src/spicelib/devices/isrc/isrc.c,
+ * src/spicelib/devices/isrc/isrcacct.c,
+ * src/spicelib/devices/isrc/isrcdefs.h,
+ * src/spicelib/devices/isrc/isrcload.c,
+ * src/spicelib/devices/isrc/isrcpar.c:
+    devices/isrc: EXTERNAL option for independent current source ISRC
+
+2013-08-06  dwarning <dwarning>
+ * src/frontend/evaluate.c,
+ * src/frontend/parse.c,
+ * src/include/ngspice/fteext.h,
+ * src/maths/cmaths/cmath4.c,
+ * src/maths/cmaths/cmath4.h:
+    fft and ifft as vector functions
+
+2013-08-09  dwarning <dwarning>
+ * src/include/ngspice/fftext.h,
+ * src/maths/fft/fftext.c:
+    fix type of length in fft window function
+
+2013-08-05  dwarning <dwarning>
+ * src/maths/cmaths/cmath4.c:
+    whitespace
+
+2013-08-03  dwarning <dwarning>
+ * src/maths/fft/fftext.c:
+    specific MS adaption
+
+2013-08-03  dwarning <dwarning>
+ * src/frontend/com_fft.c,
+ * src/include/ngspice/fftext.h,
+ * src/maths/fft/fftext.c:
+    move the `fft_windows()' function to fft/fftext.c
+
+2013-07-30  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite .subckt parameter processing
+
+2013-07-30  rlar <rlar>
+ * src/frontend/parser/lexical.c,
+ * src/frontend/variable.c:
+    fix the csh-problem $foo[$bar] and $foo[$&baz]
+
+2013-07-30  rlar <rlar>
+ * src/frontend/parser/backq.c,
+ * src/frontend/variable.c:
+    cp_variablesubst() and cp_bquote(), rewrite
+
+2013-07-30  rlar <rlar>
+ * src/frontend/parser/backq.c,
+ * src/frontend/variable.c:
+    cp_variablesubst() and cp_bquote(), rewrite
+
+2013-07-28  rlar <rlar>
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inpdoopt.c:
+    whitespace
+
+2013-07-28  rlar <rlar>
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/fteext.h,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inpapnam.c,
+ * src/spicelib/parser/inpdoopt.c:
+    ft_find_analysis_parm(), change signature
+
+2013-07-28  rlar <rlar>
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inpapnam.c,
+ * src/spicelib/parser/inpdoopt.c:
+    use type `IFparm' to abbreviate some expressions
+
+2013-07-28  rlar <rlar>
+ * src/frontend/spiceif.c:
+    if_getstat(), rewrite
+
+2013-07-27  rlar <rlar>
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/fteext.h,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inpapnam.c,
+ * src/spicelib/parser/inpdoopt.c:
+    abstraction, new function `ft_find_analysis_parm()'
+
+2013-07-27  rlar <rlar>
+ * src/frontend/shyu.c,
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/fteext.h,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inpdoopt.c:
+    abstraction, new function `ft_find_analysis()'
+
+2013-07-27  h_vogt <h_vogt>
+ * src/frontend/numparam/xpressn.c:
+    bug fix, `#248 Subcircuit call cannot have a node with same name as the subcircuit'
+
+    reported by  Henrik Forstén
+    http://sourceforge.net/p/ngspice/bugs/248/
+
+2013-07-27  h_vogt <h_vogt>
+ * BUGS:
+    ./BUGS, update the list of known bugs
+
+2013-07-26  h_vogt <h_vogt>
+ * src/spicelib/devices/vsrc/vsrc.c:
+    bug fix, `#250 "<<NAN, error = 7>>" in op analysis'
+
+    http://sourceforge.net/p/ngspice/bugs/250/
+
+2013-07-24  rlar <rlar>
+ * src/frontend/com_measure2.c,
+ * src/frontend/com_sysinfo.c,
+ * src/frontend/spiceif.c,
+ * src/maths/ni/niiter.c,
+ * src/sharedspice.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/devices/cktinit.c,
+ * src/spicelib/parser/inpgmod.c:
+    cleanup some extra parentheses
+
+2013-07-24  rlar <rlar>
+ * src/frontend/control.c,
+ * src/spicelib/analysis/cktsens.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/devices/asrc/asrcconv.c,
+ * src/spicelib/devices/mos3/mos3dset.c,
+ * src/spicelib/devices/mos9/mos9dset.c,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inpapnam.c:
+    cleanup some line wraps
+
+2013-07-24  rlar <rlar>
+ * src/spicelib/parser/inpdoopt.c:
+    inpdoopt.c, bug fix, `i' incremented twice when searching for "options"
+
+2013-07-20  rlar <rlar>
+ * src/spicelib/parser/inpdomod.c:
+    minor, prepare for automatic indentation
+
+2013-07-20  rlar <rlar>
+ * src/ciderlib/input/boundary.c,
+ * src/ciderlib/input/contact.c,
+ * src/ciderlib/input/domain.c,
+ * src/ciderlib/input/doping.c,
+ * src/ciderlib/input/dopset.c,
+ * src/ciderlib/input/electrod.c,
+ * src/ciderlib/input/material.c,
+ * src/ciderlib/input/mesh.c,
+ * src/ciderlib/input/method.c,
+ * src/ciderlib/input/mobility.c,
+ * src/ciderlib/input/models.c,
+ * src/ciderlib/input/optionsc.c,
+ * src/ciderlib/input/output.c,
+ * src/include/ngspice/numcards.h,
+ * src/spicelib/parser/inpgmod.c:
+    ciderlib, proper types for newCard(), setCardParm(), askCardQuest()
+
+2013-07-18  rlar <rlar>
+ * src/ciderlib/input/bdryset.c,
+ * src/ciderlib/input/contset.c,
+ * src/ciderlib/input/domnset.c,
+ * src/ciderlib/input/dopset.c,
+ * src/ciderlib/input/elctset.c,
+ * src/ciderlib/input/matlset.c,
+ * src/ciderlib/input/meshset.c,
+ * src/ciderlib/input/mobset.c,
+ * src/ciderlib/input/modlset.c,
+ * src/ciderlib/input/outpset.c,
+ * src/ciderlib/oned/oneadmit.c,
+ * src/ciderlib/oned/onecond.c,
+ * src/ciderlib/oned/onecont.c,
+ * src/ciderlib/oned/onedopng.c,
+ * src/ciderlib/oned/onemesh.c,
+ * src/ciderlib/oned/oneproj.c,
+ * src/ciderlib/oned/onesetup.c,
+ * src/ciderlib/oned/onesolve.c,
+ * src/ciderlib/support/geominfo.c,
+ * src/ciderlib/support/globals.c,
+ * src/ciderlib/support/mater.c,
+ * src/ciderlib/support/suprem.c,
+ * src/ciderlib/twod/twoadmit.c,
+ * src/ciderlib/twod/twoaval.c,
+ * src/ciderlib/twod/twocond.c,
+ * src/ciderlib/twod/twocont.c,
+ * src/ciderlib/twod/twocurr.c,
+ * src/ciderlib/twod/twodopng.c,
+ * src/ciderlib/twod/twoelect.c,
+ * src/ciderlib/twod/twofield.c,
+ * src/ciderlib/twod/twomesh.c,
+ * src/ciderlib/twod/twoncont.c,
+ * src/ciderlib/twod/twopcont.c,
+ * src/ciderlib/twod/twoprint.c,
+ * src/ciderlib/twod/twoproj.c,
+ * src/ciderlib/twod/tworead.c,
+ * src/ciderlib/twod/twosetbc.c,
+ * src/ciderlib/twod/twosetup.c,
+ * src/ciderlib/twod/twosolve.c,
+ * src/include/ngspice/macros.h,
+ * src/spicelib/devices/nbjt/nbjtset.c,
+ * src/spicelib/devices/nbjt/nbjttemp.c,
+ * src/spicelib/devices/nbjt2/nbt2set.c,
+ * src/spicelib/devices/nbjt2/nbt2temp.c,
+ * src/spicelib/devices/ndev/ndevset.c,
+ * src/spicelib/devices/ndev/ndevtemp.c,
+ * src/spicelib/devices/numd/numdset.c,
+ * src/spicelib/devices/numd/numdtemp.c,
+ * src/spicelib/devices/numd2/nud2set.c,
+ * src/spicelib/devices/numd2/nud2temp.c,
+ * src/spicelib/devices/numos/nummset.c,
+ * src/spicelib/devices/numos/nummtemp.c:
+    drop `NIL' macro
+
+2013-07-16  rlar <rlar>
+ * src/include/ngspice/memory.h,
+ * src/spicelib/parser/inppas3.c:
+    memory.h, polish macros
+
+2013-07-18  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/misc/dstring.c:
+    dstring_append_char(), rewrite
+
+2013-07-17  rlar <rlar>
+ * src/spicelib/analysis/cktmcrt.c:
+    CKTmodCrt(), cleanup
+
+2013-07-17  rlar <rlar>
+ * src/spicelib/analysis/cktmcrt.c:
+    CKTmodCrt(), cleanup, always assign to `*modfast'
+
+    for all invocations of CKTmodCrt() alias newModel()
+    the following is true
+       (modfast != NULL) && (*modfast == NULL)
+    see
+        (grep "git --no-pager grep -nH -e 'CKTmodCrt\\|newModel'")
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/inpdefs.h,
+ * src/spicelib/parser/inpgmod.c,
+ * src/spicelib/parser/inpmkmod.c,
+ * src/xspice/mif/mifgetmod.c:
+    drop `INPmodUsed' which is redundant to `INPmodfast'
+
+2013-07-07  rlar <rlar>
+ * src/spicelib/analysis/cktdltm.c:
+    nghash_delete() models and instances in CKTdltMod()
+
+2013-07-17  rlar <rlar>
+ * src/tclspice.c:
+    CKTfndMod(), cleanup
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), cleanup
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/cktfndm.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), drop unused arguments `type' and `modfast'
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/spicelib/analysis/cktdest.c,
+ * src/spicelib/analysis/cktfndm.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/cktinit.c:
+    CKTfndMod(), use a hashtable
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), cleanup
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/cktfndm.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), dont pass the `type' argument by reference any more
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c:
+    CKTfndMod(), cleanup
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), unuse the `type' argument
+
+2013-07-17  rlar <rlar>
+ * src/spicelib/analysis/cktfndm.c:
+    CKTfndMod(), this wont happen any more and `*type' will be overwritten anyway
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c:
+    CKTfndMod(), rewrite error expressions
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/cktfndm.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), return the found model instead of error code
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), express error return value outside of this function
+
+2013-07-17  rlar <rlar>
+ * src/spicelib/analysis/cktfndm.c:
+    CKTfndMod(), this will never happen, when this series of rewrites is finished
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/cktmcrt.c,
+ * src/spicelib/devices/urc/urcsetup.c,
+ * src/tclspice.c:
+    CKTfndMod(), assert some facts
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktfinddev.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), cleanup
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/cktfinddev.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), drop `type' and `fast' argument
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), rewrite invocations where `*fast == NULL'
+
+2013-07-17  rlar <rlar>
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c:
+    CKTfndDev(), rewrite invocations where `type == NULL'
+
+2013-07-04  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), unuse the type argument
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), rewrite error expressions
+
+2013-07-04  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/cktfinddev.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), return the found instance instead of error code
+
+    now if (fast != NULL)
+      CKTfndDev(,,fast, )
+    is equivalent to
+      *fast = CKTfndDev(,,fast, )
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), express error return value outside of this function
+
+    if (fast != NULL) then
+         err = CKTfndDev(,, fast, );
+    is equivalent to
+         err = CKTfndDev(,, fast, );
+         err = *fast ? OK : E_NODEV;
+
+2013-07-17  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), assert some facts
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/ind/mutsetup.c:
+    CKTfndDev(), unuse `type' argument
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktcrte.c:
+    CKTfndDev(), cleanup usage of `type' argument
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/ind/mutsetup.c:
+    CKTfndDev(), cleanup usage of impossible error codes
+
+2013-06-30  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/cktfinddev.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), drop unused argument `modfast'
+
+2013-07-17  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), rewrite
+
+2013-07-17  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/include/ngspice/cktdefs.h,
+ * src/spicelib/analysis/cktdest.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/cktfinddev.c,
+ * src/spicelib/devices/cktinit.c:
+    CKTfndDev(), use a hashtable to speed up this function
+
+2013-07-16  h_vogt <h_vogt>
+ * src/frontend/subckt.c:
+    subckt.c: `A' device , no special translation when nodename starts with `v'
+
+2013-07-14  rlar <rlar>
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c:
+    simplify #ifdef nesting #4/4
+
+2013-07-14  rlar <rlar>
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c:
+    simplify #ifdef nesting #3/4
+
+2013-07-14  rlar <rlar>
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c:
+    simplify #ifdef nesting #2/4
+
+2013-07-14  rlar <rlar>
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c:
+    simplify #ifdef nesting #1/4
+
+2013-07-14  h_vogt <h_vogt>
+ * src/include/ngspice/sharedspice.h,
+ * src/sharedspice.c:
+    sharedspice.c, .h: fcn to initialize Sync, fcn to set breakpoint, callback fcn to read vsrc external inputs
+
+2013-07-14  h_vogt <h_vogt>
+ * src/spicelib/analysis/dctran.c:
+    shared ngspice, dctran.c fcn to add breakpoints
+
+2013-07-14  h_vogt <h_vogt>
+ * src/spicelib/devices/vsrc/vsrc.c,
+ * src/spicelib/devices/vsrc/vsrcacct.c,
+ * src/spicelib/devices/vsrc/vsrcdefs.h,
+ * src/spicelib/devices/vsrc/vsrcload.c,
+ * src/spicelib/devices/vsrc/vsrcpar.c:
+    shared ngspice: external voltage source
+
+2013-07-14  rlar <rlar>
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktsens.c,
+ * src/spicelib/analysis/distoan.c,
+ * src/spicelib/analysis/noisean.c:
+    cleanup OUTattributes() invocations
+
+    checked for object file invariance
+
+2013-07-14  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktmapn.c,
+ * src/spicelib/analysis/cktmkcur.c,
+ * src/spicelib/analysis/cktmkvol.c,
+ * src/spicelib/analysis/cktnoise.c,
+ * src/spicelib/analysis/cktsens.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/analysis/distoan.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/pzan.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/parser/inp2c.c,
+ * src/spicelib/parser/inp2d.c,
+ * src/spicelib/parser/inp2j.c,
+ * src/spicelib/parser/inp2l.c,
+ * src/spicelib/parser/inp2o.c,
+ * src/spicelib/parser/inp2r.c,
+ * src/spicelib/parser/inp2s.c,
+ * src/spicelib/parser/inp2u.c,
+ * src/spicelib/parser/inp2w.c,
+ * src/spicelib/parser/inp2z.c:
+    cleanup IFnewUid() invocations
+
+    checked for object file invariance
+
+2013-07-14  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktsens.c,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/analysis/distoan.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/pzan.c,
+ * src/spicelib/analysis/tfanal.c:
+    cleanup OUTpBeginPlot() invocations
+
+    checked for object file invariance
+
+2013-07-14  rlar <rlar>
+ * src/maths/sparse/spsmp.c,
+ * src/spicelib/parser/ifeval.c,
+ * src/xspice/icm/xtradev/potentiometer/cfunc.mod:
+    cleanup stuttered semicolon
+
+2013-07-14  rlar <rlar>
+ * src/spicelib/analysis/noisean.c:
+    noisean.c, cleanup comment
+
+2013-07-14  rlar <rlar>
+ * src/include/ngspice/inpmacs.h:
+    polish `PARSECALL' macro
+
+    checked for object file invariance
+
+2013-07-14  rlar <rlar>
+ * src/include/ngspice/inpmacs.h,
+ * src/spicelib/parser/inp2d.c,
+ * src/spicelib/parser/inp2m.c,
+ * src/spicelib/parser/inp2p.c,
+ * src/spicelib/parser/inp2q.c,
+ * src/spicelib/parser/inp2y.c,
+ * src/spicelib/parser/inp2z.c,
+ * src/spicelib/parser/inppas3.c:
+    polish `LITERR' macro
+
+    checked for object file invariance
+
+2013-07-14  rlar <rlar>
+ * src/include/ngspice/inpmacs.h,
+ * src/spicelib/parser/inp2dot.c,
+ * src/spicelib/parser/inp2p.c,
+ * src/spicelib/parser/inp2r.c,
+ * src/spicelib/parser/inp2y.c:
+    polish `GCA' macro
+
+    checked for object file invariance
+
+2013-07-14  rlar <rlar>
+ * src/include/ngspice/inpmacs.h,
+ * src/spicelib/parser/inp2m.c,
+ * src/spicelib/parser/inp2p.c,
+ * src/spicelib/parser/inp2y.c,
+ * src/spicelib/parser/inppas3.c,
+ * src/xspice/mif/mif_inp2.c:
+    polish `IFC' macro
+
+    checked for object file invariance,
+    different code for inppas3.c, seems to be ok
+
+2013-07-14  rlar <rlar>
+ * src/include/ngspice/macros.h,
+ * src/spicelib/analysis/pzan.c:
+    polish `MERROR' macro
+
+    checked for object file invariance
+
+2013-07-12  h_vogt <h_vogt>
+ * src/misc/misc_time.c,
+ * src/misc/misc_time.h:
+    misc_time.c: make timediff always availabe when timeb.h is found
+
+2013-07-07  dwarning <dwarning>
+ * src/spicelib/parser/inp2y.c:
+    inp2y.c, TXL bug fix
+
+    reported by John Reuben P on the ngspice-users mailing list
+    need to insert instance names into the symbol table with INPinsert()
+
+2013-06-30  rlar <rlar>
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/cktdefs.h,
+ * src/include/ngspice/ifsim.h,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/cktcrte.c,
+ * src/spicelib/devices/cktfinddev.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/tclspice.c,
+ * src/unsupported/snstart.c:
+    CKTfndDev(), drop unused argument `modname' which is always NULL
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/analysis/tfanal.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/parser/inpaname.c,
+ * src/unsupported/snstart.c:
+    cleanup CKTfndDev(), findInstance() invocation
+
+2013-06-30  rlar <rlar>
+ * src/frontend/spiceif.c:
+    unify, use `ckt' instead of `ck'
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), #6/6, cleanup
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), #5/6, cleanup
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), #4/6, cleanup
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), #3/6, cleanup
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), #2/6, cleanup
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    CKTfndDev(), #1/6, whitespace
+
+2013-06-30  rlar <rlar>
+ * src/spicelib/devices/cktfinddev.c:
+    abstraction, new function `find_instance()'
+
+2013-06-29  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/frontend/numparam/spicenum.c:
+    numparm, speedup modernizeex() for the common case
+
+2013-06-29  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/spicelib/parser/inp2c.c,
+ * src/spicelib/parser/inp2i.c,
+ * src/spicelib/parser/inp2l.c,
+ * src/spicelib/parser/inp2r.c,
+ * src/spicelib/parser/inp2v.c:
+    search just once for basic device types
+
+2013-06-29  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/frontend/inpcom.c:
+    inpcom.c: fix "sytax" spelling
+
+2013-06-27  dwarning <dwarning>
+ * src/frontend/inpcom.c:
+    allow format like .5 in b-sources
+
+2013-06-25  dwarning <dwarning>
+ * src/spicelib/devices/mos1/mos1temp.c,
+ * src/spicelib/devices/mos2/mos2temp.c,
+ * src/spicelib/devices/mos3/mos3temp.c,
+ * src/spicelib/devices/mos6/mos6temp.c,
+ * src/spicelib/devices/mos9/mos9temp.c:
+    devices/mos*: prevent NaN in sqrt for negative value of model parameter `PHI'
+
+2013-06-24  Henrik Forstén <henrik.forsten@gmail.com>
+ * src/maths/misc/equality.c:
+    rewrite AlmostEqualUlps() to avoid compiler warnings concerning `strict-aliasing'
+
+2013-06-23  Henrik Forstén <ttla>
+ * src/spicelib/parser/inpsymt.c:
+    inpsymt.c, use "Daniel J. Bernstein" hash function
+
+    instead of a simple sum.
+
+    just for note,
+    there is a wealth of newer hash functions.
+
+    For example "The FNV Non-Cryptographic Hash Algorithm"
+    from http://tools.ietf.org/html/draft-eastlake-fnv-03
+
+2013-06-22  rlar <rlar>
+ * src/spicelib/analysis/cktmknod.c:
+    avoid `(IFuid) 0' cast
+
+2013-06-22  rlar <rlar>
+ * src/spicelib/analysis/cktsgen.c:
+    convert K&R function definitions to ansi style
+
+2013-06-15  rlar <rlar>
+ * src/spicelib/analysis/cktpzstr.c:
+    fix for automatic indention
+
+    this part of
+
+    > commit f9144f90b3e121ec866bf437e95ebf7aa8aa890e
+    > Author: pnenzi <pnenzi>
+    > Date:   Tue May 23 20:04:32 2000 +0000
+    >
+    >     Applied Widlok patch
+
+    is hostile to automatic indention
+
+2013-06-21  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: preliminary fixes: ftime() usage, prevent crash if controlled_exit from worker thread
+
+2013-06-09  dwarning <dwarning>
+ * src/spicelib/devices/res/res.c,
+ * src/spicelib/devices/res/resdefs.h,
+ * src/spicelib/devices/res/resmask.c,
+ * src/spicelib/devices/res/resmpar.c,
+ * src/spicelib/devices/res/resparam.c,
+ * src/spicelib/devices/res/restemp.c:
+    devices/res: use model parameter `r' and `res' as default for instances w/o value
+
+    and set minimal resistor value to 1 mOhm
+
+2013-06-09  dwarning <dwarning>
+ * src/spicelib/devices/res/resmask.c,
+ * src/spicelib/devices/res/resmpar.c,
+ * src/spicelib/devices/res/resparam.c:
+    devices/res: whitespace cleanup
+
+2013-06-09  h_vogt <h_vogt>
+ * src/maths/ni/nicomcof.c:
+    nicomcof.c: xmu used to calculate trap integration coefficient
+
+2013-06-09  h_vogt <h_vogt>
+ * src/spicelib/analysis/cktop.c:
+    cktop.c: indentation
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, whitespace
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, use strchr(,'\0')
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, use better skip_back functions
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite `chk_for_line_continuation()'
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, introduce better skip_back functions
+
+2013-06-08  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, minor cleanup
+
+2013-06-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite `inp_fix_param_values()'
+
+2013-06-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-06-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup `inp_add_params_to_subckt()'
+
+2013-06-07  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, minor rewrites
+
+2013-06-06  rlar <rlar>
+ * src/spicelib/devices/asrc/asrcset.c,
+ * src/spicelib/devices/bjt/bjtsetup.c,
+ * src/spicelib/devices/bsim1/b1set.c,
+ * src/spicelib/devices/bsim2/b2set.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3soi_dd/b3soiddset.c,
+ * src/spicelib/devices/bsim3soi_fd/b3soifdset.c,
+ * src/spicelib/devices/bsim3soi_pd/b3soipdset.c,
+ * src/spicelib/devices/bsim3v0/b3v0set.c,
+ * src/spicelib/devices/bsim3v1/b3v1set.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4v4/b4v4set.c,
+ * src/spicelib/devices/bsim4v5/b4v5set.c,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsimsoi/b4soiset.c,
+ * src/spicelib/devices/cap/capsetup.c,
+ * src/spicelib/devices/cccs/cccsset.c,
+ * src/spicelib/devices/ccvs/ccvsset.c,
+ * src/spicelib/devices/cpl/cplsetup.c,
+ * src/spicelib/devices/csw/cswsetup.c,
+ * src/spicelib/devices/dio/diosetup.c,
+ * src/spicelib/devices/hfet1/hfetsetup.c,
+ * src/spicelib/devices/hfet2/hfet2setup.c,
+ * src/spicelib/devices/hisim2/hsm2set.c,
+ * src/spicelib/devices/hisimhv1/hsmhvset.c,
+ * src/spicelib/devices/ind/indsetup.c,
+ * src/spicelib/devices/ind/mutsetup.c,
+ * src/spicelib/devices/jfet/jfetset.c,
+ * src/spicelib/devices/jfet2/jfet2set.c,
+ * src/spicelib/devices/ltra/ltraset.c,
+ * src/spicelib/devices/mes/messetup.c,
+ * src/spicelib/devices/mesa/mesasetup.c,
+ * src/spicelib/devices/mos1/mos1set.c,
+ * src/spicelib/devices/mos2/mos2set.c,
+ * src/spicelib/devices/mos3/mos3set.c,
+ * src/spicelib/devices/mos6/mos6set.c,
+ * src/spicelib/devices/mos9/mos9set.c,
+ * src/spicelib/devices/nbjt/nbjtset.c,
+ * src/spicelib/devices/nbjt2/nbt2set.c,
+ * src/spicelib/devices/ndev/ndevset.c,
+ * src/spicelib/devices/numd/numdset.c,
+ * src/spicelib/devices/numd2/nud2set.c,
+ * src/spicelib/devices/numos/nummset.c,
+ * src/spicelib/devices/res/ressetup.c,
+ * src/spicelib/devices/soi3/soi3set.c,
+ * src/spicelib/devices/sw/swsetup.c,
+ * src/spicelib/devices/tra/trasetup.c,
+ * src/spicelib/devices/txl/txlsetup.c,
+ * src/spicelib/devices/vbic/vbicsetup.c,
+ * src/spicelib/devices/vccs/vccsset.c,
+ * src/spicelib/devices/vcvs/vcvsset.c,
+ * src/spicelib/devices/vsrc/vsrcpzs.c,
+ * src/spicelib/devices/vsrc/vsrcset.c,
+ * src/xspice/mif/mifsetup.c:
+    rewrite `TSTALLOC()' macro for auto indentation
+
+    checked for object code invariance
+
+2013-06-05  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: skip title line when searching for .if in dotifeval()
+
+2013-06-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, new function `find_assignment()'
+
+2013-06-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-06-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, new function inp_split_multi_param_lines()
+
+2013-06-05  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup `inp_split_multi_param_lines()'
+
+2013-06-03  dwarning <dwarning>
+ * src/spicelib/devices/bsim4/b4.c,
+ * src/spicelib/devices/bsim4/b4mask.c,
+ * src/spicelib/devices/bsim4/b4mpar.c,
+ * src/spicelib/devices/bsim4/b4set.c,
+ * src/spicelib/devices/bsim4/bsim4def.h,
+ * src/spicelib/devices/bsim4v5/b4v5.c,
+ * src/spicelib/devices/bsim4v5/b4v5mask.c,
+ * src/spicelib/devices/bsim4v5/b4v5mpar.c,
+ * src/spicelib/devices/bsim4v5/b4v5set.c,
+ * src/spicelib/devices/bsim4v5/bsim4v5def.h,
+ * src/spicelib/devices/bsim4v6/b4v6.c,
+ * src/spicelib/devices/bsim4v6/b4v6mask.c,
+ * src/spicelib/devices/bsim4v6/b4v6mpar.c,
+ * src/spicelib/devices/bsim4v6/b4v6set.c,
+ * src/spicelib/devices/bsim4v6/bsim4v6def.h:
+    add `rgeomod' as model parameter for bsim4
+
+2013-06-02  dwarning <dwarning>
+ * src/spicelib/parser/inpptree.c:
+    parser/*.c: correct the `pwr' derivative
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, local scope for `newcard'
+
+2013-06-02  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: G source, fix a bug and add `m' to TABLE
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite `append' of some decks
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop unused assignment
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite deck allocation
+
+2013-06-02  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, local scope for some vars
+
+2013-06-02  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: multiplier `m' for behavioral G source
+
+2013-06-01  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c:
+    inp.c, inpcom.c: implement a very basic .if/.else block
+
+2013-05-31  dwarning <dwarning>
+ * src/include/ngspice/inpptree.h,
+ * src/spicelib/parser/ifeval.c,
+ * src/spicelib/parser/inpptree.c,
+ * src/spicelib/parser/inpxx.h,
+ * src/spicelib/parser/ptfuncs.c:
+    parser/*.c: implement a signed power function `pwr' for controlled sources
+
+2013-05-30  h_vogt <h_vogt>
+ * src/frontend/subckt.c:
+    subckt.c: prevent crash if 5/6 MOS nodes w/o L, W
+
+2013-05-30  h_vogt <h_vogt>
+ * src/frontend/subckt.c:
+    subckt.c: MOS model in subckt w/o L, W
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, reorder some statements
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, local scope for `str'
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, local scope for `global_card'
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop variable `prev'
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, get rid of the global `global'
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rewrite subckt_w_params business
+
+2013-05-30  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, execute inp_fix_for_numparam() just once when call_depth == 0
+
+2013-05-30  h_vogt <h_vogt>
+ * src/spicelib/devices/vccs/vccs.c,
+ * src/spicelib/devices/vccs/vccsask.c,
+ * src/spicelib/devices/vccs/vccsdefs.h,
+ * src/spicelib/devices/vccs/vccspar.c:
+    devices/vccs: implement multiplier `m' (G source)
+
+2013-05-30  h_vogt <h_vogt>
+ * src/spicelib/devices/cccs/cccs.c,
+ * src/spicelib/devices/cccs/cccsask.c,
+ * src/spicelib/devices/cccs/cccsdefs.h,
+ * src/spicelib/devices/cccs/cccspar.c:
+    devices/cccs: implement multiplier `m' (F source)
+
+2013-05-29  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop superflous initialisation
+
+2013-05-29  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, improve readability of skip_back_non_ws() and skip_back_ws()
+
+2013-05-29  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-05-29  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop some local variables
+
+2013-05-29  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, simplify error processing
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, simplify tfree() usage
+
+2013-05-29  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, local scope for some variables
+
+2013-05-29  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/vcvs/vcvsset.c:
+    vcvsset.c, cleanup order of TSTALLOC() invocations
+
+2013-05-26  dwarning <dwarning>
+ * src/spicelib/parser/inpptree.c,
+ * src/spicelib/parser/ptfuncs.c:
+    inpptree.c, ptfuncs.c: whitespace cleanup
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup deck loops #4/4
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup deck loops #3/4
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup deck loops #2/4
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup deck loops #1/4
+
+2013-05-26  h_vogt <h_vogt>
+ * src/frontend/numparam/numparam.h,
+ * src/frontend/numparam/xpressn.c:
+    xpressn.c: reduce number of (forbidden) keywords
+    to what is actually used
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, inp_chk_for_multi_in_vcvs() shrink scope of variables
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, bug fix (incorrect check for mal formed line)
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-05-26  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, simple cleanups
+
+2013-05-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, change semantics of skip_back_non_ws() and skip_back_ws()
+
+2013-05-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, unify skip_back() usage #2/2
+
+2013-05-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, unify skip_back() usage #1/2
+
+2013-05-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_get_func_from_line()
+
+2013-05-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, drop artifact, now this isn't any more a bug
+
+2013-05-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, use a list to store the `.func' lookup table
+
+2013-05-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, use a `rib cage' to store the .subckt lexical scoping of `.func'
+
+2013-05-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup inp_expand_macros_in_deck() recursion
+
+2013-05-23  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3.c,
+ * src/spicelib/devices/bsim3/b3mask.c,
+ * src/spicelib/devices/bsim3/b3mpar.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/bsim3def.h,
+ * src/spicelib/devices/bsim3v32/b3v32.c,
+ * src/spicelib/devices/bsim3v32/b3v32mask.c,
+ * src/spicelib/devices/bsim3v32/b3v32mpar.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32def.h:
+    devices/bsim3, devices/bsim3v32: add `nqsmod' as model parameter
+
+2013-05-23  rlar <rlar>
+ * src/frontend/inpcom.c:
+    bug fix, .func expansion for nested .subckt
+
+2013-05-23  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup some while(struct line * ...) loops
+
+2013-05-22  dwarning <dwarning>
+ * src/spicelib/devices/hisimhv1/hsmhvset.c:
+    devices/hisimhv1: correct the `qme2' rangecheck
+
+2013-05-21  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3check.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3mpar.c,
+ * src/spicelib/devices/bsim3/b3temp.c:
+    devices/bsim3: whitespace cleanup
+
+2013-05-21  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3.c,
+ * src/spicelib/devices/bsim3/b3mask.c,
+ * src/spicelib/devices/bsim3/b3mpar.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3temp.c:
+    devices/bsim3: complete the ACM parameter set with xl and xw
+
+2013-05-21  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3.c,
+ * src/spicelib/devices/bsim3/b3ask.c,
+ * src/spicelib/devices/bsim3/b3check.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3mask.c,
+ * src/spicelib/devices/bsim3/b3mpar.c,
+ * src/spicelib/devices/bsim3/b3par.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3temp.c,
+ * src/spicelib/devices/bsim3/bsim3def.h:
+    devices/bsim3: apply Area Calculation Method (ACM) to the bsim3v3.3 model
+
+2013-05-21  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3temp.c:
+    devices/bsim3: reposition sourceConductance block
+
+2013-05-16  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3ld.c:
+    devices/bsim3: reposition DrainSatCurrent block
+
+2013-05-20  h_vogt <h_vogt>
+ * src/spicelib/devices/hisim2/hsm2set.c,
+ * src/spicelib/devices/hisimhv1/hsmhvset.c:
+    hsm2set, hsmhvset.c: error message
+
+2013-05-20  h_vogt <h_vogt>
+ * src/spicelib/analysis/dctran.c:
+    dctran.c, bug fix `#235 When Using .TRAN analysis with UIC, ...'
+
+    add a breakpoint for UIC
+
+    #235 When Using .TRAN analysis with UIC, unconnected pulse bug
+    http://sourceforge.net/p/ngspice/bugs/235/
+
+2013-05-20  h_vogt <h_vogt>
+ * README.adms:
+    README.adms Warning about outdated information
+
+2013-05-20  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/vccs/vccsask.c,
+ * src/spicelib/devices/vccs/vccsdefs.h,
+ * src/spicelib/devices/vccs/vccsdel.c,
+ * src/spicelib/devices/vccs/vccsdest.c,
+ * src/spicelib/devices/vccs/vccsload.c,
+ * src/spicelib/devices/vccs/vccsmdel.c,
+ * src/spicelib/devices/vccs/vccspar.c,
+ * src/spicelib/devices/vccs/vccspzld.c,
+ * src/spicelib/devices/vccs/vccssacl.c,
+ * src/spicelib/devices/vccs/vccsset.c,
+ * src/spicelib/devices/vccs/vccssld.c,
+ * src/spicelib/devices/vccs/vccssprt.c,
+ * src/spicelib/devices/vccs/vccssset.c:
+    unify, use #include "vccsext.h" the same way as in all other models
+
+2013-05-20  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * configure.ac:
+    configure.ac, cleanup `WARNING: PSS analysis enabled'
+
+2013-05-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup
+
+2013-05-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, find_subckt_w_params()
+
+2013-05-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup, emphasize a search in subckt_w_params[]
+
+2013-05-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, new_subckt_w_params()
+
+2013-05-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, new_lib()
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, cleanup usage of free_function()
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, abstraction, free_function()
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, think in terms of struct functions instead of an integer
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, emphasize a potential bug
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, think in terms of struct library instead of an integer
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, collect globals into a struct
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, rename N_FUNCS and N_LIBRARY
+
+2013-05-18  h_vogt <h_vogt>
+ * src/spicelib/analysis/traninit.c:
+    traninit.c, cleanup indentation
+
+2013-05-18  h_vogt <h_vogt>
+ * src/spicelib/devices/bsim4v4/b4v4getic.c:
+    b4v4getic.c, cleanup indentation
+
+2013-05-18  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rewrite .lib processing
+
+2013-05-18  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: debug output streamlined
+
+2013-05-18  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: larger array size, debug output modified
+
+2013-05-17  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: array bounds check
+
+2013-05-16  dwarning <dwarning>
+ * src/include/ngspice/devdefs.h,
+ * src/spicelib/devices/bsim3v32/b3v32ld.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim3v32/b3v32temp.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32def.h:
+    devices/bsim3v32: whitespace cleanup
+
+2013-05-16  dwarning <dwarning>
+ * src/include/ngspice/devdefs.h,
+ * src/spicelib/devices/bsim3v32/b3v32.c,
+ * src/spicelib/devices/bsim3v32/b3v32ask.c,
+ * src/spicelib/devices/bsim3v32/b3v32check.c,
+ * src/spicelib/devices/bsim3v32/b3v32ld.c,
+ * src/spicelib/devices/bsim3v32/b3v32mask.c,
+ * src/spicelib/devices/bsim3v32/b3v32mpar.c,
+ * src/spicelib/devices/bsim3v32/b3v32par.c,
+ * src/spicelib/devices/bsim3v32/b3v32set.c,
+ * src/spicelib/devices/bsim3v32/b3v32temp.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32def.h,
+ * src/spicelib/devices/devsup.c:
+    devices/bsim3v32: apply Area Calculation Method (ACM) to the bsim3v3.2.4 model
+
+2013-05-16  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32ld.c:
+    devices/bsim3v32: reposition DrainSatCurrent block
+
+2013-05-16  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32temp.c:
+    devices/bsim3v32: remove duplicate `SourceSatCurrent' block
+
+2013-05-16  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32temp.c:
+    devices/bsim3v32: single out duplicate `SourceSatCurrent' block
+
+2013-05-16  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32temp.c:
+    devices/bsim3v32: remove duplicate `DrainSatCurrent' block
+
+2013-05-16  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32temp.c:
+    devices/bsim3v32: single out duplicate `DrainSatCurrent' block
+
+2013-05-15  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32.c:
+    devices/bsim3v32: correct `rdc' and `rsc' definition
+
+2013-05-15  h_vogt <h_vogt>
+ * src/include/ngspice/defines.h,
+ * src/winmain.c,
+ * src/winmain.h:
+    defines.h, winmain.c, .h: fix --with-wingui for CYGWIN
+
+2013-05-15  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: disable `m' for E, H
+
+2013-05-11  dwarning <dwarning>
+ * src/spicelib/devices/bsim3v32/b3v32.c,
+ * src/spicelib/devices/bsim3v32/b3v32acld.c,
+ * src/spicelib/devices/bsim3v32/b3v32ask.c,
+ * src/spicelib/devices/bsim3v32/b3v32check.c,
+ * src/spicelib/devices/bsim3v32/b3v32cvtest.c,
+ * src/spicelib/devices/bsim3v32/b3v32del.c,
+ * src/spicelib/devices/bsim3v32/b3v32dest.c,
+ * src/spicelib/devices/bsim3v32/b3v32getic.c,
+ * src/spicelib/devices/bsim3v32/b3v32ld.c,
+ * src/spicelib/devices/bsim3v32/b3v32mask.c,
+ * src/spicelib/devices/bsim3v32/b3v32mdel.c,
+ * src/spicelib/devices/bsim3v32/b3v32mpar.c,
+ * src/spicelib/devices/bsim3v32/b3v32noi.c,
+ * src/spicelib/devices/bsim3v32/b3v32par.c,
+ * src/spicelib/devices/bsim3v32/b3v32pzld.c,
+ * src/spicelib/devices/bsim3v32/b3v32temp.c,
+ * src/spicelib/devices/bsim3v32/b3v32trunc.c,
+ * src/spicelib/devices/bsim3v32/bsim3v32def.h,
+ * src/spicelib/devices/bsim3v32/bsim3v32ext.h,
+ * src/spicelib/devices/bsim3v32/bsim3v32init.c:
+    devices/bsim3v32: whitespace cleanup
+
+2013-05-11  dwarning <dwarning>
+ * src/spicelib/devices/isrc/isrc.c,
+ * src/spicelib/devices/isrc/isrcacld.c,
+ * src/spicelib/devices/isrc/isrcask.c,
+ * src/spicelib/devices/isrc/isrcdefs.h,
+ * src/spicelib/devices/isrc/isrcload.c,
+ * src/spicelib/devices/isrc/isrcpar.c,
+ * src/spicelib/devices/isrc/isrctemp.c:
+    devices/isrc: implement multiplier `m' for current sources
+
+2013-05-11  dwarning <dwarning>
+ * src/frontend/inpcom.c:
+    allow Multiplier for current source in subckts
+
+2013-05-11  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: add some some comments
+
+2013-05-11  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: no multiplier 'm' added to V, I lines in subckt
+
+2013-05-09  dwarning <dwarning>
+ * src/spicelib/devices/cap/cap.c,
+ * src/spicelib/devices/cap/capdefs.h,
+ * src/spicelib/devices/cap/capmask.c,
+ * src/spicelib/devices/cap/capmpar.c,
+ * src/spicelib/devices/cap/capsetup.c:
+    alternative geometry correction `del' for semiconductor capacitors
+
+2013-05-09  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3check.c,
+ * src/spicelib/devices/bsim3v32/b3v32check.c:
+    someone gives version=3.30e+00 in bsim models
+
+2013-05-09  h_vogt <h_vogt>
+ * src/frontend/measure.c:
+    measure.c: disable autostop, if no .meas commands found
+
+2013-05-09  h_vogt <h_vogt>
+ * src/frontend/subckt.c:
+    subckt.c: enable correct model renaming for inductors
+
+2013-05-09  h_vogt <h_vogt>
+ * src/spicelib/devices/ind/indacld.c,
+ * src/spicelib/devices/ind/indload.c:
+    devices/ind: implement multiplier `m'
+
+2013-05-09  h_vogt <h_vogt>
+ * src/spicelib/devices/res/resload.c:
+    resload.c: `m' already set in ressetup.c
+
+2013-05-09  h_vogt <h_vogt>
+ * src/spicelib/devices/res/res.c,
+ * src/spicelib/devices/res/resdefs.h,
+ * src/spicelib/devices/res/resload.c,
+ * src/spicelib/devices/res/resmpar.c,
+ * src/spicelib/devices/res/resparam.c,
+ * src/spicelib/devices/res/ressetup.c,
+ * src/spicelib/devices/res/restemp.c:
+    devices/res: whitespace cleanup
+
+2013-05-09  h_vogt <h_vogt>
+ * src/spicelib/devices/ind/ind.c,
+ * src/spicelib/devices/ind/inddefs.h,
+ * src/spicelib/devices/ind/indload.c,
+ * src/spicelib/devices/ind/indmpar.c,
+ * src/spicelib/devices/ind/indparam.c,
+ * src/spicelib/devices/ind/indtemp.c:
+    devices/ind: whitespace cleanup
+
+2013-05-08  h_vogt <h_vogt>
+ * src/spicelib/devices/cap/cap.c,
+ * src/spicelib/devices/cap/capacld.c,
+ * src/spicelib/devices/cap/capdefs.h,
+ * src/spicelib/devices/cap/capload.c,
+ * src/spicelib/devices/cap/capmask.c,
+ * src/spicelib/devices/cap/capmpar.c,
+ * src/spicelib/devices/cap/capparam.c,
+ * src/spicelib/devices/cap/capsetup.c,
+ * src/spicelib/devices/cap/captemp.c:
+    devices/cap: whitespace cleanup
+
+2013-05-09  h_vogt <h_vogt>
+ * src/spicelib/devices/ind/ind.c,
+ * src/spicelib/devices/ind/inddefs.h,
+ * src/spicelib/devices/ind/indparam.c,
+ * src/spicelib/devices/ind/indtemp.c:
+    devices/ind: implement `tc1', `tc2' instance parameters
+
+2013-05-08  h_vogt <h_vogt>
+ * src/spicelib/devices/cap/cap.c,
+ * src/spicelib/devices/cap/capdefs.h,
+ * src/spicelib/devices/cap/capparam.c,
+ * src/spicelib/devices/cap/captemp.c:
+    devices/cap: implement `tc1', `tc2' instance parameters
+
+2013-05-07  h_vogt <h_vogt>
+ * src/spicelib/devices/res/resload.c,
+ * src/spicelib/devices/res/ressetup.c:
+    move instance m-factor into ressetup
+
+2013-05-07  h_vogt <h_vogt>
+ * src/spicelib/devices/res/resload.c,
+ * src/spicelib/devices/res/restemp.c:
+    resload.c, restemp.c: tc1, tc2 instance parameters override model parameters
+
+2013-05-07  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3temp.c:
+    bsim3: fix incorrect version printout
+
+2013-05-07  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3.c,
+ * src/spicelib/devices/bsim3/b3ask.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3par.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3temp.c,
+ * src/spicelib/devices/bsim3/bsim3def.h:
+    this is the delvto/mulu0 instance extension to bsim3v3
+
+2013-05-05  dwarning <dwarning>
+ * src/spicelib/devices/bsim3/b3.c,
+ * src/spicelib/devices/bsim3/b3ask.c,
+ * src/spicelib/devices/bsim3/b3ld.c,
+ * src/spicelib/devices/bsim3/b3par.c,
+ * src/spicelib/devices/bsim3/b3set.c,
+ * src/spicelib/devices/bsim3/b3temp.c,
+ * src/spicelib/devices/bsim3/bsim3def.h:
+    devices/bsim3: whitespace cleanup
+
+2013-05-03  h_vogt <h_vogt>
+ * src/frontend/inpcom.c:
+    inpcom.c: hot fix for nested ternary expressions
+
+2013-05-01  dwarning <dwarning>
+ * src/spicelib/devices/cap/cap.c,
+ * src/spicelib/devices/res/res.c,
+ * src/spicelib/devices/res/resdefs.h,
+ * src/spicelib/devices/res/resmask.c,
+ * src/spicelib/devices/res/resmpar.c,
+ * src/spicelib/devices/res/restemp.c:
+    devices/cap, devices/res: some parameter aliases for compatibility
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spalloc.c,
+ * src/maths/sparse/spbuild.c,
+ * src/maths/sparse/spfactor.c,
+ * src/maths/sparse/spoutput.c,
+ * src/maths/sparse/spsmp.c,
+ * src/maths/sparse/spsolve.c,
+ * src/maths/sparse/sputils.c:
+    sparse/*.c, whitespace
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spalloc.c,
+ * src/maths/sparse/sputils.c:
+    sparse/*.c, rename `eMatrix' --> `Matrix' (comments)
+
+2013-04-28  rlar <rlar>
+ * src/include/ngspice/smpdefs.h,
+ * src/include/ngspice/spmatrix.h,
+ * src/maths/sparse/spsmp.c:
+    sparse/*.c, rename `eMatrix' --> `Matrix' (prototypes)
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spalloc.c,
+ * src/maths/sparse/sputils.c:
+    sparse/*.c, rename `eMatrix' --> `Matrix'
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spalloc.c,
+ * src/maths/sparse/spbuild.c,
+ * src/maths/sparse/spfactor.c,
+ * src/maths/sparse/spoutput.c,
+ * src/maths/sparse/spsmp.c,
+ * src/maths/sparse/spsolve.c,
+ * src/maths/sparse/sputils.c:
+    sparse/*.c, simplify, drop the local copy `Matrix'
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spfactor.c,
+ * src/maths/sparse/sputils.c:
+    sparse/*.c, unify, use local copy `Matrix' instead of `eMatrix'
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spsmp.c:
+    sparse/*.c, drop unnecessary (spREAL) cast
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spoutput.c:
+    sparse/*.c, drop unnecessary (double) cast
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spfactor.c:
+    sparse/*.c, drop unnecessary (int *) cast
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spbuild.c:
+    sparse/*.c, drop unnecessary (MatrixPtr) cast
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spbuild.c:
+    sparse/*.c, avoid (RealNumber *) casts by proper use of ElementPr
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/spalloc.c:
+    sparse/*.c, drop unnecessary (void *) cast
+
+2013-04-28  rlar <rlar>
+ * src/maths/sparse/sputils.c:
+    sparse/*.c, drop unused artifacts
+
+2013-04-25  dwarning <dwarning>
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/devices/bjt/bjtsupd.c,
+ * src/unsupported/cktsenup.c,
+ * src/unsupported/cktsncom.c,
+ * src/unsupported/cktsnld.c,
+ * src/unsupported/cktsnprt.c,
+ * src/unsupported/cktsnset.c,
+ * src/unsupported/snstart.c:
+    adapt the sense2 code to ngspice
+
+    workaround, make the opaque struct MatrixElement partially visible
+
+    this struct is private to the `sparse' world,
+      and lives in "maths/sparse/spdefs.h"
+    which can't be included here, because
+      it is incompatible to the rest of ngspice.
+
+    this is the same problem as in
+      ciderlib/oned/oneprint.c
+      ciderlib/twod/twoprint.c
+
+2013-04-26  rlar <rlar>
+ * src/include/ngspice/smpdefs.h,
+ * src/maths/sparse/spsmp.c:
+    fix an incorrect typedef and cast
+
+    which was of no consequence,
+      because nobody made use of it.
+
+    ancient, already in the very first commit of ngspice
+      Date:   Thu Apr 27 20:03:57 2000 +0000
+
+2013-04-24  dwarning <dwarning>
+ * src/spicelib/devices/dio/dioload.c:
+    fix a wrong GMIN implementation
+
+2013-04-23  rlar <rlar>
+ * src/frontend/inpcom.c:
+    bug fix, preserve filename case for `codemodel', `load' and `use'
+
+    reported and fixed by Emil Lambrache on the bug tracker
+    http://sourceforge.net/p/ngspice/bugs/241/
+      "#241 case sensitivity not preserved for file names"
+
+2013-04-23  dwarning <dwarning>
+ * src/unsupported/Makefile.am:
+    fix Makefile.am for SENSDEBUG code
+
+2013-04-23  dwarning <dwarning>
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/devices/bjt/bjtsacl.c,
+ * src/spicelib/devices/dio/diosload.c,
+ * src/spicelib/devices/ind/indsacl.c,
+ * src/spicelib/devices/ind/indsload.c,
+ * src/spicelib/devices/vbic/vbicload.c:
+    fix SENSDEBUG related code
+
+2013-04-22  h_vogt <h_vogt>
+ * src/spicelib/devices/sw/swload.c:
+    swload.c: reinstate the truncation code from swtrunc.c
+
+    which was removed in the following commit:
+
+    commit 0dae4607a01e2bbf93a925f5c37385ad9ce232f2
+    Date:   Wed Apr 25 18:28:20 2001 +0000
+
+        Added a patch to csw and sw from Jon Engelbert dealing with negative histeresys
+
+2013-04-22  h_vogt <h_vogt>
+ * src/spicelib/devices/txl/txldefs.h:
+    txldefs.h: update some comments
+
+2013-04-14  h_vogt <h_vogt>
+ * INSTALL:
+    INSTALL add --with-ngshared
+
+2013-04-13  h_vogt <h_vogt>
+ * src/include/ngspice/sharedspice.h,
+ * src/sharedspice.c,
+ * visualc-shared/sharedspice.vcproj:
+    sharedspice.c, .h, .vcproj: comments, update für MS Visual Sudio build
+
+2013-04-13  h_vogt <h_vogt>
+ * src/include/ngspice/sharedspice.h,
+ * src/sharedspice.c:
+    sharedspice.c, *.h: interface update, more comments
+
+2013-04-12  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: improved comments
+
+2013-04-07  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: remove bug causing sigsegv
+
+2013-04-07  rlar <rlar>
+ * src/xspice/mif/mif_inp2.c:
+    xpsice, fix premature tfree() invocation
+
+    reported by "Heini X" on the ngspice-users mailing list
+
+    this bug was introduced in
+
+    : commit 0af75f3bd968f8a29f88221a81da6f9dafd2fceb
+    : Date:   Sat Aug 18 18:31:23 2012 +0200
+    :
+    :     subckt.c, mif_inp2.c: plug XSPICE setup memory leaks
+
+2013-04-07  rlar <rlar>
+ * src/unsupported/sen2setp.c:
+    sense2, cleanup, avoid (SENstruct *) casts
+
+2013-04-07  rlar <rlar>
+ * src/unsupported/cktsenac.c,
+ * src/unsupported/cktsenup.c,
+ * src/unsupported/cktsncom.c,
+ * src/unsupported/cktsndct.c,
+ * src/unsupported/cktsnld.c,
+ * src/unsupported/cktsnprt.c,
+ * src/unsupported/cktsnset.c,
+ * src/unsupported/sen2dest.c,
+ * src/unsupported/sen2setp.c,
+ * src/unsupported/snaskq.c,
+ * src/unsupported/snstart.c:
+    sense2, whitespace cleanup
+
+    checked for object file invariance
+
+2013-04-07  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * configure.ac,
+ * src/Makefile.am,
+ * src/include/ngspice/cktdefs.h,
+ * src/spicelib/analysis/analysis.c,
+ * src/spicelib/analysis/cktsetup.c,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/parser/inp2dot.c,
+ * src/unsupported/Makefile.am,
+ * src/unsupported/cktsenac.c,
+ * src/unsupported/cktsenup.c,
+ * src/unsupported/cktsncom.c,
+ * src/unsupported/cktsndct.c,
+ * src/unsupported/cktsnld.c,
+ * src/unsupported/cktsnprt.c,
+ * src/unsupported/cktsnset.c,
+ * src/unsupported/sen2dest.c,
+ * src/unsupported/sen2setp.c,
+ * src/unsupported/snaskq.c,
+ * src/unsupported/snstart.c:
+    fix sense2, which is unsupported code
+
+2013-04-03  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: small updates
+
+2013-04-01  h_vogt <h_vogt>
+ * src/xspice/icm/makedefs.in:
+    icm/makedefs.in: add -lm for self-consistent shared libs
+
+2013-04-01  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: fix sigsev fault under LINUX
+
+2013-04-01  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: add function prototype
+
+2013-04-01  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/mes/messetup.c:
+    whitespace, align TSTALLOC calls in the setup routine of the MES model
+
+2013-04-01  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/jfet2/jfet2set.c:
+    whitespace, align TSTALLOC calls in the setup routine of the JFET2 model
+
+2013-04-01  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/jfet/jfetset.c:
+    whitespace, align TSTALLOC calls in the setup routine of the JFET model
+
+2013-04-01  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: update stopping printsend thread
+
+2013-04-01  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/bsim4v5/b4v5set.c:
+    whitespaces
+
+2013-03-31  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/bsim3soi_pd/b3soipdset.c:
+    remove a duplicate entry in the setup routine of the BSIM3SOIPD model
+
+2013-03-31  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/devices/bsim3soi_dd/b3soiddset.c:
+    remove a duplicate entry in the setup routine of the BSIM3SOIDD model
+
+2013-03-26  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: command bg_pstop to stop printsend thread before unloading ngspice library
+
+2013-03-25  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: thread handling updated
+
+2013-03-24  h_vogt <h_vogt>
+ * src/misc/alloc.c,
+ * src/sharedspice.c:
+    alloc.c sharedspice.c: improve thread safety
+
+    still much more to be done!
+
+2013-03-23  h_vogt <h_vogt>
+ * src/sharedspice.c:
+    sharedspice.c: correction for LINUX
+
+2013-03-23  h_vogt <h_vogt>
+ * configure.ac:
+    configure.ac: shared module added
+
+2013-03-23  h_vogt <h_vogt>
+ * Makefile.am,
+ * visualc-shared/include/inttypes.h,
+ * visualc-shared/include/ngspice/config.h,
+ * visualc-shared/include/stdint.h,
+ * visualc-shared/include/strings.h,
+ * visualc-shared/sharedspice.sln,
+ * visualc-shared/sharedspice.vcproj:
+    visualc-shared: support for compiling ngspice.dll with MS Visual Studio 2008
+
+2013-03-23  h_vogt <h_vogt>
+ * src/xspice/icm/dlmain.c:
+    icm/dlmain.c: restrict exported symbols under LINUX
+
+2013-03-23  h_vogt <h_vogt>
+ * src/include/ngspice/ngspice.h:
+    ngspice.h: add shared module
+
+2013-03-23  h_vogt <h_vogt>
+ * src/frontend/misccoms.c:
+    misccoms.c: special return value for shared module
+
+2013-03-23  h_vogt <h_vogt>
+ * src/frontend/error.c:
+    error.c: no exit, but callback if shared module
+
+2013-03-23  h_vogt <h_vogt>
+ * src/frontend/display.c:
+    display.c: exclude SHARED_MODULE if console
+
+2013-03-23  h_vogt <h_vogt>
+ * src/Makefile.am,
+ * src/include/ngspice/Makefile.am:
+    src/Makefile.am include/ngspice/Makefile.am: add shared module
+
+2013-03-23  h_vogt <h_vogt>
+ * src/frontend/outitf.c:
+    outitf.c: prepare for feedback in shared ngspice
+
+2013-03-23  h_vogt <h_vogt>
+ * src/include/ngspice/sharedspice.h,
+ * src/sharedspice.c:
+    main file and header for ngspice as shared module
+
+2013-03-23  h_vogt <h_vogt>
+ * src/maths/cmaths/Makefile.am:
+    new flag `SHARED_MODULE' for shared module
+
+2013-03-23  h_vogt <h_vogt>
+ * src/spicelib/analysis/dctran.c:
+    dctran.c: better rounding for status report
+
+2013-03-23  h_vogt <h_vogt>
+ * INSTALL,
+ * compile_min.sh,
+ * configure.ac,
+ * src/Makefile.am,
+ * src/maths/cmaths/Makefile.am:
+    --with-windows --> --with-wingui
+
+2013-03-23  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/measure.c,
+ * src/frontend/spec.c,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktop.c,
+ * src/spicelib/analysis/cktsetup.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/parser/inppas2.c:
+    separate progress report from having Windows GUI
+
+2013-03-23  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/measure.c,
+ * src/frontend/spec.h,
+ * src/include/ngspice/ngspice.h,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktop.c,
+ * src/spicelib/analysis/cktsetup.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/parser/inppas2.c:
+    fix `SetAnalyse()' re-declaration
+
+2013-03-23  h_vogt <h_vogt>
+ * configure.ac,
+ * src/frontend/com_ghelp.c,
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/com_sysinfo.c,
+ * src/frontend/cpitf.c,
+ * src/frontend/display.c,
+ * src/frontend/error.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/measure.c,
+ * src/frontend/misccoms.c,
+ * src/frontend/numparam/mystring.c,
+ * src/frontend/outitf.c,
+ * src/frontend/parser/input.c,
+ * src/frontend/postcoms.c,
+ * src/frontend/rawfile.c,
+ * src/frontend/resource.c,
+ * src/frontend/signal_handler.c,
+ * src/frontend/spec.c,
+ * src/frontend/spec.h,
+ * src/frontend/wdisp/windisp.c,
+ * src/frontend/wdisp/winprint.c,
+ * src/include/ngspice/ngspice.h,
+ * src/main.c,
+ * src/maths/cmaths/cmath1.c,
+ * src/maths/sparse/spoutput.c,
+ * src/misc/alloc.c,
+ * src/misc/ivars.c,
+ * src/misc/util.c,
+ * src/nghelp.c,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktop.c,
+ * src/spicelib/analysis/cktsetup.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/dctrcurv.c,
+ * src/spicelib/devices/dev.c,
+ * src/spicelib/parser/inppas2.c,
+ * src/winmain.c,
+ * visualc/include/ngspice/config.h:
+    HAS_WINDOWS --> HAS_WINGUI
+
+    allow compilation on MS Windows without GUI
+
+2013-03-16  rlar <rlar>
+ * FAQ:
+    fix mailing list instructions
+
+2013-03-06  h_vogt <h_vogt>
+ * src/frontend/commands.c,
+ * src/frontend/cpitf.c,
+ * src/frontend/device.c,
+ * src/frontend/inp.c,
+ * src/frontend/inp.h,
+ * src/frontend/inpcom.c,
+ * src/frontend/nutinp.c,
+ * src/include/ngspice/fteext.h,
+ * src/main.c:
+    add command 'circbyline' to allow entering circuit line by line
+
+2013-03-05  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: do not run all 'save' commands upfront,
+    but cumulative when they appear in the .control section
+
+2013-03-05  h_vogt <h_vogt>
+ * src/frontend/breakp2.c:
+    breakp2.c: allow v(12) and i(vdd) in 'save' command
+
+2013-03-05  h_vogt <h_vogt>
+ * src/frontend/runcoms2.c:
+    runcoms2.c: update for dbs after remcirc
+
+2013-03-05  h_vogt <h_vogt>
+ * src/tclspice.c:
+    update 'alter' handling as in ngspice main.c
+
+2013-03-05  h_vogt <h_vogt>
+ * src/frontend/breakp.c,
+ * src/frontend/breakp2.c,
+ * src/frontend/inp.c,
+ * src/frontend/plotting/graf.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/include/ngspice/ftedefs.h:
+    make database dbs local to each circuit
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: cleanup comments
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    expand_libs(): think of `next' instead `prev'
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    expand_libs(): rename `tmp_ptr2' --> `next'
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    expand_libs(): reposition `keep_char' restorage
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    expand_libs(): shrink scope of `found_section'
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    expand_libs(): bug fix, missing check for .endl at the tail of a file
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename local variable names
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename local variable names
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename local variable names
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename found_lib_name --> found_section
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename inp_determine_libraries() --> collect_section_references()
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename expand_libs() --> expand_section_references()
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename function argument names
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename function argument names
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: cleanup
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename library_file[] --> library_name[]
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename library_name[][] --> section_name[][]
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename library_ll_ptr[][] --> section_ref[][]
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename libraries[] -> library_deck[]
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename num_lib_names --> num_sections
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename new_lib_name() --> remember_section_ref()
+
+2013-02-24  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rename find_lib_name() --> find_section()
+
+2013-02-25  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: static declaration of library related global variables
+
+2013-02-22  h_vogt <h_vogt>
+ * src/frontend/inp.c,
+ * src/frontend/runcoms.c,
+ * src/frontend/runcoms2.c,
+ * src/frontend/spiceif.c,
+ * src/include/ngspice/ftedefs.h,
+ * src/spicelib/parser/inpkmods.c:
+    unique modtab for each circuit, store in ckt structure
+
+2013-02-22  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: nullify `dbs' for use with 'source' command
+
+2013-02-14  rlar <rlar>
+ * src/spicelib/analysis/cktdojob.c:
+    fix bug `#233 cktdojob: Uninitialized variable: ANALmaxnum'
+
+    this is WANT_SENSE2 specific
+
+    http://sourceforge.net/p/ngspice/bugs/233/
+
+2013-02-14  rlar <rlar>
+ * src/spicelib/devices/soi3/soi3cap.c:
+    fix bug `#232 soi3cap.c: wrong array index alpha_args[2]'
+
+    though incorrect, this didn't lead to misbehavior.
+
+    http://sourceforge.net/p/ngspice/bugs/232/
+
+2013-02-12  rlar <rlar>
+ * src/frontend/device.c,
+ * src/frontend/inp.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/nutinp.c,
+ * src/include/ngspice/fteext.h:
+    inp_readall() change function signature for readability
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: abstract into new function read_a_lib()
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rewrite using new function find_lib()
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_determine_libraries(): rewrite
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_determine_libraries(): can happen at most once
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: small cleanup
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: comment .lib semantic
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_readall(): rename local variables
+
+2013-02-09  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_readall(): local scope for `tmp_ptr1'
+
+2013-01-19  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inp_readall(): local scope for `fdo'
+
+2013-02-03  rlar <rlar>
+ * src/maths/ni/niconv.c,
+ * src/spicelib/analysis/cktncdump.c,
+ * src/spicelib/analysis/ckttrunc.c,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/parser/inppas3.c:
+    use SP_VOLTAGE instead of literal value `3'
+
+    (grep "git --no-pager grep -nH -e '->[ \t]*type.*[0-9]'")
+
+2013-02-03  rlar <rlar>
+ * src/maths/ni/niiter.c,
+ * src/spicelib/analysis/cktsetup.c:
+    retire #define NODE_VOLTAGE, use SP_VOLTAGE instead
+
+    (grep "git --no-pager grep -nH -e '\\(SP_\\|NODE_\\)\\(VOLTAGE\\|CURRENT\\)'")
+
+2013-01-26  dwarning <dwarning>
+ * src/spicelib/devices/jfet/jfet.c,
+ * src/spicelib/devices/jfet/jfetdefs.h,
+ * src/spicelib/devices/jfet/jfetmask.c,
+ * src/spicelib/devices/jfet/jfetmpar.c,
+ * src/spicelib/devices/jfet/jfetnoi.c,
+ * src/spicelib/devices/jfet/jfetset.c:
+    jfet: new noise model selector nlev=3 for correct noise in non-saturated region
+
+2013-01-26  dwarning <dwarning>
+ * src/spicelib/devices/jfet/jfetmask.c,
+ * src/spicelib/devices/jfet/jfetmpar.c,
+ * src/spicelib/devices/jfet/jfetnoi.c,
+ * src/spicelib/devices/jfet/jfetset.c:
+    jfet: whitespace cleanup
+
+2013-01-26  rlar <rlar>
+ * src/ciderlib/oned/onecond.c,
+ * src/ciderlib/oned/onecont.c,
+ * src/ciderlib/oned/onesolve.c,
+ * src/ciderlib/support/integuse.c,
+ * src/ciderlib/twod/twocont.c,
+ * src/ciderlib/twod/twoncont.c,
+ * src/ciderlib/twod/twopcont.c,
+ * src/ciderlib/twod/twosolve.c,
+ * src/frontend/com_hardcopy.c,
+ * src/frontend/device.c,
+ * src/frontend/inpcom.c,
+ * src/frontend/measure.c,
+ * src/frontend/outitf.c,
+ * src/frontend/parser/lexical.c,
+ * src/frontend/vectors.c,
+ * src/main.c,
+ * src/maths/ni/niconv.c,
+ * src/maths/ni/niinteg.c,
+ * src/maths/ni/niiter.c,
+ * src/maths/ni/niniter.c,
+ * src/ngproc2mod.c,
+ * src/spicelib/analysis/acan.c,
+ * src/spicelib/analysis/cktbkdum.c,
+ * src/spicelib/analysis/cktclrbk.c,
+ * src/spicelib/analysis/cktdisto.c,
+ * src/spicelib/analysis/cktic.c,
+ * src/spicelib/analysis/cktload.c,
+ * src/spicelib/analysis/cktnames.c,
+ * src/spicelib/analysis/cktncdump.c,
+ * src/spicelib/analysis/cktop.c,
+ * src/spicelib/analysis/cktsetbk.c,
+ * src/spicelib/analysis/cktterr.c,
+ * src/spicelib/analysis/dcop.c,
+ * src/spicelib/analysis/dcpss.c,
+ * src/spicelib/analysis/dctran.c,
+ * src/spicelib/analysis/distoan.c,
+ * src/spicelib/analysis/nevalsrc.c,
+ * src/spicelib/analysis/noisean.c,
+ * src/spicelib/parser/inpeval.c,
+ * src/spicelib/parser/inpgval.c,
+ * src/unsupported/cktsncom.c,
+ * src/unsupported/cktsnld.c,
+ * src/unsupported/sen2setp.c,
+ * src/unsupported/snstart.c,
+ * src/xspice/cm/cmutil.c,
+ * src/xspice/icm/analog/oneshot/cfunc.mod,
+ * src/xspice/icm/analog/sine/cfunc.mod,
+ * src/xspice/icm/analog/square/cfunc.mod,
+ * src/xspice/icm/analog/triangle/cfunc.mod,
+ * src/xspice/icm/xtradev/core/cfunc.mod,
+ * src/xspice/mif/mifload.c,
+ * src/xspice/mif/miftrunc.c:
+    cleanup, use array operator
+
+    checked for object file invariance on linux with
+       ./configure --enable-debug=no --enable-maintainer-mode --with-readline=yes --enable-cider --enable-ndev --enable-pss --enable-xspice
+
+2013-01-25  h_vogt <h_vogt>
+ * src/winmain.c:
+    winmain.c: print buffer enlarged
+
+2013-01-25  h_vogt <h_vogt>
+ * src/frontend/inp.c:
+    inp.c: some comments added
+
+2013-01-23  rlar <rlar>
+ * contrib/mslib/datadef.h,
+ * src/conf.h,
+ * src/frontend/arg.h,
+ * src/frontend/aspice.h,
+ * src/frontend/breakp.h,
+ * src/frontend/breakp2.h,
+ * src/frontend/circuits.h,
+ * src/frontend/com_alias.h,
+ * src/frontend/com_chdir.h,
+ * src/frontend/com_dl.h,
+ * src/frontend/com_echo.h,
+ * src/frontend/com_fft.h,
+ * src/frontend/com_rehash.h,
+ * src/frontend/com_shell.h,
+ * src/frontend/com_shift.h,
+ * src/frontend/com_unset.h,
+ * src/frontend/control.h,
+ * src/frontend/cpitf.h,
+ * src/frontend/define.h,
+ * src/frontend/device.h,
+ * src/frontend/dimens.h,
+ * src/frontend/display.h,
+ * src/frontend/dotcards.h,
+ * src/frontend/fourier.h,
+ * src/frontend/gens.h,
+ * src/frontend/hpgl.h,
+ * src/frontend/inp.h,
+ * src/frontend/inpcom.h,
+ * src/frontend/interp.h,
+ * src/frontend/linear.h,
+ * src/frontend/misccoms.h,
+ * src/frontend/miscvars.h,
+ * src/frontend/mw_coms.h,
+ * src/frontend/newcoms.h,
+ * src/frontend/numparam/numpaif.h,
+ * src/frontend/nutinp.h,
+ * src/frontend/nutmegif.h,
+ * src/frontend/options.h,
+ * src/frontend/outitf.h,
+ * src/frontend/parser/backq.h,
+ * src/frontend/parser/complete.h,
+ * src/frontend/parser/cshpar.h,
+ * src/frontend/parser/glob.h,
+ * src/frontend/parser/input.h,
+ * src/frontend/parser/lexical.h,
+ * src/frontend/parser/numparse.h,
+ * src/frontend/parser/unixcom.h,
+ * src/frontend/plotting/clip.h,
+ * src/frontend/plotting/gnuplot.h,
+ * src/frontend/plotting/graf.h,
+ * src/frontend/plotting/graphdb.h,
+ * src/frontend/plotting/plot5.h,
+ * src/frontend/plotting/plotcurv.h,
+ * src/frontend/plotting/x11.h,
+ * src/frontend/plotting/xgraph.h,
+ * src/frontend/points.h,
+ * src/frontend/postcoms.h,
+ * src/frontend/postsc.h,
+ * src/frontend/quote.h,
+ * src/frontend/rawfile.h,
+ * src/frontend/resource.h,
+ * src/frontend/runcoms.h,
+ * src/frontend/runcoms2.h,
+ * src/frontend/shyu.h,
+ * src/frontend/signal_handler.h,
+ * src/frontend/spec.h,
+ * src/frontend/spiceif.h,
+ * src/frontend/streams.h,
+ * src/frontend/subckt.h,
+ * src/frontend/typesdef.h,
+ * src/frontend/vectors.h,
+ * src/frontend/wdisp/windisp.h,
+ * src/frontend/wdisp/winprint.h,
+ * src/frontend/where.h,
+ * src/include/ngspice/acdefs.h,
+ * src/include/ngspice/bdrydefs.h,
+ * src/include/ngspice/carddefs.h,
+ * src/include/ngspice/cluster.h,
+ * src/include/ngspice/cm.h,
+ * src/include/ngspice/cmconstants.h,
+ * src/include/ngspice/cmproto.h,
+ * src/include/ngspice/cmtypes.h,
+ * src/include/ngspice/const.h,
+ * src/include/ngspice/contdefs.h,
+ * src/include/ngspice/cpdefs.h,
+ * src/include/ngspice/cpextern.h,
+ * src/include/ngspice/cpstd.h,
+ * src/include/ngspice/defines.h,
+ * src/include/ngspice/devdefs.h,
+ * src/include/ngspice/dgen.h,
+ * src/include/ngspice/distodef.h,
+ * src/include/ngspice/dllitf.h,
+ * src/include/ngspice/domndefs.h,
+ * src/include/ngspice/dopdefs.h,
+ * src/include/ngspice/dstring.h,
+ * src/include/ngspice/elctdefs.h,
+ * src/include/ngspice/enh.h,
+ * src/include/ngspice/evt.h,
+ * src/include/ngspice/evtproto.h,
+ * src/include/ngspice/evtudn.h,
+ * src/include/ngspice/ftedebug.h,
+ * src/include/ngspice/ftedefs.h,
+ * src/include/ngspice/ftedev.h,
+ * src/include/ngspice/fteext.h,
+ * src/include/ngspice/fteinp.h,
+ * src/include/ngspice/fteinput.h,
+ * src/include/ngspice/fteoptdefs.h,
+ * src/include/ngspice/fteparse.h,
+ * src/include/ngspice/gendefs.h,
+ * src/include/ngspice/gendev.h,
+ * src/include/ngspice/hash.h,
+ * src/include/ngspice/iferrmsg.h,
+ * src/include/ngspice/ifsim.h,
+ * src/include/ngspice/inpdefs.h,
+ * src/include/ngspice/inpptree.h,
+ * src/include/ngspice/ipc.h,
+ * src/include/ngspice/ipcproto.h,
+ * src/include/ngspice/ipctiein.h,
+ * src/include/ngspice/jobdefs.h,
+ * src/include/ngspice/macros.h,
+ * src/include/ngspice/material.h,
+ * src/include/ngspice/matldefs.h,
+ * src/include/ngspice/meshdefs.h,
+ * src/include/ngspice/meshext.h,
+ * src/include/ngspice/methdefs.h,
+ * src/include/ngspice/mif.h,
+ * src/include/ngspice/mifcmdat.h,
+ * src/include/ngspice/mifdefs.h,
+ * src/include/ngspice/mifparse.h,
+ * src/include/ngspice/mifproto.h,
+ * src/include/ngspice/miftypes.h,
+ * src/include/ngspice/missing_math.h,
+ * src/include/ngspice/mobdefs.h,
+ * src/include/ngspice/modldefs.h,
+ * src/include/ngspice/ngspice.h,
+ * src/include/ngspice/noisedef.h,
+ * src/include/ngspice/numcards.h,
+ * src/include/ngspice/numconst.h,
+ * src/include/ngspice/numenum.h,
+ * src/include/ngspice/numgen.h,
+ * src/include/ngspice/numglobs.h,
+ * src/include/ngspice/onedev.h,
+ * src/include/ngspice/onemesh.h,
+ * src/include/ngspice/opdefs.h,
+ * src/include/ngspice/optdefs.h,
+ * src/include/ngspice/optndefs.h,
+ * src/include/ngspice/outpdefs.h,
+ * src/include/ngspice/profile.h,
+ * src/include/ngspice/pssdefs.h,
+ * src/include/ngspice/pzdefs.h,
+ * src/include/ngspice/sen2defs.h,
+ * src/include/ngspice/sensdefs.h,
+ * src/include/ngspice/smpdefs.h,
+ * src/include/ngspice/stringutil.h,
+ * src/include/ngspice/swec.h,
+ * src/include/ngspice/tclspice.h,
+ * src/include/ngspice/tfdefs.h,
+ * src/include/ngspice/trandefs.h,
+ * src/include/ngspice/trcvdefs.h,
+ * src/include/ngspice/tskdefs.h,
+ * src/include/ngspice/twodev.h,
+ * src/include/ngspice/twomesh.h,
+ * src/include/ngspice/typedefs.h,
+ * src/include/ngspice/wstdio.h,
+ * src/maths/cmaths/cmath1.h,
+ * src/maths/cmaths/cmath2.h,
+ * src/maths/cmaths/cmath3.h,
+ * src/maths/cmaths/cmath4.h,
+ * src/maths/misc/accuracy.h,
+ * src/maths/misc/bernoull.h,
+ * src/maths/misc/norm.h,
+ * src/maths/sparse/spconfig.h,
+ * src/misc/alloc.h,
+ * src/misc/dup2.h,
+ * src/misc/ivars.h,
+ * src/misc/misc_time.h,
+ * src/misc/mktemp.h,
+ * src/misc/printnum.h,
+ * src/misc/tilde.h,
+ * src/misc/util.h,
+ * src/spicelib/parser/inpxx.h:
+    unify #ifndef include wrapper
+
+2013-01-23  rlar <rlar>
+ * src/frontend/com_chdir.h,
+ * src/frontend/com_echo.h,
+ * src/frontend/com_rehash.h,
+ * src/frontend/com_shell.h,
+ * src/frontend/com_shift.h,
+ * src/frontend/com_unset.h,
+ * src/frontend/control.h,
+ * src/frontend/display.h,
+ * src/frontend/gens.h,
+ * src/frontend/spiceif.h,
+ * src/frontend/streams.h,
+ * src/frontend/wdisp/windisp.h,
+ * src/frontend/wdisp/winprint.h,
+ * src/include/ngspice/acdefs.h,
+ * src/include/ngspice/bdrydefs.h,
+ * src/include/ngspice/carddefs.h,
+ * src/include/ngspice/cm.h,
+ * src/include/ngspice/cmconstants.h,
+ * src/include/ngspice/cmproto.h,
+ * src/include/ngspice/cmtypes.h,
+ * src/include/ngspice/contdefs.h,
+ * src/include/ngspice/cpdefs.h,
+ * src/include/ngspice/devdefs.h,
+ * src/include/ngspice/dgen.h,
+ * src/include/ngspice/distodef.h,
+ * src/include/ngspice/domndefs.h,
+ * src/include/ngspice/dopdefs.h,
+ * src/include/ngspice/dstring.h,
+ * src/include/ngspice/elctdefs.h,
+ * src/include/ngspice/enh.h,
+ * src/include/ngspice/evt.h,
+ * src/include/ngspice/evtproto.h,
+ * src/include/ngspice/evtudn.h,
+ * src/include/ngspice/ftedebug.h,
+ * src/include/ngspice/ftedefs.h,
+ * src/include/ngspice/fteext.h,
+ * src/include/ngspice/fteinp.h,
+ * src/include/ngspice/fteoptdefs.h,
+ * src/include/ngspice/fteparse.h,
+ * src/include/ngspice/gendefs.h,
+ * src/include/ngspice/gendev.h,
+ * src/include/ngspice/hash.h,
+ * src/include/ngspice/iferrmsg.h,
+ * src/include/ngspice/ifsim.h,
+ * src/include/ngspice/inpdefs.h,
+ * src/include/ngspice/ipc.h,
+ * src/include/ngspice/ipctiein.h,
+ * src/include/ngspice/jobdefs.h,
+ * src/include/ngspice/material.h,
+ * src/include/ngspice/matldefs.h,
+ * src/include/ngspice/meshdefs.h,
+ * src/include/ngspice/meshext.h,
+ * src/include/ngspice/methdefs.h,
+ * src/include/ngspice/mif.h,
+ * src/include/ngspice/mifcmdat.h,
+ * src/include/ngspice/mifdefs.h,
+ * src/include/ngspice/mifparse.h,
+ * src/include/ngspice/mifproto.h,
+ * src/include/ngspice/miftypes.h,
+ * src/include/ngspice/missing_math.h,
+ * src/include/ngspice/mobdefs.h,
+ * src/include/ngspice/modldefs.h,
+ * src/include/ngspice/ngspice.h,
+ * src/include/ngspice/noisedef.h,
+ * src/include/ngspice/numcards.h,
+ * src/include/ngspice/numconst.h,
+ * src/include/ngspice/numenum.h,
+ * src/include/ngspice/numgen.h,
+ * src/include/ngspice/numglobs.h,
+ * src/include/ngspice/onedev.h,
+ * src/include/ngspice/onemesh.h,
+ * src/include/ngspice/opdefs.h,
+ * src/include/ngspice/optdefs.h,
+ * src/include/ngspice/optndefs.h,
+ * src/include/ngspice/outpdefs.h,
+ * src/include/ngspice/profile.h,
+ * src/include/ngspice/sen2defs.h,
+ * src/include/ngspice/smpdefs.h,
+ * src/include/ngspice/tfdefs.h,
+ * src/include/ngspice/trandefs.h,
+ * src/include/ngspice/trcvdefs.h,
+ * src/include/ngspice/tskdefs.h,
+ * src/include/ngspice/twodev.h,
+ * src/include/ngspice/twomesh.h,
+ * src/include/ngspice/wstdio.h,
+ * src/maths/misc/accuracy.h,
+ * src/maths/misc/bernoull.h,
+ * src/maths/misc/norm.h,
+ * src/maths/sparse/spconfig.h:
+    prepare for #ifndef include wrapper unification
+
+2013-01-23  rlar <rlar>
+ * src/include/ngspice/cktdefs.h,
+ * src/spicelib/devices/ndev/ndevexch.h:
+    rename #ifndef include wrapper CKT_H
+
+2013-01-22  rlar <rlar>
+ * src/ciderlib/oned/oneddefs.h,
+ * src/ciderlib/oned/onedext.h,
+ * src/ciderlib/twod/twoddefs.h,
+ * src/ciderlib/twod/twodext.h,
+ * src/frontend/com_ahelp.h,
+ * src/frontend/com_asciiplot.h,
+ * src/frontend/com_cdump.h,
+ * src/frontend/com_commands.h,
+ * src/frontend/com_compose.h,
+ * src/frontend/com_display.h,
+ * src/frontend/com_dl.h,
+ * src/frontend/com_dump.h,
+ * src/frontend/com_ghelp.h,
+ * src/frontend/com_gnuplot.h,
+ * src/frontend/com_hardcopy.h,
+ * src/frontend/com_help.h,
+ * src/frontend/com_history.h,
+ * src/frontend/com_let.h,
+ * src/frontend/com_measure2.h,
+ * src/frontend/com_option.h,
+ * src/frontend/com_plot.h,
+ * src/frontend/com_set.h,
+ * src/frontend/com_setscale.h,
+ * src/frontend/com_state.h,
+ * src/frontend/com_strcmp.h,
+ * src/frontend/com_xgraph.h,
+ * src/frontend/commands.h,
+ * src/frontend/completion.h,
+ * src/frontend/diff.h,
+ * src/frontend/evaluate.h,
+ * src/frontend/hcomp.h,
+ * src/frontend/init.h,
+ * src/frontend/parse.h,
+ * src/frontend/plotting/agraf.h,
+ * src/frontend/plotting/plotit.h,
+ * src/frontend/plotting/plotting.h,
+ * src/frontend/plotting/pvec.h,
+ * src/frontend/terminal.h,
+ * src/frontend/variable.h,
+ * src/include/ngspice/bool.h,
+ * src/include/ngspice/ciderinp.h,
+ * src/include/ngspice/cidersupt.h,
+ * src/include/ngspice/cluster.h,
+ * src/include/ngspice/compatmode.h,
+ * src/include/ngspice/complex.h,
+ * src/include/ngspice/cpstd.h,
+ * src/include/ngspice/defines.h,
+ * src/include/ngspice/dllitf.h,
+ * src/include/ngspice/dvec.h,
+ * src/include/ngspice/fteinput.h,
+ * src/include/ngspice/graph.h,
+ * src/include/ngspice/grid.h,
+ * src/include/ngspice/macros.h,
+ * src/include/ngspice/memory.h,
+ * src/include/ngspice/plot.h,
+ * src/include/ngspice/pnode.h,
+ * src/include/ngspice/sim.h,
+ * src/include/ngspice/sperror.h,
+ * src/include/ngspice/swec.h,
+ * src/include/ngspice/wordlist.h,
+ * src/maths/cmaths/cmath.h,
+ * src/maths/poly/interpolate.h,
+ * src/maths/poly/poly.h,
+ * src/maths/poly/polyderiv.h,
+ * src/maths/poly/polyeval.h,
+ * src/maths/poly/polyfit.h,
+ * src/maths/sparse/spdefs.h,
+ * src/spicelib/analysis/analysis.h,
+ * src/spicelib/parser/inppas1.h,
+ * src/spicelib/parser/inppas2.h,
+ * src/spicelib/parser/inppas3.h:
+    avoid leading underscore in preprocessor macros
+
+2013-01-22  rlar <rlar>
+ * src/frontend/com_measure2.h,
+ * src/include/ngspice/complex.h,
+ * src/include/ngspice/cpstd.h,
+ * src/include/ngspice/defines.h,
+ * src/include/ngspice/fteinput.h,
+ * src/include/ngspice/macros.h:
+    cleanup some preprocessor macros
+
+2013-01-19  rlar <rlar>
+ * configure.ac,
+ * tests/Makefile.am,
+ * tests/bin/check.sh,
+ * tests/regression/Makefile.am,
+ * tests/regression/lib-processing/Makefile.am,
+ * tests/regression/lib-processing/ex1.lib,
+ * tests/regression/lib-processing/ex1a.cir,
+ * tests/regression/lib-processing/ex1a.out,
+ * tests/regression/lib-processing/ex1b.cir,
+ * tests/regression/lib-processing/ex1b.out,
+ * tests/regression/lib-processing/ex2.lib,
+ * tests/regression/lib-processing/ex2a.cir,
+ * tests/regression/lib-processing/ex2a.out,
+ * tests/regression/lib-processing/ex3.lib,
+ * tests/regression/lib-processing/ex3a.cir,
+ * tests/regression/lib-processing/ex3a.out,
+ * tests/regression/lib-processing/extra3.lib:
+    check the .lib processing
+
+2013-01-18  h_vogt <h_vogt>
+ * src/frontend/subckt.c:
+    fix bug #229 `Node name "n" is sometimes toxic'
+
+    Error: too few nodes for MOS or CPL:
+    m6 1 n 2 vss nch.3 l=4.3e-07 ...
+
+    http://sourceforge.net/p/ngspice/bugs/229/
+
+2013-01-16  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * autogen.sh:
+    Restored the execution flag on configure when ADMS is enabled
+
+2013-01-13  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c: rewrite for readability
+
+2013-01-12  rlar <rlar>
+ * src/frontend/inpcom.c:
+    inpcom.c, bug fix, incorrect start value for `prev'
+
+    this bug was introduced in the following commit,
+    which `reused' variable prev,
+    failing to preserve its initialization value NULL
+
+    Author: pnenzi <pnenzi>
+    Date:   Mon Oct 8 21:10:34 2007 +0000
+
+        Improvements in frontend by Phil Barker
+
+2013-01-12  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * src/spicelib/analysis/dcpss.c:
+    Fixed a memory leak in dcpss.c on the "err_conv" array
+
+2013-01-11  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * configure.ac:
+    Changed --enable-debug to --disable-debug in configure.ac to have it correctly displayed in the automatic completion
+
+2013-01-07  Francesco Lannutti <nicolati@users.sourceforge.net>
+ * INSTALL:
+    Added Mac OS X compilation information
+
+2013-01-02  rlar <rlar>
+ * ChangeLog:
+    update ChangeLog from `git log'
+
 2013-01-01  h_vogt <h_vogt>
  * src/include/ngspice/ngspice.h,
  * src/misc/ivars.c:
