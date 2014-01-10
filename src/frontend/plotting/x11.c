@@ -388,6 +388,8 @@ X11_NewViewport(GRAPH *graph)
     DEVDEP(graph).shell = XtCreateApplicationShell
         ("shell", topLevelShellWidgetClass, NULL, 0);
 
+    XtVaSetValues(DEVDEP(graph).shell, XtNtitle, graph->plotname, NULL);
+
     /* set up form widget */
     DEVDEP(graph).form = XtCreateManagedWidget
         ("form", formWidgetClass, DEVDEP(graph).shell, formargs, XtNumber(formargs));
