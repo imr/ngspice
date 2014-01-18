@@ -61,6 +61,7 @@ struct coreInfo_t  coreInfo =
   cm_complex_subtract,
   cm_complex_multiply,
   cm_complex_divide,
+  cm_get_path,
   no_file,
   no_file,
   no_file,

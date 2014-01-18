@@ -63,6 +63,7 @@ struct coreInfo_t {
 	Complex_t ((*dllitf_cm_complex_subtract)(Complex_t, Complex_t));
 	Complex_t ((*dllitf_cm_complex_multiply)(Complex_t, Complex_t));
 	Complex_t ((*dllitf_cm_complex_divide)(Complex_t, Complex_t));
+	char *    ((*dllitf_cm_get_path)(void));
 	FILE *    ((*dllitf_cm_stream_out)(void));
 	FILE *    ((*dllitf_cm_stream_in)(void));
 	FILE *    ((*dllitf_cm_stream_err)(void));

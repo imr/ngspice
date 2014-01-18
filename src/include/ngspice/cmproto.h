@@ -19,7 +19,8 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    01/17/14 Holger Vogt
+    Add function cm_get_path
 
 SUMMARY
 
@@ -92,6 +93,8 @@ Complex_t cm_complex_add(Complex_t x, Complex_t y);
 Complex_t cm_complex_subtract(Complex_t x, Complex_t y);
 Complex_t cm_complex_multiply(Complex_t x, Complex_t y);
 Complex_t cm_complex_divide(Complex_t x, Complex_t y);
+
+char *cm_get_path(void);
 
 FILE *cm_stream_out(void);
 FILE *cm_stream_in(void);

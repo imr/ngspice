@@ -36,6 +36,7 @@ INTERFACES
 
     cm_message_get_errmsg()
     cm_message_send()
+    cm_get_path()
 
 REFERENCED FILES
 
@@ -689,5 +690,18 @@ calculations.
 void cm_analog_auto_partial(void)
 {
     g_mif_info.auto_partial.local = MIF_TRUE;
+}
+
+/*
+cm_get_path()
+
+Return the path of the first file given on the command line
+after the command line options or set by the 'source' command.
+Will be used in function fopen_with_path().
+*/
+
+char *cm_get_path(void)
+{
+    return Infile_Path;
 }
 
