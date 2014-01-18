@@ -1389,7 +1389,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                             /*base;*/   /* holding variable for existing 
                                        non-masked bits[] integer  */
 	if (!state_file) {
-		return 1;
+		return 2;
 	}                 
 
     i = 0;                                 
@@ -1761,11 +1761,11 @@ void cm_d_state(ARGS)
                                        input from state.in */
                               *s;   /* main string variable */ 
 
-/*    char *open_error = "\n***ERROR***\nD_STATE: failed to open state file.\n";*/
+    char *open_error = "\nERROR\n  D_STATE: failed to open state file.\n";
 
-    char *loading_error = "\n***ERROR***\nD_STATE: state file was not read successfully. \nThe most common cause of this problem is a\ntrailing blank line in the state.in file \n";
+    char *loading_error = "\nERROR\n  D_STATE: state file was not read successfully. \n  The most common cause of this problem is a\n  trailing blank line in the state.in file \n";
 
-    char *index_error = "\n***ERROR***\nD_STATE: An error exists in the ordering of states values\n in the states->state[] array. This is usually caused \nby non-contiguous state definitions in the state.in file \n";
+    char *index_error = "\nERROR\n  D_STATE: An error exists in the ordering of states values\n  in the states->state[] array. This is usually caused \n  by non-contiguous state definitions in the state.in file \n";
 /*    char buf[100];*/
 
 
@@ -1845,13 +1845,15 @@ void cm_d_state(ARGS)
             rewind(state_file);
             err = cm_read_state_file(state_file,states);
         } else {
-            err = 1;
+            err = 2;
         }
 
-        if (err) { /* problem occurred in load...send error msg. */
-
+        if (err == 1) /* problem occurred in load...send error msg. */
             cm_message_send(loading_error);
+        else if (err == 2)  /* problem opening the state file...send error msg. */   
+            cm_message_send(open_error);
 
+        if (err > 0) {
             /* Reset arrays to zero */
             for (i=0; i<states->depth; i++) {
                 states->state[i] = 0;
