@@ -43,6 +43,7 @@
 #include "spicelib/analysis/analysis.h"
 #include "misc/ivars.h"
 #include "misc/misc_time.h"
+#include "misc/util.h"
 
 #if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
 # include "misc/mktemp.h"
@@ -112,6 +113,8 @@ IFsimulator *ft_sim = NULL;
 char *errRtn;     /* name of the routine declaring error */
 char *errMsg = NULL;     /* descriptive message about what went wrong */
 char *cp_program; /* program name 'ngspice' */
+
+char *Infile_Path = NULL; /* Path to netlist input file */
 
 
 /* Globals definitions for Machine Accuracy Limits
@@ -1217,6 +1220,9 @@ main(int argc, char **argv)
             while (optind < argc) {
                 char *arg = argv[optind++];
                 FILE *tp;
+                /* Copy the the path of the first filename only */
+                if (!Infile_Path)
+                    Infile_Path = ngdirname(arg);
 
                 /* Copy all the arguments into the temporary file */
                 tp = fopen(arg, "r");

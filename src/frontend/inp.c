@@ -1146,13 +1146,15 @@ com_source(wordlist *wl)
     FILE *fp, *tp;
     char buf[BSIZE_SP];
     bool inter;
-    char *tempfile = NULL;
+    char *tempfile = NULL, *firstfile;
 
     wordlist *owl = wl;
     size_t n;
 
     inter = cp_interactive;
     cp_interactive = FALSE;
+
+    firstfile = wl->wl_word;
 
     if (wl->wl_next) {
         /* There are several files -- put them into a temp file  */
@@ -1189,8 +1191,13 @@ com_source(wordlist *wl)
     /* Don't print the title if this is a spice initialisation file. */
     if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word))
         inp_spsource(fp, TRUE, tempfile ? NULL : wl->wl_word, FALSE);
-    else
+    else {
+        /* Save path name for use in XSPICE fopen_with_path() */
+        if (Infile_Path)
+            tfree(Infile_Path);
+        Infile_Path = ngdirname(firstfile);
         inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE);
+    }
 
     cp_interactive = inter;
     if (tempfile)
