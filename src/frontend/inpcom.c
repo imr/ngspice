@@ -47,7 +47,6 @@ Author: 1985 Wayne A. Christopher
 
 /* globals -- wanted to avoid complicating inp_readall interface */
 #define N_LIBRARIES       1000
-#define N_SECTIONS        1000
 #define N_PARAMS          1000
 #define N_SUBCKT_W_PARAMS 4000
 
@@ -2492,7 +2491,7 @@ inp_get_subckt_name(char *s)
 static int
 inp_get_params(char *line, char *param_names[], char *param_values[])
 {
-    char *equal_ptr = strchr(line, '=');
+    char *equal_ptr;
     char *end, *name, *value;
     int  num_params = 0;
     char keep;
