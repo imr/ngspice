@@ -14,6 +14,10 @@
 #include "cmextrn.h"
 #include "udnextrn.h"
 
+#include  <stdlib.h>
+#include  <string.h>
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 // Do not modify anything below this line
@@ -356,6 +360,10 @@ Complex_t cm_complex_divide(Complex_t x, Complex_t y) {
 	return (coreitf->dllitf_cm_complex_divide)(x,y);
 }
 
+char * cm_get_path(void) {
+	return (coreitf->dllitf_cm_get_path)();
+}
+
 FILE * cm_stream_out(void) {
 	return (coreitf->dllitf_cm_stream_out)();
 }
@@ -396,28 +404,51 @@ void txfree(void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }
 
-#include  <stdlib.h>
-#include  <string.h>
+
+/*
+fopen_with_path()
+Opens an input file <infile>. Called from d_state, file_source, d_source.
+Firstly retrieves the path Infile_Path of the ngspice input netlist.
+Then searches for (and opens) <infile> an a sequence from
+Infile_Path/<infile>
+NGSPICE_INPUT_DIR/<infile>, where the path is given by the environmental variable
+<infile>, where the path is the current directory
+*/
 
 #define MAX_PATH_LEN 1024
 
 FILE *fopen_with_path(const char *path, const char *mode)
 {
     char buf[MAX_PATH_LEN+1];
+    FILE *fp;
 
-    if(path[0] != '/') {
-        const char *x = getenv("ngspice_vpath");
+    if((path[0] != '/') && (path[1] != ':')) {
+//        const char *x = getenv("ngspice_vpath");
+        const char *x = cm_get_path();
         if(x) {
-            char *a;
-            strcpy(buf, x);
-            a = strrchr(buf, '/');
-            if(a && a[1] == '\0')
-                a[0] = '\0';
+            strncpy(buf, x, MAX_PATH_LEN);
             strcat(buf, "/");
             strcat(buf, path);
-            path = buf;
+            fp =  fopen(buf, mode);
+            if (fp)
+                return fp;
+            else {
+                char *y = getenv( "NGSPICE_INPUT_DIR" );
+                if (y && *y) {
+                    char *a;
+                    strncpy(buf, y, MAX_PATH_LEN);
+                    a = strrchr(buf, '/');
+                    if(a && a[1] == '\0')
+                        a[0] = '\0';
+                    strcat(buf, "/");
+                    strcat(buf, path);
+                    fp =  fopen(buf, mode);
+                    if (fp)
+                        return fp;
+                }
+            }
         }
     }
-
-    return fopen(path, mode);
+    fp =  fopen(path, mode);
+    return fp;
 }
