@@ -40,15 +40,12 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;C:\Program Files (x86)\Visual Leak Detector\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src\include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -58,7 +55,6 @@
 				OpenMP="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="1"
 			/>
@@ -131,9 +127,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
 			/>
@@ -149,7 +142,6 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -220,9 +212,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 			/>
 			<Tool
@@ -241,7 +230,6 @@
 				OpenMP="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -256,7 +244,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
@@ -315,9 +302,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
 			/>
@@ -336,7 +320,6 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -351,7 +334,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64.exe"
 				LinkIncremental="1"
@@ -411,9 +393,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 			/>
 			<Tool
@@ -428,7 +407,6 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="1"
 			/>
@@ -500,9 +478,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
 			/>
@@ -518,7 +493,6 @@
 				RuntimeTypeInfo="false"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -589,9 +563,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 			/>
 			<Tool
@@ -609,7 +580,6 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -624,7 +594,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_c.exe"
 				LinkIncremental="1"
@@ -683,9 +652,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
 			/>
@@ -704,7 +670,6 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -719,7 +684,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_c.exe"
 				LinkIncremental="1"
@@ -778,9 +742,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 			/>
 			<Tool
@@ -799,7 +760,6 @@
 				OpenMP="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -814,7 +774,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_omp.exe"
 				LinkIncremental="1"
@@ -873,9 +832,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
 			/>
@@ -895,7 +851,6 @@
 				OpenMP="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -910,7 +865,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_omp.exe"
 				LinkIncremental="0"
@@ -969,9 +923,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 			/>
 			<Tool
@@ -990,7 +941,6 @@
 				OpenMP="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -1005,7 +955,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_omp_c.exe"
 				LinkIncremental="1"
@@ -1064,9 +1013,6 @@
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
 			/>
@@ -1085,7 +1031,6 @@
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -1100,7 +1045,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)64_omp_c.exe"
 				LinkIncremental="1"
