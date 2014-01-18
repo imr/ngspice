@@ -2496,11 +2496,8 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
     char *end, *name, *value;
     int  num_params = 0;
     char keep;
-    bool is_expression = FALSE;
 
     while ((equal_ptr = find_assignment(line)) != NULL) {
-
-        is_expression = FALSE;
 
         /* get parameter name */
         end = skip_back_ws_(equal_ptr, line);
@@ -2511,17 +2508,15 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         /* get parameter value */
         value = skip_ws(equal_ptr + 1);
 
-        if (*value == '{')
-            is_expression = TRUE;
-        end = value;
-        if (is_expression)
+        if (*value == '{') {
+            end = value;
             while (*end && *end != '}')
                 end++;
-        else
-            end = skip_non_ws(end);
-
-        if (is_expression)
             end++;
+        } else {
+            end = skip_non_ws(value);
+        }
+
         keep = *end;
         *end = '\0';
 
