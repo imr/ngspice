@@ -2703,14 +2703,15 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 
                     if (num_subckt_params == 0 || !found_mult_param(num_subckt_params, subckt_param_names))
                         inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
+
+                    for (i = 0; i < num_subckt_params; i++) {
+                        tfree(subckt_param_names[i]);
+                        tfree(subckt_param_values[i]);
+                    }
                 }
             }
+
             tfree(subckt_name);
-            if (flag)
-                for (i = 0; i < num_subckt_params; i++) {
-                    tfree(subckt_param_names[i]);
-                    tfree(subckt_param_values[i]);
-                }
             for (i = 0; i < num_inst_params; i++) {
                 tfree(inst_param_names[i]);
                 tfree(inst_param_values[i]);
