@@ -166,7 +166,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->timeinterval[0] = loc->timeinterval[1] = PARAM_NULL(timeoffset) ? 0.0 : PARAM(timeoffset);
         for (i = 0; i < size; ++i)
             loc->amplinterval[2 * i] = loc->amplinterval[2 * i + 1] = PARAM_NULL(amploffset) ? 0.0 : PARAM(amploffset[i]);
-        loc->state->fp = fopen(PARAM(file), "r");
+        loc->state->fp = fopen_with_path(PARAM(file), "r");
         loc->state->pos = 0;
         loc->state->atend = 0;
         if (!loc->state->fp) {
