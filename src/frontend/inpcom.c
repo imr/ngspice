@@ -838,6 +838,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                  !ciprefix(".inc", buffer) &&
                  !ciprefix("codemodel", buffer) &&
                  !ciprefix("echo", buffer) &&
+                 !ciprefix("shell", buffer) &&
                  !ciprefix("source", buffer) &&
                  !ciprefix("load", buffer)
                 )
