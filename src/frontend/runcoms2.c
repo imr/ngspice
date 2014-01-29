@@ -200,14 +200,8 @@ com_remcirc(wordlist *wl)
     struct variable *v, *next;
     struct line *dd;     /*in: the spice deck */
     struct circ *p, *prev = NULL;
-
 #ifdef SHARED_MODULE
-    /* This may happen only with shared ngspice during transient analysis,
-       if simulation is stopped with 'bg_halt'
-       and then circuit shall be removed prematurely. */
-    TRANan *job = (TRANan *) ft_curckt->ci_ckt->CKTcurJob;
-    if ((job->JOBtype == 4) && (job->TRANplot))
-        SPfrontEnd->OUTendPlot (job->TRANplot);
+    TRANan *job;
 #endif
 
     NG_IGNORE(wl);
@@ -216,6 +210,15 @@ com_remcirc(wordlist *wl)
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
     }
+
+#ifdef SHARED_MODULE
+    /* This may happen only with shared ngspice during transient analysis,
+       if simulation is stopped with 'bg_halt'
+       and then circuit shall be removed prematurely. */
+    job = (TRANan *) ft_curckt->ci_ckt->CKTcurJob;
+    if (job && (job->JOBtype == 4) && (job->TRANplot))
+        SPfrontEnd->OUTendPlot (job->TRANplot);
+#endif
 
     /* delete numparam data structure dicoS */
     nupa_del_dicoS();
