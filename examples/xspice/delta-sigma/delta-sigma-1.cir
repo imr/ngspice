@@ -16,6 +16,8 @@
 
 .global dzero done
 
+.options interp ; strongly reduces memory requirements
+
 ** input signal
 * SIN(VO VA FREQ TD THETA)
 vin inp inm dc 0 sin(0 'inampl' 'infreq' 0 0)
