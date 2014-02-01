@@ -56,6 +56,8 @@ static bool parseSpecial(char *name, char *dev, char *param, char *ind);
 static bool name_eq(char *n1, char *n2);
 static bool getSpecial(dataDesc *desc, runDesc *run, IFvalue *val);
 static void freeRun(runDesc *run);
+static int InterpFileAdd(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
+static int InterpPlotAdd(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr);
 
 /*Output data to spice module*/
 #ifdef TCL_MODULE
@@ -80,6 +82,8 @@ static size_t column, rowbuflen;
 
 static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 
+static bool interpolated = FALSE;
+static double *valueold, *valuenew;
 
 /* The two "begin plot" routines share all their internals... */
 
@@ -144,6 +148,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         /* Check to see if we want to print informational data. */
         if (cp_getvar("printinfo", CP_BOOL, NULL))
             fprintf(cp_err, "(debug printing enabled)\n");
+
+        /* Check to see if we want to save only interpolated data. */
+        if (cp_getvar("interp", CP_BOOL, NULL)) {
+            interpolated = TRUE;
+            fprintf(cp_out, "Warning: Interpolated raw file data!\n\n");
+        }
 
         *runp = run = alloc(struct runDesc);
 
@@ -365,6 +375,14 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         }
     }
 
+    /* define storage for old and new data, to allow interpolation */
+    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4) {
+        valueold = TMALLOC(double, run->numData);
+        for (i = 0; i < run->numData; i++)
+            valueold[i] = 0.0;
+        valuenew = TMALLOC(double, run->numData);
+    }
+
     /*Start BLT, initilises the blt vectors saj*/
 #ifdef TCL_MODULE
     blt_init(run);
@@ -453,8 +471,18 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #ifdef TCL_MODULE
     steps_completed = run->pointCount;
 #endif
-
-    if (run->writeOut) {
+    /* interpolated batch mode output to file in transient analysis */
+    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && run->writeOut) {
+        InterpFileAdd(run, refValue, valuePtr);
+        return (OK);
+    }
+    /* interpolated interactive or control mode output to plot in transient analysis */
+    else if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && !(run->writeOut)) {
+        InterpPlotAdd(run, refValue, valuePtr);
+        return (OK);
+    }
+    /* standard batch mode output to file */
+    else if (run->writeOut) {
 
         if (run->pointCount == 1)
             fileInit_pass2(run);
@@ -677,7 +705,12 @@ OUTendPlot(runDesc *plotPtr)
 {
     runDesc *run = plotPtr;  // FIXME
 
-    if (run->writeOut) {
+    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && run->writeOut) {
+        tfree(valueold);
+        tfree(valuenew);
+        fileEnd(run);
+    }
+    else if (run->writeOut) {
         fileEnd(run);
     } else {
         gr_end_iplot();
@@ -1250,4 +1283,304 @@ OUTerror(int flags, char *format, IFuid *names)
     *bptr = '\0';
     fprintf(cp_err, "%s\n", buf);
     fflush(cp_err);
+}
+
+static int
+InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
+{
+    int i;
+    static double timeold = 0.0, timenew = 0.0, timestep = 0.0;
+    bool nodata = FALSE;
+    bool interpolatenow = FALSE;
+
+    if (run->pointCount == 1) {
+        fileInit_pass2(run);
+        timestep = run->circuit->CKTinitTime + run->circuit->CKTstep;
+    }
+
+    if (run->refIndex != -1) {
+        /*  Save first time step  */
+        if (refValue->rValue == run->circuit->CKTinitTime) {
+            timeold = refValue->rValue;
+            fileStartPoint(run->fp, run->binary, run->pointCount);
+            fileAddRealValue(run->fp, run->binary, run->circuit->CKTinitTime);
+            interpolatenow = nodata = FALSE;
+        }
+        /*  Save last time step  */
+        else if (refValue->rValue == run->circuit->CKTfinalTime) {
+            timeold = refValue->rValue;
+            fileStartPoint(run->fp, run->binary, run->pointCount);
+            fileAddRealValue(run->fp, run->binary, run->circuit->CKTfinalTime);
+            interpolatenow = nodata = FALSE;
+        }
+        /*  Save exact point  */
+        else if (refValue->rValue == timestep) {
+            timeold = refValue->rValue;
+            fileStartPoint(run->fp, run->binary, run->pointCount);
+            fileAddRealValue(run->fp, run->binary, timestep);
+            timestep += run->circuit->CKTstep;
+            interpolatenow = nodata = FALSE;
+        }
+        else if (refValue->rValue > timestep) {
+            /* add the next time step value to the vector */
+            fileStartPoint(run->fp, run->binary, run->pointCount);
+            timenew = refValue->rValue;
+            fileAddRealValue(run->fp, run->binary, timestep);
+            timestep += run->circuit->CKTstep;
+            nodata = FALSE;
+            interpolatenow = TRUE;
+        }
+        else {
+            /* Do not save this step */
+            run->pointCount--;
+            timeold = refValue->rValue;
+            nodata = TRUE;
+            interpolatenow = FALSE;
+        }
+#ifndef HAS_WINGUI
+        if (!orflag) {
+            currclock = clock();
+            if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
+                fprintf(stderr, " Reference value : % 12.5e\r",
+                        refValue->rValue);
+                lastclock = currclock;
+            }
+        }
+#endif
+
+    }
+
+    for (i = 0; i < run->numData; i++) {
+        /* we've already printed reference vec first */
+        if (run->data[i].outIndex == -1)
+            continue;
+
+#ifdef TCL_MODULE
+        blt_add(i, refValue ? refValue->rValue : NAN);
+#endif
+
+        if (run->data[i].regular) {
+        /*  Store value or interpolate and store or do not store any value to file */
+            if (!interpolatenow && !nodata) {
+                /* store the first or last value */
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+                fileAddRealValue(run->fp, run->binary, valueold[i]);
+            }
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
+                double newval;
+                valuenew[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                fileAddRealValue(run->fp, run->binary, newval);
+                valueold[i] = valuenew[i];
+            }
+            else if (nodata)
+                /* Just keep the transient output value corresponding to timeold, 
+                    but do not store to file */
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+        } else {
+            IFvalue val;
+            /* should pre-check instance */
+            if (!getSpecial(&run->data[i], run, &val)) {
+
+                /*  If this is the first data point, print a warning for any unrecognized
+                    variables, since this has not already been checked  */
+                if (run->pointCount == 1)
+                fprintf(stderr, "Warning: unrecognized variable - %s\n",
+                        run->data[i].name);
+                val.rValue = 0;
+                fileAddRealValue(run->fp, run->binary, val.rValue);
+                continue;
+            }
+            if (!interpolatenow && !nodata) {
+                /* store the first or last value */
+                valueold[i] = val.rValue;
+                fileAddRealValue(run->fp, run->binary, valueold[i]);
+            }
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
+                double newval;
+                valuenew[i] = val.rValue;
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                fileAddRealValue(run->fp, run->binary, newval);
+                valueold[i] = valuenew[i];
+            }
+            else if (nodata)
+                /* Just keep the transient output value corresponding to timeold, 
+                    but do not store to file */
+                valueold[i] = val.rValue;
+        }
+
+#ifdef TCL_MODULE
+        blt_add(i, valuePtr->v.vec.rVec [run->data[i].outIndex]);
+#endif
+
+    }
+
+    fileEndPoint(run->fp, run->binary);
+
+    /*  Check that the write to disk completed successfully, otherwise abort  */
+    if (ferror(run->fp)) {
+        fprintf(stderr, "Warning: rawfile write error !!\n");
+        shouldstop = TRUE;
+    }
+
+    if (ft_bpcheck(run->runPlot, run->pointCount) == FALSE)
+        shouldstop = TRUE;
+
+#ifdef TCL_MODULE
+    Tcl_ExecutePerLoop();
+#elif defined SHARED_MODULE
+    sh_ExecutePerLoop();
+#endif
+    return(OK);
+}
+
+static int
+InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
+{
+    int i, iscale = -1;
+    static double timeold = 0.0, timenew = 0.0, timestep = 0.0;
+    bool nodata = FALSE;
+    bool interpolatenow = FALSE;
+
+    if (run->pointCount == 1)
+        timestep = run->circuit->CKTinitTime + run->circuit->CKTstep;
+
+    /* find the scale vector */
+    for (i = 0; i < run->numData; i++)
+        if (run->data[i].outIndex == -1) {
+            iscale = i;
+            break;
+        }
+    if (iscale == -1)
+        fprintf(stderr, "Error: no scale vector found\n");
+
+#ifdef TCL_MODULE
+    /*Locks the blt vector to stop access*/
+    blt_lockvec(iscale);
+#endif
+
+    /*  Save first time step  */
+    if (refValue->rValue == run->circuit->CKTinitTime) {
+        timeold = refValue->rValue;
+        plotAddRealValue(&run->data[iscale], refValue->rValue);
+        interpolatenow = nodata = FALSE;
+    }
+    /*  Save last time step  */
+    else if (refValue->rValue == run->circuit->CKTfinalTime) {
+        timeold = refValue->rValue;
+        plotAddRealValue(&run->data[iscale], run->circuit->CKTfinalTime);
+        interpolatenow = nodata = FALSE;
+    }
+    /*  Save exact point  */
+    else if (refValue->rValue == timestep) {
+        timeold = refValue->rValue;
+        plotAddRealValue(&run->data[iscale], timestep);
+        timestep += run->circuit->CKTstep;
+        interpolatenow = nodata = FALSE;
+    }
+    else if (refValue->rValue > timestep) {
+        /* add the next time step value to the vector */
+        timenew = refValue->rValue;
+        plotAddRealValue(&run->data[iscale], timestep);
+        timestep += run->circuit->CKTstep;
+        nodata = FALSE;
+        interpolatenow = TRUE;
+    }
+    else {
+        /* Do not save this step */
+        run->pointCount--;
+        timeold = refValue->rValue;
+        nodata = TRUE;
+        interpolatenow = FALSE;
+    }
+
+#ifdef TCL_MODULE
+    /*relinks and unlocks vector*/
+    blt_relink(iscale, (run->data[iscale]).vec);
+#endif
+
+#ifndef HAS_WINGUI
+    if (!orflag) {
+        currclock = clock();
+        if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
+            fprintf(stderr, " Reference value : % 12.5e\r",
+                    refValue->rValue);
+            lastclock = currclock;
+        }
+    }
+#endif
+
+    for (i = 0; i < run->numData; i++) {
+        if (i == iscale)
+            continue;
+
+#ifdef TCL_MODULE
+        /*Locks the blt vector to stop access*/
+        blt_lockvec(i);
+#endif
+
+        if (run->data[i].regular) {
+        /*  Store value or interpolate and store or do not store any value to file */
+            if (!interpolatenow && !nodata) {
+                /* store the first or last value */
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+                plotAddRealValue(&run->data[i], valueold[i]);
+            }
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
+                double newval;
+                valuenew[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                plotAddRealValue(&run->data[i], newval);
+                valueold[i] = valuenew[i];
+            }
+            else if (nodata)
+                /* Just keep the transient output value corresponding to timeold, 
+                    but do not store to file */
+                valueold[i] = valuePtr->v.vec.rVec [run->data[i].outIndex];
+        } else {
+            IFvalue val;
+            /* should pre-check instance */
+            if (!getSpecial(&run->data[i], run, &val))
+                continue;
+            if (!interpolatenow && !nodata) {
+                /* store the first or last value */
+                valueold[i] = val.rValue;
+                plotAddRealValue(&run->data[i], valueold[i]);
+            }
+            else if (interpolatenow) {
+            /*  Interpolate time if actual time is greater than proposed next time step  */
+                double newval;
+                valuenew[i] = val.rValue;
+                newval = (timestep -  run->circuit->CKTstep - timeold)/(timenew - timeold) * (valuenew[i] - valueold[i]) + valueold[i];
+                plotAddRealValue(&run->data[i], newval);
+                valueold[i] = valuenew[i];
+            }
+            else if (nodata)
+                /* Just keep the transient output value corresponding to timeold, 
+                    but do not store to file */
+                valueold[i] = val.rValue;
+        }
+
+#ifdef TCL_MODULE
+        /*relinks and unlocks vector*/
+        blt_relink(i, (run->data[i]).vec);
+#endif
+
+    }
+
+    gr_iplot(run->runPlot);
+
+    if (ft_bpcheck(run->runPlot, run->pointCount) == FALSE)
+        shouldstop = TRUE;
+
+#ifdef TCL_MODULE
+    Tcl_ExecutePerLoop();
+#elif defined SHARED_MODULE
+    sh_ExecutePerLoop();
+#endif
+
+    return(OK);
 }
