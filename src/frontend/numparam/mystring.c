@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "ngspice/memory.h"
 #include <math.h>
 #include <stdarg.h>
 
 #include "ngspice/config.h"
+#include "ngspice/memory.h"
 #ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
 #endif

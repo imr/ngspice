@@ -15,6 +15,7 @@
 #include "fftlib.h"
 #include "matlib.h"
 #include "ngspice/fftext.h"
+#include "ngspice/config.h"
 #include "ngspice/memory.h"
 
 #ifndef M_PI

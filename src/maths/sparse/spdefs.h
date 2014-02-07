@@ -372,6 +372,7 @@ extern void * trealloc(void *, size_t);
 #define SP_FREE(ptr) { if ((ptr) != NULL) txfree(ptr); (ptr) = NULL; }
 
 
+#include "ngspice/config.h"
 
 /* A new calloc */
 #ifndef HAVE_LIBGC
@@ -382,6 +383,11 @@ extern void * trealloc(void *, size_t);
 #define SP_CALLOC(ptr,type,number)                           \
 { ptr = (type *) tmalloc((size_t)(number) * sizeof(type));   \
 }
+#include <gc/gc.h>
+#define tmalloc(m)      GC_malloc(m)
+#define trealloc(m, n)  GC_realloc((m), (n))
+#define tfree(m)
+#define txfree(m)
 #endif
 
 #include "ngspice/defines.h"
