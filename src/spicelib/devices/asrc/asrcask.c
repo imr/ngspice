@@ -56,7 +56,10 @@ ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             value->iValue = here->ASRCnegNode;
             return (OK);
         case ASRC_OUTPUTCURRENT:
-            value->rValue = ckt->CKTrhsOld[here->ASRCbranch];
+            if( here->ASRCtype == ASRC_VOLTAGE)
+                value->rValue = ckt->CKTrhsOld[here->ASRCbranch];
+			else
+                value->rValue = here->ASRCprev_value;
             return (OK);
         case ASRC_OUTPUTVOLTAGE:
             value->rValue = ckt->CKTrhsOld[here->ASRCposNode] -
