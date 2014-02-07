@@ -55,6 +55,8 @@ static void dotifeval(struct line *deck);
 static int inp_parse_temper(struct line *deck);
 static void inp_parse_temper_trees(void);
 
+static void inp_savecurrents(struct line *deck, struct line *options, wordlist **wl, wordlist *con);
+
 void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
 
@@ -605,6 +607,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
                 inp_parse_temper(deck);
+
+            /* If user wants all currents saved (.options savecurrents), add .save 
+            to wl_first with all terminal currents available on selected devices */
+            inp_savecurrents(deck, options, &wl_first, controls);
 
             /* now load deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
@@ -1574,4 +1580,133 @@ inp_evaluate_temper(void)
         d->wlend->wl_word = copy(fts);
         com_altermod(d->wl);
     }
+}
+
+
+/* Enable current measurements by the user. Check, if option savecurrents
+is set by the user. We have to do it here prematurely, because options
+will be processed later.
+Then check, if commands 'save' or '.save' are alraedy there. If not, add
+'.save all'.
+Then the deck is scanned for known devices, and their current vectors in form of
+@q1[ib] are added to new .save lines in wl_first. */
+static void inp_savecurrents(struct line *deck, struct line *options, wordlist **wl, wordlist *con)
+{
+    struct line *tmp_deck, *tmp_line;
+    char beg;
+    char *devname, *devline, *newline;
+    bool goon = FALSE, havesave = FALSE;
+    wordlist *tmpword;
+
+    /* check if option 'savecurrents' is set */
+    for (tmp_line = options; tmp_line; tmp_line = tmp_line->li_next)
+        if (strstr(tmp_line->li_line, "savecurrents")) {
+            goon = TRUE;
+            break;
+        }
+    if (!goon)
+        return;
+    /* check if we have a 'save' command in the .control section */
+    for (tmpword = con; tmpword; tmpword = tmpword->wl_next)
+        if(prefix("save", tmpword->wl_word)) {
+            havesave = TRUE;
+            break;
+        }
+
+    /* check if wl_first is already there */
+    if (*wl) {
+        /* check if .save is already in wl_first */
+        for (tmpword = *wl; tmpword; tmpword = tmpword->wl_next)
+            if(prefix(".save", tmpword->wl_word)) {
+                havesave = TRUE;
+                break;
+            }
+    }
+
+    /* if we neither have 'save' nor '.save', add '.save all'
+       or if we do not have wl_first, add at least a wordline '*' to allow wl_append_word() */
+    if (!(*wl) || !havesave) {
+        *wl = alloc(wordlist);
+        (*wl)->wl_next = NULL;
+        (*wl)->wl_prev = NULL;
+        if (havesave)
+            (*wl)->wl_word = copy("*");
+        else
+            (*wl)->wl_word = copy(".save all");
+    }
+    /* Scan the deck for devices with their terminals.
+    We currently serve bipolars, resistors, MOS1, capacitors, inductors,
+    controlled current sources. Others may follow. */
+    for (tmp_deck = deck->li_next; tmp_deck; tmp_deck = tmp_deck->li_next){
+       beg = *(tmp_deck->li_line);
+       if ((beg == '*') || (beg == '.'))
+           continue;
+       switch (beg) {
+           case 'm':
+               devline = tmp_deck->li_line;
+               devname = gettok(&devline);
+               /* .save @q1[id] @q1[is] @q1[ig] @q1[ib] */
+               newline = TMALLOC(char, 4 * strlen(devname) + 30);
+               sprintf(newline, ".save @%s[id] @%s[is] @%s[ig] @%s[ib]",
+                   devname, devname, devname, devname);
+               wl_append_word(NULL, wl, newline);
+               break;
+           case 'j':
+               devline = tmp_deck->li_line;
+               devname = gettok(&devline);
+               /* .save @q1[id] @q1[is] @q1[ig] @q1[igd] */
+               newline = TMALLOC(char, 4 * strlen(devname) + 31);
+               sprintf(newline, ".save @%s[id] @%s[is] @%s[ig] @%s[igd]",
+                   devname, devname, devname, devname);
+               wl_append_word(NULL, wl, newline);
+               break;
+           case 'q':
+               devline = tmp_deck->li_line;
+               devname = gettok(&devline);
+               /* .save @q1[ic] @q1[ie] @q1[ib] @q1[is] */
+               newline = TMALLOC(char, 4 * strlen(devname) + 30);
+               sprintf(newline, ".save @%s[ic] @%s[ie] @%s[ib] @%s[is]",
+                   devname, devname, devname, devname);
+               wl_append_word(NULL, wl, newline);
+               break;
+           case 'd':
+               devline = tmp_deck->li_line;
+               devname = gettok(&devline);
+               /* .save @d1[id] */
+               newline = TMALLOC(char, strlen(devname) + 12);
+               sprintf(newline, ".save @%s[id]",
+                   devname, devname, devname, devname);
+               wl_append_word(NULL, wl, newline);
+               break;
+           case 'r':
+           case 'c':
+           case 'l':
+           case 'b':
+           case 'f':
+           case 'g':
+           case 'w':
+           case 's':
+               devline = tmp_deck->li_line;
+               devname = gettok(&devline);
+               /* .save @r1[i] */
+               newline = TMALLOC(char, strlen(devname) + 11);
+               sprintf(newline, ".save @%s[i]",
+                   devname, devname, devname, devname);
+               wl_append_word(NULL, wl, newline);
+               break;
+           case 'i':
+               devline = tmp_deck->li_line;
+               devname = gettok(&devline);
+               /* .save @i1[current] */
+               newline = TMALLOC(char, strlen(devname) + 17);
+               sprintf(newline, ".save @%s[current]",
+                   devname, devname, devname, devname);
+               wl_append_word(NULL, wl, newline);
+               break;
+           default:
+               ;
+       }
+    }
+    while((*wl)->wl_prev)
+        (*wl) = (*wl)->wl_prev;
 }
