@@ -272,7 +272,7 @@
     <admst:when test="[name='atan']"><admst:return name="fname" value="%(name)" /></admst:when>
     <admst:when test="[name='sqrt']"><admst:return name="fname" value="%(name)" /></admst:when>
     <admst:when test="[name='exp']"><admst:return name="fname" value="%(name)" /></admst:when>
-
+    
     <admst:otherwise><admst:return name="fname" value="$(module)_%(name)"/></admst:otherwise>
   </admst:choose>
 </admst:template>

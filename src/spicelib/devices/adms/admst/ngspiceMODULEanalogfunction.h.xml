@@ -72,7 +72,7 @@
     </admst:for-each>
 
 #endif /* $(module)analogfunction */
-
+    
   </admst:template>
 
   <admst:for-each select="/module">
@@ -88,5 +88,5 @@
     <admst:value-of select="attribute[name='ngspicename']/value" />
     <admst:message format="%sanalogfunction.h: file created\n" />
   </admst:for-each>
-
+  
 </admst>
