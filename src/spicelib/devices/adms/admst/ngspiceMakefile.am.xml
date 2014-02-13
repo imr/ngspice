@@ -54,7 +54,9 @@ BUILT_SOURCES = \\
 	$(module)pzld.c	\\
 	$(module)setup.c	\\
 	$(module)temp.c	\\
-	$(module)trunc.c
+	$(module)trunc.c \\
+	$(module)analogfunction.h \\
+	$(module)analogfunction.c
 
 lib$(module)_la_SOURCES = 	\\
 	\$(BUILT_SOURCES)
@@ -84,7 +86,7 @@ DISTCLEANFILES = Makefile.am \\
 \%.c \%.hxx \\
 	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
 	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
-	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
+	\%pzld.c \%setup.c \%temp.c \%trunc.c \%analogfunction.h \%analogfunction.c \\
  : \$(srcdir)/admsva/\%.va \\
 	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
@@ -108,7 +110,9 @@ DISTCLEANFILES = Makefile.am \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
-	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEanalogfunction.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEanalogfunction.c.xml
 	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
@@ -132,7 +136,9 @@ DISTCLEANFILES = Makefile.am \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
-	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEanalogfunction.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEanalogfunction.c.xml
 
 </admst:template>
 

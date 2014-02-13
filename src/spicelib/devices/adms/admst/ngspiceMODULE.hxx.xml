@@ -253,19 +253,27 @@
     <admst:when test="[name='ln']"><admst:return name="fname" value="logE"/></admst:when>
     <admst:when test="[name='limexp']"><admst:return name="fname" value="limexp"/></admst:when>
     <admst:when test="[name='\$limexp']"><admst:return name="fname" value="limexp"/></admst:when>
-    <admst:otherwise><admst:return name="fname" value="%(name)"/></admst:otherwise>
-  </admst:choose>
-</admst:template>
-<admst:template match="fname">
-  <admst:choose>
-    <admst:when test="[name='abs']">fabs</admst:when>
-    <admst:when test="[name='\$shrinkl']">shrinkl</admst:when>
-    <admst:when test="[name='\$shrinka']">shrinka</admst:when>
-    <admst:when test="[name='log']">log10</admst:when>
-    <admst:when test="[name='ln']">logE</admst:when>
-    <admst:when test="[name='limexp']">limexp</admst:when>
-    <admst:when test="[name='\$limexp']">limexp</admst:when>
-    <admst:otherwise>%(name)</admst:otherwise>
+
+    <admst:when test="[name='hypot']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='max']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='min']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='pow']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='div']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='mult']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='add']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='cos']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='sin']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='tan']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='cosh']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='sinh']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='tanh']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='acos']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='asin']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='atan']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='sqrt']"><admst:return name="fname" value="%(name)" /></admst:when>
+    <admst:when test="[name='exp']"><admst:return name="fname" value="%(name)" /></admst:when>
+
+    <admst:otherwise><admst:return name="fname" value="$(module)_%(name)"/></admst:otherwise>
   </admst:choose>
 </admst:template>
 
