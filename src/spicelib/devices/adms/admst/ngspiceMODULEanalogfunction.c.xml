@@ -592,7 +592,7 @@ static inline double _d1_pow(double x,double y)       { return (x==0.0)?0.0:((lo
             </admst:for-each>
           </admst:when>
           <admst:otherwise>
-            <admst:return name="x" value="$function($args)"/>
+            <admst:return name="x" value="$(module)_$function($args)"/>
             <admst:for-each select="$globalanalogfunction/variable[input='yes']">
               <admst:value-of select="name"/> <admst:variable name="name" select="%s"/>
               <admst:variable name="darg" select=""/>
@@ -601,7 +601,7 @@ static inline double _d1_pow(double x,double y)       { return (x==0.0)?0.0:((lo
                 <admst:variable name="index" select="%s"/>
                 <admst:variable name="darg" select="$darg,($(arg$(index)_$name))"/>
               </admst:for-each>
-              <admst:return name="dx.$name" value="d_$function($args$darg)"/>
+              <admst:return name="dx.$name" value="d_$(module)_$function($args$darg)"/>
             </admst:for-each>
           </admst:otherwise>
         </admst:choose>
