@@ -42,9 +42,7 @@
      TOK_LE = 260,
      TOK_GE = 261,
      TOK_NE = 262,
-     TOK_LRANGE = 263,
-     TOK_RRANGE = 264,
-     NEG = 265
+     NEG = 263
    };
 #endif
 
@@ -64,7 +62,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 68 "parse-bison.h"
+#line 66 "parse-bison.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
