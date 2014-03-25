@@ -606,18 +606,8 @@ PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
     switch (*sbuf) {
 
     case '[':
-        if (sbuf[1] == '[') {
-            lexer_return(TOK_LRANGE, 2);
-        } else {
-            lexer_return(*sbuf, 1);
-        }
-
     case ']':
-        if (sbuf[1] == ']') {
-            lexer_return(TOK_RRANGE, 2);
-        } else {
-            lexer_return(*sbuf, 1);
-        }
+        lexer_return(*sbuf, 1);
 
     case '>':
     case '<':

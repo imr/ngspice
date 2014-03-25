@@ -82,7 +82,7 @@
 
 %token <num>  TOK_NUM
 %token <str>  TOK_STR
-%token        TOK_LE TOK_GE TOK_NE TOK_LRANGE TOK_RRANGE
+%token        TOK_LE TOK_GE TOK_NE
 
 %type  <pnode>   exp exp_list one_exp
 
@@ -99,7 +99,6 @@
 %left   NEG      /* negation--unary minus */
 %right  '^'      /* exponentiation */
 %left   '[' ']'
-%left   TOK_LRANGE TOK_RRANGE
 
 %initial-action      /* initialize yylval */
 {
@@ -164,7 +163,7 @@ exp:
   | exp '|' exp                       { $$ = mkbnode(PT_OP_OR,  $1, $3); }
 
   | exp '[' exp ']'                   { $$ = mkbnode(PT_OP_INDX,  $1, $3); }
-  | exp TOK_LRANGE exp TOK_RRANGE     { $$ = mkbnode(PT_OP_RANGE, $1, $3); }
+  | exp '[' '['  exp ']' ']'          { $$ = mkbnode(PT_OP_RANGE, $1, $4); }
   | exp '?' exp ':' exp               { $$ = mkbnode(PT_OP_TERNARY,$1,
                                                      mkbnode(PT_OP_COMMA,$3,$5)); }
 ;
