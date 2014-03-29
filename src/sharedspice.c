@@ -944,7 +944,6 @@ sh_vfprintf(FILE *f, const char *fmt, va_list args)
 
         if(nchars == -1) {           // compatibility to old implementations
             size *= 2;
-            nchars = vsnprintf(p, size, fmt, args);
         } else if (size < (size_t)nchars + 1) {
             size = (size_t)nchars + 1;
         } else {
