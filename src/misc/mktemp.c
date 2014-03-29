@@ -23,20 +23,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 char *
 smktemp(char *id)
 {
-    char	rbuf[513];
-    char	*nbuf;
-    int		num;
-
-
-    num = getpid( );
-
-
     if (!id)
-	id = "sp";
+        id = "sp";
 
-    sprintf(rbuf, TEMPFORMAT, id, num);
-    nbuf = TMALLOC(char, strlen(rbuf) + 1);
-    strcpy(nbuf, rbuf);
-
-    return nbuf;
+    return tprintf(TEMPFORMAT, id, getpid());
 }
