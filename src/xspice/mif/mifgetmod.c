@@ -93,7 +93,6 @@ char *MIFgetMod(
     char * line;
     char *parm;
     char *err = NULL;
-    char *temp;
     int error;
 
     int               i;
@@ -214,22 +213,10 @@ char *MIFgetMod(
                         }
                     }
                     /* gtri modification: processing of special parameter "level" removed */
-                    if(j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms))
-					{
-						//err has not been allocated, but free() in INPerrCat()
-
-						// This did not allocate enough memory you wanker, K.A. replaced 5 March 2000
-		// temp = TMALLOC(char, 40 + strlen(parm));
-						temp = TMALLOC(char, 42 + strlen(parm));// K.A. replaced 5 March 2000
-
-						sprintf(temp, "MIF: unrecognized parameter (%s) - ignored\n", parm);
-
-						fprintf(stdout, "%s", temp);
-						err = TMALLOC(char, 2 * strlen(temp) + 2);// K.A. added 5 March 2000
-                  
-						*err = '\0';// K.A. added 5 March 2000
-
-                        err = INPerrCat(err,temp);
+                    if(j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
+                        char *temp = TMALLOC(char, 41 + strlen(parm));
+                        sprintf(temp, "MIF: unrecognized parameter (%s) - ignored", parm);
+                        err = INPerrCat(err, temp);
                     }
                     FREE(parm);
 
