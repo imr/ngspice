@@ -24,6 +24,12 @@ char * gettok(char **s);
 char * gettok_instance(char **);
 char * gettok_char(char **s, char p, bool inc_p, bool nested);
 
+#ifdef __GNUC__
+extern char *tprintf(const char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
+#else
+extern char *tprintf(const char *fmt, ...);
+#endif
+
 
 #ifdef CIDER
 /* cider integration */ 

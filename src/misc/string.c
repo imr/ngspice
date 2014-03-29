@@ -10,6 +10,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/stringutil.h"
 #include "ngspice/dstring.h"
 
+#include <stdarg.h>
+
+
 int
 prefix(register char *p, register char *s)
 {
@@ -48,6 +51,45 @@ copy_substring(const char *str, const char *end)
     }
     return(p);
 }
+
+
+char*
+tprintf(const char *fmt, ...)
+{
+    char buf[1024];
+    char *p = buf;
+    int size = sizeof(buf);
+
+    va_list args;
+
+    for (;;) {
+
+        int nchars;
+
+        va_start(args, fmt);
+
+        nchars = vsnprintf(p, (size_t) size, fmt, args);
+
+        va_end(args);
+
+        if (nchars == -1) {     // compatibility to old implementations
+            size *= 2;
+        } else if (size < nchars + 1) {
+            size = nchars + 1;
+        } else {
+            break;
+        }
+
+        if (p == buf)
+            p = TMALLOC(char, size);
+        else
+            p = TREALLOC(char, p, size);
+    }
+
+
+    return (p == buf) ? copy(p) : p;
+}
+
 
 /* Determine whether sub is a substring of str. */
 /* Like strstr( ) XXX */
