@@ -913,10 +913,10 @@ inp_dodeck(
 
                 if (p == dd->li_error) {
                     if (strstr(dd->li_line, ".model"))
-                        out_printf("Warning: Model issue on line %d : %.*s ...\n  %s\n",
-                                   dd->li_linenum_orig, 56, dd->li_line, dd->li_error);
+                        out_printf("Warning: Model issue on line %d :\n  %.*s ...\n%s\n",
+                                   dd->li_linenum_orig, 72, dd->li_line, dd->li_error);
                     else {
-                        out_printf("Error on line %d : %s\n  %s\n",
+                        out_printf("Error on line %d :\n  %s\n%s\n",
                                    dd->li_linenum_orig, dd->li_line, dd->li_error);
                         have_err = TRUE;
                     }
