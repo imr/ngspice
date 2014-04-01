@@ -4195,6 +4195,35 @@ inp_split_multi_param_lines(struct line *card, int line_num)
 }
 
 
+static int
+identifier_char(int c)
+{
+    return (c == '_') || isalnum(c);
+}
+
+
+static bool
+b_transformation_wanted(const char *p)
+{
+    const char *start = p;
+
+    for (p = start; (p = strpbrk(p, "vith")) != NULL; p++) {
+        if (p > start && identifier_char(p[-1]))
+            continue;
+        if (strcmp(p, "v(") == 0 || strcmp(p, "i(") == 0)
+            return TRUE;
+        if (strcmp(p, "temper") == 0 && !identifier_char(p[6]))
+            return TRUE;
+        if (strcmp(p, "hertz") == 0 && !identifier_char(p[5]))
+            return TRUE;
+        if (strcmp(p, "time") == 0 && !identifier_char(p[4]))
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
+
 /* ps compatibility:
    ECOMP 3 0 TABLE {V(1,2)} = (-1 0V) (1, 10V)
    -->
@@ -4856,9 +4885,7 @@ inp_compat(struct line *card)
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
             /* check only after skipping Rname and nodes, either may contain time (e.g. Rtime)*/
-            if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) &&
-                (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz")) &&
-                (!strstr(cut_line, "time"))) {
+            if (!b_transformation_wanted(cut_line)) {
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
@@ -4945,10 +4972,7 @@ inp_compat(struct line *card)
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
             /* check only after skipping Cname and nodes, either may contain time (e.g. Ctime)*/
-            if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) &&
-                (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz")) &&
-                (!strstr(cut_line, "time")))
-            {
+            if (!b_transformation_wanted(cut_line)) {
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
@@ -5057,10 +5081,7 @@ inp_compat(struct line *card)
             title_tok = gettok(&cut_line);
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
-            if ((!strstr(cut_line, "v(")) &&  (!strstr(cut_line, "i(")) &&
-                (!strstr(cut_line, "temper")) &&  (!strstr(cut_line, "hertz")) &&
-                (!strstr(cut_line, "time")))
-            {
+            if (!b_transformation_wanted(cut_line)) {
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
