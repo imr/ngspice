@@ -28,9 +28,6 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
     double vtnom;
     DIOinstance *here;
     int iter;
-#ifdef TRACE
-    char *emsg;
-#endif
     double dt;
     double factor;
     double tBreakdownVoltage;
@@ -203,13 +200,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if (cbv < here->DIOtSatCur * tBreakdownVoltage/vt) {
                     cbv=here->DIOtSatCur * tBreakdownVoltage/vt;
 #ifdef TRACE
-                    emsg = TMALLOC(char, 100);
-                    if(emsg == NULL) return(E_NOMEM);
-                    (void)sprintf(emsg,
-                    "%%s: breakdown current increased to %g to resolve",
-                            cbv);
-                    SPfrontEnd->IFerrorf (ERR_WARNING, emsg, here->DIOname);
-                    FREE(emsg);
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->DIOname, cbv);
                     SPfrontEnd->IFerrorf (ERR_WARNING,
                     "incompatibility with specified saturation current");
 #endif
@@ -227,13 +218,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                         if (fabs(xcbv-cbv) <= tol) goto matched;
                     }
 #ifdef TRACE
-                    emsg = TMALLOC(char, 100);
-                    if(emsg == NULL) return(E_NOMEM);
-                    (void)sprintf(emsg,
-                    "%%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g",
-                            xbv,xcbv);
-                    SPfrontEnd->IFerrorf (ERR_WARNING, emsg, here->DIOname);
-                    FREE(emsg);
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->DIOname, xbv, xcbv);
 #endif
                 }
                 matched:

@@ -35,43 +35,27 @@ DOMNcheck(DOMNcard *cardList, MaterialInfo *matlList)
   MATLmaterial *matl;
   int cardNum = 0;
   int error = OK;
-  char ebuf[512];		/* error message buffer */
 
   for ( card = cardList; card != NULL; card = card->DOMNnextCard ) {
     cardNum++;
     if (card->DOMNxLowGiven && card->DOMNixLowGiven) {
-      sprintf( ebuf,
-	  "domain card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "domain card %d uses both location and index - location ignored", cardNum );
       card->DOMNxLowGiven = FALSE;
     }
     if (card->DOMNxHighGiven && card->DOMNixHighGiven) {
-      sprintf( ebuf,
-	  "domain card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "domain card %d uses both location and index - location ignored", cardNum );
       card->DOMNxHighGiven = FALSE;
     }
     if (card->DOMNyLowGiven && card->DOMNiyLowGiven) {
-      sprintf( ebuf,
-	  "domain card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "domain card %d uses both location and index - location ignored", cardNum );
       card->DOMNyLowGiven = FALSE;
     }
     if (card->DOMNyHighGiven && card->DOMNiyHighGiven) {
-      sprintf( ebuf,
-	  "domain card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "domain card %d uses both location and index - location ignored", cardNum );
       card->DOMNyHighGiven = FALSE;
     }
     if (!card->DOMNmaterialGiven) {
-      sprintf( ebuf,
-	  "domain card %d is missing a material index",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "domain card %d is missing a material index", cardNum );
       error = E_PRIVATE;
     } else {
       /* Make sure the material exists */
@@ -81,18 +65,12 @@ DOMNcheck(DOMNcard *cardList, MaterialInfo *matlList)
 	}
       }
       if (matl == NULL) {
-	sprintf( ebuf,
-	    "domain card %d specifies a non-existent material",
-	    cardNum );
-	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	SPfrontEnd->IFerrorf( ERR_WARNING, "domain card %d specifies a non-existent material", cardNum );
 	error = E_PRIVATE;
       }
     }
     if (!card->DOMNnumberGiven) {
-      sprintf( ebuf,
-	  "domain card %d is missing an ID number",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "domain card %d is missing an ID number", cardNum );
       error = E_PRIVATE;
     }
 
@@ -124,7 +102,6 @@ DOMNsetup(DOMNcard *cardList, DOMNdomain **domainList, MESHcoord *xMeshList,
   int ixMin, ixMax, iyMin, iyMax;
   int cardNum = 0;
   int error;
-  char ebuf[512];		/* error message buffer */
 
 /* Initialize list of domains */
   *domainList = NULL;
@@ -171,10 +148,7 @@ DOMNsetup(DOMNcard *cardList, DOMNdomain **domainList, MESHcoord *xMeshList,
       newDomain->ixHi = ixMax;
     }
     if (newDomain->ixLo > newDomain->ixHi) {
-      sprintf( ebuf,
-	  "domain card %d has low x index (%d) > high x index (%d)",
-	  cardNum, newDomain->ixLo, newDomain->ixHi );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "domain card %d has low x index (%d) > high x index (%d)", cardNum, newDomain->ixLo, newDomain->ixHi );
       error = E_PRIVATE;
     }
     if (card->DOMNiyLowGiven) {
@@ -196,10 +170,7 @@ DOMNsetup(DOMNcard *cardList, DOMNdomain **domainList, MESHcoord *xMeshList,
       newDomain->iyHi = iyMax;
     }
     if (newDomain->iyLo > newDomain->iyHi) {
-      sprintf( ebuf,
-	  "domain card %d has low y index (%d) > high y index (%d)",
-	  cardNum, newDomain->iyLo, newDomain->iyHi );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "domain card %d has low y index (%d) > high y index (%d)", cardNum, newDomain->iyLo, newDomain->iyHi );
       error = E_PRIVATE;
     }
   }

@@ -31,7 +31,6 @@ int
   MATLcard *card, *card2;
   int cardNum = 0, cardNum2;
   int error = OK;
-  char ebuf[512];		/* error message buffer */
   
   for ( card = cardList; card != NULL; card = card->MATLnextCard ) {
     cardNum++;
@@ -40,10 +39,7 @@ int
       card->MATLmaterial = SILICON;
     }
     if (!card->MATLnumberGiven) {
-      sprintf( ebuf,
-	  "material card %d is missing an id number",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "material card %d is missing an id number", cardNum );
       error = E_PRIVATE;
     }
 
@@ -55,10 +51,7 @@ int
     for ( card2 = cardList; card2 != card; card2 = card2->MATLnextCard ) {
       cardNum2++;
       if (card2->MATLnumber == card->MATLnumber) {
-	sprintf( ebuf,
-	    "material cards %d and %d use same id %d",
-	    cardNum2, cardNum, card->MATLnumber );
-	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	SPfrontEnd->IFerrorf( ERR_WARNING, "material cards %d and %d use same id %d", cardNum2, cardNum, card->MATLnumber );
 	error = E_PRIVATE;
       }
     }

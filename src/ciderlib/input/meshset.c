@@ -189,13 +189,9 @@ MESHcheck(char dim, MESHcard *cardList)
   double locStart = 0.0, locEnd;
   double ratio;
   int error = OK;
-  char errBuf[512];
 
   if ( cardList == NULL ) {
-    sprintf( errBuf,
-	"%c.mesh card list is empty",
-	dim );
-    SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+    SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card list is empty", dim );
     locEnd = locStart;
     return( E_PRIVATE );
   }
@@ -205,28 +201,19 @@ MESHcheck(char dim, MESHcard *cardList)
 
 /* Am I trying to find number of nodes directly & indirectly? */
     if (card->MESHnumberGiven && card->MESHratioGiven) {
-      sprintf( errBuf,
-	  "%c.mesh card %d uses both number and ratio - number ignored",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, errBuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "%c.mesh card %d uses both number and ratio - number ignored", dim, cardNum );
 
       card->MESHnumberGiven = FALSE;
     }
 
 /* Will I be able to locate endpoints? */
     if (!card->MESHlocationGiven && !card->MESHwidthGiven) {
-      sprintf( errBuf,
-	  "%c.mesh card %d has no distances",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+      SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d has no distances", dim, cardNum );
       locEnd = locStart;
       error = E_PRIVATE;
     }
     else if (card->MESHlocationGiven && card->MESHwidthGiven) {
-      sprintf( errBuf,
-	  "%c.mesh card %d uses both location and width - location ignored",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, errBuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "%c.mesh card %d uses both location and width - location ignored", dim, cardNum );
 
       card->MESHlocationGiven = FALSE;
       locEnd = locStart + card->MESHwidth;
@@ -241,20 +228,14 @@ MESHcheck(char dim, MESHcard *cardList)
 
 /* Are the endpoints in the wrong order? */
     if ( locEnd - locStart < - CMP_TOL ) {
-      sprintf( errBuf,
-	  "%c.mesh card %d uses negative width",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+      SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d uses negative width", dim, cardNum );
       error = E_PRIVATE;
     }
 
 /* Are the endpoints too close together? */
     else if ( (locEnd - locStart <= CMP_TOL) ) {
       if ( !(cardNum == 1 && locStart == locEnd) ) {
-	sprintf( errBuf,
-	    "%c.mesh card %d has negligible width - ignored",
-	    dim, cardNum );
-	SPfrontEnd->IFerrorf( ERR_INFO, errBuf );
+	SPfrontEnd->IFerrorf( ERR_INFO, "%c.mesh card %d has negligible width - ignored", dim, cardNum );
 	locStart = locEnd;
       }
     }
@@ -267,10 +248,7 @@ MESHcheck(char dim, MESHcard *cardList)
       ratio = 1.0;
     }
     if ((ratio < 1.0) || (ratio > 10.0)) {
-      sprintf( errBuf,
-	  "%c.mesh card %d has ratio out of range - reset to 1.0",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, errBuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "%c.mesh card %d has ratio out of range - reset to 1.0", dim, cardNum );
       ratio = 1.0;
     }
 
@@ -278,10 +256,7 @@ MESHcheck(char dim, MESHcard *cardList)
     if ((card->MESHhStartGiven && (card->MESHhStart <= 0.0)) ||
 	(card->MESHhEndGiven && (card->MESHhEnd <= 0.0)) ||
 	(card->MESHhMaxGiven && (card->MESHhMax <= 0.0))) {
-      sprintf( errBuf,
-	  "%c.mesh card %d wants to use a non-positive spacing",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+      SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d wants to use a non-positive spacing", dim, cardNum );
       error = E_PRIVATE;
     }
 
@@ -289,18 +264,12 @@ MESHcheck(char dim, MESHcard *cardList)
     if (card->MESHhMaxGiven && (
 	( card->MESHhStartGiven &&  card->MESHhEndGiven) ||
 	(!card->MESHhStartGiven && !card->MESHhEndGiven))) {
-      sprintf( errBuf,
-	  "%c.mesh card %d needs to use one of h.start or h.end with h.max",
-	  dim, cardNum );
-      SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+      SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d needs to use one of h.start or h.end with h.max", dim, cardNum );
       error = E_PRIVATE;
     }
     else if (card->MESHhMaxGiven && card->MESHhStartGiven) {
       if (card->MESHhStart > card->MESHhMax) {
-	sprintf( errBuf,
-	    "%c.mesh card %d wants h.start > h.max",
-	    dim, cardNum );
-	SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+	SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d wants h.start > h.max", dim, cardNum );
 	error = E_PRIVATE;
       }
       else {
@@ -309,10 +278,7 @@ MESHcheck(char dim, MESHcard *cardList)
     }
     else if (card->MESHhMaxGiven && card->MESHhEndGiven) {
       if (card->MESHhEnd > card->MESHhMax) {
-	sprintf( errBuf,
-	    "%c.mesh card %d wants h.end > h.max",
-	    dim, cardNum );
-	SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+	SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d wants h.end > h.max", dim, cardNum );
 	error = E_PRIVATE;
       }
       else {
@@ -425,7 +391,6 @@ MESHsetup(char dim, MESHcard *cardList, MESHcoord **coordList, int *numCoords)
   double hStart, hEnd, hMax, hBig;
   double ratStart, ratEnd;
   int error = OK;
-  char errBuf[512];
 
 /* Initialize list of coordinates. */
   *coordList = endCoord = NULL;
@@ -460,10 +425,7 @@ MESHsetup(char dim, MESHcard *cardList, MESHcoord **coordList, int *numCoords)
       }
 /* Are node numbers in the wrong order? */
       if ( numEnd < numStart ) {
-	sprintf( errBuf,
-	    "%c.mesh card %d has out-of-order node numbers ( %d > %d )",
-	    dim, cardNum, numStart, numEnd );
-	SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+	SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d has out-of-order node numbers ( %d > %d )", dim, cardNum, numStart, numEnd );
 	error = E_PRIVATE;
       }
     }
@@ -492,10 +454,7 @@ MESHsetup(char dim, MESHcard *cardList, MESHcoord **coordList, int *numCoords)
 	error = MESHspacing( card, &ratStart, &ratEnd,
 	    &nspStart, &nspMax, &nspEnd );
 	if (error) {
-	  sprintf( errBuf,
-	      "%c.mesh card %d can't be spaced automatically",
-	      dim, cardNum );
-	  SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+	  SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d can't be spaced automatically", dim, cardNum );
 	  return( error );
 	}
 	else {
@@ -504,10 +463,7 @@ MESHsetup(char dim, MESHcard *cardList, MESHcoord **coordList, int *numCoords)
       }
 /* Are the node numbers properly ordered? */
       if ( numEnd <= numStart ) {
-	sprintf( errBuf,
-	    "%c.mesh card %d results in out-of-order node numbers ( %d > %d )",
-	    dim, cardNum, numStart, numEnd );
-	SPfrontEnd->IFerrorf( ERR_FATAL, errBuf );
+	SPfrontEnd->IFerrorf( ERR_FATAL, "%c.mesh card %d results in out-of-order node numbers ( %d > %d )", dim, cardNum, numStart, numEnd );
 	error = E_PRIVATE;
       }
       else {
@@ -716,13 +672,10 @@ oneSideSpacing(double width, double spacing, double rWanted, double *rFound,
 {
   int nSpaces;			/* Number of spaces */
   double rTemp1, rTemp2;	/* For temporarily calc'ed ratios */
-  char errBuf[80];
 
 /* Make sure we can take at least one step. */
   if ( width < spacing ) {
-    sprintf( errBuf,
-	"one-sided spacing can't find an acceptable solution\n");
-    SPfrontEnd->IFerrorf( ERR_WARNING, errBuf );
+    SPfrontEnd->IFerrorf( ERR_WARNING, "one-sided spacing can't find an acceptable solution\n");
     *rFound = 0.0;
     *nFound = 0;
     return(E_PRIVATE);
@@ -747,9 +700,7 @@ oneSideSpacing(double width, double spacing, double rWanted, double *rFound,
   oneSideRatio( width, spacing, &rTemp1, nSpaces );
   oneSideRatio( width, spacing, &rTemp2, nSpaces+1 );
   if ( (rTemp1 == 0.0) && (rTemp2 == 0.0) ) {
-    sprintf( errBuf,
-	"one-sided spacing can't find an acceptable solution\n");
-    SPfrontEnd->IFerrorf( ERR_WARNING, errBuf );
+    SPfrontEnd->IFerrorf( ERR_WARNING, "one-sided spacing can't find an acceptable solution\n");
     *rFound = 0.0;
     *nFound = 0;
     return(E_PRIVATE);
@@ -918,16 +869,13 @@ twoSideSpacing(double width, double hStart, double hEnd, double rWanted,
   int nSaveE = 0;		/* " */
   double rSaveS = 0.0;		/* " */
   double rSaveE = 0.0;		/* " */
-  char errBuf[80];
 
 /*
  * It's an error if there isn't enough width to fit in both spaces.
  */
   remaining = width - (hStart + hEnd);
   if (remaining < 0.0) {
-    sprintf( errBuf,
-	"two-sided spacing can't find an acceptable solution\n");
-    SPfrontEnd->IFerrorf( ERR_WARNING, errBuf );
+    SPfrontEnd->IFerrorf( ERR_WARNING, "two-sided spacing can't find an acceptable solution\n");
     *rSfound = *rEfound = 0.0;
     *nSfound = *nEfound = 0;
     return(E_PRIVATE);
@@ -1065,9 +1013,7 @@ twoSideSpacing(double width, double hStart, double hEnd, double rWanted,
 
 /* Prepare return values. */
   if (rSaveS == 0.0) {
-    sprintf( errBuf,
-	"two-sided spacing can't find an acceptable solution\n");
-    SPfrontEnd->IFerrorf( ERR_WARNING, errBuf );
+    SPfrontEnd->IFerrorf( ERR_WARNING, "two-sided spacing can't find an acceptable solution\n");
     *rSfound = *rEfound = 0.0;
     *nSfound = *nEfound = 0;
     return(E_PRIVATE);
@@ -1185,7 +1131,6 @@ maxLimSpacing(double width, double hStart, double hMax, double rWanted,
   int i;				/* Searching indices */
   int solnFound;			/* For partial search termination */
   int solnError;			/* For partial search termination */
-  char errBuf[80];
 
 /* Compute the ratio needed to exactly go from hStart to hMax
  * in the given width.  If hMax is really big, then we know
@@ -1288,9 +1233,7 @@ maxLimSpacing(double width, double hStart, double hMax, double rWanted,
 
 /* Prepare return values. */
   if (rSaveS == 0.0) {
-    sprintf( errBuf,
-	"max-limited spacing can't find an acceptable solution\n");
-    SPfrontEnd->IFerrorf( ERR_WARNING, errBuf );
+    SPfrontEnd->IFerrorf( ERR_WARNING, "max-limited spacing can't find an acceptable solution\n");
     *rFound = 0.0;
     *nSfound = *nMfound = 0;
     return(E_PRIVATE);

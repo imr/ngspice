@@ -32,36 +32,23 @@ ELCTcheck(ELCTcard *cardList)
   ELCTcard *card;
   int cardNum = 0;
   int error = OK;
-  char ebuf[512];		/* error message buffer */
 
   for ( card = cardList; card != NULL; card = card->ELCTnextCard ) {
     cardNum++;
     if (card->ELCTxLowGiven && card->ELCTixLowGiven) {
-      sprintf( ebuf,
-	  "electrode card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "electrode card %d uses both location and index - location ignored", cardNum );
       card->ELCTxLowGiven = FALSE;
     }
     if (card->ELCTxHighGiven && card->ELCTixHighGiven) {
-      sprintf( ebuf,
-	  "electrode card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "electrode card %d uses both location and index - location ignored", cardNum );
       card->ELCTxHighGiven = FALSE;
     }
     if (card->ELCTyLowGiven && card->ELCTiyLowGiven) {
-      sprintf( ebuf,
-	  "electrode card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "electrode card %d uses both location and index - location ignored", cardNum );
       card->ELCTyLowGiven = FALSE;
     }
     if (card->ELCTyHighGiven && card->ELCTiyHighGiven) {
-      sprintf( ebuf,
-	  "electrode card %d uses both location and index - location ignored",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
+      SPfrontEnd->IFerrorf( ERR_INFO, "electrode card %d uses both location and index - location ignored", cardNum );
       card->ELCTyHighGiven = FALSE;
     }
     if (!card->ELCTnumberGiven) {
@@ -95,7 +82,6 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
   int ixMin, ixMax, iyMin, iyMax;
   int cardNum = 0;
   int error;
-  char ebuf[512];		/* error message buffer */
 
 /* Initialize list of electrodes */
   *electrodeList = NULL;
@@ -141,10 +127,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
       newElectrode->ixHi = ixMax;
     }
     if (newElectrode->ixLo > newElectrode->ixHi) {
-      sprintf( ebuf,
-	  "electrode card %d has low x index (%d) > high x index (%d)",
-	  cardNum, newElectrode->ixLo, newElectrode->ixHi );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "electrode card %d has low x index (%d) > high x index (%d)", cardNum, newElectrode->ixLo, newElectrode->ixHi );
       error = E_PRIVATE;
     }
     if (card->ELCTiyLowGiven) {
@@ -166,10 +149,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
       newElectrode->iyHi = iyMax;
     }
     if (newElectrode->iyLo > newElectrode->iyHi) {
-      sprintf( ebuf,
-	  "electrode card %d has low y index (%d) > high y index (%d)",
-	  cardNum, newElectrode->iyLo, newElectrode->iyHi );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "electrode card %d has low y index (%d) > high y index (%d)", cardNum, newElectrode->iyLo, newElectrode->iyHi );
       error = E_PRIVATE;
     }
   }

@@ -32,7 +32,6 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
   DOPcard *card;
   int cardNum = 0;
   int error = OK;
-  char ebuf[512];		/* error message buffer */
 
   for ( card = cardList; card != NULL; card = card->DOPnextCard ) {
     cardNum++;
@@ -41,81 +40,54 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
       card->DOPdomains = NULL;
     }
     if (!card->DOPprofileTypeGiven) {
-      sprintf( ebuf,
-	  "doping card %d does not specify profile type",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d does not specify profile type", cardNum );
       error = E_PRIVATE;
     } else switch (card->DOPprofileType) {
       case DOP_UNIF:
 	if (!card->DOPconcGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs conc of uniform distribution",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs conc of uniform distribution", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       case DOP_LINEAR:
 	if (!card->DOPconcGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs peak conc of linear distribution",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs peak conc of linear distribution", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       case DOP_GAUSS:
 	if (!card->DOPconcGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs peak conc of gaussian distribution",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs peak conc of gaussian distribution", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       case DOP_ERFC:
 	if (!card->DOPconcGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs peak conc of error-function distribution",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs peak conc of error-function distribution", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       case DOP_EXP:
 	if (!card->DOPconcGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs peak conc of exponential distribution",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs peak conc of exponential distribution", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       case DOP_SUPREM3:
       case DOP_SUPASCII:
 	if (!card->DOPinFileGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs input-file name of suprem3 data",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs input-file name of suprem3 data", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       case DOP_ASCII:
 	if (!card->DOPinFileGiven) {
-	  sprintf( ebuf,
-	      "doping card %d needs input-file name of ascii data",
-	      cardNum );
-	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, "doping card %d needs input-file name of ascii data", cardNum );
 	  error = E_PRIVATE;
 	}
 	break;
       default:
-	sprintf( ebuf,
-	    "doping card %d has unrecognized profile type",
-	    cardNum );
-	SPfrontEnd->IFerrorf( ERR_FATAL, ebuf );
+	SPfrontEnd->IFerrorf( ERR_FATAL, "doping card %d has unrecognized profile type", cardNum );
 	error = E_NOTFOUND;
 	break;
     }

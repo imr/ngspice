@@ -29,7 +29,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
     int ipass;
     int error;
     int i,j; /* temporaries for finding error location */
-    char *message;  /* temporary message buffer */
     double *temp;
     double startTime;
     static char *msg = "Too many iterations without convergence";
@@ -121,12 +120,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                      * wrong - so we ask for the troublesome entry
                      */
                     SMPgetError(ckt->CKTmatrix,&i,&j);
-                    message = TMALLOC(char, 1000); /* should be enough */
-                    (void)sprintf(message,
-                                  "singular matrix:  check nodes %s and %s\n",
-                                  NODENAME(ckt,i),NODENAME(ckt,j));
-                    SPfrontEnd->IFerrorf (ERR_WARNING, message);
-                    FREE(message);
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt,i), NODENAME(ckt,j));
                     ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
                     printf("reorder returned error \n");

@@ -120,7 +120,6 @@ CKTpzFindZeros(CKTcircuit *ckt, PZtrial **rootinfo, int *rootcount)
     PZtrial *neighborhood[3];
     int    strat;
     int    error;
-    char   ebuf[513];
 
     NIpzK = 0.0;
     NIpzK_mag = 0;
@@ -184,10 +183,7 @@ CKTpzFindZeros(CKTcircuit *ckt, PZtrial **rootinfo, int *rootcount)
 	}
 
 	if (SPfrontEnd->IFpauseTest()) {
-	    sprintf(ebuf,
-		"Pole-Zero analysis interrupted; %d trials, %d roots\n",
-		Seq_Num, NZeros); 
-	    SPfrontEnd->IFerrorf (ERR_WARNING, ebuf);
+	    SPfrontEnd->IFerrorf (ERR_WARNING, "Pole-Zero analysis interrupted; %d trials, %d roots\n", Seq_Num, NZeros);
 	    error = E_PAUSE;
 	    break;
 	}
@@ -218,17 +214,11 @@ CKTpzFindZeros(CKTcircuit *ckt, PZtrial **rootinfo, int *rootcount)
     *rootcount = NZeros;
 
     if (Aberr_Num > 2) {
-	sprintf(ebuf,
-    "Pole-zero converging to numerical aberrations; giving up after %d trials",
-	    Seq_Num);
-	SPfrontEnd->IFerrorf (ERR_WARNING, ebuf);
+	SPfrontEnd->IFerrorf (ERR_WARNING, "Pole-zero converging to numerical aberrations; giving up after %d trials", Seq_Num);
     }
 
     if (NIter >= NITER_LIM) {
-	sprintf(ebuf,
-	    "Pole-zero iteration limit reached; giving up after %d trials",
-	    Seq_Num);
-	SPfrontEnd->IFerrorf (ERR_WARNING, ebuf);
+	SPfrontEnd->IFerrorf (ERR_WARNING, "Pole-zero iteration limit reached; giving up after %d trials", Seq_Num);
     }
 
     return error;

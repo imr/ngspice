@@ -30,15 +30,11 @@ CONTcheck(CONTcard *cardList)
   CONTcard *card;
   int cardNum = 0;
   int error = OK;
-  char ebuf[512];		/* error message buffer */
 
   for ( card = cardList; card != NULL; card = card->CONTnextCard ) {
     cardNum++;
     if (!card->CONTnumberGiven) {
-      sprintf( ebuf,
-	  "contact card %d is missing an electrode index",
-	  cardNum );
-      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
+      SPfrontEnd->IFerrorf( ERR_WARNING, "contact card %d is missing an electrode index", cardNum );
       error = E_PRIVATE;
     }
 
