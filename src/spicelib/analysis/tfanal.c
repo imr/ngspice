@@ -97,9 +97,7 @@ TFanal(CKTcircuit *ckt, int restart)
     if (job->TFoutIsI) {
         SPfrontEnd->IFnewUid (ckt, &outuid, job->TFoutSrc ,"Output_impedance", UID_OTHER, NULL);
     } else {
-        name = TMALLOC(char, strlen(job->TFoutName) + 22);
-        (void)sprintf(name,"output_impedance_at_%s",
-                job->TFoutName);
+        name = tprintf("output_impedance_at_%s", job->TFoutName);
         SPfrontEnd->IFnewUid (ckt, &outuid, NULL, name, UID_OTHER, NULL);
     }
 

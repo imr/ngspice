@@ -52,8 +52,7 @@ INPdoOpts(
         if_parm = ft_find_analysis_parm(which, token);
 
         if(if_parm && !(if_parm->dataType & IF_UNIMP_MASK)) {
-            errmsg = TMALLOC(char, 45 + strlen(token));
-            (void) sprintf(errmsg, " Warning: %s not yet implemented - ignored \n",token);
+            errmsg = tprintf(" Warning: %s not yet implemented - ignored \n", token);
             optCard->error = INPerrCat(optCard->error,errmsg);
             val = INPgetValue(ckt,&line, if_parm->dataType, tab);
             continue;
@@ -63,8 +62,7 @@ INPdoOpts(
             val = INPgetValue(ckt,&line, if_parm->dataType&IF_VARTYPES, tab);
             error = ft_sim->setAnalysisParm (ckt, anal, if_parm->id, val, NULL);
             if(error) {
-                errmsg = TMALLOC(char, 35 + strlen(token));
-                (void) sprintf(errmsg, "Warning:  can't set option %s\n", token);
+                errmsg = tprintf("Warning:  can't set option %s\n", token);
                 optCard->error = INPerrCat(optCard->error, errmsg);
             }
             continue;

@@ -746,9 +746,8 @@ read_initialisation_file(char *dir, char *name)
       asprintf(&path, "%s" DIR_PATHSEP "%s", dir, name);
       if(path==NULL) return FALSE;    /* memory allocation error */
 #else /* ~ HAVE_ASPRINTF */
-      path = TMALLOC(char, 2 + strlen(dir) + strlen(name));
+      path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
       if(path==NULL) return FALSE;    /* memory allocation error */
-      sprintf(path, "%s" DIR_PATHSEP "%s", dir, name);
 #endif /* HAVE_ASPRINTF */
     }
 
@@ -1232,9 +1231,7 @@ main(int argc, char **argv)
                 if (!tp) {
                     char *lbuffer = getenv("NGSPICE_INPUT_DIR");
                     if (lbuffer && *lbuffer) {
-                        char *p =
-                            TMALLOC(char, strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(arg) + 1);
-                        sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, arg);
+                        char *p = tprintf("%s%s%s", lbuffer, DIR_PATHSEP, arg);
                         tp = fopen(p, "r");
                         tfree(p);
                     }

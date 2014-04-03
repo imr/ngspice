@@ -620,8 +620,7 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         struct passwd *pw;
         pw = getpwuid(getuid());
 
-        s = TMALLOC(char, 1 + strlen(pw->pw_dir) + strlen(INITSTR));
-        sprintf(s, "%s%s", pw->pw_dir, INITSTR);
+        s = tprintf("%s%s", pw->pw_dir, INITSTR);
 
         if (access(s, 0) == 0)
             inp_source(s);
@@ -1109,9 +1108,7 @@ sh_fputsll(const char *input, FILE* outf)
                 newstring = gettok_char(&outstringerr, '\n', FALSE, FALSE);
                 if(!newstring)
                     break;
-                prstring = TMALLOC(char, 7 + strlen(newstring) + 1);
-                strcat(prstring, "stderr ");
-                strcat(prstring, newstring);
+                prstring = tprintf("stderr %s", newstring);
 
                 result = pfcn(prstring, ng_ident, userptr);
                 tfree(newstring);
@@ -1144,9 +1141,7 @@ sh_fputsll(const char *input, FILE* outf)
                 newstring = gettok_char(&outstringout, '\n', FALSE, FALSE);
                 if(!newstring)
                     break;
-                prstring = TMALLOC(char, 7 + strlen(newstring) + 1);
-                strcat(prstring, "stdout ");
-                strcat(prstring, newstring);
+                prstring = tprintf("stdout %s", newstring);
                 result = pfcn(prstring, ng_ident, userptr);
                 tfree(newstring);
                 tfree(prstring);
@@ -1219,9 +1214,7 @@ sh_fputs(const char *input, FILE* outf)
                 newstring = gettok_char(&outstringerr, '\n', FALSE, FALSE);
                 if(!newstring)
                     break;
-                prstring = TMALLOC(char, 7 + strlen(newstring) + 1);
-                strcat(prstring, "stderr ");
-                strcat(prstring, newstring);
+                prstring = tprintf("stderr %s", newstring);
                 mutex_lock(&fputsMutex);
                 outstorage(prstring, TRUE);
                 mutex_unlock(&fputsMutex);
@@ -1257,9 +1250,7 @@ sh_fputs(const char *input, FILE* outf)
                 newstring = gettok_char(&outstringout, '\n', FALSE, FALSE);
                 if(!newstring)
                     break;
-                prstring = TMALLOC(char, 7 + strlen(newstring) + 1);
-                strcat(prstring, "stdout ");
-                strcat(prstring, newstring);
+                prstring = tprintf("stdout %s", newstring);
                 mutex_lock(&fputsMutex);
                 outstorage(prstring, TRUE);
                 mutex_unlock(&fputsMutex);

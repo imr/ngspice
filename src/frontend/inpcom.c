@@ -382,8 +382,7 @@ inp_stitch_continuation_lines(struct line *working)
             }
 
             /* create buffer and write last and current line into it. */
-            buffer = TMALLOC(char, strlen(prev->li_line) + strlen(s) + 2);
-            (void) sprintf(buffer, "%s %s", prev->li_line, s + 1);
+            buffer = tprintf("%s %s", prev->li_line, s + 1);
 
             /* replace prev->li_line by buffer */
             s = prev->li_line;
@@ -873,8 +872,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             }
 
         if (shell_eol_continuation) {
-            char *new_buffer = TMALLOC(char, strlen(buffer) + 2);
-            sprintf(new_buffer, "+%s", buffer);
+            char *new_buffer = tprintf("+%s", buffer);
 
             tfree(buffer);
             buffer = new_buffer;
@@ -1331,8 +1329,7 @@ inp_add_control_section(struct line *deck, int *line_number)
             }
 
             if (cp_getvar("rawfile", CP_STRING, rawfile)) {
-                line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
-                sprintf(line, "write %s", rawfile);
+                line = tprintf("write %s", rawfile);
                 prev_card->li_next = xx_new_line(c, line, (*line_number)++, 0);
                 prev_card = prev_card->li_next;
             }
@@ -1347,8 +1344,7 @@ inp_add_control_section(struct line *deck, int *line_number)
         deck->li_next = xx_new_line(deck->li_next, copy(".endc"), (*line_number)++, 0);
 
         if (cp_getvar("rawfile", CP_STRING, rawfile)) {
-            line = TMALLOC(char, strlen("write") + strlen(rawfile) + 2);
-            sprintf(line, "write %s", rawfile);
+            line = tprintf("write %s", rawfile);
             deck->li_next = xx_new_line(deck->li_next, line, (*line_number)++, 0);
         }
 
@@ -1404,11 +1400,9 @@ inp_fix_macro_param_func_paren_io(struct line *card)
             str_ptr = skip_non_ws(card->li_line);
 
             if (ciprefix(".macro", card->li_line)) {
-                new_str = TMALLOC(char, strlen(".subckt") + strlen(str_ptr) + 1);
-                sprintf(new_str, ".subckt%s", str_ptr);
+                new_str = tprintf(".subckt%s", str_ptr);
             } else {
-                new_str = TMALLOC(char, strlen(".ends") + strlen(str_ptr) + 1);
-                sprintf(new_str, ".ends%s", str_ptr);
+                new_str = tprintf(".ends%s", str_ptr);
             }
 
             tfree(card->li_line);
@@ -2218,8 +2212,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
             } else {
-                char *x = TMALLOC(char, strlen(new_str) + strlen(c->li_line) + 2);
-                sprintf(x, "%s %s", new_str, c->li_line);
+                char *x = tprintf("%s %s", new_str, c->li_line);
                 tfree(new_str);
                 new_str = x;
             }
@@ -2230,8 +2223,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         }
 
         /* create buffer and insert params: */
-        buffer = TMALLOC(char, strlen(s) + 9 + strlen(new_str) + 1);
-        sprintf(buffer, "%s params: %s", s, new_str);
+        buffer = tprintf("%s params: %s", s, new_str);
 
         tfree(s);
         tfree(new_str);
@@ -2576,8 +2568,7 @@ inp_fix_inst_line(char *inst_line,
             }
 
     for (i = 0; i < num_subckt_params; i++) {
-        new_line = TMALLOC(char, strlen(curr_line) + strlen(subckt_param_values[i]) + 2);
-        sprintf(new_line, "%s %s", curr_line, subckt_param_values[i]);
+        new_line = tprintf("%s %s", curr_line, subckt_param_values[i]);
 
         tfree(curr_line);
         tfree(subckt_param_names[i]);
@@ -2634,12 +2625,10 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
     num_subckt_params ++;
 
     if (!strstr(subckt_card->li_line, "params:")) {
-        new_str = TMALLOC(char, strlen(subckt_card->li_line) + 13);
-        sprintf(new_str, "%s params: m=1", subckt_card->li_line);
+        new_str = tprintf("%s params: m=1", subckt_card->li_line);
         add_name(subckt_w_params, get_subckt_model_name(subckt_card->li_line));
     } else {
-        new_str = TMALLOC(char, strlen(subckt_card->li_line) + 5);
-        sprintf(new_str, "%s m=1", subckt_card->li_line);
+        new_str = tprintf("%s m=1", subckt_card->li_line);
     }
 
     tfree(subckt_card->li_line);
@@ -2655,8 +2644,7 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
         /* no 'm' for model cards */
         if (ciprefix(".model", card->li_line))
             continue;
-        new_str = TMALLOC(char, strlen(card->li_line) + 7);
-        sprintf(new_str, "%s m={m}", card->li_line);
+        new_str = tprintf("%s m={m}", card->li_line);
 
         tfree(card->li_line);
         card->li_line = new_str;
@@ -3048,8 +3036,7 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
             if (curr_str == NULL) {
                 curr_str = curr_ptr;
             } else {
-                new_str = TMALLOC(char, strlen(curr_str) + strlen(curr_ptr) + 1);
-                sprintf(new_str, "%s%s", curr_str, curr_ptr);
+                new_str = tprintf("%s%s", curr_str, curr_ptr);
                 tfree(curr_str);
                 curr_str = new_str;
             }
@@ -3416,8 +3403,7 @@ inp_fix_param_values(struct line *c)
                 wl_free(nwl);
                 /* insert new vector into actual line */
                 *equal_ptr  = '\0';
-                new_str = TMALLOC(char, strlen(c->li_line) + strlen(newvec) + strlen(end_of_str + 1) + 5);
-                sprintf(new_str, "%s=[%s] %s", c->li_line, newvec, end_of_str+1);
+                new_str = tprintf("%s=[%s] %s", c->li_line, newvec, end_of_str+1);
                 tfree(newvec);
 
                 old_str    = c->li_line;
@@ -3459,8 +3445,7 @@ inp_fix_param_values(struct line *c)
                 wl_free(nwl);
                 /* insert new complex value into actual line */
                 *equal_ptr  = '\0';
-                new_str = TMALLOC(char, strlen(c->li_line) + strlen(newvec) + strlen(end_of_str + 1) + 5);
-                sprintf(new_str, "%s=<%s> %s", c->li_line, newvec, end_of_str+1);
+                new_str = tprintf("%s=<%s> %s", c->li_line, newvec, end_of_str+1);
                 tfree(newvec);
 
                 old_str    = c->li_line;
@@ -3484,13 +3469,11 @@ inp_fix_param_values(struct line *c)
                 *equal_ptr  = '\0';
 
                 if (*end_of_str == '\0') {
-                    new_str = TMALLOC(char, strlen(c->li_line) + strlen(beg_of_str) + 4);
-                    sprintf(new_str, "%s={%s}", c->li_line, beg_of_str);
+                    new_str = tprintf("%s={%s}", c->li_line, beg_of_str);
 
                 } else {
                     *end_of_str = '\0';
-                    new_str = TMALLOC(char, strlen(c->li_line) + strlen(beg_of_str) + strlen(end_of_str + 1) + 5);
-                    sprintf(new_str, "%s={%s} %s", c->li_line, beg_of_str, end_of_str+1);
+                    new_str = tprintf("%s={%s} %s", c->li_line, beg_of_str, end_of_str+1);
                 }
                 old_str    = c->li_line;
                 c->li_line = new_str;
@@ -3878,11 +3861,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                     }
                     *str_ptr = '\0';
                     if (*end != '\0') {
-                        new_str = TMALLOC(char, strlen(curr_line) + strlen(param_names[i]) + strlen(end) + 3);
-                        sprintf(new_str, "%s{%s}%s", curr_line, param_names[i], end);
+                        new_str = tprintf("%s{%s}%s", curr_line, param_names[i], end);
                     } else {
-                        new_str = TMALLOC(char, strlen(curr_line) + strlen(param_names[i]) + 3);
-                        sprintf(new_str, "%s{%s}", curr_line, param_names[i]);
+                        new_str = tprintf("%s{%s}", curr_line, param_names[i]);
                     }
                     str_ptr = new_str + strlen(curr_line) + strlen(param_names[i]);
 
@@ -3953,16 +3934,14 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
         param_ptr = skip_ws(param_ptr);
 
         if (!strstr(subckt_line, "params:")) {
-            new_line = TMALLOC(char, strlen(subckt_line) + strlen("params: ") + strlen(param_ptr) + 2);
-            sprintf(new_line, "%s params: %s", subckt_line, param_ptr);
+            new_line = tprintf("%s params: %s", subckt_line, param_ptr);
 
             subckt_name = skip_non_ws(subckt_line);
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
             add_name(subckt_w_params, copy_substring(subckt_name, end_ptr));
         } else {
-            new_line = TMALLOC(char, strlen(subckt_line) + strlen(param_ptr) + 2);
-            sprintf(new_line, "%s %s", subckt_line, param_ptr);
+            new_line = tprintf("%s %s", subckt_line, param_ptr);
         }
 
         tfree(subckt_line);
@@ -4159,8 +4138,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                 }
                 keep       = *end_param;
                 *end_param = '\0';
-                new_line   = TMALLOC(char, strlen(".param ") + strlen(beg_param) + 1);
-                sprintf(new_line, ".param %s", beg_param);
+                new_line = tprintf(".param %s", beg_param);
                 array[counter++] = new_line;
                 *end_param = keep;
                 curr_line = end_param;
@@ -4342,10 +4320,7 @@ inp_compat(struct line *card)
                 node1 =  gettok(&cut_line);
                 node2 =  gettok(&cut_line);
                 // Exxx  n1 n2 int1 0 1
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                    + 20 - 4*2 + 1;
-                ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 1",
                         title_tok, node1, node2, title_tok);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
@@ -4411,11 +4386,7 @@ inp_compat(struct line *card)
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                xlen = 2*strlen(title_tok) + strlen(expression) + 14 + strlen(firstno) +
-                    2*strlen(secondno) + strlen(midline) + 14 +
-                    strlen(lastlastno) + 50;
-                ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
                         title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
                         midline, lnumber + delta, lastlastno);
 
@@ -4465,16 +4436,10 @@ inp_compat(struct line *card)
                 }
 
                 // Exxx  n1 n2 int1 0 1
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                    + 20 - 4*2 + 1;
-                ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 1",
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 1",
                         title_tok, node1, node2, title_tok);
                 // BExxx int1 0 V = {equation}
-                xlen = 2*strlen(title_tok) + strlen(str_ptr)
-                    + 20 - 3*2 + 1;
-                ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = %s",
                         title_tok, title_tok, str_ptr);
 
                 // insert new B source line immediately after current line
@@ -4543,10 +4508,7 @@ inp_compat(struct line *card)
                 }
                 else
                     m_token = copy("1");
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                    + 20 - 4*2 + strlen(m_token);
-                ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s",
                         title_tok, node1, node2, title_tok, m_token);
                 // get the expression
                 str_ptr = gettok(&cut_line); /* ignore 'table' */
@@ -4608,11 +4570,7 @@ inp_compat(struct line *card)
                     controlled_exit(EXIT_BAD);
                 }
                 /* BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2) */
-                xlen = 2*strlen(title_tok) + strlen(expression) + 14 + strlen(firstno) +
-                    2*strlen(secondno) + strlen(midline) + 14 +
-                    strlen(lastlastno) + 50;
-                ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
                         title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
                         midline, lnumber + delta, lastlastno);
 
@@ -4674,16 +4632,10 @@ inp_compat(struct line *card)
                 // Gxxx  n1 n2 int1 0 1
                 // or
                 // Gxxx  n1 n2 int1 0 m='expr'
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                    + 20 - 4*2 + strlen(m_token);
-                ckt_array[0] = TMALLOC(char, xlen);
-                sprintf(ckt_array[0], "%s %s %s %s_int1 0 %s",
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s",
                         title_tok, node1, node2, title_tok, m_token);
                 // BGxxx int1 0 V = {equation}
-                xlen = 2*strlen(title_tok) + strlen(str_ptr)
-                    + 20 - 3*2 + 1;
-                ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 v = %s",
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = %s",
                         title_tok, title_tok, str_ptr);
 
                 // insert new B source line immediately after current line
@@ -4748,22 +4700,14 @@ inp_compat(struct line *card)
                 bFxxx int1 0 i = i(vnam)*{equation}
                 vbFxxx int1 0 0
                 */
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2) + 9;
-                ckt_array[0] = TMALLOC(char, xlen);
                 //Fxxx n1 n2 VBFxxx -1
-                sprintf(ckt_array[0], "%s %s %s vb%s -1",
+                ckt_array[0] = tprintf("%s %s %s vb%s -1",
                         title_tok, node1, node2, title_tok);
                 //BFxxx BFxxx_int1 0 I = I(vnam)*{equation}
-                xlen = 2*strlen(title_tok) + strlen(vnamstr) + strlen(equastr)
-                    + 23;
-                ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 i = i(%s) * (%s)",
+                ckt_array[1] = tprintf("b%s %s_int1 0 i = i(%s) * (%s)",
                         title_tok, title_tok, vnamstr, equastr);
                 //VBFxxx int1 0 0
-                xlen = 2*strlen(title_tok)
-                    + 16;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "vb%s %s_int1 0 dc 0",
+                ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
                         title_tok, title_tok);
                 // insert new three lines immediately after current line
                 for (i = 0; i < 3; i++) {
@@ -4828,22 +4772,14 @@ inp_compat(struct line *card)
                 bHxxx int1 0 i = i(vnam)*{equation}
                 vbHxxx int1 0 0
                 */
-                xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2) + 9;
-                ckt_array[0] = TMALLOC(char, xlen);
                 //Hxxx n1 n2 VBHxxx -1
-                sprintf(ckt_array[0], "%s %s %s vb%s -1",
+                ckt_array[0] = tprintf("%s %s %s vb%s -1",
                         title_tok, node1, node2, title_tok);
                 //BHxxx BHxxx_int1 0 I = I(vnam)*{equation}
-                xlen = 2*strlen(title_tok) + strlen(vnamstr) + strlen(equastr)
-                    + 23;
-                ckt_array[1] = TMALLOC(char, xlen);
-                sprintf(ckt_array[1], "b%s %s_int1 0 i = i(%s) * (%s)",
+                ckt_array[1] = tprintf("b%s %s_int1 0 i = i(%s) * (%s)",
                         title_tok, title_tok, vnamstr, equastr);
                 //VBHxxx int1 0 0
-                xlen = 2*strlen(title_tok)
-                    + 16;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "vb%s %s_int1 0 dc 0",
+                ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
                         title_tok, title_tok);
                 // insert new three lines immediately after current line
                 for (i = 0; i < 3; i++) {
@@ -4924,25 +4860,13 @@ inp_compat(struct line *card)
                 }
             }
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                    strlen(node1) + strlen(node2) + strlen(equation)  +
-                    28 - 6*2 + 1;
-                xline = TMALLOC(char, xlen);
-                sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
                         node1, node2, equation);
             } else if (tc2_ptr == NULL) {
-                xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                    strlen(node1) + strlen(node2) + strlen(equation)  +
-                    28 - 6*2 + 1 + 21 + 13;
-                xline = TMALLOC(char, xlen);
-                sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
                         node1, node2, equation, tc1);
             } else {
-                xlen = strlen(title_tok) + strlen(node1) + strlen(node2) +
-                    strlen(node1) + strlen(node2) + strlen(equation)  +
-                    28 - 6*2 + 1 + 21 + 21 + 13;
-                xline = TMALLOC(char, xlen);
-                sprintf(xline, "b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
                         node1, node2, equation, tc1, tc2);
             }
             tc1_ptr = NULL;
@@ -5011,34 +4935,19 @@ inp_compat(struct line *card)
                 }
             }
             // Exxx  n-aux 0  n1 n2  1
-            xlen = 2*strlen(title_tok) + strlen(node1) + strlen(node2)
-                + 21 - 4*2 + 1;
-            ckt_array[0] = TMALLOC(char, xlen);
-            sprintf(ckt_array[0], "e%s %s_int2 0 %s %s 1",
+            ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1",
                     title_tok, title_tok, node1, node2);
             // Cxxx  n-aux 0  1
-            xlen = 2*strlen(title_tok)
-                + 15 - 2*2 + 1;
-            ckt_array[1] = TMALLOC(char, xlen);
-            sprintf(ckt_array[1], "c%s %s_int2 0 1", title_tok, title_tok);
+            ckt_array[1] = tprintf("c%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n2 n1  I = i(Exxx) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                    + strlen(equation) + 27 - 2*5 + 1;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s)",
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
                         title_tok, node2, node1, title_tok, equation);
             } else if (tc2_ptr == NULL) {
-                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                    + strlen(equation) + 27 - 2*5 + 1 + 21 + 13;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
                         title_tok, node2, node1, title_tok, equation, tc1);
             } else {
-                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                    + strlen(equation) + 27 - 2*5 + 1 + 21 + 21 + 13;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=1",
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=1",
                         title_tok, node2, node1, title_tok, equation, tc1, tc2);
             }
             tc1_ptr = NULL;
@@ -5120,34 +5029,19 @@ inp_compat(struct line *card)
                 }
             }
             // Fxxx  n-aux 0  Bxxx  1
-            xlen = 3*strlen(title_tok)
-                + 20 - 3*2 + 1;
-            ckt_array[0] = TMALLOC(char, xlen);
-            sprintf(ckt_array[0], "f%s %s_int2 0 b%s -1",
+            ckt_array[0] = tprintf("f%s %s_int2 0 b%s -1",
                     title_tok, title_tok, title_tok);
             // Lxxx  n-aux 0  1
-            xlen = 2*strlen(title_tok)
-                + 15 - 2*2 + 1;
-            ckt_array[1] = TMALLOC(char, xlen);
-            sprintf(ckt_array[1], "l%s %s_int2 0 1", title_tok, title_tok);
+            ckt_array[1] = tprintf("l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                    + strlen(equation) + 31 - 2*5 + 1;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s)",
+                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s)",
                         title_tok, node1, node2, title_tok, equation);
             } else if (tc2_ptr == NULL) {
-                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                    + strlen(equation) + 31 - 2*5 + 1 + 21 + 13;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e reciproctc=0",
+                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e reciproctc=0",
                         title_tok, node2, node1, title_tok, equation, tc1);
             } else {
-                xlen = 2*strlen(title_tok) + strlen(node2) + strlen(node1)
-                    + strlen(equation) + 31 - 2*5 + 1 + 21 + 21 + 13;
-                ckt_array[2] = TMALLOC(char, xlen);
-                sprintf(ckt_array[2], "b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=0",
+                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=0",
                         title_tok, node2, node1, title_tok, equation, tc1, tc2);
             }
             tc1_ptr = NULL;
@@ -5251,18 +5145,13 @@ inp_compat(struct line *card)
                         exp_ptr = copy_substring(beg_ptr, end_ptr-2);
                         cut_line = str_ptr;
                         // generate node
-                        out_ptr = TMALLOC(char, 6);
-                        sprintf(out_ptr, "pa_%02d", (int)pai);
+                        out_ptr = tprintf("pa_%02d", (int)pai);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        xlen = 2*strlen(out_ptr) + strlen(exp_ptr)+ 15 - 2*3 + 1;
-                        ckt_array[pai] = TMALLOC(char, xlen);
-                        sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
                                 out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
-                        xlen = strlen(out_ptr) + 4;
-                        del_ptr = copy_ptr = TMALLOC(char, xlen);
-                        sprintf(copy_ptr, "v(%s)", out_ptr);
+                        del_ptr = copy_ptr = tprintf("v(%s)", out_ptr);
                         // length of the replacement part in original line
                         xlen = strlen(exp_ptr) + 7;
                         // copy the replacement without trailing '\0'
@@ -5284,18 +5173,13 @@ inp_compat(struct line *card)
                             end_ptr++;
                         exp_ptr = copy_substring(beg_ptr, end_ptr-3);
                         // generate node
-                        out_ptr = TMALLOC(char, 6);
-                        sprintf(out_ptr, "pa_%02d", (int)pai);
+                        out_ptr = tprintf("pa_%02d", (int)pai);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        xlen = 2*strlen(out_ptr) + strlen(exp_ptr)+ 15 - 2*3 + 1;
-                        ckt_array[pai] = TMALLOC(char, xlen);
-                        sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
                                 out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
-                        xlen = strlen(out_ptr) + 4;
-                        del_ptr = copy_ptr = TMALLOC(char, xlen);
-                        sprintf(copy_ptr, "v(%s)", out_ptr);
+                        del_ptr = copy_ptr = tprintf("v(%s)", out_ptr);
                         // length of the replacement part in original line
                         xlen = strlen(exp_ptr) + 9;
                         // skip '='
@@ -5367,18 +5251,13 @@ inp_compat(struct line *card)
                         exp_ptr = copy_substring(beg_ptr, end_ptr-2);
                         cut_line = str_ptr;
                         // generate node
-                        out_ptr = TMALLOC(char, 6);
-                        sprintf(out_ptr, "pa_%02d", (int)pai);
+                        out_ptr = tprintf("pa_%02d", (int)pai);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        xlen = 2*strlen(out_ptr) + strlen(exp_ptr)+ 15 - 2*3 + 1;
-                        ckt_array[pai] = TMALLOC(char, xlen);
-                        sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
                                 out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
-                        xlen = strlen(out_ptr) + 1;
-                        del_ptr = copy_ptr = TMALLOC(char, xlen);
-                        sprintf(copy_ptr, "%s", out_ptr);
+                        del_ptr = copy_ptr = tprintf("%s", out_ptr);
                         // length of the replacement part in original line
                         xlen = strlen(exp_ptr) + 7;
                         // copy the replacement without trailing '\0'
@@ -5407,15 +5286,11 @@ inp_compat(struct line *card)
                             end_ptr++;
                         exp_ptr = copy_substring(beg_ptr, end_ptr-3);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        xlen = 2*strlen(out_ptr) + strlen(exp_ptr)+ 15 - 2*3 + 1;
-                        ckt_array[pai] = TMALLOC(char, xlen);
-                        sprintf(ckt_array[pai], "b%s %s 0 v = %s",
+                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
                                 out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
-                        xlen = strlen(out_ptr) + 1;
-                        del_ptr = copy_ptr = TMALLOC(char, xlen);
-                        sprintf(copy_ptr, "%s", out_ptr);
+                        del_ptr = copy_ptr = tprintf("%s", out_ptr);
                         // length of the replacement part in original line
                         xlen = strlen(out_ptr) + strlen(exp_ptr) + 10;
                         // copy the replacement without trailing '\0'
@@ -5517,7 +5392,7 @@ inp_bsource_compat(struct line *card)
     struct line *new_line;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
-    size_t i, xlen, ustate = 0;
+    size_t i, ustate = 0;
     int skip_control = 0;
     int error1;
 
@@ -5712,18 +5587,12 @@ inp_bsource_compat(struct line *card)
                                 str_ptr++;
                                 wl->wl_word = copy(buf);
                             } else {
-                                xlen = strlen(buf);
-                                tmp_char = TMALLOC(char, xlen + 3);
-                                sprintf(tmp_char, "{%s}", buf);
-                                wl->wl_word = tmp_char;
+                                wl->wl_word = tprintf("{%s}", buf);
                             }
 
                         } else {
                             /* {} around all other tokens */
-                            xlen = strlen(buf);
-                            tmp_char = TMALLOC(char, xlen + 3);
-                            sprintf(tmp_char, "{%s}", buf);
-                            wl->wl_word = tmp_char;
+                            wl->wl_word = tprintf("{%s}", buf);
                         }
                     }
                     ustate = 0; /* we have a number */
@@ -5762,9 +5631,7 @@ inp_bsource_compat(struct line *card)
             }
             /* cut the tmp_char after the equal sign */
             equal_ptr[1] = '\0';
-            xlen = strlen(tmp_char) + strlen(new_str) + 2;
-            final_str = TMALLOC(char, xlen);
-            sprintf(final_str, "%s %s", tmp_char, new_str);
+            final_str = tprintf("%s %s", tmp_char, new_str);
 
             /* Copy old line numbers into new B source line */
             new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
@@ -5884,11 +5751,11 @@ inp_temper_compat(struct line *card)
 static char *
 inp_modify_exp(char* expr)
 {
-    char * str_ptr, *tmp_char, *new_str;
+    char * str_ptr, *new_str;
     char actchar;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
-    size_t i, xlen, ustate = 0;
+    size_t i, ustate = 0;
     int error1;
 
     /* scan the expression and remove all '{' and '}' */
@@ -5998,18 +5865,12 @@ inp_modify_exp(char* expr)
                         str_ptr++;
                         wl->wl_word = copy(buf);
                     } else {
-                        xlen = strlen(buf);
-                        tmp_char = TMALLOC(char, xlen + 3);
-                        sprintf(tmp_char, "{%s}", buf);
-                        wl->wl_word = tmp_char;
+                        wl->wl_word = tprintf("{%s}", buf);
                     }
 
                 } else {
                     /* {} around all other tokens */
-                    xlen = strlen(buf);
-                    tmp_char = TMALLOC(char, xlen + 3);
-                    sprintf(tmp_char, "{%s}", buf);
-                    wl->wl_word = tmp_char;
+                    wl->wl_word = tprintf("{%s}", buf);
                 }
             }
             ustate = 0; /* we have a number */
@@ -6103,7 +5964,7 @@ get_quoted_token(char *string, char **token)
 static void
 inp_add_series_resistor(struct line *deck)
 {
-    size_t skip_control = 0, xlen, i;
+    size_t skip_control = 0, i;
     bool has_rseries = FALSE;
     struct line *card;
     char *tmp_p, *title_tok, *node1, *node2, *rval = NULL;
@@ -6156,14 +6017,10 @@ inp_add_series_resistor(struct line *deck)
             node1 =  gettok(&cut_line);
             node2 =  gettok(&cut_line);
             /* new L line */
-            xlen = strlen(curr_line) + 10;
-            ckt_array[0] = TMALLOC(char, xlen);
-            sprintf(ckt_array[0], "%s %s %s_intern__ %s",
+            ckt_array[0] = tprintf("%s %s %s_intern__ %s",
                     title_tok, node1, node2, cut_line);
             /* new R line */
-            xlen = strlen(curr_line) + 19;
-            ckt_array[1] = TMALLOC(char, xlen);
-            sprintf(ckt_array[1], "R%s_intern__ %s_intern__ %s %s",
+            ckt_array[1] = tprintf("R%s_intern__ %s_intern__ %s %s",
                     title_tok, node2, node2, rval);
             /* assemble new L and R lines */
             for (i = 0; i < 2; i++) {
@@ -6605,8 +6462,7 @@ inp_new_func(char *funcname, char *funcbody, struct line *card, struct func_temp
     }
 
     /* replace line in deck */
-    new_str = TMALLOC(char, strlen(funcname) + strlen(funcbody) + 10);
-    sprintf(new_str, ".func %s() %s", funcname, funcbody);
+    new_str = tprintf(".func %s() %s", funcname, funcbody);
     card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
     *card->li_line = '*';
 }

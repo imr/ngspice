@@ -86,8 +86,7 @@ char *INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 	    }
 	}
 	if (i == *(ft_sim->devices[dev]->numInstanceParms)) {
-	    errbuf = TMALLOC(char, strlen(parm) + 25);
-	    (void) sprintf(errbuf, " unknown parameter (%s) \n", parm);
+	    errbuf = tprintf(" unknown parameter (%s) \n", parm);
 	    rtn = errbuf;
 	    goto quit;
 	}

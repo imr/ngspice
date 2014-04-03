@@ -149,11 +149,8 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             value->rValue *= fast->RESm;
             return(OK);
         } else {
-            char msgloc[BSIZE_SP];
-            sprintf(msgloc, "No current values available for %s", fast->RESname);
-            errMsg = TMALLOC(char, strlen(msgloc) + 1);
+            errMsg = tprintf("No current values available for %s", fast->RESname);
             errRtn = "RESask";
-            strcpy(errMsg, msgloc);
             return(E_ASKCURRENT);
         }
     case RES_POWER:
@@ -171,11 +168,8 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             value->rValue *= fast->RESm;
             return(OK);
         } else {
-            char msgloc[BSIZE_SP];
-            sprintf(msgloc, "No power values available for %s", fast->RESname);
-            errMsg = TMALLOC(char, strlen(msgloc) + 1);
+            errMsg = tprintf("No power values available for %s", fast->RESname);
             errRtn = "RESask";
-            strcpy(errMsg, msgloc);
             return(E_ASKCURRENT);
         }
         

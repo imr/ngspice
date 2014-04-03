@@ -322,16 +322,12 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			INPtermInsert(ckt, &nname2, tab, &node2);
 			ptemp.nValue = node2;
 			GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
-			ptemp.sValue =
-			    TMALLOC(char, 5 + strlen(nname1) + strlen(nname2));
-			(void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
+			ptemp.sValue = tprintf("V(%s,%s)", nname1, nname2);
 			GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
 		} else {
 			ptemp.nValue = gnode;
 			GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
-			ptemp.sValue =
-			    TMALLOC(char, 4 + strlen(nname1));
-			(void) sprintf(ptemp.sValue, "V(%s)", nname1);
+			ptemp.sValue = tprintf("V(%s)", nname1);
 			GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
 		}
 	} else if (*name == 'i' && strlen(name) == 1) {
@@ -445,15 +441,12 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 			INPtermInsert(ckt, &nname2, tab, &node2);
 			ptemp.nValue = node2;
 			GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
-			ptemp.sValue = TMALLOC(char, 5 + strlen(nname1) + strlen(nname2));
-			(void) sprintf(ptemp.sValue, "V(%s,%s)", nname1, nname2);
+			ptemp.sValue = tprintf("V(%s,%s)", nname1, nname2);
 			GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
 		} else {
 			ptemp.nValue = gnode;
 			GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
-			ptemp.sValue =
-			    TMALLOC(char, 4 + strlen(nname1));
-			(void) sprintf(ptemp.sValue, "V(%s)", nname1);
+			ptemp.sValue = tprintf("V(%s)", nname1);
 			GCA(INPapName, (ckt, which, foo, "outname", &ptemp));
 		}
 	} else if (*name == 'i' && strlen(name) == 1) {

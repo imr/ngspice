@@ -39,8 +39,7 @@ IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 #ifdef HAVE_ASPRINTF    	
 	asprintf(&newname, "%s#%s", olduid, suffix);
 #else /* ~ HAVE_ASPRINTF */   
-      newname = TMALLOC(char, strlen(olduid) + strlen(suffix) + 2); /* 2 = strlen("#\0") */ 
-      sprintf(newname, "%s#%s", olduid, suffix);
+      newname = tprintf("%s#%s", olduid, suffix);
 #endif /* HAVE_ASPRINTF */			 
 
     } else {
@@ -48,8 +47,7 @@ IFnewUid(CKTcircuit *ckt, IFuid * newuid, IFuid olduid, char *suffix, int type,
 #ifdef HAVE_ASPRINTF    	
 	asprintf(&newname, "%s", suffix);
 #else /* ~ HAVE_ASPRINTF */
-      newname = TMALLOC(char, strlen(suffix) + 1);
-      sprintf(newname, "%s", suffix);
+      newname = tprintf("%s", suffix);
 #endif /* HAVE_ASPRINTF */ 
     }
 

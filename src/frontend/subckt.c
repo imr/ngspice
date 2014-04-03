@@ -938,11 +938,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, char *sub
                 t = gettrans(name, NULL);
 
                 if (t) {
-                    new_str = TMALLOC(char, strlen(s) + strlen(t) + strlen(paren_ptr + 1) + 3);
-                    sprintf(new_str, "%s(%s)%s", s, t, paren_ptr+1);
+                    new_str = tprintf("%s(%s)%s", s, t, paren_ptr+1);
                 } else {
-                    new_str = TMALLOC(char, strlen(s) + strlen(scname) + strlen(name) + strlen(paren_ptr + 1) + 4);
-                    sprintf(new_str, "%s(%s.%s)%s", s, scname, name, paren_ptr+1);
+                    new_str = tprintf("%s(%s.%s)%s", s, scname, name, paren_ptr+1);
                 }
 
                 paren_ptr = new_str + strlen(s) + 1;

@@ -292,8 +292,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 			      type = INPtypelook("BSIM3");
 			    }
 			    if (type < 0) {
-			       err = TMALLOC(char, 60 + strlen(ver));
-			       sprintf(err,"Device type BSIM3 version %s not available in this binary\n",ver);
+			       err = tprintf("Device type BSIM3 version %s not available in this binary\n", ver);
 			    }
 			    break;
 			case  9:
@@ -318,8 +317,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 			      type = INPtypelook("BSIM4");
 			    }
 			    if (type < 0) {
-			       err = TMALLOC(char, 60 + strlen(ver));
-			       sprintf(err,"Device type BSIM4 version %s not available in this binary\n",ver);
+			       err = tprintf("Device type BSIM4 version %s not available in this binary\n", ver);
 			    }
 			    break;
 			case 15:
@@ -622,8 +620,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     else {
 #ifndef XSPICE
 	type = -1;
-	err = TMALLOC(char, 35 + strlen(type_name));
-	(void) sprintf(err, "unknown model type %s - ignored\n", type_name);
+	err = tprintf("unknown model type %s - ignored\n", type_name);
 #else
       /* gtri - modify - wbk - 10/23/90 - modify to look for code models */
 
@@ -634,8 +631,7 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
       /* look for this model type and put it in the table of models */
       type = INPtypelook(type_name);
       if(type < 0) {
-	err = TMALLOC(char, 35 + strlen(type_name));
-	sprintf(err,"Unknown model type %s - ignored\n",type_name);
+	err = tprintf("Unknown model type %s - ignored\n", type_name);
 
 #ifdef TRACE
 	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", type_name);

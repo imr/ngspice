@@ -146,14 +146,7 @@ char *MIFgetMod(
 	if(modtmp->INPmodType < 0) {
                 /* illegal device type, so can't handle */
                 *model = NULL;
-
-		/* fixed by SDB -- magic number is 39, not 35.  
-		 * Also needed parens to correctly compute # of bytes to malloc
-		 */
-                err = TMALLOC(char, 39 + strlen(name)); 
-
-                sprintf(err, "MIF: Unknown device type for model %s \n",name);
-                return(err);
+                return tprintf("MIF: Unknown device type for model %s\n", name);
             }
 
             /* check to see if this model's parameters have been processed */
@@ -199,8 +192,7 @@ char *MIFgetMod(
                                     ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType,
                                     tab, &err1);
                             if(err1) {
-                                err2 = TMALLOC(char, 25 + strlen(name) + strlen(err1));
-                                sprintf(err2, "MIF-ERROR - model: %s - %s\n", name, err1);
+                                err2 = tprintf("MIF-ERROR - model: %s - %s\n", name, err1);
                                 return(err2);
                             }
                             error = ft_sim->setModelParm (ckt,
@@ -214,8 +206,7 @@ char *MIFgetMod(
                     }
                     /* gtri modification: processing of special parameter "level" removed */
                     if(j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
-                        char *temp = TMALLOC(char, 41 + strlen(parm));
-                        sprintf(temp, "MIF: unrecognized parameter (%s) - ignored", parm);
+                        char *temp = tprintf("MIF: unrecognized parameter (%s) - ignored", parm);
                         err = INPerrCat(err, temp);
                     }
                     FREE(parm);
@@ -236,8 +227,7 @@ char *MIFgetMod(
 
     /* didn't find model - ERROR  - return NULL model */
     *model = NULL;
-    err = TMALLOC(char, 60 + strlen(name));
-    sprintf(err, " MIF-ERROR - unable to find definition of model %s\n",name);
+    err = tprintf(" MIF-ERROR - unable to find definition of model %s\n", name);
 
     return(err);
 }

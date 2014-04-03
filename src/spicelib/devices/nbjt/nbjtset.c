@@ -34,8 +34,6 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   MODLcard *models;
   OPTNcard *options;
   OUTPcard *outputs;
-  char *icFileName = NULL;
-  size_t nameLen;
   int error;
   int xMeshSize;
   ONEdevice *pDevice;
@@ -160,16 +158,9 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       }
       if (!inst->NBJTicFileGiven) {
 	if (options->OPTNunique) {
-	  nameLen = strlen(options->OPTNicFile) + strlen(inst->NBJTname) + 1;
-	  TSCALLOC(icFileName, nameLen+1, char);
-	  sprintf(icFileName, "%s.%s", options->OPTNicFile, inst->NBJTname);
-	  icFileName[nameLen] = '\0';
-          inst->NBJTicFile = icFileName;
+	  inst->NBJTicFile = tprintf("%s.%s", options->OPTNicFile, inst->NBJTname);
 	} else if (options->OPTNicFile != NULL) {
-	  nameLen = strlen(options->OPTNicFile);
-	  TSCALLOC(icFileName, nameLen+1, char);
-	  icFileName = strcpy(icFileName, options->OPTNicFile);
-	  inst->NBJTicFile = icFileName;
+	  inst->NBJTicFile = tprintf("%s", options->OPTNicFile);
 	} else {
 	  inst->NBJTicFile = NULL;
 	}

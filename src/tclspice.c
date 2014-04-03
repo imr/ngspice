@@ -2535,8 +2535,7 @@ Spice_Init(Tcl_Interp *interp)
 #ifdef HAVE_ASPRINTF
             asprintf(&s, "%s%s", pw->pw_dir, INITSTR);
 #else
-            s = TMALLOC(char, 1 + strlen(pw->pw_dir) + strlen(INITSTR));
-            sprintf(s, "%s%s", pw->pw_dir, INITSTR);
+            s = tprintf("%s%s", pw->pw_dir, INITSTR);
 #endif
             if (access(s, 0) == 0)
                 inp_source(s);

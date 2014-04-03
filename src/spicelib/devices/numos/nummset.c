@@ -35,8 +35,6 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   MODLcard *models;
   OPTNcard *options;
   OUTPcard *outputs;
-  char *icFileName = NULL;
-  size_t nameLen;
   int error, xIndex;
   int xMeshSize, yMeshSize;
   TWOdevice *pDevice;
@@ -174,16 +172,9 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       }
       if (!inst->NUMOSicFileGiven) {
 	if (options->OPTNunique) {
-	  nameLen = strlen(options->OPTNicFile) + strlen(inst->NUMOSname) + 1;
-	  TSCALLOC(icFileName, nameLen+1, char);
-	  sprintf(icFileName, "%s.%s", options->OPTNicFile, inst->NUMOSname);
-	  icFileName[nameLen] = '\0';
-          inst->NUMOSicFile = icFileName;
+	  inst->NUMOSicFile = tprintf("%s.%s", options->OPTNicFile, inst->NUMOSname);
 	} else if (options->OPTNicFile != NULL) {
-	  nameLen = strlen(options->OPTNicFile);
-	  TSCALLOC(icFileName, nameLen+1, char);
-	  icFileName = strcpy(icFileName, options->OPTNicFile);
-	  inst->NUMOSicFile = icFileName;
+	  inst->NUMOSicFile = tprintf("%s", options->OPTNicFile);
 	} else {
 	  inst->NUMOSicFile = NULL;
 	}

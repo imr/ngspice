@@ -1106,8 +1106,7 @@ if_set_binned_model(CKTcircuit *ckt, char *devname, char *param, struct dvec *va
     else
         l = *val->v_realdata; /* overwrite the length with the alter param */
 
-    width_length = TMALLOC(char, 36);
-    (void) sprintf(width_length, "w=%15.7e l=%15.7e", w, l);
+    width_length = tprintf("w=%15.7e l=%15.7e", w, l);
 
     if_setparam_model(ft_curckt->ci_ckt, &devname, width_length);
     FREE(width_length);

@@ -48,11 +48,9 @@ char *INPerror(int type)
         asprintf(&ebuf, "%s\n", val);
 #else /* ~ HAVE_ASPRINTF */
     if (errRtn) {
-        ebuf = TMALLOC(char, strlen(val) + strlen(errRtn) + 25);
-        sprintf(ebuf, "%s detected in routine \"%s\"\n", val, errRtn);
+        ebuf = tprintf("%s detected in routine \"%s\"\n", val, errRtn);
     } else {
-        ebuf = TMALLOC(char, strlen(val) + 2);
-        sprintf(ebuf, "%s\n", val);
+        ebuf = tprintf("%s\n", val);
     }
 #endif /* HAVE_ASPRINTF */
     tfree(val);

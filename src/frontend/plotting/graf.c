@@ -135,8 +135,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     if (!plotname)
         plotname = "(unknown)";
 
-    comb_title = TMALLOC(char, strlen(plotname) + strlen(pname) + 3);
-    sprintf(comb_title, "%s: %s", pname, plotname);
+    comb_title = tprintf("%s: %s", pname, plotname);
     graph->plotname = comb_title;
 
     /* note: have enum here or some better convention */

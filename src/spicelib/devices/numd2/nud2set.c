@@ -35,8 +35,6 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   MODLcard *models;
   OPTNcard *options;
   OUTPcard *outputs;
-  char *icFileName = NULL;
-  size_t nameLen;
   int error, xIndex;
   int xMeshSize, yMeshSize;
   TWOdevice *pDevice;
@@ -175,16 +173,9 @@ NUMD2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       }
       if (!inst->NUMD2icFileGiven) {
 	if (options->OPTNunique) {
-	  nameLen = strlen(options->OPTNicFile) + strlen(inst->NUMD2name) + 1;
-	  TSCALLOC(icFileName, nameLen+1, char);
-	  sprintf(icFileName, "%s.%s", options->OPTNicFile, inst->NUMD2name);
-	  icFileName[nameLen] = '\0';
-          inst->NUMD2icFile = icFileName;
+	  inst->NUMD2icFile = tprintf("%s.%s", options->OPTNicFile, inst->NUMD2name);
 	} else if (options->OPTNicFile != NULL) {
-	  nameLen = strlen(options->OPTNicFile);
-	  TSCALLOC(icFileName, nameLen+1, char);
-	  icFileName = strcpy(icFileName, options->OPTNicFile);
-	  inst->NUMD2icFile = icFileName;
+	  inst->NUMD2icFile = tprintf("%s", options->OPTNicFile);
 	} else {
 	  inst->NUMD2icFile = NULL;
 	}

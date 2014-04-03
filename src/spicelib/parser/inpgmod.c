@@ -121,9 +121,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
             controlled_exit(EXIT_FAILURE);
         }
         if (endptr == parm) { /* it was no number - it is really a string */
-          temp = TMALLOC(char, 40 + strlen(parm));
-          (void) sprintf(temp,
-                       "unrecognized parameter (%s) - ignored", parm);
+          temp = tprintf("unrecognized parameter (%s) - ignored", parm);
           err = INPerrCat(err, temp);
         }
       }
@@ -230,8 +228,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     if (modtmp->INPmodType < 0) {  /* First check for illegal model type */
       /* illegal device type, so can't handle */
       *model = NULL;
-      err = TMALLOC(char, 35 + strlen(name));
-      (void) sprintf(err,"Unknown device type for model %s \n", name);
+      err = tprintf("Unknown device type for model %s \n", name);
       return (err);
     } /* end of checking for illegal model */
 
@@ -279,8 +276,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
       if (modtmp->INPmodType < 0) {    /* First check for illegal model type */
         /* illegal device type, so can't handle */
         *model = NULL;
-        err = TMALLOC(char, 35 + strlen(name));
-        (void) sprintf(err,"Unknown device type for model %s \n", name);
+        err = tprintf("Unknown device type for model %s \n", name);
 
 #ifdef TRACE
         /* SDB debug statement */
@@ -300,8 +296,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
   }
   /* didn't find model - ERROR  - return model */
   *model = NULL;
-  err = TMALLOC(char, 60 + strlen(name));
-  (void) sprintf(err, "Unable to find definition of model %s - default assumed \n", name);
+  err = tprintf("Unable to find definition of model %s - default assumed \n", name);
 
 #ifdef TRACE
   /* SDB debug statement */
@@ -372,10 +367,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 cardType = lastType;
                 while (*line == '+') line++;        /* Skip leading '+'s */
             } else {
-                tmp = TMALLOC(char, 55);
-                (void) sprintf(tmp,
-                    "Error on card %d : illegal continuation \'+\' - ignored",
-                    cardNum);
+                tmp = tprintf("Error on card %d : illegal continuation \'+\' - ignored",
+                                cardNum);
                 err = INPerrCat(err,tmp);
                 lastType = E_MISSING;
                 break;
@@ -404,10 +397,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                         cardType = E_MISSING;
                     } else {
                         /* Error */
-                        tmp = TMALLOC(char, 55 + strlen(cardName));
-                        (void) sprintf(tmp,
-                            "Error on card %d : unrecognized name (%s) - ignored",
-                            cardNum, cardName );
+                        tmp = tprintf("Error on card %d : unrecognized name (%s) - ignored",
+                                        cardNum, cardName);
                         err = INPerrCat(err,tmp);
                     }
                 }
@@ -427,17 +418,13 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     idx = INPfindParm(parm, info->cardParms, info->numParms);
                     if (idx == E_MISSING) {
                         /* parm not found */
-                        tmp = TMALLOC(char, 60 + strlen(parm));
-                        (void)sprintf(tmp,
-                            "Error on card %d : unrecognized parameter (%s) - ignored",
-                            cardNum, parm);
+                        tmp = tprintf("Error on card %d : unrecognized parameter (%s) - ignored",
+                                        cardNum, parm);
                         err = INPerrCat(err, tmp);
                     } else if (idx == E_AMBIGUOUS) {
                         /* parm ambiguous */
-                        tmp = TMALLOC(char, 58 + strlen(parm));
-                        (void)sprintf(tmp,
-                            "Error on card %d : ambiguous parameter (%s) - ignored",
-                            cardNum, parm);
+                        tmp = tprintf("Error on card %d : ambiguous parameter (%s) - ignored",
+                                        cardNum, parm);
                         err = INPerrCat(err, tmp);
                     } else {
                         value = INPgetValue( ckt, &line,
@@ -447,10 +434,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                               == IF_FLAG) {
                             value->iValue = 0;
                           } else {
-                            tmp = TMALLOC(char, 63 + strlen(parm));
-                            (void)sprintf(tmp,
-                              "Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
-                              cardNum, parm);
+                            tmp = tprintf("Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
+                                            cardNum, parm);
                             err = INPerrCat(err, tmp);
                           }
                         }
