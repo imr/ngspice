@@ -40,7 +40,7 @@ MOBcheck(MOBcard *cardList, MaterialInfo *matlList)
       sprintf( ebuf,
 	  "mobility card %d is missing a material index",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     } else {
       /* Make sure the material exists */
@@ -53,7 +53,7 @@ MOBcheck(MOBcard *cardList, MaterialInfo *matlList)
 	sprintf( ebuf,
 	    "mobility card %d specifies a non-existent material",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	error = E_PRIVATE;
       }
     }

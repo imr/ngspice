@@ -28,8 +28,7 @@ CKTsetBreak(CKTcircuit *ckt, double time)
 #endif
 
     if(ckt->CKTtime > time) {
-        SPfrontEnd->IFerror (ERR_PANIC, "breakpoint in the past - HELP!",
-                NULL);
+        SPfrontEnd->IFerrorf (ERR_PANIC, "breakpoint in the past - HELP!");
         return(E_INTERN);
     }
     for(i=0;i<ckt->CKTbreakSize;i++) {

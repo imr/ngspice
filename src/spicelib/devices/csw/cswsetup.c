@@ -50,11 +50,8 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->CSWcontBranch = CKTfndBranch(ckt,here->CSWcontName);
             if(here->CSWcontBranch == 0) {
-                IFuid namarray[2];
-                namarray[0] = here->CSWname;
-                namarray[1] = here->CSWcontName;
-                SPfrontEnd->IFerror (ERR_FATAL,
-                        "%s: unknown controlling source %s",namarray);
+                SPfrontEnd->IFerrorf (ERR_FATAL,
+                        "%s: unknown controlling source %s", here->CSWname, here->CSWcontName);
                 return(E_BADPARM);
             }
 

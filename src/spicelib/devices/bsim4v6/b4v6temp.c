@@ -444,56 +444,46 @@ int Size_Not_Found, i;
 
                   pParam->BSIM4v6leff = Lnew - 2.0 * pParam->BSIM4v6dl;
                   if (pParam->BSIM4v6leff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v6modName;
-                      namarray[1] = here->BSIM4v6name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v6: mosfet %s, model %s: Effective channel length <= 0",
-                       namarray);
+                       model->BSIM4v6modName, here->BSIM4v6name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v6weff = Wnew - 2.0 * pParam->BSIM4v6dw;
                   if (pParam->BSIM4v6weff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v6modName;
-                      namarray[1] = here->BSIM4v6name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v6: mosfet %s, model %s: Effective channel width <= 0",
-                       namarray);
+                       model->BSIM4v6modName, here->BSIM4v6name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v6leffCV = Lnew - 2.0 * pParam->BSIM4v6dlc;
                   if (pParam->BSIM4v6leffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v6modName;
-                      namarray[1] = here->BSIM4v6name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v6: mosfet %s, model %s: Effective channel length for C-V <= 0",
-                       namarray);
+                       model->BSIM4v6modName, here->BSIM4v6name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v6weffCV = Wnew - 2.0 * pParam->BSIM4v6dwc;
                   if (pParam->BSIM4v6weffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v6modName;
-                      namarray[1] = here->BSIM4v6name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v6: mosfet %s, model %s: Effective channel width for C-V <= 0",
-                       namarray);
+                       model->BSIM4v6modName, here->BSIM4v6name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v6weffCJ = Wnew - 2.0 * pParam->BSIM4v6dwj;
                   if (pParam->BSIM4v6weffCJ <= 0.0)
-                  {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v6modName;
-                      namarray[1] = here->BSIM4v6name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+                  {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v6: mosfet %s, model %s: Effective channel width for S/D junctions <= 0",
-                       namarray);
+                       model->BSIM4v6modName, here->BSIM4v6name);
                       return(E_BADPARM);
                   }
 
@@ -2188,10 +2178,8 @@ int Size_Not_Found, i;
 		      }
 
               if (BSIM4v6checkModel(model, here, ckt))
-              {   IFuid namarray[2];
-                  namarray[0] = model->BSIM4v6modName;
-                  namarray[1] = here->BSIM4v6name;
-                  SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.4 parameter checking for %s in model %s", namarray);
+              {
+                  SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.4 parameter checking for %s in model %s", model->BSIM4v6modName, here->BSIM4v6name);
                   return(E_BADPARM);
               }
          } /* End instance */

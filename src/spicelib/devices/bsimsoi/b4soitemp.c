@@ -231,12 +231,10 @@ B4SOItemp(
 
             pParam->B4SOIleff = here->B4SOIl - 2.0 * pParam->B4SOIdl;
             if (pParam->B4SOIleff <= 0.0)
-            {   IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+            {
+                SPfrontEnd->IFerrorf(ERR_FATAL,
                                          "B4SOI: mosfet %s, model %s: Effective channel length <= 0",
-                                         namarray);
+                                         model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 
@@ -244,12 +242,10 @@ B4SOItemp(
                 - here->B4SOInbc * model->B4SOIdwbc
                 - (2.0 - here->B4SOInbc) * pParam->B4SOIdw;
             if (pParam->B4SOIweff <= 0.0)
-            {   IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+            {
+                SPfrontEnd->IFerrorf(ERR_FATAL,
                                          "B4SOI: mosfet %s, model %s: Effective channel width <= 0",
-                                         namarray);
+                                         model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 
@@ -260,12 +256,10 @@ B4SOItemp(
 
             pParam->B4SOIleffCV = here->B4SOIl - 2.0 * pParam->B4SOIdlc;
             if (pParam->B4SOIleffCV <= 0.0)
-            {   IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+            {
+                SPfrontEnd->IFerrorf(ERR_FATAL,
                                          "B4SOI: mosfet %s, model %s: Effective channel length for C-V <= 0",
-                                         namarray);
+                                         model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 
@@ -273,12 +267,10 @@ B4SOItemp(
                 - here->B4SOInbc * model->B4SOIdwbc
                 - (2.0 - here->B4SOInbc) * pParam->B4SOIdwc;
             if (pParam->B4SOIweffCV <= 0.0)
-            {   IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+            {
+                SPfrontEnd->IFerrorf(ERR_FATAL,
                                          "B4SOI: mosfet %s, model %s: Effective channel width for C-V <= 0",
-                                         namarray);
+                                         model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 
@@ -291,24 +283,18 @@ B4SOItemp(
                 - model->B4SOIdlcb;
             if (pParam->B4SOIleffCVb <= 0.0)
             {
-                IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerrorf(ERR_FATAL,
                                          "B4SOI: mosfet %s, model %s: Effective channel length for C-V (body) <= 0",
-                                         namarray);
+                                         model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 
             pParam->B4SOIleffCVbg = pParam->B4SOIleffCVb + 2 * model->B4SOIdlbg;
             if (pParam->B4SOIleffCVbg <= 0.0)
             {
-                IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                SPfrontEnd->IFerrorf(ERR_FATAL,
                                          "B4SOI: mosfet %s, model %s: Effective channel length for C-V (backgate) <= 0",
-                                         namarray);
+                                         model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 
@@ -1188,10 +1174,8 @@ B4SOItemp(
             }
 
             if (B4SOIcheckModel(model, here, ckt))
-            {   IFuid namarray[2];
-                namarray[0] = model->B4SOImodName;
-                namarray[1] = here->B4SOIname;
-                (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during B4SOIV3 parameter checking for %s in model %s", namarray);
+            {
+                SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during B4SOIV3 parameter checking for %s in model %s", model->B4SOImodName, here->B4SOIname);
                 return(E_BADPARM);
             }
 

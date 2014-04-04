@@ -54,8 +54,8 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
         ni_temp=1.45e16*nifact;
 
         if (model->MOS3phi <= 0.0) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-               "%s: Phi is not positive.", &model->MOS3modName);
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+               "%s: Phi is not positive.", model->MOS3modName);
             return(E_BADPARM);
         }
 
@@ -104,8 +104,8 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
                 model->MOS3coeffDepLayWidth = sqrt(model->MOS3alpha);
             } else {
                 model->MOS3substrateDoping = 0;
-                SPfrontEnd->IFerror (ERR_FATAL,
-                        "%s: Nsub < Ni ",&(model->MOS3modName));
+                SPfrontEnd->IFerrorf (ERR_FATAL,
+                        "%s: Nsub < Ni ", model->MOS3modName);
                 return(E_BADPARM);
             }
         }
@@ -197,17 +197,17 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->MOS3l - 2 * model->MOS3latDiff +
                                  model->MOS3lengthAdjust <= 0) {
-                SPfrontEnd->IFerror (ERR_FATAL,
+                SPfrontEnd->IFerrorf (ERR_FATAL,
                         "%s: effective channel length less than zero",
-                        &(here->MOS3name));
+                        here->MOS3name);
                 return(E_PARMVAL);
             }
 
             if(here->MOS3w - 2 * model->MOS3widthNarrow +
                                  model->MOS3widthAdjust <= 0) {
-                SPfrontEnd->IFerror (ERR_FATAL,
+                SPfrontEnd->IFerrorf (ERR_FATAL,
                         "%s: effective channel width less than zero",
-                        &(here->MOS3name));
+                        here->MOS3name);
                 return(E_PARMVAL);
             }
 

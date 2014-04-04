@@ -125,45 +125,37 @@ int Size_Not_Found;
 
                   pParam->B3SOIDDleff = here->B3SOIDDl - 2.0 * pParam->B3SOIDDdl;
                   if (pParam->B3SOIDDleff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->B3SOIDDmodName;
-                      namarray[1] = here->B3SOIDDname;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "B3SOIDD: mosfet %s, model %s: Effective channel length <= 0",
-                       namarray);
+                       model->B3SOIDDmodName, here->B3SOIDDname);
                       return(E_BADPARM);
                   }
 
                   pParam->B3SOIDDweff = here->B3SOIDDw - 2.0 * pParam->B3SOIDDdw;
                   if (pParam->B3SOIDDweff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->B3SOIDDmodName;
-                      namarray[1] = here->B3SOIDDname;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "B3SOIDD: mosfet %s, model %s: Effective channel width <= 0",
-                       namarray);
+                       model->B3SOIDDmodName, here->B3SOIDDname);
                       return(E_BADPARM);
                   }
 
                   pParam->B3SOIDDleffCV = here->B3SOIDDl - 2.0 * pParam->B3SOIDDdlc;
                   if (pParam->B3SOIDDleffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->B3SOIDDmodName;
-                      namarray[1] = here->B3SOIDDname;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "B3SOIDD: mosfet %s, model %s: Effective channel length for C-V <= 0",
-                       namarray);
+                       model->B3SOIDDmodName, here->B3SOIDDname);
                       return(E_BADPARM);
                   }
 
                   pParam->B3SOIDDweffCV = here->B3SOIDDw - 2.0 * pParam->B3SOIDDdwc;
                   if (pParam->B3SOIDDweffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->B3SOIDDmodName;
-                      namarray[1] = here->B3SOIDDname;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "B3SOIDD: mosfet %s, model %s: Effective channel width for C-V <= 0",
-                       namarray);
+                       model->B3SOIDDmodName, here->B3SOIDDname);
                       return(E_BADPARM);
                   }
 
@@ -553,10 +545,8 @@ int Size_Not_Found;
                                     / pow(pParam->B3SOIDDweff * 1E6, pParam->B3SOIDDwr);
 
 		  if (B3SOIDDcheckModel(model, here, ckt))
-		  {   IFuid namarray[2];
-                      namarray[0] = model->B3SOIDDmodName;
-                      namarray[1] = here->B3SOIDDname;
-                      SPfrontEnd->IFerror (ERR_FATAL, "Fatal error(s) detected during B3SOIDDV3 parameter checking for %s in model %s", namarray);
+		  {
+                      SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during B3SOIDDV3 parameter checking for %s in model %s", model->B3SOIDDmodName, here->B3SOIDDname);
                       return(E_BADPARM);   
 		  }
 

@@ -38,13 +38,13 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             if(!here->VSRCdcGiven) {
                 /* no DC value - either have a transient value, or none */
                 if(here->VSRCfuncTGiven) {
-                    SPfrontEnd->IFerror (ERR_WARNING,
+                    SPfrontEnd->IFerrorf (ERR_WARNING,
                             "%s: no DC value, transient time 0 value used",
-                            &(here->VSRCname));
+                            here->VSRCname);
                 } else {
-                    SPfrontEnd->IFerror (ERR_WARNING,
+                    SPfrontEnd->IFerrorf (ERR_WARNING,
                             "%s: has no value, DC 0 assumed",
-                            &(here->VSRCname));
+                            here->VSRCname);
                 }
             }
             radians = here->VSRCacPhase * M_PI / 180.0;

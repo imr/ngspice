@@ -351,11 +351,8 @@ MIFsetup(
                         smp_data_out->ibranch = CKTfndBranch(ckt,
                                                  here->conn[i]->port[j]->vsource_str);
                         if(smp_data_out->ibranch == 0) {
-                            IFuid names[2];
-                            names[0] = here->MIFname;
-                            names[1] = here->conn[i]->port[j]->vsource_str;
-                            SPfrontEnd->IFerror (ERR_FATAL,
-                                    "%s: unknown controlling source %s",names);
+                            SPfrontEnd->IFerrorf (ERR_FATAL,
+                                    "%s: unknown controlling source %s", here->MIFname, here->conn[i]->port[j]->vsource_str);
                             return(E_BADPARM);
                         }
                     } /* end if vsource current input */

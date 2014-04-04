@@ -38,7 +38,7 @@ CONTcheck(CONTcard *cardList)
       sprintf( ebuf,
 	  "contact card %d is missing an electrode index",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
 

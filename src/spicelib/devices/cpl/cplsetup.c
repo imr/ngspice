@@ -151,28 +151,28 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     for( ; model != NULL; model = model->CPLnextModel ) {
 
         if (!model->Rmgiven) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-                                 "model %s: lossy line series resistance not given", &(model->CPLmodName));
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+                                 "model %s: lossy line series resistance not given", model->CPLmodName);
             return(E_BADPARM);
         }
         if (!model->Gmgiven) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-                                 "model %s: lossy line parallel conductance not given", &(model->CPLmodName));
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+                                 "model %s: lossy line parallel conductance not given", model->CPLmodName);
             return(E_BADPARM);
         }
         if (!model->Lmgiven) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-                                 "model %s: lossy line series inductance not given", &(model->CPLmodName));
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+                                 "model %s: lossy line series inductance not given", model->CPLmodName);
             return (E_BADPARM);
         }
         if (!model->Cmgiven) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-                                 "model %s: lossy line parallel capacitance not given", &(model->CPLmodName));
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+                                 "model %s: lossy line parallel capacitance not given", model->CPLmodName);
             return (E_BADPARM);
         }
         if (!model->lengthgiven) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-                                 "model %s: lossy line length must be given", &(model->CPLmodName));
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+                                 "model %s: lossy line length must be given", model->CPLmodName);
             return (E_BADPARM);
         }
 

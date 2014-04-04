@@ -95,9 +95,9 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
             model->SOI3bodyThickness == 0)
         {
 
-        		SPfrontEnd->IFerror (ERR_FATAL,
+        		SPfrontEnd->IFerrorf (ERR_FATAL,
             	"%s: SOI3 device film thickness must be supplied",
-            	&model->SOI3modName);
+            	model->SOI3modName);
             return(E_BADPARM);              
         }
         else /* Oxide and film thicknesses are supplied. */
@@ -142,9 +142,9 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 
                     if(model->SOI3bodyThickness < xd_max)
                     {
-						  		SPfrontEnd->IFerror (ERR_WARNING,
+						  		SPfrontEnd->IFerrorf (ERR_WARNING,
                     			"%s: Body Film thickness may be too small \nfor this model to be valid",
-               				&model->SOI3modName);
+               				model->SOI3modName);
                     		/* return(E_PAUSE); don't want to stop,
                     		just issue a warning */
                     }
@@ -232,8 +232,8 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
                 else /* Substrate doping less than intrinsic silicon, so set to zero. */
                 {
                     model->SOI3substrateDoping = 0;
-                    SPfrontEnd->IFerror (ERR_FATAL,
-                            "%s: Nsub < Ni",&model->SOI3modName);
+                    SPfrontEnd->IFerrorf (ERR_FATAL,
+                            "%s: Nsub < Ni", model->SOI3modName);
                     return(E_BADPARM);
                 }
             }
@@ -243,9 +243,9 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
                		(model->SOI3gamma*model->SOI3frontOxideCapFactor);
                if(model->SOI3bodyThickness < xd_max)
                {
-					   SPfrontEnd->IFerror (ERR_WARNING,
+					   SPfrontEnd->IFerrorf (ERR_WARNING,
                   "%s :Body Film thickness may be too small \nfor this model to be valid",
-                  &model->SOI3modName);
+                  model->SOI3modName);
                   /* return(E_PAUSE); */
 					}
 /* End of thick film check - msll 21/2/94
@@ -349,10 +349,10 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->SOI3l - 2 * model->SOI3latDiff <=0)
             {
-					SPfrontEnd->IFerror (ERR_WARNING,
+					SPfrontEnd->IFerrorf (ERR_WARNING,
                	"%s: Effective channel length less than zero \nIncreasing \
                   this instance length by 2*LD to remove effect of LD",
-                  &(here->SOI3name));
+                  here->SOI3name);
 					here->SOI3l += 2*model->SOI3latDiff;
             }
             ratio4 =  exp(model->SOI3k*log(ratio)); /* ratio4 = (temp/tnom)^k */

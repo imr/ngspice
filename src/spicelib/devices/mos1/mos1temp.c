@@ -53,8 +53,8 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
     /* now model parameter preprocessing */
 
         if (model->MOS1phi <= 0.0) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-               "%s: Phi is not positive.", &model->MOS1modName);
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+               "%s: Phi is not positive.", model->MOS1modName);
             return(E_BADPARM);
         }
 
@@ -105,8 +105,8 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
                     }
                 } else {
                     model->MOS1substrateDoping = 0;
-                    SPfrontEnd->IFerror (ERR_FATAL,
-                            "%s: Nsub < Ni",&model->MOS1modName);
+                    SPfrontEnd->IFerrorf (ERR_FATAL,
+                            "%s: Nsub < Ni", model->MOS1modName);
                     return(E_BADPARM);
                 }
             }
@@ -158,9 +158,9 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if(here->MOS1l - 2 * model->MOS1latDiff <=0) {
-                SPfrontEnd->IFerror (ERR_WARNING,
+                SPfrontEnd->IFerrorf (ERR_WARNING,
                         "%s: effective channel length less than zero",
-                        &(model->MOS1modName));
+                        model->MOS1modName);
             }
             ratio4 = ratio * sqrt(ratio);
             here->MOS1tTransconductance = model->MOS1transconductance / ratio4;

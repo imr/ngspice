@@ -89,28 +89,28 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     for( ; model != NULL; model = model->TXLnextModel ) {
 
         if (!model->Rgiven) {
-           SPfrontEnd->IFerror (ERR_FATAL,
-               "model %s: lossy line series resistance not given", &(model->TXLmodName));
+           SPfrontEnd->IFerrorf (ERR_FATAL,
+               "model %s: lossy line series resistance not given", model->TXLmodName);
           return(E_BADPARM);
         }
         if (!model->Ggiven) {
-           SPfrontEnd->IFerror (ERR_FATAL,
-               "model %s: lossy line parallel conductance not given", &(model->TXLmodName));
+           SPfrontEnd->IFerrorf (ERR_FATAL,
+               "model %s: lossy line parallel conductance not given", model->TXLmodName);
           return(E_BADPARM);
         }
         if (!model->Lgiven) {
-          SPfrontEnd->IFerror (ERR_FATAL,
-              "model %s: lossy line series inductance not given", &(model->TXLmodName));
+          SPfrontEnd->IFerrorf (ERR_FATAL,
+              "model %s: lossy line series inductance not given", model->TXLmodName);
           return (E_BADPARM);
         }
         if (!model->Cgiven) {
-          SPfrontEnd->IFerror (ERR_FATAL,
-              "model %s: lossy line parallel capacitance not given", &(model->TXLmodName));
+          SPfrontEnd->IFerrorf (ERR_FATAL,
+              "model %s: lossy line parallel capacitance not given", model->TXLmodName);
           return (E_BADPARM);
         }
         if (!model->lengthgiven) {
-          SPfrontEnd->IFerror (ERR_FATAL,
-              "model %s: lossy line length must be given", &(model->TXLmodName));
+          SPfrontEnd->IFerrorf (ERR_FATAL,
+              "model %s: lossy line length must be given", model->TXLmodName);
           return (E_BADPARM);
         }
 

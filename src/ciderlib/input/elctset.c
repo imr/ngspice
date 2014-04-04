@@ -40,28 +40,28 @@ ELCTcheck(ELCTcard *cardList)
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->ELCTxLowGiven = FALSE;
     }
     if (card->ELCTxHighGiven && card->ELCTixHighGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->ELCTxHighGiven = FALSE;
     }
     if (card->ELCTyLowGiven && card->ELCTiyLowGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->ELCTyLowGiven = FALSE;
     }
     if (card->ELCTyHighGiven && card->ELCTiyHighGiven) {
       sprintf( ebuf,
 	  "electrode card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->ELCTyHighGiven = FALSE;
     }
     if (!card->ELCTnumberGiven) {
@@ -144,7 +144,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
       sprintf( ebuf,
 	  "electrode card %d has low x index (%d) > high x index (%d)",
 	  cardNum, newElectrode->ixLo, newElectrode->ixHi );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
     if (card->ELCTiyLowGiven) {
@@ -169,7 +169,7 @@ ELCTsetup(ELCTcard *cardList, ELCTelectrode **electrodeList,
       sprintf( ebuf,
 	  "electrode card %d has low y index (%d) > high y index (%d)",
 	  cardNum, newElectrode->iyLo, newElectrode->iyHi );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
   }

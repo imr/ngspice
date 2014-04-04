@@ -40,9 +40,9 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
       model->LTRAabstol = 1;
     }
     if (!model->LTRAresistGiven) {
-      SPfrontEnd->IFerror (ERR_WARNING,
+      SPfrontEnd->IFerrorf (ERR_WARNING,
 	  "%s: lossy line series resistance not given, assumed zero",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       model->LTRAresist = 0.0;
       /* return(E_BADPARM); */
     }
@@ -57,15 +57,15 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 	(model->LTRAhowToInterp != LTRA_MOD_MIXEDINTERP)) {
 
       /*
-       * SPfrontEnd->IFerror (ERR_FATAL, "%s: have to specify one of
-       * lininterp, quadinterp or mixedinterp", &(model->LTRAmodName));
+       * SPfrontEnd->IFerrorf (ERR_FATAL, "%s: have to specify one of
+       * lininterp, quadinterp or mixedinterp", model->LTRAmodName);
        * return(E_BADPARM);
        */
       if (ckt->CKTtryToCompact) {
 	model->LTRAhowToInterp = LTRA_MOD_LININTERP;
-	SPfrontEnd->IFerror (ERR_WARNING,
+	SPfrontEnd->IFerrorf (ERR_WARNING,
 	    "%s: using linear interpolation because trytocompact option specified",
-	    &(model->LTRAmodName));
+	    model->LTRAmodName);
       } else {
 	model->LTRAhowToInterp = LTRA_MOD_QUADINTERP;
       }
@@ -78,65 +78,65 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
     if (!model->LTRAconductGiven) {
       /*
-       * SPfrontEnd->IFerror (ERR_WARNING, "%s: lossy line parallel
-       * conductance not given, assumed zero", &(model->LTRAmodName));
+       * SPfrontEnd->IFerrorf (ERR_WARNING, "%s: lossy line parallel
+       * conductance not given, assumed zero", model->LTRAmodName);
        */
       model->LTRAconduct = 0.0;
       /* return(E_BADPARM); */
     }
     if (!model->LTRAinductGiven) {
-      SPfrontEnd->IFerror (ERR_WARNING,
+      SPfrontEnd->IFerrorf (ERR_WARNING,
 	  "%s: lossy line series inductance not given, assumed zero",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       model->LTRAinduct = 0.0;
       /* return(E_BADPARM); */
     }
     if (!model->LTRAcapacGiven) {
-      SPfrontEnd->IFerror (ERR_FATAL,
+      SPfrontEnd->IFerrorf (ERR_FATAL,
 	  "%s: lossy line parallel capacitance not given, assumed zero",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       model->LTRAcapac = 0.0;
       /* return(E_BADPARM); */
     }
     if (!model->LTRAlengthGiven) {
-      SPfrontEnd->IFerror (ERR_FATAL,
+      SPfrontEnd->IFerrorf (ERR_FATAL,
 	  "%s: lossy line length must be given",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       return (E_BADPARM);
     }
     if ((model->LTRAresist == 0) && (model->LTRAconduct == 0) &&
 	(model->LTRAcapac != 0) && (model->LTRAinduct != 0)) {
       model->LTRAspecialCase = LTRA_MOD_LC;
 #ifdef LTRADEBUG
-      SPfrontEnd->IFerror (ERR_INFO,
+      SPfrontEnd->IFerrorf (ERR_INFO,
 	  "%s: lossless line",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
 #endif
     }
     if ((model->LTRAresist != 0) && (model->LTRAconduct == 0) &&
 	(model->LTRAcapac != 0) && (model->LTRAinduct != 0)) {
       model->LTRAspecialCase = LTRA_MOD_RLC;
 #ifdef LTRADEBUG
-      SPfrontEnd->IFerror (ERR_INFO,
+      SPfrontEnd->IFerrorf (ERR_INFO,
 	  "%s: RLC line",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
 #endif
     }
     if ((model->LTRAresist != 0) && (model->LTRAconduct == 0) &&
 	(model->LTRAcapac != 0) && (model->LTRAinduct == 0)) {
       model->LTRAspecialCase = LTRA_MOD_RC;
 #ifdef LTRADEBUG
-      SPfrontEnd->IFerror (ERR_INFO,
+      SPfrontEnd->IFerrorf (ERR_INFO,
 	  "%s: RC line",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
 #endif
     }
     if ((model->LTRAresist != 0) && (model->LTRAconduct == 0) &&
 	(model->LTRAcapac == 0) && (model->LTRAinduct != 0)) {
       model->LTRAspecialCase = LTRA_MOD_RL;
-      SPfrontEnd->IFerror (ERR_FATAL,
+      SPfrontEnd->IFerrorf (ERR_FATAL,
 	  "%s: RL line not supported yet",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       return (E_BADPARM);
 #ifdef LTRADEBUG
 #endif
@@ -145,17 +145,17 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 	(model->LTRAcapac == 0) && (model->LTRAinduct == 0)) {
       model->LTRAspecialCase = LTRA_MOD_RG;
 #ifdef LTRADEBUG
-      SPfrontEnd->IFerror (ERR_INFO,
+      SPfrontEnd->IFerrorf (ERR_INFO,
 	  "%s: RG line",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
 #endif
     }
     if ((model->LTRAconduct != 0) && ((model->LTRAcapac != 0) ||
 	    (model->LTRAinduct != 0))) {
       model->LTRAspecialCase = LTRA_MOD_LTRA;
-      SPfrontEnd->IFerror (ERR_FATAL,
+      SPfrontEnd->IFerrorf (ERR_FATAL,
 	  "%s: Nonzero G (except RG) line not supported yet",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       return (E_BADPARM);
 #ifdef LTRADEBUG
 #endif
@@ -163,9 +163,9 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     if ((model->LTRAresist == 0.0 ? 0 : 1) + (model->LTRAconduct
 	    == 0.0 ? 0 : 1) + (model->LTRAinduct == 0.0 ? 0 : 1) +
 	(model->LTRAcapac == 0.0 ? 0 : 1) <= 1) {
-      SPfrontEnd->IFerror (ERR_FATAL,
+      SPfrontEnd->IFerrorf (ERR_FATAL,
 	  "%s: At least two of R,L,G,C must be specified and nonzero",
-	  &(model->LTRAmodName));
+	  model->LTRAmodName);
       return (E_BADPARM);
     }
     /* loop through all the instances of the model */

@@ -49,9 +49,9 @@ TFanal(CKTcircuit *ckt, int restart)
     ptr = CKTfndDev(ckt, job->TFinSrc);
 
     if (!ptr || ptr->GENmodPtr->GENmodType < 0) {
-        SPfrontEnd->IFerror (ERR_WARNING,
+        SPfrontEnd->IFerrorf (ERR_WARNING,
                              "Transfer function source %s not in circuit",
-                             &job->TFinSrc);
+                             job->TFinSrc);
         job->TFinIsV = 0;
         job->TFinIsI = 0;
         return E_NOTFOUND;
@@ -64,9 +64,9 @@ TFanal(CKTcircuit *ckt, int restart)
         job->TFinIsV = 0;
         job->TFinIsI = 1;
     } else {
-        SPfrontEnd->IFerror (ERR_WARNING,
+        SPfrontEnd->IFerrorf (ERR_WARNING,
                              "Transfer function source %s not of proper type",
-                             &job->TFinSrc);
+                             job->TFinSrc);
         return E_NOTFOUND;
     }
 

@@ -94,45 +94,37 @@ int Size_Not_Found;
 
                   pParam->BSIM3v0leff = here->BSIM3v0l - 2.0 * pParam->BSIM3v0dl;
                   if (pParam->BSIM3v0leff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM3v0modName;
-                      namarray[1] = here->BSIM3v0name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM3v0: mosfet %s, model %s: Effective channel length <= 0",
-                       namarray);
+                       model->BSIM3v0modName, here->BSIM3v0name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM3v0weff = here->BSIM3v0w - 2.0 * pParam->BSIM3v0dw;
                   if (pParam->BSIM3v0weff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM3v0modName;
-                      namarray[1] = here->BSIM3v0name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM3v0: mosfet %s, model %s: Effective channel width <= 0",
-                       namarray);
+                       model->BSIM3v0modName, here->BSIM3v0name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM3v0leffCV = here->BSIM3v0l - 2.0 * pParam->BSIM3v0dlc;
                   if (pParam->BSIM3v0leffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM3v0modName;
-                      namarray[1] = here->BSIM3v0name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM3v0: mosfet %s, model %s: Effective channel length for C-V <= 0",
-                       namarray);
+                       model->BSIM3v0modName, here->BSIM3v0name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM3v0weffCV = here->BSIM3v0w - 2.0 * pParam->BSIM3v0dwc;
                   if (pParam->BSIM3v0weffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM3v0modName;
-                      namarray[1] = here->BSIM3v0name;
-                      SPfrontEnd->IFerror (ERR_FATAL,
+	          {
+                      SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM3v0: mosfet %s, model %s: Effective channel width for C-V <= 0",
-                       namarray);
+                       model->BSIM3v0modName, here->BSIM3v0name);
                       return(E_BADPARM);
                   }
 

@@ -289,9 +289,8 @@ int EVTiter(
     }
     FREE(err_msg);
 
-    SPfrontEnd->IFerror (ERR_WARNING,
-        "Too many iteration passes in event-driven circuits",
-        NULL);
+    SPfrontEnd->IFerrorf (ERR_WARNING,
+        "Too many iteration passes in event-driven circuits");
     return(E_ITERLIM);
 
 }

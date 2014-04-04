@@ -47,9 +47,9 @@ NOISEan (CKTcircuit *ckt, int restart)
         bool ac_given = FALSE;
 
         if (!inst || inst->GENmodPtr->GENmodType < 0) {
-            SPfrontEnd->IFerror (ERR_WARNING,
+            SPfrontEnd->IFerrorf (ERR_WARNING,
                                  "Noise input source %s not in circuit",
-                                 &job->input);
+                                 job->input);
             return E_NOTFOUND;
         }
 
@@ -58,16 +58,16 @@ NOISEan (CKTcircuit *ckt, int restart)
         } else if(inst->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
             ac_given = ((ISRCinstance *)inst) -> ISRCacGiven;
         } else {
-            SPfrontEnd->IFerror (ERR_WARNING,
+            SPfrontEnd->IFerrorf (ERR_WARNING,
                                  "Noise input source %s is not of proper type",
-                                 &job->input);
+                                 job->input);
             return E_NOTFOUND;
         }
 
         if (!ac_given) {
-            SPfrontEnd->IFerror (ERR_WARNING,
+            SPfrontEnd->IFerrorf (ERR_WARNING,
                                  "Noise input source %s has no AC value",
-                                 &job->input);
+                                 job->input);
             return E_NOACINPUT;
         }
     }

@@ -43,7 +43,7 @@ int
       sprintf( ebuf,
 	  "material card %d is missing an id number",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
 
@@ -58,7 +58,7 @@ int
 	sprintf( ebuf,
 	    "material cards %d and %d use same id %d",
 	    cardNum2, cardNum, card->MATLnumber );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	error = E_PRIVATE;
       }
     }

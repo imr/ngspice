@@ -71,8 +71,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number)) == NULL)
 	    if( here->ASRCtype == ASRC_VOLTAGE) {
 
                 if(here->ASRCposNode == here->ASRCnegNode) {
-                    SPfrontEnd->IFerror (ERR_FATAL,
-                              "instance %s is a shorted ASRC", &here->ASRCname);
+                    SPfrontEnd->IFerrorf (ERR_FATAL,
+                              "instance %s is a shorted ASRC", here->ASRCname);
                     return(E_UNSUPP);
                 }
 
@@ -89,11 +89,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, (second)->number)) == NULL)
                     here->ASRCcont_br = CKTfndBranch(ckt,
                             here->ASRCtree->vars[i].uValue);
                     if(here->ASRCcont_br == 0) {
-                        IFuid namarray[2];
-                        namarray[0] =  here->ASRCname;
-                        namarray[1] = here->ASRCtree->vars[i].uValue;
-                        SPfrontEnd->IFerror (ERR_FATAL,
-                                "%s: unknown controlling source %s",namarray);
+                        SPfrontEnd->IFerrorf (ERR_FATAL,
+                                "%s: unknown controlling source %s", here->ASRCname, here->ASRCtree->vars[i].uValue);
                         return(E_BADPARM);
                     }
                     if( here->ASRCtype == ASRC_VOLTAGE){

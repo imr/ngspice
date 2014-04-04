@@ -164,8 +164,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             goto found;
         }
 
-        SPfrontEnd->IFerror (ERR_FATAL,
-                "DCtrCurv: source / resistor %s not in circuit", &(job->TRCVvName[i]));
+        SPfrontEnd->IFerrorf (ERR_FATAL,
+                "DCtrCurv: source / resistor %s not in circuit", job->TRCVvName[i]);
         return(E_NODEV);
 
 found:;

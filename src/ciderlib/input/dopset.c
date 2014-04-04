@@ -44,7 +44,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
       sprintf( ebuf,
 	  "doping card %d does not specify profile type",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     } else switch (card->DOPprofileType) {
       case DOP_UNIF:
@@ -52,7 +52,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs conc of uniform distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -61,7 +61,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of linear distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -70,7 +70,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of gaussian distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -79,7 +79,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of error-function distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -88,7 +88,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs peak conc of exponential distribution",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -98,7 +98,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs input-file name of suprem3 data",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -107,7 +107,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	  sprintf( ebuf,
 	      "doping card %d needs input-file name of ascii data",
 	      cardNum );
-	  SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	  SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	  error = E_PRIVATE;
 	}
 	break;
@@ -115,7 +115,7 @@ DOPcheck(DOPcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList)
 	sprintf( ebuf,
 	    "doping card %d has unrecognized profile type",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_FATAL, ebuf, NULL );
+	SPfrontEnd->IFerrorf( ERR_FATAL, ebuf );
 	error = E_NOTFOUND;
 	break;
     }

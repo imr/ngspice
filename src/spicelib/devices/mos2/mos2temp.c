@@ -54,8 +54,8 @@ MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
 
         if (model->MOS2phi <= 0.0) {
-            SPfrontEnd->IFerror (ERR_FATAL,
-               "%s: Phi is not positive.", &model->MOS2modName);
+            SPfrontEnd->IFerrorf (ERR_FATAL,
+               "%s: Phi is not positive.", model->MOS2modName);
             return(E_BADPARM);
         }
 
@@ -108,8 +108,8 @@ MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
                     (CHARGE*model->MOS2substrateDoping *1e6 /*(cm**3/m**3)*/));
             } else {
                 model->MOS2substrateDoping = 0;
-                SPfrontEnd->IFerror (ERR_FATAL, "%s: Nsub < Ni",
-                        &(model->MOS2modName));
+                SPfrontEnd->IFerrorf (ERR_FATAL, "%s: Nsub < Ni",
+                        model->MOS2modName);
                 return(E_BADPARM);
             }
         }
@@ -205,9 +205,9 @@ MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
                 here->MOS2sourceConductance = 0;
             }
             if(here->MOS2l - 2 * model->MOS2latDiff <=0) {
-                SPfrontEnd->IFerror (ERR_WARNING,
+                SPfrontEnd->IFerrorf (ERR_WARNING,
                         "%s: effective channel length less than zero",
-                        &(here->MOS2name));
+                        here->MOS2name);
             }
 
             ratio4 = ratio * sqrt(ratio);

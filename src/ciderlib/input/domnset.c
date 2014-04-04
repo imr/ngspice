@@ -43,35 +43,35 @@ DOMNcheck(DOMNcard *cardList, MaterialInfo *matlList)
       sprintf( ebuf,
 	  "domain card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->DOMNxLowGiven = FALSE;
     }
     if (card->DOMNxHighGiven && card->DOMNixHighGiven) {
       sprintf( ebuf,
 	  "domain card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->DOMNxHighGiven = FALSE;
     }
     if (card->DOMNyLowGiven && card->DOMNiyLowGiven) {
       sprintf( ebuf,
 	  "domain card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->DOMNyLowGiven = FALSE;
     }
     if (card->DOMNyHighGiven && card->DOMNiyHighGiven) {
       sprintf( ebuf,
 	  "domain card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->DOMNyHighGiven = FALSE;
     }
     if (!card->DOMNmaterialGiven) {
       sprintf( ebuf,
 	  "domain card %d is missing a material index",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     } else {
       /* Make sure the material exists */
@@ -84,7 +84,7 @@ DOMNcheck(DOMNcard *cardList, MaterialInfo *matlList)
 	sprintf( ebuf,
 	    "domain card %d specifies a non-existent material",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	error = E_PRIVATE;
       }
     }
@@ -92,7 +92,7 @@ DOMNcheck(DOMNcard *cardList, MaterialInfo *matlList)
       sprintf( ebuf,
 	  "domain card %d is missing an ID number",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
 
@@ -174,7 +174,7 @@ DOMNsetup(DOMNcard *cardList, DOMNdomain **domainList, MESHcoord *xMeshList,
       sprintf( ebuf,
 	  "domain card %d has low x index (%d) > high x index (%d)",
 	  cardNum, newDomain->ixLo, newDomain->ixHi );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
     if (card->DOMNiyLowGiven) {
@@ -199,7 +199,7 @@ DOMNsetup(DOMNcard *cardList, DOMNdomain **domainList, MESHcoord *xMeshList,
       sprintf( ebuf,
 	  "domain card %d has low y index (%d) > high y index (%d)",
 	  cardNum, newDomain->iyLo, newDomain->iyHi );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
   }

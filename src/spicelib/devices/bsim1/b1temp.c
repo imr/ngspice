@@ -49,21 +49,15 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
                 here=here->B1nextInstance) {
 
             if( (EffChanLength = here->B1l - model->B1deltaL *1e-6 )<=0) { 
-                IFuid namarray[2];
-                namarray[0] = model->B1modName;
-                namarray[1] = here->B1name;
-                SPfrontEnd->IFerror (ERR_FATAL,
+                SPfrontEnd->IFerrorf (ERR_FATAL,
                     "B1: mosfet %s, model %s: Effective channel length <=0",
-                    namarray);
+                    model->B1modName, here->B1name);
                 return(E_BADPARM);
             }
             if( (EffChanWidth = here->B1w - model->B1deltaW *1e-6 ) <= 0 ) {
-                IFuid namarray[2];
-                namarray[0] = model->B1modName;
-                namarray[1] = here->B1name;
-                SPfrontEnd->IFerror (ERR_FATAL,
+                SPfrontEnd->IFerrorf (ERR_FATAL,
                     "B1: mosfet %s, model %s: Effective channel width <=0",
-                    namarray);
+                    model->B1modName, here->B1name);
                 return(E_BADPARM);
             }
             here->B1GDoverlapCap=EffChanWidth *model->B1gateDrainOverlapCap;

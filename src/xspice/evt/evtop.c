@@ -173,9 +173,8 @@ int EVTop(
         if(ckt->evt->data.statistics->op_alternations >=
                 ckt->evt->limits.max_op_alternations) {
 
-            SPfrontEnd->IFerror (ERR_WARNING,
-                "Too many analog/event-driven solution alternations",
-                NULL);
+            SPfrontEnd->IFerrorf (ERR_WARNING,
+                "Too many analog/event-driven solution alternations");
 
             err_msg = TMALLOC(char, 10000);
             output_queue = &(ckt->evt->queue.output);

@@ -35,11 +35,8 @@ CCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             
             here->CCCScontBranch = CKTfndBranch(ckt,here->CCCScontName);
             if(here->CCCScontBranch == 0) {
-                IFuid namarray[2];
-                namarray[0] = here->CCCSname;
-                namarray[1] = here->CCCScontName;
-                SPfrontEnd->IFerror (ERR_FATAL,
-                        "%s: unknown controlling source %s",namarray);
+                SPfrontEnd->IFerrorf (ERR_FATAL,
+                        "%s: unknown controlling source %s", here->CCCSname, here->CCCScontName);
                 return(E_BADPARM);
             }
 

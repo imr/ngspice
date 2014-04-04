@@ -52,7 +52,7 @@ void *hrealloc(void *ptr, size_t num);
 #define XALLOC(ptr, type, number)                                       \
     do {                                                                \
         if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
-            SPfrontEnd->IFerror(E_PANIC, "Out of Memory", NULL);        \
+            SPfrontEnd->IFerrorf(E_PANIC, "Out of Memory");             \
             exit(1);                                                    \
         }                                                               \
     } while(0)

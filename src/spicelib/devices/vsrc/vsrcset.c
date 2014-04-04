@@ -32,8 +32,8 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 here=here->VSRCnextInstance) {
             
             if(here->VSRCposNode == here->VSRCnegNode) {
-                SPfrontEnd->IFerror (ERR_FATAL,
-                        "instance %s is a shorted VSRC", &here->VSRCname);
+                SPfrontEnd->IFerrorf (ERR_FATAL,
+                        "instance %s is a shorted VSRC", here->VSRCname);
                 return(E_UNSUPP);
             }
 

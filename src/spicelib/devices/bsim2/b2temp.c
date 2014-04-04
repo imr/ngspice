@@ -80,22 +80,18 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
 		EffectiveWidth = here->B2w - model->B2deltaW * 1.0e-6;
 
                 if(EffectiveLength<=0)
-		{  IFuid namarray[2];
-                   namarray[0] = model->B2modName;
-                   namarray[1] = here->B2name;
-                   SPfrontEnd->IFerror (ERR_FATAL,
+		{
+                   SPfrontEnd->IFerrorf (ERR_FATAL,
                     "B2: mosfet %s, model %s: Effective channel length <=0",
-                    namarray);
+                    model->B2modName, here->B2name);
                    return(E_BADPARM);
                 }
 
                 if(EffectiveWidth <= 0)
-		{  IFuid namarray[2];
-                   namarray[0] = model->B2modName;
-                   namarray[1] = here->B2name;
-                   SPfrontEnd->IFerror (ERR_FATAL,
+		{
+                   SPfrontEnd->IFerrorf (ERR_FATAL,
                     "B2: mosfet %s, model %s: Effective channel width <=0",
-                    namarray);
+                    model->B2modName, here->B2name);
                    return(E_BADPARM);
                 }
 

@@ -38,35 +38,35 @@ BDRYcheck(BDRYcard *cardList, DOMNdomain *domnList)
       sprintf( ebuf,
 	  "boundary card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->BDRYxLowGiven = FALSE;
     }
     if (card->BDRYxHighGiven && card->BDRYixHighGiven) {
       sprintf( ebuf,
 	  "boundary card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->BDRYxHighGiven = FALSE;
     }
     if (card->BDRYyLowGiven && card->BDRYiyLowGiven) {
       sprintf( ebuf,
 	  "boundary card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->BDRYyLowGiven = FALSE;
     }
     if (card->BDRYyHighGiven && card->BDRYiyHighGiven) {
       sprintf( ebuf,
 	  "boundary card %d uses both location and index - location ignored",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_INFO, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_INFO, ebuf );
       card->BDRYyHighGiven = FALSE;
     }
     if (!card->BDRYdomainGiven) {
       sprintf( ebuf,
 	  "boundary card %d is missing a domain index",
 	  cardNum );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     } else {
       /* Make sure the domain exists */
@@ -79,7 +79,7 @@ BDRYcheck(BDRYcard *cardList, DOMNdomain *domnList)
 	sprintf( ebuf,
 	    "boundary card %d specifies a non-existent domain",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	error = E_PRIVATE;
       }
     }
@@ -97,7 +97,7 @@ BDRYcheck(BDRYcard *cardList, DOMNdomain *domnList)
 	sprintf( ebuf,
 	    "interface card %d specifies a non-existent domain",
 	    cardNum );
-	SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+	SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
 	error = E_PRIVATE;
       }
     }
@@ -175,7 +175,7 @@ BDRYsetup(BDRYcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList,DOMNdom
       sprintf( ebuf,
 	  "boundary card %d has low x index (%d) > high x index (%d)",
 	  cardNum, card->BDRYixHigh, card->BDRYixLow );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
     if (card->BDRYiyLowGiven) {
@@ -200,7 +200,7 @@ BDRYsetup(BDRYcard *cardList, MESHcoord *xMeshList, MESHcoord *yMeshList,DOMNdom
       sprintf( ebuf,
 	  "boundary card %d has low y index (%d) > high y index (%d)",
 	  cardNum, card->BDRYiyHigh, card->BDRYiyLow );
-      SPfrontEnd->IFerror( ERR_WARNING, ebuf, NULL );
+      SPfrontEnd->IFerrorf( ERR_WARNING, ebuf );
       error = E_PRIVATE;
     }
   }
