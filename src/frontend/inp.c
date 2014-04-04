@@ -1674,8 +1674,7 @@ static void inp_savecurrents(struct line *deck, struct line *options, wordlist *
                devname = gettok(&devline);
                /* .save @d1[id] */
                newline = TMALLOC(char, strlen(devname) + 12);
-               sprintf(newline, ".save @%s[id]",
-                   devname, devname, devname, devname);
+               sprintf(newline, ".save @%s[id]", devname);
                wl_append_word(NULL, wl, newline);
                break;
            case 'r':
@@ -1690,8 +1689,7 @@ static void inp_savecurrents(struct line *deck, struct line *options, wordlist *
                devname = gettok(&devline);
                /* .save @r1[i] */
                newline = TMALLOC(char, strlen(devname) + 11);
-               sprintf(newline, ".save @%s[i]",
-                   devname, devname, devname, devname);
+               sprintf(newline, ".save @%s[i]", devname);
                wl_append_word(NULL, wl, newline);
                break;
            case 'i':
@@ -1699,8 +1697,7 @@ static void inp_savecurrents(struct line *deck, struct line *options, wordlist *
                devname = gettok(&devline);
                /* .save @i1[current] */
                newline = TMALLOC(char, strlen(devname) + 17);
-               sprintf(newline, ".save @%s[current]",
-                   devname, devname, devname, devname);
+               sprintf(newline, ".save @%s[current]", devname);
                wl_append_word(NULL, wl, newline);
                break;
            default:
