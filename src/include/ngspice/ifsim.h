@@ -437,7 +437,13 @@ struct IFfrontEnd {
                             /* should we stop now? */
     double (*IFseconds) (void);
                             /* what time is it? */
-    int (*IFerror) (int, char *, IFuid *);
+    void (*IFerror) (int, char *, IFuid *);
+                            /* output an error or warning message */
+#ifdef __GNUC__
+    void (*IFerrorf) (int, const char *fmt, ...) __attribute__ ((format (__printf__, 2, 3)));
+#else
+    void (*IFerrorf) (int, const char *fmt, ...);
+#endif
                             /* output an error or warning message */
     int (*OUTpBeginPlot) (CKTcircuit *, JOB *,
                           IFuid,

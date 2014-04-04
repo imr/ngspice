@@ -1285,6 +1285,31 @@ OUTerror(int flags, char *format, IFuid *names)
     fflush(cp_err);
 }
 
+
+void
+OUTerrorf(int flags, const char *format, ...)
+{
+    struct mesg *m;
+    va_list args;
+
+    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL, NULL))
+        return;
+
+    for (m = msgs; m->flag; m++)
+        if (flags & m->flag)
+            fprintf(cp_err, "%s: ", m->string);
+
+    va_start (args, format);
+
+    vfprintf(cp_err, format, args);
+    fputc('\n', cp_err);
+
+    fflush(cp_err);
+
+    va_end(args);
+}
+
+
 static int
 InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 {

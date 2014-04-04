@@ -204,7 +204,9 @@ extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,runD
 extern int OUTwReference(runDesc *,IFvalue *,void **);
 extern int OUTwData(runDesc *,int,IFvalue *,void *), OUTwEnd(runDesc *), OUTendPlot(runDesc *);
 extern int OUTbeginDomain(runDesc *,IFuid,int,IFvalue *);
-extern int OUTendDomain(runDesc *), OUTstopnow(void), OUTerror(int,char *,IFuid *);
+extern int OUTendDomain(runDesc *), OUTstopnow(void);
+extern void OUTerror(int,char *,IFuid *);
+extern void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__printf__, 2, 3)));
 extern int OUTattributes(runDesc *,IFuid,int,IFvalue *);
 
 extern void initw(void);
@@ -215,6 +217,7 @@ IFfrontEnd nutmeginfo = {
     OUTstopnow,
     seconds,
     OUTerror,
+    OUTerrorf,
     OUTpBeginPlot,
     OUTpData,
     OUTwBeginPlot,
