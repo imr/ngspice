@@ -2655,19 +2655,12 @@ static void
 inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck)
 {
     struct line *c;
-    struct line *d, *p = NULL;
-    char *subckt_name;
     char *subckt_param_names[1000];
     char *subckt_param_values[1000];
     char *inst_param_names[1000];
     char *inst_param_values[1000];
     char name_w_space[1000];
-    int  num_subckt_params = 0;
-    int  num_inst_params   = 0;
-    int  i, j, k;
-    bool flag = FALSE;
-    bool found_subckt = FALSE;
-    bool found_param_match = FALSE;
+    int  i;
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
@@ -2678,13 +2671,13 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             continue;
 
         if (ciprefix("x", inst_line)) {
-            num_inst_params = inp_get_params(inst_line, inst_param_names, inst_param_values);
-            subckt_name     = inp_get_subckt_name(inst_line);
+            int num_inst_params = inp_get_params(inst_line, inst_param_names, inst_param_values);
+            char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                flag = FALSE;
-                // iterate through the deck to find the subckt (last one defined wins)
+                struct line *d, *p = NULL;
 
+                // iterate through the deck to find the subckt (last one defined wins)
                 for (d = deck; d; d = d->li_next) {
                     char *subckt_line = d->li_line;
                     if (ciprefix(".subckt", subckt_line)) {
@@ -2692,14 +2685,13 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                         subckt_line = skip_ws(subckt_line);
 
                         sprintf(name_w_space, "%s ", subckt_name);
-                        if (strncmp(subckt_line, name_w_space, strlen(name_w_space)) == 0) {
+                        if (strncmp(subckt_line, name_w_space, strlen(name_w_space)) == 0)
                             p = d;
-                            flag = TRUE;
-                        }
                     }
                 }
-                if (flag) {
-                    num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
+
+                if (p) {
+                    int num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
 
                     if (num_subckt_params == 0 || !found_mult_param(num_subckt_params, subckt_param_names))
                         inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
@@ -2726,13 +2718,16 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             continue;
 
         if (ciprefix("x", inst_line)) {
-            subckt_name = inp_get_subckt_name(inst_line);
+
+            char *subckt_name = inp_get_subckt_name(inst_line);
 
             if (find_name(subckt_w_params, subckt_name)) {
-                sprintf(name_w_space, "%s ", subckt_name);
+                struct line *d;
 
                 /* find .subckt line */
-                found_subckt = FALSE;
+                bool found_subckt = FALSE;
+
+                sprintf(name_w_space, "%s ", subckt_name);
 
                 d = deck;
                 while (d != NULL) {
@@ -2742,14 +2737,15 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                         subckt_line = skip_ws(subckt_line);
 
                         if (strncmp(subckt_line, name_w_space, strlen(name_w_space)) == 0) {
-                            num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
-                            num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
+                            int num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
+                            int num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
 
                             // make sure that if have inst params that one matches subckt
-                            found_param_match = FALSE;
+                            bool found_param_match = FALSE;
                             if (num_inst_params == 0) {
                                 found_param_match = TRUE;
                             } else {
+                                int j, k;
                                 for (j = 0; j < num_inst_params; j++) {
                                     for (k = 0; k < num_subckt_params; k++)
                                         if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
