@@ -178,7 +178,7 @@ char *spice_dstring_append_char( SPICE_DSTRINGPTR dstr_p, char c)
   return spice_dstring_append( dstr_p, &c, 1 ) ;
 } /* end spice_dstring_append_char() */
 
-static int spice_format_length( va_list args, const char *fmt )
+static int spice_format_length( const char *fmt, va_list args )
 {
     int i ;					/* integer */
     int len ;					/* length of format */
@@ -256,7 +256,6 @@ static int spice_format_length( va_list args, const char *fmt )
       }
       fmt++ ;
     } /* end while() */
-    va_end(args) ;
 
     return(len) ;
 
@@ -275,7 +274,8 @@ char *spice_dstring_print( SPICE_DSTRINGPTR dsPtr, const char *format, ... )
      * First get the length of the buffer needed.
     ----------------------------------------------------------------- */
     va_start( args, format ) ;
-    format_len = spice_format_length(args,format) ;
+    format_len = spice_format_length(format, args) ;
+    va_end(args) ;
 
     /* -----------------------------------------------------------------
      * Next allocate the proper buffer size.
