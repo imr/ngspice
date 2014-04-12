@@ -304,4 +304,9 @@ void soa_printf(CKTcircuit *ckt, GENinstance *instance, const char *fmt, ...);
 #define NG_IGNOREABLE(x)  (void)x
 
 
+#if !defined(va_copy) && defined(_MSC_VER)
+#define va_copy(dst, src) ((dst) = (src))
+#endif
+
+
 #endif

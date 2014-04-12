@@ -2669,7 +2669,11 @@ tcl_vfprintf(FILE *f, const char *fmt, va_list args)
     // assert(size > 0);
 
     for (;;) {
-        nchars = vsnprintf(p + prolog_len, size, fmt, args);
+        va_list ap;
+
+        va_copy(ap, args);
+        nchars = vsnprintf(p + prolog_len, size, fmt, ap);
+        va_end(ap);
 
         if(nchars == -1) {           /* compatibility to old implementations */
             size *= 2;
