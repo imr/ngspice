@@ -53,24 +53,21 @@ copy_substring(const char *str, const char *end)
 }
 
 
-char*
-tprintf(const char *fmt, ...)
+char *
+tvprintf(const char *fmt, va_list args)
 {
     char buf[1024];
     char *p = buf;
     int size = sizeof(buf);
 
-    va_list args;
-
     for (;;) {
 
         int nchars;
+        va_list ap;
 
-        va_start(args, fmt);
-
-        nchars = vsnprintf(p, (size_t) size, fmt, args);
-
-        va_end(args);
+        va_copy(ap, args);
+        nchars = vsnprintf(p, (size_t) size, fmt, ap);
+        va_end(ap);
 
         if (nchars == -1) {     // compatibility to old implementations
             size *= 2;
@@ -88,6 +85,20 @@ tprintf(const char *fmt, ...)
 
 
     return (p == buf) ? copy(p) : p;
+}
+
+
+char *
+tprintf(const char *fmt, ...)
+{
+    char *rv;
+    va_list ap;
+
+    va_start(ap, fmt);
+    rv = tvprintf(fmt, ap);
+    va_end(ap);
+
+    return rv;
 }
 
 

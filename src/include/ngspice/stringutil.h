@@ -3,11 +3,14 @@
  * 1999 E. Rouat
  ************/
 
+#ifndef ngspice_STRINGUTIL_H
+#define ngspice_STRINGUTIL_H
+
 #include "ngspice/config.h"
 #include "ngspice/bool.h"
 
-#ifndef ngspice_STRINGUTIL_H
-#define ngspice_STRINGUTIL_H
+#include <stdarg.h>
+
 
 int prefix(register char *p, register char *s);
 char * copy(const char *str);
@@ -23,6 +26,8 @@ char * stripWhiteSpacesInsideParens(char *str);
 char * gettok(char **s);
 char * gettok_instance(char **);
 char * gettok_char(char **s, char p, bool inc_p, bool nested);
+
+extern char *tvprintf(const char *fmt, va_list args);
 
 #ifdef __GNUC__
 extern char *tprintf(const char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
