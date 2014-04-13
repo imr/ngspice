@@ -1666,61 +1666,46 @@ numdevs(char *s)
  *  otherwise.
  *----------------------------------------------------------------------*/
 static bool
-modtranslate(struct line *deck, char *subname, wordlist **submod, wordlist ** const modnames)
+modtranslate(struct line *c, char *subname, wordlist **submod, wordlist ** const modnames)
 {
-    struct line *c;
-    char *buffer, *name, *t, model[4 * BSIZE_SP];
-    bool gotone;
+    bool gotone = FALSE;
 
-    (void) strcpy(model, ".model");
-    gotone = FALSE;
-    for (c = deck; c; c = c->li_next) {       /* iterate through model def . . . */
-        if (ciprefix(model, c->li_line)) {
-            gotone = TRUE;
-            t = c->li_line;
+    for (; c; c = c->li_next)
+        if (ciprefix(".model", c->li_line)) {
+            char *model_name, *translated_model_name;
+            char *t = c->li_line;
 
 #ifdef TRACE
-            /* SDB debug statement */
-            printf("In modtranslate, translating line %s\n", t);
+            printf("modtranslate(), translating:\n"
+                   "  \"%s\" -->\n", t);
 #endif
 
-            name = gettok(&t);     /* at this point, name = .model */
-            buffer = TMALLOC(char, strlen(name) + strlen(t) + strlen(subname) + 4);
-            (void) sprintf(buffer, "%s ", name);    /* at this point, buffer = ".model " */
-            tfree(name);
-            name = gettok(&t);                     /* name now holds model name */
-            *submod = wl_cons(name, *submod);
-#ifdef TRACE
-            /* SDB debug statement */
-            printf("In modtranslate, sticking model name %s into submod\n", (*submod)->wl_word);
-#endif
-
-
-            /*  now stick the new model name into the model line.  */
-            (void) sprintf(buffer + strlen(buffer), "%s:%s ",
-                           subname, name);                 /* buffer = "model subname:modelname " */
-            (void) strcat(buffer, t);
-            tfree(c->li_line);
-            c->li_line = buffer;
-
-#ifdef TRACE
-            /* SDB debug statement */
-            printf("In modtranslate, translated line= %s\n", c->li_line);
-#endif
-
-            /* this looks like it tries to stick the translated model name into the list of model names */
-            t = c->li_line;
+            /* swallow ".model" */
             txfree(gettok(&t));
-            *modnames = wl_cons(gettok(&t), *modnames);
+
+            model_name = gettok(&t);
+
+            translated_model_name = tprintf("%s:%s", subname, model_name);
+
+            /* remember the translation */
+            *submod = wl_cons(model_name, *submod);
+            *modnames = wl_cons(translated_model_name, *modnames);
+
+            /* perform the actual translation of this .model line */
+            t = tprintf(".model %s %s", translated_model_name, t);
+            tfree(c->li_line);
+            c->li_line = t;
 
 #ifdef TRACE
-            /* SDB debug statement */
-            printf("In modtranslate, sticking model name %s into modnames\n", (*modnames)->wl_word);
+            printf("  \"%s\"\n", t);
+            printf("  mapped modelname \"%s\" --> \"%s\"\n",
+                   model_name, translated_model_name);
 #endif
 
+            gotone = TRUE;
         }
-    }
-    return (gotone);
+
+    return gotone;
 }
 
 
