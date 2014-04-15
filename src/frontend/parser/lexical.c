@@ -141,14 +141,13 @@ nloop:
 
     for (;;) {
 
+        c = cp_readchar(&string, cp_inp_cur);
+
         if (string) {
-            c = cp_readchar(&string, cp_inp_cur);
             if (c == '\0')
                 c = '\n';
             if (c == ESCAPE)
                 c = '[';
-        } else {
-            c = cp_readchar(&string, cp_inp_cur);
         }
 
     gotchar:
