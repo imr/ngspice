@@ -142,13 +142,13 @@ nloop:
     for (;;) {
 
         if (string) {
-            c = *string++;
+            c = cp_readchar(&string, cp_inp_cur);
             if (c == '\0')
                 c = '\n';
             if (c == ESCAPE)
                 c = '[';
         } else {
-            c = input(cp_inp_cur);
+            c = cp_readchar(&string, cp_inp_cur);
         }
 
     gotchar:
@@ -191,7 +191,7 @@ nloop:
             wlist = cw = NULL;
             if (string)
                 return NULL;
-            while (((c = input(cp_inp_cur)) != '\n') && (c != EOF))
+            while (((c = cp_readchar(&string, cp_inp_cur)) != '\n') && (c != EOF))
                 ;
             goto nloop;
         }
