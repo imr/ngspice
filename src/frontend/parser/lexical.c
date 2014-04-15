@@ -149,10 +149,10 @@ nloop:
 
         c = cp_readchar(&string, cp_inp_cur);
 
-        if (string && (c == ESCAPE))
-            c = '[';
-
     gotchar:
+
+        if (string && (c == ESCAPE))
+            continue;
 
         if ((c != EOF) && (c != ESCAPE))
             linebuf[j++] = (char) c;
