@@ -104,6 +104,13 @@ pwlist_echo(wordlist *wlist, char *name)
 }
 
 
+static int
+cp_readchar(char **string, FILE *fptr)
+{
+    return (*string) ? *(*string)++ : input(fptr);
+}
+
+
 /* CDHW */
 
 wordlist *
@@ -169,7 +176,7 @@ nloop:
             c = strip(c);
 
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
-            c = quote(string ? *string++ : input(cp_inp_cur));
+            c = quote(cp_readchar(&string, cp_inp_cur));
             linebuf[j++] = (char) strip(c);
         }
 
@@ -212,7 +219,7 @@ nloop:
             goto done;
 
         case '\'':
-            while (((c = (string ? *string++ : input(cp_inp_cur))) != '\'') &&
+            while (((c = cp_readchar(&string, cp_inp_cur)) != '\'') &&
                    (i < NEW_BSIZE_SP - 1))
             {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
@@ -227,14 +234,14 @@ nloop:
         case '`':
             d = c;
             buf[i++] = (char) d;
-            while (((c = (string ? *string++ : input(cp_inp_cur))) != d) &&
+            while (((c = cp_readchar(&string, cp_inp_cur)) != d) &&
                    (i < NEW_BSIZE_SP - 2))
             {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
                 if (c == '\\') {
                     linebuf[j++] = (char) c;
-                    c = (string ? *string++ : input(cp_inp_cur));
+                    c = cp_readchar(&string, cp_inp_cur);
                     buf[i++] = (char) quote(c);
                     linebuf[j++] = (char) c;
                 } else {
