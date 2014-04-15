@@ -107,7 +107,13 @@ pwlist_echo(wordlist *wlist, char *name)
 static int
 cp_readchar(char **string, FILE *fptr)
 {
-    return (*string) ? *(*string)++ : input(fptr);
+    if (*string == NULL)
+        return input(fptr);
+
+    if (**string)
+        return *(*string)++;
+    else
+        return '\n';
 }
 
 
@@ -143,12 +149,8 @@ nloop:
 
         c = cp_readchar(&string, cp_inp_cur);
 
-        if (string) {
-            if (c == '\0')
-                c = '\n';
-            if (c == ESCAPE)
-                c = '[';
-        }
+        if (string && (c == ESCAPE))
+            c = '[';
 
     gotchar:
 
