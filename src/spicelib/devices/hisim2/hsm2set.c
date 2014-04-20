@@ -318,7 +318,7 @@ int HSM2setup(
     if ( !model->HSM2_nsubcmax_Given ) model->HSM2_nsubcmax = 5e18 ;
 
     if ( !model->HSM2_qme1_Given   ) model->HSM2_qme1   = 0.0 ;
-    if ( !model->HSM2_qme2_Given   ) model->HSM2_qme2   = 0.0 ;
+    if ( !model->HSM2_qme2_Given   ) model->HSM2_qme2   = 2.0 ;
     if ( !model->HSM2_qme3_Given   ) model->HSM2_qme3   = 0.0 ;
 
     if ( !model->HSM2_vovers_Given  ) model->HSM2_vovers  = 0.0 ;
@@ -948,7 +948,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
       RANGECHECK(pParam->HSM2_bgtmp1, 50.0e-6,   1.0e-3, "BGTMP1") ;
       RANGECHECK(pParam->HSM2_bgtmp2, -1.0e-6,   1.0e-6, "BGTMP2") ;
       RANGECHECK(pParam->HSM2_eg0,        1.0,      1.3, "EG0") ;
-      RANGECHECK(pParam->HSM2_vfbc,      -1.2,     -0.8, "VFBC") ;
+      RANGECHECK(pParam->HSM2_vfbc,      -1.2,      0.0, "VFBC") ;
       RANGECHECK(pParam->HSM2_vfbover,   -0.2,      0.2, "VFBOVER") ;
       RANGECHECK(pParam->HSM2_nsubc,   1.0e16,   1.0e19, "NSUBC") ;
       RANGECHECK(pParam->HSM2_nsubp,   1.0e16,   1.0e19, "NSUBP") ;
@@ -1019,7 +1019,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     MINCHECK  (model->HSM2_tox,        0.0, "TOX") ;
     RANGECHECK(model->HSM2_xld,        0.0,  50.0e-9, "XLD") ;
     RANGECHECK(model->HSM2_xwd,   -10.0e-9, 100.0e-9, "XWD") ;
-    RANGECHECK(model->HSM2_rsh,        0.0,   1.0e-3, "RSH") ;
+    RANGECHECK(model->HSM2_rsh,        0.0,    200.0, "RSH") ;
     RANGECHECK(model->HSM2_rshg,       0.0,    100.0, "RSHG") ;
     RANGECHECK(model->HSM2_xqy,    10.0e-9,  50.0e-9, "XQY") ;
     RANGECHECK(model->HSM2_rs,         0.0,  10.0e-3, "RS") ;
@@ -1045,7 +1045,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     RANGECHECK(model->HSM2_vover,      0.0,     50.0, "VOVER") ;
     RANGECHECK(model->HSM2_voverp,     0.0,      2.0, "VOVERP") ;
     RANGECHECK(model->HSM2_qme1,       0.0, 300.0e-9, "QME1") ;
-    RANGECHECK(model->HSM2_qme3,       0.0,800.0e-12, "QME3") ;
+    RANGECHECK(model->HSM2_qme3,       0.0,  1.0e-09, "QME3") ;
     RANGECHECK(model->HSM2_tnom,      22.0,     32.0, "TNOM") ;
     RANGECHECK(model->HSM2_ddltmax,    1.0,     20.0, "DDLTMAX") ;
     RANGECHECK(model->HSM2_ddltict,   -3.0,     20.0, "DDLTICT") ;

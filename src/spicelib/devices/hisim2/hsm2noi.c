@@ -175,11 +175,14 @@ int HSM2noise (
          if ( model->HSM2_corsrd <= 0 || here->HSM2internalGd <= 0.0 ) {
            G = here->HSM2_noithrml ;
          } else {
-           R = 0.0 , G = 0.0 ;
-           if ( here->HSM2_noithrml > 0.0 ) R += 1.0 / here->HSM2_noithrml ;
-           if ( here->HSM2internalGd > 0.0 ) R += 1.0 / here->HSM2internalGd ;
-           if ( here->HSM2internalGs > 0.0 ) R += 1.0 / here->HSM2internalGs ;
-           if ( R > 0.0 ) G = 1.0 / R ;
+           if ( here->HSM2_noithrml * here->HSM2internalGd * here->HSM2internalGs > 0.0 ) {
+              G = here->HSM2_noithrml * here->HSM2internalGd * here->HSM2internalGs
+              / ( here->HSM2_noithrml * here->HSM2internalGd
+                + here->HSM2internalGd * here->HSM2internalGs
+                + here->HSM2_noithrml * here->HSM2internalGs );
+           } else {
+              G = 0.0;
+           }
          }
            NevalSrc(&noizDens[HSM2IDNOIZ], (double*) NULL,
                     ckt, N_GAIN,
