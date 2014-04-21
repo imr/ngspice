@@ -198,6 +198,17 @@ if test "x$with_editline" = xyes; then
     fi
 fi
 
+# --enable-klu: Use KLU linear systems solver
+AC_ARG_ENABLE([klu],
+    [AS_HELP_STRING([--enable-klu], [Use KLU linear systems solver])])
+
+# Add KLU solver to ngspice
+if test "x$enable_klu" = xyes; then
+    AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
+    AC_MSG_WARN([KLU solver enabled])
+fi
+AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes])
+
 
 # Enable maintainer commands only if requested
 AM_MAINTAINER_MODE([enable])
@@ -1152,6 +1163,7 @@ AC_CONFIG_FILES([Makefile
                  src/maths/deriv/Makefile
                  src/maths/poly/Makefile
                  src/maths/sparse/Makefile
+                 src/maths/KLU/Makefile
                  src/misc/Makefile
                  src/xspice/Makefile
                  src/xspice/cm/Makefile
