@@ -24,4 +24,10 @@ extern int NUMOStrunc(GENmodel *, CKTcircuit *, double *);
 extern void NUMOSdump(GENmodel *, CKTcircuit *);
 extern void NUMOSacct(GENmodel *, CKTcircuit *, FILE *);
 
+#ifdef KLU
+extern int NUMOSbindCSC (GENmodel*, CKTcircuit*) ;
+extern int NUMOSbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int NUMOSbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
 #endif				/* NUMOSEXT_H */

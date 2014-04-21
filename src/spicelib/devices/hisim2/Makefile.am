@@ -33,6 +33,10 @@ libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2trunc.c
 
 
+if KLU_WANTED
+libhisim2_la_SOURCES += hsm2bindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

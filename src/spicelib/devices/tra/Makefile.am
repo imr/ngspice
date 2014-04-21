@@ -22,6 +22,11 @@ libtra_la_SOURCES =	\
 	tratrunc.c
 
 
+if KLU_WANTED
+libtra_la_SOURCES += trabindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

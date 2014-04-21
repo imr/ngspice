@@ -66,6 +66,11 @@ SPICEdev NUMOSinfo = {
     .DEVdump = NUMOSdump,
     .DEVacct = NUMOSacct,
 #endif
+#ifdef KLU
+    .DEVbindCSC = NUMOSbindCSC,
+    .DEVbindCSCComplex = NUMOSbindCSCComplex,
+    .DEVbindCSCComplexToReal = NUMOSbindCSCComplexToReal,
+#endif
 };
 
 

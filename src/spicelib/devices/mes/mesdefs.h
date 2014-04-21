@@ -144,6 +144,24 @@ int MESmode;
 	double **MESnVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *MESdrainDrainPrimeBinding ;
+    BindElement *MESgateDrainPrimeBinding ;
+    BindElement *MESgateSourcePrimeBinding ;
+    BindElement *MESsourceSourcePrimeBinding ;
+    BindElement *MESdrainPrimeDrainBinding ;
+    BindElement *MESdrainPrimeGateBinding ;
+    BindElement *MESdrainPrimeSourcePrimeBinding ;
+    BindElement *MESsourcePrimeGateBinding ;
+    BindElement *MESsourcePrimeSourceBinding ;
+    BindElement *MESsourcePrimeDrainPrimeBinding ;
+    BindElement *MESdrainDrainBinding ;
+    BindElement *MESgateGateBinding ;
+    BindElement *MESsourceSourceBinding ;
+    BindElement *MESdrainPrimeDrainPrimeBinding ;
+    BindElement *MESsourcePrimeSourcePrimeBinding ;
+#endif
+
 } MESinstance ;
 
 #define MESvgs MESstate 

@@ -266,6 +266,31 @@ typedef struct sMOS1instance {
 #define MOS1dphibs_dw MOS1sens + 68
 #define MOS1dphibd_dw MOS1sens + 69
 
+#ifdef KLU
+    BindElement *MOS1DdBinding ;
+    BindElement *MOS1GgBinding ;
+    BindElement *MOS1SsBinding ;
+    BindElement *MOS1BbBinding ;
+    BindElement *MOS1DPdpBinding ;
+    BindElement *MOS1SPspBinding ;
+    BindElement *MOS1DdpBinding ;
+    BindElement *MOS1GbBinding ;
+    BindElement *MOS1GdpBinding ;
+    BindElement *MOS1GspBinding ;
+    BindElement *MOS1SspBinding ;
+    BindElement *MOS1BdpBinding ;
+    BindElement *MOS1BspBinding ;
+    BindElement *MOS1DPspBinding ;
+    BindElement *MOS1DPdBinding ;
+    BindElement *MOS1BgBinding ;
+    BindElement *MOS1DPgBinding ;
+    BindElement *MOS1SPgBinding ;
+    BindElement *MOS1SPsBinding ;
+    BindElement *MOS1DPbBinding ;
+    BindElement *MOS1SPbBinding ;
+    BindElement *MOS1SPdpBinding ;
+#endif
+
 } MOS1instance ;
 
 #define MOS1vbd MOS1states+ 0   /* bulk-drain voltage */

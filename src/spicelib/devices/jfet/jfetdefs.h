@@ -152,6 +152,24 @@ typedef struct sJFETinstance {
     double JFETtThreshold;    /* temperature adjusted threshold voltage */
     double JFETtBeta;   /* temperature adjusted beta */
 
+#ifdef KLU
+    BindElement *JFETdrainDrainPrimeBinding ;
+    BindElement *JFETgateDrainPrimeBinding ;
+    BindElement *JFETgateSourcePrimeBinding ;
+    BindElement *JFETsourceSourcePrimeBinding ;
+    BindElement *JFETdrainPrimeDrainBinding ;
+    BindElement *JFETdrainPrimeGateBinding ;
+    BindElement *JFETdrainPrimeSourcePrimeBinding ;
+    BindElement *JFETsourcePrimeGateBinding ;
+    BindElement *JFETsourcePrimeSourceBinding ;
+    BindElement *JFETsourcePrimeDrainPrimeBinding ;
+    BindElement *JFETdrainDrainBinding ;
+    BindElement *JFETgateGateBinding ;
+    BindElement *JFETsourceSourceBinding ;
+    BindElement *JFETdrainPrimeDrainPrimeBinding ;
+    BindElement *JFETsourcePrimeSourcePrimeBinding ;
+#endif
+
 } JFETinstance ;
 
 #define JFETvgs JFETstate 

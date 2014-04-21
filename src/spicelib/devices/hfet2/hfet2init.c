@@ -66,6 +66,11 @@ SPICEdev HFET2info = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = HFET2bindCSC,
+    .DEVbindCSCComplex = HFET2bindCSCComplex,
+    .DEVbindCSCComplexToReal = HFET2bindCSCComplexToReal,
+#endif
 };
 
 

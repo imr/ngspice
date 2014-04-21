@@ -66,6 +66,11 @@ SPICEdev MESinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = MESbindCSC,
+    .DEVbindCSCComplex = MESbindCSCComplex,
+    .DEVbindCSCComplexToReal = MESbindCSCComplexToReal,
+#endif
 };
 
 

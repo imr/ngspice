@@ -66,6 +66,11 @@ SPICEdev HSMHVinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = HSMHVbindCSC,
+    .DEVbindCSCComplex = HSMHVbindCSCComplex,
+    .DEVbindCSCComplexToReal = HSMHVbindCSCComplexToReal,
+#endif
 };
 
 

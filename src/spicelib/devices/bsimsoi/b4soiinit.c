@@ -64,6 +64,11 @@ SPICEdev B4SOIinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = B4SOIbindCSC,
+    .DEVbindCSCComplex = B4SOIbindCSCComplex,
+    .DEVbindCSCComplexToReal = B4SOIbindCSCComplexToReal,
+#endif
 };
 
 

@@ -36,6 +36,9 @@ libbjt_la_SOURCES =	\
 	bjttrunc.c
 
 
+if KLU_WANTED
+libbjt_la_SOURCES += bjtbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

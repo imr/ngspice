@@ -77,6 +77,14 @@ typedef struct sVSRCinstance {
     unsigned VSRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
     unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
+
+#ifdef KLU
+    BindElement *VSRCposIbrBinding ;
+    BindElement *VSRCnegIbrBinding ;
+    BindElement *VSRCibrNegBinding ;
+    BindElement *VSRCibrPosBinding ;
+#endif
+
 } VSRCinstance ;
 
 

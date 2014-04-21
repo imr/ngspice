@@ -66,6 +66,11 @@ SPICEdev INDinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = INDbindCSC,
+    .DEVbindCSCComplex = INDbindCSCComplex,
+    .DEVbindCSCComplexToReal = INDbindCSCComplexToReal,
+#endif
 };
 
 
@@ -127,6 +132,11 @@ SPICEdev MUTinfo = {
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
+#endif
+#ifdef KLU
+    .DEVbindCSC = MUTbindCSC,
+    .DEVbindCSCComplex = MUTbindCSCComplex,
+    .DEVbindCSCComplexToReal = MUTbindCSCComplexToReal,
 #endif
 };
 

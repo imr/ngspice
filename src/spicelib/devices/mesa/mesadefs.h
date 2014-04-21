@@ -210,6 +210,38 @@ int MESAmode;
     double MESAnsb0;
     double MESAvcrits;
     double MESAvcritd;
+
+#ifdef KLU
+    BindElement *MESAdrainDrainBinding ;
+    BindElement *MESAdrainPrimeDrainPrimeBinding ;
+    BindElement *MESAdrainPrmPrmDrainPrmPrmBinding ;
+    BindElement *MESAgateGateBinding ;
+    BindElement *MESAgatePrimeGatePrimeBinding ;
+    BindElement *MESAsourceSourceBinding ;
+    BindElement *MESAsourcePrimeSourcePrimeBinding ;
+    BindElement *MESAsourcePrmPrmSourcePrmPrmBinding ;
+    BindElement *MESAdrainDrainPrimeBinding ;
+    BindElement *MESAdrainPrimeDrainBinding ;
+    BindElement *MESAgatePrimeDrainPrimeBinding ;
+    BindElement *MESAdrainPrimeGatePrimeBinding ;
+    BindElement *MESAgatePrimeSourcePrimeBinding ;
+    BindElement *MESAsourcePrimeGatePrimeBinding ;
+    BindElement *MESAsourceSourcePrimeBinding ;
+    BindElement *MESAsourcePrimeSourceBinding ;
+    BindElement *MESAdrainPrimeSourcePrimeBinding ;
+    BindElement *MESAsourcePrimeDrainPrimeBinding ;
+    BindElement *MESAgatePrimeGateBinding ;
+    BindElement *MESAgateGatePrimeBinding ;
+    BindElement *MESAsourcePrmPrmSourcePrimeBinding ;
+    BindElement *MESAsourcePrimeSourcePrmPrmBinding ;
+    BindElement *MESAsourcePrmPrmGatePrimeBinding ;
+    BindElement *MESAgatePrimeSourcePrmPrmBinding ;
+    BindElement *MESAdrainPrmPrmDrainPrimeBinding ;
+    BindElement *MESAdrainPrimeDrainPrmPrmBinding ;
+    BindElement *MESAdrainPrmPrmGatePrimeBinding ;
+    BindElement *MESAgatePrimeDrainPrmPrmBinding ;
+#endif
+
 } MESAinstance ;
 
 

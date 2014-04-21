@@ -66,6 +66,11 @@ SPICEdev MOS2info = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = MOS2bindCSC,
+    .DEVbindCSCComplex = MOS2bindCSCComplex,
+    .DEVbindCSCComplexToReal = MOS2bindCSCComplexToReal,
+#endif
 };
 
 
