@@ -71,7 +71,14 @@ SPICEdev B4SOIinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &B4SOIiSize,
- /* DEVmodSize    */ &B4SOImSize
+ /* DEVmodSize    */ &B4SOImSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   B4SOIbindCSC,
+ /* DEVbindCSCComplex */   B4SOIbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  B4SOIbindCSCComplexToReal,
+#endif
+
 };
 
 SPICEdev *

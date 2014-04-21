@@ -28,3 +28,9 @@ extern int B3SOIPDtemp(GENmodel*,CKTcircuit*);
 extern int B3SOIPDtrunc(GENmodel*,CKTcircuit*,double*);
 extern int B3SOIPDnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B3SOIPDunsetup(GENmodel*,CKTcircuit*);
+
+#ifdef KLU
+extern int B3SOIPDbindCSC (GENmodel*, CKTcircuit*) ;
+extern int B3SOIPDbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int B3SOIPDbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

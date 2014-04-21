@@ -73,7 +73,13 @@ SPICEdev MESinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MESiSize,
- /* DEVmodSize    */ &MESmSize
+ /* DEVmodSize    */ &MESmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   MESbindCSC,
+ /* DEVbindCSCComplex */   MESbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MESbindCSCComplexToReal,
+#endif
 
 };
 
