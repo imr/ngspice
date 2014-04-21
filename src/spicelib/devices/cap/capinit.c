@@ -66,6 +66,11 @@ SPICEdev CAPinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = CAPbindCSC,
+    .DEVbindCSCComplex = CAPbindCSCComplex,
+    .DEVbindCSCComplexToReal = CAPbindCSCComplexToReal,
+#endif
 };
 
 

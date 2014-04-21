@@ -66,6 +66,11 @@ SPICEdev LTRAinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = LTRAbindCSC,
+    .DEVbindCSCComplex = LTRAbindCSCComplex,
+    .DEVbindCSCComplexToReal = LTRAbindCSCComplexToReal,
+#endif
 };
 
 

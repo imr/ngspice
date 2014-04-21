@@ -67,6 +67,11 @@ SPICEdev SWinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = SWbindCSC,
+    .DEVbindCSCComplex = SWbindCSCComplex,
+    .DEVbindCSCComplexToReal = SWbindCSCComplexToReal,
+#endif
 };
 
 

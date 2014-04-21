@@ -64,6 +64,11 @@ SPICEdev B3SOIDDinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = B3SOIDDbindCSC,
+    .DEVbindCSCComplex = B3SOIDDbindCSCComplex,
+    .DEVbindCSCComplexToReal = B3SOIDDbindCSCComplexToReal,
+#endif
 };
 
 

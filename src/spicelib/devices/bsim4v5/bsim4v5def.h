@@ -561,6 +561,79 @@ typedef struct sBSIM4v5instance
         double **BSIM4v5nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *BSIM4v5DPbpBinding ;
+    BindElement *BSIM4v5GPbpBinding ;
+    BindElement *BSIM4v5SPbpBinding ;
+    BindElement *BSIM4v5BPdpBinding ;
+    BindElement *BSIM4v5BPgpBinding ;
+    BindElement *BSIM4v5BPspBinding ;
+    BindElement *BSIM4v5BPbpBinding ;
+    BindElement *BSIM4v5DdBinding ;
+    BindElement *BSIM4v5GPgpBinding ;
+    BindElement *BSIM4v5SsBinding ;
+    BindElement *BSIM4v5DPdpBinding ;
+    BindElement *BSIM4v5SPspBinding ;
+    BindElement *BSIM4v5DdpBinding ;
+    BindElement *BSIM4v5GPdpBinding ;
+    BindElement *BSIM4v5GPspBinding ;
+    BindElement *BSIM4v5SspBinding ;
+    BindElement *BSIM4v5DPspBinding ;
+    BindElement *BSIM4v5DPdBinding ;
+    BindElement *BSIM4v5DPgpBinding ;
+    BindElement *BSIM4v5SPgpBinding ;
+    BindElement *BSIM4v5SPsBinding ;
+    BindElement *BSIM4v5SPdpBinding ;
+    BindElement *BSIM4v5QqBinding ;
+    BindElement *BSIM4v5QbpBinding ;
+    BindElement *BSIM4v5QdpBinding ;
+    BindElement *BSIM4v5QspBinding ;
+    BindElement *BSIM4v5QgpBinding ;
+    BindElement *BSIM4v5DPqBinding ;
+    BindElement *BSIM4v5SPqBinding ;
+    BindElement *BSIM4v5GPqBinding ;
+    BindElement *BSIM4v5GEgeBinding ;
+    BindElement *BSIM4v5GEgpBinding ;
+    BindElement *BSIM4v5GPgeBinding ;
+    BindElement *BSIM4v5GEdpBinding ;
+    BindElement *BSIM4v5GEspBinding ;
+    BindElement *BSIM4v5GEbpBinding ;
+    BindElement *BSIM4v5GMdpBinding ;
+    BindElement *BSIM4v5GMgpBinding ;
+    BindElement *BSIM4v5GMgmBinding ;
+    BindElement *BSIM4v5GMgeBinding ;
+    BindElement *BSIM4v5GMspBinding ;
+    BindElement *BSIM4v5GMbpBinding ;
+    BindElement *BSIM4v5DPgmBinding ;
+    BindElement *BSIM4v5GPgmBinding ;
+    BindElement *BSIM4v5GEgmBinding ;
+    BindElement *BSIM4v5SPgmBinding ;
+    BindElement *BSIM4v5BPgmBinding ;
+    BindElement *BSIM4v5DPdbBinding ;
+    BindElement *BSIM4v5SPsbBinding ;
+    BindElement *BSIM4v5DBdpBinding ;
+    BindElement *BSIM4v5DBdbBinding ;
+    BindElement *BSIM4v5DBbpBinding ;
+    BindElement *BSIM4v5DBbBinding ;
+    BindElement *BSIM4v5BPdbBinding ;
+    BindElement *BSIM4v5BPbBinding ;
+    BindElement *BSIM4v5BPsbBinding ;
+    BindElement *BSIM4v5SBspBinding ;
+    BindElement *BSIM4v5SBbpBinding ;
+    BindElement *BSIM4v5SBbBinding ;
+    BindElement *BSIM4v5SBsbBinding ;
+    BindElement *BSIM4v5BdbBinding ;
+    BindElement *BSIM4v5BbpBinding ;
+    BindElement *BSIM4v5BsbBinding ;
+    BindElement *BSIM4v5BbBinding ;
+    BindElement *BSIM4v5DgpBinding ;
+    BindElement *BSIM4v5DspBinding ;
+    BindElement *BSIM4v5DbpBinding ;
+    BindElement *BSIM4v5SdpBinding ;
+    BindElement *BSIM4v5SgpBinding ;
+    BindElement *BSIM4v5SbpBinding ;
+#endif
+
 } BSIM4v5instance ;
 
 struct bsim4v5SizeDependParam

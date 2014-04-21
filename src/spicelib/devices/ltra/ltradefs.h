@@ -70,6 +70,30 @@ typedef struct sLTRAinstance {
     unsigned LTRAicC1Given : 1;  /* flag to ind. init. current at port 1 given */
     unsigned LTRAicV2Given : 1;  /* flag to ind. init. voltage at port 2 given */
     unsigned LTRAicC2Given : 1;  /* flag to ind. init. current at port 2 given */
+
+#ifdef KLU
+    BindElement *LTRAibr1Pos1Binding ;
+    BindElement *LTRAibr1Neg1Binding ;
+    BindElement *LTRAibr1Pos2Binding ;
+    BindElement *LTRAibr1Neg2Binding ;
+    BindElement *LTRAibr1Ibr1Binding ;
+    BindElement *LTRAibr1Ibr2Binding ;
+    BindElement *LTRAibr2Pos1Binding ;
+    BindElement *LTRAibr2Neg1Binding ;
+    BindElement *LTRAibr2Pos2Binding ;
+    BindElement *LTRAibr2Neg2Binding ;
+    BindElement *LTRAibr2Ibr1Binding ;
+    BindElement *LTRAibr2Ibr2Binding ;
+    BindElement *LTRApos1Ibr1Binding ;
+    BindElement *LTRAneg1Ibr1Binding ;
+    BindElement *LTRApos2Ibr2Binding ;
+    BindElement *LTRAneg2Ibr2Binding ;
+    BindElement *LTRApos1Pos1Binding ;
+    BindElement *LTRAneg1Neg1Binding ;
+    BindElement *LTRApos2Pos2Binding ;
+    BindElement *LTRAneg2Neg2Binding ;
+#endif
+
 } LTRAinstance ;
 
 

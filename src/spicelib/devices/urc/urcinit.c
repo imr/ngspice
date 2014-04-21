@@ -66,6 +66,11 @@ SPICEdev URCinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = NULL,
+    .DEVbindCSCComplex = NULL,
+    .DEVbindCSCComplexToReal = NULL,
+#endif
 };
 
 

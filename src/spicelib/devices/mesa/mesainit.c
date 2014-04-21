@@ -66,6 +66,11 @@ SPICEdev MESAinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = MESAbindCSC,
+    .DEVbindCSCComplex = MESAbindCSCComplex,
+    .DEVbindCSCComplexToReal = MESAbindCSCComplexToReal,
+#endif
 };
 
 

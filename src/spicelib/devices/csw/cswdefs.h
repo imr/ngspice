@@ -50,6 +50,14 @@ typedef struct sCSWinstance {
 #else
     double *CSWnVar;
 #endif
+
+#ifdef KLU
+    BindElement *CSWposPosBinding;
+    BindElement *CSWposNegBinding;
+    BindElement *CSWnegPosBinding;
+    BindElement *CSWnegNegBinding;
+#endif
+
 } CSWinstance;
 
 /* data per model */

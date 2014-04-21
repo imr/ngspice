@@ -71,6 +71,11 @@ SPICEdev TXLinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = TXLbindCSC,
+    .DEVbindCSCComplex = TXLbindCSCComplex,
+    .DEVbindCSCComplexToReal = TXLbindCSCComplexToReal,
+#endif
 };
 
 

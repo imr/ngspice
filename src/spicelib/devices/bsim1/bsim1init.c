@@ -66,6 +66,11 @@ SPICEdev B1info = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+#ifdef KLU
+    .DEVbindCSC = B1bindCSC,
+    .DEVbindCSCComplex = B1bindCSCComplex,
+    .DEVbindCSCComplexToReal = B1bindCSCComplexToReal,
+#endif
 };
 
 
