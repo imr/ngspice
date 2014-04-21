@@ -163,6 +163,13 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_NOOPAC:
         task->TSKnoopac = (val->iValue != 0);
         break;
+
+#ifdef KLU
+    case OPT_SPARSE:
+        task->TSKkluMODE = (val->iValue == 0) ;
+        break ;
+#endif
+
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
     case OPT_EVT_MAX_OP_ALTER:
@@ -315,7 +322,13 @@ static IFparm OPTtbl[] = {
  { "reldv", OPT_RELDV, IF_SET|IF_REAL,
         "Maximum relative iter-iter node voltage change" },
  { "noopac", OPT_NOOPAC, IF_SET|IF_FLAG,
-        "No op calculation in ac if circuit is linear" }
+        "No op calculation in ac if circuit is linear" },
+
+#ifdef KLU
+ { "sparse", OPT_SPARSE, IF_SET|IF_FLAG,
+        "Set SPARSE 1.3 as Direct Linear Solver" }
+#endif
+
 };
 
 int OPTcount = NUMELEMS(OPTtbl);
