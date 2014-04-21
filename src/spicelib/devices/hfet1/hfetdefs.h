@@ -125,6 +125,37 @@ typedef struct sHFETAinstance {
     double HFETAfgds;
     double HFETAggrwl;
 
+#ifdef KLU
+    BindElement *HFETAdrainDrainPrimeBinding ;
+    BindElement *HFETAgatePrimeDrainPrimeBinding ;
+    BindElement *HFETAgatePrimeSourcePrimeBinding ;
+    BindElement *HFETAsourceSourcePrimeBinding ;
+    BindElement *HFETAdrainPrimeDrainBinding ;
+    BindElement *HFETAdrainPrimeGatePrimeBinding ;
+    BindElement *HFETAdrainPrimeSourcePrimeBinding ;
+    BindElement *HFETAsourcePrimeGatePrimeBinding ;
+    BindElement *HFETAsourcePrimeSourceBinding ;
+    BindElement *HFETAsourcePrimeDrainPrimeBinding ;
+    BindElement *HFETAdrainDrainBinding ;
+    BindElement *HFETAgatePrimeGatePrimeBinding ;
+    BindElement *HFETAsourceSourceBinding ;
+    BindElement *HFETAdrainPrimeDrainPrimeBinding ;
+    BindElement *HFETAsourcePrimeSourcePrimeBinding ;
+    BindElement *HFETAdrainPrimeDrainPrmPrmBinding ;
+    BindElement *HFETAdrainPrmPrmDrainPrimeBinding ;
+    BindElement *HFETAdrainPrmPrmGatePrimeBinding ;
+    BindElement *HFETAgatePrimeDrainPrmPrmBinding ;
+    BindElement *HFETAdrainPrmPrmDrainPrmPrmBinding ;
+    BindElement *HFETAsourcePrimeSourcePrmPrmBinding ;
+    BindElement *HFETAsourcePrmPrmSourcePrimeBinding ;
+    BindElement *HFETAsourcePrmPrmGatePrimeBinding ;
+    BindElement *HFETAgatePrimeSourcePrmPrmBinding ;
+    BindElement *HFETAsourcePrmPrmSourcePrmPrmBinding ;
+    BindElement *HFETAgateGateBinding ;
+    BindElement *HFETAgateGatePrimeBinding ;
+    BindElement *HFETAgatePrimeGateBinding ;
+#endif
+
 } HFETAinstance ;
 
 

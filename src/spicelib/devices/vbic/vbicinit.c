@@ -71,6 +71,12 @@ SPICEdev VBICinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = VBICbindCSC,
+    .DEVbindCSCComplex = VBICbindCSCComplex,
+    .DEVbindCSCComplexToReal = VBICbindCSCComplexToReal,
+#endif
 };
 
 

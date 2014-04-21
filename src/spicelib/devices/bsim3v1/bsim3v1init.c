@@ -65,6 +65,12 @@ SPICEdev BSIM3v1info = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = BSIM3v1bindCSC,
+    .DEVbindCSCComplex = BSIM3v1bindCSCComplex,
+    .DEVbindCSCComplexToReal = BSIM3v1bindCSCComplexToReal,
+#endif
 };
 
 

@@ -75,6 +75,14 @@ struct sINDinstance {
     struct INDsystem *system;
     INDinstance *system_next_ind;
     int system_idx;
+
+#ifdef KLU
+    BindElement *INDposIbrBinding ;
+    BindElement *INDnegIbrBinding ;
+    BindElement *INDibrNegBinding ;
+    BindElement *INDibrPosBinding ;
+    BindElement *INDibrIbrBinding ;
+#endif
 };
 
 #define INDflux INDstate     /* flux in the inductor */
@@ -147,6 +155,11 @@ struct sMUTinstance {
                                  * set equal to  0 if not a design parameter */
 
     MUTinstance *system_next_mut;
+
+#ifdef KLU
+    BindElement *MUTbr1br2Binding ;
+    BindElement *MUTbr2br1Binding ;
+#endif
 };
 
 

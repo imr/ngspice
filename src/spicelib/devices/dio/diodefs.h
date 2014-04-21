@@ -147,6 +147,16 @@ typedef struct sDIOinstance {
         double **DIOnVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *DIOposPosPrimeBinding ;
+    BindElement *DIOnegPosPrimeBinding ;
+    BindElement *DIOposPrimePosBinding ;
+    BindElement *DIOposPrimeNegBinding ;
+    BindElement *DIOposPosBinding ;
+    BindElement *DIOnegNegBinding ;
+    BindElement *DIOposPrimePosPrimeBinding ;
+#endif
+
 } DIOinstance ;
 
 #define DIOsenGeq DIOsens /* stores the perturbed values of geq */

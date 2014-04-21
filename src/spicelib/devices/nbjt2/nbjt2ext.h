@@ -24,4 +24,10 @@ extern int NBJT2trunc(GENmodel *, CKTcircuit *, double *);
 extern void NBJT2dump(GENmodel *, CKTcircuit *);
 extern void NBJT2acct(GENmodel *, CKTcircuit *, FILE *);
 
+#ifdef KLU
+extern int NBJT2bindCSC (GENmodel*, CKTcircuit*) ;
+extern int NBJT2bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int NBJT2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
 #endif				/* NBJT2EXT_H */

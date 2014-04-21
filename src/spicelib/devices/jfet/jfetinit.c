@@ -66,6 +66,12 @@ SPICEdev JFETinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = JFETbindCSC,
+    .DEVbindCSCComplex = JFETbindCSCComplex,
+    .DEVbindCSCComplexToReal = JFETbindCSCComplexToReal,
+#endif
 };
 
 

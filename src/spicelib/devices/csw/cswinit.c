@@ -68,6 +68,12 @@ SPICEdev CSWinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = CSWbindCSC,
+    .DEVbindCSCComplex = CSWbindCSCComplex,
+    .DEVbindCSCComplexToReal = CSWbindCSCComplexToReal,
+#endif
 };
 
 

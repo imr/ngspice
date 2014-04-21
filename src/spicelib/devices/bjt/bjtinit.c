@@ -66,6 +66,12 @@ SPICEdev BJTinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = BJTbindCSC,
+    .DEVbindCSCComplex = BJTbindCSCComplex,
+    .DEVbindCSCComplexToReal = BJTbindCSCComplexToReal,
+#endif
 };
 
 

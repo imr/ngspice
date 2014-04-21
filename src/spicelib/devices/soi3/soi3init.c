@@ -66,6 +66,12 @@ SPICEdev SOI3info = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = SOI3bindCSC,
+    .DEVbindCSCComplex = SOI3bindCSCComplex,
+    .DEVbindCSCComplexToReal = SOI3bindCSCComplexToReal,
+#endif
 };
 
 

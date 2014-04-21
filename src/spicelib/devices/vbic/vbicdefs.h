@@ -245,6 +245,60 @@ typedef struct sVBICinstance {
 #endif /*NONOISE*/
 /* the above to avoid allocating memory when it is not needed */
 
+#ifdef KLU
+    BindElement *VBICcollCollBinding ;
+    BindElement *VBICbaseBaseBinding ;
+    BindElement *VBICemitEmitBinding ;
+    BindElement *VBICsubsSubsBinding ;
+    BindElement *VBICcollCXCollCXBinding ;
+    BindElement *VBICcollCICollCIBinding ;
+    BindElement *VBICbaseBXBaseBXBinding ;
+    BindElement *VBICbaseBIBaseBIBinding ;
+    BindElement *VBICemitEIEmitEIBinding ;
+    BindElement *VBICbaseBPBaseBPBinding ;
+    BindElement *VBICsubsSISubsSIBinding ;
+    BindElement *VBICbaseEmitBinding ;
+    BindElement *VBICemitBaseBinding ;
+    BindElement *VBICbaseCollBinding ;
+    BindElement *VBICcollBaseBinding ;
+    BindElement *VBICcollCollCXBinding ;
+    BindElement *VBICbaseBaseBXBinding ;
+    BindElement *VBICemitEmitEIBinding ;
+    BindElement *VBICsubsSubsSIBinding ;
+    BindElement *VBICcollCXCollCIBinding ;
+    BindElement *VBICcollCXBaseBXBinding ;
+    BindElement *VBICcollCXBaseBIBinding ;
+    BindElement *VBICcollCXBaseBPBinding ;
+    BindElement *VBICcollCIBaseBIBinding ;
+    BindElement *VBICcollCIEmitEIBinding ;
+    BindElement *VBICbaseBXBaseBIBinding ;
+    BindElement *VBICbaseBXEmitEIBinding ;
+    BindElement *VBICbaseBXBaseBPBinding ;
+    BindElement *VBICbaseBXSubsSIBinding ;
+    BindElement *VBICbaseBIEmitEIBinding ;
+    BindElement *VBICbaseBPSubsSIBinding ;
+    BindElement *VBICcollCXCollBinding ;
+    BindElement *VBICbaseBXBaseBinding ;
+    BindElement *VBICemitEIEmitBinding ;
+    BindElement *VBICsubsSISubsBinding ;
+    BindElement *VBICcollCICollCXBinding ;
+    BindElement *VBICbaseBICollCXBinding ;
+    BindElement *VBICbaseBPCollCXBinding ;
+    BindElement *VBICbaseBXCollCIBinding ;
+    BindElement *VBICbaseBICollCIBinding ;
+    BindElement *VBICemitEICollCIBinding ;
+    BindElement *VBICbaseBPCollCIBinding ;
+    BindElement *VBICbaseBIBaseBXBinding ;
+    BindElement *VBICemitEIBaseBXBinding ;
+    BindElement *VBICbaseBPBaseBXBinding ;
+    BindElement *VBICsubsSIBaseBXBinding ;
+    BindElement *VBICemitEIBaseBIBinding ;
+    BindElement *VBICbaseBPBaseBIBinding ;
+    BindElement *VBICsubsSICollCIBinding ;
+    BindElement *VBICsubsSIBaseBIBinding ;
+    BindElement *VBICsubsSIBaseBPBinding ;
+#endif
+
 } VBICinstance ;
 
 /* entries in the state vector for vbic: */

@@ -285,6 +285,33 @@ typedef struct sBJTinstance {
 #endif /*NONOISE*/
 /* the above to avoid allocating memory when it is not needed */
 
+#ifdef KLU
+    BindElement *BJTcolColPrimeBinding ;
+    BindElement *BJTbaseBasePrimeBinding ;
+    BindElement *BJTemitEmitPrimeBinding ;
+    BindElement *BJTcolPrimeColBinding ;
+    BindElement *BJTcolPrimeBasePrimeBinding ;
+    BindElement *BJTcolPrimeEmitPrimeBinding ;
+    BindElement *BJTbasePrimeBaseBinding ;
+    BindElement *BJTbasePrimeColPrimeBinding ;
+    BindElement *BJTbasePrimeEmitPrimeBinding ;
+    BindElement *BJTemitPrimeEmitBinding ;
+    BindElement *BJTemitPrimeColPrimeBinding ;
+    BindElement *BJTemitPrimeBasePrimeBinding ;
+    BindElement *BJTcolColBinding ;
+    BindElement *BJTbaseBaseBinding ;
+    BindElement *BJTemitEmitBinding ;
+    BindElement *BJTcolPrimeColPrimeBinding ;
+    BindElement *BJTbasePrimeBasePrimeBinding ;
+    BindElement *BJTemitPrimeEmitPrimeBinding ;
+    BindElement *BJTsubstSubstBinding ;
+    BindElement *BJTsubstConSubstBinding ;
+    BindElement *BJTsubstSubstConBinding ;
+    BindElement *BJTsubstConSubstConBinding ;
+    BindElement *BJTbaseColPrimeBinding ;
+    BindElement *BJTcolPrimeBaseBinding ;
+#endif
+
 } BJTinstance ;
 
 /* entries in the state vector for bjt: */

@@ -48,6 +48,14 @@ typedef struct sCCVSinstance {
     int  CCVSsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
+#ifdef KLU
+    BindElement *CCVSposIbrBinding ;
+    BindElement *CCVSnegIbrBinding ;
+    BindElement *CCVSibrNegBinding ;
+    BindElement *CCVSibrPosBinding ;
+    BindElement *CCVSibrContBrBinding ;
+#endif
+
 } CCVSinstance ;
 
 /* per model data */
