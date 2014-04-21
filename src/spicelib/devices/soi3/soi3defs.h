@@ -321,6 +321,65 @@ typedef struct sSOI3instance {
 	double **SOI3nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *SOI3D_dStructPtr ;
+    BindElement *SOI3D_dpStructPtr ;
+    BindElement *SOI3DP_dStructPtr ;
+    BindElement *SOI3S_sStructPtr ;
+    BindElement *SOI3S_spStructPtr ;
+    BindElement *SOI3SP_sStructPtr ;
+    BindElement *SOI3GF_gfStructPtr ;
+    BindElement *SOI3GF_gbStructPtr ;
+    BindElement *SOI3GF_dpStructPtr ;
+    BindElement *SOI3GF_spStructPtr ;
+    BindElement *SOI3GF_bStructPtr ;
+    BindElement *SOI3GB_gfStructPtr ;
+    BindElement *SOI3GB_gbStructPtr ;
+    BindElement *SOI3GB_dpStructPtr ;
+    BindElement *SOI3GB_spStructPtr ;
+    BindElement *SOI3GB_bStructPtr ;
+    BindElement *SOI3B_gfStructPtr ;
+    BindElement *SOI3B_gbStructPtr ;
+    BindElement *SOI3B_dpStructPtr ;
+    BindElement *SOI3B_spStructPtr ;
+    BindElement *SOI3B_bStructPtr ;
+    BindElement *SOI3DP_gfStructPtr ;
+    BindElement *SOI3DP_gbStructPtr ;
+    BindElement *SOI3DP_dpStructPtr ;
+    BindElement *SOI3DP_spStructPtr ;
+    BindElement *SOI3DP_bStructPtr ;
+    BindElement *SOI3SP_gfStructPtr ;
+    BindElement *SOI3SP_gbStructPtr ;
+    BindElement *SOI3SP_dpStructPtr ;
+    BindElement *SOI3SP_spStructPtr ;
+    BindElement *SOI3SP_bStructPtr ;
+    BindElement *SOI3TOUT_ibrStructPtr ;
+    BindElement *SOI3IBR_toutStructPtr ;
+    BindElement *SOI3TOUT_toutStructPtr ;
+    BindElement *SOI3TOUT_tout1StructPtr ;
+    BindElement *SOI3TOUT1_toutStructPtr ;
+    BindElement *SOI3TOUT1_tout1StructPtr ;
+    BindElement *SOI3TOUT1_tout2StructPtr ;
+    BindElement *SOI3TOUT2_tout1StructPtr ;
+    BindElement *SOI3TOUT2_tout2StructPtr ;
+    BindElement *SOI3TOUT2_tout3StructPtr ;
+    BindElement *SOI3TOUT3_tout2StructPtr ;
+    BindElement *SOI3TOUT3_tout3StructPtr ;
+    BindElement *SOI3TOUT3_tout4StructPtr ;
+    BindElement *SOI3TOUT4_tout3StructPtr ;
+    BindElement *SOI3TOUT4_tout4StructPtr ;
+    BindElement *SOI3TOUT_gfStructPtr ;
+    BindElement *SOI3TOUT_gbStructPtr ;
+    BindElement *SOI3TOUT_dpStructPtr ;
+    BindElement *SOI3TOUT_spStructPtr ;
+    BindElement *SOI3TOUT_bStructPtr ;
+    BindElement *SOI3GF_toutStructPtr ;
+    BindElement *SOI3GB_toutStructPtr ;
+    BindElement *SOI3DP_toutStructPtr ;
+    BindElement *SOI3SP_toutStructPtr ;
+    BindElement *SOI3B_toutStructPtr ;
+#endif
+
 } SOI3instance ;
 
 #define SOI3vbd  SOI3states+ 0   /* bulk-drain voltage */

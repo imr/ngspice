@@ -74,7 +74,13 @@ SPICEdev NDEVinfo = {
 #endif               
                     
  /* DEVinstSize   */ &NDEViSize,
- /* DEVmodSize    */ &NDEVmSize
+ /* DEVmodSize    */ &NDEVmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */ NULL,
+ /* DEVbindCSCComplex */ NULL,
+ /* DEVbindCSCComplexToReal */  NULL,
+#endif
 
 };
 
