@@ -321,6 +321,65 @@ typedef struct sSOI3instance {
 	double **SOI3nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *SOI3D_dBinding ;
+    BindElement *SOI3D_dpBinding ;
+    BindElement *SOI3DP_dBinding ;
+    BindElement *SOI3S_sBinding ;
+    BindElement *SOI3S_spBinding ;
+    BindElement *SOI3SP_sBinding ;
+    BindElement *SOI3GF_gfBinding ;
+    BindElement *SOI3GF_gbBinding ;
+    BindElement *SOI3GF_dpBinding ;
+    BindElement *SOI3GF_spBinding ;
+    BindElement *SOI3GF_bBinding ;
+    BindElement *SOI3GB_gfBinding ;
+    BindElement *SOI3GB_gbBinding ;
+    BindElement *SOI3GB_dpBinding ;
+    BindElement *SOI3GB_spBinding ;
+    BindElement *SOI3GB_bBinding ;
+    BindElement *SOI3B_gfBinding ;
+    BindElement *SOI3B_gbBinding ;
+    BindElement *SOI3B_dpBinding ;
+    BindElement *SOI3B_spBinding ;
+    BindElement *SOI3B_bBinding ;
+    BindElement *SOI3DP_gfBinding ;
+    BindElement *SOI3DP_gbBinding ;
+    BindElement *SOI3DP_dpBinding ;
+    BindElement *SOI3DP_spBinding ;
+    BindElement *SOI3DP_bBinding ;
+    BindElement *SOI3SP_gfBinding ;
+    BindElement *SOI3SP_gbBinding ;
+    BindElement *SOI3SP_dpBinding ;
+    BindElement *SOI3SP_spBinding ;
+    BindElement *SOI3SP_bBinding ;
+    BindElement *SOI3TOUT_ibrBinding ;
+    BindElement *SOI3IBR_toutBinding ;
+    BindElement *SOI3TOUT_toutBinding ;
+    BindElement *SOI3TOUT_tout1Binding ;
+    BindElement *SOI3TOUT1_toutBinding ;
+    BindElement *SOI3TOUT1_tout1Binding ;
+    BindElement *SOI3TOUT1_tout2Binding ;
+    BindElement *SOI3TOUT2_tout1Binding ;
+    BindElement *SOI3TOUT2_tout2Binding ;
+    BindElement *SOI3TOUT2_tout3Binding ;
+    BindElement *SOI3TOUT3_tout2Binding ;
+    BindElement *SOI3TOUT3_tout3Binding ;
+    BindElement *SOI3TOUT3_tout4Binding ;
+    BindElement *SOI3TOUT4_tout3Binding ;
+    BindElement *SOI3TOUT4_tout4Binding ;
+    BindElement *SOI3TOUT_gfBinding ;
+    BindElement *SOI3TOUT_gbBinding ;
+    BindElement *SOI3TOUT_dpBinding ;
+    BindElement *SOI3TOUT_spBinding ;
+    BindElement *SOI3TOUT_bBinding ;
+    BindElement *SOI3GF_toutBinding ;
+    BindElement *SOI3GB_toutBinding ;
+    BindElement *SOI3DP_toutBinding ;
+    BindElement *SOI3SP_toutBinding ;
+    BindElement *SOI3B_toutBinding ;
+#endif
+
 } SOI3instance ;
 
 #define SOI3vbd  SOI3states+ 0   /* bulk-drain voltage */
