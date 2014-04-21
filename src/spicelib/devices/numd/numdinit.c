@@ -66,6 +66,12 @@ SPICEdev NUMDinfo = {
     .DEVdump = NUMDdump,
     .DEVacct = NUMDacct,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = NUMDbindCSC,
+    .DEVbindCSCComplex = NUMDbindCSCComplex,
+    .DEVbindCSCComplexToReal = NUMDbindCSCComplexToReal,
+#endif
 };
 
 

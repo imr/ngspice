@@ -66,6 +66,12 @@ SPICEdev RESinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = RESbindCSC,
+    .DEVbindCSCComplex = RESbindCSCComplex,
+    .DEVbindCSCComplexToReal = RESbindCSCComplexToReal,
+#endif
 };
 
 

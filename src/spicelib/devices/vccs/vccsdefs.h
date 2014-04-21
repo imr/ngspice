@@ -49,6 +49,13 @@ typedef struct sVCCSinstance {
     int  VCCSsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
+#ifdef KLU
+    BindElement *VCCSposContPosBinding ;
+    BindElement *VCCSposContNegBinding ;
+    BindElement *VCCSnegContPosBinding ;
+    BindElement *VCCSnegContNegBinding ;
+#endif
+
 } VCCSinstance ;
 
 #define VCCSvOld VCCSstates
