@@ -44,3 +44,9 @@ extern int LTRAstraightLineCheck(double,double,double,double,double,double,doubl
 
 extern int LTRAdevDelete(GENinstance*);
 extern int LTRAmDelete(GENmodel*);
+
+#ifdef KLU
+extern int LTRAbindCSC (GENmodel*, CKTcircuit*) ;
+extern int LTRAbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int LTRAbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

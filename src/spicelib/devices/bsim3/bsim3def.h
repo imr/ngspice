@@ -261,6 +261,40 @@ typedef struct sBSIM3instance
         double **BSIM3nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *BSIM3DdBinding ;
+    BindElement *BSIM3GgBinding ;
+    BindElement *BSIM3SsBinding ;
+    BindElement *BSIM3BbBinding ;
+    BindElement *BSIM3DPdpBinding ;
+    BindElement *BSIM3SPspBinding ;
+    BindElement *BSIM3DdpBinding ;
+    BindElement *BSIM3GbBinding ;
+    BindElement *BSIM3GdpBinding ;
+    BindElement *BSIM3GspBinding ;
+    BindElement *BSIM3SspBinding ;
+    BindElement *BSIM3BdpBinding ;
+    BindElement *BSIM3BspBinding ;
+    BindElement *BSIM3DPspBinding ;
+    BindElement *BSIM3DPdBinding ;
+    BindElement *BSIM3BgBinding ;
+    BindElement *BSIM3DPgBinding ;
+    BindElement *BSIM3SPgBinding ;
+    BindElement *BSIM3SPsBinding ;
+    BindElement *BSIM3DPbBinding ;
+    BindElement *BSIM3SPbBinding ;
+    BindElement *BSIM3SPdpBinding ;
+    BindElement *BSIM3QqBinding ;
+    BindElement *BSIM3QdpBinding ;
+    BindElement *BSIM3QgBinding ;
+    BindElement *BSIM3QspBinding ;
+    BindElement *BSIM3QbBinding ;
+    BindElement *BSIM3DPqBinding ;
+    BindElement *BSIM3GqBinding ;
+    BindElement *BSIM3SPqBinding ;
+    BindElement *BSIM3BqBinding ;
+#endif
+
 } BSIM3instance ;
 
 struct bsim3SizeDependParam

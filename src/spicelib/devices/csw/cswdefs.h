@@ -47,10 +47,18 @@ typedef struct sCSWinstance {
     unsigned CSWzero_stateGiven : 1;  /* flag to indicate initial state */
 #ifndef NONOISE
     double CSWnVar[NSTATVARS];
-#else
+#else /* NONOISE */
     double *CSWnVar;
+#endif /* NONOISE */
+
+#ifdef KLU
+    BindElement *CSWposPosBinding ;
+    BindElement *CSWposNegBinding ;
+    BindElement *CSWnegPosBinding ;
+    BindElement *CSWnegNegBinding ;
 #endif
-} CSWinstance;
+
+} CSWinstance ;
 
 /* data per model */
 

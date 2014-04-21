@@ -258,6 +258,40 @@ typedef struct sBSIM3v32instance
         double **BSIM3v32nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *BSIM3v32DdBinding ;
+    BindElement *BSIM3v32GgBinding ;
+    BindElement *BSIM3v32SsBinding ;
+    BindElement *BSIM3v32BbBinding ;
+    BindElement *BSIM3v32DPdpBinding ;
+    BindElement *BSIM3v32SPspBinding ;
+    BindElement *BSIM3v32DdpBinding ;
+    BindElement *BSIM3v32GbBinding ;
+    BindElement *BSIM3v32GdpBinding ;
+    BindElement *BSIM3v32GspBinding ;
+    BindElement *BSIM3v32SspBinding ;
+    BindElement *BSIM3v32BdpBinding ;
+    BindElement *BSIM3v32BspBinding ;
+    BindElement *BSIM3v32DPspBinding ;
+    BindElement *BSIM3v32DPdBinding ;
+    BindElement *BSIM3v32BgBinding ;
+    BindElement *BSIM3v32DPgBinding ;
+    BindElement *BSIM3v32SPgBinding ;
+    BindElement *BSIM3v32SPsBinding ;
+    BindElement *BSIM3v32DPbBinding ;
+    BindElement *BSIM3v32SPbBinding ;
+    BindElement *BSIM3v32SPdpBinding ;
+    BindElement *BSIM3v32QqBinding ;
+    BindElement *BSIM3v32QdpBinding ;
+    BindElement *BSIM3v32QspBinding ;
+    BindElement *BSIM3v32QgBinding ;
+    BindElement *BSIM3v32QbBinding ;
+    BindElement *BSIM3v32DPqBinding ;
+    BindElement *BSIM3v32SPqBinding ;
+    BindElement *BSIM3v32GqBinding ;
+    BindElement *BSIM3v32BqBinding ;
+#endif
+
 } BSIM3v32instance ;
 
 struct bsim3v32SizeDependParam
