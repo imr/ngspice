@@ -266,6 +266,31 @@ typedef struct sMOS3instance {
 	double **MOS3nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *MOS3DdStructPtr ;
+    BindElement *MOS3GgStructPtr ;
+    BindElement *MOS3SsStructPtr ;
+    BindElement *MOS3BbStructPtr ;
+    BindElement *MOS3DPdpStructPtr ;
+    BindElement *MOS3SPspStructPtr ;
+    BindElement *MOS3DdpStructPtr ;
+    BindElement *MOS3GbStructPtr ;
+    BindElement *MOS3GdpStructPtr ;
+    BindElement *MOS3GspStructPtr ;
+    BindElement *MOS3SspStructPtr ;
+    BindElement *MOS3BdpStructPtr ;
+    BindElement *MOS3BspStructPtr ;
+    BindElement *MOS3DPspStructPtr ;
+    BindElement *MOS3DPdStructPtr ;
+    BindElement *MOS3BgStructPtr ;
+    BindElement *MOS3DPgStructPtr ;
+    BindElement *MOS3SPgStructPtr ;
+    BindElement *MOS3SPsStructPtr ;
+    BindElement *MOS3DPbStructPtr ;
+    BindElement *MOS3SPbStructPtr ;
+    BindElement *MOS3SPdpStructPtr ;
+#endif
+
 } MOS3instance ;
 
 #define MOS3vbd MOS3states+ 0

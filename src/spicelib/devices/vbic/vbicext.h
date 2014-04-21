@@ -27,4 +27,10 @@ extern int VBICtrunc(GENmodel*,CKTcircuit*,double*);
 extern int VBICnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int VBICsoaCheck(CKTcircuit *, GENmodel *);
 
+#ifdef KLU
+extern int VBICbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VBICbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VBICbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
 #endif

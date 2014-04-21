@@ -29,3 +29,9 @@ extern int BSIM4v6trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4v6noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v6unsetup(GENmodel*,CKTcircuit*);
 extern int BSIM4v6soaCheck(CKTcircuit *, GENmodel *);
+
+#ifdef KLU
+extern int BSIM4v6bindCSC (GENmodel*, CKTcircuit*) ;
+extern int BSIM4v6bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int BSIM4v6bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

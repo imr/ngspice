@@ -675,6 +675,54 @@ typedef struct sHSM2instance {
   double **HSM2nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *HSM2DPbpStructPtr ;
+    BindElement *HSM2SPbpStructPtr ;
+    BindElement *HSM2GPbpStructPtr ;
+    BindElement *HSM2BPdpStructPtr ;
+    BindElement *HSM2BPspStructPtr ;
+    BindElement *HSM2BPgpStructPtr ;
+    BindElement *HSM2BPbpStructPtr ;
+    BindElement *HSM2DdStructPtr ;
+    BindElement *HSM2GPgpStructPtr ;
+    BindElement *HSM2SsStructPtr ;
+    BindElement *HSM2DPdpStructPtr ;
+    BindElement *HSM2SPspStructPtr ;
+    BindElement *HSM2DdpStructPtr ;
+    BindElement *HSM2GPdpStructPtr ;
+    BindElement *HSM2GPspStructPtr ;
+    BindElement *HSM2SspStructPtr ;
+    BindElement *HSM2DPspStructPtr ;
+    BindElement *HSM2DPdStructPtr ;
+    BindElement *HSM2DPgpStructPtr ;
+    BindElement *HSM2SPgpStructPtr ;
+    BindElement *HSM2SPsStructPtr ;
+    BindElement *HSM2SPdpStructPtr ;
+    BindElement *HSM2GgStructPtr ;
+    BindElement *HSM2GgpStructPtr ;
+    BindElement *HSM2GPgStructPtr ;
+    BindElement *HSM2GdpStructPtr ;
+    BindElement *HSM2GspStructPtr ;
+    BindElement *HSM2GbpStructPtr ;
+    BindElement *HSM2DPdbStructPtr ;
+    BindElement *HSM2SPsbStructPtr ;
+    BindElement *HSM2DBdpStructPtr ;
+    BindElement *HSM2DBdbStructPtr ;
+    BindElement *HSM2DBbpStructPtr ;
+    BindElement *HSM2DBbStructPtr ;
+    BindElement *HSM2BPdbStructPtr ;
+    BindElement *HSM2BPbStructPtr ;
+    BindElement *HSM2BPsbStructPtr ;
+    BindElement *HSM2SBspStructPtr ;
+    BindElement *HSM2SBbpStructPtr ;
+    BindElement *HSM2SBbStructPtr ;
+    BindElement *HSM2SBsbStructPtr ;
+    BindElement *HSM2BdbStructPtr ;
+    BindElement *HSM2BbpStructPtr ;
+    BindElement *HSM2BsbStructPtr ;
+    BindElement *HSM2BbStructPtr ;
+#endif
+
 } HSM2instance ;
 
 

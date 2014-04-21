@@ -267,7 +267,30 @@ typedef struct sMOS2instance {
 	double **MOS2nVar;
 #endif /* NONOISE */
 
-    
+#ifdef KLU
+    BindElement *MOS2DdStructPtr ;
+    BindElement *MOS2GgStructPtr ;
+    BindElement *MOS2SsStructPtr ;
+    BindElement *MOS2BbStructPtr ;
+    BindElement *MOS2DPdpStructPtr ;
+    BindElement *MOS2SPspStructPtr ;
+    BindElement *MOS2DdpStructPtr ;
+    BindElement *MOS2GbStructPtr ;
+    BindElement *MOS2GdpStructPtr ;
+    BindElement *MOS2GspStructPtr ;
+    BindElement *MOS2SspStructPtr ;
+    BindElement *MOS2BdpStructPtr ;
+    BindElement *MOS2BspStructPtr ;
+    BindElement *MOS2DPspStructPtr ;
+    BindElement *MOS2DPdStructPtr ;
+    BindElement *MOS2BgStructPtr ;
+    BindElement *MOS2DPgStructPtr ;
+    BindElement *MOS2SPgStructPtr ;
+    BindElement *MOS2SPsStructPtr ;
+    BindElement *MOS2DPbStructPtr ;
+    BindElement *MOS2SPbStructPtr ;
+    BindElement *MOS2SPdpStructPtr ;
+#endif
 
 } MOS2instance ;
 
