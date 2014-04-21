@@ -30,6 +30,20 @@ int nthreads;
             return(E_NOMEM);\
 }
 
+#ifdef KLU
+#include <stdlib.h>
+
+static
+int
+BindCompare (const void *a, const void *b)
+{
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
+
+    return ((int)(A->Sparse - B->Sparse)) ;
+}
+#endif
 
 int
 CKTsetup(CKTcircuit *ckt)
@@ -91,6 +105,53 @@ CKTsetup(CKTcircuit *ckt)
             if(error) return(error);
         }
     }
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+        SMPnnz (ckt->CKTmatrix) ;
+#endif
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+
+        int i ;
+        int n = SMPmatSize (ckt->CKTmatrix) ;
+        ckt->CKTmatrix->CKTkluN = n ;
+
+        int nz = ckt->CKTmatrix->CKTklunz ;
+
+        ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
+        ckt->CKTmatrix->CKTkluAi           = TMALLOC (int, nz) ;
+        ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
+        ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n) ;
+
+        ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
+
+        ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
+
+        /* Complex Stuff needed for AC Analysis */
+        ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * nz) ;
+        ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * n) ;
+
+        /* Binding Table from Sparse to CSC Format Creation */
+        SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+        /* Binding Table Sorting */
+        qsort (ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare) ;
+
+        /* KLU Pointers Assignment */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
+
+        ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+    } else {
+        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+    }
+#endif
+
     for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
         CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
     }

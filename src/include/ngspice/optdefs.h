@@ -124,6 +124,10 @@ typedef struct {
 #define OPT_EPSMIN       71
 
 
+#ifdef KLU
+#define OPT_SPARSE       72
+#endif
+
 #ifdef XSPICE
 /* gtri - begin - wbk - add new options */
 #define OPT_ENH_NOOPALTER           100
