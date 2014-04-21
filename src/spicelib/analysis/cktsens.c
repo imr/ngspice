@@ -55,7 +55,7 @@ static double inc_freq(double freq, int type, double step_size);
  *			For each element/parameter in the test list:
  *				construct the perturbation matrix
  *				Solve for the sensitivities:
- *					delta_E = Y^-1 (delta_Y E - delta_I)
+ *					delta_E = Y^-1 (delta_Y->SPmatrix E - delta_I)
  *				save results
  */
 
@@ -71,7 +71,8 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	static double	freq;
 	static int	nfreqs;
 	static int	i;
-	static SMPmatrix	*delta_Y = NULL, *Y;
+	static SMPmatrix	*delta_Y = NULL;
+	static MatrixFrame	*Y;
 	static double	step_size;
 	double		*E, *iE;
 	IFvalue		value, nvalue;
@@ -89,7 +90,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	int		type;
 	double		*saved_rhs = NULL,
 			*saved_irhs = NULL;
-	SMPmatrix	*saved_matrix = NULL;
+	MatrixFrame	*saved_matrix = NULL;
+
+        delta_Y = TMALLOC(SMPmatrix, 1);
 
 #ifndef notdef
 #ifdef notdef
@@ -139,10 +142,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		if (error)
 			return error;
 
-		size = spGetSize(ckt->CKTmatrix, 1);
+		size = spGetSize (ckt->CKTmatrix->SPmatrix, 1) ;
 
 		/* Create the perturbation matrix */
-		delta_Y = spCreate(size, 1, &error);
+		delta_Y->SPmatrix = spCreate(size, 1, &error);
 		if (error)
 			return error;
 
@@ -181,7 +184,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					sg->ptable[sg->param].keyword);
 			}
 
-			SPfrontEnd->IFnewUid (ckt, output_names + k, NULL, namebuf, UID_OTHER, NULL);
+			SPfrontEnd->IFnewUid (ckt,
+				output_names + k, NULL,
+				namebuf, UID_OTHER, NULL);
 			k += 1;
 		}
 
@@ -190,14 +195,16 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			freq_name = NULL;
 		} else {
 			type = IF_COMPLEX;
-			SPfrontEnd->IFnewUid (ckt, &freq_name, NULL, "frequency", UID_OTHER, NULL);
+			SPfrontEnd->IFnewUid (ckt,
+				&freq_name, NULL,
+				"frequency", UID_OTHER, NULL);
 		}
 
-                error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                                                   ckt->CKTcurJob->JOBname,
-                                                   freq_name, IF_REAL,
-                                                   num_vars, output_names, type,
-                                                   &sen_data);
+                error = SPfrontEnd->OUTpBeginPlot (
+                    ckt, ckt->CKTcurJob,
+                    ckt->CKTcurJob->JOBname,
+                    freq_name, IF_REAL,
+                    num_vars, output_names, type, &sen_data);
 		if (error)
 			return error;
 
@@ -209,7 +216,8 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			output_values = NULL;
 			output_cvalues = TMALLOC(IFcomplex, num_vars);
 			if (job->step_type != SENS_LINEAR)
-			    SPfrontEnd->OUTattributes (sen_data, NULL, OUT_SCALE_LOG, NULL);
+			    SPfrontEnd->OUTattributes (sen_data,
+				    NULL, OUT_SCALE_LOG, NULL);
 
 		}
 
@@ -231,12 +239,12 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	bypass = ckt->CKTbypass;
 	ckt->CKTbypass = 0;
 
-	/* CKTop solves into CKTrhs and CKTmatrix,
+	/* CKTop solves into CKTrhs and CKTmatrix->SPmatrix,
 	 *	 CKTirhs is hopefully zero (fresh allocated ?) */
 
 	E = ckt->CKTrhs;
 	iE = ckt->CKTirhs;
-	Y = ckt->CKTmatrix;
+	Y = ckt->CKTmatrix->SPmatrix;
 
 #ifdef ASDEBUG
 	DEBUG(1) {
@@ -279,7 +287,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error)
 				return error;
 
-			/* XXX ckt->CKTmatrix = Y; */
+			/* XXX ckt->CKTmatrix->SPmatrix = Y; */
 
 			error = CKTsetup(ckt);
 			if (error)
@@ -308,17 +316,17 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
-			/* NIacIter solves into CKTrhsOld, CKTirhsOld and CKTmatrix */
+			/* NIacIter solves into CKTrhsOld, CKTirhsOld and CKTmatrix->SPmatrix */
 			E = ckt->CKTrhsOld;
 			iE = ckt->CKTirhsOld;
-			Y = ckt->CKTmatrix;
+			Y = ckt->CKTmatrix->SPmatrix;
 		}
 
 		/* Use a different vector & matrix */
 
 		save_context(ckt->CKTrhs, saved_rhs);
 		save_context(ckt->CKTirhs, saved_irhs);
-		save_context(ckt->CKTmatrix, saved_matrix);
+		save_context(ckt->CKTmatrix->SPmatrix, saved_matrix);
 
 		ckt->CKTrhs = delta_I;
 		ckt->CKTirhs = delta_iI;
@@ -351,7 +359,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
-			spClear(delta_Y);
+			spClear(delta_Y->SPmatrix);
 
 			for (j = 0; j < size; j++) {
 				delta_I[j] = 0.0;
@@ -394,7 +402,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of device:\n");
-				spPrint(delta_Y, 0, 1, 1);
+				spPrint(delta_Y->SPmatrix, 0, 1, 1);
 				printf("LHS:\n");
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
@@ -418,7 +426,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error && error != E_BADPARM)
 				return error;
 
-			spConstMult(delta_Y, -1.0);
+			spConstMult(delta_Y->SPmatrix, -1.0);
 			for (j = 0; j < size; j++) {
 				delta_I[j] *= -1.0;
 				delta_iI[j] *= -1.0;
@@ -427,7 +435,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of negating matrix:\n");
-				spPrint(delta_Y, 0, 1, 1);
+				spPrint(delta_Y->SPmatrix, 0, 1, 1);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -453,7 +461,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of changing the parameter:\n");
-				spPrint(delta_Y, 0, 1, 1);
+				spPrint(delta_Y->SPmatrix, 0, 1, 1);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -477,17 +485,17 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 			/* delta_Y E */
-			spMultiply(delta_Y, delta_I_delta_Y, E,
+			spMultiply(delta_Y->SPmatrix, delta_I_delta_Y, E,
 				delta_iI_delta_Y, iE);
 
 #ifdef ASDEBUG
 			DEBUG(2)
 				for (j = 0; j < size; j++)
-					printf("delta_Y * E [%d] = %20.15g\n",
+					printf("delta_Y->SPmatrix * E [%d] = %20.15g\n",
 						j, delta_I_delta_Y[j]);
 #endif
 
-			/* delta_I - delta_Y E */
+			/* delta_I - delta_Y->SPmatrix E */
 			for (j = 0; j < size; j++) {
 				delta_I[j] -= delta_I_delta_Y[j];
 				delta_iI[j] -= delta_iI_delta_Y[j];
@@ -538,21 +546,24 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 			if (is_dc) {
 				if (job->output_volt)
-					output_values[n] =
-					    delta_I [job->output_pos->number]
-					    - delta_I [job->output_neg->number];
+					output_values[n] = delta_I
+						[job->output_pos->number]
+						- delta_I
+						[job->output_neg->number];
 				else {
 					output_values[n] = delta_I[branch_eq];
 				}
 				output_values[n] /= delta_var;
 			} else {
 				if (job->output_volt) {
-					output_cvalues[n].real =
-					    delta_I [job->output_pos->number]
-					    - delta_I [job->output_neg->number];
-					output_cvalues[n].imag =
-					    delta_iI [job->output_pos->number]
-					    - delta_iI [job->output_neg->number];
+					output_cvalues[n].real = delta_I
+						[job->output_pos->number]
+						- delta_I
+						[job->output_neg->number];
+					output_cvalues[n].imag = delta_iI
+						[job->output_pos->number]
+						- delta_iI
+						[job->output_neg->number];
 				} else {
 					output_cvalues[n].real =
 						delta_I[branch_eq];
@@ -569,7 +580,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		release_context(ckt->CKTrhs, saved_rhs);
 		release_context(ckt->CKTirhs, saved_irhs);
-		release_context(ckt->CKTmatrix, saved_matrix);
+		release_context(ckt->CKTmatrix->SPmatrix, saved_matrix);
 
 		if (is_dc)
 			nvalue.v.vec.rVec = output_values;
@@ -594,9 +605,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 	release_context(ckt->CKTrhs, saved_rhs);
 	release_context(ckt->CKTirhs, saved_irhs);
-	release_context(ckt->CKTmatrix, saved_matrix);
+	release_context(ckt->CKTmatrix->SPmatrix, saved_matrix);
 
-	spDestroy(delta_Y);
+	spDestroy(delta_Y->SPmatrix);
 	FREE(delta_I);
 	FREE(delta_iI);
 
@@ -620,7 +631,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 double
 inc_freq(double freq, int type, double step_size)
 {
-	if (type != SENS_LINEAR)
+	if (type != LINEAR)
 		freq *= step_size;
 	else
 		freq += step_size;
