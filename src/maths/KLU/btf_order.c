@@ -26,7 +26,7 @@
  * with support from Sandia National Laboratories.  All Rights Reserved.
  */
 
-#include "btf.h"
+#include "ngspice/btf.h"
 #include "btf_internal.h"
 
 /* This function only operates on square matrices (either structurally full-
