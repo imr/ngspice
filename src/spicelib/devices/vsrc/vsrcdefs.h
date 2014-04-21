@@ -91,6 +91,7 @@ typedef struct sVSRCinstance {
     unsigned VSRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
     unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
+
 #ifdef RFSPICE
     unsigned VSRCportNumGiven : 1;      /* Flag to indicate Port Num is given */
     unsigned VSRCportZ0Given : 1;       /* Flag to indicate Port Z0 is given */
@@ -109,6 +110,14 @@ typedef struct sVSRCinstance {
     double       VSRCportPhaseRad;      /* Port Initial Phase (rad) */
     double       VSRCki;                /* Normalization Factor for Kurosawa power wave*/
 #endif
+
+#ifdef KLU
+    BindElement *VSRCposIbrBinding ;
+    BindElement *VSRCnegIbrBinding ;
+    BindElement *VSRCibrNegBinding ;
+    BindElement *VSRCibrPosBinding ;
+#endif
+
 } VSRCinstance ;
 
 

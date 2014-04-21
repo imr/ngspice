@@ -9,3 +9,10 @@ extern int TXLparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int TXLsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int TXLunsetup(GENmodel*, CKTcircuit*);
 extern int TXLdevDelete(GENinstance*);
+
+#ifdef KLU
+extern int TXLbindCSC (GENmodel*, CKTcircuit*) ;
+extern int TXLbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int TXLbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+

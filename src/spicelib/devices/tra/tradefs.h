@@ -83,6 +83,32 @@ typedef struct sTRAinstance {
     unsigned TRAicC2Given : 1;  /* flag to ind. init. current at port 2 given */
     unsigned TRAreltolGiven:1;  /* flag to ind. relative deriv. tol. given */
     unsigned TRAabstolGiven:1;  /* flag to ind. absolute deriv. tol. given */
+
+#ifdef KLU
+    BindElement *TRAibr1Ibr2Binding ;
+    BindElement *TRAibr1Int1Binding ;
+    BindElement *TRAibr1Neg1Binding ;
+    BindElement *TRAibr1Neg2Binding ;
+    BindElement *TRAibr1Pos2Binding ;
+    BindElement *TRAibr2Ibr1Binding ;
+    BindElement *TRAibr2Int2Binding ;
+    BindElement *TRAibr2Neg1Binding ;
+    BindElement *TRAibr2Neg2Binding ;
+    BindElement *TRAibr2Pos1Binding ;
+    BindElement *TRAint1Ibr1Binding ;
+    BindElement *TRAint1Int1Binding ;
+    BindElement *TRAint1Pos1Binding ;
+    BindElement *TRAint2Ibr2Binding ;
+    BindElement *TRAint2Int2Binding ;
+    BindElement *TRAint2Pos2Binding ;
+    BindElement *TRAneg1Ibr1Binding ;
+    BindElement *TRAneg2Ibr2Binding ;
+    BindElement *TRApos1Int1Binding ;
+    BindElement *TRApos1Pos1Binding ;
+    BindElement *TRApos2Int2Binding ;
+    BindElement *TRApos2Pos2Binding ;
+#endif
+
 } TRAinstance ;
 
 
