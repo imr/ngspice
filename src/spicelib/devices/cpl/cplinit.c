@@ -73,7 +73,13 @@ SPICEdev CPLinfo = {
 /* DEVacct        */ NULL,
 #endif   
 /* DEVinstSize    */ &CPLiSize,
-/* DEVmodSize     */ &CPLmSize
+/* DEVmodSize     */ &CPLmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   NULL,
+ /* DEVbindCSCComplex */   NULL,
+ /* DEVbindCSCComplexToReal */  NULL,
+#endif
 
 };
 

@@ -85,6 +85,19 @@ typedef struct sNBJT2instance {
   unsigned NBJT2icFileGiven:1;	/* flag to indicate init. cond. file given */
   unsigned NBJT2printGiven:1;	/* flag to indicate print given */
   unsigned NBJT2tempGiven:1;	/* flag to indicate temp given */
+
+#ifdef KLU
+    BindElement *NBJT2colColStructPtr ;
+    BindElement *NBJT2colBaseStructPtr ;
+    BindElement *NBJT2colEmitStructPtr ;
+    BindElement *NBJT2baseColStructPtr ;
+    BindElement *NBJT2baseBaseStructPtr ;
+    BindElement *NBJT2baseEmitStructPtr ;
+    BindElement *NBJT2emitColStructPtr ;
+    BindElement *NBJT2emitBaseStructPtr ;
+    BindElement *NBJT2emitEmitStructPtr ;
+#endif
+
 } NBJT2instance;
 
 /* per model data */

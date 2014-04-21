@@ -283,6 +283,33 @@ typedef struct sBJTinstance {
 #endif /*NONOISE*/
 /* the above to avoid allocating memory when it is not needed */
 
+#ifdef KLU
+    BindElement *BJTcolColPrimeStructPtr ;
+    BindElement *BJTbaseBasePrimeStructPtr ;
+    BindElement *BJTemitEmitPrimeStructPtr ;
+    BindElement *BJTcolPrimeColStructPtr ;
+    BindElement *BJTcolPrimeBasePrimeStructPtr ;
+    BindElement *BJTcolPrimeEmitPrimeStructPtr ;
+    BindElement *BJTbasePrimeBaseStructPtr ;
+    BindElement *BJTbasePrimeColPrimeStructPtr ;
+    BindElement *BJTbasePrimeEmitPrimeStructPtr ;
+    BindElement *BJTemitPrimeEmitStructPtr ;
+    BindElement *BJTemitPrimeColPrimeStructPtr ;
+    BindElement *BJTemitPrimeBasePrimeStructPtr ;
+    BindElement *BJTcolColStructPtr ;
+    BindElement *BJTbaseBaseStructPtr ;
+    BindElement *BJTemitEmitStructPtr ;
+    BindElement *BJTcolPrimeColPrimeStructPtr ;
+    BindElement *BJTbasePrimeBasePrimeStructPtr ;
+    BindElement *BJTemitPrimeEmitPrimeStructPtr ;
+    BindElement *BJTsubstSubstStructPtr ;
+    BindElement *BJTsubstConSubstStructPtr ;
+    BindElement *BJTsubstSubstConStructPtr ;
+    BindElement *BJTsubstConSubstConStructPtr ;
+    BindElement *BJTbaseColPrimeStructPtr ;
+    BindElement *BJTcolPrimeBaseStructPtr ;
+#endif
+
 } BJTinstance ;
 
 /* entries in the state vector for bjt: */

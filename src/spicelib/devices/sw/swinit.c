@@ -74,7 +74,13 @@ SPICEdev SWinfo = {
  /* DEVacct       */ NULL,
 #endif /* CIDER */                        
  /* DEVinstSize   */ &SWiSize,
- /* DEVmodSize    */ &SWmSize
+ /* DEVmodSize    */ &SWmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   SWbindCSC,
+ /* DEVbindCSCComplex */   SWbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  SWbindCSCComplexToReal,
+#endif
 
 };
 
