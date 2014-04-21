@@ -29,6 +29,9 @@ libbsim3v32_la_SOURCES = \
 	bsim3v32itf.h
 
 
+if KLU_WANTED
+libbsim3v32_la_SOURCES += b3v32bindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

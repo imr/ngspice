@@ -31,3 +31,9 @@ extern int B4SOItrunc(GENmodel*,CKTcircuit*,double*);
 extern int B4SOInoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int B4SOIunsetup(GENmodel*,CKTcircuit*);
 extern int B4SOIsoaCheck(CKTcircuit *, GENmodel *);
+
+#ifdef KLU
+extern int B4SOIbindCSC (GENmodel*, CKTcircuit*) ;
+extern int B4SOIbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int B4SOIbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

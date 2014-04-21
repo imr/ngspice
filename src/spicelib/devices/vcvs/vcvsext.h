@@ -18,3 +18,8 @@ extern void VCVSsPrint(GENmodel*,CKTcircuit*);
 extern int VCVSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VCVSunsetup(GENmodel*,CKTcircuit*);
 
+#ifdef KLU
+extern int VCVSbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VCVSbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VCVSbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

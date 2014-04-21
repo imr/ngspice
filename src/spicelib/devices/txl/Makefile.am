@@ -21,6 +21,11 @@ libtxl_la_SOURCES = \
 	txlsetup.c \
 	txlinit.c
 
+
+if KLU_WANTED
+libtxl_la_SOURCES += txlbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

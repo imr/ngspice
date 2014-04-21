@@ -25,3 +25,9 @@ extern int B2setup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int B2unsetup(GENmodel*,CKTcircuit*);
 extern int B2temp(GENmodel*,CKTcircuit*);
 extern int B2trunc(GENmodel*,CKTcircuit*,double*);
+
+#ifdef KLU
+extern int B2bindCSC (GENmodel*, CKTcircuit*) ;
+extern int B2bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int B2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

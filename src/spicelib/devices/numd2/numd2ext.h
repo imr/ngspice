@@ -24,5 +24,10 @@ extern int NUMD2trunc(GENmodel *, CKTcircuit *, double *);
 extern void NUMD2dump(GENmodel *, CKTcircuit *);
 extern void NUMD2acct(GENmodel *, CKTcircuit *, FILE *);
 
+#ifdef KLU
+extern int NUMD2bindCSC (GENmodel*, CKTcircuit*) ;
+extern int NUMD2bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int NUMD2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
 
 #endif				/* NUMD2EXT_H */

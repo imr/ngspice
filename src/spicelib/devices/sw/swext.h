@@ -17,3 +17,9 @@ extern int SWpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int SWsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int SWnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int SWtrunc(GENmodel*,CKTcircuit*,double*);
+
+#ifdef KLU
+extern int SWbindCSC (GENmodel*, CKTcircuit*) ;
+extern int SWbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int SWbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

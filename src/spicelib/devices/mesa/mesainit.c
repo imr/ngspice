@@ -73,7 +73,13 @@ SPICEdev MESAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MESAiSize,
- /* DEVmodSize    */ &MESAmSize
+ /* DEVmodSize    */ &MESAmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   MESAbindCSC,
+ /* DEVbindCSCComplex */   MESAbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MESAbindCSCComplexToReal,
+#endif
 
 };
 

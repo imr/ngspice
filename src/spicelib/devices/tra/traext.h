@@ -16,3 +16,9 @@ extern int TRAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int TRAunsetup(GENmodel*,CKTcircuit*);
 extern int TRAtemp(GENmodel*,CKTcircuit*);
 extern int TRAtrunc(GENmodel*,CKTcircuit*,double*);
+
+#ifdef KLU
+extern int TRAbindCSC (GENmodel*, CKTcircuit*) ;
+extern int TRAbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int TRAbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

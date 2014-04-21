@@ -176,6 +176,31 @@ typedef struct sBSIM2instance {
 
 #define B2numStates 35           
 
+#ifdef KLU
+    BindElement *B2DdStructPtr ;
+    BindElement *B2GgStructPtr ;
+    BindElement *B2SsStructPtr ;
+    BindElement *B2BbStructPtr ;
+    BindElement *B2DPdpStructPtr ;
+    BindElement *B2SPspStructPtr ;
+    BindElement *B2DdpStructPtr ;
+    BindElement *B2GbStructPtr ;
+    BindElement *B2GdpStructPtr ;
+    BindElement *B2GspStructPtr ;
+    BindElement *B2SspStructPtr ;
+    BindElement *B2BdpStructPtr ;
+    BindElement *B2BspStructPtr ;
+    BindElement *B2DPspStructPtr ;
+    BindElement *B2DPdStructPtr ;
+    BindElement *B2BgStructPtr ;
+    BindElement *B2DPgStructPtr ;
+    BindElement *B2SPgStructPtr ;
+    BindElement *B2SPsStructPtr ;
+    BindElement *B2DPbStructPtr ;
+    BindElement *B2SPbStructPtr ;
+    BindElement *B2SPdpStructPtr ;
+#endif
+
 } B2instance ;
 
 struct bsim2SizeDependParam
