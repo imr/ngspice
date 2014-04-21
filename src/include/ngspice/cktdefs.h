@@ -288,6 +288,11 @@ struct CKTcircuit {
 
     NGHASHPTR DEVnameHash;
     NGHASHPTR MODnameHash;
+
+#ifdef KLU
+    unsigned int CKTkluMODE:1 ;
+#endif
+
 };
 
 
