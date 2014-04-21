@@ -67,6 +67,12 @@ SPICEdev DIOinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = DIObindCSC,
+    .DEVbindCSCComplex = DIObindCSCComplex,
+    .DEVbindCSCComplexToReal = DIObindCSCComplexToReal,
+#endif
 };
 
 

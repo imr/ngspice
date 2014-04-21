@@ -66,6 +66,12 @@ SPICEdev TRAinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = TRAbindCSC,
+    .DEVbindCSCComplex = TRAbindCSCComplex,
+    .DEVbindCSCComplexToReal = TRAbindCSCComplexToReal,
+#endif
 };
 
 

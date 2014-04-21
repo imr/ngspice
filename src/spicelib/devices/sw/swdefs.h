@@ -48,8 +48,16 @@ typedef struct sSWinstance {
     double SWnVar[NSTATVARS];
 #else
     double *SWnVar;
+#endif /* NONOISE */
+
+#ifdef KLU
+    BindElement *SWposPosBinding ;
+    BindElement *SWposNegBinding ;
+    BindElement *SWnegPosBinding ;
+    BindElement *SWnegNegBinding ;
 #endif
-} SWinstance;
+
+} SWinstance ;
 
 /* data per model */
 

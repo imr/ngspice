@@ -44,6 +44,11 @@ typedef struct sCCCSinstance {
     int  CCCSsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
+#ifdef KLU
+    BindElement *CCCSposContBrBinding ;
+    BindElement *CCCSnegContBrBinding ;
+#endif
+
 } CCCSinstance ;
 
 /* per model data */
