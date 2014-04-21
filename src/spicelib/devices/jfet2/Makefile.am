@@ -28,8 +28,11 @@ libjfet2_la_SOURCES =	\
 	psmodel.h
 
 
-
+if KLU_WANTED
+libjfet2_la_SOURCES += jfet2bindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in
