@@ -120,6 +120,10 @@ typedef struct {
 
 #define OPT_NOOPAC       68
 
+#ifdef KLU
+#define OPT_SPARSE       69
+#endif
+
 #ifdef XSPICE
 /* gtri - begin - wbk - add new options */
 #define OPT_ENH_NOOPALTER           100

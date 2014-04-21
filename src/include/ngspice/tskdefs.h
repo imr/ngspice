@@ -66,6 +66,11 @@ struct TSKtask {
     double TSKabsDv;                 /* abs limit for iter-iter voltage change */
     double TSKrelDv;                 /* rel limit for iter-iter voltage change */
     unsigned int TSKnoopac:1; /* flag for no OP calculation before AC */
+
+#ifdef KLU
+    unsigned int TSKkluMODE:1 ;
+#endif
+
 };
 
 #endif
