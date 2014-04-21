@@ -663,7 +663,7 @@
 /* === Include files ======================================================== */
 /* ========================================================================== */
 
-#include "colamd.h"
+#include "ngspice/colamd.h"
 #include <limits.h>
 #include <math.h>
 
@@ -685,7 +685,7 @@
 /* ========================================================================== */
 
 /* define UF_long */
-#include "UFconfig.h"
+#include "ngspice/UFconfig.h"
 
 #ifdef DLONG
 
