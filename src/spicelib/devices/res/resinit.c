@@ -73,7 +73,13 @@ SPICEdev RESinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &RESiSize,
- /* DEVmodSize    */ &RESmSize
+ /* DEVmodSize    */ &RESmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   RESbindCSC,
+ /* DEVbindCSCComplex */   RESbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  RESbindCSCComplexToReal,
+#endif
 
 };
 

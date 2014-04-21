@@ -31,7 +31,11 @@ libbsim1_la_SOURCES =	\
 	bsim1itf.h
 
 
+if KLU_WANTED
+libbsim1_la_SOURCES += b1bindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

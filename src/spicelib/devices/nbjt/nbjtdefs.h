@@ -83,6 +83,19 @@ typedef struct sNBJTinstance {
   unsigned NBJTicFileGiven:1;	/* flag to indicate init. cond. file given */
   unsigned NBJTprintGiven:1;	/* flag to indicate if print was given */
   unsigned NBJTtempGiven:1;	/* flag to indicate if temp was given */
+
+#ifdef KLU
+    BindElement *NBJTcolColBinding ;
+    BindElement *NBJTbaseBaseBinding ;
+    BindElement *NBJTemitEmitBinding ;
+    BindElement *NBJTcolBaseBinding ;
+    BindElement *NBJTcolEmitBinding ;
+    BindElement *NBJTbaseColBinding ;
+    BindElement *NBJTbaseEmitBinding ;
+    BindElement *NBJTemitColBinding ;
+    BindElement *NBJTemitBaseBinding ;
+#endif
+
 } NBJTinstance;
 
 /* per model data */
