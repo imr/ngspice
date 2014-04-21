@@ -385,6 +385,73 @@ typedef struct sB3SOIPDinstance
         double **B3SOIPDnVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *B3SOIPDTemptempBinding ;
+    BindElement *B3SOIPDTempdpBinding ;
+    BindElement *B3SOIPDTempspBinding ;
+    BindElement *B3SOIPDTempgBinding ;
+    BindElement *B3SOIPDTempbBinding ;
+    BindElement *B3SOIPDGtempBinding ;
+    BindElement *B3SOIPDDPtempBinding ;
+    BindElement *B3SOIPDSPtempBinding ;
+    BindElement *B3SOIPDEtempBinding ;
+    BindElement *B3SOIPDBtempBinding ;
+    BindElement *B3SOIPDPtempBinding ;
+    BindElement *B3SOIPDBpBinding ;
+    BindElement *B3SOIPDPbBinding ;
+    BindElement *B3SOIPDPpBinding ;
+    BindElement *B3SOIPDEbBinding ;
+    BindElement *B3SOIPDGbBinding ;
+    BindElement *B3SOIPDDPbBinding ;
+    BindElement *B3SOIPDSPbBinding ;
+    BindElement *B3SOIPDBeBinding ;
+    BindElement *B3SOIPDBgBinding ;
+    BindElement *B3SOIPDBdpBinding ;
+    BindElement *B3SOIPDBspBinding ;
+    BindElement *B3SOIPDBbBinding ;
+    BindElement *B3SOIPDEgBinding ;
+    BindElement *B3SOIPDEdpBinding ;
+    BindElement *B3SOIPDEspBinding ;
+    BindElement *B3SOIPDGeBinding ;
+    BindElement *B3SOIPDDPeBinding ;
+    BindElement *B3SOIPDSPeBinding ;
+    BindElement *B3SOIPDEeBinding ;
+    BindElement *B3SOIPDGgBinding ;
+    BindElement *B3SOIPDGdpBinding ;
+    BindElement *B3SOIPDGspBinding ;
+    BindElement *B3SOIPDDPgBinding ;
+    BindElement *B3SOIPDDPdpBinding ;
+    BindElement *B3SOIPDDPspBinding ;
+    BindElement *B3SOIPDDPdBinding ;
+    BindElement *B3SOIPDSPgBinding ;
+    BindElement *B3SOIPDSPdpBinding ;
+    BindElement *B3SOIPDSPspBinding ;
+    BindElement *B3SOIPDSPsBinding ;
+    BindElement *B3SOIPDDdBinding ;
+    BindElement *B3SOIPDDdpBinding ;
+    BindElement *B3SOIPDSsBinding ;
+    BindElement *B3SOIPDSspBinding ;
+    BindElement *B3SOIPDVbsBinding ;
+    BindElement *B3SOIPDIdsBinding ;
+    BindElement *B3SOIPDIcBinding ;
+    BindElement *B3SOIPDIbsBinding ;
+    BindElement *B3SOIPDIbdBinding ;
+    BindElement *B3SOIPDIiiBinding ;
+    BindElement *B3SOIPDIgBinding ;
+    BindElement *B3SOIPDGiggBinding ;
+    BindElement *B3SOIPDGigdBinding ;
+    BindElement *B3SOIPDGigbBinding ;
+    BindElement *B3SOIPDIgidlBinding ;
+    BindElement *B3SOIPDItunBinding ;
+    BindElement *B3SOIPDIbpBinding ;
+    BindElement *B3SOIPDCbbBinding ;
+    BindElement *B3SOIPDCbdBinding ;
+    BindElement *B3SOIPDCbgBinding ;
+    BindElement *B3SOIPDQbfBinding ;
+    BindElement *B3SOIPDQjsBinding ;
+    BindElement *B3SOIPDQjdBinding ;
+#endif
+
 } B3SOIPDinstance ;
 
 struct b3soipdSizeDependParam

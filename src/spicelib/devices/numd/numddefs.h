@@ -63,6 +63,14 @@ typedef struct sNUMDinstance {
   unsigned NUMDicFileGiven:1;	/* flag to indicate init. cond. file given */
   unsigned NUMDtempGiven:1;	/* flag to indicate temp was specified */
   unsigned NUMDprintGiven:1;	/* flag to indicate if print was specified */
+
+#ifdef KLU
+    BindElement *NUMDposPosBinding ;
+    BindElement *NUMDnegNegBinding ;
+    BindElement *NUMDnegPosBinding ;
+    BindElement *NUMDposNegBinding ;
+#endif
+
 } NUMDinstance;
 
 

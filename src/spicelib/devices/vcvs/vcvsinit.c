@@ -66,6 +66,12 @@ SPICEdev VCVSinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = VCVSbindCSC,
+    .DEVbindCSCComplex = VCVSbindCSCComplex,
+    .DEVbindCSCComplexToReal = VCVSbindCSCComplexToReal,
+#endif
 };
 
 

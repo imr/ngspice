@@ -16,8 +16,15 @@ extern int VSRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCunsetup(GENmodel*,CKTcircuit*);
 extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
+
 #ifdef RFSPICE
 extern int VSRCspupdate(GENmodel*, CKTcircuit*);
 extern int VSRCgetActivePorts(GENmodel* inModel, CKTcircuit* ckt, VSRCinstance** ports);
 extern int VSRCspinit(GENmodel* inModel, CKTcircuit* ckt, CMat* zref, CMat* gn, CMat* gninv);
+#endif
+
+#ifdef KLU
+extern int VSRCbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VSRCbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VSRCbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif

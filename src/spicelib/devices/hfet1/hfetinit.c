@@ -66,6 +66,12 @@ SPICEdev HFETAinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = HFETAbindCSC,
+    .DEVbindCSCComplex = HFETAbindCSC,
+    .DEVbindCSCComplexToReal = HFETAbindCSCComplexToReal,
+#endif
 };
 
 
