@@ -78,7 +78,13 @@ SPICEdev TXLinfo = {
  /* DEVacct       */ NULL,  
 #endif
     &TXLiSize,
-    &TXLmSize
+    &TXLmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   TXLbindCSC,
+ /* DEVbindCSCComplex */   TXLbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  TXLbindCSCComplexToReal,
+#endif
 
 };
 

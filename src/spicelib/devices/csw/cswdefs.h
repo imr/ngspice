@@ -48,6 +48,14 @@ typedef struct sCSWinstance {
 #else /* NONOISE */
 	double *CSWnVar;
 #endif /* NONOISE */
+
+#ifdef KLU
+    BindElement *CSWposPosptrStructPtr ;
+    BindElement *CSWposNegptrStructPtr ;
+    BindElement *CSWnegPosptrStructPtr ;
+    BindElement *CSWnegNegptrStructPtr ;
+#endif
+
 } CSWinstance ;
 
 /* data per model */

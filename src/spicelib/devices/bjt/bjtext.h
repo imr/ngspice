@@ -34,3 +34,9 @@ extern int BJTdSetup(GENmodel*, register CKTcircuit*);
 extern int BJTsoaCheck(CKTcircuit *, GENmodel *);
 
 #endif
+
+#ifdef KLU
+extern int BJTbindCSC (GENmodel*, CKTcircuit*) ;
+extern int BJTbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int BJTbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif

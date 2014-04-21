@@ -29,6 +29,9 @@ libbsim2_la_SOURCES =	\
 	bsim2itf.h
 
 
+if KLU_WANTED
+libbsim2_la_SOURCES += b2bindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

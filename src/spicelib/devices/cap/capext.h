@@ -24,3 +24,8 @@ extern int CAPtemp(GENmodel*,CKTcircuit*);
 extern int CAPtrunc(GENmodel*,CKTcircuit*,double*);
 extern int CAPsoaCheck(CKTcircuit *, GENmodel *);
 
+#ifdef KLU
+extern int CAPbindCSC (GENmodel*, CKTcircuit*) ;
+extern int CAPbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int CAPbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
