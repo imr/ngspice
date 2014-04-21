@@ -677,6 +677,54 @@ typedef struct sHSM2instance {
   double **HSM2nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *HSM2DPbpBinding ;
+    BindElement *HSM2SPbpBinding ;
+    BindElement *HSM2GPbpBinding ;
+    BindElement *HSM2BPdpBinding ;
+    BindElement *HSM2BPspBinding ;
+    BindElement *HSM2BPgpBinding ;
+    BindElement *HSM2BPbpBinding ;
+    BindElement *HSM2DdBinding ;
+    BindElement *HSM2GPgpBinding ;
+    BindElement *HSM2SsBinding ;
+    BindElement *HSM2DPdpBinding ;
+    BindElement *HSM2SPspBinding ;
+    BindElement *HSM2DdpBinding ;
+    BindElement *HSM2GPdpBinding ;
+    BindElement *HSM2GPspBinding ;
+    BindElement *HSM2SspBinding ;
+    BindElement *HSM2DPspBinding ;
+    BindElement *HSM2DPdBinding ;
+    BindElement *HSM2DPgpBinding ;
+    BindElement *HSM2SPgpBinding ;
+    BindElement *HSM2SPsBinding ;
+    BindElement *HSM2SPdpBinding ;
+    BindElement *HSM2GgBinding ;
+    BindElement *HSM2GgpBinding ;
+    BindElement *HSM2GPgBinding ;
+    BindElement *HSM2GdpBinding ;
+    BindElement *HSM2GspBinding ;
+    BindElement *HSM2GbpBinding ;
+    BindElement *HSM2DPdbBinding ;
+    BindElement *HSM2SPsbBinding ;
+    BindElement *HSM2DBdpBinding ;
+    BindElement *HSM2DBdbBinding ;
+    BindElement *HSM2DBbpBinding ;
+    BindElement *HSM2DBbBinding ;
+    BindElement *HSM2BPdbBinding ;
+    BindElement *HSM2BPbBinding ;
+    BindElement *HSM2BPsbBinding ;
+    BindElement *HSM2SBspBinding ;
+    BindElement *HSM2SBbpBinding ;
+    BindElement *HSM2SBbBinding ;
+    BindElement *HSM2SBsbBinding ;
+    BindElement *HSM2BdbBinding ;
+    BindElement *HSM2BbpBinding ;
+    BindElement *HSM2BsbBinding ;
+    BindElement *HSM2BbBinding ;
+#endif
+
 } HSM2instance ;
 
 
