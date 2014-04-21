@@ -120,6 +120,10 @@ enum {
     OPT_XMU,
     OPT_INDVERBOSITY,
     OPT_EPSMIN,
+
+#ifdef KLU
+    OPT_SPARSE,
+#endif
 };
 
 #ifdef XSPICE

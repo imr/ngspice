@@ -251,6 +251,23 @@ ACan(CKTcircuit *ckt, int restart)
 
     ckt->CKTcurrentAnalysis = DOING_AC;
 
+#ifdef KLU
+    int i ;
+
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Real Matrix to Complex Matrix */
+        if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
+        {
+            for (i = 0 ; i < DEVmaxnum ; i++)
+                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                    DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+            ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+        }
+    }
+#endif
+
     /* main loop through all scheduled frequencies */
     while (freq <= job->ACstopFreq + freqTol) {
         if(SPfrontEnd->IFpauseTest()) {
@@ -262,6 +279,19 @@ ACan(CKTcircuit *ckt, int restart)
 
         /* Update opertating point, if variable 'hertz' is given */
         if (ckt->CKTvarHertz) {
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Complex Matrix to Real Matrix */
+                for (i = 0 ; i < DEVmaxnum ; i++)
+                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
+                        DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
+
+                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+            }
+#endif
+
 #ifdef XSPICE
             /* Call EVTop if event-driven instances exist */
 
@@ -290,6 +320,19 @@ ACan(CKTcircuit *ckt, int restart)
             ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
             error = CKTload(ckt);
             if(error) return(error);
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE)
+            {
+                /* Conversion from Real Matrix to Complex Matrix */
+                for (i = 0 ; i < DEVmaxnum ; i++)
+                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                        DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+            }
+#endif
+
         }
 
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODEAC;
@@ -389,6 +432,19 @@ endsweep:
     SPfrontEnd->OUTendPlot (acPlot);
     acPlot = NULL;
     UPDATE_STATS(0);
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Complex Matrix to Real Matrix */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
+
+        ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+    }
+#endif
+
     return(0);
 }
 
