@@ -566,6 +566,79 @@ typedef struct sBSIM4v6instance
         double **BSIM4v6nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *BSIM4v6DPbpStructPtr ;
+    BindElement *BSIM4v6GPbpStructPtr ;
+    BindElement *BSIM4v6SPbpStructPtr ;
+    BindElement *BSIM4v6BPdpStructPtr ;
+    BindElement *BSIM4v6BPgpStructPtr ;
+    BindElement *BSIM4v6BPspStructPtr ;
+    BindElement *BSIM4v6BPbpStructPtr ;
+    BindElement *BSIM4v6DdStructPtr ;
+    BindElement *BSIM4v6GPgpStructPtr ;
+    BindElement *BSIM4v6SsStructPtr ;
+    BindElement *BSIM4v6DPdpStructPtr ;
+    BindElement *BSIM4v6SPspStructPtr ;
+    BindElement *BSIM4v6DdpStructPtr ;
+    BindElement *BSIM4v6GPdpStructPtr ;
+    BindElement *BSIM4v6GPspStructPtr ;
+    BindElement *BSIM4v6SspStructPtr ;
+    BindElement *BSIM4v6DPspStructPtr ;
+    BindElement *BSIM4v6DPdStructPtr ;
+    BindElement *BSIM4v6DPgpStructPtr ;
+    BindElement *BSIM4v6SPgpStructPtr ;
+    BindElement *BSIM4v6SPsStructPtr ;
+    BindElement *BSIM4v6SPdpStructPtr ;
+    BindElement *BSIM4v6QqStructPtr ;
+    BindElement *BSIM4v6QbpStructPtr ;
+    BindElement *BSIM4v6QdpStructPtr ;
+    BindElement *BSIM4v6QspStructPtr ;
+    BindElement *BSIM4v6QgpStructPtr ;
+    BindElement *BSIM4v6DPqStructPtr ;
+    BindElement *BSIM4v6SPqStructPtr ;
+    BindElement *BSIM4v6GPqStructPtr ;
+    BindElement *BSIM4v6GEgeStructPtr ;
+    BindElement *BSIM4v6GEgpStructPtr ;
+    BindElement *BSIM4v6GPgeStructPtr ;
+    BindElement *BSIM4v6GEdpStructPtr ;
+    BindElement *BSIM4v6GEspStructPtr ;
+    BindElement *BSIM4v6GEbpStructPtr ;
+    BindElement *BSIM4v6GMdpStructPtr ;
+    BindElement *BSIM4v6GMgpStructPtr ;
+    BindElement *BSIM4v6GMgmStructPtr ;
+    BindElement *BSIM4v6GMgeStructPtr ;
+    BindElement *BSIM4v6GMspStructPtr ;
+    BindElement *BSIM4v6GMbpStructPtr ;
+    BindElement *BSIM4v6DPgmStructPtr ;
+    BindElement *BSIM4v6GPgmStructPtr ;
+    BindElement *BSIM4v6GEgmStructPtr ;
+    BindElement *BSIM4v6SPgmStructPtr ;
+    BindElement *BSIM4v6BPgmStructPtr ;
+    BindElement *BSIM4v6DPdbStructPtr ;
+    BindElement *BSIM4v6SPsbStructPtr ;
+    BindElement *BSIM4v6DBdpStructPtr ;
+    BindElement *BSIM4v6DBdbStructPtr ;
+    BindElement *BSIM4v6DBbpStructPtr ;
+    BindElement *BSIM4v6DBbStructPtr ;
+    BindElement *BSIM4v6BPdbStructPtr ;
+    BindElement *BSIM4v6BPbStructPtr ;
+    BindElement *BSIM4v6BPsbStructPtr ;
+    BindElement *BSIM4v6SBspStructPtr ;
+    BindElement *BSIM4v6SBbpStructPtr ;
+    BindElement *BSIM4v6SBbStructPtr ;
+    BindElement *BSIM4v6SBsbStructPtr ;
+    BindElement *BSIM4v6BdbStructPtr ;
+    BindElement *BSIM4v6BbpStructPtr ;
+    BindElement *BSIM4v6BsbStructPtr ;
+    BindElement *BSIM4v6BbStructPtr ;
+    BindElement *BSIM4v6DgpStructPtr ;
+    BindElement *BSIM4v6DspStructPtr ;
+    BindElement *BSIM4v6DbpStructPtr ;
+    BindElement *BSIM4v6SdpStructPtr ;
+    BindElement *BSIM4v6SgpStructPtr ;
+    BindElement *BSIM4v6SbpStructPtr ;
+#endif
+
 } BSIM4v6instance ;
 
 struct bsim4v6SizeDependParam

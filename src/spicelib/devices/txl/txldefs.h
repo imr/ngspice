@@ -49,6 +49,23 @@ typedef struct sTXLinstance {
 	unsigned TXLdcGiven : 1;
 	unsigned TXLlengthgiven : 1;   /* flag to indicate that instance parameter len is specified */
 
+#ifdef KLU
+    BindElement *TXLposPosptrStructPtr ;
+    BindElement *TXLposNegptrStructPtr ;
+    BindElement *TXLnegPosptrStructPtr ;
+    BindElement *TXLnegNegptrStructPtr ;
+    BindElement *TXLibr1PosptrStructPtr ;
+    BindElement *TXLibr2NegptrStructPtr ;
+    BindElement *TXLnegIbr2ptrStructPtr ;
+    BindElement *TXLposIbr1ptrStructPtr ;
+    BindElement *TXLibr1Ibr1ptrStructPtr ;
+    BindElement *TXLibr2Ibr2ptrStructPtr ;
+    BindElement *TXLibr1NegptrStructPtr ;
+    BindElement *TXLibr2PosptrStructPtr ;
+    BindElement *TXLibr1Ibr2ptrStructPtr ;
+    BindElement *TXLibr2Ibr1ptrStructPtr ;
+#endif
+
 } TXLinstance ;
 
 

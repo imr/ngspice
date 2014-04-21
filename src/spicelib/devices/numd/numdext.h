@@ -24,4 +24,10 @@ extern int NUMDtrunc(GENmodel *, CKTcircuit *, double *);
 extern void NUMDdump(GENmodel *, CKTcircuit *);
 extern void NUMDacct(GENmodel *, CKTcircuit *, FILE *);
 
+#ifdef KLU
+extern int NUMDbindCSC (GENmodel*, CKTcircuit*) ;
+extern int NUMDbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int NUMDbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
 #endif				/* NUMDEXT_H */

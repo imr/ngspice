@@ -73,7 +73,13 @@ SPICEdev CCVSinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &CCVSiSize,
- /* DEVmodSize    */ &CCVSmSize
+ /* DEVmodSize    */ &CCVSmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   CCVSbindCSC,
+ /* DEVbindCSCComplex */   CCVSbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  CCVSbindCSCComplexToReal,
+#endif
 
 };
 

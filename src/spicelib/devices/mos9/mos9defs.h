@@ -268,6 +268,31 @@ typedef struct sMOS9instance {
 	double **MOS9nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+    BindElement *MOS9DdStructPtr ;
+    BindElement *MOS9GgStructPtr ;
+    BindElement *MOS9SsStructPtr ;
+    BindElement *MOS9BbStructPtr ;
+    BindElement *MOS9DPdpStructPtr ;
+    BindElement *MOS9SPspStructPtr ;
+    BindElement *MOS9DdpStructPtr ;
+    BindElement *MOS9GbStructPtr ;
+    BindElement *MOS9GdpStructPtr ;
+    BindElement *MOS9GspStructPtr ;
+    BindElement *MOS9SspStructPtr ;
+    BindElement *MOS9BdpStructPtr ;
+    BindElement *MOS9BspStructPtr ;
+    BindElement *MOS9DPspStructPtr ;
+    BindElement *MOS9DPdStructPtr ;
+    BindElement *MOS9BgStructPtr ;
+    BindElement *MOS9DPgStructPtr ;
+    BindElement *MOS9SPgStructPtr ;
+    BindElement *MOS9SPsStructPtr ;
+    BindElement *MOS9DPbStructPtr ;
+    BindElement *MOS9SPbStructPtr ;
+    BindElement *MOS9SPdpStructPtr ;
+#endif
+
 } MOS9instance ;
 
 #define MOS9vbd MOS9states+ 0

@@ -35,6 +35,8 @@
  */
 
 
+/* Francesco Lannutti 2012-09 - NGSPICE Configuration File Inclusion */
+#include "ngspice/config.h"
 
 
 #ifndef  spOKAY
@@ -293,5 +295,21 @@ extern  void     spMultiply( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spMultTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 extern  void     spSolve( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
+
+/* Francesco Lannutti - CSC Data Structure Conversion */
+#ifdef KLU
+typedef struct sBindElement {
+    double *Sparse ;
+    double *CSC ;
+    double *CSC_Complex ;
+} BindElement ;
+
+extern int WriteCol_original (MatrixPtr, int, spREAL *, spREAL *, int *, BindElement *, spREAL **) ;
+extern int WriteCol_original_dump (MatrixPtr, int, spREAL *, int *) ;
+extern void spMatrix_CSC (MatrixPtr, int *, int *, double *, double *, int, BindElement *, double **) ;
+extern void spMatrix_CSC_dump (MatrixPtr, char *) ;
+extern void spRHS_CSC_dump (spREAL *, char *, MatrixPtr) ;
+#endif
+/* ------------------------------------------------------ */
 
 #endif  /* spOKAY */

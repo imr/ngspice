@@ -47,6 +47,14 @@ typedef struct sSWinstance {
 #else /* NONOISE */
     double *SWnVar;
 #endif /* NONOISE */
+
+#ifdef KLU
+    BindElement *SWposPosptrStructPtr ;
+    BindElement *SWposNegptrStructPtr ;
+    BindElement *SWnegPosptrStructPtr ;
+    BindElement *SWnegNegptrStructPtr ;
+#endif
+
 } SWinstance ;
 
 /* data per model */

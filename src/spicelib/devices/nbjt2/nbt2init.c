@@ -74,7 +74,13 @@ SPICEdev NBJT2info = {
 #endif  
                     
  /* DEVinstSize   */ &NBJT2iSize,
- /* DEVmodSize    */ &NBJT2mSize
+ /* DEVmodSize    */ &NBJT2mSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   NBJT2bindCSC,
+ /* DEVbindCSCComplex */   NBJT2bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  NBJT2bindCSCComplexToReal,
+#endif
 
 };
 

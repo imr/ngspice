@@ -72,7 +72,14 @@ SPICEdev B3SOIPDinfo = {
  /* DEVacct*/        NULL,
 #endif
  /* DEVinstSize*/   &B3SOIPDiSize,
- /* DEVmodSize*/    &B3SOIPDmSize
+ /* DEVmodSize*/    &B3SOIPDmSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   B3SOIPDbindCSC,
+ /* DEVbindCSCComplex */   B3SOIPDbindCSCComplex,
+ /* DEVbindCSCComplexToReal */  B3SOIPDbindCSCComplexToReal,
+#endif
+
 };
 
 SPICEdev *

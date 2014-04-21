@@ -24,6 +24,9 @@ libnbjt_la_SOURCES =	\
 	nbjttrun.c
 
 
+if KLU_WANTED
+libnbjt_la_SOURCES += nbjtbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
