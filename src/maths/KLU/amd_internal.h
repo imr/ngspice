@@ -162,7 +162,7 @@
 /* ------------------------------------------------------------------------- */
 
 /* define UF_long */
-#include "UFconfig.h"
+#include "ngspice/UFconfig.h"
 
 #if defined (DLONG) || defined (ZLONG)
 
@@ -219,7 +219,7 @@
 /* AMD routine definitions (user-callable) */
 /* ------------------------------------------------------------------------- */
 
-#include "amd.h"
+#include "ngspice/amd.h"
 
 /* ------------------------------------------------------------------------- */
 /* AMD routine definitions (not user-callable) */
