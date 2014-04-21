@@ -24,7 +24,11 @@ libcsw_la_SOURCES =	\
 	cswtrunc.c
 
 
+if KLU_WANTED
+libcsw_la_SOURCES += cswbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

@@ -33,7 +33,11 @@ libmos3_la_SOURCES =	\
 	mos3temp.c	\
 	mos3trun.c
 
+if KLU_WANTED
+libmos3_la_SOURCES += mos3bindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in

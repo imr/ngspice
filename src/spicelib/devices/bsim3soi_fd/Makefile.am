@@ -28,6 +28,9 @@ libbsim3soifd_la_SOURCES = \
 	b3soifditf.h
 
 
+if KLU_WANTED
+libbsim3soifd_la_SOURCES += b3soifdbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

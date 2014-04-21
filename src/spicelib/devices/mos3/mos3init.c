@@ -73,7 +73,13 @@ SPICEdev MOS3info = {
  /* DEVacct       */ NULL,
 #endif                         
  /* DEVinstSize   */ &MOS3iSize,
- /* DEVmodSize    */ &MOS3mSize
+ /* DEVmodSize    */ &MOS3mSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */   MOS3bindCSC,
+ /* DEVbindCSCComplex */   MOS3bindCSCComplex,
+ /* DEVbindCSCComplexToReal */  MOS3bindCSCComplexToReal,
+#endif
 
 };
 

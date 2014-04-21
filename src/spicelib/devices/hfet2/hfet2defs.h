@@ -80,7 +80,25 @@ typedef struct sHFET2instance {
     double HFET2vcrit;
     double HFET2ggrlw;
     double HFET2jslw;
-    
+
+#ifdef KLU
+    BindElement *HFET2drainDrainPrimeStructPtr ;
+    BindElement *HFET2gateDrainPrimeStructPtr ;
+    BindElement *HFET2gateSourcePrimeStructPtr ;
+    BindElement *HFET2sourceSourcePrimeStructPtr ;
+    BindElement *HFET2drainPrimeDrainStructPtr ;
+    BindElement *HFET2drainPrimeGateStructPtr ;
+    BindElement *HFET2drainPriHFET2ourcePrimeStructPtr ;
+    BindElement *HFET2sourcePrimeGateStructPtr ;
+    BindElement *HFET2sourcePriHFET2ourceStructPtr ;
+    BindElement *HFET2sourcePrimeDrainPrimeStructPtr ;
+    BindElement *HFET2drainDrainStructPtr ;
+    BindElement *HFET2gateGateStructPtr ;
+    BindElement *HFET2sourceSourceStructPtr ;
+    BindElement *HFET2drainPrimeDrainPrimeStructPtr ;
+    BindElement *HFET2sourcePriHFET2ourcePrimeStructPtr ;
+#endif
+
 } HFET2instance ;
 
 

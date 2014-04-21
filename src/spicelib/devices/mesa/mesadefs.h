@@ -208,6 +208,38 @@ int MESAmode;
     double MESAnsb0;
     double MESAvcrits;
     double MESAvcritd;
+
+#ifdef KLU
+    BindElement *MESAdrainDrainStructPtr ;
+    BindElement *MESAdrainPrimeDrainPrimeStructPtr ;
+    BindElement *MESAdrainPrmPrmDrainPrmPrmStructPtr ;
+    BindElement *MESAgateGateStructPtr ;
+    BindElement *MESAgatePrimeGatePrimeStructPtr ;
+    BindElement *MESAsourceSourceStructPtr ;
+    BindElement *MESAsourcePrimeSourcePrimeStructPtr ;
+    BindElement *MESAsourcePrmPrmSourcePrmPrmStructPtr ;
+    BindElement *MESAdrainDrainPrimeStructPtr ;
+    BindElement *MESAdrainPrimeDrainStructPtr ;
+    BindElement *MESAgatePrimeDrainPrimeStructPtr ;
+    BindElement *MESAdrainPrimeGatePrimeStructPtr ;
+    BindElement *MESAgatePrimeSourcePrimeStructPtr ;
+    BindElement *MESAsourcePrimeGatePrimeStructPtr ;
+    BindElement *MESAsourceSourcePrimeStructPtr ;
+    BindElement *MESAsourcePrimeSourceStructPtr ;
+    BindElement *MESAdrainPrimeSourcePrimeStructPtr ;
+    BindElement *MESAsourcePrimeDrainPrimeStructPtr ;
+    BindElement *MESAgatePrimeGateStructPtr ;
+    BindElement *MESAgateGatePrimeStructPtr ;
+    BindElement *MESAsourcePrmPrmSourcePrimeStructPtr ;
+    BindElement *MESAsourcePrimeSourcePrmPrmStructPtr ;
+    BindElement *MESAsourcePrmPrmGatePrimeStructPtr ;
+    BindElement *MESAgatePrimeSourcePrmPrmStructPtr ;
+    BindElement *MESAdrainPrmPrmDrainPrimeStructPtr ;
+    BindElement *MESAdrainPrimeDrainPrmPrmStructPtr ;
+    BindElement *MESAdrainPrmPrmGatePrimeStructPtr ;
+    BindElement *MESAgatePrimeDrainPrmPrmStructPtr ;
+#endif
+
 } MESAinstance ;
 
 

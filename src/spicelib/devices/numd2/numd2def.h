@@ -64,6 +64,14 @@ typedef struct sNUMD2instance {
   unsigned NUMD2icFileGiven:1;	/* flag to indicate init. cond. file given */
   unsigned NUMD2tempGiven:1;	/* flag to indicate temp was specified */
   unsigned NUMD2printGiven:1;	/* flag to indicate if print was specified */
+
+#ifdef KLU
+    BindElement *NUMD2posPosStructPtr ;
+    BindElement *NUMD2negNegStructPtr ;
+    BindElement *NUMD2negPosStructPtr ;
+    BindElement *NUMD2posNegStructPtr ;
+#endif
+
 } NUMD2instance;
 
 
