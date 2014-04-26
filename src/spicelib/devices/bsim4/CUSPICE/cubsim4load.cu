@@ -1,25 +1,25 @@
 /*
  * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
+ * Redistribution and use in source and binary forms, with or without modification, 
  * are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,
+ * 1. Redistributions of source code must retain the above copyright notice, 
  *    this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation and/or
+ * 2. Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation and/or 
  *    other materials provided with the distribution.
  *
- * 3. Neither the name of the copyright holder nor the names of its contributors may be used to
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used to 
  *    endorse or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -734,7 +734,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                             (BSIM4entry.d_BSIM4gbbsArray [instance_ID] + BSIM4entry.d_BSIM4ggislbArray [instance_ID]) * delvbd -
                             (BSIM4entry.d_BSIM4gbgsArray [instance_ID] + BSIM4entry.d_BSIM4ggislgArray [instance_ID]) * delvgd +
                             (BSIM4entry.d_BSIM4gbdsArray [instance_ID] + BSIM4entry.d_BSIM4ggisldArray [instance_ID] - BSIM4entry.d_BSIM4ggidlsArray [instance_ID]) * delvds -
-                            BSIM4entry.d_BSIM4ggidlgArray [instance_ID] * delvgs - BSIM4entry.d_BSIM4ggidlbArray [instance_ID] * delvbs ;
+                            BSIM4entry.d_BSIM4ggidlgArray [instance_ID] * delvgs - BSIM4entry.d_BSIM4ggidlbArray [instance_ID] * delvbs ; 
 
                     Igstot = BSIM4entry.d_BSIM4IgsRWArray [instance_ID] + BSIM4entry.d_BSIM4IgcdRWArray [instance_ID] ;
                     cgshat = Igstot + BSIM4entry.d_BSIM4gIgsgArray [instance_ID] * delvgs + BSIM4entry.d_BSIM4gIgcdgArray [instance_ID] * delvgd -
@@ -758,7 +758,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                           BSIM4entry.d_BSIM4gdtotgArray [instance_ID] * delvgs + BSIM4entry.d_BSIM4gdtotbArray [instance_ID] * delvbs ;
 
 #ifndef NOBYPASS
-                /* Following should be one IF statement, but some C compilers
+                /* Following should be one IF statement, but some C compilers 
                  * can't handle that all at once, so we split it into several
                  * successive IF's */
 
@@ -872,7 +872,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                     vbs_jct = (!BSIM4entry.d_BSIM4rbodyModArray [instance_ID]) ? vbs : vsbs ;
                     vbd_jct = (!BSIM4entry.d_BSIM4rbodyModArray [instance_ID]) ? vbd : vdbd ;
 
-/*** qdef should not be kept fixed even if vgs, vds & vbs has converged
+/*** qdef should not be kept fixed even if vgs, vds & vbs has converged 
 ****               qdef = CKTstate_0 [BSIM4entry.d_BSIM4statesArray [instance_ID] + 27] ;
 ***/
                     cdrain = BSIM4entry.d_BSIM4cdRWArray [instance_ID] ;
@@ -965,7 +965,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
 
                         if ((Check1 == 0) && (Check2 == 0))
                             Check = 0 ;
-                        else
+                        else 
                             Check = 1 ;
                     }
                 } else {
@@ -1053,7 +1053,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                             BSIM4entry.d_BSIM4gbsRWArray [instance_ID] = T0 + CKTgmin ;
                             BSIM4entry.d_BSIM4cbsRWArray [instance_ID] = BSIM4entry.d_BSIM4IVjsmFwdArray [instance_ID] - SourceSatCurrent + T0 *
                                              (vbs_jct - BSIM4entry.d_BSIM4vjsmFwdArray [instance_ID]) + CKTgmin * vbs_jct ;
-                        }
+                        }        
                         break ;
 
                     case 2 :
@@ -1075,7 +1075,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                             T2 = BSIM4entry.d_BSIM4IVjsmRevArray [instance_ID] + BSIM4entry.d_BSIM4SslpRevArray [instance_ID] * (vbs_jct - BSIM4entry.d_BSIM4vjsmRevArray [instance_ID]) ;
                             BSIM4entry.d_BSIM4gbsRWArray [instance_ID] = devbs_dvb * T2 + T1 * BSIM4entry.d_BSIM4SslpRevArray [instance_ID] + CKTgmin ;
                             BSIM4entry.d_BSIM4cbsRWArray [instance_ID] = T1 * T2 + CKTgmin * vbs_jct ;
-                        }
+                        }         
                         else if (vbs_jct <= BSIM4entry.d_BSIM4vjsmFwdArray [instance_ID])
                         {
                             T0 = vbs_jct / Nvtms ;
@@ -1212,7 +1212,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                             {
                                 T2 = exp (-T1) ;
                                 T3 = -T2 /Nvtmd ;
-                            }
+                            }     
                             BSIM4entry.d_BSIM4gbdRWArray [instance_ID] = DrainSatCurrent * (devbd_dvb - BSIM4xjbvd * T3) + CKTgmin ;
                             BSIM4entry.d_BSIM4cbdRWArray [instance_ID] = DrainSatCurrent * (evbd + BSIM4entry.d_BSIM4XExpBVDArray [instance_ID] - 1.0 -
                                              BSIM4xjbvd * T2) + CKTgmin * vbd_jct ;
@@ -1227,7 +1227,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
 
                     default: break ;
                 }
-            }
+            } 
 
 
             /* trap-assisted tunneling and recombination current for reverse bias  */
@@ -1579,7 +1579,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
             T0 = BSIM4entry.d_BSIM4vfbArray [instance_ID] + pParam->BSIM4phi;
 
             /* 16 - DIVERGENT */
-            if (BSIM4mtrlMod == 0)
+            if (BSIM4mtrlMod == 0)   
                 T1 = EPSSI ;
             else
                 T1 = BSIM4epsrgate * EPS0 ;
@@ -1851,7 +1851,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                 T2 = pParam->BSIM4ua + pParam->BSIM4uc * Vbseff ;
 
                 /*Coulombic*/
-                VgsteffVth = pParam->BSIM4VgsteffVth ;
+                VgsteffVth = pParam->BSIM4VgsteffVth ; 
                 T10 = exp (pParam->BSIM4ucs * log (0.5 + 0.5 * Vgsteff / VgsteffVth)) ;
                 T11 =  pParam->BSIM4ud / T10;
                 dT11_dVg = -0.5 * pParam->BSIM4ucs * T11 / (0.5 + 0.5 * Vgsteff / VgsteffVth) / VgsteffVth ;
@@ -1941,7 +1941,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                 dT0_dVb = -(Abulk * dEsatL_dVb + dAbulk_dVb * EsatL) * T1 ;
                 dVdsat_dVg = T3 * dT0_dVg + T2 * dEsatL_dVg + EsatL * T0 ;
                 dVdsat_dVd = T3 * dT0_dVd + T2 * dEsatL_dVd ;
-                dVdsat_dVb = T3 * dT0_dVb + T2 * dEsatL_dVb ;
+                dVdsat_dVb = T3 * dT0_dVb + T2 * dEsatL_dVb ;   
             }
             else
             {
@@ -2012,7 +2012,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
             {
                 Vdseff = 0.0 ;
                 dVdseff_dVg = 0.0 ;
-                dVdseff_dVb = 0.0 ;
+                dVdseff_dVb = 0.0 ; 
             }
 
             /* 31 - DIVERGENT */
@@ -2036,8 +2036,8 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                 T5 = 1.0 / (Esat * pParam->BSIM4litl) ;
                 T4 = -T5 / EsatL ;
                 dT5_dVg = dEsatL_dVg * T4 ;
-                dT5_dVd = dEsatL_dVd * T4 ;
-                dT5_dVb = dEsatL_dVb * T4 ;
+                dT5_dVd = dEsatL_dVd * T4 ; 
+                dT5_dVb = dEsatL_dVb * T4 ; 
                 T6 = 1.0 + diffVds  * T5 ;
                 dT6_dVg = dT5_dVg * diffVds - dVdseff_dVg * T5 ;
                 dT6_dVd = dT5_dVd * diffVds + (1.0 - dVdseff_dVd) * T5 ;
@@ -2421,7 +2421,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                 T1 = vs / (pParam->BSIM4vtl * pParam->BSIM4tfactor) ;
 
                 /* 39 - DIVERGENT */
-                if (T1 > 0.0)
+                if (T1 > 0.0)  
                 {
                     T2 = 1.0 + exp (T0 * log (T1)) ;
                     T3 = (T2 - 1.0) * T0 / vs ;
@@ -2669,7 +2669,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
             } else{    /* v4.7 New Gidl/GISL model */
                 /* GISL */
                 /* 13 - non-divergent */
-                if (BSIM4mtrlMod==0)
+                if (BSIM4mtrlMod==0) 
                     T1 = (-vds - pParam->BSIM4rgisl * vgd_eff - pParam->BSIM4egisl) / T0 ;
                 else
                     T1 = (-vds - pParam->BSIM4rgisl * vgd_eff - pParam->BSIM4egisl + pParam->BSIM4vfbsd) / T0 ;
@@ -2719,7 +2719,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                 BSIM4entry.d_BSIM4ggislgArray [instance_ID] = Ggislg ;
                 BSIM4entry.d_BSIM4ggislbArray [instance_ID] = Ggislb ;
                 /* End of GISL */
-
+                    
                 /* GIDL */
                 /* 14 - non-divergent */
                 if (BSIM4mtrlMod == 0)
@@ -2741,7 +2741,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                         Igidl = pParam->BSIM4weffCJ * pParam->BSIM4agidl * T1 * exp (-T2) ;
                         T3 = Igidl / T1 * (T2 + 1) ;
                         Ggidld = T3 * dT1_dVd ;
-                        Ggidlg = T3 * dT1_dVg ;
+                        Ggidlg = T3 * dT1_dVg ;    
                     } else {
                         T3 = pParam->BSIM4weffCJ * pParam->BSIM4agidl * MIN_EXPL ;
                         Igidl = T3 * T1 ;
@@ -2766,7 +2766,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                     Ggidld *= T6 ;
                     Ggidlg *= T6 ;
                     Igidl *= T6 ;
-                }
+                }                                        
                 BSIM4entry.d_BSIM4IgidlRWArray [instance_ID] = Igidl ;
                 BSIM4entry.d_BSIM4ggidldArray [instance_ID] = Ggidld ;
                 BSIM4entry.d_BSIM4ggidlgArray [instance_ID] = Ggidlg ;
@@ -3514,7 +3514,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                         }    /* end of linear region */
                     }    /* end of 50/50 partition */
                 }    /* end of inversion */
-            }    /* end of capMod=0 */
+            }    /* end of capMod=0 */ 
             else
             {
                 if (Vbseff < 0.0)
@@ -3539,20 +3539,20 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
 
                     /* 60 - DIVERGENT */
                     if (VgstNVt > EXP_THRESHOLD)
-                    {
+                    {   
                         Vgsteff = Vgst - voffcv ;
                         dVgsteff_dVg = dVgs_eff_dVg ;
                         dVgsteff_dVd = -dVth_dVd ;
                         dVgsteff_dVb = -dVth_dVb ;
                     }
                     else if (VgstNVt < -EXP_THRESHOLD)
-                    {
+                    {   
                         Vgsteff = T0 * log (1.0 + MIN_EXP) ;
                         dVgsteff_dVg = 0.0 ;
                         dVgsteff_dVd = Vgsteff / noff ;
                         dVgsteff_dVb = dVgsteff_dVd * dnoff_dVb ;
                         dVgsteff_dVd *= dnoff_dVd ;
-                    } else {
+                    } else {   
                         ExpVgst = exp (VgstNVt) ;
                         Vgsteff = T0 * log (1.0 + ExpVgst) ;
                         dVgsteff_dVg = ExpVgst / (1.0 + ExpVgst) ;
@@ -3562,27 +3562,27 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                                        Vgsteff / noff * dnoff_dVb ;
                         dVgsteff_dVg *= dVgs_eff_dVg ;
                     }    /* End of VgsteffCV for cvchargeMod = 0 */
-                } else {
+                } else {                
                     T0 = n * Vtm ;
                     T1 = pParam->BSIM4mstarcv * Vgst ;
                     T2 = T1 / T0 ;
 
                     /* 61 - DIVERGENT */
                     if (T2 > EXP_THRESHOLD)
-                    {
+                    {   
                         T10 = T1 ;
                         dT10_dVg = pParam->BSIM4mstarcv * dVgs_eff_dVg ;
                         dT10_dVd = -dVth_dVd * pParam->BSIM4mstarcv ;
                         dT10_dVb = -dVth_dVb * pParam->BSIM4mstarcv ;
                     }
                     else if (T2 < -EXP_THRESHOLD)
-                    {
+                    {   
                         T10 = Vtm * log (1.0 + MIN_EXP) ;
                         dT10_dVg = 0.0 ;
                         dT10_dVd = T10 * dn_dVd ;
                         dT10_dVb = T10 * dn_dVb ;
                         T10 *= n ;
-                    } else {
+                    } else {   
                         ExpVgst = exp (T2) ;
                         T3 = Vtm * log (1.0 + ExpVgst) ;
                         T10 = n * T3 ;
@@ -3596,7 +3596,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
 
                     /* 62 - DIVERGENT */
                     if (T2 < -EXP_THRESHOLD)
-                    {
+                    {   
                         T3 = BSIM4coxe * MIN_EXP / pParam->BSIM4cdep0 ;
                         T9 = pParam->BSIM4mstarcv + T3 * n ;
                         dT9_dVg = 0.0 ;
@@ -3604,13 +3604,13 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                         dT9_dVb = dn_dVb * T3 ;
                     }
                     else if (T2 > EXP_THRESHOLD)
-                    {
+                    {   
                         T3 = BSIM4coxe * MAX_EXP / pParam->BSIM4cdep0 ;
                         T9 = pParam->BSIM4mstarcv + T3 * n ;
                         dT9_dVg = 0.0 ;
                         dT9_dVd = dn_dVd * T3 ;
                         dT9_dVb = dn_dVb * T3 ;
-                    } else {
+                    } else {   
                         ExpVgst = exp (T2) ;
                         T3 = BSIM4coxe / pParam->BSIM4cdep0 ;
                         T4 = T3 * ExpVgst ;
@@ -3625,7 +3625,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                     T11 = T9 * T9 ;
                     dVgsteff_dVg = (T9 * dT10_dVg - T10 * dT9_dVg) / T11 ;
                     dVgsteff_dVd = (T9 * dT10_dVd - T10 * dT9_dVd) / T11 ;
-                    dVgsteff_dVb = (T9 * dT10_dVb - T10 * dT9_dVb) / T11 ;
+                    dVgsteff_dVb = (T9 * dT10_dVb - T10 * dT9_dVb) / T11 ; 
                     /* End of VgsteffCV for cvchargeMod = 1 */
                 }
 
@@ -3758,8 +3758,8 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                         /* 50/50 Charge petition model */
                         qsrc = -0.5 * (qgate + qbulk) ;
                         Csg = -0.5 * (Cgg1 + Cbg1) ;
-                        Csb = -0.5 * (Cgb1 + Cbb1) ;
-                        Csd = -0.5 * (Cgd1 + Cbd1) ;
+                        Csb = -0.5 * (Cgb1 + Cbb1) ; 
+                        Csd = -0.5 * (Cgd1 + Cbd1) ; 
                     }
                     qgate += Qac0 + Qsub0 ;
                     qbulk -= (Qac0 + Qsub0) ;
@@ -4006,7 +4006,7 @@ int *d_PositionVector, double *d_CKTloadOutput, int *d_PositionVectorRHS, double
                         /* 50/50 partition */
                         qsrc = -0.5 * qgate ;
                         Csg = -0.5 * Cgg1 ;
-                        Csd = -0.5 * Cgd1 ;
+                        Csd = -0.5 * Cgd1 ; 
                         Csb = -0.5 * Cgb1 ;
                     }
                     qgate += Qac0 + Qsub0 - qbulk ;
@@ -4281,8 +4281,8 @@ finished:
                 goto line850 ;
 
             /* 73 - DIVERGENT */
-            if (BSIM4entry.d_BSIM4rgateModArray [instance_ID] == 3)
-            {
+            if (BSIM4entry.d_BSIM4rgateModArray [instance_ID] == 3) 
+            {   
                 vgdx = vgmd ;
                 vgsx = vgms ;
             } else {
@@ -4291,7 +4291,7 @@ finished:
                 vgsx = vgs ;
             }
 
-            if (BSIM4capMod == 0)
+            if (BSIM4capMod == 0) 
             {
                 cgdo = pParam->BSIM4cgdo ;
                 qgdo = pParam->BSIM4cgdo * vgdx ;
@@ -4350,7 +4350,7 @@ line755:
                         gcbgmb = gcgmbb ;
                         gcggb = BSIM4entry.d_BSIM4cggbRWArray [instance_ID] * ag0 ;
                         gcgdb = BSIM4entry.d_BSIM4cgdbRWArray [instance_ID] * ag0 ;
-                        gcgsb = BSIM4entry.d_BSIM4cgsbRWArray [instance_ID] * ag0 ;
+                        gcgsb = BSIM4entry.d_BSIM4cgsbRWArray [instance_ID] * ag0 ;   
                         gcgbb = -(gcggb + gcgdb + gcgsb) ;
                         gcdgb = BSIM4entry.d_BSIM4cdgbRWArray [instance_ID] * ag0 ;
                         gcsgb = -(BSIM4entry.d_BSIM4cggbRWArray [instance_ID] + BSIM4entry.d_BSIM4cbgbRWArray [instance_ID] + BSIM4entry.d_BSIM4cdgbRWArray [instance_ID]) * ag0 ;
@@ -4381,7 +4381,7 @@ line755:
                     if (!BSIM4entry.d_BSIM4rbodyModArray [instance_ID])
                     {
                         gcdbb = -(gcdgb + gcddb + gcdsb + gcdgmb) ;
-                        gcsbb = -(gcsgb + gcsdb + gcssb + gcsgmb) ;
+                        gcsbb = -(gcsgb + gcsdb + gcssb + gcsgmb) ; 
                         gcbdb = (BSIM4entry.d_BSIM4cbdbRWArray [instance_ID] - BSIM4entry.d_BSIM4capbdRWArray [instance_ID]) * ag0 ;
                         gcbsb = (BSIM4entry.d_BSIM4cbsbRWArray [instance_ID] - BSIM4entry.d_BSIM4capbsRWArray [instance_ID]) * ag0 ;
                         gcdbdb = 0.0 ;
@@ -4792,7 +4792,7 @@ line850:
 
             goto line900 ;
 
-
+            
 line860:
             /* Calculate equivalent charge current */
             cqgate = CKTstate_0 [BSIM4entry.d_BSIM4statesArray [instance_ID] + 14] ;
@@ -4909,7 +4909,7 @@ line900:
                     gIgtotd = gIstotd + gIdtotd + gIbtotd ;
                     gIgtots = gIstots + gIdtots + gIbtots ;
                     gIgtotb = gIstotb + gIdtotb + gIbtotb ;
-                    Igtoteq = Istoteq + Idtoteq + Ibtoteq ;
+                    Igtoteq = Istoteq + Idtoteq + Ibtoteq ; 
                 }
                 else
                     gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = 0.0 ;
@@ -5174,7 +5174,7 @@ line900:
 
                 total_offset += 5 ;
             }
-            else if (BSIM4entry.d_BSIM4rgateModArray [instance_ID] == 2)
+            else if (BSIM4entry.d_BSIM4rgateModArray [instance_ID] == 2)        
             {
                 d_CKTloadOutput [pos + total_offset + 0] = m * gcrg ;
 
