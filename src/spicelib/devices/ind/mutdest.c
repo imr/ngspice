@@ -8,11 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
-
 void
 MUTdestroy(void)
 {
 }
-
-#endif

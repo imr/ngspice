@@ -22,7 +22,6 @@ INDsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     INDmodel *model = (INDmodel*)inModel;
     INDinstance *here;
     double  cind,icind,val,ival;     
-#ifdef MUTUAL
     MUTinstance *muthere;
     MUTmodel *mutmodel;
     double  cind1;
@@ -48,7 +47,6 @@ INDsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double  k2;
     int ktype;
     int itype;
-#endif
     SENstruct *info;
 
     info = ckt->CKTsenInfo;
@@ -59,7 +57,6 @@ INDsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         for (here = INDinstances(model); here != NULL ;
                 here=INDnextInstance(here)) {
 
-#ifdef MUTUAL
         }
     }
     ktype = CKTtypelook("mutual");
@@ -142,7 +139,6 @@ INDsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
                 here=INDnextInstance(here)) {
-#endif /* MUTUAL */
                 if(here->INDsenParmNo){
                 cind = *(ckt->CKTrhsOld + here->INDbrEq);
                 icind = *(ckt->CKTirhsOld + here->INDbrEq);

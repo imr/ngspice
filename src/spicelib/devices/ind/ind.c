@@ -63,7 +63,6 @@ int	INDmPTSize = NUMELEMS(INDmPTable);
 int	INDiSize = sizeof(INDinstance);
 int	INDmSize = sizeof(INDmodel);
 
-#ifdef MUTUAL
 
 IFparm MUTpTable[] = { /* parameters */
     IOPAP( "k", MUT_COEFF, IF_REAL    , "Mutual inductance"),
@@ -86,5 +85,3 @@ int	MUTpTSize = NUMELEMS(MUTpTable);
 int	MUTmPTSize = 0;
 int	MUTiSize = sizeof(INDinstance);
 int	MUTmSize = sizeof(INDmodel);
-
-#endif /*MUTUAL*/

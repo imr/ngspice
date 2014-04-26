@@ -28,7 +28,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
     double    tag1;
     SENstruct *info;
 
-#ifdef MUTUAL
     MUTinstance *muthere;
     MUTmodel *mutmodel;
     double   cind1;
@@ -39,7 +38,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
     int itype;
     int IND1_brEq;
     int IND2_brEq;
-#endif
 
     info = ckt->CKTsenInfo;
 
@@ -65,7 +63,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
         for (here = INDinstances(model); here != NULL ;
                 here=INDnextInstance(here)) {
 
-#ifdef MUTUAL
         }
     }
     ktype = CKTtypelook("mutual");
@@ -122,7 +119,6 @@ INDsLoad(GENmodel *inModel, CKTcircuit *ckt)
         for (here = INDinstances(model); here != NULL ;
                 here=INDnextInstance(here)) {
 
-#endif /* MUTUAL */
             cind = *(ckt->CKTrhsOld + here->INDbrEq);
 #ifdef SENSDEBUG
             fprintf(stdout,"\n cind=%.5e\n",cind);

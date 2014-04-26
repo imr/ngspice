@@ -17,7 +17,6 @@ This function is obsolete (was used by an old sensitivity analysis)
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef MUTUAL
 /*ARGSUSED*/
 int
 MUTsSetup(SENstruct *info, GENmodel *inModel)
@@ -41,4 +40,3 @@ MUTsSetup(SENstruct *info, GENmodel *inModel)
     }
     return(OK);
 }
-#endif /* MUTUAL */

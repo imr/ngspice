@@ -9,11 +9,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 int
 MUTdelete(GENinstance *gen_inst)
 {
     NG_IGNORE(gen_inst);
     return OK;
 }
-#endif /*MUTUAL*/

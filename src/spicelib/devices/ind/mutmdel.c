@@ -8,12 +8,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-
-#ifdef MUTUAL
 int
 MUTmDelete(GENmodel *gen_model)
 {
     NG_IGNORE(gen_model);
     return OK;
 }
-#endif /* MUTUAL */
