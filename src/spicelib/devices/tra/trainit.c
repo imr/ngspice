@@ -71,6 +71,10 @@ SPICEdev TRAinfo = {
     .DEVbindCSCComplex = TRAbindCSCComplex,
     .DEVbindCSCComplexToReal = TRAbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

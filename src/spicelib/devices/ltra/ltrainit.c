@@ -71,6 +71,10 @@ SPICEdev LTRAinfo = {
     .DEVbindCSCComplex = LTRAbindCSCComplex,
     .DEVbindCSCComplexToReal = LTRAbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

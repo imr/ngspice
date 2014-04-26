@@ -71,6 +71,10 @@ SPICEdev JFET2info = {
     .DEVbindCSCComplex = JFET2bindCSCComplex,
     .DEVbindCSCComplexToReal = JFET2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

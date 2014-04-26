@@ -71,6 +71,10 @@ SPICEdev MOS2info = {
     .DEVbindCSCComplex = MOS2bindCSCComplex,
     .DEVbindCSCComplexToReal = MOS2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

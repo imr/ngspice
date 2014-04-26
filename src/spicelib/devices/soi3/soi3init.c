@@ -71,6 +71,10 @@ SPICEdev SOI3info = {
     .DEVbindCSCComplex = SOI3bindCSCComplex,
     .DEVbindCSCComplexToReal = SOI3bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 
