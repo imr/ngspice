@@ -23,7 +23,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE(ckt);
 
-    /*  loop through all the inductor models */
+    /*  loop through all the mutual inductor models */
     for( ; model != NULL; model = model->MUTnextModel ) {
 
         /* loop through all the instances of the model */
