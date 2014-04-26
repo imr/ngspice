@@ -16,6 +16,10 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 int
 BSIM4v7getic(
@@ -25,8 +29,17 @@ CKTcircuit *ckt)
 BSIM4v7model *model = (BSIM4v7model*)inModel;
 BSIM4v7instance *here;
 
-    for (; model ; model = BSIM4v7nextModel(model)) 
-    {    for (here = BSIM4v7instances(model); here; here = BSIM4v7nextInstance(here))
+#ifdef USE_CUSPICE
+    int i, status;
+#endif
+
+    for (; model; model = BSIM4v7nextModel(model)) {
+
+#ifdef USE_CUSPICE
+        i = 0;
+#endif
+
+        for (here = BSIM4v7instances(model); here; here = BSIM4v7nextInstance(here))
           {
               if (!here->BSIM4v7icVDSGiven) 
               {   here->BSIM4v7icVDS = *(ckt->CKTrhs + here->BSIM4v7dNode) 
@@ -40,7 +53,23 @@ BSIM4v7instance *here;
               {  here->BSIM4v7icVBS = *(ckt->CKTrhs + here->BSIM4v7bNode)
                                   - *(ckt->CKTrhs + here->BSIM4v7sNode);
               }
+
+#ifdef USE_CUSPICE
+            model->BSIM4v7paramCPU.BSIM4v7icVDSArray [i] = here->BSIM4v7icVDS;
+            model->BSIM4v7paramCPU.BSIM4v7icVGSArray [i] = here->BSIM4v7icVGS;
+            model->BSIM4v7paramCPU.BSIM4v7icVBSArray [i] = here->BSIM4v7icVBS;
+
+            i++;
+#endif
+
          }
+
+#ifdef USE_CUSPICE
+        status = cuBSIM4v7getic ((GENmodel *)model);
+        if (status != 0)
+            return E_NOMEM;
+#endif
+
     }
     return(OK);
 }

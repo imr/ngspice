@@ -6,6 +6,10 @@
 #include "bsim4v7ext.h"
 #include "bsim4v7init.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 SPICEdev BSIM4v7info = {
     .DEVpublic = {
@@ -33,7 +37,11 @@ SPICEdev BSIM4v7info = {
 
     .DEVparam = BSIM4v7param,
     .DEVmodParam = BSIM4v7mParam,
+#ifdef USE_CUSPICE
+    .DEVload = cuBSIM4v7load,
+#else
     .DEVload = BSIM4v7load,
+#endif
     .DEVsetup = BSIM4v7setup,
     .DEVunsetup = BSIM4v7unsetup,
     .DEVpzSetup = BSIM4v7setup,
@@ -70,6 +78,10 @@ SPICEdev BSIM4v7info = {
     .DEVbindCSC = BSIM4v7bindCSC,
     .DEVbindCSCComplex = BSIM4v7bindCSCComplex,
     .DEVbindCSCComplexToReal = BSIM4v7bindCSCComplexToReal,
+#endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = cuBSIM4v7destroy,
+    .DEVtopology = BSIM4v7topology,
 #endif
 };
 

@@ -29,3 +29,7 @@ extern int CAPbindCSC (GENmodel*, CKTcircuit*) ;
 extern int CAPbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int CAPbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef USE_CUSPICE
+extern int CAPtopology (GENmodel *, CKTcircuit *, int *, int *) ;
+#endif

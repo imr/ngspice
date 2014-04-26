@@ -1,0 +1,11 @@
+* Test Mutual Inductor Model
+
+V1 0 1 pulse(0 1 0p 200p 200p 1n 2n)
+R1 1 2 10
+L1 2 0 10
+L2 3 0 10
+K1 L1 L2 0.5
+
+.tran 1ps 1ns
+.print tran all
+.end

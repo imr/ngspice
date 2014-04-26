@@ -13,3 +13,8 @@ extern int ISRCmDelete(GENmodel*);
 extern int ISRCparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int ISRCpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int ISRCtemp(GENmodel*,CKTcircuit*);
+
+#ifdef USE_CUSPICE
+extern int ISRCsetup (SMPmatrix *, GENmodel *, CKTcircuit *, int *) ;
+extern int ISRCtopology (GENmodel *, CKTcircuit *, int *, int *) ;
+#endif

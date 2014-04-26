@@ -20,6 +20,10 @@ static int spice3_gmin(CKTcircuit *, long int, long int, int);
 static int gillespie_src(CKTcircuit *, long int, long int, int);
 static int spice3_src(CKTcircuit *, long int, long int, int);
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 int
 CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
@@ -127,6 +131,10 @@ static int
 dynamic_gmin (CKTcircuit *ckt, long int firstmode,
               long int continuemode, int iterlim)
 {
+#ifdef USE_CUSPICE
+    int status ;
+#endif
+
     double OldGmin, gtarget, factor;
     int converged;
 
@@ -150,6 +158,12 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
     for (i = 0; i < ckt->CKTnumStates; i++)
         ckt->CKTstate0 [i] = 0;
 
+#ifdef USE_CUSPICE
+    status = cuCKTstatesFlush (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#endif
+
     factor = ckt->CKTgminFactor;
     OldGmin = 1e-2;
     ckt->CKTdiagGmin = OldGmin / factor;
@@ -172,6 +186,12 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
 
             for (i = 0, n = ckt->CKTnodes; n; n = n->next)
                 OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
+
+#ifdef USE_CUSPICE
+            status = cuCKTstate0UpdateDtoH (ckt) ;
+            if (status != 0)
+                return (E_NOMEM) ;
+#endif
 
             memcpy(OldCKTstate0, ckt->CKTstate0,
                    (size_t) ckt->CKTnumStates * sizeof(double));
@@ -207,6 +227,13 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
 
             memcpy(ckt->CKTstate0, OldCKTstate0,
                    (size_t) ckt->CKTnumStates * sizeof(double));
+
+#ifdef USE_CUSPICE
+            status = cuCKTstate0UpdateHtoD (ckt) ;
+            if (status != 0)
+                return (E_NOMEM) ;
+#endif
+
         }
     }
 
@@ -320,6 +347,10 @@ static int
 gillespie_src (CKTcircuit *ckt, long int firstmode,
                long int continuemode, int iterlim)
 {
+#ifdef USE_CUSPICE
+    int status ;
+#endif
+
     int converged, i, iters;
     double ConvFact;
     CKTnode *n;
@@ -337,6 +368,12 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
     for (i = 0; i < ckt->CKTnumStates; i++)
         ckt->CKTstate0[i] = 0;
+
+#ifdef USE_CUSPICE
+    status = cuCKTstatesFlush (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#endif
 
     /*  First, try a straight solution with all sources at zero */
 
@@ -398,6 +435,12 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
         for (i = 0, n = ckt->CKTnodes; n; n = n->next)
             OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
 
+#ifdef USE_CUSPICE
+        status = cuCKTstate0UpdateDtoH (ckt) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#endif
+
         memcpy(OldCKTstate0, ckt->CKTstate0,
                (size_t) ckt->CKTnumStates * sizeof(double));
 
@@ -424,6 +467,12 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
                 for (i = 0, n = ckt->CKTnodes; n; n = n->next)
                     OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
+
+#ifdef USE_CUSPICE
+                status = cuCKTstate0UpdateDtoH (ckt) ;
+                if (status != 0)
+                    return (E_NOMEM) ;
+#endif
 
                 memcpy(OldCKTstate0, ckt->CKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
@@ -459,6 +508,12 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
                 memcpy(ckt->CKTstate0, OldCKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
+
+#ifdef USE_CUSPICE
+                status = cuCKTstate0UpdateHtoD (ckt) ;
+                if (status != 0)
+                    return (E_NOMEM) ;
+#endif
 
             }
 

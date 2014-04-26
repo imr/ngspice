@@ -6,6 +6,10 @@
 #include "vsrcext.h"
 #include "vsrcinit.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 SPICEdev VSRCinfo = {
     .DEVpublic = {
@@ -33,7 +37,11 @@ SPICEdev VSRCinfo = {
 
     .DEVparam = VSRCparam,
     .DEVmodParam = NULL,
+#ifdef USE_CUSPICE
+    .DEVload = cuVSRCload,
+#else
     .DEVload = VSRCload,
+#endif
     .DEVsetup = VSRCsetup,
     .DEVunsetup = VSRCunsetup,
     .DEVpzSetup = VSRCpzSetup,
@@ -70,6 +78,10 @@ SPICEdev VSRCinfo = {
     .DEVbindCSC = VSRCbindCSC,
     .DEVbindCSCComplex = VSRCbindCSCComplex,
     .DEVbindCSCComplexToReal = VSRCbindCSCComplexToReal,
+#endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = cuVSRCdestroy,
+    .DEVtopology = VSRCtopology,
 #endif
 };
 

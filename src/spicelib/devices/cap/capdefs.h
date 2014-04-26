@@ -79,6 +79,35 @@ typedef struct sCAPinstance {
 +3 for the derivatives - pointer to the
 beginning of the array */
 
+#ifdef USE_CUSPICE
+typedef struct sCAPparamCPUstruct {
+    double *CAPcpuPointersD [5] ;
+    #define CAPinitCondArray CAPcpuPointersD[0]
+    #define CAPcapacArray CAPcpuPointersD[1]
+    #define CAPmArray CAPcpuPointersD[2]
+    #define CAPgeqValueArray CAPcpuPointersD[3]
+    #define CAPceqValueArray CAPcpuPointersD[4]
+
+    int *CAPcpuPointersI [3] ;
+    #define CAPposNodeArray CAPcpuPointersI[0]
+    #define CAPnegNodeArray CAPcpuPointersI[1]
+    #define CAPstateArray CAPcpuPointersI[2]
+} CAPparamCPUstruct ;
+
+typedef struct sCAPparamGPUstruct {
+    double *CAPcudaPointersD [5] ;
+    #define d_CAPinitCondArray CAPcudaPointersD[0]
+    #define d_CAPcapacArray CAPcudaPointersD[1]
+    #define d_CAPmArray CAPcudaPointersD[2]
+    #define d_CAPgeqValueArray CAPcudaPointersD[3]
+    #define d_CAPceqValueArray CAPcudaPointersD[4]
+
+    int *CAPcudaPointersI [3] ;
+    #define d_CAPposNodeArray CAPcudaPointersI[0]
+    #define d_CAPnegNodeArray CAPcudaPointersI[1]
+    #define d_CAPstateArray CAPcudaPointersI[2]
+} CAPparamGPUstruct ;
+#endif
 
 /* data per model */
 
@@ -119,6 +148,25 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     unsigned CAPdiGiven        : 1;    /* flag indicates epsilon-ins given */
     unsigned CAPthickGiven     : 1;    /* flags indicates insulator thickness given */
     unsigned CAPbv_maxGiven    : 1;    /* flags indicates maximum voltage is given */
+
+#ifdef USE_CUSPICE
+    CAPparamCPUstruct CAPparamCPU ;
+    CAPparamGPUstruct CAPparamGPU ;
+
+    int offset ;
+    int n_values ;
+    int n_Ptr ;
+    int *PositionVector ;
+    int *d_PositionVector ;
+
+    int offsetRHS ;
+    int n_valuesRHS ;
+    int n_PtrRHS ;
+    int *PositionVectorRHS ;
+    int *d_PositionVectorRHS ;
+
+    int n_instances ;
+#endif
 
 } CAPmodel;
 

@@ -62,18 +62,27 @@ do { \
     ckt->CKTstat->STATtranSyncTime += ckt->CKTstat->STATsyncTime - startkTime; \
 } while(0)
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 int
 DCtran(CKTcircuit *ckt,
        int restart)   /* forced restart flag */
 {
+#ifdef USE_CUSPICE
+    int status ;
+#else
+    double *temp ;
+#endif
+
     TRANan *job = (TRANan *) ckt->CKTcurJob;
 
     int i;
     double olddelta;
     double delta;
     double newdelta;
-    double *temp;
     double startdTime;
     double startsTime;
     double startlTime;
@@ -340,8 +349,15 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
         /* modeinittran set here */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
+
+#ifdef USE_CUSPICE
+        status = cuCKTstate01copy (ckt) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#else
         memcpy(ckt->CKTstate1, ckt->CKTstate0,
               (size_t) ckt->CKTnumStates * sizeof(double));
+#endif
 
 #ifdef WANT_SENSE2
         if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){
@@ -705,11 +721,17 @@ resume:
         ckt->CKTdeltaOld[i+1] = ckt->CKTdeltaOld[i];
     ckt->CKTdeltaOld[0] = ckt->CKTdelta;
 
+#ifdef USE_CUSPICE
+    status = cuCKTstatesCircularBuffer (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#else
     temp = ckt->CKTstates[ckt->CKTmaxOrder+1];
     for(i=ckt->CKTmaxOrder;i>=0;i--) {
         ckt->CKTstates[i+1] = ckt->CKTstates[i];
     }
     ckt->CKTstates[0] = temp;
+#endif
 
 /* 600 */
     for (;;) {
@@ -780,10 +802,18 @@ resume:
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
         if(firsttime) {
+
+#ifdef USE_CUSPICE
+            status = cuCKTstate123copy (ckt) ;
+            if (status != 0)
+                return (E_NOMEM) ;
+#else
             memcpy(ckt->CKTstate2, ckt->CKTstate1,
                    (size_t) ckt->CKTnumStates * sizeof(double));
             memcpy(ckt->CKTstate3, ckt->CKTstate1,
                    (size_t) ckt->CKTnumStates * sizeof(double));
+#endif
+
         }
         /* txl, cpl addition */
         if (converged == 1111) {
@@ -853,6 +883,13 @@ resume:
                 goto chkStep;
 #endif
             }
+
+#ifdef USE_CUSPICE
+            status = cuCKTstatesUpdateDtoH (ckt) ;
+            if (status != 0)
+                return (E_NOMEM) ;
+#endif
+
             newdelta = ckt->CKTdelta;
             error = CKTtrunc(ckt,&newdelta);
             if(error) {
