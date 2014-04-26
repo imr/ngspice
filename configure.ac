@@ -51,7 +51,7 @@ AC_ARG_ENABLE([ansi],
 
 # --disable-debug: remove -g and -Wall  option to the compiler
 AC_ARG_ENABLE([debug],
-    [AS_HELP_STRING([--disable-debug], [Add -g option for compilation (default)])])
+    [AS_HELP_STRING([--disable-debug], [Remove -g option for compilation (Added by default)])])
 
 # --enable-gprof: add -pg option to the compiler (GCC)
 AC_ARG_ENABLE([gprof],
