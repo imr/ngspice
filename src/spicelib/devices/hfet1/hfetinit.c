@@ -71,6 +71,10 @@ SPICEdev HFETAinfo = {
     .DEVbindCSCComplex = HFETAbindCSC,
     .DEVbindCSCComplexToReal = HFETAbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

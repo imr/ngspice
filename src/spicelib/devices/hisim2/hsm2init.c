@@ -71,6 +71,10 @@ SPICEdev HSM2info = {
     .DEVbindCSCComplex = HSM2bindCSCComplex,
     .DEVbindCSCComplexToReal = HSM2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

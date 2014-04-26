@@ -71,6 +71,10 @@ SPICEdev NUMDinfo = {
     .DEVbindCSCComplex = NUMDbindCSCComplex,
     .DEVbindCSCComplexToReal = NUMDbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

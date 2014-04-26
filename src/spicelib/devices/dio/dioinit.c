@@ -72,6 +72,10 @@ SPICEdev DIOinfo = {
     .DEVbindCSCComplex = DIObindCSCComplex,
     .DEVbindCSCComplexToReal = DIObindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

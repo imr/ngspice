@@ -71,6 +71,10 @@ SPICEdev ASRCinfo = {
     .DEVbindCSCComplex = ASRCbindCSCComplex,
     .DEVbindCSCComplexToReal = ASRCbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

@@ -71,6 +71,10 @@ SPICEdev BSIM3v32info = {
     .DEVbindCSCComplex = BSIM3v32bindCSCComplex,
     .DEVbindCSCComplexToReal = BSIM3v32bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 
