@@ -24,7 +24,7 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->INDnextModel ) {
  
-   /* Default Value Processing for Model Parameters */
+        /* Default Value Processing for Model Parameters */
         if (!model->INDmIndGiven) {
              model->INDmInd = 0.0;
         }
