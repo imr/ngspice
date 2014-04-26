@@ -28,6 +28,7 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
     double  dummy1;
     double  dummy2;
     SENstruct *info;
+
     MUTinstance *muthere;
     MUTmodel *mutmodel;
     double sxp1;
@@ -36,6 +37,7 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
     double   rootl1,rootl2;
     int ktype;
     int itype;
+
 
     info = ckt->CKTsenInfo;
     if(ckt->CKTmode & MODEINITTRAN) return(OK);
@@ -63,8 +65,6 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 
                 *(ckt->CKTstate0 + here->INDsensxp + 2 * (iparmno - 1)) = sxp;
             }
-
-
         }
     }
     ktype = CKTtypelook("mutual");
@@ -125,6 +125,7 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
                 here=INDnextInstance(here)) {
+
                 for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
 
                 if(ckt->CKTmode&MODETRANOP){

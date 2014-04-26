@@ -77,7 +77,6 @@ SPICEdev URCinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_urc_info(void)
 {

@@ -77,7 +77,6 @@ SPICEdev SOI3info = {
 #endif
 };
 
-
 SPICEdev *
 get_soi3_info(void)
 {

@@ -77,7 +77,6 @@ SPICEdev NUMD2info = {
 #endif
 };
 
-
 SPICEdev *
 get_numd2_info(void)
 {

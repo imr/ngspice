@@ -77,7 +77,6 @@ SPICEdev MOS6info = {
 #endif
 };
 
-
 SPICEdev *
 get_mos6_info(void)
 {

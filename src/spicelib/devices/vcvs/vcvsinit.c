@@ -77,7 +77,6 @@ SPICEdev VCVSinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_vcvs_info(void)
 {

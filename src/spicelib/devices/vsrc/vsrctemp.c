@@ -20,7 +20,7 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-process voltage source parameters
          */
 {
-    VSRCmodel *model = (VSRCmodel *) inModel;
+    VSRCmodel *model = (VSRCmodel *)inModel;
     VSRCinstance *here;
     double radians;
 
@@ -90,5 +90,5 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     }
 
-    return(OK);
+    return (OK) ;
 }

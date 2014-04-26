@@ -77,7 +77,6 @@ SPICEdev MESAinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_mesa_info(void)
 {

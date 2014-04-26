@@ -320,6 +320,7 @@ enum {
     IND_QUEST_SENS_DC,
 };
 
+
 /* device parameters */
 enum {
     MUT_COEFF = 401,

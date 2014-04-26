@@ -77,7 +77,6 @@ SPICEdev MESinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_mes_info(void)
 {

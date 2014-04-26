@@ -78,7 +78,6 @@ SPICEdev SWinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_sw_info(void)
 {

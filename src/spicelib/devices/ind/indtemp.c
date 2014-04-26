@@ -5,7 +5,6 @@ Author: 2003 Paolo Nenzi
 /*
  */
 
-
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "inddefs.h"
@@ -99,6 +98,6 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
 #endif
 
     }
-    return(OK);
+    return (OK) ;
 }
 
