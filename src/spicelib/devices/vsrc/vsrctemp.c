@@ -10,6 +10,10 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 /*ARGSUSED*/
 int
 VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -22,8 +26,16 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE(ckt);
 
+#ifdef USE_CUSPICE
+    int i, j, status ;
+#endif
+
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = VSRCnextModel(model)) {
+
+#ifdef USE_CUSPICE
+    i = 0 ;
+#endif
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
@@ -50,7 +62,32 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             radians = here->VSRCacPhase * M_PI / 180.0;
             here->VSRCacReal = here->VSRCacMag * cos(radians);
             here->VSRCacImag = here->VSRCacMag * sin(radians);
+
+#ifdef USE_CUSPICE
+            for (j = 0 ; j < here->n_coeffs ; j++)
+            {
+                model->VSRCparamCPU.VSRCcoeffsArrayHost [i] [j] = here->VSRCcoeffs [j] ;
+            }
+
+            model->VSRCparamCPU.VSRCdcvalueArray[i] = here->VSRCdcValue ;
+            model->VSRCparamCPU.VSRCrdelayArray[i] = here->VSRCrdelay ;
+            model->VSRCparamCPU.VSRCdcGivenArray[i] = here->VSRCdcGiven ;
+            model->VSRCparamCPU.VSRCfunctionTypeArray[i] = here->VSRCfunctionType ;
+            model->VSRCparamCPU.VSRCfunctionOrderArray[i] = here->VSRCfunctionOrder ;
+            model->VSRCparamCPU.VSRCrGivenArray[i] = here->VSRCrGiven ;
+            model->VSRCparamCPU.VSRCrBreakptArray[i] = here->VSRCrBreakpt ;
+
+            i++ ;
+#endif
+
         }
+
+#ifdef USE_CUSPICE
+        status = cuVSRCtemp ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#endif
+
     }
 
     return(OK);

@@ -33,3 +33,7 @@ extern int BSIM4v7bindCSC (GENmodel*, CKTcircuit*) ;
 extern int BSIM4v7bindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int BSIM4v7bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef USE_CUSPICE
+extern int BSIM4v7topology (GENmodel *, CKTcircuit *, int *, int *);
+#endif

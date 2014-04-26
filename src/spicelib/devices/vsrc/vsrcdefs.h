@@ -86,8 +86,50 @@ typedef struct sVSRCinstance {
     BindElement *VSRCibrIbrBinding ;
 #endif
 
+#ifdef USE_CUSPICE
+    double *d_VSRCcoeffs ;
+
+    int n_coeffs ;
+#endif
+
 } VSRCinstance ;
 
+#ifdef USE_CUSPICE
+typedef struct sVSRCparamCPUstruct {
+    /* pointer to array of coefficients in GPU */
+    double **VSRCcoeffsArrayHost ;
+    double **VSRCcoeffsArray ;
+
+    double *VSRCcpuPointersD [3] ;
+    #define VSRCdcvalueArray VSRCcpuPointersD[0]
+    #define VSRCrdelayArray VSRCcpuPointersD[1]
+    #define VSRCValueArray VSRCcpuPointersD[2]
+
+    int *VSRCcpuPointersI [5] ;
+    #define VSRCdcGivenArray VSRCcpuPointersI[0]
+    #define VSRCfunctionTypeArray VSRCcpuPointersI[1]
+    #define VSRCfunctionOrderArray VSRCcpuPointersI[2]
+    #define VSRCrGivenArray VSRCcpuPointersI[3]
+    #define VSRCrBreakptArray VSRCcpuPointersI[4]
+} VSRCparamCPUstruct ;
+
+typedef struct sVSRCparamGPUstruct {
+    /* pointer to array of coefficients in GPU */
+    double **d_VSRCcoeffsArray ;
+
+    double *VSRCcudaPointersD [3] ;
+    #define d_VSRCdcvalueArray VSRCcudaPointersD[0]
+    #define d_VSRCrdelayArray VSRCcudaPointersD[1]
+    #define d_VSRCValueArray VSRCcudaPointersD[2]
+
+    int *VSRCcudaPointersI [5] ;
+    #define d_VSRCdcGivenArray VSRCcudaPointersI[0]
+    #define d_VSRCfunctionTypeArray VSRCcudaPointersI[1]
+    #define d_VSRCfunctionOrderArray VSRCcudaPointersI[2]
+    #define d_VSRCrGivenArray VSRCcudaPointersI[3]
+    #define d_VSRCrBreakptArray VSRCcudaPointersI[4]
+} VSRCparamGPUstruct ;
+#endif
 
 /* per model data */
 
@@ -99,6 +141,25 @@ typedef struct sVSRCmodel {
 #define VSRCnextModel(inst) ((struct sVSRCmodel *)((inst)->gen.GENnextModel))
 #define VSRCinstances(inst) ((VSRCinstance *)((inst)->gen.GENinstances))
 #define VSRCmodName gen.GENmodName
+
+#ifdef USE_CUSPICE
+    VSRCparamCPUstruct VSRCparamCPU ;
+    VSRCparamGPUstruct VSRCparamGPU ;
+
+    int offset ;
+    int n_values ;
+    int n_Ptr ;
+    int *PositionVector ;
+    int *d_PositionVector ;
+
+    int offsetRHS ;
+    int n_valuesRHS ;
+    int n_PtrRHS ;
+    int *PositionVectorRHS ;
+    int *d_PositionVectorRHS ;
+
+    int n_instances ;
+#endif
 
 } VSRCmodel;
 

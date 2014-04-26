@@ -10,6 +10,10 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 int
 INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
    /* load the inductor structure with those pointers needed later 
@@ -103,6 +107,96 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(INDibrIbrPtr,INDbrEq,INDbrEq);
         }
     }
+
+#ifdef USE_CUSPICE
+    int i, j, k, status ;
+
+    /* Counting the instances */
+    for (model = (INDmodel *)inModel ; model != NULL ; model = INDnextModel(model))
+    {
+        i = 0 ;
+
+        for (here = INDinstances(model); here != NULL ; here = INDnextInstance(here))
+        {
+            i++ ;
+        }
+
+        /* How much instances we have */
+        model->n_instances = i ;
+    }
+
+    /*  loop through all the inductor models */
+    for (model = (INDmodel *)inModel ; model != NULL ; model = INDnextModel(model))
+    {
+        model->offset = ckt->total_n_values ;
+        model->offsetRHS = ckt->total_n_valuesRHS ;
+
+        j = 0 ;
+        k = 0 ;
+
+        /* loop through all the instances of the model */
+        for (here = INDinstances(model); here != NULL ; here = INDnextInstance(here))
+        {
+            /* For the Matrix */
+            if ((here->INDposNode != 0) && (here->INDbrEq != 0))
+                j++ ;
+
+            if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
+                j++ ;
+
+            if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
+                j++ ;
+
+            if ((here->INDbrEq != 0) && (here->INDposNode != 0))
+                j++ ;
+
+            if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
+                j++ ;
+
+            /* For the RHS */
+            if (here->INDbrEq != 0)
+                k++ ;
+        }
+
+        /* 2 Different Values for Every Instance */
+        model->n_values = 2 * model->n_instances;
+        ckt->total_n_values += model->n_values ;
+
+        model->n_Ptr = j ;
+        ckt->total_n_Ptr += model->n_Ptr ;
+
+        model->n_valuesRHS = model->n_instances;
+        ckt->total_n_valuesRHS += model->n_valuesRHS ;
+
+        model->n_PtrRHS = k ;
+        ckt->total_n_PtrRHS += model->n_PtrRHS ;
+
+
+        /* Position Vector assignment */
+        model->PositionVector = TMALLOC (int, model->n_instances) ;
+
+        for (j = 0 ; j < model->n_instances; j++)
+        {
+            /* 2 Different Values for Every Instance */
+            model->PositionVector [j] = model->offset + 2 * j ;
+        }
+
+        /* Position Vector assignment for the RHS */
+        model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
+
+        for (j = 0 ; j < model->n_instances; j++)
+            model->PositionVectorRHS [j] = model->offsetRHS + j ;
+    }
+
+    /*  loop through all the inductor models */
+    for (model = (INDmodel *)inModel ; model != NULL ; model = INDnextModel(model))
+    {
+        status = cuINDsetup ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+    }
+#endif
+
     return(OK);
 }
 

@@ -6,6 +6,10 @@
 #include "indext.h"
 #include "indinit.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 SPICEdev INDinfo = {
     .DEVpublic = {
@@ -33,7 +37,11 @@ SPICEdev INDinfo = {
 
     .DEVparam = INDparam,
     .DEVmodParam = INDmParam,
+#ifdef USE_CUSPICE
+    .DEVload = cuINDload,
+#else
     .DEVload = INDload,
+#endif
     .DEVsetup = INDsetup,
     .DEVunsetup = INDunsetup,
     .DEVpzSetup = INDsetup,
@@ -71,6 +79,10 @@ SPICEdev INDinfo = {
     .DEVbindCSCComplex = INDbindCSCComplex,
     .DEVbindCSCComplexToReal = INDbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = cuINDdestroy,
+    .DEVtopology = INDtopology,
+#endif
 };
 
 
@@ -100,7 +112,11 @@ SPICEdev MUTinfo = {
 
     .DEVparam = MUTparam,
     .DEVmodParam = NULL,
+#ifdef USE_CUSPICE
+    .DEVload = cuMUTload,
+#else
     .DEVload = NULL,
+#endif
     .DEVsetup = MUTsetup,
     .DEVunsetup = NULL,
     .DEVpzSetup = MUTsetup,
@@ -137,6 +153,10 @@ SPICEdev MUTinfo = {
     .DEVbindCSC = MUTbindCSC,
     .DEVbindCSCComplex = MUTbindCSCComplex,
     .DEVbindCSCComplexToReal = MUTbindCSCComplexToReal,
+#endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = cuMUTdestroy,
+    .DEVtopology = MUTtopology,
 #endif
 };
 

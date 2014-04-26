@@ -97,6 +97,45 @@ typedef struct sRESinstance {
 
 } RESinstance ;
 
+#ifdef USE_CUSPICE
+typedef struct sRESparamCPUstruct {
+    double *REScpuPointersD [8] ;
+    #define REStc1Array REScpuPointersD[0]
+    #define REStc2Array REScpuPointersD[1]
+    #define RESmArray REScpuPointersD[2]
+    #define RESconductArray REScpuPointersD[3]
+    #define REStempArray REScpuPointersD[4]
+    #define RESdtempArray REScpuPointersD[5]
+    #define REScurrentArray REScpuPointersD[6]
+    #define RESgValueArray REScpuPointersD[7]
+
+    int *REScpuPointersI [5] ;
+    #define REStc1GivenArray REScpuPointersI[0]
+    #define REStc2GivenArray REScpuPointersI[1]
+    #define RESmGivenArray REScpuPointersI[2]
+    #define RESposNodeArray REScpuPointersI[3]
+    #define RESnegNodeArray REScpuPointersI[4]
+} RESparamCPUstruct ;
+
+typedef struct sRESparamGPUstruct {
+    double *REScudaPointersD [8] ;
+    #define d_REStc1Array REScudaPointersD[0]
+    #define d_REStc2Array REScudaPointersD[1]
+    #define d_RESmArray REScudaPointersD[2]
+    #define d_RESconductArray REScudaPointersD[3]
+    #define d_REStempArray REScudaPointersD[4]
+    #define d_RESdtempArray REScudaPointersD[5]
+    #define d_REScurrentArray REScudaPointersD[6]
+    #define d_RESgValueArray REScudaPointersD[7]
+
+    int *REScudaPointersI [5] ;
+    #define d_REStc1GivenArray REScudaPointersI[0]
+    #define d_REStc2GivenArray REScudaPointersI[1]
+    #define d_RESmGivenArray REScudaPointersI[2]
+    #define d_RESposNodeArray REScudaPointersI[3]
+    #define d_RESnegNodeArray REScudaPointersI[4]
+} RESparamGPUstruct ;
+#endif
 
 /* per model data */
 
@@ -141,6 +180,20 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     unsigned RESlfGiven         :1; /* flags indicates lf is given */
     unsigned RESwfGiven         :1; /* flags indicates wf is given */
     unsigned RESefGiven         :1; /* flags indicates ef is given */
+
+#ifdef USE_CUSPICE
+    RESparamCPUstruct RESparamCPU ;
+    RESparamGPUstruct RESparamGPU ;
+
+    int offset ;
+    int n_values ;
+    int n_Ptr ;
+    int *PositionVector ;
+    int *d_PositionVector ;
+
+    int n_instances ;
+#endif
+
 } RESmodel;
 
 /* device parameters */
