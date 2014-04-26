@@ -12,7 +12,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 /* ARGSUSED */
 int
 MUTparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
@@ -40,4 +39,3 @@ MUTparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     }
     return(OK);
 }
-#endif /* MUTUAL */

@@ -24,8 +24,6 @@ Author: 1985 Thomas L. Quarles
     } while(0)
 
 
-#ifdef MUTUAL
-
 int
 MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
@@ -66,5 +64,3 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     return(OK);
 }
-
-#endif
