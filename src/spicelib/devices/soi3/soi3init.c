@@ -81,8 +81,12 @@ SPICEdev SOI3info = {
  /* DEVbindCSCComplexToReal */  SOI3bindCSCComplexToReal,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_soi3_info(void)

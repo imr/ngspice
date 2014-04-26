@@ -47,7 +47,7 @@ AC_ARG_ENABLE([ansi],
 
 # --disable-debug: remove -g and -Wall  option to the compiler
 AC_ARG_ENABLE([debug],
-    [AS_HELP_STRING([--disable-debug], [Add -g option for compilation (default)])])
+    [AS_HELP_STRING([--disable-debug], [Remove -g option for compilation (Added by default)])])
 
 # --enable-gprof: add -pg option to the compiler (GCC)
 AC_ARG_ENABLE([gprof],
@@ -198,7 +198,64 @@ if test "x$enable_klu" = xyes; then
     AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
     AC_MSG_WARN([KLU solver enabled])
 fi
-AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes])
+AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes || test "x$enable_cuspice" = xyes])
+
+# --enable-cuspice: Use CUSPICE (NGSPICE on CUDA Platforms)
+AC_ARG_ENABLE([cuspice],
+    [AS_HELP_STRING([--enable-cuspice], [Use CUSPICE (NGSPICE on CUDA Platforms)])])
+
+# Add CUSPICE (NGSPICE on CUDA Platforms) to NGSPICE
+if test "x$enable_cuspice" = xyes; then
+    AC_DEFINE(USE_CUSPICE, [], [Define if we want CUSPICE (NGSPICE on CUDA Platforms) enabled])
+    AC_MSG_WARN(CUSPICE (NGSPICE on CUDA Platforms) enabled)
+    AC_ARG_WITH([cuda],
+        [AS_HELP_STRING([--with-cuda=PATH], [Define the prefix where cuda is installed (default=/usr/local/cuda)])])
+    ARCH=`uname -m`
+    if test -n "$with_cuda"
+    then
+        CUDA_CPPFLAGS="-I$with_cuda/include"
+        if [[ $ARCH == "x86_64" ]]
+        then
+            CUDA_LIBS="-L$with_cuda/lib64 -lcuda -lcudart"
+        else
+            CUDA_LIBS="-L$with_cuda/lib -lcuda -lcudart"
+        fi
+        NVCC="$with_cuda/bin/nvcc"
+    else
+        CUDA_CPPFLAGS="-I/usr/local/cuda/include"
+        if [[ $ARCH == "x86_64" ]]
+        then
+            CUDA_LIBS="-L/usr/local/cuda/lib64 -lcuda -lcudart"
+        else
+            CUDA_LIBS="-L/usr/local/cuda/lib -lcuda -lcudart"
+        fi
+        AC_PATH_PROG(NVCC, nvcc, "no")
+        AS_IF([test "x$NVCC" = xno],
+            [AC_MSG_ERROR([NVCC compiler not found!])])
+        NVCC="nvcc"
+    fi
+    AC_SUBST(CUDA_CPPFLAGS)
+    AC_SUBST(CUDA_LIBS)
+    AC_SUBST(NVCC)
+
+    # NVCC Compilation Flags
+    CUDA_CFLAGS="-gencode arch=compute_20,\"code=sm_20\""
+    CUDA_CFLAGS+=" -gencode arch=compute_30,\"code=sm_30\""
+    CUDA_CFLAGS+=" -gencode arch=compute_32,\"code=sm_32\""
+    CUDA_CFLAGS+=" -gencode arch=compute_35,\"code=sm_35\""
+    CUDA_CFLAGS+=" -gencode arch=compute_50,\"code=sm_50\""
+    CUDA_CFLAGS+=" -DCOMPILED_BY_NVCC"
+    if test "x$enable_debug" = xno; then
+        CUDA_CFLAGS+=" -O2"
+    else
+        CUDA_CFLAGS+=" -g -O1 -G"
+    fi
+    AC_SUBST(CUDA_CFLAGS)
+
+    AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
+    AC_MSG_WARN([KLU solver enabled, because CUSPICE needs it])
+fi
+AM_CONDITIONAL([USE_CUSPICE_WANTED], [test "x$enable_cuspice" = xyes])
 
 
 # Enable maintainer commands only if requested
@@ -208,28 +265,28 @@ AM_MAINTAINER_MODE
 # Compiler checks
 # ---------------
 
-ext_CFLAGS="$CFLAGS"
+# To have an empty CFLAGS variable after AC_PROG_CC, instead of "-g -O2"
+: ${CFLAGS=""}
 
 AC_PROG_CC
 
 # Work on compiler options according to system:
 # Set default CFLAGS - only use -Wall if we have gcc
 
-# the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "x$enable_debug" = xno; then
     if test "x$GCC" = xyes; then
         AC_MSG_WARN([Removing debugging option!])
-        CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s $ext_CFLAGS"
+        CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s"
     else
         AC_MSG_WARN([Removing debugging option!])
-        CFLAGS="-O2 $ext_CFLAGS"
+        CFLAGS="-O2"
     fi
 else
     AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
     if test "x$GCC" = xyes; then
-        CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion $ext_CFLAGS"
+        CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion"
     else
-        CFLAGS="-g $ext_CFLAGS"
+        CFLAGS="-g"
     fi
 fi
 

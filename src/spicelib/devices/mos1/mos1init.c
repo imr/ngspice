@@ -81,8 +81,12 @@ SPICEdev MOS1info = {
  /* DEVbindCSCComplexToReal */  MOS1bindCSCComplexToReal,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_mos1_info(void)

@@ -86,8 +86,12 @@ SPICEdev VBICinfo = {
     VBICbindCSCComplexToReal, /* DEVbindCSCComplexToReal */
 #endif
 
-};
+#ifdef USE_CUSPICE
+    NULL, /* cuDEVdestroy */
+    NULL, /* DEVtopology  */
+#endif
 
+};
 
 SPICEdev *
 get_vbic_info(void)

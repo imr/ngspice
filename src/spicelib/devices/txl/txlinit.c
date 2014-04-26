@@ -86,6 +86,11 @@ SPICEdev TXLinfo = {
  /* DEVbindCSCComplexToReal */  TXLbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 SPICEdev *

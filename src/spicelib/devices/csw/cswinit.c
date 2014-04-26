@@ -83,6 +83,11 @@ SPICEdev CSWinfo = {
  /* DEVbindCSCComplexToReal */  CSWbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 

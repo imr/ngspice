@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 void
 MUTdestroy(GENmodel **inModel)
 {
@@ -33,4 +32,3 @@ MUTdestroy(GENmodel **inModel)
     if(oldmod) FREE(oldmod);
     *model = NULL;
 }
-#endif /* MUTUAL */
