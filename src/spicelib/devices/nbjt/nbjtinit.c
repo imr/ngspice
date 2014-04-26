@@ -82,6 +82,11 @@ SPICEdev NBJTinfo = {
  /* DEVbindCSCComplexToReal */  NBJTbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 

@@ -81,6 +81,11 @@ SPICEdev MESAinfo = {
  /* DEVbindCSCComplexToReal */  MESAbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 

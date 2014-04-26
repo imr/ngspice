@@ -81,6 +81,11 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
  /* DEVbindCSCComplexToReal */  BJTbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 

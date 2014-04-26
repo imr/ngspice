@@ -26,6 +26,11 @@ static void copy_coeffs(ISRCinstance *here, IFvalue *value)
     here->ISRCcoeffsGiven = TRUE;
 
     memcpy(here->ISRCcoeffs, value->v.vec.rVec, (size_t) n * sizeof(double));
+
+#ifdef USE_CUSPICE
+    here->n_coeffs = n ;
+#endif
+
 }
 
 

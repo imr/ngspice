@@ -78,6 +78,11 @@ SPICEdev B3SOIDDinfo = {
  /* DEVbindCSCComplexToReal */  B3SOIDDbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 SPICEdev *

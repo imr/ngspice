@@ -13,6 +13,10 @@ Author: 2003 Paolo Nenzi
 #include "ngspice/suffix.h"
 
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 /*ARGSUSED*/
 int
 INDtemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -23,8 +27,16 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
     double factor;
     double tc1, tc2;
 
+#ifdef USE_CUSPICE
+    int i, status ;
+#endif
+
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->INDnextModel ) {
+
+#ifdef USE_CUSPICE
+    i = 0 ;
+#endif
 
         /* loop through all the instances of the model */
         for (here = model->INDinstances; here != NULL ;
@@ -71,7 +83,23 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->INDinduct = here->INDinduct * factor * here->INDscale;
             here->INDinduct = here->INDinduct / here->INDm;
 
+#ifdef USE_CUSPICE
+            model->INDparamCPU.INDinitCondArray[i] = here->INDinitCond ;
+            model->INDparamCPU.INDinductArray[i] = here->INDinduct ;
+            model->INDparamCPU.INDbrEqArray[i] = here->INDbrEq ;
+            model->INDparamCPU.INDstateArray[i] = here->INDstate ;
+
+            i++ ;
+#endif
+
         }
+
+#ifdef USE_CUSPICE
+        status = cuINDtemp ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#endif
+
     }
     return(OK);
 }

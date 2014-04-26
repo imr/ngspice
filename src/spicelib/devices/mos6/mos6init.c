@@ -81,6 +81,11 @@ SPICEdev MOS6info = {
  /* DEVbindCSCComplexToReal */  MOS6bindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 
