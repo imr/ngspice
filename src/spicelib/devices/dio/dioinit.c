@@ -82,8 +82,12 @@ SPICEdev DIOinfo = {
  /* DEVbindCSCComplexToReal */  DIObindCSCComplexToReal,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_dio_info(void)

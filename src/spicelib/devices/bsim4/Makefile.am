@@ -37,6 +37,21 @@ endif
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 
+if USE_CUSPICE_WANTED
+.cu.lo:
+	$(AM_V_GEN)$(top_srcdir)/src/libtool_wrapper_for_cuda.tcl $@ $(AM_CFLAGS) $(NVCC) $(CUDA_CFLAGS) $(AM_CPPFLAGS) -c $<
+
+libbsim4_la_SOURCES +=		\
+	CUSPICE/b4topology.c	\
+	CUSPICE/cubsim4free.c	\
+	CUSPICE/cubsim4getic.c	\
+	CUSPICE/cubsim4load.cu	\
+	CUSPICE/cubsim4setup.c	\
+	CUSPICE/cubsim4temp.c
+
+AM_CPPFLAGS += $(CUDA_CPPFLAGS)
+endif
+
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = B4TERMS_OF_USE

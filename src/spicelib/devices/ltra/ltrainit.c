@@ -81,8 +81,12 @@ SPICEdev LTRAinfo = {
  /* DEVbindCSCComplexToReal */  LTRAbindCSCComplexToReal,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_ltra_info(void)

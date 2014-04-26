@@ -81,8 +81,12 @@ SPICEdev JFET2info = {
  /* DEVbindCSCComplexToReal */  JFET2bindCSCComplexToReal,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_jfet2_info(void)

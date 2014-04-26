@@ -109,4 +109,19 @@ endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 AM_CFLAGS = $(STATIC)
+
+if USE_CUSPICE_WANTED
+
+libckt_la_SOURCES +=			\
+	CUSPICE/cucktflush.c		\
+	CUSPICE/cucktnonconupdate.c	\
+	CUSPICE/cucktrhsoldupdate.c	\
+	CUSPICE/cucktsetup.c		\
+	CUSPICE/cucktstatesupdate.c	\
+	CUSPICE/cucktsystem.c
+
+AM_CPPFLAGS += $(CUDA_CPPFLAGS)
+AM_LDFLAGS = $(CUDA_LIBS) -lcusparse
+endif
+
 MAINTAINERCLEANFILES = Makefile.in

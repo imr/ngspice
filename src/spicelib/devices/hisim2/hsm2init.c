@@ -79,8 +79,12 @@ SPICEdev HSM2info = {
  /* DEVbindCSCComplexToReal */  HSM2bindCSCComplexToReal,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_hsm2_info(void)
