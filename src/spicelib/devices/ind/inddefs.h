@@ -6,10 +6,6 @@ Author: 1985 Thomas L. Quarles
 #ifndef IND
 #define IND
 
-
-/* turn on mutual inductor code */
-#define MUTUAL
-
 #include "ngspice/ifsim.h"
 #include "ngspice/complex.h"
 #include "ngspice/gendefs.h"
@@ -106,7 +102,6 @@ typedef struct sINDmodel {       /* model structure for an inductor */
 } INDmodel;
 
 
-#ifdef MUTUAL
 
 /* structures used to describe mutual inductors */
 
@@ -149,7 +144,6 @@ IFuid MUTmodName;       /* pointer to character string naming this model */
 
 } MUTmodel;
 
-#endif /*MUTUAL*/
 
 /* device parameters */
 #define IND_IND 1
@@ -186,7 +180,6 @@ IFuid MUTmodName;       /* pointer to character string naming this model */
 #define IND_QUEST_SENS_CPLX      205
 #define IND_QUEST_SENS_DC        206
 
-#ifdef MUTUAL
 /* device parameters */
 #define MUT_COEFF 401
 #define MUT_IND1 402
@@ -203,7 +196,6 @@ IFuid MUTmodName;       /* pointer to character string naming this model */
 #define MUT_QUEST_SENS_CPLX      605
 #define MUT_QUEST_SENS_DC        606
 
-#endif /*MUTUAL*/
 
 #include "indext.h"
 

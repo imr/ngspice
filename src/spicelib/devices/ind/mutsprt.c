@@ -17,7 +17,6 @@ This function is obsolete (was used by an old sensitivity analysis)
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 /* ARGSUSED */
 void
 MUTsPrint(GENmodel *inModel, CKTcircuit* ckt)
@@ -48,4 +47,3 @@ MUTsPrint(GENmodel *inModel, CKTcircuit* ckt)
         }
     }
 }
-#endif /* MUTUAL */

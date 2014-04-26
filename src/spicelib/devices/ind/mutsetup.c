@@ -16,7 +16,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 /*ARGSUSED*/
 int
 MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -69,4 +68,3 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
     return(OK);
 }
-#endif /* MUTUAL */
