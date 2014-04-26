@@ -71,8 +71,11 @@ SPICEdev NUMOSinfo = {
     .DEVbindCSCComplex = NUMOSbindCSCComplex,
     .DEVbindCSCComplexToReal = NUMOSbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_numos_info(void)

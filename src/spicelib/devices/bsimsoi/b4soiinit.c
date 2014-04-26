@@ -69,6 +69,10 @@ SPICEdev B4SOIinfo = {
     .DEVbindCSCComplex = B4SOIbindCSCComplex,
     .DEVbindCSCComplexToReal = B4SOIbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 
@@ -77,5 +81,3 @@ get_b4soi_info (void)
 {
   return &B4SOIinfo;
 }
-
-

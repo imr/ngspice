@@ -29,6 +29,7 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
     int ktype;
     int itype;
 
+
     /*  loop through all the inductor models */
     for( ; model != NULL; model = INDnextModel(model)) {
 

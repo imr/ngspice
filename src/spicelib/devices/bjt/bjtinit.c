@@ -71,6 +71,10 @@ SPICEdev BJTinfo = {
     .DEVbindCSCComplex = BJTbindCSCComplex,
     .DEVbindCSCComplexToReal = BJTbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

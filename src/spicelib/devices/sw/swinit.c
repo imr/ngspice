@@ -72,8 +72,11 @@ SPICEdev SWinfo = {
     .DEVbindCSCComplex = SWbindCSCComplex,
     .DEVbindCSCComplexToReal = SWbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_sw_info(void)

@@ -71,8 +71,11 @@ SPICEdev HFET2info = {
     .DEVbindCSCComplex = HFET2bindCSCComplex,
     .DEVbindCSCComplexToReal = HFET2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_hfet2_info(void)

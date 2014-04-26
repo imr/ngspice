@@ -76,6 +76,10 @@ SPICEdev TXLinfo = {
     .DEVbindCSCComplex = TXLbindCSCComplex,
     .DEVbindCSCComplexToReal = TXLbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

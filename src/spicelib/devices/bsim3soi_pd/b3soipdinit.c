@@ -70,6 +70,10 @@ SPICEdev B3SOIPDinfo = {
     .DEVbindCSCComplex = B3SOIPDbindCSCComplex,
     .DEVbindCSCComplexToReal = B3SOIPDbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

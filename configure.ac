@@ -207,7 +207,64 @@ if test "x$enable_klu" = xyes; then
     AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
     AC_MSG_WARN([KLU solver enabled])
 fi
-AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes])
+AM_CONDITIONAL([KLU_WANTED], [test "x$enable_klu" = xyes || test "x$enable_cuspice" = xyes])
+
+# --enable-cuspice: Use CUSPICE (NGSPICE on CUDA Platforms)
+AC_ARG_ENABLE([cuspice],
+    [AS_HELP_STRING([--enable-cuspice], [Use CUSPICE (NGSPICE on CUDA Platforms)])])
+
+# Add CUSPICE (NGSPICE on CUDA Platforms) to NGSPICE
+if test "x$enable_cuspice" = xyes; then
+    AC_DEFINE(USE_CUSPICE, [], [Define if we want CUSPICE (NGSPICE on CUDA Platforms) enabled])
+    AC_MSG_WARN(CUSPICE (NGSPICE on CUDA Platforms) enabled)
+    AC_ARG_WITH([cuda],
+        [AS_HELP_STRING([--with-cuda=PATH], [Define the prefix where cuda is installed (default=/usr/local/cuda)])])
+    ARCH=`uname -m`
+    if test -n "$with_cuda"
+    then
+        CUDA_CPPFLAGS="-I$with_cuda/include"
+        if [[ $ARCH == "x86_64" ]]
+        then
+            CUDA_LIBS="-L$with_cuda/lib64 -lcuda -lcudart"
+        else
+            CUDA_LIBS="-L$with_cuda/lib -lcuda -lcudart"
+        fi
+        NVCC="$with_cuda/bin/nvcc"
+    else
+        CUDA_CPPFLAGS="-I/usr/local/cuda/include"
+        if [[ $ARCH == "x86_64" ]]
+        then
+            CUDA_LIBS="-L/usr/local/cuda/lib64 -lcuda -lcudart"
+        else
+            CUDA_LIBS="-L/usr/local/cuda/lib -lcuda -lcudart"
+        fi
+        AC_PATH_PROG(NVCC, nvcc, "no")
+        AS_IF([test "x$NVCC" = xno],
+            [AC_MSG_ERROR([NVCC compiler not found!])])
+        NVCC="nvcc"
+    fi
+    AC_SUBST(CUDA_CPPFLAGS)
+    AC_SUBST(CUDA_LIBS)
+    AC_SUBST(NVCC)
+
+    # NVCC Compilation Flags
+    CUDA_CFLAGS="-gencode arch=compute_20,\"code=sm_20\""
+    CUDA_CFLAGS+=" -gencode arch=compute_30,\"code=sm_30\""
+    CUDA_CFLAGS+=" -gencode arch=compute_32,\"code=sm_32\""
+    CUDA_CFLAGS+=" -gencode arch=compute_35,\"code=sm_35\""
+    CUDA_CFLAGS+=" -gencode arch=compute_50,\"code=sm_50\""
+    CUDA_CFLAGS+=" -DCOMPILED_BY_NVCC"
+    if test "x$enable_debug" = xno; then
+        CUDA_CFLAGS+=" -O2"
+    else
+        CUDA_CFLAGS+=" -g -O1 -G"
+    fi
+    AC_SUBST(CUDA_CFLAGS)
+
+    AC_DEFINE(KLU, [], [Define if we want KLU linear systems solver])
+    AC_MSG_WARN([KLU solver enabled, because CUSPICE needs it])
+fi
+AM_CONDITIONAL([USE_CUSPICE_WANTED], [test "x$enable_cuspice" = xyes])
 
 
 # Enable maintainer commands only if requested

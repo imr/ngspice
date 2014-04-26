@@ -71,6 +71,10 @@ SPICEdev B2info = {
     .DEVbindCSCComplex = B2bindCSCComplex,
     .DEVbindCSCComplexToReal = B2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 

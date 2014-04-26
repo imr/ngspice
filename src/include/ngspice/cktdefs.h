@@ -303,6 +303,45 @@ struct CKTcircuit {
 #ifdef KLU
     unsigned int CKTkluMODE:1;
 #endif
+
+#ifdef USE_CUSPICE
+    double *(d_CKTstates[8]);
+#define d_CKTstate0 d_CKTstates[0]
+#define d_CKTstate1 d_CKTstates[1]
+#define d_CKTstate2 d_CKTstates[2]
+#define d_CKTstate3 d_CKTstates[3]
+#define d_CKTstate4 d_CKTstates[4]
+#define d_CKTstate5 d_CKTstates[5]
+#define d_CKTstate6 d_CKTstates[6]
+#define d_CKTstate7 d_CKTstates[7]
+
+    double *d_CKTrhsOld;
+    int *d_CKTnoncon;
+    int d_MatrixSize;
+
+    int CKTdiagElements;
+    int total_n_values;
+    int total_n_Ptr;
+    double *d_CKTloadOutput;
+    int *CKTtopologyMatrixCOOi;
+    int *CKTtopologyMatrixCOOj;
+    double *CKTtopologyMatrixCOOx;
+    int *CKTtopologyMatrixCSRp;
+    int *d_CKTtopologyMatrixCSRp;
+    int *d_CKTtopologyMatrixCSRj;
+    double *d_CKTtopologyMatrixCSRx;
+
+    int total_n_valuesRHS;
+    int total_n_PtrRHS;
+    double *d_CKTloadOutputRHS;
+    int *CKTtopologyMatrixCOOiRHS;
+    int *CKTtopologyMatrixCOOjRHS;
+    double *CKTtopologyMatrixCOOxRHS;
+    int *CKTtopologyMatrixCSRpRHS;
+    int *d_CKTtopologyMatrixCSRpRHS;
+    int *d_CKTtopologyMatrixCSRjRHS;
+    double *d_CKTtopologyMatrixCSRxRHS;
+#endif
 };
 
 

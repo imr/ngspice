@@ -10,6 +10,10 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 /*ARGSUSED*/
 int
 ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -22,8 +26,16 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE(ckt);
 
+#ifdef USE_CUSPICE
+    int i, j, status ;
+#endif
+
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = ISRCnextModel(model)) {
+
+#ifdef USE_CUSPICE
+    i = 0 ;
+#endif
 
         /* loop through all the instances of the model */
         for (here = ISRCinstances(model); here != NULL ;
@@ -52,8 +64,30 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             radians = here->ISRCacPhase * M_PI / 180.0;
             here->ISRCacReal = here->ISRCacMag * cos(radians);
             here->ISRCacImag = here->ISRCacMag * sin(radians);
+
+#ifdef USE_CUSPICE
+            for (j = 0 ; j < here->n_coeffs ; j++)
+            {
+                model->ISRCparamCPU.ISRCcoeffsArrayHost [i] [j] = here->ISRCcoeffs [j] ;
+            }
+
+            model->ISRCparamCPU.ISRCdcvalueArray[i] = here->ISRCdcValue ;
+            model->ISRCparamCPU.ISRCdcGivenArray[i] = here->ISRCdcGiven ;
+            model->ISRCparamCPU.ISRCfunctionTypeArray[i] = here->ISRCfunctionType ;
+            model->ISRCparamCPU.ISRCfunctionOrderArray[i] = here->ISRCfunctionOrder ;
+
+            i++ ;
+#endif
+
         }
+
+#ifdef USE_CUSPICE
+        status = cuISRCtemp ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#endif
+
     }
 
-    return(OK);
+    return (OK) ;
 }

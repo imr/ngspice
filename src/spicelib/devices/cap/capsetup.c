@@ -12,6 +12,9 @@ Modified: September 2003 Paolo Nenzi
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 /*ARGSUSED*/
 int
@@ -117,6 +120,92 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(CAPnegPosPtr,CAPnegNode,CAPposNode);
         }
     }
+
+#ifdef USE_CUSPICE
+    int i, j, k, status ;
+
+    /* Counting the instances */
+    for (model = (CAPmodel *)inModel ; model != NULL ; model = CAPnextModel(model))
+    {
+        i = 0 ;
+
+        for (here = CAPinstances(model); here != NULL ; here = CAPnextInstance(here))
+        {
+            i++ ;
+        }
+
+        /* How much instances we have */
+        model->n_instances = i ;
+    }
+
+    /*  loop through all the capacitor models */
+    for (model = (CAPmodel *)inModel ; model != NULL ; model = CAPnextModel(model))
+    {
+        model->offset = ckt->total_n_values ;
+        model->offsetRHS = ckt->total_n_valuesRHS ;
+
+        j = 0 ;
+        k = 0 ;
+
+        /* loop through all the instances of the model */
+        for (here = CAPinstances(model); here != NULL ; here = CAPnextInstance(here))
+        {
+            /* For the Matrix */
+            if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
+                j++ ;
+
+            if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
+                j++ ;
+
+            if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
+                j++ ;
+
+            if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
+                j++ ;
+
+            /* For the RHS */
+            if (here->CAPposNode != 0)
+                k++ ;
+
+            if (here->CAPnegNode != 0)
+                k++ ;
+        }
+
+        model->n_values = model->n_instances;
+        ckt->total_n_values += model->n_values ;
+
+        model->n_Ptr = j ;
+        ckt->total_n_Ptr += model->n_Ptr ;
+
+        model->n_valuesRHS = model->n_instances;
+        ckt->total_n_valuesRHS += model->n_valuesRHS ;
+
+        model->n_PtrRHS = k ;
+        ckt->total_n_PtrRHS += model->n_PtrRHS ;
+
+
+        /* Position Vector assignment */
+        model->PositionVector = TMALLOC (int, model->n_instances) ;
+
+        for (j = 0 ; j < model->n_instances; j++)
+            model->PositionVector [j] = model->offset + j ;
+
+        /* Position Vector assignment for the RHS */
+        model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
+
+        for (j = 0 ; j < model->n_instances; j++)
+            model->PositionVectorRHS [j] = model->offsetRHS + j ;
+    }
+
+    /*  loop through all the capacitor models */
+    for (model = (CAPmodel *)inModel ; model != NULL ; model = CAPnextModel(model))
+    {
+        status = cuCAPsetup ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+    }
+#endif
+
     return(OK);
 }
 

@@ -71,8 +71,11 @@ SPICEdev NBJT2info = {
     .DEVbindCSCComplex = NBJT2bindCSCComplex,
     .DEVbindCSCComplexToReal = NBJT2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_nbjt2_info(void)

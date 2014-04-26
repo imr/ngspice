@@ -71,8 +71,11 @@ SPICEdev NUMD2info = {
     .DEVbindCSCComplex = NUMD2bindCSCComplex,
     .DEVbindCSCComplexToReal = NUMD2bindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_numd2_info(void)

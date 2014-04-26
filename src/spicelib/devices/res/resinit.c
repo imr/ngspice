@@ -6,6 +6,9 @@
 #include "resext.h"
 #include "resinit.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 SPICEdev RESinfo = {
     .DEVpublic = {
@@ -33,7 +36,11 @@ SPICEdev RESinfo = {
 
     .DEVparam = RESparam,
     .DEVmodParam = RESmParam,
+#ifdef USE_CUSPICE
+    .DEVload = cuRESload,
+#else
     .DEVload = RESload,
+#endif
     .DEVsetup = RESsetup,
     .DEVunsetup = NULL,
     .DEVpzSetup = RESsetup,
@@ -70,6 +77,10 @@ SPICEdev RESinfo = {
     .DEVbindCSC = RESbindCSC,
     .DEVbindCSCComplex = RESbindCSCComplex,
     .DEVbindCSCComplexToReal = RESbindCSCComplexToReal,
+#endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = cuRESdestroy,
+    .DEVtopology = REStopology,
 #endif
 };
 

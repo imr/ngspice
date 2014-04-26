@@ -69,6 +69,10 @@ SPICEdev B3SOIDDinfo = {
     .DEVbindCSCComplex = B3SOIDDbindCSCComplex,
     .DEVbindCSCComplexToReal = B3SOIDDbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 
@@ -77,5 +81,3 @@ get_b3soidd_info (void)
 {
   return &B3SOIDDinfo;
 }
-
-

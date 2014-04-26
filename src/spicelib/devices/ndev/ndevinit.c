@@ -71,8 +71,11 @@ SPICEdev NDEVinfo = {
     .DEVbindCSCComplex = NULL,
     .DEVbindCSCComplexToReal = NULL,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_ndev_info(void)

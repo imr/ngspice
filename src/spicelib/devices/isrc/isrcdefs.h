@@ -68,8 +68,46 @@ typedef struct sISRCinstance {
     unsigned ISRCdGiven      :1 ;  /* flag to indicate source is a distortion input */
     unsigned ISRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned ISRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
+
+#ifdef USE_CUSPICE
+    double *d_ISRCcoeffs ;
+
+    int n_coeffs ;
+#endif
+
 } ISRCinstance ;
 
+#ifdef USE_CUSPICE
+typedef struct sISRCparamCPUstruct {
+    /* pointer to array of coefficients in GPU */
+    double **ISRCcoeffsArrayHost ;
+    double **ISRCcoeffsArray ;
+
+    double *ISRCcpuPointersD [2] ;
+    #define ISRCdcvalueArray ISRCcpuPointersD[0]
+    #define ISRCValueArray ISRCcpuPointersD[1]
+
+    int *ISRCcpuPointersI [3] ;
+    #define ISRCdcGivenArray ISRCcpuPointersI[0]
+    #define ISRCfunctionTypeArray ISRCcpuPointersI[1]
+    #define ISRCfunctionOrderArray ISRCcpuPointersI[2]
+} ISRCparamCPUstruct ;
+
+typedef struct sISRCparamGPUstruct {
+    /* pointer to array of coefficients in GPU */
+    double **d_ISRCcoeffsArray ;
+
+    double *ISRCcudaPointersD [2] ;
+    #define d_ISRCdcvalueArray ISRCcudaPointersD[0]
+    #define d_ISRCValueArray ISRCcudaPointersD[1]
+
+    int *ISRCcudaPointersI [3] ;
+    #define d_ISRCdcGivenArray ISRCcudaPointersI[0]
+    #define d_ISRCfunctionTypeArray ISRCcudaPointersI[1]
+    #define d_ISRCfunctionOrderArray ISRCcudaPointersI[2]
+
+} ISRCparamGPUstruct ;
+#endif
 
 /* per model data */
 
@@ -81,6 +119,19 @@ typedef struct sISRCmodel {
 #define ISRCnextModel(inst) ((struct sISRCmodel *)((inst)->gen.GENnextModel))
 #define ISRCinstances(inst) ((ISRCinstance *)((inst)->gen.GENinstances))
 #define ISRCmodName gen.GENmodName
+
+#ifdef USE_CUSPICE
+    ISRCparamCPUstruct ISRCparamCPU ;
+    ISRCparamGPUstruct ISRCparamGPU ;
+
+    int offsetRHS ;
+    int n_valuesRHS ;
+    int n_PtrRHS ;
+    int *PositionVectorRHS ;
+    int *d_PositionVectorRHS ;
+
+    int n_instances ;
+#endif
 
 } ISRCmodel;
 

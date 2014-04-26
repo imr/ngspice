@@ -71,8 +71,11 @@ SPICEdev MESinfo = {
     .DEVbindCSCComplex = MESbindCSCComplex,
     .DEVbindCSCComplexToReal = MESbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_mes_info(void)

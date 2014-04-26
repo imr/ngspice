@@ -71,8 +71,11 @@ SPICEdev MESAinfo = {
     .DEVbindCSCComplex = MESAbindCSCComplex,
     .DEVbindCSCComplexToReal = MESAbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
-
 
 SPICEdev *
 get_mesa_info(void)

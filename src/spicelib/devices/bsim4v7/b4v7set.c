@@ -35,6 +35,10 @@
 #include "ngspice/cpextern.h"
 #endif
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
@@ -2581,6 +2585,568 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             }
         }
     }
+
+#ifdef USE_CUSPICE
+    int i, j, jRHS, l, lRHS, status ;
+
+    /* Counting the instances */
+    for (model = (BSIM4v7model *)inModel ; model != NULL ; model = BSIM4v7nextModel(model))
+    {
+        i = 0 ;
+
+        for (here = BSIM4v7instances(model); here != NULL ; here = BSIM4v7nextInstance(here))
+        {
+            i++ ;
+        }
+
+        /* How much instances we have */
+        model->n_instances = i ;
+    }
+
+    /*  loop through all the BSIM4v7 models */
+    for (model = (BSIM4v7model *)inModel ; model != NULL ; model = BSIM4v7nextModel(model))
+    {
+        /* Position Vector Allocation */
+        model->PositionVector = TMALLOC (int, model->n_instances) ;
+
+        /* Position Vector Allocation for the RHS */
+        model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
+
+
+        model->offset = ckt->total_n_values ;
+        model->offsetRHS = ckt->total_n_valuesRHS ;
+
+        i = 0 ;
+        j = 0 ;
+        jRHS = 0 ;
+        l = 0 ;
+        lRHS = 0 ;
+
+        /* loop through all the instances of the model */
+        for (here = BSIM4v7instances(model); here != NULL ; here = BSIM4v7nextInstance(here))
+        {
+            /* Position Vector Assignment */
+            model->PositionVector [i] = model->offset + l ;
+
+            /* Position Vector Assignment for the RHS */
+            model->PositionVectorRHS [i] = model->offsetRHS + lRHS ;
+
+
+            /* For the Matrix */
+            if (here->BSIM4v7rgateMod == 1)
+            {
+                /* m * geltd */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodeExt != 0))
+                    j++ ;
+
+                /* m * geltd */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodeExt != 0))
+                    j++ ;
+
+                /* m * geltd */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcggb + geltd - ggtg + gIgtotg) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgdb - ggtd + gIgtotd) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgsb - ggts + gIgtots) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgbb - ggtb + gIgtotb) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 5 ;
+            }
+            else if (here->BSIM4v7rgateMod == 2)        
+            {
+                /* m * gcrg */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodeExt != 0))
+                    j++ ;
+
+                /* m * gcrgg */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * gcrgd */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * gcrgs */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * gcrgb */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * gcrg */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodeExt != 0))
+                    j++ ;
+
+                /* m * (gcggb  - gcrgg - ggtg + gIgtotg) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgdb - gcrgd - ggtd + gIgtotd) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgsb - gcrgs - ggts + gIgtots) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgbb - gcrgb - ggtb + gIgtotb) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 9 ;
+            }
+            else if (here->BSIM4v7rgateMod == 3)
+            {
+                /* m * geltd */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodeExt != 0))
+                    j++ ;
+
+                /* m * geltd */
+                if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodeMid != 0))
+                    j++ ;
+
+                /* m * geltd */
+                if ((here->BSIM4v7gNodeMid != 0) && (here->BSIM4v7gNodeExt != 0))
+                    j++ ;
+
+                /* m * (geltd + gcrg + gcgmgmb) */
+                if ((here->BSIM4v7gNodeMid != 0) && (here->BSIM4v7gNodeMid != 0))
+                    j++ ;
+
+                /* m * (gcrgd + gcgmdb) */
+                if ((here->BSIM4v7gNodeMid != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * gcrgg */
+                if ((here->BSIM4v7gNodeMid != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcrgs + gcgmsb) */
+                if ((here->BSIM4v7gNodeMid != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcrgb + gcgmbb) */
+                if ((here->BSIM4v7gNodeMid != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * gcdgmb */
+                if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7gNodeMid != 0))
+                    j++ ;
+
+                /* m * gcrg */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodeMid != 0))
+                    j++ ;
+
+                /* m * gcsgmb */
+                if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7gNodeMid != 0))
+                    j++ ;
+
+                /* m * gcbgmb */
+                if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7gNodeMid != 0))
+                    j++ ;
+
+                /* m * (gcggb - gcrgg - ggtg + gIgtotg) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgdb - gcrgd - ggtd + gIgtotd) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgsb - gcrgs - ggts + gIgtots) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgbb - gcrgb - ggtb + gIgtotb) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 14 ;
+            } else {
+                /* m * (gcggb - ggtg + gIgtotg) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgdb - ggtd + gIgtotd) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgsb - ggts + gIgtots) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcgbb - ggtb + gIgtotb) */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 4 ;
+            }
+
+
+            if (model->BSIM4v7rdsMod)
+            {
+                /* m * gdtotg */
+                if ((here->BSIM4v7dNode != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * gdtots */
+                if ((here->BSIM4v7dNode != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * gdtotb */
+                if ((here->BSIM4v7dNode != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * gstotd */
+                if ((here->BSIM4v7sNode != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * gstotg */
+                if ((here->BSIM4v7sNode != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * gstotb */
+                if ((here->BSIM4v7sNode != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 4 ;
+            }
+
+
+            /* m * (gdpr + here->BSIM4v7gds + here->BSIM4v7gbd + T1 * ddxpart_dVd -
+               gdtotd + RevSum + gcddb + gbdpdp + dxpart * ggtd - gIdtotd) + m * ggidld */
+            if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                j++ ;
+
+            /* m * (gdpr + gdtot) */
+            if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7dNode != 0))
+                j++ ;
+
+            /* m * (Gm + gcdgb - gdtotg + gbdpg - gIdtotg + dxpart * ggtg + T1 * ddxpart_dVg) + m * ggidlg */
+            if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                j++ ;
+
+            /* m * (here->BSIM4v7gds + gdtots - dxpart * ggts + gIdtots -
+               T1 * ddxpart_dVs + FwdSum - gcdsb - gbdpsp) + m * (ggidlg + ggidld + ggidlb) */
+            if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                j++ ;
+
+            /* m * (gjbd + gdtotb - Gmbs - gcdbb - gbdpb + gIdtotb - T1 * ddxpart_dVb - dxpart * ggtb) - m * ggidlb */
+            if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                j++ ;
+
+            /* m * (gdpr - gdtotd) */
+            if ((here->BSIM4v7dNode != 0) && (here->BSIM4v7dNodePrime != 0))
+                j++ ;
+
+            /* m * (gdpr + gdtot) */
+            if ((here->BSIM4v7dNode != 0) && (here->BSIM4v7dNode != 0))
+                j++ ;
+
+            /* m * (here->BSIM4v7gds + gstotd + RevSum - gcsdb - gbspdp -
+               T1 * dsxpart_dVd - sxpart * ggtd + gIstotd) + m * (ggisls + ggislg + ggislb) */
+            if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                j++ ;
+
+            /* m * (gcsgb - Gm - gstotg + gbspg + sxpart * ggtg + T1 * dsxpart_dVg - gIstotg) + m * ggislg */
+            if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                j++ ;
+
+            /* m * (gspr + here->BSIM4v7gds + here->BSIM4v7gbs + T1 * dsxpart_dVs -
+               gstots + FwdSum + gcssb + gbspsp + sxpart * ggts - gIstots) + m * ggisls */
+            if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                j++ ;
+
+            /* m * (gspr + gstot) */
+            if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7sNode != 0))
+                j++ ;
+
+            /* m * (gjbs + gstotb + Gmbs - gcsbb - gbspb - sxpart * ggtb - T1 * dsxpart_dVb + gIstotb) - m * ggislb */
+            if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                j++ ;
+
+            /* m * (gspr - gstots) */
+            if ((here->BSIM4v7sNode != 0) && (here->BSIM4v7sNodePrime != 0))
+                j++ ;
+
+            /* m * (gspr + gstot) */
+            if ((here->BSIM4v7sNode != 0) && (here->BSIM4v7sNode != 0))
+                j++ ;
+
+            /* m * (gcbdb - gjbd + gbbdp - gIbtotd) - m * ggidld + m * (ggislg + ggisls + ggislb) */
+            if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7dNodePrime != 0))
+                j++ ;
+
+            /* m * (gcbgb - here->BSIM4v7gbgs - gIbtotg) - m * ggidlg - m * ggislg */
+            if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
+                j++ ;
+
+            /* m * (gcbsb - gjbs + gbbsp - gIbtots) + m * (ggidlg + ggidld + ggidlb) - m * ggisls */
+            if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7sNodePrime != 0))
+                j++ ;
+
+            /* m * (gjbd + gjbs + gcbbb - here->BSIM4v7gbbs - gIbtotb) - m * ggidlb - m * ggislb */
+            if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                j++ ;
+
+            /* Different Values for the CKTloadOutput */
+            l += 16 ;
+
+
+            if (here->BSIM4v7rbodyMod)
+            {
+                /* m * (gcdbdb - here->BSIM4v7gbd) */
+                if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7dbNode != 0))
+                    j++ ;
+
+                /* m * (here->BSIM4v7gbs - gcsbsb) */
+                if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7sbNode != 0))
+                    j++ ;
+
+                /* m * (gcdbdb - here->BSIM4v7gbd) */
+                if ((here->BSIM4v7dbNode != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * (here->BSIM4v7gbd - gcdbdb + here->BSIM4v7grbpd + here->BSIM4v7grbdb) */
+                if ((here->BSIM4v7dbNode != 0) && (here->BSIM4v7dbNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbpd */
+                if ((here->BSIM4v7dbNode != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbdb */
+                if ((here->BSIM4v7dbNode != 0) && (here->BSIM4v7bNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbpd */
+                if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7dbNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbpb */
+                if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7bNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbps */
+                if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7sbNode != 0))
+                    j++ ;
+
+                /* m * (here->BSIM4v7grbpd + here->BSIM4v7grbps  + here->BSIM4v7grbpb) */
+                if ((here->BSIM4v7bNodePrime != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * (gcsbsb - here->BSIM4v7gbs) */
+                if ((here->BSIM4v7sbNode != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbps */
+                if ((here->BSIM4v7sbNode != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbsb */
+                if ((here->BSIM4v7sbNode != 0) && (here->BSIM4v7bNode != 0))
+                    j++ ;
+
+                /* m * (here->BSIM4v7gbs - gcsbsb + here->BSIM4v7grbps + here->BSIM4v7grbsb) */
+                if ((here->BSIM4v7sbNode != 0) && (here->BSIM4v7sbNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbdb */
+                if ((here->BSIM4v7bNode != 0) && (here->BSIM4v7dbNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbpb */
+                if ((here->BSIM4v7bNode != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7grbsb */
+                if ((here->BSIM4v7bNode != 0) && (here->BSIM4v7sbNode != 0))
+                    j++ ;
+
+                /* m * (here->BSIM4v7grbsb + here->BSIM4v7grbdb + here->BSIM4v7grbpb) */
+                if ((here->BSIM4v7bNode != 0) && (here->BSIM4v7bNode != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 12 ;
+            }
+
+
+            if (here->BSIM4v7trnqsMod)
+            {
+                /* m * (gqdef + here->BSIM4v7gtau) */
+                if ((here->BSIM4v7qNode != 0) && (here->BSIM4v7qNode != 0))
+                    j++ ;
+
+                /* m * (ggtg - gcqgb) */
+                if ((here->BSIM4v7qNode != 0) && (here->BSIM4v7gNodePrime != 0))
+                    j++ ;
+
+                /* m * (ggtd - gcqdb) */
+                if ((here->BSIM4v7qNode != 0) && (here->BSIM4v7dNodePrime != 0))
+                    j++ ;
+
+                /* m * (ggts - gcqsb) */
+                if ((here->BSIM4v7qNode != 0) && (here->BSIM4v7sNodePrime != 0))
+                    j++ ;
+
+                /* m * (ggtb - gcqbb) */
+                if ((here->BSIM4v7qNode != 0) && (here->BSIM4v7bNodePrime != 0))
+                    j++ ;
+
+                /* m * dxpart * here->BSIM4v7gtau */
+                if ((here->BSIM4v7dNodePrime != 0) && (here->BSIM4v7qNode != 0))
+                    j++ ;
+
+                /* m * sxpart * here->BSIM4v7gtau */
+                if ((here->BSIM4v7sNodePrime != 0) && (here->BSIM4v7qNode != 0))
+                    j++ ;
+
+                /* m * here->BSIM4v7gtau */
+                if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7qNode != 0))
+                    j++ ;
+
+                /* Different Values for the CKTloadOutput */
+                l += 8 ;
+            }
+
+
+            /* For the RHS */
+            /* m * (ceqjd - ceqbd + ceqgdtot - ceqdrn - ceqqd + Idtoteq) */
+            if (here->BSIM4v7dNodePrime != 0)
+                jRHS++ ;
+
+            /* m * (ceqqg - ceqgcrg + Igtoteq) */
+            if (here->BSIM4v7gNodePrime != 0)
+                jRHS++ ;
+
+            /* Different Values for the CKTloadOutputRHS */
+            lRHS += 2 ;
+
+
+            if (here->BSIM4v7rgateMod == 2)
+            {
+                /* m * ceqgcrg */
+                if (here->BSIM4v7gNodeExt != 0)
+                    jRHS++ ;
+
+                /* Different Values for the CKTloadOutputRHS */
+                lRHS += 1 ;
+            }
+            else if (here->BSIM4v7rgateMod == 3)
+            {
+                /* m * (ceqqgmid + ceqgcrg) */
+                if (here->BSIM4v7gNodeMid != 0)
+                    jRHS++ ;
+
+                /* Different Values for the CKTloadOutputRHS */
+                lRHS += 1 ;
+            }
+
+
+            if (!here->BSIM4v7rbodyMod)
+            {
+                /* m * (ceqbd + ceqbs - ceqjd - ceqjs - ceqqb + Ibtoteq) */
+                if (here->BSIM4v7bNodePrime != 0)
+                    jRHS++ ;
+
+                /* m * (ceqdrn - ceqbs + ceqjs + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq) */
+                if (here->BSIM4v7sNodePrime != 0)
+                    jRHS++ ;
+
+                /* Different Values for the CKTloadOutputRHS */
+                lRHS += 2 ;
+            } else {
+                /* m * (ceqjd + ceqqjd) */
+                if (here->BSIM4v7dbNode != 0)
+                    jRHS++ ;
+
+                /* m * (ceqbd + ceqbs - ceqqb + Ibtoteq) */
+                if (here->BSIM4v7bNodePrime != 0)
+                    jRHS++ ;
+
+                /* m * (ceqjs + ceqqjs) */
+                if (here->BSIM4v7sbNode != 0)
+                    jRHS++ ;
+
+                /* m * (ceqdrn - ceqbs + ceqjs + ceqqd + ceqqg + ceqqb +
+                   ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq) */
+                if (here->BSIM4v7sNodePrime != 0)
+                    jRHS++ ;
+
+                /* Different Values for the CKTloadOutputRHS */
+                lRHS += 4 ;
+            }
+
+
+            if (model->BSIM4v7rdsMod)
+            {
+                /* m * ceqgdtot */
+                if (here->BSIM4v7dNode != 0)
+                    jRHS++ ;
+
+                /* m * ceqgstot */
+                if (here->BSIM4v7sNode != 0)
+                    jRHS++ ;
+
+                /* Different Values for the CKTloadOutputRHS */
+                lRHS += 2 ;
+            }
+
+
+            if (here->BSIM4v7trnqsMod)
+            {
+                /* m * (cqcheq - cqdef) */
+                if (here->BSIM4v7qNode != 0)
+                    jRHS++ ;
+
+                /* Different Values for the CKTloadOutputRHS */
+                lRHS += 1 ;
+            }
+
+            i++ ;
+        }
+
+        model->n_values = l ;
+        ckt->total_n_values += model->n_values ;
+
+        model->n_Ptr = j ;
+        ckt->total_n_Ptr += model->n_Ptr ;
+
+        model->n_valuesRHS = lRHS ;
+        ckt->total_n_valuesRHS += model->n_valuesRHS ;
+
+        model->n_PtrRHS = jRHS ;
+        ckt->total_n_PtrRHS += model->n_PtrRHS ;
+    }
+
+    /*  loop through all the BSIM4v7 models */
+    for (model = (BSIM4v7model *)inModel ; model != NULL ; model = BSIM4v7nextModel(model))
+    {
+        status = cuBSIM4v7setup ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+    }
+#endif
 
 #ifdef USE_OMP
     InstCount = 0;

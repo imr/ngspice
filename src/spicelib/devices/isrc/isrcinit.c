@@ -6,6 +6,9 @@
 #include "isrcext.h"
 #include "isrcinit.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 SPICEdev ISRCinfo = {
     .DEVpublic = {
@@ -33,8 +36,16 @@ SPICEdev ISRCinfo = {
 
     .DEVparam = ISRCparam,
     .DEVmodParam = NULL,
+#ifdef USE_CUSPICE
+    .DEVload = cuISRCload,
+#else
     .DEVload = ISRCload,
+#endif
+#ifdef USE_CUSPICE
+    .DEVsetup = ISRCsetup,
+#else
     .DEVsetup = NULL,
+#endif
     .DEVunsetup = NULL,
     .DEVpzSetup = NULL,
     .DEVtemperature = ISRCtemp,
@@ -70,6 +81,10 @@ SPICEdev ISRCinfo = {
     .DEVbindCSC = NULL,
     .DEVbindCSCComplex = NULL,
     .DEVbindCSCComplexToReal = NULL,
+#endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = cuISRCdestroy,
+    .DEVtopology = ISRCtopology,
 #endif
 };
 

@@ -71,6 +71,10 @@ SPICEdev CCVSinfo = {
     .DEVbindCSCComplex = CCVSbindCSCComplex,
     .DEVbindCSCComplexToReal = CCVSbindCSCComplexToReal,
 #endif
+#ifdef USE_CUSPICE
+    .cuDEVdestroy = NULL,
+    .DEVtopology = NULL,
+#endif
 };
 
 
