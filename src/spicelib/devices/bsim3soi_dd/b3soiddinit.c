@@ -81,5 +81,3 @@ get_b3soidd_info (void)
 {
   return &B3SOIDDinfo;
 }
-
-

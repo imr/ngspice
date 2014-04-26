@@ -77,7 +77,6 @@ SPICEdev NBJT2info = {
 #endif
 };
 
-
 SPICEdev *
 get_nbjt2_info(void)
 {

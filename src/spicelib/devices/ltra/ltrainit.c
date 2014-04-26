@@ -77,7 +77,6 @@ SPICEdev LTRAinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_ltra_info(void)
 {

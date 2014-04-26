@@ -77,7 +77,6 @@ SPICEdev MOS3info = {
 #endif
 };
 
-
 SPICEdev *
 get_mos3_info(void)
 {

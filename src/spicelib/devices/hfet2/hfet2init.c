@@ -77,7 +77,6 @@ SPICEdev HFET2info = {
 #endif
 };
 
-
 SPICEdev *
 get_hfet2_info(void)
 {

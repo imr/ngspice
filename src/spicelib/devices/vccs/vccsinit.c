@@ -77,7 +77,6 @@ SPICEdev VCCSinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_vccs_info(void)
 {

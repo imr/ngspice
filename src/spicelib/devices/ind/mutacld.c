@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-
 int
 MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {

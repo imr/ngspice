@@ -77,7 +77,6 @@ SPICEdev BSIM4v5info = {
 #endif
 };
 
-
 SPICEdev *
 get_bsim4v5_info(void)
 {

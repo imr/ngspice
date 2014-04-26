@@ -26,9 +26,9 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = INDnextModel(model)) {
- 
-   /* Default Value Processing for Model Parameters */
+    for ( ; model != NULL ; model = INDnextModel(model))
+    {
+        /* Default Value Processing for Model Parameters */
         if (!model->INDmIndGiven) {
              model->INDmInd = 0.0;
         }
@@ -197,7 +197,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 #endif
 
-    return(OK);
+    return (OK) ;
 }
 
 int

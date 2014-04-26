@@ -77,7 +77,6 @@ SPICEdev NUMOSinfo = {
 #endif
 };
 
-
 SPICEdev *
 get_numos_info(void)
 {

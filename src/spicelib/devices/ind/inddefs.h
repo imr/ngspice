@@ -310,6 +310,7 @@ struct INDsystem {
 #define IND_QUEST_SENS_CPLX      205
 #define IND_QUEST_SENS_DC        206
 
+
 /* device parameters */
 #define MUT_COEFF       401
 #define MUT_IND1        402
