@@ -189,6 +189,10 @@ com_version(wordlist *wl)
                     "** Compiled with Sparse Direct Linear Solver\n"
 #endif
 
+#ifdef USE_CUSPICE
+                    "** Compiled with CUSPICE (NGSPICE on CUDA Platforms)\n"
+#endif
+
                 "** The U. C. Berkeley CAD Group\n"
                 "** Copyright 1985-1994, Regents of the University of California.\n"
                 "** %s\n",
@@ -227,6 +231,10 @@ com_version(wordlist *wl)
                     "** (NDEV and URC models not supported yet)\n"
 #else
                     "** Compiled with Sparse Direct Linear Solver\n"
+#endif
+
+#ifdef USE_CUSPICE
+                    "** Compiled with CUSPICE (NGSPICE on CUDA Platforms)\n"
 #endif
 
                     "** The U. C. Berkeley CAD Group\n"

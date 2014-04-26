@@ -49,6 +49,14 @@ typedef struct sSMPmatrix {
     #define CKTkluOFF 0                   /* KLU MODE OFF definition */
 #endif
 
+#ifdef USE_CUSPICE
+    double *d_CKTkluAx ;
+    double *d_CKTrhs ;
+
+    void *CKTcsrmvHandle ;
+    void *CKTcsrmvDescr ;
+#endif
+
 } SMPmatrix ;
 
 

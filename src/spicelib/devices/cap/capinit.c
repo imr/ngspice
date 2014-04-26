@@ -6,6 +6,9 @@
 #include "capext.h"
 #include "capinit.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 SPICEdev CAPinfo = {
     {   "Capacitor",
@@ -41,7 +44,11 @@ SPICEdev CAPinfo = {
 
  /* DEVparam      */ CAPparam,
  /* DEVmodParam   */ CAPmParam,
+#ifdef USE_CUSPICE
+ /* DEVload       */ cuCAPload,
+#else
  /* DEVload       */ CAPload,
+#endif
  /* DEVsetup      */ CAPsetup,
  /* DEVunsetup    */ NULL,
  /* DEVpzSetup    */ CAPsetup,
@@ -78,6 +85,11 @@ SPICEdev CAPinfo = {
  /* DEVbindCSC        */  CAPbindCSC,
  /* DEVbindCSCComplex */  CAPbindCSCComplex,
  /* DEVbindCSCComplexToReal */  CAPbindCSCComplexToReal,
+#endif
+
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ cuCAPdestroy,
+ /* DEVtopology */  CAPtopology,
 #endif
 
 };

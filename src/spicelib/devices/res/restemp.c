@@ -10,6 +10,10 @@ Modified: 2000 AlanSfixes
 #include "resdefs.h"
 #include "ngspice/sperror.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 int
 REStemp(GENmodel *inModel, CKTcircuit *ckt)
 /* perform the temperature update to the resistors
@@ -25,9 +29,16 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
     double difference;
     double tc1, tc2, tce;
 
+#ifdef USE_CUSPICE
+    int i, status ;
+#endif
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
+
+#ifdef USE_CUSPICE
+        i = 0 ;
+#endif
 
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
@@ -92,7 +103,31 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here -> RESacConduct = here -> RESconduct;
                 here -> RESacResist = here -> RESresist;
             }
+
+#ifdef USE_CUSPICE
+            model->RESparamCPU.REStc1GivenArray[i] = here->REStc1Given ;
+            model->RESparamCPU.REStc2GivenArray[i] = here->REStc2Given ;
+            model->RESparamCPU.RESmGivenArray[i] = here->RESmGiven ;
+            model->RESparamCPU.REStc1Array[i] = here->REStc1 ;
+            model->RESparamCPU.REStc2Array[i] = here->REStc2 ;
+            model->RESparamCPU.RESmArray[i] = here->RESm ;
+            model->RESparamCPU.RESposNodeArray[i] = here->RESposNode ;
+            model->RESparamCPU.RESnegNodeArray[i] = here->RESnegNode ;
+            model->RESparamCPU.RESconductArray[i] = here->RESconduct ;
+            model->RESparamCPU.REStempArray[i] = here->REStemp ;
+            model->RESparamCPU.RESdtempArray[i] = here->RESdtemp ;
+
+            i++ ;
+#endif
+
         }
+
+#ifdef USE_CUSPICE
+        status = cuREStemp ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#endif
+
     }
-    return(OK);
+    return (OK) ;
 }

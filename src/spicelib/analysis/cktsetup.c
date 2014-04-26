@@ -19,6 +19,11 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/enh.h"
 #endif
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#include "cusparse_v2.h"
+#endif
+
 #ifdef USE_OMP
 #include <omp.h>
 #include "ngspice/cpextern.h"
@@ -45,9 +50,62 @@ BindCompare (const void *a, const void *b)
 }
 #endif
 
+#ifdef USE_CUSPICE
+typedef struct sElement {
+    int row ;
+    int col ;
+    double val ;
+} Element ;
+
+static
+int
+Compare (const void *a, const void *b)
+{
+    Element *A, *B ;
+    A = (Element *)a ;
+    B = (Element *)b ;
+    return (A->row - B->row) ;
+}
+
+static
+int
+Compress (int *Ai, int *Bp, int num_rows, int n_COO)
+{
+    int i, j ;
+
+    for (i = 0 ; i <= Ai [0] ; i++)
+        Bp [i] = 0 ;
+
+    j = Ai [0] + 1 ;
+    for (i = 1 ; i < n_COO ; i++)
+    {
+        if (Ai [i] == Ai [i - 1] + 1)
+        {
+            Bp [j] = i ;
+            j++ ;
+        }
+        else if (Ai [i] > Ai [i - 1] + 1)
+        {
+            for ( ; j <= Ai [i] ; j++)
+                Bp [j] = i ;
+        }
+    }
+
+    for ( ; j <= num_rows ; j++)
+        Bp [j] = i ;
+
+    return 0 ;
+}
+#endif
+
 int
 CKTsetup(CKTcircuit *ckt)
 {
+#ifdef USE_CUSPICE
+    int status ;
+    cusparseStatus_t cusparseStatus ;
+#endif
+
     int i;
     int error;
 #ifdef XSPICE
@@ -143,6 +201,124 @@ CKTsetup(CKTcircuit *ckt)
                 DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
 
         ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+
+#ifdef USE_CUSPICE
+        fprintf (stderr, "Using CUSPICE (NGSPICE on CUDA Platforms)\n") ;
+
+        /* In the DEVsetup the Position Vectors must be assigned and copied to the GPU */
+        int j, k, u, TopologyNNZ ;
+        int uRHS, TopologyNNZRHS ;
+        int ret ;
+
+
+        /* CKTloadOutput Vector allocation - DIRECTLY in the GPU memory */
+
+        /* CKTloadOutput for the RHS Vector allocation - DIRECTLY in the GPU memory */
+
+
+        /* Diagonal Elements Counting */
+        j = 0 ;
+        for (i = 0 ; i < n ; i++)
+            if (ckt->CKTmatrix->CKTdiag_CSC [i] != NULL)
+                j++ ;
+
+        ckt->CKTdiagElements = j ;
+
+        /* Topology Matrix Pre-Allocation in COO format */
+        TopologyNNZ = ckt->total_n_Ptr + ckt->CKTdiagElements ; // + ckt->CKTdiagElements because of CKTdiagGmin
+                                                                // without the zeroes along the diagonal
+        ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
+        ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
+        ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
+
+        /* Topology Matrix for the RHS Pre-Allocation in COO format */
+        TopologyNNZRHS = ckt->total_n_PtrRHS ;
+        ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
+        ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
+        ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
+
+
+        /* Topology Matrix Pre-Allocation in CSR format */
+        ckt->CKTtopologyMatrixCSRp = TMALLOC (int, nz + 1) ;
+
+        /* Topology Matrix for the RHS Pre-Allocation in CSR format */
+        ckt->CKTtopologyMatrixCSRpRHS = TMALLOC (int, (n + 1) + 1) ;
+
+
+        /* Topology Matrix Construction & Topology Matrix for the RHS Construction */
+
+        u = 0 ;
+        uRHS = 0 ;
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVtopology && ckt->CKThead [i])
+                DEVices [i]->DEVtopology (ckt->CKThead [i], ckt, &u, &uRHS) ;
+
+
+        /* CKTdiagGmin Contribute Addition to the Topology Matrix */
+        k = u ;
+        for (j = 0 ; j < n ; j++)
+        {
+            if (ckt->CKTmatrix->CKTdiag_CSC [j] >= ckt->CKTmatrix->CKTkluAx)
+            {
+                ckt->CKTtopologyMatrixCOOi [k] = (int)(ckt->CKTmatrix->CKTdiag_CSC [j] - ckt->CKTmatrix->CKTkluAx) ;
+                ckt->CKTtopologyMatrixCOOj [k] = ckt->total_n_values ;
+                ckt->CKTtopologyMatrixCOOx [k] = 1 ;
+                k++ ;
+            }
+        }
+
+        /* Copy the Topology Matrix to the GPU in COO format */
+
+
+        /* COO format to CSR format Conversion using Quick Sort */
+
+        Element *TopologyStruct ;
+        TopologyStruct = TMALLOC (Element, TopologyNNZ) ;
+
+        for (i = 0 ; i < TopologyNNZ ; i++)
+        {
+            TopologyStruct [i].row = ckt->CKTtopologyMatrixCOOi [i] ;
+            TopologyStruct [i].col = ckt->CKTtopologyMatrixCOOj [i] ;
+            TopologyStruct [i].val = ckt->CKTtopologyMatrixCOOx [i] ;
+        }
+
+        qsort (TopologyStruct, (size_t)TopologyNNZ, sizeof(Element), Compare) ;
+
+        for (i = 0 ; i < TopologyNNZ ; i++)
+        {
+            ckt->CKTtopologyMatrixCOOi [i] = TopologyStruct [i].row ;
+            ckt->CKTtopologyMatrixCOOj [i] = TopologyStruct [i].col ;
+            ckt->CKTtopologyMatrixCOOx [i] = TopologyStruct [i].val ;
+        }
+
+        ret = Compress (ckt->CKTtopologyMatrixCOOi, ckt->CKTtopologyMatrixCSRp, nz, TopologyNNZ) ;
+
+        /* COO format to CSR format Conversion for the RHS using Quick Sort */
+
+        Element *TopologyStructRHS ;
+        TopologyStructRHS = TMALLOC (Element, TopologyNNZRHS) ;
+
+        for (i = 0 ; i < TopologyNNZRHS ; i++)
+        {
+            TopologyStructRHS [i].row = ckt->CKTtopologyMatrixCOOiRHS [i] ;
+            TopologyStructRHS [i].col = ckt->CKTtopologyMatrixCOOjRHS [i] ;
+            TopologyStructRHS [i].val = ckt->CKTtopologyMatrixCOOxRHS [i] ;
+        }
+
+        qsort (TopologyStructRHS, (size_t)TopologyNNZRHS, sizeof(Element), Compare) ;
+
+        for (i = 0 ; i < TopologyNNZRHS ; i++)
+        {
+            ckt->CKTtopologyMatrixCOOiRHS [i] = TopologyStructRHS [i].row ;
+            ckt->CKTtopologyMatrixCOOjRHS [i] = TopologyStructRHS [i].col ;
+            ckt->CKTtopologyMatrixCOOxRHS [i] = TopologyStructRHS [i].val ;
+        }
+
+        ret = Compress (ckt->CKTtopologyMatrixCOOiRHS, ckt->CKTtopologyMatrixCSRpRHS, n + 1, TopologyNNZRHS) ;
+
+        /* Multiply the Topology Matrix by the M Vector to build the Final CSC Matrix - after the CKTload Call */
+#endif
+
     } else {
         fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
     }
@@ -151,6 +327,34 @@ CKTsetup(CKTcircuit *ckt)
     for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
         CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
     }
+
+#ifdef USE_CUSPICE
+    ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
+    status = cuCKTsetup (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+
+    /* CUSPARSE Handle Creation */
+    cusparseStatus = cusparseCreate ((cusparseHandle_t *)(&(ckt->CKTmatrix->CKTcsrmvHandle))) ;
+    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+    {
+        fprintf (stderr, "CUSPARSE Handle Setup Error\n") ;
+        return (E_NOMEM) ;
+    }
+
+    /* CUSPARSE Matrix Descriptor Creation */
+    cusparseStatus = cusparseCreateMatDescr ((cusparseMatDescr_t *)(&(ckt->CKTmatrix->CKTcsrmvDescr))) ;
+    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+    {
+        fprintf (stderr, "CUSPARSE Matrix Descriptor Setup Error\n") ;
+        return (E_NOMEM) ;
+    }
+
+    /* CUSPARSE Matrix Properties Definition */
+    cusparseSetMatType ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_MATRIX_TYPE_GENERAL) ;
+    cusparseSetMatIndexBase ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_INDEX_BASE_ZERO) ;
+#endif
+
 #ifdef WANT_SENSE2
     if(ckt->CKTsenInfo){
         /* to allocate memory to sensitivity structures if

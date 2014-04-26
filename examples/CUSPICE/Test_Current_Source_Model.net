@@ -1,0 +1,10 @@
+* Test Current Source Model
+
+I1 0 1 pulse(0 1 0p 200p 200p 1n 2n)
+R1 0 1 1k
+R2 1 2 0.5k
+R3 2 0 0.2k
+
+.tran 1ps 1ns
+.print tran all
+.end

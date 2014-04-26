@@ -13,7 +13,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 /* ARGSUSED */
 int
 MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
@@ -38,4 +37,3 @@ MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     return(OK);
 
 }
-#endif /*MUTUAL*/

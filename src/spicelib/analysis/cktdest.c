@@ -41,6 +41,12 @@ CKTdestroy(CKTcircuit *ckt)
         if ( DEVices[i] && DEVices[i]->DEVdestroy && ckt->CKThead[i] ) {
             DEVices[i]->DEVdestroy (&(ckt->CKThead[i]));
         }
+
+#ifdef USE_CUSPICE
+        if (DEVices [i] && DEVices [i]->cuDEVdestroy && ckt->CKThead [i])
+            DEVices [i]->cuDEVdestroy (ckt->CKThead [i]) ;
+#endif
+
     }
     for(i=0;i<=ckt->CKTmaxOrder+1;i++){
         FREE(ckt->CKTstates[i]);

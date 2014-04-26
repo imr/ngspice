@@ -11,7 +11,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
 int
 MUTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
@@ -33,4 +32,3 @@ MUTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
     }
     return(E_NODEV);
 }
-#endif /*MUTUAL*/

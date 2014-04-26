@@ -50,6 +50,13 @@ NIinit(CKTcircuit *ckt)
     klu_defaults (ckt->CKTmatrix->CKTkluCommon) ;
 #endif
 
+#ifdef USE_CUSPICE
+    ckt->CKTmatrix->d_CKTkluAx = NULL ;
+    ckt->CKTmatrix->d_CKTrhs = NULL ;
+    ckt->CKTmatrix->CKTcsrmvHandle = NULL ;
+    ckt->CKTmatrix->CKTcsrmvDescr = NULL ;
+#endif
+
     ckt->CKTniState = NIUNINITIALIZED;
     return SMPnewMatrix(ckt->CKTmatrix, 0);
 }

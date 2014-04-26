@@ -11,8 +11,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-
-#ifdef MUTUAL
 int
 MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
@@ -32,4 +30,3 @@ MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     return(OK);
 
 }
-#endif /* MUTUAL */

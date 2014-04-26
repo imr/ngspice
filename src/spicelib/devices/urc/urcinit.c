@@ -81,8 +81,12 @@ SPICEdev URCinfo = {
  /* DEVbindCSCComplexToReal */  NULL,
 #endif
 
-};
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
 
+};
 
 SPICEdev *
 get_urc_info(void)

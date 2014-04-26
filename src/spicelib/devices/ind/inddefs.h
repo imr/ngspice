@@ -6,10 +6,6 @@ Author: 1985 Thomas L. Quarles
 #ifndef IND
 #define IND
 
-
-/* turn on mutual inductor code */
-#define MUTUAL
-
 #include "ngspice/ifsim.h"
 #include "ngspice/complex.h"
 #include "ngspice/gendefs.h"
@@ -80,6 +76,12 @@ struct sINDinstance {
     BindElement *INDibrPosBinding;
     BindElement *INDibrIbrBinding;
 #endif
+
+/* PARTICULAR SITUATION */
+#ifdef USE_CUSPICE
+    int instanceID;
+#endif
+
 };
 
 #define INDflux INDstate     /* flux in the inductor */
@@ -88,6 +90,31 @@ struct sINDinstance {
                               *  +3 for the derivatives - pointer to the
                               *  beginning of the array */
 
+#ifdef USE_CUSPICE
+typedef struct sINDparamCPUstruct {
+    double *INDcpuPointersD [4];
+    #define INDinitCondArray INDcpuPointersD[0]
+    #define INDinductArray INDcpuPointersD[1]
+    #define INDreqValueArray INDcpuPointersD[2]
+    #define INDveqValueArray INDcpuPointersD[3]
+
+    int *INDcpuPointersI [2];
+    #define INDbrEqArray INDcpuPointersI[0]
+    #define INDstateArray INDcpuPointersI[1]
+} INDparamCPUstruct;
+
+typedef struct sINDparamGPUstruct {
+    double *INDcudaPointersD [4];
+    #define d_INDinitCondArray INDcudaPointersD[0]
+    #define d_INDinductArray INDcudaPointersD[1]
+    #define d_INDreqValueArray INDcudaPointersD[2]
+    #define d_INDveqValueArray INDcudaPointersD[3]
+
+    int *INDcudaPointersI [2];
+    #define d_INDbrEqArray INDcudaPointersI[0]
+    #define d_INDstateArray INDcudaPointersI[1]
+} INDparamGPUstruct;
+#endif
 
 /* per model data */
 
@@ -120,10 +147,28 @@ struct sINDmodel {             /* model structure for an inductor */
     unsigned INDmIndGiven  : 1; /* flag to indicate model inductance given */
 
     double INDspecInd;     /* Specific (one turn) inductance */
+
+#ifdef USE_CUSPICE
+    INDparamCPUstruct INDparamCPU;
+    INDparamGPUstruct INDparamGPU;
+
+    int offset;
+    int n_values;
+    int n_Ptr;
+    int *PositionVector;
+    int *d_PositionVector;
+
+    int offsetRHS;
+    int n_valuesRHS;
+    int n_PtrRHS;
+    int *PositionVectorRHS;
+    int *d_PositionVectorRHS;
+
+    int n_instances;
+#endif
+
 };
 
-
-#ifdef MUTUAL
 
 /* structures used to describe mutual inductors */
 
@@ -156,6 +201,33 @@ struct sMUTinstance {
 #endif
 };
 
+#ifdef USE_CUSPICE
+typedef struct sMUTparamCPUstruct {
+    double *MUTcpuPointersD [1];
+    #define MUTfactorArray MUTcpuPointersD[0]
+
+    int *MUTcpuPointersI [6];
+    #define MUTflux1Array        MUTcpuPointersI[0]
+    #define MUTflux2Array        MUTcpuPointersI[1]
+    #define MUTbrEq1Array        MUTcpuPointersI[2]
+    #define MUTbrEq2Array        MUTcpuPointersI[3]
+    #define MUTinstanceIND1Array MUTcpuPointersI[4]
+    #define MUTinstanceIND2Array MUTcpuPointersI[5]
+} MUTparamCPUstruct;
+
+typedef struct sMUTparamGPUstruct {
+    double *MUTcudaPointersD [1];
+    #define d_MUTfactorArray MUTcudaPointersD[0]
+
+    int *MUTcudaPointersI [6];
+    #define d_MUTflux1Array        MUTcudaPointersI[0]
+    #define d_MUTflux2Array        MUTcudaPointersI[1]
+    #define d_MUTbrEq1Array        MUTcudaPointersI[2]
+    #define d_MUTbrEq2Array        MUTcudaPointersI[3]
+    #define d_MUTinstanceIND1Array MUTcudaPointersI[4]
+    #define d_MUTinstanceIND2Array MUTcudaPointersI[5]
+} MUTparamGPUstruct;
+#endif
 
 /* per model data */
 
@@ -168,6 +240,24 @@ struct sMUTmodel {             /* model structure for a mutual inductor */
     IFuid MUTmodName;          /* pointer to character string naming this model */
 
 /* --- end of generic struct GENmodel --- */
+#ifdef USE_CUSPICE
+    MUTparamCPUstruct MUTparamCPU;
+    MUTparamGPUstruct MUTparamGPU;
+
+    int offset;
+    int n_values;
+    int n_Ptr;
+    int *PositionVector;
+    int *d_PositionVector;
+
+    int *PositionVectorRHS;
+    int *d_PositionVectorRHS;
+
+    int n_instances;
+
+    /* PARTICULAR SITUATION */
+    int n_instancesRHS;
+#endif
 };
 
 
@@ -178,7 +268,6 @@ struct INDsystem {
     struct INDsystem *next_system;
 };
 
-#endif /*MUTUAL*/
 
 /* device parameters */
 #define IND_IND      1
@@ -215,7 +304,7 @@ struct INDsystem {
 #define IND_QUEST_SENS_CPLX      205
 #define IND_QUEST_SENS_DC        206
 
-#ifdef MUTUAL
+
 /* device parameters */
 #define MUT_COEFF       401
 #define MUT_IND1        402
@@ -232,7 +321,6 @@ struct INDsystem {
 #define MUT_QUEST_SENS_CPLX      605
 #define MUT_QUEST_SENS_DC        606
 
-#endif /*MUTUAL*/
 
 #include "indext.h"
 

@@ -2,7 +2,9 @@
 #define ngspice_BOOL_H
 
 //typedef unsigned char bool;
+#ifndef COMPILED_BY_NVCC
 typedef int bool;
+#endif
 
 typedef int BOOL ;
 

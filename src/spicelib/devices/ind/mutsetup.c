@@ -15,6 +15,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 #define TSTALLOC(ptr, first, second)                                    \
     do {                                                                \
@@ -23,8 +26,6 @@ Author: 1985 Thomas L. Quarles
         }                                                               \
     } while(0)
 
-
-#ifdef MUTUAL
 
 int
 MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -64,7 +65,85 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             TSTALLOC(MUTbr2br1Ptr, MUTind2->INDbrEq, MUTind1->INDbrEq);
         }
 
+#ifdef USE_CUSPICE
+    int i, j, status;
+    INDmodel *indmodel;
+    INDinstance *indhere;
+
+    /* Counting the instances */
+    for (model = (MUTmodel *)inModel; model; model = model->MUTnextModel) {
+        i = 0;
+
+        for (here = model->MUTinstances; here; here = here->MUTnextInstance)
+            i++;
+
+        /* How much instances we have */
+        model->n_instances = i;
+    }
+
+    /*  loop through all the mutual inductor models */
+    for (model = (MUTmodel *)inModel; model; model = model->MUTnextModel) {
+        model->offset = ckt->total_n_values;
+
+        j = 0;
+
+        /* loop through all the instances of the model */
+        for (here = model->MUTinstances; here; here = here->MUTnextInstance) {
+            /* For the Matrix */
+            if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0))
+                j++;
+
+            if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0))
+                j++;
+        }
+
+        model->n_values = model->n_instances;
+        ckt->total_n_values += model->n_values;
+
+        model->n_Ptr = j;
+        ckt->total_n_Ptr += model->n_Ptr;
+
+
+        /* Position Vector assignment */
+        model->PositionVector = TMALLOC(int, model->n_instances);
+
+        for (j = 0; j < model->n_instances; j++)
+            model->PositionVector [j] = model->offset + j;
+
+
+        /* PARTICULAR SITUATION */
+        /* Pick up the IND model from one of the two IND instances */
+        indmodel = model->MUTinstances->MUTind1->INDmodPtr;
+        model->n_instancesRHS = indmodel->n_instances;
+
+        /* Position Vector assignment for the RHS */
+        model->PositionVectorRHS = TMALLOC(int, model->n_instancesRHS);
+
+        for (j = 0 ; j < model->n_instancesRHS ; j++)
+            model->PositionVectorRHS [j] = indmodel->PositionVectorRHS [j];
+
+        /* InstanceID assignment for every IND instance */
+        j = 0;
+        for (indhere = indmodel->INDinstances; indhere; indhere = indhere->INDnextInstance)
+            indhere->instanceID = j++;
+
+        /* InstanceID storing for every MUT instance */
+        model->MUTparamCPU.MUTinstanceIND1Array = TMALLOC(int, model->n_instances);
+        model->MUTparamCPU.MUTinstanceIND2Array = TMALLOC(int, model->n_instances);
+        j = 0;
+        for (here = model->MUTinstances; here; here = here->MUTnextInstance) {
+            model->MUTparamCPU.MUTinstanceIND1Array [j] = here->MUTind1->instanceID;
+            model->MUTparamCPU.MUTinstanceIND2Array [j++] = here->MUTind2->instanceID;
+        }
+    }
+
+    /*  loop through all the mutual inductor models */
+    for (model = (MUTmodel *)inModel; model; model = model->MUTnextModel) {
+        status = cuMUTsetup ((GENmodel *)model);
+        if (status != 0)
+            return (E_NOMEM);
+    }
+#endif
+
     return(OK);
 }
-
-#endif
