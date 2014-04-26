@@ -88,7 +88,6 @@ SPICEdev MOS2info = {
 
 };
 
-
 SPICEdev *
 get_mos2_info(void)
 {

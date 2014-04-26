@@ -5,7 +5,6 @@ Author: 2003 Paolo Nenzi
 /*
  */
 
-
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "inddefs.h"
@@ -50,7 +49,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
 	 * M = k * \/l1 * l2 
 	 */
             here->MUTfactor = here->MUTcoupling * sqrt(ind1 * ind2); 
-		     
+
 #ifdef USE_CUSPICE
             model->MUTparamCPU.MUTfactorArray[i] = here->MUTfactor ;
             model->MUTparamCPU.MUTflux1Array[i] = here->MUTind1->INDflux ;
@@ -70,5 +69,5 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
 #endif
 
     }
-    return(OK);
+    return (OK) ;
 }

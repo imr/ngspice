@@ -89,7 +89,6 @@ SPICEdev DIOinfo = {
 
 };
 
-
 SPICEdev *
 get_dio_info(void)
 {

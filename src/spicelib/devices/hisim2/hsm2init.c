@@ -86,7 +86,6 @@ SPICEdev HSM2info = {
 
 };
 
-
 SPICEdev *
 get_hsm2_info(void)
 {

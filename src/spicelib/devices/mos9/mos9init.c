@@ -88,7 +88,6 @@ SPICEdev MOS9info = {
 
 };
 
-
 SPICEdev *
 get_mos9_info(void)
 {

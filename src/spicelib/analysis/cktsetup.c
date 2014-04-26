@@ -53,7 +53,8 @@ typedef struct sElement {
     double val ;
 } Element ;
 
-static int
+static
+int
 Compare (const void *a, const void *b)
 {
     Element *A, *B ;
@@ -62,7 +63,8 @@ Compare (const void *a, const void *b)
     return (A->row - B->row) ;
 }
 
-static int
+static
+int
 Compress (int *Ai, int *Bp, int num_rows, int n_COO)
 {
     int i, j ;

@@ -88,7 +88,6 @@ SPICEdev BSIM4v6info = {
 
 };
 
-
 SPICEdev *
 get_bsim4v6_info(void)
 {

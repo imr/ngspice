@@ -88,7 +88,6 @@ SPICEdev LTRAinfo = {
 
 };
 
-
 SPICEdev *
 get_ltra_info(void)
 {

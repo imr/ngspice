@@ -86,11 +86,6 @@ SPICEdev B3SOIFDinfo = {
 
 };
 
-
-
-
-
-
 SPICEdev *
 get_b3soifd_info (void)
 {

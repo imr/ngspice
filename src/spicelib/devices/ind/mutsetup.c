@@ -30,8 +30,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(states);
 
     /*  loop through all the mutual inductor models */
-    for( ; model != NULL; model = model->MUTnextModel ) {
-
+    for ( ; model != NULL ; model = model->MUTnextModel)
+    {
         /* loop through all the instances of the model */
         for (here = model->MUTinstances; here != NULL ;
                 here=here->MUTnextInstance) {
@@ -164,5 +164,5 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 #endif
 
-    return(OK);
+    return (OK) ;
 }

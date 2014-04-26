@@ -89,7 +89,6 @@ SPICEdev NDEVinfo = {
 
 };
 
-
 SPICEdev *
 get_ndev_info(void)
 {

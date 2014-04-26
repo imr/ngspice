@@ -89,7 +89,6 @@ SPICEdev NUMOSinfo = {
 
 };
 
-
 SPICEdev *
 get_numos_info(void)
 {

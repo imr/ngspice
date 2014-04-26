@@ -88,7 +88,6 @@ SPICEdev JFETinfo = {
 
 };
 
-
 SPICEdev *
 get_jfet_info(void)
 {

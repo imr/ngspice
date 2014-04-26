@@ -89,7 +89,6 @@ SPICEdev NUMD2info = {
 
 };
 
-
 SPICEdev *
 get_numd2_info(void)
 {

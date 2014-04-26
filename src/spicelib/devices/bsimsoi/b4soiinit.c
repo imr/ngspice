@@ -91,5 +91,3 @@ get_b4soi_info (void)
 {
   return &B4SOIinfo;
 }
-
-

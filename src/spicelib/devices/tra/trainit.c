@@ -88,7 +88,6 @@ SPICEdev TRAinfo = {
 
 };
 
-
 SPICEdev *
 get_tra_info(void)
 {

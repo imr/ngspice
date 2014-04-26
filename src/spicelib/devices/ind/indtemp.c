@@ -5,13 +5,11 @@ Author: 2003 Paolo Nenzi
 /*
  */
 
-
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "inddefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
-
 
 #ifdef USE_CUSPICE
 #include "ngspice/CUSPICE/CUSPICE.h"
@@ -101,6 +99,6 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
 #endif
 
     }
-    return(OK);
+    return (OK) ;
 }
 

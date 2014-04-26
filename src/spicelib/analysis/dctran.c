@@ -354,8 +354,7 @@ DCtran(CKTcircuit *ckt,
         if (status != 0)
             return (E_NOMEM) ;
 #else
-        bcopy(ckt->CKTstate0, ckt->CKTstate1,
-              (size_t) ckt->CKTnumStates * sizeof(double));
+        bcopy (ckt->CKTstate0, ckt->CKTstate1, (size_t) ckt->CKTnumStates * sizeof(double)) ;
 #endif
 
 #ifdef WANT_SENSE2
@@ -807,9 +806,10 @@ resume:
             if (status != 0)
                 return (E_NOMEM) ;
 #else
-            for(i=0;i<ckt->CKTnumStates;i++) {
-                ckt->CKTstate2[i] = ckt->CKTstate1[i];
-                ckt->CKTstate3[i] = ckt->CKTstate1[i];
+            for (i = 0 ; i < ckt->CKTnumStates ; i++)
+            {
+                ckt->CKTstate2 [i] = ckt->CKTstate1 [i] ;
+                ckt->CKTstate3 [i] = ckt->CKTstate1 [i] ;
             }
 #endif
 

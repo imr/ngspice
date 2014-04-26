@@ -160,7 +160,6 @@ typedef struct sINDmodel {       /* model structure for an inductor */
 } INDmodel;
 
 
-
 /* structures used to describe mutual inductors */
 
 
@@ -287,6 +286,7 @@ IFuid MUTmodName;       /* pointer to character string naming this model */
 #define IND_QUEST_SENS_PH        204
 #define IND_QUEST_SENS_CPLX      205
 #define IND_QUEST_SENS_DC        206
+
 
 /* device parameters */
 #define MUT_COEFF 401

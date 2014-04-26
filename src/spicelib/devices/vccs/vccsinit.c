@@ -88,7 +88,6 @@ SPICEdev VCCSinfo = {
 
 };
 
-
 SPICEdev *
 get_vccs_info(void)
 {

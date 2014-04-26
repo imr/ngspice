@@ -88,7 +88,6 @@ SPICEdev URCinfo = {
 
 };
 
-
 SPICEdev *
 get_urc_info(void)
 {

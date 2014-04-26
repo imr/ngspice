@@ -88,7 +88,6 @@ SPICEdev MESinfo = {
 
 };
 
-
 SPICEdev *
 get_mes_info(void)
 {

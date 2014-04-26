@@ -162,7 +162,7 @@ SPICEdev MUTinfo = {
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
-#endif  
+#endif
     &MUTiSize,
     &MUTmSize,
 

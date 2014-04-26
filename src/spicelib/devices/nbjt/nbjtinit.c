@@ -89,7 +89,6 @@ SPICEdev NBJTinfo = {
 
 };
 
-
 SPICEdev *
 get_nbjt_info(void)
 {

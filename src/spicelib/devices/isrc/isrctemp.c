@@ -89,5 +89,5 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     }
 
-    return(OK);
+    return (OK) ;
 }

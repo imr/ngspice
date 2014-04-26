@@ -93,7 +93,6 @@ SPICEdev VBICinfo = {
 
 };
 
-
 SPICEdev *
 get_vbic_info(void)
 {

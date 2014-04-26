@@ -86,7 +86,6 @@ SPICEdev HSMHVinfo = {
 
 };
 
-
 SPICEdev *
 get_hsmhv_info(void)
 {

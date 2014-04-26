@@ -139,5 +139,5 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 #endif
 
     }
-    return(OK);
+    return (OK) ;
 }
