@@ -16,7 +16,6 @@ Author: 2003 Paolo Nenzi
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 /*ARGSUSED*/
 int
 INDtemp(GENmodel *inModel, CKTcircuit *ckt)

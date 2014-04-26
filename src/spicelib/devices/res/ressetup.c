@@ -13,7 +13,6 @@ Modified: Apr 2000 Paolo Nenzi
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 int
 RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         /* load the resistor structure with those pointers needed later

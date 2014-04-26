@@ -16,7 +16,6 @@ Modified: September 2003 Paolo Nenzi
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 /*ARGSUSED*/
 int
 CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)

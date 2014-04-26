@@ -20,7 +20,6 @@ Modified: September 2003 Paolo Nenzi
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 /*ARGSUSED*/
 int
 CAPtemp(GENmodel *inModel, CKTcircuit *ckt)

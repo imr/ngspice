@@ -2666,7 +2666,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
                 /* Different Values for the CKTloadOutput */
                 l += 5 ;
             }
-            else if (here->BSIM4v7rgateMod == 2)
+            else if (here->BSIM4v7rgateMod == 2)        
             {
                 /* m * gcrg */
                 if ((here->BSIM4v7gNodeExt != 0) && (here->BSIM4v7gNodeExt != 0))

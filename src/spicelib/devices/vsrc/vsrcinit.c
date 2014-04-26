@@ -10,7 +10,6 @@
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 SPICEdev VSRCinfo = {
     .DEVpublic = {
         .name = "Vsource",

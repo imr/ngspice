@@ -10,7 +10,6 @@
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 SPICEdev INDinfo = {
     .DEVpublic = {
         .name = "Inductor",

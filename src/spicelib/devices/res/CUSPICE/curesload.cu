@@ -1,25 +1,25 @@
 /*
  * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
+ * Redistribution and use in source and binary forms, with or without modification, 
  * are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,
+ * 1. Redistributions of source code must retain the above copyright notice, 
  *    this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation and/or
+ * 2. Redistributions in binary form must reproduce the above copyright notice, 
+ *    this list of conditions and the following disclaimer in the documentation and/or 
  *    other materials provided with the distribution.
  *
- * 3. Neither the name of the copyright holder nor the names of its contributors may be used to
+ * 3. Neither the name of the copyright holder nor the names of its contributors may be used to 
  *    endorse or promote products derived from this software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -92,23 +92,23 @@ RESparamGPUstruct RESentry, double *CKTrhsOld, int n_instances, int *d_PositionV
         {
             if (!(RESentry.d_REStc1GivenArray [instance_ID]))
                 RESentry.d_REStc1Array [instance_ID] = 0.0 ;
-
+            
             if (!(RESentry.d_REStc2GivenArray [instance_ID]))
                 RESentry.d_REStc2Array [instance_ID] = 0.0 ;
-
+            
             if (!(RESentry.d_RESmGivenArray [instance_ID]))
                 RESentry.d_RESmArray [instance_ID] = 1.0 ;
 
             RESentry.d_REScurrentArray [instance_ID] = (CKTrhsOld [RESentry.d_RESposNodeArray [instance_ID]] -
                                                     CKTrhsOld [RESentry.d_RESnegNodeArray [instance_ID]]) *
                                                     RESentry.d_RESconductArray [instance_ID] ;
-
+            
             difference = (RESentry.d_REStempArray [instance_ID] + RESentry.d_RESdtempArray [instance_ID]) - 300.15 ;
             factor = 1.0 + (RESentry.d_REStc1Array [instance_ID]) * difference +
                      (RESentry.d_REStc2Array [instance_ID]) * difference * difference ;
-
+            
             m = (RESentry.d_RESmArray [instance_ID]) / factor ;
-
+            
             d_CKTloadOutput [d_PositionVector [instance_ID]] = m * RESentry.d_RESconductArray [instance_ID] ;
         }
     }

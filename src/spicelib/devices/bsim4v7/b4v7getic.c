@@ -20,7 +20,6 @@
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 int
 BSIM4v7getic(
 GENmodel *inModel,

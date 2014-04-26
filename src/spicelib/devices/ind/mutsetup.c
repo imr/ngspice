@@ -19,7 +19,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 #define TSTALLOC(ptr, first, second)                                    \
     do {                                                                \
         if ((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL) { \
