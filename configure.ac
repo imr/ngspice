@@ -32,6 +32,10 @@ AC_CONFIG_HEADER([src/include/ngspice/config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+ext_CFLAGS="${CFLAGS+yes}"
+
+AC_PROG_CC
+
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
@@ -197,29 +201,32 @@ AM_MAINTAINER_MODE
 # Compiler checks
 # ---------------
 
-ext_CFLAGS="$CFLAGS"
-
-AC_PROG_CC
-
 # Work on compiler options according to system:
 # Set default CFLAGS - only use -Wall if we have gcc
 
 # the above AC_PROG_CC may set CFLAGS to "-O2 -g"
-if test "x$enable_debug" = xno; then
-    if test "x$GCC" = xyes; then
+if test "x$ext_CFLAGS" != xyes; then
+
+    if test "x$enable_debug" = xno; then
         AC_MSG_WARN([Removing debugging option!])
-        CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s $ext_CFLAGS"
+        if test "x$GCC" = xyes; then
+            CFLAGS="-O2 -s"
+        else
+            CFLAGS="-O2"
+        fi
     else
-        AC_MSG_WARN([Removing debugging option!])
-        CFLAGS="-O2 $ext_CFLAGS"
+        AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
+        if test "x$GCC" = xyes; then
+            CFLAGS="-g -O1"
+        else
+            CFLAGS="-g"
+        fi
     fi
-else
-    AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
+
     if test "x$GCC" = xyes; then
-        CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion $ext_CFLAGS"
-    else
-        CFLAGS="-g $ext_CFLAGS"
+        CFLAGS="$CFLAGS -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion"
     fi
+
 fi
 
 # the profiling option
