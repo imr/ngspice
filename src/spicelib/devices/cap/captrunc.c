@@ -14,17 +14,18 @@ Modified: September 2003 Paolo Nenzi
 
 
 int
-CAPtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
+CAPtrunc (GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-    CAPmodel *model = (CAPmodel*)inModel;
-    CAPinstance *here;
+    CAPmodel *model = (CAPmodel*)inModel ;
+    CAPinstance *here ;
 
-    for( ; model!= NULL; model = CAPnextModel(model)) {
-        for(here = CAPinstances(model); here != NULL ;
-                here = CAPnextInstance(here)) {
-
-            CKTterr(here->CAPqcap,ckt,timeStep);
+    for ( ; model != NULL ; model = CAPnextModel(model))
+    {
+        for (here = CAPinstances(model); here != NULL ; here = CAPnextInstance(here))
+        {
+            CKTterr (here->CAPqcap, ckt, timeStep) ;
         }
     }
-    return(OK);
+
+    return (OK) ;
 }

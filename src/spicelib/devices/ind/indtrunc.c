@@ -13,16 +13,17 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-INDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
+INDtrunc (GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-    INDmodel *model = (INDmodel*)inModel;
-    INDinstance *here;
-    for( ; model!= NULL; model = INDnextModel(model)) {
-        for(here = INDinstances(model); here != NULL ;
-                here = INDnextInstance(here)) {
-
-            CKTterr(here->INDflux,ckt,timeStep);
+    INDmodel *model = (INDmodel*)inModel ;
+    INDinstance *here ;
+    for ( ; model!= NULL ; model = INDnextModel(model))
+    {
+        for (here = INDinstances(model); here != NULL ; here = INDnextInstance(here))
+        {
+            CKTterr (here->INDflux, ckt, timeStep) ;
         }
     }
-    return(OK);
+
+    return (OK) ;
 }

@@ -18,43 +18,44 @@
 
 
 int
-BSIM4v7trunc(
-GENmodel *inModel,
-CKTcircuit *ckt,
-double *timeStep)
+BSIM4v7trunc (GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-BSIM4v7model *model = (BSIM4v7model*)inModel;
-BSIM4v7instance *here;
+    BSIM4v7model *model = (BSIM4v7model*)inModel;
+    BSIM4v7instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;
-#endif /* STEPDEBUG */
+#endif
 
-    for (; model != NULL; model = BSIM4v7nextModel(model))
-    {    for (here = BSIM4v7instances(model); here != NULL;
-	      here = BSIM4v7nextInstance(here))
-	      {
+    for (; model; model = BSIM4v7nextModel(model))
+        for (here = BSIM4v7instances(model); here; here = BSIM4v7nextInstance(here)) {
+
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
-#endif /* STEPDEBUG */
-            CKTterr(here->BSIM4v7qb,ckt,timeStep);
-            CKTterr(here->BSIM4v7qg,ckt,timeStep);
-            CKTterr(here->BSIM4v7qd,ckt,timeStep);
+#endif
+
+            CKTterr(here->BSIM4v7qb, ckt, timeStep);
+            CKTterr(here->BSIM4v7qg, ckt, timeStep);
+            CKTterr(here->BSIM4v7qd, ckt, timeStep);
+
             if (here->BSIM4v7trnqsMod)
-                CKTterr(here->BSIM4v7qcdump,ckt,timeStep);
+                CKTterr(here->BSIM4v7qcdump, ckt, timeStep);
+
             if (here->BSIM4v7rbodyMod)
-            {   CKTterr(here->BSIM4v7qbs,ckt,timeStep);
-                CKTterr(here->BSIM4v7qbd,ckt,timeStep);
-	          }
-	          if (here->BSIM4v7rgateMod == 3)
-		        CKTterr(here->BSIM4v7qgmid,ckt,timeStep);
-#ifdef STEPDEBUG
-            if(debugtemp != *timeStep)
-	          {  printf("device %s reduces step from %g to %g\n",
-                       here->BSIM4v7name,debugtemp,*timeStep);
+            {
+                CKTterr(here->BSIM4v7qbs, ckt, timeStep);
+                CKTterr(here->BSIM4v7qbd, ckt, timeStep);
             }
-#endif /* STEPDEBUG */
+
+            if (here->BSIM4v7rgateMod == 3)
+                CKTterr(here->BSIM4v7qgmid, ckt, timeStep);
+
+#ifdef STEPDEBUG
+            if (debugtemp != *timeStep)
+                printf("device %s reduces step from %g to %g\n", here->BSIM4v7name, debugtemp, *timeStep);
+#endif
+
         }
-    }
-    return(OK);
+
+    return OK;
 }

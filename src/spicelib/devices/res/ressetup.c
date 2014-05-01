@@ -142,5 +142,5 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 #endif
 
-    return(OK);
+    return (OK) ;
 }
