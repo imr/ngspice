@@ -17,43 +17,51 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTtrunc(CKTcircuit *ckt, double *timeStep)
+CKTtrunc (CKTcircuit *ckt, double *timeStep)
 {
 #ifndef NEWTRUNC
-    int i;
-    double timetemp;
-#ifdef STEPDEBUG
-    double debugtemp;
-#endif /* STEPDEBUG */
-    double startTime;
-    int error = OK;
+    int i ;
+    double timetemp ;
 
-    startTime = SPfrontEnd->IFseconds();
+#ifdef STEPDEBUG
+    double debugtemp ;
+#endif /* STEPDEBUG */
 
-    timetemp = HUGE;
-    for (i=0;i<DEVmaxnum;i++) {
-        if (DEVices[i] && DEVices[i]->DEVtrunc && ckt->CKThead[i]) {
+    double startTime ;
+    int error = OK ;
+
+    startTime = SPfrontEnd->IFseconds () ;
+
+    timetemp = HUGE ;
+    for (i = 0 ; i < DEVmaxnum ; i++)
+    {
+        if (DEVices[i] && DEVices[i]->DEVtrunc && ckt->CKThead[i])
+        {
+
 #ifdef STEPDEBUG
-            debugtemp = timetemp;
+            debugtemp = timetemp ;
 #endif /* STEPDEBUG */
-	    error = DEVices[i]->DEVtrunc (ckt->CKThead[i], ckt, &timetemp);
-	    if(error) {
-                ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds()
-                    - startTime;
-                return(error);
+
+	    error = DEVices[i]->DEVtrunc (ckt->CKThead[i], ckt, &timetemp) ;
+	    if (error)
+            {
+                ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds () - startTime ;
+                return (error) ;
             }
+
 #ifdef STEPDEBUG
-            if(debugtemp != timetemp) {
-                printf("timestep cut by device type %s from %g to %g\n",
-                        DEVices[i]->DEVpublic.name, debugtemp, timetemp);
+            if (debugtemp != timetemp)
+            {
+                printf ("timestep cut by device type %s from %g to %g\n", DEVices[i]->DEVpublic.name, debugtemp, timetemp) ;
             }
 #endif /* STEPDEBUG */
+
         }
     }
-    *timeStep = MIN(2 * *timeStep,timetemp);
+    *timeStep = MIN (2 * *timeStep, timetemp) ;
 
-    ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds() - startTime;
-    return(OK);
+    ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds () - startTime ;
+    return (OK) ;
 #else /* NEWTRUNC */
     int i;
     CKTnode *node;
