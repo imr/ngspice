@@ -3,27 +3,9 @@
 noinst_LTLIBRARIES = libKLU_real.la libKLU_complex.la libKLU.la
 
 libKLU_real_la_SOURCES = 	\
-	amd_1.c			\
-	amd_2.c			\
-	amd_aat.c		\
-	amd_control.c		\
-	amd_defaults.c		\
-	amd_dump.c		\
-	amd_global.c		\
-	amd_info.c		\
-	amd_order.c		\
-	amd_postorder.c		\
-	amd_post_tree.c		\
-	amd_preprocess.c	\
-	amd_valid.c		\
-	btf_maxtrans.c		\
-	btf_order.c		\
-	btf_strongcomp.c	\
-	colamd.c		\
-	colamd_global.c		\
-	klu.c			\
 	klu_analyze.c		\
 	klu_analyze_given.c	\
+	klu.c			\
 	klu_defaults.c		\
 	klu_diagnostics.c	\
 	klu_dump.c		\
@@ -44,27 +26,9 @@ libKLU_real_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 
 
 libKLU_complex_la_SOURCES = 	\
-	amd_1.c			\
-	amd_2.c			\
-	amd_aat.c		\
-	amd_control.c		\
-	amd_defaults.c		\
-	amd_dump.c		\
-	amd_global.c		\
-	amd_info.c		\
-	amd_order.c		\
-	amd_postorder.c		\
-	amd_post_tree.c		\
-	amd_preprocess.c	\
-	amd_valid.c		\
-	btf_maxtrans.c		\
-	btf_order.c		\
-	btf_strongcomp.c	\
-	colamd.c		\
-	colamd_global.c		\
-	klu.c			\
 	klu_analyze.c		\
 	klu_analyze_given.c	\
+	klu.c			\
 	klu_defaults.c		\
 	klu_diagnostics.c	\
 	klu_dump.c		\
@@ -85,6 +49,24 @@ libKLU_complex_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -DCOMPLEX
 
 
 libKLU_la_SOURCES =		\
+	amd_1.c			\
+	amd_2.c			\
+	amd_aat.c		\
+	amd_control.c		\
+	amd_defaults.c		\
+	amd_dump.c		\
+	amd_global.c		\
+	amd_info.c		\
+	amd_order.c		\
+	amd_postorder.c		\
+	amd_post_tree.c		\
+	amd_preprocess.c	\
+	amd_valid.c		\
+	btf_maxtrans.c		\
+	btf_order.c		\
+	btf_strongcomp.c	\
+	colamd.c		\
+	colamd_global.c		\
 	klusmp.c
 
 libKLU_la_LIBADD =		\
@@ -93,5 +75,6 @@ libKLU_la_LIBADD =		\
 
 
 libKLU_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -62,6 +62,18 @@
 #define KLU_condest klu_zl_condest
 #define KLU_flops klu_zl_flops
 
+// Francesco
+#define KLU_analyze klu_zl_analyze
+#define KLU_analyze_given klu_zl_analyze_given
+#define KLU_alloc_symbolic klu_zl_alloc_symbolic
+#define KLU_free_symbolic klu_zl_free_symbolic
+#define KLU_defaults klu_zl_defaults
+#define KLU_free klu_zl_free
+#define KLU_malloc klu_zl_malloc
+#define KLU_realloc klu_zl_realloc
+#define KLU_add_size_t klu_zl_add_size_t
+#define KLU_mult_size_t klu_zl_mult_size_t
+
 #else
 
 #define KLU_scale klu_z_scale
@@ -84,6 +96,18 @@
 #define KLU_extract klu_z_extract
 #define KLU_condest klu_z_condest
 #define KLU_flops klu_z_flops
+
+// Francesco
+#define KLU_analyze klu_z_analyze
+#define KLU_analyze_given klu_z_analyze_given
+#define KLU_alloc_symbolic klu_z_alloc_symbolic
+#define KLU_free_symbolic klu_z_free_symbolic
+#define KLU_defaults klu_z_defaults
+#define KLU_free klu_z_free
+#define KLU_malloc klu_z_malloc
+#define KLU_realloc klu_z_realloc
+#define KLU_add_size_t klu_z_add_size_t
+#define KLU_mult_size_t klu_z_mult_size_t
 
 #endif
 
@@ -112,6 +136,18 @@
 #define KLU_condest klu_l_condest
 #define KLU_flops klu_l_flops
 
+// Francesco
+#define KLU_analyze klu_l_analyze
+#define KLU_analyze_given klu_l_analyze_given
+#define KLU_alloc_symbolic klu_l_alloc_symbolic
+#define KLU_free_symbolic klu_l_free_symbolic
+#define KLU_defaults klu_l_defaults
+#define KLU_free klu_l_free
+#define KLU_malloc klu_l_malloc
+#define KLU_realloc klu_l_realloc
+#define KLU_add_size_t klu_l_add_size_t
+#define KLU_mult_size_t klu_l_mult_size_t
+
 #else
 
 #define KLU_scale klu_scale
@@ -135,6 +171,18 @@
 #define KLU_condest klu_condest
 #define KLU_flops klu_flops
 
+// Francesco
+#define KLU_analyze klu_analyze
+#define KLU_analyze_given klu_analyze_given
+#define KLU_alloc_symbolic klu_alloc_symbolic
+#define KLU_free_symbolic klu_free_symbolic
+#define KLU_defaults klu_defaults
+#define KLU_free klu_free
+#define KLU_malloc klu_malloc
+#define KLU_realloc klu_realloc
+#define KLU_add_size_t klu_add_size_t
+#define KLU_mult_size_t klu_mult_size_t
+
 #endif
 
 #endif
@@ -142,16 +190,16 @@
 
 #ifdef DLONG
 
-#define KLU_analyze klu_l_analyze
-#define KLU_analyze_given klu_l_analyze_given
-#define KLU_alloc_symbolic klu_l_alloc_symbolic
-#define KLU_free_symbolic klu_l_free_symbolic
-#define KLU_defaults klu_l_defaults
-#define KLU_free klu_l_free
-#define KLU_malloc klu_l_malloc
-#define KLU_realloc klu_l_realloc
-#define KLU_add_size_t klu_l_add_size_t
-#define KLU_mult_size_t klu_l_mult_size_t
+//#define KLU_analyze klu_l_analyze
+//#define KLU_analyze_given klu_l_analyze_given
+//#define KLU_alloc_symbolic klu_l_alloc_symbolic
+//#define KLU_free_symbolic klu_l_free_symbolic
+//#define KLU_defaults klu_l_defaults
+//#define KLU_free klu_l_free
+//#define KLU_malloc klu_l_malloc
+//#define KLU_realloc klu_l_realloc
+//#define KLU_add_size_t klu_l_add_size_t
+//#define KLU_mult_size_t klu_l_mult_size_t
 
 #define KLU_symbolic klu_l_symbolic
 #define KLU_numeric klu_l_numeric
@@ -166,16 +214,16 @@
 
 #else
 
-#define KLU_analyze klu_analyze
-#define KLU_analyze_given klu_analyze_given
-#define KLU_alloc_symbolic klu_alloc_symbolic
-#define KLU_free_symbolic klu_free_symbolic
-#define KLU_defaults klu_defaults
-#define KLU_free klu_free
-#define KLU_malloc klu_malloc
-#define KLU_realloc klu_realloc
-#define KLU_add_size_t klu_add_size_t
-#define KLU_mult_size_t klu_mult_size_t
+//#define KLU_analyze klu_analyze
+//#define KLU_analyze_given klu_analyze_given
+//#define KLU_alloc_symbolic klu_alloc_symbolic
+//#define KLU_free_symbolic klu_free_symbolic
+//#define KLU_defaults klu_defaults
+//#define KLU_free klu_free
+//#define KLU_malloc klu_malloc
+//#define KLU_realloc klu_realloc
+//#define KLU_add_size_t klu_add_size_t
+//#define KLU_mult_size_t klu_mult_size_t
 
 #define KLU_symbolic klu_symbolic
 #define KLU_numeric klu_numeric
