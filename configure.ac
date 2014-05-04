@@ -1154,9 +1154,6 @@ AC_CONFIG_FILES([Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile
                  tests/bsim3/Makefile
-                 tests/bsim3/ac_sim/Makefile
-                 tests/bsim3/dc_sim/Makefile
-                 tests/bsim3/tran_sim/Makefile
                  tests/bsim3soidd/Makefile
                  tests/bsim3soifd/Makefile
                  tests/bsim3soipd/Makefile

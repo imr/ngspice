@@ -1,0 +1,3 @@
+#!/bin/sh
+
+../../bin/run_cmc_check clean ngspice | tee cmcqa_pmos.log
