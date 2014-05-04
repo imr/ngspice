@@ -10,13 +10,14 @@ libsparse_la_SOURCES =	\
 	spextra.c	\
 	spfactor.c	\
 	spoutput.c	\
-	spsmp.c		\
 	spsolve.c	\
 	sputils.c
 
 
 if KLU_WANTED
 libsparse_la_SOURCES += spCSC.c
+else
+libsparse_la_SOURCES += spsmp.c
 endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
