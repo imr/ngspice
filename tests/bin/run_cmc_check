@@ -16,10 +16,10 @@ qaSpecFile="qaSpec"
 qaResultsDirectory="results"
 testProgramName="$(dirname $0)/runQaTests.pl"
 if [ -z "$testProgramFlags" ] ; then
-    testProgramFlags="-nwV"
+    testProgramFlags="-nw"
 fi
 
-#testProgramFlags="-d"
+#testProgramFlags="-d -V"
 
 
 help() {
