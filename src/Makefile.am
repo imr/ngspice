@@ -547,6 +547,10 @@ libngspice_la_LIBADD += \
 	ciderlib/support/libcidersuprt.la
 endif
 
+if KLU_WANTED
+libngspice_la_LIBADD += maths/KLU/libKLU.la
+endif
+
 libngspice_la_LIBADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
