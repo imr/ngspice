@@ -1045,6 +1045,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     RANGECHECK(model->HSM2_vover,      0.0,     50.0, "VOVER") ;
     RANGECHECK(model->HSM2_voverp,     0.0,      2.0, "VOVERP") ;
     RANGECHECK(model->HSM2_qme1,       0.0, 300.0e-9, "QME1") ;
+    RANGECHECK(model->HSM2_qme2,       1.0,      3.0, "QME2") ;
     RANGECHECK(model->HSM2_qme3,       0.0,  1.0e-09, "QME3") ;
     RANGECHECK(model->HSM2_tnom,      22.0,     32.0, "TNOM") ;
     RANGECHECK(model->HSM2_ddltmax,    1.0,     20.0, "DDLTMAX") ;
