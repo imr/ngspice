@@ -265,28 +265,28 @@ AM_MAINTAINER_MODE
 # Compiler checks
 # ---------------
 
-# To have an empty CFLAGS variable after AC_PROG_CC, instead of "-g -O2"
-: ${CFLAGS=""}
+ext_CFLAGS="$CFLAGS"
 
 AC_PROG_CC
 
 # Work on compiler options according to system:
 # Set default CFLAGS - only use -Wall if we have gcc
 
+# the above AC_PROG_CC may set CFLAGS to "-O2 -g"
 if test "x$enable_debug" = xno; then
     if test "x$GCC" = xyes; then
         AC_MSG_WARN([Removing debugging option!])
-        CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s"
+        CFLAGS="-O2 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -s $ext_CFLAGS"
     else
         AC_MSG_WARN([Removing debugging option!])
-        CFLAGS="-O2"
+        CFLAGS="-O2 $ext_CFLAGS"
     fi
 else
     AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
     if test "x$GCC" = xyes; then
-        CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion"
+        CFLAGS="-g -O1 -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion $ext_CFLAGS"
     else
-        CFLAGS="-g"
+        CFLAGS="-g $ext_CFLAGS"
     fi
 fi
 
