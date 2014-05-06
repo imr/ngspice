@@ -104,6 +104,12 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef USE_CUSPICE
     int status ;
     cusparseStatus_t cusparseStatus ;
+
+    ckt->total_n_values = 0 ;
+    ckt->total_n_Ptr = 0 ;
+
+    ckt->total_n_valuesRHS = 0 ;
+    ckt->total_n_PtrRHS = 0 ;
 #endif
 
     int i;
