@@ -248,12 +248,48 @@ if test "x$enable_cuspice" = xyes; then
     AC_SUBST(NVCC)
 
     # NVCC Compilation Flags
-    CUDA_CFLAGS="-gencode arch=compute_20,\"code=sm_20\""
-    CUDA_CFLAGS+=" -gencode arch=compute_30,\"code=sm_30\""
-    CUDA_CFLAGS+=" -gencode arch=compute_32,\"code=sm_32\""
-    CUDA_CFLAGS+=" -gencode arch=compute_35,\"code=sm_35\""
-    CUDA_CFLAGS+=" -gencode arch=compute_50,\"code=sm_50\""
+    NVCC_OUTPUT=`nvcc -h`
+    C_20=$(echo $NVCC_OUTPUT | grep "compute_20")
+    SM_20=$(echo $NVCC_OUTPUT | grep "sm_20")
+    C_30=$(echo $NVCC_OUTPUT | grep "compute_30")
+    SM_30=$(echo $NVCC_OUTPUT | grep "sm_30")
+    C_32=$(echo $NVCC_OUTPUT | grep "compute_32")
+    SM_32=$(echo $NVCC_OUTPUT | grep "sm_32")
+    C_35=$(echo $NVCC_OUTPUT | grep "compute_35")
+    SM_35=$(echo $NVCC_OUTPUT | grep "sm_35")
+    C_50=$(echo $NVCC_OUTPUT | grep "compute_50")
+    SM_50=$(echo $NVCC_OUTPUT | grep "sm_50")
+    AC_MSG_RESULT([CUSPICE will be compiled for the following architectures:])
+    if test "$C_20" != "" && test "$SM_20" != ""
+    then
+        CUDA_CFLAGS="-gencode arch=compute_20,\"code=sm_20\""
+        AC_MSG_RESULT([    Compute Capability: 2.0])
+    else
+        CUDA_CFLAGS=""
+    fi
+    if test "$C_30" != "" && test "$SM_30" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_30,\"code=sm_30\""
+        AC_MSG_RESULT([    Compute Capability: 3.0])
+    fi
+    if test "$C_32" != "" && test "$SM_32" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_32,\"code=sm_32\""
+        AC_MSG_RESULT([    Compute Capability: 3.2])
+    fi
+    if test "$C_35" != "" && test "$SM_35" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_35,\"code=sm_35\""
+        AC_MSG_RESULT([    Compute Capability: 3.5])
+    fi
+    if test "$C_50" != "" && test "$SM_50" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_50,\"code=sm_50\""
+        AC_MSG_RESULT([    Compute Capability: 5.0])
+    fi
+
     CUDA_CFLAGS+=" -DCOMPILED_BY_NVCC"
+
     if test "x$enable_debug" = xno; then
         CUDA_CFLAGS+=" -O2"
     else
