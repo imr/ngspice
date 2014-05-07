@@ -15,8 +15,8 @@
 //
 
 `ifdef ngspice
-nTypeSelectionArguments pmos leveL=62 version=1.23
-pTypeSelectionArguments nmos leveL=62 version=1.23
+nTypeSelectionArguments pmos leveL=73 version=1.23
+pTypeSelectionArguments nmos leveL=73 version=1.23
 `endif
 `ifdef hspice
 nTypeSelectionArguments hisimhv_n5_va TYPE=-1

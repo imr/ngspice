@@ -13,9 +13,13 @@
 // It is assumed that there are no polarity specific
 //
 
+`ifdef spice
+nTypeSelectionArguments nmos level=61 version=270
+pTypeSelectionArguments pmos level=61 version=270
+`endif
 `ifdef ngspice
-nTypeSelectionArguments     nmos level=61 version=270
-pTypeSelectionArguments     pmos level=61 version=270
+nTypeSelectionArguments nmos level=68 version=270
+pTypeSelectionArguments pmos level=68 version=270
 `endif
 
 //
