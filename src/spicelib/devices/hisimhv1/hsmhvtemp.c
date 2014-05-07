@@ -209,7 +209,7 @@ int HSMHVtemp(
         SPfrontEnd->IFerrorf
           ( 
            ERR_FATAL, 
-           "HiSIM_HV: MOSFET(%s) MODEL(%s): effective channel length is negative or 0", 
+           "HiSIM_HV: MOSFET(%s) MODEL(%s): effective channel length is negative or 0",
            model->HSMHVmodName, here->HSMHVname
            );
         return (E_BADPARM);
@@ -232,7 +232,7 @@ int HSMHVtemp(
         SPfrontEnd->IFerrorf
           ( 
            ERR_FATAL, 
-           "HiSIM_HV: MOSFET(%s) MODEL(%s): effective channel width is negative or 0", 
+           "HiSIM_HV: MOSFET(%s) MODEL(%s): effective channel width is negative or 0",
            model->HSMHVmodName, here->HSMHVname
            );
         return (E_BADPARM);

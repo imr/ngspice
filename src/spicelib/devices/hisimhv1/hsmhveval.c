@@ -584,7 +584,7 @@ int HSMHVevaluate
   double Qbmm=0.0,   Qbmm_dVb=0.0,   Qbmm_dVd =0.0,  Qbmm_dVg =0.0, Qbmm_dT =0.0 ;
   double dqb=0.0,    dqb_dVb=0.0,    dqb_dVg=0.0,    dqb_dVd =0.0,  dqb_dT =0.0 ;
   double Vdx=0.0,    Vdx_dVbs=0.0 ;
-  double Vdx2=0.0,   Vdx2_dVbs=0.0 ;    
+  double Vdx2=0.0,   Vdx2_dVbs=0.0 ;
   double Pbsum=0.0,  Pbsum_dVb=0.0,  Pbsum_dVd=0.0,  Pbsum_dVg =0.0,  Pbsum_dT =0.0 ;
   double sqrt_Pbsum =0.0 ;
   /* Poly-Depletion Effect */
@@ -4744,7 +4744,7 @@ start_of_mobility:
                    ) / Tox0 ;
       T2_dVb = - ( pParam->HSMHV_fvbs * Vbsz_dVbs -Vgsz_dVbs + dVthSC_dVb + dVthLP_dVb 
                    ) / Tox0 ;
-      T2_dT = - (  pParam->HSMHV_fvbs * Vbsz_dT   -Vgsz_dT   + dVthSC_dT + dVthLP_dT 
+      T2_dT = - (  pParam->HSMHV_fvbs * Vbsz_dT   -Vgsz_dT   + dVthSC_dT + dVthLP_dT
                    ) / Tox0 ;
 
       T0 = T2 * T2 ;
@@ -6510,7 +6510,7 @@ start_of_mobility:
   /*-----------------------------------------------------------*
    * End of PART-7. (label) 
    *-----------------*/ 
-/* end_of_part_7: */ 
+/* end_of_part_7: */
 
   /*-----------------------------------------------------------* 
    * Bottom of hsmhveval. 

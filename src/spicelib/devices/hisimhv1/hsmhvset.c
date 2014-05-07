@@ -920,9 +920,9 @@ int HSMHVsetup(
         if ( here->HSMHVtempNode >= 0 ) {
        /* FATAL Error when 6th node is defined and COSUBNODE=0 */
           SPfrontEnd->IFerrorf
-            ( 
-             ERR_FATAL, 
-             "HiSIM_HV: MOSFET(%s) MODEL(%s): 6th node is defined and COSUBNODE=0", 
+            (
+             ERR_FATAL,
+             "HiSIM_HV: MOSFET(%s) MODEL(%s): 6th node is defined and COSUBNODE=0",
              here->HSMHVname, model->HSMHVmodName
              );
           return (E_BADPARM);
@@ -931,7 +931,7 @@ int HSMHVsetup(
       /* 5th node is switched to tempNode, if COSUBNODE=0 and 5 external nodes are assigned. */
           if ( here->HSMHVsubNode > 0 ) {
     	    here->HSMHVtempNode = here->HSMHVsubNode ;
-	    here->HSMHVsubNode  = -1 ; 
+	    here->HSMHVsubNode  = -1 ;
           }
         }
       }
