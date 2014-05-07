@@ -34,7 +34,11 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 ext_CFLAGS="${CFLAGS+yes}"
 
+echo "!!!!!!!!! before A_C_PROG_CC CFLAGS=\"${CFLAGS-<unset>}\" GCC=\"${GCC-<unset>}\" ext_CFLAGS=\"${ext_CFLAGS-<unset>}\""
+
 AC_PROG_CC
+
+echo "!!!!!!!!! after A_C_PROG_CC CFLAGS=\"${CFLAGS-<unset>}\" GCC=\"${GCC-<unset>}\" ext_CFLAGS=\"${ext_CFLAGS-<unset>}\""
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
@@ -273,6 +277,8 @@ AM_MAINTAINER_MODE
 # Set default CFLAGS - only use -Wall if we have gcc
 
 # the above AC_PROG_CC may set CFLAGS to "-O2 -g"
+echo "!!!!!!!!! before ngspice CFLAGS massage, CFLAGS=\"${CFLAGS-<unset>}\" GCC=\"${GCC-<unset>}\" ext_CFLAGS=\"${ext_CFLAGS-<unset>}\""
+
 if test "x$ext_CFLAGS" != xyes; then
 
     if test "x$enable_debug" = xno; then
@@ -296,6 +302,8 @@ if test "x$ext_CFLAGS" != xyes; then
     fi
 
 fi
+
+echo "!!!!!!!!! after ngspice CFLAGS massage, CFLAGS=\"${CFLAGS-<unset>}\" GCC=\"${GCC-<unset>}\" ext_CFLAGS=\"${ext_CFLAGS-<unset>}\""
 
 # the profiling option
 if test "x$enable_gprof" = xyes; then
