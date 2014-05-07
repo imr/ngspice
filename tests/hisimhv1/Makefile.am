@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 
-TESTS = nmos/qaSpec.basic pmos/qaSpec.basic
+TESTS = nmos/qaSpec pmos/qaSpec
 
 TESTS_ENVIRONMENT = \
 	$(SHELL) $(top_srcdir)/tests/bin/check_cmc.sh \
