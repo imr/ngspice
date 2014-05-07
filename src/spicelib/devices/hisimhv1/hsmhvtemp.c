@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvtemp.c
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by
                 Hiroshima University &
@@ -325,9 +325,9 @@ int HSMHVtemp(
 	here->HSMHV_rd0 = 0.0 ;
       }
       if ( pParam->HSMHV_rd > 0.0 || pParam->HSMHV_rs > 0.0 ) {
-        here->HSMHV_rdtemp0 = 1.0 + model->HSMHV_rds / pow( here->HSMHV_w * C_m2um * LG , model->HSMHV_rdsp ) ;
+        here->HSMHV_rdtemp0 = 1.0 + model->HSMHV_rds / pow( WL , model->HSMHV_rdsp ) ;
 	if( pParam->HSMHV_rdvd != 0.0 ){
-	  T7 = ( 1.0 + model->HSMHV_rdvds / pow( here->HSMHV_w * C_m2um * LG , model->HSMHV_rdvdsp ) );
+	  T7 = ( 1.0 + model->HSMHV_rdvds / pow( WL , model->HSMHV_rdvdsp ) );
           T6 = ( - model->HSMHV_rdvdl * pow( LG , model->HSMHV_rdvdlp ) ) ;
           if(T6 > large_arg) T6 = large_arg ;  
           T6 = exp( T6 ) ;
@@ -335,7 +335,7 @@ int HSMHVtemp(
         }
       }
       if( pParam->HSMHV_rd23 != 0.0 ){
-	T2 = ( 1.0 + model->HSMHV_rd23s / pow( here->HSMHV_w * C_m2um * LG , model->HSMHV_rd23sp ) );
+	T2 = ( 1.0 + model->HSMHV_rd23s / pow( WL , model->HSMHV_rd23sp ) );
         T1 = ( - model->HSMHV_rd23l * pow( LG , model->HSMHV_rd23lp ) ) ;
         if(T1 > large_arg)  T1 = large_arg ; 
         T1 = exp( T1 ) ;
@@ -399,13 +399,13 @@ int HSMHVtemp(
 
       /* Self heating */
       pParam->HSMHV_rth = pParam->HSMHV_rth0 / ( here->HSMHV_m * here->HSMHV_weff_nf )
-	* ( 1.0 + model->HSMHV_rth0w / pow( here->HSMHV_w * C_m2um , model->HSMHV_rth0wp ) );
+	* ( 1.0 + model->HSMHV_rth0w / pow( WG , model->HSMHV_rth0wp ) );
       pParam->HSMHV_cth = modelMKS->HSMHV_cth0 * ( here->HSMHV_m * here->HSMHV_weff_nf ) ;
 
       pParam->HSMHV_rth *= ( 1.0 / pow( here->HSMHV_nf , model->HSMHV_rth0nf ) ) ;
       
       here->HSMHV_rthtemp0 = 1.0 / pow( here->HSMHV_nf , model->HSMHV_rth0nf ) / ( here->HSMHV_m * here->HSMHV_weff_nf )
-       * ( 1.0 + model->HSMHV_rth0w / pow( here->HSMHV_w * C_m2um , model->HSMHV_rth0wp ) );
+       * ( 1.0 + model->HSMHV_rth0w / pow( WG , model->HSMHV_rth0wp ) );
 
 
       /*-----------------------------------------------------------*

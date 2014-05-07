@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvld.c
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &
@@ -22,7 +22,6 @@
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
-
 
 #define SHOW_EPS_QUANT 1.0e-15
 
@@ -40,8 +39,8 @@ static void ShowPhysVals
  )
 {
 
-NG_IGNORE(vgd);
-NG_IGNORE(vbd);
+  NG_IGNORE(vgd);
+  NG_IGNORE(vbd);
 
   /*                                                            */
   /*                                                            */
@@ -250,7 +249,7 @@ int HSMHVload(
 
   double Qdext=0.0, dQdext_dVdse=0.0, dQdext_dVgse=0.0, dQdext_dVbse=0.0, dQdext_dT=0.0 ;
   double Qgext=0.0, dQgext_dVdse=0.0, dQgext_dVgse=0.0, dQgext_dVbse=0.0, dQgext_dT=0.0 ;
-  double Qsext=0.0, dQsext_dVdse=0.0, dQsext_dVgse=0.0, dQsext_dVbse=0.0, dQsext_dT=0.0 ;
+  double dQsext_dVdse=0.0, dQsext_dVgse=0.0, dQsext_dVbse=0.0, dQsext_dT=0.0 ;
   double Qbext=0.0, dQbext_dVdse=0.0, dQbext_dVgse=0.0, dQbext_dVbse=0.0, dQbext_dT=0.0 ;
   /* 5th substrate node */
   int flg_subNode = 0 ;
@@ -1108,7 +1107,6 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQgext_dVgse = here->HSMHV_dQgext_dVgse ;
         dQgext_dVbse = here->HSMHV_dQgext_dVbse ;
         dQgext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQgext_dTi : 0.0  ;
-        Qsext        = here->HSMHV_qsext ;
         dQsext_dVdse = here->HSMHV_dQsext_dVdse ;
         dQsext_dVgse = here->HSMHV_dQsext_dVgse ;
         dQsext_dVbse = here->HSMHV_dQsext_dVbse ;
@@ -1270,7 +1268,6 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQgext_dVgse = here->HSMHV_dQgext_dVgse ;
         dQgext_dVbse = here->HSMHV_dQgext_dVbse ;
         dQgext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQgext_dTi : 0.0  ;
-        Qsext        = here->HSMHV_qdext ;
         dQsext_dVdse = - (here->HSMHV_dQdext_dVdse + here->HSMHV_dQdext_dVgse + here->HSMHV_dQdext_dVbse);
         dQsext_dVgse = here->HSMHV_dQdext_dVgse ;
         dQsext_dVbse = here->HSMHV_dQdext_dVbse ;
