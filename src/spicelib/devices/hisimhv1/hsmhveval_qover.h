@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhveval_qover.h
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by
                 Hiroshima University &

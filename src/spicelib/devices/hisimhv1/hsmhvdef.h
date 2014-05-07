@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvdef
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &
@@ -915,9 +915,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   HSMHVinstance * HSMHVinstances;	/* pointer to list of instances 
 				   that have this model */
   IFuid HSMHVmodName;       	/* pointer to the name of this model */
-
-  /* --- end of generic struct GENmodel --- */
-
   int HSMHV_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV_level;               /* level */
   int HSMHV_info;                /* information */

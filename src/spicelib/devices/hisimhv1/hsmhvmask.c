@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvmask.c
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by
                 Hiroshima University &
@@ -1851,23 +1851,23 @@ int HSMHVmAsk(
     return(OK);
 
   case HSMHV_MOD_VGS_MAX:
-      value->rValue = model->HSMHVvgsMax;
-      return(OK);
+    value->rValue = model->HSMHVvgsMax;
+    return(OK);
   case HSMHV_MOD_VGD_MAX:
-      value->rValue = model->HSMHVvgdMax;
-      return(OK);
+    value->rValue = model->HSMHVvgdMax;
+    return(OK);
   case HSMHV_MOD_VGB_MAX:
-      value->rValue = model->HSMHVvgbMax;
-      return(OK);
+    value->rValue = model->HSMHVvgbMax;
+    return(OK);
   case HSMHV_MOD_VDS_MAX:
-      value->rValue = model->HSMHVvdsMax;
-      return(OK);
+    value->rValue = model->HSMHVvdsMax;
+    return(OK);
   case HSMHV_MOD_VBS_MAX:
-      value->rValue = model->HSMHVvbsMax;
-      return(OK);
+    value->rValue = model->HSMHVvbsMax;
+    return(OK);
   case HSMHV_MOD_VBD_MAX:
-      value->rValue = model->HSMHVvbdMax;
-      return(OK);
+    value->rValue = model->HSMHVvbdMax;
+    return(OK);
 
   default:
     return(E_BADPARM);

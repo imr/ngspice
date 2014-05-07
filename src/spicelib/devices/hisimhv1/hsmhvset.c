@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvset.c
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &
@@ -74,13 +74,13 @@ int HSMHVsetup(
     model->HSMHV_noise = 1;
 
     if ( !model->HSMHV_version_Given) {
-        model->HSMHV_version = "1.23" ;
-       printf("          1.23 is selected for VERSION. (default) \n");
+        model->HSMHV_version = "1.24" ;
+       printf("          1.24 is selected for VERSION. (default) \n");
     } else {
-      if (strcmp(model->HSMHV_version,"1.23") != 0 ) {
-       model->HSMHV_version = "1.23" ;
-       printf("          1.23 is the only available VERSION. \n");
-       printf("          1.23 is selected for VERSION. (default) \n");
+      if (strcmp(model->HSMHV_version,"1.24") != 0 ) {
+       model->HSMHV_version = "1.24" ;
+       printf("          1.24 is only available for VERSION. \n");
+       printf("          1.24 is selected for VERSION. (default) \n");
       } else {
        printf("           %s is selected for VERSION \n", model->HSMHV_version);
       }
@@ -916,10 +916,27 @@ int HSMHVsetup(
 	here->HSMHVdbNode = here->HSMHVbNodePrime = here->HSMHVsbNode = here->HSMHVbNode;
       }
 
+      if ( here->HSMHV_cosubnode == 0 && here->HSMHVsubNode >= 0 ) {
+        if ( here->HSMHVtempNode >= 0 ) {
+       /* FATAL Error when 6th node is defined and COSUBNODE=0 */
+          IFuid namarr[2];
+          namarr[0] = here->HSMHVname;
+          namarr[1] = model->HSMHVmodName;
+          (*(SPfrontEnd->IFerror))
+            ( 
+             ERR_FATAL, 
+             "HiSIM_HV: MOSFET(%s) MODEL(%s): 6th node is defined and COSUBNODE=0", 
+             namarr 
+             );
+          return (E_BADPARM);
+        } else {
+
       /* 5th node is switched to tempNode, if COSUBNODE=0 and 5 external nodes are assigned. */
-      if ( here->HSMHV_cosubnode == 0 && here->HSMHVsubNode > 0 && here->HSMHVtempNode <= 0 ) {
-	here->HSMHVtempNode = here->HSMHVsubNode ;
-	here->HSMHVsubNode  = -1 ; 
+          if ( here->HSMHVsubNode > 0 ) {
+    	    here->HSMHVtempNode = here->HSMHVsubNode ;
+	    here->HSMHVsubNode  = -1 ; 
+          }
+        }
       }
 
       /* self heating*/
@@ -945,35 +962,35 @@ int HSMHVsetup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-} } while(0)
+}
 
-      TSTALLOC(HSMHVDPbpPtr, HSMHVdNodePrime, HSMHVbNodePrime);
-      TSTALLOC(HSMHVSPbpPtr, HSMHVsNodePrime, HSMHVbNodePrime);
-      TSTALLOC(HSMHVGPbpPtr, HSMHVgNodePrime, HSMHVbNodePrime);
+      TSTALLOC(HSMHVDPbpPtr, HSMHVdNodePrime, HSMHVbNodePrime)
+      TSTALLOC(HSMHVSPbpPtr, HSMHVsNodePrime, HSMHVbNodePrime)
+      TSTALLOC(HSMHVGPbpPtr, HSMHVgNodePrime, HSMHVbNodePrime)
 
-      TSTALLOC(HSMHVBPdPtr,  HSMHVbNodePrime, HSMHVdNode);
-      TSTALLOC(HSMHVBPsPtr,  HSMHVbNodePrime, HSMHVsNode);
-      TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime);
-      TSTALLOC(HSMHVBPspPtr, HSMHVbNodePrime, HSMHVsNodePrime);
-      TSTALLOC(HSMHVBPgpPtr, HSMHVbNodePrime, HSMHVgNodePrime);
-      TSTALLOC(HSMHVBPbpPtr, HSMHVbNodePrime, HSMHVbNodePrime);
+      TSTALLOC(HSMHVBPdPtr,  HSMHVbNodePrime, HSMHVdNode)
+      TSTALLOC(HSMHVBPsPtr,  HSMHVbNodePrime, HSMHVsNode)
+      TSTALLOC(HSMHVBPdpPtr, HSMHVbNodePrime, HSMHVdNodePrime)
+      TSTALLOC(HSMHVBPspPtr, HSMHVbNodePrime, HSMHVsNodePrime)
+      TSTALLOC(HSMHVBPgpPtr, HSMHVbNodePrime, HSMHVgNodePrime)
+      TSTALLOC(HSMHVBPbpPtr, HSMHVbNodePrime, HSMHVbNodePrime)
 
-      TSTALLOC(HSMHVDdPtr, HSMHVdNode, HSMHVdNode);
-      TSTALLOC(HSMHVGPgpPtr, HSMHVgNodePrime, HSMHVgNodePrime);
-      TSTALLOC(HSMHVSsPtr, HSMHVsNode, HSMHVsNode);
-      TSTALLOC(HSMHVDPdpPtr, HSMHVdNodePrime, HSMHVdNodePrime);
-      TSTALLOC(HSMHVSPspPtr, HSMHVsNodePrime, HSMHVsNodePrime);
-      TSTALLOC(HSMHVDdpPtr, HSMHVdNode, HSMHVdNodePrime);
-      TSTALLOC(HSMHVGPdpPtr, HSMHVgNodePrime, HSMHVdNodePrime);
-      TSTALLOC(HSMHVGPspPtr, HSMHVgNodePrime, HSMHVsNodePrime);
-      TSTALLOC(HSMHVSspPtr, HSMHVsNode, HSMHVsNodePrime);
-      TSTALLOC(HSMHVDPspPtr, HSMHVdNodePrime, HSMHVsNodePrime);
-      TSTALLOC(HSMHVDPdPtr, HSMHVdNodePrime, HSMHVdNode);
-      TSTALLOC(HSMHVDPgpPtr, HSMHVdNodePrime, HSMHVgNodePrime);
-      TSTALLOC(HSMHVSPgpPtr, HSMHVsNodePrime, HSMHVgNodePrime);
-      TSTALLOC(HSMHVSPsPtr, HSMHVsNodePrime, HSMHVsNode);
+      TSTALLOC(HSMHVDdPtr, HSMHVdNode, HSMHVdNode)
+      TSTALLOC(HSMHVGPgpPtr, HSMHVgNodePrime, HSMHVgNodePrime)
+      TSTALLOC(HSMHVSsPtr, HSMHVsNode, HSMHVsNode)
+      TSTALLOC(HSMHVDPdpPtr, HSMHVdNodePrime, HSMHVdNodePrime)
+      TSTALLOC(HSMHVSPspPtr, HSMHVsNodePrime, HSMHVsNodePrime)
+      TSTALLOC(HSMHVDdpPtr, HSMHVdNode, HSMHVdNodePrime)
+      TSTALLOC(HSMHVGPdpPtr, HSMHVgNodePrime, HSMHVdNodePrime)
+      TSTALLOC(HSMHVGPspPtr, HSMHVgNodePrime, HSMHVsNodePrime)
+      TSTALLOC(HSMHVSspPtr, HSMHVsNode, HSMHVsNodePrime)
+      TSTALLOC(HSMHVDPspPtr, HSMHVdNodePrime, HSMHVsNodePrime)
+      TSTALLOC(HSMHVDPdPtr, HSMHVdNodePrime, HSMHVdNode)
+      TSTALLOC(HSMHVDPgpPtr, HSMHVdNodePrime, HSMHVgNodePrime)
+      TSTALLOC(HSMHVSPgpPtr, HSMHVsNodePrime, HSMHVgNodePrime)
+      TSTALLOC(HSMHVSPsPtr, HSMHVsNodePrime, HSMHVsNode)
       TSTALLOC(HSMHVSPdpPtr, HSMHVsNodePrime, HSMHVdNodePrime);
 
       TSTALLOC(HSMHVGgPtr, HSMHVgNode, HSMHVgNode);
@@ -1026,44 +1043,44 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 	TSTALLOC(HSMHVSPsubPtr, HSMHVsNodePrime, HSMHVsubNode);
       }
       if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-	TSTALLOC(HSMHVTemptempPtr, HSMHVtempNode, HSMHVtempNode);
-	TSTALLOC(HSMHVTempdPtr, HSMHVtempNode, HSMHVdNode);
-	TSTALLOC(HSMHVTempdpPtr, HSMHVtempNode, HSMHVdNodePrime);
-	TSTALLOC(HSMHVTempsPtr, HSMHVtempNode, HSMHVsNode);
-	TSTALLOC(HSMHVTempspPtr, HSMHVtempNode, HSMHVsNodePrime);
-	TSTALLOC(HSMHVDPtempPtr, HSMHVdNodePrime, HSMHVtempNode);
-	TSTALLOC(HSMHVSPtempPtr, HSMHVsNodePrime, HSMHVtempNode);
+	TSTALLOC(HSMHVTemptempPtr, HSMHVtempNode, HSMHVtempNode)
+	TSTALLOC(HSMHVTempdPtr, HSMHVtempNode, HSMHVdNode)
+	TSTALLOC(HSMHVTempdpPtr, HSMHVtempNode, HSMHVdNodePrime)
+	TSTALLOC(HSMHVTempsPtr, HSMHVtempNode, HSMHVsNode)
+	TSTALLOC(HSMHVTempspPtr, HSMHVtempNode, HSMHVsNodePrime)
+	TSTALLOC(HSMHVDPtempPtr, HSMHVdNodePrime, HSMHVtempNode)
+	TSTALLOC(HSMHVSPtempPtr, HSMHVsNodePrime, HSMHVtempNode)
   
-        TSTALLOC(HSMHVTempgpPtr, HSMHVtempNode, HSMHVgNodePrime);
-	TSTALLOC(HSMHVTempbpPtr, HSMHVtempNode, HSMHVbNodePrime);
+        TSTALLOC(HSMHVTempgpPtr, HSMHVtempNode, HSMHVgNodePrime)
+	TSTALLOC(HSMHVTempbpPtr, HSMHVtempNode, HSMHVbNodePrime)
 
-	TSTALLOC(HSMHVGPtempPtr, HSMHVgNodePrime, HSMHVtempNode);
-	TSTALLOC(HSMHVBPtempPtr, HSMHVbNodePrime, HSMHVtempNode);
+	TSTALLOC(HSMHVGPtempPtr, HSMHVgNodePrime, HSMHVtempNode)
+	TSTALLOC(HSMHVBPtempPtr, HSMHVbNodePrime, HSMHVtempNode)
 
-	TSTALLOC(HSMHVDBtempPtr, HSMHVdbNode, HSMHVtempNode);
-	TSTALLOC(HSMHVSBtempPtr, HSMHVsbNode, HSMHVtempNode);
+	TSTALLOC(HSMHVDBtempPtr, HSMHVdbNode, HSMHVtempNode)
+	TSTALLOC(HSMHVSBtempPtr, HSMHVsbNode, HSMHVtempNode)
 	TSTALLOC(HSMHVDtempPtr, HSMHVdNode, HSMHVtempNode);
 	TSTALLOC(HSMHVStempPtr, HSMHVsNode, HSMHVtempNode);
       }
       if ( model->HSMHV_conqs ) { /* flat handling of NQS */
-	TSTALLOC(HSMHVDPqiPtr, HSMHVdNodePrime, HSMHVqiNode);
-	TSTALLOC(HSMHVGPqiPtr, HSMHVgNodePrime, HSMHVqiNode);
-	TSTALLOC(HSMHVGPqbPtr, HSMHVgNodePrime, HSMHVqbNode);
-	TSTALLOC(HSMHVSPqiPtr, HSMHVsNodePrime, HSMHVqiNode);
-	TSTALLOC(HSMHVBPqbPtr, HSMHVbNodePrime, HSMHVqbNode);
-	TSTALLOC(HSMHVQIdpPtr, HSMHVqiNode, HSMHVdNodePrime);
-	TSTALLOC(HSMHVQIgpPtr, HSMHVqiNode, HSMHVgNodePrime);
-	TSTALLOC(HSMHVQIspPtr, HSMHVqiNode, HSMHVsNodePrime);
-	TSTALLOC(HSMHVQIbpPtr, HSMHVqiNode, HSMHVbNodePrime);
-	TSTALLOC(HSMHVQIqiPtr, HSMHVqiNode, HSMHVqiNode);
-	TSTALLOC(HSMHVQBdpPtr, HSMHVqbNode, HSMHVdNodePrime);
-	TSTALLOC(HSMHVQBgpPtr, HSMHVqbNode, HSMHVgNodePrime);
-	TSTALLOC(HSMHVQBspPtr, HSMHVqbNode, HSMHVsNodePrime);
-	TSTALLOC(HSMHVQBbpPtr, HSMHVqbNode, HSMHVbNodePrime);
-	TSTALLOC(HSMHVQBqbPtr, HSMHVqbNode, HSMHVqbNode);
+	TSTALLOC(HSMHVDPqiPtr, HSMHVdNodePrime, HSMHVqiNode)
+	TSTALLOC(HSMHVGPqiPtr, HSMHVgNodePrime, HSMHVqiNode)
+	TSTALLOC(HSMHVGPqbPtr, HSMHVgNodePrime, HSMHVqbNode)
+	TSTALLOC(HSMHVSPqiPtr, HSMHVsNodePrime, HSMHVqiNode)
+	TSTALLOC(HSMHVBPqbPtr, HSMHVbNodePrime, HSMHVqbNode)
+	TSTALLOC(HSMHVQIdpPtr, HSMHVqiNode, HSMHVdNodePrime)
+	TSTALLOC(HSMHVQIgpPtr, HSMHVqiNode, HSMHVgNodePrime)
+	TSTALLOC(HSMHVQIspPtr, HSMHVqiNode, HSMHVsNodePrime)
+	TSTALLOC(HSMHVQIbpPtr, HSMHVqiNode, HSMHVbNodePrime)
+	TSTALLOC(HSMHVQIqiPtr, HSMHVqiNode, HSMHVqiNode)
+	TSTALLOC(HSMHVQBdpPtr, HSMHVqbNode, HSMHVdNodePrime)
+	TSTALLOC(HSMHVQBgpPtr, HSMHVqbNode, HSMHVgNodePrime)
+	TSTALLOC(HSMHVQBspPtr, HSMHVqbNode, HSMHVsNodePrime)
+	TSTALLOC(HSMHVQBbpPtr, HSMHVqbNode, HSMHVbNodePrime)
+	TSTALLOC(HSMHVQBqbPtr, HSMHVqbNode, HSMHVqbNode)
         if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
-	  TSTALLOC(HSMHVQItempPtr, HSMHVqiNode, HSMHVtempNode);
-	  TSTALLOC(HSMHVQBtempPtr, HSMHVqbNode, HSMHVtempNode);
+	  TSTALLOC(HSMHVQItempPtr, HSMHVqiNode, HSMHVtempNode)
+	  TSTALLOC(HSMHVQBtempPtr, HSMHVqbNode, HSMHVtempNode)
         }
       }
 
@@ -1320,7 +1337,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     RANGECHECK(model->HSMHV_sub2l,      0.0,      1.0, "SUB2L") ;
     RANGECHECK(model->HSMHV_voverp,     0.0,      2.0, "VOVERP") ;
     RANGECHECK(model->HSMHV_qme1,       0.0, 300.0e-9, "QME1") ;
-    RANGECHECK(model->HSMHV_qme2,       0.0,      2.0, "QME2") ;
+    RANGECHECK(model->HSMHV_qme2,       0.0,      0.0, "QME2") ;
     RANGECHECK(model->HSMHV_qme3,       0.0,800.0e-12, "QME3") ;
     RANGECHECK(model->HSMHV_glpart1,    0.0,      1.0, "GLPART1") ;
     RANGECHECK(model->HSMHV_tnom,      22.0,     32.0, "TNOM") ;
@@ -1437,7 +1454,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
   }
 
   return(OK);
-} 
+}
 
 int
 HSMHVunsetup(

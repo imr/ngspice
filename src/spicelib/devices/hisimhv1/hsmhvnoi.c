@@ -4,11 +4,11 @@
  Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 3 )
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvnoi.c
 
- DATE : 2012.4.6
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &
@@ -78,7 +78,7 @@ int HSMHVnoise (
 	  case N_DENS:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
-			     here->HSMHVname, HSMHVnNames[i]);
+			     (char *)here->HSMHVname, HSMHVnNames[i]);
 	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
@@ -90,7 +90,7 @@ int HSMHVnoise (
 	  case INT_NOIZ:
 	    for ( i = 0; i < HSMHVNSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
-			     here->HSMHVname, HSMHVnNames[i]);
+			     (char *)here->HSMHVname, HSMHVnNames[i]);
 	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
@@ -99,7 +99,7 @@ int HSMHVnoise (
 		 (IFuid) NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
-			     here->HSMHVname, HSMHVnNames[i]);
+			     (char *)here->HSMHVname, HSMHVnNames[i]);
 	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
