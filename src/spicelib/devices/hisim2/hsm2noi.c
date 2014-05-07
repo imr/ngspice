@@ -47,7 +47,7 @@ int HSM2noise (
   double noizDens[HSM2NSRCS];
   double lnNdens[HSM2NSRCS];
   register int i;
-  double R = 0.0 , G = 0.0 ;
+  double G = 0.0 ;
   double TTEMP = 0.0 ;
  
   /* for induced gate noise calculation: */
