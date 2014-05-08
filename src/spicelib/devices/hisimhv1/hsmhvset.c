@@ -919,14 +919,11 @@ int HSMHVsetup(
       if ( here->HSMHV_cosubnode == 0 && here->HSMHVsubNode >= 0 ) {
         if ( here->HSMHVtempNode >= 0 ) {
        /* FATAL Error when 6th node is defined and COSUBNODE=0 */
-          IFuid namarr[2];
-          namarr[0] = here->HSMHVname;
-          namarr[1] = model->HSMHVmodName;
-          (*(SPfrontEnd->IFerror))
+          SPfrontEnd->IFerrorf
             (
              ERR_FATAL,
              "HiSIM_HV: MOSFET(%s) MODEL(%s): 6th node is defined and COSUBNODE=0",
-             namarr
+             here->HSMHVname, model->HSMHVmodName
              );
           return (E_BADPARM);
         } else {
