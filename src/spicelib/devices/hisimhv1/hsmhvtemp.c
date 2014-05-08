@@ -206,14 +206,11 @@ int HSMHVtemp(
     
       Leff = Lgate - ( dL + dLLD ) ;
       if ( Leff <= 0.0 ) {   
-        IFuid namarr[2];
-        namarr[0] = model->HSMHVmodName;
-        namarr[1] = here->HSMHVname;
-        (*(SPfrontEnd->IFerror))
+        SPfrontEnd->IFerrorf
           ( 
            ERR_FATAL, 
            "HiSIM_HV: MOSFET(%s) MODEL(%s): effective channel length is negative or 0", 
-           namarr 
+           model->HSMHVmodName, here->HSMHVname
            );
         return (E_BADPARM);
       }
@@ -232,14 +229,11 @@ int HSMHVtemp(
       here->HSMHV_weff_ld     = Wgate - 2.0e0 * dWLD ;
       here->HSMHV_weff_cv     = Wgate - 2.0e0 * dWCV ;
       if ( Weff <= 0.0 ) {   
-        IFuid namarr[2];
-        namarr[0] = model->HSMHVmodName;
-        namarr[1] = here->HSMHVname;
-        (*(SPfrontEnd->IFerror))
+        SPfrontEnd->IFerrorf
           ( 
            ERR_FATAL, 
            "HiSIM_HV: MOSFET(%s) MODEL(%s): effective channel width is negative or 0", 
-           namarr 
+           model->HSMHVmodName, here->HSMHVname
            );
         return (E_BADPARM);
       }
