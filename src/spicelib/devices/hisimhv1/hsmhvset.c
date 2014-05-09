@@ -959,9 +959,9 @@ int HSMHVsetup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
       TSTALLOC(HSMHVDPbpPtr, HSMHVdNodePrime, HSMHVbNodePrime);
       TSTALLOC(HSMHVSPbpPtr, HSMHVsNodePrime, HSMHVbNodePrime);
