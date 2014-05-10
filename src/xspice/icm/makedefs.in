@@ -17,7 +17,7 @@ CC = @CC@
 CFLAGS = @CFLAGS@
 
 # Spice header include path
-INCLUDES = -I$(top_srcdir)/src/include -I$(top_builddir)/src/include
+INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
 
 # CFLAGS to use here
 EXTRA_CFLAGS = -fPIC
