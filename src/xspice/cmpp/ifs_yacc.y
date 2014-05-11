@@ -113,6 +113,8 @@ static Boolean_t num_items_fixed;
 Ifs_Table_t *parser_ifs_table;
 #define TBL parser_ifs_table
 
+int ifs_num_errors;
+
 static size_t alloced_size [4];
 
 /*
@@ -188,6 +190,7 @@ find_conn_ref (char *name)
    }
    sprintf (str, "Port `%s' not found", name);
    yyerror (str);
+   ifs_num_errors++;
 
    return 0;
 }
@@ -227,6 +230,7 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
    case VSOURCE_CURRENT:
       if (dir != IN) {
 	 yyerror ("Port type `vnam' is only valid for `in' ports");
+	 ifs_num_errors++;
       }
       break;
    case CONDUCTANCE:
@@ -235,6 +239,7 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
    case DIFF_RESISTANCE:
       if (dir != INOUT) {
 	 yyerror ("Port types `g', `gd', `h', `hd' are only valid for `inout' ports");
+	 ifs_num_errors++;
       }
       break;
    default:
@@ -247,6 +252,7 @@ static void check_dtype_not_pointer (Data_Type_t dtype)
 {
    if (dtype == POINTER) {
       yyerror("Invalid parameter type - POINTER type valid only for STATIC_VARs");
+      ifs_num_errors++;
    }
 }
 
@@ -264,6 +270,7 @@ static void check_default_type (Conn_Info_t conn)
       }
    }
    yyerror ("Port default type is not an allowed type");
+   ifs_num_errors++;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -291,6 +298,7 @@ assign_ctype_list (Conn_Info_t  *conn, Ctype_List_t *ctype_list )
       }
       if (ctype_class != get_ctype_class (p->ctype.kind)) {
 	 yyerror ("Incompatible port types in `allowed_types' clause");
+	 ifs_num_errors++;
       }
       check_port_type_direction (conn->direction, p->ctype.kind);
       
@@ -312,6 +320,7 @@ assign_value (Data_Type_t type, Value_t *dest_value, My_Value_t src_value)
 	       dtype_to_str[src_value.kind],
 	       dtype_to_str[type] );
       yyerror (str);
+      ifs_num_errors++;
    } 
    switch (type) {
    case BOOLEAN:
@@ -331,6 +340,7 @@ assign_value (Data_Type_t type, Value_t *dest_value, My_Value_t src_value)
       break;
    default:
       yyerror ("INTERNAL ERROR - unexpected data type in `assign_value'");
+      ifs_num_errors++;
    }
 }   
 
@@ -340,6 +350,7 @@ assign_limits (Data_Type_t type, Param_Info_t *param, Range_t range)
 {
    if (range.is_named) {
       yyerror ("Named range not allowed for limits");
+      ifs_num_errors++;
    }
    param->has_lower_limit = range.u.bounds.lower.has_bound;
    if (param->has_lower_limit) {

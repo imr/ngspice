@@ -61,6 +61,8 @@ extern char *ifs_yytext;
 extern Ifs_Table_t *parser_ifs_table;
 extern Boolean_t    parser_just_names;
 
+extern int ifs_num_errors;
+
 static Status_t read_ifs_table(FILE *fp, int mode, Ifs_Table_t *ifs_table);
 
 const char *current_filename;
@@ -153,7 +155,9 @@ static Status_t read_ifs_table(
    parser_just_names = (mode == GET_IFS_NAME) ? TRUE : FALSE;
    parser_ifs_table = ifs_table;
 
-   if (ifs_yyparse()) {
+   ifs_num_errors = 0;
+
+   if (ifs_yyparse() || (ifs_num_errors > 0)) {
       print_error ("Error parsing interface specification file");
       ifs_yyrestart(NULL);
       return ERROR;
