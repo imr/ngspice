@@ -45,7 +45,11 @@ SPICEdev BSIM4v7info = {
     .DEVunsetup = BSIM4v7unsetup,
     .DEVpzSetup = BSIM4v7setup,
     .DEVtemperature = BSIM4v7temp,
+#ifdef USE_CUSPICE
+    .DEVtrunc = cuBSIM4v7trunc,
+#else
     .DEVtrunc = BSIM4v7trunc,
+#endif
     .DEVfindBranch = NULL,
     .DEVacLoad = BSIM4v7acLoad,
     .DEVaccept = NULL,

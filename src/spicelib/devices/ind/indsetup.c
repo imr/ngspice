@@ -186,6 +186,19 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
         for (j = 0 ; j < model->n_instances; j++)
             model->PositionVectorRHS [j] = model->offsetRHS + j ;
+
+
+        /* Position Vector for timeSteps */
+        model->offset_timeSteps = ckt->total_n_timeSteps ;
+        model->n_timeSteps = model->n_instances;
+        ckt->total_n_timeSteps += model->n_timeSteps ;
+
+        /* Position Vector assignment for timeSteps */
+        model->PositionVector_timeSteps = TMALLOC (int, model->n_instances) ;
+
+        for (j = 0 ; j < model->n_instances; j++)
+            model->PositionVector_timeSteps [j] = model->offset_timeSteps + j ;
+
     }
 
     /*  loop through all the inductor models */

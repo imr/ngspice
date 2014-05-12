@@ -306,6 +306,7 @@ struct CKTcircuit {
 
 #ifdef USE_CUSPICE
     double *(d_CKTstates[8]);
+    double **dD_CKTstates;
 #define d_CKTstate0 d_CKTstates[0]
 #define d_CKTstate1 d_CKTstates[1]
 #define d_CKTstate2 d_CKTstates[2]
@@ -314,6 +315,8 @@ struct CKTcircuit {
 #define d_CKTstate5 d_CKTstates[5]
 #define d_CKTstate6 d_CKTstates[6]
 #define d_CKTstate7 d_CKTstates[7]
+
+    double *d_CKTdeltaOld;
 
     double *d_CKTrhsOld;
     int *d_CKTnoncon;
@@ -341,6 +344,11 @@ struct CKTcircuit {
     int *d_CKTtopologyMatrixCSRpRHS;
     int *d_CKTtopologyMatrixCSRjRHS;
     double *d_CKTtopologyMatrixCSRxRHS;
+
+    int total_n_timeSteps;
+    double *CKTtimeSteps;
+    double *d_CKTtimeSteps;
+    double *d_CKTtimeStepsOut;
 #endif
 };
 

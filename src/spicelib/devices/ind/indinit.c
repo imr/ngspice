@@ -45,7 +45,11 @@ SPICEdev INDinfo = {
     .DEVunsetup = INDunsetup,
     .DEVpzSetup = INDsetup,
     .DEVtemperature = INDtemp,
+#ifdef USE_CUSPICE
+    .DEVtrunc = cuINDtrunc,
+#else
     .DEVtrunc = INDtrunc,
+#endif
     .DEVfindBranch = NULL,
     .DEVacLoad = INDacLoad,
     .DEVaccept = NULL,
