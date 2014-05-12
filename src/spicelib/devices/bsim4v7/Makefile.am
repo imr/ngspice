@@ -45,9 +45,10 @@ libbsim4v7_la_SOURCES +=		\
 	CUSPICE/cubsim4v7getic.c	\
 	CUSPICE/cubsim4v7load.cu	\
 	CUSPICE/cubsim4v7setup.c	\
-	CUSPICE/cubsim4v7temp.c
+	CUSPICE/cubsim4v7temp.c		\
+	CUSPICE/cubsim4v7trunc.cu
 
-AM_CPPFLAGS += $(CUDA_CPPFLAGS)
+AM_CPPFLAGS += $(CUDA_CPPFLAGS) -I$(top_srcdir)/src/spicelib/analysis
 endif
 
 MAINTAINERCLEANFILES = Makefile.in

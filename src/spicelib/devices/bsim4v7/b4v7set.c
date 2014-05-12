@@ -2587,7 +2587,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     }
 
 #ifdef USE_CUSPICE
-    int i, j, jRHS, l, lRHS, status ;
+    int i, j, jRHS, l, lRHS, lTimeSteps, status ;
 
     /* Counting the instances */
     for (model = (BSIM4v7model *)inModel ; model != NULL ; model = BSIM4v7nextModel(model))
@@ -2612,15 +2612,22 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
         /* Position Vector Allocation for the RHS */
         model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
 
+        /* Position Vector Allocation for timeSteps */
+        model->PositionVector_timeSteps = TMALLOC (int, model->n_instances) ;
+
 
         model->offset = ckt->total_n_values ;
         model->offsetRHS = ckt->total_n_valuesRHS ;
+
+        model->offset_timeSteps = ckt->total_n_timeSteps ;
+
 
         i = 0 ;
         j = 0 ;
         jRHS = 0 ;
         l = 0 ;
         lRHS = 0 ;
+        lTimeSteps = 0 ;
 
         /* loop through all the instances of the model */
         for (here = BSIM4v7instances(model); here != NULL ; here = BSIM4v7nextInstance(here))
@@ -2630,6 +2637,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 
             /* Position Vector Assignment for the RHS */
             model->PositionVectorRHS [i] = model->offsetRHS + lRHS ;
+
+            /* Position Vector Assignment for timeSteps */
+            model->PositionVector_timeSteps [i] = model->offset_timeSteps + lTimeSteps ;
 
 
             /* For the Matrix */
@@ -2779,6 +2789,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 
                 /* Different Values for the CKTloadOutput */
                 l += 14 ;
+
+                /* Different TimeSteps */
+                lTimeSteps += 1 ;
             } else {
                 /* m * (gcggb - ggtg + gIgtotg) */
                 if ((here->BSIM4v7gNodePrime != 0) && (here->BSIM4v7gNodePrime != 0))
@@ -2911,6 +2924,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             /* Different Values for the CKTloadOutput */
             l += 16 ;
 
+            /* Different TimeSteps */
+            lTimeSteps += 3 ;
+
 
             if (here->BSIM4v7rbodyMod)
             {
@@ -2988,6 +3004,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 
                 /* Different Values for the CKTloadOutput */
                 l += 12 ;
+
+                /* Different TimeSteps */
+                lTimeSteps += 2 ;
             }
 
 
@@ -3027,6 +3046,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 
                 /* Different Values for the CKTloadOutput */
                 l += 8 ;
+
+                /* Different TimeSteps */
+                lTimeSteps += 1 ;
             }
 
 
@@ -3137,6 +3159,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 
         model->n_PtrRHS = jRHS ;
         ckt->total_n_PtrRHS += model->n_PtrRHS ;
+
+        model->n_timeSteps = lTimeSteps ;
+        ckt->total_n_timeSteps += model->n_timeSteps ;
     }
 
     /*  loop through all the BSIM4v7 models */
