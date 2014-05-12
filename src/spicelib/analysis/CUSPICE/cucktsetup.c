@@ -58,7 +58,7 @@ CKTcircuit *ckt
 )
 {
     int i ;
-    long unsigned int m, mRHS, n, nz, TopologyNNZ, TopologyNNZRHS, size1, size2 ;
+    long unsigned int m, mRHS, n, nz, TopologyNNZ, TopologyNNZRHS, size1, size2, size3 ;
     cudaError_t status ;
 
     n = (long unsigned int)ckt->CKTmatrix->CKTkluN ;
@@ -74,6 +74,7 @@ CKTcircuit *ckt
 
     size1 = (long unsigned int)(ckt->d_MatrixSize + 1) ;
     size2 = (long unsigned int)ckt->CKTnumStates ;
+    size3 = (long unsigned int)ckt->total_n_timeSteps ;
 
     /* Topology Matrix Handling */
     status = cudaMalloc ((void **)&(ckt->CKTmatrix->d_CKTrhs), (n + 1) * sizeof(double)) ;
@@ -140,6 +141,23 @@ CKTcircuit *ckt
         status = cudaMalloc ((void **)&(ckt->d_CKTstates[i]), size2 * sizeof(double)) ;
         CUDAMALLOCCHECK (ckt->d_CKTstates[i], size2, double, status)
     }
+
+
+    /* Truncation Error */
+    status = cudaMalloc ((void **)&(ckt->dD_CKTstates), 8 * sizeof(double *)) ;
+    CUDAMALLOCCHECK (ckt->dD_CKTstates, 8, double *, status)
+
+    status = cudaMemcpy (ckt->dD_CKTstates, ckt->d_CKTstates, 8 * sizeof(double *), cudaMemcpyHostToDevice) ;
+    CUDAMEMCPYCHECK (ckt->dD_CKTstates, 8, double *, status)
+
+    status = cudaMalloc ((void **)&(ckt->d_CKTdeltaOld), 7 * sizeof(double)) ;
+    CUDAMALLOCCHECK (ckt->d_CKTdeltaOld, 7, double, status)
+
+//    ckt->CKTtimeSteps = (double *) malloc (size3 * sizeof(double)) ;
+    status = cudaMalloc ((void **)&(ckt->d_CKTtimeSteps), size3 * sizeof(double)) ;
+    CUDAMALLOCCHECK (ckt->d_CKTtimeSteps, size3, double, status)
+    status = cudaMalloc ((void **)&(ckt->d_CKTtimeStepsOut), size3 * sizeof(double)) ;
+    CUDAMALLOCCHECK (ckt->d_CKTtimeStepsOut, size3, double, status)
 
     return (OK) ;
 }

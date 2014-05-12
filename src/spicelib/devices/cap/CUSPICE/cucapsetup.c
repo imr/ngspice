@@ -73,6 +73,12 @@ GENmodel *inModel
     status = cudaMemcpy (model->d_PositionVectorRHS, model->PositionVectorRHS, size * sizeof(int), cudaMemcpyHostToDevice) ;
     CUDAMEMCPYCHECK (model->d_PositionVectorRHS, size, int, status)
 
+    status = cudaMalloc ((void **)&(model->d_PositionVector_timeSteps), size * sizeof(int)) ;
+    CUDAMALLOCCHECK (model->d_PositionVector_timeSteps, size, int, status)
+
+    status = cudaMemcpy (model->d_PositionVector_timeSteps, model->PositionVector_timeSteps, size * sizeof(int), cudaMemcpyHostToDevice) ;
+    CUDAMEMCPYCHECK (model->d_PositionVector_timeSteps, size, int, status)
+
     /* DOUBLE */
     model->CAPparamCPU.CAPinitCondArray = (double *) malloc (size * sizeof(double)) ;
     status = cudaMalloc ((void **)&(model->CAPparamGPU.d_CAPinitCondArray), size * sizeof(double)) ;
