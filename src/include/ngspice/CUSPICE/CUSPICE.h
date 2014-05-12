@@ -33,29 +33,33 @@ int cuCKTrhsOldUpdateDtoH (CKTcircuit *) ;
 int cuCKTsetup (CKTcircuit *) ;
 int cuCKTsystemDtoH (CKTcircuit *) ;
 int cuCKTstatesFlush (CKTcircuit *) ;
-int cuCKTstatesUpdateDtoH (CKTcircuit *) ;
 int cuCKTstate0UpdateHtoD (CKTcircuit *) ;
 int cuCKTstate0UpdateDtoH (CKTcircuit *) ;
 int cuCKTstate01copy (CKTcircuit *) ;
 int cuCKTstatesCircularBuffer (CKTcircuit *) ;
 int cuCKTstate123copy (CKTcircuit *) ;
+int cuCKTdeltaOldUpdateHtoD (CKTcircuit *) ;
+int cuCKTtrunc (CKTcircuit *, double, double *) ;
 
 int cuBSIM4v7destroy (GENmodel *) ;
 int cuBSIM4v7getic (GENmodel *) ;
 int cuBSIM4v7load (GENmodel *, CKTcircuit *) ;
 int cuBSIM4v7setup (GENmodel *) ;
 int cuBSIM4v7temp (GENmodel *) ;
+int cuBSIM4v7trunc (GENmodel *, CKTcircuit *, double *) ;
 
 int cuCAPdestroy (GENmodel *) ;
 int cuCAPgetic (GENmodel *) ;
 int cuCAPload (GENmodel *, CKTcircuit *) ;
 int cuCAPsetup (GENmodel *) ;
 int cuCAPtemp (GENmodel *) ;
+int cuCAPtrunc (GENmodel *, CKTcircuit *, double *) ;
 
 int cuINDdestroy (GENmodel *) ;
 int cuINDload (GENmodel *, CKTcircuit *) ;
 int cuINDsetup (GENmodel *) ;
 int cuINDtemp (GENmodel *) ;
+int cuINDtrunc (GENmodel *, CKTcircuit *, double *) ;
 
 int cuISRCdestroy (GENmodel *) ;
 int cuISRCload (GENmodel *, CKTcircuit *) ;

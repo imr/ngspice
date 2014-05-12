@@ -884,7 +884,7 @@ resume:
             }
 
 #ifdef USE_CUSPICE
-            status = cuCKTstatesUpdateDtoH (ckt) ;
+            status = cuCKTdeltaOldUpdateHtoD (ckt) ;
             if (status != 0)
                 return (E_NOMEM) ;
 #endif

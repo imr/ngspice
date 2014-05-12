@@ -57,7 +57,8 @@ libind_la_SOURCES +=		\
 	CUSPICE/cuindfree.c	\
 	CUSPICE/cuindload.cu	\
 	CUSPICE/cuindsetup.c	\
-	CUSPICE/cuindtemp.c
+	CUSPICE/cuindtemp.c	\
+	CUSPICE/cuindtrunc.cu
 
 libind_la_SOURCES +=		\
 	CUSPICE/muttopology.c	\
@@ -66,7 +67,7 @@ libind_la_SOURCES +=		\
 	CUSPICE/cumutsetup.c	\
 	CUSPICE/cumuttemp.c
 
-AM_CPPFLAGS += $(CUDA_CPPFLAGS)
+AM_CPPFLAGS += $(CUDA_CPPFLAGS) -I$(top_srcdir)/src/spicelib/analysis
 endif
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -73,6 +73,12 @@ GENmodel *inModel
     status = cudaMemcpy (model->d_PositionVectorRHS, model->PositionVectorRHS, size * sizeof(int), cudaMemcpyHostToDevice) ;
     CUDAMEMCPYCHECK (model->d_PositionVectorRHS, size, int, status)
 
+    status = cudaMalloc ((void **)&(model->d_PositionVector_timeSteps), size * sizeof(int)) ;
+    CUDAMALLOCCHECK (model->d_PositionVector_timeSteps, size, int, status)
+
+    status = cudaMemcpy (model->d_PositionVector_timeSteps, model->PositionVector_timeSteps, size * sizeof(int), cudaMemcpyHostToDevice) ;
+    CUDAMEMCPYCHECK (model->d_PositionVector_timeSteps, size, int, status)
+
     /* DOUBLE */
     model->BSIM4v7paramCPU.BSIM4v7gbsRWArray = (double *) malloc (size * sizeof(double)) ;
     status = cudaMalloc ((void **)&(model->BSIM4v7paramGPU.d_BSIM4v7gbsRWArray), size * sizeof(double)) ;

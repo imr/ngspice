@@ -40,30 +40,6 @@
     }
 
 int
-cuCKTstatesUpdateDtoH
-(
-CKTcircuit *ckt
-)
-{
-    int i ;
-    long unsigned int size ;
-    cudaError_t status ;
-
-    size = (long unsigned int)ckt->CKTnumStates ;
-
-    for (i = 0 ; i < 8 ; i++)
-    {
-        if (ckt->CKTstates[i] != NULL)
-        {
-            status = cudaMemcpy (ckt->CKTstates[i], ckt->d_CKTstates[i], size * sizeof(double), cudaMemcpyDeviceToHost) ;
-            CUDAMEMCPYCHECK (ckt->CKTstates[i], size, double, status)
-        }
-    }
-
-    return (OK) ;
-}
-
-int
 cuCKTstatesFlush
 (
 CKTcircuit *ckt
@@ -159,6 +135,20 @@ CKTcircuit *ckt
 
     status = cudaMemcpy (ckt->d_CKTstate3, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
     CUDAMEMCPYCHECK (ckt->d_CKTstate3, size, double, status)
+
+    return (OK) ;
+}
+
+int
+cuCKTdeltaOldUpdateHtoD
+(
+CKTcircuit *ckt
+)
+{
+    cudaError_t status ;
+
+    status = cudaMemcpy (ckt->d_CKTdeltaOld, ckt->CKTdeltaOld, 7 * sizeof(double), cudaMemcpyHostToDevice) ;
+    CUDAMEMCPYCHECK (ckt->d_CKTdeltaOld, 7, double, status)
 
     return (OK) ;
 }
