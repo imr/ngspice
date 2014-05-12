@@ -165,6 +165,11 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     int *PositionVectorRHS ;
     int *d_PositionVectorRHS ;
 
+    int offset_timeSteps ;
+    int n_timeSteps ;
+    int *PositionVector_timeSteps ;
+    int *d_PositionVector_timeSteps ;
+
     int n_instances ;
 #endif
 

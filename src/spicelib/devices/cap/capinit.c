@@ -45,7 +45,11 @@ SPICEdev CAPinfo = {
     .DEVunsetup = NULL,
     .DEVpzSetup = CAPsetup,
     .DEVtemperature = CAPtemp,
+#ifdef USE_CUSPICE
+    .DEVtrunc = cuCAPtrunc,
+#else
     .DEVtrunc = CAPtrunc,
+#endif
     .DEVfindBranch = NULL,
     .DEVacLoad = CAPacLoad,
     .DEVaccept = NULL,

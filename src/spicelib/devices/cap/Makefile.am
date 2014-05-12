@@ -48,9 +48,10 @@ libcap_la_SOURCES +=		\
 	CUSPICE/cucapgetic.c	\
 	CUSPICE/cucapload.cu	\
 	CUSPICE/cucapsetup.c	\
-	CUSPICE/cucaptemp.c
+	CUSPICE/cucaptemp.c	\
+	CUSPICE/cucaptrunc.cu
 
-AM_CPPFLAGS += $(CUDA_CPPFLAGS)
+AM_CPPFLAGS += $(CUDA_CPPFLAGS) -I$(top_srcdir)/src/spicelib/analysis
 endif
 
 MAINTAINERCLEANFILES = Makefile.in
