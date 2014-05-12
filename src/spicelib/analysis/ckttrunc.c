@@ -15,6 +15,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 int
 CKTtrunc (CKTcircuit *ckt, double *timeStep)
@@ -58,7 +61,16 @@ CKTtrunc (CKTcircuit *ckt, double *timeStep)
 
         }
     }
+
+#ifdef USE_CUSPICE
+    int status ;
+
+    status = cuCKTtrunc (ckt, HUGE, timeStep) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#else
     *timeStep = MIN (2 * *timeStep, timetemp) ;
+#endif
 
     ckt->CKTstat->STATtranTruncTime += SPfrontEnd->IFseconds () - startTime ;
     return (OK) ;
