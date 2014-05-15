@@ -86,14 +86,14 @@ extern void line_free_x(struct line * deck, bool recurse);
 struct subs;
 static struct line *doit(struct line *deck, wordlist *modnames);
 static int translate(struct line *deck, char *formal, char *actual, char *scname,
-                     char *subname, struct subs *subs, wordlist const *modnames);
+                     const char *subname, struct subs *subs, wordlist const *modnames);
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
-static int settrans(char *formal, char *actual, char *subname);
+static int settrans(char *formal, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end);
 static int numnodes(char *name, struct subs *subs, wordlist const *modnames);
 static int  numdevs(char *s);
-static wordlist *modtranslate(struct line *deck, char *subname, wordlist  **const new_modnames);
+static wordlist *modtranslate(struct line *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct line *deck, char *subname, wordlist * const orig_modnames);
 static int inp_numnodes(char c);
 
@@ -548,7 +548,7 @@ doit(struct line *deck, wordlist *modnames) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
 
                 char *tofree, *tofree2, *s, *t;
-                char *scname, *subname;
+                char *scname;
                 struct line *lcc;
 
                 gotone = TRUE;
@@ -600,34 +600,21 @@ doit(struct line *deck, wordlist *modnames) {
                 /* Now we have to replace this line with the
                  * macro definition.
                  */
-                subname = copy(sss->su_name);
 
                 /*  make lcc point to a copy of the .subckt definition  */
                 lcc = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
-                {
-                    /* this translates the model names in .model lines
-                     *   and appends them to `modnames'
-                     */
-                    wordlist *orig_modnames = modtranslate(lcc, scname, &modnames);
-                    /* This translates the model name on all components in the deck */
-                    if (orig_modnames)
-                        devmodtranslate(lcc, scname, orig_modnames);
-                    wl_free(orig_modnames);
-                }
+                /* prepend the translated model names to the list `modnames' */
+                modnames = modtranslate(lcc, scname, modnames);
 
-                {
-                    char *s = sss->su_args;
-                    txfree(gettok(&t));  /* Throw out the subcircuit refdes */
+                txfree(gettok(&t));  /* Throw out the subcircuit refdes */
 
-                    /* now invoke translate, which handles the remainder of the
-                     * translation.
-                     */
-                    if (!translate(lcc, s, t, scname, subname, subs, modnames))
-                        error = 1;
-                    tfree(subname);
-                }
+                /* now invoke translate, which handles the remainder of the
+                * translation.
+                */
+                if (!translate(lcc, sss->su_args, t, scname, sss->su_name, subs, modnames))
+                    error = 1;
 
                 /* Now splice the decks together. */
                 {
@@ -894,7 +881,7 @@ bxx_buffer(struct bxx_buffer *t)
  * subname = copy of the subcircuit name
  *-------------------------------------------------------------------------------------------*/
 static int
-translate(struct line *deck, char *formal, char *actual, char *scname, char *subname, struct subs *subs, wordlist const *modnames)
+translate(struct line *deck, char *formal, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
 {
     struct line *c;
     struct bxx_buffer buffer;
@@ -1407,7 +1394,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
  * subname = copy of the subcircuit name
  *------------------------------------------------------------------------------*/
 static int
-settrans(char *formal, char *actual, char *subname)
+settrans(char *formal, char *actual, const char *subname)
 {
     int i;
 
@@ -1670,9 +1657,10 @@ numdevs(char *s)
  *  modtranslate returns the list of model names which have been translated
  *----------------------------------------------------------------------*/
 static wordlist *
-modtranslate(struct line *c, char *subname, wordlist ** const new_modnames)
+modtranslate(struct line *c, char *subname, wordlist *new_modnames)
 {
     wordlist *orig_modnames = NULL;
+    struct line *lcc = c;
 
     for (; c; c = c->li_next)
         if (ciprefix(".model", c->li_line)) {
@@ -1693,7 +1681,7 @@ modtranslate(struct line *c, char *subname, wordlist ** const new_modnames)
 
             /* remember the translation */
             orig_modnames = wl_cons(model_name, orig_modnames);
-            *new_modnames = wl_cons(new_model_name, *new_modnames);
+            new_modnames = wl_cons(new_model_name, new_modnames);
 
             /* perform the actual translation of this .model line */
             t = tprintf(".model %s %s", new_model_name, t);
@@ -1708,7 +1696,12 @@ modtranslate(struct line *c, char *subname, wordlist ** const new_modnames)
 
         }
 
-    return orig_modnames;
+    if (orig_modnames) {
+        devmodtranslate(lcc, subname, orig_modnames);
+        wl_free(orig_modnames);
+    }
+
+    return new_modnames;
 }
 
 
@@ -1720,12 +1713,11 @@ modtranslate(struct line *c, char *subname, wordlist ** const new_modnames)
  *  after:    Q1 c b e U1:2N3904
  *-------------------------------------------------------------------*/
 static void
-devmodtranslate(struct line *deck, char *subname, wordlist * const orig_modnames)
+devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 {
-    struct line *s;
     int found;
 
-    for (s = deck; s; s = s->li_next) {
+    for (; s; s = s->li_next) {
 
         char *buffer, *t, c, *name, *next_name;
         wordlist *wlsub;
