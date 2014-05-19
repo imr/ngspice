@@ -1,4 +1,4 @@
-/**** BSIM4.7.0 Released by Darsen Lu 04/08/2011 ****/
+/**** BSIM4.8.0 Released by Navid Paydavosi 11/01/2013 ****/
 
 /**********
  * Copyright 2006 Regents of the University of California. All rights reserved.
@@ -19,6 +19,7 @@
  * Modified by Mohan Dunga, Wenwei Yang, 05/18/2007.
  * Modified by Wenwei Yang, 07/31/2008.
  * Modified by Tanvir Morshed, Darsen Lu 03/27/2011
+ * Modified by Pankaj Kumar Thakur, 07/23/2012
  **********/
 
 
@@ -851,6 +852,10 @@ int Size_Not_Found, i;
                                     + model->BSIM4lteta0 * Inv_L
                                     + model->BSIM4wteta0 * Inv_W
                                     + model->BSIM4pteta0 * Inv_LW;
+                  pParam->BSIM4tvoffcv = model->BSIM4tvoffcv /* v4.8.0  */
+                                    + model->BSIM4ltvoffcv * Inv_L
+                                    + model->BSIM4wtvoffcv * Inv_W
+                                    + model->BSIM4ptvoffcv * Inv_LW;
                   pParam->BSIM4etab = model->BSIM4etab
                                     + model->BSIM4letab * Inv_L
                                     + model->BSIM4wetab * Inv_W
@@ -983,6 +988,18 @@ int Size_Not_Found, i;
                                      + model->BSIM4lcigc * Inv_L
                                      + model->BSIM4wcigc * Inv_W
                                      + model->BSIM4pcigc * Inv_LW;
+                  pParam->BSIM4aigsd = model->BSIM4aigsd
+                                     + model->BSIM4laigsd * Inv_L
+                                     + model->BSIM4waigsd * Inv_W
+                                     + model->BSIM4paigsd * Inv_LW;
+                  pParam->BSIM4bigsd = model->BSIM4bigsd
+                                     + model->BSIM4lbigsd * Inv_L
+                                     + model->BSIM4wbigsd * Inv_W
+                                     + model->BSIM4pbigsd * Inv_LW;
+                  pParam->BSIM4cigsd = model->BSIM4cigsd
+                                     + model->BSIM4lcigsd * Inv_L
+                                     + model->BSIM4wcigsd * Inv_W
+                                     + model->BSIM4pcigsd * Inv_LW;
                   pParam->BSIM4aigs = model->BSIM4aigs
                                      + model->BSIM4laigs * Inv_L
                                      + model->BSIM4waigs * Inv_W
@@ -1542,6 +1559,57 @@ int Size_Not_Found, i;
                   pParam->BSIM4inv_od_ref = Inv_saref + Inv_sbref;
                   pParam->BSIM4rho_ref = model->BSIM4ku0 / pParam->BSIM4ku0temp * pParam->BSIM4inv_od_ref;
 
+                  /*high k*/
+                  /*Calculate VgsteffVth for mobMod=3*/
+                  if(model->BSIM4mobMod==3)
+                  {	/*Calculate n @ Vbs=Vds=0*/
+                      lt1 = model->BSIM4factor1* pParam->BSIM4sqrtXdep0;
+                      T0 = pParam->BSIM4dvt1 * pParam->BSIM4leff / lt1;
+                      if (T0 < EXP_THRESHOLD)
+                      {
+                          T1 = exp(T0);
+                          T2 = T1 - 1.0;
+                          T3 = T2 * T2;
+                          T4 = T3 + 2.0 * T1 * MIN_EXP;
+                          Theta0 = T1 / T4;
+                      }
+                      else
+                          Theta0 = 1.0 / (MAX_EXP - 2.0);
+
+                      tmp1 = epssub / pParam->BSIM4Xdep0;
+                      tmp2 = pParam->BSIM4nfactor * tmp1;
+                      tmp3 = (tmp2 + pParam->BSIM4cdsc * Theta0 + pParam->BSIM4cit) / model->BSIM4coxe;
+                      if (tmp3 >= -0.5)
+                          n0 = 1.0 + tmp3;
+                      else
+                      {
+                          T0 = 1.0 / (3.0 + 8.0 * tmp3);
+                          n0 = (1.0 + 3.0 * tmp3) * T0;
+                      }
+
+                      T0 = n0 * model->BSIM4vtm;
+                      T1 = pParam->BSIM4voffcbn;
+                      T2 = T1/T0;
+                      if (T2 < -EXP_THRESHOLD)
+                      {   T3 = model->BSIM4coxe * MIN_EXP / pParam->BSIM4cdep0;
+                          T4 = pParam->BSIM4mstar + T3 * n0;
+                      }
+                      else if (T2 > EXP_THRESHOLD)
+                      {   T3 = model->BSIM4coxe * MAX_EXP / pParam->BSIM4cdep0;
+                          T4 = pParam->BSIM4mstar + T3 * n0;
+                      }
+                      else
+                      {  T3 = exp(T2)* model->BSIM4coxe / pParam->BSIM4cdep0;
+                         T4 = pParam->BSIM4mstar + T3 * n0;
+                      }
+                      pParam->BSIM4VgsteffVth = T0 * log(2.0)/T4;
+                  }
+
+                  /* New DITS term added in 4.7 */
+                  T0 = -pParam->BSIM4dvtp3 * log(pParam->BSIM4leff);
+                  DEXP(T0, T1);
+                  pParam->BSIM4dvtp2factor = pParam->BSIM4dvtp5 + pParam->BSIM4dvtp2 * T1;
+
               } /* End of SizeNotFound */
 
               /*  stress effect */
@@ -1699,37 +1767,60 @@ int Size_Not_Found, i;
 
               if(here->BSIM4rbodyMod == 2)
                 {
-                  if (bodymode == 5)
-                    {
-                      rbsbx =  exp( log(model->BSIM4rbsbx0) + model->BSIM4rbsdbxl * lnl +
-                                    model->BSIM4rbsdbxw * lnw + model->BSIM4rbsdbxnf * lnnf );
-                      rbsby =  exp( log(model->BSIM4rbsby0) + model->BSIM4rbsdbyl * lnl +
-                                    model->BSIM4rbsdbyw * lnw + model->BSIM4rbsdbynf * lnnf );
-                      here->BSIM4rbsb = rbsbx * rbsby / (rbsbx + rbsby);
+                    if (bodymode == 5)
+                      {
+                        /*rbsbx =  exp( log(model->BSIM4rbsbx0) + model->BSIM4rbsdbxl * lnl +
+                              model->BSIM4rbsdbxw * lnw + model->BSIM4rbsdbxnf * lnnf );
+                        rbsby =  exp( log(model->BSIM4rbsby0) + model->BSIM4rbsdbyl * lnl +
+                              model->BSIM4rbsdbyw * lnw + model->BSIM4rbsdbynf * lnnf );
+                               */
+                        rbsbx =  model->BSIM4rbsbx0 * exp( model->BSIM4rbsdbxl * lnl +
+                              model->BSIM4rbsdbxw * lnw + model->BSIM4rbsdbxnf * lnnf );
+                        rbsby =  model->BSIM4rbsby0 * exp( model->BSIM4rbsdbyl * lnl +
+                              model->BSIM4rbsdbyw * lnw + model->BSIM4rbsdbynf * lnnf );
+                        here->BSIM4rbsb = rbsbx * rbsby / (rbsbx + rbsby);
 
 
-                      rbdbx =  exp( log(model->BSIM4rbdbx0) + model->BSIM4rbsdbxl * lnl +
-                                    model->BSIM4rbsdbxw * lnw + model->BSIM4rbsdbxnf * lnnf );
-                      rbdby =  exp( log(model->BSIM4rbdby0) + model->BSIM4rbsdbyl * lnl +
-                                    model->BSIM4rbsdbyw * lnw + model->BSIM4rbsdbynf * lnnf );
-                      here->BSIM4rbdb = rbdbx * rbdby / (rbdbx + rbdby);
-                    }
+                        /*rbdbx =  exp( log(model->BSIM4rbdbx0) + model->BSIM4rbsdbxl * lnl +
+                              model->BSIM4rbsdbxw * lnw + model->BSIM4rbsdbxnf * lnnf );
+                        rbdby =  exp( log(model->BSIM4rbdby0) + model->BSIM4rbsdbyl * lnl +
+                              model->BSIM4rbsdbyw * lnw + model->BSIM4rbsdbynf * lnnf );
+                                */
 
-                  if ((bodymode == 3)|| (bodymode == 5))
-                    {
-                      here->BSIM4rbps = exp( log(model->BSIM4rbps0) + model->BSIM4rbpsl * lnl +
-                                             model->BSIM4rbpsw * lnw + model->BSIM4rbpsnf * lnnf );
-                      here->BSIM4rbpd = exp( log(model->BSIM4rbpd0) + model->BSIM4rbpdl * lnl +
-                                             model->BSIM4rbpdw * lnw + model->BSIM4rbpdnf * lnnf );
-                    }
+                        rbdbx =  model->BSIM4rbdbx0 * exp( model->BSIM4rbsdbxl * lnl +
+                              model->BSIM4rbsdbxw * lnw + model->BSIM4rbsdbxnf * lnnf );
+                        rbdby =  model->BSIM4rbdby0 * exp(  model->BSIM4rbsdbyl * lnl +
+                              model->BSIM4rbsdbyw * lnw + model->BSIM4rbsdbynf * lnnf );
 
-                  rbpbx =  exp( log(model->BSIM4rbpbx0) + model->BSIM4rbpbxl * lnl +
-                                model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
-                  rbpby =  exp( log(model->BSIM4rbpby0) + model->BSIM4rbpbyl * lnl +
-                                model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
-                  here->BSIM4rbpb = rbpbx*rbpby/(rbpbx + rbpby);
-                }
+                        here->BSIM4rbdb = rbdbx * rbdby / (rbdbx + rbdby);
+                      }
 
+                    if ((bodymode == 3)|| (bodymode == 5))
+                      {
+                        /*here->BSIM4rbps = exp( log(model->BSIM4rbps0) + model->BSIM4rbpsl * lnl +
+                                   model->BSIM4rbpsw * lnw + model->BSIM4rbpsnf * lnnf );
+                        here->BSIM4rbpd = exp( log(model->BSIM4rbpd0) + model->BSIM4rbpdl * lnl +
+                                                 model->BSIM4rbpdw * lnw + model->BSIM4rbpdnf * lnnf );
+                               */
+                        here->BSIM4rbps = model->BSIM4rbps0 * exp( model->BSIM4rbpsl * lnl +
+                                   model->BSIM4rbpsw * lnw + model->BSIM4rbpsnf * lnnf );
+                        here->BSIM4rbpd = model->BSIM4rbpd0 * exp( model->BSIM4rbpdl * lnl +
+                                                 model->BSIM4rbpdw * lnw + model->BSIM4rbpdnf * lnnf );
+
+                      }
+
+                    /*rbpbx =  exp( log(model->BSIM4rbpbx0) + model->BSIM4rbpbxl * lnl +
+                      	model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
+                    rbpby =  exp( log(model->BSIM4rbpby0) + model->BSIM4rbpbyl * lnl +
+                      	model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
+                            */
+                            rbpbx =  model->BSIM4rbpbx0 * exp(  model->BSIM4rbpbxl * lnl +
+                      	model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
+                    rbpby =  model->BSIM4rbpby0 * exp(  model->BSIM4rbpbyl * lnl +
+                      	model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
+
+                    here->BSIM4rbpb = rbpbx*rbpby/(rbpbx + rbpby);
+                  }
 
               if ((here->BSIM4rbodyMod == 1 ) || ((here->BSIM4rbodyMod == 2 ) && (bodymode == 5)) )
               {   if (here->BSIM4rbdb < 1.0e-3)
@@ -2124,65 +2215,9 @@ int Size_Not_Found, i;
                 here->BSIM4SswgTempRevSatCur = T5 * T10 * T11 * model->BSIM4jtsswgs;
                 here->BSIM4DswgTempRevSatCur = T6 * T10 * T11 * model->BSIM4jtsswgd;
 
-                /*high k*/
-                /*Calculate VgsteffVth for mobMod=3*/
-                if(model->BSIM4mobMod==3)
-                {        /*Calculate n @ Vbs=Vds=0*/
-                    V0 = pParam->BSIM4vbi - pParam->BSIM4phi;
-                    lt1 = model->BSIM4factor1* pParam->BSIM4sqrtXdep0;
-                    ltw = lt1;
-                    T0 = pParam->BSIM4dvt1 * pParam->BSIM4leff / lt1;
-                    if (T0 < EXP_THRESHOLD)
-                      {
-                        T1 = exp(T0);
-                        T2 = T1 - 1.0;
-                        T3 = T2 * T2;
-                        T4 = T3 + 2.0 * T1 * MIN_EXP;
-                        Theta0 = T1 / T4;
-                      }
-                    else
-                      Theta0 = 1.0 / (MAX_EXP - 2.0);
-
-                     tmp1 = epssub / pParam->BSIM4Xdep0;
-                    here->BSIM4nstar = model->BSIM4vtm / Charge_q *
-                      (model->BSIM4coxe        + tmp1 + pParam->BSIM4cit);
-                    tmp2 = pParam->BSIM4nfactor * tmp1;
-                    tmp3 = (tmp2 + pParam->BSIM4cdsc * Theta0 + pParam->BSIM4cit) / model->BSIM4coxe;
-                    if (tmp3 >= -0.5)
-                      n0 = 1.0 + tmp3;
-                    else
-                      {
-                        T0 = 1.0 / (3.0 + 8.0 * tmp3);
-                        n0 = (1.0 + 3.0 * tmp3) * T0;
-                      }
-
-                  T0 = n0 * model->BSIM4vtm;
-                  T1 = pParam->BSIM4voffcbn;
-                  T2 = T1/T0;
-                  if (T2 < -EXP_THRESHOLD)
-                  {   T3 = model->BSIM4coxe * MIN_EXP / pParam->BSIM4cdep0;
-                      T4 = pParam->BSIM4mstar + T3 * n0;
-                  }
-                  else if (T2 > EXP_THRESHOLD)
-                  {   T3 = model->BSIM4coxe * MAX_EXP / pParam->BSIM4cdep0;
-                      T4 = pParam->BSIM4mstar + T3 * n0;
-                  }
-                  else
-                  {  T3 = exp(T2)* model->BSIM4coxe / pParam->BSIM4cdep0;
-                               T4 = pParam->BSIM4mstar + T3 * n0;
-                  }
-                  pParam->BSIM4VgsteffVth = T0 * log(2.0)/T4;
-
-                }
-
-                /* New DITS term added in 4.7 */
-                T0 = -pParam->BSIM4dvtp3 * log(pParam->BSIM4leff);
-                DEXP(T0, T1);
-                pParam->BSIM4dvtp2factor = pParam->BSIM4dvtp5 + pParam->BSIM4dvtp2 * T1;
-
                 if(model->BSIM4mtrlMod != 0 && model->BSIM4mtrlCompatMod == 0)
-                {
-                    /* Calculate TOXP from EOT */
+        {
+            /* Calculate TOXP from EOT */
                     /* Calculate Vgs_eff @ Vgs = VDD with Poly Depletion Effect */
                     Vtm0eot = KboQ * model->BSIM4tempeot;
                     Vtmeot  = Vtm0eot;
@@ -2263,6 +2298,7 @@ int Size_Not_Found, i;
                         n = (1.0 + 3.0 * tmp3) * T0;
                       }
 
+
                     /* Vth correction for Pocket implant */
                     if (pParam->BSIM4dvtp0 > 0.0)
                       {
@@ -2297,9 +2333,12 @@ int Size_Not_Found, i;
                         toxpf = toxe - epsrox/model->BSIM4epsrsub * Tcen;
                         niter++;
                       } while ((niter<=4)&&(ABS(toxpf-toxpi)>1e-12));
-                      model->BSIM4toxp = toxpf;
-                      model->BSIM4coxp = epsrox * EPS0 / model->BSIM4toxp;
-                      }
+                      here->BSIM4toxp = toxpf;
+                      here->BSIM4coxp = epsrox * EPS0 / model->BSIM4toxp;
+                } else {
+                    here->BSIM4toxp = model->BSIM4toxp;
+                    here->BSIM4coxp = model->BSIM4coxp;
+                }
 
               if (BSIM4checkModel(model, here, ckt))
               {
