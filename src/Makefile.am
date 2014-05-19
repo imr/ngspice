@@ -55,6 +55,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/bsim4/libbsim4.la		\
 	spicelib/devices/bsim4v5/libbsim4v5.la		\
 	spicelib/devices/bsim4v6/libbsim4v6.la		\
+	spicelib/devices/bsim4v7/libbsim4v7.la		\
 	spicelib/devices/cap/libcap.la			\
 	spicelib/devices/bsim3soi_pd/libbsim3soipd.la	\
 	spicelib/devices/bsim3soi_fd/libbsim3soifd.la	\

@@ -310,7 +310,10 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 			    if (prefix("4.6", ver)) {
 			      type = INPtypelook("BSIM4v6");
 			    }
-			    if ( (strstr(ver, "default")) || (prefix("4.7", ver)) ) {
+			    if (prefix("4.7", ver)) {
+			      type = INPtypelook("BSIM4v7");
+			    }
+			    if ( (strstr(ver, "default")) || (prefix("4.8", ver)) ) {
 			      type = INPtypelook("BSIM4");
 			    }
 			    if (type < 0) {

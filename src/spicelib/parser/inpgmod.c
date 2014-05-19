@@ -220,6 +220,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         && modtmp->INPmodType != INPtypelook ("BSIM4")
         && modtmp->INPmodType != INPtypelook ("BSIM4v5")
         && modtmp->INPmodType != INPtypelook ("BSIM4v6")
+        && modtmp->INPmodType != INPtypelook ("BSIM4v7")
         && modtmp->INPmodType != INPtypelook ("HiSIM2")
         && modtmp->INPmodType != INPtypelook ("HiSIMHV")
        ) continue; /* We left the loop if the model is not in the list */
