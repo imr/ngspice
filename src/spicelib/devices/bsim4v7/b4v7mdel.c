@@ -11,25 +11,25 @@
  **********/
 
 #include "ngspice/ngspice.h"
-#include "bsim4def.h"
+#include "bsim4v7def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
 int
-BSIM4mDelete(
+BSIM4v7mDelete(
 GENmodel **inModel,
 IFuid modname,
 GENmodel *kill)
 {
-BSIM4model **model = (BSIM4model**)inModel;
-BSIM4model *modfast = (BSIM4model*)kill;
-BSIM4instance *here;
-BSIM4instance *prev = NULL;
-BSIM4model **oldmod;
+BSIM4v7model **model = (BSIM4v7model**)inModel;
+BSIM4v7model *modfast = (BSIM4v7model*)kill;
+BSIM4v7instance *here;
+BSIM4v7instance *prev = NULL;
+BSIM4v7model **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->BSIM4nextModel)) 
-    {    if ((*model)->BSIM4modName == modname || 
+    for (; *model ; model = &((*model)->BSIM4v7nextModel)) 
+    {    if ((*model)->BSIM4v7modName == modname || 
              (modfast && *model == modfast))
 	     goto delgot;
          oldmod = model;
@@ -37,8 +37,8 @@ BSIM4model **oldmod;
     return(E_NOMOD);
 
 delgot:
-    *oldmod = (*model)->BSIM4nextModel; /* cut deleted device out of list */
-    for (here = (*model)->BSIM4instances; here; here = here->BSIM4nextInstance)
+    *oldmod = (*model)->BSIM4v7nextModel; /* cut deleted device out of list */
+    for (here = (*model)->BSIM4v7instances; here; here = here->BSIM4v7nextInstance)
     {    if(prev) FREE(prev);
          prev = here;
     }

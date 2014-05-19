@@ -12,33 +12,33 @@
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "bsim4def.h"
+#include "bsim4v7def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
 
 int
-BSIM4getic(
+BSIM4v7getic(
 GENmodel *inModel,
 CKTcircuit *ckt)
 {
-BSIM4model *model = (BSIM4model*)inModel;
-BSIM4instance *here;
+BSIM4v7model *model = (BSIM4v7model*)inModel;
+BSIM4v7instance *here;
 
-    for (; model ; model = model->BSIM4nextModel) 
-    {    for (here = model->BSIM4instances; here; here = here->BSIM4nextInstance)
+    for (; model ; model = model->BSIM4v7nextModel) 
+    {    for (here = model->BSIM4v7instances; here; here = here->BSIM4v7nextInstance)
           {
-              if (!here->BSIM4icVDSGiven) 
-              {   here->BSIM4icVDS = *(ckt->CKTrhs + here->BSIM4dNode) 
-                                   - *(ckt->CKTrhs + here->BSIM4sNode);
+              if (!here->BSIM4v7icVDSGiven) 
+              {   here->BSIM4v7icVDS = *(ckt->CKTrhs + here->BSIM4v7dNode) 
+                                   - *(ckt->CKTrhs + here->BSIM4v7sNode);
               }
-              if (!here->BSIM4icVGSGiven) 
-              {   here->BSIM4icVGS = *(ckt->CKTrhs + here->BSIM4gNodeExt) 
-                                   - *(ckt->CKTrhs + here->BSIM4sNode);
+              if (!here->BSIM4v7icVGSGiven) 
+              {   here->BSIM4v7icVGS = *(ckt->CKTrhs + here->BSIM4v7gNodeExt) 
+                                   - *(ckt->CKTrhs + here->BSIM4v7sNode);
               }
-              if(!here->BSIM4icVBSGiven)
-              {  here->BSIM4icVBS = *(ckt->CKTrhs + here->BSIM4bNode)
-                                  - *(ckt->CKTrhs + here->BSIM4sNode);
+              if(!here->BSIM4v7icVBSGiven)
+              {  here->BSIM4v7icVBS = *(ckt->CKTrhs + here->BSIM4v7bNode)
+                                  - *(ckt->CKTrhs + here->BSIM4v7sNode);
               }
          }
     }

@@ -26,7 +26,7 @@
 #include "ngspice/ftedefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
-#include "bsim4def.h"
+#include "bsim4v7def.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
@@ -44,14 +44,14 @@
 #define Charge_q 1.60219e-19
 
 int
-BSIM4setup(
+BSIM4v7setup(
 SMPmatrix *matrix,
 GENmodel *inModel,
 CKTcircuit *ckt,
 int *states)
 {
-BSIM4model *model = (BSIM4model*)inModel;
-BSIM4instance *here;
+BSIM4v7model *model = (BSIM4v7model*)inModel;
+BSIM4v7instance *here;
 int error;
 CKTnode *tmp;
 int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
@@ -60,7 +60,7 @@ JOB   *job;
 
 #ifdef USE_OMP
 unsigned int idx, InstCount;
-BSIM4instance **InstArray;
+BSIM4v7instance **InstArray;
 #endif
 
     /* Search for a noise analysis request */
@@ -71,2274 +71,2274 @@ BSIM4instance **InstArray;
         }
     }
 
-    /*  loop through all the BSIM4 device models */
-    for( ; model != NULL; model = model->BSIM4nextModel )
+    /*  loop through all the BSIM4v7 device models */
+    for( ; model != NULL; model = model->BSIM4v7nextModel )
     {   /* process defaults of model parameters */
-        if (!model->BSIM4typeGiven)
-            model->BSIM4type = NMOS;     
+        if (!model->BSIM4v7typeGiven)
+            model->BSIM4v7type = NMOS;     
 
-        if (!model->BSIM4mobModGiven) 
-            model->BSIM4mobMod = 0;
-        else if ((model->BSIM4mobMod != 0) && (model->BSIM4mobMod != 1)
-                 && (model->BSIM4mobMod != 2)&& (model->BSIM4mobMod != 3))
-        {   model->BSIM4mobMod = 0;
+        if (!model->BSIM4v7mobModGiven) 
+            model->BSIM4v7mobMod = 0;
+        else if ((model->BSIM4v7mobMod != 0) && (model->BSIM4v7mobMod != 1)
+                 && (model->BSIM4v7mobMod != 2)&& (model->BSIM4v7mobMod != 3))
+        {   model->BSIM4v7mobMod = 0;
             printf("Warning: mobMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4binUnitGiven) 
-            model->BSIM4binUnit = 1;
-        if (!model->BSIM4paramChkGiven) 
-            model->BSIM4paramChk = 1;
+        if (!model->BSIM4v7binUnitGiven) 
+            model->BSIM4v7binUnit = 1;
+        if (!model->BSIM4v7paramChkGiven) 
+            model->BSIM4v7paramChk = 1;
 
-        if (!model->BSIM4dioModGiven)
-            model->BSIM4dioMod = 1;
-        else if ((model->BSIM4dioMod != 0) && (model->BSIM4dioMod != 1)
-            && (model->BSIM4dioMod != 2))
-        {   model->BSIM4dioMod = 1;
+        if (!model->BSIM4v7dioModGiven)
+            model->BSIM4v7dioMod = 1;
+        else if ((model->BSIM4v7dioMod != 0) && (model->BSIM4v7dioMod != 1)
+            && (model->BSIM4v7dioMod != 2))
+        {   model->BSIM4v7dioMod = 1;
             printf("Warning: dioMod has been set to its default value: 1.\n");
         }
 
-        if (!model->BSIM4cvchargeModGiven) 
-            model->BSIM4cvchargeMod = 0;
-        if (!model->BSIM4capModGiven) 
-            model->BSIM4capMod = 2;
-        else if ((model->BSIM4capMod != 0) && (model->BSIM4capMod != 1)
-            && (model->BSIM4capMod != 2))
-        {   model->BSIM4capMod = 2;
+        if (!model->BSIM4v7cvchargeModGiven) 
+            model->BSIM4v7cvchargeMod = 0;
+        if (!model->BSIM4v7capModGiven) 
+            model->BSIM4v7capMod = 2;
+        else if ((model->BSIM4v7capMod != 0) && (model->BSIM4v7capMod != 1)
+            && (model->BSIM4v7capMod != 2))
+        {   model->BSIM4v7capMod = 2;
             printf("Warning: capMod has been set to its default value: 2.\n");
         }
 
-        if (!model->BSIM4rdsModGiven)
-            model->BSIM4rdsMod = 0;
-        else if ((model->BSIM4rdsMod != 0) && (model->BSIM4rdsMod != 1))
-        {   model->BSIM4rdsMod = 0;
+        if (!model->BSIM4v7rdsModGiven)
+            model->BSIM4v7rdsMod = 0;
+        else if ((model->BSIM4v7rdsMod != 0) && (model->BSIM4v7rdsMod != 1))
+        {   model->BSIM4v7rdsMod = 0;
             printf("Warning: rdsMod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4rbodyModGiven)
-            model->BSIM4rbodyMod = 0;
-        else if ((model->BSIM4rbodyMod != 0) && (model->BSIM4rbodyMod != 1) && (model->BSIM4rbodyMod != 2))
-        {   model->BSIM4rbodyMod = 0;
+        if (!model->BSIM4v7rbodyModGiven)
+            model->BSIM4v7rbodyMod = 0;
+        else if ((model->BSIM4v7rbodyMod != 0) && (model->BSIM4v7rbodyMod != 1) && (model->BSIM4v7rbodyMod != 2))
+        {   model->BSIM4v7rbodyMod = 0;
             printf("Warning: rbodyMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4rgateModGiven)
-            model->BSIM4rgateMod = 0;
-        else if ((model->BSIM4rgateMod != 0) && (model->BSIM4rgateMod != 1)
-            && (model->BSIM4rgateMod != 2) && (model->BSIM4rgateMod != 3))
-        {   model->BSIM4rgateMod = 0;
+        if (!model->BSIM4v7rgateModGiven)
+            model->BSIM4v7rgateMod = 0;
+        else if ((model->BSIM4v7rgateMod != 0) && (model->BSIM4v7rgateMod != 1)
+            && (model->BSIM4v7rgateMod != 2) && (model->BSIM4v7rgateMod != 3))
+        {   model->BSIM4v7rgateMod = 0;
             printf("Warning: rgateMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4perModGiven)
-            model->BSIM4perMod = 1;
-        else if ((model->BSIM4perMod != 0) && (model->BSIM4perMod != 1))
-        {   model->BSIM4perMod = 1;
+        if (!model->BSIM4v7perModGiven)
+            model->BSIM4v7perMod = 1;
+        else if ((model->BSIM4v7perMod != 0) && (model->BSIM4v7perMod != 1))
+        {   model->BSIM4v7perMod = 1;
             printf("Warning: perMod has been set to its default value: 1.\n");
         }
 
-        if (!model->BSIM4geoModGiven)
-            model->BSIM4geoMod = 0;
+        if (!model->BSIM4v7geoModGiven)
+            model->BSIM4v7geoMod = 0;
 
-        if (!model->BSIM4rgeoModGiven)
-            model->BSIM4rgeoMod = 0;
-        else if ((model->BSIM4rgeoMod != 0) && (model->BSIM4rgeoMod != 1))
-        {   model->BSIM4rgeoMod = 1;
+        if (!model->BSIM4v7rgeoModGiven)
+            model->BSIM4v7rgeoMod = 0;
+        else if ((model->BSIM4v7rgeoMod != 0) && (model->BSIM4v7rgeoMod != 1))
+        {   model->BSIM4v7rgeoMod = 1;
             printf("Warning: rgeoMod has been set to its default value: 1.\n");
         }
-        if (!model->BSIM4fnoiModGiven) 
-            model->BSIM4fnoiMod = 1;
-        else if ((model->BSIM4fnoiMod != 0) && (model->BSIM4fnoiMod != 1))
-        {   model->BSIM4fnoiMod = 1;
+        if (!model->BSIM4v7fnoiModGiven) 
+            model->BSIM4v7fnoiMod = 1;
+        else if ((model->BSIM4v7fnoiMod != 0) && (model->BSIM4v7fnoiMod != 1))
+        {   model->BSIM4v7fnoiMod = 1;
             printf("Warning: fnoiMod has been set to its default value: 1.\n");
         }
-        if (!model->BSIM4tnoiModGiven)
-            model->BSIM4tnoiMod = 0; /* WDLiu: tnoiMod=1 needs to set internal S/D nodes */
-        else if ((model->BSIM4tnoiMod != 0) && (model->BSIM4tnoiMod != 1) && (model->BSIM4tnoiMod != 2))  /* v4.7 */
-        {   model->BSIM4tnoiMod = 0;
+        if (!model->BSIM4v7tnoiModGiven)
+            model->BSIM4v7tnoiMod = 0; /* WDLiu: tnoiMod=1 needs to set internal S/D nodes */
+        else if ((model->BSIM4v7tnoiMod != 0) && (model->BSIM4v7tnoiMod != 1) && (model->BSIM4v7tnoiMod != 2))  /* v4.7 */
+        {   model->BSIM4v7tnoiMod = 0;
             printf("Warning: tnoiMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4trnqsModGiven)
-            model->BSIM4trnqsMod = 0; 
-        else if ((model->BSIM4trnqsMod != 0) && (model->BSIM4trnqsMod != 1))
-        {   model->BSIM4trnqsMod = 0;
+        if (!model->BSIM4v7trnqsModGiven)
+            model->BSIM4v7trnqsMod = 0; 
+        else if ((model->BSIM4v7trnqsMod != 0) && (model->BSIM4v7trnqsMod != 1))
+        {   model->BSIM4v7trnqsMod = 0;
             printf("Warning: trnqsMod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4acnqsModGiven)
-            model->BSIM4acnqsMod = 0;
-        else if ((model->BSIM4acnqsMod != 0) && (model->BSIM4acnqsMod != 1))
-        {   model->BSIM4acnqsMod = 0;
+        if (!model->BSIM4v7acnqsModGiven)
+            model->BSIM4v7acnqsMod = 0;
+        else if ((model->BSIM4v7acnqsMod != 0) && (model->BSIM4v7acnqsMod != 1))
+        {   model->BSIM4v7acnqsMod = 0;
             printf("Warning: acnqsMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4mtrlModGiven)   
-            model->BSIM4mtrlMod = 0;
-        else if((model->BSIM4mtrlMod != 0) && (model->BSIM4mtrlMod != 1))
+        if (!model->BSIM4v7mtrlModGiven)   
+            model->BSIM4v7mtrlMod = 0;
+        else if((model->BSIM4v7mtrlMod != 0) && (model->BSIM4v7mtrlMod != 1))
         {
-            model->BSIM4mtrlMod = 0;
+            model->BSIM4v7mtrlMod = 0;
             printf("Warning: mtrlMod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4mtrlCompatModGiven)   
-            model->BSIM4mtrlCompatMod = 0;
-        else if((model->BSIM4mtrlCompatMod != 0) && (model->BSIM4mtrlCompatMod != 1))
+        if (!model->BSIM4v7mtrlCompatModGiven)   
+            model->BSIM4v7mtrlCompatMod = 0;
+        else if((model->BSIM4v7mtrlCompatMod != 0) && (model->BSIM4v7mtrlCompatMod != 1))
         {
-            model->BSIM4mtrlCompatMod = 0;
+            model->BSIM4v7mtrlCompatMod = 0;
             printf("Warning: mtrlCompatMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4igcModGiven)
-            model->BSIM4igcMod = 0;
-        else if ((model->BSIM4igcMod != 0) && (model->BSIM4igcMod != 1)
-                  && (model->BSIM4igcMod != 2))
-        {   model->BSIM4igcMod = 0;
+        if (!model->BSIM4v7igcModGiven)
+            model->BSIM4v7igcMod = 0;
+        else if ((model->BSIM4v7igcMod != 0) && (model->BSIM4v7igcMod != 1)
+                  && (model->BSIM4v7igcMod != 2))
+        {   model->BSIM4v7igcMod = 0;
             printf("Warning: igcMod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4igbModGiven)
-            model->BSIM4igbMod = 0;
-        else if ((model->BSIM4igbMod != 0) && (model->BSIM4igbMod != 1))
-        {   model->BSIM4igbMod = 0;
+        if (!model->BSIM4v7igbModGiven)
+            model->BSIM4v7igbMod = 0;
+        else if ((model->BSIM4v7igbMod != 0) && (model->BSIM4v7igbMod != 1))
+        {   model->BSIM4v7igbMod = 0;
             printf("Warning: igbMod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4tempModGiven)
-            model->BSIM4tempMod = 0;
-        else if ((model->BSIM4tempMod != 0) && (model->BSIM4tempMod != 1) 
-                  && (model->BSIM4tempMod != 2) && (model->BSIM4tempMod != 3))
-        {   model->BSIM4tempMod = 0;
+        if (!model->BSIM4v7tempModGiven)
+            model->BSIM4v7tempMod = 0;
+        else if ((model->BSIM4v7tempMod != 0) && (model->BSIM4v7tempMod != 1) 
+                  && (model->BSIM4v7tempMod != 2) && (model->BSIM4v7tempMod != 3))
+        {   model->BSIM4v7tempMod = 0;
             printf("Warning: tempMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4versionGiven) 
-            model->BSIM4version = copy("4.7.0");
-        if (!model->BSIM4toxrefGiven)
-            model->BSIM4toxref = 30.0e-10;
-        if (!model->BSIM4eotGiven)
-            model->BSIM4eot = 15.0e-10;
-        if (!model->BSIM4vddeotGiven)
-            model->BSIM4vddeot = (model->BSIM4type == NMOS) ? 1.5 : -1.5;
-        if (!model->BSIM4tempeotGiven)
-            model->BSIM4tempeot = 300.15;
-        if (!model->BSIM4leffeotGiven)
-            model->BSIM4leffeot = 1;
-        if (!model->BSIM4weffeotGiven)
-            model->BSIM4weffeot = 10;        
-        if (!model->BSIM4adosGiven)
-            model->BSIM4ados = 1.0;
-        if (!model->BSIM4bdosGiven)
-            model->BSIM4bdos = 1.0;
-        if (!model->BSIM4toxeGiven)
-            model->BSIM4toxe = 30.0e-10;
-        if (!model->BSIM4toxpGiven)
-            model->BSIM4toxp = model->BSIM4toxe;
-        if (!model->BSIM4toxmGiven)
-            model->BSIM4toxm = model->BSIM4toxe;
-        if (!model->BSIM4dtoxGiven)
-            model->BSIM4dtox = 0.0;
-        if (!model->BSIM4epsroxGiven)
-            model->BSIM4epsrox = 3.9;
+        if (!model->BSIM4v7versionGiven) 
+            model->BSIM4v7version = copy("4.7.0");
+        if (!model->BSIM4v7toxrefGiven)
+            model->BSIM4v7toxref = 30.0e-10;
+        if (!model->BSIM4v7eotGiven)
+            model->BSIM4v7eot = 15.0e-10;
+        if (!model->BSIM4v7vddeotGiven)
+            model->BSIM4v7vddeot = (model->BSIM4v7type == NMOS) ? 1.5 : -1.5;
+        if (!model->BSIM4v7tempeotGiven)
+            model->BSIM4v7tempeot = 300.15;
+        if (!model->BSIM4v7leffeotGiven)
+            model->BSIM4v7leffeot = 1;
+        if (!model->BSIM4v7weffeotGiven)
+            model->BSIM4v7weffeot = 10;        
+        if (!model->BSIM4v7adosGiven)
+            model->BSIM4v7ados = 1.0;
+        if (!model->BSIM4v7bdosGiven)
+            model->BSIM4v7bdos = 1.0;
+        if (!model->BSIM4v7toxeGiven)
+            model->BSIM4v7toxe = 30.0e-10;
+        if (!model->BSIM4v7toxpGiven)
+            model->BSIM4v7toxp = model->BSIM4v7toxe;
+        if (!model->BSIM4v7toxmGiven)
+            model->BSIM4v7toxm = model->BSIM4v7toxe;
+        if (!model->BSIM4v7dtoxGiven)
+            model->BSIM4v7dtox = 0.0;
+        if (!model->BSIM4v7epsroxGiven)
+            model->BSIM4v7epsrox = 3.9;
 
-        if (!model->BSIM4cdscGiven)
-            model->BSIM4cdsc = 2.4e-4;   /* unit Q/V/m^2  */
-        if (!model->BSIM4cdscbGiven)
-            model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */    
-            if (!model->BSIM4cdscdGiven)
-            model->BSIM4cdscd = 0.0;   /* unit Q/V/m^2  */
-        if (!model->BSIM4citGiven)
-            model->BSIM4cit = 0.0;   /* unit Q/V/m^2  */
-        if (!model->BSIM4nfactorGiven)
-            model->BSIM4nfactor = 1.0;
-        if (!model->BSIM4xjGiven)
-            model->BSIM4xj = .15e-6;
-        if (!model->BSIM4vsatGiven)
-            model->BSIM4vsat = 8.0e4;    /* unit m/s */ 
-        if (!model->BSIM4atGiven)
-            model->BSIM4at = 3.3e4;    /* unit m/s */ 
-        if (!model->BSIM4a0Given)
-            model->BSIM4a0 = 1.0;  
-        if (!model->BSIM4agsGiven)
-            model->BSIM4ags = 0.0;
-        if (!model->BSIM4a1Given)
-            model->BSIM4a1 = 0.0;
-        if (!model->BSIM4a2Given)
-            model->BSIM4a2 = 1.0;
-        if (!model->BSIM4ketaGiven)
-            model->BSIM4keta = -0.047;    /* unit  / V */
-        if (!model->BSIM4nsubGiven)
-            model->BSIM4nsub = 6.0e16;   /* unit 1/cm3 */
-        if (!model->BSIM4phigGiven)
-            model->BSIM4phig = 4.05;  
-        if (!model->BSIM4epsrgateGiven)
-            model->BSIM4epsrgate = 11.7;  
-        if (!model->BSIM4easubGiven)
-            model->BSIM4easub = 4.05;  
-        if (!model->BSIM4epsrsubGiven)
-            model->BSIM4epsrsub = 11.7; 
-        if (!model->BSIM4ni0subGiven)
-            model->BSIM4ni0sub = 1.45e10;   /* unit 1/cm3 */
-        if (!model->BSIM4bg0subGiven)
-            model->BSIM4bg0sub =  1.16;     /* unit eV */
-        if (!model->BSIM4tbgasubGiven)
-            model->BSIM4tbgasub = 7.02e-4;  
-        if (!model->BSIM4tbgbsubGiven)
-            model->BSIM4tbgbsub = 1108.0;  
-        if (!model->BSIM4ndepGiven)
-            model->BSIM4ndep = 1.7e17;   /* unit 1/cm3 */
-        if (!model->BSIM4nsdGiven)
-            model->BSIM4nsd = 1.0e20;   /* unit 1/cm3 */
-        if (!model->BSIM4phinGiven)
-            model->BSIM4phin = 0.0; /* unit V */
-        if (!model->BSIM4ngateGiven)
-            model->BSIM4ngate = 0;   /* unit 1/cm3 */
-        if (!model->BSIM4vbmGiven)
-            model->BSIM4vbm = -3.0;
-        if (!model->BSIM4xtGiven)
-            model->BSIM4xt = 1.55e-7;
-        if (!model->BSIM4kt1Given)
-            model->BSIM4kt1 = -0.11;      /* unit V */
-        if (!model->BSIM4kt1lGiven)
-            model->BSIM4kt1l = 0.0;      /* unit V*m */
-        if (!model->BSIM4kt2Given)
-            model->BSIM4kt2 = 0.022;      /* No unit */
-        if (!model->BSIM4k3Given)
-            model->BSIM4k3 = 80.0;      
-        if (!model->BSIM4k3bGiven)
-            model->BSIM4k3b = 0.0;      
-        if (!model->BSIM4w0Given)
-            model->BSIM4w0 = 2.5e-6;    
-        if (!model->BSIM4lpe0Given)
-            model->BSIM4lpe0 = 1.74e-7;     
-        if (!model->BSIM4lpebGiven)
-            model->BSIM4lpeb = 0.0;
-        if (!model->BSIM4dvtp0Given)
-            model->BSIM4dvtp0 = 0.0;
-        if (!model->BSIM4dvtp1Given)
-            model->BSIM4dvtp1 = 0.0;
-        if (!model->BSIM4dvtp2Given)        /* New DIBL/Rout */
-            model->BSIM4dvtp2 = 0.0;
-        if (!model->BSIM4dvtp3Given)
-            model->BSIM4dvtp3 = 0.0;
-        if (!model->BSIM4dvtp4Given)
-            model->BSIM4dvtp4 = 0.0;
-        if (!model->BSIM4dvtp5Given)
-            model->BSIM4dvtp5 = 0.0;
-        if (!model->BSIM4dvt0Given)
-            model->BSIM4dvt0 = 2.2;    
-        if (!model->BSIM4dvt1Given)
-            model->BSIM4dvt1 = 0.53;      
-        if (!model->BSIM4dvt2Given)
-            model->BSIM4dvt2 = -0.032;   /* unit 1 / V */     
+        if (!model->BSIM4v7cdscGiven)
+            model->BSIM4v7cdsc = 2.4e-4;   /* unit Q/V/m^2  */
+        if (!model->BSIM4v7cdscbGiven)
+            model->BSIM4v7cdscb = 0.0;   /* unit Q/V/m^2  */    
+            if (!model->BSIM4v7cdscdGiven)
+            model->BSIM4v7cdscd = 0.0;   /* unit Q/V/m^2  */
+        if (!model->BSIM4v7citGiven)
+            model->BSIM4v7cit = 0.0;   /* unit Q/V/m^2  */
+        if (!model->BSIM4v7nfactorGiven)
+            model->BSIM4v7nfactor = 1.0;
+        if (!model->BSIM4v7xjGiven)
+            model->BSIM4v7xj = .15e-6;
+        if (!model->BSIM4v7vsatGiven)
+            model->BSIM4v7vsat = 8.0e4;    /* unit m/s */ 
+        if (!model->BSIM4v7atGiven)
+            model->BSIM4v7at = 3.3e4;    /* unit m/s */ 
+        if (!model->BSIM4v7a0Given)
+            model->BSIM4v7a0 = 1.0;  
+        if (!model->BSIM4v7agsGiven)
+            model->BSIM4v7ags = 0.0;
+        if (!model->BSIM4v7a1Given)
+            model->BSIM4v7a1 = 0.0;
+        if (!model->BSIM4v7a2Given)
+            model->BSIM4v7a2 = 1.0;
+        if (!model->BSIM4v7ketaGiven)
+            model->BSIM4v7keta = -0.047;    /* unit  / V */
+        if (!model->BSIM4v7nsubGiven)
+            model->BSIM4v7nsub = 6.0e16;   /* unit 1/cm3 */
+        if (!model->BSIM4v7phigGiven)
+            model->BSIM4v7phig = 4.05;  
+        if (!model->BSIM4v7epsrgateGiven)
+            model->BSIM4v7epsrgate = 11.7;  
+        if (!model->BSIM4v7easubGiven)
+            model->BSIM4v7easub = 4.05;  
+        if (!model->BSIM4v7epsrsubGiven)
+            model->BSIM4v7epsrsub = 11.7; 
+        if (!model->BSIM4v7ni0subGiven)
+            model->BSIM4v7ni0sub = 1.45e10;   /* unit 1/cm3 */
+        if (!model->BSIM4v7bg0subGiven)
+            model->BSIM4v7bg0sub =  1.16;     /* unit eV */
+        if (!model->BSIM4v7tbgasubGiven)
+            model->BSIM4v7tbgasub = 7.02e-4;  
+        if (!model->BSIM4v7tbgbsubGiven)
+            model->BSIM4v7tbgbsub = 1108.0;  
+        if (!model->BSIM4v7ndepGiven)
+            model->BSIM4v7ndep = 1.7e17;   /* unit 1/cm3 */
+        if (!model->BSIM4v7nsdGiven)
+            model->BSIM4v7nsd = 1.0e20;   /* unit 1/cm3 */
+        if (!model->BSIM4v7phinGiven)
+            model->BSIM4v7phin = 0.0; /* unit V */
+        if (!model->BSIM4v7ngateGiven)
+            model->BSIM4v7ngate = 0;   /* unit 1/cm3 */
+        if (!model->BSIM4v7vbmGiven)
+            model->BSIM4v7vbm = -3.0;
+        if (!model->BSIM4v7xtGiven)
+            model->BSIM4v7xt = 1.55e-7;
+        if (!model->BSIM4v7kt1Given)
+            model->BSIM4v7kt1 = -0.11;      /* unit V */
+        if (!model->BSIM4v7kt1lGiven)
+            model->BSIM4v7kt1l = 0.0;      /* unit V*m */
+        if (!model->BSIM4v7kt2Given)
+            model->BSIM4v7kt2 = 0.022;      /* No unit */
+        if (!model->BSIM4v7k3Given)
+            model->BSIM4v7k3 = 80.0;      
+        if (!model->BSIM4v7k3bGiven)
+            model->BSIM4v7k3b = 0.0;      
+        if (!model->BSIM4v7w0Given)
+            model->BSIM4v7w0 = 2.5e-6;    
+        if (!model->BSIM4v7lpe0Given)
+            model->BSIM4v7lpe0 = 1.74e-7;     
+        if (!model->BSIM4v7lpebGiven)
+            model->BSIM4v7lpeb = 0.0;
+        if (!model->BSIM4v7dvtp0Given)
+            model->BSIM4v7dvtp0 = 0.0;
+        if (!model->BSIM4v7dvtp1Given)
+            model->BSIM4v7dvtp1 = 0.0;
+        if (!model->BSIM4v7dvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4v7dvtp2 = 0.0;
+        if (!model->BSIM4v7dvtp3Given)
+            model->BSIM4v7dvtp3 = 0.0;
+        if (!model->BSIM4v7dvtp4Given)
+            model->BSIM4v7dvtp4 = 0.0;
+        if (!model->BSIM4v7dvtp5Given)
+            model->BSIM4v7dvtp5 = 0.0;
+        if (!model->BSIM4v7dvt0Given)
+            model->BSIM4v7dvt0 = 2.2;    
+        if (!model->BSIM4v7dvt1Given)
+            model->BSIM4v7dvt1 = 0.53;      
+        if (!model->BSIM4v7dvt2Given)
+            model->BSIM4v7dvt2 = -0.032;   /* unit 1 / V */     
 
-        if (!model->BSIM4dvt0wGiven)
-            model->BSIM4dvt0w = 0.0;    
-        if (!model->BSIM4dvt1wGiven)
-            model->BSIM4dvt1w = 5.3e6;    
-        if (!model->BSIM4dvt2wGiven)
-            model->BSIM4dvt2w = -0.032;   
+        if (!model->BSIM4v7dvt0wGiven)
+            model->BSIM4v7dvt0w = 0.0;    
+        if (!model->BSIM4v7dvt1wGiven)
+            model->BSIM4v7dvt1w = 5.3e6;    
+        if (!model->BSIM4v7dvt2wGiven)
+            model->BSIM4v7dvt2w = -0.032;   
 
-        if (!model->BSIM4droutGiven)
-            model->BSIM4drout = 0.56;     
-        if (!model->BSIM4dsubGiven)
-            model->BSIM4dsub = model->BSIM4drout;     
-        if (!model->BSIM4vth0Given)
-            model->BSIM4vth0 = (model->BSIM4type == NMOS) ? 0.7 : -0.7;
-        if (!model->BSIM4vfbGiven)
-            model->BSIM4vfb = -1.0;
-        if (!model->BSIM4euGiven)
-            model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
-        if (!model->BSIM4ucsGiven)
-            model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
-        if (!model->BSIM4uaGiven)
-            model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
-        if (!model->BSIM4ua1Given)
-            model->BSIM4ua1 = 1.0e-9;      /* unit m/V */
-        if (!model->BSIM4ubGiven)
-            model->BSIM4ub = 1.0e-19;     /* unit (m/V)**2 */
-        if (!model->BSIM4ub1Given)
-            model->BSIM4ub1 = -1.0e-18;     /* unit (m/V)**2 */
-        if (!model->BSIM4ucGiven)
-            model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;   
-        if (!model->BSIM4uc1Given)
-            model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
-        if (!model->BSIM4udGiven)
-            model->BSIM4ud = 0.0;     /* unit m**(-2) */
-        if (!model->BSIM4ud1Given)
-            model->BSIM4ud1 = 0.0;     
-        if (!model->BSIM4upGiven)
-            model->BSIM4up = 0.0;     
-        if (!model->BSIM4lpGiven)
-            model->BSIM4lp = 1.0e-8;     
-        if (!model->BSIM4u0Given)
-            model->BSIM4u0 = (model->BSIM4type == NMOS) ? 0.067 : 0.025;
-        if (!model->BSIM4uteGiven)
-            model->BSIM4ute = -1.5; 
-        if (!model->BSIM4ucsteGiven)
-            model->BSIM4ucste = -4.775e-3;
-        if (!model->BSIM4voffGiven)
-            model->BSIM4voff = -0.08;
-        if (!model->BSIM4vofflGiven)
-            model->BSIM4voffl = 0.0;
-        if (!model->BSIM4voffcvlGiven)
-            model->BSIM4voffcvl = 0.0;
-        if (!model->BSIM4minvGiven)
-            model->BSIM4minv = 0.0;
-        if (!model->BSIM4minvcvGiven)
-            model->BSIM4minvcv = 0.0;
-        if (!model->BSIM4fproutGiven)
-            model->BSIM4fprout = 0.0;
-        if (!model->BSIM4pditsGiven)
-            model->BSIM4pdits = 0.0;
-        if (!model->BSIM4pditsdGiven)
-            model->BSIM4pditsd = 0.0;
-        if (!model->BSIM4pditslGiven)
-            model->BSIM4pditsl = 0.0;
-        if (!model->BSIM4deltaGiven)  
-           model->BSIM4delta = 0.01;
-        if (!model->BSIM4rdswminGiven)
-            model->BSIM4rdswmin = 0.0;
-        if (!model->BSIM4rdwminGiven)
-            model->BSIM4rdwmin = 0.0;
-        if (!model->BSIM4rswminGiven)
-            model->BSIM4rswmin = 0.0;
-        if (!model->BSIM4rdswGiven)
-            model->BSIM4rdsw = 200.0; /* in ohm*um */     
-        if (!model->BSIM4rdwGiven)
-            model->BSIM4rdw = 100.0;
-        if (!model->BSIM4rswGiven)
-            model->BSIM4rsw = 100.0;
-        if (!model->BSIM4prwgGiven)
-            model->BSIM4prwg = 1.0; /* in 1/V */
-        if (!model->BSIM4prwbGiven)
-            model->BSIM4prwb = 0.0;      
-        if (!model->BSIM4prtGiven)
-        if (!model->BSIM4prtGiven)
-            model->BSIM4prt = 0.0;      
-        if (!model->BSIM4eta0Given)
-            model->BSIM4eta0 = 0.08;      /* no unit  */ 
-        if (!model->BSIM4etabGiven)
-            model->BSIM4etab = -0.07;      /* unit  1/V */ 
-        if (!model->BSIM4pclmGiven)
-            model->BSIM4pclm = 1.3;      /* no unit  */ 
-        if (!model->BSIM4pdibl1Given)
-            model->BSIM4pdibl1 = 0.39;    /* no unit  */
-        if (!model->BSIM4pdibl2Given)
-            model->BSIM4pdibl2 = 0.0086;    /* no unit  */ 
-        if (!model->BSIM4pdiblbGiven)
-            model->BSIM4pdiblb = 0.0;    /* 1/V  */ 
-        if (!model->BSIM4pscbe1Given)
-            model->BSIM4pscbe1 = 4.24e8;     
-        if (!model->BSIM4pscbe2Given)
-            model->BSIM4pscbe2 = 1.0e-5;    
-        if (!model->BSIM4pvagGiven)
-            model->BSIM4pvag = 0.0;     
-        if (!model->BSIM4wrGiven)  
-            model->BSIM4wr = 1.0;
-        if (!model->BSIM4dwgGiven)  
-            model->BSIM4dwg = 0.0;
-        if (!model->BSIM4dwbGiven)  
-            model->BSIM4dwb = 0.0;
-        if (!model->BSIM4b0Given)
-            model->BSIM4b0 = 0.0;
-        if (!model->BSIM4b1Given)  
-            model->BSIM4b1 = 0.0;
-        if (!model->BSIM4alpha0Given)  
-            model->BSIM4alpha0 = 0.0;
-        if (!model->BSIM4alpha1Given)
-            model->BSIM4alpha1 = 0.0;
-        if (!model->BSIM4beta0Given)  
-            model->BSIM4beta0 = 0.0;
-        if (!model->BSIM4gidlModGiven)
-            model->BSIM4gidlMod = 0;         /* v4.7 New GIDL/GISL */
-        if (!model->BSIM4agidlGiven)
-            model->BSIM4agidl = 0.0;
-        if (!model->BSIM4bgidlGiven)
-            model->BSIM4bgidl = 2.3e9; /* V/m */
-        if (!model->BSIM4cgidlGiven)
-            model->BSIM4cgidl = 0.5; /* V^3 */
-        if (!model->BSIM4egidlGiven)
-            model->BSIM4egidl = 0.8; /* V */
-        if (!model->BSIM4rgidlGiven)          /* v4.7 New GIDL/GISL */
-            model->BSIM4rgidl = 1.0;
-        if (!model->BSIM4kgidlGiven)          /* v4.7 New GIDL/GISL */
-            model->BSIM4kgidl = 0.0;
-        if (!model->BSIM4fgidlGiven)          /* v4.7 New GIDL/GISL */
-            model->BSIM4fgidl = 0.0;
-        if (!model->BSIM4agislGiven)
+        if (!model->BSIM4v7droutGiven)
+            model->BSIM4v7drout = 0.56;     
+        if (!model->BSIM4v7dsubGiven)
+            model->BSIM4v7dsub = model->BSIM4v7drout;     
+        if (!model->BSIM4v7vth0Given)
+            model->BSIM4v7vth0 = (model->BSIM4v7type == NMOS) ? 0.7 : -0.7;
+        if (!model->BSIM4v7vfbGiven)
+            model->BSIM4v7vfb = -1.0;
+        if (!model->BSIM4v7euGiven)
+            model->BSIM4v7eu = (model->BSIM4v7type == NMOS) ? 1.67 : 1.0;
+        if (!model->BSIM4v7ucsGiven)
+            model->BSIM4v7ucs = (model->BSIM4v7type == NMOS) ? 1.67 : 1.0;
+        if (!model->BSIM4v7uaGiven)
+            model->BSIM4v7ua = ((model->BSIM4v7mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
+        if (!model->BSIM4v7ua1Given)
+            model->BSIM4v7ua1 = 1.0e-9;      /* unit m/V */
+        if (!model->BSIM4v7ubGiven)
+            model->BSIM4v7ub = 1.0e-19;     /* unit (m/V)**2 */
+        if (!model->BSIM4v7ub1Given)
+            model->BSIM4v7ub1 = -1.0e-18;     /* unit (m/V)**2 */
+        if (!model->BSIM4v7ucGiven)
+            model->BSIM4v7uc = (model->BSIM4v7mobMod == 1) ? -0.0465 : -0.0465e-9;   
+        if (!model->BSIM4v7uc1Given)
+            model->BSIM4v7uc1 = (model->BSIM4v7mobMod == 1) ? -0.056 : -0.056e-9;   
+        if (!model->BSIM4v7udGiven)
+            model->BSIM4v7ud = 0.0;     /* unit m**(-2) */
+        if (!model->BSIM4v7ud1Given)
+            model->BSIM4v7ud1 = 0.0;     
+        if (!model->BSIM4v7upGiven)
+            model->BSIM4v7up = 0.0;     
+        if (!model->BSIM4v7lpGiven)
+            model->BSIM4v7lp = 1.0e-8;     
+        if (!model->BSIM4v7u0Given)
+            model->BSIM4v7u0 = (model->BSIM4v7type == NMOS) ? 0.067 : 0.025;
+        if (!model->BSIM4v7uteGiven)
+            model->BSIM4v7ute = -1.5; 
+        if (!model->BSIM4v7ucsteGiven)
+            model->BSIM4v7ucste = -4.775e-3;
+        if (!model->BSIM4v7voffGiven)
+            model->BSIM4v7voff = -0.08;
+        if (!model->BSIM4v7vofflGiven)
+            model->BSIM4v7voffl = 0.0;
+        if (!model->BSIM4v7voffcvlGiven)
+            model->BSIM4v7voffcvl = 0.0;
+        if (!model->BSIM4v7minvGiven)
+            model->BSIM4v7minv = 0.0;
+        if (!model->BSIM4v7minvcvGiven)
+            model->BSIM4v7minvcv = 0.0;
+        if (!model->BSIM4v7fproutGiven)
+            model->BSIM4v7fprout = 0.0;
+        if (!model->BSIM4v7pditsGiven)
+            model->BSIM4v7pdits = 0.0;
+        if (!model->BSIM4v7pditsdGiven)
+            model->BSIM4v7pditsd = 0.0;
+        if (!model->BSIM4v7pditslGiven)
+            model->BSIM4v7pditsl = 0.0;
+        if (!model->BSIM4v7deltaGiven)  
+           model->BSIM4v7delta = 0.01;
+        if (!model->BSIM4v7rdswminGiven)
+            model->BSIM4v7rdswmin = 0.0;
+        if (!model->BSIM4v7rdwminGiven)
+            model->BSIM4v7rdwmin = 0.0;
+        if (!model->BSIM4v7rswminGiven)
+            model->BSIM4v7rswmin = 0.0;
+        if (!model->BSIM4v7rdswGiven)
+            model->BSIM4v7rdsw = 200.0; /* in ohm*um */     
+        if (!model->BSIM4v7rdwGiven)
+            model->BSIM4v7rdw = 100.0;
+        if (!model->BSIM4v7rswGiven)
+            model->BSIM4v7rsw = 100.0;
+        if (!model->BSIM4v7prwgGiven)
+            model->BSIM4v7prwg = 1.0; /* in 1/V */
+        if (!model->BSIM4v7prwbGiven)
+            model->BSIM4v7prwb = 0.0;      
+        if (!model->BSIM4v7prtGiven)
+        if (!model->BSIM4v7prtGiven)
+            model->BSIM4v7prt = 0.0;      
+        if (!model->BSIM4v7eta0Given)
+            model->BSIM4v7eta0 = 0.08;      /* no unit  */ 
+        if (!model->BSIM4v7etabGiven)
+            model->BSIM4v7etab = -0.07;      /* unit  1/V */ 
+        if (!model->BSIM4v7pclmGiven)
+            model->BSIM4v7pclm = 1.3;      /* no unit  */ 
+        if (!model->BSIM4v7pdibl1Given)
+            model->BSIM4v7pdibl1 = 0.39;    /* no unit  */
+        if (!model->BSIM4v7pdibl2Given)
+            model->BSIM4v7pdibl2 = 0.0086;    /* no unit  */ 
+        if (!model->BSIM4v7pdiblbGiven)
+            model->BSIM4v7pdiblb = 0.0;    /* 1/V  */ 
+        if (!model->BSIM4v7pscbe1Given)
+            model->BSIM4v7pscbe1 = 4.24e8;     
+        if (!model->BSIM4v7pscbe2Given)
+            model->BSIM4v7pscbe2 = 1.0e-5;    
+        if (!model->BSIM4v7pvagGiven)
+            model->BSIM4v7pvag = 0.0;     
+        if (!model->BSIM4v7wrGiven)  
+            model->BSIM4v7wr = 1.0;
+        if (!model->BSIM4v7dwgGiven)  
+            model->BSIM4v7dwg = 0.0;
+        if (!model->BSIM4v7dwbGiven)  
+            model->BSIM4v7dwb = 0.0;
+        if (!model->BSIM4v7b0Given)
+            model->BSIM4v7b0 = 0.0;
+        if (!model->BSIM4v7b1Given)  
+            model->BSIM4v7b1 = 0.0;
+        if (!model->BSIM4v7alpha0Given)  
+            model->BSIM4v7alpha0 = 0.0;
+        if (!model->BSIM4v7alpha1Given)
+            model->BSIM4v7alpha1 = 0.0;
+        if (!model->BSIM4v7beta0Given)  
+            model->BSIM4v7beta0 = 0.0;
+        if (!model->BSIM4v7gidlModGiven)
+            model->BSIM4v7gidlMod = 0;         /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7agidlGiven)
+            model->BSIM4v7agidl = 0.0;
+        if (!model->BSIM4v7bgidlGiven)
+            model->BSIM4v7bgidl = 2.3e9; /* V/m */
+        if (!model->BSIM4v7cgidlGiven)
+            model->BSIM4v7cgidl = 0.5; /* V^3 */
+        if (!model->BSIM4v7egidlGiven)
+            model->BSIM4v7egidl = 0.8; /* V */
+        if (!model->BSIM4v7rgidlGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4v7rgidl = 1.0;
+        if (!model->BSIM4v7kgidlGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4v7kgidl = 0.0;
+        if (!model->BSIM4v7fgidlGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4v7fgidl = 0.0;
+        if (!model->BSIM4v7agislGiven)
         {
-            if (model->BSIM4agidlGiven)
-                model->BSIM4agisl = model->BSIM4agidl;
+            if (model->BSIM4v7agidlGiven)
+                model->BSIM4v7agisl = model->BSIM4v7agidl;
             else
-                model->BSIM4agisl = 0.0;
+                model->BSIM4v7agisl = 0.0;
         }
-        if (!model->BSIM4bgislGiven)
+        if (!model->BSIM4v7bgislGiven)
         {
-            if (model->BSIM4bgidlGiven)
-                model->BSIM4bgisl = model->BSIM4bgidl;
+            if (model->BSIM4v7bgidlGiven)
+                model->BSIM4v7bgisl = model->BSIM4v7bgidl;
             else
-                model->BSIM4bgisl = 2.3e9; /* V/m */
+                model->BSIM4v7bgisl = 2.3e9; /* V/m */
         }
-        if (!model->BSIM4cgislGiven)
+        if (!model->BSIM4v7cgislGiven)
         {
-            if (model->BSIM4cgidlGiven)
-                model->BSIM4cgisl = model->BSIM4cgidl;
+            if (model->BSIM4v7cgidlGiven)
+                model->BSIM4v7cgisl = model->BSIM4v7cgidl;
             else
-                model->BSIM4cgisl = 0.5; /* V^3 */
+                model->BSIM4v7cgisl = 0.5; /* V^3 */
         }
-        if (!model->BSIM4egislGiven)
+        if (!model->BSIM4v7egislGiven)
         {
-            if (model->BSIM4egidlGiven)
-                model->BSIM4egisl = model->BSIM4egidl;
+            if (model->BSIM4v7egidlGiven)
+                model->BSIM4v7egisl = model->BSIM4v7egidl;
             else
-                model->BSIM4egisl = 0.8; /* V */
+                model->BSIM4v7egisl = 0.8; /* V */
         }
-        if (!model->BSIM4rgislGiven)          /* v4.7 New GIDL/GISL */
-            model->BSIM4rgisl = model->BSIM4rgidl;
-        if (!model->BSIM4kgislGiven)          /* v4.7 New GIDL/GISL */
-            model->BSIM4kgisl = model->BSIM4kgidl;
-        if (!model->BSIM4fgislGiven)          /* v4.7 New GIDL/GISL */
-            model->BSIM4fgisl = model->BSIM4fgidl;
-        if (!model->BSIM4aigcGiven)
-            model->BSIM4aigc = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
-        if (!model->BSIM4bigcGiven)
-            model->BSIM4bigc = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
-        if (!model->BSIM4cigcGiven)
-            model->BSIM4cigc = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
-        if (model->BSIM4aigsdGiven)
+        if (!model->BSIM4v7rgislGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4v7rgisl = model->BSIM4v7rgidl;
+        if (!model->BSIM4v7kgislGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4v7kgisl = model->BSIM4v7kgidl;
+        if (!model->BSIM4v7fgislGiven)          /* v4.7 New GIDL/GISL */
+            model->BSIM4v7fgisl = model->BSIM4v7fgidl;
+        if (!model->BSIM4v7aigcGiven)
+            model->BSIM4v7aigc = (model->BSIM4v7type == NMOS) ? 1.36e-2 : 9.80e-3;
+        if (!model->BSIM4v7bigcGiven)
+            model->BSIM4v7bigc = (model->BSIM4v7type == NMOS) ? 1.71e-3 : 7.59e-4;
+        if (!model->BSIM4v7cigcGiven)
+            model->BSIM4v7cigc = (model->BSIM4v7type == NMOS) ? 0.075 : 0.03;
+        if (model->BSIM4v7aigsdGiven)
         {
-            model->BSIM4aigs = model->BSIM4aigd = model->BSIM4aigsd;
+            model->BSIM4v7aigs = model->BSIM4v7aigd = model->BSIM4v7aigsd;
         }
         else
         {
-            model->BSIM4aigsd = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
-            if (!model->BSIM4aigsGiven)
-                model->BSIM4aigs = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
-            if (!model->BSIM4aigdGiven)
-                model->BSIM4aigd = (model->BSIM4type == NMOS) ? 1.36e-2 : 9.80e-3;
+            model->BSIM4v7aigsd = (model->BSIM4v7type == NMOS) ? 1.36e-2 : 9.80e-3;
+            if (!model->BSIM4v7aigsGiven)
+                model->BSIM4v7aigs = (model->BSIM4v7type == NMOS) ? 1.36e-2 : 9.80e-3;
+            if (!model->BSIM4v7aigdGiven)
+                model->BSIM4v7aigd = (model->BSIM4v7type == NMOS) ? 1.36e-2 : 9.80e-3;
         }
-        if (model->BSIM4bigsdGiven)
+        if (model->BSIM4v7bigsdGiven)
         {
-            model->BSIM4bigs = model->BSIM4bigd = model->BSIM4bigsd;
+            model->BSIM4v7bigs = model->BSIM4v7bigd = model->BSIM4v7bigsd;
         }
         else
         {
-            model->BSIM4bigsd = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
-            if (!model->BSIM4bigsGiven)
-                model->BSIM4bigs = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
-            if (!model->BSIM4bigdGiven)
-                model->BSIM4bigd = (model->BSIM4type == NMOS) ? 1.71e-3 : 7.59e-4;
+            model->BSIM4v7bigsd = (model->BSIM4v7type == NMOS) ? 1.71e-3 : 7.59e-4;
+            if (!model->BSIM4v7bigsGiven)
+                model->BSIM4v7bigs = (model->BSIM4v7type == NMOS) ? 1.71e-3 : 7.59e-4;
+            if (!model->BSIM4v7bigdGiven)
+                model->BSIM4v7bigd = (model->BSIM4v7type == NMOS) ? 1.71e-3 : 7.59e-4;
         }
-        if (model->BSIM4cigsdGiven)
+        if (model->BSIM4v7cigsdGiven)
         {
-            model->BSIM4cigs = model->BSIM4cigd = model->BSIM4cigsd;
+            model->BSIM4v7cigs = model->BSIM4v7cigd = model->BSIM4v7cigsd;
         }
         else
         {
-             model->BSIM4cigsd = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
-           if (!model->BSIM4cigsGiven)
-                model->BSIM4cigs = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
-            if (!model->BSIM4cigdGiven)
-                model->BSIM4cigd = (model->BSIM4type == NMOS) ? 0.075 : 0.03;
+             model->BSIM4v7cigsd = (model->BSIM4v7type == NMOS) ? 0.075 : 0.03;
+           if (!model->BSIM4v7cigsGiven)
+                model->BSIM4v7cigs = (model->BSIM4v7type == NMOS) ? 0.075 : 0.03;
+            if (!model->BSIM4v7cigdGiven)
+                model->BSIM4v7cigd = (model->BSIM4v7type == NMOS) ? 0.075 : 0.03;
         }
-        if (!model->BSIM4aigbaccGiven)
-            model->BSIM4aigbacc = 1.36e-2;
-        if (!model->BSIM4bigbaccGiven)
-            model->BSIM4bigbacc = 1.71e-3;
-        if (!model->BSIM4cigbaccGiven)
-            model->BSIM4cigbacc = 0.075;
-        if (!model->BSIM4aigbinvGiven)
-            model->BSIM4aigbinv = 1.11e-2;
-        if (!model->BSIM4bigbinvGiven)
-            model->BSIM4bigbinv = 9.49e-4;
-        if (!model->BSIM4cigbinvGiven)
-            model->BSIM4cigbinv = 0.006;
-        if (!model->BSIM4nigcGiven)
-            model->BSIM4nigc = 1.0;
-        if (!model->BSIM4nigbinvGiven)
-            model->BSIM4nigbinv = 3.0;
-        if (!model->BSIM4nigbaccGiven)
-            model->BSIM4nigbacc = 1.0;
-        if (!model->BSIM4ntoxGiven)
-            model->BSIM4ntox = 1.0;
-        if (!model->BSIM4eigbinvGiven)
-            model->BSIM4eigbinv = 1.1;
-        if (!model->BSIM4pigcdGiven)
-            model->BSIM4pigcd = 1.0;
-        if (!model->BSIM4poxedgeGiven)
-            model->BSIM4poxedge = 1.0;
-        if (!model->BSIM4xrcrg1Given)
-            model->BSIM4xrcrg1 = 12.0;
-        if (!model->BSIM4xrcrg2Given)
-            model->BSIM4xrcrg2 = 1.0;
-        if (!model->BSIM4ijthsfwdGiven)
-            model->BSIM4ijthsfwd = 0.1; /* unit A */
-        if (!model->BSIM4ijthdfwdGiven)
-            model->BSIM4ijthdfwd = model->BSIM4ijthsfwd;
-        if (!model->BSIM4ijthsrevGiven)
-            model->BSIM4ijthsrev = 0.1; /* unit A */
-        if (!model->BSIM4ijthdrevGiven)
-            model->BSIM4ijthdrev = model->BSIM4ijthsrev;
-        if (!model->BSIM4tnoiaGiven)
-            model->BSIM4tnoia = 1.5;
-        if (!model->BSIM4tnoibGiven)
-            model->BSIM4tnoib = 3.5;
-        if (!model->BSIM4tnoicGiven)
-            model->BSIM4tnoic = 0.0;
-        if (!model->BSIM4rnoiaGiven)
-            model->BSIM4rnoia = 0.577;
-        if (!model->BSIM4rnoibGiven)
-            model->BSIM4rnoib = 0.5164;
-        if (!model->BSIM4rnoicGiven)
-            model->BSIM4rnoic = 0.395;
-        if (!model->BSIM4ntnoiGiven)
-            model->BSIM4ntnoi = 1.0;
-        if (!model->BSIM4lambdaGiven)
-            model->BSIM4lambda = 0.0;
-        if (!model->BSIM4vtlGiven)
-            model->BSIM4vtl = 2.0e5;    /* unit m/s */ 
-        if (!model->BSIM4xnGiven)
-            model->BSIM4xn = 3.0;   
-        if (!model->BSIM4lcGiven)
-            model->BSIM4lc = 5.0e-9;   
-        if (!model->BSIM4vfbsdoffGiven)  
-            model->BSIM4vfbsdoff = 0.0;  /* unit v */  
-        if (!model->BSIM4tvfbsdoffGiven)
-            model->BSIM4tvfbsdoff = 0.0;  
-        if (!model->BSIM4tvoffGiven)
-            model->BSIM4tvoff = 0.0;  
-        if (!model->BSIM4tnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4tnfactor = 0.0;  
-        if (!model->BSIM4teta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4teta0 = 0.0;  
-        if (!model->BSIM4tvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4tvoffcv = 0.0;  
+        if (!model->BSIM4v7aigbaccGiven)
+            model->BSIM4v7aigbacc = 1.36e-2;
+        if (!model->BSIM4v7bigbaccGiven)
+            model->BSIM4v7bigbacc = 1.71e-3;
+        if (!model->BSIM4v7cigbaccGiven)
+            model->BSIM4v7cigbacc = 0.075;
+        if (!model->BSIM4v7aigbinvGiven)
+            model->BSIM4v7aigbinv = 1.11e-2;
+        if (!model->BSIM4v7bigbinvGiven)
+            model->BSIM4v7bigbinv = 9.49e-4;
+        if (!model->BSIM4v7cigbinvGiven)
+            model->BSIM4v7cigbinv = 0.006;
+        if (!model->BSIM4v7nigcGiven)
+            model->BSIM4v7nigc = 1.0;
+        if (!model->BSIM4v7nigbinvGiven)
+            model->BSIM4v7nigbinv = 3.0;
+        if (!model->BSIM4v7nigbaccGiven)
+            model->BSIM4v7nigbacc = 1.0;
+        if (!model->BSIM4v7ntoxGiven)
+            model->BSIM4v7ntox = 1.0;
+        if (!model->BSIM4v7eigbinvGiven)
+            model->BSIM4v7eigbinv = 1.1;
+        if (!model->BSIM4v7pigcdGiven)
+            model->BSIM4v7pigcd = 1.0;
+        if (!model->BSIM4v7poxedgeGiven)
+            model->BSIM4v7poxedge = 1.0;
+        if (!model->BSIM4v7xrcrg1Given)
+            model->BSIM4v7xrcrg1 = 12.0;
+        if (!model->BSIM4v7xrcrg2Given)
+            model->BSIM4v7xrcrg2 = 1.0;
+        if (!model->BSIM4v7ijthsfwdGiven)
+            model->BSIM4v7ijthsfwd = 0.1; /* unit A */
+        if (!model->BSIM4v7ijthdfwdGiven)
+            model->BSIM4v7ijthdfwd = model->BSIM4v7ijthsfwd;
+        if (!model->BSIM4v7ijthsrevGiven)
+            model->BSIM4v7ijthsrev = 0.1; /* unit A */
+        if (!model->BSIM4v7ijthdrevGiven)
+            model->BSIM4v7ijthdrev = model->BSIM4v7ijthsrev;
+        if (!model->BSIM4v7tnoiaGiven)
+            model->BSIM4v7tnoia = 1.5;
+        if (!model->BSIM4v7tnoibGiven)
+            model->BSIM4v7tnoib = 3.5;
+        if (!model->BSIM4v7tnoicGiven)
+            model->BSIM4v7tnoic = 0.0;
+        if (!model->BSIM4v7rnoiaGiven)
+            model->BSIM4v7rnoia = 0.577;
+        if (!model->BSIM4v7rnoibGiven)
+            model->BSIM4v7rnoib = 0.5164;
+        if (!model->BSIM4v7rnoicGiven)
+            model->BSIM4v7rnoic = 0.395;
+        if (!model->BSIM4v7ntnoiGiven)
+            model->BSIM4v7ntnoi = 1.0;
+        if (!model->BSIM4v7lambdaGiven)
+            model->BSIM4v7lambda = 0.0;
+        if (!model->BSIM4v7vtlGiven)
+            model->BSIM4v7vtl = 2.0e5;    /* unit m/s */ 
+        if (!model->BSIM4v7xnGiven)
+            model->BSIM4v7xn = 3.0;   
+        if (!model->BSIM4v7lcGiven)
+            model->BSIM4v7lc = 5.0e-9;   
+        if (!model->BSIM4v7vfbsdoffGiven)  
+            model->BSIM4v7vfbsdoff = 0.0;  /* unit v */  
+        if (!model->BSIM4v7tvfbsdoffGiven)
+            model->BSIM4v7tvfbsdoff = 0.0;  
+        if (!model->BSIM4v7tvoffGiven)
+            model->BSIM4v7tvoff = 0.0;  
+        if (!model->BSIM4v7tnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7tnfactor = 0.0;  
+        if (!model->BSIM4v7teta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7teta0 = 0.0;  
+        if (!model->BSIM4v7tvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7tvoffcv = 0.0;  
  
-        if (!model->BSIM4lintnoiGiven)
-            model->BSIM4lintnoi = 0.0;  /* unit m */  
+        if (!model->BSIM4v7lintnoiGiven)
+            model->BSIM4v7lintnoi = 0.0;  /* unit m */  
 
-        if (!model->BSIM4xjbvsGiven)
-            model->BSIM4xjbvs = 1.0; /* no unit */
-        if (!model->BSIM4xjbvdGiven)
-            model->BSIM4xjbvd = model->BSIM4xjbvs;
-        if (!model->BSIM4bvsGiven)
-            model->BSIM4bvs = 10.0; /* V */
-        if (!model->BSIM4bvdGiven)
-            model->BSIM4bvd = model->BSIM4bvs;
+        if (!model->BSIM4v7xjbvsGiven)
+            model->BSIM4v7xjbvs = 1.0; /* no unit */
+        if (!model->BSIM4v7xjbvdGiven)
+            model->BSIM4v7xjbvd = model->BSIM4v7xjbvs;
+        if (!model->BSIM4v7bvsGiven)
+            model->BSIM4v7bvs = 10.0; /* V */
+        if (!model->BSIM4v7bvdGiven)
+            model->BSIM4v7bvd = model->BSIM4v7bvs;
 
-        if (!model->BSIM4gbminGiven)
-            model->BSIM4gbmin = 1.0e-12; /* in mho */
-        if (!model->BSIM4rbdbGiven)
-            model->BSIM4rbdb = 50.0; /* in ohm */
-        if (!model->BSIM4rbpbGiven)
-            model->BSIM4rbpb = 50.0;
-        if (!model->BSIM4rbsbGiven)
-            model->BSIM4rbsb = 50.0;
-        if (!model->BSIM4rbpsGiven)
-            model->BSIM4rbps = 50.0;
-        if (!model->BSIM4rbpdGiven)
-            model->BSIM4rbpd = 50.0;
+        if (!model->BSIM4v7gbminGiven)
+            model->BSIM4v7gbmin = 1.0e-12; /* in mho */
+        if (!model->BSIM4v7rbdbGiven)
+            model->BSIM4v7rbdb = 50.0; /* in ohm */
+        if (!model->BSIM4v7rbpbGiven)
+            model->BSIM4v7rbpb = 50.0;
+        if (!model->BSIM4v7rbsbGiven)
+            model->BSIM4v7rbsb = 50.0;
+        if (!model->BSIM4v7rbpsGiven)
+            model->BSIM4v7rbps = 50.0;
+        if (!model->BSIM4v7rbpdGiven)
+            model->BSIM4v7rbpd = 50.0;
 
-        if (!model->BSIM4rbps0Given)
-            model->BSIM4rbps0 = 50.0;
-        if (!model->BSIM4rbpslGiven)
-            model->BSIM4rbpsl = 0.0;
-        if (!model->BSIM4rbpswGiven)
-            model->BSIM4rbpsw = 0.0;
-        if (!model->BSIM4rbpsnfGiven)
-            model->BSIM4rbpsnf = 0.0;
+        if (!model->BSIM4v7rbps0Given)
+            model->BSIM4v7rbps0 = 50.0;
+        if (!model->BSIM4v7rbpslGiven)
+            model->BSIM4v7rbpsl = 0.0;
+        if (!model->BSIM4v7rbpswGiven)
+            model->BSIM4v7rbpsw = 0.0;
+        if (!model->BSIM4v7rbpsnfGiven)
+            model->BSIM4v7rbpsnf = 0.0;
 
-        if (!model->BSIM4rbpd0Given)
-            model->BSIM4rbpd0 = 50.0;
-        if (!model->BSIM4rbpdlGiven)
-            model->BSIM4rbpdl = 0.0;
-        if (!model->BSIM4rbpdwGiven)
-            model->BSIM4rbpdw = 0.0;
-        if (!model->BSIM4rbpdnfGiven)
-            model->BSIM4rbpdnf = 0.0;
+        if (!model->BSIM4v7rbpd0Given)
+            model->BSIM4v7rbpd0 = 50.0;
+        if (!model->BSIM4v7rbpdlGiven)
+            model->BSIM4v7rbpdl = 0.0;
+        if (!model->BSIM4v7rbpdwGiven)
+            model->BSIM4v7rbpdw = 0.0;
+        if (!model->BSIM4v7rbpdnfGiven)
+            model->BSIM4v7rbpdnf = 0.0;
 
-        if (!model->BSIM4rbpbx0Given)
-            model->BSIM4rbpbx0 = 100.0;
-        if (!model->BSIM4rbpbxlGiven)
-            model->BSIM4rbpbxl = 0.0;
-        if (!model->BSIM4rbpbxwGiven)
-            model->BSIM4rbpbxw = 0.0;
-        if (!model->BSIM4rbpbxnfGiven)
-            model->BSIM4rbpbxnf = 0.0;
-        if (!model->BSIM4rbpby0Given)
-            model->BSIM4rbpby0 = 100.0;
-        if (!model->BSIM4rbpbylGiven)
-            model->BSIM4rbpbyl = 0.0;
-        if (!model->BSIM4rbpbywGiven)
-            model->BSIM4rbpbyw = 0.0;
-        if (!model->BSIM4rbpbynfGiven)
-            model->BSIM4rbpbynf = 0.0;
-
-
-        if (!model->BSIM4rbsbx0Given)
-            model->BSIM4rbsbx0 = 100.0;
-        if (!model->BSIM4rbsby0Given)
-            model->BSIM4rbsby0 = 100.0;
-        if (!model->BSIM4rbdbx0Given)
-            model->BSIM4rbdbx0 = 100.0;
-        if (!model->BSIM4rbdby0Given)
-            model->BSIM4rbdby0 = 100.0;
+        if (!model->BSIM4v7rbpbx0Given)
+            model->BSIM4v7rbpbx0 = 100.0;
+        if (!model->BSIM4v7rbpbxlGiven)
+            model->BSIM4v7rbpbxl = 0.0;
+        if (!model->BSIM4v7rbpbxwGiven)
+            model->BSIM4v7rbpbxw = 0.0;
+        if (!model->BSIM4v7rbpbxnfGiven)
+            model->BSIM4v7rbpbxnf = 0.0;
+        if (!model->BSIM4v7rbpby0Given)
+            model->BSIM4v7rbpby0 = 100.0;
+        if (!model->BSIM4v7rbpbylGiven)
+            model->BSIM4v7rbpbyl = 0.0;
+        if (!model->BSIM4v7rbpbywGiven)
+            model->BSIM4v7rbpbyw = 0.0;
+        if (!model->BSIM4v7rbpbynfGiven)
+            model->BSIM4v7rbpbynf = 0.0;
 
 
-        if (!model->BSIM4rbsdbxlGiven)
-            model->BSIM4rbsdbxl = 0.0;
-        if (!model->BSIM4rbsdbxwGiven)
-            model->BSIM4rbsdbxw = 0.0;
-        if (!model->BSIM4rbsdbxnfGiven)
-            model->BSIM4rbsdbxnf = 0.0;
-        if (!model->BSIM4rbsdbylGiven)
-            model->BSIM4rbsdbyl = 0.0;
-        if (!model->BSIM4rbsdbywGiven)
-            model->BSIM4rbsdbyw = 0.0;
-        if (!model->BSIM4rbsdbynfGiven)
-            model->BSIM4rbsdbynf = 0.0;
+        if (!model->BSIM4v7rbsbx0Given)
+            model->BSIM4v7rbsbx0 = 100.0;
+        if (!model->BSIM4v7rbsby0Given)
+            model->BSIM4v7rbsby0 = 100.0;
+        if (!model->BSIM4v7rbdbx0Given)
+            model->BSIM4v7rbdbx0 = 100.0;
+        if (!model->BSIM4v7rbdby0Given)
+            model->BSIM4v7rbdby0 = 100.0;
 
-        if (!model->BSIM4cgslGiven)  
-            model->BSIM4cgsl = 0.0;
-        if (!model->BSIM4cgdlGiven)  
-            model->BSIM4cgdl = 0.0;
-        if (!model->BSIM4ckappasGiven)  
-            model->BSIM4ckappas = 0.6;
-        if (!model->BSIM4ckappadGiven)
-            model->BSIM4ckappad = model->BSIM4ckappas;
-        if (!model->BSIM4clcGiven)  
-            model->BSIM4clc = 0.1e-6;
-        if (!model->BSIM4cleGiven)  
-            model->BSIM4cle = 0.6;
-        if (!model->BSIM4vfbcvGiven)  
-            model->BSIM4vfbcv = -1.0;
-        if (!model->BSIM4acdeGiven)
-            model->BSIM4acde = 1.0;
-        if (!model->BSIM4moinGiven)
-            model->BSIM4moin = 15.0;
-        if (!model->BSIM4noffGiven)
-            model->BSIM4noff = 1.0;
-        if (!model->BSIM4voffcvGiven)
-            model->BSIM4voffcv = 0.0;
-        if (!model->BSIM4dmcgGiven)
-            model->BSIM4dmcg = 0.0;
-        if (!model->BSIM4dmciGiven)
-            model->BSIM4dmci = model->BSIM4dmcg;
-        if (!model->BSIM4dmdgGiven)
-            model->BSIM4dmdg = 0.0;
-        if (!model->BSIM4dmcgtGiven)
-            model->BSIM4dmcgt = 0.0;
-        if (!model->BSIM4xgwGiven)
-            model->BSIM4xgw = 0.0;
-        if (!model->BSIM4xglGiven)
-            model->BSIM4xgl = 0.0;
-        if (!model->BSIM4rshgGiven)
-            model->BSIM4rshg = 0.1;
-        if (!model->BSIM4ngconGiven)
-            model->BSIM4ngcon = 1.0;
-        if (!model->BSIM4tcjGiven)
-            model->BSIM4tcj = 0.0;
-        if (!model->BSIM4tpbGiven)
-            model->BSIM4tpb = 0.0;
-        if (!model->BSIM4tcjswGiven)
-            model->BSIM4tcjsw = 0.0;
-        if (!model->BSIM4tpbswGiven)
-            model->BSIM4tpbsw = 0.0;
-        if (!model->BSIM4tcjswgGiven)
-            model->BSIM4tcjswg = 0.0;
-        if (!model->BSIM4tpbswgGiven)
-            model->BSIM4tpbswg = 0.0;
+
+        if (!model->BSIM4v7rbsdbxlGiven)
+            model->BSIM4v7rbsdbxl = 0.0;
+        if (!model->BSIM4v7rbsdbxwGiven)
+            model->BSIM4v7rbsdbxw = 0.0;
+        if (!model->BSIM4v7rbsdbxnfGiven)
+            model->BSIM4v7rbsdbxnf = 0.0;
+        if (!model->BSIM4v7rbsdbylGiven)
+            model->BSIM4v7rbsdbyl = 0.0;
+        if (!model->BSIM4v7rbsdbywGiven)
+            model->BSIM4v7rbsdbyw = 0.0;
+        if (!model->BSIM4v7rbsdbynfGiven)
+            model->BSIM4v7rbsdbynf = 0.0;
+
+        if (!model->BSIM4v7cgslGiven)  
+            model->BSIM4v7cgsl = 0.0;
+        if (!model->BSIM4v7cgdlGiven)  
+            model->BSIM4v7cgdl = 0.0;
+        if (!model->BSIM4v7ckappasGiven)  
+            model->BSIM4v7ckappas = 0.6;
+        if (!model->BSIM4v7ckappadGiven)
+            model->BSIM4v7ckappad = model->BSIM4v7ckappas;
+        if (!model->BSIM4v7clcGiven)  
+            model->BSIM4v7clc = 0.1e-6;
+        if (!model->BSIM4v7cleGiven)  
+            model->BSIM4v7cle = 0.6;
+        if (!model->BSIM4v7vfbcvGiven)  
+            model->BSIM4v7vfbcv = -1.0;
+        if (!model->BSIM4v7acdeGiven)
+            model->BSIM4v7acde = 1.0;
+        if (!model->BSIM4v7moinGiven)
+            model->BSIM4v7moin = 15.0;
+        if (!model->BSIM4v7noffGiven)
+            model->BSIM4v7noff = 1.0;
+        if (!model->BSIM4v7voffcvGiven)
+            model->BSIM4v7voffcv = 0.0;
+        if (!model->BSIM4v7dmcgGiven)
+            model->BSIM4v7dmcg = 0.0;
+        if (!model->BSIM4v7dmciGiven)
+            model->BSIM4v7dmci = model->BSIM4v7dmcg;
+        if (!model->BSIM4v7dmdgGiven)
+            model->BSIM4v7dmdg = 0.0;
+        if (!model->BSIM4v7dmcgtGiven)
+            model->BSIM4v7dmcgt = 0.0;
+        if (!model->BSIM4v7xgwGiven)
+            model->BSIM4v7xgw = 0.0;
+        if (!model->BSIM4v7xglGiven)
+            model->BSIM4v7xgl = 0.0;
+        if (!model->BSIM4v7rshgGiven)
+            model->BSIM4v7rshg = 0.1;
+        if (!model->BSIM4v7ngconGiven)
+            model->BSIM4v7ngcon = 1.0;
+        if (!model->BSIM4v7tcjGiven)
+            model->BSIM4v7tcj = 0.0;
+        if (!model->BSIM4v7tpbGiven)
+            model->BSIM4v7tpb = 0.0;
+        if (!model->BSIM4v7tcjswGiven)
+            model->BSIM4v7tcjsw = 0.0;
+        if (!model->BSIM4v7tpbswGiven)
+            model->BSIM4v7tpbsw = 0.0;
+        if (!model->BSIM4v7tcjswgGiven)
+            model->BSIM4v7tcjswg = 0.0;
+        if (!model->BSIM4v7tpbswgGiven)
+            model->BSIM4v7tpbswg = 0.0;
 
         /* Length dependence */
-        if (!model->BSIM4lcdscGiven)
-            model->BSIM4lcdsc = 0.0;
-        if (!model->BSIM4lcdscbGiven)
-            model->BSIM4lcdscb = 0.0;
-            if (!model->BSIM4lcdscdGiven) 
-            model->BSIM4lcdscd = 0.0;
-        if (!model->BSIM4lcitGiven)
-            model->BSIM4lcit = 0.0;
-        if (!model->BSIM4lnfactorGiven)
-            model->BSIM4lnfactor = 0.0;
-        if (!model->BSIM4lxjGiven)
-            model->BSIM4lxj = 0.0;
-        if (!model->BSIM4lvsatGiven)
-            model->BSIM4lvsat = 0.0;
-        if (!model->BSIM4latGiven)
-            model->BSIM4lat = 0.0;
-        if (!model->BSIM4la0Given)
-            model->BSIM4la0 = 0.0; 
-        if (!model->BSIM4lagsGiven)
-            model->BSIM4lags = 0.0;
-        if (!model->BSIM4la1Given)
-            model->BSIM4la1 = 0.0;
-        if (!model->BSIM4la2Given)
-            model->BSIM4la2 = 0.0;
-        if (!model->BSIM4lketaGiven)
-            model->BSIM4lketa = 0.0;
-        if (!model->BSIM4lnsubGiven)
-            model->BSIM4lnsub = 0.0;
-        if (!model->BSIM4lndepGiven)
-            model->BSIM4lndep = 0.0;
-        if (!model->BSIM4lnsdGiven)
-            model->BSIM4lnsd = 0.0;
-        if (!model->BSIM4lphinGiven)
-            model->BSIM4lphin = 0.0;
-        if (!model->BSIM4lngateGiven)
-            model->BSIM4lngate = 0.0;
-        if (!model->BSIM4lvbmGiven)
-            model->BSIM4lvbm = 0.0;
-        if (!model->BSIM4lxtGiven)
-            model->BSIM4lxt = 0.0;
-        if (!model->BSIM4lkt1Given)
-            model->BSIM4lkt1 = 0.0; 
-        if (!model->BSIM4lkt1lGiven)
-            model->BSIM4lkt1l = 0.0;
-        if (!model->BSIM4lkt2Given)
-            model->BSIM4lkt2 = 0.0;
-        if (!model->BSIM4lk3Given)
-            model->BSIM4lk3 = 0.0;      
-        if (!model->BSIM4lk3bGiven)
-            model->BSIM4lk3b = 0.0;      
-        if (!model->BSIM4lw0Given)
-            model->BSIM4lw0 = 0.0;    
-        if (!model->BSIM4llpe0Given)
-            model->BSIM4llpe0 = 0.0;
-        if (!model->BSIM4llpebGiven)
-            model->BSIM4llpeb = 0.0; 
-        if (!model->BSIM4ldvtp0Given)
-            model->BSIM4ldvtp0 = 0.0;
-        if (!model->BSIM4ldvtp1Given)
-            model->BSIM4ldvtp1 = 0.0;
-        if (!model->BSIM4ldvtp2Given)        /* New DIBL/Rout */
-            model->BSIM4ldvtp2 = 0.0;
-        if (!model->BSIM4ldvtp3Given)
-            model->BSIM4ldvtp3 = 0.0;
-        if (!model->BSIM4ldvtp4Given)
-            model->BSIM4ldvtp4 = 0.0;
-        if (!model->BSIM4ldvtp5Given)
-            model->BSIM4ldvtp5 = 0.0;
-        if (!model->BSIM4ldvt0Given)
-            model->BSIM4ldvt0 = 0.0;    
-        if (!model->BSIM4ldvt1Given)
-            model->BSIM4ldvt1 = 0.0;      
-        if (!model->BSIM4ldvt2Given)
-            model->BSIM4ldvt2 = 0.0;
-        if (!model->BSIM4ldvt0wGiven)
-            model->BSIM4ldvt0w = 0.0;    
-        if (!model->BSIM4ldvt1wGiven)
-            model->BSIM4ldvt1w = 0.0;      
-        if (!model->BSIM4ldvt2wGiven)
-            model->BSIM4ldvt2w = 0.0;
-        if (!model->BSIM4ldroutGiven)
-            model->BSIM4ldrout = 0.0;     
-        if (!model->BSIM4ldsubGiven)
-            model->BSIM4ldsub = 0.0;
-        if (!model->BSIM4lvth0Given)
-           model->BSIM4lvth0 = 0.0;
-        if (!model->BSIM4luaGiven)
-            model->BSIM4lua = 0.0;
-        if (!model->BSIM4lua1Given)
-            model->BSIM4lua1 = 0.0;
-        if (!model->BSIM4lubGiven)
-            model->BSIM4lub = 0.0;
-        if (!model->BSIM4lub1Given)
-            model->BSIM4lub1 = 0.0;
-        if (!model->BSIM4lucGiven)
-            model->BSIM4luc = 0.0;
-        if (!model->BSIM4luc1Given)
-            model->BSIM4luc1 = 0.0;
-        if (!model->BSIM4ludGiven)
-            model->BSIM4lud = 0.0;
-        if (!model->BSIM4lud1Given)
-            model->BSIM4lud1 = 0.0;
-        if (!model->BSIM4lupGiven)
-            model->BSIM4lup = 0.0;
-        if (!model->BSIM4llpGiven)
-            model->BSIM4llp = 0.0;
-        if (!model->BSIM4lu0Given)
-            model->BSIM4lu0 = 0.0;
-        if (!model->BSIM4luteGiven)
-            model->BSIM4lute = 0.0;  
-          if (!model->BSIM4lucsteGiven)
-            model->BSIM4lucste = 0.0;                 
-        if (!model->BSIM4lvoffGiven)
-            model->BSIM4lvoff = 0.0;
-        if (!model->BSIM4lminvGiven)
-            model->BSIM4lminv = 0.0;
-        if (!model->BSIM4lminvcvGiven)
-            model->BSIM4lminvcv = 0.0;
-        if (!model->BSIM4lfproutGiven)
-            model->BSIM4lfprout = 0.0;
-        if (!model->BSIM4lpditsGiven)
-            model->BSIM4lpdits = 0.0;
-        if (!model->BSIM4lpditsdGiven)
-            model->BSIM4lpditsd = 0.0;
-        if (!model->BSIM4ldeltaGiven)  
-            model->BSIM4ldelta = 0.0;
-        if (!model->BSIM4lrdswGiven)
-            model->BSIM4lrdsw = 0.0;
-        if (!model->BSIM4lrdwGiven)
-            model->BSIM4lrdw = 0.0;
-        if (!model->BSIM4lrswGiven)
-            model->BSIM4lrsw = 0.0;
-        if (!model->BSIM4lprwbGiven)
-            model->BSIM4lprwb = 0.0;
-        if (!model->BSIM4lprwgGiven)
-            model->BSIM4lprwg = 0.0;
-        if (!model->BSIM4lprtGiven)
-            model->BSIM4lprt = 0.0;
-        if (!model->BSIM4leta0Given)
-            model->BSIM4leta0 = 0.0;
-        if (!model->BSIM4letabGiven)
-            model->BSIM4letab = -0.0;
-        if (!model->BSIM4lpclmGiven)
-            model->BSIM4lpclm = 0.0; 
-        if (!model->BSIM4lpdibl1Given)
-            model->BSIM4lpdibl1 = 0.0;
-        if (!model->BSIM4lpdibl2Given)
-            model->BSIM4lpdibl2 = 0.0;
-        if (!model->BSIM4lpdiblbGiven)
-            model->BSIM4lpdiblb = 0.0;
-        if (!model->BSIM4lpscbe1Given)
-            model->BSIM4lpscbe1 = 0.0;
-        if (!model->BSIM4lpscbe2Given)
-            model->BSIM4lpscbe2 = 0.0;
-        if (!model->BSIM4lpvagGiven)
-            model->BSIM4lpvag = 0.0;     
-        if (!model->BSIM4lwrGiven)  
-            model->BSIM4lwr = 0.0;
-        if (!model->BSIM4ldwgGiven)  
-            model->BSIM4ldwg = 0.0;
-        if (!model->BSIM4ldwbGiven)  
-            model->BSIM4ldwb = 0.0;
-        if (!model->BSIM4lb0Given)
-            model->BSIM4lb0 = 0.0;
-        if (!model->BSIM4lb1Given)  
-            model->BSIM4lb1 = 0.0;
-        if (!model->BSIM4lalpha0Given)  
-            model->BSIM4lalpha0 = 0.0;
-        if (!model->BSIM4lalpha1Given)
-            model->BSIM4lalpha1 = 0.0;
-        if (!model->BSIM4lbeta0Given)  
-            model->BSIM4lbeta0 = 0.0;
-        if (!model->BSIM4lagidlGiven)
-            model->BSIM4lagidl = 0.0;
-        if (!model->BSIM4lbgidlGiven)
-            model->BSIM4lbgidl = 0.0;
-        if (!model->BSIM4lcgidlGiven)
-            model->BSIM4lcgidl = 0.0;
-        if (!model->BSIM4legidlGiven)
-            model->BSIM4legidl = 0.0;
-        if (!model->BSIM4lrgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4lrgidl = 0.0;
-        if (!model->BSIM4lkgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4lkgidl = 0.0;
-        if (!model->BSIM4lfgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4lfgidl = 0.0;
+        if (!model->BSIM4v7lcdscGiven)
+            model->BSIM4v7lcdsc = 0.0;
+        if (!model->BSIM4v7lcdscbGiven)
+            model->BSIM4v7lcdscb = 0.0;
+            if (!model->BSIM4v7lcdscdGiven) 
+            model->BSIM4v7lcdscd = 0.0;
+        if (!model->BSIM4v7lcitGiven)
+            model->BSIM4v7lcit = 0.0;
+        if (!model->BSIM4v7lnfactorGiven)
+            model->BSIM4v7lnfactor = 0.0;
+        if (!model->BSIM4v7lxjGiven)
+            model->BSIM4v7lxj = 0.0;
+        if (!model->BSIM4v7lvsatGiven)
+            model->BSIM4v7lvsat = 0.0;
+        if (!model->BSIM4v7latGiven)
+            model->BSIM4v7lat = 0.0;
+        if (!model->BSIM4v7la0Given)
+            model->BSIM4v7la0 = 0.0; 
+        if (!model->BSIM4v7lagsGiven)
+            model->BSIM4v7lags = 0.0;
+        if (!model->BSIM4v7la1Given)
+            model->BSIM4v7la1 = 0.0;
+        if (!model->BSIM4v7la2Given)
+            model->BSIM4v7la2 = 0.0;
+        if (!model->BSIM4v7lketaGiven)
+            model->BSIM4v7lketa = 0.0;
+        if (!model->BSIM4v7lnsubGiven)
+            model->BSIM4v7lnsub = 0.0;
+        if (!model->BSIM4v7lndepGiven)
+            model->BSIM4v7lndep = 0.0;
+        if (!model->BSIM4v7lnsdGiven)
+            model->BSIM4v7lnsd = 0.0;
+        if (!model->BSIM4v7lphinGiven)
+            model->BSIM4v7lphin = 0.0;
+        if (!model->BSIM4v7lngateGiven)
+            model->BSIM4v7lngate = 0.0;
+        if (!model->BSIM4v7lvbmGiven)
+            model->BSIM4v7lvbm = 0.0;
+        if (!model->BSIM4v7lxtGiven)
+            model->BSIM4v7lxt = 0.0;
+        if (!model->BSIM4v7lkt1Given)
+            model->BSIM4v7lkt1 = 0.0; 
+        if (!model->BSIM4v7lkt1lGiven)
+            model->BSIM4v7lkt1l = 0.0;
+        if (!model->BSIM4v7lkt2Given)
+            model->BSIM4v7lkt2 = 0.0;
+        if (!model->BSIM4v7lk3Given)
+            model->BSIM4v7lk3 = 0.0;      
+        if (!model->BSIM4v7lk3bGiven)
+            model->BSIM4v7lk3b = 0.0;      
+        if (!model->BSIM4v7lw0Given)
+            model->BSIM4v7lw0 = 0.0;    
+        if (!model->BSIM4v7llpe0Given)
+            model->BSIM4v7llpe0 = 0.0;
+        if (!model->BSIM4v7llpebGiven)
+            model->BSIM4v7llpeb = 0.0; 
+        if (!model->BSIM4v7ldvtp0Given)
+            model->BSIM4v7ldvtp0 = 0.0;
+        if (!model->BSIM4v7ldvtp1Given)
+            model->BSIM4v7ldvtp1 = 0.0;
+        if (!model->BSIM4v7ldvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4v7ldvtp2 = 0.0;
+        if (!model->BSIM4v7ldvtp3Given)
+            model->BSIM4v7ldvtp3 = 0.0;
+        if (!model->BSIM4v7ldvtp4Given)
+            model->BSIM4v7ldvtp4 = 0.0;
+        if (!model->BSIM4v7ldvtp5Given)
+            model->BSIM4v7ldvtp5 = 0.0;
+        if (!model->BSIM4v7ldvt0Given)
+            model->BSIM4v7ldvt0 = 0.0;    
+        if (!model->BSIM4v7ldvt1Given)
+            model->BSIM4v7ldvt1 = 0.0;      
+        if (!model->BSIM4v7ldvt2Given)
+            model->BSIM4v7ldvt2 = 0.0;
+        if (!model->BSIM4v7ldvt0wGiven)
+            model->BSIM4v7ldvt0w = 0.0;    
+        if (!model->BSIM4v7ldvt1wGiven)
+            model->BSIM4v7ldvt1w = 0.0;      
+        if (!model->BSIM4v7ldvt2wGiven)
+            model->BSIM4v7ldvt2w = 0.0;
+        if (!model->BSIM4v7ldroutGiven)
+            model->BSIM4v7ldrout = 0.0;     
+        if (!model->BSIM4v7ldsubGiven)
+            model->BSIM4v7ldsub = 0.0;
+        if (!model->BSIM4v7lvth0Given)
+           model->BSIM4v7lvth0 = 0.0;
+        if (!model->BSIM4v7luaGiven)
+            model->BSIM4v7lua = 0.0;
+        if (!model->BSIM4v7lua1Given)
+            model->BSIM4v7lua1 = 0.0;
+        if (!model->BSIM4v7lubGiven)
+            model->BSIM4v7lub = 0.0;
+        if (!model->BSIM4v7lub1Given)
+            model->BSIM4v7lub1 = 0.0;
+        if (!model->BSIM4v7lucGiven)
+            model->BSIM4v7luc = 0.0;
+        if (!model->BSIM4v7luc1Given)
+            model->BSIM4v7luc1 = 0.0;
+        if (!model->BSIM4v7ludGiven)
+            model->BSIM4v7lud = 0.0;
+        if (!model->BSIM4v7lud1Given)
+            model->BSIM4v7lud1 = 0.0;
+        if (!model->BSIM4v7lupGiven)
+            model->BSIM4v7lup = 0.0;
+        if (!model->BSIM4v7llpGiven)
+            model->BSIM4v7llp = 0.0;
+        if (!model->BSIM4v7lu0Given)
+            model->BSIM4v7lu0 = 0.0;
+        if (!model->BSIM4v7luteGiven)
+            model->BSIM4v7lute = 0.0;  
+          if (!model->BSIM4v7lucsteGiven)
+            model->BSIM4v7lucste = 0.0;                 
+        if (!model->BSIM4v7lvoffGiven)
+            model->BSIM4v7lvoff = 0.0;
+        if (!model->BSIM4v7lminvGiven)
+            model->BSIM4v7lminv = 0.0;
+        if (!model->BSIM4v7lminvcvGiven)
+            model->BSIM4v7lminvcv = 0.0;
+        if (!model->BSIM4v7lfproutGiven)
+            model->BSIM4v7lfprout = 0.0;
+        if (!model->BSIM4v7lpditsGiven)
+            model->BSIM4v7lpdits = 0.0;
+        if (!model->BSIM4v7lpditsdGiven)
+            model->BSIM4v7lpditsd = 0.0;
+        if (!model->BSIM4v7ldeltaGiven)  
+            model->BSIM4v7ldelta = 0.0;
+        if (!model->BSIM4v7lrdswGiven)
+            model->BSIM4v7lrdsw = 0.0;
+        if (!model->BSIM4v7lrdwGiven)
+            model->BSIM4v7lrdw = 0.0;
+        if (!model->BSIM4v7lrswGiven)
+            model->BSIM4v7lrsw = 0.0;
+        if (!model->BSIM4v7lprwbGiven)
+            model->BSIM4v7lprwb = 0.0;
+        if (!model->BSIM4v7lprwgGiven)
+            model->BSIM4v7lprwg = 0.0;
+        if (!model->BSIM4v7lprtGiven)
+            model->BSIM4v7lprt = 0.0;
+        if (!model->BSIM4v7leta0Given)
+            model->BSIM4v7leta0 = 0.0;
+        if (!model->BSIM4v7letabGiven)
+            model->BSIM4v7letab = -0.0;
+        if (!model->BSIM4v7lpclmGiven)
+            model->BSIM4v7lpclm = 0.0; 
+        if (!model->BSIM4v7lpdibl1Given)
+            model->BSIM4v7lpdibl1 = 0.0;
+        if (!model->BSIM4v7lpdibl2Given)
+            model->BSIM4v7lpdibl2 = 0.0;
+        if (!model->BSIM4v7lpdiblbGiven)
+            model->BSIM4v7lpdiblb = 0.0;
+        if (!model->BSIM4v7lpscbe1Given)
+            model->BSIM4v7lpscbe1 = 0.0;
+        if (!model->BSIM4v7lpscbe2Given)
+            model->BSIM4v7lpscbe2 = 0.0;
+        if (!model->BSIM4v7lpvagGiven)
+            model->BSIM4v7lpvag = 0.0;     
+        if (!model->BSIM4v7lwrGiven)  
+            model->BSIM4v7lwr = 0.0;
+        if (!model->BSIM4v7ldwgGiven)  
+            model->BSIM4v7ldwg = 0.0;
+        if (!model->BSIM4v7ldwbGiven)  
+            model->BSIM4v7ldwb = 0.0;
+        if (!model->BSIM4v7lb0Given)
+            model->BSIM4v7lb0 = 0.0;
+        if (!model->BSIM4v7lb1Given)  
+            model->BSIM4v7lb1 = 0.0;
+        if (!model->BSIM4v7lalpha0Given)  
+            model->BSIM4v7lalpha0 = 0.0;
+        if (!model->BSIM4v7lalpha1Given)
+            model->BSIM4v7lalpha1 = 0.0;
+        if (!model->BSIM4v7lbeta0Given)  
+            model->BSIM4v7lbeta0 = 0.0;
+        if (!model->BSIM4v7lagidlGiven)
+            model->BSIM4v7lagidl = 0.0;
+        if (!model->BSIM4v7lbgidlGiven)
+            model->BSIM4v7lbgidl = 0.0;
+        if (!model->BSIM4v7lcgidlGiven)
+            model->BSIM4v7lcgidl = 0.0;
+        if (!model->BSIM4v7legidlGiven)
+            model->BSIM4v7legidl = 0.0;
+        if (!model->BSIM4v7lrgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7lrgidl = 0.0;
+        if (!model->BSIM4v7lkgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7lkgidl = 0.0;
+        if (!model->BSIM4v7lfgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7lfgidl = 0.0;
 
-        if (!model->BSIM4lagislGiven)
+        if (!model->BSIM4v7lagislGiven)
         {
-            if (model->BSIM4lagidlGiven)
-                model->BSIM4lagisl = model->BSIM4lagidl;
+            if (model->BSIM4v7lagidlGiven)
+                model->BSIM4v7lagisl = model->BSIM4v7lagidl;
             else
-                model->BSIM4lagisl = 0.0;
+                model->BSIM4v7lagisl = 0.0;
         }
-        if (!model->BSIM4lbgislGiven)
+        if (!model->BSIM4v7lbgislGiven)
         {
-            if (model->BSIM4lbgidlGiven)
-                model->BSIM4lbgisl = model->BSIM4lbgidl;
+            if (model->BSIM4v7lbgidlGiven)
+                model->BSIM4v7lbgisl = model->BSIM4v7lbgidl;
             else
-                model->BSIM4lbgisl = 0.0;
+                model->BSIM4v7lbgisl = 0.0;
         }
-        if (!model->BSIM4lcgislGiven)
+        if (!model->BSIM4v7lcgislGiven)
         {
-            if (model->BSIM4lcgidlGiven)
-                model->BSIM4lcgisl = model->BSIM4lcgidl;
+            if (model->BSIM4v7lcgidlGiven)
+                model->BSIM4v7lcgisl = model->BSIM4v7lcgidl;
             else
-                model->BSIM4lcgisl = 0.0;
+                model->BSIM4v7lcgisl = 0.0;
         }
-        if (!model->BSIM4legislGiven)
+        if (!model->BSIM4v7legislGiven)
         {
-            if (model->BSIM4legidlGiven)
-                model->BSIM4legisl = model->BSIM4legidl;
+            if (model->BSIM4v7legidlGiven)
+                model->BSIM4v7legisl = model->BSIM4v7legidl;
             else
-                model->BSIM4legisl = 0.0; 
+                model->BSIM4v7legisl = 0.0; 
         }
-        if (!model->BSIM4lrgislGiven)         /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7lrgislGiven)         /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4lrgidlGiven)
-                model->BSIM4lrgisl = model->BSIM4lrgidl;
+            if (model->BSIM4v7lrgidlGiven)
+                model->BSIM4v7lrgisl = model->BSIM4v7lrgidl;
         }
-        if (!model->BSIM4lkgislGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7lkgislGiven)        /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4lkgidlGiven)
-                model->BSIM4lkgisl = model->BSIM4lkgidl;
+            if (model->BSIM4v7lkgidlGiven)
+                model->BSIM4v7lkgisl = model->BSIM4v7lkgidl;
         }
-        if (!model->BSIM4lfgislGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7lfgislGiven)        /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4lfgidlGiven)
-                model->BSIM4lfgisl = model->BSIM4lfgidl;
+            if (model->BSIM4v7lfgidlGiven)
+                model->BSIM4v7lfgisl = model->BSIM4v7lfgidl;
         }
-        if (!model->BSIM4laigcGiven)
-            model->BSIM4laigc = 0.0;
-        if (!model->BSIM4lbigcGiven)
-            model->BSIM4lbigc = 0.0;
-        if (!model->BSIM4lcigcGiven)
-            model->BSIM4lcigc = 0.0;
-        if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        if (!model->BSIM4v7laigcGiven)
+            model->BSIM4v7laigc = 0.0;
+        if (!model->BSIM4v7lbigcGiven)
+            model->BSIM4v7lbigc = 0.0;
+        if (!model->BSIM4v7lcigcGiven)
+            model->BSIM4v7lcigc = 0.0;
+        if (!model->BSIM4v7aigsdGiven && (model->BSIM4v7aigsGiven || model->BSIM4v7aigdGiven))
         {
-            if (!model->BSIM4laigsGiven)
-                model->BSIM4laigs = 0.0;
-            if (!model->BSIM4laigdGiven)
-                model->BSIM4laigd = 0.0;
+            if (!model->BSIM4v7laigsGiven)
+                model->BSIM4v7laigs = 0.0;
+            if (!model->BSIM4v7laigdGiven)
+                model->BSIM4v7laigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4laigsdGiven)
-               model->BSIM4laigsd = 0.0;
-           model->BSIM4laigs = model->BSIM4laigd = model->BSIM4laigsd;
+           if (!model->BSIM4v7laigsdGiven)
+               model->BSIM4v7laigsd = 0.0;
+           model->BSIM4v7laigs = model->BSIM4v7laigd = model->BSIM4v7laigsd;
         }
-        if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        if (!model->BSIM4v7bigsdGiven && (model->BSIM4v7bigsGiven || model->BSIM4v7bigdGiven))
         {
-            if (!model->BSIM4lbigsGiven)
-                model->BSIM4lbigs = 0.0;
-            if (!model->BSIM4lbigdGiven)
-                model->BSIM4lbigd = 0.0;
+            if (!model->BSIM4v7lbigsGiven)
+                model->BSIM4v7lbigs = 0.0;
+            if (!model->BSIM4v7lbigdGiven)
+                model->BSIM4v7lbigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4lbigsdGiven)
-               model->BSIM4lbigsd = 0.0;
-           model->BSIM4lbigs = model->BSIM4lbigd = model->BSIM4lbigsd;
+           if (!model->BSIM4v7lbigsdGiven)
+               model->BSIM4v7lbigsd = 0.0;
+           model->BSIM4v7lbigs = model->BSIM4v7lbigd = model->BSIM4v7lbigsd;
         }
-        if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        if (!model->BSIM4v7cigsdGiven && (model->BSIM4v7cigsGiven || model->BSIM4v7cigdGiven))
         {
-            if (!model->BSIM4lcigsGiven)
-                model->BSIM4lcigs = 0.0;
-            if (!model->BSIM4lcigdGiven)
-                model->BSIM4lcigd = 0.0;
+            if (!model->BSIM4v7lcigsGiven)
+                model->BSIM4v7lcigs = 0.0;
+            if (!model->BSIM4v7lcigdGiven)
+                model->BSIM4v7lcigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4lcigsdGiven)
-               model->BSIM4lcigsd = 0.0;
-           model->BSIM4lcigs = model->BSIM4lcigd = model->BSIM4lcigsd;
+           if (!model->BSIM4v7lcigsdGiven)
+               model->BSIM4v7lcigsd = 0.0;
+           model->BSIM4v7lcigs = model->BSIM4v7lcigd = model->BSIM4v7lcigsd;
         }
-        if (!model->BSIM4laigbaccGiven)
-            model->BSIM4laigbacc = 0.0;
-        if (!model->BSIM4lbigbaccGiven)
-            model->BSIM4lbigbacc = 0.0;
-        if (!model->BSIM4lcigbaccGiven)
-            model->BSIM4lcigbacc = 0.0;
-        if (!model->BSIM4laigbinvGiven)
-            model->BSIM4laigbinv = 0.0;
-        if (!model->BSIM4lbigbinvGiven)
-            model->BSIM4lbigbinv = 0.0;
-        if (!model->BSIM4lcigbinvGiven)
-            model->BSIM4lcigbinv = 0.0;
-        if (!model->BSIM4lnigcGiven)
-            model->BSIM4lnigc = 0.0;
-        if (!model->BSIM4lnigbinvGiven)
-            model->BSIM4lnigbinv = 0.0;
-        if (!model->BSIM4lnigbaccGiven)
-            model->BSIM4lnigbacc = 0.0;
-        if (!model->BSIM4lntoxGiven)
-            model->BSIM4lntox = 0.0;
-        if (!model->BSIM4leigbinvGiven)
-            model->BSIM4leigbinv = 0.0;
-        if (!model->BSIM4lpigcdGiven)
-            model->BSIM4lpigcd = 0.0;
-        if (!model->BSIM4lpoxedgeGiven)
-            model->BSIM4lpoxedge = 0.0;
-        if (!model->BSIM4lxrcrg1Given)
-            model->BSIM4lxrcrg1 = 0.0;
-        if (!model->BSIM4lxrcrg2Given)
-            model->BSIM4lxrcrg2 = 0.0;
-        if (!model->BSIM4leuGiven)
-            model->BSIM4leu = 0.0;
-                if (!model->BSIM4lucsGiven)
-            model->BSIM4lucs = 0.0;
-        if (!model->BSIM4lvfbGiven)
-            model->BSIM4lvfb = 0.0;
-        if (!model->BSIM4llambdaGiven)
-            model->BSIM4llambda = 0.0;
-        if (!model->BSIM4lvtlGiven)
-            model->BSIM4lvtl = 0.0;  
-        if (!model->BSIM4lxnGiven)
-            model->BSIM4lxn = 0.0;  
-        if (!model->BSIM4lvfbsdoffGiven)
-            model->BSIM4lvfbsdoff = 0.0;   
-        if (!model->BSIM4ltvfbsdoffGiven)
-            model->BSIM4ltvfbsdoff = 0.0;  
-        if (!model->BSIM4ltvoffGiven)
-            model->BSIM4ltvoff = 0.0;  
-        if (!model->BSIM4ltnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4ltnfactor = 0.0;  
-        if (!model->BSIM4lteta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4lteta0 = 0.0;  
-        if (!model->BSIM4ltvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4ltvoffcv = 0.0;  
+        if (!model->BSIM4v7laigbaccGiven)
+            model->BSIM4v7laigbacc = 0.0;
+        if (!model->BSIM4v7lbigbaccGiven)
+            model->BSIM4v7lbigbacc = 0.0;
+        if (!model->BSIM4v7lcigbaccGiven)
+            model->BSIM4v7lcigbacc = 0.0;
+        if (!model->BSIM4v7laigbinvGiven)
+            model->BSIM4v7laigbinv = 0.0;
+        if (!model->BSIM4v7lbigbinvGiven)
+            model->BSIM4v7lbigbinv = 0.0;
+        if (!model->BSIM4v7lcigbinvGiven)
+            model->BSIM4v7lcigbinv = 0.0;
+        if (!model->BSIM4v7lnigcGiven)
+            model->BSIM4v7lnigc = 0.0;
+        if (!model->BSIM4v7lnigbinvGiven)
+            model->BSIM4v7lnigbinv = 0.0;
+        if (!model->BSIM4v7lnigbaccGiven)
+            model->BSIM4v7lnigbacc = 0.0;
+        if (!model->BSIM4v7lntoxGiven)
+            model->BSIM4v7lntox = 0.0;
+        if (!model->BSIM4v7leigbinvGiven)
+            model->BSIM4v7leigbinv = 0.0;
+        if (!model->BSIM4v7lpigcdGiven)
+            model->BSIM4v7lpigcd = 0.0;
+        if (!model->BSIM4v7lpoxedgeGiven)
+            model->BSIM4v7lpoxedge = 0.0;
+        if (!model->BSIM4v7lxrcrg1Given)
+            model->BSIM4v7lxrcrg1 = 0.0;
+        if (!model->BSIM4v7lxrcrg2Given)
+            model->BSIM4v7lxrcrg2 = 0.0;
+        if (!model->BSIM4v7leuGiven)
+            model->BSIM4v7leu = 0.0;
+                if (!model->BSIM4v7lucsGiven)
+            model->BSIM4v7lucs = 0.0;
+        if (!model->BSIM4v7lvfbGiven)
+            model->BSIM4v7lvfb = 0.0;
+        if (!model->BSIM4v7llambdaGiven)
+            model->BSIM4v7llambda = 0.0;
+        if (!model->BSIM4v7lvtlGiven)
+            model->BSIM4v7lvtl = 0.0;  
+        if (!model->BSIM4v7lxnGiven)
+            model->BSIM4v7lxn = 0.0;  
+        if (!model->BSIM4v7lvfbsdoffGiven)
+            model->BSIM4v7lvfbsdoff = 0.0;   
+        if (!model->BSIM4v7ltvfbsdoffGiven)
+            model->BSIM4v7ltvfbsdoff = 0.0;  
+        if (!model->BSIM4v7ltvoffGiven)
+            model->BSIM4v7ltvoff = 0.0;  
+        if (!model->BSIM4v7ltnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7ltnfactor = 0.0;  
+        if (!model->BSIM4v7lteta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7lteta0 = 0.0;  
+        if (!model->BSIM4v7ltvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7ltvoffcv = 0.0;  
 
 
-        if (!model->BSIM4lcgslGiven)  
-            model->BSIM4lcgsl = 0.0;
-        if (!model->BSIM4lcgdlGiven)  
-            model->BSIM4lcgdl = 0.0;
-        if (!model->BSIM4lckappasGiven)  
-            model->BSIM4lckappas = 0.0;
-        if (!model->BSIM4lckappadGiven)
-            model->BSIM4lckappad = 0.0;
-        if (!model->BSIM4lclcGiven)  
-            model->BSIM4lclc = 0.0;
-        if (!model->BSIM4lcleGiven)  
-            model->BSIM4lcle = 0.0;
-        if (!model->BSIM4lcfGiven)  
-            model->BSIM4lcf = 0.0;
-        if (!model->BSIM4lvfbcvGiven)  
-            model->BSIM4lvfbcv = 0.0;
-        if (!model->BSIM4lacdeGiven)
-            model->BSIM4lacde = 0.0;
-        if (!model->BSIM4lmoinGiven)
-            model->BSIM4lmoin = 0.0;
-        if (!model->BSIM4lnoffGiven)
-            model->BSIM4lnoff = 0.0;
-        if (!model->BSIM4lvoffcvGiven)
-            model->BSIM4lvoffcv = 0.0;
+        if (!model->BSIM4v7lcgslGiven)  
+            model->BSIM4v7lcgsl = 0.0;
+        if (!model->BSIM4v7lcgdlGiven)  
+            model->BSIM4v7lcgdl = 0.0;
+        if (!model->BSIM4v7lckappasGiven)  
+            model->BSIM4v7lckappas = 0.0;
+        if (!model->BSIM4v7lckappadGiven)
+            model->BSIM4v7lckappad = 0.0;
+        if (!model->BSIM4v7lclcGiven)  
+            model->BSIM4v7lclc = 0.0;
+        if (!model->BSIM4v7lcleGiven)  
+            model->BSIM4v7lcle = 0.0;
+        if (!model->BSIM4v7lcfGiven)  
+            model->BSIM4v7lcf = 0.0;
+        if (!model->BSIM4v7lvfbcvGiven)  
+            model->BSIM4v7lvfbcv = 0.0;
+        if (!model->BSIM4v7lacdeGiven)
+            model->BSIM4v7lacde = 0.0;
+        if (!model->BSIM4v7lmoinGiven)
+            model->BSIM4v7lmoin = 0.0;
+        if (!model->BSIM4v7lnoffGiven)
+            model->BSIM4v7lnoff = 0.0;
+        if (!model->BSIM4v7lvoffcvGiven)
+            model->BSIM4v7lvoffcv = 0.0;
 
         /* Width dependence */
-        if (!model->BSIM4wcdscGiven)
-            model->BSIM4wcdsc = 0.0;
-        if (!model->BSIM4wcdscbGiven)
-            model->BSIM4wcdscb = 0.0;  
-            if (!model->BSIM4wcdscdGiven)
-            model->BSIM4wcdscd = 0.0;
-        if (!model->BSIM4wcitGiven)
-            model->BSIM4wcit = 0.0;
-        if (!model->BSIM4wnfactorGiven)
-            model->BSIM4wnfactor = 0.0;
-        if (!model->BSIM4wxjGiven)
-            model->BSIM4wxj = 0.0;
-        if (!model->BSIM4wvsatGiven)
-            model->BSIM4wvsat = 0.0;
-        if (!model->BSIM4watGiven)
-            model->BSIM4wat = 0.0;
-        if (!model->BSIM4wa0Given)
-            model->BSIM4wa0 = 0.0; 
-        if (!model->BSIM4wagsGiven)
-            model->BSIM4wags = 0.0;
-        if (!model->BSIM4wa1Given)
-            model->BSIM4wa1 = 0.0;
-        if (!model->BSIM4wa2Given)
-            model->BSIM4wa2 = 0.0;
-        if (!model->BSIM4wketaGiven)
-            model->BSIM4wketa = 0.0;
-        if (!model->BSIM4wnsubGiven)
-            model->BSIM4wnsub = 0.0;
-        if (!model->BSIM4wndepGiven)
-            model->BSIM4wndep = 0.0;
-        if (!model->BSIM4wnsdGiven)
-            model->BSIM4wnsd = 0.0;
-        if (!model->BSIM4wphinGiven)
-            model->BSIM4wphin = 0.0;
-        if (!model->BSIM4wngateGiven)
-            model->BSIM4wngate = 0.0;
-        if (!model->BSIM4wvbmGiven)
-            model->BSIM4wvbm = 0.0;
-        if (!model->BSIM4wxtGiven)
-            model->BSIM4wxt = 0.0;
-        if (!model->BSIM4wkt1Given)
-            model->BSIM4wkt1 = 0.0; 
-        if (!model->BSIM4wkt1lGiven)
-            model->BSIM4wkt1l = 0.0;
-        if (!model->BSIM4wkt2Given)
-            model->BSIM4wkt2 = 0.0;
-        if (!model->BSIM4wk3Given)
-            model->BSIM4wk3 = 0.0;      
-        if (!model->BSIM4wk3bGiven)
-            model->BSIM4wk3b = 0.0;      
-        if (!model->BSIM4ww0Given)
-            model->BSIM4ww0 = 0.0;    
-        if (!model->BSIM4wlpe0Given)
-            model->BSIM4wlpe0 = 0.0;
-        if (!model->BSIM4wlpebGiven)
-            model->BSIM4wlpeb = 0.0; 
-        if (!model->BSIM4wdvtp0Given)
-            model->BSIM4wdvtp0 = 0.0;
-        if (!model->BSIM4wdvtp1Given)
-            model->BSIM4wdvtp1 = 0.0;
-        if (!model->BSIM4wdvtp2Given)        /* New DIBL/Rout */
-            model->BSIM4wdvtp2 = 0.0;
-        if (!model->BSIM4wdvtp3Given)
-            model->BSIM4wdvtp3 = 0.0;
-        if (!model->BSIM4wdvtp4Given)
-            model->BSIM4wdvtp4 = 0.0;
-        if (!model->BSIM4wdvtp5Given)
-            model->BSIM4wdvtp5 = 0.0;
-        if (!model->BSIM4wdvt0Given)
-            model->BSIM4wdvt0 = 0.0;    
-        if (!model->BSIM4wdvt1Given)
-            model->BSIM4wdvt1 = 0.0;      
-        if (!model->BSIM4wdvt2Given)
-            model->BSIM4wdvt2 = 0.0;
-        if (!model->BSIM4wdvt0wGiven)
-            model->BSIM4wdvt0w = 0.0;    
-        if (!model->BSIM4wdvt1wGiven)
-            model->BSIM4wdvt1w = 0.0;      
-        if (!model->BSIM4wdvt2wGiven)
-            model->BSIM4wdvt2w = 0.0;
-        if (!model->BSIM4wdroutGiven)
-            model->BSIM4wdrout = 0.0;     
-        if (!model->BSIM4wdsubGiven)
-            model->BSIM4wdsub = 0.0;
-        if (!model->BSIM4wvth0Given)
-           model->BSIM4wvth0 = 0.0;
-        if (!model->BSIM4wuaGiven)
-            model->BSIM4wua = 0.0;
-        if (!model->BSIM4wua1Given)
-            model->BSIM4wua1 = 0.0;
-        if (!model->BSIM4wubGiven)
-            model->BSIM4wub = 0.0;
-        if (!model->BSIM4wub1Given)
-            model->BSIM4wub1 = 0.0;
-        if (!model->BSIM4wucGiven)
-            model->BSIM4wuc = 0.0;
-        if (!model->BSIM4wuc1Given)
-            model->BSIM4wuc1 = 0.0;
-        if (!model->BSIM4wudGiven)
-            model->BSIM4wud = 0.0;
-        if (!model->BSIM4wud1Given)
-            model->BSIM4wud1 = 0.0;
-        if (!model->BSIM4wupGiven)
-            model->BSIM4wup = 0.0;
-        if (!model->BSIM4wlpGiven)
-            model->BSIM4wlp = 0.0;
-        if (!model->BSIM4wu0Given)
-            model->BSIM4wu0 = 0.0;
-        if (!model->BSIM4wuteGiven)
-                model->BSIM4wute = 0.0; 
-        if (!model->BSIM4wucsteGiven)
-                model->BSIM4wucste = 0.0;                 
-        if (!model->BSIM4wvoffGiven)
-                model->BSIM4wvoff = 0.0;
-        if (!model->BSIM4wminvGiven)
-            model->BSIM4wminv = 0.0;
-        if (!model->BSIM4wminvcvGiven)
-            model->BSIM4wminvcv = 0.0;
-        if (!model->BSIM4wfproutGiven)
-            model->BSIM4wfprout = 0.0;
-        if (!model->BSIM4wpditsGiven)
-            model->BSIM4wpdits = 0.0;
-        if (!model->BSIM4wpditsdGiven)
-            model->BSIM4wpditsd = 0.0;
-        if (!model->BSIM4wdeltaGiven)  
-            model->BSIM4wdelta = 0.0;
-        if (!model->BSIM4wrdswGiven)
-            model->BSIM4wrdsw = 0.0;
-        if (!model->BSIM4wrdwGiven)
-            model->BSIM4wrdw = 0.0;
-        if (!model->BSIM4wrswGiven)
-            model->BSIM4wrsw = 0.0;
-        if (!model->BSIM4wprwbGiven)
-            model->BSIM4wprwb = 0.0;
-        if (!model->BSIM4wprwgGiven)
-            model->BSIM4wprwg = 0.0;
-        if (!model->BSIM4wprtGiven)
-            model->BSIM4wprt = 0.0;
-        if (!model->BSIM4weta0Given)
-            model->BSIM4weta0 = 0.0;
-        if (!model->BSIM4wetabGiven)
-            model->BSIM4wetab = 0.0;
-        if (!model->BSIM4wpclmGiven)
-            model->BSIM4wpclm = 0.0; 
-        if (!model->BSIM4wpdibl1Given)
-            model->BSIM4wpdibl1 = 0.0;
-        if (!model->BSIM4wpdibl2Given)
-            model->BSIM4wpdibl2 = 0.0;
-        if (!model->BSIM4wpdiblbGiven)
-            model->BSIM4wpdiblb = 0.0;
-        if (!model->BSIM4wpscbe1Given)
-            model->BSIM4wpscbe1 = 0.0;
-        if (!model->BSIM4wpscbe2Given)
-            model->BSIM4wpscbe2 = 0.0;
-        if (!model->BSIM4wpvagGiven)
-            model->BSIM4wpvag = 0.0;     
-        if (!model->BSIM4wwrGiven)  
-            model->BSIM4wwr = 0.0;
-        if (!model->BSIM4wdwgGiven)  
-            model->BSIM4wdwg = 0.0;
-        if (!model->BSIM4wdwbGiven)  
-            model->BSIM4wdwb = 0.0;
-        if (!model->BSIM4wb0Given)
-            model->BSIM4wb0 = 0.0;
-        if (!model->BSIM4wb1Given)  
-            model->BSIM4wb1 = 0.0;
-        if (!model->BSIM4walpha0Given)  
-            model->BSIM4walpha0 = 0.0;
-        if (!model->BSIM4walpha1Given)
-            model->BSIM4walpha1 = 0.0;
-        if (!model->BSIM4wbeta0Given)  
-            model->BSIM4wbeta0 = 0.0;
-        if (!model->BSIM4wagidlGiven)
-            model->BSIM4wagidl = 0.0;
-        if (!model->BSIM4wbgidlGiven)
-            model->BSIM4wbgidl = 0.0;
-        if (!model->BSIM4wcgidlGiven)
-            model->BSIM4wcgidl = 0.0;
-        if (!model->BSIM4wegidlGiven)
-            model->BSIM4wegidl = 0.0;
-        if (!model->BSIM4wrgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4wrgidl = 0.0;
-        if (!model->BSIM4wkgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4wkgidl = 0.0;
-        if (!model->BSIM4wfgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4wfgidl = 0.0;
+        if (!model->BSIM4v7wcdscGiven)
+            model->BSIM4v7wcdsc = 0.0;
+        if (!model->BSIM4v7wcdscbGiven)
+            model->BSIM4v7wcdscb = 0.0;  
+            if (!model->BSIM4v7wcdscdGiven)
+            model->BSIM4v7wcdscd = 0.0;
+        if (!model->BSIM4v7wcitGiven)
+            model->BSIM4v7wcit = 0.0;
+        if (!model->BSIM4v7wnfactorGiven)
+            model->BSIM4v7wnfactor = 0.0;
+        if (!model->BSIM4v7wxjGiven)
+            model->BSIM4v7wxj = 0.0;
+        if (!model->BSIM4v7wvsatGiven)
+            model->BSIM4v7wvsat = 0.0;
+        if (!model->BSIM4v7watGiven)
+            model->BSIM4v7wat = 0.0;
+        if (!model->BSIM4v7wa0Given)
+            model->BSIM4v7wa0 = 0.0; 
+        if (!model->BSIM4v7wagsGiven)
+            model->BSIM4v7wags = 0.0;
+        if (!model->BSIM4v7wa1Given)
+            model->BSIM4v7wa1 = 0.0;
+        if (!model->BSIM4v7wa2Given)
+            model->BSIM4v7wa2 = 0.0;
+        if (!model->BSIM4v7wketaGiven)
+            model->BSIM4v7wketa = 0.0;
+        if (!model->BSIM4v7wnsubGiven)
+            model->BSIM4v7wnsub = 0.0;
+        if (!model->BSIM4v7wndepGiven)
+            model->BSIM4v7wndep = 0.0;
+        if (!model->BSIM4v7wnsdGiven)
+            model->BSIM4v7wnsd = 0.0;
+        if (!model->BSIM4v7wphinGiven)
+            model->BSIM4v7wphin = 0.0;
+        if (!model->BSIM4v7wngateGiven)
+            model->BSIM4v7wngate = 0.0;
+        if (!model->BSIM4v7wvbmGiven)
+            model->BSIM4v7wvbm = 0.0;
+        if (!model->BSIM4v7wxtGiven)
+            model->BSIM4v7wxt = 0.0;
+        if (!model->BSIM4v7wkt1Given)
+            model->BSIM4v7wkt1 = 0.0; 
+        if (!model->BSIM4v7wkt1lGiven)
+            model->BSIM4v7wkt1l = 0.0;
+        if (!model->BSIM4v7wkt2Given)
+            model->BSIM4v7wkt2 = 0.0;
+        if (!model->BSIM4v7wk3Given)
+            model->BSIM4v7wk3 = 0.0;      
+        if (!model->BSIM4v7wk3bGiven)
+            model->BSIM4v7wk3b = 0.0;      
+        if (!model->BSIM4v7ww0Given)
+            model->BSIM4v7ww0 = 0.0;    
+        if (!model->BSIM4v7wlpe0Given)
+            model->BSIM4v7wlpe0 = 0.0;
+        if (!model->BSIM4v7wlpebGiven)
+            model->BSIM4v7wlpeb = 0.0; 
+        if (!model->BSIM4v7wdvtp0Given)
+            model->BSIM4v7wdvtp0 = 0.0;
+        if (!model->BSIM4v7wdvtp1Given)
+            model->BSIM4v7wdvtp1 = 0.0;
+        if (!model->BSIM4v7wdvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4v7wdvtp2 = 0.0;
+        if (!model->BSIM4v7wdvtp3Given)
+            model->BSIM4v7wdvtp3 = 0.0;
+        if (!model->BSIM4v7wdvtp4Given)
+            model->BSIM4v7wdvtp4 = 0.0;
+        if (!model->BSIM4v7wdvtp5Given)
+            model->BSIM4v7wdvtp5 = 0.0;
+        if (!model->BSIM4v7wdvt0Given)
+            model->BSIM4v7wdvt0 = 0.0;    
+        if (!model->BSIM4v7wdvt1Given)
+            model->BSIM4v7wdvt1 = 0.0;      
+        if (!model->BSIM4v7wdvt2Given)
+            model->BSIM4v7wdvt2 = 0.0;
+        if (!model->BSIM4v7wdvt0wGiven)
+            model->BSIM4v7wdvt0w = 0.0;    
+        if (!model->BSIM4v7wdvt1wGiven)
+            model->BSIM4v7wdvt1w = 0.0;      
+        if (!model->BSIM4v7wdvt2wGiven)
+            model->BSIM4v7wdvt2w = 0.0;
+        if (!model->BSIM4v7wdroutGiven)
+            model->BSIM4v7wdrout = 0.0;     
+        if (!model->BSIM4v7wdsubGiven)
+            model->BSIM4v7wdsub = 0.0;
+        if (!model->BSIM4v7wvth0Given)
+           model->BSIM4v7wvth0 = 0.0;
+        if (!model->BSIM4v7wuaGiven)
+            model->BSIM4v7wua = 0.0;
+        if (!model->BSIM4v7wua1Given)
+            model->BSIM4v7wua1 = 0.0;
+        if (!model->BSIM4v7wubGiven)
+            model->BSIM4v7wub = 0.0;
+        if (!model->BSIM4v7wub1Given)
+            model->BSIM4v7wub1 = 0.0;
+        if (!model->BSIM4v7wucGiven)
+            model->BSIM4v7wuc = 0.0;
+        if (!model->BSIM4v7wuc1Given)
+            model->BSIM4v7wuc1 = 0.0;
+        if (!model->BSIM4v7wudGiven)
+            model->BSIM4v7wud = 0.0;
+        if (!model->BSIM4v7wud1Given)
+            model->BSIM4v7wud1 = 0.0;
+        if (!model->BSIM4v7wupGiven)
+            model->BSIM4v7wup = 0.0;
+        if (!model->BSIM4v7wlpGiven)
+            model->BSIM4v7wlp = 0.0;
+        if (!model->BSIM4v7wu0Given)
+            model->BSIM4v7wu0 = 0.0;
+        if (!model->BSIM4v7wuteGiven)
+                model->BSIM4v7wute = 0.0; 
+        if (!model->BSIM4v7wucsteGiven)
+                model->BSIM4v7wucste = 0.0;                 
+        if (!model->BSIM4v7wvoffGiven)
+                model->BSIM4v7wvoff = 0.0;
+        if (!model->BSIM4v7wminvGiven)
+            model->BSIM4v7wminv = 0.0;
+        if (!model->BSIM4v7wminvcvGiven)
+            model->BSIM4v7wminvcv = 0.0;
+        if (!model->BSIM4v7wfproutGiven)
+            model->BSIM4v7wfprout = 0.0;
+        if (!model->BSIM4v7wpditsGiven)
+            model->BSIM4v7wpdits = 0.0;
+        if (!model->BSIM4v7wpditsdGiven)
+            model->BSIM4v7wpditsd = 0.0;
+        if (!model->BSIM4v7wdeltaGiven)  
+            model->BSIM4v7wdelta = 0.0;
+        if (!model->BSIM4v7wrdswGiven)
+            model->BSIM4v7wrdsw = 0.0;
+        if (!model->BSIM4v7wrdwGiven)
+            model->BSIM4v7wrdw = 0.0;
+        if (!model->BSIM4v7wrswGiven)
+            model->BSIM4v7wrsw = 0.0;
+        if (!model->BSIM4v7wprwbGiven)
+            model->BSIM4v7wprwb = 0.0;
+        if (!model->BSIM4v7wprwgGiven)
+            model->BSIM4v7wprwg = 0.0;
+        if (!model->BSIM4v7wprtGiven)
+            model->BSIM4v7wprt = 0.0;
+        if (!model->BSIM4v7weta0Given)
+            model->BSIM4v7weta0 = 0.0;
+        if (!model->BSIM4v7wetabGiven)
+            model->BSIM4v7wetab = 0.0;
+        if (!model->BSIM4v7wpclmGiven)
+            model->BSIM4v7wpclm = 0.0; 
+        if (!model->BSIM4v7wpdibl1Given)
+            model->BSIM4v7wpdibl1 = 0.0;
+        if (!model->BSIM4v7wpdibl2Given)
+            model->BSIM4v7wpdibl2 = 0.0;
+        if (!model->BSIM4v7wpdiblbGiven)
+            model->BSIM4v7wpdiblb = 0.0;
+        if (!model->BSIM4v7wpscbe1Given)
+            model->BSIM4v7wpscbe1 = 0.0;
+        if (!model->BSIM4v7wpscbe2Given)
+            model->BSIM4v7wpscbe2 = 0.0;
+        if (!model->BSIM4v7wpvagGiven)
+            model->BSIM4v7wpvag = 0.0;     
+        if (!model->BSIM4v7wwrGiven)  
+            model->BSIM4v7wwr = 0.0;
+        if (!model->BSIM4v7wdwgGiven)  
+            model->BSIM4v7wdwg = 0.0;
+        if (!model->BSIM4v7wdwbGiven)  
+            model->BSIM4v7wdwb = 0.0;
+        if (!model->BSIM4v7wb0Given)
+            model->BSIM4v7wb0 = 0.0;
+        if (!model->BSIM4v7wb1Given)  
+            model->BSIM4v7wb1 = 0.0;
+        if (!model->BSIM4v7walpha0Given)  
+            model->BSIM4v7walpha0 = 0.0;
+        if (!model->BSIM4v7walpha1Given)
+            model->BSIM4v7walpha1 = 0.0;
+        if (!model->BSIM4v7wbeta0Given)  
+            model->BSIM4v7wbeta0 = 0.0;
+        if (!model->BSIM4v7wagidlGiven)
+            model->BSIM4v7wagidl = 0.0;
+        if (!model->BSIM4v7wbgidlGiven)
+            model->BSIM4v7wbgidl = 0.0;
+        if (!model->BSIM4v7wcgidlGiven)
+            model->BSIM4v7wcgidl = 0.0;
+        if (!model->BSIM4v7wegidlGiven)
+            model->BSIM4v7wegidl = 0.0;
+        if (!model->BSIM4v7wrgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7wrgidl = 0.0;
+        if (!model->BSIM4v7wkgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7wkgidl = 0.0;
+        if (!model->BSIM4v7wfgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7wfgidl = 0.0;
 
-        if (!model->BSIM4wagislGiven)
+        if (!model->BSIM4v7wagislGiven)
         {
-            if (model->BSIM4wagidlGiven)
-                model->BSIM4wagisl = model->BSIM4wagidl;
+            if (model->BSIM4v7wagidlGiven)
+                model->BSIM4v7wagisl = model->BSIM4v7wagidl;
             else
-                model->BSIM4wagisl = 0.0;
+                model->BSIM4v7wagisl = 0.0;
         }
-        if (!model->BSIM4wbgislGiven)
+        if (!model->BSIM4v7wbgislGiven)
         {
-            if (model->BSIM4wbgidlGiven)
-                model->BSIM4wbgisl = model->BSIM4wbgidl;
+            if (model->BSIM4v7wbgidlGiven)
+                model->BSIM4v7wbgisl = model->BSIM4v7wbgidl;
             else
-                model->BSIM4wbgisl = 0.0;
+                model->BSIM4v7wbgisl = 0.0;
         }
-        if (!model->BSIM4wcgislGiven)
+        if (!model->BSIM4v7wcgislGiven)
         {
-            if (model->BSIM4wcgidlGiven)
-                model->BSIM4wcgisl = model->BSIM4wcgidl;
+            if (model->BSIM4v7wcgidlGiven)
+                model->BSIM4v7wcgisl = model->BSIM4v7wcgidl;
             else
-                model->BSIM4wcgisl = 0.0;
+                model->BSIM4v7wcgisl = 0.0;
         }
-        if (!model->BSIM4wegislGiven)
+        if (!model->BSIM4v7wegislGiven)
         {
-            if (model->BSIM4wegidlGiven)
-                model->BSIM4wegisl = model->BSIM4wegidl;
+            if (model->BSIM4v7wegidlGiven)
+                model->BSIM4v7wegisl = model->BSIM4v7wegidl;
             else
-                model->BSIM4wegisl = 0.0; 
+                model->BSIM4v7wegisl = 0.0; 
         }
-        if (!model->BSIM4wrgislGiven)         /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7wrgislGiven)         /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4wrgidlGiven)
-                model->BSIM4wrgisl = model->BSIM4wrgidl;
+            if (model->BSIM4v7wrgidlGiven)
+                model->BSIM4v7wrgisl = model->BSIM4v7wrgidl;
         }
-        if (!model->BSIM4wkgislGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7wkgislGiven)        /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4wkgidlGiven)
-                model->BSIM4wkgisl = model->BSIM4wkgidl;
+            if (model->BSIM4v7wkgidlGiven)
+                model->BSIM4v7wkgisl = model->BSIM4v7wkgidl;
         }
-        if (!model->BSIM4wfgislGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7wfgislGiven)        /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4wfgidlGiven)
-                model->BSIM4wfgisl = model->BSIM4wfgidl;
+            if (model->BSIM4v7wfgidlGiven)
+                model->BSIM4v7wfgisl = model->BSIM4v7wfgidl;
         }
-        if (!model->BSIM4waigcGiven)
-            model->BSIM4waigc = 0.0;
-        if (!model->BSIM4wbigcGiven)
-            model->BSIM4wbigc = 0.0;
-        if (!model->BSIM4wcigcGiven)
-            model->BSIM4wcigc = 0.0;
-        if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        if (!model->BSIM4v7waigcGiven)
+            model->BSIM4v7waigc = 0.0;
+        if (!model->BSIM4v7wbigcGiven)
+            model->BSIM4v7wbigc = 0.0;
+        if (!model->BSIM4v7wcigcGiven)
+            model->BSIM4v7wcigc = 0.0;
+        if (!model->BSIM4v7aigsdGiven && (model->BSIM4v7aigsGiven || model->BSIM4v7aigdGiven))
         {
-            if (!model->BSIM4waigsGiven)
-                model->BSIM4waigs = 0.0;
-            if (!model->BSIM4waigdGiven)
-                model->BSIM4waigd = 0.0;
+            if (!model->BSIM4v7waigsGiven)
+                model->BSIM4v7waigs = 0.0;
+            if (!model->BSIM4v7waigdGiven)
+                model->BSIM4v7waigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4waigsdGiven)
-               model->BSIM4waigsd = 0.0;
-           model->BSIM4waigs = model->BSIM4waigd = model->BSIM4waigsd;
+           if (!model->BSIM4v7waigsdGiven)
+               model->BSIM4v7waigsd = 0.0;
+           model->BSIM4v7waigs = model->BSIM4v7waigd = model->BSIM4v7waigsd;
         }
-        if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        if (!model->BSIM4v7bigsdGiven && (model->BSIM4v7bigsGiven || model->BSIM4v7bigdGiven))
         {
-            if (!model->BSIM4wbigsGiven)
-                model->BSIM4wbigs = 0.0;
-            if (!model->BSIM4wbigdGiven)
-                model->BSIM4wbigd = 0.0;
+            if (!model->BSIM4v7wbigsGiven)
+                model->BSIM4v7wbigs = 0.0;
+            if (!model->BSIM4v7wbigdGiven)
+                model->BSIM4v7wbigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4wbigsdGiven)
-               model->BSIM4wbigsd = 0.0;
-           model->BSIM4wbigs = model->BSIM4wbigd = model->BSIM4wbigsd;
+           if (!model->BSIM4v7wbigsdGiven)
+               model->BSIM4v7wbigsd = 0.0;
+           model->BSIM4v7wbigs = model->BSIM4v7wbigd = model->BSIM4v7wbigsd;
         }
-        if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        if (!model->BSIM4v7cigsdGiven && (model->BSIM4v7cigsGiven || model->BSIM4v7cigdGiven))
         {
-            if (!model->BSIM4wcigsGiven)
-                model->BSIM4wcigs = 0.0;
-            if (!model->BSIM4wcigdGiven)
-                model->BSIM4wcigd = 0.0;
+            if (!model->BSIM4v7wcigsGiven)
+                model->BSIM4v7wcigs = 0.0;
+            if (!model->BSIM4v7wcigdGiven)
+                model->BSIM4v7wcigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4wcigsdGiven)
-               model->BSIM4wcigsd = 0.0;
-           model->BSIM4wcigs = model->BSIM4wcigd = model->BSIM4wcigsd;
+           if (!model->BSIM4v7wcigsdGiven)
+               model->BSIM4v7wcigsd = 0.0;
+           model->BSIM4v7wcigs = model->BSIM4v7wcigd = model->BSIM4v7wcigsd;
         }
-        if (!model->BSIM4waigbaccGiven)
-            model->BSIM4waigbacc = 0.0;
-        if (!model->BSIM4wbigbaccGiven)
-            model->BSIM4wbigbacc = 0.0;
-        if (!model->BSIM4wcigbaccGiven)
-            model->BSIM4wcigbacc = 0.0;
-        if (!model->BSIM4waigbinvGiven)
-            model->BSIM4waigbinv = 0.0;
-        if (!model->BSIM4wbigbinvGiven)
-            model->BSIM4wbigbinv = 0.0;
-        if (!model->BSIM4wcigbinvGiven)
-            model->BSIM4wcigbinv = 0.0;
-        if (!model->BSIM4wnigcGiven)
-            model->BSIM4wnigc = 0.0;
-        if (!model->BSIM4wnigbinvGiven)
-            model->BSIM4wnigbinv = 0.0;
-        if (!model->BSIM4wnigbaccGiven)
-            model->BSIM4wnigbacc = 0.0;
-        if (!model->BSIM4wntoxGiven)
-            model->BSIM4wntox = 0.0;
-        if (!model->BSIM4weigbinvGiven)
-            model->BSIM4weigbinv = 0.0;
-        if (!model->BSIM4wpigcdGiven)
-            model->BSIM4wpigcd = 0.0;
-        if (!model->BSIM4wpoxedgeGiven)
-            model->BSIM4wpoxedge = 0.0;
-        if (!model->BSIM4wxrcrg1Given)
-            model->BSIM4wxrcrg1 = 0.0;
-        if (!model->BSIM4wxrcrg2Given)
-            model->BSIM4wxrcrg2 = 0.0;
-        if (!model->BSIM4weuGiven)
-            model->BSIM4weu = 0.0;
-            if (!model->BSIM4wucsGiven)
-            model->BSIM4wucs = 0.0;
-        if (!model->BSIM4wvfbGiven)
-            model->BSIM4wvfb = 0.0;
-        if (!model->BSIM4wlambdaGiven)
-            model->BSIM4wlambda = 0.0;
-        if (!model->BSIM4wvtlGiven)
-            model->BSIM4wvtl = 0.0;  
-        if (!model->BSIM4wxnGiven)
-            model->BSIM4wxn = 0.0;  
-        if (!model->BSIM4wvfbsdoffGiven)
-            model->BSIM4wvfbsdoff = 0.0;   
-        if (!model->BSIM4wtvfbsdoffGiven)
-            model->BSIM4wtvfbsdoff = 0.0;  
-        if (!model->BSIM4wtvoffGiven)
-            model->BSIM4wtvoff = 0.0;  
-        if (!model->BSIM4wtnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4wtnfactor = 0.0;  
-        if (!model->BSIM4wteta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4wteta0 = 0.0;  
-        if (!model->BSIM4wtvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4wtvoffcv = 0.0;  
+        if (!model->BSIM4v7waigbaccGiven)
+            model->BSIM4v7waigbacc = 0.0;
+        if (!model->BSIM4v7wbigbaccGiven)
+            model->BSIM4v7wbigbacc = 0.0;
+        if (!model->BSIM4v7wcigbaccGiven)
+            model->BSIM4v7wcigbacc = 0.0;
+        if (!model->BSIM4v7waigbinvGiven)
+            model->BSIM4v7waigbinv = 0.0;
+        if (!model->BSIM4v7wbigbinvGiven)
+            model->BSIM4v7wbigbinv = 0.0;
+        if (!model->BSIM4v7wcigbinvGiven)
+            model->BSIM4v7wcigbinv = 0.0;
+        if (!model->BSIM4v7wnigcGiven)
+            model->BSIM4v7wnigc = 0.0;
+        if (!model->BSIM4v7wnigbinvGiven)
+            model->BSIM4v7wnigbinv = 0.0;
+        if (!model->BSIM4v7wnigbaccGiven)
+            model->BSIM4v7wnigbacc = 0.0;
+        if (!model->BSIM4v7wntoxGiven)
+            model->BSIM4v7wntox = 0.0;
+        if (!model->BSIM4v7weigbinvGiven)
+            model->BSIM4v7weigbinv = 0.0;
+        if (!model->BSIM4v7wpigcdGiven)
+            model->BSIM4v7wpigcd = 0.0;
+        if (!model->BSIM4v7wpoxedgeGiven)
+            model->BSIM4v7wpoxedge = 0.0;
+        if (!model->BSIM4v7wxrcrg1Given)
+            model->BSIM4v7wxrcrg1 = 0.0;
+        if (!model->BSIM4v7wxrcrg2Given)
+            model->BSIM4v7wxrcrg2 = 0.0;
+        if (!model->BSIM4v7weuGiven)
+            model->BSIM4v7weu = 0.0;
+            if (!model->BSIM4v7wucsGiven)
+            model->BSIM4v7wucs = 0.0;
+        if (!model->BSIM4v7wvfbGiven)
+            model->BSIM4v7wvfb = 0.0;
+        if (!model->BSIM4v7wlambdaGiven)
+            model->BSIM4v7wlambda = 0.0;
+        if (!model->BSIM4v7wvtlGiven)
+            model->BSIM4v7wvtl = 0.0;  
+        if (!model->BSIM4v7wxnGiven)
+            model->BSIM4v7wxn = 0.0;  
+        if (!model->BSIM4v7wvfbsdoffGiven)
+            model->BSIM4v7wvfbsdoff = 0.0;   
+        if (!model->BSIM4v7wtvfbsdoffGiven)
+            model->BSIM4v7wtvfbsdoff = 0.0;  
+        if (!model->BSIM4v7wtvoffGiven)
+            model->BSIM4v7wtvoff = 0.0;  
+        if (!model->BSIM4v7wtnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7wtnfactor = 0.0;  
+        if (!model->BSIM4v7wteta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7wteta0 = 0.0;  
+        if (!model->BSIM4v7wtvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7wtvoffcv = 0.0;  
 
-        if (!model->BSIM4wcgslGiven)  
-            model->BSIM4wcgsl = 0.0;
-        if (!model->BSIM4wcgdlGiven)  
-            model->BSIM4wcgdl = 0.0;
-        if (!model->BSIM4wckappasGiven)  
-            model->BSIM4wckappas = 0.0;
-        if (!model->BSIM4wckappadGiven)
-            model->BSIM4wckappad = 0.0;
-        if (!model->BSIM4wcfGiven)  
-            model->BSIM4wcf = 0.0;
-        if (!model->BSIM4wclcGiven)  
-            model->BSIM4wclc = 0.0;
-        if (!model->BSIM4wcleGiven)  
-            model->BSIM4wcle = 0.0;
-        if (!model->BSIM4wvfbcvGiven)  
-            model->BSIM4wvfbcv = 0.0;
-        if (!model->BSIM4wacdeGiven)
-            model->BSIM4wacde = 0.0;
-        if (!model->BSIM4wmoinGiven)
-            model->BSIM4wmoin = 0.0;
-        if (!model->BSIM4wnoffGiven)
-            model->BSIM4wnoff = 0.0;
-        if (!model->BSIM4wvoffcvGiven)
-            model->BSIM4wvoffcv = 0.0;
+        if (!model->BSIM4v7wcgslGiven)  
+            model->BSIM4v7wcgsl = 0.0;
+        if (!model->BSIM4v7wcgdlGiven)  
+            model->BSIM4v7wcgdl = 0.0;
+        if (!model->BSIM4v7wckappasGiven)  
+            model->BSIM4v7wckappas = 0.0;
+        if (!model->BSIM4v7wckappadGiven)
+            model->BSIM4v7wckappad = 0.0;
+        if (!model->BSIM4v7wcfGiven)  
+            model->BSIM4v7wcf = 0.0;
+        if (!model->BSIM4v7wclcGiven)  
+            model->BSIM4v7wclc = 0.0;
+        if (!model->BSIM4v7wcleGiven)  
+            model->BSIM4v7wcle = 0.0;
+        if (!model->BSIM4v7wvfbcvGiven)  
+            model->BSIM4v7wvfbcv = 0.0;
+        if (!model->BSIM4v7wacdeGiven)
+            model->BSIM4v7wacde = 0.0;
+        if (!model->BSIM4v7wmoinGiven)
+            model->BSIM4v7wmoin = 0.0;
+        if (!model->BSIM4v7wnoffGiven)
+            model->BSIM4v7wnoff = 0.0;
+        if (!model->BSIM4v7wvoffcvGiven)
+            model->BSIM4v7wvoffcv = 0.0;
 
         /* Cross-term dependence */
-        if (!model->BSIM4pcdscGiven)
-            model->BSIM4pcdsc = 0.0;
-        if (!model->BSIM4pcdscbGiven)
-            model->BSIM4pcdscb = 0.0;   
-            if (!model->BSIM4pcdscdGiven)
-            model->BSIM4pcdscd = 0.0;
-        if (!model->BSIM4pcitGiven)
-            model->BSIM4pcit = 0.0;
-        if (!model->BSIM4pnfactorGiven)
-            model->BSIM4pnfactor = 0.0;
-        if (!model->BSIM4pxjGiven)
-            model->BSIM4pxj = 0.0;
-        if (!model->BSIM4pvsatGiven)
-            model->BSIM4pvsat = 0.0;
-        if (!model->BSIM4patGiven)
-            model->BSIM4pat = 0.0;
-        if (!model->BSIM4pa0Given)
-            model->BSIM4pa0 = 0.0; 
+        if (!model->BSIM4v7pcdscGiven)
+            model->BSIM4v7pcdsc = 0.0;
+        if (!model->BSIM4v7pcdscbGiven)
+            model->BSIM4v7pcdscb = 0.0;   
+            if (!model->BSIM4v7pcdscdGiven)
+            model->BSIM4v7pcdscd = 0.0;
+        if (!model->BSIM4v7pcitGiven)
+            model->BSIM4v7pcit = 0.0;
+        if (!model->BSIM4v7pnfactorGiven)
+            model->BSIM4v7pnfactor = 0.0;
+        if (!model->BSIM4v7pxjGiven)
+            model->BSIM4v7pxj = 0.0;
+        if (!model->BSIM4v7pvsatGiven)
+            model->BSIM4v7pvsat = 0.0;
+        if (!model->BSIM4v7patGiven)
+            model->BSIM4v7pat = 0.0;
+        if (!model->BSIM4v7pa0Given)
+            model->BSIM4v7pa0 = 0.0; 
             
-        if (!model->BSIM4pagsGiven)
-            model->BSIM4pags = 0.0;
-        if (!model->BSIM4pa1Given)
-            model->BSIM4pa1 = 0.0;
-        if (!model->BSIM4pa2Given)
-            model->BSIM4pa2 = 0.0;
-        if (!model->BSIM4pketaGiven)
-            model->BSIM4pketa = 0.0;
-        if (!model->BSIM4pnsubGiven)
-            model->BSIM4pnsub = 0.0;
-        if (!model->BSIM4pndepGiven)
-            model->BSIM4pndep = 0.0;
-        if (!model->BSIM4pnsdGiven)
-            model->BSIM4pnsd = 0.0;
-        if (!model->BSIM4pphinGiven)
-            model->BSIM4pphin = 0.0;
-        if (!model->BSIM4pngateGiven)
-            model->BSIM4pngate = 0.0;
-        if (!model->BSIM4pvbmGiven)
-            model->BSIM4pvbm = 0.0;
-        if (!model->BSIM4pxtGiven)
-            model->BSIM4pxt = 0.0;
-        if (!model->BSIM4pkt1Given)
-            model->BSIM4pkt1 = 0.0; 
-        if (!model->BSIM4pkt1lGiven)
-            model->BSIM4pkt1l = 0.0;
-        if (!model->BSIM4pkt2Given)
-            model->BSIM4pkt2 = 0.0;
-        if (!model->BSIM4pk3Given)
-            model->BSIM4pk3 = 0.0;      
-        if (!model->BSIM4pk3bGiven)
-            model->BSIM4pk3b = 0.0;      
-        if (!model->BSIM4pw0Given)
-            model->BSIM4pw0 = 0.0;    
-        if (!model->BSIM4plpe0Given)
-            model->BSIM4plpe0 = 0.0;
-        if (!model->BSIM4plpebGiven)
-            model->BSIM4plpeb = 0.0;
-        if (!model->BSIM4pdvtp0Given)
-            model->BSIM4pdvtp0 = 0.0;
-        if (!model->BSIM4pdvtp1Given)
-            model->BSIM4pdvtp1 = 0.0;
-        if (!model->BSIM4pdvtp2Given)        /* New DIBL/Rout */
-            model->BSIM4pdvtp2 = 0.0;
-        if (!model->BSIM4pdvtp3Given)
-            model->BSIM4pdvtp3 = 0.0;
-        if (!model->BSIM4pdvtp4Given)
-            model->BSIM4pdvtp4 = 0.0;
-        if (!model->BSIM4pdvtp5Given)
-            model->BSIM4pdvtp5 = 0.0;
-        if (!model->BSIM4pdvt0Given)
-            model->BSIM4pdvt0 = 0.0;    
-        if (!model->BSIM4pdvt1Given)
-            model->BSIM4pdvt1 = 0.0;      
-        if (!model->BSIM4pdvt2Given)
-            model->BSIM4pdvt2 = 0.0;
-        if (!model->BSIM4pdvt0wGiven)
-            model->BSIM4pdvt0w = 0.0;    
-        if (!model->BSIM4pdvt1wGiven)
-            model->BSIM4pdvt1w = 0.0;      
-        if (!model->BSIM4pdvt2wGiven)
-            model->BSIM4pdvt2w = 0.0;
-        if (!model->BSIM4pdroutGiven)
-            model->BSIM4pdrout = 0.0;     
-        if (!model->BSIM4pdsubGiven)
-            model->BSIM4pdsub = 0.0;
-        if (!model->BSIM4pvth0Given)
-           model->BSIM4pvth0 = 0.0;
-        if (!model->BSIM4puaGiven)
-            model->BSIM4pua = 0.0;
-        if (!model->BSIM4pua1Given)
-            model->BSIM4pua1 = 0.0;
-        if (!model->BSIM4pubGiven)
-            model->BSIM4pub = 0.0;
-        if (!model->BSIM4pub1Given)
-            model->BSIM4pub1 = 0.0;
-        if (!model->BSIM4pucGiven)
-            model->BSIM4puc = 0.0;
-        if (!model->BSIM4puc1Given)
-            model->BSIM4puc1 = 0.0;
-        if (!model->BSIM4pudGiven)
-            model->BSIM4pud = 0.0;
-        if (!model->BSIM4pud1Given)
-            model->BSIM4pud1 = 0.0;
-        if (!model->BSIM4pupGiven)
-            model->BSIM4pup = 0.0;
-        if (!model->BSIM4plpGiven)
-            model->BSIM4plp = 0.0;
-        if (!model->BSIM4pu0Given)
-            model->BSIM4pu0 = 0.0;
-        if (!model->BSIM4puteGiven)
-            model->BSIM4pute = 0.0;  
-     if (!model->BSIM4pucsteGiven)
-            model->BSIM4pucste = 0.0;                 
-        if (!model->BSIM4pvoffGiven)
-            model->BSIM4pvoff = 0.0;
-        if (!model->BSIM4pminvGiven)
-            model->BSIM4pminv = 0.0;
-        if (!model->BSIM4pminvcvGiven)
-            model->BSIM4pminvcv = 0.0;
-        if (!model->BSIM4pfproutGiven)
-            model->BSIM4pfprout = 0.0;
-        if (!model->BSIM4ppditsGiven)
-            model->BSIM4ppdits = 0.0;
-        if (!model->BSIM4ppditsdGiven)
-            model->BSIM4ppditsd = 0.0;
-        if (!model->BSIM4pdeltaGiven)  
-            model->BSIM4pdelta = 0.0;
-        if (!model->BSIM4prdswGiven)
-            model->BSIM4prdsw = 0.0;
-        if (!model->BSIM4prdwGiven)
-            model->BSIM4prdw = 0.0;
-        if (!model->BSIM4prswGiven)
-            model->BSIM4prsw = 0.0;
-        if (!model->BSIM4pprwbGiven)
-            model->BSIM4pprwb = 0.0;
-        if (!model->BSIM4pprwgGiven)
-            model->BSIM4pprwg = 0.0;
-        if (!model->BSIM4pprtGiven)
-            model->BSIM4pprt = 0.0;
-        if (!model->BSIM4peta0Given)
-            model->BSIM4peta0 = 0.0;
-        if (!model->BSIM4petabGiven)
-            model->BSIM4petab = 0.0;
-        if (!model->BSIM4ppclmGiven)
-            model->BSIM4ppclm = 0.0; 
-        if (!model->BSIM4ppdibl1Given)
-            model->BSIM4ppdibl1 = 0.0;
-        if (!model->BSIM4ppdibl2Given)
-            model->BSIM4ppdibl2 = 0.0;
-        if (!model->BSIM4ppdiblbGiven)
-            model->BSIM4ppdiblb = 0.0;
-        if (!model->BSIM4ppscbe1Given)
-            model->BSIM4ppscbe1 = 0.0;
-        if (!model->BSIM4ppscbe2Given)
-            model->BSIM4ppscbe2 = 0.0;
-        if (!model->BSIM4ppvagGiven)
-            model->BSIM4ppvag = 0.0;     
-        if (!model->BSIM4pwrGiven)  
-            model->BSIM4pwr = 0.0;
-        if (!model->BSIM4pdwgGiven)  
-            model->BSIM4pdwg = 0.0;
-        if (!model->BSIM4pdwbGiven)  
-            model->BSIM4pdwb = 0.0;
-        if (!model->BSIM4pb0Given)
-            model->BSIM4pb0 = 0.0;
-        if (!model->BSIM4pb1Given)  
-            model->BSIM4pb1 = 0.0;
-        if (!model->BSIM4palpha0Given)  
-            model->BSIM4palpha0 = 0.0;
-        if (!model->BSIM4palpha1Given)
-            model->BSIM4palpha1 = 0.0;
-        if (!model->BSIM4pbeta0Given)  
-            model->BSIM4pbeta0 = 0.0;
-        if (!model->BSIM4pagidlGiven)
-            model->BSIM4pagidl = 0.0;
-        if (!model->BSIM4pbgidlGiven)
-            model->BSIM4pbgidl = 0.0;
-        if (!model->BSIM4pcgidlGiven)
-            model->BSIM4pcgidl = 0.0;
-        if (!model->BSIM4pegidlGiven)
-            model->BSIM4pegidl = 0.0;
-        if (!model->BSIM4prgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4prgidl = 0.0;
-        if (!model->BSIM4pkgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4pkgidl = 0.0;
-        if (!model->BSIM4pfgidlGiven)        /* v4.7 New GIDL/GISL */
-            model->BSIM4pfgidl = 0.0;
+        if (!model->BSIM4v7pagsGiven)
+            model->BSIM4v7pags = 0.0;
+        if (!model->BSIM4v7pa1Given)
+            model->BSIM4v7pa1 = 0.0;
+        if (!model->BSIM4v7pa2Given)
+            model->BSIM4v7pa2 = 0.0;
+        if (!model->BSIM4v7pketaGiven)
+            model->BSIM4v7pketa = 0.0;
+        if (!model->BSIM4v7pnsubGiven)
+            model->BSIM4v7pnsub = 0.0;
+        if (!model->BSIM4v7pndepGiven)
+            model->BSIM4v7pndep = 0.0;
+        if (!model->BSIM4v7pnsdGiven)
+            model->BSIM4v7pnsd = 0.0;
+        if (!model->BSIM4v7pphinGiven)
+            model->BSIM4v7pphin = 0.0;
+        if (!model->BSIM4v7pngateGiven)
+            model->BSIM4v7pngate = 0.0;
+        if (!model->BSIM4v7pvbmGiven)
+            model->BSIM4v7pvbm = 0.0;
+        if (!model->BSIM4v7pxtGiven)
+            model->BSIM4v7pxt = 0.0;
+        if (!model->BSIM4v7pkt1Given)
+            model->BSIM4v7pkt1 = 0.0; 
+        if (!model->BSIM4v7pkt1lGiven)
+            model->BSIM4v7pkt1l = 0.0;
+        if (!model->BSIM4v7pkt2Given)
+            model->BSIM4v7pkt2 = 0.0;
+        if (!model->BSIM4v7pk3Given)
+            model->BSIM4v7pk3 = 0.0;      
+        if (!model->BSIM4v7pk3bGiven)
+            model->BSIM4v7pk3b = 0.0;      
+        if (!model->BSIM4v7pw0Given)
+            model->BSIM4v7pw0 = 0.0;    
+        if (!model->BSIM4v7plpe0Given)
+            model->BSIM4v7plpe0 = 0.0;
+        if (!model->BSIM4v7plpebGiven)
+            model->BSIM4v7plpeb = 0.0;
+        if (!model->BSIM4v7pdvtp0Given)
+            model->BSIM4v7pdvtp0 = 0.0;
+        if (!model->BSIM4v7pdvtp1Given)
+            model->BSIM4v7pdvtp1 = 0.0;
+        if (!model->BSIM4v7pdvtp2Given)        /* New DIBL/Rout */
+            model->BSIM4v7pdvtp2 = 0.0;
+        if (!model->BSIM4v7pdvtp3Given)
+            model->BSIM4v7pdvtp3 = 0.0;
+        if (!model->BSIM4v7pdvtp4Given)
+            model->BSIM4v7pdvtp4 = 0.0;
+        if (!model->BSIM4v7pdvtp5Given)
+            model->BSIM4v7pdvtp5 = 0.0;
+        if (!model->BSIM4v7pdvt0Given)
+            model->BSIM4v7pdvt0 = 0.0;    
+        if (!model->BSIM4v7pdvt1Given)
+            model->BSIM4v7pdvt1 = 0.0;      
+        if (!model->BSIM4v7pdvt2Given)
+            model->BSIM4v7pdvt2 = 0.0;
+        if (!model->BSIM4v7pdvt0wGiven)
+            model->BSIM4v7pdvt0w = 0.0;    
+        if (!model->BSIM4v7pdvt1wGiven)
+            model->BSIM4v7pdvt1w = 0.0;      
+        if (!model->BSIM4v7pdvt2wGiven)
+            model->BSIM4v7pdvt2w = 0.0;
+        if (!model->BSIM4v7pdroutGiven)
+            model->BSIM4v7pdrout = 0.0;     
+        if (!model->BSIM4v7pdsubGiven)
+            model->BSIM4v7pdsub = 0.0;
+        if (!model->BSIM4v7pvth0Given)
+           model->BSIM4v7pvth0 = 0.0;
+        if (!model->BSIM4v7puaGiven)
+            model->BSIM4v7pua = 0.0;
+        if (!model->BSIM4v7pua1Given)
+            model->BSIM4v7pua1 = 0.0;
+        if (!model->BSIM4v7pubGiven)
+            model->BSIM4v7pub = 0.0;
+        if (!model->BSIM4v7pub1Given)
+            model->BSIM4v7pub1 = 0.0;
+        if (!model->BSIM4v7pucGiven)
+            model->BSIM4v7puc = 0.0;
+        if (!model->BSIM4v7puc1Given)
+            model->BSIM4v7puc1 = 0.0;
+        if (!model->BSIM4v7pudGiven)
+            model->BSIM4v7pud = 0.0;
+        if (!model->BSIM4v7pud1Given)
+            model->BSIM4v7pud1 = 0.0;
+        if (!model->BSIM4v7pupGiven)
+            model->BSIM4v7pup = 0.0;
+        if (!model->BSIM4v7plpGiven)
+            model->BSIM4v7plp = 0.0;
+        if (!model->BSIM4v7pu0Given)
+            model->BSIM4v7pu0 = 0.0;
+        if (!model->BSIM4v7puteGiven)
+            model->BSIM4v7pute = 0.0;  
+     if (!model->BSIM4v7pucsteGiven)
+            model->BSIM4v7pucste = 0.0;                 
+        if (!model->BSIM4v7pvoffGiven)
+            model->BSIM4v7pvoff = 0.0;
+        if (!model->BSIM4v7pminvGiven)
+            model->BSIM4v7pminv = 0.0;
+        if (!model->BSIM4v7pminvcvGiven)
+            model->BSIM4v7pminvcv = 0.0;
+        if (!model->BSIM4v7pfproutGiven)
+            model->BSIM4v7pfprout = 0.0;
+        if (!model->BSIM4v7ppditsGiven)
+            model->BSIM4v7ppdits = 0.0;
+        if (!model->BSIM4v7ppditsdGiven)
+            model->BSIM4v7ppditsd = 0.0;
+        if (!model->BSIM4v7pdeltaGiven)  
+            model->BSIM4v7pdelta = 0.0;
+        if (!model->BSIM4v7prdswGiven)
+            model->BSIM4v7prdsw = 0.0;
+        if (!model->BSIM4v7prdwGiven)
+            model->BSIM4v7prdw = 0.0;
+        if (!model->BSIM4v7prswGiven)
+            model->BSIM4v7prsw = 0.0;
+        if (!model->BSIM4v7pprwbGiven)
+            model->BSIM4v7pprwb = 0.0;
+        if (!model->BSIM4v7pprwgGiven)
+            model->BSIM4v7pprwg = 0.0;
+        if (!model->BSIM4v7pprtGiven)
+            model->BSIM4v7pprt = 0.0;
+        if (!model->BSIM4v7peta0Given)
+            model->BSIM4v7peta0 = 0.0;
+        if (!model->BSIM4v7petabGiven)
+            model->BSIM4v7petab = 0.0;
+        if (!model->BSIM4v7ppclmGiven)
+            model->BSIM4v7ppclm = 0.0; 
+        if (!model->BSIM4v7ppdibl1Given)
+            model->BSIM4v7ppdibl1 = 0.0;
+        if (!model->BSIM4v7ppdibl2Given)
+            model->BSIM4v7ppdibl2 = 0.0;
+        if (!model->BSIM4v7ppdiblbGiven)
+            model->BSIM4v7ppdiblb = 0.0;
+        if (!model->BSIM4v7ppscbe1Given)
+            model->BSIM4v7ppscbe1 = 0.0;
+        if (!model->BSIM4v7ppscbe2Given)
+            model->BSIM4v7ppscbe2 = 0.0;
+        if (!model->BSIM4v7ppvagGiven)
+            model->BSIM4v7ppvag = 0.0;     
+        if (!model->BSIM4v7pwrGiven)  
+            model->BSIM4v7pwr = 0.0;
+        if (!model->BSIM4v7pdwgGiven)  
+            model->BSIM4v7pdwg = 0.0;
+        if (!model->BSIM4v7pdwbGiven)  
+            model->BSIM4v7pdwb = 0.0;
+        if (!model->BSIM4v7pb0Given)
+            model->BSIM4v7pb0 = 0.0;
+        if (!model->BSIM4v7pb1Given)  
+            model->BSIM4v7pb1 = 0.0;
+        if (!model->BSIM4v7palpha0Given)  
+            model->BSIM4v7palpha0 = 0.0;
+        if (!model->BSIM4v7palpha1Given)
+            model->BSIM4v7palpha1 = 0.0;
+        if (!model->BSIM4v7pbeta0Given)  
+            model->BSIM4v7pbeta0 = 0.0;
+        if (!model->BSIM4v7pagidlGiven)
+            model->BSIM4v7pagidl = 0.0;
+        if (!model->BSIM4v7pbgidlGiven)
+            model->BSIM4v7pbgidl = 0.0;
+        if (!model->BSIM4v7pcgidlGiven)
+            model->BSIM4v7pcgidl = 0.0;
+        if (!model->BSIM4v7pegidlGiven)
+            model->BSIM4v7pegidl = 0.0;
+        if (!model->BSIM4v7prgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7prgidl = 0.0;
+        if (!model->BSIM4v7pkgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7pkgidl = 0.0;
+        if (!model->BSIM4v7pfgidlGiven)        /* v4.7 New GIDL/GISL */
+            model->BSIM4v7pfgidl = 0.0;
 
-        if (!model->BSIM4pagislGiven)
+        if (!model->BSIM4v7pagislGiven)
         {
-            if (model->BSIM4pagidlGiven)
-                model->BSIM4pagisl = model->BSIM4pagidl;
+            if (model->BSIM4v7pagidlGiven)
+                model->BSIM4v7pagisl = model->BSIM4v7pagidl;
             else
-                model->BSIM4pagisl = 0.0;
+                model->BSIM4v7pagisl = 0.0;
         }
-        if (!model->BSIM4pbgislGiven)
+        if (!model->BSIM4v7pbgislGiven)
         {
-            if (model->BSIM4pbgidlGiven)
-                model->BSIM4pbgisl = model->BSIM4pbgidl;
+            if (model->BSIM4v7pbgidlGiven)
+                model->BSIM4v7pbgisl = model->BSIM4v7pbgidl;
             else
-                model->BSIM4pbgisl = 0.0;
+                model->BSIM4v7pbgisl = 0.0;
         }
-        if (!model->BSIM4pcgislGiven)
+        if (!model->BSIM4v7pcgislGiven)
         {
-            if (model->BSIM4pcgidlGiven)
-                model->BSIM4pcgisl = model->BSIM4pcgidl;
+            if (model->BSIM4v7pcgidlGiven)
+                model->BSIM4v7pcgisl = model->BSIM4v7pcgidl;
             else
-                model->BSIM4pcgisl = 0.0;
+                model->BSIM4v7pcgisl = 0.0;
         }
-        if (!model->BSIM4pegislGiven)
+        if (!model->BSIM4v7pegislGiven)
         {
-            if (model->BSIM4pegidlGiven)
-                model->BSIM4pegisl = model->BSIM4pegidl;
+            if (model->BSIM4v7pegidlGiven)
+                model->BSIM4v7pegisl = model->BSIM4v7pegidl;
             else
-                model->BSIM4pegisl = 0.0; 
+                model->BSIM4v7pegisl = 0.0; 
         }
-        if (!model->BSIM4prgislGiven)         /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7prgislGiven)         /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4prgidlGiven)
-                model->BSIM4prgisl = model->BSIM4prgidl;
+            if (model->BSIM4v7prgidlGiven)
+                model->BSIM4v7prgisl = model->BSIM4v7prgidl;
         }
-        if (!model->BSIM4pkgislGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7pkgislGiven)        /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4pkgidlGiven)
-                model->BSIM4pkgisl = model->BSIM4pkgidl;
+            if (model->BSIM4v7pkgidlGiven)
+                model->BSIM4v7pkgisl = model->BSIM4v7pkgidl;
         }
-        if (!model->BSIM4pfgislGiven)        /* v4.7 New GIDL/GISL */
+        if (!model->BSIM4v7pfgislGiven)        /* v4.7 New GIDL/GISL */
         {
-            if (model->BSIM4pfgidlGiven)
-                model->BSIM4pfgisl = model->BSIM4pfgidl;
+            if (model->BSIM4v7pfgidlGiven)
+                model->BSIM4v7pfgisl = model->BSIM4v7pfgidl;
         }
-        if (!model->BSIM4paigcGiven)
-            model->BSIM4paigc = 0.0;
-        if (!model->BSIM4pbigcGiven)
-            model->BSIM4pbigc = 0.0;
-        if (!model->BSIM4pcigcGiven)
-            model->BSIM4pcigc = 0.0;
-        if (!model->BSIM4aigsdGiven && (model->BSIM4aigsGiven || model->BSIM4aigdGiven))
+        if (!model->BSIM4v7paigcGiven)
+            model->BSIM4v7paigc = 0.0;
+        if (!model->BSIM4v7pbigcGiven)
+            model->BSIM4v7pbigc = 0.0;
+        if (!model->BSIM4v7pcigcGiven)
+            model->BSIM4v7pcigc = 0.0;
+        if (!model->BSIM4v7aigsdGiven && (model->BSIM4v7aigsGiven || model->BSIM4v7aigdGiven))
         {
-            if (!model->BSIM4paigsGiven)
-                model->BSIM4paigs = 0.0;
-            if (!model->BSIM4paigdGiven)
-                model->BSIM4paigd = 0.0;
+            if (!model->BSIM4v7paigsGiven)
+                model->BSIM4v7paigs = 0.0;
+            if (!model->BSIM4v7paigdGiven)
+                model->BSIM4v7paigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4paigsdGiven)
-               model->BSIM4paigsd = 0.0;
-           model->BSIM4paigs = model->BSIM4paigd = model->BSIM4paigsd;
+           if (!model->BSIM4v7paigsdGiven)
+               model->BSIM4v7paigsd = 0.0;
+           model->BSIM4v7paigs = model->BSIM4v7paigd = model->BSIM4v7paigsd;
         }
-        if (!model->BSIM4bigsdGiven && (model->BSIM4bigsGiven || model->BSIM4bigdGiven))
+        if (!model->BSIM4v7bigsdGiven && (model->BSIM4v7bigsGiven || model->BSIM4v7bigdGiven))
         {
-            if (!model->BSIM4pbigsGiven)
-                model->BSIM4pbigs = 0.0;
-            if (!model->BSIM4pbigdGiven)
-                model->BSIM4pbigd = 0.0;
+            if (!model->BSIM4v7pbigsGiven)
+                model->BSIM4v7pbigs = 0.0;
+            if (!model->BSIM4v7pbigdGiven)
+                model->BSIM4v7pbigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4pbigsdGiven)
-               model->BSIM4pbigsd = 0.0;
-           model->BSIM4pbigs = model->BSIM4pbigd = model->BSIM4pbigsd;
+           if (!model->BSIM4v7pbigsdGiven)
+               model->BSIM4v7pbigsd = 0.0;
+           model->BSIM4v7pbigs = model->BSIM4v7pbigd = model->BSIM4v7pbigsd;
         }
-        if (!model->BSIM4cigsdGiven && (model->BSIM4cigsGiven || model->BSIM4cigdGiven))
+        if (!model->BSIM4v7cigsdGiven && (model->BSIM4v7cigsGiven || model->BSIM4v7cigdGiven))
         {
-            if (!model->BSIM4pcigsGiven)
-                model->BSIM4pcigs = 0.0;
-            if (!model->BSIM4pcigdGiven)
-                model->BSIM4pcigd = 0.0;
+            if (!model->BSIM4v7pcigsGiven)
+                model->BSIM4v7pcigs = 0.0;
+            if (!model->BSIM4v7pcigdGiven)
+                model->BSIM4v7pcigd = 0.0;
         }
         else
         {
-           if (!model->BSIM4pcigsdGiven)
-               model->BSIM4pcigsd = 0.0;
-           model->BSIM4pcigs = model->BSIM4pcigd = model->BSIM4pcigsd;
+           if (!model->BSIM4v7pcigsdGiven)
+               model->BSIM4v7pcigsd = 0.0;
+           model->BSIM4v7pcigs = model->BSIM4v7pcigd = model->BSIM4v7pcigsd;
         }
-        if (!model->BSIM4paigbaccGiven)
-            model->BSIM4paigbacc = 0.0;
-        if (!model->BSIM4pbigbaccGiven)
-            model->BSIM4pbigbacc = 0.0;
-        if (!model->BSIM4pcigbaccGiven)
-            model->BSIM4pcigbacc = 0.0;
-        if (!model->BSIM4paigbinvGiven)
-            model->BSIM4paigbinv = 0.0;
-        if (!model->BSIM4pbigbinvGiven)
-            model->BSIM4pbigbinv = 0.0;
-        if (!model->BSIM4pcigbinvGiven)
-            model->BSIM4pcigbinv = 0.0;
-        if (!model->BSIM4pnigcGiven)
-            model->BSIM4pnigc = 0.0;
-        if (!model->BSIM4pnigbinvGiven)
-            model->BSIM4pnigbinv = 0.0;
-        if (!model->BSIM4pnigbaccGiven)
-            model->BSIM4pnigbacc = 0.0;
-        if (!model->BSIM4pntoxGiven)
-            model->BSIM4pntox = 0.0;
-        if (!model->BSIM4peigbinvGiven)
-            model->BSIM4peigbinv = 0.0;
-        if (!model->BSIM4ppigcdGiven)
-            model->BSIM4ppigcd = 0.0;
-        if (!model->BSIM4ppoxedgeGiven)
-            model->BSIM4ppoxedge = 0.0;
-        if (!model->BSIM4pxrcrg1Given)
-            model->BSIM4pxrcrg1 = 0.0;
-        if (!model->BSIM4pxrcrg2Given)
-            model->BSIM4pxrcrg2 = 0.0;
-        if (!model->BSIM4peuGiven)
-            model->BSIM4peu = 0.0;
-                if (!model->BSIM4pucsGiven)
-            model->BSIM4pucs = 0.0;
-        if (!model->BSIM4pvfbGiven)
-            model->BSIM4pvfb = 0.0;
-        if (!model->BSIM4plambdaGiven)
-            model->BSIM4plambda = 0.0;
-        if (!model->BSIM4pvtlGiven)
-            model->BSIM4pvtl = 0.0;  
-        if (!model->BSIM4pxnGiven)
-            model->BSIM4pxn = 0.0;  
-        if (!model->BSIM4pvfbsdoffGiven)
-            model->BSIM4pvfbsdoff = 0.0;   
-        if (!model->BSIM4ptvfbsdoffGiven)
-            model->BSIM4ptvfbsdoff = 0.0;  
-        if (!model->BSIM4ptvoffGiven)
-            model->BSIM4ptvoff = 0.0;  
-        if (!model->BSIM4ptnfactorGiven)         /* v4.7 temp dep of leakage current  */
-            model->BSIM4ptnfactor = 0.0;  
-        if (!model->BSIM4pteta0Given)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4pteta0 = 0.0;  
-        if (!model->BSIM4ptvoffcvGiven)                /* v4.7 temp dep of leakage current  */
-            model->BSIM4ptvoffcv = 0.0;  
+        if (!model->BSIM4v7paigbaccGiven)
+            model->BSIM4v7paigbacc = 0.0;
+        if (!model->BSIM4v7pbigbaccGiven)
+            model->BSIM4v7pbigbacc = 0.0;
+        if (!model->BSIM4v7pcigbaccGiven)
+            model->BSIM4v7pcigbacc = 0.0;
+        if (!model->BSIM4v7paigbinvGiven)
+            model->BSIM4v7paigbinv = 0.0;
+        if (!model->BSIM4v7pbigbinvGiven)
+            model->BSIM4v7pbigbinv = 0.0;
+        if (!model->BSIM4v7pcigbinvGiven)
+            model->BSIM4v7pcigbinv = 0.0;
+        if (!model->BSIM4v7pnigcGiven)
+            model->BSIM4v7pnigc = 0.0;
+        if (!model->BSIM4v7pnigbinvGiven)
+            model->BSIM4v7pnigbinv = 0.0;
+        if (!model->BSIM4v7pnigbaccGiven)
+            model->BSIM4v7pnigbacc = 0.0;
+        if (!model->BSIM4v7pntoxGiven)
+            model->BSIM4v7pntox = 0.0;
+        if (!model->BSIM4v7peigbinvGiven)
+            model->BSIM4v7peigbinv = 0.0;
+        if (!model->BSIM4v7ppigcdGiven)
+            model->BSIM4v7ppigcd = 0.0;
+        if (!model->BSIM4v7ppoxedgeGiven)
+            model->BSIM4v7ppoxedge = 0.0;
+        if (!model->BSIM4v7pxrcrg1Given)
+            model->BSIM4v7pxrcrg1 = 0.0;
+        if (!model->BSIM4v7pxrcrg2Given)
+            model->BSIM4v7pxrcrg2 = 0.0;
+        if (!model->BSIM4v7peuGiven)
+            model->BSIM4v7peu = 0.0;
+                if (!model->BSIM4v7pucsGiven)
+            model->BSIM4v7pucs = 0.0;
+        if (!model->BSIM4v7pvfbGiven)
+            model->BSIM4v7pvfb = 0.0;
+        if (!model->BSIM4v7plambdaGiven)
+            model->BSIM4v7plambda = 0.0;
+        if (!model->BSIM4v7pvtlGiven)
+            model->BSIM4v7pvtl = 0.0;  
+        if (!model->BSIM4v7pxnGiven)
+            model->BSIM4v7pxn = 0.0;  
+        if (!model->BSIM4v7pvfbsdoffGiven)
+            model->BSIM4v7pvfbsdoff = 0.0;   
+        if (!model->BSIM4v7ptvfbsdoffGiven)
+            model->BSIM4v7ptvfbsdoff = 0.0;  
+        if (!model->BSIM4v7ptvoffGiven)
+            model->BSIM4v7ptvoff = 0.0;  
+        if (!model->BSIM4v7ptnfactorGiven)         /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7ptnfactor = 0.0;  
+        if (!model->BSIM4v7pteta0Given)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7pteta0 = 0.0;  
+        if (!model->BSIM4v7ptvoffcvGiven)                /* v4.7 temp dep of leakage current  */
+            model->BSIM4v7ptvoffcv = 0.0;  
 
-        if (!model->BSIM4pcgslGiven)  
-            model->BSIM4pcgsl = 0.0;
-        if (!model->BSIM4pcgdlGiven)  
-            model->BSIM4pcgdl = 0.0;
-        if (!model->BSIM4pckappasGiven)  
-            model->BSIM4pckappas = 0.0;
-        if (!model->BSIM4pckappadGiven)
-            model->BSIM4pckappad = 0.0;
-        if (!model->BSIM4pcfGiven)  
-            model->BSIM4pcf = 0.0;
-        if (!model->BSIM4pclcGiven)  
-            model->BSIM4pclc = 0.0;
-        if (!model->BSIM4pcleGiven)  
-            model->BSIM4pcle = 0.0;
-        if (!model->BSIM4pvfbcvGiven)  
-            model->BSIM4pvfbcv = 0.0;
-        if (!model->BSIM4pacdeGiven)
-            model->BSIM4pacde = 0.0;
-        if (!model->BSIM4pmoinGiven)
-            model->BSIM4pmoin = 0.0;
-        if (!model->BSIM4pnoffGiven)
-            model->BSIM4pnoff = 0.0;
-        if (!model->BSIM4pvoffcvGiven)
-            model->BSIM4pvoffcv = 0.0;
+        if (!model->BSIM4v7pcgslGiven)  
+            model->BSIM4v7pcgsl = 0.0;
+        if (!model->BSIM4v7pcgdlGiven)  
+            model->BSIM4v7pcgdl = 0.0;
+        if (!model->BSIM4v7pckappasGiven)  
+            model->BSIM4v7pckappas = 0.0;
+        if (!model->BSIM4v7pckappadGiven)
+            model->BSIM4v7pckappad = 0.0;
+        if (!model->BSIM4v7pcfGiven)  
+            model->BSIM4v7pcf = 0.0;
+        if (!model->BSIM4v7pclcGiven)  
+            model->BSIM4v7pclc = 0.0;
+        if (!model->BSIM4v7pcleGiven)  
+            model->BSIM4v7pcle = 0.0;
+        if (!model->BSIM4v7pvfbcvGiven)  
+            model->BSIM4v7pvfbcv = 0.0;
+        if (!model->BSIM4v7pacdeGiven)
+            model->BSIM4v7pacde = 0.0;
+        if (!model->BSIM4v7pmoinGiven)
+            model->BSIM4v7pmoin = 0.0;
+        if (!model->BSIM4v7pnoffGiven)
+            model->BSIM4v7pnoff = 0.0;
+        if (!model->BSIM4v7pvoffcvGiven)
+            model->BSIM4v7pvoffcv = 0.0;
 
-        if (!model->BSIM4gamma1Given)
-            model->BSIM4gamma1 = 0.0;
-        if (!model->BSIM4lgamma1Given)
-            model->BSIM4lgamma1 = 0.0;
-        if (!model->BSIM4wgamma1Given)
-            model->BSIM4wgamma1 = 0.0;
-        if (!model->BSIM4pgamma1Given)
-            model->BSIM4pgamma1 = 0.0;
-        if (!model->BSIM4gamma2Given)
-            model->BSIM4gamma2 = 0.0;
-        if (!model->BSIM4lgamma2Given)
-            model->BSIM4lgamma2 = 0.0;
-        if (!model->BSIM4wgamma2Given)
-            model->BSIM4wgamma2 = 0.0;
-        if (!model->BSIM4pgamma2Given)
-            model->BSIM4pgamma2 = 0.0;
-        if (!model->BSIM4vbxGiven)
-            model->BSIM4vbx = 0.0;
-        if (!model->BSIM4lvbxGiven)
-            model->BSIM4lvbx = 0.0;
-        if (!model->BSIM4wvbxGiven)
-            model->BSIM4wvbx = 0.0;
-        if (!model->BSIM4pvbxGiven)
-            model->BSIM4pvbx = 0.0;
+        if (!model->BSIM4v7gamma1Given)
+            model->BSIM4v7gamma1 = 0.0;
+        if (!model->BSIM4v7lgamma1Given)
+            model->BSIM4v7lgamma1 = 0.0;
+        if (!model->BSIM4v7wgamma1Given)
+            model->BSIM4v7wgamma1 = 0.0;
+        if (!model->BSIM4v7pgamma1Given)
+            model->BSIM4v7pgamma1 = 0.0;
+        if (!model->BSIM4v7gamma2Given)
+            model->BSIM4v7gamma2 = 0.0;
+        if (!model->BSIM4v7lgamma2Given)
+            model->BSIM4v7lgamma2 = 0.0;
+        if (!model->BSIM4v7wgamma2Given)
+            model->BSIM4v7wgamma2 = 0.0;
+        if (!model->BSIM4v7pgamma2Given)
+            model->BSIM4v7pgamma2 = 0.0;
+        if (!model->BSIM4v7vbxGiven)
+            model->BSIM4v7vbx = 0.0;
+        if (!model->BSIM4v7lvbxGiven)
+            model->BSIM4v7lvbx = 0.0;
+        if (!model->BSIM4v7wvbxGiven)
+            model->BSIM4v7wvbx = 0.0;
+        if (!model->BSIM4v7pvbxGiven)
+            model->BSIM4v7pvbx = 0.0;
 
         /* unit degree celcius */
-        if (!model->BSIM4tnomGiven)  
-            model->BSIM4tnom = ckt->CKTnomTemp; 
-        if (!model->BSIM4LintGiven)  
-           model->BSIM4Lint = 0.0;
-        if (!model->BSIM4LlGiven)  
-           model->BSIM4Ll = 0.0;
-        if (!model->BSIM4LlcGiven)
-           model->BSIM4Llc = model->BSIM4Ll;
-        if (!model->BSIM4LlnGiven)  
-           model->BSIM4Lln = 1.0;
-        if (!model->BSIM4LwGiven)  
-           model->BSIM4Lw = 0.0;
-        if (!model->BSIM4LwcGiven)
-           model->BSIM4Lwc = model->BSIM4Lw;
-        if (!model->BSIM4LwnGiven)  
-           model->BSIM4Lwn = 1.0;
-        if (!model->BSIM4LwlGiven)  
-           model->BSIM4Lwl = 0.0;
-        if (!model->BSIM4LwlcGiven)
-           model->BSIM4Lwlc = model->BSIM4Lwl;
-        if (!model->BSIM4LminGiven)  
-           model->BSIM4Lmin = 0.0;
-        if (!model->BSIM4LmaxGiven)  
-           model->BSIM4Lmax = 1.0;
-        if (!model->BSIM4WintGiven)  
-           model->BSIM4Wint = 0.0;
-        if (!model->BSIM4WlGiven)  
-           model->BSIM4Wl = 0.0;
-        if (!model->BSIM4WlcGiven)
-           model->BSIM4Wlc = model->BSIM4Wl;
-        if (!model->BSIM4WlnGiven)  
-           model->BSIM4Wln = 1.0;
-        if (!model->BSIM4WwGiven)  
-           model->BSIM4Ww = 0.0;
-        if (!model->BSIM4WwcGiven)
-           model->BSIM4Wwc = model->BSIM4Ww;
-        if (!model->BSIM4WwnGiven)  
-           model->BSIM4Wwn = 1.0;
-        if (!model->BSIM4WwlGiven)  
-           model->BSIM4Wwl = 0.0;
-        if (!model->BSIM4WwlcGiven)
-           model->BSIM4Wwlc = model->BSIM4Wwl;
-        if (!model->BSIM4WminGiven)  
-           model->BSIM4Wmin = 0.0;
-        if (!model->BSIM4WmaxGiven)  
-           model->BSIM4Wmax = 1.0;
-        if (!model->BSIM4dwcGiven)  
-           model->BSIM4dwc = model->BSIM4Wint;
-        if (!model->BSIM4dlcGiven)  
-           model->BSIM4dlc = model->BSIM4Lint;
-        if (!model->BSIM4xlGiven)  
-           model->BSIM4xl = 0.0;
-        if (!model->BSIM4xwGiven)  
-           model->BSIM4xw = 0.0;
-        if (!model->BSIM4dlcigGiven)
-           model->BSIM4dlcig = model->BSIM4Lint;
-        if (!model->BSIM4dlcigdGiven)
+        if (!model->BSIM4v7tnomGiven)  
+            model->BSIM4v7tnom = ckt->CKTnomTemp; 
+        if (!model->BSIM4v7LintGiven)  
+           model->BSIM4v7Lint = 0.0;
+        if (!model->BSIM4v7LlGiven)  
+           model->BSIM4v7Ll = 0.0;
+        if (!model->BSIM4v7LlcGiven)
+           model->BSIM4v7Llc = model->BSIM4v7Ll;
+        if (!model->BSIM4v7LlnGiven)  
+           model->BSIM4v7Lln = 1.0;
+        if (!model->BSIM4v7LwGiven)  
+           model->BSIM4v7Lw = 0.0;
+        if (!model->BSIM4v7LwcGiven)
+           model->BSIM4v7Lwc = model->BSIM4v7Lw;
+        if (!model->BSIM4v7LwnGiven)  
+           model->BSIM4v7Lwn = 1.0;
+        if (!model->BSIM4v7LwlGiven)  
+           model->BSIM4v7Lwl = 0.0;
+        if (!model->BSIM4v7LwlcGiven)
+           model->BSIM4v7Lwlc = model->BSIM4v7Lwl;
+        if (!model->BSIM4v7LminGiven)  
+           model->BSIM4v7Lmin = 0.0;
+        if (!model->BSIM4v7LmaxGiven)  
+           model->BSIM4v7Lmax = 1.0;
+        if (!model->BSIM4v7WintGiven)  
+           model->BSIM4v7Wint = 0.0;
+        if (!model->BSIM4v7WlGiven)  
+           model->BSIM4v7Wl = 0.0;
+        if (!model->BSIM4v7WlcGiven)
+           model->BSIM4v7Wlc = model->BSIM4v7Wl;
+        if (!model->BSIM4v7WlnGiven)  
+           model->BSIM4v7Wln = 1.0;
+        if (!model->BSIM4v7WwGiven)  
+           model->BSIM4v7Ww = 0.0;
+        if (!model->BSIM4v7WwcGiven)
+           model->BSIM4v7Wwc = model->BSIM4v7Ww;
+        if (!model->BSIM4v7WwnGiven)  
+           model->BSIM4v7Wwn = 1.0;
+        if (!model->BSIM4v7WwlGiven)  
+           model->BSIM4v7Wwl = 0.0;
+        if (!model->BSIM4v7WwlcGiven)
+           model->BSIM4v7Wwlc = model->BSIM4v7Wwl;
+        if (!model->BSIM4v7WminGiven)  
+           model->BSIM4v7Wmin = 0.0;
+        if (!model->BSIM4v7WmaxGiven)  
+           model->BSIM4v7Wmax = 1.0;
+        if (!model->BSIM4v7dwcGiven)  
+           model->BSIM4v7dwc = model->BSIM4v7Wint;
+        if (!model->BSIM4v7dlcGiven)  
+           model->BSIM4v7dlc = model->BSIM4v7Lint;
+        if (!model->BSIM4v7xlGiven)  
+           model->BSIM4v7xl = 0.0;
+        if (!model->BSIM4v7xwGiven)  
+           model->BSIM4v7xw = 0.0;
+        if (!model->BSIM4v7dlcigGiven)
+           model->BSIM4v7dlcig = model->BSIM4v7Lint;
+        if (!model->BSIM4v7dlcigdGiven)
         {
-           if (model->BSIM4dlcigGiven) 
-               model->BSIM4dlcigd = model->BSIM4dlcig;
+           if (model->BSIM4v7dlcigGiven) 
+               model->BSIM4v7dlcigd = model->BSIM4v7dlcig;
            else             
-               model->BSIM4dlcigd = model->BSIM4Lint;
+               model->BSIM4v7dlcigd = model->BSIM4v7Lint;
         }
-        if (!model->BSIM4dwjGiven)
-           model->BSIM4dwj = model->BSIM4dwc;
-        if (!model->BSIM4cfGiven)
-           model->BSIM4cf = 2.0 * model->BSIM4epsrox * EPS0 / PI
-                          * log(1.0 + 0.4e-6 / model->BSIM4toxe);
+        if (!model->BSIM4v7dwjGiven)
+           model->BSIM4v7dwj = model->BSIM4v7dwc;
+        if (!model->BSIM4v7cfGiven)
+           model->BSIM4v7cf = 2.0 * model->BSIM4v7epsrox * EPS0 / PI
+                          * log(1.0 + 0.4e-6 / model->BSIM4v7toxe);
 
-        if (!model->BSIM4xpartGiven)
-            model->BSIM4xpart = 0.0;
-        if (!model->BSIM4sheetResistanceGiven)
-            model->BSIM4sheetResistance = 0.0;
+        if (!model->BSIM4v7xpartGiven)
+            model->BSIM4v7xpart = 0.0;
+        if (!model->BSIM4v7sheetResistanceGiven)
+            model->BSIM4v7sheetResistance = 0.0;
 
-        if (!model->BSIM4SunitAreaJctCapGiven)
-            model->BSIM4SunitAreaJctCap = 5.0E-4;
-        if (!model->BSIM4DunitAreaJctCapGiven)
-            model->BSIM4DunitAreaJctCap = model->BSIM4SunitAreaJctCap;
-        if (!model->BSIM4SunitLengthSidewallJctCapGiven)
-            model->BSIM4SunitLengthSidewallJctCap = 5.0E-10;
-        if (!model->BSIM4DunitLengthSidewallJctCapGiven)
-            model->BSIM4DunitLengthSidewallJctCap = model->BSIM4SunitLengthSidewallJctCap;
-        if (!model->BSIM4SunitLengthGateSidewallJctCapGiven)
-            model->BSIM4SunitLengthGateSidewallJctCap = model->BSIM4SunitLengthSidewallJctCap ;
-        if (!model->BSIM4DunitLengthGateSidewallJctCapGiven)
-            model->BSIM4DunitLengthGateSidewallJctCap = model->BSIM4SunitLengthGateSidewallJctCap;
-        if (!model->BSIM4SjctSatCurDensityGiven)
-            model->BSIM4SjctSatCurDensity = 1.0E-4;
-        if (!model->BSIM4DjctSatCurDensityGiven)
-            model->BSIM4DjctSatCurDensity = model->BSIM4SjctSatCurDensity;
-        if (!model->BSIM4SjctSidewallSatCurDensityGiven)
-            model->BSIM4SjctSidewallSatCurDensity = 0.0;
-        if (!model->BSIM4DjctSidewallSatCurDensityGiven)
-            model->BSIM4DjctSidewallSatCurDensity = model->BSIM4SjctSidewallSatCurDensity;
-        if (!model->BSIM4SjctGateSidewallSatCurDensityGiven)
-            model->BSIM4SjctGateSidewallSatCurDensity = 0.0;
-        if (!model->BSIM4DjctGateSidewallSatCurDensityGiven)
-            model->BSIM4DjctGateSidewallSatCurDensity = model->BSIM4SjctGateSidewallSatCurDensity;
-        if (!model->BSIM4SbulkJctPotentialGiven)
-            model->BSIM4SbulkJctPotential = 1.0;
-        if (!model->BSIM4DbulkJctPotentialGiven)
-            model->BSIM4DbulkJctPotential = model->BSIM4SbulkJctPotential;
-        if (!model->BSIM4SsidewallJctPotentialGiven)
-            model->BSIM4SsidewallJctPotential = 1.0;
-        if (!model->BSIM4DsidewallJctPotentialGiven)
-            model->BSIM4DsidewallJctPotential = model->BSIM4SsidewallJctPotential;
-        if (!model->BSIM4SGatesidewallJctPotentialGiven)
-            model->BSIM4SGatesidewallJctPotential = model->BSIM4SsidewallJctPotential;
-        if (!model->BSIM4DGatesidewallJctPotentialGiven)
-            model->BSIM4DGatesidewallJctPotential = model->BSIM4SGatesidewallJctPotential;
-        if (!model->BSIM4SbulkJctBotGradingCoeffGiven)
-            model->BSIM4SbulkJctBotGradingCoeff = 0.5;
-        if (!model->BSIM4DbulkJctBotGradingCoeffGiven)
-            model->BSIM4DbulkJctBotGradingCoeff = model->BSIM4SbulkJctBotGradingCoeff;
-        if (!model->BSIM4SbulkJctSideGradingCoeffGiven)
-            model->BSIM4SbulkJctSideGradingCoeff = 0.33;
-        if (!model->BSIM4DbulkJctSideGradingCoeffGiven)
-            model->BSIM4DbulkJctSideGradingCoeff = model->BSIM4SbulkJctSideGradingCoeff;
-        if (!model->BSIM4SbulkJctGateSideGradingCoeffGiven)
-            model->BSIM4SbulkJctGateSideGradingCoeff = model->BSIM4SbulkJctSideGradingCoeff;
-        if (!model->BSIM4DbulkJctGateSideGradingCoeffGiven)
-            model->BSIM4DbulkJctGateSideGradingCoeff = model->BSIM4SbulkJctGateSideGradingCoeff;
-        if (!model->BSIM4SjctEmissionCoeffGiven)
-            model->BSIM4SjctEmissionCoeff = 1.0;
-        if (!model->BSIM4DjctEmissionCoeffGiven)
-            model->BSIM4DjctEmissionCoeff = model->BSIM4SjctEmissionCoeff;
-        if (!model->BSIM4SjctTempExponentGiven)
-            model->BSIM4SjctTempExponent = 3.0;
-        if (!model->BSIM4DjctTempExponentGiven)
-            model->BSIM4DjctTempExponent = model->BSIM4SjctTempExponent;
+        if (!model->BSIM4v7SunitAreaJctCapGiven)
+            model->BSIM4v7SunitAreaJctCap = 5.0E-4;
+        if (!model->BSIM4v7DunitAreaJctCapGiven)
+            model->BSIM4v7DunitAreaJctCap = model->BSIM4v7SunitAreaJctCap;
+        if (!model->BSIM4v7SunitLengthSidewallJctCapGiven)
+            model->BSIM4v7SunitLengthSidewallJctCap = 5.0E-10;
+        if (!model->BSIM4v7DunitLengthSidewallJctCapGiven)
+            model->BSIM4v7DunitLengthSidewallJctCap = model->BSIM4v7SunitLengthSidewallJctCap;
+        if (!model->BSIM4v7SunitLengthGateSidewallJctCapGiven)
+            model->BSIM4v7SunitLengthGateSidewallJctCap = model->BSIM4v7SunitLengthSidewallJctCap ;
+        if (!model->BSIM4v7DunitLengthGateSidewallJctCapGiven)
+            model->BSIM4v7DunitLengthGateSidewallJctCap = model->BSIM4v7SunitLengthGateSidewallJctCap;
+        if (!model->BSIM4v7SjctSatCurDensityGiven)
+            model->BSIM4v7SjctSatCurDensity = 1.0E-4;
+        if (!model->BSIM4v7DjctSatCurDensityGiven)
+            model->BSIM4v7DjctSatCurDensity = model->BSIM4v7SjctSatCurDensity;
+        if (!model->BSIM4v7SjctSidewallSatCurDensityGiven)
+            model->BSIM4v7SjctSidewallSatCurDensity = 0.0;
+        if (!model->BSIM4v7DjctSidewallSatCurDensityGiven)
+            model->BSIM4v7DjctSidewallSatCurDensity = model->BSIM4v7SjctSidewallSatCurDensity;
+        if (!model->BSIM4v7SjctGateSidewallSatCurDensityGiven)
+            model->BSIM4v7SjctGateSidewallSatCurDensity = 0.0;
+        if (!model->BSIM4v7DjctGateSidewallSatCurDensityGiven)
+            model->BSIM4v7DjctGateSidewallSatCurDensity = model->BSIM4v7SjctGateSidewallSatCurDensity;
+        if (!model->BSIM4v7SbulkJctPotentialGiven)
+            model->BSIM4v7SbulkJctPotential = 1.0;
+        if (!model->BSIM4v7DbulkJctPotentialGiven)
+            model->BSIM4v7DbulkJctPotential = model->BSIM4v7SbulkJctPotential;
+        if (!model->BSIM4v7SsidewallJctPotentialGiven)
+            model->BSIM4v7SsidewallJctPotential = 1.0;
+        if (!model->BSIM4v7DsidewallJctPotentialGiven)
+            model->BSIM4v7DsidewallJctPotential = model->BSIM4v7SsidewallJctPotential;
+        if (!model->BSIM4v7SGatesidewallJctPotentialGiven)
+            model->BSIM4v7SGatesidewallJctPotential = model->BSIM4v7SsidewallJctPotential;
+        if (!model->BSIM4v7DGatesidewallJctPotentialGiven)
+            model->BSIM4v7DGatesidewallJctPotential = model->BSIM4v7SGatesidewallJctPotential;
+        if (!model->BSIM4v7SbulkJctBotGradingCoeffGiven)
+            model->BSIM4v7SbulkJctBotGradingCoeff = 0.5;
+        if (!model->BSIM4v7DbulkJctBotGradingCoeffGiven)
+            model->BSIM4v7DbulkJctBotGradingCoeff = model->BSIM4v7SbulkJctBotGradingCoeff;
+        if (!model->BSIM4v7SbulkJctSideGradingCoeffGiven)
+            model->BSIM4v7SbulkJctSideGradingCoeff = 0.33;
+        if (!model->BSIM4v7DbulkJctSideGradingCoeffGiven)
+            model->BSIM4v7DbulkJctSideGradingCoeff = model->BSIM4v7SbulkJctSideGradingCoeff;
+        if (!model->BSIM4v7SbulkJctGateSideGradingCoeffGiven)
+            model->BSIM4v7SbulkJctGateSideGradingCoeff = model->BSIM4v7SbulkJctSideGradingCoeff;
+        if (!model->BSIM4v7DbulkJctGateSideGradingCoeffGiven)
+            model->BSIM4v7DbulkJctGateSideGradingCoeff = model->BSIM4v7SbulkJctGateSideGradingCoeff;
+        if (!model->BSIM4v7SjctEmissionCoeffGiven)
+            model->BSIM4v7SjctEmissionCoeff = 1.0;
+        if (!model->BSIM4v7DjctEmissionCoeffGiven)
+            model->BSIM4v7DjctEmissionCoeff = model->BSIM4v7SjctEmissionCoeff;
+        if (!model->BSIM4v7SjctTempExponentGiven)
+            model->BSIM4v7SjctTempExponent = 3.0;
+        if (!model->BSIM4v7DjctTempExponentGiven)
+            model->BSIM4v7DjctTempExponent = model->BSIM4v7SjctTempExponent;
 
-        if (!model->BSIM4jtssGiven)
-            model->BSIM4jtss = 0.0;
-        if (!model->BSIM4jtsdGiven)
-            model->BSIM4jtsd = model->BSIM4jtss;
-        if (!model->BSIM4jtsswsGiven)
-            model->BSIM4jtssws = 0.0;
-        if (!model->BSIM4jtsswdGiven)
-            model->BSIM4jtsswd = model->BSIM4jtssws;
-        if (!model->BSIM4jtsswgsGiven)
-            model->BSIM4jtsswgs = 0.0;
-        if (!model->BSIM4jtsswgdGiven)
-            model->BSIM4jtsswgd = model->BSIM4jtsswgs;
-                if (!model->BSIM4jtweffGiven)
-                    model->BSIM4jtweff = 0.0;
-        if (!model->BSIM4njtsGiven)
-            model->BSIM4njts = 20.0;
-        if (!model->BSIM4njtsswGiven)
-            model->BSIM4njtssw = 20.0;
-        if (!model->BSIM4njtsswgGiven)
-            model->BSIM4njtsswg = 20.0;
-        if (!model->BSIM4njtsdGiven)
+        if (!model->BSIM4v7jtssGiven)
+            model->BSIM4v7jtss = 0.0;
+        if (!model->BSIM4v7jtsdGiven)
+            model->BSIM4v7jtsd = model->BSIM4v7jtss;
+        if (!model->BSIM4v7jtsswsGiven)
+            model->BSIM4v7jtssws = 0.0;
+        if (!model->BSIM4v7jtsswdGiven)
+            model->BSIM4v7jtsswd = model->BSIM4v7jtssws;
+        if (!model->BSIM4v7jtsswgsGiven)
+            model->BSIM4v7jtsswgs = 0.0;
+        if (!model->BSIM4v7jtsswgdGiven)
+            model->BSIM4v7jtsswgd = model->BSIM4v7jtsswgs;
+                if (!model->BSIM4v7jtweffGiven)
+                    model->BSIM4v7jtweff = 0.0;
+        if (!model->BSIM4v7njtsGiven)
+            model->BSIM4v7njts = 20.0;
+        if (!model->BSIM4v7njtsswGiven)
+            model->BSIM4v7njtssw = 20.0;
+        if (!model->BSIM4v7njtsswgGiven)
+            model->BSIM4v7njtsswg = 20.0;
+        if (!model->BSIM4v7njtsdGiven)
         {
-            if (model->BSIM4njtsGiven)
-                model->BSIM4njtsd =  model->BSIM4njts;
+            if (model->BSIM4v7njtsGiven)
+                model->BSIM4v7njtsd =  model->BSIM4v7njts;
             else
-              model->BSIM4njtsd = 20.0;
+              model->BSIM4v7njtsd = 20.0;
         }
-        if (!model->BSIM4njtsswdGiven)
+        if (!model->BSIM4v7njtsswdGiven)
         {
-            if (model->BSIM4njtsswGiven)
-                model->BSIM4njtsswd =  model->BSIM4njtssw;
+            if (model->BSIM4v7njtsswGiven)
+                model->BSIM4v7njtsswd =  model->BSIM4v7njtssw;
             else
-              model->BSIM4njtsswd = 20.0;
+              model->BSIM4v7njtsswd = 20.0;
         }
-        if (!model->BSIM4njtsswgdGiven)
+        if (!model->BSIM4v7njtsswgdGiven)
         {
-            if (model->BSIM4njtsswgGiven)
-                model->BSIM4njtsswgd =  model->BSIM4njtsswg;
+            if (model->BSIM4v7njtsswgGiven)
+                model->BSIM4v7njtsswgd =  model->BSIM4v7njtsswg;
             else
-              model->BSIM4njtsswgd = 20.0;
+              model->BSIM4v7njtsswgd = 20.0;
         }
-        if (!model->BSIM4xtssGiven)
-            model->BSIM4xtss = 0.02;
-        if (!model->BSIM4xtsdGiven)
-            model->BSIM4xtsd = model->BSIM4xtss;
-        if (!model->BSIM4xtsswsGiven)
-            model->BSIM4xtssws = 0.02;
-        if (!model->BSIM4xtsswdGiven)
-            model->BSIM4xtsswd = model->BSIM4xtssws;
-        if (!model->BSIM4xtsswgsGiven)
-            model->BSIM4xtsswgs = 0.02;
-        if (!model->BSIM4xtsswgdGiven)
-            model->BSIM4xtsswgd = model->BSIM4xtsswgs;
-        if (!model->BSIM4tnjtsGiven)
-            model->BSIM4tnjts = 0.0;
-        if (!model->BSIM4tnjtsswGiven)
-            model->BSIM4tnjtssw = 0.0;
-        if (!model->BSIM4tnjtsswgGiven)
-            model->BSIM4tnjtsswg = 0.0;
-        if (!model->BSIM4tnjtsdGiven)
+        if (!model->BSIM4v7xtssGiven)
+            model->BSIM4v7xtss = 0.02;
+        if (!model->BSIM4v7xtsdGiven)
+            model->BSIM4v7xtsd = model->BSIM4v7xtss;
+        if (!model->BSIM4v7xtsswsGiven)
+            model->BSIM4v7xtssws = 0.02;
+        if (!model->BSIM4v7xtsswdGiven)
+            model->BSIM4v7xtsswd = model->BSIM4v7xtssws;
+        if (!model->BSIM4v7xtsswgsGiven)
+            model->BSIM4v7xtsswgs = 0.02;
+        if (!model->BSIM4v7xtsswgdGiven)
+            model->BSIM4v7xtsswgd = model->BSIM4v7xtsswgs;
+        if (!model->BSIM4v7tnjtsGiven)
+            model->BSIM4v7tnjts = 0.0;
+        if (!model->BSIM4v7tnjtsswGiven)
+            model->BSIM4v7tnjtssw = 0.0;
+        if (!model->BSIM4v7tnjtsswgGiven)
+            model->BSIM4v7tnjtsswg = 0.0;
+        if (!model->BSIM4v7tnjtsdGiven)
         {
-            if (model->BSIM4tnjtsGiven)
-                model->BSIM4tnjtsd =  model->BSIM4tnjts;
+            if (model->BSIM4v7tnjtsGiven)
+                model->BSIM4v7tnjtsd =  model->BSIM4v7tnjts;
             else
-              model->BSIM4tnjtsd = 0.0;
+              model->BSIM4v7tnjtsd = 0.0;
         }
-        if (!model->BSIM4tnjtsswdGiven)
+        if (!model->BSIM4v7tnjtsswdGiven)
         {
-            if (model->BSIM4tnjtsswGiven)
-                model->BSIM4tnjtsswd =  model->BSIM4tnjtssw;
+            if (model->BSIM4v7tnjtsswGiven)
+                model->BSIM4v7tnjtsswd =  model->BSIM4v7tnjtssw;
             else
-              model->BSIM4tnjtsswd = 0.0;
+              model->BSIM4v7tnjtsswd = 0.0;
         }
-        if (!model->BSIM4tnjtsswgdGiven)
+        if (!model->BSIM4v7tnjtsswgdGiven)
         {
-            if (model->BSIM4tnjtsswgGiven)
-                model->BSIM4tnjtsswgd =  model->BSIM4tnjtsswg;
+            if (model->BSIM4v7tnjtsswgGiven)
+                model->BSIM4v7tnjtsswgd =  model->BSIM4v7tnjtsswg;
             else
-              model->BSIM4tnjtsswgd = 0.0;
+              model->BSIM4v7tnjtsswgd = 0.0;
         }
-        if (!model->BSIM4vtssGiven)
-            model->BSIM4vtss = 10.0;
-        if (!model->BSIM4vtsdGiven)
-            model->BSIM4vtsd = model->BSIM4vtss;
-        if (!model->BSIM4vtsswsGiven)
-            model->BSIM4vtssws = 10.0;
-        if (!model->BSIM4vtsswdGiven)
-            model->BSIM4vtsswd = model->BSIM4vtssws;
-        if (!model->BSIM4vtsswgsGiven)
-            model->BSIM4vtsswgs = 10.0;
-        if (!model->BSIM4vtsswgdGiven)
-            model->BSIM4vtsswgd = model->BSIM4vtsswgs;
+        if (!model->BSIM4v7vtssGiven)
+            model->BSIM4v7vtss = 10.0;
+        if (!model->BSIM4v7vtsdGiven)
+            model->BSIM4v7vtsd = model->BSIM4v7vtss;
+        if (!model->BSIM4v7vtsswsGiven)
+            model->BSIM4v7vtssws = 10.0;
+        if (!model->BSIM4v7vtsswdGiven)
+            model->BSIM4v7vtsswd = model->BSIM4v7vtssws;
+        if (!model->BSIM4v7vtsswgsGiven)
+            model->BSIM4v7vtsswgs = 10.0;
+        if (!model->BSIM4v7vtsswgdGiven)
+            model->BSIM4v7vtsswgd = model->BSIM4v7vtsswgs;
 
-        if (!model->BSIM4oxideTrapDensityAGiven)
-        {   if (model->BSIM4type == NMOS)
-                model->BSIM4oxideTrapDensityA = 6.25e41;
+        if (!model->BSIM4v7oxideTrapDensityAGiven)
+        {   if (model->BSIM4v7type == NMOS)
+                model->BSIM4v7oxideTrapDensityA = 6.25e41;
             else
-                model->BSIM4oxideTrapDensityA= 6.188e40;
+                model->BSIM4v7oxideTrapDensityA= 6.188e40;
         }
-        if (!model->BSIM4oxideTrapDensityBGiven)
-        {   if (model->BSIM4type == NMOS)
-                model->BSIM4oxideTrapDensityB = 3.125e26;
+        if (!model->BSIM4v7oxideTrapDensityBGiven)
+        {   if (model->BSIM4v7type == NMOS)
+                model->BSIM4v7oxideTrapDensityB = 3.125e26;
             else
-                model->BSIM4oxideTrapDensityB = 1.5e25;
+                model->BSIM4v7oxideTrapDensityB = 1.5e25;
         }
-        if (!model->BSIM4oxideTrapDensityCGiven)
-            model->BSIM4oxideTrapDensityC = 8.75e9;
-        if (!model->BSIM4emGiven)
-            model->BSIM4em = 4.1e7; /* V/m */
-        if (!model->BSIM4efGiven)
-            model->BSIM4ef = 1.0;
-        if (!model->BSIM4afGiven)
-            model->BSIM4af = 1.0;
-        if (!model->BSIM4kfGiven)
-            model->BSIM4kf = 0.0;
+        if (!model->BSIM4v7oxideTrapDensityCGiven)
+            model->BSIM4v7oxideTrapDensityC = 8.75e9;
+        if (!model->BSIM4v7emGiven)
+            model->BSIM4v7em = 4.1e7; /* V/m */
+        if (!model->BSIM4v7efGiven)
+            model->BSIM4v7ef = 1.0;
+        if (!model->BSIM4v7afGiven)
+            model->BSIM4v7af = 1.0;
+        if (!model->BSIM4v7kfGiven)
+            model->BSIM4v7kf = 0.0;
 
-        if (!model->BSIM4vgsMaxGiven)
-            model->BSIM4vgsMax = 1e99;
-        if (!model->BSIM4vgdMaxGiven)
-            model->BSIM4vgdMax = 1e99;
-        if (!model->BSIM4vgbMaxGiven)
-            model->BSIM4vgbMax = 1e99;
-        if (!model->BSIM4vdsMaxGiven)
-            model->BSIM4vdsMax = 1e99;
-        if (!model->BSIM4vbsMaxGiven)
-            model->BSIM4vbsMax = 1e99;
-        if (!model->BSIM4vbdMaxGiven)
-            model->BSIM4vbdMax = 1e99;
+        if (!model->BSIM4v7vgsMaxGiven)
+            model->BSIM4v7vgsMax = 1e99;
+        if (!model->BSIM4v7vgdMaxGiven)
+            model->BSIM4v7vgdMax = 1e99;
+        if (!model->BSIM4v7vgbMaxGiven)
+            model->BSIM4v7vgbMax = 1e99;
+        if (!model->BSIM4v7vdsMaxGiven)
+            model->BSIM4v7vdsMax = 1e99;
+        if (!model->BSIM4v7vbsMaxGiven)
+            model->BSIM4v7vbsMax = 1e99;
+        if (!model->BSIM4v7vbdMaxGiven)
+            model->BSIM4v7vbdMax = 1e99;
 
         /* stress effect */
-        if (!model->BSIM4sarefGiven)
-            model->BSIM4saref = 1e-6; /* m */
-        if (!model->BSIM4sbrefGiven)
-            model->BSIM4sbref = 1e-6;  /* m */
-        if (!model->BSIM4wlodGiven)
-            model->BSIM4wlod = 0;  /* m */
-        if (!model->BSIM4ku0Given)
-            model->BSIM4ku0 = 0; /* 1/m */
-        if (!model->BSIM4kvsatGiven)
-            model->BSIM4kvsat = 0;
-        if (!model->BSIM4kvth0Given) /* m */
-            model->BSIM4kvth0 = 0;
-        if (!model->BSIM4tku0Given)
-            model->BSIM4tku0 = 0;
-        if (!model->BSIM4llodku0Given)
-            model->BSIM4llodku0 = 0;
-        if (!model->BSIM4wlodku0Given)
-            model->BSIM4wlodku0 = 0;
-        if (!model->BSIM4llodvthGiven)
-            model->BSIM4llodvth = 0;
-        if (!model->BSIM4wlodvthGiven)
-            model->BSIM4wlodvth = 0;
-        if (!model->BSIM4lku0Given)
-            model->BSIM4lku0 = 0;
-        if (!model->BSIM4wku0Given)
-            model->BSIM4wku0 = 0;
-        if (!model->BSIM4pku0Given)
-            model->BSIM4pku0 = 0;
-        if (!model->BSIM4lkvth0Given)
-            model->BSIM4lkvth0 = 0;
-        if (!model->BSIM4wkvth0Given)
-            model->BSIM4wkvth0 = 0;
-        if (!model->BSIM4pkvth0Given)
-            model->BSIM4pkvth0 = 0;
-        if (!model->BSIM4stk2Given)
-            model->BSIM4stk2 = 0;
-        if (!model->BSIM4lodk2Given)
-            model->BSIM4lodk2 = 1.0;
-        if (!model->BSIM4steta0Given)
-            model->BSIM4steta0 = 0;
-        if (!model->BSIM4lodeta0Given)
-            model->BSIM4lodeta0 = 1.0;
+        if (!model->BSIM4v7sarefGiven)
+            model->BSIM4v7saref = 1e-6; /* m */
+        if (!model->BSIM4v7sbrefGiven)
+            model->BSIM4v7sbref = 1e-6;  /* m */
+        if (!model->BSIM4v7wlodGiven)
+            model->BSIM4v7wlod = 0;  /* m */
+        if (!model->BSIM4v7ku0Given)
+            model->BSIM4v7ku0 = 0; /* 1/m */
+        if (!model->BSIM4v7kvsatGiven)
+            model->BSIM4v7kvsat = 0;
+        if (!model->BSIM4v7kvth0Given) /* m */
+            model->BSIM4v7kvth0 = 0;
+        if (!model->BSIM4v7tku0Given)
+            model->BSIM4v7tku0 = 0;
+        if (!model->BSIM4v7llodku0Given)
+            model->BSIM4v7llodku0 = 0;
+        if (!model->BSIM4v7wlodku0Given)
+            model->BSIM4v7wlodku0 = 0;
+        if (!model->BSIM4v7llodvthGiven)
+            model->BSIM4v7llodvth = 0;
+        if (!model->BSIM4v7wlodvthGiven)
+            model->BSIM4v7wlodvth = 0;
+        if (!model->BSIM4v7lku0Given)
+            model->BSIM4v7lku0 = 0;
+        if (!model->BSIM4v7wku0Given)
+            model->BSIM4v7wku0 = 0;
+        if (!model->BSIM4v7pku0Given)
+            model->BSIM4v7pku0 = 0;
+        if (!model->BSIM4v7lkvth0Given)
+            model->BSIM4v7lkvth0 = 0;
+        if (!model->BSIM4v7wkvth0Given)
+            model->BSIM4v7wkvth0 = 0;
+        if (!model->BSIM4v7pkvth0Given)
+            model->BSIM4v7pkvth0 = 0;
+        if (!model->BSIM4v7stk2Given)
+            model->BSIM4v7stk2 = 0;
+        if (!model->BSIM4v7lodk2Given)
+            model->BSIM4v7lodk2 = 1.0;
+        if (!model->BSIM4v7steta0Given)
+            model->BSIM4v7steta0 = 0;
+        if (!model->BSIM4v7lodeta0Given)
+            model->BSIM4v7lodeta0 = 1.0;
 
         /* Well Proximity Effect  */
-        if (!model->BSIM4webGiven)
-            model->BSIM4web = 0.0; 
-        if (!model->BSIM4wecGiven)
-            model->BSIM4wec = 0.0;
-        if (!model->BSIM4kvth0weGiven)
-            model->BSIM4kvth0we = 0.0; 
-        if (!model->BSIM4k2weGiven)
-            model->BSIM4k2we = 0.0; 
-        if (!model->BSIM4ku0weGiven)
-            model->BSIM4ku0we = 0.0; 
-        if (!model->BSIM4screfGiven)
-            model->BSIM4scref = 1.0E-6; /* m */
-        if (!model->BSIM4wpemodGiven)
-            model->BSIM4wpemod = 0; 
-        else if ((model->BSIM4wpemod != 0) && (model->BSIM4wpemod != 1))
-        {   model->BSIM4wpemod = 0;
+        if (!model->BSIM4v7webGiven)
+            model->BSIM4v7web = 0.0; 
+        if (!model->BSIM4v7wecGiven)
+            model->BSIM4v7wec = 0.0;
+        if (!model->BSIM4v7kvth0weGiven)
+            model->BSIM4v7kvth0we = 0.0; 
+        if (!model->BSIM4v7k2weGiven)
+            model->BSIM4v7k2we = 0.0; 
+        if (!model->BSIM4v7ku0weGiven)
+            model->BSIM4v7ku0we = 0.0; 
+        if (!model->BSIM4v7screfGiven)
+            model->BSIM4v7scref = 1.0E-6; /* m */
+        if (!model->BSIM4v7wpemodGiven)
+            model->BSIM4v7wpemod = 0; 
+        else if ((model->BSIM4v7wpemod != 0) && (model->BSIM4v7wpemod != 1))
+        {   model->BSIM4v7wpemod = 0;
             printf("Warning: wpemod has been set to its default value: 0.\n");
         }
-        if (!model->BSIM4lkvth0weGiven)
-            model->BSIM4lkvth0we = 0; 
-        if (!model->BSIM4lk2weGiven)
-            model->BSIM4lk2we = 0;
-        if (!model->BSIM4lku0weGiven)
-            model->BSIM4lku0we = 0;
-        if (!model->BSIM4wkvth0weGiven)
-            model->BSIM4wkvth0we = 0; 
-        if (!model->BSIM4wk2weGiven)
-            model->BSIM4wk2we = 0;
-        if (!model->BSIM4wku0weGiven)
-            model->BSIM4wku0we = 0;
-        if (!model->BSIM4pkvth0weGiven)
-            model->BSIM4pkvth0we = 0; 
-        if (!model->BSIM4pk2weGiven)
-            model->BSIM4pk2we = 0;
-        if (!model->BSIM4pku0weGiven)
-            model->BSIM4pku0we = 0;
+        if (!model->BSIM4v7lkvth0weGiven)
+            model->BSIM4v7lkvth0we = 0; 
+        if (!model->BSIM4v7lk2weGiven)
+            model->BSIM4v7lk2we = 0;
+        if (!model->BSIM4v7lku0weGiven)
+            model->BSIM4v7lku0we = 0;
+        if (!model->BSIM4v7wkvth0weGiven)
+            model->BSIM4v7wkvth0we = 0; 
+        if (!model->BSIM4v7wk2weGiven)
+            model->BSIM4v7wk2we = 0;
+        if (!model->BSIM4v7wku0weGiven)
+            model->BSIM4v7wku0we = 0;
+        if (!model->BSIM4v7pkvth0weGiven)
+            model->BSIM4v7pkvth0we = 0; 
+        if (!model->BSIM4v7pk2weGiven)
+            model->BSIM4v7pk2we = 0;
+        if (!model->BSIM4v7pku0weGiven)
+            model->BSIM4v7pku0we = 0;
 
-        DMCGeff = model->BSIM4dmcg - model->BSIM4dmcgt;
-        DMCIeff = model->BSIM4dmci;
-        DMDGeff = model->BSIM4dmdg - model->BSIM4dmcgt;
+        DMCGeff = model->BSIM4v7dmcg - model->BSIM4v7dmcgt;
+        DMCIeff = model->BSIM4v7dmci;
+        DMDGeff = model->BSIM4v7dmdg - model->BSIM4v7dmcgt;
 
         /*
          * End processing models and begin to loop
          * through all the instances of the model
          */
 
-        for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+        for (here = model->BSIM4v7instances; here != NULL ;
+             here=here->BSIM4v7nextInstance) 
         {
             /* allocate a chunk of the state vector */
-            here->BSIM4states = *states;
-            *states += BSIM4numStates;
+            here->BSIM4v7states = *states;
+            *states += BSIM4v7numStates;
 
             /* perform the parameter defaulting */
-            if (!here->BSIM4lGiven)
-                here->BSIM4l = 5.0e-6;
-            if (!here->BSIM4wGiven)
-                here->BSIM4w = 5.0e-6;
-            if (!here->BSIM4mGiven)
-                here->BSIM4m = 1.0;
-            if (!here->BSIM4nfGiven)
-                here->BSIM4nf = 1.0;
-            if (!here->BSIM4minGiven)
-                here->BSIM4min = 0; /* integer */
-            if (!here->BSIM4icVDSGiven)
-                here->BSIM4icVDS = 0.0;
-            if (!here->BSIM4icVGSGiven)
-                here->BSIM4icVGS = 0.0;
-            if (!here->BSIM4icVBSGiven)
-                here->BSIM4icVBS = 0.0;
-            if (!here->BSIM4drainAreaGiven)
-                here->BSIM4drainArea = 0.0;
-            if (!here->BSIM4drainPerimeterGiven)
-                here->BSIM4drainPerimeter = 0.0;
-            if (!here->BSIM4drainSquaresGiven)
-                here->BSIM4drainSquares = 1.0;
-            if (!here->BSIM4sourceAreaGiven)
-                here->BSIM4sourceArea = 0.0;
-            if (!here->BSIM4sourcePerimeterGiven)
-                here->BSIM4sourcePerimeter = 0.0;
-            if (!here->BSIM4sourceSquaresGiven)
-                here->BSIM4sourceSquares = 1.0;
+            if (!here->BSIM4v7lGiven)
+                here->BSIM4v7l = 5.0e-6;
+            if (!here->BSIM4v7wGiven)
+                here->BSIM4v7w = 5.0e-6;
+            if (!here->BSIM4v7mGiven)
+                here->BSIM4v7m = 1.0;
+            if (!here->BSIM4v7nfGiven)
+                here->BSIM4v7nf = 1.0;
+            if (!here->BSIM4v7minGiven)
+                here->BSIM4v7min = 0; /* integer */
+            if (!here->BSIM4v7icVDSGiven)
+                here->BSIM4v7icVDS = 0.0;
+            if (!here->BSIM4v7icVGSGiven)
+                here->BSIM4v7icVGS = 0.0;
+            if (!here->BSIM4v7icVBSGiven)
+                here->BSIM4v7icVBS = 0.0;
+            if (!here->BSIM4v7drainAreaGiven)
+                here->BSIM4v7drainArea = 0.0;
+            if (!here->BSIM4v7drainPerimeterGiven)
+                here->BSIM4v7drainPerimeter = 0.0;
+            if (!here->BSIM4v7drainSquaresGiven)
+                here->BSIM4v7drainSquares = 1.0;
+            if (!here->BSIM4v7sourceAreaGiven)
+                here->BSIM4v7sourceArea = 0.0;
+            if (!here->BSIM4v7sourcePerimeterGiven)
+                here->BSIM4v7sourcePerimeter = 0.0;
+            if (!here->BSIM4v7sourceSquaresGiven)
+                here->BSIM4v7sourceSquares = 1.0;
 
-            if (!here->BSIM4rbdbGiven)
-                here->BSIM4rbdb = model->BSIM4rbdb; /* in ohm */
-            if (!here->BSIM4rbsbGiven)
-                here->BSIM4rbsb = model->BSIM4rbsb;
-            if (!here->BSIM4rbpbGiven)
-                here->BSIM4rbpb = model->BSIM4rbpb;
-            if (!here->BSIM4rbpsGiven)
-                here->BSIM4rbps = model->BSIM4rbps;
-            if (!here->BSIM4rbpdGiven)
-                here->BSIM4rbpd = model->BSIM4rbpd;
-            if (!here->BSIM4delvtoGiven)
-                here->BSIM4delvto = 0.0;
-            if (!here->BSIM4xgwGiven)
-                here->BSIM4xgw = model->BSIM4xgw;
-            if (!here->BSIM4ngconGiven)
-                here->BSIM4ngcon = model->BSIM4ngcon;
+            if (!here->BSIM4v7rbdbGiven)
+                here->BSIM4v7rbdb = model->BSIM4v7rbdb; /* in ohm */
+            if (!here->BSIM4v7rbsbGiven)
+                here->BSIM4v7rbsb = model->BSIM4v7rbsb;
+            if (!here->BSIM4v7rbpbGiven)
+                here->BSIM4v7rbpb = model->BSIM4v7rbpb;
+            if (!here->BSIM4v7rbpsGiven)
+                here->BSIM4v7rbps = model->BSIM4v7rbps;
+            if (!here->BSIM4v7rbpdGiven)
+                here->BSIM4v7rbpd = model->BSIM4v7rbpd;
+            if (!here->BSIM4v7delvtoGiven)
+                here->BSIM4v7delvto = 0.0;
+            if (!here->BSIM4v7xgwGiven)
+                here->BSIM4v7xgw = model->BSIM4v7xgw;
+            if (!here->BSIM4v7ngconGiven)
+                here->BSIM4v7ngcon = model->BSIM4v7ngcon;
 
                     
             /* Process instance model selectors, some
              * may override their global counterparts
              */
-            if (!here->BSIM4rbodyModGiven)
-                here->BSIM4rbodyMod = model->BSIM4rbodyMod;
-            else if ((here->BSIM4rbodyMod != 0) && (here->BSIM4rbodyMod != 1) && (here->BSIM4rbodyMod != 2))
-            {   here->BSIM4rbodyMod = model->BSIM4rbodyMod;
+            if (!here->BSIM4v7rbodyModGiven)
+                here->BSIM4v7rbodyMod = model->BSIM4v7rbodyMod;
+            else if ((here->BSIM4v7rbodyMod != 0) && (here->BSIM4v7rbodyMod != 1) && (here->BSIM4v7rbodyMod != 2))
+            {   here->BSIM4v7rbodyMod = model->BSIM4v7rbodyMod;
                 printf("Warning: rbodyMod has been set to its global value %d.\n",
-                model->BSIM4rbodyMod);
+                model->BSIM4v7rbodyMod);
             }
 
-            if (!here->BSIM4rgateModGiven)
-                here->BSIM4rgateMod = model->BSIM4rgateMod;
-            else if ((here->BSIM4rgateMod != 0) && (here->BSIM4rgateMod != 1)
-                && (here->BSIM4rgateMod != 2) && (here->BSIM4rgateMod != 3))
-            {   here->BSIM4rgateMod = model->BSIM4rgateMod;
+            if (!here->BSIM4v7rgateModGiven)
+                here->BSIM4v7rgateMod = model->BSIM4v7rgateMod;
+            else if ((here->BSIM4v7rgateMod != 0) && (here->BSIM4v7rgateMod != 1)
+                && (here->BSIM4v7rgateMod != 2) && (here->BSIM4v7rgateMod != 3))
+            {   here->BSIM4v7rgateMod = model->BSIM4v7rgateMod;
                 printf("Warning: rgateMod has been set to its global value %d.\n",
-                model->BSIM4rgateMod);
+                model->BSIM4v7rgateMod);
             }
 
-            if (!here->BSIM4geoModGiven)
-                here->BSIM4geoMod = model->BSIM4geoMod;
+            if (!here->BSIM4v7geoModGiven)
+                here->BSIM4v7geoMod = model->BSIM4v7geoMod;
 
-            if (!here->BSIM4rgeoModGiven)
-                here->BSIM4rgeoMod = model->BSIM4rgeoMod;
-            else if ((here->BSIM4rgeoMod != 0) && (here->BSIM4rgeoMod != 1))
-            {   here->BSIM4rgeoMod = model->BSIM4rgeoMod;
+            if (!here->BSIM4v7rgeoModGiven)
+                here->BSIM4v7rgeoMod = model->BSIM4v7rgeoMod;
+            else if ((here->BSIM4v7rgeoMod != 0) && (here->BSIM4v7rgeoMod != 1))
+            {   here->BSIM4v7rgeoMod = model->BSIM4v7rgeoMod;
                 printf("Warning: rgeoMod has been set to its global value %d.\n",
-                model->BSIM4rgeoMod);
+                model->BSIM4v7rgeoMod);
             }
 
-            if (!here->BSIM4trnqsModGiven)
-                here->BSIM4trnqsMod = model->BSIM4trnqsMod;
-            else if ((here->BSIM4trnqsMod != 0) && (here->BSIM4trnqsMod != 1))
-            {   here->BSIM4trnqsMod = model->BSIM4trnqsMod;
+            if (!here->BSIM4v7trnqsModGiven)
+                here->BSIM4v7trnqsMod = model->BSIM4v7trnqsMod;
+            else if ((here->BSIM4v7trnqsMod != 0) && (here->BSIM4v7trnqsMod != 1))
+            {   here->BSIM4v7trnqsMod = model->BSIM4v7trnqsMod;
                 printf("Warning: trnqsMod has been set to its global value %d.\n",
-                model->BSIM4trnqsMod);
+                model->BSIM4v7trnqsMod);
             }
 
-            if (!here->BSIM4acnqsModGiven)
-                here->BSIM4acnqsMod = model->BSIM4acnqsMod;
-            else if ((here->BSIM4acnqsMod != 0) && (here->BSIM4acnqsMod != 1))
-            {   here->BSIM4acnqsMod = model->BSIM4acnqsMod;
+            if (!here->BSIM4v7acnqsModGiven)
+                here->BSIM4v7acnqsMod = model->BSIM4v7acnqsMod;
+            else if ((here->BSIM4v7acnqsMod != 0) && (here->BSIM4v7acnqsMod != 1))
+            {   here->BSIM4v7acnqsMod = model->BSIM4v7acnqsMod;
                 printf("Warning: acnqsMod has been set to its global value %d.\n",
-                model->BSIM4acnqsMod);
+                model->BSIM4v7acnqsMod);
             }
 
             /* stress effect */
-            if (!here->BSIM4saGiven)
-                here->BSIM4sa = 0.0;
-            if (!here->BSIM4sbGiven)
-                here->BSIM4sb = 0.0;
-            if (!here->BSIM4sdGiven)
-                here->BSIM4sd = 2 * model->BSIM4dmcg;
+            if (!here->BSIM4v7saGiven)
+                here->BSIM4v7sa = 0.0;
+            if (!here->BSIM4v7sbGiven)
+                here->BSIM4v7sb = 0.0;
+            if (!here->BSIM4v7sdGiven)
+                here->BSIM4v7sd = 2 * model->BSIM4v7dmcg;
             /* Well Proximity Effect  */
-            if (!here->BSIM4scaGiven)
-                here->BSIM4sca = 0.0;
-            if (!here->BSIM4scbGiven)
-                here->BSIM4scb = 0.0;
-            if (!here->BSIM4sccGiven)
-                here->BSIM4scc = 0.0;
-            if (!here->BSIM4scGiven)
-                here->BSIM4sc = 0.0; /* m */
+            if (!here->BSIM4v7scaGiven)
+                here->BSIM4v7sca = 0.0;
+            if (!here->BSIM4v7scbGiven)
+                here->BSIM4v7scb = 0.0;
+            if (!here->BSIM4v7sccGiven)
+                here->BSIM4v7scc = 0.0;
+            if (!here->BSIM4v7scGiven)
+                here->BSIM4v7sc = 0.0; /* m */
 
             /* process drain series resistance */
             createNode = 0;
-            if ( (model->BSIM4rdsMod != 0)
-                            || (model->BSIM4tnoiMod == 1 && noiseAnalGiven))
+            if ( (model->BSIM4v7rdsMod != 0)
+                            || (model->BSIM4v7tnoiMod == 1 && noiseAnalGiven))
             {
                createNode = 1;
-            } else if (model->BSIM4sheetResistance > 0)
+            } else if (model->BSIM4v7sheetResistance > 0)
             {
-                     if (here->BSIM4drainSquaresGiven
-                                       && here->BSIM4drainSquares > 0)
+                     if (here->BSIM4v7drainSquaresGiven
+                                       && here->BSIM4v7drainSquares > 0)
                      {
                           createNode = 1;
-                     } else if (!here->BSIM4drainSquaresGiven
-                                       && (here->BSIM4rgeoMod != 0))
+                     } else if (!here->BSIM4v7drainSquaresGiven
+                                       && (here->BSIM4v7rgeoMod != 0))
                      {
-                          BSIM4RdseffGeo(here->BSIM4nf*here->BSIM4m, here->BSIM4geoMod,
-                                  here->BSIM4rgeoMod, here->BSIM4min,
-                                  here->BSIM4w, model->BSIM4sheetResistance,
+                          BSIM4v7RdseffGeo(here->BSIM4v7nf*here->BSIM4v7m, here->BSIM4v7geoMod,
+                                  here->BSIM4v7rgeoMod, here->BSIM4v7min,
+                                  here->BSIM4v7w, model->BSIM4v7sheetResistance,
                                   DMCGeff, DMCIeff, DMDGeff, 0, &Rtot);
                           if(Rtot > 0)
                              createNode = 1;
                      }
             }
             if ( createNode != 0 )
-            {   if ( here->BSIM4dNodePrime == 0 )
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"drain");
+            {   if ( here->BSIM4v7dNodePrime == 0 )
+            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"drain");
                 if(error) return(error);
-                here->BSIM4dNodePrime = tmp->number;
+                here->BSIM4v7dNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
                   CKTnode *tmpNode;
                   IFuid tmpName;    
@@ -2352,37 +2352,37 @@ BSIM4instance **InstArray;
             }
             }
             else
-            {   here->BSIM4dNodePrime = here->BSIM4dNode;
+            {   here->BSIM4v7dNodePrime = here->BSIM4v7dNode;
             }
             
             /* process source series resistance */
             createNode = 0;
-            if ( (model->BSIM4rdsMod != 0)
-                            || (model->BSIM4tnoiMod == 1 && noiseAnalGiven))
+            if ( (model->BSIM4v7rdsMod != 0)
+                            || (model->BSIM4v7tnoiMod == 1 && noiseAnalGiven))
             {
                createNode = 1;
-            } else if (model->BSIM4sheetResistance > 0)
+            } else if (model->BSIM4v7sheetResistance > 0)
             {
-                     if (here->BSIM4sourceSquaresGiven
-                                        && here->BSIM4sourceSquares > 0)
+                     if (here->BSIM4v7sourceSquaresGiven
+                                        && here->BSIM4v7sourceSquares > 0)
                      {
                           createNode = 1;
-                     } else if (!here->BSIM4sourceSquaresGiven
-                                        && (here->BSIM4rgeoMod != 0))
+                     } else if (!here->BSIM4v7sourceSquaresGiven
+                                        && (here->BSIM4v7rgeoMod != 0))
                      {
-                          BSIM4RdseffGeo(here->BSIM4nf*here->BSIM4m, here->BSIM4geoMod,
-                                  here->BSIM4rgeoMod, here->BSIM4min,
-                                  here->BSIM4w, model->BSIM4sheetResistance,
+                          BSIM4v7RdseffGeo(here->BSIM4v7nf*here->BSIM4v7m, here->BSIM4v7geoMod,
+                                  here->BSIM4v7rgeoMod, here->BSIM4v7min,
+                                  here->BSIM4v7w, model->BSIM4v7sheetResistance,
                                   DMCGeff, DMCIeff, DMDGeff, 1, &Rtot);
                           if(Rtot > 0)
                              createNode = 1;
                      }
             }
             if ( createNode != 0 )
-            {   if ( here->BSIM4sNodePrime == 0 )
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"source");
+            {   if ( here->BSIM4v7sNodePrime == 0 )
+            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"source");
                 if(error) return(error);
-                here->BSIM4sNodePrime = tmp->number;
+                here->BSIM4v7sNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
                   CKTnode *tmpNode;
                   IFuid tmpName;
@@ -2396,13 +2396,13 @@ BSIM4instance **InstArray;
             }
             }
             else
-                here->BSIM4sNodePrime = here->BSIM4sNode;
+                here->BSIM4v7sNodePrime = here->BSIM4v7sNode;
 
-            if ( here->BSIM4rgateMod > 0 )
-            {   if ( here->BSIM4gNodePrime == 0 )
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"gate");
+            if ( here->BSIM4v7rgateMod > 0 )
+            {   if ( here->BSIM4v7gNodePrime == 0 )
+            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"gate");
                 if(error) return(error);
-                   here->BSIM4gNodePrime = tmp->number;
+                   here->BSIM4v7gNodePrime = tmp->number;
                 if (ckt->CKTcopyNodesets) {
                   CKTnode *tmpNode;
                   IFuid tmpName;
@@ -2416,30 +2416,30 @@ BSIM4instance **InstArray;
             }
             }
             else
-                here->BSIM4gNodePrime = here->BSIM4gNodeExt;
+                here->BSIM4v7gNodePrime = here->BSIM4v7gNodeExt;
 
-            if ( here->BSIM4rgateMod == 3 )
-            {   if ( here->BSIM4gNodeMid == 0 )
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"midgate");
+            if ( here->BSIM4v7rgateMod == 3 )
+            {   if ( here->BSIM4v7gNodeMid == 0 )
+            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"midgate");
                 if(error) return(error);
-                   here->BSIM4gNodeMid = tmp->number;
+                   here->BSIM4v7gNodeMid = tmp->number;
             }
             }
             else
-                here->BSIM4gNodeMid = here->BSIM4gNodeExt;
+                here->BSIM4v7gNodeMid = here->BSIM4v7gNodeExt;
             
 
             /* internal body nodes for body resistance model */
-            if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
-            {   if (here->BSIM4dbNode == 0)
-                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"dbody");
+            if ((here->BSIM4v7rbodyMod ==1) || (here->BSIM4v7rbodyMod ==2))
+            {   if (here->BSIM4v7dbNode == 0)
+                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"dbody");
                     if(error) return(error);
-                    here->BSIM4dbNode = tmp->number;
+                    here->BSIM4v7dbNode = tmp->number;
                 }
-                if (here->BSIM4bNodePrime == 0)
-                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"body");
+                if (here->BSIM4v7bNodePrime == 0)
+                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"body");
                     if(error) return(error);
-                    here->BSIM4bNodePrime = tmp->number;
+                    here->BSIM4v7bNodePrime = tmp->number;
                     if (ckt->CKTcopyNodesets) {
                       CKTnode *tmpNode;
                       IFuid tmpName;
@@ -2451,26 +2451,26 @@ BSIM4instance **InstArray;
                       }
                     }
                 }
-                if (here->BSIM4sbNode == 0)
-                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"sbody");
+                if (here->BSIM4v7sbNode == 0)
+                {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"sbody");
                     if(error) return(error);
-                    here->BSIM4sbNode = tmp->number;
+                    here->BSIM4v7sbNode = tmp->number;
                 }
             }
             else
-                here->BSIM4dbNode = here->BSIM4bNodePrime = here->BSIM4sbNode
-                                  = here->BSIM4bNode;
+                here->BSIM4v7dbNode = here->BSIM4v7bNodePrime = here->BSIM4v7sbNode
+                                  = here->BSIM4v7bNode;
 
             /* NQS node */
-            if ( here->BSIM4trnqsMod )
-            {   if ( here->BSIM4qNode == 0 ) 
-            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
+            if ( here->BSIM4v7trnqsMod )
+            {   if ( here->BSIM4v7qNode == 0 ) 
+            {   error = CKTmkVolt(ckt,&tmp,here->BSIM4v7name,"charge");
                 if(error) return(error);
-                here->BSIM4qNode = tmp->number;
+                here->BSIM4v7qNode = tmp->number;
             }
             }
             else 
-                here->BSIM4qNode = 0;
+                here->BSIM4v7qNode = 0;
       
 
 /* set Sparse Matrix Pointers 
@@ -2480,126 +2480,126 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(BSIM4DPbpPtr, BSIM4dNodePrime, BSIM4bNodePrime);
-            TSTALLOC(BSIM4GPbpPtr, BSIM4gNodePrime, BSIM4bNodePrime);
-            TSTALLOC(BSIM4SPbpPtr, BSIM4sNodePrime, BSIM4bNodePrime);
+            TSTALLOC(BSIM4v7DPbpPtr, BSIM4v7dNodePrime, BSIM4v7bNodePrime);
+            TSTALLOC(BSIM4v7GPbpPtr, BSIM4v7gNodePrime, BSIM4v7bNodePrime);
+            TSTALLOC(BSIM4v7SPbpPtr, BSIM4v7sNodePrime, BSIM4v7bNodePrime);
 
-            TSTALLOC(BSIM4BPdpPtr, BSIM4bNodePrime, BSIM4dNodePrime);
-            TSTALLOC(BSIM4BPgpPtr, BSIM4bNodePrime, BSIM4gNodePrime);
-            TSTALLOC(BSIM4BPspPtr, BSIM4bNodePrime, BSIM4sNodePrime);
-            TSTALLOC(BSIM4BPbpPtr, BSIM4bNodePrime, BSIM4bNodePrime);
+            TSTALLOC(BSIM4v7BPdpPtr, BSIM4v7bNodePrime, BSIM4v7dNodePrime);
+            TSTALLOC(BSIM4v7BPgpPtr, BSIM4v7bNodePrime, BSIM4v7gNodePrime);
+            TSTALLOC(BSIM4v7BPspPtr, BSIM4v7bNodePrime, BSIM4v7sNodePrime);
+            TSTALLOC(BSIM4v7BPbpPtr, BSIM4v7bNodePrime, BSIM4v7bNodePrime);
 
-            TSTALLOC(BSIM4DdPtr, BSIM4dNode, BSIM4dNode);
-            TSTALLOC(BSIM4GPgpPtr, BSIM4gNodePrime, BSIM4gNodePrime);
-            TSTALLOC(BSIM4SsPtr, BSIM4sNode, BSIM4sNode);
-            TSTALLOC(BSIM4DPdpPtr, BSIM4dNodePrime, BSIM4dNodePrime);
-            TSTALLOC(BSIM4SPspPtr, BSIM4sNodePrime, BSIM4sNodePrime);
-            TSTALLOC(BSIM4DdpPtr, BSIM4dNode, BSIM4dNodePrime);
-            TSTALLOC(BSIM4GPdpPtr, BSIM4gNodePrime, BSIM4dNodePrime);
-            TSTALLOC(BSIM4GPspPtr, BSIM4gNodePrime, BSIM4sNodePrime);
-            TSTALLOC(BSIM4SspPtr, BSIM4sNode, BSIM4sNodePrime);
-            TSTALLOC(BSIM4DPspPtr, BSIM4dNodePrime, BSIM4sNodePrime);
-            TSTALLOC(BSIM4DPdPtr, BSIM4dNodePrime, BSIM4dNode);
-            TSTALLOC(BSIM4DPgpPtr, BSIM4dNodePrime, BSIM4gNodePrime);
-            TSTALLOC(BSIM4SPgpPtr, BSIM4sNodePrime, BSIM4gNodePrime);
-            TSTALLOC(BSIM4SPsPtr, BSIM4sNodePrime, BSIM4sNode);
-            TSTALLOC(BSIM4SPdpPtr, BSIM4sNodePrime, BSIM4dNodePrime);
+            TSTALLOC(BSIM4v7DdPtr, BSIM4v7dNode, BSIM4v7dNode);
+            TSTALLOC(BSIM4v7GPgpPtr, BSIM4v7gNodePrime, BSIM4v7gNodePrime);
+            TSTALLOC(BSIM4v7SsPtr, BSIM4v7sNode, BSIM4v7sNode);
+            TSTALLOC(BSIM4v7DPdpPtr, BSIM4v7dNodePrime, BSIM4v7dNodePrime);
+            TSTALLOC(BSIM4v7SPspPtr, BSIM4v7sNodePrime, BSIM4v7sNodePrime);
+            TSTALLOC(BSIM4v7DdpPtr, BSIM4v7dNode, BSIM4v7dNodePrime);
+            TSTALLOC(BSIM4v7GPdpPtr, BSIM4v7gNodePrime, BSIM4v7dNodePrime);
+            TSTALLOC(BSIM4v7GPspPtr, BSIM4v7gNodePrime, BSIM4v7sNodePrime);
+            TSTALLOC(BSIM4v7SspPtr, BSIM4v7sNode, BSIM4v7sNodePrime);
+            TSTALLOC(BSIM4v7DPspPtr, BSIM4v7dNodePrime, BSIM4v7sNodePrime);
+            TSTALLOC(BSIM4v7DPdPtr, BSIM4v7dNodePrime, BSIM4v7dNode);
+            TSTALLOC(BSIM4v7DPgpPtr, BSIM4v7dNodePrime, BSIM4v7gNodePrime);
+            TSTALLOC(BSIM4v7SPgpPtr, BSIM4v7sNodePrime, BSIM4v7gNodePrime);
+            TSTALLOC(BSIM4v7SPsPtr, BSIM4v7sNodePrime, BSIM4v7sNode);
+            TSTALLOC(BSIM4v7SPdpPtr, BSIM4v7sNodePrime, BSIM4v7dNodePrime);
 
-            TSTALLOC(BSIM4QqPtr, BSIM4qNode, BSIM4qNode);
-            TSTALLOC(BSIM4QbpPtr, BSIM4qNode, BSIM4bNodePrime) ;
-            TSTALLOC(BSIM4QdpPtr, BSIM4qNode, BSIM4dNodePrime);
-            TSTALLOC(BSIM4QspPtr, BSIM4qNode, BSIM4sNodePrime);
-            TSTALLOC(BSIM4QgpPtr, BSIM4qNode, BSIM4gNodePrime);
-            TSTALLOC(BSIM4DPqPtr, BSIM4dNodePrime, BSIM4qNode);
-            TSTALLOC(BSIM4SPqPtr, BSIM4sNodePrime, BSIM4qNode);
-            TSTALLOC(BSIM4GPqPtr, BSIM4gNodePrime, BSIM4qNode);
+            TSTALLOC(BSIM4v7QqPtr, BSIM4v7qNode, BSIM4v7qNode);
+            TSTALLOC(BSIM4v7QbpPtr, BSIM4v7qNode, BSIM4v7bNodePrime) ;
+            TSTALLOC(BSIM4v7QdpPtr, BSIM4v7qNode, BSIM4v7dNodePrime);
+            TSTALLOC(BSIM4v7QspPtr, BSIM4v7qNode, BSIM4v7sNodePrime);
+            TSTALLOC(BSIM4v7QgpPtr, BSIM4v7qNode, BSIM4v7gNodePrime);
+            TSTALLOC(BSIM4v7DPqPtr, BSIM4v7dNodePrime, BSIM4v7qNode);
+            TSTALLOC(BSIM4v7SPqPtr, BSIM4v7sNodePrime, BSIM4v7qNode);
+            TSTALLOC(BSIM4v7GPqPtr, BSIM4v7gNodePrime, BSIM4v7qNode);
 
-            if (here->BSIM4rgateMod != 0)
-            {   TSTALLOC(BSIM4GEgePtr, BSIM4gNodeExt, BSIM4gNodeExt);
-                TSTALLOC(BSIM4GEgpPtr, BSIM4gNodeExt, BSIM4gNodePrime);
-                TSTALLOC(BSIM4GPgePtr, BSIM4gNodePrime, BSIM4gNodeExt);
-                TSTALLOC(BSIM4GEdpPtr, BSIM4gNodeExt, BSIM4dNodePrime);
-                TSTALLOC(BSIM4GEspPtr, BSIM4gNodeExt, BSIM4sNodePrime);
-                TSTALLOC(BSIM4GEbpPtr, BSIM4gNodeExt, BSIM4bNodePrime);
+            if (here->BSIM4v7rgateMod != 0)
+            {   TSTALLOC(BSIM4v7GEgePtr, BSIM4v7gNodeExt, BSIM4v7gNodeExt);
+                TSTALLOC(BSIM4v7GEgpPtr, BSIM4v7gNodeExt, BSIM4v7gNodePrime);
+                TSTALLOC(BSIM4v7GPgePtr, BSIM4v7gNodePrime, BSIM4v7gNodeExt);
+                TSTALLOC(BSIM4v7GEdpPtr, BSIM4v7gNodeExt, BSIM4v7dNodePrime);
+                TSTALLOC(BSIM4v7GEspPtr, BSIM4v7gNodeExt, BSIM4v7sNodePrime);
+                TSTALLOC(BSIM4v7GEbpPtr, BSIM4v7gNodeExt, BSIM4v7bNodePrime);
 
-                TSTALLOC(BSIM4GMdpPtr, BSIM4gNodeMid, BSIM4dNodePrime);
-                TSTALLOC(BSIM4GMgpPtr, BSIM4gNodeMid, BSIM4gNodePrime);
-                TSTALLOC(BSIM4GMgmPtr, BSIM4gNodeMid, BSIM4gNodeMid);
-                TSTALLOC(BSIM4GMgePtr, BSIM4gNodeMid, BSIM4gNodeExt);
-                TSTALLOC(BSIM4GMspPtr, BSIM4gNodeMid, BSIM4sNodePrime);
-                TSTALLOC(BSIM4GMbpPtr, BSIM4gNodeMid, BSIM4bNodePrime);
-                TSTALLOC(BSIM4DPgmPtr, BSIM4dNodePrime, BSIM4gNodeMid);
-                TSTALLOC(BSIM4GPgmPtr, BSIM4gNodePrime, BSIM4gNodeMid);
-                TSTALLOC(BSIM4GEgmPtr, BSIM4gNodeExt, BSIM4gNodeMid);
-                TSTALLOC(BSIM4SPgmPtr, BSIM4sNodePrime, BSIM4gNodeMid);
-                TSTALLOC(BSIM4BPgmPtr, BSIM4bNodePrime, BSIM4gNodeMid);
+                TSTALLOC(BSIM4v7GMdpPtr, BSIM4v7gNodeMid, BSIM4v7dNodePrime);
+                TSTALLOC(BSIM4v7GMgpPtr, BSIM4v7gNodeMid, BSIM4v7gNodePrime);
+                TSTALLOC(BSIM4v7GMgmPtr, BSIM4v7gNodeMid, BSIM4v7gNodeMid);
+                TSTALLOC(BSIM4v7GMgePtr, BSIM4v7gNodeMid, BSIM4v7gNodeExt);
+                TSTALLOC(BSIM4v7GMspPtr, BSIM4v7gNodeMid, BSIM4v7sNodePrime);
+                TSTALLOC(BSIM4v7GMbpPtr, BSIM4v7gNodeMid, BSIM4v7bNodePrime);
+                TSTALLOC(BSIM4v7DPgmPtr, BSIM4v7dNodePrime, BSIM4v7gNodeMid);
+                TSTALLOC(BSIM4v7GPgmPtr, BSIM4v7gNodePrime, BSIM4v7gNodeMid);
+                TSTALLOC(BSIM4v7GEgmPtr, BSIM4v7gNodeExt, BSIM4v7gNodeMid);
+                TSTALLOC(BSIM4v7SPgmPtr, BSIM4v7sNodePrime, BSIM4v7gNodeMid);
+                TSTALLOC(BSIM4v7BPgmPtr, BSIM4v7bNodePrime, BSIM4v7gNodeMid);
             }        
 
-            if ((here->BSIM4rbodyMod ==1) || (here->BSIM4rbodyMod ==2))
-            {   TSTALLOC(BSIM4DPdbPtr, BSIM4dNodePrime, BSIM4dbNode);
-                TSTALLOC(BSIM4SPsbPtr, BSIM4sNodePrime, BSIM4sbNode);
+            if ((here->BSIM4v7rbodyMod ==1) || (here->BSIM4v7rbodyMod ==2))
+            {   TSTALLOC(BSIM4v7DPdbPtr, BSIM4v7dNodePrime, BSIM4v7dbNode);
+                TSTALLOC(BSIM4v7SPsbPtr, BSIM4v7sNodePrime, BSIM4v7sbNode);
 
-                TSTALLOC(BSIM4DBdpPtr, BSIM4dbNode, BSIM4dNodePrime);
-                TSTALLOC(BSIM4DBdbPtr, BSIM4dbNode, BSIM4dbNode);
-                TSTALLOC(BSIM4DBbpPtr, BSIM4dbNode, BSIM4bNodePrime);
-                TSTALLOC(BSIM4DBbPtr, BSIM4dbNode, BSIM4bNode);
+                TSTALLOC(BSIM4v7DBdpPtr, BSIM4v7dbNode, BSIM4v7dNodePrime);
+                TSTALLOC(BSIM4v7DBdbPtr, BSIM4v7dbNode, BSIM4v7dbNode);
+                TSTALLOC(BSIM4v7DBbpPtr, BSIM4v7dbNode, BSIM4v7bNodePrime);
+                TSTALLOC(BSIM4v7DBbPtr, BSIM4v7dbNode, BSIM4v7bNode);
 
-                TSTALLOC(BSIM4BPdbPtr, BSIM4bNodePrime, BSIM4dbNode);
-                TSTALLOC(BSIM4BPbPtr, BSIM4bNodePrime, BSIM4bNode);
-                TSTALLOC(BSIM4BPsbPtr, BSIM4bNodePrime, BSIM4sbNode);
+                TSTALLOC(BSIM4v7BPdbPtr, BSIM4v7bNodePrime, BSIM4v7dbNode);
+                TSTALLOC(BSIM4v7BPbPtr, BSIM4v7bNodePrime, BSIM4v7bNode);
+                TSTALLOC(BSIM4v7BPsbPtr, BSIM4v7bNodePrime, BSIM4v7sbNode);
 
-                TSTALLOC(BSIM4SBspPtr, BSIM4sbNode, BSIM4sNodePrime);
-                TSTALLOC(BSIM4SBbpPtr, BSIM4sbNode, BSIM4bNodePrime);
-                TSTALLOC(BSIM4SBbPtr, BSIM4sbNode, BSIM4bNode);
-                TSTALLOC(BSIM4SBsbPtr, BSIM4sbNode, BSIM4sbNode);
+                TSTALLOC(BSIM4v7SBspPtr, BSIM4v7sbNode, BSIM4v7sNodePrime);
+                TSTALLOC(BSIM4v7SBbpPtr, BSIM4v7sbNode, BSIM4v7bNodePrime);
+                TSTALLOC(BSIM4v7SBbPtr, BSIM4v7sbNode, BSIM4v7bNode);
+                TSTALLOC(BSIM4v7SBsbPtr, BSIM4v7sbNode, BSIM4v7sbNode);
 
-                TSTALLOC(BSIM4BdbPtr, BSIM4bNode, BSIM4dbNode);
-                TSTALLOC(BSIM4BbpPtr, BSIM4bNode, BSIM4bNodePrime);
-                TSTALLOC(BSIM4BsbPtr, BSIM4bNode, BSIM4sbNode);
-                TSTALLOC(BSIM4BbPtr, BSIM4bNode, BSIM4bNode);
+                TSTALLOC(BSIM4v7BdbPtr, BSIM4v7bNode, BSIM4v7dbNode);
+                TSTALLOC(BSIM4v7BbpPtr, BSIM4v7bNode, BSIM4v7bNodePrime);
+                TSTALLOC(BSIM4v7BsbPtr, BSIM4v7bNode, BSIM4v7sbNode);
+                TSTALLOC(BSIM4v7BbPtr, BSIM4v7bNode, BSIM4v7bNode);
             }
 
-            if (model->BSIM4rdsMod)
-            {   TSTALLOC(BSIM4DgpPtr, BSIM4dNode, BSIM4gNodePrime);
-                TSTALLOC(BSIM4DspPtr, BSIM4dNode, BSIM4sNodePrime);
-                TSTALLOC(BSIM4DbpPtr, BSIM4dNode, BSIM4bNodePrime);
-                TSTALLOC(BSIM4SdpPtr, BSIM4sNode, BSIM4dNodePrime);
-                TSTALLOC(BSIM4SgpPtr, BSIM4sNode, BSIM4gNodePrime);
-                TSTALLOC(BSIM4SbpPtr, BSIM4sNode, BSIM4bNodePrime);
+            if (model->BSIM4v7rdsMod)
+            {   TSTALLOC(BSIM4v7DgpPtr, BSIM4v7dNode, BSIM4v7gNodePrime);
+                TSTALLOC(BSIM4v7DspPtr, BSIM4v7dNode, BSIM4v7sNodePrime);
+                TSTALLOC(BSIM4v7DbpPtr, BSIM4v7dNode, BSIM4v7bNodePrime);
+                TSTALLOC(BSIM4v7SdpPtr, BSIM4v7sNode, BSIM4v7dNodePrime);
+                TSTALLOC(BSIM4v7SgpPtr, BSIM4v7sNode, BSIM4v7gNodePrime);
+                TSTALLOC(BSIM4v7SbpPtr, BSIM4v7sNode, BSIM4v7bNodePrime);
             }
         }
     }
 
 #ifdef USE_OMP
     InstCount = 0;
-    model = (BSIM4model*)inModel;
-    /* loop through all the BSIM4 device models 
+    model = (BSIM4v7model*)inModel;
+    /* loop through all the BSIM4v7 device models 
        to count the number of instances */
     
-    for( ; model != NULL; model = model->BSIM4nextModel )
+    for( ; model != NULL; model = model->BSIM4v7nextModel )
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+        for (here = model->BSIM4v7instances; here != NULL ;
+             here=here->BSIM4v7nextInstance) 
         { 
             InstCount++;
         }
     }
-    InstArray = TMALLOC(BSIM4instance*, InstCount);
-    model = (BSIM4model*)inModel;
+    InstArray = TMALLOC(BSIM4v7instance*, InstCount);
+    model = (BSIM4v7model*)inModel;
     idx = 0;
-    for( ; model != NULL; model = model->BSIM4nextModel )
+    for( ; model != NULL; model = model->BSIM4v7nextModel )
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+        for (here = model->BSIM4v7instances; here != NULL ;
+             here=here->BSIM4v7nextInstance) 
         { 
             InstArray[idx] = here;
             idx++;
         }
         /* set the array pointer and instance count into each model */
-        model->BSIM4InstCount = InstCount;
-        model->BSIM4InstanceArray = InstArray;		
+        model->BSIM4v7InstCount = InstCount;
+        model->BSIM4v7InstanceArray = InstArray;		
     }
 #endif
 
@@ -2607,31 +2607,31 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 }  
 
 int
-BSIM4unsetup(
+BSIM4v7unsetup(
 GENmodel *inModel,
 CKTcircuit *ckt)
 {
 #ifndef HAS_BATCHSIM
-    BSIM4model *model;
-    BSIM4instance *here;
+    BSIM4v7model *model;
+    BSIM4v7instance *here;
 
-    for (model = (BSIM4model *)inModel; model != NULL;
-            model = model->BSIM4nextModel)
+    for (model = (BSIM4v7model *)inModel; model != NULL;
+            model = model->BSIM4v7nextModel)
     {
-        for (here = model->BSIM4instances; here != NULL;
-                here=here->BSIM4nextInstance)
+        for (here = model->BSIM4v7instances; here != NULL;
+                here=here->BSIM4v7nextInstance)
         {
-            if (here->BSIM4dNodePrime
-                    && here->BSIM4dNodePrime != here->BSIM4dNode)
+            if (here->BSIM4v7dNodePrime
+                    && here->BSIM4v7dNodePrime != here->BSIM4v7dNode)
             {
-                CKTdltNNum(ckt, here->BSIM4dNodePrime);
-                here->BSIM4dNodePrime = 0;
+                CKTdltNNum(ckt, here->BSIM4v7dNodePrime);
+                here->BSIM4v7dNodePrime = 0;
             }
-            if (here->BSIM4sNodePrime
-                    && here->BSIM4sNodePrime != here->BSIM4sNode)
+            if (here->BSIM4v7sNodePrime
+                    && here->BSIM4v7sNodePrime != here->BSIM4v7sNode)
             {
-                CKTdltNNum(ckt, here->BSIM4sNodePrime);
-                here->BSIM4sNodePrime = 0;
+                CKTdltNNum(ckt, here->BSIM4v7sNodePrime);
+                here->BSIM4v7sNodePrime = 0;
             }
         }
     }

@@ -11,20 +11,20 @@
  **********/
 
 #include "ngspice/ngspice.h"
-#include "bsim4def.h"
+#include "bsim4v7def.h"
 #include "ngspice/suffix.h"
 
 void
-BSIM4destroy(
+BSIM4v7destroy(
     GENmodel **inModel)
 {
-    BSIM4model **model = (BSIM4model**)inModel;
-    BSIM4instance *here;
-    BSIM4instance *prev = NULL;
-    BSIM4model *mod = *model;
-    BSIM4model *oldmod = NULL;
+    BSIM4v7model **model = (BSIM4v7model**)inModel;
+    BSIM4v7instance *here;
+    BSIM4v7instance *prev = NULL;
+    BSIM4v7model *mod = *model;
+    BSIM4v7model *oldmod = NULL;
 
-    for (; mod ; mod = mod->BSIM4nextModel) {
+    for (; mod ; mod = mod->BSIM4v7nextModel) {
     /** added to get rid of link list pSizeDependParamKnot **/      
         struct bsim4SizeDependParam *pParam, *pParamOld=NULL;
 
@@ -38,12 +38,12 @@ BSIM4destroy(
         pParam = NULL;
      /** end of extra code **/
         if(oldmod) {
-            FREE(oldmod->BSIM4version);
+            FREE(oldmod->BSIM4v7version);
             FREE(oldmod);
         }
         oldmod = mod;
-        prev = (BSIM4instance *)NULL;
-        for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance) {
+        prev = (BSIM4v7instance *)NULL;
+        for (here = mod->BSIM4v7instances; here; here = here->BSIM4v7nextInstance) {
             if(prev) FREE(prev);
             prev = here;
         }
@@ -52,10 +52,10 @@ BSIM4destroy(
     if(oldmod) {
 #ifdef USE_OMP
         /* free just once for all models */
-        FREE(oldmod->BSIM4InstanceArray);
+        FREE(oldmod->BSIM4v7InstanceArray);
 #endif
-        /* oldmod->BSIM4modName to be freed in INPtabEnd() */
-        FREE(oldmod->BSIM4version);
+        /* oldmod->BSIM4v7modName to be freed in INPtabEnd() */
+        FREE(oldmod->BSIM4v7version);
         FREE(oldmod);
     }
     *model = NULL;

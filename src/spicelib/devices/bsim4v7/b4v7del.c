@@ -11,32 +11,32 @@
  **********/
 
 #include "ngspice/ngspice.h"
-#include "bsim4def.h"
+#include "bsim4v7def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/gendefs.h"
 #include "ngspice/suffix.h"
 
 
 int
-BSIM4delete(
+BSIM4v7delete(
 GENmodel *inModel,
 IFuid name,
 GENinstance **inInst)
 {
-BSIM4instance **fast = (BSIM4instance**)inInst;
-BSIM4model *model = (BSIM4model*)inModel;
-BSIM4instance **prev = NULL;
-BSIM4instance *here;
+BSIM4v7instance **fast = (BSIM4v7instance**)inInst;
+BSIM4v7model *model = (BSIM4v7model*)inModel;
+BSIM4v7instance **prev = NULL;
+BSIM4v7instance *here;
 
-    for (; model ; model = model->BSIM4nextModel) 
-    {    prev = &(model->BSIM4instances);
+    for (; model ; model = model->BSIM4v7nextModel) 
+    {    prev = &(model->BSIM4v7instances);
          for (here = *prev; here ; here = *prev) 
-	 {    if (here->BSIM4name == name || (fast && here==*fast))
-	      {   *prev= here->BSIM4nextInstance;
+	 {    if (here->BSIM4v7name == name || (fast && here==*fast))
+	      {   *prev= here->BSIM4v7nextInstance;
                   FREE(here);
                   return(OK);
               }
-              prev = &(here->BSIM4nextInstance);
+              prev = &(here->BSIM4v7nextInstance);
          }
     }
     return(E_NODEV);
