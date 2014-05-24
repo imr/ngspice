@@ -114,32 +114,30 @@ length(const char *s)
 /* -----------------------------------------------------------------
  * Function: add string t to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
-bool
+void
 sadd(SPICE_DSTRINGPTR dstr_p, const char *t)
 {
     spice_dstring_append(dstr_p, t, -1);
-    return 1;
 }
 
 
 /* -----------------------------------------------------------------
  * Function: add character c to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
-bool
+void
 cadd(SPICE_DSTRINGPTR dstr_p, char c)
 {
     char tmp_str[2];
     tmp_str[0] = c;
     tmp_str[1] = '\0';
     spice_dstring_append(dstr_p, tmp_str, -1);
-    return 1;
 }
 
 
 /* -----------------------------------------------------------------
  * Function: insert character c at front of dynamic string dstr_p
  * ----------------------------------------------------------------- */
-bool
+void
 cins(SPICE_DSTRINGPTR dstr_p, char c)
 {
     int i;
@@ -152,14 +150,13 @@ cins(SPICE_DSTRINGPTR dstr_p, char c)
     for (i = ls + 1; i >= 0; i--)
         s_p[i + 1] = s_p[i];
     s_p[0] = c;
-    return 1;
 }
 
 
 /* -----------------------------------------------------------------
  * Function: insert string t at front of dynamic string dstr_p
  * ----------------------------------------------------------------- */
-bool
+void
 sins(SPICE_DSTRINGPTR dstr_p, const char *t)
 {
     int i;
@@ -176,7 +173,6 @@ sins(SPICE_DSTRINGPTR dstr_p, const char *t)
 
     for (i = 0; i < lt; i++)
         s_p[i] = t[i];
-    return 1;
 }
 
 
@@ -225,12 +221,11 @@ scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)  /* returns success flag */
  * Create copy of the string in the dynamic string.  Dynamic strings
  * are always NULLterminated.
  * ----------------------------------------------------------------- */
-bool
+void
 scopys(SPICE_DSTRINGPTR s, const char *t)     /* returns success flag */
 {
     spice_dstring_reinit(s);
     spice_dstring_append(s, t, -1);
-    return 1; /* Dstrings expand to any length */
 }
 
 
@@ -238,7 +233,7 @@ scopys(SPICE_DSTRINGPTR s, const char *t)     /* returns success flag */
  * Create an upper case copy of a string and store it in a dynamic string.
  * Dynamic strings are always NULL * terminated.
  * ----------------------------------------------------------------- */
-bool
+void
 scopy_up(SPICE_DSTRINGPTR dstr_p, const char *str)    /* returns success flag */
 {
     char up[2];                 /* short string */
@@ -250,7 +245,6 @@ scopy_up(SPICE_DSTRINGPTR dstr_p, const char *str)    /* returns success flag */
         up[0] = upcase(*ptr);
         spice_dstring_append(dstr_p, up, 1);
     }
-    return 1; /* Dstrings expand to any length */
 }
 
 
@@ -258,7 +252,7 @@ scopy_up(SPICE_DSTRINGPTR dstr_p, const char *str)    /* returns success flag */
  * Create a lower case copy of a string and store it in a dynamic string.
  * Dynamic strings are always NULL * terminated.
  * ----------------------------------------------------------------- */
-bool
+void
 scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
 {
     char low[2];                /* short string */
@@ -270,11 +264,10 @@ scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
         low[0] = lowcase(*ptr);
         spice_dstring_append(dstr_p, low, 1);
     }
-    return 1; /* Dstrings expand to any length */
 }
 
 
-bool
+void
 ccopy(SPICE_DSTRINGPTR dstr_p, char c)  /* returns success flag */
 {
     char *s_p;                  /* current string */
@@ -282,7 +275,6 @@ ccopy(SPICE_DSTRINGPTR dstr_p, char c)  /* returns success flag */
     sfix(dstr_p, 1);
     s_p = spice_dstring_value(dstr_p);
     s_p[0] = c;
-    return 1;
 }
 
 
@@ -359,7 +351,7 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 }
 
 
-bool
+void
 nadd(SPICE_DSTRINGPTR dstr_p, long n)
 /* append a decimal integer to a string */
 {
@@ -395,12 +387,10 @@ nadd(SPICE_DSTRINGPTR dstr_p, long n)
             spice_dstring_append(dstr_p, load_str, 1);
         }
     }
-
-    return 1;
 }
 
 
-bool
+void
 naddll(SPICE_DSTRINGPTR dstr_p, long long n)
 /* append a decimal integer (but a long long) to a string */
 {
@@ -436,8 +426,6 @@ naddll(SPICE_DSTRINGPTR dstr_p, long long n)
             spice_dstring_append(dstr_p, load_str, 1);
         }
     }
-
-    return 1;
 }
 
 
