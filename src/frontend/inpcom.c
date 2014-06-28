@@ -3847,11 +3847,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                             end--;
                     }
                     *str_ptr = '\0';
-                    if (*end != '\0') {
-                        new_str = tprintf("%s{%s}%s", curr_line, param_names[i], end);
-                    } else {
-                        new_str = tprintf("%s{%s}", curr_line, param_names[i]);
-                    }
+                    new_str = tprintf("%s{%s}%s", curr_line, param_names[i], end);
                     str_ptr = new_str + strlen(curr_line) + strlen(param_names[i]);
 
                     tfree(ptr->li_line);
