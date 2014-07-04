@@ -4178,13 +4178,13 @@ b_transformation_wanted(const char *p)
     for (p = start; (p = strpbrk(p, "vith")) != NULL; p++) {
         if (p > start && identifier_char(p[-1]))
             continue;
-        if (strcmp(p, "v(") == 0 || strcmp(p, "i(") == 0)
+        if (strncmp(p, "v(", 2) == 0 || strncmp(p, "i(", 2) == 0)
             return TRUE;
-        if (strcmp(p, "temper") == 0 && !identifier_char(p[6]))
+        if (strncmp(p, "temper", 6) == 0 && !identifier_char(p[6]))
             return TRUE;
-        if (strcmp(p, "hertz") == 0 && !identifier_char(p[5]))
+        if (strncmp(p, "hertz", 5) == 0 && !identifier_char(p[5]))
             return TRUE;
-        if (strcmp(p, "time") == 0 && !identifier_char(p[4]))
+        if (strncmp(p, "time", 4) == 0 && !identifier_char(p[4]))
             return TRUE;
     }
 
