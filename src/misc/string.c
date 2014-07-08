@@ -647,8 +647,7 @@ isquote( char ch )
 bool
 is_arith_char( char c )
 {
-  if ( c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == '<' ||
-       c == '>' || c == '?' || c == '|' || c == '&' || c == '^')
+  if (c != '\0' && strchr("+-*/()<>?:|&^!%\\", c))
     return TRUE;
   else
     return FALSE;

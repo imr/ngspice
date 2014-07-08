@@ -1,0 +1,124 @@
+* 'func-1' check .func processing
+
+* (exec-spice "ngspice -b %s")
+* (tests-aux-renumber)
+
+
+* ----------------------------------------
+*   introduce some nodenames and instancenames
+*     intentionally meant to collide with parameter names
+
+vncol1  n 0  101.0
+vncol2  p 0  102.0
+vncol3  x 0  103.0
+
+vp  1 0  105.0
+rp  1 0  1.0
+
+* ----------------------------------------
+* arbitrary tests
+
+.func foo0()  '1013.0'
+
+v1001_t  n1001_t 0  '100*foo0()'
+v1001_g  n1001_g 0  '101300.0'
+
+.func bar1(p) 'p'
+
+v1002_t  n1002_t 0  'bar1(117.0)'
+v1003_t  n1003_t 0  '2*bar1(117.0+2.0)'
+
+v1002_g  n1002_g 0  '117.0'
+v1003_g  n1003_g 0  '238.0'
+
+.func bar2(p) 'v(p)+p'
+
+b1004_t  n1004_t 0  v = 'bar2(17.0)'
+v1004_g  n1004_g 0  '119.0'
+
+.func bar3(p) 'p+v(p)'
+
+b1005_t  n1005_t 0  v = 'bar3(17.0)'
+v1005_g  n1005_g 0  '119.0'
+
+.func bar4(p) 'p+v(p)+p'
+
+b1006_t  n1006_t 0  v = 'bar4(17.0)'
+v1006_g  n1006_g 0  '136.0'
+
+.func baz1(n,vp) 'n+i(vp)+vp'
+
+b1007_t  n1007_t 0  v = 'baz1(17.0,10000)'
+v1007_g  n1007_g 0  '9912'
+
+.func baz2(p,n)  'v(p)+p+v(n)'
+
+b1008_t  n1008_t 0  v = 'baz2(1000.0,1e20)'
+v1008_g  n1008_g 0  '1203.0'
+
+.func baz3(x)  'x+x'
+
+v1009_t  n1009_t 0  '17*baz3(100.0)'
+v1009_g  n1009_g 0  '3400.0'
+
+.func moo1(x,p,n) 'x<p?p:n'
+v1010_t  n1010_t 0  '10*moo1(2,3,5)'
+v1010_g  n1010_g 0  '30'
+
+v1011_t  n1011_t 0  '10*moo1(4,3,5)'
+v1011_g  n1011_g 0  '50'
+
+.func moo2(x,p,n) 'x<p?p:x>n?n:x'
+v1012_t  n1012_t 0  '10*moo2(4,3,5)*100'
+v1012_g  n1012_g 0  '4000'
+
+v1013_t  n1013_t 0  '10*moo2(2,3,5)*100'
+v1013_g  n1013_g 0  '3000'
+
+v1014_t  n1014_t 0  '10*moo2(6,3,5)*100'
+v1014_g  n1014_g 0  '5000'
+
+* ----------------------------------------
+
+.param xoo = 100
+.func fun1(a, xoo) 'a*xoo'
+
+v1015_t  n1015_t 0  'fun1(xoo,2)'
+v1015_g  n1015_g 0  '200'
+
+* ----------------------------------------
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+let total_count = 0
+let fail_count = 0
+
+let tests = 1001 + vector(15)
+
+foreach n $&tests
+  set n_test = "n{$n}_t"
+  set n_gold = "n{$n}_g"
+  if mismatch(v($n_test), v($n_gold), 1e-9)
+    let v_test = v($n_test)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, v($n_test) = $&v_test but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end

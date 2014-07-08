@@ -75,6 +75,7 @@ struct function_env
         char *macro;
         char *params[N_PARAMS];
         int   num_parameters;
+        const char *accept;
     } *functions;
 };
 
@@ -2888,6 +2889,17 @@ inp_get_func_from_line(struct function_env *env, char *line)
     temp_buf[str_len++] = '\0';
 
     function->macro = strdup(temp_buf);
+
+    {
+        int i;
+
+        char *accept = TMALLOC(char, function->num_parameters + 1);
+        for (i = 0; i < function->num_parameters; i++)
+            accept[i] = function->params[i][0];
+        accept[i] = '\0';
+
+        function->accept = accept;
+    }
 }
 
 
@@ -2925,115 +2937,100 @@ inp_grab_func(struct function_env *env, struct line *c)
 
 
 static char*
-inp_do_macro_param_replace(struct function *fcn, char *params[])
+search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
 {
-    char *param_ptr, *curr_ptr, *new_str, *curr_str = NULL, *search_ptr;
-    char keep, before, after;
-    int  i;
+    for (; (str = strpbrk(str, fcn->accept)) != NULL; str++) {
+        char before;
 
-    if (fcn->num_parameters == 0)
-        return strdup(fcn->macro);
+        if (str > str_begin)
+            before = str[-1];
+        else
+            before = '\0';
 
-    for (i = 0; i < fcn->num_parameters; i++) {
-
-        if (curr_str == NULL) {
-            search_ptr = curr_ptr = strdup(fcn->macro);
-        } else {
-            search_ptr = curr_ptr = curr_str;
-            curr_str = NULL;
-        }
-
-        while ((param_ptr = strstr(search_ptr, fcn->params[i])) != NULL) {
-            char *op_ptr = NULL, *cp_ptr = NULL;
-            int is_vi = 0;
-
-            /* make sure actually have the parameter name */
-            if (param_ptr == search_ptr) /* no valid 'before' */
-                before = '\0';
-            else
-                before = *(param_ptr-1);
-            after  = param_ptr [ strlen(fcn->params[i]) ];
-            if (!(is_arith_char(before) || isspace(before) ||
-                  before == ',' || before == '=' || (param_ptr-1) < curr_ptr) ||
-                !(is_arith_char(after) || isspace(after) ||
-                  after == ',' || after  == '=' || after  == '\0'))
-            {
-                search_ptr = param_ptr + 1;
-                continue;
-            }
-
-            /* exclude v(nn, parameter), v(parameter, nn), v(parameter),
-            and i(parameter) if here 'parameter' is also a node name */
-            if (before != '\0') {
-                /* go backwards from 'parameter' and find '(' */
-                for (op_ptr = param_ptr-1; op_ptr > curr_ptr; op_ptr--) {
-                    if (*op_ptr == ')') {
-                        is_vi = 0;
-                        break;
-                    }
-                    if ((*op_ptr == '(') && (op_ptr - 2 > curr_ptr) &&
-                       ((*(op_ptr - 1) == 'v') || (*(op_ptr - 1) == 'i')) &&
-                       (is_arith_char(*(op_ptr - 2)) || isspace(*(op_ptr - 2)) ||
-                       *(op_ptr - 2) == ',' || *(op_ptr - 2) == '=' )) {
-                        is_vi = 1;
-                        break;
+        if (is_arith_char(before) || isspace(before) || strchr(",=", before)) {
+            int i;
+            for (i = 0; i < fcn->num_parameters; i++) {
+                size_t len = strlen(fcn->params[i]);
+                if (strncmp(str, fcn->params[i], len) == 0) {
+                    char after = str[len];
+                    if (is_arith_char(after) || isspace(after) || strchr(",=", after)) {
+                        *which = i;
+                        return str;
                     }
                 }
-                /* We have a true v( or i( */
-                if (is_vi) {
-                    cp_ptr = param_ptr;
-                    /* go forward and find closing ')' */
-                    while (*cp_ptr) {
-                       cp_ptr++;
-                       if (*cp_ptr == '(') {
-                           is_vi = 0;
-                           break;
-                       }
-                       if (*cp_ptr == ')')
-                           break;
-                    }
-                    if (*cp_ptr == '\0')
-                        is_vi = 0;
-                }
-                /* We have a true v(...) or i(...),
-                   so skip it, and continue searching for new 'parameter' */
-                if (is_vi) {
-                    search_ptr = cp_ptr;
-                    continue;
-                }
-            }
-
-            keep       = *param_ptr;
-            *param_ptr = '\0';
-
-            {
-                size_t curr_str_len = curr_str ? strlen(curr_str) : 0;
-                size_t len = strlen(curr_ptr) + strlen(params[i]) + 1;
-                if (str_has_arith_char(params[i])) {
-                    curr_str = TREALLOC(char, curr_str, curr_str_len + len + 2);
-                    sprintf(curr_str + curr_str_len, "%s(%s)", curr_ptr, params[i]);
-                } else {
-                    curr_str = TREALLOC(char, curr_str, curr_str_len + len);
-                    sprintf(curr_str + curr_str_len, "%s%s", curr_ptr, params[i]);
-                }
-            }
-
-            *param_ptr = keep;
-            search_ptr = curr_ptr = param_ptr + strlen(fcn->params[i]);
-        }
-
-        if (param_ptr == NULL) {
-            if (curr_str == NULL) {
-                curr_str = curr_ptr;
-            } else {
-                new_str = tprintf("%s%s", curr_str, curr_ptr);
-                tfree(curr_str);
-                curr_str = new_str;
             }
         }
     }
 
-    return curr_str;
+    return NULL;
+}
+
+
+static char*
+inp_do_macro_param_replace(struct function *fcn, char *params[])
+{
+    char *str = strdup(fcn->macro);
+    int  i;
+
+    char *collect_ptr = NULL;
+    char *arg_ptr = str;
+    char *rest = str;
+
+    while ((arg_ptr = search_func_arg(arg_ptr, fcn, &i, str)) != NULL) {
+        char *p;
+        int is_vi = 0;
+
+        /* exclude v(nn, parameter), v(parameter, nn), v(parameter),
+           and i(parameter) if here 'parameter' is also a node name */
+
+        /* go backwards from 'parameter' and find '(' */
+        for (p = arg_ptr; --p > str; )
+            if (*p == '(' || *p == ')') {
+                if ((*p == '(') && strchr("vi", p[-1]) &&
+                    (p - 2 < str || is_arith_char(p[-2]) || isspace(p[-2]) || strchr(",=", p[-2])))
+                    is_vi = 1;
+                break;
+            }
+
+        /* if we have a true v( or i( */
+        if (is_vi) {
+            /* go forward and find closing ')' */
+            for (p = arg_ptr + 1; *p; p++)
+                if (*p == '(' || *p == ')')
+                    break;
+            /* We have a true v(...) or i(...),
+               so skip it, and continue searching for new 'parameter' */
+            if (*p == ')') {
+                arg_ptr = p;
+                continue;
+            }
+        }
+
+        {
+            size_t collect_ptr_len = collect_ptr ? strlen(collect_ptr) : 0;
+            size_t len = strlen(rest) + strlen(params[i]) + 1;
+            int prefix_len = (int) (arg_ptr - rest);
+            if (str_has_arith_char(params[i])) {
+                collect_ptr = TREALLOC(char, collect_ptr, collect_ptr_len + len + 2);
+                sprintf(collect_ptr + collect_ptr_len, "%.*s(%s)", prefix_len, rest, params[i]);
+            } else {
+                collect_ptr = TREALLOC(char, collect_ptr, collect_ptr_len + len);
+                sprintf(collect_ptr + collect_ptr_len, "%.*s%s", prefix_len, rest, params[i]);
+            }
+        }
+
+        arg_ptr += strlen(fcn->params[i]);
+        rest = arg_ptr;
+    }
+
+    if (collect_ptr) {
+        char *new_str = tprintf("%s%s", collect_ptr, rest);
+        tfree(collect_ptr);
+        tfree(str);
+        str = new_str;
+    }
+
+    return str;
 }
 
 
