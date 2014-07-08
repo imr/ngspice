@@ -6218,6 +6218,7 @@ inp_fix_temper_in_param(struct line *deck)
                 while ((*beg_tstr) != '=')
                     beg_tstr--;
                 beg_pstr = beg_tstr;
+                beg_pstr--;
                 /* go back over param name */
                 while(isspace(*beg_pstr))
                     beg_pstr--;
