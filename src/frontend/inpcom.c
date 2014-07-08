@@ -6217,25 +6217,17 @@ inp_fix_temper_in_param(struct line *deck)
                 */
                 while ((*beg_tstr) != '=')
                     beg_tstr--;
-                beg_pstr = beg_tstr;
-                beg_pstr--;
                 /* go back over param name */
-                while(isspace(*beg_pstr))
-                    beg_pstr--;
-                while(!isspace(*beg_pstr))
-                    beg_pstr--;
+                beg_pstr = skip_back_non_ws(skip_back_ws(beg_tstr));
                 /* get function name from parameter name */
-                funcname = copy_substring(beg_pstr + 1, beg_tstr);
+                funcname = copy_substring(beg_pstr, beg_tstr);
                 /* find end of function body */
                 while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
                     end_tstr++;
                 /* go back over next param name */
                 if (*end_tstr == '=') {
+                    end_tstr = skip_back_non_ws(skip_back_ws(end_tstr));
                     end_tstr--;
-                    while(isspace(*end_tstr))
-                        end_tstr--;
-                    while(!isspace(*end_tstr))
-                        end_tstr--;
                 }
 
                 funcbody = copy_substring(beg_tstr + 1, end_tstr);
