@@ -4368,7 +4368,7 @@ inp_compat(struct line *card)
                 /* check for max-min and take half the difference for delta */
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
-                if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
+                if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
@@ -4551,7 +4551,7 @@ inp_compat(struct line *card)
                 /* check for max-min and take half the difference for delta */
                 delta = (lnumber-fnumber)/2.;
                 lastlastno = gettok_node(&cut_line);
-                if (!secondno || (*midline == 0) || (delta <= 0.) || !lastlastno) {
+                if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
@@ -6373,7 +6373,7 @@ inp_fix_temper_in_param(struct line *deck)
                     state = (*chp) && (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
                     if (!state) {
                         ch = *chp;
-                        *chp = 0;
+                        *chp = '\0';
                         if (strcmp(var_name, new_func->funcname) == 0 && ch != '(') {
                             new_str = INPstrCat(new_str, copy(chp_start), "");
                             new_str = INPstrCat(new_str, copy("()"), "");
