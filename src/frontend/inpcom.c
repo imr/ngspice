@@ -5951,33 +5951,29 @@ get_quoted_token(char *string, char **token)
 static void
 inp_add_series_resistor(struct line *deck)
 {
-    size_t skip_control = 0, i;
-    bool has_rseries = FALSE;
+    int skip_control = 0;
     struct line *card;
-    char *tmp_p, *title_tok, *node1, *node2, *rval = NULL;
-    char *ckt_array[10];
-    struct line  *param_end = NULL, *param_beg = NULL;
+    char *rval = NULL;
 
     for (card = deck; card; card = card->li_next) {
         char *curr_line = card->li_line;
-        if (*curr_line == '*')
-            continue;
-        if (strstr(curr_line, "option") && strstr(curr_line, "rseries"))
-            has_rseries = TRUE;
-        else
-            continue;
-        tmp_p = strstr(curr_line, "rseries");
-        tmp_p += 7;
-        /* default to "1e-3" if no value given */
-        if (ciprefix("=", tmp_p)) {
-            tmp_p = strchr(tmp_p, '=') + 1;
-            rval = gettok(&tmp_p);
+        if (*curr_line != '*' && strstr(curr_line, "option")) {
+            char *t = strstr(curr_line, "rseries");
+            if (t) {
+                tfree(rval);
+
+                t += 7;
+                if (*t++ == '=')
+                    rval = gettok(&t);
+
+                /* default to "1e-3" if no value given */
+                if (!rval)
+                    rval = copy("1e-3");
+            }
         }
-        else
-            rval = copy("1e-3");
     }
 
-    if (!has_rseries || !rval)
+    if (!rval)
         return;
 
     fprintf(stdout,
@@ -5985,49 +5981,38 @@ inp_add_series_resistor(struct line *deck)
             "resistor %s Ohms added in series to each inductor L\n\n", rval);
 
     for (card = deck; card; card = card->li_next) {
-        char *cut_line;
-        char *curr_line = cut_line = card->li_line;
+        char *cut_line = card->li_line;
 
         /* exclude any command inside .control ... .endc */
-        if (ciprefix(".control", curr_line)) {
+        if (ciprefix(".control", cut_line)) {
             skip_control ++;
             continue;
-        } else if (ciprefix(".endc", curr_line)) {
+        } else if (ciprefix(".endc", cut_line)) {
             skip_control --;
             continue;
         } else if (skip_control > 0) {
             continue;
         }
 
-        if (ciprefix("l", curr_line)) {
-            title_tok = gettok(&cut_line);
-            node1 =  gettok(&cut_line);
-            node2 =  gettok(&cut_line);
-            /* new L line */
-            ckt_array[0] = tprintf("%s %s %s_intern__ %s",
-                    title_tok, node1, node2, cut_line);
-            /* new R line */
-            ckt_array[1] = tprintf("R%s_intern__ %s_intern__ %s %s",
-                    title_tok, node2, node2, rval);
-            /* assemble new L and R lines */
-            for (i = 0; i < 2; i++) {
-                struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
+        if (ciprefix("l", cut_line)) {
 
-                if (param_end)
-                    param_end->li_next = x;
-                else
-                    param_beg = x;
+            char *title_tok = gettok(&cut_line);
+            char *node1 = gettok(&cut_line);
+            char *node2 = gettok(&cut_line);
 
-                param_end = x;
-            }
+            /* new L line and new R line */
+            char *newL = tprintf("%s %s %s_intern__ %s", title_tok, node1, node2, cut_line);
+            char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok, node2, node2, rval);
+
+            struct line *d;
+
             // comment out current L line
-            *(card->li_line)   = '*';
             // insert new new L and R lines immediately after current line
-            param_end->li_next = card->li_next;
-            card->li_next      = param_beg;
-            // point 'card' pointer to last in scalar list
-            card               = param_end;
-            param_beg = param_end = NULL;
+            *(card->li_line) = '*';
+            d = xx_new_line(card->li_next, newR, 0, 0);
+            card->li_next = xx_new_line(d, newL, 0, 0);
+            card = d;
+
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
