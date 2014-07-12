@@ -4412,7 +4412,7 @@ inp_compat(struct line *card)
                BExxx int1 0 V = {equation}
             */
             /* search for ' vol=' or ' vol =' */
-            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("vol", skip_back_non_ws(skip_back_ws(str_ptr)))) {
+            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("vol", skip_back_non_ws_(skip_back_ws_(str_ptr, curr_line), curr_line))) {
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4598,7 +4598,7 @@ inp_compat(struct line *card)
               BGxxx int1 0 V = {equation}
             */
             /* search for ' cur=' or ' cur =' */
-            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("cur", skip_back_non_ws(skip_back_ws(str_ptr)))) {
+            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("cur", skip_back_non_ws_(skip_back_ws_(str_ptr, curr_line), curr_line))) {
                 char *m_ptr, *m_token;
                 cut_line = curr_line;
                 /* title and nodes */
