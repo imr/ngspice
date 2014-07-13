@@ -4189,6 +4189,30 @@ b_transformation_wanted(const char *p)
 }
 
 
+static char *
+search_identifier(char *str, const char *identifier, char *str_begin)
+{
+    while ((str = strstr(str, identifier)) != NULL) {
+        char before;
+
+        if (str > str_begin)
+            before = str[-1];
+        else
+            before = '\0';
+
+        if (is_arith_char(before) || isspace(before) || strchr(",{", before)) {
+            char after = str[strlen(identifier)];
+            if (is_arith_char(after) || isspace(after) || strchr(",}", after))
+                return str;
+        }
+
+        str++;
+    }
+
+    return NULL;
+}
+
+
 /* ps compatibility:
    ECOMP 3 0 TABLE {V(1,2)} = (-1 0V) (1, 10V)
    -->
@@ -4654,26 +4678,15 @@ inp_compat(struct line *card)
 
         /* F element compatibility */
         else if (*curr_line == 'f') {
-            char actchar, *beg_tstr, *equastr, *vnamstr;
+            char *equastr, *vnamstr;
             /* Fxxx n1 n2 CCCS vnam gain --> Fxxx n1 n2 vnam gain
                remove cccs */
             replace_token(curr_line, "cccs", 4, 6);
+
             /* Deal with
                Fxxx n1 n2 vnam {equation}
                if equation contains the 'temper' token */
-            beg_tstr = curr_line;
-            while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                actchar = *(beg_tstr - 1);
-                if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '{')) {
-                    beg_tstr++;
-                    continue;
-                }
-                actchar = *(beg_tstr + 6);
-                if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}')) {
-                    beg_tstr++;
-                    continue;
-                }
-                /* we have found a true 'temper' */
+            if (search_identifier(curr_line, "temper", curr_line)) {
                 cut_line = curr_line;
                 title_tok = gettok(&cut_line);
                 node1 =  gettok(&cut_line);
@@ -4721,31 +4734,19 @@ inp_compat(struct line *card)
                 tfree(equastr);
                 tfree(node1);
                 tfree(node2);
-                break;
             }
         }
         /* H element compatibility */
         else if (*curr_line == 'h') {
-            char actchar, *beg_tstr, *equastr, *vnamstr;
+            char *equastr, *vnamstr;
             /* Hxxx n1 n2 CCVS vnam transres --> Hxxx n1 n2 vnam transres
                remove cccs */
             replace_token(curr_line, "ccvs", 4, 6);
+
             /* Deal with
                Hxxx n1 n2 vnam {equation}
                if equation contains the 'temper' token */
-            beg_tstr = curr_line;
-            while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                actchar = *(beg_tstr - 1);
-                if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '{')) {
-                    beg_tstr++;
-                    continue;
-                }
-                actchar = *(beg_tstr + 6);
-                if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}')) {
-                    beg_tstr++;
-                    continue;
-                }
-                /* we have found a true 'temper' */
+            if (search_identifier(curr_line, "temper", curr_line)) {
                 cut_line = curr_line;
                 title_tok = gettok(&cut_line);
                 node1 =  gettok(&cut_line);
@@ -4793,7 +4794,6 @@ inp_compat(struct line *card)
                 tfree(equastr);
                 tfree(node1);
                 tfree(node2);
-                break;
             }
         }
 
@@ -5648,7 +5648,6 @@ inp_temper_compat(struct line *card)
 {
     int skip_control = 0;
     char *beg_str, *end_str, *beg_tstr, *end_tstr, *exp_str;
-    char actchar;
 
     for (; card; card = card->li_next) {
 
@@ -5681,21 +5680,9 @@ inp_temper_compat(struct line *card)
         /* remove white spaces of everything inside {}*/
         card->li_line = inp_remove_ws(card->li_line);
         curr_line = card->li_line;
-        /* now check if 'temper' is a token or just a substring of another string, e.g. mytempers */
-        /* we may have multiple temper and mytempers in multiple expressions in a line */
+
         beg_str = beg_tstr = curr_line;
-        while ((beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-            actchar = *(beg_tstr - 1);
-            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '{')) {
-                beg_tstr++;
-                continue;
-            }
-            actchar = *(beg_tstr + 6);
-            if (!isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',') && !(actchar == '}')) {
-                beg_tstr++;
-                continue;
-            }
-            /* we have found a true 'temper' */
+        while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
             /* set the global variable */
             expr_w_temper = TRUE;
             /* find the expression: first go back to the opening '{',
@@ -6175,7 +6162,6 @@ inp_fix_temper_in_param(struct line *deck)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
     char *beg_pstr, *beg_tstr, *end_tstr, *funcbody, *funcname;
-    char actchar;
     struct func_temper *new_func = NULL, *beg_func;
     struct line *card;
 
@@ -6218,26 +6204,14 @@ inp_fix_temper_in_param(struct line *deck)
         }
 
         if (ciprefix(".param", curr_line)) {
-            /* check if we have a true 'temper' */
             beg_tstr = curr_line;
-            while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                actchar = *(beg_tstr - 1);
-                if (!(actchar == '{') && !isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',')) {
-                    beg_tstr++;
-                    continue;
-                }
-                actchar = *(beg_tstr + 6);
-                if (actchar == '=') {
+            while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
+                if (beg_tstr[6] == '=') {
                     fprintf(stderr, "Error: you cannot assign a value to TEMPER\n");
                     fprintf(stderr, "  Line no. %d, %s\n", card->li_linenum, curr_line);
                     controlled_exit(EXIT_BAD);
                 }
-
-                if (!(actchar == '}') && !isspace(actchar) && !is_arith_char(actchar) && !(actchar == ',')) {
-                    beg_tstr++;
-                    continue;
-                }
-                /* we have found a true 'temper', so start conversion */
+                end_tstr = beg_tstr;
                 /* find function name and function body: We may have multiple
                    params in a linie!
                 */
