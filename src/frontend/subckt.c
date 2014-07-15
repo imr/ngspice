@@ -377,6 +377,28 @@ inp_subcktexpand(struct line *deck) {
 }
 
 
+static struct line *
+find_ends(struct line *l)
+{
+    int nest = 1;
+
+    while (l->li_next) {
+
+        if (ciprefix(sbend, l->li_next->li_line)) /* found a .ends */
+            nest--;
+        else if (ciprefix(start, l->li_next->li_line))  /* found a .subckt */
+            nest++;
+
+        if (!nest)
+            break;
+
+        l = l->li_next;
+    }
+
+    return l;
+}
+
+
 #define MAXNEST 21
 /*-------------------------------------------------------------------*/
 /*  doit does the actual substitution of .subckts.                   */
@@ -417,8 +439,6 @@ doit(struct line *deck, wordlist *modnames) {
 
         while (last) {
 
-            struct line *c, *lcc;
-
             if (ciprefix(sbend, last->li_line)) {         /* if line == .ends  */
                 fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                         last->li_line);
@@ -426,6 +446,9 @@ doit(struct line *deck, wordlist *modnames) {
             }
 
             if (ciprefix(start, last->li_line)) {  /* if line == .subckt  */
+
+                struct line *c, *lcc;
+
                 if (last->li_next == NULL) {            /* first check that next line is non null */
                     fprintf(cp_err, "Error: no %s line.\n", sbend);
                     return (NULL);
@@ -436,25 +459,9 @@ doit(struct line *deck, wordlist *modnames) {
                  * .subckt card, and c will point to the location of the .ends card.
                  * and lcc->li_next === c, thus lcc will be the last body card
                  */
-                {
-                    int nest = 1;
-                    lcc = last;
-                    c = lcc->li_next;
 
-                    while (c) {
-
-                        if (ciprefix(sbend, c->li_line)) /* found a .ends */
-                            nest--;
-                        else if (ciprefix(start, c->li_line))  /* found a .subckt */
-                            nest++;
-
-                        if (!nest)
-                            break;
-
-                        lcc = c;
-                        c = lcc->li_next;
-                    }
-                }
+                lcc = find_ends(last);
+                c = lcc->li_next;
 
                 /* Check to see if we have looped through remainder of deck without finding .ends */
                 if (!c) {
