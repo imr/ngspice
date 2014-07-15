@@ -466,8 +466,6 @@ doit(struct line *deck, wordlist *modnames) {
                 /* c    is the terminating .ends card */
                 /* lcc  is one card before, which is the last body card */
 
-                sss = alloc(struct subs);
-
                 if (use_numparams == FALSE)
                     lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
 
@@ -478,13 +476,18 @@ doit(struct line *deck, wordlist *modnames) {
                     deck = c->li_next;
 
                 /*  Now put the .subckt definition found into sss  */
-                sss->su_def = last->li_next;
 
                 {
                     char *s = last->li_line;
+
+                    sss = alloc(struct subs);
+
                     txfree(gettok(&s));
+
                     sss->su_name = gettok(&s);
                     sss->su_args = copy(s);
+                    sss->su_def = last->li_next;
+
                     /* count the number of args in the .subckt line */
                     sss->su_numargs = 0;
                     for (;;) {
@@ -675,22 +678,15 @@ doit(struct line *deck, wordlist *modnames) {
         return NULL;    /* error message already reported; should free() */
 
 
-    /*
-      struct subs {
-      char *su_name;
-      char *su_args;
-      int su_numargs;
-      struct line *su_def;
-      struct subs *su_next;
-      };
-    */
     while (subs) {
-        struct subs *sss2 = subs;
-        subs = subs->su_next;
-        tfree(sss2->su_name);
-        tfree(sss2->su_args);
-        line_free(sss2->su_def, TRUE);
-        tfree(sss2);
+        struct subs *rest = subs->su_next;
+
+        tfree(subs->su_name);
+        tfree(subs->su_args);
+        line_free(subs->su_def, TRUE);
+        tfree(subs);
+
+        subs = rest;
     }
 
     return (deck);
