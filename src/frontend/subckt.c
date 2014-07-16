@@ -434,20 +434,20 @@ doit(struct line *deck, wordlist *modnames) {
     {
         /* First pass: xtract all the .subckts and stick pointers to them into sss.  */
 
-        struct line *last = deck;
-        struct line *lc   = NULL;
+        struct line *c = deck;
+        struct line *prev_of_c = NULL;
 
-        while (last) {
+        while (c) {
 
-            if (ciprefix(sbend, last->li_line)) {         /* if line == .ends  */
+            if (ciprefix(sbend, c->li_line)) {         /* if line == .ends  */
                 fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
-                        last->li_line);
+                        c->li_line);
                 return (NULL);
             }
 
-            if (ciprefix(start, last->li_line)) {  /* if line == .subckt  */
+            if (ciprefix(start, c->li_line)) {  /* if line == .subckt  */
 
-                struct line *prev_of_ends = find_ends(last);
+                struct line *prev_of_ends = find_ends(c);
                 struct line *ends = prev_of_ends->li_next;
 
                 /* Check to see if we have looped through remainder of deck without finding .ends */
@@ -456,23 +456,23 @@ doit(struct line *deck, wordlist *modnames) {
                     return (NULL);
                 }
 
-                /* last is the opening .subckt card */
+                /* c is the opening .subckt card */
                 /* ends    is the terminating .ends card */
-                /* prev_of_ends  is one card before, which is the last body card */
+                /* prev_of_ends  is one card before, which is the c body card */
 
                 if (use_numparams == FALSE)
                     prev_of_ends->li_next = NULL;    /* shouldn't we free some memory here????? */
 
                 /* cut the whole .subckt ... .ends sequence from the deck chain */
-                if (lc)
-                    lc->li_next = ends->li_next;
+                if (prev_of_c)
+                    prev_of_c->li_next = ends->li_next;
                 else
                     deck = ends->li_next;
 
                 /*  Now put the .subckt definition found into sss  */
 
                 {
-                    char *s = last->li_line;
+                    char *s = c->li_line;
 
                     sss = alloc(struct subs);
 
@@ -480,7 +480,7 @@ doit(struct line *deck, wordlist *modnames) {
 
                     sss->su_name = gettok(&s);
                     sss->su_args = copy(s);
-                    sss->su_def = last->li_next;
+                    sss->su_def = c->li_next;
 
                     /* count the number of args in the .subckt line */
                     sss->su_numargs = 0;
@@ -498,18 +498,18 @@ doit(struct line *deck, wordlist *modnames) {
                 sss->su_next = subs;
                 subs = sss;            /* Now that sss is built, assign it to subs */
 
-                line_free_x(last, FALSE);
-                last = ends->li_next;
+                line_free_x(c, FALSE);
+                c = ends->li_next;
 
                 /*gp */
                 ends->li_next = NULL;  /* Numparam needs line ends */
                 ends->li_line[0] = '*'; /* comment it out */
             } else { /*  line is neither .ends nor .subckt.  */
-                /* make lc point to this card, and advance last to next card. */
-                lc = last;
-                last = last->li_next;
+                /* make prev_of_c point to this card, and advance c to next card. */
+                prev_of_c = c;
+                c = c->li_next;
             }
-        } /* for (last = deck . . . .  */
+        }
     }
 
 
