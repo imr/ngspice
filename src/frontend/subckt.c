@@ -458,9 +458,6 @@ doit(struct line *deck, wordlist *modnames) {
                 /* c     points to the opening .subckt card */
                 /* ends  points to the terminating .ends card */
 
-                if (use_numparams == FALSE)
-                    prev_of_ends->li_next = NULL;    /* shouldn't we free some memory here????? */
-
                 /* cut the whole .subckt ... .ends sequence from the deck chain */
                 if (prev_of_c)
                     prev_of_c->li_next = ends->li_next;
@@ -500,9 +497,13 @@ doit(struct line *deck, wordlist *modnames) {
                 line_free_x(c, FALSE);
                 c = ends->li_next;
 
-                /*gp */
-                ends->li_next = NULL;  /* Numparam needs line ends */
-                ends->li_line[0] = '*'; /* comment it out */
+                if (use_numparams == FALSE) {
+                    line_free_x(ends, FALSE); /* drop the .ends card */
+                    prev_of_ends->li_next = NULL;
+                } else {
+                    ends->li_line[0] = '*'; /* comment the .ends card */
+                    ends->li_next = NULL;
+                }
 
             } else {
 
