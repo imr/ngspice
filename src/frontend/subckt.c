@@ -439,7 +439,7 @@ doit(struct line *deck, wordlist *modnames) {
 
         while (c) {
 
-            if (ciprefix(sbend, c->li_line)) {         /* if line == .ends  */
+            if (ciprefix(sbend, c->li_line)) {  /* if line == .ends  */
                 fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                         c->li_line);
                 return (NULL);
@@ -450,15 +450,13 @@ doit(struct line *deck, wordlist *modnames) {
                 struct line *prev_of_ends = find_ends(c);
                 struct line *ends = prev_of_ends->li_next;
 
-                /* Check to see if we have looped through remainder of deck without finding .ends */
                 if (!ends) {
                     fprintf(cp_err, "Error: no %s line.\n", sbend);
                     return (NULL);
                 }
 
-                /* c is the opening .subckt card */
-                /* ends    is the terminating .ends card */
-                /* prev_of_ends  is one card before, which is the c body card */
+                /* c     points to the opening .subckt card */
+                /* ends  points to the terminating .ends card */
 
                 if (use_numparams == FALSE)
                     prev_of_ends->li_next = NULL;    /* shouldn't we free some memory here????? */
@@ -495,8 +493,9 @@ doit(struct line *deck, wordlist *modnames) {
                     }
                 }
 
+                /* push `sss' onto the `subs' list */
                 sss->su_next = subs;
-                subs = sss;            /* Now that sss is built, assign it to subs */
+                subs = sss;
 
                 line_free_x(c, FALSE);
                 c = ends->li_next;
@@ -504,8 +503,9 @@ doit(struct line *deck, wordlist *modnames) {
                 /*gp */
                 ends->li_next = NULL;  /* Numparam needs line ends */
                 ends->li_line[0] = '*'; /* comment it out */
-            } else { /*  line is neither .ends nor .subckt.  */
-                /* make prev_of_c point to this card, and advance c to next card. */
+
+            } else {
+
                 prev_of_c = c;
                 c = c->li_next;
             }
