@@ -447,21 +447,8 @@ doit(struct line *deck, wordlist *modnames) {
 
             if (ciprefix(start, last->li_line)) {  /* if line == .subckt  */
 
-                struct line *c, *lcc;
-
-                if (last->li_next == NULL) {            /* first check that next line is non null */
-                    fprintf(cp_err, "Error: no %s line.\n", sbend);
-                    return (NULL);
-                }
-
-                /* Here we loop through the deck looking for .subckt and .ends cards.
-                 * At the end of this section, last will point to the location of the
-                 * .subckt card, and c will point to the location of the .ends card.
-                 * and lcc->li_next === c, thus lcc will be the last body card
-                 */
-
-                lcc = find_ends(last);
-                c = lcc->li_next;
+                struct line *lcc = find_ends(last);
+                struct line *c = lcc->li_next;
 
                 /* Check to see if we have looped through remainder of deck without finding .ends */
                 if (!c) {
