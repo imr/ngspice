@@ -491,13 +491,13 @@ doit(struct line *deck, wordlist *modnames) {
 
                 /* cut the whole .subckt ... .ends sequence from the deck chain */
 
-                line_free_x(c, FALSE);
+                line_free_x(c, FALSE); /* drop the .subckt card */
                 c = ends->li_next;
 
                 if (prev_of_c)
-                    prev_of_c->li_next = ends->li_next;
+                    prev_of_c->li_next = c;
                 else
-                    deck = ends->li_next;
+                    deck = c;
 
                 if (use_numparams == FALSE) {
                     line_free_x(ends, FALSE); /* drop the .ends card */
