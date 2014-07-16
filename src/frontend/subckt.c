@@ -458,11 +458,6 @@ doit(struct line *deck, wordlist *modnames) {
                 /* c     points to the opening .subckt card */
                 /* ends  points to the terminating .ends card */
 
-                /* cut the whole .subckt ... .ends sequence from the deck chain */
-                if (prev_of_c)
-                    prev_of_c->li_next = ends->li_next;
-                else
-                    deck = ends->li_next;
 
                 /*  Now put the .subckt definition found into sss  */
 
@@ -494,8 +489,15 @@ doit(struct line *deck, wordlist *modnames) {
                 sss->su_next = subs;
                 subs = sss;
 
+                /* cut the whole .subckt ... .ends sequence from the deck chain */
+
                 line_free_x(c, FALSE);
                 c = ends->li_next;
+
+                if (prev_of_c)
+                    prev_of_c->li_next = ends->li_next;
+                else
+                    deck = ends->li_next;
 
                 if (use_numparams == FALSE) {
                     line_free_x(ends, FALSE); /* drop the .ends card */
