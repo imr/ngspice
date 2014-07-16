@@ -447,27 +447,27 @@ doit(struct line *deck, wordlist *modnames) {
 
             if (ciprefix(start, last->li_line)) {  /* if line == .subckt  */
 
-                struct line *lcc = find_ends(last);
-                struct line *c = lcc->li_next;
+                struct line *prev_of_ends = find_ends(last);
+                struct line *ends = prev_of_ends->li_next;
 
                 /* Check to see if we have looped through remainder of deck without finding .ends */
-                if (!c) {
+                if (!ends) {
                     fprintf(cp_err, "Error: no %s line.\n", sbend);
                     return (NULL);
                 }
 
                 /* last is the opening .subckt card */
-                /* c    is the terminating .ends card */
-                /* lcc  is one card before, which is the last body card */
+                /* ends    is the terminating .ends card */
+                /* prev_of_ends  is one card before, which is the last body card */
 
                 if (use_numparams == FALSE)
-                    lcc->li_next = NULL;    /* shouldn't we free some memory here????? */
+                    prev_of_ends->li_next = NULL;    /* shouldn't we free some memory here????? */
 
                 /* cut the whole .subckt ... .ends sequence from the deck chain */
                 if (lc)
-                    lc->li_next = c->li_next;
+                    lc->li_next = ends->li_next;
                 else
-                    deck = c->li_next;
+                    deck = ends->li_next;
 
                 /*  Now put the .subckt definition found into sss  */
 
@@ -499,11 +499,11 @@ doit(struct line *deck, wordlist *modnames) {
                 subs = sss;            /* Now that sss is built, assign it to subs */
 
                 line_free_x(last, FALSE);
-                last = c->li_next;
+                last = ends->li_next;
 
                 /*gp */
-                c->li_next = NULL;  /* Numparam needs line c */
-                c->li_line[0] = '*'; /* comment it out */
+                ends->li_next = NULL;  /* Numparam needs line ends */
+                ends->li_line[0] = '*'; /* comment it out */
             } else { /*  line is neither .ends nor .subckt.  */
                 /* make lc point to this card, and advance last to next card. */
                 lc = last;
