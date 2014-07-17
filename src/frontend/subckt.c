@@ -632,7 +632,6 @@ doit(struct line *deck, wordlist *modnames) {
                     }
                     while (lcc->li_next)
                         lcc = lcc->li_next;
-                    lcc->li_next = c->li_next;
                     lcc->li_next = savenext;
                 }
                 c = lcc->li_next;
