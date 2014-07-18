@@ -549,7 +549,6 @@ doit(struct line *deck, wordlist *modnames) {
 
                 char *tofree, *tofree2, *s, *t;
                 char *scname;
-                struct line *su_deck;
 
                 gotone = TRUE;
                 t = tofree = s = copy(c->li_line);       /*  s & t hold copy of component line  */
@@ -589,18 +588,14 @@ doit(struct line *deck, wordlist *modnames) {
                 /* If no .subckt is found, don't complain -- this might be an
                  * instance of a subckt that is defined above at higher level.
                  */
-                if (!sss) {
-                    tfree(tofree);
-                    tfree(tofree2);
-                    continue;
-                }
+                if (sss) {
+
+                struct line *su_deck = inp_deckcopy(sss->su_def);
+                struct line *rest_of_c = c->li_next;
 
                 /* Now we have to replace this line with the
                  * macro definition.
                  */
-
-                /*  make su_deck point to a copy of the .subckt definition  */
-                su_deck = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
                 /* prepend the translated model names to the list `modnames' */
@@ -615,8 +610,6 @@ doit(struct line *deck, wordlist *modnames) {
                     error = 1;
 
                 /* Now splice the decks together. */
-                {
-                    struct line *rest_of_c = c->li_next;
                     if (use_numparams == FALSE) {
                         line_free_x(c, FALSE); /* drop the invocation */
                         if (prev_of_c)
@@ -631,7 +624,7 @@ doit(struct line *deck, wordlist *modnames) {
                     while (c->li_next)
                         c = c->li_next;
                     c->li_next = rest_of_c;
-                }
+            }
                 tfree(tofree);
                 tfree(tofree2);
             }     /* if (ciprefix(invoke, c->li_line)) . . . */
