@@ -544,7 +544,7 @@ doit(struct line *deck, wordlist *modnames) {
         struct line *c = deck;
         struct line *prev_of_c = NULL;
         gotone = FALSE;
-        while (c) {
+        for (; c; prev_of_c = c, c = c->li_next) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
 
                 char *tofree, *tofree2, *s, *t;
@@ -590,8 +590,6 @@ doit(struct line *deck, wordlist *modnames) {
                  * instance of a subckt that is defined above at higher level.
                  */
                 if (!sss) {
-                    prev_of_c = c;
-                    c = c->li_next;
                     tfree(tofree);
                     tfree(tofree2);
                     continue;
@@ -637,13 +635,7 @@ doit(struct line *deck, wordlist *modnames) {
                 }
                 tfree(tofree);
                 tfree(tofree2);
-                prev_of_c = c;
-                c = c->li_next;
             }     /* if (ciprefix(invoke, c->li_line)) . . . */
-            else {
-                prev_of_c = c;
-                c = c->li_next;
-            }
         }
     } while (!error && numpasses-- && gotone);
 
