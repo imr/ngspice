@@ -634,10 +634,10 @@ doit(struct line *deck, wordlist *modnames) {
                         lcc = lcc->li_next;
                     lcc->li_next = savenext;
                 }
-                c = lcc->li_next;
-                prev_of_c = lcc;
                 tfree(tofree);
                 tfree(tofree2);
+                prev_of_c = lcc;
+                c = lcc->li_next;
             }     /* if (ciprefix(invoke, c->li_line)) . . . */
             else {
                 prev_of_c = c;
