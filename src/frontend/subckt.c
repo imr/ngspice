@@ -542,7 +542,7 @@ doit(struct line *deck, wordlist *modnames) {
     /* Second pass: do the replacements. */
     do {                    /*  while (!error && numpasses-- && gotone)  */
         struct line *c = deck;
-        struct line *lc = NULL;
+        struct line *prev_of_c = NULL;
         gotone = FALSE;
         while (c) {
             if (ciprefix(invoke, c->li_line)) {  /* found reference to .subckt (i.e. component with refdes X)  */
@@ -590,7 +590,7 @@ doit(struct line *deck, wordlist *modnames) {
                  * instance of a subckt that is defined above at higher level.
                  */
                 if (!sss) {
-                    lc = c;
+                    prev_of_c = c;
                     c = c->li_next;
                     tfree(tofree);
                     tfree(tofree2);
@@ -621,8 +621,8 @@ doit(struct line *deck, wordlist *modnames) {
                     struct line *savenext = c->li_next;
                     if (use_numparams == FALSE) {
                         /* old style: c will drop a dangling pointer: memory leak  */
-                        if (lc)
-                            lc->li_next = lcc;
+                        if (prev_of_c)
+                            prev_of_c->li_next = lcc;
                         else
                             deck = lcc;
                     } else {
@@ -635,12 +635,12 @@ doit(struct line *deck, wordlist *modnames) {
                     lcc->li_next = savenext;
                 }
                 c = lcc->li_next;
-                lc = lcc;
+                prev_of_c = lcc;
                 tfree(tofree);
                 tfree(tofree2);
             }     /* if (ciprefix(invoke, c->li_line)) . . . */
             else {
-                lc = c;
+                prev_of_c = c;
                 c = c->li_next;
             }
         }
