@@ -630,14 +630,15 @@ doit(struct line *deck, wordlist *modnames) {
                         c->li_next = lcc;
                         c->li_line[0] = '*'; /* comment it out */
                     }
-                    while (lcc->li_next)
-                        lcc = lcc->li_next;
-                    lcc->li_next = savenext;
+                    c = lcc;
+                    while (c->li_next)
+                        c = c->li_next;
+                    c->li_next = savenext;
                 }
                 tfree(tofree);
                 tfree(tofree2);
-                prev_of_c = lcc;
-                c = lcc->li_next;
+                prev_of_c = c;
+                c = c->li_next;
             }     /* if (ciprefix(invoke, c->li_line)) . . . */
             else {
                 prev_of_c = c;
