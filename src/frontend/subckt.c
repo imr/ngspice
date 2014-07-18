@@ -549,7 +549,7 @@ doit(struct line *deck, wordlist *modnames) {
 
                 char *tofree, *tofree2, *s, *t;
                 char *scname;
-                struct line *lcc;
+                struct line *su_deck;
 
                 gotone = TRUE;
                 t = tofree = s = copy(c->li_line);       /*  s & t hold copy of component line  */
@@ -601,19 +601,19 @@ doit(struct line *deck, wordlist *modnames) {
                  * macro definition.
                  */
 
-                /*  make lcc point to a copy of the .subckt definition  */
-                lcc = inp_deckcopy(sss->su_def);
+                /*  make su_deck point to a copy of the .subckt definition  */
+                su_deck = inp_deckcopy(sss->su_def);
 
                 /* Change the names of .models found in .subckts . . .  */
                 /* prepend the translated model names to the list `modnames' */
-                modnames = modtranslate(lcc, scname, modnames);
+                modnames = modtranslate(su_deck, scname, modnames);
 
                 txfree(gettok(&t));  /* Throw out the subcircuit refdes */
 
                 /* now invoke translate, which handles the remainder of the
                 * translation.
                 */
-                if (!translate(lcc, sss->su_args, t, scname, sss->su_name, subs, modnames))
+                if (!translate(su_deck, sss->su_args, t, scname, sss->su_name, subs, modnames))
                     error = 1;
 
                 /* Now splice the decks together. */
@@ -622,15 +622,15 @@ doit(struct line *deck, wordlist *modnames) {
                     if (use_numparams == FALSE) {
                         /* old style: c will drop a dangling pointer: memory leak  */
                         if (prev_of_c)
-                            prev_of_c->li_next = lcc;
+                            prev_of_c->li_next = su_deck;
                         else
-                            deck = lcc;
+                            deck = su_deck;
                     } else {
                         /* ifdef NUMPARAMS, keep the invoke line as a comment  */
-                        c->li_next = lcc;
+                        c->li_next = su_deck;
                         c->li_line[0] = '*'; /* comment it out */
                     }
-                    c = lcc;
+                    c = su_deck;
                     while (c->li_next)
                         c = c->li_next;
                     c->li_next = savenext;
