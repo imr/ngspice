@@ -618,15 +618,14 @@ doit(struct line *deck, wordlist *modnames) {
                 {
                     struct line *rest_of_c = c->li_next;
                     if (use_numparams == FALSE) {
-                        /* old style: c will drop a dangling pointer: memory leak  */
+                        line_free_x(c, FALSE); /* drop the invocation */
                         if (prev_of_c)
                             prev_of_c->li_next = su_deck;
                         else
                             deck = su_deck;
                     } else {
-                        /* ifdef NUMPARAMS, keep the invoke line as a comment  */
+                        c->li_line[0] = '*'; /* comment the invocation */
                         c->li_next = su_deck;
-                        c->li_line[0] = '*'; /* comment it out */
                     }
                     c = su_deck;
                     while (c->li_next)
