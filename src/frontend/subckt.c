@@ -618,7 +618,7 @@ doit(struct line *deck, wordlist *modnames) {
 
                 /* Now splice the decks together. */
                 {
-                    struct line *savenext = c->li_next;
+                    struct line *rest_of_c = c->li_next;
                     if (use_numparams == FALSE) {
                         /* old style: c will drop a dangling pointer: memory leak  */
                         if (prev_of_c)
@@ -633,7 +633,7 @@ doit(struct line *deck, wordlist *modnames) {
                     c = su_deck;
                     while (c->li_next)
                         c = c->li_next;
-                    c->li_next = savenext;
+                    c->li_next = rest_of_c;
                 }
                 tfree(tofree);
                 tfree(tofree2);
