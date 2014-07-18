@@ -590,26 +590,27 @@ doit(struct line *deck, wordlist *modnames) {
                  */
                 if (sss) {
 
-                struct line *su_deck = inp_deckcopy(sss->su_def);
-                struct line *rest_of_c = c->li_next;
+                    struct line *su_deck = inp_deckcopy(sss->su_def);
+                    struct line *rest_of_c = c->li_next;
 
-                /* Now we have to replace this line with the
-                 * macro definition.
-                 */
+                    /* Now we have to replace this line with the
+                     * macro definition.
+                     */
 
-                /* Change the names of .models found in .subckts . . .  */
-                /* prepend the translated model names to the list `modnames' */
-                modnames = modtranslate(su_deck, scname, modnames);
+                    /* Change the names of .models found in .subckts . . .  */
+                    /* prepend the translated model names to the list `modnames' */
+                    modnames = modtranslate(su_deck, scname, modnames);
 
-                txfree(gettok(&t));  /* Throw out the subcircuit refdes */
+                    txfree(gettok(&t));  /* Throw out the subcircuit refdes */
 
-                /* now invoke translate, which handles the remainder of the
-                * translation.
-                */
-                if (!translate(su_deck, sss->su_args, t, scname, sss->su_name, subs, modnames))
-                    error = 1;
+                    /* now invoke translate, which handles the remainder of the
+                     * translation.
+                     */
+                    if (!translate(su_deck, sss->su_args, t, scname, sss->su_name, subs, modnames))
+                        error = 1;
 
-                /* Now splice the decks together. */
+                    /* Now splice the decks together. */
+
                     if (use_numparams == FALSE) {
                         line_free_x(c, FALSE); /* drop the invocation */
                         if (prev_of_c)
@@ -620,14 +621,17 @@ doit(struct line *deck, wordlist *modnames) {
                         c->li_line[0] = '*'; /* comment the invocation */
                         c->li_next = su_deck;
                     }
+
                     c = su_deck;
                     while (c->li_next)
                         c = c->li_next;
+
                     c->li_next = rest_of_c;
-            }
+                }
+
                 tfree(tofree);
                 tfree(tofree2);
-            }     /* if (ciprefix(invoke, c->li_line)) . . . */
+            }
         }
     } while (!error && numpasses-- && gotone);
 
