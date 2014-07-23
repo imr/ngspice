@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 
-TESTS = model-scope-5.cir
+TESTS = global-1.cir model-scope-5.cir
 
 TESTS_ENVIRONMENT = ngspice_vpath=$(srcdir) $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 

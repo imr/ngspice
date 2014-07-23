@@ -1,0 +1,81 @@
+check treatment of multiple .global cards
+
+* (exec-spice "ngspice -b %s")
+* (tests-aux-renumber)
+
+* multiple .global decks are "accumulative"
+
+.global n1001_t n1002_t
+.global n1003_t
+
+
+.subckt su1 1
+R2        1 0  10k
+R3  n1001_t 0  2000.0
+.ends
+
+.subckt su2 1
+R2        1 0  10k
+R3  n1002_t 0  4000.0
+.ends
+
+.subckt su3 1
+R2        1 0  10k
+R3  n1003_t 0  8000.0
+.ends
+
+
+i1  n1001_t 0  -3mA
+R1  n1001_t 0  1000.0
+
+i2  n1002_t 0  -5mA
+R2  n1002_t 0  1000.0
+
+i3  n1003_t 0  -9mA
+R3  n1003_t 0  1000.0
+
+X1  n1    su1
+X2  n1    su2
+X3  n1    su3
+Rn  n1 0  100k
+
+v1g  n1001_g 0  2.0000000
+v2g  n1002_g 0  4.0000000
+v3g  n1003_g 0  8.0000000
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+* listing extended
+
+let total_count = 0
+let fail_count = 0
+
+let tests = 1001 + vector(3)
+
+foreach n $&tests
+  set n_test = "n{$n}_t"
+  set n_gold = "n{$n}_g"
+  if mismatch(v($n_test), v($n_gold), 1e-9)
+    let v_test = v($n_test)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, v($n_test) = $&v_test but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
