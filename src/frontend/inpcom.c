@@ -750,7 +750,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         if (ciprefix(".include", buffer) || ciprefix(".inc", buffer)) {
 
             char *y = NULL;
-            char *s, *t;
+            char *s;
 
             struct line *newcard;
 
@@ -758,7 +758,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
             s = skip_non_ws(buffer);               /* advance past non-space chars */
 
-            t = get_quoted_token(s, &y);
+            s = get_quoted_token(s, &y);
 
             if (!y) {
                 fprintf(cp_err, "Error: .include filename missing\n");
