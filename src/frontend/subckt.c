@@ -244,11 +244,11 @@ inp_subcktexpand(struct line *deck) {
     for (i = 0; i < 128; i++)
         strcpy(node[i], ""); /* Clear global node holder */
 
+    numgnode = 0;
     for (c = deck; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
             s = c->li_line;
             txfree(gettok(&s));
-            numgnode = 0;
             while (*s) {
                 i = 0;
                 t = s;
