@@ -131,8 +131,8 @@ static bool use_numparams = FALSE;
 
 static char start[32], sbend[32], invoke[32], model[32];
 
-static char node[128][128];
-static int numgnode;
+static char global_nodes[128][128];
+static int num_global_nodes;
 
 /*-------------------------------------------------------------------
   inp_subcktexpand is the top level function which translates
@@ -146,7 +146,7 @@ static int numgnode;
   1.  Define some aliases for .subckt, .ends, etc.
   2.  First numparam pass: substitute paramterized tokens by
   intermediate values 1000000001 etc.
-  3.  Make a list node[] of global nodes
+  3.  Make a list global_nodes[] of global nodes
   4.  Clean up parens around netnames
   5.  Call doit, which does the actual translation.
   6.  Second numparam pass: Do final substitution
@@ -241,9 +241,9 @@ inp_subcktexpand(struct line *deck) {
     {
     int i;
     for (i = 0; i < 128; i++)
-        strcpy(node[i], ""); /* Clear global node holder */
+        strcpy(global_nodes[i], ""); /* Clear global node holder */
 
-    numgnode = 0;
+    num_global_nodes = 0;
     for (c = deck; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
             char *s = c->li_line;
@@ -253,17 +253,17 @@ inp_subcktexpand(struct line *deck) {
                 i = 0;
                 for (/*s*/; *s && !isspace(*s); s++)
                     i++;
-                strncpy(node[numgnode], t, (size_t) i);
+                strncpy(global_nodes[num_global_nodes], t, (size_t) i);
                 if (i>0 && t[i-1] != '\0')
-                    node[numgnode][i] = '\0';
+                    global_nodes[num_global_nodes][i] = '\0';
                 while (isspace(*s))
                     s++;
-                numgnode++;
-            } /* node[] holds name of global node */
+                num_global_nodes++;
+            } /* global_nodes[] holds name of global node */
 #ifdef TRACE
             printf("***Global node option has been found.***\n");
-            for (i = 0; i<numgnode; i++)
-                printf("***Global node no.%d is %s.***\n", i, node[i]);
+            for (i = 0; i<num_global_nodes; i++)
+                printf("***Global node no.%d is %s.***\n", i, global_nodes[i]);
             printf("\n");
 #endif
             c->li_line[0] = '*'; /* comment it out */
@@ -1431,9 +1431,9 @@ gettrans(const char *name, const char *name_end)
 #endif
 
     /* Added by H.Tanaka to translate global nodes */
-    for (i = 0; i<numgnode; i++)
-        if (eq_substr(name, name_end, node[i]))
-            return (node[i]);
+    for (i = 0; i<num_global_nodes; i++)
+        if (eq_substr(name, name_end, global_nodes[i]))
+            return (global_nodes[i]);
 
     if (eq_substr(name, name_end, "0"))
         return ("0");
