@@ -157,11 +157,8 @@ static int numgnode;
   -------------------------------------------------------------------*/
 struct line *
 inp_subcktexpand(struct line *deck) {
-    struct line *ll, *c;
-    char *s;
+    struct line *c;
     int ok = 0;
-    char *t;
-    int i;
     wordlist *modnames = NULL;
 
     if (!cp_getvar("substart", CP_STRING, start))
@@ -224,7 +221,7 @@ inp_subcktexpand(struct line *deck) {
                 continue;
 
             if (ciprefix(model, c->li_line)) {
-                s = c->li_line;
+                char *s = c->li_line;
                 txfree(gettok(&s)); /* discard the model keyword */
                 modnames = wl_cons(gettok(&s), modnames);
             } /* model name finding routine */
@@ -241,17 +238,19 @@ inp_subcktexpand(struct line *deck) {
 #endif
 
     /* Added by H.Tanaka to find global nodes */
+    {
+    int i;
     for (i = 0; i < 128; i++)
         strcpy(node[i], ""); /* Clear global node holder */
 
     numgnode = 0;
     for (c = deck; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
-            s = c->li_line;
+            char *s = c->li_line;
             txfree(gettok(&s));
             while (*s) {
+                char *t = s;
                 i = 0;
-                t = s;
                 for (/*s*/; *s && !isspace(*s); s++)
                     i++;
                 strncpy(node[numgnode], t, (size_t) i);
@@ -269,6 +268,7 @@ inp_subcktexpand(struct line *deck) {
 #endif
             c->li_line[0] = '*'; /* comment it out */
         }
+    }
 
     /* Let's do a few cleanup things... Get rid of ( ) around node lists... */
     for (c = deck; c; c = c->li_next) {    /* iterate on lines in deck */
@@ -329,19 +329,19 @@ inp_subcktexpand(struct line *deck) {
 #endif
 
     /* doit does the actual splicing in of the .subckt . . .  */
-    ll = doit(deck, modnames);
+    deck = doit(deck, modnames);
 
     wl_free(modnames);
 
     /* Count numbers of line in deck after expansion */
-    if (ll) {
+    if (deck) {
         dynMaxckt = 0; /* number of lines in deck after expansion */
-        for (c = ll; c; c = c->li_next)
+        for (c = deck; c; c = c->li_next)
             dynMaxckt++;
     }
 
     /* Now check to see if there are still subckt instances undefined... */
-    for (c = ll; c; c = c->li_next)
+    for (c = deck; c; c = c->li_next)
         if (ciprefix(invoke, c->li_line)) {
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->li_line);
             if (use_numparams)
@@ -352,7 +352,7 @@ inp_subcktexpand(struct line *deck) {
     if (use_numparams) {
         /* the NUMPARAM final line translation pass */
         ok = ok && nupa_signal(NUPASUBDONE, NULL);
-        for (c = ll; c; c = c->li_next)
+        for (c = deck; c; c = c->li_next)
             /* 'param' .meas statements can have dependencies on measurement values */
             /* need to skip evaluating here and evaluate after other .meas statements */
             if (ciprefix(".meas", c->li_line) && strstr(c->li_line, "param")) {
@@ -363,7 +363,7 @@ inp_subcktexpand(struct line *deck) {
 
 #ifdef TRACE
         fprintf(stderr, "Numparams converted deck:\n");
-        for (c = ll; c; c = c->li_next)
+        for (c = deck; c; c = c->li_next)
             fprintf(stderr, "%3d:%s\n", c->li_linenum, c->li_line);
 #endif
 
@@ -372,7 +372,7 @@ inp_subcktexpand(struct line *deck) {
         ok = ok && nupa_signal(NUPAEVALDONE, NULL);
     }
 
-    return (ll);  /* return the spliced deck.  */
+    return (deck);  /* return the spliced deck.  */
 }
 
 
