@@ -131,43 +131,50 @@ static bool use_numparams = FALSE;
 
 static char start[32], sbend[32], invoke[32], model[32];
 
-static char global_nodes[128][128];
+static char *global_nodes[128];
 static int num_global_nodes;
 
 
 static void
 collect_global_nodes(struct line *c)
 {
-    int i;
-
-    for (i = 0; i < 128; i++)
-        strcpy(global_nodes[i], ""); /* Clear global node holder */
-
     num_global_nodes = 0;
+
     for (; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
             char *s = c->li_line;
             txfree(gettok(&s));
             while (*s) {
                 char *t = s;
-                i = 0;
-                for (/*s*/; *s && !isspace(*s); s++)
-                    i++;
-                strncpy(global_nodes[num_global_nodes], t, (size_t) i);
-                if (i>0 && t[i-1] != '\0')
-                    global_nodes[num_global_nodes][i] = '\0';
+                for (; *s && !isspace(*s); s++)
+                    ;
+                global_nodes[num_global_nodes++] = copy_substring(t, s);
                 while (isspace(*s))
                     s++;
-                num_global_nodes++;
-            } /* global_nodes[] holds name of global node */
-#ifdef TRACE
-            printf("***Global node option has been found.***\n");
-            for (i = 0; i<num_global_nodes; i++)
-                printf("***Global node no.%d is %s.***\n", i, global_nodes[i]);
-            printf("\n");
-#endif
+            }
             c->li_line[0] = '*'; /* comment it out */
         }
+
+#ifdef TRACE
+    {
+        int i;
+        printf("***Global node option has been found.***\n");
+        for (i = 0; i < num_global_nodes; i++)
+            printf("***Global node no.%d is %s.***\n", i, global_nodes[i]);
+        printf("\n");
+    }
+#endif
+
+}
+
+
+static void
+free_global_nodes(void)
+{
+    int i;
+    for (i = 0; i < num_global_nodes; i++)
+        tfree(global_nodes[i]);
+    num_global_nodes = 0;
 }
 
 
@@ -338,6 +345,7 @@ inp_subcktexpand(struct line *deck) {
     /* doit does the actual splicing in of the .subckt . . .  */
     deck = doit(deck, modnames);
 
+    free_global_nodes();
     wl_free(modnames);
 
     /* Count numbers of line in deck after expansion */
