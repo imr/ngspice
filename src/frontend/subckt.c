@@ -140,6 +140,12 @@ collect_global_nodes(struct line *c)
 {
     num_global_nodes = 0;
 
+    global_nodes[num_global_nodes++] = copy("0");
+
+#ifdef XSPICE
+    global_nodes[num_global_nodes++] = copy("null");
+#endif
+
     for (; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
             char *s = c->li_line;
@@ -1438,20 +1444,10 @@ gettrans(const char *name, const char *name_end)
     if (!name_end)
         name_end = strchr(name, '\0');
 
-#ifdef XSPICE
-    /* gtri - wbk - 2/27/91 - don't translate the reserved word 'null' */
-    if (eq_substr(name, name_end, "null"))
-        return ("null");
-    /* gtri - end */
-#endif
-
     /* Added by H.Tanaka to translate global nodes */
     for (i = 0; i<num_global_nodes; i++)
         if (eq_substr(name, name_end, global_nodes[i]))
             return (global_nodes[i]);
-
-    if (eq_substr(name, name_end, "0"))
-        return ("0");
 
     for (i = 0; table[i].t_old; i++)
         if (eq_substr(name, name_end, table[i].t_old))
