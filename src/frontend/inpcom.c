@@ -1265,7 +1265,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s",
                                      model_name, ctrl_node_str, node_str, model_name);
                 m_instance[0] = 'a';
-                a_card = xx_new_line(NULL, m_instance, *(line_number)++, 0);
+                a_card = xx_new_line(NULL, m_instance, (*line_number)++, 0);
 
                 m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
                                   model_name, xy_values1[0], xy_values2[0],
