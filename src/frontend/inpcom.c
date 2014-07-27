@@ -1196,84 +1196,85 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
         if (*line == 'e') {
 
-            char *bool_ptr;
+            char *fcn_b;
 
-            if ((bool_ptr = strstr(line, "nand(")) != NULL ||
-                (bool_ptr = strstr(line, "and(")) != NULL ||
-                (bool_ptr = strstr(line, "nor(")) != NULL ||
-                (bool_ptr = strstr(line, "or(")) != NULL)
+            if ((fcn_b = strstr(line, "nand(")) != NULL ||
+                (fcn_b = strstr(line, "and(")) != NULL ||
+                (fcn_b = strstr(line, "nor(")) != NULL ||
+                (fcn_b = strstr(line, "or(")) != NULL)
             {
                 struct line *a_card, *model_card, *next_card;
-                char *str_ptr1, *str_ptr2, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *node_str, *ctrl_node_str, *xy_str1, *model_name, *fcn_name;
+                char *s, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char *out_str, *ctrl_nodes_str, *xy_values1_b, *ref_str, *fcn_name, *fcn_e, *out_b, *out_e, *ref_e;
                 char *m_instance, *m_model;
+                char *xy_values2_b, *xy_values1_e, *ctrl_nodes_b, *ctrl_nodes_e;
                 int  xy_count1, xy_count2;
 
-                str_ptr1 = skip_non_ws(line);
-                model_name = copy_substring(line, str_ptr1);
+                ref_e = skip_non_ws(line);
+                ref_str = copy_substring(line, ref_e);
 
-                str_ptr1 = skip_ws(str_ptr1);
-                str_ptr2 = skip_back_ws(bool_ptr);
-                keep = *str_ptr2;
-                *str_ptr2 = '\0';
-                node_str  = strdup(str_ptr1);
-                *str_ptr2 = keep;
+                out_b = skip_ws(ref_e);
+                out_e = skip_back_ws(fcn_b);
+                keep = *out_e;
+                *out_e = '\0';
+                out_str = strdup(out_b);
+                *out_e = keep;
 
-                str_ptr1 = strchr(bool_ptr, '(');
-                fcn_name = copy_substring(bool_ptr, str_ptr1);
-                str_ptr1  = strchr(str_ptr1, ')');
+                fcn_e = strchr(fcn_b, '(');
+                fcn_name = copy_substring(fcn_b, fcn_e);
+                s = strchr(fcn_e, ')');
                 comma_ptr = strchr(line, ',');
-                if (!str_ptr1 || !comma_ptr) {
+                if (!s || !comma_ptr) {
                     fprintf(stderr, "ERROR: mal formed line: %s\n", line);
                     controlled_exit(EXIT_FAILURE);
                 }
-                str_ptr1 = skip_ws(str_ptr1 + 1);
-                xy_str1 = skip_back_ws(comma_ptr);
-                if (xy_str1[-1] == '}') {
-                    while (*--xy_str1 != '{')
+                ctrl_nodes_b = skip_ws(s + 1);
+                xy_values1_b = skip_back_ws(comma_ptr);
+                if (xy_values1_b[-1] == '}') {
+                    while (*--xy_values1_b != '{')
                         ;
                 } else {
-                    xy_str1 = skip_back_non_ws(xy_str1);
+                    xy_values1_b = skip_back_non_ws(xy_values1_b);
                 }
-                str_ptr2 = skip_back_ws(xy_str1);
-                keep = *str_ptr2;
-                *str_ptr2 = '\0';
-                ctrl_node_str = strdup(str_ptr1);
-                *str_ptr2 = keep;
+                ctrl_nodes_e = skip_back_ws(xy_values1_b);
+                keep = *ctrl_nodes_e;
+                *ctrl_nodes_e = '\0';
+                ctrl_nodes_str = strdup(ctrl_nodes_b);
+                *ctrl_nodes_e = keep;
 
-                str_ptr1 = skip_ws(comma_ptr + 1);
-                if (*str_ptr1 == '{') {
-                    while (*str_ptr1++ != '}')
+                xy_values1_e = skip_ws(comma_ptr + 1);
+                if (*xy_values1_e == '{') {
+                    while (*xy_values1_e++ != '}')
                         ;
                 } else {
-                    str_ptr1 = skip_non_ws(str_ptr1);
+                    xy_values1_e = skip_non_ws(xy_values1_e);
                 }
-                keep = *str_ptr1;
-                *str_ptr1 = '\0';
-                xy_count1 = get_comma_separated_values(xy_values1, xy_str1);
-                *str_ptr1 = keep;
+                keep = *xy_values1_e;
+                *xy_values1_e = '\0';
+                xy_count1 = get_comma_separated_values(xy_values1, xy_values1_b);
+                *xy_values1_e = keep;
 
-                str_ptr1 = skip_ws(str_ptr1);
-                xy_count2 = get_comma_separated_values(xy_values2, str_ptr1);
+                xy_values2_b = skip_ws(xy_values1_e);
+                xy_count2 = get_comma_separated_values(xy_values2, xy_values2_b);
 
                 // place restrictions on only having 2 point values; this can change later
                 if (xy_count1 != 2 && xy_count2 != 2)
                     fprintf(stderr, "ERROR: only expecting 2 pair values for multi-input vcvs!\n");
 
                 m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s",
-                                     model_name, ctrl_node_str, node_str, model_name);
+                                     ref_str, ctrl_nodes_str, out_str, ref_str);
                 m_instance[0] = 'a';
                 a_card = xx_new_line(NULL, m_instance, (*line_number)++, 0);
 
                 m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
-                                  model_name, xy_values1[0], xy_values2[0],
+                                  ref_str, xy_values1[0], xy_values2[0],
                                   xy_values1[1], xy_values2[1], fcn_name);
                 model_card = xx_new_line(NULL, m_model, (*line_number)++, 0);
 
-                tfree(model_name);
-                tfree(node_str);
+                tfree(ref_str);
+                tfree(out_str);
                 tfree(fcn_name);
-                tfree(ctrl_node_str);
+                tfree(ctrl_nodes_str);
                 tfree(xy_values1[0]);
                 tfree(xy_values1[1]);
                 tfree(xy_values2[0]);
