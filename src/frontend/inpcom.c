@@ -1219,9 +1219,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 node_str  = strdup(str_ptr1);
                 *str_ptr2 = keep;
 
-                str_ptr1 = bool_ptr;
-                while (*++str_ptr1 != '(')
-                    ;
+                str_ptr1 = strchr(bool_ptr, '(');
                 fcn_name = copy_substring(bool_ptr, str_ptr1);
                 str_ptr1  = strchr(str_ptr1, ')');
                 comma_ptr = strchr(line, ',');
