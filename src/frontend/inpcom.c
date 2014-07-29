@@ -1204,11 +1204,15 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 (fcn_b = strstr(line, "or(")) != NULL)
             {
                 struct line *a_card, *model_card, *next_card;
-                char *s, keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
                 char *out_str, *ctrl_nodes_str, *xy_values1_b, *ref_str, *fcn_name, *fcn_e, *out_b, *out_e, *ref_e;
                 char *m_instance, *m_model;
                 char *xy_values2_b, *xy_values1_e, *ctrl_nodes_b, *ctrl_nodes_e;
                 int  xy_count1, xy_count2;
+                bool ok = FALSE;
+
+                do {
+                char *s;
 
                 ref_e = skip_non_ws(line);
 
@@ -1217,11 +1221,11 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
                 fcn_e = strchr(fcn_b, '(');
                 s = strchr(fcn_e, ')');
+                if (!s)
+                    break;
                 comma_ptr = strchr(line, ',');
-                if (!s || !comma_ptr) {
-                    fprintf(stderr, "ERROR: mal formed line: %s\n", line);
-                    controlled_exit(EXIT_FAILURE);
-                }
+                if (!comma_ptr)
+                    break;
                 ctrl_nodes_b = skip_ws(s + 1);
                 xy_values1_b = skip_back_ws(comma_ptr);
                 if (xy_values1_b[-1] == '}') {
@@ -1241,6 +1245,14 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 }
 
                 xy_values2_b = skip_ws(xy_values1_e);
+
+                ok = TRUE;
+                } while(0);
+
+                if (!ok) {
+                    fprintf(stderr, "ERROR: malformed line: %s\n", line);
+                    controlled_exit(EXIT_FAILURE);
+                }
 
                 ref_str = copy_substring(line, ref_e);
 
