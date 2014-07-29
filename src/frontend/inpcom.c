@@ -1211,17 +1211,11 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 int  xy_count1, xy_count2;
 
                 ref_e = skip_non_ws(line);
-                ref_str = copy_substring(line, ref_e);
 
                 out_b = skip_ws(ref_e);
                 out_e = skip_back_ws(fcn_b);
-                keep = *out_e;
-                *out_e = '\0';
-                out_str = strdup(out_b);
-                *out_e = keep;
 
                 fcn_e = strchr(fcn_b, '(');
-                fcn_name = copy_substring(fcn_b, fcn_e);
                 s = strchr(fcn_e, ')');
                 comma_ptr = strchr(line, ',');
                 if (!s || !comma_ptr) {
@@ -1237,10 +1231,6 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                     xy_values1_b = skip_back_non_ws(xy_values1_b);
                 }
                 ctrl_nodes_e = skip_back_ws(xy_values1_b);
-                keep = *ctrl_nodes_e;
-                *ctrl_nodes_e = '\0';
-                ctrl_nodes_str = strdup(ctrl_nodes_b);
-                *ctrl_nodes_e = keep;
 
                 xy_values1_e = skip_ws(comma_ptr + 1);
                 if (*xy_values1_e == '{') {
@@ -1249,12 +1239,28 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 } else {
                     xy_values1_e = skip_non_ws(xy_values1_e);
                 }
+
+                xy_values2_b = skip_ws(xy_values1_e);
+
+                ref_str = copy_substring(line, ref_e);
+
+                keep = *out_e;
+                *out_e = '\0';
+                out_str = strdup(out_b);
+                *out_e = keep;
+
+                fcn_name = copy_substring(fcn_b, fcn_e);
+
+                keep = *ctrl_nodes_e;
+                *ctrl_nodes_e = '\0';
+                ctrl_nodes_str = strdup(ctrl_nodes_b);
+                *ctrl_nodes_e = keep;
+
                 keep = *xy_values1_e;
                 *xy_values1_e = '\0';
                 xy_count1 = get_comma_separated_values(xy_values1, xy_values1_b);
                 *xy_values1_e = keep;
 
-                xy_values2_b = skip_ws(xy_values1_e);
                 xy_count2 = get_comma_separated_values(xy_values2, xy_values2_b);
 
                 // place restrictions on only having 2 point values; this can change later
