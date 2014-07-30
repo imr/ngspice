@@ -1212,54 +1212,54 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 bool ok = FALSE;
 
                 do {
-                ref_e = skip_non_ws(line);
+                    ref_e = skip_non_ws(line);
 
-                out_b = skip_ws(ref_e);
+                    out_b = skip_ws(ref_e);
 
-                out_e = skip_back_ws(fcn_b);
-                if (out_e <= out_b)
-                    break;
+                    out_e = skip_back_ws(fcn_b);
+                    if (out_e <= out_b)
+                        break;
 
-                fcn_e = strchr(fcn_b, '(');
+                    fcn_e = strchr(fcn_b, '(');
 
-                ctrl_nodes_b = strchr(fcn_e, ')');
-                if (!ctrl_nodes_b)
-                    break;
-                ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
+                    ctrl_nodes_b = strchr(fcn_e, ')');
+                    if (!ctrl_nodes_b)
+                        break;
+                    ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
 
-                comma_ptr = strchr(ctrl_nodes_b, ',');
-                if (!comma_ptr)
-                    break;
+                    comma_ptr = strchr(ctrl_nodes_b, ',');
+                    if (!comma_ptr)
+                        break;
 
-                xy_values1_b = skip_back_ws_(comma_ptr, ctrl_nodes_b);
-                if (xy_values1_b[-1] == '}') {
-                    while (--xy_values1_b >= ctrl_nodes_b)
-                        if (*xy_values1_b == '{')
-                            break;
-                } else {
-                    xy_values1_b = skip_back_non_ws_(xy_values1_b, ctrl_nodes_b);
-                }
-                if (xy_values1_b <= ctrl_nodes_b)
-                    break;
+                    xy_values1_b = skip_back_ws_(comma_ptr, ctrl_nodes_b);
+                    if (xy_values1_b[-1] == '}') {
+                        while (--xy_values1_b >= ctrl_nodes_b)
+                            if (*xy_values1_b == '{')
+                                break;
+                    } else {
+                        xy_values1_b = skip_back_non_ws_(xy_values1_b, ctrl_nodes_b);
+                    }
+                    if (xy_values1_b <= ctrl_nodes_b)
+                        break;
 
-                ctrl_nodes_e = skip_back_ws_(xy_values1_b, ctrl_nodes_b);
-                if (ctrl_nodes_e <= ctrl_nodes_b)
-                    break;
+                    ctrl_nodes_e = skip_back_ws_(xy_values1_b, ctrl_nodes_b);
+                    if (ctrl_nodes_e <= ctrl_nodes_b)
+                        break;
 
-                xy_values1_e = skip_ws(comma_ptr + 1);
-                if (*xy_values1_e == '{') {
-                    xy_values1_e = strchr(xy_values1_e, '}');
-                    if (xy_values1_e)
-                        xy_values1_e ++;
-                } else {
-                    xy_values1_e = skip_non_ws(xy_values1_e);
-                }
-                if (!xy_values1_e)
-                    break;
+                    xy_values1_e = skip_ws(comma_ptr + 1);
+                    if (*xy_values1_e == '{') {
+                        xy_values1_e = strchr(xy_values1_e, '}');
+                        if (xy_values1_e)
+                            xy_values1_e ++;
+                    } else {
+                        xy_values1_e = skip_non_ws(xy_values1_e);
+                    }
+                    if (!xy_values1_e)
+                        break;
 
-                xy_values2_b = skip_ws(xy_values1_e);
+                    xy_values2_b = skip_ws(xy_values1_e);
 
-                ok = TRUE;
+                    ok = TRUE;
                 } while(0);
 
                 if (!ok) {
