@@ -1212,37 +1212,50 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 bool ok = FALSE;
 
                 do {
-                char *s;
-
                 ref_e = skip_non_ws(line);
 
                 out_b = skip_ws(ref_e);
+
                 out_e = skip_back_ws(fcn_b);
+                if (out_e <= out_b)
+                    break;
 
                 fcn_e = strchr(fcn_b, '(');
-                s = strchr(fcn_e, ')');
-                if (!s)
+
+                ctrl_nodes_b = strchr(fcn_e, ')');
+                if (!ctrl_nodes_b)
                     break;
-                comma_ptr = strchr(line, ',');
+                ctrl_nodes_b = skip_ws(ctrl_nodes_b + 1);
+
+                comma_ptr = strchr(ctrl_nodes_b, ',');
                 if (!comma_ptr)
                     break;
-                ctrl_nodes_b = skip_ws(s + 1);
-                xy_values1_b = skip_back_ws(comma_ptr);
+
+                xy_values1_b = skip_back_ws_(comma_ptr, ctrl_nodes_b);
                 if (xy_values1_b[-1] == '}') {
-                    while (*--xy_values1_b != '{')
-                        ;
+                    while (--xy_values1_b >= ctrl_nodes_b)
+                        if (*xy_values1_b == '{')
+                            break;
                 } else {
-                    xy_values1_b = skip_back_non_ws(xy_values1_b);
+                    xy_values1_b = skip_back_non_ws_(xy_values1_b, ctrl_nodes_b);
                 }
-                ctrl_nodes_e = skip_back_ws(xy_values1_b);
+                if (xy_values1_b <= ctrl_nodes_b)
+                    break;
+
+                ctrl_nodes_e = skip_back_ws_(xy_values1_b, ctrl_nodes_b);
+                if (ctrl_nodes_e <= ctrl_nodes_b)
+                    break;
 
                 xy_values1_e = skip_ws(comma_ptr + 1);
                 if (*xy_values1_e == '{') {
-                    while (*xy_values1_e++ != '}')
-                        ;
+                    xy_values1_e = strchr(xy_values1_e, '}');
+                    if (xy_values1_e)
+                        xy_values1_e ++;
                 } else {
                     xy_values1_e = skip_non_ws(xy_values1_e);
                 }
+                if (!xy_values1_e)
+                    break;
 
                 xy_values2_b = skip_ws(xy_values1_e);
 
@@ -1255,18 +1268,9 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 }
 
                 ref_str = copy_substring(line, ref_e);
-
-                keep = *out_e;
-                *out_e = '\0';
-                out_str = strdup(out_b);
-                *out_e = keep;
-
+                out_str = copy_substring(out_b, out_e);
                 fcn_name = copy_substring(fcn_b, fcn_e);
-
-                keep = *ctrl_nodes_e;
-                *ctrl_nodes_e = '\0';
-                ctrl_nodes_str = strdup(ctrl_nodes_b);
-                *ctrl_nodes_e = keep;
+                ctrl_nodes_str = copy_substring(ctrl_nodes_b, ctrl_nodes_e);
 
                 keep = *xy_values1_e;
                 *xy_values1_e = '\0';
