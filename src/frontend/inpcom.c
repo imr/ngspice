@@ -1216,7 +1216,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
                     out_b = skip_ws(ref_e);
 
-                    out_e = skip_back_ws(fcn_b);
+                    out_e = skip_back_ws_(fcn_b, out_b);
                     if (out_e <= out_b)
                         break;
 
