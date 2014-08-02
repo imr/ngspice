@@ -1174,6 +1174,22 @@ inp_fix_gnd_name(struct line *c)
 }
 
 
+/*
+ * transform a VCVS "gate" instance into a XSPICE instance
+ *
+ *   Exx  out+ out-  <VCVS>  {nand|nor|and|or}(n)
+ *   +  in[1]+ in[1]- ... in[n]+ in[n]-
+ *   +  x1,y1 x2,y2
+ * ==>
+ *   Axx  %vd[ in[1]+ in[1]- ... in[n]+ in[n]- ]
+ *   +    %vd( out+ out- )  Exx
+ *   .model Exx multi_input_pwd ( x = [x1 x2] x = [y1 y2] model = {nand|nor|and|or} )
+ *
+ * fixme,
+ *   `n' is not checked
+ *   the x,y list is fixed to length 2
+ */
+
 static void
 inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 {
