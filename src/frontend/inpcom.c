@@ -2165,7 +2165,6 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         /* beg  will point to start of param list   */
         beg = skip_back_ws_(equal, s);
         beg = skip_back_non_ws_(beg, s);
-        beg[-1] = '\0';         /* fixme can be < s */
 
         head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
@@ -2185,13 +2184,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 controlled_exit(EXIT_FAILURE);
             }
 
-            if (*ptr2 == '\0') {
-                /* End of string - don't go over end. */
-                beg = ptr2;
-            } else {
-                *ptr2 = '\0';
-                beg = ptr2 + 1;
-            }
+            beg = ptr2;
 
             end_card = xx_new_line(NULL, copy_substring(ptr1, ptr2), 0, 0);
 
