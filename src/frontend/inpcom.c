@@ -148,6 +148,8 @@ static char *skip_ws(char *d)          { while (isspace(*d))        d++; return 
 static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace(d[-1])) d--; return d; }
 static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace(d[-1])) d--; return d; }
 
+static char *inp_spawn_brace(char *s);
+
 static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
 void tprint(struct line *deck);
@@ -1264,9 +1266,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
                     xy_values1_e = skip_ws(comma_ptr + 1);
                     if (*xy_values1_e == '{') {
-                        xy_values1_e = strchr(xy_values1_e, '}');
-                        if (xy_values1_e)
-                            xy_values1_e ++;
+                        xy_values1_e = inp_spawn_brace(xy_values1_e);
                     } else {
                         xy_values1_e = skip_non_ws(xy_values1_e);
                     }
@@ -1942,6 +1942,26 @@ inp_search_opening_paren(char *s, char *start)
 #endif
 
 
+/* search forward for closing brace */
+static char *
+inp_spawn_brace(char *s)
+{
+    int count = 0;
+    // assert(*s == '{')
+    while (*s) {
+        if (*s == '{')
+            count++;
+        if (*s == '}')
+            count--;
+        if (count == 0)
+            return s + 1;
+        s++;
+    }
+
+    return NULL;
+}
+
+
 /*-------------------------------------------------------------------------*
   removes  " " quotes, returns lower case letters,
   replaces non-printable characterss with '_'                                                                       *
@@ -2129,7 +2149,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
     struct line *head = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
     char keep;
-    int  num_params = 0, i = 0, bracedepth = 0;
+    int  num_params = 0, i = 0;
     /* find first '=' */
     equal = strchr(s, '=');
     if (!strstr(s, "params:") && equal != NULL) {
@@ -2159,26 +2179,15 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             ptr1 = skip_back_non_ws_(ptr1, beg);
             /* ptr1 points to beginning of parameter */
 
-            /* if parameter is an expression and starts with '{', find closing '}'
-               Braces maybe nested (will they ever be ?). */
-            if (*ptr2 == '{') {
-                bracedepth = 1;
-                while (bracedepth > 0) {
-                    ptr2++;
-                    if (*ptr2 == '{')
-                        bracedepth++;
-                    else if (*ptr2 == '}')
-                        bracedepth--;
-                    else if (*ptr2 == '\0') {
-                        fprintf(stderr, "Error: Missing } in line %s\n", s);
-                        controlled_exit(EXIT_FAILURE);
-                    }
-                }
-                ptr2++;/* ptr2 points past end of parameter {...} */
-            }
+            if (*ptr2 == '{')
+                ptr2 = inp_spawn_brace(ptr2);
             else
-                /* take only the next token (separated by space) as the parameter */
-                ptr2 = skip_non_ws(ptr2); /* ptr2 points past end of parameter       */
+                ptr2 = skip_non_ws(ptr2);
+
+            if (!ptr2) {
+                fprintf(stderr, "Error: Missing } in line %s\n", s);
+                controlled_exit(EXIT_FAILURE);
+            }
 
             keep  = *ptr2;
             if (keep == '\0') {
@@ -2545,13 +2554,14 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         /* get parameter value */
         value = skip_ws(equal_ptr + 1);
 
-        if (*value == '{') {
-            end = value;
-            while (*end && *end != '}')
-                end++;
-            end++;
-        } else {
+        if (*value == '{')
+            end = inp_spawn_brace(value);
+        else
             end = skip_non_ws(value);
+
+        if (!end) {
+            fprintf(stderr, "Error: Missing } in %s\n", line);
+            controlled_exit(EXIT_FAILURE);
         }
 
         keep = *end;
