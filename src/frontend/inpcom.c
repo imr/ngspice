@@ -2170,9 +2170,6 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
         while ((ptr1 = strchr(beg, '=')) != NULL) {
-#ifndef NOBRACE
-            /* alternative patch to cope with spaces:
-               get expression between braces {...} */
             ptr2 = skip_ws(ptr1 + 1);
             ptr1 = skip_back_ws_(ptr1, beg);
             ptr1 = skip_back_non_ws_(ptr1, beg);
@@ -2205,46 +2202,6 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
             prev_card = end_card;
             num_params++;
-#else
-            /* patch provided by Ivan Riis Nielsen */
-            bool done = FALSE;
-            int buf_len = 32, buf_idx = 0;
-            char *buf = TMALLOC(char, buf_len), *p1 = beg, *p2 = beg;
-
-            while (!done) {
-                while (*p2 && !isspace(*p2)) {
-
-                    if (buf_idx >= buf_len) {
-                        buf_len *= 2;
-                        buf = TREALLOC(char, buf, buf_len);
-                    }
-                    buf[buf_idx++] = *(p2++);
-                }
-                p1 = skip_ws(p2);
-                if (*p1 == '\0' || !(strchr("+-*/<>=(!,{", p2[-1]) || strchr("+-*/<>=()!,}", *p1))) {
-                    if (buf_idx >= buf_len) {
-                        buf_len *= 2;
-                        buf = TREALLOC(char, buf, buf_len);
-                    }
-                    buf[buf_idx++] = '\0';
-                    beg = p1;
-
-                    end_card = xx_new_line(NULL, buf, 0, 0);
-
-                    if (start_card == NULL)
-                        head->li_next = start_card = end_card;
-                    else
-                        prev_card->li_next = end_card;
-
-                    prev_card = end_card;
-                    num_params++;
-
-                    done = TRUE;
-                }
-                else
-                    p2 = p1;
-            }
-#endif
         }
         /* now sort parameters in order of dependencies */
         inp_sort_params(start_card, end_card, head, start_card, end_card);
