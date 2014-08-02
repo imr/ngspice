@@ -2148,11 +2148,10 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
     struct line *head = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
-    char keep;
     int  num_params = 0, i = 0;
-    /* find first '=' */
+
     equal = strchr(s, '=');
-    if (!strstr(s, "params:") && equal != NULL) {
+    if (equal && !strstr(s, "params:")) {
         /* get subckt name (ptr1 will point to name) */
         ptr1 = skip_non_ws(s);
         ptr1 = skip_ws(ptr1);
@@ -2170,7 +2169,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
         head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
-        while (*beg && (ptr1 = strchr(beg, '=')) != NULL) {
+        while ((ptr1 = strchr(beg, '=')) != NULL) {
 #ifndef NOBRACE
             /* alternative patch to cope with spaces:
                get expression between braces {...} */
@@ -2189,8 +2188,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 controlled_exit(EXIT_FAILURE);
             }
 
-            keep  = *ptr2;
-            if (keep == '\0') {
+            if (*ptr2 == '\0') {
                 /* End of string - don't go over end. */
                 beg = ptr2;
             } else {
@@ -2198,7 +2196,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 beg = ptr2 + 1;
             }
 
-            end_card = xx_new_line(NULL, strdup(ptr1), 0, 0);
+            end_card = xx_new_line(NULL, copy_substring(ptr1, ptr2), 0, 0);
 
             if (start_card == NULL)
                 head->li_next = start_card = end_card;
