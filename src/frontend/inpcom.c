@@ -152,6 +152,7 @@ static char *inp_spawn_brace(char *s);
 
 static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
+static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct line *deck);
 
 struct inp_read_t
@@ -3650,8 +3651,8 @@ get_number_terminals(char *c)
 static void
 inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
-    char *param_name = NULL, *param_str = NULL, *param_ptr = NULL;
-    int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0, ioff = 1;
+    char *param_name = NULL, *param_str = NULL;
+    int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0;
     bool in_control = FALSE;
 
     bool found_in_list = FALSE;
@@ -3736,14 +3737,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
             param_str = param_strs[j];
 
-            while ((param_ptr = strstr(param_str, param_name)) != NULL) {
-                ioff = (strchr(param_ptr, '}') != NULL ? 1 : 0);  /* want prevent wrong memory access below */
-                /* looking for curly braces or other string limiter */
-                if ((!isalnum(param_ptr[-ioff]) && param_ptr[-ioff] != '_' &&
-                     !isalnum(param_ptr[strlen(param_name)]) &&
-                     param_ptr[strlen(param_name)] != '_') ||
-                    strcmp(param_ptr, param_name) == 0)
-                { /* this are cases without curly braces */
+            if (search_plain_identifier(param_str, param_name)) {
                     ind = 0;
                     found_in_list = FALSE;
                     while (depends_on[j][ind] != NULL) {
@@ -3757,9 +3751,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                         depends_on[j][ind++] = param_name;
                         depends_on[j][ind]   = NULL;
                     }
-                    break;
-                }
-                param_str = param_ptr + strlen(param_name);
             }
         }
     }
@@ -4199,6 +4190,32 @@ search_identifier(char *str, const char *identifier, char *str_begin)
         }
 
         str++;
+    }
+
+    return NULL;
+}
+
+
+static char *
+search_plain_identifier(char *str, const char *identifier)
+{
+    char *str_begin = str;
+
+    while ((str = strstr(str, identifier)) != NULL) {
+        char before;
+
+        if (str > str_begin)
+            before = str[-1];
+        else
+            before = '\0';
+
+        if (!before || !identifier_char(before)) {
+            char after = str[strlen(identifier)];
+            if (!after || !identifier_char(after))
+                return str;
+        }
+
+        str += strlen(identifier);
     }
 
     return NULL;
