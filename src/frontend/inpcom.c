@@ -3505,12 +3505,12 @@ get_param_str(char *line)
 struct dependency
 {
     int level;
-    int param_skip;
+    int skip;
     char *param_name;
     char *param_str;
     char *depends_on[100];
-    struct line *ptr_array;
-    struct line *ptr_array_ordered;
+    struct line *card;
+    struct line *card_ordered;
 };
 
 
@@ -3696,25 +3696,25 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             deps[num_params].level         = -1;
             deps[num_params].param_name   = get_param_name(c->li_line); /* strdup in fcn */
             deps[num_params].param_str    = strdup(get_param_str(c->li_line));
-            deps[num_params].ptr_array     = c;
+            deps[num_params].card          = c;
             num_params ++;
         }
 
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
     for (i = 0; i < num_params; i++)
-        deps[i].param_skip = 0;
+        deps[i].skip = 0;
 
     for (i = 0; i < num_params; i++)
-        for (j = num_params-1; j >= 0 && !deps[i].param_skip; j--)
+        for (j = num_params - 1; j >= 0 && !deps[i].skip; j--)
             if (i != j && i < j && strcmp(deps[i].param_name, deps[j].param_name) == 0) {
                 // skip earlier one in list
-                deps[i].param_skip = 1;
+                deps[i].skip = 1;
                 skipped++;
             }
 
     for (i = 0; i < num_params; i++) {
-        if (deps[i].param_skip == 1)
+        if (deps[i].skip == 1)
             continue;
 
         param_name = deps[i].param_name;
@@ -3837,8 +3837,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     for (i = 0; i <= max_level; i++)
         for (j = num_params-1; j >= 0; j--)
             if (deps[j].level == i)
-                if (deps[j].param_skip == 0)
-                    deps[ind++].ptr_array_ordered = deps[j].ptr_array;
+                if (deps[j].skip == 0)
+                    deps[ind++].card_ordered = deps[j].card;
 
     num_params -= skipped;
     if (ind != num_params) {
@@ -3848,10 +3848,10 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     /* fix next ptrs */
     c                                      = card_bf_start->li_next;
-    card_bf_start->li_next                   = deps[0].ptr_array_ordered;
-    deps[num_params-1].ptr_array_ordered->li_next = c;
+    card_bf_start->li_next                   = deps[0].card_ordered;
+    deps[num_params-1].card_ordered->li_next = c;
     for (i = 0; i < num_params-1; i++)
-        deps[i].ptr_array_ordered->li_next = deps[i+1].ptr_array_ordered;
+        deps[i].card_ordered->li_next = deps[i+1].card_ordered;
 
     // clean up memory
     for (i = 0; i < arr_size; i++) {
