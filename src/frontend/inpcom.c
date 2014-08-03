@@ -3726,14 +3726,12 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             param_str = deps[j].param_str;
 
             if (search_plain_identifier(param_str, param_name)) {
-                    ind = 0;
                     found_in_list = FALSE;
-                    while (deps[j].depends_on[ind] != NULL) {
+                    for (ind = 0; deps[j].depends_on[ind]; ind++) {
                         if (strcmp(param_name, deps[j].depends_on[ind]) == 0) {
                             found_in_list = TRUE;
                             break;
                         }
-                        ind++;
                     }
                     if (!found_in_list) {
                         deps[j].depends_on[ind++] = param_name;
