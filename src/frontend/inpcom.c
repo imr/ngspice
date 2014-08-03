@@ -3691,9 +3691,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         if (strchr(c->li_line, '=')) {
             deps[num_params].depends_on[0] = NULL;
             deps[num_params].level         = -1;
-            deps[num_params].skip         = 0;
-            deps[num_params].param_name   = get_param_name(c->li_line); /* strdup in fcn */
-            deps[num_params].param_str    = strdup(get_param_str(c->li_line));
+            deps[num_params].skip          = 0;
+            deps[num_params].param_name    = get_param_name(c->li_line); /* strdup in fcn */
+            deps[num_params].param_str     = strdup(get_param_str(c->li_line));
             deps[num_params].card          = c;
             num_params ++;
         }
@@ -3712,26 +3712,23 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     for (i = 0; i < num_params; i++)
         if (!deps[i].skip) {
-
-        char *param_name = deps[i].param_name;
-        for (j = 0; j < num_params; j++) {
+            char *param_name = deps[i].param_name;
+            for (j = 0; j < num_params; j++) {
 //        for (j = i + 1; j < num_params; j++) {  /* FIXME: to be tested */
-            if (j == i)
-                continue;
+                if (j == i)
+                    continue;
 
-            if (search_plain_identifier(deps[j].param_str, param_name)) {
-                    for (ind = 0; deps[j].depends_on[ind]; ind++) {
-                        if (strcmp(param_name, deps[j].depends_on[ind]) == 0) {
+                if (search_plain_identifier(deps[j].param_str, param_name)) {
+                    for (ind = 0; deps[j].depends_on[ind]; ind++)
+                        if (strcmp(param_name, deps[j].depends_on[ind]) == 0)
                             break;
-                        }
-                    }
                     if (!deps[j].depends_on[ind]) {
                         deps[j].depends_on[ind++] = param_name;
                         deps[j].depends_on[ind]   = NULL;
                     }
+                }
             }
         }
-    }
 
     max_level = 0;
     for (i = 0; i < num_params; i++) {
@@ -3826,7 +3823,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     ind = 0;
     for (i = 0; i <= max_level; i++)
-        for (j = num_params-1; j >= 0; j--)
+        for (j = num_params - 1; j >= 0; j--)
             if (deps[j].level == i)
                 if (deps[j].skip == 0)
                     deps[ind++].card_ordered = deps[j].card;
@@ -3838,10 +3835,10 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     }
 
     /* fix next ptrs */
-    c                                      = card_bf_start->li_next;
-    card_bf_start->li_next                   = deps[0].card_ordered;
+    c                      = card_bf_start->li_next;
+    card_bf_start->li_next = deps[0].card_ordered;
     deps[num_params-1].card_ordered->li_next = c;
-    for (i = 0; i < num_params-1; i++)
+    for (i = 0; i < num_params - 1; i++)
         deps[i].card_ordered->li_next = deps[i+1].card_ordered;
 
     // clean up memory
