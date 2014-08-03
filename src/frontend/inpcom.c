@@ -3666,7 +3666,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     struct line *c;
     char *str_ptr, *beg, *end, *new_str;
-    int  skipped = 0;
+    int  skipped;
     int arr_size;
 
     struct dependency *deps;
@@ -3691,6 +3691,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         if (strchr(c->li_line, '=')) {
             deps[num_params].depends_on[0] = NULL;
             deps[num_params].level         = -1;
+            deps[num_params].skip         = 0;
             deps[num_params].param_name   = get_param_name(c->li_line); /* strdup in fcn */
             deps[num_params].param_str    = strdup(get_param_str(c->li_line));
             deps[num_params].card          = c;
@@ -3699,9 +3700,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
-    for (i = 0; i < num_params; i++)
-        deps[i].skip = 0;
 
+    skipped = 0;
     for (i = 0; i < num_params; i++)
         for (j = num_params - 1; j >= 0 && !deps[i].skip; j--)
             if (i != j && i < j && strcmp(deps[i].param_name, deps[j].param_name) == 0) {
