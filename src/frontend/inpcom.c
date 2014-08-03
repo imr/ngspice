@@ -3662,7 +3662,7 @@ static void
 inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
     char *param_name = NULL, *param_str = NULL;
-    int  i, j, num_params = 0, ind = 0, max_level = 0, num_terminals = 0;
+    int  i, j, num_params, ind = 0, max_level = 0, num_terminals = 0;
     bool in_control = FALSE;
 
     bool found_in_list = FALSE;
@@ -3686,11 +3686,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         if (strchr(c->li_line, '='))
             arr_size ++;
 
-    num_params = 0; /* This is just to keep the code in row 2907ff. */
-
     deps = TMALLOC(struct dependency, arr_size);
 
-    c = start_card;
+    num_params = 0;
     for (c = start_card; c; c = c->li_next)
         // ignore .param lines without '='
         if (strchr(c->li_line, '=')) {
@@ -3698,8 +3696,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             deps[num_params].level         = -1;
             deps[num_params].param_name   = get_param_name(c->li_line); /* strdup in fcn */
             deps[num_params].param_str    = strdup(get_param_str(c->li_line));
-
-            deps[num_params++].ptr_array   = c;
+            deps[num_params].ptr_array     = c;
+            num_params ++;
         }
 
     // look for duplicately defined parameters and mark earlier one to skip
