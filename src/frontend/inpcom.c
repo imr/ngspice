@@ -3665,8 +3665,6 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     int  i, j, num_params, ind = 0, max_level = 0, num_terminals = 0;
     bool in_control = FALSE;
 
-    bool found_in_list = FALSE;
-
     struct line *c;
     char *str_ptr, *beg, *end, *new_str;
     int  skipped = 0;
@@ -3726,14 +3724,12 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             param_str = deps[j].param_str;
 
             if (search_plain_identifier(param_str, param_name)) {
-                    found_in_list = FALSE;
                     for (ind = 0; deps[j].depends_on[ind]; ind++) {
                         if (strcmp(param_name, deps[j].depends_on[ind]) == 0) {
-                            found_in_list = TRUE;
                             break;
                         }
                     }
-                    if (!found_in_list) {
+                    if (!deps[j].depends_on[ind]) {
                         deps[j].depends_on[ind++] = param_name;
                         deps[j].depends_on[ind]   = NULL;
                     }
