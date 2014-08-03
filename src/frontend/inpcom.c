@@ -3661,7 +3661,6 @@ get_number_terminals(char *c)
 static void
 inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
-    char *param_name = NULL;
     int  i, j, num_params, ind = 0, max_level = 0, num_terminals = 0;
     bool in_control = FALSE;
 
@@ -3714,7 +3713,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     for (i = 0; i < num_params; i++)
         if (!deps[i].skip) {
 
-        param_name = deps[i].param_name;
+        char *param_name = deps[i].param_name;
         for (j = 0; j < num_params; j++) {
 //        for (j = i + 1; j < num_params; j++) {  /* FIXME: to be tested */
             if (j == i)
