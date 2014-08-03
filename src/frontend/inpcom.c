@@ -3667,7 +3667,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     bool found_in_list = FALSE;
 
-    struct line *ptr;
+    struct line *c;
     char *str_ptr, *beg, *end, *new_str;
     int  skipped = 0;
     int arr_size = 12000;
@@ -3681,8 +3681,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     /* determine the number of lines with .param */
 
-    for (ptr = start_card; ptr; ptr = ptr->li_next)
-        if (strchr(ptr->li_line, '='))
+    for (c = start_card; c; c = c->li_next)
+        if (strchr(c->li_line, '='))
             num_params++;
 
     arr_size = num_params;
@@ -3690,16 +3690,16 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     deps = TMALLOC(struct dependency, arr_size);
 
-    ptr = start_card;
-    for (ptr = start_card; ptr; ptr = ptr->li_next)
+    c = start_card;
+    for (c = start_card; c; c = c->li_next)
         // ignore .param lines without '='
-        if (strchr(ptr->li_line, '=')) {
+        if (strchr(c->li_line, '=')) {
             deps[num_params].depends_on[0] = NULL;
             deps[num_params].level         = -1;
-            deps[num_params].param_name   = get_param_name(ptr->li_line); /* strdup in fcn */
-            deps[num_params].param_str    = strdup(get_param_str(ptr->li_line));
+            deps[num_params].param_name   = get_param_name(c->li_line); /* strdup in fcn */
+            deps[num_params].param_str    = strdup(get_param_str(c->li_line));
 
-            deps[num_params++].ptr_array   = ptr;
+            deps[num_params++].ptr_array   = c;
         }
 
     // look for duplicately defined parameters and mark earlier one to skip
@@ -3754,9 +3754,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     /* look for unquoted parameters and quote them */
 
     in_control = FALSE;
-    for (ptr = s_c; ptr && ptr != e_c; ptr = ptr->li_next) {
+    for (c = s_c; c && c != e_c; c = c->li_next) {
 
-        char *curr_line = ptr->li_line;
+        char *curr_line = c->li_line;
 
         if (ciprefix(".control", curr_line)) {
             in_control = TRUE;
@@ -3827,8 +3827,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                     new_str = tprintf("%s{%s}%s", curr_line, deps[i].param_name, end);
                     str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name);
 
-                    tfree(ptr->li_line);
-                    curr_line = ptr->li_line = new_str;
+                    tfree(c->li_line);
+                    curr_line = c->li_line = new_str;
                 }
                 str_ptr++;
             }
@@ -3849,9 +3849,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     }
 
     /* fix next ptrs */
-    ptr                                      = card_bf_start->li_next;
+    c                                      = card_bf_start->li_next;
     card_bf_start->li_next                   = deps[0].ptr_array_ordered;
-    deps[num_params-1].ptr_array_ordered->li_next = ptr;
+    deps[num_params-1].ptr_array_ordered->li_next = c;
     for (i = 0; i < num_params-1; i++)
         deps[i].ptr_array_ordered->li_next = deps[i+1].ptr_array_ordered;
 
