@@ -3515,34 +3515,33 @@ struct dependency
 
 
 static int
-inp_get_param_level(int param_num, struct dependency *deps, int total_params)
+inp_get_param_level(int param_num, struct dependency *deps, int num_params)
 {
-    int index1, comp_level = 0, temp_level;
-    int index2;
+    int i, k, l, level = 0;
 
     if (deps[param_num].level != -1)
         return deps[param_num].level;
 
-    for (index1 = 0; deps[param_num].depends_on[index1]; index1++) {
+    for (i = 0; deps[param_num].depends_on[i]; i++) {
 
-        for (index2 = 0; index2 < total_params; index2++)
-            if (deps[param_num].depends_on[index1] == deps[index2].param_name)
+        for (k = 0; k < num_params; k++)
+            if (deps[param_num].depends_on[i] == deps[k].param_name)
                 break;
 
-        if (index2 >= total_params) {
+        if (k >= num_params) {
             fprintf(stderr, "ERROR: unable to find dependency parameter for %s!\n", deps[param_num].param_name);
             controlled_exit(EXIT_FAILURE);
         }
 
-        temp_level = inp_get_param_level(index2, deps, total_params) + 1;
+        l = inp_get_param_level(k, deps, num_params) + 1;
 
-        if (comp_level < temp_level)
-            comp_level = temp_level;
+        if (level < l)
+            level = l;
     }
 
-    deps[param_num].level = comp_level;
+    deps[param_num].level = level;
 
-    return comp_level;
+    return level;
 }
 
 
