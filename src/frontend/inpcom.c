@@ -3711,9 +3711,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                 skipped++;
             }
 
-    for (i = 0; i < num_params; i++) {
-        if (deps[i].skip == 1)
-            continue;
+    for (i = 0; i < num_params; i++)
+        if (!deps[i].skip) {
 
         param_name = deps[i].param_name;
         for (j = 0; j < num_params; j++) {
