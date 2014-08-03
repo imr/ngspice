@@ -3502,26 +3502,38 @@ get_param_str(char *line)
 }
 
 
+struct dependency
+{
+    int level;
+    int param_skip;
+    char *param_name;
+    char *param_str;
+    char *depends_on[100];
+    struct line *ptr_array;
+    struct line *ptr_array_ordered;
+};
+
+
 static int
-inp_get_param_level(int param_num, char ***depends_on, char **param_names, char **param_strs, int total_params, int *level)
+inp_get_param_level(int param_num, struct dependency *deps, int total_params)
 {
     int index1 = 0, comp_level = 0, temp_level = 0;
     int index2 = 0;
 
-    if (level[param_num] != -1)
-        return level[param_num];
+    if (deps[param_num].level != -1)
+        return deps[param_num].level;
 
-    while (depends_on[param_num][index1] != NULL) {
+    while (deps[param_num].depends_on[index1] != NULL) {
         index2 = 0;
         while (index2 <= total_params &&
-               param_names[index2] != depends_on[param_num][index1])
+               deps[index2].param_name != deps[param_num].depends_on[index1])
             index2++;
 
         if (index2 > total_params) {
-            fprintf(stderr, "ERROR: unable to find dependency parameter for %s!\n", param_names[param_num]);
+            fprintf(stderr, "ERROR: unable to find dependency parameter for %s!\n", deps[param_num].param_name);
             controlled_exit(EXIT_FAILURE);
         }
-        temp_level = inp_get_param_level(index2, depends_on, param_names, param_strs, total_params, level);
+        temp_level = inp_get_param_level(index2, deps, total_params);
         temp_level++;
 
         if (comp_level < temp_level)
@@ -3529,7 +3541,7 @@ inp_get_param_level(int param_num, char ***depends_on, char **param_names, char 
         index1++;
     }
 
-    level[param_num] = comp_level;
+    deps[param_num].level = comp_level;
 
     return comp_level;
 }
@@ -3662,13 +3674,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     int  skipped = 0;
     int arr_size = 12000;
 
-    int *level;
-    int *param_skip;
-    char **param_names;
-    char **param_strs;
-    char ***depends_on;
-    struct line **ptr_array;
-    struct line **ptr_array_ordered;
+    struct dependency *deps;
 
     NG_IGNORE(end_card);
 
@@ -3684,81 +3690,67 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     arr_size = num_params;
     num_params = 0; /* This is just to keep the code in row 2907ff. */
 
-    // dynamic memory allocation
-    level = TMALLOC(int, arr_size);
-    param_skip = TMALLOC(int, arr_size);
-    param_names = TMALLOC(char *, arr_size);
-    param_strs = TMALLOC(char *, arr_size);
-
-    /* array[row][column] -> depends_on[array_size][100] */
-    /* rows */
-    depends_on = TMALLOC(char **, arr_size);
-    /* columns */
-    for (i = 0; i < arr_size; i++)
-        depends_on[i] = TMALLOC(char *, 100);
-
-    ptr_array = TMALLOC(struct line *, arr_size);
-    ptr_array_ordered = TMALLOC(struct line *, arr_size);
+    deps = TMALLOC(struct dependency, arr_size);
 
     ptr = start_card;
     for (ptr = start_card; ptr; ptr = ptr->li_next)
         // ignore .param lines without '='
         if (strchr(ptr->li_line, '=')) {
-            depends_on[num_params][0] = NULL;
-            level[num_params]         = -1;
-            param_names[num_params]   = get_param_name(ptr->li_line); /* strdup in fcn */
-            param_strs[num_params]    = strdup(get_param_str(ptr->li_line));
+            deps[num_params].depends_on[0] = NULL;
+            deps[num_params].level         = -1;
+            deps[num_params].param_name   = get_param_name(ptr->li_line); /* strdup in fcn */
+            deps[num_params].param_str    = strdup(get_param_str(ptr->li_line));
 
-            ptr_array[num_params++]   = ptr;
+            deps[num_params++].ptr_array   = ptr;
         }
 
     // look for duplicately defined parameters and mark earlier one to skip
     // param list is ordered as defined in netlist
     for (i = 0; i < num_params; i++)
-        param_skip[i] = 0;
+        deps[i].param_skip = 0;
 
     for (i = 0; i < num_params; i++)
-        for (j = num_params-1; j >= 0 && !param_skip[i]; j--)
-            if (i != j && i < j && strcmp(param_names[i], param_names[j]) == 0) {
+        for (j = num_params-1; j >= 0 && !deps[i].param_skip; j--)
+            if (i != j && i < j && strcmp(deps[i].param_name, deps[j].param_name) == 0) {
                 // skip earlier one in list
-                param_skip[i] = 1;
+                deps[i].param_skip = 1;
                 skipped++;
             }
 
     for (i = 0; i < num_params; i++) {
-        if (param_skip[i] == 1)
+        if (deps[i].param_skip == 1)
             continue;
 
-        param_name = param_names[i];
+        param_name = deps[i].param_name;
         for (j = 0; j < num_params; j++) {
 //        for (j = i + 1; j < num_params; j++) {  /* FIXME: to be tested */
             if (j == i)
                 continue;
 
-            param_str = param_strs[j];
+            param_str = deps[j].param_str;
 
             if (search_plain_identifier(param_str, param_name)) {
                     ind = 0;
                     found_in_list = FALSE;
-                    while (depends_on[j][ind] != NULL) {
-                        if (strcmp(param_name, depends_on[j][ind]) == 0) {
+                    while (deps[j].depends_on[ind] != NULL) {
+                        if (strcmp(param_name, deps[j].depends_on[ind]) == 0) {
                             found_in_list = TRUE;
                             break;
                         }
                         ind++;
                     }
                     if (!found_in_list) {
-                        depends_on[j][ind++] = param_name;
-                        depends_on[j][ind]   = NULL;
+                        deps[j].depends_on[ind++] = param_name;
+                        deps[j].depends_on[ind]   = NULL;
                     }
             }
         }
     }
 
     for (i = 0; i < num_params; i++) {
-        level[i] = inp_get_param_level(i, depends_on, param_names, param_strs, num_params, level);
-        if (max_level < level[i])
-            max_level = level[i];
+        deps[i].level = inp_get_param_level(i, deps, num_params);
+        if (max_level < deps[i].level)
+            max_level = deps[i].level;
     }
 
     /* look for unquoted parameters and quote them */
@@ -3804,17 +3796,17 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 /* FIXME: useless and potentially buggy code: we check parameters like
    l={length}, but the following will not work for such a parameter string.
    We just live from the fact that str_ptr = "". */
-            while ((str_ptr = strstr(str_ptr, param_names[i])) != NULL) {
+            while ((str_ptr = strstr(str_ptr, deps[i].param_name)) != NULL) {
                 /* make sure actually have the parameter name */
                 char before = *(str_ptr-1);
-                char after  = *(str_ptr+strlen(param_names[i]));
+                char after  = *(str_ptr+strlen(deps[i].param_name));
                 if (!(is_arith_char(before) || isspace(before) || (str_ptr-1) < curr_line) ||
                     !(is_arith_char(after)  || isspace(after)  || after == '\0')) {
                     str_ptr ++;
                     continue;
                 }
                 beg = str_ptr - 1;
-                end = str_ptr + strlen(param_names[i]);
+                end = str_ptr + strlen(deps[i].param_name);
                 if ((isspace(*beg) || *beg == '=') &&
                     (isspace(*end) || *end == '\0' || *end == ')')) {
                     if (isspace(*beg)) {
@@ -3834,8 +3826,8 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
                             end--;
                     }
                     *str_ptr = '\0';
-                    new_str = tprintf("%s{%s}%s", curr_line, param_names[i], end);
-                    str_ptr = new_str + strlen(curr_line) + strlen(param_names[i]);
+                    new_str = tprintf("%s{%s}%s", curr_line, deps[i].param_name, end);
+                    str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name);
 
                     tfree(ptr->li_line);
                     curr_line = ptr->li_line = new_str;
@@ -3848,9 +3840,9 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     ind = 0;
     for (i = 0; i <= max_level; i++)
         for (j = num_params-1; j >= 0; j--)
-            if (level[j] == i)
-                if (param_skip[j] == 0)
-                    ptr_array_ordered[ind++] = ptr_array[j];
+            if (deps[j].level == i)
+                if (deps[j].param_skip == 0)
+                    deps[ind++].ptr_array_ordered = deps[j].ptr_array;
 
     num_params -= skipped;
     if (ind != num_params) {
@@ -3860,29 +3852,18 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     /* fix next ptrs */
     ptr                                      = card_bf_start->li_next;
-    card_bf_start->li_next                   = ptr_array_ordered[0];
-    ptr_array_ordered[num_params-1]->li_next = ptr;
+    card_bf_start->li_next                   = deps[0].ptr_array_ordered;
+    deps[num_params-1].ptr_array_ordered->li_next = ptr;
     for (i = 0; i < num_params-1; i++)
-        ptr_array_ordered[i]->li_next = ptr_array_ordered[i+1];
+        deps[i].ptr_array_ordered->li_next = deps[i+1].ptr_array_ordered;
 
     // clean up memory
     for (i = 0; i < arr_size; i++) {
-        tfree(param_names[i]);
-        tfree(param_strs[i]);
+        tfree(deps[i].param_name);
+        tfree(deps[i].param_str);
     }
 
-    tfree(level);
-    tfree(param_skip);
-    tfree(param_names);
-    tfree(param_strs);
-
-    for (i = 0; i< arr_size; i++)
-        tfree(depends_on[i]);
-    tfree(depends_on);
-
-    tfree(ptr_array);
-    tfree(ptr_array_ordered);
-
+    tfree(deps);
 }
 
 
