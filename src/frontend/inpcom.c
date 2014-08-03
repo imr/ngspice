@@ -3525,11 +3525,11 @@ inp_get_param_level(int param_num, struct dependency *deps, int total_params)
 
     while (deps[param_num].depends_on[index1] != NULL) {
         index2 = 0;
-        while (index2 <= total_params &&
+        while (index2 < total_params &&
                deps[index2].param_name != deps[param_num].depends_on[index1])
             index2++;
 
-        if (index2 > total_params) {
+        if (index2 >= total_params) {
             fprintf(stderr, "ERROR: unable to find dependency parameter for %s!\n", deps[param_num].param_name);
             controlled_exit(EXIT_FAILURE);
         }
