@@ -3670,7 +3670,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     struct line *c;
     char *str_ptr, *beg, *end, *new_str;
     int  skipped = 0;
-    int arr_size = 12000;
+    int arr_size;
 
     struct dependency *deps;
 
@@ -3681,11 +3681,11 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     /* determine the number of lines with .param */
 
+    arr_size = 0;
     for (c = start_card; c; c = c->li_next)
         if (strchr(c->li_line, '='))
-            num_params++;
+            arr_size ++;
 
-    arr_size = num_params;
     num_params = 0; /* This is just to keep the code in row 2907ff. */
 
     deps = TMALLOC(struct dependency, arr_size);
