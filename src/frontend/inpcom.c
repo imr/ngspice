@@ -2842,7 +2842,7 @@ new_function_parameter(struct function *fcn, char *parameter)
 static void
 inp_get_func_from_line(struct function_env *env, char *line)
 {
-    char *end;
+    char *end, *orig_line = line;
     char temp_buf[5000];
     int  str_len = 0;
     struct function *function;
@@ -2858,8 +2858,12 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
     function = new_function(env, copy_substring(line, end));
 
-    while (*end && *end != '(')
-        end++;
+    end = skip_ws(end);
+
+    if (*end != '(') {
+        fprintf(stderr, "ERROR: .func syntax, did not find opening parenthesis in str: %s\n", orig_line);
+        controlled_exit(EXIT_FAILURE);
+    }
 
     /* get function parameters */
     while (*end && *end != ')') {
@@ -2873,8 +2877,14 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
 
     /* skip to the beinning of the function body */
-    while (*end && *end++ != '{')
-        ;
+    end = strchr(end, '{');
+
+    if (!end) {
+        fprintf(stderr, "ERROR: .func syntax, did not find opening brace in str: %s\n", orig_line);
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    end++;
 
     /* get function body */
     str_len = 0;
