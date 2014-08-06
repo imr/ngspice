@@ -3520,7 +3520,6 @@ struct dependency
     char *param_str;
     char *depends_on[100];
     struct line *card;
-    struct line *card_ordered;
 };
 
 
@@ -3674,7 +3673,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     int  i, j, num_params, ind = 0, max_level, num_terminals = 0;
     bool in_control = FALSE;
 
-    struct line *c;
+    struct line *c, *tail;
     char *str_ptr, *beg, *end, *new_str;
     int  skipped;
     int arr_size;
@@ -3831,25 +3830,24 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
         }
     }
 
+    c = card_bf_start;
+    tail = c->li_next;
+
     ind = 0;
     for (i = 0; i <= max_level; i++)
         for (j = num_params - 1; j >= 0; j--)
-            if (deps[j].level == i)
-                if (deps[j].skip == 0)
-                    deps[ind++].card_ordered = deps[j].card;
+            if (!deps[j].skip && deps[j].level == i) {
+                c = c->li_next = deps[j].card;
+                ind++;
+            }
+
+    c->li_next = tail;
 
     num_params -= skipped;
     if (ind != num_params) {
         fprintf(stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params);
         controlled_exit(EXIT_FAILURE);
     }
-
-    /* fix next ptrs */
-    c                      = card_bf_start->li_next;
-    card_bf_start->li_next = deps[0].card_ordered;
-    deps[num_params-1].card_ordered->li_next = c;
-    for (i = 0; i < num_params - 1; i++)
-        deps[i].card_ordered->li_next = deps[i+1].card_ordered;
 
     // clean up memory
     for (i = 0; i < arr_size; i++) {
