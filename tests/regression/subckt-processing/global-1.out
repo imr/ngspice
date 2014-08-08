@@ -1,0 +1,10 @@
+
+Circuit: check treatment of multiple .global cards
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+
+No. of Data Rows : 1
+INFO: 0 of 3 tests failed
+ngspice-26 done
