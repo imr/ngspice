@@ -2860,31 +2860,36 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
     end = skip_ws(end);
 
-    if (*end != '(') {
-        fprintf(stderr, "ERROR: .func syntax, did not find opening parenthesis in str: %s\n", orig_line);
-        controlled_exit(EXIT_FAILURE);
-    }
+    if (*end != '(')
+        goto Lerror;
+
+    end = skip_ws(end + 1);
 
     /* get function parameters */
-    while (*end && *end != ')') {
-        char *beg = skip_ws(end + 1);
-        end = beg;
+    for (;;)  {
+        char *beg = end;
         while (*end && !isspace(*end) && *end != ',' && *end != ')')
             end++;
-        if (end > beg)
-            new_function_parameter(function, copy_substring(beg, end));
+        if (end == beg)
+            break;
+        new_function_parameter(function, copy_substring(beg, end));
+        end = skip_ws(end);
+        if (*end != ',')
+            break;
+        end = skip_ws(end + 1);
+        if (*end == ')')
+            goto Lerror;
     }
 
+    if (*end != ')')
+        goto Lerror;
 
-    /* skip to the beinning of the function body */
-    end = strchr(end, '{');
+    end = skip_ws(end + 1);
 
-    if (!end) {
-        fprintf(stderr, "ERROR: .func syntax, did not find opening brace in str: %s\n", orig_line);
-        controlled_exit(EXIT_FAILURE);
-    }
+    if (*end != '{')
+        goto Lerror;
 
-    end++;
+    end = skip_ws(end + 1);
 
     /* get function body */
     str_len = 0;
@@ -2896,6 +2901,19 @@ inp_get_func_from_line(struct function_env *env, char *line)
     temp_buf[str_len++] = '\0';
 
     function->macro = strdup(temp_buf);
+
+    if (*end != '}')
+        goto Lerror;
+
+    end = skip_ws(end + 1);
+
+    if (*end != '\0') {
+Lerror:
+        // fixme, free()
+        fprintf(stderr, "ERROR: faild to parse .func in: %s\n", orig_line);
+        controlled_exit(EXIT_FAILURE);
+        return;
+    }
 
     {
         int i;
