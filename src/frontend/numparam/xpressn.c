@@ -287,22 +287,12 @@ dico_free_entry(entry *entry_p)
    redefinition of old symbols gives a warning message.
 */
 
-typedef enum {Push = 'u'} _nPush;
-typedef enum {Pop  = 'o'} _nPop;
-
-
 static void
-dicostack(tdico *dico, char op)
-/* push or pop operation for nested subcircuit locals */
+dicostack_push(tdico *dico)
+/* push operation for nested subcircuit locals */
 {
     int asize;                  /* allocation size */
-    char *inst_name;            /* name of subcircuit instance */
-    char *param_p;              /* qualified inst parameter name */
-    entry *entry_p;             /* current entry */
-    NGHASHPTR htable_p;         /* current hash table */
-    NGHASHITER iter;            /* hash iterator - thread safe */
 
-    if (op == Push) {
         dico->stack_depth++;
         if (dico->stack_depth > dico->symbol_stack_alloc) {
             /* Just double the stack alloc */
@@ -314,7 +304,19 @@ dicostack(tdico *dico, char op)
         /* lazy allocation - don't allocate space if we can help it */
         dico->local_symbols[dico->stack_depth] = NULL;
         dico->inst_name[dico->stack_depth] = nupa_inst_name;
-    } else if (op == Pop) {
+}
+
+
+static void
+dicostack_pop(tdico *dico)
+/* pop operation for nested subcircuit locals */
+{
+    char *inst_name;            /* name of subcircuit instance */
+    char *param_p;              /* qualified inst parameter name */
+    entry *entry_p;             /* current entry */
+    NGHASHPTR htable_p;         /* current hash table */
+    NGHASHITER iter;            /* hash iterator - thread safe */
+
         if (dico->stack_depth > 0) {
             /* -----------------------------------------------------------------
              * Keep instance parameters around by transferring current local
@@ -349,7 +351,6 @@ dicostack(tdico *dico, char op)
         } else {
             message(dico, " Subckt Stack underflow.\n");
         }
-    }
 }
 
 
@@ -2020,7 +2021,7 @@ nupa_subcktcall(tdico *dico, char *s, char *x, bool err)
     }
 
     /***** finally, execute the multi-assignment line */
-    dicostack(dico, Push);      /* create local symbol scope */
+    dicostack_push(dico);      /* create local symbol scope */
 
     if (narg != n) {
         err = message(dico,
@@ -2045,5 +2046,5 @@ nupa_subcktcall(tdico *dico, char *s, char *x, bool err)
 void
 nupa_subcktexit(tdico *dico)
 {
-    dicostack(dico, Pop);
+    dicostack_pop(dico);
 }
