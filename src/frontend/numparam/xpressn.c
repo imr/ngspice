@@ -293,17 +293,17 @@ dicostack_push(tdico *dico)
 {
     int asize;                  /* allocation size */
 
-        dico->stack_depth++;
-        if (dico->stack_depth > dico->symbol_stack_alloc) {
-            /* Just double the stack alloc */
-            dico->symbol_stack_alloc *= 2;
-            asize = dico->symbol_stack_alloc + 1; /* account for zero */
-            dico->local_symbols = TREALLOC(NGHASHPTR, dico->local_symbols, asize);
-            dico->inst_name = TREALLOC(char*, dico->inst_name, asize);
-        }
-        /* lazy allocation - don't allocate space if we can help it */
-        dico->local_symbols[dico->stack_depth] = NULL;
-        dico->inst_name[dico->stack_depth] = nupa_inst_name;
+    dico->stack_depth++;
+    if (dico->stack_depth > dico->symbol_stack_alloc) {
+        /* Just double the stack alloc */
+        dico->symbol_stack_alloc *= 2;
+        asize = dico->symbol_stack_alloc + 1; /* account for zero */
+        dico->local_symbols = TREALLOC(NGHASHPTR, dico->local_symbols, asize);
+        dico->inst_name = TREALLOC(char*, dico->inst_name, asize);
+    }
+    /* lazy allocation - don't allocate space if we can help it */
+    dico->local_symbols[dico->stack_depth] = NULL;
+    dico->inst_name[dico->stack_depth] = nupa_inst_name;
 }
 
 
@@ -317,40 +317,40 @@ dicostack_pop(tdico *dico)
     NGHASHPTR htable_p;         /* current hash table */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
-        if (dico->stack_depth <= 0) {
-            message(dico, " Subckt Stack underflow.\n");
-            return;
+    if (dico->stack_depth <= 0) {
+        message(dico, " Subckt Stack underflow.\n");
+        return;
+    }
+
+    /* -----------------------------------------------------------------
+     * Keep instance parameters around by transferring current local
+     * scope variables to an instance qualified hash table.
+     * ----------------------------------------------------------------- */
+    inst_name = dico->inst_name[dico->stack_depth];
+    htable_p = dico->local_symbols[dico->stack_depth];
+    if (htable_p) {
+        SPICE_DSTRING param_name; /* build a qualified name */
+        spice_dstring_init(&param_name);
+
+        NGHASH_FIRST(&iter);
+        for (entry_p = (entry *) nghash_enumerateRE(htable_p, &iter);
+             entry_p;
+             entry_p = (entry *) nghash_enumerateRE(htable_p, &iter))
+        {
+            spice_dstring_reinit(&param_name);
+            param_p = spice_dstring_print(&param_name, "%s.%s",
+                                          inst_name, entry_p->symbol);
+            nupa_add_inst_param(param_p, entry_p->vl);
+            dico_free_entry(entry_p);
         }
+        nghash_free(htable_p, NULL, NULL);
+        spice_dstring_free(&param_name);
+    }
+    tfree(inst_name);
 
-            /* -----------------------------------------------------------------
-             * Keep instance parameters around by transferring current local
-             * scope variables to an instance qualified hash table.
-             * ----------------------------------------------------------------- */
-            inst_name = dico->inst_name[dico->stack_depth];
-            htable_p = dico->local_symbols[dico->stack_depth];
-            if (htable_p) {
-                SPICE_DSTRING param_name; /* build a qualified name */
-                spice_dstring_init(&param_name);
-
-                NGHASH_FIRST(&iter);
-                for (entry_p = (entry *) nghash_enumerateRE(htable_p, &iter);
-                     entry_p;
-                     entry_p = (entry *) nghash_enumerateRE(htable_p, &iter))
-                {
-                    spice_dstring_reinit(&param_name);
-                    param_p = spice_dstring_print(&param_name, "%s.%s",
-                                                  inst_name, entry_p->symbol);
-                    nupa_add_inst_param(param_p, entry_p->vl);
-                    dico_free_entry(entry_p);
-                }
-                nghash_free(htable_p, NULL, NULL);
-                spice_dstring_free(&param_name);
-            }
-            tfree(inst_name);
-
-            dico->inst_name[dico->stack_depth] = NULL;
-            dico->local_symbols[dico->stack_depth] = NULL;
-            dico->stack_depth--;
+    dico->inst_name[dico->stack_depth] = NULL;
+    dico->local_symbols[dico->stack_depth] = NULL;
+    dico->stack_depth--;
 }
 
 
