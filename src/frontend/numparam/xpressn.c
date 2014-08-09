@@ -250,15 +250,17 @@ initdico(tdico *dico)
     dico->srcline = -1;
     dico->errcount = 0;
 
-    dico->global_symbols = nghash_init(NGHASH_MIN_SIZE);
-    nghash_unique(dico->global_symbols, TRUE); /* no rewrite of global symbols */
     spice_dstring_init(&(dico->lookup_buf));
 
-    dico->stack_depth = 0;              /* top of the stack */
     asize = dico->symbol_stack_alloc = 10;/* expected stack depth - no longer limited */
     asize++;                            /* account for zero */
     dico->local_symbols = TMALLOC(NGHASHPTR, asize);
     dico->inst_name = TMALLOC(char*, asize);
+    dico->stack_depth = 0;              /* top of the stack */
+
+    dico->local_symbols[0] = nghash_init(NGHASH_MIN_SIZE);
+    nghash_unique(dico->local_symbols[0], TRUE); /* no rewrite of global symbols */
+
     dico->inst_symbols = NULL;          /* instance qualified are lazily allocated */
 
     compat_mode = ngspice_compat_mode();
@@ -357,7 +359,7 @@ dicostack_pop(tdico *dico)
 int
 donedico(tdico *dico)
 {
-    int sze = nghash_get_size(dico->global_symbols);
+    int sze = nghash_get_size(dico->local_symbols[0]);
     return sze;
 }
 
@@ -385,7 +387,7 @@ entrynb(tdico *d, char *s)
     }
 
     /* No local symbols - try the global table */
-    entry_p = (entry *) nghash_find(d->global_symbols, s);
+    entry_p = (entry *) nghash_find(d->local_symbols[0], s);
     return (entry_p);
 }
 
@@ -513,7 +515,7 @@ nupa_define(tdico *dico,
         htable_p = dico->local_symbols[dico->stack_depth];
     } else {
         /* global symbol */
-        htable_p = dico->global_symbols;
+        htable_p = dico->local_symbols[0];
     }
 
     entry_p = attrib(dico, htable_p, t, op);

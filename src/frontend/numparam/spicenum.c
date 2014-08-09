@@ -471,8 +471,8 @@ nupa_del_dicoS(void)
     dispose(dicoS->dynrefptr);
     dispose(dicoS->dyncategory);
     dispose(dicoS->inst_name);
+    nghash_free(dicoS->local_symbols[0], del_attrib, NULL);
     dispose(dicoS->local_symbols);
-    nghash_free(dicoS->global_symbols, del_attrib, NULL);
     dispose(dicoS);
     dicoS = NULL;
 }
@@ -588,7 +588,7 @@ nupa_list_params(FILE *cp_out)
      * Finally dump the global symbols.
      * ----------------------------------------------------------------- */
     fprintf(cp_out, " global symbol definitions:\n");
-    dump_symbol_table(dico_p, dico_p->global_symbols, cp_out);
+    dump_symbol_table(dico_p, dico_p->local_symbols[0], cp_out);
 }
 
 
@@ -629,7 +629,7 @@ nupa_get_param(char *param_name, int *found)
 
     if (!(*found)) {
         /* No luck.  Try the global table. */
-        entry_p = (entry *) nghash_find(dico_p->global_symbols, up_name);
+        entry_p = (entry *) nghash_find(dico_p->local_symbols[0], up_name);
         if (entry_p) {
             result = entry_p->vl;
             *found = 1;
@@ -665,7 +665,7 @@ nupa_add_param(char *param_name, double value)
         htable_p = dico_p->local_symbols[dico_p->stack_depth];
     } else {
         /* global symbol */
-        htable_p = dico_p->global_symbols;
+        htable_p = dico_p->local_symbols[0];
     }
 
     entry_p = attrib(dico_p, htable_p, up_name, 'N');

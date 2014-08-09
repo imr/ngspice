@@ -46,8 +46,6 @@ typedef struct _ttdico { /* the input scanner data structure */
     int errcount;
     int symbol_stack_alloc;     /* stack allocation */
     int stack_depth;            /* current depth of the symbol stack */
-    NGHASHPTR global_symbols;   /* hash table of globally defined symbols
-                                   for quick lookup */
     NGHASHPTR *local_symbols;   /* stack of locally defined symbols */
     NGHASHPTR inst_symbols;     /* instance qualified symbols - after a pop */
     char **inst_name;           /* name of subcircuit */
