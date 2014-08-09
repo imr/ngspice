@@ -44,7 +44,7 @@ typedef struct _ttdico { /* the input scanner data structure */
     int srcline;
     int oldline;
     int errcount;
-    int symbol_stack_alloc;     /* stack allocation */
+    int max_stack_depth;        /* alloced maximum depth of the symbol stack */
     int stack_depth;            /* current depth of the symbol stack */
     NGHASHPTR *symbols;         /* stack of scopes for symbol lookup */
                                 /*  [0] denotes global scope */

@@ -241,7 +241,7 @@ message(tdico *dic, const char *fmt, ...)
 void
 initdico(tdico *dico)
 {
-    int asize;                          /* default allocation size */
+    int asize = 10;           /* default allocation depth of the synbol stack */
     COMPATMODE_T compat_mode;
 
     spice_dstring_init(&(dico->option));
@@ -252,10 +252,9 @@ initdico(tdico *dico)
 
     spice_dstring_init(&(dico->lookup_buf));
 
-    asize = dico->symbol_stack_alloc = 10;/* expected stack depth - no longer limited */
-    asize++;                            /* account for zero */
     dico->symbols = TMALLOC(NGHASHPTR, asize);
     dico->inst_name = TMALLOC(char*, asize);
+    dico->max_stack_depth = asize;
     dico->stack_depth = 0;              /* top of the stack */
 
     dico->symbols[0] = nghash_init(NGHASH_MIN_SIZE);
@@ -293,16 +292,14 @@ static void
 dicostack_push(tdico *dico)
 /* push operation for nested subcircuit locals */
 {
-    int asize;                  /* allocation size */
-
     dico->stack_depth++;
-    if (dico->stack_depth > dico->symbol_stack_alloc) {
-        /* Just double the stack alloc */
-        dico->symbol_stack_alloc *= 2;
-        asize = dico->symbol_stack_alloc + 1; /* account for zero */
+
+    if (dico->stack_depth >= dico->max_stack_depth) {
+        int asize = (dico->max_stack_depth *= 2);
         dico->symbols = TREALLOC(NGHASHPTR, dico->symbols, asize);
         dico->inst_name = TREALLOC(char*, dico->inst_name, asize);
     }
+
     /* lazy allocation - don't allocate space if we can help it */
     dico->symbols[dico->stack_depth] = NULL;
     dico->inst_name[dico->stack_depth] = nupa_inst_name;
