@@ -562,7 +562,6 @@ nupa_list_params(FILE *cp_out)
 {
     int depth;                  /* nested subcircit depth */
     tdico *dico_p;              /* local copy for speed */
-    NGHASHPTR htable_p;         /* current hash table */
 
     dico_p = dicoS;
     if (dico_p == NULL) {
@@ -578,7 +577,7 @@ nupa_list_params(FILE *cp_out)
      * we use lazy allocation to save memory.
      * ----------------------------------------------------------------- */
     for (depth = dico_p->stack_depth; depth > 0; depth--) {
-        htable_p = dico_p->local_symbols[depth];
+        NGHASHPTR htable_p = dico_p->local_symbols[depth];
         if (htable_p) {
             fprintf(cp_out, " local symbol definitions for:%s\n", dico_p->inst_name[depth]);
             dump_symbol_table(dico_p, htable_p, cp_out);
@@ -608,7 +607,6 @@ nupa_get_param(char *param_name, int *found)
     char *up_name;              /* current parameter upper case */
     entry *entry_p;             /* current entry */
     tdico *dico_p;              /* local copy for speed */
-    NGHASHPTR htable_p;         /* current hash table */
     double result = 0;          /* parameter value */
 
     dico_p = dicoS;
@@ -618,7 +616,7 @@ nupa_get_param(char *param_name, int *found)
 
     *found = 0;
     for (depth = dico_p->stack_depth; depth > 0; depth--) {
-        htable_p = dico_p->local_symbols[depth];
+        NGHASHPTR htable_p = dico_p->local_symbols[depth];
         if (htable_p) {
             entry_p = (entry *) nghash_find(htable_p, up_name);
             if (entry_p) {
