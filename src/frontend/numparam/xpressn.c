@@ -317,7 +317,11 @@ dicostack_pop(tdico *dico)
     NGHASHPTR htable_p;         /* current hash table */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
-        if (dico->stack_depth > 0) {
+        if (dico->stack_depth <= 0) {
+            message(dico, " Subckt Stack underflow.\n");
+            return;
+        }
+
             /* -----------------------------------------------------------------
              * Keep instance parameters around by transferring current local
              * scope variables to an instance qualified hash table.
@@ -347,10 +351,6 @@ dicostack_pop(tdico *dico)
             dico->inst_name[dico->stack_depth] = NULL;
             dico->local_symbols[dico->stack_depth] = NULL;
             dico->stack_depth--;
-
-        } else {
-            message(dico, " Subckt Stack underflow.\n");
-        }
 }
 
 
