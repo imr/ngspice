@@ -1682,33 +1682,6 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 
 
 /*
-  check if current token matches model bin name -- <token>.[0-9]+
-*/
-
-static bool
-model_bin_match(char *token, char *model_name)
-{
-    char *dot_char;
-    bool  flag = FALSE;
-
-    if (strncmp(model_name, token, strlen(token)) == 0)
-        if ((dot_char = strchr(model_name, '.')) != NULL) {
-            flag = TRUE;
-            dot_char++;
-            while (*dot_char != '\0') {
-                if (!isdigit(*dot_char)) {
-                    flag = FALSE;
-                    break;
-                }
-                dot_char++;
-            }
-        }
-
-    return flag;
-}
-
-
-/*
   iterate through the deck and comment out unused subckts, models
   (don't want to waste time processing everything)
   also comment out .param lines with no parameters defined
@@ -1879,9 +1852,10 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             } else {
                 found_model = FALSE;
                 for (i = 0; i < num_used_model_names; i++)
-                    if (strcmp(used_model_names[i], model_name) == 0 ||
-                        model_bin_match(used_model_names[i], model_name))
+                    if (model_name_match(used_model_names[i], model_name)) {
                         found_model = TRUE;
+                        break;
+                    }
             }
             tfree(model_type);
             if (!found_model)

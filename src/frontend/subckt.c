@@ -1457,36 +1457,6 @@ gettrans(const char *name, const char *name_end)
 }
 
 
-/*
-  check if current token matches model bin name -- <token>.[0-9]+
-*/
-static bool
-model_bin_match(char *token, char *model_name)
-{
-    /* find last dot in model_name */
-    char *dot_char = strrchr(model_name, '.');
-    bool  flag = FALSE;
-    /* check if token equals the substring before last dot in model_name */
-    if (dot_char) {
-        char *mtoken = copy_substring(model_name, dot_char);
-        if (cieq(mtoken, token)) {
-            flag = TRUE;
-            dot_char++;
-            /* check if model_name has binning info (trailing digit(s)) */
-            while (*dot_char != '\0') {
-                if (!isdigit(*dot_char)) {
-                    flag = FALSE;
-                    break;
-                }
-                dot_char++;
-            }
-        }
-        tfree(mtoken);
-    }
-    return flag;
-}
-
-
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
@@ -1560,11 +1530,11 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
         txfree(gettok(&s));          /* Skip component name */
         while ((i < n) && (*s) && !gotit) {
             t = gettok_node(&s);       /* get nodenames . . .  */
-            for (wl = modnames; wl; wl = wl->wl_next) {
-                /* also need to check if binnable device mos model */
-                if (eq(t, wl->wl_word) || model_bin_match(t, wl->wl_word))
+            for (wl = modnames; wl; wl = wl->wl_next)
+                if (model_name_match(t, wl->wl_word)) {
                     gotit = 1;
-            }
+                    break;
+                }
             i++;
             tfree(t);
         } /* while . . . . */
@@ -1950,27 +1920,11 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             found = 0;
             while (!found) {
                 /* Now, is this a subcircuit model? */
-                for (wlsub = orig_modnames; wlsub; wlsub = wlsub->wl_next) {
-                    /* FIXME, probably too unspecific */
-                    int i = (int) strlen(wlsub->wl_word);
-                    int j = 0; /* Now, have we a binned model? */
-                    char* dot_char;
-                    if ((dot_char = strstr(wlsub->wl_word, ".")) != NULL) {
-                        dot_char++;
-                        j++;
-                        while (*dot_char != '\0') {
-                            if (!isdigit(*dot_char)) {
-                                break;
-                            }
-                            dot_char++;
-                            j++;
-                        }
-                    }
-                    if (strncmp(name, wlsub->wl_word, (size_t) (i - j)) == 0) {
+                for (wlsub = orig_modnames; wlsub; wlsub = wlsub->wl_next)
+                    if (model_name_match(name, wlsub->wl_word)) {
                         found = 1;
                         break;
                     }
-                }
                 if (!found) { /* name was not a model - was a netname */
                     (void) sprintf(buffer + strlen(buffer), "%s ", name);
                     tfree(name);
