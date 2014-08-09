@@ -480,7 +480,7 @@ del_attrib(void *e_p)
 
 
 static bool
-define(tdico *dico,
+nupa_define(tdico *dico,
        char *t,                 /* identifier to define */
        char op,                 /* option */
        char tpe,                /* type marker */
@@ -591,7 +591,7 @@ defsubckt(tdico *dico, char *s, int w, char categ)
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
         pscopy_up(&ustr, s, i, j - i);
-        err = define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL, NULL);
+        err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL, NULL);
         spice_dstring_free(&ustr);
     } else {
         err = message(dico, "Subcircuit or Model without name.\n");
@@ -1800,7 +1800,7 @@ nupa_assignment(tdico *dico, char *s, char mode)
                 wval = i;
             }
 
-            err = define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,
+            err = nupa_define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,
                          dtype, rval, wval, NULL, NULL);
             error = error || err;
         }
