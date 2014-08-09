@@ -1,0 +1,52 @@
+check model binning
+
+* (exec-spice "ngspice -b %s")
+
+ix1  0 1       dc=5uA
+mx1  1 1 0 0   nmos0v7 l=5u w=5u
+
+ix2  0 2       dc=5uA
+mx2  2 2 0 0   nmos_tst l=5u w=5u
+
+ix3  0 3       dc=6uA
+mx3  3 3 0 0   nmos0v9 l=5u w=6u
+
+ix4  0 4       dc=6uA
+mx4  4 4 0 0   nmos_tst l=5u w=6u
+
+* binned
+.model nmos_tst.1 nmos ( version=4.8 level=54 Vth0=0.7 lmin=1u lmax=10u wmin=4.5u wmax=5.5u )
+.model nmos_tst.2 nmos ( version=4.8 level=54 Vth0=0.9 lmin=1u lmax=10u wmin=5.5u wmax=6.5u )
+
+* and non binned to compare with
+.model nmos0v7 nmos ( version=4.8 level=54 Vth0=0.7 )
+.model nmos0v9 nmos ( version=4.8 level=54 Vth0=0.9 )
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+let fail_count = 0
+let total_count = 2
+
+if mismatch(v(2)/v(1), 1.0, 1e-4)
+    let fail_count = fail_count + 1
+end
+
+if mismatch(v(4)/v(3), 1.0, 1e-4)
+    let fail_count = fail_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
