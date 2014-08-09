@@ -571,24 +571,16 @@ nupa_list_params(FILE *cp_out)
 
     fprintf(cp_out, "\n\n");
 
-    /* -----------------------------------------------------------------
-     * Print out the locally defined symbols from highest to lowest priority.
-     * If there are no parameters, the hash table will not be allocated as
-     * we use lazy allocation to save memory.
-     * ----------------------------------------------------------------- */
-    for (depth = dico_p->stack_depth; depth > 0; depth--) {
+    for (depth = dico_p->stack_depth; depth >= 0; depth--) {
         NGHASHPTR htable_p = dico_p->symbols[depth];
         if (htable_p) {
-            fprintf(cp_out, " local symbol definitions for:%s\n", dico_p->inst_name[depth]);
+            if (depth > 0)
+                fprintf(cp_out, " local symbol definitions for: %s\n", dico_p->inst_name[depth]);
+            else
+                fprintf(cp_out, " global symbol definitions:\n");
             dump_symbol_table(dico_p, htable_p, cp_out);
         }
     }
-
-    /* -----------------------------------------------------------------
-     * Finally dump the global symbols.
-     * ----------------------------------------------------------------- */
-    fprintf(cp_out, " global symbol definitions:\n");
-    dump_symbol_table(dico_p, dico_p->symbols[0], cp_out);
 }
 
 
@@ -615,7 +607,7 @@ nupa_get_param(char *param_name, int *found)
     up_name = spice_dstring_value(& dico_p->lookup_buf);
 
     *found = 0;
-    for (depth = dico_p->stack_depth; depth > 0; depth--) {
+    for (depth = dico_p->stack_depth; depth >= 0; depth--) {
         NGHASHPTR htable_p = dico_p->symbols[depth];
         if (htable_p) {
             entry_p = (entry *) nghash_find(htable_p, up_name);
@@ -624,15 +616,6 @@ nupa_get_param(char *param_name, int *found)
                 *found = 1;
                 break;
             }
-        }
-    }
-
-    if (!(*found)) {
-        /* No luck.  Try the global table. */
-        entry_p = (entry *) nghash_find(dico_p->symbols[0], up_name);
-        if (entry_p) {
-            result = entry_p->vl;
-            *found = 1;
         }
     }
 
@@ -658,15 +641,11 @@ nupa_add_param(char *param_name, double value)
     scopy_up(& dico_p->lookup_buf, param_name);
     up_name = spice_dstring_value(& dico_p->lookup_buf);
 
-    if (dico_p->stack_depth > 0) {
-        /* can't be lazy anymore */
-        if (!(dico_p->symbols[dico_p->stack_depth]))
-            dico_p->symbols[dico_p->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
-        htable_p = dico_p->symbols[dico_p->stack_depth];
-    } else {
-        /* global symbol */
-        htable_p = dico_p->symbols[0];
-    }
+    /* can't be lazy anymore */
+    if (!(dico_p->symbols[dico_p->stack_depth]))
+        dico_p->symbols[dico_p->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
+
+    htable_p = dico_p->symbols[dico_p->stack_depth];
 
     entry_p = attrib(dico_p, htable_p, up_name, 'N');
     if (entry_p) {

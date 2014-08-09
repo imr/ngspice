@@ -377,7 +377,7 @@ entrynb(tdico *d, char *s)
     NGHASHPTR htable_p;         /* hash table */
 
     /* look at the current scope and then backup the stack */
-    for (depth = d->stack_depth; depth > 0; depth--) {
+    for (depth = d->stack_depth; depth >= 0; depth--) {
         htable_p = d->symbols[depth];
         if (htable_p) {
             entry_p = (entry *) nghash_find(htable_p, s);
@@ -386,9 +386,7 @@ entrynb(tdico *d, char *s)
         }
     }
 
-    /* No local symbols - try the global table */
-    entry_p = (entry *) nghash_find(d->symbols[0], s);
-    return (entry_p);
+    return NULL;
 }
 
 
@@ -507,16 +505,11 @@ nupa_define(tdico *dico,
 
     NG_IGNORE(pval);
 
-    if (dico->stack_depth > 0) {
-        /* can't be lazy anymore */
-        if (!(dico->symbols[dico->stack_depth]))
-            dico->symbols[dico->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
+    /* can't be lazy anymore */
+    if (!(dico->symbols[dico->stack_depth]))
+        dico->symbols[dico->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
 
-        htable_p = dico->symbols[dico->stack_depth];
-    } else {
-        /* global symbol */
-        htable_p = dico->symbols[0];
-    }
+    htable_p = dico->symbols[dico->stack_depth];
 
     entry_p = attrib(dico, htable_p, t, op);
     err = 0;
