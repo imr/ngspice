@@ -685,37 +685,39 @@ get_comma_separated_values( char *values[], char *str ) {
 /*
   check if the given token matches a model name
     either exact
+      then return 1
   or
     modulo a trailing model binning extension '\.[0-9]+'
+      then return 2
 */
 
-bool
+int
 model_name_match(const char *token, const char *model_name)
 {
     const char *p;
     size_t token_len = strlen(token);
 
     if (strncmp(token, model_name, token_len) != 0)
-        return FALSE;
+        return 0;
 
     p = model_name + token_len;
 
     // exact match
     if (*p == '\0')
-        return TRUE;
+        return 1;
 
     // check for .
     if (*p++ != '.')
-        return FALSE;
+        return 0;
 
     // minimum one trailing char
     if (*p == '\0')
-        return FALSE;
+        return 0;
 
     // all of them digits
     for (; *p; p++)
         if (!isdigit(*p))
-            return FALSE;
+            return 0;
 
-    return TRUE;
+    return 2;
 }

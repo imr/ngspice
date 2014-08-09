@@ -212,6 +212,10 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   w = parse_values[1]*scale;
 
   for ( modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel ) {
+
+    if ( model_name_match(name, modtmp->INPmodName) < 2 )
+        continue;
+
     if ( /* This is the list of binable models */
            modtmp->INPmodType != INPtypelook ("BSIM3")
         && modtmp->INPmodType != INPtypelook ("BSIM3v32")
@@ -238,8 +242,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     lmin = parse_values[0]; lmax = parse_values[1];
     wmin = parse_values[2]; wmax = parse_values[3];
 
-    if ( strncmp( modtmp->INPmodName, name, strlen( name ) ) == 0 &&
-      in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
+    if ( in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
         if ( !modtmp->INPmodfast ) {
             error = create_model( ckt, modtmp, tab );
             if ( error ) return NULL;

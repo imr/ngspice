@@ -26,7 +26,7 @@ char * stripWhiteSpacesInsideParens(char *str);
 char * gettok(char **s);
 char * gettok_instance(char **);
 char * gettok_char(char **s, char p, bool inc_p, bool nested);
-bool model_name_match(const char *token, const char *model_name);
+int model_name_match(const char *token, const char *model_name);
 
 extern char *tvprintf(const char *fmt, va_list args);
 
