@@ -254,12 +254,12 @@ initdico(tdico *dico)
 
     asize = dico->symbol_stack_alloc = 10;/* expected stack depth - no longer limited */
     asize++;                            /* account for zero */
-    dico->local_symbols = TMALLOC(NGHASHPTR, asize);
+    dico->symbols = TMALLOC(NGHASHPTR, asize);
     dico->inst_name = TMALLOC(char*, asize);
     dico->stack_depth = 0;              /* top of the stack */
 
-    dico->local_symbols[0] = nghash_init(NGHASH_MIN_SIZE);
-    nghash_unique(dico->local_symbols[0], TRUE); /* no rewrite of global symbols */
+    dico->symbols[0] = nghash_init(NGHASH_MIN_SIZE);
+    nghash_unique(dico->symbols[0], TRUE); /* no rewrite of global symbols */
 
     dico->inst_symbols = NULL;          /* instance qualified are lazily allocated */
 
@@ -300,11 +300,11 @@ dicostack_push(tdico *dico)
         /* Just double the stack alloc */
         dico->symbol_stack_alloc *= 2;
         asize = dico->symbol_stack_alloc + 1; /* account for zero */
-        dico->local_symbols = TREALLOC(NGHASHPTR, dico->local_symbols, asize);
+        dico->symbols = TREALLOC(NGHASHPTR, dico->symbols, asize);
         dico->inst_name = TREALLOC(char*, dico->inst_name, asize);
     }
     /* lazy allocation - don't allocate space if we can help it */
-    dico->local_symbols[dico->stack_depth] = NULL;
+    dico->symbols[dico->stack_depth] = NULL;
     dico->inst_name[dico->stack_depth] = nupa_inst_name;
 }
 
@@ -329,7 +329,7 @@ dicostack_pop(tdico *dico)
      * scope variables to an instance qualified hash table.
      * ----------------------------------------------------------------- */
     inst_name = dico->inst_name[dico->stack_depth];
-    htable_p = dico->local_symbols[dico->stack_depth];
+    htable_p = dico->symbols[dico->stack_depth];
     if (htable_p) {
         SPICE_DSTRING param_name; /* build a qualified name */
         spice_dstring_init(&param_name);
@@ -351,7 +351,7 @@ dicostack_pop(tdico *dico)
     tfree(inst_name);
 
     dico->inst_name[dico->stack_depth] = NULL;
-    dico->local_symbols[dico->stack_depth] = NULL;
+    dico->symbols[dico->stack_depth] = NULL;
     dico->stack_depth--;
 }
 
@@ -359,7 +359,7 @@ dicostack_pop(tdico *dico)
 int
 donedico(tdico *dico)
 {
-    int sze = nghash_get_size(dico->local_symbols[0]);
+    int sze = nghash_get_size(dico->symbols[0]);
     return sze;
 }
 
@@ -378,7 +378,7 @@ entrynb(tdico *d, char *s)
 
     /* look at the current scope and then backup the stack */
     for (depth = d->stack_depth; depth > 0; depth--) {
-        htable_p = d->local_symbols[depth];
+        htable_p = d->symbols[depth];
         if (htable_p) {
             entry_p = (entry *) nghash_find(htable_p, s);
             if (entry_p)
@@ -387,7 +387,7 @@ entrynb(tdico *d, char *s)
     }
 
     /* No local symbols - try the global table */
-    entry_p = (entry *) nghash_find(d->local_symbols[0], s);
+    entry_p = (entry *) nghash_find(d->symbols[0], s);
     return (entry_p);
 }
 
@@ -509,13 +509,13 @@ nupa_define(tdico *dico,
 
     if (dico->stack_depth > 0) {
         /* can't be lazy anymore */
-        if (!(dico->local_symbols[dico->stack_depth]))
-            dico->local_symbols[dico->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
+        if (!(dico->symbols[dico->stack_depth]))
+            dico->symbols[dico->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
 
-        htable_p = dico->local_symbols[dico->stack_depth];
+        htable_p = dico->symbols[dico->stack_depth];
     } else {
         /* global symbol */
-        htable_p = dico->local_symbols[0];
+        htable_p = dico->symbols[0];
     }
 
     entry_p = attrib(dico, htable_p, t, op);

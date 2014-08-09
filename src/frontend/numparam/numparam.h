@@ -46,7 +46,8 @@ typedef struct _ttdico { /* the input scanner data structure */
     int errcount;
     int symbol_stack_alloc;     /* stack allocation */
     int stack_depth;            /* current depth of the symbol stack */
-    NGHASHPTR *local_symbols;   /* stack of locally defined symbols */
+    NGHASHPTR *symbols;         /* stack of scopes for symbol lookup */
+                                /*  [0] denotes global scope */
     NGHASHPTR inst_symbols;     /* instance qualified symbols - after a pop */
     char **inst_name;           /* name of subcircuit */
     fumas   fms[101];

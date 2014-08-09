@@ -471,8 +471,8 @@ nupa_del_dicoS(void)
     dispose(dicoS->dynrefptr);
     dispose(dicoS->dyncategory);
     dispose(dicoS->inst_name);
-    nghash_free(dicoS->local_symbols[0], del_attrib, NULL);
-    dispose(dicoS->local_symbols);
+    nghash_free(dicoS->symbols[0], del_attrib, NULL);
+    dispose(dicoS->symbols);
     dispose(dicoS);
     dicoS = NULL;
 }
@@ -577,7 +577,7 @@ nupa_list_params(FILE *cp_out)
      * we use lazy allocation to save memory.
      * ----------------------------------------------------------------- */
     for (depth = dico_p->stack_depth; depth > 0; depth--) {
-        NGHASHPTR htable_p = dico_p->local_symbols[depth];
+        NGHASHPTR htable_p = dico_p->symbols[depth];
         if (htable_p) {
             fprintf(cp_out, " local symbol definitions for:%s\n", dico_p->inst_name[depth]);
             dump_symbol_table(dico_p, htable_p, cp_out);
@@ -588,7 +588,7 @@ nupa_list_params(FILE *cp_out)
      * Finally dump the global symbols.
      * ----------------------------------------------------------------- */
     fprintf(cp_out, " global symbol definitions:\n");
-    dump_symbol_table(dico_p, dico_p->local_symbols[0], cp_out);
+    dump_symbol_table(dico_p, dico_p->symbols[0], cp_out);
 }
 
 
@@ -616,7 +616,7 @@ nupa_get_param(char *param_name, int *found)
 
     *found = 0;
     for (depth = dico_p->stack_depth; depth > 0; depth--) {
-        NGHASHPTR htable_p = dico_p->local_symbols[depth];
+        NGHASHPTR htable_p = dico_p->symbols[depth];
         if (htable_p) {
             entry_p = (entry *) nghash_find(htable_p, up_name);
             if (entry_p) {
@@ -629,7 +629,7 @@ nupa_get_param(char *param_name, int *found)
 
     if (!(*found)) {
         /* No luck.  Try the global table. */
-        entry_p = (entry *) nghash_find(dico_p->local_symbols[0], up_name);
+        entry_p = (entry *) nghash_find(dico_p->symbols[0], up_name);
         if (entry_p) {
             result = entry_p->vl;
             *found = 1;
@@ -660,12 +660,12 @@ nupa_add_param(char *param_name, double value)
 
     if (dico_p->stack_depth > 0) {
         /* can't be lazy anymore */
-        if (!(dico_p->local_symbols[dico_p->stack_depth]))
-            dico_p->local_symbols[dico_p->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
-        htable_p = dico_p->local_symbols[dico_p->stack_depth];
+        if (!(dico_p->symbols[dico_p->stack_depth]))
+            dico_p->symbols[dico_p->stack_depth] = nghash_init(NGHASH_MIN_SIZE);
+        htable_p = dico_p->symbols[dico_p->stack_depth];
     } else {
         /* global symbol */
-        htable_p = dico_p->local_symbols[0];
+        htable_p = dico_p->symbols[0];
     }
 
     entry_p = attrib(dico_p, htable_p, up_name, 'N');
