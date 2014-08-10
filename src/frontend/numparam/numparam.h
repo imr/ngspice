@@ -14,8 +14,6 @@ typedef enum {Intro   = '&'} _nIntro;    /* Introduces preprocessor tokens */
 typedef enum {Comment = '*'} _nComment;  /* Spice Comment lines */
 typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
 
-typedef char *auxtable;         /* dummy */
-
 
 /* -----------------------------------------------------------------
  * I believe the entry should be a union of type but I need more info.
@@ -32,11 +30,6 @@ typedef struct _tentry {
 } entry;
 
 
-typedef struct _tfumas { /*function,macro,string*/
-    unsigned start; /*,stop*/   /* buffer index or location */
-} fumas;
-
-
 typedef struct _ttdico { /* the input scanner data structure */
     SPICE_DSTRING srcfile;      /* last piece of source file name */
     SPICE_DSTRING option;       /* one-character translator options */
@@ -50,9 +43,6 @@ typedef struct _ttdico { /* the input scanner data structure */
                                 /*  [0] denotes global scope */
     NGHASHPTR inst_symbols;     /* instance qualified symbols - after a pop */
     char **inst_name;           /* name of subcircuit */
-    fumas   fms[101];
-    int   nfms;                 /* number of functions & macros */
-    auxtable nodetab;
     char **dynrefptr;
     char *dyncategory;
     int hs_compatibility;       /* allow extra keywords */
