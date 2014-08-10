@@ -19,18 +19,18 @@ typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
  * I believe the entry should be a union of type but I need more info.
  * ----------------------------------------------------------------- */
 
-typedef struct _tentry {
+typedef struct entry_s {
     char   tp;         /* type: I)nt R)eal S)tring F)unction M)acro P)ointer */
     char *symbol;
     int  level;                 /* subckt nesting level */
     double vl;                  /* float value if defined */
     int  ivl;                   /* int value or string buffer index */
     char *sbbase;               /* string buffer base address if any */
-    struct _tentry *pointer;    /* pointer chain */
+    struct entry_s *pointer;    /* pointer chain */
 } entry;
 
 
-typedef struct _ttdico { /* the input scanner data structure */
+typedef struct {                /* the input scanner data structure */
     SPICE_DSTRING srcfile;      /* last piece of source file name */
     SPICE_DSTRING option;       /* one-character translator options */
     SPICE_DSTRING lookup_buf;   /* useful temp buffer for quick symbol lookup */
