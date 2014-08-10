@@ -4071,6 +4071,10 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                         get_paren_expression = FALSE;
                     end_param++;
                 }
+
+                if (end_param[-1] == ',')
+                    end_param--;
+
                 keep       = *end_param;
                 *end_param = '\0';
                 new_line = tprintf(".param %s", beg_param);
