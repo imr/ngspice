@@ -484,7 +484,6 @@ nupa_define(dico_t *dico,
        char tpe,                /* type marker */
        double z,                /* float value if any */
        int w,                   /* integer value if any */
-       entry_t *pval,           /* pointer value if any */
        char *base)              /* string pointer if any */
 {
     /*define t as real or integer,
@@ -499,8 +498,6 @@ nupa_define(dico_t *dico,
     bool err, warn;
     entry_t *entry;             /* spice table entry */
     NGHASHPTR htable_p;         /* hash table */
-
-    NG_IGNORE(pval);
 
     /* can't be lazy anymore */
     if (!(dico->symbols[dico->stack_depth]))
@@ -584,7 +581,7 @@ defsubckt(dico_t *dico, char *s, int w, char categ)
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
         pscopy_up(&ustr, s, i, j - i);
-        err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL, NULL);
+        err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL);
         spice_dstring_free(&ustr);
     } else {
         err = message(dico, "Subcircuit or Model without name.\n");
@@ -1590,7 +1587,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
             }
 
             err = nupa_define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,
-                         dtype, rval, wval, NULL, NULL);
+                         dtype, rval, wval, NULL);
             error = error || err;
         }
 
