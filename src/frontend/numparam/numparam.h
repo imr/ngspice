@@ -49,16 +49,16 @@ typedef struct {                /* the input scanner data structure */
 } dico_t;
 
 
-void initdico(dico_t *dico);
-int donedico(dico_t *dico);
+void initdico(dico_t *);
+int donedico(dico_t *);
 void dico_free_entry(entry_t *entry_p);
-bool defsubckt(dico_t *dico, char *s, int w, char categ);
-int findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname);
-bool nupa_substitute(dico_t *dico, char *s, char *r, bool err);
-bool nupa_assignment(dico_t *dico, char *s, char mode);
-bool nupa_subcktcall(dico_t *dico, char *s, char *x, bool err);
-void nupa_subcktexit(dico_t *dico);
+bool defsubckt(dico_t *, char *s, int w, char categ);
+int findsubckt(dico_t *, char *s, SPICE_DSTRINGPTR subname);
+bool nupa_substitute(dico_t *, char *s, char *r, bool err);
+bool nupa_assignment(dico_t *, char *s, char mode);
+bool nupa_subcktcall(dico_t *, char *s, char *x, bool err);
+void nupa_subcktexit(dico_t *);
 dico_t *nupa_fetchinstance(void);
-char getidtype(dico_t *d, char *s);
-entry_t *attrib(dico_t *d, NGHASHPTR htable, char *t, char op);
+char getidtype(dico_t *, char *s);
+entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op);
 void del_attrib(void *);

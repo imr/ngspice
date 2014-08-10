@@ -233,7 +233,7 @@ char * nbofnodes   = "222222444443222240334";
 char * nbsubdevice = "000000000000111002000";
 
 void prefixing(char * s, char * p, char * formals, char * actuals,
-   char categ, dico_t *dic)
+   char categ, dico_t *dico)
 /* s is a line in expanded subcircuit. 
    p is the prefix to be glued anywhere .
    assume that everything except first and last word in s may be a node. 
@@ -277,7 +277,7 @@ Reminder on Numparam symbols:
        /* bug: are there semilocal nodes ? in nested subckt declarations ? */
       if ( (leadchar=='Q') && (! done) ) { /* BJT: watch non-node name */
         scopy(v,u); stupcase(v);
-        done=  getidtype(dic, v) == 'O'; /* a model name stops the node list */;
+        done=  getidtype(dico, v) == 'O'; /* a model name stops the node list */;
       } 
       if ( (! done) && (nodes>0) ) { /* transform a node name */
         k= inwordlist(u, formals);
@@ -303,7 +303,7 @@ Reminder on Numparam symbols:
   }
 }
 
-void getnodelist(char * form, char * act, char * s, dico_t *dic, int k)
+void getnodelist(char * form, char * act, char * s, dico_t *dico, int k)
 /* the line s contains the actual node parameters, between 1st & last word */
 {
   int j,ls, idef;
@@ -316,7 +316,7 @@ void getnodelist(char * form, char * act, char * s, dico_t *dic, int k)
     if ( j<ls ) { sadd(act,u); cadd(act,' ') ;}
   }
   /* now u already holds the subckt name if all is ok ? */
-  idef = findsubckt( dic, buf2[k], u); 
+  idef = findsubckt( dico, buf2[k], u);
   /* line buf2[idef] contains: .subckt name < formal list > */ 
   if ( idef>0 ) { 
     scopy(t, buf2[idef]); 
@@ -337,7 +337,7 @@ void nupa_test(char * fname, char mode)
 /* bugs in nupa_eval(), and for nested subckt definitions !?! */
 {
   FILE * tf, fout;
-  dico_t * dic; /* dictionary data pointer */
+  dico_t * dico; /* dictionary data pointer */
   Strbig(Llen,s);
   Str(80, prefix);
   /* Strbig(Llen, formals); Strbig(Llen,actuals); */
@@ -369,12 +369,12 @@ void nupa_test(char * fname, char mode)
   */
   gluepluslines(i); /* must re-allocate certain buff[i]  */ 
   nupa_signal(NUPADECKCOPY, fname);
-  dic= nupa_fetchinstance(); /* bug: should have a task handle as arg */
+  dico= nupa_fetchinstance(); /* bug: should have a task handle as arg */
   for ( j=1; j<=i; Inc(j) ) {
     buf2[j]= nupa_copy(buff[j], j); /* transformed data */;
   }
   nupa_signal(NUPASUBDONE, NULL);
-  nline= runscript(dic, "", 1,i, 20); /* our own subckt expansion */
+  nline= runscript(dico, "", 1,i, 20); /* our own subckt expansion */
   /* putlogfile(' ',nline," expanded lines"); */
   if ( mode=='w' ) {
     i= cpos('.', fname); 
@@ -392,13 +392,13 @@ void nupa_test(char * fname, char mode)
       scopy(prefix,pxbuf[pindex[j]]); 
       if ( NotZ(prefix[0]) ) { cadd(prefix, pfxsep) ;} 
       prefixing(s, prefix, formals[parstack], actuals[parstack],
-           dic->category[k], dic);  
-      if ( dic->category[k] == 'X' ) { 
+           dico->category[k], dico);
+      if ( dico->category[k] == 'X' ) {
         if ( parstack< (10-1) ) { Inc(parstack) ;}
-        getnodelist(formals[parstack], actuals[parstack], s, dic,k);
+        getnodelist(formals[parstack], actuals[parstack], s, dico,k);
         /*dbg: printf("Form: %s\n", formals[parstack]); */
         /*dbg: printf("Actu: %s\n", actuals[parstack]); */;
-      } else if ( dic->category[k]=='U' ) { /* return from subckt */
+      } else if ( dico->category[k]=='U' ) { /* return from subckt */
         if ( parstack>0 ) { Dec(parstack) ;}
       }
       if ( fout != NULL ) {

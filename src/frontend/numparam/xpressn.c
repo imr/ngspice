@@ -205,32 +205,32 @@ mathfunction(int f, double z, double x)
 
 
 #ifdef __GNUC__
-static bool message(dico_t *dic, const char *fmt, ...)
+static bool message(dico_t *dico, const char *fmt, ...)
     __attribute__ ((format (__printf__, 2, 3)));
 #endif
 
 
 static bool
-message(dico_t *dic, const char *fmt, ...)
+message(dico_t *dico, const char *fmt, ...)
 {
     va_list ap;
 
-    char *srcfile = spice_dstring_value(&(dic->srcfile));
+    char *srcfile = spice_dstring_value(&(dico->srcfile));
 
     if (srcfile && *srcfile)
         fprintf(stderr, "%s:", srcfile);
 
-    if (dic->srcline >= 0)
+    if (dico->srcline >= 0)
         fprintf
             (stderr,
              "Original line no.: %d, new internal line no.: %d:\n",
-             dic->oldline, dic->srcline);
+             dico->oldline, dico->srcline);
 
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
 
-    dic->errcount++;
+    dico->errcount++;
 
     return 1; /* error! */
 }
@@ -367,15 +367,15 @@ donedico(dico_t *dico)
  * symbols in that order.
  * ----------------------------------------------------------------- */
 static entry_t *
-entrynb(dico_t *d, char *s)
+entrynb(dico_t *dico, char *s)
 {
     int depth;                  /* stack depth */
     entry_t *entry_p;           /* search hash table */
     NGHASHPTR htable_p;         /* hash table */
 
     /* look at the current scope and then backup the stack */
-    for (depth = d->stack_depth; depth >= 0; depth--) {
-        htable_p = d->symbols[depth];
+    for (depth = dico->stack_depth; depth >= 0; depth--) {
+        htable_p = dico->symbols[depth];
         if (htable_p) {
             entry_p = (entry_t *) nghash_find(htable_p, s);
             if (entry_p)
@@ -388,13 +388,13 @@ entrynb(dico_t *d, char *s)
 
 
 char
-getidtype(dico_t *d, char *s)
+getidtype(dico_t *dico, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in table */
 {
     entry_t *entry_p;           /* hash table entry */
     char itp = '?';             /* assume unknown */
 
-    entry_p = entrynb(d, s);
+    entry_p = entrynb(dico, s);
     if (entry_p)
         itp = entry_p->tp;
 
@@ -435,7 +435,7 @@ fetchnumentry(dico_t *dico, char *t, bool *perr)
 /*******  writing dictionary entries *********/
 
 entry_t *
-attrib(dico_t *dico_p, NGHASHPTR htable_p, char *t, char op)
+attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op)
 {
     /* seek or attribute dico entry number for string t.
        Option  op='N' : force a new entry, if tos>level and old is  valid.
@@ -444,7 +444,7 @@ attrib(dico_t *dico_p, NGHASHPTR htable_p, char *t, char op)
 
     entry_p = (entry_t *) nghash_find(htable_p, t);
     if (entry_p && (op == 'N') &&
-        (entry_p->level < dico_p->stack_depth) && (entry_p->tp != '?'))
+        (entry_p->level < dico->stack_depth) && (entry_p->tp != '?'))
     {
         entry_p = NULL;
     }
@@ -453,7 +453,7 @@ attrib(dico_t *dico_p, NGHASHPTR htable_p, char *t, char op)
         entry_p = TMALLOC(entry_t, 1);
         entry_p->symbol = strdup(t);
         entry_p->tp = '?';      /* signal Unknown */
-        entry_p->level = dico_p->stack_depth;
+        entry_p->level = dico->stack_depth;
         nghash_insert(htable_p, t, entry_p);
     }
 
