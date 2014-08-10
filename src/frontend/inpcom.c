@@ -4052,7 +4052,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
             counter   = 0;
             while ((equal_ptr = find_assignment(curr_line)) != NULL) {
 
-                char keep, *beg_param, *end_param, *new_line;
+                char *beg_param, *end_param;
 
                 bool get_expression = FALSE;
                 bool get_paren_expression = FALSE;
@@ -4075,11 +4075,8 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                 if (end_param[-1] == ',')
                     end_param--;
 
-                keep       = *end_param;
-                *end_param = '\0';
-                new_line = tprintf(".param %s", beg_param);
-                array[counter++] = new_line;
-                *end_param = keep;
+                array[counter++] = tprintf(".param %.*s", (int) (end_param - beg_param), beg_param);
+
                 curr_line = end_param;
             }
 
