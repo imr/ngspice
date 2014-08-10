@@ -272,7 +272,7 @@ initdico(tdico *dico)
 
 
 void
-dico_free_entry(entry *entry_p)
+dico_free_entry(entry_t *entry_p)
 {
     if (entry_p->symbol)
         txfree(entry_p->symbol);
@@ -312,7 +312,7 @@ dicostack_pop(tdico *dico)
 {
     char *inst_name;            /* name of subcircuit instance */
     char *param_p;              /* qualified inst parameter name */
-    entry *entry_p;             /* current entry */
+    entry_t *entry_p;           /* current entry */
     NGHASHPTR htable_p;         /* current hash table */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
@@ -332,9 +332,9 @@ dicostack_pop(tdico *dico)
         spice_dstring_init(&param_name);
 
         NGHASH_FIRST(&iter);
-        for (entry_p = (entry *) nghash_enumerateRE(htable_p, &iter);
+        for (entry_p = (entry_t *) nghash_enumerateRE(htable_p, &iter);
              entry_p;
-             entry_p = (entry *) nghash_enumerateRE(htable_p, &iter))
+             entry_p = (entry_t *) nghash_enumerateRE(htable_p, &iter))
         {
             spice_dstring_reinit(&param_name);
             param_p = spice_dstring_print(&param_name, "%s.%s",
@@ -366,18 +366,18 @@ donedico(tdico *dico)
  * look thru the stack of local symbols and then look at the global
  * symbols in that order.
  * ----------------------------------------------------------------- */
-static entry *
+static entry_t *
 entrynb(tdico *d, char *s)
 {
     int depth;                  /* stack depth */
-    entry *entry_p;             /* search hash table */
+    entry_t *entry_p;           /* search hash table */
     NGHASHPTR htable_p;         /* hash table */
 
     /* look at the current scope and then backup the stack */
     for (depth = d->stack_depth; depth >= 0; depth--) {
         htable_p = d->symbols[depth];
         if (htable_p) {
-            entry_p = (entry *) nghash_find(htable_p, s);
+            entry_p = (entry_t *) nghash_find(htable_p, s);
             if (entry_p)
                 return (entry_p);
         }
@@ -391,7 +391,7 @@ char
 getidtype(tdico *d, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in table */
 {
-    entry *entry_p;             /* hash table entry */
+    entry_t *entry_p;           /* hash table entry */
     char itp = '?';             /* assume unknown */
 
     entry_p = entrynb(d, s);
@@ -407,7 +407,7 @@ fetchnumentry(tdico *dico, char *t, bool *perr)
 {
     bool err = *perr;
     double u;
-    entry *entry_p;             /* hash table entry */
+    entry_t *entry_p;           /* hash table entry */
 
     entry_p = entrynb(dico, t); /* no keyword */
     /*dbg -- if (k <= 0) { printf("Dico num lookup fails."); } */
@@ -434,15 +434,15 @@ fetchnumentry(tdico *dico, char *t, bool *perr)
 
 /*******  writing dictionary entries *********/
 
-entry *
+entry_t *
 attrib(tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
 {
     /* seek or attribute dico entry number for string t.
        Option  op='N' : force a new entry, if tos>level and old is  valid.
     */
-    entry *entry_p;             /* symbol table entry */
+    entry_t *entry_p;           /* symbol table entry */
 
-    entry_p = (entry *) nghash_find(htable_p, t);
+    entry_p = (entry_t *) nghash_find(htable_p, t);
     if (entry_p && (op == 'N') &&
         (entry_p->level < dico_p->stack_depth) && (entry_p->tp != '?'))
     {
@@ -450,7 +450,7 @@ attrib(tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
     }
 
     if (!entry_p) {
-        entry_p = TMALLOC(entry, 1);
+        entry_p = TMALLOC(entry_t, 1);
         entry_p->symbol = strdup(t);
         entry_p->tp = '?';      /* signal Unknown */
         entry_p->level = dico_p->stack_depth;
@@ -469,7 +469,7 @@ attrib(tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
 void
 del_attrib(void *e_p)
 {
-    entry *entry_p = (entry*)e_p;
+    entry_t *entry_p = (entry_t*)e_p;
     if(entry_p) {
         tfree(entry_p->symbol);
         tfree(entry_p);
@@ -484,7 +484,7 @@ nupa_define(tdico *dico,
        char tpe,                /* type marker */
        double z,                /* float value if any */
        int w,                   /* integer value if any */
-       entry *pval,             /* pointer value if any */
+       entry_t *pval,           /* pointer value if any */
        char *base)              /* string pointer if any */
 {
     /*define t as real or integer,
@@ -497,7 +497,7 @@ nupa_define(tdico *dico,
     */
     char c;
     bool err, warn;
-    entry *entry_p;             /* spice table entry */
+    entry_t *entry_p;           /* spice table entry */
     NGHASHPTR htable_p;         /* hash table */
 
     NG_IGNORE(pval);
@@ -600,7 +600,7 @@ findsubckt(tdico *dico, char *s, SPICE_DSTRINGPTR subname)
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
 {
-    entry *entry_p;             /* symbol table entry */
+    entry_t *entry_p;           /* symbol table entry */
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
     int j, k;
     int line;                   /* stored line number */
@@ -1169,7 +1169,7 @@ evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     double u = 0.0;
     int j, lq;
     char dt;
-    entry *entry_p;
+    entry_t *entry_p;
     bool numeric, done, nolookup;
     bool err;
 

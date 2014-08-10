@@ -16,7 +16,7 @@ typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
 
 
 /* -----------------------------------------------------------------
- * I believe the entry should be a union of type but I need more info.
+ * I believe the entry_t should be a union of type but I need more info.
  * ----------------------------------------------------------------- */
 
 typedef struct entry_s {
@@ -27,7 +27,7 @@ typedef struct entry_s {
     int  ivl;                   /* int value or string buffer index */
     char *sbbase;               /* string buffer base address if any */
     struct entry_s *pointer;    /* pointer chain */
-} entry;
+} entry_t;
 
 
 typedef struct {                /* the input scanner data structure */
@@ -51,7 +51,7 @@ typedef struct {                /* the input scanner data structure */
 
 void initdico(tdico *dico);
 int donedico(tdico *dico);
-void dico_free_entry(entry *entry_p);
+void dico_free_entry(entry_t *entry_p);
 bool defsubckt(tdico *dico, char *s, int w, char categ);
 int findsubckt(tdico *dico, char *s, SPICE_DSTRINGPTR subname);
 bool nupa_substitute(tdico *dico, char *s, char *r, bool err);
@@ -60,5 +60,5 @@ bool nupa_subcktcall(tdico *dico, char *s, char *x, bool err);
 void nupa_subcktexit(tdico *dico);
 tdico *nupa_fetchinstance(void);
 char getidtype(tdico *d, char *s);
-entry *attrib(tdico *d, NGHASHPTR htable, char *t, char op);
+entry_t *attrib(tdico *d, NGHASHPTR htable, char *t, char op);
 void del_attrib(void *);
