@@ -535,19 +535,19 @@ static void
 dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *cp_out)
 {
     char *name;                 /* current symbol */
-    entry_t *entry_p;           /* current entry */
+    entry_t *entry;             /* current entry */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
     NGHASH_FIRST(&iter);
-    for (entry_p = (entry_t *) nghash_enumerateRE(htable_p, &iter);
-         entry_p;
-         entry_p = (entry_t *) nghash_enumerateRE(htable_p, &iter))
+    for (entry = (entry_t *) nghash_enumerateRE(htable_p, &iter);
+         entry;
+         entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
     {
-        if (entry_p->tp == 'R') {
+        if (entry->tp == 'R') {
             spice_dstring_reinit(& dico->lookup_buf);
-            scopy_lower(& dico->lookup_buf, entry_p->symbol);
+            scopy_lower(& dico->lookup_buf, entry->symbol);
             name = spice_dstring_value(& dico->lookup_buf);
-            fprintf(cp_out, "       ---> %s = %g\n", name, entry_p->vl);
+            fprintf(cp_out, "       ---> %s = %g\n", name, entry->vl);
             spice_dstring_free(& dico->lookup_buf);
         }
     }
@@ -597,7 +597,7 @@ nupa_get_param(char *param_name, int *found)
 {
     int depth;                  /* nested subcircit depth */
     char *up_name;              /* current parameter upper case */
-    entry_t *entry_p;           /* current entry */
+    entry_t *entry;             /* current entry */
     dico_t *dico;               /* local copy for speed */
     double result = 0;          /* parameter value */
 
@@ -610,9 +610,9 @@ nupa_get_param(char *param_name, int *found)
     for (depth = dico->stack_depth; depth >= 0; depth--) {
         NGHASHPTR htable_p = dico->symbols[depth];
         if (htable_p) {
-            entry_p = (entry_t *) nghash_find(htable_p, up_name);
-            if (entry_p) {
-                result = entry_p->vl;
+            entry = (entry_t *) nghash_find(htable_p, up_name);
+            if (entry) {
+                result = entry->vl;
                 *found = 1;
                 break;
             }
@@ -628,7 +628,7 @@ void
 nupa_add_param(char *param_name, double value)
 {
     char *up_name;              /* current parameter upper case */
-    entry_t *entry_p;           /* current entry */
+    entry_t *entry;             /* current entry */
     dico_t *dico;               /* local copy for speed */
     NGHASHPTR htable_p;         /* hash table of interest */
 
@@ -647,12 +647,12 @@ nupa_add_param(char *param_name, double value)
 
     htable_p = dico->symbols[dico->stack_depth];
 
-    entry_p = attrib(dico, htable_p, up_name, 'N');
-    if (entry_p) {
-        entry_p->vl = value;
-        entry_p->tp = 'R';
-        entry_p->ivl = 0;
-        entry_p->sbbase = NULL;
+    entry = attrib(dico, htable_p, up_name, 'N');
+    if (entry) {
+        entry->vl = value;
+        entry->tp = 'R';
+        entry->ivl = 0;
+        entry->sbbase = NULL;
     }
 
     spice_dstring_free(& dico->lookup_buf);
@@ -663,7 +663,7 @@ void
 nupa_add_inst_param(char *param_name, double value)
 {
     char *up_name;              /* current parameter upper case */
-    entry_t *entry_p;           /* current entry */
+    entry_t *entry;             /* current entry */
     dico_t *dico;               /* local copy for speed */
 
     dico = dicoS;
@@ -674,12 +674,12 @@ nupa_add_inst_param(char *param_name, double value)
     if (!(dico->inst_symbols))
         dico->inst_symbols = nghash_init(NGHASH_MIN_SIZE);
 
-    entry_p = attrib(dico, dico->inst_symbols, up_name, 'N');
-    if (entry_p) {
-        entry_p->vl = value;
-        entry_p->tp = 'R';
-        entry_p->ivl = 0;
-        entry_p->sbbase = NULL;
+    entry = attrib(dico, dico->inst_symbols, up_name, 'N');
+    if (entry) {
+        entry->vl = value;
+        entry->tp = 'R';
+        entry->ivl = 0;
+        entry->sbbase = NULL;
     }
 
     spice_dstring_free(& dico->lookup_buf);
@@ -694,7 +694,7 @@ nupa_add_inst_param(char *param_name, double value)
 void
 nupa_copy_inst_dico(void)
 {
-    entry_t *entry_p;           /* current entry */
+    entry_t *entry;             /* current entry */
     dico_t *dico;               /* local copy for speed */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
@@ -705,12 +705,12 @@ nupa_copy_inst_dico(void)
             fprintf(stderr, "stack depth should be zero.\n");
 
         NGHASH_FIRST(&iter);
-        for (entry_p = (entry_t *) nghash_enumerateRE(dico->inst_symbols, &iter);
-             entry_p;
-             entry_p = (entry_t *) nghash_enumerateRE(dico->inst_symbols, &iter))
+        for (entry = (entry_t *) nghash_enumerateRE(dico->inst_symbols, &iter);
+             entry;
+             entry = (entry_t *) nghash_enumerateRE(dico->inst_symbols, &iter))
         {
-            nupa_add_param(entry_p->symbol, entry_p->vl);
-            dico_free_entry(entry_p);
+            nupa_add_param(entry->symbol, entry->vl);
+            dico_free_entry(entry);
         }
 
         nghash_free(dico->inst_symbols, NULL, NULL);

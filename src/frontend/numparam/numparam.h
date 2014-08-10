@@ -51,7 +51,7 @@ typedef struct {                /* the input scanner data structure */
 
 void initdico(dico_t *);
 int donedico(dico_t *);
-void dico_free_entry(entry_t *entry_p);
+void dico_free_entry(entry_t *);
 bool defsubckt(dico_t *, char *s, int w, char categ);
 int findsubckt(dico_t *, char *s, SPICE_DSTRINGPTR subname);
 bool nupa_substitute(dico_t *, char *s, char *r, bool err);

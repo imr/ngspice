@@ -272,12 +272,12 @@ initdico(dico_t *dico)
 
 
 void
-dico_free_entry(entry_t *entry_p)
+dico_free_entry(entry_t *entry)
 {
-    if (entry_p->symbol)
-        txfree(entry_p->symbol);
+    if (entry->symbol)
+        txfree(entry->symbol);
 
-    txfree(entry_p);
+    txfree(entry);
 }
 
 
@@ -312,7 +312,7 @@ dicostack_pop(dico_t *dico)
 {
     char *inst_name;            /* name of subcircuit instance */
     char *param_p;              /* qualified inst parameter name */
-    entry_t *entry_p;           /* current entry */
+    entry_t *entry;             /* current entry */
     NGHASHPTR htable_p;         /* current hash table */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
@@ -332,15 +332,15 @@ dicostack_pop(dico_t *dico)
         spice_dstring_init(&param_name);
 
         NGHASH_FIRST(&iter);
-        for (entry_p = (entry_t *) nghash_enumerateRE(htable_p, &iter);
-             entry_p;
-             entry_p = (entry_t *) nghash_enumerateRE(htable_p, &iter))
+        for (entry = (entry_t *) nghash_enumerateRE(htable_p, &iter);
+             entry;
+             entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
         {
             spice_dstring_reinit(&param_name);
             param_p = spice_dstring_print(&param_name, "%s.%s",
-                                          inst_name, entry_p->symbol);
-            nupa_add_inst_param(param_p, entry_p->vl);
-            dico_free_entry(entry_p);
+                                          inst_name, entry->symbol);
+            nupa_add_inst_param(param_p, entry->vl);
+            dico_free_entry(entry);
         }
         nghash_free(htable_p, NULL, NULL);
         spice_dstring_free(&param_name);
@@ -370,16 +370,16 @@ static entry_t *
 entrynb(dico_t *dico, char *s)
 {
     int depth;                  /* stack depth */
-    entry_t *entry_p;           /* search hash table */
+    entry_t *entry;             /* search hash table */
     NGHASHPTR htable_p;         /* hash table */
 
     /* look at the current scope and then backup the stack */
     for (depth = dico->stack_depth; depth >= 0; depth--) {
         htable_p = dico->symbols[depth];
         if (htable_p) {
-            entry_p = (entry_t *) nghash_find(htable_p, s);
-            if (entry_p)
-                return (entry_p);
+            entry = (entry_t *) nghash_find(htable_p, s);
+            if (entry)
+                return (entry);
         }
     }
 
@@ -391,12 +391,12 @@ char
 getidtype(dico_t *dico, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in table */
 {
-    entry_t *entry_p;           /* hash table entry */
+    entry_t *entry;             /* hash table entry */
     char itp = '?';             /* assume unknown */
 
-    entry_p = entrynb(dico, s);
-    if (entry_p)
-        itp = entry_p->tp;
+    entry = entrynb(dico, s);
+    if (entry)
+        itp = entry->tp;
 
     return (itp);
 }
@@ -407,20 +407,20 @@ fetchnumentry(dico_t *dico, char *t, bool *perr)
 {
     bool err = *perr;
     double u;
-    entry_t *entry_p;           /* hash table entry */
+    entry_t *entry;             /* hash table entry */
 
-    entry_p = entrynb(dico, t); /* no keyword */
+    entry = entrynb(dico, t); /* no keyword */
     /*dbg -- if (k <= 0) { printf("Dico num lookup fails."); } */
 
-    while (entry_p && (entry_p->tp == 'P'))
-        entry_p = entry_p->pointer;
+    while (entry && (entry->tp == 'P'))
+        entry = entry->pointer;
 
-    if (entry_p)
-        if (entry_p->tp != 'R')
-            entry_p = NULL;
+    if (entry)
+        if (entry->tp != 'R')
+            entry = NULL;
 
-    if (entry_p) {
-        u = entry_p->vl;
+    if (entry) {
+        u = entry->vl;
     } else {
         err = message(dico, "Undefined number [%s]\n", t);
         u = 0.0;
@@ -440,24 +440,24 @@ attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op)
     /* seek or attribute dico entry number for string t.
        Option  op='N' : force a new entry, if tos>level and old is  valid.
     */
-    entry_t *entry_p;           /* symbol table entry */
+    entry_t *entry;             /* symbol table entry */
 
-    entry_p = (entry_t *) nghash_find(htable_p, t);
-    if (entry_p && (op == 'N') &&
-        (entry_p->level < dico->stack_depth) && (entry_p->tp != '?'))
+    entry = (entry_t *) nghash_find(htable_p, t);
+    if (entry && (op == 'N') &&
+        (entry->level < dico->stack_depth) && (entry->tp != '?'))
     {
-        entry_p = NULL;
+        entry = NULL;
     }
 
-    if (!entry_p) {
-        entry_p = TMALLOC(entry_t, 1);
-        entry_p->symbol = strdup(t);
-        entry_p->tp = '?';      /* signal Unknown */
-        entry_p->level = dico->stack_depth;
-        nghash_insert(htable_p, t, entry_p);
+    if (!entry) {
+        entry = TMALLOC(entry_t, 1);
+        entry->symbol = strdup(t);
+        entry->tp = '?';      /* signal Unknown */
+        entry->level = dico->stack_depth;
+        nghash_insert(htable_p, t, entry);
     }
 
-    return entry_p;
+    return entry;
 }
 
 
@@ -467,12 +467,12 @@ attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op)
  */
 
 void
-del_attrib(void *e_p)
+del_attrib(void *entry_p)
 {
-    entry_t *entry_p = (entry_t*)e_p;
-    if(entry_p) {
-        tfree(entry_p->symbol);
-        tfree(entry_p);
+    entry_t *entry = (entry_t*) entry_p;
+    if(entry) {
+        tfree(entry->symbol);
+        tfree(entry);
     }
 }
 
@@ -497,7 +497,7 @@ nupa_define(dico_t *dico,
     */
     char c;
     bool err, warn;
-    entry_t *entry_p;           /* spice table entry */
+    entry_t *entry;             /* spice table entry */
     NGHASHPTR htable_p;         /* hash table */
 
     NG_IGNORE(pval);
@@ -508,36 +508,36 @@ nupa_define(dico_t *dico,
 
     htable_p = dico->symbols[dico->stack_depth];
 
-    entry_p = attrib(dico, htable_p, t, op);
+    entry = attrib(dico, htable_p, t, op);
     err = 0;
 
-    if (!entry_p) {
+    if (!entry) {
 
         err = message(dico, " Symbol table overflow\n");
 
     } else {
 
-        if (entry_p->tp == 'P')
-            entry_p = entry_p->pointer; /* pointer indirection */
+        if (entry->tp == 'P')
+            entry = entry->pointer; /* pointer indirection */
 
-        if (entry_p)
-            c = entry_p->tp;
+        if (entry)
+            c = entry->tp;
         else
             c = ' ';
 
         if ((c == 'R') || (c == 'S') || (c == '?')) {
 
-            entry_p->vl = z;
-            entry_p->tp = tpe;
-            entry_p->ivl = w;
-            entry_p->sbbase = base;
+            entry->vl = z;
+            entry->tp = tpe;
+            entry->ivl = w;
+            entry->sbbase = base;
             /* if ((c != '?') && (i <= dico->stack[dico->tos])) { */
             if (c == '?')
-                entry_p->level = dico->stack_depth; /* promote! */
+                entry->level = dico->stack_depth; /* promote! */
 
             /* warn about re-write to a global scope! */
-            if (entry_p->level < dico->stack_depth)
-                warn = message(dico, "%s:%d overwritten.\n", t, entry_p->level);
+            if (entry->level < dico->stack_depth)
+                warn = message(dico, "%s:%d overwritten.\n", t, entry->level);
 
         } else {
             /* suppress error message, resulting from multiple definition of
@@ -600,7 +600,7 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
 {
-    entry_t *entry_p;           /* symbol table entry */
+    entry_t *entry;             /* symbol table entry */
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
     int j, k;
     int line;                   /* stored line number */
@@ -618,10 +618,10 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
         k--;
 
     pscopy_up(&ustr, s, k + 1, j - k);
-    entry_p = entrynb(dico, spice_dstring_value(&ustr));
+    entry = entrynb(dico, spice_dstring_value(&ustr));
 
-    if (entry_p && (entry_p->tp == 'U')) {
-        line = entry_p->ivl;
+    if (entry && (entry->tp == 'U')) {
+        line = entry->ivl;
         scopyd(subname, &ustr);
     } else {
         line = 0;
@@ -1169,7 +1169,7 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     double u = 0.0;
     int j, lq;
     char dt;
-    entry_t *entry_p;
+    entry_t *entry;
     bool numeric, done, nolookup;
     bool err;
 
@@ -1180,32 +1180,32 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     if (mode == 1) {
         /* string? */
         stupcase(t);
-        entry_p = entrynb(dico, t);
-        nolookup = !entry_p;
+        entry = entrynb(dico, t);
+        nolookup = !entry;
 
-        while (entry_p && (entry_p->tp == 'P'))
-            entry_p = entry_p->pointer; /* follow pointer chain */
+        while (entry && (entry->tp == 'P'))
+            entry = entry->pointer; /* follow pointer chain */
 
         /* pointer chain */
-        if (entry_p)
-            dt = entry_p->tp;
+        if (entry)
+            dt = entry->tp;
         else
             dt = ' ';
 
         /* data type: Real or String */
         if (dt == 'R') {
-            u = entry_p->vl;
+            u = entry->vl;
             numeric = 1;
         } else if (dt == 'S') {
             /* suppose source text "..." at */
-            j = entry_p->ivl;
+            j = entry->ivl;
             lq = 0;
 
             do
             {
                 j++;
                 lq++;
-                dt = /* ibf->bf[j]; */ entry_p->sbbase[j];
+                dt = /* ibf->bf[j]; */ entry->sbbase[j];
 
                 if (cpos('3', spice_dstring_value(&dico->option)) <= 0)
                     dt = upcase(dt); /* spice-2 */
@@ -1218,7 +1218,7 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
             } while (!done);
         }
 
-        if (!entry_p)
+        if (!entry)
             err = message(dico,
                           "\"%s\" not evaluated.%s\n", t,
                           nolookup ? " Lookup failure." : "");
