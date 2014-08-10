@@ -205,13 +205,13 @@ mathfunction(int f, double z, double x)
 
 
 #ifdef __GNUC__
-static bool message(tdico *dic, const char *fmt, ...)
+static bool message(dico_t *dic, const char *fmt, ...)
     __attribute__ ((format (__printf__, 2, 3)));
 #endif
 
 
 static bool
-message(tdico *dic, const char *fmt, ...)
+message(dico_t *dic, const char *fmt, ...)
 {
     va_list ap;
 
@@ -239,7 +239,7 @@ message(tdico *dic, const char *fmt, ...)
 /************ the input text symbol table (dictionary) *************/
 
 void
-initdico(tdico *dico)
+initdico(dico_t *dico)
 {
     int asize = 10;           /* default allocation depth of the synbol stack */
     COMPATMODE_T compat_mode;
@@ -289,7 +289,7 @@ dico_free_entry(entry_t *entry_p)
 */
 
 static void
-dicostack_push(tdico *dico)
+dicostack_push(dico_t *dico)
 /* push operation for nested subcircuit locals */
 {
     dico->stack_depth++;
@@ -307,7 +307,7 @@ dicostack_push(tdico *dico)
 
 
 static void
-dicostack_pop(tdico *dico)
+dicostack_pop(dico_t *dico)
 /* pop operation for nested subcircuit locals */
 {
     char *inst_name;            /* name of subcircuit instance */
@@ -354,7 +354,7 @@ dicostack_pop(tdico *dico)
 
 
 int
-donedico(tdico *dico)
+donedico(dico_t *dico)
 {
     int sze = nghash_get_size(dico->symbols[0]);
     return sze;
@@ -367,7 +367,7 @@ donedico(tdico *dico)
  * symbols in that order.
  * ----------------------------------------------------------------- */
 static entry_t *
-entrynb(tdico *d, char *s)
+entrynb(dico_t *d, char *s)
 {
     int depth;                  /* stack depth */
     entry_t *entry_p;           /* search hash table */
@@ -388,7 +388,7 @@ entrynb(tdico *d, char *s)
 
 
 char
-getidtype(tdico *d, char *s)
+getidtype(dico_t *d, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in table */
 {
     entry_t *entry_p;           /* hash table entry */
@@ -403,7 +403,7 @@ getidtype(tdico *d, char *s)
 
 
 static double
-fetchnumentry(tdico *dico, char *t, bool *perr)
+fetchnumentry(dico_t *dico, char *t, bool *perr)
 {
     bool err = *perr;
     double u;
@@ -435,7 +435,7 @@ fetchnumentry(tdico *dico, char *t, bool *perr)
 /*******  writing dictionary entries *********/
 
 entry_t *
-attrib(tdico *dico_p, NGHASHPTR htable_p, char *t, char op)
+attrib(dico_t *dico_p, NGHASHPTR htable_p, char *t, char op)
 {
     /* seek or attribute dico entry number for string t.
        Option  op='N' : force a new entry, if tos>level and old is  valid.
@@ -478,7 +478,7 @@ del_attrib(void *e_p)
 
 
 static bool
-nupa_define(tdico *dico,
+nupa_define(dico_t *dico,
        char *t,                 /* identifier to define */
        char op,                 /* option */
        char tpe,                /* type marker */
@@ -555,7 +555,7 @@ nupa_define(tdico *dico,
 
 
 bool
-defsubckt(tdico *dico, char *s, int w, char categ)
+defsubckt(dico_t *dico, char *s, int w, char categ)
 /* called on 1st pass of spice source code,
    to enter subcircuit (categ=U) and model (categ=O) names
 */
@@ -595,7 +595,7 @@ defsubckt(tdico *dico, char *s, int w, char categ)
 
 
 int
-findsubckt(tdico *dico, char *s, SPICE_DSTRINGPTR subname)
+findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value
    and the name in string subname  */
@@ -729,7 +729,7 @@ fetchid(SPICE_DSTRINGPTR t, const char *s_end, const char *iptr)
 
 
 static double
-fetchnumber(tdico *dico, const char **pi, bool *perror)
+fetchnumber(dico_t *dico, const char **pi, bool *perror)
 /* parse a Spice number in string s */
 {
     double u;
@@ -762,7 +762,7 @@ fetchnumber(tdico *dico, const char **pi, bool *perror)
 
 
 static char
-fetchoperator(tdico *dico,
+fetchoperator(dico_t *dico,
               const char *s_end,
               const char **pi,
               unsigned char *pstate, unsigned char *plevel,
@@ -941,7 +941,7 @@ operate(char op, double x, double y)
 
 
 static double
-formula(tdico *dico, const char *s, const char *s_end, bool *perror)
+formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 {
     /* Expression parser.
        s is a formula with parentheses and math ops +-* / ...
@@ -1163,7 +1163,7 @@ formula(tdico *dico, const char *s, const char *s_end, bool *perror)
 
 
 static bool
-evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
+evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
     /* transform t to result q. mode 0: expression, mode 1: simple variable */
     double u = 0.0;
@@ -1249,7 +1249,7 @@ evaluate(tdico *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 /********* interface functions for spice3f5 extension ***********/
 
 static int
-insertnumber(tdico *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
+insertnumber(dico_t *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
     const char *u = spice_dstring_value(ustr_p);
@@ -1283,7 +1283,7 @@ insertnumber(tdico *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 
 
 bool
-nupa_substitute(tdico *dico, char *s, char *r, bool err)
+nupa_substitute(dico_t *dico, char *s, char *r, bool err)
 /* s: pointer to original source line.
    r: pointer to result line, already heavily modified wrt s
    anywhere we find a 10-char numstring in r, substitute it.
@@ -1528,7 +1528,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
 
 
 bool
-nupa_assignment(tdico *dico, char *s, char mode)
+nupa_assignment(dico_t *dico, char *s, char mode)
 /* is called for all 'Param' lines of the input file.
    is also called for the params: section of a subckt .
    mode='N' define new local variable, else global...
@@ -1608,7 +1608,7 @@ nupa_assignment(tdico *dico, char *s, char mode)
 
 
 bool
-nupa_subcktcall(tdico *dico, char *s, char *x, bool err)
+nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
 /* s= a subckt define line, with formal params.
    x= a matching subckt call line, with actual params
 */
@@ -1832,7 +1832,7 @@ nupa_subcktcall(tdico *dico, char *s, char *x, bool err)
 
 
 void
-nupa_subcktexit(tdico *dico)
+nupa_subcktexit(dico_t *dico)
 {
     dicostack_pop(dico);
 }

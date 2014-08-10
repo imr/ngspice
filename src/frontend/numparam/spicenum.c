@@ -31,7 +31,7 @@ Todo:
 
 extern bool ft_batchmode;
 
-void dump_symbols(tdico *dico_p);
+void dump_symbols(dico_t *dico_p);
 
 char *nupa_inst_name;
 
@@ -166,7 +166,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
 
 static int
-findsubname(tdico *dico, SPICE_DSTRINGPTR dstr_p)
+findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 /* truncate the parameterized subckt call to regular old Spice */
 /* scan a string from the end, skipping non-idents and {expressions} */
 /* then truncate s after the last subckt(?) identifier */
@@ -290,7 +290,7 @@ modernizeex(SPICE_DSTRINGPTR dstr_p)
 
 
 static char
-transform(tdico *dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
+transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
           SPICE_DSTRINGPTR u_p)
 /*         line s is categorized and crippled down to basic Spice
  *         returns in u control word following dot, if any
@@ -390,7 +390,7 @@ transform(tdico *dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
 
 /************ core of numparam **************/
 
-/* some day, all these nasty globals will go into the tdico structure
+/* some day, all these nasty globals will go into the dico_t structure
    and everything will get hidden behind some "handle" ...
    For the time being we will rename this variable to end in S so we know
    they are statics within this file for easier reading of the code.
@@ -404,7 +404,7 @@ static unsigned char incontrolS = 0;    /* flag control code sections */
 static unsigned char dologfileS = 0;    /* for debugging */
 static unsigned char firstsignalS = 1;
 static FILE *logfileS = NULL;
-static tdico *dicoS = NULL;
+static dico_t *dicoS = NULL;
 
 
 /*  already part of dico : */
@@ -440,7 +440,7 @@ nupa_init(char *srcfile)
     linecountS = 0;
     incontrolS = 0;
     placeholder = 0;
-    dicoS = (tdico *) new(sizeof(tdico));
+    dicoS = (dico_t *) new(sizeof(dico_t));
     initdico(dicoS);
 
     dicoS->dynrefptr = TMALLOC(char*, dynmaxline + 1);
@@ -532,7 +532,7 @@ nupa_scan(char *s, int linenum, int is_subckt)
  * Dump the contents of a symbol table.
  * ----------------------------------------------------------------- */
 static void
-dump_symbol_table(tdico *dico_p, NGHASHPTR htable_p, FILE *cp_out)
+dump_symbol_table(dico_t *dico_p, NGHASHPTR htable_p, FILE *cp_out)
 {
     char *name;                 /* current symbol */
     entry_t *entry_p;           /* current entry */
@@ -561,7 +561,7 @@ void
 nupa_list_params(FILE *cp_out)
 {
     int depth;                  /* nested subcircit depth */
-    tdico *dico_p;              /* local copy for speed */
+    dico_t *dico_p;             /* local copy for speed */
 
     dico_p = dicoS;
     if (dico_p == NULL) {
@@ -598,7 +598,7 @@ nupa_get_param(char *param_name, int *found)
     int depth;                  /* nested subcircit depth */
     char *up_name;              /* current parameter upper case */
     entry_t *entry_p;           /* current entry */
-    tdico *dico_p;              /* local copy for speed */
+    dico_t *dico_p;             /* local copy for speed */
     double result = 0;          /* parameter value */
 
     dico_p = dicoS;
@@ -629,7 +629,7 @@ nupa_add_param(char *param_name, double value)
 {
     char *up_name;              /* current parameter upper case */
     entry_t *entry_p;           /* current entry */
-    tdico *dico_p;              /* local copy for speed */
+    dico_t *dico_p;             /* local copy for speed */
     NGHASHPTR htable_p;         /* hash table of interest */
 
     dico_p = dicoS;
@@ -664,7 +664,7 @@ nupa_add_inst_param(char *param_name, double value)
 {
     char *up_name;              /* current parameter upper case */
     entry_t *entry_p;           /* current entry */
-    tdico *dico_p;              /* local copy for speed */
+    dico_t *dico_p;             /* local copy for speed */
 
     dico_p = dicoS;
     spice_dstring_reinit(& dico_p->lookup_buf);
@@ -695,7 +695,7 @@ void
 nupa_copy_inst_dico(void)
 {
     entry_t *entry_p;           /* current entry */
-    tdico *dico_p;              /* local copy for speed */
+    dico_t *dico_p;             /* local copy for speed */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
     dico_p = dicoS;
@@ -884,7 +884,7 @@ nupa_signal(int sig, char *info)
 
 #ifdef USING_NUPATEST
 /* This is use only by the nupatest program */
-tdico *
+dico_t *
 nupa_fetchinstance(void)
 {
     return dico;
@@ -892,7 +892,7 @@ nupa_fetchinstance(void)
 #endif
 
 
-void dump_symbols(tdico *dico_p)
+void dump_symbols(dico_t *dico_p)
 {
     NG_IGNORE(dico_p);
 

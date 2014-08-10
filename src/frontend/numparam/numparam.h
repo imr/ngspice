@@ -46,19 +46,19 @@ typedef struct {                /* the input scanner data structure */
     char **dynrefptr;
     char *dyncategory;
     int hs_compatibility;       /* allow extra keywords */
-} tdico;
+} dico_t;
 
 
-void initdico(tdico *dico);
-int donedico(tdico *dico);
+void initdico(dico_t *dico);
+int donedico(dico_t *dico);
 void dico_free_entry(entry_t *entry_p);
-bool defsubckt(tdico *dico, char *s, int w, char categ);
-int findsubckt(tdico *dico, char *s, SPICE_DSTRINGPTR subname);
-bool nupa_substitute(tdico *dico, char *s, char *r, bool err);
-bool nupa_assignment(tdico *dico, char *s, char mode);
-bool nupa_subcktcall(tdico *dico, char *s, char *x, bool err);
-void nupa_subcktexit(tdico *dico);
-tdico *nupa_fetchinstance(void);
-char getidtype(tdico *d, char *s);
-entry_t *attrib(tdico *d, NGHASHPTR htable, char *t, char op);
+bool defsubckt(dico_t *dico, char *s, int w, char categ);
+int findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname);
+bool nupa_substitute(dico_t *dico, char *s, char *r, bool err);
+bool nupa_assignment(dico_t *dico, char *s, char mode);
+bool nupa_subcktcall(dico_t *dico, char *s, char *x, bool err);
+void nupa_subcktexit(dico_t *dico);
+dico_t *nupa_fetchinstance(void);
+char getidtype(dico_t *d, char *s);
+entry_t *attrib(dico_t *d, NGHASHPTR htable, char *t, char op);
 void del_attrib(void *);

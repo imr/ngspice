@@ -48,7 +48,7 @@ and substitute node/device name arguments.
 
 */
 
- int runscript( tdico *dico, char * prefix,
+ int runscript( dico_t *dico, char * prefix,
    int istart, int istop, int maxnest)
 /* recursive top-down expansion: circuit --> list of line numbers */
 /* keep it simple,stupid  compared to Spice's code */
@@ -233,7 +233,7 @@ char * nbofnodes   = "222222444443222240334";
 char * nbsubdevice = "000000000000111002000";
 
 void prefixing(char * s, char * p, char * formals, char * actuals,
-   char categ, tdico *dic)
+   char categ, dico_t *dic)
 /* s is a line in expanded subcircuit. 
    p is the prefix to be glued anywhere .
    assume that everything except first and last word in s may be a node. 
@@ -303,7 +303,7 @@ Reminder on Numparam symbols:
   }
 }
 
-void getnodelist(char * form, char * act, char * s, tdico *dic, int k)
+void getnodelist(char * form, char * act, char * s, dico_t *dic, int k)
 /* the line s contains the actual node parameters, between 1st & last word */
 {
   int j,ls, idef;
@@ -337,7 +337,7 @@ void nupa_test(char * fname, char mode)
 /* bugs in nupa_eval(), and for nested subckt definitions !?! */
 {
   FILE * tf, fout;
-  tdico * dic; /* dictionary data pointer */
+  dico_t * dic; /* dictionary data pointer */
   Strbig(Llen,s);
   Str(80, prefix);
   /* Strbig(Llen, formals); Strbig(Llen,actuals); */
