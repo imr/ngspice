@@ -2860,6 +2860,10 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
     end = skip_ws(end + 1);
 
+    // skip an unwanted and non advertised optional '='
+    if (*end == '=')
+        end = skip_ws(end + 1);
+
     if (*end != '{')
         goto Lerror;
 
