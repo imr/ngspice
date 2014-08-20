@@ -253,7 +253,7 @@ void INPpas2(CKTcircuit *ckt, card * data, INPtables * tab, TSKtask *task)
 	    return;
 	    break;
 
-	case 0:
+	case '\0':
 	    break;
 
 	default:

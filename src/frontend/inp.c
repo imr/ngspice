@@ -455,7 +455,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     /* all commands from within .control section */
                     } else {
                         s = dd->li_line;
-                        dd->li_line = 0; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
+                        dd->li_line = NULL; /* SJB - prevent line_free() freeing the string (now pointed at by wl->wl_word) */
                     }
                     controls = wl_cons(s, controls);
                 }
