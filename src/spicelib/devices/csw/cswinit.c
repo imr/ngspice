@@ -75,7 +75,12 @@ SPICEdev CSWinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &CSWiSize,
- /* DEVmodSize    */ &CSWmSize
+ /* DEVmodSize    */ &CSWmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

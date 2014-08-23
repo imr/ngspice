@@ -190,52 +190,149 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 
     error2 = OK;
 
+#ifdef RELAN
+    int j, relan ;
+    relan = 0 ;
+#endif
+
     /* Analysis order is important */
-    for (i = 0; i < ANALmaxnum; i++) {
+    for (i = 0; i < ANALmaxnum; i++)
+    {
 
 #ifdef WANT_SENSE2
-	if (i == sens_num)
-	    continue;
+        if (i == sens_num)
+        {
+            continue ;
+        }
 #endif
 
-	for (job = task->jobs; job; job = job->JOBnextJob) {
-	    if (job->JOBtype == i) {
-                ckt->CKTcurJob=job;
-		error = OK;
-		if (analInfo[i]->an_init)
-		    error = analInfo[i]->an_init (ckt, job);
-		if (!error && analInfo[i]->do_ic)
-		    error = CKTic(ckt);
-		if (!error){
-#ifdef XSPICE
-            if(reset) {
-                  /* gtri - begin - 6/10/91 - wbk - Setup event-driven data */
-                  error = EVTsetup(ckt);
-                  if(error) {
-                    ckt->CKTstat->STATtotAnalTime +=
-                      SPfrontEnd->IFseconds() - startTime;
-                    return(error);
-                  }
-                  /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
-            }
+        for (job = task->jobs ; job ; job = job->JOBnextJob)
+        {
+            if (job->JOBtype == i)
+            {
+
+#ifdef RELAN
+                if (relan)
+                {
+                    for (j = 0 ; j < ckt->CKTagingN ; j++)
+                    {
+                        printf ("\n\nAdding Aging Effect at %-.9g seconds...\n\n", ckt->CKTagingStep + j * ckt->CKTagingStep) ;
+                        error = CKTagingAdd (ckt, j) ;
+                        if (error)
+                        {
+                            return (error) ;
+                        }
+
+                        error = CKTtemp (ckt) ;
+                        if (error)
+                        {
+                            return (error) ;
+                        }
 #endif
-		    error = analInfo[i]->an_func (ckt, reset);
-			/* txl, cpl addition */
-			if (error == 1111) break;
-		}
-		if (error)
-		    error2 = error;
-	    }
-	}
+
+                        ckt->CKTcurJob = job ;
+                        error = OK ;
+                        if (analInfo[i]->an_init)
+                        {
+                            error = analInfo[i]->an_init (ckt, job) ;
+                        }
+
+                        if (!error && analInfo[i]->do_ic)
+                        {
+                            error = CKTic (ckt) ;
+                        }
+
+                        if (!error)
+                        {
+
+#ifdef XSPICE
+                            if (reset)
+                            {
+                                /* gtri - begin - 6/10/91 - wbk - Setup event-driven data */
+                                error = EVTsetup (ckt) ;
+                                if (error)
+                                {
+                                    ckt->CKTstat->STATtotAnalTime += SPfrontEnd->IFseconds() - startTime ;
+                                    return (error) ;
+                                }
+                                /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
+                            }
+#endif
+
+                            error = analInfo[i]->an_func (ckt, reset) ;
+                            /* txl, cpl addition */
+                            if (error == 1111)
+                            {
+                                break ;
+                            }
+                            if (error)
+                            {
+                                error2 = error ;
+                            }
+                        }
+
+#ifdef RELAN
+                    }
+                } else {
+                    ckt->CKTcurJob = job ;
+                    error = OK ;
+                    if (analInfo[i]->an_init)
+                    {
+                        error = analInfo[i]->an_init (ckt, job) ;
+                    }
+
+                    if (!error && analInfo[i]->do_ic)
+                    {
+                        error = CKTic (ckt) ;
+                    }
+
+                    if (!error)
+                    {
+
+#ifdef XSPICE
+                        if (reset)
+                        {
+                            /* gtri - begin - 6/10/91 - wbk - Setup event-driven data */
+                            error = EVTsetup (ckt) ;
+                            if (error)
+                            {
+                                ckt->CKTstat->STATtotAnalTime += SPfrontEnd->IFseconds() - startTime ;
+                                return (error) ;
+                            }
+                            /* gtri - end - 6/10/91 - wbk - Setup event-driven data */
+                        }
+#endif
+
+                        error = analInfo[i]->an_func (ckt, reset) ;
+                        /* txl, cpl addition */
+                        if (error == 1111)
+                        {
+                            break ;
+                        }
+                        if (error)
+                        {
+                            error2 = error ;
+                        }
+                    }
+
+                    if (i == 1)
+                    {
+                        /* Reliability Analysis */
+                        relan = 1 ;
+                    }
+                }
+#endif /* RELAN */
+
+            }
+        }
     }
 
-    ckt->CKTstat->STATtotAnalTime += SPfrontEnd->IFseconds() - startTime;
+    ckt->CKTstat->STATtotAnalTime += SPfrontEnd->IFseconds() - startTime ;
 
 #ifdef WANT_SENSE2
     if (ckt->CKTsenInfo)
 	SENdestroy(ckt->CKTsenInfo);
 #endif
 
-    return(error2);
+    return (error2) ;
 }
-

@@ -114,6 +114,11 @@ typedef struct SPICEdev {
     int *DEVinstSize;    /* size of an instance */
     int *DEVmodSize;     /* size of a model */
 
+#ifdef RELAN
+    int (*DEVagingAdd)(GENmodel *, int) ;
+    int (*DEVagingSetup)(GENmodel *, CKTcircuit *) ;
+#endif
+
 } SPICEdev;  /* instance of structure for each possible type of device */
 
 

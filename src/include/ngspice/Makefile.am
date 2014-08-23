@@ -125,4 +125,9 @@ include_HEADERS = \
 	wallace.h	\
 	wstdio.h
 
+if RELAN_WANTED
+include_HEADERS += \
+	relandefs.h
+endif
+
 MAINTAINERCLEANFILES = Makefile.in

@@ -73,7 +73,12 @@ SPICEdev TRAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &TRAiSize,
- /* DEVmodSize    */ &TRAmSize
+ /* DEVmodSize    */ &TRAmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

@@ -74,7 +74,13 @@ SPICEdev DIOinfo = {
  /* DEVacct       */ NULL,
 #endif                     
  /* DEVinstSize   */ &DIOiSize,
- /* DEVmodSize    */ &DIOmSize
+ /* DEVmodSize    */ &DIOmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
+
 };
 
 

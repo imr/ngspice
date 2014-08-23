@@ -73,7 +73,12 @@ SPICEdev MOS9info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MOS9iSize,
- /* DEVmodSize    */ &MOS9mSize
+ /* DEVmodSize    */ &MOS9mSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

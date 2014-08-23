@@ -30,6 +30,11 @@ libbsim4_la_SOURCES =	\
 	bsim4itf.h
 
 
+if RELAN_WANTED
+libbsim4_la_SOURCES +=	\
+	b4reliability.c
+endif
+
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)

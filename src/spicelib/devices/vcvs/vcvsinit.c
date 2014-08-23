@@ -73,7 +73,12 @@ SPICEdev VCVSinfo = {
  /* DEVacct       */ NULL,
 #endif                          
  /* DEVinstSize   */ &VCVSiSize,
- /* DEVmodSize    */ &VCVSmSize
+ /* DEVmodSize    */ &VCVSmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

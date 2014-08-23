@@ -73,7 +73,12 @@ SPICEdev SOI3info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &SOI3iSize,
- /* DEVmodSize    */ &SOI3mSize
+ /* DEVmodSize    */ &SOI3mSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

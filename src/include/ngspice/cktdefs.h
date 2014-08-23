@@ -278,6 +278,13 @@ struct CKTcircuit {
 /* SP: 100609 */
 #endif
 
+#ifdef RELAN
+    double CKTagingStartTime ; /* Reliability Analysis - Start Time */
+    double CKTagingStep ;      /* Reliability Analysis - Time Step */
+    double CKTagingTotalTime ; /* Reliability Analysis - Stop Time */
+    int CKTagingN ;            /* Reliability Analysis - Number of Steps */
+#endif
+
     unsigned int CKTisLinear:1; /* flag to indicate that the circuit
                                    contains only linear elements */
     unsigned int CKTnoopac:1; /* flag to indicate that OP will not be evaluated
@@ -414,6 +421,15 @@ extern int PSSsetParm(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PSSinit(CKTcircuit *, JOB *);
 extern int DCpss(CKTcircuit *, int);
 /* SP */
+#endif
+
+#ifdef RELAN
+extern int RELANaskQuest (CKTcircuit *, JOB *, int, IFvalue *) ;
+extern int RELANsetParm (CKTcircuit *, JOB *, int, IFvalue *) ;
+extern int RELANinit (CKTcircuit *, JOB *) ;
+extern int RELANanalysis (CKTcircuit *, int) ;
+extern int CKTagingAdd (CKTcircuit *, int) ;
+extern int CKTagingSetup (CKTcircuit *) ;
 #endif
 
 extern int NaskQuest(CKTcircuit *, JOB *, int, IFvalue *);

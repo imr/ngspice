@@ -73,7 +73,12 @@ SPICEdev RESinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &RESiSize,
- /* DEVmodSize    */ &RESmSize
+ /* DEVmodSize    */ &RESmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

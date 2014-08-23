@@ -73,7 +73,12 @@ SPICEdev CPLinfo = {
 /* DEVacct        */ NULL,
 #endif   
 /* DEVinstSize    */ &CPLiSize,
-/* DEVmodSize     */ &CPLmSize
+/* DEVmodSize     */ &CPLmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

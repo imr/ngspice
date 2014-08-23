@@ -24,8 +24,17 @@ extern SPICEanalysis PSSinfo;
 extern SPICEanalysis SEN2info;
 #endif
 
+#ifdef RELAN
+extern SPICEanalysis RELANinfo ;
+#endif
+
 SPICEanalysis *analInfo[] = {
     &OPTinfo,
+
+#ifdef RELAN
+    &RELANinfo,
+#endif
+
     &ACinfo,
     &DCTinfo,
     &DCOinfo,

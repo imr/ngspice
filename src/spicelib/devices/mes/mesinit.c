@@ -73,7 +73,12 @@ SPICEdev MESinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MESiSize,
- /* DEVmodSize    */ &MESmSize
+ /* DEVmodSize    */ &MESmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

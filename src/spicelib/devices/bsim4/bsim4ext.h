@@ -31,3 +31,8 @@ extern int BSIM4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4unsetup(GENmodel*,CKTcircuit*);
 extern int BSIM4soaCheck(CKTcircuit *, GENmodel *);
+
+#ifdef RELAN
+extern int BSIM4agingAdd (GENmodel *, int) ;
+extern int BSIM4agingSetup (GENmodel *, CKTcircuit *) ;
+#endif

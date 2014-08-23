@@ -73,7 +73,12 @@ SPICEdev B1info = {
  /* DEVacct       */ NULL,
 #endif    
  /* DEVinstSize   */ &B1iSize,
- /* DEVmodSize    */ &B1mSize
+ /* DEVmodSize    */ &B1mSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

@@ -74,7 +74,12 @@ SPICEdev NBJTinfo = {
 #endif
 
  /* DEVinstSize   */ &NBJTiSize,
- /* DEVmodSize    */ &NBJTmSize
+ /* DEVmodSize    */ &NBJTmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

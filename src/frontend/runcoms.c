@@ -186,6 +186,15 @@ com_pss(wordlist *wl)
 #endif
 
 
+#ifdef RELAN
+void
+com_relan (wordlist *wl)
+{
+    dosim ("relan", wl) ;
+}
+#endif
+
+
 static int
 dosim(
     char *what, /* in: command (pz,op,dc,ac,tf,tran,sens,disto,noise,run) */

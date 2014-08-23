@@ -74,7 +74,12 @@ SPICEdev NUMD2info = {
 #endif
                     
  /* DEVinstSize   */ &NUMD2iSize,
- /* DEVmodSize    */ &NUMD2mSize
+ /* DEVmodSize    */ &NUMD2mSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

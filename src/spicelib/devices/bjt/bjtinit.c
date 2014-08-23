@@ -73,7 +73,12 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
  /* DEVacct       */ NULL,
 #endif                     
  /* DEVinstSize   */ &BJTiSize,
- /* DEVmodSize    */ &BJTmSize
+ /* DEVmodSize    */ &BJTmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

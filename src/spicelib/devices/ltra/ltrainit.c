@@ -73,7 +73,12 @@ SPICEdev LTRAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &LTRAiSize,
- /* DEVmodSize    */ &LTRAmSize
+ /* DEVmodSize    */ &LTRAmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

@@ -107,6 +107,16 @@ libckt_la_SOURCES += \
 endif
 
 
+if RELAN_WANTED
+libckt_la_SOURCES += \
+		relanalysis.c	\
+		relanaskq.c	\
+		relaninit.c	\
+		relansetp.c	\
+		cktreliability.c
+endif
+
+
 AM_CPPFLAGS = @AM_CPPFLAGS@  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 AM_CFLAGS = $(STATIC)
 MAINTAINERCLEANFILES = Makefile.in

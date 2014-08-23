@@ -72,7 +72,13 @@ SPICEdev CAPinfo = {
  /* DEVacct       */ NULL,
 #endif    
  /* DEVinstSize   */ &CAPiSize,
- /* DEVmodSize    */ &CAPmSize
+ /* DEVmodSize    */ &CAPmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
+
 };
 
 

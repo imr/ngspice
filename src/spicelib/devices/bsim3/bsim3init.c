@@ -72,7 +72,12 @@ SPICEdev BSIM3info = {
  /* DEVacct       */ NULL,
 #endif                       
  /* DEVinstSize   */ &BSIM3iSize,
- /* DEVmodSize    */ &BSIM3mSize
+ /* DEVmodSize    */ &BSIM3mSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

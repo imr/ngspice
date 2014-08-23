@@ -314,6 +314,70 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     }
 #endif
 
+#ifdef RELAN
+    if (strcmp (token, "relan") == 0)
+    {
+        JOB *relanJob ;
+        which = ft_find_analysis ("RELAN") ;
+        if (which == -1)
+        {
+            current->error = INPerrCat (current->error, INPmkTemp ("Reliability Analysis Unsupported\n")) ;
+            return (0) ; /* temporary */
+        }
+        err = ft_sim->newAnalysis (ft_curckt->ci_ckt, which, "relan", &relanJob, ft_curckt->ci_specTask) ;
+        if (err)
+        {
+            ft_sperror(err, "createRELAN") ;
+            return (0) ;
+        }
+
+        parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
+        error = INPapName (ckt, which, relanJob, "relan_aging_step", parm) ;
+        if (error)
+        {
+            current->error = INPerrCat (current->error, INPerror (error)) ;
+        }
+
+        parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
+        error = INPapName (ckt, which, relanJob, "relan_aging_stop", parm) ;
+        if (error)
+        {
+            current->error = INPerrCat (current->error, INPerror (error)) ;
+        }
+
+        if (*line)
+        {
+            if (*line == 'd')
+            {
+                goto next ;
+            } else if (*line == 'u') {
+                goto uic_relan ;
+            }
+            parm = INPgetValue (ckt, &line, IF_REAL, tab) ; /* AgingStart */
+            error = INPapName (ckt, which, relanJob, "relan_aging_start", parm) ;
+            if (error)
+            {
+                current->error = INPerrCat (current->error, INPerror (error)) ;
+            }
+
+        uic_relan:
+            if (*line == 'u')
+            {
+                INPgetTok (&line, &name, 1) ;
+                if (strcmp (name, "uic") == 0)
+                {
+                    ptemp.iValue = 1 ;
+                    error = INPapName (ckt, which, relanJob, "uic", &ptemp) ;
+                    if (error)
+                    {
+                        current->error = INPerrCat (current->error, INPerror (error)) ;
+                    }
+                }
+            }
+        }
+    }
+#endif
+
 next:
     while (*line) { /* read the entire line */
 

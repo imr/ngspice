@@ -572,6 +572,10 @@ typedef struct sBSIM4instance
         double **BSIM4nVar;
 #endif /* NONOISE */
 
+#ifdef RELAN
+    double *BSIM4agingDelvto ;
+#endif
+
 } BSIM4instance ;
 
 struct bsim4SizeDependParam

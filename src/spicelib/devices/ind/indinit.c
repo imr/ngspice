@@ -72,7 +72,12 @@ SPICEdev INDinfo = {
  /* DEVacct       */ NULL,
 #endif                       
  /* DEVinstSize   */ &INDiSize,
- /* DEVmodSize    */ &INDmSize
+ /* DEVmodSize    */ &INDmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 
@@ -142,7 +147,12 @@ SPICEdev MUTinfo = {
  /* DEVacct       */ NULL,
 #endif  
     &MUTiSize,
-    &MUTmSize
+    &MUTmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

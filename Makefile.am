@@ -14,7 +14,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 ar-lib compile config.guess \
 			src/include/ngspice/config.h.in config.sub configure install-sh \
 			missing mkinstalldirs stamp-h.in ltconfig \
-			ltmain.sh depcomp ylwrap
+			ltmain.sh depcomp ylwrap test-driver
 
 ACLOCAL_AMFLAGS = -I m4
 

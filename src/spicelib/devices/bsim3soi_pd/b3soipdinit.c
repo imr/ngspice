@@ -72,7 +72,13 @@ SPICEdev B3SOIPDinfo = {
  /* DEVacct*/        NULL,
 #endif
  /* DEVinstSize*/   &B3SOIPDiSize,
- /* DEVmodSize*/    &B3SOIPDmSize
+ /* DEVmodSize*/    &B3SOIPDmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
+
 };
 
 SPICEdev *

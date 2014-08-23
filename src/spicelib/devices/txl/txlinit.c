@@ -78,7 +78,12 @@ SPICEdev TXLinfo = {
  /* DEVacct       */ NULL,  
 #endif
     &TXLiSize,
-    &TXLmSize
+    &TXLmSize,
+
+#ifdef RELAN
+ /* DEVagingAdd */   NULL,
+ /* DEVagingSetup */ NULL
+#endif
 
 };
 

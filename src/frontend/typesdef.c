@@ -79,6 +79,11 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "harm", "harm" },
     { "spect", "spect" },
     { "pss", "periodic" },
+
+#ifdef RELAN
+    { "relan", "reliability" }
+#endif
+
 };
 
 int notypes = 19;
