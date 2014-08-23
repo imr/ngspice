@@ -365,9 +365,11 @@ dosim(
         tfree(ww);
     }
 
+#ifndef RELAN
     /* execute the .measure statements */
     if (!err && ft_curckt->ci_last_an && ft_curckt->ci_meas)
         do_measure(ft_curckt->ci_last_an, FALSE);
+#endif
 
     return err;
 }

@@ -24,6 +24,10 @@ Modified: 2000 AlansFixes
 
 extern SPICEanalysis *analInfo[];
 
+#ifdef RELAN
+extern bool do_measure (char *what, bool chk_only) ;
+#endif
+
 int
 CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 {
@@ -269,6 +273,9 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
                             {
                                 error2 = error ;
                             }
+
+                            /* Execute .meas statement */
+                            do_measure (spice_analysis_get_name (job->JOBtype), FALSE) ;
                         }
 
 #ifdef RELAN
