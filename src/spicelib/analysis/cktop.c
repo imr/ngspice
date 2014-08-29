@@ -155,11 +155,21 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
     factor = ckt->CKTgminFactor;
     OldGmin = 1e-2;
     gtarget = MAX (ckt->CKTgmin, ckt->CKTgshunt);
-    ckt->CKTdiagGmin = OldGmin / factor;
+    if (ckt->CKTuseDeviceGmin)
+    {
+        ckt->CKTgmin = OldGmin / factor ;
+    } else {
+        ckt->CKTdiagGmin = OldGmin / factor ;
+    }
     success = failed = 0;
 
     while ((!success) && (!failed)) {
-        fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
+        if (ckt->CKTuseDeviceGmin)
+        {
+            fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTgmin) ;
+        } else {
+            fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin) ;
+        }
         ckt->CKTnoncon = 1;
         iters = ckt->CKTstat->STATnumIter;
 
@@ -171,35 +181,70 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
             SPfrontEnd->IFerror (ERR_INFO,
                                  "One successful gmin step", NULL);
 
-            if (ckt->CKTdiagGmin <= gtarget) {
-                success = 1;
-            } else {
-                i = 0;
-                for (n = ckt->CKTnodes; n; n = n->next) {
-                    OldRhsOld[i] = ckt->CKTrhsOld[n->number];
-                    i++;
-                }
-
-                for (i = 0; i < ckt->CKTnumStates; i++) {
-                    OldCKTstate0[i] = ckt->CKTstate0[i];
-                }
-
-                if (iters <= (ckt->CKTdcTrcvMaxIter / 4)) {
-                    factor *= sqrt (factor);
-                    if (factor > ckt->CKTgminFactor)
-                        factor = ckt->CKTgminFactor;
-                }
-
-                if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
-                    factor = sqrt (factor);
-
-                OldGmin = ckt->CKTdiagGmin;
-
-                if ((ckt->CKTdiagGmin) < (factor * gtarget)) {
-                    factor = ckt->CKTdiagGmin / gtarget;
-                    ckt->CKTdiagGmin = gtarget;
+            if (ckt->CKTuseDeviceGmin)
+            {
+                if (ckt->CKTgmin <= gtarget) {
+                    success = 1;
                 } else {
-                    ckt->CKTdiagGmin /= factor;
+                    i = 0;
+                    for (n = ckt->CKTnodes; n; n = n->next) {
+                        OldRhsOld[i] = ckt->CKTrhsOld[n->number];
+                        i++;
+                    }
+
+                    for (i = 0; i < ckt->CKTnumStates; i++) {
+                        OldCKTstate0[i] = ckt->CKTstate0[i];
+                    }
+
+                    if (iters <= (ckt->CKTdcTrcvMaxIter / 4)) {
+                        factor *= sqrt (factor);
+                        if (factor > ckt->CKTgminFactor)
+                            factor = ckt->CKTgminFactor;
+                    }
+
+                    if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
+                        factor = sqrt (factor);
+
+                    OldGmin = ckt->CKTgmin;
+
+                    if ((ckt->CKTgmin) < (factor * gtarget)) {
+                        factor = ckt->CKTgmin / gtarget;
+                        ckt->CKTgmin = gtarget;
+                    } else {
+                        ckt->CKTgmin /= factor;
+                    }
+                }
+            } else {
+                if (ckt->CKTdiagGmin <= gtarget) {
+                    success = 1;
+                } else {
+                    i = 0;
+                    for (n = ckt->CKTnodes; n; n = n->next) {
+                        OldRhsOld[i] = ckt->CKTrhsOld[n->number];
+                        i++;
+                    }
+
+                    for (i = 0; i < ckt->CKTnumStates; i++) {
+                        OldCKTstate0[i] = ckt->CKTstate0[i];
+                    }
+
+                    if (iters <= (ckt->CKTdcTrcvMaxIter / 4)) {
+                        factor *= sqrt (factor);
+                        if (factor > ckt->CKTgminFactor)
+                            factor = ckt->CKTgminFactor;
+                    }
+
+                    if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
+                        factor = sqrt (factor);
+
+                    OldGmin = ckt->CKTdiagGmin;
+
+                    if ((ckt->CKTdiagGmin) < (factor * gtarget)) {
+                        factor = ckt->CKTdiagGmin / gtarget;
+                        ckt->CKTdiagGmin = gtarget;
+                    } else {
+                        ckt->CKTdiagGmin /= factor;
+                    }
                 }
             }
         } else {
@@ -213,7 +258,12 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                                      "Further gmin increment",
                                      NULL);
                 factor = sqrt (sqrt (factor));
-                ckt->CKTdiagGmin = OldGmin / factor;
+                if (ckt->CKTuseDeviceGmin)
+                {
+                    ckt->CKTgmin = OldGmin / factor ;
+                } else {
+                    ckt->CKTdiagGmin = OldGmin / factor ;
+                }
 
                 i = 0;
                 for (n = ckt->CKTnodes; n; n = n->next) {

@@ -79,6 +79,14 @@ CKTsetup(CKTcircuit *ckt)
             if(error) return(error);
         }
     }
+
+    if (ckt->CKTuseDeviceGmin)
+    {
+        fprintf (stderr, "Using Device Gmin Stepping...\n") ;
+    } else {
+        fprintf (stderr, "Using Diag Gmin Stepping...\n") ;
+    }
+
     for(i=0;i<=MAX(2,ckt->CKTmaxOrder)+1;i++) { /* dctran needs 3 states as minimum */
         CKALLOC(ckt->CKTstates[i],ckt->CKTnumStates,double);
     }
@@ -128,7 +136,6 @@ CKTsetup(CKTcircuit *ckt)
     /* gtri - end - Setup for adding rshunt option resistors */
 #endif
 
-#ifdef KIRCHHOFF
     CKTnode *node ;
 
     node = ckt->CKTnodes ;
@@ -142,6 +149,7 @@ CKTsetup(CKTcircuit *ckt)
         }
     }
 
+#ifdef KIRCHHOFF
     /** Marking node as Non-Linear when needed
      *  By default every node is Linear
      */

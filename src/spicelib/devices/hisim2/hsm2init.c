@@ -73,7 +73,8 @@ SPICEdev HSM2info = {
  /* DEVmodSize    */ &HSM2mSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ HSM2nodeIsNonLinear
+ /* DEVnodeIsNonLinear */ HSM2nodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

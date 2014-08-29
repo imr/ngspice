@@ -75,7 +75,8 @@ SPICEdev BJTinfo = {                  /* description from struct IFdevice  */
  /* DEVmodSize    */ &BJTmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ BJTnodeIsNonLinear
+ /* DEVnodeIsNonLinear */ BJTnodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

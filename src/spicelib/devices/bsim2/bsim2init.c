@@ -75,7 +75,8 @@ SPICEdev B2info = {
  /* DEVmodSize    */ &B2mSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ B2nodeIsNonLinear
+ /* DEVnodeIsNonLinear */ B2nodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

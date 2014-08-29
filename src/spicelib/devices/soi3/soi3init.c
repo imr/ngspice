@@ -75,7 +75,8 @@ SPICEdev SOI3info = {
  /* DEVmodSize    */ &SOI3mSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ SOI3nodeIsNonLinear
+ /* DEVnodeIsNonLinear */ SOI3nodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

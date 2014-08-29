@@ -75,7 +75,8 @@ SPICEdev JFETinfo = {
  /* DEVmodSize    */ &JFETmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ JFETnodeIsNonLinear
+ /* DEVnodeIsNonLinear */ JFETnodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

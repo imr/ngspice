@@ -75,7 +75,8 @@ SPICEdev MOS2info = {
  /* DEVmodSize    */ &MOS2mSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ MOS2nodeIsNonLinear
+ /* DEVnodeIsNonLinear */ MOS2nodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

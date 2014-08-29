@@ -80,7 +80,8 @@ SPICEdev VBICinfo = {
     &VBICmSize,   /* DEVmodSize     */
 
 #ifdef KIRCHHOFF
-    VBICnodeIsNonLinear /* DEVnodeIsNonLinear */
+    VBICnodeIsNonLinear, /* DEVnodeIsNonLinear */
+    NULL                 /* DEVloadKCL */
 #endif
 
 };

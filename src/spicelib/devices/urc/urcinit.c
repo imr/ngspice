@@ -75,7 +75,8 @@ SPICEdev URCinfo = {
  /* DEVmodSize    */ &URCmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ NULL,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

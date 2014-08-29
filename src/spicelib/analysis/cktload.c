@@ -79,16 +79,19 @@ CKTload(CKTcircuit *ckt)
         }
     }
 
-#ifdef KIRCHHOFF
     /* GMIN Stepping */
     for (i = 1 ; i <= size ; i++)
     {
         if (ckt->CKTdiag [i] != NULL)
         {
-            *(ckt->CKTdiag [i]) += ckt->CKTdiagGmin ;
+            if (ckt->CKTuseDeviceGmin)
+            {
+                *(ckt->CKTdiag [i]) += ckt->CKTgmin ;
+            } else {
+                *(ckt->CKTdiag [i]) += ckt->CKTdiagGmin ;
+            }
         }
     }
-#endif
 
 #ifdef XSPICE
     /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */
@@ -199,19 +202,22 @@ ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum)
     return currents;
 }
 
+#ifdef KIRCHHOFF
 int
 CKTloadKCL (CKTcircuit *ckt)
 {
-/*    for (i = 0 ; i < DEVmaxnum ; i++)
+    int error, i ;
+
+    for (i = 0 ; i < DEVmaxnum ; i++)
     {
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i])
+        if (DEVices[i] && DEVices[i]->DEVloadKCL && ckt->CKThead[i])
         {
-            error = DEVices[i]->DEVload (ckt->CKThead[i], ckt) ;
+            error = DEVices[i]->DEVloadKCL (ckt->CKThead[i], ckt) ;
             if (error)
                 return (error) ;
         }
-    }*/
-    DEVices[10]->DEVloadKCL (ckt->CKThead[10], ckt) ;
+    }
 
     return (OK) ;
 }
+#endif

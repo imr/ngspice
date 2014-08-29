@@ -76,7 +76,8 @@ SPICEdev ASRCinfo = {
  /* DEVmodSize    */ &ASRCmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ ASRCnodeIsNonLinear
+ /* DEVnodeIsNonLinear */ ASRCnodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

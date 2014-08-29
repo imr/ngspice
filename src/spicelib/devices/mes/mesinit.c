@@ -75,7 +75,8 @@ SPICEdev MESinfo = {
  /* DEVmodSize    */ &MESmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ MESnodeIsNonLinear
+ /* DEVnodeIsNonLinear */ MESnodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

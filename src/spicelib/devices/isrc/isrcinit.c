@@ -75,7 +75,8 @@ SPICEdev ISRCinfo = {
  /* DEVmodSize    */ &ISRCmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ NULL,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

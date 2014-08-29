@@ -76,7 +76,8 @@ SPICEdev DIOinfo = {
  /* DEVmodSize    */ &DIOmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ DIOnodeIsNonLinear
+ /* DEVnodeIsNonLinear */ DIOnodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

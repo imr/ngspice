@@ -73,7 +73,8 @@ SPICEdev B4SOIinfo = {
  /* DEVmodSize    */ &B4SOImSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ B4SOInodeIsNonLinear
+ /* DEVnodeIsNonLinear */ B4SOInodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

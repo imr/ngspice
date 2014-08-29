@@ -120,8 +120,14 @@ NIconvTest (CKTcircuit *ckt)
                 ptr = ptr->next ;
             }
 
-            if (maximum < fabs (ckt->CKTdiagGmin * ckt->CKTrhsOld [i]))
-                maximum = fabs (ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) ;
+            if (ckt->CKTuseDeviceGmin)
+            {
+                if (maximum < fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]))
+                    maximum = fabs (ckt->CKTgmin * ckt->CKTrhsOld [i]) ;
+            } else {
+                if (maximum < fabs (ckt->CKTdiagGmin * ckt->CKTrhsOld [i]))
+                    maximum = fabs (ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) ;
+            }
 
 
 #ifdef STEPDEBUG
@@ -130,12 +136,23 @@ NIconvTest (CKTcircuit *ckt)
 #endif
 
             /* Check Convergence */
-            if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+            if (ckt->CKTuseDeviceGmin)
             {
-		ckt->CKTtroubleNode = i ;
-		ckt->CKTtroubleElt = NULL ;
+                if (fabs (ckt->CKTfvk [i] + ckt->CKTgmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+                {
+                    ckt->CKTtroubleNode = i ;
+                    ckt->CKTtroubleElt = NULL ;
 
-                return 1 ;
+                    return 1 ;
+                }
+            } else {
+                if (fabs (ckt->CKTfvk [i] + ckt->CKTdiagGmin * ckt->CKTrhsOld [i]) > (ckt->CKTreltol * maximum + ckt->CKTabstol))
+                {
+                    ckt->CKTtroubleNode = i ;
+                    ckt->CKTtroubleElt = NULL ;
+
+                    return 1 ;
+                }
             }
         }
     }

@@ -74,7 +74,8 @@ SPICEdev B3SOIPDinfo = {
  /* DEVmodSize*/    &B3SOIPDmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ B3SOIPDnodeIsNonLinear
+ /* DEVnodeIsNonLinear */ B3SOIPDnodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

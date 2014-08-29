@@ -80,7 +80,8 @@ SPICEdev TXLinfo = {
  /* DEVmodSize    */ &TXLmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ NULL,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

@@ -74,7 +74,8 @@ SPICEdev BSIM3info = {
  /* DEVmodSize    */ &BSIM3mSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ BSIM3nodeIsNonLinear
+ /* DEVnodeIsNonLinear */ BSIM3nodeIsNonLinear,
+ /* DEVloadKCL */         NULL
 #endif
 
 };

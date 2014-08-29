@@ -116,12 +116,12 @@ struct CKTcircuit {
     double *CKTrhs;             /* current rhs value - being loaded */
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
+    double **CKTdiag ;
 
 #ifdef KIRCHHOFF
     double *CKTfvk ;            /* KCL Verification array */
     int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
     CKTmkCurKCLnode **CKTmkCurKCLarray ; /* Array of KCL Currents */
-    double **CKTdiag ;
 #endif
 
     double *CKTrhsSpare;        /* spare rhs value for reordering */
@@ -295,6 +295,7 @@ struct CKTcircuit {
                                    contains only linear elements */
     unsigned int CKTnoopac:1; /* flag to indicate that OP will not be evaluated
                                  during AC simulation */
+    unsigned int CKTuseDeviceGmin : 1 ;
 };
 
 

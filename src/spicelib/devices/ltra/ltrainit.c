@@ -75,7 +75,8 @@ SPICEdev LTRAinfo = {
  /* DEVmodSize    */ &LTRAmSize,
 
 #ifdef KIRCHHOFF
- /* DEVnodeIsNonLinear */ NULL
+ /* DEVnodeIsNonLinear */ NULL,
+ /* DEVloadKCL */         NULL
 #endif
 
 };
