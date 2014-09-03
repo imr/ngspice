@@ -215,19 +215,40 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
     /*  --------  Check if model is a MOSFET --------- */
     else if ((strcmp(type_name, "nmos") == 0)
 	       || (strcmp(type_name, "pmos") == 0)
+
+#ifdef RELAN
+	       || (strcmp(type_name, "relmodel") == 0)
+#endif
+
 	       || (strcmp(type_name, "nsoi") == 0)
 	       || (strcmp(type_name, "psoi") == 0)) {
 			err = INPfindLev(line, &lev);
 			switch (lev) {
 			case 0:
 			case 1:
-			    type = INPtypelook("Mos1");
-			    if (type < 0) {
-				err =
-				    INPmkTemp
-				    ("Device type MOS1 not available in this binary\n");
-			    }
-			    break;
+
+#ifdef RELAN
+                            if (!(strcmp(type_name, "relmodel")))
+                            {
+                                type = INPtypelook ("RELMODEL") ;
+                                if (type < 0)
+                                {
+                                    err = INPmkTemp ("Model type 'relmodel' not available in this binary\n") ;
+                                }
+                            } else {
+#endif
+
+                                type = INPtypelook ("Mos1") ;
+                                if (type < 0)
+                                {
+                                    err = INPmkTemp ("Device type MOS1 not available in this binary\n") ;
+                                }
+
+#ifdef RELAN
+                            }
+#endif
+
+                            break ;
 			case 2:
 			    type = INPtypelook("Mos2");
 			    if (type < 0) {

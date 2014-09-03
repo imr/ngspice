@@ -1133,6 +1133,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/numd/Makefile
                  src/spicelib/devices/numd2/Makefile
                  src/spicelib/devices/numos/Makefile
+                 src/spicelib/devices/relmodel/Makefile
                  src/spicelib/parser/Makefile
                  src/ciderlib/Makefile
                  src/ciderlib/input/Makefile

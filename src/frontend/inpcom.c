@@ -1846,6 +1846,11 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                and, if 5, will not be detected by get_subckt_model_name()*/
             if (cieq(model_type, "c") ||
                 cieq(model_type, "l") ||
+
+#ifdef RELAN
+                cieq(model_type, "relmodel") ||
+#endif
+
                 cieq(model_type, "r"))
             {
                 found_model = TRUE;

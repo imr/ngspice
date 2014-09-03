@@ -826,6 +826,10 @@ typedef struct sBSIM4model
     BSIM4instance *BSIM4instances;
     IFuid BSIM4modName;
 
+#ifdef RELAN
+    struct sBSIM4model *BSIM4relmodelModel ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int BSIM4type;
