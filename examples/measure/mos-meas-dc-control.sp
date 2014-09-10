@@ -11,8 +11,8 @@ vb b 0 dc 0
 
 * model binning
 * uses default parameters, except toxe
-.model nch.1 nmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u toxe=3n )
-.model nch.2 nmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=10u  wmax=100u toxe=4n)
+.model nch.1 nmos ( version=4.7 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u toxe=3n )
+.model nch.2 nmos ( version=4.7 level=54 lmin=0.1u lmax=20u wmin=10u  wmax=100u toxe=4n)
 
 .control
 dc vds 0 3.5 0.05 vgs 3.5 0.5 -0.5

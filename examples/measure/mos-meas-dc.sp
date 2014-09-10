@@ -11,10 +11,10 @@ vb b 0 dc 0
 .print dc v(1) i(vs)
 
 * model binning
-.model nch.1 nmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
-.model nch.2 nmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=10u  wmax=100u )
-.model pch.1 pmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
-.model pch.2 pmos ( version=4.4 level=54 lmin=0.1u lmax=20u wmin=10u  wmax=100u )
+.model nch.1 nmos ( version=4.7 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
+.model nch.2 nmos ( version=4.7 level=54 lmin=0.1u lmax=20u wmin=10u  wmax=100u )
+.model pch.1 pmos ( version=4.7 level=54 lmin=0.1u lmax=20u wmin=0.1u wmax=10u  )
+.model pch.2 pmos ( version=4.7 level=54 lmin=0.1u lmax=20u wmin=10u  wmax=100u )
 
 .meas dc is_at FIND i(vs) AT=1
 .meas dc is_max max i(vs) from=0 to=3.5
