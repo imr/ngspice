@@ -101,7 +101,7 @@ void INPptPrint(char *str, IFparseTree * ptree);
 #define PTF_COSH    7
 #define PTF_EXP     8
 #define PTF_LN      9
-#define PTF_LOG     10
+#define PTF_LOG10   10
 #define PTF_SIN     11
 #define PTF_SINH    12
 #define PTF_SQRT    13

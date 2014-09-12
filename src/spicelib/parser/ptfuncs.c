@@ -232,7 +232,7 @@ PTln(double arg)
 }
 
 double
-PTlog(double arg)
+PTlog10(double arg)
 {
     if (arg < 0.0)
         return (HUGE);

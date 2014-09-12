@@ -144,7 +144,7 @@ static struct func {
     { "cosh",   PTF_COSH,   (void(*)(void)) PTcosh } ,
     { "exp",    PTF_EXP,    (void(*)(void)) PTexp } ,
     { "ln",     PTF_LN,     (void(*)(void)) PTln } ,
-    { "log",    PTF_LOG,    (void(*)(void)) PTlog } ,
+    { "log",    PTF_LOG10,  (void(*)(void)) PTlog10 } ,
     { "sgn",    PTF_SGN,    (void(*)(void)) PTsgn } ,
     { "sin",    PTF_SIN,    (void(*)(void)) PTsin } ,
     { "sinh",   PTF_SINH,   (void(*)(void)) PTsinh } ,
@@ -435,7 +435,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             arg1 = mkb(PT_DIVIDE, mkcon(1.0), p->left);
             break;
 
-        case PTF_LOG:                /* log(e) / u */
+        case PTF_LOG10:              /* log(e) / u */
             arg1 = mkb(PT_DIVIDE, mkcon(M_LOG10E), p->left);
             break;
 
