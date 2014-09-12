@@ -236,7 +236,7 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
 }
 
 void *
-cx_log(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_log10(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
@@ -253,7 +253,7 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
             /* Perhaps we should trap when td = 0.0, but Ken wants
              * this to be possible...
              */
-            rcheck(td >= 0, "log");
+            rcheck(td >= 0, "log10");
             if (td == 0.0) {
                 realpart(c[i]) = - log10(HUGE);
                 imagpart(c[i]) = 0.0;
@@ -272,7 +272,7 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
         d = alloc_d(length);
         *newtype = VF_REAL;
         for (i = 0; i < length; i++) {
-            rcheck(dd[i] >= 0, "log");
+            rcheck(dd[i] >= 0, "log10");
             if (dd[i] == 0.0)
                 d[i] = - log10(HUGE);
             else
