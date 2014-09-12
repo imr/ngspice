@@ -62,7 +62,7 @@ extern void *cx_imag(void *, short int , int , int *, short int *);
 extern void *cx_pos(void *, short int , int , int *, short int *);
 extern void *cx_db(void *, short int , int , int *, short int *);
 extern void *cx_log10(void *, short int , int , int *, short int *);
-extern void *cx_ln(void *, short int , int , int *, short int *);
+extern void *cx_log(void *, short int , int , int *, short int *);
 extern void *cx_exp(void *, short int , int , int *, short int *);
 extern void *cx_sqrt(void *, short int , int , int *, short int *);
 extern void *cx_sin(void *, short int , int , int *, short int *);

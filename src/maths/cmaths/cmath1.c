@@ -283,7 +283,7 @@ cx_log10(void *data, short int type, int length, int *newlength, short int *newt
 }
 
 void *
-cx_ln(void *data, short int type, int length, int *newlength, short int *newtype)
+cx_log(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     *newlength = length;
     if (type == VF_COMPLEX) {
@@ -297,7 +297,7 @@ cx_ln(void *data, short int type, int length, int *newlength, short int *newtype
             double td;
 
             td = cmag(cc[i]);
-            rcheck(td >= 0, "ln");
+            rcheck(td >= 0, "log");
             if (td == 0.0) {
                 realpart(c[i]) = - log(HUGE);
                 imagpart(c[i]) = 0.0;
@@ -316,7 +316,7 @@ cx_ln(void *data, short int type, int length, int *newlength, short int *newtype
         d = alloc_d(length);
         *newtype = VF_REAL;
         for (i = 0; i < length; i++) {
-            rcheck(dd[i] >= 0, "ln");
+            rcheck(dd[i] >= 0, "log");
             if (dd[i] == 0.0)
                 d[i] = - log(HUGE);
             else

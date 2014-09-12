@@ -151,7 +151,7 @@ struct func ft_funcs[] = {
     { "db",          cx_db },
     { "log",         cx_log10 },
     { "log10",       cx_log10 },
-    { "ln",          cx_ln },
+    { "ln",          cx_log },
     { "exp",         cx_exp },
     { "abs",         cx_mag },
     { "sqrt",        cx_sqrt },
