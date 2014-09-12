@@ -143,7 +143,7 @@ static struct func {
     { "cos",    PTF_COS,    (void(*)(void)) PTcos } ,
     { "cosh",   PTF_COSH,   (void(*)(void)) PTcosh } ,
     { "exp",    PTF_EXP,    (void(*)(void)) PTexp } ,
-    { "ln",     PTF_LN,     (void(*)(void)) PTln } ,
+    { "ln",     PTF_LOG,    (void(*)(void)) PTlog } ,
     { "log",    PTF_LOG10,  (void(*)(void)) PTlog10 } ,
     { "sgn",    PTF_SGN,    (void(*)(void)) PTsgn } ,
     { "sin",    PTF_SIN,    (void(*)(void)) PTsin } ,
@@ -312,19 +312,19 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                        arg1);
         } else {
             /*
-             * D(f^g) = D(exp(g*ln(f)))
-             *              = exp(g*ln(f)) * D(g*ln(f))
-             *              = exp(g*ln(f)) * (D(g)*ln(f) + g*D(f)/f)
+             * D(f^g) = D(exp(g*log(f)))
+             *              = exp(g*log(f)) * D(g*log(f))
+             *              = exp(g*log(f)) * (D(g)*log(f) + g*D(f)/f)
              */
             arg1 = PTdifferentiate(p->left, varnum);
             arg2 = PTdifferentiate(p->right, varnum);
             newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                  p->right, mkf(PTF_LN,
+                                                  p->right, mkf(PTF_LOG,
                                                                 p->left))),
                        mkb(PT_PLUS,
                            mkb(PT_TIMES, p->right,
                                mkb(PT_DIVIDE, arg1, p->left)),
-                           mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left))));
+                           mkb(PT_TIMES, arg2, mkf(PTF_LOG, p->left))));
         }
         break;
 
@@ -431,7 +431,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             arg1 = mkf(PTF_EXP, p->left);
             break;
 
-        case PTF_LN:                /* 1 / u */
+        case PTF_LOG:               /* 1 / u */
             arg1 = mkb(PT_DIVIDE, mkcon(1.0), p->left);
             break;
 
@@ -574,19 +574,19 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 #endif
             } else {
             /*
-             * D(f^g) = D(exp(g*ln(f)))
-             *              = exp(g*ln(f)) * D(g*ln(f))
-             *              = exp(g*ln(f)) * (D(g)*ln(f) + g*D(f)/f)
+             * D(f^g) = D(exp(g*log(f)))
+             *              = exp(g*log(f)) * D(g*log(f))
+             *              = exp(g*log(f)) * (D(g)*log(f) + g*D(f)/f)
              */
              arg1 = PTdifferentiate(p->left->left, varnum);
              arg2 = PTdifferentiate(p->left->right, varnum);
              newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                p->left->right, mkf(PTF_LN,
+                                                p->left->right, mkf(PTF_LOG,
                                                 p->left->left))),
                                 mkb(PT_PLUS,
                                     mkb(PT_TIMES, p->left->right,
                                     mkb(PT_DIVIDE, arg1, p->left->left)),
-                                    mkb(PT_TIMES, arg2, mkf(PTF_LN, p->left->left))));
+                                    mkb(PT_TIMES, arg2, mkf(PTF_LOG, p->left->left))));
             }
             return mkfirst(newp, p);
         }
@@ -605,10 +605,10 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                 /* b is a constant
                  *
                  * f(a,b) = signum(a) * abs(a)^b
-                 *        = signum(a) * exp(b*ln(abs(a)))
-                 * D(f)   = signum(a) * D(exp(b*ln(abs(a))))
-                 *        = signum(a) * exp(b*ln(abs(a))) * D(b*ln(abs(a)))
-                 *        = signum(a) * abs(a)^b * D(b*ln(abs(a)))
+                 *        = signum(a) * exp(b*log(abs(a)))
+                 * D(f)   = signum(a) * D(exp(b*log(abs(a))))
+                 *        = signum(a) * exp(b*log(abs(a))) * D(b*log(abs(a)))
+                 *        = signum(a) * abs(a)^b * D(b*log(abs(a)))
                  *        = signum(a) * abs(a)^b * b * 1/abs(a) * D(abs(a))
                  *        = signum(a) * abs(a)^(b-1) * b * D(abs(a))
                  *        = signum(a) * abs(a)^(b-1) * b * signum(a) * D(a)
@@ -632,15 +632,15 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             /* b is a function
              *
              * f(a,b) = signum(a) * abs(a)^b
-             *        = signum(a) * exp(b*ln(abs(a)))
-             * D(f)   = signum(a) * D(exp(b*ln(abs(a))))
-             *        = signum(a) * exp(b*ln(abs(a))) * D(b*ln(abs(a)))
-             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b * D(ln(abs(a))))
-             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b * 1/abs(a) * D(abs(a)))
-             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b * 1/abs(a) * signum(a)*D(a))
-             *        = signum(a) * exp(b*ln(abs(a))) * (D(b) * ln(abs(a)) + b/a*D(a))
-             *        = signum(a) * exp(b*ln(abs(a))) * D(b) * ln(abs(a) + signum(a) * exp(b*ln(abs(a))) / a * b * D(a)
-             *        = signum(a) * exp(b*ln(abs(a))) * D(b) * ln(abs(a) + abs(a)^(b-1) * b * D(a)
+             *        = signum(a) * exp(b*log(abs(a)))
+             * D(f)   = signum(a) * D(exp(b*log(abs(a))))
+             *        = signum(a) * exp(b*log(abs(a))) * D(b*log(abs(a)))
+             *        = signum(a) * exp(b*log(abs(a))) * (D(b) * log(abs(a)) + b * D(log(abs(a))))
+             *        = signum(a) * exp(b*log(abs(a))) * (D(b) * log(abs(a)) + b * 1/abs(a) * D(abs(a)))
+             *        = signum(a) * exp(b*log(abs(a))) * (D(b) * log(abs(a)) + b * 1/abs(a) * signum(a)*D(a))
+             *        = signum(a) * exp(b*log(abs(a))) * (D(b) * log(abs(a)) + b/a*D(a))
+             *        = signum(a) * exp(b*log(abs(a))) * D(b) * log(abs(a) + signum(a) * exp(b*log(abs(a))) / a * b * D(a)
+             *        = signum(a) * exp(b*log(abs(a))) * D(b) * log(abs(a) + abs(a)^(b-1) * b * D(a)
              */
              arg1 = PTdifferentiate(a, varnum);
              arg2 = PTdifferentiate(b, varnum);
@@ -650,7 +650,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                             mkb(PT_TIMES,
                                 mkb(PT_POWER, mkf(PTF_ABS, a), b),
                                 mkb(PT_TIMES, arg2,
-                                    mkf(PTF_LN, mkf(PTF_ABS, a))))),
+                                    mkf(PTF_LOG, mkf(PTF_ABS, a))))),
                         mkb(PT_TIMES,
                             mkb(PT_TIMES,
                                 mkb(PT_POWER,

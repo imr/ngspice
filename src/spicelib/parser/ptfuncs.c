@@ -224,7 +224,7 @@ PTexp(double arg)
 }
 
 double
-PTln(double arg)
+PTlog(double arg)
 {
     if (arg < 0.0)
         return (HUGE);

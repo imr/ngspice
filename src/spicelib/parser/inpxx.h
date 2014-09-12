@@ -55,7 +55,7 @@ double PTuramp(double arg);
 double PTcos(double arg);
 double PTcosh(double arg);
 double PTexp(double arg);
-double PTln(double arg);
+double PTlog(double arg);
 double PTlog10(double arg);
 double PTsin(double arg);
 double PTsinh(double arg);
