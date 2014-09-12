@@ -145,6 +145,7 @@ static struct func {
     { "exp",    PTF_EXP,    (void(*)(void)) PTexp } ,
     { "ln",     PTF_LOG,    (void(*)(void)) PTlog } ,
     { "log",    PTF_LOG10,  (void(*)(void)) PTlog10 } ,
+    { "log10",  PTF_LOG10,  (void(*)(void)) PTlog10 } ,
     { "sgn",    PTF_SGN,    (void(*)(void)) PTsgn } ,
     { "sin",    PTF_SIN,    (void(*)(void)) PTsin } ,
     { "sinh",   PTF_SINH,   (void(*)(void)) PTsinh } ,
