@@ -255,6 +255,12 @@ struct comm spcp_coms[] = {
       NULL,
       "library library ... : Loads the device librarys." } ,
 #endif
+#ifdef SIMKIT
+    { "simkit", com_simkit, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 0, LOTS,
+      NULL,
+      "library library ... : Loads the simkit model library." } ,
+#endif
     { "load", com_load, FALSE, TRUE,
       { 1, 1, 1, 1 }, E_BEGINNING | E_NOPLOTS, 1, LOTS,
       arg_load,

@@ -1,7 +1,6 @@
 #ifndef _DEV_H
 #define _DEV_H
 
-
 void spice_init_devices(void);
 void spice_destroy_devices(void);
 int num_devices(void);
@@ -15,5 +14,9 @@ int DEVflag(int type);
 void load_alldevs(void);
 int load_dev(char *name);
 #endif
+#ifdef SIMKIT
+int load_simkit(void);
+#endif
+
 #endif
 

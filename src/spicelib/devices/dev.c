@@ -36,6 +36,11 @@
 #include "dev.h"
 #include "ngspice/memory.h" /* to alloc, realloc devices*/
 
+#ifdef SIMKIT
+#include "sk.h"
+#include "simkit_models_loader.h"
+#include <dlfcn.h> /* to load libraries*/
+#endif
 
 #ifdef XSPICE
 /*saj headers for xspice*/
@@ -505,3 +510,31 @@ char *dlerror(void)
 
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/
+
+#ifdef SIMKIT
+int load_simkit(void){
+  const char *msg;
+
+  SK_MODELLIB_DESCRIPTOR (*p_sk_load_models)(void) = NULL;
+  SK_MODELLIB_DESCRIPTOR *p_sk_modellib_descr = NULL;
+  void (*p_sk_unload_models)(void) = NULL;
+
+  void *p_sk_loader_lib = dlopen("/home/dwarning/local/src/spice/simkit/4.3_pub/source/lib/libsimkit_models_loader", RTLD_LAZY | RTLD_GLOBAL);
+  if (p_sk_loader_lib != NULL)
+  {
+    p_sk_load_models = dlsym(p_sk_loader_lib, "SK_load_models");
+    p_sk_unload_models = dlsym(p_sk_loader_lib, "SK_unload_models");
+  } else
+  {
+    msg = dlerror();
+    printf("%s\n", msg);
+    return 1;
+  }
+  
+  if (p_sk_load_models != NULL)
+  {
+    p_sk_modellib_descr = p_sk_load_models();
+  }
+
+}
+#endif

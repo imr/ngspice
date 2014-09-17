@@ -4,7 +4,6 @@
 #include "../spicelib/devices/dev.h" /* for load library commands */
 #include "com_dl.h"
 
-
 #ifdef XSPICE
 void com_codemodel(wordlist *wl)
 {
@@ -26,5 +25,16 @@ void com_use(wordlist *wl)
     for (ww = wl; ww; ww = ww->wl_next)
         if (load_dev(wl->wl_word))
             fprintf(cp_err, "Error: Library %s couldn't be loaded!\n", ww->wl_word);
+}
+#endif
+
+
+#ifdef SIMKIT
+void com_simkit(wordlist *wl)
+{
+    wordlist *ww;
+    for (ww = wl; ww; ww = ww->wl_next)
+        if (load_simkit())
+            fprintf(cp_err, "Error: Simkit %s couldn't be loaded!\n", ww->wl_word);
 }
 #endif

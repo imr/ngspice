@@ -9,4 +9,8 @@ void com_codemodel(wordlist *wl);
 void com_use(wordlist *wl);
 #endif
 
+#ifdef SIMKIT
+void com_simkit(wordlist *wl);
+#endif
+
 #endif

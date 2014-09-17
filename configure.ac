@@ -141,6 +141,10 @@ AC_ARG_ENABLE([expdevices],
 AC_ARG_ENABLE([xspice],
     [AS_HELP_STRING([--enable-xspice], [Enable XSpice enhancements, (experimental)])])
 
+# --enable-simkit: define SIMKIT in the code.
+AC_ARG_ENABLE([simkit],
+    [AS_HELP_STRING([--enable-simkit], [Interface to the NXP simkit model library])])
+
 # --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements, (experimental)])])
@@ -921,6 +925,13 @@ AC_SUBST([XSPICEDLLIBS])
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
 
+# Add simkit model library to ngspice.
+if test "x$enable_simkit" = xyes; then
+    AC_MSG_RESULT([SIMKIT model library enabled])
+    AC_DEFINE([SIMKIT], [1], [The SIMKIT model library])
+fi
+
+AM_CONDITIONAL([SIMKIT_WANTED], [test "x$enable_simkit" = xyes])
 
 # Add CIDER enhancements to ngspice.
 if test "x$enable_cider" = xyes; then
