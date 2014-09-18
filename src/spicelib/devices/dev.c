@@ -39,7 +39,17 @@
 #ifdef SIMKIT
 #include "sk.h"
 #include "simkit_models_loader.h"
-#include <dlfcn.h> /* to load libraries*/
+#ifndef _WIN32
+    #include <sys/param.h> /* MAXPATHLEN */
+    #include <dlfcn.h> /* to load libraries */
+#else /* _WIN32 */
+    #include <windows.h>
+    /* Dynamic library related functions differ between Windows and Unix */
+    #define dlopen(a, b)    LoadLibrary(TEXT(a))
+    #define dlsym(a, b)     GetProcAddress((a), TEXT(b))
+    #define dlclose(a)      FreeLibrary(a)
+    #define dlerror()       printf("dll not found\n")
+#endif /* _WIN32 */
 #endif
 
 #ifdef XSPICE
@@ -510,16 +520,37 @@ char *dlerror(void)
 
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/
-
 #ifdef SIMKIT
 int load_simkit(void){
   const char *msg;
 
-  SK_MODELLIB_DESCRIPTOR (*p_sk_load_models)(void) = NULL;
+  SK_MODELLIB_DESCRIPTOR *(*p_sk_load_models)(void) = NULL;
   SK_MODELLIB_DESCRIPTOR *p_sk_modellib_descr = NULL;
   void (*p_sk_unload_models)(void) = NULL;
 
-  void *p_sk_loader_lib = dlopen("/home/dwarning/local/src/spice/simkit/4.3_pub/source/lib/libsimkit_models_loader", RTLD_LAZY | RTLD_GLOBAL);
+  char        library_path[MAXPATHLEN];
+  char        library_name[MAXPATHLEN];
+  char        *p_simkit_ld_libpath;
+
+  snprintf(library_name, MAXPATHLEN, "libsimkit_models_loader");
+
+  p_simkit_ld_libpath = getenv("SIMKIT_LD_LIBRARY_PATH");
+
+  if ( p_simkit_ld_libpath != NULL) {
+    snprintf(library_path, MAXPATHLEN, 
+             "%s/%s.so",
+             p_simkit_ld_libpath,
+             library_name);
+  } else {
+   /* If the full path is not specified, dlopen() will look via the
+    * LD_LIBRARY_PATH to find the shared lib */
+    snprintf(library_path, MAXPATHLEN, 
+             "%s.so",
+             library_name);
+  }
+
+  void *p_sk_loader_lib = dlopen(library_path, RTLD_LAZY | RTLD_GLOBAL);
+
   if (p_sk_loader_lib != NULL)
   {
     p_sk_load_models = dlsym(p_sk_loader_lib, "SK_load_models");
@@ -536,5 +567,6 @@ int load_simkit(void){
     p_sk_modellib_descr = p_sk_load_models();
   }
 
+  return 0;
 }
 #endif

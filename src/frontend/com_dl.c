@@ -32,9 +32,9 @@ void com_use(wordlist *wl)
 #ifdef SIMKIT
 void com_simkit(wordlist *wl)
 {
-    wordlist *ww;
-    for (ww = wl; ww; ww = ww->wl_next)
-        if (load_simkit())
-            fprintf(cp_err, "Error: Simkit %s couldn't be loaded!\n", ww->wl_word);
+    NG_IGNORE(wl);
+
+	if (load_simkit())
+        fprintf(cp_err, "Error: Simkit couldn't be loaded!\n");
 }
 #endif
