@@ -358,6 +358,10 @@ if_getstat(CKTcircuit *ckt, char *name)
 void com_snload(wordlist *wl) { NG_IGNORE(wl); }
 void com_snsave(wordlist *wl) { NG_IGNORE(wl); }
 
+#ifdef SIMKIT
+int load_simkit(void) { return 0; }
+#endif
+
 void SMPprint( SMPmatrix *n1 , char *n2)
 {
     NG_IGNORE(n1);
