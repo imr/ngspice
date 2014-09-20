@@ -128,6 +128,7 @@ void INPptPrint(char *str, IFparseTree * ptree);
 #define PTF_MAX	33
 #define PTF_CEIL	34
 #define PTF_FLOOR	35
+#define PTF_NINT	36
 
 /* The following things are used by the parser -- these are the token types the
  * lexer returns.

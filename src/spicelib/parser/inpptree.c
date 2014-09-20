@@ -156,6 +156,7 @@ static struct func {
     { "uramp",  PTF_URAMP,  (void(*)(void)) PTuramp } ,
     { "ceil",   PTF_CEIL,   (void(*)(void)) PTceil } ,
     { "floor",  PTF_FLOOR,  (void(*)(void)) PTfloor } ,
+    { "nint",   PTF_NINT,   (void(*)(void)) PTnint } ,
     { "-",      PTF_UMINUS, (void(*)(void)) PTuminus },
     /* MW. cif function added */
     { "u2",     PTF_USTEP2, (void(*)(void)) PTustep2},
@@ -488,6 +489,10 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             break;
 
         case PTF_CEIL:                /* naive: D(ceil(u)) = 0 */
+            arg1 = mkcon(0.0);
+            break;
+
+        case PTF_NINT:                /* naive: D(nint(u)) = 0 */
             arg1 = mkcon(0.0);
             break;
 

@@ -76,5 +76,6 @@ double PTge0(double arg);
 double PTle0(double arg);
 double PTceil(double arg);
 double PTfloor(double arg);
+double PTnint(double arg);
 
 #endif
