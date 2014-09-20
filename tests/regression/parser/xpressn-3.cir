@@ -1,0 +1,135 @@
+* 'xpressn-3' check nint/floor/ceil
+
+* (exec-spice "ngspice -b %s" t)
+
+.subckt test_nint g n b value=0 gold=0
+vg   g 0  dc = 'gold'
+
+vn   n 0  dc = 'nint(value)'
+
+v1   1 0  dc = 'value'
+b1   b 0  v = nint(v(1))
+
+vid  id 0 dc = 1
+.ends
+
+.subckt test_floor g n b value=0 gold=0
+vg   g 0  dc = 'gold'
+
+vn   n 0  dc = 'floor(value)'
+
+v1   1 0  dc = 'value'
+b1   b 0  v = floor(v(1))
+
+vid  id 0 dc = 2
+.ends
+
+.subckt test_ceil g n b value=0 gold=0
+vg   g 0  dc = 'gold'
+
+vn   n 0  dc = 'ceil(value)'
+
+v1   1 0  dc = 'value'
+b1   b 0  v = ceil(v(1))
+
+vid  id 0 dc = 3
+.ends
+
+x1084_t  n1084_g n1084_n n1084_b  test_nint value=2.6  gold=3
+x1085_t  n1085_g n1085_n n1085_b  test_nint value=2.5  gold=2
+x1086_t  n1086_g n1086_n n1086_b  test_nint value=2.4  gold=2
+x1087_t  n1087_g n1087_n n1087_b  test_nint value=1.6  gold=2
+x1088_t  n1088_g n1088_n n1088_b  test_nint value=1.5  gold=2
+x1089_t  n1089_g n1089_n n1089_b  test_nint value=1.4  gold=1
+x1090_t  n1090_g n1090_n n1090_b  test_nint value=0.6  gold=1
+x1091_t  n1091_g n1091_n n1091_b  test_nint value=0.5  gold=0
+x1092_t  n1092_g n1092_n n1092_b  test_nint value=0.4  gold=0
+x1093_t  n1093_g n1093_n n1093_b  test_nint value=0    gold=0
+x1094_t  n1094_g n1094_n n1094_b  test_nint value=-0.4 gold=0
+x1095_t  n1095_g n1095_n n1095_b  test_nint value=-0.5 gold=0
+x1096_t  n1096_g n1096_n n1096_b  test_nint value=-0.6 gold=-1
+x1097_t  n1097_g n1097_n n1097_b  test_nint value=-1.4 gold=-1
+x1098_t  n1098_g n1098_n n1098_b  test_nint value=-1.5 gold=-2
+x1099_t  n1099_g n1099_n n1099_b  test_nint value=-1.6 gold=-2
+x1100_t  n1100_g n1100_n n1100_b  test_nint value=-2.4 gold=-2
+x1101_t  n1101_g n1101_n n1101_b  test_nint value=-2.5 gold=-2
+x1102_t  n1102_g n1102_n n1102_b  test_nint value=-2.6 gold=-3
+
+x1103_t  n1103_g n1103_n n1103_b  test_floor value=2.1  gold=2
+x1104_t  n1104_g n1104_n n1104_b  test_floor value=1.9  gold=1
+x1105_t  n1105_g n1105_n n1105_b  test_floor value=0    gold=0
+x1106_t  n1106_g n1106_n n1106_b  test_floor value=-1.9 gold=-2
+x1107_t  n1107_g n1107_n n1107_b  test_floor value=-2.1 gold=-3
+
+x1108_t  n1108_g n1108_n n1108_b  test_ceil value=2.1  gold=3
+x1109_t  n1109_g n1109_n n1109_b  test_ceil value=1.9  gold=2
+x1110_t  n1110_g n1110_n n1110_b  test_ceil value=0    gold=0
+x1111_t  n1111_g n1111_n n1111_b  test_ceil value=-1.9 gold=-1
+x1112_t  n1112_g n1112_n n1112_b  test_ceil value=-2.1 gold=-2
+
+
+* ----------------------------------------
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+let total_count = 0
+let fail_count = 0
+
+let tests = 1084 + vector(29)
+
+foreach n $&tests
+
+  set n_id = "x{$n}_t.id"
+  set n_value = "x{$n}_t.1"
+  set n_gold = "n{$n}_g"
+  set n_numparm = "n{$n}_n"
+  set n_asrc = "n{$n}_b"
+
+  if v($n_id) eq 1
+    let v_control = nint(v($n_value))
+  else
+    if v($n_id) eq 2
+      let v_control = floor(v($n_value))
+    else
+      let v_control = ceil(v($n_value))
+    end
+  end
+
+  if mismatch(v($n_numparm), v($n_gold), 1e-9)
+    let v_numparm = v($n_numparm)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, $n, v($n_numparm) = $&v_numparm but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+
+  if mismatch(v($n_asrc), v($n_gold), 1e-9)
+    let v_asrc = v($n_asrc)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, $n, v($n_asrc) = $&v_asrc but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+
+  if mismatch(v_control, v($n_gold), 1e-9)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, $n, v_control = $&v_control but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
