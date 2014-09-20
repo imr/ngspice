@@ -170,6 +170,7 @@ struct func ft_funcs[] = {
     { "exponential", cx_exponential },
     { "sgauss",      cx_sgauss },
     { "pos",         cx_pos },
+    { "nint",        cx_nint },
     { "floor",       cx_floor },
     { "ceil",        cx_ceil },
     { "mean",        cx_mean },

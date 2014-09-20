@@ -74,6 +74,7 @@ extern void *cx_tanh(void *, short int , int , int *, short int *);
 extern void *cx_atan(void *, short int , int , int *, short int *);
 extern void *cx_floor(void *, short int , int , int *, short int *);
 extern void *cx_ceil(void *, short int , int , int *, short int *);
+extern void *cx_nint(void *, short int , int , int *, short int *);
 extern void *cx_sortorder(void *, short int , int , int *, short int *);
 
 /* cmath2.c */
