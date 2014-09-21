@@ -37,19 +37,7 @@
 #include "ngspice/memory.h" /* to alloc, realloc devices*/
 
 #ifdef SIMKIT
-#include "sk.h"
-#include "simkit_models_loader.h"
-#ifndef _WIN32
-    #include <sys/param.h> /* MAXPATHLEN */
-    #include <dlfcn.h> /* to load libraries */
-#else /* _WIN32 */
-    #include <windows.h>
-    /* Dynamic library related functions differ between Windows and Unix */
-    #define dlopen(a, b)    LoadLibrary(TEXT(a))
-    #define dlsym(a, b)     GetProcAddress((a), TEXT(b))
-    #define dlclose(a)      FreeLibrary(a)
-    #define dlerror()       printf("dll not found\n")
-#endif /* _WIN32 */
+#include <dlfcn.h> /* to load libraries */
 #endif
 
 #ifdef XSPICE
@@ -521,51 +509,43 @@ char *dlerror(void)
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/
 #ifdef SIMKIT
+#define MAXPATHLEN 1024
 int load_simkit(void){
   const char *msg;
 
-  SK_MODELLIB_DESCRIPTOR *(*p_sk_load_models)(void) = NULL;
-  SK_MODELLIB_DESCRIPTOR *p_sk_modellib_descr = NULL;
-  void (*p_sk_unload_models)(void) = NULL;
+  void (*p_sk_ngspice_lib)(void) = NULL;
+  void *(*p_sk_init_models)(void) = NULL;
 
   char        library_path[MAXPATHLEN];
   char        library_name[MAXPATHLEN];
   char        *p_simkit_ld_libpath;
 
-  snprintf(library_name, MAXPATHLEN, "libsimkit_models_loader");
+  snprintf(library_name, MAXPATHLEN, "libsimkit_ngspice_1.0.so");
 
   p_simkit_ld_libpath = getenv("SIMKIT_LD_LIBRARY_PATH");
 
   if ( p_simkit_ld_libpath != NULL) {
     snprintf(library_path, MAXPATHLEN, 
-             "%s/%s.so",
+             "%s/%s",
              p_simkit_ld_libpath,
              library_name);
+    p_sk_ngspice_lib = dlopen(library_path, RTLD_LAZY | RTLD_GLOBAL);
   } else {
-   /* If the full path is not specified, dlopen() will look via the
-    * LD_LIBRARY_PATH to find the shared lib */
-    snprintf(library_path, MAXPATHLEN, 
-             "%s.so",
-             library_name);
+    /* If the full path is not specified, dlopen() will look via the
+     * LD_LIBRARY_PATH to find the shared lib */
+    p_sk_ngspice_lib = dlopen(library_name, RTLD_LAZY | RTLD_GLOBAL);
   }
-
-  void *p_sk_loader_lib = dlopen(library_path, RTLD_LAZY | RTLD_GLOBAL);
-
-  if (p_sk_loader_lib != NULL)
+  if (p_sk_ngspice_lib != NULL)
   {
-    p_sk_load_models = dlsym(p_sk_loader_lib, "SK_load_models");
-    p_sk_unload_models = dlsym(p_sk_loader_lib, "SK_unload_models");
+    p_sk_init_models = dlsym(p_sk_ngspice_lib, "init_models");
   } else
   {
     msg = dlerror();
     printf("%s\n", msg);
     return 1;
   }
-  
-  if (p_sk_load_models != NULL)
-  {
-    p_sk_modellib_descr = p_sk_load_models();
-  }
+
+  p_sk_init_models();
 
   return 0;
 }
