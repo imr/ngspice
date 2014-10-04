@@ -54,7 +54,7 @@ void CKTemitlxt2(runDesc *run)
     valData.v.vec.rVec = ckt->CKTrhsOld+1;
 
     if(ckt->CKTtime <= 0.0) {
-       time_resolution=(double)pow(10.0,(double)LXT2_TIME_RESOLUTION_EXPONENT);
+       time_resolution = pow(10.0, LXT2_TIME_RESOLUTION_EXPONENT);
        last_set_time = 0;
        #ifdef LXT2_DEBUG
        printf("LXT2 CKTemitlxt2 set time (%g)  (%d)\n", ckt->CKTtime,last_set_time);
@@ -71,7 +71,7 @@ void CKTemitlxt2(runDesc *run)
     }
     for(i = 0; i < trace_num; i++) {
        if(trace_index[i] > 0) {
-          trace=(struct lxt2_wr_symbol *)(trace_table[i]);
+          trace = trace_table[i];
           if(trace!=NULL) {
 	      value = valData.v.vec.rVec[run->data[trace_index[i]].outIndex];
  	      name = run->data[trace_index[i]].name;

@@ -44,7 +44,7 @@ void EVTemitlxt2(
     name = node_table[node_index]->name;
 
     if(time_resolution<0.0) {
-       time_resolution=(double)pow(10.0,(double)LXT2_TIME_RESOLUTION_EXPONENT);
+       time_resolution = pow(10.0, LXT2_TIME_RESOLUTION_EXPONENT);
        last_set_time=0;
        #ifdef LXT2_DEBUG
        printf("LXT2 time_resolution (%g) last_time(%d)\n", time_resolution,last_set_time);
@@ -59,17 +59,17 @@ void EVTemitlxt2(
       last_set_time = set_time;
     }
 
-    trace=(struct lxt2_wr_symbol *)(trace_table[node_index]);
+    trace = trace_table[node_index];
 
     switch(type)
     {
       case 0:	/* Bit */
                 #ifdef LXT2_DEBUG
-      		printf("LXT2 evtlxt2.c:trace(%p) emit bit (%s)->(%s)\n",trace,name,(char *)EVTbitmap(*((int *)(from->node_value))));
+      		printf("LXT2 evtlxt2.c:trace(%p) emit bit (%s)->(%s)\n",trace,name,EVTbitmap(*((int *)(from->node_value))));
 		#endif
-      		if(lxt2_wr_emit_value_bit_string(ckt->lxt2.file,trace,0,(char *)EVTbitmap(*((int *)(from->node_value))))==0) {
+      		if(lxt2_wr_emit_value_bit_string(ckt->lxt2.file,trace,0,EVTbitmap(*((int *)(from->node_value))))==0) {
 		   #ifdef LXT2_DEBUG
-		   printf("LXT2 evtlxt2.c:trace(%p) emit bit (%s)->(%s) SUCCESS\n",&trace,name,(char *)EVTbitmap(*((int *)(from->node_value))));
+		   printf("LXT2 evtlxt2.c:trace(%p) emit bit (%s)->(%s) SUCCESS\n",&trace,name,EVTbitmap(*((int *)(from->node_value))));
 		   #endif
 		};
 		break;
@@ -87,9 +87,9 @@ void EVTemitlxt2(
 		break;
       default:	/* Bit */
                 #ifdef LXT2_DEBUG
-      		printf("LXT2 evtlxt2.c:trace(%p) emit bit (%s)->(%s)\n",trace,name,(char *)EVTbitmap(*((int *)(from->node_value))));
+      		printf("LXT2 evtlxt2.c:trace(%p) emit bit (%s)->(%s)\n",trace,name,EVTbitmap(*((int *)(from->node_value))));
 		#endif
-      		lxt2_wr_emit_value_bit_string(ckt->lxt2.file,trace,0,(char *)EVTbitmap(*((int *)(from->node_value))));
+      		lxt2_wr_emit_value_bit_string(ckt->lxt2.file,trace,0,EVTbitmap(*((int *)(from->node_value))));
 		break;
     }
     #ifdef LXT2_DEBUG
