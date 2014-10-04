@@ -89,6 +89,8 @@ int EVTinit(
 
     /*    static char *err_no_hybrids = "ERROR - no hybrids found in input deck";*/
 
+    /* printf("From EVTinit\n"); holmes */
+    fflush(stdout);
 
     /* Exit immediately if there are no event-driven instances */
     /* but don't complain */
@@ -136,6 +138,8 @@ int EVTinit(
     /* allocated immediately prior to each simulation job.         */
 
     /* Return */
+    /* printf("From EVTinit end\n"); holmes */
+    fflush(stdout);
     return(OK);
 }
 
@@ -162,6 +166,8 @@ static int EVTcount_hybrids(
 
     Evt_Inst_Info_t     *inst;
 
+    /* printf("From EVTcount_hybrids\n"); holmes */
+    fflush(stdout);
 
     /* Count number of hybrids and hybrid outputs in the inst list */
     /* created during parsing.  Note: other counts */
@@ -188,6 +194,8 @@ static int EVTcount_hybrids(
     }
     ckt->evt->counts.num_hybrids = num_hybrids;
     ckt->evt->counts.num_hybrid_outputs = num_hybrid_outputs;
+    /* printf("From EVTcount_hybrids end\n"); holmes */
+    fflush(stdout);
 
     return(OK);
 }
@@ -212,6 +220,8 @@ static int EVTcheck_nodes(
     static char *err_prefix  = "ERROR - node ";
     static char *err_collide = " cannot be both analog and digital";
 
+    /* printf("From EVTcount_nodes\n"); holmes */
+    fflush(stdout);
 
     /* Report error if any analog node name matches any event node name */
     event_node = ckt->evt->info.node_list;
@@ -236,6 +246,9 @@ static int EVTcheck_nodes(
         event_node = event_node->next;
     }
     printf("-------------------\n\n");    /* holmes : would like these listed a tran init with their types and values */
+
+    /* printf("From EVTcount_nodes end\n"); holmes */
+    fflush(stdout);
 
 
     /* Return */
@@ -279,6 +292,9 @@ static int EVTinit_info(
     int                 *hybrid_index = NULL;
 
     int num_hybrids;
+
+    /* printf("From EVTinit_info\n"); holmes */
+    fflush(stdout);
 
 
     /* Allocate and initialize table of inst pointers */
@@ -331,6 +347,9 @@ static int EVTinit_info(
     }
     ckt->evt->info.hybrid_index = hybrid_index;
 
+    /* printf("From EVTinit_info end\n"); holmes */
+    fflush(stdout);
+
 
     /* Return */
     return(OK);
@@ -357,6 +376,9 @@ static int EVTinit_queue(
     Evt_Node_Queue_t    *node_queue;
     Evt_Output_Queue_t  *output_queue;
 
+
+    /* printf("From EVTinit_queue\n"); holmes */
+    fflush(stdout);
 
     /* Allocate elements in the inst queue */
 
@@ -402,6 +424,9 @@ static int EVTinit_queue(
     CKALLOC(output_queue->changed_index, num_outputs, int)
     CKALLOC(output_queue->changed, num_outputs, Mif_Boolean_t)
 
+    /* printf("From EVTinit_queue end\n"); holmes */
+    fflush(stdout);
+
 
     /* Return */
     return(OK);
@@ -427,6 +452,9 @@ static int EVTinit_limits(
     /* maximum possible number of events that can trickle through any    */
     /* circuit that does not contain loops.                              */
 
+    /* printf("From EVTinit_limits\n"); holmes */
+    fflush(stdout);
+
     ckt->evt->limits.max_event_passes = ckt->evt->counts.num_outputs + 1;
 
 
@@ -434,6 +462,9 @@ static int EVTinit_limits(
     /* iterations to the number of event outputs on hybrids.              */
 
     ckt->evt->limits.max_op_alternations = ckt->evt->counts.num_hybrid_outputs + 1;
+
+    /* printf("From EVTinit_limits end\n"); holmes */
+    fflush(stdout);
 
 
     /* Return */

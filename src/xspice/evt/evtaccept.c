@@ -76,6 +76,8 @@ void EVTaccept(
     Evt_State_Data_t    *state_data;
     Evt_Msg_Data_t      *msg_data;
 
+    /* fprintf(stdout,"From EVTaccept: \n"); holmes */
+    fflush(stdout);
 
     /* Exit if no event instances */
     if(ckt->evt->counts.num_insts == 0)

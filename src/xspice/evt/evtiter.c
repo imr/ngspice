@@ -125,6 +125,9 @@ int EVTiter(
 
     char                *err_msg;
 
+    /*  fprintf(stdout,"From EVTiter 0\n"); holmes */
+    fflush(stdout);
+
 
     /* Get temporary pointers for fast access */
     evt = ckt->evt;
