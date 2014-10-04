@@ -76,6 +76,7 @@ void EVTdequeue(
 
     /* Take all items on output queue with matching time */
     /* and set changed flags in output queue */
+     /* printf("From EVTdequeue\n"); holmes */
     EVTdequeue_output(ckt, time);
 
     /* Take all items on inst queue with matching time */

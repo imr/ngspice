@@ -95,6 +95,7 @@ void EVTbackup(
     double      new_time)   /* the time to backup to */
 {
 
+    /* printf("From EVTbackup\n"); holmes */
 
     /* Backup the node data */
     EVTbackup_node_data(ckt, new_time);

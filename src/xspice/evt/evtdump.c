@@ -136,6 +136,7 @@ void EVTdump(
 
     Mif_Boolean_t       equal;
 
+    /* printf("From EVTdump\n"); holmes */
 
     /* Return immediately if IPC is not enabled */
     if(! g_ipc.enabled)

@@ -156,4 +156,11 @@ void EVTnode_copy(
         g_evt_udn_info[udn_index]->copy (from->inverted_value,
                                               here->inverted_value);
     }
+    /* holmes
+    if(node_table[node_index]->udn_index == 0) {
+     printf("From EVTnode_copy Name(%s) time(%g) step(%g) value(%d)\n",node_table[node_index]->name,ckt->CKTtime,from->step,*((int *)(from->node_value))); 
+    }
+    else {
+      printf("From EVTnode_copy Name(%s) time(%g) step(%g) value(%g)\n",node_table[node_index]->name,ckt->CKTtime,from->step,*((double *)(from->node_value))); 
+    }*/
 }

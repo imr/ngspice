@@ -41,6 +41,7 @@ CKTdump(CKTcircuit *ckt, double ref, void *plot)
     refData.rValue = ref;
     valData.v.numValue = ckt->CKTmaxEqNum-1;
     valData.v.vec.rVec = ckt->CKTrhsOld+1;
+    /* printf("CKTdump SPfrontEnd->OUTpData(plot,&refData,&valData)\n"); holmes how often is it called? At each break point*/
     SPfrontEnd->OUTpData (plot, &refData, &valData);
 
 #ifdef CIDER

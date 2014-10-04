@@ -97,6 +97,8 @@ void EVTqueue_output(
 
     NG_IGNORE(udn_index);
 
+    /* printf("From EVTqueue_output\n"); holmes */
+
     /* Get pointers for fast access */
     output_queue = &(ckt->evt->queue.output);
 

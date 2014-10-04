@@ -162,14 +162,17 @@ DCtran(CKTcircuit *ckt,
         g_mif_info.circuit.anal_init = MIF_TRUE;
 /* gtri - end - wbk */
 #endif
-        error = CKTnames(ckt,&numNames,&nameList);
+        error = CKTnames(ckt,&numNames,&nameList);   /* holmes: returns a list of all analog signal names */
+        /* holmes: can make function to get list of evt names here */
+
         if(error) return(error);
         SPfrontEnd->IFnewUid (ckt, &timeUid, NULL, "time", UID_OTHER, NULL);
+        /* printf("dctran1 SPfrontEnd->OUTpBeginPlo(t)\n");  holmes: looking at calls */
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                            ckt->CKTcurJob->JOBname,
                                            timeUid, IF_REAL,
                                            numNames, nameList, IF_REAL,
-                                           &(job->TRANplot));
+                                           &(job->TRANplot));  /* holmes: checks what user typed in to save against what is in the circuit  */
         tfree(nameList);
         if(error) return(error);
 
@@ -494,8 +497,10 @@ DCtran(CKTcircuit *ckt,
 /* gtri - begin - wbk - Update event queues/data for accepted timepoint */
     /* Note: this must be done AFTER sending results to SI so it can't */
     /* go next to CKTaccept() above */
-    if(ckt->evt->counts.num_insts > 0)
+    if(ckt->evt->counts.num_insts > 0) {
+         /* printf("dctran XSPICE EVTaccept is called;\n"); holmes: looking at calls */
         EVTaccept(ckt, ckt->CKTtime);
+    }
 /* gtri - end - wbk - Update event queues/data for accepted timepoint */
 #endif
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
@@ -511,6 +516,7 @@ DCtran(CKTcircuit *ckt,
         lxt2_end(job->TRANplot);
 #endif
 
+        /* printf("dctran XSPICE SPfrontEnd->OUTendPlot(((TRANan*)ckt->CKTcurJob)->TRANplot);\n");  holmes: looking at calls */
         SPfrontEnd->OUTendPlot (job->TRANplot);
         job->TRANplot = NULL;
         UPDATE_STATS(0);

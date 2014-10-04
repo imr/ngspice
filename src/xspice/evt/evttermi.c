@@ -132,6 +132,7 @@ void EVTtermInsert(
 
     int         output_subindex;
 
+    /* printf("From EVTtermInsert\n"); holmes */
 
     /* Get the instance index and create new entry in inst */
     /* info list if this is a new instance. */
@@ -188,6 +189,7 @@ static void EVTinst_insert(
 
     NG_IGNORE(err_msg);
 
+    /* printf("From EVTinst_insert M(%s) I(%s)\n",fast->MIFmodPtr->MIFmodName,fast->MIFname);   holmes: Might be the way in for SDF annotation */
 
     /* Scan list of instances in event structure to see if already there */
     /* and get the index */
@@ -260,6 +262,7 @@ static void EVTnode_insert(
     Evt_Inst_Index_t *inst;
     Evt_Inst_Index_t **inst_ptr;
 
+    /* printf("From EVTnode_insert M(%s) I(%s) N(%s) Type(%s)\n",fast->MIFmodPtr->MIFmodName,fast->MIFname,node_name,type_name);   holmes: Might be the way in for SDF annotation */
 
     /* *************************************** */
     /* Get and check the node type information */
@@ -417,6 +420,8 @@ static void EVTport_insert(
 
     NG_IGNORE(err_msg);
 
+    /* printf("From EVTnode_insert M(%s) I(%s) P(%s)\n",fast->MIFmodPtr->MIFmodName,fast->MIFname,node_name);   holmes: Might be the way in for SDF annotation */
+
     /* Find the end of the port info list */
     port = ckt->evt->info.port_list;
     port_ptr = &(ckt->evt->info.port_list);
@@ -480,6 +485,8 @@ static void EVToutput_insert(
     int                   index;
 
     NG_IGNORE(err_msg);
+
+    /* printf("From EVTport_insert I(%s)\n",fast->MIFname);  holmes: Might be the way in for SDF annotation */
 
     /* Find the end of the port info list */
     output = ckt->evt->info.output_list;

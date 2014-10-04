@@ -404,12 +404,13 @@ com_write(wordlist *wl)
     if (wl)
         names = ft_getpnames(wl, TRUE);
     else
-        names = ft_getpnames(&all, TRUE);
+        names = ft_getpnames(&all, TRUE);   /* holmes: ft_getnames-all not getting event driven names */
 
     if (names == NULL)
         return;
 
     for (pn = names; pn; pn = pn->pn_next) {
+        /* printf("n->pn_name(%s)\n", n->pn_name);  holmes: print the node name */
         d = ft_evaluate(pn);
         if (!d)
             goto done;
@@ -453,6 +454,7 @@ com_write(wordlist *wl)
                 if (vec_eq(d, tpl->pl_scale)) {
                     newplot.pl_scale = vv;
                     scalefound = TRUE;
+                    /* printf("scalefound = TRUE\n"); holmes: */
                 }
             }
         }
@@ -472,21 +474,37 @@ com_write(wordlist *wl)
          */
         for (;;) {
             scalefound = FALSE;
+            /* printf("--------for;;----------------\n"); holmes: */
             for (d = newplot.pl_dvecs; d; d = d->v_next) {
+            /* printf("----------------------------\n"); holmes:
+               printf("d(%p)\n", d);
+               printf("d->v_name(%s)\n", d->v_name);
+               printf("d->v_type(%i)\n", d->v_type);
+               printf("d->v_length(%i)\n", d->v_length);
+               printf("d->v_next(%p)\n", d->v_next);
+               printf("d->v_link2(%p)\n", d->v_link2);
+               printf("d->v_scale(%p)\n", d->v_scale);*/
+               /* if ((d->v_type<2) && d->v_scale) { */
                 if (d->v_scale) {
                     for (vv = newplot.pl_dvecs; vv; vv = vv->v_next) {
+                        /* printf("vv(%p)\n", vv); holmes: */
                         if (vec_eq(vv, d->v_scale)) {
+                            /* printf("data equivalent vv(%p) d->v_scale(%p)\n", vv, d->v_scale); holmes: */
                             break;
                         }
                     }
                     /* We have to grab it... */
                    if(vv && d->v_scale && vec_eq(vv, d->v_scale)) { /* holmes: */
+                     /* printf("2nd data equivalent vv(%p) d->v_scale(%p)\n", vv, d->v_scale); holmes: */
                    } /* holmes: */
                    else {   /* holmes: */
                     vv = vec_copy(d->v_scale);
+                    /* printf("copy vv(%p) from d->v_scale(%p)\n", vv, d->v_scale); holmes: */
                     vv->v_next = newplot.pl_dvecs;
+                    /* printf("move to vv->v_next(%p)\n", vv); holmes: */
                     newplot.pl_dvecs = vv;
                     scalefound = TRUE;
+                    /* printf("scalefound\n"); */
                    } /* holmes: */
                 }
             }

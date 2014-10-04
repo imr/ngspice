@@ -67,6 +67,7 @@ double EVTnext_time(
     Evt_Inst_Queue_t    *inst_queue;
     Evt_Output_Queue_t  *output_queue;
 
+    /* printf("From EVTnext_time\n"); holmes */
 
     /* Initialize next time to machine infinity */
     next_time = 1e30;

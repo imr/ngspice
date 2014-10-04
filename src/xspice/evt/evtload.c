@@ -112,6 +112,8 @@ int EVTload(
     void                *value_ptr;
 
 
+    /* printf("From EVTload\n"); holmes */
+
     /* ***************************** */
     /* Prepare the code model inputs */
     /* ***************************** */

@@ -133,6 +133,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     /*to resume a run saj
      *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
      */
+    /* printf("From outitf.c: BEGIN PLOT  --------------------------------------------\n"); holmes: find out when this function call is made relative to lxt2 creation. */
     if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
@@ -155,7 +156,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         run->windowed = windowed;
         run->numData = 0;
 
-        an_name = spice_analysis_get_name(analysisPtr->JOBtype);
+        an_name = spice_analysis_get_name(analysisPtr->JOBtype);   /* holmes: get the analysis name */
         ft_curckt->ci_last_an = an_name;
 
         /* Now let's see which of these things we need.  First toss in the
@@ -163,12 +164,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
          * us to save that we can find in the name list.  Finally unpack
          * the remaining saves into parameters.
          */
-        numsaves = ft_getSaves(&saves);
+        numsaves = ft_getSaves(&saves);                                     /* holmes: retrieve the "saveable" information. Each saveable thing can come from one or more analyses. */
         if (numsaves) {
-            savesused = TMALLOC(bool, numsaves);
-            saveall = FALSE;
+            savesused = TMALLOC(bool, numsaves);         /* holmes: looks like an index for tagging which things the user wants saved. */
+            saveall = FALSE;                                                /* holmes: Start with the lowest cost assumption, not saving anything */
             for (i = 0; i < numsaves; i++) {
-                if (saves[i].analysis && !cieq(saves[i].analysis, an_name)) {
+                if (saves[i].analysis && !cieq(saves[i].analysis, an_name)) {       /* holmes: if the saveable things match the current analysis tag it as usable for this analysis. */
                     /* ignore this one this time around */
                     savesused[i] = TRUE;
                     continue;
@@ -176,7 +177,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
                 /*  Check for ".save all" and new synonym ".save allv"  */
 
-                if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv")) {
+                if (cieq(saves[i].name, "all") || cieq(saves[i].name, "allv")) {    /* holmes: tag all voltages */
                     saveall = TRUE;
                     savesused[i] = TRUE;
                     saves[i].used = 1;
@@ -185,7 +186,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
                 /*  And now for the new ".save alli" option  */
 
-                if (cieq(saves[i].name, "alli")) {
+                if (cieq(saves[i].name, "alli")) {                                  /* holmes: tag all voltages */
                     savealli = TRUE;
                     savesused[i] = TRUE;
                     saves[i].used = 1;
@@ -196,9 +197,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         /* Pass 0. */
         if (refName) {
-            addDataDesc(run, refName, refType, -1);
+            addDataDesc(run, refName, refType, -1);                                 /* Adding a data description to a particular analysis run */
             for (i = 0; i < numsaves; i++)
-                if (!savesused[i] && name_eq(saves[i].name, refName)) {
+                if (!savesused[i] && name_eq(saves[i].name, refName)) {             /* holmes: not sure what refName is, simulator reference node, (time?) ac/xfer analysis */
                     savesused[i] = TRUE;
                     saves[i].used = 1;
                 }
@@ -209,17 +210,18 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         /* Pass 1. */
         if (numsaves && !saveall) {
-            for (i = 0; i < numsaves; i++) {
+            for (i = 0; i < numsaves; i++) {                                                          /* holmes: dataName is from Ngspice process, does not include Xspice process */
                 printf("saves[%d].name(%s)\n",i,saves[i].name);
-                if (!savesused[i])
+                if (!savesused[i]) {
                     for (j = 0; j < numNames; j++)
-                        if (name_eq(saves[i].name, dataNames[j])) {
+                        if (name_eq(saves[i].name, dataNames[j])) {                                           /* holmes: if user specifies XSPICE nodes they are ignored */
                             printf("saves[%d].name(%s) dataNames[%d](%s)\n",i,saves[i].name,j,dataNames[j]);  /* holmes: looking for missing digital signals */
                             addDataDesc(run, dataNames[j], dataType, j);
                             savesused[i] = TRUE;
                             saves[i].used = 1;
                             break;
                         }
+                }
             }
         } else {
             for (i = 0; i < numNames; i++)
@@ -335,7 +337,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             addSpecialDesc(run, saves[i].name, namebuf, parambuf, depind);
         }
 
-        if (numsaves) {
+        if (numsaves) {                             /* holmes: all data descriptions are now attached to the run, so free up scratch pad. */
             for (i = 0; i < numsaves; i++) {
                 tfree(saves[i].analysis);
                 tfree(saves[i].name);
@@ -385,7 +387,7 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
     dataDesc *data;
 
     if (!run->numData)
-        run->data = TMALLOC(dataDesc, 1);
+        run->data = TMALLOC(dataDesc, 1);     /* holmes: a data descriptions is added to the run */
     else
         run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
 
@@ -459,12 +461,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
     if (run->writeOut) {
 
+        /* printf("OUTpData  run->writeout is true\n");  holmes */
         if (run->pointCount == 1)
             fileInit_pass2(run);
 
         fileStartPoint(run->fp, run->binary, run->pointCount);
 
         if (run->refIndex != -1) {
+            /* printf("OUTpData  run->refIndex = -1\n");  holmes */
             if (run->isComplex) {
                 fileAddComplexValue(run->fp, run->binary, refValue->cValue);
 
@@ -484,6 +488,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             } else {
 
                 /*  And the same for a non-complex value  */
+                /* printf("OUTpData non-complex fileAddRealValue\n");  holmes */
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
@@ -509,9 +514,11 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
             if (run->data[i].regular) {
-                if (run->data[i].type == IF_REAL)
+                if (run->data[i].type == IF_REAL) {
+                    /* printf("OUTpData non-complex fileAddRealValue regular IF_REAL.\n");  holmes */
                     fileAddRealValue(run->fp, run->binary,
                                      valuePtr->v.vec.rVec [run->data[i].outIndex]);
+                }
                 else if (run->data[i].type == IF_COMPLEX)
                     fileAddComplexValue(run->fp, run->binary,
                                         valuePtr->v.vec.cVec [run->data[i].outIndex]);
@@ -555,6 +562,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
         }
 
+        /* printf("OUTpData fileEndPoint.\n");  holmes */
         fileEndPoint(run->fp, run->binary);
 
         /*  Check that the write to disk completed successfully, otherwise abort  */
@@ -890,10 +898,14 @@ fileStartPoint(FILE *fp, bool bin, int num)
 static void
 fileAddRealValue(FILE *fp, bool bin, double value)
 {
-    if (bin)
+    if (bin) {
         rowbuf[column++] = value;
-    else
+        /* printf("writing data to binary file\n");   holmes: Is this used in dctran? */
+    }
+    else {
+        /* printf("writing data to ascii file\n");   holmes: Is this used in dctran? */
         fprintf(fp, "\t%.*e\n", DOUBLE_PRECISION, value);
+    }
 }
 
 

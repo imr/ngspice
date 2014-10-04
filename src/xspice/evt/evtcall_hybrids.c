@@ -66,6 +66,7 @@ void EVTcall_hybrids(
 
     int     *hybrid_index;
 
+    /* printf("From EVTcall_hybrids\n"); holmes */
 
     /* Get needed data for fast access */
     num_hybrids = ckt->evt->counts.num_hybrids;

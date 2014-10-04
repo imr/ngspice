@@ -99,6 +99,7 @@ int EVTsetup(
 
     int err;
 
+    /* printf("From EVTsetup\n"); holmes */
 
     /* Exit immediately if no event-driven instances in circuit */
     if(ckt->evt->counts.num_insts == 0)
@@ -458,6 +459,8 @@ static int EVTsetup_jobs(
     jobs->state_data[i] = data->state;
     jobs->msg_data[i] = data->msg;
     jobs->statistics[i] = data->statistics;
+
+    /* printf("From evtsetup.c jobs->job_name[num_jobs(%d)](%s)\n",i,jobs->job_name[i]);  holmes: looking at jobs */
 
     return(OK);
 }
