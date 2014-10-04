@@ -36,6 +36,7 @@ struct runDesc {
     bool writeOut;
     bool windowed;
     bool binary;
+    bool swapendian;
     struct plot *runPlot;
     FILE *fp;
     long pointPos;              /* where to write pointCount */

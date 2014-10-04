@@ -32,6 +32,7 @@ libckt_la_SOURCES = \
 		ckti2nod.c	\
 		cktic.c		\
 		cktlnkeq.c	\
+		cktlxt2.c	\
 		cktload.c	\
 		cktmapn.c	\
 		cktmask.c	\
@@ -79,6 +80,8 @@ libckt_la_SOURCES = \
 		dkerproc.c	\
 		dloadfns.c	\
 		dsetparm.c	\
+		lxt2_init.c	\
+		lxt2_write.c	\
 		naskq.c		\
 		nevalsrc.c	\
 		ninteg.c	\

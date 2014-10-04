@@ -17,6 +17,7 @@ libevtxsp_la_SOURCES = \
 	evtdeque.c  \
 	evtinit.c  \
 	evtload.c  \
+	evtlxt2.c  \
 	evtnode_copy.c  \
 	evtplot.c  \
 	evtqueue.c  \

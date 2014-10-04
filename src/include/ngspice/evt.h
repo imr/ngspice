@@ -48,6 +48,11 @@ NON-STANDARD FEATURES
 #include "ngspice/miftypes.h"
 
 
+/*
+#ifdef LXT2
+#include "ngspice/lxt2_write.h"
+#endif
+*/
 
 /* ************** */
 /* Info structure */

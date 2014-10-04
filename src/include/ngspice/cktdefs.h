@@ -16,6 +16,13 @@
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 
+/* holmes lxt2 */
+#define LXT2
+#ifdef LXT2
+/* #define LXT2_DEBUG */
+#define LXT2_TIME_RESOLUTION_EXPONENT -12
+#include "ngspice/lxt2_write.h"
+#endif
 
 #define MAXNUMDEVS 64   /* Max number of possible devices PN:XXX may cause toubles*/
 #define MAXNUMDEVNODES 4        /* Max No. of nodes per device */
@@ -288,6 +295,12 @@ struct CKTcircuit {
 
     NGHASHPTR DEVnameHash;
     NGHASHPTR MODnameHash;
+
+/* holmes: adding XLT2 waveforms 5/18/2011 */
+#ifdef LXT2
+   lxt2_t lxt2;
+#endif
+
 };
 
 

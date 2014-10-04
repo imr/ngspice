@@ -207,14 +207,19 @@ static int EVTcheck_nodes(
     CKTnode             *analog_node;
     Evt_Node_Info_t     *event_node;
 
+    int evtNodeIsTested;
+
     static char *err_prefix  = "ERROR - node ";
     static char *err_collide = " cannot be both analog and digital";
 
 
     /* Report error if any analog node name matches any event node name */
     event_node = ckt->evt->info.node_list;
+    printf("Event Driven Nodes:\n");    /* holmes : would like these listed a tran init with their types and values */
+    printf("-------------------\n");    /* holmes : would like these listed a tran init with their types and values */
     while(event_node) {
         analog_node = ckt->CKTnodes;
+        evtNodeIsTested = 0;
         while(analog_node) {
             if(strcmp(event_node->name, analog_node->name) == 0) {
                 errMsg = TMALLOC(char, strlen(err_prefix) + strlen(event_node->name) + strlen(err_collide) + 1);
@@ -223,11 +228,15 @@ static int EVTcheck_nodes(
                                           err_collide);
                 fprintf(stdout, "%s\n", errMsg);
                 return(E_PRIVATE);
+                evtNodeIsTested = 1;
             }
             analog_node = analog_node->next;
         }
+        if (evtNodeIsTested == 0) printf("%s\n", event_node->name); /* holmes : would like these listed after DCOP/TRAN init with their types and values */
         event_node = event_node->next;
     }
+    printf("-------------------\n\n");    /* holmes : would like these listed a tran init with their types and values */
+
 
     /* Return */
     return(OK);

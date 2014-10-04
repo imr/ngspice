@@ -720,6 +720,13 @@ AC_CHECK_LIB([fftw3], [fftw_plan_dft_1d],
         [AC_DEFINE([HAVE_LIBFFTW3], [], [Have fft routines in libfftw3])
          LIBS="$LIBS -lfftw3"])
 
+AC_CHECK_LIB([z],[compress],
+    [LIBS="$LIBS -lz"],
+    [AC_MSG_ERROR([Couldn't find z compression libraries.])])
+AC_MSG_RESULT([LXT2 waveform database included])
+#AC_DEFINE([LXT2], [1], [The LXT2 waveform database])
+AC_CHECK_HEADERS([zlibdefs.h zlib.h malloc.h alloca.h inttypes.h])
+
 # Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
 # According POSIX we should look for macros first

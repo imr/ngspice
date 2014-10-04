@@ -209,15 +209,18 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         /* Pass 1. */
         if (numsaves && !saveall) {
-            for (i = 0; i < numsaves; i++)
+            for (i = 0; i < numsaves; i++) {
+                printf("saves[%d].name(%s)\n",i,saves[i].name);
                 if (!savesused[i])
                     for (j = 0; j < numNames; j++)
                         if (name_eq(saves[i].name, dataNames[j])) {
+                            printf("saves[%d].name(%s) dataNames[%d](%s)\n",i,saves[i].name,j,dataNames[j]);  /* holmes: looking for missing digital signals */
                             addDataDesc(run, dataNames[j], dataType, j);
                             savesused[i] = TRUE;
                             saves[i].used = 1;
                             break;
                         }
+            }
         } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
@@ -912,6 +915,9 @@ static void
 fileEndPoint(FILE *fp, bool bin)
 {
     /*  write row buffer to file  */
+
+    printf("fileEndPoint: flushing binary data to raw file.\n");  /* holmes: Is this used in dctran? */
+
     /* otherwise the data has already been written */
 
     if (bin)

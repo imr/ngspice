@@ -48,4 +48,6 @@ typedef struct SPICEanalysis SPICEanalysis;
 
 typedef struct runDesc runDesc;
 
+typedef struct lxt2_s lxt2_t;
+
 #endif

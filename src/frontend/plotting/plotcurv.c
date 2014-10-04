@@ -137,7 +137,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
             dy = isreal(v) ? v->v_realdata[i] :
                 realpart(v->v_compdata[i]);
             if ((i == 0 || (dir > 0 ? lx > dx : dir < 0 ? lx < dx : 0)) &&
-                xs->v_plot && xs->v_plot->pl_scale == xs)
+                xs->v_plot && xs->v_plot->pl_scale && xs->v_plot->pl_scale == xs)
             {
                 gr_point(v, dx, dy, lx, ly, 0);
             } else {

@@ -116,6 +116,8 @@ char *ft_setkwords[] = {
     "subend",
     "subinvoke",
     "substart",
+    "lxt2waves"   /* holmes:  adding switch to write lxt2 waveform database */
+    "swapendian"  /* holmes:  adding switch to write raw file in opposite endianness of OS */
     "term",
     "ticmarks",
     "tnom",
