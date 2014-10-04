@@ -330,6 +330,7 @@ extern int CKTdltNNum(CKTcircuit *, int);
 extern int CKTdltNod(CKTcircuit *, CKTnode *);
 extern int CKTdoJob(CKTcircuit *, int , TSKtask *);
 extern void CKTdump(CKTcircuit *, double, void *);
+extern void CKTemitlxt2(runDesc *);
 extern int CKTsoaInit(void);
 extern int CKTsoaCheck(CKTcircuit *);
 #ifdef CIDER
