@@ -1,0 +1,74 @@
+/*
+ * SUMMARY
+ * This file contains the interface specification file for the
+ * analog limit code model.
+ *
+ */
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_limitsmbv
+Spice_Model_Name:      limitsmbv
+Description:           "limit block"
+
+
+PORT_TABLE:
+Port_Name:          x
+Description:        "input"
+Direction:          in
+Default_Type:       v
+Allowed_Types:      [v,vd,i,id,vnam]
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
+
+PORT_TABLE:
+Port_Name:          xtp
+Description:        "positive threshold"
+Direction:          in
+Default_Type:       v
+Allowed_Types:      [v,vd,i,id,vnam]
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
+
+PORT_TABLE:
+Port_Name:          xtm
+Description:        "negative threshold"
+Direction:          in
+Default_Type:       v
+Allowed_Types:      [v,vd,i,id,vnam]
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
+
+PORT_TABLE:
+Port_Name:          y
+Description:        "output"
+Direction:          out
+Default_Type:       v
+Allowed_Types:      [v,vd,i,id]
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       no
+
+PARAMETER_TABLE:
+Parameter_Name:     g
+Description:        "linear gain"
+Data_Type:          real
+Default_Value:      1.0
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+Parameter_Name:     a
+Description:        "exponential gain"
+Data_Type:          real
+Default_Value:      1.0
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
