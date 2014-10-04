@@ -1,0 +1,244 @@
+
+Circuit: mixed io types  
+
+Event Driven Nodes:
+-------------------
+enable
+clk
+div2_out
+div4_out
+div8_out
+filt_in
+xfilter.x0a
+xfilter.x1a
+xfilter.x2a
+xfilter.filt1_out
+xfilter.filt2_in
+xfilter.x0b
+xfilter.x1b
+xfilter.x2b
+filt_out
+-------------------
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Analog Nodes:
+-------------
+1
+a_out
+oa_minus
+xlpf.outint
+lpf_out
+v1#branch
+a.xlpf.a1#branch_1_0
+abridge3#branch_1_0
+-------------
+
+No. of Data Columns : 9  
+LXT2 time resolution is 1.0e-12 seconds.
+
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+1                                            0
+a_out                                        0
+oa_minus                                     0
+xlpf.outint                                  0
+lpf_out                                      0
+v1#branch                                    0
+a.xlpf.a1#branch_1_0                         0
+abridge3#branch_1_0                          0
+
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+fileEndPoint: flushing binary data to raw file.
+
+No. of Data Rows : 175
+elapsed time since last call: 0.171 seconds.
+
+Total elapsed time: 0.171 seconds.
+
+Total DRAM available = 2015.417969 MB.
+DRAM currently available = 289.644531 MB.
+Total ngspice program size = 6.072266 MB.
+Resident set size = 1.870117 MB.
+Shared ngspice pages = 647.000 kB.
+Text (code) pages = 1.493164 MB.
+Stack = 0 bytes.
+Library pages = 3.121094 MB.
+
