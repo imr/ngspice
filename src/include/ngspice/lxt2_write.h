@@ -240,8 +240,8 @@ unsigned int chg[LXT2_WR_GRANULE_SIZE];
 #define LXT2_WR_SYM_F_WIRE         (1<<15)
 #define LXT2_WR_SYM_F_REG          (1<<16)
 
-void			lxt2_init(void *plotPtr);
-void			lxt2_end(void *plotPtr);
+void			lxt2_init(runDesc *run);
+void			lxt2_end(runDesc *run);
 
 			/* file I/O */
 struct lxt2_wr_trace *	lxt2_wr_init(const char *name);

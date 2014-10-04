@@ -24,7 +24,7 @@
 #pragma alloca
 #endif
 
-#include "ngspice/config.h"
+#include "ngspice/ngspice.h"
 #include "ngspice/lxt2_write.h"
 
 

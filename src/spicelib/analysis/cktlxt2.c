@@ -32,9 +32,8 @@
             return(E_NOMEM); \
     }
 
-void CKTemitlxt2(void *plotPtr)
+void CKTemitlxt2(runDesc *run)
 {
-    runDesc *run = (runDesc *) plotPtr;
     struct lxt2_wr_symbol  **trace_table;
     struct lxt2_wr_symbol  *trace;
     char *name;

@@ -32,10 +32,9 @@
     }
 
 static void EVTtraceinit(CKTcircuit *ckt);
-static void KVLtraceinit(void *plotPtr);
+static void KVLtraceinit(runDesc *run);
 
-void lxt2_init(void *plotPtr) {
-    runDesc *run = (runDesc *)plotPtr;
+void lxt2_init(runDesc *run) {
 
     #ifdef LXT2_DEBUG
     printf("LXT2 lxt2_init\n");
@@ -56,9 +55,8 @@ void lxt2_init(void *plotPtr) {
     }
 }
 
-void lxt2_end(void *plotPtr)
+void lxt2_end(runDesc *run)
 {
-    runDesc *run = (runDesc *) plotPtr;
     if(run && run->circuit) {
       #ifdef LXT2_DEBUG
       printf("LXT2 final file flush.\n");
@@ -130,9 +128,8 @@ static void EVTtraceinit(CKTcircuit *ckt)       /* the circuit structure */
     ckt->lxt2.evt_num = num_nodes;
 }
 
-static void KVLtraceinit(void *plotPtr)   /* Call this after OUTpBeginPlot after all electrical run data is loaded */
+static void KVLtraceinit(runDesc *run)   /* Call this after OUTpBeginPlot after all electrical run data is loaded */
 {
-    runDesc *run = (runDesc *) plotPtr;
     struct lxt2_wr_symbol  **trace_table = NULL;
     int *kvl_indexmap = NULL;
     int i;
