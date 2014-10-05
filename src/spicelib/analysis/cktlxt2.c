@@ -1,30 +1,15 @@
 #include "ngspice/ngspice.h"
-#include "ngspice/config.h"
-#include "ngspice/cktdefs.h"
-//#include "ngspice/cktaccept.h"
-#include "ngspice/trandefs.h"
-#include "ngspice/sperror.h"
 #include "ngspice/fteext.h"
-#include "ngspice/missing_math.h"
+
 #include "../frontend/outitf.h"
+
 #include <math.h>
 
 #ifdef XSPICE
-/* gtri - add - wbk - Add headers */
-#include "ngspice/miftypes.h"
-
-#include "ngspice/evt.h"
-#include "ngspice/mif.h"
 #include "ngspice/evtproto.h"
-#include "ngspice/ipctiein.h"
-/* gtri - end - wbk - Add headers */
 #endif
 
 #include "ngspice/lxt2_write.h"
-
-#ifdef CLUSTER
-#include "cluster.h"
-#endif
 
 #define CKALLOC(var,size,type) \
     if(size) { \

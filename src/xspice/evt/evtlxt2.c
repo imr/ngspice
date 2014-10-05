@@ -1,14 +1,6 @@
 #include "ngspice/ngspice.h"
-#include "ngspice/cktdefs.h"
-//#include "util.h"
-
-#include "ngspice/mif.h"
-#include "ngspice/evt.h"
-#include "ngspice/evtudn.h"
-
-#include "ngspice/mifproto.h"
 #include "ngspice/evtproto.h"
-#include "ngspice/cm.h"
+
 #include <math.h>
 
 static char *EVTbitmap(int i);
