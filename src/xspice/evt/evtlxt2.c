@@ -123,6 +123,6 @@ static char *EVTbitmap(int i)
 	break;
     }
 
-    *(p) = 0;
+    *(p) = '\0';
     return(s);
 }
