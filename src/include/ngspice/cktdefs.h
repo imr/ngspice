@@ -296,7 +296,7 @@ struct CKTcircuit {
 extern int ACan(CKTcircuit *, int);
 extern int ACaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern int ACsetParm(CKTcircuit *, JOB *, int , IFvalue *);
-extern int CKTacDump(CKTcircuit *, double , void *);
+extern int CKTacDump(CKTcircuit *, double , runDesc *);
 extern int CKTacLoad(CKTcircuit *);
 extern int CKTaccept(CKTcircuit *);
 extern int CKTacct(CKTcircuit *, JOB *, int , IFvalue *);
@@ -316,7 +316,7 @@ extern int CKTdltMod(CKTcircuit *, GENmodel *);
 extern int CKTdltNNum(CKTcircuit *, int);
 extern int CKTdltNod(CKTcircuit *, CKTnode *);
 extern int CKTdoJob(CKTcircuit *, int , TSKtask *);
-extern void CKTdump(CKTcircuit *, double, void *);
+extern void CKTdump(CKTcircuit *, double, runDesc *);
 extern int CKTsoaInit(void);
 extern int CKTsoaCheck(CKTcircuit *);
 #ifdef CIDER

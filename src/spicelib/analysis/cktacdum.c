@@ -17,7 +17,7 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CKTacDump(CKTcircuit *ckt, double freq, void *plot)
+CKTacDump(CKTcircuit *ckt, double freq, runDesc *plot)
 {
     double *rhsold;
     double *irhsold;

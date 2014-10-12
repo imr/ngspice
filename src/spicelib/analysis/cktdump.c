@@ -30,7 +30,7 @@ TODO:
 #endif
 
 void
-CKTdump(CKTcircuit *ckt, double ref, void *plot)
+CKTdump(CKTcircuit *ckt, double ref, runDesc *plot)
 {
     IFvalue refData;
     IFvalue valData;
