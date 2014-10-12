@@ -477,11 +477,13 @@ com_write(wordlist *wl)
                     for (vv = newplot.pl_dvecs; vv; vv = vv->v_next)
                         if (vec_eq(vv, d->v_scale))
                             break;
-                    /* We have to grab it... */
-                    vv = vec_copy(d->v_scale);
-                    vv->v_next = newplot.pl_dvecs;
-                    newplot.pl_dvecs = vv;
-                    scalefound = TRUE;
+                    if (!vv) {
+                        /* We have to grab it... */
+                        vv = vec_copy(d->v_scale);
+                        vv->v_next = newplot.pl_dvecs;
+                        newplot.pl_dvecs = vv;
+                        scalefound = TRUE;
+                    }
                 }
             }
 
@@ -641,11 +643,13 @@ com_write_sparam(wordlist *wl)
                     for (vv = newplot.pl_dvecs; vv; vv = vv->v_next)
                         if (vec_eq(vv, d->v_scale))
                             break;
-                    /* We have to grab it... */
-                    vv = vec_copy(d->v_scale);
-                    vv->v_next = newplot.pl_dvecs;
-                    newplot.pl_dvecs = vv;
-                    scalefound = TRUE;
+                    if (!vv) {
+                        /* We have to grab it... */
+                        vv = vec_copy(d->v_scale);
+                        vv->v_next = newplot.pl_dvecs;
+                        newplot.pl_dvecs = vv;
+                        scalefound = TRUE;
+                    }
                 }
             }
             if (!scalefound)
