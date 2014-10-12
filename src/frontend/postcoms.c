@@ -543,7 +543,7 @@ com_write_sparam(wordlist *wl)
     struct pnode *pn;
     struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv, *Rbasevec = NULL;
     struct pnode *names;
-    bool scalefound, appendwrite = FALSE;
+    bool scalefound;
     struct plot *tpl, newplot;
     double Rbaseval;
 
@@ -678,8 +678,6 @@ com_write_sparam(wordlist *wl)
             } else {
                 lv = d;
             }
-        /* If there are more plots we want them appended... */
-        appendwrite = TRUE;
     }
 
 done:
