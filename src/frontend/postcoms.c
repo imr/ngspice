@@ -478,10 +478,14 @@ com_write(wordlist *wl)
                         if (vec_eq(vv, d->v_scale))
                             break;
                     /* We have to grab it... */
+                   if(vv && d->v_scale && vec_eq(vv, d->v_scale)) { /* holmes: */
+                   } /* holmes: */
+                   else {   /* holmes: */
                     vv = vec_copy(d->v_scale);
                     vv->v_next = newplot.pl_dvecs;
                     newplot.pl_dvecs = vv;
                     scalefound = TRUE;
+                   } /* holmes: */
                 }
             }
 
