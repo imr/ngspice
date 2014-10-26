@@ -33,17 +33,10 @@ extern "C" {
 #include <ctype.h>
 #include <errno.h>
 #include <unistd.h>
-#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
-#endif
 #include <zlib.h>
 
-#ifndef HAVE_FSEEKO
-#define fseeko fseek
-#define ftello ftell
-#endif
-
-#include <wavealloca.h>
+#define wave_alloca alloca
 
 #define LXT2_WR_HDRID (0x1380)
 #define LXT2_WR_VERSION (0x0001)
@@ -260,6 +253,8 @@ unsigned int chg[LXT2_WR_GRANULE_SIZE];
 #define LXT2_WR_SYM_F_WIRE         (1<<15)
 #define LXT2_WR_SYM_F_REG          (1<<16)
 
+void                    lxt2_init(runDesc *run);
+void                    lxt2_end(runDesc *run);
 
 			/* file I/O */
 struct lxt2_wr_trace *	lxt2_wr_init(const char *name);
@@ -308,6 +303,16 @@ int 			lxt2_wr_emit_value_int(struct lxt2_wr_trace *lt, struct lxt2_wr_symbol *s
 int 			lxt2_wr_emit_value_double(struct lxt2_wr_trace *lt, struct lxt2_wr_symbol *s, unsigned int row, double value);
 int 			lxt2_wr_emit_value_string(struct lxt2_wr_trace *lt, struct lxt2_wr_symbol *s, unsigned int row, char *value);
 int 			lxt2_wr_emit_value_bit_string(struct lxt2_wr_trace *lt, struct lxt2_wr_symbol *s, unsigned int row, char *value);
+
+typedef struct lxt2_s {
+    struct lxt2_wr_trace   *file;
+    struct lxt2_wr_symbol **evt_table;
+    int                    *evt_indexmap;
+    int                     evt_num;
+    struct lxt2_wr_symbol **kvl_table;
+    int                    *kvl_indexmap;
+    int                     kvl_num;
+} lxt2_t;
 
 #ifdef __cplusplus
 }

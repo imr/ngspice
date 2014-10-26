@@ -24,8 +24,8 @@
 #pragma alloca
 #endif
 
-#include <config.h>
-#include "lxt2_write.h"
+#include "ngspice/ngspice.h"
+#include "ngspice/lxt2_write.h"
 
 
 static char *lxt2_wr_vcd_truncate_bitvec(char *s)
