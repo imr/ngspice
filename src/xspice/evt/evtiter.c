@@ -232,6 +232,9 @@ int EVTiter(
             /* resolved node value has not changed */
             if(g_mif_info.circuit.anal_type == MIF_TRAN) {
 
+#ifdef LXT2
+                EVTemitlxt2(ckt, node_index, &(rhsold[node_index]));
+#endif
                 node = *(node_data->tail[node_index]);
                 node_data->tail[node_index] = &(node->next);
                 EVTnode_copy(ckt, node_index, &(rhsold[node_index]), &(node->next));

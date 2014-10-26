@@ -691,13 +691,21 @@ show_help(void)
 static void
 show_version(void)
 {
-    printf("%s compiled from %s revision %s\n"
+    printf("%s compiled from %s revision(%s) branch(SMBV)\n"
+       "-----------------------------------------------------\n"
        "Written originally by Berkeley University\n"
-       "Currently maintained by the NGSpice Project\n\n"
+       "Developed and maintained by the Ngspice Project\n"
+       "Enhanced by Sherlock Model-Based Verification, L.L.C.\n"
+       "-----------------------------------------------------\n"
        "Copyright (C) 1985-1996,"
        "  The Regents of the University of California\n"
        "Copyright (C) 1999-2011,"
-       "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
+       "  The NGSpice Project\n"
+       "Copyright (C) 2001-2012,"
+       "  Tony Bybell\n"
+       "Copyright (C) 2011-2014,"
+       "  Sherlock Model-Based Verification, L.L.C.\n",
+           cp_program, PACKAGE, VERSION);
 }
 
 #ifdef SIMULATOR

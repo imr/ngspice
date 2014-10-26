@@ -123,4 +123,9 @@ void EVTaccept(
 
 struct dvec *EVTfindvec(char *node);
 
+void EVTemitlxt2(
+    CKTcircuit    *ckt,        /* The circuit structure */
+    int           node_index,  /* The node index of lxt2 data stream */
+    Evt_Node_t    *from);      /* Location to event node data to emit to lxt2 */
+
 #endif

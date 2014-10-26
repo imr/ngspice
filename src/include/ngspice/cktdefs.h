@@ -16,6 +16,12 @@
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 
+#define LXT2
+
+#ifdef LXT2
+#define LXT2_TIME_RESOLUTION_EXPONENT -12
+#include "ngspice/lxt2_write.h"
+#endif
 
 #define MAXNUMDEVS 64   /* Max number of possible devices PN:XXX may cause toubles*/
 #define MAXNUMDEVNODES 4        /* Max No. of nodes per device */
@@ -288,6 +294,11 @@ struct CKTcircuit {
 
     NGHASHPTR DEVnameHash;
     NGHASHPTR MODnameHash;
+
+#ifdef LXT2
+   lxt2_t lxt2;
+#endif
+
 };
 
 
@@ -317,6 +328,7 @@ extern int CKTdltNNum(CKTcircuit *, int);
 extern int CKTdltNod(CKTcircuit *, CKTnode *);
 extern int CKTdoJob(CKTcircuit *, int , TSKtask *);
 extern void CKTdump(CKTcircuit *, double, void *);
+extern void CKTemitlxt2(runDesc *);
 extern int CKTsoaInit(void);
 extern int CKTsoaCheck(CKTcircuit *);
 #ifdef CIDER

@@ -200,6 +200,9 @@ DCtran(CKTcircuit *ckt,
         }
 
 #ifdef XSPICE
+#ifdef LXT2
+        lxt2_init(job->TRANplot);
+#endif
 /* gtri - begin - wbk - set a breakpoint at end of supply ramping time */
         /* must do this after CKTtime set to 0 above */
         if(ckt->enh->ramp.ramptime > 0.0)
@@ -474,8 +477,12 @@ DCtran(CKTcircuit *ckt,
 #ifdef CLUSTER
         CLUoutput(ckt);
 #endif
-        if(ckt->CKTtime >= ckt->CKTinitTime)
+        if (ckt->CKTtime >= ckt->CKTinitTime) {
             CKTdump(ckt, ckt->CKTtime, job->TRANplot);
+#ifdef LXT2
+            CKTemitlxt2(job->TRANplot);
+#endif
+        }
 #ifdef XSPICE
 /* gtri - begin - wbk - Update event queues/data for accepted timepoint */
     /* Note: this must be done AFTER sending results to SI so it can't */
@@ -492,6 +499,11 @@ DCtran(CKTcircuit *ckt,
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
 #endif
+
+#ifdef LXT2
+        lxt2_end(job->TRANplot);
+#endif
+
         SPfrontEnd->OUTendPlot (job->TRANplot);
         job->TRANplot = NULL;
         UPDATE_STATS(0);
