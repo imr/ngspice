@@ -1,0 +1,11 @@
+#!/bin/bash
+
+ngspice -b -o xspice_c3.log -r xspice_c3.raw xspice_c3.cir
+
+mv waveforms.lxt xspice_c3.lxt
+
+gtkwave xspice_c3.lxt
+
+# In gtkwave:
+# Select the analog signals and right click "Data Format-->Analog-->Step"
+# and add analog hight extensions to increase their scale.
