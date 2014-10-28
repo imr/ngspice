@@ -1,37 +1,38 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\"
 .\" Copyright (c) 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
-.ig
-
-(woman-find-file buffer-file-name)
-
-(let* ((man-args (concat "-l " buffer-file-name))
-       (bufname (concat "*Man " man-args "*")))
-  (when (get-buffer bufname)
-    (kill-buffer bufname))
-  (man man-args))
-
-(compile
-  (concat "groff -t -e -man -Tps "
-          buffer-file-name
-          " > /tmp/tmp.ps &&  gv /tmp/tmp.ps"))
-
-..
-.TH NGNUTMEG 1 "6 June 2010"
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH NGNUTMEG 1 "2014-10-28"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
 .ds = \-\^\-
-.ds ngspice \s-2NGSPICE\s+2
 .SH "NAME"
 ngnutmeg \- ngspice post-processor
 .SH "SYNOPSIS"
 \fBngnutmeg\fP [\fIoptions\fP] [\fIdatafile\fP ...]
 .SH "DESCRIPTION"
 This man page is just a small overview.
-The primary documentation of ngspice is in the \*[ngspice] User's Manual,
+The primary documentation of ngspice is in the ngspice User's Manual,
 which is available as a pdf file.
 .br
-\fBngnutmeg\fP is a post processor for \*[ngspice] \- it takes
+\fBngnutmeg\fP is a post processor for ngspice \- it takes
 the raw output file created by \fBngspice \-r\fP
 and plots the data on a graphics terminal or a workstation display.
 Note that the raw output file is different from the
-data that \*[ngspice] writes to the standard output.
+data that ngspice writes to the standard output.
 .SH "OPTIONS"
 .TP
 \fB\-\fP
@@ -60,7 +61,7 @@ Further arguments are taken to be data files in binary or ascii format
 (see \fBsconvert\fP(1)) which are loaded into ngnutmeg.
 If the file
 is in binary format, it may be only partially completed (useful for
-examining \*[ngspice] output before the simulation is finished).
+examining ngspice output before the simulation is finished).
 One file may contain any number of data sets from different analyses.
 .SH "ENVIRONMENT"
 See ngspice(1)
@@ -69,7 +70,7 @@ See ngspice(1)
 .SH "SEE ALSO"
 sconvert(1), ngspice(1), mfb(3), writedata(3), and
 .br
-\*[ngspice] User's Manual at \fBhttp://ngspice.sourceforge.net/docs.html\fP
+ngspice User's Manual at \fBhttp://ngspice.sourceforge.net/docs.html\fP
 .SH "BUGS"
 Please report bugs to the ngspice project via
 .br
@@ -78,6 +79,3 @@ Please report bugs to the ngspice project via
 Wayne Christopher (faustus@cad.berkeley.edu)
 .br
 \fBngspice\fP: various authors (see \fBhttp://sourceforge.net/projects/ngspice/\fP)
-.\" Local Variables:
-.\" mode: nroff
-.\" End:

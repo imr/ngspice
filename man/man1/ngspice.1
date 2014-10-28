@@ -1,34 +1,36 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\"
 .\" Copyright (c) 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
-.ig
-
-(woman-find-file buffer-file-name)
-
-(let* ((man-args (concat "-l " buffer-file-name))
-       (bufname (concat "*Man " man-args "*")))
-  (when (get-buffer bufname)
-    (kill-buffer bufname))
-  (man man-args))
-
-(compile (concat "groff -t -e -man -Tps "
-        buffer-file-name
-        " > /tmp/tmp.ps &&  gv /tmp/tmp.ps"))
-
-..
-.TH NGSPICE 1 "6 June 2010"
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH NGSPICE 1 "2014-10-28"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
 .ds = \-\^\-
-.ds ngspice \s-2NGSPICE\s+2
 .SH "NAME"
 ngspice \- circuit simulator derived from SPICE3f5
 .SH "SYNOPSIS"
 \fBngspice\fP [\fIoptions\fP] [\fIfile\fP ...]
 .SH "DESCRIPTION"
 This man page is just a small overview.
-The primary documentation of ngspice is in the \*[ngspice] User's Manual,
+The primary documentation of ngspice is in the ngspice User's Manual,
 which is available as a pdf file.
 .SH "OPTIONS"
 .TP
 \fB\-n\fP  or  \fB\*=no\-spiceinit\fP
-Don't try to source the file ".spiceinit" upon startup. Normally \*[ngspice]
+Don't try to source the file ".spiceinit" upon startup. Normally ngspice
 tries to find the file in the current directory, and if it is not found then
 in the user's home directory.
 .TP
@@ -40,9 +42,9 @@ The program is being run on a terminal with \fBmfb\fP name \fIterm\fP.
 .TP
 \fB\-b\fP  or  \fB\*=batch\fP
 Run in batch mode.
-\*[ngspice] will read the standard input or the specified
+ngspice will read the standard input or the specified
 input file and do the simulation.
-Note that if the standard input is not a terminal, \*[ngspice] will default
+Note that if the standard input is not a terminal, ngspice will default
 to batch mode, unless the \-i flag is given.
 .TP
 \fB\-s\fP  or  \fB\*=server\fP
@@ -136,7 +138,7 @@ The User's Initialisation File.
 .SH "SEE ALSO"
 sconvert(1), ngnutmeg(1), mfb(3), writedata(3), and
 .br
-\*[ngspice] User's Manual at \fBhttp://ngspice.sourceforge.net/docs.html\fP
+ngspice User's Manual at \fBhttp://ngspice.sourceforge.net/docs.html\fP
 .SH "BUGS"
 Please report bugs to the ngspice project via
 .br
@@ -147,6 +149,3 @@ Please report bugs to the ngspice project via
 \fBnutmeg\fP: User interface: Wayne Christopher (faustus@cad.berkeley.edu)
 .br
 \fBngspice\fP: various authors (see \fBhttp://sourceforge.net/projects/ngspice/\fP)
-.\" Local Variables:
-.\" mode: nroff
-.\" End:
