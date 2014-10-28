@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH CMPP 1 "2012-06-02"
+.TH CMPP 1 "2014-10-28"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -19,7 +19,14 @@
 cmpp \- Code Model PreProcessor
 .SH SYNOPSIS
 .B cmpp
-.RI [-ifs] [-mod [<filename>]] [-lst]
+.RI \-ifs
+.br
+.B cmpp
+.RI \-mod
+.RI [<filename>]
+.br
+.B cmpp
+.RI \-lst
 .br
 .SH DESCRIPTION
 This manual page documents briefly the
@@ -32,16 +39,16 @@ command.
 .\" respectively.
 \fBcmpp\fP is a is a code model preprocessor for the XSpice program.
 .SH OPTIONS
-All options for this program start with two dashes (`-').
+All options for this program start with one dash (`-').
 A summary of options is included below.
 .TP
-.B \-\-ifs
+.B \-ifs
 Process Interface Specification File
 .TP
-.B \-\-mod filename
-Process Model Definition File
+.B \-mod [<filename>]
+Process Model Definition File (default filename cfunc.mod)
 .TP
-.B \-\-lst
+.B \-lst
 Process Pathname List Files
 .br
 .SH AUTHOR
