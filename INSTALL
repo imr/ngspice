@@ -613,8 +613,11 @@ Most of the options now following are not well maintained, are not tested or eve
             ngspice.info-10
         man\
             man1\
+                cmpp.1
+                ngmakeidx.1
                 ngmultidec.1
                 ngnutmeg.1
+                ngproc2mod.1
                 ngsconvert.1
                 ngspice.1
         ngspice\
