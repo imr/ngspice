@@ -5967,8 +5967,8 @@ inp_add_series_resistor(struct line *deck)
             char *node2 = gettok(&cut_line);
 
             /* new L line and new R line */
-            char *newL = tprintf("%s %s %s_intern__ %s", title_tok, node1, node2, cut_line);
-            char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok, node2, node2, rval);
+            char *newL = tprintf("%s %s %s_intern__ %s", title_tok, node1, title_tok, cut_line);
+            char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok, title_tok, node2, rval);
 
             struct line *d;
 
