@@ -5591,7 +5591,7 @@ inp_bsource_compat(struct line *card)
 
             tmp_char = copy(curr_line);
             equal_ptr = strchr(tmp_char, '=');
-            if (str_ptr == NULL) {
+            if (!equal_ptr) {
                 fprintf(stderr, "ERROR: mal formed B line:\n  %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
