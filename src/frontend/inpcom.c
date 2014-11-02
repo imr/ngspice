@@ -5496,11 +5496,9 @@ static char *
 inp_modify_exp(char* expr)
 {
     char * str_ptr;
-    char actchar;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
-    size_t i, ustate = 0;
-    int error1;
+    size_t ustate = 0;
 
     /* scan the expression and remove all '{' and '}' */
     for (str_ptr = expr; *str_ptr; str_ptr++)
@@ -5509,6 +5507,7 @@ inp_modify_exp(char* expr)
     /* scan the expression */
     str_ptr = expr;
     while (*str_ptr != '\0') {
+        char actchar;
         str_ptr = skip_ws(str_ptr);
         if (*str_ptr == '\0')
             break;
@@ -5556,6 +5555,7 @@ inp_modify_exp(char* expr)
             str_ptr++;
             ustate = 2; /* place a '-' in front of token */
         } else if (isalpha(actchar)) {
+            size_t i;
             /* unary -, change sign */
             if (ustate == 2) {
                 i = 1;
@@ -5616,6 +5616,7 @@ inp_modify_exp(char* expr)
             }
             ustate = 0; /* we have a number */
         } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
+            int error1;
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&str_ptr, &error1, 0);
             /* unary -, change sign */
