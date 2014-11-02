@@ -5503,12 +5503,9 @@ inp_modify_exp(char* expr)
     int error1;
 
     /* scan the expression and remove all '{' and '}' */
-    str_ptr = expr;
-    while (*str_ptr) {
+    for (str_ptr = expr; *str_ptr; str_ptr++)
         if ((*str_ptr == '{') || (*str_ptr == '}'))
             *str_ptr = ' ';
-        str_ptr++;
-    }
     /* scan the expression */
     str_ptr = expr;
     while (*str_ptr != '\0') {
