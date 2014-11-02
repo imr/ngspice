@@ -5497,7 +5497,6 @@ inp_modify_exp(char* expr)
 {
     char *s;
     wordlist *wl = NULL, *wlist = NULL;
-    char buf[512];
     enum { S_value = 0, S_operator, S_unary_minus } state = S_value;
 
     /* scan the expression and remove all '{' and '}' */
@@ -5551,6 +5550,7 @@ inp_modify_exp(char* expr)
             s++;
             state = S_unary_minus;
         } else if (isalpha(c)) {
+            char buf[512];
             int i = 0;
             if (state == S_unary_minus)
                 buf[i++] = '-';
