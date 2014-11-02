@@ -5640,8 +5640,6 @@ inp_modify_exp(char* expr)
 
     new_str = wl_flatten(wlist);
     wl_free(wlist);
-    wlist = NULL;
-    wl = NULL;
     return(new_str);
 }
 
