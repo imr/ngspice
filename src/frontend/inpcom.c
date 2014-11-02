@@ -5562,14 +5562,11 @@ inp_modify_exp(char* expr)
 
             if (((actchar == 'v') || (actchar == 'i')) && (str_ptr[1] == '(')) {
                 while (*str_ptr != ')') {
-                    buf[i] = *str_ptr;
-                    i++;
-                    str_ptr++;
+                    buf[i++] = *str_ptr++;
                 }
-                buf[i] = *str_ptr;
+                buf[i] = *str_ptr++;
                 buf[i+1] = '\0';
                 wl->wl_word = copy(buf);
-                str_ptr++;
             } else {
                 while (isalnum(*str_ptr) ||
                        (*str_ptr == '!') || (*str_ptr == '#') ||
@@ -5577,9 +5574,7 @@ inp_modify_exp(char* expr)
                        (*str_ptr == '_') || (*str_ptr == '[') ||
                        (*str_ptr == ']'))
                 {
-                    buf[i] = *str_ptr;
-                    i++;
-                    str_ptr++;
+                    buf[i++] = *str_ptr++;
                 }
                 buf[i] = '\0';
                 /* no parens {} around time, hertz, temper, the constants
@@ -5625,10 +5620,9 @@ inp_modify_exp(char* expr)
                 str_ptr++;
         } else { /* strange char */
             printf("Preparing expression for numparam\nWhat is this?\n%s\n", str_ptr);
-            buf[0] = *str_ptr;
+            buf[0] = *str_ptr++;
             buf[1] = '\0';
             wl->wl_word = copy(buf);
-            str_ptr++;
         }
     }
 
