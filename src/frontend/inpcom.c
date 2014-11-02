@@ -5662,6 +5662,7 @@ inp_temper_compat(struct line *card)
 
         beg_str = beg_tstr = curr_line;
         while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
+            char *modified_exp;
             /* set the global variable */
             expr_w_temper = TRUE;
             /* find the expression: first go back to the opening '{',
@@ -5671,11 +5672,12 @@ inp_temper_compat(struct line *card)
             end_str = end_tstr = beg_tstr;
             exp_str = gettok_char(&end_tstr, '}', TRUE, TRUE);
             /* modify the expression string */
-            exp_str = inp_modify_exp(exp_str);
+            modified_exp = inp_modify_exp(exp_str);
+            tfree(exp_str);
             /* add the intermediate string between previous and next expression to the new line */
             new_str = INPstrCat(new_str, copy_substring(beg_str, end_str), " ");
             /* add the modified expression string to the new line */
-            new_str = INPstrCat(new_str, exp_str, " ");
+            new_str = INPstrCat(new_str, modified_exp, " ");
             new_str = INPstrCat(new_str, copy(" "), " ");
             /* move on to the next intermediate string */
             beg_str = beg_tstr = end_tstr;
@@ -5853,7 +5855,6 @@ inp_modify_exp(char* expr)
     wl_free(wlist);
     wlist = NULL;
     wl = NULL;
-    tfree(expr);
     return(new_str);
 }
 
