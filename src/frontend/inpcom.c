@@ -5495,7 +5495,7 @@ inp_temper_compat(struct line *card)
 static char *
 inp_modify_exp(char* expr)
 {
-    char * str_ptr, *new_str;
+    char * str_ptr;
     char actchar;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
@@ -5638,9 +5638,9 @@ inp_modify_exp(char* expr)
         }
     }
 
-    new_str = wl_flatten(wlist);
+    expr = wl_flatten(wlist);
     wl_free(wlist);
-    return(new_str);
+    return expr;
 }
 
 
