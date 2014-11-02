@@ -5555,14 +5555,10 @@ inp_modify_exp(char* expr)
             str_ptr++;
             ustate = 2; /* place a '-' in front of token */
         } else if (isalpha(actchar)) {
-            size_t i;
+            size_t i = 0;
             /* unary -, change sign */
-            if (ustate == 2) {
-                i = 1;
-                buf[0] = '-';
-            } else {
-                i = 0;
-            }
+            if (ustate == 2)
+                buf[i++] = '-';
 
             if (((actchar == 'v') || (actchar == 'i')) && (str_ptr[1] == '(')) {
                 while (*str_ptr != ')') {
