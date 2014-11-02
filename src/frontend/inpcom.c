@@ -5521,9 +5521,7 @@ inp_modify_exp(char* expr)
                 actchar = '^';
                 str_ptr++;
             }
-            buf[0] = actchar;
-            buf[1] = '\0';
-            wl->wl_word = copy(buf);
+            wl->wl_word = tprintf("%c", actchar);
             str_ptr++;
             if (actchar == ')')
                 ustate = S_value;
@@ -5545,9 +5543,7 @@ inp_modify_exp(char* expr)
             wl->wl_word = copy_substring(beg, str_ptr);
             ustate = S_operator;
         } else if ((actchar == '-') && (ustate == S_value)) {
-            buf[0] = actchar;
-            buf[1] = '\0';
-            wl->wl_word = copy(buf);
+            wl->wl_word = tprintf("%c", actchar);
             str_ptr++;
             ustate = S_operator;
         } else if ((actchar == '-') && (ustate == S_operator)) {
@@ -5618,9 +5614,7 @@ inp_modify_exp(char* expr)
                 str_ptr++;
         } else { /* strange char */
             printf("Preparing expression for numparam\nWhat is this?\n%s\n", str_ptr);
-            buf[0] = *str_ptr++;
-            buf[1] = '\0';
-            wl->wl_word = copy(buf);
+            wl->wl_word = tprintf("%c", *str_ptr++);
         }
     }
 
