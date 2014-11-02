@@ -5353,7 +5353,7 @@ replace_token(char *string, char *token, int wherereplace, int total)
 static void
 inp_bsource_compat(struct line *card)
 {
-    char *equal_ptr, *str_ptr, *tmp_char, *new_str, *final_str;
+    char *equal_ptr, *str_ptr, *new_str, *final_str;
     struct line *new_line;
     int skip_control = 0;
 
@@ -5387,16 +5387,7 @@ inp_bsource_compat(struct line *card)
             if ((str_ptr = strstr(curr_line, "m={m}")) != NULL)
                 memcpy(str_ptr, "     ", 5);
             new_str = inp_modify_exp(equal_ptr + 1);
-
-            tmp_char = copy(curr_line);
-            equal_ptr = strchr(tmp_char, '=');
-            if (!equal_ptr) {
-                fprintf(stderr, "ERROR: mal formed B line:\n  %s\n", curr_line);
-                controlled_exit(EXIT_FAILURE);
-            }
-            /* cut the tmp_char after the equal sign */
-            equal_ptr[1] = '\0';
-            final_str = tprintf("%s %s", tmp_char, new_str);
+            final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line), curr_line, new_str);
 
             /* Copy old line numbers into new B source line */
             new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
@@ -5409,7 +5400,6 @@ inp_bsource_compat(struct line *card)
             card              = new_line;
 
             tfree(new_str);
-            tfree(tmp_char);
         } /* end of if 'b' */
     } /* end of for loop */
 }
