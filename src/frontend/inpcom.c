@@ -5392,7 +5392,7 @@ inp_bsource_compat(struct line *card)
             if ((str_ptr = strstr(curr_line, "m={m}")) != NULL)
                 memcpy(str_ptr, "     ", 5);
             /* scan the line and remove all '{' and '}' */
-            str_ptr = curr_line;
+            str_ptr = equal_ptr + 1;
             while (*str_ptr) {
                 if ((*str_ptr == '{') || (*str_ptr == '}'))
                     *str_ptr = ' ';
