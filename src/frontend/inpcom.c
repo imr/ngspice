@@ -5555,7 +5555,7 @@ inp_modify_exp(char* expr)
             str_ptr++;
             ustate = S_unary_minus;
         } else if (isalpha(actchar)) {
-            size_t i = 0;
+            int i = 0;
             if (ustate == S_unary_minus)
                 buf[i++] = '-';
 
