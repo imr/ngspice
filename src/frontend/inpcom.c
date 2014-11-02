@@ -5621,12 +5621,10 @@ inp_modify_exp(char* expr)
         } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&str_ptr, &error1, 0);
-            char   cvalue[19];
             /* unary -, change sign */
             if (ustate == 2)
                 dvalue *= -1;
-            sprintf(cvalue, "%18.10e", dvalue);
-            wl->wl_word = copy(cvalue);
+            wl->wl_word = tprintf("%18.10e", dvalue);
             ustate = 0; /* we have a number */
             /* skip the `unit', FIXME INPevaluate() should do this */
             while (isalpha(*str_ptr))
