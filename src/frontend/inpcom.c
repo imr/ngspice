@@ -5517,11 +5517,12 @@ inp_modify_exp(char* expr)
             (c == '+') || (c == '?') || (c == ':'))
         {
             if ((c == '*') && (s[1] == '*')) {
-                c = '^';
+                wl->wl_word = tprintf("**");
+                s += 2;
+            } else {
+                wl->wl_word = tprintf("%c", c);
                 s++;
             }
-            wl->wl_word = tprintf("%c", c);
-            s++;
             if (c == ')')
                 state = S_value;
             else
