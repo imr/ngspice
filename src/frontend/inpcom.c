@@ -5503,6 +5503,7 @@ inp_modify_exp(char* expr)
     for (s = expr; *s; s++)
         if ((*s == '{') || (*s == '}'))
             *s = ' ';
+
     /* scan the expression */
     s = expr;
     while (*s != '\0') {
@@ -5512,6 +5513,7 @@ inp_modify_exp(char* expr)
             break;
         c = *s;
         wl_append_word(&wlist, &wl, NULL);
+
         if ((c == ',') || (c == '(') || (c == ')') ||
             (c == '*') || (c == '/') || (c == '^') ||
             (c == '+') || (c == '?') || (c == ':'))
@@ -5550,15 +5552,16 @@ inp_modify_exp(char* expr)
             s++;
             state = S_unary_minus;
         } else if (isalpha(c)) {
+
             char buf[512];
             int i = 0;
+
             if (state == S_unary_minus)
                 buf[i++] = '-';
 
             if (((c == 'v') || (c == 'i')) && (s[1] == '(')) {
-                while (*s != ')') {
+                while (*s != ')')
                     buf[i++] = *s++;
-                }
                 buf[i++] = *s++;
                 buf[i] = '\0';
                 wl->wl_word = copy(buf);
@@ -5620,6 +5623,7 @@ inp_modify_exp(char* expr)
 
     expr = wl_flatten(wlist);
     wl_free(wlist);
+
     return expr;
 }
 
