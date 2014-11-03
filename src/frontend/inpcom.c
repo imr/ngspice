@@ -5495,34 +5495,34 @@ inp_temper_compat(struct line *card)
 static char *
 inp_modify_exp(char* expr)
 {
-    char * str_ptr;
+    char *s;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
     enum { S_value = 0, S_operator, S_unary_minus } ustate = S_value;
 
     /* scan the expression and remove all '{' and '}' */
-    for (str_ptr = expr; *str_ptr; str_ptr++)
-        if ((*str_ptr == '{') || (*str_ptr == '}'))
-            *str_ptr = ' ';
+    for (s = expr; *s; s++)
+        if ((*s == '{') || (*s == '}'))
+            *s = ' ';
     /* scan the expression */
-    str_ptr = expr;
-    while (*str_ptr != '\0') {
+    s = expr;
+    while (*s != '\0') {
         char actchar;
-        str_ptr = skip_ws(str_ptr);
-        if (*str_ptr == '\0')
+        s = skip_ws(s);
+        if (*s == '\0')
             break;
-        actchar = *str_ptr;
+        actchar = *s;
         wl_append_word(&wlist, &wl, NULL);
         if ((actchar == ',') || (actchar == '(') || (actchar == ')') ||
             (actchar == '*') || (actchar == '/') || (actchar == '^') ||
             (actchar == '+') || (actchar == '?') || (actchar == ':'))
         {
-            if ((actchar == '*') && (str_ptr[1] == '*')) {
+            if ((actchar == '*') && (s[1] == '*')) {
                 actchar = '^';
-                str_ptr++;
+                s++;
             }
             wl->wl_word = tprintf("%c", actchar);
-            str_ptr++;
+            s++;
             if (actchar == ')')
                 ustate = S_value;
             else
@@ -5531,50 +5531,50 @@ inp_modify_exp(char* expr)
                    (actchar == '!') || (actchar == '='))
         {
             /* >=, <=, !=, ==, <>, ... */
-            char *beg = str_ptr++;
-            if ((*str_ptr == '=') || (*str_ptr == '<') || (*str_ptr == '>'))
-                str_ptr++;
-            wl->wl_word = copy_substring(beg, str_ptr);
+            char *beg = s++;
+            if ((*s == '=') || (*s == '<') || (*s == '>'))
+                s++;
+            wl->wl_word = copy_substring(beg, s);
             ustate = S_operator;
         } else if ((actchar == '|') || (actchar == '&')) {
-            char *beg = str_ptr++;
-            if ((*str_ptr == '|') || (*str_ptr == '&'))
-                str_ptr++;
-            wl->wl_word = copy_substring(beg, str_ptr);
+            char *beg = s++;
+            if ((*s == '|') || (*s == '&'))
+                s++;
+            wl->wl_word = copy_substring(beg, s);
             ustate = S_operator;
         } else if ((actchar == '-') && (ustate == S_value)) {
             wl->wl_word = tprintf("%c", actchar);
-            str_ptr++;
+            s++;
             ustate = S_operator;
         } else if ((actchar == '-') && (ustate == S_operator)) {
             wl->wl_word = copy("");
-            str_ptr++;
+            s++;
             ustate = S_unary_minus;
         } else if (isalpha(actchar)) {
             int i = 0;
             if (ustate == S_unary_minus)
                 buf[i++] = '-';
 
-            if (((actchar == 'v') || (actchar == 'i')) && (str_ptr[1] == '(')) {
-                while (*str_ptr != ')') {
-                    buf[i++] = *str_ptr++;
+            if (((actchar == 'v') || (actchar == 'i')) && (s[1] == '(')) {
+                while (*s != ')') {
+                    buf[i++] = *s++;
                 }
-                buf[i] = *str_ptr++;
+                buf[i] = *s++;
                 buf[i+1] = '\0';
                 wl->wl_word = copy(buf);
             } else {
-                while (isalnum(*str_ptr) ||
-                       (*str_ptr == '!') || (*str_ptr == '#') ||
-                       (*str_ptr == '$') || (*str_ptr == '%') ||
-                       (*str_ptr == '_') || (*str_ptr == '[') ||
-                       (*str_ptr == ']'))
+                while (isalnum(*s) ||
+                       (*s == '!') || (*s == '#') ||
+                       (*s == '$') || (*s == '%') ||
+                       (*s == '_') || (*s == '[') ||
+                       (*s == ']'))
                 {
-                    buf[i++] = *str_ptr++;
+                    buf[i++] = *s++;
                 }
                 buf[i] = '\0';
                 /* no parens {} around time, hertz, temper, the constants
                    pi and e which are defined in inpptree.c, around pwl and temp. coeffs */
-                if ((*str_ptr == '(') ||
+                if ((*s == '(') ||
                     cieq(buf, "hertz") || cieq(buf, "temper") ||
                     cieq(buf, "time") || cieq(buf, "pi") ||
                     cieq(buf, "e") || cieq(buf, "pwl"))
@@ -5584,12 +5584,12 @@ inp_modify_exp(char* expr)
                 } else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
                            cieq(buf, "reciproctc"))
                 {
-                    str_ptr = skip_ws(str_ptr);
+                    s = skip_ws(s);
                     /* no {} around tc1 = or tc2 = , these are temp coeffs. */
-                    if (str_ptr[0] == '='  &&  str_ptr[1] != '=') {
+                    if (s[0] == '='  &&  s[1] != '=') {
                         buf[i++] = '=';
                         buf[i] = '\0';
-                        str_ptr++;
+                        s++;
                         wl->wl_word = copy(buf);
                     } else {
                         wl->wl_word = tprintf("{%s}", buf);
@@ -5604,17 +5604,17 @@ inp_modify_exp(char* expr)
         } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
             int error1;
             /* allow 100p, 5MEG etc. */
-            double dvalue = INPevaluate(&str_ptr, &error1, 0);
+            double dvalue = INPevaluate(&s, &error1, 0);
             if (ustate == S_unary_minus)
                 dvalue *= -1;
             wl->wl_word = tprintf("%18.10e", dvalue);
             ustate = S_value;
             /* skip the `unit', FIXME INPevaluate() should do this */
-            while (isalpha(*str_ptr))
-                str_ptr++;
+            while (isalpha(*s))
+                s++;
         } else { /* strange char */
-            printf("Preparing expression for numparam\nWhat is this?\n%s\n", str_ptr);
-            wl->wl_word = tprintf("%c", *str_ptr++);
+            printf("Preparing expression for numparam\nWhat is this?\n%s\n", s);
+            wl->wl_word = tprintf("%c", *s++);
         }
     }
 
