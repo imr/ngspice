@@ -5507,28 +5507,28 @@ inp_modify_exp(char* expr)
     /* scan the expression */
     s = expr;
     while (*s != '\0') {
-        char actchar;
+        char c;
         s = skip_ws(s);
         if (*s == '\0')
             break;
-        actchar = *s;
+        c = *s;
         wl_append_word(&wlist, &wl, NULL);
-        if ((actchar == ',') || (actchar == '(') || (actchar == ')') ||
-            (actchar == '*') || (actchar == '/') || (actchar == '^') ||
-            (actchar == '+') || (actchar == '?') || (actchar == ':'))
+        if ((c == ',') || (c == '(') || (c == ')') ||
+            (c == '*') || (c == '/') || (c == '^') ||
+            (c == '+') || (c == '?') || (c == ':'))
         {
-            if ((actchar == '*') && (s[1] == '*')) {
-                actchar = '^';
+            if ((c == '*') && (s[1] == '*')) {
+                c = '^';
                 s++;
             }
-            wl->wl_word = tprintf("%c", actchar);
+            wl->wl_word = tprintf("%c", c);
             s++;
-            if (actchar == ')')
+            if (c == ')')
                 ustate = S_value;
             else
                 ustate = S_operator;
-        } else if ((actchar == '>') || (actchar == '<') ||
-                   (actchar == '!') || (actchar == '='))
+        } else if ((c == '>') || (c == '<') ||
+                   (c == '!') || (c == '='))
         {
             /* >=, <=, !=, ==, <>, ... */
             char *beg = s++;
@@ -5536,26 +5536,26 @@ inp_modify_exp(char* expr)
                 s++;
             wl->wl_word = copy_substring(beg, s);
             ustate = S_operator;
-        } else if ((actchar == '|') || (actchar == '&')) {
+        } else if ((c == '|') || (c == '&')) {
             char *beg = s++;
             if ((*s == '|') || (*s == '&'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
             ustate = S_operator;
-        } else if ((actchar == '-') && (ustate == S_value)) {
-            wl->wl_word = tprintf("%c", actchar);
+        } else if ((c == '-') && (ustate == S_value)) {
+            wl->wl_word = tprintf("%c", c);
             s++;
             ustate = S_operator;
-        } else if ((actchar == '-') && (ustate == S_operator)) {
+        } else if ((c == '-') && (ustate == S_operator)) {
             wl->wl_word = copy("");
             s++;
             ustate = S_unary_minus;
-        } else if (isalpha(actchar)) {
+        } else if (isalpha(c)) {
             int i = 0;
             if (ustate == S_unary_minus)
                 buf[i++] = '-';
 
-            if (((actchar == 'v') || (actchar == 'i')) && (s[1] == '(')) {
+            if (((c == 'v') || (c == 'i')) && (s[1] == '(')) {
                 while (*s != ')') {
                     buf[i++] = *s++;
                 }
@@ -5601,7 +5601,7 @@ inp_modify_exp(char* expr)
                 }
             }
             ustate = S_value;
-        } else if (isdigit(actchar) || (actchar == '.')) { /* allow .5 format too */
+        } else if (isdigit(c) || (c == '.')) { /* allow .5 format too */
             int error1;
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&s, &error1, 0);
