@@ -5498,7 +5498,7 @@ inp_modify_exp(char* expr)
     char *s;
     wordlist *wl = NULL, *wlist = NULL;
     char buf[512];
-    enum { S_value = 0, S_operator, S_unary_minus } ustate = S_value;
+    enum { S_value = 0, S_operator, S_unary_minus } state = S_value;
 
     /* scan the expression and remove all '{' and '}' */
     for (s = expr; *s; s++)
@@ -5524,9 +5524,9 @@ inp_modify_exp(char* expr)
             wl->wl_word = tprintf("%c", c);
             s++;
             if (c == ')')
-                ustate = S_value;
+                state = S_value;
             else
-                ustate = S_operator;
+                state = S_operator;
         } else if ((c == '>') || (c == '<') ||
                    (c == '!') || (c == '='))
         {
@@ -5535,24 +5535,24 @@ inp_modify_exp(char* expr)
             if ((*s == '=') || (*s == '<') || (*s == '>'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
-            ustate = S_operator;
+            state = S_operator;
         } else if ((c == '|') || (c == '&')) {
             char *beg = s++;
             if ((*s == '|') || (*s == '&'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
-            ustate = S_operator;
-        } else if ((c == '-') && (ustate == S_value)) {
+            state = S_operator;
+        } else if ((c == '-') && (state == S_value)) {
             wl->wl_word = tprintf("%c", c);
             s++;
-            ustate = S_operator;
-        } else if ((c == '-') && (ustate == S_operator)) {
+            state = S_operator;
+        } else if ((c == '-') && (state == S_operator)) {
             wl->wl_word = copy("");
             s++;
-            ustate = S_unary_minus;
+            state = S_unary_minus;
         } else if (isalpha(c)) {
             int i = 0;
-            if (ustate == S_unary_minus)
+            if (state == S_unary_minus)
                 buf[i++] = '-';
 
             if (((c == 'v') || (c == 'i')) && (s[1] == '(')) {
@@ -5600,15 +5600,15 @@ inp_modify_exp(char* expr)
                     wl->wl_word = tprintf("{%s}", buf);
                 }
             }
-            ustate = S_value;
+            state = S_value;
         } else if (isdigit(c) || (c == '.')) { /* allow .5 format too */
             int error1;
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&s, &error1, 0);
-            if (ustate == S_unary_minus)
+            if (state == S_unary_minus)
                 dvalue *= -1;
             wl->wl_word = tprintf("%18.10e", dvalue);
-            ustate = S_value;
+            state = S_value;
             /* skip the `unit', FIXME INPevaluate() should do this */
             while (isalpha(*s))
                 s++;
