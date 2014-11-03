@@ -5559,8 +5559,8 @@ inp_modify_exp(char* expr)
                 while (*s != ')') {
                     buf[i++] = *s++;
                 }
-                buf[i] = *s++;
-                buf[i+1] = '\0';
+                buf[i++] = *s++;
+                buf[i] = '\0';
                 wl->wl_word = copy(buf);
             } else {
                 while (isalnum(*s) ||
