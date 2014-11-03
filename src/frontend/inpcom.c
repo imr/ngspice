@@ -5506,12 +5506,10 @@ inp_modify_exp(char* expr)
 
     /* scan the expression */
     s = expr;
-    while (*s != '\0') {
-        char c;
-        s = skip_ws(s);
-        if (*s == '\0')
-            break;
-        c = *s;
+    while (*(s = skip_ws(s))) {
+
+        char c = *s;
+
         wl_append_word(&wlist, &wl, NULL);
 
         if ((c == ',') || (c == '(') || (c == ')') ||
