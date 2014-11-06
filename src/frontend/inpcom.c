@@ -5577,12 +5577,12 @@ inp_modify_exp(char* expr)
                         s++;
                         wl->wl_word = copy(buf);
                     } else {
-                        wl->wl_word = tprintf("{%s}", buf);
+                        wl->wl_word = tprintf("({%s})", buf);
                     }
 
                 } else {
                     /* {} around all other tokens */
-                    wl->wl_word = tprintf("{%s}", buf);
+                    wl->wl_word = tprintf("({%s})", buf);
                 }
             }
         } else if (isdigit(c) || (c == '.')) { /* allow .5 format too */
