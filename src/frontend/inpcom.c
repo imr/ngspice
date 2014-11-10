@@ -3328,8 +3328,8 @@ inp_fix_param_values(struct line *c)
                 *beg_of_str == '{' ||
                 *beg_of_str == '.' ||
                 *beg_of_str == '"' ||
-                (*beg_of_str == '-' && isdigit(beg_of_str[1])) ||
-                (*beg_of_str == '-' && beg_of_str[1] == '.' && isdigit(beg_of_str[2])) ||
+                ((*beg_of_str == '-' || *beg_of_str == '+') && isdigit(beg_of_str[1])) ||
+                ((*beg_of_str == '-' || *beg_of_str == '+') && beg_of_str[1] == '.' && isdigit(beg_of_str[2])) ||
                 ciprefix("true", beg_of_str) ||
                 ciprefix("false", beg_of_str))
             {
