@@ -724,6 +724,7 @@ cp_variablesubst(wordlist *wlist)
         t = wl->wl_word;
         i = 0;
         while ((s = strchr(t, cp_dol)) != NULL) {
+            char *s_dollar = s, *end;
             while (t < s)
                 wbuf[i++] = *t++;
             wbuf[i] = '\0';
@@ -731,22 +732,17 @@ cp_variablesubst(wordlist *wlist)
             s = buf;
             /* Get s and t past the end of the var name. */
             {
-                char *end = span_var_expr(t);
+                end = span_var_expr(t);
                 while (t < end)
                     *s++ = *t++;
             }
             *s = '\0';
             nwl = vareval(buf);
-            if (i) {
+         if (nwl) {
                 (void) strcpy(buf, wbuf);
-                if (nwl) {
                     (void) strcat(buf, nwl->wl_word);
                     tfree(nwl->wl_word);
                     nwl->wl_word = copy(buf);
-                } else {
-                    nwl = wl_cons(copy(buf), NULL);
-                }
-            }
 
             (void) strcpy(tbuf, t); /* Save t*/
             if ((wl = wl_splice(wl, nwl)) == NULL) {/* this frees wl */
@@ -756,6 +752,7 @@ cp_variablesubst(wordlist *wlist)
             /* Go back to beginning of wlist */
             for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
                 ;
+            i = strlen(wl->wl_word);
             /* limit copying to buffer of size BSIZE_SP */
             (void) strncpy(buf, wl->wl_word, BSIZE_SP - 1 - strlen(tbuf));
             i = (int) strlen(buf);
@@ -765,6 +762,21 @@ cp_variablesubst(wordlist *wlist)
 
             tfree(wl->wl_word);
             wl->wl_word = copy(buf);
+         } else {
+             for (s = s_dollar; *end; )
+                 *s++ = *end++;
+             *s = '\0';
+             if (s == wl->wl_word) {
+                 wordlist *next = wl->wl_next;
+                 if (wlist == wl)
+                     wlist = next;
+                 wl_delete_slice(wl, next);
+                 if (!next)
+                     return wlist;
+                 wl = next;
+             }
+         }
+
             t = &wl->wl_word[i];
             s = wl->wl_word;
             for (i = 0; s < t; s++)

@@ -1,0 +1,24 @@
+
+Circuit: test for regression of already fixed bugs
+
+TEST: >< should be ><
+TEST: >1< should be >1<
+TEST: >2< should be >2<
+TEST: 1 2 3 baz bar
+TEST: should be >1 2 3 baz bar<
+TEST: >1< should be >1<
+TEST: end
+TEST: mi au
+TEST: should be >mi au<
+TEST: >mi< should be >mi<
+TEST: mi au
+TEST: should be >mi au<
+TEST: >mi< should be >mi<
+TEST: mi au
+TEST: should be >mi au<
+TEST: >mi< should be >mi<
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+No. of Data Rows : 1

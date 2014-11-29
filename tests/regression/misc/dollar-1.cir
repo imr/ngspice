@@ -1,0 +1,43 @@
+test $var expansion
+
+v1 1 0 dc = 0
+
+.control
+
+set foo = ""
+echo "TEST:" ">{$foo}< should be ><"
+
+set foo = ( 1 2 3 )
+set bar = 2
+echo "TEST:" ">$foo[0]< should be >1<"
+echo "TEST:" ">$foo[$bar]< should be >2<"
+
+set foo = ( $foo baz  bar )
+echo "TEST:" $foo
+echo "TEST:" "should be >1 2 3 baz bar<"
+echo "TEST:" ">$foo[0]< should be >1<"
+
+set aux = ( )
+echo "TEST:" $aux "end"
+
+set foo = ( $aux mi au )
+set bar = ( mi $aux au )
+set baz = ( mi au $aux )
+
+echo "TEST:" $foo
+echo "TEST:" "should be >mi au<"
+echo "TEST:" ">$foo[0]< should be >mi<"
+
+echo "TEST:" $bar
+echo "TEST:" "should be >mi au<"
+echo "TEST:" ">$bar[0]< should be >mi<"
+
+echo "TEST:" $baz
+echo "TEST:" "should be >mi au<"
+echo "TEST:" ">$baz[0]< should be >mi<"
+
+quit 0
+
+.endc
+
+.end
