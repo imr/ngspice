@@ -715,72 +715,51 @@ span_var_expr(char *t)
 wordlist *
 cp_variablesubst(wordlist *wlist)
 {
-    wordlist *wl, *nwl;
-    char *s, *t, buf[BSIZE_SP], wbuf[BSIZE_SP], tbuf[BSIZE_SP];
-    /* tbuf holds current word after wl_splice() calls free() on it */
-    int i;
+    wordlist *wl;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
-        t = wl->wl_word;
-        i = 0;
-        while ((s = strchr(t, cp_dol)) != NULL) {
-            char *s_dollar = s, *end;
-            while (t < s)
-                wbuf[i++] = *t++;
-            wbuf[i] = '\0';
-            t++;
-            s = buf;
-            /* Get s and t past the end of the var name. */
-            {
-                end = span_var_expr(t);
-                while (t < end)
-                    *s++ = *t++;
+
+        char *s_dollar;
+        int i = 0;
+
+        while ((s_dollar = strchr(wl->wl_word + i, cp_dol)) != NULL) {
+
+            int prefix_len = (int) (s_dollar - wl->wl_word);
+
+            char *tail = span_var_expr(s_dollar + 1);
+            char *var = copy_substring(s_dollar + 1, tail);
+
+            wordlist *nwl = vareval(var);
+            tfree(var);
+
+            if (nwl) {
+                char *x = nwl->wl_word;
+                char *tail_ = copy(tail);
+                nwl->wl_word = tprintf("%.*s%s", prefix_len, wl->wl_word, nwl->wl_word);
+                free(x);
+                if (wlist == wl)
+                    wlist = nwl;
+                wl = wl_splice(wl, nwl);
+                i = strlen(wl->wl_word);
+                x = wl->wl_word;
+                wl->wl_word = tprintf("%s%s", wl->wl_word, tail_);
+                free(x);
+                free(tail_);
+            } else if (prefix_len || *tail) {
+                char *x = wl->wl_word;
+                wl->wl_word = tprintf("%.*s%s", prefix_len, wl->wl_word, tail);
+                i = prefix_len;
+                free(x);
+            } else {
+                wordlist *next = wl->wl_next;
+                if (wlist == wl)
+                    wlist = next;
+                wl_delete_slice(wl, next);
+                if (!next)
+                    return wlist;
+                wl = next;
+                i = 0;
             }
-            *s = '\0';
-            nwl = vareval(buf);
-         if (nwl) {
-                (void) strcpy(buf, wbuf);
-                    (void) strcat(buf, nwl->wl_word);
-                    tfree(nwl->wl_word);
-                    nwl->wl_word = copy(buf);
-
-            (void) strcpy(tbuf, t); /* Save t*/
-            if ((wl = wl_splice(wl, nwl)) == NULL) {/* this frees wl */
-                wl_free(nwl);
-                return (NULL);
-            }
-            /* Go back to beginning of wlist */
-            for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
-                ;
-            i = strlen(wl->wl_word);
-            /* limit copying to buffer of size BSIZE_SP */
-            (void) strncpy(buf, wl->wl_word, BSIZE_SP - 1 - strlen(tbuf));
-            i = (int) strlen(buf);
-            if (i == BSIZE_SP - 1)
-                fprintf(stderr, "\nWarning: output truncated to %d characters!\n\n", i);
-            (void) strcat(buf, tbuf); /* tbuf is used here only */
-
-            tfree(wl->wl_word);
-            wl->wl_word = copy(buf);
-         } else {
-             for (s = s_dollar; *end; )
-                 *s++ = *end++;
-             *s = '\0';
-             if (s == wl->wl_word) {
-                 wordlist *next = wl->wl_next;
-                 if (wlist == wl)
-                     wlist = next;
-                 wl_delete_slice(wl, next);
-                 if (!next)
-                     return wlist;
-                 wl = next;
-             }
-         }
-
-            t = &wl->wl_word[i];
-            s = wl->wl_word;
-            for (i = 0; s < t; s++)
-                wbuf[i++] = *s;
         }
     }
 
