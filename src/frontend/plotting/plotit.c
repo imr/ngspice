@@ -234,8 +234,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     char *xn;
     int i, j, xt;
     double tt;
-    wordlist *wwl;
-    char cline[BSIZE_SP], buf[BSIZE_SP], *pname;
+    wordlist *wwl, *tail;
+    char *cline = NULL, buf[BSIZE_SP], *pname;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
 
     double tstep, tstart, tstop, ttime;
@@ -269,23 +269,26 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     nylabel = getword(wwl, "ylabel");
     ntitle = getword(wwl, "title");
     pname = wl_flatten(wwl->wl_next);
-    (void) sprintf(cline, "plot %s", pname);
+    tail = wl_cons(tprintf("plot %s", pname), NULL);
     tfree(pname);
     wl_free(wwl);
 
     /* add title, xlabel or ylabel, if available, with quotes '' */
     if (nxlabel) {
-        sprintf(cline, "%s xlabel '%s'", cline, nxlabel);
+        tail = wl_cons(tprintf("xlabel '%s'", nxlabel), tail);
         tfree(nxlabel);
     }
     if (nylabel) {
-        sprintf(cline, "%s ylabel '%s'", cline, nylabel);
+        tail = wl_cons(tprintf("ylabel '%s'", nylabel), tail);
         tfree(nylabel);
     }
     if (ntitle) {
-        sprintf(cline, "%s title '%s'", cline, ntitle);
+        tail = wl_cons(tprintf("title '%s'", ntitle), tail);
         tfree(ntitle);
     }
+
+    cline = wl_flatten(wl_reverse(tail));
+    wl_free(tail);
 
     /* Now extract all the parameters. */
 
@@ -1030,6 +1033,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     rtn = TRUE;
 
 quit:
+    tfree(cline);
     free_pnode(names);
     FREE(title);
 quit1:
