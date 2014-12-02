@@ -5888,7 +5888,7 @@ static void
 inp_fix_temper_in_param(struct line *deck)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
-    char *beg_pstr, *beg_tstr, *end_tstr, *funcbody, *funcname;
+    char *funcbody, *funcname;
     struct func_temper *new_func = NULL, *beg_func;
     struct line *card;
 
@@ -5931,38 +5931,54 @@ inp_fix_temper_in_param(struct line *deck)
         }
 
         if (ciprefix(".param", curr_line)) {
-            beg_tstr = curr_line;
-            while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
-                if (beg_tstr[6] == '=') {
-                    fprintf(stderr, "Error: you cannot assign a value to TEMPER\n");
-                    fprintf(stderr, "  Line no. %d, %s\n", card->li_linenum, curr_line);
-                    controlled_exit(EXIT_BAD);
-                }
-                end_tstr = beg_tstr;
-                /* find function name and function body: We may have multiple
-                   params in a linie!
-                */
-                while ((*beg_tstr) != '=')
-                    beg_tstr--;
-                /* go back over param name */
-                beg_pstr = skip_back_non_ws(skip_back_ws(beg_tstr));
-                /* get function name from parameter name */
-                funcname = copy_substring(beg_pstr, beg_tstr);
-                /* find end of function body */
-                while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
-                    end_tstr++;
-                /* go back over next param name */
-                if (*end_tstr == '=') {
-                    end_tstr = skip_back_non_ws(skip_back_ws(end_tstr));
-                    end_tstr--;
-                }
 
-                funcbody = copy_substring(beg_tstr + 1, end_tstr);
-                inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
-                tfree(funcbody);
+            char *p, *temper, *equal_ptr, *lhs_b, *lhs_e;
 
-                beg_tstr = end_tstr;
+            temper = search_identifier(curr_line, "temper", curr_line);
+
+            if (!temper)
+                continue;
+
+            equal_ptr = find_assignment(curr_line);
+
+            if (!equal_ptr) {
+                fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
             }
+
+            /* .param lines with `,' separated multiple parameters
+             *    must have been split in inp_split_multi_param_lines()
+             */
+
+            if (find_assignment(equal_ptr + 1)) {
+                fprintf(stderr, "ERROR: internal error on line '%s'!\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }
+
+            lhs_b = skip_non_ws(curr_line);   // eat .param
+            lhs_b = skip_ws(lhs_b);
+
+            lhs_e = skip_back_ws_(equal_ptr, curr_line);
+
+            /* skip if this is a function already */
+            p = strpbrk(lhs_b, "(,)");
+            if (p && p < lhs_e)
+                continue;
+
+            if (temper < equal_ptr) {
+                fprintf(stderr,
+                        "Error: you cannot assign a value to TEMPER\n"
+                        "  Line no. %d, %s\n",
+                        card->li_linenum, curr_line);
+                controlled_exit(EXIT_BAD);
+            }
+
+            funcname = copy_substring(lhs_b, lhs_e);
+            funcbody = copy(equal_ptr + 1);
+
+            inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+
+            tfree(funcbody);
         }
     }
 
