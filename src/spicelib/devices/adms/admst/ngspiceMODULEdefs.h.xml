@@ -322,7 +322,7 @@ typedef struct s$(module)model {         /* model structure */
 
 #include &quot;$(module)ext.h&quot;
 <admst:if test="[not(nilled(analogfunction))]">
-#include &quot;analogfunction.h&quot;
+#include &quot;$(module).analogfunction.h&quot;
 </admst:if>
 
 #endif /*$(module)*/
