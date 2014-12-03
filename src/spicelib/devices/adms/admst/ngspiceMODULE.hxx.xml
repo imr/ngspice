@@ -1051,6 +1051,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='equ']">
       <admst:return name="bname" value="=="/>
     </admst:when>
+    <admst:when test="[name='multmod']">
+      <admst:return name="bname" value="%%"/>
+    </admst:when>
     <admst:when test="[name='notequ']">
       <admst:return name="bname" value="!="/>
     </admst:when>
