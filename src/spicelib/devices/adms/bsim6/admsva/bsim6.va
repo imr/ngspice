@@ -181,7 +181,7 @@
 				Rend = Rsh * Weffcj / (3.0 * nuEnd * (DMCG + DMCI)); \
 		end \
 		else begin \
-			`STROBE2("Warning: (instance %M) Specified RGEO = %d not matched (BSIM6RdsEndIso), \
+			`STROBE2("Warning: (instance BSIM6) Specified RGEO = %d not matched (BSIM6RdsEndIso), \
 			Rend is set to zero.", rgeo); \
 			Rend = 0.0; \
 		end \
@@ -203,7 +203,7 @@
 				Rend = Rsh * Weffcj / (3.0 * nuEnd * (DMCG + DMCI)); \
 		end \
 		else begin \
-			`STROBE2("Warning: (instance %M) Specified RGEO=%d not matched (BSIM6RdsEndIso \
+			`STROBE2("Warning: (instance BSIM6) Specified RGEO=%d not matched (BSIM6RdsEndIso \
 			type 2), Rend is set to zero.", rgeo); \
 			Rend = 0.0; \
 		end \
@@ -229,7 +229,7 @@
 					Rend = Rsh * Weffcj / (6.0 * nuEnd * DMCG); \
 			end \
 			else begin \
-				`STROBE2("Warning: (instance %M) Specified RGEO = %d not matched (BSIM6RdsEndSha), \
+				`STROBE2("Warning: (instance BSIM6) Specified RGEO = %d not matched (BSIM6RdsEndSha), \
 				Rend is set to zero.", rgeo); \
 				Rend = 0.0; \
 			end \
@@ -251,7 +251,7 @@
 					Rend = Rsh * Weffcj / (6.0 * nuEnd * DMCG); \
 			end \
 			else begin \
-				`STROBE2("Warning: (instance %M) Specified RGEO=%d not matched (BSIM6RdsEndSha \
+				`STROBE2("Warning: (instance BSIM6) Specified RGEO=%d not matched (BSIM6RdsEndSha \
 				type 2), Rend is set to zero.", rgeo); \
 				Rend = 0.0; \
 			end \
@@ -373,7 +373,7 @@
 			end \
 		end \
 		else begin \
-			`STROBE2("Warning: (instance %M) Specified RGEO=%d not matched (BSIM6RdseffGeo \
+			`STROBE2("Warning: (instance BSIM6) Specified RGEO=%d not matched (BSIM6RdseffGeo \
 			), Rint is set to zero.", rgeo); \
 			Rint = 0.0; \
 		end \
@@ -384,7 +384,7 @@
 		else \
 			Rtot = Rint * Rend / (Rint + Rend); \
 		if (Rtot==0.0) \
-			`STROBE("Warning: (instance %M) Zero resistance returned from RdseffGeo"); \
+			`STROBE("Warning: (instance BSIM6) Zero resistance returned from RdseffGeo"); \
 	end
 
 //****************** Effective PS,PD,AS,AD Calculation. Ref: BSIM4 ****************************
@@ -475,7 +475,7 @@
                 	Ad = ADiso + (nf - 1.0) * ADsha;\
 		end \
 		else begin \
-			`STROBE2("Warning: (instance %M) Specified GEO=%d not matched (BSIM6RdseffGeo \
+			`STROBE2("Warning: (instance BSIM6) Specified GEO=%d not matched (BSIM6RdseffGeo \
 			), PS,PD,AS,AD set to zero.", geo); \
 			Ps = 0;\
                 	Pd = 0;\
@@ -2015,13 +2015,13 @@ analog begin
 
 	Lnew = L_mult + XL;
 	if (Lnew <= 0) begin
-		$strobe("Fatal: Ldrawn*LMLT+XL = %e for  %M is non-positive", Lnew);
+		$strobe("Fatal: Ldrawn*LMLT+XL = %e for  BSIM6 is non-positive", Lnew);
 		$finish(0);
 	end
 	W_by_NF = W_mult/NF ;
 	Wnew 	= W_by_NF +XW;
 	if (Wnew <= 0) begin
-		$strobe("Fatal: W/NF*WMLT+XW = %e for  %M is non-positive", Wnew);
+		$strobe("Fatal: W/NF*WMLT+XW = %e for  BSIM6 is non-positive", Wnew);
 		$finish(0);
 	end
 	// Binning
@@ -2037,41 +2037,41 @@ analog begin
 	dWIV		= WINT + WL * L_WLN + WW * W_WWN + WWL * LW_WLN_WWN;
 	Leff		= Lnew - 2.0*dLIV;
 	if (Leff <= 0) begin
-		$strobe("Fatal: Effective channel length = %e for  %M is non-positive", Leff);
+		$strobe("Fatal: Effective channel length = %e for  BSIM6 is non-positive", Leff);
 		$finish(0);
 	end else if (Leff<=1.0e-9)
-	$strobe("Warning: Effective channel length = %e for  %M is <= 1.0e-9. Recommended Leff >= 1e-8", Leff);
+	$strobe("Warning: Effective channel length = %e for  BSIM6 is <= 1.0e-9. Recommended Leff >= 1e-8", Leff);
 
 	Weff		= Wnew - 2.0*dWIV;
 	if (Weff <= 0) begin
-		$strobe("Fatal: Effective channel Width = %e for  %M is non-positive", Weff);
+		$strobe("Fatal: Effective channel Width = %e for  BSIM6 is non-positive", Weff);
 		$finish(0);
 	end else if (Weff<=1.0e-9)
-	$strobe("Warning: Effective channel width = %e for  %M is <= 1.0e-9. Recommended Weff >= 1e-8", Leff);
+	$strobe("Warning: Effective channel width = %e for  BSIM6 is <= 1.0e-9. Recommended Weff >= 1e-8", Leff);
 
 	//Leff and Weff for CV
 	dLCV		= DLC + LLC * L_LLN + LWC * W_LWN + LWLC * LW_LLN_LWN;
 	dWCV		= DWC + WLC * L_WLN + WWC * W_WWN + WWLC * LW_WLN_WWN;
 	Lact		= Lnew - 2.0*dLCV;
 	if (Lact <= 0) begin
-		$strobe("Fatal: Effective channel length for CV = %e for  %M is non-positive", Lact);
+		$strobe("Fatal: Effective channel length for CV = %e for  BSIM6 is non-positive", Lact);
 		$finish(0);
 	end else if (Lact<=1.0e-9)
-	$strobe("Warning: Effective channel length for CV = %e for  %M is <= 1.0e-9. Recommended Leff >= 1e-8", Leff);
+	$strobe("Warning: Effective channel length for CV = %e for  BSIM6 is <= 1.0e-9. Recommended Leff >= 1e-8", Leff);
 
 	Wact		= Wnew - 2.0*dWCV;
 	if (Wact <= 0) begin
-		$strobe("Fatal: Effective channel width for CV = %e for  %M is non-positive", Wact);
+		$strobe("Fatal: Effective channel width for CV = %e for  BSIM6 is non-positive", Wact);
 		$finish(0);
 	end else if (Wact<=1.0e-9)
-	$strobe("Warning: Effective channel width for CV = %e for  %M is <= 1.0e-9. Recommended Weff >= 1e-8", Leff);
+	$strobe("Warning: Effective channel width for CV = %e for  BSIM6 is <= 1.0e-9. Recommended Weff >= 1e-8", Leff);
 
 
 	//Weffcj for Diode, GIDL etc.
 	dWJ		= DWJ + WLC / pow(Lnew,WLN) + WWC / pow(Wnew,WWN) + WWLC / pow(Lnew,WLN) / pow(Wnew,WWN);
 	Weffcj		= Wnew - 2.0*dWJ;
 	if (Weffcj <= 0) begin
-		$strobe("Fatal: Effective channel width for S/D junctions = %e for  %M is non-positive", Weffcj);
+		$strobe("Fatal: Effective channel width for S/D junctions = %e for  BSIM6 is non-positive", Weffcj);
 		$finish(0);
 	end
 
@@ -2088,7 +2088,7 @@ analog begin
 	L_WLN1		= L_WLN;
 	if (DLBIN != 0) begin
 			if(DLBIN<=-Lnew) begin
-				$strobe("Fatal: DLBIN for  %M = %e is <= -Ldrawn*LMLT", DLBIN);
+				$strobe("Fatal: DLBIN for  BSIM6 = %e is <= -Ldrawn*LMLT", DLBIN);
 				$finish(0);
 			end else begin
 				L_LLN1		= pow(Lnew+DLBIN, -LLN);
@@ -2100,7 +2100,7 @@ analog begin
 	W_WWN1		= W_WWN;
 	if (DWBIN != 0) begin
 			if(DWBIN<=-Wnew) begin
-				$strobe("Fatal: DWBIN for  %M = %e is <= -Wdrawn*WMLT", DWBIN);
+				$strobe("Fatal: DWBIN for  BSIM6 = %e is <= -Wdrawn*WMLT", DWBIN);
 				$finish(0);
 			end else begin
 				W_LWN1		= pow(Wnew+DWBIN, -LWN);
@@ -2115,12 +2115,12 @@ analog begin
 
 	Leff1		= Lnew - 2.0*dLB + DLBIN;
 	if (Leff1 <= 0) begin
-		$strobe("Fatal: Effective channel length for binning = %e for  %M is non-positive", Leff1);
+		$strobe("Fatal: Effective channel length for binning = %e for  BSIM6 is non-positive", Leff1);
 		$finish(0);
 	end
 	Weff1		= Wnew - 2.0*dWB + DWBIN;
 	if (Weff1 <= 0) begin
-		$strobe("Fatal: Effective channel width for binning = %e for  %M is non-positive", Weff1);
+		$strobe("Fatal: Effective channel width for binning = %e for  BSIM6 is non-positive", Weff1);
 		$finish(0);
 	end
 
@@ -2674,7 +2674,7 @@ analog begin
 	else begin
 		Grgeltd = 1.0e3; /* mho */
 		if (RGATEMOD != 0)
-			`STROBE("Warning: (instance %M) The gate conductance reset to 1.0e3 mho.");
+			`STROBE("Warning: (instance BSIM6) The gate conductance reset to 1.0e3 mho.");
 	end
 `else
 	if(RGATEMOD != 0)
@@ -2881,7 +2881,7 @@ DevTemp = $temperature + DTEMP;
 	else
 		ASeff=temp_ASeff;
 	if(ASeff<0.0) begin
-		$strobe("Warning: (instance %M) ASeff = %e is negative, set to zero.", ASeff);
+		$strobe("Warning: (instance BSIM6) ASeff = %e is negative, set to zero.", ASeff);
 		ASeff=0.0;
 	end
 
@@ -2890,7 +2890,7 @@ DevTemp = $temperature + DTEMP;
 	else
 		ADeff=temp_ADeff;
 	if(ADeff<0.0) begin
-		$strobe("Warning: (instance %M) ADeff = %e is negative, set to zero.", ADeff);
+		$strobe("Warning: (instance BSIM6) ADeff = %e is negative, set to zero.", ADeff);
 		ADeff=0.0;
 	end
 
@@ -2903,7 +2903,7 @@ DevTemp = $temperature + DTEMP;
 	end else begin
 		PSeff=temp_PSeff;
 		if(PSeff<0.0) begin // final check
-			$strobe("Warning: (instance %M) PSeff = %e is negative.Set to 0.0", PSeff);
+			$strobe("Warning: (instance BSIM6) PSeff = %e is negative.Set to 0.0", PSeff);
 			PSeff=0.0;
 		end
 	end
@@ -2916,7 +2916,7 @@ DevTemp = $temperature + DTEMP;
 	end else begin
 		PDeff=temp_PDeff;
 		if(PDeff<0.0) begin // final check
-			$strobe("Warning: (instance %M) PDeff = %e is negative.Set to 0.0", PDeff);
+			$strobe("Warning: (instance BSIM6) PDeff = %e is negative.Set to 0.0", PDeff);
 			PDeff=0.0;
 		end
 	end
@@ -3053,7 +3053,7 @@ DevTemp = $temperature + DTEMP;
 							exp(-20.0 * T1 * T2) ) / Wdrn;
 			end
 			else
-				`STROBE("Warning: (Instance %M) No WPE as none of SCA, SCB, SCC, SC is given and/or SC not positive.");
+				`STROBE("Warning: (Instance BSIM6) No WPE as none of SCA, SCB, SCC, SC is given and/or SC not positive.");
 		end
 
 	end
