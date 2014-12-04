@@ -2636,26 +2636,23 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 <!-- analog//callfunctions -->
 <admst:template match="callfunction">
   <admst:choose>
+    <admst:when test="function[name='\$strobe']">
+      <admst:text format="printf("/>
+      <admst:join select="function/arguments" separator=",">
+      <admst:text format="%(e(tree))"/>
+      </admst:join>
+      <admst:text format=");\n"/>
+      <admst:text format="printf(&quot;\\n&quot;);\n"/>
+    </admst:when>
     <admst:when test="function[name='\$finish']">
-      <admst:text format="_finish("/>
-      <admst:join select="function/arguments" separator=",">%(e(tree))</admst:join>
+      <admst:text format="exit("/>
+      <admst:join select="function/arguments" separator=",">
+      <admst:text format="%(e(tree))"/>
+      </admst:join>
       <admst:text format=");\n"/>
     </admst:when>
     <admst:otherwise>
-      <admst:choose>
-        <admst:when test="function[name='\$strobe']">printf(</admst:when>
-        <admst:when test="function[name='\$warning']">_warning(</admst:when>
-        <admst:when test="function[name='\$error']">_error(</admst:when>
-        <admst:when test="function[name='\$stop']">_stop(</admst:when>
-        <admst:otherwise>
-          <admst:fatal format="function not supported: %(function/name)\n"/>
-        </admst:otherwise>
-      </admst:choose>
-      <admst:join select="function/arguments" separator=",">
-        %(e(tree))
-        <admst:if test="[position(.)=1]">&quot;\\n&quot;</admst:if>
-      </admst:join>
-      <admst:text format="); fflush(stdout);\n"/>
+      <admst:text format="%(function/name): not supported by this interface\n"/>
     </admst:otherwise>
   </admst:choose>
 </admst:template>
