@@ -65,7 +65,7 @@ TWOdopingValue(DOPprofile *pProfile, DOPtable *pTable, double x,
     argL = argY / pProfile->LAT_RATIO;
   }
   if ( pProfile->rotate ) {
-    argP = sqrt(argP*argP + argL*argL);
+    argP = hypot(argP, argL);
     argL = 0.0;
   }
   

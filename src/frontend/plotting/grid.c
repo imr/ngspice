@@ -778,7 +778,7 @@ polargrid(GRAPH *graph)
     /* Figure out the minimum and maximum radii we're dealing with. */
     mx = (graph->data.xmin + graph->data.xmax) / 2;
     my = (graph->data.ymin + graph->data.ymax) / 2;
-    d = sqrt(mx * mx + my * my);
+    d = hypot(mx, my);
     maxrad = d + (graph->data.xmax - graph->data.xmin) / 2;
     minrad = d - (graph->data.xmax - graph->data.xmin) / 2;
 
@@ -862,7 +862,7 @@ drawpolargrid(GRAPH *graph)
     /* The distance from the center of the plotting area to the center of
      * the logical area.
      */
-    dist = (int)sqrt((double) (relcx * relcx + relcy * relcy));
+    dist = (int)hypot(relcx, relcy);
 
     SetLinestyle(0);
     DevDrawArc(graph->grid.xaxis.circular.center,
@@ -987,7 +987,7 @@ adddeglabel(GRAPH *graph, int deg, int x, int y, int cx, int cy, int lx, int ly)
     int d, w, h;
     double angle;
 
-    if (sqrt((double) (x - cx) * (x - cx) + (y - cy) * (y - cy)) < MINDIST)
+    if (hypot(x - cx, y - cy) < MINDIST)
         return;
     (void) sprintf(buf, "%d", deg);
     w = graph->fontwidth * (int) (strlen(buf) + 1);
@@ -1124,7 +1124,7 @@ drawsmithgrid(GRAPH *graph)
     /* Figure out the minimum and maximum radii we're dealing with. */
     mx = (graph->datawindow.xmin + graph->datawindow.xmax) / 2;
     my = (graph->datawindow.ymin + graph->datawindow.ymax) / 2;
-    d = sqrt(mx * mx + my * my);
+    d = hypot(mx, my);
     maxrad = d + (graph->datawindow.xmax - graph->datawindow.xmin) / 2;
 
     mag = (int)floor(mylog10(maxrad));
@@ -1419,7 +1419,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
     cliprad = (double) icliprad;
     x = cx - clipx;
     y = cy - clipy;
-    dist = sqrt((double) (x * x + y * y));
+    dist = hypot(x, y);
 
     if (!rad || !cliprad)
         return (-1);
@@ -1469,7 +1469,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
 
     tx = cos(start) * rad + x;
     ty = sin(start) * rad + y;
-    d = sqrt((double) tx * tx + ty * ty);
+    d = hypot(tx, ty);
     in = (d > cliprad) ? FALSE : TRUE;
 
     /* Now begin with start.  If the point is in, draw to either end, a1,

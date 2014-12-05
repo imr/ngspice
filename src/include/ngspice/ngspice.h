@@ -170,6 +170,7 @@ extern double x_asinh(double);
 extern double x_acosh(double);
 #define atanh x_atanh
 extern double x_atanh(double);
+#define hypot _hypot
 #endif
 #define strdup _strdup
 #define unlink _unlink

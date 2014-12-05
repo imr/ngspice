@@ -152,9 +152,9 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
     }
 
     /* Figure out the distances between the points */
-    a = sqrt((double) ((*x1 - cx) * (*x1 - cx) + (*y1 - cy) * (*y1 - cy)));
-    b = sqrt((double) ((*x2 - cx) * (*x2 - cx) + (*y2 - cy) * (*y2 - cy)));
-    c = sqrt((double) ((*x1 - *x2) * (*x1 - *x2) + (*y1 - *y2) * (*y1 - *y2)));
+    a = hypot(*x1 - cx, *y1 - cy);
+    b = hypot(*x2 - cx, *y2 - cy);
+    c = hypot(*x1 - *x2, *y1 - *y2);
 
     /* We have three cases now -- either the midpoint of the line is
      * closest to the origon, or point 1 or point 2 is.  Actually the
@@ -164,7 +164,7 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
      */
     tx = (*x1 + *x2) / 2;
     ty = (*y1 + *y2) / 2;
-    dt = sqrt((double) ((tx - cx) * (tx - cx) + (ty - cy) * (ty - cy)));
+    dt = hypot(tx - cx, ty - cy);
     if ((dt < a) && (dt < b)) {
         /* This is wierd -- round-off errors I guess. */
         tt = (a * a + c * c - b * b) / (2 * a * c);

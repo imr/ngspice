@@ -186,7 +186,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 */
 
     /* now calculate the avalanche generation rate */
-    current = sqrt( jnx * jnx + jny * jny );
+    current = hypot(jnx, jny);
     if ( current != 0.0 ) {
 	eField = (enx * jnx + eny * jny) / current;
 	if ( (eField > 0) && ( info->bii[ELEC] / eField <= 80.0) ) {
@@ -194,7 +194,7 @@ TWOavalanche(TWOelem *pElem, TWOnode *pNode)
 		    * exp( - info->bii[ELEC] / eField );
 	}
     }
-    current = sqrt( jpx * jpx + jpy * jpy );
+    current = hypot(jpx, jpy);
     if ( current != 0.0 ) {
 	eField = (epx * jpx + epy * jpy) / current;
 	if ( eField > eiip2 ) {

@@ -125,13 +125,13 @@ get_value(
     int idx              /*in: index of vector value to be read out */
     )
 {
-    double ar, bi, tt;
+    double ar, bi;
 
     ar = values->v_compdata[idx].cx_real;
     bi = values->v_compdata[idx].cx_imag;
 
     if ((meas->m_vectype == 'm') || (meas->m_vectype == 'M')) {
-        return sqrt(ar*ar + bi*bi); /* magnitude */
+        return hypot(ar, bi); /* magnitude */
     } else if ((meas->m_vectype == 'r') || (meas->m_vectype == 'R')) {
         return ar;  /* real value */
     } else if ((meas->m_vectype == 'i') || (meas->m_vectype == 'I')) {
@@ -139,8 +139,7 @@ get_value(
     } else if ((meas->m_vectype == 'p') || (meas->m_vectype == 'P')) {
         return radtodeg(atan2(bi, ar)); /* phase (in degrees) */
     } else if ((meas->m_vectype == 'd') || (meas->m_vectype == 'D')) {
-        tt = sqrt(ar*ar + bi*bi);  /* dB of magnitude */
-        return 20.0 * log10(tt);
+        return 20.0 * log10(hypot(ar, bi));  /* dB of magnitude */
     } else {
         return ar;  /* default: real value */
     }

@@ -876,7 +876,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
          * is outside the drawing area so I'll stay as the maximum size of the hypotenuse of
          * the complex value
          */
-        rad = sqrt(mx * mx + my * my);
+        rad = hypot(mx, my);
         xlims[0] = - rad;
         xlims[1] = rad;
         ylims[0] = - rad;

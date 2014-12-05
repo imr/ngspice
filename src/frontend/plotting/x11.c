@@ -726,7 +726,7 @@ slopelocation(GRAPH *graph, int x0, int y0)
         {
             angle = RAD_TO_DEG * atan2(fy0, fx0);
             fprintf(stdout, "r0 = %g, a0 = %g\n",
-                    sqrt(fx0*fx0 + fy0*fy0),
+                    hypot(fx0, fy0),
                     (angle>0)?angle:360.0+angle);
         }
 

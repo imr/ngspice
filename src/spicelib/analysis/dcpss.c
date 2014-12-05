@@ -1605,7 +1605,7 @@ DFT
         tmp = Mag [i] * 2.0 / (double)ndata;
         Phase [i] *= 2.0 / (double)ndata;
         Freq [i] = i * FundFreq;
-        Mag [i] = sqrt (tmp * tmp + Phase [i] * Phase [i]);
+        Mag [i] = hypot (tmp, Phase [i]);
         Phase [i] = atan2 (Phase [i], tmp) * 180.0 / M_PI;
         nMag [i] = Mag [i] / Mag [1];
         nPhase [i] = Phase [i] - Phase [1];

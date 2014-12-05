@@ -145,7 +145,7 @@ typedef  struct
 #define  CMPLX_INF_NORM(a)      (MAX (ABS((a).Real),ABS((a).Imag)))
 
 /* Macro function that returns the magnitude (L-2 norm) of a complex number. */
-#define  CMPLX_2_NORM(a)        (sqrt((a).Real*(a).Real + (a).Imag*(a).Imag))
+#define  CMPLX_2_NORM(a)        (hypot((a).Real, (a).Imag))
 
 /* Macro function that performs complex addition. */
 #define  CMPLX_ADD(to,from_a,from_b)            \
