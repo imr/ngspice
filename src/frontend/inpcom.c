@@ -3661,6 +3661,9 @@ get_number_terminals(char *c)
 }
 
 
+static char *ya_search_identifier(char *str, const char *identifier, char *str_begin);
+
+
 /* sort parameters based on parameter dependencies */
 
 static void
@@ -3785,15 +3788,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 /* FIXME: useless and potentially buggy code: we check parameters like
    l={length}, but the following will not work for such a parameter string.
    We just live from the fact that str_ptr = "". */
-            while ((str_ptr = strstr(str_ptr, deps[i].param_name)) != NULL) {
-                /* make sure actually have the parameter name */
-                char before = *(str_ptr-1);
-                char after  = *(str_ptr+strlen(deps[i].param_name));
-                if (!(is_arith_char(before) || isspace(before) || (str_ptr-1) < curr_line) ||
-                    !(is_arith_char(after)  || isspace(after)  || after == '\0')) {
-                    str_ptr ++;
-                    continue;
-                }
+            while ((str_ptr = ya_search_identifier(str_ptr, deps[i].param_name, curr_line)) != NULL) {
                 beg = str_ptr - 1;
                 end = str_ptr + strlen(deps[i].param_name);
                 if ((isspace(*beg) || *beg == '=') &&
@@ -4163,6 +4158,30 @@ search_identifier(char *str, const char *identifier, char *str_begin)
     }
 
     return NULL;
+}
+
+
+char *
+ya_search_identifier(char *str, const char *identifier, char *str_begin)
+{
+    while ((str = strstr(str, identifier)) != NULL) {
+        char before;
+
+        if (str > str_begin)
+            before = str[-1];
+        else
+            before = '\0';
+
+        if (is_arith_char(before) || isspace(before) || (str <= str_begin)) {
+            char after = str[strlen(identifier)];
+            if ((is_arith_char(after) || isspace(after) || after == '\0'))
+                break;
+        }
+
+        str++;
+    }
+
+    return str;
 }
 
 
