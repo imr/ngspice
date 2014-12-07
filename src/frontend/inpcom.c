@@ -5903,6 +5903,8 @@ inp_dot_if(struct line *card)
  * add info to end of new_func and continue scanning.
  */
 
+static char *inp_functionalise_identifier(char *curr_line, char *identifier);
+
 static void
 inp_fix_temper_in_param(struct line *deck)
 {
@@ -6021,13 +6023,7 @@ inp_fix_temper_in_param(struct line *deck)
 
             char *new_str = NULL; /* string we assemble here */
             char *curr_line = card->li_line;
-            char * new_tmp_str, *tmp_str, *firsttok_str;
-            /* Some new variables... */
-            char *chp;
-            char *chp_start;
-            char *var_name;
-            char ch;
-            int state;
+            char *firsttok_str;
 
             if (*curr_line == '*')
                 continue;
@@ -6067,42 +6063,9 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
             }
 
-            /* This is the new code - it finds each variable name and checks it against new_func->funcname */
-            for (state = 0, var_name = chp_start = chp = curr_line; ; chp++) {
-                switch(state)
-                {
-                case 0:
-                    /* in state 0 we are looking for the first character of a variable name,
-                       which has to be an alphabetic character. */
-                    if (isalpha(*chp))
-                    {
-                        state = 1;
-                        var_name = chp;
-                    }
-                    break;
-                case 1:
-                    /* In state 1 we are looking for the last character of a variable name.
-                       The variable name consists of alphanumeric characters and special characters,
-                       which are defined above as VALIDCHARS. */
-                    state = (*chp) && (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
-                    if (!state) {
-                        ch = *chp;
-                        *chp = '\0';
-                        if (strcmp(var_name, new_func->funcname) == 0 && ch != '(') {
-                            new_str = INPstrCat(new_str, copy(chp_start), "");
-                            new_str = INPstrCat(new_str, copy("()"), "");
-                            chp_start=chp;
-                        }
-                        *chp = ch;
-                    }
-                    break;
-                }
-                if (!(*chp))
-                    break;
-            }
+            new_str = inp_functionalise_identifier(curr_line, new_func->funcname);
+
             if (new_str) {
-                /* add final part of line */
-                new_str = INPstrCat(new_str, copy(chp_start), "");
                 /* restore first part of the line */
                 new_str = INPstrCat(firsttok_str, new_str, " ");
                 new_str = inp_remove_ws(new_str);
@@ -6111,10 +6074,9 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
 
             /* if we have inserted into a .param line, convert to .func */
-            new_tmp_str = new_str;
-            if (prefix(".param", new_tmp_str)) {
-                tmp_str = gettok(&new_tmp_str);
-                tfree(tmp_str);
+            if (prefix(".param", new_str)) {
+                char *new_tmp_str = new_str;
+                txfree(gettok(&new_tmp_str));
                 funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
                 funcbody = copy(new_tmp_str + 1);
                 inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
@@ -6132,6 +6094,52 @@ inp_fix_temper_in_param(struct line *deck)
     tfree(sub_count);
     /* remove new_func */
     inp_rem_func(&beg_func);
+}
+
+
+static char *
+inp_functionalise_identifier(char *curr_line, char *identifier)
+{
+    /* This is the new code - it finds each variable name and checks it against `identifier' */
+    int state;
+    char *var_name, *chp_start, *chp, *new_str = NULL;
+    for (state = 0, var_name = chp_start = chp = curr_line; ; chp++) {
+        switch(state)
+        {
+        case 0:
+            /* in state 0 we are looking for the first character of a variable name,
+               which has to be an alphabetic character. */
+            if (isalpha(*chp))
+            {
+                state = 1;
+                var_name = chp;
+            }
+            break;
+        case 1:
+            /* In state 1 we are looking for the last character of a variable name.
+               The variable name consists of alphanumeric characters and special characters,
+               which are defined above as VALIDCHARS. */
+            state = (*chp) && (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
+            if (!state) {
+                char ch = *chp;
+                *chp = '\0';
+                if (strcmp(var_name, identifier) == 0 && ch != '(') {
+                    new_str = INPstrCat(new_str, copy(chp_start), "");
+                    new_str = INPstrCat(new_str, copy("()"), "");
+                    chp_start=chp;
+                }
+                *chp = ch;
+            }
+            break;
+        }
+        if (!(*chp))
+            break;
+    }
+    if (new_str) {
+        /* add final part of line */
+        new_str = INPstrCat(new_str, copy(chp_start), "");
+    }
+    return new_str;
 }
 
 
