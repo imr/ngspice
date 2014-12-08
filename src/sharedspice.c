@@ -76,7 +76,7 @@ typedef SRWLOCK mutexType;
 typedef CRITICAL_SECTION mutexType;
 #endif
 #define thread_self() GetCurrentThread()
-#define threadid_self() GetThreadId(GetCurrentThread())
+#define threadid_self() GetCurrentThreadId()
 typedef HANDLE threadId_t;
 #define WIN_THREADS
 #define THREADS
