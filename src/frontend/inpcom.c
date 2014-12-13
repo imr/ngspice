@@ -6065,13 +6065,14 @@ inp_fix_temper_in_param(struct line *deck)
 
             new_str = inp_functionalise_identifier(curr_line, new_func->funcname);
 
-            if (new_str) {
-                /* restore first part of the line */
-                new_str = INPstrCat(firsttok_str, new_str, " ");
-                new_str = inp_remove_ws(new_str);
-            }
-            else
+            if (new_str == curr_line) {
+                tfree(firsttok_str);
                 continue;
+            }
+
+            /* restore first part of the line */
+            new_str = INPstrCat(firsttok_str, new_str, " ");
+            new_str = inp_remove_ws(new_str);
 
             /* if we have inserted into a .param line, convert to .func */
             if (prefix(".param", new_str)) {
@@ -6100,46 +6101,22 @@ inp_fix_temper_in_param(struct line *deck)
 static char *
 inp_functionalise_identifier(char *curr_line, char *identifier)
 {
-    /* This is the new code - it finds each variable name and checks it against `identifier' */
-    int state;
-    char *var_name, *chp_start, *chp, *new_str = NULL;
-    for (state = 0, var_name = chp_start = chp = curr_line; ; chp++) {
-        switch(state)
-        {
-        case 0:
-            /* in state 0 we are looking for the first character of a variable name,
-               which has to be an alphabetic character. */
-            if (isalpha(*chp))
-            {
-                state = 1;
-                var_name = chp;
-            }
-            break;
-        case 1:
-            /* In state 1 we are looking for the last character of a variable name.
-               The variable name consists of alphanumeric characters and special characters,
-               which are defined above as VALIDCHARS. */
-            state = (*chp) && (isalphanum(*chp) || strchr(VALIDCHARS, *chp));
-            if (!state) {
-                char ch = *chp;
-                *chp = '\0';
-                if (strcmp(var_name, identifier) == 0 && ch != '(') {
-                    new_str = INPstrCat(new_str, copy(chp_start), "");
-                    new_str = INPstrCat(new_str, copy("()"), "");
-                    chp_start=chp;
-                }
-                *chp = ch;
-            }
-            break;
+    int len = strlen(identifier);
+    char *p, *str = curr_line;
+
+    for (p = str; (p = search_identifier(p, identifier, str)) != NULL; )
+        if (p[len] != '(') {
+            int prefix_len = (int) (p - str) + len;
+            char *x = str;
+            str = tprintf("%.*s()%s", prefix_len, str, str + prefix_len);
+            if (x != curr_line)
+                tfree(x);
+            p = str + prefix_len + 2;
+        } else {
+            p ++;
         }
-        if (!(*chp))
-            break;
-    }
-    if (new_str) {
-        /* add final part of line */
-        new_str = INPstrCat(new_str, copy(chp_start), "");
-    }
-    return new_str;
+
+    return str;
 }
 
 
