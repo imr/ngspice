@@ -2171,9 +2171,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         inp_sort_params(first_param_card, head, NULL, NULL);
 
         /* create new ordered parameter string for subckt call */
-        c = head->li_next;
-        tfree(head);
-        for (;c != NULL;) {
+        for (c = head->li_next; c; c = c->li_next)
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
             } else {
@@ -2181,11 +2179,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
                 tfree(new_str);
                 new_str = x;
             }
-            tfree(c->li_line);
-            head = c;
-            c = c->li_next;
-            tfree(head);
-        }
+
+        line_free_x(head, TRUE);
 
         /* create buffer and insert params: */
         buffer = tprintf("%s params: %s", s, new_str);
