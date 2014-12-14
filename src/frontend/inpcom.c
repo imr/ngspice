@@ -117,7 +117,7 @@ static struct line *inp_expand_macros_in_deck(struct function_env *, struct line
 static void inp_fix_param_values(struct line *deck);
 static void inp_reorder_params(struct names *subckt_w_params, struct line *list_head);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
-static void inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c);
+static void inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct line *s_c, struct line *e_c);
 static char *inp_remove_ws(char *s);
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
@@ -2170,7 +2170,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             num_params++;
         }
         /* now sort parameters in order of dependencies */
-        inp_sort_params(start_card, end_card, head, start_card, end_card);
+        inp_sort_params(start_card, head, start_card, end_card);
 
         /* create new ordered parameter string for subckt call */
         c = head->li_next;
@@ -3666,7 +3666,7 @@ static void inp_quote_params(struct line *s_c, struct line *e_c, struct dependen
 /* sort parameters based on parameter dependencies */
 
 static void
-inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
+inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
     int  i, j, num_params, ind = 0, max_level;
 
@@ -3676,22 +3676,20 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     struct dependency *deps;
 
-    NG_IGNORE(end_card);
-
-    if (start_card == NULL)
+    if (param_cards == NULL)
         return;
 
     /* determine the number of lines with .param */
 
     arr_size = 0;
-    for (c = start_card; c; c = c->li_next)
+    for (c = param_cards; c; c = c->li_next)
         if (strchr(c->li_line, '='))
             arr_size ++;
 
     deps = TMALLOC(struct dependency, arr_size);
 
     num_params = 0;
-    for (c = start_card; c; c = c->li_next)
+    for (c = param_cards; c; c = c->li_next)
         // ignore .param lines without '='
         if (strchr(c->li_line, '=')) {
             deps[num_params].depends_on[0] = NULL;
@@ -3848,7 +3846,7 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
 
         if (ciprefix(".ends", curr_line)) {
             if (first_param_card) {
-                inp_sort_params(first_param_card, last_param_card, subckt_card, subckt_card, c);
+                inp_sort_params(first_param_card, subckt_card, subckt_card, c);
                 inp_add_params_to_subckt(subckt_w_params, subckt_card);
             }
             return c;
@@ -3933,7 +3931,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
         c = c->li_next;
     }
 
-    inp_sort_params(first_param_card, last_param_card, list_head, list_head->li_next, end);
+    inp_sort_params(first_param_card, list_head, list_head->li_next, end);
 }
 
 
