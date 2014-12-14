@@ -3669,11 +3669,9 @@ static char *ya_search_identifier(char *str, const char *identifier, char *str_b
 static void
 inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c)
 {
-    int  i, j, num_params, ind = 0, max_level, num_terminals = 0;
-    bool in_control = FALSE;
+    int  i, j, num_params, ind = 0, max_level;
 
     struct line *c, *tail;
-    char *str_ptr, *beg, *end, *new_str;
     int  skipped;
     int arr_size;
 
@@ -3740,8 +3738,13 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     }
 
     /* look for unquoted parameters and quote them */
+{
+    struct line *c;
+    bool in_control = FALSE;
+    int num_terminals = 0;
+    int  i, j;
+    char *str_ptr, *beg, *end, *new_str;
 
-    in_control = FALSE;
     for (c = s_c; c && c != e_c; c = c->li_next) {
 
         char *curr_line = c->li_line;
@@ -3814,6 +3817,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             }
         }
     }
+ }
 
     c = card_bf_start;
     tail = c->li_next;
