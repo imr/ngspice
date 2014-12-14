@@ -3710,13 +3710,15 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
     // param list is ordered as defined in netlist
 
     skipped = 0;
-    for (i = 0; i < num_params; i++)
-        for (j = num_params - 1; j >= 0 && !deps[i].skip; j--)
-            if (i != j && i < j && strcmp(deps[i].param_name, deps[j].param_name) == 0) {
-                // skip earlier one in list
-                deps[i].skip = 1;
-                skipped++;
-            }
+    for (i = 0; i < num_params; i++) {
+        for (j = i + 1; j < num_params; j++)
+            if (strcmp(deps[i].param_name, deps[j].param_name) == 0)
+                break;
+        if (j < num_params) {
+            deps[i].skip = 1;
+            skipped++;
+        }
+    }
 
     for (i = 0; i < num_params; i++)
         if (!deps[i].skip) {
