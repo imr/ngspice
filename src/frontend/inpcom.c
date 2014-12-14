@@ -2170,6 +2170,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
             num_params++;
         }
         /* now sort parameters in order of dependencies */
+        head->li_next = NULL;
         inp_sort_params(start_card, head, NULL, NULL);
 
         /* create new ordered parameter string for subckt call */
