@@ -3881,13 +3881,11 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
 static void
 inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
 {
-    struct line *deck = list_head->li_next;
-
     struct line *first_param_card = NULL;
     struct line *last_param_card = NULL;
 
     struct line *prev_card = list_head;
-    struct line *c = deck;
+    struct line *c = prev_card->li_next;
 
     struct line *end;
 
@@ -3935,7 +3933,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
         c = c->li_next;
     }
 
-    inp_sort_params(first_param_card, last_param_card, list_head, deck, end);
+    inp_sort_params(first_param_card, last_param_card, list_head, list_head->li_next, end);
 }
 
 
