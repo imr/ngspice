@@ -115,7 +115,7 @@ static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struc
 static void inp_expand_macros_in_func(struct function_env *);
 static struct line *inp_expand_macros_in_deck(struct function_env *, struct line *deck);
 static void inp_fix_param_values(struct line *deck);
-static void inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line *list_head);
+static void inp_reorder_params(struct names *subckt_w_params, struct line *list_head);
 static int  inp_split_multi_param_lines(struct line *deck, int line_number);
 static void inp_sort_params(struct line *start_card, struct line *end_card, struct line *card_bf_start, struct line *s_c, struct line *e_c);
 static char *inp_remove_ws(char *s);
@@ -524,7 +524,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
-        inp_reorder_params(subckt_w_params, working, cc);
+        inp_reorder_params(subckt_w_params, cc);
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
         delete_names(subckt_w_params);
@@ -3879,8 +3879,10 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
 
 
 static void
-inp_reorder_params(struct names *subckt_w_params, struct line *deck, struct line *list_head)
+inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
 {
+    struct line *deck = list_head->li_next;
+
     struct line *first_param_card = NULL;
     struct line *last_param_card = NULL;
 
