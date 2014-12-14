@@ -6095,12 +6095,12 @@ inp_fix_temper_in_param(struct line *deck)
 static char *
 inp_functionalise_identifier(char *curr_line, char *identifier)
 {
-    int len = strlen(identifier);
+    size_t len = strlen(identifier);
     char *p, *str = curr_line;
 
     for (p = str; (p = search_identifier(p, identifier, str)) != NULL; )
         if (p[len] != '(') {
-            int prefix_len = (int) (p - str) + len;
+            int prefix_len = (int) (p + len - str);
             char *x = str;
             str = tprintf("%.*s()%s", prefix_len, str, str + prefix_len);
             if (x != curr_line)
