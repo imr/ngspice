@@ -3661,7 +3661,7 @@ get_number_terminals(char *c)
 static char *ya_search_identifier(char *str, const char *identifier, char *str_begin);
 
 
-static void inp_qoute_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params);
+static void inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params);
 
 /* sort parameters based on parameter dependencies */
 
@@ -3736,7 +3736,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             max_level = deps[i].level;
     }
 
-    inp_qoute_params(s_c, e_c, deps, num_params);
+    inp_quote_params(s_c, e_c, deps, num_params);
 
     c = card_bf_start;
     tail = c->li_next;
@@ -6091,7 +6091,7 @@ inp_rem_func(struct func_temper **beg_func)
 
 /* look for unquoted parameters and quote them */
 static void
-inp_qoute_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params)
+inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params)
 {
     struct line *c;
     bool in_control = FALSE;
