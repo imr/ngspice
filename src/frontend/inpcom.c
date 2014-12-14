@@ -3722,22 +3722,14 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
 
     for (i = 0; i < num_params; i++)
         if (!deps[i].skip) {
-            char *param_name = deps[i].param_name;
-            for (j = 0; j < num_params; j++) {
-//        for (j = i + 1; j < num_params; j++) {  /* FIXME: to be tested */
-                if (j == i)
-                    continue;
-
-                if (search_plain_identifier(deps[j].param_str, param_name)) {
+            char *param = deps[i].param_name;
+            for (j = 0; j < num_params; j++)
+                if (j != i && search_plain_identifier(deps[j].param_str, param)) {
                     for (ind = 0; deps[j].depends_on[ind]; ind++)
-                        if (strcmp(param_name, deps[j].depends_on[ind]) == 0)
-                            break;
-                    if (!deps[j].depends_on[ind]) {
-                        deps[j].depends_on[ind++] = param_name;
-                        deps[j].depends_on[ind]   = NULL;
-                    }
+                        ;
+                    deps[j].depends_on[ind++] = param;
+                    deps[j].depends_on[ind]   = NULL;
                 }
-            }
         }
 
     max_level = 0;
