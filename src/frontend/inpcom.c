@@ -3664,6 +3664,8 @@ get_number_terminals(char *c)
 static char *ya_search_identifier(char *str, const char *identifier, char *str_begin);
 
 
+static void inp_qoute_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params);
+
 /* sort parameters based on parameter dependencies */
 
 static void
@@ -3737,87 +3739,7 @@ inp_sort_params(struct line *start_card, struct line *end_card, struct line *car
             max_level = deps[i].level;
     }
 
-    /* look for unquoted parameters and quote them */
-{
-    struct line *c;
-    bool in_control = FALSE;
-    int num_terminals = 0;
-    int  i, j;
-    char *str_ptr, *beg, *end, *new_str;
-
-    for (c = s_c; c && c != e_c; c = c->li_next) {
-
-        char *curr_line = c->li_line;
-
-        if (ciprefix(".control", curr_line)) {
-            in_control = TRUE;
-            continue;
-        }
-
-        if (ciprefix(".endc", curr_line)) {
-            in_control = FALSE;
-            continue;
-        }
-
-        if (in_control || curr_line[0] == '.' || curr_line[0] == '*')
-            continue;
-
-/* FIXME: useless and potentially buggy code, when called from line 2225:
-   we check parameters like l={length}, but not complete lines: We just
-   live from the fact, that there are device names for all characters
-   of the alphabet */
-        num_terminals = get_number_terminals(curr_line);
-
-        if (num_terminals <= 0)
-            continue;
-
-        for (i = 0; i < num_params; i++) {
-            str_ptr = curr_line;
-
-/* FIXME: useless and potentially buggy code, when called from line 2225:
-   we check parameters like
-   l={length}, but not complete lines: this will always lead to str_ptr = "" */
-            for (j = 0; j < num_terminals+1; j++) {
-                str_ptr = skip_non_ws(str_ptr);
-                str_ptr = skip_ws(str_ptr);
-            }
-
-/* FIXME: useless and potentially buggy code: we check parameters like
-   l={length}, but the following will not work for such a parameter string.
-   We just live from the fact that str_ptr = "". */
-            while ((str_ptr = ya_search_identifier(str_ptr, deps[i].param_name, curr_line)) != NULL) {
-                beg = str_ptr - 1;
-                end = str_ptr + strlen(deps[i].param_name);
-                if ((isspace(*beg) || *beg == '=') &&
-                    (isspace(*end) || *end == '\0' || *end == ')')) {
-                    if (isspace(*beg)) {
-                        while (isspace(*beg))
-                            beg--;
-                        if (*beg != '{')
-                            beg++;
-                        str_ptr = beg;
-                    }
-                    if (isspace(*end)) {
-                        /* possible case: "{  length }" -> {length} */
-                        while (*end && isspace(*end))
-                            end++;
-                        if (*end == '}')
-                            end++;
-                        else
-                            end--;
-                    }
-                    *str_ptr = '\0';
-                    new_str = tprintf("%s{%s}%s", curr_line, deps[i].param_name, end);
-                    str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name);
-
-                    tfree(c->li_line);
-                    curr_line = c->li_line = new_str;
-                }
-                str_ptr++;
-            }
-        }
-    }
- }
+    inp_qoute_params(s_c, e_c, deps, num_params);
 
     c = card_bf_start;
     tail = c->li_next;
@@ -6161,5 +6083,90 @@ inp_rem_func(struct func_temper **beg_func)
         next_func = (*beg_func)->next;
         tfree((*beg_func)->funcname);
         tfree((*beg_func));
+    }
+}
+
+
+/* look for unquoted parameters and quote them */
+static void
+inp_qoute_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params)
+{
+    struct line *c;
+    bool in_control = FALSE;
+    int num_terminals = 0;
+    int  i, j;
+    char *str_ptr, *beg, *end, *new_str;
+
+    for (c = s_c; c && c != e_c; c = c->li_next) {
+
+        char *curr_line = c->li_line;
+
+        if (ciprefix(".control", curr_line)) {
+            in_control = TRUE;
+            continue;
+        }
+
+        if (ciprefix(".endc", curr_line)) {
+            in_control = FALSE;
+            continue;
+        }
+
+        if (in_control || curr_line[0] == '.' || curr_line[0] == '*')
+            continue;
+
+/* FIXME: useless and potentially buggy code, when called from line 2225:
+   we check parameters like l={length}, but not complete lines: We just
+   live from the fact, that there are device names for all characters
+   of the alphabet */
+        num_terminals = get_number_terminals(curr_line);
+
+        if (num_terminals <= 0)
+            continue;
+
+        for (i = 0; i < num_params; i++) {
+            str_ptr = curr_line;
+
+/* FIXME: useless and potentially buggy code, when called from line 2225:
+   we check parameters like
+   l={length}, but not complete lines: this will always lead to str_ptr = "" */
+            for (j = 0; j < num_terminals+1; j++) {
+                str_ptr = skip_non_ws(str_ptr);
+                str_ptr = skip_ws(str_ptr);
+            }
+
+/* FIXME: useless and potentially buggy code: we check parameters like
+   l={length}, but the following will not work for such a parameter string.
+   We just live from the fact that str_ptr = "". */
+            while ((str_ptr = ya_search_identifier(str_ptr, deps[i].param_name, curr_line)) != NULL) {
+                beg = str_ptr - 1;
+                end = str_ptr + strlen(deps[i].param_name);
+                if ((isspace(*beg) || *beg == '=') &&
+                    (isspace(*end) || *end == '\0' || *end == ')')) {
+                    if (isspace(*beg)) {
+                        while (isspace(*beg))
+                            beg--;
+                        if (*beg != '{')
+                            beg++;
+                        str_ptr = beg;
+                    }
+                    if (isspace(*end)) {
+                        /* possible case: "{  length }" -> {length} */
+                        while (*end && isspace(*end))
+                            end++;
+                        if (*end == '}')
+                            end++;
+                        else
+                            end--;
+                    }
+                    *str_ptr = '\0';
+                    new_str = tprintf("%s{%s}%s", curr_line, deps[i].param_name, end);
+                    str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name);
+
+                    tfree(c->li_line);
+                    curr_line = c->li_line = new_str;
+                }
+                str_ptr++;
+            }
+        }
     }
 }
