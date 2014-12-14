@@ -3734,7 +3734,7 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
 
     ind = 0;
     for (i = 0; i <= max_level; i++)
-        for (j = num_params - 1; j >= 0; j--)
+        for (j = 0; j < num_params; j++)
             if (!deps[j].skip && deps[j].level == i) {
                 c = c->li_next = deps[j].card;
                 ind++;
