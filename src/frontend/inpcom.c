@@ -2118,9 +2118,8 @@ find_name(struct names *p, char *name)
 static char*
 inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
-    struct line *head = NULL, *start_card = NULL, *end_card = NULL, *prev_card = NULL, *c = NULL;
+    struct line *head = NULL, *first_param_card = NULL, *last_param_card = NULL, *c = NULL;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
-    int  num_params = 0, i = 0;
 
     equal = strchr(s, '=');
     if (equal && !strstr(s, "params:")) {
@@ -2159,24 +2158,22 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
             beg = ptr2;
 
-            end_card = xx_new_line(NULL, copy_substring(ptr1, ptr2), 0, 0);
+            c  = xx_new_line(NULL, copy_substring(ptr1, ptr2), 0, 0);
 
-            if (start_card == NULL)
-                head->li_next = start_card = end_card;
+            if (last_param_card)
+                last_param_card->li_next = c;
             else
-                prev_card->li_next = end_card;
+                first_param_card = c;
 
-            prev_card = end_card;
-            num_params++;
+            last_param_card = c;
         }
         /* now sort parameters in order of dependencies */
-        head->li_next = NULL;
-        inp_sort_params(start_card, head, NULL, NULL);
+        inp_sort_params(first_param_card, head, NULL, NULL);
 
         /* create new ordered parameter string for subckt call */
         c = head->li_next;
         tfree(head);
-        for (i = 0; i < num_params && c != NULL; i++) {
+        for (;c != NULL;) {
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
             } else {
