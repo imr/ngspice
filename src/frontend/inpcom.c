@@ -3839,7 +3839,7 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
 
         if (ciprefix(".ends", curr_line)) {
             if (first_param_card) {
-                inp_sort_params(first_param_card, subckt_card, subckt_card, c);
+                inp_sort_params(first_param_card, subckt_card, subckt_card->li_next, c);
                 inp_add_params_to_subckt(subckt_w_params, subckt_card);
             }
             return c;
