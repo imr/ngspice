@@ -3878,11 +3878,6 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
     struct line *prev_card = list_head;
     struct line *c = prev_card->li_next;
 
-    struct line *end;
-
-    for (end = list_head; end->li_next; end = end->li_next)
-        ;
-
     /* move .param lines to beginning of deck */
     while (c != NULL) {
 
@@ -3924,7 +3919,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
         c = c->li_next;
     }
 
-    inp_sort_params(first_param_card, list_head, list_head->li_next, end);
+    inp_sort_params(first_param_card, list_head, list_head->li_next, NULL);
 }
 
 
