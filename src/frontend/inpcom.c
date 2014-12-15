@@ -3727,8 +3727,6 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
             max_level = deps[i].level;
     }
 
-    inp_quote_params(s_c, e_c, deps, num_params);
-
     c = card_bf_start;
     tail = c->li_next;
 
@@ -3747,6 +3745,8 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
         fprintf(stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params);
         controlled_exit(EXIT_FAILURE);
     }
+
+    inp_quote_params(s_c, e_c, deps, num_params);
 
     // clean up memory
     for (i = 0; i < arr_size; i++) {
