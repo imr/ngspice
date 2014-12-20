@@ -6076,6 +6076,7 @@ inp_rem_func(struct func_temper **beg_func)
 
 
 /* look for unquoted parameters and quote them */
+/* FIXME, this function seems to be useless and/or buggy and/or naive */
 static void
 inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, int num_params)
 {
