@@ -6138,12 +6138,13 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
                     }
                     *str_ptr = '\0';
                     new_str = tprintf("%s{%s}%s", curr_line, deps[i].param_name, end);
-                    str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name);
+                    str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name) + 2;
 
                     tfree(c->li_line);
                     curr_line = c->li_line = new_str;
+                } else {
+                    str_ptr += strlen(deps[i].param_name);
                 }
-                str_ptr++;
             }
         }
     }
