@@ -6119,7 +6119,9 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
                 beg = str_ptr;
                 end = str_ptr + strlen(deps[i].param_name);
                 if ((isspace(beg[-1]) || beg[-1] == '=') &&
-                    (isspace(*end) || *end == '\0' || *end == ')')) {
+                    (isspace(*end) || *end == '\0' || *end == ')'))
+                {
+                    int prefix_len;
                     if (isspace(beg[-1])) {
                         beg = skip_back_ws(beg);
                         if (beg[-1] == '{')
@@ -6134,9 +6136,9 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
                         else
                             end--;
                     }
-                    *str_ptr = '\0';
-                    new_str = tprintf("%s{%s}%s", curr_line, deps[i].param_name, end);
-                    str_ptr = new_str + strlen(curr_line) + strlen(deps[i].param_name) + 2;
+                    prefix_len = (int)(str_ptr - curr_line);
+                    new_str = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, end);
+                    str_ptr = new_str + prefix_len + strlen(deps[i].param_name) + 2;
 
                     tfree(c->li_line);
                     curr_line = c->li_line = new_str;
