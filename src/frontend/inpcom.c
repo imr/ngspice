@@ -6077,15 +6077,13 @@ inp_rem_func(struct func_temper **beg_func)
 
 /* look for unquoted parameters and quote them */
 static void
-inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params)
+inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, int num_params)
 {
-    struct line *c;
     bool in_control = FALSE;
-    int num_terminals = 0;
-    int  i, j;
-    char *str_ptr, *end;
 
-    for (c = s_c; c && c != e_c; c = c->li_next) {
+    for (; c && c != end_c; c = c->li_next) {
+
+        int i, j, num_terminals;
 
         char *curr_line = c->li_line;
 
@@ -6108,40 +6106,47 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
             continue;
 
         for (i = 0; i < num_params; i++) {
-            str_ptr = curr_line;
+
+            char *s = curr_line;
 
             for (j = 0; j < num_terminals+1; j++) {
-                str_ptr = skip_non_ws(str_ptr);
-                str_ptr = skip_ws(str_ptr);
+                s = skip_non_ws(s);
+                s = skip_ws(s);
             }
 
-            while ((str_ptr = ya_search_identifier(str_ptr, deps[i].param_name, curr_line)) != NULL) {
-                end = str_ptr + strlen(deps[i].param_name);
-                if ((isspace(str_ptr[-1]) || str_ptr[-1] == '=') &&
-                    (isspace(*end) || *end == '\0' || *end == ')'))
+            while ((s = ya_search_identifier(s, deps[i].param_name, curr_line)) != NULL) {
+
+                char *rest = s + strlen(deps[i].param_name);
+
+                if ((isspace(s[-1]) || s[-1] == '=') &&
+                    (isspace(*rest) || *rest == '\0' || *rest == ')'))
                 {
                     int prefix_len;
-                    if (isspace(str_ptr[-1])) {
-                        str_ptr = skip_back_ws(str_ptr);
-                        if (str_ptr[-1] == '{')
-                            str_ptr--;
+
+                    if (isspace(s[-1])) {
+                        s = skip_back_ws(s);
+                        if (s[-1] == '{')
+                            s--;
                     }
-                    if (isspace(*end)) {
+
+                    if (isspace(*rest)) {
                         /* possible case: "{  length }" -> {length} */
-                        end = skip_ws(end);
-                        if (*end == '}')
-                            end++;
+                        rest = skip_ws(rest);
+                        if (*rest == '}')
+                            rest++;
                         else
-                            end--;
+                            rest--;
                     }
-                    prefix_len = (int)(str_ptr - curr_line);
-                    curr_line = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, end);
-                    str_ptr = curr_line + prefix_len + strlen(deps[i].param_name) + 2;
+
+                    prefix_len = (int)(s - curr_line);
+
+                    curr_line = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, rest);
+                    s = curr_line + prefix_len + strlen(deps[i].param_name) + 2;
 
                     tfree(c->li_line);
                     c->li_line = curr_line;
                 } else {
-                    str_ptr += strlen(deps[i].param_name);
+                    s += strlen(deps[i].param_name);
                 }
             }
         }
