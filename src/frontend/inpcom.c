@@ -6083,7 +6083,7 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
     bool in_control = FALSE;
     int num_terminals = 0;
     int  i, j;
-    char *str_ptr, *beg, *end, *new_str;
+    char *str_ptr, *beg, *end;
 
     for (c = s_c; c && c != e_c; c = c->li_next) {
 
@@ -6137,11 +6137,11 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
                             end--;
                     }
                     prefix_len = (int)(str_ptr - curr_line);
-                    new_str = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, end);
-                    str_ptr = new_str + prefix_len + strlen(deps[i].param_name) + 2;
+                    curr_line = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, end);
+                    str_ptr = curr_line + prefix_len + strlen(deps[i].param_name) + 2;
 
                     tfree(c->li_line);
-                    curr_line = c->li_line = new_str;
+                    c->li_line = curr_line;
                 } else {
                     str_ptr += strlen(deps[i].param_name);
                 }
