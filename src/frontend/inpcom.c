@@ -6083,7 +6083,7 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
     bool in_control = FALSE;
     int num_terminals = 0;
     int  i, j;
-    char *str_ptr, *beg, *end;
+    char *str_ptr, *end;
 
     for (c = s_c; c && c != e_c; c = c->li_next) {
 
@@ -6116,17 +6116,15 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
             }
 
             while ((str_ptr = ya_search_identifier(str_ptr, deps[i].param_name, curr_line)) != NULL) {
-                beg = str_ptr;
                 end = str_ptr + strlen(deps[i].param_name);
-                if ((isspace(beg[-1]) || beg[-1] == '=') &&
+                if ((isspace(str_ptr[-1]) || str_ptr[-1] == '=') &&
                     (isspace(*end) || *end == '\0' || *end == ')'))
                 {
                     int prefix_len;
-                    if (isspace(beg[-1])) {
-                        beg = skip_back_ws(beg);
-                        if (beg[-1] == '{')
-                            beg--;
-                        str_ptr = beg;
+                    if (isspace(str_ptr[-1])) {
+                        str_ptr = skip_back_ws(str_ptr);
+                        if (str_ptr[-1] == '{')
+                            str_ptr--;
                     }
                     if (isspace(*end)) {
                         /* possible case: "{  length }" -> {length} */
