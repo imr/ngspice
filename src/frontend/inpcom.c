@@ -6116,21 +6116,19 @@ inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, in
             }
 
             while ((str_ptr = ya_search_identifier(str_ptr, deps[i].param_name, curr_line)) != NULL) {
-                beg = str_ptr - 1;
+                beg = str_ptr;
                 end = str_ptr + strlen(deps[i].param_name);
-                if ((isspace(*beg) || *beg == '=') &&
+                if ((isspace(beg[-1]) || beg[-1] == '=') &&
                     (isspace(*end) || *end == '\0' || *end == ')')) {
-                    if (isspace(*beg)) {
-                        while (isspace(*beg))
+                    if (isspace(beg[-1])) {
+                        beg = skip_back_ws(beg);
+                        if (beg[-1] == '{')
                             beg--;
-                        if (*beg != '{')
-                            beg++;
                         str_ptr = beg;
                     }
                     if (isspace(*end)) {
                         /* possible case: "{  length }" -> {length} */
-                        while (*end && isspace(*end))
-                            end++;
+                        end = skip_ws(end);
                         if (*end == '}')
                             end++;
                         else
