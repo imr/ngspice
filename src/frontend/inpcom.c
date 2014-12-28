@@ -2227,11 +2227,9 @@ inp_remove_ws(char *s)
             curr++;
         if (isspace(*curr)) {
             curr = skip_ws(curr);
-            if (is_expression)
-                if (*curr != '\0' && *curr != '=' && !is_arith_char(*curr) && *curr != ',')
+            if (is_expression && *curr != '\0' && *curr != '=' && !is_arith_char(*curr) && *curr != ',')
                     big_buff[big_buff_index++] = ' ';
-            if (!is_expression)
-                if (*curr != '\0' && *curr != '=')
+            if (!is_expression && *curr != '\0' && *curr != '=')
                     big_buff[big_buff_index++] = ' ';
         }
     }
