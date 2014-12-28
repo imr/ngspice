@@ -2228,10 +2228,10 @@ inp_remove_ws(char *s)
         if (isspace(*curr)) {
             curr = skip_ws(curr);
             if (is_expression) {
-                if (*curr != '=' && !is_arith_char(*curr) && *curr != ',')
+                if (*curr != '\0' && *curr != '=' && !is_arith_char(*curr) && *curr != ',')
                     big_buff[big_buff_index++] = ' ';
             } else {
-                if (*curr != '=')
+                if (*curr != '\0' && *curr != '=')
                     big_buff[big_buff_index++] = ' ';
             }
         }
