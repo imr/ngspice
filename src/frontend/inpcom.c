@@ -2195,6 +2195,18 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 }
 
 
+/*
+ * this function shall:
+ *   reduce sequences of whitespace to one space
+ *   and to drop even that if it seems to be at a `safe' place to do so
+ * safe place means:
+ *   before or behind a '='
+ *   before or behind an operator within a {} expression
+ *     whereby `operator' is classified by `is_arith_char()'
+ * fixme:
+ *   thats odd and very naive business
+ */
+
 static char*
 inp_remove_ws(char *s)
 {
@@ -2228,14 +2240,7 @@ inp_remove_ws(char *s)
         if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
             *d++ = *s++;
             s = skip_ws(s);
-
-            if (*s == '\0')
-                continue;
-
-            if (*s == '{')
-                is_expression = TRUE;
-            if (*s == '}')
-                is_expression = FALSE;
+            continue;
         }
 
         *d++ = *s++;
