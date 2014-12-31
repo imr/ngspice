@@ -2200,7 +2200,7 @@ inp_remove_ws(char *s)
 {
     char *x = s;
     char *big_buff = TMALLOC(char, strlen(s) + 2);
-    int  big_buff_index = 0;
+    char *d = big_buff;
     char *buffer;
     bool is_expression = FALSE;
 
@@ -2210,7 +2210,7 @@ inp_remove_ws(char *s)
         if (*s == '}')
             is_expression = FALSE;
 
-        big_buff[big_buff_index++] = *s;
+        *d++ = *s;
         if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
             s = skip_ws(s + 1);
 
@@ -2219,18 +2219,18 @@ inp_remove_ws(char *s)
             if (*s == '}')
                 is_expression = FALSE;
 
-            big_buff[big_buff_index++] = *s;
+            *d++ = *s;
         }
         if (*s != '\0')
             s++;
         if (isspace(*s)) {
             s = skip_ws(s);
             if (!(*s == '\0' || *s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))))
-                big_buff[big_buff_index++] = ' ';
+                *d++ = ' ';
         }
     }
 
-    big_buff[big_buff_index] = '\0';
+    *d = '\0';
 
     buffer = copy(big_buff);
 
