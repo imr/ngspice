@@ -2196,8 +2196,9 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
 
 static char*
-inp_remove_ws(char *s)
+inp_remove_ws(char * const s)
 {
+    char *x = s;
     char *big_buff;
     int  big_buff_index = 0;
     char *buffer, *curr;
@@ -2236,7 +2237,7 @@ inp_remove_ws(char *s)
 
     buffer = copy(big_buff);
 
-    tfree(s);
+    tfree(x);
     tfree(big_buff);
 
     return buffer;
