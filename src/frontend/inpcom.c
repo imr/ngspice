@@ -2199,7 +2199,7 @@ static char*
 inp_remove_ws(char *s)
 {
     char *x = s;
-    char *big_buff = TMALLOC(char, strlen(s) + 2);
+    char *big_buff = TMALLOC(char, strlen(s) + 1);
     char *d = big_buff;
     char *buffer;
     bool is_expression = FALSE;
@@ -2213,6 +2213,9 @@ inp_remove_ws(char *s)
         *d++ = *s;
         if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
             s = skip_ws(s + 1);
+
+            if (*s == '\0')
+                continue;
 
             if (*s == '{')
                 is_expression = TRUE;
