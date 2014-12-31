@@ -2221,11 +2221,9 @@ inp_remove_ws(char *s)
                 is_expression = TRUE;
             if (*s == '}')
                 is_expression = FALSE;
-
-            *d++ = *s;
-        } else {
-            *d++ = *s;
         }
+
+        *d++ = *s;
         s++;
         if (isspace(*s)) {
             s = skip_ws(s);
