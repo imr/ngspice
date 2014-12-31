@@ -2211,8 +2211,8 @@ inp_remove_ws(char *s)
             is_expression = FALSE;
 
         if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
-            *d++ = *s;
-            s = skip_ws(s + 1);
+            *d++ = *s++;
+            s = skip_ws(s);
 
             if (*s == '\0')
                 continue;
@@ -2223,8 +2223,7 @@ inp_remove_ws(char *s)
                 is_expression = FALSE;
         }
 
-        *d++ = *s;
-        s++;
+        *d++ = *s++;
         if (isspace(*s)) {
             s = skip_ws(s);
             if (!(*s == '\0' || *s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))))
