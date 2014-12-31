@@ -2196,16 +2196,16 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
 
 static char*
-inp_remove_ws(char * const s)
+inp_remove_ws(char * const s_)
 {
-    char *x = s;
+    char *x = s_;
     char *big_buff;
     int  big_buff_index = 0;
     char *buffer, *curr;
     bool is_expression = FALSE;
 
-    big_buff = TMALLOC(char, strlen(s) + 2);
-    curr = s;
+    big_buff = TMALLOC(char, strlen(s_) + 2);
+    curr = s_;
 
     while (*curr != '\0') {
         if (*curr == '{')
