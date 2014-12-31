@@ -2199,12 +2199,10 @@ static char*
 inp_remove_ws(char *s)
 {
     char *x = s;
-    char *big_buff;
+    char *big_buff = TMALLOC(char, strlen(s) + 2);
     int  big_buff_index = 0;
     char *buffer;
     bool is_expression = FALSE;
-
-    big_buff = TMALLOC(char, strlen(s) + 2);
 
     while (*s != '\0') {
         if (*s == '{')
