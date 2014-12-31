@@ -2211,9 +2211,8 @@ static char*
 inp_remove_ws(char *s)
 {
     char *x = s;
-    char *big_buff = TMALLOC(char, strlen(s) + 1);
-    char *d = big_buff;
-    char *buffer;
+    char *d = s;
+
     bool is_expression = FALSE;
 
     /* preserve at least one whitespace at beginning of line
@@ -2248,12 +2247,13 @@ inp_remove_ws(char *s)
 
     *d = '\0';
 
-    buffer = copy(big_buff);
+    if (d == s)
+        return x;
 
+    s = copy(x);
     tfree(x);
-    tfree(big_buff);
 
-    return buffer;
+    return s;
 }
 
 
