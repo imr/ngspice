@@ -2204,11 +2204,26 @@ inp_remove_ws(char *s)
     char *buffer;
     bool is_expression = FALSE;
 
+    /* preserve at least one whitespace at beginning of line
+     * fixme,
+     *   is this really necessary ?
+     *   or is this an artefact of original inp_remove_ws() implementation ?
+     */
+    if (isspace(*s))
+        *d++ = *s++;
+
     while (*s != '\0') {
         if (*s == '{')
             is_expression = TRUE;
         if (*s == '}')
             is_expression = FALSE;
+
+        if (isspace(*s)) {
+            s = skip_ws(s);
+            if (!(*s == '\0' || *s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))))
+                *d++ = ' ';
+            continue;
+        }
 
         if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
             *d++ = *s++;
@@ -2224,11 +2239,6 @@ inp_remove_ws(char *s)
         }
 
         *d++ = *s++;
-        if (isspace(*s)) {
-            s = skip_ws(s);
-            if (!(*s == '\0' || *s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))))
-                *d++ = ' ';
-        }
     }
 
     *d = '\0';
