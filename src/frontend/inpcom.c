@@ -2210,8 +2210,8 @@ inp_remove_ws(char *s)
         if (*s == '}')
             is_expression = FALSE;
 
-        *d++ = *s;
         if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
+            *d++ = *s;
             s = skip_ws(s + 1);
 
             if (*s == '\0')
@@ -2222,6 +2222,8 @@ inp_remove_ws(char *s)
             if (*s == '}')
                 is_expression = FALSE;
 
+            *d++ = *s;
+        } else {
             *d++ = *s;
         }
         s++;
