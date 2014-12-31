@@ -2196,39 +2196,38 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
 
 static char*
-inp_remove_ws(char * const s_)
+inp_remove_ws(char *s)
 {
-    char *x = s_;
+    char *x = s;
     char *big_buff;
     int  big_buff_index = 0;
-    char *buffer, *curr;
+    char *buffer;
     bool is_expression = FALSE;
 
-    big_buff = TMALLOC(char, strlen(s_) + 2);
-    curr = s_;
+    big_buff = TMALLOC(char, strlen(s) + 2);
 
-    while (*curr != '\0') {
-        if (*curr == '{')
+    while (*s != '\0') {
+        if (*s == '{')
             is_expression = TRUE;
-        if (*curr == '}')
+        if (*s == '}')
             is_expression = FALSE;
 
-        big_buff[big_buff_index++] = *curr;
-        if (*curr == '=' || (is_expression && (is_arith_char(*curr) || *curr == ','))) {
-            curr = skip_ws(curr + 1);
+        big_buff[big_buff_index++] = *s;
+        if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
+            s = skip_ws(s + 1);
 
-            if (*curr == '{')
+            if (*s == '{')
                 is_expression = TRUE;
-            if (*curr == '}')
+            if (*s == '}')
                 is_expression = FALSE;
 
-            big_buff[big_buff_index++] = *curr;
+            big_buff[big_buff_index++] = *s;
         }
-        if (*curr != '\0')
-            curr++;
-        if (isspace(*curr)) {
-            curr = skip_ws(curr);
-            if (!(*curr == '\0' || *curr == '=' || (is_expression && (is_arith_char(*curr) || *curr == ','))))
+        if (*s != '\0')
+            s++;
+        if (isspace(*s)) {
+            s = skip_ws(s);
+            if (!(*s == '\0' || *s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))))
                 big_buff[big_buff_index++] = ' ';
         }
     }
