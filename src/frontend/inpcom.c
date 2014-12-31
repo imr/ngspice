@@ -2213,7 +2213,7 @@ inp_remove_ws(char *s)
     char *x = s;
     char *d = s;
 
-    bool is_expression = FALSE;
+    int brace_level = 0;
 
     /* preserve at least one whitespace at beginning of line
      * fixme,
@@ -2225,18 +2225,18 @@ inp_remove_ws(char *s)
 
     while (*s != '\0') {
         if (*s == '{')
-            is_expression = TRUE;
+            brace_level++;
         if (*s == '}')
-            is_expression = FALSE;
+            brace_level--;
 
         if (isspace(*s)) {
             s = skip_ws(s);
-            if (!(*s == '\0' || *s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))))
+            if (!(*s == '\0' || *s == '=' || ((brace_level > 0) && (is_arith_char(*s) || *s == ','))))
                 *d++ = ' ';
             continue;
         }
 
-        if (*s == '=' || (is_expression && (is_arith_char(*s) || *s == ','))) {
+        if (*s == '=' || ((brace_level > 0) && (is_arith_char(*s) || *s == ','))) {
             *d++ = *s++;
             s = skip_ws(s);
             continue;
