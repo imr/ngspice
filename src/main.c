@@ -1325,20 +1325,10 @@ main(int argc, char **argv)
 
     } else {
 
-        bool gdata = TRUE;
-
-        if (optind == argc)         /* No raw file */
-            gdata = FALSE;
-
         cp_interactive = FALSE;
 
-        if (gdata) {
-            if (optind < argc)
-                while (optind < argc)
-                    ft_loadfile(argv[optind++]);
-            else
-                ft_loadfile(ft_rawfile);
-        }
+        while (optind < argc)
+            ft_loadfile(argv[optind++]);
     }
 
 #endif /* ~ SIMULATOR */
