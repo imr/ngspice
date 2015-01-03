@@ -724,9 +724,6 @@ append_to_stream(FILE *dest, FILE *source)
 static bool
 read_initialisation_file(char *dir, char *name)
 {
-#ifndef HAVE_UNISTD_H
-    FILE *fp = NULL;
-#endif /* not HAVE_UNISTD_H */
     char *path;
     bool result = FALSE;
 
@@ -744,16 +741,23 @@ read_initialisation_file(char *dir, char *name)
 
     /* now access the file */
 #ifdef HAVE_UNISTD_H
-    if (access(path, R_OK) == 0) {
+    if (access(path, R_OK) == 0)
+        result = TRUE;
 #else
-    if ((fp = fopen(path, "r")) != NULL) {
-        (void) fclose(fp);
+    {
+        FILE *fp = fopen(path, "r");
+        if (fp) {
+            fclose(fp);
+            result = TRUE;
+        }
+    }
 #endif /* HAVE_UNISTD_H */
+
+    if (result) {
         inp_source(path);
 #ifdef TRACE
         printf("Init file: '%s'\n", path);
 #endif /* TRACE */
-        result = TRUE;  /* loaded okay */
     }
 
     if (path != name)
