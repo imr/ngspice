@@ -242,7 +242,7 @@ if_run(CKTcircuit *t, char *w, wordlist *s, INPtables *b)
     NG_IGNORE(w);
     NG_IGNORE(t);
 
-    return (0);
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -253,7 +253,7 @@ if_sens_run(CKTcircuit *t, wordlist *args, INPtables *tab)
     NG_IGNORE(args);
     NG_IGNORE(t);
 
-    return (0);
+    return 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -262,8 +262,6 @@ if_dump(CKTcircuit *ckt, FILE *fp)
 {
     NG_IGNORE(fp);
     NG_IGNORE(ckt);
-
-    return;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -288,16 +286,16 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 }
 
 /* -------------------------------------------------------------------------- */
-void if_cktfree(CKTcircuit *ckt, INPtables *tab)
+void
+if_cktfree(CKTcircuit *ckt, INPtables *tab)
 {
     NG_IGNORE(tab);
     NG_IGNORE(ckt);
-
-    return;
 }
 
 /* -------------------------------------------------------------------------- */
-void if_setndnames(char *line)
+void
+if_setndnames(char *line)
 {
     NG_IGNORE(line);
 }
@@ -307,7 +305,7 @@ char *
 if_errstring(int code)
 {
     NG_IGNORE(code);
-    return ("spice error");
+    return "spice error";
 }
 
 /* -------------------------------------------------------------------------- */
@@ -317,8 +315,6 @@ if_setparam_model(CKTcircuit *ckt, char **name, char *val)
     NG_IGNORE(val);
     NG_IGNORE(name);
     NG_IGNORE(ckt);
-
-    return;
 }
 
 void
@@ -329,8 +325,6 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
     NG_IGNORE(param);
     NG_IGNORE(name);
     NG_IGNORE(ckt);
-
-    return;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -342,7 +336,7 @@ if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
     NG_IGNORE(start);
     NG_IGNORE(ckt);
 
-    return (FALSE);
+    return FALSE;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -352,31 +346,38 @@ if_getstat(CKTcircuit *ckt, char *name)
     NG_IGNORE(name);
     NG_IGNORE(ckt);
 
-    return (NULL);
+    return NULL;
 }
 
-void com_snload(wordlist *wl) { NG_IGNORE(wl); }
-void com_snsave(wordlist *wl) { NG_IGNORE(wl); }
+void
+com_snload(wordlist *wl)
+{
+    NG_IGNORE(wl);
+}
+void
+com_snsave(wordlist *wl)
+{
+    NG_IGNORE(wl);
+}
 
-void SMPprint( SMPmatrix *n1 , char *n2)
+void
+SMPprint(SMPmatrix *n1, char *n2)
 {
     NG_IGNORE(n1);
     NG_IGNORE(n2);
-
-    return;
 }
 
-void SMPprintRHS( SMPmatrix *n1, char *n2 , double* n3 , double* n4)
+void
+SMPprintRHS(SMPmatrix *n1, char *n2, double *n3, double *n4)
 {
     NG_IGNORE(n1);
     NG_IGNORE(n2);
     NG_IGNORE(n3);
     NG_IGNORE(n4);
-
-    return;
 }
 
-void spice_destroy_devices(void)
+void
+spice_destroy_devices(void)
 {
 }
 
@@ -387,35 +388,47 @@ void spice_destroy_devices(void)
 #ifdef XSPICE
 /* saj to get nutmeg to compile, not nice but necessary */
 Ipc_Tiein_t  g_ipc;
-Ipc_Status_t ipc_send_errchk(void ) {
+Ipc_Status_t
+ipc_send_errchk(void)
+{
   Ipc_Status_t x = IPC_STATUS_OK;
-  return(x);
+  return x;
 }
-Ipc_Status_t ipc_get_line(char *str , int *len , Ipc_Wait_t wait ){
+Ipc_Status_t
+ipc_get_line(char *str, int *len, Ipc_Wait_t wait)
+{
   Ipc_Status_t x = IPC_STATUS_OK;
   NG_IGNORE(str);
   NG_IGNORE(len);
   NG_IGNORE(wait);
 
-  return(x);
+  return x;
 }
-struct line *ENHtranslate_poly(struct line *deck){
+struct line *
+ENHtranslate_poly(struct line *deck)
+{
   NG_IGNORE(deck);
-  return(NULL);
+  return NULL;
 }
-int load_opus(char *name){
+int
+load_opus(char *name)
+{
   NG_IGNORE(name);
-  return(1);
+  return 1;
 }
-char  *MIFgettok(char **s){
+char *
+MIFgettok(char **s)
+{
   NG_IGNORE(s);
-  return(NULL);
+  return NULL;
 }
-void EVTprint(wordlist *wl){
+void
+EVTprint(wordlist *wl)
+{
   NG_IGNORE(wl);
-  return;
 }
-struct dvec *EVTfindvec(char *node){
+struct dvec *
+EVTfindvec(char *node) {
   NG_IGNORE(node);
   return NULL;
 }
@@ -443,22 +456,23 @@ int DEVmaxnum = 0;
    - Spice3
    - all compatibility stuff
 */
-COMPATMODE_T ngspice_compat_mode(void)
+COMPATMODE_T
+ngspice_compat_mode(void)
 {
    char behaviour[80] ;
 
    if( cp_getvar("ngbehavior", CP_STRING, behaviour)){
       if (strcasecmp(behaviour, "all")==0)
-         return( COMPATMODE_ALL ) ;
+         return COMPATMODE_ALL;
       if (strcasecmp(behaviour, "hs")==0)
-         return( COMPATMODE_HS ) ;
+         return COMPATMODE_HS;
       if (strcasecmp(behaviour, "ps")==0)
-         return( COMPATMODE_PS ) ;
+         return COMPATMODE_PS;
       if (strcasecmp(behaviour, "spice3")==0)
-         return( COMPATMODE_SPICE3 ) ;
+         return COMPATMODE_SPICE3;
    }
-   return(COMPATMODE_ALL) ;
-} /* end ngspice_compat_mode() */
+   return COMPATMODE_ALL;
+}
 
 /* -------------------------------------------------------------------------- */
 int
@@ -486,7 +500,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK ) / CHARGE;
     CONSTKoverQ = CONSTboltz / CHARGE;
     CONSTe = exp(1.0);
-    return(OK);
+    return OK;
 }
 
 
@@ -502,7 +516,8 @@ sp_shutdown(int exitval)
     else if (exitval == EXIT_INFO)
         winmessage("Information during setup, see main window!");
 #endif
-    if  (exitval == EXIT_INFO) exitval = EXIT_NORMAL;
+    if  (exitval == EXIT_INFO)
+        exitval = EXIT_NORMAL;
     exit (exitval);
 }
 
@@ -520,9 +535,9 @@ prompt(void)
         return NULL;    /* NULL means no prompt */
 
     s = get_alt_prompt();
-    if(s==NULL)
+    if (!s)
     s = cp_promptstring;
-    if(s==NULL)
+    if (!s)
     s = "->";
 
     while (*s) {
@@ -644,7 +659,8 @@ app_rl_readlines(void)
     /* History gets written in ../fte/misccoms.c com_quit */
 
 #else
-    while (cp_evloop(NULL) == 1) ;
+    while (cp_evloop(NULL) == 1)
+        ;
 #endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 }
 
@@ -713,15 +729,16 @@ read_initialisation_file(char *dir, char *name)
     bool result = FALSE;
 
     /* check name */
-    if(name==NULL || name[0]=='\0')
+    if (!name || *name == '\0')
         return FALSE;   /* Fail; name needed */
 
     /* contruct the full path */
-    if(dir == NULL || dir[0]=='\0') {
+    if (!dir || *dir == '\0') {
       path = name;
     } else {
       path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
-      if(path==NULL) return FALSE;    /* memory allocation error */
+      if (!path)
+          return FALSE;    /* memory allocation error */
     }
 
     /* now access the file */
@@ -736,13 +753,13 @@ read_initialisation_file(char *dir, char *name)
             result = TRUE;
         }
     }
-#endif /* HAVE_UNISTD_H */
+#endif
 
     if (result) {
         inp_source(path);
 #ifdef TRACE
         printf("Init file: '%s'\n", path);
-#endif /* TRACE */
+#endif
     }
 
     if (path != name)
@@ -757,14 +774,14 @@ static void
 print_news(void)
 {
     if (News_File && *News_File) {
-        char* fname = cp_tildexpand(News_File); /*DG  Memory leak */
+        char *fname = cp_tildexpand(News_File); /*DG  Memory leak */
         FILE *fp = fopen(fname, "r");
         tfree(fname);
         if (fp) {
             char buf[BSIZE_SP];
             while (fgets(buf, BSIZE_SP, fp))
                 fputs(buf, stdout);
-            (void) fclose(fp);
+            fclose(fp);
         }
     }
 }
@@ -1052,10 +1069,10 @@ main(int argc, char **argv)
     /* Set up signal handling */
     if (!ft_batchmode) {
         /*  Set up interrupt handler  */
-        (void) signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
+        signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
 
         /* floating point exception  */
-        (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
+        signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
 
 #ifdef SIGTSTP
         signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
@@ -1094,7 +1111,7 @@ main(int argc, char **argv)
                 /* if that failed try in the user's home directory
                    if their HOME environment variable is set */
                 char *homedir = getenv("HOME");
-                if(homedir != NULL)
+                if (homedir)
                     if(FALSE == read_initialisation_file(homedir, INITSTR)  &&
                        FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
                         ;
