@@ -526,20 +526,20 @@ prompt(void)
     s = "->";
 
     while (*s) {
-      switch (strip(*s)) {
+      char c = (char) strip(*s++);
+      switch (c) {
         case '!':
           p += sprintf(p, "%d", where_history() + 1);
           break;
         case '\\':
-          if (s[1])
-              s++;
+          if (*s)
+              c = (char) strip(*s++);
           default:
-              *p = (char) strip(*s); ++p;
+              *p++ = c;
           break;
       }
-      s++;
     }
-    *p = 0;
+    *p = '\0';
     return pbuf;
 }
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
