@@ -528,22 +528,7 @@ prompt(void)
     while (*s) {
       switch (strip(*s)) {
         case '!':
-#if defined(HAVE_BSDEDITLINE) && 0
-          {
-            /* SJB In the present version of editline (v2.9)
-              it seems that where_history() is broken.
-              This is a hack that works round this problem.
-              WARNING: It may fail to work in the future
-              as it relies on undocumented structure */
-            /* some years later, it fails indeed, (v2.11 on debian) */
-            int where = 0;
-            HIST_ENTRY *he = current_history();
-            if(he!=NULL) where = *(int*)(he->data);
-            p += sprintf(p, "%d", where + 1);
-          }
-#else
           p += sprintf(p, "%d", where_history() + 1);
-#endif  /* HAVE_BSDEDITLINE*/
           break;
         case '\\':
           if (s[1])
