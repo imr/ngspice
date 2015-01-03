@@ -532,7 +532,7 @@ prompt(void)
           break;
         case '\\':
           if (s[1])
-              p += sprintf(p, "%c", strip(*++s));
+              s++;
           default:
               *p = (char) strip(*s); ++p;
           break;
