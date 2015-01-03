@@ -22,8 +22,8 @@
 /* SJB added editline support 2005-05-05 */
 #ifdef HAVE_BSDEDITLINE
 # include <editline/readline.h>
- extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
- extern int rl_catch_signals;        /* missing from editline/readline.h */
+extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
+extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif
 
 #include "ngspice/iferrmsg.h"
@@ -68,8 +68,8 @@
 #endif
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
- char history_file[512] = {'\0'};
- static char *application_name;
+char history_file[512] = {'\0'};
+static char *application_name;
 #endif
 
 /* Undefine this next line for debug tracing */
@@ -87,12 +87,12 @@ bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt.
 char *ft_rawfile = "rawspice.raw";
 
 #ifdef HAS_WINGUI
- extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
- extern void SetSource( char *Name);    /* display the source file name in the source window */
- extern int  xmain(int argc, char **argv);
- FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
+extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
+extern void SetSource(char *Name);    /* display the source file name in the source window */
+extern int  xmain(int argc, char **argv);
+FILE *flogp = NULL;         /* log file ('-o logfile' command line option) */
 #else
- bool orflag = FALSE; /* global for -o option */
+bool orflag = FALSE; /* global for -o option */
 #endif
 
 FILE *slogp = NULL;          /* soa log file ('--soa-log file' command line option) */
@@ -147,7 +147,7 @@ double Temp, RelTemp, Vt;
 double RefPsi;/* potential at Infinity */
 double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
 
- /* end cider globals */
+/* end cider globals */
 #endif /* CIDER */
 
 struct variable *(*if_getparam)(CKTcircuit *ckt, char **name, char *param, int ind, int do_model);
@@ -158,16 +158,16 @@ static void sp_shutdown(int exitval);
 static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
- static char *prompt(void);
+static char *prompt(void);
 #endif
 
 #ifndef X_DISPLAY_MISSING
 # include "frontend/plotting/x11.h"
 # ifdef HAVE_GNUREADLINE
-   static int app_event_func(void);
+static int app_event_func(void);
 # endif
 # ifdef HAVE_BSDEDITLINE
-   static void app_event_func(void);
+static void app_event_func(void);
 # endif
 #endif
 
@@ -185,17 +185,17 @@ extern IFsimulator SIMinfo;
 #ifdef SIMULATOR
 
 const bool ft_nutmeg = FALSE;
-extern struct comm spcp_coms[ ];
+extern struct comm spcp_coms[];
 struct comm *cp_coms = spcp_coms;
 
-extern int OUTpBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,runDesc **);
-extern int OUTpData(runDesc *,IFvalue *,IFvalue *);
-extern int OUTwBeginPlot(CKTcircuit *,JOB *,IFuid,IFuid,int,int,IFuid *,int,runDesc **);
-extern int OUTwReference(runDesc *,IFvalue *,void **);
-extern int OUTwData(runDesc *,int,IFvalue *,void *), OUTwEnd(runDesc *), OUTendPlot(runDesc *);
-extern int OUTbeginDomain(runDesc *,IFuid,int,IFvalue *);
+extern int OUTpBeginPlot(CKTcircuit *, JOB *, IFuid, IFuid, int, int, IFuid *, int, runDesc **);
+extern int OUTpData(runDesc *, IFvalue *, IFvalue *);
+extern int OUTwBeginPlot(CKTcircuit *, JOB *, IFuid, IFuid, int, int, IFuid *, int, runDesc **);
+extern int OUTwReference(runDesc *, IFvalue *, void **);
+extern int OUTwData(runDesc *, int, IFvalue *, void *), OUTwEnd(runDesc *), OUTendPlot(runDesc *);
+extern int OUTbeginDomain(runDesc *, IFuid, int, IFvalue *);
 extern int OUTendDomain(runDesc *), OUTstopnow(void);
-extern void OUTerror(int,char *,IFuid *);
+extern void OUTerror(int, char *, IFuid *);
 
 #ifdef __GNUC__
 extern void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__printf__, 2, 3)));
@@ -203,7 +203,7 @@ extern void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__prin
 extern void OUTerrorf(int, const char *fmt, ...);
 #endif
 
-extern int OUTattributes(runDesc *,IFuid,int,IFvalue *);
+extern int OUTattributes(runDesc *, IFuid, int, IFvalue *);
 
 extern void initw(void);
 
@@ -224,12 +224,12 @@ IFfrontEnd nutmeginfo = {
     OUTbeginDomain,
     OUTendDomain,
     OUTattributes
-    };
+};
 
 #else /* SIMULATOR */
 
 const bool ft_nutmeg = TRUE;
-extern struct comm nutcp_coms[ ];
+extern struct comm nutcp_coms[];
 struct comm *cp_coms = nutcp_coms;
 IFfrontEnd nutmeginfo;
 
@@ -270,6 +270,7 @@ if_inpdeck(struct line *deck, INPtables **tab)
 {
     NG_IGNORE(tab);
     NG_IGNORE(deck);
+
     return NULL;
 }
 
@@ -305,6 +306,7 @@ char *
 if_errstring(int code)
 {
     NG_IGNORE(code);
+
     return "spice error";
 }
 
@@ -354,6 +356,7 @@ com_snload(wordlist *wl)
 {
     NG_IGNORE(wl);
 }
+
 void
 com_snsave(wordlist *wl)
 {
@@ -388,50 +391,59 @@ spice_destroy_devices(void)
 #ifdef XSPICE
 /* saj to get nutmeg to compile, not nice but necessary */
 Ipc_Tiein_t  g_ipc;
+
 Ipc_Status_t
 ipc_send_errchk(void)
 {
-  Ipc_Status_t x = IPC_STATUS_OK;
-  return x;
+    Ipc_Status_t x = IPC_STATUS_OK;
+    return x;
 }
+
 Ipc_Status_t
 ipc_get_line(char *str, int *len, Ipc_Wait_t wait)
 {
-  Ipc_Status_t x = IPC_STATUS_OK;
-  NG_IGNORE(str);
-  NG_IGNORE(len);
-  NG_IGNORE(wait);
+    Ipc_Status_t x = IPC_STATUS_OK;
 
-  return x;
+    NG_IGNORE(str);
+    NG_IGNORE(len);
+    NG_IGNORE(wait);
+
+    return x;
 }
+
 struct line *
 ENHtranslate_poly(struct line *deck)
 {
-  NG_IGNORE(deck);
-  return NULL;
+    NG_IGNORE(deck);
+    return NULL;
 }
+
 int
 load_opus(char *name)
 {
-  NG_IGNORE(name);
-  return 1;
+    NG_IGNORE(name);
+    return 1;
 }
+
 char *
 MIFgettok(char **s)
 {
-  NG_IGNORE(s);
-  return NULL;
+    NG_IGNORE(s);
+    return NULL;
 }
+
 void
 EVTprint(wordlist *wl)
 {
-  NG_IGNORE(wl);
+    NG_IGNORE(wl);
 }
+
 struct dvec *
 EVTfindvec(char *node) {
-  NG_IGNORE(node);
-  return NULL;
+    NG_IGNORE(node);
+    return NULL;
 }
+
 #endif /* XSPICE */
 
 #endif /* SIMULATOR */
@@ -456,22 +468,24 @@ int DEVmaxnum = 0;
    - Spice3
    - all compatibility stuff
 */
+
 COMPATMODE_T
 ngspice_compat_mode(void)
 {
-   char behaviour[80] ;
+    char behaviour[80];
 
-   if( cp_getvar("ngbehavior", CP_STRING, behaviour)){
-      if (strcasecmp(behaviour, "all")==0)
-         return COMPATMODE_ALL;
-      if (strcasecmp(behaviour, "hs")==0)
-         return COMPATMODE_HS;
-      if (strcasecmp(behaviour, "ps")==0)
-         return COMPATMODE_PS;
-      if (strcasecmp(behaviour, "spice3")==0)
-         return COMPATMODE_SPICE3;
-   }
-   return COMPATMODE_ALL;
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour)) {
+        if (strcasecmp(behaviour, "all") == 0)
+            return COMPATMODE_ALL;
+        if (strcasecmp(behaviour, "hs") == 0)
+            return COMPATMODE_HS;
+        if (strcasecmp(behaviour, "ps") == 0)
+            return COMPATMODE_PS;
+        if (strcasecmp(behaviour, "spice3") == 0)
+            return COMPATMODE_SPICE3;
+    }
+
+    return COMPATMODE_ALL;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -485,7 +499,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.numAnalyses = spice_num_analysis();
     SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use
                                                              * only the public part
-                                 */
+                                                             */
 
 #ifdef CIDER
 /* Evaluates limits of machine accuracy for CIDER */
@@ -497,7 +511,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SPfrontEnd = frontEnd;
     *simulator = &SIMinfo;
     CONSTroot2 = sqrt(2.);
-    CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK ) / CHARGE;
+    CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK) / CHARGE;
     CONSTKoverQ = CONSTboltz / CHARGE;
     CONSTe = exp(1.0);
     return OK;
@@ -518,7 +532,7 @@ sp_shutdown(int exitval)
 #endif
     if  (exitval == EXIT_INFO)
         exitval = EXIT_NORMAL;
-    exit (exitval);
+    exit(exitval);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -535,26 +549,30 @@ prompt(void)
         return NULL;    /* NULL means no prompt */
 
     s = get_alt_prompt();
+
     if (!s)
-    s = cp_promptstring;
+        s = cp_promptstring;
+
     if (!s)
-    s = "->";
+        s = "->";
 
     while (*s) {
-      char c = (char) strip(*s++);
-      switch (c) {
+        char c = (char) strip(*s++);
+        switch (c) {
         case '!':
-          p += sprintf(p, "%d", where_history() + 1);
-          break;
+            p += sprintf(p, "%d", where_history() + 1);
+            break;
         case '\\':
-          if (*s)
-              c = (char) strip(*s++);
-          default:
-              *p++ = c;
-          break;
-      }
+            if (*s)
+                c = (char) strip(*s++);
+        default:
+            *p++ = c;
+            break;
+        }
     }
+
     *p = '\0';
+
     return pbuf;
 }
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
@@ -615,7 +633,7 @@ app_rl_readlines(void)
     rl_instream = cp_in;
     rl_outstream = cp_out;
 #ifndef X_DISPLAY_MISSING
-    if(dispdev->Input == X11_Input)
+    if (dispdev->Input == X11_Input)
         rl_event_hook = app_event_func;
 #endif
     rl_catch_signals = 0;   /* disable signal handling  */
@@ -628,33 +646,33 @@ app_rl_readlines(void)
 
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
     for (;;) {
-       history_set_pos(history_length);
+        history_set_pos(history_length);
 
-       if (SETJMP(jbuf, 1))    /* Set location to jump to after handling SIGINT (ctrl-C)  */
-           ft_sigintr_cleanup();
+        if (SETJMP(jbuf, 1))    /* Set location to jump to after handling SIGINT (ctrl-C)  */
+            ft_sigintr_cleanup();
 
-       line = readline(prompt());
+        line = readline(prompt());
 
-       if (!line) {
-           cp_evloop("quit");
-           continue;
-       }
+        if (!line) {
+            cp_evloop("quit");
+            continue;
+        }
 
-       if (*line) {
-           int s = history_expand(line, &expanded_line);
+        if (*line) {
+            int s = history_expand(line, &expanded_line);
 
-           if (s == 2) {
-               fprintf(stderr, "-> %s\n", expanded_line);
-           } else if (s == -1) {
-               fprintf(stderr, "readline: %s\n", expanded_line);
-           } else {
-               cp_evloop(expanded_line);
-               add_history(expanded_line);
-           }
-           free(expanded_line);
-       }
+            if (s == 2) {
+                fprintf(stderr, "-> %s\n", expanded_line);
+            } else if (s == -1) {
+                fprintf(stderr, "readline: %s\n", expanded_line);
+            } else {
+                cp_evloop(expanded_line);
+                add_history(expanded_line);
+            }
+            free(expanded_line);
+        }
 
-       free(line);
+        free(line);
     }
     /* History gets written in ../fte/misccoms.c com_quit */
 
@@ -670,24 +688,24 @@ static void
 show_help(void)
 {
     printf("Usage: %s [OPTION]... [FILE]...\n"
-       "Simulate the electical circuits in FILE.\n"
-       "\n"
-       "  -a  --autorun             run the loaded netlist\n"
-       "  -b, --batch               process FILE in batch mode\n"
-       "  -c, --circuitfile=FILE    set the circuitfile\n"
-       "  -i, --interactive         run in interactive mode\n"
-       "  -n, --no-spiceinit        don't load the local or user's config file\n"
-       "  -o, --output=FILE         set the outputfile\n"
-       "  -p, --pipe                run in I/O pipe mode\n"
-       "  -q, --completion          activate command completion\n"
-       "  -r, --rawfile=FILE        set the rawfile output\n"
-       "      --soa-log=FILE        set the outputfile for SOA warnings\n"
-       "  -s, --server              run spice as a server process\n"
-       "  -t, --term=TERM           set the terminal type\n"
-       "  -h, --help                display this help and exit\n"
-       "  -v, --version             output version information and exit\n"
-       "\n"
-       "Report bugs to %s.\n", cp_program, Bug_Addr);
+           "Simulate the electical circuits in FILE.\n"
+           "\n"
+           "  -a  --autorun             run the loaded netlist\n"
+           "  -b, --batch               process FILE in batch mode\n"
+           "  -c, --circuitfile=FILE    set the circuitfile\n"
+           "  -i, --interactive         run in interactive mode\n"
+           "  -n, --no-spiceinit        don't load the local or user's config file\n"
+           "  -o, --output=FILE         set the outputfile\n"
+           "  -p, --pipe                run in I/O pipe mode\n"
+           "  -q, --completion          activate command completion\n"
+           "  -r, --rawfile=FILE        set the rawfile output\n"
+           "      --soa-log=FILE        set the outputfile for SOA warnings\n"
+           "  -s, --server              run spice as a server process\n"
+           "  -t, --term=TERM           set the terminal type\n"
+           "  -h, --help                display this help and exit\n"
+           "  -v, --version             output version information and exit\n"
+           "\n"
+           "Report bugs to %s.\n", cp_program, Bug_Addr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -695,12 +713,12 @@ static void
 show_version(void)
 {
     printf("%s compiled from %s revision %s\n"
-       "Written originally by Berkeley University\n"
-       "Currently maintained by the NGSpice Project\n\n"
-       "Copyright (C) 1985-1996,"
-       "  The Regents of the University of California\n"
-       "Copyright (C) 1999-2011,"
-       "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
+           "Written originally by Berkeley University\n"
+           "Currently maintained by the NGSpice Project\n\n"
+           "Copyright (C) 1985-1996,"
+           "  The Regents of the University of California\n"
+           "Copyright (C) 1999-2011,"
+           "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
 }
 
 #ifdef SIMULATOR
@@ -712,7 +730,7 @@ append_to_stream(FILE *dest, FILE *source)
     size_t n;
 
     while ((n = fread(buf, 1, BSIZE_SP, source)) > 0)
-      fwrite(buf, n, 1, dest);
+        fwrite(buf, n, 1, dest);
 }
 #endif /* SIMULATOR */
 
@@ -734,11 +752,11 @@ read_initialisation_file(char *dir, char *name)
 
     /* contruct the full path */
     if (!dir || *dir == '\0') {
-      path = name;
+        path = name;
     } else {
-      path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
-      if (!path)
-          return FALSE;    /* memory allocation error */
+        path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
+        if (!path)
+            return FALSE;    /* memory allocation error */
     }
 
     /* now access the file */
@@ -846,11 +864,11 @@ main(int argc, char **argv)
     istty = (bool) isatty(fileno(stdin));
 #endif
 
-    init_time( );
+    init_time();
 
     {
         int rv = SIMinit(&nutmeginfo, &ft_sim);
-        if(rv != OK) {
+        if (rv != OK) {
             ft_sperror(rv, "SIMinit");
             sp_shutdown(EXIT_BAD);
         }
@@ -862,7 +880,7 @@ main(int argc, char **argv)
     TausSeed();
 
     /* --- Process command line options --- */
-    for(;;) {
+    for (;;) {
         enum { soa_log = 1001, };
 
         static struct option long_options[] = {
@@ -885,105 +903,105 @@ main(int argc, char **argv)
 
         int option_index = 0;
 
-        int c = getopt_long (argc, argv, "hvbac:ino:pqr:st:",
-                             long_options, &option_index);
+        int c = getopt_long(argc, argv, "hvbac:ino:pqr:st:",
+                            long_options, &option_index);
 
         if (c == -1)
             break;
 
         switch (c) {
-            case 'h':       /* Help */
-              show_help();
-              sp_shutdown (EXIT_INFO);
-              break;
+        case 'h':       /* Help */
+            show_help();
+            sp_shutdown(EXIT_INFO);
+            break;
 
-            case 'v':       /* Version info */
-              show_version();
-              sp_shutdown (EXIT_INFO);
-              break;
+        case 'v':       /* Version info */
+            show_version();
+            sp_shutdown(EXIT_INFO);
+            break;
 
-            case 'b':       /* Batch mode */
-              {
-                  bool x_false = FALSE;
-                  cp_vset("addcontrol", CP_BOOL, &x_false);
+        case 'b':       /* Batch mode */
+        {
+            bool x_false = FALSE;
+            cp_vset("addcontrol", CP_BOOL, &x_false);
 
-                  ft_batchmode = TRUE;
-              }
-              break;
+            ft_batchmode = TRUE;
+        }
+        break;
 
-            case 'a':       /* Add control section for autorun */
-              if (!ft_batchmode) {
-                  bool x_true = TRUE;
-                  cp_vset("addcontrol", CP_BOOL, &x_true);
-              }
-              break;
+        case 'a':       /* Add control section for autorun */
+            if (!ft_batchmode) {
+                bool x_true = TRUE;
+                cp_vset("addcontrol", CP_BOOL, &x_true);
+            }
+            break;
 
-            case 'c':       /* Circuit file */
-              if (optarg) {
-                  if ((circuit_file = fopen(optarg, "r")) == NULL) {
-                     perror(optarg);
-                     sp_shutdown(EXIT_BAD);
-                  }
-                  istty = FALSE;
-              }
-              break;
+        case 'c':       /* Circuit file */
+            if (optarg) {
+                if ((circuit_file = fopen(optarg, "r")) == NULL) {
+                    perror(optarg);
+                    sp_shutdown(EXIT_BAD);
+                }
+                istty = FALSE;
+            }
+            break;
 
-            case 'i':       /* Interactive mode */
-              iflag = TRUE;
-              break;
+        case 'i':       /* Interactive mode */
+            iflag = TRUE;
+            break;
 
-            case 'n':       /* Don't read initialisation file */
-              readinit = FALSE;
-              break;
+        case 'n':       /* Don't read initialisation file */
+            readinit = FALSE;
+            break;
 
-            case 'o':       /* Output file */
-              if (optarg) {
-                  /* switch to line buffering for stdout */
-                  setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
-                  sprintf (log_file, "%s", optarg);
-                  oflag = TRUE;
-              }
-              break;
+        case 'o':       /* Output file */
+            if (optarg) {
+                /* switch to line buffering for stdout */
+                setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
+                sprintf(log_file, "%s", optarg);
+                oflag = TRUE;
+            }
+            break;
 
-            case 'p':       /* Run in pipe mode */
-              iflag = TRUE;
-              istty = TRUE;
-              ft_pipemode = TRUE;
-              /* switch to line buffering for stdout */
-              setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
-              break;
+        case 'p':       /* Run in pipe mode */
+            iflag = TRUE;
+            istty = TRUE;
+            ft_pipemode = TRUE;
+            /* switch to line buffering for stdout */
+            setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
+            break;
 
-            case 'q':       /* Command completion */
-              qflag = TRUE;
-              break;
+        case 'q':       /* Command completion */
+            qflag = TRUE;
+            break;
 
-            case 'r':       /* The raw file */
-              if (optarg)
-                  cp_vset("rawfile", CP_STRING, optarg);
-              rflag = TRUE;
-              break;
+        case 'r':       /* The raw file */
+            if (optarg)
+                cp_vset("rawfile", CP_STRING, optarg);
+            rflag = TRUE;
+            break;
 
-            case 's':       /* Server mode */
-              ft_servermode = TRUE;
-              break;
+        case 's':       /* Server mode */
+            ft_servermode = TRUE;
+            break;
 
-            case 't':
-              if (optarg)
-                  cp_vset("term", CP_STRING, optarg);
-              break;
+        case 't':
+            if (optarg)
+                cp_vset("term", CP_STRING, optarg);
+            break;
 
-            case soa_log:
-              if (optarg) {
-                  sprintf (soa_log_file, "%s", optarg);
-                  srflag = TRUE;
-              }
-              break;
+        case soa_log:
+            if (optarg) {
+                sprintf(soa_log_file, "%s", optarg);
+                srflag = TRUE;
+            }
+            break;
 
-            case '?':
-              break;
+        case '?':
+            break;
 
-            default:
-              printf ("?? getopt returned character code 0%o ??\n", c);
+        default:
+            printf ("?? getopt returned character code 0%o ??\n", c);
         }
     }  /* --- End of command line option processing (While(1)-loop) --- */
 
@@ -1009,15 +1027,15 @@ main(int argc, char **argv)
         /* flogp used by winmain's putc which writes to file 'log_file' */
         flogp = fopen(log_file, "w");
         if (!flogp) {
-            perror (log_file);
-            sp_shutdown (EXIT_BAD);
+            perror(log_file);
+            sp_shutdown(EXIT_BAD);
         }
 #else
         orflag = TRUE;
         /* Connect stdout and stderr to file log_file and log stdout */
-        if (!freopen (log_file, "w", stdout)) {
-            perror (log_file);
-            sp_shutdown (EXIT_BAD);
+        if (!freopen(log_file, "w", stdout)) {
+            perror(log_file);
+            sp_shutdown(EXIT_BAD);
         }
         dup2(fileno(stdout), fileno(stderr));
         setvbuf(stdout, NULL, _IOLBF, BUFSIZ); /* enable line buffering */
@@ -1031,8 +1049,8 @@ main(int argc, char **argv)
         /* Open the soa log file */
         slogp = fopen(soa_log_file, "w");
         if (!slogp) {
-            perror (soa_log_file);
-            sp_shutdown (EXIT_BAD);
+            perror(soa_log_file);
+            sp_shutdown(EXIT_BAD);
         }
     } /* srflag */
 
@@ -1059,7 +1077,7 @@ main(int argc, char **argv)
     /* Get information on memory status upon startup.
        Would like to do this later, but cpinit evals commands.
        fcn is in resource.c */
-    init_rlimits( );
+    init_rlimits();
 
     /* Have to initialize cp now.
        fcn is in cpitf.c*/
@@ -1106,14 +1124,14 @@ main(int argc, char **argv)
             /* load user's initialisation file
                try accessing the initialisation file in the current directory
                if that fails try the alternate name */
-            if(FALSE == read_initialisation_file("", INITSTR)  &&
-               FALSE == read_initialisation_file("", ALT_INITSTR)) {
+            if (FALSE == read_initialisation_file("", INITSTR)  &&
+                FALSE == read_initialisation_file("", ALT_INITSTR)) {
                 /* if that failed try in the user's home directory
                    if their HOME environment variable is set */
                 char *homedir = getenv("HOME");
                 if (homedir)
-                    if(FALSE == read_initialisation_file(homedir, INITSTR)  &&
-                       FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
+                    if (FALSE == read_initialisation_file(homedir, INITSTR)  &&
+                        FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
                         ;
                     }
             }
@@ -1121,7 +1139,7 @@ main(int argc, char **argv)
 
         if (!ft_batchmode) {
             com_version(NULL);
-            DevInit( );
+            DevInit();
             print_news();
         }
 
@@ -1149,15 +1167,15 @@ main(int argc, char **argv)
 // initialization and seed for FastNorm Gaussian random generator
         {
             unsigned int rseed = 66;
-            initnorm (0, 0);
+            initnorm(0, 0);
             if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
                 time_t acttime = time(NULL);
                 rseed = (unsigned int) acttime;
             }
-            initnorm (rseed, 2);
-            fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
+            initnorm(rseed, 2);
+            fprintf(cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
         }
-#elif defined (WaGauss)
+#elif defined(WaGauss)
         {
             unsigned int rseed = 66;
             if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
@@ -1203,7 +1221,7 @@ main(int argc, char **argv)
             }
 #endif
 
-            if(!tempfile) {
+            if (!tempfile) {
                 perror("tmpfile()");
                 sp_shutdown(EXIT_BAD);
             }
@@ -1339,8 +1357,8 @@ main(int argc, char **argv)
 
 #endif /* ~ SIMULATOR */
 
-    for(;;)
-        if(!SETJMP(jbuf, 1)) {
+    for (;;)
+        if (!SETJMP(jbuf, 1)) {
             /*  enter the command processing loop  */
             cp_interactive = TRUE;
             app_rl_readlines();
