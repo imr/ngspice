@@ -740,7 +740,7 @@ cp_variablesubst(wordlist *wlist)
                 if (wlist == wl)
                     wlist = nwl;
                 wl = wl_splice(wl, nwl);
-                i = strlen(wl->wl_word);
+                i = (int) strlen(wl->wl_word);
                 x = wl->wl_word;
                 wl->wl_word = tprintf("%s%s", wl->wl_word, tail_);
                 free(x);
