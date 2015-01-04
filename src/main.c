@@ -815,7 +815,7 @@ main(int argc, char **argv)
     char log_file[BSIZE_SP];
     char soa_log_file[BSIZE_SP];
     volatile bool readinit = TRUE;
-    bool istty = TRUE;
+    volatile bool istty = TRUE;
     bool iflag = FALSE;
     bool qflag = FALSE;
 
