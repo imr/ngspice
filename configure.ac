@@ -224,7 +224,7 @@ if test "x$ext_CFLAGS" != xyes; then
     fi
 
     if test "x$GCC" = xyes; then
-        CFLAGS="$CFLAGS -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion"
+        CFLAGS="$CFLAGS -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wold-style-definition -Wredundant-decls -Wconversion -Wno-unused-but-set-variable"
     fi
 
 fi
