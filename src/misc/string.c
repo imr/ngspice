@@ -370,7 +370,7 @@ gettok_noparens(char **s)
 	   ( **s != ')' ) &&
 	   ( **s != ',') 
 	  )  {
-        *(*s)++ ;
+        (*s)++ ;
     }
 
     token = copy_substring(beg, *s) ;
@@ -400,7 +400,7 @@ gettok_instance(char **s)
          ( **s != '(' ) &&
          ( **s != ')' )
         )  {
-        *(*s)++ ;
+        (*s)++ ;
     }
 
     token = copy_substring(beg, *s) ;
@@ -443,7 +443,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
             q = '(';
         /* add string in front of q, excluding q */
         while ((c = **s) != '\0' && ( **s != q ))  {
-            *(*s)++ ;
+            (*s)++ ;
         }
         /* return if nested bracket found, excluding its character */
         while ((c = **s) != '\0')  {
@@ -452,13 +452,13 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
             if (count == 0) {
                 break;
             }
-            *(*s)++ ;
+            (*s)++ ;
         }
     }
     else
         /* just look for p and return string, excluding p */
         while ((c = **s) != '\0' && ( **s != p ))  {
-            *(*s)++ ;
+            (*s)++ ;
         }
 
     if (c == '\0')
@@ -467,7 +467,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
 
     if (inc_p)
         /* add p */
-        *(*s)++ ;
+        (*s)++ ;
 
     token = copy_substring(beg, *s) ;
 
