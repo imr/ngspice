@@ -266,9 +266,9 @@ get_plot_byname(char* plotname)
 
 #ifdef THREADS
 #ifdef __MINGW32__
-static threadId_t tid, printtid, bgtid;
+static threadId_t tid, printtid; // , bgtid;
 #else
-static threadId_t tid, printtid, bgtid = (threadId_t) 0;
+static threadId_t tid, printtid; // , bgtid = (threadId_t) 0;
 #endif
 
 static bool fl_running = FALSE;
@@ -292,15 +292,15 @@ _thread_run(void *string)
     /* notify caller that thread is running */
     if (!nobgtrwanted)
         bgtr(fl_exited, ng_ident, userptr);
-    bgtid = thread_self();
+//  bgtid = thread_self();
     cp_evloop((char *)string);
     FREE(string);
-#ifdef __MINGW32__
-    bgtid.p = NULL;
-    bgtid.x = 0;
-#else
-    bgtid = (threadId_t)0;
-#endif
+// #ifdef __MINGW32__
+//     bgtid.p = NULL;
+//     bgtid.x = 0;
+// #else
+//     bgtid = (threadId_t)0;
+// #endif
     fl_exited = TRUE;
     /* notify caller that thread has exited */
     if (!nobgtrwanted)
@@ -916,9 +916,9 @@ sh_vfprintf(FILE *f, const char *fmt, va_list args)
 
     if ((fileno(f) != STDOUT_FILENO && fileno(f) != STDERR_FILENO &&
          f != stderr && f != stdout)
-#ifdef THREADS
+// #ifdef THREADS
 //        || (fl_running && bgtid == thread_self())
-#endif
+// #endif
         )
         return vfprintf(f, fmt, args);
 
