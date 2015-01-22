@@ -295,7 +295,7 @@ _thread_run(void *string)
     bgtid = thread_self();
     cp_evloop((char *)string);
     FREE(string);
-#ifdef __MINGW32__nn
+#ifdef __MINGW32__
     bgtid.p = NULL;
     bgtid.x = 0;
 #else
