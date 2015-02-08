@@ -340,6 +340,11 @@ spFactor(MatrixPtr Matrix)
 
     Size = Matrix->Size;
 
+    if (Size == 0) {
+        Matrix->Factored = YES;
+        return (Matrix->Error = spOKAY);
+    }
+
     if (Matrix->Diag[1]->Real == 0.0) return ZeroPivot( Matrix, 1 );
     Matrix->Diag[1]->Real = 1.0 / Matrix->Diag[1]->Real;
 
@@ -443,6 +448,12 @@ FactorComplexMatrix( MatrixPtr Matrix )
     assert(Matrix->Complex);
 
     Size = Matrix->Size;
+
+    if (Size == 0) {
+        Matrix->Factored = YES;
+        return (Matrix->Error = spOKAY);
+    }
+
     pElement = Matrix->Diag[1];
     if (ELEMENT_MAG(pElement) == 0.0) return ZeroPivot( Matrix, 1 );
     /* Cmplx expr: *pPivot = 1.0 / *pPivot. */

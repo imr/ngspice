@@ -22,7 +22,7 @@ CKTnames(CKTcircuit *ckt, int *numNames, IFuid **nameList)
     int i;
     *numNames = ckt->CKTmaxEqNum-1;
     *nameList = TMALLOC(IFuid, *numNames);
-    if ((*nameList) == NULL) return(E_NOMEM);
+    if (*numNames && (*nameList) == NULL) return(E_NOMEM);
     i=0;
     for (here = ckt->CKTnodes->next; here; here = here->next)  {
         (*nameList) [i++] = here->name;

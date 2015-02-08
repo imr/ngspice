@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 
-TESTS = bugs-1.cir dollar-1.cir
+TESTS = bugs-1.cir dollar-1.cir empty-1.cir
 
 TESTS_ENVIRONMENT = ngspice_vpath=$(srcdir) $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 

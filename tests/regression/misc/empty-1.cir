@@ -1,0 +1,18 @@
+check that we can survive emptiness
+
+* (exec-spice "ngspice -b %s")
+
+* Nothingness, No circuit elements at all.
+*   We have only the implicit node "0"
+* Checks whether we can live with a
+*   zero times zero circuit matrix
+
+.control
+op
+tran 0.1m 1m
+ac lin 3 1kHz 2kHz
+echo "TEST: done"
+quit 0
+.endc
+
+.end
