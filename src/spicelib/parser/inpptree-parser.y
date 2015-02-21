@@ -106,7 +106,10 @@ exp:
 
   | '-' exp  %prec NEG                { $$ = mkfnode("-",$2); }
 
-  | TOK_STR '(' nonempty_arglist ')'  { $$ = mkfnode($1, $3); txfree((void*)$1); }
+  | TOK_STR '(' nonempty_arglist ')'  { $$ = mkfnode($1, $3);
+                                        if (!$$)
+                                            YYERROR;
+                                        txfree((void*)$1); }
 
   | TOK_pnode
 

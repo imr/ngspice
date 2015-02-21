@@ -197,7 +197,7 @@ static struct constant {
 void
 INPgetTree(char **line, INPparseTree ** pt, CKTcircuit *ckt, INPtables * tab)
 {
-    INPparseNode *p;
+    INPparseNode *p = NULL;
     int i, rv;
 
     values = NULL;
