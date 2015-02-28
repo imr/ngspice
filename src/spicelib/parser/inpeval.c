@@ -184,39 +184,19 @@ INPevaluate(char **line, int *error, int gobble)
         break;
     case 'm':
     case 'M':
-    {
-        /* special case for m - may be m or mil or meg */
-        if (here[1] != '\0' && here[2] != '\0') {
-            /* at least 2 characters, so check them. */
-            if ((here[1] == 'E') || (here[1] == 'e')) {
-                if ((here[2] == 'G') || (here[2] == 'g')) {
-                    expo1 = expo1 + 6;
-                    if (gobble) {
-                        FREE(token);
-                    } else {
-                        *line = here;
-                    }
-                    return (sign * mantis *
-                            pow(10.0, (double) (expo1 + expsgn * expo2)));
-                }
-            } else if ((here[1] == 'I') || (here[1] == 'i')) {
-                if ((here[2] == 'L') || (here[2] == 'l')) {
-                    expo1 = expo1 - 6;
-                    mantis = mantis * 25.4;
-                    if (gobble) {
-                        FREE(token);
-                    } else {
-                        *line = here;
-                    }
-                    return (sign * mantis *
-                            pow(10.0, (double) (expo1 + expsgn * expo2)));
-                }
-            }
+        if (((here[1] == 'E') || (here[1] == 'e')) &&
+            ((here[2] == 'G') || (here[2] == 'g')))
+        {
+            expo1 = expo1 + 6;  /* Meg */
+        } else if (((here[1] == 'I') || (here[1] == 'i')) &&
+                   ((here[2] == 'L') || (here[2] == 'l')))
+        {
+            expo1 = expo1 - 6;
+            mantis *= 25.4;     /* Mil */
+        } else {
+            expo1 = expo1 - 3;  /* m, milli */
         }
-        /* not either special case, so just m => 1e-3 */
-        expo1 = expo1 - 3;
-    }
-    break;
+        break;
     default:
         break;
     }
