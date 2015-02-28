@@ -53,12 +53,10 @@ double INPevaluate(char **line, int *error, int gobble)
     if ((*here == 0) || ((!(isdigit(*here))) && (*here != '.'))) {
 	/* number looks like just a sign! */
         *error = 1;
-	/* back out the 'gettok' operation */
-        *line = tmpline;
         if (gobble) {
             FREE(token);
-        } else {
-            *line = here;
+            /* back out the 'gettok' operation */
+            *line = tmpline;
         }
         return (0);
     }
