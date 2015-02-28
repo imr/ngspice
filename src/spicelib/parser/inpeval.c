@@ -26,14 +26,10 @@ INPevaluate(char **line, int *error, int gobble)
     /* setup */
     tmpline = *line;
 
-    if (gobble == 1) {
+    if (gobble) {
         /* MW. INPgetUTok should be called with gobble=0 or it make
          * errors in v(1,2) exp */
         *error = INPgetUTok(line, &token, 0);
-        if (*error)
-            return (0.0);
-    } else if (gobble == 2) {
-        *error = INPgetU2Tok(line, &token, 0);
         if (*error)
             return (0.0);
     } else {
