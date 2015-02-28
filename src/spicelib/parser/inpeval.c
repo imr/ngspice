@@ -50,7 +50,7 @@ double INPevaluate(char **line, int *error, int gobble)
         here++;
         sign = -1;
     }
-    if ((*here == 0) || ((!(isdigit(*here))) && (*here != '.'))) {
+    if ((*here == '\0') || ((!(isdigit(*here))) && (*here != '.'))) {
 	/* number looks like just a sign! */
         *error = 1;
         if (gobble) {
@@ -65,7 +65,7 @@ double INPevaluate(char **line, int *error, int gobble)
         mantis = 10 * mantis + *here - '0';
         here++;
     }
-    if (*here == 0) {
+    if (*here == '\0') {
         /* reached the end of token - done. */
         if (gobble) {
             FREE(token);
@@ -90,7 +90,7 @@ double INPevaluate(char **line, int *error, int gobble)
     if (*here == '.') {
         /* found a decimal point! */
         here++;			/* skip to next character */
-        if (*here == 0) {
+        if (*here == '\0') {
             /* number ends in the decimal point */
             if (gobble) {
                 FREE(token);
@@ -103,7 +103,7 @@ double INPevaluate(char **line, int *error, int gobble)
             /* digit, so accumulate it. */
             mantis = 10 * mantis + *here - '0';
             expo1 = expo1 - 1;
-            if (*here == 0) {
+            if (*here == '\0') {
                 /* reached the end of token - done. */
                 if (gobble) {
                     FREE(token);
@@ -169,7 +169,7 @@ double INPevaluate(char **line, int *error, int gobble)
         case 'M':
         {
             /* special case for m - may be m or mil or meg */
-            if (here[1] != 0 && here[2] != 0) {
+            if (here[1] != '\0' && here[2] != '\0') {
                 /* at least 2 characters, so check them. */
                 if ((here[1] == 'E') || (here[1] == 'e')) {
                     if ((here[2] == 'G') || (here[2] == 'g')) {
