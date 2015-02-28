@@ -46,7 +46,7 @@ double INPevaluate(char **line, int *error, int gobble)
     here = token;
     if (*here == '+')
         here++;			/* plus, so do nothing except skip it */
-    if (*here == '-') {		/* minus, so skip it, and change sign */
+    else if (*here == '-') {		/* minus, so skip it, and change sign */
         here++;
         sign = -1;
     }
@@ -123,7 +123,7 @@ double INPevaluate(char **line, int *error, int gobble)
         /* now look for exponent sign */
         if (*here == '+')
             here++;		/* just skip + */
-        if (*here == '-') {
+        else if (*here == '-') {
             here++;		/* skip over minus sign */
             expsgn = -1;	/* and make a negative exponent */
             /* now look for the digits of the exponent */
