@@ -30,7 +30,6 @@ INPgetTok(char **line, char **token, int gobble)
 {
     char *point;
     int signstate;
-    int diffpoints;
 
     /* scan along throwing away garbage characters until end of line
        or a separation char is found */
@@ -104,12 +103,9 @@ INPgetTok(char **line, char **token, int gobble)
     if (point == *line && *point)       /* Weird items, 1 char */
         point++;
 
-    diffpoints = (int)(point - *line);
-    *token = TMALLOC(char, 1 + diffpoints);
+    *token = copy_substring(*line, point);
     if (!*token)
         return (E_NOMEM);
-    (void) strncpy(*token, *line, (size_t) diffpoints);
-    *(*token + diffpoints) = '\0';
 
     *line = point;
 
@@ -150,7 +146,6 @@ INPgetNetTok(char **line, char **token, int gobble)
 /* gobble: eat non-whitespace trash AFTER token? */
 {
     char *point;
-    int diffpoints;
 
     /* scan along throwing away garbage characters until end of line
        or a separation char is found */
@@ -194,12 +189,9 @@ INPgetNetTok(char **line, char **token, int gobble)
     if (point == *line && *point)       /* Weird items, 1 char */
         point++;
 
-    diffpoints = (int)(point - *line);
-    *token = TMALLOC(char, 1 + diffpoints);
+    *token = copy_substring(*line, point);
     if (!*token)
         return (E_NOMEM);
-    (void) strncpy(*token, *line, (size_t) diffpoints);
-    *(*token + diffpoints) = '\0';
 
     *line = point;
 
@@ -325,11 +317,9 @@ INPgetUTok(char **line, char **token, int gobble)
     if (point == *line && *point)       /* Weird items, 1 char */
         point++;
 
-    *token = TMALLOC(char, 1 + point - *line);
+    *token = copy_substring(*line, point);
     if (!*token)
         return (E_NOMEM);
-    (void) strncpy(*token, *line, (size_t) (point - *line));
-    *(*token + (point - *line)) = '\0';
 
     /* gobble garbage to next token */
     for (; *point != '\0'; point++) {
@@ -465,11 +455,9 @@ INPgetU2Tok(char **line, char **token, int gobble)
     if (point == *line && *point)       /* Weird items, 1 char */
         point++;
 
-    *token = TMALLOC(char, 1 + point - *line);
+    *token = copy_substring(*line, point);
     if (!*token)
         return (E_NOMEM);
-    (void) strncpy(*token, *line, (size_t) (point - *line));
-    *(*token + (point - *line)) = '\0';
 
     /* gobble garbage to next token */
     for (; *point != '\0'; point++) {
