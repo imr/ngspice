@@ -116,15 +116,6 @@ INPevaluate(char **line, int *error, int gobble)
             /* digit, so accumulate it. */
             mantis = 10 * mantis + *here - '0';
             expo1 = expo1 - 1;
-            if (*here == '\0') {
-                /* reached the end of token - done. */
-                if (gobble) {
-                    FREE(token);
-                } else {
-                    *line = here;
-                }
-                return (mantis * sign * pow(10.0, (double) expo1));
-            }
             here++;
         }
     }
