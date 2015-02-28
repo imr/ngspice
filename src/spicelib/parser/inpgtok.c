@@ -95,9 +95,10 @@ int INPgetTok(char **line, char **token, int gobble)
 
     }
 
+    if (point == *line && *point)	/* Weird items, 1 char */
+	point++;
+
     diffpoints = (int)(point - *line);
-    if ((diffpoints < 1) && *point)
-        diffpoints = 1;	/* Weird items, 1 char */
     *token = TMALLOC(char, 1 + diffpoints);
     if (!*token)
         return (E_NOMEM);
@@ -190,10 +191,11 @@ int INPgetNetTok(char **line, char **token, int gobble)
 	    break;
     }
 
+    if (point == *line && *point)	/* Weird items, 1 char */
+	point++;
+
     /* now copy found token into *token */
     diffpoints = (int)(point - *line);
-    if ((diffpoints < 1) && *point)
-        diffpoints = 1;	/* Weird items, 1 char */
     *token = TMALLOC(char, 1 + diffpoints);
     if (!*token)
         return (E_NOMEM);
