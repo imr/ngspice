@@ -37,13 +37,13 @@ NOISEan (CKTcircuit *ckt, int restart)
     double freqTol; /* tolerence parameter for finding final frequency; hack */
 
     NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
+    GENinstance *inst = CKTfndDev(ckt, job->input);
 
     posOutNode = (job->output) -> number;
     negOutNode = (job->outputRef) -> number;
 
     /* see if the source specified is AC */
     {
-        GENinstance *inst = CKTfndDev(ckt, job->input);
         bool ac_given = FALSE;
 
         if (!inst || inst->GENmodPtr->GENmodType < 0) {
@@ -194,7 +194,8 @@ NOISEan (CKTcircuit *ckt, int restart)
 	    return (E_PAUSE);
         }
 	ckt->CKTomega = 2.0 * M_PI * data->freq;
-	ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEAC;
+	ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEAC | MODEACNOISE;
+	ckt->noise_input = inst;
 
 	/*
 	 * solve the original AC system to get the transfer

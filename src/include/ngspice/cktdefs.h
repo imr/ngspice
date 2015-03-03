@@ -165,6 +165,9 @@ struct CKTcircuit {
 #define MODETRAN           0x1
 #define MODEAC             0x2
 
+/* for noise analysis */
+#define MODEACNOISE        0x8
+
 /* old 'modedc' parameters */
 #define MODEDC            0x70
 #define MODEDCOP          0x10
@@ -288,6 +291,8 @@ struct CKTcircuit {
 
     NGHASHPTR DEVnameHash;
     NGHASHPTR MODnameHash;
+
+    GENinstance *noise_input;   /* identify the input vsrc/isrc during noise analysis */
 };
 
 

@@ -22,12 +22,22 @@ VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
 
+            double acReal, acImag;
+
+            if ((ckt->CKTmode & MODEACNOISE) && (here == ckt->noise_input)) {
+                acReal = 1.0;
+                acImag = 0.0;
+            } else {
+                acReal = here->VSRCacReal;
+                acImag = here->VSRCacImag;
+            }
+
             *(here->VSRCposIbrptr) += 1.0 ;
             *(here->VSRCnegIbrptr) -= 1.0 ;
             *(here->VSRCibrPosptr) += 1.0 ;
             *(here->VSRCibrNegptr) -= 1.0 ;
-            *(ckt->CKTrhs + (here->VSRCbranch)) += here->VSRCacReal;
-            *(ckt->CKTirhs + (here->VSRCbranch)) += here->VSRCacImag;
+            *(ckt->CKTrhs + (here->VSRCbranch)) += acReal;
+            *(ckt->CKTirhs + (here->VSRCbranch)) += acImag;
         }
     }
 
