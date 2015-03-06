@@ -184,6 +184,15 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             here->DIOtVcrit = vte * log(vte/(CONSTroot2*here->DIOtSatCur));
 
+            /* limit junction potential to max of 1/FC */
+            if(here->DIOtDepCap > 1.0) {
+                here->DIOtJctPot=1.0/model->DIOdepletionCapCoeff;
+                here->DIOtDepCap=model->DIOdepletionCapCoeff*here->DIOtJctPot;
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                        "%s: junction potential VJ too large, limited to %f",
+                        model->DIOmodName, here->DIOtJctPot);
+            }
+
             /* and now to compute the breakdown voltage, again, using
              * temperature adjusted basic parameters */
             if (model->DIObreakdownVoltageGiven){
