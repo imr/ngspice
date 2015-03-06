@@ -25,7 +25,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double arg;
     double argsw;
     double capd;
-    double cd;
+    double cd, cdb, cdsw;
     double cdeq;
     double cdhat;
     double ceq;
@@ -45,7 +45,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double delvd;   /* change in diode voltage temporary */
     double evd;
     double evrev;
-    double gd;
+    double gd, gdb, gdsw;
     double geq;
     double gspr;    /* area-scaled conductance */
     double sarg;
@@ -60,6 +60,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     int Check;
     int error;
     int SenCond=0;    /* sensitivity condition */
+    double diffcharge, diffchargeSW, deplcharge, deplchargeSW, diffcap, diffcapSW, deplcap, deplcapSW;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->DIOnextModel ) {
@@ -84,7 +85,11 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 
             }
             cd = 0.0;
+            cdb = 0.0;
+            cdsw = 0.0;
             gd = 0.0;
+            gdb = 0.0;
+            gdsw = 0.0;
             csat = here->DIOtSatCur;
             csatsw = here->DIOtSatSWCur;
             gspr = here->DIOtConductance * here->DIOarea;
@@ -197,22 +202,22 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                     if (vd >= -3*vtesw) {               /* forward */
 
                         evd = exp(vd/vtesw);
-                        cd = csatsw*(evd-1);
-                        gd = csatsw*evd/vtesw;
+                        cdsw = csatsw*(evd-1);
+                        gdsw = csatsw*evd/vtesw;
 
                     } else if((!(model->DIObreakdownVoltageGiven)) ||
                             vd >= -here->DIOtBrkdwnV) { /* reverse */
 
                         argsw = 3*vtesw/(vd*CONSTe);
                         argsw = argsw * argsw * argsw;
-                        cd = -csatsw*(1+argsw);
-                        gd = csatsw*3*argsw/vd;
+                        cdsw = -csatsw*(1+argsw);
+                        gdsw = csatsw*3*argsw/vd;
 
                     } else {                            /* breakdown */
 
                         evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
-                        cd = -csatsw*evrev;
-                        gd = csatsw*evrev/vtebrk;
+                        cdsw = -csatsw*evrev;
+                        gdsw = csatsw*evrev/vtebrk;
 
                     }
 
@@ -227,22 +232,22 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
             if (vd >= -3*vte) {                 /* bottom current forward */
 
                 evd = exp(vd/vte);
-                cd = cd + csat*(evd-1);
-                gd = gd + csat*evd/vte;
+                cdb = csat*(evd-1);
+                gdb = csat*evd/vte;
 
             } else if((!(model->DIObreakdownVoltageGiven)) ||
                     vd >= -here->DIOtBrkdwnV) { /* reverse */
 
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
-                cd = cd - csat*(1+arg);
-                gd = gd + csat*3*arg/vd;
+                cdb = -csat*(1+arg);
+                gdb = csat*3*arg/vd;
 
             } else {                            /* breakdown */
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
-                cd = cd - csat*evrev;
-                gd = gd + csat*evrev/vtebrk;
+                cdb = -csat*evrev;
+                gdb = csat*evrev/vtebrk;
 
             }
 
@@ -251,8 +256,8 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 vtetun = model->DIOtunEmissionCoeff * vt;
                 evd = exp(-vd/vtetun);
 
-                cd = cd - here->DIOtTunSatSWCur * (evd - 1);
-                gd = gd + here->DIOtTunSatSWCur * evd / vtetun;
+                cdsw = cdsw - here->DIOtTunSatSWCur * (evd - 1);
+                gdsw = gdsw + here->DIOtTunSatSWCur * evd / vtetun;
 
             }
 
@@ -261,11 +266,13 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 vtetun = model->DIOtunEmissionCoeff * vt;
                 evd = exp(-vd/vtetun);
 
-                cd = cd - here->DIOtTunSatCur * (evd - 1);
-                gd = gd + here->DIOtTunSatCur * evd / vtetun;
+                cdb = cdb - here->DIOtTunSatCur * (evd - 1);
+                gdb = gdb + here->DIOtTunSatCur * evd / vtetun;
 
             }
 
+            cd = cdb + cdsw;
+            gd = gdb + gdsw;
 
             if (vd >= -3*vte) { /* limit forward */
 
@@ -299,28 +306,39 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                *   charge storage elements
                */
                 czero=here->DIOtJctCap;
-                czeroSW=here->DIOtJctSWCap;
                 if (vd < here->DIOtDepCap){
                     arg=1-vd/here->DIOtJctPot;
-                    argSW=1-vd/here->DIOtJctSWPot;
                     sarg=exp(-here->DIOtGradingCoeff*log(arg));
-                    sargSW=exp(-model->DIOgradingSWCoeff*log(argSW));
-                    *(ckt->CKTstate0 + here->DIOcapCharge) =
-                            here->DIOtTransitTime*cd+
-                            here->DIOtJctPot*czero*(1-arg*sarg)/(1-here->DIOtGradingCoeff)+
-                            here->DIOtJctSWPot*czeroSW*(1-argSW*sargSW)/(1-model->DIOgradingSWCoeff);
-                    capd=here->DIOtTransitTime*gd+czero*sarg+czeroSW*sargSW;
+                    deplcharge = here->DIOtJctPot*czero*(1-arg*sarg)/(1-here->DIOtGradingCoeff);
+                    deplcap = czero*sarg;
                 } else {
                     czof2=czero/here->DIOtF2;
-                    czof2SW=czeroSW/here->DIOtF2SW;
-                    *(ckt->CKTstate0 + here->DIOcapCharge) =
-                            here->DIOtTransitTime*cd+czero*here->DIOtF1+
-                            czof2*(here->DIOtF3*(vd-here->DIOtDepCap)+(here->DIOtGradingCoeff/(here->DIOtJctPot+here->DIOtJctPot))*(vd*vd-here->DIOtDepCap*here->DIOtDepCap))+
-                            czof2SW*(here->DIOtF3SW*(vd-here->DIOtDepCap)+(model->DIOgradingSWCoeff/(here->DIOtJctSWPot+here->DIOtJctSWPot))*(vd*vd-here->DIOtDepCap*here->DIOtDepCap));
-                    capd=here->DIOtTransitTime*gd+
-                            czof2*(here->DIOtF3+here->DIOtGradingCoeff*vd/here->DIOtJctPot)+
-                            czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vd/here->DIOtJctSWPot);
+                    deplcharge = czero*here->DIOtF1+czof2*(here->DIOtF3*(vd-here->DIOtDepCap)+
+                                 (here->DIOtGradingCoeff/(here->DIOtJctPot+here->DIOtJctPot))*(vd*vd-here->DIOtDepCap*here->DIOtDepCap));
+                    deplcap = czof2*(here->DIOtF3+here->DIOtGradingCoeff*vd/here->DIOtJctPot);
                 }
+                czeroSW=here->DIOtJctSWCap;
+                if (vd < here->DIOtDepSWCap){
+                    argSW=1-vd/here->DIOtJctSWPot;
+                    sargSW=exp(-model->DIOgradingSWCoeff*log(argSW));
+                    deplchargeSW = here->DIOtJctSWPot*czeroSW*(1-argSW*sargSW)/(1-model->DIOgradingSWCoeff);
+                    deplcapSW = czeroSW*sargSW;
+                } else {
+                    czof2SW=czeroSW/here->DIOtF2SW;
+                    deplchargeSW = czeroSW*here->DIOtF1+czof2SW*(here->DIOtF3SW*(vd-here->DIOtDepSWCap)+
+                                   (model->DIOgradingSWCoeff/(here->DIOtJctSWPot+here->DIOtJctSWPot))*(vd*vd-here->DIOtDepSWCap*here->DIOtDepSWCap));
+                    deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vd/here->DIOtJctSWPot);
+                }
+
+                diffcharge = here->DIOtTransitTime*cdb;
+                diffchargeSW = here->DIOtTransitTime*cdsw;
+                *(ckt->CKTstate0 + here->DIOcapCharge) =
+                        diffcharge + diffchargeSW + deplcharge + deplchargeSW;
+
+                diffcap = here->DIOtTransitTime*gdb;
+                diffcapSW = here->DIOtTransitTime*gdsw;
+                capd = diffcap + diffcapSW + deplcap + deplcapSW;
+
                 here->DIOcap = capd;
 
                 /*

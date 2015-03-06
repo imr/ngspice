@@ -179,6 +179,8 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             /* same for Depletion Capacitance */
             here->DIOtDepCap=model->DIOdepletionCapCoeff*
                     here->DIOtJctPot;
+            here->DIOtDepSWCap=model->DIOdepletionSWcapCoeff*
+                    here->DIOtJctSWPot;
             /* and Vcrit */
             vte=model->DIOemissionCoeff*vt;
 
@@ -191,6 +193,14 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                 SPfrontEnd->IFerrorf (ERR_WARNING,
                         "%s: junction potential VJ too large, limited to %f",
                         model->DIOmodName, here->DIOtJctPot);
+            }
+            /* limit sidewall junction potential to max of 1/FCS */
+            if(here->DIOtDepSWCap > 1.0) {
+                here->DIOtJctSWPot=1.0/model->DIOdepletionSWcapCoeff;
+                here->DIOtDepSWCap=model->DIOdepletionSWcapCoeff*here->DIOtJctSWPot;
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                        "%s: junction potential VJS too large, limited to %f",
+                        model->DIOmodName, here->DIOtJctSWPot);
             }
 
             /* and now to compute the breakdown voltage, again, using

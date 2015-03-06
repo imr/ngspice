@@ -82,6 +82,8 @@ typedef struct sDIOinstance {
 
     double DIOtDepCap;  /* temperature adjusted transition point in */
                         /* the curve matching (Fc * Vj ) */
+    double DIOtDepSWCap;  /* temperature adjusted transition point in */
+                          /* the curve matching (Fcs * Vjs ) */
     double DIOtSatCur;  /* temperature adjusted saturation current */
     double DIOtSatSWCur;  /* temperature adjusted side wall saturation current */
     double DIOtTunSatCur;        /* tunneling saturation current */
