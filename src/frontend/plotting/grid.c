@@ -16,7 +16,6 @@ Modified: 2001 AlansFixes
 #include "../display.h"
 
 #define RAD_TO_DEG      (180.0 / M_PI)
-#define LABEL_CHARS     16
 
 typedef enum { x_axis, y_axis } Axis;
 
@@ -230,7 +229,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     int max;
     static double dd[2];
     int mult = 1;
-    char buf[LABEL_CHARS], *s;
+    char buf[GRAPH_UNITS_LENGTH], *s;
     int slim, digits;
 
     if (axis == y_axis && graph->grid.ysized) {
@@ -495,7 +494,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
 {
     int i, j;
     double m, step;
-    char buf[LABEL_CHARS];
+    char buf[GRAPH_UNITS_LENGTH];
 
     NG_IGNORE(onedec);
     NG_IGNORE(mult);
@@ -563,7 +562,7 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
     int i, j;
     double k;
     double decs;
-    char buf[LABEL_CHARS], *s;
+    char buf[GRAPH_UNITS_LENGTH], *s;
 
     if (axis == x_axis && graph->grid.xsized) {
         lmt = graph->grid.xaxis.log.lmt;
@@ -663,7 +662,7 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
 {
     int i, j, k, m;
     double t;
-    char buf[LABEL_CHARS];
+    char buf[GRAPH_UNITS_LENGTH];
 
     /* Now plot every pp'th decade line, with subs lines between them. */
     if (subs > 1)

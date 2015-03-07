@@ -17,6 +17,7 @@ Author: 1988 Jeffrey M. Hsu
 
 struct _keyed;
 
+#define GRAPH_UNITS_LENGTH  16
 
 /* Device-independent data structure for plots. */
 
@@ -68,7 +69,7 @@ struct graph {
       int circular;         /* TRUE if circular plot area */
       union {
         struct {
-                char units[16];     /* unit labels */
+                char units[GRAPH_UNITS_LENGTH];  /* unit labels */
                 int     spacing, numspace;
                 double  distance, lowlimit, highlimit;
                 int     mult;
@@ -79,11 +80,11 @@ struct graph {
                 int     digits;
         } lin;
         struct {
-                char units[16];     /* unit labels */
+                char units[GRAPH_UNITS_LENGTH];  /* unit labels */
                 int hmt, lmt, decsp, subs, pp;
         } log;
         struct {
-                char units[16];     /* unit labels */
+                char units[GRAPH_UNITS_LENGTH];  /* unit labels */
                 int radius, center;
                 double mrad;
                 int lmt;
