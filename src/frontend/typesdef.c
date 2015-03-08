@@ -30,7 +30,7 @@ struct plotab {
 };
 
 /* note:  This should correspond to SV_ defined in sim.h */
-struct type types[NUMTYPES] = {
+static struct type types[NUMTYPES] = {
     { "notype", NULL } ,
     { "time", "s" } ,
     { "frequency", "Hz" } ,
@@ -56,7 +56,7 @@ struct type types[NUMTYPES] = {
 
 /* The stuff for plot names. */
 
-struct plotab plotabs[NUMPLOTTYPES] = {
+static struct plotab plotabs[NUMPLOTTYPES] = {
     { "tran", "transient" } ,
     { "op", "op" } ,
     { "tf", "function" },
@@ -81,9 +81,6 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "pss", "periodic" },
 };
 
-int notypes = 21;
-int noplotabs = 22;
-
 
 /* A command to define types for vectors and plots.  This will generally
  * be used in the Command: field of the rawfile.
@@ -104,21 +101,19 @@ com_dftype(wordlist *wl)
     case 'v':
     case 'V':
         wl = wl->wl_next;
-        name = copy(wl->wl_word);
+        name = wl->wl_word;
         wl = wl->wl_next;
-        abb = copy(wl->wl_word);
-        for (i = 0; i < notypes; i++)
-            if (cieq(types[i].t_name, name)) {
-                types[i].t_abbrev = abb;
-                return;
-            }
-        if (notypes >= NUMTYPES - 1) {
+        abb = wl->wl_word;
+        for (i = 0; i < NUMTYPES && types[i].t_name; i++)
+            if (cieq(types[i].t_name, name))
+                break;
+        if (i >= NUMTYPES) {
             fprintf(cp_err, "Error: too many types defined\n");
             return;
         }
-        types[notypes].t_name = name;
-        types[notypes].t_abbrev = abb;
-        notypes++;
+        if (!types[i].t_name)
+            types[i].t_name = copy(name);
+        types[i].t_abbrev = copy(abb);
         break;
 
     case 'p':
@@ -126,23 +121,18 @@ com_dftype(wordlist *wl)
         wl = wl->wl_next;
         name = copy(wl->wl_word);
         wl = wl->wl_next;
-        while (wl) {
-            for (i = 0; i < noplotabs; i++)
-                if (cieq(plotabs[i].p_pattern, wl->wl_word)) {
-                    plotabs[i].p_name = name;
-                    wl = wl->wl_next;
+        for (; wl; wl = wl->wl_next) {
+            char *pattern = wl->wl_word;
+            for (i = 0; i < NUMPLOTTYPES && plotabs[i].p_pattern; i++)
+                if (cieq(plotabs[i].p_pattern, pattern))
                     break;
-                }
-            if (i != noplotabs)
-                continue;
-            if (noplotabs >= NUMPLOTTYPES - 1) {
+            if (i >= NUMPLOTTYPES) {
                 fprintf(cp_err, "Error: too many plot abs\n");
                 return;
             }
-            plotabs[noplotabs].p_name = name;
-            plotabs[noplotabs].p_pattern = copy(wl->wl_word);
-            wl = wl->wl_next;
-            noplotabs++;
+            if (!plotabs[i].p_pattern)
+                plotabs[i].p_pattern = copy(pattern);
+            plotabs[i].p_name = name;
         }
         break;
 
@@ -174,6 +164,19 @@ ft_typenames(int typenum)
         return (types[typenum].t_name);
     else
         return (NULL);
+}
+
+
+static int
+ft_typenum_x(char *type)
+{
+    int i;
+
+    for (i = 0; i < NUMTYPES && types[i].t_name; i++)
+        if (eq(type, types[i].t_name))
+            return i;
+
+    return -1;
 }
 
 
@@ -210,7 +213,7 @@ ft_plotabbrev(char *string)
     buf[sizeof(buf) - 1] = '\0';
     strtolower(buf);
 
-    for (i = 0; plotabs[i].p_name; i++)
+    for (i = 0; i < NUMPLOTTYPES && plotabs[i].p_name; i++)
         if (substring(plotabs[i].p_pattern, buf))
             return (plotabs[i].p_name);
 
@@ -224,26 +227,20 @@ void
 com_stype(wordlist *wl)
 {
     char *type = wl->wl_word;
-    int tt;
-    struct dvec *v, *vv;
-    char *s;
+    int typenum = ft_typenum_x(type);
 
-    for (tt = 0; ; tt++)
-        if ((s = ft_typenames(tt)) == NULL || eq(type, s))
-            break;
-
-    if (!s) {
+    if (typenum < 0) {
         fprintf(cp_err, "Error: no such type as '%s'\n", type);
         return;
     }
 
     for (wl = wl->wl_next; wl; wl = wl->wl_next) {
-        v = vec_get(wl->wl_word);
+        struct dvec *v = vec_get(wl->wl_word);
         if (!v)
             fprintf(cp_err, "Error: no such vector %s.\n", wl->wl_word);
         else
-            for (vv = v; vv; vv = vv->v_link2)
-                if (vv->v_flags & VF_PERMANENT)
-                    vv->v_type = tt;
+            for (; v; v = v->v_link2)
+                if (v->v_flags & VF_PERMANENT)
+                    v->v_type = typenum;
     }
 }
