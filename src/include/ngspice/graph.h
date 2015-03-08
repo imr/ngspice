@@ -97,21 +97,6 @@ struct graph {
       char *xlabel, *ylabel;
     } grid;
 
-    int numbuttons;     /* number of buttons */
-    struct {
-      int id;
-      char *message;
-    } *buttons;
-    int buttonsxoff;    /* viewportxoff + x size of viewport */
-    int buttonsyoff;
-
-    struct {
-      int width, height;
-      char message[161];        /* two lines of text */
-    } messagebox;
-    int messagexoff;
-    int messageyoff;
-
     /* characters the user typed on graph */
     /* note: think up better names */
     struct _keyed *keyed;
