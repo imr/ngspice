@@ -81,7 +81,7 @@ struct plotab plotabs[NUMPLOTTYPES] = {
     { "pss", "periodic" },
 };
 
-int notypes = 19;
+int notypes = 21;
 int noplotabs = 22;
 
 
