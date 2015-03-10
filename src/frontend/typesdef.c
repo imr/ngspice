@@ -11,6 +11,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
+#include "ngspice/sim.h"
 #include "typesdef.h"
 
 
@@ -194,7 +195,7 @@ ft_typnum(char *name)
         if (cieq(name, types[i].t_name))
             return (i);
 
-    return (0);
+    return (SV_NOTYPE);
 }
 
 
