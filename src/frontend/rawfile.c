@@ -12,6 +12,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedefs.h"
 #include "dimens.h"
 #include "ngspice/dvec.h"
+#include "ngspice/sim.h"
 
 #include "rawfile.h"
 #include "variable.h"
@@ -154,14 +155,14 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     fprintf(fp, "Variables:\n");
     for (i = 0, v = pl->pl_dvecs; v; v = v->v_next) {
-        if (strcmp(ft_typenames(v->v_type), "current") == 0) {
+        if (v->v_type == SV_CURRENT) {
             branch = NULL;
             if ((branch = strstr(v->v_name, "#branch")) != NULL) {
                 *branch = '\0';
             }
             fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
             if (branch != NULL) *branch = '#';
-        } else if (strcmp(ft_typenames(v->v_type), "voltage") == 0) {
+        } else if (v->v_type == SV_VOLTAGE) {
             fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
         } else {
             fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));

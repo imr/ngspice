@@ -20,6 +20,7 @@ Author: 1988 Jeffrey M. Hsu
 #include "ngspice/graph.h"
 #include "ngspice/ftedbgra.h"
 #include "ngspice/ftedev.h"
+#include "ngspice/sim.h"
 #include <terminal.h>
 #include "graf.h"
 #include "graphdb.h"
@@ -315,15 +316,13 @@ static void
 gr_start_internal(struct dvec *dv, bool copyvec)
 {
     struct dveclist *link;
-    char *s;
 
     /* Do something special with poles and zeros.  Poles are 'x's, and
      * zeros are 'o's.  */
-    s = ft_typenames(dv->v_type);
-    if (eq(s, "pole")) {
+    if (dv->v_type == SV_POLE) {
         dv->v_linestyle = 'x';
         return;
-    } else if (eq(s, "zero")) {
+    } else if (dv->v_type == SV_ZERO) {
         dv->v_linestyle = 'o';
         return;
     }
@@ -658,7 +657,7 @@ iplot(struct plot *pl, int id)
 
         for (yt = pl->pl_dvecs->v_type, v = pl->pl_dvecs->v_next; v; v = v->v_next)
             if ((v->v_flags & VF_PLOT) && (v->v_type != yt)) {
-                yt = 0;
+                yt = SV_NOTYPE;
                 break;
             }
 
