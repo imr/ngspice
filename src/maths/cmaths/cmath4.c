@@ -273,7 +273,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
         c_indata = (ngcomplex_t *) data;
         c_outdata = alloc_c(length);
         scale = alloc_d(length);        /* XXX */
-        if (pl->pl_scale->v_type == VF_COMPLEX)
+        if (iscomplex(pl->pl_scale))
             /* Not ideal */
             for (i = 0; i < length; i++)
                 scale[i] = realpart(pl->pl_scale->v_compdata[i]);
@@ -369,7 +369,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
         */
 
         /* Modified to deal with complex frequency vector */
-        if (pl->pl_scale->v_type == VF_COMPLEX)
+        if (iscomplex(pl->pl_scale))
             for (i = 0; i < length; i++)
                 scale[i] = realpart(pl->pl_scale->v_compdata[i]);
         else
@@ -398,7 +398,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
                      * abort.
                      */
 
-                    if (pl->pl_scale->v_type == VF_COMPLEX)
+                    if (iscomplex(pl->pl_scale))
                         x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
                     else
                         x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
@@ -412,7 +412,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
             {
                 /* Again the same error */
                         /* x = pl->pl_scale->v_realdata[j + base]; */
-                if (pl->pl_scale->v_type == VF_COMPLEX)
+                if (iscomplex(pl->pl_scale))
                     x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
                 else
                     x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
@@ -582,7 +582,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
     } else if (pl->pl_scale->v_type == SV_FREQUENCY) { /* take frequency from ac data and calculate time */
 
         /* Deal with complex frequency vector */
-        if (pl->pl_scale->v_type == VF_COMPLEX) {
+        if (iscomplex(pl->pl_scale)) {
             span = realpart(pl->pl_scale->v_compdata[pl->pl_scale->v_length-1]) - realpart(pl->pl_scale->v_compdata[0]);
             for (i = 0; i<pl->pl_scale->v_length; i++)
                 xscale[i] = realpart(pl->pl_scale->v_compdata[i]);
@@ -836,7 +836,7 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
         xscale = TMALLOC(double, tpts);
 
         /* Deal with complex frequency vector */
-        if (pl->pl_scale->v_type == VF_COMPLEX)
+        if (iscomplex(pl->pl_scale))
             span = realpart(pl->pl_scale->v_compdata[tpts-1]) - realpart(pl->pl_scale->v_compdata[0]);
         else
             span = pl->pl_scale->v_realdata[tpts-1] - pl->pl_scale->v_realdata[0];
