@@ -25,6 +25,18 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
 
+        /* Default Value Processing for Resistor Models */
+        if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
+        if(!model->RESsheetResGiven) model->RESsheetRes = 0.0;
+        if(!model->RESdefWidthGiven) model->RESdefWidth = 10e-6; /*M*/
+        if(!model->RESdefLengthGiven) model->RESdefLength = 10e-6;
+        if(!model->REStc1Given) model->REStempCoeff1    = 0.0;
+        if(!model->REStc2Given) model->REStempCoeff2    = 0.0;
+        if(!model->RESnarrowGiven) model->RESnarrow     = 0.0;
+        if(!model->RESshortGiven) model->RESshort       = 0.0;
+        if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;
+        if(!model->RESfNexpGiven) model->RESfNexp       = 1.0;
+
         if(!model->RESbv_maxGiven)
             model->RESbv_max = 1e99;
 
@@ -32,8 +44,26 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
 
-            if(!here->RESmGiven)
-                here->RESm = 1.0;
+            if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
+            if(!here->RESlengthGiven)  here->RESlength = model->RESdefLength;
+            if(!here->RESscaleGiven)   here->RESscale  = 1.0;
+            if(!here->RESmGiven)       here->RESm      = 1.0;
+            if(!here->RESnoisyGiven)   here->RESnoisy  = 1;
+            if(!here->RESresGiven)  {
+                if(here->RESlength * here->RESwidth * model->RESsheetRes > 0.0) {
+                    here->RESresist = model->RESsheetRes * (here->RESlength -
+                                                            model->RESshort) / (here->RESwidth - model->RESnarrow);
+                } else {
+                    if(model->RESresGiven) {
+                        here->RESresist = model->RESres;
+                    } else {
+                        SPfrontEnd->IFerrorf (ERR_WARNING,
+                                             "%s: resistance to low, set to 1 mOhm", here->RESname);
+                        here->RESresist = 1e-03;
+                    }
+                }
+            }
+
             if(!here->RESbv_maxGiven)
                 here->RESbv_max = model->RESbv_max;
 
