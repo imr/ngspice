@@ -25,6 +25,7 @@ IFparm RESpTable[] = { /* parameters */
     IOP(   "bv_max",	RES_BV_MAX,	     IF_REAL,    "maximum voltage over resistor"),
     IOPU(  "scale",	RES_SCALE,	     IF_REAL,    "Scale factor"),
     IOP(   "noisy",        RES_NOISY,           IF_INTEGER, "Resistor generate noise"),
+    IOPR(  "noise",        RES_NOISY,           IF_INTEGER, "Resistor generate noise"),
     IP(    "sens_resist",  RES_RESIST_SENS,     IF_FLAG,
     "flag to request sensitivity WRT resistance"),
     OP(    "i",            RES_CURRENT,         IF_REAL,    "Current"),
