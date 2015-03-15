@@ -58,7 +58,10 @@ IFparm RESmPTable[] = { /* model parameters */
     IOPXU( "tnom",   RES_MOD_TNOM,     IF_REAL,"Parameter measurement temperature"),
     IOP(   "r",      RES_MOD_R,        IF_REAL,"Resistor model default value"),
     IOPR(  "res",    RES_MOD_R,        IF_REAL,"Resistor model default value"),
-    IOP(   "bv_max", RES_MOD_BV_MAX,   IF_REAL,"maximum voltage over resistor")
+    IOP(   "bv_max", RES_MOD_BV_MAX,   IF_REAL,"maximum voltage over resistor"),
+    IOP(   "lf",     RES_MOD_LF,       IF_REAL,"noise area length exponent"),
+    IOP(   "wf",     RES_MOD_WF,       IF_REAL,"noise area width exponent"),
+    IOP(   "ef",     RES_MOD_EF,       IF_REAL,"noise frequency exponent")
 };
 
 char *RESnames[] = {

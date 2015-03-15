@@ -44,6 +44,7 @@ typedef struct sRESinstance {
     double REStc2;                  /* second temperature coefficient of resistors */
     double RESbv_max;               /* Maximum resistor voltage */
     int    RESnoisy;                /* Set if the resistor generates noise */
+    double RESeffNoiseArea;         /* effective resistor area for noise calculation */
     double *RESposPosptr;           /* pointer to sparse matrix diagonal at
                                      * (positive,positive) */
     double *RESnegNegptr;           /* pointer to sparse matrix diagonal at
@@ -110,6 +111,9 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     double RESfNexp;        /* Flicker noise exponent */
     double RESres;          /* Default model resistance */
     double RESbv_max;       /* Maximum resistor voltage */
+    double RESlf;           /* length exponent for noise calculation */
+    double RESwf;           /* width exponent for noise calculation */
+    double RESef;           /* frequncy exponent for noise calculation */
     unsigned REStnomGiven       :1; /* flag to indicate nominal temp. was given */
     unsigned REStc1Given        :1; /* flag to indicate tc1 was specified */
     unsigned REStc2Given        :1; /* flag to indicate tc2 was specified */
@@ -122,6 +126,9 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     unsigned RESfNexpGiven      :1; /* flag to indicate af given */
     unsigned RESresGiven        :1; /* flag to indicate model resistance given */
     unsigned RESbv_maxGiven     :1; /* flags indicates maximum voltage is given */
+    unsigned RESlfGiven         :1; /* flags indicates lf is given */
+    unsigned RESwfGiven         :1; /* flags indicates wf is given */
+    unsigned RESefGiven         :1; /* flags indicates ef is given */
 } RESmodel;
 
 /* device parameters */
@@ -158,6 +165,9 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 #define RES_MOD_KF 110
 #define RES_MOD_AF 111
 #define RES_MOD_BV_MAX 112
+#define RES_MOD_LF 113
+#define RES_MOD_WF 114
+#define RES_MOD_EF 115
 
 /* device questions */
 #define RES_QUEST_SENS_REAL      201

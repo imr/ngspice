@@ -135,7 +135,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                        
                        noizDens[RESFLNOIZ] *= inst->RESm * model->RESfNcoef * exp(model->RESfNexp *
                                               log(MAX(fabs(inst->REScurrent),
-                                              N_MINLOG))) / data->freq;
+                                              N_MINLOG))) / (inst->RESeffNoiseArea*pow(data->freq,model->RESef));
                        lnNdens[RESFLNOIZ]   = log(MAX(noizDens[RESFLNOIZ],N_MINLOG));
 
                        noizDens[RESTOTNOIZ] = noizDens[RESTHNOIZ] + noizDens[RESFLNOIZ];

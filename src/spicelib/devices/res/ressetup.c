@@ -36,6 +36,9 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         if(!model->RESshortGiven) model->RESshort       = 0.0;
         if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;
         if(!model->RESfNexpGiven) model->RESfNexp       = 1.0;
+        if(!model->RESlfGiven) model->RESlf             = 1.0;
+        if(!model->RESwfGiven) model->RESwf             = 1.0;
+        if(!model->RESefGiven) model->RESef             = 1.0;
 
         if(!model->RESbv_maxGiven)
             model->RESbv_max = 1e99;
@@ -66,6 +69,12 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
 
             if(!here->RESbv_maxGiven)
                 here->RESbv_max = model->RESbv_max;
+
+            if((here->RESwidthGiven)||(here->RESlengthGiven))
+                here->RESeffNoiseArea = pow((here->RESlength-model->RESshort),model->RESlf)
+                                       *pow((here->RESwidth-model->RESnarrow),model->RESwf);
+            else
+                here->RESeffNoiseArea = 1.0;
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
