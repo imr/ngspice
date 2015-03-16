@@ -92,6 +92,7 @@ IOP( "nf",  B4SOI_NF,     IF_REAL   , "Number of fingers"),
 IOP( "rbdb", B4SOI_RBDB,  IF_REAL   , "Body resistance"),
 IOP( "rbsb", B4SOI_RBSB,  IF_REAL   , "Body resistance"),
 IOP( "delvto", B4SOI_DELVTO,  IF_REAL, "Zero bias threshold voltage variation"),
+IOPR( "delvt0", B4SOI_DELVTO,  IF_REAL, "Zero bias threshold voltage variation"),
 /* v4.0 end */
 
 IOP( "soimod", B4SOI_SOIMOD, IF_INTEGER,    "Instance model selector for PD/FD operation"), /* v3.2 */
