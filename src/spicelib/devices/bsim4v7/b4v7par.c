@@ -137,6 +137,10 @@ IFvalue *select)
             here->BSIM4v7delvto = value->rValue;
             here->BSIM4v7delvtoGiven = TRUE;
             break;
+        case BSIM4v7_MULU0:
+            here->BSIM4v7mulu0 = value->rValue;
+            here->BSIM4v7mulu0Given = TRUE;
+            break;
         case BSIM4v7_XGW:
             here->BSIM4v7xgw = value->rValue;
             here->BSIM4v7xgwGiven = TRUE;

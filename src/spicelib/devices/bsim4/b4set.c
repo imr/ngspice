@@ -2326,6 +2326,8 @@ BSIM4instance **InstArray;
                 here->BSIM4rbpd = model->BSIM4rbpd;
             if (!here->BSIM4delvtoGiven)
                 here->BSIM4delvto = 0.0;
+            if (!here->BSIM4mulu0Given)
+                here->BSIM4mulu0 = 1.0;
             if (!here->BSIM4xgwGiven)
                 here->BSIM4xgw = model->BSIM4xgw;
             if (!here->BSIM4ngconGiven)
