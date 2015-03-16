@@ -75,6 +75,7 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOPU("npn",  VBIC_MOD_NPN,   IF_FLAG, "NPN type device"),
  IOPU("pnp",  VBIC_MOD_PNP,   IF_FLAG, "PNP type device"),
  IOP("tnom",  VBIC_MOD_TNOM,  IF_REAL, "Parameter measurement temperature"),
+ IOPR("tref",  VBIC_MOD_TNOM,  IF_REAL, "Parameter measurement temperature"),
  IOP("rcx",   VBIC_MOD_RCX,   IF_REAL, "Extrinsic coll resistance"),
  IOP("rci",   VBIC_MOD_RCI,   IF_REAL, "Intrinsic coll resistance"),
  IOP("vo",    VBIC_MOD_VO,    IF_REAL, "Epi drift saturation voltage"),
