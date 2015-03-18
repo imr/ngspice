@@ -1054,8 +1054,8 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
                       ((dev->instanceParms[i].dataType & IF_ASK) && inout == 0)) &&
                      cieq(dev->instanceParms[i].keyword, param))
             {
-                if (dev->instanceParms[i].dataType & IF_REDUNDANT)
-                    i -= 1;
+                while ((dev->instanceParms[i].dataType & IF_REDUNDANT) && (i > 0))
+                    i--;
                 return (&dev->instanceParms[i]);
             }
         }
@@ -1068,8 +1068,8 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
                  ((dev->modelParms[i].dataType & IF_ASK) && inout == 0)) &&
                 eq(dev->modelParms[i].keyword, param))
             {
-                if (dev->modelParms[i].dataType & IF_REDUNDANT)
-                    i -= 1;
+                while ((dev->modelParms[i].dataType & IF_REDUNDANT) && (i > 0))
+                    i--;
                 return (&dev->modelParms[i]);
             }
 
