@@ -4,7 +4,7 @@
 typedef struct st_dgen dgen;
 
 struct st_dgen {
-	GENcircuit	*ckt;
+	CKTcircuit	*ckt;
 	wordlist	*dev_list;
 	int		flags;
 	int		dev_type_no;
@@ -26,6 +26,6 @@ struct st_dgen {
 #define	DGEN_DEFPARAMS	0x001
 #define	DGEN_ALLPARAMS	0x002
 
-extern dgen	*dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model);
+extern dgen	*dgen_init(CKTcircuit *ckt, wordlist *wl, int nomix, int flag, int model);
 
 #endif

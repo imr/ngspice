@@ -31,11 +31,6 @@ struct GENinstance {
 };
 
 
-/* Generic circuit data */
-
-typedef void GENcircuit;
-
-
 /* per model data */
 
 struct GENmodel {       /* model structure for a resistor */

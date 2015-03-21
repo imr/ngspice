@@ -638,7 +638,7 @@ param_forall(dgen *dg, int flags)
     for (i = 0; i < xcount; i++)
         if ((plist[i].dataType & IF_ASK)
             && !(plist[i].dataType & IF_REDUNDANT)
-            && ((plist[i].dataType & IF_SET) || ((CKTcircuit *) (dg->ckt))->CKTrhsOld)
+            && ((plist[i].dataType & IF_SET) || dg->ckt->CKTrhsOld)
             && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
         {
                 j = 0;
@@ -672,7 +672,7 @@ param_forall_old(dgen *dg, int flags)
     for (i = 0; i < xcount; i++)
         if ((plist[i].dataType & IF_ASK)
             && !(plist[i].dataType & IF_REDUNDANT)
-            && ((plist[i].dataType & IF_SET) || ((CKTcircuit *) (dg->ckt))->CKTrhsOld)
+            && ((plist[i].dataType & IF_SET) || dg->ckt->CKTrhsOld)
             && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
         {
                 j = 0;
@@ -714,8 +714,8 @@ listparam(wordlist *p, dgen *dg)
         }
 
     if (found) {
-        if ((((CKTcircuit *) (dg->ckt))->CKTrhsOld ||
-             (plist[i].dataType & IF_SET)))
+        if (dg->ckt->CKTrhsOld ||
+             (plist[i].dataType & IF_SET))
         {
             j = 0;
             do {

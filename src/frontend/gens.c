@@ -24,7 +24,7 @@ wl_forall(wordlist *wl, void (*fn)(wordlist*, dgen*), dgen *data)
 
 
 dgen *
-dgen_init(GENcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
+dgen_init(CKTcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 {
     dgen  *dg, *dg_save;
 
@@ -142,7 +142,7 @@ dgen_next(dgen **dgx)
         } else if (dg->dev_type_no < DEVmaxnum) {
             dg->dev_type_no += 1;
             if (dg->dev_type_no < DEVmaxnum) {
-                dg->model = ((CKTcircuit *)(dg->ckt))->CKThead[dg->dev_type_no];
+                dg->model = dg->ckt->CKThead[dg->dev_type_no];
                 if (dg->model)
                     dg->instance = dg->model->GENinstances;
             } else {
