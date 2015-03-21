@@ -636,12 +636,11 @@ param_forall(dgen *dg, int flags)
     }
 
     for (i = 0; i < xcount; i++)
-        if (plist[i].dataType & IF_ASK)
-            if ((((CKTcircuit *) (dg->ckt))->CKTrhsOld ||
-                 (plist[i].dataType & IF_SET)) &&
-                (!(plist[i].dataType & (IF_REDUNDANT | IF_UNINTERESTING)) ||
-                 (flags == DGEN_ALLPARAMS && !(plist[i].dataType & IF_REDUNDANT))))
-            {
+        if ((plist[i].dataType & IF_ASK)
+            && !(plist[i].dataType & IF_REDUNDANT)
+            && ((plist[i].dataType & IF_SET) || ((CKTcircuit *) (dg->ckt))->CKTrhsOld)
+            && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
+        {
                 j = 0;
                 do {
                     fprintf(cp_out, "    %-19s=", plist[i].keyword);
@@ -671,12 +670,11 @@ param_forall_old(dgen *dg, int flags)
     }
 
     for (i = 0; i < xcount; i++)
-        if (plist[i].dataType & IF_ASK)
-            if ((((CKTcircuit *) (dg->ckt))->CKTrhsOld ||
-                 (plist[i].dataType & IF_SET)) &&
-                (!(plist[i].dataType & (IF_REDUNDANT | IF_UNINTERESTING)) ||
-                 (flags == DGEN_ALLPARAMS && !(plist[i].dataType & IF_REDUNDANT))))
-            {
+        if ((plist[i].dataType & IF_ASK)
+            && !(plist[i].dataType & IF_REDUNDANT)
+            && ((plist[i].dataType & IF_SET) || ((CKTcircuit *) (dg->ckt))->CKTrhsOld)
+            && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
+        {
                 j = 0;
                 do {
                     if (!j)
