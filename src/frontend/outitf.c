@@ -854,6 +854,14 @@ fileInit_pass2(runDesc *run)
             type = SV_TIME;
         else if (cieq(name, "frequency"))
             type = SV_FREQUENCY;
+        else if (cieq(name, "onoise_spectrum"))
+            type = SV_OUTPUT_N_DENS;
+        else if (cieq(name, "onoise_integrated"))
+            type = SV_OUTPUT_NOISE;
+        else if (cieq(name, "inoise_spectrum"))
+            type = SV_INPUT_N_DENS;
+        else if (cieq(name, "inoise_integrated"))
+            type = SV_INPUT_NOISE;
         else if (cieq(name, "temp-sweep"))
             type = SV_TEMP;
         else if (cieq(name, "res-sweep"))
