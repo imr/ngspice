@@ -24,9 +24,14 @@ VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             double acReal, acImag;
 
-            if ((ckt->CKTmode & MODEACNOISE) && ((GENinstance *) here == ckt->noise_input)) {
-                acReal = 1.0;
-                acImag = 0.0;
+            if (ckt->CKTmode & MODEACNOISE) {
+                if ((GENinstance *) here == ckt->noise_input) {
+                    acReal = 1.0;
+                    acImag = 0.0;
+                } else {
+                    acReal = 0.0;
+                    acImag = 0.0;
+                }
             } else {
                 acReal = here->VSRCacReal;
                 acImag = here->VSRCacImag;
