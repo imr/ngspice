@@ -86,33 +86,24 @@ measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg, i
 static void
 correct_vec(MEASUREPTR meas)
 {
-    char *vec, *vecfirst, newvec[BSIZE_SP];
-    char *vec2, newvec2[BSIZE_SP];
+    char *vec = meas->m_vec;
 
-    vec = meas->m_vec;
     /* return if not of type VM() etc */
     if ((*vec != 'v') || (!strstr(vec, "(")))
         return;
 
-    if (*(++vec) != '(') {
-        vecfirst = copy(meas->m_vec);
-        vecfirst[1] = '\0';
-        meas->m_vectype = *vec;
-        sprintf(newvec, "%s%s", vecfirst, strstr(meas->m_vec, "("));
-        tfree(meas->m_vec);
-        tfree(vecfirst);
-        meas->m_vec = copy(newvec);
+    if (vec[1] != '(') {
+        meas->m_vectype = vec[1];
+        meas->m_vec = tprintf("%c%s", vec[0], strstr(vec, "("));
+        tfree(vec);
     }
 
-    vec2 = meas->m_vec2;
-    if (vec2 && (*(++vec2) != '(')) {
-        vecfirst = copy(meas->m_vec2);
-        vecfirst[1] = '\0';
-        meas->m_vectype2 = *vec2;
-        sprintf(newvec, "%s%s", vecfirst, strstr(meas->m_vec2, "("));
-        tfree(meas->m_vec2);
-        tfree(vecfirst);
-        meas->m_vec2 = copy(newvec2);
+    vec = meas->m_vec2;
+
+    if (vec && (vec[1] != '(')) {
+        meas->m_vectype2 = vec[1];
+        meas->m_vec2 = tprintf("%c%s", vec[0], strstr(vec, "("));
+        tfree(vec);
     }
 }
 
