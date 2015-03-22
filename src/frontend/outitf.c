@@ -839,6 +839,44 @@ fileInit(runDesc *run)
 }
 
 
+static int
+guess_type(char *name)
+{
+    int type;
+
+    if (substring("#branch", name))
+        type = SV_CURRENT;
+    else if (cieq(name, "time"))
+        type = SV_TIME;
+    else if (cieq(name, "frequency"))
+        type = SV_FREQUENCY;
+    else if (cieq(name, "onoise_spectrum"))
+        type = SV_OUTPUT_N_DENS;
+    else if (cieq(name, "onoise_integrated"))
+        type = SV_OUTPUT_NOISE;
+    else if (cieq(name, "inoise_spectrum"))
+        type = SV_INPUT_N_DENS;
+    else if (cieq(name, "inoise_integrated"))
+        type = SV_INPUT_NOISE;
+    else if (cieq(name, "temp-sweep"))
+        type = SV_TEMP;
+    else if (cieq(name, "res-sweep"))
+        type = SV_RES;
+    else if ((*name == '@') && substring("[g", name))
+        type = SV_ADMITTANCE;
+    else if ((*name == '@') && substring("[c", name))
+        type = SV_CAPACITANCE;
+    else if ((*name == '@') && substring("[i", name))
+        type = SV_CURRENT;
+    else if ((*name == '@') && substring("[q", name))
+        type = SV_CHARGE;
+    else
+        type = SV_VOLTAGE;
+
+    return type;
+}
+
+
 static void
 fileInit_pass2(runDesc *run)
 {
@@ -848,34 +886,7 @@ fileInit_pass2(runDesc *run)
 
         char *name = run->data[i].name;
 
-        if (substring("#branch", name))
-            type = SV_CURRENT;
-        else if (cieq(name, "time"))
-            type = SV_TIME;
-        else if (cieq(name, "frequency"))
-            type = SV_FREQUENCY;
-        else if (cieq(name, "onoise_spectrum"))
-            type = SV_OUTPUT_N_DENS;
-        else if (cieq(name, "onoise_integrated"))
-            type = SV_OUTPUT_NOISE;
-        else if (cieq(name, "inoise_spectrum"))
-            type = SV_INPUT_N_DENS;
-        else if (cieq(name, "inoise_integrated"))
-            type = SV_INPUT_NOISE;
-        else if (cieq(name, "temp-sweep"))
-            type = SV_TEMP;
-        else if (cieq(name, "res-sweep"))
-            type = SV_RES;
-        else if ((*name == '@') && (substring("[g", name)))
-            type = SV_ADMITTANCE;
-        else if ((*name == '@') && (substring("[c", name)))
-            type = SV_CAPACITANCE;
-        else if ((*name == '@') && (substring("[i", name)))
-            type = SV_CURRENT;
-        else if ((*name == '@') && (substring("[q", name)))
-            type = SV_CHARGE;
-        else
-            type = SV_VOLTAGE;
+        type = guess_type(name);
 
         if (type == SV_CURRENT) {
             char *branch = strstr(name, "#branch");
@@ -1020,34 +1031,9 @@ plotInit(runDesc *run)
         } else {
             v->v_name = copy(dd->name);
         }
-        if (substring("#branch", v->v_name))
-            v->v_type = SV_CURRENT;
-        else if (cieq(v->v_name, "time"))
-            v->v_type = SV_TIME;
-        else if (cieq(v->v_name, "frequency"))
-            v->v_type = SV_FREQUENCY;
-        else if (cieq(v->v_name, "onoise_spectrum"))
-            v->v_type = SV_OUTPUT_N_DENS;
-        else if (cieq(v->v_name, "onoise_integrated"))
-            v->v_type = SV_OUTPUT_NOISE;
-        else if (cieq(v->v_name, "inoise_spectrum"))
-            v->v_type = SV_INPUT_N_DENS;
-        else if (cieq(v->v_name, "inoise_integrated"))
-            v->v_type = SV_INPUT_NOISE;
-        else if (cieq(v->v_name, "temp-sweep"))
-            v->v_type = SV_TEMP;
-        else if (cieq(v->v_name, "res-sweep"))
-            v->v_type = SV_RES;
-        else if ((*(v->v_name) == '@') && (substring("[g", v->v_name)))
-            v->v_type = SV_ADMITTANCE;
-        else if ((*(v->v_name) == '@') && (substring("[c", v->v_name)))
-            v->v_type = SV_CAPACITANCE;
-        else if ((*(v->v_name) == '@') && (substring("[i", v->v_name)))
-            v->v_type = SV_CURRENT;
-        else if ((*(v->v_name) == '@') && (substring("[q", v->v_name)))
-            v->v_type = SV_CHARGE;
-        else
-            v->v_type = SV_VOLTAGE;
+
+        v->v_type = guess_type(v->v_name);
+
         v->v_length = 0;
         v->v_scale = NULL;
         if (!run->isComplex) {
