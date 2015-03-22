@@ -106,7 +106,7 @@ correct_vec(MEASUREPTR meas)
 
     vec2 = meas->m_vec2;
     if (vec2 && (*(++vec2) != '(')) {
-        vecfirst = copy(meas->m_vec);
+        vecfirst = copy(meas->m_vec2);
         vecfirst[1] = '\0';
         meas->m_vectype2 = *vec2;
         sprintf(newvec, "%s%s", vecfirst, strstr(meas->m_vec2, "("));
