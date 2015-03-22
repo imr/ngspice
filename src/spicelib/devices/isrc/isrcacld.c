@@ -25,7 +25,7 @@ ISRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             double acReal, acImag;
 
-            if ((ckt->CKTmode & MODEACNOISE) && (here == ckt->noise_input)) {
+            if ((ckt->CKTmode & MODEACNOISE) && ((GENinstance *) here == ckt->noise_input)) {
                 acReal = 1.0;
                 acImag = 0.0;
             } else {
