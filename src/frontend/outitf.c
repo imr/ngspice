@@ -72,6 +72,11 @@ extern void sh_vecinit(runDesc *run);
 extern bool orflag;
 #endif
 
+// fixme
+//   ugly hack to work around missing api to specify the "type" of signals
+int fixme_onoise_type = SV_NOTYPE;
+int fixme_inoise_type = SV_NOTYPE;
+
 
 #define DOUBLE_PRECISION    15
 
@@ -137,6 +142,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     /*to resume a run saj
      *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
      */
+
+    if (strcmp("NOISE", spice_analysis_get_name(analysisPtr->JOBtype))) {
+        fixme_onoise_type = SV_NOTYPE;
+        fixme_inoise_type = SV_NOTYPE;
+    }
+
     if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
@@ -850,14 +861,10 @@ guess_type(char *name)
         type = SV_TIME;
     else if (cieq(name, "frequency"))
         type = SV_FREQUENCY;
-    else if (cieq(name, "onoise_spectrum"))
-        type = SV_OUTPUT_N_DENS;
-    else if (cieq(name, "onoise_integrated"))
-        type = SV_OUTPUT_NOISE;
-    else if (cieq(name, "inoise_spectrum"))
-        type = SV_INPUT_N_DENS;
-    else if (cieq(name, "inoise_integrated"))
-        type = SV_INPUT_NOISE;
+    else if (ciprefix("inoise", name))
+        type = fixme_inoise_type;
+    else if (ciprefix("onoise", name))
+        type = fixme_onoise_type;
     else if (cieq(name, "temp-sweep"))
         type = SV_TEMP;
     else if (cieq(name, "res-sweep"))

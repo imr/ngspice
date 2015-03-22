@@ -16,8 +16,14 @@ Modified: 2001 AlansFixes
 #include "ngspice/iferrmsg.h"
 #include "ngspice/noisedef.h"
 #include "ngspice/sperror.h"
+#include "ngspice/sim.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
+
+// fixme
+//   ugly hack to work around missing api to specify the "type" of signals
+extern int fixme_onoise_type;
+extern int fixme_inoise_type;
 
 
 int
@@ -35,6 +41,7 @@ NOISEan (CKTcircuit *ckt, int restart)
     int step;
     IFuid freqUid;
     double freqTol; /* tolerence parameter for finding final frequency; hack */
+    int i, src_type;
 
     NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
     GENinstance *inst = CKTfndDev(ckt, job->input);
@@ -55,8 +62,10 @@ NOISEan (CKTcircuit *ckt, int restart)
 
         if (inst->GENmodPtr->GENmodType == CKTtypelook("Vsource")) {
             ac_given = ((VSRCinstance *)inst) -> VSRCacGiven;
+            src_type = SV_VOLTAGE;
         } else if(inst->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
             ac_given = ((ISRCinstance *)inst) -> ISRCacGiven;
+            src_type = SV_CURRENT;
         } else {
             SPfrontEnd->IFerrorf (ERR_WARNING,
                                  "Noise input source %s is not of proper type",
@@ -128,8 +137,20 @@ NOISEan (CKTcircuit *ckt, int restart)
 	 * plot
 	 */
 
+	if (src_type == SV_VOLTAGE)
+	    fixme_inoise_type = SV_VOLTAGE_DENSITY;
+	else
+	    fixme_inoise_type = SV_CURRENT_DENSITY;
+
+	fixme_onoise_type = SV_VOLTAGE_DENSITY;
+
+	for (i = 0; i < data->numPlots; i++)
+	    data->squared_value[i] =
+		ciprefix("inoise", data->namelist[i]) ||
+		ciprefix("onoise", data->namelist[i]);
+
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                                           "Noise Spectral Density Curves - (V^2 or A^2)/Hz",
+                                           "Noise Spectral Density Curves",
                                            freqUid, IF_REAL,
                                            data->numPlots, data->namelist, IF_REAL,
                                            &(data->NplotPtr));
@@ -275,8 +296,16 @@ NOISEan (CKTcircuit *ckt, int restart)
 
 	if (error) return(error);
 
+	fixme_inoise_type = src_type;
+	fixme_onoise_type = SV_VOLTAGE;
+
+	for (i = 0; i < data->numPlots; i++)
+	    data->squared_value[i] =
+		ciprefix("inoise", data->namelist[i]) ||
+		ciprefix("onoise", data->namelist[i]);
+
         SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                                   "Integrated Noise - V^2 or A^2",
+                                   "Integrated Noise",
                                    NULL, 0,
                                    data->numPlots, data->namelist, IF_REAL,
                                    &(data->NplotPtr));
