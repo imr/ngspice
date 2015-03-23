@@ -52,6 +52,7 @@ typedef struct {
     char *squared_value;
     runDesc *NplotPtr; /* the plot pointer */
     IFuid *namelist;       /* list of plot names */
+    unsigned squared : 1;
 } Ndata;
 
 

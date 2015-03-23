@@ -68,7 +68,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	    data->outpVector =
 		TMALLOC(double, data->numPlots);
 	    data->squared_value =
-		TMALLOC(char, data->numPlots);
+		data->squared ? NULL : TMALLOC(char, data->numPlots);
             break;
 
 	case INT_NOIZ:
@@ -85,7 +85,7 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	    data->outpVector =
 		TMALLOC(double, data->numPlots);
 	    data->squared_value =
-		TMALLOC(char, data->numPlots);
+		data->squared ? NULL : TMALLOC(char, data->numPlots);
 	    break;
 
         default:
@@ -107,9 +107,10 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 		    (outNdens * data->GainSqInv);
 
 		refVal.rValue = data->freq; /* the reference is the freq */
-		for (i = 0; i < data->outNumber; i++)
-		    if (data->squared_value[i])
-			data->outpVector[i] = sqrt(data->outpVector[i]);
+		if (!data->squared)
+		    for (i = 0; i < data->outNumber; i++)
+			if (data->squared_value[i])
+			    data->outpVector[i] = sqrt(data->outpVector[i]);
 		outData.v.numValue = data->outNumber; /* vector number */
 		outData.v.vec.rVec = data->outpVector; /* vector of outputs */
 		SPfrontEnd->OUTpData (data->NplotPtr, &refVal, &outData);
@@ -119,9 +120,10 @@ CKTnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
 	case INT_NOIZ:
 	    data->outpVector[data->outNumber++] =  data->outNoiz; 
 	    data->outpVector[data->outNumber++] =  data->inNoise;
-	    for (i = 0; i < data->outNumber; i++)
-		if (data->squared_value[i])
-		    data->outpVector[i] = sqrt(data->outpVector[i]);
+	    if (!data->squared)
+		for (i = 0; i < data->outNumber; i++)
+		    if (data->squared_value[i])
+			data->outpVector[i] = sqrt(data->outpVector[i]);
 	    outData.v.vec.rVec = data->outpVector; /* vector of outputs */
 	    outData.v.numValue = data->outNumber; /* vector number */
 	    SPfrontEnd->OUTpData (data->NplotPtr, &refVal, &outData);
