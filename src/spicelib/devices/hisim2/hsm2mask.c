@@ -1,19 +1,58 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
  
  FILE : hsm2mask.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HiSIM2 Distribution Statement and
+Copyright Notice" attached to HiSIM2 model.
+
+-----HiSIM2 Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaim all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+
+*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/ifsim.h"
@@ -115,6 +154,13 @@ int HSM2mAsk(
   case HSM2_MOD_COERRREP:
     value->iValue = model->HSM2_coerrrep;
     return(OK);
+  case  HSM2_MOD_CODEP:
+    value->iValue = model->HSM2_codep;
+    return(OK);
+  case HSM2_MOD_CODDLT:
+    value->iValue = model->HSM2_coddlt;
+    return(OK);
+
   case  HSM2_MOD_VMAX:
     value->rValue = model->HSM2_vmax;
     return(OK);
@@ -298,9 +344,7 @@ int HSM2mAsk(
   case  HSM2_MOD_PGD2:
     value->rValue = model->HSM2_pgd2;
     return(OK);
-//case  HSM2_MOD_PGD3:
-//  value->rValue = model->HSM2_pgd3;
-//  return(OK);
+
   case  HSM2_MOD_PGD4:
     value->rValue = model->HSM2_pgd4;
     return(OK);
@@ -324,6 +368,12 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_NINVD:
     value->rValue = model->HSM2_ninvd;
+    return(OK);
+  case  HSM2_MOD_NINVDL:
+    value->rValue = model->HSM2_ninvdl;
+    return(OK);
+  case  HSM2_MOD_NINVDLP:
+    value->rValue = model->HSM2_ninvdlp;
     return(OK);
   case  HSM2_MOD_MUECB0:
     value->rValue = model->HSM2_muecb0;
@@ -881,6 +931,107 @@ int HSM2mAsk(
     return(OK);
   case  HSM2_MOD_MUECB1LP:
     value->rValue = model->HSM2_muecb1lp;
+    return(OK);
+
+  /* Depletion Mode MOSFET */
+  case  HSM2_MOD_NDEPM:
+    value->rValue = model->HSM2_ndepm;
+    return(OK);
+  case  HSM2_MOD_NDEPML:
+    value->rValue = model->HSM2_ndepml;
+    return(OK);
+  case  HSM2_MOD_NDEPMLP:
+    value->rValue = model->HSM2_ndepmlp;
+    return(OK);
+  case  HSM2_MOD_TNDEP:
+    value->rValue = model->HSM2_tndep;
+    return(OK);
+  case  HSM2_MOD_DEPLEAK:
+    value->rValue = model->HSM2_depleak;
+    return(OK);
+  case  HSM2_MOD_DEPLEAKL:
+    value->rValue = model->HSM2_depleakl;
+    return(OK);
+  case  HSM2_MOD_DEPLEAKLP:
+    value->rValue = model->HSM2_depleaklp;
+    return(OK);
+  case  HSM2_MOD_DEPETA:
+    value->rValue = model->HSM2_depeta;
+    return(OK);
+  case HSM2_MOD_DEPMUE0:
+    value->rValue = model->HSM2_depmue0;
+    return(OK);
+  case HSM2_MOD_DEPMUE0L:
+    value->rValue = model->HSM2_depmue0l;
+    return(OK);
+  case HSM2_MOD_DEPMUE0LP:
+    value->rValue = model->HSM2_depmue0lp;
+    return(OK);
+  case HSM2_MOD_DEPMUE1:
+    value->rValue = model->HSM2_depmue1;
+    return(OK);
+  case HSM2_MOD_DEPMUE1L:
+    value->rValue = model->HSM2_depmue1l;
+    return(OK);
+  case HSM2_MOD_DEPMUE1LP:
+    value->rValue = model->HSM2_depmue1lp;
+    return(OK);
+  case HSM2_MOD_DEPMUEBACK0:
+    value->rValue = model->HSM2_depmueback0;
+    return(OK);
+  case HSM2_MOD_DEPMUEBACK0L:
+    value->rValue = model->HSM2_depmueback0l;
+    return(OK);
+  case HSM2_MOD_DEPMUEBACK0LP:
+    value->rValue = model->HSM2_depmueback0lp;
+    return(OK);
+  case HSM2_MOD_DEPMUEBACK1:
+    value->rValue = model->HSM2_depmueback1;
+    return(OK);
+  case HSM2_MOD_DEPMUEBACK1L:
+    value->rValue = model->HSM2_depmueback1l;
+    return(OK);
+  case HSM2_MOD_DEPMUEBACK1LP:
+    value->rValue = model->HSM2_depmueback1lp;
+    return(OK);
+  case HSM2_MOD_DEPMUEPH0:
+    value->rValue = model->HSM2_depmueph0;
+    return(OK);
+  case HSM2_MOD_DEPMUEPH1:
+    value->rValue = model->HSM2_depmueph1;
+    return(OK);
+  case HSM2_MOD_DEPVMAX:
+    value->rValue = model->HSM2_depvmax;
+    return(OK);
+  case HSM2_MOD_DEPVMAXL:
+    value->rValue = model->HSM2_depvmaxl;
+    return(OK);
+  case HSM2_MOD_DEPVMAXLP:
+    value->rValue = model->HSM2_depvmaxlp;
+    return(OK);
+  case HSM2_MOD_DEPVDSEF1:
+    value->rValue = model->HSM2_depvdsef1;
+    return(OK);
+  case HSM2_MOD_DEPVDSEF1L:
+    value->rValue = model->HSM2_depvdsef1l;
+    return(OK);
+  case HSM2_MOD_DEPVDSEF1LP:
+    value->rValue = model->HSM2_depvdsef1lp;
+    return(OK);
+  case HSM2_MOD_DEPVDSEF2:
+    value->rValue = model->HSM2_depvdsef2;
+    return(OK);
+  case HSM2_MOD_DEPVDSEF2L:
+    value->rValue = model->HSM2_depvdsef2l;
+    return(OK);
+  case HSM2_MOD_DEPVDSEF2LP:
+    value->rValue = model->HSM2_depvdsef2lp;
+    return(OK);
+  case HSM2_MOD_DEPBB:
+    value->rValue = model->HSM2_depbb;
+    return(OK);
+  case HSM2_MOD_DEPMUETMP:
+    value->rValue = model->HSM2_depmuetmp;
     return(OK);
 
 

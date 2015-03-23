@@ -1,19 +1,58 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
  
  FILE : hsm2.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HiSIM2 Distribution Statement and
+Copyright Notice" attached to HiSIM2 model.
+
+-----HiSIM2 Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaim all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+
+*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/devdefs.h"
@@ -98,7 +137,7 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("level", HSM2_MOD_LEVEL, IF_INTEGER, ""),
   IOP("info", HSM2_MOD_INFO, IF_INTEGER, "information level (for debug, etc.)"),
   IOP("noise", HSM2_MOD_NOISE, IF_INTEGER, "noise model selector"),
-  IOP("version", HSM2_MOD_VERSION, IF_INTEGER, "model version 220"),
+  IOP("version", HSM2_MOD_VERSION, IF_INTEGER, "model version 280"),
   IOP("show", HSM2_MOD_SHOW, IF_INTEGER, "show physical value"),
   IOP("corsrd", HSM2_MOD_CORSRD, IF_INTEGER, "solve equations accounting Rs and Rd."),
   IOP("corg", HSM2_MOD_CORG, IF_INTEGER, "solve equations accounting Rg."),
@@ -120,7 +159,9 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("coqy", HSM2_MOD_COQY, IF_INTEGER, "calculate lateral-field-induced charge/capacitance"),
   IOP("coqovsm", HSM2_MOD_COQOVSM, IF_INTEGER, "select smoothing method of Qover"),
   IOP("coerrrep", HSM2_MOD_COERRREP, IF_INTEGER, "selector for error report"),
-  IOP("vmax", HSM2_MOD_VMAX, IF_REAL, "saturation velocity [cm/s"),
+  IOP("codep", HSM2_MOD_CODEP, IF_INTEGER, "selector for depletion device"),
+  IOP("coddlt", HSM2_MOD_CODDLT, IF_INTEGER, "selector for ddlt model "),
+  IOP("vmax", HSM2_MOD_VMAX, IF_REAL, "saturation velocity [cm/s]"),
   IOP("bgtmp1", HSM2_MOD_BGTMP1, IF_REAL, "first order temp. coeff. for band gap [V/K]"),
   IOP("bgtmp2", HSM2_MOD_BGTMP2, IF_REAL, "second order temp. coeff. for band gap [V/K^2]"),
   IOP("eg0", HSM2_MOD_EG0, IF_REAL, ""),
@@ -190,6 +231,8 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("ndepwp", HSM2_MOD_NDEPWP, IF_REAL, "coeff. of Qbm for Eeff [-]"),
   IOP("ninv", HSM2_MOD_NINV, IF_REAL, "coeff. of Qnm for Eeff [-]"),
   IOP("ninvd", HSM2_MOD_NINVD, IF_REAL, "modification of Vdse dependence on Eeff [1/V]"),
+  IOP("ninvdl", HSM2_MOD_NINVDL, IF_REAL, " LG dependence of NINVD "),
+  IOP("ninvdlp", HSM2_MOD_NINVDLP, IF_REAL, " LG dependence of NINVD "),
   IOP("muecb0", HSM2_MOD_MUECB0, IF_REAL, "const. part of coulomb scattering [cm^2/Vs]"),
   IOP("muecb1", HSM2_MOD_MUECB1, IF_REAL, "coeff. for coulomb scattering [cm^2/Vs]"),
   IOP("mueph0", HSM2_MOD_MUEPH0, IF_REAL, "power of Eeff for phonon scattering [-]"),
@@ -387,6 +430,40 @@ IFparm HSM2mPTable[] = { /* model parameters */
   IOP("muecb0lp", HSM2_MOD_MUECB0LP, IF_REAL, "L dependence of MUECB0"),
   IOP("muecb1lp", HSM2_MOD_MUECB1LP, IF_REAL, "L dependence of MUECB1"),
 
+  /* Depletion Mode MOSFET */
+  IOP("ndepm", HSM2_MOD_NDEPM, IF_REAL, "N- layer concentlation of the depletion MOS model"),
+  IOP("ndepml", HSM2_MOD_NDEPML, IF_REAL, "L dependence of NDEPM "),
+  IOP("ndepmlp", HSM2_MOD_NDEPMLP, IF_REAL, "L dependence of NDEPM "),
+  IOP("tndep", HSM2_MOD_TNDEP, IF_REAL, "N- layer depth of the depletion MOS model"),
+  IOP("depleak", HSM2_MOD_DEPLEAK, IF_REAL, "leakage current modification parameter for the depletion MOS model"),
+  IOP("depleakl", HSM2_MOD_DEPLEAKL, IF_REAL, "L dependence of DEPLEAK"),
+  IOP("depleaklp", HSM2_MOD_DEPLEAKLP, IF_REAL, "L dependence of DEPLEAK"),
+  IOP("depeta", HSM2_MOD_DEPETA, IF_REAL, "Vds dependence of threshold voltage for the depletion MOS model"),
+  IOP("depmue0", HSM2_MOD_DEPMUE0, IF_REAL, " [-]"),
+  IOP("depmue0l", HSM2_MOD_DEPMUE0L, IF_REAL, " [-]"),
+  IOP("depmue0lp", HSM2_MOD_DEPMUE0LP, IF_REAL, " [-]"),
+  IOP("depmue1", HSM2_MOD_DEPMUE1, IF_REAL, " [-]"),
+  IOP("depmue1l", HSM2_MOD_DEPMUE1L, IF_REAL, " [-]"),
+  IOP("depmue1lp", HSM2_MOD_DEPMUE1LP, IF_REAL, " [-]"),
+  IOP("depmueback0", HSM2_MOD_DEPMUEBACK0, IF_REAL, " [-]"),
+  IOP("depmueback0l", HSM2_MOD_DEPMUEBACK0L, IF_REAL, " [-]"),
+  IOP("depmueback0lp", HSM2_MOD_DEPMUEBACK0LP, IF_REAL, " [-]"),
+  IOP("depmueback1", HSM2_MOD_DEPMUEBACK1, IF_REAL, " [-]"),
+  IOP("depmueback1l", HSM2_MOD_DEPMUEBACK1L, IF_REAL, " [-]"),
+  IOP("depmueback1lp", HSM2_MOD_DEPMUEBACK1LP, IF_REAL, " [-]"),
+  IOP("depmueph0", HSM2_MOD_DEPMUEPH0, IF_REAL, " [-]"),
+  IOP("depmueph1", HSM2_MOD_DEPMUEPH1, IF_REAL, " [-]"),
+  IOP("depvmax", HSM2_MOD_DEPVMAX, IF_REAL, " [-]"),
+  IOP("depvmaxl", HSM2_MOD_DEPVMAXL, IF_REAL, " [-]"),
+  IOP("depvmaxlp", HSM2_MOD_DEPVMAXLP, IF_REAL, " [-]"),
+  IOP("depvdsef1", HSM2_MOD_DEPVDSEF1, IF_REAL, " [-]"),
+  IOP("depvdsef1l", HSM2_MOD_DEPVDSEF1L, IF_REAL, " [-]"),
+  IOP("depvdsef1lp", HSM2_MOD_DEPVDSEF1LP, IF_REAL, " [-]"),
+  IOP("depvdsef2", HSM2_MOD_DEPVDSEF2, IF_REAL, " [-]"),
+  IOP("depvdsef2l", HSM2_MOD_DEPVDSEF2L, IF_REAL, " [-]"),
+  IOP("depvdsef2lp", HSM2_MOD_DEPVDSEF2LP, IF_REAL, " [-]"),
+  IOP("depbb",   HSM2_MOD_DEPBB, IF_REAL,   " [-]"),
+  IOP("depmuetmp", HSM2_MOD_DEPMUETMP, IF_REAL, " [-]"),
 
   /* binning parameters */
   IOP("lmin", HSM2_MOD_LMIN, IF_REAL, "Minimum length for the model"),

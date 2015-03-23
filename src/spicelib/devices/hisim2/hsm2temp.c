@@ -1,19 +1,58 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
  
  FILE : hsm2temp.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HiSIM2 Distribution Statement and
+Copyright Notice" attached to HiSIM2 model.
+
+-----HiSIM2 Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaim all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+
+*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/smpdefs.h"
@@ -60,6 +99,15 @@
     y = ( xmin ) + 0.5 * ( T1 + T2 ) ; \
   }
 
+/*===========================================================*
+* pow
+*=================*/
+#ifdef POW_TO_EXP_AND_LOG
+#define Fn_Pow( x , y )  ( (x==0.0) ? 0.0 : exp( (y) * log( x ) ) ) 
+#else
+#define Fn_Pow( x , y )  ( (x==0.0) ? 0.0 : pow( x , y ) )
+#endif
+
 int HSM2temp(
      GENmodel *inModel,
      CKTcircuit *ckt)
@@ -77,9 +125,11 @@ int HSM2temp(
   double MUEPLD = 0.0 ;
   double GDLD = 0.0 ;
   double T1, T2, T3 ;
+  const double small = 1.0e-50 ;
   /* temperature-dependent variables */
   double Eg ,TTEMP, beta, Nin;
   double js, jssw, js2, jssw2 ;
+  double Tratio ;
   int i;
 
   /* declarations for the sc3 clamping part */
@@ -99,11 +149,11 @@ int HSM2temp(
       pParam = &here->pParam ;
       hereMKS = &here->hereMKS ;
 
-      here->HSM2_lgate = Lgate = here->HSM2_l + model->HSM2_xl ;
-      Wgate = here->HSM2_w / here->HSM2_nf  + model->HSM2_xw ;
+      Lgate = here->HSM2_lgate ;
+      Wgate = here->HSM2_wgate ;
 
-      LG = Lgate * C_m2um ;
-      here->HSM2_wg = WG = Wgate * C_m2um ; 
+      LG = here->HSM2_lg ;
+      WG = here->HSM2_wg ; 
       WL = WG * LG ;
       MUEPWD = model->HSM2_muepwd * C_m2um ;
       MUEPLD = model->HSM2_muepld * C_m2um ;
@@ -139,7 +189,7 @@ int HSM2temp(
            (here->HSM2_nf > 1.0 && here->HSM2_sd > 0.0))) {
         T1 = 0.0;
         for (i = 0; i < here->HSM2_nf; i++) {
-          T1 += 1.0 / (here->HSM2_sa + 0.5 * here->HSM2_l
+          T1 = T1 + 1.0 / (here->HSM2_sa + 0.5 * here->HSM2_l
                        + i * (here->HSM2_sd + here->HSM2_l))
               + 1.0 / (here->HSM2_sb + 0.5 * here->HSM2_l
                        + i * (here->HSM2_sd + here->HSM2_l));
@@ -157,10 +207,10 @@ int HSM2temp(
       /* DFM */
       if ( model->HSM2_codfm == 1 && here->HSM2_nsubcdfm_Given ) {
 	RANGECHECK(here->HSM2_nsubcdfm,   1.0e16,   1.0e19, "NSUBCDFM") ;
- 	here->HSM2_mueph1 *= here->HSM2_mphdfm
-	  * ( log(hereMKS->HSM2_nsubcdfm) - log(here->HSM2_nsubc) ) + 1.0 ;
-	here->HSM2_nsubp += hereMKS->HSM2_nsubcdfm - here->HSM2_nsubc ;
- 	Npext += hereMKS->HSM2_nsubcdfm - here->HSM2_nsubc ;
+ 	here->HSM2_mueph1 = here->HSM2_mueph1 * ( here->HSM2_mphdfm
+	   * ( log(hereMKS->HSM2_nsubcdfm) - log(here->HSM2_nsubc) ) + 1.0 ) ;
+	here->HSM2_nsubp  = here->HSM2_nsubp + hereMKS->HSM2_nsubcdfm - here->HSM2_nsubc ;
+ 	Npext = Npext + hereMKS->HSM2_nsubcdfm - here->HSM2_nsubc ;
  	here->HSM2_nsubc = hereMKS->HSM2_nsubcdfm ;
       }
 
@@ -169,19 +219,19 @@ int HSM2temp(
               ( here->HSM2_sca
                 + model->HSM2_web * here->HSM2_scb
                 + model->HSM2_wec * here->HSM2_scc ) ;
-        here->HSM2_nsubc +=  T0 ;
+        here->HSM2_nsubc  = here->HSM2_nsubc + T0 ;
         Fn_SLtemp( here->HSM2_nsubc , here->HSM2_nsubc , Nsubmin , Nsubmin_dlt ) ;
         T0 = modelMKS->HSM2_nsubpwpe *
               ( here->HSM2_sca
                 + model->HSM2_web * here->HSM2_scb
                 + model->HSM2_wec * here->HSM2_scc ) ;
-        here->HSM2_nsubp +=  T0 ;
+        here->HSM2_nsubp  = here->HSM2_nsubp + T0 ;
         Fn_SLtemp( here->HSM2_nsubp , here->HSM2_nsubp , Nsubmin , Nsubmin_dlt ) ;
         T0 = modelMKS->HSM2_npextwpe *
               ( here->HSM2_sca
                 + model->HSM2_web * here->HSM2_scb
                 + model->HSM2_wec * here->HSM2_scc ) ;
-        Npext +=  T0 ;
+        Npext = Npext + T0 ;
         Fn_SLtemp( Npext , Npext , Nsubmin , Nsubmin_dlt ) ;
 	/* WPE end */
 
@@ -221,6 +271,9 @@ int HSM2temp(
 	/ C_ESI ;
       here->HSM2_ninv_o_esi = pParam->HSM2_ninv / C_ESI ;
 
+      /* LG dependence of NINVD */
+      here->HSM2_ninvd = model->HSM2_ninvd * ( 1.0 + (model->HSM2_ninvdl / pow( LG, model->HSM2_ninvdlp)));
+
       /* Metallurgical channel geometry */
       dL = model->HSM2_xld 
         + (modelMKS->HSM2_ll / pow (Lgate + model->HSM2_lld, model->HSM2_lln)) ;
@@ -229,11 +282,15 @@ int HSM2temp(
     
       Leff = Lgate - 2.0e0 * dL ;
       if ( Leff <= 1.0e-9 ) {   
-        SPfrontEnd->IFerrorf
+        IFuid namarr[2];
+        namarr[0] = model->HSM2modName;
+        namarr[1] = here->HSM2name;
+        (*(SPfrontEnd->IFerror))
           ( 
            ERR_FATAL, 
            "HiSIM2: MOSFET(%s) MODEL(%s): effective channel length is smaller than 1nm", 
-           model->HSM2modName, here->HSM2name);
+           namarr 
+           );
         return (E_BADPARM);
       }
       here->HSM2_leff = Leff ;
@@ -249,11 +306,15 @@ int HSM2temp(
 
       here->HSM2_weff = Weff = Wgate - 2.0e0 * dW ;
       if ( Weff <= 0.0 ) {   
-        SPfrontEnd->IFerrorf
+        IFuid namarr[2];
+        namarr[0] = model->HSM2modName;
+        namarr[1] = here->HSM2name;
+        (*(SPfrontEnd->IFerror))
           ( 
            ERR_FATAL, 
            "HiSIM2: MOSFET(%s) MODEL(%s): effective channel width is negative or 0", 
-           model->HSM2modName, here->HSM2name);
+           namarr 
+           );
         return (E_BADPARM);
       }
       here->HSM2_weff_nf = Weff * here->HSM2_nf ;
@@ -264,7 +325,7 @@ int HSM2temp(
       T1 = 2.0 * ( 1.0 - model->HSM2_nsubpfac ) / model->HSM2_nsubpl * LG + 2.0 * model->HSM2_nsubpfac - 1.0 ;
       Fn_SUtemp( T1 , T1 , 1 , model->HSM2_nsubpdlt ) ;
       Fn_SLtemp( T1 , T1 , model->HSM2_nsubpfac  , model->HSM2_nsubpdlt ) ;
-      here->HSM2_nsubp *= T1 ;
+      here->HSM2_nsubp = here->HSM2_nsubp * T1 ;
       }
 
       /* Note: Sign Changed --> */
@@ -282,11 +343,11 @@ int HSM2temp(
       }
 
       T2 = 1.0e0 + ( model->HSM2_nsubcw / pow ( WG, model->HSM2_nsubcwp )) ;
-      T2 *= 1.0e0 + ( model->HSM2_nsubcw2 / pow ( WG, model->HSM2_nsubcwp2 )) ;
+      T2 = T2 * ( 1.0e0 + ( model->HSM2_nsubcw2 / pow ( WG, model->HSM2_nsubcwp2 )) ) ;
       T3 = modelMKS->HSM2_nsubcmax / here->HSM2_nsubc ;
 
       Fn_SUtemp( T1 , T2 , T3 , 0.01 ) ;
-      here->HSM2_nsubc *= T1 ;
+      here->HSM2_nsubc = here->HSM2_nsubc * T1 ;
 
       if (Lod_half > 0.0) {
         T1 = 1.0e0 / (1.0e0 + pParam->HSM2_nsubcsti2) ;
@@ -300,7 +361,7 @@ int HSM2temp(
         fprintf ( stderr , "    The model parameter  NSUBCW/NSUBCWP and/or NSUBCW2/NSUBCW2P might be wrong.\n" ) ;
         here->HSM2_nsubc = 1e15 / C_cm2m_p3 ;
       }
-      if(model->HSM2_coerrrep && (Npext < here->HSM2_nsubc || Npext > here->HSM2_nsubp)) {
+      if( (model->HSM2_codep==0) && model->HSM2_coerrrep && (Npext < here->HSM2_nsubc || Npext > here->HSM2_nsubp)) {
         fprintf ( stderr , "*** warning(HiSIM): actual NPEXT value is smaller than NSUBC and/or greater than NSUBP.\n" ) ;
         fprintf ( stderr , "    ( Npext = %e , NSUBC = %e , NSUBP = %e ) \n",Npext,here->HSM2_nsubc,here->HSM2_nsubp);
         fprintf ( stderr , "    The model parameter  NPEXTW and/or NPEXTWP might be wrong.\n" ) ;
@@ -373,18 +434,18 @@ int HSM2temp(
       /* Process source/drain series resistamce */
       here->HSM2_rd = 0.0;
       if ( model->HSM2_rsh > 0.0 ) {
-        here->HSM2_rd += model->HSM2_rsh * here->HSM2_nrd ;
+        here->HSM2_rd = here->HSM2_rd + model->HSM2_rsh * here->HSM2_nrd ;
       } 
       if ( model->HSM2_rd > 0.0 ) {
-       here->HSM2_rd += model->HSM2_rd / here->HSM2_weff_nf ;
+       here->HSM2_rd = here->HSM2_rd + model->HSM2_rd / here->HSM2_weff_nf ;
      }
 
       here->HSM2_rs = 0.0;
       if ( model->HSM2_rsh > 0.0 ) {
-        here->HSM2_rs += model->HSM2_rsh * here->HSM2_nrs ;
+        here->HSM2_rs = here->HSM2_rs + model->HSM2_rsh * here->HSM2_nrs ;
       }
       if ( model->HSM2_rs > 0.0 ) {
-        here->HSM2_rs += model->HSM2_rs / here->HSM2_weff_nf ; 
+        here->HSM2_rs = here->HSM2_rs + model->HSM2_rs / here->HSM2_weff_nf ; 
       }
 
       if (model->HSM2_corsrd < 0) {
@@ -436,8 +497,13 @@ int HSM2temp(
       }
 
       /* Vdseff */
-      T1 = model->HSM2_ddltslp * LG + model->HSM2_ddltict ;
-      here->HSM2_ddlt = T1 * model->HSM2_ddltmax / ( T1 + model->HSM2_ddltmax ) + 1.0 ;
+      if ( model->HSM2_coddlt == 0 ) {
+        T1 = model->HSM2_ddltslp * LG + model->HSM2_ddltict ;
+        here->HSM2_ddlt = T1 * model->HSM2_ddltmax / ( T1 + model->HSM2_ddltmax ) + 1.0 ;
+      } else { /* fix in version 2.80 */ 
+        T1 = model->HSM2_ddltslp * LG ;
+        here->HSM2_ddlt = T1 * model->HSM2_ddltmax / ( T1 + model->HSM2_ddltmax ) + model->HSM2_ddltict + small ;
+      }
 
       /* Isub */
       T2 = pow( Weff , model->HSM2_svgswp ) ;
@@ -508,13 +574,15 @@ int HSM2temp(
         here->HSM2_beta2 = beta * beta ;
         here->HSM2_betatnom = C_QE / (C_KB * model->HSM2_ktnom) ;
 
+        Tratio =   TTEMP / model->HSM2_ktnom ;
+
         /* Intrinsic carrier concentration */
-        here->HSM2_nin = Nin = C_Nin0 * pow (TTEMP / model->HSM2_ktnom, 1.5e0) 
+        here->HSM2_nin = Nin = C_Nin0 * pow (Tratio, 1.5e0) 
           * exp (- Eg / 2.0e0 * beta + here->HSM2_egtnom / 2.0e0 * here->HSM2_betatnom) ;
 
 
         /* Phonon Scattering (temperature-dependent part) */
-        T1 =  pow (TTEMP / model->HSM2_ktnom, pParam->HSM2_muetmp) ;
+        T1 =  pow (Tratio, pParam->HSM2_muetmp) ;
         here->HSM2_mphn0 = T1 / here->HSM2_mueph ;
         here->HSM2_mphn1 = here->HSM2_mphn0 * model->HSM2_mueph0 ;
 
@@ -524,30 +592,79 @@ int HSM2temp(
 
 
         /* Velocity Temperature Dependence */
-        T1 =  TTEMP / model->HSM2_ktnom ;
         here->HSM2_vmax = here->HSM2_vmax0 * pParam->HSM2_vmax 
-          / (1.8 + 0.4 * T1 + 0.1 * T1 * T1 - pParam->HSM2_vtmp * (1.0e0 - T1)) ;
+          / (1.8 + 0.4 * Tratio + 0.1 * Tratio * Tratio - pParam->HSM2_vtmp * (1.0e0 - Tratio)) ;
 
 
         /* Coefficient of the F function for bulk charge */
-        here->HSM2_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSM2_nsub / beta ) ;
-	here->HSM2_cnst0over = here->HSM2_cnst0 * sqrt( pParam->HSM2_nover / here->HSM2_nsub ) ;     
+        /* Depletion mode MOSFET  */
+        if( model->HSM2_codep ) {
+          T3 = pow(here->HSM2_lg,model->HSM2_ndepmlp) ;
+          here->HSM2_ndepm = modelMKS->HSM2_ndepm * ( 1.0 + model->HSM2_ndepml / T3 );
+          if ( here->HSM2_ndepm < 1e+21 ) { here->HSM2_ndepm = 1e+21 ; }
+          here->HSM2_Pb2n = 2.0/beta*log(here->HSM2_ndepm/Nin) ;
+          here->HSM2_Vbipn = 1.0/beta*log(here->HSM2_ndepm*here->HSM2_nsub/Nin/Nin) ;
+          here->HSM2_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSM2_ndepm / beta ) ;
+          here->HSM2_cnst1 = Nin*Nin/here->HSM2_ndepm/here->HSM2_ndepm ;
+
+          T1 =  Fn_Pow(Tratio, model->HSM2_depmuetmp) ;
+          here->HSM2_depmphn0 = T1 / model->HSM2_depmueph1 ;
+          here->HSM2_depmphn1 = here->HSM2_depmphn0 * model->HSM2_depmueph0 ;
+//        T0 = 1.8 + 0.4 * Tratio + 0.1 * Tratio * Tratio - model->HSM2_depvtmp * ( 1.0 - Tratio ) ;
+          T0 = 1.0 ; // ignore DEPVTMP in HiSIM2
+          here->HSM2_depvmax = model->HSM2_depvmax / T0 / C_m2cm ;
+
+         // LG dependence DEPVMAX 
+         T3 = pow( here->HSM2_lg, model->HSM2_depvmaxlp ) ;
+         here->HSM2_depvmax = here->HSM2_depvmax * ( 1.0 + model->HSM2_depvmaxl / T3 ) ;
+         if( here->HSM2_depvmax < 0.0 ) { here->HSM2_depvmax = 0.0; }
+
+         // LG dependence DEPLEAK 
+         T3 = pow( here->HSM2_lg, model->HSM2_depleaklp ) ;
+         here->HSM2_depleak = model->HSM2_depleak * ( 1.0 + model->HSM2_depleakl / T3 ) ;
+         if( here->HSM2_depleak < 0.0 ) { here->HSM2_depleak = 0.0; }
+
+         // LG dependence DEPMUE0 & DEPMUE1
+         T3 = pow( here->HSM2_lg, model->HSM2_depmue0lp ) ;
+         here->HSM2_depmue0 = model->HSM2_depmue0 * ( 1.0 + model->HSM2_depmue0l / T3 ) ;
+         if( here->HSM2_depmue0 < 1.0 ) { here->HSM2_depmue0 = 1.0; }
+         T3 = pow( here->HSM2_lg, model->HSM2_depmue1lp ) ;
+         here->HSM2_depmue1 = model->HSM2_depmue1 * ( 1.0 + model->HSM2_depmue1l / T3 ) ;
+         if( here->HSM2_depmue1 < 0.0 ) { here->HSM2_depmue1 = 0.0; }
+
+         // LG dependence DEPMUEBACK0 & DEPMUEBACK1
+         T3 = pow( here->HSM2_lg, model->HSM2_depmueback0lp ) ;
+         here->HSM2_depmueback0 = model->HSM2_depmueback0 * ( 1.0 + model->HSM2_depmueback0l / T3 ) ;
+         if( here->HSM2_depmueback0 < 0.0 ) { here->HSM2_depmueback0 = 0.0; }
+         T3 = pow( here->HSM2_lg, model->HSM2_depmueback1lp ) ;
+         here->HSM2_depmueback1 = model->HSM2_depmueback1 * ( 1.0 + model->HSM2_depmueback1l / T3 ) ;
+         if( here->HSM2_depmueback1 < 0.0 ) { here->HSM2_depmueback1 = 0.0; }
+
+         // LG dependence DEPVDSEF1 & DEPVDSEF2
+         T3 = pow( here->HSM2_lg, model->HSM2_depvdsef1lp ) ;
+         here->HSM2_depvdsef1 = model->HSM2_depvdsef1 * ( 1.0 + model->HSM2_depvdsef1l / T3 ) ;
+         if( here->HSM2_depvdsef1 < 0.0 ) { here->HSM2_depvdsef1 = 0.0; }
+         T3 = pow( here->HSM2_lg, model->HSM2_depvdsef2lp ) ;
+         here->HSM2_depvdsef2 = model->HSM2_depvdsef2 * ( 1.0 + model->HSM2_depvdsef2l / T3 ) ;
+         if( here->HSM2_depvdsef2 < 0.1 ) { here->HSM2_depvdsef2 = 0.1; }
+
+        } else {
+        /* Normal mode MOSFET  */
+          here->HSM2_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSM2_nsub / beta ) ;
+          /* cnst1: n_{p0} / p_{p0} */
+          T1 = Nin / here->HSM2_nsub ;
+          here->HSM2_cnst1 = T1 * T1 ;
+        }
 
         /* 2 phi_B (temperature-dependent) */
         /* @temp, with pocket */
         here->HSM2_pb2 =  2.0e0 / beta * log (here->HSM2_nsub / Nin) ;
         if ( pParam->HSM2_nover != 0.0) {
 	   here->HSM2_pb2over = 2.0 / beta * log( pParam->HSM2_nover / Nin ) ;
-
-           /* (1 / cnst1 / cnstCoxi) for Ps0LD_iniB */
-           T1 = here->HSM2_cnst0over * model->HSM2_tox / here->HSM2_cecox  ;
-           T2 = pParam->HSM2_nover / Nin ;
-           T1 = T2 * T2 / ( T1 * T1 ) ;
-           here->HSM2_ps0ldinib  = T1 ; /* (1 / cnst1 / cnstCoxi) */
-
+	   here->HSM2_cnst0over = sqrt ( 2.0 * C_ESI * C_QE * pParam->HSM2_nover / beta ) ;     
         }else {
            here->HSM2_pb2over = 0.0 ;
-           here->HSM2_ps0ldinib  = 0.0 ;
+           here->HSM2_cnst0over = 0.0 ;
         }
 
 
@@ -556,25 +673,21 @@ int HSM2temp(
         here->HSM2_wdpl = sqrt ( T1 / here->HSM2_nsub ) ;
         here->HSM2_wdplp = sqrt( T1 / ( here->HSM2_nsubp ) ) ; 
 
-        /* cnst1: n_{p0} / p_{p0} */
-        T1 = Nin / here->HSM2_nsub ;
-        here->HSM2_cnst1 = T1 * T1 ;
-
 
         /* for substrate-source/drain junction diode. */
         js   = pParam->HSM2_js0
           * exp ((here->HSM2_egtnom * here->HSM2_betatnom - Eg * beta
-                  + model->HSM2_xti * log (TTEMP / model->HSM2_ktnom)) / pParam->HSM2_nj) ;
+                  + model->HSM2_xti * log (Tratio)) / pParam->HSM2_nj) ;
         jssw = pParam->HSM2_js0sw
           * exp ((here->HSM2_egtnom * here->HSM2_betatnom - Eg * beta 
-                  + model->HSM2_xti * log (TTEMP / model->HSM2_ktnom)) / model->HSM2_njsw) ;
+                  + model->HSM2_xti * log (Tratio)) / model->HSM2_njsw) ;
 
         js2  = pParam->HSM2_js0
           * exp ((here->HSM2_egtnom * here->HSM2_betatnom - Eg * beta
-                  + model->HSM2_xti2 * log (TTEMP / model->HSM2_ktnom)) / pParam->HSM2_nj) ;  
+                  + model->HSM2_xti2 * log (Tratio)) / pParam->HSM2_nj) ;  
         jssw2 = pParam->HSM2_js0sw
           * exp ((here->HSM2_egtnom * here->HSM2_betatnom - Eg * beta
-                  + model->HSM2_xti2 * log (TTEMP / model->HSM2_ktnom)) / model->HSM2_njsw) ; 
+                  + model->HSM2_xti2 * log (Tratio)) / model->HSM2_njsw) ; 
       
         here->HSM2_isbd = here->HSM2_ad * js + here->HSM2_pd * jssw ;
         here->HSM2_isbd2 = here->HSM2_ad * js2 + here->HSM2_pd * jssw2 ;
@@ -582,13 +695,13 @@ int HSM2temp(
         here->HSM2_isbs2 = here->HSM2_as * js2 + here->HSM2_ps * jssw2 ;
 
         here->HSM2_vbdt = pParam->HSM2_nj / beta 
-          * log (pParam->HSM2_vdiffj * (TTEMP / model->HSM2_ktnom) * (TTEMP / model->HSM2_ktnom) 
+          * log (pParam->HSM2_vdiffj * (Tratio) * (Tratio) 
                  / (here->HSM2_isbd + 1.0e-50) + 1) ;
         here->HSM2_vbst = pParam->HSM2_nj / beta 
-          * log (pParam->HSM2_vdiffj * (TTEMP / model->HSM2_ktnom) * (TTEMP / model->HSM2_ktnom) 
+          * log (pParam->HSM2_vdiffj * (Tratio) * (Tratio) 
                  / (here->HSM2_isbs + 1.0e-50) + 1) ;
 
-        here->HSM2_exptemp = exp (((TTEMP / model->HSM2_ktnom) - 1) * model->HSM2_ctemp) ;
+        here->HSM2_exptemp = exp (((Tratio) - 1) * model->HSM2_ctemp) ;
         here->HSM2_jd_nvtm_inv = 1.0 / ( pParam->HSM2_nj / beta ) ;
         here->HSM2_jd_expcd = exp (here->HSM2_vbdt * here->HSM2_jd_nvtm_inv ) ;
         here->HSM2_jd_expcs = exp (here->HSM2_vbst * here->HSM2_jd_nvtm_inv ) ;

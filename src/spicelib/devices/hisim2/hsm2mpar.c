@@ -1,19 +1,58 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
  
  FILE : hsm2mpar.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HiSIM2 Distribution Statement and
+Copyright Notice" attached to HiSIM2 model.
+
+-----HiSIM2 Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaim all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+
+*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "hsm2def.h"
@@ -140,6 +179,15 @@ int HSM2mParam(
     mod->HSM2_coerrrep = value->iValue;
     mod->HSM2_coerrrep_Given = TRUE;
     break;
+  case  HSM2_MOD_CODEP:
+    mod->HSM2_codep = value->iValue;
+    mod->HSM2_codep_Given = TRUE;
+    break;
+  case HSM2_MOD_CODDLT:
+    mod->HSM2_coddlt = value->iValue;
+    mod->HSM2_coddlt_Given = TRUE;
+    break;
+
   case  HSM2_MOD_VMAX:
     mod->HSM2_vmax = value->rValue;
     mod->HSM2_vmax_Given = TRUE;
@@ -419,6 +467,14 @@ int HSM2mParam(
   case  HSM2_MOD_NINVD:
     mod->HSM2_ninvd = value->rValue;
     mod->HSM2_ninvd_Given = TRUE;
+    break;
+  case  HSM2_MOD_NINVDL:
+    mod->HSM2_ninvdl = value->rValue;
+    mod->HSM2_ninvdl_Given = TRUE;
+    break;
+  case  HSM2_MOD_NINVDLP:
+    mod->HSM2_ninvdlp = value->rValue;
+    mod->HSM2_ninvdlp_Given = TRUE;
     break;
   case  HSM2_MOD_MUECB0:
     mod->HSM2_muecb0 = value->rValue;
@@ -1162,6 +1218,139 @@ int HSM2mParam(
     mod->HSM2_muecb1lp_Given = TRUE;
     break;
 
+  /* Depletion Mode MODFET */
+  case HSM2_MOD_NDEPM:
+    mod->HSM2_ndepm = value->rValue;
+    mod->HSM2_ndepm_Given = TRUE;
+    break;
+  case HSM2_MOD_NDEPML:
+    mod->HSM2_ndepml = value->rValue;
+    mod->HSM2_ndepml_Given = TRUE;
+    break;
+  case HSM2_MOD_NDEPMLP:
+    mod->HSM2_ndepmlp = value->rValue;
+    mod->HSM2_ndepmlp_Given = TRUE;
+    break;
+  case HSM2_MOD_TNDEP:
+    mod->HSM2_tndep = value->rValue;
+    mod->HSM2_tndep_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPLEAK:
+    mod->HSM2_depleak = value->rValue;
+    mod->HSM2_depleak_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPLEAKL:
+    mod->HSM2_depleakl = value->rValue;
+    mod->HSM2_depleakl_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPLEAKLP:
+    mod->HSM2_depleaklp = value->rValue;
+    mod->HSM2_depleaklp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPETA:
+    mod->HSM2_depeta = value->rValue;
+    mod->HSM2_depeta_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUE0:
+    mod->HSM2_depmue0 = value->rValue;
+    mod->HSM2_depmue0_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUE0L:
+    mod->HSM2_depmue0l = value->rValue;
+    mod->HSM2_depmue0l_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUE0LP:
+    mod->HSM2_depmue0lp = value->rValue;
+    mod->HSM2_depmue0lp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUE1:
+    mod->HSM2_depmue1 = value->rValue;
+    mod->HSM2_depmue1_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUE1L:
+    mod->HSM2_depmue1l = value->rValue;
+    mod->HSM2_depmue1l_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUE1LP:
+    mod->HSM2_depmue1lp = value->rValue;
+    mod->HSM2_depmue1lp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEBACK0:
+    mod->HSM2_depmueback0 = value->rValue;
+    mod->HSM2_depmueback0_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEBACK0L:
+    mod->HSM2_depmueback0l = value->rValue;
+    mod->HSM2_depmueback0l_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEBACK0LP:
+    mod->HSM2_depmueback0lp = value->rValue;
+    mod->HSM2_depmueback0lp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEBACK1:
+    mod->HSM2_depmueback1 = value->rValue;
+    mod->HSM2_depmueback1_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEBACK1L:
+    mod->HSM2_depmueback1l = value->rValue;
+    mod->HSM2_depmueback1l_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEBACK1LP:
+    mod->HSM2_depmueback1lp = value->rValue;
+    mod->HSM2_depmueback1lp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEPH0:
+    mod->HSM2_depmueph0 = value->rValue;
+    mod->HSM2_depmueph0_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUEPH1:
+    mod->HSM2_depmueph1 = value->rValue;
+    mod->HSM2_depmueph1_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVMAX:
+    mod->HSM2_depvmax = value->rValue;
+    mod->HSM2_depvmax_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVMAXL:
+    mod->HSM2_depvmaxl = value->rValue;
+    mod->HSM2_depvmaxl_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVMAXLP:
+    mod->HSM2_depvmaxlp = value->rValue;
+    mod->HSM2_depvmaxlp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVDSEF1:
+    mod->HSM2_depvdsef1 = value->rValue;
+    mod->HSM2_depvdsef1_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVDSEF1L:
+    mod->HSM2_depvdsef1l = value->rValue;
+    mod->HSM2_depvdsef1l_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVDSEF1LP:
+    mod->HSM2_depvdsef1lp = value->rValue;
+    mod->HSM2_depvdsef1lp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVDSEF2:
+    mod->HSM2_depvdsef2 = value->rValue;
+    mod->HSM2_depvdsef2_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVDSEF2L:
+    mod->HSM2_depvdsef2l = value->rValue;
+    mod->HSM2_depvdsef2l_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPVDSEF2LP:
+    mod->HSM2_depvdsef2lp = value->rValue;
+    mod->HSM2_depvdsef2lp_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPBB:
+    mod->HSM2_depbb = value->rValue;
+    mod->HSM2_depbb_Given = TRUE;
+    break;
+  case HSM2_MOD_DEPMUETMP:
+    mod->HSM2_depmuetmp = value->rValue;
+    mod->HSM2_depmuetmp_Given = TRUE;
+    break;
 
   /* binning parameters */
   case  HSM2_MOD_LMIN:

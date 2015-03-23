@@ -8,7 +8,7 @@
 
 SPICEdev HSM2info = {
   {   "HiSIM2",
-      "Hiroshima University STARC IGFET Model 2.7.0",
+      "Hiroshima University STARC IGFET Model 2.8.0",
       
       &HSM2nSize,
       &HSM2nSize,

@@ -1,19 +1,58 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
  
  FILE : hsm2set.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HiSIM2 Distribution Statement and
+Copyright Notice" attached to HiSIM2 model.
+
+-----HiSIM2 Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaim all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+
+*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/smpdefs.h"
@@ -91,17 +130,18 @@ int HSM2setup(
     model->HSM2_noise = 1; /* allways noise is set to be 1 */
 
     if ( !model->HSM2_version_Given) {
-        model->HSM2_version = 270; /* default 270 */
-	printf("           270 is selected for VERSION. (default) \n");
+        model->HSM2_version = 280; /* default 2.80 */
+	printf("           2.80 is selected for VERSION. (default) \n");
     } else {
-      if (model->HSM2_version != 270) {
-	model->HSM2_version = 270; /* default 270 */
-	printf("           270 is the only available VERSION. \n");
-	printf("           270 is selected for VERSION. (default) \n");
-      } else {
-	printf("           %d is selected for VERSION \n", (int)model->HSM2_version);
-      }
+      if (model->HSM2_version < 280 || model->HSM2_version > 280 ) {
+ 	printf("           %d is not available for VERSION. \n", model->HSM2_version ); 
+	model->HSM2_version = 280; /* 2.80 */
+      } 
+      printf("           2.80 is selected for VERSION. \n");
     }
+    /* set subversion & revision */ 
+//  model->HSM2_subversion = fmod(model->HSM2_version *  10 , 10 );
+//  model->HSM2_revision   = fmod(model->HSM2_version * 100 , 10 );
 
     if ( !model->HSM2_corsrd_Given     ) model->HSM2_corsrd     = 0 ;
     if ( !model->HSM2_corg_Given       ) model->HSM2_corg       = 0 ;
@@ -121,12 +161,27 @@ int HSM2setup(
     if ( !model->HSM2_corbnet_Given    ) model->HSM2_corbnet    = 0 ; 
     else if ( model->HSM2_corbnet != 0 && model->HSM2_corbnet != 1 ) {
       model->HSM2_corbnet = 0;
-      printf("warning(HiSIM2): CORBNET has been set to its default value: %d.\n", model->HSM2_corbnet);
+      printf("warning(HiSIM): CORBNET has been set to its default value: %d.\n", model->HSM2_corbnet);
     }
     if ( !model->HSM2_corecip_Given    ) model->HSM2_corecip    = 1 ;
     if ( !model->HSM2_coqy_Given       ) model->HSM2_coqy       = 0 ;
     if ( !model->HSM2_coqovsm_Given    ) model->HSM2_coqovsm    = 1 ;
     if ( !model->HSM2_coerrrep_Given   ) model->HSM2_coerrrep   = 1 ;
+    if ( !model->HSM2_codep_Given      ) model->HSM2_codep      = 0 ;
+    if ( !model->HSM2_coddlt_Given     ) model->HSM2_coddlt     = 1 ;
+
+    if ( model->HSM2_codep_Given ) {
+      if( model->HSM2_codep != 0 && model->HSM2_codep != 1 ) {
+        printf("warning(HiSIM): Invalid CODEP  (%d) was specified, resetted to 0.\n",model->HSM2_codep);
+        model->HSM2_codep = 0 ;
+      }
+    }
+    if ( model->HSM2_coddlt_Given ) {
+      if( model->HSM2_coddlt != 0 && model->HSM2_coddlt != 1 ) {
+        printf("warning(HiSIM): Invalid CODDLT (%d) was specified, resetted to 0.\n",model->HSM2_coddlt);
+        model->HSM2_coddlt = 0 ;
+      }
+    }
 
 
     if ( !model->HSM2_vmax_Given    ) model->HSM2_vmax    = 1.0e7 ;
@@ -137,8 +192,13 @@ int HSM2setup(
     if ( !model->HSM2_xld_Given     ) model->HSM2_xld     = 0.0 ;
     if ( !model->HSM2_lover_Given   ) model->HSM2_lover   = 30e-9 ;
     if ( !model->HSM2_ddltmax_Given ) model->HSM2_ddltmax = 10.0 ; /* Vdseff */
-    if ( !model->HSM2_ddltslp_Given ) model->HSM2_ddltslp = 0.0 ; /* Vdseff */
-    if ( !model->HSM2_ddltict_Given ) model->HSM2_ddltict = 10.0 ; /* Vdseff */
+    if ( model->HSM2_coddlt == 0 ) {
+      if ( !model->HSM2_ddltslp_Given ) model->HSM2_ddltslp =  0.0 ; /* Vdseff */
+      if ( !model->HSM2_ddltict_Given ) model->HSM2_ddltict = 10.0 ; /* Vdseff */
+    } else {
+      if ( !model->HSM2_ddltslp_Given ) model->HSM2_ddltslp = 10.0 ; /* Vdseff */
+      if ( !model->HSM2_ddltict_Given ) model->HSM2_ddltict =  0.0 ; /* Vdseff */
+    }
     if ( !model->HSM2_vfbover_Given ) model->HSM2_vfbover = 0.0 ;
     if ( !model->HSM2_nover_Given   ) model->HSM2_nover   = 1E19 ;
     if ( !model->HSM2_xwd_Given     ) model->HSM2_xwd     = 0.0 ;
@@ -200,6 +260,8 @@ int HSM2setup(
     if ( !model->HSM2_ndepwp_Given ) model->HSM2_ndepwp = 1.0 ;
     if ( !model->HSM2_ninv_Given   ) model->HSM2_ninv   = 0.5 ;
     if ( !model->HSM2_ninvd_Given  ) model->HSM2_ninvd  = 0.0 ;
+    if ( !model->HSM2_ninvdl_Given  ) model->HSM2_ninvdl  = 0.0 ;
+    if ( !model->HSM2_ninvdlp_Given ) model->HSM2_ninvdlp = 1.0 ;
     if ( !model->HSM2_muecb0_Given ) model->HSM2_muecb0 = 1.0e3 ;
     if ( !model->HSM2_muecb1_Given ) model->HSM2_muecb1 = 100.0 ;
     if ( !model->HSM2_mueph0_Given ) model->HSM2_mueph0 = 300.0e-3 ;
@@ -327,7 +389,7 @@ int HSM2setup(
     if ( !model->HSM2_nsubcmax_Given ) model->HSM2_nsubcmax = 5e18 ;
 
     if ( !model->HSM2_qme1_Given   ) model->HSM2_qme1   = 0.0 ;
-    if ( !model->HSM2_qme2_Given   ) model->HSM2_qme2   = 2.0 ;
+    if ( !model->HSM2_qme2_Given   ) model->HSM2_qme2   = 2.0 ; /* fix in version 2.80 */ 
     if ( !model->HSM2_qme3_Given   ) model->HSM2_qme3   = 0.0 ;
 
     if ( !model->HSM2_vovers_Given  ) model->HSM2_vovers  = 0.0 ;
@@ -408,17 +470,64 @@ int HSM2setup(
     if ( !model->HSM2_nsubcwp2_Given ) model->HSM2_nsubcwp2 = 1.0 ;
     if ( !model->HSM2_muephw2_Given ) model->HSM2_muephw2 = 0.0 ;
     if ( !model->HSM2_muepwp2_Given ) model->HSM2_muepwp2 = 1.0 ;
+
     /* WPE set default Model parameter value */
     if ( !model->HSM2_web_Given ) model->HSM2_web = 0.0 ;
     if ( !model->HSM2_wec_Given ) model->HSM2_wec = 0.0 ;
     if ( !model->HSM2_nsubcwpe_Given ) model->HSM2_nsubcwpe = 0.0 ; 
     if ( !model->HSM2_npextwpe_Given ) model->HSM2_npextwpe = 0.0 ; 
     if ( !model->HSM2_nsubpwpe_Given ) model->HSM2_nsubpwpe = 0.0 ; 
+
     if ( !model->HSM2_Vgsmin_Given ) model->HSM2_Vgsmin = -5.0 * model->HSM2_type ;
     if ( !model->HSM2_sc3Vbs_Given ) model->HSM2_sc3Vbs =  0.0 ;
     if ( !model->HSM2_byptol_Given ) model->HSM2_byptol =  0.0 ;
     if ( !model->HSM2_muecb0lp_Given ) model->HSM2_muecb0lp = 0.0;
     if ( !model->HSM2_muecb1lp_Given ) model->HSM2_muecb1lp = 0.0;
+
+    /* Depletion Mode MOSFET */
+    if ( !model->HSM2_ndepm_Given )     model->HSM2_ndepm = 1e17 ;
+    if ( !model->HSM2_ndepml_Given )    model->HSM2_ndepml = 0.0 ;
+    if ( !model->HSM2_ndepmlp_Given )   model->HSM2_ndepmlp = 1.0 ;
+    if ( !model->HSM2_tndep_Given )     model->HSM2_tndep = 0.2e-6 ;
+    if ( !model->HSM2_depleak_Given )   model->HSM2_depleak = 0.5 ;
+    if ( !model->HSM2_depleakl_Given )  model->HSM2_depleakl = 0.0 ;
+    if ( !model->HSM2_depleaklp_Given ) model->HSM2_depleaklp = 1.0 ;
+    if ( !model->HSM2_depeta_Given )    model->HSM2_depeta = 0.0 ;
+    if ( !model->HSM2_depmue0_Given    ) model->HSM2_depmue0    = 1e3 ;
+    if ( !model->HSM2_depmue0l_Given   ) model->HSM2_depmue0l   = 0.0 ;
+    if ( !model->HSM2_depmue0lp_Given  ) model->HSM2_depmue0lp  = 1.0 ;
+    if ( !model->HSM2_depmue1_Given    ) model->HSM2_depmue1    = 0.0 ;
+    if ( !model->HSM2_depmue1l_Given   ) model->HSM2_depmue1l   = 0.0 ;
+    if ( !model->HSM2_depmue1lp_Given  ) model->HSM2_depmue1lp  = 1.0 ;
+    if ( !model->HSM2_depmueback0_Given ) model->HSM2_depmueback0 = 1e2 ;
+    if ( !model->HSM2_depmueback0l_Given ) model->HSM2_depmueback0l = 0.0 ;
+    if ( !model->HSM2_depmueback0lp_Given ) model->HSM2_depmueback0lp = 1.0 ;
+    if ( !model->HSM2_depmueback1_Given ) model->HSM2_depmueback1 = 0.0 ;
+    if ( !model->HSM2_depmueback1l_Given ) model->HSM2_depmueback1l = 0.0 ;
+    if ( !model->HSM2_depmueback1lp_Given ) model->HSM2_depmueback1lp = 1.0 ;
+    if ( !model->HSM2_depmueph0_Given  ) model->HSM2_depmueph0  = 0.3 ;
+    if ( !model->HSM2_depmueph1_Given  ) model->HSM2_depmueph1  = 5e3 ;
+    if ( !model->HSM2_depvmax_Given    ) model->HSM2_depvmax    = 3e7 ;
+    if ( !model->HSM2_depvmaxl_Given   ) model->HSM2_depvmaxl   = 0.0 ;
+    if ( !model->HSM2_depvmaxlp_Given  ) model->HSM2_depvmaxlp  = 1.0 ;
+    if ( !model->HSM2_depvdsef1_Given  ) model->HSM2_depvdsef1  = 2.0 ;
+    if ( !model->HSM2_depvdsef1l_Given ) model->HSM2_depvdsef1l = 0.0 ;
+    if ( !model->HSM2_depvdsef1lp_Given ) model->HSM2_depvdsef1lp = 1.0 ;
+    if ( !model->HSM2_depvdsef2_Given  ) model->HSM2_depvdsef2  = 0.5 ;
+    if ( !model->HSM2_depvdsef2l_Given ) model->HSM2_depvdsef2l = 0.0 ;
+    if ( !model->HSM2_depvdsef2lp_Given ) model->HSM2_depvdsef2lp = 1.0 ;
+    if ( !model->HSM2_depbb_Given      ) model->HSM2_depbb      = 1.0 ;
+    if ( !model->HSM2_depmuetmp_Given  ) model->HSM2_depmuetmp  = 1.5 ;
+
+    if ( model->HSM2_codep ) { /* change default value for depletion mod MOSFET */
+      if ( !model->HSM2_corecip_Given ) model->HSM2_corecip = 0 ;
+      if ( !model->HSM2_copprv_Given ) model->HSM2_copprv = 0 ;
+      if ( !model->HSM2_vfbc_Given   ) model->HSM2_vfbc  = 0.2 ;
+      if ( !model->HSM2_nsubc_Given  ) model->HSM2_nsubc = 5.0e16 ;
+      if ( !model->HSM2_lp_Given     ) model->HSM2_lp    = 0.0 ;
+      if ( !model->HSM2_nsubp_Given  ) model->HSM2_nsubp = 1.0e17 ;
+      if ( !model->HSM2_muesr1_Given ) model->HSM2_muesr1 = 5.0e15 ;
+    }
 
     /* binning parameters */
     if ( !model->HSM2_lmin_Given ) model->HSM2_lmin = 0.0 ;
@@ -657,7 +766,37 @@ int HSM2setup(
     if (!model->HSM2vbsMaxGiven) model->HSM2vbsMax = 1e99;
     if (!model->HSM2vbdMaxGiven) model->HSM2vbdMax = 1e99;
 
-    if ( model->HSM2_corecip == 1 ){
+    if ( model->HSM2_codep ) {
+      RANGERESET(model->HSM2_ndepm,      5e15,   2e17,  "NDEPM" ) ;
+      RANGERESET(model->HSM2_tndep,      1e-7,   1e-6,  "TNDEP" ) ;
+      RANGECHECK(model->HSM2_depleak,    0.0,   10.0,   "DEPLEAK" ) ;
+
+      if( model->HSM2_corecip )  {
+        printf("warning(HiSIM): CORECIP is not supported yet in depletion mode MOSFET, resetted to 0.\n");
+        model->HSM2_corecip = 0;
+      }
+      if( model->HSM2_copprv )  {
+        printf("warning(HiSIM): COPPRV is not supported yet in depletion mode MOSFET, resetted to 0.\n");
+        model->HSM2_copprv = 0;
+      }
+      if( model->HSM2_corsrd == 1 )  {
+        printf("warning(HiSIM): CORSRD=1 is not supported yet in depletion mode MOSFET, resetted to -1.\n");
+        model->HSM2_corsrd = -1;
+      }
+      if( model->HSM2_coisti )  {
+        printf("warning(HiSIM): STI leak model is not supported yet in depletion mode MOSFET, skipped\n");
+        model->HSM2_coisti = 0 ;
+      }
+      if( model->HSM2_cothrml ) {
+        printf("warning(HiSIM): Thermal noise model is not supported yet in depletion mode MOSFET, skipped\n");
+        model->HSM2_cothrml = 0 ;
+      }
+      if( model->HSM2_coign )  {
+        printf("warning(HiSIM): Induced gate noise model is not supported yet in depletion mode MOSFET, skipped\n");
+        model->HSM2_coign = 0 ;
+      }
+    }
+    if ( model->HSM2_corecip ){
       model->HSM2_sc2 =  0.0 ; model->HSM2_lsc2 =  0.0 ; model->HSM2_wsc2 =  0.0 ; model->HSM2_psc2 =  0.0 ;
       model->HSM2_scp2 = 0.0 ; model->HSM2_lscp2 = 0.0 ; model->HSM2_wscp2 = 0.0 ; model->HSM2_pscp2 = 0.0 ;
       model->HSM2_sc4 = 0.0  ; model->HSM2_lsc4 = 0.0  ; model->HSM2_wsc4 = 0.0  ; model->HSM2_psc4 = 0.0 ;
@@ -705,7 +844,7 @@ int HSM2setup(
       else if ( here->HSM2_corbnet != 0 && here->HSM2_corbnet != 1 ) {
 	here->HSM2_corbnet = model->HSM2_corbnet ;
         if(model->HSM2_coerrrep)
-	printf("warning(HiSIM2): CORBNET has been set to its default value: %d.\n", here->HSM2_corbnet);
+	printf("warning(HiSIM): CORBNET has been set to its default value: %d.\n", here->HSM2_corbnet);
       }
       if ( !here->HSM2_rbdb_Given) here->HSM2_rbdb = model->HSM2_rbdb; /* in ohm */
       if ( !here->HSM2_rbsb_Given) here->HSM2_rbsb = model->HSM2_rbsb;
@@ -718,7 +857,7 @@ int HSM2setup(
       else if ( here->HSM2_corg != 0 && here->HSM2_corg != 1 ) {
 	here->HSM2_corg = model->HSM2_corg ;
         if(model->HSM2_coerrrep)
-	printf("warning(HiSIM2): CORG has been set to its default value: %d.\n", here->HSM2_corg);
+	printf("warning(HiSIM): CORG has been set to its default value: %d.\n", here->HSM2_corg);
       }
 
       if ( !here->HSM2_mphdfm_Given ) here->HSM2_mphdfm = model->HSM2_mphdfm ;
@@ -789,33 +928,33 @@ int HSM2setup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-} } while(0)
+}
 
-      TSTALLOC(HSM2DPbpPtr, HSM2dNodePrime, HSM2bNodePrime);
-      TSTALLOC(HSM2SPbpPtr, HSM2sNodePrime, HSM2bNodePrime);
-      TSTALLOC(HSM2GPbpPtr, HSM2gNodePrime, HSM2bNodePrime);
+      TSTALLOC(HSM2DPbpPtr, HSM2dNodePrime, HSM2bNodePrime)
+      TSTALLOC(HSM2SPbpPtr, HSM2sNodePrime, HSM2bNodePrime)
+      TSTALLOC(HSM2GPbpPtr, HSM2gNodePrime, HSM2bNodePrime)
 
-      TSTALLOC(HSM2BPdpPtr, HSM2bNodePrime, HSM2dNodePrime);
-      TSTALLOC(HSM2BPspPtr, HSM2bNodePrime, HSM2sNodePrime);
-      TSTALLOC(HSM2BPgpPtr, HSM2bNodePrime, HSM2gNodePrime);
-      TSTALLOC(HSM2BPbpPtr, HSM2bNodePrime, HSM2bNodePrime);
+      TSTALLOC(HSM2BPdpPtr, HSM2bNodePrime, HSM2dNodePrime)
+      TSTALLOC(HSM2BPspPtr, HSM2bNodePrime, HSM2sNodePrime)
+      TSTALLOC(HSM2BPgpPtr, HSM2bNodePrime, HSM2gNodePrime)
+      TSTALLOC(HSM2BPbpPtr, HSM2bNodePrime, HSM2bNodePrime)
 
-      TSTALLOC(HSM2DdPtr, HSM2dNode, HSM2dNode);
-      TSTALLOC(HSM2GPgpPtr, HSM2gNodePrime, HSM2gNodePrime);
-      TSTALLOC(HSM2SsPtr, HSM2sNode, HSM2sNode);
-      TSTALLOC(HSM2DPdpPtr, HSM2dNodePrime, HSM2dNodePrime);
-      TSTALLOC(HSM2SPspPtr, HSM2sNodePrime, HSM2sNodePrime);
-      TSTALLOC(HSM2DdpPtr, HSM2dNode, HSM2dNodePrime);
-      TSTALLOC(HSM2GPdpPtr, HSM2gNodePrime, HSM2dNodePrime);
-      TSTALLOC(HSM2GPspPtr, HSM2gNodePrime, HSM2sNodePrime);
-      TSTALLOC(HSM2SspPtr, HSM2sNode, HSM2sNodePrime);
-      TSTALLOC(HSM2DPspPtr, HSM2dNodePrime, HSM2sNodePrime);
-      TSTALLOC(HSM2DPdPtr, HSM2dNodePrime, HSM2dNode);
-      TSTALLOC(HSM2DPgpPtr, HSM2dNodePrime, HSM2gNodePrime);
-      TSTALLOC(HSM2SPgpPtr, HSM2sNodePrime, HSM2gNodePrime);
-      TSTALLOC(HSM2SPsPtr, HSM2sNodePrime, HSM2sNode);
+      TSTALLOC(HSM2DdPtr, HSM2dNode, HSM2dNode)
+      TSTALLOC(HSM2GPgpPtr, HSM2gNodePrime, HSM2gNodePrime)
+      TSTALLOC(HSM2SsPtr, HSM2sNode, HSM2sNode)
+      TSTALLOC(HSM2DPdpPtr, HSM2dNodePrime, HSM2dNodePrime)
+      TSTALLOC(HSM2SPspPtr, HSM2sNodePrime, HSM2sNodePrime)
+      TSTALLOC(HSM2DdpPtr, HSM2dNode, HSM2dNodePrime)
+      TSTALLOC(HSM2GPdpPtr, HSM2gNodePrime, HSM2dNodePrime)
+      TSTALLOC(HSM2GPspPtr, HSM2gNodePrime, HSM2sNodePrime)
+      TSTALLOC(HSM2SspPtr, HSM2sNode, HSM2sNodePrime)
+      TSTALLOC(HSM2DPspPtr, HSM2dNodePrime, HSM2sNodePrime)
+      TSTALLOC(HSM2DPdPtr, HSM2dNodePrime, HSM2dNode)
+      TSTALLOC(HSM2DPgpPtr, HSM2dNodePrime, HSM2gNodePrime)
+      TSTALLOC(HSM2SPgpPtr, HSM2sNodePrime, HSM2gNodePrime)
+      TSTALLOC(HSM2SPsPtr, HSM2sNodePrime, HSM2sNode)
       TSTALLOC(HSM2SPdpPtr, HSM2sNodePrime, HSM2dNodePrime);
 
       if ( here->HSM2_corg == 1 ) {
@@ -866,9 +1005,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
       here->HSM2_ktemp = here->HSM2_temp + 273.15 ; /* [C] -> [K] */
 
       here->HSM2_lgate = Lgate = here->HSM2_l + model->HSM2_xl ;
-      Wgate = here->HSM2_w / here->HSM2_nf  + model->HSM2_xw ;
+      here->HSM2_wgate = Wgate = here->HSM2_w / here->HSM2_nf  + model->HSM2_xw ;
 
-      LG = Lgate * C_m2um ;
+      here->HSM2_lg = LG = Lgate * C_m2um ;
       here->HSM2_wg = WG = Wgate * C_m2um ;
 
       /* binning calculation */
@@ -957,7 +1096,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
       RANGECHECK(pParam->HSM2_bgtmp1, 50.0e-6,   1.0e-3, "BGTMP1") ;
       RANGECHECK(pParam->HSM2_bgtmp2, -1.0e-6,   1.0e-6, "BGTMP2") ;
       RANGECHECK(pParam->HSM2_eg0,        1.0,      1.3, "EG0") ;
-      RANGECHECK(pParam->HSM2_vfbc,      -1.2,      0.0, "VFBC") ;
+      if( model->HSM2_codep == 0 ) 
+           { RANGECHECK(pParam->HSM2_vfbc,      -1.2,      0.0, "VFBC") ; }
+      else { RANGECHECK(pParam->HSM2_vfbc,      -1.2,      0.8, "VFBC") ; }
       RANGECHECK(pParam->HSM2_vfbover,   -0.2,      0.2, "VFBOVER") ;
       RANGECHECK(pParam->HSM2_nsubc,   1.0e16,   1.0e19, "NSUBC") ;
       RANGECHECK(pParam->HSM2_nsubp,   1.0e16,   1.0e19, "NSUBP") ;
@@ -970,7 +1111,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
       RANGECHECK(pParam->HSM2_pgd1,       0.0,  50.0e-3, "PGD1") ;
       RANGECHECK(pParam->HSM2_ndep,       0.0,      1.0, "NDEP") ;
       RANGECHECK(pParam->HSM2_ninv,       0.0,      1.0, "NINV") ;
-      RANGECHECK(pParam->HSM2_muecb0,   100.0,  100.0e3, "MUECB0") ;
+      RANGECHECK(pParam->HSM2_muecb0,    10.0,  100.0e3, "MUECB0") ;
       RANGECHECK(pParam->HSM2_muecb1,     5.0,    1.0e4, "MUECB1") ;
       RANGECHECK(pParam->HSM2_mueph1,   2.0e3,   35.0e3, "MUEPH1") ;
       RANGECHECK(pParam->HSM2_vtmp,      -5.0,      1.0, "VTMP") ;
@@ -1006,8 +1147,8 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
       pParam->HSM2_nsubpsti1  = pParam->HSM2_nsubpsti1 / C_m2cm ;
       pParam->HSM2_nsubcsti1  = pParam->HSM2_nsubcsti1 / C_m2cm ;
       pParam->HSM2_muesti1    = pParam->HSM2_muesti1 / C_m2cm ;
-      pParam->HSM2_ndep       = pParam->HSM2_ndep / C_m2cm ;
-      pParam->HSM2_ninv       = pParam->HSM2_ninv / C_m2cm ;
+      pParam->HSM2_ndep       = pParam->HSM2_ndep ;
+      pParam->HSM2_ninv       = pParam->HSM2_ninv ;
 
       pParam->HSM2_vmax       = pParam->HSM2_vmax   / C_m2cm ;
       pParam->HSM2_wfc        = pParam->HSM2_wfc    * C_m2cm_p2 ;
@@ -1028,7 +1169,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     MINCHECK  (model->HSM2_tox,        0.0, "TOX") ;
     RANGECHECK(model->HSM2_xld,        0.0,  50.0e-9, "XLD") ;
     RANGECHECK(model->HSM2_xwd,   -10.0e-9, 100.0e-9, "XWD") ;
-    RANGECHECK(model->HSM2_rsh,        0.0,    200.0, "RSH") ;
+    RANGECHECK(model->HSM2_rsh,        0.0,    200.0, "RSH") ; /* fix in version 2.80 */
     RANGECHECK(model->HSM2_rshg,       0.0,    100.0, "RSHG") ;
     RANGECHECK(model->HSM2_xqy,    10.0e-9,  50.0e-9, "XQY") ;
     RANGECHECK(model->HSM2_rs,         0.0,  10.0e-3, "RS") ;
@@ -1046,7 +1187,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     RANGECHECK(model->HSM2_npext,   1.0e16,   1.0e18, "NPEXT") ;
     RANGECHECK(model->HSM2_scp21,      0.0,      5.0, "SCP21") ;
     RANGECHECK(model->HSM2_scp22,      0.0,      0.0, "SCP22") ;
-    RANGECHECK(model->HSM2_bs1,        0.0,  50.0e-3, "BS1") ;
+    RANGECHECK(model->HSM2_bs1,       -1.0,  50.0e-3, "BS1") ;
     RANGECHECK(model->HSM2_bs2,        0.5,      1.0, "BS2") ;
     MINCHECK  (model->HSM2_cgbo,       0.0, "CGBO") ;
     RANGECHECK(model->HSM2_clm5,       0.0,      2.0, "CLM5") ;
@@ -1055,7 +1196,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     RANGECHECK(model->HSM2_voverp,     0.0,      2.0, "VOVERP") ;
     RANGECHECK(model->HSM2_qme1,       0.0, 300.0e-9, "QME1") ;
     RANGECHECK(model->HSM2_qme2,       1.0,      3.0, "QME2") ;
-    RANGECHECK(model->HSM2_qme3,       0.0,  1.0e-09, "QME3") ;
+    RANGECHECK(model->HSM2_qme3,       0.0,   1.0e-9, "QME3") ;
     RANGECHECK(model->HSM2_tnom,      22.0,     32.0, "TNOM") ;
     RANGECHECK(model->HSM2_ddltmax,    1.0,     20.0, "DDLTMAX") ;
     RANGECHECK(model->HSM2_ddltict,   -3.0,     20.0, "DDLTICT") ;
@@ -1093,6 +1234,8 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
      modelMKS->HSM2_cit       = model->HSM2_cit       * C_m2cm_p2 ;
      modelMKS->HSM2_ovslp     = model->HSM2_ovslp     / C_m2cm ;
      modelMKS->HSM2_dly3      = model->HSM2_dly3      / C_m2cm_p2 ;
+
+     modelMKS->HSM2_ndepm     = model->HSM2_ndepm     / C_cm2m_p3 ;
 
     /*-----------------------------------------------------------*
      * Change unit into Kelvin.

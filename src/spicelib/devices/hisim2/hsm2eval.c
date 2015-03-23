@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) 
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 ) 
  
  FILE : hsm2eval.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
@@ -131,13 +131,14 @@ to others."
 #define C_IDD_MIN    1.0e-15
 
 /* local variables used in macro functions */
+double TMF0, TMF1 , TMF2 , TMF3 , TMF4 ; 
 /*===========================================================*
 * pow
 *=================*/
 #ifdef POW_TO_EXP_AND_LOG
-#define Fn_Pow( x , y )  exp( (y) * log( x )  ) 
+#define Fn_Pow( x , y )  ( (x==0.0) ? 0.0 : exp( (y) * log( x ) ) ) 
 #else
-#define Fn_Pow( x , y )  pow( x , y )
+#define Fn_Pow( x , y )  ( (x==0.0) ? 0.0 : pow( x , y ) )
 #endif
 
 /*===========================================================*
@@ -170,7 +171,6 @@ to others."
 *-----------------*/
 
 #define Fn_SU( y , x , xmax , delta , dx ) { \
-    double TMF1, TMF2; \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
     TMF2 = 4.0 * ( xmax ) * ( delta) ; \
     TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
@@ -180,7 +180,6 @@ to others."
   }
 
 #define Fn_SU2( y , x , xmax , delta , dy_dx , dy_dxmax ) { \
-    double TMF1, TMF2; \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
     TMF2 = 4.0 * ( xmax ) * ( delta) ; \
     TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
@@ -197,7 +196,6 @@ to others."
 *-----------------*/
 
 #define Fn_SL( y , x , xmin , delta , dx ) { \
-    double TMF1, TMF2; \
     TMF1 = ( x ) - ( xmin ) - ( delta ) ; \
     TMF2 = 4.0 * ( xmin ) * ( delta ) ; \
     TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
@@ -212,7 +210,6 @@ to others."
 *-----------------*/
 
 #define Fn_SZ( y , x , delta , dx ) { \
-    double TMF2; \
     TMF2 = sqrt ( ( x ) *  ( x ) + 4.0 * ( delta ) * ( delta) ) ; \
     dx = 0.5 * ( 1.0 + ( x ) / TMF2 ) ; \
     y = 0.5 * ( ( x ) + TMF2 ) ; \
@@ -315,6 +312,96 @@ static double CeilingPow
   dx = (xmax) * xmp * dnm / arg ; \
 }
 
+#define Fn_SU_CP2( y , x , xmax , delta , pw , dx , dxmax ) { \
+ if(x > xmax - delta && delta >= 0.0) { \
+   TMF1 = x - xmax + delta ; \
+   Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
+   y = xmax - delta + TMF0 ; \
+   dx = dx ; \
+   dxmax = 1.0-dx ; \
+ } else { \
+   y = x ; \
+   dx = 1.0 ; \
+   dxmax = 0.0 ; \
+ } \
+}
+
+#define Fn_CP2( y , x , xmax , pw , dx , dxmax ) {      \
+  double x2 = (x) * (x) ; \
+  double xmax2 = (xmax) * (xmax) ; \
+  double xp = 1.0 , xmp = 1.0 ; \
+  int   m =0, mm =0; \
+  double arg =0.0, dnm =0.0; \
+  for ( m = 0 ; m < pw ; m ++ ) { xp *= x2 ; xmp *= xmax2 ; } \
+  arg = xp + xmp ; \
+  dnm = arg ; \
+  if ( pw == 1 || pw == 2 || pw == 4 || pw == 8 ) { \
+    if ( pw == 1 ) { mm = 1 ; \
+    } else if ( pw == 2 ) { mm = 2 ; \
+    } else if ( pw == 4 ) { mm = 3 ; \
+    } else if ( pw == 8 ) { mm = 4 ; } \
+    for ( m = 0 ; m < mm ; m ++ ) { dnm = sqrt( dnm ) ; } \
+  } else { dnm = Fn_Pow( dnm , 1.0 / ( 2.0 * pw ) ) ; } \
+  dnm = 1.0 / dnm ; \
+  y = (x) * (xmax) * dnm ; \
+  dx = (xmax) * xmp * dnm / arg ; \
+  dxmax = (x) * xp * dnm / arg ; \
+}
+
+#define Fn_SU_CP3( y , x , xmax , delta , pw , dx , dxmax , ddelta ) { \
+ if(x > xmax - delta && delta >= 0.0) { \
+   TMF1 = x - xmax + delta ; \
+   Fn_CP2( TMF0 , TMF1 , delta , pw , dx , ddelta )     \
+   y = xmax - delta + TMF0 ; \
+   dx = dx ; \
+   dxmax = 1.0-dx ; \
+   ddelta = -1.0+dx+ddelta; \
+ } else { \
+   y = x ; \
+   dx = 1.0 ; \
+   dxmax = 0.0 ; \
+   ddelta = 0.0 ; \
+ } \
+}
+
+#define Fn_SU_CP( y , x , xmax , delta , pw , dx ) { \
+ if(x > xmax - delta && delta >= 0.0) { \
+   TMF1 = x - xmax + delta ; \
+   Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
+   y = xmax - delta + TMF0 ; \
+   dx = dx ; \
+ } else { \
+   y = x ; \
+   dx = 1.0 ; \
+ } \
+}
+
+#define Fn_SL_CP2( y , x , xmin , delta , pw , dx , dxmin) { \
+ if(x < xmin + delta && delta >= 0.0) { \
+   TMF1 = xmin + delta - x ; \
+   Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
+   y = xmin + delta - TMF0 ; \
+   dx = dx ; \
+   dxmin = 1.0-dx ; \
+ } else { \
+   y = x ; \
+   dx = 1.0 ; \
+   dxmin = 0.0 ; \
+ } \
+}
+#define Fn_SL_CP( y , x , xmin , delta , pw , dx ) { \
+ if(x < xmin + delta && delta >= 0.0) { \
+   TMF1 = xmin + delta - x ; \
+   Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
+   y = xmin + delta - TMF0 ; \
+   dx = dx ; \
+ } else { \
+   y = x ; \
+   dx = 1.0 ; \
+ } \
+}
+
+
 
 /*===========================================================*
 * Functions for symmetry.
@@ -325,7 +412,6 @@ static double CeilingPow
 *-----------------*/
 
 #define Fn_DclPoly4( y , x , dx ) { \
-  double TMF2, TMF3, TMF4; \
   TMF2 = (x) * (x) ; \
   TMF3 = TMF2 * (x) ; \
   TMF4 = TMF2 * TMF2 ; \
@@ -338,12 +424,20 @@ static double CeilingPow
 *-----------------*/
 
 #define Fn_SUPoly4( y , x , xmax , dx ) { \
- double TMF1; \
  TMF1 = (x) / xmax ; \
  Fn_DclPoly4( y , TMF1 , dx ) ; \
  y = xmax * ( 1.0 - y ) ; \
  dx = - dx ; \
 }
+
+#define Fn_SUPoly4m( y , x , xmax , dx , dxmax ) { \
+ TMF1 = (x) / xmax ; \
+ Fn_DclPoly4( TMF0 , TMF1 , dx ) ; \
+ y = xmax * ( 1.0 - TMF0 ) ; \
+ dxmax = 1.0 - TMF0 + TMF1 * dx ; \
+ dx = - dx ; \
+}
+
  
 /*---------------------------------------------------*
 * SymAdd: evaluate additional term for symmetry.
@@ -351,7 +445,6 @@ static double CeilingPow
 
 #define Fn_SymAdd( y , x , add0 , dx ) \
 { \
-    double TMF1, TMF2, TMF3; \
     TMF1 = 2.0 * ( x ) / ( add0 ) ; \
     TMF2 = 1.0 + TMF1 * ( (1.0/2) + TMF1 * ( (1.0/6) \
                + TMF1 * ( (1.0/24) + TMF1 * ( (1.0/120) \
@@ -380,7 +473,6 @@ int HSM2evaluate
 {
   HSM2binningParam *pParam = &here->pParam ;
   HSM2modelMKSParam *modelMKS = &model->modelMKS ;
-/*  HSM2hereMKSParam *hereMKS = &here->hereMKS ;*/
   /*-----------------------------------*
    * Constants for Smoothing functions
    *---------------*/
@@ -391,7 +483,10 @@ int HSM2evaluate
   const double eef_dlt = 1.0e-2 * C_m2cm ;
   const double sti2_dlt = 2.0e-3 ;
   const double pol_dlt = 5.0e-2 ; 
+//const double psia_dlt = 1.0e-3 ;
+//const double psia2_dlt = 5.0e-3 ;
   const double psisti_dlt = 5.0e-3 ;
+//const double jct_dlt = 1.0e-2 ;
 
   /*---------------------------------------------------*
    * Local variables. 
@@ -399,11 +494,15 @@ int HSM2evaluate
   /* Constants ----------------------- */
   const int lp_s0_max = 20 ;
   const int lp_sl_max = 20 ;
+  const int lp_se_max = 150 ;
+
   int lp_bs_max = 10 ;
   const double Ids_tol = 1.0e-10 ;
   const double Ids_maxvar = 1.0e-1 ;
   const double dP_max  = 0.1e0 ;
   const double ps_conv = 5.0e-13 ;
+  const double ps_conv2 = 1.0e-10 ;
+
   /* double  ps_conv = 1.0e-13 ;*/
   const double gs_conv = 1.0e-8 ;
   const double mini_current = 1.0e-15 ;
@@ -457,7 +556,7 @@ int HSM2evaluate
   double Vbse =0.0, Vdse =0.0, Vgse =0.0 ;
   /* confine bias */
   double Vbsc =0.0, Vdsc =0.0, Vgsc =0.0 ;
-  double Vbsc_dVbse = 1.0 ;
+  double Vbsc_dVbse =1.0, Vbsc_dVbse_dVbs =0.0 ;
   /* internal bias */
   double Vbs =0.0, Vds =0.0, Vgs =0.0, Vdb =0.0, Vsb =0.0 ;
   double Vbs_dVbse = 1.0 , Vbs_dVdse = 0.0 , Vbs_dVgse = 0.0 ;
@@ -475,8 +574,9 @@ int HSM2evaluate
   double Psl_dVbs =0.0, Psl_dVds =0.0, Psl_dVgs =0.0 ;
   double Psl_lim =0.0, dPlim =0.0 ;
   /* Pds := Psl - Ps0 */
-  double Pds = 0.0 ;
+  double Pds = 0.0 , Pdsz = 0.0 ;
   double Pds_dVbs = 0.0, Pds_dVds = 0.0 , Pds_dVgs  = 0.0 ;
+  double Pdsz_dVbs = 0.0, Pdsz_dVds = 0.0 , Pdsz_dVgs  = 0.0 ;
   double Pds_ini =0.0 ;
   double Pds_max =0.0 ;
   /* iteration numbers of Ps0 and Psl equations. */
@@ -494,12 +594,12 @@ int HSM2evaluate
   /* modified bias and potential for sym.*/
   double Vbsz =0.0, Vdsz =0.0, Vgsz =0.0 ;
   double Vbsz_dVbs =0.0, Vbsz_dVds =0.0 ;
-  double Vdsz_dVds =0.0 ;
-  double Vgsz_dVgs =0.0, Vgsz_dVds =0.0 ;
-  double Vzadd =0.0, Vzadd_dVds =0.0 ;
+  double Vdsz_dVds =0.0, Vdsz_dVbs =0.0 ;
+  double Vgsz_dVgs =0.0, Vgsz_dVbs =0.0, Vgsz_dVds =0.0 ;
+  double Vzadd =0.0, Vzadd_dVds =0.0,  Vzadd_dVbs =0.0 ;
   double Ps0z =0.0, Ps0z_dVbs =0.0, Ps0z_dVds =0.0, Ps0z_dVgs =0.0 ;
   double Pzadd =0.0, Pzadd_dVbs =0.0, Pzadd_dVds =0.0, Pzadd_dVgs =0.0 ;
-  double Vgpz , Vgpz_dVbs , Vgpz_dVds , Vgpz_dVgs ; /* (tmp) */
+  double Vgpz = 0.0 , Vgpz_dVbs = 0.0 , Vgpz_dVds = 0.0 , Vgpz_dVgs = 0.0 ; /* (tmp) */
 
   /* IBPC */
   double dVbsIBPC =0.0, dVbsIBPC_dVbs =0.0, dVbsIBPC_dVds =0.0, dVbsIBPC_dVgs =0.0 ;
@@ -614,6 +714,7 @@ int HSM2evaluate
   double Qbmm=0.0, Qbmm_dVb=0.0, Qbmm_dVd =0.0, Qbmm_dVg =0.0 ;
   double dqb=0.0, dqb_dVb=0.0, dqb_dVg=0.0, dqb_dVd =0.0 ;
   double Vdx=0.0, Vdx2 =0.0 ;
+  double Vdx_dVbs =0.0, Vdx2_dVbs =0.0 ;
   double Pbsum=0.0, sqrt_Pbsum =0.0 ;
   double Pbsum_dVb=0.0, Pbsum_dVd=0.0, Pbsum_dVg =0.0 ;
   /* Poly-Depletion Effect */
@@ -786,6 +887,7 @@ int HSM2evaluate
   /* PART-6 (noise) */
   /* 1/f */
   double NFalp =0.0, NFtrp =0.0, Cit =0.0, Nflic =0.0 ;
+  double Qi_noi =0.0 , Qiu_noi =0.0 ;
   /* thermal */
   double Eyd=0.0, Mu_Ave=0.0, Nthrml=0.0, Mud_hoso =0.0 ;
   /* induced gate noise ( Part 0/3 ) */
@@ -811,7 +913,7 @@ int HSM2evaluate
   double dVbs =0.0, dVds =0.0, dVgs =0.0 ;
   double dV_sum =0.0 ;
   /* temporary vars. */
-  double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12 ;
+  double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9 = 0.0, T10 = 0.0, T11 = 0.0, T12 ;
   double TX =0.0, TX_dVbs =0.0, TX_dVds =0.0, TX_dVgs =0.0 ;
   double TY =0.0, TY_dVbs =0.0, TY_dVds =0.0, TY_dVgs =0.0 ;
   double T1_dVb =0.0, T1_dVd =0.0, T1_dVg =0.0 ;
@@ -824,9 +926,9 @@ int HSM2evaluate
   double T8_dVb =0.0, T8_dVd =0.0, T8_dVg =0.0 ;
   double T9_dVb =0.0, T9_dVd =0.0, T9_dVg =0.0 ;
   double T10_dVb =0.0, T10_dVd =0.0, T10_dVg =0.0 ;
+  double T15, T16, T17 ;
 
   int   flg_zone = 0 ;
-  double Vfbsft = 0.0 , Vfbsft_dVbs =0.0, Vfbsft_dVds =0.0, Vfbsft_dVgs =0.0 ;
 
   /* Vdseff */
   double Vdseff =0.0, Vdsorg =0.0 ;
@@ -904,17 +1006,17 @@ int HSM2evaluate
   double Chi_A=0.0, Chi_A_dVxb=0.0, Chi_A_dVgb =0.0 ;
   double Chi_B=0.0, Chi_B_dVxb=0.0, Chi_B_dVgb =0.0 ;
   double Chi_1=0.0, Chi_1_dVxb=0.0, Chi_1_dVgb =0.0 ;
-/*  double psi_B=0.0, arg_B =0.0 ;*/
+  double psi_B=0.0, arg_B =0.0 ;
   double psi=0.0, psi_dVgb=0.0, psi_dVxb =0.0 ;
   double Ps0_iniA_dVxb=0.0, Ps0_iniA_dVgb =0.0 ;
-/*  double Ps0_iniB_dVxb=0.0 , Ps0_iniB_dVgb =0.0 ;*/
+  double Ps0_iniB_dVxb=0.0, Ps0_iniB_dVgb =0.0 ;
   double Psa_dVxb=0.0, Psa_dVgb=0.0, Ps0LD_dVxb=0.0, Ps0LD_dVgb =0.0 ;
-  double /*fs02_dVxb=0.0,*/ fs02_dVgb =0.0 ;
+  double fs02_dVxb=0.0, fs02_dVgb =0.0 ;
 
   /* SCE LOOP */
   double A =0.0, A_dVgs=0.0, A_dVds=0.0, A_dVbs =0.0 ;
   int    NNN =0 ;
-/*  double PS0_SCE=0 ,  PS0_SCE_dVgs = 0 ,  PS0_SCE_dVds = 0 ,  PS0_SCE_dVbs = 0 ;*/
+  double PS0_SCE=0 ,  PS0_SCE_dVgs = 0 ,  PS0_SCE_dVds = 0 ,  PS0_SCE_dVbs = 0 ;
   double PS0Z_SCE=0 , PS0Z_SCE_dVgs = 0 , PS0Z_SCE_dVds = 0 , PS0Z_SCE_dVbs = 0 ;
    /* double arg0 = 0.01 , arg1 = 0.04 ; */
    double arg0 = 0.01 ;
@@ -923,6 +1025,7 @@ int HSM2evaluate
 
   int codqb = 0 ;
   int corecip = model->HSM2_corecip ;
+  int START_OF_SCE_LOOP = 1 , end_of_part_1 = 0 ;
 
 
   /* modify Qy in accumulation region */
@@ -941,7 +1044,7 @@ int HSM2evaluate
   double Ps0_iniB_dVds =0.0, Ps0_iniB_dVgs =0.0, Ps0_iniB_dVbs =0.0 ;
 
   double A_dPS0Z = 0.0,      dqb_dPS0Z = 0.0,    dVth_dPS0Z = 0.0,   dVth0_dPS0Z = 0.0,
-         dVthLP_dPS0Z = 0.0, dVthSC_dPS0Z = 0.0, Qbmm_dPS0Z = 0.0,   Vfbsft_dPS0Z = 0.0,
+         dVthLP_dPS0Z = 0.0, dVthSC_dPS0Z = 0.0, Qbmm_dPS0Z = 0.0,   
          Vgp_dPS0Z = 0.0,    Vgpz_dPS0Z = 0.0,                       Vthp_dPS0Z = 0.0,
          Vth0_dPS0Z = 0.0 ;
   double T1_dPS0Z=0.0,           T3_dPS0Z=0.0,           T4_dPS0Z=0.0,           T5_dPS0Z=0.0,
@@ -956,6 +1059,7 @@ int HSM2evaluate
 
 
   double Vgs_min =0.0 ;
+
 
   /*================ Start of executable code.=================*/
 
@@ -1080,16 +1184,45 @@ int HSM2evaluate
     flg_vbsc = 1 ;
     T1 = Vbse - Vbs_bnd ;
     T2 = Vbs_max - Vbs_bnd ;
-    Fn_SUPoly4( TY , T1 , T2 , Vbsc_dVbse ) ; 
+    Fn_SUPoly4m( TY , T1 , T2 , Vbsc_dVbse , T0 ) ; 
     Vbsc = Vbs_bnd + TY ;
+
+    T3 = 1 / T2 ;
+    /* x/xmax */
+    T4 = T1 * T3 ;
+    T4_dVb = T3 ;
+
+    T5 = T4 * T4;
+    T5_dVb = 2 * T4_dVb * T4 ;
+    T15 = 2 * T4_dVb * T4_dVb ; /* T15 = T5_dVb_dVb */
+
+    T6 = T4 * T5 ;
+    T6_dVb = T4_dVb * T5 + T4 * T5_dVb ;
+    T16 = T4_dVb * T5_dVb + T4_dVb * T5_dVb + T4 * T15 ; /* T16 = T6_dVb_dVb */
+
+    /* T7 = Z  T7_dVb = dZ_dVb  T17 = dZ_dVb_dVb */
+    T7 = 1 + T4 + T5 + T6 + T5 * T5 ;
+    T7_dVb = T4_dVb + T5_dVb + T6_dVb + 2 * T5_dVb * T5 ;
+    T17 = T15 + T16 + 2 * T15 * T5 + 2 * T5_dVb * T5_dVb ;
+
+    T8 = T7 * T7 ;
+    T8_dVb = 2 * T7_dVb * T7 ;
+
+    T9 = 1 / T8 ;
+    T9_dVb = - T8_dVb * T9 * T9 ;
+
+    Vbsc_dVbse = T2 * T7_dVb * T9 ;
+    Vbsc_dVbse_dVbs = T2 * ( T17 * T9 + T7_dVb * T9_dVb ) ;
+
   }  else if ( Vbse < Vbs_min ) {
     flg_vbsc = -1 ;
     Vbsc = Vbs_min ;
-    Vbsc_dVbse = 1.0 ;
+    Vbsc_dVbse_dVbs = 0.0 ;
   }  else {
     flg_vbsc =  0 ;
     Vbsc = Vbse ;
     Vbsc_dVbse = 1.0 ;
+    Vbsc_dVbse_dVbs = 0.0 ;
   }
 
   Vdsc = Vdse ;
@@ -1232,6 +1365,473 @@ int HSM2evaluate
     Vds = Vdsc ;
     Vgs = Vgsc ;
   } /* end of flg_rsrd if-blocks */
+
+
+  if( model->HSM2_codep == 1 ) {    
+    /*---------------------------------------------------*
+     * CODEP=1 : Depletion mode MOSFET  
+     *-----------------*/
+
+    /*-----------------------------------------------------------*
+     * Vxsz: Modified bias introduced to realize symmetry at Vds=0.
+     *-----------------*/
+
+    T1 = Vbsc_dVbse * Vds / 2 ;
+    Fn_SymAdd(  Vzadd , T1 , model->HSM2_vzadd0 , T2 ) ;
+    Vzadd_dVbs = T2 * Vbsc_dVbse_dVbs * Vds / 2 ;
+    T2 *= Vbsc_dVbse / 2 ;
+    Vzadd_dVds = T2 ;
+
+    if ( Vzadd < ps_conv ) {
+         Vzadd = ps_conv ;
+         Vzadd_dVds = 0.0 ;
+         Vzadd_dVbs = 0.0 ;
+    }
+
+    Vbsz = Vbs + Vzadd ;
+    Vbsz_dVbs = 1.0 ;
+    Vbsz_dVds = Vzadd_dVds ;
+
+    Vdsz = Vds + 2.0 * Vzadd ;
+    Vdsz_dVbs = 0.0 ;
+    Vdsz_dVds = 1.0 + 2.0 * Vzadd_dVds ;
+
+    Vgsz = Vgs + Vzadd ;
+    Vgsz_dVgs = 1.0 ;
+    Vgsz_dVbs = 0.0 ;
+    Vgsz_dVds = Vzadd_dVds ;
+
+
+    /*---------------------------------------------------*
+     * Factor of modification for symmetry.
+     *-----------------*/
+
+    T1 = here->HSM2_qnsub_esi * Cox0_inv * Cox0_inv ;
+    T2 = Vgs - Vfb ;
+    T3 = 1 + 2.0 / T1 * ( T2 - beta_inv - Vbs ) ;
+    Fn_SZ( T4 , T3 , 1e-3 , T5 ) ;
+    TX = sqrt( T4 ) ;
+    Pslsat = T2 + T1 * ( 1.0 - TX ) ; 
+    VdsatS = Pslsat - Pb2 ;
+    Fn_SL( VdsatS , VdsatS , 0.1 , 5e-2 , T6 ) ;
+
+    VdsatS_dVbs = ( TX ? (T6 * T5 / TX ) : 0.0 ) ;
+    VdsatS_dVds = 0.0 ;
+    VdsatS_dVgs = ( TX ? (T6 * ( 1.0 - T5 / TX )) : 0.0 ) ;
+
+
+    T1 = Vds / VdsatS ;
+    Fn_SUPoly4( TX , T1 , 1.0 , T0 ) ; 
+    FMDVDS = TX * TX ;
+    T2 = 2 * TX * T0 ;
+    T3 = T2 / ( VdsatS * VdsatS ) ;
+    FMDVDS_dVbs = T3 * ( - Vds * VdsatS_dVbs ) ;
+    FMDVDS_dVds = T3 * ( 1.0 * VdsatS - Vds * VdsatS_dVds ) ;
+    FMDVDS_dVgs = T3 * ( - Vds * VdsatS_dVgs ) ;
+
+    /*-----------------------------------------------------------*
+     * Quantum effect
+     *-----------------*/
+    if ( model->HSM2_flg_qme == 0 ) {
+      flg_qme = 0 ;
+    } else {
+      flg_qme = 1 ;
+    }
+
+
+    T1 = here->HSM2_2qnsub_esi ;
+    T2 = sqrt( T1 * Pb20 ) ;
+    Vthq = Pb20 + Vfb + T2 * Cox0_inv ;
+    Vthq_dVb = 0.0 ;
+    Vthq_dVd = 0.0 ;
+
+    if ( flg_qme == 0 ) {
+      Tox = Tox0 ;
+      Tox_dVb = 0.0 ;
+      Tox_dVd = 0.0 ;
+      Tox_dVg = 0.0 ;
+  
+      Cox = Cox0 ;
+      Cox_dVb = 0.0 ;
+      Cox_dVd = 0.0 ;
+      Cox_dVg = 0.0 ;
+  
+      Cox_inv  = Cox0_inv ;
+      Cox_inv_dVb = 0.0 ;
+      Cox_inv_dVd = 0.0 ;
+      Cox_inv_dVg = 0.0 ;
+  
+      T0 = cnst0 * cnst0 * Cox_inv ;
+      cnstCoxi = T0 * Cox_inv ;
+      cnstCoxi_dVb = 0.0 ;
+      cnstCoxi_dVd = 0.0 ;
+      cnstCoxi_dVg = 0.0 ;
+
+    } else {
+
+      T5     = Vgs  - Vbs - Vthq + model->HSM2_qme2 ;
+      T5_dVb = -1.0 - Vthq_dVb ;
+      T5_dVd =      - Vthq_dVd ;
+      T5_dVg =  1.0 ;
+      Fn_SZ( T2 , T5 , qme_dlt, T3) ;
+      T2 = T2 + small ;
+      T2_dVb = T3 * T5_dVb ; 
+      T2_dVd = T3 * T5_dVd ; 
+      T2_dVg = T3 * T5_dVg ; 
+
+      T3 = 1.0 /  T2 ;
+      T7 = -1.0 / ( T2 * T2 ) ;
+      T3_dVb = T7 * T2_dVb ; 
+      T3_dVd = T7 * T2_dVd ; 
+      T3_dVg = T7 * T2_dVg ; 
+
+      T4 = 2.0 * fabs(Vthq) ;
+      T6 = Vfb - Vthq + model->HSM2_qme2 ;
+      if(T6 > T4) { T4 = T6; }
+
+      Fn_SU( T2 , T3 , 1.0 / T4  , qme_dlt, T6 ) ; 
+      T2_dVb = T6 * T3_dVb ;
+      T2_dVd = T6 * T3_dVd ;
+      T2_dVg = T6 * T3_dVg ;
+
+      dTox = model->HSM2_qme1 * T2 + model->HSM2_qme3 ;
+      T7   = model->HSM2_qme1 ;
+      dTox_dVb = T7 * T2_dVb ;
+      dTox_dVd = T7 * T2_dVd ;
+      dTox_dVg = T7 * T2_dVg ;
+
+      if ( dTox * 1.0e12 < Tox0 ) {
+        dTox = 0.0 ;
+	dTox_dVb = 0.0 ;
+        dTox_dVd = 0.0 ;
+        dTox_dVg = 0.0 ;
+        flg_qme = 0 ;
+      }
+
+      Tox = Tox0 + dTox ;
+      Tox_dVb = dTox_dVb ;
+      Tox_dVd = dTox_dVd ;
+      Tox_dVg = dTox_dVg ;
+
+      Cox = c_eox / Tox ;
+      T1  = - c_eox / ( Tox * Tox ) ;
+      Cox_dVb = T1 * Tox_dVb ;
+      Cox_dVd = T1 * Tox_dVd ;
+      Cox_dVg = T1 * Tox_dVg ;
+  
+      Cox_inv  = Tox / c_eox ; 
+      T1  = 1.0 / c_eox ;
+      Cox_inv_dVb = T1 * Tox_dVb ;
+      Cox_inv_dVd = T1 * Tox_dVd ;
+      Cox_inv_dVg = T1 * Tox_dVg ;
+  
+      T0 = cnst0 * cnst0 * Cox_inv ;
+      cnstCoxi = T0 * Cox_inv ;
+      T1 = 2.0 * T0 ;
+      cnstCoxi_dVb = T1 * Cox_inv_dVb ;
+      cnstCoxi_dVd = T1 * Cox_inv_dVd ;
+      cnstCoxi_dVg = T1 * Cox_inv_dVg ;
+    }
+
+
+    fac1 = cnst0 * Cox_inv ;
+    fac1_dVds = cnst0 * Cox_inv_dVd ;
+    fac1_dVgs = cnst0 * Cox_inv_dVg ;
+    fac1_dVbs = cnst0 * Cox_inv_dVb ;
+    fac1p2 = fac1 * fac1 ;
+
+    /* Ps0_min: approx. solution of Poisson equation at Vgs_min */
+    /*          ( easy to improve, if necessary  )              */
+    Ps0_min = 2.0 * beta_inv * log(-Vgs_min/fac1) ;
+    Ps0_min_dVds = -2.0 * beta_inv * fac1_dVds / fac1 ;
+    Ps0_min_dVgs = -2.0 * beta_inv * fac1_dVgs / fac1 ;
+    Ps0_min_dVbs = -2.0 * beta_inv * fac1_dVbs / fac1 ;
+
+
+    /*---------------------------------------------------*
+     * Vbsz2 : Vbs for dVth
+     *-----------------*/
+    Vbsz2 = Vbsz ;
+    Vbsz2_dVbs = Vbsz_dVbs ;
+    Vbsz2_dVds = Vbsz_dVds ;
+    Vbsz2_dVgs = 0.0 ;
+
+    /*---------------------------------------------------*
+     * Vthp : Vth with pocket.
+     *-----------------*/
+    T1 = here->HSM2_2qnsub_esi ;
+    Qb0 = sqrt (T1 * (Pb20 - Vbsz2)) ;
+    T2 = 0.5 * T1 / Qb0 ;
+    Qb0_dVb = T2 * (- Vbsz2_dVbs) ;
+    Qb0_dVd = T2 * (- Vbsz2_dVds) ;
+    Qb0_dVg = T2 * (- Vbsz2_dVgs) ;
+ 
+    Vthp = Pb20 + Vfb + Qb0 * Cox_inv + here->HSM2_ptovr;
+    Vthp_dVb = Qb0_dVb * Cox_inv + Qb0 * Cox_inv_dVb ;
+    Vthp_dVd = Qb0_dVd * Cox_inv + Qb0 * Cox_inv_dVd ;
+    Vthp_dVg = Qb0_dVg * Cox_inv + Qb0 * Cox_inv_dVg ;
+    
+    Pb20b = Pb20 ;
+    Pb20b_dVb = 0.0 ;
+    Pb20b_dVd = 0.0 ;
+    Pb20b_dVg = 0.0 ;
+    
+    T0 = 0.95 ;
+    T1 = T0 * Pb20b - Vbsz2 - 1.0e-3 ;
+    T1_dVb = T0 * Pb20b_dVb - Vbsz2_dVbs ;
+    T1_dVd = T0 * Pb20b_dVd - Vbsz2_dVds ;
+    T1_dVg = T0 * Pb20b_dVg - Vbsz2_dVgs ;
+    T2 = sqrt (T1 * T1 + 4.0 * T0 * Pb20b * 1.0e-3) ;
+    T3 = T0 * Pb20b - 0.5 * (T1 + T2) ;
+    T4 = 2.0 * T0 * 1.0e-3 ;
+    T5 = T1 / T2 ;
+    T6 = T4 / T2 ;
+    T3_dVb = T0 * Pb20b_dVb
+           - 0.5 * (T1_dVb + (T1_dVb * T5 + T6 * Pb20b_dVb ) ) ;
+    T3_dVd = T0 * Pb20b_dVd
+           - 0.5 * (T1_dVd + (T1_dVd * T5 + T6 * Pb20b_dVd ) ) ;
+    T3_dVg = T0 * Pb20b_dVg
+           - 0.5 * (T1_dVg + (T1_dVg * T5 + T6 * Pb20b_dVg ) ) ;
+    Pbsum = Pb20b - T3 ;
+    Pbsum_dVb = Pb20b_dVb - T3_dVb ;
+    Pbsum_dVd = Pb20b_dVd - T3_dVd ;
+    Pbsum_dVg = Pb20b_dVg - T3_dVg ;
+
+    if( model->HSM2_codep ) {
+       Pbsum = Pbsum + model->HSM2_depeta * Vdsz ;
+       Pbsum_dVb = Pbsum_dVb + model->HSM2_depeta * Vdsz_dVbs ;
+       Pbsum_dVd = Pbsum_dVd + model->HSM2_depeta * Vdsz_dVds ;
+    }
+
+    sqrt_Pbsum = sqrt( Pbsum ) ;
+
+    /*-------------------------------------------*
+     * dVthLP : Short-channel effect induced by pocket.
+     * - Vth0 : Vth without pocket.
+     *-----------------*/
+    if ( model->HSM2_lp != 0.0 ) {
+      T1 = here->HSM2_2qnsub_esi ;
+      T2 = model->HSM2_bs2 - Vbsz2 ;
+      T3 = T2 + small ;
+      T4 = sqrt (T3 * T3 + 4.0 * vth_dlt) ;
+      T5 = 0.5 * (T3 + T4) ;
+      T6 = 0.5 * (1.0 + T3 / T4) ;
+      T5_dVb = - Vbsz2_dVbs * T6 ;
+      T5_dVd = - Vbsz2_dVds * T6 ;
+      T5_dVg = - Vbsz2_dVgs * T6 ;
+      T7 = 1.0 / T5 ;
+      bs12 = model->HSM2_bs1 * T7 ;
+      T8 = - bs12 * T7 ;
+      bs12_dVb = T8 * T5_dVb ;
+      bs12_dVd = T8 * T5_dVd ;
+      bs12_dVg = T8 * T5_dVg ;
+      Fn_SU( T10 , Vbsz2 + bs12, 0.93 * Pb20, vth_dlt, T0) ;
+      Qbmm = sqrt (T1 * (Pb20 - T10 )) ;
+      T9 = T0 / Qbmm ;
+      Qbmm_dVb = 0.5 * T1 * - (Vbsz2_dVbs + bs12_dVb) * T9 ;
+      Qbmm_dVd = 0.5 * T1 * - (Vbsz2_dVds + bs12_dVd) * T9 ;
+      Qbmm_dVg = 0.5 * T1 * - (Vbsz2_dVgs + bs12_dVg) * T9 ;
+
+      dqb = (Qb0 - Qbmm) * Cox_inv ;
+      dqb_dVb = Vthp_dVb - Qbmm_dVb * Cox_inv - Qbmm * Cox_inv_dVb ;
+      dqb_dVd = Vthp_dVd - Qbmm_dVd * Cox_inv - Qbmm * Cox_inv_dVd ;
+      dqb_dVg = Vthp_dVg - Qbmm_dVg * Cox_inv - Qbmm * Cox_inv_dVg ;
+
+      T1 = 2.0 * C_QE * here->HSM2_nsubc * C_ESI ;
+      T2 = sqrt( T1 * ( Pb2c - Vbsz2 ) ) ;
+      Vth0 = Pb2c + Vfb + T2 * Cox_inv ;
+      T3 = 0.5 * T1 / T2 * Cox_inv ;
+      Vth0_dVb = T3 * ( - Vbsz2_dVbs ) + T2 * Cox_inv_dVb ;
+      Vth0_dVd = T3 * ( - Vbsz2_dVds ) + T2 * Cox_inv_dVd ;
+      Vth0_dVg = T3 * ( - Vbsz2_dVgs ) + T2 * Cox_inv_dVg ;
+
+      T1 = C_ESI * Cox_inv ;
+      T2 = here->HSM2_wdplp ;
+      T4 = 1.0e0 / ( model->HSM2_lp * model->HSM2_lp ) ;
+      T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
+      dVth0 = T5 * sqrt_Pbsum ;
+      T6 = 0.5 * T5 / sqrt_Pbsum ;
+      T7 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * C_ESI * T2 * T4 * sqrt_Pbsum ;
+      T8 = - 2.0e0 * T1 * T2 * T4 * sqrt_Pbsum ;
+      dVth0_dVb = T6 * Pbsum_dVb + T7 * Cox_inv_dVb + T8 * Pb20b_dVb ;
+      dVth0_dVd = T6 * Pbsum_dVd + T7 * Cox_inv_dVd + T8 * Pb20b_dVd ;
+      dVth0_dVg = T6 * Pbsum_dVg + T7 * Cox_inv_dVg + T8 * Pb20b_dVg ;
+      
+      T1 = Vthp - Vth0 ;
+      T1_dVb = Vthp_dVb - Vth0_dVb ;
+      T2 = pParam->HSM2_scp1 + pParam->HSM2_scp3 * Pbsum / model->HSM2_lp ;
+      T2_dVb = pParam->HSM2_scp3 * Pbsum_dVb / model->HSM2_lp ;
+      T3 = T2 + pParam->HSM2_scp2 * Vdsz ;
+      T3_dVb = T2_dVb + pParam->HSM2_scp2 * Vdsz_dVbs ;
+
+
+      Vdx = model->HSM2_scp21 + Vdsz ;
+      Vdx_dVbs = Vdsz_dVbs ;
+      Vdx2 = Vdx * Vdx ;
+      Vdx2_dVbs = 2 * Vdx_dVbs * Vdx ;
+      
+      dVthLP = T1 * dVth0 * T3 + dqb - here->HSM2_msc / Vdx2 ;
+      dVthLP_dVb = T1_dVb * dVth0 * T3 + T1 * dVth0_dVb * T3 +  T1 * dVth0 * T3_dVb 
+                   + dqb_dVb + here->HSM2_msc / Vdx2 /Vdx2 *Vdx2_dVbs;
+      T4 = T1 * dVth0 * pParam->HSM2_scp3 / model->HSM2_lp ;
+      dVthLP_dVd = (Vthp_dVd - Vth0_dVd) * dVth0 * T3 + T1 * dVth0_dVd * T3 
+                     + T4 * Pbsum_dVd
+                     + T1 * dVth0 * pParam->HSM2_scp2 * Vdsz_dVds
+                     + dqb_dVd
+                 + 2.0e0 * here->HSM2_msc * Vdx * Vdsz_dVds / ( Vdx2 * Vdx2 ) ;
+      dVthLP_dVg = (Vthp_dVg - Vth0_dVg) * dVth0 * T3 + T1 * dVth0_dVg * T3
+                     + T4 * Pbsum_dVg + dqb_dVg ;
+    } else {
+      dVthLP = 0.0e0 ;
+      dVthLP_dVb = 0.0e0 ;
+      dVthLP_dVd = 0.0e0 ;
+      dVthLP_dVg = 0.0e0 ;
+    }
+
+    /*---------------------------------------------------*
+     * dVthSC : Short-channel effect induced by Vds.
+     *-----------------*/
+    T1 = C_ESI * Cox_inv ;
+    T2 = here->HSM2_wdpl ;
+    T3 = here->HSM2_lgate - model->HSM2_parl2 ;
+    T4 = 1.0e0 / ( T3 * T3 ) ;
+    T5 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * T1 * T2 * T4 ;
+
+    dVth0 = T5 * sqrt_Pbsum ;
+
+    T6 = T5 / 2.0 / sqrt_Pbsum ;
+    T7 = 2.0e0 * ( model->HSM2_vbi - Pb20b ) * C_ESI * T2 * T4 * sqrt_Pbsum ;
+    T8 = - 2.0e0 * T1 * T2 * T4 * sqrt_Pbsum ;
+    dVth0_dVb = T6 * Pbsum_dVb + T7 * Cox_inv_dVb + T8 * Pb20b_dVb ;
+    dVth0_dVd = T6 * Pbsum_dVd + T7 * Cox_inv_dVd + T8 * Pb20b_dVd ;
+    dVth0_dVg = T6 * Pbsum_dVg + T7 * Cox_inv_dVg + T8 * Pb20b_dVg ;
+
+    T1 = pParam->HSM2_sc3 / here->HSM2_lgate ;
+    T4 = pParam->HSM2_sc1 + T1 * Pbsum ;
+    T4_dVb = T1 * Pbsum_dVb ;
+    T4_dVd = T1 * Pbsum_dVd ;
+    T4_dVg = T1 * Pbsum_dVg ;
+
+    T5 = T4 + pParam->HSM2_sc2 * Vdsz * ( 1.0 +  model->HSM2_sc4 * Pbsum );
+    T5_dVb = T4_dVb + pParam->HSM2_sc2 * Vdsz * model->HSM2_sc4 * Pbsum_dVb 
+             + pParam->HSM2_sc2 * Vdsz_dVbs * model->HSM2_sc4 * Pbsum;
+    T5_dVd = T4_dVd + pParam->HSM2_sc2 * Vdsz_dVds * ( 1.0 + model->HSM2_sc4 * Pbsum )
+             + pParam->HSM2_sc2 * Vdsz * model->HSM2_sc4 * Pbsum_dVd;
+    T5_dVg = T4_dVg + pParam->HSM2_sc2 * Vdsz * model->HSM2_sc4 * Pbsum_dVg;
+
+
+    dVthSC = dVth0 * T5 ;
+    dVthSC_dVb = dVth0_dVb * T5 + dVth0 * T5_dVb ;
+    dVthSC_dVd = dVth0_dVd * T5 + dVth0 * T5_dVd ;
+    dVthSC_dVg = dVth0_dVg * T5 + dVth0 * T5_dVg ;
+
+    /*---------------------------------------------------*
+     * dVthW : narrow-channel effect.
+     *-----------------*/
+    T1 = 1.0 / Cox ;
+    T2 = T1 * T1 ;
+    T3 = 1.0 / ( Cox +  pParam->HSM2_wfc / Weff ) ;
+    T4 = T3 * T3 ;
+    T5 = T1 - T3 ;
+    T6 = Qb0 * ( T2 - T4 ) ;
+
+    dVthW = Qb0 * T5 + pParam->HSM2_wvth0 / here->HSM2_wg ;
+    dVthW_dVb = Qb0_dVb * T5 - Cox_dVb * T6 ;
+    dVthW_dVd = Qb0_dVd * T5 - Cox_dVd * T6 ;
+    dVthW_dVg =              - Cox_dVg * T6 ;
+
+    /*---------------------------------------------------*
+     * dVth : Total variation. 
+     * - Positive dVth means the decrease in Vth.
+     *-----------------*/
+    dVth = dVthSC + dVthLP + dVthW + here->HSM2_dVthsm ;
+    dVth_dVb = dVthSC_dVb + dVthLP_dVb + dVthW_dVb ;
+    dVth_dVd = dVthSC_dVd + dVthLP_dVd + dVthW_dVd ;
+    dVth_dVg = dVthSC_dVg + dVthLP_dVg + dVthW_dVg ;
+
+    /*---------------------------------------------------*
+     * Vth : Threshold voltagei for OP. 
+     *-----------------*/
+    T2 = sqrt( here->HSM2_2qnsub_esi * (Pb2-Vbsz) ) ;
+    Vth = Pb2 + Vfb + T2 * Cox0_inv - dVth ;
+
+    /*-----------------------------------------------------------*
+     * Constants in the equation of Ps0 . 
+     *-----------------*/
+
+    fac1 = cnst0 * Cox_inv ;
+    fac1_dVbs = cnst0 * Cox_inv_dVb ;
+    fac1_dVds = cnst0 * Cox_inv_dVd ;
+    fac1_dVgs = cnst0 * Cox_inv_dVg ;
+
+    fac1p2 = fac1 * fac1 ;
+
+    /*---------------------------------------------------*
+     * Poly-Depletion Effect
+     *-----------------*/
+
+    dPpg = 0.0 ;
+    dPpg_dVb = 0.0 ;
+    dPpg_dVd = 0.0 ;
+    dPpg_dVg = 0.0 ;
+
+    if ( here->HSM2_flg_pgd == 1 ) {
+
+      T7 = Vgsz ;
+      T7_dVb =  Vgsz_dVbs ;
+      T7_dVd =  Vgsz_dVds ;
+      T7_dVg =  Vgsz_dVgs ;
+
+      T0 = here->HSM2_cnstpgd ;
+
+      T3 = T7 - model->HSM2_pgd2 ;
+      T3_dVb = T7_dVb ;
+      T3_dVd = T7_dVd ;
+      T3_dVg = T7_dVg ;
+
+      Fn_ExpLim( dPpg , T3 , T6 ) ;
+      dPpg_dVb = T6 * T3_dVb ;
+      dPpg_dVd = T6 * T3_dVd ;
+      dPpg_dVg = T6 * T3_dVg ;
+
+      Fn_SZ( dPpg , dPpg - 1.0 , pol_dlt , T6 ) ;
+      dPpg_dVb *= T6 ;
+      dPpg_dVd *= T6 ;
+      dPpg_dVg *= T6 ;
+
+      dPpg *= T0 ;
+      dPpg_dVb *= T0 ;
+      dPpg_dVd *= T0 ;
+      dPpg_dVg *= T0 ;
+
+      Fn_SU( dPpg , dPpg , pol_b , pol_dlt , T9 ) ;
+      dPpg_dVb *= T9 ;
+      dPpg_dVd *= T9 ;
+      dPpg_dVg *= T9 ;
+
+    }
+
+    /*---------------------------------------------------*
+     * Vgp : Effective gate bias with SCE & RSCE & flatband. 
+     *-----------------*/
+    Vgp = Vgs - Vfb + dVth - dPpg ;
+    Vgp_dVbs = dVth_dVb - dPpg_dVb ;
+    Vgp_dVds = dVth_dVd - dPpg_dVd ;
+    Vgp_dVgs = 1.0e0 + dVth_dVg - dPpg_dVg ;
+
+    /*---------------------------------------------------*
+     * Vgs_fb : Actual flatband voltage taking account Vbs. 
+     * - note: if Vgs == Vgs_fb then Vgp == Ps0 == Vbs . 
+     *------------------*/
+    Vgs_fb = Vfb - dVth + dPpg + Vbs ;
+
+#include "hsm2eval_dep.h"
+
+  } else {
+
+  /*---------------------------------------------------*
+   * Normal mode MOSFET
+   *------------------*/
 
   /*-----------------------------------------------------------*
    * start of the loop.
@@ -1569,11 +2169,11 @@ int HSM2evaluate
       /**************************/
 
 	/* initial value for SCE LOOP */
-/*	PS0_SCE = Ps0_ini ;   
+	PS0_SCE = Ps0_ini ;   
       PS0_SCE_dVds  = Ps0_ini_dVds ;
       PS0_SCE_dVgs  = Ps0_ini_dVgs ;
       PS0_SCE_dVbs  = Ps0_ini_dVbs ; 
-*/
+
 	PS0Z_SCE = Ps0_ini ;
       PS0Z_SCE_dVds = Ps0_ini_dVds ;
       PS0Z_SCE_dVgs = Ps0_ini_dVgs ;
@@ -1585,7 +2185,12 @@ int HSM2evaluate
 
     /* ************************************************************************* */
    
-    START_OF_SCE_LOOP : /* outer loop of multi level Newton framework            */
+//  START_OF_SCE_LOOP : /* outer loop of multi level Newton framework            */
+    START_OF_SCE_LOOP = 1 ; end_of_part_1 = 0 ;
+while( START_OF_SCE_LOOP ) { /* Begin: 1st SCE LOOP */
+  while( START_OF_SCE_LOOP ) { /* Begin: 2nd SCE LOOP */
+    while( START_OF_SCE_LOOP ) { /* Begin: 3rd SCE LOOP */
+    START_OF_SCE_LOOP = 0 ;
 
     /* ************************************************************************* */
    
@@ -2560,76 +3165,6 @@ int HSM2evaluate
      *------------------*/
     Vgs_fb = Vfb - dVth + dPpg + Vbs ;
 
-    
-    /*---------------------------------------------------*
-     * Vfbsft : Vfb shift 
-     *-----------------*/
-    Vfbsft = 0.0 ;
-    Vfbsft_dVbs = 0.0 ;
-    Vfbsft_dVds = 0.0 ;
-    Vfbsft_dVgs = 0.0 ;
-    Vfbsft_dPS0Z = 0.0 ;
-
-    if ( Vbs > 0.0 ) {
-      /* values at D2/D3 boundary + beta */
-      /* Ps0 */
-      T1 = Vbs + ( znbd5 + 1 ) * beta_inv ; 
-      /* Qb0 */
-      /* T2 = cnst0 * sqrt( znbd5 ) */ 
-      T2 = cnst0 * 2.23606797749979 ;
-
-      /* Vgp assuming Qn0=0 */
-      T3 = T2 * Cox_inv + T1 ; 
-
-      /* Vgp difference */
-      TX = T3 - Vgp ;
-      TX_dVbs = 1.0 - Vgp_dVbs ;
-      TX_dVds = - Vgp_dVds ;
-      TX_dVgs = - Vgp_dVgs ;
-      TX_dPS0Z = - Vgp_dPS0Z ;
-
-      /* set lower limit to 0 */
-      Fn_SZ( TX , TX , 0.1 , T4 ) ;
-      TX_dVbs *= T4 ;
-      TX_dVds *= T4 ;
-      TX_dVgs *= T4 ;
-      TX_dPS0Z *= T4 ;
-
-      /* TY: damping factor */
-      T1 = 0.5 ;
-      T5 = Vbs / T1 ;
-      T5_dVb = 1.0 / T1 ;
-      T6 = T5 * T5 ;
-      T6 *= T6 ; 
-      T6_dVb = 4 * T5 * T5 * T5 * T5_dVb ;
-      T7 = 1.0 / ( 1.0 + T6 ) ;
-      T8 = T7 * T7 ;
-      TY = 1.0 - T7 ;
-      TY_dVbs = T8 * T6_dVb ;
-
-      TX = TY = 0.0 ;
-      TX_dVbs = TX_dVds = TX_dVgs = TX_dPS0Z = TY_dVbs = 0.0 ;
-
-      Vfbsft = TX * TY ;
-      Vfbsft_dVbs = TX_dVbs * TY + TX * TY_dVbs ;
-      Vfbsft_dVds = TX_dVds * TY ;
-      Vfbsft_dVgs = TX_dVgs * TY ;
-      Vfbsft_dPS0Z = TX_dPS0Z * TY ;
-      Vgs_fb -= Vfbsft ;
-
-      Vgp += Vfbsft ;
-      Vgp_dVbs += Vfbsft_dVbs ;
-      Vgp_dVds += Vfbsft_dVds ;
-      Vgp_dVgs += Vfbsft_dVgs ;
-      Vgp_dPS0Z += Vfbsft_dPS0Z ;
-   
-      Vgpz += Vfbsft ; 
-      Vgpz_dVbs += Vfbsft_dVbs ;
-      Vgpz_dVds += Vfbsft_dVds ;
-      Vgpz_dVgs += Vfbsft_dVgs ;
-      Vgpz_dPS0Z += Vfbsft_dPS0Z ;
-    }
-
     /*-----------------------------------------------------------*
      * Accumulation zone. (zone-A)
      * - evaluate basic characteristics and exit from this part.
@@ -2824,26 +3359,30 @@ int HSM2evaluate
 	PS0Z_SCE_dVbs = Ps0z_dVbs ;
         PS0Z_SCE_dVds = Ps0z_dVds ;
         PS0Z_SCE_dVgs = Ps0z_dVgs ;
-/*
+
         PS0_SCE = PS0Z_SCE - Pzadd ;
         PS0_SCE_dVbs = Ps0_dVbs ;
         PS0_SCE_dVds = Ps0_dVds ;
         PS0_SCE_dVgs = Ps0_dVgs ;
-*/
+
 	NNN += 1 ;
 
-	if( (    fabs(delta_PS0Z_SCE) > PS0_SCE_tol
-              || fabs(delta_PS0Z_SCE_dVbs) > PS0_SCE_deriv_tol
-              || fabs(delta_PS0Z_SCE_dVds) > PS0_SCE_deriv_tol
-              || fabs(delta_PS0Z_SCE_dVgs) > PS0_SCE_deriv_tol                        
-            ) && (NNN < MAX_LOOP_SCE)  ){
-	  goto START_OF_SCE_LOOP; 
-	}
+       if( (    fabs(delta_PS0Z_SCE) > PS0_SCE_tol
+             || fabs(delta_PS0Z_SCE_dVbs) > PS0_SCE_deriv_tol
+             || fabs(delta_PS0Z_SCE_dVds) > PS0_SCE_deriv_tol
+             || fabs(delta_PS0Z_SCE_dVgs) > PS0_SCE_deriv_tol
+           ) && (NNN < MAX_LOOP_SCE)  ){
+      // goto START_OF_SCE_LOOP; 
+              START_OF_SCE_LOOP = 1 ; 
+      }
       }
 
-      goto end_of_part_1 ;
+    //goto end_of_part_1 ; 
+      if( START_OF_SCE_LOOP==0 ) end_of_part_1 = 1 ;
     } 
 
+    } /* End of 3rd SCE_LOOP */
+    if ( end_of_part_1 == 0 ) { /* skip to end_of_part_1 */
     
     /*-----------------------------------------------------------*
      * Initial guess for Ps0. 
@@ -3327,29 +3866,34 @@ int HSM2evaluate
 	PS0Z_SCE_dVbs = Ps0z_dVbs ;
         PS0Z_SCE_dVds = Ps0z_dVds ;
         PS0Z_SCE_dVgs = Ps0z_dVgs ;
-/*
+
         PS0_SCE = PS0Z_SCE - Pzadd ;
         PS0_SCE_dVbs = Ps0_dVbs ;
         PS0_SCE_dVds = Ps0_dVds ;
         PS0_SCE_dVgs = Ps0_dVgs ;
-*/
+
 
 	NNN += 1 ;
 
-	if( (    fabs(delta_PS0Z_SCE) > PS0_SCE_tol
-              || fabs(delta_PS0Z_SCE_dVbs) > PS0_SCE_deriv_tol
-              || fabs(delta_PS0Z_SCE_dVds) > PS0_SCE_deriv_tol
-              || fabs(delta_PS0Z_SCE_dVgs) > PS0_SCE_deriv_tol                        
-            ) && (NNN < MAX_LOOP_SCE)  ){
-	  goto START_OF_SCE_LOOP; 
+       if( (    fabs(delta_PS0Z_SCE) > PS0_SCE_tol
+             || fabs(delta_PS0Z_SCE_dVbs) > PS0_SCE_deriv_tol
+             || fabs(delta_PS0Z_SCE_dVds) > PS0_SCE_deriv_tol
+             || fabs(delta_PS0Z_SCE_dVgs) > PS0_SCE_deriv_tol
+           ) && (NNN < MAX_LOOP_SCE)  ){
+       //go to START_OF_SCE_LOOP; 
+	        START_OF_SCE_LOOP = 1 ; 
 	}
-
 
       }
 
-      goto end_of_part_1 ;
+    //goto end_of_part_1 ; 
+      if( START_OF_SCE_LOOP==0 ) end_of_part_1 = 1 ;
+
     }
 
+    } /* skip end_of_part_1  */
+  } /* End of 2nd SCE_LOOP */
+    if( end_of_part_1 == 0 ) { /* skip to end_of_part_1 */
 
     /*-----------------------------------------------------------*
      * Start point of Psl (= Ps0 + Pds) calculation. (label)
@@ -3781,25 +4325,29 @@ start_of_loopl:
       PS0Z_SCE_dVbs = Ps0z_dVbs ;
       PS0Z_SCE_dVds = Ps0z_dVds ;
       PS0Z_SCE_dVgs = Ps0z_dVgs ;
-/*
+
       PS0_SCE = PS0Z_SCE - Pzadd ;
       PS0_SCE_dVbs = Ps0_dVbs ;
       PS0_SCE_dVds = Ps0_dVds ;
       PS0_SCE_dVgs = Ps0_dVgs ;
-*/
+
       NNN += 1 ;
 
       if( (    fabs(delta_PS0Z_SCE) > PS0_SCE_tol
             || fabs(delta_PS0Z_SCE_dVbs) > PS0_SCE_deriv_tol
             || fabs(delta_PS0Z_SCE_dVds) > PS0_SCE_deriv_tol
-            || fabs(delta_PS0Z_SCE_dVgs) > PS0_SCE_deriv_tol                        
+            || fabs(delta_PS0Z_SCE_dVgs) > PS0_SCE_deriv_tol
           ) && (NNN < MAX_LOOP_SCE)  ){
-        goto START_OF_SCE_LOOP;
+     // goto START_OF_SCE_LOOP;
+             START_OF_SCE_LOOP = 1 ;
       }
 
 
     }
 
+    } /* skip end_of_part_1  */
+} /* End of 1st SCE_LOOP */
+    if ( end_of_part_1 == 0 ) { /* skip to end_of_part_1 */
 
     /*-----------------------------------------------------------*
      * Evaluate Idd. 
@@ -4200,41 +4748,25 @@ start_of_mobility:
     } else { Lch_dVbs = - Lred_dVbs ; Lch_dVds = - Lred_dVds ; Lch_dVgs = - Lred_dVgs ; }
 
 
-    /*-----------------------------------------------------------*
-     * Modified potential for symmetry.
-     *-----------------*/
-    T1 =  ( Vds - Pds ) / 2 ;
-    Fn_SymAdd( Pzadd , T1 , model->HSM2_pzadd0 , T2 ) ;
-    T2 /= 2 ;
-    Pzadd_dVbs = T2 * ( - Pds_dVbs ) ;
-    Pzadd_dVds = T2 * ( 1.0 - Pds_dVds ) ;
-    Pzadd_dVgs = T2 * ( - Pds_dVgs ) ;  
-  
-    if ( Pzadd < epsm10 ) {
-      Pzadd = epsm10 ;
-      Pzadd_dVbs = 0.0 ;
-      Pzadd_dVds = 0.0 ;
-      Pzadd_dVgs = 0.0 ;
-    }
-  
-    Ps0z = Ps0 + Pzadd ;
-    Ps0z_dVbs = Ps0_dVbs + Pzadd_dVbs ;
-    Ps0z_dVds = Ps0_dVds + Pzadd_dVds ;
-    Ps0z_dVgs = Ps0_dVgs + Pzadd_dVgs ;
-
 
     /*-----------------------------------------------------------*
      * Muun : universal mobility. (CGS unit)
      *-----------------*/
 
-    T1 = here->HSM2_ndep_o_esi ;
-    T2 = here->HSM2_ninv_o_esi ;
+    T1 = here->HSM2_ndep_o_esi / C_m2cm ; /* fix in version 2.8 */
+    T2 = here->HSM2_ninv_o_esi / C_m2cm ; /* fix in version 2.8 */
 
-    T0 = model->HSM2_ninvd ;
-    T4 = 1.0 + ( Psl - Ps0 ) * T0 ;
-    T4_dVb = ( Psl_dVbs - Ps0_dVbs ) * T0 ;
-    T4_dVd = ( Psl_dVds - Ps0_dVds ) * T0 ;
-    T4_dVg = ( Psl_dVgs - Ps0_dVgs ) * T0 ;
+    T0 = here->HSM2_ninvd ;
+    T3 = sqrt(Pds*Pds + model->HSM2_vzadd0) ;
+    Pdsz = T3 - sqrt(model->HSM2_vzadd0) ;
+    Pdsz_dVbs = Pds_dVbs * Pds / T3  ;
+    Pdsz_dVds = Pds_dVds * Pds / T3  ;
+    Pdsz_dVgs = Pds_dVgs * Pds / T3  ;
+
+    T4 = 1.0 + Pdsz * T0 ;
+    T4_dVb =   Pdsz_dVbs * T0 ;
+    T4_dVd =   Pdsz_dVds * T0 ;
+    T4_dVg =   Pdsz_dVgs * T0 ;
 
     T5     = T1 * Qbu      + T2 * Qiu ;
     T5_dVb = T1 * Qbu_dVbs + T2 * Qiu_dVbs ;
@@ -4767,8 +5299,11 @@ start_of_mobility:
      * - This effects for the 2nd and later iterations of bias loop.
      *-----------------*/
     flg_pprv = 1 ;
+ 
+    } /* skip to end_of_part_1 */
 
   } /*++ End of the bias loop +++++++++++++++++++++++++++++*/
+  if ( end_of_part_1 == 0 ) {
 
   if ( lp_bs > lp_bs_max ) { lp_bs -- ; }
 
@@ -4789,11 +5324,18 @@ start_of_mobility:
   }
 
 
-
   /*-----------------------------------------------------------*
    * End of PART-1. (label) 
    *-----------------*/
- end_of_part_1: 
+   } /* skip end_of_part_1 */
+/* end_of_part_1: */
+ end_of_part_1 = 0;
+
+  // Qiu for noise calcs
+  Qiu_noi = Qiu ;
+
+  }  // end of Normal mode MOSFET
+
 
   /*----------------------------------------------------------*
    * Evaluate integrated chages in unit [C].
@@ -4805,12 +5347,14 @@ start_of_mobility:
   Qb_dVbs = T1 * Qbu_dVbs ;
   Qb_dVds = T1 * Qbu_dVds ;
   Qb_dVgs = T1 * Qbu_dVgs ;
-    
+
   Qi = T1 * Qiu ;
   Qi_dVbs = T1 * Qiu_dVbs ;
   Qi_dVds = T1 * Qiu_dVds ;
   Qi_dVgs = T1 * Qiu_dVgs ;
- 
+
+  Qi_noi = T1 * Qiu_noi ; // for noise calc.
+  
   Qd = Qi * Qdrat ;
   Qd_dVbs = Qi_dVbs * Qdrat + Qi * Qdrat_dVbs ;
   Qd_dVds = Qi_dVds * Qdrat + Qi * Qdrat_dVds ;
@@ -4821,6 +5365,27 @@ start_of_mobility:
    * PART-2: Substrate / gate / leak currents
    *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
  
+    /*-----------------------------------------------------------*
+     * Modified potential for symmetry.
+     *-----------------*/
+    T1 =  ( Vds - Pds ) / 2 ;
+    Fn_SymAdd( Pzadd , T1 , model->HSM2_pzadd0 , T2 ) ;
+    T2 /= 2 ;
+    Pzadd_dVbs = T2 * ( - Pds_dVbs ) ;
+    Pzadd_dVds = T2 * ( 1.0 - Pds_dVds ) ;
+    Pzadd_dVgs = T2 * ( - Pds_dVgs ) ;  
+  
+    if ( Pzadd < epsm10 ) {
+      Pzadd = epsm10 ;
+      Pzadd_dVbs = 0.0 ;
+      Pzadd_dVds = 0.0 ;
+      Pzadd_dVgs = 0.0 ;
+    }
+  
+    Ps0z = Ps0 + Pzadd ;
+    Ps0z_dVbs = Ps0_dVbs + Pzadd_dVbs ;
+    Ps0z_dVds = Ps0_dVds + Pzadd_dVds ;
+    Ps0z_dVgs = Ps0_dVgs + Pzadd_dVgs ;
   /*-----------------------------------------------------------*
    * Isub : substrate current induced by impact ionization.
    *-----------------*/
@@ -4845,7 +5410,7 @@ start_of_mobility:
       T3 = T8 / T7 ;
 
       T9 = 2.0 / T8 ;
-      T4 = 1.0e0 + T9 * T7 ;
+      T4 = T9 * T7 ;         /* bugfix in version 2.80 */ 
 
       T2 = here->HSM2_xvbs ;
       T5 = T1 - beta_inv - T2 * Vbsz ;
@@ -4853,7 +5418,7 @@ start_of_mobility:
       T5_dVg = T1_dVg ;
       T5_dVb = T1_dVb - T2 * Vbsz_dVbs;
 
-      T6 = T4 * T5 ;
+      T6 = 1.0 + T4 * T5 ;   /* bugfix in version 2.80 */
       T6_dVd = T4 * T5_dVd ;
       T6_dVg = T4 * T5_dVg ;
       T6_dVb = T4 * T5_dVb ;
@@ -5328,7 +5893,7 @@ start_of_mobility:
         Ec_dVgs =0.0e0 ;
       } else {
       T1 =  beta_inv / Leff ;
-      T2 = 1.0 / Qn0 ;
+      T2 = 1.0 / (Qn0 + 1e-20) ;
       T3 = T2 * T2 ;
       Ec = Idd * T1 * T2 ;
       Ec_dVbs = T1 * (Idd_dVbs * T2 - Idd * Qn0_dVbs * T3 ) ;
@@ -5629,17 +6194,17 @@ start_of_mobility:
             psi_dVxb -= Chi_1_dVxb ;
          
             psi      += beta*0.1 ;
-/*    
+    
             psi_B = psi;
-            arg_B = psi*psi/(gamma*T0);*/
+            arg_B = psi*psi/(gamma*T0);
             Chi_B = log(gamma*T0 + psi*psi) - log(cnst1over*T0) + beta*Vxbgmtcl;
             Chi_B_dVgb = 2.0*psi*psi_dVgb/ (gamma*T0 + psi*psi);
             Chi_B_dVxb = (gamma_dVxb*T0+2.0*psi*psi_dVxb)/(gamma*T0+psi*psi)
                                 + beta*Vxbgmtcl_dVxbgmt;    
             Ps0_iniB      = Chi_B/beta - Vxbgmtcl ;
-/*            Ps0_iniB_dVgb = Chi_B_dVgb/beta;
+            Ps0_iniB_dVgb = Chi_B_dVgb/beta;
             Ps0_iniB_dVxb = Chi_B_dVxb/beta- Vxbgmtcl_dVxbgmt;
-*/    
+    
             
             /* construction of Ps0LD by taking Ps0_iniB as an upper limit of Ps0_iniA
              *
@@ -5867,7 +6432,7 @@ start_of_mobility:
             fs01_dVds = Ps0LD_dVds * fs01_dPs0 ;
             fs01_dVgs = Ps0LD_dVgb * fs01_dPs0 ;
             fs02_dVbs = Ps0LD_dVxb * fs02_dPs0 + fs02_dVbs ;
-/*            fs02_dVxb = Ps0LD_dVds * fs02_dPs0 ;*/
+            fs02_dVxb = Ps0LD_dVds * fs02_dPs0 ;
             fs02_dVgb = Ps0LD_dVgb * fs02_dPs0 ;
     
             /*-----------------------------------------------------------*
@@ -6212,11 +6777,11 @@ start_of_mobility:
   /*---------------------------------------------------*
    * Add Gjmin.
    *-----------------*/
-  Ibd += Gjmin * vbd_jct ;
-  Ibs += Gjmin * vbs_jct ;
+    Ibd += Gjmin * vbd_jct ;
+    Ibs += Gjmin * vbs_jct ;
   
-  Gbd += Gjmin ;
-  Gbs += Gjmin ;
+    Gbd += Gjmin ;
+    Gbs += Gjmin ;
 
   /*-----------------------------------------------------------*
    * Charges and Capacitances.
@@ -6577,7 +7142,7 @@ start_of_mobility:
 
     T1 = Qn0 / C_QE ;
     T2 = ( Cox + Qn0 / ( Ps0 - Vbs ) + Cit ) * beta_inv / C_QE ;
-    T3 = -2.0E0 * Qi / C_QE / Lch / here->HSM2_weff_nf - T1 ;
+    T3 = -2.0E0 * Qi_noi / C_QE / Lch / here->HSM2_weff_nf - T1 ;
     if ( T3 != T1 ) {
       T4 = 1.0E0 / ( T1 + T2 ) / ( T3 + T2 ) + 2.0E0 * NFalp * Ey * Mu / ( T3 - T1 )
         * log( ( T3 + T2 ) / ( T1 + T2 ) ) + NFalp * Ey * Mu * NFalp * Ey * Mu ;
@@ -7387,7 +7952,6 @@ start_of_mobility:
     here->HSM2_Qi_dVds = M * Qi_dVdse ;
     here->HSM2_Qi_dVbs = M * Qi_dVbse ;
 
-    here->HSM2_alpha = Alpha ;
   }
 
   /*---------------------------------------------------* 

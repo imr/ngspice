@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM
- ( VERSION : 2  SUBVERSION : 7  REVISION : 0 ) Beta
+ ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
  
  FILE : hsm2pzld.c
 
- Date : 2012.10.25
+ Date : 2014.6.5
 
  released by 
                 Hiroshima University &
@@ -29,8 +29,8 @@ int HSM2pzLoad(
 {
   HSM2model *model = (HSM2model*)inModel;
   HSM2instance *here;
-  double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb = 0.0, xcbsb, xcbbb;
-  double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb = 0.0, xcssb, xcsbb;
+  double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
+  double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
   double xcdbdb = 0.0, xcsbsb = 0.0;
   double gdpr, gspr, gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, gm, gmbs;
   double gjbd, gjbs, grg;

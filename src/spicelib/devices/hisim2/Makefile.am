@@ -14,6 +14,7 @@ libhisim2_la_SOURCES =	hisim2.h	\
 			hsm2dest.c	\
 			hsm2eval.c	\
 			hsm2evalenv.h	\
+			hsm2eval_dep.h	\
 			hsm2ext.h	\
 			hsm2getic.c	\
 			hsm2init.c	\
