@@ -181,6 +181,7 @@ June 2008 (revised October 2011)
  *-----------------*/
 #define Fn_SL_CP3( y , x , xmin , delta , pw , dx , dxmin, ddelta) { \
  if(x < xmin + delta && delta >= 0.0) { \
+   double TMF0, TMF1; \
    TMF1 = xmin + delta - x ; \
    Fn_CP2( TMF0 , TMF1 , delta , pw , dx , ddelta )  \
    y = xmin + delta - TMF0 ; \

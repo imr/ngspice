@@ -130,8 +130,6 @@ to others."
 #define C_PSLK_SHIFT 1.0      /* constant value for temporary shift */
 #define C_IDD_MIN    1.0e-15
 
-/* local variables used in macro functions */
-double TMF0, TMF1 , TMF2 , TMF3 , TMF4 ; 
 /*===========================================================*
 * pow
 *=================*/
@@ -171,6 +169,7 @@ double TMF0, TMF1 , TMF2 , TMF3 , TMF4 ;
 *-----------------*/
 
 #define Fn_SU( y , x , xmax , delta , dx ) { \
+    double TMF1, TMF2; \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
     TMF2 = 4.0 * ( xmax ) * ( delta) ; \
     TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
@@ -180,6 +179,7 @@ double TMF0, TMF1 , TMF2 , TMF3 , TMF4 ;
   }
 
 #define Fn_SU2( y , x , xmax , delta , dy_dx , dy_dxmax ) { \
+    double TMF1, TMF2; \
     TMF1 = ( xmax ) - ( x ) - ( delta ) ; \
     TMF2 = 4.0 * ( xmax ) * ( delta) ; \
     TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
@@ -196,6 +196,7 @@ double TMF0, TMF1 , TMF2 , TMF3 , TMF4 ;
 *-----------------*/
 
 #define Fn_SL( y , x , xmin , delta , dx ) { \
+    double TMF1, TMF2; \
     TMF1 = ( x ) - ( xmin ) - ( delta ) ; \
     TMF2 = 4.0 * ( xmin ) * ( delta ) ; \
     TMF2 = TMF2 > 0.0 ?  TMF2 : - ( TMF2 ) ; \
@@ -210,6 +211,7 @@ double TMF0, TMF1 , TMF2 , TMF3 , TMF4 ;
 *-----------------*/
 
 #define Fn_SZ( y , x , delta , dx ) { \
+    double TMF2; \
     TMF2 = sqrt ( ( x ) *  ( x ) + 4.0 * ( delta ) * ( delta) ) ; \
     dx = 0.5 * ( 1.0 + ( x ) / TMF2 ) ; \
     y = 0.5 * ( ( x ) + TMF2 ) ; \
@@ -314,6 +316,7 @@ static double CeilingPow
 
 #define Fn_SU_CP2( y , x , xmax , delta , pw , dx , dxmax ) { \
  if(x > xmax - delta && delta >= 0.0) { \
+   double TMF0, TMF1; \
    TMF1 = x - xmax + delta ; \
    Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
    y = xmax - delta + TMF0 ; \
@@ -350,6 +353,7 @@ static double CeilingPow
 
 #define Fn_SU_CP3( y , x , xmax , delta , pw , dx , dxmax , ddelta ) { \
  if(x > xmax - delta && delta >= 0.0) { \
+   double TMF0, TMF1; \
    TMF1 = x - xmax + delta ; \
    Fn_CP2( TMF0 , TMF1 , delta , pw , dx , ddelta )     \
    y = xmax - delta + TMF0 ; \
@@ -366,6 +370,7 @@ static double CeilingPow
 
 #define Fn_SU_CP( y , x , xmax , delta , pw , dx ) { \
  if(x > xmax - delta && delta >= 0.0) { \
+   double TMF0, TMF1; \
    TMF1 = x - xmax + delta ; \
    Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
    y = xmax - delta + TMF0 ; \
@@ -378,6 +383,7 @@ static double CeilingPow
 
 #define Fn_SL_CP2( y , x , xmin , delta , pw , dx , dxmin) { \
  if(x < xmin + delta && delta >= 0.0) { \
+   double TMF0, TMF1; \
    TMF1 = xmin + delta - x ; \
    Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
    y = xmin + delta - TMF0 ; \
@@ -391,6 +397,7 @@ static double CeilingPow
 }
 #define Fn_SL_CP( y , x , xmin , delta , pw , dx ) { \
  if(x < xmin + delta && delta >= 0.0) { \
+   double TMF0, TMF1; \
    TMF1 = xmin + delta - x ; \
    Fn_CP( TMF0 , TMF1 , delta , pw , dx )  \
    y = xmin + delta - TMF0 ; \
@@ -412,6 +419,7 @@ static double CeilingPow
 *-----------------*/
 
 #define Fn_DclPoly4( y , x , dx ) { \
+  double TMF2, TMF3, TMF4; \
   TMF2 = (x) * (x) ; \
   TMF3 = TMF2 * (x) ; \
   TMF4 = TMF2 * TMF2 ; \
@@ -424,6 +432,7 @@ static double CeilingPow
 *-----------------*/
 
 #define Fn_SUPoly4( y , x , xmax , dx ) { \
+ double TMF1; \
  TMF1 = (x) / xmax ; \
  Fn_DclPoly4( y , TMF1 , dx ) ; \
  y = xmax * ( 1.0 - y ) ; \
@@ -431,6 +440,7 @@ static double CeilingPow
 }
 
 #define Fn_SUPoly4m( y , x , xmax , dx , dxmax ) { \
+ double TMF0, TMF1; \
  TMF1 = (x) / xmax ; \
  Fn_DclPoly4( TMF0 , TMF1 , dx ) ; \
  y = xmax * ( 1.0 - TMF0 ) ; \
@@ -445,6 +455,7 @@ static double CeilingPow
 
 #define Fn_SymAdd( y , x , add0 , dx ) \
 { \
+    double TMF1, TMF2, TMF3; \
     TMF1 = 2.0 * ( x ) / ( add0 ) ; \
     TMF2 = 1.0 + TMF1 * ( (1.0/2) + TMF1 * ( (1.0/6) \
                + TMF1 * ( (1.0/24) + TMF1 * ( (1.0/120) \
