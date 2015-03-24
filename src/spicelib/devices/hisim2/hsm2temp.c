@@ -282,15 +282,11 @@ int HSM2temp(
     
       Leff = Lgate - 2.0e0 * dL ;
       if ( Leff <= 1.0e-9 ) {   
-        IFuid namarr[2];
-        namarr[0] = model->HSM2modName;
-        namarr[1] = here->HSM2name;
-        (*(SPfrontEnd->IFerror))
+        SPfrontEnd->IFerrorf
           ( 
            ERR_FATAL, 
            "HiSIM2: MOSFET(%s) MODEL(%s): effective channel length is smaller than 1nm", 
-           namarr 
-           );
+           model->HSM2modName, here->HSM2name);
         return (E_BADPARM);
       }
       here->HSM2_leff = Leff ;
@@ -306,15 +302,11 @@ int HSM2temp(
 
       here->HSM2_weff = Weff = Wgate - 2.0e0 * dW ;
       if ( Weff <= 0.0 ) {   
-        IFuid namarr[2];
-        namarr[0] = model->HSM2modName;
-        namarr[1] = here->HSM2name;
-        (*(SPfrontEnd->IFerror))
+        SPfrontEnd->IFerrorf
           ( 
            ERR_FATAL, 
            "HiSIM2: MOSFET(%s) MODEL(%s): effective channel width is negative or 0", 
-           namarr 
-           );
+           model->HSM2modName, here->HSM2name);
         return (E_BADPARM);
       }
       here->HSM2_weff_nf = Weff * here->HSM2_nf ;
