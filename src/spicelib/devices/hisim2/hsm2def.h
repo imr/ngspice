@@ -687,6 +687,9 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   HSM2instance * HSM2instances;	/* pointer to list of instances 
 				   that have this model */
   IFuid HSM2modName;       	/* pointer to the name of this model */
+
+  /* --- end of generic struct GENmodel --- */
+
   int HSM2_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSM2_level;               /* level */
   int HSM2_info;                /* information */
