@@ -928,33 +928,33 @@ int HSM2setup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
-      TSTALLOC(HSM2DPbpPtr, HSM2dNodePrime, HSM2bNodePrime)
-      TSTALLOC(HSM2SPbpPtr, HSM2sNodePrime, HSM2bNodePrime)
-      TSTALLOC(HSM2GPbpPtr, HSM2gNodePrime, HSM2bNodePrime)
+      TSTALLOC(HSM2DPbpPtr, HSM2dNodePrime, HSM2bNodePrime);
+      TSTALLOC(HSM2SPbpPtr, HSM2sNodePrime, HSM2bNodePrime);
+      TSTALLOC(HSM2GPbpPtr, HSM2gNodePrime, HSM2bNodePrime);
 
-      TSTALLOC(HSM2BPdpPtr, HSM2bNodePrime, HSM2dNodePrime)
-      TSTALLOC(HSM2BPspPtr, HSM2bNodePrime, HSM2sNodePrime)
-      TSTALLOC(HSM2BPgpPtr, HSM2bNodePrime, HSM2gNodePrime)
-      TSTALLOC(HSM2BPbpPtr, HSM2bNodePrime, HSM2bNodePrime)
+      TSTALLOC(HSM2BPdpPtr, HSM2bNodePrime, HSM2dNodePrime);
+      TSTALLOC(HSM2BPspPtr, HSM2bNodePrime, HSM2sNodePrime);
+      TSTALLOC(HSM2BPgpPtr, HSM2bNodePrime, HSM2gNodePrime);
+      TSTALLOC(HSM2BPbpPtr, HSM2bNodePrime, HSM2bNodePrime);
 
-      TSTALLOC(HSM2DdPtr, HSM2dNode, HSM2dNode)
-      TSTALLOC(HSM2GPgpPtr, HSM2gNodePrime, HSM2gNodePrime)
-      TSTALLOC(HSM2SsPtr, HSM2sNode, HSM2sNode)
-      TSTALLOC(HSM2DPdpPtr, HSM2dNodePrime, HSM2dNodePrime)
-      TSTALLOC(HSM2SPspPtr, HSM2sNodePrime, HSM2sNodePrime)
-      TSTALLOC(HSM2DdpPtr, HSM2dNode, HSM2dNodePrime)
-      TSTALLOC(HSM2GPdpPtr, HSM2gNodePrime, HSM2dNodePrime)
-      TSTALLOC(HSM2GPspPtr, HSM2gNodePrime, HSM2sNodePrime)
-      TSTALLOC(HSM2SspPtr, HSM2sNode, HSM2sNodePrime)
-      TSTALLOC(HSM2DPspPtr, HSM2dNodePrime, HSM2sNodePrime)
-      TSTALLOC(HSM2DPdPtr, HSM2dNodePrime, HSM2dNode)
-      TSTALLOC(HSM2DPgpPtr, HSM2dNodePrime, HSM2gNodePrime)
-      TSTALLOC(HSM2SPgpPtr, HSM2sNodePrime, HSM2gNodePrime)
-      TSTALLOC(HSM2SPsPtr, HSM2sNodePrime, HSM2sNode)
+      TSTALLOC(HSM2DdPtr, HSM2dNode, HSM2dNode);
+      TSTALLOC(HSM2GPgpPtr, HSM2gNodePrime, HSM2gNodePrime);
+      TSTALLOC(HSM2SsPtr, HSM2sNode, HSM2sNode);
+      TSTALLOC(HSM2DPdpPtr, HSM2dNodePrime, HSM2dNodePrime);
+      TSTALLOC(HSM2SPspPtr, HSM2sNodePrime, HSM2sNodePrime);
+      TSTALLOC(HSM2DdpPtr, HSM2dNode, HSM2dNodePrime);
+      TSTALLOC(HSM2GPdpPtr, HSM2gNodePrime, HSM2dNodePrime);
+      TSTALLOC(HSM2GPspPtr, HSM2gNodePrime, HSM2sNodePrime);
+      TSTALLOC(HSM2SspPtr, HSM2sNode, HSM2sNodePrime);
+      TSTALLOC(HSM2DPspPtr, HSM2dNodePrime, HSM2sNodePrime);
+      TSTALLOC(HSM2DPdPtr, HSM2dNodePrime, HSM2dNode);
+      TSTALLOC(HSM2DPgpPtr, HSM2dNodePrime, HSM2gNodePrime);
+      TSTALLOC(HSM2SPgpPtr, HSM2sNodePrime, HSM2gNodePrime);
+      TSTALLOC(HSM2SPsPtr, HSM2sNodePrime, HSM2sNode);
       TSTALLOC(HSM2SPdpPtr, HSM2sNodePrime, HSM2dNodePrime);
 
       if ( here->HSM2_corg == 1 ) {
