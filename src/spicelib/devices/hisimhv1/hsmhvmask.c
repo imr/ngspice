@@ -1,61 +1,19 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvmask.c
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
  released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
-/**********************************************************************
-
-The following source code, and all copyrights, trade secrets or other
-intellectual property rights in and to the source code in its entirety,
-is owned by the Hiroshima University and the STARC organization.
-
-All users need to follow the "HISIM_HV Distribution Statement and
-Copyright Notice" attached to HiSIM_HV model.
-
------HISIM_HV Distribution Statement and Copyright Notice--------------
-
-Software is distributed as is, completely without warranty or service
-support. Hiroshima University or STARC and its employees are not liable
-for the condition or performance of the software.
-
-Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
-
-Hiroshima University and STARC hereby disclaims all implied warranties.
-
-Hiroshima University and STARC grant the users the right to modify, copy,
-and redistribute the software and documentation, both within the user's
-organization and externally, subject to the following restrictions
-
-1. The users agree not to charge for Hiroshima University and STARC code
-itself but may charge for additions, extensions, or support.
-
-2. In any product based on the software, the users agree to acknowledge
-Hiroshima University and STARC that developed the software. This
-acknowledgment shall appear in the product documentation.
-
-3. The users agree to reproduce any copyright notice which appears on
-the software on any copy or modification of such made available
-to others."
-
-Toshimasa Asahara, President, Hiroshima University
-Mitiko Miura-Mattausch, Professor, Hiroshima University
-Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
-*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/ifsim.h"
@@ -166,18 +124,6 @@ int HSMHVmAsk(
   case  HSMHV_MOD_COLDRIFT:
     value->iValue = model->HSMHV_coldrift;
     return(OK);
-  case  HSMHV_MOD_CORDRIFT:
-    value->iValue = model->HSMHV_cordrift;
-    return(OK);
-  case  HSMHV_MOD_COERRREP:
-    value->iValue = model->HSMHV_coerrrep;
-    return(OK);
-  case  HSMHV_MOD_CODEP:
-    value->iValue = model->HSMHV_codep;
-    return(OK);
-  case  HSMHV_MOD_CODDLT:
-    value->iValue = model->HSMHV_coddlt;
-    return(OK);
   case  HSMHV_MOD_VMAX:
     value->rValue = model->HSMHV_vmax;
     return(OK);
@@ -247,23 +193,8 @@ int HSMHVmAsk(
   case  HSMHV_MOD_SUBLD1:
     value->rValue = model->HSMHV_subld1;
     return(OK);
-  case  HSMHV_MOD_SUBLD1L:
-    value->rValue = model->HSMHV_subld1l;
-    return(OK);
-  case  HSMHV_MOD_SUBLD1LP:
-    value->rValue = model->HSMHV_subld1lp;
-    return(OK);
   case  HSMHV_MOD_SUBLD2:
     value->rValue = model->HSMHV_subld2;
-    return(OK);
-  case  HSMHV_MOD_XPDV:
-    value->rValue = model->HSMHV_xpdv;
-    return(OK);
-  case  HSMHV_MOD_XPVDTH:
-    value->rValue = model->HSMHV_xpvdth;
-    return(OK);
-  case  HSMHV_MOD_XPVDTHG:
-    value->rValue = model->HSMHV_xpvdthg;
     return(OK);
   case  HSMHV_MOD_DDLTMAX: /* Vdseff */
     value->rValue = model->HSMHV_ddltmax;
@@ -402,6 +333,9 @@ int HSMHVmAsk(
     return(OK);
   case  HSMHV_MOD_PGD2:
     value->rValue = model->HSMHV_pgd2;
+    return(OK);
+  case  HSMHV_MOD_PGD3:
+    value->rValue = model->HSMHV_pgd3;
     return(OK);
   case  HSMHV_MOD_PGD4:
     value->rValue = model->HSMHV_pgd4;
@@ -814,6 +748,9 @@ int HSMHVmAsk(
   case  HSMHV_MOD_KAPPA:
     value->rValue = model->HSMHV_kappa;
     return(OK);
+  case  HSMHV_MOD_PTHROU:
+    value->rValue = model->HSMHV_pthrou;
+    return(OK);
   case  HSMHV_MOD_VDIFFJ:
     value->rValue = model->HSMHV_vdiffj;
     return(OK);
@@ -861,46 +798,11 @@ int HSMHVmAsk(
   case  HSMHV_MOD_IBPC1:
     value->rValue = model->HSMHV_ibpc1;
     return(OK);
-  case  HSMHV_MOD_IBPC1L:
-    value->rValue = model->HSMHV_ibpc1l;
-    return(OK);
-  case  HSMHV_MOD_IBPC1LP:
-    value->rValue = model->HSMHV_ibpc1lp;
-    return(OK);
   case  HSMHV_MOD_IBPC2:
     value->rValue = model->HSMHV_ibpc2;
     return(OK);
   case  HSMHV_MOD_MPHDFM:
     value->rValue = model->HSMHV_mphdfm;
-    return(OK);
-
-  case  HSMHV_MOD_PTL:
-    value->rValue = model->HSMHV_ptl;
-    return(OK);
-  case  HSMHV_MOD_PTP:
-    value->rValue = model->HSMHV_ptp;
-    return(OK);
-  case  HSMHV_MOD_PT2:
-    value->rValue = model->HSMHV_pt2;
-    return(OK);
-  case  HSMHV_MOD_PTLP:
-    value->rValue = model->HSMHV_ptlp;
-    return(OK);
-  case  HSMHV_MOD_GDL:
-    value->rValue = model->HSMHV_gdl;
-    return(OK);
-  case  HSMHV_MOD_GDLP:
-    value->rValue = model->HSMHV_gdlp;
-    return(OK);
-
-  case  HSMHV_MOD_GDLD:
-    value->rValue = model->HSMHV_gdld;
-    return(OK);
-  case  HSMHV_MOD_PT4:
-    value->rValue = model->HSMHV_pt4;
-    return(OK);
-  case  HSMHV_MOD_PT4P:
-    value->rValue = model->HSMHV_pt4p;
     return(OK);
   case  HSMHV_MOD_RDVG11:
     value->rValue = model->HSMHV_rdvg11;
@@ -968,6 +870,12 @@ int HSMHVmAsk(
   case  HSMHV_MOD_RD20:
     value->rValue = model->HSMHV_rd20;
     return(OK);
+  case  HSMHV_MOD_QOVSM: 
+    value->rValue = model->HSMHV_qovsm;
+    return(OK);
+  case  HSMHV_MOD_LDRIFT: 
+    value->rValue = model->HSMHV_ldrift;
+    return(OK);
   case  HSMHV_MOD_RD21:
     value->rValue = model->HSMHV_rd21;
     return(OK);
@@ -985,6 +893,9 @@ int HSMHVmAsk(
     return(OK);
   case  HSMHV_MOD_RD25:
     value->rValue = model->HSMHV_rd25;
+    return(OK);
+  case  HSMHV_MOD_RD26:
+    value->rValue = model->HSMHV_rd26;
     return(OK);
   case  HSMHV_MOD_RDVDL:
     value->rValue = model->HSMHV_rdvdl;
@@ -1081,261 +992,8 @@ int HSMHVmAsk(
   case  HSMHV_MOD_NSUBSUB:
     value->rValue = model->HSMHV_nsubsub;
     return(OK);
-
-  case  HSMHV_MOD_RDRMUE:
-    value->rValue = model->HSMHV_rdrmue;
-    return(OK);
-  case  HSMHV_MOD_RDRVMAX:
-    value->rValue = model->HSMHV_rdrvmax;
-    return(OK);
-  case  HSMHV_MOD_RDRMUETMP:
-    value->rValue = model->HSMHV_rdrmuetmp;
-    return(OK);
-  case  HSMHV_MOD_RDRVTMP:
-    value->rValue = model->HSMHV_rdrvtmp;
-    return(OK);
-  case  HSMHV_MOD_NDEPM:
-    value->rValue = model->HSMHV_ndepm;
-    return(OK);
-  case  HSMHV_MOD_TNDEP:
-    value->rValue = model->HSMHV_tndep;
-    return(OK);
-  case  HSMHV_MOD_DEPMUE0:
-    value->rValue = model->HSMHV_depmue0;
-    return(OK);
-  case  HSMHV_MOD_DEPMUE1:
-    value->rValue = model->HSMHV_depmue1;
-    return(OK);
-  case  HSMHV_MOD_DEPMUEBACK0:
-    value->rValue = model->HSMHV_depmueback0;
-    return(OK);
-  case  HSMHV_MOD_DEPMUEBACK1:
-    value->rValue = model->HSMHV_depmueback1;
-    return(OK);
-  case  HSMHV_MOD_DEPLEAK:
-    value->rValue = model->HSMHV_depleak;
-    return(OK);
-  case  HSMHV_MOD_DEPETA:
-    value->rValue = model->HSMHV_depeta;
-    return(OK);
-  case  HSMHV_MOD_DEPVMAX:
-    value->rValue = model->HSMHV_depvmax;
-    return(OK);
-  case  HSMHV_MOD_DEPVDSEF1:
-    value->rValue = model->HSMHV_depvdsef1;
-    return(OK);
-  case  HSMHV_MOD_DEPVDSEF2:
-    value->rValue = model->HSMHV_depvdsef2;
-    return(OK);
-  case  HSMHV_MOD_DEPMUEPH0:
-    value->rValue = model->HSMHV_depmueph0;
-    return(OK);
-  case  HSMHV_MOD_DEPMUEPH1:
-    value->rValue = model->HSMHV_depmueph1;
-    return(OK);
-  case  HSMHV_MOD_DEPBB:
-    value->rValue = model->HSMHV_depbb;
-    return(OK);
-  case  HSMHV_MOD_DEPVTMP:
-    value->rValue = model->HSMHV_depvtmp;
-    return(OK);
-  case  HSMHV_MOD_DEPMUETMP:
-    value->rValue = model->HSMHV_depmuetmp;
-    return(OK);
-
-  case  HSMHV_MOD_ISBREAK:
-    value->rValue = model->HSMHV_isbreak;
-    return(OK);
-  case  HSMHV_MOD_RWELL:
-    value->rValue = model->HSMHV_rwell;
-    return(OK);
-
-
-/*   case  HSMHV_MOD_RDRVMAXT1: */
-/*     value->rValue = model->HSMHV_rdrvmaxt1; */
-/*     return(OK); */
-/*   case  HSMHV_MOD_RDRVMAXT2: */
-/*     value->rValue = model->HSMHV_rdrvmaxt2; */
-/*     return(OK); */
-  case  HSMHV_MOD_RDRDJUNC:
-    value->rValue = model->HSMHV_rdrdjunc;
-    return(OK);
-  case  HSMHV_MOD_RDRCX:
-    value->rValue = model->HSMHV_rdrcx;
-    return(OK);
-  case  HSMHV_MOD_RDRCAR:
-    value->rValue = model->HSMHV_rdrcar;
-    return(OK);
-  case  HSMHV_MOD_RDRDL1:
-    value->rValue = model->HSMHV_rdrdl1;
-    return(OK);
-  case  HSMHV_MOD_RDRDL2:
-    value->rValue = model->HSMHV_rdrdl2;
-    return(OK);
-  case  HSMHV_MOD_RDRVMAXW:
-    value->rValue = model->HSMHV_rdrvmaxw;
-    return(OK);
-  case  HSMHV_MOD_RDRVMAXWP:
-    value->rValue = model->HSMHV_rdrvmaxwp;
-    return(OK);
-  case  HSMHV_MOD_RDRVMAXL:
-    value->rValue = model->HSMHV_rdrvmaxl;
-    return(OK);
-  case  HSMHV_MOD_RDRVMAXLP:
-    value->rValue = model->HSMHV_rdrvmaxlp;
-    return(OK);
-  case  HSMHV_MOD_RDRMUEL:
-    value->rValue = model->HSMHV_rdrmuel;
-    return(OK);
-  case  HSMHV_MOD_RDRMUELP:
-    value->rValue = model->HSMHV_rdrmuelp;
-    return(OK);
-  case  HSMHV_MOD_RDRQOVER:
-    value->rValue = model->HSMHV_rdrqover;
-    return(OK);
-  case HSMHV_MOD_QOVADD:
-    value->rValue = model->HSMHV_qovadd;
-    return(OK);
-  case HSMHV_MOD_JS0D:
-    value->rValue = model->HSMHV_js0d;
-    return(OK);
-  case HSMHV_MOD_JS0SWD:
-    value->rValue = model->HSMHV_js0swd;
-    return(OK);
-  case HSMHV_MOD_NJD:
-    value->rValue = model->HSMHV_njd;
-    return(OK);
-  case HSMHV_MOD_NJSWD:
-    value->rValue = model->HSMHV_njswd;
-    return(OK);
-  case HSMHV_MOD_XTID:
-    value->rValue = model->HSMHV_xtid;
-    return(OK);
-  case HSMHV_MOD_CJD:
-    value->rValue = model->HSMHV_cjd;
-    return(OK);
-  case HSMHV_MOD_CJSWD:
-    value->rValue = model->HSMHV_cjswd;
-    return(OK);
-  case HSMHV_MOD_CJSWGD:
-    value->rValue = model->HSMHV_cjswgd;
-    return(OK);
-  case HSMHV_MOD_MJD:
-    value->rValue = model->HSMHV_mjd;
-    return(OK);
-  case HSMHV_MOD_MJSWD:
-    value->rValue = model->HSMHV_mjswd;
-    return(OK);
-  case HSMHV_MOD_MJSWGD:
-    value->rValue = model->HSMHV_mjswgd;
-    return(OK);
-  case HSMHV_MOD_PBD:
-    value->rValue = model->HSMHV_pbd;
-    return(OK);
-  case HSMHV_MOD_PBSWD:
-    value->rValue = model->HSMHV_pbswd;
-    return(OK);
-  case HSMHV_MOD_PBSWDG:
-    value->rValue = model->HSMHV_pbswgd;
-    return(OK);
-  case HSMHV_MOD_XTI2D:
-    value->rValue = model->HSMHV_xti2d;
-    return(OK);
-  case HSMHV_MOD_CISBD:
-    value->rValue = model->HSMHV_cisbd;
-    return(OK);
-  case HSMHV_MOD_CVBD:
-    value->rValue = model->HSMHV_cvbd;
-    return(OK);
-  case HSMHV_MOD_CTEMPD:
-    value->rValue = model->HSMHV_ctempd;
-    return(OK);
-  case HSMHV_MOD_CISBKD:
-    value->rValue = model->HSMHV_cisbkd;
-    return(OK);
-  case HSMHV_MOD_DIVXD:
-    value->rValue = model->HSMHV_divxd;
-    return(OK);
-  case HSMHV_MOD_VDIFFJD:
-    value->rValue = model->HSMHV_vdiffjd;
-    return(OK);
-  case HSMHV_MOD_JS0S:
-    value->rValue = model->HSMHV_js0s;
-    return(OK);
-  case HSMHV_MOD_JS0SWS:
-    value->rValue = model->HSMHV_js0sws;
-    return(OK);
-  case HSMHV_MOD_NJS:
-    value->rValue = model->HSMHV_njs;
-    return(OK);
-  case HSMHV_MOD_NJSWS:
-    value->rValue = model->HSMHV_njsws;
-    return(OK);
-  case HSMHV_MOD_XTIS:
-    value->rValue = model->HSMHV_xtis;
-    return(OK);
-  case HSMHV_MOD_CJS:
-    value->rValue = model->HSMHV_cjs;
-    return(OK);
-  case HSMHV_MOD_CJSSW:
-    value->rValue = model->HSMHV_cjsws;
-    return(OK);
-  case HSMHV_MOD_CJSWGS:
-    value->rValue = model->HSMHV_cjswgs;
-    return(OK);
-  case HSMHV_MOD_MJS:
-    value->rValue = model->HSMHV_mjs;
-    return(OK);
-  case HSMHV_MOD_MJSWS:
-    value->rValue = model->HSMHV_mjsws;
-    return(OK);
-  case HSMHV_MOD_MJSWGS:
-    value->rValue = model->HSMHV_mjswgs;
-    return(OK);
-  case HSMHV_MOD_PBS:
-    value->rValue = model->HSMHV_pbs;
-    return(OK);
-  case HSMHV_MOD_PBSWS:
-    value->rValue = model->HSMHV_pbsws;
-    return(OK);
-  case HSMHV_MOD_PBSWSG:
-    value->rValue = model->HSMHV_pbswgs;
-    return(OK);
-  case HSMHV_MOD_XTI2S:
-    value->rValue = model->HSMHV_xti2s;
-    return(OK);
-  case HSMHV_MOD_CISBS:
-    value->rValue = model->HSMHV_cisbs;
-    return(OK);
-  case HSMHV_MOD_CVBS:
-    value->rValue = model->HSMHV_cvbs;
-    return(OK);
-  case HSMHV_MOD_CTEMPS:
-    value->rValue = model->HSMHV_ctemps;
-    return(OK);
-  case HSMHV_MOD_CISBKS:
-    value->rValue = model->HSMHV_cisbks;
-    return(OK);
-  case HSMHV_MOD_DIVXS:
-    value->rValue = model->HSMHV_divxs;
-    return(OK);
-  case HSMHV_MOD_VDIFFJS:
-    value->rValue = model->HSMHV_vdiffjs;
-    return(OK);
   case HSMHV_MOD_SHEMAX:
     value->rValue = model->HSMHV_shemax;
-    return(OK);
-  case HSMHV_MOD_VGSMIN:
-    value->rValue = model->HSMHV_vgsmin;
-    return(OK);
-  case HSMHV_MOD_GDSLEAK:
-    value->rValue = model->HSMHV_gdsleak;
-    return(OK);
-  case HSMHV_MOD_RDRBB:
-    value->rValue = model->HSMHV_rdrbb;
-    return(OK);
-  case HSMHV_MOD_RDRBBTMP:
-    value->rValue = model->HSMHV_rdrbbtmp;
     return(OK);
 
   /* binning parameters */
@@ -1412,6 +1070,9 @@ int HSMHVmAsk(
     return(OK);
   case  HSMHV_MOD_LPGD1:
     value->rValue = model->HSMHV_lpgd1;
+    return(OK);
+  case  HSMHV_MOD_LPGD3:
+    value->rValue = model->HSMHV_lpgd3;
     return(OK);
   case  HSMHV_MOD_LNDEP:
     value->rValue = model->HSMHV_lndep;
@@ -1566,6 +1227,9 @@ int HSMHVmAsk(
   case  HSMHV_MOD_LNFALP:
     value->rValue = model->HSMHV_lnfalp;
     return(OK);
+  case  HSMHV_MOD_LPTHROU:
+    value->rValue = model->HSMHV_lpthrou;
+    return(OK);
   case  HSMHV_MOD_LVDIFFJ:
     value->rValue = model->HSMHV_lvdiffj;
     return(OK);
@@ -1629,36 +1293,6 @@ int HSMHVmAsk(
   case  HSMHV_MOD_LVOVER:
     value->rValue = model->HSMHV_lvover;
     return(OK);
-  case HSMHV_MOD_LJS0D:
-    value->rValue = model->HSMHV_ljs0d;
-    return(OK);
-  case HSMHV_MOD_LJS0SWD:
-    value->rValue = model->HSMHV_ljs0swd;
-    return(OK);
-  case HSMHV_MOD_LNJD:
-    value->rValue = model->HSMHV_lnjd;
-    return(OK);
-  case HSMHV_MOD_LCISBKD:
-    value->rValue = model->HSMHV_lcisbkd;
-    return(OK);
-  case HSMHV_MOD_LVDIFFJD:
-    value->rValue = model->HSMHV_lvdiffjd;
-    return(OK);
-  case HSMHV_MOD_LJS0S:
-    value->rValue = model->HSMHV_ljs0s;
-    return(OK);
-  case HSMHV_MOD_LJS0SWS:
-    value->rValue = model->HSMHV_ljs0sws;
-    return(OK);
-  case HSMHV_MOD_LNJS:
-    value->rValue = model->HSMHV_lnjs;
-    return(OK);
-  case HSMHV_MOD_LCISBKS:
-    value->rValue = model->HSMHV_lcisbks;
-    return(OK);
-  case HSMHV_MOD_LVDIFFJS:
-    value->rValue = model->HSMHV_lvdiffjs;
-    return(OK);
 
   /* Width dependence */
   case  HSMHV_MOD_WVMAX:
@@ -1714,6 +1348,9 @@ int HSMHVmAsk(
     return(OK);
   case  HSMHV_MOD_WPGD1:
     value->rValue = model->HSMHV_wpgd1;
+    return(OK);
+  case  HSMHV_MOD_WPGD3:
+    value->rValue = model->HSMHV_wpgd3;
     return(OK);
   case  HSMHV_MOD_WNDEP:
     value->rValue = model->HSMHV_wndep;
@@ -1868,6 +1505,9 @@ int HSMHVmAsk(
   case  HSMHV_MOD_WNFALP:
     value->rValue = model->HSMHV_wnfalp;
     return(OK);
+  case  HSMHV_MOD_WPTHROU:
+    value->rValue = model->HSMHV_wpthrou;
+    return(OK);
   case  HSMHV_MOD_WVDIFFJ:
     value->rValue = model->HSMHV_wvdiffj;
     return(OK);
@@ -1931,36 +1571,6 @@ int HSMHVmAsk(
   case  HSMHV_MOD_WVOVER:
     value->rValue = model->HSMHV_wvover;
     return(OK);
-  case HSMHV_MOD_WJS0D:
-    value->rValue = model->HSMHV_wjs0d;
-    return(OK);
-  case HSMHV_MOD_WJS0SWD:
-    value->rValue = model->HSMHV_wjs0swd;
-    return(OK);
-  case HSMHV_MOD_WNJD:
-    value->rValue = model->HSMHV_wnjd;
-    return(OK);
-  case HSMHV_MOD_WCISBKD:
-    value->rValue = model->HSMHV_wcisbkd;
-    return(OK);
-  case HSMHV_MOD_WVDIFFJD:
-    value->rValue = model->HSMHV_wvdiffjd;
-    return(OK);
-  case HSMHV_MOD_WJS0S:
-    value->rValue = model->HSMHV_wjs0s;
-    return(OK);
-  case HSMHV_MOD_WJS0SWS:
-    value->rValue = model->HSMHV_wjs0sws;
-    return(OK);
-  case HSMHV_MOD_WNJS:
-    value->rValue = model->HSMHV_wnjs;
-    return(OK);
-  case HSMHV_MOD_WCISBKS:
-    value->rValue = model->HSMHV_wcisbks;
-    return(OK);
-  case HSMHV_MOD_WVDIFFJS:
-    value->rValue = model->HSMHV_wvdiffjs;
-    return(OK);
 
   /* Cross-term dependence */
   case  HSMHV_MOD_PVMAX:
@@ -2016,6 +1626,9 @@ int HSMHVmAsk(
     return(OK);
   case  HSMHV_MOD_PPGD1:
     value->rValue = model->HSMHV_ppgd1;
+    return(OK);
+  case  HSMHV_MOD_PPGD3:
+    value->rValue = model->HSMHV_ppgd3;
     return(OK);
   case  HSMHV_MOD_PNDEP:
     value->rValue = model->HSMHV_pndep;
@@ -2170,6 +1783,9 @@ int HSMHVmAsk(
   case  HSMHV_MOD_PNFALP:
     value->rValue = model->HSMHV_pnfalp;
     return(OK);
+  case  HSMHV_MOD_PPTHROU:
+    value->rValue = model->HSMHV_ppthrou;
+    return(OK);
   case  HSMHV_MOD_PVDIFFJ:
     value->rValue = model->HSMHV_pvdiffj;
     return(OK);
@@ -2232,36 +1848,6 @@ int HSMHVmAsk(
     return(OK);
   case  HSMHV_MOD_PVOVER:
     value->rValue = model->HSMHV_pvover;
-    return(OK);
-  case HSMHV_MOD_PJS0D:
-    value->rValue = model->HSMHV_pjs0d;
-    return(OK);
-  case HSMHV_MOD_PJS0SWD:
-    value->rValue = model->HSMHV_pjs0swd;
-    return(OK);
-  case HSMHV_MOD_PNJD:
-    value->rValue = model->HSMHV_pnjd;
-    return(OK);
-  case HSMHV_MOD_PCISBKD:
-    value->rValue = model->HSMHV_pcisbkd;
-    return(OK);
-  case HSMHV_MOD_PVDIFFJD:
-    value->rValue = model->HSMHV_pvdiffjd;
-    return(OK);
-  case HSMHV_MOD_PJS0S:
-    value->rValue = model->HSMHV_pjs0s;
-    return(OK);
-  case HSMHV_MOD_PJS0SWS:
-    value->rValue = model->HSMHV_pjs0sws;
-    return(OK);
-  case HSMHV_MOD_PNJS:
-    value->rValue = model->HSMHV_pnjs;
-    return(OK);
-  case HSMHV_MOD_PCISBKS:
-    value->rValue = model->HSMHV_pcisbks;
-    return(OK);
-  case HSMHV_MOD_PVDIFFJS:
-    value->rValue = model->HSMHV_pvdiffjs;
     return(OK);
 
   case HSMHV_MOD_VGS_MAX:

@@ -11,10 +11,7 @@ libhisimhv1_la_SOURCES = hisimhv.h	\
 			hsmhvdel.c 	\
 			hsmhvdest.c 	\
 			hsmhveval.c	\
-			hsmhveval_dep.h	\
-			hsmhveval_dio.c	\
 			hsmhveval_qover.h	\
-			hsmhveval_rdrift.c	\
 			hsmhvevalenv.h	\
 			hsmhvext.h	\
 			hsmhvgetic.c 	\
@@ -33,8 +30,6 @@ libhisimhv1_la_SOURCES = hisimhv.h	\
 			hsmhvsoachk.c 	\
 			hsmhvtemp.c 	\
 			hsmhvtemp_eval.h \
-			hsmhvtemp_eval_dio.h \
-			hsmhvtemp_eval_rdri.h \
 			hsmhvtrunc.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

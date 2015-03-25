@@ -1,61 +1,19 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhveval_qover.h
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
  released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
-/**********************************************************************
-
-The following source code, and all copyrights, trade secrets or other
-intellectual property rights in and to the source code in its entirety,
-is owned by the Hiroshima University and the STARC organization.
-
-All users need to follow the "HISIM_HV Distribution Statement and
-Copyright Notice" attached to HiSIM_HV model.
-
------HISIM_HV Distribution Statement and Copyright Notice--------------
-
-Software is distributed as is, completely without warranty or service
-support. Hiroshima University or STARC and its employees are not liable
-for the condition or performance of the software.
-
-Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
-
-Hiroshima University and STARC hereby disclaims all implied warranties.
-
-Hiroshima University and STARC grant the users the right to modify, copy,
-and redistribute the software and documentation, both within the user's
-organization and externally, subject to the following restrictions
-
-1. The users agree not to charge for Hiroshima University and STARC code
-itself but may charge for additions, extensions, or support.
-
-2. In any product based on the software, the users agree to acknowledge
-Hiroshima University and STARC that developed the software. This
-acknowledgment shall appear in the product documentation.
-
-3. The users agree to reproduce any copyright notice which appears on
-the software on any copy or modification of such made available
-to others."
-
-Toshimasa Asahara, President, Hiroshima University
-Mitiko Miura-Mattausch, Professor, Hiroshima University
-Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
-*************************************************************************/
 
 /*  Begin HSMHVevalQover */
 
@@ -103,7 +61,7 @@ June 2008 (revised October 2011)
     /*-----------------------------------*
      * QsuLD: total charge = Accumulation | Depletion+inversion
      *-----------------*/
-    if ( VgpLD  < Vgb_fb_LD ){   
+    if (   VgpLD  < Vgb_fb_LD ){   
       /*---------------------------*
        * Accumulation
        *-----------------*/
@@ -136,23 +94,16 @@ June 2008 (revised October 2011)
       Ac3_dVgb = T1 * Ac31_dVgb ;
       Ac3_dT = T1 * Ac31_dT ; 
   
-      if ( Ac4 < Ac3*1.0e-8 ) {
-        Ac1 = 0.5*Ac4/Ac31 ;
-        Ac1_dVxb =  - 0.5*Ac4/Ac3*Ac31_dVxb ;
-        Ac1_dVgb =  - 0.5*Ac4/Ac3*Ac31_dVxb ;
-        Ac1_dT = 0.5*Ac4_dT/Ac31 - 0.5*Ac4/Ac3*Ac31_dT ;
-      } else {
-        Ac2 = sqrt( Ac4 + Ac3 ) ;
-        T1 = 0.5 / Ac2 ;
-        Ac2_dVxb = T1 *  Ac3_dVxb ;
-        Ac2_dVgb = T1 *  Ac3_dVgb ;
-        Ac2_dT = T1 *  ( Ac4_dT + Ac3_dT ); 
+      Ac2 = sqrt( Ac4 + Ac3 ) ;
+      T1 = 0.5 / Ac2 ;
+      Ac2_dVxb = T1 *  Ac3_dVxb ;
+      Ac2_dVgb = T1 *  Ac3_dVgb ;
+      Ac2_dT = T1 *  ( Ac4_dT + Ac3_dT ); 
     
-        Ac1 = -Ac31 + Ac2 ;
-        Ac1_dVxb = Ac2_dVxb -Ac31_dVxb ;
-        Ac1_dVgb = Ac2_dVgb -Ac31_dVgb ;
-        Ac1_dT   = Ac2_dT -Ac31_dT ;
-      }
+      Ac1 = -7.0 * C_SQRT_2 + Ac2 + 9.0 * TY * ( TX - 2.0 ) ;
+      Ac1_dVxb = Ac2_dVxb + 9.0 * TY * TX_dVxb ;
+      Ac1_dVgb = Ac2_dVgb + 9.0 * TY * TX_dVgb ;
+      Ac1_dT = Ac2_dT + 9.0 * ( TY_dT * ( TX - 2.0 ) + TY * TX_dT ) ; 
   
       Acd = pow( Ac1 , C_1o3 ) ;
       T1 = C_1o3 / ( Acd * Acd ) ;
@@ -320,14 +271,14 @@ June 2008 (revised October 2011)
         VgpLD_shift_dVgb = VgpLD_dVgb;
         VgpLD_shift_dVxb = Vxbgmtcl_dVxbgmt;
         VgpLD_shift_dT   = Vxbgmtcl_dT;
-        exp_bVbs = exp( beta * - Vxbgmtcl ) + small;
+        exp_bVbs = exp( beta * - Vxbgmtcl ) + small ;
         exp_bVbs_dVxb = - exp_bVbs * beta * Vxbgmtcl_dVxbgmt;
         exp_bVbs_dT   = - exp_bVbs * (beta_dT*Vxbgmtcl + beta*Vxbgmtcl_dT);
         T0 = here->HSMHV_nin / Nover_func;
         T0_dT = Nin_dT / Nover_func;
         cnst1over = T0 * T0;
         cnst1over_dT = 2.0 * T0 * T0_dT;
-        gamma = cnst1over * exp_bVbs;
+        gamma = cnst1over * exp_bVbs ;
         gamma_dVxb = cnst1over * exp_bVbs_dVxb;
         gamma_dT   = cnst1over_dT * exp_bVbs + cnst1over * exp_bVbs_dT;
      
@@ -360,8 +311,8 @@ June 2008 (revised October 2011)
         psi      += beta*0.1 ;
         psi_dT   += beta_dT*0.1 ;
 
-        psi_B = psi;
-        arg_B = psi*psi/(gamma*T0);
+/*        psi_B = psi;*/
+/*        arg_B = psi*psi/(gamma*T0);*/
         Chi_B = log(gamma*T0 + psi*psi) - log(cnst1over*T0) + beta*Vxbgmtcl;
         Chi_B_dVgb = 2.0*psi*psi_dVgb/ (gamma*T0 + psi*psi);
         Chi_B_dVxb = (gamma_dVxb*T0+2.0*psi*psi_dVxb)/(gamma*T0+psi*psi)
@@ -370,10 +321,10 @@ June 2008 (revised October 2011)
                             - (cnst1over_dT*T0 + cnst1over*T0_dT)/(cnst1over*T0)
                             + beta_dT*Vxbgmtcl + beta*Vxbgmtcl_dT;
         Ps0_iniB      = Chi_B/beta - Vxbgmtcl ;
-        Ps0_iniB_dVgb = Chi_B_dVgb/beta;
+/*        Ps0_iniB_dVgb = Chi_B_dVgb/beta;
         Ps0_iniB_dVxb = Chi_B_dVxb/beta- Vxbgmtcl_dVxbgmt;
         Ps0_iniB_dT   = Chi_B_dT/beta - Chi_B/(beta*beta)*beta_dT - Vxbgmtcl_dT;
-
+*/
         
         /* construction of Ps0LD by taking Ps0_iniB as an upper limit of Ps0_iniA
          *
@@ -522,7 +473,7 @@ June 2008 (revised October 2011)
          *-----------------*/
         if ( flg_conv == 0 ) { 
           fprintf( stderr , 
-                   "*** warning(HiSIM_HV(%s)): Went Over Iteration Maximum (Ps0LD)\n",model->HSMHVmodName ) ;
+                   "*** warning(HiSIM_HV): Went Over Iteration Maximum (Ps0LD)\n" ) ;
           fprintf( stderr , " -Vxbgmtcl = %e   Vgbgmt = %e\n" , -Vxbgmtcl , Vgbgmt ) ;
         } 
 
@@ -626,7 +577,7 @@ June 2008 (revised October 2011)
         fs01_dVgs = Ps0LD_dVgb * fs01_dPs0 ;
         fs01_dT   = Ps0LD_dT * fs01_dPs0 + fs01_dT;
         fs02_dVbs = Ps0LD_dVxb * fs02_dPs0 + fs02_dVbs ;
-        fs02_dVxb = Ps0LD_dVds * fs02_dPs0 ;
+/*        fs02_dVxb = Ps0LD_dVds * fs02_dPs0 ;*/
         fs02_dVgb = Ps0LD_dVgb * fs02_dPs0 ;
         fs02_dT   = Ps0LD_dT * fs02_dPs0 + fs02_dT;
 
@@ -665,9 +616,9 @@ June 2008 (revised October 2011)
     } /* end of Vgbgmt region blocks */
   
     /* convert to source ref. */
-    Ps0LD_dVbs = Ps0LD_dVxb * Vxbgmt_dVbs + Ps0LD_dVgb * Vgbgmt_dVbs ;
+/*    Ps0LD_dVbs = Ps0LD_dVxb * Vxbgmt_dVbs + Ps0LD_dVgb * Vgbgmt_dVbs ;*/
     Ps0LD_dVds = Ps0LD_dVxb * Vxbgmt_dVds + Ps0LD_dVgb * Vgbgmt_dVds ;
-    Ps0LD_dVgs = Ps0LD_dVxb * Vxbgmt_dVgs + Ps0LD_dVgb * Vgbgmt_dVgs ;
+/*    Ps0LD_dVgs = Ps0LD_dVxb * Vxbgmt_dVgs + Ps0LD_dVgb * Vgbgmt_dVgs ;*/
 
     QsuLD_dVbs = QsuLD_dVxb * Vxbgmt_dVbs + QsuLD_dVgb * Vgbgmt_dVbs ;
     QsuLD_dVds = QsuLD_dVxb * Vxbgmt_dVds + QsuLD_dVgb * Vgbgmt_dVds ;

@@ -1,14 +1,14 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvext.h
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &

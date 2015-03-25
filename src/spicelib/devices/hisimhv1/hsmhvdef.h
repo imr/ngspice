@@ -1,61 +1,19 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvdef
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
-/**********************************************************************
-
-The following source code, and all copyrights, trade secrets or other
-intellectual property rights in and to the source code in its entirety,
-is owned by the Hiroshima University and the STARC organization.
-
-All users need to follow the "HISIM_HV Distribution Statement and
-Copyright Notice" attached to HiSIM_HV model.
-
------HISIM_HV Distribution Statement and Copyright Notice--------------
-
-Software is distributed as is, completely without warranty or service
-support. Hiroshima University or STARC and its employees are not liable
-for the condition or performance of the software.
-
-Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
-
-Hiroshima University and STARC hereby disclaims all implied warranties.
-
-Hiroshima University and STARC grant the users the right to modify, copy,
-and redistribute the software and documentation, both within the user's
-organization and externally, subject to the following restrictions
-
-1. The users agree not to charge for Hiroshima University and STARC code
-itself but may charge for additions, extensions, or support.
-
-2. In any product based on the software, the users agree to acknowledge
-Hiroshima University and STARC that developed the software. This
-acknowledgment shall appear in the product documentation.
-
-3. The users agree to reproduce any copyright notice which appears on
-the software on any copy or modification of such made available
-to others."
-
-Toshimasa Asahara, President, Hiroshima University
-Mitiko Miura-Mattausch, Professor, Hiroshima University
-Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
-*************************************************************************/
 
 #ifndef HSMHV
 #define HSMHV
@@ -90,6 +48,10 @@ typedef struct sHSMHVmodelMKSParam {
   double HSMHV_rdvd ;
   double HSMHV_rdvdtemp1 ;
   double HSMHV_rdvdtemp2 ;
+//double HSMHV_muecb0 ;
+//double HSMHV_muecb1 ;
+//double HSMHV_muesr1 ;
+//double HSMHV_mueph1 ;
   double HSMHV_nsubsub ;
   double HSMHV_nsubpsti1 ;
   double HSMHV_muesti1 ;
@@ -112,11 +74,6 @@ typedef struct sHSMHVmodelMKSParam {
   double HSMHV_dly3 ;
   double HSMHV_rth0 ;
   double HSMHV_cth0 ;
-  double HSMHV_rdrmue ; 
-  double HSMHV_rdrvmax ; 
-  double HSMHV_ndepm ;
-  double HSMHV_depvmax ;
-
 } HSMHVmodelMKSParam ;
 
 
@@ -140,7 +97,7 @@ typedef struct sHSMHVbinningParam {
   double HSMHV_sc2 ;
   double HSMHV_sc3 ;
   double HSMHV_pgd1 ;
-//double HSMHV_pgd3 ;
+  double HSMHV_pgd3 ;
   double HSMHV_ndep ;
   double HSMHV_ninv ;
   double HSMHV_muecb0 ;
@@ -192,6 +149,7 @@ typedef struct sHSMHVbinningParam {
   double HSMHV_glkb2 ;
   double HSMHV_nftrp ;
   double HSMHV_nfalp ;
+  double HSMHV_pthrou ;
   double HSMHV_vdiffj ;
   double HSMHV_ibpc1 ;
   double HSMHV_ibpc2 ;
@@ -216,16 +174,6 @@ typedef struct sHSMHVbinningParam {
   /*-----------SHE--------------*/
   double HSMHV_rth ;
   double HSMHV_cth ;
-  double HSMHV_js0d;
-  double HSMHV_js0swd;
-  double HSMHV_njd;
-  double HSMHV_cisbkd;
-  double HSMHV_vdiffjd;
-  double HSMHV_js0s;
-  double HSMHV_js0sws;
-  double HSMHV_njs;
-  double HSMHV_cisbks;
-  double HSMHV_vdiffjs;
   /*-----------------------------*/
 
 } HSMHVbinningParam ;
@@ -235,6 +183,10 @@ typedef struct sHSMHVbinningParam {
 typedef struct sHSMHVhereMKSParam {
   double HSMHV_vmax ;
   double HSMHV_subld2 ;
+//double HSMHV_muecb0 ;
+//double HSMHV_muecb1 ;
+//double HSMHV_muesr1 ;
+//double HSMHV_mueph1 ;
   double HSMHV_ndep ;
   double HSMHV_ninv ;
   double HSMHV_nsubc ;
@@ -417,12 +369,8 @@ typedef struct sHSMHVinstance {
   double HSMHV_dRd_dVdse  ;
   double HSMHV_dRd_dVgse  ;
   double HSMHV_dRd_dVbse  ;
-  double HSMHV_dRd_dVddp  ;
   double HSMHV_dRd_dVsubs ;
   double HSMHV_dRd_dTi    ;
-  double HSMHV_dRd_dVds ;
-  double HSMHV_dRd_dVgs ;
-  double HSMHV_dRd_dVbs ;
   double HSMHV_Rs ; /* different from HSMHV_rs */
   double HSMHV_dRs_dVdse  ;
   double HSMHV_dRs_dVgse  ;
@@ -450,18 +398,7 @@ typedef struct sHSMHVinstance {
   double HSMHV_dIsub_dVgsi ;
   double HSMHV_dIsub_dVbsi ;
   double HSMHV_dIsub_dTi   ;
-  double HSMHV_isubld;
-  double HSMHV_dIsubLD_dVdsi ;
-  double HSMHV_dIsubLD_dVgsi ;
-  double HSMHV_dIsubLD_dVbsi ;
-  double HSMHV_dIsubLD_dTi   ;
-  double HSMHV_dIsubLD_dVddp ;
-  double HSMHV_idsibpc;
-  double HSMHV_dIdsIBPC_dVdsi ;
-  double HSMHV_dIdsIBPC_dVgsi ;
-  double HSMHV_dIdsIBPC_dVbsi ;
-  double HSMHV_dIdsIBPC_dTi   ;
-  double HSMHV_dIdsIBPC_dVddp ;
+  double HSMHV_dIsub_dVdse ;
   /* gidl and gisl current */
   double HSMHV_igidl; /* gate induced drain leakage */
   /* double HSMHV_gigidlgs;	not used */
@@ -625,10 +562,6 @@ typedef struct sHSMHVinstance {
 
 
   /* internal variables */
-  double HSMHV_exptempd ;
-  double HSMHV_exptemps ;
-  double HSMHV_jd_nvtm_invd ;
-  double HSMHV_jd_nvtm_invs ;
   double HSMHV_eg ;
   double HSMHV_beta ;
   double HSMHV_beta_inv ;
@@ -641,9 +574,7 @@ typedef struct sHSMHVinstance {
   double HSMHV_wg ;
   double HSMHV_mueph ;
   double HSMHV_mphn0 ;
-  double HSMHV_depmphn0 ;
   double HSMHV_mphn1 ;
-  double HSMHV_depmphn1 ;
   double HSMHV_muesr ;
   double HSMHV_rdvd ;
   double HSMHV_rsvd ; /* for the reverse mode */
@@ -671,6 +602,7 @@ typedef struct sHSMHVinstance {
   double HSMHV_isbs2 ;
   double HSMHV_vbdt ;
   double HSMHV_vbst ;
+  double HSMHV_exptemp ;
   double HSMHV_wsti ;
   double HSMHV_cnstpgd ;
   /* double HSMHV_ninvp0 ;	not used */
@@ -690,13 +622,13 @@ typedef struct sHSMHVinstance {
   double HSMHV_ddlt ;
   double HSMHV_xsub1 ;
   double HSMHV_xsub2 ;
-  double HSMHV_ibpc1 ;
   double HSMHV_xgate ;
   double HSMHV_xvbs ;
   double HSMHV_vg2const ;
   double HSMHV_wdpl ;
   double HSMHV_wdplp ;
   double HSMHV_cfrng ;
+  double HSMHV_jd_nvtm_inv ;
   double HSMHV_jd_expcd ;
   double HSMHV_jd_expcs ;
   double HSMHV_sqrt_eg ;
@@ -715,58 +647,16 @@ typedef struct sHSMHVinstance {
   double HSMHV_costi0 ;
   double HSMHV_costi0_p2 ;
   double HSMHV_costi1 ;
-  double HSMHV_ptl0;
-  double HSMHV_pt40;
-  double HSMHV_gdl0;
+  double HSMHV_ps0ldinib ;
+  double HSMHV_ps0ldinibs ;
   double HSMHV_rdvdtemp0 ;
   double HSMHV_rthtemp0 ;
   double HSMHV_powratio ;
-
-  double HSMHV_rdrmue ;
-  double HSMHV_rdrvmax ;
-
-  double HSMHV_depvmax ;
-
-  double HSMHV_rdrcx ;
-  double HSMHV_rdrcar ;
-
-  double HSMHV_xpdv ; 
-  double HSMHV_Ps0LD ;
-  double HSMHV_Ps0LD_dVds ;
-  double HSMHV_Ps0LD_dVgs ;
-  double HSMHV_Ps0LD_dVbs ;
-  double HSMHV_Ps0LD_dTi ;
-  double HSMHV_QbuLD ;
-  double HSMHV_QbuLD_dVds ;
-  double HSMHV_QbuLD_dVgs ;
-  double HSMHV_QbuLD_dVbs ;
-  double HSMHV_QbuLD_dTi ;
-
-  double HSMHV_kjunc ;
-  double HSMHV_kdep  ;
-  double HSMHV_Xmax  ;
-  double HSMHV_rdrcxw ;
-  double HSMHV_rdrvmaxw ;
-  double HSMHV_rdrvmaxl ;
-  double HSMHV_rdrmuel ;
 
   double HSMHV_mueph1 ;
   double HSMHV_nsubp;
   double HSMHV_nsubc;
 
-  double HSMHV_Tratio;
-
-  double HSMHV_ndepm ;
-  double HSMHV_Pb2n ;
-  double HSMHV_Vbipn ;
-
-  double HSMHV_rdrbb ;
-
-  int HSMHV_cordrift ;
-
-  double HSMHV_Vdserevz ;
-  double HSMHV_Vdserevz_dVd ;
-  double HSMHV_Vsubsrev ;
 
   HSMHVhereMKSParam hereMKS ; /* unit-converted parameters */
 
@@ -1025,6 +915,9 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   HSMHVinstance * HSMHVinstances;	/* pointer to list of instances 
 				   that have this model */
   IFuid HSMHVmodName;       	/* pointer to the name of this model */
+
+  /* --- end of generic struct GENmodel --- */
+
   int HSMHV_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV_level;               /* level */
   int HSMHV_info;                /* information */
@@ -1056,10 +949,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   int HSMHV_cosym;      /* Symmetry model for HV */
   int HSMHV_cotemp;
   int HSMHV_coldrift;
-  int HSMHV_cordrift;
-  int HSMHV_coerrrep;
-  int HSMHV_codep;
-  int HSMHV_coddlt;
+
 
   double HSMHV_vmax ;
   double HSMHV_vmaxt1 ;
@@ -1086,12 +976,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_ldrift1s ;
   double HSMHV_ldrift2s ;
   double HSMHV_subld1 ;
-  double HSMHV_subld1l ;
-  double HSMHV_subld1lp ;
   double HSMHV_subld2 ;
-  double HSMHV_xpdv ;
-  double HSMHV_xpvdth ;
-  double HSMHV_xpvdthg ;
   double HSMHV_ddltmax ;
   double HSMHV_ddltslp ;
   double HSMHV_ddltict ;
@@ -1143,7 +1028,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_sc4 ;
   double HSMHV_pgd1 ;
   double HSMHV_pgd2 ;
-//double HSMHV_pgd3 ;
+  double HSMHV_pgd3 ;
   double HSMHV_pgd4 ;
   double HSMHV_ndep ;
   double HSMHV_ndepl ;
@@ -1286,6 +1171,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_cit ;
   double HSMHV_falph ;
   double HSMHV_kappa ;  
+  double HSMHV_pthrou ;
   double HSMHV_vdiffj ; 
   double HSMHV_dly1 ;
   double HSMHV_dly2 ;
@@ -1303,23 +1189,15 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_rbsb ;
   /* IBPC */
   double HSMHV_ibpc1 ;
-  double HSMHV_ibpc1l ;
-  double HSMHV_ibpc1lp ;
   double HSMHV_ibpc2 ;
   /* DFM */
   double HSMHV_mphdfm ;
-
-  double HSMHV_ptl, HSMHV_ptp, HSMHV_pt2, HSMHV_ptlp, HSMHV_gdl, HSMHV_gdlp  ;
-
-  double HSMHV_gdld ;
-  double HSMHV_pt4 ;
-  double HSMHV_pt4p ;
 
   double HSMHV_vbsmin ;
   double HSMHV_rdvg11 ;
   double HSMHV_rdvg12 ;
   double HSMHV_rd20 ;
-//double HSMHV_qovsm ; 
+  double HSMHV_qovsm ; 
   double HSMHV_ldrift ; 
   double HSMHV_rd21 ;
   double HSMHV_rd22 ;
@@ -1327,6 +1205,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_rd23 ;
   double HSMHV_rd24 ;
   double HSMHV_rd25 ;
+  double HSMHV_rd26 ;
   double HSMHV_rdvdl ;
   double HSMHV_rdvdlp ;
   double HSMHV_rdvds ;
@@ -1375,94 +1254,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 
 
   double HSMHV_cvdsover ;
-
-  double HSMHV_rdrmue ; 
-  double HSMHV_rdrvmax ; 
-  double HSMHV_rdrmuetmp ; 
-  double HSMHV_ndepm ;
-  double HSMHV_tndep ;
-  double HSMHV_depmue0 ;
-  double HSMHV_depmue1 ;
-  double HSMHV_depmueback0 ;
-  double HSMHV_depmueback1 ;
-  double HSMHV_depvmax ;
-  double HSMHV_depvdsef1 ;
-  double HSMHV_depvdsef2 ;
-  double HSMHV_depmueph0 ;
-  double HSMHV_depmueph1 ;
-  double HSMHV_depbb ;
-  double HSMHV_depleak ;
-  double HSMHV_depeta ;
-  double HSMHV_depvtmp ;
-  double HSMHV_depmuetmp ;
-
-  double HSMHV_isbreak ;
-  double HSMHV_rwell ;
-
-  double HSMHV_rdrvtmp ; 
-  //  double HSMHV_rdrvmaxt1 ; 
-  //  double HSMHV_rdrvmaxt2 ; 
-  double HSMHV_rdrdjunc ; 
-  double HSMHV_rdrcx ; 
-  double HSMHV_rdrcar ; 
-  double HSMHV_rdrdl1 ; 
-  double HSMHV_rdrdl2 ; 
-  double HSMHV_rdrvmaxw ;
-  double HSMHV_rdrvmaxwp ;
-  double HSMHV_rdrvmaxl ;
-  double HSMHV_rdrvmaxlp ;
-  double HSMHV_rdrmuel ;
-  double HSMHV_rdrmuelp ;
-  double HSMHV_qovadd;
-  double HSMHV_rdrqover ;
-  double HSMHV_js0d;
-  double HSMHV_js0swd;
-  double HSMHV_njd;
-  double HSMHV_njswd;
-  double HSMHV_xtid;
-  double HSMHV_cjd;
-  double HSMHV_cjswd;
-  double HSMHV_cjswgd;
-  double HSMHV_mjd;
-  double HSMHV_mjswd;
-  double HSMHV_mjswgd;
-  double HSMHV_pbd;
-  double HSMHV_pbswd;
-  double HSMHV_pbswgd;
-  double HSMHV_xti2d;
-  double HSMHV_cisbd;
-  double HSMHV_cvbd;
-  double HSMHV_ctempd;
-  double HSMHV_cisbkd;
-  double HSMHV_divxd;
-  double HSMHV_vdiffjd;
-  double HSMHV_js0s;
-  double HSMHV_js0sws;
-  double HSMHV_njs;
-  double HSMHV_njsws;
-  double HSMHV_xtis;
-  double HSMHV_cjs;
-  double HSMHV_cjsws;
-  double HSMHV_cjswgs;
-  double HSMHV_mjs;
-  double HSMHV_mjsws;
-  double HSMHV_mjswgs;
-  double HSMHV_pbs;
-  double HSMHV_pbsws;
-  double HSMHV_pbswgs;
-  double HSMHV_xti2s;
-  double HSMHV_cisbs;
-  double HSMHV_cvbs;
-  double HSMHV_ctemps;
-  double HSMHV_cisbks;
-  double HSMHV_divxs;
-  double HSMHV_vdiffjs;
   double HSMHV_shemax;
-  double HSMHV_vgsmin;
-  double HSMHV_gdsleak;
-  double HSMHV_rdrbb;
-  double HSMHV_rdrbbtmp;
-
 
   /* binning parameters */
   double HSMHV_lmin ;
@@ -1491,7 +1283,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_lsc2 ;
   double HSMHV_lsc3 ;
   double HSMHV_lpgd1 ;
-//double HSMHV_lpgd3 ;
+  double HSMHV_lpgd3 ;
   double HSMHV_lndep ;
   double HSMHV_lninv ;
   double HSMHV_lmuecb0 ;
@@ -1543,6 +1335,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_lglkb2 ;
   double HSMHV_lnftrp ;
   double HSMHV_lnfalp ;
+  double HSMHV_lpthrou ;
   double HSMHV_lvdiffj ;
   double HSMHV_libpc1 ;
   double HSMHV_libpc2 ;
@@ -1564,16 +1357,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_lrs ;
   double HSMHV_lrth0 ;
   double HSMHV_lvover ;
-  double HSMHV_ljs0d;
-  double HSMHV_ljs0swd;
-  double HSMHV_lnjd;
-  double HSMHV_lcisbkd;
-  double HSMHV_lvdiffjd;
-  double HSMHV_ljs0s;
-  double HSMHV_ljs0sws;
-  double HSMHV_lnjs;
-  double HSMHV_lcisbks;
-  double HSMHV_lvdiffjs;
 
   /* Width dependence */
   double HSMHV_wvmax ;
@@ -1594,7 +1377,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_wsc2 ;
   double HSMHV_wsc3 ;
   double HSMHV_wpgd1 ;
-//double HSMHV_wpgd3 ;
+  double HSMHV_wpgd3 ;
   double HSMHV_wndep ;
   double HSMHV_wninv ;
   double HSMHV_wmuecb0 ;
@@ -1646,6 +1429,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_wglkb2 ;
   double HSMHV_wnftrp ;
   double HSMHV_wnfalp ;
+  double HSMHV_wpthrou ;
   double HSMHV_wvdiffj ;
   double HSMHV_wibpc1 ;
   double HSMHV_wibpc2 ;
@@ -1667,16 +1451,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_wrs ;
   double HSMHV_wrth0 ;
   double HSMHV_wvover ;
-  double HSMHV_wjs0d;
-  double HSMHV_wjs0swd;
-  double HSMHV_wnjd;
-  double HSMHV_wcisbkd;
-  double HSMHV_wvdiffjd;
-  double HSMHV_wjs0s;
-  double HSMHV_wjs0sws;
-  double HSMHV_wnjs;
-  double HSMHV_wcisbks;
-  double HSMHV_wvdiffjs;
 
   /* Cross-term dependence */
   double HSMHV_pvmax ;
@@ -1697,7 +1471,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_psc2 ;
   double HSMHV_psc3 ;
   double HSMHV_ppgd1 ;
-//double HSMHV_ppgd3 ;
+  double HSMHV_ppgd3 ;
   double HSMHV_pndep ;
   double HSMHV_pninv ;
   double HSMHV_pmuecb0 ;
@@ -1749,6 +1523,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_pglkb2 ;
   double HSMHV_pnftrp ;
   double HSMHV_pnfalp ;
+  double HSMHV_ppthrou ;
   double HSMHV_pvdiffj ;
   double HSMHV_pibpc1 ;
   double HSMHV_pibpc2 ;
@@ -1770,29 +1545,12 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   double HSMHV_prs ;
   double HSMHV_prth0 ;
   double HSMHV_pvover ;
-  double HSMHV_pjs0d;
-  double HSMHV_pjs0swd;
-  double HSMHV_pnjd;
-  double HSMHV_pcisbkd;
-  double HSMHV_pvdiffjd;
-  double HSMHV_pjs0s;
-  double HSMHV_pjs0sws;
-  double HSMHV_pnjs;
-  double HSMHV_pcisbks;
-  double HSMHV_pvdiffjs;
 
   /* internal variables */
-  double HSMHV_exptempd ;
-  double HSMHV_exptemps ;
-  double HSMHV_jd_nvtm_invd ;
-  double HSMHV_jd_nvtm_invs ;
   double HSMHV_vcrit ;
   int HSMHV_flg_qme ;
   double HSMHV_qme12 ;
   double HSMHV_ktnom ;
-
-  int HSMHV_subversion ;
-  int HSMHV_revision ;
 
   double HSMHVvgsMax;
   double HSMHVvgdMax;
@@ -1834,11 +1592,8 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_cosym_Given  :1;      /* Symmetry model for HV */
   unsigned HSMHV_cotemp_Given  :1;
   unsigned HSMHV_coldrift_Given  :1;
-  unsigned HSMHV_cordrift_Given  :1;
-  unsigned HSMHV_coerrrep_Given  :1;
-  unsigned HSMHV_codep_Given  :1;
-  unsigned HSMHV_coddlt_Given  :1;
   unsigned HSMHV_kappa_Given :1;  
+  unsigned HSMHV_pthrou_Given :1;
   unsigned HSMHV_vdiffj_Given :1; 
   unsigned HSMHV_vmax_Given  :1;
   unsigned HSMHV_vmaxt1_Given  :1;
@@ -1865,12 +1620,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_ldrift1s_Given  :1;
   unsigned HSMHV_ldrift2s_Given  :1;
   unsigned HSMHV_subld1_Given  :1;
-  unsigned HSMHV_subld1l_Given  :1;
-  unsigned HSMHV_subld1lp_Given  :1;
   unsigned HSMHV_subld2_Given  :1;
-  unsigned HSMHV_xpdv_Given  :1;
-  unsigned HSMHV_xpvdth_Given  :1;
-  unsigned HSMHV_xpvdthg_Given  :1;
   unsigned HSMHV_ddltmax_Given  :1;
   unsigned HSMHV_ddltslp_Given  :1;
   unsigned HSMHV_ddltict_Given  :1;
@@ -1910,27 +1660,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_parl2_Given  :1;
   unsigned HSMHV_lp_Given  :1;
   unsigned HSMHV_nsubp_Given  :1;
-  unsigned HSMHV_ndepm_Given  :1;
-  unsigned HSMHV_tndep_Given  :1;
-  unsigned HSMHV_depmue0_Given  :1;
-  unsigned HSMHV_depmue1_Given  :1;
-  unsigned HSMHV_depmueback0_Given  :1;
-  unsigned HSMHV_depmueback1_Given  :1;
-  unsigned HSMHV_depleak_Given  :1;
-  unsigned HSMHV_depeta_Given  :1;
-  unsigned HSMHV_depvmax_Given  :1;
-  unsigned HSMHV_depvdsef1_Given  :1;
-  unsigned HSMHV_depvdsef2_Given  :1;
-  unsigned HSMHV_depmueph0_Given  :1;
-  unsigned HSMHV_depmueph1_Given  :1;
-  unsigned HSMHV_depbb_Given  :1;
-  unsigned HSMHV_depvtmp_Given  :1;
-  unsigned HSMHV_depmuetmp_Given  :1;
-
-  unsigned HSMHV_isbreak_Given  :1;
-  unsigned HSMHV_rwell_Given  :1;
-
-
   unsigned HSMHV_nsubp0_Given  :1;
   unsigned HSMHV_nsubwp_Given  :1;
   unsigned HSMHV_scp1_Given  :1;
@@ -1942,6 +1671,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_sc4_Given  :1;
   unsigned HSMHV_pgd1_Given  :1;
   unsigned HSMHV_pgd2_Given  :1;
+  unsigned HSMHV_pgd3_Given  :1;
   unsigned HSMHV_pgd4_Given  :1;
   unsigned HSMHV_ndep_Given  :1;
   unsigned HSMHV_ndepl_Given  :1;
@@ -2092,23 +1822,11 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_rbdb_Given :1;
   unsigned HSMHV_rbsb_Given :1;
   unsigned HSMHV_ibpc1_Given :1;
-  unsigned HSMHV_ibpc1l_Given :1;
-  unsigned HSMHV_ibpc1lp_Given :1;
   unsigned HSMHV_ibpc2_Given :1;
   unsigned HSMHV_mphdfm_Given :1;
-
-  unsigned HSMHV_ptl_Given :1;
-  unsigned HSMHV_ptp_Given :1;
-  unsigned HSMHV_pt2_Given :1;
-  unsigned HSMHV_ptlp_Given :1;
-  unsigned HSMHV_gdl_Given :1;
-  unsigned HSMHV_gdlp_Given :1;
-
-  unsigned HSMHV_gdld_Given :1;
-  unsigned HSMHV_pt4_Given :1;
-  unsigned HSMHV_pt4p_Given :1;
   unsigned HSMHV_rdvg11_Given  :1;
   unsigned HSMHV_rdvg12_Given  :1;
+  unsigned HSMHV_qovsm_Given  :1;
   unsigned HSMHV_ldrift_Given  :1;
   unsigned HSMHV_rd20_Given  :1;
   unsigned HSMHV_rd21_Given  :1;
@@ -2117,6 +1835,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_rd23_Given  :1;
   unsigned HSMHV_rd24_Given  :1;
   unsigned HSMHV_rd25_Given  :1;
+  unsigned HSMHV_rd26_Given  :1;
   unsigned HSMHV_rdvdl_Given  :1;
   unsigned HSMHV_rdvdlp_Given  :1;
   unsigned HSMHV_rdvds_Given  :1;
@@ -2174,78 +1893,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_ddrift_Given  :1;  /* substrate effect */
   unsigned HSMHV_vbisub_Given  :1;  /* substrate effect */
   unsigned HSMHV_nsubsub_Given  :1; /* substrate effect */
-
-  unsigned HSMHV_rdrmue_Given  :1;
-  unsigned HSMHV_rdrvmax_Given  :1;
-  unsigned HSMHV_rdrmuetmp_Given  :1;
-  unsigned HSMHV_myu0_leak_Given  :1;
-  unsigned HSMHV_myu0_leaktmp_Given  :1;
-  unsigned HSMHV_myu0_vmax_Given  :1;
-  unsigned HSMHV_myu0_cotemp1_Given  :1;
-  unsigned HSMHV_myu0_cotemp2_Given  :1;
-
-  unsigned HSMHV_rdrvtmp_Given  :1;
-  unsigned HSMHV_rdrdjunc_Given  :1;
-  unsigned HSMHV_rdrcx_Given  :1;
-  unsigned HSMHV_rdrcar_Given  :1;
-  unsigned HSMHV_rdrdl1_Given  :1;
-  unsigned HSMHV_rdrdl2_Given  :1;
-  unsigned HSMHV_rdrvmaxw_Given  :1;
-  unsigned HSMHV_rdrvmaxwp_Given  :1;
-  unsigned HSMHV_rdrvmaxl_Given  :1;
-  unsigned HSMHV_rdrvmaxlp_Given  :1;
-  unsigned HSMHV_rdrmuel_Given  :1;
-  unsigned HSMHV_rdrmuelp_Given  :1;
-  unsigned HSMHV_qovadd_Given :1;
-  unsigned HSMHV_rdrqover_Given  :1;
-  unsigned HSMHV_js0d_Given :1;
-  unsigned HSMHV_js0swd_Given :1;
-  unsigned HSMHV_njd_Given :1;
-  unsigned HSMHV_njswd_Given :1;
-  unsigned HSMHV_xtid_Given :1;
-  unsigned HSMHV_cjd_Given :1;
-  unsigned HSMHV_cjswd_Given :1;
-  unsigned HSMHV_cjswgd_Given :1;
-  unsigned HSMHV_mjd_Given :1;
-  unsigned HSMHV_mjswd_Given :1;
-  unsigned HSMHV_mjswgd_Given :1;
-  unsigned HSMHV_pbd_Given :1;
-  unsigned HSMHV_pbswd_Given :1;
-  unsigned HSMHV_pbswgd_Given :1;
-  unsigned HSMHV_xti2d_Given :1;
-  unsigned HSMHV_cisbd_Given :1;
-  unsigned HSMHV_cvbd_Given :1;
-  unsigned HSMHV_ctempd_Given :1;
-  unsigned HSMHV_cisbkd_Given :1;
-  unsigned HSMHV_divxd_Given :1;
-  unsigned HSMHV_vdiffjd_Given :1;
-  unsigned HSMHV_js0s_Given :1;
-  unsigned HSMHV_js0sws_Given :1;
-  unsigned HSMHV_njs_Given :1;
-  unsigned HSMHV_njsws_Given :1;
-  unsigned HSMHV_xtis_Given :1;
-  unsigned HSMHV_cjs_Given :1;
-  unsigned HSMHV_cjsws_Given :1;
-  unsigned HSMHV_cjswgs_Given :1;
-  unsigned HSMHV_mjs_Given :1;
-  unsigned HSMHV_mjsws_Given :1;
-  unsigned HSMHV_mjswgs_Given :1;
-  unsigned HSMHV_pbs_Given :1;
-  unsigned HSMHV_pbsws_Given :1;
-  unsigned HSMHV_pbswgs_Given :1;
-  unsigned HSMHV_xti2s_Given :1;
-  unsigned HSMHV_cisbs_Given :1;
-  unsigned HSMHV_cvbs_Given :1;
-  unsigned HSMHV_ctemps_Given :1;
-  unsigned HSMHV_cisbks_Given :1;
-  unsigned HSMHV_divxs_Given :1;
-  unsigned HSMHV_vdiffjs_Given :1;
   unsigned HSMHV_shemax_Given :1;
-  unsigned HSMHV_vgsmin_Given :1;
-  unsigned HSMHV_gdsleak_Given :1;
-  unsigned HSMHV_rdrbb_Given :1;
-  unsigned HSMHV_rdrbbtmp_Given :1;
-
 
   /* binning parameters */
   unsigned HSMHV_lmin_Given :1;
@@ -2274,6 +1922,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_lsc2_Given :1;
   unsigned HSMHV_lsc3_Given :1;
   unsigned HSMHV_lpgd1_Given :1;
+  unsigned HSMHV_lpgd3_Given :1;
   unsigned HSMHV_lndep_Given :1;
   unsigned HSMHV_lninv_Given :1;
   unsigned HSMHV_lmuecb0_Given :1;
@@ -2325,6 +1974,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_lglkb2_Given :1;
   unsigned HSMHV_lnftrp_Given :1;
   unsigned HSMHV_lnfalp_Given :1;
+  unsigned HSMHV_lpthrou_Given :1;
   unsigned HSMHV_lvdiffj_Given :1;
   unsigned HSMHV_libpc1_Given :1;
   unsigned HSMHV_libpc2_Given :1;
@@ -2346,16 +1996,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_lrs_Given :1;
   unsigned HSMHV_lrth0_Given :1;
   unsigned HSMHV_lvover_Given :1;
-  unsigned HSMHV_ljs0d_Given :1;
-  unsigned HSMHV_ljs0swd_Given :1;
-  unsigned HSMHV_lnjd_Given :1;
-  unsigned HSMHV_lcisbkd_Given :1;
-  unsigned HSMHV_lvdiffjd_Given :1;
-  unsigned HSMHV_ljs0s_Given :1;
-  unsigned HSMHV_ljs0sws_Given :1;
-  unsigned HSMHV_lnjs_Given :1;
-  unsigned HSMHV_lcisbks_Given :1;
-  unsigned HSMHV_lvdiffjs_Given :1;
 
   /* Width dependence */
   unsigned HSMHV_wvmax_Given :1;
@@ -2376,6 +2016,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_wsc2_Given :1;
   unsigned HSMHV_wsc3_Given :1;
   unsigned HSMHV_wpgd1_Given :1;
+  unsigned HSMHV_wpgd3_Given :1;
   unsigned HSMHV_wndep_Given :1;
   unsigned HSMHV_wninv_Given :1;
   unsigned HSMHV_wmuecb0_Given :1;
@@ -2427,6 +2068,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_wglkb2_Given :1;
   unsigned HSMHV_wnftrp_Given :1;
   unsigned HSMHV_wnfalp_Given :1;
+  unsigned HSMHV_wpthrou_Given :1;
   unsigned HSMHV_wvdiffj_Given :1;
   unsigned HSMHV_wibpc1_Given :1;
   unsigned HSMHV_wibpc2_Given :1;
@@ -2448,16 +2090,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_wrs_Given :1;
   unsigned HSMHV_wrth0_Given :1;
   unsigned HSMHV_wvover_Given :1;
-  unsigned HSMHV_wjs0d_Given :1;
-  unsigned HSMHV_wjs0swd_Given :1;
-  unsigned HSMHV_wnjd_Given :1;
-  unsigned HSMHV_wcisbkd_Given :1;
-  unsigned HSMHV_wvdiffjd_Given :1;
-  unsigned HSMHV_wjs0s_Given :1;
-  unsigned HSMHV_wjs0sws_Given :1;
-  unsigned HSMHV_wnjs_Given :1;
-  unsigned HSMHV_wcisbks_Given :1;
-  unsigned HSMHV_wvdiffjs_Given :1;
 
   /* Cross-term dependence */
   unsigned HSMHV_pvmax_Given :1;
@@ -2478,6 +2110,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_psc2_Given :1;
   unsigned HSMHV_psc3_Given :1;
   unsigned HSMHV_ppgd1_Given :1;
+  unsigned HSMHV_ppgd3_Given :1;
   unsigned HSMHV_pndep_Given :1;
   unsigned HSMHV_pninv_Given :1;
   unsigned HSMHV_pmuecb0_Given :1;
@@ -2529,6 +2162,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_pglkb2_Given :1;
   unsigned HSMHV_pnftrp_Given :1;
   unsigned HSMHV_pnfalp_Given :1;
+  unsigned HSMHV_ppthrou_Given :1;
   unsigned HSMHV_pvdiffj_Given :1;
   unsigned HSMHV_pibpc1_Given :1;
   unsigned HSMHV_pibpc2_Given :1;
@@ -2550,23 +2184,13 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
   unsigned HSMHV_prs_Given :1;
   unsigned HSMHV_prth0_Given :1;
   unsigned HSMHV_pvover_Given :1;
-  unsigned HSMHV_pjs0d_Given :1;
-  unsigned HSMHV_pjs0swd_Given :1;
-  unsigned HSMHV_pnjd_Given :1;
-  unsigned HSMHV_pcisbkd_Given :1;
-  unsigned HSMHV_pvdiffjd_Given :1;
-  unsigned HSMHV_pjs0s_Given :1;
-  unsigned HSMHV_pjs0sws_Given :1;
-  unsigned HSMHV_pnjs_Given :1;
-  unsigned HSMHV_pcisbks_Given :1;
-  unsigned HSMHV_pvdiffjs_Given :1;
 
-  unsigned HSMHVvgsMaxGiven  :1;
-  unsigned HSMHVvgdMaxGiven  :1;
-  unsigned HSMHVvgbMaxGiven  :1;
-  unsigned HSMHVvdsMaxGiven  :1;
-  unsigned HSMHVvbsMaxGiven  :1;
-  unsigned HSMHVvbdMaxGiven  :1;
+  unsigned  HSMHVvgsMaxGiven  :1;
+  unsigned  HSMHVvgdMaxGiven  :1;
+  unsigned  HSMHVvgbMaxGiven  :1;
+  unsigned  HSMHVvdsMaxGiven  :1;
+  unsigned  HSMHVvbsMaxGiven  :1;
+  unsigned  HSMHVvbdMaxGiven  :1;
 
 } HSMHVmodel;
 
@@ -2608,10 +2232,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_COSYM   37    /* Symmery model for HV */
 #define HSMHV_MOD_COTEMP  38
 #define HSMHV_MOD_COLDRIFT 39
-#define HSMHV_MOD_CORDRIFT 40
-#define HSMHV_MOD_COERRREP 44
-#define HSMHV_MOD_CODEP    45
-#define HSMHV_MOD_CODDLT   46
 /* device parameters */
 #define HSMHV_COSELFHEAT  49
 #define HSMHV_COSUBNODE   50
@@ -2687,12 +2307,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_LDRIFT1S  324
 #define HSMHV_MOD_LDRIFT2S  325
 #define HSMHV_MOD_SUBLD1    321
-#define HSMHV_MOD_SUBLD1L   329
-#define HSMHV_MOD_SUBLD1LP  330
 #define HSMHV_MOD_SUBLD2    322
-#define HSMHV_MOD_XPDV      326
-#define HSMHV_MOD_XPVDTH    327
-#define HSMHV_MOD_XPVDTHG   328
 #define HSMHV_MOD_DDLTMAX   421 /* Vdseff */
 #define HSMHV_MOD_DDLTSLP   422 /* Vdseff */
 #define HSMHV_MOD_DDLTICT   423 /* Vdseff */
@@ -2794,35 +2409,17 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_PBSW      176
 #define HSMHV_MOD_PBSWG     177
 #define HSMHV_MOD_TPOLY     179
-/* #define HSMHV_MOD_TPOLYLD   	not used */
+/* #define HSMHV_MOD_TPOLYLD   477	not used */
 #define HSMHV_MOD_LP        180
 #define HSMHV_MOD_NSUBP     181
 #define HSMHV_MOD_NSUBP0    182
 #define HSMHV_MOD_NSUBWP    183
-#define HSMHV_MOD_NDEPM     600 
-#define HSMHV_MOD_TNDEP     601
-#define HSMHV_MOD_DEPMUE0 605
-#define HSMHV_MOD_DEPMUE1 606
-#define HSMHV_MOD_DEPMUEBACK0 607
-#define HSMHV_MOD_DEPMUEBACK1 608
-#define HSMHV_MOD_DEPVMAX 609
-#define HSMHV_MOD_DEPBB 610
-#define HSMHV_MOD_DEPVDSEF1 611
-#define HSMHV_MOD_DEPVDSEF2 612
-#define HSMHV_MOD_DEPMUEPH0 613
-#define HSMHV_MOD_DEPMUEPH1 614
-#define HSMHV_MOD_DEPLEAK   615
-#define HSMHV_MOD_DEPETA    616
-#define HSMHV_MOD_DEPVTMP   617
-#define HSMHV_MOD_DEPMUETMP 618
-#define HSMHV_MOD_ISBREAK   619
-#define HSMHV_MOD_RWELL     620
 #define HSMHV_MOD_SCP1      184
 #define HSMHV_MOD_SCP2      185
 #define HSMHV_MOD_SCP3      186
 #define HSMHV_MOD_PGD1      187
 #define HSMHV_MOD_PGD2      188
-//#define HSMHV_MOD_PGD3      
+#define HSMHV_MOD_PGD3      189
 #define HSMHV_MOD_PGD4      190
 #define HSMHV_MOD_CLM1      191
 #define HSMHV_MOD_CLM2      192
@@ -2884,7 +2481,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_BS1       245
 #define HSMHV_MOD_BS2       246
 #define HSMHV_MOD_KAPPA     251
-//#define HSMHV_MOD_PTHROU    253
+#define HSMHV_MOD_PTHROU    253
 #define HSMHV_MOD_VDIFFJ    254
 #define HSMHV_MOD_DLY1      255
 #define HSMHV_MOD_DLY2      256
@@ -2919,21 +2516,8 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_SLGLP     311
 #define HSMHV_MOD_SUB1LP    312
 #define HSMHV_MOD_IBPC1     404
-#define HSMHV_MOD_IBPC1L    331
-#define HSMHV_MOD_IBPC1LP   332
 #define HSMHV_MOD_IBPC2     405
 #define HSMHV_MOD_MPHDFM    409
-
-#define HSMHV_MOD_PTL       530
-#define HSMHV_MOD_PTP       531
-#define HSMHV_MOD_PT2       532
-#define HSMHV_MOD_PTLP      533
-#define HSMHV_MOD_GDL       534
-#define HSMHV_MOD_GDLP      535
-
-#define HSMHV_MOD_GDLD      536
-#define HSMHV_MOD_PT4       537
-#define HSMHV_MOD_PT4P      538
 #define HSMHV_MOD_RDVG11    424
 #define HSMHV_MOD_RDVG12    425
 #define HSMHV_MOD_RTH0      432
@@ -2953,8 +2537,8 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_VBISUB    484 /* substrate effect */
 #define HSMHV_MOD_NSUBSUB   485 /* substrate effect */
 
-//#define HSMHV_MOD_QOVSM     323
-//#define HSMHV_MOD_LDRIFT    458
+#define HSMHV_MOD_QOVSM     323
+#define HSMHV_MOD_LDRIFT    458
 #define HSMHV_MOD_RD20      447 
 #define HSMHV_MOD_RD21      441 
 #define HSMHV_MOD_RD22      442 
@@ -2962,6 +2546,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_RD23      443 
 #define HSMHV_MOD_RD24      444 
 #define HSMHV_MOD_RD25      445 
+#define HSMHV_MOD_RD26      446 
 #define HSMHV_MOD_RDVDL     448 
 #define HSMHV_MOD_RDVDLP    449 
 #define HSMHV_MOD_RDVDS     450 
@@ -2988,77 +2573,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 
 
 #define HSMHV_MOD_CVDSOVER  480
-
-#define HSMHV_MOD_RDRMUE    520 
-#define HSMHV_MOD_RDRVMAX   521 
-#define HSMHV_MOD_RDRMUETMP 522 
-#define HSMHV_MOD_M0LEAK    524 
-#define HSMHV_MOD_M0LEAKTMP 525 
-#define HSMHV_MOD_LEAKVMAX  543 
-#define HSMHV_MOD_M0TEMP1   551 
-#define HSMHV_MOD_M0TEMP2   553 
-
-#define HSMHV_MOD_RDRVTMP   523 
-#define HSMHV_MOD_RDRDJUNC  527 
-#define HSMHV_MOD_RDRCX     528 
-#define HSMHV_MOD_RDRCAR    529 
-#define HSMHV_MOD_RDRDL1    540 
-#define HSMHV_MOD_RDRDL2    541 
-#define HSMHV_MOD_RDRVMAXW  544
-#define HSMHV_MOD_RDRVMAXWP 545
-#define HSMHV_MOD_RDRVMAXL  546
-#define HSMHV_MOD_RDRVMAXLP 547
-#define HSMHV_MOD_RDRMUEL   548
-#define HSMHV_MOD_RDRMUELP  549
-#define HSMHV_MOD_RDRQOVER  552
-#define HSMHV_MOD_QOVADD      338
-#define HSMHV_MOD_JS0D        100
-#define HSMHV_MOD_JS0SWD      150
-#define HSMHV_MOD_NJD         153
-#define HSMHV_MOD_NJSWD       189
-#define HSMHV_MOD_XTID        194
-#define HSMHV_MOD_CJD         196
-#define HSMHV_MOD_CJSWD       197
-#define HSMHV_MOD_CJSWGD      247
-#define HSMHV_MOD_MJD         252
-#define HSMHV_MOD_MJSWD       253
-#define HSMHV_MOD_MJSWGD      264
-#define HSMHV_MOD_PBD         265
-#define HSMHV_MOD_PBSWD       266
-#define HSMHV_MOD_PBSWDG      267
-#define HSMHV_MOD_XTI2D       268
-#define HSMHV_MOD_CISBD       269
-#define HSMHV_MOD_CVBD        270
-#define HSMHV_MOD_CTEMPD      271
-#define HSMHV_MOD_CISBKD      272
-#define HSMHV_MOD_DIVXD       274
-#define HSMHV_MOD_VDIFFJD     275
-#define HSMHV_MOD_JS0S        276
-#define HSMHV_MOD_JS0SWS      277
-#define HSMHV_MOD_NJS         278
-#define HSMHV_MOD_NJSWS       279
-#define HSMHV_MOD_XTIS        280
-#define HSMHV_MOD_CJS         288
-#define HSMHV_MOD_CJSSW       289
-#define HSMHV_MOD_CJSWGS      291
-#define HSMHV_MOD_MJS         293
-#define HSMHV_MOD_MJSWS       298
-#define HSMHV_MOD_MJSWGS      299
-#define HSMHV_MOD_PBS         300
-#define HSMHV_MOD_PBSWS       302
-#define HSMHV_MOD_PBSWSG      323
-#define HSMHV_MOD_XTI2S       333
-#define HSMHV_MOD_CISBS       334
-#define HSMHV_MOD_CVBS        335
-#define HSMHV_MOD_CTEMPS      336
-#define HSMHV_MOD_CISBKS      337
-#define HSMHV_MOD_DIVXS       339
-#define HSMHV_MOD_VDIFFJS     340
-#define HSMHV_MOD_SHEMAX      501
-#define HSMHV_MOD_VGSMIN      502
-#define HSMHV_MOD_GDSLEAK     511
-#define HSMHV_MOD_RDRBB       273
-#define HSMHV_MOD_RDRBBTMP    602
+#define HSMHV_MOD_SHEMAX      100
 
 /* binning parameters */
 #define HSMHV_MOD_LMIN       1000
@@ -3087,7 +2602,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_LSC2       1127
 #define HSMHV_MOD_LSC3       1128
 #define HSMHV_MOD_LPGD1      1187
-//#define HSMHV_MOD_LPGD3      1189
+#define HSMHV_MOD_LPGD3      1189
 #define HSMHV_MOD_LNDEP      1129
 #define HSMHV_MOD_LNINV      1130
 #define HSMHV_MOD_LMUECB0    1131
@@ -3139,7 +2654,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_LGLKB2     1219
 #define HSMHV_MOD_LNFTRP     1258
 #define HSMHV_MOD_LNFALP     1259
-//#define HSMHV_MOD_LPTHROU    1253
+#define HSMHV_MOD_LPTHROU    1253
 #define HSMHV_MOD_LVDIFFJ    1254
 #define HSMHV_MOD_LIBPC1     1404
 #define HSMHV_MOD_LIBPC2     1405
@@ -3161,16 +2676,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_LRS        1398
 #define HSMHV_MOD_LRTH0      1432
 #define HSMHV_MOD_LVOVER     1199
-#define HSMHV_MOD_LJS0D       345
-#define HSMHV_MOD_LJS0SWD     370
-#define HSMHV_MOD_LNJD        372
-#define HSMHV_MOD_LCISBKD     386
-#define HSMHV_MOD_LVDIFFJD    387
-#define HSMHV_MOD_LJS0S       388
-#define HSMHV_MOD_LJS0SWS     395
-#define HSMHV_MOD_LNJS        396
-#define HSMHV_MOD_LCISBKS     397
-#define HSMHV_MOD_LVDIFFJS    400
 
 /* Width dependence */
 #define HSMHV_MOD_WVMAX      2100
@@ -3191,7 +2696,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_WSC2       2127
 #define HSMHV_MOD_WSC3       2128
 #define HSMHV_MOD_WPGD1      2187
-//#define HSMHV_MOD_WPGD3      2189
+#define HSMHV_MOD_WPGD3      2189
 #define HSMHV_MOD_WNDEP      2129
 #define HSMHV_MOD_WNINV      2130
 #define HSMHV_MOD_WMUECB0    2131
@@ -3243,7 +2748,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_WGLKB2     2219
 #define HSMHV_MOD_WNFTRP     2258
 #define HSMHV_MOD_WNFALP     2259
-//#define HSMHV_MOD_WPTHROU    2253
+#define HSMHV_MOD_WPTHROU    2253
 #define HSMHV_MOD_WVDIFFJ    2254
 #define HSMHV_MOD_WIBPC1     2404
 #define HSMHV_MOD_WIBPC2     2405
@@ -3265,16 +2770,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_WRS        2398
 #define HSMHV_MOD_WRTH0      2432
 #define HSMHV_MOD_WVOVER     2199
-#define HSMHV_MOD_WJS0D       401
-#define HSMHV_MOD_WJS0SWD     435
-#define HSMHV_MOD_WNJD        440
-#define HSMHV_MOD_WCISBKD     446
-#define HSMHV_MOD_WVDIFFJD    459
-#define HSMHV_MOD_WJS0S       460
-#define HSMHV_MOD_WJS0SWS     467
-#define HSMHV_MOD_WNJS        468
-#define HSMHV_MOD_WCISBKS     469
-#define HSMHV_MOD_WVDIFFJS    477
 
 /* Cross-term dependence */
 #define HSMHV_MOD_PVMAX      3100
@@ -3295,7 +2790,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_PSC2       3127
 #define HSMHV_MOD_PSC3       3128
 #define HSMHV_MOD_PPGD1      3187
-//#define HSMHV_MOD_PPGD3      3189
+#define HSMHV_MOD_PPGD3      3189
 #define HSMHV_MOD_PNDEP      3129
 #define HSMHV_MOD_PNINV      3130
 #define HSMHV_MOD_PMUECB0    3131
@@ -3347,7 +2842,7 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_PGLKB2     3219
 #define HSMHV_MOD_PNFTRP     3258
 #define HSMHV_MOD_PNFALP     3259
-//#define HSMHV_MOD_PPTHROU    3253
+#define HSMHV_MOD_PPTHROU    3253
 #define HSMHV_MOD_PVDIFFJ    3254
 #define HSMHV_MOD_PIBPC1     3404
 #define HSMHV_MOD_PIBPC2     3405
@@ -3369,16 +2864,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_PRS        3398
 #define HSMHV_MOD_PRTH0      3432
 #define HSMHV_MOD_PVOVER     3199
-#define HSMHV_MOD_PJS0D       479
-#define HSMHV_MOD_PJS0SWD     486
-#define HSMHV_MOD_PNJD        487
-#define HSMHV_MOD_PCISBKD     488
-#define HSMHV_MOD_PVDIFFJD    489
-#define HSMHV_MOD_PJS0S       495
-#define HSMHV_MOD_PJS0SWS     496
-#define HSMHV_MOD_PNJS        497
-#define HSMHV_MOD_PCISBKS     498
-#define HSMHV_MOD_PVDIFFJS    499
 
 /* device requests */
 #define HSMHV_DNODE          341
@@ -3442,8 +2927,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHV_MOD_GBMIN      394
 
 #define HSMHV_ISUB           410
-#define HSMHV_ISUBLD         426
-#define HSMHV_IDSIBPC        427
 #define HSMHV_IGIDL          411
 #define HSMHV_IGISL          412
 #define HSMHV_IGD            413

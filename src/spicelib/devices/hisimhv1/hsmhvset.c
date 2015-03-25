@@ -1,61 +1,19 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvset.c
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
-/**********************************************************************
-
-The following source code, and all copyrights, trade secrets or other
-intellectual property rights in and to the source code in its entirety,
-is owned by the Hiroshima University and the STARC organization.
-
-All users need to follow the "HISIM_HV Distribution Statement and
-Copyright Notice" attached to HiSIM_HV model.
-
------HISIM_HV Distribution Statement and Copyright Notice--------------
-
-Software is distributed as is, completely without warranty or service
-support. Hiroshima University or STARC and its employees are not liable
-for the condition or performance of the software.
-
-Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
-
-Hiroshima University and STARC hereby disclaims all implied warranties.
-
-Hiroshima University and STARC grant the users the right to modify, copy,
-and redistribute the software and documentation, both within the user's
-organization and externally, subject to the following restrictions
-
-1. The users agree not to charge for Hiroshima University and STARC code
-itself but may charge for additions, extensions, or support.
-
-2. In any product based on the software, the users agree to acknowledge
-Hiroshima University and STARC that developed the software. This
-acknowledgment shall appear in the product documentation.
-
-3. The users agree to reproduce any copyright notice which appears on
-the software on any copy or modification of such made available
-to others."
-
-Toshimasa Asahara, President, Hiroshima University
-Mitiko Miura-Mattausch, Professor, Hiroshima University
-Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
-*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/smpdefs.h"
@@ -74,45 +32,28 @@ June 2008 (revised October 2011)
   + model->HSMHV_l##param / Lbin + model->HSMHV_w##param / Wbin \
   + model->HSMHV_p##param / LWbin ;
 
-#define RANGECHECK(param, min, max, pname)          \
-  if ( model->HSMHV_coerrrep && ((param) < (min) || (param) > (max)) ) { \
-    printf("warning(HiSIM_HV(%s)): (%s = %g) range [%g , %g].\n", model->HSMHVmodName,\
-           (pname), (param), (min*1.0), (max*1.0) );            \
+#define RANGECHECK(param, min, max, pname)                              \
+  if ( (param) < (min) || (param) > (max) ) {             \
+    printf("warning(HiSIMHV): The model/instance parameter %s (= %e) must be in the range [%e , %e].\n", \
+           (pname), (param), (double) (min), (double) (max) );                     \
   }
-#define RANGERESET(param, min, max, pname)              \
-  if ( model->HSMHV_coerrrep && ((param) > (max)) ) {   \
-    printf("reset(HiSIM_HV(%s)): (%s = %g to %g) range [%g , %g].\n", model->HSMHVmodName,\
-           (pname), (param), (max*1.0), (min*1.0), (max*1.0) );     \
-  } \
-  if ( model->HSMHV_coerrrep && ((param) < (min)) ) {   \
-    printf("reset(HiSIM_HV(%s)): (%s = %g to %g) range [%g , %g].\n",model->HSMHVmodName, \
-           (pname), (param), (min*1.0), (min*1.0), (max*1.0) );     \
-  } \
-  if ( (param) < (min) ) {  param  = (min); }    \
-  if ( (param) > (max) ) {  param  = (max); }            
-#define MINCHECK(param, min, pname)                     \
-  if ( model->HSMHV_coerrrep && ((param) < (min)) ) {   \
-    printf("warning(HiSIM_HV(%s)): (%s = %g) range [%g , %g].\n",model->HSMHVmodName, \
-           (pname), (param), (min*1.0), (min*1.0) );                   \
+#define MINCHECK(param, min, pname)                              \
+  if ( (param) < (min) ) {             \
+    printf("warning(HiSIMHV): The model/instance parameter %s (= %e) must be greater than %e.\n", \
+           (pname), (param), (min) );                     \
   }
-#define MINRESET(param, min, pname)                     \
-  if ( model->HSMHV_coerrrep && ((param) < (min)) ) {   \
-    printf("reset(HiSIM_HV(%s)): (%s = %g to %g) range [%g , %g].\n",model->HSMHVmodName,    \
-           (pname), (param), (min*1.0), (min*1.0), (min*1.0) );            \
-  } \
-  if ( (param) < (min) ) {  param  = (min); } 
 
 int HSMHVsetup(
-     SMPmatrix *matrix,
-     GENmodel *inModel,
-     CKTcircuit *ckt,
+     register SMPmatrix *matrix,
+     register GENmodel *inModel,
+     register CKTcircuit *ckt,
      int *states)
      /* load the HSMHV device structure with those pointers needed later 
       * for fast matrix loading 
       */
 {
-  HSMHVmodel *model = (HSMHVmodel*)inModel;
-  HSMHVinstance *here;
+  register HSMHVmodel *model = (HSMHVmodel*)inModel;
+  register HSMHVinstance *here;
   int error=0 ;
   CKTnode *tmp;
   double T2, Rd, Rs ;
@@ -121,7 +62,6 @@ int HSMHVsetup(
   HSMHVhereMKSParam  *hereMKS ;
   double LG=0.0, WG =0.0, Lgate =0.0, Wgate =0.0 ;
   double Lbin=0.0, Wbin=0.0, LWbin =0.0; /* binning */
-  
   
   /*  loop through all the HSMHV device models */
   for ( ;model != NULL ;model = model->HSMHVnextModel ) {
@@ -134,23 +74,17 @@ int HSMHVsetup(
     model->HSMHV_noise = 1;
 
     if ( !model->HSMHV_version_Given) {
-      model->HSMHV_version = "2.20" ;
-      printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHVmodName);
-      model->HSMHV_subversion = 2 ;
+        model->HSMHV_version = "1.24" ;
+       printf("          1.24 is selected for VERSION. (default) \n");
     } else {
-      if (strcmp(model->HSMHV_version,"2.20") == 0 ) {
-        printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHVmodName);
-        model->HSMHV_subversion = 2 ;
-      } else if (strcmp(model->HSMHV_version,"2.2") == 0 ) {
-        printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHVmodName);
-        model->HSMHV_subversion = 2 ;
+      if (strcmp(model->HSMHV_version,"1.24") != 0 ) {
+       model->HSMHV_version = "1.24" ;
+       printf("          1.24 is only available for VERSION. \n");
+       printf("          1.24 is selected for VERSION. (default) \n");
       } else {
-        printf("warning(HiSIM_HV(%s)): invalid version %s is specified, reseted 2.20 \n",
-        model->HSMHVmodName,model->HSMHV_version);
-        model->HSMHV_subversion = 2 ;
+       printf("           %s is selected for VERSION \n", model->HSMHV_version);
       }
     }
-    
 
     if ( !model->HSMHV_corsrd_Given     ) model->HSMHV_corsrd     = 3 ;
     if ( !model->HSMHV_corg_Given       ) model->HSMHV_corg       = 0 ;
@@ -172,34 +106,14 @@ int HSMHVsetup(
     if ( !model->HSMHV_corbnet_Given    ) model->HSMHV_corbnet    = 0 ; 
     else if ( model->HSMHV_corbnet != 0 && model->HSMHV_corbnet != 1 ) {
       model->HSMHV_corbnet = 0;
-      printf("warning(HiSIM_HV(%s)): CORBNET has been set to its default value: %d.\n", 
-      model->HSMHVmodName,model->HSMHV_corbnet);
+      printf("warning(HiSIMHV): CORBNET has been set to its default value: %d.\n", model->HSMHV_corbnet);
     }
     if ( !model->HSMHV_coselfheat_Given ) model->HSMHV_coselfheat = 0 ; /* Self-heating model */
     if ( !model->HSMHV_cosubnode_Given  ) model->HSMHV_cosubnode  = 0 ; 
     if ( !model->HSMHV_cosym_Given ) model->HSMHV_cosym = 0 ;           /* Symmetry model for HV */
     if ( !model->HSMHV_cotemp_Given ) model->HSMHV_cotemp = 0 ;
-    if ( !model->HSMHV_cordrift_Given ) model->HSMHV_cordrift = 1 ;
-    model->HSMHV_coldrift = 1 ;
-    if (  model->HSMHV_coldrift_Given ) {
-      fprintf(stderr,"warning(HiSIM_HV(%s)): COLDRIFT has been inactivated ( Ldrift = LDRIFT1 + LDRIFT2 ).\n",model->HSMHVmodName);
-    }
-    if ( !model->HSMHV_coerrrep_Given ) model->HSMHV_coerrrep = 1 ;
-    if ( !model->HSMHV_codep_Given ) model->HSMHV_codep = 0 ;
-    if ( model->HSMHV_codep_Given ) {
-      if( model->HSMHV_codep != 0 && model->HSMHV_codep != 1 ) {
-        printf("warning(HiSIM_HV(%s)): Invalid model parameter CODEP  (= %d) was specified, resetted to 0.\n",model->HSMHVmodName,model->HSMHV_codep);
-        model->HSMHV_codep = 0 ;
-      }
-    }
+    if ( !model->HSMHV_coldrift_Given ) model->HSMHV_coldrift = 0 ;
 
-    if ( !model->HSMHV_coddlt_Given ) model->HSMHV_coddlt = 1 ;
-    if ( model->HSMHV_coddlt_Given ) {
-      if( model->HSMHV_coddlt != 0 && model->HSMHV_coddlt != 1 ) {
-        printf("warning(HiSIM_HV(%s)): Invalid model parameter CODDLT  (= %d) was specified, resetted to 1.\n",model->HSMHVmodName,model->HSMHV_coddlt);
-        model->HSMHV_coddlt = 1 ;
-      }
-    }
 
     if ( !model->HSMHV_vmax_Given    ) model->HSMHV_vmax    = 1.0e7 ;
     if ( !model->HSMHV_vmaxt1_Given  ) model->HSMHV_vmaxt1  = 0.0 ;
@@ -207,15 +121,14 @@ int HSMHVsetup(
     if ( !model->HSMHV_bgtmp1_Given  ) model->HSMHV_bgtmp1  = 90.25e-6 ;
     if ( !model->HSMHV_bgtmp2_Given  ) model->HSMHV_bgtmp2  = 1.0e-7 ;
     if ( !model->HSMHV_eg0_Given     ) model->HSMHV_eg0     = 1.1785e0 ;
-    if ( !model->HSMHV_tox_Given     ) model->HSMHV_tox     = 7e-9 ;
-    if ( !model->HSMHV_xld_Given     ) model->HSMHV_xld     = 0 ;
-    if ( !model->HSMHV_lover_Given   ) model->HSMHV_lover   = 30e-9 ;
-//  if ( !model->HSMHV_lovers_Given  ) model->HSMHV_lovers  = 30e-9 ;
-//  if (  model->HSMHV_lover_Given   ) model->HSMHV_lovers  = model->HSMHV_lover ;
+    if ( !model->HSMHV_tox_Given     ) model->HSMHV_tox     = 30e-9 ;
+    if ( !model->HSMHV_xld_Given     ) model->HSMHV_xld     = 0.0 ;
+    if ( !model->HSMHV_lovers_Given  ) model->HSMHV_lovers  = 30e-9 ;
+    if (  model->HSMHV_lover_Given   ) model->HSMHV_lovers  = model->HSMHV_lover ;
     if ( !model->HSMHV_rdov11_Given  ) model->HSMHV_rdov11   = 0.0 ;
     if ( !model->HSMHV_rdov12_Given  ) model->HSMHV_rdov12   = 1.0 ;
     if ( !model->HSMHV_rdov13_Given  ) model->HSMHV_rdov13   = 1.0 ;
-    if ( !model->HSMHV_rdslp1_Given  ) model->HSMHV_rdslp1   = 0.0 ;
+    if ( !model->HSMHV_rdslp1_Given  ) model->HSMHV_rdslp1   = 1.0 ;
     if ( !model->HSMHV_rdict1_Given  ) model->HSMHV_rdict1   = 1.0 ;
     if ( !model->HSMHV_rdslp2_Given  ) model->HSMHV_rdslp2   = 1.0 ;
     if ( !model->HSMHV_rdict2_Given  ) model->HSMHV_rdict2   = 0.0 ;
@@ -225,18 +138,13 @@ int HSMHVsetup(
     if ( !model->HSMHV_ldrift1s_Given ) model->HSMHV_ldrift1s  = 0.0 ;
     if ( !model->HSMHV_ldrift2s_Given ) model->HSMHV_ldrift2s  = 1.0e-6 ;
     if ( !model->HSMHV_subld1_Given  ) model->HSMHV_subld1  = 0.0 ;
-    if ( !model->HSMHV_subld1l_Given  ) model->HSMHV_subld1l  = 0.0 ;
-    if ( !model->HSMHV_subld1lp_Given  ) model->HSMHV_subld1lp  = 1.0 ;
     if ( !model->HSMHV_subld2_Given  ) model->HSMHV_subld2  = 0.0 ;
-    if ( !model->HSMHV_xpdv_Given    ) model->HSMHV_xpdv    = 0.0 ;
-    if ( !model->HSMHV_xpvdth_Given  ) model->HSMHV_xpvdth  = 0.0 ;
-    if ( !model->HSMHV_xpvdthg_Given ) model->HSMHV_xpvdthg = 0.0 ;
-    if ( !model->HSMHV_ddltmax_Given ) model->HSMHV_ddltmax = 10  ;  /* Vdseff */
+    if ( !model->HSMHV_ddltmax_Given ) model->HSMHV_ddltmax = 10.0 ;  /* Vdseff */
     if ( !model->HSMHV_ddltslp_Given ) model->HSMHV_ddltslp = 0.0 ;  /* Vdseff */
     if ( !model->HSMHV_ddltict_Given ) model->HSMHV_ddltict = 10.0 ; /* Vdseff */
     if ( !model->HSMHV_vfbover_Given ) model->HSMHV_vfbover = -0.5 ;
-    if ( !model->HSMHV_nover_Given   ) model->HSMHV_nover   = 3e16 ;
-    if ( !model->HSMHV_novers_Given  ) model->HSMHV_novers  = 1e17 ;
+    if ( !model->HSMHV_nover_Given   ) model->HSMHV_nover   = 3.0e16 ;
+    if ( !model->HSMHV_novers_Given  ) model->HSMHV_novers  = 0.0 ;
     if ( !model->HSMHV_xwd_Given     ) model->HSMHV_xwd     = 0.0 ;
     if ( !model->HSMHV_xwdc_Given    ) model->HSMHV_xwdc    = model->HSMHV_xwd ;
 
@@ -260,28 +168,29 @@ int HSMHVsetup(
 
     if ( !model->HSMHV_xqy_Given    ) model->HSMHV_xqy   = 0.0 ;
     if ( !model->HSMHV_xqy1_Given   ) model->HSMHV_xqy1  = 0.0 ;
-    if ( !model->HSMHV_xqy2_Given   ) model->HSMHV_xqy2  = 2.0 ;
+    if ( !model->HSMHV_xqy2_Given   ) model->HSMHV_xqy2  = 0.0 ;
     if ( !model->HSMHV_rs_Given     ) model->HSMHV_rs    = 0.0 ;
-    if ( !model->HSMHV_rd_Given     ) model->HSMHV_rd    = 0.0 ;
+    if ( !model->HSMHV_rd_Given     ) model->HSMHV_rd    = 5.0e-3 ;
     if ( !model->HSMHV_vfbc_Given   ) model->HSMHV_vfbc  = -1.0 ;
     if ( !model->HSMHV_vbi_Given    ) model->HSMHV_vbi   = 1.1 ;
-    if ( !model->HSMHV_nsubc_Given  ) model->HSMHV_nsubc = 3.0e17 ;
+    if ( !model->HSMHV_nsubc_Given  ) model->HSMHV_nsubc = 5.0e17 ;
     if ( !model->HSMHV_parl2_Given  ) model->HSMHV_parl2 = 10.0e-9 ;
-    if ( !model->HSMHV_lp_Given     ) model->HSMHV_lp    = 15e-9 ;
+    if ( !model->HSMHV_lp_Given     ) model->HSMHV_lp    = 0.0 ;
     if ( !model->HSMHV_nsubp_Given  ) model->HSMHV_nsubp = 1.0e18 ;
-   
+
     if ( !model->HSMHV_nsubp0_Given ) model->HSMHV_nsubp0 = 0.0 ;
     if ( !model->HSMHV_nsubwp_Given ) model->HSMHV_nsubwp = 1.0 ;
 
-    if ( !model->HSMHV_scp1_Given  ) model->HSMHV_scp1 = 0.0 ;
+    if ( !model->HSMHV_scp1_Given  ) model->HSMHV_scp1 = 1.0 ;
     if ( !model->HSMHV_scp2_Given  ) model->HSMHV_scp2 = 0.0 ;
     if ( !model->HSMHV_scp3_Given  ) model->HSMHV_scp3 = 0.0 ;
-    if ( !model->HSMHV_sc1_Given   ) model->HSMHV_sc1  = 0.0 ;
+    if ( !model->HSMHV_sc1_Given   ) model->HSMHV_sc1  = 1.0 ;
     if ( !model->HSMHV_sc2_Given   ) model->HSMHV_sc2  = 0.0 ;
     if ( !model->HSMHV_sc3_Given   ) model->HSMHV_sc3  = 0.0 ;
     if ( !model->HSMHV_sc4_Given   ) model->HSMHV_sc4  = 0.0 ;
     if ( !model->HSMHV_pgd1_Given  ) model->HSMHV_pgd1 = 0.0 ;
     if ( !model->HSMHV_pgd2_Given  ) model->HSMHV_pgd2 = 1.0 ;
+    if ( !model->HSMHV_pgd3_Given  ) model->HSMHV_pgd3 = 0.8 ;
     if ( !model->HSMHV_pgd4_Given  ) model->HSMHV_pgd4 = 0.0 ;
 
     if ( !model->HSMHV_ndep_Given   ) model->HSMHV_ndep   = 1.0 ;
@@ -292,7 +201,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_muecb1_Given ) model->HSMHV_muecb1 = 100.0 ;
     if ( !model->HSMHV_mueph0_Given ) model->HSMHV_mueph0 = 300.0e-3 ;
     if ( !model->HSMHV_mueph1_Given ) {
-      if (model->HSMHV_type == NMOS) model->HSMHV_mueph1 = 20.0e3 ;
+      if (model->HSMHV_type == NMOS) model->HSMHV_mueph1 = 25.0e3 ;
       else model->HSMHV_mueph1 = 9.0e3 ;
     }
     if ( !model->HSMHV_muephw_Given ) model->HSMHV_muephw = 0.0 ;
@@ -307,7 +216,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_wvth0_Given ) model->HSMHV_wvth0 = 0.0 ;
 
     if ( !model->HSMHV_muesr0_Given ) model->HSMHV_muesr0 = 2.0 ;
-    if ( !model->HSMHV_muesr1_Given ) model->HSMHV_muesr1 = 6.0e14 ;
+    if ( !model->HSMHV_muesr1_Given ) model->HSMHV_muesr1 = 1.0e16 ;
     if ( !model->HSMHV_muesrl_Given ) model->HSMHV_muesrl = 0.0 ;
     if ( !model->HSMHV_muesrw_Given ) model->HSMHV_muesrw = 0.0 ;
     if ( !model->HSMHV_mueswp_Given ) model->HSMHV_mueswp = 1.0 ;
@@ -320,8 +229,8 @@ int HSMHVsetup(
       else model->HSMHV_bb = 1.0 ;
     }
 
-    if ( !model->HSMHV_sub1_Given  ) model->HSMHV_sub1  = 10 ;
-    if ( !model->HSMHV_sub2_Given  ) model->HSMHV_sub2  = 25 ;
+    if ( !model->HSMHV_sub1_Given  ) model->HSMHV_sub1  = 10.0 ;
+    if ( !model->HSMHV_sub2_Given  ) model->HSMHV_sub2  = 25.0 ;
     if ( !model->HSMHV_svgs_Given  ) model->HSMHV_svgs  = 0.8e0 ;
     if ( !model->HSMHV_svbs_Given  ) model->HSMHV_svbs  = 0.5e0 ;
     if ( !model->HSMHV_svbsl_Given ) model->HSMHV_svbsl = 0e0 ;
@@ -343,7 +252,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_slglp_Given  ) model->HSMHV_slglp  = 1.0 ;
     if ( !model->HSMHV_sub1lp_Given ) model->HSMHV_sub1lp = 1.0 ; 
 
-    if ( !model->HSMHV_nsti_Given      ) model->HSMHV_nsti      = 5.0e17 ;
+    if ( !model->HSMHV_nsti_Given      ) model->HSMHV_nsti      = 1.0e17 ;
     if ( !model->HSMHV_wsti_Given      ) model->HSMHV_wsti      = 0.0 ;
     if ( !model->HSMHV_wstil_Given     ) model->HSMHV_wstil     = 0.0 ;
     if ( !model->HSMHV_wstilp_Given    ) model->HSMHV_wstilp    = 1.0 ;
@@ -361,7 +270,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_nsubpsti3_Given ) model->HSMHV_nsubpsti3 = 1.0 ;
 
     if ( !model->HSMHV_lpext_Given ) model->HSMHV_lpext = 1.0e-50 ;
-    if ( !model->HSMHV_npext_Given ) model->HSMHV_npext = 5.0e17 ;
+    if ( !model->HSMHV_npext_Given ) model->HSMHV_npext = 1.0e17 ;
     if ( !model->HSMHV_scp21_Given ) model->HSMHV_scp21 = 0.0 ;
     if ( !model->HSMHV_scp22_Given ) model->HSMHV_scp22 = 0.0 ;
     if ( !model->HSMHV_bs1_Given   ) model->HSMHV_bs1   = 0.0 ;
@@ -388,9 +297,10 @@ int HSMHVsetup(
     if ( !model->HSMHV_cvb_Given   ) model->HSMHV_cvb   = 0.0e0 ;
     if ( !model->HSMHV_ctemp_Given ) model->HSMHV_ctemp = 0.0e0 ;
     if ( !model->HSMHV_cisbk_Given ) model->HSMHV_cisbk = 0.0e0 ;
+    if ( !model->HSMHV_cvbk_Given  ) model->HSMHV_cvbk  = 0.0e0 ;
     if ( !model->HSMHV_divx_Given  ) model->HSMHV_divx  = 0.0e0 ;
 
-    if ( !model->HSMHV_clm1_Given  ) model->HSMHV_clm1 = 50e-3 ;
+    if ( !model->HSMHV_clm1_Given  ) model->HSMHV_clm1 = 0.7 ;
     if ( !model->HSMHV_clm2_Given  ) model->HSMHV_clm2 = 2.0 ;
     if ( !model->HSMHV_clm3_Given  ) model->HSMHV_clm3 = 1.0 ;
     if ( !model->HSMHV_clm5_Given   ) model->HSMHV_clm5   = 1.0 ;
@@ -401,7 +311,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_nsubcw_Given    ) model->HSMHV_nsubcw  = 0.0 ;
     if ( !model->HSMHV_nsubcwp_Given   ) model->HSMHV_nsubcwp = 1.0 ;
     if ( !model->HSMHV_qme1_Given   ) model->HSMHV_qme1   = 0.0 ;
-    if ( !model->HSMHV_qme2_Given   ) model->HSMHV_qme2   = 2.0 ;
+    if ( !model->HSMHV_qme2_Given   ) model->HSMHV_qme2   = 0.0 ;
     if ( !model->HSMHV_qme3_Given   ) model->HSMHV_qme3   = 0.0 ;
 
     if ( !model->HSMHV_vovers_Given  ) model->HSMHV_vovers  = 0.0 ;
@@ -423,8 +333,8 @@ int HSMHVsetup(
 
     if ( !model->HSMHV_glpart1_Given ) model->HSMHV_glpart1 = 0.5 ;
     if ( !model->HSMHV_glksd1_Given  ) model->HSMHV_glksd1  = 1.0e-15 ;
-    if ( !model->HSMHV_glksd2_Given  ) model->HSMHV_glksd2  = 1e3 ;
-    if ( !model->HSMHV_glksd3_Given  ) model->HSMHV_glksd3  = -1e3 ;
+    if ( !model->HSMHV_glksd2_Given  ) model->HSMHV_glksd2  = 5e6 ;
+    if ( !model->HSMHV_glksd3_Given  ) model->HSMHV_glksd3  = -5e6 ;
     if ( !model->HSMHV_glkb1_Given   ) model->HSMHV_glkb1   = 5e-16 ;
     if ( !model->HSMHV_glkb2_Given   ) model->HSMHV_glkb2   = 1e0 ;
     if ( !model->HSMHV_glkb3_Given   ) model->HSMHV_glkb3   = 0e0 ;
@@ -442,6 +352,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_cgso_Given  ) model->HSMHV_cgso  = 0.0 ;
     if ( !model->HSMHV_cgdo_Given  ) model->HSMHV_cgdo  = 0.0 ;
 
+    if ( !model->HSMHV_pthrou_Given ) model->HSMHV_pthrou = 0.0 ;
 
     if ( !model->HSMHV_vdiffj_Given ) model->HSMHV_vdiffj = 0.6e-3 ;
     if ( !model->HSMHV_dly1_Given   ) model->HSMHV_dly1   = 100.0e-12 ;
@@ -456,26 +367,14 @@ int HSMHVsetup(
     if ( !model->HSMHV_rbpb_Given   ) model->HSMHV_rbpb  = 50.0e0 ;
     if ( !model->HSMHV_rbpd_Given   ) model->HSMHV_rbpd  = 50.0e0 ;
     if ( !model->HSMHV_rbps_Given   ) model->HSMHV_rbps  = 50.0e0 ;
-    if ( !model->HSMHV_rbdb_Given   ) model->HSMHV_rbdb  = 50.0e0 ; /* not used in this version */
-    if ( !model->HSMHV_rbsb_Given   ) model->HSMHV_rbsb  = 50.0e0 ; /* not used in this version */
+    if ( !model->HSMHV_rbdb_Given   ) model->HSMHV_rbdb  = 50.0e0 ;
+    if ( !model->HSMHV_rbsb_Given   ) model->HSMHV_rbsb  = 50.0e0 ;
 
     if ( !model->HSMHV_ibpc1_Given  ) model->HSMHV_ibpc1 = 0.0 ;
-    if ( !model->HSMHV_ibpc1l_Given  ) model->HSMHV_ibpc1l = 0.0 ;
-    if ( !model->HSMHV_ibpc1lp_Given  ) model->HSMHV_ibpc1lp = -1.0 ;
     if ( !model->HSMHV_ibpc2_Given  ) model->HSMHV_ibpc2 = 0.0 ;
 
     if ( !model->HSMHV_mphdfm_Given ) model->HSMHV_mphdfm = -0.3 ;
 
-    if ( !model->HSMHV_ptl_Given  ) model->HSMHV_ptl  = 0.0 ;
-    if ( !model->HSMHV_ptp_Given  ) model->HSMHV_ptp  = 3.5 ;
-    if ( !model->HSMHV_pt2_Given  ) model->HSMHV_pt2  = 0.0 ;
-    if ( !model->HSMHV_ptlp_Given ) model->HSMHV_ptlp = 1.0 ;
-    if ( !model->HSMHV_gdl_Given  ) model->HSMHV_gdl  = 0.0 ;
-    if ( !model->HSMHV_gdlp_Given ) model->HSMHV_gdlp = 0.0 ;
-
-    if ( !model->HSMHV_gdld_Given ) model->HSMHV_gdld = 0.0 ;
-    if ( !model->HSMHV_pt4_Given  ) model->HSMHV_pt4  = 0.0 ;
-    if ( !model->HSMHV_pt4p_Given ) model->HSMHV_pt4p = 1.0 ;
     if ( !model->HSMHV_rdvg11_Given ) model->HSMHV_rdvg11  = 0.0 ;
     if ( !model->HSMHV_rdvg12_Given ) model->HSMHV_rdvg12  = 100.0 ;
     if ( !model->HSMHV_rth0_Given   ) model->HSMHV_rth0    = 0.1 ;    /* Self-heating model */
@@ -495,6 +394,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_xldld_Given    ) model->HSMHV_xldld    = 1.0e-6 ;
     if ( !model->HSMHV_xwdld_Given    ) model->HSMHV_xwdld    = model->HSMHV_xwd ;
     if ( !model->HSMHV_rdvd_Given     ) model->HSMHV_rdvd     = 7.0e-2 ;
+    if ( !model->HSMHV_qovsm_Given    ) model->HSMHV_qovsm    = 0.2 ;
 
     if ( !model->HSMHV_rd20_Given    ) model->HSMHV_rd20    = 0.0 ;
     if ( !model->HSMHV_rd21_Given    ) model->HSMHV_rd21    = 1.0 ;
@@ -538,106 +438,12 @@ int HSMHVsetup(
     if ( !model->HSMHV_prattemp1_Given  ) model->HSMHV_prattemp1   = 0.0 ;
     if ( !model->HSMHV_prattemp2_Given  ) model->HSMHV_prattemp2   = 0.0 ;
 
-    if ( !model->HSMHV_rdvsub_Given   ) model->HSMHV_rdvsub     = 1.0 ;    /* [-] substrate effect */
-    if ( !model->HSMHV_rdvdsub_Given  ) model->HSMHV_rdvdsub    = 0.3 ;    /* [-] substrate effect */
-    if ( !model->HSMHV_ddrift_Given   ) model->HSMHV_ddrift     = 1.0e-6 ; /* [m] substrate effect */
-    if ( !model->HSMHV_vbisub_Given   ) model->HSMHV_vbisub     = 0.7 ;    /* [V] substrate effect */
-    if ( !model->HSMHV_nsubsub_Given  ) model->HSMHV_nsubsub    = 1.0e15 ; /* [cm^-3] substrate effect */
-
-    if ( !model->HSMHV_rdrmue_Given    ) model->HSMHV_rdrmue    = 1.0e3 ; 
-    if ( !model->HSMHV_rdrvmax_Given   ) model->HSMHV_rdrvmax   = 3.0e7 ; 
-    if ( !model->HSMHV_rdrmuetmp_Given ) model->HSMHV_rdrmuetmp = 0.0 ; 
-
-    if ( !model->HSMHV_ndepm_Given )     model->HSMHV_ndepm = 1e17 ;
-    if ( !model->HSMHV_tndep_Given )     model->HSMHV_tndep = 0.2e-6 ;
-    if ( !model->HSMHV_depmue0_Given ) model->HSMHV_depmue0 = 1.0e3 ;
-    if ( !model->HSMHV_depmue1_Given ) model->HSMHV_depmue1 = 0.0 ;
-    if ( !model->HSMHV_depmueback0_Given ) model->HSMHV_depmueback0 = 1.0e2 ;
-    if ( !model->HSMHV_depmueback1_Given ) model->HSMHV_depmueback1 = 0.0 ;
-    if ( !model->HSMHV_depleak_Given ) model->HSMHV_depleak = 0.5 ;
-    if ( !model->HSMHV_depeta_Given ) model->HSMHV_depeta = 0.0 ;
-    if ( !model->HSMHV_depvmax_Given ) model->HSMHV_depvmax = 3.0e7 ;
-    if ( !model->HSMHV_depvdsef1_Given ) model->HSMHV_depvdsef1 = 2.0 ;
-    if ( !model->HSMHV_depvdsef2_Given ) model->HSMHV_depvdsef2 = 0.5 ;
-    if ( !model->HSMHV_depmueph0_Given ) model->HSMHV_depmueph0 = 0.3 ;
-    if ( !model->HSMHV_depmueph1_Given ) model->HSMHV_depmueph1 = 5.0e3 ;
-    if ( !model->HSMHV_depbb_Given ) model->HSMHV_depbb = 1.0 ;
-    if ( !model->HSMHV_depvtmp_Given ) model->HSMHV_depvtmp = 0.0 ;
-    if ( !model->HSMHV_depmuetmp_Given ) model->HSMHV_depmuetmp = 1.5 ;
-
-    if ( model->HSMHV_codep ) {
-      if ( !model->HSMHV_copprv_Given ) model->HSMHV_copprv = 0 ;
-      if ( !model->HSMHV_vfbc_Given   ) model->HSMHV_vfbc   = -0.2 ;
-      if ( !model->HSMHV_nsubc_Given  ) model->HSMHV_nsubc  = 5.0e16 ;
-      if ( !model->HSMHV_lp_Given     ) model->HSMHV_lp     = 0.0 ;
-      if ( !model->HSMHV_nsubp_Given  ) model->HSMHV_nsubp  = 1.0e17 ;
-      if ( !model->HSMHV_muesr1_Given ) model->HSMHV_muesr1 = 5.0e15 ;
-    }
-
-    if ( !model->HSMHV_isbreak_Given ) model->HSMHV_isbreak = 1.0e-12 ;
-    if ( !model->HSMHV_rwell_Given ) model->HSMHV_rwell = 1.0e3 ;
-
-    if ( !model->HSMHV_rdrvtmp_Given   ) model->HSMHV_rdrvtmp   = 0.0 ; 
-    if ( !model->HSMHV_rdrdjunc_Given  ) model->HSMHV_rdrdjunc  = 1.0e-6 ; 
-    if ( !model->HSMHV_rdrcx_Given     ) model->HSMHV_rdrcx     = 0.0 ; 
-    if ( !model->HSMHV_rdrcar_Given    ) model->HSMHV_rdrcar    = 1.0e-8 ;
-    if ( !model->HSMHV_rdrdl1_Given    ) model->HSMHV_rdrdl1    = 0.0 ; 
-    if ( !model->HSMHV_rdrdl2_Given    ) model->HSMHV_rdrdl2    = 0.0 ; 
-    if ( !model->HSMHV_rdrvmaxw_Given  ) model->HSMHV_rdrvmaxw  = 0.0 ; 
-    if ( !model->HSMHV_rdrvmaxwp_Given ) model->HSMHV_rdrvmaxwp = 1.0 ; 
-    if ( !model->HSMHV_rdrvmaxl_Given  ) model->HSMHV_rdrvmaxl  = 0.0 ; 
-    if ( !model->HSMHV_rdrvmaxlp_Given ) model->HSMHV_rdrvmaxlp = 1.0 ; 
-    if ( !model->HSMHV_rdrmuel_Given   ) model->HSMHV_rdrmuel   = 0.0 ; 
-    if ( !model->HSMHV_rdrmuelp_Given  ) model->HSMHV_rdrmuelp  = 1.0 ; 
-    if ( !model->HSMHV_rdrqover_Given  ) model->HSMHV_rdrqover  = 1E5 ; 
-    if ( !model->HSMHV_qovadd_Given    ) model->HSMHV_qovadd    = 0.0 ;
-    if ( !model->HSMHV_js0d_Given      ) model->HSMHV_js0d      = model->HSMHV_js0 ;
-    if ( !model->HSMHV_js0swd_Given    ) model->HSMHV_js0swd    = model->HSMHV_js0sw ;
-    if ( !model->HSMHV_njd_Given       ) model->HSMHV_njd       = model->HSMHV_nj ;
-    if ( !model->HSMHV_njswd_Given     ) model->HSMHV_njswd     = model->HSMHV_njsw ;
-    if ( !model->HSMHV_xtid_Given      ) model->HSMHV_xtid      = model->HSMHV_xti ;
-    if ( !model->HSMHV_cjd_Given       ) model->HSMHV_cjd       = model->HSMHV_cj ;
-    if ( !model->HSMHV_cjswd_Given     ) model->HSMHV_cjswd     = model->HSMHV_cjsw ;
-    if ( !model->HSMHV_cjswgd_Given    ) model->HSMHV_cjswgd    = model->HSMHV_cjswg ;
-    if ( !model->HSMHV_mjd_Given       ) model->HSMHV_mjd       = model->HSMHV_mj ;
-    if ( !model->HSMHV_mjswd_Given     ) model->HSMHV_mjswd     = model->HSMHV_mjsw ;
-    if ( !model->HSMHV_mjswgd_Given    ) model->HSMHV_mjswgd    = model->HSMHV_mjswg ;
-    if ( !model->HSMHV_pbd_Given       ) model->HSMHV_pbd       = model->HSMHV_pb ;
-    if ( !model->HSMHV_pbswd_Given     ) model->HSMHV_pbswd     = model->HSMHV_pbsw ;
-    if ( !model->HSMHV_pbswgd_Given    ) model->HSMHV_pbswgd    = model->HSMHV_pbswg ;
-    if ( !model->HSMHV_xti2d_Given     ) model->HSMHV_xti2d     = model->HSMHV_xti2 ;
-    if ( !model->HSMHV_cisbd_Given     ) model->HSMHV_cisbd     = model->HSMHV_cisb ;
-    if ( !model->HSMHV_cvbd_Given      ) model->HSMHV_cvbd      = model->HSMHV_cvb ;
-    if ( !model->HSMHV_ctempd_Given    ) model->HSMHV_ctempd    = model->HSMHV_ctemp ;
-    if ( !model->HSMHV_cisbkd_Given    ) model->HSMHV_cisbkd    = model->HSMHV_cisbk ;
-    if ( !model->HSMHV_divxd_Given     ) model->HSMHV_divxd     = model->HSMHV_divx ;
-    if ( !model->HSMHV_vdiffjd_Given   ) model->HSMHV_vdiffjd   = model->HSMHV_vdiffj ;
-    if ( !model->HSMHV_js0s_Given      ) model->HSMHV_js0s      = model->HSMHV_js0d ;
-    if ( !model->HSMHV_js0sws_Given    ) model->HSMHV_js0sws    = model->HSMHV_js0swd ;
-    if ( !model->HSMHV_njs_Given       ) model->HSMHV_njs       = model->HSMHV_njd ;
-    if ( !model->HSMHV_njsws_Given     ) model->HSMHV_njsws     = model->HSMHV_njswd ;
-    if ( !model->HSMHV_xtis_Given      ) model->HSMHV_xtis      = model->HSMHV_xtid ;
-    if ( !model->HSMHV_cjs_Given       ) model->HSMHV_cjs       = model->HSMHV_cjd ;
-    if ( !model->HSMHV_cjsws_Given     ) model->HSMHV_cjsws     = model->HSMHV_cjswd ;
-    if ( !model->HSMHV_cjswgs_Given    ) model->HSMHV_cjswgs    = model->HSMHV_cjswgd ;
-    if ( !model->HSMHV_mjs_Given       ) model->HSMHV_mjs       = model->HSMHV_mjd ;
-    if ( !model->HSMHV_mjsws_Given     ) model->HSMHV_mjsws     = model->HSMHV_mjswd ;
-    if ( !model->HSMHV_mjswgs_Given    ) model->HSMHV_mjswgs    = model->HSMHV_mjswgd ;
-    if ( !model->HSMHV_pbs_Given       ) model->HSMHV_pbs       = model->HSMHV_pbd ;
-    if ( !model->HSMHV_pbsws_Given     ) model->HSMHV_pbsws     = model->HSMHV_pbswd ;
-    if ( !model->HSMHV_pbswgs_Given    ) model->HSMHV_pbswgs    = model->HSMHV_pbswgd ;
-    if ( !model->HSMHV_xti2s_Given     ) model->HSMHV_xti2s     = model->HSMHV_xti2d ;
-    if ( !model->HSMHV_cisbs_Given     ) model->HSMHV_cisbs     = model->HSMHV_cisbd ;
-    if ( !model->HSMHV_cvbs_Given      ) model->HSMHV_cvbs      = model->HSMHV_cvbd ;
-    if ( !model->HSMHV_ctemps_Given    ) model->HSMHV_ctemps    = model->HSMHV_ctempd ;
-    if ( !model->HSMHV_cisbks_Given    ) model->HSMHV_cisbks    = model->HSMHV_cisbkd ;
-    if ( !model->HSMHV_divxs_Given     ) model->HSMHV_divxs     = model->HSMHV_divxd ;
-    if ( !model->HSMHV_vdiffjs_Given   ) model->HSMHV_vdiffjs   = model->HSMHV_vdiffjd ;
+    if ( !model->HSMHV_rdvsub_Given   ) model->HSMHV_rdvsub   = 1.0 ;    /* [-] substrate effect */
+    if ( !model->HSMHV_rdvdsub_Given  ) model->HSMHV_rdvdsub  = 0.3 ;    /* [-] substrate effect */
+    if ( !model->HSMHV_ddrift_Given   ) model->HSMHV_ddrift   = 1.0e-6 ; /* [m] substrate effect */
+    if ( !model->HSMHV_vbisub_Given   ) model->HSMHV_vbisub   = 0.7 ;    /* [V] substrate effect */
+    if ( !model->HSMHV_nsubsub_Given  ) model->HSMHV_nsubsub  = 1.0e15 ; /* [cm^-3] substrate effect */
     if ( !model->HSMHV_shemax_Given    ) model->HSMHV_shemax    = 500 ;
-    if ( !model->HSMHV_vgsmin_Given    ) model->HSMHV_vgsmin    = -100 * model->HSMHV_type ;
-    if ( !model->HSMHV_gdsleak_Given   ) model->HSMHV_gdsleak   = 0.0 ;
-    if ( !model->HSMHV_rdrbb_Given     ) model->HSMHV_rdrbb     = 1 ;
-    if ( !model->HSMHV_rdrbbtmp_Given  ) model->HSMHV_rdrbbtmp     = 0 ;
 
     /* binning parameters */
     if ( !model->HSMHV_lmin_Given ) model->HSMHV_lmin = 0.0 ;
@@ -666,6 +472,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_lsc2_Given ) model->HSMHV_lsc2 = 0.0 ;
     if ( !model->HSMHV_lsc3_Given ) model->HSMHV_lsc3 = 0.0 ;
     if ( !model->HSMHV_lpgd1_Given ) model->HSMHV_lpgd1 = 0.0 ;
+    if ( !model->HSMHV_lpgd3_Given ) model->HSMHV_lpgd3 = 0.0 ;
     if ( !model->HSMHV_lndep_Given ) model->HSMHV_lndep = 0.0 ;
     if ( !model->HSMHV_lninv_Given ) model->HSMHV_lninv = 0.0 ;
     if ( !model->HSMHV_lmuecb0_Given ) model->HSMHV_lmuecb0 = 0.0 ;
@@ -717,6 +524,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_lglkb2_Given ) model->HSMHV_lglkb2 = 0.0 ;
     if ( !model->HSMHV_lnftrp_Given ) model->HSMHV_lnftrp = 0.0 ;
     if ( !model->HSMHV_lnfalp_Given ) model->HSMHV_lnfalp = 0.0 ;
+    if ( !model->HSMHV_lpthrou_Given ) model->HSMHV_lpthrou = 0.0 ;
     if ( !model->HSMHV_lvdiffj_Given ) model->HSMHV_lvdiffj = 0.0 ;
     if ( !model->HSMHV_libpc1_Given ) model->HSMHV_libpc1 = 0.0 ;
     if ( !model->HSMHV_libpc2_Given ) model->HSMHV_libpc2 = 0.0 ;
@@ -738,16 +546,6 @@ int HSMHVsetup(
     if ( !model->HSMHV_lrs_Given ) model->HSMHV_lrs = 0.0 ;
     if ( !model->HSMHV_lrth0_Given ) model->HSMHV_lrth0 = 0.0 ;
     if ( !model->HSMHV_lvover_Given ) model->HSMHV_lvover = 0.0 ;
-    if ( !model->HSMHV_ljs0d_Given     ) model->HSMHV_ljs0d     = model->HSMHV_ljs0 ;
-    if ( !model->HSMHV_ljs0swd_Given   ) model->HSMHV_ljs0swd   = model->HSMHV_ljs0sw ;
-    if ( !model->HSMHV_lnjd_Given      ) model->HSMHV_lnjd      = model->HSMHV_lnj ;
-    if ( !model->HSMHV_lcisbkd_Given   ) model->HSMHV_lcisbkd   = model->HSMHV_lcisbk ;
-    if ( !model->HSMHV_lvdiffjd_Given  ) model->HSMHV_lvdiffjd  = model->HSMHV_lvdiffj ;
-    if ( !model->HSMHV_ljs0s_Given     ) model->HSMHV_ljs0s     = model->HSMHV_ljs0d ;
-    if ( !model->HSMHV_ljs0sws_Given   ) model->HSMHV_ljs0sws   = model->HSMHV_ljs0swd ;
-    if ( !model->HSMHV_lnjs_Given      ) model->HSMHV_lnjs      = model->HSMHV_lnjd ;
-    if ( !model->HSMHV_lcisbks_Given   ) model->HSMHV_lcisbks   = model->HSMHV_lcisbkd ;
-    if ( !model->HSMHV_lvdiffjs_Given  ) model->HSMHV_lvdiffjs  = model->HSMHV_lvdiffjd ;
 
     /* Width dependence */
     if ( !model->HSMHV_wvmax_Given ) model->HSMHV_wvmax = 0.0 ;
@@ -768,6 +566,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_wsc2_Given ) model->HSMHV_wsc2 = 0.0 ;
     if ( !model->HSMHV_wsc3_Given ) model->HSMHV_wsc3 = 0.0 ;
     if ( !model->HSMHV_wpgd1_Given ) model->HSMHV_wpgd1 = 0.0 ;
+    if ( !model->HSMHV_wpgd3_Given ) model->HSMHV_wpgd3 = 0.0 ;
     if ( !model->HSMHV_wndep_Given ) model->HSMHV_wndep = 0.0 ;
     if ( !model->HSMHV_wninv_Given ) model->HSMHV_wninv = 0.0 ;
     if ( !model->HSMHV_wmuecb0_Given ) model->HSMHV_wmuecb0 = 0.0 ;
@@ -819,6 +618,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_wglkb2_Given ) model->HSMHV_wglkb2 = 0.0 ;
     if ( !model->HSMHV_wnftrp_Given ) model->HSMHV_wnftrp = 0.0 ;
     if ( !model->HSMHV_wnfalp_Given ) model->HSMHV_wnfalp = 0.0 ;
+    if ( !model->HSMHV_wpthrou_Given ) model->HSMHV_wpthrou = 0.0 ;
     if ( !model->HSMHV_wvdiffj_Given ) model->HSMHV_wvdiffj = 0.0 ;
     if ( !model->HSMHV_wibpc1_Given ) model->HSMHV_wibpc1 = 0.0 ;
     if ( !model->HSMHV_wibpc2_Given ) model->HSMHV_wibpc2 = 0.0 ;
@@ -840,16 +640,6 @@ int HSMHVsetup(
     if ( !model->HSMHV_wrs_Given ) model->HSMHV_wrs = 0.0 ;
     if ( !model->HSMHV_wrth0_Given ) model->HSMHV_wrth0 = 0.0 ;
     if ( !model->HSMHV_wvover_Given ) model->HSMHV_wvover = 0.0 ;
-    if ( !model->HSMHV_wjs0d_Given     ) model->HSMHV_wjs0d     = model->HSMHV_wjs0 ;
-    if ( !model->HSMHV_wjs0swd_Given   ) model->HSMHV_wjs0swd   = model->HSMHV_wjs0sw ;
-    if ( !model->HSMHV_wnjd_Given      ) model->HSMHV_wnjd      = model->HSMHV_wnj ;
-    if ( !model->HSMHV_wcisbkd_Given   ) model->HSMHV_wcisbkd   = model->HSMHV_wcisbk ;
-    if ( !model->HSMHV_wvdiffjd_Given  ) model->HSMHV_wvdiffjd  = model->HSMHV_wvdiffj ;
-    if ( !model->HSMHV_wjs0s_Given     ) model->HSMHV_wjs0s     = model->HSMHV_wjs0d ;
-    if ( !model->HSMHV_wjs0sws_Given   ) model->HSMHV_wjs0sws   = model->HSMHV_wjs0swd ;
-    if ( !model->HSMHV_wnjs_Given      ) model->HSMHV_wnjs      = model->HSMHV_wnjd ;
-    if ( !model->HSMHV_wcisbks_Given   ) model->HSMHV_wcisbks   = model->HSMHV_wcisbkd ;
-    if ( !model->HSMHV_wvdiffjs_Given  ) model->HSMHV_wvdiffjs  = model->HSMHV_wvdiffjd ;
 
     /* Cross-term dependence */
     if ( !model->HSMHV_pvmax_Given ) model->HSMHV_pvmax = 0.0 ;
@@ -870,6 +660,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_psc2_Given ) model->HSMHV_psc2 = 0.0 ;
     if ( !model->HSMHV_psc3_Given ) model->HSMHV_psc3 = 0.0 ;
     if ( !model->HSMHV_ppgd1_Given ) model->HSMHV_ppgd1 = 0.0 ;
+    if ( !model->HSMHV_ppgd3_Given ) model->HSMHV_ppgd3 = 0.0 ;
     if ( !model->HSMHV_pndep_Given ) model->HSMHV_pndep = 0.0 ;
     if ( !model->HSMHV_pninv_Given ) model->HSMHV_pninv = 0.0 ;
     if ( !model->HSMHV_pmuecb0_Given ) model->HSMHV_pmuecb0 = 0.0 ;
@@ -921,6 +712,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_pglkb2_Given ) model->HSMHV_pglkb2 = 0.0 ;
     if ( !model->HSMHV_pnftrp_Given ) model->HSMHV_pnftrp = 0.0 ;
     if ( !model->HSMHV_pnfalp_Given ) model->HSMHV_pnfalp = 0.0 ;
+    if ( !model->HSMHV_ppthrou_Given ) model->HSMHV_ppthrou = 0.0 ;
     if ( !model->HSMHV_pvdiffj_Given ) model->HSMHV_pvdiffj = 0.0 ;
     if ( !model->HSMHV_pibpc1_Given ) model->HSMHV_pibpc1 = 0.0 ;
     if ( !model->HSMHV_pibpc2_Given ) model->HSMHV_pibpc2 = 0.0 ;
@@ -942,17 +734,8 @@ int HSMHVsetup(
     if ( !model->HSMHV_prs_Given ) model->HSMHV_prs = 0.0 ;
     if ( !model->HSMHV_prth0_Given ) model->HSMHV_prth0 = 0.0 ;
     if ( !model->HSMHV_pvover_Given ) model->HSMHV_pvover = 0.0 ;
-    if ( !model->HSMHV_pjs0d_Given     ) model->HSMHV_pjs0d     = model->HSMHV_pjs0 ;
-    if ( !model->HSMHV_pjs0swd_Given   ) model->HSMHV_pjs0swd   = model->HSMHV_pjs0sw ;
-    if ( !model->HSMHV_pnjd_Given      ) model->HSMHV_pnjd      = model->HSMHV_pnj ;
-    if ( !model->HSMHV_pcisbkd_Given   ) model->HSMHV_pcisbkd   = model->HSMHV_pcisbk ;
-    if ( !model->HSMHV_pvdiffjd_Given  ) model->HSMHV_pvdiffjd  = model->HSMHV_pvdiffj ;
-    if ( !model->HSMHV_pjs0s_Given     ) model->HSMHV_pjs0s     = model->HSMHV_pjs0d ;
-    if ( !model->HSMHV_pjs0sws_Given   ) model->HSMHV_pjs0sws   = model->HSMHV_pjs0swd ;
-    if ( !model->HSMHV_pnjs_Given      ) model->HSMHV_pnjs      = model->HSMHV_pnjd ;
-    if ( !model->HSMHV_pcisbks_Given   ) model->HSMHV_pcisbks   = model->HSMHV_pcisbkd ;
-    if ( !model->HSMHV_pvdiffjs_Given  ) model->HSMHV_pvdiffjs  = model->HSMHV_pvdiffjd ;
 
+    if (  model->HSMHV_rd26_Given   ) model->HSMHV_qovsm   = model->HSMHV_rd26 ;
     if (  model->HSMHV_ldrift_Given ) model->HSMHV_ldrift2 = model->HSMHV_ldrift ;
 
     if (!model->HSMHVvgsMaxGiven) model->HSMHVvgsMax = 1e99;
@@ -974,8 +757,8 @@ int HSMHVsetup(
 /*          { model->HSMHV_xld  = model->HSMHV_xldld   ; } */
        if(!model->HSMHV_lover_Given    ) 
          { model->HSMHV_lover  = model->HSMHV_loverld ; }
-//     if(!model->HSMHV_lovers_Given   ) 
-//       { model->HSMHV_lovers  = model->HSMHV_loverld ; }
+       if(!model->HSMHV_lovers_Given   ) 
+         { model->HSMHV_lovers  = model->HSMHV_loverld ; }
        if(!model->HSMHV_ldrift1s_Given ) 
          { model->HSMHV_ldrift1s = model->HSMHV_ldrift1 ; }
        if(!model->HSMHV_ldrift2s_Given )  
@@ -983,13 +766,11 @@ int HSMHVsetup(
        if(!model->HSMHV_cgso_Given     ) { model->HSMHV_cgso       = model->HSMHV_cgdo ;
                                            model->HSMHV_cgso_Given = model->HSMHV_cgdo_Given ; }
     }
-    if ( !model->HSMHV_lovers_Given   ) model->HSMHV_lovers  = model->HSMHV_lover ;
 
-    if ( model->HSMHV_cvbk_Given  ) {
-      fprintf(stderr,"warning(HiSIM_HV(%s)): CVBK has been inactivated by CVB.\n",model->HSMHVmodName);
+    if ( model->HSMHV_xqy > 0.0 && model->HSMHV_xqy < 1.0e-9 ) {
+       fprintf ( stderr , "*** warning(HiSIMHV): XQY (%e[m]) is too small -> reset to 1nm.\n" , model->HSMHV_xqy ) ;
+       model->HSMHV_xqy = 1e-9 ;
     }
-    if (  model->HSMHV_cordrift ) { model->HSMHV_corsrd = 0 ; }
-
 
     modelMKS = &model->modelMKS ;
 
@@ -1032,7 +813,7 @@ int HSMHVsetup(
 	here->HSMHV_corbnet = model->HSMHV_corbnet ;
       else if ( here->HSMHV_corbnet != 0 && here->HSMHV_corbnet != 1 ) {
 	here->HSMHV_corbnet = model->HSMHV_corbnet ;
-	printf("warning(HiSIM_HV(%s)): CORBNET has been set to its default value: %d.\n", model->HSMHVmodName,here->HSMHV_corbnet);
+	printf("warning(HiSIMHV): CORBNET has been set to its default value: %d.\n", here->HSMHV_corbnet);
       }
       if ( !here->HSMHV_rbdb_Given) here->HSMHV_rbdb = model->HSMHV_rbdb; /* not used in this version */
       if ( !here->HSMHV_rbsb_Given) here->HSMHV_rbsb = model->HSMHV_rbsb; /* not used in this version */
@@ -1044,18 +825,14 @@ int HSMHVsetup(
 	here->HSMHV_corg = model->HSMHV_corg ;
       else if ( here->HSMHV_corg != 0 && here->HSMHV_corg != 1 ) {
 	here->HSMHV_corg = model->HSMHV_corg ;
-	printf("warning(HiSIM_HV(%s)): CORG has been set to its default value: %d.\n", model->HSMHVmodName,here->HSMHV_corg);
+	printf("warning(HiSIMHV): CORG has been set to its default value: %d.\n", here->HSMHV_corg);
       }
 
       if ( !here->HSMHV_m_Given      ) here->HSMHV_m      = 1.0 ;
-      if (  here->HSMHV_subld1_Given  ) {
-            printf("warning(HiSIM_HV(%s)): SUBLD1 has been inactived in instance param.\n",model->HSMHVmodName);
-      }
-      if (  here->HSMHV_subld2_Given  ) {
-            printf("warning(HiSIM_HV(%s)): SUBLD2 has been inactived in instance param.\n",model->HSMHVmodName);
-      }
+      if ( !here->HSMHV_subld1_Given  ) here->HSMHV_subld1  = model->HSMHV_subld1 ;
+      if ( !here->HSMHV_subld2_Given  ) here->HSMHV_subld2  = model->HSMHV_subld2 ;
       if ( !here->HSMHV_lovers_Given  ) here->HSMHV_lovers  = model->HSMHV_lovers ;
-      if ( !here->HSMHV_lover_Given   ) here->HSMHV_lover   = model->HSMHV_lover ;
+      if (  here->HSMHV_lover_Given   ) here->HSMHV_lovers  = here->HSMHV_lover ;
       if ( !here->HSMHV_loverld_Given ) here->HSMHV_loverld = model->HSMHV_loverld ;
       if ( !here->HSMHV_ldrift1_Given  ) here->HSMHV_ldrift1 = model->HSMHV_ldrift1 ;
       if ( !here->HSMHV_ldrift2_Given  ) here->HSMHV_ldrift2 = model->HSMHV_ldrift2 ;
@@ -1063,12 +840,13 @@ int HSMHVsetup(
       if ( !here->HSMHV_ldrift2s_Given ) here->HSMHV_ldrift2s = model->HSMHV_ldrift2s ;
 
       if (  model->HSMHV_cosym ) {
-//                                                                        here->HSMHV_lover  = here->HSMHV_lovers ;
-         if ( !here->HSMHV_lover_Given    && !model->HSMHV_lover_Given  ) here->HSMHV_lover  = here->HSMHV_loverld ; 
-         if ( !here->HSMHV_lovers_Given   && !model->HSMHV_lovers_Given ) here->HSMHV_lovers = here->HSMHV_lover ;
+         if ( !here->HSMHV_lovers_Given   && !model->HSMHV_lovers_Given ) here->HSMHV_lovers = here->HSMHV_loverld ;
+                                                                          here->HSMHV_lover  = here->HSMHV_lovers ;
          if ( !here->HSMHV_ldrift1s_Given && !model->HSMHV_ldrift1s_Given ) here->HSMHV_ldrift1s = here->HSMHV_ldrift1 ;
          if ( !here->HSMHV_ldrift2s_Given && !model->HSMHV_ldrift2s_Given ) here->HSMHV_ldrift2s = here->HSMHV_ldrift2 ;
       }
+
+
 
 
       /* process drain series resistance */
@@ -1076,9 +854,10 @@ int HSMHVsetup(
       T2 = ( here->HSMHV_ldrift1 * model->HSMHV_rdslp1 * C_m2um  + model->HSMHV_rdict1 )
 	   * ( here->HSMHV_ldrift2 * model->HSMHV_rdslp2 * C_m2um  + model->HSMHV_rdict2 ) ;
       Rd = model->HSMHV_rsh * here->HSMHV_nrd * here->HSMHV_nf + (model->HSMHV_rd + model->HSMHV_rdvd) * T2 ;
-      if ( ( ( ( model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3 ) && Rd > 0.0 ) 
-	     || model->HSMHV_cordrift == 1 ) ) {
-	if( here->HSMHVdNodePrime <= 0) {
+      if ( (model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3)
+           && Rd > 0.0 ) {
+	if(here->HSMHVdNodePrime <= 0) {
+        model->HSMHV_rd   = ( model->HSMHV_rd   == 0.0 ) ? 1e-50 :  model->HSMHV_rd ;
         error = CKTmkVolt(ckt, &tmp, here->HSMHVname, "drain");
 	if (error) return(error);
 	here->HSMHVdNodePrime = tmp->number;
@@ -1090,14 +869,12 @@ int HSMHVsetup(
       
       /* process source series resistance */
       /* rough check if Rs != 0 *  ***** don't forget to change if Rs processing is changed *******/
-      if(model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3) {
       T2 = ( here->HSMHV_ldrift1s * model->HSMHV_rdslp1 * C_m2um + model->HSMHV_rdict1 )
 	   * ( here->HSMHV_ldrift2s * model->HSMHV_rdslp2 * C_m2um + model->HSMHV_rdict2 ) ;
-      }else{ T2 = 0.0; }
       Rs = model->HSMHV_rsh * here->HSMHV_nrs * here->HSMHV_nf + model->HSMHV_rs * T2 ;
-      if ( (model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3 || model->HSMHV_cordrift == 1)
+      if ( (model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3)
            && Rs > 0.0 ) {
-       if( here->HSMHVsNodePrime == 0) {
+       if(here->HSMHVsNodePrime == 0) {
         error = CKTmkVolt(ckt, &tmp, here->HSMHVname, "source");
 	if (error) return(error);
 	here->HSMHVsNodePrime = tmp->number;
@@ -1109,7 +886,7 @@ int HSMHVsetup(
 
       /* process gate resistance */
       if ( (here->HSMHV_corg == 1 && model->HSMHV_rshg > 0.0) ) {
-       if (here->HSMHVgNodePrime == 0) {
+       if(here->HSMHVgNodePrime == 0) {
 	error = CKTmkVolt(ckt, &tmp, here->HSMHVname, "gate");
 	if (error) return(error);
 	here->HSMHVgNodePrime = tmp->number;
@@ -1141,21 +918,21 @@ int HSMHVsetup(
 
       if ( here->HSMHV_cosubnode == 0 && here->HSMHVsubNode >= 0 ) {
         if ( here->HSMHVtempNode >= 0 ) {
-      /* FATAL Error when 6th node is defined and COSUBNODE=0 */
-          IFuid namarr[2];
-          namarr[0] = here->HSMHVname;
-          namarr[1] = model->HSMHVmodName;
-          (*(SPfrontEnd->IFerror))
-            ( 
-             ERR_FATAL, 
-             "HiSIM_HV: MOSFET(%s) MODEL(%s): 6th node is defined and COSUBNODE=0", 
-             namarr 
+       /* FATAL Error when 6th node is defined and COSUBNODE=0 */
+          SPfrontEnd->IFerrorf
+            (
+             ERR_FATAL,
+             "HiSIM_HV: MOSFET(%s) MODEL(%s): 6th node is defined and COSUBNODE=0",
+             here->HSMHVname, model->HSMHVmodName
              );
           return (E_BADPARM);
         } else {
+
       /* 5th node is switched to tempNode, if COSUBNODE=0 and 5 external nodes are assigned. */
-	here->HSMHVtempNode = here->HSMHVsubNode ;
-	here->HSMHVsubNode  = -1 ; 
+          if ( here->HSMHVsubNode > 0 ) {
+    	    here->HSMHVtempNode = here->HSMHVsubNode ;
+	    here->HSMHVsubNode  = -1 ;
+          }
         }
       }
 
@@ -1182,9 +959,9 @@ int HSMHVsetup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
       TSTALLOC(HSMHVDPbpPtr, HSMHVdNodePrime, HSMHVbNodePrime);
       TSTALLOC(HSMHVSPbpPtr, HSMHVsNodePrime, HSMHVbNodePrime);
@@ -1262,7 +1039,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 	TSTALLOC(HSMHVSsubPtr,  HSMHVsNode,      HSMHVsubNode);
 	TSTALLOC(HSMHVSPsubPtr, HSMHVsNodePrime, HSMHVsubNode);
       }
-      if ( here->HSMHVtempNode >  0 ) { /* self heating */
+      if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
 	TSTALLOC(HSMHVTemptempPtr, HSMHVtempNode, HSMHVtempNode);
 	TSTALLOC(HSMHVTempdPtr, HSMHVtempNode, HSMHVdNode);
 	TSTALLOC(HSMHVTempdpPtr, HSMHVtempNode, HSMHVdNodePrime);
@@ -1271,7 +1048,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 	TSTALLOC(HSMHVDPtempPtr, HSMHVdNodePrime, HSMHVtempNode);
 	TSTALLOC(HSMHVSPtempPtr, HSMHVsNodePrime, HSMHVtempNode);
   
-        TSTALLOC(HSMHVTempgpPtr, HSMHVtempNode, HSMHVgNodePrime)
+        TSTALLOC(HSMHVTempgpPtr, HSMHVtempNode, HSMHVgNodePrime);
 	TSTALLOC(HSMHVTempbpPtr, HSMHVtempNode, HSMHVbNodePrime);
 
 	TSTALLOC(HSMHVGPtempPtr, HSMHVgNodePrime, HSMHVtempNode);
@@ -1298,11 +1075,14 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 	TSTALLOC(HSMHVQBspPtr, HSMHVqbNode, HSMHVsNodePrime);
 	TSTALLOC(HSMHVQBbpPtr, HSMHVqbNode, HSMHVbNodePrime);
 	TSTALLOC(HSMHVQBqbPtr, HSMHVqbNode, HSMHVqbNode);
-        if ( here->HSMHVtempNode >  0 ) { /* self heating */
+        if ( here->HSMHV_coselfheat >  0 ) { /* self heating */
 	  TSTALLOC(HSMHVQItempPtr, HSMHVqiNode, HSMHVtempNode);
 	  TSTALLOC(HSMHVQBtempPtr, HSMHVqbNode, HSMHVtempNode);
         }
       }
+
+
+
 
       /*-----------------------------------------------------------*
        * Range check of instance parameters
@@ -1321,16 +1101,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       LWbin = Lbin * Wbin ;
 
       BINNING(vmax)
-      BINNING(js0d);
-      BINNING(js0swd);
-      BINNING(njd);
-      BINNING(cisbkd);
-      BINNING(vdiffjd);
-      BINNING(js0s);
-      BINNING(js0sws);
-      BINNING(njs);
-      BINNING(cisbks);
-      BINNING(vdiffjs);
       BINNING(bgtmp1)
       BINNING(bgtmp2)
       BINNING(eg0)
@@ -1348,6 +1118,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       BINNING(sc2)
       BINNING(sc3)
       BINNING(pgd1)
+      BINNING(pgd3)
       BINNING(ndep)
       BINNING(ninv)
       BINNING(muecb0)
@@ -1379,6 +1150,10 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       BINNING(nsubpsti3)
       BINNING(cgso)
       BINNING(cgdo)
+      BINNING(js0)
+      BINNING(js0sw)
+      BINNING(nj)
+      BINNING(cisbk)
       BINNING(clm1)
       BINNING(clm2)
       BINNING(clm3)
@@ -1395,6 +1170,8 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       BINNING(glkb2)
       BINNING(nftrp)
       BINNING(nfalp)
+      BINNING(pthrou)
+      BINNING(vdiffj)
       BINNING(ibpc1)
       BINNING(ibpc2)
       BINNING(cgbo)
@@ -1423,21 +1200,18 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       RANGECHECK(pParam->HSMHV_bgtmp1, 50.0e-6,   1.0e-3, "BGTMP1") ;
       RANGECHECK(pParam->HSMHV_bgtmp2, -1.0e-6,   1.0e-6, "BGTMP2") ;
       RANGECHECK(pParam->HSMHV_eg0,        1.0,      1.3, "EG0") ;
-      RANGECHECK(pParam->HSMHV_vfbover,   -1.2,      1.0, "VFBOVER") ;
-      if( model->HSMHV_codep == 0 ) {
-        RANGECHECK(pParam->HSMHV_vfbc,      -1.2,      0.0, "VFBC") ;
-      } else {
-        RANGECHECK(pParam->HSMHV_vfbc,      -1.2,      0.8, "VFBC") ;
-      }
+      RANGECHECK(pParam->HSMHV_vfbover,   -1.0,      1.0, "VFBOVER") ;
+      RANGECHECK(pParam->HSMHV_vfbc,      -1.2,     -0.8, "VFBC") ;
       RANGECHECK(pParam->HSMHV_nsubc,   1.0e16,   1.0e19, "NSUBC") ;
       RANGECHECK(pParam->HSMHV_nsubp,   1.0e16,   1.0e19, "NSUBP") ;
-      RANGECHECK(pParam->HSMHV_scp1,       0.0,     10.0, "SCP1") ;
-      RANGECHECK(pParam->HSMHV_scp2,       0.0,      1.0, "SCP2") ;
+      RANGECHECK(pParam->HSMHV_scp1,       0.0,     20.0, "SCP1") ;
+      RANGECHECK(pParam->HSMHV_scp2,       0.0,      2.0, "SCP2") ;
       RANGECHECK(pParam->HSMHV_scp3,       0.0,   200e-9, "SCP3") ;
-      RANGECHECK(pParam->HSMHV_sc1,        0.0,     10.0, "SC1") ;
-      RANGECHECK(pParam->HSMHV_sc2,        0.0,      1.0, "SC2") ;
-      RANGECHECK(pParam->HSMHV_sc3,        0.0,   20e-6, "SC3") ;
-      RANGECHECK(pParam->HSMHV_pgd1,       0.0,  30.0e-3, "PGD1") ;
+      RANGECHECK(pParam->HSMHV_sc1,        0.0,     20.0, "SC1") ;
+      RANGECHECK(pParam->HSMHV_sc2,        0.0,      2.0, "SC2") ;
+      RANGECHECK(pParam->HSMHV_sc3,        0.0,   200e-9, "SC3") ;
+      RANGECHECK(pParam->HSMHV_pgd1,       0.0,  50.0e-3, "PGD1") ;
+      RANGECHECK(pParam->HSMHV_pgd3,       0.0,      1.2, "PGD3") ;
       RANGECHECK(pParam->HSMHV_ndep,       0.0,      1.0, "NDEP") ;
       RANGECHECK(pParam->HSMHV_ninv,       0.0,      1.0, "NINV") ;
       RANGECHECK(pParam->HSMHV_muecb0,   100.0,  100.0e3, "MUECB0") ;
@@ -1445,18 +1219,22 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       RANGECHECK(pParam->HSMHV_mueph1,   2.0e3,   30.0e3, "MUEPH1") ;
       RANGECHECK(pParam->HSMHV_vtmp,      -2.0,      1.0, "VTMP") ;
       RANGECHECK(pParam->HSMHV_muesr1,  1.0e14,   1.0e16, "MUESR1") ;
-      RANGECHECK(pParam->HSMHV_muetmp,     0.5,      2.5, "MUETMP") ;
-      RANGECHECK(pParam->HSMHV_clm1,      0.01,      1.0, "CLM1") ;
+      RANGECHECK(pParam->HSMHV_muetmp,     0.5,      2.0, "MUETMP") ;
+      RANGECHECK(pParam->HSMHV_clm1,       0.01,      1.0, "CLM1") ;
       RANGECHECK(pParam->HSMHV_clm2,       1.0,      4.0, "CLM2") ;
       RANGECHECK(pParam->HSMHV_clm3,       0.5,      5.0, "CLM3") ;
       RANGECHECK(pParam->HSMHV_wfc,   -5.0e-15,   1.0e-6, "WFC") ;
-      RANGECHECK(pParam->HSMHV_cgso,       0.0, 100e-9 * C_VAC*model->HSMHV_kappa/model->HSMHV_tox, "CGSO") ;
-      RANGECHECK(pParam->HSMHV_cgdo,       0.0, 100e-9 * C_VAC*model->HSMHV_kappa/model->HSMHV_tox, "CGDO") ;
+      RANGECHECK(pParam->HSMHV_cgso,       0.0, 100e-9 * 100*C_VAC*model->HSMHV_kappa/model->HSMHV_tox*C_m2cm, "CGSO") ;
+      RANGECHECK(pParam->HSMHV_cgdo,       0.0, 100e-9 * 100*C_VAC*model->HSMHV_kappa/model->HSMHV_tox*C_m2cm, "CGDO") ;
+      RANGECHECK(pParam->HSMHV_pthrou,     0.0,  50.0e-3, "PTHROU") ;
       RANGECHECK(pParam->HSMHV_ibpc1,      0.0,   1.0e12, "IBPC1") ;
       RANGECHECK(pParam->HSMHV_ibpc2,      0.0,   1.0e12, "IBPC2") ;
       RANGECHECK(pParam->HSMHV_cvdsover,   0.0,      1.0, "CVDSOVER") ;
       RANGECHECK(pParam->HSMHV_nsti,    1.0e16,   1.0e19, "NSTI") ;
-      MINCHECK(  pParam->HSMHV_cgbo,       0.0,           "CGBO") ;
+      if ( pParam->HSMHV_cgbo < 0.0 ) { 
+        printf("warning(HiSIMHV): %s = %e\n", "CGBO", pParam->HSMHV_cgbo ); 
+        printf("warning(HiSIMHV): The model parameter %s must not be less than %s.\n", "CGBO", "0.0" ); 
+       }
       RANGECHECK(pParam->HSMHV_npext,   1.0e16,   1.0e18, "NPEXT") ;
       RANGECHECK(pParam->HSMHV_rd,         0.0,  100.0e-3, "RD") ;
       RANGECHECK(pParam->HSMHV_rd22,      -5.0,      0.0, "RD22") ;
@@ -1471,16 +1249,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       RANGECHECK(pParam->HSMHV_rs,         0.0,  10.0e-3, "RS") ;
       RANGECHECK(pParam->HSMHV_rth0,       0.0,     10.0, "RTH0") ;
       RANGECHECK(pParam->HSMHV_vover,      0.0,      4.0, "VOVER") ;
-
-      if ( model->HSMHV_xpdv * model->HSMHV_xldld > 1 ) {
-	      here->HSMHV_xpdv = 1/model->HSMHV_xldld ; 
-      }else { here->HSMHV_xpdv = model->HSMHV_xpdv; }
-
-      here->HSMHV_cordrift = model->HSMHV_cordrift ;
-      if ( model->HSMHV_cordrift  && pParam->HSMHV_nover == 0.0 ) {
-        fprintf(stderr,"warning(HiSIM_HV(%s)): CORDRIFT has been inactivated when NOVER = 0.0.\n",model->HSMHVmodName);
-        here->HSMHV_cordrift = 0 ;
-      }
 
       /*-----------------------------------------------------------*
        * Change unit into MKS for instance parameters.
@@ -1517,8 +1285,12 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       pParam->HSMHV_rd24       = pParam->HSMHV_rd24      / C_m2cm ;
       pParam->HSMHV_rdvd       = pParam->HSMHV_rdvd      / C_m2cm ;
       pParam->HSMHV_rth0       = pParam->HSMHV_rth0      / C_m2cm ;
+//    hereMKS->HSMHV_muecb0    = pParam->HSMHV_muecb0 * C_m2cm_p2 ;
+//    hereMKS->HSMHV_muecb1    = pParam->HSMHV_muecb1 * C_m2cm_p2 ;
+//    hereMKS->HSMHV_muesr1    = pParam->HSMHV_muesr1 * C_m2cm_p2 ;
+//    hereMKS->HSMHV_mueph1    = pParam->HSMHV_mueph1 * C_m2cm_p2 ;
 
-      pParam->HSMHV_vfbover    = -pParam->HSMHV_vfbover ; /* for Backword Compitibility */
+      pParam->HSMHV_vfbover    = - pParam->HSMHV_vfbover ; /* For Backward compatibility */
 
     } /* instance */
 
@@ -1527,19 +1299,17 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     /*-----------------------------------------------------------*
      * Range check of model parameters
      *-----------------*/
-     RANGECHECK(model->HSMHV_shemax   ,    300,     600, "SHEMAX");
-     RANGECHECK(model->HSMHV_cvbd     ,   -0.1,     0.2, "CVBD");
-     RANGECHECK(model->HSMHV_cvbs     ,   -0.1,     0.2, "CVBS");
-    if ( model->HSMHV_tox <= 0 && model->HSMHV_coerrrep ) {
-      printf("warning(HiSIM_HV(%s)): TOX = %e\n ", model->HSMHVmodName,model->HSMHV_tox);
-      printf("warning(HiSIM_HV(%s)): The model parameter TOX must be positive.\n",model->HSMHVmodName);
+     RANGECHECK(model->HSMHV_shemax   ,    300,    600, "SHEMAX");
+    if ( model->HSMHV_tox <= 0 ) {
+      printf("warning(HiSIMHV): TOX = %e\n ", model->HSMHV_tox);
+      printf("warning(HiSIMHV): The model parameter TOX must be positive.\n");
     }
     RANGECHECK(model->HSMHV_xld,        0.0,  50.0e-9, "XLD") ;
-    RANGECHECK(model->HSMHV_xwd,  -100.0e-9, 300.0e-9, "XWD") ;
+    RANGECHECK(model->HSMHV_xwd,   -10.0e-9, 100.0e-9, "XWD") ;
     RANGECHECK(model->HSMHV_xwdc,  -10.0e-9, 100.0e-9, "XWDC") ;
-    RANGECHECK(model->HSMHV_rsh,        0.0,    500.0, "RSH") ;
+    RANGECHECK(model->HSMHV_rsh,        0.0,      500, "RSH") ;
     RANGECHECK(model->HSMHV_rshg,       0.0,    100.0, "RSHG") ;
-    if(model->HSMHV_xqy != 0.0) RANGECHECK(model->HSMHV_xqy,        10.0e-9,  50.0e-9, "XQY") ;
+    if(model->HSMHV_xqy != 0.0) { MINCHECK  (model->HSMHV_xqy,    10.0e-9,           "XQY") ; }
     MINCHECK  (model->HSMHV_xqy1,       0.0,           "XQY1") ;
     MINCHECK  (model->HSMHV_xqy2,       0.0,           "XQY2") ;
     RANGECHECK(model->HSMHV_vbi,        1.0,      1.2, "VBI") ;
@@ -1550,29 +1320,22 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_mueph0,    0.25,     0.35, "MUEPH0") ;
     RANGECHECK(model->HSMHV_muesr0,     1.8,      2.2, "MUESR0") ;
     RANGECHECK(model->HSMHV_lpext,  1.0e-50,  10.0e-6, "LPEXT") ;
-    MINCHECK  (model->HSMHV_sc4,        0.0,           "SC4") ;
     RANGECHECK(model->HSMHV_scp21,      0.0,      5.0, "SCP21") ;
-    RANGERESET(model->HSMHV_scp22,      0.0,      0.0, "SCP22") ;
+    RANGECHECK(model->HSMHV_scp22,      0.0,      0.0, "SCP22") ;
     RANGECHECK(model->HSMHV_bs1,        0.0,  50.0e-3, "BS1") ;
     RANGECHECK(model->HSMHV_bs2,        0.5,      1.0, "BS2") ;
-    MINCHECK  (model->HSMHV_ptl,        0.0,           "PTL") ;
-    RANGECHECK(model->HSMHV_ptp,        3.0,      4.0, "PTP") ;
-    MINCHECK  (model->HSMHV_pt2,        0.0,           "PT2") ;
-    MINCHECK  (model->HSMHV_pt4,        0.0,           "PT4") ;
-    MINCHECK  (model->HSMHV_pt4p,       0.0,           "PT4P") ;
-    RANGECHECK(model->HSMHV_gdl,        0.0,   220e-9, "GDL") ;
+    RANGECHECK(model->HSMHV_clm5,       0.0,      2.0, "CLM5") ;
+    RANGECHECK(model->HSMHV_clm6,       0.0,     20.0, "CLM6") ;
     MINCHECK  (model->HSMHV_ninvd,      0.0,           "NINVD") ;
     MINCHECK  (model->HSMHV_ninvdw,     0.0,           "NINVDW") ;
     MINCHECK  (model->HSMHV_ninvdwp,    0.0,           "NINVDWP") ;
     MINCHECK  (model->HSMHV_ninvdt1,    0.0,           "NINVDT1") ;
     MINCHECK  (model->HSMHV_ninvdt2,    0.0,           "NINVDT2") ;
-    RANGECHECK(model->HSMHV_clm5,       0.0,      2.0, "CLM5") ;
-    RANGECHECK(model->HSMHV_clm6,       0.0,     20.0, "CLM6") ;
     RANGECHECK(model->HSMHV_sub2l,      0.0,      1.0, "SUB2L") ;
     RANGECHECK(model->HSMHV_voverp,     0.0,      2.0, "VOVERP") ;
-    RANGECHECK(model->HSMHV_qme1,       0.0,     1e-9, "QME1") ;
-    RANGECHECK(model->HSMHV_qme2,       1.0,      3.0, "QME2") ;
-    RANGECHECK(model->HSMHV_qme3,       0.0,  500e-12, "QME3") ;
+    RANGECHECK(model->HSMHV_qme1,       0.0, 300.0e-9, "QME1") ;
+    RANGECHECK(model->HSMHV_qme2,       0.0,      0.0, "QME2") ;
+    RANGECHECK(model->HSMHV_qme3,       0.0,800.0e-12, "QME3") ;
     RANGECHECK(model->HSMHV_glpart1,    0.0,      1.0, "GLPART1") ;
     RANGECHECK(model->HSMHV_tnom,      22.0,     32.0, "TNOM") ;
     RANGECHECK(model->HSMHV_ddltmax,    1.0,     10.0, "DDLTMAX") ;
@@ -1580,11 +1343,12 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_ddltslp,    0.0,     20.0, "DDLTSLP") ;
     RANGECHECK(model->HSMHV_mphdfm,    -3.0,      3.0, "MPHDFM") ;
     RANGECHECK(model->HSMHV_cvb,       -0.1,      0.2, "CVB") ;
+    RANGECHECK(model->HSMHV_cvbk,      -0.1,      0.2, "CVBK") ;
     RANGECHECK(model->HSMHV_rd20,       0.0,     30.0, "RD20") ;
     RANGECHECK(model->HSMHV_rd21,       0.0,      1.0, "RD21") ;
     RANGECHECK(model->HSMHV_rd22d,      0.0,      2.0, "RD22D") ;
     MINCHECK(  model->HSMHV_rd25,       0.0,           "RD25") ;
-    RANGECHECK(model->HSMHV_rdtemp1,  -1e-3,     2e-2, "RDTEMP1") ;
+    RANGECHECK(model->HSMHV_rdtemp1,  -1e-3,     1e-2, "RDTEMP1") ;
     RANGECHECK(model->HSMHV_rdtemp2,  -1e-5,     1e-5, "RDTEMP2") ;
     RANGECHECK(model->HSMHV_rdvdtemp1,-1e-3,     1e-2, "RDVDTEMP1") ;
     RANGECHECK(model->HSMHV_rdvdtemp2,-1e-5,     1e-5, "RDVDTEMP2") ;
@@ -1597,7 +1361,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_powrat,     0.0,      1.0, "POWRAT") ;
     RANGECHECK(model->HSMHV_prattemp1, -1.0,      1.0, "PRATTEMP1") ;
     RANGECHECK(model->HSMHV_prattemp2, -1.0,      1.0, "PRATTEMP2") ;
-    MINRESET ( model->HSMHV_xldld,      0.0,           "XLDLD") ;
+    MINCHECK(  model->HSMHV_xldld,      0.0,           "XLDLD") ;
     MINCHECK(  model->HSMHV_loverld,    0.0,           "LOVERLD") ;
     MINCHECK(  model->HSMHV_lovers,     0.0,           "LOVERS") ;
     MINCHECK(  model->HSMHV_lover,      0.0,           "LOVER") ;
@@ -1605,7 +1369,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     MINCHECK(  model->HSMHV_ldrift1s,   0.0,           "LDRIFT1S") ;
     MINCHECK(  model->HSMHV_ldrift2,    0.0,           "LDRIFT2") ;
     MINCHECK(  model->HSMHV_ldrift2s,   0.0,           "LDRIFT2S") ;
-//    MINCHECK(  model->HSMHV_ldrift,     0.0,           "LDRIFT") ;
+    MINCHECK(  model->HSMHV_ldrift,     0.0,           "LDRIFT") ;
     RANGECHECK(model->HSMHV_rds,       -100,      100, "RDS") ;
     RANGECHECK(model->HSMHV_rdsp,       -10,       10, "RDSP") ;
     RANGECHECK(model->HSMHV_rdvdl,     -100,      100, "RDVDL") ;
@@ -1620,47 +1384,6 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     RANGECHECK(model->HSMHV_rdov12,     0.0,      2.0, "RDOV12") ;
     RANGECHECK(model->HSMHV_rdslp2,   -10.0,     10.0, "RDSLP2") ;
     RANGECHECK(model->HSMHV_rdict2,   -10.0,     10.0, "RDICT2") ;
-    RANGECHECK(model->HSMHV_rdrvmax,    1e6,    100e6, "RDRVMAX"   ) ;
-    RANGECHECK(model->HSMHV_rdrmue,     1e2,      3e3, "RDRMUE"    ) ;
-    RANGECHECK(model->HSMHV_rdrqover,   0.0,      1e7, "RDRDQOVER"  ) ;
-    RANGERESET(model->HSMHV_rdrcx,      0.0,      1.0, "RDRCX"     ) ;
-    RANGECHECK(model->HSMHV_rdrcar,     0.0,    50e-9, "RDRCAR"    ) ;
-    RANGECHECK(model->HSMHV_rdrmuetmp,  0.0,      2.0, "RDRMUETMP" ) ;
-    RANGECHECK(model->HSMHV_rdrvtmp,   -2.0,      1.0, "RDRVTMP"   ) ;
-    MINCHECK(  model->HSMHV_xpdv,       0.0,           "XPDV"      ) ;
-    MINCHECK(  model->HSMHV_xpvdth,     0.0,           "XPVDTH"    ) ;
-    RANGECHECK(model->HSMHV_xpvdthg,   -1.0,      1.0, "XPVDTHG"   ) ;
-    MINCHECK(  model->HSMHV_ibpc1l,     0.0,           "IBPC1L"    ) ;
-    RANGERESET(model->HSMHV_ndepm,      5e15,   2e17,  "NDEPM" ) ;
-    RANGERESET(model->HSMHV_tndep,      1e-7,   1e-6,  "TNDEP" ) ;
-    RANGERESET(model->HSMHV_depmue0,       1,    1e5,   "DEPMUE0" ) ;
-    RANGECHECK(model->HSMHV_depmueback0,   1,    1e5,   "DEPMUEBACK0" ) ;
-    RANGECHECK(model->HSMHV_depvdsef2,   0.1,    4.0,   "DEPVDSEF2" ) ;
-    RANGECHECK(model->HSMHV_depmueph1,     1,    1e5,   "DEPMUEPH1" ) ;
-    RANGECHECK(model->HSMHV_depleak,     0.0,    5.0,   "DEPLEAK" ) ;
-    
-    if( model->HSMHV_codep == 1 && model->HSMHV_coerrrep ) {
-      if( model->HSMHV_copprv == 1 ) {
-        printf("warning(HiSIM_HV(%s)): COPPRV is not supported yet in Depletion mode mode, resetted to 0.\n",model->HSMHVmodName);
-      }
-      if( model->HSMHV_coisti == 1 ) { 
-        printf("warning(HiSIM_HV(%s)): STI leak model is not supported yet in Depletion mode model, skipped\n",model->HSMHVmodName);
-      } 
-      if( model->HSMHV_cothrml == 1 ) {
-        printf("warning(HiSIM_HV(%s)): Thermal noise model is not supported yet in Depletion mode model, skipped\n",model->HSMHVmodName);
-      }
-      if( model->HSMHV_coign == 1 ) {
-        printf("warning(HiSIM_HV(%s)): Induced gate noise model is not supported yet in Depletion mode model, skipped\n",model->HSMHVmodName);
-      }
-    }
-    if( model->HSMHV_codep && model->HSMHV_copprv == 1 ) { model->HSMHV_copprv = 0 ; }
-
-    if ( model->HSMHV_xpdv * model->HSMHV_xldld > 1 && model->HSMHV_coerrrep ) {
-	printf("warning(HiSIM_HV(%s)): The model parameter XPDV (= %e) must be smaller than 1/XLDLD (= %e).\n", 
-	       model->HSMHVmodName,model->HSMHV_xpdv, 1/model->HSMHV_xldld ); 
-      	printf("warning(HiSIM_HV(%s)): The model parameter XPDV (= %e) has been changed to %e.\n", 
-	       model->HSMHVmodName,model->HSMHV_xpdv, 1/model->HSMHV_xldld );			
-    }
 
 
     /*-----------------------------------------------------------*
@@ -1703,10 +1426,10 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
      modelMKS->HSMHV_ovslp     = model->HSMHV_ovslp     / C_m2cm ;
      modelMKS->HSMHV_dly3      = model->HSMHV_dly3      / C_m2cm_p2 ;
      modelMKS->HSMHV_cth0      = model->HSMHV_cth0      * C_m2cm ;
-     modelMKS->HSMHV_rdrmue    = model->HSMHV_rdrmue    / C_m2cm_p2 ;
-     modelMKS->HSMHV_rdrvmax   = model->HSMHV_rdrvmax   / C_m2cm ;
-     modelMKS->HSMHV_ndepm     = model->HSMHV_ndepm     / C_cm2m_p3 ;
-     modelMKS->HSMHV_depvmax   = model->HSMHV_depvmax   / C_m2cm ;
+//   modelMKS->HSMHV_muecb0    = model->HSMHV_muecb0    * C_cm2m_p2 ;
+//   modelMKS->HSMHV_muecb1    = model->HSMHV_muecb1    * C_cm2m_p2 ;
+//   modelMKS->HSMHV_muesr1    = model->HSMHV_muesr1    * C_cm2m_p2 ;
+//   modelMKS->HSMHV_mueph1    = model->HSMHV_mueph1    * C_cm2m_p2 ;
 
 
     /*-----------------------------------------------------------*
@@ -1717,9 +1440,18 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 
   } /* model */
 
+  /* Reset ckt->CKTbypass to 0 */
+  if( ckt->CKTbypass == 1 ) {
+    fprintf( stderr, "\nwarning(HiSIMHV): The BYPASS option is reset to 0 for reliable simulation.\n");
+    ckt->CKTbypass = 0 ;
+  }  
+  /* check ckt->CKTintegrateMethod */
+  if( ckt->CKTintegrateMethod == TRAPEZOIDAL ) { /* TRAPEZODAL:1 GEAR:2 */
+    fprintf( stderr, "\nwarning(HiSIMHV): Recommend the Gear method for reliable simulation with '.options METHOD=GEAR'.\n");
+  }
 
   return(OK);
-} 
+}
 
 int
 HSMHVunsetup(

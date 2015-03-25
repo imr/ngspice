@@ -1,62 +1,20 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhv.c
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
 
  released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
-/**********************************************************************
-
-The following source code, and all copyrights, trade secrets or other
-intellectual property rights in and to the source code in its entirety,
-is owned by the Hiroshima University and the STARC organization.
-
-All users need to follow the "HISIM_HV Distribution Statement and
-Copyright Notice" attached to HiSIM_HV model.
-
------HISIM_HV Distribution Statement and Copyright Notice--------------
-
-Software is distributed as is, completely without warranty or service
-support. Hiroshima University or STARC and its employees are not liable
-for the condition or performance of the software.
-
-Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
-
-Hiroshima University and STARC hereby disclaims all implied warranties.
-
-Hiroshima University and STARC grant the users the right to modify, copy,
-and redistribute the software and documentation, both within the user's
-organization and externally, subject to the following restrictions
-
-1. The users agree not to charge for Hiroshima University and STARC code
-itself but may charge for additions, extensions, or support.
-
-2. In any product based on the software, the users agree to acknowledge
-Hiroshima University and STARC that developed the software. This
-acknowledgment shall appear in the product documentation.
-
-3. The users agree to reproduce any copyright notice which appears on
-the software on any copy or modification of such made available
-to others."
-
-Toshimasa Asahara, President, Hiroshima University
-Mitiko Miura-Mattausch, Professor, Hiroshima University
-Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
-*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/devdefs.h"
@@ -106,8 +64,6 @@ IFparm HSMHVpTable[] = { /* parameters */
  /* Output Physical Values: */
  OP ( "ids",   HSMHV_CD,    IF_REAL   , "Ids"),  /* Drain-Source current */
  OP ( "isub",  HSMHV_ISUB,  IF_REAL   , "Isub"),  /* Substrate current */
- OP ( "isubld",  HSMHV_ISUBLD,  IF_REAL   , "IsubLD"),  /* Substrate current */
- OP ( "idsibpc",  HSMHV_IDSIBPC,  IF_REAL   , "IdsIBPC"),  /*  Impact-Ionization Induced Bulk Potential Change (IBPC)*/
  OP ( "igidl", HSMHV_IGIDL, IF_REAL   , "Igidl"), /* Gate-Induced Drain Leakage current */
  OP ( "igisl", HSMHV_IGISL, IF_REAL   , "Igisl"), /* Gate-Induced Source Leakage current */
  OP ( "igd",   HSMHV_IGD,   IF_REAL   , "Igd"),  /* Gate-Drain current */
@@ -168,15 +124,11 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("coign", HSMHV_MOD_COIGN, IF_INTEGER, "Calculate induced gate noise"),
   IOP("codfm", HSMHV_MOD_CODFM, IF_INTEGER, "Calculation of model for DFM"),
   IOP("coqovsm", HSMHV_MOD_COQOVSM, IF_INTEGER, "select smoothing method of Qover"),
-  IOP("coselfheat", HSMHV_MOD_COSELFHEAT, IF_INTEGER, "Calculation of self heating model"), 
+  IOP("coselfheat", HSMHV_MOD_COSELFHEAT, IF_INTEGER, "Calculation of self heating model"),
   IOP("cosubnode", HSMHV_MOD_COSUBNODE, IF_INTEGER, "Switch tempNode to subNode"),
   IOP("cosym", HSMHV_MOD_COSYM, IF_INTEGER, "Model selector for symmetry device"), 
   IOP("cotemp", HSMHV_MOD_COTEMP, IF_INTEGER, "Model flag for temperature dependence"), 
   IOP("coldrift", HSMHV_MOD_COLDRIFT, IF_INTEGER, "selector for Ldrift parameter"),
-  IOP("cordrift", HSMHV_MOD_CORDRIFT, IF_INTEGER, ""),
-  IOP("coerrrep", HSMHV_MOD_COERRREP, IF_INTEGER, "selector for error report"),
-  IOP("codep", HSMHV_MOD_CODEP, IF_INTEGER, "selector for depletion device"),
-  IOP("coddlt", HSMHV_MOD_CODDLT, IF_INTEGER, "selector for DDLT model"),
 
   IOP("vbsmin", HSMHV_MOD_VBSMIN, IF_REAL, "Minimum back bias voltage to be treated in hsmhveval [V]"),
 
@@ -205,12 +157,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("ldrift1s", HSMHV_MOD_LDRIFT1S, IF_REAL, "Drift region length-1 on the source side[m]"), 
   IOP("ldrift2s", HSMHV_MOD_LDRIFT2S, IF_REAL, "Drift region length-2 on the source side[m]"), 
   IOP("subld1", HSMHV_MOD_SUBLD1, IF_REAL, "Impact-ionization current in the drift region [-]"),
-  IOP("subld1l", HSMHV_MOD_SUBLD1L, IF_REAL, "Impact-ionization current in the drift region [um^{subld1lp}]"),
-  IOP("subld1lp", HSMHV_MOD_SUBLD1LP, IF_REAL, "Impact-ionization current in the drift region [-]"),
   IOP("subld2", HSMHV_MOD_SUBLD2, IF_REAL, "Impact-ionization current in the drift region [m^{-1}*V^{3/2}]"),
-  IOP("xpdv", HSMHV_MOD_XPDV, IF_REAL, "Impact-ionization current in the drift region [m^{-1}]"),
-  IOP("xpvdth", HSMHV_MOD_XPVDTH, IF_REAL, "Impact-ionization current in the drift region [V]"),
-  IOP("xpvdthg", HSMHV_MOD_XPVDTHG, IF_REAL, "Impact-ionization current in the drift region [V^{-1}]"),
   IOP("ddltmax", HSMHV_MOD_DDLTMAX, IF_REAL, ""), /* Vdseff */
   IOP("ddltslp", HSMHV_MOD_DDLTSLP, IF_REAL, ""), /* Vdseff */
   IOP("ddltict", HSMHV_MOD_DDLTICT, IF_REAL, ""), /* Vdseff */
@@ -257,7 +204,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("sc4", HSMHV_MOD_SC4, IF_REAL, "Parameter for SCE [1/V]"), 
   IOP("pgd1", HSMHV_MOD_PGD1, IF_REAL, "Parameter for gate-poly depletion [V]"),
   IOP("pgd2", HSMHV_MOD_PGD2, IF_REAL, "Parameter for gate-poly depletion [V]"),
-//IOP("pgd3", HSMHV_MOD_PGD3, IF_REAL, "Parameter for gate-poly depletion [-]"),
+  IOP("pgd3", HSMHV_MOD_PGD3, IF_REAL, "Parameter for gate-poly depletion [-]"),
   IOP("pgd4", HSMHV_MOD_PGD4, IF_REAL, "Parameter for gate-poly depletion [-]"),
   IOP("ndep", HSMHV_MOD_NDEP, IF_REAL, "Coeff. of Qbm for Eeff [-]"),
   IOP("ndepl", HSMHV_MOD_NDEPL, IF_REAL, "Coeff. of Qbm for Eeff [-]"),
@@ -355,7 +302,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("cvb", HSMHV_MOD_CVB, IF_REAL, "Bias dependence coefficient of cisb [-]"),
   IOP("ctemp", HSMHV_MOD_CTEMP, IF_REAL, "Temperature coefficient [-]"),
   IOP("cisbk", HSMHV_MOD_CISBK, IF_REAL, "Reverse bias saturation current [A]"),
-  IOP("cvbk", HSMHV_MOD_CVBK, IF_REAL, "Inactived by CVB "),
+  IOP("cvbk", HSMHV_MOD_CVBK, IF_REAL, "Bias dependence coefficient of cisb [-]"),
   IOP("divx", HSMHV_MOD_DIVX, IF_REAL, "  [1/V]"),
 
   IOP("clm1", HSMHV_MOD_CLM1, IF_REAL, "Parameter for CLM [-]"),
@@ -403,7 +350,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("cit", HSMHV_MOD_CIT, IF_REAL, ""),
   IOP("falph", HSMHV_MOD_FALPH, IF_REAL, "Parameter for 1/f noise"),
   IOP("kappa", HSMHV_MOD_KAPPA, IF_REAL, "Dielectric constant for high-k stacked gate"),
-//IOP("pthrou", HSMHV_MOD_PTHROU, IF_REAL, "Modify subthreshold slope [-]"),
+  IOP("pthrou", HSMHV_MOD_PTHROU, IF_REAL, "Modify subthreshold slope [-]"),
   IOP("vdiffj", HSMHV_MOD_VDIFFJ, IF_REAL, "Threshold voltage for S/D junction diode [V]"),
   IOP("dly1", HSMHV_MOD_DLY1, IF_REAL, "Parameter for transit time [-]"),
   IOP("dly2", HSMHV_MOD_DLY2, IF_REAL, "Parameter for transit time [-]"),
@@ -421,23 +368,10 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("rbsb", HSMHV_MOD_RBSB, IF_REAL, ""),
 
   IOP("ibpc1", HSMHV_MOD_IBPC1, IF_REAL, "Parameter for impact-ionization induced bulk potential change"),
-  IOP("ibpc1l", HSMHV_MOD_IBPC1L, IF_REAL, "Parameter for impact-ionization induced bulk potential change"),
-  IOP("ibpc1lp", HSMHV_MOD_IBPC1LP, IF_REAL, "Parameter for impact-ionization induced bulk potential change"),
   IOP("ibpc2", HSMHV_MOD_IBPC2, IF_REAL, "Parameter for impact-ionization induced bulk potential change"),
 
   IOP("mphdfm", HSMHV_MOD_MPHDFM, IF_REAL, "NSUBCDFM dependence of phonon scattering for DFM"),
 
-
-  IOP("ptl", HSMHV_MOD_PTL, IF_REAL, ""),
-  IOP("ptp", HSMHV_MOD_PTP, IF_REAL, ""),
-  IOP("pt2", HSMHV_MOD_PT2, IF_REAL, ""),
-  IOP("ptlp", HSMHV_MOD_PTLP, IF_REAL, ""),
-  IOP("gdl", HSMHV_MOD_GDL, IF_REAL, ""),
-  IOP("gdlp", HSMHV_MOD_GDLP, IF_REAL, ""),
-
-  IOP("gdld", HSMHV_MOD_GDLD, IF_REAL, ""),
-  IOP("pt4", HSMHV_MOD_PT4, IF_REAL, ""),
-  IOP("pt4p", HSMHV_MOD_PT4P, IF_REAL, ""),
   IOP("rdvg11", HSMHV_MOD_RDVG11, IF_REAL, ""), 
   IOP("rdvg12", HSMHV_MOD_RDVG12, IF_REAL, ""), 
   IOP("rth0", HSMHV_MOD_RTH0, IF_REAL, "Thermal resistance"), /* Self-heating model --SHE---*/
@@ -466,6 +400,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("rd23", HSMHV_MOD_RD23, IF_REAL, ""), 
   IOP("rd24", HSMHV_MOD_RD24, IF_REAL, ""), 
   IOP("rd25", HSMHV_MOD_RD25, IF_REAL, ""), 
+  IOP("rd26", HSMHV_MOD_RD26, IF_REAL, "alias for qovsm"), 
   IOP("rdvdl", HSMHV_MOD_RDVDL, IF_REAL, ""), 
   IOP("rdvdlp", HSMHV_MOD_RDVDLP, IF_REAL, ""), 
   IOP("rdvds", HSMHV_MOD_RDVDS, IF_REAL, ""), 
@@ -476,8 +411,8 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("rd23sp", HSMHV_MOD_RD23SP, IF_REAL, ""), 
   IOP("rds", HSMHV_MOD_RDS, IF_REAL, ""), 
   IOP("rdsp", HSMHV_MOD_RDSP, IF_REAL, ""), 
-//IOP("qovsm", HSMHV_MOD_QOVSM, IF_REAL, "Smoothing Qover at depletion/inversion transition"), 
-//  IOP("ldrift", HSMHV_MOD_LDRIFT, IF_REAL, "alias for ldrift2"),
+  IOP("qovsm", HSMHV_MOD_QOVSM, IF_REAL, "Smoothing Qover at depletion/inversion transition"), 
+  IOP("ldrift", HSMHV_MOD_LDRIFT, IF_REAL, "alias for ldrift2"),
   IOP("rdtemp1", HSMHV_MOD_RDTEMP1, IF_REAL, "Temperature-dependence of Rd"), 
   IOP("rdtemp2", HSMHV_MOD_RDTEMP2, IF_REAL, "Temperature-dependence of Rd"), 
   IOP("rth0r", HSMHV_MOD_RTH0R, IF_REAL, "Heat radiation for SHE"),   /* not used */
@@ -493,95 +428,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("ddrift", HSMHV_MOD_DDRIFT, IF_REAL, "model parameter for the substrate effect"),
   IOP("vbisub", HSMHV_MOD_VBISUB, IF_REAL, "model parameter for the substrate effect"),
   IOP("nsubsub", HSMHV_MOD_NSUBSUB, IF_REAL, "model parameter for the substrate effect"),
-
-  IOP("rdrmue", HSMHV_MOD_RDRMUE, IF_REAL, ""),
-  IOP("rdrvmax", HSMHV_MOD_RDRVMAX, IF_REAL, ""),
-  IOP("rdrmuetmp", HSMHV_MOD_RDRMUETMP, IF_REAL, ""),
-  IOP("ndepm", HSMHV_MOD_NDEPM, IF_REAL, "N- layer concentlation of the depletion MOS model"),
-  IOP("tndep", HSMHV_MOD_TNDEP, IF_REAL, "N- layer depth of the depletion MOS model"),
-  IOP("depmue0", HSMHV_MOD_DEPMUE0, IF_REAL, "coulomb scattering of resistor region "),
-  IOP("depmue1", HSMHV_MOD_DEPMUE1, IF_REAL, "coulomb scattering of resistor region"),
-  IOP("depmueback0", HSMHV_MOD_DEPMUEBACK0, IF_REAL, "coulomb scattering of back region"),
-  IOP("depmueback1", HSMHV_MOD_DEPMUEBACK1, IF_REAL, "coulomb scattering of back region"),
-  IOP("depleak", HSMHV_MOD_DEPLEAK, IF_REAL, "leakage current coefficient"),
-  IOP("depeta", HSMHV_MOD_DEPETA, IF_REAL, "Vds dependence"),
-  IOP("depvmax", HSMHV_MOD_DEPVMAX, IF_REAL, "velocity saturation"),
-  IOP("depvdsef1", HSMHV_MOD_DEPVDSEF1, IF_REAL, "Vds dependece of leakage current"),
-  IOP("depvdsef2", HSMHV_MOD_DEPVDSEF2, IF_REAL, "Vds dependece of leakage current"),
-  IOP("depmueph0", HSMHV_MOD_DEPMUEPH0, IF_REAL, "phonon scattering"),
-  IOP("depmueph1", HSMHV_MOD_DEPMUEPH1, IF_REAL, "phonon scattering"),
-  IOP("depbb", HSMHV_MOD_DEPBB, IF_REAL, "high field effect coeeficient"),
-  IOP("depvtmp", HSMHV_MOD_DEPVTMP, IF_REAL, "temperature dependence of velocity saturation"),
-  IOP("depmuetmp", HSMHV_MOD_DEPMUETMP, IF_REAL, "temperature dependence of mobility"),
-
-
-  IOP("isbreak", HSMHV_MOD_ISBREAK, IF_REAL, "reverse saturation current for breakdown"),
-  IOP("rwell", HSMHV_MOD_RWELL, IF_REAL, "well resistance for breakdown"),
-
-  IOP("rdrvtmp", HSMHV_MOD_RDRVTMP, IF_REAL, ""),
-/*   IOP("rdrvmaxt1", HSMHV_MOD_RDRVMAXT1, IF_REAL, ""), */
-/*   IOP("rdrvmaxt2", HSMHV_MOD_RDRVMAXT2, IF_REAL, ""), */
-  IOP("rdrdjunc", HSMHV_MOD_RDRDJUNC, IF_REAL, ""),
-  IOP("rdrcx", HSMHV_MOD_RDRCX, IF_REAL, ""),
-  IOP("rdrcar", HSMHV_MOD_RDRCAR, IF_REAL, ""),
-  IOP("rdrdl1", HSMHV_MOD_RDRDL1, IF_REAL, ""),
-  IOP("rdrdl2", HSMHV_MOD_RDRDL2, IF_REAL, ""),
-  IOP("rdrvmaxw", HSMHV_MOD_RDRVMAXW, IF_REAL, ""),
-  IOP("rdrvmaxwp", HSMHV_MOD_RDRVMAXWP, IF_REAL, ""),
-  IOP("rdrvmaxl", HSMHV_MOD_RDRVMAXL, IF_REAL, ""),
-  IOP("rdrvmaxlp", HSMHV_MOD_RDRVMAXLP, IF_REAL, ""),
-  IOP("rdrmuel", HSMHV_MOD_RDRMUEL, IF_REAL, ""),
-  IOP("rdrmuelp", HSMHV_MOD_RDRMUELP, IF_REAL, ""),
-  IOP("rdrqover", HSMHV_MOD_RDRQOVER, IF_REAL, ""),
-  IOP("qovadd",  HSMHV_MOD_QOVADD, IF_REAL,  "parameter for additional Qover Charge [-]"),
-  IOP("js0d",    HSMHV_MOD_JS0D, IF_REAL,    "Saturation current density for drain junction [A/m^2]"),
-  IOP("js0swd",  HSMHV_MOD_JS0SWD, IF_REAL,  "Side wall saturation current density for drain junction [A/m  ]"),
-  IOP("njd",     HSMHV_MOD_NJD, IF_REAL,     "Emission coefficient for drain junction [-    ]"),
-  IOP("njswd",   HSMHV_MOD_NJSWD, IF_REAL,   "Sidewall emission coefficient for drain junction [     ]"),
-  IOP("xtid",    HSMHV_MOD_XTID, IF_REAL,    "Junction current temparature exponent coefficient for drain junction [-    ]"),
-  IOP("cjd",     HSMHV_MOD_CJD, IF_REAL,     "Bottom junction capacitance per unit area at zero bias for drain junction [F/m^2]"),
-  IOP("cjswd",   HSMHV_MOD_CJSWD, IF_REAL,   "Sidewall junction capacitance grading coefficient per unit length at zero bias for drain junction [F/m  ]"),
-  IOP("cjswgd",  HSMHV_MOD_CJSWGD, IF_REAL,  "Gate sidewall junction capacitance per unit length at zero bias for drain junction [F/m  ]"),
-  IOP("mjd",     HSMHV_MOD_MJD, IF_REAL,     "Bottom junction capacitance grading coefficient for drain junction [     ]"),
-  IOP("mjswd",   HSMHV_MOD_MJSWD, IF_REAL,   "Sidewall junction capacitance grading coefficient for drain junction [     ]"),
-  IOP("mjswgd",  HSMHV_MOD_MJSWGD, IF_REAL,  "Gate sidewall junction capacitance grading coefficient for drain junction [     ]"),
-  IOP("pbd",     HSMHV_MOD_PBD, IF_REAL,     "Bottom junction build-in potential  for drain junction  [V    ]"),
-  IOP("pbswd",   HSMHV_MOD_PBSWD, IF_REAL,   "Sidewall junction build-in potential for drain junction [V    ]"),
-  IOP("pbswgd",  HSMHV_MOD_PBSWDG, IF_REAL,  "Gate sidewall junction build-in potential for drain junction [V    ]"),
-  IOP("xti2d",   HSMHV_MOD_XTI2D, IF_REAL,   "Temperature coefficient for drain junction [-    ]"),
-  IOP("cisbd",   HSMHV_MOD_CISBD, IF_REAL,   "Reverse bias saturation current for drain junction [-    ]"),
-  IOP("cvbd",    HSMHV_MOD_CVBD, IF_REAL,    "Bias dependence coefficient of cisb for drain junction  [-    ]"),
-  IOP("ctempd",  HSMHV_MOD_CTEMPD, IF_REAL,  "Temperature coefficient for drain junction [-    ]"),
-  IOP("cisbkd",  HSMHV_MOD_CISBKD, IF_REAL,  "Reverse bias saturation current for drain junction [A    ]"),
-  IOP("divxd",   HSMHV_MOD_DIVXD, IF_REAL,   "Reverse coefficient coefficient for drain junction [1/V  ]"),
-  IOP("vdiffjd", HSMHV_MOD_VDIFFJD, IF_REAL, "Threshold voltage for junction diode for drain junction [V    ]"),
-  IOP("js0s",    HSMHV_MOD_JS0S, IF_REAL,    "Saturation current density for source junction [A/m^2]"),
-  IOP("js0sws",  HSMHV_MOD_JS0SWS, IF_REAL,  "Side wall saturation current density for source junction [A/m  ]"),
-  IOP("njs",     HSMHV_MOD_NJS, IF_REAL,     "Emission coefficient for source junction [-    ]"),
-  IOP("njsws",   HSMHV_MOD_NJSWS, IF_REAL,   "Sidewall emission coefficient for source junction [     ]"),
-  IOP("xtis",    HSMHV_MOD_XTIS, IF_REAL,    "Junction current temparature exponent coefficient for source junction [-    ]"),
-  IOP("cjs",     HSMHV_MOD_CJS, IF_REAL,     "Bottom junction capacitance per unit area at zero bias for source junction [F/m^2]"),
-  IOP("cjsws",   HSMHV_MOD_CJSSW, IF_REAL,   "Sidewall junction capacitance grading coefficient per unit length at zero bias for source junction [F/m  ]"),
-  IOP("cjswgs",  HSMHV_MOD_CJSWGS, IF_REAL,  "Gate sidewall junction capacitance per unit length at zero bias for source junction [F/m  ]"),
-  IOP("mjs",     HSMHV_MOD_MJS, IF_REAL,     "Bottom junction capacitance grading coefficient for source junction [     ]"),
-  IOP("mjsws",   HSMHV_MOD_MJSWS, IF_REAL,   "Sidewall junction capacitance grading coefficient for source junction [     ]"),
-  IOP("mjswgs",  HSMHV_MOD_MJSWGS, IF_REAL,  "Gate sidewall junction capacitance grading coefficient for source junction [     ]"),
-  IOP("pbs",     HSMHV_MOD_PBS, IF_REAL,     "Bottom junction build-in potential  for source junction  [V    ]"),
-  IOP("pbsws",   HSMHV_MOD_PBSWS, IF_REAL,   "Sidewall junction build-in potential for source junction [V    ]"),
-  IOP("pbswgs",  HSMHV_MOD_PBSWSG, IF_REAL,  "Gate sidewall junction build-in potential for source junction [V    ]"),
-  IOP("xti2s",   HSMHV_MOD_XTI2S, IF_REAL,   "Temperature coefficient for source junction [-    ]"),
-  IOP("cisbs",   HSMHV_MOD_CISBS, IF_REAL,   "Reverse bias saturation current for source junction [-    ]"),
-  IOP("cvbs",    HSMHV_MOD_CVBS, IF_REAL,    "Bias dependence coefficient of cisb for source junction  [-    ]"),
-  IOP("ctemps",  HSMHV_MOD_CTEMPS, IF_REAL,  "Temperature coefficient for source junction [-    ]"),
-  IOP("cisbks",  HSMHV_MOD_CISBKS, IF_REAL,  "Reverse bias saturation current for source junction [A    ]"),
-  IOP("divxs",   HSMHV_MOD_DIVXS, IF_REAL,   "Reverse coefficient coefficient for source junction [1/V  ]"),
-  IOP("vdiffjs", HSMHV_MOD_VDIFFJS, IF_REAL, "Threshold voltage for junction diode for source junction [V    ]"),
   IOP("shemax",  HSMHV_MOD_SHEMAX, IF_REAL,  "Maximum rise temperatue for SHE [C]"),
-  IOP("vgsmin",  HSMHV_MOD_VGSMIN, IF_REAL,  "minimal/maximal expected Vgs (NMOS/PMOS) [V]"),
-  IOP("gdsleak", HSMHV_MOD_GDSLEAK, IF_REAL, "Channel leakage conductance [A/V]"),
-  IOP("rdrbb", HSMHV_MOD_RDRBB, IF_REAL, "degradation of the mobility in drift region"),
-  IOP("rdrbbtmp", HSMHV_MOD_RDRBBTMP, IF_REAL, "temperature coeeficient of RDRBB"),
-
 
   /* binning parameters */
   IOP("lmin", HSMHV_MOD_LMIN, IF_REAL, "Minimum length for the model"),
@@ -598,7 +445,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("leg0", HSMHV_MOD_LEG0, IF_REAL, "Length dependence of eg0"),
   IOP("lvfbover", HSMHV_MOD_LVFBOVER, IF_REAL, "Length dependence of vfbover"),
   IOP("lnover", HSMHV_MOD_LNOVER, IF_REAL, "Length dependence of nover"),
-  IOP("lnovers", HSMHV_MOD_LNOVERS, IF_REAL, "Length dependence of nover on source side"),
+  IOP("lnovers", HSMHV_MOD_LNOVERS, IF_REAL, "Length dependence of nover on source size"),
   IOP("lwl2", HSMHV_MOD_LWL2, IF_REAL, "Length dependence of wl2"),
   IOP("lvfbc", HSMHV_MOD_LVFBC, IF_REAL, "Length dependence of vfbc"),
   IOP("lnsubc", HSMHV_MOD_LNSUBC, IF_REAL, "Length dependence of nsubc"),
@@ -610,7 +457,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("lsc2", HSMHV_MOD_LSC2, IF_REAL, "Length dependence of sc2"),
   IOP("lsc3", HSMHV_MOD_LSC3, IF_REAL, "Length dependence of sc3"),
   IOP("lpgd1", HSMHV_MOD_LPGD1, IF_REAL, "Length dependence of pgd1"),
-//IOP("lpgd3", HSMHV_MOD_LPGD3, IF_REAL, "Length dependence of pgd3"),
+  IOP("lpgd3", HSMHV_MOD_LPGD3, IF_REAL, "Length dependence of pgd3"),
   IOP("lndep", HSMHV_MOD_LNDEP, IF_REAL, "Length dependence of ndep"),
   IOP("lninv", HSMHV_MOD_LNINV, IF_REAL, "Length dependence of ninv"),
   IOP("lmuecb0", HSMHV_MOD_LMUECB0, IF_REAL, "Length dependence of muecb0"),
@@ -662,7 +509,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("lglkb2", HSMHV_MOD_LGLKB2, IF_REAL, "Length dependence of glkb2"),
   IOP("lnftrp", HSMHV_MOD_LNFTRP, IF_REAL, "Length dependence of nftrp"),
   IOP("lnfalp", HSMHV_MOD_LNFALP, IF_REAL, "Length dependence of nfalp"),
-//IOP("lpthrou", HSMHV_MOD_LPTHROU, IF_REAL, "Length dependence of pthrou"),
+  IOP("lpthrou", HSMHV_MOD_LPTHROU, IF_REAL, "Length dependence of pthrou"),
   IOP("lvdiffj", HSMHV_MOD_LVDIFFJ, IF_REAL, "Length dependence of vdiffj"),
   IOP("libpc1", HSMHV_MOD_LIBPC1, IF_REAL, "Length dependence of ibpc1"),
   IOP("libpc2", HSMHV_MOD_LIBPC2, IF_REAL, "Length dependence of ibpc2"),
@@ -684,16 +531,6 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("lrs", HSMHV_MOD_LRS, IF_REAL, "Length dependence of rs"),
   IOP("lrth0", HSMHV_MOD_LRTH0, IF_REAL, "Length dependence of rth0"),
   IOP("lvover", HSMHV_MOD_LVOVER, IF_REAL, "Length dependence of vover"),
-  IOP("ljs0d",   HSMHV_MOD_LJS0D, IF_REAL,   "Length dependence of js0d"),
-  IOP("ljs0swd", HSMHV_MOD_LJS0SWD, IF_REAL, "Length dependence of js0swd"),
-  IOP("lnjd",    HSMHV_MOD_LNJD, IF_REAL,    "Length dependence of njd"),
-  IOP("lcisbkd", HSMHV_MOD_LCISBKD, IF_REAL, "Length dependence of cisbkd"),
-  IOP("lvdiffjd", HSMHV_MOD_LVDIFFJD, IF_REAL, "Length dependence of vdiffjd"),
-  IOP("ljs0s",   HSMHV_MOD_LJS0S, IF_REAL,   "Length dependence of js0s"),
-  IOP("ljs0sws", HSMHV_MOD_LJS0SWS, IF_REAL, "Length dependence of js0sws"),
-  IOP("lnjs",    HSMHV_MOD_LNJS, IF_REAL,    "Length dependence of njs"),
-  IOP("lcisbks", HSMHV_MOD_LCISBKS, IF_REAL, "Length dependence of cisbks"),
-  IOP("lvdiffjs", HSMHV_MOD_LVDIFFJS, IF_REAL, "Length dependence of vdiffjs"),
 
   /* Width dependence */
   IOP("wvmax", HSMHV_MOD_WVMAX, IF_REAL, "Width dependence of vmax"),
@@ -702,7 +539,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("weg0", HSMHV_MOD_WEG0, IF_REAL, "Width dependence of eg0"),
   IOP("wvfbover", HSMHV_MOD_WVFBOVER, IF_REAL, "Width dependence of vfbover"),
   IOP("wnover", HSMHV_MOD_WNOVER, IF_REAL, "Width dependence of nover"),
-  IOP("wnovers", HSMHV_MOD_WNOVERS, IF_REAL, "Width dependence of novers on source side"),
+  IOP("wnovers", HSMHV_MOD_WNOVERS, IF_REAL, "Width dependence of novers on source size"),
   IOP("wwl2", HSMHV_MOD_WWL2, IF_REAL, "Width dependence of wl2"),
   IOP("wvfbc", HSMHV_MOD_WVFBC, IF_REAL, "Width dependence of vfbc"),
   IOP("wnsubc", HSMHV_MOD_WNSUBC, IF_REAL, "Width dependence of nsubc"),
@@ -714,7 +551,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("wsc2", HSMHV_MOD_WSC2, IF_REAL, "Width dependence of sc2"),
   IOP("wsc3", HSMHV_MOD_WSC3, IF_REAL, "Width dependence of sc3"),
   IOP("wpgd1", HSMHV_MOD_WPGD1, IF_REAL, "Width dependence of pgd1"),
-//IOP("wpgd3", HSMHV_MOD_WPGD3, IF_REAL, "Width dependence of pgd3"),
+  IOP("wpgd3", HSMHV_MOD_WPGD3, IF_REAL, "Width dependence of pgd3"),
   IOP("wndep", HSMHV_MOD_WNDEP, IF_REAL, "Width dependence of ndep"),
   IOP("wninv", HSMHV_MOD_WNINV, IF_REAL, "Width dependence of ninv"),
   IOP("wmuecb0", HSMHV_MOD_WMUECB0, IF_REAL, "Width dependence of muecb0"),
@@ -766,7 +603,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("wglkb2", HSMHV_MOD_WGLKB2, IF_REAL, "Width dependence of glkb2"),
   IOP("wnftrp", HSMHV_MOD_WNFTRP, IF_REAL, "Width dependence of nftrp"),
   IOP("wnfalp", HSMHV_MOD_WNFALP, IF_REAL, "Width dependence of nfalp"),
-//IOP("wpthrou", HSMHV_MOD_WPTHROU, IF_REAL, "Width dependence of pthrou"),
+  IOP("wpthrou", HSMHV_MOD_WPTHROU, IF_REAL, "Width dependence of pthrou"),
   IOP("wvdiffj", HSMHV_MOD_WVDIFFJ, IF_REAL, "Width dependence of vdiffj"),
   IOP("wibpc1", HSMHV_MOD_WIBPC1, IF_REAL, "Width dependence of ibpc1"),
   IOP("wibpc2", HSMHV_MOD_WIBPC2, IF_REAL, "Width dependence of ibpc2"),
@@ -788,16 +625,6 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("wrs", HSMHV_MOD_WRS, IF_REAL, "Width dependence of rs"),
   IOP("wrth0", HSMHV_MOD_WRTH0, IF_REAL, "Width dependence of rth0"),
   IOP("wvover", HSMHV_MOD_WVOVER, IF_REAL, "Width dependence of vover"),
-  IOP("wjs0d",   HSMHV_MOD_WJS0D, IF_REAL,   "Wength dependence of js0d"),
-  IOP("wjs0swd", HSMHV_MOD_WJS0SWD, IF_REAL, "Wength dependence of js0swd"),
-  IOP("wnjd",    HSMHV_MOD_WNJD, IF_REAL,    "Wength dependence of njd"),
-  IOP("wcisbkd", HSMHV_MOD_WCISBKD, IF_REAL, "Wength dependence of cisbkd"),
-  IOP("wvdiffjd", HSMHV_MOD_WVDIFFJD, IF_REAL, "Wength dependence of vdiffjd"),
-  IOP("wjs0s",   HSMHV_MOD_WJS0S, IF_REAL,   "Wength dependence of js0s"),
-  IOP("wjs0sws", HSMHV_MOD_WJS0SWS, IF_REAL, "Wength dependence of js0sws"),
-  IOP("wnjs",    HSMHV_MOD_WNJS, IF_REAL,    "Wength dependence of njs"),
-  IOP("wcisbks", HSMHV_MOD_WCISBKS, IF_REAL, "Wength dependence of cisbks"),
-  IOP("wvdiffjs", HSMHV_MOD_WVDIFFJS, IF_REAL, "Wength dependence of vdiffjs"),
 
   /* Cross-term dependence */
   IOP("pvmax", HSMHV_MOD_PVMAX, IF_REAL, "Cross-term dependence of vmax"),
@@ -806,7 +633,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("peg0", HSMHV_MOD_PEG0, IF_REAL, "Cross-term dependence of eg0"),
   IOP("pvfbover", HSMHV_MOD_PVFBOVER, IF_REAL, "Cross-term dependence of vfbover"),
   IOP("pnover", HSMHV_MOD_PNOVER, IF_REAL, "Cross-term dependence of nover"),
-  IOP("pnovers", HSMHV_MOD_PNOVERS, IF_REAL, "Cross-term dependence of nover on source side"),
+  IOP("pnovers", HSMHV_MOD_PNOVERS, IF_REAL, "Cross-term dependence of nover on source size"),
   IOP("pwl2", HSMHV_MOD_PWL2, IF_REAL, "Cross-term dependence of wl2"),
   IOP("pvfbc", HSMHV_MOD_PVFBC, IF_REAL, "Cross-term dependence of vfbc"),
   IOP("pnsubc", HSMHV_MOD_PNSUBC, IF_REAL, "Cross-term dependence of nsubc"),
@@ -818,7 +645,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("psc2", HSMHV_MOD_PSC2, IF_REAL, "Cross-term dependence of sc2"),
   IOP("psc3", HSMHV_MOD_PSC3, IF_REAL, "Cross-term dependence of sc3"),
   IOP("ppgd1", HSMHV_MOD_PPGD1, IF_REAL, "Cross-term dependence of pgd1"),
-//IOP("ppgd3", HSMHV_MOD_PPGD3, IF_REAL, "Cross-term dependence of pgd3"),
+  IOP("ppgd3", HSMHV_MOD_PPGD3, IF_REAL, "Cross-term dependence of pgd3"),
   IOP("pndep", HSMHV_MOD_PNDEP, IF_REAL, "Cross-term dependence of ndep"),
   IOP("pninv", HSMHV_MOD_PNINV, IF_REAL, "Cross-term dependence of ninv"),
   IOP("pmuecb0", HSMHV_MOD_PMUECB0, IF_REAL, "Cross-term dependence of muecb0"),
@@ -870,7 +697,7 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("pglkb2", HSMHV_MOD_PGLKB2, IF_REAL, "Cross-term dependence of glkb2"),
   IOP("pnftrp", HSMHV_MOD_PNFTRP, IF_REAL, "Cross-term dependence of nftrp"),
   IOP("pnfalp", HSMHV_MOD_PNFALP, IF_REAL, "Cross-term dependence of nfalp"),
-//IOP("ppthrou", HSMHV_MOD_PPTHROU, IF_REAL, "Cross-term dependence of pthrou"),
+  IOP("ppthrou", HSMHV_MOD_PPTHROU, IF_REAL, "Cross-term dependence of pthrou"),
   IOP("pvdiffj", HSMHV_MOD_PVDIFFJ, IF_REAL, "Cross-term dependence of vdiffj"),
   IOP("pibpc1", HSMHV_MOD_PIBPC1, IF_REAL, "Cross-term dependence of ibpc1"),
   IOP("pibpc2", HSMHV_MOD_PIBPC2, IF_REAL, "Cross-term dependence of ibpc2"),
@@ -892,16 +719,6 @@ IFparm HSMHVmPTable[] = { /* model parameters */
   IOP("prs", HSMHV_MOD_PRS, IF_REAL, "Cross-term dependence of rs"),
   IOP("prth0", HSMHV_MOD_PRTH0, IF_REAL, "Cross-term dependence of rth0"),
   IOP("pvover", HSMHV_MOD_PVOVER, IF_REAL, "Cross-term dependence of vover"),
-  IOP("pjs0d",   HSMHV_MOD_PJS0D, IF_REAL,   "Cross-term dependence of js0d"),
-  IOP("pjs0swd", HSMHV_MOD_PJS0SWD, IF_REAL, "Cross-term dependence of js0swd"),
-  IOP("pnjd",    HSMHV_MOD_PNJD, IF_REAL,    "Cross-term dependence of njd"),
-  IOP("pcisbkd", HSMHV_MOD_PCISBKD, IF_REAL, "Cross-term dependence of cisbkd"),
-  IOP("pvdiffjd", HSMHV_MOD_PVDIFFJD, IF_REAL, "Cross-term dependence of vdiffjd"),
-  IOP("pjs0s",   HSMHV_MOD_PJS0S, IF_REAL,   "Cross-term dependence of js0s"),
-  IOP("pjs0sws", HSMHV_MOD_PJS0SWS, IF_REAL, "Cross-term dependence of js0sws"),
-  IOP("pnjs",    HSMHV_MOD_PNJS, IF_REAL,    "Cross-term dependence of njs"),
-  IOP("pcisbks", HSMHV_MOD_PCISBKS, IF_REAL, "Cross-term dependence of cisbks"),
-  IOP("pvdiffjs", HSMHV_MOD_PVDIFFJS, IF_REAL, "Cross-term dependence of vdiffjs"),
 
   IOP("vgs_max", HSMHV_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
   IOP("vgd_max", HSMHV_MOD_VGD_MAX, IF_REAL, "maximum voltage G-D branch"),

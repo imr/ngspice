@@ -1,61 +1,19 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2014 Hiroshima University & STARC
+ Copyright (C) 2012 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
- Model Parameter 'VERSION' : 2.20
+ ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
+ Model Parameter VERSION : 1.23
  FILE : hsmhvmpar.c
 
- DATE : 2014.6.11
+ DATE : 2013.04.30
 
  released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
-/**********************************************************************
-
-The following source code, and all copyrights, trade secrets or other
-intellectual property rights in and to the source code in its entirety,
-is owned by the Hiroshima University and the STARC organization.
-
-All users need to follow the "HISIM_HV Distribution Statement and
-Copyright Notice" attached to HiSIM_HV model.
-
------HISIM_HV Distribution Statement and Copyright Notice--------------
-
-Software is distributed as is, completely without warranty or service
-support. Hiroshima University or STARC and its employees are not liable
-for the condition or performance of the software.
-
-Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
-
-Hiroshima University and STARC hereby disclaims all implied warranties.
-
-Hiroshima University and STARC grant the users the right to modify, copy,
-and redistribute the software and documentation, both within the user's
-organization and externally, subject to the following restrictions
-
-1. The users agree not to charge for Hiroshima University and STARC code
-itself but may charge for additions, extensions, or support.
-
-2. In any product based on the software, the users agree to acknowledge
-Hiroshima University and STARC that developed the software. This
-acknowledgment shall appear in the product documentation.
-
-3. The users agree to reproduce any copyright notice which appears on
-the software on any copy or modification of such made available
-to others."
-
-Toshimasa Asahara, President, Hiroshima University
-Mitiko Miura-Mattausch, Professor, Hiroshima University
-Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
-*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "hsmhvdef.h"
@@ -194,22 +152,6 @@ int HSMHVmParam(
     mod->HSMHV_coldrift = value->iValue;
     mod->HSMHV_coldrift_Given = TRUE;
     break;
-  case  HSMHV_MOD_CORDRIFT:
-    mod->HSMHV_cordrift = value->iValue;
-    mod->HSMHV_cordrift_Given = TRUE;
-    break;
-  case  HSMHV_MOD_COERRREP:
-    mod->HSMHV_coerrrep = value->iValue;
-    mod->HSMHV_coerrrep_Given = TRUE;
-    break;
-  case  HSMHV_MOD_CODEP:
-    mod->HSMHV_codep = value->iValue;
-    mod->HSMHV_codep_Given = TRUE;
-    break;
-  case  HSMHV_MOD_CODDLT:
-    mod->HSMHV_coddlt = value->iValue;
-    mod->HSMHV_coddlt_Given = TRUE;
-    break;
   case  HSMHV_MOD_VMAX:
     mod->HSMHV_vmax = value->rValue;
     mod->HSMHV_vmax_Given = TRUE;
@@ -302,29 +244,9 @@ int HSMHVmParam(
     mod->HSMHV_subld1 = value->rValue;
     mod->HSMHV_subld1_Given = TRUE;
     break;
-  case  HSMHV_MOD_SUBLD1L:
-    mod->HSMHV_subld1l = value->rValue;
-    mod->HSMHV_subld1l_Given = TRUE;
-    break;
-  case  HSMHV_MOD_SUBLD1LP:
-    mod->HSMHV_subld1lp = value->rValue;
-    mod->HSMHV_subld1lp_Given = TRUE;
-    break;
   case  HSMHV_MOD_SUBLD2:
     mod->HSMHV_subld2 = value->rValue;
     mod->HSMHV_subld2_Given = TRUE;
-    break;
-  case  HSMHV_MOD_XPDV:
-    mod->HSMHV_xpdv = value->rValue;
-    mod->HSMHV_xpdv_Given = TRUE;
-    break;
-  case  HSMHV_MOD_XPVDTH:
-    mod->HSMHV_xpvdth = value->rValue;
-    mod->HSMHV_xpvdth_Given = TRUE;
-    break;
-  case  HSMHV_MOD_XPVDTHG:
-    mod->HSMHV_xpvdthg = value->rValue;
-    mod->HSMHV_xpvdthg_Given = TRUE;
     break;
   case  HSMHV_MOD_DDLTMAX: /* Vdseff */
     mod->HSMHV_ddltmax = value->rValue;
@@ -509,6 +431,10 @@ int HSMHVmParam(
   case  HSMHV_MOD_PGD2:
     mod->HSMHV_pgd2 = value->rValue;
     mod->HSMHV_pgd2_Given = TRUE;
+    break;
+  case  HSMHV_MOD_PGD3:
+    mod->HSMHV_pgd3 = value->rValue;
+    mod->HSMHV_pgd3_Given = TRUE;
     break;
   case  HSMHV_MOD_PGD4:
     mod->HSMHV_pgd4 = value->rValue;
@@ -1058,6 +984,10 @@ int HSMHVmParam(
     mod->HSMHV_kappa = value->rValue;
     mod->HSMHV_kappa_Given = TRUE;
     break;
+  case  HSMHV_MOD_PTHROU:
+    mod->HSMHV_pthrou = value->rValue;
+    mod->HSMHV_pthrou_Given = TRUE;
+    break;
   case  HSMHV_MOD_VDIFFJ:
     mod->HSMHV_vdiffj = value->rValue;
     mod->HSMHV_vdiffj_Given = TRUE;
@@ -1114,14 +1044,6 @@ int HSMHVmParam(
     mod->HSMHV_ibpc1 = value->rValue;
     mod->HSMHV_ibpc1_Given = TRUE;
     break;
-  case  HSMHV_MOD_IBPC1L:
-    mod->HSMHV_ibpc1l = value->rValue;
-    mod->HSMHV_ibpc1l_Given = TRUE;
-    break;
-  case  HSMHV_MOD_IBPC1LP:
-    mod->HSMHV_ibpc1lp = value->rValue;
-    mod->HSMHV_ibpc1lp_Given = TRUE;
-    break;
   case  HSMHV_MOD_IBPC2:
     mod->HSMHV_ibpc2 = value->rValue;
     mod->HSMHV_ibpc2_Given = TRUE;
@@ -1129,44 +1051,6 @@ int HSMHVmParam(
   case  HSMHV_MOD_MPHDFM:
     mod->HSMHV_mphdfm = value->rValue;
     mod->HSMHV_mphdfm_Given = TRUE;
-    break;
-
-  case  HSMHV_MOD_PTL:
-    mod->HSMHV_ptl = value->rValue;
-    mod->HSMHV_ptl_Given = TRUE;
-    break;
-  case  HSMHV_MOD_PTP:
-    mod->HSMHV_ptp = value->rValue;
-    mod->HSMHV_ptp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_PT2:
-    mod->HSMHV_pt2 = value->rValue;
-    mod->HSMHV_pt2_Given = TRUE;
-    break;
-  case  HSMHV_MOD_PTLP:
-    mod->HSMHV_ptlp = value->rValue;
-    mod->HSMHV_ptlp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_GDL:
-    mod->HSMHV_gdl = value->rValue;
-    mod->HSMHV_gdl_Given = TRUE;
-    break;
-  case  HSMHV_MOD_GDLP:
-    mod->HSMHV_gdlp = value->rValue;
-    mod->HSMHV_gdlp_Given = TRUE;
-    break;
-
-  case  HSMHV_MOD_GDLD:
-    mod->HSMHV_gdld = value->rValue;
-    mod->HSMHV_gdld_Given = TRUE;
-    break;
-  case  HSMHV_MOD_PT4:
-    mod->HSMHV_pt4 = value->rValue;
-    mod->HSMHV_pt4_Given = TRUE;
-    break;
-  case  HSMHV_MOD_PT4P:
-    mod->HSMHV_pt4p = value->rValue;
-    mod->HSMHV_pt4p_Given = TRUE;
     break;
   case  HSMHV_MOD_RDVG11:
     mod->HSMHV_rdvg11 = value->rValue;
@@ -1179,6 +1063,14 @@ int HSMHVmParam(
   case  HSMHV_MOD_RD20:
     mod->HSMHV_rd20 = value->rValue;
     mod->HSMHV_rd20_Given = TRUE;
+    break;
+  case  HSMHV_MOD_QOVSM: 
+    mod->HSMHV_qovsm = value->rValue;
+    mod->HSMHV_qovsm_Given = TRUE;
+    break;
+  case  HSMHV_MOD_LDRIFT: 
+    mod->HSMHV_ldrift = value->rValue;
+    mod->HSMHV_ldrift_Given = TRUE;
     break;
   case  HSMHV_MOD_RD21:
     mod->HSMHV_rd21 = value->rValue;
@@ -1203,6 +1095,10 @@ int HSMHVmParam(
   case  HSMHV_MOD_RD25:
     mod->HSMHV_rd25 = value->rValue;
     mod->HSMHV_rd25_Given = TRUE;
+    break;
+  case  HSMHV_MOD_RD26:
+    mod->HSMHV_rd26 = value->rValue;
+    mod->HSMHV_rd26_Given = TRUE;
     break;
   case  HSMHV_MOD_RDVDL:
     mod->HSMHV_rdvdl = value->rValue;
@@ -1404,263 +1300,11 @@ int HSMHVmParam(
     mod->HSMHV_nsubsub = value->rValue;
     mod->HSMHV_nsubsub_Given = TRUE;
     break;
-
-  case  HSMHV_MOD_RDRMUE:
-    mod->HSMHV_rdrmue = value->rValue;
-    mod->HSMHV_rdrmue_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRVMAX:
-    mod->HSMHV_rdrvmax = value->rValue;
-    mod->HSMHV_rdrvmax_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRMUETMP:
-    mod->HSMHV_rdrmuetmp = value->rValue;
-    mod->HSMHV_rdrmuetmp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRVTMP:
-    mod->HSMHV_rdrvtmp = value->rValue;
-    mod->HSMHV_rdrvtmp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRDJUNC:
-    mod->HSMHV_rdrdjunc = value->rValue;
-    mod->HSMHV_rdrdjunc_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRCX:
-    mod->HSMHV_rdrcx = value->rValue;
-    mod->HSMHV_rdrcx_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRCAR:
-    mod->HSMHV_rdrcar = value->rValue;
-    mod->HSMHV_rdrcar_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRDL1:
-    mod->HSMHV_rdrdl1 = value->rValue;
-    mod->HSMHV_rdrdl1_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRDL2:
-    mod->HSMHV_rdrdl2 = value->rValue;
-    mod->HSMHV_rdrdl2_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRVMAXW:
-    mod->HSMHV_rdrvmaxw = value->rValue;
-    mod->HSMHV_rdrvmaxw_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRVMAXWP:
-    mod->HSMHV_rdrvmaxwp = value->rValue;
-    mod->HSMHV_rdrvmaxwp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRVMAXL:
-    mod->HSMHV_rdrvmaxl = value->rValue;
-    mod->HSMHV_rdrvmaxl_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRVMAXLP:
-    mod->HSMHV_rdrvmaxlp = value->rValue;
-    mod->HSMHV_rdrvmaxlp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRMUEL:
-    mod->HSMHV_rdrmuel = value->rValue;
-    mod->HSMHV_rdrmuel_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRMUELP:
-    mod->HSMHV_rdrmuelp = value->rValue;
-    mod->HSMHV_rdrmuelp_Given = TRUE;
-    break;
-  case  HSMHV_MOD_RDRQOVER:
-    mod->HSMHV_rdrqover = value->rValue;
-    mod->HSMHV_rdrqover_Given = TRUE;
-    break;
-  case HSMHV_MOD_QOVADD:
-    mod->HSMHV_qovadd = value->rValue;
-    mod->HSMHV_qovadd_Given = TRUE;
-    break;
-  case HSMHV_MOD_JS0D:
-    mod->HSMHV_js0d = value->rValue;
-    mod->HSMHV_js0d_Given = TRUE;
-    break;
-  case HSMHV_MOD_JS0SWD:
-    mod->HSMHV_js0swd = value->rValue;
-    mod->HSMHV_js0swd_Given = TRUE;
-    break;
-  case HSMHV_MOD_NJD:
-    mod->HSMHV_njd = value->rValue;
-    mod->HSMHV_njd_Given = TRUE;
-    break;
-  case HSMHV_MOD_NJSWD:
-    mod->HSMHV_njswd = value->rValue;
-    mod->HSMHV_njswd_Given = TRUE;
-    break;
-  case HSMHV_MOD_XTID:
-    mod->HSMHV_xtid = value->rValue;
-    mod->HSMHV_xtid_Given = TRUE;
-    break;
-  case HSMHV_MOD_CJD:
-    mod->HSMHV_cjd = value->rValue;
-    mod->HSMHV_cjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_CJSWD:
-    mod->HSMHV_cjswd = value->rValue;
-    mod->HSMHV_cjswd_Given = TRUE;
-    break;
-  case HSMHV_MOD_CJSWGD:
-    mod->HSMHV_cjswgd = value->rValue;
-    mod->HSMHV_cjswgd_Given = TRUE;
-    break;
-  case HSMHV_MOD_MJD:
-    mod->HSMHV_mjd = value->rValue;
-    mod->HSMHV_mjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_MJSWD:
-    mod->HSMHV_mjswd = value->rValue;
-    mod->HSMHV_mjswd_Given = TRUE;
-    break;
-  case HSMHV_MOD_MJSWGD:
-    mod->HSMHV_mjswgd = value->rValue;
-    mod->HSMHV_mjswgd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PBD:
-    mod->HSMHV_pbd = value->rValue;
-    mod->HSMHV_pbd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PBSWD:
-    mod->HSMHV_pbswd = value->rValue;
-    mod->HSMHV_pbswd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PBSWDG:
-    mod->HSMHV_pbswgd = value->rValue;
-    mod->HSMHV_pbswgd_Given = TRUE;
-    break;
-  case HSMHV_MOD_XTI2D:
-    mod->HSMHV_xti2d = value->rValue;
-    mod->HSMHV_xti2d_Given = TRUE;
-    break;
-  case HSMHV_MOD_CISBD:
-    mod->HSMHV_cisbd = value->rValue;
-    mod->HSMHV_cisbd_Given = TRUE;
-    break;
-  case HSMHV_MOD_CVBD:
-    mod->HSMHV_cvbd = value->rValue;
-    mod->HSMHV_cvbd_Given = TRUE;
-    break;
-  case HSMHV_MOD_CTEMPD:
-    mod->HSMHV_ctempd = value->rValue;
-    mod->HSMHV_ctempd_Given = TRUE;
-    break;
-  case HSMHV_MOD_CISBKD:
-    mod->HSMHV_cisbkd = value->rValue;
-    mod->HSMHV_cisbkd_Given = TRUE;
-    break;
-  case HSMHV_MOD_DIVXD:
-    mod->HSMHV_divxd = value->rValue;
-    mod->HSMHV_divxd_Given = TRUE;
-    break;
-  case HSMHV_MOD_VDIFFJD:
-    mod->HSMHV_vdiffjd = value->rValue;
-    mod->HSMHV_vdiffjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_JS0S:
-    mod->HSMHV_js0s = value->rValue;
-    mod->HSMHV_js0s_Given = TRUE;
-    break;
-  case HSMHV_MOD_JS0SWS:
-    mod->HSMHV_js0sws = value->rValue;
-    mod->HSMHV_js0sws_Given = TRUE;
-    break;
-  case HSMHV_MOD_NJS:
-    mod->HSMHV_njs = value->rValue;
-    mod->HSMHV_njs_Given = TRUE;
-    break;
-  case HSMHV_MOD_NJSWS:
-    mod->HSMHV_njsws = value->rValue;
-    mod->HSMHV_njsws_Given = TRUE;
-    break;
-  case HSMHV_MOD_XTIS:
-    mod->HSMHV_xtis = value->rValue;
-    mod->HSMHV_xtis_Given = TRUE;
-    break;
-  case HSMHV_MOD_CJS:
-    mod->HSMHV_cjs = value->rValue;
-    mod->HSMHV_cjs_Given = TRUE;
-    break;
-  case HSMHV_MOD_CJSSW:
-    mod->HSMHV_cjsws = value->rValue;
-    mod->HSMHV_cjsws_Given = TRUE;
-    break;
-  case HSMHV_MOD_CJSWGS:
-    mod->HSMHV_cjswgs = value->rValue;
-    mod->HSMHV_cjswgs_Given = TRUE;
-    break;
-  case HSMHV_MOD_MJS:
-    mod->HSMHV_mjs = value->rValue;
-    mod->HSMHV_mjs_Given = TRUE;
-    break;
-  case HSMHV_MOD_MJSWS:
-    mod->HSMHV_mjsws = value->rValue;
-    mod->HSMHV_mjsws_Given = TRUE;
-    break;
-  case HSMHV_MOD_MJSWGS:
-    mod->HSMHV_mjswgs = value->rValue;
-    mod->HSMHV_mjswgs_Given = TRUE;
-    break;
-  case HSMHV_MOD_PBS:
-    mod->HSMHV_pbs = value->rValue;
-    mod->HSMHV_pbs_Given = TRUE;
-    break;
-  case HSMHV_MOD_PBSWS:
-    mod->HSMHV_pbsws = value->rValue;
-    mod->HSMHV_pbsws_Given = TRUE;
-    break;
-  case HSMHV_MOD_PBSWSG:
-    mod->HSMHV_pbswgs = value->rValue;
-    mod->HSMHV_pbswgs_Given = TRUE;
-    break;
-  case HSMHV_MOD_XTI2S:
-    mod->HSMHV_xti2s = value->rValue;
-    mod->HSMHV_xti2s_Given = TRUE;
-    break;
-  case HSMHV_MOD_CISBS:
-    mod->HSMHV_cisbs = value->rValue;
-    mod->HSMHV_cisbs_Given = TRUE;
-    break;
-  case HSMHV_MOD_CVBS:
-    mod->HSMHV_cvbs = value->rValue;
-    mod->HSMHV_cvbs_Given = TRUE;
-    break;
-  case HSMHV_MOD_CTEMPS:
-    mod->HSMHV_ctemps = value->rValue;
-    mod->HSMHV_ctemps_Given = TRUE;
-    break;
-  case HSMHV_MOD_CISBKS:
-    mod->HSMHV_cisbks = value->rValue;
-    mod->HSMHV_cisbks_Given = TRUE;
-    break;
-  case HSMHV_MOD_DIVXS:
-    mod->HSMHV_divxs = value->rValue;
-    mod->HSMHV_divxs_Given = TRUE;
-    break;
-  case HSMHV_MOD_VDIFFJS:
-    mod->HSMHV_vdiffjs = value->rValue;
-    mod->HSMHV_vdiffjs_Given = TRUE;
-    break;
   case HSMHV_MOD_SHEMAX:
     mod->HSMHV_shemax = value->rValue;
     mod->HSMHV_shemax_Given = TRUE;
     break;
-  case HSMHV_MOD_VGSMIN:
-    mod->HSMHV_vgsmin = value->rValue;
-    mod->HSMHV_vgsmin_Given = TRUE;
-    break;
-  case HSMHV_MOD_GDSLEAK:
-    mod->HSMHV_gdsleak = value->rValue;
-    mod->HSMHV_gdsleak_Given = TRUE;
-    break;
-  case HSMHV_MOD_RDRBB:
-    mod->HSMHV_rdrbb = value->rValue;
-    mod->HSMHV_rdrbb_Given = TRUE;
-    break;
-  case HSMHV_MOD_RDRBBTMP:
-    mod->HSMHV_rdrbbtmp = value->rValue;
-    mod->HSMHV_rdrbbtmp_Given = TRUE;
-    break;
+
 
 
   /* binning parameters */
@@ -1761,6 +1405,10 @@ int HSMHVmParam(
   case  HSMHV_MOD_LPGD1:
     mod->HSMHV_lpgd1 = value->rValue;
     mod->HSMHV_lpgd1_Given = TRUE;
+    break;
+  case  HSMHV_MOD_LPGD3:
+    mod->HSMHV_lpgd3 = value->rValue;
+    mod->HSMHV_lpgd3_Given = TRUE;
     break;
   case  HSMHV_MOD_LNDEP:
     mod->HSMHV_lndep = value->rValue;
@@ -1966,6 +1614,10 @@ int HSMHVmParam(
     mod->HSMHV_lnfalp = value->rValue;
     mod->HSMHV_lnfalp_Given = TRUE;
     break;
+  case  HSMHV_MOD_LPTHROU:
+    mod->HSMHV_lpthrou = value->rValue;
+    mod->HSMHV_lpthrou_Given = TRUE;
+    break;
   case  HSMHV_MOD_LVDIFFJ:
     mod->HSMHV_lvdiffj = value->rValue;
     mod->HSMHV_lvdiffj_Given = TRUE;
@@ -2051,46 +1703,6 @@ int HSMHVmParam(
     mod->HSMHV_lvover = value->rValue;
     mod->HSMHV_lvover_Given = TRUE;
     break;
-  case HSMHV_MOD_LJS0D:
-    mod->HSMHV_ljs0d = value->rValue;
-    mod->HSMHV_ljs0d_Given = TRUE;
-    break;
-  case HSMHV_MOD_LJS0SWD:
-    mod->HSMHV_ljs0swd = value->rValue;
-    mod->HSMHV_ljs0swd_Given = TRUE;
-    break;
-  case HSMHV_MOD_LNJD:
-    mod->HSMHV_lnjd = value->rValue;
-    mod->HSMHV_lnjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_LCISBKD:
-    mod->HSMHV_lcisbkd = value->rValue;
-    mod->HSMHV_lcisbkd_Given = TRUE;
-    break;
-  case HSMHV_MOD_LVDIFFJD:
-    mod->HSMHV_lvdiffjd = value->rValue;
-    mod->HSMHV_lvdiffjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_LJS0S:
-    mod->HSMHV_ljs0s = value->rValue;
-    mod->HSMHV_ljs0s_Given = TRUE;
-    break;
-  case HSMHV_MOD_LJS0SWS:
-    mod->HSMHV_ljs0sws = value->rValue;
-    mod->HSMHV_ljs0sws_Given = TRUE;
-    break;
-  case HSMHV_MOD_LNJS:
-    mod->HSMHV_lnjs = value->rValue;
-    mod->HSMHV_lnjs_Given = TRUE;
-    break;
-  case HSMHV_MOD_LCISBKS:
-    mod->HSMHV_lcisbks = value->rValue;
-    mod->HSMHV_lcisbks_Given = TRUE;
-    break;
-  case HSMHV_MOD_LVDIFFJS:
-    mod->HSMHV_lvdiffjs = value->rValue;
-    mod->HSMHV_lvdiffjs_Given = TRUE;
-    break;
 
   /* Width dependence */
   case  HSMHV_MOD_WVMAX:
@@ -2164,6 +1776,10 @@ int HSMHVmParam(
   case  HSMHV_MOD_WPGD1:
     mod->HSMHV_wpgd1 = value->rValue;
     mod->HSMHV_wpgd1_Given = TRUE;
+    break;
+  case  HSMHV_MOD_WPGD3:
+    mod->HSMHV_wpgd3 = value->rValue;
+    mod->HSMHV_wpgd3_Given = TRUE;
     break;
   case  HSMHV_MOD_WNDEP:
     mod->HSMHV_wndep = value->rValue;
@@ -2369,6 +1985,10 @@ int HSMHVmParam(
     mod->HSMHV_wnfalp = value->rValue;
     mod->HSMHV_wnfalp_Given = TRUE;
     break;
+  case  HSMHV_MOD_WPTHROU:
+    mod->HSMHV_wpthrou = value->rValue;
+    mod->HSMHV_wpthrou_Given = TRUE;
+    break;
   case  HSMHV_MOD_WVDIFFJ:
     mod->HSMHV_wvdiffj = value->rValue;
     mod->HSMHV_wvdiffj_Given = TRUE;
@@ -2454,46 +2074,6 @@ int HSMHVmParam(
     mod->HSMHV_wvover = value->rValue;
     mod->HSMHV_wvover_Given = TRUE;
     break;
-  case HSMHV_MOD_WJS0D:
-    mod->HSMHV_wjs0d = value->rValue;
-    mod->HSMHV_wjs0d_Given = TRUE;
-    break;
-  case HSMHV_MOD_WJS0SWD:
-    mod->HSMHV_wjs0swd = value->rValue;
-    mod->HSMHV_wjs0swd_Given = TRUE;
-    break;
-  case HSMHV_MOD_WNJD:
-    mod->HSMHV_wnjd = value->rValue;
-    mod->HSMHV_wnjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_WCISBKD:
-    mod->HSMHV_wcisbkd = value->rValue;
-    mod->HSMHV_wcisbkd_Given = TRUE;
-    break;
-  case HSMHV_MOD_WVDIFFJD:
-    mod->HSMHV_wvdiffjd = value->rValue;
-    mod->HSMHV_wvdiffjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_WJS0S:
-    mod->HSMHV_wjs0s = value->rValue;
-    mod->HSMHV_wjs0s_Given = TRUE;
-    break;
-  case HSMHV_MOD_WJS0SWS:
-    mod->HSMHV_wjs0sws = value->rValue;
-    mod->HSMHV_wjs0sws_Given = TRUE;
-    break;
-  case HSMHV_MOD_WNJS:
-    mod->HSMHV_wnjs = value->rValue;
-    mod->HSMHV_wnjs_Given = TRUE;
-    break;
-  case HSMHV_MOD_WCISBKS:
-    mod->HSMHV_wcisbks = value->rValue;
-    mod->HSMHV_wcisbks_Given = TRUE;
-    break;
-  case HSMHV_MOD_WVDIFFJS:
-    mod->HSMHV_wvdiffjs = value->rValue;
-    mod->HSMHV_wvdiffjs_Given = TRUE;
-    break;
 
   /* Cross-term dependence */
   case  HSMHV_MOD_PVMAX:
@@ -2567,6 +2147,10 @@ int HSMHVmParam(
   case  HSMHV_MOD_PPGD1:
     mod->HSMHV_ppgd1 = value->rValue;
     mod->HSMHV_ppgd1_Given = TRUE;
+    break;
+  case  HSMHV_MOD_PPGD3:
+    mod->HSMHV_ppgd3 = value->rValue;
+    mod->HSMHV_ppgd3_Given = TRUE;
     break;
   case  HSMHV_MOD_PNDEP:
     mod->HSMHV_pndep = value->rValue;
@@ -2772,6 +2356,10 @@ int HSMHVmParam(
     mod->HSMHV_pnfalp = value->rValue;
     mod->HSMHV_pnfalp_Given = TRUE;
     break;
+  case  HSMHV_MOD_PPTHROU:
+    mod->HSMHV_ppthrou = value->rValue;
+    mod->HSMHV_ppthrou_Given = TRUE;
+    break;
   case  HSMHV_MOD_PVDIFFJ:
     mod->HSMHV_pvdiffj = value->rValue;
     mod->HSMHV_pvdiffj_Given = TRUE;
@@ -2856,119 +2444,6 @@ int HSMHVmParam(
   case  HSMHV_MOD_PVOVER:
     mod->HSMHV_pvover = value->rValue;
     mod->HSMHV_pvover_Given = TRUE;
-    break;
-
-  case HSMHV_MOD_PJS0D:
-    mod->HSMHV_pjs0d = value->rValue;
-    mod->HSMHV_pjs0d_Given = TRUE;
-    break;
-  case HSMHV_MOD_PJS0SWD:
-    mod->HSMHV_pjs0swd = value->rValue;
-    mod->HSMHV_pjs0swd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PNJD:
-    mod->HSMHV_pnjd = value->rValue;
-    mod->HSMHV_pnjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PCISBKD:
-    mod->HSMHV_pcisbkd = value->rValue;
-    mod->HSMHV_pcisbkd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PVDIFFJD:
-    mod->HSMHV_pvdiffjd = value->rValue;
-    mod->HSMHV_pvdiffjd_Given = TRUE;
-    break;
-  case HSMHV_MOD_PJS0S:
-    mod->HSMHV_pjs0s = value->rValue;
-    mod->HSMHV_pjs0s_Given = TRUE;
-    break;
-  case HSMHV_MOD_PJS0SWS:
-    mod->HSMHV_pjs0sws = value->rValue;
-    mod->HSMHV_pjs0sws_Given = TRUE;
-    break;
-  case HSMHV_MOD_PNJS:
-    mod->HSMHV_pnjs = value->rValue;
-    mod->HSMHV_pnjs_Given = TRUE;
-    break;
-  case HSMHV_MOD_PCISBKS:
-    mod->HSMHV_pcisbks = value->rValue;
-    mod->HSMHV_pcisbks_Given = TRUE;
-    break;
-  case HSMHV_MOD_PVDIFFJS:
-    mod->HSMHV_pvdiffjs = value->rValue;
-    mod->HSMHV_pvdiffjs_Given = TRUE;
-    break;
-  case HSMHV_MOD_NDEPM:
-    mod->HSMHV_ndepm = value->rValue;
-    mod->HSMHV_ndepm_Given = TRUE;
-    break;
-  case HSMHV_MOD_TNDEP:
-    mod->HSMHV_tndep = value->rValue;
-    mod->HSMHV_tndep_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUE0:
-    mod->HSMHV_depmue0 = value->rValue;
-    mod->HSMHV_depmue0_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUE1:
-    mod->HSMHV_depmue1 = value->rValue;
-    mod->HSMHV_depmue1_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUEBACK0:
-    mod->HSMHV_depmueback0 = value->rValue;
-    mod->HSMHV_depmueback0_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUEBACK1:
-    mod->HSMHV_depmueback1 = value->rValue;
-    mod->HSMHV_depmueback1_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPLEAK:
-    mod->HSMHV_depleak = value->rValue;
-    mod->HSMHV_depleak_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPETA:
-    mod->HSMHV_depeta = value->rValue;
-    mod->HSMHV_depeta_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPVMAX:
-    mod->HSMHV_depvmax = value->rValue;
-    mod->HSMHV_depvmax_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPVDSEF1:
-    mod->HSMHV_depvdsef1 = value->rValue;
-    mod->HSMHV_depvdsef1_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPVDSEF2:
-    mod->HSMHV_depvdsef2 = value->rValue;
-    mod->HSMHV_depvdsef2_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUEPH0:
-    mod->HSMHV_depmueph0 = value->rValue;
-    mod->HSMHV_depmueph0_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUEPH1:
-    mod->HSMHV_depmueph1 = value->rValue;
-    mod->HSMHV_depmueph1_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPBB:
-    mod->HSMHV_depbb = value->rValue;
-    mod->HSMHV_depbb_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPVTMP:
-    mod->HSMHV_depvtmp = value->rValue;
-    mod->HSMHV_depvtmp_Given = TRUE;
-    break;
-  case HSMHV_MOD_DEPMUETMP:
-    mod->HSMHV_depmuetmp = value->rValue;
-    mod->HSMHV_depmuetmp_Given = TRUE;
-    break;
-  case HSMHV_MOD_ISBREAK:
-    mod->HSMHV_isbreak = value->rValue;
-    mod->HSMHV_isbreak_Given = TRUE;
-    break;
-  case HSMHV_MOD_RWELL:
-    mod->HSMHV_rwell = value->rValue;
-    mod->HSMHV_rwell_Given = TRUE;
     break;
 
   case HSMHV_MOD_VGS_MAX:
