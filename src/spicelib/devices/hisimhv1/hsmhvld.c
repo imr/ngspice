@@ -1,19 +1,61 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
- Model Parameter VERSION : 1.23
+ ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
+ Model Parameter 'VERSION' : 2.20
  FILE : hsmhvld.c
 
- DATE : 2013.04.30
+ DATE : 2014.6.11
 
  released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HISIM_HV Distribution Statement and
+Copyright Notice" attached to HiSIM_HV model.
+
+-----HISIM_HV Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaims all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+Toshimasa Asahara, President, Hiroshima University
+Mitiko Miura-Mattausch, Professor, Hiroshima University
+Katsuhiro Shimohigashi, President&CEO, STARC
+June 2008 (revised October 2011) 
+*************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "hisimhv.h"
@@ -163,7 +205,7 @@ static void ShowPhysVals
 
 int HSMHVload(
      GENmodel *inModel,
-     register CKTcircuit *ckt)
+     CKTcircuit *ckt)
      /* actually load the current value into the 
       * sparse matrix previously provided 
       */
@@ -171,8 +213,8 @@ int HSMHVload(
   register HSMHVmodel *model = (HSMHVmodel*)inModel;
   register HSMHVinstance *here;
   HSMHVbinningParam *pParam;
-/*  HSMHVmodelMKSParam *modelMKS ;*/
-/*  HSMHVhereMKSParam  *hereMKS ;*/
+  HSMHVmodelMKSParam *modelMKS ;
+  HSMHVhereMKSParam  *hereMKS ;
 
 
 
@@ -206,12 +248,17 @@ int HSMHVload(
   double Igb=0.0, dIgb_dVd=0.0, dIgb_dVg=0.0, dIgb_dVb=0.0, dIgb_dVs=0.0, dIgb_dT=0.0 ;
   double Isub=0.0, dIsub_dVds=0.0, dIsub_dVgs=0.0, dIsub_dVbs=0.0, dIsub_dT=0.0 ;
   double Isubs=0.0, dIsubs_dVds=0.0, dIsubs_dVgs=0.0, dIsubs_dVbs=0.0, dIsubs_dT=0.0 ;
-  double dIsub_dVdse=0.0, dIsubs_dVdse=0.0 ;
+  double IsubLD=0.0, dIsubLD_dVds=0.0, dIsubLD_dVgs=0.0, dIsubLD_dVbs=0.0, dIsubLD_dT=0.0 ;
+  double IsubLDs=0.0, dIsubLDs_dVds=0.0, dIsubLDs_dVgs=0.0, dIsubLDs_dVbs=0.0, dIsubLDs_dT=0.0 ;
+  double dIsubLD_dVddp=0.0, dIsubLDs_dVddp=0.0 ;
+  double IdsIBPC=0.0, dIdsIBPC_dVds=0.0, dIdsIBPC_dVgs=0.0, dIdsIBPC_dVbs=0.0, dIdsIBPC_dT=0.0 ;
+  double IdsIBPCs=0.0, dIdsIBPCs_dVds=0.0, dIdsIBPCs_dVgs=0.0, dIdsIBPCs_dVbs=0.0, dIdsIBPCs_dT=0.0 ;
+  double dIdsIBPC_dVddp=0.0, dIdsIBPCs_dVddp=0.0 ;
   double Igidl=0.0, dIgidl_dVds=0.0, dIgidl_dVgs=0.0, dIgidl_dVbs=0.0, dIgidl_dT=0.0 ;
   double Igisl=0.0, dIgisl_dVds=0.0, dIgisl_dVgs=0.0, dIgisl_dVbs=0.0, dIgisl_dT=0.0 ;
   double Ibd=0.0, Gbd=0.0, Gbdt=0.0 ;
   double Ibs=0.0, Gbs=0.0, Gbst=0.0 ;
-  double Iddp=0.0, dIddp_dVddp=0.0, dIddp_dVdse=0.0, dIddp_dVgse=0.0, dIddp_dVbse=0.0, dIddp_dVsubs=0.0, dIddp_dT =0.0 ;
+  double Iddp=0.0, dIddp_dVddp=0.0, dIddp_dVdse=0.0, dIddp_dVgse=0.0, dIddp_dVbse=0.0, dIddp_dVsubs=0.0, dIddp_dT =0.0 , dIddp_dVds =0.0, dIddp_dVgs =0.0, dIddp_dVbs =0.0 ;
   double Issp=0.0, dIssp_dVssp=0.0, dIssp_dVdse=0.0, dIssp_dVgse=0.0, dIssp_dVbse=0.0, dIssp_dVsubs=0.0, dIssp_dT =0.0 ;
   double Iggp=0.0, dIggp_dVggp =0.0 ;
   double Ibpb=0.0, dIbpb_dVbpb =0.0 ;
@@ -228,10 +275,10 @@ int HSMHVload(
   double i_d=0.0,   i_dP=0.0,   i_g=0.0,   i_gP=0.0,   i_s=0.0,   i_sP=0.0,   i_bP=0.0,   i_b=0.0,   i_db=0.0,     i_sb=0.0,   i_t=0.0   ;
 
   /* resistances and conductances */
-  double Rd=0.0, dRd_dVdse=0.0, dRd_dVgse=0.0, dRd_dVbse=0.0, dRd_dVsubs=0.0, dRd_dT=0.0 ;
+  double Rd=0.0, dRd_dVdse=0.0, dRd_dVgse=0.0, dRd_dVbse=0.0, dRd_dVsubs=0.0, dRd_dT=0.0, dRd_dVddp=0.0, dRd_dVds=0.0, dRd_dVgs=0.0, dRd_dVbs=0.0 ;
   double Rs=0.0, dRs_dVdse=0.0, dRs_dVgse=0.0, dRs_dVbse=0.0, dRs_dVsubs=0.0, dRs_dT=0.0 ;
 
-  double GD=0.0, GD_dVds=0.0, GD_dVgs=0.0, GD_dVbs=0.0, GD_dVsubs=0.0, GD_dT=0.0 ;
+  double GD=0.0, GD_dVds=0.0, GD_dVgs=0.0, GD_dVbs=0.0, GD_dVsubs=0.0, GD_dT=0.0, GD_dVddp=0.0, GD_dVdse=0.0, GD_dVgse=0.0, GD_dVbse=0.0 ;
   double GS=0.0, GS_dVds=0.0, GS_dVgs=0.0, GS_dVbs=0.0, GS_dVsubs=0.0, GS_dT=0.0 ;
   double Gth=0.0 ;
   double GG=0.0,  GRBPD=0.0, GRBPS=0.0, GRBPB=0.0; 
@@ -249,8 +296,9 @@ int HSMHVload(
 
   double Qdext=0.0, dQdext_dVdse=0.0, dQdext_dVgse=0.0, dQdext_dVbse=0.0, dQdext_dT=0.0 ;
   double Qgext=0.0, dQgext_dVdse=0.0, dQgext_dVgse=0.0, dQgext_dVbse=0.0, dQgext_dT=0.0 ;
-  double /*Qsext=0.0,*/ dQsext_dVdse=0.0, dQsext_dVgse=0.0, dQsext_dVbse=0.0, dQsext_dT=0.0 ;
+  double Qsext=0.0, dQsext_dVdse=0.0, dQsext_dVgse=0.0, dQsext_dVbse=0.0, dQsext_dT=0.0 ;
   double Qbext=0.0, dQbext_dVdse=0.0, dQbext_dVgse=0.0, dQbext_dVbse=0.0, dQbext_dT=0.0 ;
+
   /* 5th substrate node */
   int flg_subNode = 0 ;
   
@@ -258,7 +306,6 @@ int HSMHVload(
   double Veffpower=0.0, dVeffpower_dVds=0.0, dVeffpower_dVdse =0.0 ;
   double P=0.0, dP_dVds=0.0,  dP_dVgs=0.0,  dP_dVbs=0.0, dP_dT =0.0,
                 dP_dVdse=0.0, dP_dVgse=0.0, dP_dVbse =0.0 ;
-  int flg_tempNode = 0 ;
   double T0 , T1 , T2 ;
 
 #define SHE_MAX_dlt 0.1 
@@ -363,12 +410,12 @@ int HSMHVload(
   for ( ; model != NULL; model = model->HSMHVnextModel ) {
     /* loop through all the instances of the model */
 
-/*    modelMKS = &model->modelMKS ;*/
+    modelMKS = &model->modelMKS ;
 
     for (here = model->HSMHVinstances; here != NULL ;
          here = here->HSMHVnextInstance) {
       
-/*      hereMKS = &here->hereMKS ;*/
+      hereMKS = &here->hereMKS ;
       pParam = &here->pParam ;
       showPhysVal = 0;
       Check=1;
@@ -378,7 +425,6 @@ int HSMHVload(
       noncon_old = ckt->CKTnoncon;
       flg_nqs = model->HSMHV_conqs ;
       flg_subNode = here->HSMHVsubNode ; /* if flg_subNode > 0, external(/internal) substrate node exists */
-      flg_tempNode = here->HSMHVtempNode ; /* if flg_tempNode > 0, external/internal temperature node exists */
 
 #ifdef DEBUG_HISIMHVLD_VX
       printf("mode = %x\n", ckt->CKTmode);
@@ -397,7 +443,7 @@ int HSMHVload(
         vdbd = *(ckt->CKTstate0 + here->HSMHVvdbd);
         vsbs = *(ckt->CKTstate0 + here->HSMHVvsbs);
 	if (flg_subNode > 0) vsubs = *(ckt->CKTstate0 + here->HSMHVvsubs);
- 	if( flg_tempNode > 0 ){
+ 	if( here->HSMHV_coselfheat > 0 ){
 	  deltemp = *(ckt->CKTstate0 + here->HSMHVdeltemp);
 	}
  	vdse = *(ckt->CKTstate0 + here->HSMHVvdse) ;
@@ -423,7 +469,7 @@ int HSMHVload(
         vdbd = *(ckt->CKTstate1 + here->HSMHVvdbd);
         vsbs = *(ckt->CKTstate1 + here->HSMHVvsbs);
 	if (flg_subNode > 0) vsubs = *(ckt->CKTstate1 + here->HSMHVvsubs);
- 	if( flg_tempNode > 0 ){
+ 	if( here->HSMHV_coselfheat > 0 ){
 	  deltemp = *(ckt->CKTstate1 + here->HSMHVdeltemp);
 	}
  	vdse = *(ckt->CKTstate1 + here->HSMHVvdse) ;
@@ -451,7 +497,7 @@ int HSMHVload(
           vds = 0.1;
         }
 	if (flg_subNode > 0) vsubs = 0.0;
-        if( flg_tempNode > 0 ) deltemp=0.0;
+        if( here->HSMHV_coselfheat > 0 ) deltemp=0.0;
         vdse = vds ;
         vgse = vgs ;
         Qi_nqs = Qb_nqs = 0.0 ;
@@ -460,7 +506,7 @@ int HSMHVload(
                 here->HSMHV_off ) {
         vbs = vgs = vds = 0.0; vges = 0.0; vdbd = vsbs = 0.0;
 	if (flg_subNode > 0) vsubs = 0.0;
-        if( flg_tempNode > 0 ) deltemp=0.0;
+        if( here->HSMHV_coselfheat > 0 ) deltemp=0.0;
         vdse = vds ;
         vgse = vgs ;
         Qi_nqs = Qb_nqs = 0.0 ;
@@ -511,7 +557,7 @@ int HSMHVload(
             vsubs = (1.0 + xfact)* (*(ckt->CKTstate1 + here->HSMHVvsubs))
               - ( xfact * (*(ckt->CKTstate2 + here->HSMHVvsubs)));
 	  }
-          if( flg_tempNode > 0 ){
+          if( here->HSMHV_coselfheat > 0 ){
             deltemp = (1.0 + xfact)* (*(ckt->CKTstate1 + here->HSMHVdeltemp))
               - ( xfact * (*(ckt->CKTstate2 + here->HSMHVdeltemp)));
             
@@ -571,7 +617,7 @@ int HSMHVload(
 	      * (*(ckt->CKTrhsOld + here->HSMHVsubNode)
 		 - *(ckt->CKTrhsOld + here->HSMHVsNode));
 	  }
-	  if( flg_tempNode > 0 ){
+	  if( here->HSMHV_coselfheat > 0 ){
 	      deltemp = *(ckt->CKTrhsOld + here->HSMHVtempNode);
 	  }
 	  vbse = model->HSMHV_type * 
@@ -608,7 +654,7 @@ int HSMHVload(
 #ifndef NOBYPASS
         /* start of bypass section
            ... no bypass in case of selfheating  */
-        if ( !(ckt->CKTmode & MODEINITPRED) && ckt->CKTbypass && !model->HSMHV_coselfheat) {
+        if ( !(ckt->CKTmode & MODEINITPRED) && ckt->CKTbypass && !here->HSMHV_coselfheat) {
           delvds  = vds  - *(ckt->CKTstate0 + here->HSMHVvds) ;
           delvgs  = vgs  - *(ckt->CKTstate0 + here->HSMHVvgs) ;
           delvbs  = vbs  - *(ckt->CKTstate0 + here->HSMHVvbs) ;
@@ -648,7 +694,7 @@ int HSMHVload(
               gds        = here->HSMHV_dIds_dVdsi ;
               gm         = here->HSMHV_dIds_dVgsi ;
               gmbs       = here->HSMHV_dIds_dVbsi ;
-              gmT        = (flg_tempNode > 0) ? here->HSMHV_dIds_dTi : 0.0  ;
+              gmT        = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIds_dTi : 0.0  ;
 	      gmbs_ext   = here->HSMHV_dIds_dVbse;
 	      gds_ext    = here->HSMHV_dIds_dVdse ;
 	      gm_ext     = here->HSMHV_dIds_dVgse;
@@ -656,51 +702,73 @@ int HSMHVload(
 	      dIsub_dVds   = here->HSMHV_dIsub_dVdsi ; 
 	      dIsub_dVgs   = here->HSMHV_dIsub_dVgsi ; 
 	      dIsub_dVbs   = here->HSMHV_dIsub_dVbsi ;
-              dIsub_dT     = (flg_tempNode > 0) ? here->HSMHV_dIsub_dTi : 0.0  ; 
-	      dIsub_dVdse  = here->HSMHV_dIsub_dVdse ;
+              dIsub_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsub_dTi : 0.0  ; 
 	      Isubs        = 0.0 ;
 	      dIsubs_dVds  = 0.0 ; 
 	      dIsubs_dVgs  = 0.0 ; 
 	      dIsubs_dVbs  = 0.0 ;
               dIsubs_dT    = 0.0 ;
-	      dIsubs_dVdse = 0.0 ;
+	      IsubLD         = here->HSMHV_isubld ;
+	      dIsubLD_dVds   = here->HSMHV_dIsubLD_dVdsi ; 
+	      dIsubLD_dVgs   = here->HSMHV_dIsubLD_dVgsi ; 
+	      dIsubLD_dVbs   = here->HSMHV_dIsubLD_dVbsi ;
+              dIsubLD_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsubLD_dTi : 0.0  ; 
+	      dIsubLD_dVddp  = here->HSMHV_dIsubLD_dVddp ;
+	      IsubLDs        = 0.0 ;
+	      dIsubLDs_dVds  = 0.0 ; 
+	      dIsubLDs_dVgs  = 0.0 ; 
+	      dIsubLDs_dVbs  = 0.0 ;
+              dIsubLDs_dT    = 0.0 ;
+	      dIsubLDs_dVddp = 0.0 ;
+	      IdsIBPC         = here->HSMHV_idsibpc ;
+	      dIdsIBPC_dVds   = here->HSMHV_dIdsIBPC_dVdsi ; 
+	      dIdsIBPC_dVgs   = here->HSMHV_dIdsIBPC_dVgsi ; 
+	      dIdsIBPC_dVbs   = here->HSMHV_dIdsIBPC_dVbsi ;
+              dIdsIBPC_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIdsIBPC_dTi : 0.0  ; 
+	      dIdsIBPC_dVddp  = here->HSMHV_dIdsIBPC_dVddp ;
+	      IdsIBPCs        = 0.0 ;
+	      dIdsIBPCs_dVds  = 0.0 ; 
+	      dIdsIBPCs_dVgs  = 0.0 ; 
+	      dIdsIBPCs_dVbs  = 0.0 ;
+              dIdsIBPCs_dT    = 0.0 ;
+	      dIdsIBPCs_dVddp = 0.0 ;
               Igidl        = here->HSMHV_igidl ;
               dIgidl_dVds  = here->HSMHV_dIgidl_dVdsi ;
               dIgidl_dVgs  = here->HSMHV_dIgidl_dVgsi ;
               dIgidl_dVbs  = here->HSMHV_dIgidl_dVbsi ;
-              dIgidl_dT    = (flg_tempNode > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
+              dIgidl_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
               Igisl        = here->HSMHV_igisl ;
               dIgisl_dVds  = here->HSMHV_dIgisl_dVdsi ;
               dIgisl_dVgs  = here->HSMHV_dIgisl_dVgsi ;
               dIgisl_dVbs  = here->HSMHV_dIgisl_dVbsi ;
-              dIgisl_dT    = (flg_tempNode > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
+              dIgisl_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
               Igd          = here->HSMHV_igd ;
               dIgd_dVd   = here->HSMHV_dIgd_dVdsi ;
               dIgd_dVg   = here->HSMHV_dIgd_dVgsi ;
               dIgd_dVb   = here->HSMHV_dIgd_dVbsi ;
-              dIgd_dT      = (flg_tempNode > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
+              dIgd_dT      = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
               Igs          = here->HSMHV_igs ;
               dIgs_dVd   = here->HSMHV_dIgs_dVdsi ;
               dIgs_dVg   = here->HSMHV_dIgs_dVgsi ;
               dIgs_dVb   = here->HSMHV_dIgs_dVbsi ;
-              dIgs_dT      = (flg_tempNode > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
+              dIgs_dT      = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
               Igb          = here->HSMHV_igb ;
               dIgb_dVd   = here->HSMHV_dIgb_dVdsi ;
               dIgb_dVg   = here->HSMHV_dIgb_dVgsi ;
               dIgb_dVb   = here->HSMHV_dIgb_dVbsi ;
-              dIgb_dT      = (flg_tempNode > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
+              dIgb_dT      = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
 	      Ibd = here->HSMHV_ibd ;
               Gbd = here->HSMHV_gbd ;
-	      Gbdt = (flg_tempNode > 0) ? here->HSMHV_gbdT : 0.0 ;
+	      Gbdt = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbdT : 0.0 ;
 	      Ibs = here->HSMHV_ibs ;
 	      Gbs = here->HSMHV_gbs ;
-	      Gbst = (flg_tempNode > 0) ? here->HSMHV_gbsT : 0.0 ;
+	      Gbst = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbsT : 0.0 ;
             } else { /* reverse mode */
               Ids       = - here->HSMHV_ids ;
               gds       = + (here->HSMHV_dIds_dVdsi + here->HSMHV_dIds_dVgsi + here->HSMHV_dIds_dVbsi) ;
               gm        = - here->HSMHV_dIds_dVgsi ;
               gmbs      = - here->HSMHV_dIds_dVbsi ;
-              gmT       = (flg_tempNode > 0) ? - here->HSMHV_dIds_dTi : 0.0  ;
+              gmT       = (here->HSMHV_coselfheat > 0) ? - here->HSMHV_dIds_dTi : 0.0  ;
               gds_ext   = + (here->HSMHV_dIds_dVdse + here->HSMHV_dIds_dVgse + here->HSMHV_dIds_dVbse) ;
   	      gm_ext    = - here->HSMHV_dIds_dVgse;
 	      gmbs_ext  = - here->HSMHV_dIds_dVbse;
@@ -709,51 +777,72 @@ int HSMHVload(
 	      dIsub_dVgs   = 0.0 ; 
 	      dIsub_dVbs   = 0.0 ;
               dIsub_dT     = 0.0 ; 
-	      dIsub_dVdse  = 0.0 ;
 	      Isubs        =   here->HSMHV_isub ;
 	      dIsubs_dVds  = - (here->HSMHV_dIsub_dVdsi + here->HSMHV_dIsub_dVgsi + here->HSMHV_dIsub_dVbsi) ; 
 	      dIsubs_dVgs  =   here->HSMHV_dIsub_dVgsi ; 
 	      dIsubs_dVbs  =   here->HSMHV_dIsub_dVbsi ;
-              dIsubs_dT    =   (flg_tempNode > 0) ? here->HSMHV_dIsub_dTi : 0.0 ;
-	      dIsubs_dVdse = - here->HSMHV_dIsub_dVdse ; /* = - (dIsub_dVdse + dIsub_dVbse + dIsub_dVgse) */
+              dIsubs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsub_dTi : 0.0 ;
+	      IsubLD         = 0.0 ;
+	      dIsubLD_dVds   = 0.0 ; 
+	      dIsubLD_dVgs   = 0.0 ; 
+	      dIsubLD_dVbs   = 0.0 ;
+              dIsubLD_dT     = 0.0 ; 
+	      dIsubLD_dVddp  = 0.0 ;
+	      IsubLDs        =   here->HSMHV_isubld ;
+	      dIsubLDs_dVds  = - (here->HSMHV_dIsubLD_dVdsi + here->HSMHV_dIsubLD_dVgsi + here->HSMHV_dIsubLD_dVbsi) ; 
+	      dIsubLDs_dVgs  =   here->HSMHV_dIsubLD_dVgsi ; 
+	      dIsubLDs_dVbs  =   here->HSMHV_dIsubLD_dVbsi ;
+              dIsubLDs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsubLD_dTi : 0.0 ;
+	      dIsubLDs_dVddp = - here->HSMHV_dIsubLD_dVddp ;
+	      IdsIBPC         = 0.0 ;
+	      dIdsIBPC_dVds   = 0.0 ; 
+	      dIdsIBPC_dVgs   = 0.0 ; 
+	      dIdsIBPC_dVbs   = 0.0 ;
+              dIdsIBPC_dT     = 0.0 ; 
+	      dIdsIBPC_dVddp  = 0.0 ;
+	      IdsIBPCs        =   here->HSMHV_idsibpc ;
+	      dIdsIBPCs_dVds  = - (here->HSMHV_dIdsIBPC_dVdsi + here->HSMHV_dIdsIBPC_dVgsi + here->HSMHV_dIdsIBPC_dVbsi) ; 
+	      dIdsIBPCs_dVgs  =   here->HSMHV_dIdsIBPC_dVgsi ; 
+	      dIdsIBPCs_dVbs  =   here->HSMHV_dIdsIBPC_dVbsi ;
+              dIdsIBPCs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIdsIBPC_dTi : 0.0 ;
+	      dIdsIBPCs_dVddp = - here->HSMHV_dIdsIBPC_dVddp ;
               Igidl        =   here->HSMHV_igisl ;
               dIgidl_dVds  = - (here->HSMHV_dIgisl_dVdsi + here->HSMHV_dIgisl_dVgsi + here->HSMHV_dIgisl_dVbsi) ;
               dIgidl_dVgs  =   here->HSMHV_dIgisl_dVgsi ;
               dIgidl_dVbs  =   here->HSMHV_dIgisl_dVbsi ;
-              dIgidl_dT    =   (flg_tempNode > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
+              dIgidl_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
               Igisl        =   here->HSMHV_igidl ;
               dIgisl_dVds  = - (here->HSMHV_dIgidl_dVdsi + here->HSMHV_dIgidl_dVgsi + here->HSMHV_dIgidl_dVbsi) ;
               dIgisl_dVgs  =   here->HSMHV_dIgidl_dVgsi ;
               dIgisl_dVbs  =   here->HSMHV_dIgidl_dVbsi ;
-              dIgisl_dT    =   (flg_tempNode > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
+              dIgisl_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
               Igd          =   here->HSMHV_igd ;
               dIgd_dVd   = - (here->HSMHV_dIgs_dVdsi + here->HSMHV_dIgs_dVgsi + here->HSMHV_dIgs_dVbsi) ;
               dIgd_dVg   =   here->HSMHV_dIgs_dVgsi ;
               dIgd_dVb   =   here->HSMHV_dIgs_dVbsi ;
-              dIgd_dT      =   (flg_tempNode > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
+              dIgd_dT      =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
               Igs          =   here->HSMHV_igs ;
               dIgs_dVd   = - (here->HSMHV_dIgd_dVdsi + here->HSMHV_dIgd_dVgsi + here->HSMHV_dIgd_dVbsi) ;
               dIgs_dVg   =   here->HSMHV_dIgd_dVgsi ;
               dIgs_dVb   =   here->HSMHV_dIgd_dVbsi ;
-              dIgs_dT      =   (flg_tempNode > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
+              dIgs_dT      =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
               Igb          =   here->HSMHV_igb ;
               dIgb_dVd   = - (here->HSMHV_dIgb_dVdsi + here->HSMHV_dIgb_dVgsi + here->HSMHV_dIgb_dVbsi) ;
               dIgb_dVg   =   here->HSMHV_dIgb_dVgsi ;
               dIgb_dVb   =   here->HSMHV_dIgb_dVbsi ;
-              dIgb_dT      =   (flg_tempNode > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
+              dIgb_dT      =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
 	      Ibd = here->HSMHV_ibd ;
 	      Gbd = here->HSMHV_gbd ;
-	      Gbdt = (flg_tempNode > 0) ? here->HSMHV_gbdT : 0.0 ;
+	      Gbdt = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbdT : 0.0 ;
 	      Ibs = here->HSMHV_ibs ;
 	      Gbs = here->HSMHV_gbs ;
-	      Gbst = (flg_tempNode > 0) ? here->HSMHV_gbsT : 0.0 ;
+	      Gbst = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbsT : 0.0 ;
             } /* end of reverse mode */
 
             /* for bypass control, only nonlinear static currents are considered: */
             i_dP     = Ids  + Isub  + Igidl - Igd ;
             i_dP_hat = i_dP + gm         *delvgs + gds        *delvds + gmbs       *delvbs + gmT      *deldeltemp
                             + dIsub_dVgs *delvgs + dIsub_dVds *delvds + dIsub_dVbs *delvbs + dIsub_dT *deldeltemp
-                            + dIsub_dVdse*delvdse 
                             + dIgidl_dVgs*delvgs + dIgidl_dVds*delvds + dIgidl_dVbs*delvbs + dIgidl_dT*deldeltemp
                             -(dIgd_dVg   *delvgs + dIgd_dVd   *delvds + dIgd_dVb   *delvbs + dIgd_dT  *deldeltemp)
                             + gm_ext     *delvgse + gds_ext    *delvdse + gmbs_ext   *delvbse ;
@@ -766,7 +855,6 @@ int HSMHVload(
             i_sP     =-Ids  + Isubs + Igisl - Igs ;
             i_sP_hat = i_sP -(gm         *delvgs + gds        *delvds + gmbs       *delvbs + gmT      *deldeltemp)
                             + dIsubs_dVgs*delvgs + dIsubs_dVds*delvds + dIsubs_dVbs*delvbs + dIsubs_dT*deldeltemp
-                            + dIsubs_dVdse*delvdse 
                             + dIgisl_dVgs*delvgs + dIgisl_dVds*delvds + dIgisl_dVbs*delvbs + dIgisl_dT*deldeltemp
                             -(dIgs_dVg   *delvgs + dIgs_dVd   *delvds + dIgs_dVb   *delvbs + dIgs_dT  *deldeltemp)
                             -(gm_ext     *delvgse + gds_ext    *delvdse + gmbs_ext   *delvbse) ;
@@ -910,7 +998,7 @@ int HSMHVload(
           }
         }
 
-        if( flg_tempNode > 0 ){
+        if( here->HSMHV_coselfheat > 0 ){
            /* Logarithmic damping of deltemp beyond LIM_TOL */
            deltemp_old = *(ckt->CKTstate0 + here->HSMHVdeltemp);
            if (deltemp > deltemp_old + LIM_TOL)
@@ -937,6 +1025,9 @@ int HSMHVload(
       vbd_jct = vdbd;
 
       /* linear branch voltages */
+      if ( (ckt->CKTmode & MODEINITJCT) && !here->HSMHV_off ) {
+	vddp = vggp = vssp = vbpdb = vbpb = vbpsb = 0.0;
+      } else {
       vddp = model->HSMHV_type * 
            (*(ckt->CKTrhsOld+here->HSMHVdNode) -
               *(ckt->CKTrhsOld+here->HSMHVdNodePrime));
@@ -961,6 +1052,7 @@ int HSMHVload(
       vbpsb = model->HSMHV_type * 
            (*(ckt->CKTrhsOld+here->HSMHVbNodePrime) -
               *(ckt->CKTrhsOld+here->HSMHVsbNode));
+      }
 
 
 #ifdef DEBUG_HISIMHVLD_VX
@@ -1016,7 +1108,7 @@ int HSMHVload(
         printf( "cothrml = %s\n", (model->HSMHV_cothrml) ? "true" : "false" ) ;
         printf( "coign = %s\n"  , (model->HSMHV_coign)   ? "true" : "false" ) ;
         printf( "cosym   = %s\n" , (model->HSMHV_cosym) ? "true" : "false" ) ;
-        printf( "coselfheat = %s\n" , (model->HSMHV_coselfheat) ? "true" : "false" ) ;
+        printf( "coselfheat = %s\n" , (here->HSMHV_coselfheat) ? "true" : "false" ) ;
       }
       /* print inputs ------------AA */
 
@@ -1030,9 +1122,14 @@ int HSMHVload(
  #endif
 
       /* call model evaluation */
-      if ( HSMHVevaluate(ivdse,ivgse,ivbse,ivds, ivgs, ivbs, vbs_jct, vbd_jct, vsubs, deltemp, here, model, ckt) == HiSIM_ERROR ) 
+      if ( HSMHVevaluate(ivdse,ivgse,ivbse,ivds, ivgs, ivbs, vbs_jct, vbd_jct, vsubs, vddp, deltemp, here, model, ckt) == HiSIM_ERROR ) 
         return (HiSIM_ERROR);
-
+      if ( here->HSMHV_cordrift == 1 ) {
+	if ( HSMHVrdrift(vddp, vds, vbs, vsubs, deltemp, here, model, ckt) == HiSIM_ERROR ) 
+	  return (HiSIM_ERROR);
+      }
+      if ( HSMHVdio(vbs_jct, vbd_jct, deltemp, here, model, ckt) == HiSIM_ERROR )
+	return (HiSIM_ERROR);
 
 #ifdef DEBUG_HISIMHVCGG
       printf("HSMHV_ids %e ", here->HSMHV_ids ) ;
@@ -1046,22 +1143,26 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
          /* (could be shifted a bit forward ...)       */
       if ( here->HSMHV_mode > 0 ) { /* forward mode */
         Rd         = here->HSMHV_Rd ;
+        dRd_dVddp  = here->HSMHV_dRd_dVddp  ;
         dRd_dVdse  = here->HSMHV_dRd_dVdse  ;
         dRd_dVgse  = here->HSMHV_dRd_dVgse  ;
         dRd_dVbse  = here->HSMHV_dRd_dVbse  ;
         dRd_dVsubs = (flg_subNode > 0) ? here->HSMHV_dRd_dVsubs : 0.0 ; /* derivative w.r.t. Vsubs */
-        dRd_dT     = (flg_tempNode > 0) ? here->HSMHV_dRd_dTi : 0.0  ;
+        dRd_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dRd_dTi : 0.0  ;
+	dRd_dVds   = here->HSMHV_dRd_dVds   ;
+	dRd_dVgs   = here->HSMHV_dRd_dVgs   ;
+	dRd_dVbs   = here->HSMHV_dRd_dVbs   ;
         Rs         = here->HSMHV_Rs ;
         dRs_dVdse  = here->HSMHV_dRs_dVdse  ;
         dRs_dVgse  = here->HSMHV_dRs_dVgse  ;
         dRs_dVbse  = here->HSMHV_dRs_dVbse  ;
         dRs_dVsubs = (flg_subNode > 0) ? here->HSMHV_dRs_dVsubs : 0.0 ; /* derivative w.r.t. Vsubs */
-        dRs_dT     = (flg_tempNode > 0) ? here->HSMHV_dRs_dTi : 0.0  ;
+        dRs_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dRs_dTi : 0.0  ;
         Ids        = here->HSMHV_ids ;
         gds        = here->HSMHV_dIds_dVdsi ;
         gm         = here->HSMHV_dIds_dVgsi ;
         gmbs       = here->HSMHV_dIds_dVbsi ;
-        gmT        = (flg_tempNode > 0) ? here->HSMHV_dIds_dTi : 0.0  ;
+        gmT        = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIds_dTi : 0.0  ;
 	gmbs_ext   = here->HSMHV_dIds_dVbse ;
 	gds_ext    = here->HSMHV_dIds_dVdse ;
 	gm_ext     = here->HSMHV_dIds_dVgse ;
@@ -1070,32 +1171,32 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQd_dVds  = here->HSMHV_dQdi_dVdsi ;
         dQd_dVgs  = here->HSMHV_dQdi_dVgsi ;
         dQd_dVbs  = here->HSMHV_dQdi_dVbsi ;
-        dQd_dT    = (flg_tempNode > 0) ? here->HSMHV_dQdi_dTi : 0.0  ;
+        dQd_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQdi_dTi : 0.0  ;
         Qg         = here->HSMHV_qg ;
         dQg_dVds   = here->HSMHV_dQg_dVdsi ;
         dQg_dVgs   = here->HSMHV_dQg_dVgsi ;
         dQg_dVbs   = here->HSMHV_dQg_dVbsi ;
-        dQg_dT     = (flg_tempNode > 0) ? here->HSMHV_dQg_dTi : 0.0  ;
+        dQg_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQg_dTi : 0.0  ;
         Qs        = here->HSMHV_qs ;
         dQs_dVds  = here->HSMHV_dQsi_dVdsi ;
         dQs_dVgs  = here->HSMHV_dQsi_dVgsi ;
         dQs_dVbs  = here->HSMHV_dQsi_dVbsi ;
-        dQs_dT    = (flg_tempNode > 0) ? here->HSMHV_dQsi_dTi : 0.0  ;
+        dQs_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQsi_dTi : 0.0  ;
         Qb         = - (here->HSMHV_qg + here->HSMHV_qd + here->HSMHV_qs) ;
         dQb_dVds   = here->HSMHV_dQb_dVdsi ;
         dQb_dVgs   = here->HSMHV_dQb_dVgsi ;
         dQb_dVbs   = here->HSMHV_dQb_dVbsi ;
-        dQb_dT     = (flg_tempNode > 0) ? here->HSMHV_dQb_dTi : 0.0  ;
+        dQb_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQb_dTi : 0.0  ;
         Qfd        = here->HSMHV_qdp ;
         dQfd_dVdse = here->HSMHV_dqdp_dVdse ;
         dQfd_dVgse = here->HSMHV_dqdp_dVgse ;
         dQfd_dVbse = here->HSMHV_dqdp_dVbse ;
-        dQfd_dT    = (flg_tempNode > 0) ? here->HSMHV_dqdp_dTi : 0.0  ;
+        dQfd_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dqdp_dTi : 0.0  ;
         Qfs        = here->HSMHV_qsp ;
         dQfs_dVdse = here->HSMHV_dqsp_dVdse ;
         dQfs_dVgse = here->HSMHV_dqsp_dVgse ;
         dQfs_dVbse = here->HSMHV_dqsp_dVbse ;
-        dQfs_dT    = (flg_tempNode > 0) ? here->HSMHV_dqsp_dTi : 0.0  ;
+        dQfs_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dqsp_dTi : 0.0  ;
 
         Qdext        = here->HSMHV_qdext ;
         dQdext_dVdse = here->HSMHV_dQdext_dVdse ;
@@ -1107,7 +1208,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQgext_dVgse = here->HSMHV_dQgext_dVgse ;
         dQgext_dVbse = here->HSMHV_dQgext_dVbse ;
         dQgext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQgext_dTi : 0.0  ;
-/*        Qsext        = here->HSMHV_qsext ;*/
+        Qsext        = here->HSMHV_qsext ;
         dQsext_dVdse = here->HSMHV_dQsext_dVdse ;
         dQsext_dVgse = here->HSMHV_dQsext_dVgse ;
         dQsext_dVbse = here->HSMHV_dQsext_dVbse ;
@@ -1121,60 +1222,82 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 	dIsub_dVds   = here->HSMHV_dIsub_dVdsi ; 
 	dIsub_dVgs   = here->HSMHV_dIsub_dVgsi ; 
 	dIsub_dVbs   = here->HSMHV_dIsub_dVbsi ;
-        dIsub_dT     = (flg_tempNode > 0) ? here->HSMHV_dIsub_dTi : 0.0  ;
-        dIsub_dVdse  = here->HSMHV_dIsub_dVdse ;
+        dIsub_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsub_dTi : 0.0  ;
 	Isubs        = 0.0 ;
 	dIsubs_dVds  = 0.0 ; 
 	dIsubs_dVgs  = 0.0 ; 
 	dIsubs_dVbs  = 0.0 ;
         dIsubs_dT    = 0.0 ;
-	dIsubs_dVdse = 0.0 ;
+	IsubLD         = here->HSMHV_isubld ;
+	dIsubLD_dVds   = here->HSMHV_dIsubLD_dVdsi ; 
+	dIsubLD_dVgs   = here->HSMHV_dIsubLD_dVgsi ; 
+	dIsubLD_dVbs   = here->HSMHV_dIsubLD_dVbsi ;
+        dIsubLD_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsubLD_dTi : 0.0  ;
+        dIsubLD_dVddp  = here->HSMHV_dIsubLD_dVddp ;
+	IsubLDs        = 0.0 ;
+	dIsubLDs_dVds  = 0.0 ; 
+	dIsubLDs_dVgs  = 0.0 ; 
+	dIsubLDs_dVbs  = 0.0 ;
+        dIsubLDs_dT    = 0.0 ;
+	dIsubLDs_dVddp = 0.0 ;
+	IdsIBPC         = here->HSMHV_idsibpc ;
+	dIdsIBPC_dVds   = here->HSMHV_dIdsIBPC_dVdsi ; 
+	dIdsIBPC_dVgs   = here->HSMHV_dIdsIBPC_dVgsi ; 
+	dIdsIBPC_dVbs   = here->HSMHV_dIdsIBPC_dVbsi ;
+        dIdsIBPC_dT     = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIdsIBPC_dTi : 0.0  ;
+        dIdsIBPC_dVddp  = here->HSMHV_dIdsIBPC_dVddp ;
+	IdsIBPCs        = 0.0 ;
+	dIdsIBPCs_dVds  = 0.0 ; 
+	dIdsIBPCs_dVgs  = 0.0 ; 
+	dIdsIBPCs_dVbs  = 0.0 ;
+        dIdsIBPCs_dT    = 0.0 ;
+	dIdsIBPCs_dVddp = 0.0 ;
         Igidl        = here->HSMHV_igidl ;
         dIgidl_dVds  = here->HSMHV_dIgidl_dVdsi ;
         dIgidl_dVgs  = here->HSMHV_dIgidl_dVgsi ;
         dIgidl_dVbs  = here->HSMHV_dIgidl_dVbsi ;
-        dIgidl_dT    = (flg_tempNode > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
+        dIgidl_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
         Igisl        = here->HSMHV_igisl ;
         dIgisl_dVds  = here->HSMHV_dIgisl_dVdsi ;
         dIgisl_dVgs  = here->HSMHV_dIgisl_dVgsi ;
         dIgisl_dVbs  = here->HSMHV_dIgisl_dVbsi ;
-        dIgisl_dT    = (flg_tempNode > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
+        dIgisl_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
         Igd          = here->HSMHV_igd ;
         dIgd_dVd   = here->HSMHV_dIgd_dVdsi ;
         dIgd_dVg   = here->HSMHV_dIgd_dVgsi ;
         dIgd_dVb   = here->HSMHV_dIgd_dVbsi ;
-        dIgd_dT      = (flg_tempNode > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
+        dIgd_dT      = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
         Igs          = here->HSMHV_igs ;
         dIgs_dVd   = here->HSMHV_dIgs_dVdsi ;
         dIgs_dVg   = here->HSMHV_dIgs_dVgsi ;
         dIgs_dVb   = here->HSMHV_dIgs_dVbsi ;
-        dIgs_dT      = (flg_tempNode > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
+        dIgs_dT      = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
         Igb          = here->HSMHV_igb ;
         dIgb_dVd   = here->HSMHV_dIgb_dVdsi ;
         dIgb_dVg   = here->HSMHV_dIgb_dVgsi ;
         dIgb_dVb   = here->HSMHV_dIgb_dVbsi ;
-        dIgb_dT      = (flg_tempNode > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
+        dIgb_dT      = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
 
         /*---------------------------------------------------* 
          * Junction diode.
          *-----------------*/ 
 	Ibd = here->HSMHV_ibd ;
 	Gbd = here->HSMHV_gbd ;
-	Gbdt = (flg_tempNode > 0) ? here->HSMHV_gbdT : 0.0 ;
+	Gbdt = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbdT : 0.0 ;
 	
 	/* Qbd = here->HSMHV_qbd ; */
 	Qbd = *(ckt->CKTstate0 + here->HSMHVqbd) ;
 	Cbd = here->HSMHV_capbd ;
-	Cbdt = (flg_tempNode > 0) ? here->HSMHV_gcbdT : 0.0 ;
+	Cbdt = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gcbdT : 0.0 ;
 
 	Ibs = here->HSMHV_ibs ;
 	Gbs = here->HSMHV_gbs ;
-	Gbst = (flg_tempNode > 0) ? here->HSMHV_gbsT : 0.0 ;
+	Gbst = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbsT : 0.0 ;
 
 	/* Qbs = here->HSMHV_qbs ; */
 	Qbs = *(ckt->CKTstate0 + here->HSMHVqbs) ;
 	Cbs = here->HSMHV_capbs ;
-	Cbst = (flg_tempNode > 0) ? here->HSMHV_gcbsT : 0.0 ;
+	Cbst = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gcbsT : 0.0 ;
 
         if (flg_nqs) {
           tau         = here->HSMHV_tau       ;
@@ -1208,22 +1331,26 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         /* note: here->HSMHV_Rd and here->HSMHV_Rs are already subjected to mode handling,
            while the following derivatives here->HSMHV_Rd_dVdse, ... are not! */
         Rd        = here->HSMHV_Rd ;
+        dRd_dVddp = here->HSMHV_dRd_dVddp  ;
         dRd_dVdse = here->HSMHV_dRd_dVdse ;
         dRd_dVgse = here->HSMHV_dRd_dVgse ;
         dRd_dVbse = here->HSMHV_dRd_dVbse ;
         dRd_dVsubs= (flg_subNode > 0) ? here->HSMHV_dRd_dVsubs : 0.0 ; /* derivative w.r.t. Vsubs */
-        dRd_dT    = (flg_tempNode > 0) ? here->HSMHV_dRd_dTi : 0.0  ; 
+        dRd_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dRd_dTi : 0.0  ; 
+	dRd_dVds  = here->HSMHV_dRd_dVds  ;
+	dRd_dVgs  = here->HSMHV_dRd_dVgs  ;
+	dRd_dVbs  = here->HSMHV_dRd_dVbs  ;
         Rs        = here->HSMHV_Rs ;
         dRs_dVdse = here->HSMHV_dRs_dVdse ;
         dRs_dVgse = here->HSMHV_dRs_dVgse ;
         dRs_dVbse = here->HSMHV_dRs_dVbse ;
         dRs_dVsubs= (flg_subNode > 0) ? here->HSMHV_dRs_dVsubs : 0.0 ; /* derivative w.r.t. Vsubs */
-        dRs_dT    = (flg_tempNode > 0) ? here->HSMHV_dRs_dTi : 0.0  ;
+        dRs_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dRs_dTi : 0.0  ;
         Ids       = - here->HSMHV_ids ;
         gds       = + (here->HSMHV_dIds_dVdsi + here->HSMHV_dIds_dVgsi + here->HSMHV_dIds_dVbsi) ;
         gm        = - here->HSMHV_dIds_dVgsi ;
         gmbs      = - here->HSMHV_dIds_dVbsi ;
-        gmT       = (flg_tempNode > 0) ? - here->HSMHV_dIds_dTi : 0.0  ;
+        gmT       = (here->HSMHV_coselfheat > 0) ? - here->HSMHV_dIds_dTi : 0.0  ;
 	gds_ext   = + (here->HSMHV_dIds_dVdse + here->HSMHV_dIds_dVgse + here->HSMHV_dIds_dVbse) ;
 	gm_ext    = - here->HSMHV_dIds_dVgse;
 	gmbs_ext  = - here->HSMHV_dIds_dVbse;
@@ -1232,32 +1359,32 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQd_dVds  = - (here->HSMHV_dQsi_dVdsi + here->HSMHV_dQsi_dVgsi + here->HSMHV_dQsi_dVbsi) ;
         dQd_dVgs  =   here->HSMHV_dQsi_dVgsi ;
         dQd_dVbs  =   here->HSMHV_dQsi_dVbsi ;
-        dQd_dT    =   (flg_tempNode > 0) ? here->HSMHV_dQsi_dTi : 0.0  ;
+        dQd_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQsi_dTi : 0.0  ;
         Qg         =   here->HSMHV_qg ;
         dQg_dVds   = - (here->HSMHV_dQg_dVdsi + here->HSMHV_dQg_dVgsi + here->HSMHV_dQg_dVbsi) ;
         dQg_dVgs   =   here->HSMHV_dQg_dVgsi ;
         dQg_dVbs   =   here->HSMHV_dQg_dVbsi ;
-        dQg_dT     =   (flg_tempNode > 0) ? here->HSMHV_dQg_dTi : 0.0  ;
+        dQg_dT     =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQg_dTi : 0.0  ;
         Qs        =   here->HSMHV_qd ;
         dQs_dVds  = - (here->HSMHV_dQdi_dVdsi + here->HSMHV_dQdi_dVgsi + here->HSMHV_dQdi_dVbsi) ;
         dQs_dVgs  =   here->HSMHV_dQdi_dVgsi ;
         dQs_dVbs  =   here->HSMHV_dQdi_dVbsi ;
-        dQs_dT    =   (flg_tempNode > 0) ? here->HSMHV_dQdi_dTi : 0.0  ;
+        dQs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQdi_dTi : 0.0  ;
         Qb         = - (here->HSMHV_qg + here->HSMHV_qd + here->HSMHV_qs) ;
         dQb_dVds   = - (here->HSMHV_dQb_dVdsi + here->HSMHV_dQb_dVgsi + here->HSMHV_dQb_dVbsi) ;
         dQb_dVgs   =   here->HSMHV_dQb_dVgsi ;
         dQb_dVbs   =   here->HSMHV_dQb_dVbsi ;
-        dQb_dT     =   (flg_tempNode > 0) ? here->HSMHV_dQb_dTi : 0.0  ;
+        dQb_dT     =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQb_dTi : 0.0  ;
         Qfd        =   here->HSMHV_qsp ;
         dQfd_dVdse = - (here->HSMHV_dqsp_dVdse + here->HSMHV_dqsp_dVgse + here->HSMHV_dqsp_dVbse) ;
         dQfd_dVgse =   here->HSMHV_dqsp_dVgse ;
         dQfd_dVbse =   here->HSMHV_dqsp_dVbse ;
-        dQfd_dT    =   (flg_tempNode > 0) ? here->HSMHV_dqsp_dTi : 0.0  ;
+        dQfd_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dqsp_dTi : 0.0  ;
         Qfs        =   here->HSMHV_qdp ;
         dQfs_dVdse = - (here->HSMHV_dqdp_dVdse + here->HSMHV_dqdp_dVgse + here->HSMHV_dqdp_dVbse) ;
         dQfs_dVgse =   here->HSMHV_dqdp_dVgse ;
         dQfs_dVbse =   here->HSMHV_dqdp_dVbse ;
-        dQfs_dT    =   (flg_tempNode > 0) ? here->HSMHV_dqdp_dTi : 0.0  ;
+        dQfs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dqdp_dTi : 0.0  ;
 
         Qdext        = here->HSMHV_qsext ;
         dQdext_dVdse = - (here->HSMHV_dQsext_dVdse + here->HSMHV_dQsext_dVgse + here->HSMHV_dQsext_dVbse);
@@ -1269,7 +1396,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         dQgext_dVgse = here->HSMHV_dQgext_dVgse ;
         dQgext_dVbse = here->HSMHV_dQgext_dVbse ;
         dQgext_dT    = (here->HSMHV_coselfheat > 0) ? here->HSMHV_dQgext_dTi : 0.0  ;
-/*        Qsext        = here->HSMHV_qdext ;*/
+        Qsext        = here->HSMHV_qdext ;
         dQsext_dVdse = - (here->HSMHV_dQdext_dVdse + here->HSMHV_dQdext_dVgse + here->HSMHV_dQdext_dVbse);
         dQsext_dVgse = here->HSMHV_dQdext_dVgse ;
         dQsext_dVbse = here->HSMHV_dQdext_dVbse ;
@@ -1284,61 +1411,83 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 	dIsub_dVgs   = 0.0 ; 
 	dIsub_dVbs   = 0.0 ;
         dIsub_dT     = 0.0 ;
-        dIsub_dVdse  = 0.0 ;
 	Isubs        =   here->HSMHV_isub ;
 	dIsubs_dVds  = - (here->HSMHV_dIsub_dVdsi + here->HSMHV_dIsub_dVgsi + here->HSMHV_dIsub_dVbsi) ; 
 	dIsubs_dVgs  =   here->HSMHV_dIsub_dVgsi ; 
 	dIsubs_dVbs  =   here->HSMHV_dIsub_dVbsi ;
-        dIsubs_dT    =   (flg_tempNode > 0) ? here->HSMHV_dIsub_dTi : 0.0 ;
-	dIsubs_dVdse = - here->HSMHV_dIsub_dVdse ; /* = - (dIsub_dVdse + dIsub_dVbse + dIsub_dVgse) */
+        dIsubs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsub_dTi : 0.0 ;
+	IsubLD         = 0.0 ;
+	dIsubLD_dVds   = 0.0 ; 
+	dIsubLD_dVgs   = 0.0 ; 
+	dIsubLD_dVbs   = 0.0 ;
+        dIsubLD_dT     = 0.0 ;
+        dIsubLD_dVddp  = 0.0 ;
+	IsubLDs        =   here->HSMHV_isubld ;
+	dIsubLDs_dVds  = - (here->HSMHV_dIsubLD_dVdsi + here->HSMHV_dIsubLD_dVgsi + here->HSMHV_dIsubLD_dVbsi) ; 
+	dIsubLDs_dVgs  =   here->HSMHV_dIsubLD_dVgsi ; 
+	dIsubLDs_dVbs  =   here->HSMHV_dIsubLD_dVbsi ;
+        dIsubLDs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIsubLD_dTi : 0.0 ;
+	dIsubLDs_dVddp = - here->HSMHV_dIsubLD_dVddp ;
+	IdsIBPC         = 0.0 ;
+	dIdsIBPC_dVds   = 0.0 ; 
+	dIdsIBPC_dVgs   = 0.0 ; 
+	dIdsIBPC_dVbs   = 0.0 ;
+        dIdsIBPC_dT     = 0.0 ;
+        dIdsIBPC_dVddp  = 0.0 ;
+	IdsIBPCs        =   here->HSMHV_idsibpc ;
+	dIdsIBPCs_dVds  = - (here->HSMHV_dIdsIBPC_dVdsi + here->HSMHV_dIdsIBPC_dVgsi + here->HSMHV_dIdsIBPC_dVbsi) ; 
+	dIdsIBPCs_dVgs  =   here->HSMHV_dIdsIBPC_dVgsi ; 
+	dIdsIBPCs_dVbs  =   here->HSMHV_dIdsIBPC_dVbsi ;
+        dIdsIBPCs_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIdsIBPC_dTi : 0.0 ;
+	dIdsIBPCs_dVddp = - here->HSMHV_dIdsIBPC_dVddp ;
         Igidl        =   here->HSMHV_igisl ;
         dIgidl_dVds  = - (here->HSMHV_dIgisl_dVdsi + here->HSMHV_dIgisl_dVgsi + here->HSMHV_dIgisl_dVbsi) ;
         dIgidl_dVgs  =   here->HSMHV_dIgisl_dVgsi ;
         dIgidl_dVbs  =   here->HSMHV_dIgisl_dVbsi ;
-        dIgidl_dT    =   (flg_tempNode > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
+        dIgidl_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgisl_dTi : 0.0  ;
         Igisl        =   here->HSMHV_igidl ;
         dIgisl_dVds  = - (here->HSMHV_dIgidl_dVdsi + here->HSMHV_dIgidl_dVgsi + here->HSMHV_dIgidl_dVbsi) ;
         dIgisl_dVgs  =   here->HSMHV_dIgidl_dVgsi ;
         dIgisl_dVbs  =   here->HSMHV_dIgidl_dVbsi ;
-        dIgisl_dT    =   (flg_tempNode > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
+        dIgisl_dT    =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgidl_dTi : 0.0  ;
         /* note: here->HSMHV_igd and here->HSMHV_igs are already subjected to mode handling,
            while the following derivatives here->HSMHV_dIgd_dVdsi, ... are not! */
         Igd          =   here->HSMHV_igd ;
         dIgd_dVd   = - (here->HSMHV_dIgs_dVdsi + here->HSMHV_dIgs_dVgsi + here->HSMHV_dIgs_dVbsi) ;
         dIgd_dVg   =   here->HSMHV_dIgs_dVgsi ;
         dIgd_dVb   =   here->HSMHV_dIgs_dVbsi ;
-        dIgd_dT      =   (flg_tempNode > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
+        dIgd_dT      =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgs_dTi : 0.0  ;
         Igs          =   here->HSMHV_igs ;
         dIgs_dVd   = - (here->HSMHV_dIgd_dVdsi + here->HSMHV_dIgd_dVgsi + here->HSMHV_dIgd_dVbsi) ;
         dIgs_dVg   =   here->HSMHV_dIgd_dVgsi ;
         dIgs_dVb   =   here->HSMHV_dIgd_dVbsi ;
-        dIgs_dT      =   (flg_tempNode > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
+        dIgs_dT      =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgd_dTi : 0.0  ;
         Igb          =   here->HSMHV_igb ;
         dIgb_dVd   = - (here->HSMHV_dIgb_dVdsi + here->HSMHV_dIgb_dVgsi + here->HSMHV_dIgb_dVbsi) ;
         dIgb_dVg   =   here->HSMHV_dIgb_dVgsi ;
         dIgb_dVb   =   here->HSMHV_dIgb_dVbsi ;
-        dIgb_dT      =   (flg_tempNode > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
+        dIgb_dT      =   (here->HSMHV_coselfheat > 0) ? here->HSMHV_dIgb_dTi : 0.0  ;
 
 	/*---------------------------------------------------* 
 	 * Junction diode.
 	 *-----------------*/ 
 	Ibd = here->HSMHV_ibd ;
 	Gbd = here->HSMHV_gbd ;
-	Gbdt = (flg_tempNode > 0) ? here->HSMHV_gbdT : 0.0 ;
+	Gbdt = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbdT : 0.0 ;
 	
 	/* Qbd = here->HSMHV_qbd ; */
 	Qbd = *(ckt->CKTstate0 + here->HSMHVqbd) ;
 	Cbd = here->HSMHV_capbd ;
-	Cbdt = (flg_tempNode > 0) ? here->HSMHV_gcbdT : 0.0 ;
+	Cbdt = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gcbdT : 0.0 ;
 
 	Ibs = here->HSMHV_ibs ;
 	Gbs = here->HSMHV_gbs ;
-	Gbst = (flg_tempNode > 0) ? here->HSMHV_gbsT : 0.0 ;
+	Gbst = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gbsT : 0.0 ;
 
 	/* Qbs = here->HSMHV_qbs ; */
 	Qbs = *(ckt->CKTstate0 + here->HSMHVqbs) ;
 	Cbs = here->HSMHV_capbs ;
-	Cbst = (flg_tempNode > 0) ? here->HSMHV_gcbsT : 0.0 ;
+	Cbst = (here->HSMHV_coselfheat > 0) ? here->HSMHV_gcbsT : 0.0 ;
 
         if (flg_nqs) {
           tau         =   here->HSMHV_tau       ;
@@ -1369,7 +1518,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         }
       } /* end of reverse mode */
 
-      if (flg_tempNode > 0) {
+      if (here->HSMHV_coselfheat > 0) {
         if (pParam->HSMHV_rth > C_RTH_MIN) {
 	  Gth = 1.0/pParam->HSMHV_rth ;
         } else {
@@ -1493,21 +1642,29 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
      /*---------------------------------------------------* 
       * External Resistances
       *-----------------*/ 
-      if(model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3 ) {
+      if(model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3 || model->HSMHV_cordrift == 1 ) {
 	if(Rd > 0){
 	  GD = 1.0/Rd;
-	  GD_dVgs = - dRd_dVgse /Rd/Rd;
-	  GD_dVds = - dRd_dVdse /Rd/Rd;
-	  GD_dVbs = - dRd_dVbse /Rd/Rd;
+	  GD_dVgs   = - dRd_dVgs   /Rd/Rd;
+	  GD_dVds   = - dRd_dVds   /Rd/Rd;
+	  GD_dVddp  = - dRd_dVddp  /Rd/Rd;
+	  GD_dVbs   = - dRd_dVbs   /Rd/Rd;
 	  GD_dVsubs = - dRd_dVsubs /Rd/Rd;
-	  GD_dT = - dRd_dT /Rd/Rd;
+	  GD_dT     = - dRd_dT     /Rd/Rd;
+	  GD_dVgse  = - dRd_dVgse  /Rd/Rd;
+	  GD_dVdse  = - dRd_dVdse  /Rd/Rd;
+	  GD_dVbse  = - dRd_dVbse  /Rd/Rd;
 	}else{
 	  GD=0.0;
 	  GD_dVgs=0.0;
 	  GD_dVds=0.0;
+	  GD_dVddp = 0.0;
 	  GD_dVbs=0.0;
 	  GD_dVsubs=0.0;
           GD_dT  =0.0;
+	  GD_dVgse  =0.0;
+	  GD_dVdse  =0.0;
+	  GD_dVbse  =0.0;
 	}
 	if(Rs > 0){
 	  GS = 1.0/Rs;
@@ -1525,13 +1682,16 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
           GS_dT  =0.0;
 	}
       }
-      Iddp        = GD * vddp;
-      dIddp_dVddp = GD;
-      dIddp_dVdse = GD_dVds * vddp;
-      dIddp_dVgse = GD_dVgs * vddp;
-      dIddp_dVbse = GD_dVbs * vddp;
+      Iddp        = GD        * vddp;
+      dIddp_dVddp = GD_dVddp  * vddp + GD ;
+      dIddp_dVdse = GD_dVdse  * vddp;
+      dIddp_dVgse = GD_dVgse  * vddp;
+      dIddp_dVbse = GD_dVbse  * vddp;
       dIddp_dVsubs= GD_dVsubs * vddp;
-      dIddp_dT    = GD_dT * vddp;
+      dIddp_dT    = GD_dT     * vddp;
+      dIddp_dVds  = GD_dVds   * vddp;
+      dIddp_dVgs  = GD_dVgs   * vddp;
+      dIddp_dVbs  = GD_dVbs   * vddp;
 
       Issp        = GS * vssp;
       dIssp_dVssp = GS;
@@ -1651,7 +1811,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 	  x[subNode]  = model->HSMHV_type *( *(ckt->CKTrhsOld+here->HSMHVsubNode)); /* previous vsub */
 	else
 	  x[subNode]  = 0.0;
-        if (flg_tempNode > 0) 
+        if (here->HSMHV_coselfheat > 0) 
           x[tempNode] =  *(ckt->CKTrhsOld+here->HSMHVtempNode);
         else
           x[tempNode] = 0.0;
@@ -1673,6 +1833,10 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
         Ids  += gm         *delvgs + gds        *delvds + gmbs       *delvbs + gmT      *deldeltemp ;
         Isub += dIsub_dVgs *delvgs + dIsub_dVds *delvds + dIsub_dVbs *delvbs + dIsub_dT *deldeltemp ;
         Isubs+= dIsubs_dVgs*delvgs + dIsubs_dVds*delvds + dIsubs_dVbs*delvbs + dIsubs_dT*deldeltemp ;
+        IsubLD += dIsubLD_dVgs *delvgs + dIsubLD_dVds *delvds + dIsubLD_dVbs *delvbs + dIsubLD_dT *deldeltemp ;
+        IsubLDs+= dIsubLDs_dVgs*delvgs + dIsubLDs_dVds*delvds + dIsubLDs_dVbs*delvbs + dIsubLDs_dT*deldeltemp ;
+        IdsIBPC += dIdsIBPC_dVgs *delvgs + dIdsIBPC_dVds *delvds + dIdsIBPC_dVbs *delvbs + dIdsIBPC_dT *deldeltemp ;
+        IdsIBPCs+= dIdsIBPCs_dVgs*delvgs + dIdsIBPCs_dVds*delvds + dIdsIBPCs_dVbs*delvbs + dIdsIBPCs_dT*deldeltemp ;
         Igd  += dIgd_dVg   *delvgs + dIgd_dVd   *delvds + dIgd_dVb   *delvbs + dIgd_dT  *deldeltemp ;
         Igs  += dIgs_dVg   *delvgs + dIgs_dVd   *delvds + dIgs_dVb   *delvbs + dIgs_dT  *deldeltemp ;
         Igb  += dIgb_dVg   *delvgs + dIgb_dVd   *delvds + dIgb_dVb   *delvbs + dIgb_dT  *deldeltemp ;
@@ -1692,8 +1856,6 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 
       if (delvgse || delvdse || delvbse ) {
         Ids  += gm_ext     *delvgse + gds_ext    *delvdse + gmbs_ext   *delvbse ;
-        Isub += dIsub_dVdse*delvdse ;
-        Isubs+= dIsubs_dVdse*delvdse ;
         P    += dP_dVgse   *delvgse + dP_dVdse   *delvdse + dP_dVbse   *delvbse ;
         Iddp += dIddp_dVgse*delvgse + dIddp_dVdse*delvdse + dIddp_dVbse*delvbse ;
         Issp += dIssp_dVgse*delvgse + dIssp_dVdse*delvdse + dIssp_dVbse*delvbse ;
@@ -1723,6 +1885,25 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       delvddp = (x[dNode] - x[dNodePrime]) - vddp ;
       if (delvddp) {
         Iddp += dIddp_dVddp * delvddp ;
+        IsubLD  += dIsubLD_dVddp   * delvddp ;
+        IsubLDs += dIsubLDs_dVddp  * delvddp ;
+        IdsIBPC += dIdsIBPC_dVddp  * delvddp ;
+        IdsIBPCs+= dIdsIBPCs_dVddp * delvddp ;
+      }
+
+      delvds = (x[dNodePrime] - x[sNodePrime]) - vds ;
+      if (delvds) {
+        Iddp += dIddp_dVds * delvds ;
+      }
+
+      delvgs = (x[gNodePrime] - x[sNodePrime]) - vgs ;
+      if (delvgs) {
+        Iddp += dIddp_dVgs * delvgs ;
+      }
+
+      delvbs = (x[bNodePrime] - x[sNodePrime]) - vbs ;
+      if (delvbs) {
+        Iddp += dIddp_dVbs * delvbs ;
       }
 
       delvssp = (x[sNode] - x[sNodePrime]) - vssp ;
@@ -1767,7 +1948,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
      
 
       /*  drain node  */
-      i_d = Iddp - Ibd ;
+      i_d = Iddp - Ibd + IsubLD + IdsIBPC - IdsIBPCs ;
       /*  intrinsic drain node */
       i_dP = -Iddp + Ids + Isub + Igidl - Igd ;
       /*  gate node */
@@ -1775,11 +1956,11 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       /*  intrinsic gate node */
       i_gP = - Iggp + Igd + Igs + Igb ;
       /*  source node  */
-      i_s = Issp - Ibs ;
+      i_s = Issp - Ibs + IsubLDs - IdsIBPC + IdsIBPCs ;
       /*  intrinsic source node  */
       i_sP = - Issp - Ids + Isubs + Igisl - Igs ;
       /*  intrinsic bulk node */
-      i_bP = - Isub - Isubs - Igidl -Igb - Igisl  + Ibpdb + Ibpb + Ibpsb ;
+      i_bP = - Isub - Isubs - IsubLD - IsubLDs- Igidl -Igb - Igisl  + Ibpdb + Ibpb + Ibpsb ;
       /*  base node */
       i_b = - Ibpb ;
       /*  drain bulk node  */
@@ -1787,7 +1968,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       /*  source bulk node  */
       i_sb = Ibs - Ibpsb ;
       /*  temp node  */
-      if (flg_tempNode > 0){
+      if (here->HSMHV_coselfheat > 0){
         i_t = Ith - P ;
       } else {
         i_t = 0.0;
@@ -1807,30 +1988,31 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       }
      
       /*  drain node  */
-      ydc_d[dNode] = dIddp_dVddp + dIddp_dVdse + Gbd ;
-      ydc_d[dNodePrime] = -dIddp_dVddp ;
+      ydc_d[dNode] = dIddp_dVddp + dIddp_dVdse + Gbd + dIsubLD_dVddp + dIdsIBPC_dVddp - dIdsIBPCs_dVddp ;
+      ydc_d[dNodePrime] = -dIddp_dVddp + dIddp_dVds + dIsubLD_dVds  + dIdsIBPC_dVds - dIdsIBPCs_dVds - dIsubLD_dVddp  - dIdsIBPC_dVddp + dIdsIBPCs_dVddp ;
       /* ydc_d[gNode] = 0.0 ; */
-      ydc_d[gNodePrime] = dIddp_dVgse ;
+      ydc_d[gNodePrime] = dIddp_dVgse + dIddp_dVgs + dIsubLD_dVgs  + dIdsIBPC_dVgs - dIdsIBPCs_dVgs ;
       ydc_d[sNode] = - ( dIddp_dVdse + dIddp_dVgse + dIddp_dVbse ) - dIddp_dVsubs ;
-      /* ydc_d[sNodePrime] = 0.0 ; */
-      ydc_d[bNodePrime] =  dIddp_dVbse ;
+      ydc_d[sNodePrime] =  - dIsubLD_dVds - dIsubLD_dVgs - dIsubLD_dVbs  - dIdsIBPC_dVds  - dIdsIBPC_dVgs  - dIdsIBPC_dVbs  - (- dIdsIBPCs_dVds  - dIdsIBPCs_dVgs  - dIdsIBPCs_dVbs ) - ( dIddp_dVds + dIddp_dVgs + dIddp_dVbs ) ; 
+      ydc_d[bNodePrime] =  dIddp_dVbse + dIddp_dVbs + dIsubLD_dVbs  + dIdsIBPC_dVbs - dIdsIBPCs_dVbs ;
       /* ydc_d[bNode] = 0.0 ; */
       ydc_d[dbNode] = - Gbd ;
       /* ydc_d[sbNode] = 0.0 ; */
       ydc_d[subNode] = dIddp_dVsubs ;
-      ydc_d[tempNode] = dIddp_dT - Gbdt ;
+      ydc_d[tempNode] = dIddp_dT - Gbdt + dIsubLD_dT  + dIdsIBPC_dT - dIdsIBPCs_dT ;
 
       /*  intrinsic drain node  */
-      ydc_dP[dNode] = - (dIddp_dVddp + dIddp_dVdse) + gds_ext + dIsub_dVdse ;
-      ydc_dP[dNodePrime] = dIddp_dVddp + gds + dIsub_dVds + dIgidl_dVds - dIgd_dVd ;
+      ydc_dP[dNode] = - (dIddp_dVddp + dIddp_dVdse) + gds_ext ;
+      ydc_dP[dNodePrime] = dIddp_dVddp - dIddp_dVds + gds + dIsub_dVds + dIgidl_dVds - dIgd_dVd ;
       /* ydc_dP[gNode] = 0.0; */
-      ydc_dP[gNodePrime] = -dIddp_dVgse + gm_ext
+      ydc_dP[gNodePrime] = -dIddp_dVgse - dIddp_dVgs + gm_ext
 	 + gm + dIsub_dVgs + dIgidl_dVgs - dIgd_dVg ;
-      ydc_dP[sNode] =  dIddp_dVdse + dIddp_dVgse + dIddp_dVbse + dIddp_dVsubs + (-gds_ext -gm_ext -gmbs_ext) - dIsub_dVdse;
+      ydc_dP[sNode] =  dIddp_dVdse + dIddp_dVgse + dIddp_dVbse + dIddp_dVsubs + (-gds_ext -gm_ext -gmbs_ext);
       ydc_dP[sNodePrime] = -( gds + dIsub_dVds + dIgidl_dVds ) 
 	 - ( gm + dIsub_dVgs + dIgidl_dVgs )
-	 - ( gmbs + dIsub_dVbs + dIgidl_dVbs ) - dIgd_dVs ;
-      ydc_dP[bNodePrime] = - dIddp_dVbse + gmbs_ext
+	 - ( gmbs + dIsub_dVbs + dIgidl_dVbs ) - dIgd_dVs 
+	 + ( dIddp_dVds + dIddp_dVgs + dIddp_dVbs ) ;
+      ydc_dP[bNodePrime] = - dIddp_dVbse - dIddp_dVbs + gmbs_ext
 	 + gmbs + dIsub_dVbs + dIgidl_dVbs - dIgd_dVb;
       /* ydc_dP[bNode] = 0.0; */
       /* ydc_dP[dbNode] = 0.0 ; */
@@ -1866,26 +2048,26 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       ydc_gP[tempNode] = dIgd_dT + dIgs_dT + dIgb_dT ;
 
       /*  source node */
-      ydc_s[dNode] = dIssp_dVdse;
-      /* ydc_s[dNodePrime] = 0.0 */
+      ydc_s[dNode] = dIssp_dVdse + dIsubLDs_dVddp  - dIdsIBPC_dVddp + dIdsIBPCs_dVddp ;
+      ydc_s[dNodePrime] = dIsubLDs_dVds  - dIdsIBPC_dVds + dIdsIBPCs_dVds - dIsubLDs_dVddp  + dIdsIBPC_dVddp - dIdsIBPCs_dVddp ;
       /* ydc_s[gNode] = 0.0 */
-      ydc_s[gNodePrime] = dIssp_dVgse;
-      ydc_s[sNode] = dIssp_dVssp - ( dIssp_dVgse + dIssp_dVdse + dIssp_dVbse ) - dIssp_dVsubs + Gbs;
-      ydc_s[sNodePrime] = - dIssp_dVssp;
-      ydc_s[bNodePrime] = dIssp_dVbse ;
+      ydc_s[gNodePrime] = dIssp_dVgse + dIsubLDs_dVgs  - dIdsIBPC_dVgs + dIdsIBPCs_dVgs ;
+      ydc_s[sNode] = dIssp_dVssp - ( dIssp_dVgse + dIssp_dVdse + dIssp_dVbse ) - dIssp_dVsubs + Gbs ;
+      ydc_s[sNodePrime] = - dIssp_dVssp - dIsubLDs_dVds - dIsubLDs_dVgs - dIsubLDs_dVbs   - (- dIdsIBPC_dVds  - dIdsIBPC_dVgs  - dIdsIBPC_dVbs )  - dIdsIBPCs_dVds  - dIdsIBPCs_dVgs  - dIdsIBPCs_dVbs ;
+      ydc_s[bNodePrime] = dIssp_dVbse + dIsubLDs_dVbs  - dIdsIBPC_dVbs + dIdsIBPCs_dVbs ;
       /* ydc_s[bNode] = 0.0 */
       /* ydc_s[dbNode] = 0.0 */
       ydc_s[sbNode]     = - Gbs ;
       ydc_s[subNode] = dIssp_dVsubs;
-      ydc_s[tempNode] = dIssp_dT - Gbst;
+      ydc_s[tempNode] = dIssp_dT - Gbst + dIsubLDs_dT  - dIdsIBPC_dT + dIdsIBPCs_dT ;
 
       /*  intrinsic source node */
-      ydc_sP[dNode] = - dIssp_dVdse -gds_ext + dIsubs_dVdse ;
+      ydc_sP[dNode] = - dIssp_dVdse -gds_ext ;
       ydc_sP[dNodePrime] = - gds + dIsubs_dVds + dIgisl_dVds - dIgs_dVd ;
       /* ydc_sP[gNode] = 0.0 ; */
       ydc_sP[gNodePrime] = -dIssp_dVgse -gm_ext
 	 - gm + dIsubs_dVgs + dIgisl_dVgs - dIgs_dVg ;
-      ydc_sP[sNode] = - dIssp_dVssp - ( - dIssp_dVdse - dIssp_dVgse - dIssp_dVbse ) + dIssp_dVsubs +(gds_ext + gm_ext + gmbs_ext) - dIsubs_dVdse;
+      ydc_sP[sNode] = - dIssp_dVssp - ( - dIssp_dVdse - dIssp_dVgse - dIssp_dVbse ) + dIssp_dVsubs +(gds_ext + gm_ext + gmbs_ext);
       ydc_sP[sNodePrime] = dIssp_dVssp - ( - gds + dIsubs_dVds + dIgisl_dVds )
 	 - ( - gm + dIsubs_dVgs + dIgisl_dVgs )
 	 - ( - gmbs + dIsubs_dVbs + dIgisl_dVbs ) - dIgs_dVs ;
@@ -1899,19 +2081,19 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 			  - gmT + dIsubs_dT + dIgisl_dT - dIgs_dT;
      
       /*  intrinsic bulk node */
-      ydc_bP[dNode] = - dIsub_dVdse - dIsubs_dVdse ; 
-      ydc_bP[dNodePrime] = - dIsub_dVds - dIsubs_dVds - dIgidl_dVds - dIgb_dVd - dIgisl_dVds ;
+      ydc_bP[dNode] = - dIsubLD_dVddp - dIsubLDs_dVddp ; 
+      ydc_bP[dNodePrime] = - dIsub_dVds - dIsubs_dVds  - dIsubLD_dVds - dIsubLDs_dVds - dIgidl_dVds - dIgb_dVd - dIgisl_dVds - ( - dIsubLD_dVddp - dIsubLDs_dVddp ) ;
       /* ydc_bP[gNode] = 0.0 ; */
-      ydc_bP[gNodePrime] = - dIsub_dVgs - dIsubs_dVgs - dIgidl_dVgs - dIgb_dVg - dIgisl_dVgs ;
-      ydc_bP[sNode] = dIsub_dVdse + dIsubs_dVdse;
-      ydc_bP[sNodePrime] = - ( - dIsub_dVds - dIsubs_dVds - dIgidl_dVds - dIgisl_dVds )
-       - ( - dIsub_dVgs - dIsubs_dVgs - dIgidl_dVgs - dIgisl_dVgs )
-       - ( - dIsub_dVbs - dIsubs_dVbs - dIgidl_dVbs - dIgisl_dVbs ) - dIgb_dVs ; 
-      ydc_bP[bNodePrime] = - dIsub_dVbs - dIsubs_dVbs - dIgidl_dVbs - dIgb_dVb - dIgisl_dVbs + dIbpdb_dVbpdb + dIbpb_dVbpb + dIbpsb_dVbpsb ; 
+      ydc_bP[gNodePrime] = - dIsub_dVgs - dIsubs_dVgs  - dIsubLD_dVgs - dIsubLDs_dVgs - dIgidl_dVgs - dIgb_dVg - dIgisl_dVgs ;
+      /* ydc_bP[sNode] = 0.0 ;*/ 
+      ydc_bP[sNodePrime] = - ( - dIsub_dVds - dIsubs_dVds - dIsubLD_dVds - dIsubLDs_dVds - dIgidl_dVds - dIgisl_dVds )
+       - ( - dIsub_dVgs - dIsubs_dVgs - dIsubLD_dVgs - dIsubLDs_dVgs - dIgidl_dVgs - dIgisl_dVgs )
+       - ( - dIsub_dVbs - dIsubs_dVbs - dIsubLD_dVbs - dIsubLDs_dVbs - dIgidl_dVbs - dIgisl_dVbs ) - dIgb_dVs ; 
+      ydc_bP[bNodePrime] = - dIsub_dVbs - dIsubs_dVbs  - dIsubLD_dVbs - dIsubLDs_dVbs - dIgidl_dVbs - dIgb_dVb - dIgisl_dVbs + dIbpdb_dVbpdb + dIbpb_dVbpb + dIbpsb_dVbpsb ; 
       ydc_bP[bNode] = - dIbpb_dVbpb ; 
       ydc_bP[dbNode] = - dIbpdb_dVbpdb ;
       ydc_bP[sbNode] =  - dIbpsb_dVbpsb ;
-      ydc_bP[tempNode] = - dIsub_dT - dIsubs_dT - dIgidl_dT - dIgb_dT - dIgisl_dT ;
+      ydc_bP[tempNode] = - dIsub_dT - dIsubs_dT - dIsubLD_dT - dIsubLDs_dT - dIgidl_dT - dIgb_dT - dIgisl_dT ;
      
       /*  bulk node */
       /* ydc_b[dNode] = 0.0 ; */
@@ -2466,7 +2648,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(ckt->CKTrhs + here->HSMHVbNode)      -= model->HSMHV_type * cur_b;
       *(ckt->CKTrhs + here->HSMHVdbNode)     -= model->HSMHV_type * cur_db;
       *(ckt->CKTrhs + here->HSMHVsbNode)     -= model->HSMHV_type * cur_sb;
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         *(ckt->CKTrhs + here->HSMHVtempNode) -= cur_t;  /* temp node independent of model type! */
       }
       if (flg_nqs) {
@@ -2488,7 +2670,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       if (flg_subNode > 0) {
 	*(here->HSMHVDsubPtr) += ydc_d[subNode];
       }
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVDtempPtr) += model->HSMHV_type * (ydc_d[tempNode] + ag0*ydyn_d[tempNode]);
       }
@@ -2503,7 +2685,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       if (flg_subNode > 0) {
 	*(here->HSMHVDPsubPtr) += ydc_dP[subNode];
       }
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVDPtempPtr) +=  model->HSMHV_type * (ydc_dP[tempNode] + ag0*ydyn_dP[tempNode]);
       }
@@ -2523,7 +2705,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(here->HSMHVGPsPtr)  +=  ydc_gP[sNode]      + ag0*ydyn_gP[sNode];
       *(here->HSMHVGPspPtr) +=  ydc_gP[sNodePrime] + ag0*ydyn_gP[sNodePrime];
       *(here->HSMHVGPbpPtr) +=  ydc_gP[bNodePrime] + ag0*ydyn_gP[bNodePrime];
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVGPtempPtr) +=  model->HSMHV_type * (ydc_gP[tempNode] + ag0*ydyn_gP[tempNode]);
       }
@@ -2543,7 +2725,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       if (flg_subNode > 0) {
 	*(here->HSMHVSsubPtr) += ydc_s[subNode];
       }
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVStempPtr) += model->HSMHV_type * (ydc_s[tempNode]+ ag0*ydyn_s[tempNode]);
       }
@@ -2558,7 +2740,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       if (flg_subNode > 0) {
 	*(here->HSMHVSPsubPtr) += ydc_sP[subNode];
       }
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVSPtempPtr) +=  model->HSMHV_type * (ydc_sP[tempNode] + ag0*ydyn_sP[tempNode]);
       }
@@ -2576,7 +2758,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(here->HSMHVBPbPtr)  +=  ydc_bP[bNode]      + ag0*ydyn_bP[bNode];
       *(here->HSMHVBPdbPtr) +=  ydc_bP[dbNode]     + ag0*ydyn_bP[dbNode];
       *(here->HSMHVBPsbPtr) +=  ydc_bP[sbNode]     + ag0*ydyn_bP[sbNode];
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVBPtempPtr) +=  model->HSMHV_type * (ydc_bP[tempNode] + ag0*ydyn_bP[tempNode]);
       }
@@ -2592,7 +2774,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(here->HSMHVDBdPtr)  +=  ydc_db[dNode]      + ag0*ydyn_db[dNode];
       *(here->HSMHVDBbpPtr) +=  ydc_db[bNodePrime] + ag0*ydyn_db[bNodePrime];
       *(here->HSMHVDBdbPtr) +=  ydc_db[dbNode]     + ag0*ydyn_db[dbNode];
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVDBtempPtr) +=  model->HSMHV_type * (ydc_db[tempNode] + ag0*ydyn_db[tempNode]);
       }
@@ -2601,13 +2783,13 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       *(here->HSMHVSBsPtr)  +=  ydc_sb[sNode]      + ag0*ydyn_sb[sNode];
       *(here->HSMHVSBbpPtr) +=  ydc_sb[bNodePrime] + ag0*ydyn_sb[bNodePrime];
       *(here->HSMHVSBsbPtr) +=  ydc_sb[sbNode]     + ag0*ydyn_sb[sbNode];
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVSBtempPtr) +=  model->HSMHV_type * (ydc_sb[tempNode] + ag0*ydyn_sb[tempNode]);
       }
 
       /*temp*/
-      if( flg_tempNode > 0) { 
+      if( here->HSMHV_coselfheat > 0) { 
         /* temp entries in matrix dependent on model type */
         *(here->HSMHVTempdPtr)  +=  model->HSMHV_type * (ydc_t[dNode]      + ag0*ydyn_t[dNode]     );
         *(here->HSMHVTempdpPtr) +=  model->HSMHV_type * (ydc_t[dNodePrime] + ag0*ydyn_t[dNodePrime]);
@@ -2627,7 +2809,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 	*(here->HSMHVQIspPtr) +=  model->HSMHV_type * (ydc_qi[sNodePrime] + ag0*ydyn_qi[sNodePrime]);
 	*(here->HSMHVQIbpPtr) +=  model->HSMHV_type * (ydc_qi[bNodePrime] + ag0*ydyn_qi[bNodePrime]);
 	*(here->HSMHVQIqiPtr) +=                     (ydc_qi[qiNode] + ag0*ydyn_qi[qiNode]);
-        if ( flg_tempNode > 0 ) { /* self heating */
+        if ( here->HSMHV_coselfheat > 0 ) { /* self heating */
 	  *(here->HSMHVQItempPtr) +=                     (ydc_qi[tempNode] + ag0*ydyn_qi[tempNode]);
         }
 
@@ -2637,7 +2819,7 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
 	*(here->HSMHVQBspPtr) +=  model->HSMHV_type * (ydc_qb[sNodePrime] + ag0*ydyn_qb[sNodePrime]);
 	*(here->HSMHVQBbpPtr) +=  model->HSMHV_type * (ydc_qb[bNodePrime] + ag0*ydyn_qb[bNodePrime]);
 	*(here->HSMHVQBqbPtr) +=                     (ydc_qb[qbNode] + ag0*ydyn_qb[qbNode]);
-        if ( flg_tempNode > 0 ) { /* self heating */
+        if ( here->HSMHV_coselfheat > 0 ) { /* self heating */
 	  *(here->HSMHVQBtempPtr) +=                     (ydc_qb[tempNode] + ag0*ydyn_qb[tempNode]);
         }
       }
@@ -2648,8 +2830,8 @@ line1000:
       if (ckt->CKTnoncon != noncon_old) {
         ckt->CKTtroubleElt = (GENinstance *) here;
       }
-     
-      
+
+
     } /* End of MOSFET Instance */
   } /* End of Model Instance */
 

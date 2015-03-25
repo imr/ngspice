@@ -6,11 +6,11 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hsmhvdest.c
+ FILE : hsmhvtemp_eval_rdri.h
 
  DATE : 2014.6.11
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -57,30 +57,47 @@ Katsuhiro Shimohigashi, President&CEO, STARC
 June 2008 (revised October 2011) 
 *************************************************************************/
 
-#include "ngspice/ngspice.h"
-#include "hsmhvdef.h"
-#include "ngspice/suffix.h"
+        TTEMP = ckt->CKTtemp;
+        if ( here->HSMHV_dtemp_Given ) { TTEMP = TTEMP + here->HSMHV_dtemp ; }
+        TTEMP0 = TTEMP ; 
+#ifdef HSMHVEVAL
+        /* Self heating */
+        TTEMP = TTEMP + deltemp ; 
+#endif
 
-void HSMHVdestroy(
-     GENmodel **inModel)
-{
-  HSMHVmodel **model = (HSMHVmodel**)inModel;
-  HSMHVinstance *here;
-  HSMHVinstance *prev = NULL;
-  HSMHVmodel *mod = *model;
-  HSMHVmodel *oldmod = NULL;
-  
-  for ( ;mod ;mod = mod->HSMHVnextModel ) {
-    if (oldmod) FREE(oldmod);
-    oldmod = mod;
-    prev = (HSMHVinstance *)NULL;
-    for ( here = mod->HSMHVinstances ;here ;here = here->HSMHVnextInstance ) {
-      if (prev) FREE(prev);
-      prev = here;
-    }
-    if (prev) FREE(prev);
-  }
-  if (oldmod) FREE(oldmod);
-  *model = NULL;
-}
 
+        /* Phonon Scattering (temperature-dependent part) */
+        T1 =  Fn_Pow ( here->HSMHV_Tratio, model->HSMHV_rdrmuetmp ) ;
+        here->HSMHV_rdrmue = modelMKS->HSMHV_rdrmue / T1 ;
+#ifdef HSMHVEVAL
+        T1_dT = model->HSMHV_rdrmuetmp * Fn_Pow( here->HSMHV_Tratio, model->HSMHV_rdrmuetmp - 1.0 )
+          / model->HSMHV_ktnom ;
+        Mu0_dT = - modelMKS->HSMHV_rdrmue / ( T1 * T1 ) * T1_dT ;
+#endif
+
+
+        /* Velocity Temperature Dependence */
+        T0 = 1.8 + 0.4 * here->HSMHV_Tratio + 0.1 * here->HSMHV_Tratio * here->HSMHV_Tratio - model->HSMHV_rdrvtmp * ( 1.0 - here->HSMHV_Tratio ) ;
+#ifdef HSMHVEVAL
+        T0_dT = 1 / model->HSMHV_ktnom * ( 0.4 + 0.2 * here->HSMHV_Tratio + model->HSMHV_rdrvtmp ) ;
+#endif
+        here->HSMHV_rdrvmax = modelMKS->HSMHV_rdrvmax / T0 ;
+#ifdef HSMHVEVAL
+        Vmax_dT = - modelMKS->HSMHV_rdrvmax / ( T0 * T0 ) * T0_dT ;
+#endif
+
+
+        here->HSMHV_rdrcx  = model->HSMHV_rdrcx ;
+        here->HSMHV_rdrcar = model->HSMHV_rdrcar ;
+#ifdef HSMHVEVAL
+        Cx_dT              = 0.0 ; 
+        Car_dT             = 0.0 ; 
+#endif
+
+      //Toshiba model //
+        here->HSMHV_rdrbb = model->HSMHV_rdrbb+model->HSMHV_rdrbbtmp*(TTEMP-model->HSMHV_ktnom) ;
+#ifdef HSMHVEVAL
+        Rdrbb_dT          = model->HSMHV_rdrbbtmp ;
+#endif
+
+/* end of HSMHVtemp_eval_rdri.h */

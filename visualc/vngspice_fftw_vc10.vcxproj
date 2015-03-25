@@ -944,6 +944,9 @@
     <ClInclude Include="..\src\frontend\completion.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
     <ClInclude Include="..\src\conf.h" />
+    <ClInclude Include="..\src\spicelib\devices\hisimhv1\hsmhveval_dep.h" />
+    <ClInclude Include="..\src\spicelib\devices\hisimhv1\hsmhvtemp_eval_dio.h" />
+    <ClInclude Include="..\src\spicelib\devices\hisimhv1\hsmhvtemp_eval_rdri.h" />
     <ClInclude Include="include\ngspice\config.h" />
     <ClInclude Include="..\src\include\ngspice\const.h" />
     <ClInclude Include="..\src\include\ngspice\contdefs.h" />
@@ -1756,6 +1759,8 @@
     <ClCompile Include="..\src\spicelib\analysis\ckttyplk.c" />
     <ClCompile Include="..\src\frontend\plotting\clip.c" />
     <ClCompile Include="..\src\spicelib\analysis\cluster.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhveval_dio.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhveval_rdrift.c" />
     <ClCompile Include="..\src\xspice\cm\cm.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath1.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath2.c" />

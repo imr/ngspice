@@ -1,19 +1,61 @@
 /***********************************************************************
 
  HiSIM (Hiroshima University STARC IGFET Model)
- Copyright (C) 2012 Hiroshima University & STARC
+ Copyright (C) 2014 Hiroshima University & STARC
 
  MODEL NAME : HiSIM_HV 
- ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
- Model Parameter VERSION : 1.23
+ ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
+ Model Parameter 'VERSION' : 2.20
  FILE : hsmhvtemp_eval.h
 
- DATE : 2013.04.30
+ DATE : 2014.6.11
 
  released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
+/**********************************************************************
+
+The following source code, and all copyrights, trade secrets or other
+intellectual property rights in and to the source code in its entirety,
+is owned by the Hiroshima University and the STARC organization.
+
+All users need to follow the "HISIM_HV Distribution Statement and
+Copyright Notice" attached to HiSIM_HV model.
+
+-----HISIM_HV Distribution Statement and Copyright Notice--------------
+
+Software is distributed as is, completely without warranty or service
+support. Hiroshima University or STARC and its employees are not liable
+for the condition or performance of the software.
+
+Hiroshima University and STARC own the copyright and grant users a perpetual,
+irrevocable, worldwide, non-exclusive, royalty-free license with respect 
+to the software as set forth below.   
+
+Hiroshima University and STARC hereby disclaims all implied warranties.
+
+Hiroshima University and STARC grant the users the right to modify, copy,
+and redistribute the software and documentation, both within the user's
+organization and externally, subject to the following restrictions
+
+1. The users agree not to charge for Hiroshima University and STARC code
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the software, the users agree to acknowledge
+Hiroshima University and STARC that developed the software. This
+acknowledgment shall appear in the product documentation.
+
+3. The users agree to reproduce any copyright notice which appears on
+the software on any copy or modification of such made available
+to others."
+
+Toshimasa Asahara, President, Hiroshima University
+Mitiko Miura-Mattausch, Professor, Hiroshima University
+Katsuhiro Shimohigashi, President&CEO, STARC
+June 2008 (revised October 2011) 
+*************************************************************************/
+
 #define C_rdtemp_min 5.0e-3
 #define C_rdtemp_dlt 1.0e-2
 
@@ -24,16 +66,15 @@
     /* Self heating */
     TTEMP = TTEMP + deltemp ; 
 #endif
-/*Tdiff0 =   TTEMP0 - model->HSMHV_ktnom ;*/
-/*Tdiff0_2 = TTEMP0 * TTEMP0 - model->HSMHV_ktnom * model->HSMHV_ktnom ;*/
+Tdiff0 =   TTEMP0 - model->HSMHV_ktnom ;
+Tdiff0_2 = TTEMP0 * TTEMP0 - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 Tdiff =    TTEMP  - model->HSMHV_ktnom ;
 Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
+        here->HSMHV_Tratio = TTEMP / model->HSMHV_ktnom ;
 
         /* Band gap */
-        T1 = TTEMP - model->HSMHV_ktnom ;
-        T2 = TTEMP * TTEMP - model->HSMHV_ktnom * model->HSMHV_ktnom ;
-        here->HSMHV_eg = Eg = here->HSMHV_egtnom - pParam->HSMHV_bgtmp1 * T1
-          - pParam->HSMHV_bgtmp2 * T2 ;
+        here->HSMHV_eg = Eg = here->HSMHV_egtnom - pParam->HSMHV_bgtmp1 * Tdiff
+          - pParam->HSMHV_bgtmp2 * Tdiff_2 ;
         here->HSMHV_sqrt_eg = sqrt( Eg ) ;
 #ifdef HSMHVEVAL
         Eg_dT = -pParam->HSMHV_bgtmp1 - 2.0e0 * TTEMP * pParam->HSMHV_bgtmp2 ;
@@ -59,26 +100,53 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 #endif
 
         /* Intrinsic carrier concentration */
-        here->HSMHV_nin = Nin = C_Nin0 * Fn_Pow (TTEMP / model->HSMHV_ktnom, 1.5e0) 
+        here->HSMHV_nin = Nin = C_Nin0 * Fn_Pow (here->HSMHV_Tratio, 1.5e0) 
           * exp (- Eg / 2.0e0 * beta + here->HSMHV_egtnom / 2.0e0 * here->HSMHV_betatnom) ;
 #ifdef HSMHVEVAL
         Nin_dT = C_Nin0 * exp (- Eg / 2.0e0 * beta + here->HSMHV_egtnom / 2.0e0 * here->HSMHV_betatnom)
-          * 1.5e0 * Fn_Pow ( TTEMP / model->HSMHV_ktnom , 0.5e0 ) / model->HSMHV_ktnom 
-          + C_Nin0 * Fn_Pow (TTEMP / model->HSMHV_ktnom, 1.5e0) 
+          * 1.5e0 * Fn_Pow ( here->HSMHV_Tratio , 0.5e0 ) / model->HSMHV_ktnom 
+          + C_Nin0 * Fn_Pow (here->HSMHV_Tratio, 1.5e0) 
           * exp (- Eg / 2.0e0 * beta + here->HSMHV_egtnom / 2.0e0 * here->HSMHV_betatnom)
           * ( - Eg / 2.0e0 * beta_dT - beta / 2.0e0 * Eg_dT );
 #endif
 
         /* Phonon Scattering (temperature-dependent part) */
-        T1 =  Fn_Pow (TTEMP / model->HSMHV_ktnom, pParam->HSMHV_muetmp) ;
+        T1 =  Fn_Pow (here->HSMHV_Tratio, pParam->HSMHV_muetmp) ;
         here->HSMHV_mphn0 = T1 / here->HSMHV_mueph ;
         here->HSMHV_mphn1 = here->HSMHV_mphn0 * model->HSMHV_mueph0 ;
 #ifdef HSMHVEVAL
-        T1_dT = pParam->HSMHV_muetmp * Fn_Pow(TTEMP / model->HSMHV_ktnom, pParam->HSMHV_muetmp - 1.0 )
+        T1_dT = pParam->HSMHV_muetmp * Fn_Pow(here->HSMHV_Tratio, pParam->HSMHV_muetmp - 1.0 )
           / model->HSMHV_ktnom ;
         mphn0_dT = T1_dT / here->HSMHV_mueph ;
 #endif
 
+        if( model->HSMHV_codep == 1 ) {
+        /* depletion MOS parameter (temperature-dependent part) */
+          here->HSMHV_Pb2n = 2.0/beta*log(here->HSMHV_ndepm/Nin) ;
+          here->HSMHV_Vbipn = 1.0/beta*log(here->HSMHV_ndepm*here->HSMHV_nsub/Nin/Nin) ;
+          here->HSMHV_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSMHV_ndepm / beta ) ;
+          here->HSMHV_cnst1 = Nin*Nin/here->HSMHV_ndepm/here->HSMHV_ndepm ;
+          T1 =  Fn_Pow (here->HSMHV_Tratio, model->HSMHV_depmuetmp) ;
+          here->HSMHV_depmphn0 = T1 / model->HSMHV_depmueph1 ;
+          here->HSMHV_depmphn1 = here->HSMHV_depmphn0 * model->HSMHV_depmueph0 ;
+
+          T0 = 1.8 + 0.4 * here->HSMHV_Tratio + 0.1 * here->HSMHV_Tratio * here->HSMHV_Tratio - model->HSMHV_depvtmp * ( 1.0 - here->HSMHV_Tratio ) ;
+          here->HSMHV_depvmax = modelMKS->HSMHV_depvmax / T0 ;
+
+#ifdef HSMHVEVAL
+          Pb2n_dT = -here->HSMHV_Pb2n/beta*beta_dT-2.0/beta/Nin*Nin_dT ;
+          Vbipn_dT = -here->HSMHV_Vbipn/beta*beta_dT-2/beta/Nin*Nin_dT ;
+          cnst0_dT = 0.5e0 / here->HSMHV_cnst0 * 2.0 * C_ESI * C_QE * here->HSMHV_ndepm * beta_inv_dT ;
+          cnst1_dT = 2.0e0 * Nin * Nin_dT / here->HSMHV_ndepm / here->HSMHV_ndepm ;
+          T1_dT = model->HSMHV_depmuetmp * Fn_Pow(here->HSMHV_Tratio, model->HSMHV_depmuetmp - 1.0 ) 
+          / model->HSMHV_ktnom ;
+          depmphn0_dT = T1_dT / model->HSMHV_depmueph1 ;
+          T0_dT = 1 / model->HSMHV_ktnom * ( 0.4 + 0.2 * here->HSMHV_Tratio + model->HSMHV_depvtmp ) ;
+          depVmax_dT = - modelMKS->HSMHV_depvmax / ( T0 * T0 ) * T0_dT ;
+
+#endif
+        }
+ 
         /* Pocket Overlap (temperature-dependent part) */
         here->HSMHV_ptovr = here->HSMHV_ptovr0 / beta ;
 #ifdef HSMHVEVAL
@@ -87,16 +155,14 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 
         /* Velocity Temperature Dependence */
         T1 = TTEMP  / model->HSMHV_ktnom ;
-        T3 = TTEMP0 - model->HSMHV_ktnom ;
-        T4 = TTEMP0 * TTEMP0 - model->HSMHV_ktnom * model->HSMHV_ktnom ;
         T0 = 1.8 + 0.4 * T1 + 0.1 * T1 * T1 - pParam->HSMHV_vtmp * (1.0 - T1) ;
 	 if ( model->HSMHV_cotemp != 2 ) { /* without deltemp (COTEMP=0,1,3) */
         here->HSMHV_vmax = here->HSMHV_vmax0 * pParam->HSMHV_vmax
           / T0
-          * ( 1.0 + model->HSMHV_vmaxt1 * T3 + model->HSMHV_vmaxt2 * T4 ) ;
+          * ( 1.0 + model->HSMHV_vmaxt1 * Tdiff0 + model->HSMHV_vmaxt2 * Tdiff0_2 ) ;
 #ifdef HSMHVEVAL
         Vmax_dT=-here->HSMHV_vmax0 * pParam->HSMHV_vmax 
-          / ( T0 * T0 ) * ( 1.0 + model->HSMHV_vmaxt1 * T3 + model->HSMHV_vmaxt2 * T4 )
+          / ( T0 * T0 ) * ( 1.0 + model->HSMHV_vmaxt1 * Tdiff0 + model->HSMHV_vmaxt2 * Tdiff0_2 )
           * 1/model->HSMHV_ktnom * (0.4 + 0.2 * T1 + pParam->HSMHV_vtmp) ;
 #endif
 	 } else { /* with deltemp (COTEMP=2) */
@@ -113,7 +179,7 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 #endif
 	 }
 	 if ( model->HSMHV_cotemp != 2 ) { /* without deltemp (COTEMP=0,1,3) */
-        here->HSMHV_ninvd = here->HSMHV_ninvd0 * ( 1.0 + model->HSMHV_ninvdt1 * T3 + model->HSMHV_ninvdt2 * T4 ) ;
+        here->HSMHV_ninvd = here->HSMHV_ninvd0 * ( 1.0 + model->HSMHV_ninvdt1 * Tdiff0 + model->HSMHV_ninvdt2 * Tdiff0_2 ) ;
 #ifdef HSMHVEVAL
 	ninvd_dT = 0.0 ;
 #endif
@@ -126,11 +192,11 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 	 }
       
 	/* Temperature Dependence of RTH0 */
-	pParam->HSMHV_rth = ( pParam->HSMHV_rth0 + model->HSMHV_rthtemp1 * T3 + model->HSMHV_rthtemp2 * T4  ) * here->HSMHV_rthtemp0 ;
+	pParam->HSMHV_rth = ( pParam->HSMHV_rth0 + model->HSMHV_rthtemp1 * Tdiff0 + model->HSMHV_rthtemp2 * Tdiff0_2  ) * here->HSMHV_rthtemp0 ;
 
 
 	/* Temperature Dependence of POWRAT */
-        T2 = pParam->HSMHV_powrat + model->HSMHV_prattemp1 * T3 + model->HSMHV_prattemp2 * T4  ;
+        T2 = pParam->HSMHV_powrat + model->HSMHV_prattemp1 * Tdiff0 + model->HSMHV_prattemp2 * Tdiff0_2  ;
 	Fn_SL( T2 , T2 , 0 , 0.05 , T0 );
 	Fn_SU( here->HSMHV_powratio , T2 , 1 , 0.05 , T0 );
 
@@ -147,52 +213,53 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
         here->HSMHV_wdpl = sqrt ( T1 / here->HSMHV_nsub ) ;
         here->HSMHV_wdplp = sqrt( T1 / ( here->HSMHV_nsubp ) ) ; 
 
-        /* Coefficient of the F function for bulk charge */
-        here->HSMHV_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSMHV_nsub / beta ) ;
+        
+        if( model->HSMHV_codep == 0  ) {
+          /* Coefficient of the F function for bulk charge */
+          here->HSMHV_cnst0 = sqrt ( 2.0 * C_ESI * C_QE * here->HSMHV_nsub / beta ) ;
 
-        /* cnst1: n_{p0} / p_{p0} */
-        T1 = Nin / here->HSMHV_nsub ;
-        here->HSMHV_cnst1 = T1 * T1 ;
+          /* cnst1: n_{p0} / p_{p0} */
+          T1 = Nin / here->HSMHV_nsub ;
+          here->HSMHV_cnst1 = T1 * T1 ;
 #ifdef HSMHVEVAL
-        cnst0_dT = 0.5e0 / here->HSMHV_cnst0 * 2.0 * C_ESI * C_QE * here->HSMHV_nsub * beta_inv_dT ;
-        cnst1_dT = 2.0e0 * Nin * Nin_dT / here->HSMHV_nsub / here->HSMHV_nsub ;
+          cnst0_dT = 0.5e0 / here->HSMHV_cnst0 * 2.0 * C_ESI * C_QE * here->HSMHV_nsub * beta_inv_dT ;
+          cnst1_dT = 2.0e0 * Nin * Nin_dT / here->HSMHV_nsub / here->HSMHV_nsub ;
 #endif
+        }
+        
 
-	if ( pParam->HSMHV_nover != 0.0 ) {
-	  here->HSMHV_cnst0over = here->HSMHV_cnst0 * sqrt( pParam->HSMHV_nover / here->HSMHV_nsub ) ;     
+        if( model->HSMHV_codep == 0  ) {
+
+          if ( pParam->HSMHV_nover != 0.0 ) {
+	    here->HSMHV_cnst0over = here->HSMHV_cnst0 * sqrt( pParam->HSMHV_nover / here->HSMHV_nsub ) ;     
 #ifdef HSMHVEVAL
-         cnst0over_dT = cnst0_dT * sqrt( pParam->HSMHV_nover / here->HSMHV_nsub ) ; 
+           cnst0over_dT = cnst0_dT * sqrt( pParam->HSMHV_nover / here->HSMHV_nsub ) ; 
 #endif
-        /* ps0ldinib : Ps0_iniB for Ps0LD */
-        T1 = here->HSMHV_cnst0over * model->HSMHV_tox / here->HSMHV_cecox  ;
-        T2 = pParam->HSMHV_nover / Nin ;
-        here->HSMHV_ps0ldinib = T2 * T2 / ( T1 * T1 );
+          }
+          if ( pParam->HSMHV_novers != 0.0 ) {
+	    here->HSMHV_cnst0overs = here->HSMHV_cnst0 * sqrt( pParam->HSMHV_novers / here->HSMHV_nsub ) ;     
 #ifdef HSMHVEVAL
-        T1_dT = cnst0over_dT  * model->HSMHV_tox / here->HSMHV_cecox  ;  
-        T2_dT = - Nin_dT * T2 / Nin; 
-        ps0ldinib_dT = 2.0 * here->HSMHV_ps0ldinib * ( T2_dT * T1 - T2 * T1_dT ) / ( T1 * T2 );
+            cnst0overs_dT = cnst0_dT * sqrt( pParam->HSMHV_novers / here->HSMHV_nsub ) ;
 #endif
-	}
-	if ( pParam->HSMHV_novers != 0.0 ) {
-	  here->HSMHV_cnst0overs = here->HSMHV_cnst0 * sqrt( pParam->HSMHV_novers / here->HSMHV_nsub ) ;     
+          }
+        } else {
+          if ( pParam->HSMHV_nover != 0.0 ) {
+            here->HSMHV_cnst0over = here->HSMHV_cnst0 * sqrt( pParam->HSMHV_nover / here->HSMHV_ndepm ) ;
 #ifdef HSMHVEVAL
-	  cnst0overs_dT = cnst0_dT * sqrt( pParam->HSMHV_novers / here->HSMHV_nsub ) ;
+           cnst0over_dT = cnst0_dT * sqrt( pParam->HSMHV_nover / here->HSMHV_ndepm ) ;
 #endif
-          /* ps0ldinib : Ps0_iniB for Ps0LD */
-          T1 = here->HSMHV_cnst0overs * model->HSMHV_tox / here->HSMHV_cecox  ;
-          T2 = pParam->HSMHV_novers / Nin ;
-          here->HSMHV_ps0ldinibs = T2 * T2 / ( T1 * T1 );
+          }
+          if ( pParam->HSMHV_novers != 0.0 ) {
+            here->HSMHV_cnst0overs = here->HSMHV_cnst0 * sqrt( pParam->HSMHV_novers / here->HSMHV_ndepm ) ;
 #ifdef HSMHVEVAL
-         T1_dT = cnst0overs_dT  * model->HSMHV_tox / here->HSMHV_cecox  ;  
-         T2_dT = - Nin_dT * T2 / Nin; 
-         ps0ldinibs_dT = 2.0 * here->HSMHV_ps0ldinibs * ( T2_dT * T1 - T2 * T1_dT ) / ( T1 * T2 );
+            cnst0overs_dT = cnst0_dT * sqrt( pParam->HSMHV_novers / here->HSMHV_ndepm ) ;
 #endif
- 	}
+          }
+
+        }
+
 
 	/* temperature-dependent resistance model */
-        T3 = model->HSMHV_ktnom ;
-        T1 = TTEMP0 - T3 ;
-        T4 = TTEMP0 * TTEMP0 - T3 * T3 ;
 	/* drain side */
 	if ( pParam->HSMHV_rd > 0.0 ) {
          T2 = here->HSMHV_rdtemp0
@@ -200,7 +267,7 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 	   * ( here->HSMHV_ldrift2 * model->HSMHV_rdslp2 * C_m2um   + model->HSMHV_rdict2 ) ;
 
 	 if ( model->HSMHV_cotemp == 1 ) { /* without deltemp (COTEMP=1) */
-	 here->HSMHV_rd = ( pParam->HSMHV_rd + T1 * modelMKS->HSMHV_rdtemp1 + modelMKS->HSMHV_rdtemp2 * T4 ) * T2 ;
+	 here->HSMHV_rd = ( pParam->HSMHV_rd + modelMKS->HSMHV_rdtemp1 * Tdiff0 + modelMKS->HSMHV_rdtemp2 * Tdiff0_2 ) * T2 ;
 	 Fn_SL( here->HSMHV_rd, here->HSMHV_rd, C_rdtemp_min * pParam->HSMHV_rd, C_rdtemp_dlt * pParam->HSMHV_rd, T0 );
 #ifdef HSMHVEVAL
 	 Rd0_dT = 0.0 ;
@@ -223,7 +290,7 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 	      * ( here->HSMHV_ldrift2s * model->HSMHV_rdslp2 * C_m2um   + model->HSMHV_rdict2 ) ;
 	    
 	 if ( model->HSMHV_cotemp == 1 ) { /* without deltemp (COTEMP=1) */
-	    here->HSMHV_rs = ( pParam->HSMHV_rs + T1 * modelMKS->HSMHV_rdtemp1 + modelMKS->HSMHV_rdtemp2 * T4 ) * T2 ;
+	    here->HSMHV_rs = ( pParam->HSMHV_rs + modelMKS->HSMHV_rdtemp1 * Tdiff0 + modelMKS->HSMHV_rdtemp2 * Tdiff0_2 ) * T2 ;
 	    Fn_SL( here->HSMHV_rs, here->HSMHV_rs, C_rdtemp_min * pParam->HSMHV_rs, C_rdtemp_dlt * pParam->HSMHV_rs, T0 );
 #ifdef HSMHVEVAL
 	    Rs0_dT = 0.0 ;
@@ -250,10 +317,8 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 	  Fn_SU( T7  , T5    , T4 * ( model->HSMHV_rdov11 + 1.0) , 50.0e-6 , T6 ) ;
 	  Fn_SL( T2  , T7 + T1 * T4  , 0, 50.0e-6 , T6 ) ;
 
-          T3 = model->HSMHV_ktnom ;
-          T1 = TTEMP0 - T3 ;
 	 if ( model->HSMHV_cotemp == 0 || model->HSMHV_cotemp == 1 ) { /* without deltemp (COTEMP=0,1) */
-	  here->HSMHV_rdvd = ( pParam->HSMHV_rdvd + T1 * modelMKS->HSMHV_rdvdtemp1 + modelMKS->HSMHV_rdvdtemp2 * ( TTEMP0 * TTEMP0 - T3 * T3 ) ) * T2 ;
+	  here->HSMHV_rdvd = ( pParam->HSMHV_rdvd + modelMKS->HSMHV_rdvdtemp1 * Tdiff0 + modelMKS->HSMHV_rdvdtemp2 * Tdiff0_2 ) * T2 ;
 	  Fn_SL( here->HSMHV_rdvd, here->HSMHV_rdvd, C_rdtemp_min * pParam->HSMHV_rdvd, C_rdtemp_dlt * pParam->HSMHV_rdvd, T0 );
 #ifdef HSMHVEVAL
           Rdvd_dT = 0.0 ;
@@ -276,10 +341,8 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 	  Fn_SU( T7  , T5    , T4 * ( model->HSMHV_rdov11 + 1.0) , 50.0e-6 , T6 ) ;
 	  Fn_SL( T2  , T7 + T1 * T4  , 0, 50.0e-6 , T6 ) ;
 
-          T3 = model->HSMHV_ktnom ;
-          T1 = TTEMP0 - T3 ;
 	 if ( model->HSMHV_cotemp == 0 || model->HSMHV_cotemp == 1 ) { /* without deltemp (COTEMP=0,1) */
-	  here->HSMHV_rsvd = ( pParam->HSMHV_rdvd + T1 * modelMKS->HSMHV_rdvdtemp1 + modelMKS->HSMHV_rdvdtemp2 * ( TTEMP0 * TTEMP0 - T3 * T3 ) ) * T2 ;
+	  here->HSMHV_rsvd = ( pParam->HSMHV_rdvd + modelMKS->HSMHV_rdvdtemp1 * Tdiff0 + modelMKS->HSMHV_rdvdtemp2 * Tdiff0_2 ) * T2 ;
 	  Fn_SL( here->HSMHV_rsvd, here->HSMHV_rsvd, C_rdtemp_min * pParam->HSMHV_rdvd, C_rdtemp_dlt * pParam->HSMHV_rdvd, T0 );
 #ifdef HSMHVEVAL
           Rsvd_dT = 0.0 ;
@@ -296,83 +359,8 @@ Tdiff_2 =  TTEMP  * TTEMP  - model->HSMHV_ktnom * model->HSMHV_ktnom ;
 	  here->HSMHV_rsvd = 0.0 ;
 	}
 
-        /* for substrate-source/drain junction diode. */
-        js   = pParam->HSMHV_js0
-          * exp ((here->HSMHV_egtnom * here->HSMHV_betatnom - Eg * beta
-                  + model->HSMHV_xti * log (TTEMP / model->HSMHV_ktnom)) / pParam->HSMHV_nj) ;
-        jssw = pParam->HSMHV_js0sw
-          * exp ((here->HSMHV_egtnom * here->HSMHV_betatnom - Eg * beta 
-                  + model->HSMHV_xti * log (TTEMP / model->HSMHV_ktnom)) / model->HSMHV_njsw) ;
-
-        js2  = pParam->HSMHV_js0
-          * exp ((here->HSMHV_egtnom * here->HSMHV_betatnom - Eg * beta
-                  + model->HSMHV_xti2 * log (TTEMP / model->HSMHV_ktnom)) / pParam->HSMHV_nj) ;  
-        jssw2 = pParam->HSMHV_js0sw
-          * exp ((here->HSMHV_egtnom * here->HSMHV_betatnom - Eg * beta
-                  + model->HSMHV_xti2 * log (TTEMP / model->HSMHV_ktnom)) / model->HSMHV_njsw) ; 
       
-#ifdef HSMHVEVAL
-	T0 = - Eg * beta_dT - Eg_dT * beta ; /* Self heating */
-	T1 = T0 + model->HSMHV_xti  / TTEMP ; /* Self heating */
-	T2 = T0 + model->HSMHV_xti2 / TTEMP ; /* Self heating */
-
-	js_dT =    js    * T1  / pParam->HSMHV_nj; /* Self heating */
-	jssw_dT =  jssw  * T1/ model->HSMHV_njsw ; /* Self heating */
-	js2_dT =   js2   * T2  / pParam->HSMHV_nj; /* Self heating */
-	jssw2_dT = jssw2 * T2 / model->HSMHV_njsw; /* Self heating */
-#endif
       
-        here->HSMHV_isbd = here->HSMHV_ad * js + here->HSMHV_pd * jssw ;
-        here->HSMHV_isbd2 = here->HSMHV_ad * js2 + here->HSMHV_pd * jssw2 ;
-        here->HSMHV_isbs = here->HSMHV_as * js + here->HSMHV_ps * jssw ;
-        here->HSMHV_isbs2 = here->HSMHV_as * js2 + here->HSMHV_ps * jssw2 ;
-
-#ifdef HSMHVEVAL
-	isbd_dT =  here->HSMHV_ad * js_dT  + here->HSMHV_pd * jssw_dT  ; /* Self heating */
-	isbd2_dT = here->HSMHV_ad * js2_dT + here->HSMHV_pd * jssw2_dT ; /* Self heating */
-	isbs_dT =  here->HSMHV_as * js_dT  + here->HSMHV_ps * jssw_dT  ; /* Self heating */
-	isbs2_dT = here->HSMHV_as * js2_dT + here->HSMHV_ps * jssw2_dT ; /* Self heating */
-#endif
-
-        T1 = TTEMP / model->HSMHV_ktnom ;
-        T0 = T1 * T1 ;
-        T2 = here->HSMHV_isbd + small ;
-        T3 = here->HSMHV_isbs + small ;
-#ifdef HSMHVEVAL
-        T1_dT = 1.0 / model->HSMHV_ktnom ; /* Self heating */
-        T0_dT = 2.0 * T1 * T1_dT ;       /* Self heating */
-        T2_dT = isbd_dT ;                /* Self heating */
-	T3_dT = isbs_dT ;                /* Self heating */
-#endif
-
-        here->HSMHV_vbdt = pParam->HSMHV_nj / beta 
-          * log ( pParam->HSMHV_vdiffj * T0 / T2 + 1.0 ) ;
-        here->HSMHV_vbst = pParam->HSMHV_nj / beta 
-          * log ( pParam->HSMHV_vdiffj * T0 / T3 + 1.0 ) ;
-
-        here->HSMHV_exptemp = exp (( T1 - 1.0 ) * model->HSMHV_ctemp ) ;
-
-#ifdef HSMHVEVAL
-	vbdt_dT = - beta_dT / beta * here->HSMHV_vbdt
-	  + pParam->HSMHV_nj / beta * pParam->HSMHV_vdiffj / ( pParam->HSMHV_vdiffj * T0 / T2 + 1.0 ) 
-	  * ( T0_dT / T2 - T0 / T2 / T2 * T2_dT ) ; /* Self heating */
-	vbst_dT = - beta_dT / beta * here->HSMHV_vbst
-	  + pParam->HSMHV_nj / beta * pParam->HSMHV_vdiffj / ( pParam->HSMHV_vdiffj * T0 / T3 + 1.0 ) 
-	  * ( T0_dT / T3 - T0 / T3 / T3 * T3_dT ) ; /* Self heating */
-#endif
-
-        here->HSMHV_jd_nvtm_inv = 1.0 / ( pParam->HSMHV_nj / beta ) ;
-        here->HSMHV_jd_expcd = exp (here->HSMHV_vbdt * here->HSMHV_jd_nvtm_inv ) ;
-        here->HSMHV_jd_expcs = exp (here->HSMHV_vbst * here->HSMHV_jd_nvtm_inv ) ;
-
-#ifdef HSMHVEVAL
-       exptemp_dT = model->HSMHV_ctemp / model->HSMHV_ktnom * here->HSMHV_exptemp ;       /* Self heating */
-	jd_nvtm_inv_dT = beta_dT / pParam->HSMHV_nj ;                                  /* Self heating */
-	jd_expcd_dT = here->HSMHV_jd_expcd
-	  * ( vbdt_dT * here->HSMHV_jd_nvtm_inv + here->HSMHV_vbdt * jd_nvtm_inv_dT ) ; /* Self heating */
-	jd_expcs_dT = here->HSMHV_jd_expcs
-	  * ( vbst_dT * here->HSMHV_jd_nvtm_inv + here->HSMHV_vbst * jd_nvtm_inv_dT ) ; /* Self heating */
-#endif
 
        /* costi0 and costi1 for STI transistor model (temperature-dependent part) */
        here->HSMHV_costi0 = here->HSMHV_costi00 * sqrt(here->HSMHV_beta_inv) ;
