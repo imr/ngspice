@@ -95,6 +95,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "hfet2/hfet2itf.h"
 #include "hisim2/hsm2itf.h"
 #include "hisimhv1/hsmhvitf.h"
+#include "hisimhv2/hsmhvitf.h"
 #include "ind/inditf.h"
 #include "isrc/isrcitf.h"
 #include "jfet/jfetitf.h"
@@ -285,12 +286,12 @@ SPICEdev ** devices(void)
 
 #ifdef ADMS
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
-                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", \
+                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1",  "hisimhv2", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "bjt504t", "ekv", "psp102"}
 #else
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
-                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", \
+                      "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", "hisimhv2", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
 #endif

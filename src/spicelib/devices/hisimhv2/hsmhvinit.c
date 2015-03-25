@@ -6,19 +6,19 @@
 #include "hsmhvitf.h"
 #include "hsmhvinit.h"
 
-SPICEdev HSMHVinfo = {
-  {   "HiSIMHV1",
-      "Hiroshima University STARC IGFET Model - HiSIM_HV v.1",
+SPICEdev HSMHV2info = {
+  {   "HiSIMHV2",
+      "Hiroshima University STARC IGFET Model - HiSIM_HV v.2",
       
-      &HSMHVnSize,
-      &HSMHVnSize,
-      HSMHVnames,
+      &HSMHV2nSize,
+      &HSMHV2nSize,
+      HSMHV2names,
 
-      &HSMHVpTSize,
-      HSMHVpTable,
+      &HSMHV2pTSize,
+      HSMHV2pTable,
       
-      &HSMHVmPTSize,
-      HSMHVmPTable,
+      &HSMHV2mPTSize,
+      HSMHV2mPTable,
 
 #ifdef XSPICE
 /*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
@@ -38,25 +38,25 @@ SPICEdev HSMHVinfo = {
 	DEV_DEFAULT
   },
 
- /* DEVparam      */ HSMHVparam,
- /* DEVmodParam   */ HSMHVmParam,
- /* DEVload       */ HSMHVload,
- /* DEVsetup      */ HSMHVsetup,
- /* DEVunsetup    */ HSMHVunsetup,
- /* DEVpzSetup    */ HSMHVsetup,
- /* DEVtemperature*/ HSMHVtemp,
- /* DEVtrunc      */ HSMHVtrunc,
+ /* DEVparam      */ HSMHV2param,
+ /* DEVmodParam   */ HSMHV2mParam,
+ /* DEVload       */ HSMHV2load,
+ /* DEVsetup      */ HSMHV2setup,
+ /* DEVunsetup    */ HSMHV2unsetup,
+ /* DEVpzSetup    */ HSMHV2setup,
+ /* DEVtemperature*/ HSMHV2temp,
+ /* DEVtrunc      */ HSMHV2trunc,
  /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ HSMHVacLoad,
+ /* DEVacLoad     */ HSMHV2acLoad,
  /* DEVaccept     */ NULL,
- /* DEVdestroy    */ HSMHVdestroy,
- /* DEVmodDelete  */ HSMHVmDelete,
- /* DEVdelete     */ HSMHVdelete, 
- /* DEVsetic      */ HSMHVgetic,
- /* DEVask        */ HSMHVask,
- /* DEVmodAsk     */ HSMHVmAsk,
- /* DEVpzLoad     */ HSMHVpzLoad,
- /* DEVconvTest   */ HSMHVconvTest,
+ /* DEVdestroy    */ HSMHV2destroy,
+ /* DEVmodDelete  */ HSMHV2mDelete,
+ /* DEVdelete     */ HSMHV2delete, 
+ /* DEVsetic      */ HSMHV2getic,
+ /* DEVask        */ HSMHV2ask,
+ /* DEVmodAsk     */ HSMHV2mAsk,
+ /* DEVpzLoad     */ HSMHV2pzLoad,
+ /* DEVconvTest   */ HSMHV2convTest,
  /* DEVsenSetup   */ NULL,
  /* DEVsenLoad    */ NULL,
  /* DEVsenUpdate  */ NULL,
@@ -64,20 +64,20 @@ SPICEdev HSMHVinfo = {
  /* DEVsenPrint   */ NULL,
  /* DEVsenTrunc   */ NULL,
  /* DEVdisto      */ NULL,
- /* DEVnoise      */ HSMHVnoise,
- /* DEVsoaCheck   */ HSMHVsoaCheck,
+ /* DEVnoise      */ HSMHV2noise,
+ /* DEVsoaCheck   */ HSMHV2soaCheck,
 #ifdef CIDER
  /* DEVdump       */ NULL,
  /* DEVacct       */ NULL,
 #endif
- /* DEVinstSize   */ &HSMHViSize,
- /* DEVmodSize    */ &HSMHVmSize
+ /* DEVinstSize   */ &HSMHV2iSize,
+ /* DEVmodSize    */ &HSMHV2mSize
 
 };
 
 
 SPICEdev *
-get_hsmhv_info(void)
+get_hsmhv2_info(void)
 {
-    return &HSMHVinfo;
+    return &HSMHV2info;
 }

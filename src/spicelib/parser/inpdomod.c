@@ -402,11 +402,15 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 			    }
 			    break;
 			case 73:
-			    type = INPtypelook("HiSIMHV");
+			    err = INPfindVer(line, ver); /* mapping of minor versions >= 1.1 are included */
+			    if ((prefix("1.1", ver)) || (prefix("1.2", ver))) {
+			      type = INPtypelook("HiSIMHV1");
+			    }
+			    if ( (strstr(ver, "default")) || (prefix("2.0", ver)) || (prefix("2.1", ver)) || (prefix("2.2", ver)) ) {
+			      type = INPtypelook("HiSIMHV2");
+			    }
 			    if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Placeholder: Device type HiSIMHV not available in this binary\n");
+			       err = tprintf("Device type HiSIMHV version %s not available in this binary\n", ver);
 			    }
 			    break;
 			default:		/* placeholder; use level xxx for the next model */

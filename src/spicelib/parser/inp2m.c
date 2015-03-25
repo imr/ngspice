@@ -150,7 +150,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                         (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
                         (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
                         (thismodel->INPmodType != INPtypelook ("B3SOIDD")) &&
-                        (thismodel->INPmodType != INPtypelook ("HiSIMHV")) &&
+                        (thismodel->INPmodType != INPtypelook ("HiSIMHV1")) &&
+                        (thismodel->INPmodType != INPtypelook ("HiSIMHV2")) &&
                         (thismodel->INPmodType != INPtypelook ("SOI3"))
                    ) {
                     /*  if model is not variable node B3SOIPD/FD/DD or STAG model, error!  */
@@ -169,7 +170,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                     (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
                     (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
                     (thismodel->INPmodType != INPtypelook ("B3SOIDD")) &&
-                    (thismodel->INPmodType != INPtypelook ("HiSIMHV")) &&
+                    (thismodel->INPmodType != INPtypelook ("HiSIMHV1")) &&
+                    (thismodel->INPmodType != INPtypelook ("HiSIMHV2")) &&
                     (thismodel->INPmodType != INPtypelook ("SOI3"))
                ) {
                 /*  if model is not variable node B3SOIPD/FD/DD  model, error!  */
@@ -237,7 +239,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                 && thismodel->INPmodType != INPtypelook ("psp102")
 #endif
                 && thismodel->INPmodType != INPtypelook ("HiSIM2")
-                && thismodel->INPmodType != INPtypelook ("HiSIMHV")
+                && thismodel->INPmodType != INPtypelook ("HiSIMHV1")
+                && thismodel->INPmodType != INPtypelook ("HiSIMHV2")
            ) {
             LITERR ("incorrect model type");
             return;

@@ -1097,6 +1097,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/hfet2/Makefile
                  src/spicelib/devices/hisim2/Makefile
                  src/spicelib/devices/hisimhv1/Makefile
+                 src/spicelib/devices/hisimhv2/Makefile
                  src/spicelib/devices/jfet/Makefile
                  src/spicelib/devices/jfet2/Makefile
                  src/spicelib/devices/ltra/Makefile

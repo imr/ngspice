@@ -226,7 +226,8 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         && modtmp->INPmodType != INPtypelook ("BSIM4v6")
         && modtmp->INPmodType != INPtypelook ("BSIM4v7")
         && modtmp->INPmodType != INPtypelook ("HiSIM2")
-        && modtmp->INPmodType != INPtypelook ("HiSIMHV")
+        && modtmp->INPmodType != INPtypelook ("HiSIMHV1")
+        && modtmp->INPmodType != INPtypelook ("HiSIMHV2")
        ) continue; /* We left the loop if the model is not in the list */
 
     if (modtmp->INPmodType < 0) {  /* First check for illegal model type */
