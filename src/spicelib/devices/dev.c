@@ -167,6 +167,7 @@ static SPICEdev *(*static_devices[])(void) = {
     get_hfet2_info,
     get_hsm2_info,
     get_hsmhv_info,
+    get_hsmhv2_info,
     get_ind_info,
     get_mut_info,
     get_isrc_info,
