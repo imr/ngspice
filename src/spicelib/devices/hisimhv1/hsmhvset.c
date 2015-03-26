@@ -79,7 +79,7 @@ int HSMHVsetup(
     } else {
       if (strcmp(model->HSMHV_version,"1.24") != 0 ) {
        model->HSMHV_version = "1.24" ;
-       printf("          1.24 is only available for VERSION. \n");
+//       printf("          1.24 is only available for VERSION. \n");
        printf("          1.24 is selected for VERSION. (default) \n");
       } else {
        printf("           %s is selected for VERSION \n", model->HSMHV_version);
@@ -1446,9 +1446,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     ckt->CKTbypass = 0 ;
   }  
   /* check ckt->CKTintegrateMethod */
-  if( ckt->CKTintegrateMethod == TRAPEZOIDAL ) { /* TRAPEZODAL:1 GEAR:2 */
-    fprintf( stderr, "\nwarning(HiSIMHV): Recommend the Gear method for reliable simulation with '.options METHOD=GEAR'.\n");
-  }
+//  if( ckt->CKTintegrateMethod == TRAPEZOIDAL ) { /* TRAPEZODAL:1 GEAR:2 */
+//    fprintf( stderr, "\nwarning(HiSIMHV): Recommend the Gear method for reliable simulation with '.options METHOD=GEAR'.\n");
+//  }
 
   return(OK);
 }
