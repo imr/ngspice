@@ -65,6 +65,9 @@ sub runNoiseTest {
                 }
                 print OF "x1 ".join(" ",@main::Pin)." mysub";
                 print OF "hn 0 n_$noisePin v_$noisePin 1";
+                print OF ".control";
+                print OF "set sqrnoise";
+                print OF ".endc";
                 print OF ".noise v(n_$noisePin) vin $main::frequencySpec";
                 print OF ".print noise all";
                 print OF ".end";
