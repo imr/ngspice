@@ -270,7 +270,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             (type == INPtypelook ("B3SOIPD")) ||
             (type == INPtypelook ("B3SOIFD")) ||
             (type == INPtypelook ("B3SOIDD")) ||
-            (type == INPtypelook ("HiSIMHV")) ||
+            (type == INPtypelook ("HiSIMHV1")) ||
+            (type == INPtypelook ("HiSIMHV2")) ||
             (type == INPtypelook ("SOI3"))) {
         switch (nodeflag) {
         case 0:
