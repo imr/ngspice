@@ -124,39 +124,33 @@ int HSM2noise (
 	    for ( i = 0; i < HSM2NSRCS; i++ ) { 
 	      (void) sprintf(name, "onoise.%s%s", 
 			     (char *)here->HSM2name, HSM2nNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   ((long unsigned int)data->numPlots + 1) * sizeof(IFuid));
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      (*(SPfrontEnd->IFnewUid)) 
+	      SPfrontEnd->IFnewUid 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, NULL);
+		 NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  case INT_NOIZ:
 	    for ( i = 0; i < HSM2NSRCS; i++ ) {
 	      (void) sprintf(name, "onoise_total.%s%s", 
 			     (char *)here->HSM2name, HSM2nNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   ((long unsigned int)data->numPlots + 1) * sizeof(IFuid));
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      (*(SPfrontEnd->IFnewUid)) 
+	      SPfrontEnd->IFnewUid
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, NULL);
+		 NULL, name, UID_OTHER, NULL);
 	      
 	      (void) sprintf(name, "inoise_total.%s%s", 
 			     (char *)here->HSM2name, HSM2nNames[i]);
-	      data->namelist = 
-		(IFuid *) trealloc((char *) data->namelist,
-				   ((long unsigned int)data->numPlots + 1) * sizeof(IFuid));
+	      data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
 	      if (!data->namelist)
 		return(E_NOMEM);
-	      (*(SPfrontEnd->IFnewUid)) 
+	      SPfrontEnd->IFnewUid 
 		(ckt, &(data->namelist[data->numPlots++]),
-		 (IFuid) NULL, name, UID_OTHER, NULL);
+		 NULL, name, UID_OTHER, NULL);
 	    }
 	    break;
 	  }
