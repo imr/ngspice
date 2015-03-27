@@ -23,20 +23,8 @@ nTypeSelectionArguments     nmos level=62 version=1.24
 pTypeSelectionArguments     pmos level=62 version=1.24
 `endif
 `ifdef hspice
-nTypeSelectionArguments     hisimhv_va TYPE=1
-pTypeSelectionArguments     hisimhv_va TYPE=-1
-`endif
-`ifdef smartspice
-nTypeSelectionArguments     hisimhv_va TYPE=1
-pTypeSelectionArguments     hisimhv_va TYPE=-1
-`endif
-`ifdef ads
-nTypeSelectionArguments     hisimhv_va  TYPE=1
-pTypeSelectionArguments     hisimhv_va  TYPE=-1
-`endif
-`ifdef spectre
-nTypeSelectionArguments     hisimhv_va TYPE=1
-pTypeSelectionArguments     hisimhv_va TYPE=-1
+nTypeSelectionArguments     nmos level=73 version=1.24
+pTypeSelectionArguments     pmos level=73 version=1.24
 `endif
 
 //
