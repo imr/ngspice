@@ -169,17 +169,17 @@ int HSM2noise (
 
          /* rs/rd thermal noise */
          if ( model->HSM2_corsrd < 0 ) {
-           NevalSrc(&noizDens[HSM2RDNOIZ], (double*) NULL,
+           NevalSrc(&noizDens[HSM2RDNOIZ], NULL,
                     ckt, N_GAIN,
                     here->HSM2dNodePrime, here->HSM2dNode,
-                    (double) 0.0);
+                    0.0);
            noizDens[HSM2RDNOIZ] *= 4 * CONSTboltz * TTEMP * here->HSM2drainConductance ;
 	   lnNdens[HSM2RDNOIZ] = log( MAX(noizDens[HSM2RDNOIZ],N_MINLOG) ) ;
 
-           NevalSrc(&noizDens[HSM2RSNOIZ], (double*) NULL,
+           NevalSrc(&noizDens[HSM2RSNOIZ], NULL,
                     ckt, N_GAIN,
                     here->HSM2sNodePrime, here->HSM2sNode,
-                    (double) 0.0);
+                    0.0);
            noizDens[HSM2RSNOIZ] *= 4 * CONSTboltz * TTEMP * here->HSM2sourceConductance ;
 	   lnNdens[HSM2RSNOIZ] = log( MAX(noizDens[HSM2RSNOIZ],N_MINLOG) ) ;
 
@@ -217,20 +217,20 @@ int HSM2noise (
               G = 0.0;
            }
          }
-           NevalSrc(&noizDens[HSM2IDNOIZ], (double*) NULL,
+           NevalSrc(&noizDens[HSM2IDNOIZ], NULL,
                     ckt, N_GAIN,
                     here->HSM2dNodePrime, here->HSM2sNodePrime,
-                    (double) 0.0);
+                    0.0);
            noizDens[HSM2IDNOIZ] *= 4 * CONSTboltz * TTEMP * G ;
            lnNdens[HSM2IDNOIZ] = log( MAX(noizDens[HSM2IDNOIZ],N_MINLOG) );
            break;
          }
 
          /* flicker noise */
-         NevalSrc(&noizDens[HSM2FLNOIZ], (double*) NULL,
+         NevalSrc(&noizDens[HSM2FLNOIZ], NULL,
                   ckt, N_GAIN,
                   here->HSM2dNodePrime, here->HSM2sNodePrime,
-                  (double) 0.0);
+                  0.0);
          switch ( model->HSM2_noise ) {
          case 1:
            /* HiSIM model */
