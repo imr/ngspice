@@ -1025,6 +1025,9 @@ typedef struct sHSMHV2model {     /* model structure for a resistor */
   HSMHV2instance * HSMHV2instances;	/* pointer to list of instances 
 				   that have this model */
   IFuid HSMHV2modName;       	/* pointer to the name of this model */
+
+  /* --- end of generic struct GENmodel --- */
+
   int HSMHV2_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV2_level;               /* level */
   int HSMHV2_info;                /* information */
