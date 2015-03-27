@@ -51,7 +51,7 @@ sub runNoiseTest {
                 print OF "* Noise simulation for $main::simulatorName";
                 &generateCommonNetlistInfo($variant,$temperature);
                 print OF "vin dummy 0 0 ac 1";
-                print OF "rin dummy 0 1";
+                print OF "rin dummy 0 1.0 noise=0";
                 foreach $pin (@main::Pin) {
                     if ($main::isFloatingPin{$pin}) {
                         print OF "i_$pin $pin 0 0";
