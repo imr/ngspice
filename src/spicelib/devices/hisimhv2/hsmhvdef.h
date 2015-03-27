@@ -3473,14 +3473,10 @@ typedef struct sHSMHV2model {     /* model structure for a resistor */
 #include "hsmhvext.h"
 
 /* Prototype has to be adapted! 
-#ifdef __STDC__
 extern void HSMHV2evaluate(double,double,double,HSMHV2instance*,HSMHV2model*,
         double*,double*,double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, double*, double*, double*, 
         double*, double*, double*, double*, CKTcircuit*);
-#else
-extern void HSMHV2evaluate();
-#endif
 */
 
 #endif /*HSMHV2*/
