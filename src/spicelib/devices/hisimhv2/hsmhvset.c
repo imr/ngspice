@@ -1182,9 +1182,9 @@ int HSMHV2setup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
     return(E_NOMEM);\
-}
+} } while(0)
 
       TSTALLOC(HSMHV2DPbpPtr, HSMHV2dNodePrime, HSMHV2bNodePrime);
       TSTALLOC(HSMHV2SPbpPtr, HSMHV2sNodePrime, HSMHV2bNodePrime);
@@ -1271,7 +1271,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
 	TSTALLOC(HSMHV2DPtempPtr, HSMHV2dNodePrime, HSMHV2tempNode);
 	TSTALLOC(HSMHV2SPtempPtr, HSMHV2sNodePrime, HSMHV2tempNode);
   
-        TSTALLOC(HSMHV2TempgpPtr, HSMHV2tempNode, HSMHV2gNodePrime)
+        TSTALLOC(HSMHV2TempgpPtr, HSMHV2tempNode, HSMHV2gNodePrime);
 	TSTALLOC(HSMHV2TempbpPtr, HSMHV2tempNode, HSMHV2bNodePrime);
 
 	TSTALLOC(HSMHV2GPtempPtr, HSMHV2gNodePrime, HSMHV2tempNode);
@@ -1320,7 +1320,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       Wbin = pow(WG, model->HSMHV2_wbinn) ;
       LWbin = Lbin * Wbin ;
 
-      BINNING(vmax)
+      BINNING(vmax);
       BINNING(js0d);
       BINNING(js0swd);
       BINNING(njd);
@@ -1331,90 +1331,90 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
       BINNING(njs);
       BINNING(cisbks);
       BINNING(vdiffjs);
-      BINNING(bgtmp1)
-      BINNING(bgtmp2)
-      BINNING(eg0)
-      BINNING(vfbover)
-      BINNING(nover)
-      BINNING(novers)
-      BINNING(wl2)
-      BINNING(vfbc)
-      BINNING(nsubc)
-      BINNING(nsubp)
-      BINNING(scp1)
-      BINNING(scp2)
-      BINNING(scp3)
-      BINNING(sc1)
-      BINNING(sc2)
-      BINNING(sc3)
-      BINNING(pgd1)
-      BINNING(ndep)
-      BINNING(ninv)
-      BINNING(muecb0)
-      BINNING(muecb1)
-      BINNING(mueph1)
-      BINNING(vtmp)
-      BINNING(wvth0)
-      BINNING(muesr1)
-      BINNING(muetmp)
-      BINNING(sub1)
-      BINNING(sub2)
-      BINNING(svds)
-      BINNING(svbs)
-      BINNING(svgs)
-      BINNING(fn1)
-      BINNING(fn2)
-      BINNING(fn3)
-      BINNING(fvbs)
-      BINNING(nsti)
-      BINNING(wsti)
-      BINNING(scsti1)
-      BINNING(scsti2)
-      BINNING(vthsti)
-      BINNING(muesti1)
-      BINNING(muesti2)
-      BINNING(muesti3)
-      BINNING(nsubpsti1)
-      BINNING(nsubpsti2)
-      BINNING(nsubpsti3)
-      BINNING(cgso)
-      BINNING(cgdo)
-      BINNING(clm1)
-      BINNING(clm2)
-      BINNING(clm3)
-      BINNING(wfc)
-      BINNING(gidl1)
-      BINNING(gidl2)
-      BINNING(gleak1)
-      BINNING(gleak2)
-      BINNING(gleak3)
-      BINNING(gleak6)
-      BINNING(glksd1)
-      BINNING(glksd2)
-      BINNING(glkb1)
-      BINNING(glkb2)
-      BINNING(nftrp)
-      BINNING(nfalp)
-      BINNING(ibpc1)
-      BINNING(ibpc2)
-      BINNING(cgbo)
-      BINNING(cvdsover)
-      BINNING(falph)
-      BINNING(npext)
-      BINNING(powrat)
-      BINNING(rd)
-      BINNING(rd22)
-      BINNING(rd23)
-      BINNING(rd24)
-      BINNING(rdict1)
-      BINNING(rdov13)
-      BINNING(rdslp1)
-      BINNING(rdvb)
-      BINNING(rdvd)
-      BINNING(rdvg11)
-      BINNING(rs)
-      BINNING(rth0)
-      BINNING(vover)
+      BINNING(bgtmp1);
+      BINNING(bgtmp2);
+      BINNING(eg0);
+      BINNING(vfbover);
+      BINNING(nover);
+      BINNING(novers);
+      BINNING(wl2);
+      BINNING(vfbc);
+      BINNING(nsubc);
+      BINNING(nsubp);
+      BINNING(scp1);
+      BINNING(scp2);
+      BINNING(scp3);
+      BINNING(sc1);
+      BINNING(sc2);
+      BINNING(sc3);
+      BINNING(pgd1);
+      BINNING(ndep);
+      BINNING(ninv);
+      BINNING(muecb0);
+      BINNING(muecb1);
+      BINNING(mueph1);
+      BINNING(vtmp);
+      BINNING(wvth0);
+      BINNING(muesr1);
+      BINNING(muetmp);
+      BINNING(sub1);
+      BINNING(sub2);
+      BINNING(svds);
+      BINNING(svbs);
+      BINNING(svgs);
+      BINNING(fn1);
+      BINNING(fn2);
+      BINNING(fn3);
+      BINNING(fvbs);
+      BINNING(nsti);
+      BINNING(wsti);
+      BINNING(scsti1);
+      BINNING(scsti2);
+      BINNING(vthsti);
+      BINNING(muesti1);
+      BINNING(muesti2);
+      BINNING(muesti3);
+      BINNING(nsubpsti1);
+      BINNING(nsubpsti2);
+      BINNING(nsubpsti3);
+      BINNING(cgso);
+      BINNING(cgdo);
+      BINNING(clm1);
+      BINNING(clm2);
+      BINNING(clm3);
+      BINNING(wfc);
+      BINNING(gidl1);
+      BINNING(gidl2);
+      BINNING(gleak1);
+      BINNING(gleak2);
+      BINNING(gleak3);
+      BINNING(gleak6);
+      BINNING(glksd1);
+      BINNING(glksd2);
+      BINNING(glkb1);
+      BINNING(glkb2);
+      BINNING(nftrp);
+      BINNING(nfalp);
+      BINNING(ibpc1);
+      BINNING(ibpc2);
+      BINNING(cgbo);
+      BINNING(cvdsover);
+      BINNING(falph);
+      BINNING(npext);
+      BINNING(powrat);
+      BINNING(rd);
+      BINNING(rd22);
+      BINNING(rd23);
+      BINNING(rd24);
+      BINNING(rdict1);
+      BINNING(rdov13);
+      BINNING(rdslp1);
+      BINNING(rdvb);
+      BINNING(rdvd);
+      BINNING(rdvg11);
+      BINNING(rs);
+      BINNING(rth0);
+      BINNING(vover);
 
       /*-----------------------------------------------------------*
        * Range check of model parameters
