@@ -655,11 +655,9 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
 
                     /* With the following we pack the name and the acronym of the parameter */
                     {
-                        char auxiliar[70], *aux_pointer;
-                        sprintf(auxiliar, "%s [%s]", tv->va_name, device->instanceParms[i].keyword);
-                        aux_pointer = tv->va_name;
-                        free(aux_pointer);
-                        tv->va_name = copy(auxiliar);
+                        char *x = tv->va_name;
+                        tv->va_name = tprintf("%s [%s]", tv->va_name, device->instanceParms[i].keyword);
+                        free(x);
                     }
                     if (vv)
                         tv->va_next = vv;
@@ -702,12 +700,9 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                      * tv->va_name += device->modelParms[i].keyword;
                      */
                     {
-                        char auxiliar[70], *aux_pointer;
-                        sprintf(auxiliar, "%s [%s]", tv->va_name, device->modelParms[i].keyword);
-                        aux_pointer = tv->va_name;
-                        free(aux_pointer);
-                        tv->va_name = copy(auxiliar);
-                        /* strcpy(aux_pointer, auxiliar); */
+                        char *x = tv->va_name;
+                        tv->va_name = tprintf("%s [%s]", tv->va_name, device->modelParms[i].keyword);
+                        free(x);
                     }
                     /* tv->va_string = device->modelParms[i].keyword;   Put the name of the variable */
                     if (vv)

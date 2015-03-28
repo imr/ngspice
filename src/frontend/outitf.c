@@ -1009,7 +1009,6 @@ static void
 plotInit(runDesc *run)
 {
     struct plot *pl = plot_alloc(run->type);
-    char buf[100];
     struct dvec *v;
     dataDesc *dd;
     int i;
@@ -1033,8 +1032,7 @@ plotInit(runDesc *run)
         dd = &run->data[i];
         v = alloc(struct dvec);
         if (isdigit(*dd->name)) {
-            (void) sprintf(buf, "V(%s)", dd->name);
-            v->v_name = copy(buf);
+            v->v_name = tprintf("V(%s)", dd->name);
         } else {
             v->v_name = copy(dd->name);
         }

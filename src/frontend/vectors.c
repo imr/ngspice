@@ -1080,7 +1080,7 @@ vec_mkfamily(struct dvec *v)
 {
     int size, numvecs, i, j, count[MAXDIMS];
     struct dvec *vecs, *d;
-    char buf[BSIZE_SP], buf2[BSIZE_SP];
+    char buf2[BSIZE_SP];
 
     if (v->v_numdims < 2)
         return (v);
@@ -1101,8 +1101,7 @@ vec_mkfamily(struct dvec *v)
         count[i] = 0;
     for (d = vecs, j = 0; d; j++, d = d->v_link2) {
         indexstring(count, v->v_numdims - 1, buf2);
-        (void) sprintf(buf, "%s%s", v->v_name, buf2);
-        d->v_name = copy(buf);
+        d->v_name = tprintf("%s%s", v->v_name, buf2);
         d->v_type = v->v_type;
         d->v_flags = v->v_flags;
         d->v_minsignal = v->v_minsignal;

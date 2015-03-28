@@ -25,7 +25,6 @@ com_linearize(wordlist *wl)
     struct dvec *newtime, *v;
     struct dvec *oldtime;
     int len, i;
-    char buf[BSIZE_SP];
 
     if (!ft_curckt || !ft_curckt->ci_ckt ||
         !if_tranparams(ft_curckt, &tstart, &tstop, &tstep)) {
@@ -55,8 +54,7 @@ com_linearize(wordlist *wl)
     old = plot_cur;
     oldtime = old->pl_scale;
     new = plot_alloc("transient");
-    (void) sprintf(buf, "%s (linearized)", old->pl_name);
-    new->pl_name = copy(buf);
+    new->pl_name = tprintf("%s (linearized)", old->pl_name);
     new->pl_title = copy(old->pl_title);
     new->pl_date = copy(old->pl_date);
     new->pl_next = plot_list;

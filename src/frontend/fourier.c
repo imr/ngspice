@@ -51,7 +51,6 @@ fourier(wordlist *wl, struct plot *current_plot)
     int shift;
     int rv = 1;
 
-    char newvecname[32];
     struct dvec *n;
     int newveccount = 1;
     static int callstof = 1;
@@ -190,14 +189,13 @@ fourier(wordlist *wl, struct plot *current_plot)
             }
             fputs("\n", cp_out);
 
-            /* generate name for new vector, using vec->name */
-            sprintf(newvecname, "fourier%d%d", callstof, newveccount);
-
             /* create and assign a new vector n */
             /* with size 3 * nfreqs in current plot */
             n = alloc(struct dvec);
             ZERO(n, struct dvec);
-            n->v_name = copy(newvecname);
+
+            /* generate name for new vector, using vec->name */
+            n->v_name = tprintf("fourier%d%d", callstof, newveccount);
             n->v_type = SV_NOTYPE;
             n->v_flags = (VF_REAL | VF_PERMANENT);
             n->v_length = 3 * nfreqs;
@@ -255,18 +253,15 @@ com_fourier(wordlist *wl)
 static char *
 pnum(double num)
 {
-    char buf[BSIZE_SP];
     int i = cp_numdgt;
 
     if (i < 1)
         i = 6;
 
     if (num < 0.0)
-        sprintf(buf, "%.*g", i - 1, num);
+        return tprintf("%.*g", i - 1, num);
     else
-        sprintf(buf, "%.*g", i, num);
-
-    return (copy(buf));
+        return tprintf("%.*g", i, num);
 }
 
 

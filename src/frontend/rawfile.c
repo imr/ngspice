@@ -295,7 +295,7 @@ raw_read(char *name) {
     char *title = "default title";
     char *date = 0;
     struct plot *plots = NULL, *curpl = NULL;
-    char buf[BSIZE_SP], buf2[BSIZE_SP], *s, *t, *r;
+    char buf[BSIZE_SP], *s, *t, *r;
     int flags = 0, nvars = 0, npoints = 0, i, j;
     int ndimpoints, numdims = 0, dims[MAXDIMS];
     bool raw_padded = TRUE, is_ascii = FALSE;
@@ -499,8 +499,7 @@ raw_read(char *name) {
                 /* Fix the name... */
                 if (isdigit(*v->v_name) && (r = ft_typabbrev(v ->v_type)) != NULL) {
                     char *x = v->v_name;
-                    (void) sprintf(buf2, "%s(%s)", r, v->v_name);
-                    v->v_name = copy(buf2);
+                    v->v_name = tprintf("%s(%s)", r, v->v_name);
                     tfree(x);
                 }
 

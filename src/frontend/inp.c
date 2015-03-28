@@ -1561,12 +1561,10 @@ inp_evaluate_temper(void)
 {
     struct pt_temper *d;
     double result;
-    char fts[128];
 
     for(d = devtlist; d; d = d->next) {
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
-        sprintf(fts, "%g", result);
-        d->wlend->wl_word = copy(fts);
+        d->wlend->wl_word = tprintf("%g", result);
         com_alter(d->wl);
     }
 
@@ -1576,8 +1574,7 @@ inp_evaluate_temper(void)
         if (ft_sim->findModel (ft_curckt->ci_ckt, d->wl->wl_word) == NULL)
             continue;
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
-        sprintf(fts, "%g", result);
-        d->wlend->wl_word = copy(fts);
+        d->wlend->wl_word = tprintf("%g", result);
         com_altermod(d->wl);
     }
 }

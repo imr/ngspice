@@ -341,7 +341,6 @@ mknnode(double number)
 {
     struct pnode *p;
     struct dvec *v;
-    char buf[BSIZE_SP];
 
     p = alloc(struct pnode);
     v = alloc(struct dvec);
@@ -359,10 +358,9 @@ mknnode(double number)
      * large...
      */
     if (number < MAXPOSINT)
-        (void) sprintf(buf, "%d", (int) number);
+        v->v_name = tprintf("%d", (int) number);
     else
-        (void) sprintf(buf, "%G", number);
-    v->v_name = copy(buf);
+        v->v_name = tprintf("%G", number);
     v->v_type = SV_NOTYPE;
     v->v_flags = VF_REAL;
     v->v_realdata = TMALLOC(double, 1);

@@ -37,10 +37,10 @@ void
 com_meas(wordlist *wl)
 {
     /* wl: in, input line of meas command */
-    char *line_in, *outvar, newvec[1000];
+    char *line_in, *outvar;
     wordlist *wl_count, *wl_let;
 
-    char *vec_found, *token, *equal_ptr, newval[256];
+    char *vec_found, *token, *equal_ptr;
     wordlist *wl_index;
     struct dvec *d;
     int err = 0;
@@ -79,9 +79,8 @@ com_meas(wordlist *wl)
                        of the rigt hand side does make sense */
                     if (d && (d->v_length == 1) && (d->v_numdims == 1)) {
                         /* get its value */
-                        sprintf(newval, "%e", d->v_realdata[0]);
+                        wl_index->wl_word = tprintf("%e", d->v_realdata[0]);
                         tfree(vec_found);
-                        wl_index->wl_word = copy(newval);
                     }
                 }
             }
@@ -96,11 +95,10 @@ com_meas(wordlist *wl)
                     /* Only if we have a single valued vector, replacing
                     of the rigt hand side does make sense */
                     if (d && (d->v_length == 1) && (d->v_numdims == 1)) {
-                        *equal_ptr = '\0';
-                        sprintf(newval, "%s=%e", token, d->v_realdata[0]);
-                        // memory leak with first part of vec_found ?
+                        int lhs_len = (int)(equal_ptr - token);
+                        wl_index->wl_word =
+                            tprintf("%.*s=%e", lhs_len, token, d->v_realdata[0]);
                         tfree(token);
-                        wl_index->wl_word = copy(newval);
                     }
                 }
             }
@@ -129,8 +127,7 @@ com_meas(wordlist *wl)
         return;
     }
 
-    sprintf(newvec, "%s = %e", outvar, result);
-    wl_let = wl_cons(copy(newvec), NULL);
+    wl_let = wl_cons(tprintf("%s = %e", outvar, result), NULL);
     com_let(wl_let);
     wl_free(wl_let);
     tfree(line_in);

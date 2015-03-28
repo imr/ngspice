@@ -33,26 +33,23 @@ wordlist *
 cp_varwl(struct variable *var)
 {
     wordlist *wl = NULL, *w, *wx = NULL;
-    char buf[BSIZE_SP], *copystring;
+    char *buf;
     struct variable *vt;
 
     switch (var->va_type) {
     case CP_BOOL:
         /* Can't ever be FALSE. */
-        sprintf(buf, "%s", var->va_bool ? "TRUE" : "FALSE");
+        buf = copy(var->va_bool ? "TRUE" : "FALSE");
         break;
     case CP_NUM:
-        sprintf(buf, "%d", var->va_num);
+        buf = tprintf("%d", var->va_num);
         break;
     case CP_REAL:
         /* This is a case where printnum isn't too good... */
-        sprintf(buf, "%G", var->va_real);
+        buf = tprintf("%G", var->va_real);
         break;
     case CP_STRING:
-        /*strcpy(buf, cp_unquote(var->va_string)); DG: memory leak here*/
-        copystring = cp_unquote(var->va_string); /*DG*/
-        strcpy(buf, copystring);
-        tfree(copystring);
+        buf = cp_unquote(var->va_string);
         break;
     case CP_LIST:   /* The tricky case. */
         for (vt = var->va_vlist; vt; vt = vt->va_next) {
@@ -73,8 +70,7 @@ cp_varwl(struct variable *var)
         return (NULL);
     }
 
-    wl = wl_cons(copy(buf), NULL);
-    return (wl);
+    return wl_cons(buf, NULL);
 }
 
 
@@ -787,8 +783,7 @@ vareval(char *string)
     switch (*string) {
 
     case '$':
-        (void) sprintf(buf, "%d", getpid());
-        wl = wl_cons(copy(buf), NULL);
+        wl = wl_cons(tprintf("%d", getpid()), NULL);
         tfree(oldstring);
         return (wl);
 
@@ -836,8 +831,7 @@ vareval(char *string)
                 i++;
         else
             i = (v->va_type != CP_BOOL);
-        (void) sprintf(buf, "%d", i);
-        wl = wl_cons(copy(buf), NULL);
+        wl = wl_cons(tprintf("%d", i), NULL);
         tfree(oldstring);
         return (wl);
 

@@ -56,16 +56,15 @@ wordlist *
 cp_histsubst(wordlist *wlist)
 {
     wordlist *nwl, *w, *n;
-    char buf[BSIZE_SP], *s, *b;
+    char *s, *b;
 
     /* Replace ^old^new with !:s^old^new. */
 
     cp_didhsubst = FALSE;
     if (*wlist->wl_word == cp_hat) {
-        (void) sprintf(buf, "%c%c:s%s", cp_bang, cp_bang,
-                       wlist->wl_word);
-        tfree(wlist->wl_word);
-        wlist->wl_word = copy(buf);
+        char *x = wlist->wl_word;
+        wlist->wl_word = tprintf("%c%c:s%s", cp_bang, cp_bang, wlist->wl_word);
+        tfree(x);
     }
 
     for (w = wlist; w; w = w->wl_next) {
@@ -78,10 +77,10 @@ cp_histsubst(wordlist *wlist)
                     wlist->wl_word = NULL;
                     return (wlist);
                 }
-                if (b < s) {
-                    (void) sprintf(buf, "%.*s%s", (int)(s-b), b, n->wl_word);
-                    tfree(n->wl_word);
-                    n->wl_word = copy(buf);
+                if (s > b) {
+                    char *x = n->wl_word;
+                    n->wl_word = tprintf("%.*s%s", (int)(s-b), b, n->wl_word);
+                    tfree(x);
                 }
                 nwl = wl_splice(w, n);
                 if (wlist == w)
@@ -182,11 +181,12 @@ dohsubst(char *string)
         return (NULL);
 
     if (*string) {
+        char *x;
         for (wl = nwl; wl->wl_next; wl = wl->wl_next)
             ;
-        (void) sprintf(buf, "%s%s", wl->wl_word, string);
-        tfree(wl->wl_word);
-        wl->wl_word = copy(buf);
+        x = wl->wl_word;
+        wl->wl_word = tprintf("%s%s", wl->wl_word, string);
+        tfree(x);
     }
 
     return (nwl);

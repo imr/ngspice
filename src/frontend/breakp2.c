@@ -157,11 +157,9 @@ copynode(char *s)
 
     r = strchr(s, /*(*/')');
     *r = '\0';
-    if (*(l - 1) == 'i' || *(l - 1) == 'I') {
-        char buf[513];
-        sprintf(buf, "%s#branch", l + 1);
-        ret = copy(buf);
-    } else
+    if (*(l - 1) == 'i' || *(l - 1) == 'I')
+        ret = tprintf("%s#branch", l + 1);
+    else
         ret = copy(l + 1);
 
     tfree(s);

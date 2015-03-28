@@ -1001,20 +1001,18 @@ op_not(struct pnode *arg)
 static char *
 mkcname(char what, char *v1, char *v2)
 {
-    char buf[BSIZE_SP], *s;
-
-    if (what == 'a')
-        (void) sprintf(buf, "%s(%s)", v1, v2);
-    else if (what == 'b')
-        (void) sprintf(buf, "-(%s)", v1);
-    else if (what == 'c')
-        (void) sprintf(buf, "~(%s)", v1);
-    else if (what == '[')
-        (void) sprintf(buf, "%s[%s]", v1, v2);
-    else if (what == 'R')
-        (void) sprintf(buf, "%s[[%s]]", v1, v2);
-    else
-        (void) sprintf(buf, "(%s)%c(%s)", v1, what, v2);
-    s = copy(buf);
-    return (s);
+    switch (what) {
+    case 'a':
+        return tprintf("%s(%s)", v1, v2);
+    case 'b':
+        return tprintf("-(%s)", v1);
+    case 'c':
+        return tprintf("~(%s)", v1);
+    case '[':
+        return tprintf("%s[%s]", v1, v2);
+    case 'R':
+        return tprintf("%s[[%s]]", v1, v2);
+    default:
+        return tprintf("(%s)%c(%s)", v1, what, v2);
+    }
 }
