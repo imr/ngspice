@@ -1,5 +1,5 @@
-#ifndef _HISIMINIT_H
-#define _HISIMINIT_H
+#ifndef _HSMHV2INIT_H
+#define _HSMHV2INIT_H
 
 extern IFparm HSMHV2pTable[ ];
 extern IFparm HSMHV2mPTable[ ];

@@ -60,8 +60,8 @@ June 2008 (revised October 2011)
 #include "hsmhvdef.h"
 #include "ngspice/cktdefs.h"
 
-#ifndef _HiSIMHV_H
-#define _HiSIMHV_H
+#ifndef _HiSIMHV2_H
+#define _HiSIMHV2_H
 
 /* return value */
 #ifndef OK
@@ -137,4 +137,4 @@ extern int HSMHV2dio
  CKTcircuit   *ckt
  ) ;
 
-#endif /* _HiSIMHV_H */
+#endif /* _HiSIMHV2_H */
