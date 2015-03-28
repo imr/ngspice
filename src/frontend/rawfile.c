@@ -488,7 +488,7 @@ raw_read(char *name) {
                 } else {
                     fprintf(cp_err, "Error: bad var line %s\n", buf);
                     /* MW. v_name must be valid in the case that no. points = 0 */
-                    v->v_name = "no vars\n";
+                    v->v_name = copy("no vars\n");
                 }
                 t = gettok(&s); /* The type name. */
                 if (t)
@@ -498,8 +498,10 @@ raw_read(char *name) {
 
                 /* Fix the name... */
                 if (isdigit(*v->v_name) && (r = ft_typabbrev(v ->v_type)) != NULL) {
+                    char *x = v->v_name;
                     (void) sprintf(buf2, "%s(%s)", r, v->v_name);
                     v->v_name = copy(buf2);
+                    tfree(x);
                 }
 
                 /* Now come the strange options... */
