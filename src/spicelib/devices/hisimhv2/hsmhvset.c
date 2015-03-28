@@ -1182,7 +1182,7 @@ int HSMHV2setup(
       
       /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
-do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
+do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==NULL){\
     return(E_NOMEM);\
 } } while(0)
 

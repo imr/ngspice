@@ -95,7 +95,7 @@ int HSMHV2ask(
   here->HSMHV2_csso = - (here->HSMHV2_csdo + here->HSMHV2_csgo + here->HSMHV2_csbo) ;
 
   /* NQS? */
-  if (here->HSMHV2QIqiPtr == (double *)NULL) {
+  if (here->HSMHV2QIqiPtr == NULL) {
     flg_nqs = 0 ;
   } else {
     flg_nqs = 1 ;
