@@ -122,17 +122,17 @@ int HSMHVnoise (
 
          /* rs/rd thermal noise */
 	  if ( model->HSMHV_corsrd == 1 || model->HSMHV_corsrd == 3 ) {
-	    NevalSrc(&noizDens[HSMHVRDNOIZ], (double*) NULL,
+	    NevalSrc(&noizDens[HSMHVRDNOIZ], NULL,
 		     ckt, N_GAIN,
 		     here->HSMHVdNodePrime, here->HSMHVdNode,
-		     (double) 0.0);
+		     0.0);
 	    noizDens[HSMHVRDNOIZ] *= 4 * C_KB * TTEMP * here->HSMHVdrainConductance ;
             lnNdens[HSMHVRDNOIZ] = log( MAX(noizDens[HSMHVRDNOIZ],N_MINLOG) );
 	    
-	    NevalSrc(&noizDens[HSMHVRSNOIZ], (double*) NULL,
+	    NevalSrc(&noizDens[HSMHVRSNOIZ], NULL,
 		     ckt, N_GAIN,
 		     here->HSMHVsNodePrime, here->HSMHVsNode,
-		     (double) 0.0);
+		     0.0);
 	    noizDens[HSMHVRSNOIZ] *= 4 * C_KB * TTEMP * here->HSMHVsourceConductance ;
             lnNdens[HSMHVRSNOIZ] = log( MAX(noizDens[HSMHVRSNOIZ],N_MINLOG) );
 	  } else {
@@ -143,10 +143,10 @@ int HSMHVnoise (
 	  }
 
 	  /* channel thermal noise */
-	  NevalSrc(&noizDens[HSMHVIDNOIZ], (double*) NULL,
+	  NevalSrc(&noizDens[HSMHVIDNOIZ], NULL,
 		   ckt, N_GAIN,
 		   here->HSMHVdNodePrime, here->HSMHVsNodePrime,
-		   (double) 0.0);
+		   0.0);
 	  switch( model->HSMHV_noise ) {
 	  case 1:
 	    /* HiSIMHV model */
@@ -157,10 +157,10 @@ int HSMHVnoise (
 	  }
 
 	  /* flicker noise */
-	  NevalSrc(&noizDens[HSMHVFLNOIZ], (double*) NULL,
+	  NevalSrc(&noizDens[HSMHVFLNOIZ], NULL,
 		   ckt, N_GAIN,
 		   here->HSMHVdNodePrime, here->HSMHVsNodePrime, 
-		   (double) 0.0);
+		   0.0);
 	  switch ( model->HSMHV_noise ) {
 	  case 1:
 	    /* HiSIM model */
@@ -170,10 +170,10 @@ int HSMHVnoise (
 	  }	  
 
 	  /* induced gate noise */
-	  NevalSrc(&noizDens[HSMHVIGNOIZ], (double*) NULL,
+	  NevalSrc(&noizDens[HSMHVIGNOIZ], NULL,
 		   ckt, N_GAIN, 
 		   here->HSMHVdNodePrime, here->HSMHVsNodePrime, 
-		   (double) 0.0);
+		   0.0);
 	  switch ( model->HSMHV_noise ) {
 	  case 1:
 	    /* HiSIM model */

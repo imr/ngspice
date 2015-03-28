@@ -53,7 +53,7 @@ int HSMHVask(
   here->HSMHV_csso = - (here->HSMHV_csdo + here->HSMHV_csgo + here->HSMHV_csbo) ;
 
   /* NQS? */
-  if (here->HSMHVQIqiPtr == (double *)NULL) {
+  if (here->HSMHVQIqiPtr == NULL) {
     flg_nqs = 0 ;
   } else {
     flg_nqs = 1 ;
