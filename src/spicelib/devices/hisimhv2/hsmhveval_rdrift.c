@@ -75,7 +75,7 @@ June 2008 (revised October 2011)
 #include "hsmhvevalenv.h"
 
 /* local variables used in macro functions */
-double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 , TMF5 , TMF6 ; 
+static double TMF0 , TMF1 , TMF2 , TMF3 ;
 
 /*===========================================================*
 * pow

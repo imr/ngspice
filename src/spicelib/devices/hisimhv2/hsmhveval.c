@@ -135,8 +135,7 @@ June 2008 (revised October 2011)
 #define C_gidl_delta 0.5
 
 /* local variables used in macro functions */
-double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 , TMF5 , TMF6 ;
-double TCF0 , TCF1 , TCF2 , TCF3 , TCF4 , TCF5 ;
+static double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 ;
 
 /*===========================================================*
 * Exp() for PGD.
