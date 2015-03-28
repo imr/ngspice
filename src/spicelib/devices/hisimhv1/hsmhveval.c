@@ -160,7 +160,7 @@ June. 2008  (revised in June 2011)
 #define C_gidl_delta 0.5
 
 /* local variables used in macro functions */
-static double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 , TMF5 , TMF6 ; 
+static double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 ; 
 /*===========================================================*
 * pow
 *=================*/
