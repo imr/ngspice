@@ -6,11 +6,11 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hisimhv.h
+ FILE : hsmhvdel.c
 
  DATE : 2014.6.11
 
- released by
+ released by 
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -57,84 +57,32 @@ Katsuhiro Shimohigashi, President&CEO, STARC
 June 2008 (revised October 2011) 
 *************************************************************************/
 
-#include "hsmhvdef.h"
-#include "ngspice/cktdefs.h"
+#include "ngspice/ngspice.h"
+#include "hsmhv2def.h"
+#include "ngspice/sperror.h"
+#include "ngspice/gendefs.h"
+#include "ngspice/suffix.h"
 
-#ifndef _HiSIMHV2_H
-#define _HiSIMHV2_H
+int HSMHV2delete(
+     GENmodel *inModel,
+     IFuid name,
+     GENinstance **inInst)
+{
+  HSMHV2instance **fast = (HSMHV2instance**)inInst;
+  HSMHV2model *model = (HSMHV2model*)inModel;
+  HSMHV2instance **prev = NULL;
+  HSMHV2instance *here;
 
-/* return value */
-#ifndef OK
-#define HiSIM_OK        0
-#define HiSIM_ERROR     1
-#else
-#define HiSIM_OK        OK
-#define HiSIM_ERROR     E_PANIC
-#endif
-
-/* MOS type */
-#ifndef NMOS
-#define NMOS     1
-#define PMOS    -1
-#endif
-
-/* device working mode */
-#ifndef CMI_NORMAL_MODE
-#define HiSIM_NORMAL_MODE    1
-#define HiSIM_REVERSE_MODE  -1
-#else
-#define HiSIM_NORMAL_MODE  CMI_NORMAL_MODE
-#define HiSIM_REVERSE_MODE CMI_REVERSE_MODE
-#endif
-
-/* others */
-#ifndef NULL
-#define NULL            0
-#endif
-
-#define HiSIM_FALSE     0
-#define HiSIM_TRUE      1
-
-#ifndef return_if_error
-#define return_if_error(s) { int error = s; if(error) return(error); }
-#endif
-
-extern int HSMHV2evaluate
-(
- double ivds,
- double ivgs,
- double ivbs,
- double ivdsi,
- double ivgsi,
- double ivbsi,
- double vbs_jct,
- double vbd_jct,
- double vsubs,
- double vddp,
- double deltemp,
- HSMHV2instance *here,
- HSMHV2model    *model,
- CKTcircuit   *ckt
- ) ;
-extern int HSMHV2rdrift
-( 
- double vddp,
- double ivds,
- double ivbs,
- double vsubs,
- double deltemp,
- HSMHV2instance *here,
- HSMHV2model    *model,
- CKTcircuit   *ckt
- ) ;
-extern int HSMHV2dio
-(
- double        vbs_jct,
- double        vbd_jct,
- double        deltemp,
- HSMHV2instance *here,
- HSMHV2model    *model,
- CKTcircuit   *ckt
- ) ;
-
-#endif /* _HiSIMHV2_H */
+  for( ;model ;model = model->HSMHV2nextModel ) {
+    prev = &(model->HSMHV2instances);
+    for ( here = *prev ;here ;here = *prev ) {
+      if ( here->HSMHV2name == name || (fast && here==*fast) ) {
+	*prev= here->HSMHV2nextInstance;
+	FREE(here);
+	return(OK);
+      }
+      prev = &(here->HSMHV2nextInstance);
+    }
+  }
+  return(E_NODEV);
+}

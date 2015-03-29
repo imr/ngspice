@@ -6,7 +6,7 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hsmhvmdel.c
+ FILE : hsmhvgetic.c
 
  DATE : 2014.6.11
 
@@ -58,38 +58,41 @@ June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
-#include "hsmhvdef.h"
+#include "ngspice/cktdefs.h"
+#include "hsmhv2def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-int HSMHV2mDelete(
-     GENmodel **inModel,
-     IFuid modname,
-     GENmodel *kill)
+int HSMHV2getic(
+     GENmodel *inModel,
+     CKTcircuit *ckt)
 {
-  HSMHV2model **model = (HSMHV2model**)inModel;
-  HSMHV2model *modfast = (HSMHV2model*)kill;
+  HSMHV2model *model = (HSMHV2model*)inModel;
   HSMHV2instance *here;
-  HSMHV2instance *prev = NULL;
-  HSMHV2model **oldmod;
+  /*
+   * grab initial conditions out of rhs array.   User specified, so use
+   * external nodes to get values
+   */
 
-  oldmod = model;
-  for ( ;*model ;model = &((*model)->HSMHV2nextModel) ) {
-    if ( (*model)->HSMHV2modName == modname || 
-	 (modfast && *model == modfast) ) goto delgot;
-    oldmod = model;
+  for ( ;model ;model = model->HSMHV2nextModel ) {
+    for ( here = model->HSMHV2instances; here ;here = here->HSMHV2nextInstance ) {
+      if (!here->HSMHV2_icVBS_Given) {
+	here->HSMHV2_icVBS = 
+	  *(ckt->CKTrhs + here->HSMHV2bNode) - 
+	  *(ckt->CKTrhs + here->HSMHV2sNode);
+      }
+      if (!here->HSMHV2_icVDS_Given) {
+	here->HSMHV2_icVDS = 
+	  *(ckt->CKTrhs + here->HSMHV2dNode) - 
+	  *(ckt->CKTrhs + here->HSMHV2sNode);
+      }
+      if (!here->HSMHV2_icVGS_Given) {
+	here->HSMHV2_icVGS = 
+	  *(ckt->CKTrhs + here->HSMHV2gNode) - 
+	  *(ckt->CKTrhs + here->HSMHV2sNode);
+      }
+    }
   }
-  return(E_NOMOD);
-
- delgot:
-  *oldmod = (*model)->HSMHV2nextModel; /* cut deleted device out of list */
-  for ( here = (*model)->HSMHV2instances ; 
-	here ;here = here->HSMHV2nextInstance ) {
-    if (prev) FREE(prev);
-    prev = here;
-  }
-  if (prev) FREE(prev);
-  FREE(*model);
   return(OK);
 }
 

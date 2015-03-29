@@ -61,7 +61,7 @@ June 2008 (revised October 2011)
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
 #include "ngspice/sperror.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
 #include "ngspice/suffix.h"
 
 int HSMHV2pzLoad(

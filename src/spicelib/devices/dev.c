@@ -95,7 +95,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "hfet2/hfet2itf.h"
 #include "hisim2/hsm2itf.h"
 #include "hisimhv1/hsmhvitf.h"
-#include "hisimhv2/hsmhvitf.h"
+#include "hisimhv2/hsmhv2itf.h"
 #include "ind/inditf.h"
 #include "isrc/isrcitf.h"
 #include "jfet/jfetitf.h"

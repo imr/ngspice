@@ -59,7 +59,7 @@ June 2008 (revised October 2011)
 
 #include "ngspice/ngspice.h"
 #include "ngspice/ifsim.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/fteext.h"

@@ -6,7 +6,7 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hsmhvgetic.c
+ FILE : hsmhvtrunc.c
 
  DATE : 2014.6.11
 
@@ -59,40 +59,43 @@ June 2008 (revised October 2011)
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-int HSMHV2getic(
+int HSMHV2trunc(
      GENmodel *inModel,
-     CKTcircuit *ckt)
+     CKTcircuit *ckt,
+     double *timeStep)
 {
   HSMHV2model *model = (HSMHV2model*)inModel;
   HSMHV2instance *here;
-  /*
-   * grab initial conditions out of rhs array.   User specified, so use
-   * external nodes to get values
-   */
+#ifdef STEPDEBUG
+  double debugtemp=0.0 ;
+#endif /* STEPDEBUG */
+  
+  for ( ;model != NULL ;model = model->HSMHV2nextModel ) {
+    for ( here=model->HSMHV2instances ;here!=NULL ;
+	  here = here->HSMHV2nextInstance ) {
+#ifdef STEPDEBUG
+      debugtemp = *timeStep;
+#endif /* STEPDEBUG */
+      CKTterr(here->HSMHV2qb,ckt,timeStep);
+      CKTterr(here->HSMHV2qg,ckt,timeStep);
+      CKTterr(here->HSMHV2qd,ckt,timeStep);
 
-  for ( ;model ;model = model->HSMHV2nextModel ) {
-    for ( here = model->HSMHV2instances; here ;here = here->HSMHV2nextInstance ) {
-      if (!here->HSMHV2_icVBS_Given) {
-	here->HSMHV2_icVBS = 
-	  *(ckt->CKTrhs + here->HSMHV2bNode) - 
-	  *(ckt->CKTrhs + here->HSMHV2sNode);
-      }
-      if (!here->HSMHV2_icVDS_Given) {
-	here->HSMHV2_icVDS = 
-	  *(ckt->CKTrhs + here->HSMHV2dNode) - 
-	  *(ckt->CKTrhs + here->HSMHV2sNode);
-      }
-      if (!here->HSMHV2_icVGS_Given) {
-	here->HSMHV2_icVGS = 
-	  *(ckt->CKTrhs + here->HSMHV2gNode) - 
-	  *(ckt->CKTrhs + here->HSMHV2sNode);
-      }
+      CKTterr(here->HSMHV2qbs,ckt,timeStep);
+      CKTterr(here->HSMHV2qbd,ckt,timeStep);
+      CKTterr(here->HSMHV2qfd,ckt,timeStep);
+      CKTterr(here->HSMHV2qfs,ckt,timeStep);
+
+
+#ifdef STEPDEBUG
+      if ( debugtemp != *timeStep ) 
+	printf("device %s reduces step from %g to %g\n",
+	       here->HSMHV2name, debugtemp, *timeStep);
+#endif /* STEPDEBUG */
     }
   }
   return(OK);
 }
-

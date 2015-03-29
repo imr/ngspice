@@ -5,7 +5,7 @@ Author:   2013 Dietmar Warning
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"

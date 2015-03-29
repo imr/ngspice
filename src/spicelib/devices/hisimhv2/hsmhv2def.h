@@ -3470,7 +3470,7 @@ typedef struct sHSMHV2model {     /* model structure for a resistor */
 #define HSMHV2_MOD_VBS_MAX            4005
 #define HSMHV2_MOD_VBD_MAX            4006
 
-#include "hsmhvext.h"
+#include "hsmhv2ext.h"
 
 /* Prototype has to be adapted! 
 extern void HSMHV2evaluate(double,double,double,HSMHV2instance*,HSMHV2model*,

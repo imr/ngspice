@@ -6,7 +6,7 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hsmhvdest.c
+ FILE : hsmhvmdel.c
 
  DATE : 2014.6.11
 
@@ -58,29 +58,38 @@ June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
+#include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-void HSMHV2destroy(
-     GENmodel **inModel)
+int HSMHV2mDelete(
+     GENmodel **inModel,
+     IFuid modname,
+     GENmodel *kill)
 {
   HSMHV2model **model = (HSMHV2model**)inModel;
+  HSMHV2model *modfast = (HSMHV2model*)kill;
   HSMHV2instance *here;
   HSMHV2instance *prev = NULL;
-  HSMHV2model *mod = *model;
-  HSMHV2model *oldmod = NULL;
-  
-  for ( ;mod ;mod = mod->HSMHV2nextModel ) {
-    if (oldmod) FREE(oldmod);
-    oldmod = mod;
-    prev = (HSMHV2instance *)NULL;
-    for ( here = mod->HSMHV2instances ;here ;here = here->HSMHV2nextInstance ) {
-      if (prev) FREE(prev);
-      prev = here;
-    }
-    if (prev) FREE(prev);
+  HSMHV2model **oldmod;
+
+  oldmod = model;
+  for ( ;*model ;model = &((*model)->HSMHV2nextModel) ) {
+    if ( (*model)->HSMHV2modName == modname || 
+	 (modfast && *model == modfast) ) goto delgot;
+    oldmod = model;
   }
-  if (oldmod) FREE(oldmod);
-  *model = NULL;
+  return(E_NOMOD);
+
+ delgot:
+  *oldmod = (*model)->HSMHV2nextModel; /* cut deleted device out of list */
+  for ( here = (*model)->HSMHV2instances ; 
+	here ;here = here->HSMHV2nextInstance ) {
+    if (prev) FREE(prev);
+    prev = here;
+  }
+  if (prev) FREE(prev);
+  FREE(*model);
+  return(OK);
 }
 

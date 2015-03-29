@@ -71,8 +71,8 @@ June 2008 (revised October 2011)
 /*-----------------------------------*
 * HiSIM macros
 *-----------------*/
-#include "hisimhv.h"
-#include "hsmhvevalenv.h"
+#include "hisimhv2.h"
+#include "hsmhv2evalenv.h"
 
 /* local variables used in macro functions */
 static double TMF0 , TMF1 , TMF2 , TMF3 ;
@@ -285,7 +285,7 @@ int HSMHV2rdrift
   if ( here->HSMHV2tempNode > 0 && pParam->HSMHV2_rth0 != 0.0 ) {
 
 #define HSMHV2EVAL
-#include "hsmhvtemp_eval_rdri.h"
+#include "hsmhv2temp_eval_rdri.h"
 
   } else {
     if ( here->HSMHV2_dtemp_Given ) { TTEMP = TTEMP + here->HSMHV2_dtemp ; }

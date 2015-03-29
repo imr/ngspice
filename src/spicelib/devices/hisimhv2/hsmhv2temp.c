@@ -60,8 +60,8 @@ June 2008 (revised October 2011)
 #include "ngspice/ngspice.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
-#include "hsmhvdef.h"
-#include "hsmhvevalenv.h"
+#include "hsmhv2def.h"
+#include "hsmhv2evalenv.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
@@ -488,9 +488,9 @@ int HSMHV2temp(
        *-----------------*/
       if ( here->HSMHV2tempNode < 0 || pParam->HSMHV2_rth0 == 0.0 ) {
 
-#include "hsmhvtemp_eval.h"
-#include "hsmhvtemp_eval_rdri.h"
-#include "hsmhvtemp_eval_dio.h"
+#include "hsmhv2temp_eval.h"
+#include "hsmhv2temp_eval_rdri.h"
+#include "hsmhv2temp_eval_dio.h"
 
       } /* end of if ( here->HSMHV2tempNode < 0 || pParam->HSMHV2_rth0 == 0.0 ) */
 

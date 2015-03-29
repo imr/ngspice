@@ -6,7 +6,7 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hsmhvdel.c
+ FILE : hsmhvdest.c
 
  DATE : 2014.6.11
 
@@ -58,31 +58,29 @@ June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
-#include "hsmhvdef.h"
-#include "ngspice/sperror.h"
-#include "ngspice/gendefs.h"
+#include "hsmhv2def.h"
 #include "ngspice/suffix.h"
 
-int HSMHV2delete(
-     GENmodel *inModel,
-     IFuid name,
-     GENinstance **inInst)
+void HSMHV2destroy(
+     GENmodel **inModel)
 {
-  HSMHV2instance **fast = (HSMHV2instance**)inInst;
-  HSMHV2model *model = (HSMHV2model*)inModel;
-  HSMHV2instance **prev = NULL;
+  HSMHV2model **model = (HSMHV2model**)inModel;
   HSMHV2instance *here;
-
-  for( ;model ;model = model->HSMHV2nextModel ) {
-    prev = &(model->HSMHV2instances);
-    for ( here = *prev ;here ;here = *prev ) {
-      if ( here->HSMHV2name == name || (fast && here==*fast) ) {
-	*prev= here->HSMHV2nextInstance;
-	FREE(here);
-	return(OK);
-      }
-      prev = &(here->HSMHV2nextInstance);
+  HSMHV2instance *prev = NULL;
+  HSMHV2model *mod = *model;
+  HSMHV2model *oldmod = NULL;
+  
+  for ( ;mod ;mod = mod->HSMHV2nextModel ) {
+    if (oldmod) FREE(oldmod);
+    oldmod = mod;
+    prev = (HSMHV2instance *)NULL;
+    for ( here = mod->HSMHV2instances ;here ;here = here->HSMHV2nextInstance ) {
+      if (prev) FREE(prev);
+      prev = here;
     }
+    if (prev) FREE(prev);
   }
-  return(E_NODEV);
+  if (oldmod) FREE(oldmod);
+  *model = NULL;
 }
+

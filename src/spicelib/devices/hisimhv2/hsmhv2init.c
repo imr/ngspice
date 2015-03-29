@@ -2,9 +2,9 @@
 
 #include "ngspice/devdefs.h"
 
-#include "hsmhvdef.h"
-#include "hsmhvitf.h"
-#include "hsmhvinit.h"
+#include "hsmhv2def.h"
+#include "hsmhv2itf.h"
+#include "hsmhv2init.h"
 
 SPICEdev HSMHV2info = {
   {   "HiSIMHV2",

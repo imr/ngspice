@@ -6,11 +6,11 @@
  MODEL NAME : HiSIM_HV 
  ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
  Model Parameter 'VERSION' : 2.20
- FILE : hsmhvtrunc.c
+ FILE : hisimhv.h
 
  DATE : 2014.6.11
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -57,45 +57,84 @@ Katsuhiro Shimohigashi, President&CEO, STARC
 June 2008 (revised October 2011) 
 *************************************************************************/
 
-#include "ngspice/ngspice.h"
+#include "hsmhv2def.h"
 #include "ngspice/cktdefs.h"
-#include "hsmhvdef.h"
-#include "ngspice/sperror.h"
-#include "ngspice/suffix.h"
 
-int HSMHV2trunc(
-     GENmodel *inModel,
-     CKTcircuit *ckt,
-     double *timeStep)
-{
-  HSMHV2model *model = (HSMHV2model*)inModel;
-  HSMHV2instance *here;
-#ifdef STEPDEBUG
-  double debugtemp=0.0 ;
-#endif /* STEPDEBUG */
-  
-  for ( ;model != NULL ;model = model->HSMHV2nextModel ) {
-    for ( here=model->HSMHV2instances ;here!=NULL ;
-	  here = here->HSMHV2nextInstance ) {
-#ifdef STEPDEBUG
-      debugtemp = *timeStep;
-#endif /* STEPDEBUG */
-      CKTterr(here->HSMHV2qb,ckt,timeStep);
-      CKTterr(here->HSMHV2qg,ckt,timeStep);
-      CKTterr(here->HSMHV2qd,ckt,timeStep);
+#ifndef _HiSIMHV2_H
+#define _HiSIMHV2_H
 
-      CKTterr(here->HSMHV2qbs,ckt,timeStep);
-      CKTterr(here->HSMHV2qbd,ckt,timeStep);
-      CKTterr(here->HSMHV2qfd,ckt,timeStep);
-      CKTterr(here->HSMHV2qfs,ckt,timeStep);
+/* return value */
+#ifndef OK
+#define HiSIM_OK        0
+#define HiSIM_ERROR     1
+#else
+#define HiSIM_OK        OK
+#define HiSIM_ERROR     E_PANIC
+#endif
 
+/* MOS type */
+#ifndef NMOS
+#define NMOS     1
+#define PMOS    -1
+#endif
 
-#ifdef STEPDEBUG
-      if ( debugtemp != *timeStep ) 
-	printf("device %s reduces step from %g to %g\n",
-	       here->HSMHV2name, debugtemp, *timeStep);
-#endif /* STEPDEBUG */
-    }
-  }
-  return(OK);
-}
+/* device working mode */
+#ifndef CMI_NORMAL_MODE
+#define HiSIM_NORMAL_MODE    1
+#define HiSIM_REVERSE_MODE  -1
+#else
+#define HiSIM_NORMAL_MODE  CMI_NORMAL_MODE
+#define HiSIM_REVERSE_MODE CMI_REVERSE_MODE
+#endif
+
+/* others */
+#ifndef NULL
+#define NULL            0
+#endif
+
+#define HiSIM_FALSE     0
+#define HiSIM_TRUE      1
+
+#ifndef return_if_error
+#define return_if_error(s) { int error = s; if(error) return(error); }
+#endif
+
+extern int HSMHV2evaluate
+(
+ double ivds,
+ double ivgs,
+ double ivbs,
+ double ivdsi,
+ double ivgsi,
+ double ivbsi,
+ double vbs_jct,
+ double vbd_jct,
+ double vsubs,
+ double vddp,
+ double deltemp,
+ HSMHV2instance *here,
+ HSMHV2model    *model,
+ CKTcircuit   *ckt
+ ) ;
+extern int HSMHV2rdrift
+( 
+ double vddp,
+ double ivds,
+ double ivbs,
+ double vsubs,
+ double deltemp,
+ HSMHV2instance *here,
+ HSMHV2model    *model,
+ CKTcircuit   *ckt
+ ) ;
+extern int HSMHV2dio
+(
+ double        vbs_jct,
+ double        vbd_jct,
+ double        deltemp,
+ HSMHV2instance *here,
+ HSMHV2model    *model,
+ CKTcircuit   *ckt
+ ) ;
+
+#endif /* _HiSIMHV2_H */

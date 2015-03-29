@@ -61,7 +61,7 @@ June 2008 (revised October 2011)
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 

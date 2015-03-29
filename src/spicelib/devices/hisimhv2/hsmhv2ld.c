@@ -58,7 +58,7 @@ June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
-#include "hisimhv.h"
+#include "hisimhv2.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
@@ -1784,7 +1784,7 @@ line755: /* standard entry if HSMHV2evaluate is bypassed */
         }
       }
 
-#include "hsmhvld_info_eval.h"
+#include "hsmhv2ld_info_eval.h"
 
       /* For standard Newton method (SPICE_rhs == 0):                          */
       /*   if currents (and charges) are limited -> extrapolate onto x-values  */

@@ -59,7 +59,7 @@ June 2008 (revised October 2011)
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hsmhvdef.h"
+#include "hsmhv2def.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/const.h"
 #include "ngspice/devdefs.h"

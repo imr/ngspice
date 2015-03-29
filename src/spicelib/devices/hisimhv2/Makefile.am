@@ -2,40 +2,40 @@
 
 noinst_LTLIBRARIES = libhisimhv2.la
 
-libhisimhv2_la_SOURCES = hisimhv.h	\
-			hsmhv.c		\
-			hsmhvacld.c	\
-			hsmhvask.c 	\
-			hsmhvcvtest.c 	\
-			hsmhvdef.h	\
-			hsmhvdel.c 	\
-			hsmhvdest.c 	\
-			hsmhveval.c	\
-			hsmhveval_dep.h	\
-			hsmhveval_dio.c	\
-			hsmhveval_qover.h	\
-			hsmhveval_rdrift.c	\
-			hsmhvevalenv.h	\
-			hsmhvext.h	\
-			hsmhvgetic.c 	\
-			hsmhvinit.c	\
-			hsmhvinit.h	\
-			hsmhvitf.h	\
-			hsmhvld.c 	\
-			hsmhvld_info_eval.h 	\
-			hsmhvmask.c 	\
-			hsmhvmdel.c 	\
-			hsmhvmpar.c 	\
-			hsmhvnoi.c 	\
-			hsmhvpar.c 	\
-			hsmhvpzld.c 	\
-			hsmhvset.c 	\
-			hsmhvsoachk.c 	\
-			hsmhvtemp.c 	\
-			hsmhvtemp_eval.h \
-			hsmhvtemp_eval_dio.h \
-			hsmhvtemp_eval_rdri.h \
-			hsmhvtrunc.c
+libhisimhv2_la_SOURCES = hisimhv2.h	\
+			hsmhv2.c		\
+			hsmhv2acld.c	\
+			hsmhv2ask.c 	\
+			hsmhv2cvtest.c 	\
+			hsmhv2def.h	\
+			hsmhv2del.c 	\
+			hsmhv2dest.c 	\
+			hsmhv2eval.c	\
+			hsmhv2eval_dep.h	\
+			hsmhv2eval_dio.c	\
+			hsmhv2eval_qover.h	\
+			hsmhv2eval_rdrift.c	\
+			hsmhv2evalenv.h	\
+			hsmhv2ext.h	\
+			hsmhv2getic.c 	\
+			hsmhv2init.c	\
+			hsmhv2init.h	\
+			hsmhv2itf.h	\
+			hsmhv2ld.c 	\
+			hsmhv2ld_info_eval.h 	\
+			hsmhv2mask.c 	\
+			hsmhv2mdel.c 	\
+			hsmhv2mpar.c 	\
+			hsmhv2noi.c 	\
+			hsmhv2par.c 	\
+			hsmhv2pzld.c 	\
+			hsmhv2set.c 	\
+			hsmhv2soachk.c 	\
+			hsmhv2temp.c 	\
+			hsmhv2temp_eval.h \
+			hsmhv2temp_eval_dio.h \
+			hsmhv2temp_eval_rdri.h \
+			hsmhv2trunc.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
