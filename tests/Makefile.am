@@ -6,6 +6,7 @@ SUBDIRS =		\
 	bsimsoi		\
 	hisim		\
 	hisimhv1	\
+	hisimhv2	\
 	regression
 
 if XSPICE_WANTED
@@ -27,6 +28,7 @@ DIST_SUBDIRS =		\
 	hfet		\
 	hisim		\
 	hisimhv1	\
+	hisimhv2	\
 	jfet		\
 	mes		\
 	mesa		\

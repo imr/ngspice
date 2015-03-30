@@ -1172,6 +1172,7 @@ AC_CONFIG_FILES([Makefile
                  tests/hfet/Makefile
                  tests/hisim/Makefile
                  tests/hisimhv1/Makefile
+                 tests/hisimhv2/Makefile
                  tests/jfet/Makefile
                  tests/mes/Makefile
                  tests/mesa/Makefile
