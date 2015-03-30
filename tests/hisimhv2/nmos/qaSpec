@@ -1,0 +1,513 @@
+
+//
+// Test specification for HiSIM_HV (version 2.1.0)
+//
+
+//
+// Simulator specific information
+// These arguments are added to the model card
+// specification to invoke the desired model in
+// different simulators (which can have different
+// names or levels for the same model) and to switch
+// between nType and pType polarities.
+// It is assumed that there are no polarity specific
+// parameters.
+//
+
+`ifdef spice
+nTypeSelectionArguments nmos level=62 version=2.10
+pTypeSelectionArguments pmos level=62 version=2.10
+`endif
+`ifdef ngspice
+nTypeSelectionArguments nmos level=73 version=2.20
+pTypeSelectionArguments pmos level=73 version=2.20
+`endif
+`ifdef hspice
+nTypeSelectionArguments nmos level=73 version=2.10
+pTypeSelectionArguments pmos level=73 version=2.10
+`endif
+
+//
+// General test-independent information
+//
+
+keyLetter                   m
+pins                        d g s b 
+linearScale                 w l ps pd
+areaScale                   as ad 
+temperature                 27 -50 150
+//checkPolarity             yes
+scaleParameters             m
+
+//
+// Specific tests
+//
+
+test                        dcSw_Id1_vb0
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Id1_vb1
+biases                      V(s)=0 V(b)=-0.5
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Id1_vb2
+biases                      V(s)=0 V(b)=-1.5
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=5e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Id1_vb0_jd
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Ig1_vb0
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=2,5,10
+biasSweep                   V(g)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Ig1_vb1
+biases                      V(s)=0 V(b)=-0.5
+biasList                    V(d)=2,5,10
+biasSweep                   V(g)=1,20.000000001,1
+outputs                     I(d) I(g) I(s) I(b)
+instanceParameters          W=20e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Ig1_vb2
+biases                      V(s)=0 V(b)=-1.5
+biasList                    V(d)=2,5,10
+biasSweep                   V(g)=1,20.000000001,1
+outputs                     I(d) 
+instanceParameters          W=20e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_Ig1_vb0_jd
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=2,5,10
+biasSweep                   V(g)=1,20.000000001,1
+outputs                     I(d) I(g) I(s) I(b)
+instanceParameters          W=20e-6 L=2.0e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_ld2
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_lg2
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=2,5,10
+biasSweep                   V(g)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=5e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+
+test                        dcSw_cosym
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=0.1,30.1,0.5
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=20e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COSYM=1 RD=0.1 CORDRIFT=0
+
+test                        dcSw_rs2m
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=0.1,0.6,2,5
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=10e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COSYM=1 RD=0.1 RS=2e-3 CORDRIFT=0
+
+test                        dcSw_corsrd0
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=2e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             CORSRD=0 CORDRIFT=0
+
+test                        dcSw_corsrd1
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=20e-6 AD=20e-12 AS=20e-12 PD=12e-6 PS=12e-6
+modelParameters             parameters/nmosParameters
+modelParameters             CORSRD=1 RD=0.1 RS=0.05 CORDRIFT=0
+
+test                        dcSw_corsrd2
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+modelParameters             CORSRD=2 CORDRIFT=0
+
+test                        dcSw_isub
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d) I(b)
+instanceParameters          W=50e-6 L=50e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COISUB=1 SUB1=1 SVGS=1 SVDS=1 SUB1L=0.1 SUB2L=0.1 SLG=1 SVBS=1
+
+test                        dcSw_gidl
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d) I(b)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COGIDL=1
+
+test                        dcSw_she
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             COSELFHEAT=1 POWRAT=0.5
+
+test                        dcSw_ptl
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             CORDRIFT=0 CORSRD=-1 RSH=10 PT4P=0.1 GDLD=0.0001
+
+test                        dcSw_coisti
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6 
+instanceParameters          SA=1e-6 SB=2e-6 SD=1e-6 NF=2
+modelParameters             parameters/nmosParameters
+modelParameters             COISTI=1 WSTI=0.1E-4
+modelParameters             NSUBPSTI1=2e-6 NSUBPSTI2=1e-6 NSUBPSTI3=1.5
+
+test                        dcSw_corg
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6 
+modelParameters             CORG=1 RSHG=10
+
+test                        dcSw_corbnet
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6 
+modelParameters             CORBNET=1 
+
+test                        dcSw_codfm
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=50e-6 L=2e-6  NSUBCDFM=1E17
+modelParameters             CODFM=1 
+
+test                        dcSw_rdrbb
+biases                      V(s)=0 V(b)=-5
+biasList                    V(g)=2,5,10
+biasSweep                   V(d)=1,20.000000001,1
+outputs                     I(d)
+instanceParameters          W=20e-6 L=2e-6 
+modelParameters             RDRBB=1.5
+
+test                        dcSw_NF_RDS 
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 NF=100
+modelParameters             parameters/nmosParameters
+modelParameters             CORDRIFT=0 RD=0.01 RDS=1 RDSP=2.0 RDVDS=1 RDVDSP=1.5
+
+test                        dcSw_NF_RD23
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=1e-6 L=2e-6 NF=100
+modelParameters             parameters/nmosParameters
+modelParameters             CORDRIFT=0 RD20=0.1 RD23=0.1 RD23L=0.1 RD23S=0.1 RD23SP=1.5 RD24=0.1
+
+test                        dcSw_NF_RTH0W 
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 NF=100
+modelParameters             parameters/nmosParameters
+modelParameters             COSELFHEAT=1 RTH0=1 RTH0W=2.0 RTH0WP=2.5
+
+test                        dcSw_COTEMP1 
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters		    COTEMP=1
+
+test                        dcSw_COTEMP2 
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters		    COTEMP=2
+
+test                        dcSw_COTEMP3 
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters		    COTEMP=3
+
+test                        dcSw_RDRIFT_REVS 
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-10
+biasSweep                   V(g)=1,20.000000001,2
+outputs                     I(d) 
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             CORDRIFT=1 RDRCX=0.5 
+
+
+
+test                        acVd
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=5
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+
+test                        acVd_corsrd1
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             CORSRD=1 RD=0.01 RS=0.1 CORDRIFT=0
+
+test                        acVd_corsrd2
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=20
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             CORSRD=2 CORDRIFT=0
+
+test                        acVd_cosym
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=5
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=20e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COSYM=1 RD=0.01 CORDRIFT=0
+
+test                        acVd_cvdsover
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             CVDSOVER=0.2
+
+test                        acVd_coisti
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6
+instanceParameters          SA=1e-6 SB=2e-6 SD=1e-6 NF=2
+modelParameters             parameters/nmosParameters
+modelParameters             COISTI=1 WSTI=0.1E-4
+modelParameters             NSUBPSTI1=2e-6 NSUBPSTI2=1e-6 NSUBPSTI3=1.5
+
+test                        acVd_coadov
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COADOV=1
+
+test                        acVd_corg
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             CORG=1 RSHG=10
+
+test                        acVd_corbnet
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             CORBNET=1
+
+test                        acVd_codfm
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6  NSUBCDFM=1E17
+modelParameters             parameters/nmosParameters
+modelParameters             CODFM=1
+
+test                        acVd_rdrbb
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(g)=10
+biasSweep                   V(d)=1,20.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             RDRBB=1.5
+
+test                        acVg_QOVADD
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(d)=1
+biasSweep                   V(g)=1,10.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             QOVADD=1e-4
+
+test                        acVg_LOVER
+temperature                 27 150
+biases                      V(s)=0 V(b)=0 V(d)=1
+biasSweep                   V(g)=1,10.0000001,1
+outputs                     G(d,g) G(d,d) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 
+modelParameters             parameters/nmosParameters
+modelParameters             LOVERS=0 LOVER=1.6e-06 LOVERLD=3e-06
+
+test                        acFreq
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=10
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+
+test                        acFreq_cosym
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=10
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=10e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COSYM=1 RD=0.01 CORDRIFT=0
+
+test                        acFreq_coovlp
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=10
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COOVLP=0 CORDRIFT=0
+
+test                        acFreq_nover
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=5
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             NOVER=1E16 CORDRIFT=0
+
+test                        acFreq_coadov
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=5
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=20e-6 L=2e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COADOV=0
+
+test                        acFreq_conqs
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=5
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=50e-6 L=5e-6 AD=25e-12 AS=25e-12 PD=10e-6 PS=10e-6
+modelParameters             parameters/nmosParameters
+modelParameters             CONQS=1
+
+test                        acFreq_coiigs
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=10 V(g)=5
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          W=100e-6 L=8e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COIIGS=1
+
+test                        noise1
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=20
+biasList                    V(g)=5,10
+freq                        dec 10 1e3 1e8
+outputs                     N(d)
+instanceParameters          W=100e-6 L=8e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COTHRML=1 COIGN=1
+
+test                        noise2
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=20
+biasList                    V(g)=5,10
+freq                        dec 10 1e3 1e8
+outputs                     N(d)
+instanceParameters          W=100e-6 L=8e-6
+modelParameters             parameters/nmosParameters
+modelParameters             COFLICK=1 FALPH=1.2 
