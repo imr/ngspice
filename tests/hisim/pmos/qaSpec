@@ -11,6 +11,7 @@
 // names or levels for the same model) and to switch
 // between nType and pType polarities.
 // It is assumed that there are no polarity specific
+// parameters.
 //
 
 `ifdef spice
@@ -20,6 +21,10 @@ pTypeSelectionArguments nmos level=61 version=270
 `ifdef ngspice
 nTypeSelectionArguments pmos level=68 version=270
 pTypeSelectionArguments nmos level=68 version=270
+`endif
+`ifdef hspice
+nTypeSelectionArguments pmos level=68 version=2.7.0
+pTypeSelectionArguments nmos level=68 version=2.7.0
 `endif
 
 //
@@ -31,6 +36,7 @@ pins                        d g s b
 linearScale                 w l ps pd
 areaScale                   as ad 
 temperature                 27 -50 150
+symmetricPins               d s
 scaleParameters             m
 
 

@@ -14,9 +14,17 @@
 // parameters.
 //
 
+`ifdef spice
+nTypeSelectionArguments nmos level=10
+pTypeSelectionArguments pmos level=10
+`endif 
 `ifdef ngspice
-nTypeSelectionArguments     nmos level=10
-pTypeSelectionArguments     pmos level=10
+nTypeSelectionArguments nmos level=10
+pTypeSelectionArguments pmos level=10
+`endif
+`ifdef hspice
+nTypeSelectionArguments nmos level=70 version=4.4
+pTypeSelectionArguments pmos level=70 version=4.4
 `endif
 
 //

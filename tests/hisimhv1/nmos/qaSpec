@@ -14,17 +14,17 @@
 // parameters.
 //
 
-`ifdef ngspice
-nTypeSelectionArguments     nmos level=73 version=1.24
-pTypeSelectionArguments     pmos level=73 version=1.24
-`endif
 `ifdef spice
-nTypeSelectionArguments     nmos level=62 version=1.24
-pTypeSelectionArguments     pmos level=62 version=1.24
+nTypeSelectionArguments nmos level=62 version=1.24
+pTypeSelectionArguments pmos level=62 version=1.24
+`endif
+`ifdef ngspice
+nTypeSelectionArguments nmos level=73 version=1.24
+pTypeSelectionArguments pmos level=73 version=1.24
 `endif
 `ifdef hspice
-nTypeSelectionArguments     nmos level=73 version=1.24
-pTypeSelectionArguments     pmos level=73 version=1.24
+nTypeSelectionArguments nmos level=73 version=1.2.4
+pTypeSelectionArguments pmos level=73 version=1.2.4
 `endif
 
 //
@@ -37,7 +37,6 @@ linearScale                 w l ps pd
 areaScale                   as ad 
 temperature                 27 -50 150
 //checkPolarity             yes
-//symmetricpins		    d s
 scaleParameters             m
 
 //

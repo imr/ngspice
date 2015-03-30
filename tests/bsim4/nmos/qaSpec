@@ -15,12 +15,16 @@
 //
 
 `ifdef spice
-nTypeSelectionArguments     nmos level=14 version=4.7.0
-pTypeSelectionArguments     pmos level=14 version=4.7.0
+nTypeSelectionArguments nmos level=14 version=4.8.0
+pTypeSelectionArguments pmos level=14 version=4.8.0
 `endif
 `ifdef ngspice
-nTypeSelectionArguments     nmos level=14 version=4.8.0
-pTypeSelectionArguments     pmos level=14 version=4.8.0
+nTypeSelectionArguments nmos level=14 version=4.8.0
+pTypeSelectionArguments pmos level=14 version=4.8.0
+`endif
+`ifdef hspice
+nTypeSelectionArguments nmos level=54 version=4.5
+pTypeSelectionArguments pmos level=54 version=4.5
 `endif
 
 //

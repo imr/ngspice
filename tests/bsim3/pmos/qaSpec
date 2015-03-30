@@ -1,3 +1,4 @@
+
 //
 // Test specification for bsim3 (version 3.3.0)
 //
@@ -15,11 +16,15 @@
 
 `ifdef spice
 nTypeSelectionArguments pmos level=7 version=3.2.4
-pTypeSelectionArguments pmos level=7 version=3.2.4
+pTypeSelectionArguments nmos level=7 version=3.2.4
 `endif
 `ifdef ngspice
 nTypeSelectionArguments pmos level=8 version=3.3.0
-pTypeSelectionArguments pmos level=8 version=3.3.0
+pTypeSelectionArguments nmos level=8 version=3.3.0
+`endif
+`ifdef hspice
+nTypeSelectionArguments pmos level=53 version=3.3.0
+pTypeSelectionArguments nmos level=53 version=3.3.0
 `endif
 
 //
