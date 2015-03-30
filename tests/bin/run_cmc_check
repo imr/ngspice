@@ -30,6 +30,8 @@ help() {
 
         ngspice            run tests and compare results ngspice
 
+        hspice             run tests and compare results hspice
+
         clean              remove all previously generated simulation results
 
         NOTE: if test results exist they are not resimulated
@@ -102,22 +104,38 @@ run_test() {
 
 
 #####
-##### ngspice tests
+##### tests
 #####
 
 ngspice() {
     run_test ngspice
 }
 
+hspice() {
+    run_test hspice
+}
 
+
+#####
+##### clean
+#####
 
 clean() {
     rm -rf ${qaResultsDirectory}/ngspice ngspiceCkt*
+    rm -rf ${qaResultsDirectory}/hspice hspiceCkt*
+}
+
+clean_ngspice() {
+    rm -rf ${qaResultsDirectory}/ngspice ngspiceCkt*
+}
+
+clean_hspice() {
+    rm -rf ${qaResultsDirectory}/hspice hspiceCkt*
 }
 
 
 all() {
-    ngspice
+    ngspice hspice
 }
 
 
@@ -143,7 +161,7 @@ done
 
 for arg in $@ ; do
     case "$arg" in
-        all | clean | ngspice)
+        all | clean | clean_ngspice | ngspice | clean_hspice | hspice)
             "$arg"
             ;;
         *)
