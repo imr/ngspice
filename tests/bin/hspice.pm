@@ -492,7 +492,7 @@ sub runDcTest {
 sub generateCommonNetlistInfo {
     my($variant)=$_[0];
     my(@Pin_x,$arg,$name,$value,$eFactor,$fFactor,$pin);
-    print OF ".option tnom=27 gmin=1e-15 abstol=1e-14 reltol=1e-8 ingold=2"; # default temp for HSPICE is 25
+    print OF ".option tnom=27 gmin=1e-15 abstol=1e-14 reltol=1e-8 ingold=2 numdgt=7"; # default temp for HSPICE is 25
     print OF ".temp $main::Temperature[0]";
     if ($variant=~/^scale$/) {
         print OF ".option scale=$main::scaleFactor";
