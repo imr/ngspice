@@ -1,7 +1,9 @@
 *.test
 *.log
+*.out
 
 ngspiceCkt
+hspiceCkt
 
 /xspice/digital/spinit
 
