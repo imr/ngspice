@@ -20,17 +20,15 @@ Author: 1985 Thomas L. Quarles
 #include "inpxx.h"
 
 int
-INPaName(char *parm, IFvalue * val, CKTcircuit *ckt, int *dev, char *devnam,
-	 GENinstance **fast, IFsimulator * sim, int *dataType, IFvalue * selector)
-		    /* the name of the parameter to set */
-		    /* the parameter union containing the value to set */
-		    /* the circuit this device is a member of */
-		    /* the device type code to the device being parsed */
-		    /* the name of the device */
-		     /* direct pointer to device being parsed */
-			    /* the simulator data structure */
-		    /* the datatype of the returned value structure */
-			/* data sub-selector for questions */
+INPaName ( char *parm,      // the name of the parameter to set,
+        IFvalue *val,       // the parameter union containing the value to set,
+        CKTcircuit *ckt,    // the circuit this device is a member of,
+        int *dev,           // the device type code to the device being parsed,
+        char *devnam,       // the name of the device,
+        GENinstance **fast, // direct pointer to device being parsed,
+        IFsimulator *sim,   // the simulator data structure,
+        int *dataType,      // the datatype of the returned value structure,
+        IFvalue *selector)  // data sub-selector for questions.
 {
     int error;			/* int to store evaluate error return codes in */
     int i;
