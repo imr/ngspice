@@ -64,11 +64,4 @@ int OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value);
 int OUTstopnow(void);
 void OUTerror(int flags, char *format, IFuid *names);
 
-#ifdef __GNUC__
-void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__printf__, 2, 3)));
-#else
-void OUTerrorf(int, const char *fmt, ...);
-#endif
-
-
 #endif
