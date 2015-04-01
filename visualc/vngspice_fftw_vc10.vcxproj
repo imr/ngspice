@@ -1652,6 +1652,7 @@
     <ClCompile Include="..\src\spicelib\devices\cap\capask.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capdel.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capdest.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\capfindbr.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capload.c" />
@@ -1768,6 +1769,8 @@
     <ClCompile Include="..\src\spicelib\analysis\ckttyplk.c" />
     <ClCompile Include="..\src\frontend\plotting\clip.c" />
     <ClCompile Include="..\src\spicelib\analysis\cluster.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\indfindbr.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\resfindbr.c" />
     <ClCompile Include="..\src\xspice\cm\cm.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath1.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath2.c" />
