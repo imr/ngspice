@@ -31,6 +31,12 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 
             m = (here->RESm);
 
+            /* mhx: access current like I(Rx) */
+            if (here->RESbrptr != NULL) {
+                *(ckt->CKTrhs + here->RESbrEq) = m * here->REScurrent;
+                *(here->RESbrptr) += 1.0;
+            }
+
             *(here->RESposPosptr) += m * here->RESconduct;
             *(here->RESnegNegptr) += m * here->RESconduct;
             *(here->RESposNegptr) -= m * here->RESconduct;

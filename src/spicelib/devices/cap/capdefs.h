@@ -26,6 +26,7 @@ typedef struct sCAPinstance {
     int CAPstate;   /* pointer to start of capacitor state vector */
     int CAPposNode; /* number of positive node of capacitor */
     int CAPnegNode; /* number of negative node of capacitor */
+    int CAPbrEq;    /* mhx: store node number */
 
     double CAPtemp;     /* temperature at which this capacitor operates */
     double CAPdtemp;    /* delta-temperature of this instance */
@@ -47,6 +48,7 @@ typedef struct sCAPinstance {
                               * (positive,negative) */
     double *CAPnegPosptr;    /* pointer to sparse matrix offdiagonal at
                               * (negative,positive) */
+    double *CAPbrptr;        /* mhx: to get I(Cx), pointer to sparse matrix diagonal */
     unsigned CAPcapGiven    : 1;   /* flag to indicate capacitance was specified */
     unsigned CAPicGiven     : 1;   /* flag to indicate init. cond. was specified */
     unsigned CAPwidthGiven  : 1;   /* flag to indicate capacitor width given */

@@ -86,6 +86,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(RESnegNegptr, RESnegNode, RESnegNode);
             TSTALLOC(RESposNegptr, RESposNode, RESnegNode);
             TSTALLOC(RESnegPosptr, RESnegNode, RESposNode);
+            if (here->RESbrEq & (here->RESbrptr == NULL))
+                TSTALLOC(RESbrptr, RESbrEq, RESbrEq);
         }
     }
     return(OK);

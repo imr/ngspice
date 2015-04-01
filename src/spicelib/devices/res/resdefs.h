@@ -27,6 +27,7 @@ typedef struct sRESinstance {
     int RESstate;       /* not used but needed for sructure consistency */
     int RESposNode;     /* number of positive node of resistor */
     int RESnegNode;     /* number of negative node of resistor */
+    int RESbrEq;        /* mhx: number of the node that stores I(Rx) */
 
     double REStemp;     /* temperature at which this resistor operates */
     double RESdtemp;    /* delta-temperature of a particular instance  */
@@ -53,6 +54,7 @@ typedef struct sRESinstance {
                                      * (positive,negative) */
     double *RESnegPosptr;           /* pointer to sparse matrix offdiagonal at
                                      * (negative,positive) */
+    double *RESbrptr;               /* mhx: to get I(Rx), pointer to sparse matrix diagonal */
     unsigned RESresGiven    : 1;    /* flag to indicate resistance was specified */
     unsigned RESwidthGiven  : 1;    /* flag to indicate width given */
     unsigned RESlengthGiven : 1;    /* flag to indicate length given */

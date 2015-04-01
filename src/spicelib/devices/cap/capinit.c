@@ -47,7 +47,7 @@ SPICEdev CAPinfo = {
  /* DEVpzSetup    */ CAPsetup,
  /* DEVtemperature*/ CAPtemp,
  /* DEVtrunc      */ CAPtrunc,
- /* DEVfindBranch */ NULL,
+ /* DEVfindBranch */ CAPfindBr,
  /* DEVacLoad     */ CAPacLoad,
  /* DEVaccept     */ NULL,
  /* DEVdestroy    */ CAPdestroy,
