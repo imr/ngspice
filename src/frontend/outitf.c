@@ -175,6 +175,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         run->type = copy(analName);
         run->windowed = windowed;
         run->numData = 0;
+        run->spindex = -1; // mhx
 
         an_name = spice_analysis_get_name(analysisPtr->JOBtype);
         ft_curckt->ci_last_an = an_name;

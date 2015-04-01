@@ -89,6 +89,7 @@ int IFnewUid(CKTcircuit *, IFuid *, IFuid, char *, int, CKTnode **);
 int IFdelUid(CKTcircuit *, IFuid, int);
 int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **, IFsimulator *, int *,
         IFvalue *);
+int INPaSpecName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **, IFsimulator *, int *, IFvalue *, int *);
 int INPapName(CKTcircuit *, int, JOB *, char *, IFvalue *);
 void INPcaseFix(char *);
 char *INPdevParse(char **, CKTcircuit *, int, GENinstance *, double *, int *, INPtables *);
