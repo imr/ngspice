@@ -115,6 +115,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(CAPnegNegptr,CAPnegNode,CAPnegNode);
             TSTALLOC(CAPposNegptr,CAPposNode,CAPnegNode);
             TSTALLOC(CAPnegPosptr,CAPnegNode,CAPposNode);
+            if (here->CAPbrEq & (here->CAPbrptr == NULL))
+                TSTALLOC(CAPbrptr, CAPbrEq, CAPbrEq); /* mhx: to access I(Cx) */
         }
     }
     return(OK);

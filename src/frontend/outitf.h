@@ -8,7 +8,6 @@
 
 #include "ngspice/typedefs.h"
 
-
 typedef struct dataDesc {
     char *name;                 /* The name of the vector. */
     int type;                   /* The type. */
@@ -24,7 +23,6 @@ typedef struct dataDesc {
     struct dvec *vec;
 } dataDesc;
 
-
 struct runDesc {
     void *analysis;
     CKTcircuit *circuit;
@@ -38,12 +36,12 @@ struct runDesc {
     bool binary;
     struct plot *runPlot;
     FILE *fp;
-    long pointPos;              /* where to write pointCount */
+    long pointPos;		/* where to write pointCount */
     int pointCount;
     int isComplex;
     int windowCount;
+    int spindex;		/* mhx */
 };
-
 
 int OUTpBeginPlot(CKTcircuit *circuitPtr, JOB *analysisPtr,
                   IFuid analName,
@@ -63,12 +61,5 @@ int OUTendDomain(runDesc *plotPtr);
 int OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value);
 int OUTstopnow(void);
 void OUTerror(int flags, char *format, IFuid *names);
-
-#ifdef __GNUC__
-void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__printf__, 2, 3)));
-#else
-void OUTerrorf(int, const char *fmt, ...);
-#endif
-
 
 #endif

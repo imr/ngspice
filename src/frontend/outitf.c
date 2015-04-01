@@ -83,7 +83,7 @@ int fixme_inoise_type = SV_NOTYPE;
 
 static clock_t lastclock, currclock;
 static double *rowbuf;
-static size_t column, rowbuflen;
+static size_t column, rowbuflen, doornroosje = 0;
 
 static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 
@@ -175,6 +175,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         run->type = copy(analName);
         run->windowed = windowed;
         run->numData = 0;
+        run->spindex = -1; // mhx
 
         an_name = spice_analysis_get_name(analysisPtr->JOBtype);
         ft_curckt->ci_last_an = an_name;
@@ -508,13 +509,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
 #ifndef HAS_WINGUI
-                if (!orflag) {
+                if (!orflag && (doornroosje == 0)) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
                                 refValue->cValue.real);
                         lastclock = currclock;
                     }
+                else doornroosje--;    
                 }
 #endif
             } else {
@@ -523,7 +525,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
-                if (!orflag) {
+                if (!orflag && (doornroosje == 0)) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
@@ -531,6 +533,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                         lastclock = currclock;
                     }
                 }
+                else doornroosje--;    
 #endif
             }
         }
@@ -606,7 +609,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             variable just the same  */
 
 #ifndef HAS_WINGUI
-        if (!orflag) {
+        if (!orflag && (doornroosje == 0)) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 if (run->isComplex) {
@@ -619,6 +622,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 lastclock = currclock;
             }
         }
+        else doornroosje--;
 #endif
 
         for (i = 0; i < run->numData; i++) {
@@ -942,7 +946,7 @@ fileStartPoint(FILE *fp, bool bin, int num)
     column = 0;
 }
 
-
+/* This code is used when one does  RUN aap.raw  but *not* when doing RUN. */
 static void
 fileAddRealValue(FILE *fp, bool bin, double value)
 {
@@ -1056,6 +1060,8 @@ plotInit(runDesc *run)
     }
 }
 
+/* mhx: minimize the number of REALLOCs */
+#define OUTSIZE (256*4096)
 
 static void
 plotAddRealValue(dataDesc *desc, double value)
@@ -1063,11 +1069,11 @@ plotAddRealValue(dataDesc *desc, double value)
     struct dvec *v = desc->vec;
 
     if (isreal(v)) {
-        v->v_realdata = TREALLOC(double, v->v_realdata, v->v_length + 1);
+        if ((v->v_dims[0] & (OUTSIZE - 1)) == 0) v->v_realdata = TREALLOC(double, v->v_realdata, v->v_length + OUTSIZE);
         v->v_realdata[v->v_length] = value;
     } else {
         /* a real parading as a VF_COMPLEX */
-        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
+        if ((v->v_dims[0] & (OUTSIZE - 1)) == 0) v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + OUTSIZE);
         v->v_compdata[v->v_length].cx_real = value;
         v->v_compdata[v->v_length].cx_imag = 0.0;
     }
@@ -1082,7 +1088,7 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-    v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
+    if ((v->v_dims[0] & (OUTSIZE - 1)) == 0) v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + OUTSIZE);
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
 

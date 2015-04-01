@@ -24,7 +24,7 @@ extern int INDsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int INDunsetup(GENmodel*,CKTcircuit*);
 extern int INDtemp(GENmodel*, CKTcircuit*);
 extern int INDtrunc(GENmodel*,CKTcircuit*,double*);
-
+extern int INDfindBr(CKTcircuit*, GENmodel*, IFuid);  // mhx: find inductor branch
 extern int MUTacLoad(GENmodel*,CKTcircuit*);
 extern int MUTask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MUTdelete(GENmodel*,IFuid,GENinstance**);

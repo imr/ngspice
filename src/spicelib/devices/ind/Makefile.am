@@ -22,6 +22,7 @@ libind_la_SOURCES =	\
 	indsacl.c	\
 	indsetup.c	\
 	indsload.c	\
+	indfindbr.c	\
 	indsprt.c	\
 	indsset.c	\
 	indsupd.c	\

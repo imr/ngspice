@@ -10,9 +10,9 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "ngspice/sperror.h"
 
 
-/* actually load the current resistance value into the sparse matrix
+/* actually load the current resistance value into the sparse matrix 
  * previously provided */
-int
+int 
 RESload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
@@ -23,13 +23,19 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
         RESinstance *here;
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
-                here = here->RESnextInstance) {
+        for (here = model->RESinstances; here != NULL ; 
+            here = here->RESnextInstance) {
 
-            here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) -
+            here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) - 
                                 *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
 
             m = (here->RESm);
+
+            /* mhx: access current like I(Rx) */
+            if (here->RESbrptr != NULL) {
+                *(ckt->CKTrhs + here->RESbrEq) = m * here->REScurrent;
+                *(here->RESbrptr) += 1.0;
+            }
 
             *(here->RESposPosptr) += m * here->RESconduct;
             *(here->RESnegNegptr) += m * here->RESconduct;
@@ -41,10 +47,10 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 }
 
 
-/* actually load the current resistance value into the sparse matrix
+/* actually load the current resistance value into the sparse matrix 
  * previously provided */
-int
-RESacload(GENmodel *inModel, CKTcircuit *ckt)
+int 
+RESacload(GENmodel *inModel, CKTcircuit *ckt) 
 {
     RESmodel *model = (RESmodel *)inModel;
     double m;
@@ -56,7 +62,7 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
         RESinstance *here;
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
+        for (here = model->RESinstances; here != NULL ; 
              here = here->RESnextInstance) {
 
             m = (here->RESm);
