@@ -83,7 +83,7 @@ int fixme_inoise_type = SV_NOTYPE;
 
 static clock_t lastclock, currclock;
 static double *rowbuf;
-static size_t column, rowbuflen;
+static size_t column, rowbuflen, doornroosje = 0;
 
 static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 
@@ -508,13 +508,14 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
 #ifndef HAS_WINGUI
-                if (!orflag) {
+                if (!orflag && (doornroosje == 0)) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
                                 refValue->cValue.real);
                         lastclock = currclock;
                     }
+                else doornroosje--;
                 }
 #endif
             } else {
@@ -523,7 +524,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
-                if (!orflag) {
+                if (!orflag && (doornroosje == 0)) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
@@ -531,6 +532,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                         lastclock = currclock;
                     }
                 }
+                else doornroosje--;
 #endif
             }
         }
@@ -606,7 +608,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             variable just the same  */
 
 #ifndef HAS_WINGUI
-        if (!orflag) {
+        if (!orflag && (doornroosje == 0)) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 if (run->isComplex) {
@@ -619,6 +621,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                 lastclock = currclock;
             }
         }
+        else doornroosje--;
 #endif
 
         for (i = 0; i < run->numData; i++) {
