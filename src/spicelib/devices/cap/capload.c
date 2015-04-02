@@ -80,7 +80,7 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                     /* mhx: to access I(Cx) */
                     if (here->CAPbrptr != NULL) {
                         *(ckt->CKTrhs + here->CAPbrEq) = *(ckt->CKTstate0 + here->CAPccap);
-                        *(here->CAPbrptr) += 1.0;
+                        *(here->CAPbrptr) += 1.0 / m;
                     }
                 } else
                     *(ckt->CKTstate0+here->CAPqcap) = here->CAPcapac * vcap;
