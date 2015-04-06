@@ -69,7 +69,6 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
             factor = 1.0 + tc1*difference + tc2*difference*difference;
 
             here->INDinduct = here->INDinduct * factor * here->INDscale;
-            here->INDinduct = here->INDinduct / here->INDm;
 
         }
     }
