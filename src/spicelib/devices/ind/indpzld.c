@@ -27,7 +27,7 @@ INDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for( here = model->INDinstances;here != NULL; 
                 here = here->INDnextInstance) {
     
-            val = here->INDinduct;
+            val = here->INDinduct / here->INDm;
 	    
             *(here->INDposIbrptr) +=  1;
             *(here->INDnegIbrptr) -=  1;
