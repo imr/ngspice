@@ -46,7 +46,8 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if( here->ASRCtree->IFeval (here->ASRCtree, ckt->CKTgmin, &rhs,
-                    asrc_vals,asrc_derivs) == OK){
+                    asrc_vals,asrc_derivs) != OK)
+                return(E_BADPARM);
 
                 prev = here->ASRCprev_value;
                 diff = fabs( prev - rhs);
@@ -63,10 +64,6 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
 		    ckt->CKTtroubleElt = (GENinstance *) here;
                     return(OK);
                 }
-            } else {
-
-                return(E_BADPARM);
-            }
         }
     }
     return(OK);
