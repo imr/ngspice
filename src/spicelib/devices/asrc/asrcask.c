@@ -38,12 +38,12 @@ ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
         value->rValue = here->ASRCtc2;
         return(OK);
     case ASRC_CURRENT:
-        value->tValue = here->ASRCtype == ASRC_CURRENT ?
-            here->ASRCtree : NULL;
+        value->tValue =
+            (here->ASRCtype == ASRC_CURRENT) ? here->ASRCtree : NULL;
         return(OK);
     case ASRC_VOLTAGE:
-        value->tValue = here->ASRCtype == ASRC_VOLTAGE ?
-            here->ASRCtree : NULL;
+        value->tValue =
+            (here->ASRCtype == ASRC_VOLTAGE) ? here->ASRCtree : NULL;
         return(OK);
     case ASRC_POS_NODE:
         value->iValue = here->ASRCposNode;
@@ -58,7 +58,8 @@ ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             value->rValue = here->ASRCprev_value;
         return(OK);
     case ASRC_OUTPUTVOLTAGE:
-        value->rValue = ckt->CKTrhsOld[here->ASRCposNode] -
+        value->rValue =
+            ckt->CKTrhsOld[here->ASRCposNode] -
             ckt->CKTrhsOld[here->ASRCnegNode];
         return(OK);
     default:

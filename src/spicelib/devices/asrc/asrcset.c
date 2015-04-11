@@ -26,12 +26,14 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(states);
 
     for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here;
-             here=here->ASRCnextInstance) {
+        for (here = model->ASRCinstances; here; here=here->ASRCnextInstance) {
 
-            if (!here->ASRCtc1Given) here->ASRCtc1 = 0.0;
-            if (!here->ASRCtc2Given) here->ASRCtc2 = 0.0;
-            if (!here->ASRCreciproctcGiven) here->ASRCreciproctc = 0;
+            if (!here->ASRCtc1Given)
+                here->ASRCtc1 = 0.0;
+            if (!here->ASRCtc2Given)
+                here->ASRCtc2 = 0.0;
+            if (!here->ASRCreciproctcGiven)
+                here->ASRCreciproctc = 0;
 
             here->ASRCposptr = NULL;
             j = 0; /* strchr of the array holding ptrs to SMP */
@@ -40,7 +42,8 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (here->ASRCtype == ASRC_VOLTAGE) {
                 if (here->ASRCbranch == 0) {
                     error = CKTmkCur(ckt, &tmp, here->ASRCname, "branch");
-                    if (error) return(error);
+                    if (error)
+                        return(error);
                     here->ASRCbranch = tmp->number;
                 }
             }
@@ -64,8 +67,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (here->ASRCtype == ASRC_VOLTAGE) {
 
                 if (here->ASRCposNode == here->ASRCnegNode) {
-                    SPfrontEnd->IFerrorf(ERR_FATAL,
-                                         "instance %s is a shorted ASRC", here->ASRCname);
+                    SPfrontEnd->IFerrorf(ERR_FATAL, "instance %s is a shorted ASRC", here->ASRCname);
                     return(E_UNSUPP);
                 }
 
@@ -80,11 +82,10 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             for (i = 0; i < here->ASRCtree->numVars; i++) {
                 switch (here->ASRCtree->varTypes[i]) {
                 case IF_INSTANCE:
-                    here->ASRCcont_br = CKTfndBranch(ckt,
-                                                     here->ASRCtree->vars[i].uValue);
+                    here->ASRCcont_br = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
                     if (here->ASRCcont_br == 0) {
-                        SPfrontEnd->IFerrorf (ERR_FATAL,
-                                              "%s: unknown controlling source %s", here->ASRCname, here->ASRCtree->vars[i].uValue);
+                        SPfrontEnd->IFerrorf(ERR_FATAL, "%s: unknown controlling source %s",
+                                             here->ASRCname, here->ASRCtree->vars[i].uValue);
                         return(E_BADPARM);
                     }
                     if (here->ASRCtype == ASRC_VOLTAGE) {
@@ -136,19 +137,13 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
 int
-ASRCunsetup(
-    GENmodel *inModel,
-    CKTcircuit *ckt)
+ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
 
-    for (; model;
-         model = model->ASRCnextModel)
-    {
-        for (here = model->ASRCinstances; here;
-             here = here->ASRCnextInstance)
-        {
+    for (; model; model = model->ASRCnextModel) {
+        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
             if (here->ASRCbranch) {
                 CKTdltNNum(ckt, here->ASRCbranch);
                 here->ASRCbranch = 0;

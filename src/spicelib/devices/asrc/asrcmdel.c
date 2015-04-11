@@ -20,8 +20,8 @@ ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
 
     oldmod = model;
     for (; *model; model = &((*model)->ASRCnextModel)) {
-        if ((*model)->ASRCmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->ASRCmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -33,11 +33,13 @@ ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
 
     for (here = (*model)->ASRCinstances; here; here = here->ASRCnextInstance) {
         FREE(here->ASRCacValues);
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
 
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return(OK);
 }

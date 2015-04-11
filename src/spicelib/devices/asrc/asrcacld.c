@@ -29,12 +29,12 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here;
-             here = here->ASRCnextInstance) {
+        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
 
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
-            factor = 1.0 + (here->ASRCtc1) * difference +
-                (here->ASRCtc2) * difference * difference;
+            factor = 1.0
+                + (here->ASRCtc1) * difference
+                + (here->ASRCtc2) * difference * difference;
 
             if (here->ASRCreciproctc == 1) {
                 factor = 1 / factor;

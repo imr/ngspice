@@ -22,8 +22,7 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double rhs;
 
     for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here;
-             here = here->ASRCnextInstance) {
+        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
 
             i = here->ASRCtree->numVars;
             if (asrc_nvals < i) {
@@ -54,11 +53,11 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
             diff = fabs(prev - rhs);
 
             if (here->ASRCtype == ASRC_VOLTAGE) {
-                tol = ckt->CKTreltol *
-                    MAX(fabs(rhs), fabs(prev)) + ckt->CKTvoltTol;
+                tol = ckt->CKTreltol * MAX(fabs(rhs), fabs(prev))
+                    + ckt->CKTvoltTol;
             } else {
-                tol = ckt->CKTreltol *
-                    MAX(fabs(rhs), fabs(prev)) + ckt->CKTabstol;
+                tol = ckt->CKTreltol * MAX(fabs(rhs), fabs(prev))
+                    + ckt->CKTabstol;
             }
 
             if (diff > tol) {
