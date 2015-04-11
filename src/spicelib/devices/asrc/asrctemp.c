@@ -8,31 +8,32 @@ Author: 1985 Thomas L. Quarles
 #include "asrcdefs.h"
 #include "ngspice/sperror.h"
 
+
 int
 ASRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 {
-    ASRCmodel *model =  (ASRCmodel *)inModel;
+    ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
 
     /*  loop through all the source models */
-    for( ; model != NULL; model = model->ASRCnextModel ) {
-
+    for (; model != NULL; model = model->ASRCnextModel) {
         /* loop through all the instances of the model */
-        for (here = model->ASRCinstances; here != NULL ;
-                here=here->ASRCnextInstance) {
+        for (here = model->ASRCinstances; here != NULL;
+             here = here->ASRCnextInstance) {
 
             /* Default Value Processing for Source Instance */
 
-          if(!here->ASRCtempGiven) {
-             here->ASRCtemp   = ckt->CKTtemp;
-             if(!here->ASRCdtempGiven) here->ASRCdtemp  = 0.0;
-           } else { /* ASRCtempGiven */
-             here->ASRCdtemp = 0.0;
-             if (here->ASRCdtempGiven)
-                 printf("%s: Instance temperature specified, dtemp ignored\n", here->ASRCname);
-           }
+            if (!here->ASRCtempGiven) {
+                here->ASRCtemp = ckt->CKTtemp;
+                if (!here->ASRCdtempGiven) here->ASRCdtemp = 0.0;
+            } else { /* ASRCtempGiven */
+                here->ASRCdtemp = 0.0;
+                if (here->ASRCdtempGiven)
+                    printf("%s: Instance temperature specified, dtemp ignored\n", here->ASRCname);
+            }
 
         }
     }
+
     return(OK);
 }

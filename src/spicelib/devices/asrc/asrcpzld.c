@@ -10,13 +10,13 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/suffix.h"
 #include "ngspice/complex.h"
 
+
 /*ARGSUSED*/
 int
 ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
-
-        /* actually load the current voltage value into the
-         * sparse matrix previously provided
-         */
+/* actually load the current voltage value into the
+ * sparse matrix previously provided
+ */
 {
     ASRCmodel *model = (ASRCmodel*) inModel;
     ASRCinstance *here;
@@ -28,18 +28,19 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     NG_IGNORE(s);
 
     /*  loop through all the Arbitrary source models */
-    for( ; model != NULL; model = model->ASRCnextModel ) {
-
+    for (; model != NULL; model = model->ASRCnextModel) {
         /* loop through all the instances of the model */
-        for (here = model->ASRCinstances; here != NULL ;
-                here=here->ASRCnextInstance)
+        for (here = model->ASRCinstances; here != NULL;
+             here = here->ASRCnextInstance)
         {
-	    difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
-	    factor = 1.0 + (here->ASRCtc1)*difference + 
-		    (here->ASRCtc2)*difference*difference;
-	    if(here->ASRCreciproctc == 1) {
-		    factor = 1/factor;
-		  }
+
+            difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
+            factor = 1.0 + (here->ASRCtc1) * difference +
+                (here->ASRCtc2) * difference * difference;
+
+            if (here->ASRCreciproctc == 1) {
+                factor = 1 / factor;
+            }
 
             j = 0;
 
@@ -56,30 +57,30 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             }
 
             /* Fill the vector of values from the previous solution */
-            for( i=0; i < here->ASRCtree->numVars; i++) {
-                if( here->ASRCtree->varTypes[i] == IF_INSTANCE) {
-                     int branch = CKTfndBranch(ckt,here->ASRCtree->vars[i].uValue);
-                     asrc_vals[i] = *(ckt->CKTrhsOld + branch);
+            for (i = 0; i < here->ASRCtree->numVars; i++) {
+                if (here->ASRCtree->varTypes[i] == IF_INSTANCE) {
+                    int branch = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
+                    asrc_vals[i] = *(ckt->CKTrhsOld + branch);
                 } else {
                     int node_num = (here->ASRCtree->vars[i].nValue) -> number;
                     asrc_vals[i] = *(ckt->CKTrhsOld + node_num);
                 }
             }
 
-            if(here->ASRCtree->IFeval (here->ASRCtree, ckt->CKTgmin, &value, asrc_vals, asrc_derivs) != OK)
+            if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &value, asrc_vals, asrc_derivs) != OK)
                 return(E_BADPARM);
 
-            if( here->ASRCtype == ASRC_VOLTAGE) {
+            if (here->ASRCtype == ASRC_VOLTAGE) {
                 *(here->ASRCposptr[j++]) += 1.0;
                 *(here->ASRCposptr[j++]) -= 1.0;
                 *(here->ASRCposptr[j++]) -= 1.0;
                 *(here->ASRCposptr[j++]) += 1.0;
             }
 
-            for(i=0; i < here->ASRCtree->numVars; i++) {
-                switch(here->ASRCtree->varTypes[i]) {
+            for (i = 0; i < here->ASRCtree->numVars; i++) {
+                switch (here->ASRCtree->varTypes[i]) {
                 case IF_INSTANCE:
-                    if( here->ASRCtype == ASRC_VOLTAGE) {
+                    if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* CCVS */
                         *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
                     } else {
@@ -89,7 +90,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                     }
                     break;
                 case IF_NODE:
-                    if(here->ASRCtype == ASRC_VOLTAGE) {
+                    if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* VCVS */
                         *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
                     } else {
