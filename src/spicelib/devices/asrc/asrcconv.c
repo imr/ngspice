@@ -15,7 +15,7 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
 {
     ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
-    int i, node_num, branch;
+    int i;
     double diff;
     double prev;
     double tol;
@@ -37,10 +37,10 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
             for (i = 0; i < here->ASRCtree->numVars; i++)
                 if (here->ASRCtree->varTypes[i] == IF_INSTANCE) {
-                    branch = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
+                    int branch = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
                     asrc_vals[i] = ckt->CKTrhsOld[branch];
                 } else {
-                    node_num = here->ASRCtree->vars[i].nValue->number;
+                    int node_num = here->ASRCtree->vars[i].nValue->number;
                     asrc_vals[i] = ckt->CKTrhsOld[node_num];
                 }
 

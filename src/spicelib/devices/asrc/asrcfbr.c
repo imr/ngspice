@@ -14,8 +14,8 @@ Author: 1987 Kanwar Jit Singh
 int
 ASRCfindBr(CKTcircuit *ckt, GENmodel *inputModel, IFuid name)
 {
-    ASRCinstance *here;
     ASRCmodel *model = (ASRCmodel*) inputModel;
+    ASRCinstance *here;
     int error;
     CKTnode *tmp;
 
