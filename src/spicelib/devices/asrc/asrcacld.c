@@ -33,12 +33,11 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
             factor = 1.0
-                + (here->ASRCtc1) * difference
-                + (here->ASRCtc2) * difference * difference;
+                + here->ASRCtc1 * difference
+                + here->ASRCtc2 * difference * difference;
 
-            if (here->ASRCreciproctc == 1) {
+            if (here->ASRCreciproctc == 1)
                 factor = 1 / factor;
-            }
 
             /*
              * Get the function and its derivatives from the

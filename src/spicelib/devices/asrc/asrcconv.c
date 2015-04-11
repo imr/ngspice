@@ -35,7 +35,7 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
                 asrc_derivs = NEWN(double, i);
             }
 
-            for (i = 0; i < here->ASRCtree->numVars; i++) {
+            for (i = 0; i < here->ASRCtree->numVars; i++)
                 if (here->ASRCtree->varTypes[i] == IF_INSTANCE) {
                     branch = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
                     asrc_vals[i] = ckt->CKTrhsOld[branch];
@@ -43,7 +43,6 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
                     node_num = here->ASRCtree->vars[i].nValue->number;
                     asrc_vals[i] = ckt->CKTrhsOld[node_num];
                 }
-            }
 
             if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &rhs,
                                        asrc_vals, asrc_derivs) != OK)
@@ -52,13 +51,12 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
             prev = here->ASRCprev_value;
             diff = fabs(prev - rhs);
 
-            if (here->ASRCtype == ASRC_VOLTAGE) {
+            if (here->ASRCtype == ASRC_VOLTAGE)
                 tol = ckt->CKTreltol * MAX(fabs(rhs), fabs(prev))
                     + ckt->CKTvoltTol;
-            } else {
+            else
                 tol = ckt->CKTreltol * MAX(fabs(rhs), fabs(prev))
                     + ckt->CKTabstol;
-            }
 
             if (diff > tol) {
                 ckt->CKTnoncon++;

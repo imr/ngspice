@@ -33,12 +33,11 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
 
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
             factor = 1.0
-                + (here->ASRCtc1) * difference
-                + (here->ASRCtc2) * difference * difference;
+                + here->ASRCtc1 * difference
+                + here->ASRCtc2 * difference * difference;
 
-            if (here->ASRCreciproctc == 1) {
+            if (here->ASRCreciproctc == 1)
                 factor = 1 / factor;
-            }
 
             /*
              * Get the function and its derivatives evaluated
@@ -76,7 +75,7 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
 
             /* The ac load precomputation and storage */
             if (ckt->CKTmode & MODEINITSMSIG) {
-                int size = (here->ASRCtree->numVars) + 1;
+                int size = here->ASRCtree->numVars + 1;
                 here->ASRCacValues = NEWN(double, size);
                 for (i = 0; i < here->ASRCtree->numVars; i++)
                     here->ASRCacValues[i] = asrc_derivs[i];
@@ -127,9 +126,8 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             /* Store the rhs for small signal analysis */
-            if (ckt->CKTmode & MODEINITSMSIG) {
+            if (ckt->CKTmode & MODEINITSMSIG)
                 here->ASRCacValues[here->ASRCtree->numVars] = factor * rhs;
-            }
         }
     }
 

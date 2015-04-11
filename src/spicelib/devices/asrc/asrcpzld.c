@@ -32,12 +32,11 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
             factor = 1.0
-                + (here->ASRCtc1) * difference
-                + (here->ASRCtc2) * difference * difference;
+                + here->ASRCtc1 * difference
+                + here->ASRCtc2 * difference * difference;
 
-            if (here->ASRCreciproctc == 1) {
+            if (here->ASRCreciproctc == 1)
                 factor = 1 / factor;
-            }
 
             j = 0;
 
@@ -54,7 +53,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             }
 
             /* Fill the vector of values from the previous solution */
-            for (i = 0; i < here->ASRCtree->numVars; i++) {
+            for (i = 0; i < here->ASRCtree->numVars; i++)
                 if (here->ASRCtree->varTypes[i] == IF_INSTANCE) {
                     int branch = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
                     asrc_vals[i] = *(ckt->CKTrhsOld + branch);
@@ -62,7 +61,6 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                     int node_num = (here->ASRCtree->vars[i].nValue) -> number;
                     asrc_vals[i] = *(ckt->CKTrhsOld + node_num);
                 }
-            }
 
             if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &value, asrc_vals, asrc_derivs) != OK)
                 return(E_BADPARM);

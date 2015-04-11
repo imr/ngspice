@@ -19,8 +19,8 @@ ASRCfindBr(CKTcircuit *ckt, GENmodel *inputModel, IFuid name)
     int error;
     CKTnode *tmp;
 
-    for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
+    for (; model; model = model->ASRCnextModel)
+        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance)
             if (here->ASRCname == name) {
                 if (here->ASRCbranch == 0) {
                     error = CKTmkCur(ckt, &tmp, here->ASRCname, "branch");
@@ -30,8 +30,6 @@ ASRCfindBr(CKTcircuit *ckt, GENmodel *inputModel, IFuid name)
                 }
                 return(here->ASRCbranch);
             }
-        }
-    }
 
     return(0);
 }

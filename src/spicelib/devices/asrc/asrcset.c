@@ -39,14 +39,13 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             j = 0; /* strchr of the array holding ptrs to SMP */
             v_first = 1;
 
-            if (here->ASRCtype == ASRC_VOLTAGE) {
+            if (here->ASRCtype == ASRC_VOLTAGE)
                 if (here->ASRCbranch == 0) {
                     error = CKTmkCur(ckt, &tmp, here->ASRCname, "branch");
                     if (error)
                         return(error);
                     here->ASRCbranch = tmp->number;
                 }
-            }
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr, first, second)                                    \
@@ -142,14 +141,12 @@ ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
 
-    for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
+    for (; model; model = model->ASRCnextModel)
+        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance)
             if (here->ASRCbranch) {
                 CKTdltNNum(ckt, here->ASRCbranch);
                 here->ASRCbranch = 0;
             }
-        }
-    }
 
     return OK;
 }
