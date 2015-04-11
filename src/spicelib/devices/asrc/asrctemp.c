@@ -15,9 +15,7 @@ ASRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
 
-    /*  loop through all the source models */
     for (; model != NULL; model = model->ASRCnextModel) {
-        /* loop through all the instances of the model */
         for (here = model->ASRCinstances; here != NULL;
              here = here->ASRCnextInstance) {
 
@@ -26,7 +24,7 @@ ASRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             if (!here->ASRCtempGiven) {
                 here->ASRCtemp = ckt->CKTtemp;
                 if (!here->ASRCdtempGiven) here->ASRCdtemp = 0.0;
-            } else { /* ASRCtempGiven */
+            } else {
                 here->ASRCdtemp = 0.0;
                 if (here->ASRCdtempGiven)
                     printf("%s: Instance temperature specified, dtemp ignored\n", here->ASRCname);

@@ -2,14 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Kanwar Jit Singh
 **********/
-/*
- * singh@ic.Berkeley.edu
- */
-
-/*
- * This routine gives access to the internal device parameters
- * of Current Controlled Voltage Source
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -20,7 +12,11 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/suffix.h"
 
 
-/* ARGSUSED */
+/*
+ * This routine gives access to the internal device parameters
+ * of Current Controlled Voltage Source
+ */
+
 int
 ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
 {
@@ -68,5 +64,4 @@ ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
     default:
         return(E_BADPARM);
     }
-    /* NOTREACHED */
 }

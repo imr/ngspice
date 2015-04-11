@@ -11,12 +11,12 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/complex.h"
 
 
-/*ARGSUSED*/
-int
-ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 /* actually load the current voltage value into the
  * sparse matrix previously provided
  */
+
+int
+ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     ASRCmodel *model = (ASRCmodel*) inModel;
     ASRCinstance *here;
@@ -27,9 +27,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     NG_IGNORE(s);
 
-    /*  loop through all the Arbitrary source models */
     for (; model != NULL; model = model->ASRCnextModel) {
-        /* loop through all the instances of the model */
         for (here = model->ASRCinstances; here != NULL;
              here = here->ASRCnextInstance)
         {

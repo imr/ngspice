@@ -2,9 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Kanwar Jit Singh
 **********/
-/*
- * singh@ic.Berkeley.edu
- */
 
 #include "ngspice/ngspice.h"
 #include "asrcdefs.h"

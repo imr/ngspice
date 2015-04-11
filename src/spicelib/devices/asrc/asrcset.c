@@ -2,9 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Kanwar Jit Singh
 **********/
-/*
- * singh@ic.Berkeley.edu
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -13,12 +10,12 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/suffix.h"
 
 
-/*ARGSUSED*/
-int
-ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 /* load the voltage source structure with those
  * pointers needed later for fast matrix loading
  */
+
+int
+ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     ASRCinstance *here;
     ASRCmodel *model = (ASRCmodel*) inModel;
@@ -28,9 +25,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     NG_IGNORE(states);
 
-    /*  loop through all the user models*/
     for (; model != NULL; model = model->ASRCnextModel) {
-        /* loop through all the instances of the model */
         for (here = model->ASRCinstances; here != NULL;
              here=here->ASRCnextInstance) {
 

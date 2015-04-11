@@ -2,9 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Kanwar Jit Singh
 **********/
-/*
- * singh@ic.Berkeley.edu
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -17,14 +14,13 @@ double *asrc_vals, *asrc_derivs;
 int    asrc_nvals;
 
 
-/*ARGSUSED*/
+/* actually load the current voltage value into the
+ * sparse matrix previously provided
+ */
+
 int
 ASRCload(GENmodel *inModel, CKTcircuit *ckt)
 {
-    /* actually load the current voltage value into the
-     * sparse matrix previously provided
-     */
-
     ASRCmodel *model = (ASRCmodel*) inModel;
     ASRCinstance *here;
     int i, j;
@@ -32,9 +28,7 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
     double difference;
     double factor;
 
-    /*  loop through all the Arbitrary source models */
     for (; model != NULL; model = model->ASRCnextModel) {
-        /* loop through all the instances of the model */
         for (here = model->ASRCinstances; here != NULL;
              here=here->ASRCnextInstance)
         {
