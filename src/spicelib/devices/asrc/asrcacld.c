@@ -28,8 +28,8 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     NG_IGNORE(ckt);
 
-    for (; model != NULL; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here != NULL;
+    for (; model; model = model->ASRCnextModel) {
+        for (here = model->ASRCinstances; here;
              here = here->ASRCnextInstance) {
 
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;

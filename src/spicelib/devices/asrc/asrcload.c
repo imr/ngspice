@@ -28,8 +28,8 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
     double difference;
     double factor;
 
-    for (; model != NULL; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here != NULL;
+    for (; model; model = model->ASRCnextModel) {
+        for (here = model->ASRCinstances; here;
              here=here->ASRCnextInstance)
         {
 

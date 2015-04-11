@@ -21,8 +21,8 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double tol;
     double rhs;
 
-    for (; model != NULL; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here != NULL;
+    for (; model; model = model->ASRCnextModel) {
+        for (here = model->ASRCinstances; here;
              here = here->ASRCnextInstance) {
 
             i = here->ASRCtree->numVars;

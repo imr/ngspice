@@ -19,8 +19,8 @@ ASRCfindBr(CKTcircuit *ckt, GENmodel *inputModel, IFuid name)
     int error;
     CKTnode *tmp;
 
-    for (; model != NULL; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here != NULL;
+    for (; model; model = model->ASRCnextModel) {
+        for (here = model->ASRCinstances; here;
              here = here->ASRCnextInstance) {
             if (here->ASRCname == name) {
                 if (here->ASRCbranch == 0) {
