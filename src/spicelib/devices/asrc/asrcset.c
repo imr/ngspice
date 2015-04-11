@@ -140,10 +140,10 @@ ASRCunsetup(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
-    ASRCmodel *model;
+    ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
 
-    for (model = (ASRCmodel *) inModel; model != NULL;
+    for (; model != NULL;
          model = model->ASRCnextModel)
     {
         for (here = model->ASRCinstances; here != NULL;
