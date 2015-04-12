@@ -73,30 +73,12 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++) {
-                switch (here->ASRCtree->varTypes[i]) {
-                case IF_INSTANCE:
                     if (here->ASRCtype == ASRC_VOLTAGE) {
-                        /* CCVS */
                         *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
                     } else {
-                        /* CCCS */
                         *(here->ASRCposptr[j++]) += asrc_derivs[i] / factor;
                         *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
                     }
-                    break;
-                case IF_NODE:
-                    if (here->ASRCtype == ASRC_VOLTAGE) {
-                        /* VCVS */
-                        *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
-                    } else {
-                        /* VCCS */
-                        *(here->ASRCposptr[j++]) += asrc_derivs[i] / factor;
-                        *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
-                    }
-                    break;
-                default:
-                    return(E_BADPARM);
-                }
             }
         }
     }
