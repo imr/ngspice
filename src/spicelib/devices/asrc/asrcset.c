@@ -77,10 +77,12 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++) {
+                int column;
+
                 switch (here->ASRCtree->varTypes[i]) {
                 case IF_INSTANCE:
-                    here->ASRCcont_br = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
-                    if (here->ASRCcont_br == 0) {
+                    column = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
+                    if (column == 0) {
                         SPfrontEnd->IFerrorf(ERR_FATAL, "%s: unknown controlling source %s",
                                              here->ASRCname, here->ASRCtree->vars[i].uValue);
                         return(E_BADPARM);
@@ -88,26 +90,27 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* CCVS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, here->ASRCcont_br);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
                     } else if (here->ASRCtype == ASRC_CURRENT) {
                         /* CCCS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCcont_br);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCcont_br);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
                     } else {
                         return (E_BADPARM);
                     }
                     break;
                 case IF_NODE:
+                    column = here->ASRCtree->vars[i].nValue->number;
                     if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* VCVS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, here->ASRCtree->vars[i].nValue->number);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
                     } else if (here->ASRCtype == ASRC_CURRENT) {
                         /* VCCS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCtree->vars[i].nValue->number);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCtree->vars[i].nValue->number);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
                     } else {
                         return (E_BADPARM);
                     }
