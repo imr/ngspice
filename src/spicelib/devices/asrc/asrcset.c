@@ -125,7 +125,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     }
                     break;
                 default:
-                    break;
+                    return (E_BADPARM);
                 }
             }
         }
