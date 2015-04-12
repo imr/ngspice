@@ -87,33 +87,23 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                                              here->ASRCname, here->ASRCtree->vars[i].uValue);
                         return(E_BADPARM);
                     }
-                    if (here->ASRCtype == ASRC_VOLTAGE) {
-                        /* CCVS */
-                        here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
-                    } else if (here->ASRCtype == ASRC_CURRENT) {
-                        /* CCCS */
-                        here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
-                    } else {
-                        return (E_BADPARM);
-                    }
                     break;
                 case IF_NODE:
                     column = here->ASRCtree->vars[i].nValue->number;
-                    if (here->ASRCtype == ASRC_VOLTAGE) {
-                        /* VCVS */
-                        here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
-                    } else if (here->ASRCtype == ASRC_CURRENT) {
-                        /* VCCS */
-                        here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
-                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
-                    } else {
-                        return (E_BADPARM);
-                    }
+                    break;
+                default:
+                    return (E_BADPARM);
+                }
+
+                switch (here->ASRCtype) {
+                case ASRC_VOLTAGE:
+                    here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
+                    TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
+                    break;
+                case ASRC_CURRENT:
+                    here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
+                    TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
+                    TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
                     break;
                 default:
                     return (E_BADPARM);
