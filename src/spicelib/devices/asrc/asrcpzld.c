@@ -48,8 +48,8 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                     FREE(asrc_derivs);
                 }
                 asrc_nvals = i;
-                asrc_vals = NEWN(double, i);
-                asrc_derivs = NEWN(double, i);
+                asrc_vals = TMALLOC(double, i);
+                asrc_derivs = TMALLOC(double, i);
             }
 
             /* Fill the vector of values from the previous solution */

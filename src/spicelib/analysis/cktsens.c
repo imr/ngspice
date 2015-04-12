@@ -149,11 +149,11 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		size += 1;
 
 		/* Create an extra rhs */
-		delta_I = NEWN(double, size);
-		delta_iI = NEWN(double, size);
+		delta_I = TMALLOC(double, size);
+		delta_iI = TMALLOC(double, size);
 
-		delta_I_delta_Y = NEWN(double, size);
-		delta_iI_delta_Y = NEWN(double, size);
+		delta_I_delta_Y = TMALLOC(double, size);
+		delta_iI_delta_Y = TMALLOC(double, size);
 
 
 		num_vars = 0;
@@ -165,7 +165,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			return OK;	/* XXXX Should be E_ something */
 
 		k = 0;
-		output_names = NEWN(IFuid, num_vars);
+		output_names = TMALLOC(IFuid, num_vars);
 		for (sg = sgen_init(ckt, is_dc); sg; sgen_next(&sg)) {
 			if (!sg->is_instparam) {
 				sprintf(namebuf, "%s:%s",
@@ -203,11 +203,11 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 		FREE(output_names);
 		if (is_dc) {
-			output_values = NEWN(double, num_vars);
+			output_values = TMALLOC(double, num_vars);
 			output_cvalues = NULL;
 		} else {
 			output_values = NULL;
-			output_cvalues = NEWN(IFcomplex, num_vars);
+			output_cvalues = TMALLOC(IFcomplex, num_vars);
 			if (job->step_type != SENS_LINEAR)
 			    SPfrontEnd->OUTattributes (sen_data, NULL, OUT_SCALE_LOG, NULL);
 

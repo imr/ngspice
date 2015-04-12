@@ -198,7 +198,7 @@ DCpss(CKTcircuit *ckt,
         ckt->CKTtimeListSize = (int)(1 / ckt->CKTguessedFreq / maxstepsize + 0.5);
         ltra_num = CKTtypelook("LTRA");
         if (ltra_num >= 0 && ckt->CKThead[ltra_num] != NULL)
-            ckt->CKTtimePoints = NEWN(double, ckt->CKTtimeListSize);
+            ckt->CKTtimePoints = TMALLOC(double, ckt->CKTtimeListSize);
         /* end LTRA code addition */
 
         /* Breakpoints initialization */

@@ -128,7 +128,7 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTtimeListSize = (int) ceil( ckt->CKTfinalTime / maxstepsize );
         ltra_num = CKTtypelook("LTRA");
         if (ltra_num >= 0 && ckt->CKThead[ltra_num] != NULL)
-            ckt->CKTtimePoints = NEWN(double, ckt->CKTtimeListSize);
+            ckt->CKTtimePoints = TMALLOC(double, ckt->CKTtimeListSize);
         /* end LTRA code addition */
 
         if(ckt->CKTbreaks) FREE(ckt->CKTbreaks);

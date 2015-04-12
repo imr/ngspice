@@ -1128,7 +1128,7 @@ doset(CKTcircuit *ckt, int typecode, GENinstance *dev, GENmodel *mod, IFparm *op
         switch (opt->dataType & (IF_VARTYPES & ~IF_VECTOR)) {
         case IF_FLAG:
         case IF_INTEGER:
-            iptr = nval.v.vec.iVec = NEWN(int, n);
+            iptr = nval.v.vec.iVec = TMALLOC(int, n);
 
             for (i = 0; i < n; i++)
                 *iptr++ = (int)floor(*dptr++ + 0.5);

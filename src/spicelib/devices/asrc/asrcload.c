@@ -49,8 +49,8 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
                     FREE(asrc_derivs);
                 }
                 asrc_nvals = i;
-                asrc_vals = NEWN(double, i);
-                asrc_derivs = NEWN(double, i);
+                asrc_vals = TMALLOC(double, i);
+                asrc_derivs = TMALLOC(double, i);
             }
 
             j = 0;
@@ -76,7 +76,7 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
             /* The ac load precomputation and storage */
             if (ckt->CKTmode & MODEINITSMSIG) {
                 int size = here->ASRCtree->numVars + 1;
-                here->ASRCacValues = NEWN(double, size);
+                here->ASRCacValues = TMALLOC(double, size);
                 for (i = 0; i < here->ASRCtree->numVars; i++)
                     here->ASRCacValues[i] = asrc_derivs[i];
             }

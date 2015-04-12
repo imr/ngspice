@@ -31,8 +31,8 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
                     FREE(asrc_derivs);
                 }
                 asrc_nvals = i;
-                asrc_vals = NEWN(double, i);
-                asrc_derivs = NEWN(double, i);
+                asrc_vals = TMALLOC(double, i);
+                asrc_derivs = TMALLOC(double, i);
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++)

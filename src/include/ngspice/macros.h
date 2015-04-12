@@ -50,7 +50,6 @@
     } while(0)
 
 #define	NEW(TYPE)	(TMALLOC(TYPE, 1))
-#define	NEWN(TYPE,COUNT) (TMALLOC(TYPE, COUNT))
 
 
 #define	R_NORM(A,B) {					      \
