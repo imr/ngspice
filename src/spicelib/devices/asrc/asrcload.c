@@ -74,12 +74,9 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
             here->ASRCprev_value = rhs;
 
             /* The ac load precomputation and storage */
-            if (ckt->CKTmode & MODEINITSMSIG) {
-                int size = here->ASRCtree->numVars + 1;
-                here->ASRCacValues = TMALLOC(double, size);
+            if (ckt->CKTmode & MODEINITSMSIG)
                 for (i = 0; i < here->ASRCtree->numVars; i++)
                     here->ASRCacValues[i] = asrc_derivs[i];
-            }
 
             if (here->ASRCtype == ASRC_VOLTAGE) {
 
