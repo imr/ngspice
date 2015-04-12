@@ -43,9 +43,6 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (!here->ASRCreciproctcGiven)
                 here->ASRCreciproctc = 0;
 
-            here->ASRCposptr = NULL;
-            j = 0; /* strchr of the array holding ptrs to SMP */
-
             if (here->ASRCtype == ASRC_VOLTAGE)
                 if (here->ASRCbranch == 0) {
                     error = CKTmkCur(ckt, &tmp, here->ASRCname, "branch");
@@ -65,11 +62,23 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     return(E_NOMEM);                                    \
                 } } while(0)
 
+            switch (here->ASRCtype) {
+            case ASRC_VOLTAGE:
+                j = 4 + here->ASRCtree->numVars;
+                break;
+            case ASRC_CURRENT:
+                j = 2 * here->ASRCtree->numVars;
+                break;
+            default:
+                return (E_BADPARM);
+            }
+
+            here->ASRCposptr = TMALLOC(double *, j);
+
             /* For each controlling variable set the entries
                in the vector of the positions of the SMP */
+            j = 0;
             if (here->ASRCtype == ASRC_VOLTAGE) {
-
-                here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 4);
 
                 TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCbranch);
                 TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCbranch);
@@ -96,18 +105,11 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     return (E_BADPARM);
                 }
 
-                switch (here->ASRCtype) {
-                case ASRC_VOLTAGE:
-                    here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
+                if (here->ASRCtype == ASRC_VOLTAGE) {
                     TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
-                    break;
-                case ASRC_CURRENT:
-                    here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
+                } else {
                     TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
                     TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
-                    break;
-                default:
-                    return (E_BADPARM);
                 }
             }
         }
