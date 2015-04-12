@@ -82,27 +82,29 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if (here->ASRCtype == ASRC_VOLTAGE) {
+
                 *(here->ASRCposptr[j++]) += 1.0;
                 *(here->ASRCposptr[j++]) -= 1.0;
                 *(here->ASRCposptr[j++]) -= 1.0;
                 *(here->ASRCposptr[j++]) += 1.0;
-            }
 
-            for (i = 0; i < here->ASRCtree->numVars; i++) {
-                rhs -= (asrc_vals[i] * asrc_derivs[i]);
+                for (i = 0; i < here->ASRCtree->numVars; i++) {
+                    rhs -= (asrc_vals[i] * asrc_derivs[i]);
 
-                    if (here->ASRCtype == ASRC_VOLTAGE) {
-                        *(here->ASRCposptr[j++]) -= asrc_derivs[i] * factor;
-                    } else {
-                        *(here->ASRCposptr[j++]) += asrc_derivs[i] * factor;
-                        *(here->ASRCposptr[j++]) -= asrc_derivs[i] * factor;
-                    }
-            }
+                    *(here->ASRCposptr[j++]) -= asrc_derivs[i] * factor;
+                }
 
-            /* Insert the RHS */
-            if (here->ASRCtype == ASRC_VOLTAGE) {
                 ckt->CKTrhs[here->ASRCbranch] += factor * rhs;
+
             } else {
+
+                for (i = 0; i < here->ASRCtree->numVars; i++) {
+                    rhs -= (asrc_vals[i] * asrc_derivs[i]);
+
+                    *(here->ASRCposptr[j++]) += asrc_derivs[i] * factor;
+                    *(here->ASRCposptr[j++]) -= asrc_derivs[i] * factor;
+                }
+
                 ckt->CKTrhs[here->ASRCposNode] -= factor * rhs;
                 ckt->CKTrhs[here->ASRCnegNode] += factor * rhs;
             }

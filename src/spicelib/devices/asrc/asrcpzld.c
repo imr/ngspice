@@ -66,19 +66,22 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                 return(E_BADPARM);
 
             if (here->ASRCtype == ASRC_VOLTAGE) {
-                *(here->ASRCposptr[j++]) += 1.0;
-                *(here->ASRCposptr[j++]) -= 1.0;
-                *(here->ASRCposptr[j++]) -= 1.0;
-                *(here->ASRCposptr[j++]) += 1.0;
-            }
 
-            for (i = 0; i < here->ASRCtree->numVars; i++) {
-                    if (here->ASRCtype == ASRC_VOLTAGE) {
-                        *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
-                    } else {
-                        *(here->ASRCposptr[j++]) += asrc_derivs[i] / factor;
-                        *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
-                    }
+                *(here->ASRCposptr[j++]) += 1.0;
+                *(here->ASRCposptr[j++]) -= 1.0;
+                *(here->ASRCposptr[j++]) -= 1.0;
+                *(here->ASRCposptr[j++]) += 1.0;
+
+                for (i = 0; i < here->ASRCtree->numVars; i++)
+                    *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
+
+            } else {
+
+                for (i = 0; i < here->ASRCtree->numVars; i++) {
+                    *(here->ASRCposptr[j++]) += asrc_derivs[i] / factor;
+                    *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
+                }
+
             }
         }
     }
