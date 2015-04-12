@@ -20,7 +20,6 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     ASRCinstance *here;
     ASRCmodel *model = (ASRCmodel*) inModel;
     int error, i, j;
-    int v_first;
     CKTnode *tmp;
 
     NG_IGNORE(states);
@@ -37,7 +36,6 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->ASRCposptr = NULL;
             j = 0; /* strchr of the array holding ptrs to SMP */
-            v_first = 1;
 
             if (here->ASRCtype == ASRC_VOLTAGE)
                 if (here->ASRCbranch == 0) {
@@ -70,7 +68,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     return(E_UNSUPP);
                 }
 
-                here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 5);
+                here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 4);
 
                 TSTALLOC(ASRCposptr[j++], ASRCposNode, ASRCbranch);
                 TSTALLOC(ASRCposptr[j++], ASRCnegNode, ASRCbranch);
@@ -89,13 +87,8 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     }
                     if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* CCVS */
-                        if (v_first) {
-                            TSTALLOC(ASRCposptr[j++], ASRCbranch, ASRCcont_br);
-                            v_first = 0;
-                        } else {
-                            here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                            TSTALLOC(ASRCposptr[j++], ASRCbranch, ASRCcont_br);
-                        }
+                        here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
+                        TSTALLOC(ASRCposptr[j++], ASRCbranch, ASRCcont_br);
                     } else if (here->ASRCtype == ASRC_CURRENT) {
                         /* CCCS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
@@ -108,13 +101,8 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 case IF_NODE:
                     if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* VCVS */
-                        if (v_first) {
-                            MY_TSTALLOC(ASRCposptr[j++], ASRCbranch, here->ASRCtree->vars[i].nValue);
-                            v_first = 0;
-                        } else {
-                            here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                            MY_TSTALLOC(ASRCposptr[j++], ASRCbranch, here->ASRCtree->vars[i].nValue);
-                        }
+                        here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
+                        MY_TSTALLOC(ASRCposptr[j++], ASRCbranch, here->ASRCtree->vars[i].nValue);
                     } else if (here->ASRCtype == ASRC_CURRENT) {
                         /* VCCS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
