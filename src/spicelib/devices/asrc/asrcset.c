@@ -47,7 +47,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr, first, second)                                    \
-            do { if ((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL) { \
+            do { if ((here->ptr = SMPmakeElt(matrix, first, second)) == NULL) { \
                     return(E_NOMEM);                                    \
                 } } while(0)
 
@@ -70,10 +70,10 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
                 here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 4);
 
-                TSTALLOC(ASRCposptr[j++], ASRCposNode, ASRCbranch);
-                TSTALLOC(ASRCposptr[j++], ASRCnegNode, ASRCbranch);
-                TSTALLOC(ASRCposptr[j++], ASRCbranch, ASRCnegNode);
-                TSTALLOC(ASRCposptr[j++], ASRCbranch, ASRCposNode);
+                TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCbranch);
+                TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCbranch);
+                TSTALLOC(ASRCposptr[j++], here->ASRCbranch,  here->ASRCnegNode);
+                TSTALLOC(ASRCposptr[j++], here->ASRCbranch,  here->ASRCposNode);
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++) {
@@ -88,12 +88,12 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* CCVS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                        TSTALLOC(ASRCposptr[j++], ASRCbranch, ASRCcont_br);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, here->ASRCcont_br);
                     } else if (here->ASRCtype == ASRC_CURRENT) {
                         /* CCCS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
-                        TSTALLOC(ASRCposptr[j++], ASRCposNode, ASRCcont_br);
-                        TSTALLOC(ASRCposptr[j++], ASRCnegNode, ASRCcont_br);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCcont_br);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCcont_br);
                     } else {
                         return (E_BADPARM);
                     }
@@ -102,12 +102,12 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     if (here->ASRCtype == ASRC_VOLTAGE) {
                         /* VCVS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 1);
-                        MY_TSTALLOC(ASRCposptr[j++], ASRCbranch, here->ASRCtree->vars[i].nValue);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCbranch, here->ASRCtree->vars[i].nValue->number);
                     } else if (here->ASRCtype == ASRC_CURRENT) {
                         /* VCCS */
                         here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 2);
-                        MY_TSTALLOC(ASRCposptr[j++], ASRCposNode, here->ASRCtree->vars[i].nValue);
-                        MY_TSTALLOC(ASRCposptr[j++], ASRCnegNode, here->ASRCtree->vars[i].nValue);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCtree->vars[i].nValue->number);
+                        TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCtree->vars[i].nValue->number);
                     } else {
                         return (E_BADPARM);
                     }
