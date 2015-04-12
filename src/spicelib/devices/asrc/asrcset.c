@@ -27,6 +27,15 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     for (; model; model = model->ASRCnextModel) {
         for (here = model->ASRCinstances; here; here=here->ASRCnextInstance) {
 
+            if (!here->ASRCtree)
+                return E_PARMVAL;
+
+            if (here->ASRCtype == ASRC_VOLTAGE)
+                if (here->ASRCposNode == here->ASRCnegNode) {
+                    SPfrontEnd->IFerrorf(ERR_FATAL, "instance %s is a shorted ASRC", here->ASRCname);
+                    return(E_UNSUPP);
+                }
+
             if (!here->ASRCtc1Given)
                 here->ASRCtc1 = 0.0;
             if (!here->ASRCtc2Given)
@@ -58,15 +67,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             /* For each controlling variable set the entries
                in the vector of the positions of the SMP */
-            if (!here->ASRCtree)
-                return E_PARMVAL;
-
             if (here->ASRCtype == ASRC_VOLTAGE) {
-
-                if (here->ASRCposNode == here->ASRCnegNode) {
-                    SPfrontEnd->IFerrorf(ERR_FATAL, "instance %s is a shorted ASRC", here->ASRCname);
-                    return(E_UNSUPP);
-                }
 
                 here->ASRCposptr = TREALLOC(double *, here->ASRCposptr, j + 4);
 
