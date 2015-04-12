@@ -29,6 +29,7 @@ typedef struct sASRCinstance {
     int ASRCtype;              /* Whether source is voltage or current */
     int ASRCbranch;            /* number of branch equation added for v source */
     IFparseTree *ASRCtree;     /* The parse tree */
+    int *ASRCvars;             /* indices of the controlling nodes/branches */
 
     double ASRCtemp;           /* temperature at which this resistor operates */
     double ASRCdtemp;          /* delta-temperature of a particular instance  */

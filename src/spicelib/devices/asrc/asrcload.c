@@ -59,13 +59,7 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
              * Fill the vector of values from the previous solution
              */
             for (i = 0; i < here->ASRCtree->numVars; i++)
-                if (here->ASRCtree->varTypes[i] == IF_INSTANCE) {
-                    int branch = CKTfndBranch(ckt, here->ASRCtree->vars[i].uValue);
-                    asrc_vals[i] = ckt->CKTrhsOld[branch];
-                } else {
-                    int node_num = (here->ASRCtree->vars[i].nValue) -> number;
-                    asrc_vals[i] = ckt->CKTrhsOld[node_num];
-                }
+                asrc_vals[i] = ckt->CKTrhsOld[here->ASRCvars[i]];
 
             if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &rhs, asrc_vals, asrc_derivs) != OK)
                 return(E_BADPARM);
