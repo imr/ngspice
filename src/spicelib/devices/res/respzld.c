@@ -21,7 +21,7 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
     RESmodel *model = (RESmodel *)inModel;
     RESinstance *here;
-    double m;
+    double g;
 
     NG_IGNORE(s);
     NG_IGNORE(ckt);
@@ -33,12 +33,15 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
 
-	    m = here->RESm;
-	    
-            *(here->RESposPosptr) += m * here->RESconduct;
-            *(here->RESnegNegptr) += m * here->RESconduct;
-            *(here->RESposNegptr) -= m * here->RESconduct;
-            *(here->RESnegPosptr) -= m * here->RESconduct;
+            if (here->RESacresGiven)
+                g = here->RESm * here->RESacConduct;
+            else
+                g = here->RESm * here->RESconduct;
+
+            *(here->RESposPosptr) += g;
+            *(here->RESnegNegptr) += g;
+            *(here->RESposNegptr) -= g;
+            *(here->RESnegPosptr) -= g;
         }
     }
     return(OK);

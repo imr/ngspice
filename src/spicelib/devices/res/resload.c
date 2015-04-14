@@ -47,7 +47,7 @@ int
 RESacload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
-    double m;
+    double g;
 
     NG_IGNORE(ckt);
 
@@ -59,19 +59,15 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances; here != NULL ;
              here = here->RESnextInstance) {
 
-            m = (here->RESm);
+            if (here->RESacresGiven)
+                g = here->RESm * here->RESacConduct;
+            else
+                g = here->RESm * here->RESconduct;
 
-            if(here->RESacresGiven) {
-                *(here->RESposPosptr) += m * here->RESacConduct;
-                *(here->RESnegNegptr) += m * here->RESacConduct;
-                *(here->RESposNegptr) -= m * here->RESacConduct;
-                *(here->RESnegPosptr) -= m * here->RESacConduct;
-            } else {
-                *(here->RESposPosptr) += m * here->RESconduct;
-                *(here->RESnegNegptr) += m * here->RESconduct;
-                *(here->RESposNegptr) -= m * here->RESconduct;
-                *(here->RESnegPosptr) -= m * here->RESconduct;
-            }
+            *(here->RESposPosptr) += g;
+            *(here->RESnegNegptr) += g;
+            *(here->RESposNegptr) -= g;
+            *(here->RESnegPosptr) -= g;
         }
     }
     return(OK);
