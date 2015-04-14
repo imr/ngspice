@@ -31,10 +31,17 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 
             m = (here->RESm);
 
-            *(here->RESposPosptr) += m * here->RESconduct;
-            *(here->RESnegNegptr) += m * here->RESconduct;
-            *(here->RESposNegptr) -= m * here->RESconduct;
-            *(here->RESnegPosptr) -= m * here->RESconduct;
+            *(here->RES_posPrime_posPrime) += m * here->RESconduct;
+            *(here->RES_neg_neg)           += m * here->RESconduct;
+            *(here->RES_posPrime_neg)      -= m * here->RESconduct;
+            *(here->RES_neg_PosPrime)      -= m * here->RESconduct;
+
+            if (here->RESbranch) {
+                *(here->RES_pos_ibr)      += 1.0 ;
+                *(here->RES_posPrime_ibr) -= 1.0 ;
+                *(here->RES_ibr_pos)      += 1.0 ;
+                *(here->RES_ibr_posPrime) -= 1.0 ;
+            }
         }
     }
     return(OK);
@@ -64,10 +71,17 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
             else
                 g = here->RESm * here->RESconduct;
 
-            *(here->RESposPosptr) += g;
-            *(here->RESnegNegptr) += g;
-            *(here->RESposNegptr) -= g;
-            *(here->RESnegPosptr) -= g;
+            *(here->RES_posPrime_posPrime) += g;
+            *(here->RES_neg_neg)           += g;
+            *(here->RES_posPrime_neg)      -= g;
+            *(here->RES_neg_PosPrime)      -= g;
+
+            if (here->RESbranch) {
+                *(here->RES_pos_ibr)      += 1.0 ;
+                *(here->RES_posPrime_ibr) -= 1.0 ;
+                *(here->RES_ibr_pos)      += 1.0 ;
+                *(here->RES_ibr_posPrime) -= 1.0 ;
+            }
         }
     }
     return(OK);

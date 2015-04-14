@@ -38,10 +38,17 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             else
                 g = here->RESm * here->RESconduct;
 
-            *(here->RESposPosptr) += g;
-            *(here->RESnegNegptr) += g;
-            *(here->RESposNegptr) -= g;
-            *(here->RESnegPosptr) -= g;
+            *(here->RES_posPrime_posPrime) += g;
+            *(here->RES_neg_neg)           += g;
+            *(here->RES_posPrime_neg)      -= g;
+            *(here->RES_neg_PosPrime)      -= g;
+
+            if (here->RESbranch) {
+                *(here->RES_pos_ibr)      += 1.0;
+                *(here->RES_posPrime_ibr) -= 1.0;
+                *(here->RES_ibr_pos)      += 1.0;
+                *(here->RES_ibr_posPrime) -= 1.0;
+            }
         }
     }
     return(OK);

@@ -73,6 +73,8 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef HAS_PROGREP
         SetAnalyse( "Device Setup", 0 );
 #endif
+        // make sure asrc comes before res, cap, ind etc
+        //   damit die findbranches durch sind ...
         if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {
             error = DEVices[i]->DEVsetup (matrix, ckt->CKThead[i], ckt,
                     &ckt->CKTnumStates);

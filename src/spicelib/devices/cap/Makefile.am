@@ -28,6 +28,7 @@ libcap_la_SOURCES =	\
 	capsset.c	\
 	capsupd.c	\
 	captemp.c	\
+	capfindbr.c	\
 	captrunc.c
 
 

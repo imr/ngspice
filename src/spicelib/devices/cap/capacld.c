@@ -29,10 +29,17 @@ CAPacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             val = ckt->CKTomega * here->CAPcapac;
 
-            *(here->CAPposPosptr +1) += m * val;
-            *(here->CAPnegNegptr +1) += m * val;
-            *(here->CAPposNegptr +1) -= m * val;
-            *(here->CAPnegPosptr +1) -= m * val;
+            *(here->CAP_posPrime_posPrime +1) += m * val;
+            *(here->CAP_neg_neg +1)           += m * val;
+            *(here->CAP_posPrime_neg +1)      -= m * val;
+            *(here->CAP_neg_PosPrime +1)      -= m * val;
+
+            if (here->CAPbranch) {
+                *(here->CAP_pos_ibr)      += 1.0;
+                *(here->CAP_posPrime_ibr) -= 1.0;
+                *(here->CAP_ibr_pos)      += 1.0;
+                *(here->CAP_ibr_posPrime) -= 1.0;
+            }
         }
     }
     return(OK);

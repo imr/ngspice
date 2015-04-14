@@ -44,11 +44,11 @@ SPICEdev RESinfo = {
  /* DEVmodParam   */ RESmParam,
  /* DEVload       */ RESload,
  /* DEVsetup      */ RESsetup,
- /* DEVunsetup    */ NULL,
+ /* DEVunsetup    */ RESunsetup,
  /* DEVpzSetup    */ RESsetup,
  /* DEVtemperature*/ REStemp,
  /* DEVtrunc      */ NULL,
- /* DEVfindBranch */ NULL,
+ /* DEVfindBranch */ RESfindBr,
  /* DEVacLoad     */ RESacload,  /* ac load and normal load are identical */
  /* DEVaccept     */ NULL,
  /* DEVdestroy    */ RESdestroy,

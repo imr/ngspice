@@ -33,14 +33,21 @@ CAPpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             val = here->CAPcapac;
             m = here->CAPm;
 	    
-	    *(here->CAPposPosptr ) +=   m * val * s->real;
-            *(here->CAPposPosptr +1) += m * val * s->imag;
-            *(here->CAPnegNegptr ) +=   m * val * s->real;
-            *(here->CAPnegNegptr +1) += m * val * s->imag;
-            *(here->CAPposNegptr ) -=   m * val * s->real;
-            *(here->CAPposNegptr +1) -= m * val * s->imag;
-            *(here->CAPnegPosptr ) -=   m * val * s->real;
-            *(here->CAPnegPosptr +1) -= m * val * s->imag;
+            *(here->CAP_posPrime_posPrime )   += m * val * s->real;
+            *(here->CAP_posPrime_posPrime +1) += m * val * s->imag;
+            *(here->CAP_neg_neg )             += m * val * s->real;
+            *(here->CAP_neg_neg +1)           += m * val * s->imag;
+            *(here->CAP_posPrime_neg )        -= m * val * s->real;
+            *(here->CAP_posPrime_neg +1)      -= m * val * s->imag;
+            *(here->CAP_neg_PosPrime )        -= m * val * s->real;
+            *(here->CAP_neg_PosPrime +1)      -= m * val * s->imag;
+
+            if (here->CAPbranch) {
+                *(here->CAP_pos_ibr)      += 1.0;
+                *(here->CAP_posPrime_ibr) -= 1.0;
+                *(here->CAP_ibr_pos)      += 1.0;
+                *(here->CAP_ibr_posPrime) -= 1.0;
+            }
         }
     }
     return(OK);
