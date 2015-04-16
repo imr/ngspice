@@ -1,0 +1,35 @@
+testcase for meas min/max/avg
+
+* (exec-spice "ngspice %s" t)
+
+R1 1 0 1k
+
+.control
+
+tran 10ms 1000ms
+
+compose time values 200 210 240 260
+compose foo  values 110 140 120 125
+
+plot foo
+
+meas tran foo_avg1 AVG foo from=200 to=260
+let gold_avg1 = ((110+140)/2 * (210-200) + (140+120)/2 * (240-210) + (120+125)/2 * (260-240)) / (260-200)
+
+meas tran foo_avg2 AVG foo from=210 to=240
+let gold_avg2 = ((140+120)/2 * (240-210)) / (240-210)
+
+meas tran foo_max MAX foo from=200 to=260
+let gold_max = 140
+
+meas tran foo_min MIN foo from=200 to=260
+let gold_min = 110
+
+print foo_avg1 gold_avg1
+print foo_avg2 gold_avg2
+print foo_max  gold_max
+print foo_min  gold_min
+
+.endc
+
+.end
