@@ -696,9 +696,10 @@ measure_minMaxAvg(
     ANALYSIS_TYPE_T mFunctionType   /* in: one of AT_AVG, AT_MIN, AT_MAX, AT_MIN_AT, AT_MAX_AT */
     )
 {
-    int i, avgCnt;
+    int i;
     struct dvec *d, *dScale;
     double value, svalue, mValue, mValueAt;
+    double pvalue = 0.0, sprev = 0.0, Tsum = 0.0;
     int first;
     bool ac_check = FALSE, sp_check = FALSE, dc_check = FALSE, tran_check = FALSE;
 
@@ -707,7 +708,6 @@ measure_minMaxAvg(
     meas->m_measured = NAN;
     meas->m_measured_at = NAN;
     first = 0;
-    avgCnt = 0;
 
     d = vec_get(meas->m_vec);
     if (d == NULL) {
@@ -778,10 +778,26 @@ measure_minMaxAvg(
         }
 
         if (first == 0) {
-            mValue = value;
-            mValueAt = svalue;
             first = 1;
 
+            switch (mFunctionType) {
+            case AT_MIN:
+            case AT_MIN_AT:
+            case AT_MAX_AT:
+            case AT_MAX:
+                mValue = value;
+                mValueAt = svalue;
+                break;
+            case AT_AVG:
+                mValue = 0.0;
+                mValueAt = svalue;
+                Tsum = 0.0;
+                pvalue = value;
+                sprev = svalue;
+                break;
+            default:
+                fprintf(cp_err, "Error: improper min/max/avg call.\n");
+            }
         } else {
             switch (mFunctionType) {
             case AT_MIN:
@@ -801,8 +817,10 @@ measure_minMaxAvg(
                 break;
             }
             case AT_AVG: {
-                mValue = mValue + value;
-                avgCnt ++;
+                mValue += 0.5 * (value + pvalue) * (svalue - sprev);
+                Tsum += (svalue - sprev);
+                pvalue = value;
+                sprev = svalue;
                 break;
             }
             default :
@@ -815,7 +833,7 @@ measure_minMaxAvg(
     switch (mFunctionType)
     {
     case AT_AVG: {
-        meas->m_measured = (mValue / avgCnt);
+        meas->m_measured = mValue / (first ? Tsum : 1.0);
         meas->m_measured_at = svalue;
         break;
     }
