@@ -297,19 +297,26 @@ com_sttus(wordlist *wl)
  */
 
 void
+dbfree1(struct dbcomm *dd)
+{
+    tfree(dd->db_nodename1);
+    tfree(dd->db_nodename2);
+    if (dd->db_also) {
+        dbfree(dd->db_also);
+        dd->db_also = NULL;
+    }
+    tfree(dd);
+}
+
+
+void
 dbfree(struct dbcomm *db)
 {
     struct dbcomm *dd, *dn;
 
     for (dd = db; dd; dd = dn) {
         dn = dd->db_next;
-        tfree(dd->db_nodename1);
-        tfree(dd->db_nodename2);
-        if (dd->db_also) {
-            dbfree(dd->db_also);
-            dd->db_also = NULL;
-        }
-        tfree(dd);
+        dbfree1(dd);
     }
 }
 
@@ -324,10 +331,7 @@ com_delete(wordlist *wl)
     struct dbcomm *d, *dt;
 
     if (wl && eq(wl->wl_word, "all")) {
-        for (dt = dbs; dt; dt = d) {
-            d = dt->db_next;
-            dbfree(dt);
-        }
+        dbfree(dbs);
         ft_curckt->ci_dbs = dbs = NULL;
         return;
     } else if (!wl) {
@@ -362,7 +366,7 @@ com_delete(wordlist *wl)
                     dt->db_next = d->db_next;
                 else
                     ft_curckt->ci_dbs = dbs = d->db_next;
-                dbfree(d);
+                dbfree1(d);
                 (void) sprintf(buf, "%d", i);
                 cp_remkword(CT_DBNUMS, buf);
                 break;

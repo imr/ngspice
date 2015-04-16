@@ -30,6 +30,7 @@ extern void ft_checkkids(void);
 
 extern bool ft_bpcheck(struct plot *runplot, int iteration);
 extern void dbfree(struct dbcomm *db);
+extern void dbfree1(struct dbcomm *db);
 
 
 /* breakp2.c */
