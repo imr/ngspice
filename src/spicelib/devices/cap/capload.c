@@ -45,8 +45,6 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                     vcap = *(ckt->CKTrhsOld+here->CAPposNode) -
                            *(ckt->CKTrhsOld+here->CAPnegNode) ;
                 }
-    /* check if capacitors are in the circuit or are open circuited */
-    if(ckt->CKTmode & (MODETRAN|MODEAC|MODETRANOP) ) {
                 if(ckt->CKTmode & (MODETRAN | MODEAC)) {
 #ifndef PREDICTOR
                     if(ckt->CKTmode & MODEINITPRED) {
@@ -76,6 +74,7 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhs+here->CAPposNode) -= m * ceq;
                     *(ckt->CKTrhs+here->CAPnegNode) += m * ceq;
                 } else
+    if (ckt->CKTmode & MODETRANOP) {
                     *(ckt->CKTstate0+here->CAPqcap) = here->CAPcapac * vcap;
     }
             }
