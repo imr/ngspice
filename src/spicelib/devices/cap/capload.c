@@ -26,14 +26,12 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     double m;
 
+    /* evaluate device independent analysis conditions */
+    cond1 = ((ckt->CKTmode & MODEDC) && (ckt->CKTmode & MODEINITJCT))
+        ||  ((ckt->CKTmode & MODEUIC) && (ckt->CKTmode & MODEINITTRAN));
+
     /* check if capacitors are in the circuit or are open circuited */
     if(ckt->CKTmode & (MODETRAN|MODEAC|MODETRANOP) ) {
-        /* evaluate device independent analysis conditions */
-        cond1=
-            ( ( (ckt->CKTmode & MODEDC) &&
-                (ckt->CKTmode & MODEINITJCT) )
-              || ( ( ckt->CKTmode & MODEUIC) &&
-                   ( ckt->CKTmode & MODEINITTRAN) ) ) ;
         /*  loop through all the capacitor models */
         for( ; model != NULL; model = model->CAPnextModel ) {
 
