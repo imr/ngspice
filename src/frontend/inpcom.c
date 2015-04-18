@@ -1704,9 +1704,9 @@ static void
 comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 {
     struct line *card;
-    char **used_subckt_names, **used_model_names, *subckt_name, *model_name;
-    int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, num_terminals = 0, tmp_cnt = 0;
-    bool processing_subckt = FALSE, found_subckt = FALSE, remove_subckt = FALSE, found_model = FALSE, has_models = FALSE;
+    char **used_subckt_names, **used_model_names;
+    int  num_used_subckt_names = 0, num_used_model_names = 0, i = 0, tmp_cnt = 0;
+    bool processing_subckt = FALSE, remove_subckt = FALSE, has_models = FALSE;
     int skip_control = 0, nested_subckt = 0;
 
     /* generate arrays of *char for subckt or model names. Start
@@ -1748,10 +1748,11 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             processing_subckt = TRUE;
         if (ciprefix(".ends", line) || ciprefix(".eom", line))
             processing_subckt = FALSE;
+
         if (!processing_subckt) {
             if (*line == 'x') {
-                subckt_name = get_instance_subckt(line);
-                found_subckt = FALSE;
+                char *subckt_name = get_instance_subckt(line);
+                bool found_subckt = FALSE;
                 for (i = 0; i < num_used_subckt_names; i++)
                     if (strcmp(used_subckt_names[i], subckt_name) == 0) found_subckt = TRUE;
                 if (!found_subckt) {
@@ -1761,8 +1762,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                     tfree(subckt_name);
                 }
             } else if (*line == 'a') {
-                model_name = get_adevice_model_name(line);
-                found_model = FALSE;
+                char *model_name = get_adevice_model_name(line);
+                bool found_model = FALSE;
                 for (i = 0; i < num_used_model_names; i++)
                     if (strcmp(used_model_names[i], model_name) == 0)
                         found_model = TRUE;
@@ -1774,16 +1775,14 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                 /* This is a preliminary version, until we have found a reliable
                    method to detect the model name out of the input line (Many
                    options have to be taken into account.). */
-                num_terminals = get_number_terminals(line);
+                int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
-                    bool model_ok;
-                    model_name = get_model_name(line, num_terminals);
+                    char *model_name = get_model_name(line, num_terminals);
 
-                    model_ok = is_a_modelname(model_name);
                     /* Check if model has already been recognized, if not, add its name to
                        list used_model_names[i] */
-                    if (model_ok) {
-                        found_model = FALSE;
+                    if (is_a_modelname(model_name)) {
+                        bool found_model = FALSE;
                         for (i = 0; i < num_used_model_names; i++)
                             if (strcmp(used_model_names[i], model_name) == 0)
                                 found_model = TRUE;
@@ -1814,8 +1813,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             continue;
 
         if (ciprefix(".subckt", line) || ciprefix(".macro", line)) {
+            char *subckt_name = get_subckt_model_name(line);
             nested_subckt++;
-            subckt_name = get_subckt_model_name(line);
             if (nested_subckt == 1) {
                 /* check if unused, only at top level */
                 remove_subckt = TRUE;
@@ -1840,7 +1839,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                  (ciprefix(".model", line) || ciprefix(".cmodel", line)))
         {
             char *model_type = get_model_type(line);
-            model_name = get_subckt_model_name(line);
+            char *model_name = get_subckt_model_name(line);
+            bool found_model = FALSE;
             /* keep R, L, C models because in addition to no. of terminals the value may be given,
                as in RE1 1 2 800 newres dtemp=5, so model name may be token no. 4 or 5,
                and, if 5, will not be detected by get_subckt_model_name()*/
@@ -1850,7 +1850,6 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
             {
                 found_model = TRUE;
             } else {
-                found_model = FALSE;
                 for (i = 0; i < num_used_model_names; i++)
                     if (model_name_match(used_model_names[i], model_name)) {
                         found_model = TRUE;
