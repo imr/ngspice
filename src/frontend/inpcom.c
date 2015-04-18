@@ -1583,6 +1583,31 @@ get_adevice_model_name(char *line)
 }
 
 
+/*
+ * FIXME, this is a mere hack of the worst kind
+ *   to distinguish modelname tokens from other tokens
+ *   by a simple comparison for well known discrete device name patterns
+ */
+
+static int
+is_a_modelname(const char *s)
+{
+    /* first character of model name is character from alphabet */
+    if (isalpha(s[0]))
+        return TRUE;
+
+    /* e.g. 1N4002 */
+    if (isdigit(s[0]) && isalpha(s[1]) && isdigit(s[2]))
+        return TRUE;
+
+    /* e.g. 2SK456 */
+    if (isdigit(s[0]) && isalpha(s[1]) && isalpha(s[2]) && isdigit(s[3]))
+        return TRUE;
+
+    return FALSE;
+}
+
+
 static void
 get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                        char *used_subckt_names[], int *num_used_subckt_names,
@@ -1642,18 +1667,9 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                 num_terminals = get_number_terminals(line);
 
                 if (num_terminals != 0) {
-                    char *tmp_name, *tmp_name1;
-                    tmp_name1 = tmp_name = model_name = get_model_name(line, num_terminals);
+                    model_name = get_model_name(line, num_terminals);
 
-                    if (isalpha(*model_name) ||
-                        /* first character is digit, second is alpha, third is digit,
-                           e.g. 1N4002 */
-                        ((strlen(model_name) > 2) && isdigit(*tmp_name) &&
-                         isalpha(*(++tmp_name)) && isdigit(*(++tmp_name))) ||
-                        /* first character is is digit, second is alpha, third is alpha, fourth is digit
-                           e.g. 2SK456 */
-                        ((strlen(model_name) > 3) && isdigit(*tmp_name1) && isalpha(*(++tmp_name1)) &&
-                         isalpha(*(++tmp_name1)) && isdigit(*(++tmp_name1)))) {
+                    if (is_a_modelname(model_name)) {
                         found_model = FALSE;
                         for (i = 0; i < *num_used_model_names; i++)
                             if (strcmp(used_model_names[i], model_name) == 0) found_model = TRUE;
@@ -1760,23 +1776,10 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                    options have to be taken into account.). */
                 num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
-                    bool model_ok = FALSE;
-                    char *tmp_name, *tmp_name1;
-                    tmp_name = tmp_name1 = model_name = get_model_name(line, num_terminals);
-                    /* first character of model name is character from alphabet */
-                    if (isalpha(*model_name))
-                        model_ok = TRUE;
-                    /* first character is digit, second is alpha, third is digit,
-                       e.g. 1N4002 */
-                    else if ((strlen(model_name) > 2) && isdigit(*tmp_name) &&
-                             isalpha(*(++tmp_name)) && isdigit(*(++tmp_name)))
-                        model_ok = TRUE;
-                    /* first character is is digit, second is alpha, third is alpha, fourth is digit
-                       e.g. 2SK456 */
-                    else if ((strlen(model_name) > 3) && isdigit(*tmp_name1) &&
-                             isalpha(*(++tmp_name1)) && isalpha(*(++tmp_name1)) &&
-                             isdigit(*(++tmp_name1)))
-                        model_ok = TRUE;
+                    bool model_ok;
+                    model_name = get_model_name(line, num_terminals);
+
+                    model_ok = is_a_modelname(model_name);
                     /* Check if model has already been recognized, if not, add its name to
                        list used_model_names[i] */
                     if (model_ok) {
