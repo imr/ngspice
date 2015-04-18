@@ -1615,9 +1615,9 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                        bool has_models)
 {
     struct line *card;
-    char *curr_subckt_name, *inst_subckt_name, *model_name, *new_names[100];
-    bool found_subckt = FALSE, have_subckt = FALSE, found_model = FALSE;
-    int  i, num_terminals = 0, tmp_cnt = 0;
+    char *new_names[100];
+    bool found_subckt = FALSE;
+    int  i, tmp_cnt = 0;
 
     for (card = start_card; card; card = card->li_next) {
 
@@ -1630,7 +1630,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
             break;
 
         if (ciprefix(".subckt", line) || ciprefix(".macro", line)) {
-            curr_subckt_name = get_subckt_model_name(line);
+            char *curr_subckt_name = get_subckt_model_name(line);
 
             if (strcmp(curr_subckt_name, subckt_name) == 0)
                 found_subckt = TRUE;
@@ -1640,8 +1640,8 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 
         if (found_subckt) {
             if (*line == 'x') {
-                inst_subckt_name = get_instance_subckt(line);
-                have_subckt = FALSE;
+                char *inst_subckt_name = get_instance_subckt(line);
+                bool have_subckt = FALSE;
                 for (i = 0; i < *num_used_subckt_names; i++)
                     if (strcmp(used_subckt_names[i], inst_subckt_name) == 0)
                         have_subckt = TRUE;
@@ -1652,8 +1652,8 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     tfree(inst_subckt_name);
                 }
             } else if (*line == 'a') {
-                model_name = get_adevice_model_name(line);
-                found_model = FALSE;
+                char *model_name = get_adevice_model_name(line);
+                bool found_model = FALSE;
                 for (i = 0; i < *num_used_model_names; i++)
                     if (strcmp(used_model_names[i], model_name) == 0)
                         found_model = TRUE;
@@ -1664,13 +1664,13 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     tfree(model_name);
                 }
             } else if (has_models) {
-                num_terminals = get_number_terminals(line);
+                int num_terminals = get_number_terminals(line);
 
                 if (num_terminals != 0) {
-                    model_name = get_model_name(line, num_terminals);
+                    char *model_name = get_model_name(line, num_terminals);
 
                     if (is_a_modelname(model_name)) {
-                        found_model = FALSE;
+                        bool found_model = FALSE;
                         for (i = 0; i < *num_used_model_names; i++)
                             if (strcmp(used_model_names[i], model_name) == 0) found_model = TRUE;
                         if (!found_model) {
