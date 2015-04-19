@@ -1674,15 +1674,12 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                 nlist_adjoin(used_models, model_name);
             } else if (has_models) {
                 int num_terminals = get_number_terminals(line);
-
                 if (num_terminals != 0) {
                     char *model_name = get_model_name(line, num_terminals);
-
-                    if (is_a_modelname(model_name)) {
+                    if (is_a_modelname(model_name))
                         nlist_adjoin(used_models, model_name);
-                    } else {
+                    else
                         tfree(model_name);
-                    }
                 }
             }
         }
@@ -1767,14 +1764,10 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
                     char *model_name = get_model_name(line, num_terminals);
-
-                    /* Check if model has already been recognized, if not, add its name to
-                       list used_models.names[i] */
-                    if (is_a_modelname(model_name)) {
+                    if (is_a_modelname(model_name))
                         nlist_adjoin(&used_models, model_name);
-                    } else {
+                    else
                         tfree(model_name);
-                    }
                 }
             } /* if (has_models)  */
         } /* if (!processing_subckt) */
@@ -1795,19 +1788,16 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 
         if (ciprefix(".subckt", line) || ciprefix(".macro", line)) {
             char *subckt_name = get_subckt_model_name(line);
-            nested_subckt++;
-            if (nested_subckt == 1) {
-                /* check if unused, only at top level */
+            /* check if unused, only at top level */
+            if (nested_subckt++ == 0)
                 remove_subckt = !nlist_find(&used_subckts, subckt_name);
-            }
             tfree(subckt_name);
         }
 
         if (ciprefix(".ends", line) || ciprefix(".eom", line)) {
-            nested_subckt--;
             if (remove_subckt)
                 *line = '*';
-            if (nested_subckt == 0)
+            if (--nested_subckt == 0)
                 remove_subckt = FALSE;
         }
 
@@ -1818,20 +1808,18 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
         {
             char *model_type = get_model_type(line);
             char *model_name = get_subckt_model_name(line);
-            bool found_model = FALSE;
+
             /* keep R, L, C models because in addition to no. of terminals the value may be given,
                as in RE1 1 2 800 newres dtemp=5, so model name may be token no. 4 or 5,
                and, if 5, will not be detected by get_subckt_model_name()*/
-            if (cieq(model_type, "c") ||
-                cieq(model_type, "l") ||
-                cieq(model_type, "r"))
+            if (!cieq(model_type, "c") &&
+                !cieq(model_type, "l") &&
+                !cieq(model_type, "r") &&
+                !nlist_find(&used_models, model_name))
             {
-                found_model = TRUE;
-            } else {
-                found_model = !!nlist_find(&used_models, model_name);
-            }
-            if (!found_model)
                 *line = '*';
+            }
+
             tfree(model_type);
             tfree(model_name);
         }
