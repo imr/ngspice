@@ -129,7 +129,7 @@ static void inp_new_func(char *funcname, char *funcbody, struct line *card,
 static void inp_rem_func(struct func_temper **new_func);
 
 static bool chk_for_line_continuation(char *line);
-static void comment_out_unused_subckt_models(struct line *start_card, int no_of_lines);
+static void comment_out_unused_subckt_models(struct line *start_card);
 static void inp_fix_macro_param_func_paren_io(struct line *begin_card);
 static void inp_fix_gnd_name(struct line *deck);
 static void inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number);
@@ -512,7 +512,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
         inp_remove_excess_ws(working);
 
-        comment_out_unused_subckt_models(working, rv . line_number);
+        comment_out_unused_subckt_models(working);
 
         subckt_params_to_param(working);
 
@@ -1730,18 +1730,13 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 */
 
 static void
-comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
+comment_out_unused_subckt_models(struct line *start_card)
 {
     struct line *card;
     struct nlist *used_subckts, *used_models;
     int  i = 0, fence;
     bool processing_subckt = FALSE, remove_subckt = FALSE, has_models = FALSE;
     int skip_control = 0, nested_subckt = 0;
-
-    /* generate arrays of *char for subckt or model names. Start
-       with 1000, but increase, if number of lines in deck is larger */
-    if (no_of_lines < 1000)
-        no_of_lines = 1000;
 
     used_subckts = nlist_allocate(100);
     used_models = nlist_allocate(100);
