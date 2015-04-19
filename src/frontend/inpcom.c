@@ -1604,6 +1604,10 @@ is_a_modelname(const char *s)
     if (isdigit(s[0]) && isalpha(s[1]) && isalpha(s[2]) && isdigit(s[3]))
         return TRUE;
 
+    /* e.g. 1SMB4148 */
+    if (isdigit(s[0]) && isalpha(s[1]) && isalpha(s[2]) && isalpha(s[3]) && isdigit(s[4]))
+        return TRUE;
+
     return FALSE;
 }
 
