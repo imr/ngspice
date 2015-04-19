@@ -1651,8 +1651,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     if (strcmp(used_subckts->names[i], inst_subckt_name) == 0)
                         have_subckt = TRUE;
                 if (!have_subckt) {
-                    new_names[tmp_cnt++] = used_subckts->names[used_subckts->num_names] = inst_subckt_name;
-                    used_subckts->num_names += 1;
+                    new_names[tmp_cnt++] = used_subckts->names[used_subckts->num_names++] = inst_subckt_name;
                 } else {
                     tfree(inst_subckt_name);
                 }
@@ -1663,8 +1662,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     if (strcmp(used_models->names[i], model_name) == 0)
                         found_model = TRUE;
                 if (!found_model) {
-                    used_models->names[used_models->num_names] = model_name;
-                    used_models->num_names += 1;
+                    used_models->names[used_models->num_names++] = model_name;
                 } else {
                     tfree(model_name);
                 }
@@ -1677,10 +1675,10 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     if (is_a_modelname(model_name)) {
                         bool found_model = FALSE;
                         for (i = 0; i < used_models->num_names; i++)
-                            if (strcmp(used_models->names[i], model_name) == 0) found_model = TRUE;
+                            if (strcmp(used_models->names[i], model_name) == 0)
+                                found_model = TRUE;
                         if (!found_model) {
-                            used_models->names[used_models->num_names] = model_name;
-                            used_models->num_names += 1;
+                            used_models->names[used_models->num_names++] = model_name;
                         } else {
                             tfree(model_name);
                         }
@@ -1761,7 +1759,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                 char *subckt_name = get_instance_subckt(line);
                 bool found_subckt = FALSE;
                 for (i = 0; i < used_subckts.num_names; i++)
-                    if (strcmp(used_subckts.names[i], subckt_name) == 0) found_subckt = TRUE;
+                    if (strcmp(used_subckts.names[i], subckt_name) == 0)
+                        found_subckt = TRUE;
                 if (!found_subckt) {
                     used_subckts.names[used_subckts.num_names++] = subckt_name;
                     tmp_cnt++;
@@ -1861,9 +1860,9 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                         break;
                     }
             }
-            tfree(model_type);
             if (!found_model)
                 *line = '*';
+            tfree(model_type);
             tfree(model_name);
         }
     }
