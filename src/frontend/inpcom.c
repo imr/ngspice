@@ -1620,9 +1620,10 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                        bool has_models)
 {
     struct line *card;
-    char *new_names[100];
+    int first_new_subckt = used_subckts->num_names;
+
     bool found_subckt = FALSE;
-    int  i, tmp_cnt = 0;
+    int  i, fence;
 
     for (card = start_card; card; card = card->li_next) {
 
@@ -1651,7 +1652,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     if (strcmp(used_subckts->names[i], inst_subckt_name) == 0)
                         have_subckt = TRUE;
                 if (!have_subckt) {
-                    new_names[tmp_cnt++] = used_subckts->names[used_subckts->num_names++] = inst_subckt_name;
+                    used_subckts->names[used_subckts->num_names++] = inst_subckt_name;
                 } else {
                     tfree(inst_subckt_name);
                 }
@@ -1691,8 +1692,9 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
     }
 
     // now make recursive call on instances just found above
-    for (i = 0; i < tmp_cnt; i++)
-        get_subckts_for_subckt(start_card, new_names[i],
+    fence = used_subckts->num_names;
+    for (i = first_new_subckt; i < fence; i++)
+        get_subckts_for_subckt(start_card, used_subckts->names[i],
                                used_subckts, used_models, has_models);
 }
 
@@ -1708,7 +1710,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
 {
     struct line *card;
     struct nlist used_subckts, used_models;
-    int  i = 0, tmp_cnt = 0;
+    int  i = 0, fence;
     bool processing_subckt = FALSE, remove_subckt = FALSE, has_models = FALSE;
     int skip_control = 0, nested_subckt = 0;
 
@@ -1763,7 +1765,6 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                         found_subckt = TRUE;
                 if (!found_subckt) {
                     used_subckts.names[used_subckts.num_names++] = subckt_name;
-                    tmp_cnt++;
                 } else {
                     tfree(subckt_name);
                 }
@@ -1804,7 +1805,8 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
         } /* if (!processing_subckt) */
     } /* for loop through all cards */
 
-    for (i = 0; i < tmp_cnt; i++)
+    fence = used_subckts.num_names;
+    for (i = 0; i < fence; i++)
         get_subckts_for_subckt(start_card, used_subckts.names[i],
                                &used_subckts, &used_models, has_models);
 
