@@ -1626,6 +1626,16 @@ nlist_find(const struct nlist *nlist, const char *name)
 
 
 static void
+nlist_adjoin(struct nlist *nlist, char *name)
+{
+    if (nlist_find(nlist, name))
+        tfree(name);
+    else
+        nlist->names[nlist->num_names++] = name;
+}
+
+
+static void
 get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                        struct nlist *used_subckts, struct nlist *used_models,
                        bool has_models)
@@ -1658,18 +1668,10 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
         if (found_subckt) {
             if (*line == 'x') {
                 char *inst_subckt_name = get_instance_subckt(line);
-                if (!nlist_find(used_subckts, inst_subckt_name)) {
-                    used_subckts->names[used_subckts->num_names++] = inst_subckt_name;
-                } else {
-                    tfree(inst_subckt_name);
-                }
+                nlist_adjoin(used_subckts, inst_subckt_name);
             } else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line);
-                if (!nlist_find(used_models, model_name)) {
-                    used_models->names[used_models->num_names++] = model_name;
-                } else {
-                    tfree(model_name);
-                }
+                nlist_adjoin(used_models, model_name);
             } else if (has_models) {
                 int num_terminals = get_number_terminals(line);
 
@@ -1677,11 +1679,7 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
                     char *model_name = get_model_name(line, num_terminals);
 
                     if (is_a_modelname(model_name)) {
-                        if (!nlist_find(used_models, model_name)) {
-                            used_models->names[used_models->num_names++] = model_name;
-                        } else {
-                            tfree(model_name);
-                        }
+                        nlist_adjoin(used_models, model_name);
                     } else {
                         tfree(model_name);
                     }
@@ -1758,17 +1756,10 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
         if (!processing_subckt) {
             if (*line == 'x') {
                 char *subckt_name = get_instance_subckt(line);
-                if (!nlist_find(&used_subckts, subckt_name)) {
-                    used_subckts.names[used_subckts.num_names++] = subckt_name;
-                } else {
-                    tfree(subckt_name);
-                }
+                nlist_adjoin(&used_subckts, subckt_name);
             } else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line);
-                if (!nlist_find(&used_models, model_name))
-                    used_models.names[used_models.num_names++] = model_name;
-                else
-                    tfree(model_name);
+                nlist_adjoin(&used_models, model_name);
             } else if (has_models) {
                 /* This is a preliminary version, until we have found a reliable
                    method to detect the model name out of the input line (Many
@@ -1780,10 +1771,7 @@ comment_out_unused_subckt_models(struct line *start_card, int no_of_lines)
                     /* Check if model has already been recognized, if not, add its name to
                        list used_models.names[i] */
                     if (is_a_modelname(model_name)) {
-                        if (!nlist_find(&used_models, model_name))
-                            used_models.names[used_models.num_names++] = model_name;
-                        else
-                            tfree(model_name);
+                        nlist_adjoin(&used_models, model_name);
                     } else {
                         tfree(model_name);
                     }
