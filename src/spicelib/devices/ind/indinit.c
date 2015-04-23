@@ -47,7 +47,7 @@ SPICEdev INDinfo = {
  /* DEVpzSetup    */ INDsetup,
  /* DEVtemperature*/ INDtemp,
  /* DEVtrunc      */ INDtrunc,
- /* DEVfindBranch */ NULL,
+ /* DEVfindBranch */ INDfindBr,
  /* DEVacLoad     */ INDacLoad,
  /* DEVaccept     */ NULL,
  /* DEVdestroy    */ INDdestroy,

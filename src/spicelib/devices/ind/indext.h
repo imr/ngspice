@@ -24,6 +24,7 @@ extern int INDsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int INDunsetup(GENmodel*,CKTcircuit*);
 extern int INDtemp(GENmodel*, CKTcircuit*);
 extern int INDtrunc(GENmodel*,CKTcircuit*,double*);
+extern int INDfindBr(CKTcircuit*, GENmodel*, IFuid);
 
 extern int MUTacLoad(GENmodel*,CKTcircuit*);
 extern int MUTask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);

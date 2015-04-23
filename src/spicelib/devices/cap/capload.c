@@ -67,16 +67,21 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate1+here->CAPccap) =
                             *(ckt->CKTstate0+here->CAPccap);
                     }
-                    *(here->CAPposPosptr) += m * geq;
-                    *(here->CAPnegNegptr) += m * geq;
-                    *(here->CAPposNegptr) -= m * geq;
-                    *(here->CAPnegPosptr) -= m * geq;
-                    *(ckt->CKTrhs+here->CAPposNode) -= m * ceq;
-                    *(ckt->CKTrhs+here->CAPnegNode) += m * ceq;
+                    *(here->CAP_posPrime_pos) += m * geq;
+                    *(here->CAP_neg_neg)      += m * geq;
+                    *(here->CAP_posPrime_neg) -= m * geq;
+                    *(here->CAP_neg_pos)      -= m * geq;
+                    ckt->CKTrhs[here->CAPposPrimeNode] -= m * ceq;
+                    ckt->CKTrhs[here->CAPnegNode]      += m * ceq;
                 } else
     if (ckt->CKTmode & MODETRANOP) {
                     *(ckt->CKTstate0+here->CAPqcap) = here->CAPcapac * vcap;
     }
+
+                if (here->CAPbranch) {
+                    *(here->CAP_pos_ibr)      += 1.0;
+                    *(here->CAP_posPrime_ibr) -= 1.0;
+                }
             }
         }
     return(OK);

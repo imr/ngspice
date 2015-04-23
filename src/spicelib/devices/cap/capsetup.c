@@ -111,12 +111,37 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(CAPposPosptr,CAPposNode,CAPposNode);
-            TSTALLOC(CAPnegNegptr,CAPnegNode,CAPnegNode);
-            TSTALLOC(CAPposNegptr,CAPposNode,CAPnegNode);
-            TSTALLOC(CAPnegPosptr,CAPnegNode,CAPposNode);
+            if (here->CAPbranch == 0) {
+                here->CAPposPrimeNode = here->CAPposNode;
+            } else {
+                here->CAPposPrimeNode = here->CAPbranch;
+                TSTALLOC(CAP_pos_ibr, CAPposNode, CAPbranch);
+                TSTALLOC(CAP_posPrime_ibr, CAPposPrimeNode, CAPbranch);
+            }
+
+            TSTALLOC(CAP_posPrime_pos, CAPposPrimeNode, CAPposNode);
+            TSTALLOC(CAP_neg_neg, CAPnegNode, CAPnegNode);
+            TSTALLOC(CAP_posPrime_neg, CAPposPrimeNode, CAPnegNode);
+            TSTALLOC(CAP_neg_pos, CAPnegNode, CAPposNode);
         }
     }
     return(OK);
 }
 
+
+int
+CAPunsetup(GENmodel *inModel, CKTcircuit *ckt)
+{
+    CAPmodel *model = (CAPmodel *) inModel;
+    CAPinstance *here;
+
+    for (; model; model = model->CAPnextModel)
+        for (here = model->CAPinstances; here; here = here->CAPnextInstance)
+            if (here->CAPbranch) {
+                CKTdltNNum(ckt, here->CAPbranch);
+                here->CAPbranch = 0;
+                here->CAPposPrimeNode = 0;
+            }
+
+    return OK;
+}

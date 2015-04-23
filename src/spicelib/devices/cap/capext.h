@@ -20,7 +20,9 @@ extern void CAPsPrint(GENmodel*,CKTcircuit*);
 extern int CAPsSetup(SENstruct *,GENmodel*);
 extern int CAPsUpdate(GENmodel*,CKTcircuit*);
 extern int CAPsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
+extern int CAPunsetup(GENmodel*,CKTcircuit*);
 extern int CAPtemp(GENmodel*,CKTcircuit*);
 extern int CAPtrunc(GENmodel*,CKTcircuit*,double*);
 extern int CAPsoaCheck(CKTcircuit *, GENmodel *);
+extern int CAPfindBr(CKTcircuit*,GENmodel*,IFuid);
 

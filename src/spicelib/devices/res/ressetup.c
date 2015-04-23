@@ -82,11 +82,38 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(RESposPosptr, RESposNode, RESposNode);
-            TSTALLOC(RESnegNegptr, RESnegNode, RESnegNode);
-            TSTALLOC(RESposNegptr, RESposNode, RESnegNode);
-            TSTALLOC(RESnegPosptr, RESnegNode, RESposNode);
+            if (here->RESbranch == 0) {
+                here->RESposPrimeNode = here->RESposNode;
+            } else {
+                here->RESposPrimeNode = here->RESbranch;
+                TSTALLOC(RES_pos_ibr, RESposNode, RESbranch);
+                TSTALLOC(RES_posPrime_ibr, RESposPrimeNode, RESbranch);
+            }
+
+            TSTALLOC(RES_posPrime_pos, RESposPrimeNode, RESposNode);
+            TSTALLOC(RES_neg_neg, RESnegNode, RESnegNode);
+            TSTALLOC(RES_posPrime_neg, RESposPrimeNode, RESnegNode);
+            TSTALLOC(RES_neg_pos, RESnegNode, RESposNode);
+
         }
     }
     return(OK);
+}
+
+
+int
+RESunsetup(GENmodel *inModel, CKTcircuit *ckt)
+{
+    RESmodel *model = (RESmodel *) inModel;
+    RESinstance *here;
+
+    for (; model; model = model->RESnextModel)
+        for (here = model->RESinstances; here; here = here->RESnextInstance)
+            if (here->RESbranch) {
+                CKTdltNNum(ckt, here->RESbranch);
+                here->RESbranch = 0;
+                here->RESposPrimeNode = 0;
+            }
+
+    return OK;
 }
