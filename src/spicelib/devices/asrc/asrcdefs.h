@@ -28,6 +28,8 @@ typedef struct sASRCinstance {
 
     int ASRCtype;              /* Whether source is voltage or current */
     int ASRCbranch;            /* number of branch equation added for v source */
+    int ASRCposPrimeNode;      /* number of positive prime node of capacitor */
+
     IFparseTree *ASRCtree;     /* The parse tree */
     int *ASRCvars;             /* indices of the controlling nodes/branches */
 

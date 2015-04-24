@@ -56,6 +56,8 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 break;
             case ASRC_CURRENT:
                 j = 2 * here->ASRCtree->numVars;
+                if (here->ASRCbranch)
+                    j += 2;
                 break;
             default:
                 return (E_BADPARM);
@@ -83,6 +85,15 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCbranch);
                 TSTALLOC(ASRCposptr[j++], here->ASRCbranch,  here->ASRCnegNode);
                 TSTALLOC(ASRCposptr[j++], here->ASRCbranch,  here->ASRCposNode);
+            } else {
+
+                if (here->ASRCbranch == 0) {
+                    here->ASRCposPrimeNode = here->ASRCposNode;
+                } else {
+                    here->ASRCposPrimeNode = here->ASRCbranch;
+                    TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCbranch);
+                    TSTALLOC(ASRCposptr[j++], here->ASRCposPrimeNode, here->ASRCbranch);
+                }
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++) {
@@ -109,7 +120,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (here->ASRCtype == ASRC_VOLTAGE) {
                     TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
                 } else {
-                    TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
+                    TSTALLOC(ASRCposptr[j++], here->ASRCposPrimeNode, column);
                     TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
                 }
             }
@@ -131,6 +142,7 @@ ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
             if (here->ASRCbranch) {
                 CKTdltNNum(ckt, here->ASRCbranch);
                 here->ASRCbranch = 0;
+                here->ASRCposPrimeNode = 0;
             }
 
     return OK;

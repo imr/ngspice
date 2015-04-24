@@ -89,6 +89,11 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
 
             } else {
 
+                if (here->ASRCbranch) {
+                    *(here->ASRCposptr[j++]) += 1.0;
+                    *(here->ASRCposptr[j++]) -= 1.0;
+                }
+
                 for (i = 0; i < here->ASRCtree->numVars; i++) {
                     rhs -= (asrc_vals[i] * asrc_derivs[i]);
 
@@ -96,7 +101,7 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
                     *(here->ASRCposptr[j++]) -= asrc_derivs[i] * factor;
                 }
 
-                ckt->CKTrhs[here->ASRCposNode] -= factor * rhs;
+                ckt->CKTrhs[here->ASRCposPrimeNode] -= factor * rhs;
                 ckt->CKTrhs[here->ASRCnegNode] += factor * rhs;
             }
 

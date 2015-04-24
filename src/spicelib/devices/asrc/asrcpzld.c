@@ -77,6 +77,11 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             } else {
 
+                if (here->ASRCbranch) {
+                    *(here->ASRCposptr[j++]) += 1.0;
+                    *(here->ASRCposptr[j++]) -= 1.0;
+                }
+
                 for (i = 0; i < here->ASRCtree->numVars; i++) {
                     *(here->ASRCposptr[j++]) += asrc_derivs[i] / factor;
                     *(here->ASRCposptr[j++]) -= asrc_derivs[i] / factor;
