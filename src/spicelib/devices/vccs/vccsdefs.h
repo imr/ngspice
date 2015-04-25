@@ -28,19 +28,24 @@ typedef struct sVCCSinstance {
     int VCCSnegNode;    /* number of negative node of source */
     int VCCScontPosNode;    /* number of positive node of controlling source */
     int VCCScontNegNode;    /* number of negative node of controlling source */
+    int VCCSposPrimeNode;  /* number of node between resistor and vprobe */
+    int VCCSbranch;        /* number of vprobe branch current node */
 
     double VCCSinitCond;    /* initial condition (of controlling source) */
     double VCCScoeff;       /* coefficient */
     double VCCSmValue;      /* Parallel multiplier */
 
-    double *VCCSposContPosptr;  /* pointer to sparse matrix element at 
+    double *VCCSposPrimeContPosptr;  /* pointer to sparse matrix element at
                                  * (positive node, control positive node) */
-    double *VCCSposContNegptr;  /* pointer to sparse matrix element at 
+    double *VCCSposPrimeContNegptr;  /* pointer to sparse matrix element at
                                  * (negative node, control negative node) */
     double *VCCSnegContPosptr;  /* pointer to sparse matrix element at 
                                  * (positive node, control positive node) */
     double *VCCSnegContNegptr;  /* pointer to sparse matrix element at 
                                  * (negative node, control negative node) */
+    double *VCCS_pos_ibr;
+    double *VCCS_posPrime_ibr;
+
     unsigned VCCScoeffGiven :1 ;/* flag to indicate function coeffs given */
     unsigned VCCSmGiven     :1 ;/* flag to indicate multiplier given */
 

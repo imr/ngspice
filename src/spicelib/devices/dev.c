@@ -141,7 +141,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 static SPICEdev *(*static_devices[])(void) = {
     /* URC device MUST precede both resistors and capacitors */
     get_urc_info,
-    get_asrc_info,              /* asrc must precede res, cap, ind and dio */
+    get_asrc_info,              /* asrc must precede res, cap, ind, dio, cccs, vccs, isrc */
     get_bjt_info,
     get_bsim1_info,
     get_bsim2_info,

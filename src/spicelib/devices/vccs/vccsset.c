@@ -40,11 +40,37 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(VCCSposContPosptr, VCCSposNode, VCCScontPosNode);
-            TSTALLOC(VCCSposContNegptr, VCCSposNode, VCCScontNegNode);
+            if (here->VCCSbranch == 0) {
+                here->VCCSposPrimeNode = here->VCCSposNode;
+            } else {
+                here->VCCSposPrimeNode = here->VCCSbranch;
+                TSTALLOC(VCCS_pos_ibr, VCCSposNode, VCCSbranch);
+                TSTALLOC(VCCS_posPrime_ibr, VCCSposPrimeNode, VCCSbranch);
+            }
+
+            TSTALLOC(VCCSposPrimeContPosptr, VCCSposPrimeNode, VCCScontPosNode);
+            TSTALLOC(VCCSposPrimeContNegptr, VCCSposPrimeNode, VCCScontNegNode);
             TSTALLOC(VCCSnegContPosptr, VCCSnegNode, VCCScontPosNode);
             TSTALLOC(VCCSnegContNegptr, VCCSnegNode, VCCScontNegNode);
         }
     }
     return(OK);
+}
+
+
+int
+VCCSunsetup(GENmodel *inModel, CKTcircuit *ckt)
+{
+    VCCSmodel *model = (VCCSmodel *) inModel;
+    VCCSinstance *here;
+
+    for (; model; model = model->VCCSnextModel)
+        for (here = model->VCCSinstances; here; here = here->VCCSnextInstance)
+            if (here->VCCSbranch) {
+                CKTdltNNum(ckt, here->VCCSbranch);
+                here->VCCSbranch = 0;
+                here->VCCSposPrimeNode = 0;
+            }
+
+    return OK;
 }

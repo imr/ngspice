@@ -33,10 +33,15 @@ VCCSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for (here = model->VCCSinstances; here != NULL ;
                 here=here->VCCSnextInstance) {
             
-            *(here->VCCSposContPosptr) += here->VCCScoeff ;
-            *(here->VCCSposContNegptr) -= here->VCCScoeff ;
+            *(here->VCCSposPrimeContPosptr) += here->VCCScoeff ;
+            *(here->VCCSposPrimeContNegptr) -= here->VCCScoeff ;
             *(here->VCCSnegContPosptr) -= here->VCCScoeff ;
             *(here->VCCSnegContNegptr) += here->VCCScoeff ;
+
+            if (here->VCCSbranch) {
+                *(here->VCCS_pos_ibr)      += 1.0;
+                *(here->VCCS_posPrime_ibr) -= 1.0;
+            }
         }
     }
     return(OK);

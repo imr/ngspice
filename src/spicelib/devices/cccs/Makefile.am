@@ -13,6 +13,7 @@ libcccs_la_SOURCES =	\
 	cccsinit.h	\
 	cccsitf.h	\
 	cccsload.c	\
+	cccsfindbr.c	\
 	cccsmdel.c	\
 	cccspar.c	\
 	cccspzld.c	\

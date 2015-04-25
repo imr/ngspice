@@ -44,11 +44,11 @@ SPICEdev VCCSinfo = {
  /* DEVmodParam   */ NULL,
  /* DEVload       */ VCCSload,
  /* DEVsetup      */ VCCSsetup,
- /* DEVunsetup    */ NULL,
+ /* DEVunsetup    */ VCCSunsetup,
  /* DEVpzSetup    */ VCCSsetup,
  /* DEVtemperature*/ NULL,
  /* DEVtrunc      */ NULL,
- /* DEVfindBranch */ NULL,
+ /* DEVfindBranch */ VCCSfindBr,
  /* DEVacLoad     */ VCCSload,   /* ac and normal loads are identical */
  /* DEVaccept     */ NULL,
  /* DEVdestroy    */ VCCSdestroy,

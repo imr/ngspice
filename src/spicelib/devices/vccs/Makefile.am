@@ -13,6 +13,7 @@ libvccs_la_SOURCES =	\
 	vccsinit.h	\
 	vccsitf.h	\
 	vccsload.c	\
+	vccsfindbr.c	\
 	vccsmdel.c	\
 	vccspar.c	\
 	vccspzld.c	\

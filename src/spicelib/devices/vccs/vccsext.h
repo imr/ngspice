@@ -15,3 +15,5 @@ extern int VCCSsLoad(GENmodel*,CKTcircuit*);
 extern int VCCSsSetup(SENstruct*,GENmodel*);
 extern void VCCSsPrint(GENmodel*,CKTcircuit*);
 extern int VCCSsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
+extern int VCCSunsetup(GENmodel*,CKTcircuit*);
+extern int VCCSfindBr(CKTcircuit*, GENmodel*, IFuid);

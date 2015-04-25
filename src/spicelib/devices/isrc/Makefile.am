@@ -11,12 +11,14 @@ libisrc_la_SOURCES =	\
 	isrcdel.c	\
 	isrcdest.c	\
 	isrcext.h	\
+	isrcfindbr.c	\
 	isrcinit.c	\
 	isrcinit.h	\
 	isrcitf.h	\
 	isrcload.c	\
 	isrcmdel.c	\
 	isrcpar.c	\
+	isrcsetup.c	\
 	isrctemp.c
 
 

@@ -396,8 +396,13 @@ loadDone:
 #endif
 /* gtri - end - wbk - modify for supply ramping option */
 
-            *(ckt->CKTrhs + (here->ISRCposNode)) += m * value;
+            *(ckt->CKTrhs + (here->ISRCposPrimeNode)) += m * value;
             *(ckt->CKTrhs + (here->ISRCnegNode)) -= m * value;
+
+            if (here->ISRCbranch) {
+                *(here->ISRC_pos_ibr)      += 1.0;
+                *(here->ISRC_posPrime_ibr) -= 1.0;
+            }
 
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 

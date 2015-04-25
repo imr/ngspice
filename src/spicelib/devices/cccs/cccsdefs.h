@@ -25,6 +25,8 @@ typedef struct sCCCSinstance {
     int CCCSposNode;    /* number of positive node of source */
     int CCCSnegNode;    /* number of negative node of source */
     int CCCScontBranch;    /* number of branch eq of controlling source */
+    int CCCSposPrimeNode;  /* number of node between resistor and vprobe */
+    int CCCSbranch;        /* number of vprobe branch current node */
 
     char *CCCScontName; /* pointer to name of controlling instance */
 
@@ -36,6 +38,9 @@ typedef struct sCCCSinstance {
                                      *(positive node, control branch eq)*/
     double *CCCSnegContBrptr;  /* pointer to sparse matrix element at 
                                      *(negative node, control branch eq)*/
+    double *CCCS_pos_ibr;
+    double *CCCS_posPrime_ibr;
+
     unsigned CCCScoeffGiven :1 ;   /* flag to indicate coeff given */
     unsigned CCCSmGiven     :1 ;  /* flag to indicate multiplier given */
 

@@ -28,6 +28,12 @@ typedef struct sISRCinstance {
     int ISRCnegNode;    /* number of negative node of source */
     int ISRCposNode;    /* number of positive node of source */
 
+    int ISRCposPrimeNode;  /* number of node between resistor and vprobe */
+    int ISRCbranch;        /* number of vprobe branch current node */
+
+    double *ISRC_pos_ibr;
+    double *ISRC_posPrime_ibr;
+
     int ISRCfunctionType;   /* code number of function type for source */
     int ISRCfunctionOrder;  /* order of the function for the source */
     double *ISRCcoeffs; /* pointer to array of coefficients */

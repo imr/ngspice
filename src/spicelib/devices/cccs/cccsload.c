@@ -34,6 +34,12 @@ CCCSload(GENmodel *inModel, CKTcircuit *ckt)
 
             *(here->CCCSposContBrptr) += here->CCCScoeff ;
             *(here->CCCSnegContBrptr) -= here->CCCScoeff ;
+
+            if (here->CCCSbranch) {
+                *(here->CCCS_pos_ibr)      += 1.0;
+                *(here->CCCS_posPrime_ibr) -= 1.0;
+            }
+
         }
     }
     return(OK);

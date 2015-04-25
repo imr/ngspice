@@ -46,9 +46,35 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(CCCSposContBrptr,CCCSposNode,CCCScontBranch);
-            TSTALLOC(CCCSnegContBrptr,CCCSnegNode,CCCScontBranch);
+            if (here->CCCSbranch == 0) {
+                here->CCCSposPrimeNode = here->CCCSposNode;
+            } else {
+                here->CCCSposPrimeNode = here->CCCSbranch;
+                TSTALLOC(CCCS_pos_ibr, CCCSposNode, CCCSbranch);
+                TSTALLOC(CCCS_posPrime_ibr, CCCSposPrimeNode, CCCSbranch);
+            }
+
+            TSTALLOC(CCCSposContBrptr, CCCSposPrimeNode, CCCScontBranch);
+            TSTALLOC(CCCSnegContBrptr, CCCSnegNode, CCCScontBranch);
         }
     }
     return(OK);
+}
+
+
+int
+CCCSunsetup(GENmodel *inModel, CKTcircuit *ckt)
+{
+    CCCSmodel *model = (CCCSmodel *) inModel;
+    CCCSinstance *here;
+
+    for (; model; model = model->CCCSnextModel)
+        for (here = model->CCCSinstances; here; here = here->CCCSnextInstance)
+            if (here->CCCSbranch) {
+                CKTdltNNum(ckt, here->CCCSbranch);
+                here->CCCSbranch = 0;
+                here->CCCSposPrimeNode = 0;
+            }
+
+    return OK;
 }
