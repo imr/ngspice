@@ -1669,6 +1669,7 @@
     <ClCompile Include="..\src\spicelib\devices\cap\capask.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capdel.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capdest.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\capfindbr.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capload.c" />
@@ -2062,6 +2063,7 @@
     <ClCompile Include="..\src\spicelib\devices\ind\indask.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\inddel.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\inddest.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\indfindbr.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indinit.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indload.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indmask.c" />
@@ -2561,6 +2563,7 @@
     <ClCompile Include="..\src\spicelib\devices\res\resask.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resdel.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resdest.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\resfindbr.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resinit.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resload.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resmask.c" />
