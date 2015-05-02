@@ -315,7 +315,12 @@ cp_istrue(wordlist *wl)
     v = ft_evaluate(names);
 
     rv = !vec_iszero(v);
-    free_pnode(names);
+
+    /* va: garbage collection for v, if pnode names is no simple value */
+    if (names->pn_value == NULL && v != NULL)
+        vec_free(v);
+    free_pnode(names); /* free also v, if pnode names is simple value */
+
     return rv;
 }
 
