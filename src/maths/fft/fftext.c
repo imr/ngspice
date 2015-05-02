@@ -42,18 +42,18 @@ int fftInit(int M)
     /*** I did NOT test cases with M>27 ***/
     if ((M >= 0) && ((size_t) M < 8*sizeof(int))) {
         theError = 0;
-        if (UtblArray[M] == 0) {	// have we not inited this size fft yet?
+        if (UtblArray[M] == NULL) {	// have we not inited this size fft yet?
             // init cos table
             UtblArray[M] = TMALLOC(double, POW2(M)/4+1);
-            if (UtblArray[M] == 0)
+            if (UtblArray[M] == NULL)
                 theError = 2;
             else {
                 fftCosInit(M, UtblArray[M]);
             }
             if (M > 1) {
-                if (BRLowArray[M/2] == 0) {	// init bit reversed table for cmplx fft
+                if (BRLowArray[M/2] == NULL) {	// init bit reversed table for cmplx fft
                     BRLowArray[M/2] = TMALLOC(short, POW2(M/2-1));
-                    if (BRLowArray[M/2] == 0)
+                    if (BRLowArray[M/2] == NULL)
                         theError = 2;
                     else {
                         fftBRInit(M, BRLowArray[M/2]);
@@ -61,9 +61,9 @@ int fftInit(int M)
                 }
             }
             if (M > 2) {
-                if (BRLowArray[(M-1)/2] == 0) {	// init bit reversed table for real fft
+                if (BRLowArray[(M-1)/2] == NULL) {	// init bit reversed table for real fft
                     BRLowArray[(M-1)/2] = TMALLOC(short, POW2((M-1)/2-1));
-                    if (BRLowArray[(M-1)/2] == 0)
+                    if (BRLowArray[(M-1)/2] == NULL)
                         theError = 2;
                     else {
                         fftBRInit(M-1, BRLowArray[(M-1)/2]);
@@ -80,15 +80,15 @@ void fftFree(void)
 // release storage for all private cosine and bit reversed tables
     int i1;
     for (i1=8*sizeof(int)/2-1; i1>=0; i1--) {
-        if (BRLowArray[i1] != 0) {
+        if (BRLowArray[i1] != NULL) {
             free(BRLowArray[i1]);
-            BRLowArray[i1] = 0;
+            BRLowArray[i1] = NULL;
         }
     }
     for (i1=8*sizeof(int)-1; i1>=0; i1--) {
-        if (UtblArray[i1] != 0) {
+        if (UtblArray[i1] != NULL) {
             free(UtblArray[i1]);
-            UtblArray[i1] = 0;
+            UtblArray[i1] = NULL;
         }
     }
 }

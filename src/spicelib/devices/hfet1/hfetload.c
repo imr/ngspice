@@ -721,8 +721,8 @@ cgd_calc:
     dtdvds      = deltdvdse*dvdsevds+deltdvkneet*CK1*temp;
     *gmd        = -delcgdvgs*dvdsevds+delcgdtd*dtdvds;
   } else {
-    gmg = 0;
-    gmd = 0;
+    gmg = NULL;
+    gmd = NULL;
   }  
 
   if(model->HFETAgatemod != 0) {  

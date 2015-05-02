@@ -91,6 +91,6 @@ cp_unquote(char *string)
 
         return (s);
     } else {
-        return 0;
+        return NULL;
     }
 }

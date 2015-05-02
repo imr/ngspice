@@ -448,7 +448,7 @@ EVTfindvec(char *node) {
 
 #endif /* SIMULATOR */
 
-char *hlp_filelist[] = { "ngspice", 0 };
+char *hlp_filelist[] = { "ngspice", NULL };
 
 
 /* allocate space for global constants in 'CONST.h' */
@@ -884,21 +884,21 @@ main(int argc, char **argv)
         enum { soa_log = 1001, };
 
         static struct option long_options[] = {
-            {"help",         no_argument,       0, 'h'},
-            {"version",      no_argument,       0, 'v'},
-            {"batch",        no_argument,       0, 'b'},
-            {"autorun",      no_argument,       0, 'a'},
-            {"circuitfile",  required_argument, 0, 'c'},
-            {"interactive",  no_argument,       0, 'i'},
-            {"no-spiceinit", no_argument,       0, 'n'},
-            {"output",       required_argument, 0, 'o'},
-            {"pipe",         no_argument,       0, 'p'},
-            {"completion",   no_argument,       0, 'q'},
-            {"rawfile",      required_argument, 0, 'r'},
-            {"server",       no_argument,       0, 's'},
-            {"terminal",     required_argument, 0, 't'},
-            {"soa-log",      required_argument, 0, soa_log},
-            {0, 0, 0, 0}
+            {"help",         no_argument,       NULL, 'h'},
+            {"version",      no_argument,       NULL, 'v'},
+            {"batch",        no_argument,       NULL, 'b'},
+            {"autorun",      no_argument,       NULL, 'a'},
+            {"circuitfile",  required_argument, NULL, 'c'},
+            {"interactive",  no_argument,       NULL, 'i'},
+            {"no-spiceinit", no_argument,       NULL, 'n'},
+            {"output",       required_argument, NULL, 'o'},
+            {"pipe",         no_argument,       NULL, 'p'},
+            {"completion",   no_argument,       NULL, 'q'},
+            {"rawfile",      required_argument, NULL, 'r'},
+            {"server",       no_argument,       NULL, 's'},
+            {"terminal",     required_argument, NULL, 't'},
+            {"soa-log",      required_argument, NULL, soa_log},
+            {NULL,           0,                 NULL, 0}
         };
 
         int option_index = 0;

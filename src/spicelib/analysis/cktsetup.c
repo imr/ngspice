@@ -147,7 +147,7 @@ CKTunsetup(CKTcircuit *ckt)
     /* added by HT 050802*/
     for(node=ckt->CKTnodes;node;node=node->next){
         if(node->icGiven || node->nsGiven) {
-            node->ptr=0;
+            node->ptr=NULL;
         }
     }
 

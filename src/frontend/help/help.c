@@ -71,7 +71,7 @@ findglobalsubject(char *subject)
     char **dict;
     long fpos;
 
-    place = 0;
+    place = NULL;
     for (dict = hlp_filelist; *dict && **dict; dict++) {
         fpos = findsubject(*dict, subject);
         if (fpos != -1) {

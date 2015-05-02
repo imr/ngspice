@@ -551,7 +551,7 @@ get_alt_prompt(void)
     struct control *c;
 
     /* if nothing on the command stack return NULL */
-    if (cend[stackp] == 0)
+    if (cend[stackp] == NULL)
         return NULL;
 
     /* measure stack depth */

@@ -161,7 +161,7 @@ bad:
 void
 com_trce(wordlist *wl)
 {
-    settrace(wl, VF_PRINT, 0);
+    settrace(wl, VF_PRINT, NULL);
 }
 
 

@@ -87,9 +87,9 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	IFuid		*output_names, freq_name;
 	int		bypass;
 	int		type;
-	double		*saved_rhs = 0,
-			*saved_irhs = 0;
-	SMPmatrix	*saved_matrix = 0;
+	double		*saved_rhs = NULL,
+			*saved_irhs = NULL;
+	SMPmatrix	*saved_matrix = NULL;
 
 #ifndef notdef
 #ifdef notdef

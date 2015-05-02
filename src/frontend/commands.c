@@ -580,7 +580,7 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
       ": Print circuit inventory" },
-    { 0, NULL, FALSE, FALSE,
+    { NULL, NULL, FALSE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       NULL }
@@ -971,7 +971,7 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
       ": Print circuit inventory" } ,
-    { 0, NULL, FALSE, FALSE,
+    { NULL, NULL, FALSE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       NULL }

@@ -479,7 +479,7 @@ void ipc_free_devices(
     for(i = 0; i < num_items; i++)
 	{
         FREE(names[i]);
-		names[i] = 0;
+		names[i] = NULL;
 	}
 
     if(num_items > 0) 

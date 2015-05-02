@@ -125,8 +125,8 @@ CKTpzFindZeros(CKTcircuit *ckt, PZtrial **rootinfo, int *rootcount)
     NIpzK_mag = 0;
     High_Guess = -1.0;
     Low_Guess = 1.0;
-    ZeroTrial = 0;
-    Trials = 0;
+    ZeroTrial = NULL;
+    Trials = NULL;
     NZeros = 0;
     NFlat = 0;
     Max_Zeros = SMPmatSize(ckt->CKTmatrix);

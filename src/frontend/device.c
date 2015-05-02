@@ -734,7 +734,7 @@ listparam(wordlist *p, dgen *dg)
                     fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
                 else
                     fprintf(cp_out, "%*s", LEFT_WIDTH, " ");
-                k = dgen_for_n(dg, count, bogus1, 0, j);
+                k = dgen_for_n(dg, count, bogus1, NULL, j);
                 fprintf(cp_out, "\n");
                 j += 1;
             } while (k > 0);
@@ -746,7 +746,7 @@ listparam(wordlist *p, dgen *dg)
                 fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH, p->wl_word);
             else
                 fprintf(cp_out, "%*s", LEFT_WIDTH, " ");
-            k = dgen_for_n(dg, count, bogus2, 0, j);
+            k = dgen_for_n(dg, count, bogus2, NULL, j);
             fprintf(cp_out, "\n");
             j += 1;
         } while (k > 0);

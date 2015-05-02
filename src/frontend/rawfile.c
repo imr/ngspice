@@ -293,7 +293,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 struct plot *
 raw_read(char *name) {
     char *title = "default title";
-    char *date = 0;
+    char *date = NULL;
     struct plot *plots = NULL, *curpl = NULL;
     char buf[BSIZE_SP], *s, *t, *r;
     int flags = 0, nvars = 0, npoints = 0, i, j;

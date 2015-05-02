@@ -123,7 +123,7 @@ com_aspice(wordlist *wl)
         }
         (void) dup2(fileno(stdout), fileno(stderr));
 
-        (void) execl(spicepath, spicepath, "-r", raw, (void*)0);
+        (void) execl(spicepath, spicepath, "-r", raw, NULL);
 
         /* Screwed up. */
         perror(spicepath);
@@ -328,7 +328,7 @@ com_rspice(wordlist *wl)
         dup2(from_serv[1], 1);  /* stdout */
         dup2(err_serv[1], 2);   /* stderr */
 
-        execlp(remote_shell, remote_shell, rhost, program, "-s", (void*)0);
+        execlp(remote_shell, remote_shell, rhost, program, "-s", NULL);
         /* system(com_buf); */
         perror(remote_shell);
         exit(-1);

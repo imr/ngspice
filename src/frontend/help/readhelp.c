@@ -69,7 +69,7 @@ hlp_read(fplace *place)
     bool mof = FALSE;
 
     if (!place)
-        return 0;
+        return NULL;
 
     top->place = copy_fplace(place);
 

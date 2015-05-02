@@ -612,7 +612,7 @@ iplot(struct plot *pl, int id)
     int yt;
     char *yl = NULL;
     double xlims[2], ylims[2];
-    static REQUEST reqst = { checkup_option, 0 };
+    static REQUEST reqst = { checkup_option, NULL };
     int inited = 0;
     char commandline[513];
 
@@ -680,7 +680,7 @@ iplot(struct plot *pl, int id)
 
     } else {
         /* plot the last points and resize if needed */
-        Input(&reqst, 0);
+        Input(&reqst, NULL);
         /* First see if we have to make the screen bigger */
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
               realpart(xs->v_compdata[len - 1]));

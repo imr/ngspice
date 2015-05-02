@@ -30,7 +30,7 @@ com_where(wordlist *wl)
         return;
     }
 
-    msg = ft_sim->nonconvErr (ft_curckt->ci_ckt, 0);
+    msg = ft_sim->nonconvErr (ft_curckt->ci_ckt, NULL);
 
     printf("%s", msg);
 
