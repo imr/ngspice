@@ -1630,6 +1630,17 @@ nlist_find(const struct nlist *nlist, const char *name)
 }
 
 
+static const char *
+nlist_model_find(const struct nlist *nlist, const char *name)
+{
+    int i;
+    for (i = 0; i < nlist->num_names; i++)
+        if (model_name_match(nlist->names[i], name))
+            return nlist->names[i];
+    return NULL;
+}
+
+
 static void
 nlist_adjoin(struct nlist *nlist, char *name)
 {
@@ -1842,7 +1853,7 @@ comment_out_unused_subckt_models(struct line *start_card)
             if (!cieq(model_type, "c") &&
                 !cieq(model_type, "l") &&
                 !cieq(model_type, "r") &&
-                !nlist_find(used_models, model_name))
+                !nlist_model_find(used_models, model_name))
             {
                 *line = '*';
             }
