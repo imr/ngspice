@@ -883,6 +883,33 @@ vec_free_x(struct dvec *v)
 }
 
 
+/*
+ * return TRUE if every vector element is zero
+ */
+
+bool
+vec_iszero(struct dvec *v)
+{
+    int i;
+
+    for (; v; v = v->v_link2)
+        if (isreal(v))
+            for (i = 0; i < v->v_length; i++) {
+                if (v->v_realdata[i] != 0.0)
+                    return FALSE;
+            }
+        else
+            for (i = 0; i < v->v_length; i++) {
+                if (realpart(v->v_compdata[i]) != 0.0)
+                    return FALSE;
+                if (imagpart(v->v_compdata[i]) != 0.0)
+                    return FALSE;
+            }
+
+    return TRUE;
+}
+
+
 /* This is something we do in a few places...  Since vectors get copied a lot,
  * we can't just compare pointers to tell if two vectors are 'really' the same.
  */

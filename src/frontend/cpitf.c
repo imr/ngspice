@@ -299,9 +299,9 @@ ft_cpinit(void)
 bool
 cp_istrue(wordlist *wl)
 {
-    int i;
     struct dvec *v;
     struct pnode *names;
+    bool rv;
 
     /* First do all the csh-type stuff here... */
     wl = wl_copy(wl);
@@ -314,24 +314,9 @@ cp_istrue(wordlist *wl)
 
     v = ft_evaluate(names);
 
-    for (; v; v = v->v_link2)
-        if (isreal(v)) {
-            for (i = 0; i < v->v_length; i++)
-                if (v->v_realdata[i] != 0.0) {
-                    free_pnode(names);
-                    return (TRUE);
-                }
-        } else {
-            for (i = 0; i < v->v_length; i++)
-                if ((realpart(v->v_compdata[i]) != 0.0) ||
-                    (imagpart(v->v_compdata[i]) != 0.0)) {
-                    free_pnode(names);
-                    return (TRUE);
-                }
-        }
-
+    rv = !vec_iszero(v);
     free_pnode(names);
-    return (FALSE);
+    return rv;
 }
 
 

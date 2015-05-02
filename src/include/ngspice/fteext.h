@@ -323,6 +323,7 @@ extern int ft_typnum(char *);
 
 /* vectors.c */
 
+extern bool vec_iszero(struct dvec *v);
 extern bool vec_eq(struct dvec *v1, struct dvec *v2);
 extern int plot_num;
 extern struct dvec *vec_fromplot(char *word, struct plot *plot);
