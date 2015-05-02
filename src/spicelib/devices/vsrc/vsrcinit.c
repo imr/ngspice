@@ -19,7 +19,7 @@ SPICEdev VSRCinfo = {
         &VSRCpTSize,
         VSRCpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

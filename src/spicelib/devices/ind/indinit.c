@@ -81,14 +81,15 @@ SPICEdev MUTinfo = {
     {   
         "mutual",
         "Mutual inductors",
-        0, /* term count */
-        0, /* term count */
+
+        NULL,
+        NULL,
         NULL,
 
         &MUTpTSize,
         MUTpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

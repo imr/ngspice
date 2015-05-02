@@ -19,7 +19,7 @@ SPICEdev CCVSinfo = {
         &CCVSpTSize,
         CCVSpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

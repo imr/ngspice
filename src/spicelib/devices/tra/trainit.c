@@ -19,7 +19,7 @@ SPICEdev TRAinfo = {
         &TRApTSize,
         TRApTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

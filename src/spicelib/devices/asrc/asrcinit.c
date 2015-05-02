@@ -19,7 +19,7 @@ SPICEdev ASRCinfo = {
         &ASRCpTSize,
         ASRCpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

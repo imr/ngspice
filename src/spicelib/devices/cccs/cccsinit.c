@@ -18,7 +18,7 @@ SPICEdev CCCSinfo = {
         &CCCSpTSize,
         CCCSpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

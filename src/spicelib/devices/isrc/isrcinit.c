@@ -19,7 +19,7 @@ SPICEdev ISRCinfo = {
         &ISRCpTSize,
         ISRCpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE

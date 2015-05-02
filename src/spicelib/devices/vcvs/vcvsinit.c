@@ -19,7 +19,7 @@ SPICEdev VCVSinfo = {
         &VCVSpTSize,
         VCVSpTable,
 
-        0,
+        NULL,
         NULL,
 
 #ifdef XSPICE
