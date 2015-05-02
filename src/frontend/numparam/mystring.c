@@ -71,8 +71,6 @@ ci_prefix(const char *p, const char *s)
  *  are 0-terminated char arrays with a 2-byte trailer: max length.
  *  the string mini-library is "overflow-safe" under these conditions:
  *    use Str(n,s) macro: define and initialize a string s of maxlen n<255
- *    use sini() to initialize empty strings;  sfix() for non-empty ones.
- *    the Sini() macro does automatic sizing, for automatic char arrays
  *    to allocate a string on the heap, use newstring(n).
  *    use maxlen() and length() to retrieve string max and actual length
  *    use: cadd, cins, sadd, sins, scopy, pscopy to manipulate them
@@ -83,26 +81,6 @@ ci_prefix(const char *p, const char *s)
  *    MUST die.   Now we only die on a heap failure as with dynamic
  *    string we cannot have a string overflow.
  */
-
-void
-sfix(SPICE_DSTRINGPTR dstr_p, int len)
-/* suppose s is allocated and filled with non-zero stuff */
-{
-    /* This function will now eliminate the max field.   The length of
-     * the string is going to be i-1 and a null is going to be added
-     * at the ith position to be compatible with old codel.  Also no
-     * null characters will be present in the string leading up to the
-     * NULL so this will make it a valid string. */
-    int j;
-    char *s;
-
-    spice_dstring_setlength(dstr_p, len);
-    s = spice_dstring_value(dstr_p);
-    for (j = 0; j < len; j++)   /* eliminate null characters ! */
-        if (s[j] == 0)
-            s[j] = 1;
-}
-
 
 int
 length(const char *s)
@@ -272,7 +250,7 @@ ccopy(SPICE_DSTRINGPTR dstr_p, char c)  /* returns success flag */
 {
     char *s_p;                  /* current string */
 
-    sfix(dstr_p, 1);
+    spice_dstring_setlength(dstr_p, 1);
     s_p = spice_dstring_value(dstr_p);
     s_p[0] = c;
 }

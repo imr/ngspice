@@ -12,7 +12,6 @@
 typedef char string[258];
 
 
-void sfix(SPICE_DSTRINGPTR dstr_p, int len);
 char *pscopy(SPICE_DSTRINGPTR s, const char *a, int i, int j);
 char *pscopy_up(SPICE_DSTRINGPTR s, const char *a, int i, int j);
 bool scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
