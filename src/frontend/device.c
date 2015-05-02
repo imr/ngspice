@@ -1280,11 +1280,11 @@ com_alter_common(wordlist *wl, int do_model)
             dev = p + 1;
             p = strchr(p, '[');
             if (p) {
-                *p++ = 0;
+                *p++ = '\0';
                 param = p;
                 p = strchr(p, ']');
                 if (p)
-                    *p = 0;
+                    *p = '\0';
             }
         } else {
             dev = p;

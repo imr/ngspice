@@ -414,7 +414,7 @@ cp_ccon(bool on)
         (void) ioctl(fileno(cp_in), TERM_GET, &OS_Buf);
 #endif
         sbuf = OS_Buf;
-        sbuf.c_cc[VEOF] = 0;
+        sbuf.c_cc[VEOF] = '\0';
         sbuf.c_cc[VEOL] = ESCAPE;
         sbuf.c_cc[VEOL2] = CNTRL_D;
 #if HAVE_TCSETATTR

@@ -601,7 +601,7 @@ gettoks(char *s)
             c = r;
 
         if (c)
-            *c = 0;
+            *c = '\0';
 
         wl = wl_cons(NULL, NULL);
         *prevp = wl;
@@ -617,7 +617,7 @@ gettoks(char *s)
         }
 
         if (c != r) {
-            *r = 0;
+            *r = '\0';
             wl = wl_cons(copy(c + 1), NULL);
             *prevp = wl;
             prevp = &wl->wl_next;

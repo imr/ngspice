@@ -440,7 +440,7 @@ void
 gr_pmsg(char *text)
 {
     char buf[BSIZE_SP];
-    buf[0] = 0;
+    buf[0] = '\0';
 
     DevUpdate();
 

@@ -180,9 +180,9 @@ com_version(wordlist *wl)
                 "** Copyright 1985-1994, Regents of the University of California.\n"
                 "** %s\n",
                 ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
-        if (Spice_Notice != NULL && *Spice_Notice != 0)
+        if (Spice_Notice != NULL && *Spice_Notice != '\0')
             fprintf(cp_out, "** %s\n", Spice_Notice);
-        if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+        if (Spice_Build_Date != NULL && *Spice_Build_Date != '\0')
             fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
         fprintf(cp_out, "******\n");
 
@@ -197,9 +197,9 @@ com_version(wordlist *wl)
                     "** %s-%s\n"
                     "** %s\n",
                     ft_sim->simulator, ft_sim->version, Spice_Manual);
-            if (Spice_Notice != NULL && *Spice_Notice != 0)
+            if (Spice_Notice != NULL && *Spice_Notice != '\0')
                 fprintf(cp_out, "** %s\n", Spice_Notice);
-            if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+            if (Spice_Build_Date != NULL && *Spice_Build_Date != '\0')
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "******\n");
 
@@ -212,9 +212,9 @@ com_version(wordlist *wl)
                     "** Copyright 1985-1994, Regents of the University of California.\n"
                     "** %s\n",
                     ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
-            if (Spice_Notice != NULL && *Spice_Notice != 0)
+            if (Spice_Notice != NULL && *Spice_Notice != '\0')
                 fprintf(cp_out, "** %s\n", Spice_Notice);
-            if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+            if (Spice_Build_Date != NULL && *Spice_Build_Date != '\0')
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "**\n");
 #ifdef CIDER

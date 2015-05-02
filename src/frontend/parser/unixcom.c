@@ -96,7 +96,7 @@ cp_rehash(char *pathlist, bool docc)
 #  ifdef HAVE_GETCWD
             (void) getcwd(buf, sizeof(buf));
 #  else
-            *buf = 0;
+            *buf = '\0';
 #  endif
 #endif
             i = strlen(buf);

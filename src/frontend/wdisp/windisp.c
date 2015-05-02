@@ -482,7 +482,7 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
       
       strncpy(buf2, gr->plotname, sizeof(buf2));
       if ((t = strchr(buf2, ':')) != NULL)
-         *t = 0;
+         *t = '\0';
 
       if (!eq(plot_cur->pl_typename, buf2)) {
          (void) sprintf(buf,

@@ -434,7 +434,7 @@ X11_NewViewport(GRAPH *graph)
     if (p != fontname) {
         for (q = fontname; *p; *q++ = *p++)
             ;
-        *q = 0;
+        *q = '\0';
     }
 
     trys = 1;
@@ -823,7 +823,7 @@ zoomin(GRAPH *graph)
 
     strncpy(buf2, graph->plotname, sizeof(buf2));
     if ((t = strchr(buf2, ':')) != NULL)
-        *t = 0;
+        *t = '\0';
 
     if (!eq(plot_cur->pl_typename, buf2)) {
         (void) sprintf(buf,

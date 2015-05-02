@@ -62,7 +62,7 @@ tildexpand(char *string)
            pw = getpwuid(getuid());
            if (pw)
              result = pw->pw_dir;
-           *buf = 0;
+           *buf = '\0';
        }
 
     } else {
@@ -70,7 +70,7 @@ tildexpand(char *string)
 	k = buf;
 	while ((c = *string) && c != '/')
 		*k++ = c, string++;
-	*k = 0;
+	*k = '\0';
 	pw = getpwnam(buf);
        if (pw)
          result = pw->pw_dir;

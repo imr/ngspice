@@ -255,7 +255,7 @@ INPgetUTok(char **line, char **token, int gobble)
         separator = '\'';
         point++;
     } else
-        separator = 0;
+        separator = '\0';
 
     /* mark beginning of token */
     *line = point;

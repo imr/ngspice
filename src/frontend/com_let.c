@@ -38,7 +38,7 @@ com_let(wordlist *wl)
     /* extract indices */
     numdims = 0;
     if ((rhs = strchr(p, '=')) != NULL) {
-        *rhs++ = 0;
+        *rhs++ = '\0';
     } else {
         fprintf(cp_err, "Error: bad let syntax\n");
         tfree(p);
@@ -47,7 +47,7 @@ com_let(wordlist *wl)
 
     if ((s = strchr(p, '[')) != NULL) {
         need_open = 0;
-        *s++ = 0;
+        *s++ = '\0';
         while (!need_open || *s == '[') {
             depth = 0;
             if (need_open)
@@ -75,7 +75,7 @@ com_let(wordlist *wl)
                 need_open = 0;
 
             if (*q)
-                *q++ = 0;
+                *q++ = '\0';
 
             /* evaluate expression between s and q */
             /* va, indexing */
@@ -120,7 +120,7 @@ com_let(wordlist *wl)
     for (q = p + strlen(p) - 1; *q <= ' ' && p <= q; q--)
         ;
 
-    *++q = 0;
+    *++q = '\0';
 
     /* sanity check */
     if (eq(p, "all") ||strchr(p, '@')) {

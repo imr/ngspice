@@ -182,7 +182,7 @@ char *MIFgetMod(
                 INPgetTok(&line,&parm,1);     /* throw away 'modtype' */
                 tfree(parm);
 
-                while(*line != 0) {
+                while(*line != '\0') {
                     INPgetTok(&line,&parm,1);
                     for(j=0 ; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
                         if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {

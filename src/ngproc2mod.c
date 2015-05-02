@@ -99,7 +99,7 @@ main(void) {
                 *typeline == '\n' ) {
             typeline ++;
         }
-        if(*typeline == 0) break;
+        if(*typeline == '\0') break;
         if(strncmp("nm",typeline,2) == 0) {
             ncur = TMALLOC(nmod, 1);
             ncur->nnext = NULL;

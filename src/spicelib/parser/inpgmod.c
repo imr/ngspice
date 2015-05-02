@@ -80,7 +80,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
     tfree(parm);
     INPgetTok(&line, &parm, 1);        /* throw away 'modname' */
     tfree(parm);
-    while (*line != 0) {
+    while (*line != '\0') {
       INPgetTok(&line, &parm, 1);
       if (!*parm)
         continue;

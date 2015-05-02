@@ -54,7 +54,7 @@ com_reshape(wordlist *wl)
             if (p != w->wl_word)
                 w = w->wl_next;
             wlast = w;
-            *p++ = 0;
+            *p++ = '\0';
         } else {
             wlast = NULL;
         }
