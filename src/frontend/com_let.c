@@ -123,7 +123,7 @@ com_let(wordlist *wl)
     *++q = '\0';
 
     /* sanity check */
-    if (eq(p, "all") ||strchr(p, '@')) {
+    if (eq(p, "all") || strchr(p, '@') || isdigit(*p)) {
         fprintf(cp_err, "Error: bad variable name %s\n", p);
         tfree(p);
         return;
