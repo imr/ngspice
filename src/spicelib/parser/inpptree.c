@@ -1409,6 +1409,9 @@ void INPfreeTree(IFparseTree *ptree)
 
     int i;
 
+    if (!pt)
+        return;
+
     for (i = 0; i < pt->p.numVars; i++)
         dec_usage(pt->derivs[i]);
 
