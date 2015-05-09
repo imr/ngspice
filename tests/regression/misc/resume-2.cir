@@ -1,0 +1,50 @@
+regression test for "alter" with "stop" and "resume"
+
+* (exec-spice "ngspice %s" t)
+
+* check wheter we can "stop" a transient simulation
+*   alter a resistance and a voltage
+*   and successfully "resume" from there
+*
+* charge a capacitor for 1ms
+*   (first order e^(-t/tau) response, with tau=1ms)
+* then stop, alter resistance, and voltage,
+*    for a new tau of just 100us
+* and resume from there.
+*
+* finally, compare the capacitor voltage against a golden trace
+
+v1 1 0 dc 5
+
+r1 1 2 1k
+c2 2 0 1u
+
+.control
+stop when time = 1ms
+tran 2u 2ms uic
+alter r1=100
+alter v1=10
+resume
+
+* calculate the golden response
+let tau1 = 1k * 1u
+let tau2 = 100 * 1u
+let tstop = 1ms
+let vstop = 5 * (1 - exp(-tstop / tau1))
+let trace1 = 5 * (1 - exp(-time / tau1))
+let trace2 = vstop + (10 - vstop) * (1 - exp(-(time - tstop) / tau2))
+let gold = (time le tstop) * trace1 + (time gt tstop) * trace2
+
+* plot v(2) gold
+
+let maxerr = vecmax(abs(v(2) - gold))
+
+if maxerr > 2e-4
+  echo "ERROR: test failed, excessive error, maxerr = $&maxerr"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
