@@ -38,6 +38,7 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         if ( AlmostEqualUlps( value->rValue, 0, 3 ) ) value->rValue = 0.001; /* 0.001 should be sufficiently small */
         here->RESresist = value->rValue;
         here->RESresGiven = TRUE;
+        here->RESconduct = 1.0 / here->RESresist;
         break;
     case RES_ACRESIST:
         here->RESacResist = value->rValue;
