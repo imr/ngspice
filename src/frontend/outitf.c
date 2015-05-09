@@ -143,11 +143,6 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
      *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
      */
 
-    if (strcmp("NOISE", spice_analysis_get_name(analysisPtr->JOBtype))) {
-        fixme_onoise_type = SV_NOTYPE;
-        fixme_inoise_type = SV_NOTYPE;
-    }
-
     if (dataType == 666 && numNames == 666) {
         run = *runp;
         run->writeOut = ft_getOutReq(&run->fp, &run->runPlot, &run->binary,
