@@ -1,0 +1,53 @@
+* check whether we can swallow special modelnames starting with a digit
+
+* (exec-spice "ngspice -b %s")
+
+* check whether we can swallow special modelnames starting with a digit
+*   for example 1n4002 2SK456 or 1SMB4148
+* see function is_a_modelname() in inpcom.c
+
+i1  1 0   dc -100u
+
+vm1 1 t1  dc 0
+d1  t1 0  dplain
+
+vm2 1 t2  dc 0
+d2  t2 0  1n4002
+
+vm3 1 t3  dc 0
+d3  t3 0  2sk456
+
+vm4 1 t4  dc 0
+d4  t4 0  1smb4148
+
+ 
+.model dplain   d(is=1.0f)
+
+.model 1n4002   d(is=1.3f)
+.model 2sk456   d(is=1.5f)
+.model 1smb4148 d(is=1.7f)
+ 
+.control
+
+op
+
+compose result values i(vm2)/i(vm1) i(vm3)/i(vm1) i(vm4)/i(vm1)
+compose gold   values 1.3 1.5 1.7
+
+let err = result / gold - 1
+let allowed_err = 1e-7
+
+echo "Note: err =" $&err
+echo "Note: allowed_err =" $&allowed_err
+
+if vecmax(abs(err)) > allowed_err
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
+
+.end
