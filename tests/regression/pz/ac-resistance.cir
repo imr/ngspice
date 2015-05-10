@@ -1,0 +1,68 @@
+check for proper use of ac resistance
+
+* (exec-spice "ngspice %s" t)
+
+Vin 1 0  dc 5.0  ac 3.0
+
+R1 1 2  1k ac=4k
+C2 2 0  1n
+R2 2 0  4k
+
+
+.control
+
+let success_count = 0
+
+op
+
+let H0 = 1 / (1 + 1k / 4k)
+let gold = 5.0 * H0
+let err = v(2)/gold - 1
+
+echo "Note: err[op] =" $&err
+if abs(err) > 1e-12
+  echo "ERROR: op test failed"
+else
+  echo "INFO: [op], success"
+  let success_count = success_count + 1
+end
+
+ac lin 3 100kHz 200kHz
+
+let H0 = 1 / (1 + 4k / 4k)
+let tau = 1 / (1/4k + 1/4k) * 1n
+let s = 2 * pi * i * frequency
+let gold = 3.0 * H0 / (1 + s * tau)
+
+let err = abs(v(2)/gold - 1)
+
+echo "Note: err[ac] =" $&err
+if vecmax(err) > 1e-12
+  echo "ERROR: ac test failed"
+else
+  echo "INFO: [ac], success"
+  let success_count = success_count + 1
+end
+
+pz 1 0  2 0  vol pz
+
+let tau = 1 / (1/4k + 1/4k) * 1n
+let gold = -1/tau
+
+let err = abs(pole(1)/gold - 1)
+
+echo "Note: err[pz] =" $&err
+if err > 1e-12
+  echo "ERROR: ac test failed"
+else
+  echo "INFO: [pz], success"
+  let success_count = success_count + 1
+end
+
+if success_count ne 3
+  quit 1
+else
+  quit 0
+end
+
+.endc
