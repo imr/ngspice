@@ -389,6 +389,14 @@ v1116_g  n1116_g 0  '2.1'
 
 * ----------------------------------------
 
+v1117_t  n1117_t 0  'log10(10.0)'
+v1118_t  n1118_t 0  'log10(0.5)'
+
+v1117_g  n1117_g 0  '1.0'
+v1118_g  n1118_g 0  '-0.3010299956639812'
+
+* ----------------------------------------
+
 .control
 
 define mismatch(a,b,err) abs(a-b)>err
@@ -398,7 +406,7 @@ op
 let total_count = 0
 let fail_count = 0
 
-let tests = 1001 + vector(116)
+let tests = 1001 + vector(118)
 
 foreach n $&tests
   set n_test = "n{$n}_t"
