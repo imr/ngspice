@@ -1,0 +1,63 @@
+regression test for log, log10 and ln
+
+* (exec-spice "ngspice -b %s" t)
+
+v1 1 0 dc 2.7
+
+vn1 n1 0 'ln(2.7)'
+vn2 n2 0 'log(2.7)'
+vn3 n3 0 'log10(2.7)'
+
+bb1 b1 0 v = ln(v(1))
+bb2 b2 0 v = log(v(1))
+bb3 b3 0 v = log10(v(1))
+
+.control
+
+op
+
+let success = 0
+
+compose numparm values v(n1)   v(n2)    v(n3)
+compose asrc    values v(b1)   v(b2)    v(b3)
+compose ctrl    values ln(2.7) log(2.7) log10(2.7)
+
+compose gold values 0.9932517730102834 0.9932517730102834 0.43136376415898736
+
+let numparm_err = vecmax(abs(numparm/gold - 1))
+let asrc_err    = vecmax(abs(asrc/gold - 1))
+let ctrl_err    = vecmax(abs(ctrl/gold - 1))
+
+echo "Note: numparm_err = " $&numparm_err
+echo "Note: asrc_err = " $&asrc_err
+echo "Note: ctrl_err = " $&ctrl_err
+
+if numparm_err > 1e-15
+  echo "ERROR: test failed, numparm, excessive error"
+else
+  let success = success + 1
+end
+
+if asrc_err > 1e-15
+  echo "ERROR: test failed, asrc, excessive error"
+else
+  let success = success + 1
+end
+
+if ctrl_err > 1e-15
+  echo "ERROR: test failed, control, excessive error"
+else
+  let success = success + 1
+end
+
+
+if success eq 3
+   echo "INFO: success"
+   quit 0
+else
+   quit 1
+end
+
+.endc
+
+.end
