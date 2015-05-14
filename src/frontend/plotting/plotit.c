@@ -385,7 +385,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "xlog")) {
         if (gfound) {
-            fprintf(cp_err, "Warning: too many grid types given\n");
+            if (gtype == GRID_YLOG)
+                gtype = GRID_LOGLOG;
+            else
+                fprintf(cp_err, "Warning: too many grid types given\n");
         } else {
             gtype = GRID_XLOG;
             gfound = TRUE;
@@ -393,7 +396,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
     if (getflag(wl, "ylog")) {
         if (gfound) {
-            fprintf(cp_err, "Warning: too many grid types given\n");
+            if (gtype == GRID_XLOG)
+                gtype = GRID_LOGLOG;
+            else
+                fprintf(cp_err, "Warning: too many grid types given\n");
         } else {
             gtype = GRID_YLOG;
             gfound = TRUE;
