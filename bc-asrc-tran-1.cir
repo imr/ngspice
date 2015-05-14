@@ -1,0 +1,52 @@
+* test asrc branch current, tran, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1   in 0   SINE(0 1 1)
+
+BR1  in N3  i = v(in,N3)/1.0      $ artificial 1 Ohm Resistor
+Vm1  N3 N5  0
+C1   N5 0   0.21
+
+B1   out 0  V = I(BR1)
+
+.control
+
+* insertion of nodes and branches has to be checked for correct "unsetup"
+* I saw a failing tran after an op, whilst tran alone worked
+
+op
+rusage totiter
+
+tran 1ms 1.0
+rusage totiter
+
+plot v(out) i(Vm1)*0.99
+
+* golden answer, derived with "maxima"
+let R = 1.0
+let C = 0.21
+let tau = R * C
+let omega = 2 * pi
+let ot = omega * tau
+let gold = (sin(time*omega)*ot + cos(time*omega) - exp(-time/tau)) * ot/(1+ot*ot)/R
+
+let err = vecmax(abs(v(out) - gold))
+echo "INFO: err =" $&err
+
+if err > 4e-6
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+end
+
+if 1
+  plot v(out) i(Vm1)*0.99 gold*0.97
+  plot v(out)-gold
+else
+  quit 0
+end
+
+.endc
+
+.end

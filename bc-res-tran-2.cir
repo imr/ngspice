@@ -1,0 +1,47 @@
+* test resistor branch current, tran, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1  in 0    SINE(0 1 1)
+
+R1  in out  1
+B1  out 0   v = i(R1)^3
+
+.control
+
+op
+rusage totiter
+
+tran 1ms 1.0
+rusage totiter
+
+* syndrom
+let x = v(in)^3 - 3*v(out)*v(in)^2 + 3*v(out)^2*v(in) - v(out)^3 - v(out)
+
+let xx = v(out)^3 * 1.0 + v(out) - v(in)
+
+* golden answer, derived with "maxima"
+let P1 = sqrt(v(in)^2 + 4/27) - v(in)
+let P2 = (P1 / 2) ^ (1/3)
+let gold = P2 - 1 / (3*P2) + v(in)
+
+let err = vecmax(abs(v(out) - gold))
+echo "INFO: err =" $&err
+
+if err > 20e-6
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+end
+
+if 1
+  plot v(out)
+  plot v(out) - gold
+  plot x
+else
+  quit 0
+end
+
+.endc
+
+.end

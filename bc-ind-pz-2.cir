@@ -1,0 +1,49 @@
+* test inductor branch current, pz, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1   in 0   ac = 2.31
+
+L1   in N3  0.21 m = 3
+Vm1  N3 N5  0
+R2   N5 0   2.42
+B2   N5 0   V = I(L1)               $ extends R2 for a total of 1 Ohm
+
+B1   out 0  V = I(L1)
+
+.control
+
+* insertion of nodes and branches has to be checked for correct "unsetup"
+* I saw a failing tran after an op, whilst tran alone worked
+
+op
+rusage totiter
+
+pz in 0 out 0 vol pz
+rusage totiter
+
+* golden answer
+let R = 1
+let L = 0.21 / 3
+let tau = L / R
+let gold_pole = (-1,0)/tau
+
+let pole_err = abs(pole(1)/gold_pole - 1)
+
+echo "INFO: pole_err =" $&pole_err
+
+if pole_err > 1e-6
+  echo "ERROR: pz/pole test failed"
+  quit 1
+else
+  echo "INFO: pz/pole success"
+end
+
+if 1
+  print pole(1) gold_pole
+else
+  quit 0
+end
+
+.endc
+
+.end

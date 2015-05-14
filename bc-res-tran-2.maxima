@@ -1,0 +1,23 @@
+/*  vin ---R---+---- vout
+ *             |
+ *           u = i^3
+ *             |
+ */
+
+g1: u = vin - R*i;
+g2: u = i^3;
+g3: vout = u;
+
+x: eliminate([g1,g2,g3], [i,u]), R=1;
+
+solve(x, vout);
+third(%);
+
+P1: sqrt(vin^2 + 4/27) - vin;
+P2: (P1 / 2) ^ (1/3);
+gold : P2 - 1 / (3*P2) + vin;
+
+/* check by substitution into x, shall be zero */
+x, vout=gold;
+%, expand;
+%, factor;

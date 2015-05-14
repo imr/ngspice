@@ -1,0 +1,19 @@
+/*  vin ---R---+---- vout
+ *             |
+ *           u = i^3
+ *             |
+ */
+
+batch("./bc-res-tran-2.maxima");
+
+/* ac response */
+diff(x);
+solve(%, del(vout))/del(vin), factor;
+ac : rhs(first(%));
+
+dc_vin: 3.0;
+dc_vout: float(gold), vin=dc_vin;
+
+float(ac), vout=dc_vout, vin=dc_vin;
+
+

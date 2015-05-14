@@ -1,0 +1,52 @@
+* test inductor branch current, ac, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1   in 0   ac = 2.31
+
+L1   in N3  0.21 m = 3
+Vm1  N3 N5  0
+R2   N5 0   2.42
+B2   N5 0   V = I(L1)               $ extends R2 for a total of 1 Ohm
+
+B1   out 0  V = I(L1)
+
+.control
+
+* insertion of nodes and branches has to be checked for correct "unsetup"
+* I saw a failing tran after an op, whilst tran alone worked
+
+op
+rusage totiter
+
+ac dec 20 0.01 100
+rusage totiter
+
+* golden answer
+let R = 1
+let L = 0.21 / 3
+let tau = L / R
+let s = (0,2) * pi * frequency
+let gold = 2.31/R * 1/(1 + s*tau)
+
+let ac_err = v(out) / gold - 1
+let ac_max_err = vecmax(abs(ac_err))
+
+echo "INFO: ac_max_err =" $&ac_max_err
+
+if ac_max_err > 1e-12
+  echo "ERROR: ac test failed"
+  quit 1
+else
+  echo "INFO: ac success"
+end
+
+if 1
+  plot vdb(out) db(abs(i(Vm1)))*0.99 db(abs(gold))*0.98
+  plot abs(ac_err)
+else
+  quit 0
+end
+
+.endc
+
+.end

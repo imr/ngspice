@@ -1,0 +1,52 @@
+* test capacitor branch current, ac, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1   in 0   SINE(0 1 1) ac = 2.31
+
+C1   in N3  0.07 m = 3
+Vm1  N3 N5  0
+R2   N5 0   2.42
+B2   N5 0   V = I(C1)               $ extends R2 for a total of 1 Ohm
+
+B1   out 0  V = I(C1)
+
+.control
+
+* insertion of nodes and branches has to be checked for correct "unsetup"
+* I saw a failing tran after an op, whilst tran alone worked
+
+op
+rusage totiter
+
+ac dec 20 0.01 100
+rusage totiter
+
+* golden answer
+let R = 1
+let C = 0.07 * 3
+let tau = R * C
+let s = (0,1) * 2 * pi * frequency
+let gold = 2.31 / R * s*tau/(1 + s*tau)
+
+let ac_err = v(out) / gold - 1
+let ac_max_err = vecmax(abs(ac_err))
+
+echo "INFO: ac_max_err =" $&ac_max_err
+
+if ac_max_err > 1e-15
+  echo "ERROR: ac test failed"
+  quit 1
+else
+  echo "INFO: ac success"
+end
+
+if 1
+  plot vdb(out) db(abs(i(Vm1)))*0.99 db(abs(gold))*0.98
+  plot abs(ac_err)
+else
+  quit 0
+end
+
+.endc
+
+.end

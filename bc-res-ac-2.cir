@@ -1,0 +1,54 @@
+* test resistor branch current, ac, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1  in 0    dc=3.0 ac=2.31
+
+R1  in out  1
+B1  out 0   v = i(R1)^3
+
+.control
+
+* for more newton iterations, and increased precision, try
+* set reltol = 1e-15
+
+op
+rusage totiter
+
+ac dec 20 0.01 100
+rusage totiter
+
+* golden answer, derived with "maxima"
+let gold_dc_out = 1.786588337237788
+let gold_ac_out = 2.31 * 0.81539950577107
+
+let dc_err = op1.v(out) / gold_dc_out - 1
+let ac_err = v(out) / gold_ac_out - 1
+
+let ac_max_err = vecmax(abs(ac_err))
+
+echo "INFO: dc_err =" $&dc_err
+echo "INFO: ac_max_err =" $&ac_max_err
+
+if abs(dc_err) > 1e-6
+  echo "ERROR: dc test failed"
+  quit 1
+else
+  echo "INFO: dc success"
+end
+
+if ac_max_err > 1e-6
+  echo "ERROR: ac test failed"
+  quit 1
+else
+  echo "INFO: ac success"
+end
+
+if 1
+  plot abs(ac_err)
+else
+  quit 0
+end
+
+.endc
+
+.end

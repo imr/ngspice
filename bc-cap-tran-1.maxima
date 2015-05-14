@@ -1,0 +1,10 @@
+/* R in series with C feed with vin*sin(omega*t) */
+
+assume(omega > 0);
+
+vsource: laplace(vin*sin(t*omega), t, s);
+iout: vsource/R * s*tau/(1 + s*tau);
+ilt(iout, s, t), factor;
+
+f1: vin/R / (1 + (omega*tau)^2);
+f2: %th(2) / f1;

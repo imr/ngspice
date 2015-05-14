@@ -1,0 +1,59 @@
+* test capacitor branch current, pz, with feedback
+*  (exec-spice "ngspice %s" t)
+
+V1   in 0   ac = 2.31
+
+C1   in N3  0.07 m = 3
+Vm1  N3 N5  0
+R2   N5 0   2.42
+B2   N5 0   V = I(C1)               $ extends R2 for a total of 1 Ohm
+
+B1   out 0  V = I(C1)
+
+.control
+
+* insertion of nodes and branches has to be checked for correct "unsetup"
+* I saw a failing tran after an op, whilst tran alone worked
+
+op
+rusage totiter
+
+pz in 0 out 0 vol pz
+rusage totiter
+
+* golden answer
+let R = 1
+let C = 0.07 * 3
+let tau = R * C
+let gold_pole = (-1,0)/tau
+let gold_zero = (0,0)
+
+let pole_err = abs(pole(1)/gold_pole - 1)
+let zero_err = abs(zero(1))
+
+echo "INFO: pole_err =" $&pole_err
+echo "INFO: zero_err =" $&zero_err
+
+if pole_err > 1e-6
+  echo "ERROR: pz/pole test failed"
+  quit 1
+else
+  echo "INFO: pz/pole success"
+end
+
+if zero_err > 1e-6
+  echo "ERROR: pz/zero test failed"
+  quit 1
+else
+  echo "INFO: pz/zero success"
+end
+
+if 1
+  print pole(1) zero(1) gold_pole gold_zero
+else
+  quit 0
+end
+
+.endc
+
+.end
