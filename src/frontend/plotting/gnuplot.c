@@ -21,6 +21,27 @@
 #define GP_MAXVECTORS 64
 
 
+static void
+quote_gnuplot_string(FILE *stream, char *s)
+{
+    fputc('"', stream);
+
+    for (; *s; s++)
+        switch (*s) {
+        case '\n':
+            fputs("\\n", stream);
+            break;
+        case '"':
+        case '\\':
+            fputc('\\', stream);
+        default:
+            fputc(*s, stream);
+        }
+
+    fputc('"', stream);
+}
+
+
 void
 ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs)
 {
@@ -111,21 +132,29 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
     /* Set up the file header. */
 #if !defined(__MINGW__) && !defined(_MSC_VER)
-    fprintf(file, "set terminal X11\n");
+    fprintf(file, "set terminal X11 noenhanced\n");
+#else
+    fprintf(file, "set termoption noenhanced\n");
 #endif
     if (title) {
         text = cp_unquote(title);
-        fprintf(file, "set title \"%s\"\n", text);
+        fprintf(file, "set title ");
+        quote_gnuplot_string(file, text);
+        fprintf(file, "\n");
         tfree(text);
     }
     if (xlabel) {
         text = cp_unquote(xlabel);
-        fprintf(file, "set xlabel \"%s\"\n", text);
+        fprintf(file, "set xlabel ");
+        quote_gnuplot_string(file, text);
+        fprintf(file, "\n");
         tfree(text);
     }
     if (ylabel) {
         text = cp_unquote(ylabel);
-        fprintf(file, "set ylabel \"%s\"\n", text);
+        fprintf(file, "set ylabel ");
+        quote_gnuplot_string(file, text);
+        fprintf(file, "\n");
         tfree(text);
     }
     if (!nogrid) {
@@ -197,17 +226,18 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         if (v->v_name) {
             i = i + 2;
             if (i > 2) fprintf(file, ",\\\n");
-            fprintf(file, "\'%s\' using %d:%d with %s lw %d title \"%s\" ",
-                    filename_data, i-1, i, plotstyle, linewidth, v->v_name);
+            fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                    filename_data, i-1, i, plotstyle, linewidth);
+            quote_gnuplot_string(file, v->v_name);
         }
     }
     fprintf(file, "\n");
     fprintf(file, "set terminal push\n");
     if (terminal_type == 1) {
-        fprintf(file, "set terminal postscript eps color\n");
+        fprintf(file, "set terminal postscript eps color noenhanced\n");
         fprintf(file, "set out \'%s.eps\'\n", filename);
     } else {
-        fprintf(file, "set terminal png\n");
+        fprintf(file, "set terminal png noenhanced\n");
         fprintf(file, "set out \'%s.png\'\n", filename);
     }
     fprintf(file, "replot\n");
