@@ -1,0 +1,82 @@
+* (exec-spice "ngspice %s" t)
+
+.temp 37.0
+
+* holgers save all i, was saved der bei ac ??? id ist reell ?
+vin 1 0 dc = 5 ac = 1
+
+*r1  1 2 1k
+*br1 1 2 v='i(br1)*1k'
+br1 1 2  v = 'i(br1) * 1k * (1 + sqrt(hertz/1kHz))' tc1=0.01
+c2  2 0  30u
+* FIXME, the diode doesn't behave as expected when temp != 27.0
+d2  2 0  dplain temp=27.0
+
+.model dplain   d(is=1.0f)
+
+*uT = kT/e
+*i = is * (e^(u/uT - 1)
+*di/du = is * e^~ * kT/e = (i + is) / uT
+
+.control
+
+* default is 1e-12, yet gold is calculated with none
+set gmin = 0
+
+set reltol = 1e-15
+set vntol  = 1e-15
+*set abstol = 1e-15
+*set chgtol = 1e-24
+
+*! display
+
+let uT = boltz * (273.15 + 27.0) / echarge
+
+* these boltz and echarge are literal from devices/dio
+*   and differ slightly from our global visible ones
+let uT = 1.3806226e-23 / 1.6021918e-19 * (273.15 + 27.0)
+
+* echo no arity FIXME !!
+*print uT (uT - 0.0258642)
+
+*! print uT uT-0.0258641863845515
+
+op
+
+let r  = 1k * (1 + 10 * 0.01)
+let is = 1f
+let u0 = 5.0
+
+let cd = 1m
+repeat 5
+let f = cd * r + uT * log(cd/is + 1) - u0
+let f_hat = r + uT / (cd/is + 1) / is
+let cd = cd - f/f_hat
+let err = cd/-i(vin) - 1
+*print cd+i(vin)
+print err
+end
+
+*! show all
+*! showmod all
+
+let r1_dc = 1k * (1 + 10 * 0.01)
+let d2_gd = @d2[gd]
+let c2    = @c2[capacitance]
+
+*! print all
+
+ac dec 100 1 1e6
+
+let s = 2*pi*i * frequency
+
+let r1_ac = 1k * (1 + sqrt(frequency/1kHz)) * (1 + 10 * 0.01)
+let H = 1/(1 + r1_ac * (s * op1.c2 + op1.d2_gd))
+
+let err = v(2)/H - 1
+print vecmax(abs(err))
+
+plot abs(H) abs(v(2))
+plot abs(err)
+
+.endc
