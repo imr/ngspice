@@ -33,6 +33,7 @@ ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
 
     for (here = (*model)->ASRCinstances; here; here = here->ASRCnextInstance) {
         FREE(here->ASRCacValues);
+        FREE(here->ASRCopValues);
         if (prev)
             FREE(prev);
         prev = here;

@@ -24,7 +24,7 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
     int i, j;
     double *derivs;
     double difference;
-    double factor;
+    double factor, rhs;
 
     NG_IGNORE(ckt);
 
@@ -47,7 +47,13 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
              */
 
             j = 0;
-            derivs = here->ASRCacValues;
+
+            if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &rhs, here->ASRCopValues, asrc_derivs) != OK)
+                return(E_BADPARM);
+
+            derivs = asrc_derivs;
+
+            // mit factor multiplien !!
 
             if (here->ASRCtype == ASRC_VOLTAGE) {
 

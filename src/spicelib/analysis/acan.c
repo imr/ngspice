@@ -251,7 +251,7 @@ ACan(CKTcircuit *ckt, int restart)
         ckt->CKTomega = 2.0 * M_PI *freq;
 
         /* Update opertating point, if variable 'hertz' is given */
-        if (ckt->CKTvarHertz) {
+        if (0 && ckt->CKTvarHertz) {
 #ifdef XSPICE
             /* Call EVTop if event-driven instances exist */
 
