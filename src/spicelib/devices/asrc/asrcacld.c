@@ -63,13 +63,13 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->ASRCposptr[j++]) += 1.0;
 
                 for (i = 0; i < here->ASRCtree->numVars; i++)
-                    *(here->ASRCposptr[j++]) -= derivs[i] / factor;
+                    *(here->ASRCposptr[j++]) -= derivs[i] * factor;
 
             } else {
 
                 for (i = 0; i < here->ASRCtree->numVars; i++) {
-                    *(here->ASRCposptr[j++]) += derivs[i] / factor;
-                    *(here->ASRCposptr[j++]) -= derivs[i] / factor;
+                    *(here->ASRCposptr[j++]) += derivs[i] * factor;
+                    *(here->ASRCposptr[j++]) -= derivs[i] * factor;
                 }
 
             }
