@@ -40,6 +40,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             j = 0;
 
+/* fixme thats part of load or setup or ... */
             /* Get the function evaluated and the derivatives too */
             i = here->ASRCtree->numVars;
             if (asrc_nvals < i) {
@@ -62,6 +63,7 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                     asrc_vals[i] = *(ckt->CKTrhsOld + node_num);
                 }
 
+/* FIXME need to fix this too */
             if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &value, asrc_vals, asrc_derivs) != OK)
                 return(E_BADPARM);
 
