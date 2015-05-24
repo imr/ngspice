@@ -99,10 +99,6 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
                 ckt->CKTrhs[here->ASRCposNode] -= factor * rhs;
                 ckt->CKTrhs[here->ASRCnegNode] += factor * rhs;
             }
-
-            /* Store the rhs for small signal analysis */
-            if (ckt->CKTmode & MODEINITSMSIG)
-                here->ASRCacValues[here->ASRCtree->numVars] = factor * rhs;
         }
     }
 
