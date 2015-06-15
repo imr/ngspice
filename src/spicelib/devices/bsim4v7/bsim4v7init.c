@@ -73,7 +73,14 @@ SPICEdev BSIM4v7info = {
     NULL,          /* DEVacct        */
 #endif
     &BSIM4v7iSize,   /* DEVinstSize    */
-    &BSIM4v7mSize    /* DEVmodSize     */
+    &BSIM4v7mSize,   /* DEVmodSize     */
+
+#ifdef KLU
+    BSIM4v7bindCSC, /* DEVbindCSC */
+    BSIM4v7bindCSCComplex, /* DEVbindCSCComplex */
+    BSIM4v7bindCSCComplexToReal, /* DEVbindCSCComplexToReal */
+#endif
+
 };
 
 
