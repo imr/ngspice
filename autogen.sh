@@ -190,8 +190,10 @@ echo "Running $LIBTOOLIZE"
 $LIBTOOLIZE --copy --force \
     || error_and_exit "$LIBTOOLIZE failed"
 
+# fixme, actually we want something like autoreconf -fvi
+
 echo "Running aclocal $ACLOCAL_FLAGS"
-aclocal $ACLOCAL_FLAGS \
+aclocal $ACLOCAL_FLAGS -I m4 \
     || error_and_exit "aclocal failed"
 
 # optional feature: autoheader

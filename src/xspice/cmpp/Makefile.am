@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 BUILT_SOURCES = ifs_lex.c ifs_yacc.c ifs_yacc.h mod_lex.c mod_yacc.c mod_yacc.h
+CLEANFILES = ifs_lex.c ifs_yacc.c ifs_yacc.h mod_lex.c mod_yacc.c mod_yacc.h
 
 EXTRA_DIST = ifs_lex.l mod_lex.l ifs_yacc.h mod_yacc.h .gitignore
 
@@ -28,3 +29,22 @@ ifs_yacc.c ifs_yacc.h : ifs_yacc.y
 
 mod_yacc.c mod_yacc.h : mod_yacc.y
 	$(BISON) $(BISONFLAGS) -d -o mod_yacc.c $<
+
+
+if CROSS_COMPILING
+
+BUILT_SOURCES += build/cmpp$(BUILD_EXEEXT)
+CLEANFILES += build/cmpp$(BUILD_EXEEXT)
+
+BUILD_CMPP_FILES = \
+	main.c pp_ifs.c pp_lst.c pp_mod.c read_ifs.c util.c \
+	writ_ifs.c ifs_yacc.c ifs_lex.c mod_yacc.c mod_lex.c
+
+# srcdir wegen der _y misere ...
+build/cmpp$(BUILD_EXEEXT) : $(BUILD_CMPP_FILES)
+	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) -I . -I $(srcdir) $(LDFLAGS_FOR_BUILD) -o $@ $^
+
+distclean-local:
+	-rm -rf build
+
+endif

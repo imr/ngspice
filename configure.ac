@@ -32,6 +32,8 @@ AC_CONFIG_HEADER([src/include/ngspice/config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+AX_PROG_CC_FOR_BUILD
+
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
@@ -1206,4 +1208,14 @@ AC_CONFIG_FILES([Makefile
                  tests/xspice/digital/spinit
                  tests/resistance/Makefile
                  tests/vbic/Makefile])
+
+AM_CONDITIONAL([CROSS_COMPILING], [test "x$cross_compiling" = xyes])
+
+if test "x$cross_compiling" = xyes; then
+   AC_CONFIG_COMMANDS([mkdir], [$MKDIR_P src/xspice/cmpp/build])
+   AC_SUBST([CMPP], ['$(top_builddir)/src/xspice/cmpp/build/cmpp$(BUILD_EXEEXT)'])
+else
+   AC_SUBST([CMPP], ['$(top_builddir)/src/xspice/cmpp/cmpp$(EXEEXT)'])
+fi
+
 AC_OUTPUT
