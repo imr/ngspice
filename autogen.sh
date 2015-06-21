@@ -191,7 +191,7 @@ $LIBTOOLIZE --copy --force \
     || error_and_exit "$LIBTOOLIZE failed"
 
 echo "Running aclocal $ACLOCAL_FLAGS"
-aclocal $ACLOCAL_FLAGS \
+aclocal $ACLOCAL_FLAGS -I m4 \
     || error_and_exit "aclocal failed"
 
 # optional feature: autoheader
