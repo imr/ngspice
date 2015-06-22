@@ -71,7 +71,13 @@ SPICEdev HSMHV2info = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &HSMHV2iSize,
- /* DEVmodSize    */ &HSMHV2mSize
+ /* DEVmodSize    */ &HSMHV2mSize,
+
+#ifdef KLU
+ /* DEVbindCSC        */       NULL,
+ /* DEVbindCSCComplex */       NULL,
+ /* DEVbindCSCComplexToReal */ NULL,
+#endif
 
 };
 
