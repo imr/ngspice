@@ -69,7 +69,6 @@ CAPbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 here->CAPnegPosptrStructPtr = matched ;
                 here->CAPnegPosptr = matched->CSC ;
             }
-
         }
     }
 

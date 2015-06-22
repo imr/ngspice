@@ -19,10 +19,15 @@ libasrc_la_SOURCES =	\
 	asrcmdel.c	\
 	asrcpar.c	\
 	asrcpzld.c	\
-	asrcset.c \
+	asrcset.c	\
 	asrctemp.c
 
 
+if KLU_WANTED
+libasrc_la_SOURCES += asrcbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
 MAINTAINERCLEANFILES = Makefile.in
