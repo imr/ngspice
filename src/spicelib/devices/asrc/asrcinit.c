@@ -67,9 +67,9 @@ SPICEdev ASRCinfo = {
     .DEVacct = NULL,
 #endif
 #ifdef KLU
-    .DEVbindCSC = NULL,
-    .DEVbindCSCComplex = NULL,
-    .DEVbindCSCComplexToReal = NULL,
+    .DEVbindCSC = ASRCbindCSC,
+    .DEVbindCSCComplex = ASRCbindCSCComplex,
+    .DEVbindCSCComplexToReal = ASRCbindCSCComplexToReal,
 #endif
 };
 
