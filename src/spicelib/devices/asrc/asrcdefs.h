@@ -54,6 +54,10 @@ typedef struct sASRCinstance {
     unsigned ASRCreciproctcGiven : 1; /* indicates reciproctc flag parameter specified */
     unsigned ASRCreciprocmGiven : 1;  /* indicates reciprocm flag parameter specified */
 
+#ifdef KLU
+    BindElement **ASRCposBinding ;
+#endif
+
 } ASRCinstance;
 
 
