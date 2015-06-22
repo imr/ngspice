@@ -65,6 +65,10 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->ASRCvars = TMALLOC(int, here->ASRCtree->numVars);
             here->ASRCacValues = TMALLOC(double, here->ASRCtree->numVars + 1);
 
+#ifdef KLU
+            here->ASRCposBinding = TMALLOC (BindElement *, j) ;
+#endif
+
             /* For each controlling variable set the entries
                in the vector of the positions of the SMP */
 

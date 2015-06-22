@@ -50,6 +50,10 @@ typedef struct sASRCinstance {
     unsigned ASRCtc2Given : 1;        /* indicates tc2 parameter specified */
     unsigned ASRCreciproctcGiven : 1; /* indicates reciproctc flag parameter specified */
 
+#ifdef KLU
+    BindElement **ASRCposBinding ;
+#endif
+
 } ASRCinstance;
 
 

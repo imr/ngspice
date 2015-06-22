@@ -16,3 +16,9 @@ extern int ASRCacLoad(GENmodel *, CKTcircuit *);
 extern int ASRCsetup(SMPmatrix *, GENmodel *, CKTcircuit *, int *);
 extern int ASRCunsetup(GENmodel *, CKTcircuit *);
 extern int ASRCtemp(GENmodel *, CKTcircuit *);
+
+#ifdef KLU
+extern int ASRCbindCSC (GENmodel *, CKTcircuit *) ;
+extern int ASRCbindCSCComplex (GENmodel *, CKTcircuit *) ;
+extern int ASRCbindCSCComplexToReal (GENmodel *, CKTcircuit *) ;
+#endif
