@@ -828,6 +828,17 @@ resume:
 #endif
 
         } else {
+
+            printf ("CKTtime: %-.9g\n", ckt->CKTtime) ;
+            CKTreliability (ckt, 0) ;
+/** Nel RHSold, ogni device deve accedere ai propri valori per vedere se esso stesso è acceso o spento.
+    Nel caso del BSIM4, vale la regola Vgs > Vth, dove Vgs = ckt->CKTrhsOld [here->BSIM4...] - ckt->CKTrhsOld [here->BSIM4...] e Vth = here->BSIM4vth .
+    In caso il transistor sia acceso, si alza un flag, privato del device, che indica che è acceso. Se è spento, lo stesso flag sarà basso.
+    Il tempo corrente CKTtime deve essere memorizzato insieme, in modo tale da poter poi calcolare il delta di tempo necessario al modello.
+    QUI, deve essere controllato che all'istante precedente il device sia acceso (o spento). Se si manifesta un cambio, allora la fase di stress (o di recovery)
+      è finita e bisogna calcolare il delta_vth attraverso il modello.
+*/
+
             if (firsttime) {
 #ifdef WANT_SENSE2
                 if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN)){

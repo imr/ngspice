@@ -114,6 +114,8 @@ typedef struct SPICEdev {
     int *DEVinstSize;    /* size of an instance */
     int *DEVmodSize;     /* size of a model */
 
+    int (*DEVreliability)(GENmodel *, CKTcircuit *, unsigned int) ;
+
 } SPICEdev;  /* instance of structure for each possible type of device */
 
 

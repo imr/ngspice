@@ -223,6 +223,9 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 		    error = analInfo[i]->an_func (ckt, reset);
 			/* txl, cpl addition */
 			if (error == 1111) break;
+
+                    CKTreliability (ckt, 1) ;
+
 		}
 		if (error)
 		    error2 = error;

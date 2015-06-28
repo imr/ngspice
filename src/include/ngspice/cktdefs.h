@@ -423,6 +423,8 @@ extern int DCpss(CKTcircuit *, int);
 /* SP */
 #endif
 
+extern int CKTreliability (CKTcircuit *, unsigned int) ;
+
 extern int NaskQuest(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NsetParm(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NIacIter(CKTcircuit *);

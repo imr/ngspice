@@ -31,7 +31,8 @@ libmos1_la_SOURCES =	\
 	mos1sset.c	\
 	mos1supd.c	\
 	mos1temp.c	\
-	mos1trun.c
+	mos1trun.c	\
+	mos1reliability.c
 
 
 

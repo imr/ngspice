@@ -73,7 +73,10 @@ SPICEdev MOS1info = {
  /* DEVacct       */ NULL,
 #endif                       
  /* DEVinstSize   */ &MOS1iSize,
- /* DEVmodSize    */ &MOS1mSize
+ /* DEVmodSize    */ &MOS1mSize,
+
+ MOS1reliability
+
 };
 
 
