@@ -206,11 +206,14 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(MOS1SPbPtr,MOS1sNodePrime,MOS1bNode);
             TSTALLOC(MOS1SPdpPtr,MOS1sNodePrime,MOS1dNodePrime);
 
-            here->MOS1reliability = TMALLOC (MOS1relStruct, 1) ;
-            here->MOS1reliability->time = 0 ;
-            here->MOS1reliability->deltaVth = 0 ;
-            here->MOS1reliability->t_star = 0 ;
-            here->MOS1reliability->IsON = -1 ;
+            if (model->MOS1type == -1)
+            {
+                here->MOS1reliability = TMALLOC (MOS1relStruct, 1) ;
+                here->MOS1reliability->time = 0 ;
+                here->MOS1reliability->deltaVth = 0 ;
+                here->MOS1reliability->t_star = 0 ;
+                here->MOS1reliability->IsON = -1 ;
+            }
         }
     }
     return(OK);

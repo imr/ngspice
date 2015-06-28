@@ -72,109 +72,112 @@ MOS1reliability (GENmodel *inModel, CKTcircuit *ckt, unsigned int mode)
         /* loop through all the instances of the model */
         for (here = model->MOS1instances ; here != NULL ; here=here->MOS1nextInstance)
         {
-            vds = ckt->CKTstate0 [here->MOS1vds] ;
-            vgs = ckt->CKTstate0 [here->MOS1vgs] ;
-            von = model->MOS1type * here->MOS1von ;
-            if (vds >= 0)
+            if (model->MOS1type == -1)
             {
-                printf ("VDS >= 0\tMOS1type: %d\tMOS1instance: %s\tVgs: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgs, von) ;
-                if (vgs > von)
+                vds = ckt->CKTstate0 [here->MOS1vds] ;
+                vgs = ckt->CKTstate0 [here->MOS1vgs] ;
+                von = model->MOS1type * here->MOS1von ;
+                if (vds >= 0)
                 {
-                    printf ("Acceso!\n") ;
-                    NowIsON = 1 ;
-                } else {
-                    printf ("Spento!\n") ;
-                    NowIsON = 0 ;
-                }
-            } else {
-                double vgd ;
-                vgd = vgs - vds ;
-                printf ("VDS <  0\tMOS1type: %d\tMOS1instance: %s\tVgd: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgd, von) ;
-                if (vgd > von)
-                {
-                    printf ("Acceso!\n") ;
-                    NowIsON = 1 ;
-                } else {
-                    printf ("Spento!\n") ;
-                    NowIsON = 0 ;
-                }
-            }
-
-            // If it's the first time, initialize 'here->MOS1reliability->IsON'
-            if (here->MOS1reliability->IsON == -1)
-            {
-                here->MOS1reliability->IsON = NowIsON ;
-            }
-
-            if (mode == 0)
-            {
-                if (NowIsON)
-                {
-                    if (here->MOS1reliability->IsON == 1)
+                    printf ("VDS >= 0\tMOS1type: %d\tMOS1instance: %s\tVgs: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgs, von) ;
+                    if (vgs > von)
                     {
-                        // Until now, the device was ON - Do NOTHING
-                        delta = -1 ;
-                    } else if (here->MOS1reliability->IsON == 0) {
-                        // Until now, the device was OFF - Calculate recovery
-                        delta = ckt->CKTtime - here->MOS1reliability->time ;
-
-                        // Calculate Aging - Giogio Liatis' Model
-                        calculate_aging (here, delta, 0) ;
-
-                        // Update time and flag - Stress begins
-                        here->MOS1reliability->time = ckt->CKTtime ;
-                        here->MOS1reliability->IsON = 1 ;
+                        printf ("Acceso!\n") ;
+                        NowIsON = 1 ;
                     } else {
-                        fprintf (stderr, "Reliability Analysis Error\n") ;
+                        printf ("Spento!\n") ;
+                        NowIsON = 0 ;
                     }
                 } else {
+                    double vgd ;
+                    vgd = vgs - vds ;
+                    printf ("VDS <  0\tMOS1type: %d\tMOS1instance: %s\tVgd: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgd, von) ;
+                    if (vgd > von)
+                    {
+                        printf ("Acceso!\n") ;
+                        NowIsON = 1 ;
+                    } else {
+                        printf ("Spento!\n") ;
+                        NowIsON = 0 ;
+                    }
+                }
+
+                // If it's the first time, initialize 'here->MOS1reliability->IsON'
+                if (here->MOS1reliability->IsON == -1)
+                {
+                    here->MOS1reliability->IsON = NowIsON ;
+                }
+
+                if (mode == 0)
+                {
+                    if (NowIsON)
+                    {
+                        if (here->MOS1reliability->IsON == 1)
+                        {
+                            // Until now, the device was ON - Do NOTHING
+                            delta = -1 ;
+                        } else if (here->MOS1reliability->IsON == 0) {
+                            // Until now, the device was OFF - Calculate recovery
+                            delta = ckt->CKTtime - here->MOS1reliability->time ;
+
+                            // Calculate Aging - Giogio Liatis' Model
+                            calculate_aging (here, delta, 0) ;
+
+                            // Update time and flag - Stress begins
+                            here->MOS1reliability->time = ckt->CKTtime ;
+                            here->MOS1reliability->IsON = 1 ;
+                        } else {
+                            fprintf (stderr, "Reliability Analysis Error\n") ;
+                        }
+                    } else {
+                        if (here->MOS1reliability->IsON == 1)
+                        {
+                            // Until now, the device was ON - Calculate stress
+                            delta = ckt->CKTtime - here->MOS1reliability->time ;
+
+                            // Calculate Aging - Giorgio Liatis' Model
+                            calculate_aging (here, delta, 1) ;
+
+                            // Update time and flag - Recovery begins
+                            here->MOS1reliability->time = ckt->CKTtime ;
+                            here->MOS1reliability->IsON = 0 ;
+                        } else if (here->MOS1reliability->IsON == 0) {
+                            // Until now, the device was OFF - Do NOTHING
+                            delta = -1 ;
+                        } else {
+                            fprintf (stderr, "Reliability Analysis Error\n") ;
+                        }
+                    }
+                } else if (mode == 1) {
+                    // In this mode, it doesn't matter if NOW the device is in stress or in recovery, since it's the last timestep
                     if (here->MOS1reliability->IsON == 1)
                     {
-                        // Until now, the device was ON - Calculate stress
+                        // Calculate stress
                         delta = ckt->CKTtime - here->MOS1reliability->time ;
-
-                        // Calculate Aging - Giorgio Liatis' Model
                         calculate_aging (here, delta, 1) ;
 
-                        // Update time and flag - Recovery begins
+                        // Update time and flag - Maybe Optional
+                        here->MOS1reliability->time = ckt->CKTtime ;
+                        here->MOS1reliability->IsON = 1 ;
+                    } else if (here->MOS1reliability->IsON == 0) {
+                        // Calculate recovery
+                        delta = ckt->CKTtime - here->MOS1reliability->time ;
+                        calculate_aging (here, delta, 0) ;
+
+                        // Update time and flag - Maybe Optional
                         here->MOS1reliability->time = ckt->CKTtime ;
                         here->MOS1reliability->IsON = 0 ;
-                    } else if (here->MOS1reliability->IsON == 0) {
-                        // Until now, the device was OFF - Do NOTHING
-                        delta = -1 ;
                     } else {
                         fprintf (stderr, "Reliability Analysis Error\n") ;
                     }
-                }
-            } else if (mode == 1) {
-                // In this mode, it doesn't matter if NOW the device is in stress or in recovery, since it's the last timestep
-                if (here->MOS1reliability->IsON == 1)
-                {
-                    // Calculate stress
-                    delta = ckt->CKTtime - here->MOS1reliability->time ;
-                    calculate_aging (here, delta, 1) ;
-
-                    // Update time and flag - Maybe Optional
-                    here->MOS1reliability->time = ckt->CKTtime ;
-                    here->MOS1reliability->IsON = 1 ;
-                } else if (here->MOS1reliability->IsON == 0) {
-                    // Calculate recovery
-                    delta = ckt->CKTtime - here->MOS1reliability->time ;
-                    calculate_aging (here, delta, 0) ;
-
-                    // Update time and flag - Maybe Optional
-                    here->MOS1reliability->time = ckt->CKTtime ;
-                    here->MOS1reliability->IsON = 0 ;
                 } else {
                     fprintf (stderr, "Reliability Analysis Error\n") ;
                 }
-            } else {
-                fprintf (stderr, "Reliability Analysis Error\n") ;
+                printf ("Time: %-.9gs\t", here->MOS1reliability->time) ;
+                printf ("DeltaVth: %-.9gmV\t", here->MOS1reliability->deltaVth * 1000) ;
+                printf ("IsON: %u\t", here->MOS1reliability->IsON) ;
+                printf ("t_star: %-.9gs\n\n\n", here->MOS1reliability->t_star) ;
             }
-            printf ("Time: %-.9gs\t", here->MOS1reliability->time) ;
-            printf ("DeltaVth: %-.9gmV\t", here->MOS1reliability->deltaVth * 1000) ;
-            printf ("IsON: %u\t", here->MOS1reliability->IsON) ;
-            printf ("t_star: %-.9gs\n\n\n", here->MOS1reliability->t_star) ;
         }
     }
 
