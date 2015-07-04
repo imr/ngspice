@@ -73,7 +73,10 @@ SPICEdev BSIM4info = {
     NULL,          /* DEVacct        */
 #endif
     &BSIM4iSize,   /* DEVinstSize    */
-    &BSIM4mSize    /* DEVmodSize     */
+    &BSIM4mSize,    /* DEVmodSize     */
+
+ BSIM4reliability
+
 };
 
 

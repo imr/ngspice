@@ -5,27 +5,29 @@
 
 #include "analysis.h"
 
-extern SPICEanalysis OPTinfo;
-extern SPICEanalysis ACinfo;
-extern SPICEanalysis DCTinfo;
-extern SPICEanalysis DCOinfo;
-extern SPICEanalysis TRANinfo;
-extern SPICEanalysis PZinfo;
-extern SPICEanalysis TFinfo;
-extern SPICEanalysis DISTOinfo;
-extern SPICEanalysis NOISEinfo;
-extern SPICEanalysis SENSinfo;
+extern SPICEanalysis OPTinfo ;
+extern SPICEanalysis RELANinfo ;
+extern SPICEanalysis ACinfo ;
+extern SPICEanalysis DCTinfo ;
+extern SPICEanalysis DCOinfo ;
+extern SPICEanalysis TRANinfo ;
+extern SPICEanalysis PZinfo ;
+extern SPICEanalysis TFinfo ;
+extern SPICEanalysis DISTOinfo ;
+extern SPICEanalysis NOISEinfo ;
+extern SPICEanalysis SENSinfo ;
 
 #ifdef WITH_PSS
-extern SPICEanalysis PSSinfo;
+extern SPICEanalysis PSSinfo ;
 #endif
 
 #ifdef WANT_SENSE2
-extern SPICEanalysis SEN2info;
+extern SPICEanalysis SEN2info ;
 #endif
 
-SPICEanalysis *analInfo[] = {
+SPICEanalysis *analInfo [] = {
     &OPTinfo,
+    &RELANinfo,
     &ACinfo,
     &DCTinfo,
     &DCOinfo,
@@ -41,25 +43,24 @@ SPICEanalysis *analInfo[] = {
 #ifdef WANT_SENSE2
     &SEN2info,
 #endif
-};
+} ;
 
-
-char *spice_analysis_get_name(int index)
+char *spice_analysis_get_name (int index)
 {
-    return analInfo[index]->if_analysis.name;
+    return analInfo [index]->if_analysis.name ;
 }
 
-char *spice_analysis_get_description(int index)
+char *spice_analysis_get_description (int index)
 {
-    return analInfo[index]->if_analysis.description;
+    return analInfo [index]->if_analysis.description ;
 }
 
-int spice_num_analysis(void)
+int spice_num_analysis (void)
 {
-    return NUMELEMS(analInfo);
+    return NUMELEMS (analInfo) ;
 }
 
-SPICEanalysis **spice_analysis_ptr(void)
+SPICEanalysis **spice_analysis_ptr (void)
 {
-    return analInfo;
+    return analInfo ;
 }

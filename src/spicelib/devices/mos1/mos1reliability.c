@@ -79,25 +79,25 @@ MOS1reliability (GENmodel *inModel, CKTcircuit *ckt, unsigned int mode)
                 von = model->MOS1type * here->MOS1von ;
                 if (vds >= 0)
                 {
-                    printf ("VDS >= 0\tMOS1type: %d\tMOS1instance: %s\tVgs: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgs, von) ;
+//                    printf ("VDS >= 0\tMOS1type: %d\tMOS1instance: %s\tVgs: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgs, von) ;
                     if (vgs > von)
                     {
-                        printf ("Acceso!\n") ;
+//                        printf ("Acceso!\n") ;
                         NowIsON = 1 ;
                     } else {
-                        printf ("Spento!\n") ;
+//                        printf ("Spento!\n") ;
                         NowIsON = 0 ;
                     }
                 } else {
                     double vgd ;
                     vgd = vgs - vds ;
-                    printf ("VDS <  0\tMOS1type: %d\tMOS1instance: %s\tVgd: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgd, von) ;
+//                    printf ("VDS <  0\tMOS1type: %d\tMOS1instance: %s\tVgd: %-.9g\tVon: %-.9g\t", model->MOS1type, here->MOS1name, vgd, von) ;
                     if (vgd > von)
                     {
-                        printf ("Acceso!\n") ;
+//                        printf ("Acceso!\n") ;
                         NowIsON = 1 ;
                     } else {
-                        printf ("Spento!\n") ;
+//                        printf ("Spento!\n") ;
                         NowIsON = 0 ;
                     }
                 }
@@ -170,13 +170,13 @@ MOS1reliability (GENmodel *inModel, CKTcircuit *ckt, unsigned int mode)
                     } else {
                         fprintf (stderr, "Reliability Analysis Error\n") ;
                     }
+                    printf ("\tTime: %-.9gs\t\t", ckt->CKTtime) ;
+                    printf ("DeltaVth: %-.9gmV\t\t", here->MOS1reliability->deltaVth * 1000) ;
+                    printf ("Device Name: %s\t\t", here->MOS1name) ;
+                    printf ("Device Type: %s\n\n", model->MOS1modName) ;
                 } else {
                     fprintf (stderr, "Reliability Analysis Error\n") ;
                 }
-                printf ("Time: %-.9gs\t", here->MOS1reliability->time) ;
-                printf ("DeltaVth: %-.9gmV\t", here->MOS1reliability->deltaVth * 1000) ;
-                printf ("IsON: %u\t", here->MOS1reliability->IsON) ;
-                printf ("t_star: %-.9gs\n\n\n", here->MOS1reliability->t_star) ;
             }
         }
     }

@@ -612,6 +612,66 @@ dot_pss(char *line, void *ckt, INPtables *tab, card *current,
 /* SP */
 #endif
 
+//#ifdef RELAN
+static int
+dot_relan (char *line, void *ckt, INPtables *tab, card *current, void *task, void *gnode, JOB *foo)
+{
+    int error ;      /* error code temporary */
+    IFvalue ptemp ;  /* a value structure to package resistance into */
+    IFvalue *parm ;  /* a pointer to a value struct for function returns */
+    int which ;      /* which analysis we are performing */
+    char *word ;     /* something to stick a word of input into */
+    double dtemp ;   /* random double precision temporary */
+
+    NG_IGNORE (gnode) ;
+
+    /* .relan AgingStep AgingStop <AgingStart> <tmax> <UIC> */
+    which = ft_find_analysis ("RELAN") ;
+    if (which == -1)
+    {
+        LITERR ("Reliability Analysis unsupported.\n") ;
+        return (0) ;
+    }
+    IFC (newAnalysis, (ckt, which, "Reliability Analysis", &foo, task)) ;
+
+    parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
+    GCA (INPapName, (ckt, which, foo, "relan_aging_step", parm)) ;
+
+    parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
+    GCA (INPapName, (ckt, which, foo, "relan_aging_stop", parm)) ;
+
+    if (*line)
+    {
+        dtemp = INPevaluate (&line, &error, 1) ; /* AgingStart */
+        if (error == 0)
+        {
+            ptemp.rValue = dtemp ;
+            GCA (INPapName, (ckt, which, foo, "relan_aging_start", &ptemp)) ;
+            dtemp = INPevaluate (&line, &error, 1) ;	/* tmax */
+            if (error == 0)
+            {
+                ptemp.rValue = dtemp ;
+                GCA (INPapName, (ckt, which, foo, "relan_aging_max", &ptemp)) ;
+            }
+        }
+    }
+
+    if (*line)
+    {
+        INPgetTok (&line, &word, 1) ; /* UIC */
+        if (strcmp (word, "uic") == 0)
+        {
+            ptemp.iValue = 1 ;
+            GCA (INPapName, (ckt, which, foo, "uic", &ptemp)) ;
+        } else {
+            fprintf (stderr,"Error: unknown parameter %s on .relan - ignored\n", word) ;
+        }
+    }
+
+    return (0) ;
+}
+//#endif
+
 static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
             TSKtask *task, CKTnode *gnode, JOB *foo)
@@ -698,6 +758,13 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *
 		goto quit;
 		/* SP */
 #endif
+
+//#ifdef RELAN
+        } else if ((strcmp (token, ".relan") == 0)) {
+		rtn = dot_relan (line, ckt, tab, current, task, gnode, foo) ;
+		goto quit ;
+//#endif
+
 	} else if ((strcmp(token, ".subckt") == 0) ||
 	           (strcmp(token, ".ends") == 0)) {
 		/* not yet implemented - warn & ignore */

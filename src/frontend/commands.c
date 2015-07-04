@@ -293,6 +293,14 @@ struct comm spcp_coms[] = {
       "[.pss line args] : Do a periodic state analysis." } ,
 /* SP */
 #endif
+
+//#ifdef RELAN
+    { "relan", com_relan, TRUE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[.relan line args] : Do a Reliability Analysis." } ,
+//#endif
+
     { "ac", com_ac, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -724,6 +732,14 @@ struct comm nutcp_coms[] = {
       "[.pss line args] : Do a periodic steady state analysis." } ,
 /* SP */
 #endif
+
+//#ifdef RELAN
+    { "relan", NULL, TRUE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[.relan line args] : Do a Reliability Analysis." } ,
+//#endif
+
     { "ac", NULL, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,

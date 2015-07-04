@@ -96,7 +96,11 @@ libckt_la_SOURCES = \
 		traninit.c	\
 		transetp.c	\
 		cluster.c	\
-		cktreliability.c
+		cktreliability.c	\
+		relananalysis.c	\
+		relanaskq.c	\
+		relaninit.c	\
+		relansetp.c
 
 
 if PSS_WANTED

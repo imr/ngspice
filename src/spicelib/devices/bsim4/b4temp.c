@@ -1715,6 +1715,13 @@ int Size_Not_Found, i;
               }
 
             /* adding delvto  */
+            if (model->BSIM4type == -1)
+            {
+                if (here->BSIM4reliability->IsON != -1)
+                {
+                    here->BSIM4delvto = here->BSIM4reliability->deltaVth ;
+                }
+            }
             here->BSIM4vth0 += here->BSIM4delvto;
             here->BSIM4vfb = pParam->BSIM4vfb + model->BSIM4type * here->BSIM4delvto;
 

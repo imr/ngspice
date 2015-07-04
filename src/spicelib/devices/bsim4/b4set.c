@@ -2653,6 +2653,15 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
                 TSTALLOC(BSIM4SgpPtr, BSIM4sNode, BSIM4gNodePrime);
                 TSTALLOC(BSIM4SbpPtr, BSIM4sNode, BSIM4bNodePrime);
             }
+
+            if (model->BSIM4type == -1)
+            {
+                here->BSIM4reliability = TMALLOC (BSIM4relStruct, 1) ;
+                here->BSIM4reliability->time = 0 ;
+                here->BSIM4reliability->deltaVth = 0 ;
+                here->BSIM4reliability->t_star = 0 ;
+                here->BSIM4reliability->IsON = -1 ;
+            }
         }
     }
 

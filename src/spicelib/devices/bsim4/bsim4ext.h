@@ -31,3 +31,5 @@ extern int BSIM4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4unsetup(GENmodel*,CKTcircuit*);
 extern int BSIM4soaCheck(CKTcircuit *, GENmodel *);
+
+extern int BSIM4reliability (GENmodel *, CKTcircuit *, unsigned int) ;

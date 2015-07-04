@@ -29,6 +29,13 @@ Modified by Pankaj Kumar Thakur, 07/23/2012
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
+typedef struct sBSIM4relStruct {
+    double time ;
+    double deltaVth ;
+    double t_star ;
+    int IsON ;
+} BSIM4relStruct ;
+
 typedef struct sBSIM4instance
 {
     struct sBSIM4model *BSIM4modPtr;
@@ -573,6 +580,8 @@ typedef struct sBSIM4instance
 #else /* NONOISE */
         double **BSIM4nVar;
 #endif /* NONOISE */
+
+    BSIM4relStruct *BSIM4reliability ;
 
 } BSIM4instance ;
 

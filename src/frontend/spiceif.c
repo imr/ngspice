@@ -221,6 +221,11 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         || eq(what, "pss")
         /* SP */
 #endif
+
+//#ifdef RELAN
+        || eq (what, "relan")
+//#endif
+
         )
     {
         s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
@@ -336,6 +341,11 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         (eq(what, "pss")) ||
         /* SP */
 #endif
+
+//#ifdef RELAN
+        (eq (what, "relan")) ||
+//#endif
+
         (eq(what, "run")))
     {
         /*CDHW Run the analysis pointed to by ci_curTask CDHW*/

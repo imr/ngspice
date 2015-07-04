@@ -224,7 +224,17 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 			/* txl, cpl addition */
 			if (error == 1111) break;
 
-                    CKTreliability (ckt, 1) ;
+                    if (i == 1)
+                    {
+                        /* In case of Reliability Analysis, perform the final CKTreliability */
+                        printf ("\n\nFinal Aging...\n") ;
+                        CKTreliability (ckt, 1) ;
+                        error = CKTtemp (ckt) ;
+                        if (error)
+                        {
+                            return (error) ;
+                        }
+                    }
 
 		}
 		if (error)

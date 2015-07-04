@@ -27,7 +27,8 @@ libbsim4_la_SOURCES =	\
 	bsim4ext.h	\
 	bsim4init.c	\
 	bsim4init.h	\
-	bsim4itf.h
+	bsim4itf.h	\
+	b4reliability.c
 
 
 
