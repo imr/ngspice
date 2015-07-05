@@ -1,16 +1,19 @@
 %{
     /*
-     * (compile (concat "bison " (file-relative-name buffer-file-name)))
+     * (compile (concat "bison -ydo inpptree-parser.c " (file-relative-name buffer-file-name)))
      */
+
+  #include "ngspice/ngspice.h"
+  #include "ngspice/inpptree.h"
 
   #include <stdio.h>
   #include <stdlib.h>
 
-  struct PTltype {
-    char *start, *stop;
-  };
-
   # define YYLTYPE struct PTltype
+
+  #include "inpptree-parser.h"
+  #include "inpptree-parser-y.h"
+
 
   # define YYLLOC_DEFAULT(Current, Rhs, N)                               \
      do                                                                  \
@@ -22,23 +25,10 @@
        }                                                                 \
      while (0)
 
-
-  #include "inpptree-parser.h"
-
-  extern int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line);
-  extern int PTdebug;
-
   static void PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *);
-
-  #if defined (_MSC_VER)
-  # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
-  #endif
-
-
 %}
 
 %name-prefix="PT"
-%output="inpptree-parser.c"
 
 %defines
 
@@ -93,53 +83,53 @@ expression: exp
 
 
 exp:
-    TOK_NUM                           { $$ = mknnode($1); }
-  | TOK_STR                           { $$ = mksnode($1, ckt); txfree((void*)$1); }
+    TOK_NUM                           { $$ = PT_mknnode($1); }
+  | TOK_STR                           { $$ = PT_mksnode($1, ckt); txfree((void*)$1); }
 
-  | exp '+' exp                       { $$ = mkbnode("+", $1, $3); }
-  | exp '-' exp                       { $$ = mkbnode("-", $1, $3); }
-  | exp '*' exp                       { $$ = mkbnode("*", $1, $3); }
-  | exp '/' exp                       { $$ = mkbnode("/", $1, $3); }
-  | exp '^' exp                       { $$ = mkbnode("^", $1, $3); }
+  | exp '+' exp                       { $$ = PT_mkbnode("+", $1, $3); }
+  | exp '-' exp                       { $$ = PT_mkbnode("-", $1, $3); }
+  | exp '*' exp                       { $$ = PT_mkbnode("*", $1, $3); }
+  | exp '/' exp                       { $$ = PT_mkbnode("/", $1, $3); }
+  | exp '^' exp                       { $$ = PT_mkbnode("^", $1, $3); }
 
   | '(' exp ')'                       { $$ = $2; }
 
-  | '-' exp  %prec NEG                { $$ = mkfnode("-",$2); }
+  | '-' exp  %prec NEG                { $$ = PT_mkfnode("-",$2); }
 
-  | TOK_STR '(' nonempty_arglist ')'  { $$ = mkfnode($1, $3);
+  | TOK_STR '(' nonempty_arglist ')'  { $$ = PT_mkfnode($1, $3);
                                         if (!$$)
                                             YYERROR;
                                         txfree((void*)$1); }
 
   | TOK_pnode
 
-  | exp '?' exp ':' exp               { $$ = mkfnode("ternary_fcn",
-                                               mkbnode(",",
-                                                 mkbnode(",", $1, $3),
+  | exp '?' exp ':' exp               { $$ = PT_mkfnode("ternary_fcn",
+                                               PT_mkbnode(",",
+                                                 PT_mkbnode(",", $1, $3),
                                                  $5)); }
 
-  | exp TOK_EQ exp                    { $$ = mkfnode("eq0", mkbnode("-",$1,$3)); }
-  | exp TOK_NE exp                    { $$ = mkfnode("ne0", mkbnode("-",$1,$3)); }
-  | exp TOK_GT exp                    { $$ = mkfnode("gt0", mkbnode("-",$1,$3)); }
-  | exp TOK_LT exp                    { $$ = mkfnode("lt0", mkbnode("-",$1,$3)); }
-  | exp TOK_GE exp                    { $$ = mkfnode("ge0", mkbnode("-",$1,$3)); }
-  | exp TOK_LE exp                    { $$ = mkfnode("le0", mkbnode("-",$1,$3)); }
+  | exp TOK_EQ exp                    { $$ = PT_mkfnode("eq0", PT_mkbnode("-",$1,$3)); }
+  | exp TOK_NE exp                    { $$ = PT_mkfnode("ne0", PT_mkbnode("-",$1,$3)); }
+  | exp TOK_GT exp                    { $$ = PT_mkfnode("gt0", PT_mkbnode("-",$1,$3)); }
+  | exp TOK_LT exp                    { $$ = PT_mkfnode("lt0", PT_mkbnode("-",$1,$3)); }
+  | exp TOK_GE exp                    { $$ = PT_mkfnode("ge0", PT_mkbnode("-",$1,$3)); }
+  | exp TOK_LE exp                    { $$ = PT_mkfnode("le0", PT_mkbnode("-",$1,$3)); }
 
-  | exp TOK_OR exp                    { $$ = mkfnode("ne0",
-                                               mkbnode("+",
-                                                 mkfnode("ne0", $1),
-                                                   mkfnode("ne0", $3))); }
-  | exp TOK_AND exp                   { $$ = mkfnode("eq0",
-                                               mkbnode("+",
-                                                 mkfnode("eq0", $1),
-                                                   mkfnode("eq0", $3))); }
-  | '!' exp                           { $$ = mkfnode("eq0", $2); }
+  | exp TOK_OR exp                    { $$ = PT_mkfnode("ne0",
+                                               PT_mkbnode("+",
+                                                 PT_mkfnode("ne0", $1),
+                                                   PT_mkfnode("ne0", $3))); }
+  | exp TOK_AND exp                   { $$ = PT_mkfnode("eq0",
+                                               PT_mkbnode("+",
+                                                 PT_mkfnode("eq0", $1),
+                                                   PT_mkfnode("eq0", $3))); }
+  | '!' exp                           { $$ = PT_mkfnode("eq0", $2); }
 
   ;
 
 nonempty_arglist:
     exp
-  | nonempty_arglist ',' exp     { $$ = mkbnode(",", $1, $3); }
+  | nonempty_arglist ',' exp     { $$ = PT_mkbnode(",", $1, $3); }
 
 %%
 

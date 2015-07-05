@@ -1,9 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = inpptree-parser.y
-## For Windows with Visual Studio
-EXTRA_DIST += inpptree-parser.c inpptree-parser.h
-
 noinst_LTLIBRARIES = libinp.la
 
 libinp_la_SOURCES = \
@@ -63,17 +59,19 @@ libinp_la_SOURCES = \
 		inppas3.h	\
 		inppname.c	\
 		inpptree.c	\
+		inpptree-parser.y \
+		inpptree-parser-y.h \
 		inpsymt.c	\
 		inptyplk.c	\
 		ptfuncs.c	\
 		sperror.c	\
 		inpxx.h
 
-$(srcdir)/inpptree.c : inpptree-parser.c
-inpptree-parser.c inpptree-parser.h : inpptree-parser.y
-	bison $(srcdir)/inpptree-parser.y
+inpptree-parser.c : inpptree-parser.y
+	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 AM_CFLAGS = $(STATIC)
+AM_YFLAGS = -d
 
 MAINTAINERCLEANFILES = Makefile.in

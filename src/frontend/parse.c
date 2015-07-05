@@ -16,16 +16,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "evaluate.h"
 #include "parse.h"
+#include "parse-bison.h"
+#include "parse-bison-y.h"
 
 
 static bool checkvalid(struct pnode *pn);
-static struct pnode *mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2);
-static struct pnode *mkunode(int op, struct pnode *arg);
-static struct pnode *mkfnode(const char *func, struct pnode *arg);
-static struct pnode *mknnode(double number);
-static struct pnode *mksnode(const char *string);
 
-#include "parse-bison.c"
+extern int PPparse(char **, struct pnode **);
 
 void db_print_pnode_tree(struct pnode *p, char *print);
 
@@ -199,8 +196,8 @@ struct func func_not = { "not", cx_not };
 
 /* Binary operator node. */
 
-static struct pnode *
-mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
+struct pnode *
+PP_mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
 {
     struct op *o;
     struct pnode *p;
@@ -210,7 +207,7 @@ mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
             break;
 
     if (!o->op_name)
-        fprintf(cp_err, "mkbnode: Internal Error: no such op num %d\n",
+        fprintf(cp_err, "PP_mkbnode: Internal Error: no such op num %d\n",
                 opnum);
 
     p = alloc(struct pnode);
@@ -232,8 +229,8 @@ mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
 
 /* Unary operator node. */
 
-static struct pnode *
-mkunode(int op, struct pnode *arg)
+struct pnode *
+PP_mkunode(int op, struct pnode *arg)
 {
     struct pnode *p;
     struct op *o;
@@ -244,7 +241,7 @@ mkunode(int op, struct pnode *arg)
             break;
 
     if (!o->op_name)
-        fprintf(cp_err, "mkunode: Internal Error: no such op num %d\n",
+        fprintf(cp_err, "PP_mkunode: Internal Error: no such op num %d\n",
                 op);
 
     p->pn_op = o;
@@ -270,8 +267,8 @@ mkunode(int op, struct pnode *arg)
  * defined to be.
  */
 
-static struct pnode *
-mkfnode(const char *func, struct pnode *arg)
+struct pnode *
+PP_mkfnode(const char *func, struct pnode *arg)
 {
     struct func *f;
     struct pnode *p, *q;
@@ -304,7 +301,7 @@ mkfnode(const char *func, struct pnode *arg)
             return (NULL);
         }
         /* (void) strcpy(buf, d->v_name); XXX */
-        return (mksnode(buf));
+        return (PP_mksnode(buf));
     } else if (f->fu_name == NULL) {
         fprintf(cp_err, "Error: no function as %s with that arity.\n",
                 func);
@@ -313,8 +310,8 @@ mkfnode(const char *func, struct pnode *arg)
     }
 
     if (!f->fu_func && arg->pn_op && arg->pn_op->op_num == PT_OP_COMMA) {
-        p = mkbnode(PT_OP_MINUS, mkfnode(func, arg->pn_left),
-                    mkfnode(func, arg->pn_right));
+        p = PP_mkbnode(PT_OP_MINUS, PP_mkfnode(func, arg->pn_left),
+                    PP_mkfnode(func, arg->pn_right));
         tfree(arg);
         return p;
     }
@@ -336,8 +333,8 @@ mkfnode(const char *func, struct pnode *arg)
 
 /* Number node. */
 
-static struct pnode *
-mknnode(double number)
+struct pnode *
+PP_mknnode(double number)
 {
     struct pnode *p;
     struct dvec *v;
@@ -353,7 +350,7 @@ mknnode(double number)
     p->pn_left = p->pn_right = NULL;
     p->pn_next = NULL;
 
-    /* We don't use printnum because it screws up mkfnode above. We have
+    /* We don't use printnum because it screws up PP_mkfnode above. We have
      * to be careful to deal properly with node numbers that are quite
      * large...
      */
@@ -374,8 +371,8 @@ mknnode(double number)
 
 /* String node. */
 
-static struct pnode *
-mksnode(const char *string)
+struct pnode *
+PP_mksnode(const char *string)
 {
     struct dvec *v, *nv, *vs, *newv = NULL, *end = NULL;
     struct pnode *p;

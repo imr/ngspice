@@ -2,9 +2,7 @@
 
 SUBDIRS = plotting help parser wdisp numparam trannoise
 DIST_SUBDIRS = plotting help parser wdisp numparam trannoise
-EXTRA_DIST = testcommands.c parse-bison.y
-## For Windows with Visual Studio
-EXTRA_DIST += parse-bison.c parse-bison.h
+EXTRA_DIST = testcommands.c
 
 noinst_LTLIBRARIES = libfte.la
 
@@ -150,6 +148,8 @@ libfte_la_SOURCES =	\
 	outitf.h	\
 	parse.c		\
 	parse.h		\
+	parse-bison.y	\
+	parse-bison-y.h	\
 	points.c	\
 	points.h	\
 	postcoms.c	\
@@ -194,10 +194,9 @@ libfte_la_SOURCES =	\
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include @X_CFLAGS@
 AM_CFLAGS = $(STATIC)
+AM_YFLAGS = -d
 
 MAINTAINERCLEANFILES = Makefile.in
 
-parse-bison.c parse-bison.h : parse-bison.y
-	bison $(srcdir)/parse-bison.y
-
-$(srcdir)/parse.c : parse-bison.c
+parse-bison.c : parse-bison.y
+	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<

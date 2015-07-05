@@ -11,20 +11,19 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/inpptree.h"
 #include "inpxx.h"
 
+#include "inpptree-parser.h"
+#include "inpptree-parser-y.h"
+
+int PTparse(char **line, INPparseNode **p, CKTcircuit *ckt);
 
 static INPparseNode *mkcon(double value);
 static INPparseNode *mkb(int type, INPparseNode * left,
                          INPparseNode * right);
 static INPparseNode *mkf(int type, INPparseNode * arg);
 static int PTcheck(INPparseNode * p);
-static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
-                             INPparseNode * arg2);
-static INPparseNode *mkfnode(const char *fname, INPparseNode * arg);
 static INPparseNode *mkvnode(char *name);
 static INPparseNode *mkinode(char *name);
 
-static INPparseNode *mknnode(double number);
-static INPparseNode *mksnode(const char *string, void *ckt);
 static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum);
 
 static void free_tree(INPparseNode *);
@@ -96,17 +95,11 @@ mkfirst(INPparseNode *fst, INPparseNode *snd)
 }
 
 
-#include "inpptree-parser.c"
-
 static IFvalue *values = NULL;
 static int *types;
 static int numvalues;
 static CKTcircuit *circuit;
 static INPtables *tables;
-
-#if defined (_MSC_VER)
-# define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
-#endif
 
 extern IFsimulator *ft_sim;        /* XXX */
 
@@ -885,7 +878,7 @@ static int PTcheck(INPparseNode * p)
 
 /* Binop node. */
 
-static INPparseNode *mkbnode(const char *opstr, INPparseNode * arg1,
+INPparseNode *PT_mkbnode(const char *opstr, INPparseNode * arg1,
                              INPparseNode * arg2)
 {
     INPparseNode *p;
@@ -1002,7 +995,7 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
 }
 
 
-static INPparseNode *mkfnode(const char *fname, INPparseNode * arg)
+INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
 {
     int i;
     INPparseNode *p;
@@ -1122,7 +1115,7 @@ static INPparseNode *mkinode(char *name)
 
 /* Number node. */
 
-static INPparseNode *mknnode(double number)
+INPparseNode *PT_mknnode(double number)
 {
     struct INPparseNode *p;
 
@@ -1138,7 +1131,7 @@ static INPparseNode *mknnode(double number)
 
 /* String node. */
 
-static INPparseNode *mksnode(const char *string, void *ckt)
+INPparseNode *PT_mksnode(const char *string, void *ckt)
 {
     int i, j;
     char buf[128];
