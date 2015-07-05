@@ -9,7 +9,12 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/typedefs.h"
 #include "ngspice/ifsim.h"
 
-
+#ifdef RELAN
+typedef struct sGENrelmodelDeviceElem {
+    char *device_name ;                   /* Name of the device considered by Relmodel */
+    struct sGENrelmodelDeviceElem *next ; /* Pointer to the next device name */
+} GENrelmodelDeviceElem ;
+#endif
 
         /* definitions used to describe generic devices */
 
@@ -43,6 +48,7 @@ struct GENmodel {       /* model structure for a resistor */
 
 #ifdef RELAN
     GENmodel *GENrelmodelModel ; /* Relmodel Companion Model */
+    GENrelmodelDeviceElem *GENrelmodelDeviceList ; /* List of devices to be considered by Relmodel */
 #endif
 
 };

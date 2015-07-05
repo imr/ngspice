@@ -18,17 +18,19 @@ extern IFsimulator *ft_sim;
 static void
 dot_appendmodel (CKTcircuit *ckt, INPtables *tab, card *current)
 {
-    /* .appendmodel from_model to_model */
+    /* .appendmodel from_model to_model <list_of_devices> */
 
-    int type;                  /* the type the model says it is */
-    char *line ;               /* the part of the current line left to parse */
-    char *relmodel_name ;      /* the relmodel name */
-    char *appendmodel_name ;   /* the appendmodel name */
-    char *save ;               /* saj - used to save the posn of the start of
-                                  the parameters if the model is a mosfet */
-    char *model ;              /* the name of the model */
-    INPmodel *thismodel ;      /* pointer to model description for user's model */
-    GENmodel *mdfast ;         /* pointer to the actual model */
+    int error ;              /* error code temporary */
+    int type ;               /* the type the model says it is */
+    char *line ;             /* the part of the current line left to parse */
+    char *relmodel_name ;    /* the relmodel name */
+    char *appendmodel_name ; /* the appendmodel name */
+    char *device_name ;      /* the device name in the list of devices */
+    char *save ;             /* saj - used to save the posn of the start of
+                                the parameters if the model is a mosfet */
+    char *model ;            /* the name of the model */
+    INPmodel *thismodel ;    /* pointer to model description for user's model */
+    GENmodel *mdfast ;       /* pointer to the actual model */
     char* err_msg ;
 
 #ifdef TRACE
@@ -122,6 +124,23 @@ dot_appendmodel (CKTcircuit *ckt, INPtables *tab, card *current)
             INPgetModBin (ckt, relmodel_name, &thismodel, tab, line) ;
         }
         thismodel->INPmodfast->GENrelmodelModel = mdfast ; /* Attach 'relmodel' model to 'appendmodel' model */
+
+        // Parse the rest of the line, which is a list of devices
+        thismodel->INPmodfast->GENrelmodelDeviceList = NULL ;
+        while (*line)
+        {
+            INPgetTok (&line, &device_name, 1) ;
+            error = INPretrieve (&device_name, tab) ;
+            if (error)
+            {
+                printf ("Warning: Cannot find the %s instance of the %s model - Skipping this instance\n\n", device_name, appendmodel_name) ;
+            } else {
+                GENrelmodelDeviceElem *GENrelmodelDevice = TMALLOC (GENrelmodelDeviceElem, 1) ;
+                GENrelmodelDevice->device_name = device_name ;
+                GENrelmodelDevice->next = thismodel->INPmodfast->GENrelmodelDeviceList ;
+                thismodel->INPmodfast->GENrelmodelDeviceList = GENrelmodelDevice ;
+            }
+        }
     } else {
         LITERR ("Error: The model 'relmodel' hasn't been defined\n\n") ;
     }

@@ -834,6 +834,7 @@ typedef struct sBSIM4model
 
 #ifdef RELAN
     GENmodel *BSIM4relmodelModel ;
+    GENrelmodelDeviceElem *BSIM4relmodelDeviceList ;
 #endif
 
     /* --- end of generic struct GENmodel --- */
