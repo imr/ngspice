@@ -29,7 +29,7 @@ install: all
 
 uninstall:
 	for cm in $(CMDIRS) ; do \
-		rm -f "$(DESTDIR)$(pkglibdir)/$$cm.cm"; \
+		-rm -f "$(DESTDIR)$(pkglibdir)/$$cm.cm"; \
 	done
 
 
@@ -82,9 +82,12 @@ cm-descr := \
 
 
 cm-clean :
-	rm -f $(cm)/$(cm).cm
-	rm -f $(cm-descr) $(cm-objs) $(cm-gens)
-	rm -f $(cm-deps)
+	-rm -f $(cm)/$(cm).cm
+	-rm -f $(cm-descr) $(cm-objs) $(cm-gens)
+	-rm -f $(cm-deps)
+
+cm-distclean :
+	-rm -rf $(cm-dep-dirs)
 
 #-----
 
@@ -160,6 +163,10 @@ GNUmakefile makedefs : % : $(srcdir)/%.in $(top_builddir)/config.status
 maintainer-clean: distclean
 
 distclean: clean
+	for cm in $(CMDIRS) ; do \
+		$(MAKE) cm=$$cm cm-distclean \
+		|| exit 1; \
+	done
 	-rm -f GNUmakefile makedefs
 
 distdir:
