@@ -68,7 +68,7 @@ ft_sigintr_cleanup(void)
     cp_resetcontrol();
 }
 
-
+unsigned int interrupt_counter ;
 /*  invoke this function upon keyboard interrupt  */
 RETSIGTYPE
 ft_sigintr(void)
