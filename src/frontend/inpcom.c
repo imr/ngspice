@@ -1877,6 +1877,11 @@ comment_out_unused_subckt_models(struct line *start_card)
             if (!cieq(model_type, "c") &&
                 !cieq(model_type, "l") &&
                 !cieq(model_type, "r") &&
+
+#ifdef RELAN
+                !cieq(model_type, "relmodel") &&
+#endif
+
                 !nlist_model_find(used_models, model_name))
             {
                 *line = '*';

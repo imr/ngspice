@@ -1717,11 +1717,11 @@ int Size_Not_Found, i;
             /* adding delvto */
 
 #ifdef RELAN
-            if (model->BSIM4type == -1)
+            if (model->BSIM4type == PMOS)
             {
-                if (here->BSIM4reliability->IsON != -1)
+                if (here->relStruct->IsON != -1)
                 {
-                    here->BSIM4delvto = here->BSIM4reliability->deltaVth ;
+                    here->BSIM4delvto = here->relStruct->deltaVth ;
                 }
             }
 #endif

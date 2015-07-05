@@ -60,6 +60,10 @@ if NUMDEV_WANTED
 SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
+if RELAN_WANTED
+SUBDIRS += relmodel
+endif
+
 DIST_SUBDIRS = \
 	@VLADEVDIR@ \
 	asrc	\

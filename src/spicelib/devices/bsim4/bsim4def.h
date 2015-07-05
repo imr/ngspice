@@ -30,12 +30,7 @@ Modified by Pankaj Kumar Thakur, 07/23/2012
 #include "ngspice/noisedef.h"
 
 #ifdef RELAN
-typedef struct sBSIM4relStruct {
-    double time ;
-    double deltaVth ;
-    double t_star ;
-    int IsON ;
-} BSIM4relStruct ;
+#include "../relmodel/relmodeldefs.h"
 #endif
 
 typedef struct sBSIM4instance
@@ -584,7 +579,7 @@ typedef struct sBSIM4instance
 #endif /* NONOISE */
 
 #ifdef RELAN
-    BSIM4relStruct *BSIM4reliability ;
+    RELMODELrelStruct *relStruct ;
 #endif
 
 } BSIM4instance ;
@@ -836,6 +831,10 @@ typedef struct sBSIM4model
     struct sBSIM4model *BSIM4nextModel;
     BSIM4instance *BSIM4instances;
     IFuid BSIM4modName;
+
+#ifdef RELAN
+    GENmodel *BSIM4relmodelModel ;
+#endif
 
     /* --- end of generic struct GENmodel --- */
 

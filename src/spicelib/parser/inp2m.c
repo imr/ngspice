@@ -303,4 +303,12 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     if (waslead) {
         LITERR (" error:  no unlabeled parameter permitted on mosfet\n");
     }
+
+#ifdef RELAN
+    if (type == INPtypelook ("BSIM4"))
+    {
+        thismodel->INPmodfast->GENrelmodelModel = NULL ; /* Default value */
+    }
+#endif
+
 }

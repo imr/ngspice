@@ -138,6 +138,10 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "ndev/ndevitf.h"
 #endif
 
+#ifdef RELAN
+#include "relmodel/relmodelitf.h"
+#endif
+
 static SPICEdev *(*static_devices[])(void) = {
     /* URC device MUST precede both resistors and capacitors */
     get_urc_info,
@@ -209,6 +213,10 @@ static SPICEdev *(*static_devices[])(void) = {
 
 #ifdef NDEV
     get_ndev_info,
+#endif
+
+#ifdef RELAN
+    get_relmodel_info
 #endif
 
 };

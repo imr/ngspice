@@ -138,6 +138,11 @@ ngspice_LDADD += \
 	spicelib/devices/numos/libnumos.la
 endif
 
+if RELAN_WANTED
+ngspice_LDADD += \
+	spicelib/devices/relmodel/librelmodel.la
+endif
+
 ngspice_LDADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
@@ -385,6 +390,11 @@ libspice_la_LIBADD += \
 	spicelib/devices/numos/libnumos.la
 endif
 
+if RELAN_WANTED
+libspice_la_LIBADD += \
+	spicelib/devices/relmodel/librelmodel.la
+endif
+
 libspice_la_LIBADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
@@ -498,6 +508,11 @@ libngspice_la_LIBADD += \
 	spicelib/devices/numd/libnumd.la   \
 	spicelib/devices/numd2/libnumd2.la \
 	spicelib/devices/numos/libnumos.la
+endif
+
+if RELAN_WANTED
+libngspice_la_LIBADD += \
+	spicelib/devices/relmodel/librelmodel.la
 endif
 
 libngspice_la_LIBADD += \

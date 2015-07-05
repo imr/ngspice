@@ -705,6 +705,14 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *
 		/* don't have to do anything, since models were all done in
 		 * pass 1 */
 		goto quit;
+
+#ifdef RELAN
+        } else if (strcmp (token, ".appendmodel") == 0) {
+                /* don't have to do anything, since this command is handled in
+		 * pass 3 */
+                goto quit ;
+#endif
+
 	} else if ((strcmp(token, ".width") == 0) ||
 	           strcmp(token, ".print") == 0 || strcmp(token, ".plot") == 0) {
 		/* obsolete - ignore */

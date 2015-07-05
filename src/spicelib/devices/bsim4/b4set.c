@@ -2655,13 +2655,14 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             }
 
 #ifdef RELAN
-            if (model->BSIM4type == -1)
+            here->relStruct = NULL ;
+            if (model->BSIM4type == PMOS)
             {
-                here->BSIM4reliability = TMALLOC (BSIM4relStruct, 1) ;
-                here->BSIM4reliability->time = 0 ;
-                here->BSIM4reliability->deltaVth = 0 ;
-                here->BSIM4reliability->t_star = 0 ;
-                here->BSIM4reliability->IsON = -1 ;
+                here->relStruct = TMALLOC (RELMODELrelStruct, 1) ;
+                here->relStruct->time = 0 ;
+                here->relStruct->deltaVth = 0 ;
+                here->relStruct->t_star = 0 ;
+                here->relStruct->IsON = -1 ;
             }
 #endif
 
