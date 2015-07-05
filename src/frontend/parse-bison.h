@@ -45,6 +45,14 @@
      NEG = 263
    };
 #endif
+/* Tokens.  */
+#define TOK_NUM 258
+#define TOK_STR 259
+#define TOK_LE 260
+#define TOK_GE 261
+#define TOK_NE 262
+#define NEG 263
+
 
 
 
@@ -53,7 +61,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 53 "parse-bison.y"
+#line 45 "parse-bison.y"
 
   double num;
   const char  *str;
@@ -62,7 +70,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 66 "parse-bison.h"
+#line 74 "parse-bison.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

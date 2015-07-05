@@ -51,6 +51,20 @@
      NEG = 269
    };
 #endif
+/* Tokens.  */
+#define TOK_NUM 258
+#define TOK_STR 259
+#define TOK_pnode 260
+#define TOK_LE 261
+#define TOK_LT 262
+#define TOK_GE 263
+#define TOK_GT 264
+#define TOK_EQ 265
+#define TOK_NE 266
+#define TOK_OR 267
+#define TOK_AND 268
+#define NEG 269
+
 
 
 
@@ -59,7 +73,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 53 "inpptree-parser.y"
+#line 43 "inpptree-parser.y"
 
   double num;
   const char  *str;
@@ -68,7 +82,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 72 "inpptree-parser.h"
+#line 86 "inpptree-parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
