@@ -15,6 +15,8 @@ uname = $(shell uname)
 # C compiler to use
 CC = @CC@
 CFLAGS = @CFLAGS@
+EXEEXT = @EXEEXT@
+BUILD_EXEEXT = @BUILD_EXEEXT@
 
 # Spice header include path
 INCLUDES = -I$(top_builddir)/src/include -I$(top_srcdir)/src/include
@@ -39,7 +41,7 @@ ifeq ($(ISSUNOS), 1)
 endif
 
 # Path to the cmpp utility
-CMPP = $(top_builddir)/src/xspice/cmpp/cmpp
+CMPP = @CMPP@
 
 LIBS = -lm
 

@@ -27,3 +27,23 @@ ifs_lex.c : ifs_lex.l
 
 ifs_yacc.c : ifs_yacc.y
 	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<
+
+
+if CROSS_COMPILING
+
+BUILT_SOURCES += build/cmpp$(BUILD_EXEEXT)
+CLEANFILES = build/cmpp$(BUILD_EXEEXT)
+
+BUILD_CMPP_FILES = main.c \
+	pp_ifs.c pp_lst.c pp_mod.c read_ifs.c writ_ifs.c util.c \
+	ifs_lex.c ifs_yacc.c \
+	mod_lex.c mod_yacc.c
+
+build/cmpp$(BUILD_EXEEXT) : $(BUILD_CMPP_FILES)
+	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
+		$(AM_CPPFLAGS) $(LDFLAGS_FOR_BUILD) -o $@ $^
+
+distclean-local:
+	-rm -rf build
+
+endif

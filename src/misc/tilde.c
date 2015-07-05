@@ -13,7 +13,7 @@ Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #undef BOOLEAN
 #include <windows.h> /* win32 functions */
-#include "Shlobj.h"  /* SHGetFolderPath */
+#include "shlobj.h"  /* SHGetFolderPath */
 #endif
 
 /* XXX To prevent a name collision with `readline's `tilde_expand',
