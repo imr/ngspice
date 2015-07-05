@@ -195,7 +195,7 @@ fi
 
 
 # Enable maintainer commands only if requested
-AM_MAINTAINER_MODE
+AM_MAINTAINER_MODE([enable])
 
 
 # Compiler checks
@@ -868,22 +868,15 @@ fi
 AC_SUBST([XGRAPHDIR])
 AC_SUBST([NOTXGRAPH])
 
-AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc])
+AC_PROG_YACC
+AC_PROG_LEX
 
 #################  XSPICE ##################################################
 # Add new code models to the build by pointing to them here.
 
 if test "x$enable_xspice" = xyes; then
-    if test -z "${YACC}" ; then
-        AC_MSG_ERROR([XSPICE build requires bison, byacc or yacc parser generator])
-    fi
     AC_MSG_RESULT([X-Spice features included])
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
-# Define variables for LEX
-    AC_CHECK_PROGS([LEX], [flex lex])
-    if test -z "$LEX" ; then
-        AC_MSG_ERROR([Flex is required for building XSPICE])
-    fi
     case $host_os in
         *mingw* )
             AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
@@ -911,10 +904,6 @@ if test "x$enable_xspice" = xyes; then
     AC_CHECK_HEADERS([libintl.h malloc.h])
 else
     XSPICEINIT="*"
-
-    if test -z "${YACC}" ; then
-        AC_MSG_WARN([No bison, byacc, yacc found: Uses prebuilt default parsers])
-    fi
 fi
 AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
