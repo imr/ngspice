@@ -13,12 +13,14 @@ Modified: 2000 AlansFixes
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
+#ifdef RELAN
 typedef struct sMOS1relStruct {
     double time ;
     double deltaVth ;
     double t_star ;
     int IsON ;
 } MOS1relStruct ;
+#endif
 
 /* declarations for level 1 MOSFETs */
 
@@ -271,7 +273,9 @@ typedef struct sMOS1instance {
 #define MOS1dphibs_dw MOS1sens + 68
 #define MOS1dphibd_dw MOS1sens + 69
 
+#ifdef RELAN
     MOS1relStruct *MOS1reliability ;
+#endif
 
 } MOS1instance ;
 

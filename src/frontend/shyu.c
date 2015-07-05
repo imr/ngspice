@@ -314,7 +314,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     }
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
     if (strcmp (token, "relan") == 0)
     {
         JOB *relanJob ;
@@ -376,7 +376,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
             }
         }
     }
-//#endif
+#endif
 
 next:
     while (*line) { /* read the entire line */

@@ -75,7 +75,9 @@ SPICEdev BSIM4info = {
     &BSIM4iSize,   /* DEVinstSize    */
     &BSIM4mSize,    /* DEVmodSize     */
 
+#ifdef RELAN
  BSIM4reliability
+#endif
 
 };
 

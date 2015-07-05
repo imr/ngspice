@@ -423,13 +423,13 @@ extern int DCpss(CKTcircuit *, int);
 /* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
+extern int CKTreliability (CKTcircuit *, unsigned int) ;
 extern int RELANaskQuest (CKTcircuit *, JOB *, int, IFvalue *) ;
 extern int RELANsetParm (CKTcircuit *, JOB *, int, IFvalue *) ;
 extern int RELANinit (CKTcircuit *, JOB *) ;
 extern int RELANanalysis (CKTcircuit *, int) ;
-extern int CKTreliability (CKTcircuit *, unsigned int) ;
-//#endif
+#endif
 
 extern int NaskQuest(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NsetParm(CKTcircuit *, JOB *, int, IFvalue *);

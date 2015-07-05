@@ -17,9 +17,9 @@ void com_tran(wordlist *wl);
 void com_pss(wordlist *wl);
 /* SP */
 
-//#ifdef RELAN
+#ifdef RELAN
 void com_relan (wordlist *wl) ;
-//#endif
+#endif
 
 void com_sens(wordlist *wl);
 void com_disto(wordlist *wl);

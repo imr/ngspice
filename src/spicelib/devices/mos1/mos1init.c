@@ -75,7 +75,9 @@ SPICEdev MOS1info = {
  /* DEVinstSize   */ &MOS1iSize,
  /* DEVmodSize    */ &MOS1mSize,
 
+#ifdef RELAN
  MOS1reliability
+#endif
 
 };
 

@@ -95,12 +95,7 @@ libckt_la_SOURCES = \
 		tranaskq.c	\
 		traninit.c	\
 		transetp.c	\
-		cluster.c	\
-		cktreliability.c	\
-		relananalysis.c	\
-		relanaskq.c	\
-		relaninit.c	\
-		relansetp.c
+		cluster.c
 
 
 if PSS_WANTED
@@ -109,6 +104,15 @@ libckt_la_SOURCES += \
 		pssaskq.c	\
 		pssinit.c	\
 		psssetp.c
+endif
+
+if RELAN_WANTED
+libckt_la_SOURCES += \
+		cktreliability.c	\
+		relananalysis.c		\
+		relanaskq.c		\
+		relaninit.c		\
+		relansetp.c
 endif
 
 

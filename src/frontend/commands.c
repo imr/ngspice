@@ -294,12 +294,12 @@ struct comm spcp_coms[] = {
 /* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
     { "relan", com_relan, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "[.relan line args] : Do a Reliability Analysis." } ,
-//#endif
+#endif
 
     { "ac", com_ac, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
@@ -733,12 +733,12 @@ struct comm nutcp_coms[] = {
 /* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
     { "relan", NULL, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "[.relan line args] : Do a Reliability Analysis." } ,
-//#endif
+#endif
 
     { "ac", NULL, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,

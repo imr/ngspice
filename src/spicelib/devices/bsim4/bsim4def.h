@@ -29,12 +29,14 @@ Modified by Pankaj Kumar Thakur, 07/23/2012
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
+#ifdef RELAN
 typedef struct sBSIM4relStruct {
     double time ;
     double deltaVth ;
     double t_star ;
     int IsON ;
 } BSIM4relStruct ;
+#endif
 
 typedef struct sBSIM4instance
 {
@@ -581,7 +583,9 @@ typedef struct sBSIM4instance
         double **BSIM4nVar;
 #endif /* NONOISE */
 
+#ifdef RELAN
     BSIM4relStruct *BSIM4reliability ;
+#endif
 
 } BSIM4instance ;
 

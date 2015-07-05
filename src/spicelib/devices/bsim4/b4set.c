@@ -2654,6 +2654,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
                 TSTALLOC(BSIM4SbpPtr, BSIM4sNode, BSIM4bNodePrime);
             }
 
+#ifdef RELAN
             if (model->BSIM4type == -1)
             {
                 here->BSIM4reliability = TMALLOC (BSIM4relStruct, 1) ;
@@ -2662,6 +2663,8 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
                 here->BSIM4reliability->t_star = 0 ;
                 here->BSIM4reliability->IsON = -1 ;
             }
+#endif
+
         }
     }
 

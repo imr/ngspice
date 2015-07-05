@@ -29,4 +29,6 @@ extern int MOS1disto(int,GENmodel*,CKTcircuit*);
 extern int MOS1noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int MOS1dSetup(GENmodel*,CKTcircuit*);
 
+#ifdef RELAN
 extern int MOS1reliability (GENmodel *, CKTcircuit *, unsigned int) ;
+#endif

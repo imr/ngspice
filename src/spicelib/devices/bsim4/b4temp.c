@@ -1714,7 +1714,9 @@ int Size_Not_Found, i;
                 here->BSIM4u0temp *= T3;
               }
 
-            /* adding delvto  */
+            /* adding delvto */
+
+#ifdef RELAN
             if (model->BSIM4type == -1)
             {
                 if (here->BSIM4reliability->IsON != -1)
@@ -1722,6 +1724,8 @@ int Size_Not_Found, i;
                     here->BSIM4delvto = here->BSIM4reliability->deltaVth ;
                 }
             }
+#endif
+
             here->BSIM4vth0 += here->BSIM4delvto;
             here->BSIM4vfb = pParam->BSIM4vfb + model->BSIM4type * here->BSIM4delvto;
 

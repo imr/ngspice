@@ -6,7 +6,11 @@
 #include "analysis.h"
 
 extern SPICEanalysis OPTinfo ;
+
+#ifdef RELAN
 extern SPICEanalysis RELANinfo ;
+#endif
+
 extern SPICEanalysis ACinfo ;
 extern SPICEanalysis DCTinfo ;
 extern SPICEanalysis DCOinfo ;
@@ -27,7 +31,11 @@ extern SPICEanalysis SEN2info ;
 
 SPICEanalysis *analInfo [] = {
     &OPTinfo,
+
+#ifdef RELAN
     &RELANinfo,
+#endif
+
     &ACinfo,
     &DCTinfo,
     &DCOinfo,

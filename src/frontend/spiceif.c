@@ -222,9 +222,9 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         /* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
         || eq (what, "relan")
-//#endif
+#endif
 
         )
     {
@@ -342,9 +342,9 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         /* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
         (eq (what, "relan")) ||
-//#endif
+#endif
 
         (eq(what, "run")))
     {

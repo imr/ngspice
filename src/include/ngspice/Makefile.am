@@ -125,7 +125,13 @@ pkginclude_HEADERS = \
 	FastNorm3.h	\
 	fftext.h	\
 	wallace.h	\
-	wstdio.h	\
+	wstdio.h
+
+
+if RELAN_WANTED
+include_HEADERS += \
 	relandefs.h
+endif
+
 
 MAINTAINERCLEANFILES = Makefile.in

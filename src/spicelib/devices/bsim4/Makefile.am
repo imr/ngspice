@@ -27,9 +27,13 @@ libbsim4_la_SOURCES =	\
 	bsim4ext.h	\
 	bsim4init.c	\
 	bsim4init.h	\
-	bsim4itf.h	\
-	b4reliability.c
+	bsim4itf.h
 
+
+if RELAN_WANTED
+libbsim4_la_SOURCES += \
+	b4reliability.c
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

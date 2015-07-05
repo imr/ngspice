@@ -154,6 +154,10 @@ AC_ARG_ENABLE([adms],
 AC_ARG_ENABLE([pss],
     [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
 
+# --enable-relan: Enable Reliability Analysis
+AC_ARG_ENABLE([relan],
+    [AS_HELP_STRING([--enable-relan], [Enable Reliability Analysis, (experimental)])])
+
 # --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE([ndev],
     [AS_HELP_STRING([--enable-ndev], [Enable NDEV interface, (experimental)])])
@@ -847,6 +851,10 @@ if test "x$enable_pss" = xyes; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
     AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
+if test "x$enable_relan" = xyes; then
+    AC_DEFINE([RELAN], [], [Define if you want Reliability Analysis])
+    AC_MSG_RESULT([WARNING: Reliability Analysis enabled])
+fi
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled])
@@ -926,6 +934,8 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
 
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
+
+AM_CONDITIONAL([RELAN_WANTED], [test "x$enable_relan" = xyes])
 
 AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 

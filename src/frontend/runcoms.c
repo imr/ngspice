@@ -185,13 +185,13 @@ com_pss(wordlist *wl)
 #endif
 
 
-//#ifdef RELAN
+#ifdef RELAN
 void
 com_relan (wordlist *wl)
 {
     dosim ("relan", wl) ;
 }
-//#endif
+#endif
 
 
 static int

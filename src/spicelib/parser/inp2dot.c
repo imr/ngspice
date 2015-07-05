@@ -612,7 +612,7 @@ dot_pss(char *line, void *ckt, INPtables *tab, card *current,
 /* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
 static int
 dot_relan (char *line, void *ckt, INPtables *tab, card *current, void *task, void *gnode, JOB *foo)
 {
@@ -670,7 +670,7 @@ dot_relan (char *line, void *ckt, INPtables *tab, card *current, void *task, voi
 
     return (0) ;
 }
-//#endif
+#endif
 
 static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
@@ -759,11 +759,11 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *
 		/* SP */
 #endif
 
-//#ifdef RELAN
+#ifdef RELAN
         } else if ((strcmp (token, ".relan") == 0)) {
 		rtn = dot_relan (line, ckt, tab, current, task, gnode, foo) ;
 		goto quit ;
-//#endif
+#endif
 
 	} else if ((strcmp(token, ".subckt") == 0) ||
 	           (strcmp(token, ".ends") == 0)) {

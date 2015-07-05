@@ -31,9 +31,13 @@ libmos1_la_SOURCES =	\
 	mos1sset.c	\
 	mos1supd.c	\
 	mos1temp.c	\
-	mos1trun.c	\
-	mos1reliability.c
+	mos1trun.c
 
+
+if RELAN_WANTED
+libmos1_la_SOURCES += \
+	mos1reliability.c
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

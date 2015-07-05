@@ -224,6 +224,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 			/* txl, cpl addition */
 			if (error == 1111) break;
 
+#ifdef RELAN
                     if (i == 1)
                     {
                         /* In case of Reliability Analysis, perform the final CKTreliability */
@@ -235,6 +236,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
                             return (error) ;
                         }
                     }
+#endif
 
 		}
 		if (error)

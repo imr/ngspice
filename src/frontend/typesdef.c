@@ -83,9 +83,9 @@ static struct plotab plotabs[NUMPLOTTYPES] = {
     { "spect", "spect" },
     { "pss", "periodic" },
 
-//#ifdef RELAN
-    { "relan", "reliability" },
-//#endif
+#ifdef RELAN
+    { "relan", "reliability" }
+#endif
 
 };
 
