@@ -2114,6 +2114,7 @@
     <ClCompile Include="..\src\spicelib\parser\inppas3.c" />
     <ClCompile Include="..\src\spicelib\parser\inppname.c" />
     <ClCompile Include="..\src\spicelib\parser\inpptree.c" />
+    <ClCompile Include="..\src\spicelib\parser\inpptree-parser.c" />
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />
     <ClCompile Include="..\src\spicelib\parser\inptyplk.c" />
     <ClCompile Include="..\src\frontend\parser\input.c" />
@@ -2512,6 +2513,7 @@
     <ClCompile Include="..\src\ciderlib\input\outpset.c" />
     <ClCompile Include="..\src\ciderlib\input\output.c" />
     <ClCompile Include="..\src\frontend\parse.c" />
+    <ClCompile Include="..\src\frontend\parse-bison.c" />
     <ClCompile Include="..\src\frontend\plotting\plot5.c" />
     <ClCompile Include="..\src\frontend\plotting\plotcurv.c" />
     <ClCompile Include="..\src\frontend\plotting\plotit.c" />

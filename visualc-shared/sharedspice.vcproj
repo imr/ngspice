@@ -5541,6 +5541,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\parser\inpptree-parser.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\parser\inpsymt.c"
 				>
 			</File>
@@ -7146,6 +7150,10 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\parse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parse-bison.c"
 				>
 			</File>
 			<File
