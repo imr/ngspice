@@ -7,6 +7,8 @@ Author: 2015 Francesco Lannutti - July 2015
 #include "bsim4def.h"
 #include "ngspice/sperror.h"
 
+#include <gsl/gsl_fit.h>
+
 static int
 BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mode)
 {
@@ -19,7 +21,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
     // Determine if the transistor is ON or OFF
     vds = ckt->CKTstate0 [here->BSIM4vds] ;
     vgs = ckt->CKTstate0 [here->BSIM4vgs] ;
-    von = model->BSIM4type * here->BSIM4von ;
+    von = here->BSIM4von ;
     if (vds >= 0)
     {
 //        printf ("VDS >= 0\tBSIM4type: %d\tBSIM4instance: %s\tVgs: %-.9g\tVon: %-.9g\t", model->BSIM4type, here->BSIM4name, vgs, von) ;
@@ -118,16 +120,16 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 // Until now, the device was OFF - Calculate recovery
                 delta = ckt->CKTtime - here->relStruct->time ;
 
+                // Update time and flag - Stress begins
+                here->relStruct->time = ckt->CKTtime ;
+                here->relStruct->IsON = 1 ;
+
                 // Calculate Aging - Giogio Liatis' Model
                 ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 0) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
                 }
-
-                // Update time and flag - Stress begins
-                here->relStruct->time = ckt->CKTtime ;
-                here->relStruct->IsON = 1 ;
             } else {
                 fprintf (stderr, "Reliability Analysis Error\n") ;
             }
@@ -137,16 +139,16 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 // Until now, the device was ON - Calculate stress
                 delta = ckt->CKTtime - here->relStruct->time ;
 
+                // Update time and flag - Recovery begins
+                here->relStruct->time = ckt->CKTtime ;
+                here->relStruct->IsON = 0 ;
+
                 // Calculate Aging - Giorgio Liatis' Model
                 ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
                 }
-
-                // Update time and flag - Recovery begins
-                here->relStruct->time = ckt->CKTtime ;
-                here->relStruct->IsON = 0 ;
             } else if (here->relStruct->IsON == 0) {
                 // Until now, the device was OFF - Do NOTHING
                 delta = -1 ;
@@ -155,32 +157,36 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             }
         }
     } else if (mode == 1) {
-        // In this mode, it doesn't matter if NOW the device is in stress or in recovery, since it's the last timestep
+        // In this mode, it doesn't matter if NOW the device is in stress or in recovery, since it's the latest timestep
         if (here->relStruct->IsON == 1)
         {
             // Calculate stress
             delta = ckt->CKTtime - here->relStruct->time ;
+
+            // Update time and flag - Maybe Optional
+            here->relStruct->time = ckt->CKTtime ;
+            here->relStruct->IsON = 1 ;
+
+            // Calculate Aging - Giorgio Liatis' Model
             ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1) ;
             if (ret == 1)
             {
                 return (E_INTERN) ;
             }
-
-            // Update time and flag - Maybe Optional
-            here->relStruct->time = ckt->CKTtime ;
-            here->relStruct->IsON = 1 ;
         } else if (here->relStruct->IsON == 0) {
             // Calculate recovery
             delta = ckt->CKTtime - here->relStruct->time ;
+
+            // Update time and flag - Maybe Optional
+            here->relStruct->time = ckt->CKTtime ;
+            here->relStruct->IsON = 0 ;
+
+            // Calculate Aging - Giorgio Liatis' Model
             ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 0) ;
             if (ret == 1)
             {
                 return (E_INTERN) ;
             }
-
-            // Update time and flag - Maybe Optional
-            here->relStruct->time = ckt->CKTtime ;
-            here->relStruct->IsON = 0 ;
         } else {
             fprintf (stderr, "Reliability Analysis Error\n") ;
         }
@@ -188,6 +194,50 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
         printf ("DeltaVth: %-.9gmV\t\t", here->relStruct->deltaVth * 1000) ;
         printf ("Device Name: %s\t\t", here->BSIM4name) ;
         printf ("Device Type: %s\n\n", model->BSIM4modName) ;
+
+
+        /* Calculate fitting */
+        double c0, c1, cov00, cov01, cov11, chisq ;
+
+        /* Count how many deltaVth we have */
+        unsigned int i ;
+        RELMODELrelList *current ;
+
+        i = 0 ;
+        current = here->relStruct->deltaVthList ;
+        while (current != NULL)
+        {
+            i++ ;
+            current = current->next ;
+        }
+
+        /* Assign list members to vectors */
+        double *timeFit, *deltaVthFit ;
+
+        timeFit = TMALLOC (double, i) ;
+        deltaVthFit = TMALLOC (double, i) ;
+
+        i = 0 ;
+        current = here->relStruct->deltaVthList ;
+        while (current != NULL)
+        {
+            timeFit [i] = current->time ;
+            deltaVthFit [i] = exp (current->deltaVth) ;
+            printf ("Time: %-.9g\n", current->time) ;
+            printf ("DeltaVth: %-.9g\n", current->deltaVth) ;
+            printf ("DeltaVth (exp): %-.9g\n", exp (current->deltaVth)) ;
+            i++ ;
+            current = current->next ;
+        }
+
+        /* Execute Fitting */
+        gsl_fit_linear (timeFit + 1, 1, deltaVthFit + 1, 1, i - 1, &c0, &c1, &cov00, &cov01, &cov11, &chisq) ;
+
+        /* Perform Extrapolation */
+        double yFit, yFitErr ;
+        gsl_fit_linear_est (2e-6, c0, c1, cov00, cov01, cov11, &yFit, &yFitErr) ;
+
+        printf ("\n\tFitting -> %-.9gs\t%-.9gmV\n\n", 31536000.0, log (yFit) * 1000) ;
     } else {
         fprintf (stderr, "Reliability Analysis Error\n") ;
     }

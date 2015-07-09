@@ -11,11 +11,18 @@ Author: Francesco Lannutti - July 2015
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
+typedef struct sRELMODELrelList {
+    double time ;
+    double deltaVth ;
+    struct sRELMODELrelList *next ;
+} RELMODELrelList ;
+
 typedef struct sRELMODELrelStruct {
     double time ;
     double deltaVth ;
     double t_star ;
     int IsON ;
+    RELMODELrelList *deltaVthList ;
 } RELMODELrelStruct ;
 
 typedef struct sRELMODELmodel

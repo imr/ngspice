@@ -13,6 +13,39 @@ Author: Francesco Lannutti - July 2015
 //#define CONSTepsZero (8.854214871e-12)   /* epsilon zero F/m */
 //#define CONSTepsSiO2 (3.4531479969e-11)  /* epsilon SiO2 F/m */
 
+static int
+listInsert (RELMODELrelList **list, double time, double deltaVth)
+{
+    RELMODELrelList *current ;
+    RELMODELrelList *previous ;
+
+    /* Loop until the end of the list */
+    previous = NULL ;
+    current = *list ;
+    while (current != NULL)
+    {
+        previous = current ;
+        current = current->next ;
+    }
+
+    /* Insert the new element into the list */
+    if (previous == NULL)
+    {
+        *list = TMALLOC (RELMODELrelList, 1) ;
+        current = *list ;
+    } else {
+        current = TMALLOC (RELMODELrelList, 1) ;
+        previous->next = current ;
+    }
+
+    /* Populate the element */
+    current->time = time ;
+    current->deltaVth = deltaVth ;
+    current->next = NULL ;
+
+    return 0 ;
+}
+
 int
 RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, unsigned int stress_or_recovery)
 {
@@ -49,6 +82,16 @@ RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, un
     } else {
         here->relStruct->deltaVth = here->relStruct->deltaVth * log (1 + (1.718 / (1 + pow ((t_aging / relmodel->RELMODELtau_e), relmodel->RELMODELbeta1)))) ;
     }
+
+    /* Insert 'here->relStruct->deltaVth' into the list for the later fitting */
+    listInsert (&(here->relStruct->deltaVthList), here->relStruct->time, here->relStruct->deltaVth) ;
+//    RELMODELrelList *temp ;
+//    temp = TMALLOC (RELMODELrelList, 1) ;
+//    temp->time = here->relStruct->time ;
+//    temp->deltaVth = here->relStruct->deltaVth ;
+//    temp->next = here->relStruct->deltaVthList ;
+//    here->relStruct->deltaVthList = temp ;
+//    printf ("QUI\n\n") ;
 
     if (!stress_or_recovery)
     {
