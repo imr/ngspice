@@ -126,7 +126,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 1 ;
 
                 // Calculate Aging - Giogio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 0) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -148,7 +148,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 0 ;
 
                 // Calculate Aging - Giorgio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -175,7 +175,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             here->relStruct->IsON = 1 ;
 
             // Calculate Aging - Giorgio Liatis' Model
-            ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1) ;
+            ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
             if (ret == 1)
             {
                 return (E_INTERN) ;
@@ -192,7 +192,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             here->relStruct->IsON = 0 ;
 
             // Calculate Aging - Giorgio Liatis' Model
-            ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 0) ;
+            ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
             if (ret == 1)
             {
                 return (E_INTERN) ;
@@ -239,8 +239,6 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             current = current->next ;
         }
 
-//        printf ("Number of Semi Periods: %u\n", here->relStruct->semiPeriods) ;
-
         if (here->relStruct->semiPeriods > 1)
         {
             /* The model behavior is periodic - Use Fourier basis fitting */
@@ -251,24 +249,14 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
 
             number_of_periods = here->relStruct->semiPeriods / 2 ;
             number_of_modes = 10 * (number_of_periods + 1) ;
-//            printf ("Number of Periods: %u\n", number_of_periods) ;
-//            printf ("Number of Modes: %u\n", number_of_modes) ;
 
             rows = i ;
             columns = 2 * number_of_modes + 1 ;
             size = rows * columns ;
             fitting_matrix = TMALLOC (double, size) ;
-//            printf ("Rows: %u\n", rows) ;
-//            printf ("Columns: %u\n", columns) ;
 
             factor_for_2pi = 2 * 3.14159265359 / (timeFit [rows - 1] - timeFit [0]) ;
-/*            for (i = 0 ; i < rows ; i++)
-            {
-                printf ("Time: %-.9g\n", timeFit [i]) ;
-            }
-            printf ("Max Time: %-.9g\n", timeFit [rows - 1]) ;
-            printf ("Min Time: %-.9g\n", timeFit [0]) ;
-*/
+
             for (i = 0 ; i < rows ; i++)
             {
                 /* The first element of every row is equal to 1 */
@@ -297,11 +285,6 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             gsl_linalg_QR_decomp (&m.matrix, tau) ;
             gsl_linalg_QR_lssolve (&m.matrix, tau, &b.vector, x, residual) ;
 
-//            printf ("fitting_matrix = \n") ;
-//            gsl_matrix_fprintf (stdout, &m.matrix, "%g") ;
-//            printf ("x = \n") ;
-//            gsl_vector_fprintf (stdout, x, "%g") ;
-
             target = 315360000.0 ;
             f = gsl_vector_get (x, 0) ;
 
@@ -326,32 +309,16 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             gsl_vector_free (x) ;
             gsl_vector_free (residual) ;
         } else {
-            /* Execute Fitting */
-            double c0, c1, cov00, cov01, cov11, chisq, *deltaVthFitExp ;
-            unsigned int j ;
-
-            deltaVthFitExp = TMALLOC (double, i) ;
-            for (j = 0 ; j < i ; j++)
+            if (here->relStruct->deltaVth > 0)
             {
-                deltaVthFitExp [j] = exp (deltaVthFit [j]) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, 315360000.0, 0, 1) ;
+                if (ret == 1)
+                {
+                    return (E_INTERN) ;
+                }
             }
 
-            gsl_fit_linear (timeFit, 1, deltaVthFitExp, 1, i, &c0, &c1, &cov00, &cov01, &cov11, &chisq) ;
-            printf ("\n\n") ;
-            printf ("c0: %-.9g\n", c0) ;
-            printf ("c1: %-.9g\n", c1) ;
-            printf ("cov00: %-.9g\n", cov00) ;
-            printf ("cov01: %-.9g\n", cov01) ;
-            printf ("cov11: %-.9g\n", cov11) ;
-            printf ("chisq: %-.9g\n", chisq) ;
-            printf ("\n\n") ;
-
-            /* Perform Extrapolation */
-            double yFit, yFitErr ;
-            gsl_fit_linear_est (315360000.0, c0, c1, cov00, cov01, cov11, &yFit, &yFitErr) ;
-
-            printf ("\n\tFitting -> %-.9gs\t%-.9gmV\n\n", 315360000.0, log (yFit) * 1000) ;
-            printf ("\n\tFitting -> %-.9gs\t%-.9gmV\n\n", 315360000.0, log (c0 + c1 * 315360000.0) * 1000) ;
+            printf ("\n\nExtrapolation at 10 years:\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n", here->relStruct->deltaVth * 1000) ;
         }
     } else {
         fprintf (stderr, "Reliability Analysis Error\n") ;

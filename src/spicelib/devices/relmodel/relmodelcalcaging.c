@@ -47,9 +47,9 @@ listInsert (RELMODELrelList **list, double time, double deltaVth)
 }
 
 int
-RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, unsigned int stress_or_recovery)
+RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, double t_step, unsigned int stress_or_recovery)
 {
-    double A, i, Nt, step ;
+    double A, i, Nt ;
     BSIM4instance *here ;
     RELMODELmodel *relmodel ;
 
@@ -71,44 +71,42 @@ RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, un
     Nt = pow ((sqrt (relmodel->RELMODELnts)), 3) * 1e-21 ;
     A = (CHARGE / (4 * CONSTepsZero * 1e-9 * relmodel->RELMODELeps_hk)) * pow ((relmodel->RELMODELh_cut / (2 * sqrt (2 * relmodel->RELMODELm_star * relmodel->RELMODELw)) * 1e9), 2) ;
 
-//    printf ("\n\nStart Aging...\n") ;
-//    printf ("\tEnd step: %-.9g\n\n", here->relStruct->t_star + t_aging) ;
-    step = 1e-12 ;
-    for (i = 0 ; i < t_aging ; i += step)
+    if (t_step == 0)
     {
-        if (stress_or_recovery)
+        /* Extrapolation for 10 years when there is only stress */
+        here->relStruct->t_star = 0 ;
+        if (relmodel->RELMODELh_cut / (2 * sqrt (2 * relmodel->RELMODELm_star * relmodel->RELMODELw)) * log (1 + pow (((t_aging + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)) * 1e9 <= 2)
         {
-            if (relmodel->RELMODELh_cut / (2 * sqrt (2 * relmodel->RELMODELm_star * relmodel->RELMODELw)) * log (1 + pow (((i + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)) * 1e9 <= 2)
-            {
-                here->relStruct->deltaVth = Nt * A * pow (log (1 + pow (((i + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)), 2) ;
-            } else {
-                here->relStruct->deltaVth = pow ((CHARGE / (4 * CONSTepsZero * 1e-9 * relmodel->RELMODELeps_hk)) * Nt * here->BSIM4modPtr->BSIM4toxe * 1e9, 2) ;
-            }
-            here->relStruct->deltaVthMax = here->relStruct->deltaVth ;
+            here->relStruct->deltaVth = Nt * A * pow (log (1 + pow (((t_aging + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)), 2) ;
         } else {
-//            printf ("\n\nDeltaVth Prior Recovery: %-.9gmV\n\n", here->relStruct->deltaVth * 1000) ;
-            here->relStruct->deltaVth = here->relStruct->deltaVthMax * log (1 + (1.718 / (1 + pow ((i / relmodel->RELMODELtau_e), relmodel->RELMODELbeta1)))) ;
+                here->relStruct->deltaVth = (CHARGE / (4 * CONSTepsZero * 1e-9 * relmodel->RELMODELeps_hk)) * Nt * pow (here->BSIM4modPtr->BSIM4toxe * 1e9, 2) ;
         }
+    } else {
+        for (i = 0 ; i < t_aging ; i += t_step)
+        {
+            if (stress_or_recovery)
+            {
+                if (relmodel->RELMODELh_cut / (2 * sqrt (2 * relmodel->RELMODELm_star * relmodel->RELMODELw)) * log (1 + pow (((i + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)) * 1e9 <= 2)
+                {
+                    here->relStruct->deltaVth = Nt * A * pow (log (1 + pow (((i + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)), 2) ;
+                } else {
+                    here->relStruct->deltaVth = (CHARGE / (4 * CONSTepsZero * 1e-9 * relmodel->RELMODELeps_hk)) * Nt * pow (here->BSIM4modPtr->BSIM4toxe * 1e9, 2) ;
+                }
+                here->relStruct->deltaVthMax = here->relStruct->deltaVth ;
+            } else {
+                here->relStruct->deltaVth = here->relStruct->deltaVthMax * log (1 + (1.718 / (1 + pow ((i / relmodel->RELMODELtau_e), relmodel->RELMODELbeta1)))) ;
+            }
 
-        /* Insert 'here->relStruct->deltaVth' into the list for the later fitting */
-        listInsert (&(here->relStruct->deltaVthList), here->relStruct->offsetTime + i, here->relStruct->deltaVth) ;
-//        printf ("\nStep: %-.9g\tDeltaVth: %-.9gmV\n\n", i, here->relStruct->deltaVth * 1000) ;
-//        RELMODELrelList *temp ;
-//        temp = TMALLOC (RELMODELrelList, 1) ;
-//        temp->time = i + here->relStruct->t_star ;
-//        temp->deltaVth = here->relStruct->deltaVth ;
-//        temp->next = here->relStruct->deltaVthList ;
-//        here->relStruct->deltaVthList = temp ;
-//        printf ("QUI\n\n") ;
+            /* Insert 'here->relStruct->deltaVth' into the list for the later fitting */
+            listInsert (&(here->relStruct->deltaVthList), here->relStruct->offsetTime + i, here->relStruct->deltaVth) ;
+        }
+        here->relStruct->offsetTime += i ;
     }
-//    printf ("Stop Aging...\n\n") ;
 
     if (!stress_or_recovery)
     {
         here->relStruct->t_star = pow ((exp (sqrt (here->relStruct->deltaVth / (Nt * A))) - 1), (1 / relmodel->RELMODELbeta)) * relmodel->RELMODELtau_0 ;
     }
-
-    here->relStruct->offsetTime += i ;
 
     return 0 ;
 }
