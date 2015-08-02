@@ -19,10 +19,13 @@ typedef struct sRELMODELrelList {
 
 typedef struct sRELMODELrelStruct {
     double time ;
+    double offsetTime ;
     double deltaVth ;
+    double deltaVthMax ;
     double t_star ;
     int IsON ;
     RELMODELrelList *deltaVthList ;
+    unsigned int semiPeriods ;
 } RELMODELrelStruct ;
 
 typedef struct sRELMODELmodel

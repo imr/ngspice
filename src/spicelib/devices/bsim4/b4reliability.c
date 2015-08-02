@@ -8,6 +8,7 @@ Author: 2015 Francesco Lannutti - July 2015
 #include "ngspice/sperror.h"
 
 #include <gsl/gsl_fit.h>
+#include <gsl/gsl_linalg.h>
 
 static int
 BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mode)
@@ -130,6 +131,9 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 {
                     return (E_INTERN) ;
                 }
+
+                // Update the semiperiod counter
+                here->relStruct->semiPeriods++ ;
             } else {
                 fprintf (stderr, "Reliability Analysis Error\n") ;
             }
@@ -149,6 +153,9 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 {
                     return (E_INTERN) ;
                 }
+
+                // Update the semiperiod counter
+                here->relStruct->semiPeriods++ ;
             } else if (here->relStruct->IsON == 0) {
                 // Until now, the device was OFF - Do NOTHING
                 delta = -1 ;
@@ -173,6 +180,9 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             {
                 return (E_INTERN) ;
             }
+
+            // Update the semiperiod counter
+            here->relStruct->semiPeriods++ ;
         } else if (here->relStruct->IsON == 0) {
             // Calculate recovery
             delta = ckt->CKTtime - here->relStruct->time ;
@@ -187,6 +197,9 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             {
                 return (E_INTERN) ;
             }
+
+            // Update the semiperiod counter
+            here->relStruct->semiPeriods++ ;
         } else {
             fprintf (stderr, "Reliability Analysis Error\n") ;
         }
@@ -197,7 +210,6 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
 
 
         /* Calculate fitting */
-        double c0, c1, cov00, cov01, cov11, chisq ;
 
         /* Count how many deltaVth we have */
         unsigned int i ;
@@ -222,22 +234,125 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
         while (current != NULL)
         {
             timeFit [i] = current->time ;
-            deltaVthFit [i] = exp (current->deltaVth) ;
-            printf ("Time: %-.9g\n", current->time) ;
-            printf ("DeltaVth: %-.9g\n", current->deltaVth) ;
-            printf ("DeltaVth (exp): %-.9g\n", exp (current->deltaVth)) ;
+            deltaVthFit [i] = current->deltaVth ;
             i++ ;
             current = current->next ;
         }
 
-        /* Execute Fitting */
-        gsl_fit_linear (timeFit + 1, 1, deltaVthFit + 1, 1, i - 1, &c0, &c1, &cov00, &cov01, &cov11, &chisq) ;
+//        printf ("Number of Semi Periods: %u\n", here->relStruct->semiPeriods) ;
 
-        /* Perform Extrapolation */
-        double yFit, yFitErr ;
-        gsl_fit_linear_est (2e-6, c0, c1, cov00, cov01, cov11, &yFit, &yFitErr) ;
+        if (here->relStruct->semiPeriods > 1)
+        {
+            /* The model behavior is periodic - Use Fourier basis fitting */
+            /* Generate the fitting matrix */
 
-        printf ("\n\tFitting -> %-.9gs\t%-.9gmV\n\n", 31536000.0, log (yFit) * 1000) ;
+            double f, factor_for_2pi, *fitting_matrix, target ;
+            unsigned int columns, j, number_of_modes, number_of_periods, rows, size ;
+
+            number_of_periods = here->relStruct->semiPeriods / 2 ;
+            number_of_modes = 10 * (number_of_periods + 1) ;
+//            printf ("Number of Periods: %u\n", number_of_periods) ;
+//            printf ("Number of Modes: %u\n", number_of_modes) ;
+
+            rows = i ;
+            columns = 2 * number_of_modes + 1 ;
+            size = rows * columns ;
+            fitting_matrix = TMALLOC (double, size) ;
+//            printf ("Rows: %u\n", rows) ;
+//            printf ("Columns: %u\n", columns) ;
+
+            factor_for_2pi = 2 * 3.14159265359 / (timeFit [rows - 1] - timeFit [0]) ;
+/*            for (i = 0 ; i < rows ; i++)
+            {
+                printf ("Time: %-.9g\n", timeFit [i]) ;
+            }
+            printf ("Max Time: %-.9g\n", timeFit [rows - 1]) ;
+            printf ("Min Time: %-.9g\n", timeFit [0]) ;
+*/
+            for (i = 0 ; i < rows ; i++)
+            {
+                /* The first element of every row is equal to 1 */
+                fitting_matrix [columns * i] = 1 ;
+
+                /* The odd elements of every row are cos(x) */
+                for (j = 0 ; j < number_of_modes ; j++)
+                {
+                    fitting_matrix [columns * i + 2 * j + 1] = cos ((j + 1) * timeFit [i] * factor_for_2pi) ;
+                }
+
+                /* The even elements of every row are sin(x) */
+                for (j = 1 ; j <= number_of_modes ; j++)
+                {
+                    fitting_matrix [columns * i + 2 * j] = sin (j * timeFit [i] * factor_for_2pi) ;
+                }
+            }
+
+            gsl_matrix_view m = gsl_matrix_view_array (fitting_matrix, rows, columns) ;
+            gsl_vector_view b = gsl_vector_view_array (deltaVthFit, rows) ;
+            gsl_vector *tau = gsl_vector_alloc (MIN (rows, columns)) ;
+
+            gsl_vector *x = gsl_vector_alloc (columns) ;
+            gsl_vector *residual = gsl_vector_alloc (rows) ;
+
+            gsl_linalg_QR_decomp (&m.matrix, tau) ;
+            gsl_linalg_QR_lssolve (&m.matrix, tau, &b.vector, x, residual) ;
+
+//            printf ("fitting_matrix = \n") ;
+//            gsl_matrix_fprintf (stdout, &m.matrix, "%g") ;
+//            printf ("x = \n") ;
+//            gsl_vector_fprintf (stdout, x, "%g") ;
+
+            target = 315360000.0 ;
+            f = gsl_vector_get (x, 0) ;
+
+            /* The odd elements of every row are cos(x) */
+            for (j = 0 ; j < number_of_modes ; j++)
+            {
+                f += gsl_vector_get (x, 2 * j + 1) * cos ((j + 1) * target * factor_for_2pi) ;
+            }
+
+            /* The even elements of every row are sin(x) */
+            for (j = 1 ; j <= number_of_modes ; j++)
+            {
+                f += gsl_vector_get (x, 2 * j) * sin (j * target * factor_for_2pi) ;
+            }
+
+            printf ("\n\nExtrapolation at 10 years:\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n", f * 1000) ;
+
+            /* Assign the extrapolated DeltaVth to the model */
+            here->relStruct->deltaVth = f ;
+
+            gsl_vector_free (tau) ;
+            gsl_vector_free (x) ;
+            gsl_vector_free (residual) ;
+        } else {
+            /* Execute Fitting */
+            double c0, c1, cov00, cov01, cov11, chisq, *deltaVthFitExp ;
+            unsigned int j ;
+
+            deltaVthFitExp = TMALLOC (double, i) ;
+            for (j = 0 ; j < i ; j++)
+            {
+                deltaVthFitExp [j] = exp (deltaVthFit [j]) ;
+            }
+
+            gsl_fit_linear (timeFit, 1, deltaVthFitExp, 1, i, &c0, &c1, &cov00, &cov01, &cov11, &chisq) ;
+            printf ("\n\n") ;
+            printf ("c0: %-.9g\n", c0) ;
+            printf ("c1: %-.9g\n", c1) ;
+            printf ("cov00: %-.9g\n", cov00) ;
+            printf ("cov01: %-.9g\n", cov01) ;
+            printf ("cov11: %-.9g\n", cov11) ;
+            printf ("chisq: %-.9g\n", chisq) ;
+            printf ("\n\n") ;
+
+            /* Perform Extrapolation */
+            double yFit, yFitErr ;
+            gsl_fit_linear_est (315360000.0, c0, c1, cov00, cov01, cov11, &yFit, &yFitErr) ;
+
+            printf ("\n\tFitting -> %-.9gs\t%-.9gmV\n\n", 315360000.0, log (yFit) * 1000) ;
+            printf ("\n\tFitting -> %-.9gs\t%-.9gmV\n\n", 315360000.0, log (c0 + c1 * 315360000.0) * 1000) ;
+        }
     } else {
         fprintf (stderr, "Reliability Analysis Error\n") ;
     }

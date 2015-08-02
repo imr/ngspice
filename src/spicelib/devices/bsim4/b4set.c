@@ -2660,10 +2660,13 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             {
                 here->relStruct = TMALLOC (RELMODELrelStruct, 1) ;
                 here->relStruct->time = 0 ;
+                here->relStruct->offsetTime = 0 ;
                 here->relStruct->deltaVth = 0 ;
+                here->relStruct->deltaVthMax = 0 ;
                 here->relStruct->t_star = 0 ;
                 here->relStruct->IsON = -1 ;
                 here->relStruct->deltaVthList = NULL ;
+                here->relStruct->semiPeriods = 0 ;
             }
 #endif
 
