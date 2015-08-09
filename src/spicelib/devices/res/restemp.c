@@ -33,6 +33,21 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
 
+            if (!here->RESresGiven) {
+                if (here->RESlength * here->RESwidth * model->RESsheetRes > 0.0) {
+                    here->RESresist =
+                        (here->RESlength - model->RESshort) /
+                        (here->RESwidth - model->RESnarrow) *
+                        model->RESsheetRes;
+                } else if (model->RESresGiven) {
+                    here->RESresist = model->RESres;
+                } else {
+                    SPfrontEnd->IFerrorf (ERR_WARNING,
+                                          "%s: resistance to low, set to 1 mOhm", here->RESname);
+                    here->RESresist = 1e-03;
+                }
+            }
+
             /* Default Value Processing for Resistor Instance */
 
             if(!here->REStempGiven) {

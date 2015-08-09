@@ -52,20 +52,6 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
             if(!here->RESscaleGiven)   here->RESscale  = 1.0;
             if(!here->RESmGiven)       here->RESm      = 1.0;
             if(!here->RESnoisyGiven)   here->RESnoisy  = 1;
-            if(!here->RESresGiven)  {
-                if(here->RESlength * here->RESwidth * model->RESsheetRes > 0.0) {
-                    here->RESresist = model->RESsheetRes * (here->RESlength -
-                                                            model->RESshort) / (here->RESwidth - model->RESnarrow);
-                } else {
-                    if(model->RESresGiven) {
-                        here->RESresist = model->RESres;
-                    } else {
-                        SPfrontEnd->IFerrorf (ERR_WARNING,
-                                             "%s: resistance to low, set to 1 mOhm", here->RESname);
-                        here->RESresist = 1e-03;
-                    }
-                }
-            }
 
             if(!here->RESbv_maxGiven)
                 here->RESbv_max = model->RESbv_max;
