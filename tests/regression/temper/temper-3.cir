@@ -1,0 +1,40 @@
+regression test temper-3.cir, temper sweep with 'temper' in a model parameter
+
+* check invocation of CKTtemp() in DCtrCurv()
+*   and for proper instance update in REStemp()
+
+.model rtest r r='1000 + temper'
+.model rfix  r r='1000'
+
+v1  1 0  dc 5v
+
+r_test  1 0  rtest
+
+.control
+
+let success_count = 0
+
+dc temp 10 100 10.0
+
+let val = -v(1)/i(v1) - 1000
+let gold = "temp-sweep"
+
+let err = vecmax(abs(val/gold - 1))
+
+echo "Note: err =" $&err
+if err > 1e-12
+  echo "ERROR: test failed"
+else
+  echo "INFO: success"
+  let success_count = success_count + 1
+end
+
+if success_count ne 1
+  quit 1
+else
+  quit 0
+end
+
+.endc
+
+.end
