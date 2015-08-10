@@ -1569,9 +1569,11 @@ inp_evaluate_temper(void)
     }
 
     for(d = modtlist; d; d = d->next) {
+        char *name = d->wl->wl_word;
+        INPretrieve(&name, ft_curckt->ci_symtab);
         /* only evaluate models which have been entered into the
            hash table ckt->MODnameHash */
-        if (ft_sim->findModel (ft_curckt->ci_ckt, d->wl->wl_word) == NULL)
+        if (ft_sim->findModel (ft_curckt->ci_ckt, name) == NULL)
             continue;
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         d->wlend->wl_word = tprintf("%g", result);
