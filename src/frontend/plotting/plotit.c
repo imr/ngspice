@@ -230,7 +230,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     bool gfound = FALSE, pfound = FALSE, oneval = FALSE;
     double *dd, ylims[2], xlims[2];
     struct pnode *pn, *names;
-    struct dvec *dv, *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
+    struct dvec *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
     char *xn;
     int i, j, xt;
     double tt;
@@ -546,6 +546,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (pn->pn_value && (pn->pn_value->v_length == 0) &&
             eq(pn->pn_value->v_name, "vs"))
         {
+            struct dvec *dv;
+
             if (!lv) {
                 fprintf(cp_err, "Error: misplaced vs arg\n");
                 goto quit;
@@ -571,6 +573,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             }
 
         } else {
+
+            struct dvec *dv;
 
             dv = ft_evaluate(pn);
             if (!dv)
