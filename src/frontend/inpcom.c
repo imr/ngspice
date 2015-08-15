@@ -3214,8 +3214,14 @@ inp_expand_macros_in_deck(struct function_env *env, struct line *c)
             continue;
 
         if (ciprefix(".subckt", c->li_line)) {
+            struct line *subckt = c;
             c = inp_expand_macros_in_deck(env, c->li_next);
-            continue;
+            if (c)
+                continue;
+
+            fprintf(stderr, "Error: line %d, missing .ends\n  %s\n",
+                    subckt->li_linenum_orig, subckt->li_line);
+            controlled_exit(EXIT_BAD);
         }
 
         if (ciprefix(".ends", c->li_line))
