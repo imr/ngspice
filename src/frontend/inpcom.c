@@ -126,7 +126,7 @@ static void inp_dot_if(struct line *deck);
 static char *inp_modify_exp(char* expression);
 static void inp_new_func(char *funcname, char *funcbody, struct line *card,
                          struct func_temper **new_func, int *sub_count, int subckt_depth);
-static void inp_rem_func(struct func_temper **new_func);
+static void inp_delete_funcs(struct func_temper *funcs);
 
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct line *start_card);
@@ -6014,8 +6014,7 @@ inp_fix_temper_in_param(struct line *deck)
 
     /* final memory clearance */
     tfree(sub_count);
-    /* remove new_func */
-    inp_rem_func(&beg_func);
+    inp_delete_funcs(beg_func);
 }
 
 
@@ -6076,14 +6075,13 @@ inp_new_func(char *funcname, char *funcbody, struct line *card, struct func_temp
 
 
 static void
-inp_rem_func(struct func_temper **beg_func)
+inp_delete_funcs(struct func_temper *f)
 {
-    struct func_temper *next_func;
-
-    for(; *beg_func; *beg_func = next_func) {
-        next_func = (*beg_func)->next;
-        tfree((*beg_func)->funcname);
-        tfree((*beg_func));
+    while (f) {
+        struct func_temper *f_next = f->next;
+        tfree(f->funcname);
+        tfree(f);
+        f = f_next;
     }
 }
 
