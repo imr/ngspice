@@ -4070,7 +4070,7 @@ search_identifier(char *str, const char *identifier, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace(before) || strchr(",{", before)) {
+        if (is_arith_char(before) || isspace(before) || strchr("=,{", before)) {
             char after = str[strlen(identifier)];
             if (is_arith_char(after) || isspace(after) || strchr(",}", after))
                 return str;
