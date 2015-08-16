@@ -28,7 +28,7 @@
   static void PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *);
 %}
 
-%name-prefix="PT"
+%name-prefix "PT"
 
 %defines
 

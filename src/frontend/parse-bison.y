@@ -29,7 +29,7 @@
   static void PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *);
 %}
 
-%name-prefix="PP"
+%name-prefix "PP"
 
 %defines
 %locations
