@@ -124,8 +124,8 @@ static void inp_bsource_compat(struct line *deck);
 static void inp_temper_compat(struct line *card);
 static void inp_dot_if(struct line *deck);
 static char *inp_modify_exp(char* expression);
-static void inp_new_func(char *funcname, char *funcbody, struct line *card,
-                         struct func_temper **new_func, int *sub_count, int subckt_depth);
+static struct func_temper *inp_new_func(char *funcname, char *funcbody, struct line *card,
+                                        int *sub_count, int subckt_depth);
 static void inp_delete_funcs(struct func_temper *funcs);
 
 static bool chk_for_line_continuation(char *line);
@@ -5831,7 +5831,7 @@ inp_fix_temper_in_param(struct line *deck)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
     char *funcbody, *funcname;
-    struct func_temper *new_func = NULL, *beg_func;
+    struct func_temper *f, *funcs = NULL, **funcs_tail_ptr = &funcs;
     struct line *card;
 
     sub_count = TMALLOC(int, 16);
@@ -5918,23 +5918,24 @@ inp_fix_temper_in_param(struct line *deck)
             funcname = copy_substring(lhs_b, lhs_e);
             funcbody = copy(equal_ptr + 1);
 
-            inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+            *funcs_tail_ptr =
+                inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
+            funcs_tail_ptr = & (*funcs_tail_ptr)->next;
 
             tfree(funcbody);
         }
     }
 
     /* second pass */
-    /* for each .func entry in new_func start the insertion operation:
-       search each line from the deck, which has the suitable subcircuit nesting data,
-       for tokens xxx equalling the funcname, replace xxx by xxx(). After insertion,
-       remove the respective entry in new_fuc. If the replacement is done in a
-       .param line, convert it to a .func line and add an entry to new_func.
-       Continue until new_func is empty.
+    /* for each .func entry in `funcs' start the insertion operation:
+       search each line from the deck which has the suitable subcircuit nesting data.
+       for tokens xxx equalling the funcname, replace xxx by xxx().
+       if the replacement is done in a .param line then
+         convert it to a .func line and append an entry to `funcs'.
+       Continue up to the very end of `funcs'.
      */
 
-    beg_func = new_func;
-    for (; new_func; new_func = new_func->next) {
+    for (f = funcs; f; f = f->next) {
 
         for(j = 0; j < 16; j++)
             sub_count[j] = 0;
@@ -5971,10 +5972,10 @@ inp_fix_temper_in_param(struct line *deck)
             }
 
             /* exclude lines which do not have the same subcircuit
-               nesting depth and number as found in new_func */
-            if (subckt_depth != new_func->subckt_depth)
+               nesting depth and number as found in f */
+            if (subckt_depth != f->subckt_depth)
                 continue;
-            if (sub_count[subckt_depth] != new_func->subckt_count)
+            if (sub_count[subckt_depth] != f->subckt_count)
                 continue;
 
             /* remove first token, ignore it here, restore it later */
@@ -5984,7 +5985,7 @@ inp_fix_temper_in_param(struct line *deck)
                 continue;
             }
 
-            new_str = inp_functionalise_identifier(curr_line, new_func->funcname);
+            new_str = inp_functionalise_identifier(curr_line, f->funcname);
 
             if (new_str == curr_line) {
                 tfree(firsttok_str);
@@ -6001,7 +6002,9 @@ inp_fix_temper_in_param(struct line *deck)
                 txfree(gettok(&new_tmp_str));
                 funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
                 funcbody = copy(new_tmp_str + 1);
-                inp_new_func(funcname, funcbody, card, &new_func, sub_count, subckt_depth);
+                *funcs_tail_ptr =
+                    inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
+                funcs_tail_ptr = & (*funcs_tail_ptr)->next;
                 tfree(new_str);
                 tfree(funcbody);
             } else {
@@ -6014,7 +6017,7 @@ inp_fix_temper_in_param(struct line *deck)
 
     /* final memory clearance */
     tfree(sub_count);
-    inp_delete_funcs(beg_func);
+    inp_delete_funcs(funcs);
 }
 
 
@@ -6045,32 +6048,25 @@ inp_functionalise_identifier(char *curr_line, char *identifier)
  * and add line to deck
  */
 
-static void
-inp_new_func(char *funcname, char *funcbody, struct line *card, struct func_temper **new_func,
+static struct func_temper *
+inp_new_func(char *funcname, char *funcbody, struct line *card,
              int *sub_count, int subckt_depth)
 {
-    struct func_temper *new_func_tmp;
-    static struct func_temper *new_func_end;
+    struct func_temper *f;
     char *new_str;
 
-    new_func_tmp = TMALLOC(struct func_temper, 1);
-    new_func_tmp->funcname = funcname;
-    new_func_tmp->next = NULL;
-    new_func_tmp->subckt_depth = subckt_depth;
-    new_func_tmp->subckt_count = sub_count[subckt_depth];
-
-    /* Insert at the back */
-    if (*new_func == NULL) {
-        *new_func = new_func_end = new_func_tmp;
-    } else {
-        new_func_end->next = new_func_tmp;
-        new_func_end = new_func_tmp;
-    }
+    f = TMALLOC(struct func_temper, 1);
+    f->funcname = funcname;
+    f->next = NULL;
+    f->subckt_depth = subckt_depth;
+    f->subckt_count = sub_count[subckt_depth];
 
     /* replace line in deck */
     new_str = tprintf(".func %s() %s", funcname, funcbody);
     card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
     *card->li_line = '*';
+
+    return f;
 }
 
 
