@@ -2810,12 +2810,32 @@ new_function_parameter(struct function *fcn, char *parameter)
 }
 
 
+static bool
+inp_strip_braces(char *s)
+{
+    int nesting = 0;
+    char *d = s;
+
+    for (; *s; s++)
+        if (*s == '{') {
+            nesting++;
+        } else if (*s == '}') {
+            if (--nesting < 0)
+                return FALSE;
+        } else if (!isspace(*s)) {
+            *d++ = *s;
+        }
+
+    *d++ = '\0';
+
+    return TRUE;
+}
+
+
 static void
 inp_get_func_from_line(struct function_env *env, char *line)
 {
     char *end, *orig_line = line;
-    char temp_buf[5000];
-    int  str_len = 0;
     struct function *function;
 
     /* skip `.func' */
@@ -2861,36 +2881,9 @@ inp_get_func_from_line(struct function_env *env, char *line)
     if (*end == '=')
         end = skip_ws(end + 1);
 
-    if (*end != '{')
-        goto Lerror;
+    function->body = copy(end);
 
-    end = skip_ws(end + 1);
-
-    /* get function body */
-    str_len = 0;
-    while (*end  && *end != '}') {
-        if (!isspace(*end))
-            temp_buf[str_len++] = *end;
-        end++;
-    }
-    temp_buf[str_len++] = '\0';
-
-    function->body = strdup(temp_buf);
-
-    if (*end != '}')
-        goto Lerror;
-
-    end = skip_ws(end + 1);
-
-    if (*end != '\0') {
-Lerror:
-        // fixme, free()
-        fprintf(stderr, "ERROR: faild to parse .func in: %s\n", orig_line);
-        controlled_exit(EXIT_FAILURE);
-        return;
-    }
-
-    {
+    if (inp_strip_braces(function->body)) {
         int i;
 
         char *accept = TMALLOC(char, function->num_parameters + 1);
@@ -2899,7 +2892,15 @@ Lerror:
         accept[i] = '\0';
 
         function->accept = accept;
+        return;
     }
+
+    tfree(function->body);
+
+ Lerror:
+    // fixme, free()
+    fprintf(stderr, "ERROR: faild to parse .func in: %s\n", orig_line);
+    controlled_exit(EXIT_FAILURE);
 }
 
 
