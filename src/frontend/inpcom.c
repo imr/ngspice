@@ -72,7 +72,7 @@ struct function_env
     struct function {
         struct function *next;
         char *name;
-        char *macro;
+        char *body;
         char *params[N_PARAMS];
         int   num_parameters;
         const char *accept;
@@ -2791,7 +2791,7 @@ free_function(struct function *fcn)
     int i;
 
     tfree(fcn->name);
-    tfree(fcn->macro);
+    tfree(fcn->body);
 
     for (i = 0; i < fcn->num_parameters; i++)
         tfree(fcn->params[i]);
@@ -2875,7 +2875,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
     }
     temp_buf[str_len++] = '\0';
 
-    function->macro = strdup(temp_buf);
+    function->body = strdup(temp_buf);
 
     if (*end != '}')
         goto Lerror;
@@ -2969,7 +2969,7 @@ search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
 static char*
 inp_do_macro_param_replace(struct function *fcn, char *params[])
 {
-    char *str = strdup(fcn->macro);
+    char *str = strdup(fcn->body);
     int  i;
 
     char *collect_ptr = NULL;
@@ -3164,7 +3164,7 @@ inp_expand_macros_in_func(struct function_env *env)
     struct function *f;
 
     for (f = env->functions; f ; f = f->next)
-        f->macro = inp_expand_macro_in_str(env, f->macro);
+        f->body = inp_expand_macro_in_str(env, f->body);
 }
 
 
