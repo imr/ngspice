@@ -33,7 +33,15 @@ CKTtrunc (CKTcircuit *ckt, double *timeStep)
     double startTime ;
     int error = OK ;
 
+#ifdef USE_CUSPICE
+    int doReduction, status ;
+#endif
+
     startTime = SPfrontEnd->IFseconds () ;
+
+#ifdef USE_CUSPICE
+    doReduction = 0 ;
+#endif
 
     timetemp = HUGE ;
     for (i = 0 ; i < DEVmaxnum ; i++)
@@ -44,6 +52,10 @@ CKTtrunc (CKTcircuit *ckt, double *timeStep)
 #ifdef STEPDEBUG
             debugtemp = timetemp ;
 #endif /* STEPDEBUG */
+
+#ifdef USE_CUSPICE
+            doReduction = 1 ;
+#endif
 
 	    error = DEVices[i]->DEVtrunc (ckt->CKThead[i], ckt, &timetemp) ;
 	    if (error)
@@ -63,11 +75,12 @@ CKTtrunc (CKTcircuit *ckt, double *timeStep)
     }
 
 #ifdef USE_CUSPICE
-    int status ;
-
-    status = cuCKTtrunc (ckt, HUGE, timeStep) ;
-    if (status != 0)
-        return (E_NOMEM) ;
+    if (doReduction)
+    {
+        status = cuCKTtrunc (ckt, HUGE, timeStep) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+    }
 #else
     *timeStep = MIN (2 * *timeStep, timetemp) ;
 #endif
