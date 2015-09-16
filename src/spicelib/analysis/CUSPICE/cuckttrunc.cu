@@ -54,6 +54,13 @@ CKTcircuit *ckt, double timetemp, double *timeStep
 
     cudaDeviceSynchronize () ;
 
+    status = cudaGetLastError () ; // check for launch error
+    if (status != cudaSuccess)
+    {
+        fprintf (stderr, "Kernel 1 launch failure in cuCKTtrunc\n\n") ;
+        return (E_NOMEM) ;
+    }
+
     cuCKTtrunc_kernel <<< 1, thread, thread_y * sizeof(double) >>> (ckt->d_CKTtimeStepsOut, ckt->d_CKTtimeSteps, block_x) ;
 
     cudaDeviceSynchronize () ;
@@ -61,7 +68,7 @@ CKTcircuit *ckt, double timetemp, double *timeStep
     status = cudaGetLastError () ; // check for launch error
     if (status != cudaSuccess)
     {
-        fprintf (stderr, "Kernel launch failure in cuCKTtrunc\n\n") ;
+        fprintf (stderr, "Kernel 2 launch failure in cuCKTtrunc\n\n") ;
         return (E_NOMEM) ;
     }
 
