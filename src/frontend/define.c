@@ -58,16 +58,16 @@ com_define(wordlist *wlist)
      */
     buf[0] = '\0';
 
-    for (wl = wlist; wl && (strchr(wl->wl_word, /* ( */ ')') == NULL);
+    for (wl = wlist; wl && (strchr(wl->wl_word, ')') == NULL);
          wl = wl->wl_next)
         (void) strcat(buf, wl->wl_word);
 
     if (wl) {
         for (t = buf; *t; t++)
             ;
-        for (s = wl->wl_word; *s && (*s != /* ( */ ')'); s++, t++)
+        for (s = wl->wl_word; *s && (*s != ')'); s++, t++)
             *t = *s;
-        *t++ = /* ( */ ')';
+        *t++ = ')';
         *t = '\0';
         if (*++s)
             wl->wl_word = copy(s);
@@ -87,7 +87,7 @@ com_define(wordlist *wlist)
     (void) strcpy(tbuf, buf);
 
     for (b = tbuf; *b; b++)
-        if (isspace(*b) || (*b == '(' /* ) */)) {
+        if (isspace(*b) || (*b == '(')) {
             *b = '\0';
             break;
         }
@@ -115,11 +115,11 @@ com_define(wordlist *wlist)
     /* Format the name properly and add to the list. */
     b = copy(buf);
     for (s = b; *s; s++) {
-        if (*s == '(') { /*)*/
+        if (*s == '(') {
             *s = '\0';
-            if (s[1] != /*(*/ ')')
+            if (s[1] != ')')
                 arity++;    /* It will have been 0. */
-        } else if (*s == /*(*/ ')') {
+        } else if (*s == ')') {
             *s = '\0';
         } else if (*s == ',') {
             *s = '\0';
@@ -201,7 +201,7 @@ prdefs(char *name)
     char *s;
 
     if (name) {
-        s = strchr(name, '(' /* ) */);
+        s = strchr(name, '(');
         if (s)
             *s = '\0';
     }

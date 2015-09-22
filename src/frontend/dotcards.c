@@ -421,7 +421,7 @@ fixdotplot(wordlist *wl)
         /* Is this a trailing (a,b) ? Note that we require it to be
          * one word.
          */
-        if (!wl->wl_next && (*wl->wl_word == '(')) /*)*/ {
+        if (!wl->wl_next && (*wl->wl_word == '(')) {
             s = wl->wl_word + 1;
             d = ft_numparse(&s, FALSE);
             if (*s != ',') {
@@ -432,7 +432,7 @@ fixdotplot(wordlist *wl)
             d1 = *d;
             s++;
             d = ft_numparse(&s, FALSE);
-            if ((*s != /*(*/ ')') || s[1]) {
+            if ((*s != ')') || s[1]) {
                 fprintf(cp_err, "Error: bad limits \"%s\"\n",
                         wl->wl_word);
                 return;
@@ -585,7 +585,7 @@ gettoks(char *s)
             tfree(t);
             continue;
         }
-        l = strrchr(t, '('/*)*/);
+        l = strrchr(t, '(');
         if (!l) {
             wl = wl_cons(copy(t), NULL);
             *prevp = wl;
@@ -594,7 +594,7 @@ gettoks(char *s)
             continue;
         }
 
-        r = strchr(t, /*(*/')');
+        r = strchr(t, ')');
 
         c = strchr(t, ',');
         if (!c)

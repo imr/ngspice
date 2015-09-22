@@ -151,11 +151,11 @@ copynode(char *s)
     else
         s = copy(s);
 
-    l = strrchr(s, '('/*)*/);
+    l = strrchr(s, '(');
     if (!l)
         return s;
 
-    r = strchr(s, /*(*/')');
+    r = strchr(s, ')');
     *r = '\0';
     if (*(l - 1) == 'i' || *(l - 1) == 'I')
         ret = tprintf("%s#branch", l + 1);

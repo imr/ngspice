@@ -334,7 +334,7 @@ cp_setparse(wordlist *wl)
         strcpy(val, copyval);
         tfree(copyval);
 
-        if (eq(val, "(")) { /* ) */
+        if (eq(val, "(")) {
             /* The beginning of a list... We have to walk down the
              * list until we find a close paren... If there are nested
              * ()'s, treat them as tokens...  */

@@ -125,7 +125,7 @@ brac1(char *string)
                     nb++;
                 if (*s == cp_ccurl)
                     nb--;
-                if (*s == '\0') {   /* { */
+                if (*s == '\0') {
                     fprintf(cp_err, "Error: missing }.\n");
                     return (NULL);
                 }
@@ -180,7 +180,7 @@ brac2(char *string)
                 nb++;
             if (*s == cp_ccurl)
                 nb--;
-            if (*s == '\0') {       /* { */
+            if (*s == '\0') {
                 fprintf(cp_err, "Error: missing }.\n");
                 return (NULL);
             }

@@ -383,11 +383,11 @@ vec_fromplot(char *word, struct plot *plot)
     }
 
     /* scanf("%c(%s)" doesn't do what it should do. ) */
-    if (!d && (sscanf(word, "%c(%s", /* ) */ &cc, buf) == 2) &&
-        /* ( */ ((s = strrchr(buf, ')')) != NULL) &&
+    if (!d && (sscanf(word, "%c(%s", &cc, buf) == 2) &&
+        ((s = strrchr(buf, ')')) != NULL) &&
         (s[1] == '\0')) {
         *s = '\0';
-        if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word)) {
+        if (prefix("i(", word) || prefix("I(", word)) {
             /* Spice dependency... */
             (void) sprintf(buf2, "%s#branch", buf);
             (void) strcpy(buf, buf2);

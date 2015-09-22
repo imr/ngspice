@@ -288,9 +288,9 @@ gettok(char **s)
         return (NULL);
     beg = *s ;
     while ((c = **s) != '\0' && !isspace(c)) {
-	if (c == '('/*)*/)
+	if (c == '(')
 	    paren += 1;
-	else if (c == /*(*/')')
+	else if (c == ')')
 	    paren -= 1;
 	else if (c == ',' && paren < 1)
 	    break;
@@ -325,9 +325,9 @@ gettok_iv(char **s)
     // add v or i to buf
     spice_dstring_append_char( &buf, *(*s)++ ) ;
     while ((c = **s) != '\0') {
-        if (c == '('/*)*/)
+        if (c == '(')
             paren += 1;
-        else if (c == /*(*/')')
+        else if (c == ')')
             paren -= 1;
         if (isspace(c)) 
             (*s)++;
