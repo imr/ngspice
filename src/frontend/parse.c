@@ -667,13 +667,23 @@ PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
             /* It is bad how we have to recognise '[' -- sometimes
              * it is part of a word, when it defines a parameter
              * name, and otherwise it isn't.
-             * va, ']' too
+             *
+             * what is valid here ?
+             *   foo  dc1.foo  dc1.@m1[vth]
+             * this too ?
+             *   vthing#branch
+             * should we convert the pseudo identifier ?
+             *   i(v5) --> v5#branch
              */
             for (; *sbuf && !strchr(specials, *sbuf); sbuf++)
                 if (*sbuf == '@')
                     atsign = 1;
-                else if (!atsign && (*sbuf == '[' || *sbuf == ']'))
+                else if (!atsign && *sbuf == '[')
                     break;
+                else if (atsign && *sbuf == ']') {
+                    sbuf++;
+                    break;
+                }
 
             lvalp->str = copy_substring(start, sbuf);
             lexer_return(TOK_STR, 0);

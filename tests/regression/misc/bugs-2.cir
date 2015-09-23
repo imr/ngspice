@@ -1,0 +1,42 @@
+parser test
+*
+* test capability to parse @foo[bar][42]
+* (exec-spice "ngspice %s" t)
+
+v1  1 0  dc=0
+
+.control
+
+save @v1[dc]
+
+dc v1 0 1 250m
+
+let foo = @v1[dc]
+
+let gold = 500m
+let bar = foo[2]
+let baz = @v1[dc][2]
+
+let fail_count = 0
+
+if bar <> 0.5
+  echo "ERROR: bar = $&bar should be 0.5"
+  let fail_count = fail_count + 1
+end
+
+if baz <> 0.5
+  echo "ERROR: baz = $&baz should be 0.5"
+  let fail_count = fail_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
