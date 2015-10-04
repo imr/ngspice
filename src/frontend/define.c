@@ -416,12 +416,12 @@ ntharg(int num, struct pnode *args)
                     return args->pn_left;
                 return args;
             }
-            num--;
             if (args->pn_op && (args->pn_op->op_num != PT_OP_COMMA)) {
-                if (num <= 1)
+                if (num <= 2)
                     return args;
                 return NULL;
             }
+            num--;
             args = args->pn_right;
         }
 }
