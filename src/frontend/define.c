@@ -420,6 +420,8 @@ ntharg(int num, struct pnode *args)
                 else
                     return (NULL);
             }
+            if (!ptry)
+                return NULL;
             ptry = ptry->pn_right;
         }
 
