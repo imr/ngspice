@@ -133,13 +133,8 @@ com_define(wordlist *wlist)
 
     if (udf == NULL) {
         udf = alloc(struct udfunc);
-        if (udfuncs == NULL) {
-            udfuncs = udf;
-            udf->ud_next = NULL;
-        } else {
-            udf->ud_next = udfuncs;
-            udfuncs = udf;
-        }
+        udf->ud_next = udfuncs;
+        udfuncs = udf;
     }
 
     udf->ud_text = names;
