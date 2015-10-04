@@ -96,6 +96,7 @@ exp:
   | '(' exp ')'                       { $$ = $2; }
 
   | '-' exp  %prec NEG                { $$ = PT_mkfnode("-",$2); }
+  | '+' exp  %prec NEG                { $$ = $2; }
 
   | TOK_STR '(' nonempty_arglist ')'  { $$ = PT_mkfnode($1, $3);
                                         if (!$$)
