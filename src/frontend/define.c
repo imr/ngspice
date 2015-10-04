@@ -410,22 +410,23 @@ ntharg(int num, struct pnode *args)
     // fact: num >= 1 for all known invocations of ntharg()
         for (;;) {
             if (--num <= 0) {
-                break;
+                if (args && args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
+                    return args->pn_left;
+                return args;
             }
             if (args && args->pn_op && (args->pn_op->op_num != PT_OP_COMMA)) {
                 if (num <= 1)
-                    break;
+                {
+                    if (args && args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
+                        return args->pn_left;
+                    return args;
+                }
                 return NULL;
             }
             if (!args)
                 return NULL;
             args = args->pn_right;
         }
-
-    if (args && args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
-        return args->pn_left;
-
-    return args;
 }
 
 
