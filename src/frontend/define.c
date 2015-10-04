@@ -408,9 +408,7 @@ static struct pnode *
 ntharg(int num, struct pnode *args)
 {
     // fact: num >= 1 for all known invocations of ntharg()
-        for (;;) {
-            if (!args)
-                return NULL;
+        for (; args; args = args->pn_right, --num) {
             if (num <= 1) {
                 if (args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
                     return args->pn_left;
@@ -421,9 +419,9 @@ ntharg(int num, struct pnode *args)
                     return args;
                 return NULL;
             }
-            num--;
-            args = args->pn_right;
         }
+
+        return NULL;
 }
 
 
