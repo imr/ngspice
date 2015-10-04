@@ -409,12 +409,10 @@ ntharg(int num, struct pnode *args)
 {
     if (num > 1)
         while (--num > 0) {
-            if (args && args->pn_op &&
-                (args->pn_op->op_num != PT_OP_COMMA)) {
+            if (args && args->pn_op && (args->pn_op->op_num != PT_OP_COMMA)) {
                 if (num == 1)
                     break;
-                else
-                    return (NULL);
+                return NULL;
             }
             if (!args)
                 return NULL;
@@ -422,7 +420,7 @@ ntharg(int num, struct pnode *args)
         }
 
     if (args && args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
-        args = args->pn_left;
+        return args->pn_left;
 
     return args;
 }
