@@ -411,11 +411,12 @@ ntharg(int num, struct pnode *args)
         for (;;) {
             if (!args)
                 return NULL;
-            if (--num <= 0) {
+            if (num <= 1) {
                 if (args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
                     return args->pn_left;
                 return args;
             }
+            num--;
             if (args->pn_op && (args->pn_op->op_num != PT_OP_COMMA)) {
                 if (num <= 1)
                     return args;
