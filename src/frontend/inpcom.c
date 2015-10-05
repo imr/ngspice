@@ -4229,12 +4229,10 @@ inp_compat(struct line *card)
             /* Exxx n1 n2 value={equation}
                -->
                Exxx n1 n2   vol={equation} */
-            if ((str_ptr = strstr(curr_line, "value=")) != NULL) {
-                str_ptr[0] = ' ';
-                str_ptr[1] = ' ';
-                str_ptr[2] = 'v';
-                str_ptr[3] = 'o';
-                str_ptr[4] = 'l';
+            if ((str_ptr = search_plain_identifier(curr_line, "value")) != NULL) {
+                if (str_ptr[5] == '=')
+                    *str_ptr++ = ' ';
+                strncpy(str_ptr, " vol=", 5);
             }
             /* Exxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
                -->
@@ -4405,12 +4403,10 @@ inp_compat(struct line *card)
             /* Gxxx n1 n2 value={equation}
                -->
                Gxxx n1 n2   cur={equation} */
-            if ((str_ptr = strstr(curr_line, "value=")) != NULL) {
-                str_ptr[0] = ' ';
-                str_ptr[1] = ' ';
-                str_ptr[2] = 'c';
-                str_ptr[3] = 'u';
-                str_ptr[4] = 'r';
+            if ((str_ptr = search_plain_identifier(curr_line, "value")) != NULL) {
+                if (str_ptr[5] == '=')
+                    *str_ptr++ = ' ';
+                strncpy(str_ptr, " cur=", 5);
             }
 
             /* Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
