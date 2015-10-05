@@ -4251,14 +4251,18 @@ inp_compat(struct line *card)
                 // Exxx  n1 n2 int1 0 1
                 ckt_array[0] = tprintf("%s %s %s %s_int1 0 1",
                         title_tok, node1, node2, title_tok);
-                // get the expression
-                str_ptr = gettok(&cut_line); /* ignore 'table' */
-                if (!cieq(str_ptr, "table")) {
+                // skip "table"
+                cut_line = skip_ws(cut_line);
+                if (!ciprefix("table", cut_line)) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                tfree(str_ptr);
+                cut_line += 5;
+                // compatibility, allow table = {expr} {pairs}
+                if (*cut_line == '=')
+                    *cut_line++ = ' ';
+                // get the expression
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
@@ -4437,14 +4441,18 @@ inp_compat(struct line *card)
                     m_token = copy("1");
                 ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s",
                         title_tok, node1, node2, title_tok, m_token);
-                // get the expression
-                str_ptr = gettok(&cut_line); /* ignore 'table' */
-                if (!cieq(str_ptr, "table")) {
+                // skip "table"
+                cut_line = skip_ws(cut_line);
+                if (!ciprefix("table", cut_line)) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->li_linenum_orig, card->li_line);
                     controlled_exit(EXIT_BAD);
                 }
-                tfree(str_ptr);
+                cut_line += 5;
+                // compatibility, allow table = {expr} {pairs}
+                if (*cut_line == '=')
+                    *cut_line++ = ' ';
+                // get the expression
                 str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
