@@ -21,6 +21,20 @@ v1003_g  n1003_g 0  4
 b1004_t  n1004_t 0  V='-aux1003**2'
 v1004_g  n1004_g 0  -4
 
+* unary '+'
+
+b1005_t  n1005_t 0  V=(+ (5))
+v1005_g  n1005_g 0  5
+
+b1006_t  n1006_t 0  V=(+(v(aux1002)))
+v1006_g  n1006_g 0  3
+
+b1007_t  n1007_t 0  V=+-(5)
+v1007_g  n1007_g 0  -5
+
+b1008_t  n1008_t 0  V=-+(5)
+v1008_g  n1008_g 0  -5
+
 * ----------------------------------------
 
 .control
@@ -32,7 +46,7 @@ op
 let total_count = 0
 let fail_count = 0
 
-let tests = 1001 + vector(4)
+let tests = 1001 + vector(8)
 
 foreach n $&tests
   set n_test = "n{$n}_t"
