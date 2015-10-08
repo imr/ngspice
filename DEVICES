@@ -672,8 +672,8 @@ will be updated every time the device specific code is altered or changed to ref
 
        Ver:    4.2.0 - 4.6.5
        Class:  M
-       Level:  14 & 54, version = 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6
-       Dir:    devices/bsim4 (level 4.6.5)
+       Level:  14 & 54, version = 4.5, 4.6, 4.7, 4.8
+       Dir:    devices/bsim4 (level 4.8.0)
        Status: o.k.
 
        This is the actual BSIM4 model from Berkeley Device Group.
@@ -689,9 +689,9 @@ will be updated every time the device specific code is altered or changed to ref
 
  11.13 HiSIM2 - Hiroshima-university STARC IGFET Model
 
-       Ver:    2.7.0
+       Ver:    2.8.0
        Class:  M
-       Level:  61, 68
+       Level:  68
        Dir:    devices/hisim2
        Status: TO BE TESTED.
 
@@ -700,17 +700,20 @@ will be updated every time the device specific code is altered or changed to ref
 
        Web site: http://home.hiroshima-u.ac.jp/usdl/HiSIM.html
 
+       Enhancements over the original model:
+        - Support for Multi-core processors using OpenMP
+
 
  11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
 
-       Ver:    1.2.3
+       Ver:    1.2.4 and 2.2
        Class:  M
-       Level:  62, 73
+       Level:  73
        Dir:    devices/hisimhv
        Status: TO BE TESTED.
 
-       This is the HiSIM_HV model available from Hiroshima University
-       (Ultra-Small Device Engineering Laboratory)
+       This is the HiSIM_HV model version 1 and 2 available from
+       Hiroshima University (Ultra-Small Device Engineering Laboratory)
 
        Web site: http://home.hiroshima-u.ac.jp/usdl/HiSIM.html
 
@@ -787,7 +790,7 @@ will be updated every time the device specific code is altered or changed to ref
 
       Ver:    2.6
       Class:  M
-      Level:  61
+      Level:  60
       Dir:    devices/soi3
       Status: OBSOLETE
 
