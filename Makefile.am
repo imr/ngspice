@@ -28,6 +28,3 @@ mrproper: maintainer-clean
 	rm -f `find $(top_srcdir) -type f -name "*~" -print`
 	rm -f `find $(top_srcdir) -type f -name "*.orig" -print`
 	rm -f `find $(top_srcdir) -type f -name "*.rej" -print`
-
-maintainer-clean-local:
-	rm -rf $(top_srcdir)/m4
