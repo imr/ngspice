@@ -699,9 +699,6 @@ static const char *
 fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
 /* copy next identifier from s into t, advance and return scan index i */
 {
-    char c;
-    bool ok;
-
     spice_dstring_reinit(t);
 
     // facts: alfa(*s) == true && s < s_end
@@ -709,15 +706,13 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
 
     for (; s < s_end; ) {
 
-        c = *s++;
+        char c = *s++;
 
         // facts: upcase('\0') == '\0'
         // facts: alfanum('\0') == false
         // facts: alfanum(upcase(x)) == alfanum(x)
 
-        ok = alfanum(c) || c == '.';
-
-        if (!ok)
+        if (!(alfanum(c) || c == '.'))
             return s - 1;
 
         cadd(t, upcase(c));
