@@ -716,6 +716,10 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
         if (s > s_end)
             c = '\0';
 
+        // facts: upcase('\0') == '\0'
+        // facts: alfanum('\0') == false
+        // facts: alfanum(upcase(x)) == alfanum(x)
+
         c = upcase(c);
         ok = alfanum(c) || c == '.';
 
