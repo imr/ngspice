@@ -712,9 +712,10 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
 
     do
     {
-        c = *s++;
-        if (s > s_end)
+        if (s >= s_end)
             break;
+
+        c = *s++;
 
         // facts: upcase('\0') == '\0'
         // facts: alfanum('\0') == false
@@ -729,7 +730,7 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
 
     } while (1);
 
-    return s - 1;             /* return updated s */
+    return s;
 }
 
 
