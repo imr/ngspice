@@ -702,8 +702,10 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
     char c;
     bool ok;
 
+    // facts: alfa(*s) == true && s < s_end
     c = *s++;
 
+    // facts: alfa(c) == true && s <= s_end
     while (!alfa(c) && (s < s_end))
         c = *s++;
 
@@ -1053,6 +1055,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             s = kptr;
             fu = 0;
         } else if (alfa(c)) {
+            // facts: c == *s && s < s_end && alfa(c) == true
             s = fetchid(&tstr, s, s_end); /* user id, but sort out keywords */
             state = S_atom;
             {
