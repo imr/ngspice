@@ -710,10 +710,7 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
     spice_dstring_reinit(t);
     cadd(t, upcase(c));
 
-    do
-    {
-        if (s >= s_end)
-            break;
+    for (; s < s_end; ) {
 
         c = *s++;
 
@@ -727,8 +724,7 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
             return s - 1;
 
         cadd(t, upcase(c));
-
-    } while (1);
+    }
 
     return s;
 }
