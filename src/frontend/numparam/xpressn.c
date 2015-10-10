@@ -706,8 +706,6 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
     c = *s++;
 
     // facts: alfa(c) == true && s <= s_end
-    while (!alfa(c) && (s < s_end))
-        c = *s++;
 
     spice_dstring_reinit(t);
     cadd(t, upcase(c));
