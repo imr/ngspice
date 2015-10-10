@@ -702,12 +702,12 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
     char c;
     bool ok;
 
+    spice_dstring_reinit(t);
+
     // facts: alfa(*s) == true && s < s_end
     c = *s++;
 
     // facts: alfa(c) == true && s <= s_end
-
-    spice_dstring_reinit(t);
     cadd(t, upcase(c));
 
     for (; s < s_end; ) {
