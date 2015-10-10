@@ -38,7 +38,7 @@
 %lex-param   {char **line}
 
 %parse-param {struct INPparseNode **retval}
-%parse-param {void *ckt}
+%parse-param {CKTcircuit *ckt}
 
 %union {
   double num;
