@@ -696,24 +696,24 @@ parseunit(const char *s)
 
 
 static const char *
-fetchid(SPICE_DSTRINGPTR t, const char *iptr, const char *s_end)
+fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
 /* copy next identifier from s into t, advance and return scan index i */
 {
     char c;
     bool ok;
 
-    c = *iptr++;
+    c = *s++;
 
-    while (!alfa(c) && (iptr < s_end))
-        c = *iptr++;
+    while (!alfa(c) && (s < s_end))
+        c = *s++;
 
     spice_dstring_reinit(t);
     cadd(t, upcase(c));
 
     do
     {
-        c = *iptr++;
-        if (iptr > s_end)
+        c = *s++;
+        if (s > s_end)
             c = '\0';
 
         c = upcase(c);
@@ -724,7 +724,7 @@ fetchid(SPICE_DSTRINGPTR t, const char *iptr, const char *s_end)
 
     } while (ok);
 
-    return iptr - 1;             /* return updated iptr */
+    return s - 1;             /* return updated s */
 }
 
 
