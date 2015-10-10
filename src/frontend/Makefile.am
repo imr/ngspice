@@ -198,5 +198,7 @@ AM_YFLAGS = -d
 
 MAINTAINERCLEANFILES = Makefile.in
 
+$(srcdir)/parse.c : parse-bison.c
+
 parse-bison.c : parse-bison.y
 	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<

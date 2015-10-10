@@ -67,6 +67,8 @@ libinp_la_SOURCES = \
 		sperror.c	\
 		inpxx.h
 
+$(srcdir)/inpptree.c : inpptree-parser.c
+
 inpptree-parser.c : inpptree-parser.y
 	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<
 
