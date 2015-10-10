@@ -697,20 +697,12 @@ parseunit(const char *s)
 
 static const char *
 fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
-/* copy next identifier from s into t, advance and return scan index i */
 {
     spice_dstring_reinit(t);
-
-    // facts: alfa(*s) == true && s < s_end
-    // facts: alfa(c) == true && s <= s_end
 
     for (; s < s_end; s++) {
 
         char c = *s;
-
-        // facts: upcase('\0') == '\0'
-        // facts: alfanum('\0') == false
-        // facts: alfanum(upcase(x)) == alfanum(x)
 
         if (!(alfanum(c) || c == '.'))
             return s;
@@ -1047,7 +1039,6 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             s = kptr;
             fu = 0;
         } else if (alfa(c)) {
-            // facts: c == *s && s < s_end && alfa(c) == true
             s = fetchid(&tstr, s, s_end); /* user id, but sort out keywords */
             state = S_atom;
             {
