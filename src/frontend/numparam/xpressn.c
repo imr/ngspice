@@ -696,7 +696,7 @@ parseunit(const char *s)
 
 
 static const char *
-fetchid(SPICE_DSTRINGPTR t, const char *s_end, const char *iptr)
+fetchid(SPICE_DSTRINGPTR t, const char *iptr, const char *s_end)
 /* copy next identifier from s into t, advance and return scan index i */
 {
     char c;
@@ -1053,7 +1053,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             s = kptr;
             fu = 0;
         } else if (alfa(c)) {
-            s = fetchid(&tstr, s_end, s); /* user id, but sort out keywords */
+            s = fetchid(&tstr, s, s_end); /* user id, but sort out keywords */
             state = S_atom;
             {
                 fu = keyword(fmathS, spice_dstring_value(&tstr)); /* numeric function? */
