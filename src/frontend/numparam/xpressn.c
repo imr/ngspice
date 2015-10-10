@@ -722,10 +722,12 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
 
         ok = alfanum(c) || c == '.';
 
-        if (ok)
-            cadd(t, upcase(c));
+        if (!ok)
+            return s - 1;
 
-    } while (ok);
+        cadd(t, upcase(c));
+
+    } while (1);
 
     return s - 1;             /* return updated s */
 }
