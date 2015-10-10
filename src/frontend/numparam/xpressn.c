@@ -720,11 +720,10 @@ fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
         // facts: alfanum('\0') == false
         // facts: alfanum(upcase(x)) == alfanum(x)
 
-        c = upcase(c);
         ok = alfanum(c) || c == '.';
 
         if (ok)
-            cadd(t, c);
+            cadd(t, upcase(c));
 
     } while (ok);
 
