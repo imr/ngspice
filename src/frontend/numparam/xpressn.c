@@ -406,32 +406,18 @@ getidtype(dico_t *dico, char *s)
 
 
 static double
-fetchnumentry(dico_t *dico, char *t, bool *perr)
+fetchnumentry(dico_t *dico, char *s, bool *perr)
 {
-    bool err = *perr;
-    double u;
-    entry_t *entry;             /* hash table entry */
-
-    entry = entrynb(dico, t); /* no keyword */
-    /*dbg -- if (k <= 0) { printf("Dico num lookup fails."); } */
+    entry_t *entry = entrynb(dico, s);
 
     while (entry && (entry->tp == 'P'))
         entry = entry->pointer;
 
-    if (entry)
-        if (entry->tp != 'R')
-            entry = NULL;
+    if (entry && (entry->tp == 'R'))
+        return entry->vl;
 
-    if (entry) {
-        u = entry->vl;
-    } else {
-        err = message(dico, "Undefined number [%s]\n", t);
-        u = 0.0;
-    }
-
-    *perr = err;
-
-    return u;
+    *perr = message(dico, "Undefined number [%s]\n", s);
+    return 0.0;
 }
 
 
