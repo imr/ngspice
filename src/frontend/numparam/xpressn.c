@@ -620,7 +620,7 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
 /************ input scanner stuff **************/
 
 static unsigned char
-keyword(const char *keys, const char *s)
+keyword(const char *keys, const char *s, const char *s_end)
 {
     /* return 0 if s not found in list keys, else the ordinal number */
     unsigned char j = 1;
@@ -630,9 +630,9 @@ keyword(const char *keys, const char *s)
 
     for (;;) {
         const char *p = s;
-        while (*p && (*p == *keys))
+        while ((p < s_end) && (upcase(*p) == *keys))
             p++, keys++;
-        if (!*p && (*keys <= ' '))
+        if ((p >= s_end) && (*keys <= ' '))
             return j;
         keys = strchr(keys, ' ');
         if (!keys)
@@ -1008,7 +1008,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             for (t = s; t < s_next;)
                 cadd(&tstr, upcase(*t++));
             {
-                fu = keyword(fmathS, spice_dstring_value(&tstr)); /* numeric function? */
+                fu = keyword(fmathS, s, s_next); /* numeric function? */
                 if (fu > 0) {
                     state = S_init;  /* S_init means: ignore for the moment */
                 } else {
