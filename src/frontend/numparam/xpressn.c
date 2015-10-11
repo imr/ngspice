@@ -636,43 +636,26 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
 /************ input scanner stuff **************/
 
 static unsigned char
-keyword(const char *keys, const char *t)
+keyword(const char *keys, const char *s)
 {
-    /* return 0 if t not found in list keys, else the ordinal number */
-    unsigned char i, j, k;
-    int lt, lk;
-    bool ok;
+    /* return 0 if s not found in list keys, else the ordinal number */
+    unsigned char j = 1;
 
-    lt = (int) strlen(t);
-    lk = (int) strlen(keys);
-    k = 0;
-    j = 0;
-
-    do
-    {
-        j++;
-        i = 0;
-        ok = 1;
-
-        do
-        {
-            i++;
-            k++;
-            ok = (k <= lk) && (t[i - 1] == keys[k - 1]);
-        } while (ok && (i < lt));
-
-        if (ok)
-            ok = (k == lk) || (keys[k] <= ' ');
-
-        if (!ok && (k < lk))    /* skip to next item */
-            while ((k <= lk) && (keys[k - 1] > ' '))
-                k++;
-    } while (!ok && (k < lk));
-
-    if (ok)
-        return j;
-    else
+    if (!*s)
         return 0;
+
+    for (;;) {
+        const char *p = s;
+        while (*p && (*p == *keys))
+            p++, keys++;
+        if (!*p && (*keys <= ' '))
+            return j;
+        keys = strchr(keys, ' ');
+        if (!keys)
+            return 0;
+        keys++;
+        j++;
+    }
 }
 
 
