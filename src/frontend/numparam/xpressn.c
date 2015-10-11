@@ -394,14 +394,12 @@ char
 getidtype(dico_t *dico, char *s)
 /* test if identifier s is known. Answer its type, or '?' if not in table */
 {
-    entry_t *entry;             /* hash table entry */
-    char itp = '?';             /* assume unknown */
+    entry_t *entry = entrynb(dico, s);
 
-    entry = entrynb(dico, s);
     if (entry)
-        itp = entry->tp;
+        return entry->tp;
 
-    return (itp);
+    return '?';
 }
 
 
