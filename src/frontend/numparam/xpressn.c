@@ -1007,13 +1007,14 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             fu = 0;
         } else if (alfa(c)) {
             s = fetchid(&tstr, s, s_end); /* user id, but sort out keywords */
-            state = S_atom;
             {
                 fu = keyword(fmathS, spice_dstring_value(&tstr)); /* numeric function? */
-                if (fu == 0)
-                    u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
-                else
+                if (fu > 0) {
                     state = S_init;  /* S_init means: ignore for the moment */
+                } else {
+                    u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
+                    state = S_atom;
+                }
             }
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
             u = fetchnumber(dico, &s, &error);
