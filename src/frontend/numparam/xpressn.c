@@ -663,18 +663,14 @@ parseunit(const char *s)
 
 
 static const char *
-fetchid(SPICE_DSTRINGPTR t, const char *s, const char *s_end)
+fetchid(const char *s, const char *s_end)
 {
-    spice_dstring_reinit(t);
-
     for (; s < s_end; s++) {
 
         char c = *s;
 
         if (!(alfanum(c) || c == '.'))
             return s;
-
-        cadd(t, upcase(c));
     }
 
     return s;
@@ -1006,7 +1002,11 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             s = kptr;
             fu = 0;
         } else if (alfa(c)) {
-            s = fetchid(&tstr, s, s_end); /* user id, but sort out keywords */
+            const char *s_next = fetchid(s, s_end);
+            const char *t;
+            spice_dstring_reinit(&tstr);
+            for (t = s; t < s_next;)
+                cadd(&tstr, upcase(*t++));
             {
                 fu = keyword(fmathS, spice_dstring_value(&tstr)); /* numeric function? */
                 if (fu > 0) {
@@ -1016,6 +1016,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                     state = S_atom;
                 }
             }
+            s = s_next;
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
             u = fetchnumber(dico, &s, &error);
             if (negate) {
