@@ -3,7 +3,6 @@ struct PTltype {
 };
 
 extern int PTlex(YYSTYPE *lvalp, struct PTltype *llocp, char **line);
-extern int PTdebug;
 
 extern INPparseNode *PT_mkbnode(const char *opstr, INPparseNode *arg1, INPparseNode *arg2);
 extern INPparseNode *PT_mkfnode(const char *fname, INPparseNode *arg);

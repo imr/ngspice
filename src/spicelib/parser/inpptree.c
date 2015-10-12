@@ -14,8 +14,6 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "inpptree-parser.h"
 #include "inpptree-parser-y.h"
 
-int PTparse(char **line, INPparseNode **p, CKTcircuit *ckt);
-
 static INPparseNode *mkcon(double value);
 static INPparseNode *mkb(int type, INPparseNode * left,
                          INPparseNode * right);

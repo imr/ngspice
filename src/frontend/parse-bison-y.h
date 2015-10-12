@@ -3,7 +3,6 @@ struct PPltype {
 };
 
 extern int PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line);
-extern int PPdebug;
 
 extern struct pnode *PP_mkunode(int op, struct pnode *arg);
 extern struct pnode *PP_mkfnode(const char *func, struct pnode *arg);

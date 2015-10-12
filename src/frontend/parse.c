@@ -22,8 +22,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 static bool checkvalid(struct pnode *pn);
 
-extern int PPparse(char **, struct pnode **);
-
 void db_print_pnode_tree(struct pnode *p, char *print);
 
 

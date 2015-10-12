@@ -29,6 +29,7 @@
   static void PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *);
 %}
 
+%require "2.7"
 %name-prefix "PP"
 
 %defines
