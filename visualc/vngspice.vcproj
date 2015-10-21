@@ -27,7 +27,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 				ExcludedFromBuild="false"
 			/>
@@ -115,7 +115,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 				ExcludedFromBuild="false"
 			/>
@@ -203,7 +203,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -295,7 +295,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -386,7 +386,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 				ExcludedFromBuild="false"
 			/>
@@ -472,7 +472,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 				ExcludedFromBuild="false"
 			/>
@@ -560,7 +560,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -651,7 +651,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -743,7 +743,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -835,7 +835,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -928,7 +928,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
@@ -1020,7 +1020,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Custom defined Build: Recompile conf.c with actual date"
+				Description="Recompile conf.c with actual date, invoke win_bison"
 				CommandLine="del $(ConfigurationName)64\$(PlatformName)\conf.obj&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1&#x0D;&#x0A;..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1"
 			/>
 			<Tool
