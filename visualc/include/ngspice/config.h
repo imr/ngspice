@@ -185,9 +185,6 @@
 
 /* Define to 1 if you have the `logb' function. */
 #define HAVE_LOGB 1
-#ifdef _MSC_VER
-#define logb _logb /* needed in spsmp.c */
-#endif
 
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
    to 0 otherwise. */
