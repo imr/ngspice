@@ -527,6 +527,3 @@
 /* Define as `fork' if `vfork' does not work. */
 #define vfork fork
 
-/* define if shared ngspice is made */
-# define SHARED_MODULE
-
