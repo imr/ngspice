@@ -897,7 +897,6 @@
     <ClInclude Include="..\src\frontend\nutmegif.h" />
     <ClInclude Include="..\src\frontend\options.h" />
     <ClInclude Include="..\src\frontend\outitf.h" />
-    <ClInclude Include="..\src\frontend\parse-bison.h" />
     <ClInclude Include="..\src\frontend\parse.h" />
     <ClInclude Include="..\src\frontend\parser\backq.h" />
     <ClInclude Include="..\src\frontend\parser\complete.h" />
@@ -1324,12 +1323,13 @@
     <ClInclude Include="..\src\spicelib\parser\inppas1.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas2.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas3.h" />
-    <ClInclude Include="..\src\spicelib\parser\inpptree-parser.h" />
     <ClInclude Include="..\src\spicelib\parser\inpxx.h" />
     <ClInclude Include="..\src\winmain.h" />
     <ClInclude Include="include\inttypes.h" />
     <ClInclude Include="include\ngspice\config.h" />
     <ClInclude Include="include\stdint.h" />
+    <ClInclude Include="inpptree-parser.h" />
+    <ClInclude Include="parse-bison.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\xspice\icm\objects.inc" />
@@ -1483,7 +1483,6 @@
     <ClCompile Include="..\src\frontend\nutmegif.c" />
     <ClCompile Include="..\src\frontend\options.c" />
     <ClCompile Include="..\src\frontend\outitf.c" />
-    <ClCompile Include="..\src\frontend\parse-bison.c" />
     <ClCompile Include="..\src\frontend\parse.c" />
     <ClCompile Include="..\src\frontend\parser\backq.c" />
     <ClCompile Include="..\src\frontend\parser\complete.c" />
@@ -2742,7 +2741,6 @@
     <ClCompile Include="..\src\spicelib\parser\inppas2.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas3.c" />
     <ClCompile Include="..\src\spicelib\parser\inppname.c" />
-    <ClCompile Include="..\src\spicelib\parser\inpptree-parser.c" />
     <ClCompile Include="..\src\spicelib\parser\inpptree.c" />
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />
     <ClCompile Include="..\src\spicelib\parser\inptyplk.c" />
@@ -2793,7 +2791,9 @@
     <ClCompile Include="..\src\xspice\mif\miftrunc.c" />
     <ClCompile Include="..\src\xspice\mif\mifutil.c" />
     <ClCompile Include="..\src\xspice\mif\mif_inp2.c" />
+    <ClCompile Include="inpptree-parser.c" />
     <ClCompile Include="msvc-compat.c" />
+    <ClCompile Include="parse-bison.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

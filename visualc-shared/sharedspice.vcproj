@@ -595,10 +595,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\parse-bison.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\parse.h"
 				>
 			</File>
@@ -2307,10 +2303,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inpptree-parser.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\parser\inpxx.h"
 				>
 			</File>
@@ -2328,6 +2320,14 @@
 			</File>
 			<File
 				RelativePath=".\include\stdint.h"
+				>
+			</File>
+			<File
+				RelativePath="inpptree-parser.h"
+				>
+			</File>
+			<File
+				RelativePath="parse-bison.h"
 				>
 			</File>
 		</Filter>
@@ -2932,10 +2932,6 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\outitf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parse-bison.c"
 				>
 			</File>
 			<File
@@ -7983,10 +7979,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inpptree-parser.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\parser\inpptree.c"
 				>
 			</File>
@@ -8184,6 +8176,14 @@
 			</File>
 			<File
 				RelativePath="..\visualc\msvc-compat.c"
+				>
+			</File>
+			<File
+				RelativePath="inpptree-parser.c"
+				>
+			</File>
+			<File
+				RelativePath="parse-bison.c"
 				>
 			</File>
 		</Filter>
