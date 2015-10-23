@@ -134,8 +134,8 @@
 				Optimization="3"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;D:\software\tcl8.6b2\generic;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src&quot;;D:\software\tk8.6b2\generic;D:\software\blt2.4z_new\2012\blt2.4z\src"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_INTERP_RESULT"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)..\src\maths\poly&quot;;&quot;$(ProjectDir)..\src\frontend&quot;;&quot;$(ProjectDir)..\src\spicelib\devices&quot;;&quot;$(ProjectDir)..\src\include&quot;;&quot;$(ProjectDir)include&quot;;&quot;$(ProjectDir)..\src&quot;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;SIMULATOR"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -157,10 +157,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib  blt24.lib tcl86t.lib"
+				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\bin\spice.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="D:\software\tcl8.6b2\win\Release_VC9;D:\software\tk8.6b1\win\Release_VC9;D:\software\blt2.4z\blt2008_86\Release"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				HeapReserveSize="0"

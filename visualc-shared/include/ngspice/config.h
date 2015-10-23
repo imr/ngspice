@@ -51,9 +51,6 @@
 /* Define to enable the .global keyword */
 #define GLOBAL_NODE 1
 
-/* Tcl Windows */
-#define HAS_TCLWIN 1
-
 /* define to specify MS Windows executable */
 // #define HAS_WINGUI 1
 
