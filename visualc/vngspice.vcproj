@@ -1093,27 +1093,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\include\ngspice\1-f-code.h"
+				RelativePath="..\src\ciderlib\oned\oneddefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\misc\accuracy.h"
+				RelativePath="..\src\ciderlib\oned\onedext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\acdefs.h"
+				RelativePath="..\src\ciderlib\twod\twoddefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\agraf.h"
+				RelativePath="..\src\ciderlib\twod\twodext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\misc\alloc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\analysis.h"
+				RelativePath="..\src\conf.h"
 				>
 			</File>
 			<File
@@ -1125,122 +1121,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\asrc\asrcdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\asrc\asrcext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\asrc\asrcinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\asrc\asrcitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soidddef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soiddext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soiddinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soidditf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifddef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifdext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifdinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifditf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipddef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipdext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipdinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipditf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\backq.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\bdrydefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\bernoull.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtdset.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\bool.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\breakp.h"
 				>
 			</File>
@@ -1249,279 +1129,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim1\bsim1def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim1\bsim1ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim1\bsim1init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim1\bsim1itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim2\bsim2def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim2\bsim2ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim2\bsim2init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim2\bsim2itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\bsim3def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\bsim3ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\bsim3init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\bsim3itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4\bsim4def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4\bsim4ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4\bsim4init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4\bsim4itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7def.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7ext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7itf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cap\capdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cap\capext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cap\capinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cap\capitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\carddefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cccs\cccsdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cccs\cccsext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cccs\cccsinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cccs\cccsitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\ccvs\ccvsdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\ccvs\ccvsext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\ccvs\ccvsinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\ccvs\ccvsitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\ciderinp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cidersupt.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\circuits.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\cktaccept.h"
+				RelativePath="..\src\frontend\commands.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\cktdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\clip.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cluster.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath1.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath4.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cmconstants.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cmproto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cmtypes.h"
+				RelativePath="..\src\frontend\completion.h"
 				>
 			</File>
 			<File
@@ -1645,51 +1261,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\commands.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\compatmode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\complete.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\completion.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\complex.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\conf.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\ngspice\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\const.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\contdefs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\control.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cpdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cpextern.h"
 				>
 			</File>
 			<File
@@ -1697,67 +1269,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\cpl\cpldefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cpl\cplext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cpl\cplinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\cpl\cplitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\cpstd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\cshpar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\csw\cswdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\csw\cswext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\csw\cswinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\csw\cswitf.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\define.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\defines.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\dev.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\devdefs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\device.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\dgen.h"
 				>
 			</File>
 			<File
@@ -1769,23 +1285,367 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\dio\diodefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\dio\dioext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\dio\dioinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\dio\dioitf.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\frontend\display.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\dotcards.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\error.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\evaluate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\fourier.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\ftehelp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\gens.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\hcomp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\hpgl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inpcom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\interp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\linear.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\misccoms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\miscvars.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\mw_coms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\newcoms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\numparam\general.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\numparam\numpaif.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\numparam\numparam.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\nutinp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\nutmegif.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\outitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\backq.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\complete.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\cshpar.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\glob.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\input.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\lexical.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\numparse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\unixcom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\agraf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\clip.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\gnuplot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\graf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\graphdb.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plot5.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plotcurv.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plotit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plotting.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\pvec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\x11.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\xgraph.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\points.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\postcoms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\postsc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\quote.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\rawfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\runcoms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\runcoms2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\shyu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\signal_handler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\spec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\spiceif.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\streams.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\subckt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\terminal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\typesdef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\variable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\vectors.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\wdisp\ftegraf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\wdisp\windisp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\wdisp\winprint.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\where.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\1-f-code.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\acdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\bdrydefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\bool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\carddefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\ciderinp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cidersupt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cktdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cluster.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cmconstants.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cmproto.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cmtypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\compatmode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\complex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\const.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\contdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cpdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cpextern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\cpstd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\defines.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\devdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\dgen.h"
 				>
 			</File>
 			<File
@@ -1805,15 +1665,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\dotcards.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\dstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\dup2.h"
 				>
 			</File>
 			<File
@@ -1826,14 +1678,6 @@
 			</File>
 			<File
 				RelativePath="..\src\include\ngspice\enh.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\error.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\evaluate.h"
 				>
 			</File>
 			<File
@@ -1857,14 +1701,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\fft\fftlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\fourier.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\ftedbgra.h"
 				>
 			</File>
@@ -1882,14 +1718,6 @@
 			</File>
 			<File
 				RelativePath="..\src\include\ngspice\fteext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\wdisp\ftegraf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\ftehelp.h"
 				>
 			</File>
 			<File
@@ -1917,35 +1745,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\numparam\general.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\gens.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\getopt_bsd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\glob.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\gnuplot.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\graf.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\include\ngspice\graph.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\graphdb.h"
 				>
 			</File>
 			<File
@@ -1957,23 +1757,743 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\hcomp.h"
+				RelativePath="..\src\include\ngspice\hlpdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hfet2\hfet2defs.h"
+				RelativePath="..\src\include\ngspice\iferrmsg.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hfet2\hfet2ext.h"
+				RelativePath="..\src\include\ngspice\ifsim.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hfet2\hfet2init.h"
+				RelativePath="..\src\include\ngspice\inpdefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hfet2\hfet2itf.h"
+				RelativePath="..\src\include\ngspice\inpmacs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\inpptree.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\ipc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\ipcproto.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\ipctiein.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\jobdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\lsort.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\material.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\matldefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\meshdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\meshext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\methdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\mif.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\mifcmdat.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\mifdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\mifparse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\mifproto.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\miftypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\missing_math.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\mobdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\modldefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\multi_line.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\ngspice.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\noisedef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\numcards.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\numconst.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\numenum.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\numgen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\numglobs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\onedev.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\onemesh.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\opdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\optdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\optndefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\outpdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\plot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\pnode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\profile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\pssdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\pzdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\sen2defs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\sensdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\sensgen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\sim.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\smpdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\sperror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\spmatrix.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\stringutil.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\suffix.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\swec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\tfdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\trandefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\trcvdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\tskdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\twodev.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\twomesh.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\typedefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\wallace.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\wordlist.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\include\ngspice\wstdio.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath1.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath4.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\matlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\accuracy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\bernoull.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\norm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\interpolate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\poly.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\polyderiv.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\polyeval.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\polyfit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spconfig.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\alloc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\dup2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\getopt_bsd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\ivars.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\mempool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\misc_time.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\mktemp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\printnum.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\tilde.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\util.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\analysis.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\asrc\asrcdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\asrc\asrcext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\asrc\asrcinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\asrc\asrcitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtdset.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim1\bsim1def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim1\bsim1ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim1\bsim1init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim1\bsim1itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim2\bsim2def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim2\bsim2ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim2\bsim2init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim2\bsim2itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soidddef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soiddext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soiddinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_dd\b3soidditf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifddef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifdext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifdinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_fd\b3soifditf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipddef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipdext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipdinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3soi_pd\b3soipditf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3\bsim3def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3\bsim3ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3\bsim3init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3\bsim3itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4\bsim4def.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4\bsim4ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4\bsim4init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4\bsim4itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cap\capdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cap\capext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cap\capinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cap\capitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cccs\cccsdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cccs\cccsext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cccs\cccsinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cccs\cccsitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\ccvs\ccvsdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\ccvs\ccvsext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\ccvs\ccvsinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\ccvs\ccvsitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cktaccept.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cpl\cpldefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cpl\cplext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cpl\cplinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\cpl\cplitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\csw\cswdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\csw\cswext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\csw\cswinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\csw\cswitf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\dev.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\dio\diodefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\dio\dioext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\dio\dioinit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\dio\dioitf.h"
 				>
 			</File>
 			<File
@@ -1993,19 +2513,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\hfet2\hfet2defs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet2\hfet2ext.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet2\hfet2init.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet2\hfet2itf.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\hisim2\hisim.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hisimhv.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\hlpdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\hpgl.h"
 				>
 			</File>
 			<File
@@ -2029,15 +2553,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hisimhv.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvdef.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhveval_qover.h"
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvevalenv.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvevalenv.h"
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhveval_qover.h"
 				>
 			</File>
 			<File
@@ -2109,14 +2637,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\iferrmsg.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\ifsim.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\ind\inddefs.h"
 				>
 			</File>
@@ -2133,78 +2653,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpxx.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\inp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\inpcom.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\inpdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\inpmacs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppas1.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppas2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppas3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpptree-parser.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\inpptree.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\input.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\interp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\interpolate.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\inttypes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\ipc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\ipcproto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\ipctiein.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\isrc\isrcdefs.h"
 				>
 			</File>
@@ -2218,10 +2666,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\isrc\isrcitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\ivars.h"
 				>
 			</File>
 			<File
@@ -2245,6 +2689,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\jfet2\psmodel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\jfet\jfetdefs.h"
 				>
 			</File>
@@ -2261,22 +2709,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\jobdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\lexical.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\linear.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\lsort.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\ltra\ltradefs.h"
 				>
 			</File>
@@ -2290,30 +2722,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\ltra\ltraitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\macros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\material.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\matldefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\fft\matlib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\memory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\mempool.h"
 				>
 			</File>
 			<File
@@ -2341,75 +2749,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\meshdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\meshext.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\mes\mesinit.h"
 				>
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\mes\mesitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\methdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\mif.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\mifcmdat.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\mifdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\mifparse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\mifproto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\miftypes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\misc_time.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\misccoms.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\miscvars.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\missing_math.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\mktemp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\mobdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\modldefs.h"
 				>
 			</File>
 			<File
@@ -2493,14 +2837,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\multi_line.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\mw_coms.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\nbjt2\nbjt2def.h"
 				>
 			</File>
@@ -2510,6 +2846,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\nbjt2\nbjt2itf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2init.h"
 				>
 			</File>
 			<File
@@ -2526,34 +2866,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\nbjt\nbjtitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2init.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\newcoms.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\ngspice.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\noisedef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\norm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\numcards.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\numconst.h"
 				>
 			</File>
 			<File
@@ -2589,18 +2901,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\numenum.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\numgen.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\numglobs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\numos\numosdef.h"
 				>
 			</File>
@@ -2614,158 +2914,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\numos\numositf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\numparam\numpaif.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\numparam\numparam.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\numparse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\nutinp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\nutmegif.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\icm\objects.inc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\oneddefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\onedev.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onedext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\onemesh.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\opdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\optdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\optndefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\outitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\outpdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\plot.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plot5.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plotcurv.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plotit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plotting.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\pnode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\points.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\poly.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\polyderiv.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\polyeval.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\polyfit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\postcoms.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\postsc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\printnum.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\profile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\jfet2\psmodel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\pssdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\pvec.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\pzdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\quote.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\rawfile.h"
 				>
 			</File>
 			<File
@@ -2785,46 +2933,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\runcoms.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\runcoms2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\sen2defs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\sensdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\sensgen.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\shyu.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\signal_handler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\sim.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\smpdefs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\soi3\soi3defs.h"
 				>
 			</File>
@@ -2841,55 +2949,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\sparse\spconfig.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\spec.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\sperror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\spiceif.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\spmatrix.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\stdint.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\streams.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\stringutil.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\subckt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\suffix.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\sw\swdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\swec.h"
 				>
 			</File>
 			<File
@@ -2902,18 +2962,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\sw\switf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\terminal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\tfdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\tilde.h"
 				>
 			</File>
 			<File
@@ -2933,34 +2981,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\trandefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\trcvdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\tskdefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoddefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\twodev.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twodext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\include\ngspice\twomesh.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\txl\txldefs.h"
 				>
 			</File>
@@ -2977,18 +2997,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\typedefs.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\typesdef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\unixcom.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\urc\urcdefs.h"
 				>
 			</File>
@@ -3002,14 +3010,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\urc\urcitf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\util.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\variable.h"
 				>
 			</File>
 			<File
@@ -3061,10 +3061,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\vectors.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\vsrc\vsrcdefs.h"
 				>
 			</File>
@@ -3081,15 +3077,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\wallace.h"
+				RelativePath="..\src\spicelib\parser\inppas1.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\where.h"
+				RelativePath="..\src\spicelib\parser\inppas2.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\wdisp\windisp.h"
+				RelativePath="..\src\spicelib\parser\inppas3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpptree-parser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpxx.h"
 				>
 			</File>
 			<File
@@ -3097,23 +3101,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\wdisp\winprint.h"
+				RelativePath="..\src\xspice\icm\objects.inc"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\wordlist.h"
+				RelativePath=".\include\inttypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\include\ngspice\wstdio.h"
+				RelativePath=".\include\ngspice\config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\x11.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\xgraph.h"
+				RelativePath=".\include\stdint.h"
 				>
 			</File>
 		</Filter>
@@ -3129,7 +3129,1059 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\src\ciderlib\input\bdryset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\boundary.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\cards.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\contact.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\contset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\domain.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\domnset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\doping.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\dopset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\elctset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\electrod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\material.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\matlset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\mesh.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\meshset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\method.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\mobility.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\mobset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\models.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\modlset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\optionsc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\outpset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\input\output.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\oneadmit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\oneaval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onecond.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onecont.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onedest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onedopng.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onefreez.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onemesh.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onepoiss.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\oneprint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\oneproj.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\oneread.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onesetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\oned\onesolve.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\database.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\devprint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\geominfo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\globals.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\integset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\integuse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\logfile.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\mater.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\misc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\mobil.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\recomb.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\suprem.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\support\suprmitf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twoadmit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twoaval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twocond.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twocont.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twocurr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twodest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twodopng.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twoelect.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twofield.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twomesh.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twomobdv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twomobfn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twomobil.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twoncont.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twopcont.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twopoiss.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twoprint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twoproj.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\tworead.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twosetbc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twosetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ciderlib\twod\twosolve.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\conf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\arg.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\aspice.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\breakp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\breakp2.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\circuits.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\commands.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_ahelp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_alias.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_asciiplot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_cdump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_chdir.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_compose.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_display.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_dl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_dump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_echo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_fft.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_ghelp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_gnuplot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_hardcopy.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_help.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_history.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_let.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_measure2.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_option.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_plot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_rehash.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_set.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_setscale.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_shell.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_shift.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_state.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_strcmp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_sysinfo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_unset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\com_xgraph.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\control.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\cpitf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\define.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\device.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\diff.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\dimens.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\display.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\dotcards.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\error.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\evaluate.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\fourier.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\ftesopt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\gens.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\hcomp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\help\help.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\help\provide.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\help\readhelp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\help\textdisp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\help\x11disp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\help\xdisplay.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\hpgl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\init.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inpcom.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\interp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\inventory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\linear.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\measure.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\misccoms.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\miscvars.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\mw_coms.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\newcoms.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\numparam\mystring.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\numparam\spicenum.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\numparam\xpressn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\nutinp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\nutmegif.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\options.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\outitf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parse-bison.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\backq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\complete.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\cshpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\glob.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\input.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\lexical.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\numparse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\std.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\parser\unixcom.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\agraf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\clip.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\gnuplot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\graf.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\graphdb.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\grid.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plot5.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plotcurv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plotit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\plotting.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\pvec.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\x11.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\plotting\xgraph.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\points.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\postcoms.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\postsc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\quote.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\rawfile.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\resource.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\runcoms.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\runcoms2.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\shyu.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\signal_handler.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\spec.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\spiceif.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\streams.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\subckt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\terminal.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\trannoise\1-f-code.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\trannoise\FastNorm3.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\trannoise\wallace.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\typesdef.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\variable.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\vectors.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\wdisp\windisp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\wdisp\winprint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\frontend\where.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath1.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath2.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath3.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\cmaths\cmath4.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\atander.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\cosderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\cubeder.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\divderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\equalder.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\expderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\invderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\multder.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\plusder.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\powderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\sqrtder.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\tanderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\deriv\timesder.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftext.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\fftlib.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\fft\matlib.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\accuracy.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\bernoull.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\equality.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\erfc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\logb.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\norm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\randnumb.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\misc\scalb.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niaciter.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\nicomcof.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niconv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\nidest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niditer.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niinteg.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niiter.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\niniter.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\nipred.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\nipzmeth.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\nireinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\ni\nisenre.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\interpolate.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\polyderiv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\polyeval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\poly\polyfit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spalloc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spbuild.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spextra.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spfactor.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spoutput.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spsmp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\spsolve.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\maths\sparse\sputils.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\alloc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\dstring.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\dup2.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\getopt_long_bsd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\hash.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\ivars.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\misc_time.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\mktemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\printnum.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\string.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\tilde.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\util.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\misc\wlist.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\ngspice.c"
 				>
 			</File>
 			<File
@@ -3141,19 +4193,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\misc\accuracy.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\analysis\acsetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\agraf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\alloc.c"
 				>
 			</File>
 			<File
@@ -3161,11 +4201,371 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\arg.c"
+				RelativePath="..\src\spicelib\analysis\cktacct.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\aspice.c"
+				RelativePath="..\src\spicelib\analysis\cktacdum.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktaskaq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktasknq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktbkdum.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktclrbk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdelt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdisto.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdlti.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdltm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdltn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdojob.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktdump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktfbran.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktfnda.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktfndm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktfnode.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktftask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktgrnd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\ckti2nod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktic.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktlnkeq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktload.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmapn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmcrt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmkcur.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmknod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmkvol.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktmpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktnames.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktncdump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktnewan.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktneweq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktnewn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktnodn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktnoise.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktntask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktnum2n.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktop.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktparam.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktpmnam.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktpname.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktpzld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktpzset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktpzstr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsens.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsetap.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsetbk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsetnp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsgen.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktsopt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\ckttemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cktterr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\ckttroub.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\ckttrunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\ckttyplk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\cluster.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\daskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dcoaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dcop.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dcosetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dcpss.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dctaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dctran.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dctrcurv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dctsetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\distoan.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dkerproc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dloadfns.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dsetparm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\naskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\nevalsrc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\ninteg.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\noisean.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\nsetparm.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\psssetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pzan.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pzaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pzsetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\sensaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\senssetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\tfanal.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\tfaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\tfsetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\tranaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\traninit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\transetp.c"
 				>
 			</File>
 			<File
@@ -3225,7 +4625,107 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\deriv\atander.c"
+				RelativePath="..\src\spicelib\devices\bjt\bjt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtacld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtconv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtdest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtdisto.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtdset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtgetic.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtload.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtmask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtmdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtmpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtnoise.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtparam.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtpzld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsacl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsload.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsoachk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsprt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjtsupd.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjttemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bjt\bjttrunc.c"
 				>
 			</File>
 			<File
@@ -3313,6 +4813,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\bsim1\bsim1init.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\bsim2\b2.c"
 				>
 			</File>
@@ -3389,71 +4893,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3acld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3ask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3check.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3cvtest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3del.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3dest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3getic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3ld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3mask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3mdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3mpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3noi.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3par.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3pzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3set.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3soachk.c"
+				RelativePath="..\src\spicelib\devices\bsim2\bsim2init.c"
 				>
 			</File>
 			<File
@@ -3685,14 +5125,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3temp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\b3trunc.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\bsim3v0\b3v0.c"
 				>
 			</File>
@@ -3758,6 +5190,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\bsim3v0\b3v0trunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0init.c"
 				>
 			</File>
 			<File
@@ -3830,6 +5266,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\bsim3v1\b3v1trunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1init.c"
 				>
 			</File>
 			<File
@@ -3909,163 +5349,87 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4.c"
+				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4acld.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4ask.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3acld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4check.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3ask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4cvtest.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3check.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4del.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3cvtest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4dest.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3del.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4geo.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3dest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4getic.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3getic.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4ld.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3ld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4mask.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3mask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4mdel.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3mdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4mpar.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3mpar.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4noi.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3noi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4par.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3par.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4pzld.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3pzld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4set.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3set.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4soachk.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3soachk.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soi.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3temp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiacld.c"
+				RelativePath="..\src\spicelib\devices\bsim3\b3trunc.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soicheck.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soicvtest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soigetic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soild.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soinoi.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soipar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soipzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soisoachk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soitemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsimsoi\b4soitrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4temp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim4\b4trunc.c"
+				RelativePath="..\src\spicelib\devices\bsim3\bsim3init.c"
 				>
 			</File>
 			<File
@@ -4149,6 +5513,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5init.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\spicelib\devices\bsim4v6\b4v6.c"
 				>
 			</File>
@@ -4226,6 +5594,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\bsim4v6\b4v6trunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6init.c"
 				>
 			</File>
 			<File
@@ -4309,155 +5681,87 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\parser\backq.c"
+				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\ciderlib\input\bdryset.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\misc\bernoull.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4acld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjt.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4ask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtacld.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4check.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtask.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4cvtest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtconv.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4del.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtdel.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4dest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtdest.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4geo.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtdisto.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4getic.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtdset.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4ld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtgetic.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4mask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtinit.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4mdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtload.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4mpar.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtmask.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4noi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtmdel.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4par.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtmpar.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4pzld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtnoise.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4set.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtparam.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4soachk.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtpzld.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4temp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsacl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsload.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsoachk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsprt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjtsupd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjttemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bjt\bjttrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\boundary.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\breakp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\breakp2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim1\bsim1init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim2\bsim2init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3\bsim3init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v0\bsim3v0init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v1\bsim3v1init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\bsim3v32\bsim3v32init.c"
+				RelativePath="..\src\spicelib\devices\bsim4\b4trunc.c"
 				>
 			</File>
 			<File
@@ -4465,15 +5769,83 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4v5\bsim4v5init.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soi.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4v6\bsim4v6init.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiacld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\bsim4v7\bsim4v7init.c"
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soicheck.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soicvtest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soidest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soigetic.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soild.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soimpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soinoi.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soipar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soipzld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soiset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soisoachk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soitemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\bsimsoi\b4soitrunc.c"
 				>
 			</File>
 			<File
@@ -4562,10 +5934,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\cap\captrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\cards.c"
 				>
 			</File>
 			<File
@@ -4685,19 +6053,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\circuits.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\cktaccept.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktacct.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktacdum.c"
 				>
 			</File>
 			<File
@@ -4705,23 +6061,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\analysis\cktaskaq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktasknq.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\cktbindnode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktbkdum.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktclrbk.c"
 				>
 			</File>
 			<File
@@ -4729,71 +6069,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\analysis\cktdelt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdisto.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdlti.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdltm.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdltn.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdojob.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktdump.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktfbran.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\cktfinddev.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktfnda.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktfndm.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktfnode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktftask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktgrnd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\ckti2nod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktic.c"
 				>
 			</File>
 			<File
@@ -4801,351 +6077,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\analysis\cktlnkeq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktload.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmapn.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmcrt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmkcur.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmknod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmkvol.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktmpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktnames.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktncdump.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktnewan.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktneweq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktnewn.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktnodn.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktnoise.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktntask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktnum2n.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktop.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktparam.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktpmnam.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktpname.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktpzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktpzset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktpzstr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsens.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsetap.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsetbk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsetnp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsgen.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\cktsoachk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktsopt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\ckttemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cktterr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\ckttroub.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\ckttrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\ckttyplk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\clip.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\cluster.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\cm\cm.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath1.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath3.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\cmaths\cmath4.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\cm\cmevt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\cm\cmexport.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\cm\cmmeters.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\cm\cmutil.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_ahelp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_alias.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_asciiplot.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_cdump.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_chdir.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_compose.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_display.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_dl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_dump.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_echo.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_fft.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_ghelp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_gnuplot.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_hardcopy.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_help.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_history.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_let.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_measure2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_option.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_plot.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_rehash.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_set.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_setscale.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_shell.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_shift.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_state.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_strcmp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_sysinfo.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_unset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\com_xgraph.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\commands.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\complete.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\conf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\contact.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\control.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\contset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\cosderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\cpitf.c"
 				>
 			</File>
 			<File
@@ -5190,10 +6122,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\cpl\cplsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\cshpar.c"
 				>
 			</File>
 			<File
@@ -5257,75 +6185,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\deriv\cubeder.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\daskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\database.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dcoaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dcop.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dcosetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dcpss.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dctaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dctran.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dctrcurv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dctsetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\define.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\dev.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\device.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\devprint.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\devsup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\diff.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\dimens.c"
 				>
 			</File>
 			<File
@@ -5433,231 +6297,67 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\display.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\distoan.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\divderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dkerproc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dloadfns.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\domain.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\domnset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\doping.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\dopset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\dotcards.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\dsetparm.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\dstring.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\dup2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\elctset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\electrod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\enh\enh.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\enh\enhtrans.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\equalder.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\equality.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\erfc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\error.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\evaluate.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtaccept.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtbackup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtcall_hybrids.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtdeque.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtdump.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtiter.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtload.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtnext_time.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtnode_copy.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtop.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtplot.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtprint.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtqueue.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evtsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\evt\evttermi.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\expderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\trannoise\FastNorm3.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\fft\fftext.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\fft\fftlib.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\fourier.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\ftesopt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\gens.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\geominfo.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\getopt_long_bsd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\glob.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\globals.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\gnuplot.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\graf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\graphdb.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\grid.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\hash.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\hcomp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\help\help.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\hfet1\hfet.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetacl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetdest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetgetic.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetload.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetmask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetmdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetmpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetparam.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetpzl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfetsetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfettemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hfet1\hfettrunc.c"
 				>
 			</File>
 			<File
@@ -5722,70 +6422,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\hfet2\hfet2trunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetacl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetdest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetgetic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetload.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetmask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetmdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetmpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetparam.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetpzl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfetsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfettemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hfet1\hfettrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\hpgl.c"
 				>
 			</File>
 			<File
@@ -5870,6 +6506,82 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvacld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvcvtest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvdest.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhveval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvgetic.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvmask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvmdel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvmpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvnoi.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvpzld.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvset.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvsoachk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvtemp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvtrunc.c"
 				>
 			</File>
 			<File
@@ -5961,94 +6673,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvacld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvcvtest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvdest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhveval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvgetic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvmask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvmdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvmpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvnoi.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvpzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvsoachk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvtemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\hisimhv1\hsmhvtrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\idn\idndig.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\ifeval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\ifnewuid.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\ind\ind.c"
 				>
 			</File>
@@ -6129,279 +6753,47 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\init.c"
+				RelativePath="..\src\spicelib\devices\ind\mutacld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\inp.c"
+				RelativePath="..\src\spicelib\devices\ind\mutask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2b.c"
+				RelativePath="..\src\spicelib\devices\ind\mutdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2c.c"
+				RelativePath="..\src\spicelib\devices\ind\mutdest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2d.c"
+				RelativePath="..\src\spicelib\devices\ind\mutmdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2dot.c"
+				RelativePath="..\src\spicelib\devices\ind\mutparam.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2e.c"
+				RelativePath="..\src\spicelib\devices\ind\mutpzld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2f.c"
+				RelativePath="..\src\spicelib\devices\ind\mutsetup.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2g.c"
+				RelativePath="..\src\spicelib\devices\ind\mutsprt.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2h.c"
+				RelativePath="..\src\spicelib\devices\ind\mutsset.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp2i.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2j.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2k.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2l.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2m.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2n.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2o.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2p.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2q.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2r.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2s.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2t.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2u.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2v.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2w.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2y.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inp2z.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpaname.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpapnam.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpcfix.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\inpcom.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpdomod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpdoopt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpdpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inperrc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inperror.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpeval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpfindl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpfindv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpgmod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpgstr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpgtitl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpgtok.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpgval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpkmods.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inplist.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inplkmod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpmkmod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpmktmp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppas1.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppas2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppas3.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inppname.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpptree.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpptree-parser.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inpsymt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\inptyplk.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\input.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\integset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\integuse.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\interp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\interpolate.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\invderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\inventory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\ipc\ipc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\ipc\ipcaegis.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\ipc\ipcsockets.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\ipc\ipcstdio.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\ipc\ipctiein.c"
+				RelativePath="..\src\spicelib\devices\ind\muttemp.c"
 				>
 			</File>
 			<File
@@ -6446,14 +6838,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\isrc\isrctemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\ivars.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\jfet\jfet.c"
 				>
 			</File>
 			<File
@@ -6518,6 +6902,14 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\jfet2\jfet2trun.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\jfet2\psmodel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\jfet\jfet.c"
 				>
 			</File>
 			<File
@@ -6593,23 +6985,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\parser\lexical.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\limit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\linear.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\logb.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\logfile.c"
 				>
 			</File>
 			<File
@@ -6677,34 +7053,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\main.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\mater.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\material.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\fft\matlib.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\matlset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\measure.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\mes\mes.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\mesa\mesa.c"
 				>
 			</File>
@@ -6714,10 +7062,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\mesa\mesaask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\mes\mesacl.c"
 				>
 			</File>
 			<File
@@ -6765,15 +7109,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\mes\mesask.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\mesa\mesatemp.c"
 				>
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\mesa\mesatrunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\mes\mes.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\mes\mesacl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\devices\mes\mesask.c"
 				>
 			</File>
 			<File
@@ -6794,14 +7146,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\mes\mesgetic.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\mesh.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\meshset.c"
 				>
 			</File>
 			<File
@@ -6846,110 +7190,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\mes\mestrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\method.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mif.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mif_inp2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifconvt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifdelete.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifdestr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifgetmod.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifgetvalue.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifload.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifmask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifmdelete.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifmpara.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\miftrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\xspice\mif\mifutil.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\misc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\misc_time.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\misccoms.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\miscvars.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\mktemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\mobil.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\mobility.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\mobset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\models.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\modlset.c"
 				>
 			</File>
 			<File
@@ -7405,67 +7645,63 @@
 				>
 			</File>
 			<File
-				RelativePath="msvc-compat.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\deriv\multder.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2acld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutacld.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2ask.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutask.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2del.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutdel.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2dest.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutdest.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2dump.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutmdel.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutparam.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2load.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutpzld.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2mdel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutsetup.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2mpar.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutsprt.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2parm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\mutsset.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2pzld.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\ind\muttemp.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2set.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\mw_coms.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2temp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\numparam\mystring.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\naskq.c"
+				RelativePath="..\src\spicelib\devices\nbjt2\nbt2trun.c"
 				>
 			</File>
 			<File
@@ -7529,146 +7765,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2acld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2ask.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2del.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2dest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2dump.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2init.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2load.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2mdel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2mpar.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2parm.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2pzld.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2set.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2temp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\nbjt2\nbt2trun.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\nevalsrc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\newcoms.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ngspice.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niaciter.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nicomcof.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niconv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nidest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niditer.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niinteg.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niiter.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\niniter.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\ninteg.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nipred.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nipzmeth.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nireinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nisenre.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\noisean.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\norm.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\nsetparm.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\numd2\nud2.c"
 				>
 			</File>
@@ -7725,11 +7821,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\numd\numd.c"
+				RelativePath="..\src\spicelib\devices\numd2\numd2init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\devices\numd2\numd2init.c"
+				RelativePath="..\src\spicelib\devices\numd\numd.c"
 				>
 			</File>
 			<File
@@ -7849,214 +7945,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\parser\numparse.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\nutinp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\nutmegif.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\oneadmit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\oneaval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onecond.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onecont.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onedest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onedopng.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onefreez.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onemesh.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onepoiss.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\oneprint.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\oneproj.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\oneread.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onesetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\oned\onesolve.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\options.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\optionsc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\outitf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\outpset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\input\output.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parse.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parse-bison.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plot5.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plotcurv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plotit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\plotting.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\plusder.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\points.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\polyderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\polyeval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\poly\polyfit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\postcoms.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\postsc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\powderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\printnum.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\help\provide.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\devices\jfet2\psmodel.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\pssaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\pssinit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\psssetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\ptfuncs.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\plotting\pvec.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\pzan.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\pzaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\pzsetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\quote.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\randnumb.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\rawfile.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\help\readhelp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\recomb.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\res\res.c"
 				>
 			</File>
@@ -8097,10 +7985,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\resource.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\res\resparam.c"
 				>
 			</File>
@@ -8134,34 +8018,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\res\restemp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\runcoms.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\runcoms2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\misc\scalb.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\sensaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\senssetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\shyu.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\signal_handler.c"
 				>
 			</File>
 			<File
@@ -8237,82 +8093,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\sparse\spalloc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spbuild.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\spec.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\parser\sperror.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spextra.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spfactor.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\spiceif.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\numparam\spicenum.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spoutput.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spsmp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\spsolve.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\sparse\sputils.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\sqrtder.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\std.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\streams.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\string.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\subckt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\suprem.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\support\suprmitf.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\sw\sw.c"
 				>
 			</File>
@@ -8373,38 +8153,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\maths\deriv\tanderiv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\terminal.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\help\textdisp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\tfanal.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\tfaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\tfsetp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\tilde.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\deriv\timesder.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\tra\tra.c"
 				>
 			</File>
@@ -8441,18 +8189,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\analysis\tranaskq.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\traninit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\spicelib\analysis\transetp.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\tra\traparam.c"
 				>
 			</File>
@@ -8466,94 +8202,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\tra\tratrunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoadmit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoaval.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twocond.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twocont.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twocurr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twodest.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twodopng.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoelect.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twofield.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twomesh.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twomobdv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twomobfn.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twomobil.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoncont.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twopcont.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twopoiss.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoprint.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twoproj.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\tworead.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twosetbc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twosetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\ciderlib\twod\twosolve.c"
 				>
 			</File>
 			<File
@@ -8609,14 +8257,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\typesdef.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\parser\unixcom.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\urc\urc.c"
 				>
 			</File>
@@ -8654,14 +8294,6 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\devices\urc\urcsetup.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\misc\util.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\frontend\variable.c"
 				>
 			</File>
 			<File
@@ -8857,10 +8489,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\vectors.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\spicelib\devices\vsrc\vsrc.c"
 				>
 			</File>
@@ -8921,15 +8549,235 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\trannoise\wallace.c"
+				RelativePath="..\src\spicelib\parser\ifeval.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\where.c"
+				RelativePath="..\src\spicelib\parser\ifnewuid.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\wdisp\windisp.c"
+				RelativePath="..\src\spicelib\parser\inp2b.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2c.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2d.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2dot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2e.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2f.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2g.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2h.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2i.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2j.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2k.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2l.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2m.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2n.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2o.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2p.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2q.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2r.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2s.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2t.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2u.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2v.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2w.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2y.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inp2z.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpaname.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpapnam.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpcfix.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpdomod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpdoopt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpdpar.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inperrc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inperror.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpeval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpfindl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpfindv.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpgmod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpgstr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpgtitl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpgtok.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpgval.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpkmods.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inplist.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inplkmod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpmkmod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpmktmp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inppas1.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inppas2.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inppas3.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inppname.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpptree-parser.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpptree.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inpsymt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\inptyplk.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\ptfuncs.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\parser\sperror.c"
 				>
 			</File>
 			<File
@@ -8937,31 +8785,183 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\wdisp\winprint.c"
+				RelativePath="..\src\xspice\cm\cm.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\misc\wlist.c"
+				RelativePath="..\src\xspice\cm\cmevt.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\x11.c"
+				RelativePath="..\src\xspice\cm\cmexport.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\help\x11disp.c"
+				RelativePath="..\src\xspice\cm\cmmeters.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\help\xdisplay.c"
+				RelativePath="..\src\xspice\cm\cmutil.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\plotting\xgraph.c"
+				RelativePath="..\src\xspice\enh\enh.c"
 				>
 			</File>
 			<File
-				RelativePath="..\src\frontend\numparam\xpressn.c"
+				RelativePath="..\src\xspice\enh\enhtrans.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtaccept.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtbackup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtcall_hybrids.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtdeque.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtdump.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtiter.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtload.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtnext_time.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtnode_copy.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtop.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtplot.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtprint.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtqueue.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evtsetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\evt\evttermi.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\idn\idndig.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\ipc\ipc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\ipc\ipcaegis.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\ipc\ipcsockets.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\ipc\ipcstdio.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\ipc\ipctiein.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mif.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifconvt.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifdelete.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifdestr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifgetmod.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifgetvalue.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifload.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifmask.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifmdelete.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifmpara.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifsetup.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\miftrunc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mifutil.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\xspice\mif\mif_inp2.c"
+				>
+			</File>
+			<File
+				RelativePath="msvc-compat.c"
 				>
 			</File>
 		</Filter>
