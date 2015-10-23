@@ -1405,6 +1405,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\frontend\parse-bison.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\frontend\parse.h"
 				>
 			</File>

@@ -914,6 +914,7 @@
     <ClInclude Include="..\src\frontend\nutmegif.h" />
     <ClInclude Include="..\src\frontend\options.h" />
     <ClInclude Include="..\src\frontend\outitf.h" />
+    <ClInclude Include="..\src\frontend\parse-bison.h" />
     <ClInclude Include="..\src\frontend\parse.h" />
     <ClInclude Include="..\src\frontend\parser\backq.h" />
     <ClInclude Include="..\src\frontend\parser\complete.h" />
