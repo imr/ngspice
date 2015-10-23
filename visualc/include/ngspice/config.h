@@ -47,7 +47,7 @@
 /* #undef FTEDEBUG */
 
 /* CONSOLE flag set in configurations console_debug and console_release */
-#ifndef CONSOLE
+#if !defined(CONSOLE) && !defined(SHARED_MODULE)
 /* define to specify MS Windows GUI executable */
 #define HAS_WINGUI 1
 #endif
