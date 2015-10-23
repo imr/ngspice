@@ -1345,7 +1345,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\spicelib\parser\inp.h"
+				RelativePath="..\src\spicelib\parser\inpxx.h"
 				>
 			</File>
 			<File
@@ -1742,22 +1742,6 @@
 			</File>
 			<File
 				RelativePath="..\src\include\ngspice\ngspice.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nipred.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nipzmeth.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nireinit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\maths\ni\nisenre.h"
 				>
 			</File>
 			<File
@@ -4498,6 +4482,10 @@
 			</File>
 			<File
 				RelativePath="..\src\spicelib\analysis\dcosetp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\dcpss.c"
 				>
 			</File>
 			<File
@@ -7242,6 +7230,18 @@
 			</File>
 			<File
 				RelativePath="..\src\frontend\plotting\pvec.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssaskq.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\pssinit.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\spicelib\analysis\psssetp.c"
 				>
 			</File>
 			<File
