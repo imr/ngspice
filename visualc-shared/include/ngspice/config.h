@@ -233,7 +233,6 @@
 
 /* Define to 1 if you have the `scalb' function. */
 #define HAVE_SCALB 1
-#define scalb _scalb
 
 /* Define to 1 if you have the `scalbn' function. */
 /* #undef HAVE_SCALBN */
@@ -499,6 +498,9 @@
 
 /* Define if we want spice2 sensitivity analysis */
 /* #undef WANT_SENSE2 */
+
+/* Define if you want PSS analysis */
+#define WITH_PSS /**/
 
 /* The xspice enhancements */
 #define XSPICE 1
