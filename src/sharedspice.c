@@ -121,19 +121,19 @@ typedef pthread_t threadId_t;
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/devdefs.h"
-#include <spicelib/devices/dev.h>
-#include <spicelib/analysis/analysis.h>
-#include <misc/ivars.h>
-#include <frontend/resource.h>
-#include <frontend/com_measure2.h>
+#include "spicelib/devices/dev.h"
+#include "spicelib/analysis/analysis.h"
+#include "misc/ivars.h"
+#include "frontend/resource.h"
+#include "frontend/com_measure2.h"
 #ifdef _MSC_VER
 #include <stdio.h>
 #define snprintf _snprintf
 #endif
-#include <frontend/outitf.h>
+#include "frontend/outitf.h"
 #include "ngspice/memory.h"
-#include <frontend/com_measure2.h>
-#include <frontend/misccoms.h>
+#include "frontend/com_measure2.h"
+#include "frontend/misccoms.h"
 
 #ifdef HAVE_FTIME
 #include <sys/timeb.h>
