@@ -48,9 +48,6 @@
 /* Define if you want to debug frontend */
 /* #undef FTEDEBUG */
 
-/* Define to enable the .global keyword */
-#define GLOBAL_NODE 1
-
 /* define to specify MS Windows executable */
 // #define HAS_WINGUI 1
 

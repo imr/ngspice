@@ -313,7 +313,6 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
         *mingw* )
             has_shwin=true
             has_no_help=true
-            AC_DEFINE([HAS_SHWIN], [1], [ngspice.dll Windows])
             ;;
         *cygwin* )
             has_shcyg=true
