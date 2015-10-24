@@ -192,7 +192,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">$(Configuration)64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">$(Configuration)64\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'" />
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">false</LinkIncremental>
