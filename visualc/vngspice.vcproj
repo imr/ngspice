@@ -73,7 +73,6 @@
 				AdditionalDependencies="psapi.lib"
 				OutputFile="$(OutDir)\$(ProjectName)_d.exe"
 				LinkIncremental="0"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Visual Leak Detector\lib&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
 				SubSystem="2"
