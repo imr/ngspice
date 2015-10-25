@@ -404,8 +404,6 @@
       <Command>del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -612,8 +610,6 @@
       <Command>del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -727,8 +723,6 @@
       <Command>del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -839,8 +833,6 @@
       <Command>del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
