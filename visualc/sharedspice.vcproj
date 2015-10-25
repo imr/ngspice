@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\ngspice.dll"
+				OutputFile="$(OutDir)\ngspice.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -81,6 +81,7 @@
 				HeapCommitSize="0"
 				StackReserveSize="0"
 				StackCommitSize="0"
+				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -162,7 +163,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\spice.dll"
+				OutputFile="$(OutDir)\ngspice.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
@@ -173,6 +174,7 @@
 				StackCommitSize="0"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
@@ -255,7 +257,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="psapi.lib"
-				OutputFile="$(OutDir)\bin\ngspice.dll"
+				OutputFile="$(OutDir)\ngspice.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
