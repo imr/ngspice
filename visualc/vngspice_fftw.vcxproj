@@ -202,7 +202,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)\$(Platform)\conf.obj del $(Configuration)\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -251,7 +251,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)64\$(Platform)\conf.obj del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)64\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -301,7 +301,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)\$(Platform)\conf.obj del $(Configuration)\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -355,7 +355,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)64\$(Platform)\conf.obj del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)64\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -413,7 +413,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)\$(Platform)\conf.obj del $(Configuration)\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -460,7 +460,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)64\$(Platform)\conf.obj del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)64\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -510,7 +510,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)\$(Platform)\conf.obj del $(Configuration)\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -563,7 +563,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)64\$(Platform)\conf.obj del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)64\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -619,7 +619,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)\$(Platform)\conf.obj del $(Configuration)\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -673,7 +673,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)64\$(Platform)\conf.obj del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)64\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -732,7 +732,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)\$(Platform)\conf.obj del $(Configuration)\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)\$(Platform)\conf.obj;%(Outputs)</Outputs>
@@ -786,7 +786,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj
+      <Command>if exist $(Configuration)64\$(Platform)\conf.obj del $(Configuration)64\$(Platform)\conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Outputs>$(Configuration)64\$(Platform)\conf.obj;%(Outputs)</Outputs>
