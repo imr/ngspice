@@ -202,14 +202,6 @@
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -250,14 +242,6 @@
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
@@ -294,14 +278,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -348,14 +324,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
@@ -412,14 +380,6 @@
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -459,14 +419,6 @@
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
@@ -503,14 +455,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -556,14 +500,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
@@ -612,14 +548,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -666,14 +594,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
@@ -725,14 +645,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -779,14 +691,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
