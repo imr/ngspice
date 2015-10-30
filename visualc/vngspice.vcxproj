@@ -205,7 +205,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -248,7 +248,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -290,7 +290,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -339,7 +339,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONFIG64;RELBUILD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONFIG64;RELBUILD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -383,7 +383,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -425,7 +425,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -467,7 +467,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -515,7 +515,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -560,7 +560,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -609,7 +609,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64;RELBUILD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;CONFIG64;RELBUILD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -657,7 +657,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -706,7 +706,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;RELBUILD64;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;RELBUILD64;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
