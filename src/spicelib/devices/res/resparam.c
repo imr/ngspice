@@ -70,6 +70,10 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         here->REStc2 = value->rValue;
         here->REStc2Given = TRUE;
         break;
+    case RES_TCE:
+        here->REStce = value->rValue;
+        here->REStceGiven = TRUE;
+        break;
     case RES_NOISY:
         here->RESnoisy = value->iValue;
         here->RESnoisyGiven = TRUE;

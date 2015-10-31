@@ -23,7 +23,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
     RESinstance *here;
     double factor;
     double difference;
-    double tc1, tc2;
+    double tc1, tc2, tce;
 
 
     /*  loop through all the resistor models */
@@ -61,8 +61,8 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             difference = (here->REStemp + here->RESdtemp) - model->REStnom;
 
-            /* instance parameters tc1 and tc2 will override
-               model parameters tc1 and tc2 */
+            /* instance parameters tc1,tc2 and tce will override
+               model parameters tc1,tc2 and tce */
             if (here->REStc1Given)
                 tc1 = here->REStc1; /* instance */
             else
@@ -73,8 +73,13 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             else
                 tc2 = model->REStempCoeff2;
 
-            factor = 1.0 + tc1*difference +
-                     tc2*difference*difference;
+            if (here->REStceGiven)
+                tce = here->REStce;
+            else
+                tce = model->REStempCoeffe;
+
+            factor = ((((tc2 * difference) + tc1) * difference) + 1.0) *
+                pow(1.01, tce * difference);
 
             here -> RESconduct = (1.0/(here->RESresist * factor * here->RESscale));
 

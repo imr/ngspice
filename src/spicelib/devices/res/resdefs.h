@@ -42,6 +42,7 @@ typedef struct sRESinstance {
     double RESm;                    /* Multiplicity factor for this instance */
     double REStc1;                  /* first temperature coefficient of resistors */
     double REStc2;                  /* second temperature coefficient of resistors */
+    double REStce;                  /* exponential temperature coefficient of resistors */
     double RESbv_max;               /* Maximum resistor voltage */
     int    RESnoisy;                /* Set if the resistor generates noise */
     double RESeffNoiseArea;         /* effective resistor area for noise calculation */
@@ -64,6 +65,7 @@ typedef struct sRESinstance {
     unsigned RESmGiven      : 1;    /* indicates M parameter specified */
     unsigned REStc1Given    : 1;    /* indicates tc1 parameter specified */
     unsigned REStc2Given    : 1;    /* indicates tc2 parameter specified */
+    unsigned REStceGiven    : 1;    /* indicates tce parameter specified */
     unsigned RESnoisyGiven  : 1;    /* indicates if noisy is specified */
     unsigned RESbv_maxGiven : 1;    /* flags indicates maximum voltage is given */
     int    RESsenParmNo;            /* parameter # for sensitivity use;
@@ -102,6 +104,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     double REStnom;         /* temperature at which resistance measured */
     double REStempCoeff1;   /* first temperature coefficient of resistors */
     double REStempCoeff2;   /* second temperature coefficient of resistors */
+    double REStempCoeffe;   /* exponential temperature coefficient of resistors */
     double RESsheetRes;     /* sheet resistance of devices in ohms/square */
     double RESdefWidth;     /* default width of a resistor */
     double RESdefLength;    /* default length of a resistor */
@@ -117,6 +120,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     unsigned REStnomGiven       :1; /* flag to indicate nominal temp. was given */
     unsigned REStc1Given        :1; /* flag to indicate tc1 was specified */
     unsigned REStc2Given        :1; /* flag to indicate tc2 was specified */
+    unsigned REStceGiven        :1; /* flag to indicate tce was specified */
     unsigned RESsheetResGiven   :1; /* flag to indicate sheet resistance given*/
     unsigned RESdefWidthGiven   :1; /* flag to indicate default width given */
     unsigned RESdefLengthGiven  :1; /* flag to indicate default length given */
@@ -151,6 +155,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 #define RES_TC1 16
 #define RES_TC2 17
 #define RES_BV_MAX 18
+#define RES_TCE 19
 
 /* model parameters */
 #define RES_MOD_TC1 101
@@ -168,6 +173,7 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 #define RES_MOD_LF 113
 #define RES_MOD_WF 114
 #define RES_MOD_EF 115
+#define RES_MOD_TCE 116
 
 /* device questions */
 #define RES_QUEST_SENS_REAL      201

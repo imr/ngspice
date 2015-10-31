@@ -70,6 +70,9 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     case RES_TC2:
         value->rValue = fast->REStc2;
         return(OK);
+    case RES_TCE:
+        value->rValue = fast->REStce;
+        return(OK);
     case RES_BV_MAX:
         value->rValue = fast->RESbv_max;
         return(OK);

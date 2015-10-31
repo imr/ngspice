@@ -32,6 +32,7 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         if(!model->RESdefLengthGiven) model->RESdefLength = 10e-6;
         if(!model->REStc1Given) model->REStempCoeff1    = 0.0;
         if(!model->REStc2Given) model->REStempCoeff2    = 0.0;
+        if(!model->REStceGiven) model->REStempCoeffe    = 0.0;
         if(!model->RESnarrowGiven) model->RESnarrow     = 0.0;
         if(!model->RESshortGiven) model->RESshort       = 0.0;
         if(!model->RESfNcoefGiven) model->RESfNcoef     = 0.0;

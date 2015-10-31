@@ -33,6 +33,9 @@ RESmodAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case RES_MOD_TC2:
             value->rValue = model->REStempCoeff2;
             return(OK);
+        case RES_MOD_TCE:
+            value->rValue = model->REStempCoeffe;
+            return(OK);
         case RES_MOD_RSH:
             value->rValue = model->RESsheetRes;
             return(OK);

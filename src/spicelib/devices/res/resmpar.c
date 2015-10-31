@@ -30,6 +30,10 @@ RESmParam(int param, IFvalue *value, GENmodel *inModel)
         model->REStempCoeff2 = value->rValue;
         model->REStc2Given = TRUE;
         break;
+    case RES_MOD_TCE:
+        model->REStempCoeffe = value->rValue;
+        model->REStceGiven = TRUE;
+        break;
     case RES_MOD_RSH:
         model->RESsheetRes = value->rValue;
         model->RESsheetResGiven = TRUE;
