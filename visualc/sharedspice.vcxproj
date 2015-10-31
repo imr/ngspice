@@ -66,7 +66,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>if exist $(Configuration)\conf.obj del $(Configuration)\conf.obj
+      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
     </PreBuildEvent>
@@ -110,7 +110,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>if exist $(Configuration)\conf.obj del $(Configuration)\conf.obj
+      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
     </PreBuildEvent>
@@ -154,7 +154,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
     <PreBuildEvent>
       <Message>Recompile conf.c with actual date, invoke win_bison</Message>
-      <Command>if exist $(Configuration)\conf.obj del $(Configuration)\conf.obj
+      <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1</Command>
     </PreBuildEvent>
