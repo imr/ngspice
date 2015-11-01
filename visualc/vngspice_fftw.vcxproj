@@ -238,11 +238,11 @@
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -259,7 +259,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -272,7 +272,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -281,14 +281,14 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -305,7 +305,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -321,7 +321,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -330,14 +330,14 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -354,7 +354,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -367,7 +367,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -376,7 +376,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -386,7 +386,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -403,7 +403,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -421,7 +421,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
@@ -430,11 +430,11 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -451,7 +451,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -464,7 +464,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
@@ -473,14 +473,14 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -497,7 +497,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -513,7 +513,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
@@ -522,14 +522,14 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -546,7 +546,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -559,7 +559,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
@@ -568,7 +568,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -578,7 +578,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -595,7 +595,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -611,7 +611,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
@@ -620,14 +620,14 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -645,7 +645,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -661,7 +661,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
@@ -670,7 +670,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -680,7 +680,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -698,7 +698,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -716,7 +716,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
@@ -725,14 +725,14 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -750,7 +750,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -766,7 +766,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
@@ -775,7 +775,7 @@ lib /machine:x86 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:$(
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
 ..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
 ..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
-lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -785,7 +785,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;$(ProjectDir)..\src\spicelib\parser;$(ProjectDir).;$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -803,7 +803,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -819,7 +819,7 @@ lib /machine:x64 /def:$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:$(
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(ProjectDir)fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
