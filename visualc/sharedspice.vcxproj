@@ -15,7 +15,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>ngspice</ProjectName>
     <ProjectGuid>{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -47,20 +46,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>14.0.23107.0</_ProjectFileVersion>
+    <TargetName>ngspice</TargetName>
+    <OutDir>$(ProjectName)\$(Configuration).$(Platform)\</OutDir>
+    <IntDir>$(ProjectName)\$(Configuration).$(Platform)\obj\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>Debug\</OutDir>
-    <IntDir>Debug\</IntDir>
     <LinkIncremental />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>Release\</OutDir>
-    <IntDir>Release\</IntDir>
     <LinkIncremental />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

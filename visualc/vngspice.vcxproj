@@ -154,81 +154,48 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <TargetName>ngspice</TargetName>
+    <OutDir>$(ProjectName)\$(Configuration).$(Platform)\</OutDir>
+    <IntDir>$(ProjectName)\$(Configuration).$(Platform)\obj\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <TargetName>$(ProjectName)_d</TargetName>
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)64_d</TargetName>
-    <OutDir>$(Configuration)64\</OutDir>
-    <IntDir>$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)64</TargetName>
-    <OutDir>$(Configuration)64\</OutDir>
-    <IntDir>$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
-    <TargetName>$(ProjectName)_cd</TargetName>
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
-    <TargetName>$(ProjectName)_c</TargetName>
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
-    <TargetName>$(ProjectName)64_cd</TargetName>
-    <OutDir>$(Configuration)64\</OutDir>
-    <IntDir>$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
-    <TargetName>$(ProjectName)64_c</TargetName>
-    <OutDir>$(Configuration)64\</OutDir>
-    <IntDir>$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
-    <TargetName>$(ProjectName)_omp</TargetName>
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
-    <TargetName>$(ProjectName)64_omp</TargetName>
-    <OutDir>$(Configuration)64\</OutDir>
-    <IntDir>$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
-    <TargetName>$(ProjectName)_omp_c</TargetName>
-    <OutDir>$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
-    <TargetName>$(ProjectName)64_omp_c</TargetName>
-    <OutDir>$(Configuration)64\</OutDir>
-    <IntDir>$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
