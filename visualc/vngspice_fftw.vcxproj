@@ -202,11 +202,11 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -222,8 +222,7 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -236,21 +235,21 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -266,8 +265,7 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -283,21 +281,21 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -313,8 +311,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -327,14 +324,14 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -344,7 +341,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -360,8 +357,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -379,18 +375,18 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -406,8 +402,7 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -420,21 +415,21 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -450,8 +445,7 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -467,21 +461,21 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;NGDEBUG;CONSOLE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -497,8 +491,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -511,14 +504,14 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -528,7 +521,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -544,8 +537,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -561,21 +553,21 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -592,8 +584,7 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -609,14 +600,14 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -626,7 +617,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;USE_OMP;CONFIG64;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -643,8 +634,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -662,21 +652,21 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
+lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -693,8 +683,7 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -710,14 +699,14 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll32\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <PreBuildEvent>
       <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
+lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -727,7 +716,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;fftw3\fftw-3.3.3-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;include;..\src\include;..\src\spicelib\parser;.;..\..\fftw-3.3.4-dll64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;CONSOLE;CONFIG64;USE_OMP;HAVE_LIBFFTW3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -744,8 +733,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>fftw3\fftw-3.3.3-dll64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
@@ -761,7 +749,7 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "fftw3\fftw-3.3.3-dll64\libfftw3-3.dll" "$(OutDir)libfftw3-3.dll"</Command>
+      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
