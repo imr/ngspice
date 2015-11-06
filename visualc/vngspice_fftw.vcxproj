@@ -200,10 +200,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -243,10 +241,8 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -292,10 +288,8 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -338,10 +332,8 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -392,10 +384,8 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -435,10 +425,8 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -484,10 +472,8 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -530,10 +516,8 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -582,10 +566,8 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -632,10 +614,8 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -687,10 +667,8 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll32\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -737,10 +715,8 @@ lib /machine:x86 /def:fftw3\fftw-3.3.3-dll32\libfftw3-3.def /out:fftw3\fftw-3.3.
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <PreBuildEvent>
-      <Message>Recompile conf.c with actual date, invoke win_bison</Message>
+      <Message>force recompilation of conf.c with actual date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-..\..\flex-bison\win_bison.exe --output=inpptree-parser.c --defines=inpptree-parser.h ..\src\spicelib\parser\inpptree-parser.y || exit 1
-..\..\flex-bison\win_bison.exe --output=parse-bison.c --defines=parse-bison.h ..\src\frontend\parse-bison.y || exit 1
 lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.3-dll64\libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -1297,6 +1273,11 @@ lib /machine:x64 /def:fftw3\fftw-3.3.3-dll64\libfftw3-3.def /out:fftw3\fftw-3.3.
     <ClInclude Include="parse-bison.h" />
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="..\src\frontend\parse-bison.y;..\src\spicelib\parser\inpptree-parser.y">
+      <Message>invoke win_bison.exe for %(Identity)</Message>
+      <Command>..\..\flex-bison\win_bison.exe --output=%(Filename).c --defines=%(Filename).h %(Identity) || exit 1</Command>
+      <Outputs>%(Filename).c;%(Filename).h</Outputs>
+    </CustomBuild>
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
