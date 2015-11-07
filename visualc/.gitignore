@@ -4,17 +4,15 @@
 #
 # (compile "git ls-files -i --exclude-standard")
 
-/*
+/inpptree-parser.c
+/inpptree-parser.h
 
-!/include
+/parse-bison.c
+/parse-bison.h
 
-!/.gitignore
+/vngspice
+/vngspice-fftw
+/sharedspice
 
-!/how-to-ngspice-vstudio.txt
-!/how-to-fftw.txt
-
-!/*.c
-!/*.h
-!/*.sln
-!/*.vcproj
-!/*.vcxproj
+/*.sln
+/.vs
