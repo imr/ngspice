@@ -65,11 +65,11 @@ if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 echo
 # make clean is required for properly making the code models
 echo "cleaning (see make_clean.log)"
-make clean 2>&1 | tee make_clean.log 
+make clean 2>&1 -j8 | tee make_clean.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make clean failed"; exit 1 ; fi
 echo "compiling (see make.log)"
-make 2>&1 | tee make.log
+make 2>&1 -j8 | tee make.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make failed"; exit 1 ; fi
 # 32 bit: Install to C:\Spice
