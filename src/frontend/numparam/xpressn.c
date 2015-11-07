@@ -665,13 +665,9 @@ parseunit(const char *s)
 static const char *
 fetchid(const char *s, const char *s_end)
 {
-    for (; s < s_end; s++) {
-
-        char c = *s;
-
-        if (!(alfanum(c) || c == '.'))
+    for (; s < s_end; s++)
+        if (!(alfanum(*s) || *s == '.'))
             return s;
-    }
 
     return s;
 }
@@ -1007,10 +1003,9 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             if (fu > 0) {
                 state = S_init;  /* S_init means: ignore for the moment */
             } else {
-                const char *t;
                 spice_dstring_reinit(&tstr);
-                for (t = s; t < s_next;)
-                    cadd(&tstr, upcase(*t++));
+                while (s < s_next)
+                    cadd(&tstr, upcase(*s++));
                 u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 state = S_atom;
             }
