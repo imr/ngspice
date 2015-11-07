@@ -407,28 +407,24 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
 static struct pnode *
 ntharg(int num, struct pnode *args)
 {
-    struct pnode *ptry;
-
-    ptry = args;
-
     if (num > 1)
         while (--num > 0) {
-            if (ptry && ptry->pn_op &&
-                (ptry->pn_op->op_num != PT_OP_COMMA)) {
+            if (args && args->pn_op &&
+                (args->pn_op->op_num != PT_OP_COMMA)) {
                 if (num == 1)
                     break;
                 else
                     return (NULL);
             }
-            if (!ptry)
+            if (!args)
                 return NULL;
-            ptry = ptry->pn_right;
+            args = args->pn_right;
         }
 
-    if (ptry && ptry->pn_op && (ptry->pn_op->op_num == PT_OP_COMMA))
-        ptry = ptry->pn_left;
+    if (args && args->pn_op && (args->pn_op->op_num == PT_OP_COMMA))
+        args = args->pn_left;
 
-    return (ptry);
+    return args;
 }
 
 
