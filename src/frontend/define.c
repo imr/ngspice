@@ -410,8 +410,7 @@ ntharg(int num, struct pnode *args)
     // fact: num >= 1 for all known invocations of ntharg()
         while (--num > 0) {
             if (args && args->pn_op && (args->pn_op->op_num != PT_OP_COMMA)) {
-                // fact: num >= 1 because of `while' condition
-                if (num == 1)
+                if (num <= 1)
                     break;
                 return NULL;
             }
