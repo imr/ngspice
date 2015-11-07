@@ -1003,18 +1003,16 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             fu = 0;
         } else if (alfa(c)) {
             const char *s_next = fetchid(s, s_end);
-            {
-                fu = keyword(fmathS, s, s_next); /* numeric function? */
-                if (fu > 0) {
-                    state = S_init;  /* S_init means: ignore for the moment */
-                } else {
-                    const char *t;
-                    spice_dstring_reinit(&tstr);
-                    for (t = s; t < s_next;)
-                        cadd(&tstr, upcase(*t++));
-                    u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
-                    state = S_atom;
-                }
+            fu = keyword(fmathS, s, s_next); /* numeric function? */
+            if (fu > 0) {
+                state = S_init;  /* S_init means: ignore for the moment */
+            } else {
+                const char *t;
+                spice_dstring_reinit(&tstr);
+                for (t = s; t < s_next;)
+                    cadd(&tstr, upcase(*t++));
+                u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
+                state = S_atom;
             }
             s = s_next;
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
