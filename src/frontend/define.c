@@ -65,8 +65,8 @@ com_define(wordlist *wlist)
     if (wl) {
         for (t = buf; *t; t++)
             ;
-        for (s = wl->wl_word; *s && (*s != ')'); s++, t++)
-            *t = *s;
+        for (s = wl->wl_word; *s && (*s != ')');)
+            *t++ = *s++;
         *t++ = ')';
         *t = '\0';
         if (*++s)
@@ -297,7 +297,7 @@ ft_substdef(const char *name, struct pnode *args)
             fprintf(cp_err,
                     "Warning: the user-defined function %s has %d args\n",
                     name, rarity);
-        return (NULL);
+        return NULL;
     }
 
     for (s = udf->ud_name; *s; s++)
@@ -307,7 +307,7 @@ ft_substdef(const char *name, struct pnode *args)
     /* Now we have to traverse the tree and copy it over,
      * substituting args.
      */
-    return (trcopy(udf->ud_text, s, args));
+    return trcopy(udf->ud_text, s, args);
 }
 
 
@@ -346,13 +346,13 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
             }
 
             if (*s)
-                return (ntharg(i, nn));
+                return ntharg(i, nn);
             else
-                return (tree);
+                return tree;
 
         } else {
 
-            return (tree);
+            return tree;
 
         }
 
@@ -383,10 +383,10 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
 
     } else {
         fprintf(cp_err, "trcopy: Internal Error: bad parse node\n");
-        return (NULL);
+        return NULL;
     }
 
-    return (pn);
+    return pn;
 }
 
 
@@ -456,10 +456,8 @@ com_undefine(wordlist *wlist)
 }
 
 
-#ifndef LINT
-
-/* Watch out, this is not at all portable.  It's only here so I can
- * call it from dbx with an int value (all you can give with "call")...
+/*
+ * This is only here so I can "call" it from gdb/dbx
  */
 
 void
@@ -467,5 +465,3 @@ ft_pnode(struct pnode *pn)
 {
     prtree1(pn, cp_err);
 }
-
-#endif
