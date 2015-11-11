@@ -26,7 +26,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 static void savetree(struct pnode *pn);
 static void prdefs(char *name);
-static void prtree(struct udfunc *ud);
+static void prtree(struct udfunc *ud, FILE *fp);
 static void prtree1(struct pnode *pn, FILE *fp);
 static struct pnode *trcopy(struct pnode *tree, char *args, struct pnode *nn);
 static struct pnode *ntharg(int num, struct pnode *args);
@@ -203,10 +203,10 @@ prdefs(char *name)
     if (name && *name) {    /* You never know what people will do */
         for (udf = udfuncs; udf; udf = udf->ud_next)
             if (eq(name, udf->ud_name))
-                prtree(udf);
+                prtree(udf, cp_out);
     } else {
         for (udf = udfuncs; udf; udf = udf->ud_next)
-            prtree(udf);
+            prtree(udf, cp_out);
     }
 }
 
@@ -214,26 +214,26 @@ prdefs(char *name)
 /* Print out one definition. */
 
 static void
-prtree(struct udfunc *ud)
+prtree(struct udfunc *ud, FILE *fp)
 {
-    char *s, buf[BSIZE_SP];
+    const char *s = ud->ud_name;
 
-    /* Print the head. */
-    buf[0] = '\0';
-    (void) strcat(buf, ud->ud_name);
-    s = strchr(ud->ud_name, '\0') + 1;
-    (void) strcat(buf, " (");
+    /* print the function name */
+    fprintf(fp, "%s (", s);
+    s = strchr(s, '\0') + 1;
+
+    /* print the formal args */
     while (*s) {
-        (void) strcat(buf, s);
-        s = strchr(s, '\0');
-        if (s[1])
-            (void) strcat(buf, ", ");
-        s++;
+        fputs(s, fp);
+        s = strchr(s, '\0') + 1;
+        if (*s)
+            fputs(", ", fp);
     }
-    (void) strcat(buf, ") = ");
-    fputs(buf, cp_out);
-    prtree1(ud->ud_text, cp_out);
-    (void) putc('\n', cp_out);
+    fputs(") = ", fp);
+
+    /* print the function body */
+    prtree1(ud->ud_text, fp);
+    putc('\n', fp);
 }
 
 
