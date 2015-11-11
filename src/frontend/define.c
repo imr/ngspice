@@ -409,7 +409,7 @@ ntharg(int num, struct pnode *args)
 void
 com_undefine(wordlist *wlist)
 {
-    struct udfunc *udf, *ludf;
+    struct udfunc *udf;
 
     if (!wlist)
         return;
@@ -428,12 +428,12 @@ com_undefine(wordlist *wlist)
     }
 
     for (; wlist; wlist = wlist->wl_next) {
-        ludf = NULL;
+        struct udfunc *prev_udf = NULL;
         for (udf = udfuncs; udf;) {
             struct udfunc *next = udf->ud_next;
             if (eq(wlist->wl_word, udf->ud_name)) {
-                if (ludf)
-                    ludf->ud_next = udf->ud_next;
+                if (prev_udf)
+                    prev_udf->ud_next = udf->ud_next;
                 else
                     udfuncs = udf->ud_next;
                 cp_remkword(CT_UDFUNCS, wlist->wl_word);
@@ -441,7 +441,7 @@ com_undefine(wordlist *wlist)
                 free(udf->ud_name);
                 free(udf);
             } else {
-                ludf = udf;
+                prev_udf = udf;
             }
             udf = next;
         }
