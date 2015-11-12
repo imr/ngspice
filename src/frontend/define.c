@@ -30,6 +30,7 @@ static void prtree(struct udfunc *ud, FILE *fp);
 static void prtree1(struct pnode *pn, FILE *fp);
 static struct pnode *trcopy(struct pnode *tree, char *arg_names, struct pnode *args);
 static struct pnode *ntharg(int num, struct pnode *args);
+static int numargs(struct pnode *args);
 
 static struct udfunc *udfuncs = NULL;
 
@@ -262,16 +263,9 @@ struct pnode *
 ft_substdef(const char *name, struct pnode *args)
 {
     struct udfunc *udf, *wrong_udf = NULL;
-    struct pnode *tp;
     char *arg_names;
-    int arity = 0;
 
-    if (args)
-        arity = 1;
-
-    for (tp = args; tp && tp->pn_op && (tp->pn_op->op_num == PT_OP_COMMA); tp =
-             tp->pn_right)
-        arity++;
+    int arity = numargs(args);
 
     for (udf = udfuncs; udf; udf = udf->ud_next)
         if (eq(name, udf->ud_name)) {
@@ -395,6 +389,23 @@ ntharg(int num, struct pnode *args)
     }
 
     return NULL;
+}
+
+
+static int
+numargs(struct pnode *args)
+{
+    struct pnode *tp;
+    int arity = 0;
+
+    if (args)
+        arity = 1;
+
+    for (tp = args; tp && tp->pn_op && (tp->pn_op->op_num == PT_OP_COMMA); tp =
+             tp->pn_right)
+        arity++;
+
+    return arity;
 }
 
 
