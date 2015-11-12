@@ -63,8 +63,7 @@ com_define(wordlist *wlist)
         (void) strcat(buf, wl->wl_word);
 
     if (wl) {
-        for (t = buf; *t; t++)
-            ;
+        t = strchr(buf, '\0');
         for (s = wl->wl_word; *s && (*s != ')');)
             *t++ = *s++;
         *t++ = ')';
@@ -222,14 +221,11 @@ prtree(struct udfunc *ud)
     /* Print the head. */
     buf[0] = '\0';
     (void) strcat(buf, ud->ud_name);
-    for (s = ud->ud_name; *s; s++)
-        ;
+    s = strchr(ud->ud_name, '\0') + 1;
     (void) strcat(buf, " (");
-    s++;
     while (*s) {
         (void) strcat(buf, s);
-        while (*s)
-            s++;
+        s = strchr(s, '\0');
         if (s[1])
             (void) strcat(buf, ", ");
         s++;
@@ -300,9 +296,7 @@ ft_substdef(const char *name, struct pnode *args)
         return NULL;
     }
 
-    for (s = udf->ud_name; *s; s++)
-        ;
-    s++;
+    s = strchr(udf->ud_name, '\0') + 1;
 
     /* Now we have to traverse the tree and copy it over,
      * substituting args.
@@ -341,8 +335,7 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
                     break;
                 else
                     i++;
-                while (*s++)   /* Get past the last '\0'. */
-                    ;
+                s = strchr(s, '\0') + 1;
             }
 
             if (*s)
