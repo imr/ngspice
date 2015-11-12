@@ -263,7 +263,7 @@ ft_substdef(const char *name, struct pnode *args)
 {
     struct udfunc *udf, *wrong_udf = NULL;
     struct pnode *tp;
-    char *s;
+    char *arg_names;
     int arity = 0;
 
     if (args)
@@ -288,12 +288,12 @@ ft_substdef(const char *name, struct pnode *args)
         return NULL;
     }
 
-    s = strchr(udf->ud_name, '\0') + 1;
+    arg_names = strchr(udf->ud_name, '\0') + 1;
 
     /* Now we have to traverse the tree and copy it over,
      * substituting args.
      */
-    return trcopy(udf->ud_text, s, args);
+    return trcopy(udf->ud_text, arg_names, args);
 }
 
 
