@@ -257,6 +257,7 @@ extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
 extern struct pnode * ft_getpnames(wordlist *wl, bool check);
+extern struct pnode *alloc_pnode(void);
 #define free_pnode(ptr)  free_pnode_x(ptr); ptr=NULL
 extern void free_pnode_x(struct pnode *t);
 

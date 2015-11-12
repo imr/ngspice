@@ -208,19 +208,18 @@ PP_mkbnode(int opnum, struct pnode *arg1, struct pnode *arg2)
         fprintf(cp_err, "PP_mkbnode: Internal Error: no such op num %d\n",
                 opnum);
 
-    p = alloc(struct pnode);
-    p->pn_use = 0;
-    p->pn_value = NULL;
-    p->pn_name = NULL;  /* sjb */
-    p->pn_func = NULL;
+    p = alloc_pnode();
+
     p->pn_op = o;
+
     p->pn_left = arg1;
     if (p->pn_left)
         p->pn_left->pn_use++;
+
     p->pn_right = arg2;
     if (p->pn_right)
         p->pn_right->pn_use++;
-    p->pn_next = NULL;
+
     return (p);
 }
 
@@ -233,7 +232,8 @@ PP_mkunode(int op, struct pnode *arg)
     struct pnode *p;
     struct op *o;
 
-    p = alloc(struct pnode);
+    p = alloc_pnode();
+
     for (o = uops; o->op_name; o++)
         if (o->op_num == op)
             break;
@@ -243,15 +243,11 @@ PP_mkunode(int op, struct pnode *arg)
                 op);
 
     p->pn_op = o;
-    p->pn_use = 0;
-    p->pn_value = NULL;
-    p->pn_name = NULL;  /* sjb */
-    p->pn_func = NULL;
+
     p->pn_left = arg;
     if (p->pn_left)
         p->pn_left->pn_use++;
-    p->pn_right = NULL;
-    p->pn_next = NULL;
+
     return (p);
 }
 
@@ -314,17 +310,14 @@ PP_mkfnode(const char *func, struct pnode *arg)
         return p;
     }
 
-    p = alloc(struct pnode);
-    p->pn_use = 0;
-    p->pn_name = NULL;
-    p->pn_value = NULL;
+    p = alloc_pnode();
+
     p->pn_func = f;
-    p->pn_op = NULL;
+
     p->pn_left = arg;
     if (p->pn_left)
         p->pn_left->pn_use++;
-    p->pn_right = NULL;
-    p->pn_next = NULL;
+
     return (p);
 }
 
@@ -337,16 +330,11 @@ PP_mknnode(double number)
     struct pnode *p;
     struct dvec *v;
 
-    p = alloc(struct pnode);
+    p = alloc_pnode();
     v = alloc(struct dvec);
     ZERO(v, struct dvec);
-    p->pn_use = 0;
-    p->pn_name = NULL;
+
     p->pn_value = v;
-    p->pn_func = NULL;
-    p->pn_op = NULL;
-    p->pn_left = p->pn_right = NULL;
-    p->pn_next = NULL;
 
     /* We don't use printnum because it screws up PP_mkfnode above. We have
      * to be careful to deal properly with node numbers that are quite
@@ -375,13 +363,7 @@ PP_mksnode(const char *string)
     struct dvec *v, *nv, *vs, *newv = NULL, *end = NULL;
     struct pnode *p;
 
-    p = alloc(struct pnode);
-    p->pn_use = 0;
-    p->pn_name = NULL;
-    p->pn_func = NULL;
-    p->pn_op = NULL;
-    p->pn_left = p->pn_right = NULL;
-    p->pn_next = NULL;
+    p = alloc_pnode();
     v = vec_get(string);
     if (v == NULL) {
         nv = alloc(struct dvec);
@@ -390,7 +372,6 @@ PP_mksnode(const char *string)
         nv->v_name = copy(string);
         return (p);
     }
-    p->pn_value = NULL;
 
     /* It's not obvious that we should be doing this, but... */
     for (vs = v; vs; vs = vs->v_link2) {
@@ -413,6 +394,27 @@ PP_mksnode(const char *string)
        after execution of only a single command like plot @xxx[par] or write. We need to
        monitor if this will lead to excessive memory usage. h_vogt 090221 */
     return (p);
+}
+
+
+struct pnode *
+alloc_pnode(void)
+{
+    struct pnode *pn = alloc(struct pnode);
+
+    pn->pn_use = 0;
+    pn->pn_name = NULL;
+
+    // fixme, thats actually a union ...
+    pn->pn_value = NULL;
+    pn->pn_func = NULL;
+    pn->pn_op = NULL;
+
+    pn->pn_left = NULL;
+    pn->pn_right = NULL;
+    pn->pn_next = NULL;
+
+    return pn;
 }
 
 
