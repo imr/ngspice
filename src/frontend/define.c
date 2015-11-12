@@ -76,6 +76,9 @@ com_define(wordlist *wlist)
 
     /* If that's all, then print the definition. */
     if (wl == NULL) {
+        s = strchr(buf, '(');
+        if (s)
+            *s = '\0';
         prdefs(buf);
         return;
     }
@@ -192,13 +195,6 @@ static void
 prdefs(char *name)
 {
     struct udfunc *udf;
-    char *s;
-
-    if (name) {
-        s = strchr(name, '(');
-        if (s)
-            *s = '\0';
-    }
 
     if (name && *name) {    /* You never know what people will do */
         for (udf = udfuncs; udf; udf = udf->ud_next)
