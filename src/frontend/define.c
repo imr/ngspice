@@ -300,44 +300,35 @@ ft_substdef(const char *name, struct pnode *args)
 static struct pnode *
 trcopy(struct pnode *tree, char *arg_names, struct pnode *args)
 {
-    struct pnode *pn;
-    struct dvec *d;
-    char *s;
-    int i;
-
     if (tree->pn_value) {
 
-        d = tree->pn_value;
+        struct dvec *d = tree->pn_value;
 
         if ((d->v_length == 0) && strcmp(d->v_name, "list")) {
+
             /* Yep, it's a formal parameter. Substitute for it.
              * IMPORTANT: we never free parse trees, so we
              * needn't worry that they aren't trees here.
              */
-            s = arg_names;
-            i = 1;
-            while (*s) {
+
+            char *s = arg_names;
+            int i;
+
+            for (i = 1; *s; i++) {
                 if (eq(s, d->v_name))
-                    break;
-                else
-                    i++;
+                    return ntharg(i, args);
                 s = strchr(s, '\0') + 1;
             }
 
-            if (*s)
-                return ntharg(i, args);
-            else
-                return tree;
-
-        } else {
-
             return tree;
-
         }
 
-    } else if (tree->pn_func) {
+        return tree;
+    }
 
-        pn = alloc_pnode();
+    if (tree->pn_func) {
+
+        struct pnode *pn = alloc_pnode();
 
         /* pn_func are pointers to a global constant struct */
         pn->pn_func = tree->pn_func;
@@ -345,9 +336,12 @@ trcopy(struct pnode *tree, char *arg_names, struct pnode *args)
         pn->pn_left = trcopy(tree->pn_left, arg_names, args);
         pn->pn_left->pn_use++;
 
-    } else if (tree->pn_op) {
+        return pn;
+    }
 
-        pn = alloc_pnode();
+    if (tree->pn_op) {
+
+        struct pnode *pn = alloc_pnode();
 
         /* pn_op are pointers to a global constant struct */
         pn->pn_op = tree->pn_op;
@@ -360,12 +354,11 @@ trcopy(struct pnode *tree, char *arg_names, struct pnode *args)
             pn->pn_right->pn_use++;
         }
 
-    } else {
-        fprintf(cp_err, "trcopy: Internal Error: bad parse node\n");
-        return NULL;
+        return pn;
     }
 
-    return pn;
+    fprintf(cp_err, "trcopy: Internal Error: bad parse node\n");
+    return NULL;
 }
 
 
