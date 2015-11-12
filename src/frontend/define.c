@@ -28,7 +28,7 @@ static void savetree(struct pnode *pn);
 static void prdefs(char *name);
 static void prtree(struct udfunc *ud, FILE *fp);
 static void prtree1(struct pnode *pn, FILE *fp);
-static struct pnode *trcopy(struct pnode *tree, char *args, struct pnode *nn);
+static struct pnode *trcopy(struct pnode *tree, char *arg_names, struct pnode *nn);
 static struct pnode *ntharg(int num, struct pnode *args);
 
 static struct udfunc *udfuncs = NULL;
@@ -304,7 +304,7 @@ ft_substdef(const char *name, struct pnode *args)
  */
 
 static struct pnode *
-trcopy(struct pnode *tree, char *args, struct pnode *nn)
+trcopy(struct pnode *tree, char *arg_names, struct pnode *nn)
 {
     struct pnode *pn;
     struct dvec *d;
@@ -320,7 +320,7 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
              * IMPORTANT: we never free parse trees, so we
              * needn't worry that they aren't trees here.
              */
-            s = args;
+            s = arg_names;
             i = 1;
             while (*s) {
                 if (eq(s, d->v_name))
@@ -348,7 +348,7 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
         /* pn_func are pointers to a global constant struct */
         pn->pn_func = tree->pn_func;
 
-        pn->pn_left = trcopy(tree->pn_left, args, nn);
+        pn->pn_left = trcopy(tree->pn_left, arg_names, nn);
         pn->pn_left->pn_use++;
 
     } else if (tree->pn_op) {
@@ -358,11 +358,11 @@ trcopy(struct pnode *tree, char *args, struct pnode *nn)
         /* pn_op are pointers to a global constant struct */
         pn->pn_op = tree->pn_op;
 
-        pn->pn_left = trcopy(tree->pn_left, args, nn);
+        pn->pn_left = trcopy(tree->pn_left, arg_names, nn);
         pn->pn_left->pn_use++;
 
         if (pn->pn_op->op_arity == 2) {
-            pn->pn_right = trcopy(tree->pn_right, args, nn);
+            pn->pn_right = trcopy(tree->pn_right, arg_names, nn);
             pn->pn_right->pn_use++;
         }
 
