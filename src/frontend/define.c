@@ -395,16 +395,16 @@ ntharg(int num, struct pnode *args)
 static int
 numargs(struct pnode *args)
 {
-    struct pnode *tp;
-    int arity = 0;
+    int arity;
 
-    if (args)
-        arity = 1;
+    if (!args)
+        return 0;
 
-    for (tp = args; tp && tp->pn_op && (tp->pn_op->op_num == PT_OP_COMMA); tp =
-             tp->pn_right)
-        arity++;
+    for (arity = 1; args; args = args->pn_right, arity++)
+        if (!(args->pn_op && (args->pn_op->op_num == PT_OP_COMMA)))
+            return arity;
 
+    // note: a trailing NULL pn_right will be counted too
     return arity;
 }
 
