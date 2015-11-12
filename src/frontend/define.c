@@ -261,11 +261,10 @@ prtree1(struct pnode *pn, FILE *fp)
 struct pnode *
 ft_substdef(const char *name, struct pnode *args)
 {
-    struct udfunc *udf;
+    struct udfunc *udf, *wrong_udf = NULL;
     struct pnode *tp;
     char *s;
-    int arity = 0, rarity = 0;
-    bool found = FALSE;
+    int arity = 0;
 
     if (args)
         arity = 1;
@@ -276,19 +275,16 @@ ft_substdef(const char *name, struct pnode *args)
 
     for (udf = udfuncs; udf; udf = udf->ud_next)
         if (eq(name, udf->ud_name)) {
-            if (arity == udf->ud_arity) {
+            if (arity == udf->ud_arity)
                 break;
-            } else {
-                found = TRUE;
-                rarity = udf->ud_arity;
-            }
+            wrong_udf = udf;
         }
 
     if (udf == NULL) {
-        if (found)
+        if (wrong_udf)
             fprintf(cp_err,
                     "Warning: the user-defined function %s has %d args\n",
-                    name, rarity);
+                    name, wrong_udf->ud_arity);
         return NULL;
     }
 
