@@ -1,3 +1,20 @@
+For compilation with visual studio,
+  you need the GNU bison parser generator.
+
+A ready for windows compiled variant can be downloaded as
+  win_flex_bison-latest.zip
+from
+  http://sourceforge.net/projects/winflexbison/files/
+
+Create the directory
+  ../../flex-bison
+relative from this directory right here, and unzip there.
+
+We will invoke the win_bison.exe file
+ in this directory during the visual studio compilation.
+
+--------------
+
 H. Vogt 31.10.09
 (Translation of some commands from German to English is required)
 Many more details of ngspice usage under Windows is described
