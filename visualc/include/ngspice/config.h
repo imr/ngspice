@@ -56,7 +56,7 @@
 #define HAVE_ACCESS 1
 
 /* Define to 1 if you have the `acosh' function. */
-/* undef HAVE_ACOSH */
+/* #undef HAVE_ACOSH */
 
 /* Define to 1 if you have `alloca', as a function or macro. */
 /* #undef HAVE_ALLOCA */
@@ -96,6 +96,7 @@
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 /* #undef HAVE_DIRENT_H */
+
 /* Define to 1 if you have the `dirname' function. */
 /* #undef HAVE_DIRNAME */
 
@@ -305,7 +306,7 @@
 /* Define to 1 if you have the `strtol' function. */
 #define HAVE_STRTOL 1
 
-/* Define to 1 if `tm_zone' is member of `struct tm'. */
+/* Define to 1 if `tm_zone' is a member of `struct tm'. */
 /* #undef HAVE_STRUCT_TM_TM_ZONE */
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
@@ -428,9 +429,6 @@
 
 /* Do not trigger unwanted traps by default */
 /* #undef NEWTRUNC */
-
-/* Define the build date */
-#define NGSPICEBUILDDATE "Mon Sep 06 23:06:55 GMT 2010"
 
 #ifdef CONFIG64
 /* Define the directory for executables */
