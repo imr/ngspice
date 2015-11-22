@@ -2,13 +2,18 @@ regression test temper-res-1.cir, TC1 TC2 and TCE
 
 * check res model TC1 TC2, and TCE parameter
 
-.model rtest r r=1000 tc1=2m tc2=30u tce=5m
-
 v1  1 0  dc 5v
-r1  1 0  rtest
+r1  1 0  1k tc1=2m tc2=30u
+
+* note: tce shall override tc1,tc2
+
+.model rtest r r=1000 tc1=2m tc2=30u tce=700m
 
 v2  2 0  dc 5v
-r2  2 0  1k tc1=2m tc2=30u tce=5m
+r2  2 0  rtest
+
+v3  3 0  dc 5v
+r3  3 0  1k tc1=2m tc2=30u tce=700m
 
 .control
 
@@ -18,26 +23,32 @@ dc temp 10 100 10.0
 
 let tc1 = 2m
 let tc2 = 30u
-let tce = 5m
+let tce = 700m
 
 let val1 = -v(1)/i(v1)
 let val2 = -v(2)/i(v2)
+let val3 = -v(3)/i(v3)
 
 let tdif = "temp-sweep" - 27.0
-let gold = 1000.0 * ((tc2 * tdif + tc1) * tdif + 1) * (1.01^(tce * tdif))
+let gold1 = 1000.0 * ((tc2 * tdif + tc1) * tdif + 1)
+let gold2 = 1000.0 * (1.01^(tce * tdif))
 
 * plot val1
-* plot val1/gold - 1
+* plot val1/gold1 - 1
 * plot val2
-* plot val2/gold - 1
+* plot val2/gold2 - 1
+* plot val3
+* plot val3/gold2 - 1
 
-let err1 = vecmax(abs(val1/gold - 1))
-let err2 = vecmax(abs(val2/gold - 1))
+let err1 = vecmax(abs(val1/gold1 - 1))
+let err2 = vecmax(abs(val2/gold2 - 1))
+let err3 = vecmax(abs(val3/gold2 - 1))
 
 echo "Note: err1 =" $&err1
 echo "Note: err2 =" $&err2
+echo "Note: err3 =" $&err3
 
-if err1 > 1e-14 or err2 > 1e-14
+if err1 > 1e-14 or err2 > 1e-14 or err3 > 1e-14
   echo "ERROR: test failed"
 else
   echo "INFO: success"
