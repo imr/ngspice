@@ -78,8 +78,10 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             else
                 tce = model->REStempCoeffe;
 
-            factor = ((((tc2 * difference) + tc1) * difference) + 1.0) *
-                pow(1.01, tce * difference);
+            if ((here->REStceGiven)||(model->REStceGiven))
+                factor = pow(1.01, tce * difference);
+            else
+                factor = (((tc2 * difference) + tc1) * difference) + 1.0;
 
             here -> RESconduct = (1.0/(here->RESresist * factor * here->RESscale));
 
