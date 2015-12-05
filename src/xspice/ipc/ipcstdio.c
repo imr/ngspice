@@ -65,7 +65,7 @@ Ipc_Status_t ipc_transport_send_line (
 }
 
 /*---------------------------------------------------------------------------*/
-Ipc_Status_t ipc_transport_terminate_server ()
+Ipc_Status_t ipc_transport_terminate_server (void)
 {
 return IPC_STATUS_OK;
 }
