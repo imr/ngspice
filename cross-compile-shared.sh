@@ -10,7 +10,8 @@
 # or with argument "64"
 #   to compile a 64 bit windows executable
 #
-# On debian gnu/linux you will need package `mingw-w64'
+# On debian gnu/linux you will need these packages:
+#    mingw-64 make automake libtool bison flex
 #
 # (compile "time ./cross-compile-shared.sh")
 # (compile "time ./cross-compile-shared.sh 64")
