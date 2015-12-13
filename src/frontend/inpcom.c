@@ -120,6 +120,7 @@ static char *inp_remove_ws(char *s);
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
 static bool inp_temper_compat(struct line *card);
+static void inp_meas_current(struct line *card);
 static void inp_dot_if(struct line *deck);
 static char *inp_modify_exp(char* expression);
 static struct func_temper *inp_new_func(char *funcname, char *funcbody, struct line *card,
@@ -576,6 +577,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         if (inp_compat_mode != COMPATMODE_SPICE3) {
             /* Do all the compatibility stuff here */
             working = cc->li_next;
+            inp_meas_current(working);
             /* E, G, L, R, C compatibility transformations */
             inp_compat(working);
             working = cc->li_next;
@@ -6040,5 +6042,208 @@ inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, in
                 }
             }
         }
+    }
+}
+
+
+/* storage for devices which get voltage source added */
+struct replace_currm
+{
+    struct line *s_start;
+    struct line *cline;
+    char *rtoken;
+    struct replace_currm *next;
+};
+
+
+/* Measure current in node 1 of all devices, e.g. I, B, F, and G.
+   I(V...) will be ignored, however H, E nonlinear voltage
+   sources may be converted later
+   to B source, therefore we need to add current measurement here.
+   First find all ocurrencies of i(XYZ), store their cards, then
+   search for XYZ, but only within respective subcircuit, or if
+   all happens at top level. Other hierarchy is ignored for now.
+   Replace I(XYZ) bx I(V_XYZ), add voltage source V_XYZ with
+   suitable extra nodes.
+*/
+
+static void
+inp_meas_current(struct line *deck)
+{
+    struct line *card, *subc_start = NULL, *subc_prev = NULL;
+    struct replace_currm *new_rep, *act_rep = NULL, *rep = NULL;
+    char *s, *t, *u, *v;
+    int skip_control = 0, subs = 0;
+
+    /* scan through deck and find i(xyz), replace by i(v_xyz) */
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*curr_line == '*')
+            continue;
+
+        if (*curr_line == '.') {
+            if (ciprefix(".subckt", curr_line)) {
+                subs++;
+                subc_prev = subc_start;
+                subc_start = card;
+            }
+            else if (ciprefix(".ends", curr_line)) {
+                subs--;
+                subc_start = subc_prev;
+            }
+            else
+                continue;
+        }
+
+        if (!strstr(curr_line, "i("))
+            continue;
+
+        s = v = stripWhiteSpacesInsideParens(curr_line);
+        while (s) {
+            /* i( may occur more than once in a line */
+            s = u = strstr(s, "i(");
+            /* we have found it, but not (in error) at the beginning of the line */
+            if (s && s > v) {
+                /* '{' if at beginning of expression */
+                if (is_arith_char(s[-1]) || s[-1] == '{') {
+                    s += 2;
+                    if (*s == 'v') {
+                        // printf("i(v...) found in\n%s\n not converted!\n\n", curr_line);
+                        continue;
+                    }
+                    else {
+                        char *beg_str, *new_str;
+                        get_r_paren(&u);
+                        /* token containing name of devices to be measured */
+                        t = copy_substring(s, --u);
+                        if (ft_ngdebug)
+                            printf("i(%s) found in\n%s\n\n", t, curr_line);
+
+                        /* new entry to the end of struct rep */
+                        new_rep = TMALLOC(struct replace_currm, 1);
+                        new_rep->s_start = subc_start;
+                        new_rep->next = NULL;
+                        new_rep->cline = card;
+                        new_rep->rtoken = t;
+                        if (act_rep) {
+                            act_rep->next = new_rep;
+                            act_rep = act_rep->next;
+                        }
+                        else
+                            rep = act_rep = new_rep;
+                        /* change line, convert i(XXX) to i(v_XXX) */
+                        beg_str = copy_substring(v, s);
+                        new_str = tprintf("%s%s%s", beg_str, "v_", s);
+                        if (ft_ngdebug)
+                            printf("converted to\n%s\n\n", new_str);
+                        tfree(curr_line);
+                        tfree(v);
+                        card->li_line = s = v = new_str;
+                        s++;
+                        tfree(beg_str);
+                    }
+                }
+                else
+                    s++;
+            }
+        }
+    }
+
+    /* return if we did not find any i( */
+    if (rep == NULL)
+      return;
+
+    /* scan through all the devices, search for xyz, modify node 1 by adding _vmeas,
+       add a line with zero voltage v_xyz, having original node 1 and modified node 1.
+       Do this within the top level or the same level of subcircuit only. */
+    new_rep = rep;
+    for (; rep; rep = rep->next) {
+        card = rep->s_start;
+        subs = 0;
+        if (card)
+            card = card->li_next;
+        else
+            card = deck;
+        for (; card; card = card->li_next) {
+            char *tok, *new_tok, *node1, *new_line;
+            char *curr_line = card->li_line;
+            /* exclude any command inside .control ... .endc */
+            if (ciprefix(".control", curr_line)) {
+                skip_control++;
+                continue;
+            }
+            else if (ciprefix(".endc", curr_line)) {
+                skip_control--;
+                continue;
+            }
+            else if (skip_control > 0) {
+                continue;
+            }
+
+            if (*curr_line == '*')
+                continue;
+
+            if (*curr_line == '.') {
+                if (ciprefix(".subckt", curr_line))
+                    subs++;
+                else if (ciprefix(".ends", curr_line))
+                    subs--;
+                else
+                    continue;
+            }
+            if (subs > 0)
+                continue;
+            /* We are at now top level or in top level of subcircuit
+               where i(xyz) has been found */
+            tok = gettok(&curr_line);
+            /* done when end of subcircuit is reached */
+            if (eq(".ends", tok) && rep->s_start)
+                break;
+            if (eq(rep->rtoken, tok)) {
+                node1 = gettok(&curr_line);
+                /* Add _vmeas only once to first device node.
+                   Continue if we already have modified device "tok" */
+                if (!strstr(node1, "_vmeas")) {
+                    new_line = tprintf("%s %s_vmeas %s", tok, node1, curr_line);
+                    tfree(card->li_line);
+                    card->li_line = new_line;
+                }
+
+                new_tok = tprintf("v_%s", tok);
+                /* We have already added a line v_xyz to the deck */
+                if (!ciprefix(new_tok, card->li_next->li_line)) {
+                    /* add new line */
+                    new_line = tprintf("%s %s %s_vmeas 0", new_tok, node1, node1);
+                    /* insert new_line after card->li_line */
+                    insert_new_line(card, new_line, card->li_linenum + 1, 0);
+                }
+                tfree(new_tok);
+                tfree(node1);
+            }
+            tfree(tok);
+        }
+    }
+
+    /* free rep */
+    while (new_rep) {
+        struct replace_currm *repn = new_rep->next;
+        tfree(new_rep->rtoken);
+        tfree(new_rep);
+        new_rep = repn;
     }
 }
