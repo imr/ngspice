@@ -23,7 +23,7 @@ extern void shared_exit(int status);
 char ErrorMessage[1024];
 
 
-void
+ATTRIBUTE_NORETURN void
 controlled_exit(int status)
 {
 #ifdef HAS_WINGUI

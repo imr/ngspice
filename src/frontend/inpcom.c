@@ -3489,7 +3489,6 @@ get_param_name(char *line)
     if (!equal_ptr) {
         fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line);
         controlled_exit(EXIT_FAILURE);
-        return NULL;
     }
 
     equal_ptr = skip_back_ws_(equal_ptr, line);
@@ -3879,7 +3878,6 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
 
     /* the terminating `.ends' deck wasn't found */
     controlled_exit(EXIT_FAILURE);
-    return NULL;
 }
 
 

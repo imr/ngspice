@@ -786,7 +786,6 @@ errordetect:
    fprintf(stderr,	"your maximum time step	is too large for tau.\n");
    fprintf(stderr,	"decrease max time step	in .tran card and try again\n");
    controlled_exit(0);
-   return(0);
 }
 
 
