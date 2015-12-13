@@ -460,10 +460,6 @@ EXTRA_DIST += spice.def
 if SHARED_MODULE
 lib_LTLIBRARIES = libngspice.la
 
-if SHWIN
-LIBS += -lpsapi
-endif
-
 libngspice_la_SOURCES = \
 	main.c \
 	conf.c \
