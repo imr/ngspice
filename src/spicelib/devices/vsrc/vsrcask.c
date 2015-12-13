@@ -107,6 +107,11 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                         -*(ckt->CKTrhsOld + here->VSRCbranch);
             }
             return(OK);
+#ifdef SHARED_MODULE
+        case VSRC_EXTERNAL:
+            /* Don't do anything */
+            return (OK);
+#endif
         default:
             return (E_BADPARM);
     }
