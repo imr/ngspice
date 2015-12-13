@@ -28,6 +28,9 @@ Todo:
 
 #include "ngspice/fteext.h"
 
+#ifdef SHARED_MODULE
+extern void shared_exit(int status);
+#endif
 
 extern bool ft_batchmode;
 
@@ -494,6 +497,12 @@ nupa_done(void)
        simulation has finished. */
 
     if (nerrors) {
+
+#ifdef SHARED_MODULE
+        fprintf(cp_err, "Numparam expansion errors: Problem with input file.\n");
+        shared_exit(EXIT_BAD);
+#endif
+
         printf(" Copies=%d Evals=%d Placeholders=%ld Symbols=%d Errors=%d\n",
                linecountS, evalcountS, placeholder, dictsize, nerrors);
         /* debug: ask if spice run really wanted */
