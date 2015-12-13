@@ -392,7 +392,7 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
 {
     char colorN[30] = "", colorstring[30] = "";
     char rgb[30], s_red[30] = "0x", s_green[30] = "0x", s_blue[30] = "0x";
-    int  red = 0, green = 0, blue = 0, scale = 1;
+    int  red = 0, green = 0, blue = 0, maxval = 1;
     int i;
     typedef struct { int red, green, blue;} COLOR;
     /* duplicated colors from src/frontend/plotting/x11.c in rgb-style */
@@ -434,15 +434,15 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
             sscanf(s_red, "%x", &red);
             sscanf(s_green, "%x", &green);
             sscanf(s_blue, "%x", &blue);
-            scale = (1 << (strlen(s_blue) - 2) * 4) - 1;
+            maxval = (1 << (strlen(s_blue) - 2) * 4) - 1;
             sprintf(colorstring, "%1.3f %1.3f %1.3f",
-                    (double) red/scale, (double) green/scale, (double) blue/scale);
+                    (double) red/maxval, (double) green/maxval, (double) blue/maxval);
             strcpy(pscolor, colorstring);
         }
     }
     if (colorid < 0 || colorid > 20) {
         internalerror("bad colorid inside PS_SelectColor");
-    } else if (scale == 1) {  /* colorN is not an rgbstring, use default color */
+    } else if (maxval == 1) {  /* colorN is not an rgbstring, use default color */
         sprintf(colorstring, "%1.3f %1.3f %1.3f", colors[colorid].red/255.0,
                 colors[colorid].green/255.0, colors[colorid].blue/255.0);
         strcpy(pscolor, colorstring);
