@@ -143,6 +143,12 @@ com_print(wordlist *wl)
 
     out_init();
     if (!col) {
+        if (cp_getvar("width", CP_NUM, &i))
+            width = i;
+        if (width < 60)
+            width = 60;
+        if (width > BSIZE_SP - 2)
+            buf = TREALLOC(char, buf, width + 1);
         for (v = vecs; v; v = v->v_link2) {
             char *basename = vec_basename(v);
             if (plotnames)
@@ -186,7 +192,7 @@ com_print(wordlist *wl)
                             ll += (int) strlen(buf);
                             ll = (ll + 7) / 8;
                             ll = ll * 8 + 1;
-                            if (ll > 60) {
+                            if (ll > width) {
                                 out_send("\n\t");
                                 ll = 9;
                             } else {
@@ -201,7 +207,7 @@ com_print(wordlist *wl)
                             ll += (int) strlen(buf);
                             ll = (ll + 7) / 8;
                             ll = ll * 8 + 1;
-                            if (ll > 60) {
+                            if (ll > width) {
                                 out_send("\n\t");
                                 ll = 9;
                             } else {
@@ -211,7 +217,7 @@ com_print(wordlist *wl)
                     out_send(")\n");
                 } //end if (v->v_length == 1)
             }  //end  if (v->v_rlength == 1)
-        }
+        }  // end for loop
     } else {    /* Print in columns. */
         if (cp_getvar("width", CP_NUM, &i))
             width = i;
