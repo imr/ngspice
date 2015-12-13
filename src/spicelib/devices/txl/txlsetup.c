@@ -63,7 +63,7 @@ static double c1, c2, c3, x1, x2, x3;
 static double A[3][4];
 
 /* exp.c */
-static double RdL, GdC, RG, tau, RC, GL;
+static double RG, tau, RC, GL;
 static double a0, a1, a2, a3, a4, a5;
 static double ep1, ep2, ep3, eq1, eq2, eq3;
 static double ec1, ec2, ec3, ex1, ex2, ex3;
@@ -739,6 +739,7 @@ static double exp_approx2(double st)
 static int 
 exp_pade(double R, double L, double G, double C, double l, TXLine *h)
 {
+   double RdL, GdC;
   
    tau = sqrt(L*C);
    RdL = R / L;
