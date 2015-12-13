@@ -325,19 +325,15 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
       // naive:
       //   d/d ternary_fcn(cond,exp1,exp2) --> ternary_fcn(cond, d/d exp1, d/d exp2)
       {
-        INPparseNode *arg1 = p->left;
-        INPparseNode *arg2 = p->right->left;
-        INPparseNode *arg3 = p->right->right;
-
 //        extern void printTree(INPparseNode *);
 //
 //        printf("debug: %s, PT_TERN: ", __func__);
 //        printTree(p);
 //        printf("\n");
 
-        newp = mkb(PT_TERN, arg1, mkb(PT_COMMA,
-                                      PTdifferentiate(arg2, varnum),
-                                      PTdifferentiate(arg3, varnum)));
+        newp = mkb(PT_TERN, p->left, mkb(PT_COMMA,
+                                         PTdifferentiate(p->right->left, varnum),
+                                         PTdifferentiate(p->right->right, varnum)));
 
 //        printf("debug, %s, returns; ", __func__);
 //        printTree(newp);
