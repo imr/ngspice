@@ -1503,7 +1503,7 @@ ATTRIBUTE_NORETURN void shared_exit(int status)
         ngexit(status, FALSE, coquit, ng_ident, userptr);
         // finish and exit the worker thread
 #ifdef HAVE_LIBPTHREAD
-        pthread_exit(1);
+        pthread_exit(NULL);
 #elif defined _MSC_VER || defined __MINGW32__
         _endthreadex(1);
 #endif
