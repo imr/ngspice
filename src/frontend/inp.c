@@ -562,7 +562,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                    available in .control section, in plot 'const' */
                 if (ciprefix(".csparam", dd->li_line)) {
                     wordlist *wlist = NULL;
-                    wordlist *wl = NULL;
                     char *cstoken[3];
                     int i;
                     s = dd->li_line;
@@ -573,8 +572,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
                     cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
                     cstoken[2] = gettok(&s);
-                    for (i = 0; i < 3; i++)
-                        wl_append_word(&wlist, &wl, cstoken[i]);
+                    for (i = 3; --i >= 0;)
+                        wlist = wl_cons(cstoken[i], wlist);
                     com_let(wlist);
                     wl_free(wlist);
                 }
