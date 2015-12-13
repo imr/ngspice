@@ -541,7 +541,7 @@ nupa_scan(char *s, int linenum, int is_subckt)
  * Dump the contents of a symbol table.
  * ----------------------------------------------------------------- */
 static void
-dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *cp_out)
+dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
 {
     char *name;                 /* current symbol */
     entry_t *entry;             /* current entry */
@@ -556,7 +556,7 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *cp_out)
             spice_dstring_reinit(& dico->lookup_buf);
             scopy_lower(& dico->lookup_buf, entry->symbol);
             name = spice_dstring_value(& dico->lookup_buf);
-            fprintf(cp_out, "       ---> %s = %g\n", name, entry->vl);
+            fprintf(fp, "       ---> %s = %g\n", name, entry->vl);
             spice_dstring_free(& dico->lookup_buf);
         }
     }
@@ -567,7 +567,7 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *cp_out)
  * Dump the contents of the symbol table.
  * ----------------------------------------------------------------- */
 void
-nupa_list_params(FILE *cp_out)
+nupa_list_params(FILE *fp)
 {
     int depth;                  /* nested subcircit depth */
     dico_t *dico;               /* local copy for speed */
@@ -578,16 +578,16 @@ nupa_list_params(FILE *cp_out)
         return;
     }
 
-    fprintf(cp_out, "\n\n");
+    fprintf(fp, "\n\n");
 
     for (depth = dico->stack_depth; depth >= 0; depth--) {
         NGHASHPTR htable_p = dico->symbols[depth];
         if (htable_p) {
             if (depth > 0)
-                fprintf(cp_out, " local symbol definitions for: %s\n", dico->inst_name[depth]);
+                fprintf(fp, " local symbol definitions for: %s\n", dico->inst_name[depth]);
             else
-                fprintf(cp_out, " global symbol definitions:\n");
-            dump_symbol_table(dico, htable_p, cp_out);
+                fprintf(fp, " global symbol definitions:\n");
+            dump_symbol_table(dico, htable_p, fp);
         }
     }
 }
