@@ -61,7 +61,7 @@ NON-STANDARD FEATURES
 
 /*=== CONSTANTS ========================*/
 
-#define MAX_STRING_SIZE 200
+#define MAX_STRING_SIZE 1024
 
 
 /*=== MACROS ===========================*/
