@@ -310,7 +310,7 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     has_shared_module=true
     AC_DEFINE([SHARED_MODULE], [1], [shared ngspice module])
     case $host_os in
-        *mingw* )
+        *mingw* | *msys* )
             has_shwin=true
             has_no_help=true
             ;;
@@ -346,7 +346,7 @@ elif test "x$with_tcl" != x  &&  test "x$with_tcl" != xno ; then
     has_tcl_module=true
     AC_DEFINE([TCL_MODULE], [1], [Tcl Module])
     case $host_os in
-        *mingw* )
+        *mingw* | *msys* )
             has_tclwin=true
             has_no_help=true
             AC_DEFINE([HAS_TCLWIN], [1], [Tcl Windows])
@@ -878,7 +878,7 @@ if test "x$enable_xspice" = xyes; then
     AC_MSG_RESULT([X-Spice features included])
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
     case $host_os in
-        *mingw* )
+        *mingw* | *msys* )
             AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
             XSPICEDLLIBS=""
             ;;
