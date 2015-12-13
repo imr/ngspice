@@ -1807,13 +1807,12 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
     fprintf(stderr, "..1.. %e\n", x*x*x+a1*x*x+a2*x+a3);
      */
     {
-        double x1;
+        double x_backup = x;
         int i = 0;
-        x1 = x;
         for (t = root3(a1, a2, a3, x); ABS(t-x) > 5.0e-4;
                 t = root3(a1, a2, a3, x))
             if (++i == 32) {
-                x = x1;
+                x = x_backup;
                 break;
             } else
                 x = t;
