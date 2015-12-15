@@ -46,7 +46,7 @@ static NODE 		*NEW_node(void);
 /*static VI_list_txl *new_vi_txl();*/
 
 NODE     		*node_tab = NULL;
-NDnamePt 		ndn = NULL;
+NDnamePt 		ndn_btree = NULL;
 VI_list_txl 	*pool_vi_txl = NULL;
 
 /* pade.c */
@@ -1057,7 +1057,7 @@ static NODE
    NDnamePt n;
    NODE    *p;
 
-   n = insert_ND(name, &ndn);
+   n = insert_ND(name, &ndn_btree);
    if (n->nd == NULL) {
       p = NEW_node();
       p->name = n;

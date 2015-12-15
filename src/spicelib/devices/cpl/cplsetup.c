@@ -118,7 +118,7 @@ static int find_roots(double, double, double, double*, double*, double*);
 static NODE* insert_node(char*);
 static NDnamePt insert_ND(char*, NDnamePt*);
 static NODE* NEW_node(void);
-static NDnamePt ndn;
+static NDnamePt ndn_btree;
 static NODE *node_tab;
 #define epsi_mult 1e-28
 
@@ -1878,7 +1878,7 @@ insert_node(char *name)
     NDnamePt n;
     NODE    *p;
 
-    n = insert_ND(name, &ndn);
+    n = insert_ND(name, &ndn_btree);
     if (n->nd == NULL) {
         p = NEW_node();
         p->name = n;
