@@ -898,6 +898,12 @@ add_bkpt(void)
 }
 
 
+/* use the original vprintf() in the rest of this file
+ *   instead of the redirected variant
+ */
+#undef vfprintf
+
+
 /*------------------------------------------------------*/
 /* Redefine the vfprintf() functions for callback       */
 /*------------------------------------------------------*/

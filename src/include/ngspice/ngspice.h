@@ -283,15 +283,20 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #elif defined SHARED_MODULE
 
 #include <errno.h>
+#include <stdarg.h>
 
 extern int sh_printf(const char *format, ...);
 extern int sh_fprintf(FILE *fd, const char *format, ...);
+extern int sh_vfprintf(FILE *fd, const char *format, va_list args);
 extern int sh_fputs(const char *input, FILE *fd);
 extern int sh_fputc(int input, FILE *fd);
 extern int sh_putc(int input, FILE *fd);
 extern void SetAnalyse(char *analyse, int percent);
 
 #define HAS_PROGREP
+
+#undef vfprintf
+#define vfprintf sh_vfprintf
 
 #undef printf
 #define printf sh_printf
