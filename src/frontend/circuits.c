@@ -22,8 +22,8 @@ struct circ *ft_circuits = NULL;
 /* Add a circuit to the circuit list */
 
 void
-ft_newcirc(struct circ *ckt)
+ft_newcirc(struct circ *ci)
 {
-    ckt->ci_next = ft_circuits;
-    ft_circuits = ckt;
+    ci->ci_next = ft_circuits;
+    ft_circuits = ci;
 }

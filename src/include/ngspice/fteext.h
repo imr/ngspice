@@ -43,7 +43,7 @@ extern int ft_getSaves(struct save_info **);
 extern struct circ *ft_curckt;
 extern struct circ *ft_circuits;
 extern struct subcirc *ft_subcircuits;
-extern void ft_newcirc(struct circ *ckt);
+extern void ft_newcirc(struct circ *ci);
 
 /* clip.c */
 

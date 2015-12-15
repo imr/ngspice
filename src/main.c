@@ -331,12 +331,12 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
 
 /* -------------------------------------------------------------------------- */
 bool
-if_tranparams(struct circ *ckt, double *start, double *stop, double *step)
+if_tranparams(struct circ *ci, double *start, double *stop, double *step)
 {
     NG_IGNORE(step);
     NG_IGNORE(stop);
     NG_IGNORE(start);
-    NG_IGNORE(ckt);
+    NG_IGNORE(ci);
 
     return FALSE;
 }
