@@ -29,7 +29,7 @@ Todo:
 #include "ngspice/fteext.h"
 
 #ifdef SHARED_MODULE
-extern void shared_exit(int status);
+extern ATTRIBUTE_NORETURN void shared_exit(int status);
 #endif
 
 extern bool ft_batchmode;

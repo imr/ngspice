@@ -185,7 +185,7 @@ int sh_ExecutePerLoop(void);
 double getvsrcval(double, char*);
 int sh_vecinit(runDesc *run);
 
-void shared_exit(int status);
+ATTRIBUTE_NORETURN void shared_exit(int status);
 
 void sighandler_sharedspice(int num);
 
@@ -1450,7 +1450,7 @@ void SetAnalyse(
 
 /* a dll or shared library should never exit, if loaded dynamically,
    but ask for graceful shutdown (e.g. being detached) via a callback function */
-void shared_exit(int status)
+ATTRIBUTE_NORETURN void shared_exit(int status)
 {
     /* alert caller to detach dll (if we are in the main thread),
     or detach after a short sleep, if immediate is true, and we are

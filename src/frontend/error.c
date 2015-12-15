@@ -16,7 +16,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #ifdef HAS_WINGUI
 void winmessage(char *new_msg);
 #elif defined SHARED_MODULE
-extern void shared_exit(int status);
+extern ATTRIBUTE_NORETURN void shared_exit(int status);
 #endif
 
 /* global error message buffer */
