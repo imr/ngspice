@@ -966,12 +966,12 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         goto quit;
     }
 
-    /* See if there is one type we can give for the y scale... */
-    for (j = vecs->v_type, d = vecs->v_link2; d; d = d->v_link2)
-        if (d->v_type != j) {
-            j = SV_NOTYPE;
+    /* See if there is one common v_type we can give for the y scale... */
+    for (d = vecs->v_link2; d; d = d->v_link2)
+        if (d->v_type != vecs->v_type)
             break;
-        }
+
+    j = d ? SV_NOTYPE : vecs->v_type;
 
 #ifndef X_DISPLAY_MISSING
     if (devname && eq(devname, "xgraph")) {
