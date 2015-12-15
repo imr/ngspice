@@ -13,21 +13,26 @@
 void
 com_ghelp(wordlist *wl)
 {
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) || defined(X_DISPLAY_MISSING)
+
+    NG_IGNORE(wl);
+
+    printf("Internal help is no longer avaialable!\n"
+           "Please check for the actual ngspice manual at\n"
+           "  http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n"
+           "or for help on spice3 at\n"
+           "  http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
+    return;
+
+#else
+
     char *npath;
     char *path = Help_Path;
     char buf[BSIZE_SP];
+
 #ifndef X_DISPLAY_MISSING
     int i;
 #endif /* X_DISPLAY_MISSING 1  */
-
-#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) || defined(X_DISPLAY_MISSING)
-    printf("Internal help is no longer avaialable!\n");
-    printf("Please check for the actual ngspice manual at\n");
-    printf("http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n");
-    printf("or for help on spice3 at\n");
-    printf("http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
-    return;
-#else
 
     if (cp_getvar("helppath", CP_STRING, buf))
         path = copy(buf);
@@ -42,6 +47,7 @@ com_ghelp(wordlist *wl)
         com_help(wl);
         return;
     }
+
 #ifndef X_DISPLAY_MISSING /* 1 */
     path = npath;
     if (cp_getvar("helpregfont", CP_STRING, buf))
@@ -82,5 +88,6 @@ com_ghelp(wordlist *wl)
 #else
     com_help(wl);
 #endif /* X_DISPLAY_MISSING 1  */
+
 #endif
 }
