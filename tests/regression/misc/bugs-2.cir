@@ -17,6 +17,9 @@ let gold = 500m
 let bar = foo[2]
 let baz = @v1[dc][2]
 
+let two = 2
+let argh = foo[two]
+
 let fail_count = 0
 
 if bar <> 0.5
@@ -26,6 +29,11 @@ end
 
 if baz <> 0.5
   echo "ERROR: baz = $&baz should be 0.5"
+  let fail_count = fail_count + 1
+end
+
+if argh <> 0.5
+  echo "ERROR: bar = $&argh should be 0.5"
   let fail_count = fail_count + 1
 end
 

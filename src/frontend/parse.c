@@ -680,8 +680,9 @@ PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
                     atsign = 1;
                 else if (!atsign && *sbuf == '[')
                     break;
-                else if (atsign && *sbuf == ']') {
-                    sbuf++;
+                else if (*sbuf == ']') {
+                    if (atsign)
+                        sbuf++;
                     break;
                 }
 
