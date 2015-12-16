@@ -177,7 +177,6 @@ extern void initw(void);
 static runDesc *cur_run;
 
 void sh_stdflush(FILE *f);
-int  sh_vfprintf(FILE *f, const char *fmt, va_list args);
 
 int sh_fputsll(const char *input, FILE* outf);
 
