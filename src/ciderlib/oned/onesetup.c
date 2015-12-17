@@ -131,7 +131,7 @@ ONEcopyBCinfo(ONEdevice *pDevice, ONEelem *pElem, BDRYcard *bdry, int index)
   /* Now add surface recombination. */
   /* Compute semiconductor length around this node. */
   length = 0.0;
-  for (eIndex = 0; eIndex <= 3; eIndex++) {
+  for (eIndex = 0; eIndex <= 1; eIndex++) {
     pNElem = pNode->pElems[eIndex];
     if ((pNElem != NULL) && (pElem->elemType == SEMICON)) {
       length += 0.5 * pElem->dx;
