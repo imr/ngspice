@@ -624,7 +624,6 @@ DCpss(CKTcircuit *ckt,
     case SHOOTING:
     {
         double offset, interval, nextBreak ;
-        int i ;
         /* Calculation of error norms of RHS solution of every accepted nextTime */
         err = 0 ;
         for (i = 0 ; i < msize ; i++)
