@@ -73,7 +73,6 @@ CKTdisto (CKTcircuit *ckt, int mode)
     int icode;
     double mag=0.0;
     double phase=0.0;
-    int size;
 
     size = SMPmatSize(ckt->CKTmatrix);
     for (i=0;i<=size;i++) {
