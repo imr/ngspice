@@ -4,6 +4,7 @@
 #include "ngspice/ngspice.h"
 #include "ngspice/fteext.h"
 #include "ngspice/cpextern.h"
+#include "ngspice/sim.h"
 #include "ngspice/stringskip.h"
 
 #include "com_let.h"
@@ -130,10 +131,65 @@ com_let(wordlist *wl)
     }
 
     /* evaluate rhs */
+
+    /* first we check for
+    let xyz = []   or
+    let xyz = [3 -5.7 0.6]
+    If found, xyz is created or overwritten by a new vector, either empty
+    with length 0, or with length and values given by [3 -5.7 0.6] */
+    char *br = skip_ws(rhs);
+    if (*br == '[') {
+        /* we may have [...] */
+        char *cr, *tok;
+        int ii = 0, error;
+        double *doublevec = NULL;
+        br++;
+        if ((cr = strchr(rhs, ']')) != NULL) {
+            *cr = '\0';
+            tok = gettok(&br);
+            if (tok == NULL) {
+                /* We have [] and generate an empty vector */
+                /* remove the old vector 'p' */
+                vec_remove(p);
+                /* create and assign the new vector 'p' */
+                n = dvec_alloc(copy(p),
+                               SV_NOTYPE,
+                               VF_REAL | VF_PERMANENT,
+                               0, NULL);
+                vec_new(n);
+                tfree(p);
+                return;
+            }
+            else {
+                while (tok != NULL) {
+                    ii++;
+                    doublevec = TREALLOC(double, doublevec, ii);
+                    doublevec[ii - 1] = INPevaluate(&tok, &error, 1);
+                    if (error) {
+                        fprintf(cp_err, "Cannot evaluate token %s]\n", rhs);
+                        tfree(p);
+                        return;
+                    }
+                    tok = gettok(&br);
+                }
+                /* We have [ 2 -4 6.7 ] and generate corresponding vector */
+                /* remove the old vector 'p' */
+                vec_remove(p);
+                /* create and assign the new vector 'p' */
+                n = dvec_alloc(copy(p),
+                               SV_NOTYPE,
+                               VF_REAL | VF_PERMANENT,
+                               ii, doublevec);
+                vec_new(n);
+                tfree(p);
+                return;
+            }
+        }
+    }
     fake_wl.wl_word = rhs;
     names = ft_getpnames(&fake_wl, TRUE);
     if (names == NULL) {
-        /* XXX error message */
+        /* error message from ft_getpnames() */
         tfree(p);
         return;
     }
