@@ -123,8 +123,6 @@ struct _keyed {
 };
 
 
-#define NEWGRAPH TMALLOC(GRAPH, 1)
-
 #define rnd(x)  (int) ((x)+0.5)
 
 #endif

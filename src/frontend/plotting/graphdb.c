@@ -33,8 +33,6 @@ typedef struct listgraph {
     struct listgraph *next;
 } LISTGRAPH;
 
-#define NEWLISTGRAPH TMALLOC(LISTGRAPH, 1)
-
 #define NUMGBUCKETS 16
 
 typedef struct gbucket {
@@ -64,7 +62,7 @@ NewGraph(void)
     LISTGRAPH *list;
     int BucketId = RunningId % NUMGBUCKETS;
 
-    if ((list = NEWLISTGRAPH) == NULL) {
+    if ((list = TMALLOC(LISTGRAPH, 1)) == NULL) {
         internalerror("can't allocate a listgraph");
         return (NULL);
     }
@@ -244,7 +242,6 @@ typedef struct gcstack {
 } GCSTACK;
 
 GCSTACK *gcstacktop;
-#define NEWGCSTACK TMALLOC(GCSTACK, 1)
 
 
 /* note: This Push and Pop has tricky semantics.
@@ -255,7 +252,7 @@ GCSTACK *gcstacktop;
 void
 PushGraphContext(GRAPH *graph)
 {
-    GCSTACK *gcstack = NEWGCSTACK;
+    GCSTACK *gcstack = TMALLOC(GCSTACK, 1);
 
     if (!gcstacktop) {
         gcstacktop = gcstack;
