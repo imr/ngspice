@@ -76,7 +76,7 @@ DOPnewCard(GENcard **inCard, GENmodel *inModel)
     DOPcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( DOPcard );
+    newCard = TMALLOC(DOPcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

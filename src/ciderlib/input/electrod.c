@@ -47,7 +47,7 @@ ELCTnewCard(GENcard **inCard, GENmodel *inModel)
     ELCTcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( ELCTcard );
+    newCard = TMALLOC(ELCTcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

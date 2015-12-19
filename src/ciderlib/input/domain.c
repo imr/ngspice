@@ -59,7 +59,7 @@ DOMNnewCard(GENcard **inCard, GENmodel *inModel)
     DOMNcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( DOMNcard );
+    newCard = TMALLOC(DOMNcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

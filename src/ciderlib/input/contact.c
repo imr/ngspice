@@ -42,7 +42,7 @@ CONTnewCard(GENcard **inCard, GENmodel *inModel)
     CONTcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( CONTcard );
+    newCard = TMALLOC(CONTcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

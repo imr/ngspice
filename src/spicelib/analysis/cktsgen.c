@@ -22,7 +22,7 @@ sgen_init(CKTcircuit *ckt, int is_dc)
 {
 	sgen	*sg;
 
-	sg = NEW(sgen);
+	sg = TMALLOC(sgen, 1);
 	sg->param = 99999;
 	sg->is_instparam = 0;
 	sg->dev = -1;

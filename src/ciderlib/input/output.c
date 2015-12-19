@@ -91,7 +91,7 @@ OUTPnewCard(GENcard **inCard, GENmodel *inModel)
 
     tmpCard = model->GENoutputs;
     if (!tmpCard) { /* First in list */
-        newCard = NEW( OUTPcard );
+        newCard = TMALLOC(OUTPcard, 1);
         if (!newCard) {
             *inCard = NULL;
             return(E_NOMEM);

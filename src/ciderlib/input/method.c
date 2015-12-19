@@ -49,7 +49,7 @@ METHnewCard(GENcard **inCard, GENmodel *inModel)
 
     tmpCard = model->GENmethods;
     if (!tmpCard) { /* First in list */
-        newCard = NEW( METHcard );
+        newCard = TMALLOC(METHcard, 1);
         if (!newCard) {
             *inCard = NULL;
             return(E_NOMEM);

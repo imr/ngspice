@@ -60,7 +60,7 @@ XMSHnewCard(GENcard **inCard, GENmodel *inModel)
     MESHcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( MESHcard );
+    newCard = TMALLOC(MESHcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);
@@ -86,7 +86,7 @@ YMSHnewCard(GENcard **inCard, GENmodel *inModel)
     MESHcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( MESHcard );
+    newCard = TMALLOC(MESHcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

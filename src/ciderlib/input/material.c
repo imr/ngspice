@@ -102,7 +102,7 @@ MATLnewCard(GENcard **inCard, GENmodel *inModel)
     MATLcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( MATLcard );
+    newCard = TMALLOC(MATLcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

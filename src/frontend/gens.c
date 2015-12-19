@@ -30,7 +30,7 @@ dgen_init(CKTcircuit *ckt, wordlist *wl, int nomix, int flag, int model)
 
     NG_IGNORE(nomix);
 
-    dg = NEW(dgen);
+    dg = TMALLOC(dgen, 1);
     dg->ckt = ckt;
     dg->instance = NULL;
     dg->model = NULL;

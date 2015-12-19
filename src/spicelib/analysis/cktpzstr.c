@@ -234,7 +234,7 @@ PZeval(int strat, PZtrial **set, PZtrial **new_trial_p)
     int		error;
     PZtrial	*new_trial;
 
-    new_trial = NEW(PZtrial);
+    new_trial = TMALLOC(PZtrial, 1);
     new_trial->multiplicity = 0;
     new_trial->count = 0;
     new_trial->seq_num = Seq_Num++;

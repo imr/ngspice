@@ -61,7 +61,7 @@ MODLnewCard(GENcard **inCard, GENmodel *inModel)
 
     tmpCard = model->GENmodels;
     if (!tmpCard) { /* First in list */
-        newCard = NEW( MODLcard );
+        newCard = TMALLOC(MODLcard, 1);
         if (!newCard) {
             *inCard = NULL;
             return(E_NOMEM);

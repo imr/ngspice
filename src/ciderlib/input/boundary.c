@@ -67,7 +67,7 @@ BDRYnewCard(GENcard **inCard, GENmodel *inModel)
     BDRYcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( BDRYcard );
+    newCard = TMALLOC(BDRYcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);

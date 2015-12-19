@@ -68,7 +68,7 @@ OPTNnewCard(GENcard **inCard, GENmodel *inModel)
 
     tmpCard = model->GENoptions;
     if (!tmpCard) { /* First in list */
-        newCard = NEW( OPTNcard );
+        newCard = TMALLOC(OPTNcard, 1);
         if (!newCard) {
             *inCard = NULL;
             return(E_NOMEM);

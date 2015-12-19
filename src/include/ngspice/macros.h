@@ -49,8 +49,6 @@
         return (CODE);                                        \
     } while(0)
 
-#define	NEW(TYPE)	(TMALLOC(TYPE, 1))
-
 
 #define	R_NORM(A,B) {					      \
 	if ((A) == 0.0) {				      \

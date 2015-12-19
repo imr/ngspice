@@ -55,7 +55,7 @@ MOBnewCard(GENcard **inCard, GENmodel *inModel)
     MOBcard *tmpCard, *newCard;
     GENnumModel *model = (GENnumModel *)inModel;
 
-    newCard = NEW( MOBcard );
+    newCard = TMALLOC(MOBcard, 1);
     if (!newCard) {
         *inCard = NULL;
         return(E_NOMEM);
