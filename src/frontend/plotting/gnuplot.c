@@ -47,8 +47,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 {
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
-    double xval, yval, extrange;
-    int i, numVecs, linewidth, err, terminal_type;
+    double xval, yval, prev_xval, extrange;
+    int i, dir, numVecs, linewidth, err, terminal_type;
     bool xlog, ylog, nogrid, markers;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
@@ -248,6 +248,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     (void) fclose(file);
 
     /* Write out the data and setup arrays */
+    dir = 0;
+    prev_xval = NAN;
     for (i = 0; i < scale->v_length; i++) {
         for (v = vecs; v; v = v->v_link2) {
             scale = v->v_scale;
@@ -258,7 +260,21 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             yval = isreal(v) ?
                    v->v_realdata[i] : realpart(v->v_compdata[i]);
 
+            if (i > 0 && scale->v_plot && scale->v_plot->pl_scale == scale) {
+                if (dir * (xval - prev_xval) < 0) {
+                    /* direction reversal, start a new graph */
+                    fprintf(file_data, "\n");
+                    dir = 0;
+                } else if (!dir && xval > prev_xval) {
+                    dir = 1;
+                } else if (!dir && xval < prev_xval) {
+                    dir = -1;
+                }
+            }
+
             fprintf(file_data, "%e %e ", xval, yval);
+
+            prev_xval = xval;
         }
         fprintf(file_data, "\n");
     }
