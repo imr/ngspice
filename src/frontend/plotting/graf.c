@@ -38,8 +38,8 @@ static char *getitright(char *buf, double num);
 
 /* for legends, set in gr_start, reset in gr_iplot and gr_init */
 static int plotno;
-static int curcolor = 1;        /* for assigning unique colors */
-static int curlst = 0;          /* for assigning line styles */
+static int curcolor;        /* for assigning unique colors */
+static int curlst;          /* for assigning line styles */
 
 /* invariant:  currentgraph contains the current graph */
 
