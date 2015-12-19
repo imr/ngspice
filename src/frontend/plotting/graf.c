@@ -369,9 +369,7 @@ gr_start_internal(struct dvec *dv, bool copyvec)
     currentgraph->plotdata = link;
 
     /* Put the legend entry on the screen. */
-    drawlegend(currentgraph, cur.plotno, dv);
-
-    cur.plotno++;
+    drawlegend(currentgraph, cur.plotno++, dv);
 }
 
 
@@ -554,8 +552,7 @@ gr_redraw(GRAPH *graph)
     cur.plotno = 0;
     for (link = graph->plotdata; link; link = link->next) {
         /* redraw legend */
-        drawlegend(graph, cur.plotno, link->vector);
-        cur.plotno++;
+        drawlegend(graph, cur.plotno++, link->vector);
 
         /* replot data
            if onevalue, pass it a NULL scale
@@ -643,9 +640,9 @@ iplot(struct plot *pl, int id)
         for (v = pl->pl_dvecs; v; v = v->v_next)
             if (v->v_flags & VF_PLOT) {
                 lims = ft_minmax(v, TRUE);
-                if (lims[0] < ylims[0])
+                if (ylims[0] > lims[0])
                     ylims[0] = lims[0];
-                if (lims[1] > ylims[1])
+                if (ylims[1] < lims[1])
                     ylims[1] = lims[1];
                 if (!yl)
                     yl = v->v_name;
