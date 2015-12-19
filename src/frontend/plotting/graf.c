@@ -37,9 +37,11 @@ static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode);
 static char *getitright(char *buf, double num);
 
 /* for legends, set in gr_start, reset in gr_iplot and gr_init */
-static int plotno;
-static int curcolor;        /* for assigning unique colors */
-static int curlst;          /* for assigning line styles */
+static struct {
+    int plotno;
+    int color;                  /* for assigning unique colors */
+    int linestyle;              /* for assigning line styles */
+} cur;
 
 /* invariant:  currentgraph contains the current graph */
 
@@ -98,7 +100,7 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     if (hcopy)
         graph->devdep = hcopy;
 
-    plotno = 0;
+    cur.plotno = 0;
 
     /* note: should do only once, maybe in gr_init_once */
     if (!cp_getvar("pointchars", CP_STRING, pointchars))
@@ -188,18 +190,18 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
 
     /* Set up colors and line styles. */
     if (dispdev->numlinestyles == 1)
-        curlst = 0; /* Use the same one all the time. */
+        cur.linestyle = 0; /* Use the same one all the time. */
     else
-        curlst = 1;
+        cur.linestyle = 1;
 
     /* XXX Special exception for SMITH */
     if (dispdev->numcolors > 2 &&
         (graph->grid.gridtype == GRID_SMITH ||
          graph->grid.gridtype == GRID_SMITHGRID))
     {
-        curcolor = 3;
+        cur.color = 3;
     } else {
-        curcolor = 1;
+        cur.color = 1;
     }
 
     graph->commandline = copy(commandline);
@@ -329,25 +331,25 @@ gr_start_internal(struct dvec *dv, bool copyvec)
 
     /* Find a (hopefully) new line style and color. */
     if (currentgraph->plottype == PLOT_POINT) {
-        if (pointchars[curlst - 1])
-            curlst++;
+        if (pointchars[cur.linestyle - 1])
+            cur.linestyle++;
         else
-            curlst = 2;
-    } else if ((curlst > 0) && (++curlst == dispdev->numlinestyles)) {
-        curlst = 2;
+            cur.linestyle = 2;
+    } else if ((cur.linestyle > 0) && (++cur.linestyle == dispdev->numlinestyles)) {
+        cur.linestyle = 2;
     }
 
-    if ((curcolor > 0) && (++curcolor == dispdev->numcolors))
-        curcolor = (((currentgraph->grid.gridtype == GRID_SMITH ||
+    if ((cur.color > 0) && (++cur.color == dispdev->numcolors))
+        cur.color = (((currentgraph->grid.gridtype == GRID_SMITH ||
                       currentgraph->grid.gridtype == GRID_SMITHGRID) &&
                      (dispdev->numcolors > 3)) ? 4 : 2);
 
     if (currentgraph->plottype == PLOT_POINT)
-        dv->v_linestyle = pointchars[curlst - 2];
+        dv->v_linestyle = pointchars[cur.linestyle - 2];
     else
-        dv->v_linestyle = curlst;
+        dv->v_linestyle = cur.linestyle;
 
-    dv->v_color = curcolor;
+    dv->v_color = cur.color;
 
     /* save the data so we can refresh */
     link = TMALLOC(struct dveclist, 1);
@@ -366,9 +368,9 @@ gr_start_internal(struct dvec *dv, bool copyvec)
     currentgraph->plotdata = link;
 
     /* Put the legend entry on the screen. */
-    drawlegend(currentgraph, plotno, dv);
+    drawlegend(currentgraph, cur.plotno, dv);
 
-    plotno++;
+    cur.plotno++;
 }
 
 
@@ -548,9 +550,11 @@ gr_redraw(GRAPH *graph)
     /* redraw grid */
     gr_redrawgrid(graph);
 
-    for (link = graph->plotdata, plotno = 0; link; link = link->next, plotno++) {
+    cur.plotno = 0;
+    for (link = graph->plotdata; link; link = link->next) {
         /* redraw legend */
-        drawlegend(graph, plotno, link->vector);
+        drawlegend(graph, cur.plotno, link->vector);
+        cur.plotno++;
 
         /* replot data
            if onevalue, pass it a NULL scale
