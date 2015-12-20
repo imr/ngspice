@@ -1,0 +1,38 @@
+.spiceinit found in D:\Spice_general\xspice-vs2015-table\table\examples directory
+******
+** ngspice-26 : Circuit level simulation program
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Please get your ngspice manual from http://ngspice.sourceforge.net/docs.html
+** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+** Creation Date: Nov  2 2015   23:14:44
+******
+
+Circuit: code model test - table model
+
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+
+No. of Data Rows : 217
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+
+No. of Data Rows : 43
+Reducing trtol to 1 for xspice 'A' devices
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+
+
+No. of Data Rows : 31
+ngspice 1 -> 
+x0 = 0, y0 = 0    x1 = 0.924242, y1 = 0.00734906
+dx = 0.924242, dy = 0.00734906
+dy/dx = 0.00795144    dx/dy = 125.763
+
+Interrupted once . . .
+Warning: clearing control structures
+ngspice 1 -> ngspice-26 done

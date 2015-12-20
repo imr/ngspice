@@ -1,0 +1,21 @@
+* User defined init file
+*set rndseed=12
+** ascii rawfile **
+set filetype=ascii
+*set filetype=binary
+** frontend debug output **
+unset ngdebug
+set num_threads=4
+set noaskquit
+unset strict_errorhandling
+set mingwpath
+set warn=1
+*set nomoremode
+set nopage
+* http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx
+*set editor=notepad++
+* about start etc.: http://www.computerhope.com/starthlp.htm
+set editor="start \"\" /b /wait c:\\\"program files (x86)\"\\notepad++\\notepad++.exe" 
+echo .spiceinit found in D:\Spice_general\xspice-vs2015-table\table\examples directory
+
+codemodel D:\Spice_general\xspice-vs2015-table\table\Win32\Debug\table.cm
