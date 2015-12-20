@@ -51,7 +51,7 @@ Parameter_Name:     order            verbose
 Description:        "order"          "verbose"
 Data_Type:          int              int
 Default_Value:      3                0
-Limits:             -                -
+Limits:             [2 -]            [0 2]
 Vector:             no               no
 Vector_Bounds:      -                -
 Null_Allowed:       yes              yes
