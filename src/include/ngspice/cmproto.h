@@ -48,6 +48,7 @@ NON-STANDARD FEATURES
 
 #include  <stdio.h>
 #include "ngspice/cmtypes.h"
+#include "ngspice/cktdefs.h"
 
 
 void cm_climit_fcn(double in, double in_offset, double cntl_upper, 
@@ -102,6 +103,7 @@ Complex_t cm_complex_multiply(Complex_t x, Complex_t y);
 Complex_t cm_complex_divide(Complex_t x, Complex_t y);
 
 char *cm_get_path(void);
+CKTcircuit *cm_get_circuit(void);
 
 FILE *cm_stream_out(void);
 FILE *cm_stream_in(void);
