@@ -1,0 +1,743 @@
+diff --git a/manual.lyx b/manual.lyx
+index 3dd0de2..67788f8 100644
+--- a/manual.lyx
++++ b/manual.lyx
+
+@@ -55166,6 +55166,737 @@ amen 1 2 memr
+ + alpha=0 beta=2e13 vt=1.6)
+ \end_layout
+ 
++\begin_layout Subsection
++2D table model
++\end_layout
++
++\begin_layout LyX-Code
++NAME_TABLE: 
++\end_layout
++
++\begin_layout LyX-Code
++C_Function_Name:    cm_table2D 
++\end_layout
++
++\begin_layout LyX-Code
++Spice_Model_Name:   table2D 
++\end_layout
++
++\begin_layout LyX-Code
++Description:        "2D table model"
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PORT_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Port_Name:          inx                iny                out Description:
++        "inputx"           "inputy"           "output" Direction:      
++    in                 in                 out Default_Type:       v    
++              v                  i Allowed_Types:      [v,vd,i,id,vnam]
++   [v,vd,i,id,vnam]   [v,vd,i,id] Vector:             no               
++  no                 no Vector_Bounds:      -                  -       
++           - Null_Allowed:       no                 no                 no
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PARAMETER_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Parameter_Name:     order            verbose
++\end_layout
++
++\begin_layout LyX-Code
++Description:        "order"          "verbose"
++\end_layout
++
++\begin_layout LyX-Code
++Data_Type:          int              int
++\end_layout
++
++\begin_layout LyX-Code
++Default_Value:      3                0
++\end_layout
++
++\begin_layout LyX-Code
++Limits:             -                -
++\end_layout
++
++\begin_layout LyX-Code
++Vector:             no               no
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:      -                -
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:       yes              yes
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PARAMETER_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Parameter_Name:     offset           gain 
++\end_layout
++
++\begin_layout LyX-Code
++Description:        "offset"         "gain" 
++\end_layout
++
++\begin_layout LyX-Code
++Data_Type:          real             real 
++\end_layout
++
++\begin_layout LyX-Code
++Default_Value:      0.0              1.0 
++\end_layout
++
++\begin_layout LyX-Code
++Limits:             -                - 
++\end_layout
++
++\begin_layout LyX-Code
++Vector:             no               no 
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:      -                - 
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:       yes              yes
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PARAMETER_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Parameter_Name:     file 
++\end_layout
++
++\begin_layout LyX-Code
++Description:        "file name" 
++\end_layout
++
++\begin_layout LyX-Code
++Data_Type:          string 
++\end_layout
++
++\begin_layout LyX-Code
++Default_Value:      "2D-table-model.txt" 
++\end_layout
++
++\begin_layout LyX-Code
++Limits:             - 
++\end_layout
++
++\begin_layout LyX-Code
++Vector:             no 
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:      - 
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:       yes
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout Description
++Description: The 2D table model reads a matrix from file "file name" (default
++ 2D-table-model.txt) which has x columns and y rows.
++ Each x,y pair, addressed by inx and iny, yields an output value 
++\family typewriter
++out
++\family default
++.
++ Linear interpolation is used for 
++\family typewriter
++out
++\family default
++, eno (essentially non oscillating) interpolation for its derivatives.
++ Parameters 
++\family typewriter
++offset
++\family default
++ (default 0) and 
++\family typewriter
++gain
++\family default
++ (default 1) modify the output table values according to offset + gain*out.
++ Parameter 
++\family typewriter
++order
++\family default
++ (default 3) influences the calculation of the derivatives.
++ Parameter 
++\family typewriter
++verbose
++\family default
++ (default 0) yields test outputs, if set to 1 or 2.
++ The table format is shown below.
++ Be careful to include the data point inx = 0, iny = 0 into your table,
++ because ngspice uses to start there during op calculation.
++ x horizontal and y vertical adress values have to increase monotonically.
++ The usage example consists of two input voltages referenced to ground and
++ a current source output with two floating nodes.
++\end_layout
++
++\begin_layout LyX-Code
++Table Example:
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++* table source 
++\end_layout
++
++\begin_layout LyX-Code
++* number of columns (x)
++\end_layout
++
++\begin_layout LyX-Code
++8
++\end_layout
++
++\begin_layout LyX-Code
++* number of rows (y)
++\end_layout
++
++\begin_layout LyX-Code
++9
++\end_layout
++
++\begin_layout LyX-Code
++* x horizontal (column) address values (real numbers)
++\end_layout
++
++\begin_layout LyX-Code
++-1 0 1 2 3 4 5 6
++\end_layout
++
++\begin_layout LyX-Code
++* y vertical (row) address values (real numbers)
++\end_layout
++
++\begin_layout LyX-Code
++-0.6 0 0.6 1.2 1.8 2.4 3.0 3.6 4.2
++\end_layout
++
++\begin_layout LyX-Code
++* table with output data (horizontally addressed by x, vertically by y)
++\end_layout
++
++\begin_layout LyX-Code
++1 0.9 0.8 0.7 0.6 0.5 0.4 0.3
++\end_layout
++
++\begin_layout LyX-Code
++1 1 1 1 1 1 1 1
++\end_layout
++
++\begin_layout LyX-Code
++1 1.2 1.4 1.6 1.8 2 2.2 2.4
++\end_layout
++
++\begin_layout LyX-Code
++1 1.5 2 2.5 3 3.5 4 4.5
++\end_layout
++
++\begin_layout LyX-Code
++1 2 3 4 5 6 7 8
++\end_layout
++
++\begin_layout LyX-Code
++1 2.5 4 5.5 7 8.5 10 11.5
++\end_layout
++
++\begin_layout LyX-Code
++1 3 5 7 9 11 13 15
++\end_layout
++
++\begin_layout LyX-Code
++1 3.5 6 8.5 11 13.5 16 18.5
++\end_layout
++
++\begin_layout LyX-Code
++1 4 7 10 13 16 19 22
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++Example SPICE Usage:
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++atab inx iny %id(out1 out2) tabmod  
++\end_layout
++
++\begin_layout LyX-Code
++.model tabmod table2d (offset=0.0 gain=1 order=3 file="table-simple.txt")
++\end_layout
++
++\begin_layout Subsection
++3D table model
++\end_layout
++
++\begin_layout LyX-Code
++NAME_TABLE: 
++\end_layout
++
++\begin_layout LyX-Code
++C_Function_Name:   cm_table3D 
++\end_layout
++
++\begin_layout LyX-Code
++Spice_Model_Name:  table3D 
++\end_layout
++
++\begin_layout LyX-Code
++Description:       "3D table model"
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PORT_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Port_Name:         inx                iny                inz
++\end_layout
++
++\begin_layout LyX-Code
++Description:       "inputx"           "inputy"           "inputz"
++\end_layout
++
++\begin_layout LyX-Code
++Direction:         in                 in                 in
++\end_layout
++
++\begin_layout LyX-Code
++Default_Type:      v                  v                  v
++\end_layout
++
++\begin_layout LyX-Code
++Allowed_Types:     [v,vd,i,id,vnam]   [v,vd,i,id,vnam]   [v,vd,i,id,vnam]
++\end_layout
++
++\begin_layout LyX-Code
++Vector:            no                 no                 no
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:     -                  -                  -
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:      no                 no                 no
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PORT_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Port_Name:         out
++\end_layout
++
++\begin_layout LyX-Code
++Description:       "output"
++\end_layout
++
++\begin_layout LyX-Code
++Direction:         out
++\end_layout
++
++\begin_layout LyX-Code
++Default_Type:      i
++\end_layout
++
++\begin_layout LyX-Code
++Allowed_Types:     [v,vd,i,id]
++\end_layout
++
++\begin_layout LyX-Code
++Vector:            no
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:     -
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:      no
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PARAMETER_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Parameter_Name:     order            verbose
++\end_layout
++
++\begin_layout LyX-Code
++Description:        "order"          "verbose"
++\end_layout
++
++\begin_layout LyX-Code
++Data_Type:          int              int
++\end_layout
++
++\begin_layout LyX-Code
++Default_Value:      3                0
++\end_layout
++
++\begin_layout LyX-Code
++Limits:             -                -
++\end_layout
++
++\begin_layout LyX-Code
++Vector:             no               no
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:      -                -
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:       yes              yes
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PARAMETER_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Parameter_Name:    offset           gain
++\end_layout
++
++\begin_layout LyX-Code
++Description:       "offset"         "gain"
++\end_layout
++
++\begin_layout LyX-Code
++Data_Type:         real             real
++\end_layout
++
++\begin_layout LyX-Code
++Default_Value:     0.0              1.0
++\end_layout
++
++\begin_layout LyX-Code
++Limits:            -                -
++\end_layout
++
++\begin_layout LyX-Code
++Vector:            no               no
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:     -                -
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:      yes              yes
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++PARAMETER_TABLE:
++\end_layout
++
++\begin_layout LyX-Code
++Parameter_Name:    file
++\end_layout
++
++\begin_layout LyX-Code
++Description:       "file name"
++\end_layout
++
++\begin_layout LyX-Code
++Data_Type:         string
++\end_layout
++
++\begin_layout LyX-Code
++Default_Value:     "3D-table-model.txt"
++\end_layout
++
++\begin_layout LyX-Code
++Limits:            -
++\end_layout
++
++\begin_layout LyX-Code
++Vector:            no
++\end_layout
++
++\begin_layout LyX-Code
++Vector_Bounds:     -
++\end_layout
++
++\begin_layout LyX-Code
++Null_Allowed:      yes
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout Description
++Description: The 3D table model reads a matrix from file 
++\family typewriter
++"file name"
++\family default
++ (default 3D-table-model.txt) which has x columns, y rows per table and z
++ tables.
++ Each x,y,z triple, addressed by inx, iny, and inz yields an output value
++ 
++\family typewriter
++out
++\family default
++.
++ Linear interpolation is used for 
++\family typewriter
++out
++\family default
++, eno (essentially non oscillating) interpolation for its derivatives.
++ Parameters 
++\family typewriter
++offset
++\family default
++ (default 0) and 
++\family typewriter
++gain
++\family default
++ (default 1) modify the output table values according to offset + gain*out.
++ Parameter 
++\family typewriter
++order
++\family default
++ (default 3) influences the calculation of the derivatives.
++ Parameter 
++\family typewriter
++verbose
++\family default
++ (default 0) yields test outputs, if set to 1 or 2.
++ The table format is shown below.
++ Be careful to include the data point inx = 0, iny = 0, inz = 0 into your
++ table, because ngspice uses to start there during op calculation.
++ x horizontal, y vertical, and z table adress values have to increase monotonica
++lly.
++ The usage example simulates a NMOS transistor with independent drain, gate
++ and bulk nodes, referenced to source.
++ Parameter gain may be used to emulate transistor width, with respect to
++ the table transistor.
++\end_layout
++
++\begin_layout LyX-Code
++Table Example:
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++* 3D table for nmos bsim 4, W=10µm, L=0.13µm
++\end_layout
++
++\begin_layout LyX-Code
++*x
++\end_layout
++
++\begin_layout LyX-Code
++39
++\end_layout
++
++\begin_layout LyX-Code
++*y
++\end_layout
++
++\begin_layout LyX-Code
++39
++\end_layout
++
++\begin_layout LyX-Code
++*z
++\end_layout
++
++\begin_layout LyX-Code
++11
++\end_layout
++
++\begin_layout LyX-Code
++*x (drain voltage)
++\end_layout
++
++\begin_layout LyX-Code
++-0.1 -0.05 0 0.05 0.1 0.15 0.2 0.25 ...
++\end_layout
++
++\begin_layout LyX-Code
++*y (gate voltage)
++\end_layout
++
++\begin_layout LyX-Code
++-0.1 -0.05 0 0.05 0.1 0.15 0.2 0.25 ...
++\end_layout
++
++\begin_layout LyX-Code
++*z (substrate voltage)
++\end_layout
++
++\begin_layout LyX-Code
++-1.8 -1.6 -1.4 -1.2 -1 -0.8 -0.6 -0.4 -0.2 0 0.2
++\end_layout
++
++\begin_layout LyX-Code
++*table -1.8
++\end_layout
++
++\begin_layout LyX-Code
++-4.50688E-10 -4.50613E-10 -4.50601E-10 -4.50599E-10 ...
++\end_layout
++
++\begin_layout LyX-Code
++-4.49622E-10 -4.49267E-10 -4.4921E-10 -4.49202E-10 ...
++\end_layout
++
++\begin_layout LyX-Code
++-4.50672E-10 -4.49099E-10 -4.48838E-10 -4.48795E-10 ...
++ 
++\end_layout
++
++\begin_layout LyX-Code
++-4.55575E-10 -4.4953E-10 -4.48435E-10 -4.48217E-10 ...
++\end_layout
++
++\begin_layout LyX-Code
++...
++\end_layout
++
++\begin_layout LyX-Code
++*table -1.6
++\end_layout
++
++\begin_layout LyX-Code
++-3.10015E-10 -3.09767E-10 -3.0973E-10 -3.09724E-10 ...
++ 
++\end_layout
++
++\begin_layout LyX-Code
++-3.09748E-10 -3.08524E-10 -3.08339E-10 -3.08312E-10 ...
++ 
++\end_layout
++
++\begin_layout LyX-Code
++...
++\end_layout
++
++\begin_layout LyX-Code
++*table -1.4
++\end_layout
++
++\begin_layout LyX-Code
++-2.04848E-10 -2.04008E-10 -2.03882E-10 ...
++ 
++\end_layout
++
++\begin_layout LyX-Code
++-2.07275E-10 -2.03117E-10 -2.02491E-10 ...
++ 
++\end_layout
++
++\begin_layout LyX-Code
++...
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++Example SPICE Usage:
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
++\begin_layout LyX-Code
++amos1 %vd(d s) %vd(g s) %vd(b s) %id(d s) mostable1 
++\end_layout
++
++\begin_layout LyX-Code
++.model mostable1 table3d (offset=0.0 gain=0.5 order=3
++\end_layout
++
++\begin_layout LyX-Code
+++ verbose=1 file="table-3d-bsim4n.txt")
++\end_layout
++
++\begin_layout LyX-Code
++
++\end_layout
++
+ \begin_layout Section
+ \begin_inset CommandInset label
+ LatexCommand label
