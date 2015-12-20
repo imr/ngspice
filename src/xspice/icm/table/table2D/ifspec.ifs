@@ -1,0 +1,78 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 2015
+Holger Vogt
+
+AUTHORS
+
+     06 Nov 2015     Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    2D table code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+C_Function_Name:       cm_table2D
+Spice_Model_Name:      table2d
+Description:           "2D table model"
+
+
+PORT_TABLE:
+
+Port_Name:             inx                iny                out
+Description:           "inputx"           "inputy"           "output"
+Direction:             in                 in                 out
+Default_Type:          v                  v                  i
+Allowed_Types:         [v,vd,i,id,vnam]   [v,vd,i,id,vnam]   [v,vd,i,id]
+Vector:                no                 no                 no
+Vector_Bounds:         -                  -                  -
+Null_Allowed:          no                 no                 no
+
+
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     order            verbose
+Description:        "order"          "verbose"
+Data_Type:          int              int
+Default_Value:      3                0
+Limits:             -                -
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     offset           gain
+Description:        "offset"         "gain"
+Data_Type:          real             real
+Default_Value:      0.0              1.0
+Limits:             -                -
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     file
+Description:        "file name"
+Data_Type:          string
+Default_Value:      "2D-table-model.txt"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer

@@ -7,7 +7,7 @@ include makedefs
 
 
 # The codemodels to make
-CMDIRS = spice2poly digital analog xtradev xtraevt
+CMDIRS = spice2poly digital analog xtradev xtraevt table
 
 
 all:

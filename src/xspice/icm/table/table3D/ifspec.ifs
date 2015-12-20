@@ -1,0 +1,87 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 2015
+Holger Vogt
+
+AUTHORS
+
+     06 Nov 2015     Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    3D table code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+C_Function_Name:       cm_table3D
+Spice_Model_Name:      table3d
+Description:           "3D table model"
+
+
+PORT_TABLE:
+
+Port_Name:             inx                iny                inz
+Description:           "inputx"           "inputy"           "inputz"
+Direction:             in                 in                 in
+Default_Type:          v                  v                  v
+Allowed_Types:         [v,vd,i,id,vnam]   [v,vd,i,id,vnam]   [v,vd,i,id,vnam]
+Vector:                no                 no                 no
+Vector_Bounds:         -                  -                  -
+Null_Allowed:          no                 no                 no
+
+PORT_TABLE:
+
+Port_Name:             out
+Description:           "output"
+Direction:             out
+Default_Type:          i
+Allowed_Types:         [v,vd,i,id]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     order            verbose
+Description:        "order"          "verbose"
+Data_Type:          int              int
+Default_Value:      3                0
+Limits:             -                -
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     offset           gain
+Description:        "offset"         "gain"
+Data_Type:          real             real
+Default_Value:      0.0              1.0
+Limits:             -                -
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     file
+Description:        "file name"
+Data_Type:          string
+Default_Value:      "3D-table-model.txt"
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer
