@@ -27,6 +27,7 @@ if $__flag = 0
 @XSPICEINIT@ codemodel @pkglibdir@/digital.cm
 @XSPICEINIT@ codemodel @pkglibdir@/xtradev.cm
 @XSPICEINIT@ codemodel @pkglibdir@/xtraevt.cm
+@XSPICEINIT@ codemodel @pkglibdir@/table.cm
 
 end
 unset __flag

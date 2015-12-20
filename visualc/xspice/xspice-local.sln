@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xtraevt", "xtraevt.vcxproj"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xtradev", "xtradev.vcxproj", "{4BB60215-9A09-4192-9DB6-1A0CA823AFCA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "table", "table.vcxproj", "{7A6473F5-AFED-4910-88D2-6204DA829832}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spice2poly", "spice2poly.vcxproj", "{D701EA0E-B8B0-41D6-A90E-A0D8233F15FB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "digital", "digital.vcxproj", "{9ABEC5F2-F6C6-41DE-88AB-02460A07F46E}"
