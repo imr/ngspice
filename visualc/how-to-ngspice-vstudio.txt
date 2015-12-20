@@ -42,6 +42,7 @@ C:\Spice\
             spice2poly.cm
             extradev.cm
             extravt.cm
+            table.cm
     share\
         ngspice
             scripts\

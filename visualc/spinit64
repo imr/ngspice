@@ -27,6 +27,7 @@ if $__flag = 0
  codemodel C:/Spice64/lib/ngspice/digital.cm
  codemodel C:/Spice64/lib/ngspice/xtradev.cm
  codemodel C:/Spice64/lib/ngspice/xtraevt.cm
+ codemodel C:/Spice64/lib/ngspice/table.cm
 
 end
 unset __flag
