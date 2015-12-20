@@ -366,6 +366,10 @@ char * cm_get_path(void) {
 	return (coreitf->dllitf_cm_get_path)();
 }
 
+CKTcircuit *cm_get_circuit(void) {
+	return (coreitf->dllitf_cm_get_circuit)();
+}
+
 FILE * cm_stream_out(void) {
 	return (coreitf->dllitf_cm_stream_out)();
 }
