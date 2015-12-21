@@ -1119,10 +1119,6 @@ vec_mkfamily(struct dvec *v)
         d = alloc(struct dvec);
         ZERO(d, struct dvec);
 
-        *t = d;
-        t = &(d->v_link2);
-    }
-    for (d = vecs, i = 0; d; i++, d = d->v_link2) {
         indexstring(count, v->v_numdims - 1, buf2);
         d->v_name = tprintf("%s%s", v->v_name, buf2);
         d->v_type = v->v_type;
@@ -1148,6 +1144,9 @@ vec_mkfamily(struct dvec *v)
         }
         /* Add one to the counter. */
         (void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);
+
+        *t = d;
+        t = &(d->v_link2);
     }
 
     for (d = vecs; d; d = d->v_link2)
