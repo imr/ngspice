@@ -1103,7 +1103,7 @@ vec_transpose(struct dvec *v)
 struct dvec *
 vec_mkfamily(struct dvec *v)
 {
-    int size, numvecs, i, j, count[MAXDIMS];
+    int size, numvecs, i, count[MAXDIMS];
     struct dvec *vecs, *d, **t;
     char buf2[BSIZE_SP];
 
@@ -1122,7 +1122,7 @@ vec_mkfamily(struct dvec *v)
         *t = d;
         t = &(d->v_link2);
     }
-    for (d = vecs, j = 0; d; j++, d = d->v_link2) {
+    for (d = vecs, i = 0; d; i++, d = d->v_link2) {
         indexstring(count, v->v_numdims - 1, buf2);
         d->v_name = tprintf("%s%s", v->v_name, buf2);
         d->v_type = v->v_type;
@@ -1141,10 +1141,10 @@ vec_mkfamily(struct dvec *v)
 
         if (isreal(v)) {
             d->v_realdata = TMALLOC(double, size);
-            bcopy(v->v_realdata + size*j, d->v_realdata, (size_t) size * sizeof(double));
+            bcopy(v->v_realdata + size*i, d->v_realdata, (size_t) size * sizeof(double));
         } else {
             d->v_compdata = TMALLOC(ngcomplex_t, size);
-            bcopy(v->v_compdata + size*j, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
+            bcopy(v->v_compdata + size*i, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
         }
         /* Add one to the counter. */
         (void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);
