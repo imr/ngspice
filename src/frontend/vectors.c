@@ -1116,10 +1116,12 @@ vec_mkfamily(struct dvec *v)
     for (i = 0; i < MAXDIMS; i++)
         count[i] = 0;
     for (t = &vecs, i = 0; i < numvecs; i++) {
+
+        indexstring(count, v->v_numdims - 1, buf2);
+
         d = alloc(struct dvec);
         ZERO(d, struct dvec);
 
-        indexstring(count, v->v_numdims - 1, buf2);
         d->v_name = tprintf("%s%s", v->v_name, buf2);
         d->v_type = v->v_type;
         d->v_flags = v->v_flags;
