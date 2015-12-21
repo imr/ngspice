@@ -1113,6 +1113,8 @@ vec_mkfamily(struct dvec *v)
     size = v->v_dims[v->v_numdims - 1];
     for (i = 0, numvecs = 1; i < v->v_numdims - 1; i++)
         numvecs *= v->v_dims[i];
+    for (i = 0; i < MAXDIMS; i++)
+        count[i] = 0;
     for (t = &vecs, i = 0; i < numvecs; i++) {
         d = alloc(struct dvec);
         ZERO(d, struct dvec);
@@ -1120,8 +1122,6 @@ vec_mkfamily(struct dvec *v)
         *t = d;
         t = &(d->v_link2);
     }
-    for (i = 0; i < MAXDIMS; i++)
-        count[i] = 0;
     for (d = vecs, j = 0; d; j++, d = d->v_link2) {
         indexstring(count, v->v_numdims - 1, buf2);
         d->v_name = tprintf("%s%s", v->v_name, buf2);
