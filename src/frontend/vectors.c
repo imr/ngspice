@@ -1104,7 +1104,7 @@ struct dvec *
 vec_mkfamily(struct dvec *v)
 {
     int size, numvecs, i, j, count[MAXDIMS];
-    struct dvec *vecs, *d;
+    struct dvec *vecs, *d, **t;
     char buf2[BSIZE_SP];
 
     if (v->v_numdims < 2)
@@ -1113,14 +1113,12 @@ vec_mkfamily(struct dvec *v)
     size = v->v_dims[v->v_numdims - 1];
     for (i = 0, numvecs = 1; i < v->v_numdims - 1; i++)
         numvecs *= v->v_dims[i];
-    for (i = 0, vecs = d = NULL; i < numvecs; i++) {
-        if (vecs) {
-            d = d->v_link2 = alloc(struct dvec);
-            ZERO(d, struct dvec);
-        } else {
-            d = vecs = alloc(struct dvec);
-            ZERO(d, struct dvec);
-        }
+    for (t = &vecs, i = 0; i < numvecs; i++) {
+        d = alloc(struct dvec);
+        ZERO(d, struct dvec);
+
+        *t = d;
+        t = &(d->v_link2);
     }
     for (i = 0; i < MAXDIMS; i++)
         count[i] = 0;
