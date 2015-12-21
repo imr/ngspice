@@ -576,8 +576,6 @@ vec_get(const char *vec_name)
             struct variable *nv;
             double *list;
             list = TMALLOC(double, 1);
-            nv = alloc(struct variable);
-
             nv = vv->va_vlist;
             for (i = 1; ; i++) {
                 list = TREALLOC(double, list, i);
