@@ -374,6 +374,7 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         int   lLineCount;    /* Current line number */
         long  lStartPos;     /* Offset of start of current line */
         long  lTotalChars;   /* Total characters read */
+        int   interporder;   /* order of interpolation for eno */
 
         /* allocate static storage for *loc */
         STATIC_VAR (locdata) = calloc(1, sizeof(Local_Data_t));
@@ -510,9 +511,16 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         }
 
         /* generate table core */
+        interporder = PARAM(order);
+        /* boundary limits set to param 'order' aren't recognized,
+           so limit them here */
+        if (interporder < 2) {
+            cm_message_printf("Parameter Order=%d not possible, set to minimum value 2", interporder);
+            interporder = 2;
+        }
         /* int order : interpolation order,
            int n1, int n2 : data dimensions */
-        loc->newtable = sf_eno2_init(PARAM(order), ix, iy);
+        loc->newtable = sf_eno2_init(interporder, ix, iy);
 
         /* create table_data in memory */
         /* data [n2][n1] */
@@ -549,6 +557,11 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
             lLineCount++;                      /* Increment the line counter */
             /* continue if comment or empty */
             if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\0') {
+                if (lTotalChars >= lFileLen) {
+                    cm_message_printf("Not enough data in file %s", PARAM(file));
+                    loc->init_err = 1;
+                    return;
+                }
                 lLineCount--;   /* we count only real lines */
                 continue;
             }
