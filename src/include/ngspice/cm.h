@@ -45,5 +45,16 @@ NON-STANDARD FEATURES
 #include "ngspice/cmproto.h"
 #include "ngspice/mifcmdat.h"
 
+#if defined (_MSC_VER)
+#ifndef NAN
+    static const __int64 global_nan = 0x7ff8000000000000i64;
+    #define NAN (*(const double *) &global_nan)
+#endif
+#endif
+
+#if !defined(NAN)
+#define NAN (0.0/0.0)
+#endif
+
 
 #endif
