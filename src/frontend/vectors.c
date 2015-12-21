@@ -1138,6 +1138,7 @@ vec_mkfamily(struct dvec *v)
          * of these things...
          */
         d->v_numdims = 1;
+        d->v_dims[0] = size;
         d->v_length = size;
 
         if (isreal(v)) {
