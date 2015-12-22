@@ -464,18 +464,24 @@ raw_read(char *name) {
             }
             /* Now read all the variable lines in. */
             for (i = 0; i < nvars; i++) {
+                /* Allocate the data array. We would use
+                 * the desired vector length, but this would
+                 * be dangerous if the file is invalid.
+                 */
                 v = alloc(struct dvec);
                 ZERO(v, struct dvec);
                 v->v_type = SV_NOTYPE;
                 v->v_flags = (short)flags;
                 v->v_length = npoints;
+                if (isreal(v))
+                    v->v_realdata = TMALLOC(double, npoints);
+                else
+                    v->v_compdata = TMALLOC(ngcomplex_t, npoints);
                 v->v_numdims = 0;
                 /* Length and dims might be changed by options. */
 
                 v->v_plot = curpl;
 
-                v->v_next = curpl->pl_dvecs;
-                curpl->pl_dvecs = v;
                 if (!curpl->pl_scale)
                     curpl->pl_scale = v;
 
@@ -537,14 +543,9 @@ raw_read(char *name) {
                     for (j = 0; j < numdims; j++)
                         v->v_dims[j] = dims[j];
                 }
-                /* And allocate the data array. We would use
-                 * the desired vector length, but this would
-                 * be dangerous if the file is invalid.
-                 */
-                if (isreal(v))
-                    v->v_realdata = TMALLOC(double, npoints);
-                else
-                    v->v_compdata = TMALLOC(ngcomplex_t, npoints);
+
+                v->v_next = curpl->pl_dvecs;
+                curpl->pl_dvecs = v;
             }
 
         } else if (ciprefix("values:", buf) || ciprefix("binary:", buf)) {
