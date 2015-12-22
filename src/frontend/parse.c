@@ -330,11 +330,8 @@ PP_mknnode(double number)
     struct pnode *p;
     struct dvec *v;
 
-    p = alloc_pnode();
     v = alloc(struct dvec);
     ZERO(v, struct dvec);
-
-    p->pn_value = v;
 
     /* We don't use printnum because it screws up PP_mkfnode above. We have
      * to be careful to deal properly with node numbers that are quite
@@ -351,6 +348,9 @@ PP_mknnode(double number)
     v->v_length = 1;
     v->v_plot = NULL;
     vec_new(v);
+
+    p = alloc_pnode();
+    p->pn_value = v;
     return (p);
 }
 
