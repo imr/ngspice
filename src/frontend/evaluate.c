@@ -922,6 +922,8 @@ apply_func(struct func *func, struct pnode *arg)
 
     for (; v; v = v->v_link2) {
 
+        char *name;
+
         data = apply_func_funcall(func, v, &len, &type);
 
         if (!data)
@@ -934,8 +936,16 @@ apply_func(struct func *func, struct pnode *arg)
                     func->fu_name, v->v_name, len, type);
 #endif
 
+        if (eq(func->fu_name, "minus"))
+            name = mkcname('a', func->fu_name, v->v_name);
+        else if (eq(func->fu_name, "not"))
+            name = mkcname('c', func->fu_name, v->v_name);
+        else
+            name = mkcname('b', v->v_name, NULL);
+
         t = alloc(struct dvec);
         ZERO(t, struct dvec);
+        t->v_name = name;
 
         t->v_flags = (v->v_flags & ~VF_COMPLEX & ~VF_REAL &
                       ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN);
@@ -944,13 +954,6 @@ apply_func(struct func *func, struct pnode *arg)
             t->v_realdata = (double *) data;
         else
             t->v_compdata = (ngcomplex_t *) data;
-
-        if (eq(func->fu_name, "minus"))
-            t->v_name = mkcname('a', func->fu_name, v->v_name);
-        else if (eq(func->fu_name, "not"))
-            t->v_name = mkcname('c', func->fu_name, v->v_name);
-        else
-            t->v_name = mkcname('b', v->v_name, NULL);
 
         t->v_type = v->v_type; /* This is strange too. */
         t->v_length = len;
