@@ -1,0 +1,866 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>analog</ProjectName>
+    <ProjectGuid>{8271FEA2-8AC0-4B6D-BAEA-A503D37B5DB2}</ProjectGuid>
+    <RootNamespace>icmanalog</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.cm</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.cm</TargetExt>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.cm</TargetExt>
+    <TargetName>$(ProjectName)64</TargetName>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.cm</TargetExt>
+    <TargetName>$(ProjectName)64</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\analog
+..\bin\cmpp -lst
+cd climit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del climit-cfunc.c
+del climit-ifspec.c
+rename cfunc.c climit-cfunc.c
+rename ifspec.c climit-ifspec.c
+cd ..\divide
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del divide-cfunc.c
+del divide-ifspec.c
+rename cfunc.c divide-cfunc.c
+rename ifspec.c divide-ifspec.c
+cd ..\d_dt
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_dt-cfunc.c
+del d_dt-ifspec.c
+rename cfunc.c d_dt-cfunc.c
+rename ifspec.c d_dt-ifspec.c
+cd ..\gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del gain-cfunc.c
+del gain-ifspec.c
+rename cfunc.c gain-cfunc.c
+rename ifspec.c gain-ifspec.c
+cd ..\hyst
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del hyst-cfunc.c
+del hyst-ifspec.c
+rename cfunc.c hyst-cfunc.c
+rename ifspec.c hyst-ifspec.c
+cd ..\ilimit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del ilimit-cfunc.c
+del ilimit-ifspec.c
+rename cfunc.c ilimit-cfunc.c
+rename ifspec.c ilimit-ifspec.c
+cd ..\int
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del int-cfunc.c
+del int-ifspec.c
+rename cfunc.c int-cfunc.c
+rename ifspec.c int-ifspec.c
+cd ..\limit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del limit-cfunc.c
+del limit-ifspec.c
+rename cfunc.c limit-cfunc.c
+rename ifspec.c limit-ifspec.c
+cd ..\mult
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del mult-cfunc.c
+del mult-ifspec.c
+rename cfunc.c mult-cfunc.c
+rename ifspec.c mult-ifspec.c
+cd ..\multi_input_pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del multi_input_pwl-cfunc.c
+del multi_input_pwl-ifspec.c
+rename cfunc.c multi_input_pwl-cfunc.c
+rename ifspec.c multi_input_pwl-ifspec.c
+cd ..\oneshot
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del oneshot-cfunc.c
+del oneshot-ifspec.c
+rename cfunc.c oneshot-cfunc.c
+rename ifspec.c oneshot-ifspec.c
+cd ..\pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del pwl-cfunc.c
+del pwl-ifspec.c
+rename cfunc.c pwl-cfunc.c
+rename ifspec.c pwl-ifspec.c
+cd ..\sine
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del sine-cfunc.c
+del sine-ifspec.c
+rename cfunc.c sine-cfunc.c
+rename ifspec.c sine-ifspec.c
+cd ..\slew
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del slew-cfunc.c
+del slew-ifspec.c
+rename cfunc.c slew-cfunc.c
+rename ifspec.c slew-ifspec.c
+cd ..\square
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del square-cfunc.c
+del square-ifspec.c
+rename cfunc.c square-cfunc.c
+rename ifspec.c square-ifspec.c
+cd ..\summer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del summer-cfunc.c
+del summer-ifspec.c
+rename cfunc.c summer-cfunc.c
+rename ifspec.c summer-ifspec.c
+cd ..\s_xfer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del s_xfer-cfunc.c
+del s_xfer-ifspec.c
+rename cfunc.c s_xfer-cfunc.c
+rename ifspec.c s_xfer-ifspec.c
+cd ..\triangle
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del triangle-cfunc.c
+del triangle-ifspec.c
+rename cfunc.c triangle-cfunc.c
+rename ifspec.c triangle-ifspec.c
+cd ..\file_source
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del file_source-cfunc.c
+del file_source-ifspec.c
+rename cfunc.c file_source-cfunc.c
+rename ifspec.c file_source-ifspec.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)analog.cm</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>
+      </AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <NoEntryPoint>false</NoEntryPoint>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\analog
+..\bin\cmpp -lst
+cd climit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del climit-cfunc.c
+del climit-ifspec.c
+rename cfunc.c climit-cfunc.c
+rename ifspec.c climit-ifspec.c
+cd ..\divide
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del divide-cfunc.c
+del divide-ifspec.c
+rename cfunc.c divide-cfunc.c
+rename ifspec.c divide-ifspec.c
+cd ..\d_dt
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_dt-cfunc.c
+del d_dt-ifspec.c
+rename cfunc.c d_dt-cfunc.c
+rename ifspec.c d_dt-ifspec.c
+cd ..\gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del gain-cfunc.c
+del gain-ifspec.c
+rename cfunc.c gain-cfunc.c
+rename ifspec.c gain-ifspec.c
+cd ..\hyst
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del hyst-cfunc.c
+del hyst-ifspec.c
+rename cfunc.c hyst-cfunc.c
+rename ifspec.c hyst-ifspec.c
+cd ..\ilimit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del ilimit-cfunc.c
+del ilimit-ifspec.c
+rename cfunc.c ilimit-cfunc.c
+rename ifspec.c ilimit-ifspec.c
+cd ..\int
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del int-cfunc.c
+del int-ifspec.c
+rename cfunc.c int-cfunc.c
+rename ifspec.c int-ifspec.c
+cd ..\limit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del limit-cfunc.c
+del limit-ifspec.c
+rename cfunc.c limit-cfunc.c
+rename ifspec.c limit-ifspec.c
+cd ..\mult
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del mult-cfunc.c
+del mult-ifspec.c
+rename cfunc.c mult-cfunc.c
+rename ifspec.c mult-ifspec.c
+cd ..\multi_input_pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del multi_input_pwl-cfunc.c
+del multi_input_pwl-ifspec.c
+rename cfunc.c multi_input_pwl-cfunc.c
+rename ifspec.c multi_input_pwl-ifspec.c
+cd ..\oneshot
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del oneshot-cfunc.c
+del oneshot-ifspec.c
+rename cfunc.c oneshot-cfunc.c
+rename ifspec.c oneshot-ifspec.c
+cd ..\pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del pwl-cfunc.c
+del pwl-ifspec.c
+rename cfunc.c pwl-cfunc.c
+rename ifspec.c pwl-ifspec.c
+cd ..\sine
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del sine-cfunc.c
+del sine-ifspec.c
+rename cfunc.c sine-cfunc.c
+rename ifspec.c sine-ifspec.c
+cd ..\slew
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del slew-cfunc.c
+del slew-ifspec.c
+rename cfunc.c slew-cfunc.c
+rename ifspec.c slew-ifspec.c
+cd ..\square
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del square-cfunc.c
+del square-ifspec.c
+rename cfunc.c square-cfunc.c
+rename ifspec.c square-ifspec.c
+cd ..\summer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del summer-cfunc.c
+del summer-ifspec.c
+rename cfunc.c summer-cfunc.c
+rename ifspec.c summer-ifspec.c
+cd ..\s_xfer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del s_xfer-cfunc.c
+del s_xfer-ifspec.c
+rename cfunc.c s_xfer-cfunc.c
+rename ifspec.c s_xfer-ifspec.c
+cd ..\triangle
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del triangle-cfunc.c
+del triangle-ifspec.c
+rename cfunc.c triangle-cfunc.c
+rename ifspec.c triangle-ifspec.c
+cd ..\file_source
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del file_source-cfunc.c
+del file_source-ifspec.c
+rename cfunc.c file_source-cfunc.c
+rename ifspec.c file_source-ifspec.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)analog.cm</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <NoEntryPoint>false</NoEntryPoint>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\analog
+..\bin\cmpp -lst
+cd climit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del climit-cfunc.c
+del climit-ifspec.c
+rename cfunc.c climit-cfunc.c
+rename ifspec.c climit-ifspec.c
+cd ..\divide
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del divide-cfunc.c
+del divide-ifspec.c
+rename cfunc.c divide-cfunc.c
+rename ifspec.c divide-ifspec.c
+cd ..\d_dt
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_dt-cfunc.c
+del d_dt-ifspec.c
+rename cfunc.c d_dt-cfunc.c
+rename ifspec.c d_dt-ifspec.c
+cd ..\gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del gain-cfunc.c
+del gain-ifspec.c
+rename cfunc.c gain-cfunc.c
+rename ifspec.c gain-ifspec.c
+cd ..\hyst
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del hyst-cfunc.c
+del hyst-ifspec.c
+rename cfunc.c hyst-cfunc.c
+rename ifspec.c hyst-ifspec.c
+cd ..\ilimit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del ilimit-cfunc.c
+del ilimit-ifspec.c
+rename cfunc.c ilimit-cfunc.c
+rename ifspec.c ilimit-ifspec.c
+cd ..\int
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del int-cfunc.c
+del int-ifspec.c
+rename cfunc.c int-cfunc.c
+rename ifspec.c int-ifspec.c
+cd ..\limit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del limit-cfunc.c
+del limit-ifspec.c
+rename cfunc.c limit-cfunc.c
+rename ifspec.c limit-ifspec.c
+cd ..\mult
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del mult-cfunc.c
+del mult-ifspec.c
+rename cfunc.c mult-cfunc.c
+rename ifspec.c mult-ifspec.c
+cd ..\multi_input_pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del multi_input_pwl-cfunc.c
+del multi_input_pwl-ifspec.c
+rename cfunc.c multi_input_pwl-cfunc.c
+rename ifspec.c multi_input_pwl-ifspec.c
+cd ..\oneshot
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del oneshot-cfunc.c
+del oneshot-ifspec.c
+rename cfunc.c oneshot-cfunc.c
+rename ifspec.c oneshot-ifspec.c
+cd ..\pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del pwl-cfunc.c
+del pwl-ifspec.c
+rename cfunc.c pwl-cfunc.c
+rename ifspec.c pwl-ifspec.c
+cd ..\sine
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del sine-cfunc.c
+del sine-ifspec.c
+rename cfunc.c sine-cfunc.c
+rename ifspec.c sine-ifspec.c
+cd ..\slew
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del slew-cfunc.c
+del slew-ifspec.c
+rename cfunc.c slew-cfunc.c
+rename ifspec.c slew-ifspec.c
+cd ..\square
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del square-cfunc.c
+del square-ifspec.c
+rename cfunc.c square-cfunc.c
+rename ifspec.c square-ifspec.c
+cd ..\summer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del summer-cfunc.c
+del summer-ifspec.c
+rename cfunc.c summer-cfunc.c
+rename ifspec.c summer-ifspec.c
+cd ..\s_xfer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del s_xfer-cfunc.c
+del s_xfer-ifspec.c
+rename cfunc.c s_xfer-cfunc.c
+rename ifspec.c s_xfer-ifspec.c
+cd ..\triangle
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del triangle-cfunc.c
+del triangle-ifspec.c
+rename cfunc.c triangle-cfunc.c
+rename ifspec.c triangle-ifspec.c
+cd ..\file_source
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del file_source-cfunc.c
+del file_source-ifspec.c
+rename cfunc.c file_source-cfunc.c
+rename ifspec.c file_source-ifspec.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)analog64.cm</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>
+      </AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <NoEntryPoint>false</NoEntryPoint>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\analog
+..\bin\cmpp -lst
+cd climit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del climit-cfunc.c
+del climit-ifspec.c
+rename cfunc.c climit-cfunc.c
+rename ifspec.c climit-ifspec.c
+cd ..\divide
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del divide-cfunc.c
+del divide-ifspec.c
+rename cfunc.c divide-cfunc.c
+rename ifspec.c divide-ifspec.c
+cd ..\d_dt
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_dt-cfunc.c
+del d_dt-ifspec.c
+rename cfunc.c d_dt-cfunc.c
+rename ifspec.c d_dt-ifspec.c
+cd ..\gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del gain-cfunc.c
+del gain-ifspec.c
+rename cfunc.c gain-cfunc.c
+rename ifspec.c gain-ifspec.c
+cd ..\hyst
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del hyst-cfunc.c
+del hyst-ifspec.c
+rename cfunc.c hyst-cfunc.c
+rename ifspec.c hyst-ifspec.c
+cd ..\ilimit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del ilimit-cfunc.c
+del ilimit-ifspec.c
+rename cfunc.c ilimit-cfunc.c
+rename ifspec.c ilimit-ifspec.c
+cd ..\int
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del int-cfunc.c
+del int-ifspec.c
+rename cfunc.c int-cfunc.c
+rename ifspec.c int-ifspec.c
+cd ..\limit
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del limit-cfunc.c
+del limit-ifspec.c
+rename cfunc.c limit-cfunc.c
+rename ifspec.c limit-ifspec.c
+cd ..\mult
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del mult-cfunc.c
+del mult-ifspec.c
+rename cfunc.c mult-cfunc.c
+rename ifspec.c mult-ifspec.c
+cd ..\multi_input_pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del multi_input_pwl-cfunc.c
+del multi_input_pwl-ifspec.c
+rename cfunc.c multi_input_pwl-cfunc.c
+rename ifspec.c multi_input_pwl-ifspec.c
+cd ..\oneshot
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del oneshot-cfunc.c
+del oneshot-ifspec.c
+rename cfunc.c oneshot-cfunc.c
+rename ifspec.c oneshot-ifspec.c
+cd ..\pwl
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del pwl-cfunc.c
+del pwl-ifspec.c
+rename cfunc.c pwl-cfunc.c
+rename ifspec.c pwl-ifspec.c
+cd ..\sine
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del sine-cfunc.c
+del sine-ifspec.c
+rename cfunc.c sine-cfunc.c
+rename ifspec.c sine-ifspec.c
+cd ..\slew
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del slew-cfunc.c
+del slew-ifspec.c
+rename cfunc.c slew-cfunc.c
+rename ifspec.c slew-ifspec.c
+cd ..\square
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del square-cfunc.c
+del square-ifspec.c
+rename cfunc.c square-cfunc.c
+rename ifspec.c square-ifspec.c
+cd ..\summer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del summer-cfunc.c
+del summer-ifspec.c
+rename cfunc.c summer-cfunc.c
+rename ifspec.c summer-ifspec.c
+cd ..\s_xfer
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del s_xfer-cfunc.c
+del s_xfer-ifspec.c
+rename cfunc.c s_xfer-cfunc.c
+rename ifspec.c s_xfer-ifspec.c
+cd ..\triangle
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del triangle-cfunc.c
+del triangle-ifspec.c
+rename cfunc.c triangle-cfunc.c
+rename ifspec.c triangle-ifspec.c
+cd ..\file_source
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del file_source-cfunc.c
+del file_source-ifspec.c
+rename cfunc.c file_source-cfunc.c
+rename ifspec.c file_source-ifspec.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)analog64.cm</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <NoEntryPoint>false</NoEntryPoint>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\xspice\icm\analog\climit\climit-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\climit\climit-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\divide\divide-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\divide\divide-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\d_dt\d_dt-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\d_dt\d_dt-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\gain\gain-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\gain\gain-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\hyst\hyst-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\hyst\hyst-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\ilimit\ilimit-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\ilimit\ilimit-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\int\int-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\int\int-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\limit\limit-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\limit\limit-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\mult\mult-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\mult\mult-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\multi_input_pwl\multi_input_pwl-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\multi_input_pwl\multi_input_pwl-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\oneshot\oneshot-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\oneshot\oneshot-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\pwl\pwl-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\pwl\pwl-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\sine\sine-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\sine\sine-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\slew\slew-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\slew\slew-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\square\square-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\square\square-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\summer\summer-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\summer\summer-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\s_xfer\s_xfer-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\s_xfer\s_xfer-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\triangle\triangle-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\triangle\triangle-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\file_source\file_source-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\analog\file_source\file_source-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\xspice\icm\analog\climit\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\climit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\divide\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\divide\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\d_dt\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\d_dt\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\gain\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\gain\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\hyst\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\hyst\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\ilimit\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\ilimit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\int\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\int\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\limit\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\limit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\mult\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\mult\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\multi_input_pwl\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\multi_input_pwl\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\oneshot\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\oneshot\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\pwl\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\pwl\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\sine\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\sine\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\slew\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\slew\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\square\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\square\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\summer\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\summer\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\s_xfer\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\s_xfer\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\triangle\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\triangle\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\file_source\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\file_source\ifspec.ifs" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

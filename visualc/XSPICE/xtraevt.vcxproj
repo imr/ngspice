@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>xtraevt</ProjectName>
+    <ProjectGuid>{13500662-AF0B-4AB6-9AF9-BC3E07B5C1C6}</ProjectGuid>
+    <RootNamespace>icmanalog</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.cm</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.cm</TargetExt>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.cm</TargetExt>
+    <TargetName>$(ProjectName)64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.cm</TargetExt>
+    <TargetName>$(ProjectName)64</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\xtraevt
+..\bin\cmpp -lst
+cd d_to_real
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_to_real-cfunc.c
+del d_to_real-ifspec.c
+rename cfunc.c d_to_real-cfunc.c
+rename ifspec.c d_to_real-ifspec.c
+cd ..\real_delay
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_delay-cfunc.c
+del real_delay-ifspec.c
+rename cfunc.c real_delay-cfunc.c
+rename ifspec.c real_delay-ifspec.c
+cd ..\real_gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_gain-cfunc.c
+del real_gain-ifspec.c
+rename cfunc.c real_gain-cfunc.c
+rename ifspec.c real_gain-ifspec.c
+cd ..\real_to_v
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_to_v-cfunc.c
+del real_to_v-ifspec.c
+rename cfunc.c real_to_v-cfunc.c
+rename ifspec.c real_to_v-ifspec.c
+cd ..\int
+rename udnfunc.c int_udnfunc.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)xtraevt.cm</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>
+      </AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <NoEntryPoint>false</NoEntryPoint>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>cd ..\..\src\xspice\icm\xtraevt\int
+rename int_udnfunc.c udnfunc.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>revert renaming file</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\xtraevt
+..\bin\cmpp -lst
+cd d_to_real
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_to_real-cfunc.c
+del d_to_real-ifspec.c
+rename cfunc.c d_to_real-cfunc.c
+rename ifspec.c d_to_real-ifspec.c
+cd ..\real_delay
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_delay-cfunc.c
+del real_delay-ifspec.c
+rename cfunc.c real_delay-cfunc.c
+rename ifspec.c real_delay-ifspec.c
+cd ..\real_gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_gain-cfunc.c
+del real_gain-ifspec.c
+rename cfunc.c real_gain-cfunc.c
+rename ifspec.c real_gain-ifspec.c
+cd ..\real_to_v
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_to_v-cfunc.c
+del real_to_v-ifspec.c
+rename cfunc.c real_to_v-cfunc.c
+rename ifspec.c real_to_v-ifspec.c
+cd ..\int
+rename udnfunc.c int_udnfunc.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)xtraevt.cm</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <NoEntryPoint>false</NoEntryPoint>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+    <PostBuildEvent>
+      <Command>cd ..\..\src\xspice\icm\xtraevt\int
+      rename int_udnfunc.c udnfunc.c
+      cd ..\..\..\..\..\visualc\XSPICE
+      </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>revert renaming file</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\xtraevt
+..\bin\cmpp -lst
+cd d_to_real
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_to_real-cfunc.c
+del d_to_real-ifspec.c
+rename cfunc.c d_to_real-cfunc.c
+rename ifspec.c d_to_real-ifspec.c
+cd ..\real_delay
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_delay-cfunc.c
+del real_delay-ifspec.c
+rename cfunc.c real_delay-cfunc.c
+rename ifspec.c real_delay-ifspec.c
+cd ..\real_gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_gain-cfunc.c
+del real_gain-ifspec.c
+rename cfunc.c real_gain-cfunc.c
+rename ifspec.c real_gain-ifspec.c
+cd ..\real_to_v
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_to_v-cfunc.c
+del real_to_v-ifspec.c
+rename cfunc.c real_to_v-cfunc.c
+rename ifspec.c real_to_v-ifspec.c
+cd ..\int
+rename udnfunc.c int_udnfunc.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)xtraevt64.cm</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>
+      </AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <NoEntryPoint>false</NoEntryPoint>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+    <Command>
+      cd ..\..\src\xspice\icm\xtraevt\int
+      rename int_udnfunc.c udnfunc.c
+      cd ..\..\..\..\..\visualc\XSPICE
+    </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Message>Generate cfunc.c and ifspec.c</Message>
+      <Command>cd ..\..\src\xspice\icm\xtraevt
+..\bin\cmpp -lst
+cd d_to_real
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del d_to_real-cfunc.c
+del d_to_real-ifspec.c
+rename cfunc.c d_to_real-cfunc.c
+rename ifspec.c d_to_real-ifspec.c
+cd ..\real_delay
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_delay-cfunc.c
+del real_delay-ifspec.c
+rename cfunc.c real_delay-cfunc.c
+rename ifspec.c real_delay-ifspec.c
+cd ..\real_gain
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_gain-cfunc.c
+del real_gain-ifspec.c
+rename cfunc.c real_gain-cfunc.c
+rename ifspec.c real_gain-ifspec.c
+cd ..\real_to_v
+..\..\bin\cmpp -ifs
+..\..\bin\cmpp -mod
+del real_to_v-cfunc.c
+del real_to_v-ifspec.c
+rename cfunc.c real_to_v-cfunc.c
+rename ifspec.c real_to_v-ifspec.c
+cd ..\int
+rename udnfunc.c int_udnfunc.c
+cd ..\..\..\..\..\visualc\XSPICE
+</Command>
+    </PreBuildEvent>
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <OutputFile>$(OutDir)xtraevt64.cm</OutputFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <NoEntryPoint>false</NoEntryPoint>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>cd xtraevt\int
+rename int_udnfunc.c udnfunc.c
+cd ..
+cd ..</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\d_to_real\d_to_real-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\d_to_real\d_to_real-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\int\int_udnfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real\udnfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_delay\real_delay-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_delay\real_delay-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_gain\real_gain-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_gain\real_gain-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_to_v\real_to_v-cfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_to_v\real_to_v-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\xspice\icm\xtraevt\d_to_real\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\d_to_real\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_delay\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_delay\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_gain\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_gain\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\ifspec.ifs" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
