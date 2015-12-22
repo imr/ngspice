@@ -14,7 +14,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 
 int
-prefix(register char *p, register char *s)
+prefix(const char *p, const char *s)
 {
     while (*p && (*p == *s))
         p++, s++;
@@ -106,9 +106,9 @@ tprintf(const char *fmt, ...)
 /* Like strstr( ) XXX */
 
 int
-substring(register char *sub, register char *str)
+substring(const char *sub, const char *str)
 {
-    char *s, *t;
+    const char *s, *t;
 
     while (*str) {
         if (*str == *sub) {
@@ -157,7 +157,7 @@ scannum(char *str)
 /* Like strcasecmp( ) XXX */
 
 int
-cieq(register char *p, register char *s)
+cieq(const char *p, const char *s)
 {
     while (*p) {
         if ((isupper(*p) ? tolower(*p) : *p) !=
@@ -172,7 +172,7 @@ cieq(register char *p, register char *s)
 /* Case insensitive prefix. */
 
 int
-ciprefix(register char *p, register char *s)
+ciprefix(const char *p, const char *s)
 {
     while (*p) {
         if ((isupper(*p) ? tolower(*p) : *p) !=

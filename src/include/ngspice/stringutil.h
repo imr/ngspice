@@ -12,14 +12,14 @@
 #include <stdarg.h>
 
 
-int prefix(register char *p, register char *s);
+int prefix(const char *p, const char *s);
 char * copy(const char *str);
 char * copy_substring(const char *str, const char *end);
-int substring(register char *sub, register char *str);
+int substring(const char *sub, const char *str);
 void appendc(char *s, char c);
 int scannum(char *str);
-int cieq(register char *p, register char *s);
-int ciprefix(register char *p, register char *s);
+int cieq(const char *p, const char *s);
+int ciprefix(const char *p, const char *s);
 void strtolower(char *str);
 void strtoupper(char *str);
 char * stripWhiteSpacesInsideParens(char *str);

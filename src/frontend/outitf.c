@@ -846,7 +846,7 @@ fileInit(runDesc *run)
 
 
 static int
-guess_type(char *name)
+guess_type(const char *name)
 {
     int type;
 
