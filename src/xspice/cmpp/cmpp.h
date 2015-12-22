@@ -45,6 +45,14 @@ NON-STANDARD FEATURES
 #define MODPATH_FILENAME "modpath.lst"
 #define UDNPATH_FILENAME "udnpath.lst"
 
+#ifdef _MSC_VER
+#include <io.h>
+#define strdup _strdup
+#define unlink _unlink
+#define isatty _isatty
+#define fileno _fileno
+#endif
+
 /* *********************************************************************** */
 
 typedef enum {
