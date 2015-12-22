@@ -574,18 +574,18 @@ vec_get(const char *vec_name)
              * used with the parameters of isrc and vsrc
              */
             struct variable *nv;
-            double *list;
-            list = TMALLOC(double, 1);
-            nv = vv->va_vlist;
-            for (i = 1; ; i++) {
-                list = TREALLOC(double, list, i);
-                list[i-1] = nv->va_real;
-                nv = nv->va_next;
-                if (!nv)
-                    break;
-            }
-            d->v_realdata = list;
+
+            i = 0;
+            for (nv = vv->va_vlist; nv; nv = nv->va_next)
+                i++;
+
+            d->v_realdata = TREALLOC(double, d->v_realdata, i);
             d->v_length = i;
+
+            i = 0;
+            for (nv = vv->va_vlist; nv; nv = nv->va_next)
+                d->v_realdata[i++] = nv->va_real;
+
             /* To be able to identify the vector to represent
              * belongs to a special "conunto" and should be printed in a
              * special way.
