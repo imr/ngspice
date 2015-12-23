@@ -1005,7 +1005,6 @@ plotInit(runDesc *run)
 {
     struct plot *pl = plot_alloc(run->type);
     struct dvec *v;
-    dataDesc *dd;
     int i;
 
     pl->pl_title = copy(run->name);
@@ -1024,15 +1023,17 @@ plotInit(runDesc *run)
             run->isComplex = TRUE;
 
     for (i = 0; i < run->numData; i++) {
-        dd = &run->data[i];
-        v = alloc(struct dvec);
-        if (isdigit(*dd->name)) {
-            v->v_name = tprintf("V(%s)", dd->name);
-        } else {
-            v->v_name = copy(dd->name);
-        }
+        dataDesc *dd = &run->data[i];
+        char *name;
 
-        v->v_type = guess_type(v->v_name);
+        if (isdigit(dd->name[0]))
+            name = tprintf("V(%s)", dd->name);
+        else
+            name = copy(dd->name);
+
+        v = alloc(struct dvec);
+        v->v_name = name;
+        v->v_type = guess_type(name);
 
         v->v_length = 0;
         v->v_scale = NULL;
