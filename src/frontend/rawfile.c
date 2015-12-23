@@ -467,15 +467,17 @@ raw_read(char *name) {
                 v = alloc(struct dvec);
                 ZERO(v, struct dvec);
                 v->v_type = SV_NOTYPE;
+                v->v_flags = (short)flags;
+                v->v_length = npoints;
+                v->v_numdims = 0;
+                /* Length and dims might be changed by options. */
+
+                v->v_plot = curpl;
+
                 v->v_next = curpl->pl_dvecs;
                 curpl->pl_dvecs = v;
                 if (!curpl->pl_scale)
                     curpl->pl_scale = v;
-                v->v_flags = (short)flags;
-                v->v_plot = curpl;
-                v->v_length = npoints;
-                v->v_numdims = 0;
-                /* Length and dims might be changed by options. */
 
                 if (!i) {
                     curpl->pl_scale = v;
