@@ -431,8 +431,6 @@ next1:      if(vbs <= -3*vt) {
              *
              */
 
-            double arg;
-            double sarg;
             double a4[4],b4[4],x4[8],poly4[8];
             double beta1;
             double dsrgdb;

@@ -172,8 +172,6 @@ double gmbds;
              *     this routine evaluates the drain current, its derivatives and             *     the charges associated with the gate, channel and bulk             *     for mosfets             *
              */
 
-            double arg;
-            double sarg;
             double a4[4],b4[4],x4[8],poly4[8];
             double beta1;
             double sphi = 0.0;    /* square root of phi */

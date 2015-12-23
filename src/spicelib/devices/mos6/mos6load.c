@@ -461,11 +461,9 @@ next1:      if(vbs <= -3*vt) {
              *
              */
 
-            /* the following 14 variables are local to this code block until 
+            /* the following 12 variables are local to this code block until 
              * it is obvious that they can be made global 
              */
-            double arg;
-            double sarg;
             double vgon;
             double vdshere, vbsvbd;
 	    double idsat, lambda, vonbm = 0.0;

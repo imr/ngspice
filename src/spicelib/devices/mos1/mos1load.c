@@ -469,12 +469,10 @@ next1:      if(vbs <= -3*vt) {
 		 *
 		 */
 
-		/* the following 4 variables are local to this code block until 
+		/* the following 2 variables are local to this code block until 
 		 * it is obvious that they can be made global 
 		 */
-		double arg;
 		double betap;
-		double sarg;
 		double vgst;
 
                 if ((here->MOS1mode==1?vbs:vbd) <= 0 ) {

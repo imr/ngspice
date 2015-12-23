@@ -142,7 +142,7 @@ June 2008 (revised October 2011)
 
 
   double C_QE2, C_ESI2, Tn2 ; 
-  double q_Nsub, Ndepm2, q_Ndepm ; 
+  double Ndepm2, q_Ndepm ; 
   double C_2ESIpq_Ndepm, C_2ESIpq_Ndepm_inv , C_2ESI_q_Ndepm ; 
   double C_2ESIpq_Nsub , C_2ESIpq_Nsub_inv ; 
   double ps_conv3 , ps_conv23 ; 
@@ -168,7 +168,6 @@ June 2008 (revised October 2011)
   double Qn_drift, Qn_drift_dVgs, Qn_drift_dVds, Qn_drift_dVbs ;
 
   double Ey_suf, Ey_suf_dVgs, Ey_suf_dVds, Ey_suf_dVbs ;
-  double Vbsc , Vbsc_dVbse ;
 
   double DEPQFN1 = 2.0 ;
   double DEPQFN3 = 0.3 ;

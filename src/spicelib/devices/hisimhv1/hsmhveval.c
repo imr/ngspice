@@ -272,7 +272,7 @@ static double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 ;
   double xmax2 = (xmax) * (xmax) ; \
   double xp = 1.0 , xmp = 1.0 ; \
   int   m =0, mm =0; \
-  double arg =0.0, dnm =0.0; \
+  double dnm =0.0; \
   for ( m = 0 ; m < pw ; m ++ ) { xp *= x2 ; xmp *= xmax2 ; } \
   arg = xp + xmp ; \
   dnm = arg ; \
