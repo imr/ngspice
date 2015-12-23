@@ -946,6 +946,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
                 tfree(v->v_realdata);
                 v->v_realdata = newdata;
+                v->v_length = newlen;
 
                 /* Why go to all this trouble if agraf ignores it? */
                 nointerp = TRUE;
