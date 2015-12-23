@@ -466,6 +466,7 @@ raw_read(char *name) {
             for (i = 0; i < nvars; i++) {
                 v = alloc(struct dvec);
                 ZERO(v, struct dvec);
+                v->v_type = SV_NOTYPE;
                 v->v_next = curpl->pl_dvecs;
                 curpl->pl_dvecs = v;
                 if (!curpl->pl_scale)
