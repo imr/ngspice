@@ -497,7 +497,7 @@ raw_read(char *name) {
                     fprintf(cp_err, "Error: bad var line %s\n", buf);
 
                 /* Fix the name... */
-                if (isdigit(*v->v_name) && (r = ft_typabbrev(v ->v_type)) != NULL) {
+                if (isdigit(v->v_name[0]) && (r = ft_typabbrev(v ->v_type)) != NULL) {
                     char *x = v->v_name;
                     v->v_name = tprintf("%s(%s)", r, v->v_name);
                     tfree(x);
@@ -697,10 +697,10 @@ fixdims(struct dvec *v, char *s)
     for (i = 0, ndimpoints = 1; i < v->v_numdims; i++)
         ndimpoints *= v->v_dims[i];
 
-    if (ndimpoints > v->v_length)
-        v->v_numdims = 0;
-    else
+    if (v->v_length >= ndimpoints)
         v->v_length = ndimpoints;
+    else
+        v->v_numdims = 0;
 }
 
 
