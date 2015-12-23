@@ -927,18 +927,19 @@ apply_func(struct func *func, struct pnode *arg)
         if (!data)
             return (NULL);
 
-        t = alloc(struct dvec);
-        ZERO(t, struct dvec);
-
-        t->v_flags = (v->v_flags & ~VF_COMPLEX & ~VF_REAL &
-                      ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN);
-        t->v_flags |= type;
 #ifdef FTEDEBUG
         if (ft_evdb)
             fprintf(cp_err,
                     "apply_func: func %s to %s len %d, type %d\n",
                     func->fu_name, v->v_name, len, type);
 #endif
+
+        t = alloc(struct dvec);
+        ZERO(t, struct dvec);
+
+        t->v_flags = (v->v_flags & ~VF_COMPLEX & ~VF_REAL &
+                      ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN);
+        t->v_flags |= type;
         if (isreal(t))
             t->v_realdata = (double *) data;
         else
