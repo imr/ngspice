@@ -321,10 +321,12 @@ doop(char what,
     res = alloc(struct dvec);
     ZERO(res, struct dvec);
     if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
+        res->v_type = SV_NOTYPE;
         res->v_flags = (v1->v_flags | v2->v_flags |
                         VF_REAL) & ~ VF_COMPLEX;
         res->v_realdata = (double *) data;
     } else {
+        res->v_type = SV_NOTYPE;
         res->v_flags = (v1->v_flags | v2->v_flags |
                         VF_COMPLEX) & ~ VF_REAL;
         res->v_compdata = (ngcomplex_t *) data;
