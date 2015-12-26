@@ -1,0 +1,47 @@
+* check alter @v1[pulse] = [ 1 2 3 4 5 6 ]
+*
+* (exec-spice "ngspice -b %s" t)
+*
+* see com_alter_common() in frontend/device.c
+
+v1 1 0 dc 0.25 pulse( -1 2 3m 4u 5u 6m 7m)
+
+.control
+
+op
+
+let vec1 = @v1[pulse]
+compose gold1 values -1 2 3m 4u 5u 6m 7m
+let err1 = vecmax(abs(vec1/gold1 - 1))
+
+alter @v1[pulse] = [ 2 5 11n 12n 13n 54n 105n ]
+
+let vec2 = @v1[pulse]
+compose gold2 values 2 5 11n 12n 13n 54n 105n
+let err2 = vecmax(abs(vec2/gold2 - 1))
+
+echo "Note: err1 = " $&err1
+echo "Note: err2 = " $&err2
+
+let success = 0
+
+if err1 > 1e-15
+  echo "ERROR: test1 failed, excessive error"
+else
+  let success = success + 1
+end
+
+if err2 > 1e-15
+  echo "ERROR: test2 failed, excessive error"
+else
+  let success = success + 1
+end
+
+if success eq 2
+   echo "INFO: success"
+   quit 0
+else
+   quit 1
+end
+
+.endc
