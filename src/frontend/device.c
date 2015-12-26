@@ -1330,15 +1330,14 @@ com_alter_common(wordlist *wl, int do_model)
         type &= IF_VARTYPES;
         if (type == IF_REALVEC) {
             list = TMALLOC(double, 1);
-            tmp = INPevaluate(&xsbuf, &error, 1);
             for (;;) {
+                tmp = INPevaluate(&xsbuf, &error, 1);
                 if (error)
                     break;
                 /*printf(" returning vector value %g\n", tmp); */
                 i++;
                 list = TREALLOC(double, list, i);
                 list[i-1] = tmp;
-                tmp = INPevaluate(&xsbuf, &error, 1);
             }
             dv->v_realdata = list;
         }
