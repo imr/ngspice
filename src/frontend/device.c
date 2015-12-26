@@ -1321,6 +1321,8 @@ com_alter_common(wordlist *wl, int do_model)
         xsbuf = rem_xsbuf = wl_flatten(words);
         /* fprintf(cp_err, "Chain    converted  %s \n", xsbuf); */
         dv = TMALLOC(struct dvec, 1);
+        if (!dv)
+            return;
         dv->v_name = copy("real vector");
         type &= IF_VARTYPES;
         if (type == IF_REALVEC) {
@@ -1336,9 +1338,6 @@ com_alter_common(wordlist *wl, int do_model)
             dv->v_realdata = list;
         }
         dv->v_length = i;
-
-        if (!dv)
-            return;
 
         if (dv->v_length < 1) {
             fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
