@@ -1335,9 +1335,8 @@ com_alter_common(wordlist *wl, int do_model)
                 if (error)
                     break;
                 /*printf(" returning vector value %g\n", tmp); */
-                i++;
-                list = TREALLOC(double, list, i);
-                list[i-1] = tmp;
+                list = TREALLOC(double, list, i + 1);
+                list[i++] = tmp;
             }
             dv->v_realdata = list;
         }
