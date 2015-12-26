@@ -109,16 +109,12 @@ xtend(struct dvec *v, int length)
         oc = v->v_compdata;
         v->v_compdata = TMALLOC(ngcomplex_t, length);
         for (i = 0; i < v->v_length; i++) {
-            realpart(v->v_compdata[i]) = realpart(oc[i]);
-            imagpart(v->v_compdata[i]) = imagpart(oc[i]);
+            v->v_compdata[i] = oc[i];
         }
-        realpart(c) = realpart(oc[i - 1]);
-        imagpart(c) = imagpart(oc[i - 1]);
+        c = oc[i - 1];
         tfree(oc);
-        while (i < length) {
-            realpart(v->v_compdata[i]) = realpart(c);
-            imagpart(v->v_compdata[i++]) = imagpart(c);
-        }
+        while (i < length)
+            v->v_compdata[i++] = c;
     }
 
     v->v_length = length;
