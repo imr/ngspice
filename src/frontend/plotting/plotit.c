@@ -94,10 +94,12 @@ xtend(struct dvec *v, int length)
         return;
     }
 
+    i = v->v_length;
+
     if (isreal(v)) {
         double d = NAN;
         v->v_realdata = TREALLOC(double, v->v_realdata, length);
-        i = v->v_length;
+        v->v_length = length;
         if (i > 0)
             d = v->v_realdata[i - 1];
         while (i < length)
@@ -105,14 +107,12 @@ xtend(struct dvec *v, int length)
     } else {
         ngcomplex_t c = {NAN, NAN};
         v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
-        i = v->v_length;
+        v->v_length = length;
         if (i > 0)
             c = v->v_compdata[i - 1];
         while (i < length)
             v->v_compdata[i++] = c;
     }
-
-    v->v_length = length;
 }
 
 
