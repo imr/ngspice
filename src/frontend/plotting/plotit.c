@@ -85,8 +85,6 @@ static void
 xtend(struct dvec *v, int length)
 {
     int i;
-    ngcomplex_t c, *oc;
-    double d, *od;
 
     if (v->v_length == length)
         return;
@@ -99,19 +97,17 @@ xtend(struct dvec *v, int length)
     if (isreal(v)) {
         double d = NAN;
         v->v_realdata = TREALLOC(double, v->v_realdata, length);
-        od = v->v_realdata;
         i = v->v_length;
         if (i > 0)
-            d = od[i - 1];
+            d = v->v_realdata[i - 1];
         while (i < length)
             v->v_realdata[i++] = d;
     } else {
         ngcomplex_t c = {NAN, NAN};
         v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
-        oc = v->v_compdata;
         i = v->v_length;
         if (i > 0)
-            c = oc[i - 1];
+            c = v->v_compdata[i - 1];
         while (i < length)
             v->v_compdata[i++] = c;
     }
