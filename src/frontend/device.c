@@ -1331,7 +1331,9 @@ com_alter_common(wordlist *wl, int do_model)
         if (type == IF_REALVEC) {
             list = TMALLOC(double, 1);
             tmp = INPevaluate(&xsbuf, &error, 1);
-            while (error == 0) {
+            for (;;) {
+                if (error)
+                    break;
                 /*printf(" returning vector value %g\n", tmp); */
                 i++;
                 list = TREALLOC(double, list, i);
