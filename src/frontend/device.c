@@ -1330,6 +1330,12 @@ com_alter_common(wordlist *wl, int do_model)
                 list = TREALLOC(double, list, i + 1);
                 list[i++] = tmp;
             }
+
+            if (i < 1) {
+                fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
+                return;
+            }
+
             dv = TMALLOC(struct dvec, 1);
             if (!dv)
                 return;
@@ -1338,11 +1344,6 @@ com_alter_common(wordlist *wl, int do_model)
             dv->v_flags = VF_REAL;
             dv->v_realdata = list;
         dv->v_length = i;
-
-        if (dv->v_length < 1) {
-            fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
-            return;
-        }
 
         /*       Here I was, to change the inclusion in the circuit.
          * will have to revise that dv is right for its insertion.
