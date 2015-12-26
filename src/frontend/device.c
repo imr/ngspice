@@ -1321,28 +1321,30 @@ com_alter_common(wordlist *wl, int do_model)
             words = words->wl_next;
         xsbuf = rem_xsbuf = wl_flatten(words);
         /* fprintf(cp_err, "Chain    converted  %s \n", xsbuf); */
-            list = NULL;
-            for (;;) {
-                tmp = INPevaluate(&xsbuf, &error, 1);
-                if (error)
-                    break;
-                /*printf(" returning vector value %g\n", tmp); */
-                list = TREALLOC(double, list, i + 1);
-                list[i++] = tmp;
-            }
 
-            if (i < 1) {
-                fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
-                return;
-            }
+        list = NULL;
+        for (;;) {
+            tmp = INPevaluate(&xsbuf, &error, 1);
+            if (error)
+                break;
+            /* printf(" returning vector value %g\n", tmp); */
+            list = TREALLOC(double, list, i + 1);
+            list[i++] = tmp;
+        }
 
-            dv = TMALLOC(struct dvec, 1);
-            if (!dv)
-                return;
-            dv->v_name = copy("real vector");
-            dv->v_type = SV_NOTYPE;
-            dv->v_flags = VF_REAL;
-            dv->v_realdata = list;
+        if (i < 1) {
+            fprintf(cp_err, "Error: cannot evaluate new parameter value.\n");
+            return;
+        }
+
+        dv = TMALLOC(struct dvec, 1);
+        if (!dv)
+            return;
+
+        dv->v_name = copy("real vector");
+        dv->v_type = SV_NOTYPE;
+        dv->v_flags = VF_REAL;
+        dv->v_realdata = list;
         dv->v_length = i;
 
         /*       Here I was, to change the inclusion in the circuit.
