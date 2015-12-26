@@ -101,7 +101,7 @@ xtend(struct dvec *v, int length)
         v->v_realdata = TMALLOC(double, length);
         for (i = 0; i < v->v_length; i++)
             v->v_realdata[i] = od[i];
-        d = od[--i];
+        d = od[i - 1];
         tfree(od);
         while (i < length)
             v->v_realdata[i++] = d;
@@ -112,8 +112,8 @@ xtend(struct dvec *v, int length)
             realpart(v->v_compdata[i]) = realpart(oc[i]);
             imagpart(v->v_compdata[i]) = imagpart(oc[i]);
         }
-        realpart(c) = realpart(oc[--i]);
-        imagpart(c) = imagpart(oc[i]);
+        realpart(c) = realpart(oc[i - 1]);
+        imagpart(c) = imagpart(oc[i - 1]);
         tfree(oc);
         while (i < length) {
             realpart(v->v_compdata[i]) = realpart(c);
