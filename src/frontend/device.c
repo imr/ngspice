@@ -1311,7 +1311,7 @@ com_alter_common(wordlist *wl, int do_model)
            alter @vin[pulse] = [ 0 5 10n 10n 10n 50n 100n ]
         */
         char *xsbuf, *rem_xsbuf;
-        int type = IF_REALVEC, i = 0;
+        int i = 0;
 
         double *list;
         double tmp;
@@ -1327,8 +1327,6 @@ com_alter_common(wordlist *wl, int do_model)
         dv->v_name = copy("real vector");
         dv->v_type = SV_NOTYPE;
         dv->v_flags = VF_REAL;
-        type &= IF_VARTYPES;
-        if (type == IF_REALVEC) {
             list = TMALLOC(double, 1);
             for (;;) {
                 tmp = INPevaluate(&xsbuf, &error, 1);
@@ -1339,7 +1337,6 @@ com_alter_common(wordlist *wl, int do_model)
                 list[i++] = tmp;
             }
             dv->v_realdata = list;
-        }
         dv->v_length = i;
 
         if (dv->v_length < 1) {
