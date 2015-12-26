@@ -98,25 +98,20 @@ xtend(struct dvec *v, int length)
 
     if (isreal(v)) {
         double d = NAN;
+        v->v_realdata = TREALLOC(double, v->v_realdata, length);
         od = v->v_realdata;
-        v->v_realdata = TMALLOC(double, length);
-        for (i = 0; i < v->v_length; i++)
-            v->v_realdata[i] = od[i];
+        i = v->v_length;
         if (i > 0)
             d = od[i - 1];
-        tfree(od);
         while (i < length)
             v->v_realdata[i++] = d;
     } else {
         ngcomplex_t c = {NAN, NAN};
+        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
         oc = v->v_compdata;
-        v->v_compdata = TMALLOC(ngcomplex_t, length);
-        for (i = 0; i < v->v_length; i++) {
-            v->v_compdata[i] = oc[i];
-        }
+        i = v->v_length;
         if (i > 0)
             c = oc[i - 1];
-        tfree(oc);
         while (i < length)
             v->v_compdata[i++] = c;
     }
