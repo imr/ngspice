@@ -195,7 +195,7 @@ docommand(wordlist *wlist)
 
         /* Look for the command in the command list. */
         for (i = 0; cp_coms[i].co_comname; i++)
-            if (strcmp(cp_coms[i].co_comname, s) == 0)
+            if (strcasecmp(cp_coms[i].co_comname, s) == 0)
                 break;
 
         command = &cp_coms[i];
