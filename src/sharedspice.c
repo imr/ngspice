@@ -177,6 +177,7 @@ extern void initw(void);
 static runDesc *cur_run;
 
 void sh_stdflush(FILE *f);
+double getisrcval(double time, char *iname);
 
 int sh_fputsll(const char *input, FILE* outf);
 
