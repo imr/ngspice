@@ -91,10 +91,6 @@ evt_dest(Evt_Ckt_Data_t *evt)
     Evt_Node_Queue_t    *node_queue;
     Evt_Inst_Queue_t    *inst_queue;
 
-    Evt_Output_Info_t   **output_table;
-    Evt_Node_Info_t     **node_table;
-    Evt_Port_Info_t     **port_table;
-
     Evt_State_Data_t    *state_data;
     Evt_State_t         *statenext, *state;
 
@@ -120,12 +116,7 @@ evt_dest(Evt_Ckt_Data_t *evt)
     node_queue = &(evt->queue.node);
     inst_queue = &(evt->queue.inst);
 
-    output_table = evt->info.output_table;
-    node_table = evt->info.node_table;
-    port_table = evt->info.port_table;
-
     node_data = evt->data.node;
-
     state_data = evt->data.state;
     msg_data = evt->data.msg;
 
@@ -268,11 +259,43 @@ evt_dest(Evt_Ckt_Data_t *evt)
         tfree(msg_data->modified_index);
     }
 
-    /* still to care for :
-     *   output_table
-     *   node_table
-     *   port_table
-     */
+    tfree(evt->info.hybrid_index);
+
+    Evt_Inst_Info_t *inst = evt->info.inst_list;
+    while (inst) {
+        Evt_Inst_Info_t *next_inst = inst->next;
+        tfree(inst);
+        inst = next_inst;
+    }
+    tfree(evt->info.inst_table);
+
+    Evt_Node_Info_t *nodei = evt->info.node_list;
+    while (nodei) {
+        Evt_Node_Info_t *next_nodei = nodei->next;
+        tfree(nodei->name);
+        tfree(nodei);
+        nodei = next_nodei;
+    }
+    tfree(evt->info.node_table);
+
+    Evt_Port_Info_t *port = evt->info.port_list;
+    while (port) {
+        Evt_Port_Info_t *next_port = port->next;
+        tfree(port->node_name);
+        tfree(port->inst_name);
+        tfree(port->conn_name);
+        tfree(port);
+        port = next_port;
+    }
+    tfree(evt->info.port_table);
+
+    Evt_Output_Info_t *output = evt->info.output_list;
+    while (output) {
+        Evt_Output_Info_t *next_output = output->next;
+        tfree(output);
+        output = next_output;
+    }
+    tfree(evt->info.output_table);
 
     return(OK);
 }
