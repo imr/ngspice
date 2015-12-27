@@ -45,7 +45,7 @@ struct dvec {
     GRIDTYPE v_gridtype;	/* One of GRID_*. */
     PLOTTYPE v_plottype;	/* One of PLOT_*. */
     int v_length;		/* Length of the vector. */
-    int v_rlength;		/* How much space we really have. */
+    int v_rlength;		/* How much space we really have. Used as binary flag */
     int v_outindex;		/* Index if writedata is building the
 				   vector. */
     int v_linestyle;		/* What line style we are using. */
