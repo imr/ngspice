@@ -468,7 +468,7 @@ raw_read(char *name) {
                  * the desired vector length, but this would
                  * be dangerous if the file is invalid.
                  */
-                v = alloc(struct dvec);
+                v = dvec_alloc();
                 ZERO(v, struct dvec);
                 v->v_type = SV_NOTYPE;
                 v->v_flags = (short)flags;

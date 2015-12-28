@@ -114,7 +114,7 @@ oldread(char *name)
         fprintf(cp_err, "Warning: magic number 4 is wrong...\n");
 
     for (i = 0; i < nv; i++) {
-        v = alloc(struct dvec);
+        v = dvec_alloc();
         if (end)
             end->v_next = v;
         else

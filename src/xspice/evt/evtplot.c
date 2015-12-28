@@ -187,7 +187,7 @@ struct dvec *EVTfindvec(
   /* Allocate dvec structures and assign the vectors into them. */
   /* See FTE/OUTinterface.c:plotInit() for initialization example. */
 
-  scale = TMALLOC(struct dvec, 1);
+  scale = dvec_alloc();
 
   scale->v_name = MIFcopy("step");
   scale->v_type = SV_TIME;
@@ -196,7 +196,7 @@ struct dvec *EVTfindvec(
   scale->v_realdata = anal_point_vec;
   scale->v_scale = NULL;
 
-  d = TMALLOC(struct dvec, 1);
+  d = dvec_alloc();
 
   d->v_name = name;
   d->v_type = SV_VOLTAGE;

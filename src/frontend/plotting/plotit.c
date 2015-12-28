@@ -916,7 +916,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
             double *newscale;
 
-            struct dvec *newv_scale = alloc(struct dvec);
+            struct dvec *newv_scale = dvec_alloc();
             struct dvec *v;
 
             newv_scale->v_name = copy(vecs->v_scale->v_name);

@@ -764,7 +764,7 @@ com_cross(wordlist *wl)
     }
 
     vec_remove(newvec);
-    v = alloc(struct dvec);
+    v = dvec_alloc();
     v->v_name = copy(newvec);
     v->v_type = vecs ? vecs->v_type : SV_NOTYPE;
     v->v_length = i;

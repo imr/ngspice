@@ -318,7 +318,7 @@ doop(char what,
     if (!data)
         return (NULL);
     /* Make up the new vector. */
-    res = alloc(struct dvec);
+    res = dvec_alloc();
     ZERO(res, struct dvec);
     if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
         res->v_type = SV_NOTYPE;
@@ -615,7 +615,7 @@ op_range(struct pnode *arg1, struct pnode *arg2)
             len++;
     }
 
-    res = alloc(struct dvec);
+    res = dvec_alloc();
     ZERO(res, struct dvec);
     res->v_name = mkcname('R', v->v_name, ind->v_name);
     res->v_type = v->v_type;
@@ -771,7 +771,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         length = blocksize * (up - down + 1);
 
     /* Make up the new vector. */
-    res = alloc(struct dvec);
+    res = dvec_alloc();
     ZERO(res, struct dvec);
     res->v_name = mkcname('[', v->v_name, ind->v_name);
     res->v_type = v->v_type;
@@ -941,7 +941,7 @@ apply_func(struct func *func, struct pnode *arg)
         else
             name = mkcname('b', v->v_name, NULL);
 
-        t = alloc(struct dvec);
+        t = dvec_alloc();
         ZERO(t, struct dvec);
         t->v_name = name;
 

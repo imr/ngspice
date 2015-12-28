@@ -1031,7 +1031,7 @@ plotInit(runDesc *run)
         else
             name = copy(dd->name);
 
-        v = alloc(struct dvec);
+        v = dvec_alloc();
         v->v_name = name;
         v->v_type = guess_type(name);
 

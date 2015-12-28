@@ -207,7 +207,7 @@ com_spec(wordlist *wl)
     plot_cur->pl_name = copy("Spectrum");
     plot_cur->pl_date = copy(datestring());
 
-    f = alloc(struct dvec);
+    f = dvec_alloc();
     ZERO(f, struct dvec);
     f->v_name = copy("frequency");
     f->v_type = SV_FREQUENCY;
@@ -221,7 +221,7 @@ com_spec(wordlist *wl)
     fdvec = TMALLOC(ngcomplex_t *, ngood);
     for (i = 0, vec = vlist; i < ngood; i++) {
         tdvec[i] = vec->v_realdata;
-        f = alloc(struct dvec);
+        f = dvec_alloc();
         ZERO(f, struct dvec);
         f->v_name = vec_basename(vec);
         f->v_type = vec->v_type;
@@ -281,7 +281,7 @@ com_spec(wordlist *wl)
         fprintf(cp_err, "                           \r");
 
 #ifdef KEEPWINDOW
-        f = alloc(struct dvec);
+        f = dvec_alloc();
         ZERO(f, struct dvec);
         f->v_name = copy("win");
         f->v_type = SV_NOTYPE;

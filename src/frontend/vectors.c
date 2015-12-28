@@ -522,7 +522,7 @@ vec_get(const char *vec_name)
             return (NULL);
         }
 
-        d = alloc(struct dvec);
+        d = dvec_alloc();
         ZERO(d, struct dvec);
         d->v_name = copy(whole); /* MW. The same as word before */
         d->v_type = SV_NOTYPE;
@@ -685,7 +685,7 @@ vec_copy(struct dvec *v)
     if (!v)
         return (NULL);
 
-    nv = alloc(struct dvec);
+    nv = dvec_alloc();
     nv->v_name = copy(v->v_name);
     nv->v_type = v->v_type;
     nv->v_flags = v->v_flags & ~VF_PERMANENT;
@@ -1122,7 +1122,7 @@ vec_mkfamily(struct dvec *v)
 
         indexstring(count, v->v_numdims - 1, buf2);
 
-        d = alloc(struct dvec);
+        d = dvec_alloc();
         ZERO(d, struct dvec);
 
         d->v_name = tprintf("%s%s", v->v_name, buf2);

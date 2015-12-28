@@ -30,7 +30,7 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
         return;
     }
 
-    v = alloc(struct dvec);
+    v = dvec_alloc();
     v->v_name = copy(ov->v_name);
     v->v_type = ov->v_type;
     v->v_flags = ov->v_flags;

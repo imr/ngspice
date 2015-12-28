@@ -161,7 +161,7 @@ com_let(wordlist *wl)
         }
 
         /* create and assign a new vector */
-        n = alloc(struct dvec);
+        n = dvec_alloc();
         ZERO(n, struct dvec);
         n->v_name = copy(p);
         n->v_type = t->v_type;

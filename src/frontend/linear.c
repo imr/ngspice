@@ -62,7 +62,7 @@ com_linearize(wordlist *wl)
     plot_setcur(new->pl_typename);
     plot_list = new;
     len = (int)((tstop - tstart) / tstep + 1.5);
-    newtime = alloc(struct dvec);
+    newtime = dvec_alloc();
     newtime->v_name = copy(oldtime->v_name);
     newtime->v_type = oldtime->v_type;
     newtime->v_flags = oldtime->v_flags;
