@@ -90,7 +90,7 @@ xtend(struct dvec *v, int length)
         return;
 
     if (v->v_length > length) {
-        v->v_length = length;
+        dvec_trunc(v, length);
         return;
     }
 
@@ -158,7 +158,7 @@ compress(struct dvec *d, double *xcomp, double *xind)
                     d->v_realdata[i] = d->v_realdata[i * cfac];
                 else
                     d->v_compdata[i] = d->v_compdata[i * cfac];
-            d->v_length = i;
+            dvec_trunc(d, i);
         }
     }
 }

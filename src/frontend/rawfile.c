@@ -695,7 +695,7 @@ fixdims(struct dvec *v, char *s)
         ndimpoints *= v->v_dims[i];
 
     if (v->v_length >= ndimpoints)
-        v->v_length = ndimpoints;
+        dvec_trunc(v, ndimpoints);
     else
         v->v_numdims = 0;
 }

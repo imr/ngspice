@@ -41,6 +41,13 @@ dvec_alloc(char *name, int type, short flags, int length, void *storage)
 
 
 void
+dvec_trunc(struct dvec *v, int length)
+{
+    v->v_length = length;
+}
+
+
+void
 dvec_free(struct dvec *v)
 {
     if (v->v_name)
