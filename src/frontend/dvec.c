@@ -13,6 +13,7 @@ dvec_alloc(void)
     ZERO(rv, struct dvec);
 
     rv->v_plot = NULL;
+    rv->v_scale = NULL;
     rv->v_numdims = 0;
 
     return rv;

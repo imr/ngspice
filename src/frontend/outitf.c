@@ -1036,7 +1036,6 @@ plotInit(runDesc *run)
         v->v_type = guess_type(name);
 
         v->v_length = 0;
-        v->v_scale = NULL;
         if (!run->isComplex) {
             v->v_flags = VF_REAL;
             v->v_realdata = NULL;

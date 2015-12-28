@@ -194,7 +194,6 @@ struct dvec *EVTfindvec(
   scale->v_flags = VF_REAL & ~VF_PERMANENT;
   scale->v_length = i;
   scale->v_realdata = anal_point_vec;
-  scale->v_scale = NULL;
 
   d = dvec_alloc();
 
