@@ -1122,7 +1122,7 @@ com_alter_common(wordlist *wl, int do_model)
     struct pnode *names;
 
     /* DIE 2009_02_06 */
-    int step = 0, n, wlen, maxelem = 3;
+    int step = 0, i, wlen, maxelem = 3;
     wordlist *wl2 = NULL, *wlin, *rhs;
     bool eqfound = FALSE;
 
@@ -1183,7 +1183,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     if (eqfound) {
         /* step back in the wordlist, if we have moved forward, to catch 'm1' */
-        for (n = step; n > 0; n--)
+        for (i = step; i > 0; i--)
             wl2 = wl2->wl_prev;
     } else {
         /* no equal sign found, probably a pre3f4 input format
@@ -1199,7 +1199,7 @@ com_alter_common(wordlist *wl, int do_model)
         wlin = wl_nthelem(100, wlin); /* no more than 100 vector elements */
 
         if (eq(wlin->wl_word, "]"))     /* we have a vector */
-            for (n = 0; n < 100; n++) { /* no more than 100 vector elements */
+            for (i = 0; i < 100; i++) { /* no more than 100 vector elements */
                 wlin = wlin->wl_prev;
                 maxelem++;
                 if (eq(wlin->wl_word, "[")) {
@@ -1293,7 +1293,6 @@ com_alter_common(wordlist *wl, int do_model)
            alter @vin[pulse] = [ 0 5 10n 10n 10n 50n 100n ]
         */
         char *xsbuf, *rem_xsbuf;
-        int i = 0;
 
         double *list;
         double tmp;
@@ -1304,8 +1303,7 @@ com_alter_common(wordlist *wl, int do_model)
         xsbuf = rem_xsbuf = wl_flatten(words);
         /* fprintf(cp_err, "Chain    converted  %s \n", xsbuf); */
 
-        list = NULL;
-        for (;;) {
+        for (i = 0, list = NULL;;) {
             tmp = INPevaluate(&xsbuf, &error, 1);
             if (error)
                 break;
