@@ -1165,25 +1165,13 @@ com_alter_common(wordlist *wl, int do_model)
                 step = -1;
                 wl2 = wlin;
             } else if (strlen(argument) > 1) {
-                char **arglist;
-                arglist = TMALLOC(char*, 4);
-                /* copy argument */
-                arglist[0] = copy_substring(argument, eqptr);
-                /* copy equal sign */
-                arglist[1] = copy("=");
-                /* copy expression */
-                arglist[2] = copy(eqptr + 1);
-                arglist[3] = NULL;
-
-                /* create a new wordlist from array arglist */
-                wl2 = wl_build(arglist);
+                wl2 = wl_cons(copy_substring(argument, eqptr),
+                              wl_cons(copy("="),
+                                      wl_cons(copy(eqptr + 1),
+                                              NULL)));
                 /* combine wordlists into wl2, free wl */
                 wl_splice(wl, wl2);
                 wl = NULL;
-                /* free arglist */
-                for (n = 0; n < 3; n++)
-                    tfree(arglist[n]);
-                tfree(arglist);
             }
         } else {
             /* deal with 'altermod m1 vth0=0.7' by moving
