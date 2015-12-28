@@ -182,12 +182,7 @@ DestroyGraph(int id)
             d = list->graph.plotdata;
             while (d) {
                 nextd = d->next;
-                tfree(d->vector->v_name);
-                if (isreal(d->vector))
-                    tfree(d->vector->v_realdata);
-                else
-                    tfree(d->vector->v_compdata);
-                tfree(d->vector);
+                dvec_free(d->vector);
                 tfree(d);
                 d = nextd;
             }

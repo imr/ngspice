@@ -38,3 +38,16 @@ dvec_alloc(char *name, int type, short flags, int length, void *storage)
 
     return rv;
 }
+
+
+void
+dvec_free(struct dvec *v)
+{
+    if (v->v_name)
+        tfree(v->v_name);
+    if (v->v_realdata)
+        tfree(v->v_realdata);
+    if (v->v_compdata)
+        tfree(v->v_compdata);
+    tfree(v);
+}
