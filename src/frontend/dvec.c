@@ -3,7 +3,7 @@
 
 
 struct dvec *
-dvec_alloc(void)
+dvec_alloc(char *name, int type, short flags, int length, void *storage)
 {
     struct dvec *rv = TMALLOC(struct dvec, 1);
 
@@ -11,6 +11,26 @@ dvec_alloc(void)
         return NULL;
 
     ZERO(rv, struct dvec);
+
+    rv->v_name = name;
+    rv->v_type = type;
+    rv->v_flags = flags;
+    rv->v_length = length;
+
+    if (!length) {
+        rv->v_realdata = NULL;
+        rv->v_compdata = NULL;
+    } else if (flags & VF_REAL) {
+        rv->v_realdata = storage
+            ? (double *) storage
+            : TMALLOC(double, length);
+        rv->v_compdata = NULL;
+    } else if (flags & VF_COMPLEX) {
+        rv->v_realdata = NULL;
+        rv->v_compdata = storage
+            ? (ngcomplex_t *) storage
+            : TMALLOC(ngcomplex_t, length);
+    }
 
     rv->v_plot = NULL;
     rv->v_scale = NULL;

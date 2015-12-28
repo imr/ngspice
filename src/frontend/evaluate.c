@@ -318,21 +318,17 @@ doop(char what,
     if (!data)
         return (NULL);
     /* Make up the new vector. */
-    res = dvec_alloc();
     if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
-        res->v_type = SV_NOTYPE;
-        res->v_flags = (v1->v_flags | v2->v_flags |
-                        VF_REAL) & ~ VF_COMPLEX;
-        res->v_realdata = (double *) data;
+        res = dvec_alloc(mkcname(what, v1->v_name, v2->v_name),
+                         SV_NOTYPE,
+                         (v1->v_flags | v2->v_flags | VF_REAL) & ~VF_COMPLEX,
+                         length, data);
     } else {
-        res->v_type = SV_NOTYPE;
-        res->v_flags = (v1->v_flags | v2->v_flags |
-                        VF_COMPLEX) & ~ VF_REAL;
-        res->v_compdata = (ngcomplex_t *) data;
+        res = dvec_alloc(mkcname(what, v1->v_name, v2->v_name),
+                         SV_NOTYPE,
+                         (v1->v_flags | v2->v_flags | VF_COMPLEX) & ~VF_REAL,
+                         length, data);
     }
-
-    res->v_name = mkcname(what, v1->v_name, v2->v_name);
-    res->v_length = length;
 
     /* This is a non-obvious thing */
     if (v1->v_scale != v2->v_scale) {
@@ -614,15 +610,10 @@ op_range(struct pnode *arg1, struct pnode *arg2)
             len++;
     }
 
-    res = dvec_alloc();
-    res->v_name = mkcname('R', v->v_name, ind->v_name);
-    res->v_type = v->v_type;
-    res->v_flags = v->v_flags;
-    res->v_length = len;
-    if (isreal(res))
-        res->v_realdata = TMALLOC(double, len);
-    else
-        res->v_compdata = TMALLOC(ngcomplex_t, len);
+    res = dvec_alloc(mkcname('R', v->v_name, ind->v_name),
+                     v->v_type,
+                     v->v_flags,
+                     len, NULL);
 
     res->v_gridtype = v->v_gridtype;
     res->v_plottype = v->v_plottype;
@@ -769,15 +760,10 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         length = blocksize * (up - down + 1);
 
     /* Make up the new vector. */
-    res = dvec_alloc();
-    res->v_name = mkcname('[', v->v_name, ind->v_name);
-    res->v_type = v->v_type;
-    res->v_flags = v->v_flags;
-    res->v_length = length;
-    if (isreal(res))
-        res->v_realdata = TMALLOC(double, length);
-    else
-        res->v_compdata = TMALLOC(ngcomplex_t, length);
+    res = dvec_alloc(mkcname('[', v->v_name, ind->v_name),
+                     v->v_type,
+                     v->v_flags,
+                     length, NULL);
 
     res->v_defcolor = v->v_defcolor;
     res->v_gridtype = v->v_gridtype;
@@ -938,19 +924,12 @@ apply_func(struct func *func, struct pnode *arg)
         else
             name = mkcname('b', v->v_name, NULL);
 
-        t = dvec_alloc();
-        t->v_name = name;
+        t = dvec_alloc(name,
+                       v->v_type, /* This is strange too. */
+                       (v->v_flags & ~VF_COMPLEX & ~VF_REAL &
+                        ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN) | type,
+                       len, data);
 
-        t->v_flags = (v->v_flags & ~VF_COMPLEX & ~VF_REAL &
-                      ~VF_PERMANENT & ~VF_MINGIVEN & ~VF_MAXGIVEN);
-        t->v_flags |= type;
-        if (isreal(t))
-            t->v_realdata = (double *) data;
-        else
-            t->v_compdata = (ngcomplex_t *) data;
-
-        t->v_type = v->v_type; /* This is strange too. */
-        t->v_length = len;
         t->v_scale = v->v_scale;
 
         /* Copy a few useful things */

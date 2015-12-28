@@ -916,15 +916,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
 
             double *newscale;
 
-            struct dvec *newv_scale = dvec_alloc();
-            struct dvec *v;
+            struct dvec *v, *newv_scale =
+                dvec_alloc(copy(vecs->v_scale->v_name),
+                           vecs->v_scale->v_type,
+                           vecs->v_scale->v_flags,
+                           newlen, NULL);
 
-            newv_scale->v_name = copy(vecs->v_scale->v_name);
-            newv_scale->v_flags = vecs->v_scale->v_flags;
-            newv_scale->v_type = vecs->v_scale->v_type;
             newv_scale->v_gridtype = vecs->v_scale->v_gridtype;
-            newv_scale->v_length = newlen;
-            newv_scale->v_realdata = TMALLOC(double, newlen);
 
             newscale = newv_scale->v_realdata;
             for (i = 0, ttime = tstart; i < newlen; i++, ttime += tstep)

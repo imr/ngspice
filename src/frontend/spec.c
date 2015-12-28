@@ -207,12 +207,10 @@ com_spec(wordlist *wl)
     plot_cur->pl_name = copy("Spectrum");
     plot_cur->pl_date = copy(datestring());
 
-    f = dvec_alloc();
-    f->v_name = copy("frequency");
-    f->v_type = SV_FREQUENCY;
-    f->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);
-    f->v_length = fpts;
-    f->v_realdata = TMALLOC(double, fpts);
+    f = dvec_alloc(copy("frequency"),
+                   SV_FREQUENCY,
+                   VF_REAL | VF_PERMANENT | VF_PRINT,
+                   fpts, NULL);
     vec_new(f);
     freq = f->v_realdata;
 
@@ -220,12 +218,10 @@ com_spec(wordlist *wl)
     fdvec = TMALLOC(ngcomplex_t *, ngood);
     for (i = 0, vec = vlist; i < ngood; i++) {
         tdvec[i] = vec->v_realdata;
-        f = dvec_alloc();
-        f->v_name = vec_basename(vec);
-        f->v_type = vec->v_type;
-        f->v_flags = (VF_COMPLEX | VF_PERMANENT);
-        f->v_length = fpts;
-        f->v_compdata = TMALLOC(ngcomplex_t, fpts);
+        f = dvec_alloc(vec_basename(vec),
+                       vec->v_type,
+                       VF_COMPLEX | VF_PERMANENT,
+                       fpts, NULL);
         vec_new(f);
         fdvec[i] = f->v_compdata;
         vec = vec->v_link2;
@@ -279,12 +275,10 @@ com_spec(wordlist *wl)
         fprintf(cp_err, "                           \r");
 
 #ifdef KEEPWINDOW
-        f = dvec_alloc();
-        f->v_name = copy("win");
-        f->v_type = SV_NOTYPE;
-        f->v_flags = (VF_REAL | VF_PERMANENT);
-        f->v_length = tlen;
-        f->v_realdata = win;
+        f = dvec_alloc(copy("win"),
+                       SV_NOTYPE,
+                       VF_REAL | VF_PERMANENT,
+                       tlen, win);
         win = NULL;
         vec_new(f);
 #endif

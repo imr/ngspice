@@ -68,6 +68,6 @@ struct dveclist {
     struct dveclist *next;
 };
 
-struct dvec *dvec_alloc(void);
+struct dvec *dvec_alloc(char *name, int type, short flags, int length, void *storage);
 
 #endif

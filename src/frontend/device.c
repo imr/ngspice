@@ -1317,15 +1317,12 @@ com_alter_common(wordlist *wl, int do_model)
             return;
         }
 
-        dv = dvec_alloc();
+        dv = dvec_alloc(copy("real vector"),
+                        SV_NOTYPE,
+                        VF_REAL,
+                        i, list);
         if (!dv)
             return;
-
-        dv->v_name = copy("real vector");
-        dv->v_type = SV_NOTYPE;
-        dv->v_flags = VF_REAL;
-        dv->v_realdata = list;
-        dv->v_length = i;
 
         /*       Here I was, to change the inclusion in the circuit.
          * will have to revise that dv is right for its insertion.

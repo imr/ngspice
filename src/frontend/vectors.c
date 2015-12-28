@@ -522,12 +522,10 @@ vec_get(const char *vec_name)
             return (NULL);
         }
 
-        d = dvec_alloc();
-        d->v_name = copy(whole); /* MW. The same as word before */
-        d->v_type = SV_NOTYPE;
-        d->v_flags |= VF_REAL;  /* No complex values yet... */
-        d->v_realdata = TMALLOC(double, 1);
-        d->v_length = 1;
+        d = dvec_alloc(copy(whole), /* MW. The same as word before */
+                       SV_NOTYPE,
+                       VF_REAL,  /* No complex values yet... */
+                       1, NULL);
 
         /* In case the represented variable is a REAL vector this takes
          * the actual value of the first element of the linked list which
@@ -684,19 +682,10 @@ vec_copy(struct dvec *v)
     if (!v)
         return (NULL);
 
-    nv = dvec_alloc();
-    nv->v_name = copy(v->v_name);
-    nv->v_type = v->v_type;
-    nv->v_flags = v->v_flags & ~VF_PERMANENT;
-
-    nv->v_length = v->v_length;
-    if (isreal(v)) {
-        nv->v_realdata = TMALLOC(double, v->v_length);
-        nv->v_compdata = NULL;
-    } else {
-        nv->v_realdata = NULL;
-        nv->v_compdata = TMALLOC(ngcomplex_t, v->v_length);
-    }
+    nv = dvec_alloc(copy(v->v_name),
+                    v->v_type,
+                    v->v_flags & ~VF_PERMANENT,
+                    v->v_length, NULL);
 
     if (isreal(v))
         bcopy(v->v_realdata, nv->v_realdata,
@@ -1121,16 +1110,10 @@ vec_mkfamily(struct dvec *v)
 
         indexstring(count, v->v_numdims - 1, buf2);
 
-        d = dvec_alloc();
-
-        d->v_name = tprintf("%s%s", v->v_name, buf2);
-        d->v_type = v->v_type;
-        d->v_flags = v->v_flags;
-        d->v_length = size;
-        if (isreal(v))
-            d->v_realdata = TMALLOC(double, size);
-        else
-            d->v_compdata = TMALLOC(ngcomplex_t, size);
+        d = dvec_alloc(tprintf("%s%s", v->v_name, buf2),
+                       v->v_type,
+                       v->v_flags,
+                       size, NULL);
 
         d->v_minsignal = v->v_minsignal;
         d->v_maxsignal = v->v_maxsignal;

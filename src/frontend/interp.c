@@ -30,13 +30,10 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
         return;
     }
 
-    v = dvec_alloc();
-    v->v_name = copy(ov->v_name);
-    v->v_type = ov->v_type;
-    v->v_flags = ov->v_flags;
-    v->v_flags |= VF_PERMANENT;
-    v->v_length = newlen;
-    v->v_realdata = TMALLOC(double, newlen);
+    v = dvec_alloc(copy(ov->v_name),
+                   ov->v_type,
+                   ov->v_flags | VF_PERMANENT,
+                   newlen, NULL);
 
     nd = v->v_realdata;
     if (!ft_interpolate(ov->v_realdata, nd, oldscale->v_realdata,

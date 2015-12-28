@@ -62,14 +62,12 @@ com_linearize(wordlist *wl)
     plot_setcur(new->pl_typename);
     plot_list = new;
     len = (int)((tstop - tstart) / tstep + 1.5);
-    newtime = dvec_alloc();
-    newtime->v_name = copy(oldtime->v_name);
-    newtime->v_type = oldtime->v_type;
-    newtime->v_flags = oldtime->v_flags;
-    newtime->v_flags |= VF_PERMANENT;
-    newtime->v_length = len;
+    newtime = dvec_alloc(copy(oldtime->v_name),
+                         oldtime->v_type,
+                         oldtime->v_flags | VF_PERMANENT,
+                         len, NULL);
+
     newtime->v_plot = new;
-    newtime->v_realdata = TMALLOC(double, len);
     for (i = 0, d = tstart; i < len; i++, d += tstep)
         newtime->v_realdata[i] = d;
     new->pl_scale = new->pl_dvecs = newtime;

@@ -468,14 +468,9 @@ raw_read(char *name) {
                  * the desired vector length, but this would
                  * be dangerous if the file is invalid.
                  */
-                v = dvec_alloc();
-                v->v_type = SV_NOTYPE;
-                v->v_flags = (short)flags;
-                v->v_length = npoints;
-                if (isreal(v))
-                    v->v_realdata = TMALLOC(double, npoints);
-                else
-                    v->v_compdata = TMALLOC(ngcomplex_t, npoints);
+                v = dvec_alloc(NULL,
+                               SV_NOTYPE, (short) flags,
+                               npoints, NULL);
                 /* Length and dims might be changed by options. */
 
                 v->v_plot = curpl;

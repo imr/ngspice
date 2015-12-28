@@ -192,13 +192,10 @@ fourier(wordlist *wl, struct plot *current_plot)
             /* create and assign a new vector n */
             /* with size 3 * nfreqs in current plot */
             /* generate name for new vector, using vec->name */
-            n = dvec_alloc();
-
-            n->v_name = tprintf("fourier%d%d", callstof, newveccount);
-            n->v_type = SV_NOTYPE;
-            n->v_flags = (VF_REAL | VF_PERMANENT);
-            n->v_length = 3 * nfreqs;
-            n->v_realdata = TMALLOC(double, n->v_length);
+            n = dvec_alloc(tprintf("fourier%d%d", callstof, newveccount),
+                           SV_NOTYPE,
+                           VF_REAL | VF_PERMANENT,
+                           3 * nfreqs, NULL);
 
             n->v_numdims = 2;
             n->v_dims[0] = 3;

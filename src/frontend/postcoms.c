@@ -764,18 +764,14 @@ com_cross(wordlist *wl)
     }
 
     vec_remove(newvec);
-    v = dvec_alloc();
-    v->v_name = copy(newvec);
-    v->v_type = vecs ? vecs->v_type : SV_NOTYPE;
-    v->v_length = i;
-
-    if (comp) {
-        v->v_flags = VF_COMPLEX | VF_PERMANENT;
-        v->v_compdata = TMALLOC(ngcomplex_t, i);
-    } else {
-        v->v_flags = VF_REAL | VF_PERMANENT;
-        v->v_realdata = TMALLOC(double, i);
-    }
+    v = dvec_alloc(copy(newvec),
+                   vecs
+                   ? vecs->v_type
+                   : SV_NOTYPE,
+                   comp
+                   ? (VF_COMPLEX | VF_PERMANENT)
+                   : (VF_REAL | VF_PERMANENT),
+                   i, NULL);
 
     /* Now copy the ind'ths elements into this one. */
     for (n = vecs, i = 0; n; n = n->v_link2, i++)

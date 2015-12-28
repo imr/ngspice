@@ -1031,20 +1031,12 @@ plotInit(runDesc *run)
         else
             name = copy(dd->name);
 
-        v = dvec_alloc();
-        v->v_name = name;
-        v->v_type = guess_type(name);
-
-        v->v_length = 0;
-        if (!run->isComplex) {
-            v->v_flags = VF_REAL;
-            v->v_realdata = NULL;
-        } else {
-            v->v_flags = VF_COMPLEX;
-            v->v_compdata = NULL;
-        }
-
-        v->v_flags |= VF_PERMANENT;
+        v = dvec_alloc(name,
+                       guess_type(name),
+                       run->isComplex
+                       ? (VF_COMPLEX | VF_PERMANENT)
+                       : (VF_REAL | VF_PERMANENT),
+                       0, NULL);
 
         vec_new(v);
         dd->vec = v;

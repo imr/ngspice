@@ -330,20 +330,16 @@ PP_mknnode(double number)
     struct pnode *p;
     struct dvec *v;
 
-    v = dvec_alloc();
-
     /* We don't use printnum because it screws up PP_mkfnode above. We have
      * to be careful to deal properly with node numbers that are quite
      * large...
      */
-    if (number < MAXPOSINT)
-        v->v_name = tprintf("%d", (int) number);
-    else
-        v->v_name = tprintf("%G", number);
-    v->v_type = SV_NOTYPE;
-    v->v_flags = VF_REAL;
-    v->v_realdata = TMALLOC(double, 1);
-    v->v_length = 1;
+    v = dvec_alloc(number < MAXPOSINT
+                   ? tprintf("%d", (int) number)
+                   : tprintf("%G", number),
+                   SV_NOTYPE,
+                   VF_REAL,
+                   1, NULL);
 
     v->v_realdata[0] = number;
 
@@ -366,8 +362,10 @@ PP_mksnode(const char *string)
     p = alloc_pnode();
     v = vec_get(string);
     if (v == NULL) {
-        nv = dvec_alloc();
-        nv->v_name = copy(string);
+        nv = dvec_alloc(copy(string),
+                        SV_NOTYPE,
+                        0,
+                        0, NULL);
         p->pn_value = nv;
         return (p);
     }

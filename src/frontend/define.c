@@ -161,15 +161,10 @@ savetree(struct pnode *pn)
          */
         d = pn->pn_value;
         if ((d->v_length != 0) || eq(d->v_name, "list")) {
-            pn->pn_value = dvec_alloc();
-            pn->pn_value->v_name = copy(d->v_name);
-            pn->pn_value->v_length = d->v_length;
-            pn->pn_value->v_type = d->v_type;
-            pn->pn_value->v_flags = d->v_flags;
-            if (isreal(d))
-                pn->pn_value->v_realdata = TMALLOC(double, d->v_length);
-            else
-                pn->pn_value->v_compdata = TMALLOC(ngcomplex_t, d->v_length);
+            pn->pn_value = dvec_alloc(copy(d->v_name),
+                                      d->v_type,
+                                      d->v_flags,
+                                      d->v_length, NULL);
 
             /* this dvec isn't member of any plot */
 

@@ -161,15 +161,10 @@ com_let(wordlist *wl)
         }
 
         /* create and assign a new vector */
-        n = dvec_alloc();
-        n->v_name = copy(p);
-        n->v_type = t->v_type;
-        n->v_flags = (t->v_flags | VF_PERMANENT);
-        n->v_length = t->v_length;
-        if (isreal(t))
-            n->v_realdata = TMALLOC(double, n->v_length);
-        else
-            n->v_compdata = TMALLOC(ngcomplex_t, n->v_length);
+        n = dvec_alloc(copy(p),
+                       t->v_type,
+                       t->v_flags | VF_PERMANENT,
+                       t->v_length, NULL);
 
         if ((t->v_numdims) <= 1) { // changed from "!t->v_numdims" by Friedrich Schmidt
             n->v_numdims = 1;
