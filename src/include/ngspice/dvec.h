@@ -69,6 +69,7 @@ struct dveclist {
 };
 
 struct dvec *dvec_alloc(char *name, int type, short flags, int length, void *storage);
+void dvec_realloc(struct dvec *v, int length, void *storage);
 void dvec_trunc(struct dvec *v, int length);
 void dvec_free(struct dvec *);
 

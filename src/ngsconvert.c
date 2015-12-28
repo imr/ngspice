@@ -174,12 +174,7 @@ oldread(char *name)
     np = i / nv;
 
     for (v = pl->pl_dvecs; v; v = v->v_next) {
-        v->v_length = (int) np;
-        if (isreal(v)) {
-            v->v_realdata = TMALLOC(double, np);
-        } else {
-            v->v_compdata = TMALLOC(ngcomplex_t, np);
-        }
+        dvec_realloc(v, (int) np, NULL);
     }
     for (i = 0; i < np; i++) {
         /* Read in the output vector for point i. If the type is

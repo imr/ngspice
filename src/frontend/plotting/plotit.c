@@ -96,13 +96,7 @@ xtend(struct dvec *v, int length)
 
     i = v->v_length;
 
-    if (isreal(v)) {
-        v->v_realdata = TREALLOC(double, v->v_realdata, length);
-        v->v_length = length;
-    } else {
-        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
-        v->v_length = length;
-    }
+    dvec_realloc(v, length, NULL);
 
     if (isreal(v)) {
         double d = NAN;
@@ -138,15 +132,12 @@ compress(struct dvec *d, double *xcomp, double *xind)
             if (isreal(d)) {
                 double *dd = TMALLOC(double, newlen);
                 bcopy(d->v_realdata + ilo, dd, (size_t) newlen * sizeof(double));
-                tfree(d->v_realdata);
-                d->v_realdata = dd;
+                dvec_realloc(d, newlen, dd);
             } else {
                 ngcomplex_t *cc = TMALLOC(ngcomplex_t, newlen);
                 bcopy(d->v_compdata + ilo, cc, (size_t) newlen * sizeof(ngcomplex_t));
-                tfree(d->v_compdata);
-                d->v_compdata = cc;
+                dvec_realloc(d, newlen, cc);
             }
-            d->v_length = newlen;
         }
     }
 
@@ -938,9 +929,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                     goto quit;
                 }
 
-                tfree(v->v_realdata);
-                v->v_realdata = newdata;
-                v->v_length = newlen;
+                dvec_realloc(v, newlen, newdata);
 
                 /* Why go to all this trouble if agraf ignores it? */
                 nointerp = TRUE;

@@ -41,6 +41,29 @@ dvec_alloc(char *name, int type, short flags, int length, void *storage)
 
 
 void
+dvec_realloc(struct dvec *v, int length, void *storage)
+{
+    if (isreal(v)) {
+        if (storage) {
+            tfree(v->v_realdata);
+            v->v_realdata = (double *) storage;
+        } else {
+            v->v_realdata = TREALLOC(double, v->v_realdata, length);
+        }
+    } else {
+        if (storage) {
+            tfree(v->v_compdata);
+            v->v_compdata = (ngcomplex_t *) storage;
+        } else {
+            v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
+        }
+    }
+
+    v->v_length = length;
+}
+
+
+void
 dvec_trunc(struct dvec *v, int length)
 {
     v->v_length = length;

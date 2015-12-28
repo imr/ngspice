@@ -576,8 +576,7 @@ vec_get(const char *vec_name)
             for (nv = vv->va_vlist; nv; nv = nv->va_next)
                 i++;
 
-            d->v_realdata = TREALLOC(double, d->v_realdata, i);
-            d->v_length = i;
+            dvec_realloc(d, i, NULL);
 
             i = 0;
             for (nv = vv->va_vlist; nv; nv = nv->va_next)
@@ -1054,8 +1053,7 @@ vec_transpose(struct dvec *v)
             }
             koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
         }
-        tfree(oldreal);
-        v->v_realdata = newreal;
+        dvec_realloc(v, v->v_length, newreal);
     } else {
         newcomp = TMALLOC(ngcomplex_t, v->v_length);
         oldcomp = v->v_compdata;
@@ -1073,8 +1071,7 @@ vec_transpose(struct dvec *v)
             }
             koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
         }
-        tfree(oldcomp);
-        v->v_compdata = newcomp;
+        dvec_realloc(v, v->v_length, newcomp);
     }
 }
 
