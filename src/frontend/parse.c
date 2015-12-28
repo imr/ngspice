@@ -344,9 +344,11 @@ PP_mknnode(double number)
     v->v_type = SV_NOTYPE;
     v->v_flags = VF_REAL;
     v->v_realdata = TMALLOC(double, 1);
-    *v->v_realdata = number;
     v->v_length = 1;
     v->v_plot = NULL;
+
+    v->v_realdata[0] = number;
+
     vec_new(v);
 
     p = alloc_pnode();
@@ -368,8 +370,8 @@ PP_mksnode(const char *string)
     if (v == NULL) {
         nv = alloc(struct dvec);
         ZERO(nv, struct dvec);
-        p->pn_value = nv;
         nv->v_name = copy(string);
+        p->pn_value = nv;
         return (p);
     }
 

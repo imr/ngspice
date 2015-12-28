@@ -690,23 +690,26 @@ vec_copy(struct dvec *v)
     nv->v_type = v->v_type;
     nv->v_flags = v->v_flags & ~VF_PERMANENT;
 
+    nv->v_length = v->v_length;
     if (isreal(v)) {
         nv->v_realdata = TMALLOC(double, v->v_length);
-        bcopy(v->v_realdata, nv->v_realdata,
-              sizeof(double) * (size_t) v->v_length);
         nv->v_compdata = NULL;
     } else {
         nv->v_realdata = NULL;
         nv->v_compdata = TMALLOC(ngcomplex_t, v->v_length);
+    }
+
+    if (isreal(v))
+        bcopy(v->v_realdata, nv->v_realdata,
+              sizeof(double) * (size_t) v->v_length);
+    else
         bcopy(v->v_compdata, nv->v_compdata,
               sizeof(ngcomplex_t) * (size_t) v->v_length);
-    }
 
     nv->v_minsignal = v->v_minsignal;
     nv->v_maxsignal = v->v_maxsignal;
     nv->v_gridtype = v->v_gridtype;
     nv->v_plottype = v->v_plottype;
-    nv->v_length = v->v_length;
 
     /* Modified to copy the rlength of origin to destination vecor
      * instead of always putting it to 0.
@@ -1125,6 +1128,12 @@ vec_mkfamily(struct dvec *v)
         d->v_name = tprintf("%s%s", v->v_name, buf2);
         d->v_type = v->v_type;
         d->v_flags = v->v_flags;
+        d->v_length = size;
+        if (isreal(v))
+            d->v_realdata = TMALLOC(double, size);
+        else
+            d->v_compdata = TMALLOC(ngcomplex_t, size);
+
         d->v_minsignal = v->v_minsignal;
         d->v_maxsignal = v->v_maxsignal;
         d->v_gridtype = v->v_gridtype;
@@ -1135,13 +1144,10 @@ vec_mkfamily(struct dvec *v)
          */
         d->v_numdims = 1;
         d->v_dims[0] = size;
-        d->v_length = size;
 
         if (isreal(v)) {
-            d->v_realdata = TMALLOC(double, size);
             bcopy(v->v_realdata + size*i, d->v_realdata, (size_t) size * sizeof(double));
         } else {
-            d->v_compdata = TMALLOC(ngcomplex_t, size);
             bcopy(v->v_compdata + size*i, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
         }
         /* Add one to the counter. */

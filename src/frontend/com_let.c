@@ -167,6 +167,10 @@ com_let(wordlist *wl)
         n->v_type = t->v_type;
         n->v_flags = (t->v_flags | VF_PERMANENT);
         n->v_length = t->v_length;
+        if (isreal(t))
+            n->v_realdata = TMALLOC(double, n->v_length);
+        else
+            n->v_compdata = TMALLOC(ngcomplex_t, n->v_length);
 
         if ((t->v_numdims) <= 1) { // changed from "!t->v_numdims" by Friedrich Schmidt
             n->v_numdims = 1;
@@ -177,10 +181,6 @@ com_let(wordlist *wl)
                 n->v_dims[i] = t->v_dims[i];
         }
 
-        if (isreal(t))
-            n->v_realdata = TMALLOC(double, n->v_length);
-        else
-            n->v_compdata = TMALLOC(ngcomplex_t, n->v_length);
         newvec = 1;
         vec_new(n);
     }

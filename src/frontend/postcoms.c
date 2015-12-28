@@ -770,10 +770,10 @@ com_cross(wordlist *wl)
     v->v_length = i;
 
     if (comp) {
-        v->v_flags = VF_COMPLEX;
+        v->v_flags = VF_COMPLEX | VF_PERMANENT;
         v->v_compdata = TMALLOC(ngcomplex_t, i);
     } else {
-        v->v_flags = VF_REAL;
+        v->v_flags = VF_REAL | VF_PERMANENT;
         v->v_realdata = TMALLOC(double, i);
     }
 
@@ -795,7 +795,6 @@ com_cross(wordlist *wl)
             }
         }
     vec_new(v);
-    v->v_flags |= VF_PERMANENT;
     cp_addkword(CT_VECTOR, v->v_name);
 
 done:

@@ -207,29 +207,29 @@ com_spec(wordlist *wl)
     plot_cur->pl_name = copy("Spectrum");
     plot_cur->pl_date = copy(datestring());
 
-    freq = TMALLOC(double, fpts);
     f = alloc(struct dvec);
     ZERO(f, struct dvec);
     f->v_name = copy("frequency");
     f->v_type = SV_FREQUENCY;
     f->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);
     f->v_length = fpts;
-    f->v_realdata = freq;
+    f->v_realdata = TMALLOC(double, fpts);
     vec_new(f);
+    freq = f->v_realdata;
 
     tdvec = TMALLOC(double  *, ngood);
     fdvec = TMALLOC(ngcomplex_t *, ngood);
     for (i = 0, vec = vlist; i < ngood; i++) {
         tdvec[i] = vec->v_realdata;
-        fdvec[i] = TMALLOC(ngcomplex_t, fpts);
         f = alloc(struct dvec);
         ZERO(f, struct dvec);
         f->v_name = vec_basename(vec);
         f->v_type = vec->v_type;
         f->v_flags = (VF_COMPLEX | VF_PERMANENT);
         f->v_length = fpts;
-        f->v_compdata = fdvec[i];
+        f->v_compdata = TMALLOC(ngcomplex_t, fpts);
         vec_new(f);
+        fdvec[i] = f->v_compdata;
         vec = vec->v_link2;
     }
 

@@ -36,15 +36,15 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
     v->v_flags = ov->v_flags;
     v->v_flags |= VF_PERMANENT;
     v->v_length = newlen;
+    v->v_realdata = TMALLOC(double, newlen);
 
-    nd = TMALLOC(double, newlen);
+    nd = v->v_realdata;
     if (!ft_interpolate(ov->v_realdata, nd, oldscale->v_realdata,
                         oldscale->v_length, newscale, newlen, 1))
     {
         fprintf(cp_err, "Error: can't interpolate %s\n", ov->v_name);
         return;
     }
-    v->v_realdata = nd;
 
     vec_new(v);
 }

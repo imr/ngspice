@@ -97,17 +97,21 @@ xtend(struct dvec *v, int length)
     i = v->v_length;
 
     if (isreal(v)) {
-        double d = NAN;
         v->v_realdata = TREALLOC(double, v->v_realdata, length);
         v->v_length = length;
+    } else {
+        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
+        v->v_length = length;
+    }
+
+    if (isreal(v)) {
+        double d = NAN;
         if (i > 0)
             d = v->v_realdata[i - 1];
         while (i < length)
             v->v_realdata[i++] = d;
     } else {
         ngcomplex_t c = {NAN, NAN};
-        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, length);
-        v->v_length = length;
         if (i > 0)
             c = v->v_compdata[i - 1];
         while (i < length)
@@ -910,18 +914,19 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         {
             int newlen = (int)((tstop - tstart) / tstep + 1.5);
 
-            double *newscale = TMALLOC(double, newlen);
+            double *newscale;
 
             struct dvec *newv_scale = alloc(struct dvec);
             struct dvec *v;
 
+            newv_scale->v_name = copy(vecs->v_scale->v_name);
             newv_scale->v_flags = vecs->v_scale->v_flags;
             newv_scale->v_type = vecs->v_scale->v_type;
             newv_scale->v_gridtype = vecs->v_scale->v_gridtype;
             newv_scale->v_length = newlen;
-            newv_scale->v_name = copy(vecs->v_scale->v_name);
-            newv_scale->v_realdata = newscale;
+            newv_scale->v_realdata = TMALLOC(double, newlen);
 
+            newscale = newv_scale->v_realdata;
             for (i = 0, ttime = tstart; i < newlen; i++, ttime += tstep)
                 newscale[i] = ttime;
 

@@ -454,7 +454,6 @@ com_compose(wordlist *wl)
     result = alloc(struct dvec);
     ZERO(result, struct dvec);
     result->v_name = resname;
-    resname = NULL;             /* resname storage has been consumed */
     result->v_type = type;
 
     if (realflag) {
@@ -466,6 +465,8 @@ com_compose(wordlist *wl)
     }
 
     result->v_length = length;
+    resname = NULL;             /* resname storage has been consumed */
+
     result->v_numdims = 1;
     result->v_dims[0] = length;
 

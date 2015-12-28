@@ -620,11 +620,15 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     res->v_name = mkcname('R', v->v_name, ind->v_name);
     res->v_type = v->v_type;
     res->v_flags = v->v_flags;
+    res->v_length = len;
+    if (isreal(res))
+        res->v_realdata = TMALLOC(double, len);
+    else
+        res->v_compdata = TMALLOC(ngcomplex_t, len);
 
     res->v_gridtype = v->v_gridtype;
     res->v_plottype = v->v_plottype;
     res->v_defcolor = v->v_defcolor;
-    res->v_length = len;
     res->v_scale = /* nscale; */ scale;
     /* Dave says get rid of this
        res->v_numdims = v->v_numdims;
@@ -633,11 +637,6 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     */
     res->v_numdims = 1;
     res->v_dims[0] = len;
-
-    if (isreal(res))
-        res->v_realdata = TMALLOC(double, len);
-    else
-        res->v_compdata = TMALLOC(ngcomplex_t, len);
 
     /* Toss in the data */
 
@@ -777,11 +776,15 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
     res->v_name = mkcname('[', v->v_name, ind->v_name);
     res->v_type = v->v_type;
     res->v_flags = v->v_flags;
+    res->v_length = length;
+    if (isreal(res))
+        res->v_realdata = TMALLOC(double, length);
+    else
+        res->v_compdata = TMALLOC(ngcomplex_t, length);
 
     res->v_defcolor = v->v_defcolor;
     res->v_gridtype = v->v_gridtype;
     res->v_plottype = v->v_plottype;
-    res->v_length = length;
     res->v_numdims = newdim;
     if (up != down) {
         for (i = 0; i < newdim; i++)
@@ -791,11 +794,6 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         for (i = 0; i < newdim; i++)
             res->v_dims[i] = v->v_dims[i + 1];
     }
-
-    if (isreal(res))
-        res->v_realdata = TMALLOC(double, length);
-    else
-        res->v_compdata = TMALLOC(ngcomplex_t, length);
 
     /* And toss in the new data */
     for (j = 0; j < up - down + 1; j++) {
