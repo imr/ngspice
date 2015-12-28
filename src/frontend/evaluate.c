@@ -319,7 +319,6 @@ doop(char what,
         return (NULL);
     /* Make up the new vector. */
     res = dvec_alloc();
-    ZERO(res, struct dvec);
     if (relflag || (isreal(v1) && isreal(v2) && (func != cx_comma))) {
         res->v_type = SV_NOTYPE;
         res->v_flags = (v1->v_flags | v2->v_flags |
@@ -616,7 +615,6 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     }
 
     res = dvec_alloc();
-    ZERO(res, struct dvec);
     res->v_name = mkcname('R', v->v_name, ind->v_name);
     res->v_type = v->v_type;
     res->v_flags = v->v_flags;
@@ -772,7 +770,6 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
 
     /* Make up the new vector. */
     res = dvec_alloc();
-    ZERO(res, struct dvec);
     res->v_name = mkcname('[', v->v_name, ind->v_name);
     res->v_type = v->v_type;
     res->v_flags = v->v_flags;
@@ -942,7 +939,6 @@ apply_func(struct func *func, struct pnode *arg)
             name = mkcname('b', v->v_name, NULL);
 
         t = dvec_alloc();
-        ZERO(t, struct dvec);
         t->v_name = name;
 
         t->v_flags = (v->v_flags & ~VF_COMPLEX & ~VF_REAL &

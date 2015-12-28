@@ -208,7 +208,6 @@ com_spec(wordlist *wl)
     plot_cur->pl_date = copy(datestring());
 
     f = dvec_alloc();
-    ZERO(f, struct dvec);
     f->v_name = copy("frequency");
     f->v_type = SV_FREQUENCY;
     f->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);
@@ -222,7 +221,6 @@ com_spec(wordlist *wl)
     for (i = 0, vec = vlist; i < ngood; i++) {
         tdvec[i] = vec->v_realdata;
         f = dvec_alloc();
-        ZERO(f, struct dvec);
         f->v_name = vec_basename(vec);
         f->v_type = vec->v_type;
         f->v_flags = (VF_COMPLEX | VF_PERMANENT);
@@ -282,7 +280,6 @@ com_spec(wordlist *wl)
 
 #ifdef KEEPWINDOW
         f = dvec_alloc();
-        ZERO(f, struct dvec);
         f->v_name = copy("win");
         f->v_type = SV_NOTYPE;
         f->v_flags = (VF_REAL | VF_PERMANENT);

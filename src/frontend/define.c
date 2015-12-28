@@ -162,7 +162,6 @@ savetree(struct pnode *pn)
         d = pn->pn_value;
         if ((d->v_length != 0) || eq(d->v_name, "list")) {
             pn->pn_value = dvec_alloc();
-            ZERO(pn->pn_value, struct dvec);
             pn->pn_value->v_name = copy(d->v_name);
             pn->pn_value->v_length = d->v_length;
             pn->pn_value->v_type = d->v_type;

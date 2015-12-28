@@ -627,7 +627,6 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 
     /* create a new scale vector */
     sv = dvec_alloc();
-    ZERO(sv, struct dvec);
     sv->v_name = copy("fft_scale");
     sv->v_type = SV_FREQUENCY;
     sv->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);
@@ -864,7 +863,6 @@ cx_ifft(void *data, short int type, int length, int *newlength, short int *newty
 
     /* create a new scale vector */
     sv = dvec_alloc();
-    ZERO(sv, struct dvec);
     sv->v_name = copy("ifft_scale");
     sv->v_type = SV_TIME;
     sv->v_flags = (VF_REAL | VF_PERMANENT | VF_PRINT);

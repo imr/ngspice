@@ -193,7 +193,6 @@ fourier(wordlist *wl, struct plot *current_plot)
             /* with size 3 * nfreqs in current plot */
             /* generate name for new vector, using vec->name */
             n = dvec_alloc();
-            ZERO(n, struct dvec);
 
             n->v_name = tprintf("fourier%d%d", callstof, newveccount);
             n->v_type = SV_NOTYPE;

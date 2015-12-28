@@ -162,7 +162,6 @@ com_let(wordlist *wl)
 
         /* create and assign a new vector */
         n = dvec_alloc();
-        ZERO(n, struct dvec);
         n->v_name = copy(p);
         n->v_type = t->v_type;
         n->v_flags = (t->v_flags | VF_PERMANENT);

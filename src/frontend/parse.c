@@ -331,7 +331,6 @@ PP_mknnode(double number)
     struct dvec *v;
 
     v = dvec_alloc();
-    ZERO(v, struct dvec);
 
     /* We don't use printnum because it screws up PP_mkfnode above. We have
      * to be careful to deal properly with node numbers that are quite
@@ -369,7 +368,6 @@ PP_mksnode(const char *string)
     v = vec_get(string);
     if (v == NULL) {
         nv = dvec_alloc();
-        ZERO(nv, struct dvec);
         nv->v_name = copy(string);
         p->pn_value = nv;
         return (p);

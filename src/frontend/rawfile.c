@@ -469,7 +469,6 @@ raw_read(char *name) {
                  * be dangerous if the file is invalid.
                  */
                 v = dvec_alloc();
-                ZERO(v, struct dvec);
                 v->v_type = SV_NOTYPE;
                 v->v_flags = (short)flags;
                 v->v_length = npoints;

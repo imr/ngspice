@@ -523,7 +523,6 @@ vec_get(const char *vec_name)
         }
 
         d = dvec_alloc();
-        ZERO(d, struct dvec);
         d->v_name = copy(whole); /* MW. The same as word before */
         d->v_type = SV_NOTYPE;
         d->v_flags |= VF_REAL;  /* No complex values yet... */
@@ -1123,7 +1122,6 @@ vec_mkfamily(struct dvec *v)
         indexstring(count, v->v_numdims - 1, buf2);
 
         d = dvec_alloc();
-        ZERO(d, struct dvec);
 
         d->v_name = tprintf("%s%s", v->v_name, buf2);
         d->v_type = v->v_type;
