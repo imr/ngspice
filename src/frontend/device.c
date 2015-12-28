@@ -1122,12 +1122,9 @@ com_alter_common(wordlist *wl, int do_model)
     struct pnode *names;
 
     /* DIE 2009_02_06 */
-    char *argument;
-    char **arglist;
     int step = 0, n, wlen, maxelem = 3;
     wordlist *wl2 = NULL, *wlin, *rhs;
     bool eqfound = FALSE;
-    char *eqptr = NULL;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -1151,9 +1148,9 @@ com_alter_common(wordlist *wl, int do_model)
     */
     wlin = wl;
     while (wl) {
-        argument = wl->wl_word;
+        char *argument = wl->wl_word;
         /* searching for '=' ... */
-        eqptr = strchr(argument, '=');
+        char *eqptr = strchr(argument, '=');
 
         /* argument may be '=', then do nothing
            or =token
@@ -1168,6 +1165,7 @@ com_alter_common(wordlist *wl, int do_model)
                 step = -1;
                 wl2 = wlin;
             } else if (strlen(argument) > 1) {
+                char **arglist;
                 arglist = TMALLOC(char*, 4);
                 /* copy argument */
                 arglist[0] = copy_substring(argument, eqptr);
