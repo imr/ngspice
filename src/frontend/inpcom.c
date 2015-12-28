@@ -6231,8 +6231,12 @@ inp_meas_current(struct line *deck)
                 continue;
         }
 
+        if (!strstr(curr_line, "i("))
+            continue;
+
         s = v = stripWhiteSpacesInsideParens(curr_line);
         while (s) {
+            /* i( may occur more than once in a line */
             s = u = strstr(s, "i(");
             /* we have found it, but not (in error) at the beginning of the line */
             if (s && s > v) {
@@ -6263,6 +6267,7 @@ inp_meas_current(struct line *deck)
                         new_str = tprintf("%s%s%s", beg_str, "v_", s);
                         printf("converted to \n%s\n\n", new_str);
                         tfree(curr_line);
+                        tfree(v);
                         card->li_line = s = v = new_str;
                         s++;
                         tfree(beg_str);
@@ -6273,6 +6278,10 @@ inp_meas_current(struct line *deck)
             }
         }
     }
+
+    /* return if we did not find any i( */
+    if (rep == NULL)
+      return;
 
     /* scan through all the devices, search for xyz, modify node 1 by adding _vmeas,
        add a line with zero voltage v_xyz, having original node 1 and modified node 1.
