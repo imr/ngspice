@@ -476,7 +476,6 @@ raw_read(char *name) {
                     v->v_realdata = TMALLOC(double, npoints);
                 else
                     v->v_compdata = TMALLOC(ngcomplex_t, npoints);
-                v->v_numdims = 0;
                 /* Length and dims might be changed by options. */
 
                 v->v_plot = curpl;
