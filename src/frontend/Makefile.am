@@ -111,6 +111,7 @@ libfte_la_SOURCES =	\
 	display.h	\
 	dotcards.c	\
 	dotcards.h	\
+	dvec.c		\
 	error.c		\
 	evaluate.c	\
 	evaluate.h	\

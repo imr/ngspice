@@ -1386,6 +1386,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     <ClCompile Include="..\src\frontend\dimens.c" />
     <ClCompile Include="..\src\frontend\display.c" />
     <ClCompile Include="..\src\frontend\dotcards.c" />
+    <ClCompile Include="..\src\frontend\dvec.c" />
     <ClCompile Include="..\src\frontend\error.c" />
     <ClCompile Include="..\src\frontend\evaluate.c" />
     <ClCompile Include="..\src\frontend\fourier.c" />
