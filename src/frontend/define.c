@@ -171,7 +171,8 @@ savetree(struct pnode *pn)
             else
                 pn->pn_value->v_compdata = TMALLOC(ngcomplex_t, d->v_length);
 
-            pn->pn_value->v_plot = NULL; /* this dvec isn't member of any plot */
+            /* this dvec isn't member of any plot */
+
             if (isreal(d)) {
                 bcopy(d->v_realdata,
                       pn->pn_value->v_realdata,

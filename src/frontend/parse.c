@@ -344,7 +344,6 @@ PP_mknnode(double number)
     v->v_flags = VF_REAL;
     v->v_realdata = TMALLOC(double, 1);
     v->v_length = 1;
-    v->v_plot = NULL;
 
     v->v_realdata[0] = number;
 
