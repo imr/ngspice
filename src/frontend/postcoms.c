@@ -777,8 +777,7 @@ com_cross(wordlist *wl)
     for (n = vecs, i = 0; n; n = n->v_link2, i++)
         if (n->v_length > ind) {
             if (comp) {
-                realpart(v->v_compdata[i]) = realpart(n->v_compdata[ind]);
-                imagpart(v->v_compdata[i]) = imagpart(n->v_compdata[ind]);
+                v->v_compdata[i] = n->v_compdata[ind];
             } else {
                 v->v_realdata[i] = n->v_realdata[ind];
             }

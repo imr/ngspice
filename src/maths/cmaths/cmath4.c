@@ -60,15 +60,13 @@ cx_and(void *data1, void *data2, short int datatype1, short int datatype2, int l
                 realpart(c1) = dd1[i];
                 imagpart(c1) = 0.0;
             } else {
-                realpart(c1) = realpart(cc1[i]);
-                imagpart(c1) = imagpart(cc1[i]);
+                c1 = cc1[i];
             }
             if (datatype2 == VF_REAL) {
                 realpart(c2) = dd2[i];
                 imagpart(c2) = 0.0;
             } else {
-                realpart(c2) = realpart(cc2[i]);
-                imagpart(c2) = imagpart(cc2[i]);
+                c2 = cc2[i];
             }
             d[i] = ((realpart(c1) && realpart(c2)) &&
                 (imagpart(c1) && imagpart(c2)));
@@ -99,15 +97,13 @@ cx_or(void *data1, void *data2, short int datatype1, short int datatype2, int le
                 realpart(c1) = dd1[i];
                 imagpart(c1) = 0.0;
             } else {
-                realpart(c1) = realpart(cc1[i]);
-                imagpart(c1) = imagpart(cc1[i]);
+                c1 = cc1[i];
             }
             if (datatype2 == VF_REAL) {
                 realpart(c2) = dd2[i];
                 imagpart(c2) = 0.0;
             } else {
-                realpart(c2) = realpart(cc2[i]);
-                imagpart(c2) = imagpart(cc2[i]);
+                c2 = cc2[i];
             }
             d[i] = ((realpart(c1) || realpart(c2)) &&
                 (imagpart(c1) || imagpart(c2)));

@@ -640,10 +640,7 @@ op_range(struct pnode *arg1, struct pnode *arg2)
             if (isreal(res)) {
                 res->v_realdata[j] = v->v_realdata[i];
             } else {
-                realpart(res->v_compdata[j]) =
-                    realpart(v->v_compdata[i]);
-                imagpart(res->v_compdata[j]) =
-                    imagpart(v->v_compdata[i]);
+                res->v_compdata[j] = v->v_compdata[i];
             }
             j++;
         }
@@ -789,10 +786,8 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
                 res->v_realdata[k * blocksize + i] =
                     v->v_realdata[(down + j) * blocksize + i];
             } else {
-                realpart(res->v_compdata[k * blocksize + i]) =
-                    realpart(v->v_compdata[(down + j) * blocksize + i]);
-                imagpart(res->v_compdata[k * blocksize + i]) =
-                    imagpart(v->v_compdata[(down + j) * blocksize + i]);
+                res->v_compdata[k * blocksize + i] =
+                    v->v_compdata[(down + j) * blocksize + i];
             }
     }
 

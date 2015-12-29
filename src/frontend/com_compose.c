@@ -39,8 +39,7 @@ dimxpand(struct dvec *v, int *newdims, double *data)
         if (realflag) {
             data[n] = v->v_realdata[o];
         } else {
-            realpart(cdata[n]) = realpart(v->v_compdata[o]);
-            imagpart(cdata[n]) = imagpart(v->v_compdata[o]);
+            cdata[n] = v->v_compdata[o];
         }
 
         /* Now find the nextstrchr element... */
@@ -203,8 +202,7 @@ com_compose(wordlist *wl)
                     realpart(cdata[i]) = realpart(v->v_compdata[0]);
                     imagpart(cdata[i]) = 0.0;
                 } else {
-                    realpart(cdata[i]) = realpart(v->v_compdata[0]);
-                    imagpart(cdata[i]) = imagpart(v->v_compdata[0]);
+                    cdata[i] = v->v_compdata[0];
                 }
                 i++;
                 continue;
