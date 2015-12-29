@@ -466,6 +466,54 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
 }
 
 
+static void
+OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
+{
+    int i;
+
+    for (i = 0; i < run->numData; i++) {
+
+#ifdef TCL_MODULE
+        /*Locks the blt vector to stop access*/
+        blt_lockvec(i);
+#endif
+
+        if (run->data[i].outIndex == -1) {
+            if (run->data[i].type == IF_REAL)
+                plotAddRealValue(&run->data[i], refValue->rValue);
+            else if (run->data[i].type == IF_COMPLEX)
+                plotAddComplexValue(&run->data[i], refValue->cValue);
+        } else if (run->data[i].regular) {
+            if (run->data[i].type == IF_REAL)
+                plotAddRealValue(&run->data[i],
+                                 valuePtr->v.vec.rVec[run->data[i].outIndex]);
+            else if (run->data[i].type == IF_COMPLEX)
+                plotAddComplexValue(&run->data[i],
+                                    valuePtr->v.vec.cVec[run->data[i].outIndex]);
+        } else {
+            IFvalue val;
+
+            /* should pre-check instance */
+            if (!getSpecial(&run->data[i], run, &val))
+                continue;
+
+            if (run->data[i].type == IF_REAL)
+                plotAddRealValue(&run->data[i], val.rValue);
+            else if (run->data[i].type == IF_COMPLEX)
+                plotAddComplexValue(&run->data[i], val.cValue);
+            else
+                fprintf(stderr, "OUTpData: unsupported data type\n");
+        }
+
+#ifdef TCL_MODULE
+        /*relinks and unlocks vector*/
+        blt_relink(i, (run->data[i]).vec);
+#endif
+
+    }
+}
+
+
 int
 OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 {
@@ -616,44 +664,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
         }
 #endif
 
-        for (i = 0; i < run->numData; i++) {
-
-#ifdef TCL_MODULE
-            /*Locks the blt vector to stop access*/
-            blt_lockvec(i);
-#endif
-
-            if (run->data[i].outIndex == -1) {
-                if (run->data[i].type == IF_REAL)
-                    plotAddRealValue(&run->data[i], refValue->rValue);
-                else if (run->data[i].type == IF_COMPLEX)
-                    plotAddComplexValue(&run->data[i], refValue->cValue);
-            } else if (run->data[i].regular) {
-                if (run->data[i].type == IF_REAL)
-                    plotAddRealValue(&run->data[i],
-                                     valuePtr->v.vec.rVec[run->data[i].outIndex]);
-                else if (run->data[i].type == IF_COMPLEX)
-                    plotAddComplexValue(&run->data[i],
-                                        valuePtr->v.vec.cVec[run->data[i].outIndex]);
-            } else {
-                IFvalue val;
-                /* should pre-check instance */
-                if (!getSpecial(&run->data[i], run, &val))
-                    continue;
-                if (run->data[i].type == IF_REAL)
-                    plotAddRealValue(&run->data[i], val.rValue);
-                else if (run->data[i].type == IF_COMPLEX)
-                    plotAddComplexValue(&run->data[i], val.cValue);
-                else
-                    fprintf(stderr, "OUTpData: unsupported data type\n");
-            }
-
-#ifdef TCL_MODULE
-            /*relinks and unlocks vector*/
-            blt_relink(i, (run->data[i]).vec);
-#endif
-
-        }
+        OUTpD_memory(run, refValue, valuePtr);
 
         gr_iplot(run->runPlot);
     }
