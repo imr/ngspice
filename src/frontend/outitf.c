@@ -647,6 +647,8 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
     } else {
 
+        OUTpD_memory(run, refValue, valuePtr);
+
         /*  This is interactive mode. Update the screen with the reference
             variable just the same  */
 
@@ -665,8 +667,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             }
         }
 #endif
-
-        OUTpD_memory(run, refValue, valuePtr);
 
         gr_iplot(run->runPlot);
     }
