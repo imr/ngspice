@@ -936,11 +936,8 @@ void cm_d_source(ARGS)
                 source = fopen(p, "r");
                 free(p);
             }
-            if (!source) {
-                char msg[512];
-                snprintf(msg, sizeof(msg), "cannot open file %s", PARAM(input_file));
-                cm_message_send(msg);
-            }
+            if (!source)
+                cm_message_printf("cannot open file %s", PARAM(input_file));
         }
 
         /* increment counter if not a comment until EOF reached... */

@@ -85,6 +85,13 @@ int  cm_event_queue(double time);
 char *cm_message_get_errmsg(void);
 int  cm_message_send(char *msg);
 
+#ifdef __GNUC__
+int cm_message_printf(const char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
+#else
+int cm_message_printf(const char *fmt, ...);
+#endif
+
+
 double cm_netlist_get_c(void);
 double cm_netlist_get_l(void);
 

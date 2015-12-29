@@ -17,6 +17,8 @@
 #include  <stdlib.h>
 #include  <string.h>
 
+#include  <stdarg.h>
+
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -451,4 +453,42 @@ FILE *fopen_with_path(const char *path, const char *mode)
     }
     fp =  fopen(path, mode);
     return fp;
+}
+
+
+int
+cm_message_printf(const char *fmt, ...)
+{
+    char buf[1024];
+    char *p = buf;
+    int size = sizeof(buf);
+    int rv;
+
+    for (;;) {
+
+        int nchars;
+        va_list ap;
+
+        va_start(ap, fmt);
+        nchars = vsnprintf(p, (size_t) size, fmt, ap);
+        va_end(ap);
+
+        if (nchars == -1) {     // compatibility to old implementations
+            size *= 2;
+        } else if (size < nchars + 1) {
+            size = nchars + 1;
+        } else {
+            break;
+        }
+
+        if (p == buf)
+            p = tmalloc((size_t) size * sizeof(char));
+        else
+            p = trealloc(p, (size_t) size * sizeof(char));
+    }
+
+    rv = cm_message_send(p);
+    if (p != buf)
+        txfree(p);
+    return rv;
 }

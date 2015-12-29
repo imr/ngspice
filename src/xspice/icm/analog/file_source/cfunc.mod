@@ -179,9 +179,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 free(p);
             } 
             if (!loc->state->fp) {
-                char msg[512];
-                snprintf(msg, sizeof(msg), "cannot open file %s", PARAM(file));
-                cm_message_send(msg);
+                cm_message_printf("cannot open file %s", PARAM(file));
                 loc->state->atend = 1;
             }
         }
