@@ -70,7 +70,7 @@ cp_varwl(struct variable *var)
         fprintf(cp_err,
                 "cp_varwl: INTERNAL ERROR: bad variable type %d\n",
                 var->va_type);
-        return (NULL);
+        return NULL;
     }
 
     wl = wl_cons(copy(buf), NULL);
@@ -295,7 +295,7 @@ cp_setparse(wordlist *wl)
                 tfree(name);    /*DG: cp_unquote Memory leak*/
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
-                return (NULL);
+                return NULL;
             }
             val = wl->wl_word;
             wl = wl->wl_next;
@@ -311,7 +311,7 @@ cp_setparse(wordlist *wl)
                     tfree(name); /*DG: cp_unquote Memory leak: free name before exiting*/
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
-                    return (NULL);
+                    return NULL;
                 } else {
                     val = wl->wl_word;
                     wl = wl->wl_next;
@@ -322,7 +322,7 @@ cp_setparse(wordlist *wl)
             tfree(name); /*DG: cp_unquote Memory leak: free name befor exiting */
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
-            return (NULL);
+            return NULL;
         }
 
         /*   val = cp_unquote(val);  DG: bad   old val is lost*/
@@ -376,7 +376,7 @@ cp_setparse(wordlist *wl)
                 tfree(name); /* va: cp_unquote memory leak: free name before exiting */
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
-                return (NULL);
+                return NULL;
             }
 
             vv = alloc(struct variable);
@@ -417,7 +417,7 @@ cp_setparse(wordlist *wl)
 
     if (name)
         tfree(name);
-    return (vars);
+    return vars;
 }
 
 
@@ -588,7 +588,7 @@ cp_getvar(char *name, enum cp_types type, void *retval)
         if (type == CP_BOOL && retval)
             * (bool *) retval = FALSE;
         free_struct_variable(uv1);
-        return (FALSE);
+        return FALSE;
     }
 
     if (v->va_type == type) {
@@ -629,7 +629,7 @@ cp_getvar(char *name, enum cp_types type, void *retval)
             break;
         }
         free_struct_variable(uv1);
-        return (TRUE);
+        return TRUE;
 
     } else {
 
@@ -639,24 +639,24 @@ cp_getvar(char *name, enum cp_types type, void *retval)
             i = (int *) retval;
             *i = (int) v->va_real;
             free_struct_variable(uv1);
-            return (TRUE);
+            return TRUE;
         } else if ((type == CP_REAL) && (v->va_type == CP_NUM)) {
             double *d;
             d = (double *) retval;
             *d = (double) v->va_num;
             free_struct_variable(uv1);
-            return (TRUE);
+            return TRUE;
         } else if ((type == CP_STRING) && (v->va_type == CP_NUM)) {
             (void) sprintf((char*) retval, "%d", v->va_num);
             free_struct_variable(uv1);
-            return (TRUE);
+            return TRUE;
         } else if ((type == CP_STRING) && (v->va_type == CP_REAL)) {
             (void) sprintf((char*) retval, "%f", v->va_real);
             free_struct_variable(uv1);
-            return (TRUE);
+            return TRUE;
         }
         free_struct_variable(uv1);
-        return (FALSE);
+        return FALSE;
     }
 }
 
@@ -771,7 +771,7 @@ cp_variablesubst(wordlist *wlist)
         }
     }
 
-    return (wlist);
+    return wlist;
 }
 
 
@@ -837,7 +837,7 @@ vareval(char *string)
         if (!v) {
             fprintf(cp_err, "ERROR: %s: no such variable.\n", string);
             tfree(oldstring);
-            return (NULL);
+            return NULL;
         }
         if (v->va_type == CP_LIST)
             for (v = v->va_vlist, i = 0; v; v = v->va_next)
@@ -881,7 +881,7 @@ vareval(char *string)
     if (!v) {
         fprintf(cp_err, "ERROR: %s: no such variable.\n", string);
         tfree(oldstring);
-        return (NULL);
+        return NULL;
     }
     wl = cp_varwl(v);
 
@@ -919,7 +919,7 @@ vareval(char *string)
         wl_free(r);
     }
     tfree(oldstring);
-    return (wl);
+    return wl;
 }
 
 

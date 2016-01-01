@@ -67,7 +67,7 @@ findvec(char *word, struct plot *pl)
     struct dvec *d, *newv = NULL, *end = NULL, *v;
 
     if (pl == NULL)
-        return (NULL);
+        return NULL;
 
     if (cieq(word, "all")) {
         for (d = pl->pl_dvecs; d; d = d->v_next) {
@@ -85,7 +85,7 @@ findvec(char *word, struct plot *pl)
                 end = v;
             }
         }
-        return (newv);
+        return newv;
     }
 
     if (cieq(word, "allv")) {
@@ -104,7 +104,7 @@ findvec(char *word, struct plot *pl)
                 end = v;
             }
         }
-        return (newv);
+        return newv;
     }
 
     if (cieq(word, "alli")) {
@@ -123,7 +123,7 @@ findvec(char *word, struct plot *pl)
                 end = v;
             }
         }
-        return (newv);
+        return newv;
     }
 
     if (cieq(word, "ally")) {
@@ -142,7 +142,7 @@ findvec(char *word, struct plot *pl)
                 end = v;
             }
         }
-        return (newv);
+        return newv;
     }
 
     if (!pl->pl_lookup_valid)
@@ -184,7 +184,7 @@ findvec(char *word, struct plot *pl)
         vec_new(d);
     }
 
-    return (d);
+    return d;
 }
 
 
@@ -203,7 +203,7 @@ namecmp(const void *a, const void *b)
         while ((*s == *t) && !isdigit((int)*s) && *s)
             s++, t++;
         if (!*s)
-            return (0);
+            return 0;
         if ((*s != *t) && (!isdigit((int)*s) || !isdigit((int)*t)))
             return (*s - *t);
 
@@ -229,8 +229,8 @@ veccmp(const void *a, const void *b)
 
     if ((i = namecmp((*d1)->v_plot->pl_typename,
                      (*d2)->v_plot->pl_typename)) != 0)
-        return (i);
-    return (namecmp((*d1)->v_name, (*d2)->v_name));
+        return i;
+    return namecmp((*d1)->v_name, (*d2)->v_name);
 }
 
 
@@ -245,7 +245,7 @@ sortvecs(struct dvec *d)
     for (t = d, i = 0; t; t = t->v_link2)
         i++;
     if (i < 2)
-        return (d);
+        return d;
     array = TMALLOC(struct dvec *, i);
     for (t = d, i = 0; t; t = t->v_link2)
         array[i++] = t;
@@ -258,7 +258,7 @@ sortvecs(struct dvec *d)
     array[j]->v_link2 = NULL;
     d = array[0];
     tfree(array);
-    return (d);
+    return d;
 }
 
 
@@ -386,7 +386,7 @@ vec_fromplot(char *word, struct plot *plot)
         d = findvec(buf, plot);
     }
 
-    return (d);
+    return d;
 }
 
 
@@ -478,7 +478,7 @@ vec_get(const char *vec_name)
                     "ERROR: plot wildcard (name %s) matches nothing\n",
                     word);
             tfree(wd);
-            return (NULL);
+            return NULL;
         }
     }
 
@@ -504,7 +504,7 @@ vec_get(const char *vec_name)
             fprintf(cp_err,
                     "ERROR: circuit parameters only available with spice\n");
             tfree(wd);  /* MW. Memory leak fixed again */
-            return (NULL); /* va: use NULL */
+            return NULL; /* va: use NULL */
         }
 
         whole = copy(word);
@@ -534,13 +534,13 @@ vec_get(const char *vec_name)
             if (!vv) {
                 tfree(whole);
                 tfree(wd);
-                return (NULL);
+                return NULL;
             }
         } else {
             fprintf(cp_err, "ERROR: No circuit loaded.\n");
             tfree(whole);
             tfree(wd);
-            return (NULL);
+            return NULL;
         }
 
         d = alloc(struct dvec);
@@ -566,7 +566,7 @@ vec_get(const char *vec_name)
          * int POTnegNode;     // number of negative node of potentiometer (Node_3)
          *  case POT_QUEST_POS_NODE:
          *  value->rValue = (double)fast->POTposNode;
-         *  return (OK);
+         *  return OK;
          *  Works but with the format 1.00000E0
          */
 
@@ -670,11 +670,11 @@ vec_get(const char *vec_name)
         tfree(wd);
         vec_new(d);
         tfree(whole);
-        return (d);
+        return d;
     }
 
     tfree(wd);
-    return (sortvecs(d));
+    return sortvecs(d);
 }
 
 
@@ -707,7 +707,7 @@ vec_copy(struct dvec *v)
     int i;
 
     if (!v)
-        return (NULL);
+        return NULL;
 
     nv = alloc(struct dvec);
     nv->v_name = copy(v->v_name);
@@ -755,7 +755,7 @@ vec_copy(struct dvec *v)
     nv->v_link2 = NULL;
     nv->v_scale = v->v_scale;
 
-    return (nv);
+    return nv;
 }
 
 
@@ -789,7 +789,7 @@ plot_alloc(char *name)
     cp_addkword(CT_VECTOR, "all");
     pl->pl_ccom = cp_kwswitch(CT_VECTOR, ccom);
     /* va: keyword tree is old tree again, new tree is linked to pl->pl_ccom */
-    return (pl);
+    return pl;
 }
 
 
@@ -939,7 +939,7 @@ vec_eq(struct dvec *v1, struct dvec *v2)
     bool rtn;
 
     if (v1->v_plot != v2->v_plot)
-        return (FALSE);
+        return FALSE;
 
     s1 = vec_basename(v1);
     s2 = vec_basename(v2);
@@ -981,7 +981,7 @@ vec_basename(struct dvec *v)
         ;
     while ((t > s) && isspace((int)t[-1]))
         *--t = '\0';
-    return (copy(s));
+    return copy(s);
 }
 
 
@@ -1128,7 +1128,7 @@ vec_mkfamily(struct dvec *v)
     char buf[BSIZE_SP], buf2[BSIZE_SP];
 
     if (v->v_numdims < 2)
-        return (v);
+        return v;
 
     size = v->v_dims[v->v_numdims - 1];
     for (i = 0, numvecs = 1; i < v->v_numdims - 1; i++)
@@ -1178,7 +1178,7 @@ vec_mkfamily(struct dvec *v)
     for (d = vecs; d; d = d->v_link2)
         vec_new(d);
 
-    return (vecs);
+    return vecs;
 }
 
 
@@ -1188,7 +1188,7 @@ bool
 plot_prefix(char *pre, char *str)
 {
     if (!*pre)
-        return (TRUE);
+        return TRUE;
 
     while (*pre && *str) {
         if (*pre != *str)
@@ -1198,7 +1198,7 @@ plot_prefix(char *pre, char *str)
     }
 
     if (*pre || (*str && isdigit((int)pre[-1])))
-        return (FALSE);
+        return FALSE;
     else
-        return (TRUE);
+        return TRUE;
 }
