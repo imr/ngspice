@@ -498,6 +498,7 @@ MIF_INP2A (
     }
 
     tfree(model);
+    tfree(next_token);
 
     /* check connection constraints */
 
