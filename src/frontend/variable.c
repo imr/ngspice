@@ -33,23 +33,26 @@ wordlist *
 cp_varwl(struct variable *var)
 {
     wordlist *wl = NULL, *w, *wx = NULL;
-    char *buf;
+    char buf[BSIZE_SP], *copystring;
     struct variable *vt;
 
     switch (var->va_type) {
     case CP_BOOL:
         /* Can't ever be FALSE. */
-        buf = copy(var->va_bool ? "TRUE" : "FALSE");
+        sprintf(buf, "%s", var->va_bool ? "TRUE" : "FALSE");
         break;
     case CP_NUM:
-        buf = tprintf("%d", var->va_num);
+        sprintf(buf, "%d", var->va_num);
         break;
     case CP_REAL:
         /* This is a case where printnum isn't too good... */
-        buf = tprintf("%G", var->va_real);
+        sprintf(buf, "%G", var->va_real);
         break;
     case CP_STRING:
-        buf = cp_unquote(var->va_string);
+        /*strcpy(buf, cp_unquote(var->va_string)); DG: memory leak here*/
+        copystring = cp_unquote(var->va_string); /*DG*/
+        strcpy(buf, copystring);
+        tfree(copystring);
         break;
     case CP_LIST:   /* The tricky case. */
         for (vt = var->va_vlist; vt; vt = vt->va_next) {
@@ -65,12 +68,13 @@ cp_varwl(struct variable *var)
         return (wl);
     default:
         fprintf(cp_err,
-                "cp_varwl: Internal Error: bad variable type %d\n",
+                "cp_varwl: INTERNAL ERROR: bad variable type %d\n",
                 var->va_type);
         return (NULL);
     }
 
-    return wl_cons(buf, NULL);
+    wl = wl_cons(copy(buf), NULL);
+    return wl;
 }
 
 
@@ -143,7 +147,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
 
     default:
         fprintf(cp_err,
-                "cp_vset: Internal Error: bad variable type %d.\n",
+                "cp_vset: INTERNAL ERROR: bad variable type %d.\n",
                 type);
         tfree(copyvarname);
         return;
@@ -152,7 +156,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     v->va_type = type;
 
     /* Now, see if there is anything interesting going on. We
-     * recognise these special variables: noglob, nonomatch, history,
+     * recognize these special variables: noglob, nonomatch, history,
      * echo, noclobber, prompt, and verbose. cp_remvar looks for these
      * variables too. The host program will get any others.  */
     if (eq(copyvarname, "noglob"))
@@ -165,18 +169,14 @@ cp_vset(char *varname, enum cp_types type, void *value)
         cp_maxhistlength = (int)floor(v->va_real + 0.5);
     else if (eq(copyvarname, "noclobber"))
         cp_noclobber = TRUE;
-    else if (eq(varname, "echo"))   /*CDHW*/
-        cp_echo = TRUE;             /*CDHW*/
+    else if (eq(varname, "echo"))
+        cp_echo = TRUE;
     else if (eq(copyvarname, "prompt") && (type == CP_STRING))
         cp_promptstring = v->va_string;
     else if (eq(copyvarname, "ignoreeof"))
         cp_ignoreeof = TRUE;
     else if (eq(copyvarname, "cpdebug")) {
         cp_debug = TRUE;
-#ifndef CPDEBUG
-        fprintf(cp_err,
-                "Warning: program not compiled with cshpar debug messages\n");
-#endif
     }
 
     switch (i = cp_usrset(v, TRUE)) {
@@ -192,15 +192,15 @@ cp_vset(char *varname, enum cp_types type, void *value)
     case US_DONTRECORD:
         /* Do nothing... */
         if (alreadythere) {
-            fprintf(cp_err, "cp_vset: Internal Error: "
-                    "%s already there, but 'dont record'\n", v->va_name);
+            fprintf(cp_err, "cp_vset: INTERNAL ERROR: "
+                    "%s already there, but `don't record'\n", v->va_name);
         }
         break;
 
     case US_READONLY:
-        fprintf(cp_err, "Error: %s is a read-only variable.\n", v->va_name);
+        fprintf(cp_err, "ERROR: %s is a read-only variable.\n", v->va_name);
         if (alreadythere)
-            fprintf(cp_err, "cp_vset: Internal Error: "
+            fprintf(cp_err, "cp_vset: INTERNAL ERROR: "
                     "it was already there too!!\n");
         break;
 
@@ -230,16 +230,8 @@ cp_vset(char *varname, enum cp_types type, void *value)
                 else if (u->va_type == CP_LIST)
                     tfree(u->va_vlist);
                 u->va_V = v->va_V;
-                /* va_name is the same string */
                 u->va_type = v->va_type;
-                /* va_next left unchanged */
-                // tfree(v->va_name);
                 tfree(v);
-                /* va: old version with memory leaks
-                   w = u->va_next;
-                   bcopy(v, u, sizeof(*u));
-                   u->va_next = w;
-                */
             }
         }
         break;
@@ -251,24 +243,28 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
 
     default:
-        fprintf(cp_err, "cp_vset: Internal Error: bad US val %d\n", i);
+        fprintf(cp_err, "cp_vset: INTERNAL ERROR: bad US val %d\n", i);
         break;
     }
-
-    /* if (v_free) {
-         tfree(v->va_name);
-         tfree(v);
-      } */
     tfree(copyvarname);
 }
 
 
-/*CDHW This needs leak checking carefully CDHW*/
+/* CDHW This needs leak checking carefully CDHW */
+/* mhx: Uses ft_numparse, which interprets SPICE numbers. Therefore it worked incorrectly
+        for com_set: it prevented e.g. set ape="1MEG" (ape became CP_NUM 1e6 instead of CP_STRING '1meg').
+        Therefore I changed the function to FIRST check if the rhs is a string (look for quotes), and only
+        if it is not, continue with ft_numparse.
+   Note: cp_setparse is used by com_set and com_option, where this new behavior should be ok.
+         cp_setparse is used in inp.c (4) for .option scale=xxx. Assumed new behavior will be ok.
+         cp_setparse is used in rawfile.c (2) to parse "option: xxx". Assumed new behavior will be ok.
+*/
 struct variable *
 cp_setparse(wordlist *wl)
 {
     char *name = NULL, *val, *copyval, *s, *ss;
     double *td;
+    bool isstring;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
     int balance;
@@ -281,7 +277,7 @@ cp_setparse(wordlist *wl)
         name = cp_unquote(wl->wl_word);
 
         wl = wl->wl_next;
-        if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
+        if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) { /* 'name ccccc' */
             vv = alloc(struct variable);
             vv->va_name = copy(name);
             vv->va_type = CP_BOOL;
@@ -292,10 +288,10 @@ cp_setparse(wordlist *wl)
             continue;
         }
 
-        if (wl && eq(wl->wl_word, "=")) {
+        if (wl && eq(wl->wl_word, "=")) { /* 'name =' */
             wl = wl->wl_next;
             if (wl == NULL) {
-                fprintf(cp_err, "Error: bad set form.\n");
+                fprintf(cp_err, "ERROR: bad set form.\n");
                 tfree(name);    /*DG: cp_unquote Memory leak*/
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -303,7 +299,7 @@ cp_setparse(wordlist *wl)
             }
             val = wl->wl_word;
             wl = wl->wl_next;
-        } else if (wl && (*wl->wl_word == '=')) {
+        } else if (wl && (*wl->wl_word == '=')) { /* name =' */
             val = wl->wl_word + 1;
             wl = wl->wl_next;
         } else if ((s = strchr(name, '=')) != NULL) {
@@ -311,7 +307,7 @@ cp_setparse(wordlist *wl)
             *s = '\0';
             if (*val == '\0') {
                 if (!wl) {
-                    fprintf(cp_err, "Error:  %s equals what?.\n", name);
+                    fprintf(cp_err, "ERROR:  %s equals what?\n", name);
                     tfree(name); /*DG: cp_unquote Memory leak: free name before exiting*/
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
@@ -322,7 +318,7 @@ cp_setparse(wordlist *wl)
                 }
             }
         } else {
-            fprintf(cp_err, "Error: bad set form.\n");
+            fprintf(cp_err, "ERROR: bad set form\n");
             tfree(name); /*DG: cp_unquote Memory leak: free name befor exiting */
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
@@ -330,6 +326,7 @@ cp_setparse(wordlist *wl)
         }
 
         /*   val = cp_unquote(val);  DG: bad   old val is lost*/
+        isstring = (*val == '"'); /* mhx: is this sufficient? */
         copyval = cp_unquote(val); /*DG*/
         strcpy(val, copyval);
         tfree(copyval);
@@ -340,6 +337,7 @@ cp_setparse(wordlist *wl)
              * ()'s, treat them as tokens...  */
             balance = 1;
             while (wl && wl->wl_word) {
+                bool isstringc;
                 if (eq(wl->wl_word, "(")) {
                     balance++;
                 } else if (eq(wl->wl_word, ")")) {
@@ -348,7 +346,12 @@ cp_setparse(wordlist *wl)
                 }
                 vv = alloc(struct variable);
                 vv->va_next = NULL;
+                isstringc = (*wl->wl_word == '"'); /* mhx: is this sufficient? */
                 copyval = ss = cp_unquote(wl->wl_word);
+                if (isstringc) {
+                    vv->va_type = CP_STRING;
+                    vv->va_string = copy(ss);
+                } else {
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
                     vv->va_type = CP_REAL;
@@ -356,6 +359,8 @@ cp_setparse(wordlist *wl)
                 } else {
                     vv->va_type = CP_STRING;
                     vv->va_string = copy(ss);
+                    fprintf(cp_err, "cp_setparse() :: ft_numparse() didn't recognize `%s' for assignment to `%s' as CP_REAL, using CP_STRING.\n", ss, name);
+                }
                 }
                 tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
@@ -367,7 +372,7 @@ cp_setparse(wordlist *wl)
                 wl = wl->wl_next;
             }
             if (balance && !wl) {
-                fprintf(cp_err, "Error: bad set form.\n");
+                fprintf(cp_err, "ERROR: bad set form\n");
                 tfree(name); /* va: cp_unquote memory leak: free name before exiting */
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
@@ -385,19 +390,26 @@ cp_setparse(wordlist *wl)
             continue;
         }
 
-        copyval = ss = cp_unquote(val);
-        td = ft_numparse(&ss, FALSE);
+        /* there shouldn't be quotes around val at this point? */
+        if (*val == '"')
+            isstring |= TRUE; /* mhx: is this sufficient? */
+        copyval = ss = cp_unquote(val); /* 'name = ccccc' */
         vv = alloc(struct variable);
         vv->va_name = copy(name);
         vv->va_next = vars;
         vars = vv;
-        if (td) {
-            /*** We should try to get CP_NUM's... */
-            vv->va_type = CP_REAL;
-            vv->va_real = *td;
-        } else {
+        if (isstring) {
             vv->va_type = CP_STRING;
             vv->va_string = copy(val);
+        } else {
+            td = ft_numparse(&ss, FALSE); /* FALSE: because set x=1umeter should work and 'meter' ignored */
+            if (td) {
+                vv->va_type = CP_REAL;
+                vv->va_real = *td;
+            } else {
+                vv->va_type = CP_STRING;
+                vv->va_string = copy(val);
+            }
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
@@ -477,8 +489,8 @@ cp_remvar(char *varname)
         cp_nonomatch = FALSE;
     else if (eq(varname, "noclobber"))
         cp_noclobber = FALSE;
-    else if (eq(varname, "echo")) /*CDHW*/
-        cp_echo = FALSE;          /*CDHW*/
+    else if (eq(varname, "echo"))
+        cp_echo = FALSE;
     else if (eq(varname, "prompt"))
         cp_promptstring = NULL;
     else if (eq(varname, "cpdebug"))
@@ -510,14 +522,14 @@ cp_remvar(char *varname)
     case US_DONTRECORD:
         /* Do nothing... */
         if (found)
-            fprintf(cp_err, "cp_remvar: Internal Error: var %d\n", *varname);
+            fprintf(cp_err, "cp_remvar: INTERNAL ERROR: var %d\n", *varname);
         break;
 
     case US_READONLY:
         /* Badness... */
-        fprintf(cp_err, "Error: %s is read-only.\n", v->va_name);
+        fprintf(cp_err, "ERROR: %s is read-only.\n", v->va_name);
         if (found)
-            fprintf(cp_err, "cp_remvar: Internal Error: var %d\n", *varname);
+            fprintf(cp_err, "cp_remvar: INTERNAL ERROR: var %d\n", *varname);
         break;
 
     case US_SIMVAR:
@@ -540,7 +552,7 @@ cp_remvar(char *varname)
         break;
 
     default:
-        fprintf(cp_err, "cp_remvar: Internal Error: US val %d\n", i);
+        fprintf(cp_err, "cp_remvar: INTERNAL ERROR: US val %d\n", i);
         break;
     }
 
@@ -551,8 +563,10 @@ cp_remvar(char *varname)
 }
 
 
-/* Determine the value of a variable.  Fail if the variable is unset,
- * and if the type doesn't match, try and make it work...  */
+/*
+ * Determine the value of a variable.  Fail if the variable is unset,
+ * and if the type doesn't match, try and make it work...
+ */
 bool
 cp_getvar(char *name, enum cp_types type, void *retval)
 {
@@ -560,11 +574,6 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     struct variable *uv1, *uv2;
 
     cp_usrvars(&uv1, &uv2);
-
-#ifdef TRACE
-    /* SDB debug statement */
-    fprintf(stderr, "in cp_getvar, trying to get value of variable %s.\n", name);
-#endif
 
     for (v = variables; v && !eq(name, v->va_name); v = v->va_next)
         ;
@@ -616,11 +625,10 @@ cp_getvar(char *name, enum cp_types type, void *retval)
         }
         default:
             fprintf(cp_err,
-                    "cp_getvar: Internal Error: bad var type %d.\n", type);
+                    "cp_getvar: INTERNAL ERROR: bad var type %d.\n", type);
             break;
         }
         free_struct_variable(uv1);
-        // tfree(uv2);
         return (TRUE);
 
     } else {
@@ -678,7 +686,7 @@ span_var_expr(char *t)
     int parenthesis = 0;
     int brackets = 0;
 
-    while (*t && (isalphanum(*t) || strchr(VALIDCHARS, *t)))
+    while (*t && (isalphanum((int)*t) || strchr(VALIDCHARS, *t)))
         switch (*t++)
         {
         case '[':
@@ -707,55 +715,59 @@ span_var_expr(char *t)
 }
 
 
-/* Substitute variable name by its value and restore to wordlist */
 wordlist *
 cp_variablesubst(wordlist *wlist)
 {
-    wordlist *wl;
+    wordlist *wl, *nwl;
+    char *s, *t, buf[BSIZE_SP], wbuf[BSIZE_SP], tbuf[BSIZE_SP];
+    /* MW. tbuf holds current word after wl_splice() calls free() on it */
+    int i;
 
     for (wl = wlist; wl; wl = wl->wl_next) {
 
-        char *s_dollar;
-        int i = 0;
-
-        while ((s_dollar = strchr(wl->wl_word + i, cp_dol)) != NULL) {
-
-            int prefix_len = (int) (s_dollar - wl->wl_word);
-
-            char *tail = span_var_expr(s_dollar + 1);
-            char *var = copy_substring(s_dollar + 1, tail);
-
-            wordlist *nwl = vareval(var);
-            tfree(var);
-
-            if (nwl) {
-                char *x = nwl->wl_word;
-                char *tail_ = copy(tail);
-                nwl->wl_word = tprintf("%.*s%s", prefix_len, wl->wl_word, nwl->wl_word);
-                free(x);
-                if (wlist == wl)
-                    wlist = nwl;
-                wl = wl_splice(wl, nwl);
-                i = (int) strlen(wl->wl_word);
-                x = wl->wl_word;
-                wl->wl_word = tprintf("%s%s", wl->wl_word, tail_);
-                free(x);
-                free(tail_);
-            } else if (prefix_len || *tail) {
-                char *x = wl->wl_word;
-                wl->wl_word = tprintf("%.*s%s", prefix_len, wl->wl_word, tail);
-                i = prefix_len;
-                free(x);
-            } else {
-                wordlist *next = wl->wl_next;
-                if (wlist == wl)
-                    wlist = next;
-                wl_delete_slice(wl, next);
-                if (!next)
-                    return wlist;
-                wl = next;
-                i = 0;
+        t = wl->wl_word;
+        i = 0;
+        while ((s = strchr(t, cp_dol)) != NULL) {
+            while (t < s)
+                wbuf[i++] = *t++;
+            wbuf[i] = '\0';
+            t++;
+            s = buf;
+            /* Get s and t past the end of the var name. */
+            {
+                char *end = span_var_expr(t);
+                while (t < end)
+                    *s++ = *t++;
             }
+            *s = '\0';
+            nwl = vareval(buf);
+            if (i) {
+                (void) strcpy(buf, wbuf);
+                if (nwl) {
+                    (void) strcat(buf, nwl->wl_word);
+                    tfree(nwl->wl_word);
+                    nwl->wl_word = copy(buf);
+                } else {
+                    nwl = wl_cons(copy(buf), NULL);
+                }
+            }
+            (void) strcpy(tbuf, t); /* MW. Save t*/
+            if ((wl = wl_splice(wl, nwl)) == NULL) {/*CDHW this frees wl CDHW*/
+                wl_free(nwl);
+                return NULL;
+            }
+            /* This is bad... */
+            for (wlist = wl; wlist->wl_prev; wlist = wlist->wl_prev)
+                ;
+            (void) strcpy(buf, wl->wl_word);
+            i = (int) strlen(buf);
+            (void) strcat(buf, tbuf); /* MW. tbuf is used here only */
+            tfree(wl->wl_word);
+            wl->wl_word = copy(buf);
+            t = &wl->wl_word[i];
+            s = wl->wl_word;
+            for (i = 0; s < t; s++)
+                wbuf[i++] = *s;
         }
     }
 
@@ -783,7 +795,8 @@ vareval(char *string)
     switch (*string) {
 
     case '$':
-        wl = wl_cons(tprintf("%d", getpid()), NULL);
+        (void) sprintf(buf, "%d", getpid());
+        wl = wl_cons(copy(buf), NULL);
         tfree(oldstring);
         return (wl);
 
@@ -822,7 +835,7 @@ vareval(char *string)
         if (!v)
             v = cp_enqvar(string);
         if (!v) {
-            fprintf(cp_err, "Error: %s: no such variable.\n", string);
+            fprintf(cp_err, "ERROR: %s: no such variable.\n", string);
             tfree(oldstring);
             return (NULL);
         }
@@ -831,7 +844,8 @@ vareval(char *string)
                 i++;
         else
             i = (v->va_type != CP_BOOL);
-        wl = wl_cons(tprintf("%d", i), NULL);
+        (void) sprintf(buf, "%d", i);
+        wl = wl_cons(copy(buf), NULL);
         tfree(oldstring);
         return (wl);
 
@@ -848,14 +862,14 @@ vareval(char *string)
     for (v = variables; v; v = v->va_next)
         if (eq(v->va_name, string))
             break;
-    if (!v && isdigit(*string)) {
+    if (!v && isdigit((int)*string)) {
         for (v = variables; v; v = v->va_next)
             if (eq(v->va_name, "argv"))
                 break;
         range = string;
     }
     if (!v) {
-        range = NULL;
+// ?    range = NULL;
         string = oldstring;
         v = cp_enqvar(string);
     }
@@ -865,7 +879,7 @@ vareval(char *string)
         return (wl);
     }
     if (!v) {
-        fprintf(cp_err, "Error: %s: no such variable.\n", string);
+        fprintf(cp_err, "ERROR: %s: no such variable.\n", string);
         tfree(oldstring);
         return (NULL);
     }
@@ -879,22 +893,22 @@ vareval(char *string)
             char *t = ++range;
             if (*t == '&')
                 t++;
-            while (isalphanum(*t))
+            while (isalphanum((int)*t))
                 t++;
             *t = '\0';
             r = vareval(range);
             if (!r || r->wl_next) {
-                fprintf(cp_err, "Error: %s: illegal index.\n", string);
+                fprintf(cp_err, "ERROR: %s: illegal index.\n", string);
                 tfree(oldstring);
                 wl_free(r);
                 return NULL;
             }
             range = r->wl_word;
         }
-        for (low = 0; isdigit(*range); range++)
+        for (low = 0; isdigit((int)*range); range++)
             low = low * 10 + *range - '0';
-        if ((*range == '-') && isdigit(range[1]))
-            for (up = 0, range++; isdigit(*range); range++)
+        if ((*range == '-') && isdigit((int)range[1]))
+            for (up = 0, range++; isdigit((int)*range); range++)
                 up = up * 10 + *range - '0';
         else if (*range == '-')
             up = wl_length(wl);

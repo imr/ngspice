@@ -22,11 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/dstring.h"
 #include "plotting/plotting.h"
 
-#ifdef XSPICE
-/* gtri - begin - add function prototype for EVTfindvec */
 struct dvec *EVTfindvec(char *node);
-/* gtri - end   - add function prototype for EVTfindvec */
-#endif
 
 
 static void
@@ -180,14 +176,9 @@ findvec(char *word, struct plot *pl)
 
     spice_dstring_free(&dbuf);
 
-#ifdef XSPICE
-    /* gtri - begin - Add processing for getting event-driven vector */
-
     if (!d)
         d = EVTfindvec(word);
 
-    /* gtri - end   - Add processing for getting event-driven vector */
-#endif
     if (d && d->v_link2) {
         d = vec_copy(d);
         vec_new(d);
@@ -209,18 +200,18 @@ namecmp(const void *a, const void *b)
     const char *t = (const char *) b;
 
     for (;;) {
-        while ((*s == *t) && !isdigit(*s) && *s)
+        while ((*s == *t) && !isdigit((int)*s) && *s)
             s++, t++;
         if (!*s)
             return (0);
-        if ((*s != *t) && (!isdigit(*s) || !isdigit(*t)))
+        if ((*s != *t) && (!isdigit((int)*s) || !isdigit((int)*t)))
             return (*s - *t);
 
         /* The beginning of a number... Grab the two numbers and then
          * compare them...  */
-        for (i = 0; isdigit(*s); s++)
+        for (i = 0; isdigit((int)*s); s++)
             i = i * 10 + *s - '0';
-        for (j = 0; isdigit(*t); t++)
+        for (j = 0; isdigit((int)*t); t++)
             j = j * 10 + *t - '0';
 
         if (i != j)
@@ -383,11 +374,11 @@ vec_fromplot(char *word, struct plot *plot)
     }
 
     /* scanf("%c(%s)" doesn't do what it should do. ) */
-    if (!d && (sscanf(word, "%c(%s", &cc, buf) == 2) &&
-        ((s = strrchr(buf, ')')) != NULL) &&
+    if (!d && (sscanf(word, "%c(%s", /* ) */ &cc, buf) == 2) &&
+        /* ( */ ((s = strrchr(buf, ')')) != NULL) &&
         (s[1] == '\0')) {
         *s = '\0';
-        if (prefix("i(", word) || prefix("I(", word)) {
+        if (prefix("i(", /* ) */ word) || prefix("I(", /* ) */ word)) {
             /* Spice dependency... */
             (void) sprintf(buf2, "%s#branch", buf);
             (void) strcpy(buf, buf2);
@@ -422,8 +413,22 @@ vec_get(const char *vec_name)
     char buf[BSIZE_SP], *s, *wd, *word, *whole, *name = NULL, *param;
     int i = 0;
     struct variable *vv;
+    int indexvar;                 /* mhx */
 
     wd = word = copy(vec_name);   /* Gets mangled below... */
+
+    if (*word != SPECCHAR) {      /* mhx: eventually replace atoi() by full evaluate */
+        char *ps = strchr(wd, '['), *pe = strchr(wd, ']');
+        if (ps && pe && pe > ps) {
+            whole = copy(word);
+            *ps = '\0';
+            *pe = '\0';
+            indexvar = atoi(++ps);
+        } else {
+            whole = NULL;
+            indexvar = -1;
+        }
+    }
 
     if (strchr(word, '.')) {
         /* Snag the plot... */
@@ -470,18 +475,34 @@ vec_get(const char *vec_name)
         d = newv;
         if (!d) {
             fprintf(cp_err,
-                    "Error: plot wildcard (name %s) matches nothing\n",
+                    "ERROR: plot wildcard (name %s) matches nothing\n",
                     word);
-            tfree(wd); /* MW. I don't want core leaks here */
+            tfree(wd);
             return (NULL);
         }
+    }
+
+    /* In case of data[ix] we must return a SINGLE value
+       (vector of length 1) instead of the vector.
+       Duplicates a lot of code that still follows :-( */
+    if (d && indexvar != -1) {
+            struct dvec *ad;
+            ad = alloc(struct dvec);
+            ZERO(ad, struct dvec);
+            ad->v_name      = copy(whole);      /* so the name could be data[2] or data[expression] :-) */
+            ad->v_type      = d->v_type;
+            ad->v_flags     = d->v_flags;       /* VF_REAL; or complex? */
+            ad->v_length    = 1;
+            ad->v_realdata  = TMALLOC(double, 1);
+            *ad->v_realdata = *d->v_realdata;
+            tfree(whole);
     }
 
     if (!d && (*word == SPECCHAR)) {
         /* This is a special quantity... */
         if (ft_nutmeg) {
             fprintf(cp_err,
-                    "Error: circuit parameters only available with spice\n");
+                    "ERROR: circuit parameters only available with spice\n");
             tfree(wd);  /* MW. Memory leak fixed again */
             return (NULL); /* va: use NULL */
         }
@@ -516,16 +537,19 @@ vec_get(const char *vec_name)
                 return (NULL);
             }
         } else {
-            fprintf(cp_err, "Error: No circuit loaded.\n");
+            fprintf(cp_err, "ERROR: No circuit loaded.\n");
             tfree(whole);
             tfree(wd);
             return (NULL);
         }
 
-        d = dvec_alloc(copy(whole), /* MW. The same as word before */
-                       SV_NOTYPE,
-                       VF_REAL,  /* No complex values yet... */
-                       1, NULL);
+        d = alloc(struct dvec);
+        ZERO(d, struct dvec);
+        d->v_name = copy(whole); /* MW. The same as word before */
+        d->v_type = SV_NOTYPE;
+        d->v_flags |= VF_REAL;  /* No complex values yet... */
+        d->v_realdata = TMALLOC(double, 1);
+        d->v_length = 1;
 
         /* In case the represented variable is a REAL vector this takes
          * the actual value of the first element of the linked list which
@@ -538,8 +562,8 @@ vec_get(const char *vec_name)
          * defined as IF_INTEGER are not given their value when using
          * print @pot[pos_node]
          * To fix this, it is necessary to define:
-         * OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potenciometer"),
-         * int POTnegNode;     // number of negative node of potenciometer (Nodo_3)
+         * OPU( "pos_node",    POT_QUEST_POS_NODE, IF_REAL,"Positive node of potentiometer"),
+         * int POTnegNode;     // number of negative node of potentiometer (Node_3)
          *  case POT_QUEST_POS_NODE:
          *  value->rValue = (double)fast->POTposNode;
          *  return (OK);
@@ -562,7 +586,7 @@ vec_get(const char *vec_name)
          *   CP_REAL,
          *   CP_STRING,
          *   CP_LIST
-         ° };
+         * };
         */
 
         /* The variable is a vector */
@@ -572,16 +596,20 @@ vec_get(const char *vec_name)
              */
             struct variable *nv;
 
-            i = 0;
-            for (nv = vv->va_vlist; nv; nv = nv->va_next)
-                i++;
+            double *list;
+            list = TMALLOC(double, 1);
+            nv = alloc(struct variable);
 
-            dvec_realloc(d, i, NULL);
-
-            i = 0;
-            for (nv = vv->va_vlist; nv; nv = nv->va_next)
-                d->v_realdata[i++] = nv->va_real;
-
+            nv = vv->va_vlist;
+            for (i = 1; ; i++) {
+                list = TREALLOC(double, list, i);
+                list[i-1] = nv->va_real;
+                nv = nv->va_next;
+                if (!nv)
+                    break;
+            }
+            d->v_realdata = list;
+            d->v_length = i;
             /* To be able to identify the vector to represent
              * belongs to a special "conunto" and should be printed in a
              * special way.
@@ -681,22 +709,28 @@ vec_copy(struct dvec *v)
     if (!v)
         return (NULL);
 
-    nv = dvec_alloc(copy(v->v_name),
-                    v->v_type,
-                    v->v_flags & ~VF_PERMANENT,
-                    v->v_length, NULL);
+    nv = alloc(struct dvec);
+    nv->v_name = copy(v->v_name);
+    nv->v_type = v->v_type;
+    nv->v_flags = v->v_flags & ~VF_PERMANENT;
 
-    if (isreal(v))
+    if (isreal(v)) {
+        nv->v_realdata = TMALLOC(double, v->v_length);
         bcopy(v->v_realdata, nv->v_realdata,
               sizeof(double) * (size_t) v->v_length);
-    else
+        nv->v_compdata = NULL;
+    } else {
+        nv->v_realdata = NULL;
+        nv->v_compdata = TMALLOC(ngcomplex_t, v->v_length);
         bcopy(v->v_compdata, nv->v_compdata,
               sizeof(ngcomplex_t) * (size_t) v->v_length);
+    }
 
     nv->v_minsignal = v->v_minsignal;
     nv->v_maxsignal = v->v_maxsignal;
     nv->v_gridtype = v->v_gridtype;
     nv->v_plottype = v->v_plottype;
+    nv->v_length = v->v_length;
 
     /* Modified to copy the rlength of origin to destination vecor
      * instead of always putting it to 0.
@@ -764,13 +798,10 @@ plot_alloc(char *name)
 void
 vec_new(struct dvec *d)
 {
-#ifdef FTEDEBUG
-    if (ft_vecdb)
-        fprintf(cp_err, "new vector %s\n", d->v_name);
-#endif
     /* Note that this can't happen. */
     if (plot_cur == NULL) {
-        fprintf(cp_err, "vec_new: Internal Error: no cur plot\n");
+        fprintf(cp_err, "vec_new: INTERNAL ERROR: no cur plot\n");
+        controlled_exit(1);
     }
     plot_cur->pl_lookup_valid = FALSE;
     if ((d->v_flags & VF_PERMANENT) && (plot_cur->pl_scale == NULL))
@@ -849,7 +880,7 @@ vec_free_x(struct dvec *v)
                 lv->v_next = v->v_next;
             else
                 fprintf(cp_err,
-                        "vec_free: Internal Error: %s not in plot\n",
+                        "vec_free: INTERNAL ERROR: %s not in plot\n",
                         v->v_name);
         }
         if (pl->pl_scale == v) {
@@ -860,7 +891,13 @@ vec_free_x(struct dvec *v)
         }
     }
 
-    dvec_free(v);
+    if (v->v_name)
+        tfree(v->v_name);
+    if (v->v_realdata)
+        tfree(v->v_realdata);
+    if (v->v_compdata)
+        tfree(v->v_compdata);
+    tfree(v);
 }
 
 
@@ -868,7 +905,7 @@ vec_free_x(struct dvec *v)
  * return TRUE if every vector element is zero
  */
 
-bool
+BOOL
 vec_iszero(struct dvec *v)
 {
     int i;
@@ -937,12 +974,12 @@ vec_basename(struct dvec *v)
     }
 
     strtolower(buf);
-    for (t = buf; isspace(*t); t++)
+    for (t = buf; isspace((int)*t); t++)
         ;
     s = t;
     for (t = s; *t; t++)
         ;
-    while ((t > s) && isspace(t[-1]))
+    while ((t > s) && isspace((int)t[-1]))
         *--t = '\0';
     return (copy(s));
 }
@@ -972,7 +1009,7 @@ plot_setcur(char *name)
         if (plot_prefix(name, pl->pl_typename))
             break;
     if (!pl) {
-        fprintf(cp_err, "Error: no such plot named %s\n", name);
+        fprintf(cp_err, "ERROR: no such plot named %s\n", name);
         return;
     }
     /* va: we skip cp_kwswitch, because it confuses the keyword-tree management for
@@ -1053,7 +1090,8 @@ vec_transpose(struct dvec *v)
             }
             koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
         }
-        dvec_realloc(v, v->v_length, newreal);
+        tfree(oldreal);
+        v->v_realdata = newreal;
     } else {
         newcomp = TMALLOC(ngcomplex_t, v->v_length);
         oldcomp = v->v_compdata;
@@ -1062,14 +1100,17 @@ vec_transpose(struct dvec *v)
             joffset = 0;
             for (j = 0; j < dim0; j++) {
                 for (i = 0; i < dim1; i++) {
-                    newcomp[ koffset + joffset + i ] =
-                        oldcomp[ koffset + i*dim0 + j ];
+                    realpart(newcomp[ koffset + joffset + i ]) =
+                        realpart(oldcomp[ koffset + i*dim0 + j ]);
+                    imagpart(newcomp[ koffset + joffset + i ]) =
+                        imagpart(oldcomp[ koffset + i*dim0 + j ]);
                 }
                 joffset += dim1;  /* joffset = j*dim0 */
             }
             koffset += blocksize; /* koffset = k*blocksize = k*dim0*dim1 */
         }
-        dvec_realloc(v, v->v_length, newcomp);
+        tfree(oldcomp);
+        v->v_compdata = newcomp;
     }
 }
 
@@ -1082,9 +1123,9 @@ vec_transpose(struct dvec *v)
 struct dvec *
 vec_mkfamily(struct dvec *v)
 {
-    int size, numvecs, i, count[MAXDIMS];
-    struct dvec *vecs, *d, **t;
-    char buf2[BSIZE_SP];
+    int size, numvecs, i, j, count[MAXDIMS];
+    struct dvec *vecs, *d;
+    char buf[BSIZE_SP], buf2[BSIZE_SP];
 
     if (v->v_numdims < 2)
         return (v);
@@ -1092,16 +1133,25 @@ vec_mkfamily(struct dvec *v)
     size = v->v_dims[v->v_numdims - 1];
     for (i = 0, numvecs = 1; i < v->v_numdims - 1; i++)
         numvecs *= v->v_dims[i];
+    for (i = 0, vecs = d = NULL; i < numvecs; i++) {
+        if (vecs) {
+            d = d->v_link2 = alloc(struct dvec);
+            ZERO(d, struct dvec);
+        } else {
+            d = vecs = alloc(struct dvec);
+            ZERO(d, struct dvec);
+        }
+    }
     for (i = 0; i < MAXDIMS; i++)
         count[i] = 0;
-    for (t = &vecs, i = 0; i < numvecs; i++) {
+    for (d = vecs, j = 0; d; j++, d = d->v_link2) {
 
         indexstring(count, v->v_numdims - 1, buf2);
 
-        d = dvec_alloc(tprintf("%s%s", v->v_name, buf2),
-                       v->v_type,
-                       v->v_flags,
-                       size, NULL);
+        (void) sprintf(buf, "%s%s", v->v_name, buf2);
+        d->v_name = copy(buf);
+        d->v_type = v->v_type;
+        d->v_flags = v->v_flags;
 
         d->v_minsignal = v->v_minsignal;
         d->v_maxsignal = v->v_maxsignal;
@@ -1112,18 +1162,17 @@ vec_mkfamily(struct dvec *v)
          * of these things...
          */
         d->v_numdims = 1;
-        d->v_dims[0] = size;
+        d->v_length = size;
 
         if (isreal(v)) {
-            bcopy(v->v_realdata + size*i, d->v_realdata, (size_t) size * sizeof(double));
+            d->v_realdata = TMALLOC(double, size);
+            bcopy(v->v_realdata + size*j, d->v_realdata, (size_t) size * sizeof(double));
         } else {
-            bcopy(v->v_compdata + size*i, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
+            d->v_compdata = TMALLOC(ngcomplex_t, size);
+            bcopy(v->v_compdata + size*j, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
         }
         /* Add one to the counter. */
         (void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);
-
-        *t = d;
-        t = &(d->v_link2);
     }
 
     for (d = vecs; d; d = d->v_link2)
@@ -1148,7 +1197,7 @@ plot_prefix(char *pre, char *str)
         str++;
     }
 
-    if (*pre || (*str && isdigit(pre[-1])))
+    if (*pre || (*str && isdigit((int)pre[-1])))
         return (FALSE);
     else
         return (TRUE);
