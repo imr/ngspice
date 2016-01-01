@@ -263,12 +263,21 @@ cp_vset(char *varname, enum cp_types type, void *value)
 }
 
 
-/*CDHW This needs leak checking carefully CDHW*/
+/* CDHW This needs leak checking carefully CDHW */
+/* mhx: Uses ft_numparse, which interprets SPICE numbers. Therefore it worked incorrectly
+        for com_set: it prevented e.g. set ape="1MEG" (ape became CP_NUM 1e6 instead of CP_STRING '1meg').
+        Therefore I changed the function to FIRST check if the rhs is a string (look for quotes), and only
+        if it is not, continue with ft_numparse.
+   Note: cp_setparse is used by com_set and com_option, where this new behavior should be ok.
+         cp_setparse is used in inp.c (4) for .option scale=xxx. Assumed new behavior will be ok.
+         cp_setparse is used in rawfile.c (2) to parse "option: xxx". Assumed new behavior will be ok.
+*/
 struct variable *
 cp_setparse(wordlist *wl)
 {
     char *name = NULL, *val, *copyval, *s, *ss;
     double *td;
+    bool isstring;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
     int balance;
@@ -330,6 +339,7 @@ cp_setparse(wordlist *wl)
         }
 
         /*   val = cp_unquote(val);  DG: bad   old val is lost*/
+        isstring = (*val == '"'); /* mhx: is this sufficient? */
         copyval = cp_unquote(val); /*DG*/
         strcpy(val, copyval);
         tfree(copyval);
@@ -340,6 +350,7 @@ cp_setparse(wordlist *wl)
              * ()'s, treat them as tokens...  */
             balance = 1;
             while (wl && wl->wl_word) {
+                bool isstringc;
                 if (eq(wl->wl_word, "(")) {
                     balance++;
                 } else if (eq(wl->wl_word, ")")) {
@@ -348,7 +359,12 @@ cp_setparse(wordlist *wl)
                 }
                 vv = alloc(struct variable);
                 vv->va_next = NULL;
+                isstringc = (*wl->wl_word == '"'); /* mhx: is this sufficient? */
                 copyval = ss = cp_unquote(wl->wl_word);
+                if (isstringc) {
+                    vv->va_type = CP_STRING;
+                    vv->va_string = copy(ss);
+                } else {
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
                     vv->va_type = CP_REAL;
@@ -356,6 +372,8 @@ cp_setparse(wordlist *wl)
                 } else {
                     vv->va_type = CP_STRING;
                     vv->va_string = copy(ss);
+                    fprintf(cp_err, "cp_setparse() :: ft_numparse() didn't recognize `%s' for assignment to `%s' as CP_REAL, using CP_STRING.\n", ss, name);
+                }
                 }
                 tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
@@ -385,19 +403,26 @@ cp_setparse(wordlist *wl)
             continue;
         }
 
+        /* there shouldn't be quotes around val at this point? */
+        if (*val == '"')
+            isstring |= TRUE; /* mhx: is this sufficient? */
         copyval = ss = cp_unquote(val);
-        td = ft_numparse(&ss, FALSE);
         vv = alloc(struct variable);
         vv->va_name = copy(name);
         vv->va_next = vars;
         vars = vv;
-        if (td) {
-            /*** We should try to get CP_NUM's... */
-            vv->va_type = CP_REAL;
-            vv->va_real = *td;
-        } else {
+        if (isstring) {
             vv->va_type = CP_STRING;
             vv->va_string = copy(val);
+        } else {
+            td = ft_numparse(&ss, FALSE); /* FALSE: because set x=1umeter should work and 'meter' ignored */
+            if (td) {
+                vv->va_type = CP_REAL;
+                vv->va_real = *td;
+            } else {
+                vv->va_type = CP_STRING;
+                vv->va_string = copy(val);
+            }
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
@@ -855,7 +880,7 @@ vareval(char *string)
         range = string;
     }
     if (!v) {
-        range = NULL;
+// ?    range = NULL;
         string = oldstring;
         v = cp_enqvar(string);
     }

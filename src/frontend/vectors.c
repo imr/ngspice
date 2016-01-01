@@ -422,8 +422,22 @@ vec_get(const char *vec_name)
     char buf[BSIZE_SP], *s, *wd, *word, *whole, *name = NULL, *param;
     int i = 0;
     struct variable *vv;
+    int indexvar;                 /* mhx */
 
     wd = word = copy(vec_name);   /* Gets mangled below... */
+
+    if (*word != SPECCHAR) {      /* mhx: eventually replace atoi() by full evaluate */
+        char *ps = strchr(wd, '['), *pe = strchr(wd, ']');
+        if (ps && pe && pe > ps) {
+            whole = copy(word);
+            *ps = '\0';
+            *pe = '\0';
+            indexvar = atoi(++ps);
+        } else {
+            whole = NULL;
+            indexvar = -1;
+        }
+    }
 
     if (strchr(word, '.')) {
         /* Snag the plot... */
@@ -475,6 +489,22 @@ vec_get(const char *vec_name)
             tfree(wd); /* MW. I don't want core leaks here */
             return (NULL);
         }
+    }
+
+    /* In case of data[ix] we must return a SINGLE value
+       (vector of length 1) instead of the vector.
+       Duplicates a lot of code that still follows :-( */
+    if (d && indexvar != -1) {
+            struct dvec *ad;
+            ad = alloc(struct dvec);
+            ZERO(ad, struct dvec);
+            ad->v_name      = copy(whole);      /* so the name could be data[2] or data[expression] :-) */
+            ad->v_type      = d->v_type;
+            ad->v_flags     = d->v_flags;       /* VF_REAL; or complex? */
+            ad->v_length    = 1;
+            ad->v_realdata  = TMALLOC(double, 1);
+            *ad->v_realdata = *d->v_realdata;
+            tfree(whole);
     }
 
     if (!d && (*word == SPECCHAR)) {
