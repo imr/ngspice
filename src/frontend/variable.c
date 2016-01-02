@@ -390,6 +390,8 @@ free_struct_variable(struct variable *v)
 {
     while (v) {
         struct variable *next_v = v->va_next;
+        if (v->va_name)
+            tfree(v->va_name);
         if (v->va_type == CP_LIST)
             free_struct_variable(v->va_vlist);
         if (v->va_type == CP_STRING)
