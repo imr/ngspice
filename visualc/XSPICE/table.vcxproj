@@ -98,20 +98,22 @@
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\table
 ..\bin\cmpp -lst
-cd table2D
+set mdir=table2d
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table2D-cfunc.c
-del table2D-ifspec.c
-rename cfunc.c table2D-cfunc.c
-rename ifspec.c table2D-ifspec.c
-cd ..\table3D
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=table3d
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table3D-cfunc.c
-del table3D-ifspec.c
-rename cfunc.c table3D-cfunc.c
-rename ifspec.c table3D-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -154,20 +156,22 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\table
 ..\bin\cmpp -lst
-cd table2D
+set mdir=table2d
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table2D-cfunc.c
-del table2D-ifspec.c
-rename cfunc.c table2D-cfunc.c
-rename ifspec.c table2D-ifspec.c
-cd ..\table3D
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=table3d
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table3D-cfunc.c
-del table3D-ifspec.c
-rename cfunc.c table3D-cfunc.c
-rename ifspec.c table3D-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -201,20 +205,22 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\table
 ..\bin\cmpp -lst
-cd table2D
+set mdir=table2d
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table2D-cfunc.c
-del table2D-ifspec.c
-rename cfunc.c table2D-cfunc.c
-rename ifspec.c table2D-ifspec.c
-cd ..\table3D
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=table3d
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table3D-cfunc.c
-del table3D-ifspec.c
-rename cfunc.c table3D-cfunc.c
-rename ifspec.c table3D-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -259,20 +265,22 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\table
 ..\bin\cmpp -lst
-cd table2D
+set mdir=table2d
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table2D-cfunc.c
-del table2D-ifspec.c
-rename cfunc.c table2D-cfunc.c
-rename ifspec.c table2D-ifspec.c
-cd ..\table3D
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=table3d
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del table3D-cfunc.c
-del table3D-ifspec.c
-rename cfunc.c table3D-cfunc.c
-rename ifspec.c table3D-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..
 cd ..
 </Command>

@@ -99,139 +99,158 @@
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\analog
 ..\bin\cmpp -lst
-cd climit
+set mdir=climit
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del climit-cfunc.c
-del climit-ifspec.c
-rename cfunc.c climit-cfunc.c
-rename ifspec.c climit-ifspec.c
-cd ..\divide
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=divide
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del divide-cfunc.c
-del divide-ifspec.c
-rename cfunc.c divide-cfunc.c
-rename ifspec.c divide-ifspec.c
-cd ..\d_dt
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=d_dt
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_dt-cfunc.c
-del d_dt-ifspec.c
-rename cfunc.c d_dt-cfunc.c
-rename ifspec.c d_dt-ifspec.c
-cd ..\gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del gain-cfunc.c
-del gain-ifspec.c
-rename cfunc.c gain-cfunc.c
-rename ifspec.c gain-ifspec.c
-cd ..\hyst
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=hyst
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del hyst-cfunc.c
-del hyst-ifspec.c
-rename cfunc.c hyst-cfunc.c
-rename ifspec.c hyst-ifspec.c
-cd ..\ilimit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=ilimit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del ilimit-cfunc.c
-del ilimit-ifspec.c
-rename cfunc.c ilimit-cfunc.c
-rename ifspec.c ilimit-ifspec.c
-cd ..\int
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del int-cfunc.c
-del int-ifspec.c
-rename cfunc.c int-cfunc.c
-rename ifspec.c int-ifspec.c
-cd ..\limit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=limit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del limit-cfunc.c
-del limit-ifspec.c
-rename cfunc.c limit-cfunc.c
-rename ifspec.c limit-ifspec.c
-cd ..\mult
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=mult
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del mult-cfunc.c
-del mult-ifspec.c
-rename cfunc.c mult-cfunc.c
-rename ifspec.c mult-ifspec.c
-cd ..\multi_input_pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=multi_input_pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del multi_input_pwl-cfunc.c
-del multi_input_pwl-ifspec.c
-rename cfunc.c multi_input_pwl-cfunc.c
-rename ifspec.c multi_input_pwl-ifspec.c
-cd ..\oneshot
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=oneshot
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del oneshot-cfunc.c
-del oneshot-ifspec.c
-rename cfunc.c oneshot-cfunc.c
-rename ifspec.c oneshot-ifspec.c
-cd ..\pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del pwl-cfunc.c
-del pwl-ifspec.c
-rename cfunc.c pwl-cfunc.c
-rename ifspec.c pwl-ifspec.c
-cd ..\sine
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=sine
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del sine-cfunc.c
-del sine-ifspec.c
-rename cfunc.c sine-cfunc.c
-rename ifspec.c sine-ifspec.c
-cd ..\slew
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=slew
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del slew-cfunc.c
-del slew-ifspec.c
-rename cfunc.c slew-cfunc.c
-rename ifspec.c slew-ifspec.c
-cd ..\square
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=square
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del square-cfunc.c
-del square-ifspec.c
-rename cfunc.c square-cfunc.c
-rename ifspec.c square-ifspec.c
-cd ..\summer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=summer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del summer-cfunc.c
-del summer-ifspec.c
-rename cfunc.c summer-cfunc.c
-rename ifspec.c summer-ifspec.c
-cd ..\s_xfer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=s_xfer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del s_xfer-cfunc.c
-del s_xfer-ifspec.c
-rename cfunc.c s_xfer-cfunc.c
-rename ifspec.c s_xfer-ifspec.c
-cd ..\triangle
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=triangle
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del triangle-cfunc.c
-del triangle-ifspec.c
-rename cfunc.c triangle-cfunc.c
-rename ifspec.c triangle-ifspec.c
-cd ..\file_source
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=file_source
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del file_source-cfunc.c
-del file_source-ifspec.c
-rename cfunc.c file_source-cfunc.c
-rename ifspec.c file_source-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -274,139 +293,158 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\analog
 ..\bin\cmpp -lst
-cd climit
+set mdir=climit
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del climit-cfunc.c
-del climit-ifspec.c
-rename cfunc.c climit-cfunc.c
-rename ifspec.c climit-ifspec.c
-cd ..\divide
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=divide
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del divide-cfunc.c
-del divide-ifspec.c
-rename cfunc.c divide-cfunc.c
-rename ifspec.c divide-ifspec.c
-cd ..\d_dt
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=d_dt
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_dt-cfunc.c
-del d_dt-ifspec.c
-rename cfunc.c d_dt-cfunc.c
-rename ifspec.c d_dt-ifspec.c
-cd ..\gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del gain-cfunc.c
-del gain-ifspec.c
-rename cfunc.c gain-cfunc.c
-rename ifspec.c gain-ifspec.c
-cd ..\hyst
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=hyst
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del hyst-cfunc.c
-del hyst-ifspec.c
-rename cfunc.c hyst-cfunc.c
-rename ifspec.c hyst-ifspec.c
-cd ..\ilimit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=ilimit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del ilimit-cfunc.c
-del ilimit-ifspec.c
-rename cfunc.c ilimit-cfunc.c
-rename ifspec.c ilimit-ifspec.c
-cd ..\int
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del int-cfunc.c
-del int-ifspec.c
-rename cfunc.c int-cfunc.c
-rename ifspec.c int-ifspec.c
-cd ..\limit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=limit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del limit-cfunc.c
-del limit-ifspec.c
-rename cfunc.c limit-cfunc.c
-rename ifspec.c limit-ifspec.c
-cd ..\mult
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=mult
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del mult-cfunc.c
-del mult-ifspec.c
-rename cfunc.c mult-cfunc.c
-rename ifspec.c mult-ifspec.c
-cd ..\multi_input_pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=multi_input_pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del multi_input_pwl-cfunc.c
-del multi_input_pwl-ifspec.c
-rename cfunc.c multi_input_pwl-cfunc.c
-rename ifspec.c multi_input_pwl-ifspec.c
-cd ..\oneshot
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=oneshot
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del oneshot-cfunc.c
-del oneshot-ifspec.c
-rename cfunc.c oneshot-cfunc.c
-rename ifspec.c oneshot-ifspec.c
-cd ..\pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del pwl-cfunc.c
-del pwl-ifspec.c
-rename cfunc.c pwl-cfunc.c
-rename ifspec.c pwl-ifspec.c
-cd ..\sine
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=sine
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del sine-cfunc.c
-del sine-ifspec.c
-rename cfunc.c sine-cfunc.c
-rename ifspec.c sine-ifspec.c
-cd ..\slew
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=slew
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del slew-cfunc.c
-del slew-ifspec.c
-rename cfunc.c slew-cfunc.c
-rename ifspec.c slew-ifspec.c
-cd ..\square
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=square
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del square-cfunc.c
-del square-ifspec.c
-rename cfunc.c square-cfunc.c
-rename ifspec.c square-ifspec.c
-cd ..\summer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=summer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del summer-cfunc.c
-del summer-ifspec.c
-rename cfunc.c summer-cfunc.c
-rename ifspec.c summer-ifspec.c
-cd ..\s_xfer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=s_xfer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del s_xfer-cfunc.c
-del s_xfer-ifspec.c
-rename cfunc.c s_xfer-cfunc.c
-rename ifspec.c s_xfer-ifspec.c
-cd ..\triangle
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=triangle
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del triangle-cfunc.c
-del triangle-ifspec.c
-rename cfunc.c triangle-cfunc.c
-rename ifspec.c triangle-ifspec.c
-cd ..\file_source
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=file_source
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del file_source-cfunc.c
-del file_source-ifspec.c
-rename cfunc.c file_source-cfunc.c
-rename ifspec.c file_source-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -440,139 +478,158 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\analog
 ..\bin\cmpp -lst
-cd climit
+set mdir=climit
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del climit-cfunc.c
-del climit-ifspec.c
-rename cfunc.c climit-cfunc.c
-rename ifspec.c climit-ifspec.c
-cd ..\divide
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=divide
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del divide-cfunc.c
-del divide-ifspec.c
-rename cfunc.c divide-cfunc.c
-rename ifspec.c divide-ifspec.c
-cd ..\d_dt
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=d_dt
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_dt-cfunc.c
-del d_dt-ifspec.c
-rename cfunc.c d_dt-cfunc.c
-rename ifspec.c d_dt-ifspec.c
-cd ..\gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del gain-cfunc.c
-del gain-ifspec.c
-rename cfunc.c gain-cfunc.c
-rename ifspec.c gain-ifspec.c
-cd ..\hyst
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=hyst
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del hyst-cfunc.c
-del hyst-ifspec.c
-rename cfunc.c hyst-cfunc.c
-rename ifspec.c hyst-ifspec.c
-cd ..\ilimit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=ilimit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del ilimit-cfunc.c
-del ilimit-ifspec.c
-rename cfunc.c ilimit-cfunc.c
-rename ifspec.c ilimit-ifspec.c
-cd ..\int
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del int-cfunc.c
-del int-ifspec.c
-rename cfunc.c int-cfunc.c
-rename ifspec.c int-ifspec.c
-cd ..\limit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=limit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del limit-cfunc.c
-del limit-ifspec.c
-rename cfunc.c limit-cfunc.c
-rename ifspec.c limit-ifspec.c
-cd ..\mult
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=mult
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del mult-cfunc.c
-del mult-ifspec.c
-rename cfunc.c mult-cfunc.c
-rename ifspec.c mult-ifspec.c
-cd ..\multi_input_pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=multi_input_pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del multi_input_pwl-cfunc.c
-del multi_input_pwl-ifspec.c
-rename cfunc.c multi_input_pwl-cfunc.c
-rename ifspec.c multi_input_pwl-ifspec.c
-cd ..\oneshot
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=oneshot
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del oneshot-cfunc.c
-del oneshot-ifspec.c
-rename cfunc.c oneshot-cfunc.c
-rename ifspec.c oneshot-ifspec.c
-cd ..\pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del pwl-cfunc.c
-del pwl-ifspec.c
-rename cfunc.c pwl-cfunc.c
-rename ifspec.c pwl-ifspec.c
-cd ..\sine
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=sine
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del sine-cfunc.c
-del sine-ifspec.c
-rename cfunc.c sine-cfunc.c
-rename ifspec.c sine-ifspec.c
-cd ..\slew
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=slew
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del slew-cfunc.c
-del slew-ifspec.c
-rename cfunc.c slew-cfunc.c
-rename ifspec.c slew-ifspec.c
-cd ..\square
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=square
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del square-cfunc.c
-del square-ifspec.c
-rename cfunc.c square-cfunc.c
-rename ifspec.c square-ifspec.c
-cd ..\summer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=summer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del summer-cfunc.c
-del summer-ifspec.c
-rename cfunc.c summer-cfunc.c
-rename ifspec.c summer-ifspec.c
-cd ..\s_xfer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=s_xfer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del s_xfer-cfunc.c
-del s_xfer-ifspec.c
-rename cfunc.c s_xfer-cfunc.c
-rename ifspec.c s_xfer-ifspec.c
-cd ..\triangle
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=triangle
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del triangle-cfunc.c
-del triangle-ifspec.c
-rename cfunc.c triangle-cfunc.c
-rename ifspec.c triangle-ifspec.c
-cd ..\file_source
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=file_source
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del file_source-cfunc.c
-del file_source-ifspec.c
-rename cfunc.c file_source-cfunc.c
-rename ifspec.c file_source-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -617,139 +674,158 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\analog
 ..\bin\cmpp -lst
-cd climit
+set mdir=climit
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del climit-cfunc.c
-del climit-ifspec.c
-rename cfunc.c climit-cfunc.c
-rename ifspec.c climit-ifspec.c
-cd ..\divide
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=divide
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del divide-cfunc.c
-del divide-ifspec.c
-rename cfunc.c divide-cfunc.c
-rename ifspec.c divide-ifspec.c
-cd ..\d_dt
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=d_dt
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_dt-cfunc.c
-del d_dt-ifspec.c
-rename cfunc.c d_dt-cfunc.c
-rename ifspec.c d_dt-ifspec.c
-cd ..\gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del gain-cfunc.c
-del gain-ifspec.c
-rename cfunc.c gain-cfunc.c
-rename ifspec.c gain-ifspec.c
-cd ..\hyst
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=hyst
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del hyst-cfunc.c
-del hyst-ifspec.c
-rename cfunc.c hyst-cfunc.c
-rename ifspec.c hyst-ifspec.c
-cd ..\ilimit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=ilimit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del ilimit-cfunc.c
-del ilimit-ifspec.c
-rename cfunc.c ilimit-cfunc.c
-rename ifspec.c ilimit-ifspec.c
-cd ..\int
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del int-cfunc.c
-del int-ifspec.c
-rename cfunc.c int-cfunc.c
-rename ifspec.c int-ifspec.c
-cd ..\limit
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=limit
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del limit-cfunc.c
-del limit-ifspec.c
-rename cfunc.c limit-cfunc.c
-rename ifspec.c limit-ifspec.c
-cd ..\mult
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=mult
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del mult-cfunc.c
-del mult-ifspec.c
-rename cfunc.c mult-cfunc.c
-rename ifspec.c mult-ifspec.c
-cd ..\multi_input_pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=multi_input_pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del multi_input_pwl-cfunc.c
-del multi_input_pwl-ifspec.c
-rename cfunc.c multi_input_pwl-cfunc.c
-rename ifspec.c multi_input_pwl-ifspec.c
-cd ..\oneshot
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=oneshot
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del oneshot-cfunc.c
-del oneshot-ifspec.c
-rename cfunc.c oneshot-cfunc.c
-rename ifspec.c oneshot-ifspec.c
-cd ..\pwl
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=pwl
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del pwl-cfunc.c
-del pwl-ifspec.c
-rename cfunc.c pwl-cfunc.c
-rename ifspec.c pwl-ifspec.c
-cd ..\sine
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=sine
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del sine-cfunc.c
-del sine-ifspec.c
-rename cfunc.c sine-cfunc.c
-rename ifspec.c sine-ifspec.c
-cd ..\slew
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=slew
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del slew-cfunc.c
-del slew-ifspec.c
-rename cfunc.c slew-cfunc.c
-rename ifspec.c slew-ifspec.c
-cd ..\square
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=square
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del square-cfunc.c
-del square-ifspec.c
-rename cfunc.c square-cfunc.c
-rename ifspec.c square-ifspec.c
-cd ..\summer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=summer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del summer-cfunc.c
-del summer-ifspec.c
-rename cfunc.c summer-cfunc.c
-rename ifspec.c summer-ifspec.c
-cd ..\s_xfer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=s_xfer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del s_xfer-cfunc.c
-del s_xfer-ifspec.c
-rename cfunc.c s_xfer-cfunc.c
-rename ifspec.c s_xfer-ifspec.c
-cd ..\triangle
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=triangle
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del triangle-cfunc.c
-del triangle-ifspec.c
-rename cfunc.c triangle-cfunc.c
-rename ifspec.c triangle-ifspec.c
-cd ..\file_source
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=file_source
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del file_source-cfunc.c
-del file_source-ifspec.c
-rename cfunc.c file_source-cfunc.c
-rename ifspec.c file_source-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>

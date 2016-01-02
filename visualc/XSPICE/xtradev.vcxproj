@@ -98,76 +98,86 @@
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtradev
 ..\bin\cmpp -lst
-cd aswitch
+set mdir=aswitch
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del aswitch-cfunc.c
-del aswitch-ifspec.c
-rename cfunc.c aswitch-cfunc.c
-rename ifspec.c aswitch-ifspec.c
-cd ..\capacitor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=capacitor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del capacitor-cfunc.c
-del capacitor-ifspec.c
-rename cfunc.c capacitor-cfunc.c
-rename ifspec.c capacitor-ifspec.c
-cd ..\cmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=cmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del cmeter-cfunc.c
-del cmeter-ifspec.c
-rename cfunc.c cmeter-cfunc.c
-rename ifspec.c cmeter-ifspec.c
-cd ..\core
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=core
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del core-cfunc.c
-del core-ifspec.c
-rename cfunc.c core-cfunc.c
-rename ifspec.c core-ifspec.c
-cd ..\inductor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=inductor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del inductor-cfunc.c
-del inductor-ifspec.c
-rename cfunc.c inductor-cfunc.c
-rename ifspec.c inductor-ifspec.c
-cd ..\lcouple
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lcouple
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lcouple-cfunc.c
-del lcouple-ifspec.c
-rename cfunc.c lcouple-cfunc.c
-rename ifspec.c lcouple-ifspec.c
-cd ..\lmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lmeter-cfunc.c
-del lmeter-ifspec.c
-rename cfunc.c lmeter-cfunc.c
-rename ifspec.c lmeter-ifspec.c
-cd ..\potentiometer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=potentiometer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del potentiometer-cfunc.c
-del potentiometer-ifspec.c
-rename cfunc.c potentiometer-cfunc.c
-rename ifspec.c potentiometer-ifspec.c
-cd ..\zener
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=zener
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del zener-cfunc.c
-del zener-ifspec.c
-rename cfunc.c zener-cfunc.c
-rename ifspec.c zener-ifspec.c
-cd ..\memristor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=memristor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del memristor-cfunc.c
-del memristor-ifspec.c
-rename cfunc.c memristor-cfunc.c
-rename ifspec.c memristor-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -210,76 +220,86 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtradev
 ..\bin\cmpp -lst
-cd aswitch
+set mdir=aswitch
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del aswitch-cfunc.c
-del aswitch-ifspec.c
-rename cfunc.c aswitch-cfunc.c
-rename ifspec.c aswitch-ifspec.c
-cd ..\capacitor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=capacitor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del capacitor-cfunc.c
-del capacitor-ifspec.c
-rename cfunc.c capacitor-cfunc.c
-rename ifspec.c capacitor-ifspec.c
-cd ..\cmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=cmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del cmeter-cfunc.c
-del cmeter-ifspec.c
-rename cfunc.c cmeter-cfunc.c
-rename ifspec.c cmeter-ifspec.c
-cd ..\core
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=core
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del core-cfunc.c
-del core-ifspec.c
-rename cfunc.c core-cfunc.c
-rename ifspec.c core-ifspec.c
-cd ..\inductor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=inductor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del inductor-cfunc.c
-del inductor-ifspec.c
-rename cfunc.c inductor-cfunc.c
-rename ifspec.c inductor-ifspec.c
-cd ..\lcouple
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lcouple
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lcouple-cfunc.c
-del lcouple-ifspec.c
-rename cfunc.c lcouple-cfunc.c
-rename ifspec.c lcouple-ifspec.c
-cd ..\lmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lmeter-cfunc.c
-del lmeter-ifspec.c
-rename cfunc.c lmeter-cfunc.c
-rename ifspec.c lmeter-ifspec.c
-cd ..\potentiometer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=potentiometer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del potentiometer-cfunc.c
-del potentiometer-ifspec.c
-rename cfunc.c potentiometer-cfunc.c
-rename ifspec.c potentiometer-ifspec.c
-cd ..\zener
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=zener
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del zener-cfunc.c
-del zener-ifspec.c
-rename cfunc.c zener-cfunc.c
-rename ifspec.c zener-ifspec.c
-cd ..\memristor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=memristor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del memristor-cfunc.c
-del memristor-ifspec.c
-rename cfunc.c memristor-cfunc.c
-rename ifspec.c memristor-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -313,76 +333,87 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtradev
 ..\bin\cmpp -lst
-cd aswitch
+..\bin\cmpp -lst
+set mdir=aswitch
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del aswitch-cfunc.c
-del aswitch-ifspec.c
-rename cfunc.c aswitch-cfunc.c
-rename ifspec.c aswitch-ifspec.c
-cd ..\capacitor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=capacitor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del capacitor-cfunc.c
-del capacitor-ifspec.c
-rename cfunc.c capacitor-cfunc.c
-rename ifspec.c capacitor-ifspec.c
-cd ..\cmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=cmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del cmeter-cfunc.c
-del cmeter-ifspec.c
-rename cfunc.c cmeter-cfunc.c
-rename ifspec.c cmeter-ifspec.c
-cd ..\core
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=core
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del core-cfunc.c
-del core-ifspec.c
-rename cfunc.c core-cfunc.c
-rename ifspec.c core-ifspec.c
-cd ..\inductor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=inductor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del inductor-cfunc.c
-del inductor-ifspec.c
-rename cfunc.c inductor-cfunc.c
-rename ifspec.c inductor-ifspec.c
-cd ..\lcouple
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lcouple
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lcouple-cfunc.c
-del lcouple-ifspec.c
-rename cfunc.c lcouple-cfunc.c
-rename ifspec.c lcouple-ifspec.c
-cd ..\lmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lmeter-cfunc.c
-del lmeter-ifspec.c
-rename cfunc.c lmeter-cfunc.c
-rename ifspec.c lmeter-ifspec.c
-cd ..\potentiometer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=potentiometer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del potentiometer-cfunc.c
-del potentiometer-ifspec.c
-rename cfunc.c potentiometer-cfunc.c
-rename ifspec.c potentiometer-ifspec.c
-cd ..\zener
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=zener
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del zener-cfunc.c
-del zener-ifspec.c
-rename cfunc.c zener-cfunc.c
-rename ifspec.c zener-ifspec.c
-cd ..\memristor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=memristor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del memristor-cfunc.c
-del memristor-ifspec.c
-rename cfunc.c memristor-cfunc.c
-rename ifspec.c memristor-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -427,76 +458,86 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtradev
 ..\bin\cmpp -lst
-cd aswitch
+set mdir=aswitch
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del aswitch-cfunc.c
-del aswitch-ifspec.c
-rename cfunc.c aswitch-cfunc.c
-rename ifspec.c aswitch-ifspec.c
-cd ..\capacitor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=capacitor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del capacitor-cfunc.c
-del capacitor-ifspec.c
-rename cfunc.c capacitor-cfunc.c
-rename ifspec.c capacitor-ifspec.c
-cd ..\cmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=cmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del cmeter-cfunc.c
-del cmeter-ifspec.c
-rename cfunc.c cmeter-cfunc.c
-rename ifspec.c cmeter-ifspec.c
-cd ..\core
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=core
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del core-cfunc.c
-del core-ifspec.c
-rename cfunc.c core-cfunc.c
-rename ifspec.c core-ifspec.c
-cd ..\inductor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=inductor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del inductor-cfunc.c
-del inductor-ifspec.c
-rename cfunc.c inductor-cfunc.c
-rename ifspec.c inductor-ifspec.c
-cd ..\lcouple
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lcouple
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lcouple-cfunc.c
-del lcouple-ifspec.c
-rename cfunc.c lcouple-cfunc.c
-rename ifspec.c lcouple-ifspec.c
-cd ..\lmeter
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=lmeter
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del lmeter-cfunc.c
-del lmeter-ifspec.c
-rename cfunc.c lmeter-cfunc.c
-rename ifspec.c lmeter-ifspec.c
-cd ..\potentiometer
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=potentiometer
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del potentiometer-cfunc.c
-del potentiometer-ifspec.c
-rename cfunc.c potentiometer-cfunc.c
-rename ifspec.c potentiometer-ifspec.c
-cd ..\zener
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=zener
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del zener-cfunc.c
-del zener-ifspec.c
-rename cfunc.c zener-cfunc.c
-rename ifspec.c zener-ifspec.c
-cd ..\memristor
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=memristor
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del memristor-cfunc.c
-del memristor-ifspec.c
-rename cfunc.c memristor-cfunc.c
-rename ifspec.c memristor-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>

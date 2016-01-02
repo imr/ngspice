@@ -98,13 +98,14 @@
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\spice2poly
 ..\bin\cmpp -lst
-cd icm_spice2poly
+set mdir=icm_spice2poly
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del icm_spice2poly-cfunc.c
-del icm_spice2poly-ifspec.c
-rename cfunc.c icm_spice2poly-cfunc.c
-rename ifspec.c icm_spice2poly-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -147,13 +148,14 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\spice2poly
 ..\bin\cmpp -lst
-cd icm_spice2poly
+set mdir=icm_spice2poly
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del icm_spice2poly-cfunc.c
-del icm_spice2poly-ifspec.c
-rename cfunc.c icm_spice2poly-cfunc.c
-rename ifspec.c icm_spice2poly-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -187,13 +189,14 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\spice2poly
 ..\bin\cmpp -lst
-cd icm_spice2poly
+set mdir=icm_spice2poly
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del icm_spice2poly-cfunc.c
-del icm_spice2poly-ifspec.c
-rename cfunc.c icm_spice2poly-cfunc.c
-rename ifspec.c icm_spice2poly-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -238,13 +241,15 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\spice2poly
 ..\bin\cmpp -lst
-cd icm_spice2poly
+..\bin\cmpp -lst
+set mdir=icm_spice2poly
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del icm_spice2poly-cfunc.c
-del icm_spice2poly-ifspec.c
-rename cfunc.c icm_spice2poly-cfunc.c
-rename ifspec.c icm_spice2poly-ifspec.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>

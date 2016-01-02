@@ -98,36 +98,41 @@
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtraevt
 ..\bin\cmpp -lst
-cd d_to_real
+set mdir=d_to_real
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_to_real-cfunc.c
-del d_to_real-ifspec.c
-rename cfunc.c d_to_real-cfunc.c
-rename ifspec.c d_to_real-ifspec.c
-cd ..\real_delay
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_delay
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_delay-cfunc.c
-del real_delay-ifspec.c
-rename cfunc.c real_delay-cfunc.c
-rename ifspec.c real_delay-ifspec.c
-cd ..\real_gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_gain-cfunc.c
-del real_gain-ifspec.c
-rename cfunc.c real_gain-cfunc.c
-rename ifspec.c real_gain-ifspec.c
-cd ..\real_to_v
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_to_v
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_to_v-cfunc.c
-del real_to_v-ifspec.c
-rename cfunc.c real_to_v-cfunc.c
-rename ifspec.c real_to_v-ifspec.c
-cd ..\int
-rename udnfunc.c int_udnfunc.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
+rename udnfunc.c %mdir%_udnfunc.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
