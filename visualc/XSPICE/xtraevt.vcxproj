@@ -132,7 +132,10 @@ rename cfunc.c %mdir%-cfunc.c
 rename ifspec.c %mdir%-ifspec.c
 set mdir=int
 cd ..\%mdir%
-rename udnfunc.c %mdir%_udnfunc.c
+copy udnfunc.c %mdir%_udnfunc.c
+set mdir=real
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -170,13 +173,20 @@ cd ..\..\..\..\..\visualc\XSPICE
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>cd ..\..\src\xspice\icm\xtraevt\int
-rename int_udnfunc.c udnfunc.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
+      <Command>
+cd ..\..\src\xspice\icm\xtraevt
+set mdir=real
+cd %mdir%
+del %mdir%_udnfunc.c
+set mdir=int
+cd ..\%mdir%
+del %mdir%_udnfunc.c
+cd ..
+cd ..
+      </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>revert renaming file</Message>
+      <Message>delete renamed files</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -184,36 +194,44 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtraevt
 ..\bin\cmpp -lst
-cd d_to_real
+set mdir=d_to_real
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_to_real-cfunc.c
-del d_to_real-ifspec.c
-rename cfunc.c d_to_real-cfunc.c
-rename ifspec.c d_to_real-ifspec.c
-cd ..\real_delay
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_delay
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_delay-cfunc.c
-del real_delay-ifspec.c
-rename cfunc.c real_delay-cfunc.c
-rename ifspec.c real_delay-ifspec.c
-cd ..\real_gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_gain-cfunc.c
-del real_gain-ifspec.c
-rename cfunc.c real_gain-cfunc.c
-rename ifspec.c real_gain-ifspec.c
-cd ..\real_to_v
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_to_v
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_to_v-cfunc.c
-del real_to_v-ifspec.c
-rename cfunc.c real_to_v-cfunc.c
-rename ifspec.c real_to_v-ifspec.c
-cd ..\int
-rename udnfunc.c int_udnfunc.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
+set mdir=real
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -242,13 +260,20 @@ cd ..\..\..\..\..\visualc\XSPICE
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
-      <Command>cd ..\..\src\xspice\icm\xtraevt\int
-      rename int_udnfunc.c udnfunc.c
-      cd ..\..\..\..\..\visualc\XSPICE
+      <Command>
+cd ..\..\src\xspice\icm\xtraevt
+set mdir=real
+cd %mdir%
+del %mdir%_udnfunc.c
+set mdir=int
+cd ..\%mdir%
+del %mdir%_udnfunc.c
+cd ..
+cd ..
       </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>revert renaming file</Message>
+      <Message>delete renamed files</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -256,36 +281,44 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtraevt
 ..\bin\cmpp -lst
-cd d_to_real
+set mdir=d_to_real
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_to_real-cfunc.c
-del d_to_real-ifspec.c
-rename cfunc.c d_to_real-cfunc.c
-rename ifspec.c d_to_real-ifspec.c
-cd ..\real_delay
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_delay
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_delay-cfunc.c
-del real_delay-ifspec.c
-rename cfunc.c real_delay-cfunc.c
-rename ifspec.c real_delay-ifspec.c
-cd ..\real_gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_gain-cfunc.c
-del real_gain-ifspec.c
-rename cfunc.c real_gain-cfunc.c
-rename ifspec.c real_gain-ifspec.c
-cd ..\real_to_v
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_to_v
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_to_v-cfunc.c
-del real_to_v-ifspec.c
-rename cfunc.c real_to_v-cfunc.c
-rename ifspec.c real_to_v-ifspec.c
-cd ..\int
-rename udnfunc.c int_udnfunc.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
+set mdir=real
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -325,10 +358,16 @@ cd ..\..\..\..\..\visualc\XSPICE
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-    <Command>
-      cd ..\..\src\xspice\icm\xtraevt\int
-      rename int_udnfunc.c udnfunc.c
-      cd ..\..\..\..\..\visualc\XSPICE
+      <Command>
+cd ..\..\src\xspice\icm\xtraevt
+set mdir=real
+cd %mdir%
+del %mdir%_udnfunc.c
+set mdir=int
+cd ..\%mdir%
+del %mdir%_udnfunc.c
+cd ..
+cd ..
     </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -337,36 +376,44 @@ cd ..\..\..\..\..\visualc\XSPICE
       <Message>Generate cfunc.c and ifspec.c</Message>
       <Command>cd ..\..\src\xspice\icm\xtraevt
 ..\bin\cmpp -lst
-cd d_to_real
+set mdir=d_to_real
+cd %mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del d_to_real-cfunc.c
-del d_to_real-ifspec.c
-rename cfunc.c d_to_real-cfunc.c
-rename ifspec.c d_to_real-ifspec.c
-cd ..\real_delay
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_delay
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_delay-cfunc.c
-del real_delay-ifspec.c
-rename cfunc.c real_delay-cfunc.c
-rename ifspec.c real_delay-ifspec.c
-cd ..\real_gain
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_gain
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_gain-cfunc.c
-del real_gain-ifspec.c
-rename cfunc.c real_gain-cfunc.c
-rename ifspec.c real_gain-ifspec.c
-cd ..\real_to_v
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=real_to_v
+cd ..\%mdir%
 ..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod
-del real_to_v-cfunc.c
-del real_to_v-ifspec.c
-rename cfunc.c real_to_v-cfunc.c
-rename ifspec.c real_to_v-ifspec.c
-cd ..\int
-rename udnfunc.c int_udnfunc.c
+..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
+del %mdir%-cfunc.c
+del %mdir%-ifspec.c
+rename cfunc.c %mdir%-cfunc.c
+rename ifspec.c %mdir%-ifspec.c
+set mdir=int
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
+set mdir=real
+cd ..\%mdir%
+copy udnfunc.c %mdir%_udnfunc.c
 cd ..\..\..\..\..\visualc\XSPICE
 </Command>
     </PreBuildEvent>
@@ -396,17 +443,24 @@ cd ..\..\..\..\..\visualc\XSPICE
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>cd xtraevt\int
-rename int_udnfunc.c udnfunc.c
+      <Command>
+cd ..\..\src\xspice\icm\xtraevt
+set mdir=real
+cd %mdir%
+del %mdir%_udnfunc.c
+set mdir=int
+cd ..\%mdir%
+del %mdir%_udnfunc.c
 cd ..
-cd ..</Command>
+cd ..
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\xspice\icm\xtraevt\d_to_real\d_to_real-cfunc.c" />
     <ClCompile Include="..\..\src\xspice\icm\xtraevt\d_to_real\d_to_real-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\xtraevt\int\int_udnfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real\udnfunc.c" />
+    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real\real_udnfunc.c" />
     <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_delay\real_delay-cfunc.c" />
     <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_delay\real_delay-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_gain\real_gain-cfunc.c" />
