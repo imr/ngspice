@@ -127,7 +127,7 @@
 /* #undef HAVE_ENDPWENT */
 
 /* Define to 1 if you have the `erfc' function. */
-/* #undef HAVE_ERFC */
+#define HAVE_ERFC 1
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
@@ -258,7 +258,7 @@
 #define HAVE_SCALB 1
 
 /* Define to 1 if you have the `scalbn' function. */
-/* #undef HAVE_SCALBN */
+#define HAVE_SCALBN 1
 
 /* Define to 1 if you have the `select' function. */
 /* #undef HAVE_SELECT */
