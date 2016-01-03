@@ -333,7 +333,10 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
+      <Command>
+      copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"
+      make-install-vngspiced.bat fftw 64
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -385,7 +388,10 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
+      <Command>
+      copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"
+      make-install-vngspice.bat fftw 64
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
@@ -671,7 +677,10 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"</Command>
+      <Command>
+      copy /y "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "$(OutDir)"
+      make-install-vngspice.bat fftw 64
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
