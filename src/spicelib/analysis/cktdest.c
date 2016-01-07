@@ -273,6 +273,14 @@ evt_dest(Evt_Ckt_Data_t *evt)
     while (nodei) {
         Evt_Node_Info_t *next_nodei = nodei->next;
         tfree(nodei->name);
+
+        Evt_Inst_Index_t *p = nodei->inst_list;
+        while (p) {
+            Evt_Inst_Index_t *next_p = p->next;
+            tfree(p);
+            p = next_p;
+        }
+
         tfree(nodei);
         nodei = next_nodei;
     }
