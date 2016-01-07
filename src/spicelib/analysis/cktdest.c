@@ -190,7 +190,15 @@ evt_dest(Evt_Ckt_Data_t *evt)
         tfree(state_data->modified);
         tfree(state_data->modified_index);
         tfree(state_data->total_size);
-        /* FIXME: more on desc ? */
+
+        for (i = 0; i < evt->counts.num_insts; i++) {
+            Evt_State_Desc_t *p = state_data->desc[i];
+            while (p) {
+                Evt_State_Desc_t *next_p = p->next;
+                tfree(p);
+                p = next_p;
+            }
+        }
         tfree(state_data->desc);
     }
 
