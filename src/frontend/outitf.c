@@ -1,7 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1988 Wayne A. Christopher, U. C. Berkeley CAD Group
-Modified: 2000 AlansFixes
+Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 **********/
 
 /*
@@ -1057,17 +1057,35 @@ plotInit(runDesc *run)
 }
 
 
+static inline int
+vlength2delta(int l)
+{
+    if (l < 50000)
+        return 512;
+    if (l < 200000)
+        return 256;
+    if (l < 500000)
+        return 128;
+    /* larger memory allocations may exhaust memory easily
+     * this function may use better estimation depending on
+     * available memory and number of vectors (run->numData)
+     */
+    return 64;
+}
+
+
 static void
 plotAddRealValue(dataDesc *desc, double value)
 {
     struct dvec *v = desc->vec;
 
+    if (v->v_length >= v->v_alloc_length)
+        dvec_extend(v, v->v_length + vlength2delta(v->v_length));
+
     if (isreal(v)) {
-        v->v_realdata = TREALLOC(double, v->v_realdata, v->v_length + 1);
         v->v_realdata[v->v_length] = value;
     } else {
         /* a real parading as a VF_COMPLEX */
-        v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
         v->v_compdata[v->v_length].cx_real = value;
         v->v_compdata[v->v_length].cx_imag = 0.0;
     }
@@ -1082,7 +1100,9 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
 
-    v->v_compdata = TREALLOC(ngcomplex_t, v->v_compdata, v->v_length + 1);
+    if (v->v_length >= v->v_alloc_length)
+        dvec_extend(v, v->v_length + vlength2delta(v->v_length));
+
     v->v_compdata[v->v_length].cx_real = value.real;
     v->v_compdata[v->v_length].cx_imag = value.imag;
 

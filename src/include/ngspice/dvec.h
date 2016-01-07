@@ -45,6 +45,7 @@ struct dvec {
     GRIDTYPE v_gridtype;	/* One of GRID_*. */
     PLOTTYPE v_plottype;	/* One of PLOT_*. */
     int v_length;		/* Length of the vector. */
+    int v_alloc_length;		/* How much has been actually allocated. */
     int v_rlength;		/* How much space we really have. Used as binary flag */
     int v_outindex;		/* Index if writedata is building the
 				   vector. */
@@ -70,6 +71,7 @@ struct dveclist {
 
 struct dvec *dvec_alloc(char *name, int type, short flags, int length, void *storage);
 void dvec_realloc(struct dvec *v, int length, void *storage);
+void dvec_extend(struct dvec *v, int length);
 void dvec_trunc(struct dvec *v, int length);
 void dvec_free(struct dvec *);
 
