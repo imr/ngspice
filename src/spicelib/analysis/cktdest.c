@@ -259,6 +259,19 @@ evt_dest(Evt_Ckt_Data_t *evt)
         tfree(msg_data->modified_index);
     }
 
+    tfree(evt->data.node);
+    tfree(evt->data.state);
+    tfree(evt->data.msg);
+    tfree(evt->data.statistics);
+
+    for (i = 0; i < evt->jobs.num_jobs; i++)
+        tfree(evt->jobs.job_name[i]);
+    tfree(evt->jobs.job_name);
+    tfree(evt->jobs.node_data);
+    tfree(evt->jobs.state_data);
+    tfree(evt->jobs.msg_data);
+    tfree(evt->jobs.statistics);
+
     tfree(evt->info.hybrid_index);
 
     Evt_Inst_Info_t *inst = evt->info.inst_list;
