@@ -153,6 +153,14 @@ evt_dest(Evt_Ckt_Data_t *evt)
         outhere = output_queue->head[i];
         while (outhere) {
             outnext = outhere->next;
+            tfree(outhere->value);
+            tfree(outhere);
+            outhere = outnext;
+        }
+        outhere = output_queue->free[i];
+        while (outhere) {
+            outnext = outhere->next;
+            tfree(outhere->value);
             tfree(outhere);
             outhere = outnext;
         }
@@ -209,6 +217,16 @@ evt_dest(Evt_Ckt_Data_t *evt)
             node = node_data->head[i];
             while (node) {
                 nodenext = node->next;
+                tfree(node->node_value);
+                tfree(node->inverted_value);
+                tfree(node);
+                node = nodenext;
+            }
+            node = node_data->free[i];
+            while (node) {
+                nodenext = node->next;
+                tfree(node->node_value);
+                tfree(node->inverted_value);
                 tfree(node);
                 node = nodenext;
             }
@@ -225,9 +243,9 @@ evt_dest(Evt_Ckt_Data_t *evt)
             rhs = &(node_data->rhs[i]);
             while (rhs) {
                 rhsnext = rhs->next;
-                tfree(rhs->inverted_value);
                 tfree(rhs->output_value);
                 tfree(rhs->node_value);
+                tfree(rhs->inverted_value);
                 rhs = rhsnext;
             }
         }
@@ -236,9 +254,9 @@ evt_dest(Evt_Ckt_Data_t *evt)
             rhs = &(node_data->rhsold[i]);
             while (rhs) {
                 rhsnext = rhs->next;
-                tfree(rhs->inverted_value);
                 tfree(rhs->output_value);
                 tfree(rhs->node_value);
+                tfree(rhs->inverted_value);
                 rhs = rhsnext;
             }
         }
