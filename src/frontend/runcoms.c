@@ -49,13 +49,19 @@ char rawfileBuf[RAWBUF_SIZE];
 char *last_used_rawfile = NULL;
 /*end saj */
 
-/* command "setcirc" */
+
+/*
+ * command "setcirc"
+ *   print a list of circuits loaded
+ * command "setcirc <n>"
+ *   switch to circuit number <n>
+ */
+
 void
 com_scirc(wordlist *wl)
 {
     struct circ *p;
     int i, j = 0;
-    char buf[BSIZE_SP];
 
     if (ft_circuits == NULL) {
         fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
@@ -64,20 +70,13 @@ com_scirc(wordlist *wl)
 
     if (wl == NULL) {
         fprintf(cp_out,
-                "\tType the number of the desired circuit:\n\n");
+                "List of circuits loaded:\n\n");
         for (p = ft_circuits; p; p = p->ci_next) {
             if (ft_curckt == p)
                 fprintf(cp_out, "Current");
             fprintf(cp_out, "\t%d\t%s\n", ++j, p->ci_name);
         }
-        fprintf(cp_out, "? ");
-        (void) fflush(cp_out);
-        (void) fgets(buf, BSIZE_SP, cp_in);
-        clearerr(cp_in);
-        if ((sscanf(buf, " %d ", &i) != 1) || (i < 0) || (i > j))
-            return;
-        for (p = ft_circuits; --i > 0; p = p->ci_next)
-            ;
+        return;
     } else {
         for (p = ft_circuits; p; p = p->ci_next)
             j++;
