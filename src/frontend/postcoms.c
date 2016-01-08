@@ -930,31 +930,28 @@ DelPlotWindows(struct plot *pl)
 }
 
 
+/*
+ * command 'setplot'
+ *   print a list of plots available
+ * command 'setplot <plotname>'
+ *   make <plotname> the current plot
+ * command 'setplot new'
+ *   create a new plot
+ */
+
 void
 com_splot(wordlist *wl)
 {
     struct plot *pl;
-    char buf[BSIZE_SP], *s, *t;
 
     if (wl) {
         plot_setcur(wl->wl_word);
         return;
     }
-    fprintf(cp_out, "\tType the name of the desired plot:\n\n");
-    fprintf(cp_out, "\tnew\tNew plot\n");
+
+    fprintf(cp_out, "List of plots available:\n\n");
     for (pl = plot_list; pl; pl = pl->pl_next)
         fprintf(cp_out, "%s%s\t%s (%s)\n",
                 (pl == plot_cur) ? "Current " : "\t",
                 pl->pl_typename, pl->pl_title, pl->pl_name);
-
-    fprintf(cp_out, "? ");
-    if (!fgets(buf, BSIZE_SP, cp_in)) {
-        clearerr(cp_in);
-        return;
-    }
-    t = buf;
-    if ((s = gettok(&t)) == NULL)
-        return;
-
-    plot_setcur(s);
 }
