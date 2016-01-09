@@ -42,7 +42,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "terminal.h"
 
 
-bool out_moremode = TRUE;
+bool out_moremode = FALSE;
 bool out_isatty = TRUE;
 
 #ifndef TCL_MODULE
@@ -73,10 +73,10 @@ out_init(void)
 
     noprint = nopause = FALSE;
 
-    if (cp_getvar("nomoremode", CP_BOOL, NULL))
-        out_moremode = FALSE;
-    else
+    if (cp_getvar("moremode", CP_BOOL, NULL))
         out_moremode = TRUE;
+    else
+        out_moremode = FALSE;
 
     if (!out_moremode || !cp_interactive)
         out_isatty = FALSE;
