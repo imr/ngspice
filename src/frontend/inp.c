@@ -1050,6 +1050,13 @@ com_edit(wordlist *wl)
     bool inter, permfile;
     char buf[BSIZE_SP];
 
+    if (!cp_getvar("interactive", CP_BOOL, NULL)) {
+        fprintf(cp_err,
+                "Warning: flag 'interactive' not set.\n"
+                "Type 'set interactive' at first.\n");
+        return;
+    }
+
     inter = cp_interactive;
     cp_interactive = FALSE;
     if (wl) {
