@@ -7,8 +7,8 @@ set x11lineararcs
 *set filetype=ascii
 ** frontend debug output **
 *set ngdebug
-** no asking after quit **
-set noaskquit
+** asking after quit **
+*set askquit
 ** set the number of threads in openmp
 ** default (if compiled with --enable-openmp) is: 2
 *set num_threads=4
