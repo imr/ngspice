@@ -65,6 +65,7 @@ char *ft_setkwords[] = {
     "height",
     "history",
     "ignoreeof",
+    "interactive",
     "itl1",
     "itl2",
     "itl3",

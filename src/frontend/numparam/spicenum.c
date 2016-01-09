@@ -497,17 +497,18 @@ nupa_done(void)
        simulation has finished. */
 
     if (nerrors) {
-
-#ifdef SHARED_MODULE
-        fprintf(cp_err, "Numparam expansion errors: Problem with input file.\n");
-        shared_exit(EXIT_BAD);
-#endif
-
+        bool is_interactive = FALSE;
+        if (cp_getvar("interactive", CP_BOOL, NULL))
+            is_interactive = TRUE;
         printf(" Copies=%d Evals=%d Placeholders=%ld Symbols=%d Errors=%d\n",
                linecountS, evalcountS, placeholder, dictsize, nerrors);
         /* debug: ask if spice run really wanted */
         if (ft_batchmode)
             controlled_exit(EXIT_FAILURE);
+        if (!is_interactive) {
+            fprintf(cp_err, "Numparam expansion errors: Problem with input file.\n");
+            controlled_exit(EXIT_FAILURE);
+        }
         for (;;) {
             int c;
             printf("Numparam expansion errors: Run Spice anyway? y/n ?\n");
