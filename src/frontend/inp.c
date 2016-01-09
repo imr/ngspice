@@ -1050,6 +1050,13 @@ com_edit(wordlist *wl)
     bool inter, permfile;
     char buf[BSIZE_SP];
 
+    if (!cp_getvar("interactive", CP_BOOL, NULL)) {
+        fprintf(cp_err,
+                "Warning: `edit' is disabled because 'interactive' has not been set.\n"
+                "  perhaps you want to 'set interactive'\n");
+        return;
+    }
+
     inter = cp_interactive;
     cp_interactive = FALSE;
     if (wl) {
