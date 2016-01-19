@@ -41,6 +41,13 @@ inchar(FILE *fp)
             i = read(fileno(fp), &c, 1);
         while (i == -1 && errno == EINTR);
 
+#if _MSC_VER == 1900
+        /* There is a bug in MS VS2015, in that _read returns 0 instead of 1
+           if '\n' is read from stdin in text mode */
+        if (i == 0 && c == '\n')
+            i = 1;
+#endif
+
         if (i == 0 || c == '\004')
             return EOF;
 
