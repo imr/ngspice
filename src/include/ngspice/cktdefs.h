@@ -209,27 +209,28 @@ struct CKTcircuit {
     double CKTlteReltol;
     double CKTlteAbstol;
 #endif /* NEWTRUNC */
-    double CKTgmin;             /* Parallel Conductance --- */
-    double CKTgshunt;
-    double CKTdelmin;           /* ??? */
-    double CKTtrtol;            /* ??? */
-    double CKTfinalTime;        /* ??? */
-    double CKTstep;             /* ??? */
-    double CKTmaxStep;          /* ??? */
-    double CKTinitTime;         /* ??? */
-    double CKTomega;            /* ??? */
-    double CKTsrcFact;          /* ??? */
-    double CKTdiagGmin;         /* ??? */
-    int CKTnumSrcSteps;         /* ??? */
-    int CKTnumGminSteps;        /* ??? */
-    double CKTgminFactor;
-    int CKTnoncon;              /* ??? */
-    double CKTdefaultMosM;
+    double CKTgmin;             /* .options GMIN */
+    double CKTgshunt;           /* .options RSHUNT */
+    double CKTdelmin;           /* minimum time step for tran analysis */
+    double CKTtrtol;            /* .options TRTOL */
+    double CKTfinalTime;        /* TSTOP */
+    double CKTstep;             /* TSTEP */
+    double CKTmaxStep;          /* TMAX */
+    double CKTinitTime;         /* TSTART */
+    double CKTomega;            /* actual angular frequency for ac analysis */
+    double CKTsrcFact;          /* source stepping scaling factor */
+    double CKTdiagGmin;         /* actual value during gmin stepping */
+    int CKTnumSrcSteps;         /* .options SRCSTEPS */
+    int CKTnumGminSteps;        /* .options GMINSTEPS */
+    double CKTgminFactor;       /* gmin stepping scaling factor */
+    int CKTnoncon;              /* used by devices (and few other places)
+                                   to announce non-convergence */
+    double CKTdefaultMosM;      /* Default MOS multiplier parameter m */
     double CKTdefaultMosL;      /* Default Channel Lenght of MOS devices */
     double CKTdefaultMosW;      /* Default Channel Width of MOS devics */
     double CKTdefaultMosAD;     /* Default Drain Area of MOS */
     double CKTdefaultMosAS;     /* Default Source Area of MOS */
-    unsigned int CKThadNodeset:1; /* ??? */
+    unsigned int CKThadNodeset:1; /* flag to show that nodes have been set up */
     unsigned int CKTfixLimit:1; /* flag to indicate that the limiting
                                    of MOSFETs should be done as in
                                    SPICE2 */
