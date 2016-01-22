@@ -35,7 +35,7 @@ yes_or_no(void)
     int first;
 
     do {
-        first = getchar();
+        first = getchar();      /* fixme, yes_or_no io, numparm */
         if (first == '\n' || first == EOF)
             return first;
     } while (isspace(first));

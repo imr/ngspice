@@ -161,7 +161,7 @@ promptreturn(void)
 moe:
     fprintf(cp_out, "\n\t-- hit return for more, ? for help -- ");
 
-    if (!fgets(buf, 16, cp_in)) {
+    if (!fgets(buf, 16, cp_in)) { /* fixme, promptreturn io */
         clearerr(cp_in);
         *buf = 'q';
     }
@@ -202,7 +202,7 @@ out_send(char *string)
     if (noprint)
         return;
 
-    if (!out_isatty || nopause) {
+    if (!out_isatty || nopause) { /* fixme, out_isatty, reuse ?!? */
         fputs(string, cp_out);
         return;
     }
@@ -233,7 +233,7 @@ out_send(char *string)
 
         if (ypos >= ysize) {
             outbufputc();       /* out goes buffer */
-            promptreturn();
+            promptreturn();     /* fixme, out_send io */
             (void) fflush(cp_out);
             ypos = xpos = 0;
         }

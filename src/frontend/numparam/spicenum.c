@@ -512,7 +512,7 @@ nupa_done(void)
         for (;;) {
             int c;
             printf("Numparam expansion errors: Run Spice anyway? y/n ?\n");
-            c = yes_or_no();
+            c = yes_or_no();    /* fixme, nupa_done, io */
             if (c == 'n' || c == EOF)
                 controlled_exit(EXIT_FAILURE);
             if (c == 'y')
