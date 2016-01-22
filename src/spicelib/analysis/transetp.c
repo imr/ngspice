@@ -23,7 +23,7 @@ TRANsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
     case TRAN_TSTOP:
         if (value->rValue <= 0.0) {
-	        errMsg = copy("TST0P is invalid, must be greater than zero.");
+	        errMsg = copy("TSTOP is invalid, must be greater than zero.");
                 job->TRANfinalTime = 1.0;
 	        return(E_PARMVAL);
 	    }
