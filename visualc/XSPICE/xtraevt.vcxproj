@@ -93,60 +93,17 @@
     <TargetExt>.cm</TargetExt>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup>
     <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\xtraevt
-..\bin\cmpp -lst
-set mdir=d_to_real
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_delay
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_to_v
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-set mdir=real
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
+      <Message>generate cfunc.c and ifspec.c files</Message>
+      <Command>call .\aux-cfunc.bat $(ProjectName)
+call .\aux-udnfunc.bat $(ProjectName)</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Outputs>%(Outputs)</Outputs>
-    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -160,7 +117,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)xtraevt.cm</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -172,73 +128,12 @@ cd ..\..\..\..\..\visualc\XSPICE
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
-    <PostBuildEvent>
-      <Command>
-cd ..\..\src\xspice\icm\xtraevt
-set mdir=real
-cd %mdir%
-del %mdir%_udnfunc.c
-set mdir=int
-cd ..\%mdir%
-del %mdir%_udnfunc.c
-cd ..
-cd ..
-      </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>delete renamed files</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\xtraevt
-..\bin\cmpp -lst
-set mdir=d_to_real
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_delay
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_to_v
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-set mdir=real
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -250,7 +145,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)xtraevt.cm</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -259,80 +153,14 @@ cd ..\..\..\..\..\visualc\XSPICE
       <TargetMachine>MachineX86</TargetMachine>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
-    <PostBuildEvent>
-      <Command>
-cd ..\..\src\xspice\icm\xtraevt
-set mdir=real
-cd %mdir%
-del %mdir%_udnfunc.c
-set mdir=int
-cd ..\%mdir%
-del %mdir%_udnfunc.c
-cd ..
-cd ..
-      </Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>delete renamed files</Message>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\xtraevt
-..\bin\cmpp -lst
-set mdir=d_to_real
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_delay
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_to_v
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-set mdir=real
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Outputs>%(Outputs)</Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -345,7 +173,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)xtraevt64.cm</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -357,73 +184,15 @@ cd ..\..\..\..\..\visualc\XSPICE
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
-    <PostBuildEvent>
-      <Command>
-cd ..\..\src\xspice\icm\xtraevt
-set mdir=real
-cd %mdir%
-del %mdir%_udnfunc.c
-set mdir=int
-cd ..\%mdir%
-del %mdir%_udnfunc.c
-cd ..
-cd ..
-    </Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\xtraevt
-..\bin\cmpp -lst
-set mdir=d_to_real
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_delay
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=real_to_v
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-set mdir=real
-cd ..\%mdir%
-copy udnfunc.c %mdir%_udnfunc.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\xtraevt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -434,7 +203,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)xtraevt64.cm</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -442,31 +210,18 @@ cd ..\..\..\..\..\visualc\XSPICE
       <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
-    <PostBuildEvent>
-      <Command>
-cd ..\..\src\xspice\icm\xtraevt
-set mdir=real
-cd %mdir%
-del %mdir%_udnfunc.c
-set mdir=int
-cd ..\%mdir%
-del %mdir%_udnfunc.c
-cd ..
-cd ..
-      </Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\d_to_real\d_to_real-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\d_to_real\d_to_real-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\int\int_udnfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real\real_udnfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_delay\real_delay-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_delay\real_delay-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_gain\real_gain-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_gain\real_gain-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_to_v\real_to_v-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\xtraevt\real_to_v\real_to_v-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\d_to_real\d_to_real-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\d_to_real\d_to_real-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\int\int-udnfunc.c" />
+    <ClCompile Include="icm\xtraevt\real\real-udnfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_delay\real_delay-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_delay\real_delay-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\real_gain\real_gain-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_gain\real_gain-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\real_to_v\real_to_v-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_to_v\real_to_v-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>

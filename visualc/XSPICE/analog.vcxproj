@@ -94,174 +94,16 @@
     <TargetExt>.cm</TargetExt>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup>
     <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\analog
-..\bin\cmpp -lst
-set mdir=climit
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=divide
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=d_dt
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=hyst
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=ilimit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=limit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=mult
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=multi_input_pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=oneshot
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=sine
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=slew
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=square
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=summer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=s_xfer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=triangle
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=file_source
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
+      <Message>generate cfunc.c and ifspec.c files</Message>
+      <Command>call .\aux-cfunc.bat $(ProjectName)</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Outputs>%(Outputs)</Outputs>
-    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -275,7 +117,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)analog.cm</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -289,169 +130,10 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\analog
-..\bin\cmpp -lst
-set mdir=climit
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=divide
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=d_dt
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=hyst
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=ilimit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=limit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=mult
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=multi_input_pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=oneshot
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=sine
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=slew
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=square
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=summer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=s_xfer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=triangle
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=file_source
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -463,7 +145,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)analog.cm</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -474,176 +155,12 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\analog
-..\bin\cmpp -lst
-set mdir=climit
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=divide
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=d_dt
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=hyst
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=ilimit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=limit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=mult
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=multi_input_pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=oneshot
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=sine
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=slew
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=square
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=summer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=s_xfer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=triangle
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=file_source
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Outputs>%(Outputs)</Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -656,7 +173,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)analog64.cm</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -670,172 +186,13 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\analog
-..\bin\cmpp -lst
-set mdir=climit
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=divide
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=d_dt
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=gain
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=hyst
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=ilimit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=int
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=limit
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=mult
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=multi_input_pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=oneshot
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=pwl
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=sine
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=slew
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=square
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=summer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=s_xfer
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=triangle
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=file_source
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\analog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -846,7 +203,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)analog64.cm</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -856,44 +212,52 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\xspice\icm\analog\climit\climit-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\climit\climit-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\divide\divide-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\divide\divide-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\d_dt\d_dt-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\d_dt\d_dt-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\gain\gain-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\gain\gain-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\hyst\hyst-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\hyst\hyst-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\ilimit\ilimit-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\ilimit\ilimit-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\int\int-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\int\int-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\limit\limit-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\limit\limit-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\mult\mult-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\mult\mult-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\multi_input_pwl\multi_input_pwl-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\multi_input_pwl\multi_input_pwl-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\oneshot\oneshot-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\oneshot\oneshot-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\pwl\pwl-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\pwl\pwl-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\sine\sine-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\sine\sine-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\slew\slew-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\slew\slew-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\square\square-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\square\square-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\summer\summer-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\summer\summer-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\s_xfer\s_xfer-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\s_xfer\s_xfer-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\triangle\triangle-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\triangle\triangle-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\file_source\file_source-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\analog\file_source\file_source-ifspec.c" />
+    <ClCompile Include="icm\analog\climit\climit-cfunc.c" />
+    <ClCompile Include="icm\analog\climit\climit-ifspec.c" />
+    <ClCompile Include="icm\analog\divide\divide-cfunc.c" />
+    <ClCompile Include="icm\analog\divide\divide-ifspec.c" />
+    <ClCompile Include="icm\analog\d_dt\d_dt-cfunc.c" />
+    <ClCompile Include="icm\analog\d_dt\d_dt-ifspec.c" />
+    <ClCompile Include="icm\analog\gain\gain-cfunc.c" />
+    <ClCompile Include="icm\analog\gain\gain-ifspec.c" />
+    <ClCompile Include="icm\analog\hyst\hyst-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\hyst\hyst-ifspec.c" />
+    <ClCompile Include="icm\analog\ilimit\ilimit-cfunc.c" />
+    <ClCompile Include="icm\analog\ilimit\ilimit-ifspec.c" />
+    <ClCompile Include="icm\analog\int\int-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\int\int-ifspec.c" />
+    <ClCompile Include="icm\analog\limit\limit-cfunc.c" />
+    <ClCompile Include="icm\analog\limit\limit-ifspec.c" />
+    <ClCompile Include="icm\analog\mult\mult-cfunc.c" />
+    <ClCompile Include="icm\analog\mult\mult-ifspec.c" />
+    <ClCompile Include="icm\analog\multi_input_pwl\multi_input_pwl-cfunc.c" />
+    <ClCompile Include="icm\analog\multi_input_pwl\multi_input_pwl-ifspec.c" />
+    <ClCompile Include="icm\analog\oneshot\oneshot-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\oneshot\oneshot-ifspec.c" />
+    <ClCompile Include="icm\analog\pwl\pwl-cfunc.c" />
+    <ClCompile Include="icm\analog\pwl\pwl-ifspec.c" />
+    <ClCompile Include="icm\analog\sine\sine-cfunc.c" />
+    <ClCompile Include="icm\analog\sine\sine-ifspec.c" />
+    <ClCompile Include="icm\analog\slew\slew-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\slew\slew-ifspec.c" />
+    <ClCompile Include="icm\analog\square\square-cfunc.c" />
+    <ClCompile Include="icm\analog\square\square-ifspec.c" />
+    <ClCompile Include="icm\analog\summer\summer-cfunc.c" />
+    <ClCompile Include="icm\analog\summer\summer-ifspec.c" />
+    <ClCompile Include="icm\analog\s_xfer\s_xfer-cfunc.c" />
+    <ClCompile Include="icm\analog\s_xfer\s_xfer-ifspec.c" />
+    <ClCompile Include="icm\analog\triangle\triangle-cfunc.c" />
+    <ClCompile Include="icm\analog\triangle\triangle-ifspec.c" />
+    <ClCompile Include="icm\analog\file_source\file_source-cfunc.c" />
+    <ClCompile Include="icm\analog\file_source\file_source-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>

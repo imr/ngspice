@@ -93,38 +93,16 @@
     <TargetExt>.cm</TargetExt>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup>
     <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\table
-..\bin\cmpp -lst
-set mdir=table2d
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=table3d
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
+      <Message>generate cfunc.c and ifspec.c files</Message>
+      <Command>call .\aux-cfunc.bat $(ProjectName)</Command>
     </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Outputs>%(Outputs)</Outputs>
-    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\table;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -138,7 +116,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)table.cm</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -152,33 +129,10 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\table
-..\bin\cmpp -lst
-set mdir=table2d
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=table3d
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\table;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -190,7 +144,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)table.cm</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -201,40 +154,12 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\table
-..\bin\cmpp -lst
-set mdir=table2d
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=table3d
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..\..\..\..\..\visualc\XSPICE
-</Command>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Command>
-      </Command>
-      <Outputs>%(Outputs)</Outputs>
-    </CustomBuildStep>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\table;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -247,7 +172,6 @@ cd ..\..\..\..\..\visualc\XSPICE
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)table64.cm</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>
       </AssemblyDebug>
@@ -261,37 +185,13 @@ cd ..\..\..\..\..\visualc\XSPICE
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PreBuildEvent>
-      <Message>Generate cfunc.c and ifspec.c</Message>
-      <Command>cd ..\..\src\xspice\icm\table
-..\bin\cmpp -lst
-set mdir=table2d
-cd %mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-set mdir=table3d
-cd ..\%mdir%
-..\..\bin\cmpp -ifs
-..\..\bin\cmpp -mod ../%mdir%/cfunc.mod
-del %mdir%-cfunc.c
-del %mdir%-ifspec.c
-rename cfunc.c %mdir%-cfunc.c
-rename ifspec.c %mdir%-ifspec.c
-cd ..
-cd ..
-</Command>
-    </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\include;..\..\src\include;..\..\src\xspice\icm\table;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -302,7 +202,6 @@ cd ..
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)table64.cm</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -312,10 +211,14 @@ cd ..
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\xspice\icm\table\table2D\table2D-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\table\table2D\table2D-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\table\table3D\table3D-cfunc.c" />
-    <ClCompile Include="..\..\src\xspice\icm\table\table3D\table3D-ifspec.c" />
+    <ClCompile Include="icm\table\table2D\table2D-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\icm\$(ProjectName);..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\table\table2D\table2D-ifspec.c" />
+    <ClCompile Include="icm\table\table3D\table3D-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\icm\$(ProjectName);..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\table\table3D\table3D-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
