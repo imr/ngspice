@@ -24,7 +24,7 @@ vss 3 0 0
 
 .control
 ** output file **
-set outfile = "table-2d-bsim4p.txt"
+set outfile = "bsim4n-2d-1.table"
 
 *dc vds 0 1.8 0.05 vgs 0 1.8 0.3
 save i(vss)
@@ -82,6 +82,6 @@ end
 .endc
 
 
-.include ../Exam_BSIM4/Modelcards/modelcard.pmos
-.include ../Exam_BSIM4/Modelcards/modelcard.nmos
+.include ./Modelcards/modelcard.pmos
+.include ./Modelcards/modelcard.nmos
 .end

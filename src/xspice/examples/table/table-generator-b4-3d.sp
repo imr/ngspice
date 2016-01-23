@@ -31,7 +31,7 @@ vbs 4 0 0
 
 .control
 ** output file **
-set outfile = "table-3d-bsim4n.txt"
+set outfile = "bsim4n-3d-1.table"
 
 save i(vss)
 echo * 3D table for nmos bsim 4 > $outfile
