@@ -25,7 +25,7 @@ Vs2 s2 0 0
 *
 *** table model of mos transistor ***
 amos1 %vd(d s) %vd(g s) %vd(b s) %id(d s) mostable1
-.model mostable1 table3d (offset=0.0 gain=1 order=4 file="table-3d-bsim4n.txt")
+.model mostable1 table3d (offset=0.0 gain=1 order=4 file="bsim4n-3d-1.table")
 * L=0.13u W=10.0u rgeoMod=1
 * BSIM 4.7
 * change width of transistor by modifying parameter "gain"

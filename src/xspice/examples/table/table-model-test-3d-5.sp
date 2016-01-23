@@ -47,7 +47,7 @@ xmosinv5 vdd vss out4 out4 in1 nand
 cdg d g 0.01p
 csg s g 0.014p
 amos1 %vd(d s) %vd(g s) %vd(b s) %id(d s) mostable1
-.model mostable1 table3d (offset=0.0 gain=0.5 order=3 file="table-3d-bsim4n.txt")
+.model mostable1 table3d (offset=0.0 gain=0.5 order=3 file="bsim4n-3d-1.table")
 * NMOS L=0.13u W=10.0u rgeoMod=1
 * BSIM 4.7
 * change width of transistor by modifying parameter "gain"
@@ -59,7 +59,7 @@ amos1 %vd(d s) %vd(g s) %vd(b s) %id(d s) mostable1
 cdg d g 0.01p
 csg s g 0.014p
 amos2 %vd(d s) %vd(g s) %vd(b s) %id(d s) mostable2
-.model mostable2 table3d (offset=0.0 gain=1 order=3 file="table-3d-bsim4p.txt")
+.model mostable2 table3d (offset=0.0 gain=1 order=3 file="bsim4p-3d-1.table")
 * PMOS L=0.13u W=10.0u rgeoMod=1
 * BSIM 4.7
 * change width of transistor by modifying parameter "gain"
