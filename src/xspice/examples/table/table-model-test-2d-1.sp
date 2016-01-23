@@ -1,5 +1,5 @@
-Code Model Test - Table Model
-*
+Code Model Test - 2d Table Model
+* simple input table, generated manually
 *
 *** analysis type ***
 .control

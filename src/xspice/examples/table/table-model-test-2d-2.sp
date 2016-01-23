@@ -1,5 +1,5 @@
-Code Model Test - Table Model
-*
+Code Model Test - 2d Table Model
+* bsim4 transistor dc input and output characteristics
 *
 *** analysis type ***
 .control
@@ -28,7 +28,7 @@ amos1 %vd(d s) %vd(g s) %id(d s) mostable1
 * L=0.13u W=10.0u rgeoMod=1
 * BSIM 4.7
 * change width of transistor by modifying parameter "gain"
-* source is always tied to bulk (we not yet have a 3D table model!)
+* source is always tied to bulk (2d model!)
 
 amos2 %vd(d s2) %vd(d s2) %id(d s2) mostable1
 

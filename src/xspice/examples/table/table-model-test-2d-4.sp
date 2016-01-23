@@ -1,4 +1,4 @@
-Code Model Test - Table Model
+Code Model Test - 2d Table Model
 * Inverter
 *
 *** analysis type ***

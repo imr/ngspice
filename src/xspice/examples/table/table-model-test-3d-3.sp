@@ -1,5 +1,5 @@
-Code Model Test - Table Model
-* R.O. Inverter
+Code Model Test - 3d Table Model
+* Ring oscillator made of inverters
 *
 *** analysis type ***
 .control

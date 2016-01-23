@@ -1,5 +1,5 @@
-Code Model Test - Table Model
-* R.O. NAND
+Code Model Test - 3d Table Model
+* Ring oscillator made of NAND gates
 *
 *** analysis type ***
 .control

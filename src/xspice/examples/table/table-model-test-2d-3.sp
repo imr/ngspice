@@ -1,5 +1,5 @@
-Code Model Test - Table Model
-* R.O.
+Code Model Test - 2d Table Model
+* ring oscillator
 *
 *** analysis type ***
 .control
@@ -49,7 +49,7 @@ amos1 %vd(d s) %vd(g s) %id(d s) mostable1
 * NMOS L=0.13u W=10.0u rgeoMod=1
 * BSIM 4.7
 * change width of transistor by modifying parameter "gain"
-* source is always tied to bulk (we not yet have a 3D table model!)
+* source is always tied to bulk (2d model!)
 .ends
 
 .subckt tbmosp d g s
@@ -61,7 +61,7 @@ amos2 %vd(d s) %vd(g s) %id(d s) mostable2
 * PMOS L=0.13u W=10.0u rgeoMod=1
 * BSIM 4.7
 * change width of transistor by modifying parameter "gain"
-* source is always tied to bulk (we not yet have a 3D table model!)
+* source is always tied to bulk (2d model!)
 .ends
 
 .include ./modelcards/modelcard.nmos
