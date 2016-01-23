@@ -15,7 +15,7 @@ v2 2 0 DC 1.5
 *
 *** table model ***
 a1 1 2 %id(10 11) table1
-.model table1 table2d (offset=0.0 gain=1.0 order=3 file="test-table1.txt")
+.model table1 table2d (offset=0.0 gain=1.0 order=3 file="test-2d-1.table")
 *
 *
 
