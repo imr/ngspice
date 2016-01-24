@@ -8,7 +8,6 @@ REM start /WAIT "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE
 REM start /w "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com" "D:\Spice_general\ngspice\visualc\vngspice.sln" /Rebuild 
 
 if "%1" == "64" goto b64
-
 if "%2" == "64" goto b64
 
 mkdir c:\Spiced\bin
@@ -25,6 +24,7 @@ copy .\codemodels\Win32\Debug\spice2poly.cm c:\Spiced\lib\ngspice\spice2poly.cm
 copy .\spinitd C:\Spiced\share\ngspice\scripts\spinit
 
 if "%1" == "fftw" goto copy2
+if "%2" == "fftw" goto copy2
 
 copy .\vngspice\Debug.Win32\ngspice.exe c:\Spiced\bin\ngspice.exe
 goto end
@@ -32,6 +32,7 @@ goto end
 :copy2
 copy .\vngspice-fftw\Debug.Win32\ngspice.exe c:\Spiced\bin\ngspice.exe
 copy "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "C:\Spiced\bin\libfftw3-3.dll"
+goto end
 
 :b64
 
@@ -49,7 +50,6 @@ copy .\codemodels\x64\Debug\spice2poly64.cm c:\Spice64d\lib\ngspice\spice2poly.c
 copy .\spinitd64 C:\Spice64d\share\ngspice\scripts\spinit
 
 if "%1" == "fftw" goto copy2-64
-
 if "%2" == "fftw" goto copy2-64
 
 copy .\vngspice\Debug.x64\ngspice.exe c:\Spice64d\bin\ngspice.exe

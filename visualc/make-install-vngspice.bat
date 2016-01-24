@@ -8,7 +8,6 @@ REM start /WAIT "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE
 REM start /w "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com" "D:\Spice_general\ngspice\visualc\vngspice.sln" /Rebuild 
 
 if "%1" == "64" goto b64
-
 if "%2" == "64" goto b64
 
 mkdir c:\Spice\bin
@@ -59,6 +58,5 @@ goto end
 :copy2-64
 copy .\vngspice-fftw\ReleaseOMP.x64\ngspice.exe c:\Spice64\bin\ngspice.exe
 copy "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "C:\Spice64\bin\libfftw3-3.dll"
-goto end
 
 :end
