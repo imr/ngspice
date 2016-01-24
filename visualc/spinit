@@ -31,4 +31,4 @@ if $__flag = 0
 
 end
 unset __flag
-echo visualc
+*echo visualc
