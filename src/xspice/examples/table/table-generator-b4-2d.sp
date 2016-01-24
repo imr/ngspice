@@ -82,6 +82,6 @@ end
 .endc
 
 
-.include ./Modelcards/modelcard.pmos
-.include ./Modelcards/modelcard.nmos
+.include ./modelcards/modelcard.pmos
+.include ./modelcards/modelcard.nmos
 .end
