@@ -19,14 +19,14 @@ if $__flag = 0
 * For SPICE2 POLYs, edit the below line to point to the location
 * of your codemodel.
 
- codemodel C:/Spice64/lib/ngspice/spice2poly.cm
+ codemodel C:/Spice64d/lib/ngspice/spice2poly.cm
 
 * The other codemodels
- codemodel C:/Spice64/lib/ngspice/analog.cm
- codemodel C:/Spice64/lib/ngspice/digital.cm
- codemodel C:/Spice64/lib/ngspice/xtradev.cm
- codemodel C:/Spice64/lib/ngspice/xtraevt.cm
- codemodel C:/Spice64/lib/ngspice/table.cm
+ codemodel C:/Spice64d/lib/ngspice/analog.cm
+ codemodel C:/Spice64d/lib/ngspice/digital.cm
+ codemodel C:/Spice64d/lib/ngspice/xtradev.cm
+ codemodel C:/Spice64d/lib/ngspice/xtraevt.cm
+ codemodel C:/Spice64d/lib/ngspice/table.cm
 
 end
 unset __flag
