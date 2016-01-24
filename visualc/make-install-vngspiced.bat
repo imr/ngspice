@@ -14,7 +14,7 @@ mkdir c:\Spiced\bin
 mkdir c:\Spiced\lib\ngspice
 mkdir C:\Spiced\share\ngspice\scripts
 
-copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.OPENMP\vcomp140.dll" c:\Spiced\bin\vcomp140.dll
+copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.OPENMP\vcomp140.dll" c:\Spiced\bin\
 copy .\codemodels\Win32\Debug\analog.cm c:\Spiced\lib\ngspice\analog.cm
 copy .\codemodels\Win32\Debug\digital.cm c:\Spiced\lib\ngspice\digital.cm
 copy .\codemodels\Win32\Debug\table.cm c:\Spiced\lib\ngspice\table.cm
@@ -26,12 +26,12 @@ copy .\spinitd C:\Spiced\share\ngspice\scripts\spinit
 if "%1" == "fftw" goto copy2
 if "%2" == "fftw" goto copy2
 
-copy .\vngspice\Debug.Win32\ngspice.exe c:\Spiced\bin\ngspice.exe
+copy .\vngspice\Debug.Win32\ngspice.exe c:\Spiced\bin\
 goto end
 
 :copy2
-copy .\vngspice-fftw\Debug.Win32\ngspice.exe c:\Spiced\bin\ngspice.exe
-copy ..\..\fftw-3.3.4-dll32\libfftw3-3.dll C:\Spiced\bin\libfftw3-3.dll
+copy .\vngspice-fftw\Debug.Win32\ngspice.exe c:\Spiced\bin\
+copy ..\..\fftw-3.3.4-dll32\libfftw3-3.dll C:\Spiced\bin\
 goto end
 
 :b64
@@ -40,7 +40,7 @@ mkdir c:\Spice64d\bin
 mkdir c:\Spice64d\lib\ngspice
 mkdir C:\Spice64d\share\ngspice\scripts
 
-copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.OPENMP\vcomp140.dll" c:\Spice64d\bin\vcomp140.dll
+copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.OPENMP\vcomp140.dll" c:\Spice64d\bin\
 copy .\codemodels\x64\Debug\analog64.cm c:\Spice64d\lib\ngspice\analog.cm
 copy .\codemodels\x64\Debug\digital64.cm c:\Spice64d\lib\ngspice\digital.cm
 copy .\codemodels\x64\Debug\table64.cm c:\Spice64d\lib\ngspice\table.cm
@@ -52,11 +52,11 @@ copy .\spinitd64 C:\Spice64d\share\ngspice\scripts\spinit
 if "%1" == "fftw" goto copy2-64
 if "%2" == "fftw" goto copy2-64
 
-copy .\vngspice\Debug.x64\ngspice.exe c:\Spice64d\bin\ngspice.exe
+copy .\vngspice\Debug.x64\ngspice.exe c:\Spice64d\bin\
 goto end
 
 :copy2-64
-copy .\vngspice-fftw\Debug.x64\ngspice.exe c:\Spice64d\bin\ngspice.exe
-copy ..\..\fftw-3.3.4-dll64\libfftw3-3.dll C:\Spice64d\bin\libfftw3-3.dll
+copy .\vngspice-fftw\Debug.x64\ngspice.exe c:\Spice64d\bin\
+copy ..\..\fftw-3.3.4-dll64\libfftw3-3.dll C:\Spice64d\bin\
 
 :end
