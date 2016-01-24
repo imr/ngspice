@@ -11,19 +11,19 @@ if "%1" == "64" goto b64
 if "%2" == "64" goto b64
 
 set dst=c:\Spice
-set cmsrc=.\codemodels\Win32\Release
+set cmsrc=Release.Win32
 
 mkdir %dst%\bin
 mkdir %dst%\lib\ngspice
 mkdir %dst%\share\ngspice\scripts
 
 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.OPENMP\vcomp140.dll" %dst%\bin\
-copy %cmsrc%\analog.cm %dst%\lib\ngspice\analog.cm
-copy %cmsrc%\digital.cm %dst%\lib\ngspice\digital.cm
-copy %cmsrc%\table.cm %dst%\lib\ngspice\table.cm
-copy %cmsrc%\xtraevt.cm %dst%\lib\ngspice\xtraevt.cm
-copy %cmsrc%\xtradev.cm %dst%\lib\ngspice\xtradev.cm
-copy %cmsrc%\spice2poly.cm %dst%\lib\ngspice\spice2poly.cm
+copy analog\%cmsrc%\analog.cm %dst%\lib\ngspice\
+copy digital\%cmsrc%\digital.cm %dst%\lib\ngspice\
+copy table\%cmsrc%\table.cm %dst%\lib\ngspice\
+copy xtraevt\%cmsrc%\xtraevt.cm %dst%\lib\ngspice\
+copy xtradev\%cmsrc%\xtradev.cm %dst%\lib\ngspice\
+copy spice2poly\%cmsrc%\spice2poly.cm %dst%\lib\ngspice\
 copy .\spinit %dst%\share\ngspice\scripts\spinit
 
 if "%1" == "fftw" goto copy2
@@ -40,19 +40,19 @@ goto end
 :b64
 
 set dst=c:\Spice64
-set cmsrc=.\codemodels\x64\Release
+set cmsrc=Release.x64
 
 mkdir %dst%\bin
 mkdir %dst%\lib\ngspice
 mkdir %dst%\share\ngspice\scripts
 
 copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.OPENMP\vcomp140.dll" %dst%\bin\
-copy %cmsrc%\analog64.cm %dst%\lib\ngspice\analog.cm
-copy %cmsrc%\digital64.cm %dst%\lib\ngspice\digital.cm
-copy %cmsrc%\table64.cm %dst%\lib\ngspice\table.cm
-copy %cmsrc%\xtraevt64.cm %dst%\lib\ngspice\xtraevt.cm
-copy %cmsrc%\xtradev64.cm %dst%\lib\ngspice\xtradev.cm
-copy %cmsrc%\spice2poly64.cm %dst%\lib\ngspice\spice2poly.cm
+copy analog\%cmsrc%\analog.cm %dst%\lib\ngspice\
+copy digital\%cmsrc%\digital.cm %dst%\lib\ngspice\
+copy table\%cmsrc%\table.cm %dst%\lib\ngspice\
+copy xtraevt\%cmsrc%\xtraevt.cm %dst%\lib\ngspice\
+copy xtradev\%cmsrc%\xtradev.cm %dst%\lib\ngspice\
+copy spice2poly\%cmsrc%\spice2poly.cm %dst%\lib\ngspice\
 copy .\spinit64 %dst%\share\ngspice\scripts\spinit
 
 if "%1" == "fftw" goto copy2-64
