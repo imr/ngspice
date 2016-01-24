@@ -12,11 +12,12 @@ set x11lineararcs
 ** set the number of threads in openmp
 ** default (if compiled with --enable-openmp) is: 2
 *set num_threads=4
+set interactive
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
 
-* For SPICE2 POLYs, edit the below line to point to the location 
+* For SPICE2 POLYs, edit the below line to point to the location
 * of your codemodel.
 
 @XSPICEINIT@ codemodel @pkglibdir@/spice2poly.cm

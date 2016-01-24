@@ -12,6 +12,7 @@ set filetype=ascii
 ** set the number of threads in openmp
 ** default (if compiled with --enable-openmp) is: 2
 set num_threads=4
+set interactive
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
