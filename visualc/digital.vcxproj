@@ -92,7 +92,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -122,7 +122,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -149,7 +149,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -181,7 +181,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -202,164 +202,164 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="icm\digital\adc_bridge\adc_bridge-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\adc_bridge\adc_bridge-ifspec.c" />
     <ClCompile Include="icm\digital\dac_bridge\dac_bridge-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\dac_bridge\dac_bridge-ifspec.c" />
     <ClCompile Include="icm\digital\d_and\d_and-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_and\d_and-ifspec.c" />
     <ClCompile Include="icm\digital\d_buffer\d_buffer-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_buffer\d_buffer-ifspec.c" />
     <ClCompile Include="icm\digital\d_dff\d_dff-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_dff\d_dff-ifspec.c" />
     <ClCompile Include="icm\digital\d_dlatch\d_dlatch-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_dlatch\d_dlatch-ifspec.c" />
     <ClCompile Include="icm\digital\d_fdiv\d_fdiv-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_fdiv\d_fdiv-ifspec.c" />
     <ClCompile Include="icm\digital\d_inverter\d_inverter-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_inverter\d_inverter-ifspec.c" />
     <ClCompile Include="icm\digital\d_jkff\d_jkff-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_jkff\d_jkff-ifspec.c" />
     <ClCompile Include="icm\digital\d_nand\d_nand-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_nand\d_nand-ifspec.c" />
     <ClCompile Include="icm\digital\d_nor\d_nor-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_nor\d_nor-ifspec.c" />
     <ClCompile Include="icm\digital\d_open_c\d_open_c-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_open_c\d_open_c-ifspec.c" />
     <ClCompile Include="icm\digital\d_open_e\d_open_e-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_open_e\d_open_e-ifspec.c" />
     <ClCompile Include="icm\digital\d_or\d_or-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_or\d_or-ifspec.c" />
     <ClCompile Include="icm\digital\d_osc\d_osc-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_osc\d_osc-ifspec.c" />
     <ClCompile Include="icm\digital\d_pulldown\d_pulldown-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_pulldown\d_pulldown-ifspec.c" />
     <ClCompile Include="icm\digital\d_pullup\d_pullup-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_pullup\d_pullup-ifspec.c" />
     <ClCompile Include="icm\digital\d_ram\d_ram-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_ram\d_ram-ifspec.c" />
     <ClCompile Include="icm\digital\d_source\d_source-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_source\d_source-ifspec.c" />
     <ClCompile Include="icm\digital\d_srff\d_srff-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_srff\d_srff-ifspec.c" />
     <ClCompile Include="icm\digital\d_srlatch\d_srlatch-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_srlatch\d_srlatch-ifspec.c" />
     <ClCompile Include="icm\digital\d_state\d_state-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_state\d_state-ifspec.c" />
     <ClCompile Include="icm\digital\d_tff\d_tff-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_tff\d_tff-ifspec.c" />
     <ClCompile Include="icm\digital\d_tristate\d_tristate-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_tristate\d_tristate-ifspec.c" />
     <ClCompile Include="icm\digital\d_xnor\d_xnor-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_xnor\d_xnor-ifspec.c" />
     <ClCompile Include="icm\digital\d_xor\d_xor-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_xor\d_xor-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+    <ClCompile Include="..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\xspice\icm\digital\adc_bridge\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\adc_bridge\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\dac_bridge\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\dac_bridge\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_and\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_and\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_buffer\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_buffer\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_dff\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_dff\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_dlatch\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_dlatch\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_fdiv\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_fdiv\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_inverter\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_inverter\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_jkff\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_jkff\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_nand\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_nand\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_nor\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_nor\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_open_c\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_open_c\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_open_e\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_open_e\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_or\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_or\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_osc\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_osc\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_pulldown\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_pulldown\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_pullup\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_pullup\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_ram\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_ram\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_source\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_source\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_srff\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_srff\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_srlatch\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_srlatch\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_state\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_state\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_tff\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_tff\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_tristate\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_tristate\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_xnor\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_xnor\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\digital\d_xor\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_xor\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\adc_bridge\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\adc_bridge\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\dac_bridge\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\dac_bridge\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_and\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_and\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_buffer\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_buffer\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_dff\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_dff\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_dlatch\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_dlatch\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_fdiv\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_fdiv\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_inverter\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_inverter\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_jkff\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_jkff\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_nand\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_nand\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_nor\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_nor\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_open_c\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_open_c\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_open_e\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_open_e\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_or\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_or\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_osc\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_osc\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_pulldown\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_pulldown\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_pullup\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_pullup\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_ram\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_ram\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_source\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_source\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_srff\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_srff\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_srlatch\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_srlatch\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_state\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_state\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_tff\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_tff\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_tristate\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_tristate\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_xnor\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_xnor\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\digital\d_xor\cfunc.mod" />
+    <None Include="..\src\xspice\icm\digital\d_xor\ifspec.ifs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

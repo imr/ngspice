@@ -92,7 +92,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -122,7 +122,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -149,7 +149,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -181,7 +181,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -202,20 +202,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="icm\table\table2D\table2D-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\icm\$(ProjectName);..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\icm\$(ProjectName);..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\table\table2D\table2D-ifspec.c" />
     <ClCompile Include="icm\table\table3D\table3D-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\icm\$(ProjectName);..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\icm\$(ProjectName);..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\table\table3D\table3D-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+    <ClCompile Include="..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\xspice\icm\table\table2D\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\table\table2D\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\table\table3D\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\table\table3D\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\table\table2D\cfunc.mod" />
+    <None Include="..\src\xspice\icm\table\table2D\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\table\table3D\cfunc.mod" />
+    <None Include="..\src\xspice\icm\table\table3D\ifspec.ifs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

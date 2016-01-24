@@ -92,7 +92,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -122,7 +122,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -149,7 +149,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -181,7 +181,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -202,68 +202,68 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="icm\xtradev\aswitch\aswitch-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\aswitch\aswitch-ifspec.c" />
     <ClCompile Include="icm\xtradev\capacitor\capacitor-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\capacitor\capacitor-ifspec.c" />
     <ClCompile Include="icm\xtradev\cmeter\cmeter-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\cmeter\cmeter-ifspec.c" />
     <ClCompile Include="icm\xtradev\core\core-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\core\core-ifspec.c" />
     <ClCompile Include="icm\xtradev\inductor\inductor-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\inductor\inductor-ifspec.c" />
     <ClCompile Include="icm\xtradev\lcouple\lcouple-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\lcouple\lcouple-ifspec.c" />
     <ClCompile Include="icm\xtradev\lmeter\lmeter-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\lmeter\lmeter-ifspec.c" />
     <ClCompile Include="icm\xtradev\potentiometer\potentiometer-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\potentiometer\potentiometer-ifspec.c" />
     <ClCompile Include="icm\xtradev\zener\zener-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\zener\zener-ifspec.c" />
     <ClCompile Include="icm\xtradev\memristor\memristor-cfunc.c">
-      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\memristor\memristor-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+    <ClCompile Include="..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\xspice\icm\xtradev\aswitch\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\aswitch\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\capacitor\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\capacitor\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\cmeter\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\cmeter\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\core\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\core\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\inductor\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\inductor\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\lcouple\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\lcouple\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\lmeter\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\lmeter\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\potentiometer\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\potentiometer\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\zener\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\zener\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtradev\memristor\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtradev\memristor\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\aswitch\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\aswitch\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\capacitor\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\capacitor\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\cmeter\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\cmeter\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\core\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\core\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\inductor\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\inductor\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\lcouple\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\lcouple\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\lmeter\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\lmeter\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\potentiometer\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\potentiometer\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\zener\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\zener\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtradev\memristor\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtradev\memristor\ifspec.ifs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

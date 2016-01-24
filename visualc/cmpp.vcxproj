@@ -79,7 +79,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;YY_NO_UNISTD_H;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\src\xspice\cmpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\cmpp</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -96,7 +96,7 @@
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\src\xspice\cmpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\cmpp</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -117,7 +117,7 @@
       <ExceptionHandling>false</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>..\..\src\xspice\cmpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\cmpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -133,7 +133,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;YY_NO_UNISTD_H;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <CompileAs>CompileAsC</CompileAs>
-      <AdditionalIncludeDirectories>..\..\src\xspice\cmpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\xspice\cmpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -142,32 +142,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\src\xspice\cmpp\ifs_yacc.y;..\..\src\xspice\cmpp\mod_yacc.y">
+    <CustomBuild Include="..\src\xspice\cmpp\ifs_yacc.y;..\src\xspice\cmpp\mod_yacc.y">
       <Message>invoke win_bison.exe for %(Identity)</Message>
-      <Command>..\..\..\flex-bison\win_bison.exe --output=%(Filename).c --defines=%(Filename).h %(Identity) || exit 1</Command>
+      <Command>..\..\flex-bison\win_bison.exe --output=%(Filename).c --defines=%(Filename).h %(Identity) || exit 1</Command>
       <Outputs>%(Filename).c;%(Filename).h</Outputs>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\xspice\cmpp\ifs_lex.l;..\..\src\xspice\cmpp\mod_lex.l">
+    <CustomBuild Include="..\src\xspice\cmpp\ifs_lex.l;..\src\xspice\cmpp\mod_lex.l">
       <Message>invoke win_flex.exe for %(Identity)</Message>
-      <Command>..\..\..\flex-bison\win_flex.exe  %(Identity) || exit 1</Command>
+      <Command>..\..\flex-bison\win_flex.exe  %(Identity) || exit 1</Command>
       <Outputs>%(Filename).c;%(Filename).h</Outputs>
     </CustomBuild>
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\xspice\cmpp\cmpp.h" />
-    <ClInclude Include="..\..\src\xspice\cmpp\ifs_yacc_y.h" />
+    <ClInclude Include="..\src\xspice\cmpp\cmpp.h" />
+    <ClInclude Include="..\src\xspice\cmpp\ifs_yacc_y.h" />
     <ClInclude Include="ifs_yacc.h" />
     <ClInclude Include="mod_yacc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\xspice\cmpp\main.c" />
-    <ClCompile Include="..\..\src\xspice\cmpp\pp_ifs.c" />
-    <ClCompile Include="..\..\src\xspice\cmpp\pp_lst.c" />
-    <ClCompile Include="..\..\src\xspice\cmpp\pp_mod.c" />
-    <ClCompile Include="..\..\src\xspice\cmpp\read_ifs.c" />
-    <ClCompile Include="..\..\src\xspice\cmpp\util.c" />
-    <ClCompile Include="..\..\src\xspice\cmpp\writ_ifs.c" />
+    <ClCompile Include="..\src\xspice\cmpp\main.c" />
+    <ClCompile Include="..\src\xspice\cmpp\pp_ifs.c" />
+    <ClCompile Include="..\src\xspice\cmpp\pp_lst.c" />
+    <ClCompile Include="..\src\xspice\cmpp\pp_mod.c" />
+    <ClCompile Include="..\src\xspice\cmpp\read_ifs.c" />
+    <ClCompile Include="..\src\xspice\cmpp\util.c" />
+    <ClCompile Include="..\src\xspice\cmpp\writ_ifs.c" />
     <ClCompile Include="ifs_yacc.c" />
     <ClCompile Include="lex.ifs_yy.c" />
     <ClCompile Include="lex.mod_yy.c" />

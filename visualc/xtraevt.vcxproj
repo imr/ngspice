@@ -93,7 +93,7 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -123,7 +123,7 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -150,7 +150,7 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -182,7 +182,7 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -212,17 +212,17 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
     <ClCompile Include="icm\xtraevt\real_gain\real_gain-ifspec.c" />
     <ClCompile Include="icm\xtraevt\real_to_v\real_to_v-cfunc.c" />
     <ClCompile Include="icm\xtraevt\real_to_v\real_to_v-ifspec.c" />
-    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+    <ClCompile Include="..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\xspice\icm\xtraevt\d_to_real\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtraevt\d_to_real\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtraevt\real_delay\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtraevt\real_delay\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtraevt\real_gain\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtraevt\real_gain\ifspec.ifs" />
-    <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtraevt\d_to_real\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtraevt\d_to_real\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtraevt\real_delay\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtraevt\real_delay\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtraevt\real_gain\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtraevt\real_gain\ifspec.ifs" />
+    <None Include="..\src\xspice\icm\xtraevt\real_to_v\cfunc.mod" />
+    <None Include="..\src\xspice\icm\xtraevt\real_to_v\ifspec.ifs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
