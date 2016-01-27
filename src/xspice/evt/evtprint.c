@@ -43,6 +43,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/cpstd.h"
 #include "ngspice/cpextern.h"
+#include "ngspice/fteext.h"
 
 #include "ngspice/mif.h"
 #include "ngspice/evt.h"
@@ -50,6 +51,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/evtproto.h"
 
+#include <time.h>
 
 
 static int get_index(char *node_name);
@@ -70,7 +72,7 @@ This is a simple prototype implementation of the
 eprint command for testing purposes.  It is currently lacking
 in the following areas:
 
-1)  It accepts only up to 16 nodes.
+1)  It accepts only up to 93 nodes. (EPRINT_MAXARGS)
 
 2)  It does not support the selected printing of different
     members of a user-defined data struct.
@@ -87,7 +89,7 @@ in the following areas:
 
 
 
-#define EPRINT_MAXARGS  32
+#define EPRINT_MAXARGS  93
 
 
 void EVTprint(
@@ -137,7 +139,7 @@ void EVTprint(
         return;
     }
     if(nargs > EPRINT_MAXARGS) {
-        printf("ERROR - eprint currently limited to 32 arguments\n");
+        fprintf(cp_err, "ERROR - eprint currently limited to %d arguments\n", EPRINT_MAXARGS);
         return;
     }
 
@@ -155,14 +157,14 @@ void EVTprint(
         node_name[i] = w->wl_word;
         node_index[i] = get_index(node_name[i]);
         if(node_index[i] < 0) {
-            printf("ERROR - Node %s is not an event node.\n", node_name[i]);
+            fprintf(cp_err, "ERROR - Node %s is not an event node.\n", node_name[i]);
             return;
         }
         udn_index[i] = node_table[node_index[i]]->udn_index;
         if (ckt->evt->data.node)
             node_data[i] = ckt->evt->data.node->head[node_index[i]];
         else  {
-            printf("ERROR - No node data: simulation not yet run?\n");
+            fprintf(cp_err, "ERROR - No node data: simulation not yet run?\n");
             return;
         }
         node_value[i] = "";
@@ -377,4 +379,294 @@ static void print_data(
     for(i = 0; i < nargs; i++)
         out_printf("    %s", node_value[i]);
     out_printf("\n");
+}
+
+
+/* print all event node names */
+void
+EVTdisplay(wordlist *wl)
+{
+    Evt_Node_Info_t  *node;
+    CKTcircuit       *ckt;
+
+    NG_IGNORE(wl);
+    ckt = g_mif_info.ckt;
+    if (!ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return;
+    }
+    node = ckt->evt->info.node_list;
+    out_init();
+    if (!node) {
+        out_printf("No event node available!\n");
+        return;
+    }
+    out_printf("List of event nodes\n");
+    while (node) {
+        out_printf("%s\n", node->name);
+        node = node->next;
+    }
+}
+
+
+/* xspice valid 12-state values (idndig.c):
+ *   0s, 1s, Us, 0r, 1r, Ur, 0z, 1z, Uz, 0u, 1u, Uu
+ *   0   1   x   0   1   x   0   1   z   0   1   x
+ *
+ * tentative vcd translation, return value:
+ *   0: digital value, 1: real number, 2: unknown
+ */
+
+static int
+get_vcdval(char *xspiceval, char **newval)
+{
+    int i, err;
+    double retval;
+
+    static char *map[] = {
+        "0s", "1s", "Us",
+        "0r", "1r", "Ur",
+        "0z", "1z", "Uz",
+        "0u", "1u", "Uu"
+    };
+    static char *returnmap[] = {
+        "0", "1", "x",
+        "0", "1", "x",
+        "0", "1", "z",
+        "0", "1", "x"
+    };
+
+    for (i = 0; i < 12; i++)
+        if (eq(xspiceval, map[i])) {
+            *newval = copy(returnmap[i]);
+            return 0;
+        }
+
+    /* is it a real number ? */
+    retval = INPevaluate(&xspiceval, &err, 1);
+    if (err) {
+        *newval = copy("unknown");
+        return 2;
+    }
+    *newval = tprintf("%.16g", retval);
+    return 1;
+}
+
+
+#ifdef _MSC_VER
+#define time _time64
+#define localtime _localtime64
+#endif
+
+/*
+ * A simple vcd file printer.
+ * command 'eprvcd a0 a1 a2 b0 b1 b2 clk > myvcd.vcd'
+ *   prints the event nodes listed to file myvcd.vcd
+ *   which then may be viewed with an vcd viewer,
+ *     for example 'gtkwave'
+ * Still missing:
+ *   hierarchy, vector variables
+ */
+
+void
+EVTprintvcd(wordlist *wl)
+{
+    int i;
+    int nargs;
+
+    wordlist    *w;
+
+    char        *node_name[EPRINT_MAXARGS];
+    int         node_index[EPRINT_MAXARGS];
+    int         udn_index[EPRINT_MAXARGS];
+    Evt_Node_t  *node_data[EPRINT_MAXARGS];
+    char        *node_value[EPRINT_MAXARGS];
+    char        *old_node_value[EPRINT_MAXARGS];
+    char        node_ident[EPRINT_MAXARGS + 1];
+
+    CKTcircuit  *ckt;
+
+    Evt_Node_Info_t  **node_table;
+
+    Mif_Boolean_t    more;
+
+    double      step = 0.0;
+    double      next_step;
+    double      this_step;
+
+    char        *value;
+
+    /* Count the number of arguments to the command */
+    nargs = 0;
+    for (w = wl; w; w = w->wl_next)
+        nargs++;
+
+    if (nargs < 1) {
+        printf("Usage: eprvcd <node1> <node2> ...\n");
+        return;
+    }
+    if (nargs > EPRINT_MAXARGS) {
+        fprintf(cp_err, "ERROR - eprvcd currently limited to %d arguments\n", EPRINT_MAXARGS);
+        return;
+    }
+
+    /* Get needed pointers */
+    ckt = g_mif_info.ckt;
+    if (!ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return;
+    }
+    if (!ckt->evt->data.node) {
+      fprintf(cp_err, "ERROR - No node data: simulation not yet run?\n");
+      return;
+    }
+    node_table = ckt->evt->info.node_table;
+
+    /* Get data for each argument */
+    w = wl;
+    for (i = 0; i < nargs; i++) {
+        node_name[i] = w->wl_word;
+        node_index[i] = get_index(node_name[i]);
+        if (node_index[i] < 0) {
+            fprintf(cp_err, "ERROR - Node %s is not an event node.\n", node_name[i]);
+            return;
+        }
+        udn_index[i] = node_table[node_index[i]]->udn_index;
+
+        node_data[i] = ckt->evt->data.node->head[node_index[i]];
+        node_value[i] = "";
+        w = w->wl_next;
+    }
+
+    /* generate the vcd identifier code made of the printable
+       ASCII character set from ! to ~ (decimal 33 to 126) */
+    for (i = 0; i < nargs; i++)
+        node_ident[i] = (char) ('!' + i);
+    node_ident[i] = '\0';
+
+    out_init();
+
+    /* get actual time */
+    time_t ltime;
+    char datebuff[80];
+    struct tm *my_time;
+
+    time(&ltime);
+    /* Obtain the local time: */
+    my_time = localtime(&ltime);
+    /* time output format according to vcd spec */
+    strftime(datebuff, sizeof(datebuff), "%B %d, %Y %H:%M:%S", my_time);
+    out_printf("$date %s $end\n", datebuff);
+
+    out_printf("$version %s %s $end\n", ft_sim->simulator, ft_sim->version);
+
+    /* get the sim time resolution */
+    char *unit;
+    double scale;
+    double tstop = ckt->CKTfinalTime;
+    if (tstop < 1e-8) {
+        unit = "fs";
+        scale = 1e15;
+    }
+    else if (tstop < 1e-5) {
+        unit = "ps";
+        scale = 1e12;
+    }
+    else if (tstop < 1e-2) {
+        unit = "ns";
+        scale = 1e9;
+    }
+    else {
+        unit = "us";
+        scale = 1e6;
+    }
+    out_printf("$timescale 1 %s $end\n", unit);
+
+    /* Scan the node data. Go for printing using $dumpvars
+       for the initial values.  Also, determine if there is
+       more data following it and if so, what the next step is. */
+    more = MIF_FALSE;
+    next_step = 1e30;
+    for (i = 0; i < nargs; i++) {
+        step = node_data[i]->step;
+        g_evt_udn_info[udn_index[i]]->print_val
+            (node_data[i]->node_value, "all", &value);
+        old_node_value[i] = node_value[i] = value;
+        node_data[i] = node_data[i]->next;
+        if (node_data[i]) {
+            more = MIF_TRUE;
+            if (next_step > node_data[i]->step)
+                next_step = node_data[i]->step;
+        }
+    }
+
+    for (i = 0; i < nargs; i++) {
+        char *buf;
+        if (get_vcdval(node_value[i], &buf) == 1)
+            /* real number format */
+            out_printf("$var real 1 %c %s $end\n", node_ident[i], node_name[i]);
+        else
+            /* digital data format */
+            out_printf("$var wire 1 %c %s $end\n", node_ident[i], node_name[i]);
+        tfree(buf);
+    }
+
+
+    out_printf("$enddefinitions $end\n");
+
+    out_printf("#%d\n", (int)(step * scale));
+    /* first set of data for initialization
+       or if only op has been calculated */
+    out_printf("$dumpvars\n");
+    for (i = 0; i < nargs; i++) {
+        char *buf;
+        if (get_vcdval(node_value[i], &buf) == 1)
+            /* real number format */
+            out_printf("r%s %c\n", buf, node_ident[i]);
+        else
+            /* digital data format */
+            out_printf("%s%c\n", buf, node_ident[i]);
+        tfree(buf);
+    }
+    out_printf("$end\n");
+
+    /* While there is more data, get the next values and print */
+    while (more) {
+
+        more = MIF_FALSE;
+        this_step = next_step;
+        next_step = 1e30;
+
+        for (i = 0; i < nargs; i++)
+            if (node_data[i]) {
+                if (node_data[i]->step == this_step) {
+                    g_evt_udn_info[udn_index[i]]->print_val
+                        (node_data[i]->node_value, "all", &value);
+                    node_value[i] = value;
+                    node_data[i] = node_data[i]->next;
+                }
+                if (node_data[i]) {
+                    more = MIF_TRUE;
+                    if (next_step > node_data[i]->step)
+                        next_step = node_data[i]->step;
+                }
+            }
+
+        /* timestamp */
+        out_printf("#%d\n", (int)(this_step * scale));
+        /* print only values that have changed */
+        for (i = 0; i < nargs; i++) {
+            if (!eq(old_node_value[i], node_value[i])) {
+                char *buf;
+                if (get_vcdval(node_value[i], &buf) == 1)
+                    out_printf("r%s %c\n", buf, node_ident[i]);
+                else
+                    out_printf("%s%c\n", buf, node_ident[i]);
+                old_node_value[i] = node_value[i];
+                tfree(buf);
+            }
+        }
+    } /* end while there is more data */
+
+    out_printf("\n\n");
 }
