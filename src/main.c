@@ -438,6 +438,18 @@ EVTprint(wordlist *wl)
     NG_IGNORE(wl);
 }
 
+void
+EVTprintvcd(wordlist *wl)
+{
+    NG_IGNORE(wl);
+}
+
+void
+EVTdisplay(void)
+{
+
+}
+
 struct dvec *
 EVTfindvec(char *node) {
     NG_IGNORE(node);
