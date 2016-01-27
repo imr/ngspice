@@ -26,7 +26,7 @@ abridge3  real_node2 analog_node  node_bridge3
 *
 rout  analog_node 0  1k
 *
-again %vnam v1 %i i_out gain_block
+again2 %vnam v1 %i i_out gain_block
 .model gain_block gain (gain=10)
 ri_out i_out 0 1k
 *
