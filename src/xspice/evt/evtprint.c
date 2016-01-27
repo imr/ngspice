@@ -143,6 +143,10 @@ void EVTprint(
 
     /* Get needed pointers */
     ckt = g_mif_info.ckt;
+    if (!ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return;
+    }
     node_table = ckt->evt->info.node_table;
 
     /* Get data for each argument */
@@ -319,6 +323,10 @@ static int get_index(
     index = 0;
 
     ckt = g_mif_info.ckt;
+    if (!ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return(-1);
+    }
     node = ckt->evt->info.node_list;
 
     while(node) {
