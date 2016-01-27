@@ -92,6 +92,10 @@ int EVTload(CKTcircuit *ckt, int inst_index);
 
 void EVTprint(wordlist *wl);
 
+void EVTprintvcd(wordlist *wl);
+
+void EVTdisplay(void);
+
 int EVTop(
     CKTcircuit *ckt,
     long       firstmode,
