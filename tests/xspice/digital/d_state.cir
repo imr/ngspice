@@ -24,6 +24,7 @@ set noaskquit
 set noacct
 tran 100ps 20ns
 eprint clk up reset o1 o2
+eprvcd clk up reset o1 o2 > myfirst.vcd
 .endc
 
 .end
