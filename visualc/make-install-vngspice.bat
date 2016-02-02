@@ -10,53 +10,59 @@ REM start /w "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\de
 if "%1" == "64" goto b64
 if "%2" == "64" goto b64
 
-mkdir c:\Spice\bin
-mkdir c:\Spice\lib\ngspice
-mkdir C:\Spice\share\ngspice\scripts
+set dst=c:\Spice
+set cmsrc=.\codemodels\Win32\Release
 
-copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.OPENMP\vcomp140.dll" c:\Spice\bin\
-copy .\codemodels\Win32\Release\analog.cm c:\Spice\lib\ngspice\analog.cm
-copy .\codemodels\Win32\Release\digital.cm c:\Spice\lib\ngspice\digital.cm
-copy .\codemodels\Win32\Release\table.cm c:\Spice\lib\ngspice\table.cm
-copy .\codemodels\Win32\Release\xtraevt.cm c:\Spice\lib\ngspice\xtraevt.cm
-copy .\codemodels\Win32\Release\xtradev.cm c:\Spice\lib\ngspice\xtradev.cm
-copy .\codemodels\Win32\Release\spice2poly.cm c:\Spice\lib\ngspice\spice2poly.cm
-copy .\spinit C:\Spice\share\ngspice\scripts\spinit
+mkdir %dst%\bin
+mkdir %dst%\lib\ngspice
+mkdir %dst%\share\ngspice\scripts
+
+copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x86\Microsoft.VC140.OPENMP\vcomp140.dll" %dst%\bin\
+copy %cmsrc%\analog.cm %dst%\lib\ngspice\analog.cm
+copy %cmsrc%\digital.cm %dst%\lib\ngspice\digital.cm
+copy %cmsrc%\table.cm %dst%\lib\ngspice\table.cm
+copy %cmsrc%\xtraevt.cm %dst%\lib\ngspice\xtraevt.cm
+copy %cmsrc%\xtradev.cm %dst%\lib\ngspice\xtradev.cm
+copy %cmsrc%\spice2poly.cm %dst%\lib\ngspice\spice2poly.cm
+copy .\spinit %dst%\share\ngspice\scripts\spinit
 
 if "%1" == "fftw" goto copy2
 if "%2" == "fftw" goto copy2
 
-copy .\vngspice\ReleaseOMP.Win32\ngspice.exe c:\Spice\bin\
+copy .\vngspice\ReleaseOMP.Win32\ngspice.exe %dst%\bin\
 goto end
 
 :copy2
-copy .\vngspice-fftw\ReleaseOMP.Win32\ngspice.exe c:\Spice\bin\
-copy ..\..\fftw-3.3.4-dll32\libfftw3-3.dll C:\Spice\bin\
+copy .\vngspice-fftw\ReleaseOMP.Win32\ngspice.exe %dst%\bin\
+copy ..\..\fftw-3.3.4-dll32\libfftw3-3.dll %dst%\bin\
 goto end
 
 :b64
 
-mkdir c:\Spice64\bin
-mkdir c:\Spice64\lib\ngspice
-mkdir C:\Spice64\share\ngspice\scripts
+set dst=c:\Spice64
+set cmsrc=.\codemodels\x64\Release
 
-copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.OPENMP\vcomp140.dll" c:\Spice64\bin\
-copy .\codemodels\x64\Release\analog64.cm c:\Spice64\lib\ngspice\analog.cm
-copy .\codemodels\x64\Release\digital64.cm c:\Spice64\lib\ngspice\digital.cm
-copy .\codemodels\x64\Release\table64.cm c:\Spice64\lib\ngspice\table.cm
-copy .\codemodels\x64\Release\xtraevt64.cm c:\Spice64\lib\ngspice\xtraevt.cm
-copy .\codemodels\x64\Release\xtradev64.cm c:\Spice64\lib\ngspice\xtradev.cm
-copy .\codemodels\x64\Release\spice2poly64.cm c:\Spice64\lib\ngspice\spice2poly.cm
-copy .\spinit64 C:\Spice64\share\ngspice\scripts\spinit
+mkdir %dst%\bin
+mkdir %dst%\lib\ngspice
+mkdir %dst%\share\ngspice\scripts
+
+copy "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.OPENMP\vcomp140.dll" %dst%\bin\
+copy %cmsrc%\analog64.cm %dst%\lib\ngspice\analog.cm
+copy %cmsrc%\digital64.cm %dst%\lib\ngspice\digital.cm
+copy %cmsrc%\table64.cm %dst%\lib\ngspice\table.cm
+copy %cmsrc%\xtraevt64.cm %dst%\lib\ngspice\xtraevt.cm
+copy %cmsrc%\xtradev64.cm %dst%\lib\ngspice\xtradev.cm
+copy %cmsrc%\spice2poly64.cm %dst%\lib\ngspice\spice2poly.cm
+copy .\spinit64 %dst%\share\ngspice\scripts\spinit
 
 if "%1" == "fftw" goto copy2-64
 if "%2" == "fftw" goto copy2-64
 
-copy .\vngspice\ReleaseOMP.x64\ngspice.exe c:\Spice64\bin\
+copy .\vngspice\ReleaseOMP.x64\ngspice.exe %dst%\bin\
 goto end
 
 :copy2-64
-copy .\vngspice-fftw\ReleaseOMP.x64\ngspice.exe c:\Spice64\bin\
-copy ..\..\fftw-3.3.4-dll64\libfftw3-3.dll C:\Spice64\bin\
+copy .\vngspice-fftw\ReleaseOMP.x64\ngspice.exe %dst%\bin\
+copy ..\..\fftw-3.3.4-dll64\libfftw3-3.dll %dst%\bin\
 
 :end
