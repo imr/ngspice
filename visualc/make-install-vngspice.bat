@@ -31,7 +31,7 @@ goto end
 
 :copy2
 copy .\vngspice-fftw\ReleaseOMP.Win32\ngspice.exe c:\Spice\bin\ngspice.exe
-copy "..\..\fftw-3.3.4-dll32\libfftw3-3.dll" "C:\Spice\bin\libfftw3-3.dll"
+copy ..\..\fftw-3.3.4-dll32\libfftw3-3.dll C:\Spice\bin\libfftw3-3.dll
 goto end
 
 :b64
@@ -57,6 +57,6 @@ goto end
 
 :copy2-64
 copy .\vngspice-fftw\ReleaseOMP.x64\ngspice.exe c:\Spice64\bin\ngspice.exe
-copy "..\..\fftw-3.3.4-dll64\libfftw3-3.dll" "C:\Spice64\bin\libfftw3-3.dll"
+copy ..\..\fftw-3.3.4-dll64\libfftw3-3.dll C:\Spice64\bin\libfftw3-3.dll
 
 :end
