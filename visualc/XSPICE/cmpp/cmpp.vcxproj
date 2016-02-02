@@ -81,6 +81,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProfileGuidedDatabase />
+      <OutputFile>..\bin\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
