@@ -10,8 +10,26 @@
 /parse-bison.c
 /parse-bison.h
 
+/ifs_yacc.c
+/ifs_yacc.h
+
+/lex.ifs_yy.c
+/lex.mod_yy.c
+
+/mod_yacc.c
+/mod_yacc.h
+
 /vngspice
 /vngspice-fftw
 /sharedspice
+/spice2poly
+/analog
+/digital
+/xtradev
+/xtraevt
+/table
 
 /.vs
+
+/icm
+/cmpp

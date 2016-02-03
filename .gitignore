@@ -58,7 +58,3 @@ Makefile.in
 /debug*
 
 /visualc-tcl*
-/visualc/console_release
-/visualc/XSPICE/icm
-/visualc/XSPICE/cmpp
-/visualc/XSPICE/XSPICE/intermediate
