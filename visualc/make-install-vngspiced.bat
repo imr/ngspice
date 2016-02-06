@@ -4,7 +4,6 @@ REM copy ngspice.exe, codemodels *.cm to C:\Spiced or Spice64d
 REM arguments to make-install-vngspiced:
 REM %1: path to ngspice.exe, %2, %3: fftw or 64 (64 bit)
 
-
 if "%2" == "64" goto b64
 if "%3" == "64" goto b64
 
