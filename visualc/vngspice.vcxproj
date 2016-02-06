@@ -562,7 +562,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspice.bat $(OutDir) $(OutDir) 64
+      make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -610,7 +610,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspice.bat $(OutDir) $(OutDir)</Command>
+      <Command>make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
