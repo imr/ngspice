@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>table</ProjectName>
-    <ProjectGuid>{7A6473F5-AFED-4910-88D2-6204DA829832}</ProjectGuid>
+    <ProjectName>xtraevt</ProjectName>
+    <ProjectGuid>{13500662-AF0B-4AB6-9AF9-BC3E07B5C1C6}</ProjectGuid>
     <RootNamespace>icmanalog</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -66,8 +66,8 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <TargetExt>.cm</TargetExt>
-    <OutDir>$(ProjectName)\$(Configuration).$(Platform)\</OutDir>
-    <IntDir>$(ProjectName)\$(Configuration).$(Platform)\obj\</IntDir>
+    <OutDir>$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>true</GenerateManifest>
@@ -77,22 +77,25 @@
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)64</TargetName>
     <GenerateManifest>true</GenerateManifest>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)64</TargetName>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <PreBuildEvent>
       <Message>generate cfunc.c and ifspec.c files</Message>
-      <Command>call .\aux-cfunc.bat $(ProjectName)</Command>
+      <Command>call .\aux-cfunc.bat $(ProjectName)
+call .\aux-udnfunc.bat $(ProjectName)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -122,7 +125,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -149,7 +152,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -181,7 +184,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>icm\$(ProjectName);include;..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -201,21 +204,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="icm\table\table2D\table2D-cfunc.c">
-      <AdditionalIncludeDirectories>..\src\xspice\icm\$(ProjectName);..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="icm\table\table2D\table2D-ifspec.c" />
-    <ClCompile Include="icm\table\table3D\table3D-cfunc.c">
-      <AdditionalIncludeDirectories>..\src\xspice\icm\$(ProjectName);..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="icm\table\table3D\table3D-ifspec.c" />
-    <ClCompile Include="..\src\xspice\icm\dlmain.c" />
+    <ClCompile Include="icm\xtraevt\d_to_real\d_to_real-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\d_to_real\d_to_real-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\int\int-udnfunc.c" />
+    <ClCompile Include="icm\xtraevt\real\real-udnfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_delay\real_delay-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_delay\real_delay-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\real_gain\real_gain-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_gain\real_gain-ifspec.c" />
+    <ClCompile Include="icm\xtraevt\real_to_v\real_to_v-cfunc.c" />
+    <ClCompile Include="icm\xtraevt\real_to_v\real_to_v-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\xspice\icm\table\table2D\cfunc.mod" />
-    <None Include="..\src\xspice\icm\table\table2D\ifspec.ifs" />
-    <None Include="..\src\xspice\icm\table\table3D\cfunc.mod" />
-    <None Include="..\src\xspice\icm\table\table3D\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\d_to_real\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\d_to_real\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_delay\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_delay\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_gain\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_gain\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\ifspec.ifs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
