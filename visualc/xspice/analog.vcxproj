@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>analog</ProjectName>
+    <ProjectGuid>{8271FEA2-8AC0-4B6D-BAEA-A503D37B5DB2}</ProjectGuid>
+    <RootNamespace>icmanalog</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <TargetExt>.cm</TargetExt>
+    <OutDir>$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)xspice\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <GenerateManifest>true</GenerateManifest>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)64</TargetName>
+    <GenerateManifest>true</GenerateManifest>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)64</TargetName>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <PreBuildEvent>
+      <Message>generate cfunc.c and ifspec.c files</Message>
+      <Command>call .\aux-cfunc.bat $(ProjectName)</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>
+      </AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <NoEntryPoint>false</NoEntryPoint>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <NoEntryPoint>false</NoEntryPoint>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;CIDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AssemblyDebug>
+      </AssemblyDebug>
+      <SubSystem>Windows</SubSystem>
+      <NoEntryPoint>false</NoEntryPoint>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <NoEntryPoint>false</NoEntryPoint>
+      <ImportLibrary>$(TargetDir)$(TargetName).lib</ImportLibrary>
+      <TargetMachine>MachineX64</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="icm\analog\climit\climit-cfunc.c" />
+    <ClCompile Include="icm\analog\climit\climit-ifspec.c" />
+    <ClCompile Include="icm\analog\divide\divide-cfunc.c" />
+    <ClCompile Include="icm\analog\divide\divide-ifspec.c" />
+    <ClCompile Include="icm\analog\d_dt\d_dt-cfunc.c" />
+    <ClCompile Include="icm\analog\d_dt\d_dt-ifspec.c" />
+    <ClCompile Include="icm\analog\gain\gain-cfunc.c" />
+    <ClCompile Include="icm\analog\gain\gain-ifspec.c" />
+    <ClCompile Include="icm\analog\hyst\hyst-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\hyst\hyst-ifspec.c" />
+    <ClCompile Include="icm\analog\ilimit\ilimit-cfunc.c" />
+    <ClCompile Include="icm\analog\ilimit\ilimit-ifspec.c" />
+    <ClCompile Include="icm\analog\int\int-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\int\int-ifspec.c" />
+    <ClCompile Include="icm\analog\limit\limit-cfunc.c" />
+    <ClCompile Include="icm\analog\limit\limit-ifspec.c" />
+    <ClCompile Include="icm\analog\mult\mult-cfunc.c" />
+    <ClCompile Include="icm\analog\mult\mult-ifspec.c" />
+    <ClCompile Include="icm\analog\multi_input_pwl\multi_input_pwl-cfunc.c" />
+    <ClCompile Include="icm\analog\multi_input_pwl\multi_input_pwl-ifspec.c" />
+    <ClCompile Include="icm\analog\oneshot\oneshot-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\oneshot\oneshot-ifspec.c" />
+    <ClCompile Include="icm\analog\pwl\pwl-cfunc.c" />
+    <ClCompile Include="icm\analog\pwl\pwl-ifspec.c" />
+    <ClCompile Include="icm\analog\sine\sine-cfunc.c" />
+    <ClCompile Include="icm\analog\sine\sine-ifspec.c" />
+    <ClCompile Include="icm\analog\slew\slew-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\analog\slew\slew-ifspec.c" />
+    <ClCompile Include="icm\analog\square\square-cfunc.c" />
+    <ClCompile Include="icm\analog\square\square-ifspec.c" />
+    <ClCompile Include="icm\analog\summer\summer-cfunc.c" />
+    <ClCompile Include="icm\analog\summer\summer-ifspec.c" />
+    <ClCompile Include="icm\analog\s_xfer\s_xfer-cfunc.c" />
+    <ClCompile Include="icm\analog\s_xfer\s_xfer-ifspec.c" />
+    <ClCompile Include="icm\analog\triangle\triangle-cfunc.c" />
+    <ClCompile Include="icm\analog\triangle\triangle-ifspec.c" />
+    <ClCompile Include="icm\analog\file_source\file_source-cfunc.c" />
+    <ClCompile Include="icm\analog\file_source\file_source-ifspec.c" />
+    <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\xspice\icm\analog\climit\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\climit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\divide\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\divide\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\d_dt\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\d_dt\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\gain\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\gain\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\hyst\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\hyst\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\ilimit\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\ilimit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\int\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\int\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\limit\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\limit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\mult\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\mult\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\multi_input_pwl\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\multi_input_pwl\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\oneshot\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\oneshot\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\pwl\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\pwl\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\sine\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\sine\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\slew\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\slew\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\square\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\square\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\summer\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\summer\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\s_xfer\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\s_xfer\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\triangle\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\triangle\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\file_source\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\file_source\ifspec.ifs" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

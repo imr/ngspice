@@ -4,7 +4,15 @@
 #
 # (compile "git ls-files -i --exclude-standard")
 
+/codemodels/
 /tmp-bison/
+
+/xspice/bin/
+/xspice/cmpp/Debug/
+/xspice/cmpp/Release/
+/xspice/cmpp/tmp-bison/
+/xspice/icm/
+/xspice/intermediate/
 
 /vngspice/
 /vngspice-fftw/
