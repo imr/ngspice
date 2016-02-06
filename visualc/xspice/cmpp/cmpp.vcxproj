@@ -144,21 +144,21 @@
   <ItemGroup>
     <CustomBuild Include="..\..\..\src\xspice\cmpp\ifs_yacc.y;..\..\..\src\xspice\cmpp\mod_yacc.y">
       <Message>invoke win_bison.exe for %(Identity)</Message>
-      <Command>..\..\..\..\flex-bison\win_bison.exe --output=%(Filename).c --defines=%(Filename).h %(Identity) || exit 1</Command>
-      <Outputs>%(Filename).c;%(Filename).h</Outputs>
+      <Command>..\..\..\..\flex-bison\win_bison.exe --output=.\tmp-bison\%(Filename).c --defines=.\tmp-bison\%(Filename).h %(Identity) || exit 1</Command>
+      <Outputs>.\tmp-bison\%(Filename).c;.\tmp-bison\%(Filename).h</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\..\..\src\xspice\cmpp\ifs_lex.l;..\..\..\src\xspice\cmpp\mod_lex.l">
       <Message>invoke win_flex.exe for %(Identity)</Message>
-      <Command>..\..\..\..\flex-bison\win_flex.exe  %(Identity) || exit 1</Command>
-      <Outputs>%(Filename).c;%(Filename).h</Outputs>
+      <Command>..\..\..\..\flex-bison\win_flex.exe --outfile=.\tmp-bison\%(Filename).c --header-file=.\tmp-bison\%(Filename).h %(Identity) || exit 1</Command>
+      <Outputs>.\tmp-bison\%(Filename).c;.\tmp-bison\%(Filename).h</Outputs>
     </CustomBuild>
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\xspice\cmpp\cmpp.h" />
     <ClInclude Include="..\..\..\src\xspice\cmpp\ifs_yacc_y.h" />
-    <ClInclude Include="ifs_yacc.h" />
-    <ClInclude Include="mod_yacc.h" />
+    <ClInclude Include=".\tmp-bison\ifs_yacc.h" />
+    <ClInclude Include=".\tmp-bison\mod_yacc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\xspice\cmpp\main.c" />
@@ -168,10 +168,10 @@
     <ClCompile Include="..\..\..\src\xspice\cmpp\read_ifs.c" />
     <ClCompile Include="..\..\..\src\xspice\cmpp\util.c" />
     <ClCompile Include="..\..\..\src\xspice\cmpp\writ_ifs.c" />
-    <ClCompile Include="ifs_yacc.c" />
-    <ClCompile Include="lex.ifs_yy.c" />
-    <ClCompile Include="lex.mod_yy.c" />
-    <ClCompile Include="mod_yacc.c" />
+    <ClCompile Include=".\tmp-bison\ifs_lex.c" />
+    <ClCompile Include=".\tmp-bison\ifs_yacc.c" />
+    <ClCompile Include=".\tmp-bison\mod_lex.c" />
+    <ClCompile Include=".\tmp-bison\mod_yacc.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
