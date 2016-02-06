@@ -235,7 +235,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspiced.bat</Command>
+      <Command>make-install-vngspiced.bat $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -282,7 +282,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspice.bat
+      make-install-vngspice.bat $(OutDir)
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -327,7 +327,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspiced.bat 64
+      make-install-vngspiced.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -380,7 +380,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspice.bat 64
+      make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -421,7 +421,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspiced.bat</Command>
+      <Command>make-install-vngspiced.bat $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
@@ -467,7 +467,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspice.bat</Command>
+      <Command>make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
@@ -511,7 +511,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspiced.bat 64
+      make-install-vngspiced.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -562,7 +562,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspice.bat 64
+      make-install-vngspice.bat $(OutDir) $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -610,7 +610,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspice.bat</Command>
+      <Command>make-install-vngspice.bat $(OutDir) $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
@@ -663,7 +663,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspice.bat 64
+      make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -711,7 +711,7 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>make-install-vngspice.bat</Command>
+      <Command>make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
@@ -762,7 +762,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-      make-install-vngspice.bat 64
+      make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
