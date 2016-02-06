@@ -4,11 +4,7 @@
 #
 # (compile "git ls-files -i --exclude-standard")
 
-/inpptree-parser.c
-/inpptree-parser.h
-
-/parse-bison.c
-/parse-bison.h
+/tmp-bison/
 
 /vngspice/
 /vngspice-fftw/
