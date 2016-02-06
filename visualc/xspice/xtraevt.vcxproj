@@ -67,7 +67,7 @@
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <TargetExt>.cm</TargetExt>
     <OutDir>$(SolutionDir)codemodels\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)XSPICE\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)xspice\intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>true</GenerateManifest>
