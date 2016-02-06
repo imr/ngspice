@@ -4,14 +4,18 @@
 #
 # (compile "git ls-files -i --exclude-standard")
 
-/inpptree-parser.c
-/inpptree-parser.h
+/codemodels/
+/tmp-bison/
 
-/parse-bison.c
-/parse-bison.h
+/xspice/bin/
+/xspice/cmpp/Debug/
+/xspice/cmpp/Release/
+/xspice/cmpp/tmp-bison/
+/xspice/icm/
+/xspice/intermediate/
 
-/vngspice
-/vngspice-fftw
-/sharedspice
+/vngspice/
+/vngspice-fftw/
+/sharedspice/
 
-/.vs
+/.vs/
