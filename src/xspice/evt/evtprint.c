@@ -521,6 +521,10 @@ EVTprintvcd(wordlist *wl)
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
+    if (!ckt->evt->data.node) {
+      fprintf(cp_err, "ERROR - No node data: simulation not yet run?\n");
+      return;
+    }
     node_table = ckt->evt->info.node_table;
 
     /* Get data for each argument */
@@ -533,21 +537,16 @@ EVTprintvcd(wordlist *wl)
             return;
         }
         udn_index[i] = node_table[node_index[i]]->udn_index;
-        if (ckt->evt->data.node)
-            node_data[i] = ckt->evt->data.node->head[node_index[i]];
-        else {
-            fprintf(cp_err, "ERROR - No node data: simulation not yet run?\n");
-            return;
-        }
+
+        node_data[i] = ckt->evt->data.node->head[node_index[i]];
         node_value[i] = "";
         w = w->wl_next;
     }
 
     /* generate the vcd identifier code made of the printable
-    ASCII character set from ! to ~ (decimal 33 to 126) */
-    for (i = 0; i < nargs; i++) {
-        node_ident[i] = (char) (i + 33);
-    }
+       ASCII character set from ! to ~ (decimal 33 to 126) */
+    for (i = 0; i < nargs; i++)
+        node_ident[i] = (char) ('!' + i);
     node_ident[i] = '\0';
 
     out_init();
