@@ -381,11 +381,12 @@ static void print_data(
 }
 
 /* print all event node names */
-void EVTdisplay(void)
+void EVTdisplay(wordlist *wl)
 {
     Evt_Node_Info_t     *node;
     CKTcircuit          *ckt;
 
+    NG_IGNORE(wl);
     ckt = g_mif_info.ckt;
     if (!ckt) {
         fprintf(cp_err, "Error: no circuit loaded.\n");

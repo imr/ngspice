@@ -94,7 +94,7 @@ void EVTprint(wordlist *wl);
 
 void EVTprintvcd(wordlist *wl);
 
-void EVTdisplay(void);
+void EVTdisplay(wordlist *wl);
 
 int EVTop(
     CKTcircuit *ckt,
