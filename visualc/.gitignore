@@ -10,9 +10,9 @@
 /parse-bison.c
 /parse-bison.h
 
-/vngspice
-/vngspice-fftw
-/sharedspice
+/vngspice/
+/vngspice-fftw/
+/sharedspice/
 
 /*.sln
-/.vs
+/.vs/
