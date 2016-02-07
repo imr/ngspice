@@ -238,24 +238,22 @@ struct comm spcp_coms[] = {
       arg_print,
       "[col] expr ... : Print vector values." } ,
 #ifdef XSPICE
-/* gtri - begin - wbk - add event print command */
     { "eprint", EVTprint, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       NULL,
       "node node ... : Print event values." } ,
     { "eprvcd", EVTprintvcd, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
-          NULL,
-          "node node ... : Print event values into vcd file." },
-    { "edisplay", EVTdisplay, FALSE, TRUE,
-      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 0, LOTS,
       NULL,
-      "node node ... : Print all nodes." },
-/* gtri - end - wbk - add event print command */
+      "node node ... : Print event values into vcd file." },
+    { "edisplay", EVTdisplay, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 0, 0,
+      NULL,
+      "node node ... : Print all event nodes." },
     { "codemodel", com_codemodel, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       NULL,
-      "library library ... : Loads the opus librarys." } ,
+      "library library ... : Loads the code model librarys." } ,
 #endif
 #ifdef DEVLIB
     { "use", com_use, FALSE, TRUE,
