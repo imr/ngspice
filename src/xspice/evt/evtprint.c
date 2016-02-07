@@ -543,7 +543,7 @@ void EVTprintvcd(
     out_init();
 
     /* get actual time */
-    long long ltime;
+    time_t ltime;
     char datebuff[80];
     struct tm *my_time;
 
