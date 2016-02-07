@@ -445,7 +445,7 @@ EVTprintvcd(wordlist *wl)
 }
 
 void
-EVTdisplay(void)
+EVTdisplay(wordlist *wl)
 {
 
 }
