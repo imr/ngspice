@@ -49,9 +49,14 @@ char rawfileBuf[RAWBUF_SIZE];
 char *last_used_rawfile = NULL;
 /*end saj */
 
-/* command "setcirc"
-'setcirc': print a list of circuits loaded
-'setcirc nn': switch to circuit number nn */
+
+/*
+ * command "setcirc"
+ *   print a list of circuits loaded
+ * command "setcirc <n>"
+ *   switch to circuit number <n>
+ */
+
 void
 com_scirc(wordlist *wl)
 {

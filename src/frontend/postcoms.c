@@ -930,9 +930,15 @@ DelPlotWindows(struct plot *pl)
 }
 
 
-/* 'setplot' : print a list of plots available
-   'setplot plotname' : make plotname the current plot
-   'setplot new' : create a new plot */
+/*
+ * command 'setplot'
+ *   print a list of plots available
+ * command 'setplot <plotname>'
+ *   make <plotname> the current plot
+ * command 'setplot new'
+ *   create a new plot
+ */
+
 void
 com_splot(wordlist *wl)
 {

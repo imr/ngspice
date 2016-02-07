@@ -53,6 +53,7 @@ NON-STANDARD FEATURES
 
 #include <time.h>
 
+
 static int get_index(char *node_name);
 
 static void print_data(
@@ -380,11 +381,13 @@ static void print_data(
     out_printf("\n");
 }
 
+
 /* print all event node names */
-void EVTdisplay(wordlist *wl)
+void
+EVTdisplay(wordlist *wl)
 {
-    Evt_Node_Info_t     *node;
-    CKTcircuit          *ckt;
+    Evt_Node_Info_t  *node;
+    CKTcircuit       *ckt;
 
     NG_IGNORE(wl);
     ckt = g_mif_info.ckt;
@@ -407,13 +410,15 @@ void EVTdisplay(wordlist *wl)
 
 
 /* xspice valid 12-state values (idndig.c):
-0s, 1s, Us, 0r, 1r, Ur, 0z, 1z, Uz, 0u, 1u, Uu
-0   1   x   0   1   x   0   1   z   0   1   x
-   tentative vcd translation
-return value:
-0: digital value, 1: real number, 2: unknown */
-static
-int get_vcdval(char *xspiceval, char **newval)
+ *   0s, 1s, Us, 0r, 1r, Ur, 0z, 1z, Uz, 0u, 1u, Uu
+ *   0   1   x   0   1   x   0   1   z   0   1   x
+ *
+ * tentative vcd translation, return value:
+ *   0: digital value, 1: real number, 2: unknown
+ */
+
+static int
+get_vcdval(char *xspiceval, char **newval)
 {
     int i, err;
     double retval;
@@ -423,12 +428,14 @@ int get_vcdval(char *xspiceval, char **newval)
         "0s", "1s", "Us",
         "0r", "1r", "Ur",
         "0z", "1z", "Uz",
-        "0u", "1u", "Uu" };
+        "0u", "1u", "Uu"
+    };
     static char *returnmap[] = {
         "0", "1", "x",
         "0", "1", "x",
         "0", "1", "z",
-        "0", "1", "x" };
+        "0", "1", "x"
+    };
 
     for (i = 0; i < 12; i++)
         if (eq(xspiceval, map[i])) {
@@ -453,16 +460,19 @@ int get_vcdval(char *xspiceval, char **newval)
 #define localtime _localtime64
 #endif
 
-/* A simple vcd file printer. The command
-   eprvcd a0 a1 a2 b0 b1 b2 clk > myvcd.vcd
-   prints the event nodes listed to file myvcd.vcd,
-   wwhich may be viewed by any vcd viewer like gtkwave */
+/*
+ * A simple vcd file printer.
+ * command 'eprvcd a0 a1 a2 b0 b1 b2 clk > myvcd.vcd'
+ *   prints the event nodes listed to file myvcd.vcd
+ *   which then may be viewed with an vcd viewer,
+ *     for example 'gtkwave'
+ * Still missing:
+ *   hierarchy, vector variables
+ */
 
-/* Still missing: hierarchy, vector variables */
-void EVTprintvcd(
-    wordlist *wl)    /* The command line entered by user */
+void
+EVTprintvcd(wordlist *wl)
 {
-
     int i;
     int nargs;
 
@@ -662,7 +672,7 @@ void EVTprintvcd(
                     out_printf("r%s %c\n", buf, node_ident[i]);
                 else
                     out_printf("%s%c\n", buf, node_ident[i]);
-                //                out_printf("%s%c\n", get_vcdval(node_value[i]), node_ident[i]);
+                // out_printf("%s%c\n", get_vcdval(node_value[i]), node_ident[i]);
                 old_node_value[i] = node_value[i];
                 tfree(buf);
             }

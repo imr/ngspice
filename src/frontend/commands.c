@@ -253,13 +253,13 @@ struct comm spcp_coms[] = {
     { "codemodel", com_codemodel, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       NULL,
-      "library library ... : Loads the code model librarys." } ,
+      "library library ... : Loads the code model libraries." } ,
 #endif
 #ifdef DEVLIB
     { "use", com_use, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
       NULL,
-      "library library ... : Loads the device librarys." } ,
+      "library library ... : Loads the device libraries." } ,
 #endif
     { "load", com_load, FALSE, TRUE,
       { 1, 1, 1, 1 }, E_BEGINNING | E_NOPLOTS, 1, LOTS,

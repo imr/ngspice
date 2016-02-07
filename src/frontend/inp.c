@@ -1052,8 +1052,8 @@ com_edit(wordlist *wl)
 
     if (!cp_getvar("interactive", CP_BOOL, NULL)) {
         fprintf(cp_err,
-                "Warning: flag 'interactive' not set.\n"
-                "Type 'set interactive' at first.\n");
+                "Warning: `edit' is disabled because 'interactive' has not been set.\n"
+                "  perhaps you want to 'set interactive'\n");
         return;
     }
 
