@@ -744,7 +744,11 @@ DCpss(CKTcircuit *ckt,
             {
                 /* Pitagora ha sempre ragione!!! :))) */
                 /* pred is treated as FREQUENCY to avoid numerical overflow when derivative is close to ZERO */
-                pred [i] = RHS_derivative [i] / err_conv [i] ;
+                if ((RHS_derivative [i] != 0) && (err_conv [i] == 0)) {
+                    pred [i] = DBL_MAX ;
+                } else {
+                    pred [i] = RHS_derivative [i] / err_conv [i] ;
+                }
 
 #ifdef STEPDEBUG
                 fprintf (stderr, "Pred is so high or so low! Diff is: %g\n", err_conv [i]) ;
