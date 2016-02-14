@@ -26,4 +26,4 @@ mn4	bout	inv3	gnd_ana	gnd_ana	nch	w=10u l=0.18u
 
 *.tran 0.005n 100n
 *.plot tran v(4)
-.pss 624e6 500n 1 1024 10 5 5e-3 uic
+.pss 624e6 500n 1 1024 10 20 5e-3 uic

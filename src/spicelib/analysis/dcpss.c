@@ -647,7 +647,7 @@ DCpss(CKTcircuit *ckt,
             RHS_copy_der [i] = ckt->CKTrhsOld [i + 1] ;
 
 #ifdef STEPDEBUG
-            fprintf (stderr, "Pred is so high or so low! Diff is: %g\n", err_conv [i]) ;
+            fprintf (stderr, "Pred is so high or so low! Diff is: %-.9g\tat node: %d\n", err_conv [i], i) ;
 #endif
 
         }
@@ -744,17 +744,18 @@ DCpss(CKTcircuit *ckt,
             {
                 /* Pitagora ha sempre ragione!!! :))) */
                 /* pred is treated as FREQUENCY to avoid numerical overflow when derivative is close to ZERO */
-                if ((RHS_derivative [i] != 0) && (err_conv [i] == 0)) {
-                    pred [i] = DBL_MAX ;
-                } else {
+                if (fabs (err_conv [i]) != 0)
+                {
                     pred [i] = RHS_derivative [i] / err_conv [i] ;
+                } else {
+                    pred [i] = 1.0e6 * ckt->CKTguessedFreq ;
                 }
 
 #ifdef STEPDEBUG
-                fprintf (stderr, "Pred is so high or so low! Diff is: %g\n", err_conv [i]) ;
+                fprintf (stderr, "Pred is so high or so low! Diff is: %-.9g\tat node: %d\n", err_conv [i], i) ;
 #endif
 
-                if ((fabs (pred [i]) > 1.0e6 * ckt->CKTguessedFreq) || (err_conv [i] == 0))
+                if (fabs (pred [i]) > 1.0e6 * ckt->CKTguessedFreq)
                 {
                     if (pred [i] > 0)
                         pred [i] = 1.0e6 * ckt->CKTguessedFreq ;
@@ -864,7 +865,7 @@ DCpss(CKTcircuit *ckt,
 //                     err_conv_ref / dynamic_test, predsum) ;
 //#endif
 
-            /* Take the mean value of time prediction trough the dynamic test variable - predsum becomes TIME */
+            /* Take the mean value of time prediction through the dynamic test variable - predsum becomes TIME */
             predsum = 1 / (predsum * dynamic_test) ;
 
             /* Store the predsum history as absolute value */
