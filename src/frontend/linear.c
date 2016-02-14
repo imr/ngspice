@@ -15,6 +15,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* Interpolate all the vectors in a plot to a linear time scale, which
  * we determine by looking at the transient parameters in the CKT struct.
+ * If no circuit is loaded, e.g. because the 'load' command has been used
+ * to obtain data, try to get parameters from scale vector.
  */
 
 void
@@ -26,18 +28,6 @@ com_linearize(wordlist *wl)
     struct dvec *oldtime;
     int len, i;
 
-    if (!ft_curckt || !ft_curckt->ci_ckt ||
-        !if_tranparams(ft_curckt, &tstart, &tstop, &tstep)) {
-        fprintf(cp_err,
-                "Error: can't get transient parameters from circuit\n");
-        return;
-    }
-    if (((tstop - tstart) * tstep <= 0.0) || ((tstop - tstart) < tstep)) {
-        fprintf(cp_err,
-                "Error: bad parameters -- start = %G, stop = %G, step = %G\n",
-                tstart, tstop, tstep);
-        return;
-    }
     if (!plot_cur || !plot_cur->pl_dvecs || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors available\n");
         return;
@@ -49,6 +39,30 @@ com_linearize(wordlist *wl)
     }
     if (!ciprefix("tran", plot_cur->pl_typename)) {
         fprintf(cp_err, "Error: plot must be a transient analysis\n");
+        return;
+    }
+    /* check if circuit is loaded and TSTART, TSTOP, TSTEP are available
+       if no circuit is loaded, but vectors are available, obtain
+       start, stop, step data from scale vector */
+    if (!ft_curckt || !ft_curckt->ci_ckt ||
+        !if_tranparams(ft_curckt, &tstart, &tstop, &tstep)) {
+        fprintf(cp_err,
+                "Warning: Can't get transient parameters from circuit.\n"
+                "         Use transient analysis scale vector data instead.\n");
+        int length = plot_cur->pl_scale->v_length;
+        if (length < 1) {
+            fprintf(cp_err, "Error: no data in vector\n");
+            return;
+        }
+        tstart = plot_cur->pl_scale->v_realdata[0];
+        tstop = plot_cur->pl_scale->v_realdata[length - 1];
+        tstep = (tstop - tstart) / (double)length;
+    }
+    /* finally check if tstart, tstop and tstep are reasonable */
+    if (((tstop - tstart) * tstep <= 0.0) || ((tstop - tstart) < tstep)) {
+        fprintf(cp_err,
+            "Error: bad parameters -- start = %G, stop = %G, step = %G\n",
+            tstart, tstop, tstep);
         return;
     }
     old = plot_cur;
