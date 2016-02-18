@@ -294,7 +294,10 @@ ft_cpinit(void)
 }
 
 
-/* Decide whether a condition is TRUE or not. */
+/* Decide whether a condition is TRUE or not.
+ * In erroneous situations the condition shall evaluate to FALSE
+ *   additionally error messages might have been printed.
+ */
 
 bool
 cp_istrue(wordlist *wl)
@@ -309,14 +312,21 @@ cp_istrue(wordlist *wl)
     /* return FALSE if this did not expand to anything */
     if (!wl)
         return FALSE;
+    /* backquote '`' substitution */
     wl = cp_bquote(wl);
+    /* strip bit number eight */
     cp_striplist(wl);
 
+    /* parse the condition */
     names = ft_getpnames(wl, TRUE);
     wl_free(wl);
 
+    /* evaluate the parsed condition.
+     * boolean expressions evaluate to real 1.0 or 0.0 */
     v = ft_evaluate(names);
 
+    /* non boolean expressions will be considered TRUE
+     * if at least one real or complex vector element is non zero */
     rv = !vec_iszero(v);
 
     /* va: garbage collection for v, if pnode names is no simple value */
