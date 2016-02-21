@@ -1,0 +1,89 @@
+i(XXX) test
+* Restrictions of function i(device):
+* O.K. when device and i(device) are at top level.
+* O.K. when device and i(device) are in the same
+* subcircuit at first subcircuit level.
+* O.K. when device and i(device) are in the same
+* subcircuit at some deeper subcircuit level.
+
+* source at top level, function i(XXX) at top level
+*o.k.
+R1 1 0 1
+V1 1 0 1
+R2 2 0 '5 * i(R1)'
+V2 2 0 1
+
+* source at top level, function i(XXX) at subckt level
+* geht nicht!
+*.subckt contr1 n1 n2
+*RS1 n1 n2 '6 * i(R1)'
+*.ends
+
+*XR1 3 0 contr1
+*V3 3 0 1
+
+* source at subckt level, function i(XXX) at same subckt
+* o.k.
+.subckt contr2 n1 n2
+RS1 n1 n2 '6 * i(RS2)'
+RS2 1 0 1
+V1 1 0 1
+.ends
+
+XR2 4 0 contr2
+V4 4 0 1
+
+* source at subckt level, function i(XXX) at same subckt level
+* but different subcircuit: should not do!
+* does not do!
+*.subckt contr3 n1 n2
+*RS1 n1 n2 '6 * i(RS2)'
+*.ends
+
+*XR3 5 0 contr3
+*V5 5 0 1
+
+
+* source at subckt level, function i(XXX) at top level
+* geht nicht!
+
+*.subckt contr4 n1 n2
+*RS41 n1 n2 7
+*VS41 n1 n2 1
+*.ends
+
+*XR4 6 0 contr4
+*R6 7 0 '10*i(r.xr4.rs41)'
+*V6 7 0 1
+
+
+* source at second subckt level, function i(XXX) at same subckt
+* o.k.
+.subckt contr5 n1 n2
+XR2 n1 n2 contr2
+.ends
+
+XR8 8 0 contr5
+V8 8 0 1
+
+* MOS device, first node only
+vd d 0 1
+vg g 0 1
+vb b 0 0
+vs s 0 0
+m1 d g s b n1 W=10u L=1u
+RM 10 0 '1E6 * i(M1)'
+VRM 10 0 1
+
+* reuse i(M1)
+BMM 11 0 V='1E6 * i(M1)'
+RMM 11 0 1
+
+.include modelcard.nmos
+
+.control
+op
+print i(V1) i(V2) i(V4) i(V8) i(VRM) i(BMM)
+.endc
+
+.end
