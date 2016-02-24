@@ -827,7 +827,7 @@ static INPparseNode *mkf(int type, INPparseNode * arg)
 
     p->left = inc_usage(arg);
 
-    p->funcnum = i;
+    p->funcnum = funcs[i].number;
     p->function = funcs[i].funcptr;
     p->funcname = funcs[i].name;
 

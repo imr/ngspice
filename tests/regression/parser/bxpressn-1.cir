@@ -507,6 +507,18 @@ v1151_g  n1151_g 0  '1'
 v1152_g  n1152_g 0  '1'
 v1153_g  n1153_g 0  '0'
 
+* ----------------------------------------
+* special regression test unveils ...
+*   max(a,b)
+
+vaux1 n42 0 dc 42.0
+
+b1154_t  n1154_t 0  v = max(0, v(n42))
+b1155_t  n1155_t 0  v = max(v(n42), 0)
+
+v1154_g  n1154_g 0  '42.0'
+v1155_g  n1155_g 0  '42.0'
+
 .control
 
 define mismatch(a,b,err) abs(a-b)>err
@@ -516,7 +528,7 @@ op
 let total_count = 0
 let fail_count = 0
 
-let tests = 1001 + vector(153)
+let tests = 1001 + vector(155)
 
 foreach n $&tests
   set n_test = "n{$n}_t"
