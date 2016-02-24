@@ -864,28 +864,95 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             (void) strncpy(buffer + 1, "end of: ", 8);
         }   /*  end of .include handling  */
 
-        /* loop through 'buffer' until end is reached.  Then test for
-           premature end.  If premature end is reached, spew
-           error and zap the line. */
+        /* loop through 'buffer' until end is reached. Make all letters lower
+         * case except for the commands given below. Special treatment for
+         * commands 'hardcopy' and 'plot', where all letters are made lower
+         * case except for the tokens following xlabel, ylabel and title.
+         * These tokens may contain spaces, if they are enclosed in single or
+         * double quotes. Single quotes are later on swallowed and disappear,
+         * double quotes are printed. */
         {
             char *s;
             /* no lower case letters for lines beginning with: */
-            if ( !ciprefix("write", buffer) &&
-                 !ciprefix("wrdata", buffer) &&
-                 !ciprefix(".lib", buffer) &&
-                 !ciprefix(".inc", buffer) &&
-                 !ciprefix("codemodel", buffer) &&
-                 !ciprefix("echo", buffer) &&
-                 !ciprefix("shell", buffer) &&
-                 !ciprefix("source", buffer) &&
-                 !ciprefix("load", buffer)
+            if (!ciprefix("write", buffer) &&
+                !ciprefix("wrdata", buffer) &&
+                !ciprefix(".lib", buffer) &&
+                !ciprefix(".inc", buffer) &&
+                !ciprefix("codemodel", buffer) &&
+                !ciprefix("echo", buffer) &&
+                !ciprefix("shell", buffer) &&
+                !ciprefix("source", buffer) &&
+                !ciprefix("load", buffer) &&
+                !ciprefix("plot", buffer) &&
+                !ciprefix("hardcopy", buffer)
                 )
             {
-                /* lower case for all lines (exceptions see above!) */
+                /* lower case for all other lines */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     *s = tolower_c(*s);
+            } else if (ciprefix("plot", buffer) || ciprefix("hardcopy", buffer)) {
+                /* lower case excluded for tokens following title, xlabel, ylabel.
+                 * tokens may contain spaces, then they have to be enclosed in quotes.
+                 * keywords and tokens have to be separated by spaces. */
+                int j;
+                char t = ' ';
+                for (s = buffer; *s && (*s != '\n'); s++) {
+                    *s = tolower_c(*s);
+                    if (ciprefix("title", s)) {
+                        /* jump beyond title */
+                        for (j = 0; j < 5; j++) {
+                            s++;
+                            *s = tolower_c(*s);
+                        }
+                        while (*s == ' ')
+                            s++;
+                        if (!s || (*s == '\n'))
+                            break;
+                        /* check if single quote is at start of token */
+                        else if (*s == '\'') {
+                            s++;
+                            t = '\'';
+                        }
+                        /* check if double quote is at start of token */
+                        else if (*s == '\"') {
+                            s++;
+                            t = '\"';
+                        }
+                        else
+                            t = ' ';
+                        /* jump beyond token without lower casing */
+                        while ((*s != '\n') && (*s != t))
+                            s++;
+                    }
+                    else if (ciprefix("xlabel", s) || ciprefix("ylabel", s)) {
+                        /* jump beyond xlabel, ylabel */
+                        for (j = 0; j < 6; j++) {
+                            s++;
+                            *s = tolower_c(*s);
+                        }
+                        while (*s == ' ')
+                            s++;
+                        if (!s || (*s == '\n'))
+                            break;
+                        /* check if single quote is at start of token */
+                        else if (*s == '\'') {
+                            s++;
+                            t = '\'';
+                        }
+                        /* check if double quote is at start of token */
+                        else if (*s == '\"') {
+                            s++;
+                            t = '\"';
+                        }
+                        else
+                            t = ' ';
+                        /* jump beyond token without lower casing */
+                        while ((*s != '\n') && (*s != t))
+                            s++;
+                    }
+                }
             } else {
-                /* exclude some commands to preserve filename case */
+                /* exclude commands listed above to preserve filename case */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     ;
             }
