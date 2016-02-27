@@ -36,11 +36,6 @@ extern void txfree(void *ptr);
 #define ZERO(PTR, TYPE)  bzero(PTR, sizeof(TYPE))
 
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
-void *hrealloc(void *ptr, size_t num);
-#endif
-
-
 #ifdef CIDER
 
 #define RALLOC(ptr, type, number)                                       \
