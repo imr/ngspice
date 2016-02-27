@@ -80,6 +80,7 @@ settrace(wordlist *wl, int what, char *name)
                 db_type = DB_SAVE;
                 break;
             }
+            tfree(s);
             /* wrd_chtrace(NULL, TRUE, what); */
         } else {
             switch (what) {
@@ -95,10 +96,12 @@ settrace(wordlist *wl, int what, char *name)
             }
             /* v(2) --> 2, i(vds) --> vds#branch */
             db_nodename1 = copynode(s);
+            tfree(s);
+            if (!db_nodename1)  /* skip on error */
+                continue;
             /* wrd_chtrace(s, TRUE, what); */
         }
 
-        tfree(s);              /*DG avoid memoy leak */
         d = TMALLOC(struct dbcomm, 1);
         d->db_analysis = name;
         d->db_type = db_type;
@@ -157,7 +160,7 @@ copynode(char *s)
     char *l, *r;
     char *ret = NULL;
 
-    if (strstr(s, "("))
+    if (strchr(s, '('))
         s = stripWhiteSpacesInsideParens(s);
     else
         s = copy(s);
@@ -167,6 +170,12 @@ copynode(char *s)
         return s;
 
     r = strchr(s, ')');
+    if (!r) {
+        fprintf(cp_err, "Warning: Missing ')' in %s\n  Not saved!\n", s);
+        tfree(s);
+        return NULL;
+    }
+
     *r = '\0';
     if (*(l - 1) == 'i' || *(l - 1) == 'I')
         ret = tprintf("%s#branch", l + 1);
