@@ -161,6 +161,12 @@ copynode(char *s)
         return s;
 
     r = strchr(s, ')');
+    if (!r) {
+        fprintf(cp_err, "Warning: Missing ')' in %s\n  Not saved!\n", s);
+        *s = '\0';
+        return s;
+    }
+
     *r = '\0';
     if (*(l - 1) == 'i' || *(l - 1) == 'I')
         ret = tprintf("%s#branch", l + 1);
