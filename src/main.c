@@ -923,8 +923,9 @@ main(int argc, char **argv)
         case 'b':       /* Batch mode */
         {
             bool x_false = FALSE;
+            bool x_true = TRUE;
             cp_vset("addcontrol", CP_BOOL, &x_false);
-
+            cp_vset("batchmode", CP_BOOL, &x_true);
             ft_batchmode = TRUE;
         }
         break;
