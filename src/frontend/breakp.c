@@ -332,7 +332,9 @@ com_delete(wordlist *wl)
 
     if (wl && eq(wl->wl_word, "all")) {
         dbfree(dbs);
-        ft_curckt->ci_dbs = dbs = NULL;
+        dbs = NULL;
+        if (ft_curckt)
+            ft_curckt->ci_dbs = NULL;
         return;
     } else if (!wl) {
         if (!dbs) {
