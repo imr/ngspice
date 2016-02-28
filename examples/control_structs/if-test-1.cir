@@ -36,7 +36,6 @@ end
 echo
 
 echo "expect Error: testvar_d: no such variable."
-echo "expect Warning: NULL arithmetic expression"
 * in cp_istrue(): wl!=NULL then wl==NULL names==NULL v==NULL
 if $testvar_d
   echo "FAIL: you should not see this"

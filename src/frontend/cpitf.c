@@ -306,6 +306,9 @@ cp_istrue(wordlist *wl)
     /* First do all the csh-type stuff here... */
     wl = wl_copy(wl);
     wl = cp_variablesubst(wl);
+    /* return FALSE if this did not expand to anything */
+    if (!wl)
+        return FALSE;
     wl = cp_bquote(wl);
     cp_striplist(wl);
 
