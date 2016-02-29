@@ -230,7 +230,9 @@
 /* #undef HAVE_NETINET_IN_H */
 
 /* Define to 1 if you have the `popen' function. */
-/* undef HAVE_POPEN */
+#ifdef CONSOLE
+#define HAVE_POPEN 1
+#endif
 
 /* Define to 1 if you have the <pwd.h> header file. */
 /* #undef HAVE_PWD_H */

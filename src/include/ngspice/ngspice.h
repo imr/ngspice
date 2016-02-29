@@ -193,6 +193,8 @@ extern double x_atanh(double);
 #define snprintf _snprintf
 #define isatty _isatty
 #define inline __inline
+#define popen _popen
+#define pclose _pclose
 /* NAN not available in MS VS 2008 */
 #ifndef NAN
     static const __int64 global_nan = 0x7ff8000000000000i64;
