@@ -191,14 +191,14 @@ $LIBTOOLIZE --copy --force \
     || error_and_exit "$LIBTOOLIZE failed"
 
 echo "Running aclocal $ACLOCAL_FLAGS"
-aclocal $ACLOCAL_FLAGS -I m4 \
+aclocal $ACLOCAL_FLAGS --force -I m4 \
     || error_and_exit "aclocal failed"
 
 # optional feature: autoheader
 (autoheader --version) < /dev/null > /dev/null 2>&1
 if [ $? -eq 0 ]; then
   echo "Running autoheader"
-  autoheader \
+  autoheader --force \
       || error_and_exit "autoheader failed"
 fi
 
@@ -214,12 +214,12 @@ fi
 
 echo "Running autoconf"
 if [ "$ADMS" -gt 0 ]; then
-    autoconf temp-adms.ac > configure \
+    autoconf --force temp-adms.ac > configure \
         || error_and_exit "autoconf failed, with adms"
     rm -f temp-adms.ac
     chmod +x configure
 else
-    autoconf \
+    autoconf --force \
         || error_and_exit "autoconf failed"
 fi
 

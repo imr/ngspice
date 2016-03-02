@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = misc maths frontend spicelib include/ngspice
-DIST_SUBDIRS = misc maths frontend spicelib include/ngspice xspice ciderlib unsupported
+SUBDIRS = include/ngspice misc maths frontend spicelib
+DIST_SUBDIRS = include/ngspice misc maths frontend spicelib xspice ciderlib unsupported
 
 if XSPICE_WANTED
 SUBDIRS += xspice
