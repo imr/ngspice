@@ -297,26 +297,23 @@ com_sttus(wordlist *wl)
  */
 
 void
-dbfree1(struct dbcomm *dd)
+dbfree1(struct dbcomm *d)
 {
-    tfree(dd->db_nodename1);
-    tfree(dd->db_nodename2);
-    if (dd->db_also) {
-        dbfree(dd->db_also);
-        dd->db_also = NULL;
-    }
-    tfree(dd);
+    tfree(d->db_nodename1);
+    tfree(d->db_nodename2);
+    if (d->db_also)
+        dbfree(d->db_also);
+    tfree(d);
 }
 
 
 void
-dbfree(struct dbcomm *db)
+dbfree(struct dbcomm *d)
 {
-    struct dbcomm *dd, *dn;
-
-    for (dd = db; dd; dd = dn) {
-        dn = dd->db_next;
-        dbfree1(dd);
+    while (d) {
+        struct dbcomm *next_d = d->db_next;
+        dbfree1(d);
+        d = next_d;
     }
 }
 
