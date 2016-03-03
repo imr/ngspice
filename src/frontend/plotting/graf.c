@@ -991,7 +991,7 @@ gr_end_iplot(void)
                     prev->db_next = next;
                 else
                     ft_curckt->ci_dbs = dbs = next;
-                dbfree(db);
+                dbfree1(db);
             }
         } else if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
             if (db->db_graphid) {
