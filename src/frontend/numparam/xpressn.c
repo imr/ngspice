@@ -885,6 +885,8 @@ operate(char op, double x, double y)
 }
 
 
+#define nprece 9 /* maximal nb of precedence levels */
+
 static double
 formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 {
@@ -897,7 +899,6 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
        States : 1=atom, 2=binOp, 3=unOp, 4= stop-codon.
        Allowed transitions:  1->2->(3,1) and 3->(3,1).
     */
-    typedef enum {nprece = 9} _nnprece; /* maximal nb of precedence levels */
     bool error = *perror;
     bool negate = 0;
     unsigned char state, oldstate, topop, ustack, level, fu;
