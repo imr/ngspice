@@ -24,7 +24,6 @@
 
 #define eq(a,b)  (!strcmp((a), (b)))
 #define eqc(a,b)  (cieq((a), (b)))
-#define isalphanum(c)   (isalpha(c) || isdigit(c))
 #define hexnum(c) ((((c) >= '0') && ((c) <= '9')) ? ((c) - '0') : ((((c) >= \
         'a') && ((c) <= 'f')) ? ((c) - 'a' + 10) : ((((c) >= 'A') && \
         ((c) <= 'F')) ? ((c) - 'A' + 10) : 0)))

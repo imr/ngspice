@@ -678,7 +678,7 @@ span_var_expr(char *t)
     int parenthesis = 0;
     int brackets = 0;
 
-    while (*t && (isalphanum(*t) || strchr(VALIDCHARS, *t)))
+    while (*t && (isalnum(*t) || strchr(VALIDCHARS, *t)))
         switch (*t++)
         {
         case '[':
@@ -879,7 +879,7 @@ vareval(char *string)
             char *t = ++range;
             if (*t == '&')
                 t++;
-            while (isalphanum(*t))
+            while (isalnum(*t))
                 t++;
             *t = '\0';
             r = vareval(range);
