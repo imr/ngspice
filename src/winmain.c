@@ -674,7 +674,7 @@ static int MakeArgcArgv(char *cmdline,int *argc,char ***argv)
             strtok */
         /* trim all the whitespace off the end of the string. */
         for (i=(signed)strlen(pWorkString)-1; i >=0; i--)
-            if (isspace(pWorkString[i]))
+            if (isspace((unsigned char) pWorkString[i]))
                 pWorkString[i] = '\0';
             else
                 break;
@@ -1395,7 +1395,7 @@ rlead(char *s)
    bool has_space = TRUE;
    for(i=0;s[i] != '\0';i++)
    {
-      if(isspace(s[i]) && has_space)
+      if(isspace((unsigned char) s[i]) && has_space)
       {
          ; //Do nothing
       }
