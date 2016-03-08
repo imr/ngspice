@@ -1035,11 +1035,11 @@ readtics(char *string)
 
     for (k = 0; *words && k < MAXTICS; words = worde) {
 
-        while (isspace(*words))
+        while (isspace_c(*words))
             words++;
 
         worde = words;
-        while (isalpha(*worde) || isdigit(*worde))
+        while (isalpha_c(*worde) || isdigit_c(*worde))
             worde++;
 
         if (*worde)

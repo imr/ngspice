@@ -202,7 +202,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
         for (here = deck; here; here = here->li_next) {
             if (renumber)
                 here->li_linenum = i;
-            if (ciprefix(".end", here->li_line) && !isalpha(here->li_line[4]))
+            if (ciprefix(".end", here->li_line) && !isalpha_c(here->li_line[4]))
                 continue;
             if (*here->li_line != '*') {
                 Xprintf(file, "%6d : %s\n", here->li_linenum, upper(here->li_line));
@@ -227,7 +227,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
             if ((here->li_actual == NULL) || (here == deck)) {
                 if (renumber)
                     here->li_linenum = i;
-                if (ciprefix(".end", here->li_line) && !isalpha(here->li_line[4]))
+                if (ciprefix(".end", here->li_line) && !isalpha_c(here->li_line[4]))
                     continue;
                 if (type == LS_PHYSICAL)
                     Xprintf(file, "%6d : %s\n",
@@ -239,7 +239,7 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
             } else {
                 for (there = here->li_actual; there; there = there->li_next) {
                     there->li_linenum = i++;
-                    if (ciprefix(".end", here->li_line) && isalpha(here->li_line[4]))
+                    if (ciprefix(".end", here->li_line) && isalpha_c(here->li_line[4]))
                         continue;
                     if (type == LS_PHYSICAL)
                         Xprintf(file, "%6d : %s\n",
@@ -395,7 +395,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* get temp from deck */
             if (ciprefix(".temp", dd->li_line)) {
                 s = dd->li_line + 5;
-                while (isspace(*s))
+                while (isspace_c(*s))
                     s++;
                 if (temperature)
                     txfree(temperature);
@@ -404,7 +404,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
             s = dd->li_line;
-            while (isspace(*s))
+            while (isspace_c(*s))
                 s++;
             if ((*s == '*') && ((s != dd->li_line) || (s[1] != '#'))) {
                 if (commands) {
@@ -420,9 +420,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* Put the first token from line into s */
             strncpy(name, dd->li_line, BSIZE_SP);
-            for (s = name; *s && isspace(*s); s++)
+            for (s = name; *s && isspace_c(*s); s++)
                 ;
-            for (t = s; *t && !isspace(*t); t++)
+            for (t = s; *t && !isspace_c(*t); t++)
                 ;
             *t = '\0';
 
@@ -567,7 +567,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     s = dd->li_line;
                     *s = '*';
                     s = dd->li_line + 8;
-                    while (isspace(*s))
+                    while (isspace_c(*s))
                         s++;
                     cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
                     cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
@@ -807,7 +807,7 @@ inp_dodeck(
     if (!noparse) {
         struct line *opt_beg = options;
         for (; options; options = options->li_next) {
-            for (s = options->li_line; *s && !isspace(*s); s++)
+            for (s = options->li_line; *s && !isspace_c(*s); s++)
                 ;
 
             ii = cp_interactive;
@@ -988,7 +988,7 @@ inp_dodeck(
     if (!noparse) {
         /*
          * for (; options; options = options->li_next) {
-         *     for (s = options->li_line; *s && !isspace(*s); s++)
+         *     for (s = options->li_line; *s && !isspace_c(*s); s++)
          *         ;
          *     ii = cp_interactive;
          *     cp_interactive = FALSE;
@@ -1279,7 +1279,7 @@ create_circbyline(char *line)
         circarray = TMALLOC(char*, memlen);
     circarray[linec++] = line;
     if (linec < memlen) {
-        if (ciprefix(".end", line) && (line[4] == '\0' || isspace(line[4]))) {
+        if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4]))) {
             circarray[linec] = NULL;
             inp_spsource(fp, FALSE, "", TRUE);
             linec = 0;
@@ -1444,9 +1444,9 @@ inp_parse_temper(struct line *card)
                     beg_tstr--;
                 beg_pstr = beg_tstr;
                 /* go back over param name */
-                while(isspace(*beg_pstr))
+                while(isspace_c(*beg_pstr))
                     beg_pstr--;
-                while(!isspace(*beg_pstr))
+                while(!isspace_c(*beg_pstr))
                     beg_pstr--;
                 /* get parameter name */
                 paramname = copy_substring(beg_pstr + 1, beg_tstr);
@@ -1456,9 +1456,9 @@ inp_parse_temper(struct line *card)
                 /* go back over next param name */
                 if (*end_tstr == '=') {
                     end_tstr--;
-                    while(isspace(*end_tstr))
+                    while(isspace_c(*end_tstr))
                         end_tstr--;
-                    while(!isspace(*end_tstr))
+                    while(!isspace_c(*end_tstr))
                         end_tstr--;
                 }
                 /* copy the expression */
@@ -1499,9 +1499,9 @@ inp_parse_temper(struct line *card)
                     beg_tstr--;
                 beg_pstr = beg_tstr;
                 /* go back over param name */
-                while(isspace(*beg_pstr))
+                while(isspace_c(*beg_pstr))
                     beg_pstr--;
-                while(!isspace(*beg_pstr))
+                while(!isspace_c(*beg_pstr))
                     beg_pstr--;
                 /* get parameter name */
                 paramname = copy_substring(beg_pstr + 1, beg_tstr);
@@ -1511,9 +1511,9 @@ inp_parse_temper(struct line *card)
                 /* go back over next param name */
                 if (*end_tstr == '=') {
                     end_tstr--;
-                    while(isspace(*end_tstr))
+                    while(isspace_c(*end_tstr))
                         end_tstr--;
-                    while(!isspace(*end_tstr))
+                    while(!isspace_c(*end_tstr))
                         end_tstr--;
                 }
                 /* copy the expression */

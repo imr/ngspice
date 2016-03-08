@@ -265,9 +265,9 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
 #define SKIP(s)                                 \
     do {                                        \
-        while (*(s) && !isspace(*(s)))          \
+        while (*(s) && !isspace_c(*(s)))          \
             (s)++;                              \
-        while (isspace(*(s)))                   \
+        while (isspace_c(*(s)))                   \
             (s)++;                              \
     } while(0)
 
@@ -499,7 +499,7 @@ raw_read(char *name) {
                     fprintf(cp_err, "Error: bad var line %s\n", buf);
 
                 /* Fix the name... */
-                if (isdigit(v->v_name[0]) && (r = ft_typabbrev(v ->v_type)) != NULL) {
+                if (isdigit_c(v->v_name[0]) && (r = ft_typabbrev(v ->v_type)) != NULL) {
                     char *x = v->v_name;
                     v->v_name = tprintf("%s(%s)", r, v->v_name);
                     tfree(x);

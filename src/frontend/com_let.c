@@ -111,7 +111,7 @@ com_let(wordlist *wl)
                 vec_free(t);
             free_pnode(names); /* frees also t, if pnode `names' is simple value */
 
-            for (s = q; *s && isspace(*s); s++)
+            for (s = q; *s && isspace_c(*s); s++)
                 ;
         }
     }
@@ -123,7 +123,7 @@ com_let(wordlist *wl)
     *++q = '\0';
 
     /* sanity check */
-    if (eq(p, "all") || strchr(p, '@') || isdigit(*p)) {
+    if (eq(p, "all") || strchr(p, '@') || isdigit_c(*p)) {
         fprintf(cp_err, "Error: bad variable name %s\n", p);
         tfree(p);
         return;

@@ -160,7 +160,7 @@ com_print(wordlist *wl)
             for (s = buf; *s; s++)
                 ;
             s--;
-            while (isspace(*s)) {
+            while (isspace_c(*s)) {
                 *s = '\0';
                 s--;
             }

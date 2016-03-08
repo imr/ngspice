@@ -42,7 +42,7 @@ tildexpand(char *string)
     if (!string)
 	return NULL;
 
-    while (*string && isspace(*string))
+    while (*string && isspace_c(*string))
 	string++;
 
     if (*string != '~')

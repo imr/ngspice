@@ -140,13 +140,13 @@ static void inp_add_series_resistor(struct line *deck);
 static void subckt_params_to_param(struct line *deck);
 static void inp_fix_temper_in_param(struct line *deck);
 
-static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace(d[-1])) d--; return d; }
-static char *skip_back_ws(char *d)     { while (isspace(d[-1]))           d--; return d; }
-static char *skip_non_ws(char *d)      { while (*d && !isspace(*d)) d++; return d; }
-static char *skip_ws(char *d)          { while (isspace(*d))        d++; return d; }
+static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace_c(d[-1])) d--; return d; }
+static char *skip_back_ws(char *d)     { while (isspace_c(d[-1]))           d--; return d; }
+static char *skip_non_ws(char *d)      { while (*d && !isspace_c(*d)) d++; return d; }
+static char *skip_ws(char *d)          { while (isspace_c(*d))        d++; return d; }
 
-static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace(d[-1])) d--; return d; }
-static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace(d[-1])) d--; return d; }
+static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace_c(d[-1])) d--; return d; }
+static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace_c(d[-1])) d--; return d; }
 
 static char *inp_spawn_brace(char *s);
 
@@ -234,12 +234,12 @@ find_section_definition(struct line *c, char *name)
             char *s, *t, *y;
 
             s = skip_non_ws(line);
-            while (isspace(*s) || isquote(*s))
+            while (isspace_c(*s) || isquote(*s))
                 s++;
-            for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+            for (t = s; *t && !isspace_c(*t) && !isquote(*t); t++)
                 ;
             y = t;
-            while (isspace(*y) || isquote(*y))
+            while (isspace_c(*y) || isquote(*y))
                 y++;
 
             if (!*y) {
@@ -866,7 +866,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
         /* find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
         if (ciprefix(".end", buffer))
-            if ((buffer[4] == '\0') || isspace(buffer[4])) {
+            if ((buffer[4] == '\0') || isspace_c(buffer[4])) {
                 found_end = TRUE;
                 *buffer   = '*';
             }
@@ -955,7 +955,7 @@ is_absolute_pathname(const char *p)
     return
         p[0] == DIR_TERM  ||
         p[0] == DIR_TERM_LINUX  ||
-        (isalpha(p[0]) && p[1] == ':' &&
+        (isalpha_c(p[0]) && p[1] == ':' &&
          (p[2] == DIR_TERM_LINUX || p[2] == DIR_TERM));
 #else
     return
@@ -1012,7 +1012,7 @@ inp_pathresolve(const char *name)
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
     /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
-    if (cp_getvar("mingwpath", CP_BOOL, NULL) && name[0] == DIR_TERM_LINUX && isalpha(name[1]) && name[2] == DIR_TERM_LINUX) {
+    if (cp_getvar("mingwpath", CP_BOOL, NULL) && name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) && name[2] == DIR_TERM_LINUX) {
         strcpy(buf, name);
         buf[0] = buf[1];
         buf[1] = ':';
@@ -1161,8 +1161,8 @@ inp_fix_gnd_name(struct line *c)
 
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
-            if ((isspace(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
-                (isspace(gnd[3]) || gnd[3] == ')' || gnd[3] == ',')) {
+            if ((isspace_c(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
+                (isspace_c(gnd[3]) || gnd[3] == ')' || gnd[3] == ',')) {
                 memcpy(gnd, " 0 ", 3);
             }
             gnd += 3;
@@ -1469,7 +1469,7 @@ inp_fix_macro_param_func_paren_io(struct line *card)
             bool is_func = FALSE;
             str_ptr = skip_non_ws(card->li_line);  // skip over .param
             str_ptr = skip_ws(str_ptr);
-            while (!isspace(*str_ptr) && *str_ptr != '=') {
+            while (!isspace_c(*str_ptr) && *str_ptr != '=') {
                 if (*str_ptr == '(')
                     is_func = TRUE;
                 str_ptr++;
@@ -1542,7 +1542,7 @@ get_model_name(char *line, int num_terminals)
     }
 
     if (*line == 'r')           /* special dealing for r models */
-        if ((*beg_ptr == '+') || (*beg_ptr == '-') || isdigit(*beg_ptr)) { /* looking for a value before model */
+        if ((*beg_ptr == '+') || (*beg_ptr == '-') || isdigit_c(*beg_ptr)) { /* looking for a value before model */
             beg_ptr = skip_non_ws(beg_ptr); /* skip the value */
             beg_ptr = skip_ws(beg_ptr);
         }
@@ -1593,19 +1593,19 @@ static int
 is_a_modelname(const char *s)
 {
     /* first character of model name is character from alphabet */
-    if (isalpha(s[0]))
+    if (isalpha_c(s[0]))
         return TRUE;
 
     /* e.g. 1N4002 */
-    if (isdigit(s[0]) && isalpha(s[1]) && isdigit(s[2]))
+    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isdigit_c(s[2]))
         return TRUE;
 
     /* e.g. 2SK456 */
-    if (isdigit(s[0]) && isalpha(s[1]) && isalpha(s[2]) && isdigit(s[3]))
+    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isalpha_c(s[2]) && isdigit_c(s[3]))
         return TRUE;
 
     /* e.g. 1SMB4148 */
-    if (isdigit(s[0]) && isalpha(s[1]) && isalpha(s[2]) && isalpha(s[3]) && isdigit(s[4]))
+    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isalpha_c(s[2]) && isalpha_c(s[3]) && isdigit_c(s[4]))
         return TRUE;
 
     return FALSE;
@@ -1956,9 +1956,9 @@ inp_casefix(char *string)
                 if (*string == '"')
                     *string = ' ';
             }
-            if (!isspace(*string) && !isprint(*string))
+            if (!isspace_c(*string) && !isprint_c(*string))
                 *string = '_';
-            if (isupper(*string))
+            if (isupper_c(*string))
                 *string = (char) tolower(*string);
             string++;
         }
@@ -2124,7 +2124,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         /* get subckt name (ptr1 will point to name) */
         ptr1 = skip_non_ws(s);
         ptr1 = skip_ws(ptr1);
-        for (ptr2 = ptr1; *ptr2 && !isspace(*ptr2) && !isquote(*ptr2); ptr2++)
+        for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2); ptr2++)
             ;
 
         add_name(subckt_w_params, copy_substring(ptr1, ptr2));
@@ -2218,7 +2218,7 @@ inp_remove_ws(char *s)
      *   is this really necessary ?
      *   or is this an artefact of original inp_remove_ws() implementation ?
      */
-    if (isspace(*s))
+    if (isspace_c(*s))
         *d++ = *s++;
 
     while (*s != '\0') {
@@ -2227,7 +2227,7 @@ inp_remove_ws(char *s)
         if (*s == '}')
             brace_level--;
 
-        if (isspace(*s)) {
+        if (isspace_c(*s)) {
             s = skip_ws(s);
             if (!(*s == '\0' || *s == '=' || ((brace_level > 0) && (is_arith_char(*s) || *s == ','))))
                 *d++ = ' ';
@@ -2330,12 +2330,12 @@ expand_section_ref(struct line *c, char *dir_name)
     char *s, *t, *y;
 
     s = skip_non_ws(line);
-    while (isspace(*s) || isquote(*s))
+    while (isspace_c(*s) || isquote(*s))
         s++;
-    for (t = s; *t && !isspace(*t) && !isquote(*t); t++)
+    for (t = s; *t && !isspace_c(*t) && !isquote(*t); t++)
         ;
     y = t;
-    while (isspace(*y) || isquote(*y))
+    while (isspace_c(*y) || isquote(*y))
         y++;
 
     if (*y) {
@@ -2346,7 +2346,7 @@ expand_section_ref(struct line *c, char *dir_name)
         char *z;
         struct library *lib;
 
-        for (z = y; *z && !isspace(*z) && !isquote(*z); z++)
+        for (z = y; *z && !isspace_c(*z) && !isquote(*z); z++)
             ;
         keep_char1 = *t;
         keep_char2 = *z;
@@ -2489,8 +2489,8 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         *end = '\0';
 
         if (*value == '{' ||
-            isdigit(*value) ||
-            (*value == '.' && isdigit(value[1])))
+            isdigit_c(*value) ||
+            (*value == '.' && isdigit_c(value[1])))
         {
             value = copy(value);
         } else {
@@ -2822,7 +2822,7 @@ inp_strip_braces(char *s)
         } else if (*s == '}') {
             if (--nesting < 0)
                 return FALSE;
-        } else if (!isspace(*s)) {
+        } else if (!isspace_c(*s)) {
             *d++ = *s;
         }
 
@@ -2844,7 +2844,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
     /* get function name */
     end = line;
-    while (*end && !isspace(*end) && *end != '(')
+    while (*end && !isspace_c(*end) && *end != '(')
         end++;
 
     function = new_function(env, copy_substring(line, end));
@@ -2859,7 +2859,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
     /* get function parameters */
     for (;;)  {
         char *beg = end;
-        while (*end && !isspace(*end) && *end != ',' && *end != ')')
+        while (*end && !isspace_c(*end) && *end != ',' && *end != ')')
             end++;
         if (end == beg)
             break;
@@ -2948,13 +2948,13 @@ search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace(before) || strchr(",=", before)) {
+        if (is_arith_char(before) || isspace_c(before) || strchr(",=", before)) {
             int i;
             for (i = 0; i < fcn->num_parameters; i++) {
                 size_t len = strlen(fcn->params[i]);
                 if (strncmp(str, fcn->params[i], len) == 0) {
                     char after = str[len];
-                    if (is_arith_char(after) || isspace(after) || strchr(",=", after)) {
+                    if (is_arith_char(after) || isspace_c(after) || strchr(",=", after)) {
                         *which = i;
                         return str;
                     }
@@ -2988,7 +2988,7 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
         for (p = arg_ptr; --p > str; )
             if (*p == '(' || *p == ')') {
                 if ((*p == '(') && strchr("vi", p[-1]) &&
-                    (p - 2 < str || is_arith_char(p[-2]) || isspace(p[-2]) || strchr(",=", p[-2])))
+                    (p - 2 < str || is_arith_char(p[-2]) || isspace_c(p[-2]) || strchr(",=", p[-2])))
                     is_vi = 1;
                 break;
             }
@@ -3052,7 +3052,7 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
         fcn_name = open_paren_ptr;
         while (--fcn_name >= search_ptr)
         /* function name consists of numbers, letters and special characters (VALIDCHARS) */
-            if (!isalnum(*fcn_name) && !strchr(VALIDCHARS, *fcn_name))
+            if (!isalnum_c(*fcn_name) && !strchr(VALIDCHARS, *fcn_name))
                 break;
         fcn_name++;
 
@@ -3103,7 +3103,7 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
         for (num_params = 0; curr_ptr < close_paren_ptr; curr_ptr++) {
             char *beg_parameter;
             int num_parens;
-            if (isspace(*curr_ptr))
+            if (isspace_c(*curr_ptr))
                 continue;
             beg_parameter = curr_ptr;
             num_parens = 0;
@@ -3328,12 +3328,12 @@ inp_fix_param_values(struct line *c)
 
             beg_of_str = skip_ws(equal_ptr + 1);
             /* all cases where no {} have to be put around selected token */
-            if (isdigit(*beg_of_str) ||
+            if (isdigit_c(*beg_of_str) ||
                 *beg_of_str == '{' ||
                 *beg_of_str == '.' ||
                 *beg_of_str == '"' ||
-                ((*beg_of_str == '-' || *beg_of_str == '+') && isdigit(beg_of_str[1])) ||
-                ((*beg_of_str == '-' || *beg_of_str == '+') && beg_of_str[1] == '.' && isdigit(beg_of_str[2])) ||
+                ((*beg_of_str == '-' || *beg_of_str == '+') && isdigit_c(beg_of_str[1])) ||
+                ((*beg_of_str == '-' || *beg_of_str == '+') && beg_of_str[1] == '.' && isdigit_c(beg_of_str[2])) ||
                 ciprefix("true", beg_of_str) ||
                 ciprefix("false", beg_of_str))
             {
@@ -3355,8 +3355,8 @@ inp_fix_param_values(struct line *c)
                         break;
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
-                    if (isdigit(*natok) || *natok == '{' || *natok == '.' ||
-                        *natok == '"' || (*natok == '-' && isdigit(natok[1])) ||
+                    if (isdigit_c(*natok) || *natok == '{' || *natok == '.' ||
+                        *natok == '"' || (*natok == '-' && isdigit_c(natok[1])) ||
                         ciprefix("true", natok) || ciprefix("false", natok) ||
                         eq(natok, "<") || eq(natok, ">"))
                     {
@@ -3365,8 +3365,8 @@ inp_fix_param_values(struct line *c)
                         /* < xx and yy > have been dealt with before */
                         /* <xx */
                     } else if (*natok == '<') {
-                        if (isdigit(natok[1]) ||
-                            (natok[1] == '-' && isdigit(natok[2])))
+                        if (isdigit_c(natok[1]) ||
+                            (natok[1] == '-' && isdigit_c(natok[2])))
                         {
                             (void) sprintf(buffer, "%s", natok);
                         } else {
@@ -3375,7 +3375,7 @@ inp_fix_param_values(struct line *c)
                         }
                         /* yy> */
                     } else if (strchr(natok, '>')) {
-                        if (isdigit(*natok) || (*natok == '-' && isdigit(natok[1]))) {
+                        if (isdigit_c(*natok) || (*natok == '-' && isdigit_c(natok[1]))) {
                             (void) sprintf(buffer, "%s", natok);
                         } else {
                             whereisgt = strchr(natok, '>');
@@ -3421,8 +3421,8 @@ inp_fix_param_values(struct line *c)
                         break;
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
-                    if (isdigit(*natok) || *natok == '{' || *natok == '.' ||
-                        *natok == '"' || (*natok == '-' && isdigit(natok[1])) ||
+                    if (isdigit_c(*natok) || *natok == '{' || *natok == '.' ||
+                        *natok == '"' || (*natok == '-' && isdigit_c(natok[1])) ||
                         ciprefix("true", natok) || ciprefix("false", natok))
                     {
                         (void) sprintf(buffer, "%s", natok);
@@ -3451,7 +3451,7 @@ inp_fix_param_values(struct line *c)
                 end_of_str = beg_of_str;
                 parens = 0;
                 while (*end_of_str != '\0' &&
-                       (!isspace(*end_of_str) || (parens > 0)))
+                       (!isspace_c(*end_of_str) || (parens > 0)))
                 {
                     if (*end_of_str == '(')
                         parens++;
@@ -3642,7 +3642,7 @@ get_number_terminals(char *c)
                if we have a token with only digits, and where the previous token does not
                end with a ',' */
             while (*nametmp) {
-                if (isalpha(*nametmp) || (*nametmp == ','))
+                if (isalpha_c(*nametmp) || (*nametmp == ','))
                     only_digits = FALSE;
                 nametmp++;
             }
@@ -3979,7 +3979,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                 beg_param = skip_back_ws_(equal_ptr, curr_line);
                 beg_param = skip_back_non_ws_(beg_param, curr_line);
                 end_param = skip_ws(equal_ptr + 1);
-                while (*end_param != '\0' && (!isspace(*end_param) || get_expression || get_paren_expression)) {
+                while (*end_param != '\0' && (!isspace_c(*end_param) || get_expression || get_paren_expression)) {
                     if (*end_param == '{')
                         get_expression = TRUE;
                     if (*end_param == '(')
@@ -4031,7 +4031,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
 static int
 identifier_char(char c)
 {
-    return (c == '_') || isalnum(c);
+    return (c == '_') || isalnum_c(c);
 }
 
 
@@ -4068,9 +4068,9 @@ search_identifier(char *str, const char *identifier, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace(before) || strchr("=,{", before)) {
+        if (is_arith_char(before) || isspace_c(before) || strchr("=,{", before)) {
             char after = str[strlen(identifier)];
-            if (is_arith_char(after) || isspace(after) || strchr(",}", after))
+            if (is_arith_char(after) || isspace_c(after) || strchr(",}", after))
                 return str;
         }
 
@@ -4092,9 +4092,9 @@ ya_search_identifier(char *str, const char *identifier, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace(before) || (str <= str_begin)) {
+        if (is_arith_char(before) || isspace_c(before) || (str <= str_begin)) {
             char after = str[strlen(identifier)];
-            if ((is_arith_char(after) || isspace(after) || after == '\0'))
+            if ((is_arith_char(after) || isspace_c(after) || after == '\0'))
                 break;
         }
 
@@ -4753,7 +4753,7 @@ inp_compat(struct line *card)
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr)
                         tc1 = atof(tc1_ptr+1);
@@ -4762,7 +4762,7 @@ inp_compat(struct line *card)
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
                 /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr)
                         tc2 = atof(tc2_ptr+1);
@@ -4828,7 +4828,7 @@ inp_compat(struct line *card)
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr)
                         tc1 = atof(tc1_ptr+1);
@@ -4837,7 +4837,7 @@ inp_compat(struct line *card)
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
                 /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr)
                         tc2 = atof(tc2_ptr+1);
@@ -4922,7 +4922,7 @@ inp_compat(struct line *card)
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr)
                         tc1 = atof(tc1_ptr+1);
@@ -4931,7 +4931,7 @@ inp_compat(struct line *card)
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
                 /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr)
                         tc2 = atof(tc2_ptr+1);
@@ -5479,7 +5479,7 @@ inp_modify_exp(char* expr)
             if ((*s == '|') || (*s == '&'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
-        } else if (isalpha(c)) {
+        } else if (isalpha_c(c)) {
 
             char buf[512];
             int i = 0;
@@ -5491,7 +5491,7 @@ inp_modify_exp(char* expr)
                 buf[i] = '\0';
                 wl->wl_word = copy(buf);
             } else {
-                while (isalnum(*s) ||
+                while (isalnum_c(*s) ||
                        (*s == '!') || (*s == '#') ||
                        (*s == '$') || (*s == '%') ||
                        (*s == '_') || (*s == '[') ||
@@ -5528,13 +5528,13 @@ inp_modify_exp(char* expr)
                     wl->wl_word = tprintf("({%s})", buf);
                 }
             }
-        } else if (isdigit(c) || (c == '.')) { /* allow .5 format too */
+        } else if (isdigit_c(c) || (c == '.')) { /* allow .5 format too */
             int error1;
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&s, &error1, 0);
             wl->wl_word = tprintf("%18.10e", dvalue);
             /* skip the `unit', FIXME INPevaluate() should do this */
-            while (isalpha(*s))
+            while (isalpha_c(*s))
                 s++;
         } else { /* strange char */
             printf("Preparing expression for numparam\nWhat is this?\n%s\n", s);
@@ -6129,18 +6129,18 @@ inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, in
 
                 char *rest = s + strlen(deps[i].param_name);
 
-                if ((isspace(s[-1]) || s[-1] == '=') &&
-                    (isspace(*rest) || *rest == '\0' || *rest == ')'))
+                if ((isspace_c(s[-1]) || s[-1] == '=') &&
+                    (isspace_c(*rest) || *rest == '\0' || *rest == ')'))
                 {
                     int prefix_len;
 
-                    if (isspace(s[-1])) {
+                    if (isspace_c(s[-1])) {
                         s = skip_back_ws(s);
                         if (s[-1] == '{')
                             s--;
                     }
 
-                    if (isspace(*rest)) {
+                    if (isspace_c(*rest)) {
                         /* possible case: "{  length }" -> {length} */
                         rest = skip_ws(rest);
                         if (*rest == '}')

@@ -209,18 +209,18 @@ namecmp(const void *a, const void *b)
     const char *t = (const char *) b;
 
     for (;;) {
-        while ((*s == *t) && !isdigit(*s) && *s)
+        while ((*s == *t) && !isdigit_c(*s) && *s)
             s++, t++;
         if (!*s)
             return (0);
-        if ((*s != *t) && (!isdigit(*s) || !isdigit(*t)))
+        if ((*s != *t) && (!isdigit_c(*s) || !isdigit_c(*t)))
             return (*s - *t);
 
         /* The beginning of a number... Grab the two numbers and then
          * compare them...  */
-        for (i = 0; isdigit(*s); s++)
+        for (i = 0; isdigit_c(*s); s++)
             i = i * 10 + *s - '0';
-        for (j = 0; isdigit(*t); t++)
+        for (j = 0; isdigit_c(*t); t++)
             j = j * 10 + *t - '0';
 
         if (i != j)
@@ -937,12 +937,12 @@ vec_basename(struct dvec *v)
     }
 
     strtolower(buf);
-    for (t = buf; isspace(*t); t++)
+    for (t = buf; isspace_c(*t); t++)
         ;
     s = t;
     for (t = s; *t; t++)
         ;
-    while ((t > s) && isspace(t[-1]))
+    while ((t > s) && isspace_c(t[-1]))
         *--t = '\0';
     return (copy(s));
 }
@@ -1148,7 +1148,7 @@ plot_prefix(char *pre, char *str)
         str++;
     }
 
-    if (*pre || (*str && isdigit(pre[-1])))
+    if (*pre || (*str && isdigit_c(pre[-1])))
         return (FALSE);
     else
         return (TRUE);

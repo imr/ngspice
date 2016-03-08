@@ -85,8 +85,8 @@ void str_to_lower(char *s)
     char    c;
 
     for(i = 0; (c = s[i]) != '\0'; i++)
-        if(isalpha(c))
-            if(isupper(c))
+        if(isalpha_c(c))
+            if(isupper_c(c))
                 s[i] = (char) tolower(c);
 }
 

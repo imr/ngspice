@@ -72,7 +72,7 @@ hlp_thandle(topic **parent)
             return (NULL);
         }
 
-        for (s = buf; *s && isspace(*s); s++)
+        for (s = buf; *s && isspace_c(*s); s++)
             ;
         switch (*s) {
         case '?':
@@ -102,7 +102,7 @@ hlp_thandle(topic **parent)
             *parent = curtop;
             return (NULL);
         }
-        if (!isdigit(*s)) {
+        if (!isdigit_c(*s)) {
             fprintf(cp_err, "Invalid command\n");
             continue;
         }

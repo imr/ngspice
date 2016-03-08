@@ -152,10 +152,10 @@ collect_global_nodes(struct line *c)
             txfree(gettok(&s));
             while (*s) {
                 char *t = s;
-                for (; *s && !isspace(*s); s++)
+                for (; *s && !isspace_c(*s); s++)
                     ;
                 global_nodes[num_global_nodes++] = copy_substring(t, s);
-                while (isspace(*s))
+                while (isspace_c(*s))
                     s++;
             }
             c->li_line[0] = '*'; /* comment it out */
@@ -322,9 +322,9 @@ inp_subcktexpand(struct line *deck) {
         } else if  (*s == '.') {
             continue;   /* skip .commands */
         } else {        /* any other line . . . */
-            while (*s && !isspace(*s)) /* skip first token */
+            while (*s && !isspace_c(*s)) /* skip first token */
                 s++;
-            while (*s && isspace(*s)) /* skip whitespace */
+            while (*s && isspace_c(*s)) /* skip whitespace */
                 s++;
 
             if (*s == '(') {
@@ -495,11 +495,11 @@ doit(struct line *deck, wordlist *modnames) {
                     /* count the number of args in the .subckt line */
                     sss->su_numargs = 0;
                     for (;;) {
-                        while (isspace(*s))
+                        while (isspace_c(*s))
                             s++;
                         if (*s == '\0')
                             break;
-                        while (*s && !isspace(*s))
+                        while (*s && !isspace_c(*s))
                             s++;
                         sss->su_numargs ++;
                     }
@@ -1310,14 +1310,14 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
         if (((*src != 'v') && (*src != 'V') &&
              (*src != 'i') && (*src != 'I')) ||
             lastwasalpha) {
-            lastwasalpha = isalpha(*src);
+            lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);
             continue;
         }
-        for (s = src + 1; *s && isspace(*s); s++)
+        for (s = src + 1; *s && isspace_c(*s); s++)
             ;
         if (!*s || (*s != '(')) {
-            lastwasalpha = isalpha(*src);
+            lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);
             continue;
         }
@@ -1325,9 +1325,9 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
         bxx_putc(t, which = *src);
         src = s;
         bxx_putc(t, *src++);
-        while (isspace(*src))
+        while (isspace_c(*src))
             src++;
-        for (buf = src; *src && !isspace(*src) && *src != ',' && *src != ')'; )
+        for (buf = src; *src && !isspace_c(*src) && *src != ',' && *src != ')'; )
             src++;
         buf_end = src;
 
@@ -1362,11 +1362,11 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
         /* translate the reference node, as in the "2" in "v(4,2)" */
 
         if ((which == 'v') || (which == 'V')) {
-            while (*src && (isspace(*src) || *src == ',')) {
+            while (*src && (isspace_c(*src) || *src == ',')) {
                 src++;
             }
             if (*src && *src != ')') {
-                for (buf = src; *src && !isspace(*src) && (*src != ')'); )
+                for (buf = src; *src && !isspace_c(*src) && (*src != ')'); )
                     src++;
                 s = gettrans(buf, buf_end = src);
                 bxx_putc(t, ',');
@@ -1473,11 +1473,11 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     const wordlist *wl;
     int n, i, gotit;
 
-    while (*name && isspace(*name))
+    while (*name && isspace_c(*name))
         name++;
 
     c = *name;
-    if (isupper(c))
+    if (isupper_c(c))
         c = (char) tolower(c);
 
     (void) strncpy(buf, name, sizeof(buf));
@@ -1504,9 +1504,9 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
             int nodes = -2;
             for (s = buf; *s; ) {
                 nodes++;
-                while (*s && !isspace(*s))
+                while (*s && !isspace_c(*s))
                     s++;
-                while (isspace(*s))
+                while (isspace_c(*s))
                     s++;
             }
             return (nodes);
@@ -1580,7 +1580,7 @@ static int
 numdevs(char *s)
 {
 
-    while (*s && isspace(*s))
+    while (*s && isspace_c(*s))
         s++;
     switch (*s) {
     case 'K':
@@ -1690,10 +1690,10 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
         printf("In devmodtranslate, examining line %s.\n", t);
 #endif
 
-        while (*t && isspace(*t))
+        while (*t && isspace_c(*t))
             t++;
         c = *t;                           /* set c to first char in line. . . . */
-        if (isupper(c))
+        if (isupper_c(c))
             c = (char) tolower(c);
 
         buffer = TMALLOC(char, strlen(t) + strlen(subname) + 4);
@@ -2049,7 +2049,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 static int
 inp_numnodes(char c)
 {
-    if (isupper(c))
+    if (isupper_c(c))
         c = (char) tolower(c);
     switch (c) {
     case ' ':

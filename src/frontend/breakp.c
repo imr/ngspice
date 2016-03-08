@@ -60,7 +60,7 @@ com_stop(wordlist *wl)
             } else {
 #ifdef HAVE_CTYPE_H
                 for (s = wl->wl_next->wl_word, i = 0; *s; s++)
-                    if (!isdigit(*s))
+                    if (!isdigit_c(*s))
                         goto bad;
                     else
                         i = i * 10 + (*s - '0');
@@ -345,7 +345,7 @@ com_delete(wordlist *wl)
         if (wl->wl_word) {
 #ifdef HAVE_CTYPE_H
             for (s = wl->wl_word, i = 0; *s; s++)
-                if (!isdigit(*s)) {
+                if (!isdigit_c(*s)) {
                     fprintf(cp_err, "Error: %s isn't a number.\n",
                             wl->wl_word);
                     goto bad;

@@ -53,7 +53,7 @@ INPevaluate(char **line, int *error, int gobble)
         sign = -1;
     }
 
-    if ((*here == '\0') || ((!(isdigit(*here))) && (*here != '.'))) {
+    if ((*here == '\0') || ((!(isdigit_c(*here))) && (*here != '.'))) {
         /* number looks like just a sign! */
         *error = 1;
         if (gobble) {
@@ -64,7 +64,7 @@ INPevaluate(char **line, int *error, int gobble)
         return (0);
     }
 
-    while (isdigit(*here)) {
+    while (isdigit_c(*here)) {
         /* digit, so accumulate it. */
         mantis = 10 * mantis + *here - '0';
         here++;
@@ -108,7 +108,7 @@ INPevaluate(char **line, int *error, int gobble)
             return ((double) mantis * sign);
         }
 
-        while (isdigit(*here)) {
+        while (isdigit_c(*here)) {
             /* digit, so accumulate it. */
             mantis = 10 * mantis + *here - '0';
             expo1 = expo1 - 1;
@@ -131,7 +131,7 @@ INPevaluate(char **line, int *error, int gobble)
             /* now look for the digits of the exponent */
         }
 
-        while (isdigit(*here)) {
+        while (isdigit_c(*here)) {
             expo2 = 10 * expo2 + *here - '0';
             here++;
         }

@@ -204,7 +204,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         }
         loc->state->pos = ftell(loc->state->fp);
         cpdel = cp = strdup(line);
-        while (*cp && isspace(*cp))
+        while (*cp && isspace_c(*cp))
             ++cp;
         if (*cp == '#' || *cp == ';') {
             free(cpdel);
@@ -227,7 +227,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         for (i = 0; i < size; ++i)
             loc->amplinterval[2 * i] = loc->amplinterval[2 * i + 1];
         for (i = 0; i < size; ++i) {
-            while (*cp && (isspace(*cp) || *cp == ','))
+            while (*cp && (isspace_c(*cp) || *cp == ','))
                 ++cp;
             t = strtod(cp, &cp2);
             if (cp2 == cp)

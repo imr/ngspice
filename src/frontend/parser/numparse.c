@@ -53,19 +53,19 @@ ft_numparse(char **s, bool whole)
     }
 
     /* We don't want to recognise "P" as 0P, or .P as 0.0P... */
-    if ((!isdigit(*string) && *string != '.') ||
-        ((*string == '.') && !isdigit(string[1])))
+    if ((!isdigit_c(*string) && *string != '.') ||
+        ((*string == '.') && !isdigit_c(string[1])))
         return (NULL);
 
     /* Now accumulate a number. Note ascii dependencies here... */
-    while (isdigit(*string))
+    while (isdigit_c(*string))
         mant = mant * 10.0 + (*string++ - '0');
 
     /* Now maybe a decimal point. */
     if (*string == '.') {
         string++;
         p = 1;
-        while (isdigit(*string))
+        while (isdigit_c(*string))
             mant += (*string++ - '0') / power10(p++);
     }
 
@@ -82,12 +82,12 @@ ft_numparse(char **s, bool whole)
             exsign = -1;
             string++;
         }
-        while (isdigit(*string))
+        while (isdigit_c(*string))
             expo = expo * 10.0 + (*string++ - '0');
         if (*string == '.') {
             string++;
             p = 1;
-            while (isdigit(*string))
+            while (isdigit_c(*string))
                 expo += (*string++ - '0') / power10(p++);
         }
         expo *= exsign;
@@ -152,14 +152,14 @@ ft_numparse(char **s, bool whole)
 
     if (whole && *string != '\0') {
         return (NULL);
-    } else if (ft_strictnumparse && *string && isdigit(string[-1])) {
+    } else if (ft_strictnumparse && *string && isdigit_c(string[-1])) {
         if (*string == '_')
-            while (isalpha(*string) || (*string == '_'))
+            while (isalpha_c(*string) || (*string == '_'))
                 string++;
         else
             return (NULL);
     } else {
-        while (isalpha(*string) || (*string == '_'))
+        while (isalpha_c(*string) || (*string == '_'))
             string++;
     }
     *s = string;

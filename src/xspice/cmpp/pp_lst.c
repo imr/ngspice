@@ -261,7 +261,7 @@ static Status_t read_modpath(
 
         /* Strip white space including newline */
         for(i = 0, j = 0; i < len; ) {
-            if(isspace(path[i])) {
+            if(isspace_c(path[i])) {
                 i++;
             }
             else {
@@ -378,7 +378,7 @@ static Status_t read_udnpath(
 
         /* Strip white space including newline */
         for(i = 0, j = 0; i < len; ) {
-            if(isspace(path[i])) {
+            if(isspace_c(path[i])) {
                 i++;
             }
             else {

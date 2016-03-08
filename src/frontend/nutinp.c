@@ -93,9 +93,9 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                 continue;
             }
             (void) strncpy(name, dd->li_line, BSIZE_SP);
-            for (s = name; *s && isspace(*s); s++)
+            for (s = name; *s && isspace_c(*s); s++)
                 ;
-            for (t = s; *t && !isspace(*t); t++)
+            for (t = s; *t && !isspace_c(*t); t++)
                 ;
             *t = '\0';
 

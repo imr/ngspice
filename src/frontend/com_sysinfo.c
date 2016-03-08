@@ -291,7 +291,7 @@ tesCreateSystemInfo(TesSystemInfo *info)
             while ((strPtr = strstr(strPtr, matchStrProc)) != NULL) {
                 // numProcs++;
                 strPtr += strlen(matchStrProc);
-                if (isblank(*strPtr)) numProcs++;
+                if (isblank_c(*strPtr)) numProcs++;
             }
             info->numLogicalProcessors = numProcs;
             physIDs = TMALLOC(tInt, numProcs);

@@ -1635,7 +1635,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
                 continue;
 
             kptr = jptr;
-            while (--kptr >= optr && isspace(*kptr))
+            while (--kptr >= optr && isspace_c(*kptr))
                 ;
 
             hptr = kptr;

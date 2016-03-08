@@ -89,7 +89,7 @@ INPgetTok(char **line, char **token, int gobble)
         if (*point == '^')
             break;
 
-        if (isdigit(*point) || *point == '.') {
+        if (isdigit_c(*point) || *point == '.') {
             if (signstate > 1)
                 signstate = 3;
             else
@@ -300,7 +300,7 @@ INPgetUTok(char **line, char **token, int gobble)
         if (*point == '^')
             break;
 
-        if (isdigit(*point) || *point == '.') {
+        if (isdigit_c(*point) || *point == '.') {
             if (signstate > 1)
                 signstate = 3;
             else

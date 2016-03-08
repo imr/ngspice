@@ -607,7 +607,7 @@ PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
     {
         /* Workaround, The Frontend makes "<>" into "< >" */
         int j = 1;
-        while (isspace(sbuf[j]))
+        while (isspace_c(sbuf[j]))
             j++;
         if (((sbuf[j] == '<') || (sbuf[j] == '>')) && (sbuf[0] != sbuf[j])) {
             /* Allow both <> and >< for NE. */
