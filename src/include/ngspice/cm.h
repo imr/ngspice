@@ -57,4 +57,27 @@ NON-STANDARD FEATURES
 #endif
 
 
+/*
+ * type safe variants of the <ctype.h> functions for char arguments
+ */
+
+#if !defined(isalpha_c)
+
+inline static int char_to_int(char c) { return (unsigned char) c; }
+
+#define isalpha_c(x) isalpha(char_to_int(x))
+#define islower_c(x) islower(char_to_int(x))
+#define isdigit_c(x) isdigit(char_to_int(x))
+#define isalnum_c(x) isalnum(char_to_int(x))
+#define isprint_c(x) isprint(char_to_int(x))
+#define isblank_c(x) isblank(char_to_int(x))
+#define isspace_c(x) isspace(char_to_int(x))
+#define isupper_c(x) isupper(char_to_int(x))
+
+#define tolower_c(x) ((char) tolower(char_to_int(x)))
+#define toupper_c(x) ((char) toupper(char_to_int(x)))
+
+#endif
+
+
 #endif
