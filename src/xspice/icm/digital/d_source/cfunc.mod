@@ -397,7 +397,7 @@ double  *p_value )   /* OUT - The numerical value     */
     else {
 
         if(isupper_c(c))
-            c = (char) tolower(c);
+            c = tolower_c(c);
 
         switch(c) {
 
@@ -441,7 +441,7 @@ double  *p_value )   /* OUT - The numerical value     */
                 break;
             }
             if(islower_c(c1))
-                c1 = (char) toupper(c1);
+                c1 = toupper_c(c1);
             if(c1 == 'E')
                 scale_factor = 1.0e6;
             else if(c1 == 'I')

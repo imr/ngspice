@@ -1478,7 +1478,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
 
     c = *name;
     if (isupper_c(c))
-        c = (char) tolower(c);
+        c = tolower_c(c);
 
     (void) strncpy(buf, name, sizeof(buf));
     s = buf;
@@ -1694,7 +1694,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             t++;
         c = *t;                           /* set c to first char in line. . . . */
         if (isupper_c(c))
-            c = (char) tolower(c);
+            c = tolower_c(c);
 
         buffer = TMALLOC(char, strlen(t) + strlen(subname) + 4);
 
@@ -2050,7 +2050,7 @@ static int
 inp_numnodes(char c)
 {
     if (isupper_c(c))
-        c = (char) tolower(c);
+        c = tolower_c(c);
     switch (c) {
     case ' ':
     case '\t':

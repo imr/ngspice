@@ -94,7 +94,7 @@ INPgetTok(char **line, char **token, int gobble)
                 signstate = 3;
             else
                 signstate = 1;
-        } else if (tolower(*point) == 'e' && signstate == 1)
+        } else if (tolower_c(*point) == 'e' && signstate == 1)
             signstate = 2;
         else
             signstate = 3;
@@ -305,7 +305,7 @@ INPgetUTok(char **line, char **token, int gobble)
                 signstate = 3;
             else
                 signstate = 1;
-        } else if (tolower(*point) == 'e' && signstate == 1)
+        } else if (tolower_c(*point) == 'e' && signstate == 1)
             signstate = 2;
         else
             signstate = 3;

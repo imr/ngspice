@@ -35,7 +35,7 @@ cannonical_name(char *name, SPICE_DSTRINGPTR dbuf_p)
         tmp++;
         for (ptr = tmp; *ptr; ptr++)
             if (isupper_c(*ptr))
-                tmp = spice_dstring_append_char(dbuf_p, (char)tolower(*ptr));
+                tmp = spice_dstring_append_char(dbuf_p, tolower_c(*ptr));
             else
                 tmp = spice_dstring_append_char(dbuf_p, *ptr);
         while (*tmp != ')')

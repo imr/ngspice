@@ -848,7 +848,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             {
                 /* lower case for all lines (exceptions see above!) */
                 for (s = buffer; *s && (*s != '\n'); s++)
-                    *s = (char) tolower(*s);
+                    *s = tolower_c(*s);
             } else {
                 /* exclude some commands to preserve filename case */
                 for (s = buffer; *s && (*s != '\n'); s++)
@@ -1959,7 +1959,7 @@ inp_casefix(char *string)
             if (!isspace_c(*string) && !isprint_c(*string))
                 *string = '_';
             if (isupper_c(*string))
-                *string = (char) tolower(*string);
+                *string = tolower_c(*string);
             string++;
         }
 #endif

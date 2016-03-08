@@ -158,7 +158,7 @@ char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr, const char *string, int
     for( dst = dsPtr->string + dsPtr->length, end = string+length;
             string < end; string++, dst++) {
         if( isupper_c(*string) ) {
-          *dst = (char)tolower(*string) ;
+          *dst = tolower_c(*string) ;
         } else {
           *dst = *string ;
         }

@@ -401,7 +401,7 @@ MESHsetup(char dim, MESHcard *cardList, MESHcoord **coordList, int *numCoords)
 
 /* Print info header. */ 
 #ifdef NOTDEF
-  fprintf( stdout, " %c.Mesh Card Information\n", toupper(dim) );
+  fprintf( stdout, " %c.Mesh Card Information\n", toupper_c(dim) );
   fprintf( stdout, "-------------------------\n" );
   fprintf( stdout, " %3s %3s %3s %9s %9s %9s %9s %9s %9s\n",
       "n.s", "n.m", "n.e", "l.e", "h.s", "h.e", "h.m", "r.s", "r.e" );

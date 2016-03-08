@@ -336,7 +336,7 @@ Ipc_Boolean_t ipc_screen_name(char *name, char *mapped_name)
         }
         else {
             if(islower_c(name[i]))
-                mapped_name[i] = (char) toupper(name[i]);
+                mapped_name[i] = toupper_c(name[i]);
             else
                 mapped_name[i] = name[i];
         }

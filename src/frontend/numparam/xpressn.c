@@ -647,7 +647,7 @@ static double
 parseunit(const char *s)
 /* the Spice suffixes */
 {
-    switch (toupper(s[0]))
+    switch (toupper_c(s[0]))
     {
     case 'T':  return 1e12;
     case 'G':  return 1e9;
