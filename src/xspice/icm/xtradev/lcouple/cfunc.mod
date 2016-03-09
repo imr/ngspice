@@ -135,7 +135,7 @@ void cm_lcouple(ARGS)  /* structure holding parms,
               output_mmf,   /* output driving amp-turns to core side.      */
 
                num_turns,   /* number of turns on inductor                 */
-           pout_pin_fake,   /* fake partial derivative of output
+         /*pout_pin_fake,*/ /* fake partial derivative of output
                                w.r.t. input (for use with integration */
                 *in_flux,   /* current input flux value from core side
                                   (represented as a current).              */

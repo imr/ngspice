@@ -160,7 +160,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 
         /* Allocate storage for internal state */
         loc->timeinterval = (double*)calloc(2, sizeof(double));
-        loc->amplinterval = (double*)calloc(2 * size, sizeof(double));
+        loc->amplinterval = (double*)calloc(2 * (size_t) size, sizeof(double));
         loc->state = (struct filesource_state*)malloc(sizeof(struct filesource_state));        
 
         loc->timeinterval[0] = loc->timeinterval[1] = PARAM_NULL(timeoffset) ? 0.0 : PARAM(timeoffset);

@@ -698,7 +698,7 @@ NON-STANDARD FEATURES
 
 static int cm_read_source(FILE *source, Local_Data_t *loc)
 {
-    size_t      n;  /* loop index */
+    int         n;  /* loop index */
     int         i,  /* indexing variable    */
                 j,  /* indexing variable    */
        num_tokens;  /* number of tokens in a given string    */
@@ -752,8 +752,8 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                 s = base_address;
 
                 /* set storage space for bits in a row and set them to 0*/
-                loc->all_data[i] = (char*)malloc(sizeof(char) * loc->width);
-                for (n = 0; n < (unsigned int)loc->width; n++)
+                loc->all_data[i] = (char*)malloc(sizeof(char) * (size_t) loc->width);
+                for (n = 0; n < loc->width; n++)
                     loc->all_data[i][n] = 0;
 
                 /** Retrieve each token, analyze, and       **/
@@ -979,8 +979,8 @@ void cm_d_source(ARGS)
         loc->width = PORT_SIZE(out);
 
         /*** allocate storage for **all_data, & *all_timepoints ***/
-        loc->all_timepoints = (double*)calloc(i, sizeof(double));
-        loc->all_data = (char**)calloc(i, sizeof(char*));
+        loc->all_timepoints = (double*)calloc((size_t) i, sizeof(double));
+        loc->all_data = (char**)calloc((size_t) i, sizeof(char*));
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */
