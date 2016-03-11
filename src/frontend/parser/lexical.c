@@ -139,6 +139,8 @@ cp_lexer(char *string)
 
     wlist = cw = NULL;
 nloop:
+    if (wlist)
+        wl_free(wlist);
     wlist = cw = NULL;
     i = 0;
     j = 0;
@@ -195,8 +197,6 @@ nloop:
             }
             while (((c = cp_readchar(&string, cp_inp_cur)) != '\n') && (c != EOF))
                 ;
-            wl_free(wlist);
-            wlist = cw = NULL;
             goto nloop;
         }
 
@@ -282,8 +282,6 @@ nloop:
 #else
                 fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
-                wl_free(wlist);
-                wlist = cw = NULL;
                 goto nloop;
             }
 
@@ -310,8 +308,6 @@ nloop:
 #endif
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, TRUE);
-                wl_free(wlist);
-                wlist = cw = NULL;
                 goto nloop;
             }
             goto ldefault;
