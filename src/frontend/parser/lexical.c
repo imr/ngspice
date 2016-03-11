@@ -41,8 +41,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 #endif
 
-#define NEW_BSIZE_SP 2*BSIZE_SP
-
 #include "ngspice/fteinput.h"
 #include "lexical.h"
 
@@ -76,14 +74,18 @@ static int numeofs = 0;
 
 struct cp_lexer_buf
 {
-    int i;
-    char s[NEW_BSIZE_SP];
+    int i, sz;
+    char *s;
 };
 
 
 static inline void
 push(struct cp_lexer_buf *buf, int c)
 {
+    if (buf->sz <= buf->i) {
+        buf->sz += MAX(64, buf->sz);
+        buf->s = TREALLOC(char, buf->s, buf->sz);
+    }
     buf->s[buf->i++] = (char) c;
 }
 
@@ -151,6 +153,12 @@ cp_lexer(char *string)
     }
 
     wlist = wlist_tail = NULL;
+
+    buf.sz = 0;
+    buf.s = NULL;
+    linebuf.sz = 0;
+    linebuf.s = NULL;
+
 nloop:
     if (wlist)
         wl_free(wlist);
@@ -174,19 +182,6 @@ nloop:
         if (c != EOF)
             numeofs = 0;
 
-        if (buf.i == NEW_BSIZE_SP - 1) {
-            fprintf(cp_err, "Warning: word too long.\n");
-            c = ' ';
-        }
-
-        if (linebuf.i == NEW_BSIZE_SP - 1) {
-            fprintf(cp_err, "Warning: line too long.\n");
-            if (cp_bqflag)
-                c = EOF;
-            else
-                c = '\n';
-        }
-
         if (c != EOF)           /* Don't need to do this really. */
             c = strip(c);
 
@@ -204,6 +199,8 @@ nloop:
         if ((c == cp_hash) && !cp_interactive && (linebuf.i == 1)) {
             if (string) {
                 wl_free(wlist);
+                tfree(buf.s);
+                tfree(linebuf.s);
                 return NULL;
             }
             while (((c = cp_readchar(&string, cp_inp_cur)) != '\n') && (c != EOF))
@@ -232,8 +229,7 @@ nloop:
             goto done;
 
         case '\'':
-            while (((c = cp_readchar(&string, cp_inp_cur)) != '\'') &&
-                   (buf.i < NEW_BSIZE_SP - 1))
+            while ((c = cp_readchar(&string, cp_inp_cur)) != '\'')
             {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
@@ -247,8 +243,7 @@ nloop:
         case '`':
             d = c;
             push(&buf, d);
-            while (((c = cp_readchar(&string, cp_inp_cur)) != d) &&
-                   (buf.i < NEW_BSIZE_SP - 2))
+            while ((c = cp_readchar(&string, cp_inp_cur)) != d)
             {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
@@ -306,6 +301,8 @@ nloop:
             }
 
             wl_free(wlist);
+            tfree(buf.s);
+            tfree(linebuf.s);
             return NULL;
 
         case ESCAPE:
@@ -374,6 +371,8 @@ nloop:
 done:
     if (wlist->wl_word)
         pwlist_echo(wlist, "Command>");
+    tfree(buf.s);
+    tfree(linebuf.s);
     return wlist;
 }
 
