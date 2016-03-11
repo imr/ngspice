@@ -80,8 +80,7 @@ static int numeofs = 0;
 
 #define newword                                 \
     do {                                        \
-        buf[i] = '\0';                          \
-        append(copy(buf));                      \
+        append(copy_substring(buf, buf + i));   \
         i = 0;                                  \
     } while(0)
 
