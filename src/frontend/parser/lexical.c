@@ -328,7 +328,7 @@ nloop:
             goto ldefault;
 
         case '&':  /* va: $&name is one word */
-            if ((i >= 1) && (buf[i-1] == '$') && (c == '&')) {
+            if ((i >= 1) && (buf[i-1] == '$')) {
                 buf[i++] = (char) c;
                 break;
             }
