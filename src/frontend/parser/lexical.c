@@ -80,8 +80,8 @@ static int numeofs = 0;
 
 #define newword                                 \
     do {                                        \
+        buf[i] = '\0';                          \
         append(copy(buf));                      \
-        bzero(buf, NEW_BSIZE_SP);               \
         i = 0;                                  \
     } while(0)
 
@@ -145,8 +145,6 @@ nloop:
     i = 0;
     j = 0;
     paren = 0;
-    bzero(linebuf, NEW_BSIZE_SP);
-    bzero(buf, NEW_BSIZE_SP);
 
     for (;;) {
 
@@ -214,10 +212,8 @@ nloop:
             break;
 
         case '\n':
-            if (i) {
-                buf[i] = '\0';
+            if (i)
                 newword;
-            }
             if (!wlist_tail)
                 append(NULL);
             goto done;
@@ -273,9 +269,11 @@ nloop:
                 }
 
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
+                buf[i++] = '\0';
                 cp_ccom(wlist, buf, FALSE);
                 (void) fputc('\r', cp_out);
                 prompt();
+                linebuf[j++] = '\0';
                 for (j = 0; linebuf[j]; j++)
 #ifdef TIOCSTI
                     (void) ioctl(fileno(cp_out), TIOCSTI, linebuf + j);
@@ -300,6 +298,7 @@ nloop:
             if (cp_interactive && !cp_nocc) {
                 fputs("\b\b  \b\b\r", cp_out);
                 prompt();
+                linebuf[j++] = '\0';
                 for (j = 0; linebuf[j]; j++)
 #ifdef TIOCSTI
                     (void) ioctl(fileno(cp_out), TIOCSTI, linebuf + j);
@@ -307,6 +306,7 @@ nloop:
                 fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
+                buf[i++] = '\0';
                 cp_ccom(wlist, buf, TRUE);
                 goto nloop;
             }
