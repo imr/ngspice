@@ -138,6 +138,7 @@ static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 static void subckt_params_to_param(struct line *deck);
 static void inp_fix_temper_in_param(struct line *deck);
+static void inp_fix_agauss_in_param(struct line *deck);
 
 static char *inp_spawn_brace(char *s);
 
@@ -554,6 +555,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         rv . line_number = inp_split_multi_param_lines(working, rv . line_number);
 
         inp_fix_macro_param_func_paren_io(working);
+        inp_fix_agauss_in_param(working);
+
         inp_fix_temper_in_param(working);
 
         inp_expand_macros_in_deck(NULL, working);
@@ -5968,6 +5971,226 @@ inp_fix_temper_in_param(struct line *deck)
 }
 
 
+/* Convert .param lines containing function 'agauss' into .func lines:
+* .param xxx1 = 'agauss()'  --->  .func xxx1() 'agauss()'
+* Add info about the functions (name, subcircuit depth, number of
+* subckt) to linked list new_func.
+* Then scan new_func, for each xxx1 scan all lines of deck,
+* find all xxx1 and convert them to a function:
+* xxx1   --->  xxx1()
+* If this happens to be in another .param line, convert it to .func,
+* add info to end of new_func and continue scanning.
+*
+* In a second step, after subcircuits have been expanded, all occurencies
+* of agauss in a b-line are replaced by their suitable value (function
+* eval_agauss_bsource() in inp.c).
+*/
+
+static void
+inp_fix_agauss_in_param(struct line *deck)
+{
+    int skip_control = 0, subckt_depth = 0, j, *sub_count;
+    char *funcbody, *funcname;
+    struct func_temper *f, *funcs = NULL, **funcs_tail_ptr = &funcs;
+    struct line *card;
+
+    sub_count = TMALLOC(int, 16);
+    for (j = 0; j < 16; j++)
+        sub_count[j] = 0;
+
+    /* first pass:
+     *   determine all .param with agauss inside and replace by .func
+     *   convert
+     *     .param xxx1 = 'agauss(x,y,z) * 25'
+     *   to
+     *     .func xxx1() 'agauss(x,y,z) * 25'
+     */
+    card = deck;
+    for (; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        if (*curr_line == '*')
+            continue;
+
+        /* determine nested depths of subcircuits */
+        if (ciprefix(".subckt", curr_line)) {
+            subckt_depth++;
+            sub_count[subckt_depth]++;
+            continue;
+        }
+        else if (ciprefix(".ends", curr_line)) {
+            subckt_depth--;
+            continue;
+        }
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (ciprefix(".para", curr_line)) {
+
+            char *p, *temper, *equal_ptr, *lhs_b, *lhs_e;
+
+            temper = search_identifier(curr_line, "agauss", curr_line);
+
+            if (!temper)
+                continue;
+
+            equal_ptr = find_assignment(curr_line);
+
+            if (!equal_ptr) {
+                fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }
+
+            /* .param lines with `,' separated multiple parameters
+             *   must have been split in inp_split_multi_param_lines()
+             */
+
+            if (find_assignment(equal_ptr + 1)) {
+                fprintf(stderr, "ERROR: internal error on line '%s'!\n", curr_line);
+                controlled_exit(EXIT_FAILURE);
+            }
+
+            lhs_b = skip_non_ws(curr_line);   // eat .param
+            lhs_b = skip_ws(lhs_b);
+
+            lhs_e = skip_back_ws(equal_ptr, curr_line);
+
+            /* skip if this is a function already */
+            p = strpbrk(lhs_b, "(,)");
+            if (p && p < lhs_e)
+                continue;
+
+            if (temper < equal_ptr) {
+                fprintf(stderr,
+                    "Error: you cannot assign a value to TEMPER\n"
+                    "  Line no. %d, %s\n",
+                    card->li_linenum, curr_line);
+                controlled_exit(EXIT_BAD);
+            }
+
+            funcname = copy_substring(lhs_b, lhs_e);
+            funcbody = copy(equal_ptr + 1);
+
+            *funcs_tail_ptr =
+                inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
+            funcs_tail_ptr = &(*funcs_tail_ptr)->next;
+
+            tfree(funcbody);
+        }
+    }
+
+    /* second pass:
+     *   for each .func entry in `funcs' start the insertion operation:
+     *      search each line from the deck which has the suitable
+     *      subcircuit nesting data.
+     *   for tokens xxx equalling the funcname, replace xxx by xxx().
+     */
+
+    for (f = funcs; f; f = f->next) {
+
+        for (j = 0; j < 16; j++)
+            sub_count[j] = 0;
+
+        card = deck;
+        for (; card; card = card->li_next) {
+
+            char *new_str = NULL; /* string we assemble here */
+            char *curr_line = card->li_line;
+            char *firsttok_str;
+
+            if (*curr_line == '*')
+                continue;
+
+            /* determine nested depths of subcircuits */
+            if (ciprefix(".subckt", curr_line)) {
+                subckt_depth++;
+                sub_count[subckt_depth]++;
+                continue;
+            }
+            else if (ciprefix(".ends", curr_line)) {
+                subckt_depth--;
+                continue;
+            }
+
+            /* exclude any command inside .control ... .endc */
+            if (ciprefix(".control", curr_line)) {
+                skip_control++;
+                continue;
+            }
+            else if (ciprefix(".endc", curr_line)) {
+                skip_control--;
+                continue;
+            }
+            else if (skip_control > 0) {
+                continue;
+            }
+
+            /* if function is not at top level,
+               exclude lines which do not have the same subcircuit
+               nesting depth and number as found in f */
+            if (f->subckt_depth > 0) {
+                if (subckt_depth != f->subckt_depth)
+                    continue;
+                if (sub_count[subckt_depth] != f->subckt_count)
+                    continue;
+            }
+
+            /* remove first token, ignore it here, restore it later */
+            firsttok_str = gettok(&curr_line);
+            if (*curr_line == '\0') {
+                tfree(firsttok_str);
+                continue;
+            }
+
+            new_str = inp_functionalise_identifier(curr_line, f->funcname);
+
+            if (new_str == curr_line) {
+                tfree(firsttok_str);
+                continue;
+            }
+
+            /* restore first part of the line */
+            new_str = INPstrCat(firsttok_str, new_str, " ");
+            new_str = inp_remove_ws(new_str);
+
+            /* if we have inserted into a .param line, convert to .func */
+            if (prefix(".para", new_str)) {
+                char *new_tmp_str = new_str;
+                txfree(gettok(&new_tmp_str));
+                funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
+                funcbody = copy(new_tmp_str + 1);
+                *funcs_tail_ptr =
+                    inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
+                funcs_tail_ptr = &(*funcs_tail_ptr)->next;
+                tfree(new_str);
+                tfree(funcbody);
+            }
+            else {
+                *card->li_line = '*';
+                /* Enter new line into deck */
+                insert_new_line(card, new_str, 0, card->li_linenum);
+            }
+        }
+    }
+
+    /* final memory clearance */
+    tfree(sub_count);
+    inp_delete_funcs(funcs);
+}
+
+
 /* append "()" to each 'identifier' in 'curr_line',
  *   unless already there */
 static char *
@@ -6012,6 +6235,12 @@ inp_new_func(char *funcname, char *funcbody, struct line *card,
 
     /* replace line in deck */
     new_str = tprintf(".func %s() %s", funcname, funcbody);
+#if 0
+    if (*funcbody == '{')
+        new_str = tprintf(".func %s() %s", funcname, funcbody);
+    else
+        new_str = tprintf(".func %s() {%s}", funcname, funcbody);
+#endif
 
     *card->li_line = '*';
     insert_new_line(card, new_str, 0, card->li_linenum);
