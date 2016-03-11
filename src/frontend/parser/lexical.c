@@ -75,7 +75,7 @@ static int numeofs = 0;
  */
 
 #define append(word)                            \
-    wl_append_word(&wlist, &cw, word)
+    wl_append_word(&wlist, &wlist_tail, word)
 
 
 #define newword                                 \
@@ -124,7 +124,7 @@ cp_lexer(char *string)
 {
     int c, d;
     int i, j;
-    wordlist *wlist, *cw;
+    wordlist *wlist, *wlist_tail;
     char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP];
     int paren;
 
@@ -137,11 +137,11 @@ cp_lexer(char *string)
         prompt();
     }
 
-    wlist = cw = NULL;
+    wlist = wlist_tail = NULL;
 nloop:
     if (wlist)
         wl_free(wlist);
-    wlist = cw = NULL;
+    wlist = wlist_tail = NULL;
     i = 0;
     j = 0;
     paren = 0;
@@ -218,7 +218,7 @@ nloop:
                 buf[i] = '\0';
                 newword;
             }
-            if (!cw)
+            if (!wlist_tail)
                 append(NULL);
             goto done;
 
