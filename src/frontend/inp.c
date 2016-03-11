@@ -58,6 +58,8 @@ static void dotifeval(struct line *deck);
 
 static wordlist *inp_savecurrents(struct line *deck, struct line *options, wordlist *wl, wordlist *controls);
 
+static void eval_agauss_bsource(struct line *deck);
+
 void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
 
@@ -670,6 +672,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
                 inp_parse_temper(deck, &modtlist, &devtlist);
+
+            /* replace agauss(x,y,z) in each b-line by suitable value */
+            eval_agauss_bsource(deck);
 
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
@@ -1852,4 +1857,88 @@ inp_savecurrents(struct line *deck, struct line *options, wordlist *wl, wordlist
     }
 
     return wl_append(wl, wl_reverse(p));
+}
+
+
+static double
+agauss(double nominal_val, double abs_variation, double sigma)
+{
+    double stdvar;
+    stdvar = abs_variation / sigma;
+    return (nominal_val + stdvar * gauss0());
+}
+
+
+/* Second step to enable agauss in professional parameter decks:
+ * agauss has been preserved by replacement operation of .func
+ * (function inp_fix_agauss_in_param() in inpcom.c).
+ * After subcircuit expansion, agauss may be still existing in b-lines,
+ * however agauss does not exist in the B source parser, and it would
+ * not make sense in adding it there, because in each time step a different
+ * return form agauss would result.
+ * So we have to do the following in each B-line:
+ * check for agauss(x,y,z), and replace it by a suitable return value
+ * of agauss()
+ */
+
+static void
+eval_agauss_bsource(struct line *deck)
+{
+    struct line *card;
+    double x, y, z, val;
+
+    card = deck;
+    for (; card; card = card->li_next) {
+
+        int skip_control = 0;
+        char *ap, *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*curr_line != 'b')
+            continue;
+
+        while ((ap = search_identifier(curr_line, "agauss", curr_line)) != NULL) {
+            char *lparen, *rparen, *begstr, *contstr = NULL, *new_line, *midstr;
+            char *tmp1str, *tmp2str, *delstr;
+            int nerror;
+
+            begstr = copy_substring(curr_line, ap);
+
+            lparen = strchr(ap, '(');
+            rparen = strchr(ap, ')');
+            tmp1str = midstr = copy_substring(lparen + 1, rparen);
+            if (rparen + 1)
+                contstr = copy(rparen + 1);
+
+            /* find the parameters */
+            delstr = tmp2str = gettok(&tmp1str);
+            x = INPevaluate(&tmp2str, &nerror, 1);
+            tfree(delstr);
+            delstr = tmp2str = gettok(&tmp1str);
+            y = INPevaluate(&tmp2str, &nerror, 1);
+            tfree(delstr);
+            delstr = tmp2str = gettok(&tmp1str);
+            z = INPevaluate(&tmp2str, &nerror, 1);
+            tfree(delstr);
+            val = agauss(x, y, z);
+            new_line = tprintf("%s%g%s", begstr, val, contstr);
+            tfree(card->li_line);
+            curr_line = card->li_line = new_line;
+            tfree(begstr);
+            tfree(contstr);
+            tfree(midstr);
+        }
+    }
 }
