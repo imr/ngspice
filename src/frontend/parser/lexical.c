@@ -124,7 +124,7 @@ cp_lexer(char *string)
 {
     int c, d;
     int i, j;
-    wordlist *wlist = NULL, *cw = NULL;
+    wordlist *wlist, *cw;
     char buf[NEW_BSIZE_SP], linebuf[NEW_BSIZE_SP];
     int paren;
 
@@ -137,6 +137,7 @@ cp_lexer(char *string)
         prompt();
     }
 
+    wlist = cw = NULL;
 nloop:
     wlist = cw = NULL;
     i = 0;
@@ -188,12 +189,14 @@ nloop:
             c = '\n';
 
         if ((c == cp_hash) && !cp_interactive && (j == 1)) {
-            wl_free(wlist);
-            wlist = cw = NULL;
-            if (string)
+            if (string) {
+                wl_free(wlist);
                 return NULL;
+            }
             while (((c = cp_readchar(&string, cp_inp_cur)) != '\n') && (c != EOF))
                 ;
+            wl_free(wlist);
+            wlist = cw = NULL;
             goto nloop;
         }
 
@@ -271,7 +274,6 @@ nloop:
 
                 // cp_ccom doesn't mess wlist, read only access to wlist->wl_word
                 cp_ccom(wlist, buf, FALSE);
-                wl_free(wlist);
                 (void) fputc('\r', cp_out);
                 prompt();
                 for (j = 0; linebuf[j]; j++)
@@ -280,6 +282,7 @@ nloop:
 #else
                 fputc(linebuf[j], cp_out);  /* But you can't edit */
 #endif
+                wl_free(wlist);
                 wlist = cw = NULL;
                 goto nloop;
             }
