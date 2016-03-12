@@ -594,7 +594,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
         if (!create) {
             return (NULL);
         } else {
-            *dd = place = alloc(struct ccom);
+            *dd = place = TMALLOC(struct ccom, 1);
             ZERO(place, struct ccom);
             buf[0] = *word;
             buf[1] = '\0';
@@ -617,7 +617,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
         if (place->cc_name[ind] < word[ind]) {
             /* This line doesn't go out that far... */
             if (create) {
-                place->cc_sibling = alloc(struct ccom);
+                place->cc_sibling = TMALLOC(struct ccom, 1);
                 ZERO(place->cc_sibling, struct ccom);
                 place->cc_sibling->cc_ysibling = place;
                 place->cc_sibling->cc_parent = place->cc_parent;
@@ -633,7 +633,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
         } else if (place->cc_name[ind] > word[ind]) {
             if (create) {
                 /* Put this one between place and its pred. */
-                tmpc = alloc(struct ccom);
+                tmpc = TMALLOC(struct ccom, 1);
                 ZERO(tmpc, struct ccom);
                 tmpc->cc_parent = place->cc_parent;
                 tmpc->cc_sibling = place;
@@ -663,7 +663,7 @@ clookup(register char *word, struct ccom **dd, bool pref, bool create)
             if (!place->cc_child) {
                 /* No children, maybe make one and go on. */
                 if (create) {
-                    tmpc = alloc(struct ccom);
+                    tmpc = TMALLOC(struct ccom, 1);
                     ZERO(tmpc, struct ccom);
                     tmpc->cc_parent = place;
                     place->cc_child = tmpc;

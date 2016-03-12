@@ -352,7 +352,7 @@ raw_read(char *name) {
                     curpl->pl_commands = wl;
                 }
             }
-            curpl = alloc(struct plot);
+            curpl = TMALLOC(struct plot, 1);
             curpl->pl_next = plots;
             plots = curpl;
             curpl->pl_name = copy(s);

@@ -397,7 +397,7 @@ PP_mksnode(const char *string)
 struct pnode *
 alloc_pnode(void)
 {
-    struct pnode *pn = alloc(struct pnode);
+    struct pnode *pn = TMALLOC(struct pnode, 1);
 
     pn->pn_use = 0;
     pn->pn_name = NULL;

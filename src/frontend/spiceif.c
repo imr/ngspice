@@ -958,7 +958,7 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
 static struct variable *
 parmtovar(IFvalue *pv, IFparm *opt)
 {
-    struct variable *vv = alloc(struct variable);
+    struct variable *vv = TMALLOC(struct variable, 1);
     struct variable *nv;
     int i = 0;
 
@@ -983,7 +983,7 @@ parmtovar(IFvalue *pv, IFparm *opt)
     case IF_REALVEC:
         vv->va_type = CP_LIST;
         for (i = 0; i < pv->v.numValue; i++) {
-            nv = alloc(struct variable);
+            nv = TMALLOC(struct variable, 1);
             nv->va_next = vv->va_vlist;
             vv->va_vlist = nv;
             nv->va_type = CP_REAL;

@@ -620,7 +620,7 @@ cp_evloop(char *string)
 
 #define newblock                                                \
     do {                                                        \
-        cend[stackp]->co_children = alloc(struct control);      \
+        cend[stackp]->co_children = TMALLOC(struct control, 1); \
         ZERO(cend[stackp]->co_children, struct control);        \
         cend[stackp]->co_children->co_parent = cend[stackp];    \
         cend[stackp] = cend[stackp]->co_children;               \
@@ -663,13 +663,13 @@ cp_evloop(char *string)
          */
         /* va: TODO: free old structure and its content, before overwriting */
         if (cend[stackp] && (cend[stackp]->co_type != CO_UNFILLED)) {
-            cend[stackp]->co_next = alloc(struct control);
+            cend[stackp]->co_next = TMALLOC(struct control, 1);
             ZERO(cend[stackp]->co_next, struct control);
             cend[stackp]->co_next->co_prev = cend[stackp];
             cend[stackp]->co_next->co_parent = cend[stackp]->co_parent;
             cend[stackp] = cend[stackp]->co_next;
         } else if (!cend[stackp]) {
-            control[stackp] = cend[stackp] = alloc(struct control);
+            control[stackp] = cend[stackp] = TMALLOC(struct control, 1);
             ZERO(cend[stackp], struct control);
         }
 

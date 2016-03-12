@@ -115,8 +115,8 @@ struct line * ENHtranslate_poly(
 #endif
 
         /* Create two new line structs and splice into deck */
-        l1 = alloc(struct line);
-        l2 = alloc(struct line);
+        l1 = TMALLOC(struct line, 1);
+        l2 = TMALLOC(struct line, 1);
         l2->li_next = d->li_next;
         l1->li_next = l2;
         d->li_next  = l1;

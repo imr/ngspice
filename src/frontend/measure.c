@@ -330,7 +330,7 @@ do_measure(
         }
 
         if (!chk_only) {
-            newcard          = alloc(struct line);
+            newcard          = TMALLOC(struct line, 1);
             newcard->li_line = strdup(out_line);
             newcard->li_next = NULL;
 

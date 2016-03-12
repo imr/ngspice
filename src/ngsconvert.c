@@ -95,7 +95,7 @@ oldread(char *name)
         perror(name);
         return (NULL);
     }
-    pl = alloc(struct plot);
+    pl = TMALLOC(struct plot, 1);
     tfread(buf, 1, 80, fp);
     buf[80] = '\0';
     for (i = (int) strlen(buf) - 1; (i > 1) && (buf[i] == ' '); i--)

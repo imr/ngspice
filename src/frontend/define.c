@@ -135,7 +135,7 @@ com_define(wordlist *wlist)
             break;
 
     if (udf == NULL) {
-        udf = alloc(struct udfunc);
+        udf = TMALLOC(struct udfunc, 1);
         udf->ud_next = udfuncs;
         udfuncs = udf;
     }

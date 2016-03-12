@@ -275,7 +275,7 @@ wl_range(wordlist *wl, int low, int up)
 wordlist *
 wl_cons(char *word, wordlist *wlist)
 {
-    wordlist *w = alloc(wordlist);
+    wordlist *w = TMALLOC(wordlist, 1);
     w->wl_next = wlist;
     w->wl_prev = NULL;
     w->wl_word = word;
@@ -297,7 +297,7 @@ wl_cons(char *word, wordlist *wlist)
 void
 wl_append_word(wordlist **first, wordlist **last, char *word)
 {
-    wordlist *w = alloc(wordlist);
+    wordlist *w = TMALLOC(wordlist, 1);
     w->wl_next = NULL;
     w->wl_prev = (*last);
     w->wl_word = word;

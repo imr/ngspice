@@ -51,7 +51,7 @@ cp_enqvar(char *word)
             return (NULL);
 
         if (d->v_length == 1) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = copy(word);
             vv->va_type = CP_REAL;
@@ -60,13 +60,13 @@ cp_enqvar(char *word)
             else
                 vv->va_real = realpart(d->v_compdata[0]);
         } else {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = copy(word);
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
             for (i = d->v_length - 1; i >= 0; i--) {
-                tv = alloc(struct variable);
+                tv = TMALLOC(struct variable, 1);
                 tv->va_type = CP_REAL;
                 if (isreal(d))
                     tv->va_real = d->v_realdata[i];
@@ -89,37 +89,37 @@ cp_enqvar(char *word)
             if (eq(vv->va_name, word))
                 return (vv);
         if (eq(word, "curplotname")) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_name);
         } else if (eq(word, "curplottitle")) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_title);
         } else if (eq(word, "curplotdate")) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_date);
         } else if (eq(word, "curplot")) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_typename);
         } else if (eq(word, "plots")) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
             vv->va_name = word;
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
-                tv = alloc(struct variable);
+                tv = TMALLOC(struct variable, 1);
                 tv->va_type = CP_STRING;
                 tv->va_string = copy(pl->pl_typename);
                 tv->va_next = vv->va_vlist;

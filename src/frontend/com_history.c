@@ -364,10 +364,10 @@ cp_addhistent(int event, wordlist *wlist)
         /* MW. the begging - initialize histlength */
         histlength = 1;
 
-        cp_lastone = histlist = alloc(struct histent);
+        cp_lastone = histlist = TMALLOC(struct histent, 1);
         cp_lastone->hi_prev = NULL;
     } else {
-        cp_lastone->hi_next = alloc(struct histent);
+        cp_lastone->hi_next = TMALLOC(struct histent, 1);
         cp_lastone->hi_next->hi_prev = cp_lastone;
         cp_lastone = cp_lastone->hi_next;
     }

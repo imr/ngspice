@@ -161,7 +161,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             fprintf(cp_out, "Warning: Interpolated raw file data!\n\n");
         }
 
-        *runp = run = alloc(struct runDesc);
+        *runp = run = TMALLOC(struct runDesc, 1);
 
         /* First fill in some general information. */
         run->analysis = analysisPtr;

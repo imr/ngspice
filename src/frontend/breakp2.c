@@ -54,7 +54,7 @@ settrace(wordlist *wl, int what, char *name)
 
     while (wl) {
         s = cp_unquote(wl->wl_word);
-        d = alloc(struct dbcomm);
+        d = TMALLOC(struct dbcomm, 1);
         d->db_number = debugnumber++;
         d->db_analysis = name;
         if (eq(s, "all")) {

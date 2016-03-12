@@ -104,7 +104,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     }
 
     if (!v) {
-        v = alloc(struct variable);
+        v = TMALLOC(struct variable, 1);
         v->va_name = copy(copyvarname);
         v->va_next = NULL;
         v_free = TRUE;
@@ -282,7 +282,7 @@ cp_setparse(wordlist *wl)
 
         wl = wl->wl_next;
         if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(name);
             vv->va_type = CP_BOOL;
             vv->va_bool = TRUE;
@@ -346,7 +346,7 @@ cp_setparse(wordlist *wl)
                     if (!--balance)
                         break;
                 }
-                vv = alloc(struct variable);
+                vv = TMALLOC(struct variable, 1);
                 vv->va_next = NULL;
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
@@ -374,7 +374,7 @@ cp_setparse(wordlist *wl)
                 return (NULL);
             }
 
-            vv = alloc(struct variable);
+            vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(name);
             vv->va_type = CP_LIST;
             vv->va_vlist = listv;
@@ -387,7 +387,7 @@ cp_setparse(wordlist *wl)
 
         copyval = ss = cp_unquote(val);
         td = ft_numparse(&ss, FALSE);
-        vv = alloc(struct variable);
+        vv = TMALLOC(struct variable, 1);
         vv->va_name = copy(name);
         vv->va_next = vars;
         vars = vv;
@@ -461,7 +461,7 @@ cp_remvar(char *varname)
     }
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
-        v = alloc(struct variable);
+        v = TMALLOC(struct variable, 1);
         ZERO(v, struct variable);
         v->va_name = copy(varname);
         v->va_type = CP_NUM;

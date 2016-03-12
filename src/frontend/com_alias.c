@@ -123,7 +123,7 @@ cp_setalias(char *word, wordlist *wlist)
     cp_addkword(CT_ALIASES, word);
 
     if (cp_aliases == NULL) {
-        al = cp_aliases = alloc(struct alias);
+        al = cp_aliases = TMALLOC(struct alias, 1);
         al->al_next = NULL;
         al->al_prev = NULL;
     } else {
@@ -135,13 +135,13 @@ cp_setalias(char *word, wordlist *wlist)
         if (al->al_prev) {
             al = al->al_prev;
             ta = al->al_next;
-            al->al_next = alloc(struct alias);
+            al->al_next = TMALLOC(struct alias, 1);
             al->al_next->al_prev = al;
             al = al->al_next;
             al->al_next = ta;
             ta->al_prev = al;
         } else {
-            cp_aliases = alloc(struct alias);
+            cp_aliases = TMALLOC(struct alias, 1);
             cp_aliases->al_next = al;
             cp_aliases->al_prev = NULL;
             al->al_prev = cp_aliases;

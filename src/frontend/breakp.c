@@ -44,9 +44,9 @@ com_stop(wordlist *wl)
 
     while (wl) {
         if (thisone == NULL) {
-            thisone = d = alloc(struct dbcomm);
+            thisone = d = TMALLOC(struct dbcomm, 1);
         } else {
-            d->db_also = alloc(struct dbcomm);
+            d->db_also = TMALLOC(struct dbcomm, 1);
             d = d->db_also;
         }
 
@@ -180,7 +180,7 @@ com_iplot(wordlist *wl)
        separate iplot commands. */
     while (wl) {
         s = cp_unquote(wl->wl_word);
-        d = alloc(struct dbcomm);
+        d = TMALLOC(struct dbcomm, 1);
         d->db_analysis = NULL;
         d->db_number = debugnumber++;
         if (eq(s, "all")) {

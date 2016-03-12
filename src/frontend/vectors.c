@@ -732,7 +732,7 @@ vec_copy(struct dvec *v)
 struct plot *
 plot_alloc(char *name)
 {
-    struct plot *pl = alloc(struct plot), *tp;
+    struct plot *pl = TMALLOC(struct plot, 1), *tp;
     char *s;
     struct ccom *ccom;
     char buf[BSIZE_SP];

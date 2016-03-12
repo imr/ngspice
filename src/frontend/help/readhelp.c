@@ -60,7 +60,7 @@ topic *
 hlp_read(fplace *place)
 {
     char buf[BSIZE_SP];
-    topic *top = alloc(topic);
+    topic *top = TMALLOC(topic, 1);
     toplink *topiclink;
     toplink *tl, *tend = NULL;
     wordlist *end = NULL;
@@ -180,9 +180,9 @@ getsubtoplink(char **ss)
 
     s = *ss;
 
-    tl = alloc(toplink);
+    tl = TMALLOC(toplink, 1);
     if ((tmp =strchr(s, ':')) != NULL) {
-        tl->place = alloc(fplace);
+        tl->place = TMALLOC(fplace, 1);
         tl->place->filename =
             strncpy(TMALLOC(char, tmp - s + 1), s, (size_t) (tmp - s));
         tl->place->filename[tmp - s] = '\0';

@@ -793,7 +793,7 @@ inp_dodeck(
             ft_curckt->ci_nodes   = cp_kwswitch(CT_NODENAMES, NULL);
         }
         /* create new circuit structure */
-        ft_curckt = ct = alloc(struct circ);
+        ft_curckt = ct = TMALLOC(struct circ, 1);
 
         /*PN FTESTATS*/
         ft_curckt->FTEstats = TMALLOC(FTESTATistics, 1);
@@ -1631,7 +1631,7 @@ static void inp_savecurrents(struct line *deck, struct line *options, wordlist *
     /* if we neither have 'save' nor '.save', add '.save all'
        or if we do not have wl_first, add at least a wordline '*' to allow wl_append_word() */
     if (!(*wl) || !havesave) {
-        *wl = alloc(wordlist);
+        *wl = TMALLOC(wordlist, 1);
         (*wl)->wl_next = NULL;
         (*wl)->wl_prev = NULL;
         if (havesave)

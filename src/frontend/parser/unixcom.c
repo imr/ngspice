@@ -118,7 +118,7 @@ cp_rehash(char *pathlist, bool docc)
              * executable, but that is too slow
              * (as if "we" really cared).
              */
-            hh = alloc(struct hashent);
+            hh = TMALLOC(struct hashent, 1);
             hh->h_name = copy(entry->d_name);
             hh->h_path = curpath;
             i = hash(entry->d_name);

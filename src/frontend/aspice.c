@@ -131,7 +131,7 @@ com_aspice(wordlist *wl)
     }
 
     /* Add this one to the job list. */
-    p = alloc(struct proc);
+    p = TMALLOC(struct proc, 1);
     p->pr_pid = pid;
     p->pr_name = copy(s);
     p->pr_rawfile = copy(raw);

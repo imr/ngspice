@@ -484,7 +484,7 @@ doit(struct line *deck, wordlist *modnames) {
                 {
                     char *s = c->li_line;
 
-                    sss = alloc(struct subs);
+                    sss = TMALLOC(struct subs, 1);
 
                     txfree(gettok(&s));
 
@@ -707,10 +707,10 @@ inp_deckcopy(struct line *deck) {
 
     while (deck) {
         if (nd) {
-            d->li_next = alloc(struct line);
+            d->li_next = TMALLOC(struct line, 1);
             d = d->li_next;
         } else {
-            nd = d = alloc(struct line);
+            nd = d = TMALLOC(struct line, 1);
         }
         d->li_linenum = deck->li_linenum;
         d->li_line = copy(deck->li_line);
