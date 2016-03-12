@@ -38,9 +38,7 @@
 #include <stdio.h>
 
 #undef  ABORT
-#undef  MALLOC
 #undef  FREE
-#undef  REALLOC
 
 
 

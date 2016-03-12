@@ -29,9 +29,7 @@ extern void txfree(void *ptr);
 
 #include "ngspice/stringutil.h" /* va: spice3 internally bzero */
 
-#define MALLOC(x)        tmalloc((size_t) (x))
 #define FREE(x)          do { if(x) { txfree(x); (x) = NULL; } } while(0)
-#define REALLOC(x, y)    trealloc(x, (size_t) (y))
 #define ZERO(PTR, TYPE)  bzero(PTR, sizeof(TYPE))
 
 
