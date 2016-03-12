@@ -39,7 +39,12 @@
 #define  SWAP(type, a, b)   {type swapx; swapx = a; a = b; b = swapx;}
  
  
-#define ABORT() fflush(stderr);fflush(stdout);abort();
+#define ABORT()                                 \
+    do {                                        \
+        fflush(stderr);                         \
+        fflush(stdout);                         \
+        abort();                                \
+    } while(0)
 
 #define MERROR(CODE, MESSAGE) \
     do {                                                      \
