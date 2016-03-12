@@ -37,13 +37,6 @@ Author: 1982 Giles Billingsley
             c |= CODEMAXY;                      \
     } while(0)
 
-#define SWAPINT(a, b)                           \
-    do {                                        \
-        int xxxx = (a);                         \
-        (a) = (b);                              \
-        (b) = xxxx;                             \
-    } while(0)
-
 
 /* clip_line will clip a line to a rectangular area.  The returned
  * value is 'TRUE' if the line is out of the AOI (therefore does not
