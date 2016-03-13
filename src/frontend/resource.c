@@ -268,7 +268,7 @@ printres(char *name)
 #ifdef XSPICE
         /* gtri - add - 12/12/90 - wbk - record cpu time used for ipc */
         g_ipc.cpu_time = (double) lastusec;
-        g_ipc.cpu_time /= 1.0e6;
+        g_ipc.cpu_time /= 1000.0;
         g_ipc.cpu_time += (double) lastsec;
         /* gtri - end - 12/12/90 */
 #endif
