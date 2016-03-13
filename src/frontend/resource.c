@@ -205,10 +205,6 @@ printres(char *name)
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
         int total, totalu;
 
-#ifdef ipsc
-#        define NO_RUDATA
-#else
-
 #  ifdef HAVE_GETRUSAGE
         int ret;
         struct rusage ruse;
@@ -240,7 +236,6 @@ printres(char *name)
 #      endif
 #    endif
 #  endif
-#endif
 
 
 #ifndef NO_RUDATA
@@ -291,13 +286,6 @@ printres(char *name)
 
     if (!name || eq(name, "space")) {
 
-#ifdef ipsc
-        size_t usage = 0, limit = 0;
-        NXINFO cur = nxinfo, start = nxinfo_snap;
-
-        usage = cur.dataend - cur.datastart;
-        limit = start.availmem;
-#else /* ipsc */
 #  ifdef HAVE_GETRLIMIT
         size_t usage = 0, limit = 0;
         struct rlimit rld;
@@ -317,7 +305,6 @@ printres(char *name)
         usage = (size_t) (hi - enddata);
 #    endif /* HAVE_ULIMIT */
 #  endif /* HAVE_GETRLIMIT */
-#endif /* ipsc */
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO)
 
