@@ -180,8 +180,7 @@ void cm_d_osc(ARGS)
 
     int               i,    /* generic loop counter index */
               cntl_size,    /* control array size         */
-              freq_size,    /* frequency array size       */
-              int_cycle;    /* integer number of cycles   */ 
+              freq_size;    /* frequency array size       */
          
                         
 
@@ -343,12 +342,9 @@ void cm_d_osc(ARGS)
             /* calculate the instantaneous phase */
             *phase = *phase_old + freq * (TIME - T(1));
         
-            /* convert the phase to an integer */
-            int_cycle = *phase_old;
-        		
             /* dphase is the percent into the cycle for
                the period */	
-            dphase = *phase_old - int_cycle;
+            dphase = *phase_old - floor(*phase_old);
 
 
             /* Calculate the time variables and the output value
