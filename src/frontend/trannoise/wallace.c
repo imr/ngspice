@@ -81,7 +81,7 @@ initw(void)
 {
     unsigned i;
     double totsqr, nomsqr;
-    unsigned long int coa, cob, s;
+    unsigned int coa;
 
     /* initialize the uniform generator */
     srand((unsigned int) getpid());
@@ -137,18 +137,14 @@ initw(void)
     variate_used = n - 2;
 
     /* generate random reading addresses using a LCG */
-    s = 0;
     coa = 241;
-    cob = 59;
     for (i = 0; i < (n + NOTRANS); i++) {
         // addrif[i] = s = (s * coa + cob) % (n);
         coa = CombLCGTausInt();
         addrif[i] = coa >> (32 - LPOOLSIZE);
         // printf ("Random add:\t%ld\n" , s);
     }
-    s = 0;
     coa = 193;
-    cob = 15;
     for (i = 0; i < (n + NOTRANS); i++) {
         // addrib[i] = s = (s * coa + cob) % (n);
         coa = CombLCGTausInt();
