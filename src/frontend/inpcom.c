@@ -140,13 +140,13 @@ static void inp_add_series_resistor(struct line *deck);
 static void subckt_params_to_param(struct line *deck);
 static void inp_fix_temper_in_param(struct line *deck);
 
-static char *skip_back_non_ws(char *d) { while (d[-1] && !isspace_c(d[-1])) d--; return d; }
-static char *skip_back_ws(char *d)     { while (isspace_c(d[-1]))           d--; return d; }
-static char *skip_non_ws(char *d)      { while (*d && !isspace_c(*d)) d++; return d; }
-static char *skip_ws(char *d)          { while (isspace_c(*d))        d++; return d; }
+static inline char *depreciated_skip_back_non_ws(char *d) { while (d[-1] && !isspace_c(d[-1])) d--; return d; }
+static inline char *depreciated_skip_back_ws(char *d)     { while (isspace_c(d[-1]))           d--; return d; }
+static inline char *skip_non_ws(char *d)      { while (*d && !isspace_c(*d)) d++; return d; }
+static inline char *skip_ws(char *d)          { while (isspace_c(*d))        d++; return d; }
 
-static char *skip_back_non_ws_(char *d, char *start) { while (d > start && !isspace_c(d[-1])) d--; return d; }
-static char *skip_back_ws_(char *d, char *start)     { while (d > start && isspace_c(d[-1])) d--; return d; }
+static inline char *skip_back_non_ws(char *d, char *start) { while (d > start && !isspace_c(d[-1])) d--; return d; }
+static inline char *skip_back_ws(char *d, char *start)     { while (d > start && isspace_c(d[-1])) d--; return d; }
 
 static char *inp_spawn_brace(char *s);
 
@@ -1232,7 +1232,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
                     out_b = skip_ws(ref_e);
 
-                    out_e = skip_back_ws_(fcn_b, out_b);
+                    out_e = skip_back_ws(fcn_b, out_b);
                     if (out_e <= out_b)
                         break;
 
@@ -1247,18 +1247,18 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                     if (!comma_ptr)
                         break;
 
-                    xy_values1_b = skip_back_ws_(comma_ptr, ctrl_nodes_b);
+                    xy_values1_b = skip_back_ws(comma_ptr, ctrl_nodes_b);
                     if (xy_values1_b[-1] == '}') {
                         while (--xy_values1_b >= ctrl_nodes_b)
                             if (*xy_values1_b == '{')
                                 break;
                     } else {
-                        xy_values1_b = skip_back_non_ws_(xy_values1_b, ctrl_nodes_b);
+                        xy_values1_b = skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
                     }
                     if (xy_values1_b <= ctrl_nodes_b)
                         break;
 
-                    ctrl_nodes_e = skip_back_ws_(xy_values1_b, ctrl_nodes_b);
+                    ctrl_nodes_e = skip_back_ws(xy_values1_b, ctrl_nodes_b);
                     if (ctrl_nodes_e <= ctrl_nodes_b)
                         break;
 
@@ -1400,7 +1400,7 @@ chk_for_line_continuation(char *line)
 {
     if (*line != '*' && *line != '$') {
 
-        char *ptr = skip_back_ws_(strchr(line, '\0'), line);
+        char *ptr = skip_back_ws(strchr(line, '\0'), line);
 
         if ((ptr - 2 >= line) && (ptr[-1] == '\\') && (ptr[-2] == '\\')) {
             ptr[-1] = ' ';
@@ -1499,15 +1499,15 @@ get_instance_subckt(char *line)
 
     // see if instance has parameters
     if (equal_ptr) {
-        end_ptr = skip_back_ws_(equal_ptr, line);
-        end_ptr = skip_back_non_ws_(end_ptr, line);
+        end_ptr = skip_back_ws(equal_ptr, line);
+        end_ptr = skip_back_non_ws(end_ptr, line);
     } else {
         end_ptr = strchr(line, '\0');
     }
 
-    end_ptr = skip_back_ws_(end_ptr, line);
+    end_ptr = skip_back_ws(end_ptr, line);
 
-    inst_name_ptr = skip_back_non_ws_(end_ptr, line);
+    inst_name_ptr = skip_back_non_ws(end_ptr, line);
 
     return copy_substring(inst_name_ptr, end_ptr);
 }
@@ -1576,8 +1576,8 @@ get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
 
-    ptr_end = skip_back_ws_(strchr(line, '\0'), line);
-    ptr_beg = skip_back_non_ws_(ptr_end, line);
+    ptr_end = skip_back_ws(strchr(line, '\0'), line);
+    ptr_beg = skip_back_non_ws(ptr_end, line);
 
     return copy_substring(ptr_beg, ptr_end);
 }
@@ -2132,16 +2132,16 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         /* go to beginning of first parameter word  */
         /* s    will contain only subckt definition */
         /* beg  will point to start of param list   */
-        beg = skip_back_ws_(equal, s);
-        beg = skip_back_non_ws_(beg, s);
+        beg = skip_back_ws(equal, s);
+        beg = skip_back_non_ws(beg, s);
         beg[-1] = '\0';         /* fixme can be < s */
 
         head = xx_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
         while ((ptr1 = strchr(beg, '=')) != NULL) {
             ptr2 = skip_ws(ptr1 + 1);
-            ptr1 = skip_back_ws_(ptr1, beg);
-            ptr1 = skip_back_non_ws_(ptr1, beg);
+            ptr1 = skip_back_ws(ptr1, beg);
+            ptr1 = skip_back_non_ws(ptr1, beg);
             /* ptr1 points to beginning of parameter */
 
             if (*ptr2 == '{')
@@ -2443,14 +2443,14 @@ inp_get_subckt_name(char *s)
     char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
-        end_ptr = skip_back_ws_(end_ptr, s);
-        end_ptr = skip_back_non_ws_(end_ptr, s);
+        end_ptr = skip_back_ws(end_ptr, s);
+        end_ptr = skip_back_non_ws(end_ptr, s);
     } else {
         end_ptr = strchr(s, '\0');
     }
 
-    end_ptr = skip_back_ws_(end_ptr, s);
-    subckt_name = skip_back_non_ws_(end_ptr, s);
+    end_ptr = skip_back_ws(end_ptr, s);
+    subckt_name = skip_back_non_ws(end_ptr, s);
 
     return copy_substring(subckt_name, end_ptr);
 }
@@ -2467,8 +2467,8 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
     while ((equal_ptr = find_assignment(line)) != NULL) {
 
         /* get parameter name */
-        end = skip_back_ws_(equal_ptr, line);
-        name = skip_back_non_ws_(end, line);
+        end = skip_back_ws(equal_ptr, line);
+        name = skip_back_non_ws(end, line);
 
         param_names[num_params++] = copy_substring(name, end);
 
@@ -2521,8 +2521,8 @@ inp_fix_inst_line(char *inst_line,
 
     end = strchr(inst_line, '=');
     if (end) {
-        end = skip_back_ws_(end, inst_line);
-        end = skip_back_non_ws_(end, inst_line);
+        end = skip_back_ws(end, inst_line);
+        end = skip_back_non_ws(end, inst_line);
         end[-1] = '\0';         /* fixme can be < inst_line */
     }
 
@@ -3491,9 +3491,9 @@ get_param_name(char *line)
         controlled_exit(EXIT_FAILURE);
     }
 
-    equal_ptr = skip_back_ws_(equal_ptr, line);
+    equal_ptr = skip_back_ws(equal_ptr, line);
 
-    beg = skip_back_non_ws_(equal_ptr, line);
+    beg = skip_back_non_ws(equal_ptr, line);
 
     return copy_substring(beg, equal_ptr);
 }
@@ -3976,8 +3976,8 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                 bool get_expression = FALSE;
                 bool get_paren_expression = FALSE;
 
-                beg_param = skip_back_ws_(equal_ptr, curr_line);
-                beg_param = skip_back_non_ws_(beg_param, curr_line);
+                beg_param = skip_back_ws(equal_ptr, curr_line);
+                beg_param = skip_back_non_ws(beg_param, curr_line);
                 end_param = skip_ws(equal_ptr + 1);
                 while (*end_param != '\0' && (!isspace_c(*end_param) || get_expression || get_paren_expression)) {
                     if (*end_param == '{')
@@ -4353,7 +4353,7 @@ inp_compat(struct line *card)
                BExxx int1 0 V = {equation}
             */
             /* search for ' vol=' or ' vol =' */
-            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("vol", skip_back_non_ws_(skip_back_ws_(str_ptr, curr_line), curr_line))) {
+            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("vol", skip_back_non_ws(skip_back_ws(str_ptr, curr_line), curr_line))) {
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4541,7 +4541,7 @@ inp_compat(struct line *card)
               BGxxx int1 0 V = {equation}
             */
             /* search for ' cur=' or ' cur =' */
-            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("cur", skip_back_non_ws_(skip_back_ws_(str_ptr, curr_line), curr_line))) {
+            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("cur", skip_back_non_ws(skip_back_ws(str_ptr, curr_line), curr_line))) {
                 char *m_ptr, *m_token;
                 cut_line = curr_line;
                 /* title and nodes */
@@ -5903,7 +5903,7 @@ inp_fix_temper_in_param(struct line *deck)
             lhs_b = skip_non_ws(curr_line);   // eat .param
             lhs_b = skip_ws(lhs_b);
 
-            lhs_e = skip_back_ws_(equal_ptr, curr_line);
+            lhs_e = skip_back_ws(equal_ptr, curr_line);
 
             /* skip if this is a function already */
             p = strpbrk(lhs_b, "(,)");
@@ -6135,7 +6135,7 @@ inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, in
                     int prefix_len;
 
                     if (isspace_c(s[-1])) {
-                        s = skip_back_ws(s);
+                        s = depreciated_skip_back_ws(s);
                         if (s[-1] == '{')
                             s--;
                     }
