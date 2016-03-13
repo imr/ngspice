@@ -280,12 +280,25 @@ NON-STANDARD FEATURES
      
 =============================================================================*/
 
+/* FIXME,
+ *   this is seriously broken,
+ *   once it was probably based upon htonl(),
+ *     yet with broken types
+ *   then the game has changed and strtoul() was used
+ *     with a ascii representation of the length
+ *     (probably as a hacky workaround, because it proved unreliable)
+ *     but the buffer is not terminated properly
+ * Fix this when needed, currently this functionality looks like
+ *   an unused ancient artefact
+ * Fix it with regard to ipc_transport_get_line() and ipc_transport_send_line()
+ *   and in concert with the actual user at the other side of the socket
+ */
 static u_long
 bytes_to_integer (
      char   *str,	/* IN - string that contains the bytes to convert  */
      int    start )	/* IN - index into string where bytes are          */
 {
-  u_long u;             /* Value to be returned                            */
+  uint32_t u;           /* Value to be returned                            */
   char   buff[4];       /* Transfer str into buff to word align reqd data  */
   int    index;         /* Index into str and buff for transfer            */
 
@@ -299,7 +312,7 @@ bytes_to_integer (
     index++;
   }
 /*  u = ntohl (*((u_long *) buff)); */
-  u = strtoul(buff, NULL, 10);
+  u = (uint32_t) strtoul(buff, NULL, 10);
 
   return u;
 }   /* end bytes_to_integer */
@@ -658,7 +671,7 @@ ipc_transport_send_line (
 
   /* Write message body header with length: */
   hdr_buff[0] = BOL_CHAR;
-  u = htonl ((u_long) len);
+  u = htonl ((uint32_t) len);
   char_ptr = (char *) &u;
   for(i = 0; i < 4; i++)
     hdr_buff[i+1] = char_ptr[i];
