@@ -75,8 +75,8 @@ struct timeb timebegin;
 void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
 {
 
-    *msec = now->millitm - begin->millitm;
-    *sec = (int)(now->time - begin->time);
+    *msec = (int) now->millitm - (int) begin->millitm;
+    *sec = (int) now->time - (int) begin->time;
     if (*msec < 0) {
       *msec += 1000;
       (*sec)--;

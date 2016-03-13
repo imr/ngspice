@@ -213,15 +213,17 @@ printres(char *name)
         if (ret == -1)
             perror("getrusage(): ");
 
-        total_sec = ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec;
-        total_msec = (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
+        total_sec = (int) (ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec);
+        total_msec = (int) (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
         cpu_elapsed = "CPU";
 #  else
 #    ifdef HAVE_TIMES
         struct tms ruse;
-        realt = times(&ruse);
-        total_sec = (ruse.tms_utime + ruse.tms_stime)/ HZ;
-        total_msec = (ruse.tms_utime + ruse.tms_utime) * 1000 / HZ;
+        times(&ruse);
+        clock_t x = ruse.tms_utime + ruse.tms_stime;
+        clock_t hz = (clock_t) sysconf(_SC_CLK_TCK);
+        total_sec = x / hz;
+        total_msec = ((x % hz) * 1000) / hz;
         cpu_elapsed = "CPU";
 #    else
 #      ifdef HAVE_FTIME
@@ -237,21 +239,21 @@ printres(char *name)
 
 
 #ifndef NO_RUDATA
+
+        if (total_msec >= 1000) {
+            total_msec -= 1000;
+            total_sec += 1;
+        }
+
         if (!name || eq(name, "totalcputime")) {
-            total_sec += total_msec / 1000;
-            total_msec %= 1000;
             fprintf(cp_out, "Total %s time: %u.%03u seconds.\n",
                     cpu_elapsed, total_sec, total_msec);
         }
 
         if (!name || eq(name, "cputime")) {
-            last_msec = total_msec - last_msec;
-            last_sec = total_sec - last_sec;
-            while (last_msec < 0) {
-                last_msec += 1000;
-                last_sec -= 1;
-            }
-            while (last_msec > 1000) {
+            last_msec = 1000 + total_msec - last_msec;
+            last_sec = total_sec - last_sec - 1;
+            if (last_msec >= 1000) {
                 last_msec -= 1000;
                 last_sec += 1;
             }
