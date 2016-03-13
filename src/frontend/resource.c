@@ -198,12 +198,12 @@ printres(char *name)
     char *paramname = NULL;
 #endif
     bool yy = FALSE;
-    static long lastsec = 0, lastusec = 0;
+    static long last_sec = 0, last_msec = 0;
     struct variable *v, *vfree = NULL;
     char *cpu_elapsed;
 
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
-        int total, totalu;
+        int total_sec, total_msec;
 
 #  ifdef HAVE_GETRUSAGE
         int ret;
@@ -213,23 +213,21 @@ printres(char *name)
         if (ret == -1)
             perror("getrusage(): ");
 
-        total = ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec;
-        totalu = (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
+        total_sec = ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec;
+        total_msec = (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
         cpu_elapsed = "CPU";
 #  else
 #    ifdef HAVE_TIMES
         struct tms ruse;
         realt = times(&ruse);
-        total = (ruse.tms_utime + ruse.tms_stime)/ HZ;
-        totalu = (ruse.tms_utime + ruse.tms_utime) * 1000 / HZ;
+        total_sec = (ruse.tms_utime + ruse.tms_stime)/ HZ;
+        total_msec = (ruse.tms_utime + ruse.tms_utime) * 1000 / HZ;
         cpu_elapsed = "CPU";
 #    else
 #      ifdef HAVE_FTIME
         struct timeb timenow;
-        /* int sec, msec; sjb */
         ftime(&timenow);
-        timediff(&timenow, &timebegin, &total, &totalu);
-        /* totalu /= 1000;  hvogt */
+        timediff(&timenow, &timebegin, &total_sec, &total_msec);
         cpu_elapsed = "elapsed";
 #      else
 #        define NO_RUDATA
@@ -240,36 +238,36 @@ printres(char *name)
 
 #ifndef NO_RUDATA
         if (!name || eq(name, "totalcputime")) {
-            total += totalu / 1000;
-            totalu %= 1000;
+            total_sec += total_msec / 1000;
+            total_msec %= 1000;
             fprintf(cp_out, "Total %s time: %u.%03u seconds.\n",
-                    cpu_elapsed, total, totalu);
+                    cpu_elapsed, total_sec, total_msec);
         }
 
         if (!name || eq(name, "cputime")) {
-            lastusec = totalu - lastusec;
-            lastsec = total - lastsec;
-            while (lastusec < 0) {
-                lastusec += 1000;
-                lastsec -= 1;
+            last_msec = total_msec - last_msec;
+            last_sec = total_sec - last_sec;
+            while (last_msec < 0) {
+                last_msec += 1000;
+                last_sec -= 1;
             }
-            while (lastusec > 1000) {
-                lastusec -= 1000;
-                lastsec += 1;
+            while (last_msec > 1000) {
+                last_msec -= 1000;
+                last_sec += 1;
             }
 #ifndef HAVE_WIN32
             fprintf(cp_out, "%s time since last call: %lu.%03lu seconds.\n",
-                    cpu_elapsed, lastsec, lastusec);
+                    cpu_elapsed, last_sec, last_msec);
 #endif
-            lastsec = total;
-            lastusec = totalu;
+            last_sec = total_sec;
+            last_msec = total_msec;
         }
 
 #ifdef XSPICE
         /* gtri - add - 12/12/90 - wbk - record cpu time used for ipc */
-        g_ipc.cpu_time = (double) lastusec;
+        g_ipc.cpu_time = (double) last_msec;
         g_ipc.cpu_time /= 1000.0;
-        g_ipc.cpu_time += (double) lastsec;
+        g_ipc.cpu_time += (double) last_sec;
         /* gtri - end - 12/12/90 */
 #endif
 
