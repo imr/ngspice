@@ -1461,7 +1461,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                             /* convert to a floating point number... */
                             cnv_get_spice_value(token,&number);
             
-                            states->state[i] = number;
+                            states->state[i] = (int) number;
 
                              
                         }
@@ -1530,7 +1530,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                         /* convert to a floating point number... */
                                         cnv_get_spice_value(token,&number);
             
-                                        states->next_state[i] = number;
+                                        states->next_state[i] = (int) number;
                                     }
                                 }
                             }
@@ -1657,7 +1657,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                 /* convert to a floating point number... */
                                 cnv_get_spice_value(token,&number);
                         
-                                states->next_state[i] = number;
+                                states->next_state[i] = (int) number;
                             }
                         }       
                     } 
