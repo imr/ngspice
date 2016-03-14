@@ -46,6 +46,7 @@ com_option(wordlist *wl)
             printf("Unknown integration method\n");
         }
         printf("MaxOrder = %d\n", circuit->CKTmaxOrder);
+        printf("xmu = %g\n", circuit->CKTxmu);
 
         printf("\nTolerances (absolute):\n");
         printf("abstol      (current) = %g\n", circuit->CKTabstol);

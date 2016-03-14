@@ -119,6 +119,8 @@ typedef struct {
 #define OPT_RELDV        67  /* Original: 52 (Node_Damping) */
 
 #define OPT_NOOPAC       68
+#define OPT_XMU          69
+
 
 #ifdef XSPICE
 /* gtri - begin - wbk - add new options */

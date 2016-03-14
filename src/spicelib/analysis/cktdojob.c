@@ -52,6 +52,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
     ckt->CKTnomTemp  = task->TSKnomTemp;
     ckt->CKTmaxOrder  = task->TSKmaxOrder;
     ckt->CKTintegrateMethod  = task->TSKintegrateMethod;
+    ckt->CKTxmu  = task->TSKxmu;
     ckt->CKTbypass  = task->TSKbypass;
     ckt->CKTdcMaxIter  = task->TSKdcMaxIter;
     ckt->CKTdcTrcvMaxIter  = task->TSKdcTrcvMaxIter;

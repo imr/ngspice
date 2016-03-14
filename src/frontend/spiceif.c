@@ -1409,6 +1409,7 @@ void com_snload(wordlist *wl)
     _t(CKTorder);
     _t(CKTmaxOrder);
     _t(CKTintegrateMethod);
+    _t(CKTxmu);
 
     _t(CKTniState);
 

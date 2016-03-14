@@ -20,6 +20,7 @@ struct TSKtask {
     double TSKnomTemp;
     int TSKmaxOrder;        /* maximum integration method order */
     int TSKintegrateMethod; /* the integration method to be used */
+    double TSKxmu;          /* for trapezoidal method */
     int TSKcurrentAnalysis; /* the analysis in progress (if any) */
 
 /* defines for the value of  TSKcurrentAnalysis */

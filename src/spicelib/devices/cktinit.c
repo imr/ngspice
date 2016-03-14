@@ -65,6 +65,7 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTintegrateMethod = TRAPEZOIDAL;
     sckt->CKTorder = 1;
     sckt->CKTmaxOrder = 2;
+    sckt->CKTxmu = 0.5;
     sckt->CKTpivotAbsTol = 1e-13;
     sckt->CKTpivotRelTol = 1e-3;
     sckt->CKTtemp = 300.15;
