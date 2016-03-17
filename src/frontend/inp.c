@@ -1469,7 +1469,7 @@ inp_parse_temper(struct line *card)
                     *str_ptr = ' ';
 
                 /* create wordlist suitable for com_altermod */
-                wl_append_word(&wl, &wlend, devmodname);
+                wl_append_word(&wl, &wlend, copy(devmodname));
                 wl_append_word(&wl, &wlend, paramname);
                 wl_append_word(&wl, &wlend, copy("="));
                 /* to be filled in by evaluation function */
@@ -1481,6 +1481,7 @@ inp_parse_temper(struct line *card)
                 modtlistnew->next = modtlist;
                 modtlist = modtlistnew;
             }
+            tfree(devmodname);
         } else { /* instance expression with 'temper' */
             struct pt_temper *devtlistnew = NULL;
             /* get device name */
@@ -1518,7 +1519,7 @@ inp_parse_temper(struct line *card)
                     *str_ptr = ' ';
 
                 /* create wordlist suitable for com_altermod */
-                wl_append_word(&wl, &wlend, devmodname);
+                wl_append_word(&wl, &wlend, copy(devmodname));
                 wl_append_word(&wl, &wlend, paramname);
                 wl_append_word(&wl, &wlend, copy("="));
                 /* to be filled in by evaluation function */
@@ -1530,6 +1531,7 @@ inp_parse_temper(struct line *card)
                 devtlistnew->next = devtlist;
                 devtlist = devtlistnew;
             }
+            tfree(devmodname);
         }
     }
 
