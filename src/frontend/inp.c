@@ -1468,7 +1468,6 @@ inp_parse_temper(struct line *card)
                 for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
                     *str_ptr = ' ';
 
-                modtlistnew->next = NULL;
                 /* create wordlist suitable for com_altermod */
                 wl_append_word(&wl, &wlend, devmodname);
                 wl_append_word(&wl, &wlend, paramname);
@@ -1479,13 +1478,8 @@ inp_parse_temper(struct line *card)
                 modtlistnew->wlend = wlend;
 
                 /* fill in the linked parse tree list */
-                if (modtlist) {
-                    struct pt_temper *modtlisttmp = modtlist;
-                    modtlist = modtlistnew;
-                    modtlist->next = modtlisttmp;
-                } else {
-                    modtlist = modtlistnew;
-                }
+                modtlistnew->next = modtlist;
+                modtlist = modtlistnew;
             }
         } else { /* instance expression with 'temper' */
             struct pt_temper *devtlistnew = NULL;
@@ -1523,7 +1517,6 @@ inp_parse_temper(struct line *card)
                 for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
                     *str_ptr = ' ';
 
-                devtlistnew->next = NULL;
                 /* create wordlist suitable for com_altermod */
                 wl_append_word(&wl, &wlend, devmodname);
                 wl_append_word(&wl, &wlend, paramname);
@@ -1534,13 +1527,8 @@ inp_parse_temper(struct line *card)
                 devtlistnew->wlend = wlend;
 
                 /* fill in the linked parse tree list */
-                if (devtlist) {
-                    struct pt_temper *devtlisttmp = devtlist;
-                    devtlist = devtlistnew;
-                    devtlist->next = devtlisttmp;
-                } else {
-                    devtlist = devtlistnew;
-                }
+                devtlistnew->next = devtlist;
+                devtlist = devtlistnew;
             }
         }
     }
