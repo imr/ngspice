@@ -1560,6 +1560,8 @@ inp_evaluate_temper(void)
 
     for(d = devtlist; d; d = d->next) {
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
+        if (d->wlend->wl_word)
+            tfree(d->wlend->wl_word);
         d->wlend->wl_word = tprintf("%g", result);
         com_alter(d->wl);
     }
@@ -1572,6 +1574,8 @@ inp_evaluate_temper(void)
         if (ft_sim->findModel (ft_curckt->ci_ckt, name) == NULL)
             continue;
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
+        if (d->wlend->wl_word)
+            tfree(d->wlend->wl_word);
         d->wlend->wl_word = tprintf("%g", result);
         com_altermod(d->wl);
     }
