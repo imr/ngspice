@@ -138,7 +138,7 @@ static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 static void subckt_params_to_param(struct line *deck);
 static void inp_fix_temper_in_param(struct line *deck);
-static void inp_fix_agauss_in_param(struct line *deck);
+static void inp_fix_agauss_in_param(struct line *deck, char *fcn);
 
 static char *inp_spawn_brace(char *s);
 
@@ -555,7 +555,11 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         rv . line_number = inp_split_multi_param_lines(working, rv . line_number);
 
         inp_fix_macro_param_func_paren_io(working);
-        inp_fix_agauss_in_param(working);
+
+        static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
+        int ii;
+        for (ii = 0; ii < 5; ii++)
+            inp_fix_agauss_in_param(working, statfcn[ii]);
 
         inp_fix_temper_in_param(working);
 
@@ -5971,8 +5975,9 @@ inp_fix_temper_in_param(struct line *deck)
 }
 
 
-/* Convert .param lines containing function 'agauss' into .func lines:
-* .param xxx1 = 'agauss()'  --->  .func xxx1() 'agauss()'
+/* Convert .param lines containing function 'agauss' and others
+*  (function name handed over by *fcn),  into .func lines:
+* .param xxx1 = 'aunif()'  --->  .func xxx1() 'aunif()'
 * Add info about the functions (name, subcircuit depth, number of
 * subckt) to linked list new_func.
 * Then scan new_func, for each xxx1 scan all lines of deck,
@@ -5985,7 +5990,7 @@ inp_fix_temper_in_param(struct line *deck)
 */
 
 static void
-inp_fix_agauss_in_param(struct line *deck)
+inp_fix_agauss_in_param(struct line *deck, char *fcn)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
     char *funcbody, *funcname;
@@ -6039,7 +6044,7 @@ inp_fix_agauss_in_param(struct line *deck)
 
             char *p, *temper, *equal_ptr, *lhs_b, *lhs_e;
 
-            temper = search_identifier(curr_line, "agauss", curr_line);
+            temper = search_identifier(curr_line, fcn, curr_line);
 
             if (!temper)
                 continue;
@@ -6072,9 +6077,9 @@ inp_fix_agauss_in_param(struct line *deck)
 
             if (temper < equal_ptr) {
                 fprintf(stderr,
-                    "Error: you cannot assign a value to TEMPER\n"
+                    "Error: you cannot assign a value to %s\n"
                     "  Line no. %d, %s\n",
-                    card->li_linenum, curr_line);
+                    fcn, card->li_linenum, curr_line);
                 controlled_exit(EXIT_BAD);
             }
 
