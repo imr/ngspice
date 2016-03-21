@@ -29,6 +29,7 @@ Author: 1988 Jeffrey M. Hsu
 #include "../breakp2.h"
 #include "../display.h"
 #include "../runcoms.h"
+#include "ngspice/stringskip.h"
 
 
 static void gr_start_internal(struct dvec *dv, bool copyvec);

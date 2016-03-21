@@ -12,6 +12,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/fteinp.h"
+#include "ngspice/stringskip.h"
 #include "nutinp.h"
 #include "variable.h"
 #include "../misc/mktemp.h"

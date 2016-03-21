@@ -12,6 +12,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/sim.h"
+#include "ngspice/stringskip.h"
 
 #include "circuits.h"
 #include "completion.h"

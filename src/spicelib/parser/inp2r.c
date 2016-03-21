@@ -13,6 +13,7 @@ Remarks:  This code is based on a version written by Serban Popescu which
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
 #include "inpxx.h"
+#include "ngspice/stringskip.h"
 
 /* undefine to add tracing to this file */
 /* #define TRACE */

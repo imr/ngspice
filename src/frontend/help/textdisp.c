@@ -15,6 +15,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/cpdefs.h"
 #include "ngspice/hlpdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/stringskip.h"
 
 static topic *curtop;
 static bool quitflag;

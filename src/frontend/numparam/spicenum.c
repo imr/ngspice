@@ -27,6 +27,7 @@ Todo:
 #include "numparam.h"
 
 #include "ngspice/fteext.h"
+#include "ngspice/stringskip.h"
 
 #ifdef SHARED_MODULE
 extern ATTRIBUTE_NORETURN void shared_exit(int status);

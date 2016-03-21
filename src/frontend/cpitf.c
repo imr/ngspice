@@ -8,6 +8,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/fteparse.h"
+#include "ngspice/stringskip.h"
 #include "cpitf.h"
 #include "com_let.h"
 #include "com_set.h"

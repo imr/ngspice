@@ -39,6 +39,7 @@ Author: 1985 Wayne A. Christopher
 #endif
 
 #include "numparam/numpaif.h"
+#include "ngspice/stringskip.h"
 
 
 #define line_free(line, flag)                   \

@@ -5,6 +5,7 @@ Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 
 #include "ngspice/ngspice.h"
 #include "tilde.h"
+#include "ngspice/stringskip.h"
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>

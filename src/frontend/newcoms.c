@@ -11,6 +11,7 @@ Copyright 1992 Regents of the University of California.  All rights reserved.
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteparse.h"
 #include "ngspice/dvec.h"
+#include "ngspice/stringskip.h"
 
 #include "newcoms.h"
 #include "quote.h"

@@ -10,6 +10,7 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/ngspice.h"
 #include "ngspice/dvec.h"               /* For MAXDIMS */
 #include "dimens.h"
+#include "ngspice/stringskip.h"
 
 
 /*

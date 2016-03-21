@@ -59,6 +59,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteinp.h"
+#include "ngspice/stringskip.h"
 
 #include <stdarg.h>
 

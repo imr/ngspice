@@ -8,6 +8,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 
 #include "ngspice/ngspice.h"
 #include "ngspice/stringutil.h"
+#include "ngspice/stringskip.h"
 #include "ngspice/dstring.h"
 
 #include <stdarg.h>
