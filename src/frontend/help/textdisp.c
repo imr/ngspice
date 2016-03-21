@@ -72,7 +72,8 @@ hlp_thandle(topic **parent)
             return (NULL);
         }
 
-        for (s = buf; *s && isspace_c(*s); s++)
+        s = buf;
+        for (; *s && isspace_c(*s); s++)
             ;
         switch (*s) {
         case '?':

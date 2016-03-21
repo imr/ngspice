@@ -1314,7 +1314,8 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             bxx_putc(t, *src++);
             continue;
         }
-        for (s = src + 1; *s && isspace_c(*s); s++)
+        s = src + 1;
+        for (; *s && isspace_c(*s); s++)
             ;
         if (!*s || (*s != '(')) {
             lastwasalpha = isalpha_c(*src);

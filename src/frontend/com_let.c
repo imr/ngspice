@@ -111,7 +111,8 @@ com_let(wordlist *wl)
                 vec_free(t);
             free_pnode(names); /* frees also t, if pnode `names' is simple value */
 
-            for (s = q; *s && isspace_c(*s); s++)
+            s = q;
+            for (; *s && isspace_c(*s); s++)
                 ;
         }
     }

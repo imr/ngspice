@@ -937,7 +937,8 @@ vec_basename(struct dvec *v)
     }
 
     strtolower(buf);
-    for (t = buf; isspace_c(*t); t++)
+    t = buf;
+    for (; isspace_c(*t); t++)
         ;
     s = t;
     for (t = s; *t; t++)
