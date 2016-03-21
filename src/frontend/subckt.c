@@ -153,9 +153,9 @@ collect_global_nodes(struct line *c)
             txfree(gettok(&s));
             while (*s) {
                 char *t = s;
-                TEMPORARY_SKIP_NON_WS_X0(s);
+                s = TEMPORARY_SKIP_NON_WS_X0(s);
                 global_nodes[num_global_nodes++] = copy_substring(t, s);
-                TEMPORARY_SKIP_WS_X1(s);
+                s = TEMPORARY_SKIP_WS_X1(s);
             }
             c->li_line[0] = '*'; /* comment it out */
         }
@@ -321,8 +321,8 @@ inp_subcktexpand(struct line *deck) {
         } else if  (*s == '.') {
             continue;   /* skip .commands */
         } else {        /* any other line . . . */
-            TEMPORARY_SKIP_NON_WS_X0(s);
-            TEMPORARY_SKIP_WS_X1(s);
+            s = TEMPORARY_SKIP_NON_WS_X0(s);
+            s = TEMPORARY_SKIP_WS_X1(s);
 
             if (*s == '(') {
                 int level = 0;
@@ -492,10 +492,10 @@ doit(struct line *deck, wordlist *modnames) {
                     /* count the number of args in the .subckt line */
                     sss->su_numargs = 0;
                     for (;;) {
-                        TEMPORARY_SKIP_WS_X1(s);
+                        s = TEMPORARY_SKIP_WS_X1(s);
                         if (*s == '\0')
                             break;
-                        TEMPORARY_SKIP_NON_WS_X0(s);
+                        s = TEMPORARY_SKIP_NON_WS_X0(s);
                         sss->su_numargs ++;
                     }
                 }
@@ -1310,7 +1310,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             continue;
         }
         s = src + 1;
-        TEMPORARY_SKIP_WS_X1(s);
+        s = TEMPORARY_SKIP_WS_X1(s);
         if (!*s || (*s != '(')) {
             lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);
@@ -1320,7 +1320,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
         bxx_putc(t, which = *src);
         src = s;
         bxx_putc(t, *src++);
-        TEMPORARY_SKIP_WS_X1(src);
+        src = TEMPORARY_SKIP_WS_X1(src);
         for (buf = src; *src && !isspace_c(*src) && *src != ',' && *src != ')'; )
             src++;
         buf_end = src;
@@ -1467,7 +1467,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     const wordlist *wl;
     int n, i, gotit;
 
-    TEMPORARY_SKIP_WS_X1(name);
+    name = TEMPORARY_SKIP_WS_X1(name);
 
     c = *name;
     if (isupper_c(c))
@@ -1497,8 +1497,8 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
             int nodes = -2;
             for (s = buf; *s; ) {
                 nodes++;
-                TEMPORARY_SKIP_NON_WS_X0(s);
-                TEMPORARY_SKIP_WS_X1(s);
+                s = TEMPORARY_SKIP_NON_WS_X0(s);
+                s = TEMPORARY_SKIP_WS_X1(s);
             }
             return (nodes);
         }
@@ -1571,7 +1571,7 @@ static int
 numdevs(char *s)
 {
 
-    TEMPORARY_SKIP_WS_X1(s);
+    s = TEMPORARY_SKIP_WS_X1(s);
     switch (*s) {
     case 'K':
     case 'k':
@@ -1680,7 +1680,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
         printf("In devmodtranslate, examining line %s.\n", t);
 #endif
 
-        TEMPORARY_SKIP_WS_X1(t);
+        t = TEMPORARY_SKIP_WS_X1(t);
         c = *t;                           /* set c to first char in line. . . . */
         if (isupper_c(c))
             c = tolower_c(c);

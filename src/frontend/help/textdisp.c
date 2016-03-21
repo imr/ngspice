@@ -74,7 +74,7 @@ hlp_thandle(topic **parent)
         }
 
         s = buf;
-        TEMPORARY_SKIP_WS_X1(s);
+        s = TEMPORARY_SKIP_WS_X1(s);
         switch (*s) {
         case '?':
             fprintf(cp_out,

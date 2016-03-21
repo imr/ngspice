@@ -80,7 +80,7 @@ com_reshape(wordlist *wl)
                 wlast = wlast->wl_next;
             }
 
-            TEMPORARY_SKIP_WS_X1(p);
+            p = TEMPORARY_SKIP_WS_X1(p);
 
             switch (state) {
             case 0: /* p just at or before a number */
@@ -131,7 +131,7 @@ com_reshape(wordlist *wl)
                 }
             }
 
-            TEMPORARY_SKIP_WS_X1(p);
+            p = TEMPORARY_SKIP_WS_X1(p);
 
         } while (state < 3);
 

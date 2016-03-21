@@ -133,11 +133,11 @@ atodims(char *p, int *data, int *outlength)
         return 0;
     }
 
-    TEMPORARY_SKIP_WS_X1(p);
+    p = TEMPORARY_SKIP_WS_X1(p);
 
     if (*p == '[') {
         p++;
-        TEMPORARY_SKIP_WS_X1(p);
+        p = TEMPORARY_SKIP_WS_X1(p);
         needbracket = 1;
     }
 
@@ -184,7 +184,7 @@ atodims(char *p, int *data, int *outlength)
             break;
         }
 
-        TEMPORARY_SKIP_WS_X1(p);
+        p = TEMPORARY_SKIP_WS_X1(p);
     }
 
     *outlength = length;

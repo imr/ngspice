@@ -396,7 +396,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* get temp from deck */
             if (ciprefix(".temp", dd->li_line)) {
                 s = dd->li_line + 5;
-                TEMPORARY_SKIP_WS_X1(s);
+                s = TEMPORARY_SKIP_WS_X1(s);
                 if (temperature)
                     txfree(temperature);
                 temperature = strdup(s);
@@ -404,7 +404,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
             s = dd->li_line;
-            TEMPORARY_SKIP_WS_X1(s);
+            s = TEMPORARY_SKIP_WS_X1(s);
             if ((*s == '*') && ((s != dd->li_line) || (s[1] != '#'))) {
                 if (commands) {
                     /* Remove comment lines in control sections, so they  don't
@@ -420,9 +420,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Put the first token from line into s */
             strncpy(name, dd->li_line, BSIZE_SP);
             s = name;
-            TEMPORARY_SKIP_WS_X1(s);
+            s = TEMPORARY_SKIP_WS_X1(s);
             t = s;
-            TEMPORARY_SKIP_NON_WS_X0(t);
+            t = TEMPORARY_SKIP_NON_WS_X0(t);
             *t = '\0';
 
             if (ciprefix(".control", dd->li_line)) {
@@ -566,7 +566,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     s = dd->li_line;
                     *s = '*';
                     s = dd->li_line + 8;
-                    TEMPORARY_SKIP_WS_X1(s);
+                    s = TEMPORARY_SKIP_WS_X1(s);
                     cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
                     cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
                     cstoken[2] = gettok(&s);
@@ -806,7 +806,7 @@ inp_dodeck(
         struct line *opt_beg = options;
         for (; options; options = options->li_next) {
             s = options->li_line;
-            TEMPORARY_SKIP_NON_WS_X0(s);
+            s = TEMPORARY_SKIP_NON_WS_X0(s);
 
             ii = cp_interactive;
             cp_interactive = FALSE;
@@ -987,7 +987,7 @@ inp_dodeck(
         /*
          * for (; options; options = options->li_next) {
          *     s = options->li_line;
-         *     TEMPORARY_SKIP_NON_WS_X0(s);
+         *     s = TEMPORARY_SKIP_NON_WS_X0(s);
          *     ii = cp_interactive;
          *     cp_interactive = FALSE;
          *     wl = cp_lexer(s);
