@@ -13,6 +13,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "dimens.h"
 #include "ngspice/dvec.h"
 #include "ngspice/sim.h"
+#include "ngspice/stringskip.h"
 
 #include "rawfile.h"
 #include "variable.h"
@@ -264,12 +265,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
  */
 
 #define SKIP(s)                                 \
-    do {                                        \
-        while (*(s) && !isspace_c(*(s)))          \
-            (s)++;                              \
-        while (isspace_c(*(s)))                   \
-            (s)++;                              \
-    } while(0)
+    skip_ws(skip_non_ws(s))
 
 #define NONL(s)                                 \
     do {                                        \
@@ -329,18 +325,15 @@ raw_read(char *name) {
         }
         /* Figure out what this line is... */
         if (ciprefix("title:", buf)) {
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             NONL(s);
             title = copy(s);
         } else if (ciprefix("date:", buf)) {
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             NONL(s);
             date = copy(s);
         } else if (ciprefix("plotname:", buf)) {
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             NONL(s);
             if (curpl) {    /* reverse commands list */
                 for (wl = curpl->pl_commands, curpl->pl_commands = NULL;
@@ -363,8 +356,7 @@ raw_read(char *name) {
             flags = VF_PERMANENT;
             nvars = npoints = 0;
         } else if (ciprefix("flags:", buf)) {
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             while ((t = gettok(&s)) != NULL) {
                 if (cieq(t, "real"))
                     flags |= VF_REAL;
@@ -378,14 +370,12 @@ raw_read(char *name) {
                     fprintf(cp_err, "Warning: unknown flag %s\n", t);
             }
         } else if (ciprefix("no. variables:", buf)) {
-            s = buf;
-            SKIP(s);
-            SKIP(s);
+            s = SKIP(buf);
+            s = SKIP(s);
             nvars = scannum(s);
         } else if (ciprefix("no. points:", buf)) {
-            s = buf;
-            SKIP(s);
-            SKIP(s);
+            s = SKIP(buf);
+            s = SKIP(s);
             npoints = scannum(s);
         } else if (ciprefix("dimensions:", buf)) {
             if (npoints == 0) {
@@ -393,8 +383,7 @@ raw_read(char *name) {
                         "Error: misplaced Dimensions: line\n");
                 continue;
             }
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             if (atodims(s, dims, &numdims)) { /* Something's wrong. */
                 fprintf(cp_err,
                         "Warning: syntax error in dimensions, ignored.\n");
@@ -418,8 +407,7 @@ raw_read(char *name) {
             }
         } else if (ciprefix("command:", buf)) {
             /* Note that we reverse these commands eventually... */
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             NONL(s);
             if (curpl) {
                 curpl->pl_commands = wl_cons(copy(s), curpl->pl_commands);
@@ -430,8 +418,7 @@ raw_read(char *name) {
             /* Now execute the command if we can. */
             (void) cp_evloop(s);
         } else if (ciprefix("option:", buf)) {
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             NONL(s);
             if (curpl) {
                 wl = cp_lexer(s);
@@ -452,8 +439,7 @@ raw_read(char *name) {
                 plots = NULL;
                 break;
             }
-            s = buf;
-            SKIP(s);
+            s = SKIP(buf);
             if (!*s) {
                 (void) fgets(buf, BSIZE_SP, fp);
                 s = buf;
@@ -640,7 +626,7 @@ raw_read(char *name) {
         } else {
             s = buf;
             if (is_ascii) {
-                SKIP(s);
+                s = SKIP(s);
             }
             if (*s) {
                 fprintf(cp_err,
