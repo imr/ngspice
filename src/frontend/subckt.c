@@ -322,7 +322,7 @@ inp_subcktexpand(struct line *deck) {
             continue;   /* skip .commands */
         } else {        /* any other line . . . */
             TEMPORARY_SKIP_NON_WS_X0(s);
-            TEMPORARY_SKIP_WS_X0(s);
+            TEMPORARY_SKIP_WS_X1(s);
 
             if (*s == '(') {
                 int level = 0;
@@ -1310,7 +1310,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             continue;
         }
         s = src + 1;
-        TEMPORARY_SKIP_WS_X0(s);
+        TEMPORARY_SKIP_WS_X1(s);
         if (!*s || (*s != '(')) {
             lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);
@@ -1467,7 +1467,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     const wordlist *wl;
     int n, i, gotit;
 
-    TEMPORARY_SKIP_WS_X0(name);
+    TEMPORARY_SKIP_WS_X1(name);
 
     c = *name;
     if (isupper_c(c))
@@ -1571,7 +1571,7 @@ static int
 numdevs(char *s)
 {
 
-    TEMPORARY_SKIP_WS_X0(s);
+    TEMPORARY_SKIP_WS_X1(s);
     switch (*s) {
     case 'K':
     case 'k':
@@ -1680,7 +1680,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
         printf("In devmodtranslate, examining line %s.\n", t);
 #endif
 
-        TEMPORARY_SKIP_WS_X0(t);
+        TEMPORARY_SKIP_WS_X1(t);
         c = *t;                           /* set c to first char in line. . . . */
         if (isupper_c(c))
             c = tolower_c(c);

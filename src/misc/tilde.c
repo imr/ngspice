@@ -43,7 +43,7 @@ tildexpand(char *string)
     if (!string)
 	return NULL;
 
-    TEMPORARY_SKIP_WS_X0(string);
+    TEMPORARY_SKIP_WS_X1(string);
 
     if (*string != '~')
         return copy(string);

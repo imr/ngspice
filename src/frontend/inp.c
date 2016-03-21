@@ -420,7 +420,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Put the first token from line into s */
             strncpy(name, dd->li_line, BSIZE_SP);
             s = name;
-            TEMPORARY_SKIP_WS_X0(s);
+            TEMPORARY_SKIP_WS_X1(s);
             t = s;
             TEMPORARY_SKIP_NON_WS_X0(t);
             *t = '\0';
