@@ -33,6 +33,7 @@ Author: 1985 Wayne A. Christopher
 #include "subckt.h"
 #include "../misc/util.h" /* ngdirname() */
 #include "ngspice/stringutil.h"
+#include "ngspice/stringskip.h"
 #include "ngspice/wordlist.h"
 
 #ifdef XSPICE
@@ -139,14 +140,6 @@ static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct line *deck);
 static void subckt_params_to_param(struct line *deck);
 static void inp_fix_temper_in_param(struct line *deck);
-
-static inline char *depreciated_skip_back_non_ws(char *d) { while (d[-1] && !isspace_c(d[-1])) d--; return d; }
-static inline char *depreciated_skip_back_ws(char *d)     { while (isspace_c(d[-1]))           d--; return d; }
-static inline char *skip_non_ws(char *d)      { while (*d && !isspace_c(*d)) d++; return d; }
-static inline char *skip_ws(char *d)          { while (isspace_c(*d))        d++; return d; }
-
-static inline char *skip_back_non_ws(char *d, char *start) { while (d > start && !isspace_c(d[-1])) d--; return d; }
-static inline char *skip_back_ws(char *d, char *start)     { while (d > start && isspace_c(d[-1])) d--; return d; }
 
 static char *inp_spawn_brace(char *s);
 
