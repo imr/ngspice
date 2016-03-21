@@ -246,8 +246,7 @@ ft_cpinit(void)
 
         /* jump over leading spaces */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
-            while (isspace_c(*s))
-                s++;
+            TEMPORARY_SKIP_WS_X1(s);
             /* copy s into buf until space is seen, r is the actual position */
             for (r = buf; *s && !isspace_c(*s); r++, s++)
                 *r = *s;

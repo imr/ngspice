@@ -1036,8 +1036,7 @@ readtics(char *string)
 
     for (k = 0; *words && k < MAXTICS; words = worde) {
 
-        while (isspace_c(*words))
-            words++;
+        TEMPORARY_SKIP_WS_X1(words);
 
         worde = words;
         while (isalpha_c(*worde) || isdigit_c(*worde))

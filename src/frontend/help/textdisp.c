@@ -74,8 +74,7 @@ hlp_thandle(topic **parent)
         }
 
         s = buf;
-        for (; *s && isspace_c(*s); s++)
-            ;
+        TEMPORARY_SKIP_WS_X0(s);
         switch (*s) {
         case '?':
             fprintf(cp_out,

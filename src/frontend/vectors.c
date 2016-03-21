@@ -939,8 +939,7 @@ vec_basename(struct dvec *v)
 
     strtolower(buf);
     t = buf;
-    for (; isspace_c(*t); t++)
-        ;
+    TEMPORARY_SKIP_WS_X1(t);
     s = t;
     for (t = s; *t; t++)
         ;

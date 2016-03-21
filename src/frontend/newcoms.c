@@ -80,8 +80,7 @@ com_reshape(wordlist *wl)
                 wlast = wlast->wl_next;
             }
 
-            while (*p && isspace_c(*p))
-                p++;
+            TEMPORARY_SKIP_WS_X0(p);
 
             switch (state) {
             case 0: /* p just at or before a number */
@@ -132,8 +131,7 @@ com_reshape(wordlist *wl)
                 }
             }
 
-            while (*p && isspace_c(*p))
-                p++;
+            TEMPORARY_SKIP_WS_X0(p);
 
         } while (state < 3);
 

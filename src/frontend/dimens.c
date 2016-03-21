@@ -133,13 +133,11 @@ atodims(char *p, int *data, int *outlength)
         return 0;
     }
 
-    while (*p && isspace_c(*p))
-        p++;
+    TEMPORARY_SKIP_WS_X0(p);
 
     if (*p == '[') {
         p++;
-        while (*p && isspace_c(*p))
-            p++;
+        TEMPORARY_SKIP_WS_X0(p);
         needbracket = 1;
     }
 
@@ -186,8 +184,7 @@ atodims(char *p, int *data, int *outlength)
             break;
         }
 
-        while (*p && isspace_c(*p))
-            p++;
+        TEMPORARY_SKIP_WS_X0(p);
     }
 
     *outlength = length;
