@@ -83,19 +83,13 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
         char *p;
         size_t left_length;
 
-        s += 2;
-
-        /* skip any white space */
-        s = skip_ws(s);
+        s = skip_ws(s + 2);
 
         /* reject if not '=' */
         if(*s != '=')
             continue;
 
-        s++;
-
-        /* skip any white space */
-        s = skip_ws(s);
+        s = skip_ws(s + 1);
 
         /* if we now have +, - or a decimal digit then assume we have a number,
            otherwise reject */

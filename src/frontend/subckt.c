@@ -152,10 +152,9 @@ collect_global_nodes(struct line *c)
             char *s = c->li_line;
             txfree(gettok(&s));
             while (*s) {
-                char *t = s;
-                s = skip_non_ws(s);
-                global_nodes[num_global_nodes++] = copy_substring(t, s);
-                s = skip_ws(s);
+                char *t = skip_non_ws(s);
+                global_nodes[num_global_nodes++] = copy_substring(s, t);
+                s = skip_ws(t);
             }
             c->li_line[0] = '*'; /* comment it out */
         }
@@ -1309,8 +1308,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             bxx_putc(t, *src++);
             continue;
         }
-        s = src + 1;
-        s = skip_ws(s);
+        s = skip_ws(src + 1);
         if (!*s || (*s != '(')) {
             lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);

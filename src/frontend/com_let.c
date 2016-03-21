@@ -112,8 +112,7 @@ com_let(wordlist *wl)
                 vec_free(t);
             free_pnode(names); /* frees also t, if pnode `names' is simple value */
 
-            s = q;
-            s = skip_ws(s);
+            s = skip_ws(q);
         }
     }
     /* vector name at p */

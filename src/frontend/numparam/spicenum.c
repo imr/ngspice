@@ -831,8 +831,7 @@ nupa_eval(char *s, int linenum, int orig_linenum)
         err = nupa_substitute(dicoS, dicoS->dynrefptr[linenum], s, 0);
     } else if (c == 'X') {
         /* compute args of subcircuit, if required */
-        ptr = s;
-        ptr = skip_non_ws(ptr);
+        ptr = skip_non_ws(s);
         keep = *ptr;
         *ptr = '\0';
         nupa_inst_name = strdup(s);

@@ -395,16 +395,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         for (dd = deck->li_next; dd; dd = ld->li_next) {
             /* get temp from deck */
             if (ciprefix(".temp", dd->li_line)) {
-                s = dd->li_line + 5;
-                s = skip_ws(s);
+                s = skip_ws(dd->li_line + 5);
                 if (temperature)
                     txfree(temperature);
                 temperature = strdup(s);
             }
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
-            s = dd->li_line;
-            s = skip_ws(s);
+            s = skip_ws(dd->li_line);
             if ((*s == '*') && ((s != dd->li_line) || (s[1] != '#'))) {
                 if (commands) {
                     /* Remove comment lines in control sections, so they  don't
@@ -419,10 +417,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* Put the first token from line into s */
             strncpy(name, dd->li_line, BSIZE_SP);
-            s = name;
-            s = skip_ws(s);
-            t = s;
-            t = skip_non_ws(t);
+            s = skip_ws(name);
+            t = skip_non_ws(s);
             *t = '\0';
 
             if (ciprefix(".control", dd->li_line)) {
@@ -563,10 +559,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     wordlist *wlist = NULL;
                     char *cstoken[3];
                     int i;
-                    s = dd->li_line;
-                    *s = '*';
-                    s = dd->li_line + 8;
-                    s = skip_ws(s);
+                    dd->li_line[0] = '*';
+                    s = skip_ws(dd->li_line + 8);
                     cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
                     cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
                     cstoken[2] = gettok(&s);
@@ -805,8 +799,7 @@ inp_dodeck(
     if (!noparse) {
         struct line *opt_beg = options;
         for (; options; options = options->li_next) {
-            s = options->li_line;
-            s = skip_non_ws(s);
+            s = skip_non_ws(options->li_line);
 
             ii = cp_interactive;
             cp_interactive = FALSE;
@@ -986,8 +979,7 @@ inp_dodeck(
     if (!noparse) {
         /*
          * for (; options; options = options->li_next) {
-         *     s = options->li_line;
-         *     s = skip_non_ws(s);
+         *     s = skip_non_ws(options->li_line);
          *     ii = cp_interactive;
          *     cp_interactive = FALSE;
          *     wl = cp_lexer(s);

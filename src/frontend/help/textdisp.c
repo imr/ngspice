@@ -73,8 +73,7 @@ hlp_thandle(topic **parent)
             return (NULL);
         }
 
-        s = buf;
-        s = skip_ws(s);
+        s = skip_ws(buf);
         switch (*s) {
         case '?':
             fprintf(cp_out,

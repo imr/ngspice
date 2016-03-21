@@ -663,8 +663,7 @@ get_comma_separated_values( char *values[], char *str ) {
     ptr++; keep = *ptr; *ptr = '\0';
     values[count++] = strdup(str);
     *ptr = keep;
-    str = comma_ptr + 1;
-    str = skip_ws(str);
+    str = skip_ws(comma_ptr + 1);
   }
   values[count++] = strdup(str);
   return count;

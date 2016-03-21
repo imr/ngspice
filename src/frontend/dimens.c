@@ -136,8 +136,7 @@ atodims(char *p, int *data, int *outlength)
     p = skip_ws(p);
 
     if (*p == '[') {
-        p++;
-        p = skip_ws(p);
+        p = skip_ws(p + 1);
         needbracket = 1;
     }
 
