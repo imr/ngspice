@@ -95,9 +95,9 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
             }
             (void) strncpy(name, dd->li_line, BSIZE_SP);
             s = name;
-            s = TEMPORARY_SKIP_WS_X1(s);
+            s = skip_ws(s);
             t = s;
-            t = TEMPORARY_SKIP_NON_WS_X0(t);
+            t = skip_non_ws(t);
             *t = '\0';
 
             if (ciprefix(".control", dd->li_line)) {

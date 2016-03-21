@@ -832,7 +832,7 @@ nupa_eval(char *s, int linenum, int orig_linenum)
     } else if (c == 'X') {
         /* compute args of subcircuit, if required */
         ptr = s;
-        ptr = TEMPORARY_SKIP_NON_WS_X0(ptr);
+        ptr = skip_non_ws(ptr);
         keep = *ptr;
         *ptr = '\0';
         nupa_inst_name = strdup(s);
