@@ -76,9 +76,9 @@ retry:
     *ckt->CKTirhsSpare = 0;
     *ckt->CKTirhsOld = 0;
 
-    SWAP(double *, ckt->CKTirhsOld, ckt->CKTirhs);
+    SWAP(double *, ckt->CKTirhs, ckt->CKTirhsOld);
 
-    SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
+    SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
 
     return(OK);
 }

@@ -830,10 +830,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] = 1.0;
     }
     if (xlims[0] > xlims[1]) {
-        SWAP(double, xlims[1], xlims[0]);
+        SWAP(double, xlims[0], xlims[1]);
     }
     if (ylims[0] > ylims[1]) {
-        SWAP(double, ylims[1], ylims[0]);
+        SWAP(double, ylims[0], ylims[1]);
     }
     if (AlmostEqualUlps(xlims[0], xlims[1], 10)) {
         xlims[0] *= (xlims[0] > 0) ? 0.9 : 1.1;

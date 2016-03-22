@@ -42,7 +42,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
 
     if( (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
-        SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
+        SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         error = CKTload(ckt);
         if(error) {
             return(error);
@@ -266,7 +266,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
         }
 
         /* build up the lvnim1 array from the lvn array */
-        SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
+        SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         /*printf("after loading, after solving\n");*/
         /*CKTdump(ckt);*/
     }
