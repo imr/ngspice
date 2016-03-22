@@ -78,7 +78,12 @@
 #define  SQR(a)             ((a)*(a))
 
 /* Macro procedure that swaps two entities. */
-#define  SWAP(type, a, b)   {type swapx; swapx = a; a = b; b = swapx;}
+#define SWAP(type, a, b)                        \
+    do {                                        \
+        type SWAP_macro_local = a;              \
+        a = b;                                  \
+        b = SWAP_macro_local;                   \
+    } while(0)
 
 
 
