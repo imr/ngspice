@@ -154,9 +154,9 @@ wl_reverse(wordlist *wl)
         wordlist *t = wl->wl_next;
         wl->wl_next = wl->wl_prev;
         wl->wl_prev = t;
-        if (!t)
+        if (!wl->wl_prev)
             return (wl);
-        wl = t;
+        wl = wl->wl_prev;
     }
 }
 
