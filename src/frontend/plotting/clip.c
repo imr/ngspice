@@ -106,7 +106,6 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
     double dtheta;
     double theta1, theta2, tt, alpha, beta, gamma;
     bool flip = FALSE;
-    int i;
 
     /* Get the angles between the origin and the endpoints. */
     if ((*x1-cx) || (*y1-cy))
@@ -131,15 +130,9 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
 
     /* Make sure that p1 is the first point */
     if (dtheta < 0) {
-        tt = theta1;
-        theta1 = theta2;
-        theta2 = tt;
-        i = *x1;
-        *x1 = *x2;
-        *x2 = i;
-        i = *y1;
-        *y1 = *y2;
-        *y2 = i;
+        SWAP(double, theta1, theta2);
+        SWAP(int, *x1, *x2);
+        SWAP(int, *y1, *y2);
         flip = TRUE;
         dtheta = -dtheta;
     }
@@ -209,12 +202,8 @@ clip_to_circle(int *x1, int *y1, int *x2, int *y2, int cx, int cy, int rad)
     }
 
     if (flip) {
-        i = *x1;
-        *x1 = *x2;
-        *x2 = i;
-        i = *y1;
-        *y1 = *y2;
-        *y2 = i;
+        SWAP(int, *x1, *x2);
+        SWAP(int, *y1, *y2);
     }
 
     return (FALSE);

@@ -12,11 +12,7 @@ Author: 1988 Jaijeet S Roychowdhury
 static void
 DISswap(double **a, double **b)
 {
-double *c;
-
-c = *a;
-*a = *b;
-*b = c;
+    SWAP(double *, *a, *b);
 }
 
 static void

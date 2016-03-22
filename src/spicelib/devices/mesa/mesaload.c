@@ -81,7 +81,6 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
     double xfact;
 #endif
-    double temp;
     double vted;
     double vtes;
     double vtd;
@@ -321,9 +320,7 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
             if(inverse) {
               cdrain = -cdrain;
               vds = -vds;
-              temp = capgs;
-              capgs = capgd;
-              capgd = temp;
+              SWAP(double, capgs, capgd);
             }
             /*
              *   compute equivalent drain current source 

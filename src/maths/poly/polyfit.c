@@ -53,13 +53,9 @@ ft_polyfit(double *xdata, double *ydata, double *result,
         if (lindex != i) {
           /* swap rows i and lindex */
           for (k = 0; k < n; k++) {
-            d = mat1[i * n + k];
-            mat1[i * n + k] = mat1[lindex * n + k];
-            mat1[lindex * n + k] = d;
+            SWAP(double, mat1[i * n + k], mat1[lindex * n + k]);
           }
-          d = mat2[i];
-          mat2[i] = mat2[lindex];
-          mat2[lindex] = d;
+          SWAP(double, mat2[i], mat2[lindex]);
         }
         /* Make sure we have a non-zero pivot. */
         if (mat1[i * n + i] == 0.0) {

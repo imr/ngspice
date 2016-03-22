@@ -22,7 +22,7 @@ CKTpzSetup(CKTcircuit *ckt, int type)
 
     SMPmatrix *matrix;
     int error;
-    int i, temp, solution_col, balance_col;
+    int i, solution_col, balance_col;
     int input_pos, input_neg, output_pos, output_neg;
 
     NIdestroy(ckt);
@@ -71,9 +71,7 @@ CKTpzSetup(CKTcircuit *ckt, int type)
 	    balance_col = output_neg;
     } else {
 	solution_col = output_neg;
-	temp = input_pos;
-	input_pos = input_neg;
-	input_neg = temp;
+	SWAP(int, input_pos, input_neg);
     }
 
     if (input_pos)

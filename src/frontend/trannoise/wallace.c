@@ -197,10 +197,8 @@ reran1:
     for (i = 2; i >= 0; i--)
         for (j = 0; j <= i; j++)
             if (top[j] < top[j+1]) {
-                k = top[j];  top[j] = top[j+1];
-                top[j+1] = k;
-                k = ord[j];  ord[j] = ord[j+1];
-                ord[j+1] = k;
+                SWAP(int, top[j], top[j+1]);
+                SWAP(int, ord[j], ord[j+1]);
             }
 
     /* Ensure all different  */

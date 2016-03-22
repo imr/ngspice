@@ -600,7 +600,7 @@ Sf wk1 [WL], wk2 [WL];          /*  Pools of variates. */
 static void
 regen(void)
 {
-    Sw i, j, k, m;
+    Sw i, j, m;
     Sf p, q, r, s, t;
     Sw topv[6], ord[4], *top;
     Sf *ppt[4], *ptn;
@@ -626,10 +626,8 @@ reran1:
     for (i = 2; i >= 0; i--)
         for (j = 0; j <= i; j++)
             if (top[j] < top[j+1]) {
-                k = top[j];  top[j] = top[j+1];
-                top[j+1] = k;
-                k = ord[j];  ord[j] = ord[j+1];
-                ord[j+1] = k;
+                SWAP(Sw, top[j], top[j+1]);
+                SWAP(Sw, ord[j], ord[j+1]);
             }
 
     /* Ensure all different */

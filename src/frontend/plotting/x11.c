@@ -753,7 +753,7 @@ zoomin(GRAPH *graph)
 /* note: need to add circular boxes XXX */
 
     int x0, y0, x1, y1;
-    double fx0, fx1, fy0, fy1, ftemp;
+    double fx0, fx1, fy0, fy1;
     char buf[BSIZE_SP];
     char buf2[128];
     char *t;
@@ -811,14 +811,10 @@ zoomin(GRAPH *graph)
     X_ScreentoData(graph, x1, y1, &fx1, &fy1);
 
     if (fx0 > fx1) {
-        ftemp = fx0;
-        fx0 = fx1;
-        fx1 = ftemp;
+        SWAP(double, fx0, fx1);
     }
     if (fy0 > fy1) {
-        ftemp = fy0;
-        fy0 = fy1;
-        fy1 = ftemp;
+        SWAP(double, fy0, fy1);
     }
 
     strncpy(buf2, graph->plotname, sizeof(buf2));

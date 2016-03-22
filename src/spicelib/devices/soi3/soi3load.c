@@ -984,9 +984,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
 /* Now we use a nasty trick - if device is A over T, must "swap" drain and source
    potentials.  we do a literal switch and change it back for the outside world. */
             if (here->SOI3mode == -1) {
-              tmp = vsb;
-              vsb = vdb;
-              vdb = tmp;
+              SWAP(double, vsb, vdb);
             }
 
 /* Intrinsic Electrical Bit - has a bit of thermal due to TTC */            
@@ -1667,9 +1665,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
 /* now end nasty trick - if vsb and vdb have been switched, reverse them back */
              	if (here->SOI3mode == -1)
                {
-               	tmp = vsb;
-              		vsb = vdb;
-              		vdb = tmp;
+                       SWAP(double, vsb, vdb);
             	}
                 
             /*

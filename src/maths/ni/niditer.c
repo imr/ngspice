@@ -23,31 +23,22 @@ NIdIter(CKTcircuit *ckt)
 {
     int error;
     int ignore;
-    double *temp;
 
     ckt->CKTnoncon = 0;
     goto skip;
 retry:
     ckt->CKTnoncon=0;
 
-    temp = ckt->CKTrhs;
-    ckt->CKTrhs = ckt->CKTrhsSpare;
-    ckt->CKTrhsSpare = temp;
+    SWAP(double *, ckt->CKTrhs, ckt->CKTrhsSpare);
 
-    temp = ckt->CKTirhs;
-    ckt->CKTirhs = ckt->CKTirhsSpare;
-    ckt->CKTirhsSpare = temp;
+    SWAP(double *, ckt->CKTirhs, ckt->CKTirhsSpare);
 
     error = CKTacLoad(ckt);
     if(error) return(error);
     
-    temp = ckt->CKTrhs;
-    ckt->CKTrhs = ckt->CKTrhsSpare;
-    ckt->CKTrhsSpare = temp;
+    SWAP(double *, ckt->CKTrhs, ckt->CKTrhsSpare);
 
-    temp = ckt->CKTirhs;
-    ckt->CKTirhs = ckt->CKTirhsSpare;
-    ckt->CKTirhsSpare = temp;
+    SWAP(double *, ckt->CKTirhs, ckt->CKTirhsSpare);
 
 skip:
     if(ckt->CKTniState & NIACSHOULDREORDER) {
@@ -85,12 +76,8 @@ skip:
     *ckt->CKTirhsSpare = 0;
     *ckt->CKTirhsOld = 0;
 
-    temp = ckt->CKTirhsOld;
-    ckt->CKTirhsOld = ckt->CKTirhs;
-    ckt->CKTirhs = temp;
+    SWAP(double *, ckt->CKTirhsOld, ckt->CKTirhs);
 
-    temp = ckt->CKTrhsOld;
-    ckt->CKTrhsOld = ckt->CKTrhs;
-    ckt->CKTrhs = temp;
+    SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
     return(OK);
 }

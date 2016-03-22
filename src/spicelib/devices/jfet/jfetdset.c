@@ -31,7 +31,6 @@ JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double lcapgs1;
     double cd;
     double cdrain;
-    double temp;
     double cg;
     double cgd;
     double csat;
@@ -95,10 +94,8 @@ JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
 	    if (vds < 0.0) {
 		vds = -vds;
-		temp = vgs;
-		vgs = vgd;
-		vgd = temp;		/* so now these have become the
-						local variables */
+		SWAP(double, vgs, vgd);
+		/* so now these have become the local variables */
 		here->JFETmode = -1;
 		} else {
 		here->JFETmode = 1;

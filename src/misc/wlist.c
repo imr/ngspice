@@ -151,9 +151,7 @@ wl_reverse(wordlist *wl)
         return (wl);
 
     for (;;) {
-        wordlist *t = wl->wl_next;
-        wl->wl_next = wl->wl_prev;
-        wl->wl_prev = t;
+        SWAP(wordlist *, wl->wl_next, wl->wl_prev);
         if (!wl->wl_prev)
             return (wl);
         wl = wl->wl_prev;
@@ -231,14 +229,11 @@ wl_sort(wordlist *wl)
 wordlist *
 wl_range(wordlist *wl, int low, int up)
 {
-    int i;
     wordlist *tt;
     bool rev = FALSE;
 
     if (low > up) {
-        i = up;
-        up = low;
-        low = i;
+        SWAP(int, up, low);
         rev = TRUE;
     }
     up -= low;

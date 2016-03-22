@@ -29,7 +29,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
     int ipass;
     int error;
     int i,j; /* temporaries for finding error location */
-    double *temp;
     double startTime;
     static char *msg = "Too many iterations without convergence";
 
@@ -43,9 +42,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
 
     if( (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
-        temp = ckt->CKTrhsOld;
-        ckt->CKTrhsOld = ckt->CKTrhs;
-        ckt->CKTrhs = temp;
+        SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
         error = CKTload(ckt);
         if(error) {
             return(error);
@@ -269,9 +266,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
         }
 
         /* build up the lvnim1 array from the lvn array */
-        temp = ckt->CKTrhsOld;
-        ckt->CKTrhsOld = ckt->CKTrhs;
-        ckt->CKTrhs = temp;
+        SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
         /*printf("after loading, after solving\n");*/
         /*CKTdump(ckt);*/
     }

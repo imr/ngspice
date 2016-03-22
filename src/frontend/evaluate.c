@@ -597,9 +597,7 @@ op_range(struct pnode *arg1, struct pnode *arg2)
     }
 
     if (up < low) {
-        td = up;
-        up = low;
-        low = td;
+        SWAP(double, up, low);
         rev = TRUE;
     }
 
@@ -727,9 +725,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
         up = (int)floor(imagpart(ind->v_compdata[0]) + 0.5);
     }
     if (up < down) {
-        i = up;
-        up = down;
-        down = i;
+        SWAP(int, up, down);
         rev = TRUE;
     }
     if (up < 0) {

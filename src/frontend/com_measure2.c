@@ -1232,9 +1232,7 @@ measure_parse_stdParams(
     /* dc: make m_from always less than m_to */
     if (cieq("dc", meas->m_analysis))
         if (meas->m_to < meas->m_from) {
-            double tmp_val = meas->m_to;
-            meas->m_to = meas->m_from;
-            meas->m_from = tmp_val;
+            SWAP(double, meas->m_to, meas->m_from);
         }
 
     return 1;

@@ -550,9 +550,7 @@ Gaussian_Elimination1(int dims)
       }
       if (imax != i)
 	 for (k = i; k <= dim; k++) {
-	    f = A[i][k];
-	    A[i][k] = A[imax][k];
-	    A[imax][k] = f;
+	    SWAP(double, A[i][k], A[imax][k]);
 	 }
       
       f = 1.0 / A[i][i];
@@ -913,9 +911,7 @@ Gaussian_Elimination2(int dims)
       }
       if (imax != i)
 	 for (k = i; k <= dim; k++) {
-	    f = AA[i][k];
-	    AA[i][k] = AA[imax][k];
-	    AA[imax][k] = f;
+	    SWAP(double, AA[i][k], AA[imax][k]);
 	 }
       
       f = 1.0 / AA[i][i];

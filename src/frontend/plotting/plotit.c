@@ -219,7 +219,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     struct dvec *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
     char *xn;
     int i, y_type, xt;
-    double tt;
     wordlist *wwl, *tail;
     char *cline = NULL, buf[BSIZE_SP], *pname;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
@@ -831,14 +830,10 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         ylims[1] = 1.0;
     }
     if (xlims[0] > xlims[1]) {
-        tt = xlims[1];
-        xlims[1] = xlims[0];
-        xlims[0] = tt;
+        SWAP(double, xlims[1], xlims[0]);
     }
     if (ylims[0] > ylims[1]) {
-        tt = ylims[1];
-        ylims[1] = ylims[0];
-        ylims[0] = tt;
+        SWAP(double, ylims[1], ylims[0]);
     }
     if (AlmostEqualUlps(xlims[0], xlims[1], 10)) {
         xlims[0] *= (xlims[0] > 0) ? 0.9 : 1.1;

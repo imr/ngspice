@@ -25,7 +25,6 @@ NIacIter(CKTcircuit *ckt)
 {
     int error;
     int ignore;
-    double *temp;
     double startTime;
 
 retry:
@@ -77,13 +76,9 @@ retry:
     *ckt->CKTirhsSpare = 0;
     *ckt->CKTirhsOld = 0;
 
-    temp = ckt->CKTirhsOld;
-    ckt->CKTirhsOld = ckt->CKTirhs;
-    ckt->CKTirhs = temp;
+    SWAP(double *, ckt->CKTirhsOld, ckt->CKTirhs);
 
-    temp = ckt->CKTrhsOld;
-    ckt->CKTrhsOld = ckt->CKTrhs;
-    ckt->CKTrhs = temp;
+    SWAP(double *, ckt->CKTrhsOld, ckt->CKTrhs);
 
     return(OK);
 }

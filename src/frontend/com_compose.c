@@ -378,9 +378,7 @@ com_compose(wordlist *wl)
         }
 
         if (startgiven && stopgiven && (start > stop)) {
-            tt = start;
-            start = stop;
-            stop = tt;
+            SWAP(double, start, stop);
             reverse = TRUE;
         }
 

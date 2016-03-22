@@ -1491,10 +1491,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
 
     if (in) {
         if (start > d) {
-            double tmp;
-            tmp = start;
-            start = d;
-            d = tmp;
+            SWAP(double, start, d);
         }
         DevDrawArc((int)cx, (int)cy, (int)rad, start, d-start);
         sclip = start;
