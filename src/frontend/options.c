@@ -91,31 +91,31 @@ cp_enqvar(char *word)
         if (eq(word, "curplotname")) {
             vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
-            vv->va_name = word;
+            vv->va_name = copy(word);
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_name);
         } else if (eq(word, "curplottitle")) {
             vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
-            vv->va_name = word;
+            vv->va_name = copy(word);
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_title);
         } else if (eq(word, "curplotdate")) {
             vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
-            vv->va_name = word;
+            vv->va_name = copy(word);
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_date);
         } else if (eq(word, "curplot")) {
             vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
-            vv->va_name = word;
+            vv->va_name = copy(word);
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_typename);
         } else if (eq(word, "plots")) {
             vv = TMALLOC(struct variable, 1);
             vv->va_next = NULL;
-            vv->va_name = word;
+            vv->va_name = copy(word);
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
