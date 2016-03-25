@@ -28,7 +28,7 @@ static struct FTEparm FTEOPTtbl[] = {
 
 static const int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(*FTEOPTtbl);
 
-static struct variable *getFTEstat(struct circ *, int);
+static struct variable *getFTEstat(struct circ *, struct FTEparm *);
 
 
 struct variable *
@@ -40,7 +40,7 @@ ft_getstat(struct circ *ci, char *name)
     if (name) {
         for (i = 0; i < FTEOPTcount; i++)
             if (eq(name, FTEOPTtbl[i].keyword)) {
-                vv = getFTEstat(ci, FTEOPTtbl[i].id);
+                vv = getFTEstat(ci, FTEOPTtbl + i);
                 if (vv) {
                     vv->va_type = FTEOPTtbl[i].dataType;
                     vv->va_name = copy(FTEOPTtbl[i].description);
@@ -54,10 +54,10 @@ ft_getstat(struct circ *ci, char *name)
     } else {
         for (i = 0, v = vars = NULL; i < FTEOPTcount; i++) {
             if (v) {
-                v->va_next = getFTEstat(ci, FTEOPTtbl[i].id);
+                v->va_next = getFTEstat(ci, FTEOPTtbl + i);
                 v = v->va_next;
             } else {
-                vars = v = getFTEstat(ci, FTEOPTtbl[i].id);
+                vars = v = getFTEstat(ci, FTEOPTtbl + i);
             }
 
             v->va_type = FTEOPTtbl[i].dataType;
@@ -72,12 +72,12 @@ ft_getstat(struct circ *ci, char *name)
 /* This function fill the value field of the variable */
 
 static struct variable *
-getFTEstat(struct circ *ci, int id)
+getFTEstat(struct circ *ci, struct FTEparm *p)
 {
 
     struct variable *v = TMALLOC(struct variable, 1);
 
-    switch (id) {
+    switch (p->id) {
     case FTEOPT_NLDECK:
         v->va_num = ci->FTEstats->FTESTATdeckNumLines;
         break;
