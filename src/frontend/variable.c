@@ -347,6 +347,7 @@ cp_setparse(wordlist *wl)
                         break;
                 }
                 vv = TMALLOC(struct variable, 1);
+                vv->va_name = NULL;
                 vv->va_next = NULL;
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
@@ -462,8 +463,8 @@ cp_remvar(char *varname)
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
         v = TMALLOC(struct variable, 1);
-        ZERO(v, struct variable);
         v->va_name = copy(varname);
+        v->va_next = NULL;
         v->va_type = CP_NUM;
         v->va_num = 0;
         found = FALSE;

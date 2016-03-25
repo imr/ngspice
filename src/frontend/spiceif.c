@@ -982,8 +982,10 @@ parmtovar(IFvalue *pv, IFparm *opt)
         break;
     case IF_REALVEC:
         vv->va_type = CP_LIST;
+        vv->va_vlist = NULL;
         for (i = 0; i < pv->v.numValue; i++) {
             nv = TMALLOC(struct variable, 1);
+            nv->va_name = NULL;
             nv->va_next = vv->va_vlist;
             vv->va_vlist = nv;
             nv->va_type = CP_REAL;

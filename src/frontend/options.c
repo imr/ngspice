@@ -67,6 +67,7 @@ cp_enqvar(char *word)
             vv->va_vlist = NULL;
             for (i = d->v_length - 1; i >= 0; i--) {
                 tv = TMALLOC(struct variable, 1);
+                tv->va_name = NULL;
                 tv->va_type = CP_REAL;
                 if (isreal(d))
                     tv->va_real = d->v_realdata[i];
@@ -120,6 +121,7 @@ cp_enqvar(char *word)
             vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
                 tv = TMALLOC(struct variable, 1);
+                tv->va_name = NULL;
                 tv->va_type = CP_STRING;
                 tv->va_string = copy(pl->pl_typename);
                 tv->va_next = vv->va_vlist;
