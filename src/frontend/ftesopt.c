@@ -59,22 +59,19 @@ getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
         v = TMALLOC(struct variable, 1);
         v->va_name = copy(p->description);
         v->va_next = next;
-        v->va_type = CP_NUM;
-        v->va_num = stat->FTESTATdeckNumLines;
+        var_set_num(v, stat->FTESTATdeckNumLines);
         return v;
     case FTEOPT_NLT:
         v = TMALLOC(struct variable, 1);
         v->va_name = copy(p->description);
         v->va_next = next;
-        v->va_type = CP_REAL;
-        v->va_real = stat->FTESTATnetLoadTime;
+        var_set_real(v, stat->FTESTATnetLoadTime);
         return v;
     case FTEOPT_NPT:
         v = TMALLOC(struct variable, 1);
         v->va_name = copy(p->description);
         v->va_next = next;
-        v->va_type = CP_REAL;
-        v->va_real = stat->FTESTATnetParseTime;
+        var_set_real(v, stat->FTESTATnetParseTime);
         return v;
     default:
         return NULL;

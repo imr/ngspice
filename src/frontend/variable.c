@@ -121,29 +121,24 @@ cp_vset(char *varname, enum cp_types type, void *value)
             tfree(copyvarname);
             return;
         } else {
-            v->va_type = CP_BOOL;
-            v->va_bool = TRUE;
+            var_set_bool(v, TRUE);
         }
         break;
 
     case CP_NUM:
-        v->va_type = CP_NUM;
-        v->va_num = * (int *) value;
+        var_set_num(v, * (int *) value);
         break;
 
     case CP_REAL:
-        v->va_type = CP_REAL;
-        v->va_real = * (double *) value;
+        var_set_real(v, * (double *) value);
         break;
 
     case CP_STRING:
-        v->va_type = CP_STRING;
-        v->va_string = copy((char*) value);
+        var_set_string(v, copy((char*) value));
         break;
 
     case CP_LIST:
-        v->va_type = CP_LIST;
-        v->va_vlist = (struct variable *) value;
+        var_set_vlist(v, (struct variable *) value);
         break;
 
     default:
@@ -288,8 +283,7 @@ cp_setparse(wordlist *wl)
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(name);
             vv->va_next = vars;
-            vv->va_type = CP_BOOL;
-            vv->va_bool = TRUE;
+            var_set_bool(vv, TRUE);
             vars = vv;
             tfree(name);        /*DG: cp_unquote Memory leak*/
             continue;
@@ -355,11 +349,9 @@ cp_setparse(wordlist *wl)
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
-                    vv->va_type = CP_REAL;
-                    vv->va_real = *td;
+                    var_set_real(vv, *td);
                 } else {
-                    vv->va_type = CP_STRING;
-                    vv->va_string = copy(ss);
+                    var_set_string(vv, copy(ss));
                 }
                 tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
@@ -381,8 +373,7 @@ cp_setparse(wordlist *wl)
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(name);
             vv->va_next = vars;
-            vv->va_type = CP_LIST;
-            vv->va_vlist = listv;
+            var_set_vlist(vv, listv);
             vars = vv;
 
             wl = wl->wl_next;
@@ -397,11 +388,9 @@ cp_setparse(wordlist *wl)
         vars = vv;
         if (td) {
             /*** We should try to get CP_NUM's... */
-            vv->va_type = CP_REAL;
-            vv->va_real = *td;
+            var_set_real(vv, *td);
         } else {
-            vv->va_type = CP_STRING;
-            vv->va_string = copy(val);
+            var_set_string(vv, copy(val));
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
@@ -468,8 +457,7 @@ cp_remvar(char *varname)
         v = TMALLOC(struct variable, 1);
         v->va_name = copy(varname);
         v->va_next = NULL;
-        v->va_type = CP_NUM;
-        v->va_num = 0;
+        var_set_num(v, 0);
         found = FALSE;
     }
 
