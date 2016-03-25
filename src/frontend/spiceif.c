@@ -983,17 +983,13 @@ parmtovar(IFvalue *pv, IFparm *opt)
     case IF_REALVEC:
         vv->va_type = CP_LIST;
         vv->va_vlist = NULL;
-        for (i = 0; i < pv->v.numValue; i++) {
+        for (i = pv->v.numValue; --i >= 0;) {
             nv = TMALLOC(struct variable, 1);
             nv->va_name = NULL;
             nv->va_next = vv->va_vlist;
             vv->va_vlist = nv;
             nv->va_type = CP_REAL;
-            /* Change this so that the values are printed in order and
-             * not in inverted order as happens in the conversion process.
-             * Originally was  nv->va_real = pv->v.vec.rVec[i];
-             */
-            nv->va_real = pv->v.vec.rVec[pv->v.numValue-i-1];
+            nv->va_real = pv->v.vec.rVec[i];
         }
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.

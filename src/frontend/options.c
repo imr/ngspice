@@ -65,7 +65,7 @@ cp_enqvar(char *word)
             vv->va_name = copy(word);
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
-            for (i = d->v_length - 1; i >= 0; i--) {
+            for (i = d->v_length; --i >= 0;) {
                 tv = TMALLOC(struct variable, 1);
                 tv->va_name = NULL;
                 tv->va_type = CP_REAL;
