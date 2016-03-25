@@ -284,9 +284,9 @@ cp_setparse(wordlist *wl)
         if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(name);
+            vv->va_next = vars;
             vv->va_type = CP_BOOL;
             vv->va_bool = TRUE;
-            vv->va_next = vars;
             vars = vv;
             tfree(name);        /*DG: cp_unquote Memory leak*/
             continue;
@@ -377,9 +377,9 @@ cp_setparse(wordlist *wl)
 
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(name);
+            vv->va_next = vars;
             vv->va_type = CP_LIST;
             vv->va_vlist = listv;
-            vv->va_next = vars;
             vars = vv;
 
             wl = wl->wl_next;

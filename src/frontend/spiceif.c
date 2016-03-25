@@ -987,9 +987,9 @@ parmtovar(IFvalue *pv, IFparm *opt)
             nv = TMALLOC(struct variable, 1);
             nv->va_name = NULL;
             nv->va_next = vv->va_vlist;
-            vv->va_vlist = nv;
             nv->va_type = CP_REAL;
             nv->va_real = pv->v.vec.rVec[i];
+            vv->va_vlist = nv;
         }
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.
