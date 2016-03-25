@@ -28,7 +28,7 @@ static struct FTEparm FTEOPTtbl[] = {
 
 static const int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(*FTEOPTtbl);
 
-static struct variable *getFTEstat(struct circ *, struct FTEparm *);
+static struct variable *getFTEstat(struct FTEparm *, FTESTATistics *);
 
 
 struct variable *
@@ -40,7 +40,7 @@ ft_getstat(struct circ *ci, char *name)
     if (name) {
         for (i = 0; i < FTEOPTcount; i++)
             if (eq(name, FTEOPTtbl[i].keyword)) {
-                vv = getFTEstat(ci, FTEOPTtbl + i);
+                vv = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
                 if (vv) {
                     vv->va_type = FTEOPTtbl[i].dataType;
                     vv->va_name = copy(FTEOPTtbl[i].description);
@@ -54,10 +54,10 @@ ft_getstat(struct circ *ci, char *name)
     } else {
         for (i = 0, v = vars = NULL; i < FTEOPTcount; i++) {
             if (v) {
-                v->va_next = getFTEstat(ci, FTEOPTtbl + i);
+                v->va_next = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
                 v = v->va_next;
             } else {
-                vars = v = getFTEstat(ci, FTEOPTtbl + i);
+                vars = v = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
             }
 
             v->va_type = FTEOPTtbl[i].dataType;
@@ -72,20 +72,20 @@ ft_getstat(struct circ *ci, char *name)
 /* This function fill the value field of the variable */
 
 static struct variable *
-getFTEstat(struct circ *ci, struct FTEparm *p)
+getFTEstat(struct FTEparm *p, FTESTATistics *stat)
 {
 
     struct variable *v = TMALLOC(struct variable, 1);
 
     switch (p->id) {
     case FTEOPT_NLDECK:
-        v->va_num = ci->FTEstats->FTESTATdeckNumLines;
+        v->va_num = stat->FTESTATdeckNumLines;
         break;
     case FTEOPT_NLT:
-        v->va_real = ci->FTEstats->FTESTATnetLoadTime;
+        v->va_real = stat->FTESTATnetLoadTime;
         break;
     case FTEOPT_NPT:
-        v->va_real = ci->FTEstats->FTESTATnetParseTime;
+        v->va_real = stat->FTESTATnetParseTime;
         break;
     default:
         tfree(v);
