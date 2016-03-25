@@ -339,12 +339,13 @@ cp_setparse(wordlist *wl)
                     if (!--balance)
                         break;
                 }
-                vv = var_alloc(NULL, NULL);
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
+                    vv = var_alloc(NULL, NULL);
                     var_set_real(vv, *td);
                 } else {
+                    vv = var_alloc(NULL, NULL);
                     var_set_string(vv, copy(ss));
                 }
                 tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
@@ -374,13 +375,15 @@ cp_setparse(wordlist *wl)
 
         copyval = ss = cp_unquote(val);
         td = ft_numparse(&ss, FALSE);
-        vv = var_alloc(copy(name), vars);
-        vars = vv;
         if (td) {
             /*** We should try to get CP_NUM's... */
+            vv = var_alloc(copy(name), vars);
             var_set_real(vv, *td);
+            vars = vv;
         } else {
+            vv = var_alloc(copy(name), vars);
             var_set_string(vv, copy(val));
+            vars = vv;
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
