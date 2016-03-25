@@ -980,9 +980,7 @@ parmtovar(IFvalue *pv, IFparm *opt)
         struct variable *list = NULL;
         int i;
         for (i = pv->v.numValue; --i >= 0;) {
-            struct variable *nv;
-            nv = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
-            list = nv;
+            list = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
         }
         vv = var_alloc_vlist(copy(opt->description), list, NULL);
         return vv;

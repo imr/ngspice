@@ -60,9 +60,7 @@ cp_enqvar(char *word)
                 double value = isreal(d)
                     ? d->v_realdata[i]
                     : realpart(d->v_compdata[i]);
-                struct variable *tv;
-                tv = var_alloc_real(NULL, value, list);
-                list = tv;
+                list = var_alloc_real(NULL, value, list);
             }
             vv = var_alloc_vlist(copy(word), list, NULL);
         }
@@ -90,9 +88,7 @@ cp_enqvar(char *word)
             struct variable *list = NULL;
             struct plot *pl;
             for (pl = plot_list; pl; pl = pl->pl_next) {
-                struct variable *tv;
-                tv = var_alloc_string(NULL, copy(pl->pl_typename), list);
-                list = tv;
+                list = var_alloc_string(NULL, copy(pl->pl_typename), list);
             }
             vv = var_alloc_vlist(copy(word), list, NULL);
         }
