@@ -38,9 +38,7 @@ struct variable *
 cp_enqvar(char *word)
 {
     struct dvec *d;
-    struct variable *vv, *tv;
-    struct plot *pl;
-    int i;
+    struct variable *vv;
 
     if (*word == '&') {
 
@@ -60,6 +58,7 @@ cp_enqvar(char *word)
             vv->va_type = CP_REAL;
             vv->va_real = value;
         } else {
+            int i;
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(word);
             vv->va_next = NULL;
@@ -69,6 +68,7 @@ cp_enqvar(char *word)
                 double value = isreal(d)
                     ? d->v_realdata[i]
                     : realpart(d->v_compdata[i]);
+                struct variable *tv;
                 tv = TMALLOC(struct variable, 1);
                 tv->va_name = NULL;
                 tv->va_next = vv->va_vlist;
@@ -114,12 +114,14 @@ cp_enqvar(char *word)
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_typename);
         } else if (eq(word, "plots")) {
+            struct plot *pl;
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(word);
             vv->va_next = NULL;
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
+                struct variable *tv;
                 tv = TMALLOC(struct variable, 1);
                 tv->va_name = NULL;
                 tv->va_next = vv->va_vlist;

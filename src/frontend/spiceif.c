@@ -959,8 +959,6 @@ static struct variable *
 parmtovar(IFvalue *pv, IFparm *opt)
 {
     struct variable *vv = TMALLOC(struct variable, 1);
-    struct variable *nv;
-    int i = 0;
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
@@ -980,10 +978,12 @@ parmtovar(IFvalue *pv, IFparm *opt)
         vv->va_type = CP_BOOL;
         vv->va_bool = pv->iValue ? TRUE : FALSE;
         break;
-    case IF_REALVEC:
+    case IF_REALVEC: {
+        int i;
         vv->va_type = CP_LIST;
         vv->va_vlist = NULL;
         for (i = pv->v.numValue; --i >= 0;) {
+            struct variable *nv;
             nv = TMALLOC(struct variable, 1);
             nv->va_name = NULL;
             nv->va_next = vv->va_vlist;
@@ -1008,6 +1008,7 @@ parmtovar(IFvalue *pv, IFparm *opt)
          */
 
         break;
+    }
     default:
         fprintf(cp_err,
                 "parmtovar: Internal Error: bad PARM type %d.\n",
