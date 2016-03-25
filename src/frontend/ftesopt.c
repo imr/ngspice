@@ -58,22 +58,25 @@ getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
 
     switch (p->id) {
     case FTEOPT_NLDECK:
+        v->va_name = copy(p->description);
+        v->va_next = next;
+        v->va_type = p->dataType;
         v->va_num = stat->FTESTATdeckNumLines;
-        break;
+        return v;
     case FTEOPT_NLT:
+        v->va_name = copy(p->description);
+        v->va_next = next;
+        v->va_type = p->dataType;
         v->va_real = stat->FTESTATnetLoadTime;
-        break;
+        return v;
     case FTEOPT_NPT:
+        v->va_name = copy(p->description);
+        v->va_next = next;
+        v->va_type = p->dataType;
         v->va_real = stat->FTESTATnetParseTime;
-        break;
+        return v;
     default:
         tfree(v);
         return (NULL);
     }
-
-    v->va_name = copy(p->description);
-    v->va_next = next;
-    v->va_type = p->dataType;
-
-    return (v);
 }
