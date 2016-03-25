@@ -984,3 +984,38 @@ cp_vprint(void)
 
     tfree(vars);
 }
+
+void
+var_set_bool(struct variable *v, bool value)
+{
+  v->va_type = CP_BOOL;
+  v->va_bool = value;
+}
+
+void
+var_set_num(struct variable *v, int value)
+{
+  v->va_type = CP_NUM;
+  v->va_num = value;
+}
+
+void
+var_set_real(struct variable *v, double value)
+{
+  v->va_type = CP_REAL;
+  v->va_real = value;
+}
+
+void
+var_set_string(struct variable *v, char *value)
+{
+  v->va_type = CP_STRING;
+  v->va_string = value;
+}
+
+void
+var_set_vlist(struct variable *v, struct variable *value)
+{
+  v->va_type = CP_LIST;
+  v->va_vlist = value;
+}

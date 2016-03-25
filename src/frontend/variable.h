@@ -43,4 +43,10 @@ wordlist *cp_varwl(struct variable *var);
 wordlist *cp_variablesubst(wordlist *wlist);
 void free_struct_variable(struct variable *v);
 
+void var_set_bool(struct variable *, bool);
+void var_set_num(struct variable *, int);
+void var_set_real(struct variable *, double);
+void var_set_string(struct variable *, char *);
+void var_set_vlist(struct variable *, struct variable *);
+
 #endif
