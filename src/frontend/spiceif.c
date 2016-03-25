@@ -960,30 +960,43 @@ parmtovar(IFvalue *pv, IFparm *opt)
 {
     /* It is not clear whether we want to name the variable
      *   by `keyword' or by `description' */
-    struct variable *vv = TMALLOC(struct variable, 1);
-    vv->va_name = copy(opt->description);
-    vv->va_next = NULL;
+    struct variable *vv;
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
+        vv = TMALLOC(struct variable, 1);
+        vv->va_name = copy(opt->description);
+        vv->va_next = NULL;
         vv->va_type = CP_NUM;
         vv->va_num = pv->iValue;
-        break;
+        return vv;
     case IF_REAL:
     case IF_COMPLEX:
+        vv = TMALLOC(struct variable, 1);
+        vv->va_name = copy(opt->description);
+        vv->va_next = NULL;
         vv->va_type = CP_REAL;
         vv->va_real = pv->rValue;
-        break;
+        return vv;
     case IF_STRING:
+        vv = TMALLOC(struct variable, 1);
+        vv->va_name = copy(opt->description);
+        vv->va_next = NULL;
         vv->va_type = CP_STRING;
         vv->va_string = pv->sValue;
-        break;
+        return vv;
     case IF_FLAG:
+        vv = TMALLOC(struct variable, 1);
+        vv->va_name = copy(opt->description);
+        vv->va_next = NULL;
         vv->va_type = CP_BOOL;
         vv->va_bool = pv->iValue ? TRUE : FALSE;
-        break;
+        return vv;
     case IF_REALVEC: {
         int i;
+        vv = TMALLOC(struct variable, 1);
+        vv->va_name = copy(opt->description);
+        vv->va_next = NULL;
         vv->va_type = CP_LIST;
         vv->va_vlist = NULL;
         for (i = pv->v.numValue; --i >= 0;) {
@@ -995,6 +1008,7 @@ parmtovar(IFvalue *pv, IFparm *opt)
             nv->va_real = pv->v.vec.rVec[i];
             vv->va_vlist = nv;
         }
+        return vv;
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.
          *
@@ -1010,8 +1024,6 @@ parmtovar(IFvalue *pv, IFparm *opt)
          * So the list is starting from behind, but no problem
          * This works fine
          */
-
-        break;
     }
     default:
         fprintf(cp_err,
@@ -1019,8 +1031,6 @@ parmtovar(IFvalue *pv, IFparm *opt)
                 opt->dataType);
         return (NULL);
     }
-
-    return (vv);
 }
 
 
