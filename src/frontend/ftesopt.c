@@ -52,13 +52,10 @@ ft_getstat(struct circ *ci, char *name)
             }
         return (NULL);
     } else {
-        for (i = 0, v = vars = NULL; i < FTEOPTcount; i++) {
-            if (v) {
-                v->va_next = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
-                v = v->va_next;
-            } else {
-                vars = v = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
-            }
+        for (vars = NULL, i = FTEOPTcount; --i >= 0;) {
+            v = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
+            v->va_next = vars;
+            vars = v;
 
             v->va_type = FTEOPTtbl[i].dataType;
             v->va_name = copy(FTEOPTtbl[i].description);
