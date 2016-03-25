@@ -993,21 +993,22 @@ parmtovar(IFvalue *pv, IFparm *opt)
         vv->va_bool = pv->iValue ? TRUE : FALSE;
         return vv;
     case IF_REALVEC: {
+        struct variable *list = NULL;
         int i;
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(opt->description);
-        vv->va_next = NULL;
-        vv->va_type = CP_LIST;
-        vv->va_vlist = NULL;
         for (i = pv->v.numValue; --i >= 0;) {
             struct variable *nv;
             nv = TMALLOC(struct variable, 1);
             nv->va_name = NULL;
-            nv->va_next = vv->va_vlist;
+            nv->va_next = list;
             nv->va_type = CP_REAL;
             nv->va_real = pv->v.vec.rVec[i];
-            vv->va_vlist = nv;
+            list = nv;
         }
+        vv = TMALLOC(struct variable, 1);
+        vv->va_name = copy(opt->description);
+        vv->va_next = NULL;
+        vv->va_type = CP_LIST;
+        vv->va_vlist = list;
         return vv;
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.

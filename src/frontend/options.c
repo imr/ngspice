@@ -58,12 +58,8 @@ cp_enqvar(char *word)
             vv->va_type = CP_REAL;
             vv->va_real = value;
         } else {
+            struct variable *list = NULL;
             int i;
-            vv = TMALLOC(struct variable, 1);
-            vv->va_name = copy(word);
-            vv->va_next = NULL;
-            vv->va_type = CP_LIST;
-            vv->va_vlist = NULL;
             for (i = d->v_length; --i >= 0;) {
                 double value = isreal(d)
                     ? d->v_realdata[i]
@@ -71,11 +67,16 @@ cp_enqvar(char *word)
                 struct variable *tv;
                 tv = TMALLOC(struct variable, 1);
                 tv->va_name = NULL;
-                tv->va_next = vv->va_vlist;
+                tv->va_next = list;
                 tv->va_type = CP_REAL;
                 tv->va_real = value;
-                vv->va_vlist = tv;
+                list = tv;
             }
+            vv = TMALLOC(struct variable, 1);
+            vv->va_name = copy(word);
+            vv->va_next = NULL;
+            vv->va_type = CP_LIST;
+            vv->va_vlist = list;
         }
 
         if (d->v_link2)
@@ -114,21 +115,22 @@ cp_enqvar(char *word)
             vv->va_type = CP_STRING;
             vv->va_string = copy(plot_cur->pl_typename);
         } else if (eq(word, "plots")) {
+            struct variable *list = NULL;
             struct plot *pl;
-            vv = TMALLOC(struct variable, 1);
-            vv->va_name = copy(word);
-            vv->va_next = NULL;
-            vv->va_type = CP_LIST;
-            vv->va_vlist = NULL;
             for (pl = plot_list; pl; pl = pl->pl_next) {
                 struct variable *tv;
                 tv = TMALLOC(struct variable, 1);
                 tv->va_name = NULL;
-                tv->va_next = vv->va_vlist;
+                tv->va_next = list;
                 tv->va_type = CP_STRING;
                 tv->va_string = copy(pl->pl_typename);
-                vv->va_vlist = tv;
+                list = tv;
             }
+            vv = TMALLOC(struct variable, 1);
+            vv->va_name = copy(word);
+            vv->va_next = NULL;
+            vv->va_type = CP_LIST;
+            vv->va_vlist = list;
         }
         if (vv)
             return (vv);
