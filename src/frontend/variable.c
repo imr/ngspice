@@ -339,11 +339,10 @@ cp_setparse(wordlist *wl)
                 }
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
-                if (td) {
+                if (td)
                     vv = var_alloc_real(NULL, *td, NULL);
-                } else {
+                else
                     vv = var_alloc_string(NULL, copy(ss), NULL);
-                }
                 tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
                     lv->va_next = vv;

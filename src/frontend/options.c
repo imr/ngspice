@@ -85,9 +85,8 @@ cp_enqvar(char *word)
         if (eq(word, "plots")) {
             struct variable *list = NULL;
             struct plot *pl;
-            for (pl = plot_list; pl; pl = pl->pl_next) {
+            for (pl = plot_list; pl; pl = pl->pl_next)
                 list = var_alloc_string(NULL, copy(pl->pl_typename), list);
-            }
             return var_alloc_vlist(copy(word), list, NULL);
         }
     }

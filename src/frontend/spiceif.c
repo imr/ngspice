@@ -974,9 +974,8 @@ parmtovar(IFvalue *pv, IFparm *opt)
     case IF_REALVEC: {
         struct variable *list = NULL;
         int i;
-        for (i = pv->v.numValue; --i >= 0;) {
+        for (i = pv->v.numValue; --i >= 0;)
             list = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
-        }
         return var_alloc_vlist(copy(opt->description), list, NULL);
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.
