@@ -960,30 +960,24 @@ parmtovar(IFvalue *pv, IFparm *opt)
 {
     /* It is not clear whether we want to name the variable
      *   by `keyword' or by `description' */
-    struct variable *vv;
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
-        vv = var_alloc_num(copy(opt->description), pv->iValue, NULL);
-        return vv;
+        return var_alloc_num(copy(opt->description), pv->iValue, NULL);
     case IF_REAL:
     case IF_COMPLEX:
-        vv = var_alloc_real(copy(opt->description), pv->rValue, NULL);
-        return vv;
+        return var_alloc_real(copy(opt->description), pv->rValue, NULL);
     case IF_STRING:
-        vv = var_alloc_string(copy(opt->description), pv->sValue, NULL);
-        return vv;
+        return var_alloc_string(copy(opt->description), pv->sValue, NULL);
     case IF_FLAG:
-        vv = var_alloc_bool(copy(opt->description), pv->iValue ? TRUE : FALSE, NULL);
-        return vv;
+        return var_alloc_bool(copy(opt->description), pv->iValue ? TRUE : FALSE, NULL);
     case IF_REALVEC: {
         struct variable *list = NULL;
         int i;
         for (i = pv->v.numValue; --i >= 0;) {
             list = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
         }
-        vv = var_alloc_vlist(copy(opt->description), list, NULL);
-        return vv;
+        return var_alloc_vlist(copy(opt->description), list, NULL);
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.
          *

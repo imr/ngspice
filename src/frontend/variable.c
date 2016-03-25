@@ -278,8 +278,7 @@ cp_setparse(wordlist *wl)
 
         wl = wl->wl_next;
         if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
-            vv = var_alloc_bool(copy(name), TRUE, vars);
-            vars = vv;
+            vars = var_alloc_bool(copy(name), TRUE, vars);
             tfree(name);        /*DG: cp_unquote Memory leak*/
             continue;
         }
@@ -362,8 +361,7 @@ cp_setparse(wordlist *wl)
                 return (NULL);
             }
 
-            vv = var_alloc_vlist(copy(name), listv, vars);
-            vars = vv;
+            vars = var_alloc_vlist(copy(name), listv, vars);
 
             wl = wl->wl_next;
             continue;
@@ -373,11 +371,9 @@ cp_setparse(wordlist *wl)
         td = ft_numparse(&ss, FALSE);
         if (td) {
             /*** We should try to get CP_NUM's... */
-            vv = var_alloc_real(copy(name), *td, vars);
-            vars = vv;
+            vars = var_alloc_real(copy(name), *td, vars);
         } else {
-            vv = var_alloc_string(copy(name), copy(val), vars);
-            vars = vv;
+            vars = var_alloc_string(copy(name), copy(val), vars);
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */

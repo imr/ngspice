@@ -48,11 +48,15 @@ cp_enqvar(char *word)
         if (!d)
             return (NULL);
 
+        if (d->v_link2)
+            fprintf(cp_err,
+                    "Warning: only one vector may be accessed with the $& notation.\n");
+
         if (d->v_length == 1) {
             double value = isreal(d)
                 ? d->v_realdata[0]
                 : realpart(d->v_compdata[0]);
-            vv = var_alloc_real(copy(word), value, NULL);
+            return var_alloc_real(copy(word), value, NULL);
         } else {
             struct variable *list = NULL;
             int i;
@@ -62,38 +66,30 @@ cp_enqvar(char *word)
                     : realpart(d->v_compdata[i]);
                 list = var_alloc_real(NULL, value, list);
             }
-            vv = var_alloc_vlist(copy(word), list, NULL);
+            return var_alloc_vlist(copy(word), list, NULL);
         }
-
-        if (d->v_link2)
-            fprintf(cp_err,
-                    "Warning: only one vector may be accessed with the $& notation.\n");
-        return (vv);
-
     }
 
     if (plot_cur) {
         for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
                 return (vv);
-        if (eq(word, "curplotname")) {
-            vv = var_alloc_string(copy(word), copy(plot_cur->pl_name), NULL);
-        } else if (eq(word, "curplottitle")) {
-            vv = var_alloc_string(copy(word), copy(plot_cur->pl_title), NULL);
-        } else if (eq(word, "curplotdate")) {
-            vv = var_alloc_string(copy(word), copy(plot_cur->pl_date), NULL);
-        } else if (eq(word, "curplot")) {
-            vv = var_alloc_string(copy(word), copy(plot_cur->pl_typename), NULL);
-        } else if (eq(word, "plots")) {
+        if (eq(word, "curplotname"))
+            return var_alloc_string(copy(word), copy(plot_cur->pl_name), NULL);
+        if (eq(word, "curplottitle"))
+            return var_alloc_string(copy(word), copy(plot_cur->pl_title), NULL);
+        if (eq(word, "curplotdate"))
+            return var_alloc_string(copy(word), copy(plot_cur->pl_date), NULL);
+        if (eq(word, "curplot"))
+            return var_alloc_string(copy(word), copy(plot_cur->pl_typename), NULL);
+        if (eq(word, "plots")) {
             struct variable *list = NULL;
             struct plot *pl;
             for (pl = plot_list; pl; pl = pl->pl_next) {
                 list = var_alloc_string(NULL, copy(pl->pl_typename), list);
             }
-            vv = var_alloc_vlist(copy(word), list, NULL);
+            return var_alloc_vlist(copy(word), list, NULL);
         }
-        if (vv)
-            return (vv);
     }
 
     if (ft_curckt)

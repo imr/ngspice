@@ -52,18 +52,13 @@ ft_getstat(struct circ *ci, char *name)
 static struct variable *
 getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
 {
-    struct variable *v;
-
     switch (p->id) {
     case FTEOPT_NLDECK:
-        v = var_alloc_num(copy(p->description), stat->FTESTATdeckNumLines, next);
-        return v;
+        return var_alloc_num(copy(p->description), stat->FTESTATdeckNumLines, next);
     case FTEOPT_NLT:
-        v = var_alloc_real(copy(p->description), stat->FTESTATnetLoadTime, next);
-        return v;
+        return var_alloc_real(copy(p->description), stat->FTESTATnetLoadTime, next);
     case FTEOPT_NPT:
-        v = var_alloc_real(copy(p->description), stat->FTESTATnetParseTime, next);
-        return v;
+        return var_alloc_real(copy(p->description), stat->FTESTATnetParseTime, next);
     default:
         return NULL;
     }
