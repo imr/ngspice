@@ -121,23 +121,28 @@ cp_vset(char *varname, enum cp_types type, void *value)
             tfree(copyvarname);
             return;
         } else {
+            v->va_type = CP_BOOL;
             v->va_bool = TRUE;
         }
         break;
 
     case CP_NUM:
+        v->va_type = CP_NUM;
         v->va_num = * (int *) value;
         break;
 
     case CP_REAL:
+        v->va_type = CP_REAL;
         v->va_real = * (double *) value;
         break;
 
     case CP_STRING:
+        v->va_type = CP_STRING;
         v->va_string = copy((char*) value);
         break;
 
     case CP_LIST:
+        v->va_type = CP_LIST;
         v->va_vlist = (struct variable *) value;
         break;
 
@@ -148,8 +153,6 @@ cp_vset(char *varname, enum cp_types type, void *value)
         tfree(copyvarname);
         return;
     }
-
-    v->va_type = type;
 
     /* Now, see if there is anything interesting going on. We
      * recognise these special variables: noglob, nonomatch, history,
