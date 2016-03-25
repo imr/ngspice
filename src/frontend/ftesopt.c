@@ -35,11 +35,11 @@ struct variable *
 ft_getstat(struct circ *ci, char *name)
 {
     int i;
-    struct variable *v, *vars , *vv = NULL;
 
     if (name) {
         for (i = 0; i < FTEOPTcount; i++)
             if (eq(name, FTEOPTtbl[i].keyword)) {
+                struct variable *vv;
                 vv = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
                 if (vv) {
                     vv->va_type = FTEOPTtbl[i].dataType;
@@ -52,7 +52,9 @@ ft_getstat(struct circ *ci, char *name)
             }
         return (NULL);
     } else {
-        for (vars = NULL, i = FTEOPTcount; --i >= 0;) {
+        struct variable *vars = NULL;
+        for (i = FTEOPTcount; --i >= 0;) {
+            struct variable *v;
             v = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
             v->va_next = vars;
             vars = v;
