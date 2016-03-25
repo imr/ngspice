@@ -958,7 +958,11 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
 static struct variable *
 parmtovar(IFvalue *pv, IFparm *opt)
 {
+    /* It is not clear whether we want to name the variable
+     *   by `keyword' or by `description' */
     struct variable *vv = TMALLOC(struct variable, 1);
+    vv->va_name = copy(opt->description);
+    vv->va_next = NULL;
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
@@ -1016,9 +1020,6 @@ parmtovar(IFvalue *pv, IFparm *opt)
         return (NULL);
     }
 
-    /* It's not clear whether we want the keyword or the desc here... */
-    vv->va_name = copy(opt->description);
-    vv->va_next = NULL;
     return (vv);
 }
 
