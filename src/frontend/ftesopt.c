@@ -42,8 +42,6 @@ ft_getstat(struct circ *ci, char *name)
                 struct variable *vv;
                 vv = getFTEstat(FTEOPTtbl + i, ci->FTEstats, NULL);
                 if (vv) {
-                    vv->va_type = FTEOPTtbl[i].dataType;
-                    vv->va_name = copy(FTEOPTtbl[i].description);
                     return (vv);
                 } else {
                     return (NULL);
@@ -56,10 +54,6 @@ ft_getstat(struct circ *ci, char *name)
             struct variable *v;
             v = getFTEstat(FTEOPTtbl + i, ci->FTEstats, vars);
             vars = v;
-
-            v->va_type = FTEOPTtbl[i].dataType;
-            v->va_name = copy(FTEOPTtbl[i].description);
-
         }
         return vars;
     }
@@ -89,6 +83,9 @@ getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
         return (NULL);
     }
 
+    v->va_name = copy(p->description);
     v->va_next = next;
+    v->va_type = p->dataType;
+
     return (v);
 }
