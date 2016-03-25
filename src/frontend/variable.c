@@ -974,6 +974,46 @@ var_alloc(char *name, struct variable *next)
   return v;
 }
 
+struct variable *
+var_alloc_bool(char *name, bool value, struct variable *next)
+{
+    struct variable *v = var_alloc(name, next);
+    var_set_bool(v, value);
+    return v;
+}
+
+struct variable *
+var_alloc_num(char *name, int value, struct variable *next)
+{
+    struct variable *v = var_alloc(name, next);
+    var_set_num(v, value);
+    return v;
+}
+
+struct variable *
+var_alloc_real(char *name, double value, struct variable *next)
+{
+    struct variable *v = var_alloc(name, next);
+    var_set_real(v, value);
+    return v;
+}
+
+struct variable *
+var_alloc_string(char *name, char * value, struct variable *next)
+{
+    struct variable *v = var_alloc(name, next);
+    var_set_string(v, value);
+    return v;
+}
+
+struct variable *
+var_alloc_vlist(char *name, struct variable * value, struct variable *next)
+{
+    struct variable *v = var_alloc(name, next);
+    var_set_vlist(v, value);
+    return v;
+}
+
 void
 var_set_bool(struct variable *v, bool value)
 {

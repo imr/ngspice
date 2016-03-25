@@ -45,6 +45,12 @@ void free_struct_variable(struct variable *v);
 
 struct variable *var_alloc(char *name, struct variable *next);
 
+struct variable *var_alloc_bool(char *name, bool, struct variable *next);
+struct variable *var_alloc_num(char *name, int, struct variable *next);
+struct variable *var_alloc_real(char *name, double, struct variable *next);
+struct variable *var_alloc_string(char *name, char *, struct variable *next);
+struct variable *var_alloc_vlist(char *name, struct variable *, struct variable *next);
+
 void var_set_bool(struct variable *, bool);
 void var_set_num(struct variable *, int);
 void var_set_real(struct variable *, double);
