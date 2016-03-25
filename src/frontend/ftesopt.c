@@ -15,15 +15,14 @@ Author: 2010 Paolo Nenzi
 struct FTEparm {
     char *keyword;
     int id;
-    enum cp_types dataType;
     char *description;
 };
 
 
 static struct FTEparm FTEOPTtbl[] = {
-    { "decklineno",   FTEOPT_NLDECK, CP_NUM,  "Number of lines in the deck" },
-    { "netloadtime",  FTEOPT_NLT,    CP_REAL, "Netlist loading time"        },
-    { "netparsetime", FTEOPT_NPT,    CP_REAL, "Netlist parsing time"        }
+    { "decklineno",   FTEOPT_NLDECK, "Number of lines in the deck" },
+    { "netloadtime",  FTEOPT_NLT,    "Netlist loading time"        },
+    { "netparsetime", FTEOPT_NPT,    "Netlist parsing time"        }
 };
 
 static const int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(*FTEOPTtbl);
@@ -53,30 +52,31 @@ ft_getstat(struct circ *ci, char *name)
 static struct variable *
 getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
 {
-
-    struct variable *v = TMALLOC(struct variable, 1);
+    struct variable *v;
 
     switch (p->id) {
     case FTEOPT_NLDECK:
+        v = TMALLOC(struct variable, 1);
         v->va_name = copy(p->description);
         v->va_next = next;
-        v->va_type = p->dataType;
+        v->va_type = CP_NUM;
         v->va_num = stat->FTESTATdeckNumLines;
         return v;
     case FTEOPT_NLT:
+        v = TMALLOC(struct variable, 1);
         v->va_name = copy(p->description);
         v->va_next = next;
-        v->va_type = p->dataType;
+        v->va_type = CP_REAL;
         v->va_real = stat->FTESTATnetLoadTime;
         return v;
     case FTEOPT_NPT:
+        v = TMALLOC(struct variable, 1);
         v->va_name = copy(p->description);
         v->va_next = next;
-        v->va_type = p->dataType;
+        v->va_type = CP_REAL;
         v->va_real = stat->FTESTATnetParseTime;
         return v;
     default:
-        tfree(v);
-        return (NULL);
+        return NULL;
     }
 }
