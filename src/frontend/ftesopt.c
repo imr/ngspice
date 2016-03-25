@@ -28,7 +28,7 @@ static struct FTEparm FTEOPTtbl[] = {
 
 static const int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(*FTEOPTtbl);
 
-static struct variable *getFTEstat(struct FTEparm *, FTESTATistics *);
+static struct variable *getFTEstat(struct FTEparm *, FTESTATistics *, struct variable *);
 
 
 struct variable *
@@ -40,11 +40,10 @@ ft_getstat(struct circ *ci, char *name)
         for (i = 0; i < FTEOPTcount; i++)
             if (eq(name, FTEOPTtbl[i].keyword)) {
                 struct variable *vv;
-                vv = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
+                vv = getFTEstat(FTEOPTtbl + i, ci->FTEstats, NULL);
                 if (vv) {
                     vv->va_type = FTEOPTtbl[i].dataType;
                     vv->va_name = copy(FTEOPTtbl[i].description);
-                    vv->va_next = NULL;
                     return (vv);
                 } else {
                     return (NULL);
@@ -55,8 +54,7 @@ ft_getstat(struct circ *ci, char *name)
         struct variable *vars = NULL;
         for (i = FTEOPTcount; --i >= 0;) {
             struct variable *v;
-            v = getFTEstat(FTEOPTtbl + i, ci->FTEstats);
-            v->va_next = vars;
+            v = getFTEstat(FTEOPTtbl + i, ci->FTEstats, vars);
             vars = v;
 
             v->va_type = FTEOPTtbl[i].dataType;
@@ -71,7 +69,7 @@ ft_getstat(struct circ *ci, char *name)
 /* This function fill the value field of the variable */
 
 static struct variable *
-getFTEstat(struct FTEparm *p, FTESTATistics *stat)
+getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
 {
 
     struct variable *v = TMALLOC(struct variable, 1);
@@ -91,5 +89,6 @@ getFTEstat(struct FTEparm *p, FTESTATistics *stat)
         return (NULL);
     }
 
+    v->va_next = next;
     return (v);
 }
