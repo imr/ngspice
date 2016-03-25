@@ -973,6 +973,16 @@ cp_vprint(void)
     tfree(vars);
 }
 
+struct variable *
+var_alloc(char *name, struct variable *next)
+{
+  struct variable *v = TMALLOC(struct variable, 1);
+  ZERO(v, struct variable);
+  v -> va_name = name;
+  v -> va_next = next;
+  return v;
+}
+
 void
 var_set_bool(struct variable *v, bool value)
 {

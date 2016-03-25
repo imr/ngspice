@@ -43,6 +43,8 @@ wordlist *cp_varwl(struct variable *var);
 wordlist *cp_variablesubst(wordlist *wlist);
 void free_struct_variable(struct variable *v);
 
+struct variable *var_alloc(char *name, struct variable *next);
+
 void var_set_bool(struct variable *, bool);
 void var_set_num(struct variable *, int);
 void var_set_real(struct variable *, double);
