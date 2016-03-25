@@ -38,29 +38,17 @@ ft_getstat(struct circ *ci, char *name)
 
     if (name) {
         for (i = 0; i < FTEOPTcount; i++)
-            if (eq(name, FTEOPTtbl[i].keyword)) {
-                struct variable *vv;
-                vv = getFTEstat(FTEOPTtbl + i, ci->FTEstats, NULL);
-                if (vv) {
-                    return (vv);
-                } else {
-                    return (NULL);
-                }
-            }
+            if (eq(name, FTEOPTtbl[i].keyword))
+                return getFTEstat(FTEOPTtbl + i, ci->FTEstats, NULL);
         return (NULL);
     } else {
         struct variable *vars = NULL;
-        for (i = FTEOPTcount; --i >= 0;) {
-            struct variable *v;
-            v = getFTEstat(FTEOPTtbl + i, ci->FTEstats, vars);
-            vars = v;
-        }
+        for (i = FTEOPTcount; --i >= 0;)
+            vars = getFTEstat(FTEOPTtbl + i, ci->FTEstats, vars);
         return vars;
     }
 }
 
-
-/* This function fill the value field of the variable */
 
 static struct variable *
 getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
