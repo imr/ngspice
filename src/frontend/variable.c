@@ -278,8 +278,7 @@ cp_setparse(wordlist *wl)
 
         wl = wl->wl_next;
         if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
-            vv = var_alloc(copy(name), vars);
-            var_set_bool(vv, TRUE);
+            vv = var_alloc_bool(copy(name), TRUE, vars);
             vars = vv;
             tfree(name);        /*DG: cp_unquote Memory leak*/
             continue;
@@ -342,11 +341,9 @@ cp_setparse(wordlist *wl)
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
-                    vv = var_alloc(NULL, NULL);
-                    var_set_real(vv, *td);
+                    vv = var_alloc_real(NULL, *td, NULL);
                 } else {
-                    vv = var_alloc(NULL, NULL);
-                    var_set_string(vv, copy(ss));
+                    vv = var_alloc_string(NULL, copy(ss), NULL);
                 }
                 tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
                 if (listv) {
@@ -365,8 +362,7 @@ cp_setparse(wordlist *wl)
                 return (NULL);
             }
 
-            vv = var_alloc(copy(name), vars);
-            var_set_vlist(vv, listv);
+            vv = var_alloc_vlist(copy(name), listv, vars);
             vars = vv;
 
             wl = wl->wl_next;
@@ -377,12 +373,10 @@ cp_setparse(wordlist *wl)
         td = ft_numparse(&ss, FALSE);
         if (td) {
             /*** We should try to get CP_NUM's... */
-            vv = var_alloc(copy(name), vars);
-            var_set_real(vv, *td);
+            vv = var_alloc_real(copy(name), *td, vars);
             vars = vv;
         } else {
-            vv = var_alloc(copy(name), vars);
-            var_set_string(vv, copy(val));
+            vv = var_alloc_string(copy(name), copy(val), vars);
             vars = vv;
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
@@ -447,8 +441,7 @@ cp_remvar(char *varname)
     }
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
-        v = var_alloc(copy(varname), NULL);
-        var_set_num(v, 0);
+        v = var_alloc_num(copy(varname), 0, NULL);
         found = FALSE;
     }
 

@@ -964,33 +964,27 @@ parmtovar(IFvalue *pv, IFparm *opt)
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
-        vv = var_alloc(copy(opt->description), NULL);
-        var_set_num(vv, pv->iValue);
+        vv = var_alloc_num(copy(opt->description), pv->iValue, NULL);
         return vv;
     case IF_REAL:
     case IF_COMPLEX:
-        vv = var_alloc(copy(opt->description), NULL);
-        var_set_real(vv, pv->rValue);
+        vv = var_alloc_real(copy(opt->description), pv->rValue, NULL);
         return vv;
     case IF_STRING:
-        vv = var_alloc(copy(opt->description), NULL);
-        var_set_string(vv, pv->sValue);
+        vv = var_alloc_string(copy(opt->description), pv->sValue, NULL);
         return vv;
     case IF_FLAG:
-        vv = var_alloc(copy(opt->description), NULL);
-        var_set_bool(vv, pv->iValue ? TRUE : FALSE);
+        vv = var_alloc_bool(copy(opt->description), pv->iValue ? TRUE : FALSE, NULL);
         return vv;
     case IF_REALVEC: {
         struct variable *list = NULL;
         int i;
         for (i = pv->v.numValue; --i >= 0;) {
             struct variable *nv;
-            nv = var_alloc(NULL, list);
-            var_set_real(nv, pv->v.vec.rVec[i]);
+            nv = var_alloc_real(NULL, pv->v.vec.rVec[i], list);
             list = nv;
         }
-        vv = var_alloc(copy(opt->description), NULL);
-        var_set_vlist(vv, list);
+        vv = var_alloc_vlist(copy(opt->description), list, NULL);
         return vv;
         /* It is a linked list where the first node is a variable
          * pointing to the different values of the variables.

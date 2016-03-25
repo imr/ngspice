@@ -52,8 +52,7 @@ cp_enqvar(char *word)
             double value = isreal(d)
                 ? d->v_realdata[0]
                 : realpart(d->v_compdata[0]);
-            vv = var_alloc(copy(word), NULL);
-            var_set_real(vv, value);
+            vv = var_alloc_real(copy(word), value, NULL);
         } else {
             struct variable *list = NULL;
             int i;
@@ -62,12 +61,10 @@ cp_enqvar(char *word)
                     ? d->v_realdata[i]
                     : realpart(d->v_compdata[i]);
                 struct variable *tv;
-                tv = var_alloc(NULL, list);
-                var_set_real(tv, value);
+                tv = var_alloc_real(NULL, value, list);
                 list = tv;
             }
-            vv = var_alloc(copy(word), NULL);
-            var_set_vlist(vv, list);
+            vv = var_alloc_vlist(copy(word), list, NULL);
         }
 
         if (d->v_link2)
@@ -82,28 +79,22 @@ cp_enqvar(char *word)
             if (eq(vv->va_name, word))
                 return (vv);
         if (eq(word, "curplotname")) {
-            vv = var_alloc(copy(word), NULL);
-            var_set_string(vv, copy(plot_cur->pl_name));
+            vv = var_alloc_string(copy(word), copy(plot_cur->pl_name), NULL);
         } else if (eq(word, "curplottitle")) {
-            vv = var_alloc(copy(word), NULL);
-            var_set_string(vv, copy(plot_cur->pl_title));
+            vv = var_alloc_string(copy(word), copy(plot_cur->pl_title), NULL);
         } else if (eq(word, "curplotdate")) {
-            vv = var_alloc(copy(word), NULL);
-            var_set_string(vv, copy(plot_cur->pl_date));
+            vv = var_alloc_string(copy(word), copy(plot_cur->pl_date), NULL);
         } else if (eq(word, "curplot")) {
-            vv = var_alloc(copy(word), NULL);
-            var_set_string(vv, copy(plot_cur->pl_typename));
+            vv = var_alloc_string(copy(word), copy(plot_cur->pl_typename), NULL);
         } else if (eq(word, "plots")) {
             struct variable *list = NULL;
             struct plot *pl;
             for (pl = plot_list; pl; pl = pl->pl_next) {
                 struct variable *tv;
-                tv = var_alloc(NULL, list);
-                var_set_string(tv, copy(pl->pl_typename));
+                tv = var_alloc_string(NULL, copy(pl->pl_typename), list);
                 list = tv;
             }
-            vv = var_alloc(copy(word), NULL);
-            var_set_vlist(vv, list);
+            vv = var_alloc_vlist(copy(word), list, NULL);
         }
         if (vv)
             return (vv);
