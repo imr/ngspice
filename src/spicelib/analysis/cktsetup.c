@@ -69,10 +69,11 @@ CKTsetup(CKTcircuit *ckt)
       printf("OpenMP: %d threads are requested in ngspice\n", nthreads);*/
 #endif
 
-    for (i=0;i<DEVmaxnum;i++) {
 #ifdef HAS_PROGREP
-        SetAnalyse( "Device Setup", 0 );
+    SetAnalyse("Device Setup", 0);
 #endif
+
+    for (i=0;i<DEVmaxnum;i++) {
         if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {
             error = DEVices[i]->DEVsetup (matrix, ckt->CKThead[i], ckt,
                     &ckt->CKTnumStates);
