@@ -51,14 +51,14 @@ cp_enqvar(char *word)
             return (NULL);
 
         if (d->v_length == 1) {
+            double value = isreal(d)
+                ? d->v_realdata[0]
+                : realpart(d->v_compdata[0]);
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(word);
             vv->va_next = NULL;
             vv->va_type = CP_REAL;
-            if (isreal(d))
-                vv->va_real = d->v_realdata[0];
-            else
-                vv->va_real = realpart(d->v_compdata[0]);
+            vv->va_real = value;
         } else {
             vv = TMALLOC(struct variable, 1);
             vv->va_name = copy(word);
@@ -66,14 +66,14 @@ cp_enqvar(char *word)
             vv->va_type = CP_LIST;
             vv->va_vlist = NULL;
             for (i = d->v_length; --i >= 0;) {
+                double value = isreal(d)
+                    ? d->v_realdata[i]
+                    : realpart(d->v_compdata[i]);
                 tv = TMALLOC(struct variable, 1);
                 tv->va_name = NULL;
                 tv->va_next = vv->va_vlist;
                 tv->va_type = CP_REAL;
-                if (isreal(d))
-                    tv->va_real = d->v_realdata[i];
-                else
-                    tv->va_real = realpart(d->v_compdata[i]);
+                tv->va_real = value;
                 vv->va_vlist = tv;
             }
         }
