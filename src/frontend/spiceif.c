@@ -964,28 +964,20 @@ parmtovar(IFvalue *pv, IFparm *opt)
 
     switch (opt->dataType & IF_VARTYPES) {
     case IF_INTEGER:
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(opt->description);
-        vv->va_next = NULL;
+        vv = var_alloc(copy(opt->description), NULL);
         var_set_num(vv, pv->iValue);
         return vv;
     case IF_REAL:
     case IF_COMPLEX:
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(opt->description);
-        vv->va_next = NULL;
+        vv = var_alloc(copy(opt->description), NULL);
         var_set_real(vv, pv->rValue);
         return vv;
     case IF_STRING:
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(opt->description);
-        vv->va_next = NULL;
+        vv = var_alloc(copy(opt->description), NULL);
         var_set_string(vv, pv->sValue);
         return vv;
     case IF_FLAG:
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(opt->description);
-        vv->va_next = NULL;
+        vv = var_alloc(copy(opt->description), NULL);
         var_set_bool(vv, pv->iValue ? TRUE : FALSE);
         return vv;
     case IF_REALVEC: {
@@ -993,15 +985,11 @@ parmtovar(IFvalue *pv, IFparm *opt)
         int i;
         for (i = pv->v.numValue; --i >= 0;) {
             struct variable *nv;
-            nv = TMALLOC(struct variable, 1);
-            nv->va_name = NULL;
-            nv->va_next = list;
+            nv = var_alloc(NULL, list);
             var_set_real(nv, pv->v.vec.rVec[i]);
             list = nv;
         }
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(opt->description);
-        vv->va_next = NULL;
+        vv = var_alloc(copy(opt->description), NULL);
         var_set_vlist(vv, list);
         return vv;
         /* It is a linked list where the first node is a variable

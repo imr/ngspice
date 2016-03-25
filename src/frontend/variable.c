@@ -104,9 +104,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
     }
 
     if (!v) {
-        v = TMALLOC(struct variable, 1);
-        v->va_name = copy(copyvarname);
-        v->va_next = NULL;
+        v = var_alloc(copy(copyvarname), NULL);
         v_free = TRUE;
     }
 
@@ -280,9 +278,7 @@ cp_setparse(wordlist *wl)
 
         wl = wl->wl_next;
         if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
-            vv = TMALLOC(struct variable, 1);
-            vv->va_name = copy(name);
-            vv->va_next = vars;
+            vv = var_alloc(copy(name), vars);
             var_set_bool(vv, TRUE);
             vars = vv;
             tfree(name);        /*DG: cp_unquote Memory leak*/
@@ -343,9 +339,7 @@ cp_setparse(wordlist *wl)
                     if (!--balance)
                         break;
                 }
-                vv = TMALLOC(struct variable, 1);
-                vv->va_name = NULL;
-                vv->va_next = NULL;
+                vv = var_alloc(NULL, NULL);
                 copyval = ss = cp_unquote(wl->wl_word);
                 td = ft_numparse(&ss, FALSE);
                 if (td) {
@@ -370,9 +364,7 @@ cp_setparse(wordlist *wl)
                 return (NULL);
             }
 
-            vv = TMALLOC(struct variable, 1);
-            vv->va_name = copy(name);
-            vv->va_next = vars;
+            vv = var_alloc(copy(name), vars);
             var_set_vlist(vv, listv);
             vars = vv;
 
@@ -382,9 +374,7 @@ cp_setparse(wordlist *wl)
 
         copyval = ss = cp_unquote(val);
         td = ft_numparse(&ss, FALSE);
-        vv = TMALLOC(struct variable, 1);
-        vv->va_name = copy(name);
-        vv->va_next = vars;
+        vv = var_alloc(copy(name), vars);
         vars = vv;
         if (td) {
             /*** We should try to get CP_NUM's... */
@@ -454,9 +444,7 @@ cp_remvar(char *varname)
     }
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
-        v = TMALLOC(struct variable, 1);
-        v->va_name = copy(varname);
-        v->va_next = NULL;
+        v = var_alloc(copy(varname), NULL);
         var_set_num(v, 0);
         found = FALSE;
     }

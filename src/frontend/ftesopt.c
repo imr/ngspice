@@ -56,21 +56,15 @@ getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
 
     switch (p->id) {
     case FTEOPT_NLDECK:
-        v = TMALLOC(struct variable, 1);
-        v->va_name = copy(p->description);
-        v->va_next = next;
+        v = var_alloc(copy(p->description), next);
         var_set_num(v, stat->FTESTATdeckNumLines);
         return v;
     case FTEOPT_NLT:
-        v = TMALLOC(struct variable, 1);
-        v->va_name = copy(p->description);
-        v->va_next = next;
+        v = var_alloc(copy(p->description), next);
         var_set_real(v, stat->FTESTATnetLoadTime);
         return v;
     case FTEOPT_NPT:
-        v = TMALLOC(struct variable, 1);
-        v->va_name = copy(p->description);
-        v->va_next = next;
+        v = var_alloc(copy(p->description), next);
         var_set_real(v, stat->FTESTATnetParseTime);
         return v;
     default:
