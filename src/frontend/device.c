@@ -1350,11 +1350,10 @@ com_alter_common(wordlist *wl, int do_model)
 
     if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
 
-    /* va: garbage collection for dv, if pnode names is no simple value */
-    if (names->pn_value == NULL && dv != NULL)
-        vec_free(dv);
-
 done:
+    /* va: garbage collection for dv, if pnode names is no simple value */
+    if (names && !names->pn_value && dv)
+        vec_free(dv);
     free_pnode(names); /* free also dv, if pnode names is simple value */
 }
 

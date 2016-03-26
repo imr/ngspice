@@ -108,7 +108,7 @@ com_let(wordlist *wl)
             indices[numdims++] = j;
 
             /* va: garbage collection for t, if pnode `names' is no simple value */
-            if (names != NULL && names->pn_value == NULL && t != NULL)
+            if (names && !names->pn_value && t)
                 vec_free(t);
             free_pnode(names); /* frees also t, if pnode `names' is simple value */
 
@@ -235,7 +235,7 @@ com_let(wordlist *wl)
 
 quit:
     /* va: garbage collection for t, if pnode `names' is no simple value */
-    if (names != NULL && names->pn_value == NULL && t != NULL)
+    if (names && !names->pn_value && t)
         vec_free(t);
     free_pnode(names); /* frees also t, if pnode `names' is simple value */
     tfree(p);
