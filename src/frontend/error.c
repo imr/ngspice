@@ -53,7 +53,9 @@ fperror(char *mess, int code)
 void
 ft_sperror(int code, char *mess)
 {
-    fprintf(cp_err, "%s: %s\n", mess, if_errstring(code));
+    char *errstring = if_errstring(code);
+    fprintf(cp_err, "%s: %s\n", mess, errstring);
+    tfree(errstring);
 }
 
 
