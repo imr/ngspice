@@ -272,7 +272,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         tfree(ntitle);
     }
 
-    cline = wl_flatten(wl_reverse(tail));
+    tail = wl_reverse(tail);
+    cline = wl_flatten(tail);
     wl_free(tail);
 
     /* Now extract all the parameters. */
