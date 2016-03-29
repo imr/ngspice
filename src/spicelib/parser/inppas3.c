@@ -69,7 +69,10 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
 
                 /* loop until we run out of data */
                 INPgetTok(&line,&name,1);
-                if( *name == '\0') break; /* end of line */
+                if( *name == '\0') {
+                    FREE(name);
+                    break; /* end of line */
+                }
 
                 /* If we have 'all = value' , then set all voltage nodes to 'value',
                    except for ground node at node->number 0 */
@@ -79,6 +82,7 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                         if ((node1->type == SP_VOLTAGE) && (node1->number > 0))
                             IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     }
+                    FREE(name);
                     break;
                 }
                 /* check to see if in the form V(xxx) and grab the xxx */
@@ -91,9 +95,11 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                                 "Warning : Nodeset on non-existant node - %s\n", nodename);
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
+                    FREE(name);
                     continue;
                 }
                 LITERR(" Error: .nodeset syntax error.\n");
+                FREE(name);
                 break;
             }
         } else if ((strcmp(token,".ic") == 0)) {
@@ -130,9 +136,11 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                                 "Warning : IC on non-existant node - %s\n", nodename);
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
+                    FREE(name);
                     continue;
                 }
                 LITERR(" Error: .ic syntax error.\n");
+                FREE(name);
                 break;
             }
         }
