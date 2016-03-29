@@ -1,5 +1,9 @@
 Perform Monte Carlo simulation in ngspice
-* 25 stage Ring-Osc. BSIM3
+* 25 stage Ring-Osc. BSIM3 with statistical variation of various model parameters
+* cd into ngspice/examples/Monte_Carlo
+* start in interactive mode 'ngspice MC_ring.sp' with several plots for output
+* or start in batch mode, controlled by .control section (Control mode)
+* with 'ngspice -b -r MC_ring.raw -o MC_ring.log MC_ring.sp'.
 
 vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
 vdd dd 0 dc 3.3
@@ -138,6 +142,15 @@ cout  buf ss 0.2pF
     let run = run + 1
   end
 ***** plotting **********************************************************
+if $?batchmode
+  echo
+  echo Plotting not available in batch mode
+  echo Write linearized vout0 to vout{$mc_runs} to rawfile $rawfile
+  echo
+  write $rawfile {$plot_out}.allv
+  rusage
+  quit
+else
   setplot $plot_out
   plot vout0  ylabel 'RO output, original parameters'        $ just plot the tran output with nominal parameters
   setplot $plot_fft
@@ -186,6 +199,7 @@ cout  buf ss 0.2pF
   let diff40 = (vecmax(halfffts) - vecmin(halfffts))*1e-6
   echo
   echo Max. jitter is "$&diff40" MHz
+end
   rusage
 .endc
 ********************************************************************************
