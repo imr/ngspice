@@ -84,10 +84,11 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                 /* check to see if in the form V(xxx) and grab the xxx */
                 if( (*name == 'V' || *name == 'v') && !name[1] ) {
                     /* looks like V - must be V(xx) - get xx now*/
-                    INPgetTok(&line,&name,1);
-                    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
+                    char *nodename;
+                    INPgetTok(&line,&nodename,1);
+                    if (INPtermInsert(ckt,&nodename,tab,&node1)!=E_EXISTS)
                         fprintf(stderr,
-                                "Warning : Nodeset on non-existant node - %s\n", name);
+                                "Warning : Nodeset on non-existant node - %s\n", nodename);
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     continue;
@@ -122,10 +123,11 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
                 }
                 if( (*name == 'V' || *name == 'v') && !name[1] ) {
                     /* looks like V - must be V(xx) - get xx now*/
-                    INPgetTok(&line,&name,1);
-                    if (INPtermInsert(ckt,&name,tab,&node1)!=E_EXISTS)
+                    char *nodename;
+                    INPgetTok(&line,&nodename,1);
+                    if (INPtermInsert(ckt,&nodename,tab,&node1)!=E_EXISTS)
                         fprintf(stderr,
-                                "Warning : IC on non-existant node - %s\n", name);
+                                "Warning : IC on non-existant node - %s\n", nodename);
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     continue;
