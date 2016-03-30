@@ -391,6 +391,7 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 		} else {
 			LITERR(" Error: unknown parameter on .tran - ignored\n");
 		}
+		tfree(word);
 	}
 	return (0);
 }
