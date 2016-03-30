@@ -143,6 +143,7 @@ brac1(char *string)
                     newwl = wl_append(newwl, nw);
                 }
             wl_free(words);
+            wl_free(nwl);
             words = newwl;
         } else {
             for (wl = words; wl; wl = wl->wl_next)
