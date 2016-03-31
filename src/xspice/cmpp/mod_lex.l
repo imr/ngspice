@@ -1,6 +1,7 @@
 %option prefix="mod_yy"
 %option yylineno
 %option noyywrap
+%option nounput
 %{
 
 /*============================================================================

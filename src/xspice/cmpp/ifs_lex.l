@@ -2,6 +2,8 @@
 %option prefix="ifs_yy"
 %option yylineno
 %option noyywrap
+%option noinput
+%option nounput
 %{
 
 /*============================================================================
@@ -55,11 +57,6 @@ double yydval;
 /*
  * IFS specs are case insensitive:
  */
-
-/* saj - use -i flex command line option
-#undef input
-#define input() (((yytchar=yysptr>yysbuf?U(*--yysptr):getc(yyin))==10?(yylineno++,yytchar):yytchar)==EOF?0:isupper(yytchar)?tolower(yytchar):yytchar)
-*/
 
 /*---------------------------------------------------------------------------*/
 
