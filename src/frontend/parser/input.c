@@ -31,26 +31,29 @@ Author: 1988 Jeffrey M. Hsu
 int
 inchar(FILE *fp)
 {
-#ifndef HAS_WINGUI
-    char c;
-    ssize_t i;
 
+#ifndef HAS_WINGUI
     if (cp_interactive && !cp_nocc) {
+        char c;
+        ssize_t i;
+
         do
             i = read(fileno(fp), &c, 1);
         while (i == -1 && errno == EINTR);
 
-        if (i == 0 || c == '\004') {
-            return (EOF);
-        } else if (i == -1) {
+        if (i == 0 || c == '\004')
+            return EOF;
+
+        if (i == -1) {
             perror("read");
-            return (EOF);
-        } else {
-            return ((int) c);
+            return EOF;
         }
-    } else
+
+        return (int) c;
+    }
 #endif
-        return (getc(fp));
+
+    return getc(fp);
 }
 
 
