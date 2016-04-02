@@ -34,6 +34,9 @@ bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
  * plot and circuit environment variables.
  */
 
+/* this is broken, returns sometimes "new" struct variable
+ * and sometimes already/still "used" struct variable (owned by someone else)
+ */
 struct variable *
 cp_enqvar(char *word)
 {
@@ -73,8 +76,9 @@ cp_enqvar(char *word)
     if (plot_cur) {
         for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
-                return (vv);
+                return (vv);    /* <= return an already used struct variable */
         if (eq(word, "curplotname"))
+            /* return a new allocaed struct variable */
             return var_alloc_string(copy(word), copy(plot_cur->pl_name), NULL);
         if (eq(word, "curplottitle"))
             return var_alloc_string(copy(word), copy(plot_cur->pl_title), NULL);
