@@ -758,7 +758,7 @@ vareval(char *string)
             vfree = v = cp_enqvar(string);
         wl = wl_cons(copy(v ? "1" : "0"), NULL);
         tfree(oldstring);
-        free_struct_variable(vfree);
+        free_struct_variable(vfree); /* bug: free still used struct variable */
         return (wl);
 
     case '#':
@@ -780,7 +780,7 @@ vareval(char *string)
             i = (v->va_type != CP_BOOL);
         wl = wl_cons(tprintf("%d", i), NULL);
         tfree(oldstring);
-        free_struct_variable(vfree);
+        free_struct_variable(vfree); /* bug: free still used struct variable */
         return (wl);
 
     case '\0':
@@ -818,7 +818,7 @@ vareval(char *string)
         return (NULL);
     }
     wl = cp_varwl(v);
-    free_struct_variable(vfree);
+    free_struct_variable(vfree); /* bug: free still used struct variable */
 
     /* Now parse and deal with 'range' ... */
     if (range) {
