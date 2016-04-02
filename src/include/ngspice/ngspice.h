@@ -206,8 +206,8 @@ extern double x_atanh(double);
 #endif
 
 #if !defined(NAN)
-#if defined(_MSC_VER) && (_MSC_VER < 1800)
-    /* VS 2012 or less cannot evaluate 0.0/0.0 */
+#if defined(_MSC_VER)
+    /* NAN is not defined in VS 2012 or older */
     static const __int64 global_nan = 0x7ff8000000000000i64;
     #define NAN (*(const double *) &global_nan)
 #else
