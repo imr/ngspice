@@ -29,7 +29,6 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
     int error;			/* used by the macros defined above */
     char *line;			/* the part of the current line left
                                    to parse */
-    char *name;			/* the node's name */
     char *token=NULL;		/* a token from the line */
     IFparm *prm;		/* pointer to parameter to search
                                    through array */
@@ -66,6 +65,8 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
             }
 
             for(;;) {
+                char *name;     /* the node's name */
+
                 /* loop until we run out of data */
                 INPgetTok(&line,&name,1);
                 if( *name == '\0') break; /* end of line */
@@ -110,6 +111,8 @@ INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
             }
 
             for(;;) {
+                char *name;     /* the node's name */
+
                 /* loop until we run out of data */
                 INPgetTok(&line,&name,1);
                 /* check to see if in the form V(xxx) and grab the xxx */
