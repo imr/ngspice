@@ -307,7 +307,7 @@ if_errstring(int code)
 {
     NG_IGNORE(code);
 
-    return "spice error";
+    return copy("spice error");
 }
 
 /* -------------------------------------------------------------------------- */
