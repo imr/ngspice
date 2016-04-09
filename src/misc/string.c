@@ -40,6 +40,10 @@ copy(const char *str)
     return(p);
 }
 
+
+/* copy a substring, from 'str' to 'end'
+ *   including *str, excluding *end
+ */
 char *
 copy_substring(const char *str, const char *end)
 {

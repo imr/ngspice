@@ -242,9 +242,9 @@ inp_subcktexpand(struct line *deck) {
             if (ciprefix(".model", c->li_line))
                 nupa_scan(c->li_line, c->li_linenum, FALSE);
         }
+        /* now copy instances */
         for (c = deck; c; c = c->li_next)  /* first Numparam pass */
             c->li_line = nupa_copy(c->li_line, c->li_linenum);
-        /* now copy instances */
 
 #ifdef TRACE
         fprintf(stderr, "Numparams transformed deck:\n");

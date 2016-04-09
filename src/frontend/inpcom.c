@@ -548,7 +548,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         /* get max. line length and number of lines in input deck,
            and renumber the lines,
            count the number of '{' per line as an upper estimate of the number
-           of parameter substitutions in a line*/
+           of parameter substitutions in a line */
         dynmaxline = 0;
         max_line_length = 0;
         no_braces = 0;
@@ -1320,6 +1320,15 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 }
 
 
+/* If ngspice is started with option -a, then variable 'autorun'
+ *   will be set and the following function scans the deck.
+ * If 'run' is not found, a .control section will be added:
+ *   .control
+ *   run
+ *   op              ; if .op is found
+ *   write rawfile   ; if rawfile given
+ *   .endc
+ */
 static void
 inp_add_control_section(struct line *deck, int *line_number)
 {
@@ -1386,8 +1395,8 @@ inp_add_control_section(struct line *deck, int *line_number)
 }
 
 
-// look for shell-style end-of-line continuation '\\'
-
+/* overwrite shell-style end-of-line continuation '\\' with spaces,
+ *   and return TRUE when found */
 static bool
 chk_for_line_continuation(char *line)
 {
@@ -5760,6 +5769,10 @@ inp_poly_err(struct line *card)
 #endif
 
 
+/* Used for debugging. You may add
+ *   tprint(working);
+ * somewhere in function inp_readall() of this file to have
+ *   a printout of the actual deck written to file "tprint-out.txt" */
 void
 tprint(struct line *t)
 {
@@ -6021,6 +6034,8 @@ inp_fix_temper_in_param(struct line *deck)
 }
 
 
+/* append "()" to each 'identifier' in 'curr_line',
+ *   unless already there */
 static char *
 inp_functionalise_identifier(char *curr_line, char *identifier)
 {
