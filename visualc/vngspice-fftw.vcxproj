@@ -948,7 +948,9 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     <ClInclude Include="..\src\include\ngspice\dvec.h" />
     <ClInclude Include="..\src\include\ngspice\elctdefs.h" />
     <ClInclude Include="..\src\include\ngspice\enh.h" />
+    <ClInclude Include="..\src\include\ngspice\enhtypes.h" />
     <ClInclude Include="..\src\include\ngspice\evt.h" />
+    <ClInclude Include="..\src\include\ngspice\evttypes.h" />
     <ClInclude Include="..\src\include\ngspice\evtproto.h" />
     <ClInclude Include="..\src\include\ngspice\evtudn.h" />
     <ClInclude Include="..\src\include\ngspice\FastNorm3.h" />

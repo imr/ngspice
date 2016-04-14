@@ -42,6 +42,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/cktdefs.h"
 #include "ngspice/cpstd.h"
+#include "ngspice/evt.h"
 #include "ngspice/mifdefs.h"
 #include "ngspice/ipc.h"
 

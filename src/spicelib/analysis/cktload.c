@@ -19,6 +19,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/sperror.h"
 
 #ifdef XSPICE
+#include "ngspice/enh.h"
 /* gtri - add - wbk - 11/26/90 - add include for MIF global data */
 #include "ngspice/mif.h"
 /* gtri - end - wbk - 11/26/90 */

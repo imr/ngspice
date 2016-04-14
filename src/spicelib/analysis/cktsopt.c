@@ -21,6 +21,8 @@ Modified: 2000 AlansFixes
 #include "analysis.h"
 
 #ifdef XSPICE
+#include "ngspice/evt.h"
+#include "ngspice/enh.h"
 /* gtri - begin - wbk - add includes */
 #include "ngspice/mif.h"
 /* gtri - end - wbk - add includes */

@@ -16,6 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 
 #ifdef XSPICE
+#include "ngspice/evt.h"
 static int evt_dest(Evt_Ckt_Data_t *evt);
 #endif
 

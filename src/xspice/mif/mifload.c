@@ -52,6 +52,8 @@ NON-STANDARD FEATURES
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
+#include "ngspice/evt.h"
+
 #include "ngspice/mifproto.h"
 #include "ngspice/mifparse.h"
 #include "ngspice/mifdefs.h"

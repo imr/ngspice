@@ -10,6 +10,10 @@ Modified: 2005 Paolo Nenzi - Restructured
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
+#ifdef XSPICE
+#include "ngspice/enh.h"
+#endif
+
 
 static int dynamic_gmin (CKTcircuit *, long int, long int, int);
 static int spice3_gmin (CKTcircuit *, long int, long int, int);

@@ -61,6 +61,8 @@ CDHW*/
 
 
 #ifdef XSPICE
+#include "ngspice/evt.h"
+#include "ngspice/enh.h"
 /* gtri - add - wbk - 11/9/90 - include MIF function prototypes */
 #include "ngspice/mifproto.h"
 /* gtri - end - wbk - 11/9/90 */

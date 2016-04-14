@@ -46,6 +46,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/mif.h"
 #include "ngspice/evt.h"
+#include "ngspice/enh.h"
 #include "ngspice/evtudn.h"
 
 #include "ngspice/evtproto.h"

@@ -11,6 +11,8 @@ Modified 2001: AlansFixes
 #include "ngspice/sperror.h"
 
 #ifdef XSPICE
+#include "ngspice/evt.h"
+#include "ngspice/enh.h"
 /* gtri - add - wbk - 12/19/90 - Add headers */ 
 #include "ngspice/mif.h"
 #include "ngspice/evtproto.h"

@@ -15,6 +15,10 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
+#ifdef XSPICE
+#include "ngspice/enh.h"
+#endif
+
 #ifdef USE_OMP
 #include <omp.h>
 #include "ngspice/cpextern.h"

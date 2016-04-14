@@ -15,6 +15,7 @@ Modified: 1999 Paolo Nenzi
 #include "ngspice/sperror.h"
 
 #ifdef XSPICE
+#include "ngspice/evt.h"
 /* gtri - add - wbk - 12/19/90 - Add headers */
 #include "ngspice/mif.h"
 #include "ngspice/evtproto.h"

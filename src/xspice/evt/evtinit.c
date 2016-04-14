@@ -45,6 +45,7 @@ NON-STANDARD FEATURES
 //#include  "util.h"
 #include  "ngspice/sperror.h"
 
+#include  "ngspice/evt.h"
 #include  "ngspice/evtproto.h"
 
 

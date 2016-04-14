@@ -50,6 +50,8 @@ NON-STANDARD FEATURES
 #include "ngspice/trandefs.h"
 #include <math.h>
 
+#include "ngspice/enh.h"
+
 #include "ngspice/mifproto.h"
 #include "ngspice/mifparse.h"
 #include "ngspice/mifdefs.h"

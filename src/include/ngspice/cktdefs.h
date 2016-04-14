@@ -11,8 +11,8 @@
 
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 #ifdef XSPICE
-#include "ngspice/evt.h"
-#include "ngspice/enh.h"
+#include "ngspice/evttypes.h"
+#include "ngspice/enhtypes.h"
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 

@@ -17,6 +17,7 @@
 #include "ngspice/miftypes.h"
 
 #include "ngspice/evt.h"
+#include "ngspice/enh.h"
 #include "ngspice/mif.h"
 #include "ngspice/evtproto.h"
 #include "ngspice/ipctiein.h"
