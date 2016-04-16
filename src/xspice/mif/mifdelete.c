@@ -45,6 +45,10 @@ NON-STANDARD FEATURES
 #include "ngspice/mifproto.h"
 #include "ngspice/mifdefs.h"
 
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#include "ngspice/mifparse.h"
+#endif
+
 #include "ngspice/suffix.h"
 
 #include "ngspice/devdefs.h"

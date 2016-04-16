@@ -11,8 +11,7 @@ Author: 1986 Thomas L. Quarles
 
 /* gtri - add - wbk - 10/11/90 - for structs referenced in IFdevice */
 #ifdef XSPICE
-#include "ngspice/mifparse.h"
-#include "ngspice/mifcmdat.h"
+#include  "ngspice/miftypes.h"
 #endif
 /* gtri - end - wbk - 10/11/90 */
 

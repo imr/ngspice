@@ -357,7 +357,7 @@ typedef struct Mif_Inst_Var_Data_s {
  * The top level data structure passed to code models.
  */
 
-typedef struct Mif_Private_s {
+struct Mif_Private {
 
     Mif_Circ_Data_t        circuit;       /* Information about the circuit        */
     int                    num_conn;      /* Number of connections on this model  */
@@ -367,7 +367,7 @@ typedef struct Mif_Private_s {
     int                    num_inst_var;  /* Number of instance variables         */
     Mif_Inst_Var_Data_t    **inst_var;    /* Information about each inst variable */
 
-} Mif_Private_t;
+};
 
 
 

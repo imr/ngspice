@@ -48,11 +48,29 @@ NON-STANDARD FEATURES
 
 
 /*
+ * Values of different types used by the parser.  Note that this is a structure
+ * instead of a union because we need to do initializations in the ifspec.c files for
+ * the models and unions cannot be initialized in any useful way in C
+ *
+ */
+
+struct Mif_Parse_Value {
+
+    Mif_Boolean_t     bvalue;         /* For boolean values */
+    int               ivalue;         /* For integer values */
+    double            rvalue;         /* For real values */
+    Mif_Complex_t     cvalue;         /* For complex values */
+    char              *svalue;        /* For string values  */
+
+};
+
+
+/*
  * Information about a connection used by the parser to error check input
  */
 
 
-typedef struct Mif_Conn_Info_s {
+struct Mif_Conn_Info {
 
     char            *name;             /* Name of this connection */
     char            *description;      /* Description of this connection */
@@ -69,7 +87,7 @@ typedef struct Mif_Conn_Info_s {
     int             upper_bound;       /* Array size upper bound */
     Mif_Boolean_t   null_allowed;      /* True if null is allowed for this connection */
 
-} Mif_Conn_Info_t;
+};
 
 
 
@@ -78,7 +96,7 @@ typedef struct Mif_Conn_Info_s {
  * Information about a parameter used by the parser to error check input
  */
 
-typedef struct Mif_Param_Info_s {
+struct Mif_Param_Info {
 
     char                *name;            /* Name of this parameter */
     char                *description;     /* Description of this parameter */
@@ -98,7 +116,7 @@ typedef struct Mif_Param_Info_s {
     int                 upper_bound;      /* Array size upper bound */
     Mif_Boolean_t       null_allowed;     /* True if null is allowed for this parameter */
 
-} Mif_Param_Info_t;
+};
 
 
 
@@ -107,14 +125,14 @@ typedef struct Mif_Param_Info_s {
  * Information about an instance parameter used by the parser to error check input
  */
 
-typedef struct Mif_Inst_Var_Info_s {
+struct Mif_Inst_Var_Info {
 
     char                *name;            /* Name of this instance var */
     char                *description;     /* Description of this instance var */
     Mif_Data_Type_t     type;             /* Is this a real, boolean, string, ... */
     Mif_Boolean_t       is_array;         /* True if instance var is an array       */
 
-} Mif_Inst_Var_Info_t;
+};
 
 
 #endif
