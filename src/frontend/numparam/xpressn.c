@@ -528,8 +528,17 @@ nupa_define(dico_t *dico,
                Subcircuit expansion is o.k., we have to deal with this numparam
                behaviour later. (H. Vogt 090426)
             */
-            if (0)
-                message(dico, "%s: cannot redefine\n", t);
+            message(dico, "%s is already used,\n cannot be redefined\n", t);
+#if 0
+            if ((c == 'U') && (tpe == 'U'))
+                message(dico, "%s is already used as subcircuit name,\n cannot be used for another subcircuit\n", t);
+            else if ((c == 'U') && (tpe == 'O'))
+                message(dico, "%s is already used as subcircuit name,\n cannot be used for model\n", t);
+            else if ((c == 'O') && (tpe == 'U'))
+                message(dico, "%s is already used as model name,\n cannot be used for subcircuit\n", t);
+            else if ((c == 'O') && (tpe == 'O'))
+                message(dico, "%s is already used as model name,\n cannot be reused for another model\n", t);
+#endif
         }
     }
 
