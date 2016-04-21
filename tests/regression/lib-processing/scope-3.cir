@@ -1,0 +1,84 @@
+scope-3, subckt scopes
+* (exec-spice "ngspice -b %s" t)
+
+* ----
+* (/ 1 (+ (/ 1.0 2 3 3) (/ 1.0 2 3 5)))
+
+.param foo = 2k
+
+i1001_t  n1001_t 0  -1mA
+x1001_t  n1001_t 0  sub1 foo='foo*3'
+
+v1001_g  n1001_g 0  11.25v
+
+* ----
+* (/ 1 (+ (/ 1.0 2 4 11) (/ 1.0 2 4 13)))
+i1002_t  n1002_t 0  -1mA
+x1002_t  n1002_t 0  sub2 foo='foo*4'
+
+v1002_g  n1002_g 0  47.666666666666666
+
+* ----
+
+i1003_t  n1003_t 0  -1mA
+x1003_t  n1003_t 0  sub foo=3k
+
+v1003_g  n1003_g 0  33.0v
+
+* ----
+
+.subckt  sub1  n1 n2 foo=5k
+.subckt  sub   n1 n2 foo=10k
+R1   n1 n2   'foo'
+.ends
+X1   n1 n2  sub foo='3*foo'
+R1   n1 n2  '5*foo'
+.ends
+
+.subckt  sub   n1 n2 foo=17k
+R1   n1 n2  'foo*11'
+.ends
+
+.subckt  sub2  n1 n2 foo=121k
+.subckt  sub   n1 n2 foo=117k
+R1   n1 n2   'foo'
+.ends
+X1   n1 n2  sub foo='11*foo'
+R1   n1 n2  'foo*13'
+.ends
+
+
+.control
+
+define mismatch(a,b,err) abs(a-b)>err
+
+op
+
+let total_count = 0
+let fail_count = 0
+
+let tests = 1001 + vector(3)
+
+foreach n $&tests
+  set n_test = "n{$n}_t"
+  set n_gold = "n{$n}_g"
+  if mismatch(v($n_test), v($n_gold), 1e-9)
+    let v_test = v($n_test)
+    let v_gold = v($n_gold)
+    echo "ERROR, test failure, v($n_test) = $&v_test but should be $&v_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
