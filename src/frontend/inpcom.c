@@ -5692,8 +5692,14 @@ tprint(struct line *t, int numb)
     /*debug: print into file*/
     FILE *fd = fopen(filename, "w");
     for (tmp = t; tmp; tmp = tmp->li_next)
-        if (*(tmp->li_line) != '*')
-            fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+        if (*(tmp->li_line) != '*') {
+            fprintf(fd, "%6d  %6d  %s", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+            fprintf(fd, "  level: ");
+            struct nscope *x = tmp->level;
+            for (; x; x = x->next)
+                fprintf(fd, "/%p", tmp->level); /* fixme */
+            fprintf(fd, "\n");
+        }
     fprintf(fd, "\n*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n\n");
