@@ -172,6 +172,7 @@ insert_new_line(struct card *card, char *line, int linenum, int linenum_orig)
     x->line = line;
     x->linenum = linenum;
     x->linenum_orig = linenum_orig;
+    x->level = card ? card->level : NULL;
 
     if (card)
         card->nextcard = x;
@@ -411,6 +412,7 @@ inp_stitch_continuation_lines(struct card *working)
                 tfree(s);
             } else {
                 prev->actualLine = insert_new_line(NULL, s, prev->linenum, 0);
+                prev->actualLine->level = prev->level;
                 prev->actualLine->nextcard = working;
             }
             working = prev->nextcard;
