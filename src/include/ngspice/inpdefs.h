@@ -17,6 +17,7 @@ typedef struct INPtables INPtables;
 typedef struct card card;
 typedef struct INPmodel INPmodel;
 
+#define NESTINGDEPTH 10
 
 struct INPtab {
     char *t_ent;
@@ -68,6 +69,7 @@ struct card{
     char *error;
     card *nextcard;
     card *actualLine;
+    unsigned short level[NESTINGDEPTH];
 };
 
 /* structure used to save models in after they are read during pass 1 */
