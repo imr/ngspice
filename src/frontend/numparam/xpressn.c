@@ -490,7 +490,7 @@ nupa_define(dico_t *dico,
 
     } else {
         /* error message for redefinition of symbols */
-        message(dico, "%s is already used,\n cannot be redefined\n", t);
+        fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
     }
 
     return 0;
