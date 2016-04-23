@@ -5896,8 +5896,15 @@ tprint(struct line *t, int numb)
     /*debug: print into file*/
     FILE *fd = fopen(filename, "w");
     for (tmp = t; tmp; tmp = tmp->li_next)
-        if (*(tmp->li_line) != '*')
-            fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+        if (*(tmp->li_line) != '*') {
+            fprintf(fd, "%6d  %6d  %s", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+            fprintf(fd, "  level: ");
+            int i;
+            for (i = 0; i < NESTINGDEPTH; i++) {
+                fprintf(fd, "%3d", tmp->level[i]);
+            }
+            fprintf(fd, "\n");
+        }
     fprintf(fd, "\n*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n\n");
@@ -6748,7 +6755,10 @@ inp_add_levels(struct line *deck)
             else if (ciprefix(".ends", curr_line)) {
                 subs--;
                 for (i = 0; i < NESTINGDEPTH; i++)
-                    card->level[i] = card_prev->level[i];
+                    if (i < subs)
+                       card->level[i] = card_prev->level[i];
+                    else
+                       card->level[i] = 0;
                 card_prev = card;
             }
             else {
