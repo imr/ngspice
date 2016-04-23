@@ -149,6 +149,7 @@ static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct line *deck, int numb);
+static void inp_add_levels(struct line *deck);
 
 struct inp_read_t
 { struct line *cc;
@@ -514,6 +515,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         struct line *working = cc->li_next;
 
         delete_libs();
+
+        inp_add_levels(working);
         inp_fix_for_numparam(subckt_w_params, working);
 
 
@@ -6687,5 +6690,50 @@ inp_meas_current(struct line *deck)
         tfree(new_rep->rtoken);
         tfree(new_rep);
         new_rep = repn;
+    }
+}
+
+
+/* scan through deck and add level information to all struct line
+ * depending on nested subcircuits */
+static void
+inp_add_levels(struct line *deck)
+{
+    struct line *card, *subc_start = NULL, *subc_prev = NULL;
+    int skip_control = 0, subs = 0;
+
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*curr_line == '*')
+            continue;
+
+        if (*curr_line == '.') {
+            if (ciprefix(".subckt", curr_line)) {
+                subs++;
+                subc_prev = subc_start;
+                subc_start = card;
+            }
+            else if (ciprefix(".ends", curr_line)) {
+                subs--;
+                subc_start = subc_prev;
+            }
+            else
+                continue;
+        }
     }
 }
