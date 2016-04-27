@@ -37,8 +37,6 @@ extern bool ft_batchmode;
 
 void dump_symbols(dico_t *);
 
-char *nupa_inst_name;
-
 /* number of parameter substitutions, available only after the substitution */
 extern long dynsubst; /* spicenum.c:144 */
 
@@ -834,14 +832,14 @@ nupa_eval(struct card *card)
         err = nupa_substitute(dicoS, dicoS->dynrefptr[linenum], s, 0);
     } else if (c == 'X') {
         /* compute args of subcircuit, if required */
-        nupa_inst_name = copy_substring(s, skip_non_ws(s));
-        *nupa_inst_name = 'x';
+        char *inst_name = copy_substring(s, skip_non_ws(s));
+        *inst_name = 'x';
 
-        strtoupper(nupa_inst_name);
+        strtoupper(inst_name);
 
         idef = findsubckt(dicoS, s);
         if (idef > 0)
-            nupa_subcktcall(dicoS, dicoS->dynrefptr[idef], dicoS->dynrefptr[linenum], nupa_inst_name);
+            nupa_subcktcall(dicoS, dicoS->dynrefptr[idef], dicoS->dynrefptr[linenum], inst_name);
         else
             putlogfile('?', linenum, "  illegal subckt call.");
     } else if (c == 'U') {              /*  release local symbols = parameters */
@@ -880,7 +878,6 @@ nupa_signal(int sig, char *info)
         inexpansionS = 1;
     } else if (sig == NUPASUBDONE) {
         inexpansionS = 0;
-        nupa_inst_name = NULL;
     } else if (sig == NUPAEVALDONE) {
         nupa_done();
         firstsignalS = 1;
