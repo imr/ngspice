@@ -291,7 +291,7 @@ dico_free_entry(entry_t *entry)
 */
 
 static void
-dicostack_push(dico_t *dico)
+dicostack_push(dico_t *dico, char *inst_name)
 /* push operation for nested subcircuit locals */
 {
     dico->stack_depth++;
@@ -304,7 +304,7 @@ dicostack_push(dico_t *dico)
 
     /* lazy allocation - don't allocate space if we can help it */
     dico->symbols[dico->stack_depth] = NULL;
-    dico->inst_name[dico->stack_depth] = nupa_inst_name;
+    dico->inst_name[dico->stack_depth] = inst_name;
 }
 
 
@@ -1736,7 +1736,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x)
     }
 
     /***** finally, execute the multi-assignment line */
-    dicostack_push(dico);      /* create local symbol scope */
+    dicostack_push(dico, nupa_inst_name);      /* create local symbol scope */
 
     if (narg != n) {
         err = message(dico,
