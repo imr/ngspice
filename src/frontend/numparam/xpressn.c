@@ -20,7 +20,6 @@
 
 /************ keywords ************/
 
-extern char *nupa_inst_name;    /* see spicenum.c */
 extern long dynsubst;           /* see inpcom.c */
 
 #define ACT_CHARACTS 25      /* actual string length to be inserted and replaced */
@@ -1534,7 +1533,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
 
 bool
-nupa_subcktcall(dico_t *dico, char *s, char *x)
+nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
 /* s= a subckt define line, with formal params.
    x= a matching subckt call line, with actual params
 */
@@ -1736,7 +1735,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x)
     }
 
     /***** finally, execute the multi-assignment line */
-    dicostack_push(dico, nupa_inst_name);      /* create local symbol scope */
+    dicostack_push(dico, inst_name);      /* create local symbol scope */
 
     if (narg != n) {
         err = message(dico,
