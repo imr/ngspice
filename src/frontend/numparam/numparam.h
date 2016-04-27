@@ -73,7 +73,7 @@ bool defsubckt(dico_t *, struct card *);
 int findsubckt(dico_t *, char *s);
 bool nupa_substitute(dico_t *, char *s, char *r, bool err);
 bool nupa_assignment(dico_t *, char *s, char mode);
-bool nupa_subcktcall(dico_t *, char *s, char *x, bool err);
+bool nupa_subcktcall(dico_t *, char *s, char *x);
 void nupa_subcktexit(dico_t *);
 dico_t *nupa_fetchinstance(void);
 nupa_type getidtype(dico_t *, char *s);

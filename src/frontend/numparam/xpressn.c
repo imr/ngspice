@@ -1557,7 +1557,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
 
 bool
-nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
+nupa_subcktcall(dico_t *dico, char *s, char *x)
 /* s= a subckt define line, with formal params.
    x= a matching subckt call line, with actual params
 */
@@ -1573,6 +1573,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
     char *t_p;
     char *u_p;
     bool found;
+    bool err = 0;
 
     spice_dstring_init(&subname);
     spice_dstring_init(&tstr);
