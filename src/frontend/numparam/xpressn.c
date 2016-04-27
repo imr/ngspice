@@ -567,10 +567,9 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
 
 
 int
-findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
+findsubckt(dico_t *dico, char *s)
 /* input: s is a subcircuit invocation line.
-   returns 0 if not found, else the stored definition line number value
-   and the name in string subname  */
+   returns 0 if not found, else the stored definition line number value */
 {
     entry_t *entry;             /* symbol table entry */
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
@@ -594,10 +593,8 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
         line = entry->ivl;
-        scopyd(subname, &ustr);
     } else {
         line = 0;
-        spice_dstring_reinit(subname);
         message(dico, "Cannot find subcircuit.\n");
     }
 
