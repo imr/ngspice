@@ -69,7 +69,7 @@ void initdico(dico_t *);
 int donedico(dico_t *);
 void dico_free_entry(entry_t *);
 bool defsubckt(dico_t *, struct card *, nupa_type categ);
-int findsubckt(dico_t *, char *s, SPICE_DSTRINGPTR subname);
+int findsubckt(dico_t *, char *s);
 bool nupa_substitute(dico_t *, char *s, char *r, bool err);
 bool nupa_assignment(dico_t *, char *s, char mode);
 bool nupa_subcktcall(dico_t *, char *s, char *x, bool err);
