@@ -151,6 +151,7 @@ static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct line *deck, int numb);
 static void inp_add_levels(struct line *deck);
 bool inp_check_scope_mod(unsigned short elem_level[], unsigned short mod_level[]);
+bool inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[]);
 
 struct inp_read_t
 { struct line *cc;
@@ -2839,7 +2840,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                                 break;
                         }
 
-                        if (!found_param_match) {
+                        if (!found_param_match && inp_check_scope_sub(c->level, d->level)) {
                             // comment out .subckt and continue
                             while (d != NULL && !ciprefix(".ends", d->li_line)) {
                                 *(d->li_line) = '*';
@@ -6792,5 +6793,21 @@ inp_check_scope_mod(unsigned short elem_level[], unsigned short mod_level[])
             return TRUE;
     if ((elem_level[NESTINGDEPTH - 1] > 0) && (elem_level[NESTINGDEPTH - 1] == mod_level[NESTINGDEPTH - 1]))
         return TRUE;
+    return FALSE;
+}
+
+
+/* not yet checked.
+ * Question: how to express overloading a sub at a lower level ? */
+bool
+inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[])
+{
+    int i;
+    /* subcircuit at top level, accessible from all x lines */
+    if ((subckt_level[0] > 0) && (subckt_level[1] == 0))
+        return TRUE;
+    for (i = 1; i < NESTINGDEPTH - 1; i++)
+        if ((x_level[i] == subckt_level[i]) && (x_level[i + 1] == 0))
+            return TRUE;
     return FALSE;
 }
