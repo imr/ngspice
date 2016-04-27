@@ -841,7 +841,7 @@ nupa_eval(struct card *card)
 
         idef = findsubckt(dicoS, s);
         if (idef > 0)
-            nupa_subcktcall(dicoS, dicoS->dynrefptr[idef], dicoS->dynrefptr[linenum], 0);
+            nupa_subcktcall(dicoS, dicoS->dynrefptr[idef], dicoS->dynrefptr[linenum]);
         else
             putlogfile('?', linenum, "  illegal subckt call.");
     } else if (c == 'U') {              /*  release local symbols = parameters */
