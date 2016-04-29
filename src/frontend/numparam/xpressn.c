@@ -1081,6 +1081,26 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 }
 
 
+/* stupid, produce a string representation of a given double
+ *   to be spliced back into the circuit deck
+ * we want *exactly* 25 chars, we have
+ *   sign, leading digit, '.', 'e', sign, upto 3 digits exponent
+ * ==> 8 chars, thus we have 17 left for precision
+ * don't print a leading '+', something choked
+ */
+
+static void
+double_to_string(SPICE_DSTRINGPTR qstr_p, double value)
+{
+    char buf[ACT_CHARACTS + 1];
+    if (snprintf(buf, sizeof(buf), "% 25.17e", value) != ACT_CHARACTS) {
+        fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
+        controlled_exit(1);
+    }
+    scopys(qstr_p, buf);
+}
+
+
 static bool
 evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
@@ -1125,20 +1145,8 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         numeric = 1;
     }
 
-    if (numeric) {
-        /* we want *exactly* 25 chars, we have
-         *   sign, leading digit, '.', 'e', sign, upto 3 digits exponent
-         * ==> 8 chars, thus we have 17 left for precision
-         * don't print a leading '+', something choked
-         */
-
-        char buf[ACT_CHARACTS + 1];
-        if (snprintf(buf, sizeof(buf), "% 25.17e", u) != ACT_CHARACTS) {
-            fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
-            controlled_exit(1);
-        }
-        scopys(qstr_p, buf);
-    }
+    if (numeric)
+        double_to_string(qstr_p, u);
 
     return err;
 }
