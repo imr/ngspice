@@ -1132,11 +1132,10 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
             numeric = 1;
         } else if (entry->tp == NUPA_STRING) {
             /* suppose source text "..." at */
-            int j = entry->ivl;
+            int j = entry->ivl + 1;
 
             for (;;) {
-                j++;
-                char c = /* ibf->bf[j]; */ entry->sbbase[j];
+                char c = entry->sbbase[j++];
 
                 if ((c == '\"') || (c < ' '))
                     break;
