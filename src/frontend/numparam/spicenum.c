@@ -215,6 +215,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 
         found = (k >= 0) && alfanum(s[k + 1]); /* suppose an identifier */
         if (found) {
+            entry_t *entry;
             /* check for known subckt name */
             spice_dstring_reinit(&name);
             j = k + 1;
@@ -222,7 +223,8 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 cadd(&name, upcase(s[j]));
                 j++;
             }
-            found = (getidtype(dico, spice_dstring_value(&name)) == NUPA_SUBCKT);
+            entry = entrynb(dico, spice_dstring_value(&name));
+            found = entry && (entry->tp == NUPA_SUBCKT);
         }
     }
 
