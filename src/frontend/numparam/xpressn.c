@@ -367,7 +367,7 @@ donedico(dico_t *dico)
  * look thru the stack of local symbols and then look at the global
  * symbols in that order.
  * ----------------------------------------------------------------- */
-static entry_t *
+entry_t *
 entrynb(dico_t *dico, char *s)
 {
     int depth;                  /* stack depth */
@@ -385,19 +385,6 @@ entrynb(dico_t *dico, char *s)
     }
 
     return NULL;
-}
-
-
-nupa_type
-getidtype(dico_t *dico, char *s)
-/* test if identifier s is known. Answer its type, or '?' if not in table */
-{
-    entry_t *entry = entrynb(dico, s);
-
-    if (entry)
-        return entry->tp;
-
-    return NUPA_UNKNOWN;
 }
 
 

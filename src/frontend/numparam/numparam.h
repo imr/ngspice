@@ -76,6 +76,6 @@ bool nupa_assignment(dico_t *, char *s, char mode);
 bool nupa_subcktcall(dico_t *, char *s, char *x, char *inst_name);
 void nupa_subcktexit(dico_t *);
 dico_t *nupa_fetchinstance(void);
-nupa_type getidtype(dico_t *, char *s);
+entry_t *entrynb(dico_t *dico, char *s);
 entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op, struct nscope *level);
 void del_attrib(void *);
