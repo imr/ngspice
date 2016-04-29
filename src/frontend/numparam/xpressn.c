@@ -1128,14 +1128,9 @@ static bool
 evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
     /* transform t to result q. mode 0: expression, mode 1: simple variable */
-    double u = 0.0;
     entry_t *entry;
-    bool numeric;
-    bool err;
 
     spice_dstring_reinit(qstr_p);
-    numeric = 0;
-    err = 0;
 
     if (mode == 1) {
         /* string? */
@@ -1148,8 +1143,8 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 
         /* data type: Real or String */
         if (entry->tp == NUPA_REAL) {
-            u = entry->vl;
-            numeric = 1;
+            double_to_string(qstr_p, entry->vl);
+            return 0;
         } else if (entry->tp == NUPA_STRING) {
             /* suppose source text "..." at */
             int j = entry->ivl + 1;
@@ -1158,20 +1153,19 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
                 char c = entry->sbbase[j++];
 
                 if ((c == '\"') || (c < ' '))
-                    break;
+                    return 0;
 
                 cadd(qstr_p, c);
             }
         }
     } else {
-        u = formula(dico, t, t + strlen(t), &err);
-        numeric = 1;
-    }
-
-    if (numeric)
+        bool err = 0;
+        double u = formula(dico, t, t + strlen(t), &err);
+        if (err)
+            return err;
         double_to_string(qstr_p, u);
-
-    return err;
+        return 0;
+    }
 }
 
 
