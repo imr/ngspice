@@ -245,7 +245,6 @@ initdico(dico_t *dico)
     int asize = NESTINGDEPTH; /* default allocation depth of the synbol stack */
     COMPATMODE_T compat_mode;
 
-    spice_dstring_init(&(dico->option));
     spice_dstring_init(&(dico->srcfile));
 
     dico->srcline = -1;
@@ -1138,9 +1137,6 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
             for (;;) {
                 j++;
                 char c = /* ibf->bf[j]; */ entry->sbbase[j];
-
-                if (cpos('3', spice_dstring_value(&dico->option)) <= 0)
-                    c = upcase(c); /* spice-2 */
 
                 if ((c == '\"') || (c < ' '))
                     break;
