@@ -216,11 +216,6 @@ message(dico_t *dico, const char *fmt, ...)
 {
     va_list ap;
 
-    char *srcfile = spice_dstring_value(&(dico->srcfile));
-
-    if (srcfile && *srcfile)
-        fprintf(stderr, "%s:", srcfile);
-
     if (dico->srcline >= 0)
         fprintf
             (stderr,
@@ -244,8 +239,6 @@ initdico(dico_t *dico)
 {
     int asize = 10;           /* default allocation depth of the synbol stack */
     COMPATMODE_T compat_mode;
-
-    spice_dstring_init(&(dico->srcfile));
 
     dico->srcline = -1;
     dico->errcount = 0;

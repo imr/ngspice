@@ -428,7 +428,7 @@ putlogfile(char c, int num, char *t)
 
 
 static void
-nupa_init(char *srcfile)
+nupa_init(void)
 {
     int i;
 
@@ -447,9 +447,6 @@ nupa_init(char *srcfile)
         dicoS->dynrefptr[i] = NULL;
         dicoS->dyncategory[i] = '?';
     }
-
-    if (srcfile != NULL)
-        scopys(&dicoS->srcfile, srcfile);
 }
 
 
@@ -859,7 +856,7 @@ nupa_eval(struct card *card)
 
 
 void
-nupa_signal(int sig, char *info)
+nupa_signal(int sig)
 /* warning: deckcopy may come inside a recursion ! substart no! */
 /* info is context-dependent string data */
 {
@@ -867,7 +864,7 @@ nupa_signal(int sig, char *info)
 
     if (sig == NUPADECKCOPY) {
         if (firstsignalS) {
-            nupa_init(info);
+            nupa_init();
             firstsignalS = 0;
         }
     } else if (sig == NUPASUBSTART) {
