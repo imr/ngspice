@@ -18,7 +18,6 @@ bool scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
 void scopys(SPICE_DSTRINGPTR a, const char *b);
 void scopy_up(SPICE_DSTRINGPTR a, const char *str);
 void scopy_lower(SPICE_DSTRINGPTR a, const char *str);
-void ccopy(SPICE_DSTRINGPTR a, char c);
 void sadd(SPICE_DSTRINGPTR s, const char *t);
 void nadd(SPICE_DSTRINGPTR s, long n);
 void cadd(SPICE_DSTRINGPTR s, char c);
