@@ -35,8 +35,6 @@ extern ATTRIBUTE_NORETURN void shared_exit(int status);
 
 extern bool ft_batchmode;
 
-void dump_symbols(dico_t *);
-
 /* number of parameter substitutions, available only after the substitution */
 extern long dynsubst; /* spicenum.c:144 */
 
@@ -882,24 +880,4 @@ nupa_signal(int sig, char *info)
     }
 
     return 1;
-}
-
-
-#ifdef USING_NUPATEST
-/* This is use only by the nupatest program */
-dico_t *
-nupa_fetchinstance(void)
-{
-    return dico;
-}
-#endif
-
-
-void
-dump_symbols(dico_t *dico)
-{
-    NG_IGNORE(dico);
-
-    fprintf(stderr, "Symbol table\n");
-    nupa_list_params(stderr);
 }
