@@ -216,7 +216,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             spice_dstring_reinit(&name);
             j = k + 1;
             while (alfanum(s[j])) {
-                cadd(&name, upcase(s[j]));
+                cadd(&name, toupper_c(s[j]));
                 j++;
             }
             entry = entrynb(dico, spice_dstring_value(&name));
@@ -365,7 +365,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol,
         /* private style preprocessor line */
         s[0] = '*';
         category = 'P';
-    } else if (upcase(s[0]) == 'X') {
+    } else if (toupper_c(s[0]) == 'X') {
         /* strip actual parameters */
         findsubname(dico, dstr_p); /* i= index following last identifier in s */
         category = 'X';

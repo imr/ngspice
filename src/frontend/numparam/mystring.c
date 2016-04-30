@@ -147,16 +147,6 @@ sins(SPICE_DSTRINGPTR dstr_p, const char *t)
 }
 
 
-char
-upcase(char c)
-{
-    if ((c >= 'a') && (c <= 'z'))
-        return (char) (c + 'A' - 'a');
-    else
-        return c;
-}
-
-
 /* -----------------------------------------------------------------
  * Create copy of the dynamic string.  Dynamic strings are always NULL
  * terminated.
@@ -195,7 +185,7 @@ scopy_up(SPICE_DSTRINGPTR dstr_p, const char *str)    /* returns success flag */
     spice_dstring_reinit(dstr_p);
     up[1] = '\0';
     for (ptr = str; ptr && *ptr; ptr++) {
-        up[0] = upcase(*ptr);
+        up[0] = toupper_c(*ptr);
         spice_dstring_append(dstr_p, up, 1);
     }
 }
@@ -275,7 +265,7 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
         s_p = spice_dstring_value(dstr_p);
 
         for (i = 0; i < leng; i++)
-            s_p[i] = upcase(t[start + i]);
+            s_p[i] = toupper_c(t[start + i]);
 
         s_p[leng] = '\0';
 
@@ -449,7 +439,7 @@ stupcase(char *s)
     int i = 0;
 
     while (s[i] != '\0') {
-        s[i] = upcase(s[i]);
+        s[i] = toupper_c(s[i]);
         i++;
     }
 
