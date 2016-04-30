@@ -479,13 +479,3 @@ np_round(double r)
 {
     return floor(r + 0.5);
 }
-
-
-double
-np_trunc(double r)
-{
-    if (r >= 0.0)
-        return floor(r);
-    else
-        return ceil(r);
-}
