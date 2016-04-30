@@ -73,25 +73,21 @@ static void
 stripsomespace(SPICE_DSTRINGPTR dstr_p, unsigned char incontrol)
 {
     /* if s starts with one of some markers, strip leading space */
-    int i, ls;
-    char *sstr;                 /* string contained in s */
-    SPICE_DSTRING markers;
 
-    spice_dstring_init(&markers);
-    scopys(&markers, "*.&+#$");
+    const char *markers =
+        incontrol
+        ? "*.&+#$"
+        : "*.&+#$" "xX";
 
-    if (!incontrol)
-        sadd(&markers, "xX");
+    char *s = spice_dstring_value(dstr_p);
+    int ls = spice_dstring_length(dstr_p);
 
-    sstr = spice_dstring_value(dstr_p);
-    ls = spice_dstring_length(dstr_p);
-
-    i = 0;
-    while ((i < ls) && (sstr[i] <= ' '))
+    int i = 0;
+    while ((i < ls) && (s[i] <= ' '))
         i++;
 
-    if ((i > 0) && (i < ls) && (cpos(sstr[i], spice_dstring_value(&markers)) >= 0))
-        pscopy(dstr_p, sstr, i, ls);
+    if ((i > 0) && (i < ls) && strchr(markers, s[i]))
+        pscopy(dstr_p, s, i, ls);
 }
 
 
@@ -293,7 +289,7 @@ modernizeex(SPICE_DSTRINGPTR dstr_p)
 
 
 static char
-transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
+transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char incontrol,
           SPICE_DSTRINGPTR u_p)
 /*         line s is categorized and crippled down to basic Spice
  *         returns in u control word following dot, if any
@@ -327,7 +323,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
 
     spice_dstring_init(&tstr);
     spice_dstring_reinit(u_p);
-    stripsomespace(dstr_p, nostripping);
+    stripsomespace(dstr_p, incontrol);
     modernizeex(dstr_p);        /* required for stripbraces count */
 
     s = spice_dstring_value(dstr_p);
