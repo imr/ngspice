@@ -41,6 +41,5 @@ int yes_or_no(void);
 int freadstr(FILE *f, SPICE_DSTRINGPTR dstr_p);
 
 double np_round(double d);        // sjb to avoid clash with round() in math.h
-double np_trunc(double x);        // sjb to avoid clash with trunc() in math.h
 double absf(double x); /* abs */
 long absi(long i);
