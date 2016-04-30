@@ -70,7 +70,7 @@ static long placeholder = 0;
 
 
 static void
-stripsomespace(SPICE_DSTRINGPTR dstr_p, unsigned char incontrol)
+stripsomespace(SPICE_DSTRINGPTR dstr_p, bool incontrol)
 {
     /* if s starts with one of some markers, strip leading space */
 
@@ -290,7 +290,7 @@ modernizeex(SPICE_DSTRINGPTR dstr_p)
 
 
 static char
-transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char incontrol,
+transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol,
           SPICE_DSTRINGPTR u_p)
 /*         line s is categorized and crippled down to basic Spice
  *         returns in u control word following dot, if any
@@ -399,10 +399,10 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char incontrol,
 static int linecountS = 0;      /* global: number of lines received via nupa_copy */
 static int evalcountS = 0;      /* number of lines through nupa_eval() */
 static int nblogS = 0;          /* serial number of (debug) logfile */
-static unsigned char inexpansionS = 0;  /* flag subckt expansion phase */
-static unsigned char incontrolS = 0;    /* flag control code sections */
-static unsigned char dologfileS = 0;    /* for debugging */
-static unsigned char firstsignalS = 1;
+static bool inexpansionS = 0;   /* flag subckt expansion phase */
+static bool incontrolS = 0;     /* flag control code sections */
+static bool dologfileS = 0;     /* for debugging */
+static bool firstsignalS = 1;
 static FILE *logfileS = NULL;
 static dico_t *dicoS = NULL;
 static dico_t *dicos_list[100];
