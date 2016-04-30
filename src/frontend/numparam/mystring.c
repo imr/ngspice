@@ -82,13 +82,6 @@ ci_prefix(const char *p, const char *s)
  *    string we cannot have a string overflow.
  */
 
-int
-length(const char *s)
-{
-    return (int) strlen(s);
-}
-
-
 /* -----------------------------------------------------------------
  * Function: add string t to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
@@ -143,7 +136,7 @@ sins(SPICE_DSTRINGPTR dstr_p, const char *t)
     char *s_p;
 
     ls = spice_dstring_length(dstr_p);
-    lt = length(t);
+    lt = (int) strlen(t);
     spice_dstring_setlength(dstr_p, ls+lt+1); /* make sure we have space for string + EOS */
     s_p = spice_dstring_value(dstr_p);
     for (i = ls + 1; i >= 0; i--)
@@ -249,7 +242,7 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
     int stop;                   /* stop value */
     char *s_p;                  /* value of dynamic string */
 
-    stop = length(t);
+    stop = (int) strlen(t);
 
     if (start < stop) {         /* nothing! */
 
@@ -284,7 +277,7 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
     int stop;                   /* stop value */
     char *s_p;                  /* value of dynamic string */
 
-    stop = length(t);
+    stop = (int) strlen(t);
 
     if (start < stop) {         /* nothing! */
 
