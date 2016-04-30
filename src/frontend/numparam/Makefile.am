@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = ngconfig.sh readme.txt nupatest.c
+EXTRA_DIST = ngconfig.sh readme.txt
 
 noinst_LTLIBRARIES = libnumparam.la
 

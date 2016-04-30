@@ -318,68 +318,6 @@ nadd(SPICE_DSTRINGPTR dstr_p, long n)
 }
 
 
-void
-naddll(SPICE_DSTRINGPTR dstr_p, long long n)
-/* append a decimal integer (but a long long) to a string */
-{
-    int d[25];
-    int j, k;
-    char sg;                    /* the sign */
-    char load_str[2];           /* used to load dstring */
-    k = 0;
-
-    if (n < 0) {
-        n = -n;
-        sg = '-';
-    } else {
-        sg = '+';
-    }
-
-    while (n > 0) {
-        d[k] = (int) (n % 10);
-        k++;
-        n = n / 10;
-    }
-
-    if (k == 0) {
-        cadd(dstr_p, '0');
-    } else {
-        load_str[1] = '\0';
-        if (sg == '-') {
-            load_str[0] = sg;
-            spice_dstring_append(dstr_p, load_str, 1);
-        }
-        for (j = k - 1; j >= 0; j--) {
-            load_str[0] = (char) ('0' + d[j]);
-            spice_dstring_append(dstr_p, load_str, 1);
-        }
-    }
-}
-
-
-void
-stri(long n, SPICE_DSTRINGPTR dstr_p)
-/* convert integer to string */
-{
-    spice_dstring_reinit(dstr_p);
-    nadd(dstr_p, n);
-}
-
-
-bool
-steq(const char *a, const char *b)  /* string a==b test */
-{
-    return strcmp(a, b) == 0;
-}
-
-
-bool
-stne(const char *s, const char *t)
-{
-    return strcmp(s, t) != 0;
-}
-
-
 bool
 alfa(char c)
 {
@@ -394,35 +332,6 @@ bool
 alfanum(char c)
 {
     return alfa(c) || ((c >= '0') && (c <= '9'));
-}
-
-
-int
-freadstr(FILE * f, SPICE_DSTRINGPTR dstr_p)
-/* read a line from a file.
-   was BUG: long lines truncated without warning, ctrl chars are dumped.
-   Bug no more as we can only run out of memory.  Removed max argument.
-*/
-{
-    char c;
-    char str_load[2];
-    int len = 0;
-
-    str_load[0] = '\0';
-    str_load[1] = '\0';
-    spice_dstring_reinit(dstr_p);
-
-    do
-    {
-        c = (char) fgetc(f);    /*  tab is the only control char accepted */
-        if (((c >= ' ') || (c < 0) || (c == '\t'))) {
-            str_load[0] = c;
-            spice_dstring_append(dstr_p, str_load, 1);
-        }
-    }
-    while (!feof(f) && (c != '\n'));
-
-    return len;
 }
 
 
@@ -442,26 +351,6 @@ stupcase(char *s)
 
 /***** elementary math *******/
 
-double
-absf(double x)
-{
-    if (x < 0.0)
-        return -x;
-    else
-        return x;
-}
-
-
-long
-absi(long i)
-{
-    if (i >= 0)
-        return (i);
-    else
-        return (-i);
-}
-
-
 int
 spos_(char *sub, const char *s)
 {
@@ -471,11 +360,4 @@ spos_(char *sub, const char *s)
         return (int) (ptr - s);
     else
         return -1;
-}
-
-
-double
-np_round(double r)
-{
-    return floor(r + 0.5);
 }
