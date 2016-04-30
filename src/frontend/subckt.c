@@ -231,7 +231,7 @@ inp_subcktexpand(struct card *deck) {
             fprintf(stderr, "%3d:%s\n", c->linenum, c->line);
 #endif
 
-        nupa_signal(NUPADECKCOPY, NULL);
+        nupa_signal(NUPADECKCOPY);
         /* get the subckt/model names from the deck */
         for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
             if (ciprefix(".subckt", c->line))
@@ -358,13 +358,13 @@ inp_subcktexpand(struct card *deck) {
         if (ciprefix(invoke, c->line)) {
             fprintf(cp_err, "Error: unknown subckt: %s\n", c->line);
             if (use_numparams)
-                nupa_signal(NUPAEVALDONE, NULL);
+                nupa_signal(NUPAEVALDONE);
             return NULL;
         }
 
     if (use_numparams) {
         /* the NUMPARAM final line translation pass */
-        nupa_signal(NUPASUBDONE, NULL);
+        nupa_signal(NUPASUBDONE);
         for (c = deck; c; c = c->nextcard)
             /* 'param' .meas statements can have dependencies on measurement values */
             /* need to skip evaluating here and evaluate after other .meas statements */
@@ -382,7 +382,7 @@ inp_subcktexpand(struct card *deck) {
 
         /*nupa_list_params(stdout);*/
         nupa_copy_inst_dico();
-        nupa_signal(NUPAEVALDONE, NULL);
+        nupa_signal(NUPAEVALDONE);
     }
 
     return (deck);  /* return the spliced deck.  */
