@@ -732,7 +732,7 @@ fetchoperator(dico_t *dico,
     } else if (c == '^') {
         state = S_binop;
         level = 2;
-    } else if (cpos(c, "=<>#GL") >= 0) {
+    } else if (strchr("=<>#GL", c)) {
         state = S_binop;
         level = 5;
     } else if (c == 'A') {
@@ -1419,7 +1419,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
                 } while ((i <= ls) && !((d == ')') && (level <= 0)));
             }
 
-        } while (!(cpos (c, ",;)}") >= 0)); /* legal separators */
+        } while (!strchr(",;)}", c)); /* legal separators */
 
         tpe = NUPA_REAL;
     }
@@ -1703,9 +1703,10 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
 
                 u_p = spice_dstring_value(&ustr);
                 if (u_p[0]) {
+                    char *dollar = strchr(spice_dstring_value(&idlist), '$');
                     narg++;
-                    k = cpos('$', spice_dstring_value(&idlist));
-                    if (k >= 0) {
+                    if (dollar) {
+                        k = (int) (dollar - spice_dstring_value(&idlist));
                         /* replace dollar with expression string u */
                         pscopy(&vstr, spice_dstring_value(&idlist), 0, k);
                         sadd(&vstr, spice_dstring_value(&ustr));

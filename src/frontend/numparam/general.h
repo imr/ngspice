@@ -25,7 +25,6 @@ void cadd(SPICE_DSTRINGPTR s, char c);
 void naddll(SPICE_DSTRINGPTR s, long long n);
 void cins(SPICE_DSTRINGPTR s, char c);
 void sins(SPICE_DSTRINGPTR s, const char *t);
-int cpos(char c, char *s);
 int spos_(char *sub, const char *s);
 bool ci_prefix(const char *p, const char *s);
 int length(const char *s);

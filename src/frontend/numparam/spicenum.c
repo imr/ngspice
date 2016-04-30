@@ -371,7 +371,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol,
         category = 'X';
     } else if (s[0] == '+') {   /* continuation line */
         category = '+';
-    } else if (cpos(s[0], "*$#") < 0) {
+    } else if (!strchr("*$#", s[0])) {
         /* not a comment line! */
         n = stripbraces(dstr_p);
         if (n > 0)

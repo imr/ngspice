@@ -154,24 +154,6 @@ sins(SPICE_DSTRINGPTR dstr_p, const char *t)
 }
 
 
-int
-cpos(char c, char *s)
-/* return position of c in s, or 0 if not found.
- * BUG, Pascal inherited: first char is at 1, not 0 !
- * No longer!  Now position is C-based to make life easier.
- */
-{
-    int i = 0;
-    while ((s[i] != c) && (s[i] != '\0'))
-        i++;
-
-    if (s[i] == c)
-        return i;
-    else
-        return -1;
-}
-
-
 char
 upcase(char c)
 {
