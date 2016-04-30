@@ -220,17 +220,6 @@ scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
 }
 
 
-void
-ccopy(SPICE_DSTRINGPTR dstr_p, char c)  /* returns success flag */
-{
-    char *s_p;                  /* current string */
-
-    spice_dstring_setlength(dstr_p, 1);
-    s_p = spice_dstring_value(dstr_p);
-    s_p[0] = c;
-}
-
-
 char *
 pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 /* partial string copy, with C-based start - Because we now have a 0 based
