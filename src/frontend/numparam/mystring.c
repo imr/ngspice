@@ -246,10 +246,8 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 
     if (start < stop) {         /* nothing! */
 
-        if ((start + leng - 1) > stop) {
-            // leng = stop - start + 1;
+        if (leng > stop - start)
             leng = stop - start;
-        }
 
         _spice_dstring_setlength(dstr_p, leng);
         s_p = spice_dstring_value(dstr_p);
@@ -281,10 +279,8 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 
     if (start < stop) {         /* nothing! */
 
-        if ((start + leng - 1) > stop) {
-            // leng = stop - start + 1;
+        if (leng > stop - start)
             leng = stop - start;
-        }
 
         _spice_dstring_setlength(dstr_p, leng);
         s_p = spice_dstring_value(dstr_p);
