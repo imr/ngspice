@@ -391,13 +391,6 @@ alfa(char c)
 
 
 bool
-num(char c)
-{
-    return (c >= '0') && (c <= '9');
-}
-
-
-bool
 alfanum(char c)
 {
     return alfa(c) || ((c >= '0') && (c <= '9'));
