@@ -214,7 +214,7 @@ scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
     spice_dstring_reinit(dstr_p);
     low[1] = '\0';
     for (ptr = str; ptr && *ptr; ptr++) {
-        low[0] = lowcase(*ptr);
+        low[0] = tolower_c(*ptr);
         spice_dstring_append(dstr_p, low, 1);
     }
 }
@@ -387,16 +387,6 @@ bool
 stne(const char *s, const char *t)
 {
     return strcmp(s, t) != 0;
-}
-
-
-char
-lowcase(char c)
-{
-    if ((c >= 'A') && (c <= 'Z'))
-        return (char) (c - 'A' + 'a');
-    else
-        return c;
 }
 
 
