@@ -858,7 +858,7 @@ nupa_eval(struct card *card)
 }
 
 
-int
+void
 nupa_signal(int sig, char *info)
 /* warning: deckcopy may come inside a recursion ! substart no! */
 /* info is context-dependent string data */
@@ -878,6 +878,4 @@ nupa_signal(int sig, char *info)
         nupa_done();
         firstsignalS = 1;
     }
-
-    return 1;
 }
