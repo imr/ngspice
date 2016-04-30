@@ -623,7 +623,7 @@ keyword(const char *keys, const char *s, const char *s_end)
 
     for (;;) {
         const char *p = s;
-        while ((p < s_end) && (upcase(*p) == *keys))
+        while ((p < s_end) && (toupper_c(*p) == *keys))
             p++, keys++;
         if ((p >= s_end) && (*keys <= ' '))
             return j;
@@ -999,7 +999,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             } else {
                 spice_dstring_reinit(&tstr);
                 while (s < s_next)
-                    cadd(&tstr, upcase(*s++));
+                    cadd(&tstr, toupper_c(*s++));
                 u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 state = S_atom;
             }
@@ -1366,7 +1366,7 @@ getword(char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
     spice_dstring_reinit(tstr_p);
 
     while ((i <= ls) && (alfa(s[i - 1]) || num(s[i - 1]))) {
-        cadd(tstr_p, upcase(s[i - 1]));
+        cadd(tstr_p, toupper_c(s[i - 1]));
         i++;
     }
 
