@@ -47,7 +47,6 @@ typedef struct entry_s {
 
 
 typedef struct {                /* the input scanner data structure */
-    SPICE_DSTRING srcfile;      /* last piece of source file name */
     SPICE_DSTRING lookup_buf;   /* useful temp buffer for quick symbol lookup */
     int srcline;
     int oldline;
