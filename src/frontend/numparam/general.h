@@ -31,7 +31,6 @@ bool stne(const char *s, const char *t);
 void stri(long n, SPICE_DSTRINGPTR s);
 
 char upcase(char c);
-char lowcase(char c);
 bool alfa(char c);
 bool num(char c);
 bool alfanum(char c);
