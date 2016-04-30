@@ -543,7 +543,7 @@ defsubckt(dico_t *dico, struct card *card)
     bool err;
     int i, j, ls;
 
-    ls = length(s);
+    ls = (int) strlen(s);
     i = 0;
 
     while ((i < ls) && (s[i] != '.'))
@@ -586,7 +586,7 @@ findsubckt(dico_t *dico, char *s)
 
     spice_dstring_init(&ustr);
 
-    k = length(s);
+    k = (int) strlen(s);
 
     while ((k >= 0) && (s[k] <= ' '))
         k--;
@@ -1231,7 +1231,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
     spice_dstring_init(&qstr);
     spice_dstring_init(&tstr);
     i = 0;
-    ls = length(s);
+    ls = (int) strlen(s);
     err = 0;
     ir = 0;
 
@@ -1357,7 +1357,7 @@ getword(char *s, SPICE_DSTRINGPTR tstr_p, int after, int *pi)
     int ls;
 
     i = after;
-    ls = length(s);
+    ls = (int) strlen(s);
 
     do
         i++;
@@ -1386,7 +1386,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
     char c, d;
     nupa_type tpe;
 
-    ls = length(s);
+    ls = (int) strlen(s);
     ia = i + 1;
 
     while ((ia < ls) && (s[ia - 1] <= ' '))
@@ -1481,7 +1481,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
     spice_dstring_init(&tstr);
     spice_dstring_init(&ustr);
-    ls = length(s);
+    ls = (int) strlen(s);
     error = 0;
     i = 0;
 
@@ -1575,7 +1575,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
 
     /***** first, analyze the subckt definition line */
     n = 0;                      /* number of parameters if any */
-    ls = length(s);
+    ls = (int) strlen(s);
 
     scopy_up(&tstr, s);
 

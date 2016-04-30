@@ -755,7 +755,7 @@ nupa_copy(struct card *deck)
 
     spice_dstring_init(&u);
     spice_dstring_init(&keywd);
-    ls = length(s);
+    ls = (int) strlen(s);
 
     while ((ls > 0) && (s[ls - 1] <= ' '))
         ls--;
