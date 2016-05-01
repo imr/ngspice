@@ -6923,7 +6923,7 @@ inp_rem_unused_models(struct line *deck)
                     if (num_terminals != 0) {
                         char *elem_model_name = get_model_name(elem_line, num_terminals);
                         if (is_a_modelname(elem_model_name))
-                            if (cieq(elem_model_name, model_name))
+                            if (model_name_match(elem_model_name, model_name))
                                 /* check if element is within scope of model */
                                 if (inp_check_scope_mod(card_elem->level, card->level))
                                     model_is_in_use = TRUE;
