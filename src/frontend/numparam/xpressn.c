@@ -1370,7 +1370,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     char c, d;
     nupa_type tpe;
 
-    (ls_ptr - s) = (int) strlen(s);
+    ls_ptr = s + strlen(s);
     ia = (int) (iptr - s) + 1;
 
     while ((ia < (ls_ptr - s)) && (s[ia - 1] <= ' '))
