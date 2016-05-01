@@ -152,6 +152,7 @@ void tprint(struct line *deck, int numb);
 static void inp_add_levels(struct line *deck);
 bool inp_check_scope_mod(unsigned short elem_level[], unsigned short mod_level[]);
 bool inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[]);
+static char inp_get_elem_ident(char *type);
 
 struct inp_read_t
 { struct line *cc;
@@ -6810,4 +6811,64 @@ inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[])
         if ((x_level[i] == subckt_level[i]) && (x_level[i + 1] == 0))
             return TRUE;
     return FALSE;
+}
+
+
+/* model type as input, element identifier as output */
+static char
+inp_get_elem_ident(char *type)
+{
+    if (cieq(type, "r"))
+        return 'r';
+    else if (cieq(type, "c"))
+        return 'c';
+    else if (cieq(type, "l"))
+        return 'l';
+    else if (cieq(type, "nmos"))
+        return 'm';
+    else if (cieq(type, "pmos"))
+        return 'm';
+    else if (cieq(type, "numos"))
+        return 'm';
+    else if (cieq(type, "d"))
+        return 'd';
+    else if (cieq(type, "numd"))
+        return 'd';
+    else if (cieq(type, "numd2"))
+        return 'd';
+    else if (cieq(type, "npn"))
+        return 'q';
+    else if (cieq(type, "pnp"))
+        return 'q';
+    else if (cieq(type, "nbjt"))
+        return 'q';
+    else if (cieq(type, "nbjt2"))
+        return 'q';
+    else if (cieq(type, "njf"))
+        return 'j';
+    else if (cieq(type, "pjf"))
+        return 'j';
+    else if (cieq(type, "nmf"))
+        return 'z';
+    else if (cieq(type, "pmf"))
+        return 'z';
+    else if (cieq(type, "nhfet"))
+        return 'z';
+    else if (cieq(type, "phfet"))
+        return 'z';
+    else if (cieq(type, "sw"))
+        return 's';
+    else if (cieq(type, "csw"))
+        return 'w';
+    else if (cieq(type, "txl"))
+        return 'y';
+    else if (cieq(type, "cpl"))
+        return 'p';
+    else if (cieq(type, "ltra"))
+        return 'o';
+    else if (cieq(type, "urc"))
+        return 'u';
+    /* xspice code models do not have unique type names */
+    else
+        return 'a';
 }
