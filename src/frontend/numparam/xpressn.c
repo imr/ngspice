@@ -1131,14 +1131,14 @@ evaluate_variable(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t)
 
 /* transform exression in string `t' to result q */
 static bool
-evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t)
+evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char *t, const char * const t_end)
 {
     bool err = 0;
     double u;
 
     spice_dstring_reinit(qstr_p);
 
-    u = formula(dico, t, t + strlen(t), &err);
+    u = formula(dico, t, t_end, &err);
     if (err)
         return err;
 
@@ -1234,7 +1234,8 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                     sadd(&qstr, "last");
                     err = 0;
                 } else {
-                    err = evaluate_expr(dico, &qstr, spice_dstring_value(&tstr));
+                    const char *xx = spice_dstring_value(&tstr);
+                    err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
                 }
             }
 
@@ -1281,7 +1282,8 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
                     pscopy(&tstr, s, i, k - i - 1);
-                    err = evaluate_expr(dico, &qstr, spice_dstring_value(&tstr));
+                    const char *xx = spice_dstring_value(&tstr);
+                    err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
                 }
 
                 i = k;
