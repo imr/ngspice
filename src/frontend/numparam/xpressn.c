@@ -1334,7 +1334,7 @@ getword(const char *s, SPICE_DSTRINGPTR tstr_p)
 
 
 static nupa_type
-getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
+getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, int *pi)
 /* returns expression-like string until next separator
    Input  i=position before expr, output  i=just after expr, on separator.
    returns tpe=='R' if (numeric, 'S' if (string only
