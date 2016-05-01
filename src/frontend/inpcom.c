@@ -3735,6 +3735,10 @@ get_number_terminals(char *c)
             name[i] = gettok_instance(&c);
             if (strstr(name[i], "off") || strchr(name[i], '='))
                 j++;
+#ifdef CIDER
+            if (strstr(name[i], "save") || strstr(name[i], "print"))
+                j++;
+#endif
             /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc j */
             if ((comma = strchr(name[i], ',')) != NULL && (*(++comma) == '\0'))
                 j++;
