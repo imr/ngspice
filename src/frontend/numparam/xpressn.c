@@ -1349,12 +1349,12 @@ getword(const char *s, const char * const s_end, SPICE_DSTRINGPTR tstr_p)
 
     spice_dstring_reinit(tstr_p);
 
-    while ((s - 1 < s_end) && (alfa(s[-1]) || isdigit_c(s[-1]))) {
-        cadd(tstr_p, toupper_c(s[-1]));
-        s++;
-    }
+    s--;
 
-    return s;
+    while ((s < s_end) && (alfa(*s) || isdigit_c(*s)))
+        cadd(tstr_p, toupper_c(*s++));
+
+    return s + 1;
 }
 
 
