@@ -1207,8 +1207,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
     const char *kptr;
 
     while ((s < s_end) && !err) {
-        s++;
-        c = s[-1];
+
+        c = *s++;
 
         if (c == '{') {
             /* try ps expression syntax */
@@ -1217,8 +1217,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             do
             {
-                kptr++;
-                d = kptr[-1];
+                d = *kptr++;
+
                 if (d == '{')
                     nnest++;
                 else if (d == '}')
@@ -1267,11 +1267,12 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                 do
                 {
-                    kptr++;
-                    if (kptr > s_end)
+                    if (kptr >= s_end)
                         d = '\0';
                     else
-                        d = kptr[-1];
+                        d = *kptr;
+
+                    kptr++;
 
                     if (d == '(')
                         level++;
@@ -1295,11 +1296,12 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                 do
                 {
-                    kptr++;
-                    if (kptr > s_end)
+                    if (kptr >= s_end)
                         d = '\0';
                     else
-                        d = kptr[-1];
+                        d = *kptr;
+
+                    kptr++;
 
                 } while ((kptr <= s_end) && (d > ' '));
 
