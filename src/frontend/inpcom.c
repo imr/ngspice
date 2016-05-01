@@ -153,6 +153,7 @@ static void inp_add_levels(struct line *deck);
 bool inp_check_scope_mod(unsigned short elem_level[], unsigned short mod_level[]);
 bool inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[]);
 static char inp_get_elem_ident(char *type);
+static void inp_rem_unused_models(struct line *deck);
 
 struct inp_read_t
 { struct line *cc;
@@ -526,6 +527,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
         inp_remove_excess_ws(working);
 
+        inp_rem_unused_models(working);
         comment_out_unused_subckt_models(working);
 
         subckt_params_to_param(working);
@@ -6875,4 +6877,81 @@ inp_get_elem_ident(char *type)
     /* xspice code models do not have unique type names */
     else
         return 'a';
+}
+
+
+/* scan through deck. If .model is found, scan again through deck.
+   Check if elements referring to that model are available.
+   Model scope is aknowledged.
+   If model is not used, comment out the model line. */
+static void
+inp_rem_unused_models(struct line *deck)
+{
+    struct line *card, *card_elem;
+    int skip_control = 0;
+
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*curr_line == '*')
+            continue;
+
+        if (ciprefix(".model", curr_line)) {
+            int skip_control2 = 0;
+            bool model_is_in_use = FALSE;
+            /* find model type */
+            char *model_type = get_model_type(curr_line);
+            char *model_name = get_subckt_model_name(curr_line);
+            for (card_elem = deck; card_elem; card_elem = card_elem->li_next) {
+                char *elem_line = card_elem->li_line;
+                /* exclude any command inside .control ... .endc */
+                if (ciprefix(".control", elem_line)) {
+                    skip_control2++;
+                    continue;
+                }
+                else if (ciprefix(".endc", elem_line)) {
+                    skip_control2--;
+                    continue;
+                }
+                else if (skip_control2 > 0) {
+                    continue;
+                }
+                /* get the element line corresponding to the model */
+                if (*elem_line == inp_get_elem_ident(model_type)) {
+                    /* check if correct model type */
+                    int num_terminals = get_number_terminals(elem_line);
+                    if (num_terminals != 0) {
+                        char *elem_model_name = get_model_name(elem_line, num_terminals);
+                        if (is_a_modelname(elem_model_name))
+                            if (model_name_match(elem_model_name, model_name))
+                                /* check if element is within scope of model */
+                                if (inp_check_scope_mod(card_elem->level, card->level))
+                                    model_is_in_use = TRUE;
+                        tfree(elem_model_name);
+                    }
+                }
+                else
+                    continue;
+            }
+            if (!model_is_in_use)
+                curr_line[0] = '*';
+
+            tfree(model_type);
+            tfree(model_name);
+        }
+    }
 }
