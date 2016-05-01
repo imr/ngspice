@@ -1343,9 +1343,9 @@ static const char *
 getword(const char *s, const char * const s_end, SPICE_DSTRINGPTR tstr_p)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
-    do
+    s++;
+    while ((s < s_end) && !alfa(s[-1]))
         s++;
-    while ((s < s_end) && !alfa(s[-1]));
 
     spice_dstring_reinit(tstr_p);
 
