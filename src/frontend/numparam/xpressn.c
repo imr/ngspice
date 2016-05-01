@@ -1153,7 +1153,7 @@ evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char *t, const char *
 /********* interface functions for spice3f5 extension ***********/
 
 static int
-insertnumber(dico_t *dico, const int i, char * const s, SPICE_DSTRINGPTR ustr_p)
+insertnumber(dico_t *dico, const int i, char * const s_, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
     const char *u = spice_dstring_value(ustr_p);
@@ -1163,7 +1163,7 @@ insertnumber(dico_t *dico, const int i, char * const s, SPICE_DSTRINGPTR ustr_p)
     long id = 0;
     int  n  = 0;
 
-    char *p = strstr(s+i, "numparm__________");
+    char *p = strstr(s_, "numparm__________");
 
     if (p &&
         (1 == sscanf(p, "numparm__________%8lx%n", &id, &n)) &&
@@ -1172,17 +1172,17 @@ insertnumber(dico_t *dico, const int i, char * const s, SPICE_DSTRINGPTR ustr_p)
         (snprintf(buf, sizeof(buf), "%-25s", u) == ACT_CHARACTS))
     {
         memcpy(p, buf, ACT_CHARACTS);
-        return (int)(p - s - i) + ACT_CHARACTS;
+        return (int)(p - s_) + ACT_CHARACTS;
     }
 
     message
         (dico,
          "insertnumber: fails.\n"
-         "  s+i = \"%s\" u=\"%s\" id=%ld\n",
-         s+i, u, id);
+         "  s = \"%s\" u=\"%s\" id=%ld\n",
+         s_, u, id);
 
     /* swallow everything on failure */
-    return (int) strlen(s+i);
+    return (int) strlen(s_);
 }
 
 
@@ -1239,7 +1239,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             s = kptr;
             if (!err)
-                ir = ir + insertnumber(dico, ir, r, &qstr);
+                ir = ir + insertnumber(dico, ir, r + ir, &qstr);
             else
                 err = message(dico, "Cannot compute substitute\n");
 
@@ -1304,7 +1304,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             }
 
             if (!err)
-                ir = ir + insertnumber(dico, ir, r, &qstr);
+                ir = ir + insertnumber(dico, ir, r + ir, &qstr);
             else
                 message(dico, "Cannot compute &(expression)\n");
         }
