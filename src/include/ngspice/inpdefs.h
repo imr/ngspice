@@ -60,9 +60,12 @@ struct INPtables{
     GENmodel *defZmod;
 };
 
+struct modellist;
+
 struct nscope {
     struct nscope *next;
     struct card_assoc *subckts;
+    struct modellist *models;
 };
 
 struct card_assoc {
