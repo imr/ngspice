@@ -1422,7 +1422,9 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                     else if (d == ')')
                         level--;
 
-                } while (!((d == ')') && (level <= 0)));
+                    if ((d == ')') && (level <= 0))
+                        break;
+                } while (1);
             }
 
         } while (!strchr(",;)}", c)); /* legal separators */
