@@ -1254,7 +1254,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             } else {
                 pscopy(&tstr, s, 0, (int) (kptr - s - 1));
                 /* exeption made for .meas */
-                if (strcasecmp(spice_dstring_value(&tstr), "LAST") == 0) {
+                if (s + 4 == kptr - 1 && strncasecmp(s, "LAST", 4) == 0) {
                     spice_dstring_reinit(&qstr);
                     sadd(&qstr, "last");
                     err = 0;
