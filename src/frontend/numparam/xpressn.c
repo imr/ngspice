@@ -1442,7 +1442,6 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 */
 {
     /* s has the format: ident = expression; ident= expression ...  */
-    int ls;
     const char *p = s;
     bool error, err;
     nupa_type dtype;
@@ -1454,7 +1453,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 
     spice_dstring_init(&tstr);
     spice_dstring_init(&ustr);
-    ls = (int) strlen(s);
+    const int ls = (int) strlen(s);
     error = 0;
 
     while (((p - s) < ls) && (*p <= ' '))
