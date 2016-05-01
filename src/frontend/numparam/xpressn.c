@@ -1411,7 +1411,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
 
 
 bool
-nupa_assignment(dico_t *dico, char *s, char mode)
+nupa_assignment(dico_t *dico, const char * const s, char mode)
 /* is called for all 'Param' lines of the input file.
    is also called for the params: section of a subckt .
    mode='N' define new local variable, else global...
