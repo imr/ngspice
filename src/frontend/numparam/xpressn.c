@@ -1318,17 +1318,11 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
 static const char *
 getword(const char *s, const char * const s_end, SPICE_DSTRINGPTR tstr_p)
-/* isolate a word from s after position "after". return i= last read+1 */
 {
-    s++;
-    s--;
     while ((s < s_end - 1) && !alfa(*s))
         s++;
-    s++;
 
     spice_dstring_reinit(tstr_p);
-
-    s--;
 
     while ((s < s_end) && (alfa(*s) || isdigit_c(*s)))
         cadd(tstr_p, toupper_c(*s++));
