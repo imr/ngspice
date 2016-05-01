@@ -1175,7 +1175,7 @@ evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char *t, const char *
 
 /********* interface functions for spice3f5 extension ***********/
 
-static int
+static char *
 insertnumber(dico_t *dico, char * const s, SPICE_DSTRINGPTR ustr_p)
 /* insert u in string s in place of the next placeholder number */
 {
@@ -1195,7 +1195,7 @@ insertnumber(dico_t *dico, char * const s, SPICE_DSTRINGPTR ustr_p)
         (snprintf(buf, sizeof(buf), "%-25s", u) == ACT_CHARACTS))
     {
         memcpy(p, buf, ACT_CHARACTS);
-        return (int)(p - s) + ACT_CHARACTS;
+        return p + ACT_CHARACTS;
     }
 
     message
@@ -1205,7 +1205,7 @@ insertnumber(dico_t *dico, char * const s, SPICE_DSTRINGPTR ustr_p)
          s, u, id);
 
     /* swallow everything on failure */
-    return (int) strlen(s);
+    return s + strlen(s);
 }
 
 
@@ -1262,7 +1262,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             s = kptr;
             if (!err)
-                ir = ir + insertnumber(dico, r + ir, &qstr);
+                ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
             else
                 err = message(dico, "Cannot compute substitute\n");
 
@@ -1327,7 +1327,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             }
 
             if (!err)
-                ir = ir + insertnumber(dico, r + ir, &qstr);
+                ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
             else
                 message(dico, "Cannot compute &(expression)\n");
         }
