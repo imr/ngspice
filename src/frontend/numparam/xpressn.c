@@ -1460,9 +1460,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
     while ((i < ls) && !error) {
 
-        const char *tmp = s + i;
-        tmp = getword(s, &tstr, tmp);
-        i = (int) (tmp - s);
+        i = (int) (getword(s, &tstr, s + i) - s);
         t_p = spice_dstring_value(&tstr);
         if (t_p[0] == '\0')
             error = message(dico, " Identifier expected\n");
