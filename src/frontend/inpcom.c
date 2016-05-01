@@ -147,6 +147,7 @@ static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct line *deck, int numb);
 static struct nscope *inp_add_levels(struct line *deck);
+static char inp_get_elem_ident(char *type);
 static struct line_assoc *find_subckt(struct nscope *scope, const char *name);
 
 struct inp_read_t
@@ -6594,4 +6595,64 @@ inp_add_levels(struct line *deck)
         fprintf(stderr, "nesting error\n");
 
     return root;
+}
+
+
+/* model type as input, element identifier as output */
+static char
+inp_get_elem_ident(char *type)
+{
+    if (cieq(type, "r"))
+        return 'r';
+    else if (cieq(type, "c"))
+        return 'c';
+    else if (cieq(type, "l"))
+        return 'l';
+    else if (cieq(type, "nmos"))
+        return 'm';
+    else if (cieq(type, "pmos"))
+        return 'm';
+    else if (cieq(type, "numos"))
+        return 'm';
+    else if (cieq(type, "d"))
+        return 'd';
+    else if (cieq(type, "numd"))
+        return 'd';
+    else if (cieq(type, "numd2"))
+        return 'd';
+    else if (cieq(type, "npn"))
+        return 'q';
+    else if (cieq(type, "pnp"))
+        return 'q';
+    else if (cieq(type, "nbjt"))
+        return 'q';
+    else if (cieq(type, "nbjt2"))
+        return 'q';
+    else if (cieq(type, "njf"))
+        return 'j';
+    else if (cieq(type, "pjf"))
+        return 'j';
+    else if (cieq(type, "nmf"))
+        return 'z';
+    else if (cieq(type, "pmf"))
+        return 'z';
+    else if (cieq(type, "nhfet"))
+        return 'z';
+    else if (cieq(type, "phfet"))
+        return 'z';
+    else if (cieq(type, "sw"))
+        return 's';
+    else if (cieq(type, "csw"))
+        return 'w';
+    else if (cieq(type, "txl"))
+        return 'y';
+    else if (cieq(type, "cpl"))
+        return 'p';
+    else if (cieq(type, "ltra"))
+        return 'o';
+    else if (cieq(type, "urc"))
+        return 'u';
+    /* xspice code models do not have unique type names */
+    else
+        return 'a';
 }
