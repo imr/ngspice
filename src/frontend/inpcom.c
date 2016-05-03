@@ -1672,7 +1672,7 @@ get_model_type(char *line)
     beg_ptr = skip_non_ws(beg_ptr); /* eat model name */
     beg_ptr = skip_ws(beg_ptr);
 
-    return gettok(&beg_ptr);
+    return gettok_noparens(&beg_ptr);
 }
 
 
