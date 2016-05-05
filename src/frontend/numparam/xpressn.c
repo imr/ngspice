@@ -1205,8 +1205,9 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
     spice_dstring_init(&tstr);
     i = 0;
     const int ls = (int) strlen(s);
+    const char * const s_end = s + ls;
 
-    while ((i < ls) && !err) {
+    while ((i < (s_end - s)) && !err) {
         i++;
         c = s[i - 1];
 
@@ -1250,13 +1251,13 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
 
-            if ((i + 1 < ls) && (s[i] == Intro)) {
+            if ((i + 1 < (s_end - s)) && (s[i] == Intro)) {
                 i++;
                 continue;
             }
 
             i++;
-            while ((i < ls) && (s[i - 1] <= ' '))
+            while ((i < (s_end - s)) && (s[i - 1] <= ' '))
                 i++;
 
             k = i;
@@ -1268,7 +1269,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 do
                 {
                     k++;
-                    if (k > ls)
+                    if (k > (s_end - s))
                         d = '\0';
                     else
                         d = s[k - 1];
@@ -1278,9 +1279,9 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                     else if (d == ')')
                         level--;
 
-                } while ((k <= ls) && !((d == ')') && (level <= 0)));
+                } while ((k <= (s_end - s)) && !((d == ')') && (level <= 0)));
 
-                if (k > ls) {
+                if (k > (s_end - s)) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
                     pscopy(&tstr, s, i, k - i - 1);
@@ -1296,12 +1297,12 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 do
                 {
                     k++;
-                    if (k > ls)
+                    if (k > (s_end - s))
                         d = '\0';
                     else
                         d = s[k - 1];
 
-                } while ((k <= ls) && (d > ' '));
+                } while ((k <= (s_end - s)) && (d > ' '));
 
                 pscopy(&tstr, s, i-1, k - i);
                 const char *xx = spice_dstring_value(&tstr);
