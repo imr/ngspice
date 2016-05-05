@@ -1190,7 +1190,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
     spice_dstring_init(&qstr);
     const char * const s_end = strchr(s, '\0');
 
-    while ((s < s_end) && !err) {
+    while (s < s_end) {
 
         char c = *s++;
 
@@ -1214,22 +1214,23 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             if (*kptr == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
-            } else {
+                goto Lend;
+            }
+
                 /* exeption made for .meas */
                 if (s + 4 == kptr && strncasecmp(s, "LAST", 4) == 0) {
                     spice_dstring_reinit(&qstr);
                     sadd(&qstr, "last");
-                    err = 0;
                 } else {
                     err = evaluate_expr(dico, &qstr, s, kptr);
+                    if (err) {
+                        err = message(dico, "Cannot compute substitute\n");
+                        goto Lend;
+                    }
                 }
-            }
 
             s = kptr + 1;
-            if (!err)
                 ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
-            else
-                err = message(dico, "Cannot compute substitute\n");
 
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
@@ -1262,8 +1263,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                 if (kptr >= s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
-                } else {
+                    goto Lend;
+                }
+
                     err = evaluate_expr(dico, &qstr, s, kptr);
+                if (err) {
+                    message(dico, "Cannot compute &(expression)\n");
+                    goto Lend;
                 }
 
                 s = kptr + 1;
@@ -1277,16 +1283,18 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                         break;
 
                 err = evaluate_variable(dico, &qstr, s, kptr);
+                if (err) {
+                    message(dico, "Cannot compute &identifier\n");
+                    goto Lend;
+                }
                 s = kptr;
             }
 
-            if (!err)
                 ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
-            else
-                message(dico, "Cannot compute &(expression)\n");
         }
     }
 
+ Lend:
     spice_dstring_free(&qstr);
 
     return err;
