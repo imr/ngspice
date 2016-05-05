@@ -1213,12 +1213,12 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
 
         if (c == '{') {
             /* try ps expression syntax */
-            (kptr - s) = i;
+            kptr = s + i;
             nnest = 1;
 
             do
             {
-                (kptr - s)++;
+                kptr++;
                 d = s[(kptr - s) - 1];
                 if (d == '{')
                     nnest++;
@@ -1260,7 +1260,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
             while ((i < (s_end - s)) && (s[i - 1] <= ' '))
                 i++;
 
-            (kptr - s) = i;
+            kptr = s + i;
 
             if (s[(kptr - s) - 1] == '(') {
                 /* sub-formula */
@@ -1268,7 +1268,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
 
                 do
                 {
-                    (kptr - s)++;
+                    kptr++;
                     if ((kptr - s) > (s_end - s))
                         d = '\0';
                     else
@@ -1296,7 +1296,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
 
                 do
                 {
-                    (kptr - s)++;
+                    kptr++;
                     if ((kptr - s) > (s_end - s))
                         d = '\0';
                     else
