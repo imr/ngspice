@@ -1294,12 +1294,12 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             } else {
                 /* simple identifier may also be string? */
 
-                const char *kptr = ++s;
+                const char *kptr = s + 1;
                 for (; kptr < s_end; kptr++)
                     if (*kptr <= ' ')
                         break;
 
-                err = evaluate_variable(dico, &qstr, s - 1, kptr);
+                err = evaluate_variable(dico, &qstr, s, kptr);
                 s = kptr;
             }
 
