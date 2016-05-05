@@ -804,7 +804,6 @@ operate(char op, double x, double y)
         x = x * y;
         break;
     case '/':
-        // if (absf(y) > epsi)
         x = x / y;
         break;
     case '^':                   /* power */
