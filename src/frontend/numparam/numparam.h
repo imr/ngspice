@@ -9,10 +9,7 @@
 
 /***** numparam internals ********/
 
-typedef enum {Nodekey = '#'} _nNodekey;  /* Introduces node symbol */
 typedef enum {Intro   = '&'} _nIntro;    /* Introduces preprocessor tokens */
-typedef enum {Comment = '*'} _nComment;  /* Spice Comment lines */
-typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
 
 
 /* -----------------------------------------------------------------
