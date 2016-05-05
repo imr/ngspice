@@ -1227,8 +1227,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
     spice_dstring_init(&qstr);
     spice_dstring_init(&tstr);
     i = 0;
-    const int ls = (int) strlen(s);
-    const char * const s_end = s + ls;
+    const char * const s_end = strchr(s, '\0');
 
     while ((i < (s_end - s)) && !err) {
         i++;
