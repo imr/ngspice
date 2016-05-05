@@ -1231,7 +1231,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
         i++;
         c = s[i - 1];
 
-        if (c == Psp) {
+        if (c == '{') {
             /* try ps expression syntax */
             k = i;
             nnest = 1;
