@@ -1401,6 +1401,9 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
             char c = *p;
 
+            if (strchr(",;)}", c)) /* legal separators */
+                break;
+
             if (c == '(') {
                 /* sub-formula */
                 int level = 1;
@@ -1418,9 +1421,6 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                         break;
                 }
             }
-
-            if (strchr(",;)}", c)) /* legal separators */
-                break;
         }
 
         tpe = NUPA_REAL;
