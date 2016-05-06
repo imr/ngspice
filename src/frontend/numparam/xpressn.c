@@ -1322,17 +1322,17 @@ getword(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 {
     const char *iptr;
     iptr = *pi;
-    int ls;
+    const char *ls_ptr;
 
-    ls = (int) strlen(s);
+    (ls_ptr - s) = (int) strlen(s);
 
     do
         iptr++;
-    while (((iptr - s) < ls) && !alfa(s[(iptr - s) - 1]));
+    while (((iptr - s) < (ls_ptr - s)) && !alfa(s[(iptr - s) - 1]));
 
     spice_dstring_reinit(tstr_p);
 
-    while (((iptr - s) <= ls) && (alfa(s[(iptr - s) - 1]) || isdigit_c(s[(iptr - s) - 1]))) {
+    while (((iptr - s) <= (ls_ptr - s)) && (alfa(s[(iptr - s) - 1]) || isdigit_c(s[(iptr - s) - 1]))) {
         cadd(tstr_p, toupper_c(s[(iptr - s) - 1]));
         iptr++;
     }
