@@ -1317,21 +1317,21 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
 
 static const char *
-getword(const char *iptr, const char * const ls_ptr, SPICE_DSTRINGPTR tstr_p)
+getword(const char *s, const char * const s_end, SPICE_DSTRINGPTR tstr_p)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
     do
-        iptr++;
-    while ((iptr < ls_ptr) && !alfa(iptr[-1]));
+        s++;
+    while ((s < s_end) && !alfa(s[-1]));
 
     spice_dstring_reinit(tstr_p);
 
-    while ((iptr <= ls_ptr) && (alfa(iptr[-1]) || isdigit_c(iptr[-1]))) {
-        cadd(tstr_p, toupper_c(iptr[-1]));
-        iptr++;
+    while ((s <= s_end) && (alfa(s[-1]) || isdigit_c(s[-1]))) {
+        cadd(tstr_p, toupper_c(s[-1]));
+        s++;
     }
 
-    return iptr;
+    return s;
 }
 
 
