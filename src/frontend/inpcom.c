@@ -6880,16 +6880,26 @@ inp_get_elem_ident(char *type)
 }
 
 
-/* scan through deck. If .model is found, scan again through deck.
-   Check if elements referring to that model are available.
-   Model scope is aknowledged.
-   If model is not used, comment out the model line. */
+/* linked list of models, includes use info */
+struct modellist
+{
+    struct line *model;
+    char *modelname;
+    bool used;
+    char elemb;
+    struct modellist *next;
+};
+
 static void
 inp_rem_unused_models(struct line *deck)
 {
-    struct line *card, *card_elem;
+    struct line *card;
+    struct modellist *modl = NULL, *modl_new;
+    int nested, i;
+    struct modellist *modn;
     int skip_control = 0;
 
+    /* create a list of .model */
     for (card = deck; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
@@ -6911,47 +6921,120 @@ inp_rem_unused_models(struct line *deck)
             continue;
 
         if (ciprefix(".model", curr_line)) {
-            int skip_control2 = 0;
-            bool model_is_in_use = FALSE;
-            /* find model type */
+            modl_new = TMALLOC(struct modellist, 1);
             char *model_type = get_model_type(curr_line);
-            char *model_name = get_subckt_model_name(curr_line);
-            for (card_elem = deck; card_elem; card_elem = card_elem->li_next) {
-                char *elem_line = card_elem->li_line;
-                /* exclude any command inside .control ... .endc */
-                if (ciprefix(".control", elem_line)) {
-                    skip_control2++;
-                    continue;
+            modl_new->elemb = inp_get_elem_ident(model_type);
+            modl_new->modelname = get_subckt_model_name(curr_line);
+            modl_new->model = card;
+            modl_new->used = FALSE;
+            modl_new->next = modl;
+            modl = modl_new;
+            tfree(model_type);
+        }
+    }
+    /* scan through all element lines  that require or may need a model */
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        switch (*curr_line)
+        {
+        case '*':
+        case '.':
+        case 'v':
+        case 'i':
+        case 'b':
+        case 'x':
+        case 'e':
+        case 'h':
+        case 'g':
+        case 'f':
+        case 'k':
+        case 't':
+            continue;
+            break;
+        default:
+            break;
+        }
+
+        for (nested = 0; nested < NESTINGDEPTH; nested++)
+            if (card->level[nested] == 0)
+                break;
+
+        /* check if correct model name */
+        int num_terminals = get_number_terminals(curr_line);
+        /* num_terminals may be 0 for a elements */
+        if ((num_terminals != 0) || (*curr_line == 'a')) {
+            char *elem_model_name;
+            if (*curr_line == 'a')
+                elem_model_name = get_adevice_model_name(curr_line);
+            else
+                elem_model_name = get_model_name(curr_line, num_terminals);
+
+            if (is_a_modelname(elem_model_name)) {
+                /* if element is on top level, do faster here */
+                if (nested == 0) {
+                    for (modn = modl; modn; modn = modn->next)
+                        /* check if model is at top level, element is o.k., and model name is fitting */
+                        if ((modn->model->level[0] == 0) && (*curr_line == modn->elemb) && model_name_match(elem_model_name, modn->modelname))
+                            modn->used = TRUE;
                 }
-                else if (ciprefix(".endc", elem_line)) {
-                    skip_control2--;
-                    continue;
-                }
-                else if (skip_control2 > 0) {
-                    continue;
-                }
-                /* get the element line corresponding to the model */
-                if (*elem_line == inp_get_elem_ident(model_type)) {
-                    /* check if correct model type */
-                    int num_terminals = get_number_terminals(elem_line);
-                    if (num_terminals != 0) {
-                        char *elem_model_name = get_model_name(elem_line, num_terminals);
-                        if (is_a_modelname(elem_model_name))
-                            if (model_name_match(elem_model_name, model_name))
-                                /* check if element is within scope of model */
-                                if (inp_check_scope_mod(card_elem->level, card->level))
-                                    model_is_in_use = TRUE;
-                        tfree(elem_model_name);
+                else {
+                    /* scan through levels, starting with element level */
+                    for (i = nested - 1; i >= 0; i--) {
+                        bool got_a_model = FALSE;
+                        for (modn = modl; modn; modn = modn->next) {
+                            /* check if element o.k., model name is fitting, and level is o.k. */
+                            if ((*curr_line == modn->elemb) && model_name_match(elem_model_name, modn->modelname) && (card->level[i] == modn->model->level[i])) {
+                                modn->used = TRUE;
+                                got_a_model = TRUE;
+                                /* repeat for binning models, leave immediately after lowest possible level matches */
+                            }
+                            /* model is at top level, element level does not matter  */
+                            if ((i == 0) && (*curr_line == modn->elemb) && model_name_match(elem_model_name, modn->modelname) && (modn->model->level[i] == 0)) {
+                                modn->used = TRUE;
+                                got_a_model = TRUE;
+                                /* repeat for binning models, leave immediately after lowest possible level matches */
+                            }
+                        }
+                        if (got_a_model) {
+                            tfree(elem_model_name);
+                            goto nextcard;
+                        }
                     }
                 }
-                else
-                    continue;
             }
-            if (!model_is_in_use)
-                curr_line[0] = '*';
-
-            tfree(model_type);
-            tfree(model_name);
+            tfree(elem_model_name);
         }
+
+nextcard:
+        ;
+    }
+
+    /* discard all unused models */
+    for (modn = modl; modn; modn = modn->next)
+        if (modn->used == FALSE)
+            modn->model->li_line[0] = '*';
+
+    /* remove modellist */
+    for (modn = modl; modn; ) {
+        struct modellist *modn_prev;
+        tfree(modn->modelname);
+        modn_prev = modn;
+        modn = modn->next;
+        tfree(modn_prev);
     }
 }
