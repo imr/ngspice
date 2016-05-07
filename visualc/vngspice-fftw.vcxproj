@@ -2743,6 +2743,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     <ClCompile Include="..\src\xspice\evt\evtbackup.c" />
     <ClCompile Include="..\src\xspice\evt\evtcall_hybrids.c" />
     <ClCompile Include="..\src\xspice\evt\evtdeque.c" />
+    <ClCompile Include="..\src\xspice\evt\evtdest.c" />
     <ClCompile Include="..\src\xspice\evt\evtdump.c" />
     <ClCompile Include="..\src\xspice\evt\evtinit.c" />
     <ClCompile Include="..\src\xspice\evt\evtiter.c" />

@@ -66,6 +66,8 @@ void EVTtermInsert(
 
 int EVTsetup(CKTcircuit *ckt);
 
+int EVTdest(Evt_Ckt_Data_t *evt);
+
 int EVTiter(CKTcircuit *ckt);
 
 void EVTbackup(CKTcircuit *ckt, double new_time);

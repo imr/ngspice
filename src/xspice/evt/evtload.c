@@ -443,6 +443,8 @@ static void EVTadd_msg(
     if(msg_data->free[port_index]) {
         *msg_ptr = msg_data->free[port_index];
         msg_data->free[port_index] = msg_data->free[port_index]->next;
+        if ((*msg_ptr)->text)
+            tfree((*msg_ptr)->text);
     }
     else {
         *msg_ptr = TMALLOC(Evt_Msg_t, 1);

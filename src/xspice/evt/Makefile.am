@@ -13,6 +13,7 @@ libevtxsp_la_SOURCES = \
 	evtop.c     \
 	evtprint.c  \
 	evtsetup.c  \
+	evtdest.c  \
 	evtbackup.c  \
 	evtdeque.c  \
 	evtinit.c  \
