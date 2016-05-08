@@ -507,32 +507,31 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
    to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
-    const char * const s_ = card->line;
+    const char *s = card->line;
     int w = card->linenum;
 
     bool err;
 
-    const char *i_ptr, *j_ptr;
-    i_ptr = s_;
+    const char *j_ptr;
 
-    while (*i_ptr && (*i_ptr != '.'))
-        i_ptr++;                /* skip 1st dotword */
+    while (*s && (*s != '.'))
+        s++;                    /* skip 1st dotword */
 
-    while (*i_ptr && (*i_ptr > ' '))
-        i_ptr++;
+    while (*s && (*s > ' '))
+        s++;
 
-    while (*i_ptr && (*i_ptr <= ' '))
-        i_ptr++;                /* skip blank */
+    while (*s && (*s <= ' '))
+        s++;                    /* skip blank */
 
-    j_ptr = i_ptr;
+    j_ptr = s;
 
     while (*j_ptr && (*j_ptr > ' '))
         j_ptr++;
 
-    if (j_ptr > i_ptr) {
+    if (j_ptr > s) {
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
-        pscopy_up(&ustr, i_ptr, 0, (int) (j_ptr - i_ptr));
+        pscopy_up(&ustr, s, 0, (int) (j_ptr - s));
         err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL);
         spice_dstring_free(&ustr);
     } else {
