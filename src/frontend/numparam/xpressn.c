@@ -570,24 +570,26 @@ findsubckt(dico_t *dico, const char * const s)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value */
 {
+    const char *k_ptr;
+
     entry_t *entry;             /* symbol table entry */
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
-    int j, k;
+    int j;
     int line;                   /* stored line number */
 
     spice_dstring_init(&ustr);
 
-    k = (int) strlen(s);
+    (k_ptr - s) = (int) strlen(s);
 
-    while ((k >= 0) && (s[k] <= ' '))
-        k--;
+    while (((k_ptr - s) >= 0) && (s[(k_ptr - s)] <= ' '))
+        (k_ptr - s)--;
 
-    j = k;
+    j = (int) (k_ptr - s);
 
-    while ((k >= 0) && (s[k] > ' '))
-        k--;
+    while (((k_ptr - s) >= 0) && (s[(k_ptr - s)] > ' '))
+        (k_ptr - s)--;
 
-    pscopy_up(&ustr, s, k + 1, j - k);
+    pscopy_up(&ustr, s, (int) (k_ptr - s) + 1, j - (int) (k_ptr - s));
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
