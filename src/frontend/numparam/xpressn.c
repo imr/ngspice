@@ -529,14 +529,14 @@ defsubckt(dico_t *dico, struct card *card)
    to enter subcircuit names
 */
 {
-    const char * const s = card->line;
+    const char * const s_ = card->line;
     int w = card->linenum;
     struct nscope *level = card->level;
 
     bool err;
 
     const char *i_ptr, *j_ptr;
-    i_ptr = s;
+    i_ptr = s_;
 
     while (*i_ptr && (*i_ptr != '.'))
         i_ptr++;                /* skip 1st dotword */
