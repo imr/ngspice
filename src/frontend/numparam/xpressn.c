@@ -533,7 +533,7 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
     if (j_ptr > i_ptr) {
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
-        pscopy_up(&ustr, s, (int) (i_ptr - s), (int) (j_ptr - i_ptr));
+        pscopy_up(&ustr, i_ptr, 0, (int) (j_ptr - i_ptr));
         err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL);
         spice_dstring_free(&ustr);
     } else {
