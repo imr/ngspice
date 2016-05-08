@@ -507,7 +507,7 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
    to enter subcircuit (categ=U) and model (categ=O) names
 */
 {
-    char *s = card->line;
+    const char * const s = card->line;
     int w = card->linenum;
 
     bool err;
