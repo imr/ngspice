@@ -534,23 +534,24 @@ defsubckt(dico_t *dico, struct card *card)
     struct nscope *level = card->level;
 
     bool err;
-    int i, j, ls;
+    int i, j;
 
-    ls = (int) strlen(s);
+    const char * const ls_ptr;
+    (ls_ptr - s) = (int) strlen(s);
     i = 0;
 
-    while ((i < ls) && (s[i] != '.'))
+    while ((i < (ls_ptr - s)) && (s[i] != '.'))
         i++;                    /* skip 1st dotword */
 
-    while ((i < ls) && (s[i] > ' '))
+    while ((i < (ls_ptr - s)) && (s[i] > ' '))
         i++;
 
-    while ((i < ls) && (s[i] <= ' '))
+    while ((i < (ls_ptr - s)) && (s[i] <= ' '))
         i++;                    /* skip blank */
 
     j = i;
 
-    while ((j < ls) && (s[j] > ' '))
+    while ((j < (ls_ptr - s)) && (s[j] > ' '))
         j++;
 
     if (j > i) {
