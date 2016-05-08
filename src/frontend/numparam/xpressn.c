@@ -513,8 +513,7 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
     bool err;
     int i, j;
 
-    const char * const ls_ptr;
-    (ls_ptr - s) = (int) strlen(s);
+    const char * const ls_ptr = s + strlen(s);
     i = 0;
 
     while ((i < (ls_ptr - s)) && (s[i] != '.'))
