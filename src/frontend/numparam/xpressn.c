@@ -566,7 +566,7 @@ defsubckt(dico_t *dico, struct card *card)
 
 
 int
-findsubckt(dico_t *dico, char *s)
+findsubckt(dico_t *dico, const char * const s)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value */
 {
