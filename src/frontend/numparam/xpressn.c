@@ -890,12 +890,11 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             const char *kptr = ++s;
             const char *arg2 = NULL;
             const char *arg3 = NULL;
-            char d;
 
             level = 1;
-            do
+            for (;;)
             {
-                d = *kptr++;
+                char d = *kptr++;
                 if (kptr > s_end)
                     d = '\0';
 
@@ -911,7 +910,13 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                         arg3 = kptr; /* kludge for more than 2 args (ternary expression) */
                 }                 /* comma list? */
 
-            } while ((kptr <= s_end) && !((d == ')') && (level <= 0)));
+                if (kptr > s_end) {
+                    break;
+                }
+                if ((d == ')') && (level <= 0)) {
+                    break;
+                }
+            }
 
             // fixme, here level = 0 !!!!! (almost)
 
