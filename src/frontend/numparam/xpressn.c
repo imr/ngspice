@@ -911,14 +911,13 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                 }                 /* comma list? */
 
                 if (kptr >= s_end) {
-                    kptr++;
                     break;
                 }
                 if ((d == ')') && (level <= 0)) {
-                    kptr++;
                     break;
                 }
             }
+            kptr++;
 
             // fixme, here level = 0 !!!!! (almost)
 
