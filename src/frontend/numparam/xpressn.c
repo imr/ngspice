@@ -1262,13 +1262,12 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 continue;
             }
 
-            s++;
-            while ((s < s_end) && (s[-1] <= ' '))
+            while ((s < s_end - 1) && (*s <= ' '))
                 s++;
 
-            if (s[-1] == '(') {
+            if (*s == '(') {
                 /* sub-formula */
-                const char *kptr = s;
+                const char *kptr = ++s;
                 int level = 1;
 
                 for (; kptr < s_end; kptr++) {
@@ -1295,7 +1294,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             } else {
                 /* simple identifier may also be string? */
 
-                const char *kptr = s;
+                const char *kptr = ++s;
                 for (; kptr < s_end; kptr++)
                     if (*kptr <= ' ')
                         break;
