@@ -579,9 +579,9 @@ findsubckt(dico_t *dico, const char * const s)
 
     spice_dstring_init(&ustr);
 
-    k_ptr--;
-    while ((k_ptr >= s) && (*k_ptr <= ' '))
+    while ((k_ptr - 1 >= s) && (*(k_ptr-1) <= ' '))
         k_ptr--;
+    k_ptr--;
 
     j_ptr = k_ptr;
 
