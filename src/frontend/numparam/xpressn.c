@@ -571,7 +571,7 @@ findsubckt(dico_t *dico, const char * const s)
    returns 0 if not found, else the stored definition line number value */
 {
     const char *k_ptr = s + strlen(s);
-    const char *j_ptr;
+    const char *name_e;
 
     entry_t *entry;             /* symbol table entry */
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
@@ -582,12 +582,12 @@ findsubckt(dico_t *dico, const char * const s)
     while ((k_ptr - 1 >= s) && (*(k_ptr-1) <= ' '))
         k_ptr--;
 
-    j_ptr = k_ptr - 1;
+    name_e - 1 = k_ptr - 1;
 
     while ((k_ptr - 1 >= s) && (*(k_ptr-1) > ' '))
         k_ptr--;
 
-    pscopy_up(&ustr, k_ptr - 1 + 1, 0, (int) (j_ptr - (k_ptr - 1)));
+    pscopy_up(&ustr, k_ptr - 1 + 1, 0, (int) ((name_e - 1) - (k_ptr - 1)));
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
