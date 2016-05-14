@@ -1202,6 +1202,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             for (;; kptr++) {
 
                 char d = *kptr;
+                if (d == '\0')
+                    break;
 
                 if (d == '{')
                     nnest++;
@@ -1209,9 +1211,6 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     nnest--;
 
                 if (nnest == 0) {
-                    break;
-                }
-                if (d == '\0') {
                     break;
                 }
             }
@@ -1255,19 +1254,16 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 for (;; kptr++) {
 
                     char d;
-                    if (kptr >= s_end)
-                        d = '\0';
-                    else
-                        d = *kptr;
+                    if (kptr >= s_end) {
+                        break;
+                    }
+                    d = *kptr;
 
                     if (d == '(')
                         level++;
                     else if (d == ')')
                         level--;
 
-                    if (kptr >= s_end) {
-                        break;
-                    }
                     if ((d == ')') && (level <= 0)) {
                         break;
                     }
@@ -1289,13 +1285,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                     char d;
                     if (kptr >= s_end)
-                        d = '\0';
-                    else
-                        d = *kptr;
-
-                    if (kptr >= s_end) {
                         break;
-                    }
+                    d = *kptr;
+
                     if (d <= ' ') {
                         break;
                     }
