@@ -1222,11 +1222,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             const char *kptr = s;
             int nnest = 1;
 
-            for (;; kptr++) {
+            for (; *kptr; kptr++) {
 
                 char d = *kptr;
-                if (d == '\0')
-                    break;
 
                 if (d == '{')
                     nnest++;
@@ -1274,13 +1272,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 const char *kptr = s;
                 int level = 1;
 
-                for (;; kptr++) {
+                for (; kptr < s_end; kptr++) {
 
-                    char d;
-                    if (kptr >= s_end) {
-                        break;
-                    }
-                    d = *kptr;
+                    char d = *kptr;
 
                     if (d == '(')
                         level++;
@@ -1304,11 +1298,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 /* simple identifier may also be string? */
 
                 const char *kptr = s;
-                for (;; kptr++) {
+                for (; kptr < s_end; kptr++) {
 
                     char d;
-                    if (kptr >= s_end)
-                        break;
                     d = *kptr;
 
                     if (d <= ' ') {
