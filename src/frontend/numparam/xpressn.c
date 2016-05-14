@@ -1200,8 +1200,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             const char *kptr = s;
             int nnest = 1;
 
-            do
-            {
+            for (;;) {
+
                 d = *kptr++;
 
                 if (d == '{')
@@ -1209,7 +1209,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 else if (d == '}')
                     nnest--;
 
-            } while ((nnest != 0) && (d != '\0'));
+                if (nnest == 0) {
+                    break;
+                }
+                if (d == '\0') {
+                    break;
+                }
+            }
 
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
@@ -1247,8 +1253,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 const char *kptr = s;
                 int level = 1;
 
-                do
-                {
+                for (;;) {
+
                     if (kptr >= s_end)
                         d = '\0';
                     else
@@ -1261,7 +1267,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     else if (d == ')')
                         level--;
 
-                } while ((kptr <= s_end) && !((d == ')') && (level <= 0)));
+                    if (kptr > s_end) {
+                        break;
+                    }
+                    if ((d == ')') && (level <= 0)) {
+                        break;
+                    }
+                }
 
                 if (kptr > s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
@@ -1275,8 +1287,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 /* simple identifier may also be string? */
 
                 const char *kptr = s;
-                do
-                {
+                for (;;) {
+
                     if (kptr >= s_end)
                         d = '\0';
                     else
@@ -1284,7 +1296,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                     kptr++;
 
-                } while ((kptr <= s_end) && (d > ' '));
+                    if (kptr > s_end) {
+                        break;
+                    }
+                    if (d <= ' ') {
+                        break;
+                    }
+                }
 
                 err = evaluate_variable(dico, &qstr, s - 1, kptr - 1);
                 s = kptr - 1;
