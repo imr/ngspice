@@ -1190,7 +1190,6 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
     spice_dstring_init(&qstr);
     const char * const s_end = strchr(s, '\0');
-    const char *kptr;
 
     while ((s < s_end) && !err) {
 
@@ -1198,7 +1197,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
         if (c == '{') {
             /* try ps expression syntax */
-            kptr = s;
+            const char *kptr = s;
             nnest = 1;
 
             do
@@ -1243,10 +1242,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             while ((s < s_end) && (s[-1] <= ' '))
                 s++;
 
-            kptr = s;
-
-            if (kptr[-1] == '(') {
+            if (s[-1] == '(') {
                 /* sub-formula */
+                const char *kptr = s;
                 level = 1;
 
                 do
@@ -1276,6 +1274,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             } else {
                 /* simple identifier may also be string? */
 
+                const char *kptr = s;
                 do
                 {
                     if (kptr >= s_end)
