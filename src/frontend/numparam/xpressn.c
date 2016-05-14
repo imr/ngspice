@@ -1206,7 +1206,6 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 */
 {
     int ir = 0;
-    char d;
     bool err = 0;
 
     SPICE_DSTRING qstr;         /* temp result dynamic string */
@@ -1225,7 +1224,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             for (;; kptr++) {
 
-                d = *kptr;
+                char d = *kptr;
 
                 if (d == '{')
                     nnest++;
@@ -1278,6 +1277,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                 for (;; kptr++) {
 
+                    char d;
                     if (kptr >= s_end)
                         d = '\0';
                     else
@@ -1310,6 +1310,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 const char *kptr = s;
                 for (;; kptr++) {
 
+                    char d;
                     if (kptr >= s_end)
                         d = '\0';
                     else
