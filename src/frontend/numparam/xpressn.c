@@ -1205,7 +1205,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r)
    bug: wont flag overflow!
 */
 {
-    int (r_ - r) = 0;
+    char *r_ = r;
     bool err = 0;
 
     SPICE_DSTRING qstr;         /* temp result dynamic string */
@@ -1253,7 +1253,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r)
             }
 
             s = kptr + 1;
-            (r_ - r) = (r_ - r) + (int) (insertnumber(dico, r + (r_ - r), &qstr) - (r + (r_ - r)));
+            r_ = r_ + (int) (insertnumber(dico, r_, &qstr) - r_);
 
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
@@ -1313,7 +1313,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r)
                 s = kptr;
             }
 
-            (r_ - r) = (r_ - r) + (int) (insertnumber(dico, r + (r_ - r), &qstr) - (r + (r_ - r)));
+            r_ = r_ + (int) (insertnumber(dico, r_, &qstr) - r_);
         }
     }
 
