@@ -903,9 +903,9 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 
                 if ((d == ',') && (level == 1)) {
                     if (arg2 == NULL)
-                        arg2 = kptr + 1;
+                        arg2 = kptr;
                     else
-                        arg3 = kptr + 1; /* kludge for more than 2 args (ternary expression) */
+                        arg3 = kptr; /* kludge for more than 2 args (ternary expression) */
                 }                 /* comma list? */
 
                 if ((d == ')') && (level <= 0)) {
@@ -920,13 +920,13 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                 error = message(dico, "Closing \")\" not found.\n");
                 natom++;        /* shut up other error message */
             } else {
-                if (arg2 > s) {
-                    v = formula(dico, s, arg2 - 1, &error);
-                    s = arg2;
+                if (arg2 >= s) {
+                    v = formula(dico, s, arg2, &error);
+                    s = arg2 + 1;
                 }
-                if (arg3 > s) {
-                    w = formula(dico, s, arg3 - 1, &error);
-                    s = arg3;
+                if (arg3 >= s) {
+                    w = formula(dico, s, arg3, &error);
+                    s = arg3 + 1;
                 }
                 u = formula(dico, s, kptr - 1, &error);
                 state = S_atom;
