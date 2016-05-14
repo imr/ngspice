@@ -1182,12 +1182,12 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
    bug: wont flag overflow!
 */
 {
+    const char * const s_end = s + strlen(s);
     bool err = 0;
 
     SPICE_DSTRING qstr;         /* temp result dynamic string */
 
     spice_dstring_init(&qstr);
-    const char * const s_end = strchr(s, '\0');
 
     while (s < s_end) {
 
@@ -1234,7 +1234,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
 
-            if ((s + 1 < s_end) && (*s == Intro)) {
+            if ((s < s_end - 1) && (*s == Intro)) {
                 s++;
                 continue;
             }
@@ -1247,7 +1247,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 const char *kptr = s + 1;
                 int level = 1;
 
-                for (; kptr < s_end; kptr++) {
+                for (; *kptr; kptr++) {
 
                     char d = *kptr;
 
@@ -1260,7 +1260,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                         break;
                 }
 
-                if (kptr >= s_end) {
+                if (*kptr == '\0') {
                     err = message(dico, "Closing \")\" not found.\n");
                     goto Lend;
                 }
@@ -1276,6 +1276,10 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             } else {
                 /* simple identifier may also be string? */
 
+                /* fixme, kptr might point behind the terminating '\0' here
+                 * causing serious troubles in evaluate_variable()
+                 *  and/or when updating s
+                 */
                 const char *kptr = s + 1;
                 for (; kptr < s_end; kptr++)
                     if (*kptr <= ' ')
