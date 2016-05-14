@@ -912,11 +912,10 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                     break;
                 }
             }
-            kptr++;
 
             // fixme, here level = 0 !!!!! (almost)
 
-            if (kptr > s_end) {
+            if (kptr >= s_end) {
                 error = message(dico, "Closing \")\" not found.\n");
                 natom++;        /* shut up other error message */
             } else {
@@ -928,7 +927,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                     w = formula(dico, s, arg3, &error);
                     s = arg3 + 1;
                 }
-                u = formula(dico, s, kptr - 1, &error);
+                u = formula(dico, s, kptr, &error);
                 state = S_atom;
                 if (fu > 0) {
                     if ((fu == XFU_TERNARY_FCN))
@@ -947,7 +946,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                         u = mathfunction(fu, v, u);
                 }
             }
-            s = kptr;
+            s = kptr + 1;
             fu = 0;
         } else if (alfa(c)) {
             const char *s_next = fetchid(s, s_end);
