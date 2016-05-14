@@ -1223,9 +1223,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             const char *kptr = s;
             int nnest = 1;
 
-            for (;;) {
+            for (;; kptr++) {
 
-                d = *kptr++;
+                d = *kptr;
 
                 if (d == '{')
                     nnest++;
@@ -1233,9 +1233,11 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     nnest--;
 
                 if (nnest == 0) {
+                    kptr++;
                     break;
                 }
                 if (d == '\0') {
+                    kptr++;
                     break;
                 }
             }
@@ -1276,24 +1278,24 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 const char *kptr = s;
                 int level = 1;
 
-                for (;;) {
+                for (;; kptr++) {
 
                     if (kptr >= s_end)
                         d = '\0';
                     else
                         d = *kptr;
 
-                    kptr++;
-
                     if (d == '(')
                         level++;
                     else if (d == ')')
                         level--;
 
-                    if (kptr > s_end) {
+                    if (kptr >= s_end) {
+                        kptr++;
                         break;
                     }
                     if ((d == ')') && (level <= 0)) {
+                        kptr++;
                         break;
                     }
                 }
@@ -1310,19 +1312,19 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 /* simple identifier may also be string? */
 
                 const char *kptr = s;
-                for (;;) {
+                for (;; kptr++) {
 
                     if (kptr >= s_end)
                         d = '\0';
                     else
                         d = *kptr;
 
-                    kptr++;
-
-                    if (kptr > s_end) {
+                    if (kptr >= s_end) {
+                        kptr++;
                         break;
                     }
                     if (d <= ' ') {
+                        kptr++;
                         break;
                     }
                 }
