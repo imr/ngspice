@@ -584,9 +584,9 @@ findsubckt(dico_t *dico, const char * const s)
 
     j_ptr = k_ptr - 1;
 
-    k_ptr--;
-    while ((k_ptr >= s) && (*k_ptr > ' '))
+    while ((k_ptr - 1 >= s) && (*(k_ptr-1) > ' '))
         k_ptr--;
+    k_ptr--;
 
     pscopy_up(&ustr, k_ptr + 1, 0, (int) (j_ptr - k_ptr));
     entry = entrynb(dico, spice_dstring_value(&ustr));
