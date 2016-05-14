@@ -1208,21 +1208,20 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 else if (d == '}')
                     nnest--;
 
-                if (nnest == 0) {
+                if (nnest == 0)
                     break;
-                }
             }
 
             if (*kptr == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
                 /* exeption made for .meas */
-                if (s + 4 == kptr + 1 - 1 && strncasecmp(s, "LAST", 4) == 0) {
+                if (s + 4 == kptr && strncasecmp(s, "LAST", 4) == 0) {
                     spice_dstring_reinit(&qstr);
                     sadd(&qstr, "last");
                     err = 0;
                 } else {
-                    err = evaluate_expr(dico, &qstr, s, kptr + 1 - 1);
+                    err = evaluate_expr(dico, &qstr, s, kptr);
                 }
             }
 
@@ -1258,15 +1257,14 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     else if (d == ')')
                         level--;
 
-                    if ((d == ')') && (level <= 0)) {
+                    if ((d == ')') && (level <= 0))
                         break;
-                    }
                 }
 
                 if (kptr >= s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
-                    err = evaluate_expr(dico, &qstr, s, kptr + 1 - 1);
+                    err = evaluate_expr(dico, &qstr, s, kptr);
                 }
 
                 s = kptr + 1;
@@ -1279,8 +1277,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     if (*kptr <= ' ')
                         break;
 
-                err = evaluate_variable(dico, &qstr, s - 1, kptr + 1 - 1);
-                s = kptr + 1 - 1;
+                err = evaluate_variable(dico, &qstr, s - 1, kptr);
+                s = kptr;
             }
 
             if (!err)
