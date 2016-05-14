@@ -1239,22 +1239,21 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     break;
                 }
             }
-            kptr++;
 
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
                 /* exeption made for .meas */
-                if (s + 4 == kptr - 1 && strncasecmp(s, "LAST", 4) == 0) {
+                if (s + 4 == kptr + 1 - 1 && strncasecmp(s, "LAST", 4) == 0) {
                     spice_dstring_reinit(&qstr);
                     sadd(&qstr, "last");
                     err = 0;
                 } else {
-                    err = evaluate_expr(dico, &qstr, s, kptr - 1);
+                    err = evaluate_expr(dico, &qstr, s, kptr + 1 - 1);
                 }
             }
 
-            s = kptr;
+            s = kptr + 1;
             if (!err)
                 ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
             else
@@ -1296,15 +1295,14 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                         break;
                     }
                 }
-                kptr++;
 
-                if (kptr > s_end) {
+                if (kptr >= s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
-                    err = evaluate_expr(dico, &qstr, s, kptr - 1);
+                    err = evaluate_expr(dico, &qstr, s, kptr + 1 - 1);
                 }
 
-                s = kptr;
+                s = kptr + 1;
 
             } else {
                 /* simple identifier may also be string? */
@@ -1324,10 +1322,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                         break;
                     }
                 }
-                kptr++;
 
-                err = evaluate_variable(dico, &qstr, s - 1, kptr - 1);
-                s = kptr - 1;
+                err = evaluate_variable(dico, &qstr, s - 1, kptr + 1 - 1);
+                s = kptr + 1 - 1;
             }
 
             if (!err)
