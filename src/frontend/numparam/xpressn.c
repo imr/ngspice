@@ -1489,7 +1489,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
    x= a matching subckt call line, with actual params
 */
 {
-    int n, i, j1, found_j, k, g, h, narg = 0, ls, nest;
+    int n, i, j1, found_j, k, g, h, narg = 0, nest;
     SPICE_DSTRING subname;
     SPICE_DSTRING tstr;
     SPICE_DSTRING ustr;
@@ -1510,7 +1510,6 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
     /***** first, analyze the subckt definition line */
     n = 0;                      /* number of parameters if any */
-    ls = (int) strlen(s);
 
     scopy_up(&tstr, s);
 
@@ -1519,10 +1518,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
     if (j1 >= 0) {
         j1 = j1 + 6;              /* fetch its name - skip subckt */
         t_p = spice_dstring_value(&tstr);
-        while ((j1 < ls) && (t_p[j1] <= ' '))
+        while (t_p[j1] && (t_p[j1] <= ' '))
             j1++;
 
-        while ((j1 < ls) && (t_p[j1] != ' ')) {
+        while (t_p[j1] && (t_p[j1] != ' ')) {
             cadd(&subname, t_p[j1]);
             j1++;
         }
@@ -1585,7 +1584,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         scopy_up(&tstr, skip_non_ws(x));
         int j = 0;
 
-        ls = spice_dstring_length(&tstr);
+        const int ls = spice_dstring_length(&tstr);
 
         spice_dstring_init(&parsebuf);
         scopyd(&parsebuf, &tstr);
