@@ -1298,15 +1298,9 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 /* simple identifier may also be string? */
 
                 const char *kptr = s;
-                for (; kptr < s_end; kptr++) {
-
-                    char d;
-                    d = *kptr;
-
-                    if (d <= ' ') {
+                for (; kptr < s_end; kptr++)
+                    if (*kptr <= ' ')
                         break;
-                    }
-                }
 
                 err = evaluate_variable(dico, &qstr, s - 1, kptr + 1 - 1);
                 s = kptr + 1 - 1;
