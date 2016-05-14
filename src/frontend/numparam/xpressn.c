@@ -1240,7 +1240,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 }
             }
 
-            if (d == '\0') {
+            if (*kptr == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
                 /* exeption made for .meas */
