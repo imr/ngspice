@@ -556,15 +556,15 @@ findsubckt(dico_t *dico, const char * const s)
 
     spice_dstring_init(&ustr);
 
-    while ((k_ptr - 1 >= s) && (*(k_ptr-1) <= ' '))
+    while ((k_ptr > s) && (k_ptr[-1] <= ' '))
         k_ptr--;
 
     name_e = k_ptr;
 
-    while ((k_ptr - 1 >= s) && (*(k_ptr-1) > ' '))
+    while ((k_ptr > s) && (k_ptr[-1] > ' '))
         k_ptr--;
 
-    pscopy_up(&ustr, k_ptr - 1 + 1, 0, (int) ((name_e - 1) - (k_ptr - 1)));
+    pscopy_up(&ustr, k_ptr, 0, (int) (name_e - k_ptr));
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
