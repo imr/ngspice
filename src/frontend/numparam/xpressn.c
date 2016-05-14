@@ -1210,14 +1210,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     nnest--;
 
                 if (nnest == 0) {
-                    kptr++;
                     break;
                 }
                 if (d == '\0') {
-                    kptr++;
                     break;
                 }
             }
+            kptr++;
 
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
@@ -1268,14 +1267,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                         level--;
 
                     if (kptr >= s_end) {
-                        kptr++;
                         break;
                     }
                     if ((d == ')') && (level <= 0)) {
-                        kptr++;
                         break;
                     }
                 }
+                kptr++;
 
                 if (kptr > s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
@@ -1297,14 +1295,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                         d = *kptr;
 
                     if (kptr >= s_end) {
-                        kptr++;
                         break;
                     }
                     if (d <= ' ') {
-                        kptr++;
                         break;
                     }
                 }
+                kptr++;
 
                 err = evaluate_variable(dico, &qstr, s - 1, kptr - 1);
                 s = kptr - 1;
