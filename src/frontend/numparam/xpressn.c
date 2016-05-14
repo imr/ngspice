@@ -1489,7 +1489,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
    x= a matching subckt call line, with actual params
 */
 {
-    int n, i, j, found_j, k, g, h, narg = 0, ls, nest;
+    int n, i, j1, found_j, k, g, h, narg = 0, ls, nest;
     SPICE_DSTRING subname;
     SPICE_DSTRING tstr;
     SPICE_DSTRING ustr;
@@ -1514,17 +1514,17 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
     scopy_up(&tstr, s);
 
-    j = spos_("SUBCKT", spice_dstring_value(&tstr));
+    j1 = spos_("SUBCKT", spice_dstring_value(&tstr));
 
-    if (j >= 0) {
-        j = j + 6;              /* fetch its name - skip subckt */
+    if (j1 >= 0) {
+        j1 = j1 + 6;              /* fetch its name - skip subckt */
         t_p = spice_dstring_value(&tstr);
-        while ((j < ls) && (t_p[j] <= ' '))
-            j++;
+        while ((j1 < ls) && (t_p[j1] <= ' '))
+            j1++;
 
-        while ((j < ls) && (t_p[j] != ' ')) {
-            cadd(&subname, t_p[j]);
-            j++;
+        while ((j1 < ls) && (t_p[j1] != ' ')) {
+            cadd(&subname, t_p[j1]);
+            j1++;
         }
     } else {
         err = message(dico, " ! a subckt line!\n");
@@ -1583,7 +1583,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
           same name as subckt 'x1'
         */
         scopy_up(&tstr, skip_non_ws(x));
-        j = 0;
+        int j = 0;
 
         ls = spice_dstring_length(&tstr);
 
