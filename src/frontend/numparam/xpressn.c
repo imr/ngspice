@@ -1204,12 +1204,12 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
     spice_dstring_init(&qstr);
     spice_dstring_init(&tstr);
     const char *iptr;
-    (iptr - s) = 0;
+    iptr = s;
     const char * const s_end = strchr(s, '\0');
     const char *kptr;
 
     while (((iptr - s) < (s_end - s)) && !err) {
-        (iptr - s)++;
+        iptr++;
         c = s[(iptr - s) - 1];
 
         if (c == '{') {
@@ -1243,7 +1243,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 }
             }
 
-            (iptr - s) = (int) (kptr - s);
+            iptr = kptr;
             if (!err)
                 ir = insertnumber(dico, ir, r, &qstr);
             else
@@ -1253,13 +1253,13 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
             /* skip "&&" which may occur in B source */
 
             if (((iptr - s) + 1 < (s_end - s)) && (s[(iptr - s)] == Intro)) {
-                (iptr - s)++;
+                iptr++;
                 continue;
             }
 
-            (iptr - s)++;
+            iptr++;
             while (((iptr - s) < (s_end - s)) && (s[(iptr - s) - 1] <= ' '))
-                (iptr - s)++;
+                iptr++;
 
             kptr = s + (iptr - s);
 
@@ -1290,7 +1290,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                     err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
                 }
 
-                (iptr - s) = (int) (kptr - s);
+                iptr = kptr;
 
             } else {
                 /* simple identifier may also be string? */
@@ -1308,7 +1308,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 pscopy(&tstr, s, (int) (iptr - s)-1, (int) (kptr - s) - (int) (iptr - s));
                 const char *xx = spice_dstring_value(&tstr);
                 err = evaluate_variable(dico, &qstr, xx, xx + strlen(xx));
-                (iptr - s) = (int) (kptr - s) - 1;
+                iptr = kptr - 1;
             }
 
             if (!err)
