@@ -1244,7 +1244,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
             if (*s == '(') {
                 /* sub-formula */
-                const char *kptr = ++s;
+                const char *kptr = s + 1;
                 int level = 1;
 
                 for (; kptr < s_end; kptr++) {
@@ -1265,7 +1265,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     goto Lend;
                 }
 
-                err = evaluate_expr(dico, &qstr, s, kptr);
+                err = evaluate_expr(dico, &qstr, s + 1, kptr);
                 if (err) {
                     message(dico, "Cannot compute &(expression)\n");
                     goto Lend;
