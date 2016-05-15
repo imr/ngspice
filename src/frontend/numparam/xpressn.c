@@ -1175,7 +1175,7 @@ insertnumber(dico_t *dico, char * const s, SPICE_DSTRINGPTR ustr_p)
 
 
 bool
-nupa_substitute(dico_t *dico, const char *s, char *r)
+nupa_substitute(dico_t *dico, const char *s, char * const r)
 /* s: pointer to original source line.
    r: pointer to result line, already heavily modified wrt s
    anywhere we find a 10-char numstring in r, substitute it.
