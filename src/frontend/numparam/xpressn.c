@@ -1124,7 +1124,7 @@ evaluate_variable(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t)
 
     spice_dstring_reinit(qstr_p);
 
-    stupcase(t);
+    strtoupper(t);
     entry = entrynb(dico, t);
 
     if (!entry)
