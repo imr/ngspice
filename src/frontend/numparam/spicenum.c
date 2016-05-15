@@ -313,11 +313,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 {
     int a;
     char *s;                    /* dstring value of dstr_p */
-    char *t;                    /* dstring value of tstr */
     char category;
-    SPICE_DSTRING tstr;         /* temporary string */
-
-    spice_dstring_init(&tstr);
     stripsomespace(dstr_p, incontrol);
     modernizeex(dstr_p);        /* required for stripbraces count */
 
@@ -325,19 +321,21 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 
     if (s[0] == '.') {
         /* check PS parameter format */
-        scopy_up(&tstr, spice_dstring_value(dstr_p));
-
-        t = spice_dstring_value(&tstr);
-
         if (ci_prefix(".PARAM", s)) {
             /* comment it out */
             /* s[0] = '*'; */
             category = 'P';
         } else if (ci_prefix(".SUBCKT", s)) {
+            char *t;
+            SPICE_DSTRING tstr;
+            spice_dstring_init(&tstr);
+            scopy_up(&tstr, s);
+            t = spice_dstring_value(&tstr);
             /* split off any "params" tail */
             a = spos_("PARAMS:", t);
             if (a >= 0)
                 pscopy(dstr_p, s, 0, a);
+            spice_dstring_free(&tstr);
             category = 'S';
         } else if (ci_prefix(".CONTROL", s)) {
             category = 'C';
@@ -370,7 +368,6 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
         category = '*';
     }
 
-    spice_dstring_free(&tstr);
     return category;
 }
 
