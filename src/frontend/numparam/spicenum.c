@@ -329,21 +329,21 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 
         t = spice_dstring_value(&tstr);
 
-        if (ci_prefix(".PARAM", t) == 1) {
+        if (ci_prefix(".PARAM", s)) {
             /* comment it out */
             /* s[0] = '*'; */
             category = 'P';
-        } else if (ci_prefix(".SUBCKT", t) == 1) {
+        } else if (ci_prefix(".SUBCKT", s)) {
             /* split off any "params" tail */
             a = spos_("PARAMS:", t);
             if (a >= 0)
                 pscopy(dstr_p, s, 0, a);
             category = 'S';
-        } else if (ci_prefix(".CONTROL", t) == 1) {
+        } else if (ci_prefix(".CONTROL", s)) {
             category = 'C';
-        } else if (ci_prefix(".ENDC", t) == 1) {
+        } else if (ci_prefix(".ENDC", s)) {
             category = 'E';
-        } else if (ci_prefix(".ENDS", t) == 1) {
+        } else if (ci_prefix(".ENDS", s)) {
             category = 'U';
         } else {
             category = '.';
