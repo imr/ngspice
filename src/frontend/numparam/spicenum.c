@@ -286,8 +286,7 @@ modernizeex(SPICE_DSTRINGPTR dstr_p)
 
 
 static char
-transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol,
-          SPICE_DSTRINGPTR u_p)
+transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 /*         line s is categorized and crippled down to basic Spice
  *         returns in u control word following dot, if any
  *
@@ -312,14 +311,13 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol,
  *   'B'  netlist (or .model ?) line that had Braces killed
  */
 {
-    int k, a, n;
+    int a, n;
     char *s;                    /* dstring value of dstr_p */
     char *t;                    /* dstring value of tstr */
     char category;
     SPICE_DSTRING tstr;         /* temporary string */
 
     spice_dstring_init(&tstr);
-    spice_dstring_reinit(u_p);
     stripsomespace(dstr_p, incontrol);
     modernizeex(dstr_p);        /* required for stripbraces count */
 
@@ -328,13 +326,8 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol,
     if (s[0] == '.') {
         /* check PS parameter format */
         scopy_up(&tstr, spice_dstring_value(dstr_p));
-        k = 1;
 
         t = spice_dstring_value(&tstr);
-        while (t[k] > ' ') {
-            cadd(u_p, t[k]);
-            k++;
-        }
 
         if (ci_prefix(".PARAM", t) == 1) {
             /* comment it out */
@@ -744,10 +737,8 @@ nupa_copy(struct card *deck)
     int ls;
     char c, d;
     SPICE_DSTRING u;
-    SPICE_DSTRING keywd;
 
     spice_dstring_init(&u);
-    spice_dstring_init(&keywd);
     ls = (int) strlen(s);
 
     while ((ls > 0) && (s[ls - 1] <= ' '))
@@ -759,7 +750,7 @@ nupa_copy(struct card *deck)
     if ((!inexpansionS) && (linenum >= 0) && (linenum <= dynmaxline)) {
         linecountS++;
         dicoS->dynrefptr[linenum] = deck->line;
-        c = transform(dicoS, &u, incontrolS, &keywd);
+        c = transform(dicoS, &u, incontrolS);
         if (c == 'C')
             incontrolS = 1;
         else if (c == 'E')
