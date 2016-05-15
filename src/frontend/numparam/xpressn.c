@@ -1489,16 +1489,13 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
    x= a matching subckt call line, with actual params
 */
 {
-    int n, found_j, k, g, h, narg = 0, nest;
+    int n, narg = 0;
     SPICE_DSTRING subname;
     SPICE_DSTRING tstr;
     SPICE_DSTRING ustr;
     SPICE_DSTRING vstr;
     SPICE_DSTRING idlist;
     SPICE_DSTRING parsebuf;
-    char *buf, *token;
-    char *u_p;
-    bool found;
     bool err = 0;
 
     spice_dstring_init(&subname);
@@ -1586,10 +1583,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
         spice_dstring_init(&parsebuf);
         scopyd(&parsebuf, &tstr);
-        buf = spice_dstring_value(&parsebuf);
+        char * const buf = spice_dstring_value(&parsebuf);
 
-        found = found_j = 0;
-        token = strtok(buf, " "); /* a bit more exact - but not sufficient everytime */
+        int found = 0, found_j = 0;
+        char *token = strtok(buf, " "); /* a bit more exact - but not sufficient everytime */
         j = j + (int) strlen(token) + 1;
         if (strcmp(token, spice_dstring_value(&subname)))
             while ((token = strtok(NULL, " ")) != NULL) {
@@ -1613,7 +1610,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
             while (j < ls) {
 
                 /* try to fetch valid arguments */
-                k = j;
+                int k = j;
                 spice_dstring_reinit(&ustr);
 
                 if (t_p[k] == Intro) {
@@ -1625,8 +1622,8 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                         /* transform to braces... */
                         k++;
                         t_p[k] = '{';
-                        g = k;
-                        nest = 1;
+                        int g = k;
+                        int nest = 1;
 
                         while ((nest > 0) && (g < ls)) {
                             g++;
@@ -1643,7 +1640,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
                 if (alfanum(t_p[k]) || t_p[k] == '.') {
                     /* number, identifier */
-                    h = k;
+                    int h = k;
                     while (t_p[k] > ' ')
                         k++;
                     pscopy(&ustr, spice_dstring_value(&tstr), h, k - h);
@@ -1659,7 +1656,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                         message(dico, "Subckt call, symbol %c not understood\n", t_p[k]);
                 }
 
-                u_p = spice_dstring_value(&ustr);
+                char * const u_p = spice_dstring_value(&ustr);
                 if (u_p[0]) {
                     char *dollar = strchr(spice_dstring_value(&idlist), '$');
                     if (dollar) {
