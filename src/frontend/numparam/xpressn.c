@@ -1187,7 +1187,7 @@ insertnumber(dico_t *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
 
 
 bool
-nupa_substitute(dico_t *dico, char * const s_, char *r)
+nupa_substitute(dico_t *dico, const char *s, char *r)
 /* s: pointer to original source line.
    r: pointer to result line, already heavily modified wrt s
    anywhere we find a 10-char numstring in r, substitute it.
@@ -1203,9 +1203,7 @@ nupa_substitute(dico_t *dico, char * const s_, char *r)
 
     spice_dstring_init(&qstr);
     spice_dstring_init(&tstr);
-    const char *s;
-    s = s_;
-    const char * const s_end = strchr(s_, '\0');
+    const char * const s_end = strchr(s, '\0');
     const char *kptr;
 
     while ((s < s_end) && !err) {
