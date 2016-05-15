@@ -1231,7 +1231,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
-                pscopy(&tstr, s + (iptr - s), (iptr - s) - (iptr - s), (int) (kptr - iptr - 1));
+                pscopy(&tstr, iptr, 0, (int) (kptr - iptr - 1));
                 /* exeption made for .meas */
                 if (strcasecmp(spice_dstring_value(&tstr), "LAST") == 0) {
                     spice_dstring_reinit(&qstr);
@@ -1285,7 +1285,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 if (kptr > s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
-                    pscopy(&tstr, s + (iptr - s), (iptr - s) - (iptr - s), (int) (kptr - iptr - 1));
+                    pscopy(&tstr, iptr, 0, (int) (kptr - iptr - 1));
                     const char *xx = spice_dstring_value(&tstr);
                     err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
                 }
@@ -1305,7 +1305,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
 
                 } while ((kptr <= s_end) && (d > ' '));
 
-                pscopy(&tstr, s + (iptr - s - 1), (iptr - s)-1 - (iptr - s - 1), (int) (kptr - iptr));
+                pscopy(&tstr, iptr - 1, 0, (int) (kptr - iptr));
                 const char *xx = spice_dstring_value(&tstr);
                 err = evaluate_variable(dico, &qstr, xx, xx + strlen(xx));
                 iptr = kptr - 1;
