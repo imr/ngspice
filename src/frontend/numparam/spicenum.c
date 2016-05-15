@@ -311,7 +311,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
  *   'B'  netlist (or .model ?) line that had Braces killed
  */
 {
-    int a, n;
+    int a;
     char *s;                    /* dstring value of dstr_p */
     char *t;                    /* dstring value of tstr */
     char category;
@@ -347,8 +347,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
             category = 'U';
         } else {
             category = '.';
-            n = stripbraces(dstr_p);
-            if (n > 0)
+            if (stripbraces(dstr_p) > 0)
                 category = 'B'; /* priority category ! */
         }
     } else if (s[0] == Intro) {
@@ -363,8 +362,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
         category = '+';
     } else if (!strchr("*$#", s[0])) {
         /* not a comment line! */
-        n = stripbraces(dstr_p);
-        if (n > 0)
+        if (stripbraces(dstr_p) > 0)
             category = 'B';     /* line that uses braces */
         else
             category = ' ';     /* ordinary code line */
