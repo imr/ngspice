@@ -819,10 +819,10 @@ nupa_eval(struct card *card)
 #endif
 
     if (c == 'P') {                     /* evaluate parameters */
-        // err = nupa_substitute(dico, dico->dynrefptr[linenum], s, 0);
+        // err = nupa_substitute(dico, dico->dynrefptr[linenum], s);
         nupa_assignment(dicoS, dicoS->dynrefptr[linenum], 'N');
     } else if (c == 'B') {              /* substitute braces line */
-        err = nupa_substitute(dicoS, dicoS->dynrefptr[linenum], s, 0);
+        err = nupa_substitute(dicoS, dicoS->dynrefptr[linenum], s);
     } else if (c == 'X') {
         /* compute args of subcircuit, if required */
         char *inst_name = copy_substring(s, skip_non_ws(s));
