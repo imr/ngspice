@@ -1118,18 +1118,20 @@ double_to_string(SPICE_DSTRINGPTR qstr_p, double value)
 
 /* expand parameter in string `t' to result `q' */
 static bool
-evaluate_variable(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t)
+evaluate_variable(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char * const t, const char * const t_end)
 {
     entry_t *entry;
 
     spice_dstring_reinit(qstr_p);
 
-    strtoupper(t);
-    entry = entrynb(dico, t);
+    char *tx = copy_substring(t, t_end);
+    strtoupper(tx);
+    entry = entrynb(dico, tx);
+    tfree(tx);
 
     if (!entry)
         return message(dico,
-                       "\"%s\" not evaluated. Lookup failure.\n", t);
+                       "\"%.*s\" not evaluated. Lookup failure.\n", (int) (t_end - t), t);
 
     if (entry->tp == NUPA_REAL) {
         double_to_string(qstr_p, entry->vl);
@@ -1325,7 +1327,8 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                 } while ((k <= ls) && (d > ' '));
 
                 pscopy(&tstr, s, i-1, k - i);
-                err = evaluate_variable(dico, &qstr, spice_dstring_value(&tstr));
+                const char *xx = spice_dstring_value(&tstr);
+                err = evaluate_variable(dico, &qstr, xx, xx + strlen(xx));
                 i = k - 1;
             }
 
