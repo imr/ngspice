@@ -1489,7 +1489,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
    x= a matching subckt call line, with actual params
 */
 {
-    int n, i, found_j, k, g, h, narg = 0, nest;
+    int n, found_j, k, g, h, narg = 0, nest;
     SPICE_DSTRING subname;
     SPICE_DSTRING tstr;
     SPICE_DSTRING ustr;
@@ -1526,12 +1526,12 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         err = message(dico, " ! a subckt line!\n");
     }
 
-    i = spos_("PARAMS:", spice_dstring_value(&tstr));
+    const char *i2 = strstr(spice_dstring_value(&tstr), "PARAMS:");
 
-    if (i >= 0) {
+    if (i2) {
         const char *optr, *jptr;
 
-        pscopy(&tstr, spice_dstring_value(&tstr) + i + 7, 0, (int) strlen(spice_dstring_value(&tstr) + i + 7));
+        pscopy(&tstr, i2 + 7, 0, (int) strlen(i2 + 7));
 
         /* search identifier to the left of '=' assignments */
 
