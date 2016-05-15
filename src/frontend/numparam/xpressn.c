@@ -1320,23 +1320,24 @@ static void
 getword(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
-    int i = (int) (*pi - s);
+    const char *iptr;
+    (iptr - s) = (int) (*pi - s);
     int ls;
 
     ls = (int) strlen(s);
 
     do
-        i++;
-    while ((i < ls) && !alfa(s[i - 1]));
+        (iptr - s)++;
+    while (((iptr - s) < ls) && !alfa(s[(iptr - s) - 1]));
 
     spice_dstring_reinit(tstr_p);
 
-    while ((i <= ls) && (alfa(s[i - 1]) || isdigit_c(s[i - 1]))) {
-        cadd(tstr_p, toupper_c(s[i - 1]));
-        i++;
+    while (((iptr - s) <= ls) && (alfa(s[(iptr - s) - 1]) || isdigit_c(s[(iptr - s) - 1]))) {
+        cadd(tstr_p, toupper_c(s[(iptr - s) - 1]));
+        (iptr - s)++;
     }
 
-    *pi = s + i;
+    *pi = s + (iptr - s);
 }
 
 
