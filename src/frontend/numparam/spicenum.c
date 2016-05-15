@@ -311,7 +311,6 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
  *   'B'  netlist (or .model ?) line that had Braces killed
  */
 {
-    int a;
     char *s;                    /* dstring value of dstr_p */
     char category;
     stripsomespace(dstr_p, incontrol);
@@ -326,15 +325,15 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
             /* s[0] = '*'; */
             category = 'P';
         } else if (ci_prefix(".SUBCKT", s)) {
-            char *t;
+            char *params, *t;
             SPICE_DSTRING tstr;
             spice_dstring_init(&tstr);
             scopy_up(&tstr, s);
             t = spice_dstring_value(&tstr);
             /* split off any "params" tail */
-            a = spos_("PARAMS:", t);
-            if (a >= 0)
-                pscopy(dstr_p, s, 0, a);
+            params = strstr(t, "PARAMS:");
+            if (params)
+                pscopy(dstr_p, s, 0, (int)(params - t));
             spice_dstring_free(&tstr);
             category = 'S';
         } else if (ci_prefix(".CONTROL", s)) {
