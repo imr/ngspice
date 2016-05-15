@@ -1542,7 +1542,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
     if (i >= 0) {
         const char *optr, *jptr;
 
-        pscopy(&tstr, spice_dstring_value(&tstr), i + 7, spice_dstring_length(&tstr));
+        pscopy(&tstr, spice_dstring_value(&tstr), i + 7, (int) strlen(spice_dstring_value(&tstr) + i + 7));
 
         /* search identifier to the left of '=' assignments */
 
