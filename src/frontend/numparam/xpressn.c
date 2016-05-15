@@ -1217,7 +1217,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
    bug: wont flag overflow!
 */
 {
-    int i, k, level, nnest, ir = 0;
+    int i, level, nnest, ir = 0;
     char c, d;
     bool err = 0;
 
@@ -1228,6 +1228,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
     spice_dstring_init(&tstr);
     i = 0;
     const char * const s_end = strchr(s, '\0');
+    const char *kptr;
 
     while ((i < (s_end - s)) && !err) {
         i++;
@@ -1235,13 +1236,13 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
 
         if (c == '{') {
             /* try ps expression syntax */
-            k = i;
+            (kptr - s) = i;
             nnest = 1;
 
             do
             {
-                k++;
-                d = s[k - 1];
+                (kptr - s)++;
+                d = s[(kptr - s) - 1];
                 if (d == '{')
                     nnest++;
                 else if (d == '}')
@@ -1252,7 +1253,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
-                pscopy(&tstr, s, i , k - i - 1);
+                pscopy(&tstr, s, i , (int) (kptr - s) - i - 1);
                 /* exeption made for .meas */
                 if (strcasecmp(spice_dstring_value(&tstr), "LAST") == 0) {
                     spice_dstring_reinit(&qstr);
@@ -1264,7 +1265,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 }
             }
 
-            i = k;
+            i = (int) (kptr - s);
             if (!err)
                 ir = insertnumber(dico, ir, r, &qstr);
             else
@@ -1282,54 +1283,54 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
             while ((i < (s_end - s)) && (s[i - 1] <= ' '))
                 i++;
 
-            k = i;
+            (kptr - s) = i;
 
-            if (s[k - 1] == '(') {
+            if (s[(kptr - s) - 1] == '(') {
                 /* sub-formula */
                 level = 1;
 
                 do
                 {
-                    k++;
-                    if (k > (s_end - s))
+                    (kptr - s)++;
+                    if ((kptr - s) > (s_end - s))
                         d = '\0';
                     else
-                        d = s[k - 1];
+                        d = s[(kptr - s) - 1];
 
                     if (d == '(')
                         level++;
                     else if (d == ')')
                         level--;
 
-                } while ((k <= (s_end - s)) && !((d == ')') && (level <= 0)));
+                } while (((kptr - s) <= (s_end - s)) && !((d == ')') && (level <= 0)));
 
-                if (k > (s_end - s)) {
+                if ((kptr - s) > (s_end - s)) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
-                    pscopy(&tstr, s, i, k - i - 1);
+                    pscopy(&tstr, s, i, (int) (kptr - s) - i - 1);
                     const char *xx = spice_dstring_value(&tstr);
                     err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
                 }
 
-                i = k;
+                i = (int) (kptr - s);
 
             } else {
                 /* simple identifier may also be string? */
 
                 do
                 {
-                    k++;
-                    if (k > (s_end - s))
+                    (kptr - s)++;
+                    if ((kptr - s) > (s_end - s))
                         d = '\0';
                     else
-                        d = s[k - 1];
+                        d = s[(kptr - s) - 1];
 
-                } while ((k <= (s_end - s)) && (d > ' '));
+                } while (((kptr - s) <= (s_end - s)) && (d > ' '));
 
-                pscopy(&tstr, s, i-1, k - i);
+                pscopy(&tstr, s, i-1, (int) (kptr - s) - i);
                 const char *xx = spice_dstring_value(&tstr);
                 err = evaluate_variable(dico, &qstr, xx, xx + strlen(xx));
-                i = k - 1;
+                i = (int) (kptr - s) - 1;
             }
 
             if (!err)
