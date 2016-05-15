@@ -1208,19 +1208,19 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
     const char * const s_end = strchr(s, '\0');
     const char *kptr;
 
-    while (((iptr - s) < (s_end - s)) && !err) {
+    while ((iptr < s_end) && !err) {
         iptr++;
-        c = s[(iptr - s) - 1];
+        c = iptr[-1];
 
         if (c == '{') {
             /* try ps expression syntax */
-            kptr = s + (iptr - s);
+            kptr = iptr;
             nnest = 1;
 
             do
             {
                 kptr++;
-                d = s[(kptr - s) - 1];
+                d = kptr[-1];
                 if (d == '{')
                     nnest++;
                 else if (d == '}')
@@ -1231,7 +1231,7 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
-                pscopy(&tstr, s, (int) (iptr - s) , (int) (kptr - s) - (int) (iptr - s) - 1);
+                pscopy(&tstr, s, (int) (iptr - s) , (int) (kptr - iptr - 1));
                 /* exeption made for .meas */
                 if (strcasecmp(spice_dstring_value(&tstr), "LAST") == 0) {
                     spice_dstring_reinit(&qstr);
@@ -1252,40 +1252,40 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
 
-            if (((iptr - s) + 1 < (s_end - s)) && (s[(iptr - s)] == Intro)) {
+            if ((iptr + 1 < s_end) && (*iptr == Intro)) {
                 iptr++;
                 continue;
             }
 
             iptr++;
-            while (((iptr - s) < (s_end - s)) && (s[(iptr - s) - 1] <= ' '))
+            while ((iptr < s_end) && (iptr[-1] <= ' '))
                 iptr++;
 
-            kptr = s + (iptr - s);
+            kptr = iptr;
 
-            if (s[(kptr - s) - 1] == '(') {
+            if (kptr[-1] == '(') {
                 /* sub-formula */
                 level = 1;
 
                 do
                 {
                     kptr++;
-                    if ((kptr - s) > (s_end - s))
+                    if (kptr > s_end)
                         d = '\0';
                     else
-                        d = s[(kptr - s) - 1];
+                        d = kptr[-1];
 
                     if (d == '(')
                         level++;
                     else if (d == ')')
                         level--;
 
-                } while (((kptr - s) <= (s_end - s)) && !((d == ')') && (level <= 0)));
+                } while ((kptr <= s_end) && !((d == ')') && (level <= 0)));
 
-                if ((kptr - s) > (s_end - s)) {
+                if (kptr > s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
-                    pscopy(&tstr, s, (int) (iptr - s), (int) (kptr - s) - (int) (iptr - s) - 1);
+                    pscopy(&tstr, s, (int) (iptr - s), (int) (kptr - iptr - 1));
                     const char *xx = spice_dstring_value(&tstr);
                     err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
                 }
@@ -1298,14 +1298,14 @@ nupa_substitute(dico_t *dico, char * const s, char *r)
                 do
                 {
                     kptr++;
-                    if ((kptr - s) > (s_end - s))
+                    if (kptr > s_end)
                         d = '\0';
                     else
-                        d = s[(kptr - s) - 1];
+                        d = kptr[-1];
 
-                } while (((kptr - s) <= (s_end - s)) && (d > ' '));
+                } while ((kptr <= s_end) && (d > ' '));
 
-                pscopy(&tstr, s, (int) (iptr - s)-1, (int) (kptr - s) - (int) (iptr - s));
+                pscopy(&tstr, s, (int) (iptr - s)-1, (int) (kptr - iptr));
                 const char *xx = spice_dstring_value(&tstr);
                 err = evaluate_variable(dico, &qstr, xx, xx + strlen(xx));
                 iptr = kptr - 1;
