@@ -1222,10 +1222,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
     bool err = 0;
 
     SPICE_DSTRING qstr;         /* temp result dynamic string */
-    SPICE_DSTRING tstr;         /* temp dynamic string */
 
     spice_dstring_init(&qstr);
-    spice_dstring_init(&tstr);
     const char * const s_end = strchr(s, '\0');
     const char *kptr;
 
@@ -1252,15 +1250,13 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             if (d == '\0') {
                 err = message(dico, "Closing \"}\" not found.\n");
             } else {
-                pscopy(&tstr, s, 0, (int) (kptr - s - 1));
                 /* exeption made for .meas */
                 if (s + 4 == kptr - 1 && strncasecmp(s, "LAST", 4) == 0) {
                     spice_dstring_reinit(&qstr);
                     sadd(&qstr, "last");
                     err = 0;
                 } else {
-                    const char *xx = spice_dstring_value(&tstr);
-                    err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
+                    err = evaluate_expr(dico, &qstr, s, kptr - 1);
                 }
             }
 
@@ -1307,9 +1303,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 if (kptr > s_end) {
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
-                    pscopy(&tstr, s, 0, (int) (kptr - s - 1));
-                    const char *xx = spice_dstring_value(&tstr);
-                    err = evaluate_expr(dico, &qstr, xx, xx + strlen(xx));
+                    err = evaluate_expr(dico, &qstr, s, kptr - 1);
                 }
 
                 s = kptr;
@@ -1328,9 +1322,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
                 } while ((kptr <= s_end) && (d > ' '));
 
-                pscopy(&tstr, s - 1, 0, (int) (kptr - s));
-                const char *xx = spice_dstring_value(&tstr);
-                err = evaluate_variable(dico, &qstr, xx, xx + strlen(xx));
+                err = evaluate_variable(dico, &qstr, s - 1, kptr - 1);
                 s = kptr - 1;
             }
 
@@ -1342,7 +1334,6 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
     }
 
     spice_dstring_free(&qstr);
-    spice_dstring_free(&tstr);
 
     return err;
 }
