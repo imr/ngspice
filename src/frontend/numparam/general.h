@@ -25,6 +25,5 @@ bool ci_prefix(const char *p, const char *s);
 
 bool alfa(char c);
 bool alfanum(char c);
-char *stupcase(char *s);
 
 int yes_or_no(void);
