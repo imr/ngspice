@@ -73,7 +73,7 @@ ci_prefix(const char *p, const char *s)
  *    use Str(n,s) macro: define and initialize a string s of maxlen n<255
  *    to allocate a string on the heap, use newstring(n).
  *    use maxlen() and length() to retrieve string max and actual length
- *    use: cadd, cins, sadd, sins, scopy, pscopy to manipulate them
+ *    use: cadd, sadd, scopy, pscopy to manipulate them
  *    never put '\x0' characters inside strings !
  *
  *    the 'killer idea' is the following:
@@ -102,48 +102,6 @@ cadd(SPICE_DSTRINGPTR dstr_p, char c)
     tmp_str[0] = c;
     tmp_str[1] = '\0';
     spice_dstring_append(dstr_p, tmp_str, -1);
-}
-
-
-/* -----------------------------------------------------------------
- * Function: insert character c at front of dynamic string dstr_p
- * ----------------------------------------------------------------- */
-void
-cins(SPICE_DSTRINGPTR dstr_p, char c)
-{
-    int i;
-    int ls;
-    char *s_p;
-
-    ls = spice_dstring_length(dstr_p);
-    spice_dstring_setlength(dstr_p, ls+2); /* make sure we have space for char + EOS */
-    s_p = spice_dstring_value(dstr_p);
-    for (i = ls + 1; i >= 0; i--)
-        s_p[i + 1] = s_p[i];
-    s_p[0] = c;
-}
-
-
-/* -----------------------------------------------------------------
- * Function: insert string t at front of dynamic string dstr_p
- * ----------------------------------------------------------------- */
-void
-sins(SPICE_DSTRINGPTR dstr_p, const char *t)
-{
-    int i;
-    int ls;
-    int lt;
-    char *s_p;
-
-    ls = spice_dstring_length(dstr_p);
-    lt = (int) strlen(t);
-    spice_dstring_setlength(dstr_p, ls+lt+1); /* make sure we have space for string + EOS */
-    s_p = spice_dstring_value(dstr_p);
-    for (i = ls + 1; i >= 0; i--)
-        s_p[i + lt] = s_p[i];
-
-    for (i = 0; i < lt; i++)
-        s_p[i] = t[i];
 }
 
 
@@ -279,45 +237,6 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 }
 
 
-void
-nadd(SPICE_DSTRINGPTR dstr_p, long n)
-/* append a decimal integer to a string */
-{
-    int d[25];
-    int j, k;
-    char sg;                    /* the sign */
-    char load_str[2];           /* used to load dstring */
-    k = 0;
-
-    if (n < 0) {
-        n = -n;
-        sg = '-';
-    } else {
-        sg = '+';
-    }
-
-    while (n > 0) {
-        d[k] = (int)(n % 10);
-        k++;
-        n = n / 10;
-    }
-
-    if (k == 0) {
-        cadd(dstr_p, '0');
-    } else {
-        load_str[1] = '\0';
-        if (sg == '-') {
-            load_str[0] = sg;
-            spice_dstring_append(dstr_p, load_str, 1);
-        }
-        for (j = k - 1; j >= 0; j--) {
-            load_str[0] = (char) ('0' + d[j]);
-            spice_dstring_append(dstr_p, load_str, 1);
-        }
-    }
-}
-
-
 bool
 alfa(char c)
 {
@@ -332,18 +251,4 @@ bool
 alfanum(char c)
 {
     return alfa(c) || ((c >= '0') && (c <= '9'));
-}
-
-
-/***** elementary math *******/
-
-int
-spos_(char *sub, const char *s)
-{
-    const char *ptr = strstr(s, sub);
-
-    if (ptr)
-        return (int) (ptr - s);
-    else
-        return -1;
 }

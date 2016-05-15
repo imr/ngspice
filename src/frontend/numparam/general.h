@@ -16,11 +16,7 @@ void scopys(SPICE_DSTRINGPTR a, const char *b);
 void scopy_up(SPICE_DSTRINGPTR a, const char *str);
 void scopy_lower(SPICE_DSTRINGPTR a, const char *str);
 void sadd(SPICE_DSTRINGPTR s, const char *t);
-void nadd(SPICE_DSTRINGPTR s, long n);
 void cadd(SPICE_DSTRINGPTR s, char c);
-void cins(SPICE_DSTRINGPTR s, char c);
-void sins(SPICE_DSTRINGPTR s, const char *t);
-int spos_(char *sub, const char *s);
 bool ci_prefix(const char *p, const char *s);
 
 bool alfa(char c);
