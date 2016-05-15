@@ -335,20 +335,6 @@ alfanum(char c)
 }
 
 
-char *
-stupcase(char *s)
-{
-    int i = 0;
-
-    while (s[i] != '\0') {
-        s[i] = toupper_c(s[i]);
-        i++;
-    }
-
-    return s;
-}
-
-
 /***** elementary math *******/
 
 int
