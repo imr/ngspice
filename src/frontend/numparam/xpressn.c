@@ -1408,7 +1408,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         tpe = NUPA_REAL;
     }
 
-    pscopy(tstr_p, s, (int)(ia_ptr - s)-1, (int) (iptr - ia_ptr));
+    pscopy(tstr_p, ia_ptr - 1, 0, (int) (iptr - ia_ptr));
 
     if (iptr[-1] == '}')
         iptr++;
