@@ -1340,16 +1340,17 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
+    const char *ls_ptr;
     const char *iptr;
     iptr = *pi - s + s;
-    int ia, ls, level;
+    int ia, level;
     char c, d;
     nupa_type tpe;
 
-    ls = (int) strlen(s);
+    (ls_ptr - s) = (int) strlen(s);
     ia = (int) (iptr - s) + 1;
 
-    while ((ia < ls) && (s[ia - 1] <= ' '))
+    while ((ia < (ls_ptr - s)) && (s[ia - 1] <= ' '))
         ia++;                   /*white space ? */
 
     if (s[ia - 1] == '"') {
@@ -1357,14 +1358,14 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         ia++;
         iptr = ia + s;
 
-        while (((iptr - s) < ls) && (s[(iptr - s) - 1] != '"'))
+        while (((iptr - s) < (ls_ptr - s)) && (s[(iptr - s) - 1] != '"'))
             iptr++;
 
         tpe = NUPA_STRING;
 
         do
             iptr++;
-        while (((iptr - s) <= ls) && (s[(iptr - s) - 1] <= ' '));
+        while (((iptr - s) <= (ls_ptr - s)) && (s[(iptr - s) - 1] <= ' '));
 
     } else {
 
@@ -1377,7 +1378,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         {
             iptr++;
 
-            if ((iptr - s) > ls)
+            if ((iptr - s) > (ls_ptr - s))
                 c = ';';
             else
                 c = s[(iptr - s) - 1];
@@ -1389,7 +1390,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                 {
                     iptr++;
 
-                    if ((iptr - s) > ls)
+                    if ((iptr - s) > (ls_ptr - s))
                         d = '\0';
                     else
                         d = s[(iptr - s) - 1];
@@ -1399,7 +1400,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                     else if (d == ')')
                         level--;
 
-                } while (((iptr - s) <= ls) && !((d == ')') && (level <= 0)));
+                } while (((iptr - s) <= (ls_ptr - s)) && !((d == ')') && (level <= 0)));
             }
 
         } while (!strchr(",;)}", c)); /* legal separators */
