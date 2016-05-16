@@ -1579,7 +1579,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         int j0 = 0;
 
         char * const t_p = spice_dstring_value(&tstr);
-        const int ls = spice_dstring_length(&tstr);
+        const int (ls_ptr - t_p) = spice_dstring_length(&tstr);
 
         spice_dstring_init(&parsebuf);
         scopyd(&parsebuf, &tstr);
@@ -1604,10 +1604,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         if (found) {
             char *jp = t_p + j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
 
-            while (((jp - t_p) < ls) && ((t_p[(jp - t_p)] <= ' ') || (t_p[(jp - t_p)] == ',')))
+            while (((jp - t_p) < (ls_ptr - t_p)) && ((t_p[(jp - t_p)] <= ' ') || (t_p[(jp - t_p)] == ',')))
                 jp++;
 
-            while ((jp - t_p) < ls) {
+            while ((jp - t_p) < (ls_ptr - t_p)) {
 
                 /* try to fetch valid arguments */
                 char *kp = t_p + (int) (jp - t_p);
@@ -1625,7 +1625,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                         char *gp = t_p + (int) (kp - t_p);
                         int nest = 1;
 
-                        while ((nest > 0) && ((gp - t_p) < ls)) {
+                        while ((nest > 0) && ((gp - t_p) < (ls_ptr - t_p))) {
                             gp++;
                             if (t_p[(gp - t_p)] == '(')
                                 nest++;
@@ -1633,7 +1633,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                                 nest--;
                         }
 
-                        if (((gp - t_p) < ls) && (nest == 0))
+                        if (((gp - t_p) < (ls_ptr - t_p)) && (nest == 0))
                             t_p[(gp - t_p)] = '}';
                     }
                 }
