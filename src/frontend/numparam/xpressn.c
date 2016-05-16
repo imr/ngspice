@@ -1643,10 +1643,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     int h = k;
                     while (t_p[k] > ' ')
                         k++;
-                    pscopy(&ustr, spice_dstring_value(&tstr), h, k - h);
+                    pscopy(&ustr, t_p, h, k - h);
                     j = k;
                 } else if (t_p[k] == '{') {
-                    char *aux = spice_dstring_value(&tstr);
+                    char *aux = t_p;
                     const char *tmp = aux + j;
                     tmp = getexpress(NULL, &ustr, tmp);
                     j = (int) (tmp - aux);
