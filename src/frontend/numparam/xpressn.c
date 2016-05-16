@@ -1661,9 +1661,8 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                         /* replace dollar with expression string u */
                         pscopy(&vstr, spice_dstring_value(&idlist), 0, kk);
                         sadd(&vstr, spice_dstring_value(&ustr));
-                        pscopy(&ustr, spice_dstring_value(&idlist), kk+1, spice_dstring_length(&idlist));
+                        sadd(&vstr, spice_dstring_value(&idlist) + kk + 1);
                         scopyd(&idlist, &vstr);
-                        sadd(&idlist, spice_dstring_value(&ustr));
                     }
                     narg++;
                 }
