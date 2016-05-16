@@ -1579,7 +1579,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         int j0 = 0;
 
         char * const t_p = spice_dstring_value(&tstr);
-        const int (ls_ptr - t_p) = spice_dstring_length(&tstr);
+        char * const ls_ptr = t_p + spice_dstring_length(&tstr);
 
         spice_dstring_init(&parsebuf);
         scopyd(&parsebuf, &tstr);
