@@ -1643,7 +1643,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     char *hp = kp;
                     while (*kp > ' ')
                         kp++;
-                    pscopy(&ustr, t_p, (int) (hp - t_p), (int) (kp - hp));
+                    pscopy(&ustr, hp, 0, (int) (kp - hp));
                     jp = kp;
                 } else if (*kp == '{') {
                     jp = getexpress(NULL, &ustr, jp);
