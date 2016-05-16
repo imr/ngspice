@@ -1633,17 +1633,17 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
             while ((jp - t_p) < ls) {
 
                 /* try to fetch valid arguments */
-                int (kp - t_p) = (int) (jp - t_p);
+                char *kp = t_p + (int) (jp - t_p);
                 spice_dstring_reinit(&ustr);
 
                 if (t_p[(kp - t_p)] == Intro) {
 
                     /* handle historical syntax... */
                     if (alfa(t_p[(kp - t_p) + 1])) {
-                        (kp - t_p)++;
+                        kp++;
                     } else if (t_p[(kp - t_p) + 1] == '(') {
                         /* transform to braces... */
-                        (kp - t_p)++;
+                        kp++;
                         t_p[(kp - t_p)] = '{';
                         int g = (int) (kp - t_p);
                         int nest = 1;
@@ -1665,7 +1665,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     /* number, identifier */
                     int h = (int) (kp - t_p);
                     while (t_p[(kp - t_p)] > ' ')
-                        (kp - t_p)++;
+                        kp++;
                     pscopy(&ustr, t_p, h, (int) (kp - t_p) - h);
                     jp = t_p + (kp - t_p);
                 } else if (t_p[(kp - t_p)] == '{') {
