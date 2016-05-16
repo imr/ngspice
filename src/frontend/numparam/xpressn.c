@@ -1576,7 +1576,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
           same name as subckt 'x1'
         */
         scopy_up(&tstr, skip_non_ws(x));
-        int j = 0;
+        int j0 = 0;
 
         char * const t_p = spice_dstring_value(&tstr);
         const int ls = spice_dstring_length(&tstr);
@@ -1587,22 +1587,22 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
         int found = 0, found_j = 0;
         char *token = strtok(buf, " "); /* a bit more exact - but not sufficient everytime */
-        j = j + (int) strlen(token) + 1;
+        j0 = j0 + (int) strlen(token) + 1;
         if (strcmp(token, spice_dstring_value(&subname)))
             while ((token = strtok(NULL, " ")) != NULL) {
                 if (!strcmp(token, spice_dstring_value(&subname))) {
                     found = 1;
-                    found_j = j;
+                    found_j = j0;
                 }
-                j = j + (int) strlen(token) + 1;
+                j0 = j0 + (int) strlen(token) + 1;
             }
 
-        j = found_j; /* last occurence of subname in buf */
+        j0 = found_j; /* last occurence of subname in buf */
         spice_dstring_free(&parsebuf);
 
         /*  make sure that subname followed by space */
         if (found) {
-            j = j + spice_dstring_length(&subname) + 1; /* 1st position of arglist: j */
+            int j = j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: j */
 
             while ((j < ls) && ((t_p[j] <= ' ') || (t_p[j] == ',')))
                 j++;
