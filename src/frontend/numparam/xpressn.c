@@ -1633,19 +1633,19 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
             while ((jp - t_p) < ls) {
 
                 /* try to fetch valid arguments */
-                int k = (int) (jp - t_p);
+                int (kp - t_p) = (int) (jp - t_p);
                 spice_dstring_reinit(&ustr);
 
-                if (t_p[k] == Intro) {
+                if (t_p[(kp - t_p)] == Intro) {
 
                     /* handle historical syntax... */
-                    if (alfa(t_p[k + 1])) {
-                        k++;
-                    } else if (t_p[k + 1] == '(') {
+                    if (alfa(t_p[(kp - t_p) + 1])) {
+                        (kp - t_p)++;
+                    } else if (t_p[(kp - t_p) + 1] == '(') {
                         /* transform to braces... */
-                        k++;
-                        t_p[k] = '{';
-                        int g = k;
+                        (kp - t_p)++;
+                        t_p[(kp - t_p)] = '{';
+                        int g = (int) (kp - t_p);
                         int nest = 1;
 
                         while ((nest > 0) && (g < ls)) {
@@ -1661,19 +1661,19 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     }
                 }
 
-                if (alfanum(t_p[k]) || t_p[k] == '.') {
+                if (alfanum(t_p[(kp - t_p)]) || t_p[(kp - t_p)] == '.') {
                     /* number, identifier */
-                    int h = k;
-                    while (t_p[k] > ' ')
-                        k++;
-                    pscopy(&ustr, t_p, h, k - h);
-                    jp = t_p + k;
-                } else if (t_p[k] == '{') {
+                    int h = (int) (kp - t_p);
+                    while (t_p[(kp - t_p)] > ' ')
+                        (kp - t_p)++;
+                    pscopy(&ustr, t_p, h, (int) (kp - t_p) - h);
+                    jp = t_p + (kp - t_p);
+                } else if (t_p[(kp - t_p)] == '{') {
                     jp = t_p + (int) (getexpress(NULL, &ustr, t_p + (jp - t_p)) - t_p);
                 } else {
                     jp++;
-                    if (t_p[k] > ' ')
-                        message(dico, "Subckt call, symbol %c not understood\n", t_p[k]);
+                    if (t_p[(kp - t_p)] > ' ')
+                        message(dico, "Subckt call, symbol %c not understood\n", t_p[(kp - t_p)]);
                 }
 
                 char * const u_p = spice_dstring_value(&ustr);
