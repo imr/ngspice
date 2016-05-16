@@ -1681,11 +1681,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     char * const idlist_p = spice_dstring_value(&idlist);
                     char *dollar = strchr(idlist_p, '$');
                     if (dollar) {
-                        int kk = (int) (dollar - idlist_p);
                         /* replace dollar with expression string u */
-                        pscopy(&vstr, idlist_p, 0, kk);
+                        pscopy(&vstr, idlist_p, 0, (int) (dollar - idlist_p));
                         sadd(&vstr, spice_dstring_value(&ustr));
-                        sadd(&vstr, idlist_p + kk + 1);
+                        sadd(&vstr, dollar + 1);
                         scopyd(&idlist, &vstr);
                     }
                     narg++;
