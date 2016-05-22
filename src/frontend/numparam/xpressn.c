@@ -1669,9 +1669,8 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
                 } else if (t_p[k] == '{') {
                     char *aux = spice_dstring_value(&tstr);
                     const char *tmp = aux + j;
-                    tmp = getexpress(NULL, &ustr, tmp) + 1;
+                    tmp = getexpress(NULL, &ustr, tmp);
                     j = (int) (tmp - aux);
-                    j--;       /* confusion: j was in Turbo Pascal convention */
                 } else {
                     j++;
                     if (t_p[k] > ' ')
