@@ -121,7 +121,6 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             }
 
             pscopy(&tstr, s, 0, i);
-            placeholder++;
 
             t_p = spice_dstring_value(&tstr);
 
@@ -131,7 +130,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             cadd(&tstr, ' ');
             {
                 char buf[25+1];
-                sprintf(buf, "numparm__________%08lx", placeholder);
+                sprintf(buf, "numparm__________%08lx", ++placeholder);
                 sadd(&tstr, buf);
             }
             cadd(&tstr, ' ');
