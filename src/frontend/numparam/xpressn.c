@@ -1340,8 +1340,10 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
 
 static const char *
-getword(const char *s, const char * const s_end, SPICE_DSTRINGPTR tstr_p)
+getword(const char *s, SPICE_DSTRINGPTR tstr_p)
 {
+    const char *s_end = s + strlen(s);
+
     while ((s < s_end - 1) && !alfa(*s))
         s++;
 
@@ -1477,7 +1479,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
     while ((i < ls) && !error) {
 
-        i = (int) (getword(s + i, s + strlen(s), &tstr) + 1 - s);
+        i = (int) (getword(s + i, &tstr) + 1 - s);
         t_p = spice_dstring_value(&tstr);
         if (t_p[0] == '\0')
             error = message(dico, " Identifier expected\n");
