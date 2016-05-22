@@ -1356,25 +1356,24 @@ getword(const char *s, SPICE_DSTRINGPTR tstr_p)
 }
 
 
-static const char *
-getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *pi)
+static char *
+getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
 /* returns expression-like string until next separator
    Input  i=position before expr, output  i=just after expr, on separator.
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
-    const char *xia_ptr = pi;
-    const char * const ls_ptr = xia_ptr + strlen(xia_ptr);
+    const char * const ls_ptr = s + strlen(s);
     const char *p;
     nupa_type tpe;
 
-    while ((xia_ptr < ls_ptr - 1) && (*xia_ptr <= ' '))
-        xia_ptr++;              /*white space ? */
+    while ((s < ls_ptr - 1) && (*s <= ' '))
+        s++;                    /*white space ? */
 
-    if (*xia_ptr == '"') {
+    if (*s == '"') {
         /* string constant */
-        xia_ptr++;
-        p = xia_ptr;
+        s++;
+        p = s;
 
         while ((p < ls_ptr - 1) && (*p != '"'))
             p++;
@@ -1387,10 +1386,10 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *pi)
 
     } else {
 
-        if (*xia_ptr == '{')
-            xia_ptr++;
+        if (*s == '{')
+            s++;
 
-        p = xia_ptr - 1;
+        p = s - 1;
 
         p++;
 
@@ -1423,7 +1422,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *pi)
         tpe = NUPA_REAL;
     }
 
-    pscopy(tstr_p, xia_ptr, 0, (int) (p - xia_ptr));
+    pscopy(tstr_p, s, 0, (int) (p - s));
 
     if (*p == '}')
         p++;
@@ -1434,7 +1433,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *pi)
     if (type)
         *type = tpe;
 
-    return p + 1;
+    return (char *) p + 1;
 }
 
 
