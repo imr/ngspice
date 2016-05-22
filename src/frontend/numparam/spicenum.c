@@ -78,14 +78,13 @@ stripsomespace(SPICE_DSTRINGPTR dstr_p, bool incontrol)
         : "*.&+#$" "xX";
 
     char *s = spice_dstring_value(dstr_p);
-    int ls = spice_dstring_length(dstr_p);
 
     int i = 0;
-    while ((i < ls) && (s[i] <= ' '))
+    while (s[i] && (s[i] <= ' '))
         i++;
 
-    if ((i > 0) && (i < ls) && strchr(markers, s[i]))
-        pscopy(dstr_p, s, i, ls);
+    if ((i > 0) && s[i] && strchr(markers, s[i]))
+        pscopy(dstr_p, s + i, 0, (int) strlen(s + i));
 }
 
 
