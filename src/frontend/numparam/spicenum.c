@@ -95,6 +95,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
     int n, i, nest, ls, j;
     char *s;                    /* value of dynamic string */
     char *t_p;                  /* value of t dynamic string */
+    char *brace;
     SPICE_DSTRING tstr;         /* temporary dynamic string */
 
     n = 0;
@@ -103,9 +104,10 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
     ls = spice_dstring_length(dstr_p);
     i = 0;
 
-    while (i < ls) {
+    while ((brace = strchr(s + i, '{')) != NULL) {
 
-        if (s[i] == '{') {
+        i = (int) (brace - s);
+
 
             /* something to strip */
             j = i + 1;
@@ -143,12 +145,6 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             scopyd(dstr_p, &tstr);
             s = spice_dstring_value(dstr_p);
             ls = spice_dstring_length(dstr_p);
-
-        } else {
-
-            i++;
-
-        }
     }
 
     dynsubst = placeholder;
