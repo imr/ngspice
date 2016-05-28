@@ -614,6 +614,8 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 
         if (access(s, 0) == 0)
             inp_source(s);
+
+        tfree(s);
     }
 #else /* ~ HAVE_PWD_H */
     {
@@ -1397,8 +1399,10 @@ void SetAnalyse(
 
    if (DecaPercent >= 1000){
        /* Because CKTmaxStep may be smaller than 0.1%, we print only when CKTtime is large enough. */
-       if (!strcmp(Analyse, "tran") && ckt && (ckt->CKTtime < ckt->CKTfinalTime - ckt->CKTmaxStep))
+       if (!strcmp(Analyse, "tran") && ckt && (ckt->CKTtime < ckt->CKTfinalTime - ckt->CKTmaxStep)) {
+           tfree(s);
            return;
+       }
        sprintf( s, "--ready--");
        result = statfcn(s, ng_ident, userptr);
        tfree(s);
