@@ -220,6 +220,7 @@ extern char *find_back_assignment(const char *s, const char *start);
 
 extern struct card *line_nconc(struct card *head, struct card *rest);
 extern struct card *line_reverse(struct card *head);
+extern void mc_free(void);
 
 extern char **circarray;
 extern void rem_tlist(struct pt_temper *p);
