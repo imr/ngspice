@@ -382,7 +382,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         if (!deck->li_next)
             fprintf(cp_err, "Warning: no lines in input\n");
     }
-    if (!intfile)
+    if (fp && !intfile)
         fclose(fp);
 
     /* Now save the IO context and start a new control set.  After we
@@ -1067,6 +1067,14 @@ inp_dodeck(
 #if 0
     cp_addkword(CT_CKTNAMES, tt);
 #endif
+}
+
+
+void
+com_mc_source(wordlist *wl)
+{
+    NG_IGNORE(wl);
+    inp_spsource(NULL, FALSE, NULL, FALSE);
 }
 
 
