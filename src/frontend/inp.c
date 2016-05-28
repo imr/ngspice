@@ -334,6 +334,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         return;
     }
 
+    /* files starting with *ng_script are user supplied command files */
+    if (ciprefix("*ng_script", deck->li_line))
+        comfile = TRUE;
+
     if (!comfile) {
         /* Extract the .option lines from the deck into 'options',
            and remove them from the deck. */

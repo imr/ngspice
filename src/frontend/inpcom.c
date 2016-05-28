@@ -487,6 +487,10 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
     rv = inp_read(fp, 0, dir_name, comfile, intfile);
     cc = rv . cc;
 
+    /* files starting with *ng_script are user supplied command files */
+    if (cc && ciprefix("*ng_script", cc->li_line))
+        comfile = TRUE;
+
     /* The following processing of an input file is not required for command files
        like spinit or .spiceinit, so return command files here. */
 
@@ -894,6 +898,10 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         rv . cc = NULL;
         return rv;
     }
+
+    /* files starting with *ng_script are user supplied command files */
+    if (call_depth == 0 && ciprefix("*ng_script", cc->li_line))
+        comfile = TRUE;
 
     if (call_depth == 0 && !comfile) {
         cc->li_next = xx_new_line(cc->li_next, copy(".global gnd"), 1, 0);
