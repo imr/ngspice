@@ -52,6 +52,7 @@ Author: 1985 Wayne A. Christopher
 static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct line *com_options = NULL;
+static struct line *mc_deck = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 static void dotifeval(struct line *deck);
 
@@ -329,6 +330,14 @@ line_reverse(struct line *head)
 }
 
 
+/* free mc_deck */
+void
+mc_free(void)
+{
+    line_free_x(mc_deck, TRUE);
+}
+
+
 /* The routine to source a spice input deck. We read the deck in, take
  * out the front-end commands, and create a CKT structure. Also we
  * filter out the following cards: .save, .width, .four, .print, and
@@ -343,7 +352,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
  *  intfile = whether input is from internal array.  Values are TRUE/FALSE
  */
 {
-    struct line *deck, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
+    struct line *deck = NULL, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
     struct line *realdeck = NULL, *options = NULL, *curr_meas = NULL;
     char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
     double testemp = 0.0;
@@ -365,7 +374,29 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
+    /* inp_source() called with fp: load from file */
+    if (fp) {
+        deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
+
+        /* files starting with *ng_script are user supplied command files */
+        if (deck && ciprefix("*ng_script", deck->li_line))
+            comfile = TRUE;
+        /* save a copy of the deck for later reloading with 'mc_source' */
+        if (deck && !comfile) {
+            if (mc_deck)
+                mc_free();
+            mc_deck = inp_deckcopy_oc(deck);
+        }
+    }
+    /* inp_spsource() called with *fp == NULL: we want to reload circuit for MC simulation */
+    else {
+        if (mc_deck)
+            deck = inp_deckcopy(mc_deck);
+        else {
+            fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
+            controlled_exit(1);
+        }
+    }
     endTime = seconds();
     tfree(dir_name);
 
@@ -393,7 +424,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         if (!deck->li_next)
             fprintf(cp_err, "Warning: no lines in input\n");
     }
-    if (!intfile)
+    if (fp && !intfile)
         fclose(fp);
 
     /* Now save the IO context and start a new control set.  After we
@@ -1069,6 +1100,14 @@ inp_dodeck(
 #if 0
     cp_addkword(CT_CKTNAMES, tt);
 #endif
+}
+
+
+void
+com_mc_source(wordlist *wl)
+{
+    NG_IGNORE(wl);
+    inp_spsource(NULL, FALSE, NULL, FALSE);
 }
 
 
