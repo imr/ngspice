@@ -15,8 +15,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 
 void
-lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
+lincopy(struct plot *new, struct dvec *ov, struct dvec *oldscale)
 {
+    int newlen = new->pl_scale->v_length;
+    double *newscale = new->pl_scale->v_realdata;
+
     struct dvec *v;
     double *nd;
 
@@ -43,6 +46,7 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
         return;
     }
 
+    v->v_plot = new;
     vec_new(v);
 }
 
