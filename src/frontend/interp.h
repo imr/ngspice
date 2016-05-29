@@ -6,7 +6,7 @@
 #ifndef ngspice_INTERP_H
 #define ngspice_INTERP_H
 
-void lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale);
+void lincopy(struct plot *new, struct dvec *ov, struct dvec *oldscale);
 
 
 #endif

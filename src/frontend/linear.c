@@ -81,14 +81,14 @@ com_linearize(wordlist *wl)
                 wl = wl->wl_next;
                 continue;
             }
-            lincopy(v, newtime->v_realdata, len, oldtime);
+            lincopy(new, v, oldtime);
             wl = wl->wl_next;
         }
     } else {
         for (v = old->pl_dvecs; v; v = v->v_next) {
             if (v == old->pl_scale)
                 continue;
-            lincopy(v, newtime->v_realdata, len, oldtime);
+            lincopy(new, v, oldtime);
         }
     }
 }
