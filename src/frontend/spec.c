@@ -275,12 +275,12 @@ com_spec(wordlist *wl)
         fprintf(cp_err, "                           \r");
 
 #ifdef KEEPWINDOW
-        f = dvec_alloc(copy("win"),
-                       SV_NOTYPE,
-                       VF_REAL | VF_PERMANENT,
-                       tlen, win);
-        win = NULL;
-        vec_new(f);
+    f = dvec_alloc(copy("win"),
+                   SV_NOTYPE,
+                   VF_REAL | VF_PERMANENT,
+                   tlen, win);
+    win = NULL;
+    vec_new(f);
 #endif
 
 done:
