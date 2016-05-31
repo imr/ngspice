@@ -319,6 +319,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
     double startTime, endTime;
 
+#ifdef HAS_PROGREP
+    if (!comfile)
+        SetAnalyse("Source Deck", 0);
+#endif
+
     /* read in the deck from a file */
     char *dir_name = ngdirname(filename ? filename : ".");
 
@@ -582,25 +587,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* handle .if ... .elseif ... .else ... .endif statements. */
             dotifeval(deck);
 
-            /*merge the two option line structs*/
+            /* merge the two option line structs,
+               keep com_options, options is loaded into circuit and freed
+               when circuit is removed */
             if (!options && com_options)
-                options = com_options;
+                options = inp_deckcopy(com_options);
             else if (options && com_options) {
-                /* move to end of options
-                   struct line *tmp_options = options;
-                   while (tmp_options) {
-                   if (!tmp_options->li_next) break;
-                   tmp_options = tmp_options->li_next;
-                   }
-                   tmp_options->li_next = com_options;*/
-                /* move to end of com_options */
-                struct line *tmp_options = com_options;
+                /* move to end of copy from com_options and add options */
+                struct line *tmp_options = inp_deckcopy(com_options);
                 while (tmp_options) {
                     if (!tmp_options->li_next)
                         break;
                     tmp_options = tmp_options->li_next;
                 }
                 tmp_options->li_next = options;
+                options = tmp_options;
             }
 
             /* prepare parse trees from 'temper' expressions */
@@ -615,6 +616,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
             /* inp_dodeck did take ownership */
             tt = NULL;
+            options = NULL;
 
         }     /*  if (deck->li_next) */
 
