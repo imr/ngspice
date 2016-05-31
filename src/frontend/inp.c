@@ -293,6 +293,24 @@ line_free_x(struct line *deck, bool recurse)
 }
 
 
+/* reverse the linked list struct line */
+struct line *
+line_reverse(struct line *head)
+{
+    struct line *prev = NULL;
+    struct line *next;
+
+    while (head) {
+        next = head->li_next;
+        head->li_next = prev;
+        prev = head;
+        head = next;
+    }
+
+    return prev;
+}
+
+
 /* The routine to source a spice input deck. We read the deck in, take
  * out the front-end commands, and create a CKT structure. Also we
  * filter out the following cards: .save, .width, .four, .print, and
@@ -318,6 +336,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     double temperature_value;
 
     double startTime, endTime;
+
+#ifdef HAS_PROGREP
+    if (!comfile)
+        SetAnalyse("Source Deck", 0);
+#endif
 
     /* read in the deck from a file */
     char *dir_name = ngdirname(filename ? filename : ".");
@@ -582,26 +605,25 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* handle .if ... .elseif ... .else ... .endif statements. */
             dotifeval(deck);
 
-            /*merge the two option line structs*/
+            /* merge the two option line structs
+               com_options (comfile == TRUE, filled in from spinit, .spiceinit, and *ng_sript), and
+               options (comfile == FALSE, filled in from circuit with .OPTIONS)
+               into options, thus keeping com_options,
+               options is loaded into circuit and freed when circuit is removed */
             if (!options && com_options)
-                options = com_options;
+                options = inp_deckcopy(com_options);
             else if (options && com_options) {
-                /* move to end of options
-                   struct line *tmp_options = options;
-                   while (tmp_options) {
-                   if (!tmp_options->li_next) break;
-                   tmp_options = tmp_options->li_next;
-                   }
-                   tmp_options->li_next = com_options;*/
-                /* move to end of com_options */
-                struct line *tmp_options = com_options;
-                while (tmp_options) {
-                    if (!tmp_options->li_next)
+                /* add a copy from com_options to end of options */
+                struct line *new_options = options;
+                while (options) {
+                    if (!options->li_next)
                         break;
-                    tmp_options = tmp_options->li_next;
+                    options = options->li_next;
                 }
-                tmp_options->li_next = options;
+                options->li_next = inp_deckcopy(com_options);
+                options = new_options;
             }
+            options = line_reverse(options);
 
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
@@ -615,6 +637,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
             /* inp_dodeck did take ownership */
             tt = NULL;
+            options = NULL;
 
         }     /*  if (deck->li_next) */
 
