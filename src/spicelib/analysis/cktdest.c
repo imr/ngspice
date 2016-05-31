@@ -17,6 +17,7 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef XSPICE
 #include "ngspice/evtproto.h"
+#include "ngspice/mif.h"
 #endif
 
 int
@@ -77,5 +78,10 @@ CKTdestroy(CKTcircuit *ckt)
     nghash_free(ckt->DEVnameHash, NULL, NULL);
     nghash_free(ckt->MODnameHash, NULL, NULL);
     FREE(ckt);
+
+#ifdef XSPICE
+    g_mif_info.ckt = NULL;
+#endif
+
     return(OK);
 }
