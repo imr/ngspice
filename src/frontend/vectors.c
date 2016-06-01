@@ -773,7 +773,12 @@ vec_new(struct dvec *d)
     if (plot_cur == NULL) {
         fprintf(cp_err, "vec_new: Internal Error: no cur plot\n");
     }
-    plot_cur->pl_lookup_valid = FALSE;
+    if (plot_cur->pl_lookup_valid && d->v_name) {
+        char *lower_name = copy(d->v_name);
+        strtolower(lower_name);
+        nghash_insert(plot_cur->pl_lookup_table, lower_name, d);
+        tfree(lower_name);
+    }
     if ((d->v_flags & VF_PERMANENT) && (plot_cur->pl_scale == NULL))
         plot_cur->pl_scale = d;
     if (!d->v_plot)
@@ -837,7 +842,12 @@ vec_free_x(struct dvec *v)
 
     /* Now we have to take this dvec out of the plot list. */
     if (pl != NULL) {
-        pl->pl_lookup_valid = FALSE;
+        if (pl->pl_lookup_valid) {
+            char *lower_name = copy(v->v_name);
+            strtolower(lower_name);
+            nghash_deleteItem(pl->pl_lookup_table, lower_name, v);
+            tfree(lower_name);
+        }
         if (pl->pl_dvecs == v) {
             pl->pl_dvecs = v->v_next;
         } else {
