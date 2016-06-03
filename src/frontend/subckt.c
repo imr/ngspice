@@ -714,6 +714,37 @@ inp_deckcopy(struct line *deck) {
 }
 
 
+/*
+ * Copy a deck, without the actual lines, without comment lines.
+ * First line is always copied.
+ */
+struct line *
+inp_deckcopy_oc(struct line *deck)
+{
+    struct line *d = NULL, *nd = NULL;
+
+    while (deck) {
+        if (nd) {
+            d->li_next = TMALLOC(struct line, 1);
+            d = d->li_next;
+        }
+        else {
+            nd = d = TMALLOC(struct line, 1);
+        }
+        d->li_linenum = deck->li_linenum;
+        d->li_line = copy(deck->li_line);
+        if (deck->li_error)
+            d->li_error = copy(deck->li_error);
+        d->li_actual = NULL;
+        deck = deck->li_next;
+        while (deck && *(deck->li_line) == '*')
+            deck = deck->li_next;
+    }
+
+    return (nd);
+}
+
+
 /*-------------------------------------------------------------------
  * struct bxx_buffer,
  *   a string assembly facility.
