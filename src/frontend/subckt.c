@@ -710,6 +710,54 @@ inp_deckcopy(struct card *deck) {
 }
 
 
+/*
+ * Copy a deck, without the ->actualLine lines, without comment lines, and
+ * without .control section(s).
+ * First line is always copied (except being .control).
+ */
+struct card *
+inp_deckcopy_oc(struct card *deck)
+{
+    struct card *d = NULL, *nd = NULL;
+    int skip_control = 0;
+
+    while (deck) {
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", deck->line)) {
+            skip_control++;
+            deck = deck->nextcard;
+            continue;
+        }
+        else if (ciprefix(".endc", deck->line)) {
+            skip_control--;
+            deck = deck->nextcard;
+            continue;
+        }
+        else if (skip_control > 0) {
+            deck = deck->nextcard;
+            continue;
+        }
+        if (nd) {
+            d->nextcard = TMALLOC(struct card, 1);
+            d = d->nextcard;
+        }
+        else {
+            nd = d = TMALLOC(struct card, 1);
+        }
+        d->linenum = deck->linenum;
+        d->line = copy(deck->line);
+        if (deck->error)
+            d->error = copy(deck->error);
+        d->actualLine = NULL;
+        deck = deck->nextcard;
+        while (deck && *(deck->line) == '*')
+            deck = deck->nextcard;
+    }
+
+    return (nd);
+}
+
+
 /*-------------------------------------------------------------------
  * struct bxx_buffer,
  *   a string assembly facility.

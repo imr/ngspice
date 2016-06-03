@@ -8,5 +8,6 @@
 
 struct card *inp_subcktexpand(struct card *deck);
 struct card *inp_deckcopy(struct card *deck);
+struct card *inp_deckcopy_oc(struct card *deck);
 
 #endif
