@@ -344,14 +344,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             comfile = TRUE;
         /* save a copy of the deck for later reloading with 'mc_source' */
         if (!comfile)
-            mc_deck = inp_deckcopy(deck);
+            mc_deck = inp_deckcopy_oc(deck);
     }
     /* inp_spsource() called with *fp == NULL: we want to reload circuit for MC simulation */
     else {
         if (mc_deck)
             deck = inp_deckcopy(mc_deck);
         else {
-            fprintf(stderr, "Error: No circuit loaded, cannot copy internally\n");
+            fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
             controlled_exit(1);
         }
     }
