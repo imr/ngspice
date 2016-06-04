@@ -58,7 +58,7 @@ static void dotifeval(struct card *deck);
 
 static wordlist *inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist *controls);
 
-static void eval_agauss_bsource(struct card *deck, char *fcn);
+static void eval_agauss(struct card *deck, char *fcn);
 
 void line_free_x(struct card *deck, bool recurse);
 void create_circbyline(char *line);
@@ -677,7 +677,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
             int ii;
             for (ii = 0; ii < 5; ii++)
-                eval_agauss_bsource(deck, statfcn[ii]);
+                eval_agauss(deck, statfcn[ii]);
 
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
@@ -1917,7 +1917,7 @@ limit(double nominal_val, double abs_variation)
  */
 
 static void
-eval_agauss_bsource(struct card *deck, char *fcn)
+eval_agauss(struct card *deck, char *fcn)
 {
     struct card *card;
     double x, y, z, val;
