@@ -1931,6 +1931,7 @@ limit(double nominal_val, double abs_variation)
  * So we have to do the following in each B-line:
  * check for agauss(x,y,z), and replace it by a suitable return value
  * of agauss()
+ * agauss may also occur in .param lines, which have to be treated as well
  */
 
 static void
@@ -1958,7 +1959,7 @@ eval_agauss_bsource(struct line *deck, char *fcn)
             continue;
         }
 
-        if (*curr_line != 'b')
+        if ((*curr_line != 'b') && !ciprefix(".param", curr_line))
             continue;
 
         while ((ap = search_identifier(curr_line, fcn, curr_line)) != NULL) {
