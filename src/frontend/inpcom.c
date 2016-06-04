@@ -5962,7 +5962,7 @@ inp_fix_temper_in_param(struct line *deck)
 *
 * In a second step, after subcircuits have been expanded, all occurencies
 * of agauss in a b-line are replaced by their suitable value (function
-* eval_agauss_bsource() in inp.c).
+* eval_agauss() in inp.c).
 */
 
 static void
