@@ -18,6 +18,10 @@
 #include "gnuplot.h"
 
 
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+
 #define GP_MAXVECTORS 64
 
 
@@ -296,16 +300,20 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
 
 /* simple printout of data into a file, similar to data table in ft_gnuplot
-   command: wrsimple file vecs
+   command: wrdata file vecs, vectors of different length (from different plots)
+   may be printed. Data are written in pairs: scale vector, value vector. If
+   data are complex, a triple is printed (scale, real, imag).
+   Setting 'singlescale' as variable, the scale vector will be printed once only,
+   if scale vectors are of same length (there is little risk here!).
+   Width of numbers printed is set by option 'numdgt'.
  */
 void
 ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs)
 {
     FILE *file_data;
-    struct dvec *v, *scale = NULL;
-    double xval;
-    int i, numVecs;
-    bool appendwrite;
+    struct dvec *v;
+    int i, numVecs, maxlen, preci;
+    bool appendwrite, singlescale, vecnames;
 
     NG_IGNORE(xlims);
     NG_IGNORE(ylims);
@@ -316,6 +324,8 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     NG_IGNORE(plottype);
 
     appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
+    singlescale = cp_getvar("wr_singlescale", CP_BOOL, NULL);
+    vecnames = cp_getvar("wr_vecnames", CP_BOOL, NULL);
 
     /* Sanity checking. */
     for (v = vecs, numVecs = 0; v; v = v->v_link2)
@@ -324,28 +334,91 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     if (numVecs == 0)
         return;
 
+    /* print scale vector only once */
+    if (singlescale) {
+        /* check if all vectors have equal scale length */
+        maxlen = vecs->v_length; /* first length of vector read */
+        for (v = vecs; v; v = v->v_link2)
+            if (v->v_scale->v_length != maxlen) {
+                fprintf(stderr,
+                        "Error: Option 'singlescale' not possible.\n"
+                        "       Vectors %s and %s have different lengths!\n"
+                        "       No data written to %s!\n\n",
+                        vecs->v_name, v->v_name, filename);
+                return;
+            }
+    }
+    else {
+        /* find maximum scale length from all vectors */
+        maxlen = 0;
+        for (v = vecs; v; v = v->v_link2)
+            maxlen = max(v->v_scale->v_length, maxlen);
+    }
+
     /* Open the output data file. */
     if ((file_data = fopen(filename, appendwrite ? "a" : "w")) == NULL) {
         perror(filename);
         return;
     }
 
-    i = 0;
-    for (v = vecs; v; v = v->v_link2)
-        scale = v->v_scale;
+    /* If option numdgt is set, use it for printout precision. */
+    if (cp_numdgt > 0)
+        preci = cp_numdgt;
+    else
+        preci = 8;
 
-    /* Write out the data as simple arrays */
-    for (i = 0; i < scale->v_length; i++) {
+    /* Print names of vectors to first line */
+    if (vecnames) {
+        bool prscale = TRUE;
         for (v = vecs; v; v = v->v_link2) {
-            scale = v->v_scale;
-
-            xval = isreal(scale) ?
-                   scale->v_realdata[i] : realpart(scale->v_compdata[i]);
+            struct dvec *scale = v->v_scale;
+            /* If wr_singlescale is set, print scale name only in first column */
+            if (prscale)
+                fprintf(file_data, " %-*s", preci + 7, scale->v_name);
 
             if (isreal(v))
-                fprintf(file_data, "% e % e ", xval, v->v_realdata[i]);
+                fprintf(file_data, " %-*s", preci + 7, v->v_name);
             else
-                fprintf(file_data, "% e % e % e ", xval, realpart(v->v_compdata[i]), imagpart(v->v_compdata[i]));
+                fprintf(file_data, " %-*s %-*s", preci + 7, v->v_name, preci + 7, v->v_name);
+            if (singlescale)
+                /* the following names are printed without scale vector names */
+                prscale = FALSE;
+        }
+        fprintf(file_data, "\n");
+    }
+
+    /* Write out the data as simple arrays */
+    for (i = 0; i < maxlen; i++) {
+        bool prscale = TRUE;
+        /* print scale from the first vector, then only if wr_singlescale is not set */
+        for (v = vecs; v; v = v->v_link2) {
+            struct dvec *scale = v->v_scale;
+            /* if no more scale and value data, just print spaces */
+            if (i >= scale->v_length) {
+                if (prscale)
+                    fprintf(file_data, "%*s", preci + 8, "");
+
+                if (isreal(v))
+                    fprintf(file_data, "%*s", preci + 8, "");
+                else
+                    fprintf(file_data, "%*s", 2 * (preci + 8), "");
+            }
+            else {
+                if (prscale) {
+                    double xval = isreal(scale)
+                        ? scale->v_realdata[i]
+                        : realpart(scale->v_compdata[i]);
+                    fprintf(file_data, "% .*e ", preci, xval);
+                }
+
+                if (isreal(v))
+                    fprintf(file_data, "% .*e ", preci, v->v_realdata[i]);
+                else
+                    fprintf(file_data, "% .*e % .*e ", preci, realpart(v->v_compdata[i]), preci, imagpart(v->v_compdata[i]));
+            }
+            if (singlescale)
+                /* the following vectors are printed without scale vector */
+                prscale = FALSE;
         }
         fprintf(file_data, "\n");
     }
