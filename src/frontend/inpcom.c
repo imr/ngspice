@@ -496,6 +496,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
     struct line *cc;
     struct inp_read_t rv;
 
+    static int tpr = 0;
+
     num_libraries = 0;
     inp_compat_mode = ngspice_compat_mode();
 
@@ -546,9 +548,9 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-//      tprint(working, 1);
+//      tprint(working, tpr++);
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
-//      tprint(working, 2);
+//      tprint(working, tpr++);
 
         delete_names(subckt_w_params);
         subckt_w_params = NULL;
@@ -622,6 +624,13 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
             fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
                     (int) max_line_length, no_braces, dynmaxline);
         }
+    }
+    /* remove white spaces in command files */
+    else if (comfile && cc) {
+        struct line *working = cc->li_next;
+        inp_remove_excess_ws(working);
+        if (ft_ngdebug)
+            tprint(working, tpr++);
     }
 
     return cc;
