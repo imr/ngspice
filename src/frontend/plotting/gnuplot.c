@@ -295,63 +295,109 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 }
 
 
-/* simple printout of data into a file, similar to data table in ft_gnuplot
-   command: wrsimple file vecs
- */
-void
-ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs)
-{
-    FILE *file_data;
-    struct dvec *v, *scale = NULL;
-    double xval;
-    int i, numVecs;
-    bool appendwrite;
+/*
+Simple printout of data into a file, similar to data table in ft_gnuplot
+command: wrdata file vecs
+Listens to 'appendwrite', 'multiscale' and 'filetype'.
+The scale is always written as a DOUBLE REAL (frequency or time), never COMPLEX DOUBLE.
+*/
+void ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs) {
+	FILE *file_data = NULL;
+	char filename_data[1024], buf[1024] = { 0 };
+	struct dvec *v, *scale = NULL;
+	double xval;
+	int i, numVecs, length;
+	bool appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
+	bool multiscale = cp_getvar("multiscale", CP_BOOL, NULL);
+	bool ascii = FALSE;
+	bool firstcol;
 
-    char filename_data[128];
+	NG_IGNORE(xlims);
+	NG_IGNORE(ylims);
+	NG_IGNORE(title);
+	NG_IGNORE(xlabel);
+	NG_IGNORE(ylabel);
+	NG_IGNORE(gridtype);
+	NG_IGNORE(plottype);
 
-    NG_IGNORE(xlims);
-    NG_IGNORE(ylims);
-    NG_IGNORE(title);
-    NG_IGNORE(xlabel);
-    NG_IGNORE(ylabel);
-    NG_IGNORE(gridtype);
-    NG_IGNORE(plottype);
+	if (cp_getvar("filetype", CP_STRING, buf)) {
+		if (eq(buf, "binary")) ascii = FALSE;
+		else if (eq(buf, "ascii")) ascii = TRUE;
+		else fprintf(cp_err, "WARNING: strange file type %s\n", buf);
+	}
 
-    sprintf(filename_data, "%s.data", filename);
-    appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
+	sprintf(filename_data, "%s", filename);
 
-    /* Sanity checking. */
-    for (v = vecs, numVecs = 0; v; v = v->v_link2)
-        numVecs++;
+	/* Sanity checking */
+	for (v = vecs, numVecs = 0; v; v = v->v_link2) numVecs++;
+	if (numVecs == 0) return;
 
-    if (numVecs == 0)
-        return;
+	/* Open the output data file */
+#if defined(_MSC_VER) || defined(__CYGWIN__)
+	/* - Binary file binary write - hvogt 15.03.2000 ---------------------*/
+	if (ascii) {
+		if ((file_data = fopen(filename_data, appendwrite ? "a" : "w")) == NULL) { perror(filename); return; }
+	}
+	else {
+		if ((file_data = fopen(filename_data, appendwrite ? "ab" : "wb")) == NULL) { perror(filename); return; }
+	}
+	/* --------------------------------------------------------------------*/
+#else
+	if (!(file_data = fopen(filename_data, appendwrite ? "a" : "w"))) { perror(filename); return; }
+#endif
 
-    /* Open the output data file. */
-    if ((file_data = fopen(filename_data, appendwrite ? "a" : "w")) == NULL) {
-        perror(filename);
-        return;
-    }
+	i = 0;  for (v = vecs; v; v = v->v_link2) scale = v->v_scale; /* mhx ?? */
+								      /* Write out the data as simple arrays */
+	length = scale->v_length;  for (v = vecs; v; v = v->v_link2) { length = MIN(length, v->v_length); }
 
-    i = 0;
-    for (v = vecs; v; v = v->v_link2)
-        scale = v->v_scale;
-
-    /* Write out the data as simple arrays */
-    for (i = 0; i < scale->v_length; i++) {
-        for (v = vecs; v; v = v->v_link2) {
-            scale = v->v_scale;
-
-            xval = isreal(scale) ?
-                   scale->v_realdata[i] : realpart(scale->v_compdata[i]);
-
-            if (isreal(v))
-                fprintf(file_data, "% e % e ", xval, v->v_realdata[i]);
-            else
-                fprintf(file_data, "% e % e % e ", xval, realpart(v->v_compdata[i]), imagpart(v->v_compdata[i]));
-        }
-        fprintf(file_data, "\n");
-    }
-
-    (void) fclose(file_data);
+	if (ascii) { /* ascii */
+		for (i = 0; i < length; i++) { /* mhx: was scale->v_length */
+			firstcol = 1;
+			for (v = vecs; v; v = v->v_link2) {
+				if (firstcol == 1 || multiscale) {
+					firstcol = 0;  scale = v->v_scale;
+					xval = isreal(scale) ? scale->v_realdata[i] : realpart(scale->v_compdata[i]);
+					if (isreal(v))
+						fprintf(file_data, "% 20.15e % 20.15e ", xval, v->v_realdata[i]);
+					else  fprintf(file_data, "% 20.15e % 20.15e % 20.15e ", xval, realpart(v->v_compdata[i]), imagpart(v->v_compdata[i]));
+				}
+				else {
+					if (isreal(v))
+						fprintf(file_data, "% 20.15e ", v->v_realdata[i]);
+					else  fprintf(file_data, "% 20.15e % 20.15e ", realpart(v->v_compdata[i]), imagpart(v->v_compdata[i]));
+				}
+			}
+			fprintf(file_data, "\n");
+		}
+	}
+	else { /* binary */
+		for (i = 0; i < length; i++) {
+			firstcol = TRUE;
+			for (v = vecs; v; v = v->v_link2) {
+				if (firstcol == TRUE || multiscale) {
+					firstcol = FALSE;
+					if (isreal(v)) {
+						(void)fwrite(&v->v_scale->v_realdata[i], sizeof(double), 1, file_data);
+						(void)fwrite(&v->v_realdata[i], sizeof(double), 1, file_data);
+					}
+					else {
+						(void)fwrite(&realpart(v->v_scale->v_compdata[i]), sizeof(double), 1, file_data);
+						(void)fwrite(&realpart(v->v_compdata[i]), sizeof(double), 1, file_data);
+						(void)fwrite(&imagpart(v->v_compdata[i]), sizeof(double), 1, file_data);
+					}
+				}
+				else {
+					if (isreal(v))
+						(void)fwrite(&v->v_realdata[i], sizeof(double), 1, file_data);
+					else {
+						(void)fwrite(&realpart(v->v_compdata[i]), sizeof(double), 1, file_data);
+						(void)fwrite(&imagpart(v->v_compdata[i]), sizeof(double), 1, file_data);
+					}
+				}
+			}
+		}
+	}
+	(void)fclose(file_data);
 }
+
+/* EOF */
