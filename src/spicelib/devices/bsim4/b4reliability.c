@@ -164,89 +164,142 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
             }
         }
     } else if (mode == 1) {
-        // In this mode, it doesn't matter if NOW the device is in stress or in recovery, since it's the latest timestep
-        if (here->relStruct->IsON == 1)
+        if (NowIsON)
         {
-            // Calculate stress
-            delta = ckt->CKTtime - here->relStruct->time ;
-
-            // Update time and flag - Maybe Optional
-            here->relStruct->time = ckt->CKTtime ;
-            here->relStruct->IsON = 1 ;
-
-            // Calculate Aging - Giorgio Liatis' Model
-            ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
-            if (ret == 1)
+            if (here->relStruct->IsON == 1)
             {
-                return (E_INTERN) ;
+                // Until now, the device was ON - Calculate stress
+                delta = ckt->CKTtime - here->relStruct->time ;
+
+                // Update time and flag - Recovery begins
+                here->relStruct->time = ckt->CKTtime ;
+                here->relStruct->IsON = 1 ;
+
+                // Calculate Aging - Giorgio Liatis' Model
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
+                if (ret == 1)
+                {
+                    return (E_INTERN) ;
+                }
+
+                // Update the semiperiod counter
+                here->relStruct->semiPeriods++ ;
+            } else if (here->relStruct->IsON == 0) {
+                // Until now, the device was OFF - Calculate recovery
+                delta = ckt->CKTtime - here->relStruct->time ;
+
+                // Update time and flag - Stress begins
+                here->relStruct->time = ckt->CKTtime ;
+                here->relStruct->IsON = 1 ;
+
+                // Calculate Aging - Giogio Liatis' Model
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
+                if (ret == 1)
+                {
+                    return (E_INTERN) ;
+                }
+
+                // Update the semiperiod counter
+                here->relStruct->semiPeriods++ ;
+            } else {
+                fprintf (stderr, "Reliability Analysis Error\n") ;
             }
-
-            // Update the semiperiod counter
-            here->relStruct->semiPeriods++ ;
-        } else if (here->relStruct->IsON == 0) {
-            // Calculate recovery
-            delta = ckt->CKTtime - here->relStruct->time ;
-
-            // Update time and flag - Maybe Optional
-            here->relStruct->time = ckt->CKTtime ;
-            here->relStruct->IsON = 0 ;
-
-            // Calculate Aging - Giorgio Liatis' Model
-            ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
-            if (ret == 1)
-            {
-                return (E_INTERN) ;
-            }
-
-            // Update the semiperiod counter
-            here->relStruct->semiPeriods++ ;
         } else {
-            fprintf (stderr, "Reliability Analysis Error\n") ;
+            if (here->relStruct->IsON == 1)
+            {
+                // Until now, the device was ON - Calculate stress
+                delta = ckt->CKTtime - here->relStruct->time ;
+
+                // Update time and flag - Recovery begins
+                here->relStruct->time = ckt->CKTtime ;
+                here->relStruct->IsON = 0 ;
+
+                // Calculate Aging - Giorgio Liatis' Model
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
+                if (ret == 1)
+                {
+                    return (E_INTERN) ;
+                }
+
+                // Update the semiperiod counter
+                here->relStruct->semiPeriods++ ;
+            } else if (here->relStruct->IsON == 0) {
+                // Until now, the device was OFF - Calculate recovery
+                delta = ckt->CKTtime - here->relStruct->time ;
+
+                // Update time and flag - Stress begins
+                here->relStruct->time = ckt->CKTtime ;
+                here->relStruct->IsON = 0 ;
+
+                // Calculate Aging - Giogio Liatis' Model
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
+                if (ret == 1)
+                {
+                    return (E_INTERN) ;
+                }
+
+                // Update the semiperiod counter
+                here->relStruct->semiPeriods++ ;
+            } else {
+                fprintf (stderr, "Reliability Analysis Error\n") ;
+            }
         }
-        printf ("\tTime: %-.9gs\t\t", ckt->CKTtime) ;
-        printf ("DeltaVth: %-.9gmV\t\t", here->relStruct->deltaVth * 1000) ;
-        printf ("Device Name: %s\t\t", here->BSIM4name) ;
-        printf ("Device Type: %s\n\n", model->BSIM4modName) ;
+
+        if (here->relStruct->deltaVth > 0) {
+            model->number_of_aged_instances++ ;
+            model->total_deltaVth += here->relStruct->deltaVth * 1000 ;
+
+            printf ("DEVICE OK!!!\tTime: %-.9gs\t\t", ckt->CKTtime) ;
+            printf ("DeltaVth: %-.9gmV\t\t", here->relStruct->deltaVth * 1000) ;
+            printf ("Device Name: %s\t\t", here->BSIM4name) ;
+            printf ("Device Type: %s\n\n", model->BSIM4modName) ;
+        } else if (here->relStruct->deltaVth > 0) {
+            printf ("\n\n\n\nWarning: PROBLEMATIC DEVICE!!!\tTime: %-.9gs\t\t", ckt->CKTtime) ;
+            printf ("DeltaVth: %-.9gmV\t\t", here->relStruct->deltaVth * 1000) ;
+            printf ("Device Name: %s\t\t", here->BSIM4name) ;
+            printf ("Device Type: %s\n\n\n\n\n\n", model->BSIM4modName) ;
+        } else {
+            printf ("THIS DEVICE IS OFF!!!\tTime: %-.9gs\t\t", ckt->CKTtime) ;
+            printf ("DeltaVth: %-.9gmV\t\t", here->relStruct->deltaVth * 1000) ;
+            printf ("Device Name: %s\t\t", here->BSIM4name) ;
+            printf ("Device Type: %s\n\n", model->BSIM4modName) ;
+        }
 
 
         /* Calculate fitting */
 
-        /* Count how many deltaVth we have */
-        unsigned int i ;
-        RELMODELrelList *current ;
-
-        i = 0 ;
-        current = here->relStruct->deltaVthList ;
-        while (current != NULL)
-        {
-            i++ ;
-            current = current->next ;
-        }
-
-        /* Assign list members to vectors */
-        double *timeFit, *deltaVthFit ;
-
-        timeFit = TMALLOC (double, i) ;
-        deltaVthFit = TMALLOC (double, i) ;
-
-        i = 0 ;
-        current = here->relStruct->deltaVthList ;
-        while (current != NULL)
-        {
-            timeFit [i] = current->time ;
-            deltaVthFit [i] = current->deltaVth ;
-            i++ ;
-            current = current->next ;
-        }
-
         if (here->relStruct->semiPeriods > 1)
         {
             /* The model behavior is periodic - Use Fourier basis fitting */
+
+            double *deltaVthFit, f, factor_for_2pi, *fitting_matrix, target, *timeFit ;
+            RELMODELrelList *current ;
+            unsigned int columns, i, j, number_of_modes, number_of_periods, rows, size ;
+
+            /* Count how many deltaVth we have */
+            i = 0 ;
+            current = here->relStruct->deltaVthList ;
+            while (current != NULL)
+            {
+                i++ ;
+                current = current->next ;
+            }
+
+            /* Assign list members to vectors */
+            timeFit = TMALLOC (double, i) ;
+            deltaVthFit = TMALLOC (double, i) ;
+
+            i = 0 ;
+            current = here->relStruct->deltaVthList ;
+            while (current != NULL)
+            {
+                timeFit [i] = current->time ;
+                deltaVthFit [i] = current->deltaVth ;
+                i++ ;
+                current = current->next ;
+            }
+
             /* Generate the fitting matrix */
-
-            double f, factor_for_2pi, *fitting_matrix, target ;
-            unsigned int columns, j, number_of_modes, number_of_periods, rows, size ;
-
             number_of_periods = here->relStruct->semiPeriods / 2 ;
             number_of_modes = 10 * (number_of_periods + 1) ;
 
@@ -357,6 +410,11 @@ BSIM4reliability (GENmodel *inModel, CKTcircuit *ckt, unsigned int mode)
                 {
                     BSIM4reliability_internal (here, ckt, mode) ;
                 }
+            }
+
+            if (mode == 1) {
+                printf ("Number of aged BSIM4 PMOS instances: %u\n\twith a mean DeltaVth of: %-.9gmV\n\n\n",
+                        model->number_of_aged_instances, model->total_deltaVth / model->number_of_aged_instances) ;
             }
         }
     }

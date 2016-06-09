@@ -2671,6 +2671,12 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 #endif
 
         }
+
+#ifdef RELAN
+                model->number_of_aged_instances = 0 ;
+                model->total_deltaVth = 0 ;
+#endif
+
     }
 
 #ifdef USE_OMP

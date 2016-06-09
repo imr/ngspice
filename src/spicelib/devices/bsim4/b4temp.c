@@ -1721,7 +1721,7 @@ int Size_Not_Found, i;
             {
                 if (here->relStruct->IsON != -1)
                 {
-                    here->BSIM4delvto = here->relStruct->deltaVth ;
+                    here->BSIM4delvto = model->BSIM4type * here->relStruct->deltaVth ;
                 }
             }
 #endif

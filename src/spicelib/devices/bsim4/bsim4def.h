@@ -2723,6 +2723,11 @@ typedef struct sBSIM4model
     unsigned  BSIM4pku0weGiven   :1;
 
 
+#ifdef RELAN
+    unsigned int number_of_aged_instances ;
+    double total_deltaVth ;
+#endif
+
 } BSIM4model;
 
 
