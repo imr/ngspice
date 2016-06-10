@@ -52,6 +52,11 @@ settrace(wordlist *wl, int what, char *name)
     struct dbcomm *d, *td;
     char *s;
 
+    if (!ft_curckt) {
+        fprintf(cp_err, "Error: no circuit loaded\n");
+        return;
+    }
+
     while (wl) {
         s = cp_unquote(wl->wl_word);
         d = TMALLOC(struct dbcomm, 1);
