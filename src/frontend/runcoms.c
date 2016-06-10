@@ -298,6 +298,7 @@ dosim(
         last_used_rawfile = NULL;
 
     ft_curckt->ci_inprogress = TRUE;
+    cp_vset("sim_status", CP_NUM, &err);
     /* "sens2" not used in ngspice */
     if (eq(what, "sens2")) {
         if (if_sens_run(ft_curckt->ci_ckt, ww, ft_curckt->ci_symtab) == 1) {
@@ -331,6 +332,7 @@ dosim(
             fprintf(cp_err, "%s simulation(s) aborted\n", what);
             ft_curckt->ci_inprogress = FALSE;
             err = 1;
+            cp_vset("sim_status", CP_NUM, &err);
         } else {
             ft_curckt->ci_inprogress = FALSE;
         }
