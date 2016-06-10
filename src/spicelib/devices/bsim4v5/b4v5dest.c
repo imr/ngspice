@@ -44,7 +44,13 @@ BSIM4v5destroy(
         }
         if(prev) FREE(prev);
     }
-    if(oldmod) FREE(oldmod);
+    if (oldmod) {
+#ifdef USE_OMP
+        /* free just once for all models */
+        FREE(oldmod->BSIM4v5InstanceArray);
+#endif
+        FREE(oldmod);
+    }
     *model = NULL;
     return;
 }
