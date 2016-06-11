@@ -297,6 +297,7 @@ static bool inexpansionS = 0;   /* flag subckt expansion phase */
 static bool incontrolS = 0;     /* flag control code sections */
 static bool firstsignalS = 1;
 static dico_t *dicoS = NULL;
+static dico_t *dicos_list[100];
 
 
 static void
@@ -684,4 +685,37 @@ nupa_signal(int sig)
         nupa_done();
         firstsignalS = 1;
     }
+}
+
+
+/* Store dicoS for each circuit loaded.
+   The return value will be stored in ft_curckt->ci_dicos.
+   We need to keep dicoS because it may be used by measure. */
+int
+nupa_add_dicoslist(void)
+{
+    int i;
+    for (i = 0; i < 100; i++)
+        if (dicos_list[i] == NULL) {
+            dicos_list[i] = dicoS;
+            break;
+        }
+
+    return (i);
+}
+
+
+/* remove dicoS from list if circuit is removed */
+void
+nupa_rem_dicoslist(int ir)
+{
+    dicos_list[ir] = NULL;
+}
+
+
+/* change dicoS to the active circuit */
+void
+nupa_set_dicoslist(int ir)
+{
+    dicoS = dicos_list[ir];
 }

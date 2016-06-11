@@ -1057,8 +1057,9 @@ inp_dodeck(
     ct->ci_inprogress = FALSE;
     ct->ci_runonce = FALSE;
     ct->ci_commands = end;
+    ct->ci_dicos = nupa_add_dicoslist();
     /* prevent false reads in multi-threaded ngshared */
-#ifndef SHARED_MODULE
+#ifndef SHARED_MODULE    
     if (reuse)
         tfree(ct->ci_filename);
 #endif
