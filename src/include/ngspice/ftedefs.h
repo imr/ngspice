@@ -56,6 +56,8 @@ struct circ {
     JOB *ci_curOpt;           /* most recent options anal. for the circuit */
     char *ci_last_an;         /* name of last analysis run */
 
+    int ci_dicos;               /* index to the numparam dicoS structure
+                                   for this circuit */
     struct pt_temper *modtlist; /* all expressions with 'temper'
                                    in .model lines */
     struct pt_temper *devtlist; /* all expressions with 'temper'
