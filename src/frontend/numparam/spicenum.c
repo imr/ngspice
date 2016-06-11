@@ -409,6 +409,7 @@ static unsigned char dologfileS = 0;    /* for debugging */
 static unsigned char firstsignalS = 1;
 static FILE *logfileS = NULL;
 static dico_t *dicoS = NULL;
+static dico_t *dicos_list[100];
 
 
 /*  already part of dico : */
@@ -908,4 +909,37 @@ dump_symbols(dico_t *dico)
 
     fprintf(stderr, "Symbol table\n");
     nupa_list_params(stderr);
+}
+
+
+/* Store dicoS for each circuit loaded.
+   The return value will be stored in ft_curckt->ci_dicos.
+   We need to keep dicoS because it may be used by measure. */
+int
+nupa_add_dicoslist(void)
+{
+    int i;
+    for (i = 0; i < 100; i++)
+        if (dicos_list[i] == NULL) {
+            dicos_list[i] = dicoS;
+            break;
+        }
+
+    return (i);
+}
+
+
+/* remove dicoS from list if circuit is removed */
+void
+nupa_rem_dicoslist(int ir)
+{
+    dicos_list[ir] = NULL;
+}
+
+
+/* change dicoS to the active circuit */
+void
+nupa_set_dicoslist(int ir)
+{
+    dicoS = dicos_list[ir];
 }

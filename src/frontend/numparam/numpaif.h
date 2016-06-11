@@ -21,6 +21,9 @@ extern void   nupa_add_param(char *param_name, double value);
 extern void   nupa_add_inst_param(char *param_name, double value);
 extern void   nupa_copy_inst_dico(void);
 extern void   nupa_del_dicoS(void);
+extern int    nupa_add_dicoslist(void);
+extern void   nupa_rem_dicoslist(int);
+extern void   nupa_set_dicoslist(int);
 
 extern int dynMaxckt; /* number of lines in deck after expansion */
 
