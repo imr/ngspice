@@ -12,10 +12,11 @@ RELANinit (CKTcircuit *ckt, JOB *anal)
 {
     RELANan *job = (RELANan *) anal ;
 
-    ckt->CKTinitTime  = job->RELANinitTime ;
-    ckt->CKTfinalTime = job->RELANfinalTime ;
-    ckt->CKTstep      = job->RELANstep ;
-    ckt->CKTmaxStep   = job->RELANmaxStep ;
+    ckt->CKTinitTime      = job->RELANinitTime ;
+    ckt->CKTfinalTime     = job->RELANfinalTime ;
+    ckt->CKTstep          = job->RELANstep ;
+    ckt->CKTmaxStep       = job->RELANmaxStep ;
+    ckt->CKTtargetFitting = job->RELANtarget ;
 
     if (ckt->CKTmaxStep == 0)
     {

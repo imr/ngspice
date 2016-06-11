@@ -7,9 +7,6 @@ Author: 2015 Francesco Lannutti - July 2015
 #include "bsim4def.h"
 #include "ngspice/sperror.h"
 
-#include <gsl/gsl_fit.h>
-#include <gsl/gsl_linalg.h>
-
 static int
 BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mode)
 {
@@ -126,7 +123,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 1 ;
 
                 // Calculate Aging - Giogio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 0) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -148,7 +145,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 0 ;
 
                 // Calculate Aging - Giorgio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -176,7 +173,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 1 ;
 
                 // Calculate Aging - Giorgio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -193,7 +190,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 1 ;
 
                 // Calculate Aging - Giogio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 0) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -215,7 +212,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 0 ;
 
                 // Calculate Aging - Giorgio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 1) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -232,7 +229,7 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 here->relStruct->IsON = 0 ;
 
                 // Calculate Aging - Giogio Liatis' Model
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, delta, 1e-12, 0) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, delta, 1e-12, 0) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;
@@ -272,9 +269,9 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
         {
             /* The model behavior is periodic - Use Fourier basis fitting */
 
-            double *deltaVthFit, f, factor_for_2pi, *fitting_matrix, target, *timeFit ;
+            double *deltaVthFit, *timeFit ;
             RELMODELrelList *current ;
-            unsigned int columns, i, j, number_of_modes, number_of_periods, rows, size ;
+            unsigned int i, number_of_periods ;
 
             /* Count how many deltaVth we have */
             i = 0 ;
@@ -299,72 +296,17 @@ BSIM4reliability_internal (BSIM4instance *here, CKTcircuit *ckt, unsigned int mo
                 current = current->next ;
             }
 
-            /* Generate the fitting matrix */
             number_of_periods = here->relStruct->semiPeriods / 2 ;
-            number_of_modes = 10 * (number_of_periods + 1) ;
-
-            rows = i ;
-            columns = 2 * number_of_modes + 1 ;
-            size = rows * columns ;
-            fitting_matrix = TMALLOC (double, size) ;
-
-            factor_for_2pi = 2 * 3.14159265359 / (timeFit [rows - 1] - timeFit [0]) ;
-
-            for (i = 0 ; i < rows ; i++)
-            {
-                /* The first element of every row is equal to 1 */
-                fitting_matrix [columns * i] = 1 ;
-
-                /* The odd elements of every row are cos(x) */
-                for (j = 0 ; j < number_of_modes ; j++)
-                {
-                    fitting_matrix [columns * i + 2 * j + 1] = cos ((j + 1) * timeFit [i] * factor_for_2pi) ;
-                }
-
-                /* The even elements of every row are sin(x) */
-                for (j = 1 ; j <= number_of_modes ; j++)
-                {
-                    fitting_matrix [columns * i + 2 * j] = sin (j * timeFit [i] * factor_for_2pi) ;
-                }
-            }
-
-            gsl_matrix_view m = gsl_matrix_view_array (fitting_matrix, rows, columns) ;
-            gsl_vector_view b = gsl_vector_view_array (deltaVthFit, rows) ;
-            gsl_vector *tau = gsl_vector_alloc (MIN (rows, columns)) ;
-
-            gsl_vector *x = gsl_vector_alloc (columns) ;
-            gsl_vector *residual = gsl_vector_alloc (rows) ;
-
-            gsl_linalg_QR_decomp (&m.matrix, tau) ;
-            gsl_linalg_QR_lssolve (&m.matrix, tau, &b.vector, x, residual) ;
-
-            target = 315360000.0 ;
-            f = gsl_vector_get (x, 0) ;
-
-            /* The odd elements of every row are cos(x) */
-            for (j = 0 ; j < number_of_modes ; j++)
-            {
-                f += gsl_vector_get (x, 2 * j + 1) * cos ((j + 1) * target * factor_for_2pi) ;
-            }
-
-            /* The even elements of every row are sin(x) */
-            for (j = 1 ; j <= number_of_modes ; j++)
-            {
-                f += gsl_vector_get (x, 2 * j) * sin (j * target * factor_for_2pi) ;
-            }
-
-            printf ("\n\nExtrapolation at 10 years:\n\t\t\t\tDeltaVth: %-.9gmV\n\n\n\n", f * 1000) ;
 
             /* Assign the extrapolated DeltaVth to the model */
-            here->relStruct->deltaVth = f ;
+            RELMODELcalculateFitting (i, number_of_periods, ckt->CKTtargetFitting, timeFit, deltaVthFit, &here->relStruct->deltaVth) ;
 
-            gsl_vector_free (tau) ;
-            gsl_vector_free (x) ;
-            gsl_vector_free (residual) ;
+            FREE (timeFit) ;
+            FREE (deltaVthFit) ;
         } else {
             if (here->relStruct->deltaVth > 0)
             {
-                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, 315360000.0, 0, 1) ;
+                ret = RELMODELcalculateAging ((GENinstance *)here, here->BSIM4modPtr->BSIM4modType, ckt, 315360000.0, 0, 1) ;
                 if (ret == 1)
                 {
                     return (E_INTERN) ;

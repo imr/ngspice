@@ -17,13 +17,15 @@ typedef struct {
     double RELANstep ;
     double RELANmaxStep ;
     double RELANinitTime ;
+    double RELANtarget ;
     long RELANmode ;
     runDesc *RELANplot ;
 } RELANan ;
 
-#define RELAN_TSTART 1
-#define RELAN_TSTOP 2
-#define RELAN_TSTEP 3
-#define RELAN_TMAX 4
-#define RELAN_UIC 5
+#define RELAN_TARGET 1
+#define RELAN_TMAX 2
+#define RELAN_TSTART 3
+#define RELAN_TSTEP 4
+#define RELAN_TSTOP 5
+#define RELAN_UIC 6
 #endif

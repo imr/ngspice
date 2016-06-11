@@ -39,8 +39,6 @@ endif
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 
-AM_LDFLAGS = -lgsl -lgslcblas
-
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST = B4TERMS_OF_USE

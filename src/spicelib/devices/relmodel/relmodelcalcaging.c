@@ -47,9 +47,10 @@ listInsert (RELMODELrelList **list, double time, double deltaVth)
 }
 
 int
-RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, double t_step, unsigned int stress_or_recovery)
+RELMODELcalculateAging (GENinstance *inInstance, int modType, CKTcircuit *ckt, double t_aging, double t_step, unsigned int stress_or_recovery)
 {
-    double A, i, Nt ;
+    double A, i, Nt, R ;
+    double b, qFI ;
     BSIM4instance *here ;
     RELMODELmodel *relmodel ;
 
@@ -79,7 +80,7 @@ RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, do
         {
             here->relStruct->deltaVth = Nt * A * pow (log (1 + pow (((t_aging + here->relStruct->t_star) / relmodel->RELMODELtau_0), relmodel->RELMODELbeta)), 2) ;
         } else {
-                here->relStruct->deltaVth = (CHARGE / (4 * CONSTepsZero * 1e-9 * relmodel->RELMODELeps_hk)) * Nt * pow (here->BSIM4modPtr->BSIM4toxe * 1e9, 2) ;
+            here->relStruct->deltaVth = (CHARGE / (4 * CONSTepsZero * 1e-9 * relmodel->RELMODELeps_hk)) * Nt * pow (here->BSIM4modPtr->BSIM4toxe * 1e9, 2) ;
         }
     } else {
         for (i = 0 ; i < t_aging ; i += t_step)
@@ -94,7 +95,15 @@ RELMODELcalculateAging (GENinstance *inInstance, int modType, double t_aging, do
                 }
                 here->relStruct->deltaVthMax = here->relStruct->deltaVth ;
             } else {
-                here->relStruct->deltaVth = here->relStruct->deltaVthMax * log (1 + (1.718 / (1 + pow ((i / relmodel->RELMODELtau_e), relmodel->RELMODELbeta1)))) ;
+                /* Without Temperature Dependency */
+//                here->relStruct->deltaVth = here->relStruct->deltaVthMax * log (1 + (1.718 / (1 + pow ((i / relmodel->RELMODELtau_e), relmodel->RELMODELbeta1)))) ;
+
+                /* With Temperature Dependency */
+//                b = 5.621 * 1.2e6 ;
+                b = 0.706 ;
+                qFI = 1.03 ;
+                R = b * pow (ckt->CKTtemp, 2) * exp (-qFI / (relmodel->RELMODELk_b * ckt->CKTtemp)) ; // R = b * pow (T, 2) * exp (-qFI/kT) ;
+                here->relStruct->deltaVth = (1 - R) * here->relStruct->deltaVthMax * (1 - log (1 + (1.718 / (1 + pow ((i / relmodel->RELMODELtau_e), relmodel->RELMODELbeta1))))) ;
             }
 
             /* Insert 'here->relStruct->deltaVth' into the list for the later fitting */

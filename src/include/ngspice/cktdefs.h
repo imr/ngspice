@@ -283,6 +283,10 @@ struct CKTcircuit {
 /* SP: 100609 */
 #endif
 
+#ifdef RELAN
+    double CKTtargetFitting ;
+#endif
+
     unsigned int CKTisLinear:1; /* flag to indicate that the circuit
                                    contains only linear elements */
     unsigned int CKTnoopac:1; /* flag to indicate that OP will not be evaluated

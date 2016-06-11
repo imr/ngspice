@@ -6,6 +6,7 @@ if RELAN_WANTED
 librelmodel_la_SOURCES =	\
 	relmodel.c		\
 	relmodelcalcaging.c	\
+	relmodelcalcfitting.c	\
 	relmodelmask.c		\
 	relmodelmpar.c		\
 	relmodeldefs.h		\
@@ -19,5 +20,7 @@ endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+
+AM_LDFLAGS = -lgsl -lgslcblas
 
 MAINTAINERCLEANFILES = Makefile.in

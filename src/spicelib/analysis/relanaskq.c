@@ -17,17 +17,20 @@ RELANaskQuest (CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
     switch (which)
     {
+        case RELAN_TARGET:
+            value->rValue = job->RELANtarget ;
+            break ;
+        case RELAN_TMAX:
+            value->rValue = job->RELANmaxStep ;
+            break ;
         case RELAN_TSTART:
             value->rValue = job->RELANinitTime ;
-            break ;
-        case RELAN_TSTOP:
-            value->rValue = job->RELANfinalTime ;
             break ;
         case RELAN_TSTEP:
             value->rValue = job->RELANstep ;
             break ;
-        case RELAN_TMAX:
-            value->rValue = job->RELANmaxStep ;
+        case RELAN_TSTOP:
+            value->rValue = job->RELANfinalTime ;
             break ;
         case RELAN_UIC:
             if (job->RELANmode & MODEUIC) {

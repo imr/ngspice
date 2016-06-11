@@ -635,6 +635,9 @@ dot_relan (char *line, void *ckt, INPtables *tab, card *current, void *task, voi
     IFC (newAnalysis, (ckt, which, "Reliability Analysis", &foo, task)) ;
 
     parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
+    GCA (INPapName, (ckt, which, foo, "relan_aging_long_term_target", parm)) ;
+
+    parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
     GCA (INPapName, (ckt, which, foo, "relan_aging_step", parm)) ;
 
     parm = INPgetValue (ckt, &line, IF_REAL, tab) ;
