@@ -53,6 +53,7 @@ struct circ {
     JOB *ci_specOpt;   /* the special options anal. for command line jobs */
     JOB *ci_curOpt;    /* the most recent options anal. for the circuit */
     char *ci_last_an;   /* name of last analysis run */
+    int ci_dicos;      /* index to the numparam dicoS structure for this circuit*/
 
     FTESTATistics *FTEstats; /* Statistics for the front end */
 } ;
