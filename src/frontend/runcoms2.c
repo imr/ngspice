@@ -222,6 +222,8 @@ com_remcirc(wordlist *wl)
 
     /* delete numparam data structure dicoS */
     nupa_del_dicoS();
+    /* delete entry in dicoslist */
+    nupa_rem_dicoslist(ft_curckt->ci_dicos);
 
     dbfree(ft_curckt->ci_dbs);
     ft_curckt->ci_dbs = NULL;
@@ -283,5 +285,6 @@ com_remcirc(wordlist *wl)
     if (ft_curckt) {
         modtab = ft_curckt->ci_modtab;
         dbs = ft_curckt->ci_dbs;
+        nupa_set_dicoslist(ft_curckt->ci_dicos);
     }
 }
