@@ -11,7 +11,7 @@
 #define Int_MAX INT_MAX
 #endif
 
-#define NPRINT  
+#define NPRINT
 
 #define BYTES(type,n) (sizeof (type) * (n))
 #define CEILING(b,u)  (((b)+(u)-1) / (u))
@@ -37,7 +37,7 @@
 }
 
 /* function names */
-#ifdef COMPLEX 
+#ifdef COMPLEX
 
 #ifdef DLONG
 
@@ -47,7 +47,7 @@
 #define KLU_free_numeric klu_zl_free_numeric
 #define KLU_factor klu_zl_factor
 #define KLU_refactor klu_zl_refactor
-#define KLU_kernel_factor klu_zl_kernel_factor 
+#define KLU_kernel_factor klu_zl_kernel_factor
 #define KLU_lsolve klu_zl_lsolve
 #define KLU_ltsolve klu_zl_ltsolve
 #define KLU_usolve klu_zl_usolve
@@ -70,7 +70,7 @@
 #define KLU_free_numeric klu_z_free_numeric
 #define KLU_factor klu_z_factor
 #define KLU_refactor klu_z_refactor
-#define KLU_kernel_factor klu_z_kernel_factor 
+#define KLU_kernel_factor klu_z_kernel_factor
 #define KLU_lsolve klu_z_lsolve
 #define KLU_ltsolve klu_z_ltsolve
 #define KLU_usolve klu_z_usolve
@@ -97,7 +97,7 @@
 #define KLU_free_numeric klu_l_free_numeric
 #define KLU_factor klu_l_factor
 #define KLU_refactor klu_l_refactor
-#define KLU_kernel_factor klu_l_kernel_factor 
+#define KLU_kernel_factor klu_l_kernel_factor
 #define KLU_lsolve klu_l_lsolve
 #define KLU_ltsolve klu_l_ltsolve
 #define KLU_usolve klu_l_usolve
@@ -120,7 +120,7 @@
 #define KLU_free_numeric klu_free_numeric
 #define KLU_factor klu_factor
 #define KLU_refactor klu_refactor
-#define KLU_kernel_factor klu_kernel_factor 
+#define KLU_kernel_factor klu_kernel_factor
 #define KLU_lsolve klu_lsolve
 #define KLU_ltsolve klu_ltsolve
 #define KLU_usolve klu_usolve

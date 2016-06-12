@@ -24,7 +24,7 @@ typedef struct
 {
     /* A (P,Q) is in upper block triangular form.  The kth block goes from
      * row/col index R [k] to R [k+1]-1.  The estimated number of nonzeros
-     * in the L factor of the kth block is Lnz [k]. 
+     * in the L factor of the kth block is Lnz [k].
      */
 
     /* only computed if the AMD ordering is chosen: */
@@ -385,7 +385,7 @@ int klu_z_tsolve
     double B [ ],           /* size 2*ldim*nrhs */
     int conj_solve,         /* TRUE: conjugate solve, FALSE: solve A.'x=b */
     klu_common *Common
-     
+
 ) ;
 
 UF_long klu_l_tsolve (klu_l_symbolic *, klu_l_numeric *, UF_long, UF_long,
