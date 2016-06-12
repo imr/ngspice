@@ -339,8 +339,8 @@ SMPcSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], doubl
         pExtOrder = &Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluN] ;
         for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
         {
-            Matrix->CKTkluIntermediate_Complex [i] = RHS [*(pExtOrder)] ;
-            Matrix->CKTkluIntermediate_Complex [i - 1] = iRHS [*(pExtOrder--)] ;
+            Matrix->CKTkluIntermediate_Complex [i] = iRHS [*(pExtOrder)] ;
+            Matrix->CKTkluIntermediate_Complex [i - 1] = RHS [*(pExtOrder--)] ;
         }
 
         ret = klu_z_solve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate_Complex, Matrix->CKTkluCommon) ;
@@ -348,8 +348,8 @@ SMPcSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], doubl
         pExtOrder = &Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluN] ;
         for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
         {
-            RHS [*(pExtOrder)] = Matrix->CKTkluIntermediate_Complex [i] ;
-            iRHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate_Complex [i - 1] ;
+            iRHS [*(pExtOrder)] = Matrix->CKTkluIntermediate_Complex [i] ;
+            RHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate_Complex [i - 1] ;
         }
 
     } else {
