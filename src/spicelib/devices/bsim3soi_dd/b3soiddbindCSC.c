@@ -38,7 +38,7 @@ B3SOIDDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B3SOIDDinstances ; here != NULL ; here = here->B3SOIDDnextInstance)
         {
-            if ((model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0!=0.0)) 
+            if ((model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0))
             {
                 if ((here-> B3SOIDDtempNode != 0) && (here-> B3SOIDDtempNode != 0))
                 {
@@ -128,7 +128,7 @@ B3SOIDDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     here->B3SOIDDBtempPtr = matched->CSC ;
                 }
 
-                if (here->B3SOIDDbodyMod == 1) 
+                if (here->B3SOIDDbodyMod == 1)
                 {
                     if ((here-> B3SOIDDpNode != 0) && (here-> B3SOIDDtempNode != 0))
                     {
@@ -140,10 +140,10 @@ B3SOIDDbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 
                 }
             }
-            if (here->B3SOIDDbodyMod == 2) 
+            if (here->B3SOIDDbodyMod == 2)
             {
             }
-            else if (here->B3SOIDDbodyMod == 1) 
+            else if (here->B3SOIDDbodyMod == 1)
             {
                 if ((here-> B3SOIDDbNode != 0) && (here-> B3SOIDDpNode != 0))
                 {
@@ -817,7 +817,7 @@ B3SOIDDbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B3SOIDDinstances ; here != NULL ; here = here->B3SOIDDnextInstance)
         {
-            if ((model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0!=0.0)) 
+            if ((model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0))
             {
                 if ((here-> B3SOIDDtempNode != 0) && (here-> B3SOIDDtempNode != 0))
                     here->B3SOIDDTemptempPtr = here->B3SOIDDTemptempStructPtr->CSC_Complex ;
@@ -852,17 +852,17 @@ B3SOIDDbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B3SOIDDbNode != 0) && (here-> B3SOIDDtempNode != 0))
                     here->B3SOIDDBtempPtr = here->B3SOIDDBtempStructPtr->CSC_Complex ;
 
-                if (here->B3SOIDDbodyMod == 1) 
+                if (here->B3SOIDDbodyMod == 1)
                 {
                     if ((here-> B3SOIDDpNode != 0) && (here-> B3SOIDDtempNode != 0))
                         here->B3SOIDDPtempPtr = here->B3SOIDDPtempStructPtr->CSC_Complex ;
 
                 }
             }
-            if (here->B3SOIDDbodyMod == 2) 
+            if (here->B3SOIDDbodyMod == 2)
             {
             }
-            else if (here->B3SOIDDbodyMod == 1) 
+            else if (here->B3SOIDDbodyMod == 1)
             {
                 if ((here-> B3SOIDDbNode != 0) && (here-> B3SOIDDpNode != 0))
                     here->B3SOIDDBpPtr = here->B3SOIDDBpStructPtr->CSC_Complex ;
@@ -1131,7 +1131,7 @@ B3SOIDDbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B3SOIDDinstances ; here != NULL ; here = here->B3SOIDDnextInstance)
         {
-            if ((model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0!=0.0)) 
+            if ((model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0))
             {
                 if ((here-> B3SOIDDtempNode != 0) && (here-> B3SOIDDtempNode != 0))
                     here->B3SOIDDTemptempPtr = here->B3SOIDDTemptempStructPtr->CSC ;
@@ -1166,17 +1166,17 @@ B3SOIDDbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B3SOIDDbNode != 0) && (here-> B3SOIDDtempNode != 0))
                     here->B3SOIDDBtempPtr = here->B3SOIDDBtempStructPtr->CSC ;
 
-                if (here->B3SOIDDbodyMod == 1) 
+                if (here->B3SOIDDbodyMod == 1)
                 {
                     if ((here-> B3SOIDDpNode != 0) && (here-> B3SOIDDtempNode != 0))
                         here->B3SOIDDPtempPtr = here->B3SOIDDPtempStructPtr->CSC ;
 
                 }
             }
-            if (here->B3SOIDDbodyMod == 2) 
+            if (here->B3SOIDDbodyMod == 2)
             {
             }
-            else if (here->B3SOIDDbodyMod == 1) 
+            else if (here->B3SOIDDbodyMod == 1)
             {
                 if ((here-> B3SOIDDbNode != 0) && (here-> B3SOIDDpNode != 0))
                     here->B3SOIDDBpPtr = here->B3SOIDDBpStructPtr->CSC ;

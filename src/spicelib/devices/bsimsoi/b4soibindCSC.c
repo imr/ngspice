@@ -38,7 +38,7 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B4SOIinstances ; here != NULL ; here = here->B4SOInextInstance)
         {
-            if ((model->B4SOIshMod == 1) && (here->B4SOIrth0!=0.0)) 
+            if ((model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0))
             {
                 if ((here-> B4SOItempNode != 0) && (here-> B4SOItempNode != 0))
                 {
@@ -120,7 +120,7 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     here->B4SOIBtempPtr = matched->CSC ;
                 }
 
-                if (here->B4SOIbodyMod == 1) 
+                if (here->B4SOIbodyMod == 1)
                 {
                     if ((here-> B4SOIpNode != 0) && (here-> B4SOItempNode != 0))
                     {
@@ -131,7 +131,7 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     }
 
                 }
-                if (here->B4SOIsoiMod != 0) 
+                if (here->B4SOIsoiMod != 0)
                 {
                     if ((here-> B4SOItempNode != 0) && (here-> B4SOIeNode != 0))
                     {
@@ -143,10 +143,10 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 
                 }
             }
-            if (here->B4SOIbodyMod == 2) 
+            if (here->B4SOIbodyMod == 2)
             {
             }
-            else if (here->B4SOIbodyMod == 1) 
+            else if (here->B4SOIbodyMod == 1)
             {
                 if ((here-> B4SOIbNode != 0) && (here-> B4SOIpNode != 0))
                 {
@@ -231,7 +231,7 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     here->B4SOIGEspPtr = matched->CSC ;
                 }
 
-                if (here->B4SOIsoiMod !=2) 
+                if (here->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIgNodeExt != 0) && (here-> B4SOIbNode != 0))
                     {
@@ -282,7 +282,7 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     here->B4SOIGMspPtr = matched->CSC ;
                 }
 
-                if (here->B4SOIsoiMod !=2) 
+                if (here->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIgNodeMid != 0) && (here-> B4SOIbNode != 0))
                     {
@@ -718,7 +718,7 @@ B4SOIbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     here->B4SOISgPtr = matched->CSC ;
                 }
 
-                if (model->B4SOIsoiMod != 2)  
+                if (model->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIdNode != 0) && (here-> B4SOIbNode != 0))
                     {
@@ -913,7 +913,7 @@ B4SOIbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B4SOIinstances ; here != NULL ; here = here->B4SOInextInstance)
         {
-            if ((model->B4SOIshMod == 1) && (here->B4SOIrth0!=0.0)) 
+            if ((model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0))
             {
                 if ((here-> B4SOItempNode != 0) && (here-> B4SOItempNode != 0))
                     here->B4SOITemptempPtr = here->B4SOITemptempStructPtr->CSC_Complex ;
@@ -945,23 +945,23 @@ B4SOIbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIbNode != 0) && (here-> B4SOItempNode != 0))
                     here->B4SOIBtempPtr = here->B4SOIBtempStructPtr->CSC_Complex ;
 
-                if (here->B4SOIbodyMod == 1) 
+                if (here->B4SOIbodyMod == 1)
                 {
                     if ((here-> B4SOIpNode != 0) && (here-> B4SOItempNode != 0))
                         here->B4SOIPtempPtr = here->B4SOIPtempStructPtr->CSC_Complex ;
 
                 }
-                if (here->B4SOIsoiMod != 0) 
+                if (here->B4SOIsoiMod != 0)
                 {
                     if ((here-> B4SOItempNode != 0) && (here-> B4SOIeNode != 0))
                         here->B4SOITempePtr = here->B4SOITempeStructPtr->CSC_Complex ;
 
                 }
             }
-            if (here->B4SOIbodyMod == 2) 
+            if (here->B4SOIbodyMod == 2)
             {
             }
-            else if (here->B4SOIbodyMod == 1) 
+            else if (here->B4SOIbodyMod == 1)
             {
                 if ((here-> B4SOIbNode != 0) && (here-> B4SOIpNode != 0))
                     here->B4SOIBpPtr = here->B4SOIBpStructPtr->CSC_Complex ;
@@ -996,7 +996,7 @@ B4SOIbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIgNodeExt != 0) && (here-> B4SOIsNodePrime != 0))
                     here->B4SOIGEspPtr = here->B4SOIGEspStructPtr->CSC_Complex ;
 
-                if (here->B4SOIsoiMod !=2) 
+                if (here->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIgNodeExt != 0) && (here-> B4SOIbNode != 0))
                         here->B4SOIGEbPtr = here->B4SOIGEbStructPtr->CSC_Complex ;
@@ -1017,7 +1017,7 @@ B4SOIbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIgNodeMid != 0) && (here-> B4SOIsNodePrime != 0))
                     here->B4SOIGMspPtr = here->B4SOIGMspStructPtr->CSC_Complex ;
 
-                if (here->B4SOIsoiMod !=2) 
+                if (here->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIgNodeMid != 0) && (here-> B4SOIbNode != 0))
                         here->B4SOIGMbPtr = here->B4SOIGMbStructPtr->CSC_Complex ;
@@ -1188,7 +1188,7 @@ B4SOIbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIsNode != 0) && (here-> B4SOIgNode != 0))
                     here->B4SOISgPtr = here->B4SOISgStructPtr->CSC_Complex ;
 
-                if (model->B4SOIsoiMod != 2)  
+                if (model->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIdNode != 0) && (here-> B4SOIbNode != 0))
                         here->B4SOIDbPtr = here->B4SOIDbStructPtr->CSC_Complex ;
@@ -1278,7 +1278,7 @@ B4SOIbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->B4SOIinstances ; here != NULL ; here = here->B4SOInextInstance)
         {
-            if ((model->B4SOIshMod == 1) && (here->B4SOIrth0!=0.0)) 
+            if ((model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0))
             {
                 if ((here-> B4SOItempNode != 0) && (here-> B4SOItempNode != 0))
                     here->B4SOITemptempPtr = here->B4SOITemptempStructPtr->CSC ;
@@ -1310,23 +1310,23 @@ B4SOIbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIbNode != 0) && (here-> B4SOItempNode != 0))
                     here->B4SOIBtempPtr = here->B4SOIBtempStructPtr->CSC ;
 
-                if (here->B4SOIbodyMod == 1) 
+                if (here->B4SOIbodyMod == 1)
                 {
                     if ((here-> B4SOIpNode != 0) && (here-> B4SOItempNode != 0))
                         here->B4SOIPtempPtr = here->B4SOIPtempStructPtr->CSC ;
 
                 }
-                if (here->B4SOIsoiMod != 0) 
+                if (here->B4SOIsoiMod != 0)
                 {
                     if ((here-> B4SOItempNode != 0) && (here-> B4SOIeNode != 0))
                         here->B4SOITempePtr = here->B4SOITempeStructPtr->CSC ;
 
                 }
             }
-            if (here->B4SOIbodyMod == 2) 
+            if (here->B4SOIbodyMod == 2)
             {
             }
-            else if (here->B4SOIbodyMod == 1) 
+            else if (here->B4SOIbodyMod == 1)
             {
                 if ((here-> B4SOIbNode != 0) && (here-> B4SOIpNode != 0))
                     here->B4SOIBpPtr = here->B4SOIBpStructPtr->CSC ;
@@ -1361,7 +1361,7 @@ B4SOIbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIgNodeExt != 0) && (here-> B4SOIsNodePrime != 0))
                     here->B4SOIGEspPtr = here->B4SOIGEspStructPtr->CSC ;
 
-                if (here->B4SOIsoiMod !=2) 
+                if (here->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIgNodeExt != 0) && (here-> B4SOIbNode != 0))
                         here->B4SOIGEbPtr = here->B4SOIGEbStructPtr->CSC ;
@@ -1382,7 +1382,7 @@ B4SOIbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIgNodeMid != 0) && (here-> B4SOIsNodePrime != 0))
                     here->B4SOIGMspPtr = here->B4SOIGMspStructPtr->CSC ;
 
-                if (here->B4SOIsoiMod !=2) 
+                if (here->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIgNodeMid != 0) && (here-> B4SOIbNode != 0))
                         here->B4SOIGMbPtr = here->B4SOIGMbStructPtr->CSC ;
@@ -1553,7 +1553,7 @@ B4SOIbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> B4SOIsNode != 0) && (here-> B4SOIgNode != 0))
                     here->B4SOISgPtr = here->B4SOISgStructPtr->CSC ;
 
-                if (model->B4SOIsoiMod != 2)  
+                if (model->B4SOIsoiMod != 2)
                 {
                     if ((here-> B4SOIdNode != 0) && (here-> B4SOIbNode != 0))
                         here->B4SOIDbPtr = here->B4SOIDbStructPtr->CSC ;

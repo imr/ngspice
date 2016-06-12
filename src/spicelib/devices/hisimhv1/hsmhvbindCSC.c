@@ -454,7 +454,7 @@ HSMHVbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 here->HSMHVGPsPtr = matched->CSC ;
             }
 
-            if ( here->HSMHVsubNode > 0 ) 
+            if (here->HSMHVsubNode > 0)
             {
                 if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0))
                 {
@@ -489,7 +489,7 @@ HSMHVbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 }
 
             }
-            if ( here->HSMHV_coselfheat >  0 ) 
+            if (here->HSMHV_coselfheat > 0)
             {
                 if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0))
                 {
@@ -612,7 +612,7 @@ HSMHVbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 }
 
             }
-            if ( model->HSMHV_conqs ) 
+            if (model->HSMHV_conqs)
             {
                 if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0))
                 {
@@ -734,7 +734,7 @@ HSMHVbindCSC (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSMHVQBqbPtr = matched->CSC ;
                 }
 
-                if ( here->HSMHV_coselfheat >  0 ) 
+                if (here->HSMHV_coselfheat > 0)
                 {
                     if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0))
                     {
@@ -930,7 +930,7 @@ HSMHVbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0))
                 here->HSMHVGPsPtr = here->HSMHVGPsStructPtr->CSC_Complex ;
 
-            if ( here->HSMHVsubNode > 0 ) 
+            if (here->HSMHVsubNode > 0)
             {
                 if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0))
                     here->HSMHVDsubPtr = here->HSMHVDsubStructPtr->CSC_Complex ;
@@ -945,7 +945,7 @@ HSMHVbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSMHVSPsubPtr = here->HSMHVSPsubStructPtr->CSC_Complex ;
 
             }
-            if ( here->HSMHV_coselfheat >  0 ) 
+            if (here->HSMHV_coselfheat > 0)
             {
                 if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0))
                     here->HSMHVTemptempPtr = here->HSMHVTemptempStructPtr->CSC_Complex ;
@@ -993,7 +993,7 @@ HSMHVbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSMHVStempPtr = here->HSMHVStempStructPtr->CSC_Complex ;
 
             }
-            if ( model->HSMHV_conqs ) 
+            if (model->HSMHV_conqs)
             {
                 if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0))
                     here->HSMHVDPqiPtr = here->HSMHVDPqiStructPtr->CSC_Complex ;
@@ -1040,7 +1040,7 @@ HSMHVbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0))
                     here->HSMHVQBqbPtr = here->HSMHVQBqbStructPtr->CSC_Complex ;
 
-                if ( here->HSMHV_coselfheat >  0 ) 
+                if (here->HSMHV_coselfheat > 0)
                 {
                     if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0))
                         here->HSMHVQItempPtr = here->HSMHVQItempStructPtr->CSC_Complex ;
@@ -1226,7 +1226,7 @@ HSMHVbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             if ((here-> HSMHVgNodePrime != 0) && (here-> HSMHVsNode != 0))
                 here->HSMHVGPsPtr = here->HSMHVGPsStructPtr->CSC ;
 
-            if ( here->HSMHVsubNode > 0 ) 
+            if (here->HSMHVsubNode > 0)
             {
                 if ((here-> HSMHVdNode != 0) && (here-> HSMHVsubNode != 0))
                     here->HSMHVDsubPtr = here->HSMHVDsubStructPtr->CSC ;
@@ -1241,7 +1241,7 @@ HSMHVbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSMHVSPsubPtr = here->HSMHVSPsubStructPtr->CSC ;
 
             }
-            if ( here->HSMHV_coselfheat >  0 ) 
+            if (here->HSMHV_coselfheat > 0)
             {
                 if ((here-> HSMHVtempNode != 0) && (here-> HSMHVtempNode != 0))
                     here->HSMHVTemptempPtr = here->HSMHVTemptempStructPtr->CSC ;
@@ -1289,7 +1289,7 @@ HSMHVbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSMHVStempPtr = here->HSMHVStempStructPtr->CSC ;
 
             }
-            if ( model->HSMHV_conqs ) 
+            if (model->HSMHV_conqs)
             {
                 if ((here-> HSMHVdNodePrime != 0) && (here-> HSMHVqiNode != 0))
                     here->HSMHVDPqiPtr = here->HSMHVDPqiStructPtr->CSC ;
@@ -1336,7 +1336,7 @@ HSMHVbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                 if ((here-> HSMHVqbNode != 0) && (here-> HSMHVqbNode != 0))
                     here->HSMHVQBqbPtr = here->HSMHVQBqbStructPtr->CSC ;
 
-                if ( here->HSMHV_coselfheat >  0 ) 
+                if (here->HSMHV_coselfheat > 0)
                 {
                     if ((here-> HSMHVqiNode != 0) && (here-> HSMHVtempNode != 0))
                         here->HSMHVQItempPtr = here->HSMHVQItempStructPtr->CSC ;

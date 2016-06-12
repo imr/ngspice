@@ -417,7 +417,7 @@ BSIM4v5bindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 }
 
             }
-            if ((here->BSIM4v5rbodyMod ==1) || (here->BSIM4v5rbodyMod ==2))
+            if ((here->BSIM4v5rbodyMod == 1) || (here->BSIM4v5rbodyMod == 2))
             {
                 if ((here-> BSIM4v5dNodePrime != 0) && (here-> BSIM4v5dbNode != 0))
                 {
@@ -771,7 +771,7 @@ BSIM4v5bindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                     here->BSIM4v5BPgmPtr = here->BSIM4v5BPgmStructPtr->CSC_Complex ;
 
             }
-            if ((here->BSIM4v5rbodyMod ==1) || (here->BSIM4v5rbodyMod ==2))
+            if ((here->BSIM4v5rbodyMod == 1) || (here->BSIM4v5rbodyMod == 2))
             {
                 if ((here-> BSIM4v5dNodePrime != 0) && (here-> BSIM4v5dbNode != 0))
                     here->BSIM4v5DPdbPtr = here->BSIM4v5DPdbStructPtr->CSC_Complex ;
@@ -1010,7 +1010,7 @@ BSIM4v5bindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                     here->BSIM4v5BPgmPtr = here->BSIM4v5BPgmStructPtr->CSC ;
 
             }
-            if ((here->BSIM4v5rbodyMod ==1) || (here->BSIM4v5rbodyMod ==2))
+            if ((here->BSIM4v5rbodyMod == 1) || (here->BSIM4v5rbodyMod == 2))
             {
                 if ((here-> BSIM4v5dNodePrime != 0) && (here-> BSIM4v5dbNode != 0))
                     here->BSIM4v5DPdbPtr = here->BSIM4v5DPdbStructPtr->CSC ;

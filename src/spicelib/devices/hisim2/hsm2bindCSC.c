@@ -214,7 +214,7 @@ HSM2bindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 here->HSM2SPdpPtr = matched->CSC ;
             }
 
-            if ( here->HSM2_corg == 1 ) 
+            if (here->HSM2_corg == 1)
             {
                 if ((here-> HSM2gNode != 0) && (here-> HSM2gNode != 0))
                 {
@@ -265,7 +265,7 @@ HSM2bindCSC (GENmodel *inModel, CKTcircuit *ckt)
                 }
 
             }
-            if ( here->HSM2_corbnet == 1 ) 
+            if (here->HSM2_corbnet == 1)
             {
                 if ((here-> HSM2dNodePrime != 0) && (here-> HSM2dbNode != 0))
                 {
@@ -490,7 +490,7 @@ HSM2bindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             if ((here-> HSM2sNodePrime != 0) && (here-> HSM2dNodePrime != 0))
                 here->HSM2SPdpPtr = here->HSM2SPdpStructPtr->CSC_Complex ;
 
-            if ( here->HSM2_corg == 1 ) 
+            if (here->HSM2_corg == 1)
             {
                 if ((here-> HSM2gNode != 0) && (here-> HSM2gNode != 0))
                     here->HSM2GgPtr = here->HSM2GgStructPtr->CSC_Complex ;
@@ -511,7 +511,7 @@ HSM2bindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSM2GbpPtr = here->HSM2GbpStructPtr->CSC_Complex ;
 
             }
-            if ( here->HSM2_corbnet == 1 ) 
+            if (here->HSM2_corbnet == 1)
             {
                 if ((here-> HSM2dNodePrime != 0) && (here-> HSM2dbNode != 0))
                     here->HSM2DPdbPtr = here->HSM2DPdbStructPtr->CSC_Complex ;
@@ -651,7 +651,7 @@ HSM2bindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             if ((here-> HSM2sNodePrime != 0) && (here-> HSM2dNodePrime != 0))
                 here->HSM2SPdpPtr = here->HSM2SPdpStructPtr->CSC ;
 
-            if ( here->HSM2_corg == 1 ) 
+            if (here->HSM2_corg == 1)
             {
                 if ((here-> HSM2gNode != 0) && (here-> HSM2gNode != 0))
                     here->HSM2GgPtr = here->HSM2GgStructPtr->CSC ;
@@ -672,7 +672,7 @@ HSM2bindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
                     here->HSM2GbpPtr = here->HSM2GbpStructPtr->CSC ;
 
             }
-            if ( here->HSM2_corbnet == 1 ) 
+            if (here->HSM2_corbnet == 1)
             {
                 if ((here-> HSM2dNodePrime != 0) && (here-> HSM2dbNode != 0))
                     here->HSM2DPdbPtr = here->HSM2DPdbStructPtr->CSC ;

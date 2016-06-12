@@ -546,24 +546,21 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 			if (is_dc) {
 				if (job->output_volt)
-					output_values[n] = delta_I
-						[job->output_pos->number]
-						- delta_I
-						[job->output_neg->number];
+					output_values[n] =
+					    delta_I [job->output_pos->number]
+					    - delta_I [job->output_neg->number];
 				else {
 					output_values[n] = delta_I[branch_eq];
 				}
 				output_values[n] /= delta_var;
 			} else {
 				if (job->output_volt) {
-					output_cvalues[n].real = delta_I
-						[job->output_pos->number]
-						- delta_I
-						[job->output_neg->number];
-					output_cvalues[n].imag = delta_iI
-						[job->output_pos->number]
-						- delta_iI
-						[job->output_neg->number];
+					output_cvalues[n].real =
+					    delta_I [job->output_pos->number]
+					    - delta_I [job->output_neg->number];
+					output_cvalues[n].imag =
+					    delta_iI [job->output_pos->number]
+					    - delta_iI [job->output_neg->number];
 				} else {
 					output_cvalues[n].real =
 						delta_I[branch_eq];
