@@ -315,11 +315,31 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 void
 SMPcaSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
-    printf ("SMPcaSolve\n") ;
+    int ret, i, *pExtOrder ;
+
     NG_IGNORE (iSpare) ;
     NG_IGNORE (Spare) ;
 
-    spSolveTransposed (Matrix->SPmatrix, RHS, RHS, iRHS, iRHS) ;
+    if (Matrix->CKTkluMODE)
+    {
+        pExtOrder = &Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluN] ;
+        for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
+        {
+            Matrix->CKTkluIntermediate_Complex [i] = iRHS [*(pExtOrder)] ;
+            Matrix->CKTkluIntermediate_Complex [i - 1] = RHS [*(pExtOrder--)] ;
+        }
+
+        ret = klu_z_tsolve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate_Complex, 0, Matrix->CKTkluCommon) ;
+
+        pExtOrder = &Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluN] ;
+        for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
+        {
+            iRHS [*(pExtOrder)] = Matrix->CKTkluIntermediate_Complex [i] ;
+            RHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate_Complex [i - 1] ;
+        }
+    } else {
+        spSolveTransposed (Matrix->SPmatrix, RHS, RHS, iRHS, iRHS) ;
+    }
 }
 
 /*
