@@ -285,20 +285,26 @@ cp_usrset(struct variable *var, bool isset)
             fprintf(cp_err, "Error: plot name not a string\n");
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplotname")) {
-        if (plot_cur && (var->va_type == CP_STRING))
+        if (plot_cur && (var->va_type == CP_STRING)) {
+            FREE(plot_cur->pl_name);
             plot_cur->pl_name = copy(var->va_string);
+        }
         else
             fprintf(cp_err, "Error: can't set plot name\n");
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplottitle")) {
-        if (plot_cur && (var->va_type == CP_STRING))
+        if (plot_cur && (var->va_type == CP_STRING)) {
+            FREE(plot_cur->pl_title);
             plot_cur->pl_title = copy(var->va_string);
+        }
         else
             fprintf(cp_err, "Error: can't set plot title\n");
         return (US_DONTRECORD);
     } else if (eq(var->va_name, "curplotdate")) {
-        if (plot_cur && (var->va_type == CP_STRING))
+        if (plot_cur && (var->va_type == CP_STRING)) {
+            FREE(plot_cur->pl_date);
             plot_cur->pl_date = copy(var->va_string);
+        }
         else
             fprintf(cp_err, "Error: can't set plot date\n");
         return (US_DONTRECORD);
