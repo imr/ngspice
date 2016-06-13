@@ -25,7 +25,7 @@ double PTfudge_factor;
 double
 PTabs(double arg)
 {
-    return arg >= 0.0 ? arg : -arg;
+    return fabs(arg);
 }
 
 double
