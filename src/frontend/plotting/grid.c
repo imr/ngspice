@@ -15,6 +15,8 @@ Modified: 2001 AlansFixes
 #include "ngspice/grid.h"
 #include "../display.h"
 
+#include <stdlib.h>
+
 #define RAD_TO_DEG      (180.0 / M_PI)
 
 typedef enum { x_axis, y_axis } Axis;
@@ -1169,7 +1171,7 @@ drawsmithgrid(GRAPH *graph)
     j *= 10;
     while (mag < 20) {
         i = (int)(j * pow(10.0, (double) mag) * pixperunit / 2);
-        if (i / 5 > gr_radius + ((xoff > 0) ? xoff : - xoff))
+        if (i / 5 > gr_radius + abs(xoff))
             break;
         rnorm[k] = j * pow(10.0, (double) (mag - basemag));
         dphi[k] = 2.0 * atan(rnorm[k]);
@@ -1252,7 +1254,7 @@ drawsmithgrid(GRAPH *graph)
 
     if ((yoff > - gr_radius) && (yoff < gr_radius)) {
         zheight = (int)(gr_radius * cos(asin((double) yoff / gr_radius)));
-        zheight = (zheight > 0) ? zheight : - zheight;
+        zheight = abs(zheight);
     } else {
         zheight = gr_radius;
     }
