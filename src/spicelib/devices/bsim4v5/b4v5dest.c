@@ -35,7 +35,10 @@ BSIM4v5destroy(
         FREE(pParamOld);
         pParam = NULL;
      /** end of extra code **/
-        if(oldmod) FREE(oldmod);
+        if (oldmod) {
+            FREE(oldmod->BSIM4v5version);
+            FREE(oldmod);
+        }
         oldmod = mod;
         prev = NULL;
         for (here = mod->BSIM4v5instances; here; here = here->BSIM4v5nextInstance) {
@@ -49,6 +52,7 @@ BSIM4v5destroy(
         /* free just once for all models */
         FREE(oldmod->BSIM4v5InstanceArray);
 #endif
+        FREE(oldmod->BSIM4v5version);
         FREE(oldmod);
     }
     *model = NULL;
