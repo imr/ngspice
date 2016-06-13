@@ -69,7 +69,7 @@ typedef struct {
 #endif
 
 /* Some defines used mainly in cmath.c. */
-#define FTEcabs(d)  (((d) < 0.0) ? - (d) : (d))
+#define FTEcabs(d)  fabs(d)
 #define cph(c)    (atan2(imagpart(c), (realpart(c))))
 #define cmag(c)  (hypot(realpart(c), imagpart(c)))
 #define radtodeg(c) (cx_degrees ? ((c) / 3.14159265358979323846 * 180) : (c))
