@@ -2623,7 +2623,6 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
         TSTALLOC(B4SOIDPePtr, B4SOIdNodePrime, B4SOIeNode);
         TSTALLOC(B4SOISPePtr, B4SOIsNodePrime, B4SOIeNode);
 
-        TSTALLOC(B4SOIEbPtr, B4SOIeNode, B4SOIbNode);
         TSTALLOC(B4SOIEePtr, B4SOIeNode, B4SOIeNode);
 
         TSTALLOC(B4SOIGgPtr, B4SOIgNode, B4SOIgNode);
