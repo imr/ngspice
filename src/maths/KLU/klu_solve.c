@@ -41,6 +41,10 @@ Int KLU_solve
     {
         return (FALSE) ;
     }
+    if (Common->status == KLU_EMPTY_MATRIX)
+    {
+        return (FALSE) ;
+    }
     if (Numeric == NULL || Symbolic == NULL || d < Symbolic->n || nrhs < 0 ||
         B == NULL)
     {
