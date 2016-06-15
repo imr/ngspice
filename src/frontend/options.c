@@ -174,7 +174,7 @@ inp_getoptsc(char *in_line, struct line *com_options)
 
     /* option -> .options */
     /* skip option */
-    gettok(&in_line);
+    gettok_nc(&in_line);
     line = tprintf(".options %s", in_line);
 
     next = TMALLOC(struct line, 1);

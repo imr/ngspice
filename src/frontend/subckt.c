@@ -150,7 +150,7 @@ collect_global_nodes(struct line *c)
     for (; c; c = c->li_next)
         if (ciprefix(".global", c->li_line)) {
             char *s = c->li_line;
-            txfree(gettok(&s));
+            gettok_nc(&s);
             while (*s) {
                 char *t = skip_non_ws(s);
                 global_nodes[num_global_nodes++] = copy_substring(s, t);
@@ -267,7 +267,7 @@ inp_subcktexpand(struct line *deck) {
 
             if (ciprefix(model, c->li_line)) {
                 char *s = c->li_line;
-                txfree(gettok(&s)); /* discard the model keyword */
+                gettok_nc(&s); /* discard the model keyword */
                 modnames = wl_cons(gettok(&s), modnames);
             } /* model name finding routine */
         }
@@ -479,7 +479,7 @@ doit(struct line *deck, wordlist *modnames) {
 
                     sss = TMALLOC(struct subs, 1);
 
-                    txfree(gettok(&s));
+                    gettok_nc(&s);
 
                     sss->su_name = gettok(&s);
                     sss->su_args = copy(s);
@@ -612,7 +612,7 @@ doit(struct line *deck, wordlist *modnames) {
                     /* prepend the translated model names to the list `modnames' */
                     modnames = modtranslate(su_deck, scname, modnames);
 
-                    txfree(gettok(&t));  /* Throw out the subcircuit refdes */
+                    gettok_nc(&t);  /* Throw out the subcircuit refdes */
 
                     /* now invoke translate, which handles the remainder of the
                      * translation.
@@ -1544,7 +1544,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
         i = 0;
         s = buf;
         gotit = 0;
-        txfree(gettok(&s));          /* Skip component name */
+        gettok_nc(&s);          /* Skip component name */
         while ((i < n) && (*s) && !gotit) {
             t = gettok_node(&s);       /* get nodenames . . .  */
             for (wl = modnames; wl; wl = wl->wl_next)
@@ -1571,7 +1571,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
         return (n);
 
     for (s = buf, i = 0; *s && (i < 4); i++)
-        txfree(gettok(&s));
+        gettok_nc(&s);
 
     if (i == 3)
         return (3);
@@ -1650,7 +1650,7 @@ modtranslate(struct line *c, char *subname, wordlist *new_modnames)
 #endif
 
             /* swallow ".model" */
-            txfree(gettok(&t));
+            gettok_nc(&t);
 
             model_name = gettok(&t);
 

@@ -57,7 +57,7 @@ void
 ft_dotsaves(void)
 {
     wordlist *iline, *wl = NULL;
-    char *s, *fr;
+    char *s;
 
     if (!ft_curckt) /* Shouldn't happen. */
         return;
@@ -66,8 +66,7 @@ ft_dotsaves(void)
         if (ciprefix(".save", iline->wl_word)) {
             s = iline->wl_word;
             /* skip .save */
-            fr = gettok(&s);
-            tfree(fr);
+            gettok_nc(&s);
             wl = wl_append(wl, gettoks(s));
         }
 
@@ -112,7 +111,7 @@ ft_savedotargs(void)
             isaplot = 0;
 
         if (isaplot || ciprefix(".print", s)) {
-            (void) gettok(&s);
+            gettok_nc(&s);
             name = gettok(&s);
 
             if ((w = gettoks(s)) == NULL) {
@@ -138,8 +137,8 @@ ft_savedotargs(void)
                 com_save2(w, name);
             }
         } else if (ciprefix(".four", s)) {
-            (void) gettok(&s);
-            (void) gettok(&s);
+            gettok_nc(&s);
+            gettok_nc(&s);
             if ((w = gettoks(s)) == NULL) {
                 fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
             } else {
