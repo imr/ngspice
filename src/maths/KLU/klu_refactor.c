@@ -46,6 +46,10 @@ Int KLU_refactor        /* returns TRUE if successful, FALSE otherwise */
     {
         return (FALSE) ;
     }
+    if (Common->status == KLU_EMPTY_MATRIX)
+    {
+        return (FALSE) ;
+    }
     Common->status = KLU_OK ;
 
     if (Numeric == NULL)
