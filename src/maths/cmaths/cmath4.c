@@ -335,6 +335,8 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
         tfree(r_coefs);
         tfree(i_coefs);
         tfree(scale);
+        tfree(spare);
+        tfree(scratch);
         return (void *) c_outdata;
 
     }
@@ -419,7 +421,9 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
 
 
         tfree(coefs);
-        tfree(scale);        /* XXX */
+        tfree(scale);
+        tfree(spare);
+        tfree(scratch);
         return (char *) outdata;
     }
 
