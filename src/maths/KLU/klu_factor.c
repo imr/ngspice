@@ -402,6 +402,10 @@ KLU_numeric *KLU_factor         /* returns NULL if error, or a valid
     {
         return (NULL) ;
     }
+    if (Common->status == KLU_EMPTY_MATRIX)
+    {
+        return (NULL) ;
+    }
     Common->status = KLU_OK ;
     Common->numerical_rank = EMPTY ;
     Common->singular_col = EMPTY ;
