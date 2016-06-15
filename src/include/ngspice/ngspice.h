@@ -241,6 +241,7 @@ extern double x_atanh(double);
 extern char *gettok_noparens(char **s);
 extern char *gettok_node(char **s);
 extern char *gettok_iv(char **s);
+extern int gettok_nc(char **s);
 extern int get_l_paren(char **s);
 extern int get_r_paren(char **s);
 

@@ -306,6 +306,40 @@ gettok(char **s)
     return ( token ) ;
 }
 
+
+/*-------------------------------------------------------------------------*
+* gettok_nc skips over whitespaces and the next token in s, but does not
+* use TMALLOC or not return anything * but 1 for empty s and 0 if o.k. .
+* It replaces constructs like txfree(gettok(&actstring)) by
+* gettok_nc(&actstring). This is derived from the original gettok version.
+* It does not "do the right thing" when
+* you have parens or commas anywhere in the nodelist.
+*-------------------------------------------------------------------------*/
+int
+gettok_nc(char **s)
+{
+    char c;
+    int paren;
+
+    paren = 0;
+    *s = skip_ws(*s);
+    if (!**s)
+        return (1);
+    while ((c = **s) != '\0' && !isspace_c(c)) {
+        if (c == '(')
+            paren += 1;
+        else if (c == ')')
+            paren -= 1;
+        else if (c == ',' && paren < 1)
+            break;
+        (*s)++;
+    }
+    while (isspace_c(**s) || **s == ',')
+        (*s)++;
+    return (0);
+}
+
+
 /*-------------------------------------------------------------------------*
  * gettok skips over whitespaces or '=' and returns the next token found, 
  * if the token is something like i(xxx), v(yyy), or v(xxx,yyy)
