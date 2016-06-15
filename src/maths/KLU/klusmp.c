@@ -207,6 +207,11 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
         spSetComplex (Matrix->SPmatrix) ;
         ret = klu_z_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex,
                               Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
+
+        if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+        {
+            return 0 ;
+        }
         return (!ret) ;
     } else {
         spSetComplex (Matrix->SPmatrix) ;
@@ -232,6 +237,11 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
         LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
         ret = klu_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx,
                             Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
+
+        if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+        {
+            return 0 ;
+        }
         return (!ret) ;
 
 //        if (ret == 1)
@@ -269,7 +279,13 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
             Matrix->CKTkluNumeric = klu_z_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
 
         if (Matrix->CKTkluNumeric == NULL)
+        {
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            {
+                return 0 ;
+            }
             return 1 ;
+        }
         else
             return 0 ;
     } else {
@@ -299,7 +315,13 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
             Matrix->CKTkluNumeric = klu_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
 
         if (Matrix->CKTkluNumeric == NULL)
+        {
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            {
+                return 0 ;
+            }
             return 1 ;
+        }
         else
             return 0 ;
     } else {
@@ -459,7 +481,16 @@ SMPpreOrder (SMPmatrix *Matrix)
     {
         Matrix->CKTkluSymbolic = klu_analyze (Matrix->CKTkluN, Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluCommon) ;
 
-        return 0 ;
+        if (Matrix->CKTkluSymbolic == NULL)
+        {
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            {
+                return 0 ;
+            }
+            return 1 ;
+        } else {
+            return 0 ;
+        }
     } else {
         spMNA_Preorder (Matrix->SPmatrix) ;
         return spError (Matrix->SPmatrix) ;
