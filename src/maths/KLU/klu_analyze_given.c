@@ -41,6 +41,12 @@ KLU_symbolic *KLU_alloc_symbolic
 
     if (n <= 0 || Ap == NULL || Ai == NULL)
     {
+        if (n == 0)
+        {
+            Common->status = KLU_EMPTY_MATRIX ;
+            return (NULL) ;
+        }
+
         /* Ap and Ai must be present, and n must be > 0 */
         Common->status = KLU_INVALID ;
         return (NULL) ;
