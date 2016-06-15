@@ -130,6 +130,7 @@ typedef struct          /* 64-bit version (otherwise same as above) */
 /* Common->status values */
 #define KLU_OK 0
 #define KLU_SINGULAR (1)            /* status > 0 is a warning, not an error */
+#define KLU_EMPTY_MATRIX (2)        /* Modified by Francesco Lannutti - Case when the matrix is empty */
 #define KLU_OUT_OF_MEMORY (-2)
 #define KLU_INVALID (-3)
 #define KLU_TOO_LARGE (-4)          /* integer overflow has occured */
