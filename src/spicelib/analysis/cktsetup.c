@@ -101,11 +101,6 @@ CKTsetup(CKTcircuit *ckt)
 
 #ifdef KLU
     if (ckt->CKTmatrix->CKTkluMODE)
-        SMPnnz (ckt->CKTmatrix) ;
-#endif
-
-#ifdef KLU
-    if (ckt->CKTmatrix->CKTkluMODE)
     {
         fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
 
@@ -113,6 +108,7 @@ CKTsetup(CKTcircuit *ckt)
         int n = SMPmatSize (ckt->CKTmatrix) ;
         ckt->CKTmatrix->CKTkluN = n ;
 
+        SMPnnz (ckt->CKTmatrix) ;
         int nz = ckt->CKTmatrix->CKTklunz ;
 
         ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
