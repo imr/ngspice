@@ -565,18 +565,18 @@ new_memory(int dim, int deg, int deg_o)
  ****************************************************************/
 
 
-static double
-*vector(int nl, int nh)
+static double *
+vector(int nl, int nh)
 {
-    double *v;
+    double *v = TMALLOC(double, nh - nl + 1);
 
-    v = TMALLOC(double, (unsigned) (nh - nl + 1));
     if (!v) {
         fprintf(stderr, "Memory Allocation Error by tmalloc in vector().\n");
         fprintf(stderr, "...now exiting to system ...\n");
         controlled_exit(EXIT_FAILURE);
     }
-    return v-nl;
+
+    return v - nl;
 }
 
 static void
@@ -584,7 +584,7 @@ free_vector(double *v, int nl, int nh)
 {
     NG_IGNORE(nh);
 
-    free((void*) (v +nl));
+    free(v + nl);
 }
 
 static void
