@@ -454,19 +454,20 @@ SMPnewMatrix (SMPmatrix *Matrix, int size)
 void
 SMPdestroy (SMPmatrix *Matrix)
 {
+    spDestroy (Matrix->SPmatrix) ;
+
     if (Matrix->CKTkluMODE)
     {
-        spDestroy (Matrix->SPmatrix) ;
         klu_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
         klu_free_symbolic (&(Matrix->CKTkluSymbolic), Matrix->CKTkluCommon) ;
         free (Matrix->CKTkluAp) ;
         free (Matrix->CKTkluAi) ;
         free (Matrix->CKTkluAx) ;
-        free (Matrix->CKTdiag_CSC) ;
         free (Matrix->CKTkluIntermediate) ;
+        free (Matrix->CKTbindStruct) ;
+        free (Matrix->CKTdiag_CSC) ;
+        free (Matrix->CKTkluAx_Complex) ;
         free (Matrix->CKTkluIntermediate_Complex) ;
-    } else {
-        spDestroy (Matrix->SPmatrix) ;
     }
 }
 
@@ -532,8 +533,8 @@ SMPgetError (SMPmatrix *Matrix, int *Col, int *Row)
 {
     if (Matrix->CKTkluMODE)
     {
-        *Row = Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluCommon->singular_col] ;
-        *Col = Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluCommon->singular_col] ;
+        *Row = Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluCommon->singular_col + 1] ;
+        *Col = Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluCommon->singular_col + 1] ;
     } else {
         spWhereSingular (Matrix->SPmatrix, Row, Col) ;
     }
