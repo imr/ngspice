@@ -10,8 +10,8 @@
 #ifndef HAVE_LIBGC
 
 extern void *tmalloc(size_t num);
-extern void *trealloc(void *str, size_t num);
-extern void txfree(void *ptr);
+extern void *trealloc(const void *str, size_t num);
+extern void txfree(const void *ptr);
 
 #define tfree(x) (txfree(x), (x) = 0)
 

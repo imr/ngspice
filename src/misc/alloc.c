@@ -85,7 +85,7 @@ tmalloc(size_t num)
 
 
 void *
-trealloc(void *ptr, size_t num)
+trealloc(const void *ptr, size_t num)
 {
   void *s;
 /*saj*/
@@ -95,7 +95,7 @@ trealloc(void *ptr, size_t num)
 #endif
   if (!num) {
     if (ptr)
-      free(ptr);
+      free((void*) ptr);
     return NULL;
   }
 
@@ -108,7 +108,7 @@ trealloc(void *ptr, size_t num)
 #elif defined SHARED_MODULE
   mutex_lock(&allocMutex);
 #endif
-    s = realloc(ptr, num);
+    s = realloc((void*) ptr, num);
 /*saj*/
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);
@@ -129,7 +129,7 @@ trealloc(void *ptr, size_t num)
 
 
 void
-txfree(void *ptr)
+txfree(const void *ptr)
 {
 /*saj*/
 #ifdef TCL_MODULE
@@ -141,7 +141,7 @@ txfree(void *ptr)
   mutex_lock(&allocMutex);
 #endif
 	if (ptr)
-		free(ptr);
+		free((void*) ptr);
 /*saj*/
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);

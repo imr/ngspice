@@ -53,11 +53,6 @@ NON-STANDARD FEATURES
 #include  <string.h>
 
 
-/*
-void    *malloc(unsigned size);
-void    *realloc(void *ptr, unsigned size);
-*/
-
 /* *********************************************************************** */
 
 /*

@@ -109,8 +109,8 @@ FILE *cm_stream_err(void);
 
 void *malloc_pj(size_t s);
 void *calloc_pj(size_t s1, size_t s2);
-void *realloc_pj(void *ptr, size_t s);
-void  free_pj(void *ptr);
+void *realloc_pj(const void *ptr, size_t s);
+void  free_pj(const void *ptr);
 
 FILE *fopen_with_path(const char *path, const char *mode);
 

@@ -8,8 +8,8 @@
 
 #ifndef HAVE_LIBGC
 void * tmalloc(size_t num);
-void * trealloc(void *ptr, size_t num);
-void txfree(void *ptr);
+void * trealloc(const void *ptr, size_t num);
+void txfree(const void *ptr);
 #endif
 
 #endif

@@ -8,7 +8,7 @@ static void *tcalloc(size_t a, size_t b) {
   return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
 }
 
-static void no_free(void *p) {
+static void no_free(const void *p) {
   NG_IGNORE(p);
 }
 

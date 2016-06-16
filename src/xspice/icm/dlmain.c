@@ -67,8 +67,8 @@ extern CM_EXPORT void *CMudnNum(void);
 extern CM_EXPORT void *CMgetCoreItfPtr(void);
 
 extern void *tmalloc(size_t num);
-extern void *trealloc(void *str, size_t num);
-extern void txfree(void *ptr);
+extern void *trealloc(const void *str, size_t num);
+extern void txfree(const void *ptr);
 
 
 // This one returns the device table
@@ -386,11 +386,11 @@ void * calloc_pj(size_t s1, size_t s2) {
 	return (coreitf->dllitf_calloc_pj)(s1,s2);
 }
 
-void * realloc_pj(void *ptr, size_t s) {
+void * realloc_pj(const void *ptr, size_t s) {
 	return (coreitf->dllitf_realloc_pj)(ptr,s);
 }
 
-void free_pj(void *ptr) {
+void free_pj(const void *ptr) {
 	(coreitf->dllitf_free_pj)(ptr);
 }
 
@@ -398,11 +398,11 @@ void * tmalloc(size_t s) {
 	return (coreitf->dllitf_tmalloc)(s);
 }
 
-void * trealloc(void *ptr, size_t s) {
+void * trealloc(const void *ptr, size_t s) {
 	return (coreitf->dllitf_trealloc)(ptr,s);
 }
 
-void txfree(void *ptr) {
+void txfree(const void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }
 

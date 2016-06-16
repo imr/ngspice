@@ -70,11 +70,11 @@ struct coreInfo_t {
   /*Other stuff*/
 	void *    ((*dllitf_malloc_pj)(size_t));
 	void *    ((*dllitf_calloc_pj)(size_t, size_t));
-	void *    ((*dllitf_realloc_pj)(void *, size_t));
-	void      ((*dllitf_free_pj)(void *));
+	void *    ((*dllitf_realloc_pj)(const void *, size_t));
+	void      ((*dllitf_free_pj)(const void *));
 	void *    ((*dllitf_tmalloc)(size_t));
-	void *    ((*dllitf_trealloc)(void *, size_t));
-	void      ((*dllitf_txfree)(void *));
+	void *    ((*dllitf_trealloc)(const void *, size_t));
+	void      ((*dllitf_txfree)(const void *));
 };
 
 #endif

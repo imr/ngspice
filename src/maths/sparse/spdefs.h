@@ -366,8 +366,8 @@ typedef  struct
 /* Allocation */
 
 extern void * tmalloc(size_t);
-extern void   txfree(void *);
-extern void * trealloc(void *, size_t);
+extern void   txfree(const void *);
+extern void * trealloc(const void *, size_t);
 
 #define SP_MALLOC(type,number)  (type *) tmalloc((size_t)(number) * sizeof(type))
 #define SP_REALLOC(ptr,type,number) \

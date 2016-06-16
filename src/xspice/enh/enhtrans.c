@@ -40,10 +40,6 @@ NON-STANDARD FEATURES
 
 /*=== FUNCTION PROTOTYPES ===*/
 
-//void free(void *); //ka removed compiler error
-/* int  atoi(char *);  */
-
-
 /*=== INCLUDE FILES ===*/
 
 
