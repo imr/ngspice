@@ -305,9 +305,9 @@ typedef struct sBindElement {
 } BindElement ;
 
 extern int WriteCol_original (MatrixPtr, int, spREAL *, spREAL *, int *, BindElement *, spREAL **) ;
-extern int WriteCol_original_dump (MatrixPtr, int, spREAL *, int *) ;
+extern int WriteCol_original_dump (MatrixPtr, int, spREAL *, int *, unsigned int) ;
 extern void spMatrix_CSC (MatrixPtr, int *, int *, double *, double *, int, BindElement *, double **) ;
-extern void spMatrix_CSC_dump (MatrixPtr, char *) ;
+extern void spMatrix_CSC_dump (MatrixPtr, unsigned int, char *) ;
 extern void spRHS_CSC_dump (spREAL *, char *, MatrixPtr) ;
 #endif
 /* ------------------------------------------------------ */
