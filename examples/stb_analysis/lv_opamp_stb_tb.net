@@ -1,0 +1,53 @@
+************************************************************
+*                                                          *
+*        Netlisted Cell:        lv_opamp_stb_tb
+*        Netlisted By:          justin                     *
+*        Date:                  06/16/16 at 11:26 AM       *
+*                                                          *
+************************************************************
+
+R2 vfb net_0 500k
+R1 vin vfb 500k
+I1 vdd bias1 DC 1uA
+V1 vdd 0 1V
+V3 vref 0 500m
+X1 vfb vref 0 vdd 0 vout bias1 lv_opamp
+C1 0 vout 500f
+V2 vin 0 500m
+Vprobe1 probe vout dc 0V ac 1
+Vprobe2 probe net_0 0V
+Iprobe1 0 probe dc 0 ac 0
+
+.SUBCKT lv_opamp vinn vinp pd vdda vssa vout ibiasn
+MN2 diode vinn common vssa nch w=4u l=1u m=2 nf=1
+MN5 s1 vinp common vssa nch w=4u l=1u m=2 nf=1
+MN4 common ibiasn net_0 net_0 nch w=32u l=400n m=1 nf=8
+MP2 s1 diode net_5 net_5 pch w=10u l=0.8u m=5 nf=1
+MP1 diode diode net_4 net_4 pch w=10u l=0.8u m=5 nf=1
+MP3 net_2 s1 net_7 net_7 pch w=10u l=0.8u m=5 nf=1
+MN7 net_2 ibiasn net_1 net_1 nch w=32u l=400n m=2 nf=8
+MN1 ibiasn ibiasn net_3 net_3 nch w=4u l=400n m=1 nf=1
+MP4 pdb pd vdda vdda pch w=200n l=90n m=1 nf=2
+MN8 pdb pd vssa vssa nch w=100n l=90n m=1 nf=1
+MN9 ibiasn pd vssa vssa nch w=200n l=90n m=1 nf=1
+MP5 diode pdb vdda vdda pch w=200n l=90n m=1 nf=1
+MP6 s1 pdb vdda vdda pch w=200n l=90n m=1 nf=1
+V1 net_3 vssa 0V
+V2 net_0 vssa 0V
+V4 net_1 vssa 0V
+V3 vout net_2 0V
+V7 vdda net_5 0V
+V5 vdda net_4 0V
+MP7 net_6 net_2 net_6 net_6 pch w=31.5u l=3.5u m=9 nf=9
+MP8 net_6 vssa s1 vdda pch w=16u l=0.8u m=1 nf=2
+V6 vdda net_7 0V
+.ENDS lv_opamp
+
+
+
+*** Model library files.
+ .inc 'cmos.spi' 
+
+
+
+.END

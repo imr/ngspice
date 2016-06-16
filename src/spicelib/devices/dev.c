@@ -79,6 +79,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "bsim3v1/bsim3v1itf.h"
 #include "bsim3v32/bsim3v32itf.h"
 #include "bsim4/bsim4itf.h"
+#include "bsim4v0/bsim4v0itf.h"
 #include "bsim4v5/bsim4v5itf.h"
 #include "bsim4v6/bsim4v6itf.h"
 #include "bsim4v7/bsim4v7itf.h"
@@ -151,6 +152,7 @@ static SPICEdev *(*static_devices[])(void) = {
     get_bsim3v32_info,
     get_b4soi_info,
     get_bsim4_info,
+    get_bsim4v0_info,
     get_bsim4v5_info,
     get_bsim4v6_info,
     get_bsim4v7_info,
@@ -286,12 +288,12 @@ SPICEdev ** devices(void)
 /*not yet usable*/
 
 #ifdef ADMS
-#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
+#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4","bsim4v0",  "bsim4v5", "bsim4v6", "bsim4v7", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1",  "hisimhv2", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "bjt504t", "ekv", "psp102"}
 #else
-#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
+#define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v0", "bsim4v5", "bsim4v6", "bsim4v7", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", "hisimhv2", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}

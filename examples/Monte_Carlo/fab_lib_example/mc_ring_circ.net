@@ -1,0 +1,40 @@
+Perform Monte Carlo simulation in ngspice
+* 25 stage Ring-Osc. BSIM3 with statistical variation of various model parameters
+* cd into ngspice/examples/Monte_Carlo
+* start in interactive mode 'ngspice MC_ring.sp' with several plots for output
+* or start in batch mode, controlled by .control section (Control mode)
+* with 'ngspice -b -r MC_ring.raw -o MC_ring.log MC_ring.sp'.
+
+.options noacct
+
+vin in out dc 1.0 pulse 1.0 0 0.1n 5n 1 1 1
+vdd dd 0 dc 1.0
+vss ss 0 dc 0
+ve  sub  0 dc 0
+vpe well 0 dc 1.0
+
+.subckt inv1 dd ss sub well in out
+MP1 out in  dd  well pch w=5u l=100n m=3 nf=1 ad=1.35p as=1.35p pd=9.6u ps=9.6u 
+MN1 out in  ss  sub nch w=5u l=100n m=1 nf=3 ad=0.9p as=0.9p pd=6.6u ps=6.6u 
+.ends inv1
+
+.subckt inv5 dd ss sub well in out
+xinv1 dd ss sub well in 1 inv1
+xinv2 dd ss sub well 1  2 inv1
+xinv3 dd ss sub well 2  3 inv1
+xinv4 dd ss sub well 3  4 inv1
+xinv5 dd ss sub well 4 out inv1
+.ends inv5
+
+xinv1 dd ss sub well in out5 inv5
+xinv2 dd ss sub well out5 out10 inv5
+xinv3 dd ss sub well out10 out15 inv5
+xinv4 dd ss sub well out15 out20 inv5
+xinv5 dd ss sub well out20 out inv5
+xinv11 dd 0 sub well out buf inv1
+cout  buf ss 0.2pF
+
+ *** Model library files. 
+.inc 'cmos.spi'
+
+
