@@ -44,15 +44,22 @@ WriteCol_original (MatrixPtr Matrix, int Col, spREAL *CSC_Element, spREAL *CSC_E
 }
 
 int
-WriteCol_original_dump (MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC_Row)
+WriteCol_original_dump (MatrixPtr Matrix, int Col, spREAL *CSC_Element, int *CSC_Row, unsigned int complex)
 {
     int i ;
     ElementPtr current ;
     i = 0 ;
     current = Matrix->FirstInCol [Col] ;
 
-    while (current != NULL) {
-        CSC_Element [i] = current->Real ;
+    while (current != NULL)
+    {
+        if (complex)
+        {
+            CSC_Element [2 * i] = current->Real ;
+            CSC_Element [2 * i + 1] = current->Imag ;
+        } else {
+            CSC_Element [i] = current->Real ;
+        }
         CSC_Row [i] = (current->Row) - 1 ;
         i++ ;
         current = current->NextInCol ;
@@ -77,7 +84,7 @@ spMatrix_CSC (MatrixPtr Matrix, int *Ap, int *Ai, double *Ax, double *Ax_Complex
 }
 
 void
-spMatrix_CSC_dump (MatrixPtr Matrix, char *CSC_output)
+spMatrix_CSC_dump (MatrixPtr Matrix, unsigned int complex, char *CSC_output)
 {
     FILE *output ;
     int offset, i, j, *Ap, *Ai, n, nz ;
@@ -87,30 +94,52 @@ spMatrix_CSC_dump (MatrixPtr Matrix, char *CSC_output)
     nz = Matrix->Elements ;
     Ap = (int *) SP_MALLOC (int, n + 1) ;
     Ai = (int *) SP_MALLOC (int, nz) ;
-    Ax = (double *) SP_MALLOC (double, nz) ;
-
-    offset = 0 ;
-    Ap[0] = offset ;
-    for (i = 1 ; i <= n ; i++) {
-        offset += WriteCol_original_dump (Matrix, i, (spREAL *)(Ax + offset), (int *)(Ai + offset)) ;
-        Ap[i] = offset ;
+    if (complex)
+    {
+        Ax = (double *) SP_MALLOC (double, 2 * nz) ;
+    } else {
+        Ax = (double *) SP_MALLOC (double, nz) ;
     }
 
-    output = fopen (CSC_output, "w") ;
-    fprintf (output, "%%%%MatrixMarket matrix coordinate real general\n") ;
-    fprintf (output, "%%-------------------------------------------------------------------------------\n") ;
-    fprintf (output, "%% Transient Matrix Dump\n%% Family: ISCAS Circuit\n") ;
-    fprintf (output, "%%-------------------------------------------------------------------------------\n") ;
-    fprintf (output, "%d %d %d\n", n, n, offset) ;
-    for (i = 0 ; i < n ; i++)
-        for (j = Ap [i] ; j < Ap [i + 1] ; j++)
-            fprintf (output, "%d %d %-.9g\n", Ai [j] + 1, i + 1, Ax [j]) ;
-    fclose (output) ;
+    offset = 0 ;
+    Ap [0] = offset ;
+    for (i = 1 ; i <= n ; i++) {
+        offset += WriteCol_original_dump (Matrix, i, (spREAL *)(Ax + offset), (int *)(Ai + offset), complex) ;
+        Ap [i] = offset ;
+    }
 
-    output = fopen ("IntToExtColMap.txt", "w") ;
-    for (i = 1 ; i <= n ; i++)
-        fprintf (output, "%d\n", Matrix->IntToExtColMap [i]) ;
-    fclose (output) ;
+    if (!complex && CSC_output != NULL)
+    {
+        output = fopen (CSC_output, "w") ;
+        fprintf (output, "%%%%MatrixMarket matrix coordinate real general\n") ;
+        fprintf (output, "%%-------------------------------------------------------------------------------\n") ;
+        fprintf (output, "%% Transient Matrix Dump\n%% Family: ISCAS Circuit\n") ;
+        fprintf (output, "%%-------------------------------------------------------------------------------\n") ;
+        fprintf (output, "%d %d %d\n", n, n, offset) ;
+        for (i = 0 ; i < n ; i++)
+            for (j = Ap [i] ; j < Ap [i + 1] ; j++)
+                fprintf (output, "%d %d %-.9g\n", Ai [j] + 1, i + 1, Ax [j]) ;
+        fclose (output) ;
+
+        output = fopen ("IntToExtColMap.txt", "w") ;
+        for (i = 1 ; i <= n ; i++)
+            fprintf (output, "%d\n", Matrix->IntToExtColMap [i]) ;
+        fclose (output) ;
+    } else {
+        fprintf (stderr, "CSC Matrix converted from SPARSE 1.3 matrix\n") ;
+        for (i = 0 ; i < n ; i++)
+        {
+            for (j = Ap [i] ; j < Ap [i + 1] ; j++)
+            {
+                if (complex)
+                {
+                    fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g j%-.9g\n", Ai [j] + 1, i + 1, Ax [2 * j], Ax [2 * j + 1]) ;
+                } else {
+                    fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g\n", Ai [j] + 1, i + 1, Ax [j]) ;
+                }
+            }
+        }
+    }
 
     SP_FREE (Ap) ;
     SP_FREE (Ai) ;
