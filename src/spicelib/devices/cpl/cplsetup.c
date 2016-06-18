@@ -16,16 +16,16 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 
 
 
-#define VECTOR_ALLOC(vec, n) { \
-        vec = TMALLOC(double *, n); \
+#define VECTOR_ALLOC(type, vec, n) {            \
+        vec = TMALLOC(type *, n);               \
 }
 
-#define MATRIX_ALLOC(mat, m, j) { \
-        int k; \
-        mat = TMALLOC(double **, m); \
-        for (k = 0; k < m; k++) {  \
-                VECTOR_ALLOC(mat[k], j); \
-        } \
+#define MATRIX_ALLOC(type, mat, m, j) {         \
+        int k;                                  \
+        mat = TMALLOC(type **, m);              \
+        for (k = 0; k < m; k++) {               \
+            VECTOR_ALLOC(type, mat[k], j);      \
+        }                                       \
 }
 
 #define VECTOR_FREE(vec) free(vec)
@@ -195,21 +195,21 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             here->CPLibr1 = TMALLOC(int, noL);
             here->CPLibr2 = TMALLOC(int, noL);
 
-            VECTOR_ALLOC(here->CPLibr1Ibr1Ptr, noL);
-            VECTOR_ALLOC(here->CPLibr2Ibr2Ptr, noL);
-            VECTOR_ALLOC(here->CPLposIbr1Ptr, noL);
-            VECTOR_ALLOC(here->CPLnegIbr2Ptr, noL);
-            VECTOR_ALLOC(here->CPLposPosPtr, noL);
-            VECTOR_ALLOC(here->CPLnegNegPtr, noL);
-            VECTOR_ALLOC(here->CPLnegPosPtr, noL);
-            VECTOR_ALLOC(here->CPLposNegPtr, noL);
+            VECTOR_ALLOC(double, here->CPLibr1Ibr1Ptr, noL);
+            VECTOR_ALLOC(double, here->CPLibr2Ibr2Ptr, noL);
+            VECTOR_ALLOC(double, here->CPLposIbr1Ptr, noL);
+            VECTOR_ALLOC(double, here->CPLnegIbr2Ptr, noL);
+            VECTOR_ALLOC(double, here->CPLposPosPtr, noL);
+            VECTOR_ALLOC(double, here->CPLnegNegPtr, noL);
+            VECTOR_ALLOC(double, here->CPLnegPosPtr, noL);
+            VECTOR_ALLOC(double, here->CPLposNegPtr, noL);
 
-            MATRIX_ALLOC(here->CPLibr1PosPtr, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2NegPtr, noL, noL);
-            MATRIX_ALLOC(here->CPLibr1NegPtr, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2PosPtr, noL, noL);
-            MATRIX_ALLOC(here->CPLibr1Ibr2Ptr, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2Ibr1Ptr, noL, noL);
+            MATRIX_ALLOC(double, here->CPLibr1PosPtr, noL, noL);
+            MATRIX_ALLOC(double, here->CPLibr2NegPtr, noL, noL);
+            MATRIX_ALLOC(double, here->CPLibr1NegPtr, noL, noL);
+            MATRIX_ALLOC(double, here->CPLibr2PosPtr, noL, noL);
+            MATRIX_ALLOC(double, here->CPLibr1Ibr2Ptr, noL, noL);
+            MATRIX_ALLOC(double, here->CPLibr2Ibr1Ptr, noL, noL);
 
 
             branchname = TMALLOC(char *, here->dimension);
