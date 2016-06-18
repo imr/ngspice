@@ -840,6 +840,26 @@ void *klu_l_malloc (size_t, size_t, klu_l_common *) ;
 void *klu_l_free (void *, size_t, size_t, klu_l_common *) ;
 void *klu_l_realloc (size_t, size_t, size_t, void *, klu_l_common *) ;
 
+int klu_print
+(
+    int *Ap,
+    int *Ai,
+    double *Ax,
+    int n,
+    int *IntToExtRowMap,
+    int *IntToExtColMap
+) ;
+
+int klu_z_print
+(
+    int *Ap,
+    int *Ai,
+    double *Ax,
+    int n,
+    int *IntToExtRowMap,
+    int *IntToExtColMap
+) ;
+
 
 /* ========================================================================== */
 /* === KLU version ========================================================== */

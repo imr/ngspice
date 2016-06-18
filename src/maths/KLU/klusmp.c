@@ -521,8 +521,10 @@ SMPprintRHS (SMPmatrix *Matrix, char *Filename, RealVector RHS, RealVector iRHS)
 void
 SMPprint (SMPmatrix *Matrix, char *Filename)
 {
-    if (!Matrix->CKTkluMODE)
+    if (Matrix->CKTkluMODE)
     {
+        klu_z_print (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->SPmatrix->IntToExtRowMap, Matrix->SPmatrix->IntToExtColMap) ;
+    } else {
         if (Filename)
             spFileMatrix (Matrix->SPmatrix, Filename, "Circuit Matrix", 0, 1, 1) ;
         else
