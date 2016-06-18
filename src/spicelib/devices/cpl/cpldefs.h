@@ -35,22 +35,22 @@ typedef struct sCPLinstance {
 	char **in_node_names;
 	char **out_node_names;
 
-	double **CPLibr1Ibr1;
-	double **CPLibr2Ibr2;
-	double **CPLposIbr1;
-	double **CPLnegIbr2;
+	double **CPLibr1Ibr1Ptr;
+	double **CPLibr2Ibr2Ptr;
+	double **CPLposIbr1Ptr;
+	double **CPLnegIbr2Ptr;
 	/* trial */
-	double **CPLposPos;
-	double **CPLnegNeg;
-	double **CPLposNeg;
-	double **CPLnegPos;
+	double **CPLposPosPtr;
+	double **CPLnegNegPtr;
+	double **CPLposNegPtr;
+	double **CPLnegPosPtr;
 
-	double ***CPLibr1Pos;
-	double ***CPLibr2Neg;
-	double ***CPLibr1Neg;
-	double ***CPLibr2Pos;
-	double ***CPLibr1Ibr2;
-	double ***CPLibr2Ibr1;
+	double ***CPLibr1PosPtr;
+	double ***CPLibr2NegPtr;
+	double ***CPLibr1NegPtr;
+	double ***CPLibr2PosPtr;
+	double ***CPLibr1Ibr2Ptr;
+	double ***CPLibr2Ibr1Ptr;
 	
 	unsigned CPLibr1Given   : 1;
 	unsigned CPLibr2Given   : 1;
