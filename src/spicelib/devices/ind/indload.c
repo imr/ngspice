@@ -71,8 +71,8 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
                                            muthere->MUTind1->INDbrEq);
             }
 
-            *(muthere->MUTbr1br2) -= muthere->MUTfactor*ckt->CKTag[0];
-            *(muthere->MUTbr2br1) -= muthere->MUTfactor*ckt->CKTag[0];
+            *(muthere->MUTbr1br2Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
+            *(muthere->MUTbr2br1Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
         }
     }
     itype = CKTtypelook("Inductor");
