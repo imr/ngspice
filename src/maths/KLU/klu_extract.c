@@ -288,3 +288,142 @@ Int KLU_extract     /* returns TRUE if successful, FALSE otherwise */
 
     return (TRUE) ;
 }
+
+/* Francesco - Extract only Udiag */
+Int KLU_extract_Udiag     /* returns TRUE if successful, FALSE otherwise */
+(
+    /* inputs: */
+    KLU_numeric *Numeric,
+    KLU_symbolic *Symbolic,
+
+    /* outputs, all of which must be allocated on input */
+
+    /* U */
+    double *Ux,     /* size nnz(U) */
+#ifdef COMPLEX
+    double *Uz,     /* size nnz(U) for the complex case, ignored if real */
+#endif
+
+    Int *P,
+    Int *Q,
+    double *Rs,
+
+    KLU_common *Common
+)
+{
+    Entry *Ukk ;
+    Int block, k1, k2, kk, i, n, nk, nblocks, nz ;
+
+    if (Common == NULL)
+    {
+        return (FALSE) ;
+    }
+
+    if (Common->status == KLU_EMPTY_MATRIX)
+    {
+        return (FALSE) ;
+    }
+
+    if (Symbolic == NULL || Numeric == NULL)
+    {
+        Common->status = KLU_INVALID ;
+        return (FALSE) ;
+    }
+
+    Common->status = KLU_OK ;
+    n = Symbolic->n ;
+    nblocks = Symbolic->nblocks ;
+
+    /* ---------------------------------------------------------------------- */
+    /* extract scale factors */
+    /* ---------------------------------------------------------------------- */
+
+    if (Rs != NULL)
+    {
+        if (Numeric->Rs != NULL)
+        {
+            for (i = 0 ; i < n ; i++)
+            {
+                Rs [i] = Numeric->Rs [i] ;
+            }
+        }
+        else
+        {
+            /* no scaling */
+            for (i = 0 ; i < n ; i++)
+            {
+                Rs [i] = 1 ;
+            }
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* extract final row permutation */
+    /* ---------------------------------------------------------------------- */
+
+    if (P != NULL)
+    {
+        for (i = 0 ; i < n ; i++)
+        {
+            P [i] = Numeric->Pnum [i] ;
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* extract column permutation */
+    /* ---------------------------------------------------------------------- */
+
+    if (Q != NULL)
+    {
+        for (i = 0 ; i < n ; i++)
+        {
+            Q [i] = Symbolic->Q [i] ;
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* extract each block of U */
+    /* ---------------------------------------------------------------------- */
+
+    if (Ux != NULL
+#ifdef COMPLEX
+        && Uz != NULL
+#endif
+    )
+    {
+        nz = 0 ;
+        for (block = 0 ; block < nblocks ; block++)
+        {
+            k1 = Symbolic->R [block] ;
+            k2 = Symbolic->R [block+1] ;
+            nk = k2 - k1 ;
+            Ukk = ((Entry *) Numeric->Udiag) + k1 ;
+            if (nk == 1)
+            {
+                /* singleton block */
+                Ux [nz] = REAL (Ukk [0]) ;
+#ifdef COMPLEX
+                Uz [nz] = IMAG (Ukk [0]) ;
+#endif
+                nz++ ;
+            }
+            else
+            {
+                /* non-singleton block */
+                for (kk = 0 ; kk < nk ; kk++)
+                {
+                    /* add the diagonal entry */
+                    Ux [nz] = REAL (Ukk [kk]) ;
+#ifdef COMPLEX
+                    Uz [nz] = IMAG (Ukk [kk]) ;
+#endif
+                    nz++ ;
+                }
+            }
+        }
+        ASSERT (nz == Numeric->unz) ;
+
+    }
+
+    return (TRUE) ;
+}
