@@ -195,21 +195,21 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             here->CPLibr1 = TMALLOC(int, noL);
             here->CPLibr2 = TMALLOC(int, noL);
 
-            VECTOR_ALLOC(here->CPLibr1Ibr1, noL);
-            VECTOR_ALLOC(here->CPLibr2Ibr2, noL);
-            VECTOR_ALLOC(here->CPLposIbr1, noL);
-            VECTOR_ALLOC(here->CPLnegIbr2, noL);
-            VECTOR_ALLOC(here->CPLposPos, noL);
-            VECTOR_ALLOC(here->CPLnegNeg, noL);
-            VECTOR_ALLOC(here->CPLnegPos, noL);
-            VECTOR_ALLOC(here->CPLposNeg, noL);
+            VECTOR_ALLOC(here->CPLibr1Ibr1Ptr, noL);
+            VECTOR_ALLOC(here->CPLibr2Ibr2Ptr, noL);
+            VECTOR_ALLOC(here->CPLposIbr1Ptr, noL);
+            VECTOR_ALLOC(here->CPLnegIbr2Ptr, noL);
+            VECTOR_ALLOC(here->CPLposPosPtr, noL);
+            VECTOR_ALLOC(here->CPLnegNegPtr, noL);
+            VECTOR_ALLOC(here->CPLnegPosPtr, noL);
+            VECTOR_ALLOC(here->CPLposNegPtr, noL);
 
-            MATRIX_ALLOC(here->CPLibr1Pos, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2Neg, noL, noL);
-            MATRIX_ALLOC(here->CPLibr1Neg, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2Pos, noL, noL);
-            MATRIX_ALLOC(here->CPLibr1Ibr2, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2Ibr1, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1PosPtr, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2NegPtr, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1NegPtr, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2PosPtr, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1Ibr2Ptr, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2Ibr1Ptr, noL, noL);
 
 
             branchname = TMALLOC(char *, here->dimension);
@@ -259,23 +259,23 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             }
 
             for (m = 0; m < here->dimension; m++) {
-                TSTALLOC(CPLibr1Ibr1[m],CPLibr1[m],CPLibr1[m]);
-                TSTALLOC(CPLibr2Ibr2[m],CPLibr2[m],CPLibr2[m]);
-                TSTALLOC(CPLposIbr1[m],CPLposNodes[m],CPLibr1[m]);
-                TSTALLOC(CPLnegIbr2[m],CPLnegNodes[m],CPLibr2[m]);
-                TSTALLOC(CPLposPos[m],CPLposNodes[m],CPLposNodes[m]);
-                TSTALLOC(CPLnegNeg[m],CPLnegNodes[m],CPLnegNodes[m]);
-                TSTALLOC(CPLnegPos[m],CPLnegNodes[m],CPLposNodes[m]);
-                TSTALLOC(CPLposNeg[m],CPLposNodes[m],CPLnegNodes[m]);
+                TSTALLOC(CPLibr1Ibr1Ptr[m],CPLibr1[m],CPLibr1[m]);
+                TSTALLOC(CPLibr2Ibr2Ptr[m],CPLibr2[m],CPLibr2[m]);
+                TSTALLOC(CPLposIbr1Ptr[m],CPLposNodes[m],CPLibr1[m]);
+                TSTALLOC(CPLnegIbr2Ptr[m],CPLnegNodes[m],CPLibr2[m]);
+                TSTALLOC(CPLposPosPtr[m],CPLposNodes[m],CPLposNodes[m]);
+                TSTALLOC(CPLnegNegPtr[m],CPLnegNodes[m],CPLnegNodes[m]);
+                TSTALLOC(CPLnegPosPtr[m],CPLnegNodes[m],CPLposNodes[m]);
+                TSTALLOC(CPLposNegPtr[m],CPLposNodes[m],CPLnegNodes[m]);
 
                 for (p = 0; p < here->dimension; p++) {
 
-                    TSTALLOC(CPLibr1Pos[m][p],CPLibr1[m],CPLposNodes[p]);
-                    TSTALLOC(CPLibr2Neg[m][p],CPLibr2[m],CPLnegNodes[p]);
-                    TSTALLOC(CPLibr1Neg[m][p],CPLibr1[m],CPLnegNodes[p]);
-                    TSTALLOC(CPLibr2Pos[m][p],CPLibr2[m],CPLposNodes[p]);
-                    TSTALLOC(CPLibr1Ibr2[m][p],CPLibr1[m],CPLibr2[p]);
-                    TSTALLOC(CPLibr2Ibr1[m][p],CPLibr2[m],CPLibr1[p]);
+                    TSTALLOC(CPLibr1PosPtr[m][p],CPLibr1[m],CPLposNodes[p]);
+                    TSTALLOC(CPLibr2NegPtr[m][p],CPLibr2[m],CPLnegNodes[p]);
+                    TSTALLOC(CPLibr1NegPtr[m][p],CPLibr1[m],CPLnegNodes[p]);
+                    TSTALLOC(CPLibr2PosPtr[m][p],CPLibr2[m],CPLposNodes[p]);
+                    TSTALLOC(CPLibr1Ibr2Ptr[m][p],CPLibr1[m],CPLibr2[p]);
+                    TSTALLOC(CPLibr2Ibr1Ptr[m][p],CPLibr2[m],CPLibr1[p]);
 
                 }
             }
@@ -305,22 +305,22 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
             noL = here->dimension;
 
-            VECTOR_FREE(here->CPLibr1Ibr1);
-            VECTOR_FREE(here->CPLibr2Ibr2);
-            VECTOR_FREE(here->CPLposIbr1);
-            VECTOR_FREE(here->CPLnegIbr2);
-            VECTOR_FREE(here->CPLposPos);
-            VECTOR_FREE(here->CPLnegNeg);
-            VECTOR_FREE(here->CPLnegPos);
-            VECTOR_FREE(here->CPLposNeg);
+            VECTOR_FREE(here->CPLibr1Ibr1Ptr);
+            VECTOR_FREE(here->CPLibr2Ibr2Ptr);
+            VECTOR_FREE(here->CPLposIbr1Ptr);
+            VECTOR_FREE(here->CPLnegIbr2Ptr);
+            VECTOR_FREE(here->CPLposPosPtr);
+            VECTOR_FREE(here->CPLnegNegPtr);
+            VECTOR_FREE(here->CPLnegPosPtr);
+            VECTOR_FREE(here->CPLposNegPtr);
 
 
-            MATRIX_FREE(here->CPLibr1Pos, noL, noL);
-            MATRIX_FREE(here->CPLibr2Neg, noL, noL);
-            MATRIX_FREE(here->CPLibr1Neg, noL, noL);
-            MATRIX_FREE(here->CPLibr2Pos, noL, noL);
-            MATRIX_FREE(here->CPLibr1Ibr2, noL, noL);
-            MATRIX_FREE(here->CPLibr2Ibr1, noL, noL);
+            MATRIX_FREE(here->CPLibr1PosPtr, noL, noL);
+            MATRIX_FREE(here->CPLibr2NegPtr, noL, noL);
+            MATRIX_FREE(here->CPLibr1NegPtr, noL, noL);
+            MATRIX_FREE(here->CPLibr2PosPtr, noL, noL);
+            MATRIX_FREE(here->CPLibr1Ibr2Ptr, noL, noL);
+            MATRIX_FREE(here->CPLibr2Ibr1Ptr, noL, noL);
 
 
             for (m = 0; m < noL; m++) {
