@@ -68,9 +68,9 @@ SPICEdev CPLinfo = {
 #endif
 
 #ifdef KLU
-    .DEVbindCSC = NULL,
-    .DEVbindCSCComplex = NULL,
-    .DEVbindCSCComplexToReal = NULL,
+    .DEVbindCSC = CPLbindCSC,
+    .DEVbindCSCComplex = CPLbindCSCComplex,
+    .DEVbindCSCComplexToReal = CPLbindCSCComplexToReal,
 #endif
 };
 

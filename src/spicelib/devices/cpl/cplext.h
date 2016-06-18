@@ -13,3 +13,9 @@ extern int CPLsetup(SMPmatrix*, GENmodel*, CKTcircuit*, int*);
 extern int CPLunsetup(GENmodel*, CKTcircuit*);
 extern int CPLmDelete(GENmodel*);
 extern int CPLDelete(GENinstance*);
+
+#ifdef KLU
+extern int CPLbindCSC (GENmodel *, CKTcircuit *) ;
+extern int CPLbindCSCComplex (GENmodel *, CKTcircuit *) ;
+extern int CPLbindCSCComplexToReal (GENmodel *, CKTcircuit *) ;
+#endif
