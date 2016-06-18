@@ -724,13 +724,23 @@ SMPcZeroCol (SMPmatrix *eMatrix, int Col)
 
     Col = Matrix->ExtToIntColMap [Col] ;
 
-    for (Element = Matrix->FirstInCol [Col] ; Element != NULL ; Element = Element->NextInCol)
+    if (eMatrix->CKTkluMODE)
     {
-	Element->Real = 0.0 ;
-	Element->Imag = 0.0 ;
+        int i ;
+        for (i = eMatrix->CKTkluAp [Col - 1] ; i < eMatrix->CKTkluAp [Col] ; i++)
+        {
+            eMatrix->CKTkluAx_Complex [2 * i] = 0 ;
+            eMatrix->CKTkluAx_Complex [2 * i + 1] = 0 ;
+        }
+        return 0 ;
+    } else {
+        for (Element = Matrix->FirstInCol [Col] ; Element != NULL ; Element = Element->NextInCol)
+        {
+            Element->Real = 0.0 ;
+            Element->Imag = 0.0 ;
+        }
+        return spError (Matrix) ;
     }
-
-    return spError (Matrix) ;
 }
 
 /*
