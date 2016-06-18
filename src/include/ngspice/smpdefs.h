@@ -55,6 +55,7 @@ typedef struct sSMPmatrix {
 #ifdef KLU
 void SMPmatrix_CSC (SMPmatrix *) ;
 void SMPnnz (SMPmatrix *) ;
+void spDeterminant_KLU (SMPmatrix *, int *, double *, double *) ;
 #endif
 int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );
