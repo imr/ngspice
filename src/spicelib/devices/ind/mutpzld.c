@@ -29,10 +29,10 @@ MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                 here = here->MUTnextInstance) {
     
             val =  here->MUTfactor;
-            *(here->MUTbr1br2 ) -= val * s->real;
-            *(here->MUTbr1br2 +1) -= val * s->imag;
-            *(here->MUTbr2br1 ) -= val * s->real;
-            *(here->MUTbr2br1 +1) -= val * s->imag;
+            *(here->MUTbr1br2Ptr ) -= val * s->real;
+            *(here->MUTbr1br2Ptr +1) -= val * s->imag;
+            *(here->MUTbr2br1Ptr ) -= val * s->real;
+            *(here->MUTbr2br1Ptr +1) -= val * s->imag;
         }
     }
     return(OK);

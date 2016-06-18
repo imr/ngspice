@@ -124,8 +124,8 @@ IFuid MUTindName1;  /* name of coupled inductor 1 */
 IFuid MUTindName2;  /* name of coupled inductor 2 */
 INDinstance *MUTind1;   /* pointer to coupled inductor 1 */
 INDinstance *MUTind2;   /* pointer to coupled inductor 2 */
-double *MUTbr1br2;  /* pointers to off-diagonal intersections of */
-double *MUTbr2br1;  /* current branch equations in matrix */
+double *MUTbr1br2Ptr;  /* pointers to off-diagonal intersections of */
+double *MUTbr2br1Ptr;  /* current branch equations in matrix */
 
 unsigned MUTindGiven : 1;   /* flag to indicate inductance was specified */
 int  MUTsenParmNo;   /* parameter # for sensitivity use;
