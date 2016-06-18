@@ -82,6 +82,7 @@
 #define KLU_rgrowth klu_z_rgrowth
 #define KLU_rcond klu_z_rcond
 #define KLU_extract klu_z_extract
+#define KLU_extract_Udiag klu_z_extract_Udiag
 #define KLU_condest klu_z_condest
 #define KLU_flops klu_z_flops
 
@@ -132,6 +133,7 @@
 #define KLU_rgrowth klu_rgrowth
 #define KLU_rcond klu_rcond
 #define KLU_extract klu_extract
+#define KLU_extract_Udiag klu_extract_Udiag
 #define KLU_condest klu_condest
 #define KLU_flops klu_flops
 
