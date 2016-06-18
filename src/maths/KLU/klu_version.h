@@ -85,6 +85,7 @@
 #define KLU_extract_Udiag klu_z_extract_Udiag
 #define KLU_condest klu_z_condest
 #define KLU_flops klu_z_flops
+#define KLU_print klu_z_print
 
 #endif
 
@@ -136,6 +137,7 @@
 #define KLU_extract_Udiag klu_extract_Udiag
 #define KLU_condest klu_condest
 #define KLU_flops klu_flops
+#define KLU_print klu_print
 
 #endif
 

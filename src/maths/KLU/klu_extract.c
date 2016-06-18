@@ -427,3 +427,34 @@ Int KLU_extract_Udiag     /* returns TRUE if successful, FALSE otherwise */
 
     return (TRUE) ;
 }
+
+Int KLU_print
+(
+    Int *Ap,
+    Int *Ai,
+    double *Ax,
+    int n,
+    int *IntToExtRowMap,
+    int *IntToExtColMap
+)
+{
+    Entry *Az ;
+    int i, j ;
+
+    Az = (Entry *)Ax ;
+    for (i = 0 ; i < n ; i++)
+    {
+        for (j = Ap [i] ; j < Ap [i + 1] ; j++)
+        {
+
+#ifdef COMPLEX
+            fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g j%-.9g\n", IntToExtRowMap [Ai [j] + 1], IntToExtColMap [i + 1], Az [j].Real, Az [j].Imag) ;
+#else
+            fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g\n", IntToExtRowMap [Ai [j] + 1], IntToExtColMap [i + 1], Az [j]) ;
+#endif
+
+        }
+    }
+
+    return 0 ;
+}
