@@ -58,6 +58,25 @@ typedef struct sCPLinstance {
 	unsigned CPLdcGiven     : 1;
 	unsigned CPLlengthGiven : 1;
 
+#ifdef KLU
+	BindElement **CPLibr1Ibr1Binding;
+	BindElement **CPLibr2Ibr2Binding;
+	BindElement **CPLposIbr1Binding;
+	BindElement **CPLnegIbr2Binding;
+	/* trial */
+	BindElement **CPLposPosBinding;
+	BindElement **CPLnegNegBinding;
+	BindElement **CPLposNegBinding;
+	BindElement **CPLnegPosBinding;
+
+	BindElement ***CPLibr1PosBinding;
+	BindElement ***CPLibr2NegBinding;
+	BindElement ***CPLibr1NegBinding;
+	BindElement ***CPLibr2PosBinding;
+	BindElement ***CPLibr1Ibr2Binding;
+	BindElement ***CPLibr2Ibr1Binding;
+#endif
+
 } CPLinstance ;
 
 
