@@ -63,8 +63,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(MUTbr1br2,MUTind1->INDbrEq,MUTind2->INDbrEq);
-            TSTALLOC(MUTbr2br1,MUTind2->INDbrEq,MUTind1->INDbrEq);
+            TSTALLOC(MUTbr1br2Ptr,MUTind1->INDbrEq,MUTind2->INDbrEq);
+            TSTALLOC(MUTbr2br1Ptr,MUTind2->INDbrEq,MUTind1->INDbrEq);
         }
     }
     return(OK);
