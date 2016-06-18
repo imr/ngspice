@@ -211,6 +211,24 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             MATRIX_ALLOC(here->CPLibr1Ibr2Ptr, double, noL, noL);
             MATRIX_ALLOC(here->CPLibr2Ibr1Ptr, double, noL, noL);
 
+#ifdef KLU
+            VECTOR_ALLOC(here->CPLibr1Ibr1Binding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLibr2Ibr2Binding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLposIbr1Binding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLnegIbr2Binding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLposPosBinding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLnegNegBinding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLnegPosBinding, BindElement, noL);
+            VECTOR_ALLOC(here->CPLposNegBinding, BindElement, noL);
+
+            MATRIX_ALLOC(here->CPLibr1PosBinding, BindElement, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2NegBinding, BindElement, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1NegBinding, BindElement, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2PosBinding, BindElement, noL, noL);
+            MATRIX_ALLOC(here->CPLibr1Ibr2Binding, BindElement, noL, noL);
+            MATRIX_ALLOC(here->CPLibr2Ibr1Binding, BindElement, noL, noL);
+#endif
+
 
             branchname = TMALLOC(char *, here->dimension);
             if (! here->CPLibr1Given) {

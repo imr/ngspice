@@ -19,6 +19,10 @@ libcpl_la_SOURCES = \
 	cplsetup.c \
 	cplinit.c
 
+if KLU_WANTED
+libcpl_la_SOURCES += cplbindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 

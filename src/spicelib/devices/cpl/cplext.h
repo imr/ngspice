@@ -14,3 +14,9 @@ extern int CPLmParam(int,IFvalue*, GENmodel*);
 extern int CPLparam(int,IFvalue*, GENinstance*, IFvalue*);
 extern int CPLsetup(SMPmatrix*, GENmodel*, CKTcircuit*, int*);
 extern int CPLunsetup(GENmodel*, CKTcircuit*);
+
+#ifdef KLU
+extern int CPLbindCSC (GENmodel *, CKTcircuit *) ;
+extern int CPLbindCSCComplex (GENmodel *, CKTcircuit *) ;
+extern int CPLbindCSCComplexToReal (GENmodel *, CKTcircuit *) ;
+#endif
