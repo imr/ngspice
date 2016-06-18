@@ -707,6 +707,26 @@ int klu_extract     /* returns TRUE if successful, FALSE otherwise */
 ) ;
 
 
+/* Francesco - Extract only Udiag */
+int klu_extract_Udiag     /* returns TRUE if successful, FALSE otherwise */
+(
+    /* inputs: */
+    klu_numeric *Numeric,
+    klu_symbolic *Symbolic,
+
+    /* outputs, all of which must be allocated on input */
+
+    /* U */
+    double *Ux,     /* size nnz(U) */
+
+    int *P,
+    int *Q,
+    double *Rs,
+
+    klu_common *Common
+) ;
+
+
 int klu_z_extract           /* returns TRUE if successful, FALSE otherwise */
 (
     /* inputs: */
@@ -744,6 +764,26 @@ int klu_z_extract           /* returns TRUE if successful, FALSE otherwise */
 
     /* R, block boundaries */
     int *R,         /* size Symbolic->nblocks+1 (nblocks is at most n) */
+
+    klu_common *Common
+) ;
+
+/* Francesco - Extract only Udiag */
+int klu_z_extract_Udiag     /* returns TRUE if successful, FALSE otherwise */
+(
+    /* inputs: */
+    klu_numeric *Numeric,
+    klu_symbolic *Symbolic,
+
+    /* outputs, all of which must be allocated on input */
+
+    /* U */
+    double *Ux,     /* size nnz(U) */
+    double *Uz,     /* size nnz(U) for the complex case, ignored if real */
+
+    int *P,
+    int *Q,
+    double *Rs,
 
     klu_common *Common
 ) ;
