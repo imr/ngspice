@@ -540,6 +540,239 @@ SMPgetError (SMPmatrix *Matrix, int *Col, int *Row)
     }
 }
 
+#ifdef KLU
+void
+spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, RealNumber *piDeterminant)
+{
+    int I, Size ;
+    RealNumber Norm, nr, ni ;
+    ComplexNumber Pivot, cDeterminant, Udiag ;
+
+    int *P, *Q ;
+    double *Rs, *Ux, *Uz ;
+    unsigned int nSwap ;
+
+#define  NORM(a)     (nr = ABS((a).Real), ni = ABS((a).Imag), MAX (nr,ni))
+
+    *pExponent = 0 ;
+
+    if (Matrix->CKTkluCommon->status == KLU_SINGULAR)
+    {
+	*pDeterminant = 0.0 ;
+        if (Matrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex)
+        {
+            *piDeterminant = 0.0 ;
+        }
+        return ;
+    }
+
+    Size = Matrix->CKTkluN ;
+    I = 0 ;
+
+    P = (int *) malloc ((size_t)Matrix->CKTkluN * sizeof (int)) ;
+    Q = (int *) malloc ((size_t)Matrix->CKTkluN * sizeof (int)) ;
+
+    Ux = (double *) malloc ((size_t)Matrix->CKTkluN * sizeof (double)) ;
+
+    Rs = (double *) malloc ((size_t)Matrix->CKTkluN * sizeof (double)) ;
+
+    if (Matrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex)        /* Complex Case. */
+    {
+	cDeterminant.Real = 1.0 ;
+        cDeterminant.Imag = 0.0 ;
+
+        Uz = (double *) malloc ((size_t)Matrix->CKTkluN * sizeof (double)) ;
+/*
+        int *Lp, *Li, *Up, *Ui, *Fp, *Fi, *P, *Q ;
+        double *Lx, *Lz, *Ux, *Uz, *Fx, *Fz, *Rs ;
+        Lp = (int *) malloc (((size_t)Matrix->CKTkluN + 1) * sizeof (int)) ;
+        Li = (int *) malloc ((size_t)Matrix->CKTkluNumeric->lnz * sizeof (int)) ;
+        Lx = (double *) malloc ((size_t)Matrix->CKTkluNumeric->lnz * sizeof (double)) ;
+        Lz = (double *) malloc ((size_t)Matrix->CKTkluNumeric->lnz * sizeof (double)) ;
+        Up = (int *) malloc (((size_t)Matrix->CKTkluN + 1) * sizeof (int)) ;
+        Ui = (int *) malloc ((size_t)Matrix->CKTkluNumeric->unz * sizeof (int)) ;
+        Ux = (double *) malloc ((size_t)Matrix->CKTkluNumeric->unz * sizeof (double)) ;
+        Uz = (double *) malloc ((size_t)Matrix->CKTkluNumeric->unz * sizeof (double)) ;
+        Fp = (int *) malloc (((size_t)Matrix->CKTkluN + 1) * sizeof (int)) ;
+        Fi = (int *) malloc ((size_t)Matrix->CKTkluNumeric->Offp [Matrix->CKTkluN] * sizeof (int)) ;
+        Fx = (double *) malloc ((size_t)Matrix->CKTkluNumeric->Offp [Matrix->CKTkluN] * sizeof (double)) ;
+        Fz = (double *) malloc ((size_t)Matrix->CKTkluNumeric->Offp [Matrix->CKTkluN] * sizeof (double)) ;
+        klu_z_extract (Matrix->CKTkluNumeric, Matrix->CKTkluSymbolic,
+                       Lp, Li, Lx, Lz,
+                       Up, Ui, Ux, Uz,
+                       Fp, Fi, Fx, Fz,
+                       P, Q, Rs, NULL,
+                       Matrix->CKTkluCommon) ;
+*/
+        klu_z_extract_Udiag (Matrix->CKTkluNumeric, Matrix->CKTkluSymbolic, Ux, Uz, P, Q, Rs, Matrix->CKTkluCommon) ;
+/*
+        for (I = 0 ; I < Matrix->CKTkluNumeric->lnz ; I++)
+        {
+            printf ("L - Value: %-.9g\t%-.9g\n", Lx [I], Lz [I]) ;
+        }
+        for (I = 0 ; I < Matrix->CKTkluNumeric->unz ; I++)
+        {
+            printf ("U - Value: %-.9g\t%-.9g\n", Ux [I], Uz [I]) ;
+        }
+        for (I = 0 ; I < Matrix->CKTkluNumeric->Offp [Matrix->CKTkluN] ; I++)
+        {
+            printf ("F - Value: %-.9g\t%-.9g\n", Fx [I], Fz [I]) ;
+        }
+
+        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        {
+            printf ("U - Value: %-.9g\t%-.9g\n", Ux [I], Uz [I]) ;
+        }
+*/
+        nSwap = 0 ;
+        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        {
+            if (P [I] != I || Q [I] != I)
+            {
+                nSwap++ ;
+            }
+        }
+/*
+        free (Lp) ;
+        free (Li) ;
+        free (Lx) ;
+        free (Lz) ;
+        free (Up) ;
+        free (Ui) ;
+        free (Fp) ;
+        free (Fi) ;
+        free (Fx) ;
+        free (Fz) ;
+*/
+        I = 0 ;
+        while (I < Size)
+        {
+            Udiag.Real = 1 / (Ux [I] * Rs [I]) ;
+            Udiag.Imag = Uz [I] * Rs [I] ;
+
+//            printf ("Udiag.Real: %-.9g\tUdiag.Imag %-.9g\n", Udiag.Real, Udiag.Imag) ;
+
+            CMPLX_RECIPROCAL (Pivot, Udiag) ;
+            CMPLX_MULT_ASSIGN (cDeterminant, Pivot) ;
+
+//            printf ("cDeterminant.Real: %-.9g\tcDeterminant.Imag %-.9g\n", cDeterminant.Real, cDeterminant.Imag) ;
+
+	    /* Scale Determinant. */
+            Norm = NORM (cDeterminant) ;
+            if (Norm != 0.0)
+            {
+		while (Norm >= 1.0e12)
+                {
+		    cDeterminant.Real *= 1.0e-12 ;
+                    cDeterminant.Imag *= 1.0e-12 ;
+                    *pExponent += 12 ;
+                    Norm = NORM (cDeterminant) ;
+                }
+                while (Norm < 1.0e-12)
+                {
+		    cDeterminant.Real *= 1.0e12 ;
+                    cDeterminant.Imag *= 1.0e12 ;
+                    *pExponent -= 12 ;
+                    Norm = NORM (cDeterminant) ;
+                }
+            }
+            I++ ;
+        }
+
+	/* Scale Determinant again, this time to be between 1.0 <= x < 10.0. */
+        Norm = NORM (cDeterminant) ;
+        if (Norm != 0.0)
+        {
+	    while (Norm >= 10.0)
+            {
+		cDeterminant.Real *= 0.1 ;
+                cDeterminant.Imag *= 0.1 ;
+                (*pExponent)++ ;
+                Norm = NORM (cDeterminant) ;
+            }
+            while (Norm < 1.0)
+            {
+		cDeterminant.Real *= 10.0 ;
+                cDeterminant.Imag *= 10.0 ;
+                (*pExponent)-- ;
+                Norm = NORM (cDeterminant) ;
+            }
+        }
+        if (nSwap % 2 != 0)
+        {
+            CMPLX_NEGATE (cDeterminant) ;
+        }
+
+        *pDeterminant = cDeterminant.Real ;
+        *piDeterminant = cDeterminant.Imag ;
+
+        free (Uz) ;
+    }
+    else
+    {
+	/* Real Case. */
+        *pDeterminant = 1.0 ;
+
+        klu_extract_Udiag (Matrix->CKTkluNumeric, Matrix->CKTkluSymbolic, Ux, P, Q, Rs, Matrix->CKTkluCommon) ;
+
+        nSwap = 0 ;
+        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        {
+            if (P [I] != I || Q [I] != I)
+            {
+                nSwap++ ;
+            }
+        }
+
+        while (I < Size)
+        {
+            *pDeterminant /= Ux [I] ;
+
+	    /* Scale Determinant. */
+            if (*pDeterminant != 0.0)
+            {
+		while (ABS(*pDeterminant) >= 1.0e12)
+                {
+		    *pDeterminant *= 1.0e-12 ;
+                    *pExponent += 12 ;
+                }
+                while (ABS(*pDeterminant) < 1.0e-12)
+                {
+		    *pDeterminant *= 1.0e12 ;
+                    *pExponent -= 12 ;
+                }
+            }
+            I++ ;
+        }
+
+	/* Scale Determinant again, this time to be between 1.0 <= x <
+           10.0. */
+        if (*pDeterminant != 0.0)
+        {
+	    while (ABS(*pDeterminant) >= 10.0)
+            {
+		*pDeterminant *= 0.1 ;
+                (*pExponent)++ ;
+            }
+            while (ABS(*pDeterminant) < 1.0)
+            {
+		*pDeterminant *= 10.0 ;
+                (*pExponent)-- ;
+            }
+        }
+        if (nSwap % 2 != 0)
+        {
+            *pDeterminant = -*pDeterminant ;
+        }
+    }
+
+    free (P) ;
+    free (Q) ;
+    free (Ux) ;
+    free (Rs) ;
+}
+#endif
+
 /*
  * SMPcProdDiag()
  *    note: obsolete for Spice3d2 and later
