@@ -270,6 +270,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
     {
         *NumSwaps = 1 ;
         spSetComplex (Matrix->SPmatrix) ;
+//        Matrix->CKTkluCommon->tol = PivTol ;
 
         if (Matrix->CKTkluNumeric != NULL)
         {
@@ -306,6 +307,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     {
         spSetReal (Matrix->SPmatrix) ;
         LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
+//        Matrix->CKTkluCommon->tol = PivTol ;
 
         if (Matrix->CKTkluNumeric != NULL)
         {
@@ -780,7 +782,12 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
 int
 SMPcProdDiag (SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 {
-    spDeterminant (Matrix->SPmatrix, pExponent, &(pMantissa->real), &(pMantissa->imag)) ;
+    if (Matrix->CKTkluMODE)
+    {
+        spDeterminant_KLU (Matrix, pExponent, &(pMantissa->real), &(pMantissa->imag)) ;
+    } else {
+        spDeterminant (Matrix->SPmatrix, pExponent, &(pMantissa->real), &(pMantissa->imag)) ;
+    }
     return spError (Matrix->SPmatrix) ;
 }
 
@@ -793,7 +800,12 @@ SMPcDProd (SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
     double	re, im, x, y, z;
     int		p;
 
-    spDeterminant (Matrix->SPmatrix, &p, &re, &im) ;
+    if (Matrix->CKTkluMODE)
+    {
+        spDeterminant_KLU (Matrix, &p, &re, &im) ;
+    } else {
+        spDeterminant (Matrix->SPmatrix, &p, &re, &im) ;
+    }
 
 #ifndef M_LN2
 #define M_LN2   0.69314718055994530942
@@ -862,7 +874,13 @@ SMPcDProd (SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 #ifdef debug_print
     printf ("Determinant 10->2: (%20g,%20g)^%d\n", pMantissa->real, pMantissa->imag, *pExponent) ;
 #endif
-    return spError (Matrix->SPmatrix) ;
+
+    if (Matrix->CKTkluMODE)
+    {
+        return 0 ;
+    } else {
+        return spError (Matrix->SPmatrix) ;
+    }
 }
 
 
