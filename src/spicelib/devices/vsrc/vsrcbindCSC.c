@@ -43,6 +43,17 @@ VSRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
             CREATE_KLU_BINDING_TABLE(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
             CREATE_KLU_BINDING_TABLE(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+            /* Pole-Zero Analysis */
+            if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
+            {
+                i = here->VSRCibrIbrPtr ;
+                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                here->VSRCibrIbrBinding = matched ;
+                if (matched != NULL)
+                {
+                    here->VSRCibrIbrPtr = matched->CSC ;
+                }
+            }
         }
     }
 
@@ -67,6 +78,14 @@ VSRCbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+            /* Pole-Zero Analysis */
+            if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
+            {
+                if (here->VSRCibrIbrBinding != NULL)
+                {
+                    here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_Complex ;
+                }
+            }
         }
     }
 
@@ -91,6 +110,14 @@ VSRCbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+            /* Pole-Zero Analysis */
+            if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
+            {
+                if (here->VSRCibrIbrBinding != NULL)
+                {
+                    here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC ;
+                }
+            }
         }
     }
 
