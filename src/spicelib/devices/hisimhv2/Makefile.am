@@ -37,6 +37,11 @@ libhisimhv2_la_SOURCES = hisimhv2.h	\
 			hsmhv2temp_eval_rdri.h \
 			hsmhv2trunc.c
 
+
+if KLU_WANTED
+libhisimhv2_la_SOURCES += hsmhv2bindCSC.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 
