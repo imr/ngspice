@@ -1017,6 +1017,112 @@ typedef struct sHSMHV2instance {
   double **HSMHV2nVar;
 #endif /* NONOISE */
 
+#ifdef KLU
+  BindElement *HSMHV2GgBinding ;
+  BindElement *HSMHV2GgpBinding ;
+
+  BindElement *HSMHV2GPgBinding ;
+  BindElement *HSMHV2GPgpBinding ;
+  BindElement *HSMHV2GPdpBinding ;
+  BindElement *HSMHV2GPspBinding ;
+  BindElement *HSMHV2GPbpBinding ;
+
+  BindElement *HSMHV2DPdBinding ;
+  BindElement *HSMHV2DPdpBinding ;
+  BindElement *HSMHV2DPgpBinding ;
+  BindElement *HSMHV2DPspBinding ;
+  BindElement *HSMHV2DPbpBinding ;
+
+  BindElement *HSMHV2DdBinding ;
+  BindElement *HSMHV2DdpBinding ;
+  BindElement *HSMHV2DspBinding ;
+  BindElement *HSMHV2DdbBinding ;
+
+  BindElement *HSMHV2SPsBinding ;
+  BindElement *HSMHV2SPspBinding ;
+  BindElement *HSMHV2SPgpBinding ;
+  BindElement *HSMHV2SPdpBinding ;
+  BindElement *HSMHV2SPbpBinding ;
+
+  BindElement *HSMHV2SsBinding ;
+  BindElement *HSMHV2SspBinding ;
+  BindElement *HSMHV2SdpBinding ;
+  BindElement *HSMHV2SsbBinding ;
+
+  BindElement *HSMHV2BPgpBinding ;
+  BindElement *HSMHV2BPbpBinding ;
+  BindElement *HSMHV2BPdBinding ;
+  BindElement *HSMHV2BPdpBinding ;
+  BindElement *HSMHV2BPspBinding ;
+  BindElement *HSMHV2BPsBinding ;
+  BindElement *HSMHV2BPbBinding ;
+  BindElement *HSMHV2BPdbBinding ;
+  BindElement *HSMHV2BPsbBinding ;
+
+  BindElement *HSMHV2DBdBinding ;
+  BindElement *HSMHV2DBdbBinding ;
+  BindElement *HSMHV2DBbpBinding ;
+
+  BindElement *HSMHV2SBsBinding ;
+  BindElement *HSMHV2SBbpBinding ;
+  BindElement *HSMHV2SBsbBinding ;
+
+  BindElement *HSMHV2BbpBinding ;
+  BindElement *HSMHV2BbBinding ;
+
+  BindElement *HSMHV2TemptempBinding ;
+  BindElement *HSMHV2TempdBinding ;
+  BindElement *HSMHV2TempdpBinding ;
+  BindElement *HSMHV2TempsBinding ;
+  BindElement *HSMHV2TempspBinding ;
+  BindElement *HSMHV2TempgpBinding ;
+  BindElement *HSMHV2TempbpBinding ;
+  BindElement *HSMHV2GPtempBinding ;
+  BindElement *HSMHV2DPtempBinding ;
+  BindElement *HSMHV2SPtempBinding ;
+  BindElement *HSMHV2BPtempBinding ;
+  BindElement *HSMHV2DBtempBinding ;
+  BindElement *HSMHV2SBtempBinding ;
+
+  BindElement *HSMHV2DgpBinding ;
+  BindElement *HSMHV2DsBinding ;
+  BindElement *HSMHV2DbpBinding ;
+  BindElement *HSMHV2DtempBinding ;
+  BindElement *HSMHV2DPsBinding ;
+  BindElement *HSMHV2GPdBinding ;
+  BindElement *HSMHV2GPsBinding ;
+  BindElement *HSMHV2SdBinding ;
+  BindElement *HSMHV2SgpBinding ;
+  BindElement *HSMHV2SbpBinding ;
+  BindElement *HSMHV2StempBinding ;
+  BindElement *HSMHV2SPdBinding ;
+
+  /* nqs related pointers */
+  BindElement *HSMHV2DPqiBinding ;
+  BindElement *HSMHV2GPqiBinding ;
+  BindElement *HSMHV2GPqbBinding ;
+  BindElement *HSMHV2SPqiBinding ;
+  BindElement *HSMHV2BPqbBinding ;
+  BindElement *HSMHV2QIdpBinding ;
+  BindElement *HSMHV2QIgpBinding ;
+  BindElement *HSMHV2QIspBinding ;
+  BindElement *HSMHV2QIbpBinding ;
+  BindElement *HSMHV2QIqiBinding ;
+  BindElement *HSMHV2QBdpBinding ;
+  BindElement *HSMHV2QBgpBinding ;
+  BindElement *HSMHV2QBspBinding ;
+  BindElement *HSMHV2QBbpBinding ;
+  BindElement *HSMHV2QBqbBinding ;
+  BindElement *HSMHV2QItempBinding ;
+  BindElement *HSMHV2QBtempBinding ;
+
+  /* Substrate effect related pointers */
+  BindElement *HSMHV2DsubBinding ;
+  BindElement *HSMHV2DPsubBinding ;
+  BindElement *HSMHV2SsubBinding ;
+  BindElement *HSMHV2SPsubBinding ;
+#endif
+
 } HSMHV2instance ;
 
 
