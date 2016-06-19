@@ -14,6 +14,20 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
+#ifdef KLU
+#include <stdlib.h>
+
+static
+int
+BindCompare (const void *a, const void *b)
+{
+    BindElement *A, *B ;
+    A = (BindElement *)a ;
+    B = (BindElement *)b ;
+
+    return ((int)(A->Sparse - B->Sparse)) ;
+}
+#endif
 
 int
 CKTpzSetup(CKTcircuit *ckt, int type)
@@ -88,6 +102,77 @@ CKTpzSetup(CKTcircuit *ckt, int type)
     job->PZbalance_col = balance_col;
 
     job->PZnumswaps = 1;
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+
+        int i ;
+        int n = SMPmatSize (ckt->CKTmatrix) ;
+        ckt->CKTmatrix->CKTkluN = n ;
+
+        SMPnnz (ckt->CKTmatrix) ;
+        int nz = ckt->CKTmatrix->CKTklunz ;
+
+        ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
+        ckt->CKTmatrix->CKTkluAi           = TMALLOC (int, nz) ;
+        ckt->CKTmatrix->CKTkluAx           = TMALLOC (double, nz) ;
+        ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, n) ;
+
+        ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
+
+        ckt->CKTmatrix->CKTdiag_CSC        = TMALLOC (double *, n) ;
+
+        /* Complex Stuff needed for AC Analysis */
+        ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * nz) ;
+        ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * n) ;
+
+        /* Binding Table from Sparse to CSC Format Creation */
+        SMPmatrix_CSC (ckt->CKTmatrix) ;
+
+        /* Binding Table Sorting */
+        qsort (ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare) ;
+
+        /* KLU Pointers Assignment */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSC && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSC (ckt->CKThead [i], ckt) ;
+
+        /* ReOrder */
+        error = SMPpreOrder (ckt->CKTmatrix) ;
+        if (error) {
+            fprintf (stderr, "Error during ReOrdering\n") ;
+        }
+
+        /* Conversion from Real Matrix to Complex Matrix */
+        for (i = 0 ; i < DEVmaxnum ; i++)
+            if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+        ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+
+        /* Input Pos */
+        if ((input_pos != 0) && (solution_col != 0))
+        {
+            double *j ;
+
+            j = job->PZdrive_pptr ;
+            job->PZdrive_pptr = ((BindElement *) bsearch (&j, ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare))->CSC_Complex ;
+        }
+
+        /* Input Neg */
+        if ((input_neg != 0) && (solution_col != 0))
+        {
+            double *j ;
+
+            j = job->PZdrive_nptr ;
+            job->PZdrive_nptr = ((BindElement *) bsearch (&j, ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare))->CSC_Complex ;
+        }
+    } else {
+        fprintf (stderr, "Using SPARSE 1.3 as Direct Linear Solver\n") ;
+    }
+#endif
 
     error = NIreinit(ckt);
     if (error)
