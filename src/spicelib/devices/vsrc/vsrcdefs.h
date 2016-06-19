@@ -83,6 +83,7 @@ typedef struct sVSRCinstance {
     BindElement *VSRCnegIbrBinding ;
     BindElement *VSRCibrNegBinding ;
     BindElement *VSRCibrPosBinding ;
+    BindElement *VSRCibrIbrBinding ;
 #endif
 
 } VSRCinstance ;
