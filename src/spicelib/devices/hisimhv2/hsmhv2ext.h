@@ -38,3 +38,9 @@ extern int HSMHV2temp(GENmodel*,CKTcircuit*);
 extern int HSMHV2trunc(GENmodel*,CKTcircuit*,double*);
 extern int HSMHV2noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int HSMHV2soaCheck(CKTcircuit *, GENmodel *);
+
+#ifdef KLU
+extern int HSMHV2bindCSC (GENmodel*, CKTcircuit*) ;
+extern int HSMHV2bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int HSMHV2bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
