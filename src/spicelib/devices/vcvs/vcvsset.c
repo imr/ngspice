@@ -50,12 +50,12 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(VCVSposIbrptr, VCVSposNode, VCVSbranch);
-            TSTALLOC(VCVSnegIbrptr, VCVSnegNode, VCVSbranch);
-            TSTALLOC(VCVSibrPosptr, VCVSbranch, VCVSposNode);
-            TSTALLOC(VCVSibrNegptr, VCVSbranch, VCVSnegNode);
-            TSTALLOC(VCVSibrContPosptr, VCVSbranch, VCVScontPosNode);
-            TSTALLOC(VCVSibrContNegptr, VCVSbranch, VCVScontNegNode);
+            TSTALLOC(VCVSposIbrPtr, VCVSposNode, VCVSbranch);
+            TSTALLOC(VCVSnegIbrPtr, VCVSnegNode, VCVSbranch);
+            TSTALLOC(VCVSibrPosPtr, VCVSbranch, VCVSposNode);
+            TSTALLOC(VCVSibrNegPtr, VCVSbranch, VCVSnegNode);
+            TSTALLOC(VCVSibrContPosPtr, VCVSbranch, VCVScontPosNode);
+            TSTALLOC(VCVSibrContNegPtr, VCVSbranch, VCVScontNegNode);
         }
     }
     return(OK);

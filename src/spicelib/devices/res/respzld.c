@@ -38,10 +38,10 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             else
                 g = here->RESm * here->RESconduct;
 
-            *(here->RESposPosptr) += g;
-            *(here->RESnegNegptr) += g;
-            *(here->RESposNegptr) -= g;
-            *(here->RESnegPosptr) -= g;
+            *(here->RESposPosPtr) += g;
+            *(here->RESnegNegPtr) += g;
+            *(here->RESposNegPtr) -= g;
+            *(here->RESnegPosPtr) -= g;
         }
     }
     return(OK);

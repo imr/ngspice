@@ -29,20 +29,20 @@ typedef struct sTXLinstance {
 	char *out_node_name;
 	int TXLbranch;       /* unused */
 	
-	double *TXLposPosptr;
-	double *TXLposNegptr;
-	double *TXLnegPosptr;
-	double *TXLnegNegptr;
-	double *TXLibr1Posptr;
-	double *TXLibr2Negptr;
-	double *TXLposIbr1ptr;
-	double *TXLnegIbr2ptr;
-	double *TXLibr1Negptr;
-	double *TXLibr2Posptr;
-	double *TXLibr1Ibr1ptr;
-	double *TXLibr2Ibr2ptr;
-	double *TXLibr1Ibr2ptr;
-	double *TXLibr2Ibr1ptr;
+	double *TXLposPosPtr;
+	double *TXLposNegPtr;
+	double *TXLnegPosPtr;
+	double *TXLnegNegPtr;
+	double *TXLibr1PosPtr;
+	double *TXLibr2NegPtr;
+	double *TXLposIbr1Ptr;
+	double *TXLnegIbr2Ptr;
+	double *TXLibr1NegPtr;
+	double *TXLibr2PosPtr;
+	double *TXLibr1Ibr1Ptr;
+	double *TXLibr2Ibr2Ptr;
+	double *TXLibr1Ibr2Ptr;
+	double *TXLibr2Ibr1Ptr;
 	
 	unsigned TXLibr1Given : 1;
 	unsigned TXLibr2Given : 1;

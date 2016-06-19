@@ -28,11 +28,11 @@ INDacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             val = ckt->CKTomega * here->INDinduct / m;
 	    
-            *(here->INDposIbrptr) +=  1;
-            *(here->INDnegIbrptr) -=  1;
-            *(here->INDibrPosptr) +=  1;
-            *(here->INDibrNegptr) -=  1;
-            *(here->INDibrIbrptr +1) -=  val;
+            *(here->INDposIbrPtr) +=  1;
+            *(here->INDnegIbrPtr) -=  1;
+            *(here->INDibrPosPtr) +=  1;
+            *(here->INDibrNegPtr) -=  1;
+            *(here->INDibrIbrPtr +1) -=  val;
         }
     }
     return(OK);

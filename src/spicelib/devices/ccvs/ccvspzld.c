@@ -34,11 +34,11 @@ CCVSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for (here = model->CCVSinstances; here != NULL ;
                 here=here->CCVSnextInstance) {
             
-            *(here->CCVSposIbrptr) += 1.0 ;
-            *(here->CCVSnegIbrptr) -= 1.0 ;
-            *(here->CCVSibrPosptr) += 1.0 ;
-            *(here->CCVSibrNegptr) -= 1.0 ;
-            *(here->CCVSibrContBrptr) += here->CCVScoeff ;
+            *(here->CCVSposIbrPtr) += 1.0 ;
+            *(here->CCVSnegIbrPtr) -= 1.0 ;
+            *(here->CCVSibrPosPtr) += 1.0 ;
+            *(here->CCVSibrNegPtr) -= 1.0 ;
+            *(here->CCVSibrContBrPtr) += here->CCVScoeff ;
         }
     }
     return(OK);

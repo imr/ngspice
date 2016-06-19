@@ -33,13 +33,13 @@ typedef struct sVCCSinstance {
     double VCCScoeff;       /* coefficient */
     double VCCSmValue;      /* Parallel multiplier */
 
-    double *VCCSposContPosptr;  /* pointer to sparse matrix element at 
+    double *VCCSposContPosPtr;  /* pointer to sparse matrix element at 
                                  * (positive node, control positive node) */
-    double *VCCSposContNegptr;  /* pointer to sparse matrix element at 
+    double *VCCSposContNegPtr;  /* pointer to sparse matrix element at 
                                  * (negative node, control negative node) */
-    double *VCCSnegContPosptr;  /* pointer to sparse matrix element at 
+    double *VCCSnegContPosPtr;  /* pointer to sparse matrix element at 
                                  * (positive node, control positive node) */
-    double *VCCSnegContNegptr;  /* pointer to sparse matrix element at 
+    double *VCCSnegContNegPtr;  /* pointer to sparse matrix element at 
                                  * (negative node, control negative node) */
     unsigned VCCScoeffGiven :1 ;/* flag to indicate function coeffs given */
     unsigned VCCSmGiven     :1 ;/* flag to indicate multiplier given */
