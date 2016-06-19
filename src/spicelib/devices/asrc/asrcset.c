@@ -61,7 +61,7 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 return (E_BADPARM);
             }
 
-            here->ASRCposptr = TMALLOC(double *, j);
+            here->ASRCposPtr = TMALLOC(double *, j);
             here->ASRCvars = TMALLOC(int, here->ASRCtree->numVars);
             here->ASRCacValues = TMALLOC(double, here->ASRCtree->numVars + 1);
 
@@ -79,10 +79,10 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     here->ASRCbranch = tmp->number;
                 }
 
-                TSTALLOC(ASRCposptr[j++], here->ASRCposNode, here->ASRCbranch);
-                TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, here->ASRCbranch);
-                TSTALLOC(ASRCposptr[j++], here->ASRCbranch,  here->ASRCnegNode);
-                TSTALLOC(ASRCposptr[j++], here->ASRCbranch,  here->ASRCposNode);
+                TSTALLOC(ASRCposPtr[j++], here->ASRCposNode, here->ASRCbranch);
+                TSTALLOC(ASRCposPtr[j++], here->ASRCnegNode, here->ASRCbranch);
+                TSTALLOC(ASRCposPtr[j++], here->ASRCbranch,  here->ASRCnegNode);
+                TSTALLOC(ASRCposPtr[j++], here->ASRCbranch,  here->ASRCposNode);
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++) {
@@ -107,10 +107,10 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->ASRCvars[i] = column;
 
                 if (here->ASRCtype == ASRC_VOLTAGE) {
-                    TSTALLOC(ASRCposptr[j++], here->ASRCbranch, column);
+                    TSTALLOC(ASRCposPtr[j++], here->ASRCbranch, column);
                 } else {
-                    TSTALLOC(ASRCposptr[j++], here->ASRCposNode, column);
-                    TSTALLOC(ASRCposptr[j++], here->ASRCnegNode, column);
+                    TSTALLOC(ASRCposPtr[j++], here->ASRCposNode, column);
+                    TSTALLOC(ASRCposPtr[j++], here->ASRCnegNode, column);
                 }
             }
         }

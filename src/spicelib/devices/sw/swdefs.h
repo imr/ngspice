@@ -30,13 +30,13 @@ typedef struct sSWinstance {
     int SWposCntrlNode; /* number of positive controlling node of switch */
     int SWnegCntrlNode; /* number of negative controlling node of switch */
 
-    double *SWposPosptr;  /* pointer to sparse matrix diagonal at
+    double *SWposPosPtr;  /* pointer to sparse matrix diagonal at
                                 (positive,positive) for switch conductance */
-    double *SWnegPosptr;  /* pointer to sparse matrix offdiagonal at
+    double *SWnegPosPtr;  /* pointer to sparse matrix offdiagonal at
                                 (neagtive,positive) for switch conductance */
-    double *SWposNegptr;  /* pointer to sparse matrix offdiagonal at
+    double *SWposNegPtr;  /* pointer to sparse matrix offdiagonal at
                                 (positive,neagtive) for switch conductance */
-    double *SWnegNegptr;  /* pointer to sparse matrix diagonal at
+    double *SWnegNegPtr;  /* pointer to sparse matrix diagonal at
                                 (neagtive,neagtive) for switch conductance */
 
     double SWcond;      /* conductance of the switch now */

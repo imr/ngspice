@@ -51,19 +51,19 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             if (here->ASRCtype == ASRC_VOLTAGE) {
 
-                *(here->ASRCposptr[j++]) += 1.0;
-                *(here->ASRCposptr[j++]) -= 1.0;
-                *(here->ASRCposptr[j++]) -= 1.0;
-                *(here->ASRCposptr[j++]) += 1.0;
+                *(here->ASRCposPtr[j++]) += 1.0;
+                *(here->ASRCposPtr[j++]) -= 1.0;
+                *(here->ASRCposPtr[j++]) -= 1.0;
+                *(here->ASRCposPtr[j++]) += 1.0;
 
                 for (i = 0; i < here->ASRCtree->numVars; i++)
-                    *(here->ASRCposptr[j++]) -= derivs[i] / factor;
+                    *(here->ASRCposPtr[j++]) -= derivs[i] / factor;
 
             } else {
 
                 for (i = 0; i < here->ASRCtree->numVars; i++) {
-                    *(here->ASRCposptr[j++]) += derivs[i] / factor;
-                    *(here->ASRCposptr[j++]) -= derivs[i] / factor;
+                    *(here->ASRCposPtr[j++]) += derivs[i] / factor;
+                    *(here->ASRCposPtr[j++]) -= derivs[i] / factor;
                 }
 
             }

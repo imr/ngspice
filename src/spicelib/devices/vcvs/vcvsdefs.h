@@ -34,17 +34,17 @@ typedef struct sVCVSinstance {
     double VCVSinitCond;    /* initial condition (of controlling source) */
     double VCVScoeff;   /* coefficient */
 
-    double *VCVSposIbrptr;  /* pointer to sparse matrix element at 
+    double *VCVSposIbrPtr;  /* pointer to sparse matrix element at 
                              * (positive node, branch equation) */
-    double *VCVSnegIbrptr;  /* pointer to sparse matrix element at 
+    double *VCVSnegIbrPtr;  /* pointer to sparse matrix element at 
                              * (negative node, branch equation) */
-    double *VCVSibrPosptr;  /* pointer to sparse matrix element at 
+    double *VCVSibrPosPtr;  /* pointer to sparse matrix element at 
                              * (branch equation, positive node) */
-    double *VCVSibrNegptr;  /* pointer to sparse matrix element at 
+    double *VCVSibrNegPtr;  /* pointer to sparse matrix element at 
                              * (branch equation, negative node) */
-    double *VCVSibrContPosptr;  /* pointer to sparse matrix element at 
+    double *VCVSibrContPosPtr;  /* pointer to sparse matrix element at 
                                  *(branch equation, control positive node)*/
-    double *VCVSibrContNegptr;  /* pointer to sparse matrix element at 
+    double *VCVSibrContNegPtr;  /* pointer to sparse matrix element at 
                                  *(branch equation, control negative node)*/
     unsigned VCVScoeffGiven :1 ;/* flag to indicate function coeffs given */
 

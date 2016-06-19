@@ -23,8 +23,8 @@ ASRCdestroy(GENmodel **model)
             next = here->ASRCnextInstance;
             FREE(here->ASRCacValues);
             INPfreeTree(here->ASRCtree);
-            if (here->ASRCposptr)
-                free(here->ASRCposptr);
+            if (here->ASRCposPtr)
+                free(here->ASRCposPtr);
             if (here->ASRCvars)
                 free(here->ASRCvars);
             FREE(here);

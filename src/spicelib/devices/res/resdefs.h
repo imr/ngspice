@@ -46,13 +46,13 @@ typedef struct sRESinstance {
     double RESbv_max;               /* Maximum resistor voltage */
     int    RESnoisy;                /* Set if the resistor generates noise */
     double RESeffNoiseArea;         /* effective resistor area for noise calculation */
-    double *RESposPosptr;           /* pointer to sparse matrix diagonal at
+    double *RESposPosPtr;           /* pointer to sparse matrix diagonal at
                                      * (positive,positive) */
-    double *RESnegNegptr;           /* pointer to sparse matrix diagonal at
+    double *RESnegNegPtr;           /* pointer to sparse matrix diagonal at
                                      * (negative,negative) */
-    double *RESposNegptr;           /* pointer to sparse matrix offdiagonal at
+    double *RESposNegPtr;           /* pointer to sparse matrix offdiagonal at
                                      * (positive,negative) */
-    double *RESnegPosptr;           /* pointer to sparse matrix offdiagonal at
+    double *RESnegPosPtr;           /* pointer to sparse matrix offdiagonal at
                                      * (negative,positive) */
     unsigned RESresGiven    : 1;    /* flag to indicate resistance was specified */
     unsigned RESwidthGiven  : 1;    /* flag to indicate width given */

@@ -32,9 +32,9 @@ typedef struct sCCCSinstance {
 
     double CCCSmValue;  /* Parallel multiplier */
 
-    double *CCCSposContBrptr;  /* pointer to sparse matrix element at 
+    double *CCCSposContBrPtr;  /* pointer to sparse matrix element at 
                                      *(positive node, control branch eq)*/
-    double *CCCSnegContBrptr;  /* pointer to sparse matrix element at 
+    double *CCCSnegContBrPtr;  /* pointer to sparse matrix element at 
                                      *(negative node, control branch eq)*/
     unsigned CCCScoeffGiven :1 ;   /* flag to indicate coeff given */
     unsigned CCCSmGiven     :1 ;  /* flag to indicate multiplier given */

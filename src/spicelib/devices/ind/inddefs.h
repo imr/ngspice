@@ -40,15 +40,15 @@ typedef struct sINDinstance {
     double INDnt;        /* Number of turns */
     double INDinitCond; /* initial inductor voltage if specified */
 
-    double *INDposIbrptr;    /* pointer to sparse matrix diagonal at
+    double *INDposIbrPtr;    /* pointer to sparse matrix diagonal at
                               * (positive,branch eq) */
-    double *INDnegIbrptr;    /* pointer to sparse matrix diagonal at
+    double *INDnegIbrPtr;    /* pointer to sparse matrix diagonal at
                               * (negative,branch eq) */
-    double *INDibrNegptr;    /* pointer to sparse matrix offdiagonal at
+    double *INDibrNegPtr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,negative) */
-    double *INDibrPosptr;    /* pointer to sparse matrix offdiagonal at
+    double *INDibrPosPtr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,positive) */
-    double *INDibrIbrptr;    /* pointer to sparse matrix offdiagonal at
+    double *INDibrIbrPtr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,branch eq) */
 
     unsigned INDindGiven   : 1;   /* flag to indicate inductance was specified */

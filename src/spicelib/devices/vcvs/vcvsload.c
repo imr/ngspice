@@ -31,12 +31,12 @@ VCVSload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->VCVSinstances; here != NULL ;
                 here=here->VCVSnextInstance) {
             
-            *(here->VCVSposIbrptr) += 1.0 ;
-            *(here->VCVSnegIbrptr) -= 1.0 ;
-            *(here->VCVSibrPosptr) += 1.0 ;
-            *(here->VCVSibrNegptr) -= 1.0 ;
-            *(here->VCVSibrContPosptr) -= here->VCVScoeff ;
-            *(here->VCVSibrContNegptr) += here->VCVScoeff ;
+            *(here->VCVSposIbrPtr) += 1.0 ;
+            *(here->VCVSnegIbrPtr) -= 1.0 ;
+            *(here->VCVSibrPosPtr) += 1.0 ;
+            *(here->VCVSibrNegPtr) -= 1.0 ;
+            *(here->VCVSibrContPosPtr) -= here->VCVScoeff ;
+            *(here->VCVSibrContNegPtr) += here->VCVScoeff ;
         }
     }
     return(OK);

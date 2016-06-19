@@ -39,13 +39,13 @@ typedef struct sCAPinstance {
     double CAPtc2;      /* second temperature coefficient of capacitors */
     double CAPbv_max;   /* Maximum capacitor voltage */
 
-    double *CAPposPosptr;    /* pointer to sparse matrix diagonal at
+    double *CAPposPosPtr;    /* pointer to sparse matrix diagonal at
                               * (positive,positive) */
-    double *CAPnegNegptr;    /* pointer to sparse matrix diagonal at
+    double *CAPnegNegPtr;    /* pointer to sparse matrix diagonal at
                               * (negative,negative) */
-    double *CAPposNegptr;    /* pointer to sparse matrix offdiagonal at
+    double *CAPposNegPtr;    /* pointer to sparse matrix offdiagonal at
                               * (positive,negative) */
-    double *CAPnegPosptr;    /* pointer to sparse matrix offdiagonal at
+    double *CAPnegPosPtr;    /* pointer to sparse matrix offdiagonal at
                               * (negative,positive) */
     unsigned CAPcapGiven    : 1;   /* flag to indicate capacitance was specified */
     unsigned CAPicGiven     : 1;   /* flag to indicate init. cond. was specified */

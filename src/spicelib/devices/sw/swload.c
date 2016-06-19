@@ -146,10 +146,10 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 				g_now = model->SWoffConduct;
             here->SWcond = g_now;
 
-            *(here->SWposPosptr) += g_now;
-            *(here->SWposNegptr) -= g_now;
-            *(here->SWnegPosptr) -= g_now;
-            *(here->SWnegNegptr) += g_now;
+            *(here->SWposPosPtr) += g_now;
+            *(here->SWposNegPtr) -= g_now;
+            *(here->SWnegPosPtr) -= g_now;
+            *(here->SWnegNegPtr) += g_now;
         }
     }
     return(OK);
