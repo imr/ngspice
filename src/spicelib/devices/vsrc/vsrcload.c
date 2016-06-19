@@ -40,10 +40,10 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->VSRCinstances; here != NULL ;
                 here=here->VSRCnextInstance) {
 
-            *(here->VSRCposIbrptr) += 1.0 ;
-            *(here->VSRCnegIbrptr) -= 1.0 ;
-            *(here->VSRCibrPosptr) += 1.0 ;
-            *(here->VSRCibrNegptr) -= 1.0 ;
+            *(here->VSRCposIbrPtr) += 1.0 ;
+            *(here->VSRCnegIbrPtr) -= 1.0 ;
+            *(here->VSRCibrPosPtr) += 1.0 ;
+            *(here->VSRCibrNegPtr) -= 1.0 ;
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
                     here->VSRCdcGiven ) {
                 /* load using DC value */

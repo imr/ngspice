@@ -40,10 +40,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(VCCSposContPosptr, VCCSposNode, VCCScontPosNode);
-            TSTALLOC(VCCSposContNegptr, VCCSposNode, VCCScontNegNode);
-            TSTALLOC(VCCSnegContPosptr, VCCSnegNode, VCCScontPosNode);
-            TSTALLOC(VCCSnegContNegptr, VCCSnegNode, VCCScontNegNode);
+            TSTALLOC(VCCSposContPosPtr, VCCSposNode, VCCScontPosNode);
+            TSTALLOC(VCCSposContNegPtr, VCCSposNode, VCCScontNegNode);
+            TSTALLOC(VCCSnegContPosPtr, VCCSnegNode, VCCScontPosNode);
+            TSTALLOC(VCCSnegContNegPtr, VCCSnegNode, VCCScontNegNode);
         }
     }
     return(OK);

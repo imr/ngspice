@@ -34,8 +34,8 @@ CCCSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for (here = model->CCCSinstances; here != NULL ;
                 here=here->CCCSnextInstance) {
 
-            *(here->CCCSposContBrptr) += here->CCCScoeff ;
-            *(here->CCCSnegContBrptr) -= here->CCCScoeff ;
+            *(here->CCCSposContBrPtr) += here->CCCScoeff ;
+            *(here->CCCSnegContBrPtr) -= here->CCCScoeff ;
         }
     }
     return(OK);

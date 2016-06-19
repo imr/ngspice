@@ -111,10 +111,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(CAPposPosptr,CAPposNode,CAPposNode);
-            TSTALLOC(CAPnegNegptr,CAPnegNode,CAPnegNode);
-            TSTALLOC(CAPposNegptr,CAPposNode,CAPnegNode);
-            TSTALLOC(CAPnegPosptr,CAPnegNode,CAPposNode);
+            TSTALLOC(CAPposPosPtr,CAPposNode,CAPposNode);
+            TSTALLOC(CAPnegNegPtr,CAPnegNode,CAPnegNode);
+            TSTALLOC(CAPposNegPtr,CAPposNode,CAPnegNode);
+            TSTALLOC(CAPnegPosPtr,CAPnegNode,CAPposNode);
         }
     }
     return(OK);

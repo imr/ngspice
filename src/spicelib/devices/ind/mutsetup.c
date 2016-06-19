@@ -60,8 +60,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                                       here->MUTname, here->MUTindName2);
             }
 
-            TSTALLOC(MUTbr1br2, MUTind1->INDbrEq, MUTind2->INDbrEq);
-            TSTALLOC(MUTbr2br1, MUTind2->INDbrEq, MUTind1->INDbrEq);
+            TSTALLOC(MUTbr1br2Ptr, MUTind1->INDbrEq, MUTind2->INDbrEq);
+            TSTALLOC(MUTbr2br1Ptr, MUTind2->INDbrEq, MUTind1->INDbrEq);
         }
 
     return(OK);

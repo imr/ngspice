@@ -21,7 +21,7 @@ ASRCdestroy(GENmodel **inModel)
             ASRCinstance *next_inst = inst->ASRCnextInstance;
             INPfreeTree(inst->ASRCtree);
             FREE(inst->ASRCacValues);
-            FREE(inst->ASRCposptr);
+            FREE(inst->ASRCposPtr);
             FREE(inst->ASRCvars);
             FREE(inst);
             inst = next_inst;

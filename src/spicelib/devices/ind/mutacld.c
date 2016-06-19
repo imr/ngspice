@@ -25,8 +25,8 @@ MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 here = here->MUTnextInstance) {
     
             val = ckt->CKTomega * here->MUTfactor;
-            *(here->MUTbr1br2 +1) -= val;
-            *(here->MUTbr2br1 +1) -= val;
+            *(here->MUTbr1br2Ptr +1) -= val;
+            *(here->MUTbr2br1Ptr +1) -= val;
         }
     }
     return(OK);

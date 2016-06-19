@@ -134,20 +134,20 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                     here->TXLibr2 = tmp->number;
             }
 
-            TSTALLOC(TXLposPosptr, TXLposNode, TXLposNode);
-            TSTALLOC(TXLposNegptr, TXLposNode, TXLnegNode);
-            TSTALLOC(TXLnegPosptr, TXLnegNode, TXLposNode);
-            TSTALLOC(TXLnegNegptr, TXLnegNode, TXLnegNode);
-            TSTALLOC(TXLibr1Posptr, TXLibr1, TXLposNode);
-            TSTALLOC(TXLibr2Negptr, TXLibr2, TXLnegNode);
-            TSTALLOC(TXLnegIbr2ptr, TXLnegNode, TXLibr2);
-            TSTALLOC(TXLposIbr1ptr, TXLposNode, TXLibr1);
-            TSTALLOC(TXLibr1Ibr1ptr, TXLibr1, TXLibr1);
-            TSTALLOC(TXLibr2Ibr2ptr, TXLibr2, TXLibr2);
-            TSTALLOC(TXLibr1Negptr, TXLibr1, TXLnegNode);
-            TSTALLOC(TXLibr2Posptr, TXLibr2, TXLposNode);
-            TSTALLOC(TXLibr1Ibr2ptr, TXLibr1, TXLibr2);
-            TSTALLOC(TXLibr2Ibr1ptr, TXLibr2, TXLibr1);
+            TSTALLOC(TXLposPosPtr, TXLposNode, TXLposNode);
+            TSTALLOC(TXLposNegPtr, TXLposNode, TXLnegNode);
+            TSTALLOC(TXLnegPosPtr, TXLnegNode, TXLposNode);
+            TSTALLOC(TXLnegNegPtr, TXLnegNode, TXLnegNode);
+            TSTALLOC(TXLibr1PosPtr, TXLibr1, TXLposNode);
+            TSTALLOC(TXLibr2NegPtr, TXLibr2, TXLnegNode);
+            TSTALLOC(TXLnegIbr2Ptr, TXLnegNode, TXLibr2);
+            TSTALLOC(TXLposIbr1Ptr, TXLposNode, TXLibr1);
+            TSTALLOC(TXLibr1Ibr1Ptr, TXLibr1, TXLibr1);
+            TSTALLOC(TXLibr2Ibr2Ptr, TXLibr2, TXLibr2);
+            TSTALLOC(TXLibr1NegPtr, TXLibr1, TXLnegNode);
+            TSTALLOC(TXLibr2PosPtr, TXLibr2, TXLposNode);
+            TSTALLOC(TXLibr1Ibr2Ptr, TXLibr1, TXLibr2);
+            TSTALLOC(TXLibr2Ibr1Ptr, TXLibr2, TXLibr1);
 
 			here->in_node_name = CKTnodName(ckt,here->TXLposNode);
 			here->out_node_name = CKTnodName(ckt,here->TXLnegNode);

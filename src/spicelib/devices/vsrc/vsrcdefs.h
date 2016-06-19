@@ -55,15 +55,15 @@ typedef struct sVSRCinstance {
 
     double VSRCr;           /* pwl repeat */
     double VSRCrdelay;     /* pwl delay period */
-    double *VSRCposIbrptr;  /* pointer to sparse matrix element at
+    double *VSRCposIbrPtr;  /* pointer to sparse matrix element at
                              * (positive node, branch equation) */
-    double *VSRCnegIbrptr;  /* pointer to sparse matrix element at
+    double *VSRCnegIbrPtr;  /* pointer to sparse matrix element at
                              * (negative node, branch equation) */
-    double *VSRCibrPosptr;  /* pointer to sparse matrix element at
+    double *VSRCibrPosPtr;  /* pointer to sparse matrix element at
                              * (branch equation, positive node) */
-    double *VSRCibrNegptr;  /* pointer to sparse matrix element at
+    double *VSRCibrNegPtr;  /* pointer to sparse matrix element at
                              * (branch equation, negative node) */
-    double *VSRCibrIbrptr;  /* pointer to sparse matrix element at
+    double *VSRCibrIbrPtr;  /* pointer to sparse matrix element at
                              * (branch equation, branch equation) */
     unsigned VSRCdcGiven     :1 ;  /* flag to indicate dc value given */
     unsigned VSRCacGiven     :1 ;  /* flag to indicate ac keyword given */

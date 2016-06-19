@@ -46,15 +46,15 @@ struct sINDinstance {
     double INDnt;        /* Number of turns */
     double INDinitCond;  /* initial inductor voltage if specified */
 
-    double *INDposIbrptr;    /* pointer to sparse matrix diagonal at
+    double *INDposIbrPtr;    /* pointer to sparse matrix diagonal at
                               * (positive,branch eq) */
-    double *INDnegIbrptr;    /* pointer to sparse matrix diagonal at
+    double *INDnegIbrPtr;    /* pointer to sparse matrix diagonal at
                               * (negative,branch eq) */
-    double *INDibrNegptr;    /* pointer to sparse matrix offdiagonal at
+    double *INDibrNegPtr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,negative) */
-    double *INDibrPosptr;    /* pointer to sparse matrix offdiagonal at
+    double *INDibrPosPtr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,positive) */
-    double *INDibrIbrptr;    /* pointer to sparse matrix offdiagonal at
+    double *INDibrIbrPtr;    /* pointer to sparse matrix offdiagonal at
                               * (branch eq,branch eq) */
 
     unsigned INDindGiven   : 1;   /* flag to indicate inductance was specified */
@@ -133,8 +133,8 @@ struct sMUTinstance {
     IFuid MUTindName2;    /* name of coupled inductor 2 */
     INDinstance *MUTind1; /* pointer to coupled inductor 1 */
     INDinstance *MUTind2; /* pointer to coupled inductor 2 */
-    double *MUTbr1br2;    /* pointers to off-diagonal intersections of */
-    double *MUTbr2br1;    /* current branch equations in matrix */
+    double *MUTbr1br2Ptr;    /* pointers to off-diagonal intersections of */
+    double *MUTbr2br1Ptr;    /* current branch equations in matrix */
 
     unsigned MUTindGiven : 1;   /* flag to indicate inductance was specified */
     int  MUTsenParmNo;          /* parameter # for sensitivity use;

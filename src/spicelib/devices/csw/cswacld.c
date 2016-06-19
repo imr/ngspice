@@ -36,10 +36,10 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             g_now = current_state?(model->CSWonConduct):(model->CSWoffConduct);
 
-            *(here->CSWposPosptr) += g_now;
-            *(here->CSWposNegptr) -= g_now;
-            *(here->CSWnegPosptr) -= g_now;
-            *(here->CSWnegNegptr) += g_now;
+            *(here->CSWposPosPtr) += g_now;
+            *(here->CSWposNegPtr) -= g_now;
+            *(here->CSWnegPosPtr) -= g_now;
+            *(here->CSWnegNegPtr) += g_now;
         }
     }
     return(OK);

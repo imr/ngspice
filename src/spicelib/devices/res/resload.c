@@ -31,10 +31,10 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 
             m = (here->RESm);
 
-            *(here->RESposPosptr) += m * here->RESconduct;
-            *(here->RESnegNegptr) += m * here->RESconduct;
-            *(here->RESposNegptr) -= m * here->RESconduct;
-            *(here->RESnegPosptr) -= m * here->RESconduct;
+            *(here->RESposPosPtr) += m * here->RESconduct;
+            *(here->RESnegNegPtr) += m * here->RESconduct;
+            *(here->RESposNegPtr) -= m * here->RESconduct;
+            *(here->RESnegPosPtr) -= m * here->RESconduct;
         }
     }
     return(OK);
@@ -64,10 +64,10 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
             else
                 g = here->RESm * here->RESconduct;
 
-            *(here->RESposPosptr) += g;
-            *(here->RESnegNegptr) += g;
-            *(here->RESposNegptr) -= g;
-            *(here->RESnegPosptr) -= g;
+            *(here->RESposPosPtr) += g;
+            *(here->RESnegNegPtr) += g;
+            *(here->RESposNegPtr) -= g;
+            *(here->RESnegPosPtr) -= g;
         }
     }
     return(OK);

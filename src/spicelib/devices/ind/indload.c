@@ -71,8 +71,8 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
                                            muthere->MUTind1->INDbrEq);
             }
 
-            *(muthere->MUTbr1br2) -= muthere->MUTfactor*ckt->CKTag[0];
-            *(muthere->MUTbr2br1) -= muthere->MUTfactor*ckt->CKTag[0];
+            *(muthere->MUTbr1br2Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
+            *(muthere->MUTbr2br1Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
         }
     }
     itype = CKTtypelook("Inductor");
@@ -116,11 +116,11 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0+here->INDvolt);
             }
 
-            *(here->INDposIbrptr) +=  1;
-            *(here->INDnegIbrptr) -=  1;
-            *(here->INDibrPosptr) +=  1;
-            *(here->INDibrNegptr) -=  1;
-            *(here->INDibrIbrptr) -=  req;
+            *(here->INDposIbrPtr) +=  1;
+            *(here->INDnegIbrPtr) -=  1;
+            *(here->INDibrPosPtr) +=  1;
+            *(here->INDibrNegPtr) -=  1;
+            *(here->INDibrIbrPtr) -=  req;
         }
     }
     return(OK);
