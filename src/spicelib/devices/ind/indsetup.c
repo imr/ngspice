@@ -93,11 +93,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(INDposIbrptr,INDposNode,INDbrEq);
-            TSTALLOC(INDnegIbrptr,INDnegNode,INDbrEq);
-            TSTALLOC(INDibrNegptr,INDbrEq,INDnegNode);
-            TSTALLOC(INDibrPosptr,INDbrEq,INDposNode);
-            TSTALLOC(INDibrIbrptr,INDbrEq,INDbrEq);
+            TSTALLOC(INDposIbrPtr,INDposNode,INDbrEq);
+            TSTALLOC(INDnegIbrPtr,INDnegNode,INDbrEq);
+            TSTALLOC(INDibrNegPtr,INDbrEq,INDnegNode);
+            TSTALLOC(INDibrPosPtr,INDbrEq,INDposNode);
+            TSTALLOC(INDibrIbrPtr,INDbrEq,INDbrEq);
         }
     }
     return(OK);

@@ -29,18 +29,18 @@ VSRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             if (!(here->VSRCacGiven)) {
                 /*a dc source*/
                 /*the connecting nodes are shorted*/
-                *(here->VSRCposIbrptr)  += 1.0 ;
-                *(here->VSRCnegIbrptr)  += -1.0 ;
-                *(here->VSRCibrPosptr)  += 1.0 ;
-                *(here->VSRCibrNegptr)  += -1.0 ;
+                *(here->VSRCposIbrPtr)  += 1.0 ;
+                *(here->VSRCnegIbrPtr)  += -1.0 ;
+                *(here->VSRCibrPosPtr)  += 1.0 ;
+                *(here->VSRCibrNegPtr)  += -1.0 ;
             } else {
                 /*an ac source*/
                 /*no effective contribution
                  *diagonal element made 1
                  */
-                *(here->VSRCposIbrptr)  += 1.0 ;
-                *(here->VSRCnegIbrptr)  += -1.0 ;
-                *(here->VSRCibrIbrptr)  += 1.0 ;
+                *(here->VSRCposIbrPtr)  += 1.0 ;
+                *(here->VSRCnegIbrPtr)  += -1.0 ;
+                *(here->VSRCibrIbrPtr)  += 1.0 ;
             }
         }
     }

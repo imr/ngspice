@@ -69,10 +69,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(RESposPosptr, RESposNode, RESposNode);
-            TSTALLOC(RESnegNegptr, RESnegNode, RESnegNode);
-            TSTALLOC(RESposNegptr, RESposNode, RESnegNode);
-            TSTALLOC(RESnegPosptr, RESnegNode, RESposNode);
+            TSTALLOC(RESposPosPtr, RESposNode, RESposNode);
+            TSTALLOC(RESnegNegPtr, RESnegNode, RESnegNode);
+            TSTALLOC(RESposNegPtr, RESposNode, RESnegNode);
+            TSTALLOC(RESnegPosPtr, RESnegNode, RESposNode);
         }
     }
     return(OK);

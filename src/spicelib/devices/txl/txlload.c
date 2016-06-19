@@ -67,10 +67,10 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 
 			tx = here->txline;
 
-			*here->TXLposPosptr += gmin; /* dc solution */
-			*here->TXLnegNegptr += gmin;
-			*here->TXLnegPosptr += gmin;
-			*here->TXLposNegptr += gmin;
+			*here->TXLposPosPtr += gmin; /* dc solution */
+			*here->TXLnegNegPtr += gmin;
+			*here->TXLnegPosPtr += gmin;
+			*here->TXLposNegPtr += gmin;
 
 			if (cond1 || tx->vi_head == NULL) continue;
 
@@ -133,13 +133,13 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 				if (here->TXLlengthgiven) 
 					g = model->R * here->TXLlength;
 				else g = model->R * here->TXLmodPtr->length;
-				*(here->TXLposIbr1ptr) += 1.0;
-				*(here->TXLnegIbr2ptr) += 1.0;
-				*(here->TXLibr1Ibr1ptr)	+= 1.0;
-				*(here->TXLibr1Ibr2ptr)	+= 1.0;
-				*(here->TXLibr2Posptr) += 1.0;
-				*(here->TXLibr2Negptr) -= 1.0;
-				*(here->TXLibr2Ibr1ptr)	-= g;
+				*(here->TXLposIbr1Ptr) += 1.0;
+				*(here->TXLnegIbr2Ptr) += 1.0;
+				*(here->TXLibr1Ibr1Ptr)	+= 1.0;
+				*(here->TXLibr1Ibr2Ptr)	+= 1.0;
+				*(here->TXLibr2PosPtr) += 1.0;
+				*(here->TXLibr2NegPtr) -= 1.0;
+				*(here->TXLibr2Ibr1Ptr)	-= g;
 
 				continue;
 
@@ -199,19 +199,19 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 			}
 
 			/* change 6,6	 1/18/93 
-			*(here->TXLibr1Ibr1ptr)	-= 1.0;	
-			*(here->TXLibr2Ibr2ptr)	-= 1.0;
-	    *(here->TXLposIbr1ptr) += 1.0;
-	    *(here->TXLnegIbr2ptr) += 1.0;
-	    *(here->TXLibr1Posptr) += tx->sqtCdL + h1 *	tx->h1C;
-			*(here->TXLibr2Negptr) += tx->sqtCdL + h1 * tx->h1C;
+			*(here->TXLibr1Ibr1Ptr)	-= 1.0;	
+			*(here->TXLibr2Ibr2Ptr)	-= 1.0;
+	    *(here->TXLposIbr1Ptr) += 1.0;
+	    *(here->TXLnegIbr2Ptr) += 1.0;
+	    *(here->TXLibr1PosPtr) += tx->sqtCdL + h1 *	tx->h1C;
+			*(here->TXLibr2NegPtr) += tx->sqtCdL + h1 * tx->h1C;
 			*/
-			*(here->TXLibr1Ibr1ptr)	= -1.0;	
-			*(here->TXLibr2Ibr2ptr)	= -1.0;
-	    *(here->TXLposIbr1ptr) = 1.0;
-	    *(here->TXLnegIbr2ptr) = 1.0;
-	    *(here->TXLibr1Posptr) = tx->sqtCdL	+ h1 * tx->h1C;
-			*(here->TXLibr2Negptr) = tx->sqtCdL + h1 * tx->h1C;
+			*(here->TXLibr1Ibr1Ptr)	= -1.0;	
+			*(here->TXLibr2Ibr2Ptr)	= -1.0;
+	    *(here->TXLposIbr1Ptr) = 1.0;
+	    *(here->TXLnegIbr2Ptr) = 1.0;
+	    *(here->TXLibr1PosPtr) = tx->sqtCdL	+ h1 * tx->h1C;
+			*(here->TXLibr2NegPtr) = tx->sqtCdL + h1 * tx->h1C;
 
 			k = here->TXLibr1;
 			l = here->TXLibr2;
@@ -221,11 +221,11 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 			if (right_consts_txl(tx2, time,	time2, h, h1, k, l, ckt)) {
 				if (tx->lsl) {
 					f = ratio[0] * tx->h3_aten;
-					*(here->TXLibr1Negptr) = -f;
-					*(here->TXLibr2Posptr) = -f;
+					*(here->TXLibr1NegPtr) = -f;
+					*(here->TXLibr2PosPtr) = -f;
 					f = ratio[0] * tx->h2_aten;
-					*(here->TXLibr1Ibr2ptr)	= -f;
-					*(here->TXLibr2Ibr1ptr)	= -f;
+					*(here->TXLibr1Ibr2Ptr)	= -f;
+					*(here->TXLibr2Ibr1Ptr)	= -f;
 				}
 				else {
 					tx->ext	= 1;
@@ -235,13 +235,13 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 							+ tx->h3_term[1].c + tx->h3_term[2].c 
 							+ tx->h3_term[3].c + tx->h3_term[4].c
 							+ tx->h3_term[5].c ) + tx->h3_aten);
-						*(here->TXLibr1Negptr) = -f;
-						*(here->TXLibr2Posptr) = -f;
+						*(here->TXLibr1NegPtr) = -f;
+						*(here->TXLibr2PosPtr) = -f;
 						f = ratio[0] * (h1 * ( tx->h2_term[0].c	
 							+ tx->h2_term[1].c + tx->h2_term[2].c )	
 							+ tx->h2_aten);
-						*(here->TXLibr1Ibr2ptr)	= -f;
-						*(here->TXLibr2Ibr1ptr)	= -f;
+						*(here->TXLibr1Ibr2Ptr)	= -f;
+						*(here->TXLibr2Ibr1Ptr)	= -f;
 					}
 				}
 			} 

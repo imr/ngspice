@@ -37,10 +37,10 @@ VSRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 acImag = here->VSRCacImag;
             }
 
-            *(here->VSRCposIbrptr) += 1.0 ;
-            *(here->VSRCnegIbrptr) -= 1.0 ;
-            *(here->VSRCibrPosptr) += 1.0 ;
-            *(here->VSRCibrNegptr) -= 1.0 ;
+            *(here->VSRCposIbrPtr) += 1.0 ;
+            *(here->VSRCnegIbrPtr) -= 1.0 ;
+            *(here->VSRCibrPosPtr) += 1.0 ;
+            *(here->VSRCibrNegPtr) -= 1.0 ;
             *(ckt->CKTrhs + (here->VSRCbranch)) += acReal;
             *(ckt->CKTirhs + (here->VSRCbranch)) += acImag;
         }

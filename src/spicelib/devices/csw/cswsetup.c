@@ -61,10 +61,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(CSWposPosptr, CSWposNode, CSWposNode);
-            TSTALLOC(CSWposNegptr, CSWposNode, CSWnegNode);
-            TSTALLOC(CSWnegPosptr, CSWnegNode, CSWposNode);
-            TSTALLOC(CSWnegNegptr, CSWnegNode, CSWnegNode);
+            TSTALLOC(CSWposPosPtr, CSWposNode, CSWposNode);
+            TSTALLOC(CSWposNegPtr, CSWposNode, CSWnegNode);
+            TSTALLOC(CSWnegPosPtr, CSWnegNode, CSWposNode);
+            TSTALLOC(CSWnegNegPtr, CSWnegNode, CSWnegNode);
         }
     }
     return(OK);

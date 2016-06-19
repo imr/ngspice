@@ -31,15 +31,15 @@ typedef struct sCCVSinstance {
 
     double CCVScoeff;   /* coefficient */
 
-    double *CCVSposIbrptr;  /* pointer to sparse matrix element at 
+    double *CCVSposIbrPtr;  /* pointer to sparse matrix element at 
                                      * (positive node, branch equation) */
-    double *CCVSnegIbrptr;  /* pointer to sparse matrix element at 
+    double *CCVSnegIbrPtr;  /* pointer to sparse matrix element at 
                                      * (negative node, branch equation) */
-    double *CCVSibrPosptr;  /* pointer to sparse matrix element at 
+    double *CCVSibrPosPtr;  /* pointer to sparse matrix element at 
                                      * (branch equation, positive node) */
-    double *CCVSibrNegptr;  /* pointer to sparse matrix element at 
+    double *CCVSibrNegPtr;  /* pointer to sparse matrix element at 
                                      * (branch equation, negative node) */
-    double *CCVSibrContBrptr;  /* pointer to sparse matrix element at 
+    double *CCVSibrContBrPtr;  /* pointer to sparse matrix element at 
                                      *(branch equation, control branch eq)*/
     unsigned CCVScoeffGiven :1 ;   /* flag to indicate coeff given */
 

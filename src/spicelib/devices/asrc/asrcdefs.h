@@ -36,7 +36,7 @@ typedef struct sASRCinstance {
     double ASRCtc1;            /* first temperature coefficient of resistors */
     double ASRCtc2;            /* second temperature coefficient of resistors */
     int ASRCreciproctc;        /* Flag to calculate reciprocal temperature behaviour */
-    double **ASRCposptr;       /* pointer to pointers of the elements
+    double **ASRCposPtr;       /* pointer to pointers of the elements
                                 * in the sparce matrix */
     double ASRCprev_value;     /* Previous value for the convergence test */
     double *ASRCacValues;      /* Store rhs and derivatives for ac anal */

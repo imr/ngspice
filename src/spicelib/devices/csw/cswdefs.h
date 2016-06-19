@@ -31,13 +31,13 @@ typedef struct sCSWinstance {
 
     IFuid CSWcontName; /* name of controlling source */
 
-    double *CSWposPosptr;  /* pointer to sparse matrix diagonal at
+    double *CSWposPosPtr;  /* pointer to sparse matrix diagonal at
                                 (positive,positive) for switch conductance */
-    double *CSWnegPosptr;  /* pointer to sparse matrix offdiagonal at
+    double *CSWnegPosPtr;  /* pointer to sparse matrix offdiagonal at
                                 (neagtive,positive) for switch conductance */
-    double *CSWposNegptr;  /* pointer to sparse matrix offdiagonal at
+    double *CSWposNegPtr;  /* pointer to sparse matrix offdiagonal at
                                 (positive,neagtive) for switch conductance */
-    double *CSWnegNegptr;  /* pointer to sparse matrix diagonal at
+    double *CSWnegNegPtr;  /* pointer to sparse matrix diagonal at
                                 (neagtive,neagtive) for switch conductance */
 
     double CSWcond;     /* current conductance of switch */

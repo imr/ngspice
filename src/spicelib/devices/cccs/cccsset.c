@@ -46,8 +46,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(CCCSposContBrptr,CCCSposNode,CCCScontBranch);
-            TSTALLOC(CCCSnegContBrptr,CCCSnegNode,CCCScontBranch);
+            TSTALLOC(CCCSposContBrPtr,CCCSposNode,CCCScontBranch);
+            TSTALLOC(CCCSnegContBrPtr,CCCSnegNode,CCCScontBranch);
         }
     }
     return(OK);

@@ -42,11 +42,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(VSRCposIbrptr, VSRCposNode, VSRCbranch);
-            TSTALLOC(VSRCnegIbrptr, VSRCnegNode, VSRCbranch);
-            TSTALLOC(VSRCibrNegptr, VSRCbranch, VSRCnegNode);
-            TSTALLOC(VSRCibrPosptr, VSRCbranch, VSRCposNode);
-            TSTALLOC(VSRCibrIbrptr, VSRCbranch, VSRCbranch);
+            TSTALLOC(VSRCposIbrPtr, VSRCposNode, VSRCbranch);
+            TSTALLOC(VSRCnegIbrPtr, VSRCnegNode, VSRCbranch);
+            TSTALLOC(VSRCibrNegPtr, VSRCbranch, VSRCnegNode);
+            TSTALLOC(VSRCibrPosPtr, VSRCbranch, VSRCposNode);
+            TSTALLOC(VSRCibrIbrPtr, VSRCbranch, VSRCbranch);
         }
     }
     return(OK);
