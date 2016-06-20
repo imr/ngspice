@@ -869,6 +869,8 @@ AC_SUBST([XGRAPHDIR])
 AC_SUBST([NOTXGRAPH])
 
 AC_PROG_YACC
+AC_PATH_PROG([BISON],[bison])
+AX_PROG_BISON_VERSION([2.7], [AC_DEFINE([NEW_BISON], [], [Check if Bison is greater than or equal to 2.7])], [AC_MSG_WARN([Bison is less than 2.7])])
 AC_PROG_LEX
 
 #################  XSPICE ##################################################

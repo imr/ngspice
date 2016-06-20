@@ -28,7 +28,6 @@
   static void PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *);
 %}
 
-%require "2.7"
 %name-prefix "PT"
 
 %defines

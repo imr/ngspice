@@ -14,6 +14,10 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "inpptree-parser.h"
 #include "inpptree-parser-y.h"
 
+#ifndef NEW_BISON
+int PTparse(char **line, INPparseNode **p, CKTcircuit *ckt);
+#endif
+
 static INPparseNode *mkcon(double value);
 static INPparseNode *mkb(int type, INPparseNode * left,
                          INPparseNode * right);
