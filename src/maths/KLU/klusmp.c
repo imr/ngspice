@@ -557,7 +557,7 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
 
     int *P, *Q ;
     double *Rs, *Ux, *Uz ;
-    unsigned int nSwap ;
+    unsigned int nSwap, nSwapP, nSwapQ ;
 
 #define  NORM(a)     (nr = ABS((a).Real), ni = ABS((a).Imag), MAX (nr,ni))
 
@@ -631,14 +631,27 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
             printf ("U - Value: %-.9g\t%-.9g\n", Ux [I], Uz [I]) ;
         }
 */
-        nSwap = 0 ;
+        nSwapP = 0 ;
         for (I = 0 ; I < Matrix->CKTkluN ; I++)
         {
-            if (P [I] != I || Q [I] != I)
+            if (P [I] != I)
             {
-                nSwap++ ;
+                nSwapP++ ;
             }
         }
+        nSwapP /= 2 ;
+
+        nSwapQ = 0 ;
+        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        {
+            if (Q [I] != I)
+            {
+                nSwapQ++ ;
+            }
+        }
+        nSwapQ /= 2 ;
+
+        nSwap = nSwapP + nSwapQ ;
 /*
         free (Lp) ;
         free (Li) ;
@@ -722,18 +735,31 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
 
         klu_extract_Udiag (Matrix->CKTkluNumeric, Matrix->CKTkluSymbolic, Ux, P, Q, Rs, Matrix->CKTkluCommon) ;
 
-        nSwap = 0 ;
+        nSwapP = 0 ;
         for (I = 0 ; I < Matrix->CKTkluN ; I++)
         {
-            if (P [I] != I || Q [I] != I)
+            if (P [I] != I)
             {
-                nSwap++ ;
+                nSwapP++ ;
             }
         }
+        nSwapP /= 2 ;
+
+        nSwapQ = 0 ;
+        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        {
+            if (Q [I] != I)
+            {
+                nSwapQ++ ;
+            }
+        }
+        nSwapQ /= 2 ;
+
+        nSwap = nSwapP + nSwapQ ;
 
         while (I < Size)
         {
-            *pDeterminant /= Ux [I] ;
+            *pDeterminant /= (Ux [I] * Rs [I]) ;
 
 	    /* Scale Determinant. */
             if (*pDeterminant != 0.0)
