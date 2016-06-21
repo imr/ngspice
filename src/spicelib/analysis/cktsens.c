@@ -139,10 +139,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		if (error)
 			return error;
 
-		size = spGetSize(ckt->CKTmatrix, 1);
+		size = SMPmatSize(ckt->CKTmatrix);
 
 		/* Create the perturbation matrix */
-		delta_Y = spCreate(size, 1, &error);
+		error = SMPnewMatrix(&delta_Y, size);
 		if (error)
 			return error;
 
@@ -351,7 +351,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
-			spClear(delta_Y);
+			SMPcClear(delta_Y);
 
 			for (j = 0; j < size; j++) {
 				delta_I[j] = 0.0;
@@ -394,7 +394,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of device:\n");
-				spPrint(delta_Y, 0, 1, 1);
+				SMPprint(delta_Y, NULL);
 				printf("LHS:\n");
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
@@ -418,7 +418,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error && error != E_BADPARM)
 				return error;
 
-			spConstMult(delta_Y, -1.0);
+			SMPconstMult(delta_Y, -1.0);
 			for (j = 0; j < size; j++) {
 				delta_I[j] *= -1.0;
 				delta_iI[j] *= -1.0;
@@ -427,7 +427,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of negating matrix:\n");
-				spPrint(delta_Y, 0, 1, 1);
+				SMPprint(delta_Y, NULL);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -453,7 +453,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of changing the parameter:\n");
-				spPrint(delta_Y, 0, 1, 1);
+				SMPprint(delta_Y, NULL);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -477,8 +477,8 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 			/* delta_Y E */
-			spMultiply(delta_Y, delta_I_delta_Y, E,
-				delta_iI_delta_Y, iE);
+			SMPmultiply(delta_Y, delta_I_delta_Y, E,
+				    delta_iI_delta_Y, iE);
 
 #ifdef ASDEBUG
 			DEBUG(2)
@@ -496,14 +496,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf(">>> Y:\n");
-				spPrint(Y, 0, 1, 1);
+				SMPprint(Y, NULL);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
 			}
 #endif
 			/* Solve; Y already factored */
-			spSolve(Y, delta_I, delta_I, delta_iI, delta_iI);
+			SMPcSolve(Y, delta_I, delta_iI, NULL, NULL);
 
                         /* the special `0' node
                         *    the matrix indizes are [1..n]
@@ -596,7 +596,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	release_context(ckt->CKTirhs, saved_irhs);
 	release_context(ckt->CKTmatrix, saved_matrix);
 
-	spDestroy(delta_Y);
+	SMPdestroy(delta_Y);
 	FREE(delta_I);
 	FREE(delta_iI);
 
