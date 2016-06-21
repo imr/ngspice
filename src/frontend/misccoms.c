@@ -177,6 +177,14 @@ com_version(wordlist *wl)
         fprintf(cp_out,
                 "******\n"
                 "** %s-%s : %s\n"
+
+#ifdef KLU
+                    "** Compiled with KLU Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
+#else
+                    "** Compiled with Sparse Direct Linear Solver\n"
+#endif
+
                 "** The U. C. Berkeley CAD Group\n"
                 "** Copyright 1985-1994, Regents of the University of California.\n"
                 "** Copyright 2001-2020, The ngspice team.\n"
@@ -214,6 +222,14 @@ com_version(wordlist *wl)
             fprintf(cp_out,
                     "******\n"
                     "** %s-%s : %s\n"
+
+#ifdef KLU
+                    "** Compiled with KLU Direct Linear Solver\n"
+                    "** (ASRC, CPL, NDEV and URC models not supported yet)\n"
+#else
+                    "** Compiled with Sparse Direct Linear Solver\n"
+#endif
+
                     "** The U. C. Berkeley CAD Group\n"
                     "** Copyright 1985-1994, Regents of the University of California.\n"
                     "** Copyright 2001-2020, The ngspice team.\n"

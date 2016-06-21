@@ -18,7 +18,14 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/spmatrix.h"
 
+#ifdef KLU
+#include "ngspice/klu.h"
+#endif
 
+/* Francesco Lannutti
+ * If ACCT is called before NIinit, the new SMPmatrix structure is not allocated
+ * so the control must be performed on the CKTmatrix pointer to the SMPmatrix structure
+*/
 
 /* ARGSUSED */
 int
@@ -33,21 +40,35 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
         break;
     case OPT_ORIGNZ:
 	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spOriginalCount(ckt->CKTmatrix);
+	    val->iValue = spOriginalCount(ckt->CKTmatrix->SPmatrix);
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_FILLNZ:
 	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spFillinCount(ckt->CKTmatrix);
+#ifdef KLU
+	    if (ckt->CKTmatrix->CKTkluMODE)
+		val->iValue = ckt->CKTmatrix->CKTkluNumeric->lnz + ckt->CKTmatrix->CKTkluNumeric->unz + ckt->CKTmatrix->CKTkluNumeric->nzoff - ckt->CKTmatrix->CKTklunz ;
+	    else
+		val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
+#else
+	    val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
+#endif
 	} else {
 	    val->iValue = 0;
 	}
         break;
     case OPT_TOTALNZ:
 	if ( ckt->CKTmatrix != NULL ) {
-	    val->iValue = spElementCount(ckt->CKTmatrix);
+#ifdef KLU
+	    if (ckt->CKTmatrix->CKTkluMODE)
+		val->iValue = ckt->CKTmatrix->CKTkluNumeric->lnz + ckt->CKTmatrix->CKTkluNumeric->unz + ckt->CKTmatrix->CKTkluNumeric->nzoff ;
+	    else
+		val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
+#else
+	    val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
+#endif
 	} else {
 	    val->iValue = 0;
 	}
