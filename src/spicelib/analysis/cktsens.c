@@ -395,7 +395,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of device:\n");
-				spPrint(delta_Y, 0, 1, 1);
+                                SMPprint (delta_Y, NULL) ;
 				printf("LHS:\n");
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
@@ -428,7 +428,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of negating matrix:\n");
-				spPrint(delta_Y, 0, 1, 1);
+                                SMPprint (delta_Y, NULL) ;
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -454,7 +454,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of changing the parameter:\n");
-				spPrint(delta_Y, 0, 1, 1);
+                                SMPprint (delta_Y, NULL) ;
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -496,7 +496,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf(">>> Y:\n");
-				spPrint(Y, 0, 1, 1);
+                                SMPprint (Y, NULL) ;
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
