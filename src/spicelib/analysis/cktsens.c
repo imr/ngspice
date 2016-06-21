@@ -142,7 +142,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		size = SMPmatSize(ckt->CKTmatrix);
 
 		/* Create the perturbation matrix */
-		error = SMPnewMatrix(&delta_Y, size);
+		delta_Y = spCreate(size, 1, &error);
 		if (error)
 			return error;
 
