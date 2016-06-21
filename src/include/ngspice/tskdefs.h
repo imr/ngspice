@@ -70,6 +70,11 @@ struct TSKtask {
     double TSKabsDv;                 /* abs limit for iter-iter voltage change */
     double TSKrelDv;                 /* rel limit for iter-iter voltage change */
     double TSKepsmin;         /* minimum value for log */
+
+#ifdef KLU
+    unsigned int TSKkluMODE:1;
+#endif
+
 };
 
 #endif
