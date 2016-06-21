@@ -71,8 +71,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	static double	freq;
 	static int	nfreqs;
 	static int	i;
-	static SMPmatrix	*delta_Y = NULL;
-	static MatrixFrame	*Y;
+	static SMPmatrix	*delta_Y = NULL, *Y;
 	static double	step_size;
 	double		*E, *iE;
 	IFvalue		value, nvalue;
@@ -142,7 +141,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		if (error)
 			return error;
 
-		size = SMPmatSize(ckt->CKTmatrix->SPmatrix);
+		size = SMPmatSize(ckt->CKTmatrix);
 
 		/* Create the perturbation matrix */
 		error = SMPnewMatrix(delta_Y, size);
@@ -243,7 +242,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 	E = ckt->CKTrhs;
 	iE = ckt->CKTirhs;
-	Y = ckt->CKTmatrix->SPmatrix;
+	Y = ckt->CKTmatrix;
 
 #ifdef ASDEBUG
 	DEBUG(1) {
@@ -318,7 +317,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			/* NIacIter solves into CKTrhsOld, CKTirhsOld and CKTmatrix->SPmatrix */
 			E = ckt->CKTrhsOld;
 			iE = ckt->CKTirhsOld;
-			Y = ckt->CKTmatrix->SPmatrix;
+			Y = ckt->CKTmatrix;
 		}
 
 		/* Use a different vector & matrix */
@@ -358,7 +357,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
-			SMPcClear(delta_Y->SPmatrix);
+			SMPcClear(delta_Y);
 
 			for (j = 0; j < size; j++) {
 				delta_I[j] = 0.0;
@@ -430,7 +429,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error && error != E_BADPARM)
 				return error;
 
-			SMPconstMult(delta_Y->SPmatrix, -1.0);
+			SMPconstMult(delta_Y, -1.0);
 			for (j = 0; j < size; j++) {
 				delta_I[j] *= -1.0;
 				delta_iI[j] *= -1.0;
@@ -439,7 +438,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of negating matrix:\n");
-				SMPprint(delta_Y->SPmatrix, NULL);
+				SMPprint(delta_Y, NULL);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -465,7 +464,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef ASDEBUG
 			DEBUG(2) {
 				printf("Effect of changing the parameter:\n");
-				SMPprint(delta_Y->SPmatrix, NULL);
+				SMPprint(delta_Y, NULL);
 				for (j = 0; j < size; j++)
 					printf("%d: %g, %g\n", j,
 						delta_I[j], delta_iI[j]);
@@ -489,7 +488,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 			/* delta_Y E */
-			SMPmultiply(delta_Y->SPmatrix, delta_I_delta_Y, E,
+			SMPmultiply(delta_Y, delta_I_delta_Y, E,
 				    delta_iI_delta_Y, iE);
 
 #ifdef ASDEBUG
@@ -608,7 +607,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	release_context(ckt->CKTirhs, saved_irhs);
 	release_context(ckt->CKTmatrix->SPmatrix, saved_matrix);
 
-	SMPdestroy(delta_Y->SPmatrix);
+	SMPdestroy(delta_Y);
 	FREE(delta_I);
 	FREE(delta_iI);
 
