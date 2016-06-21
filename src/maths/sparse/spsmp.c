@@ -551,3 +551,21 @@ SMPzeroRow(SMPmatrix *Matrix, int Row)
 
     return spError( Matrix );
 }
+
+/*
+ * SMPconstMult()
+ */
+void
+SMPconstMult (SMPmatrix *Matrix, double constant)
+{
+    spConstMult (Matrix, constant) ;
+}
+
+/*
+ * SMPmultiply()
+ */
+void
+SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
+{
+    spMultiply (Matrix, RHS, Solution, iRHS, iSolution) ;
+}
