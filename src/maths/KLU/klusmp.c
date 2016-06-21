@@ -1112,3 +1112,21 @@ SMPcCombine (SMPmatrix *Matrix, double RHS[], double Spare[], double iRHS[], dou
     spCombine (Matrix->SPmatrix, RHS, Spare, iRHS, iSpare) ;
 }
 #endif /* PARALLEL_ARCH */
+
+/*
+ * SMPconstMult()
+ */
+void
+SMPconstMult (SMPmatrix *Matrix, double constant)
+{
+    spConstMult (Matrix->SPmatrix, constant) ;
+}
+
+/*
+ * SMPmultiply()
+ */
+void
+SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
+{
+    spMultiply (Matrix->SPmatrix, RHS, Solution, iRHS, iSolution) ;
+}
