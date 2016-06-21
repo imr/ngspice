@@ -123,6 +123,9 @@ typedef struct {
 #define OPT_INDVERBOSITY 70
 #define OPT_EPSMIN       71
 
+#ifdef KLU
+#define OPT_SPARSE       72
+#endif
 
 #ifdef XSPICE
 /* gtri - begin - wbk - add new options */
