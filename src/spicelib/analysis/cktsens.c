@@ -62,6 +62,15 @@ static double inc_freq(double freq, int type, double step_size);
 static int	error;
 int sens_sens(CKTcircuit *ckt, int restart)
 {
+
+#ifdef KLU
+    if (ckt->CKTkluMODE)
+    {
+        fprintf (stderr, "\n\n\tThe Sensitivity Analysis is not supported in KLU environment\n\tPlease add '.options sparse' in you netlist\n\n\n") ;
+        return OK ;
+    } else {
+#endif
+
 	SENS_AN	*job = (SENS_AN *) ckt->CKTcurJob;
 
 	static int	size;
@@ -626,6 +635,11 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 	return OK;
+
+#ifdef KLU
+    }
+#endif
+
 }
 
 double
