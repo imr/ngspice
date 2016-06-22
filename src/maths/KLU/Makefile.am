@@ -10,11 +10,13 @@ libKLU_real_la_SOURCES = 	\
 	klu_factor.c		\
 	klu_free_numeric.c 	\
 	klu_kernel.c		\
+	klu_multiply.c		\
 	klu_refactor.c		\
 	klu_scale.c		\
 	klu_solve.c		\
 	klu_sort.c		\
-	klu_tsolve.c
+	klu_tsolve.c		\
+	klu_utils.c
 
 
 libKLU_real_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
@@ -28,11 +30,13 @@ libKLU_complex_la_SOURCES = 	\
 	klu_factor.c		\
 	klu_free_numeric.c 	\
 	klu_kernel.c		\
+	klu_multiply.c		\
 	klu_refactor.c		\
 	klu_scale.c		\
 	klu_solve.c		\
 	klu_sort.c		\
-	klu_tsolve.c
+	klu_tsolve.c		\
+	klu_utils.c
 
 
 libKLU_complex_la_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -DCOMPLEX
