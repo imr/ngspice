@@ -523,7 +523,12 @@ SMPprint (SMPmatrix *Matrix, char *Filename)
 {
     if (Matrix->CKTkluMODE)
     {
-        klu_z_print (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->SPmatrix->IntToExtRowMap, Matrix->SPmatrix->IntToExtColMap) ;
+        if (Matrix->CKTkluMatrixIsComplex)
+        {
+            klu_z_print (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->SPmatrix->IntToExtRowMap, Matrix->SPmatrix->IntToExtColMap) ;
+        } else {
+            klu_print (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluN, Matrix->SPmatrix->IntToExtRowMap, Matrix->SPmatrix->IntToExtColMap) ;
+        }
     } else {
         if (Filename)
             spFileMatrix (Matrix->SPmatrix, Filename, "Circuit Matrix", 0, 1, 1) ;
@@ -1097,7 +1102,17 @@ SMPzeroRow (SMPmatrix *eMatrix, int Row)
 void
 SMPconstMult (SMPmatrix *Matrix, double constant)
 {
-    spConstMult (Matrix->SPmatrix, constant) ;
+    if (Matrix->CKTkluMODE)
+    {
+        if (Matrix->CKTkluMatrixIsComplex)
+        {
+            klu_z_constant_multiply (Matrix->CKTkluAp, Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->CKTkluCommon, constant) ;
+        } else {
+            klu_constant_multiply (Matrix->CKTkluAp, Matrix->CKTkluAx, Matrix->CKTkluN, Matrix->CKTkluCommon, constant) ;
+        }
+    } else {
+        spConstMult (Matrix->SPmatrix, constant) ;
+    }
 }
 
 /*
@@ -1106,5 +1121,32 @@ SMPconstMult (SMPmatrix *Matrix, double constant)
 void
 SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
 {
-    spMultiply (Matrix->SPmatrix, RHS, Solution, iRHS, iSolution) ;
+    if (Matrix->CKTkluMODE)
+    {
+        int *Ap_CSR, *Ai_CSR ;
+        double *Ax_CSR ;
+
+        Ap_CSR = (int *) malloc ((size_t)(Matrix->CKTkluN + 1) * sizeof (int)) ;
+        Ai_CSR = (int *) malloc ((size_t)Matrix->CKTklunz * sizeof (int)) ;
+
+        if (Matrix->CKTkluMatrixIsComplex)
+        {
+            Ax_CSR = (double *) malloc ((size_t)(2 * Matrix->CKTklunz) * sizeof (double)) ;
+            klu_z_convert_matrix_in_CSR (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Ap_CSR, Ai_CSR, Ax_CSR, Matrix->CKTkluN, Matrix->CKTklunz, Matrix->CKTkluCommon) ;
+            klu_z_matrix_vector_multiply (Ap_CSR, Ai_CSR, Ax_CSR, RHS, Solution, iRHS, iSolution, Matrix->SPmatrix->IntToExtRowMap,
+                                          Matrix->SPmatrix->IntToExtColMap, Matrix->CKTkluN, Matrix->CKTkluCommon) ;
+        } else {
+            Ax_CSR = (double *) malloc ((size_t)Matrix->CKTklunz * sizeof (double)) ;
+            klu_convert_matrix_in_CSR (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Ap_CSR, Ai_CSR, Ax_CSR, Matrix->CKTkluN, Matrix->CKTklunz, Matrix->CKTkluCommon) ;
+            klu_matrix_vector_multiply (Ap_CSR, Ai_CSR, Ax_CSR, RHS, Solution, Matrix->SPmatrix->IntToExtRowMap,
+                                        Matrix->SPmatrix->IntToExtColMap, Matrix->CKTkluN, Matrix->CKTkluCommon) ;
+            iSolution = iRHS ;
+        }
+
+        free (Ap_CSR) ;
+        free (Ai_CSR) ;
+        free (Ax_CSR) ;
+    } else {
+        spMultiply (Matrix->SPmatrix, RHS, Solution, iRHS, iSolution) ;
+    }
 }
