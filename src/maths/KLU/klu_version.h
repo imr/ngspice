@@ -86,6 +86,9 @@
 #define KLU_condest klu_z_condest
 #define KLU_flops klu_z_flops
 #define KLU_print klu_z_print
+#define KLU_constant_multiply klu_z_constant_multiply
+#define KLU_matrix_vector_multiply klu_z_matrix_vector_multiply
+#define KLU_convert_matrix_in_CSR klu_z_convert_matrix_in_CSR
 
 #endif
 
@@ -138,6 +141,9 @@
 #define KLU_condest klu_condest
 #define KLU_flops klu_flops
 #define KLU_print klu_print
+#define KLU_constant_multiply klu_constant_multiply
+#define KLU_matrix_vector_multiply klu_matrix_vector_multiply
+#define KLU_convert_matrix_in_CSR klu_convert_matrix_in_CSR
 
 #endif
 
