@@ -43,7 +43,7 @@ double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
 double T0=0.0, T1, CoxWL, qcheq, Cdg, Cdd, Cds, Cdb, Csg, Csd, Css, Csb;
 double ScalingFactor = 1.0e-9;
-struct BSIM4v0SizeDependParam *pParam;
+struct bsim4v0SizeDependParam *pParam;
 
     for (; model != NULL; model = model->BSIM4v0nextModel) 
     {    for (here = model->BSIM4v0instances; here!= NULL;

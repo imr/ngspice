@@ -31,7 +31,7 @@ double Vds, freq, temp;
 BSIM4v0model *model;
 BSIM4v0instance *here;
 {
-struct BSIM4v0SizeDependParam *pParam;
+struct bsim4v0SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
 double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
 
@@ -75,7 +75,7 @@ double *OnDens;
 {
 register BSIM4v0model *model = (BSIM4v0model *)inModel;
 register BSIM4v0instance *here;
-struct BSIM4v0SizeDependParam *pParam;
+struct bsim4v0SizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;
 double tempInoise;

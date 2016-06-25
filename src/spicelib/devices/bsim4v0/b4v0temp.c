@@ -48,7 +48,7 @@ CKTcircuit *ckt;
 {
 register BSIM4v0model *model = (BSIM4v0model*) inModel;
 register BSIM4v0instance *here;
-struct BSIM4v0SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
+struct bsim4v0SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
 double T0, T1, T2, T3, T4, T5, T8, T9, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
@@ -332,8 +332,8 @@ int Size_Not_Found;
               }
 
 	      if (Size_Not_Found)
-	      {   pParam = (struct BSIM4v0SizeDependParam *)malloc(
-	                    sizeof(struct BSIM4v0SizeDependParam));
+	      {   pParam = (struct bsim4v0SizeDependParam *)malloc(
+	                    sizeof(struct bsim4v0SizeDependParam));
                   if (pLastKnot == NULL)
 		      model->pSizeDependParamKnot = pParam;
                   else

@@ -47,7 +47,7 @@ double Cdgi, Cddi, Cdsi, Cdbi, Csgi, Csdi, Cssi, Csbi;
 double gmr, gmi, gmbsr, gmbsi, gdsr, gdsi;
 double FwdSumr, RevSumr, Gmr, Gmbsr;
 double FwdSumi, RevSumi, Gmi, Gmbsi;
-struct BSIM4v0SizeDependParam *pParam;
+struct bsim4v0SizeDependParam *pParam;
 
     omega = ckt->CKTomega;
     for (; model != NULL; model = model->BSIM4v0nextModel) 
