@@ -29,6 +29,7 @@ extern int BSIM4v4temp(GENmodel*,CKTcircuit*);
 extern int BSIM4v4trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM4v4noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM4v4unsetup(GENmodel*,CKTcircuit*);
+//extern int BSIM4v4soaCheck(CKTcircuit *, GENmodel *);
 
 #else /* stdc */
 extern int BSIM4v4acLoad();
@@ -49,6 +50,7 @@ extern int BSIM4v4setup();
 extern int BSIM4v4trunc();
 extern int BSIM4v4noise();
 extern int BSIM4v4unsetup();
+//extern int BSIM4v4soaCheck();
 
 #endif /* stdc */
 

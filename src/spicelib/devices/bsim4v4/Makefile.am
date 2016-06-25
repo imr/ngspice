@@ -20,7 +20,6 @@ libbsim4v4_la_SOURCES =	\
 	b4v4par.c	\
 	b4v4pzld.c	\
 	b4v4set.c	\
-	b4v4soachk.c	\
 	b4v4temp.c	\
 	b4v4trunc.c	\
 	bsim4v4def.h	\
