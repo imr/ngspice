@@ -1,8 +1,7 @@
 /**********
-Copyright 2004 Regents of the University of California.  All rights reserved.
+Copyright 2000 Regents of the University of California.  All rights reserved.
 Author: 2000 Weidong Liu.
-Author: 2001- Xuemei Xi
-File: bsim4v6itf.h
+File: bsim4v0itf.h
 **********/
 
 #ifndef DEV_BSIM4v0
