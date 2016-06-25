@@ -8,7 +8,6 @@
  **********/
 
 #include "ngspice/ngspice.h"
-//#include <stdio.h>
 #include "ngspice/devdefs.h"
 #include "bsim4v0def.h"
 #include "ngspice/suffix.h"
