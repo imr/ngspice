@@ -1,0 +1,61 @@
+* test "sens ac"
+
+v1  1 0  dc=1.27 ac=42mA
+r1  1 2  68.0
+c2  2 0  1.5n
+l3  2 3  12u
+c4  3 0  1.8n
+r5  3 0  100.0
+
+.control
+
+* express our "golden" expectations:
+setplot new
+set gold = $curplot
+let s = (0,2) * pi * 1e6
+let v1_acmag = ( 0.1258214312760609, -0.5915026769337883 )
+let r1 = ( -38.77993150952251u, 196.2381768346785u )
+let c2_c = ( -4912987.937722201,  -1131146.799006112 )
+let l3 = ( -1670.021661737812, -453.4103177577211 )
+let c4_c = ( -7419488.478291172, -1226939.0306441 )
+let r5 = ( 1.952734115993878E-5, -1.180848266533405E-4 )
+
+* run a "sens" analysis
+sens v(3) ac lin 1 1e6 1.1e6
+
+strcmp __flag $curplot $gold
+if $__flag = 0
+  echo "ERROR: sens failed to execute"
+  quit 1
+end
+
+* compare results with "golden" expectation
+
+define mismatch(a,b,err) abs(a-b)>err*abs(b)
+
+let total_count = 0
+let fail_count = 0
+
+foreach n v1_acmag r1 c2_c l3 c4_c r5
+  set n_test = "$n"
+  set n_gold = "{$gold}.$n"
+  if mismatch($n_test, $n_gold, 1e-3)
+    let s_test = $n_test
+    let s_gold = $n_gold
+    echo "ERROR, test failure, s[$n] = $&s_test but should be $&s_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end

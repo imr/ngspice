@@ -1,0 +1,68 @@
+* test "sens dc"
+
+* The "sens" analysis does express "sensitivity" as
+*   S = (d out) / (d parameter)
+* instead of the normalized
+*   S = ((d out)/out) / ((d parameter)/parameter)
+*
+* here:
+*   v(1) = (R / m_R) * (m_i1 * i1)
+*
+* S[R] = (d v(1))/(d R) = m_i1 * i1 / m_R = 42m
+* S[i1] = (d v(1))/(d i1) = m_i1 * R1 / m_R = 1k
+* S[m_R] = (d v(1))/(d m_R) = -R * i1 *m_i1/m_R^2 = -42
+* S[m_i1] = (d v(1))/(d m_i1) = R * i1 / m_R = 42
+
+i1  0 1  dc=42mA
+r1  1 0  1k
+
+.control
+
+* express our "golden" expectations:
+setplot new
+set gold = $curplot
+let i1 = 1k
+let i1_m = 42.0
+let r1 = 42m
+let r1_m = -42.0
+let r1_scale = 42.0
+
+* run a "sens" analysis
+sens v(1) dc
+
+strcmp __flag $curplot $gold
+if $__flag = 0
+  echo "ERROR: sens failed to execute"
+  quit 1
+end
+
+* compare results with "golden" expectation
+
+define mismatch(a,b,err) abs(a-b)>err*abs(b)
+
+let total_count = 0
+let fail_count = 0
+
+foreach n i1 i1_m r1 r1_m r1_scale
+  set n_test = "$n"
+  set n_gold = "{$gold}.$n"
+  if mismatch($n_test, $n_gold, 1e-3)
+    let s_test = $n_test
+    let s_gold = $n_gold
+    echo "ERROR, test failure, s[$n] = $&s_test but should be $&s_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end

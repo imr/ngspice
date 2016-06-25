@@ -1,0 +1,63 @@
+* test "sens dc"
+
+v1  1 0  dc=42
+r1  1 2  1k
+r2  2 3  1.5k
+r3  3 0  2.2k
+r4  3 4  3.3k
+r5  4 0  1.8k
+rx  2 4  2.7k
+
+.control
+
+* express our "golden" expectations:
+setplot new
+set gold = $curplot
+
+let v1 =  0.2933065931311105
+let r1 =  - 0.004104514242490192
+let r2 = - 2.954317312283796E-4
+let r3 =  0.001129248920024266
+let r4 =  - 2.00582596465584E-4
+let r5 =  0.003755608696037442
+let rx =  - 0.001494392173796886
+
+* run a "sens" analysis
+sens v(4) dc
+
+strcmp __flag $curplot $gold
+if $__flag = 0
+  echo "ERROR: sens failed to execute"
+  quit 1
+end
+
+* compare results with "golden" expectation
+
+define mismatch(a,b,err) abs(a-b)>err*abs(b)
+
+let total_count = 0
+let fail_count = 0
+
+foreach n v1 r1 r2 r3 r4 r5 rx
+  set n_test = "$n"
+  set n_gold = "{$gold}.$n"
+  if mismatch($n_test, $n_gold, 1e-3)
+    let s_test = $n_test
+    let s_gold = $n_gold
+    echo "ERROR, test failure, s[$n] = $&s_test but should be $&s_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
