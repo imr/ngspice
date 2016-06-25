@@ -1,4 +1,4 @@
-/**** BSIM4v0.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
