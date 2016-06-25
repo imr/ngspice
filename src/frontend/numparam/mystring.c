@@ -507,30 +507,6 @@ stupcase(char *s)
 }
 
 
-/*****  pointer tricks: app won't use naked malloc(), free() ****/
-
-void
-dispose(void *p)
-{
-    if (p != NULL)
-        free(p);
-}
-
-
-void *
-new(size_t sz)
-{
-    void *p = tmalloc(sz);
-
-    if (p == NULL) {            /* fatal error */
-        printf(" new() failure. Program halted.\n");
-        controlled_exit(EXIT_FAILURE);
-    }
-
-    return p;
-}
-
-
 /***** elementary math *******/
 
 double

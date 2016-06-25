@@ -444,7 +444,7 @@ nupa_init(char *srcfile)
     linecountS = 0;
     incontrolS = 0;
     placeholder = 0;
-    dicoS = (dico_t *) new(sizeof(dico_t));
+    dicoS = TMALLOC(dico_t, 1);
     initdico(dicoS);
 
     dicoS->dynrefptr = TMALLOC(char*, dynmaxline + 1);
@@ -470,14 +470,14 @@ nupa_del_dicoS(void)
         return;
 
     for (i = dynmaxline; i >= 0; i--)
-        dispose(dicoS->dynrefptr[i]);
+        txfree(dicoS->dynrefptr[i]);
 
-    dispose(dicoS->dynrefptr);
-    dispose(dicoS->dyncategory);
-    dispose(dicoS->inst_name);
+    txfree(dicoS->dynrefptr);
+    txfree(dicoS->dyncategory);
+    txfree(dicoS->inst_name);
     nghash_free(dicoS->symbols[0], del_attrib, NULL);
-    dispose(dicoS->symbols);
-    dispose(dicoS);
+    txfree(dicoS->symbols);
+    txfree(dicoS);
     dicoS = NULL;
 }
 
