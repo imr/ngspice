@@ -383,8 +383,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (!ciprefix(".control", dd->li_line) && !ciprefix(".endc", dd->li_line)) {
                 if (dd->li_line[0] == '*')
                     cp_evloop(dd->li_line + 2);
-                /* option line stored but not processed */
-                else if (ciprefix("option", dd->li_line))
+                /* option line stored but not processed, if script does not start with '*ng_script' */
+                else if (ciprefix("option", dd->li_line) && !ciprefix("*ng_script", deck->li_line))
                     com_options = inp_getoptsc(dd->li_line, com_options);
                 else
                     cp_evloop(dd->li_line);
