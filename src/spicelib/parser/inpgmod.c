@@ -222,7 +222,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         && modtmp->INPmodType != INPtypelook ("BSIM3v0")
         && modtmp->INPmodType != INPtypelook ("BSIM3v1")
         && modtmp->INPmodType != INPtypelook ("BSIM4")
-	&& modtmp->INPmodType != INPtypelook ("BSIM4v0")
+        && modtmp->INPmodType != INPtypelook ("BSIM4v0")
         && modtmp->INPmodType != INPtypelook ("BSIM4v5")
         && modtmp->INPmodType != INPtypelook ("BSIM4v6")
         && modtmp->INPmodType != INPtypelook ("BSIM4v7")
