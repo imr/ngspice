@@ -27,6 +27,12 @@ let rx =  - 0.001494392173796886
 * run a "sens" analysis
 sens v(4) dc
 
+strcmp __flag $curplot $gold
+if $__flag = 0
+  echo "ERROR: sens failed to execute"
+  quit 1
+end
+
 * compare results with "golden" expectation
 
 define mismatch(a,b,err) abs(a-b)>err*abs(b)

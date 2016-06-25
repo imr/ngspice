@@ -19,6 +19,12 @@ let c1_c = - 42mA * s / (s*100p + 1/1k)^2
 * run a "sens" analysis
 sens v(1) ac lin 1 1e6 1.1e6
 
+strcmp __flag $curplot $gold
+if $__flag = 0
+  echo "ERROR: sens failed to execute"
+  quit 1
+end
+
 * compare results with "golden" expectation
 
 define mismatch(a,b,err) abs(a-b)>err*abs(b)
