@@ -456,6 +456,8 @@ nupa_init(char *srcfile)
         dicoS->dyncategory[i] = '?';
     }
 
+    dicoS->linecount = dynmaxline;
+
     if (srcfile != NULL)
         scopys(&dicoS->srcfile, srcfile);
 }
@@ -470,7 +472,7 @@ nupa_del_dicoS(void)
     if(!dicoS)
         return;
 
-    for (i = dynmaxline; i >= 0; i--)
+    for (i = dicoS->linecount; i >= 0; i--)
         txfree(dicoS->dynrefptr[i]);
 
     txfree(dicoS->dynrefptr);
