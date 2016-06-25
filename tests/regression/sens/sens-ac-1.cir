@@ -1,0 +1,51 @@
+* test "sens ac"
+
+* (exec-spice "ngspice %s" t)
+
+i1  0 1  dc=1.27 ac=42mA
+r1  1 0  1k
+c1  1 0  100p
+
+.control
+
+* express our "golden" expectations:
+setplot new
+set gold = $curplot
+let s = (0,2) * pi * 1e6
+let i1_acmag = 1 / (s*100p + 1/1k)
+let r1 = 42mA / (1 + s*100p * 1k)^2
+let c1_c = - 42mA * s / (s*100p + 1/1k)^2
+
+* run a "sens" analysis
+sens v(1) ac lin 1 1e6 1.1e6
+
+* compare results with "golden" expectation
+
+define mismatch(a,b,err) abs(a-b)>err*abs(b)
+
+let total_count = 0
+let fail_count = 0
+
+foreach n i1_acmag c1_c  r1
+  set n_test = "$n"
+  set n_gold = "{$gold}.$n"
+  if mismatch($n_test, $n_gold, 1e-3)
+    let s_test = $n_test
+    let s_gold = $n_gold
+    echo "ERROR, test failure, s[$n] = $&s_test but should be $&s_gold"
+    let fail_count = fail_count + 1
+  end
+  let total_count = total_count + 1
+end
+
+if fail_count > 0
+  echo "ERROR: $&fail_count of $&total_count tests failed"
+  quit 1
+else
+  echo "INFO: $&fail_count of $&total_count tests failed"
+  quit 0
+end
+
+.endc
+
+.end
