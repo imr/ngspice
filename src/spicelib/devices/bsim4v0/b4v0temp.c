@@ -1,8 +1,8 @@
-/**** BSIM4v0.0.0, Released by Weidong Liu 3/24/2000 ****/
+/**** BSIM4.0.0, Released by Weidong Liu 3/24/2000 ****/
 
 /**********
  * Copyright 2000 Regents of the University of California. All rights reserved.
- * File: b4temp.c of BSIM4v0.0.0.
+ * File: b4temp.c of BSIM4.0.0.
  * Authors: Weidong Liu, Xiaodong Jin, Kanyu M. Cao, Chenming Hu.
  * Project Director: Prof. Chenming Hu.
  **********/
@@ -1463,7 +1463,7 @@ int Size_Not_Found;
               {   IFuid namarray[2];
                   namarray[0] = model->BSIM4v0modName;
                   namarray[1] = here->BSIM4v0name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4v0.0.0 parameter checking for %s in model %s", namarray);
+                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.0.0 parameter checking for %s in model %s", namarray);
                   return(E_BADPARM);
               }
          } /* End instance */
