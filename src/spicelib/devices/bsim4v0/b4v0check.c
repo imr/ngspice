@@ -26,7 +26,7 @@ struct bsim4v0SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     
-    if ((fplog = fopen("BSIM4v0.out", "w")) != NULL)
+    if ((fplog = fopen("bsim4v0.out", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4v0: Berkeley Short Channel IGFET Model-4\n");
         fprintf(fplog, "Developed by Dr. Weidong Liu, Xiaodong Jin, Kanyu M. Cao and Prof. Chenming Hu in 2000.\n");

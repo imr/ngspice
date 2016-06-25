@@ -1,7 +1,7 @@
 /**********
 Copyright 2000 Regents of the University of California.  All rights reserved.
 Author: 2000 Weidong Liu.
-File: BSIM4v0ext.h
+File: bsim4v0ext.h
 **********/
 
 #ifdef __STDC__

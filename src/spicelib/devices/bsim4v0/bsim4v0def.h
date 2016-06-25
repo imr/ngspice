@@ -1,7 +1,7 @@
 /**********
 Copyright 2000 Regents of the University of California.  All rights reserved.
 Author: 2000 Weidong Liu.
-File: BSIM4v0def.h
+File: bsim4v0def.h
 **********/
 
 #ifndef BSIM4v0
