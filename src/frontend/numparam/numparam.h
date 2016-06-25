@@ -55,6 +55,7 @@ typedef struct {                /* the input scanner data structure */
     char **dynrefptr;
     char *dyncategory;
     int hs_compatibility;       /* allow extra keywords */
+    int linecount;              /* number of lines in deck */
 } dico_t;
 
 
