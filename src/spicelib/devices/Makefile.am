@@ -8,6 +8,7 @@ SUBDIRS = \
 	bsim3	\
 	bsimsoi	\
 	bsim4		\
+	bsim4v4		\
 	bsim4v5		\
 	bsim4v6		\
 	bsim4v7		\
@@ -69,6 +70,7 @@ DIST_SUBDIRS = \
 	bsim3	\
 	bsimsoi	\
 	bsim4		\
+	bsim4v4		\
 	bsim4v5		\
 	bsim4v6		\
 	bsim4v7		\
