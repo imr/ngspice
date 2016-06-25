@@ -37,7 +37,7 @@ FILE *fplog;
         {  fprintf(fplog, "Warning: This model is BSIM4.0.0; you specified a wrong version number '%s'.\n", model->BSIM4v0version);
            printf("Warning: This model is BSIM4.0.0; you specified a wrong version number '%s'.\n", model->BSIM4v0version);
         }
-        fprintf(fplog, "Model = %s\n", model->BSIM4v0modName);
+	fprintf(fplog, "Model = %s\n", model->BSIM4v0modName);
 
 
         if ((here->BSIM4v0rgateMod == 2) || (here->BSIM4v0rgateMod == 3))
