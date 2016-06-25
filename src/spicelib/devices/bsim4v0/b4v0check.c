@@ -22,7 +22,7 @@ register BSIM4v0model *model;
 register BSIM4v0instance *here;
 CKTcircuit *ckt;
 {
-struct BSIM4v0SizeDependParam *pParam;
+struct bsim4v0SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
     

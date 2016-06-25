@@ -158,7 +158,7 @@ double Csg, Csd, Css, Csb, Cbg, Cbd, Cbb;
 double Cgg1, Cgb1, Cgd1, Cbg1, Cbb1, Cbd1, Qac0, Qsub0;
 double dQac0_dVg, dQac0_dVb, dQsub0_dVg, dQsub0_dVd, dQsub0_dVb;
    
-struct BSIM4v0SizeDependParam *pParam;
+struct bsim4v0SizeDependParam *pParam;
 int ByPass, ChargeComputationNeeded, error, Check, Check1, Check2;
 
 ScalingFactor = 1.0e-9;

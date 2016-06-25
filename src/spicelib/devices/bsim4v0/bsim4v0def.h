@@ -197,7 +197,7 @@ typedef struct sBSIM4v0instance
     double BSIM4v0gts;
     double BSIM4v0gtb;
 
-    struct BSIM4v0SizeDependParam  *pParam;
+    struct bsim4v0SizeDependParam  *pParam;
 
     unsigned BSIM4v0lGiven :1;
     unsigned BSIM4v0wGiven :1;
@@ -369,7 +369,7 @@ typedef struct sBSIM4v0instance
 
 } BSIM4v0instance ;
 
-struct BSIM4v0SizeDependParam
+struct bsim4v0SizeDependParam
 {
     double Width;
     double Length;
@@ -562,7 +562,7 @@ struct BSIM4v0SizeDependParam
     double BSIM4v0k1ox;
     double BSIM4v0k2ox;
 
-    struct BSIM4v0SizeDependParam  *pNext;
+    struct bsim4v0SizeDependParam  *pNext;
 };
 
 
@@ -1228,7 +1228,7 @@ typedef struct sBSIM4v0model
     double BSIM4v0af;  
     double BSIM4v0kf;  
 
-    struct BSIM4v0SizeDependParam *pSizeDependParamKnot;
+    struct bsim4v0SizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
     unsigned  BSIM4v0mobModGiven :1;
