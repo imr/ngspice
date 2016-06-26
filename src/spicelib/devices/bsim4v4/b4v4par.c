@@ -26,6 +26,9 @@ GENinstance *inst;
 IFvalue *select;
 {
     BSIM4v4instance *here = (BSIM4v4instance*)inst;
+
+    NG_IGNORE(select);
+
     switch(param)
     {   case BSIM4v4_W:
             here->BSIM4v4w = value->rValue;

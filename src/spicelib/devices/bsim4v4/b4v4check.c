@@ -32,6 +32,8 @@ struct bsim4v4SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
 
+    NG_IGNORE(ckt);
+
     if ((fplog = fopen("bsim4v4.out", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4v4: Berkeley Short Channel IGFET Model-4\n");

@@ -272,6 +272,8 @@ double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
 {
+	NG_IGNORE(DMDG);
+
 	if (Type == 1)
 	{   switch(rgeo)
             {	case 1:
@@ -330,6 +332,9 @@ double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
 {
+        NG_IGNORE(DMCI);
+        NG_IGNORE(DMDG);
+
         if (Type == 1)
         {   switch(rgeo)
             {   case 1:
