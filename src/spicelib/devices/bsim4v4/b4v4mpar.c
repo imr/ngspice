@@ -21,10 +21,10 @@
 #include "ngspice/const.h"
 
 int
-BSIM4v4mParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+BSIM4v4mParam(
+int param,
+IFvalue *value,
+GENmodel *inMod)
 {
     BSIM4v4model *mod = (BSIM4v4model*)inMod;
     switch(param)

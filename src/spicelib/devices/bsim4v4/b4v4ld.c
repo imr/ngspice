@@ -48,9 +48,9 @@
 int BSIM4v4polyDepletion(double phi, double ngate,double coxe, double Vgs, double *Vgs_eff, double *dVgs_eff_dVg);
 
 int
-BSIM4v4load(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v4load(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v4model *model = (BSIM4v4model*)inModel;
 BSIM4v4instance *here;

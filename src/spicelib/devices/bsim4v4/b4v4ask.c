@@ -20,12 +20,12 @@
 #include "ngspice/suffix.h"
 
 int
-BSIM4v4ask(ckt,inst,which,value,select)
-CKTcircuit *ckt;
-GENinstance *inst;
-int which;
-IFvalue *value;
-IFvalue *select;
+BSIM4v4ask(
+CKTcircuit *ckt,
+GENinstance *inst,
+int which,
+IFvalue *value,
+IFvalue *select)
 {
 BSIM4v4instance *here = (BSIM4v4instance*)inst;
 

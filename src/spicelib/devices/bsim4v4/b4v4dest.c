@@ -13,8 +13,8 @@
 #include "ngspice/suffix.h"
 
 void
-BSIM4v4destroy(inModel)
-GENmodel **inModel;
+BSIM4v4destroy(
+GENmodel **inModel)
 {
 BSIM4v4model **model = (BSIM4v4model**)inModel;
 BSIM4v4instance *here;

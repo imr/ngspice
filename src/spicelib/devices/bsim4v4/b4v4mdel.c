@@ -14,10 +14,10 @@
 #include "ngspice/suffix.h"
 
 int
-BSIM4v4mDelete(inModel,modname,kill)
-GENmodel **inModel;
-IFuid modname;
-GENmodel *kill;
+BSIM4v4mDelete(
+GENmodel **inModel,
+IFuid modname,
+GENmodel *kill)
 {
 BSIM4v4model **model = (BSIM4v4model**)inModel;
 BSIM4v4model *modfast = (BSIM4v4model*)kill;

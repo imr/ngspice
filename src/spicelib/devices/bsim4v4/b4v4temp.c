@@ -43,9 +43,9 @@
 
 
 static int
-BSIM4v4DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
-double Nvtm, Ijth, Isb, XExpBV;
-double *Vjm;
+BSIM4v4DioIjthVjmEval(
+double Nvtm, double Ijth, double Isb, double XExpBV,
+double *Vjm)
 {
 double Tb, Tc, EVjmovNv;
 
@@ -59,9 +59,9 @@ return 0;
 
 
 int
-BSIM4v4temp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v4temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v4model *model = (BSIM4v4model*) inModel;
 BSIM4v4instance *here;
