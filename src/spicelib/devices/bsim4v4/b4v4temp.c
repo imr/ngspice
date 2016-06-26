@@ -42,7 +42,7 @@
     }
 
 
-int
+static int
 BSIM4v4DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
 double Nvtm, Ijth, Isb, XExpBV;
 double *Vjm;
