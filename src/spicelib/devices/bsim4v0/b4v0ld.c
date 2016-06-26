@@ -4302,7 +4302,7 @@ line900:
                                    - gstots + FwdSum + gcssb + gbspsp + sxpart * ggts - gIstots);
            (*(here->BSIM4v0SPsPtr) -= gspr + gstot);
            (*(here->BSIM4v0SPbpPtr) -= gjbs + gstotb + Gmbs - gcsbb - gbspb - sxpart * ggtb
-				   - T1 * dsxpart_dVb) + gIstotb;
+				   - T1 * dsxpart_dVb + gIstotb);
 
            (*(here->BSIM4v0SspPtr) -= gspr - gstots);
            (*(here->BSIM4v0SsPtr) += gspr + gstot);
