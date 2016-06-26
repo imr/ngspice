@@ -1384,7 +1384,7 @@ CKTnode *tmp;
             if (!here->BSIM4v0geoModGiven)
                 here->BSIM4v0geoMod = model->BSIM4v0geoMod;
             if (!here->BSIM4v0rgeoModGiven)
-                here->BSIM4v0rgeoMod = 0.0;
+                here->BSIM4v0rgeoMod = 0;
             if (!here->BSIM4v0trnqsModGiven)
                 here->BSIM4v0trnqsMod = model->BSIM4v0trnqsMod;
             else if ((here->BSIM4v0trnqsMod != 0) && (here->BSIM4v0trnqsMod != 1))
