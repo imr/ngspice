@@ -22,7 +22,7 @@
  * conversion into the SI unit system.
  */
 
-double
+static double
 Eval1ovFNoise(Vds, model, here, freq, temp)
 double Vds, freq, temp;
 BSIM4v0model *model;

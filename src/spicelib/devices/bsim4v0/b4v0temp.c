@@ -25,7 +25,7 @@
 #define EXP_THRESHOLD 34.0
 #define Charge_q 1.60219e-19
 
-int
+static int
 BSIM4v0DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
 double Nvtm, Ijth, Isb, XExpBV;
 double *Vjm;
