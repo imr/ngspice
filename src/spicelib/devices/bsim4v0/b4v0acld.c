@@ -17,10 +17,10 @@
 int
 BSIM4v0acLoad(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM4v0model *model = (BSIM4v0model*)inModel;
-register BSIM4v0instance *here;
+BSIM4v0model *model = (BSIM4v0model*)inModel;
+BSIM4v0instance *here;
 
 double gjbd, gjbs, geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb;
 double xcbgb, xcbdb, xcbsb, xcbbb;

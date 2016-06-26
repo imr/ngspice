@@ -30,10 +30,10 @@
 int
 BSIM4v0load(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM4v0model *model = (BSIM4v0model*)inModel;
-register BSIM4v0instance *here;
+BSIM4v0model *model = (BSIM4v0model*)inModel;
+BSIM4v0instance *here;
 
 double ceqgstot, dgstot_dvd, dgstot_dvg, dgstot_dvs, dgstot_dvb;
 double ceqgdtot, dgdtot_dvd, dgdtot_dvg, dgdtot_dvs, dgdtot_dvb;
