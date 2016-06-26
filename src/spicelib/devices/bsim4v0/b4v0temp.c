@@ -368,59 +368,45 @@ int Size_Not_Found;
 
                   pParam->BSIM4v0leff = here->BSIM4v0l - 2.0 * pParam->BSIM4v0dl;
                   if (pParam->BSIM4v0leff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v0modName;
-                      namarray[1] = here->BSIM4v0name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+	          {   SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v0: mosfet %s, model %s: Effective channel length <= 0",
-                       namarray);
+                      model->BSIM4v0modName, here->BSIM4v0name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v0weff = here->BSIM4v0w / here->BSIM4v0nf 
 				    - 2.0 * pParam->BSIM4v0dw;
                   if (pParam->BSIM4v0weff <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v0modName;
-                      namarray[1] = here->BSIM4v0name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+	          {   SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v0: mosfet %s, model %s: Effective channel width <= 0",
-                       namarray);
+                      model->BSIM4v0modName, here->BSIM4v0name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v0leffCV = here->BSIM4v0l - 2.0 * pParam->BSIM4v0dlc;
                   if (pParam->BSIM4v0leffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v0modName;
-                      namarray[1] = here->BSIM4v0name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+	          {   SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v0: mosfet %s, model %s: Effective channel length for C-V <= 0",
-                       namarray);
+                      model->BSIM4v0modName, here->BSIM4v0name);
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v0weffCV = here->BSIM4v0w / here->BSIM4v0nf
 				      - 2.0 * pParam->BSIM4v0dwc;
                   if (pParam->BSIM4v0weffCV <= 0.0)
-	          {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v0modName;
-                      namarray[1] = here->BSIM4v0name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+	          {   SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v0: mosfet %s, model %s: Effective channel width for C-V <= 0",
-                       namarray);
+                      model->BSIM4v0modName, here->BSIM4v0name
+                      );
                       return(E_BADPARM);
                   }
 
                   pParam->BSIM4v0weffCJ = here->BSIM4v0w / here->BSIM4v0nf
 				      - 2.0 * pParam->BSIM4v0dwj;
                   if (pParam->BSIM4v0weffCJ <= 0.0)
-                  {   IFuid namarray[2];
-                      namarray[0] = model->BSIM4v0modName;
-                      namarray[1] = here->BSIM4v0name;
-                      (*(SPfrontEnd->IFerror))(ERR_FATAL,
+                  {   SPfrontEnd->IFerrorf (ERR_FATAL,
                       "BSIM4v0: mosfet %s, model %s: Effective channel width for S/D junctions <= 0",
-                       namarray);
+                      model->BSIM4v0modName, here->BSIM4v0name);
                       return(E_BADPARM);
                   }
 
@@ -1459,10 +1445,7 @@ int Size_Not_Found;
               }
 
               if (BSIM4v0checkModel(model, here, ckt))
-              {   IFuid namarray[2];
-                  namarray[0] = model->BSIM4v0modName;
-                  namarray[1] = here->BSIM4v0name;
-                  (*(SPfrontEnd->IFerror)) (ERR_FATAL, "Fatal error(s) detected during BSIM4.0.0 parameter checking for %s in model %s", namarray);
+              {   SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during BSIM4.0.0 parameter checking for %s in model %s", model->BSIM4v0modName, here->BSIM4v0name);
                   return(E_BADPARM);
               }
          } /* End instance */
