@@ -1,5 +1,5 @@
-#ifndef _BSIM4V0INIT_H
-#define _BSIM4V0INIT_H
+#ifndef _BSIM4v0INIT_H
+#define _BSIM4v0INIT_H
 
 extern IFparm BSIM4v0pTable[ ];
 extern IFparm BSIM4v0mPTable[ ];
