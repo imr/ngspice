@@ -23,6 +23,9 @@ int which;
 IFvalue *value;
 {
     BSIM4v0model *model = (BSIM4v0model *)inst;
+
+    NG_IGNORE(ckt);
+
     switch(which) 
     {   case BSIM4v0_MOD_MOBMOD :
             value->iValue = model->BSIM4v0mobMod; 

@@ -25,6 +25,8 @@ IFvalue *select;
 {
 BSIM4v0instance *here = (BSIM4v0instance*)inst;
 
+    NG_IGNORE(select);
+
     switch(which) 
     {   case BSIM4v0_L:
             value->rValue = here->BSIM4v0l;
