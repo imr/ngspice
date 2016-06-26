@@ -17,11 +17,11 @@
 int
 BSIM4v0pzLoad(inModel,ckt,s)
 GENmodel *inModel;
-register CKTcircuit *ckt;
-register SPcomplex *s;
+CKTcircuit *ckt;
+SPcomplex *s;
 {
-register BSIM4v0model *model = (BSIM4v0model*)inModel;
-register BSIM4v0instance *here;
+BSIM4v0model *model = (BSIM4v0model*)inModel;
+BSIM4v0instance *here;
 
 double gjbd, gjbs, geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb;
 double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;

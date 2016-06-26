@@ -67,13 +67,13 @@ BSIM4v0noise (mode, operation, inModel, ckt, data, OnDens)
 int mode, operation;
 GENmodel *inModel;
 CKTcircuit *ckt;
-register Ndata *data;
+Ndata *data;
 double *OnDens;
 {
 NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
-register BSIM4v0model *model = (BSIM4v0model *)inModel;
-register BSIM4v0instance *here;
+BSIM4v0model *model = (BSIM4v0model *)inModel;
+BSIM4v0instance *here;
 struct bsim4v0SizeDependParam *pParam;
 char name[N_MXVLNTH];
 double tempOnoise;

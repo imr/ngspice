@@ -46,8 +46,8 @@ BSIM4v0temp(inModel,ckt)
 GENmodel *inModel;
 CKTcircuit *ckt;
 {
-register BSIM4v0model *model = (BSIM4v0model*) inModel;
-register BSIM4v0instance *here;
+BSIM4v0model *model = (BSIM4v0model*) inModel;
+BSIM4v0instance *here;
 struct bsim4v0SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
 double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni;
 double T0, T1, T2, T3, T4, T5, T8, T9, Ldrn, Wdrn;
