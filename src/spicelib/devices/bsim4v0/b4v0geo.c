@@ -17,6 +17,11 @@
  * for multi-fingers and varous GEO and RGEO options.
  */
 
+int
+BSIM4v0RdsEndIso(double, double, double, double, double, double, int, int, double *);
+int
+BSIM4v0RdsEndSha(double, double, double, double, double, double, int, int, double *);
+
 static int
 BSIM4v0NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS)
 int minSD;
