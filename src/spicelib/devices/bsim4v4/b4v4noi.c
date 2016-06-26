@@ -135,7 +135,7 @@ int error, i;
 					   return(E_NOMEM);
 		                       SPfrontEnd->IFnewUid (ckt,
 			                  &(data->namelist[data->numPlots++]),
-			                  (IFuid) NULL, name, UID_OTHER,
+			                  NULL, name, UID_OTHER,
 					  NULL);
 				       /* we've added one more plot */
 			          }
@@ -150,7 +150,7 @@ int error, i;
 					   return(E_NOMEM);
 		                       SPfrontEnd->IFnewUid (ckt,
 			                  &(data->namelist[data->numPlots++]),
-			                  (IFuid) NULL, name, UID_OTHER,
+			                  NULL, name, UID_OTHER,
 					  NULL);
 				       /* we've added one more plot */
 
@@ -162,7 +162,7 @@ int error, i;
 					   return(E_NOMEM);
 		                       SPfrontEnd->IFnewUid (ckt,
 			                  &(data->namelist[data->numPlots++]),
-			                  (IFuid) NULL, name, UID_OTHER,
+			                  NULL, name, UID_OTHER,
 					  NULL);
 				       /* we've added one more plot */
 			          }
@@ -307,7 +307,7 @@ int error, i;
                                       break;
 			      }
 
-		              NevalSrc(&noizDens[BSIM4v4FLNOIZ], (double*) NULL,
+		              NevalSrc(&noizDens[BSIM4v4FLNOIZ], NULL,
 				       ckt, N_GAIN, here->BSIM4v4dNodePrime,
 				       here->BSIM4v4sNodePrime, (double) 0.0);
 
