@@ -24,10 +24,10 @@
 int
 BSIM4v4convTest(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM4v4model *model = (BSIM4v4model*)inModel;
-register BSIM4v4instance *here;
+BSIM4v4model *model = (BSIM4v4model*)inModel;
+BSIM4v4instance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs;
 double delvdbd, delvsbs;
 double delvbd_jct, delvbs_jct;

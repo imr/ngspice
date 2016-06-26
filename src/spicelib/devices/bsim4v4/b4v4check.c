@@ -24,8 +24,8 @@
 
 int
 BSIM4v4checkModel(model, here, ckt)
-register BSIM4v4model *model;
-register BSIM4v4instance *here;
+BSIM4v4model *model;
+BSIM4v4instance *here;
 CKTcircuit *ckt;
 {
 struct bsim4v4SizeDependParam *pParam;

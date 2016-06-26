@@ -50,10 +50,10 @@ int BSIM4v4polyDepletion(double phi, double ngate,double coxe, double Vgs, doubl
 int
 BSIM4v4load(inModel,ckt)
 GENmodel *inModel;
-register CKTcircuit *ckt;
+CKTcircuit *ckt;
 {
-register BSIM4v4model *model = (BSIM4v4model*)inModel;
-register BSIM4v4instance *here;
+BSIM4v4model *model = (BSIM4v4model*)inModel;
+BSIM4v4instance *here;
 
 double ceqgstot, dgstot_dvd, dgstot_dvg, dgstot_dvs, dgstot_dvb;
 double ceqgdtot, dgdtot_dvd, dgdtot_dvg, dgdtot_dvs, dgdtot_dvb;
