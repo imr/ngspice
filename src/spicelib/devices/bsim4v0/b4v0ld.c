@@ -44,7 +44,9 @@ double dRs_dvg, dRd_dvg, dRs_dvb, dRd_dvb;
 double dT0_dvg, dT1_dvb, dT3_dvg, dT3_dvb;
 double vses, vdes, vdedo, delvses, delvded, delvdes;
 double Isestot, cseshat, Idedtot, cdedhat;
-//double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
+#ifndef NEWCONV
+double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
+#endif
 
 double geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb, ceqgcrg;
 double vges, vgms, vgedo, vgmdo, vged, vgmd, delvged, delvgmd;

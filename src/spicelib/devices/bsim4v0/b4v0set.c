@@ -41,8 +41,6 @@ register BSIM4v0instance *here;
 int error;
 CKTnode *tmp;
 
-//double tmp1, tmp2;
-
     /*  loop through all the BSIM4v0 device models */
     for( ; model != NULL; model = model->BSIM4v0nextModel )
     {   /* process defaults of model parameters */
