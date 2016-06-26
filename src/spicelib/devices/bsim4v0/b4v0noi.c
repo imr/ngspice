@@ -16,9 +16,6 @@
 #include "ngspice/const.h"
 
 
-extern void   NevalSrc();
-extern double Nintegrate();
-
 /*
  * WDL: 1/f noise model has been smoothed out and enhanced with
  * bulk charge effect as well as physical N* equ. and necessary
