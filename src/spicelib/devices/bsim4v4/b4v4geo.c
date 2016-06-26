@@ -9,6 +9,7 @@
  **********/
 
 #include "ngspice/ngspice.h"
+//
 #include "bsim4v4def.h"
 
 /*
