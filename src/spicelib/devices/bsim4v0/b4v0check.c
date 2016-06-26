@@ -25,6 +25,8 @@ CKTcircuit *ckt;
 struct bsim4v0SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
+
+    NG_IGNORE(ckt);
     
     if ((fplog = fopen("bsim4v0.out", "w")) != NULL)
     {   pParam = here->pParam;
