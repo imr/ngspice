@@ -265,7 +265,7 @@ return 0;
 
 int
 BSIM4v0RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
-double Weffcj, Rsh, DMCG, DMCI;
+double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
 {	
@@ -323,7 +323,7 @@ return 0;
 
 int
 BSIM4v0RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
-double Weffcj, Rsh, DMCG;
+double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
 {
