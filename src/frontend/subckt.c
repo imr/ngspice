@@ -715,15 +715,32 @@ inp_deckcopy(struct line *deck) {
 
 
 /*
- * Copy a deck, without the actual lines, without comment lines.
- * First line is always copied.
+ * Copy a deck, without the li_actual lines, without comment lines, and
+ * without .control section(s).
+ * First line is always copied (except being .control).
  */
 struct line *
 inp_deckcopy_oc(struct line *deck)
 {
     struct line *d = NULL, *nd = NULL;
+    int skip_control = 0;
 
     while (deck) {
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", deck->li_line)) {
+            skip_control++;
+            deck = deck->li_next;
+            continue;
+        }
+        else if (ciprefix(".endc", deck->li_line)) {
+            skip_control--;
+            deck = deck->li_next;
+            continue;
+        }
+        else if (skip_control > 0) {
+            deck = deck->li_next;
+            continue;
+        }
         if (nd) {
             d->li_next = TMALLOC(struct line, 1);
             d = d->li_next;
