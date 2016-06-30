@@ -72,8 +72,15 @@ Int KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherw
         return (FALSE) ;
     }
 
-    if (Ap_CSC == NULL || Ai_CSC == NULL || Ax_CSC == NULL || Ap_CSR == NULL || Ai_CSR == NULL || Ax_CSR == NULL)
+    if (Ap_CSC != NULL)
     {
+        if (Ai_CSC == NULL || Ax_CSC == NULL)
+        {
+            Ap_CSR [0] = 0 ;
+            Ap_CSR [1] = 0 ;
+            return (TRUE) ;
+        }
+    } else {
         Common->status = KLU_INVALID ;
         return (FALSE) ;
     }
