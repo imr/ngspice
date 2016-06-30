@@ -473,6 +473,16 @@ SMPdestroy (SMPmatrix *Matrix)
         free (Matrix->CKTdiag_CSC) ;
         free (Matrix->CKTkluAx_Complex) ;
         free (Matrix->CKTkluIntermediate_Complex) ;
+        Matrix->CKTkluNumeric = NULL ;
+        Matrix->CKTkluSymbolic = NULL ;
+        Matrix->CKTkluAp = NULL ;
+        Matrix->CKTkluAi = NULL ;
+        Matrix->CKTkluAx = NULL ;
+        Matrix->CKTkluIntermediate = NULL ;
+        Matrix->CKTbindStruct = NULL ;
+        Matrix->CKTdiag_CSC = NULL ;
+        Matrix->CKTkluAx_Complex = NULL ;
+        Matrix->CKTkluIntermediate_Complex = NULL ;
     }
 }
 
