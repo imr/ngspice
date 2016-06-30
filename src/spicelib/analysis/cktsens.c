@@ -372,20 +372,23 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			if (error)
 				return error;
 
-//#ifdef KLU
-//                        if (ckt->CKTmatrix->CKTkluMODE)
-//                        {
-//                            /* Conversion from Real Matrix to Complex Matrix */
-//                            if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
-//                            {
-//                                for (i = 0 ; i < DEVmaxnum ; i++)
-//                                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
-//                                        DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
-//
-//                                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
-//                            }
-//                        }
-//#endif
+#ifdef KLU
+                        if (ckt->CKTmatrix->CKTkluMODE)
+                        {
+                            /* ReOrder */
+                            error = SMPpreOrder (ckt->CKTmatrix) ;
+
+                            /* Conversion from Real Matrix to Complex Matrix */
+                            if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
+                            {
+                                for (i = 0 ; i < DEVmaxnum ; i++)
+                                    if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                                        DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+                                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+                            }
+                        }
+#endif
 
 			error = NIacIter(ckt);
 			if (error)
