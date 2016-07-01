@@ -633,10 +633,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #endif
 
 			/* delta_Y E */
-//                        printf ("\n\nPRIMA\n") ;
+//                        fprintf (stderr, "\n\nPRIMA\n") ;
 //                        SMPprint (delta_Y, NULL) ;
                         SMPmultiply (delta_Y, delta_I_delta_Y, E, delta_iI_delta_Y, iE) ;
-//                        printf ("\n\nDOPO\n") ;
+//                        fprintf (stderr, "\n\nDOPO\n") ;
 //                        SMPprint (delta_Y, NULL) ;
 
 #ifdef ASDEBUG
@@ -646,10 +646,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 						j, delta_I_delta_Y[j]);
 #endif
 
-//                        printf ("\n\nPRIMA 1\n") ;
+//                        fprintf (stderr, "\n\nPRIMA 1\n") ;
 //                        for (j = 0 ; j < size ; j++)
 //                        {
-//                            printf ("RHS [%d]: %-.9g j%-.9g\n", j, delta_I [j], delta_iI [j]) ;
+//                            fprintf (stderr, "RHS [%d]: %-.9g j%-.9g\n", j, delta_I [j], delta_iI [j]) ;
 //                        }
 
 			/* delta_I - delta_Y->SPmatrix E */
@@ -658,10 +658,10 @@ int sens_sens(CKTcircuit *ckt, int restart)
 				delta_iI[j] -= delta_iI_delta_Y[j];
 			}
 
-//                        printf ("\n\nDOPO 1\n") ;
+//                        fprintf (stderr, "\n\nDOPO 1\n") ;
 //                        for (j = 0 ; j < size ; j++)
 //                        {
-//                            printf ("RHS [%d]: %-.9g j%-.9g\n", j, delta_I [j], delta_iI [j]) ;
+//                            fprintf (stderr, "RHS [%d]: %-.9g j%-.9g\n", j, delta_I [j], delta_iI [j]) ;
 //                        }
 
 #ifdef ASDEBUG
@@ -674,19 +674,19 @@ int sens_sens(CKTcircuit *ckt, int restart)
 			}
 #endif
 
-//                        printf ("\n\nPRIMA\n") ;
+//                        fprintf (stderr, "\n\nPRIMA\n") ;
 //                        for (j = 0 ; j < size ; j++)
 //                        {
-//                            printf ("RHS [%d]: %-.14g j%-.14g\n", j, delta_I [j], delta_iI [j]) ;
+//                            fprintf (stderr, "RHS [%d]: %-.14g j%-.14g\n", j, delta_I [j], delta_iI [j]) ;
 //                        }
 
 			/* Solve; Y already factored */
                         SMPcSolve (Y, delta_I, delta_iI, NULL, NULL) ;
 
-//                        printf ("\n\nDOPO\n") ;
+//                        fprintf (stderr, "\n\nDOPO\n") ;
 //                        for (j = 0 ; j < size ; j++)
 //                        {
-//                            printf ("RHS [%d]: %-.14g j%-.14g\n", j, delta_I [j], delta_iI [j]) ;
+//                            fprintf (stderr, "RHS [%d]: %-.14g j%-.14g\n", j, delta_I [j], delta_iI [j]) ;
 //                        }
 
                         /* the special `0' node
@@ -725,14 +725,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					output_values[n] =
 					    delta_I [job->output_pos->number]
 					    - delta_I [job->output_neg->number];
-//                                    printf ("Pos: %d\tNeg: %d\n", job->output_pos->number, job->output_neg->number) ;
+//                                    fprintf (stderr, "Pos: %d\tNeg: %d\n", job->output_pos->number, job->output_neg->number) ;
                                 }
 				else {
 					output_values[n] = delta_I[branch_eq];
 				}
-//                                printf ("output_values real PRIMA: %-.14g\n", output_values [n]) ;
+//                                fprintf (stderr, "output_values real PRIMA: %-.14g\n", output_values [n]) ;
 				output_values[n] /= delta_var;
-                                printf ("output_values real DOPO: %-.14g - delta_var: %-.9g\n", output_values [n], delta_var) ;
+                                fprintf (stderr, "output_values real DOPO: %-.14g - delta_var: %-.9g\n", output_values [n], delta_var) ;
 			} else {
 				if (job->output_volt) {
 					output_cvalues[n].real =
@@ -747,7 +747,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 					output_cvalues[n].imag =
 						delta_iI[branch_eq];
 				}
-//                                printf ("output_values complex: %-.9g j%-.9g\n", output_cvalues [n].real, output_cvalues [n].imag) ;
+//                                fprintf (stderr, "output_values complex: %-.9g j%-.9g\n", output_cvalues [n].real, output_cvalues [n].imag) ;
 				output_cvalues[n].real /= delta_var;
 				output_cvalues[n].imag /= delta_var;
 			}
@@ -895,7 +895,7 @@ count_steps(int type, double low, double high, int steps, double *stepsize)
 
 static int
 sens_load(sgen *sg, CKTcircuit *ckt, int is_dc)
-{//printf ("LOAD - is_dc: %d\n", is_dc) ;
+{//fprintf (stderr, "LOAD - is_dc: %d\n", is_dc) ;
  	int	(*fn) (GENmodel *, CKTcircuit *);
 
 	error = 0;
