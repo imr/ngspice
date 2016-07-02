@@ -89,6 +89,7 @@ Int KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherw
         {
             Ap_CSR [0] = 0 ;
             Ap_CSR [1] = 0 ;
+            Common->status = KLU_OK ;
             return (TRUE) ;
         }
     } else {
