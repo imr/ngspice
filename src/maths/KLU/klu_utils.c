@@ -88,8 +88,11 @@ KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherwise 
     {
         if (Ai_CSC == NULL || Ax_CSC == NULL)
         {
-            Ap_CSR [0] = 0 ;
-            Ap_CSR [1] = 0 ;
+            /* CSC Matrix is empty, so the CSR one */
+            for (i = 0 ; i <= n ; i++)
+            {
+                Ap_CSR [i] = 0 ;
+            }
             Common->status = KLU_OK ;
             return (TRUE) ;
         }
