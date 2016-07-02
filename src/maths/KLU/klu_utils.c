@@ -7,8 +7,7 @@ typedef struct sElement {
   Entry val ;
 } Element ;
 
-static
-int
+static int
 CompareRow (const void *a, const void *b)
 {
     Element *A = (Element *) a ;
@@ -20,8 +19,7 @@ CompareRow (const void *a, const void *b)
         0 ;
 }
 
-static
-int
+static int
 CompareColumn (const void *a, const void *b)
 {
     Element *A = (Element *) a ;
@@ -33,8 +31,7 @@ CompareColumn (const void *a, const void *b)
         0 ;
 }
 
-static
-int
+static void
 Compress (int *Ai, int *Bp, int num_rows, int n_COO)
 {
     int i, j ;
@@ -59,11 +56,10 @@ Compress (int *Ai, int *Bp, int num_rows, int n_COO)
 
     for ( ; j <= num_rows ; j++)
         Bp [j] = i ;
-
-    return 0 ;
 }
 
-Int KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherwise */
+Int
+KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherwise */
 (
     Int *Ap_CSC,    /* CSC */
     Int *Ai_CSC,    /* CSC */
