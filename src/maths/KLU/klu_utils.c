@@ -8,23 +8,28 @@ typedef struct sElement {
 
 static
 int
-Compare (const void *a, const void *b)
+CompareRow (const void *a, const void *b)
 {
-    Element *A, *B ;
-    A = (Element *)a ;
-    B = (Element *)b ;
-    return (A->row - B->row) ;
+    Element *A = (Element *) a ;
+    Element *B = (Element *) b ;
+
+    return
+        (A->row > B->row) ?  1 :
+        (A->row < B->row) ? -1 :
+        0 ;
 }
 
 static
 int
 CompareColumn (const void *a, const void *b)
 {
-    Element *A, *B ;
-    A = (Element *)a ;
-    B = (Element *)b ;
+    Element *A = (Element *) a ;
+    Element *B = (Element *) b ;
 
-    return ((int)(A->col - B->col)) ;
+    return
+        (A->col > B->col) ?  1 :
+        (A->col < B->col) ? -1 :
+        0 ;
 }
 
 static
@@ -126,7 +131,7 @@ Int KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherw
     }
 
     /* Order the MatrixCOO along the rows */
-    qsort (MatrixCOO, (size_t)nz, sizeof(Element), Compare) ;
+    qsort (MatrixCOO, (size_t)nz, sizeof(Element), CompareRow) ;
 
     /* Order the MatrixCOO along the columns */
     i = 0 ;
