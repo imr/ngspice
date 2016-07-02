@@ -13,9 +13,9 @@
 
 #define NPRINT
 
-#define BYTES(type,n) (sizeof (type) * (n))
+#define BYTES(type,n) ((int) sizeof (type) * (n))
 #define CEILING(b,u)  (((b)+(u)-1) / (u))
-#define UNITS(type,n) (CEILING (BYTES (type,n), sizeof (Unit)))
+#define UNITS(type,n) (CEILING (BYTES (type,n), (int) sizeof (Unit)))
 #define DUNITS(type,n) (ceil (BYTES (type, (double) n) / sizeof (Unit)))
 
 #define GET_I_POINTER(LU, Xip, Xi, k) \
