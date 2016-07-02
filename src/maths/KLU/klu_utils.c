@@ -18,6 +18,18 @@ CompareRow (const void *a, const void *b)
         0 ;
 }
 
+static int
+CompareColumn (const void *a, const void *b)
+{
+    Element *A = (Element *) a ;
+    Element *B = (Element *) b ;
+
+    return
+        (A->col > B->col) ?  1 :
+        (A->col < B->col) ? -1 :
+        0 ;
+}
+
 static void
 Compress (Int *Ai, Int *Bp, int num_rows, int n_COO)
 {
@@ -116,6 +128,23 @@ KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherwise 
 
     /* Order the MatrixCOO along the rows */
     qsort (MatrixCOO, (size_t)nz, sizeof(Element), CompareRow) ;
+
+    /* Order the MatrixCOO along the columns */
+    i = 0 ;
+    while (i < nz)
+    {
+        for (j = i + 1 ; j < nz ; j++)
+        {
+            if (MatrixCOO [j].row != MatrixCOO [i].row)
+            {
+                break ;
+            }
+        }
+
+        qsort (MatrixCOO + i, (size_t)(j - i), sizeof(Element), CompareColumn) ;
+
+        i = j ;
+    }
 
     for (i = 0 ; i < nz ; i++)
     {
