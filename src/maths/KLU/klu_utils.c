@@ -31,6 +31,7 @@ CompareColumn (const void *a, const void *b)
         0 ;
 }
 
+/* FIXME, shouldn't these be Int instead of int ? */
 static void
 Compress (int *Ai, int *Bp, int num_rows, int n_COO)
 {
