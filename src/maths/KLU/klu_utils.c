@@ -1,3 +1,4 @@
+#include "ngspice/memory.h"
 #include "klu_internal.h"
 
 typedef struct sElement {
@@ -104,8 +105,8 @@ KLU_convert_matrix_in_CSR         /* return TRUE if successful, FALSE otherwise 
     Common->status = KLU_OK ;
 
 
-    MatrixCOO = (Element *) malloc ((size_t)nz * sizeof (Element)) ;
-    Ap_COO = (Int *) malloc ((size_t)nz * sizeof (Int)) ;
+    MatrixCOO = TMALLOC(Element, nz);
+    Ap_COO = TMALLOC(Int, nz);
 
     Az_CSC = (Entry *)Ax_CSC ;
     Az_CSR = (Entry *)Ax_CSR ;
