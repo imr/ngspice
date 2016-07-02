@@ -130,8 +130,8 @@ size_t KLU_kernel_factor            /* 0 if failure, size of LU if OK */
 
     maxlnz = (((double) n) * ((double) n) + ((double) n)) / 2. ;
     maxlnz = MIN (maxlnz, ((double) INT_MAX)) ;
-    lsize  = MIN (maxlnz, lsize) ;
-    usize  = MIN (maxlnz, usize) ;
+    lsize  = MIN ((int) maxlnz, lsize) ;
+    usize  = MIN ((int) maxlnz, usize) ;
 
     PRINTF (("Welcome to klu: n %d anz %d k1 %d lsize %d usize %d maxlnz %g\n",
         n, anz, k1, lsize, usize, maxlnz)) ;
