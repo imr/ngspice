@@ -1,0 +1,43 @@
+<2016-07-03 So>
+
+old/archived source from
+  http://faculty.cse.tamu.edu/davis/suitesparse.html
+  http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-3.7.0.tar.gz
+
+
+inject source files from there :
+
+(compile "tar=../../../SuiteSparse-3.7.0.tar.gz
+          for dir in SuiteSparse/KLU/Source SuiteSparse/KLU/Include \\
+                     SuiteSparse/AMD/Source SuiteSparse/AMD/Include \\
+                     SuiteSparse/BTF/Source SuiteSparse/BTF/Include \\
+                     SuiteSparse/COLAMD/Source SuiteSparse/COLAMD/Include
+          do
+            tar -zxf $tar $dir
+            files=$(cd $dir && ls -1 *.c *.h)
+            mv $dir/*.c $dir/*.h .
+            git add $files
+          done
+
+          file=SuiteSparse/UFconfig/UFconfig.h
+          tar -zxf $tar $file
+          mv $file .
+          git add $(basename $file)
+          ")
+
+
+(compile "for file in colamd.h amd.h btf.h klu.h UFconfig.h
+          do
+            git mv $file ../../include/ngspice/$file
+          done
+          ")
+
+
+delete-trailing-whitespace and untabify :
+
+(loop for file in (process-lines "git" "ls-files")
+      do (with-temp-file file
+           (insert-file-contents file)
+           (delete-trailing-whitespace)
+           ;; (untabify (point-min) (point-max))
+           ))
