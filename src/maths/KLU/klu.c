@@ -154,7 +154,7 @@ size_t KLU_kernel_factor            /* 0 if failure, size of LU if OK */
     dunits = DUNITS (Int, lsize) + DUNITS (Entry, lsize) +
              DUNITS (Int, usize) + DUNITS (Entry, usize) ;
     lusize = (size_t) dunits ;
-    ok = !INT_OVERFLOW (dunits) ; 
+    ok = !INT_OVERFLOW (dunits) ;
     LU = ok ? KLU_malloc (lusize, sizeof (Unit), Common) : NULL ;
     if (LU == NULL)
     {
