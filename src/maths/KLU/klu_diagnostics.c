@@ -494,7 +494,7 @@ Int KLU_flops           /* return TRUE if successful, FALSE otherwise */
 /* Compute a really cheap estimate of the reciprocal of the condition number,
  * condition number, min(abs(diag(U))) / max(abs(diag(U))).  If U has a zero
  * pivot, or a NaN pivot, rcond will be zero.  Takes O(n) time.
- */   
+ */
 
 Int KLU_rcond           /* return TRUE if successful, FALSE otherwise */
 (
