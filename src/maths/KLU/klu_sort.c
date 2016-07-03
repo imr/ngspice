@@ -23,7 +23,7 @@ static void sort (Int n, Int *Xip, Int *Xlen, Unit *LU, Int *Tp, Int *Tj,
 
     ASSERT (KLU_valid_LU (n, FALSE, Xip, Xlen, LU)) ;
 
-    /* count the number of entries in each row of L or U */ 
+    /* count the number of entries in each row of L or U */
     for (i = 0 ; i < n ; i++)
     {
         W [i] = 0 ;

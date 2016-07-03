@@ -94,7 +94,7 @@ UF_long amd_l_order            /* see above for description of arguments */
  * of the matrix is created (where these conditions do hold), and the copy is
  * ordered.  This feature is new to v2.0 (v1.2 and earlier required this
  * condition to hold for the input matrix).
- * 
+ *
  * Row indices must be in the range 0 to
  * n-1.  Ap [0] must be zero, and thus nz = Ap [n] is the number of nonzeros
  * in A.  The array Ap is of size n+1, and the array Ai is of size nz = Ap [n].
@@ -161,7 +161,7 @@ UF_long amd_l_order            /* see above for description of arguments */
  * The Info array provides statistics about the ordering on output.  If it is
  * not present, the statistics are not returned.  This is not an error
  * condition.
- * 
+ *
  *       Info [AMD_STATUS]:  the return value of AMD, either AMD_OK,
  *           AMD_OK_BUT_JUMBLED, AMD_OUT_OF_MEMORY, or AMD_INVALID.
  *
@@ -222,7 +222,7 @@ UF_long amd_l_order            /* see above for description of arguments */
  *
  *       Info [14..19] are not used in the current version, but may be used in
  *           future versions.
- */    
+ */
 
 /* ------------------------------------------------------------------------- */
 /* direct interface to AMD */
@@ -245,7 +245,7 @@ void amd_2
     int iwlen,
     int pfree,
     int Nv [ ],
-    int Next [ ], 
+    int Next [ ],
     int Last [ ],
     int Head [ ],
     int Elen [ ],
@@ -264,7 +264,7 @@ void amd_l2
     UF_long iwlen,
     UF_long pfree,
     UF_long Nv [ ],
-    UF_long Next [ ], 
+    UF_long Next [ ],
     UF_long Last [ ],
     UF_long Head [ ],
     UF_long Elen [ ],
@@ -351,7 +351,7 @@ void amd_l_info     (double Info [ ]) ;
 /* contents of Info */
 #define AMD_STATUS 0           /* return value of amd_order and amd_l_order */
 #define AMD_N 1                /* A is n-by-n */
-#define AMD_NZ 2      /* number of nonzeros in A */ 
+#define AMD_NZ 2      /* number of nonzeros in A */
 #define AMD_SYMMETRY 3         /* symmetry of pattern (1 is sym., 0 is unsym.) */
 #define AMD_NZDIAG 4           /* # of entries on diagonal */
 #define AMD_NZ_A_PLUS_AT 5  /* nz in A+A' */
