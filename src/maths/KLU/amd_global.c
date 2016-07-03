@@ -66,7 +66,7 @@ void *(*amd_calloc) (size_t, size_t) = NULL ;
 /* ========================================================================= */
 
 /* The user can redefine this global pointer at run-time to change the printf
- * routine used by AMD.  If NULL, no printing occurs.  
+ * routine used by AMD.  If NULL, no printing occurs.
  *
  * If -DNPRINT is defined at compile-time, stdio.h is not included.  Printing
  * can then be enabled at run-time by setting amd_printf to a non-NULL function.
