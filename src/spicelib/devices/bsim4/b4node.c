@@ -36,8 +36,6 @@ BSIM4nodeIsNonLinear (GENmodel *inModel, CKTcircuit *ckt)
             fprintf (stderr, "here->BSIM4qNode: %d\n", here->BSIM4qNode) ;
 #endif
 
-            ckt->CKTnodeIsLinear [here->BSIM4dNodePrime] = 0 ;
-            ckt->CKTnodeIsLinear [here->BSIM4sNodePrime] = 0 ;
             ckt->CKTnodeIsLinear [here->BSIM4gNodePrime] = 0 ;
             ckt->CKTnodeIsLinear [here->BSIM4bNodePrime] = 0 ;
 
@@ -58,6 +56,9 @@ BSIM4nodeIsNonLinear (GENmodel *inModel, CKTcircuit *ckt)
             {
                 ckt->CKTnodeIsLinear [here->BSIM4dNode] = 0 ;
                 ckt->CKTnodeIsLinear [here->BSIM4sNode] = 0 ;
+            } else {
+                ckt->CKTnodeIsLinear [here->BSIM4dNodePrime] = 0 ;
+                ckt->CKTnodeIsLinear [here->BSIM4sNodePrime] = 0 ;
             }
 
             if (here->BSIM4trnqsMod)
