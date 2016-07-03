@@ -43,7 +43,7 @@
  *
  * Copyright (c) 2004-2007.  Tim Davis, University of Florida,
  * with support from Sandia National Laboratories.  All Rights Reserved.
- */ 
+ */
 
 #include "btf.h"
 #include "btf_internal.h"
@@ -59,7 +59,7 @@
  *
  *      * column k is not matched to any row
  *      * entries in the path are nonzero
- *      * the pairs (i1,j1), (i2,j2), (i3,j3) ..., (is,js) have been 
+ *      * the pairs (i1,j1), (i2,j2), (i3,j3) ..., (is,js) have been
  *          previously matched to each other
  *      * (i(s+1), js) is nonzero, and row i(s+1) is not matched to any column
  *
@@ -332,7 +332,7 @@ Int BTF(maxtrans)   /* returns # of columns in the matching */
     for (j = 0 ; j < ncol ; j++)
     {
         Cheap [j] = Ap [j] ;
-        Flag [j] = EMPTY ; 
+        Flag [j] = EMPTY ;
     }
 
     /* all rows and columns are currently unmatched */

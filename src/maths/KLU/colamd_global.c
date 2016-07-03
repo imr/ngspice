@@ -21,4 +21,3 @@ int (*colamd_printf) (const char *, ...) = printf ;
 #else
 int (*colamd_printf) (const char *, ...) = ((void *) 0) ;
 #endif
-
