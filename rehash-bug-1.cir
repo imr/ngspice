@@ -1,0 +1,17 @@
+* expose a bug in the rehash fix on branch tmp-ticket-20+
+
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../w32/src/ngspice " buffer-file-name) t)
+*
+* Invalid read of size 1
+*    at 0x43FB5A: findvec (vectors.c:163)
+*    by 0x43FCB4: vec_fromplot (vectors.c:374)
+*    by 0x4406FF: vec_get (vectors.c:454)
+*    by 0x42E93C: PP_mksnode (parse.c:363)
+
+.control
+  let foo = 3
+  set curplot = new
+  let bar = foo + 1
+  let baz = foo + 2
+  quit 0
+.endc
