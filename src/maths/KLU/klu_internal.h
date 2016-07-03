@@ -7,7 +7,7 @@
 #ifndef _KLU_INTERNAL_H
 #define _KLU_INTERNAL_H
 
-#include "klu.h" 
+#include "klu.h"
 #include "btf.h"
 #include "klu_version.h"
 
@@ -106,7 +106,7 @@ size_t KLU_kernel   /* final size of LU on output */
     Int Stack [ ],  /* size n */
     Int Flag [ ],   /* size n */
     Int adj_pos [ ],    /* size n */
-    
+
     /* workspace for pruning only */
     Int Lpend [ ],      /* size n workspace */
 
@@ -217,20 +217,20 @@ void KLU_utsolve
     Entry X [ ]
 ) ;
 
-Int KLU_valid 
+Int KLU_valid
 (
-    Int n, 
-    Int Ap [ ], 
-    Int Ai [ ], 
+    Int n,
+    Int Ap [ ],
+    Int Ai [ ],
     Entry Ax [ ]
 ) ;
 
-Int KLU_valid_LU 
+Int KLU_valid_LU
 (
-    Int n, 
-    Int flag_test_start_ptr, 
+    Int n,
+    Int flag_test_start_ptr,
     Int Xip [ ],
-    Int Xlen [ ],  
+    Int Xlen [ ],
     Unit LU [ ]
 );
 
