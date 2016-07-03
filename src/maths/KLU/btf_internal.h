@@ -32,10 +32,10 @@
 #define NPRINT
 #endif
 
-/* To enable debugging and assertions, uncomment this line: 
+/* To enable debugging and assertions, uncomment this line:
  #undef NDEBUG
 */
-/* To enable diagnostic printing, uncomment this line: 
+/* To enable diagnostic printing, uncomment this line:
  #undef NPRINT
 */
 
