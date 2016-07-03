@@ -954,11 +954,11 @@ int klu_z_convert_matrix_in_CSR
  *      #endif
  */
 
-#define KLU_DATE "Nov 30, 2009"
+#define KLU_DATE "Dec 7, 2011"
 #define KLU_VERSION_CODE(main,sub) ((main) * 1000 + (sub))
 #define KLU_MAIN_VERSION 1
 #define KLU_SUB_VERSION 1
-#define KLU_SUBSUB_VERSION 1
+#define KLU_SUBSUB_VERSION 3
 #define KLU_VERSION KLU_VERSION_CODE(KLU_MAIN_VERSION,KLU_SUB_VERSION)
 
 #ifdef __cplusplus
