@@ -490,6 +490,8 @@ typedef struct sBSIM3v32model
     double BSIM3v32rsc;
     double BSIM3v32wmlt;
 
+    double BSIM3v32lmlt;
+
     /* Length Dependence */
     double BSIM3v32lcdsc;
     double BSIM3v32lcdscb;
@@ -953,6 +955,8 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32rdcGiven   :1;
     unsigned  BSIM3v32rscGiven   :1;
     unsigned  BSIM3v32wmltGiven   :1;
+
+    unsigned  BSIM3v32lmltGiven :1;
 
     /* Length dependence */
     unsigned  BSIM3v32lcdscGiven   :1;
@@ -1785,6 +1789,8 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_RDC              716
 #define BSIM3v32_MOD_RSC              717
 #define BSIM3v32_MOD_WMLT             718
+
+#define BSIM3v32_MOD_LMLT             719
 
 /* device questions */
 #define BSIM3v32_DNODE                751

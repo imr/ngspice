@@ -285,6 +285,9 @@ IFuid tmpName;
         if (!model->BSIM3v32wmltGiven)
           model->BSIM3v32wmlt = 1.0;
 
+        if (!model->BSIM3v32lmltGiven)
+          model->BSIM3v32lmlt = 1.0;
+
         /* Length dependence */
         if (!model->BSIM3v32lcdscGiven)
             model->BSIM3v32lcdsc = 0.0;
@@ -1038,6 +1041,11 @@ IFuid tmpName;
             else
             {   here->BSIM3v32qNode = 0;
             }
+
+            /* Channel length scaling with lmlt model parameter */
+
+            if (model->BSIM3v32lmltGiven)
+                here->BSIM3v32l *= model->BSIM3v32lmlt;
 
         /* set Sparse Matrix Pointers */
 

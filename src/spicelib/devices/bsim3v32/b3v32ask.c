@@ -22,12 +22,14 @@ BSIM3v32ask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
           IFvalue *select)
 {
 BSIM3v32instance *here = (BSIM3v32instance*)inst;
+BSIM3v32model *model = here->BSIM3v32modPtr; /* for lmlt */
 
     NG_IGNORE(select);
 
     switch(which)
     {   case BSIM3v32_L:
             value->rValue = here->BSIM3v32l;
+            value->rValue *= model->BSIM3v32lmlt;
             return(OK);
         case BSIM3v32_W:
             value->rValue = here->BSIM3v32w;

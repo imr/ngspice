@@ -366,6 +366,10 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->BSIM3v32wmlt;
             return(OK);
 
+        case BSIM3v32_MOD_LMLT:
+            value->rValue = model->BSIM3v32lmlt;
+            return(OK);
+
         /* Length dependence */
         case  BSIM3v32_MOD_LCDSC :
           value->rValue = model->BSIM3v32lcdsc;

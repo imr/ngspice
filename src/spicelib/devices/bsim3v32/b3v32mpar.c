@@ -478,6 +478,12 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32wmltGiven = TRUE;
             break;
 
+            /* Length shrink */
+        case  BSIM3v32_MOD_LMLT:
+            mod->BSIM3v32lmlt = value->rValue;
+            mod->BSIM3v32lmltGiven = TRUE;
+            break;
+
         /* Length dependence */
         case  BSIM3v32_MOD_LCDSC :
             mod->BSIM3v32lcdsc = value->rValue;

@@ -225,6 +225,8 @@ IOP( "rdc", BSIM3v32_MOD_RDC, IF_REAL, "ACM Parameter: Resistance contact drain 
 IOP( "rsc", BSIM3v32_MOD_RSC, IF_REAL, "ACM Parameter: Resistance contact source side"),
 IOP( "wmlt", BSIM3v32_MOD_WMLT, IF_REAL, "ACM Parameter: Width shrink factor"),
 
+IOP( "lmlt", BSIM3v32_MOD_LMLT, IF_REAL, "Channel length shrink factor"),
+
 IOP( "alpha0", BSIM3v32_MOD_ALPHA0, IF_REAL, "substrate current model parameter"),
 IOP( "alpha1", BSIM3v32_MOD_ALPHA1, IF_REAL, "substrate current model parameter"),
 IOP( "beta0", BSIM3v32_MOD_BETA0, IF_REAL, "substrate current model parameter"),
