@@ -48,6 +48,10 @@ BSIM3v32destroy (GENmodel **inModel)
         if(prev) FREE(prev);
     }
     if(oldmod) {
+#ifdef USE_OMP
+        /* free just once for all models */
+        FREE(oldmod->BSIM3v32InstanceArray);
+#endif
         FREE(oldmod->BSIM3v32version);
         FREE(oldmod);
     }

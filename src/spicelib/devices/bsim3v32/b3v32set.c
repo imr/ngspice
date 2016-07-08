@@ -38,6 +38,11 @@ CKTnode *tmp;
 CKTnode *tmpNode;
 IFuid tmpName;
 
+#ifdef USE_OMP
+int idx, InstCount;
+BSIM3v32instance **InstArray;
+#endif
+
     /*  loop through all the BSIM3v32 device models */
     for( ; model != NULL; model = model->BSIM3v32nextModel )
     {
@@ -1091,6 +1096,39 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
         }
     }
+#ifdef USE_OMP
+    InstCount = 0;
+    model = (BSIM3v32model*)inModel;
+    /* loop through all the BSIM3 device models
+    to count the number of instances */
+
+    for (; model != NULL; model = model->BSIM3v32nextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM3v32instances; here != NULL;
+            here = here->BSIM3v32nextInstance)
+        {
+            InstCount++;
+        }
+    }
+    InstArray = TMALLOC(BSIM3v32instance*, InstCount);
+    model = (BSIM3v32model*)inModel;
+    idx = 0;
+    for (; model != NULL; model = model->BSIM3v32nextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM3v32instances; here != NULL;
+            here = here->BSIM3v32nextInstance)
+        {
+            InstArray[idx] = here;
+            idx++;
+        }
+        /* set the array pointer and instance count into each model */
+        model->BSIM3v32InstCount = InstCount;
+        model->BSIM3v32InstanceArray = InstArray;
+    }
+
+#endif
     return(OK);
 }
 

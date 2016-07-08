@@ -171,6 +171,48 @@ typedef struct sBSIM3v32instance
     double *BSIM3v32SPqPtr;
     double *BSIM3v32BqPtr;
 
+#ifdef USE_OMP
+    /* per instance storage of results, to update matrix at a later stge */
+    double BSIM3v32rhsG;
+    double BSIM3v32rhsB;
+    double BSIM3v32rhsD;
+    double BSIM3v32rhsS;
+    double BSIM3v32rhsQ;
+
+    double BSIM3v32DdPt;
+    double BSIM3v32GgPt;
+    double BSIM3v32SsPt;
+    double BSIM3v32BbPt;
+    double BSIM3v32DPdpPt;
+    double BSIM3v32SPspPt;
+    double BSIM3v32DdpPt;
+    double BSIM3v32GbPt;
+    double BSIM3v32GdpPt;
+    double BSIM3v32GspPt;
+    double BSIM3v32SspPt;
+    double BSIM3v32BdpPt;
+    double BSIM3v32BspPt;
+    double BSIM3v32DPspPt;
+    double BSIM3v32DPdPt;
+    double BSIM3v32BgPt;
+    double BSIM3v32DPgPt;
+    double BSIM3v32SPgPt;
+    double BSIM3v32SPsPt;
+    double BSIM3v32DPbPt;
+    double BSIM3v32SPbPt;
+    double BSIM3v32SPdpPt;
+
+    double BSIM3v32QqPt;
+    double BSIM3v32QdpPt;
+    double BSIM3v32QgPt;
+    double BSIM3v32QspPt;
+    double BSIM3v32QbPt;
+    double BSIM3v32DPqPt;
+    double BSIM3v32GqPt;
+    double BSIM3v32SPqPt;
+    double BSIM3v32BqPt;
+#endif
+
 #define BSIM3v32vbd BSIM3v32states+ 0
 #define BSIM3v32vbs BSIM3v32states+ 1
 #define BSIM3v32vgs BSIM3v32states+ 2
@@ -835,6 +877,11 @@ typedef struct sBSIM3v32model
     double BSIM3v32vbdMax;
 
     struct bsim3v32SizeDependParam *pSizeDependParamKnot;
+
+#ifdef USE_OMP
+    int BSIM3v32InstCount;
+    struct sBSIM3v32instance **BSIM3v32InstanceArray;
+#endif
 
     /* Flags */
     unsigned  BSIM3v32mobModGiven :1;
