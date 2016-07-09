@@ -10963,7 +10963,7 @@ synchronisation required.*/
 
 void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
-    unsigned int InstCount, idx;
+    int InstCount, idx;
     B4SOIinstance **InstArray;
     B4SOIinstance *here;
     B4SOImodel *model = (B4SOImodel*)inModel;

@@ -60,7 +60,7 @@ JOB   *job;
 
 
 #ifdef USE_OMP
-unsigned int idx, InstCount;
+int idx, InstCount;
 BSIM4v6instance **InstArray;
 #endif
 

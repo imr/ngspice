@@ -115,7 +115,7 @@ int HSM2setup(
   double Lbin=0.0, Wbin=0.0, LWbin =0.0; /* binning */
   
 #ifdef USE_OMP
-  unsigned int idx, InstCount;
+  int idx, InstCount;
   HSM2instance **InstArray;
 #endif
 

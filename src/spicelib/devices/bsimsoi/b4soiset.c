@@ -54,7 +54,7 @@ double Cboxt;
 double Vbs0t, Qsi;
 
 #ifdef USE_OMP
-unsigned int idx, InstCount;
+int idx, InstCount;
 B4SOIinstance **InstArray;
 #endif
 

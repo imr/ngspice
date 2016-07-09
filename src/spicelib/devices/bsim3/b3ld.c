@@ -3130,7 +3130,7 @@ return(OK);
 #ifdef USE_OMP
 void BSIM3LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
-    unsigned int InstCount, idx;
+    int InstCount, idx;
     BSIM3instance **InstArray;
     BSIM3instance *here;
     BSIM3model *model = (BSIM3model*)inModel;

@@ -5359,7 +5359,7 @@ int BSIM4v7polyDepletion(
 #ifdef USE_OMP
 void BSIM4v7LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
-    unsigned int InstCount, idx;
+    int InstCount, idx;
     BSIM4v7instance **InstArray;
     BSIM4v7instance *here;
     BSIM4v7model *model = (BSIM4v7model*)inModel;

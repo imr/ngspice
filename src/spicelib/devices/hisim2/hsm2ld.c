@@ -1493,7 +1493,7 @@ vsum0 = vsum ;
 #ifdef USE_OMP
 void HSM2LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
-    unsigned int InstCount, idx;
+    int InstCount, idx;
     HSM2instance **InstArray;
     HSM2instance *here;
     HSM2model *model = (HSM2model*)inModel;
