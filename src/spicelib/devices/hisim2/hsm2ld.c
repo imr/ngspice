@@ -247,7 +247,7 @@ int HSM2load(
 
 int HSM2LoadOMP(HSM2instance *here, CKTcircuit *ckt)
 {
-  HSM2model *model;
+  HSM2model *model = here->HSM2modPtr;
 #else
   HSM2model *model = (HSM2model*)inModel;
   HSM2instance *here;
@@ -300,7 +300,6 @@ tm0 = gtodsecld() ;
 #endif
 
 #ifdef USE_OMP
-    model = here->HSM2modPtr;
     reltol = ckt->CKTreltol * BYP_TOL_FACTOR ;
     abstol = ckt->CKTabstol * BYP_TOL_FACTOR ;
     voltTol= ckt->CKTvoltTol* BYP_TOL_FACTOR ;

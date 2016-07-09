@@ -127,7 +127,7 @@ B4SOIload(
 }
 
 int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
-    B4SOImodel *model;
+    B4SOImodel *model = here->B4SOImodPtr;
 #else
     register B4SOImodel *model = (B4SOImodel*)inModel;
     register B4SOIinstance *here;
@@ -487,10 +487,6 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
 
     double eggbcp2, eggdep, agb1, bgb1, agb2, bgb2, agbc2n, agbc2p, bgbc2n, bgbc2p, Vtm00; /* v4.3.1 bugfix for mtrlMod=1 -Tanvir */
     double m;
-
-#ifdef USE_OMP
-    model = here->B4SOImodPtr;
-#endif
 
 #ifndef USE_OMP
     for (; model != NULL; model = model->B4SOInextModel)

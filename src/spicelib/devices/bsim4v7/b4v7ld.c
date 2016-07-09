@@ -93,7 +93,7 @@ CKTcircuit *ckt)
 
 
 int BSIM4v7LoadOMP(BSIM4v7instance *here, CKTcircuit *ckt) {
-BSIM4v7model *model;
+BSIM4v7model *model = here->BSIM4v7modPtr;
 #else
 BSIM4v7model *model = (BSIM4v7model*)inModel;
 BSIM4v7instance *here;
@@ -240,10 +240,6 @@ struct bsim4SizeDependParam *pParam;
 int ByPass, ChargeComputationNeeded, error, Check, Check1, Check2;
 
 double m;
-
-#ifdef USE_OMP
-model = here->BSIM4v7modPtr;
-#endif
 
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  
