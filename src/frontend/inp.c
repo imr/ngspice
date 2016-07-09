@@ -598,6 +598,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #ifdef HAS_PROGREP
             SetAnalyse("Prepare Deck", 0);
 #endif
+            /*FIXME This is for the globel param setting only */
+            /* replace agauss(x,y,z) in each b-line by suitable value */
+            static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
+            int ii;
+            for (ii = 0; ii < 5; ii++)
+                eval_agauss(deck, statfcn[ii]);
+
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL))
                 if ((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL) {
@@ -674,12 +681,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 inp_parse_temper(deck, &modtlist, &devtlist);
 
             /* replace agauss(x,y,z) in each b-line by suitable value */
+            /* FIXME: This is for the local param setting (not yet implemented in
+            inp_fix_agauss_in_param() for model parameters according to HSPICE manual)
             static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
             int ii;
             for (ii = 0; ii < 5; ii++)
-                eval_agauss(deck, statfcn[ii]);
+                eval_agauss(deck, statfcn[ii]); */
 
-            /* If user wants all currents saved (.options savecurrents), add .save 
+            /* If user wants all currents saved (.options savecurrents), add .save
             to wl_first with all terminal currents available on selected devices */
             wl_first = inp_savecurrents(deck, options, wl_first, controls);
 
