@@ -109,21 +109,21 @@ B4SOIload(
 #ifdef USE_OMP
     int idx;
     B4SOImodel *model = (B4SOImodel*)inModel;
-    int good = 0;
+    int error = 0;
     B4SOIinstance **InstArray;
     InstArray = model->B4SOIInstanceArray;
 
 #pragma omp parallel for
     for (idx = 0; idx < model->B4SOIInstCount; idx++) {
         B4SOIinstance *here = InstArray[idx];
-        int local_good = B4SOILoadOMP(here, ckt);
-        if (local_good)
-            good = local_good;
+        int local_error = B4SOILoadOMP(here, ckt);
+        if (local_error)
+            error = local_error;
     }
 
     B4SOILoadRhsMat(inModel, ckt);
     
-    return good;
+    return error;
 }
 
 int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {

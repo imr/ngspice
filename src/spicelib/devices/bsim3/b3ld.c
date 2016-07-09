@@ -46,21 +46,21 @@ CKTcircuit *ckt)
 #ifdef USE_OMP
     int idx;
     BSIM3model *model = (BSIM3model*)inModel;
-    int good = 0;
+    int error = 0;
     BSIM3instance **InstArray;
     InstArray = model->BSIM3InstanceArray;
 
 #pragma omp parallel for
     for (idx = 0; idx < model->BSIM3InstCount; idx++) {
         BSIM3instance *here = InstArray[idx];
-        int local_good = BSIM3LoadOMP(here, ckt);
-        if (local_good)
-            good = local_good;
+        int local_error = BSIM3LoadOMP(here, ckt);
+        if (local_error)
+            error = local_error;
     }
 
     BSIM3LoadRhsMat(inModel, ckt);
 
-    return good;
+    return error;
 }
 
 
