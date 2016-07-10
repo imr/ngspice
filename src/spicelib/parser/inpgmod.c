@@ -346,7 +346,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
     if (txtCard) txtCard = txtCard->nextcard;
 
     /* Now parse each remaining card */
-    while (txtCard) {
+    for (; txtCard; txtCard = txtCard->nextcard) {
         line = txtCard->line;
         cardType = E_MISSING;
         cardNum++;
@@ -453,7 +453,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
             lastType = cardType;
             break;
         }
-        if (txtCard) txtCard = txtCard->nextcard;
     }
     *errMessage = err;
     return( 0 );
