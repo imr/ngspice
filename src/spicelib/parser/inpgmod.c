@@ -407,6 +407,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     }
                 }
             }
+            lastType = cardType;
             if (cardType >= 0) { /* parse the rest of this line */
                 while (*line) {
                     /* Strip leading carat from booleans */
@@ -450,7 +451,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     FREE(parm);
                 }
             }
-            lastType = cardType;
             break;
         }
     }
