@@ -341,7 +341,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 
     /* Skip the first card if it exists since there's nothing interesting */
     /* txtCard will be empty if the numerical model is empty */
-    if (txtCard) txtCard = txtCard->nextcard;
+    if (txtCard)
+        txtCard = txtCard->nextcard;
 
     /* Now parse each remaining card */
     for (; txtCard; txtCard = txtCard->nextcard) {
@@ -366,92 +367,94 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
             /* continuation card */
             if (!info) {
                 tmp = tprintf("Error on card %d : illegal continuation \'+\' - ignored",
-                                cardNum);
+                              cardNum);
                 err = INPerrCat(err,tmp);
                 continue;
             }
-            while (*line == '+') line++;        /* Skip leading '+'s */
+            while (*line == '+') /* Skip leading '+'s */
+                line++;
             break;
         default:
             info = NULL;
             break;
         }
 
-            if (!info) {
-                /* new command card */
-                if (cardName) FREE(cardName);        /* get rid of old card name */
-                INPgetTok(&line,&cardName,1);        /* get new card name */
-                if (*cardName) {                 /* Found a name? */
-                    int lastType = INPfindCard(cardName,INPcardTab,INPnumCards);
-                    if (lastType >= 0) {
-                        /* Add card structure to model */
-                        info = INPcardTab[lastType];
-                        error = info->newCard (&tmpCard, model->INPmodfast );
-                        if (error) return(error);
+        if (!info) {
+            /* new command card */
+            if (cardName)       /* get rid of old card name */
+                FREE(cardName);
+            INPgetTok(&line,&cardName,1);        /* get new card name */
+            if (*cardName) {                 /* Found a name? */
+                int lastType = INPfindCard(cardName,INPcardTab,INPnumCards);
+                if (lastType >= 0) {
+                    /* Add card structure to model */
+                    info = INPcardTab[lastType];
+                    error = info->newCard (&tmpCard, model->INPmodfast );
+                    if (error)
+                        return(error);
                     /* Handle parameter-less cards */
-                    } else if (cinprefix( cardName, "title", 3 ) ) {
-                        /* Do nothing */
-                    } else if (cinprefix( cardName, "comment", 3 ) ) {
-                        /* Do nothing */
-                    } else if (cinprefix( cardName, "end", 3 ) ) {
-                        /* Terminate parsing */
-                        *errMessage = err;
-                        return( 0 );
-                    } else {
-                        /* Error */
-                        tmp = tprintf("Error on card %d : unrecognized name (%s) - ignored",
-                                        cardNum, cardName);
-                        err = INPerrCat(err,tmp);
-                    }
+                } else if (cinprefix( cardName, "title", 3 ) ) {
+                    /* Do nothing */
+                } else if (cinprefix( cardName, "comment", 3 ) ) {
+                    /* Do nothing */
+                } else if (cinprefix( cardName, "end", 3 ) ) {
+                    /* Terminate parsing */
+                    *errMessage = err;
+                    return( 0 );
+                } else {
+                    /* Error */
+                    tmp = tprintf("Error on card %d : unrecognized name (%s) - ignored",
+                                  cardNum, cardName);
+                    err = INPerrCat(err,tmp);
                 }
             }
+        }
 
-            if (!info)
-                continue;
+        if (!info)
+            continue;
 
-             /* parse the rest of this line */
-                while (*line) {
-                    /* Strip leading carat from booleans */
-                    if (*line == '^') {
-                      invert = TRUE;
-                      line++;        /* Skip the '^' */
+        /* parse the rest of this line */
+        while (*line) {
+            /* Strip leading carat from booleans */
+            if (*line == '^') {
+                invert = TRUE;
+                line++;        /* Skip the '^' */
+            } else {
+                invert = FALSE;
+            }
+            INPgetTok(&line,&parm,1);
+            if (!*parm)
+                break;
+            idx = INPfindParm(parm, info->cardParms, info->numParms);
+            if (idx == E_MISSING) {
+                /* parm not found */
+                tmp = tprintf("Error on card %d : unrecognized parameter (%s) - ignored",
+                              cardNum, parm);
+                err = INPerrCat(err, tmp);
+            } else if (idx == E_AMBIGUOUS) {
+                /* parm ambiguous */
+                tmp = tprintf("Error on card %d : ambiguous parameter (%s) - ignored",
+                              cardNum, parm);
+                err = INPerrCat(err, tmp);
+            } else {
+                value = INPgetValue( ckt, &line, info->cardParms[idx].dataType, tab );
+                if (invert) { /* invert if it's a boolean entry */
+                    if ((info->cardParms[idx].dataType & IF_VARTYPES) == IF_FLAG) {
+                        value->iValue = 0;
                     } else {
-                      invert = FALSE;
-                    }
-                    INPgetTok(&line,&parm,1);
-                    if (!*parm)
-                      break;
-                    idx = INPfindParm(parm, info->cardParms, info->numParms);
-                    if (idx == E_MISSING) {
-                        /* parm not found */
-                        tmp = tprintf("Error on card %d : unrecognized parameter (%s) - ignored",
-                                        cardNum, parm);
+                        tmp = tprintf("Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
+                                      cardNum, parm);
                         err = INPerrCat(err, tmp);
-                    } else if (idx == E_AMBIGUOUS) {
-                        /* parm ambiguous */
-                        tmp = tprintf("Error on card %d : ambiguous parameter (%s) - ignored",
-                                        cardNum, parm);
-                        err = INPerrCat(err, tmp);
-                    } else {
-                        value = INPgetValue( ckt, &line,
-                            info->cardParms[idx].dataType, tab );
-                        if (invert) { /* invert if it's a boolean entry */
-                          if ((info->cardParms[idx].dataType & IF_VARTYPES)
-                              == IF_FLAG) {
-                            value->iValue = 0;
-                          } else {
-                            tmp = tprintf("Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
-                                            cardNum, parm);
-                            err = INPerrCat(err, tmp);
-                          }
-                        }
-                        error = info->setCardParm (
-                            info->cardParms[idx].id, value, tmpCard );
-                        if (error) return(error);
                     }
-                    FREE(parm);
                 }
+                error = info->setCardParm (info->cardParms[idx].id, value, tmpCard );
+                if (error)
+                    return(error);
+            }
+            FREE(parm);
+        }
     }
+
     *errMessage = err;
     return( 0 );
 }
