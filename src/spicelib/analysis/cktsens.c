@@ -200,7 +200,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		if (error)
 			return error;
 
-		SMPprint(delta_Y, NULL);
+//		SMPprint(delta_Y, NULL);
 		size += 1;
 
 		/* Create an extra rhs */
@@ -732,7 +732,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 				}
 //                                fprintf (stderr, "output_values real PRIMA: %-.14g\n", output_values [n]) ;
 				output_values[n] /= delta_var;
-				fprintf(stderr, "output_values real DOPO: %-.14g - delta_var: %-.9g\n", output_values [n], delta_var);
+//				fprintf(stderr, "output_values real DOPO: %-.14g - delta_var: %-.9g\n", output_values [n], delta_var);
 			} else {
 				if (job->output_volt) {
 					output_cvalues[n].real =
