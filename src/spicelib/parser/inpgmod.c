@@ -367,16 +367,15 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
             continue;
         case '+':
             /* continuation card */
-            if (lastType >= 0) {
-                cardType = lastType;
-                while (*line == '+') line++;        /* Skip leading '+'s */
-            } else {
+            if (lastType < 0) {
                 tmp = tprintf("Error on card %d : illegal continuation \'+\' - ignored",
                                 cardNum);
                 err = INPerrCat(err,tmp);
                 lastType = E_MISSING;
                 continue;
             }
+            cardType = lastType;
+            while (*line == '+') line++;        /* Skip leading '+'s */
             /* FALL THRU when continuing a card */
         default:
             lastType = cardType;
