@@ -331,7 +331,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
     char *line;
     char *cardName = NULL;        /* name of a card */
     char *parm;                /* name of a parameter */
-    int cardType;        /* type/index for the current card */
     int cardNum = 0;        /* number of this card in the overall line */
     int lastType = E_MISSING;        /* type of previous card */
     char *err = NULL, *tmp;    /* Strings for error messages */
@@ -348,7 +347,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
     /* Now parse each remaining card */
     for (; txtCard; txtCard = txtCard->nextcard) {
         line = txtCard->line;
-        cardType = E_MISSING;
         cardNum++;
 
         /* Skip the initial '+' and any whitespace. */
@@ -374,14 +372,10 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 lastType = E_MISSING;
                 continue;
             }
-            cardType = lastType;
             while (*line == '+') line++;        /* Skip leading '+'s */
-            lastType = cardType;
-            // cardType is not used downwards from here
             break;
         default:
-            lastType = cardType;
-            // cardType is not used downwards from here
+            lastType = E_MISSING;
             break;
         }
 
