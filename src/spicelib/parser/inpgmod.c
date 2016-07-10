@@ -380,16 +380,16 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
             /* FALL THRU when continuing a card */
         default:
             lastType = cardType;
-            if (cardType == E_MISSING) {
+            // cardType is not used downwards from here
+            if (lastType == E_MISSING) {
                 /* new command card */
                 if (cardName) FREE(cardName);        /* get rid of old card name */
                 INPgetTok(&line,&cardName,1);        /* get new card name */
                 if (*cardName) {                 /* Found a name? */
-                    cardType = INPfindCard(cardName,INPcardTab,INPnumCards);
-                    lastType = cardType;
-                    if (cardType >= 0) {
+                    lastType = INPfindCard(cardName,INPcardTab,INPnumCards);
+                    if (lastType >= 0) {
                         /* Add card structure to model */
-                        info = INPcardTab[cardType];
+                        info = INPcardTab[lastType];
                         error = info->newCard (&tmpCard, model->INPmodfast );
                         if (error) return(error);
                     /* Handle parameter-less cards */
@@ -409,7 +409,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     }
                 }
             }
-            // cardType is not used downwards from here
             if (lastType >= 0) { /* parse the rest of this line */
                 while (*line) {
                     /* Strip leading carat from booleans */
