@@ -397,8 +397,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                         /* Do nothing */
                     } else if (cinprefix( cardName, "end", 3 ) ) {
                         /* Terminate parsing */
-                        txtCard = ((card *) 0);
-                        cardType = E_MISSING;
+                        *errMessage = err;
+                        return( 0 );
                     } else {
                         /* Error */
                         tmp = tprintf("Error on card %d : unrecognized name (%s) - ignored",
