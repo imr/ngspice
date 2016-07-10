@@ -381,6 +381,9 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
         default:
             lastType = cardType;
             // cardType is not used downwards from here
+            break;
+        }
+
             if (lastType == E_MISSING) {
                 /* new command card */
                 if (cardName) FREE(cardName);        /* get rid of old card name */
@@ -452,8 +455,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     FREE(parm);
                 }
             }
-            break;
-        }
     }
     *errMessage = err;
     return( 0 );
