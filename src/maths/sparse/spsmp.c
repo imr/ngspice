@@ -568,7 +568,7 @@ SMPzeroRow(SMPmatrix *eMatrix, int Row)
 void
 SMPconstMult(SMPmatrix *Matrix, double constant)
 {
-    spConstMult(Matrix, constant);
+    spConstMult(Matrix->SPmatrix, constant);
 }
 
 /*
@@ -577,5 +577,5 @@ SMPconstMult(SMPmatrix *Matrix, double constant)
 void
 SMPmultiply(SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
 {
-    spMultiply(Matrix, RHS, Solution, iRHS, iSolution);
+    spMultiply(Matrix->SPmatrix, RHS, Solution, iRHS, iSolution);
 }
