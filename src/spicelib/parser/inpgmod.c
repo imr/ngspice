@@ -408,7 +408,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 }
             }
             lastType = cardType;
-            if (cardType >= 0) { /* parse the rest of this line */
+            // cardType is not used downwards from here
+            if (lastType >= 0) { /* parse the rest of this line */
                 while (*line) {
                     /* Strip leading carat from booleans */
                     if (*line == '^') {
