@@ -288,7 +288,7 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
 struct plot *
 raw_read(char *name) {
-    char *title = "default title";
+    char *title = NULL;
     char *date = NULL;
     struct plot *plots = NULL, *curpl = NULL;
     char buf[BSIZE_SP], *s, *t, *r;
@@ -352,7 +352,11 @@ raw_read(char *name) {
             if (!date)
                 date = copy(datestring());
             curpl->pl_date = date;
-            curpl->pl_title = copy(title);
+            if (!title)
+                title = copy("default title");
+            curpl->pl_title = title;
+            date = NULL;
+            title = NULL;
             flags = VF_PERMANENT;
             nvars = npoints = 0;
         } else if (ciprefix("flags:", buf)) {
