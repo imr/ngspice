@@ -376,7 +376,9 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
             }
             cardType = lastType;
             while (*line == '+') line++;        /* Skip leading '+'s */
-            /* FALL THRU when continuing a card */
+            lastType = cardType;
+            // cardType is not used downwards from here
+            break;
         default:
             lastType = cardType;
             // cardType is not used downwards from here
