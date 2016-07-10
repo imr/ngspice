@@ -364,7 +364,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
         case '\n':
             /* comment or empty cards */
             lastType = E_MISSING;
-            break;
+            continue;
         case '+':
             /* continuation card */
             if (lastType >= 0) {
@@ -375,7 +375,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                                 cardNum);
                 err = INPerrCat(err,tmp);
                 lastType = E_MISSING;
-                break;
+                continue;
             }
             /* FALL THRU when continuing a card */
         default:
