@@ -405,7 +405,11 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     }
                 }
             }
-            if (info) { /* parse the rest of this line */
+
+            if (!info)
+                continue;
+
+             /* parse the rest of this line */
                 while (*line) {
                     /* Strip leading carat from booleans */
                     if (*line == '^') {
@@ -447,7 +451,6 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     }
                     FREE(parm);
                 }
-            }
     }
     *errMessage = err;
     return( 0 );
