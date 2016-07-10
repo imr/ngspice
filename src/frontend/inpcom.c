@@ -527,9 +527,12 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
 
         inp_remove_excess_ws(working);
+//      tprint(working, tpr++);
 
         comment_out_unused_subckt_models(working);
+//      tprint(working, tpr++);
         inp_rem_unused_models(working);
+//      tprint(working, tpr++);
 
         subckt_params_to_param(working);
 
@@ -548,9 +551,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-//      tprint(working, tpr++);
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
-//      tprint(working, tpr++);
 
         delete_names(subckt_w_params);
         subckt_w_params = NULL;
