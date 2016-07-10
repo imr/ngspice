@@ -327,12 +327,11 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 {
     card *txtCard;        /* Text description of a card */
     GENcard *tmpCard;        /* Processed description of a card */
-    IFcardInfo *info;        /* Info about the type of card located */
+    IFcardInfo *info = NULL;        /* Info about the type of card located */
     char *line;
     char *cardName = NULL;        /* name of a card */
     char *parm;                /* name of a parameter */
     int cardNum = 0;        /* number of this card in the overall line */
-    int lastType = E_MISSING;        /* type of previous card */
     char *err = NULL, *tmp;    /* Strings for error messages */
     IFvalue *value;
     int error, idx, invert;
@@ -361,30 +360,29 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
         case '\0':
         case '\n':
             /* comment or empty cards */
-            lastType = E_MISSING;
+            info = NULL;
             continue;
         case '+':
             /* continuation card */
-            if (lastType < 0) {
+            if (!info) {
                 tmp = tprintf("Error on card %d : illegal continuation \'+\' - ignored",
                                 cardNum);
                 err = INPerrCat(err,tmp);
-                lastType = E_MISSING;
                 continue;
             }
             while (*line == '+') line++;        /* Skip leading '+'s */
             break;
         default:
-            lastType = E_MISSING;
+            info = NULL;
             break;
         }
 
-            if (lastType == E_MISSING) {
+            if (!info) {
                 /* new command card */
                 if (cardName) FREE(cardName);        /* get rid of old card name */
                 INPgetTok(&line,&cardName,1);        /* get new card name */
                 if (*cardName) {                 /* Found a name? */
-                    lastType = INPfindCard(cardName,INPcardTab,INPnumCards);
+                    int lastType = INPfindCard(cardName,INPcardTab,INPnumCards);
                     if (lastType >= 0) {
                         /* Add card structure to model */
                         info = INPcardTab[lastType];
@@ -407,7 +405,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     }
                 }
             }
-            if (lastType >= 0) { /* parse the rest of this line */
+            if (info) { /* parse the rest of this line */
                 while (*line) {
                     /* Strip leading carat from booleans */
                     if (*line == '^') {
