@@ -331,8 +331,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    /* inp_source() called with fp: load from file */
-    if (fp) {
+    /* inp_source() called with fp: load from file
+       or fp == NULL, intfile == TRUE: load circarray */
+    if (fp || intfile) {
         if (mc_deck) {
             line_free_x(mc_deck, TRUE);
             mc_deck = NULL;
