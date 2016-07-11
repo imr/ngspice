@@ -376,8 +376,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    /* inp_source() called with fp: load from file */
-    if (fp) {
+    /* inp_source() called with fp: load from file
+       or fp == NULL, intfile == TRUE: load circarray */
+    if (fp || intfile) {
         deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
 
         /* files starting with *ng_script are user supplied command files */
