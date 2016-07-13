@@ -36,6 +36,11 @@ extern void spice_destroy_devices(void); /* FIXME need a better place */
 static void byemesg(void);
 static int  confirm_quit(void);
 
+#ifdef SHARED_MODULE
+extern void sh_delete_myvec(void);
+extern void sh_delvecs(void);
+#endif
+
 
 void
 com_quit(wordlist *wl)
@@ -114,6 +119,8 @@ com_quit(wordlist *wl)
 #ifdef SHARED_MODULE
     destroy_const_plot();
     spice_destroy_devices();
+    sh_delete_myvec();
+    sh_delvecs();
 #endif
     mc_free();
 #ifdef SHARED_MODULE
