@@ -184,6 +184,8 @@ int sh_fputsll(const char *input, FILE* outf);
 int sh_ExecutePerLoop(void);
 double getvsrcval(double, char*);
 int sh_vecinit(runDesc *run);
+void sh_delete_myvec(void);
+void sh_delvecs(void);
 
 ATTRIBUTE_NORETURN void shared_exit(int status);
 
@@ -693,6 +695,15 @@ bot:
 
     return 0;
 }
+
+
+/* to be called upon 'quit' */
+void
+sh_delete_myvec(void)
+{
+    tfree(myvec);
+}
+
 
 /* retrieve a ngspice command from caller and run it
 immediately */
@@ -1632,6 +1643,11 @@ int sh_ExecutePerLoop(void)
 }
 
 
+/* declared outside of sh_vecinit to allow deleting */
+static int veccount = 0;
+static pvecinfoall pvca = NULL;
+
+
 /* called once for a new plot from beginPlot() in outitf.c,
    after the vectors in ngspice for this plot have been set.
    Transfers vector information to the caller via callback datinitfcn()
@@ -1639,9 +1655,8 @@ int sh_ExecutePerLoop(void)
 int sh_vecinit(runDesc *run)
 {
     struct dvec *d, *ds;
-    int veccount, i;
-    static pvecinfoall pvca = NULL;
-    pvecinfo *pvc;
+    int i;
+    pvecinfo *pvc = NULL;
 
     /* return immediately if callback not wanted */
     if (nodatainitwanted)
@@ -1710,6 +1725,29 @@ int sh_vecinit(runDesc *run)
             curvecvalsall->vecsa[i]->is_scale = FALSE;
     }
     return 0;
+}
+
+
+void
+sh_delvecs(void)
+{
+    int i;
+    if (pvca) {
+        if (pvca->vecs) {
+            for (i = 0; i < pvca->veccount; i++)
+                tfree(pvca->vecs[i]);
+            tfree(pvca->vecs);
+        }
+        tfree(pvca);
+    }
+    if (curvecvalsall) {
+        for (i = 0; i < veccount; i++)
+            tfree(curvecvalsall->vecsa[i]);
+        tfree(curvecvalsall->vecsa);
+        tfree(curvecvalsall);
+    }
+    if (allvecs)
+        tfree(allvecs);
 }
 
 
