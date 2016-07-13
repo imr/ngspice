@@ -214,6 +214,7 @@ extern void inp_list(FILE *file, struct line *deck, struct line *extras, int typ
 extern struct line *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile);
 extern FILE *inp_pathopen(char *name, char *mode);
 extern char *search_identifier(char *str, const char *identifier, char *str_begin);
+extern void mc_free(void);
 
 extern char** circarray;
 

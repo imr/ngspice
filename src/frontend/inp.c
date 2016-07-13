@@ -296,6 +296,14 @@ line_free_x(struct line *deck, bool recurse)
 }
 
 
+/* free mc_deck */
+void
+mc_free(void)
+{
+    line_free_x(mc_deck, TRUE);
+}
+
+
 /* The routine to source a spice input deck. We read the deck in, take
  * out the front-end commands, and create a CKT structure. Also we
  * filter out the following cards: .save, .width, .four, .print, and
