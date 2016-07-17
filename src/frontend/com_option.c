@@ -14,7 +14,7 @@
 void
 com_option(wordlist *wl)
 {
-    struct variable *vars;
+    struct variable *vars, *varsfree;
 
     CKTcircuit *circuit = NULL;
 
@@ -87,7 +87,7 @@ com_option(wordlist *wl)
         return;
     }
 
-    vars = cp_setparse(wl);
+    varsfree = vars = cp_setparse(wl);
 
     /* This is sort of a hassle... */
     while (vars) {
@@ -116,6 +116,6 @@ com_option(wordlist *wl)
         cp_vset(vars->va_name, vars->va_type, s);
         vars = vars->va_next;
     }
-    free_struct_variable(vars);
+    free_struct_variable(varsfree);
 }
 
