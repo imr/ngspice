@@ -638,8 +638,7 @@ vec_get(const char *vec_name)
             }
         }
 
-        tfree(vv->va_name);
-        tfree(vv); /* va: tfree vv->va_name and vv (avoid memory leakages) */
+        free_struct_variable(vv);
         tfree(wd);
         vec_new(d);
         tfree(whole);
