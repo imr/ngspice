@@ -14,7 +14,7 @@
 void
 com_option(wordlist *wl)
 {
-    struct variable *vars, *varsfree;
+    struct variable *vars, *v;
 
     CKTcircuit *circuit = NULL;
 
@@ -87,35 +87,35 @@ com_option(wordlist *wl)
         return;
     }
 
-    varsfree = vars = cp_setparse(wl);
+    vars = cp_setparse(wl);
 
     /* This is sort of a hassle... */
-    while (vars) {
+    for (v = vars; v; v = v->va_next) {
         void *s;
-        switch (vars->va_type) {
+        switch (v->va_type) {
         case CP_BOOL:
-            s = &vars->va_bool;
+            s = &v->va_bool;
             break;
         case CP_NUM:
-            s = &vars->va_num;
+            s = &v->va_num;
             break;
         case CP_REAL:
-            s = &vars->va_real;
+            s = &v->va_real;
             break;
         case CP_STRING:
-            s = vars->va_string;
+            s = v->va_string;
             break;
         case CP_LIST:
-            s = vars->va_vlist;
+            s = v->va_vlist;
             break;
         default:
             s = NULL;
         }
 
         /* qui deve settare le opzioni di simulazione */
-        cp_vset(vars->va_name, vars->va_type, s);
-        vars = vars->va_next;
+        cp_vset(v->va_name, v->va_type, s);
     }
-    free_struct_variable(varsfree);
+
+    free_struct_variable(vars);
 }
 
