@@ -3036,7 +3036,7 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
     char *c;
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
     char *curr_ptr, *macro_str, *curr_str = NULL;
-    int  num_parens, num_params;
+    int  num_parens, num_params, i;
     char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
     char keep;
 
@@ -3132,6 +3132,9 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
         tfree(macro_str);
 
         search_ptr = str = close_paren_ptr + 1;
+
+        for (i = 0; i < num_params; i++)
+            tfree(params[i]);
     }
 
     if (curr_str == NULL) {
