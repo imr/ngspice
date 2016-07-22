@@ -599,20 +599,6 @@ stripWhiteSpacesInsideParens(char *str)
 }
 
 
-#ifndef HAVE_BZERO
-#ifndef bzero
-void
-bzero(void *vptr, size_t num)
-{
-    register char *ptr=vptr;
-    while (num-- > 0)
-        *ptr++ = '\0';
-    return;
-}
-#endif
-#endif
-
-
 bool
 isquote( char ch )
 {

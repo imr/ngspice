@@ -224,7 +224,7 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       TWOgetStatePointers(inst->NUMOSpDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero(inst->NUMOSpDevice->pStats, sizeof(TWOstats));
+      memset(inst->NUMOSpDevice->pStats, 0, sizeof(TWOstats));
 
       inst->NUMOSpDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

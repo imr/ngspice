@@ -211,7 +211,7 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       ONEgetStatePointers(inst->NBJTpDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero(inst->NBJTpDevice->pStats, sizeof(ONEstats));
+      memset(inst->NBJTpDevice->pStats, 0, sizeof(ONEstats));
 
       inst->NBJTpDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

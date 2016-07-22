@@ -62,7 +62,7 @@ NIcomCof(CKTcircuit *ckt)
         case 4:
         case 5:
         case 6:
-            bzero(ckt->CKTag,7*sizeof(double));
+            memset(ckt->CKTag, 0, 7*sizeof(double));
             ckt->CKTag[1] = -1/ckt->CKTdelta;
             /* first, set up the matrix */
             arg=0;
@@ -150,7 +150,7 @@ NIcomCof(CKTcircuit *ckt)
          *  MUST STILL ACCOUNT FOR ARRAY AGP()
          *  KEEP THE SAME NAME FOR GMAT
          */
-        bzero(ckt->CKTagp,7*sizeof(double));
+        memset(ckt->CKTagp, 0, 7*sizeof(double));
         /*   SET UP RHS OF EQUATIONS */
         ckt->CKTagp[0]=1;
         for(i=0;i<=ckt->CKTorder;i++) {

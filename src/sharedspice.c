@@ -1547,7 +1547,7 @@ int sh_ExecutePerLoop_old(void)
             tfree(curvecvals);
         }
         len = 0;
-        bzero(type_name, 128);
+        memset(type_name, 0, 128);
     }
 
     /* initialize new for every new plot, e.g. if changed from op1 to ac1

@@ -80,9 +80,6 @@
 /* Define to enable BSD editline */
 /* #undef HAVE_BSDEDITLINE */
 
-/* Define to 1 if you have the `bzero' function. */
-/* #undef HAVE_BZERO */
-
 /* Define to 1 if you have the <ctype.h> header file. */
 #define HAVE_CTYPE_H 1
 

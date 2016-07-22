@@ -412,7 +412,7 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
 
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
-    bzero(data, sizeof(dataDesc));
+    memset(data, 0, sizeof(dataDesc));
 
     data->name = copy(name);
     data->type = type;
@@ -443,7 +443,7 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
 
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
-    bzero(data, sizeof(dataDesc));
+    memset(data, 0, sizeof(dataDesc));
 
     data->name = copy(name);
 

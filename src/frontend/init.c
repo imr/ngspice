@@ -27,7 +27,7 @@ cp_init(void)
 {
     char *s;
 
-    bzero(cp_chars, 128);
+    memset(cp_chars, 0, 128);
     for (s = singlec; *s; s++)
         /* break word to right or left of characters <>;&*/
         cp_chars[(int) *s] = (CPC_BRR | CPC_BRL);

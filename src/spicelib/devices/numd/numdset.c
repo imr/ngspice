@@ -200,7 +200,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
       ONEgetStatePointers(inst->NUMDpDevice, states);
 
       /* Wipe out statistics from previous runs (if any). */
-      bzero(inst->NUMDpDevice->pStats, sizeof(ONEstats));
+      memset(inst->NUMDpDevice->pStats, 0, sizeof(ONEstats));
 
       inst->NUMDpDevice->pStats->totalTime[STAT_SETUP] +=
 	  SPfrontEnd->IFseconds() - startTime;

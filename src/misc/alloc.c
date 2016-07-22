@@ -46,7 +46,7 @@ extern mutexType allocMutex;
  * be tmalloc'd.   Return NULL for a request for 0 bytes.
  */
 
-/* New implementation of tmalloc, it uses calloc and does not call bzero()  */
+/* New implementation of tmalloc, it uses calloc and does not call memset()  */
 
 void *
 tmalloc(size_t num)

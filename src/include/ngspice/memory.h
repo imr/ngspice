@@ -27,10 +27,10 @@ extern void txfree(const void *ptr);
 #endif /* HAVE_LIBGC */
 
 
-#include "ngspice/stringutil.h" /* va: spice3 internally bzero */
+#include "ngspice/stringutil.h"
 
 #define FREE(x)          do { if(x) { txfree(x); (x) = NULL; } } while(0)
-#define ZERO(PTR, TYPE)  bzero(PTR, sizeof(TYPE))
+#define ZERO(PTR, TYPE)  memset(PTR, 0, sizeof(TYPE))
 
 
 #ifdef CIDER

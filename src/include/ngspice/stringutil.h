@@ -44,10 +44,6 @@ int cinprefix(register char *p, register char *s, register int n);
 int cimatch(register char *p, register char *s); 
 #endif
 
-#ifndef HAVE_BZERO
-void bzero(void *ptr, size_t num);
-#endif
-
 bool isquote(char ch);
 bool is_arith_char(char c);
 bool str_has_arith_char(char *s);
