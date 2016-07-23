@@ -153,9 +153,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
               CKTnumStates the first time it is run */
             if(!OldCKTstate0)
                 OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1);
-            for(i=0; i<ckt->CKTnumStates; i++) {
-                OldCKTstate0[i] = ckt->CKTstate0[i];
-            }
+            memcpy(OldCKTstate0, ckt->CKTstate0,
+                   (size_t) ckt->CKTnumStates * sizeof(double));
 
             startTime = SPfrontEnd->IFseconds();
             SMPsolve(ckt->CKTmatrix,ckt->CKTrhs,ckt->CKTrhsSpare);

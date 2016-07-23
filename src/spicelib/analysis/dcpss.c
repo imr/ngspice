@@ -1399,10 +1399,10 @@ resume:
         ckt->CKTstat->STATtimePts ++;
         ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
         if(firsttime) {
-            for(i=0;i<ckt->CKTnumStates;i++) {
-                ckt->CKTstate2[i] = ckt->CKTstate1[i];
-                ckt->CKTstate3[i] = ckt->CKTstate1[i];
-            }
+            memcpy(ckt->CKTstate2, ckt->CKTstate1,
+                   (size_t) ckt->CKTnumStates * sizeof(double));
+            memcpy(ckt->CKTstate3, ckt->CKTstate1,
+                   (size_t) ckt->CKTnumStates * sizeof(double));
         }
         /* txl, cpl addition */
         if (converged == 1111) {

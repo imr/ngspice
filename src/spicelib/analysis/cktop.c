@@ -184,9 +184,8 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                     i++;
                 }
 
-                for (i = 0; i < ckt->CKTnumStates; i++) {
-                    OldCKTstate0[i] = ckt->CKTstate0[i];
-                }
+                memcpy(OldCKTstate0, ckt->CKTstate0,
+                   (size_t) ckt->CKTnumStates * sizeof(double));
 
                 if (iters <= (ckt->CKTdcTrcvMaxIter / 4)) {
                     factor *= sqrt (factor);
@@ -223,9 +222,8 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                     i++;
                 }
 
-                for (i = 0; i < ckt->CKTnumStates; i++) {
-                    ckt->CKTstate0[i] = OldCKTstate0[i];
-                }
+                memcpy(ckt->CKTstate0, OldCKTstate0,
+                       (size_t) ckt->CKTnumStates * sizeof(double));
             }
         }
     }
@@ -449,9 +447,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
             i++;
         }
 
-        for (i = 0; i < ckt->CKTnumStates; i++)
-            OldCKTstate0[i] = ckt->CKTstate0[i];
-
+        memcpy(OldCKTstate0, ckt->CKTstate0,
+               (size_t) ckt->CKTnumStates * sizeof(double));
 
         SPfrontEnd->IFerrorf (ERR_INFO,
                              "One successful source step");
@@ -486,8 +483,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
                     i++;
                 }
 
-                for (i = 0; i < ckt->CKTnumStates; i++)
-                    OldCKTstate0[i] = ckt->CKTstate0[i];
+                memcpy(OldCKTstate0, ckt->CKTstate0,
+                       (size_t) ckt->CKTnumStates * sizeof(double));
 
                 SPfrontEnd->IFerrorf (ERR_INFO,
                                      "One successful source step");
@@ -522,8 +519,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
                     i++;
                 }
 
-                for (i = 0; i < ckt->CKTnumStates; i++)
-                    ckt->CKTstate0[i] = OldCKTstate0[i];
+                memcpy(ckt->CKTstate0, OldCKTstate0,
+                       (size_t) ckt->CKTnumStates * sizeof(double));
 
             }
 
