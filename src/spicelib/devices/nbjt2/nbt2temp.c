@@ -82,7 +82,7 @@ NBJT2temp(GENmodel *inModel, CKTcircuit *ckt)
 
 	/* Copy everything, then fix the incorrect pointer. */
 	pNextMaterial = pMaterial->next;
-	bcopy(pM, pMaterial, sizeof(TWOmaterial));
+	memcpy(pMaterial, pM, sizeof(TWOmaterial));
 	pMaterial->next = pNextMaterial;
 
 	/* Now do the temperature dependence. */

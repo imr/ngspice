@@ -178,7 +178,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
             field[k * omaxy + i] = LCHAR;
         line1[i + margin + 2 * shift] = '|';
         (void) sprintf(buf, "%.2e", j * pow(10.0, (double) mag));
-        bcopy(buf, &line2[i + margin - ((j < 0) ? 2 : 1) - shift],
+        memcpy(&line2[i + margin - ((j < 0) ? 2 : 1) - shift], buf,
               strlen(buf));
     }
     line1[i - spacing + margin + 1] = '\0';

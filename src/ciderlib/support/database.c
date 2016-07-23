@@ -38,7 +38,7 @@ DBgetData(struct plot *plot, char *name, int lengthWanted)
 
   data = TMALLOC(double, v->v_length);
   if (isreal(v)) {
-    bcopy(v->v_realdata, data, sizeof (double) * (size_t) v->v_length);
+    memcpy(data, v->v_realdata, sizeof (double) * (size_t) v->v_length);
   } else {
     for (i=0; i < v->v_length; i++) {
       data[i] = realpart(v->v_compdata[i]);

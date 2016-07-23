@@ -220,7 +220,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
                 v->va_next = ft_curckt->ci_vars;
                 ft_curckt->ci_vars = v;
             } else {
-                /* va: avoid memory leak within bcopy */
+                /* va: avoid memory leak within memcpy */
                 if (u->va_type == CP_STRING)
                     tfree(u->va_string);
                 else if (u->va_type == CP_LIST)
@@ -233,7 +233,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
                 tfree(v);
                 /* va: old version with memory leaks
                    w = u->va_next;
-                   bcopy(v, u, sizeof(*u));
+                   memcpy(u, v, sizeof(*u));
                    u->va_next = w;
                 */
             }

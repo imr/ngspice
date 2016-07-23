@@ -213,7 +213,7 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	    pMaterial = pMaterial->next;
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
-	  bcopy(pM, pMaterial, sizeof(TWOmaterial));
+	  memcpy(pMaterial, pM, sizeof(TWOmaterial));
 	  pMaterial->next = NULL;
 	}
 

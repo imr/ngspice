@@ -599,20 +599,6 @@ stripWhiteSpacesInsideParens(char *str)
 }
 
 
-#ifndef HAVE_BCOPY
-#ifndef bcopy
-void
-bcopy(const void *vfrom, void *vto, size_t num)
-{
-    register const char *from=vfrom;
-    register char *to=vto;
-    while (num-- > 0)
-        *to++ = *from++;
-    return;
-}
-#endif
-#endif
-
 #ifndef HAVE_BZERO
 #ifndef bzero
 void

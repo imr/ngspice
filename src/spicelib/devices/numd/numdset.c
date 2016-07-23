@@ -186,7 +186,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	    pMaterial = pMaterial->next;
 	  }
 	  /* Copy everything, then fix the incorrect pointer. */
-	  bcopy(pM, pMaterial, sizeof(ONEmaterial));
+	  memcpy(pMaterial, pM, sizeof(ONEmaterial));
 	  pMaterial->next = NULL;
 	}
 

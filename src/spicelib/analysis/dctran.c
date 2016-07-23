@@ -341,7 +341,7 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
         /* modeinittran set here */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
-        bcopy(ckt->CKTstate0, ckt->CKTstate1,
+        memcpy(ckt->CKTstate1, ckt->CKTstate0,
               (size_t) ckt->CKTnumStates * sizeof(double));
 
 #ifdef WANT_SENSE2

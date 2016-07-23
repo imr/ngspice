@@ -687,10 +687,10 @@ vec_copy(struct dvec *v)
                     v->v_length, NULL);
 
     if (isreal(v))
-        bcopy(v->v_realdata, nv->v_realdata,
+        memcpy(nv->v_realdata, v->v_realdata,
               sizeof(double) * (size_t) v->v_length);
     else
-        bcopy(v->v_compdata, nv->v_compdata,
+        memcpy(nv->v_compdata, v->v_compdata,
               sizeof(ngcomplex_t) * (size_t) v->v_length);
 
     nv->v_minsignal = v->v_minsignal;
@@ -1031,7 +1031,7 @@ vec_transpose(struct dvec *v)
      *   newa[j,i] is at data[j*dim1+i]
      *   where j is in [0, dim0-1]  and  i is in [0, dim1-1]
      * Since contiguous data in the old array is scattered in the new array
-     * we can't use bcopy :(.  There is probably a BLAS2 function for this
+     * we can't use memcpy :(.  There is probably a BLAS2 function for this
      * though.  The formulation below gathers scattered old data into
      * consecutive new data.
      */
@@ -1113,9 +1113,9 @@ vec_mkfamily(struct dvec *v)
         d->v_dims[0] = size;
 
         if (isreal(v)) {
-            bcopy(v->v_realdata + size*i, d->v_realdata, (size_t) size * sizeof(double));
+            memcpy(d->v_realdata, v->v_realdata + size*i, (size_t) size * sizeof(double));
         } else {
-            bcopy(v->v_compdata + size*i, d->v_compdata, (size_t) size * sizeof(ngcomplex_t));
+            memcpy(d->v_compdata, v->v_compdata + size*i, (size_t) size * sizeof(ngcomplex_t));
         }
         /* Add one to the counter. */
         (void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);

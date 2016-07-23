@@ -169,12 +169,12 @@ savetree(struct pnode *pn)
             /* this dvec isn't member of any plot */
 
             if (isreal(d)) {
-                bcopy(d->v_realdata,
-                      pn->pn_value->v_realdata,
+                memcpy(pn->pn_value->v_realdata,
+                      d->v_realdata,
                       sizeof(double) * (size_t) d->v_length);
             } else {
-                bcopy(d->v_compdata,
-                      pn->pn_value->v_compdata,
+                memcpy(pn->pn_value->v_compdata,
+                      d->v_compdata,
                       sizeof(ngcomplex_t) * (size_t) d->v_length);
             }
         }

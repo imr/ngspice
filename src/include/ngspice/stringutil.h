@@ -44,10 +44,6 @@ int cinprefix(register char *p, register char *s, register int n);
 int cimatch(register char *p, register char *s); 
 #endif
 
-#ifndef HAVE_BCOPY
-void bcopy(const void *from, void *to, size_t num);
-#endif
-
 #ifndef HAVE_BZERO
 void bzero(void *ptr, size_t num);
 #endif

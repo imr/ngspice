@@ -131,11 +131,11 @@ compress(struct dvec *d, double *xcomp, double *xind)
             newlen = ihi - ilo;
             if (isreal(d)) {
                 double *dd = TMALLOC(double, newlen);
-                bcopy(d->v_realdata + ilo, dd, (size_t) newlen * sizeof(double));
+                memcpy(dd, d->v_realdata + ilo, (size_t) newlen * sizeof(double));
                 dvec_realloc(d, newlen, dd);
             } else {
                 ngcomplex_t *cc = TMALLOC(ngcomplex_t, newlen);
-                bcopy(d->v_compdata + ilo, cc, (size_t) newlen * sizeof(ngcomplex_t));
+                memcpy(cc, d->v_compdata + ilo, (size_t) newlen * sizeof(ngcomplex_t));
                 dvec_realloc(d, newlen, cc);
             }
         }

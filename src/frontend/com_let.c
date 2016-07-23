@@ -218,10 +218,10 @@ com_let(wordlist *wl)
             n->v_flags &= ~VF_PERMANENT;
         goto quit;
     } else if (isreal(t)) {
-        bcopy(t->v_realdata, n->v_realdata + offset,
+        memcpy(n->v_realdata + offset, t->v_realdata,
               (size_t) length * sizeof(double));
     } else {
-        bcopy(t->v_compdata, n->v_compdata + offset,
+        memcpy(n->v_compdata + offset, t->v_compdata,
               (size_t) length * sizeof(ngcomplex_t));
     }
 

@@ -390,7 +390,7 @@ DCpss(CKTcircuit *ckt,
         ckt->CKTag[0]=ckt->CKTag[1]=0;
 
         /* State0 copied into State1 - DEPRECATED LEGACY function - to be replaced with memmove() */
-        bcopy(ckt->CKTstate0, ckt->CKTstate1,
+        memcpy(ckt->CKTstate1, ckt->CKTstate0,
               (size_t) ckt->CKTnumStates * sizeof(double));
 
         /* Statistics Initialization using a macro at the beginning of this code */

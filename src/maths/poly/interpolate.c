@@ -60,8 +60,8 @@ ft_interpolate(double *data, double *ndata, double *oscale, int olen,
     ydata = TMALLOC(double, degree + 1);
 
     /* Deal with the first degree pieces. */
-    bcopy(data, ydata, (size_t) (degree + 1) * sizeof (double));
-    bcopy(oscale, xdata, (size_t) (degree + 1) * sizeof (double));
+    memcpy(ydata, data, (size_t) (degree + 1) * sizeof (double));
+    memcpy(xdata, oscale, (size_t) (degree + 1) * sizeof (double));
 
     while (!ft_polyfit(xdata, ydata, result, degree, scratch)) {
         /* If it doesn't work this time, bump the interpolation

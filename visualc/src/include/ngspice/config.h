@@ -74,9 +74,6 @@
 /* Define to 1 if you have the `atanh' function. */
 /* #undef HAVE_ATANH */
 
-/* Define to 1 if you have the `bcopy' function. */
-/* #undef HAVE_BCOPY */
-
 /* Define to 1 if you have the <blt.h> header file. */
 /* #undef HAVE_BLT_H */
 

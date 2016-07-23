@@ -495,7 +495,7 @@ resume:
 
         if(firstTime) {
             firstTime=0;
-            bcopy(ckt->CKTstate0, ckt->CKTstate1,
+            memcpy(ckt->CKTstate1, ckt->CKTstate0,
                     (size_t) ckt->CKTnumStates * sizeof(double));
         }
 

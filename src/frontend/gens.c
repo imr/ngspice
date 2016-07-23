@@ -65,7 +65,7 @@ dgen_for_n(dgen *dg, int n, int (*fn) (dgen*, IFparm*, int), IFparm *data, int s
     int   dnum, i, j, k;
 
     dgxp = &dgx;
-    bcopy(dg, dgxp, sizeof(dgx)); /* va: compatible pointer types */
+    memcpy(dgxp, dg, sizeof(dgx)); /* va: compatible pointer types */
 
     dnum = dgxp->dev_type_no;
 
