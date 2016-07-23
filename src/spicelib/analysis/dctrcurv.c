@@ -286,8 +286,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             }
         }
 
-        while (i > 0) {
-            i--;
+        while (--i >= 0)
             if (job->TRCVvType[i] == vcode) { /* voltage source */
                 ((VSRCinstance *)(job->TRCVvElt[i]))->VSRCdcValue =
                     job->TRCVvStart[i];
@@ -307,8 +306,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     1 / (((RESinstance *)(job->TRCVvElt[i]))->RESresist);
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
             }
-        }
 
+        i = 0;
         /* Rotate state vectors. */
         temp = ckt->CKTstates[ckt->CKTmaxOrder + 1];
         for (j = ckt->CKTmaxOrder; j >= 0; j--)
