@@ -307,7 +307,6 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
             }
 
-        i = 0;
         /* Rotate state vectors. */
         temp = ckt->CKTstates[ckt->CKTmaxOrder + 1];
         for (j = ckt->CKTmaxOrder; j >= 0; j--)
@@ -338,13 +337,13 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             /* first get the current step in the analysis */
             if (job->TRCVvType[0] == vcode) {
                 g_mif_info.circuit.evt_step =
-                    ((VSRCinstance *)(job->TRCVvElt[i]))->VSRCdcValue;
+                    ((VSRCinstance *)(job->TRCVvElt[0]))->VSRCdcValue;
             } else if (job->TRCVvType[0] == icode) {
                 g_mif_info.circuit.evt_step =
-                    ((ISRCinstance *)(job->TRCVvElt[i]))->ISRCdcValue;
+                    ((ISRCinstance *)(job->TRCVvElt[0]))->ISRCdcValue;
             } else if (job->TRCVvType[0] == rcode) {
                 g_mif_info.circuit.evt_step =
-                    ((RESinstance*)(job->TRCVvElt[i]->GENmodPtr))->RESresist;
+                    ((RESinstance*)(job->TRCVvElt[0]->GENmodPtr))->RESresist;
             } else if (job->TRCVvType[0] == TEMP_CODE) {
                 g_mif_info.circuit.evt_step =
                     ckt->CKTtemp - CONSTCtoK;
@@ -386,11 +385,11 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCTRANCURVE | MODEINITPRED;
         if (job->TRCVvType[0] == vcode) {
-            ckt->CKTtime = ((VSRCinstance *)(job->TRCVvElt[i]))->VSRCdcValue;
+            ckt->CKTtime = ((VSRCinstance *)(job->TRCVvElt[0]))->VSRCdcValue;
         } else if (job->TRCVvType[0] == icode) {
-            ckt->CKTtime = ((ISRCinstance *)(job->TRCVvElt[i]))->ISRCdcValue;
+            ckt->CKTtime = ((ISRCinstance *)(job->TRCVvElt[0]))->ISRCdcValue;
         } else if (job->TRCVvType[0] == rcode) {
-            ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[i]))->RESresist;
+            ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[0]))->RESresist;
         }
         else
         {
@@ -420,19 +419,19 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             int senmode;
 
 #ifdef SENSDEBUG
-            if (job->TRCVvType[i] == vcode) { /* voltage source */
+            if (job->TRCVvType[0] == vcode) { /* voltage source */
                 printf("Voltage Source Value : %.5e V\n",
-                       ((VSRCinstance*) (job->TRCVvElt[i]))->VSRCdcValue);
+                       ((VSRCinstance*) (job->TRCVvElt[0]))->VSRCdcValue);
             }
-            if (job->TRCVvType[i] == icode) { /* current source */
+            if (job->TRCVvType[0] == icode) { /* current source */
                 printf("Current Source Value : %.5e A\n",
-                       ((ISRCinstance*)(job->TRCVvElt[i]))->ISRCdcValue);
+                       ((ISRCinstance*)(job->TRCVvElt[0]))->ISRCdcValue);
             }
-            if (job->TRCVvType[i] == rcode) { /* resistance */
+            if (job->TRCVvType[0] == rcode) { /* resistance */
                 printf("Current Resistance Value : %.5e Ohm\n",
-                       ((RESinstance*)(job->TRCVvElt[i]->GENmodPtr))->RESresist);
+                       ((RESinstance*)(job->TRCVvElt[0]->GENmodPtr))->RESresist);
             }
-            if (job->TRCVvType[i] == TEMP_CODE) { /* Temperature */
+            if (job->TRCVvType[0] == TEMP_CODE) { /* Temperature */
                 printf("Current Circuit Temperature : %.5e C\n",
                        ckt->CKTtemp - CONSTCtoK);
             }
@@ -474,6 +473,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             memcpy(ckt->CKTstate1, ckt->CKTstate0,
                    (size_t) ckt->CKTnumStates * sizeof(double));
         }
+
+        i = 0;
 
     nextstep:;
 
