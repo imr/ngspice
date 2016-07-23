@@ -16,11 +16,9 @@ Modified: 1999 Paolo Nenzi
 
 #ifdef XSPICE
 #include "ngspice/evt.h"
-/* gtri - add - wbk - 12/19/90 - Add headers */
 #include "ngspice/mif.h"
 #include "ngspice/evtproto.h"
 #include "ngspice/ipctiein.h"
-/* gtri - end - wbk */
 #endif
 
 #include "ngspice/devdefs.h"
@@ -34,7 +32,6 @@ extern void inp_evaluate_temper(void);
 
 int
 DCtrCurv(CKTcircuit *ckt, int restart)
-/* forced restart flag */
 {
     TRCV *job = (TRCV *) ckt->CKTcurJob;
 
@@ -59,7 +56,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         printf("\nDC Sensitivity Results\n\n");
         CKTsenPrint(ckt);
     }
-#endif /* SENSDEBUG */
+#endif
 #endif
 
     rcode = CKTtypelook("Resistor");
@@ -87,7 +84,6 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     for (j = 0; j < 7; j++)
         ckt->CKTdeltaOld[j] = ckt->CKTdelta;
 
-    /* i will be job->TRCVnestLevel + 1 when this loop is finished */
     for (i = 0; i <= job->TRCVnestLevel; i++) {
 
         if (rcode >= 0) {
@@ -288,10 +284,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 if (i > job->TRCVnestLevel) break;
                 goto nextstep;
             }
-        } /* else  not possible */
+        }
 
         while (i > 0) {
-            /* init(i); */
             i--;
             if (job->TRCVvType[i] == vcode) { /* voltage source */
                 ((VSRCinstance *)(job->TRCVvElt[i]))->VSRCdcValue =
@@ -307,15 +302,11 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             } else if (job->TRCVvType[i] == rcode) {
                 ((RESinstance *)(job->TRCVvElt[i]))->RESresist =
                     job->TRCVvStart[i];
+                /* RESload() needs conductance as well */
                 ((RESinstance *)(job->TRCVvElt[i]))->RESconduct =
                     1 / (((RESinstance *)(job->TRCVvElt[i]))->RESresist);
-                /* Note: changing the resistance does nothing */
-                /* changing the conductance 1/r instead */
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
-                /*
-                 * RESload(job->TRCVvElt[i]->GENmodPtr, ckt);
-                 */
-            } /* else not possible */
+            }
         }
 
         /* Rotate state vectors. */
@@ -402,7 +393,6 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         } else if (job->TRCVvType[0] == rcode) {
             ckt->CKTtime = ((RESinstance *)(job->TRCVvElt[i]))->RESresist;
         }
-        /* PN Temp sweep */
         else
         {
             ckt->CKTtime = ckt->CKTtemp - CONSTCtoK;
@@ -447,7 +437,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 printf("Current Circuit Temperature : %.5e C\n",
                        ckt->CKTtemp - CONSTCtoK);
             }
-#endif /* SENSDEBUG */
+#endif
 
             senmode = ckt->CKTsenInfo->SENmode;
             save = ckt->CKTmode;
@@ -497,22 +487,18 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         } else if (job->TRCVvType[i] == rcode) { /* resistance */
             ((RESinstance*)(job->TRCVvElt[i]))->RESresist +=
                 job->TRCVvStep[i];
-            /* This code should update resistance and conductance */
+            /* RESload() needs conductance as well */
             ((RESinstance*)(job->TRCVvElt[i]))->RESconduct =
                 1 / (((RESinstance*)(job->TRCVvElt[i]))->RESresist);
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
-            /*
-             * RESload(job->TRCVvElt[i]->GENmodPtr, ckt);
-             */
         }
-        /* PN Temp Sweep - serban */
         else if (job->TRCVvType[i] == TEMP_CODE)
         {
             ckt->CKTtemp += job->TRCVvStep[i];
             if (expr_w_temper)
                 inp_evaluate_temper();
             CKTtemp(ckt);
-        } /* else not possible */
+        }
 
         if (SPfrontEnd->IFpauseTest()) {
             /* user asked us to pause, so save state */
@@ -543,21 +529,18 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         } else  if (job->TRCVvType[i] == rcode) /* Resistance */ {
             ((RESinstance*)(job->TRCVvElt[i]))->RESresist =
                     job->TRCVvSave[i];
-            /* We restore both resistance and conductance */
+            /* RESload() needs conductance as well */
             ((RESinstance*)(job->TRCVvElt[i]))->RESconduct =
                 1 / (((RESinstance*)(job->TRCVvElt[i]))->RESresist);
             ((RESinstance*)(job->TRCVvElt[i]))->RESresGiven = (job->TRCVgSave[i] != 0);
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
-            /*
-             * RESload(job->TRCVvElt[i]->GENmodPtr, ckt);
-             */
         }
         else if (job->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = job->TRCVvSave[i];
             if (expr_w_temper)
                 inp_evaluate_temper();
             CKTtemp(ckt);
-        } /* else not possible */
+        }
     }
 
     SPfrontEnd->OUTendPlot (plot);
