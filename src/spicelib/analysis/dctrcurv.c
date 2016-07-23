@@ -87,6 +87,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     for (j = 0; j < 7; j++)
         ckt->CKTdeltaOld[j] = ckt->CKTdelta;
 
+    /* i will be job->TRCVnestLevel + 1 when this loop is finished */
     for (i = 0; i <= job->TRCVnestLevel; i++) {
 
         if (rcode >= 0) {
@@ -193,10 +194,10 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 /* gtri - end - wbk */
 #endif
 
-    i--; /* PN: This seems to do nothing ??? */
-
     error = CKTnames(ckt, &numNames, &nameList);
     if (error) return(error);
+
+    i = job->TRCVnestLevel;
 
     if (job->TRCVvType[i] == vcode)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "v-sweep", UID_OTHER, NULL);
