@@ -84,9 +84,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     ckt->CKTorder = 1;
 
     /* Save the state of the circuit */
-    for (i = 0; i < 7; i++) {
-        ckt->CKTdeltaOld[i] = ckt->CKTdelta;
-    }
+    for (j = 0; j < 7; j++)
+        ckt->CKTdeltaOld[j] = ckt->CKTdelta;
 
     for (i = 0; i <= job->TRCVnestLevel; i++) {
 
@@ -320,9 +319,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
         /* Rotate state vectors. */
         temp = ckt->CKTstates[ckt->CKTmaxOrder + 1];
-        for (j = ckt->CKTmaxOrder; j >= 0; j--) {
+        for (j = ckt->CKTmaxOrder; j >= 0; j--)
             ckt->CKTstates[j + 1] = ckt->CKTstates[j];
-        }
         ckt->CKTstate0 = temp;
 
         /* do operation */
