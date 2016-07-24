@@ -30,7 +30,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
     int error;
     int i,j; /* temporaries for finding error location */
     double startTime;
-    static char *msg = "Too many iterations without convergence";
 
     double *OldCKTstate0 = NULL;
 
@@ -180,8 +179,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 iterno,maxIter);*/
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(errMsg);
-                errMsg = TMALLOC(char, strlen(msg) + 1);
-                strcpy(errMsg,msg);
+                errMsg = copy("Too many iterations without convergence");
 #ifdef STEPDEBUG
                 printf("iterlim exceeded \n");
 #endif
