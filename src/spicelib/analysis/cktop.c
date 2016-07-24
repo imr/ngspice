@@ -173,7 +173,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
 
             if (ckt->CKTdiagGmin <= gtarget) {
                 break;          /* successfull */
-            } else {
+            }
                 for (i = 0, n = ckt->CKTnodes; n; n = n->next)
                     OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
 
@@ -197,13 +197,12 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                 } else {
                     ckt->CKTdiagGmin /= factor;
                 }
-            }
         } else {
             if (factor < 1.00005) {
                 SPfrontEnd->IFerrorf (ERR_WARNING,
                                      "Last gmin step failed");
                 break;          /* failed */
-            } else {
+            }
                 SPfrontEnd->IFerrorf (ERR_WARNING,
                                      "Further gmin increment");
                 factor = sqrt (sqrt (factor));
@@ -214,7 +213,6 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
 
                 memcpy(ckt->CKTstate0, OldCKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
-            }
         }
     }
 
