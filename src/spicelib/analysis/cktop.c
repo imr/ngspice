@@ -430,6 +430,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
     /*  If we've got convergence, then try stepping up the sources  */
 
     if (converged == 0) {
+
         for (i = 0, n = ckt->CKTnodes; n; n = n->next)
             OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
 
@@ -439,10 +440,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
         SPfrontEnd->IFerrorf (ERR_INFO,
                              "One successful source step");
         ckt->CKTsrcFact = ConvFact + raise;
-    }
 
 
-    if (converged == 0)
         do {
             fprintf (stderr,
                      "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
@@ -504,6 +503,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
                 ckt->CKTsrcFact = 1;
 
         } while ((raise >= 1e-7) && (ConvFact < 1));
+    }
 
     FREE (OldRhsOld);
     FREE (OldCKTstate0);
