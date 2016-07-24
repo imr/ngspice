@@ -57,9 +57,9 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
                 converged = dynamic_gmin(ckt, firstmode, continuemode, iterlim);
             else
                 converged = spice3_gmin(ckt, firstmode, continuemode, iterlim);
+            if (converged == 0) /* If gmin-stepping worked... move out */
+                return (0);
         }
-        if (converged == 0)     /* If gmin-stepping worked... move out */
-            return (0);
 
         /* ... otherwise try stepping sources ...
          * now, we'll try source stepping - we scale the sources
