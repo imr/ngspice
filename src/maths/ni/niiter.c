@@ -27,6 +27,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 {
     double startTime, *OldCKTstate0 = NULL;
     int error, i, j;
+
     int iterno = 0;
     int ipass = 0;
 
@@ -34,25 +35,25 @@ NIiter(CKTcircuit *ckt, int maxIter)
     if (maxIter < 100)
         maxIter = 100;
 
-
-
-    if( (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
+    if ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         error = CKTload(ckt);
-        if(error)
+        if (error)
             return(error);
         return(OK);
     }
+
 #ifdef WANT_SENSE2
-    if(ckt->CKTsenInfo) {
+    if (ckt->CKTsenInfo) {
         error = NIsenReinit(ckt);
-        if(error)
+        if (error)
             return(error);
     }
 #endif
-    if(ckt->CKTniState & NIUNINITIALIZED) {
+
+    if (ckt->CKTniState & NIUNINITIALIZED) {
         error = NIreinit(ckt);
-        if(error) {
+        if (error) {
 #ifdef STEPDEBUG
             printf("re-init returned error \n");
 #endif
@@ -60,32 +61,36 @@ NIiter(CKTcircuit *ckt, int maxIter)
         }
     }
 
-    /*    OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1); */
+    /* OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1); */
 
-    for(;;) {
-        ckt->CKTnoncon=0;
+    for (;;) {
+
+        ckt->CKTnoncon = 0;
+
 #ifdef NEWPRED
-        if(!(ckt->CKTmode & MODEINITPRED))
+        if (!(ckt->CKTmode & MODEINITPRED))
 #endif
         {
+
             error = CKTload(ckt);
-            /*printf("loaded, noncon is %d\n",ckt->CKTnoncon);*/
-            /*fflush(stdout);*/
+            /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
+            /* fflush(stdout); */
             iterno++;
-            if(error) {
+            if (error) {
                 ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
                 printf("load returned error \n");
 #endif
                 FREE(OldCKTstate0);
-                return(error);
+                return (error);
             }
-            /*printf("after loading, before solving\n");*/
-            /*CKTdump(ckt);*/
 
-            if(!(ckt->CKTniState & NIDIDPREORDER)) {
+            /* printf("after loading, before solving\n"); */
+            /* CKTdump(ckt); */
+
+            if (!(ckt->CKTniState & NIDIDPREORDER)) {
                 error = SMPpreOrder(ckt->CKTmatrix);
-                if(error) {
+                if (error) {
                     ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
                     printf("pre-order returned error \n");
@@ -95,24 +100,25 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 }
                 ckt->CKTniState |= NIDIDPREORDER;
             }
-            if( (ckt->CKTmode & MODEINITJCT) ||
-                    ( (ckt->CKTmode & MODEINITTRAN) && (iterno==1)))
+
+            if ((ckt->CKTmode & MODEINITJCT) ||
+                ((ckt->CKTmode & MODEINITTRAN) && (iterno == 1)))
             {
                 ckt->CKTniState |= NISHOULDREORDER;
             }
 
-            if(ckt->CKTniState & NISHOULDREORDER) {
+            if (ckt->CKTniState & NISHOULDREORDER) {
                 startTime = SPfrontEnd->IFseconds();
-                error = SMPreorder(ckt->CKTmatrix,ckt->CKTpivotAbsTol,
-                                   ckt->CKTpivotRelTol,ckt->CKTdiagGmin);
+                error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
+                                   ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
                 ckt->CKTstat->STATreorderTime +=
                     SPfrontEnd->IFseconds() - startTime;
-                if(error) {
+                if (error) {
                     /* new feature - we can now find out something about what is
                      * wrong - so we ask for the troublesome entry
                      */
-                    SMPgetError(ckt->CKTmatrix,&i,&j);
-                    SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt,i), NODENAME(ckt,j));
+                    SMPgetError(ckt->CKTmatrix, &i, &j);
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
                     ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
                     printf("reorder returned error \n");
@@ -123,18 +129,18 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 ckt->CKTniState &= ~NISHOULDREORDER;
             } else {
                 startTime = SPfrontEnd->IFseconds();
-                error=SMPluFac(ckt->CKTmatrix,ckt->CKTpivotAbsTol,
-                               ckt->CKTdiagGmin);
+                error = SMPluFac(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
+                                 ckt->CKTdiagGmin);
                 ckt->CKTstat->STATdecompTime +=
                     SPfrontEnd->IFseconds() - startTime;
-                if(error) {
-                    if( error == E_SINGULAR ) {
+                if (error) {
+                    if (error == E_SINGULAR) {
                         ckt->CKTniState |= NISHOULDREORDER;
                         DEBUGMSG(" forced reordering....\n");
                         continue;
                     }
-                    /*CKTload(ckt);*/
-                    /*SMPprint(ckt->CKTmatrix,stdout);*/
+                    /* CKTload(ckt); */
+                    /* SMPprint(ckt->CKTmatrix, stdout); */
                     /* seems to be singular - pass the bad news up */
                     ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
@@ -144,15 +150,16 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     return(error);
                 }
             }
-            /*moved it to here as if xspice is included then CKTload changes
-              CKTnumStates the first time it is run */
-            if(!OldCKTstate0)
-                OldCKTstate0=TMALLOC(double, ckt->CKTnumStates + 1);
+
+            /* moved it to here as if xspice is included then CKTload changes
+               CKTnumStates the first time it is run */
+            if (!OldCKTstate0)
+                OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
             memcpy(OldCKTstate0, ckt->CKTstate0,
                    (size_t) ckt->CKTnumStates * sizeof(double));
 
             startTime = SPfrontEnd->IFseconds();
-            SMPsolve(ckt->CKTmatrix,ckt->CKTrhs,ckt->CKTrhsSpare);
+            SMPsolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
             ckt->CKTstat->STATsolveTime +=
                 SPfrontEnd->IFseconds() - startTime;
 #ifdef STEPDEBUG
@@ -169,9 +176,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
             *ckt->CKTrhsSpare = 0;
             *ckt->CKTrhsOld = 0;
 
-            if(iterno > maxIter) {
-                /*fprintf(stderr,"too many iterations without convergence: %d iter's (max iter == %d)\n",
-                iterno,maxIter);*/
+            if (iterno > maxIter) {
+                /* fprintf(stderr, "too many iterations without convergence: %d iter's (max iter == %d)\n",
+                   iterno, maxIter); */
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(errMsg);
                 errMsg = copy("Too many iterations without convergence");
@@ -181,71 +188,72 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 FREE(OldCKTstate0);
                 return(E_ITERLIM);
             }
-            if((ckt->CKTnoncon==0) && (iterno!=1))
+
+            if ((ckt->CKTnoncon == 0) && (iterno != 1))
                 ckt->CKTnoncon = NIconvTest(ckt);
             else
                 ckt->CKTnoncon = 1;
+
 #ifdef STEPDEBUG
-            printf("noncon is %d\n",ckt->CKTnoncon);
+            printf("noncon is %d\n", ckt->CKTnoncon);
 #endif
         }
 
-        if( (ckt->CKTnodeDamping!=0) && (ckt->CKTnoncon!=0) &&
-                ((ckt->CKTmode & MODETRANOP) || (ckt->CKTmode & MODEDCOP)) &&
-                (iterno>1) )
+        if ((ckt->CKTnodeDamping != 0) && (ckt->CKTnoncon != 0) &&
+            ((ckt->CKTmode & MODETRANOP) || (ckt->CKTmode & MODEDCOP)) &&
+            (iterno > 1))
         {
             CKTnode *node;
             double diff, maxdiff = 0;
             for (node = ckt->CKTnodes->next; node; node = node->next)
-                if(node->type == SP_VOLTAGE) {
+                if (node->type == SP_VOLTAGE) {
                     diff = ckt->CKTrhs[node->number] - ckt->CKTrhsOld[node->number];
                     if (maxdiff < diff)
                         maxdiff = diff;
                 }
-            if (maxdiff>10) {
+
+            if (maxdiff > 10) {
                 double damp_factor = 10 / maxdiff;
-                if (damp_factor<0.1)
-                    damp_factor=0.1;
+                if (damp_factor < 0.1)
+                    damp_factor = 0.1;
                 for (node = ckt->CKTnodes->next; node; node = node->next) {
                     diff = ckt->CKTrhs[node->number] - ckt->CKTrhsOld[node->number];
                     ckt->CKTrhs[node->number] =
                         ckt->CKTrhsOld[node->number] + (damp_factor * diff);
                 }
-                for(i=0; i<ckt->CKTnumStates; i++) {
+                for (i = 0; i < ckt->CKTnumStates; i++) {
                     diff = ckt->CKTstate0[i] - OldCKTstate0[i];
                     ckt->CKTstate0[i] = OldCKTstate0[i] + (damp_factor * diff);
                 }
             }
         }
 
-
-
-        if(ckt->CKTmode & MODEINITFLOAT) {
+        if (ckt->CKTmode & MODEINITFLOAT) {
             if ((ckt->CKTmode & MODEDC) && ckt->CKThadNodeset) {
-                if(ipass)
-                    ckt->CKTnoncon=ipass;
-                ipass=0;
+                if (ipass)
+                    ckt->CKTnoncon = ipass;
+                ipass = 0;
             }
-            if(ckt->CKTnoncon == 0) {
+            if (ckt->CKTnoncon == 0) {
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(OldCKTstate0);
                 return(OK);
             }
-        } else if(ckt->CKTmode & MODEINITJCT) {
-            ckt->CKTmode = (ckt->CKTmode& ~INITF )|MODEINITFIX;
+        } else if (ckt->CKTmode & MODEINITJCT) {
+            ckt->CKTmode = (ckt->CKTmode & ~INITF) | MODEINITFIX;
             ckt->CKTniState |= NISHOULDREORDER;
         } else if (ckt->CKTmode & MODEINITFIX) {
-            if(ckt->CKTnoncon==0)
-                ckt->CKTmode = (ckt->CKTmode& ~INITF )|MODEINITFLOAT;
-            ipass=1;
+            if (ckt->CKTnoncon == 0)
+                ckt->CKTmode = (ckt->CKTmode & ~INITF) | MODEINITFLOAT;
+            ipass = 1;
         } else if (ckt->CKTmode & MODEINITSMSIG) {
-            ckt->CKTmode = (ckt->CKTmode& ~INITF )|MODEINITFLOAT;
+            ckt->CKTmode = (ckt->CKTmode & ~INITF) | MODEINITFLOAT;
         } else if (ckt->CKTmode & MODEINITTRAN) {
-            if(iterno<=1)
+            if (iterno <= 1)
                 ckt->CKTniState |= NISHOULDREORDER;
-            ckt->CKTmode = (ckt->CKTmode& ~INITF )|MODEINITFLOAT;
+            ckt->CKTmode = (ckt->CKTmode & ~INITF) | MODEINITFLOAT;
         } else if (ckt->CKTmode & MODEINITPRED) {
-            ckt->CKTmode = (ckt->CKTmode& ~INITF )|MODEINITFLOAT;
+            ckt->CKTmode = (ckt->CKTmode & ~INITF) | MODEINITFLOAT;
         } else {
             ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
@@ -258,8 +266,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
         /* build up the lvnim1 array from the lvn array */
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
-        /*printf("after loading, after solving\n");*/
-        /*CKTdump(ckt);*/
+        /* printf("after loading, after solving\n"); */
+        /* CKTdump(ckt); */
     }
     /*NOTREACHED*/
 }
