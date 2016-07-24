@@ -25,20 +25,15 @@ Modified: 2001 AlansFixes
 int
 NIiter(CKTcircuit *ckt, int maxIter)
 {
-    int iterno;
-    int ipass;
-    int error;
-    int i,j; /* temporaries for finding error location */
-    double startTime;
-
-    double *OldCKTstate0 = NULL;
+    double startTime, *OldCKTstate0 = NULL;
+    int error, i, j;
+    int iterno = 0;
+    int ipass = 0;
 
     /* some convergence issues that get resolved by increasing max iter */
     if (maxIter < 100)
         maxIter = 100;
 
-    iterno=0;
-    ipass=0;
 
 
     if( (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
