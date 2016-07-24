@@ -56,7 +56,7 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
             else
                 converged = spice3_gmin(ckt, firstmode, continuemode, iterlim);
         }
-        if (!converged)         /* If gmin-stepping worked... move out */
+        if (converged == 0)     /* If gmin-stepping worked... move out */
             return (0);
 
         /* ... otherwise try stepping sources ...
@@ -94,15 +94,13 @@ int
 CKTconvTest (CKTcircuit * ckt)
 {
     int i;
-    int error = OK;
 
     for (i = 0; i < DEVmaxnum; i++) {
         if (DEVices[i] && DEVices[i]->DEVconvTest && ckt->CKThead[i]) {
-            error = DEVices[i]->DEVconvTest (ckt->CKThead[i], ckt);
+            int error = DEVices[i]->DEVconvTest (ckt->CKThead[i], ckt);
+            if (error)
+                return (error);
         }
-
-        if (error)
-            return (error);
 
         if (ckt->CKTnoncon) {
             /* printf("convTest: device %s failed\n",
@@ -147,8 +145,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
         NumNodes++;
 
     OldRhsOld = TMALLOC(double, NumNodes + 1);
-    OldCKTstate0 =
-        TMALLOC(double, ckt->CKTnumStates + 1);
+    OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
 
     for (n = ckt->CKTnodes; n; n = n->next)
         ckt->CKTrhsOld [n->number] = 0;
@@ -168,7 +165,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
         iters = ckt->CKTstat->STATnumIter;
 
         converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
-        iters = (ckt->CKTstat->STATnumIter) - iters;
+        iters = ckt->CKTstat->STATnumIter - iters;
 
         if (converged == 0) {
             ckt->CKTmode = continuemode;
@@ -178,11 +175,8 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
             if (ckt->CKTdiagGmin <= gtarget) {
                 success = 1;
             } else {
-                i = 0;
-                for (n = ckt->CKTnodes; n; n = n->next) {
-                    OldRhsOld[i] = ckt->CKTrhsOld[n->number];
-                    i++;
-                }
+                for (i = 0, n = ckt->CKTnodes; n; n = n->next)
+                    OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
 
                 memcpy(OldCKTstate0, ckt->CKTstate0,
                    (size_t) ckt->CKTnumStates * sizeof(double));
@@ -198,7 +192,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
 
                 OldGmin = ckt->CKTdiagGmin;
 
-                if ((ckt->CKTdiagGmin) < (factor * gtarget)) {
+                if (ckt->CKTdiagGmin < factor * gtarget) {
                     factor = ckt->CKTdiagGmin / gtarget;
                     ckt->CKTdiagGmin = gtarget;
                 } else {
@@ -216,11 +210,8 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                 factor = sqrt (sqrt (factor));
                 ckt->CKTdiagGmin = OldGmin / factor;
 
-                i = 0;
-                for (n = ckt->CKTnodes; n; n = n->next) {
-                    ckt->CKTrhsOld[n->number] = OldRhsOld[i];
-                    i++;
-                }
+                for (i = 0, n = ckt->CKTnodes; n; n = n->next)
+                    ckt->CKTrhsOld[n->number] = OldRhsOld[i++];
 
                 memcpy(ckt->CKTstate0, OldCKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
@@ -374,13 +365,11 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
     ConvFact = 0;
 
     NumNodes = 0;
-    for (n = ckt->CKTnodes; n; n = n->next) {
+    for (n = ckt->CKTnodes; n; n = n->next)
         NumNodes++;
-    }
 
     OldRhsOld = TMALLOC(double, NumNodes + 1);
-    OldCKTstate0 =
-        TMALLOC(double, ckt->CKTnumStates + 1);
+    OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
 
     for (n = ckt->CKTnodes; n; n = n->next)
         ckt->CKTrhsOld[n->number] = 0;
@@ -408,7 +397,6 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
 
         for (i = 0; i <= 10; i++) {
             fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
-            ckt->CKTnoncon = 1;
 
 #ifdef XSPICE
             /* gtri - begin - wbk - add convergence problem reporting flags */
@@ -416,6 +404,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
             /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
+            ckt->CKTnoncon = 1;
             converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
 
             if (converged != 0) {
@@ -441,11 +430,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
     /*  If we've got convergence, then try stepping up the sources  */
 
     if (converged == 0) {
-        i = 0;
-        for (n = ckt->CKTnodes; n; n = n->next) {
-            OldRhsOld[i] = ckt->CKTrhsOld[n->number];
-            i++;
-        }
+        for (i = 0, n = ckt->CKTnodes; n; n = n->next)
+            OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
 
         memcpy(OldCKTstate0, ckt->CKTstate0,
                (size_t) ckt->CKTnumStates * sizeof(double));
@@ -461,27 +447,23 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
             fprintf (stderr,
                      "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
 
-            iters = ckt->CKTstat->STATnumIter;
 
 #ifdef XSPICE
             /* gtri - begin - wbk - add convergence problem reporting flags */
             ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
             /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
+            iters = ckt->CKTstat->STATnumIter;
             converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
 
-            iters = (ckt->CKTstat->STATnumIter) - iters;
+            iters = ckt->CKTstat->STATnumIter - iters;
 
             ckt->CKTmode = continuemode;
 
             if (converged == 0) {
                 ConvFact = ckt->CKTsrcFact;
-                i = 0;
-
-                for (n = ckt->CKTnodes; n; n = n->next) {
-                    OldRhsOld[i] = ckt->CKTrhsOld[n->number];
-                    i++;
-                }
+                for (i = 0, n = ckt->CKTnodes; n; n = n->next)
+                    OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
 
                 memcpy(OldCKTstate0, ckt->CKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
@@ -491,40 +473,34 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
 
                 ckt->CKTsrcFact = ConvFact + raise;
 
-                if (iters <= (ckt->CKTdcTrcvMaxIter / 4)) {
-                    raise = raise * 1.5;
-                }
+                if (iters <= (ckt->CKTdcTrcvMaxIter / 4))
+                    raise *= 1.5;
 
-                if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4)) {
-                    raise = raise * 0.5;
-                }
+                if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
+                    raise *= 0.5;
 
                 /*                    if (raise>0.01) raise=0.01; */
 
             } else {
 
-                if ((ckt->CKTsrcFact - ConvFact) < 1e-8)
+                if (ckt->CKTsrcFact - ConvFact < 1e-8)
                     break;
 
-                raise = raise / 10;
+                raise /= 10;
 
                 if (raise > 0.01)
                     raise = 0.01;
 
                 ckt->CKTsrcFact = ConvFact;
-                i = 0;
-
-                for (n = ckt->CKTnodes; n; n = n->next) {
-                    ckt->CKTrhsOld[n->number] = OldRhsOld[i];
-                    i++;
-                }
+                for (i = 0, n = ckt->CKTnodes; n; n = n->next)
+                    ckt->CKTrhsOld[n->number] = OldRhsOld[i++];
 
                 memcpy(ckt->CKTstate0, OldCKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
 
             }
 
-            if ((ckt->CKTsrcFact) > 1)
+            if (ckt->CKTsrcFact > 1)
                 ckt->CKTsrcFact = 1;
 
         } while ((raise >= 1e-7) && (ConvFact < 1));
