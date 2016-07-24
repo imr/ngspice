@@ -510,7 +510,6 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
     ckt->CKTsrcFact = 1;
 
     if (ConvFact != 1) {
-        ckt->CKTsrcFact = 1;
         ckt->CKTcurrentAnalysis = DOING_TRAN;
         SPfrontEnd->IFerrorf (ERR_WARNING,
                              "source stepping failed");
