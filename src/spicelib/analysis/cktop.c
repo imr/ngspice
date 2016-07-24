@@ -46,7 +46,9 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
     }
 
 
-    if (converged != 0) {
+    if (converged == 0)
+        return converged;
+
         /* no convergence on the first try, so we do something else */
         /* first, check if we should try gmin stepping */
 
@@ -77,7 +79,6 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
         /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
-    }
 
     return (converged);
 }
