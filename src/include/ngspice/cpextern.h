@@ -167,6 +167,7 @@ extern void cp_vset(char *varname, enum cp_types type, void *value);
 extern struct variable *cp_setparse(wordlist *wl);
 extern wordlist *vareval(char *string);
 extern char *span_var_expr(char *t);
+extern void cp_remvar_all(void);
 
 /* var2.c */
 extern void cp_vprint(void);

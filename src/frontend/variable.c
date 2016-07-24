@@ -183,6 +183,8 @@ cp_vset(char *varname, enum cp_types type, void *value)
             v->va_next = variables;
             variables = v;
         }
+        else if (v_free)
+            free_struct_variable(v);
         break;
 
     case US_DONTRECORD:
@@ -191,6 +193,8 @@ cp_vset(char *varname, enum cp_types type, void *value)
             fprintf(cp_err, "cp_vset: Internal Error: "
                     "%s already there, but 'dont record'\n", v->va_name);
         }
+        if (v_free)
+            free_struct_variable(v);
         break;
 
     case US_READONLY:
@@ -220,30 +224,24 @@ cp_vset(char *varname, enum cp_types type, void *value)
                 v->va_next = ft_curckt->ci_vars;
                 ft_curckt->ci_vars = v;
             } else {
-                /* va: avoid memory leak within memcpy */
                 if (u->va_type == CP_STRING)
                     tfree(u->va_string);
                 else if (u->va_type == CP_LIST)
                     tfree(u->va_vlist);
                 u->va_V = v->va_V;
-                /* va_name is the same string */
                 u->va_type = v->va_type;
+                /* va_name is the same string */
+                tfree(u->va_name);
+                u->va_name = v->va_name;
                 /* va_next left unchanged */
-                // tfree(v->va_name);
                 tfree(v);
-                /* va: old version with memory leaks
-                   w = u->va_next;
-                   memcpy(u, v, sizeof(*u));
-                   u->va_next = w;
-                */
             }
         }
         break;
 
     case US_NOSIMVAR:
         /* What do you do? */
-        tfree(v->va_name);
-        tfree(v);
+        free_struct_variable(v);
         break;
 
     default:
@@ -251,10 +249,6 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
     }
 
-    /* if (v_free) {
-         tfree(v->va_name);
-         tfree(v);
-      } */
     tfree(copyvarname);
 }
 
@@ -1040,4 +1034,17 @@ var_set_vlist(struct variable *v, struct variable *value)
 {
   v->va_type = CP_LIST;
   v->va_vlist = value;
+}
+
+void
+cp_remvar_all(void)
+{
+    struct variable *uv1, *uv2;
+
+    cp_usrvars(&uv1, &uv2);
+
+    free_struct_variable(variables);
+    variables = NULL;
+    free_struct_variable(uv1);
+    free_struct_variable(uv2);
 }
