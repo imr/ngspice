@@ -32,8 +32,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
     double startTime;
     static char *msg = "Too many iterations without convergence";
 
-    CKTnode *node; /* current matrix entry */
-    double diff, maxdiff, damp_factor, *OldCKTstate0=NULL;
+    double *OldCKTstate0 = NULL;
 
     /* some convergence issues that get resolved by increasing max iter */
     if (maxIter < 100)
@@ -202,7 +201,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 ((ckt->CKTmode & MODETRANOP) || (ckt->CKTmode & MODEDCOP)) &&
                 (iterno>1) )
         {
-            maxdiff=0;
+            CKTnode *node;
+            double diff, maxdiff = 0;
             for (node = ckt->CKTnodes->next; node; node = node->next)
                 if(node->type == SP_VOLTAGE) {
                     diff = ckt->CKTrhs[node->number] - ckt->CKTrhsOld[node->number];
@@ -210,7 +210,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                         maxdiff = diff;
                 }
             if (maxdiff>10) {
-                damp_factor=10/maxdiff;
+                double damp_factor = 10 / maxdiff;
                 if (damp_factor<0.1)
                     damp_factor=0.1;
                 for (node = ckt->CKTnodes->next; node; node = node->next) {
