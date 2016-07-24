@@ -25,7 +25,7 @@ testdir=`dirname $TEST`
 HOST_TYPE=`uname -srvm`
 
 case $HOST_TYPE in
-    MINGW32*)
+    MINGW*|MSYS*)
       $SPICE --batch $testdir/$testname.cir -o $testname.test &&\
       sed -e 's/e-000/e+000/g' $testname.test | sed 's/e-0/e-/g' | sed 's/e+0/e+/g' | egrep -v "$FILTER" > $testname.test_tmp &&\
       sed -e 's/-0$/ 0/g' $testdir/$testname.out | egrep -v "$FILTER" > $testname.out_tmp
