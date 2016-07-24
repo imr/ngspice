@@ -183,6 +183,8 @@ cp_vset(char *varname, enum cp_types type, void *value)
             v->va_next = variables;
             variables = v;
         }
+        else if (v_free)
+            free_struct_variable(v);
         break;
 
     case US_DONTRECORD:
@@ -191,6 +193,8 @@ cp_vset(char *varname, enum cp_types type, void *value)
             fprintf(cp_err, "cp_vset: Internal Error: "
                     "%s already there, but 'dont record'\n", v->va_name);
         }
+        if (v_free)
+            free_struct_variable(v);
         break;
 
     case US_READONLY:
@@ -220,30 +224,24 @@ cp_vset(char *varname, enum cp_types type, void *value)
                 v->va_next = ft_curckt->ci_vars;
                 ft_curckt->ci_vars = v;
             } else {
-                /* va: avoid memory leak within memcpy */
                 if (u->va_type == CP_STRING)
                     tfree(u->va_string);
                 else if (u->va_type == CP_LIST)
                     tfree(u->va_vlist);
                 u->va_V = v->va_V;
-                /* va_name is the same string */
                 u->va_type = v->va_type;
+                /* va_name is the same string */
+                tfree(u->va_name);
+                u->va_name = v->va_name;
                 /* va_next left unchanged */
-                // tfree(v->va_name);
                 tfree(v);
-                /* va: old version with memory leaks
-                   w = u->va_next;
-                   memcpy(u, v, sizeof(*u));
-                   u->va_next = w;
-                */
             }
         }
         break;
 
     case US_NOSIMVAR:
         /* What do you do? */
-        tfree(v->va_name);
-        tfree(v);
+        free_struct_variable(v);
         break;
 
     default:
@@ -251,10 +249,6 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
     }
 
-    /* if (v_free) {
-         tfree(v->va_name);
-         tfree(v);
-      } */
     tfree(copyvarname);
 }
 
