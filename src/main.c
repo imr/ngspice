@@ -1382,6 +1382,14 @@ main(int argc, char **argv)
         if (!SETJMP(jbuf, 1)) {
             /*  enter the command processing loop  */
             cp_interactive = TRUE;
+#ifdef HAS_WINGUI
+            int i;
+            if (argv) {
+                for (i = 0; i < argc; i++)
+                    tfree(argv[i]);
+                tfree(argv);
+            }
+#endif
             app_rl_readlines();
         } else {
             ft_sigintr_cleanup();
