@@ -349,9 +349,8 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
                long int continuemode, int iterlim)
 {
 
-    int converged, NumNodes, i, iters;
-    double raise, ConvFact;
-    double *OldRhsOld, *OldCKTstate0;
+    int converged, i, iters;
+    double ConvFact;
     CKTnode *n;
 
     NG_IGNORE(iterlim);
@@ -361,15 +360,7 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
                          "Starting source stepping");
 
     ckt->CKTsrcFact = 0;
-    raise = 0.001;
     ConvFact = 0;
-
-    NumNodes = 0;
-    for (n = ckt->CKTnodes; n; n = n->next)
-        NumNodes++;
-
-    OldRhsOld = TMALLOC(double, NumNodes + 1);
-    OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
 
     for (n = ckt->CKTnodes; n; n = n->next)
         ckt->CKTrhsOld[n->number] = 0;
@@ -430,6 +421,15 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
     /*  If we've got convergence, then try stepping up the sources  */
 
     if (converged == 0) {
+
+        double *OldRhsOld, *OldCKTstate0, raise = 0.001;
+
+        int NumNodes = 0;
+        for (n = ckt->CKTnodes; n; n = n->next)
+            NumNodes++;
+
+        OldRhsOld = TMALLOC(double, NumNodes + 1);
+        OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
 
         for (i = 0, n = ckt->CKTnodes; n; n = n->next)
             OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
@@ -503,10 +503,11 @@ gillespie_src (CKTcircuit * ckt, long int firstmode,
                 ckt->CKTsrcFact = 1;
 
         } while ((raise >= 1e-7) && (ConvFact < 1));
+
+        FREE (OldRhsOld);
+        FREE (OldCKTstate0);
     }
 
-    FREE (OldRhsOld);
-    FREE (OldCKTstate0);
     ckt->CKTsrcFact = 1;
 
     if (ConvFact != 1) {
