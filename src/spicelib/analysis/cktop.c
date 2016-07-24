@@ -41,13 +41,12 @@ CKTop (CKTcircuit * ckt, long int firstmode, long int continuemode,
         /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
         converged = NIiter (ckt, iterlim);
+        if (converged == 0)
+            return converged;   /* successfull */
     } else {
         converged = 1;          /* the 'go directly to gmin stepping' option */
     }
 
-
-    if (converged == 0)
-        return converged;
 
         /* no convergence on the first try, so we do something else */
         /* first, check if we should try gmin stepping */
