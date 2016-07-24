@@ -68,12 +68,10 @@ com_quit(wordlist *wl)
 
     /* start to clean up the mess */
 
-#ifdef SHARED_MODULE
     {
         wordlist all = { "all", NULL, NULL };
         wordlist star = { "*", NULL, NULL };
 
-//      com_remcirc(NULL);
         com_destroy(&all);
         com_unalias(&star);
         com_undefine(&star);
@@ -85,7 +83,6 @@ com_quit(wordlist *wl)
         cp_remvar("program");
         cp_remvar("prompt");
     }
-#endif
 
 #ifdef EXPERIMENTAL_CODE
     /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
@@ -97,32 +94,33 @@ com_quit(wordlist *wl)
     }
 #endif
 
-#ifdef SHARED_MODULE
     /* Destroy CKT when quit. */
     if (!ft_nutmeg) {
         while(ft_curckt)
             com_remcirc(NULL);
     }
-#endif
 
     DevSwitch(NULL);
     DevSwitch(NULL);
 
-    /* then go away */
-
-#ifdef SHARED_MODULE
     cp_destroy_keywords();
     destroy_ivars();
-#endif
 
     byemesg();
-#ifdef SHARED_MODULE
+
     destroy_const_plot();
     spice_destroy_devices();
+
+#ifdef SHARED_MODULE
     sh_delete_myvec();
     sh_delvecs();
 #endif
+
     mc_free();
+    cp_remvar_all();
+    if (Infile_Path)
+        tfree(Infile_Path);
+
 #ifdef SHARED_MODULE
     /* add 1000 to notify that we exit from 'quit' */
     controlled_exit(1000 + exitcode);
