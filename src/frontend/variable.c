@@ -1031,3 +1031,10 @@ var_set_vlist(struct variable *v, struct variable *value)
   v->va_type = CP_LIST;
   v->va_vlist = value;
 }
+
+void
+cp_remvar_all(void)
+{
+    free_struct_variable(variables);
+    variables = NULL;
+}
