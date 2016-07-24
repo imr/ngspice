@@ -130,7 +130,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
               long int continuemode, int iterlim)
 {
     double OldGmin, gtarget, factor;
-    int success, failed, converged;
+    int converged;
 
     int NumNodes, iters, i;
     double *OldRhsOld, *OldCKTstate0;
@@ -157,9 +157,8 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
     OldGmin = 1e-2;
     ckt->CKTdiagGmin = OldGmin / factor;
     gtarget = MAX (ckt->CKTgmin, ckt->CKTgshunt);
-    success = failed = 0;
 
-    while ((!success) && (!failed)) {
+    for (;;) {
         fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
         ckt->CKTnoncon = 1;
         iters = ckt->CKTstat->STATnumIter;
@@ -173,7 +172,7 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
                                  "One successful gmin step");
 
             if (ckt->CKTdiagGmin <= gtarget) {
-                success = 1;
+                break;          /* successfull */
             } else {
                 for (i = 0, n = ckt->CKTnodes; n; n = n->next)
                     OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
@@ -201,9 +200,9 @@ dynamic_gmin (CKTcircuit * ckt, long int firstmode,
             }
         } else {
             if (factor < 1.00005) {
-                failed = 1;
                 SPfrontEnd->IFerrorf (ERR_WARNING,
                                      "Last gmin step failed");
+                break;          /* failed */
             } else {
                 SPfrontEnd->IFerrorf (ERR_WARNING,
                                      "Further gmin increment");
