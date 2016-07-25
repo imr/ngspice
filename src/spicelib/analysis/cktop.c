@@ -35,12 +35,9 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
 
     if (!ckt->CKTnoOpIter) {
 #ifdef XSPICE
-        /* gtri - begin - wbk - add convergence problem reporting flags */
-        if ((ckt->CKTnumGminSteps <= 0) && (ckt->CKTnumSrcSteps <= 0))
-            ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
-        else
-            ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-        /* gtri - end - wbk - add convergence problem reporting flags */
+        /* gtri - wbk - add convergence problem reporting flags */
+        ckt->enh->conv_debug.last_NIiter_call =
+            (ckt->CKTnumGminSteps <= 0) && (ckt->CKTnumSrcSteps <= 0);
 #endif
         converged = NIiter (ckt, iterlim);
         if (converged == 0)
@@ -173,9 +170,8 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
             SPfrontEnd->IFerrorf (ERR_INFO,
                                   "One successful gmin step");
 
-            if (ckt->CKTdiagGmin <= gtarget) {
+            if (ckt->CKTdiagGmin <= gtarget)
                 break;          /* successfull */
-            }
 
             for (i = 0, n = ckt->CKTnodes; n; n = n->next)
                 OldRhsOld[i++] = ckt->CKTrhsOld[n->number];
@@ -224,12 +220,8 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
     FREE (OldCKTstate0);
 
 #ifdef XSPICE
-    /* gtri - begin - wbk - add convergence problem reporting flags */
-    if (ckt->CKTnumSrcSteps <= 0)
-        ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
-    else
-        ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-    /* gtri - end - wbk - add convergence problem reporting flags */
+    /* gtri - wbk - add convergence problem reporting flags */
+    ckt->enh->conv_debug.last_NIiter_call = (ckt->CKTnumSrcSteps <= 0);
 #endif
 
     converged = NIiter (ckt, iterlim);
@@ -273,10 +265,8 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
     SPfrontEnd->IFerrorf (ERR_INFO,
                           "Starting gmin stepping");
 
-    if (ckt->CKTgshunt == 0)
-        ckt->CKTdiagGmin = ckt->CKTgmin;
-    else
-        ckt->CKTdiagGmin = ckt->CKTgshunt;
+    ckt->CKTdiagGmin =
+        (ckt->CKTgshunt == 0) ? ckt->CKTgmin :  ckt->CKTgshunt;
 
     for (i = 0; i < ckt->CKTnumGminSteps; i++)
         ckt->CKTdiagGmin *= ckt->CKTgminFactor;
@@ -304,12 +294,8 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
     ckt->CKTdiagGmin = ckt->CKTgshunt;
 
 #ifdef XSPICE
-    /* gtri - begin - wbk - add convergence problem reporting flags */
-    if (ckt->CKTnumSrcSteps <= 0)
-        ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
-    else
-        ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-    /* gtri - end - wbk - add convergence problem reporting flags */
+    /* gtri - wbk - add convergence problem reporting flags */
+    ckt->enh->conv_debug.last_NIiter_call = (ckt->CKTnumSrcSteps <= 0);
 #endif
 
     converged = NIiter (ckt, iterlim);
@@ -377,11 +363,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
     if (converged != 0) {
         fprintf (stderr, "\n");
 
-        if (ckt->CKTgshunt <= 0) {
-            ckt->CKTdiagGmin = ckt->CKTgmin;
-        } else {
-            ckt->CKTdiagGmin = ckt->CKTgshunt;
-        }
+        ckt->CKTdiagGmin =
+            (ckt->CKTgshunt <= 0) ? ckt->CKTgmin : ckt->CKTgshunt;
 
         for (i = 0; i < 10; i++)
             ckt->CKTdiagGmin *= 10;
