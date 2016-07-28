@@ -74,7 +74,7 @@ cp_doglob(wordlist *wlist)
             s = cp_tildexpand(wl->wl_word);
             txfree(wl->wl_word);    /* sjb - fix memory leak */
             if (!s)
-                *wl->wl_word = '\0';    /* MW. We Con't touch tmalloc addres */
+                wl->wl_word = copy("");    /* MW. We Con't touch tmalloc addres */
             else
                 wl->wl_word = s;
         }
