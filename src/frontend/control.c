@@ -873,7 +873,6 @@ cp_evloop(char *string)
 
 
 /* This blows away the control structures... */
-void cp_free_control(void); /* needed by resetcontrol */
 void cp_resetcontrol(void)
 {
     fprintf(cp_err, "Warning: clearing control structures\n");
