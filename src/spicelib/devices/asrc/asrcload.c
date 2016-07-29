@@ -10,8 +10,9 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/suffix.h"
 
 
-double *asrc_vals, *asrc_derivs;
-int    asrc_nvals;
+int    asrc_nvals = 0;
+double *asrc_vals = NULL;
+double *asrc_derivs = NULL;
 
 
 /* actually load the current voltage value into the
@@ -44,13 +45,9 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
              */
             i = here->ASRCtree->numVars;
             if (asrc_nvals < i) {
-                if (asrc_nvals) {
-                    FREE(asrc_vals);
-                    FREE(asrc_derivs);
-                }
                 asrc_nvals = i;
-                asrc_vals = TMALLOC(double, i);
-                asrc_derivs = TMALLOC(double, i);
+                asrc_vals = TREALLOC(double, asrc_vals, i);
+                asrc_derivs = TREALLOC(double, asrc_derivs, i);
             }
 
             j = 0;

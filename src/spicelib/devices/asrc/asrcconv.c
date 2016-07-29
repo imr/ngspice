@@ -26,13 +26,9 @@ ASRCconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
             i = here->ASRCtree->numVars;
             if (asrc_nvals < i) {
-                if (asrc_nvals) {
-                    FREE(asrc_vals);
-                    FREE(asrc_derivs);
-                }
                 asrc_nvals = i;
-                asrc_vals = TMALLOC(double, i);
-                asrc_derivs = TMALLOC(double, i);
+                asrc_vals = TREALLOC(double, asrc_vals, i);
+                asrc_derivs = TREALLOC(double, asrc_derivs, i);
             }
 
             for (i = 0; i < here->ASRCtree->numVars; i++)

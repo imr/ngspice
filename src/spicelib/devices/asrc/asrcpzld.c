@@ -43,13 +43,9 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             /* Get the function evaluated and the derivatives too */
             i = here->ASRCtree->numVars;
             if (asrc_nvals < i) {
-                if (asrc_nvals) {
-                    FREE(asrc_vals);
-                    FREE(asrc_derivs);
-                }
                 asrc_nvals = i;
-                asrc_vals = TMALLOC(double, i);
-                asrc_derivs = TMALLOC(double, i);
+                asrc_vals = TREALLOC(double, asrc_vals, i);
+                asrc_derivs = TREALLOC(double, asrc_derivs, i);
             }
 
             /* Fill the vector of values from the previous solution */
