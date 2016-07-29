@@ -8,27 +8,22 @@ Modified: Paolo Nenzi
 #include "ngspice/suffix.h"
 
 
-void HFET2destroy(GENmodel **inModel)
+void
+HFET2destroy(GENmodel **inModel)
 {
+    HFET2model *mod = *(HFET2model**) inModel;
 
-  HFET2model **model = (HFET2model**)inModel;
-  HFET2instance *here;
-  HFET2instance *prev = NULL;
-  HFET2model *mod = *model;
-  HFET2model *oldmod = NULL;
-
-  for( ; mod ; mod = mod->HFET2nextModel) {
-    if(oldmod) FREE(oldmod);
-    oldmod = mod;
-    prev = NULL;
-    for(here = mod->HFET2instances ; here ; here = here->HFET2nextInstance) {
-      if(prev) FREE(prev);
-      prev = here;
+    while (mod) {
+        HFET2model *next_mod = mod->HFET2nextModel;
+        HFET2instance *inst = mod->HFET2instances;
+        while (inst) {
+            HFET2instance *next_inst = inst->HFET2nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(prev) FREE(prev);
-  }
-  if(oldmod) FREE(oldmod);
-  *model = NULL;
-  return;
-  
+
+    *inModel = NULL;
 }

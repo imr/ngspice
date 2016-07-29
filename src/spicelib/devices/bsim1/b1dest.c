@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Hong J. Park, Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "bsim1def.h"
@@ -13,23 +11,19 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 void
 B1destroy(GENmodel **inModel)
 {
+    B1model *mod = *(B1model**) inModel;
 
-    B1model **model = (B1model**)inModel;
-    B1instance *here;
-    B1instance *prev = NULL;
-    B1model *mod = *model;
-    B1model *oldmod = NULL;
-
-    for( ; mod ; mod = mod->B1nextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->B1instances ; here ; here = here->B1nextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        B1model *next_mod = mod->B1nextModel;
+        B1instance *inst = mod->B1instances;
+        while (inst) {
+            B1instance *next_inst = inst->B1nextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

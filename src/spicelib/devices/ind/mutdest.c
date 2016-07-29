@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "inddefs.h"
@@ -11,26 +9,25 @@ Author: 1985 Thomas L. Quarles
 
 
 #ifdef MUTUAL
+
 void
 MUTdestroy(GENmodel **inModel)
 {
-    MUTmodel **model = (MUTmodel**)inModel;
-    MUTinstance *here;
-    MUTinstance *prev = NULL;
-    MUTmodel *mod = *model;
-    MUTmodel *oldmod = NULL;
+    MUTmodel *mod = *(MUTmodel**) inModel;
 
-    for( ; mod ; mod = mod->MUTnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->MUTinstances ; here ; here = here->MUTnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        MUTmodel *next_mod = mod->MUTnextModel;
+        MUTinstance *inst = mod->MUTinstances;
+        while (inst) {
+            MUTinstance *next_inst = inst->MUTnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }
-#endif /* MUTUAL */
+
+#endif

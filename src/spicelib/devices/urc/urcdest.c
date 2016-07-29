@@ -2,9 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
-/*
- */
-
 
 #include "ngspice/ngspice.h"
 #include "urcdefs.h"
@@ -14,22 +11,19 @@ Author: 1987 Thomas L. Quarles
 void
 URCdestroy(GENmodel **inModel)
 {
-    URCmodel **model = (URCmodel **)inModel;
-    URCinstance *here;
-    URCinstance *prev = NULL;
-    URCmodel *mod = *model;
-    URCmodel *oldmod = NULL;
+    URCmodel *mod = *(URCmodel **) inModel;
 
-    for( ; mod ; mod = mod->URCnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->URCinstances ; here ; here = here->URCnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        URCmodel *next_mod = mod->URCnextModel;
+        URCinstance *inst = mod->URCinstances;
+        while (inst) {
+            URCinstance *next_inst = inst->URCnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

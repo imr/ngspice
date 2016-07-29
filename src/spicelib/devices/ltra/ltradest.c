@@ -7,29 +7,23 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "ltradefs.h"
 #include "ngspice/suffix.h"
 
+
 void
 LTRAdestroy(GENmodel **inModel)
 {
-  LTRAmodel **model = (LTRAmodel **) inModel;
-  LTRAinstance *here;
-  LTRAinstance *prev = NULL;
-  LTRAmodel *mod = *model;
-  LTRAmodel *oldmod = NULL;
+    LTRAmodel *mod = *(LTRAmodel **) inModel;
 
-  for (; mod; mod = mod->LTRAnextModel) {
-    if (oldmod)
-      FREE(oldmod);
-    oldmod = mod;
-    prev = NULL;
-    for (here = mod->LTRAinstances; here; here = here->LTRAnextInstance) {
-      if (prev)
-	FREE(prev);
-      prev = here;
+    while (mod) {
+        LTRAmodel *next_mod = mod->LTRAnextModel;
+        LTRAinstance *inst = mod->LTRAinstances;
+        while (inst) {
+            LTRAinstance *next_inst = inst->LTRAnextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if (prev)
-      FREE(prev);
-  }
-  if (oldmod)
-    FREE(oldmod);
-  *model = NULL;
+
+    *inModel = NULL;
 }

@@ -15,7 +15,7 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/********** 
+/**********
 Modified by Paolo Nenzi 2002
 ngspice integration
 **********/
@@ -28,25 +28,20 @@ ngspice integration
 void
 SOI3destroy(GENmodel **inModel)
 {
-    SOI3model **model = (SOI3model**)inModel;
-    SOI3instance *here;
-    SOI3instance *prev = NULL;
-    SOI3model *mod = *model;
-    SOI3model *oldmod = NULL;
+    SOI3model *mod = *(SOI3model**) inModel;
 
-    for( ; mod ; mod = mod->SOI3nextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->SOI3instances ; here ; here = here->SOI3nextInstance) {
-            if(prev){
-              /*  if(prev->SOI3sens) FREE(prev->SOI3sens);  */
-                FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        SOI3model *next_mod = mod->SOI3nextModel;
+        SOI3instance *inst = mod->SOI3instances;
+        while (inst) {
+            SOI3instance *next_inst = inst->SOI3nextInstance;
+            /* FREE(inst->SOI3sens); */
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

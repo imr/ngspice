@@ -3,8 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Alan Gillespie
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "mos9defs.h"
@@ -14,25 +12,20 @@ Modified: Alan Gillespie
 void
 MOS9destroy(GENmodel **inModel)
 {
-    MOS9model **model = (MOS9model **)inModel;
-    MOS9instance *here;
-    MOS9instance *prev = NULL;
-    MOS9model *mod = *model;
-    MOS9model *oldmod = NULL;
+    MOS9model *mod = *(MOS9model **) inModel;
 
-    for( ; mod ; mod = mod->MOS9nextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->MOS9instances ; here ; here = here->MOS9nextInstance) {
-            if(prev){
-          if(prev->MOS9sens) FREE(prev->MOS9sens);
-          FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        MOS9model *next_mod = mod->MOS9nextModel;
+        MOS9instance *inst = mod->MOS9instances;
+        while (inst) {
+            MOS9instance *next_inst = inst->MOS9nextInstance;
+            FREE(inst->MOS9sens);
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "mos3defs.h"
@@ -13,25 +11,20 @@ Author: 1985 Thomas L. Quarles
 void
 MOS3destroy(GENmodel **inModel)
 {
-    MOS3model **model = (MOS3model **)inModel;
-    MOS3instance *here;
-    MOS3instance *prev = NULL;
-    MOS3model *mod = *model;
-    MOS3model *oldmod = NULL;
+    MOS3model *mod = *(MOS3model **) inModel;
 
-    for( ; mod ; mod = mod->MOS3nextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->MOS3instances ; here ; here = here->MOS3nextInstance) {
-            if(prev){
-          if(prev->MOS3sens) FREE(prev->MOS3sens);
-          FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        MOS3model *next_mod = mod->MOS3nextModel;
+        MOS3instance *inst = mod->MOS3instances;
+        while (inst) {
+            MOS3instance *next_inst = inst->MOS3nextInstance;
+            FREE(inst->MOS3sens);
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

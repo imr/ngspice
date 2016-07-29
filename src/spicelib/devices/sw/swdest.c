@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "swdefs.h"
@@ -13,22 +11,19 @@ Author: 1985 Gordon Jacobs
 void
 SWdestroy(GENmodel **inModel)
 {
-    SWmodel **model = (SWmodel**)inModel;
-    SWinstance *here;
-    SWinstance *prev = NULL;
-    SWmodel *mod = *model;
-    SWmodel *oldmod = NULL;
+    SWmodel *mod = *(SWmodel**) inModel;
 
-    for( ; mod ; mod = mod->SWnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->SWinstances ; here ; here = here->SWnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        SWmodel *next_mod = mod->SWnextModel;
+        SWinstance *inst = mod->SWinstances;
+        while (inst) {
+            SWinstance *next_inst = inst->SWnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

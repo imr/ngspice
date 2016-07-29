@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "vcvsdefs.h"
@@ -13,22 +11,19 @@ Author: 1985 Thomas L. Quarles
 void
 VCVSdestroy(GENmodel **inModel)
 {
-    VCVSmodel **model = (VCVSmodel **)inModel;
-    VCVSinstance *here;
-    VCVSinstance *prev = NULL;
-    VCVSmodel *mod = *model;
-    VCVSmodel *oldmod = NULL;
+    VCVSmodel *mod = *(VCVSmodel **) inModel;
 
-    for( ; mod ; mod = mod->VCVSnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->VCVSinstances ; here ; here = here->VCVSnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        VCVSmodel *next_mod = mod->VCVSnextModel;
+        VCVSinstance *inst = mod->VCVSinstances;
+        while (inst) {
+            VCVSinstance *next_inst = inst->VCVSnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

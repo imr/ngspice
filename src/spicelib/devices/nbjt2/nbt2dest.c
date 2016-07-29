@@ -1,6 +1,6 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
-Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -14,25 +14,24 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "../../../ciderlib/twod/twodext.h"
 #include "ngspice/suffix.h"
 
+
 void
 NBJT2destroy(GENmodel **inModel)
 {
+    NBJT2model *mod = *(NBJT2model **) inModel;
 
-  NBJT2model **model = (NBJT2model **) inModel;
-  NBJT2model *mod, *nextMod;
-  NBJT2instance *inst, *nextInst;
-
-
-  for (mod = *model; mod;) {
-    for (inst = mod->NBJT2instances; inst;) {
-      TWOdestroy(inst->NBJT2pDevice);
-      nextInst = inst->NBJT2nextInstance;
-      FREE(inst);
-      inst = nextInst;
+    while (mod) {
+        NBJT2model *next_mod = mod->NBJT2nextModel;
+        NBJT2instance *inst = mod->NBJT2instances;
+        while (inst) {
+            NBJT2instance *next_inst = inst->NBJT2nextInstance;
+            TWOdestroy(inst->NBJT2pDevice);
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    nextMod = mod->NBJT2nextModel;
-    FREE(mod);
-    mod = nextMod;
-  }
-  *model = NULL;
+
+    *inModel = NULL;
 }

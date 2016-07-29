@@ -6,7 +6,7 @@ Modified by Paolo Nenzi 2002
 **********/
 
 /*
- * Revision 2.1  99/9/27 Pin Su 
+ * Revision 2.1  99/9/27 Pin Su
  * BSIMDD2.1 release
  */
 
@@ -14,29 +14,23 @@ Modified by Paolo Nenzi 2002
 #include "b3soidddef.h"
 #include "ngspice/suffix.h"
 
+
 void
 B3SOIDDdestroy(GENmodel **inModel)
 {
-B3SOIDDmodel **model = (B3SOIDDmodel**)inModel;
-B3SOIDDinstance *here;
-B3SOIDDinstance *prev = NULL;
-B3SOIDDmodel *mod = *model;
-B3SOIDDmodel *oldmod = NULL;
+    B3SOIDDmodel *mod = *(B3SOIDDmodel**) inModel;
 
-    for (; mod ; mod = mod->B3SOIDDnextModel)
-    {    if(oldmod) FREE(oldmod);
-         oldmod = mod;
-         prev = NULL;
-         for (here = mod->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance)
-	 {    if(prev) FREE(prev);
-              prev = here;
-         }
-         if(prev) FREE(prev);
+    while (mod) {
+        B3SOIDDmodel *next_mod = mod->B3SOIDDnextModel;
+        B3SOIDDinstance *inst = mod->B3SOIDDinstances;
+        while (inst) {
+            B3SOIDDinstance *next_inst = inst->B3SOIDDnextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }
-
-
-

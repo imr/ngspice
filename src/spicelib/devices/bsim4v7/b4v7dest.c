@@ -14,50 +14,38 @@
 #include "bsim4v7def.h"
 #include "ngspice/suffix.h"
 
+
 void
-BSIM4v7destroy(
-    GENmodel **inModel)
+BSIM4v7destroy(GENmodel **inModel)
 {
-    BSIM4v7model **model = (BSIM4v7model**)inModel;
-    BSIM4v7instance *here;
-    BSIM4v7instance *prev = NULL;
-    BSIM4v7model *mod = *model;
-    BSIM4v7model *oldmod = NULL;
+    BSIM4v7model *mod = *(BSIM4v7model**) inModel;
 
-    for (; mod ; mod = mod->BSIM4v7nextModel) {
-    /** added to get rid of link list pSizeDependParamKnot **/      
-        struct bsim4SizeDependParam *pParam, *pParamOld=NULL;
-
-        pParam = mod->pSizeDependParamKnot;
-
-        for (; pParam ; pParam = pParam->pNext) {
-            FREE(pParamOld);
-            pParamOld = pParam;
-        }
-        FREE(pParamOld);
-        pParam = NULL;
-     /** end of extra code **/
-        if(oldmod) {
-            FREE(oldmod->BSIM4v7version);
-            FREE(oldmod);
-        }
-        oldmod = mod;
-        prev = (BSIM4v7instance *)NULL;
-        for (here = mod->BSIM4v7instances; here; here = here->BSIM4v7nextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
-        }
-        if(prev) FREE(prev);
-    }
-    if(oldmod) {
 #ifdef USE_OMP
-        /* free just once for all models */
-        FREE(oldmod->BSIM4v7InstanceArray);
+    /* free just once for all models */
+    FREE(mod->BSIM4v7InstanceArray);
 #endif
-        /* oldmod->BSIM4v7modName to be freed in INPtabEnd() */
-        FREE(oldmod->BSIM4v7version);
-        FREE(oldmod);
+
+    while (mod) {
+        BSIM4v7model *next_mod = mod->BSIM4v7nextModel;
+        BSIM4v7instance *inst = mod->BSIM4v7instances;
+        /** added to get rid of link list pSizeDependParamKnot **/
+        struct bsim4SizeDependParam *p = mod->pSizeDependParamKnot;
+        while (p) {
+            struct bsim4SizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
+        /** end of extra code **/
+        while (inst) {
+            BSIM4v7instance *next_inst = inst->BSIM4v7nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        /* mod->BSIM4v7modName to be freed in INPtabEnd() */
+        FREE(mod->BSIM4v7version);
+        FREE(mod);
+        mod = next_mod;
     }
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }

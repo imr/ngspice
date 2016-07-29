@@ -3,8 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: September 2003 Paolo Nenzi
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "capdefs.h"
@@ -13,25 +11,20 @@ Modified: September 2003 Paolo Nenzi
 
 void
 CAPdestroy(GENmodel **inModel)
-
 {
+    CAPmodel *mod = *(CAPmodel**) inModel;
 
-    CAPmodel **model = (CAPmodel**)inModel;
-    CAPinstance *here;
-    CAPinstance *prev = NULL;
-    CAPmodel *mod = *model;
-    CAPmodel *oldmod = NULL;
-
-    for( ; mod ; mod = mod->CAPnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->CAPinstances ; here ; here = here->CAPnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        CAPmodel *next_mod = mod->CAPnextModel;
+        CAPinstance *inst = mod->CAPinstances;
+        while (inst) {
+            CAPinstance *next_inst = inst->CAPnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

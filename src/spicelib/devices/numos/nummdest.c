@@ -1,6 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
-Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -14,24 +14,24 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "../../../ciderlib/twod/twodext.h"
 #include "ngspice/suffix.h"
 
+
 void
 NUMOSdestroy(GENmodel **inModel)
 {
+    NUMOSmodel *mod = *(NUMOSmodel **) inModel;
 
-  NUMOSmodel **model = (NUMOSmodel **) inModel;
-  NUMOSmodel *mod, *nextMod;
-  NUMOSinstance *inst, *nextInst;
-
-  for (mod = *model; mod;) {
-    for (inst = mod->NUMOSinstances; inst;) {
-      TWOdestroy(inst->NUMOSpDevice);
-      nextInst = inst->NUMOSnextInstance;
-      FREE(inst);
-      inst = nextInst;
+    while (mod) {
+        NUMOSmodel *next_mod = mod->NUMOSnextModel;
+        NUMOSinstance *inst = mod->NUMOSinstances;
+        while (inst) {
+            NUMOSinstance *next_inst = inst->NUMOSnextInstance;
+            TWOdestroy(inst->NUMOSpDevice);
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    nextMod = mod->NUMOSnextModel;
-    FREE(mod);
-    mod = nextMod;
-  }
-  *model = NULL;
+
+    *inModel = NULL;
 }

@@ -1,36 +1,32 @@
 /**********
 Permit to use it as your wish.
-Author:	2007 Gong Ding, gdiso@ustc.edu 
-University of Science and Technology of China 
+Author: 2007 Gong Ding, gdiso@ustc.edu
+University of Science and Technology of China
 **********/
-
 
 #include "ngspice/ngspice.h"
 #include "ndevdefs.h"
 #include "ngspice/suffix.h"
 
+
 void
 NDEVdestroy(GENmodel **inModel)
 {
-    
-    NDEVmodel **model = (NDEVmodel **)inModel;
-    NDEVinstance *here;
-    NDEVinstance *prev = NULL;
-    NDEVmodel *mod = *model;
-    NDEVmodel *oldmod = NULL;
+    NDEVmodel *mod = *(NDEVmodel **) inModel;
 
-    for( ; mod ; mod = mod->NDEVnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->NDEVinstances ; here ; here = here->NDEVnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        NDEVmodel *next_mod = mod->NDEVnextModel;
+        NDEVinstance *inst = mod->NDEVinstances;
+        while (inst) {
+            NDEVinstance *next_inst = inst->NDEVnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
-	close(mod->sock);
-	fprintf(stdout,"Disconnect to remote NDEV server %s:%d\n",mod->host,mod->port);
+        close(mod->sock);
+        printf("Disconnect to remote NDEV server %s:%d\n", mod->host, mod->port);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

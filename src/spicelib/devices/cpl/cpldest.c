@@ -8,25 +8,23 @@ Author: 1992 Charles Hough
 #include "cpldefs.h"
 #include "ngspice/suffix.h"
 
+
 void
 CPLdestroy(GENmodel **inModel)
 {
-    CPLmodel **model = (CPLmodel **)inModel;
-    CPLinstance *here;
-    CPLinstance *prev = NULL;
-    CPLmodel *mod = *model;
-    CPLmodel *oldmod = NULL;
+    CPLmodel *mod = *(CPLmodel **) inModel;
 
-    for( ; mod ; mod = mod->CPLnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->CPLinstances ; here ; here = here->CPLnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        CPLmodel *next_mod = mod->CPLnextModel;
+        CPLinstance *inst = mod->CPLinstances;
+        while (inst) {
+            CPLinstance *next_inst = inst->CPLnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

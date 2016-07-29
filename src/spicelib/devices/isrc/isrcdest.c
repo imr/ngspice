@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "isrcdefs.h"
@@ -13,25 +11,20 @@ Author: 1985 Thomas L. Quarles
 void
 ISRCdestroy(GENmodel **inModel)
 {
-    ISRCmodel **model = (ISRCmodel**)inModel;
-    ISRCinstance *here;
-    ISRCinstance *prev = NULL;
-    ISRCmodel *mod = *model;
-    ISRCmodel *oldmod = NULL;
+    ISRCmodel *mod = *(ISRCmodel**) inModel;
 
-    for( ; mod ; mod = mod->ISRCnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->ISRCinstances ; here ; here = here->ISRCnextInstance) {
-            if(prev) {
-                tfree(prev->ISRCcoeffs);
-                FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        ISRCmodel *next_mod = mod->ISRCnextModel;
+        ISRCinstance *inst = mod->ISRCinstances;
+        while (inst) {
+            ISRCinstance *next_inst = inst->ISRCnextInstance;
+            FREE(inst->ISRCcoeffs);
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

@@ -8,29 +8,23 @@ File: b3v0dest.c
 #include "bsim3v0def.h"
 #include "ngspice/suffix.h"
 
+
 void
 BSIM3v0destroy(GENmodel **inModel)
 {
-BSIM3v0model **model = (BSIM3v0model**)inModel;
-BSIM3v0instance *here;
-BSIM3v0instance *prev = NULL;
-BSIM3v0model *mod = *model;
-BSIM3v0model *oldmod = NULL;
+    BSIM3v0model *mod = *(BSIM3v0model**) inModel;
 
-    for (; mod ; mod = mod->BSIM3v0nextModel)
-    {    if(oldmod) FREE(oldmod);
-         oldmod = mod;
-         prev = NULL;
-         for (here = mod->BSIM3v0instances; here; here = here->BSIM3v0nextInstance)
-	 {    if(prev) FREE(prev);
-              prev = here;
-         }
-         if(prev) FREE(prev);
+    while (mod) {
+        BSIM3v0model *next_mod = mod->BSIM3v0nextModel;
+        BSIM3v0instance *inst = mod->BSIM3v0instances;
+        while (inst) {
+            BSIM3v0instance *next_inst = inst->BSIM3v0nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }
-
-
-

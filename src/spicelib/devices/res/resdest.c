@@ -3,8 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: Apr 2000 - Paolo Nenzi
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "resdefs.h"
@@ -13,22 +11,19 @@ Modified: Apr 2000 - Paolo Nenzi
 void
 RESdestroy(GENmodel **inModel)
 {
-    RESmodel **model = (RESmodel **)inModel;
-    RESinstance *here;
-    RESinstance *prev = NULL;
-    RESmodel *mod = *model;
-    RESmodel *oldmod = NULL;
+    RESmodel *mod = *(RESmodel **) inModel;
 
-    for( ; mod ; mod = mod->RESnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->RESinstances ; here ; here = here->RESnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        RESmodel *next_mod = mod->RESnextModel;
+        RESinstance *inst = mod->RESinstances;
+        while (inst) {
+            RESinstance *next_inst = inst->RESnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "ccvsdefs.h"
@@ -13,22 +11,19 @@ Author: 1985 Thomas L. Quarles
 void
 CCVSdestroy(GENmodel **inModel)
 {
-    CCVSmodel **model = (CCVSmodel**)inModel;
-    CCVSinstance *here;
-    CCVSinstance *prev = NULL;
-    CCVSmodel *mod = *model;
-    CCVSmodel *oldmod = NULL;
+    CCVSmodel *mod = *(CCVSmodel**) inModel;
 
-    for( ; mod ; mod = mod->CCVSnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->CCVSinstances ; here ; here = here->CCVSnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        CCVSmodel *next_mod = mod->CCVSnextModel;
+        CCVSinstance *inst = mod->CCVSinstances;
+        while (inst) {
+            CCVSinstance *next_inst = inst->CCVSnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

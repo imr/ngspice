@@ -1,6 +1,6 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
-Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -15,25 +15,24 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
+
 void
 NUMD2destroy(GENmodel **inModel)
 {
+    NUMD2model *mod = *(NUMD2model **) inModel;
 
-  NUMD2model **model = (NUMD2model **) inModel;
-  NUMD2model *mod, *nextMod;
-  NUMD2instance *inst, *nextInst;
-
-
-  for (mod = *model; mod;) {
-    for (inst = mod->NUMD2instances; inst;) {
-      TWOdestroy(inst->NUMD2pDevice);
-      nextInst = inst->NUMD2nextInstance;
-      FREE(inst);
-      inst = nextInst;
+    while (mod) {
+        NUMD2model *next_mod  = mod->NUMD2nextModel;
+        NUMD2instance *inst = mod->NUMD2instances;
+        while (inst) {
+            NUMD2instance *next_inst = inst->NUMD2nextInstance;
+            TWOdestroy(inst->NUMD2pDevice);
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    nextMod = mod->NUMD2nextModel;
-    FREE(mod);
-    mod = nextMod;
-  }
-  *model = NULL;
+
+    *inModel = NULL;
 }

@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1989 Takayasu Sakurai
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "mos6defs.h"
@@ -13,25 +11,20 @@ Author: 1989 Takayasu Sakurai
 void
 MOS6destroy(GENmodel **inModel)
 {
-    MOS6model **model = (MOS6model**)inModel;
-    MOS6instance *here;
-    MOS6instance *prev = NULL;
-    MOS6model *mod = *model;
-    MOS6model *oldmod = NULL;
+    MOS6model *mod = *(MOS6model**) inModel;
 
-    for( ; mod ; mod = mod->MOS6nextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->MOS6instances ; here ; here = here->MOS6nextInstance) {
-            if(prev){
-                if(prev->MOS6sens) FREE(prev->MOS6sens); 
-                FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        MOS6model *next_mod = mod->MOS6nextModel;
+        MOS6instance *inst = mod->MOS6instances;
+        while (inst) {
+            MOS6instance *next_inst = inst->MOS6nextInstance;
+            FREE(inst->MOS6sens);
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

@@ -14,50 +14,37 @@
 #include "bsim4v6def.h"
 #include "ngspice/suffix.h"
 
+
 void
-BSIM4v6destroy(
-    GENmodel **inModel)
+BSIM4v6destroy(GENmodel **inModel)
 {
-    BSIM4v6model **model = (BSIM4v6model**)inModel;
-    BSIM4v6instance *here;
-    BSIM4v6instance *prev = NULL;
-    BSIM4v6model *mod = *model;
-    BSIM4v6model *oldmod = NULL;
+    BSIM4v6model *mod = *(BSIM4v6model**) inModel;
 
-    for (; mod ; mod = mod->BSIM4v6nextModel) {
-    /** added to get rid of link list pSizeDependParamKnot **/      
-        struct bsim4v6SizeDependParam *pParam, *pParamOld=NULL;
-
-        pParam = mod->pSizeDependParamKnot;
-
-        for (; pParam ; pParam = pParam->pNext) {
-            FREE(pParamOld);
-            pParamOld = pParam;
-        }
-        FREE(pParamOld);
-        pParam = NULL;
-     /** end of extra code **/
-
-        if (oldmod) {
-            FREE(oldmod->BSIM4v6version);
-            FREE(oldmod);
-        }
-        oldmod = mod;
-        prev = NULL;
-        for (here = mod->BSIM4v6instances; here; here = here->BSIM4v6nextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
-        }
-        if(prev) FREE(prev);
-    }
-    if(oldmod) {
 #ifdef USE_OMP
-        /* free just once for all models */
-        FREE(oldmod->BSIM4v6InstanceArray);
+    /* free just once for all models */
+    FREE(mod->BSIM4v6InstanceArray);
 #endif
-        FREE(oldmod->BSIM4v6version);
-        FREE(oldmod);
+
+    while (mod) {
+        BSIM4v6model *next_mod = mod->BSIM4v6nextModel;
+        BSIM4v6instance *inst = mod->BSIM4v6instances;
+        /** added to get rid of link list pSizeDependParamKnot **/
+        struct bsim4v6SizeDependParam *p = mod->pSizeDependParamKnot;
+        while (p) {
+            struct bsim4v6SizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
+        /** end of extra code **/
+        while (inst) {
+            BSIM4v6instance *next_inst = inst->BSIM4v6nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod->BSIM4v6version);
+        FREE(mod);
+        mod = next_mod;
     }
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }

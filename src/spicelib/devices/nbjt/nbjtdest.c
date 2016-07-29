@@ -1,6 +1,6 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
-Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -14,25 +14,24 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
+
 void
 NBJTdestroy(GENmodel **inModel)
 {
+    NBJTmodel *mod = *(NBJTmodel **) inModel;
 
-  NBJTmodel **model = (NBJTmodel **) inModel;
-  NBJTmodel *mod, *nextMod;
-  NBJTinstance *inst, *nextInst;
-
-
-  for (mod = *model; mod;) {
-    for (inst = mod->NBJTinstances; inst;) {
-      ONEdestroy(inst->NBJTpDevice);
-      nextInst = inst->NBJTnextInstance;
-      FREE(inst);
-      inst = nextInst;
+    while (mod) {
+        NBJTmodel *next_mod = mod->NBJTnextModel;
+        NBJTinstance *inst = mod->NBJTinstances;
+        while (inst) {
+            NBJTinstance *next_inst = inst->NBJTnextInstance;
+            ONEdestroy(inst->NBJTpDevice);
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    nextMod = mod->NBJTnextModel;
-    FREE(mod);
-    mod = nextMod;
-  }
-  *model = NULL;
+
+    *inModel = NULL;
 }

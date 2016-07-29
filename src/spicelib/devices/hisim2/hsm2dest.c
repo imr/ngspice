@@ -5,12 +5,12 @@
 
  MODEL NAME : HiSIM
  ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
- 
+
  FILE : hsm2dest.c
 
  Date : 2014.6.5
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -31,8 +31,8 @@ support. Hiroshima University or STARC and its employees are not liable
 for the condition or performance of the software.
 
 Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
+irrevocable, worldwide, non-exclusive, royalty-free license with respect
+to the software as set forth below.
 
 Hiroshima University and STARC hereby disclaim all implied warranties.
 
@@ -58,32 +58,28 @@ to others."
 #include "hsm2def.h"
 #include "ngspice/suffix.h"
 
-void HSM2destroy(
-     GENmodel **inModel)
-{
-  HSM2model **model = (HSM2model**)inModel;
-  HSM2instance *here;
-  HSM2instance *prev = NULL;
-  HSM2model *mod = *model;
-  HSM2model *oldmod = NULL;
-  
-  for ( ;mod ;mod = mod->HSM2nextModel ) {
-    if (oldmod) FREE(oldmod);
-    oldmod = mod;
-    prev = (HSM2instance *)NULL;
-    for ( here = mod->HSM2instances ;here ;here = here->HSM2nextInstance ) {
-      if (prev) FREE(prev);
-      prev = here;
-    }
-    if (prev) FREE(prev);
-  }
-  if (oldmod) {
-#ifdef USE_OMP
-      /* free just once for all models */
-      FREE(oldmod->HSM2InstanceArray);
-#endif
-      FREE(oldmod);
-  }
-  *model = NULL;
-}
 
+void
+HSM2destroy(GENmodel **inModel)
+{
+    HSM2model *mod = *(HSM2model**) inModel;
+
+#ifdef USE_OMP
+    /* free just once for all models */
+    FREE(mod->HSM2InstanceArray);
+#endif
+
+    while (mod) {
+        HSM2model *next_mod = mod->HSM2nextModel;
+        HSM2instance *inst = mod->HSM2instances;
+        while (inst) {
+            HSM2instance *next_inst = inst->HSM2nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
+    }
+
+    *inModel = NULL;
+}

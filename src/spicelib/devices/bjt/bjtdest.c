@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 /*
  * This routine deletes all BJTs from the circuit and frees
@@ -17,31 +15,21 @@ Author: 1985 Thomas L. Quarles
 
 void
 BJTdestroy(GENmodel **inModel)
-
 {
+    BJTmodel *mod = *(BJTmodel**) inModel;
 
-    BJTmodel **model = (BJTmodel**)inModel;
-    BJTinstance *here;
-    BJTinstance *prev = NULL;
-    BJTmodel *mod = *model;
-    BJTmodel *oldmod = NULL;
-
-    for( ; mod ; mod = mod->BJTnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->BJTinstances ; here ; here = here->BJTnextInstance) {
-            if(prev){
-                if(prev->BJTsens) FREE(prev->BJTsens);
-                FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        BJTmodel *next_mod = mod->BJTnextModel;
+        BJTinstance *inst = mod->BJTinstances;
+        while (inst) {
+            BJTinstance *next_inst = inst->BJTnextInstance;
+            FREE(inst->BJTsens);
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev){
-            if(prev->BJTsens) FREE(prev->BJTsens);
-            FREE(prev);
-        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

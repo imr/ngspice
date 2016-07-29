@@ -11,23 +11,19 @@ Author: Trond Ytterdal
 void
 MESAdestroy(GENmodel **inModel)
 {
-    MESAmodel **model = (MESAmodel**)inModel;
-    MESAinstance *here;
-    MESAinstance *prev = NULL;
-    MESAmodel *mod = *model;
-    MESAmodel *oldmod = NULL;
+    MESAmodel *mod = *(MESAmodel**) inModel;
 
-    for( ; mod ; mod = mod->MESAnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->MESAinstances ; here ; here = here->MESAnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        MESAmodel *next_mod = mod->MESAnextModel;
+        MESAinstance *inst = mod->MESAinstances;
+        while (inst) {
+            MESAinstance *next_inst = inst->MESAnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }

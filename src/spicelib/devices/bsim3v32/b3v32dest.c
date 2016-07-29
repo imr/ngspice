@@ -13,48 +13,37 @@
 #include "bsim3v32def.h"
 #include "ngspice/suffix.h"
 
+
 void
 BSIM3v32destroy (GENmodel **inModel)
 {
-    BSIM3v32model **model = (BSIM3v32model**)inModel;
-    BSIM3v32instance *here;
-    BSIM3v32instance *prev = NULL;
-    BSIM3v32model *mod = *model;
-    BSIM3v32model *oldmod = NULL;
+    BSIM3v32model *mod = *(BSIM3v32model**) inModel;
 
-    for (; mod ; mod = mod->BSIM3v32nextModel) {
-    /** added to get rid of link list pSizeDependParamKnot **/
-        struct bsim3v32SizeDependParam *pParam, *pParamOld=NULL;
-
-        pParam = mod->pSizeDependParamKnot;
-
-        for (; pParam ; pParam = pParam->pNext) {
-            FREE(pParamOld);
-            pParamOld = pParam;
-        }
-        FREE(pParamOld);
-        pParam = NULL;
-     /** end of extra code **/
-        if(oldmod) {
-            FREE(oldmod->BSIM3v32version);
-            FREE(oldmod);
-        }
-        oldmod = mod;
-        prev = NULL;
-        for (here = mod->BSIM3v32instances; here; here = here->BSIM3v32nextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
-        }
-        if(prev) FREE(prev);
-    }
-    if(oldmod) {
 #ifdef USE_OMP
-        /* free just once for all models */
-        FREE(oldmod->BSIM3v32InstanceArray);
+    /* free just once for all models */
+    FREE(mod->BSIM3v32InstanceArray);
 #endif
-        FREE(oldmod->BSIM3v32version);
-        FREE(oldmod);
+
+    while (mod) {
+        BSIM3v32model *next_mod = mod->BSIM3v32nextModel;
+        BSIM3v32instance *inst = mod->BSIM3v32instances;
+        /** added to get rid of link list pSizeDependParamKnot **/
+        struct bsim3v32SizeDependParam *p =  mod->pSizeDependParamKnot;
+        while (p) {
+            struct bsim3v32SizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
+        /** end of extra code **/
+        while (inst) {
+            BSIM3v32instance *next_inst = inst->BSIM3v32nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod->BSIM3v32version);
+        FREE(mod);
+        mod = next_mod;
     }
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }

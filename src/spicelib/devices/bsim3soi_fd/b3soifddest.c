@@ -6,7 +6,7 @@ File: b3soifddest.c          98/5/01
 **********/
 
 /*
- * Revision 2.1  99/9/27 Pin Su 
+ * Revision 2.1  99/9/27 Pin Su
  * BSIMFD2.1 release
  */
 
@@ -14,29 +14,23 @@ File: b3soifddest.c          98/5/01
 #include "b3soifddef.h"
 #include "ngspice/suffix.h"
 
+
 void
 B3SOIFDdestroy(GENmodel **inModel)
 {
-B3SOIFDmodel **model = (B3SOIFDmodel**)inModel;
-B3SOIFDinstance *here;
-B3SOIFDinstance *prev = NULL;
-B3SOIFDmodel *mod = *model;
-B3SOIFDmodel *oldmod = NULL;
+    B3SOIFDmodel *mod = *(B3SOIFDmodel**) inModel;
 
-    for (; mod ; mod = mod->B3SOIFDnextModel)
-    {    if(oldmod) FREE(oldmod);
-         oldmod = mod;
-         prev = NULL;
-         for (here = mod->B3SOIFDinstances; here; here = here->B3SOIFDnextInstance)
-	 {    if(prev) FREE(prev);
-              prev = here;
-         }
-         if(prev) FREE(prev);
+    while (mod) {
+        B3SOIFDmodel *next_mod = mod->B3SOIFDnextModel;
+        B3SOIFDinstance *inst = mod->B3SOIFDinstances;
+        while (inst) {
+            B3SOIFDinstance *next_inst = inst->B3SOIFDnextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }
-
-
-

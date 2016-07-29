@@ -18,29 +18,20 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 void
 VBICdestroy(GENmodel **inModel)
 {
+    VBICmodel *mod = *(VBICmodel**) inModel;
 
-    VBICmodel **model = (VBICmodel**)inModel;
-    VBICinstance *here;
-    VBICinstance *prev = NULL;
-    VBICmodel *mod = *model;
-    VBICmodel *oldmod = NULL;
-
-    for( ; mod ; mod = mod->VBICnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->VBICinstances ; here ; here = here->VBICnextInstance) {
-            if(prev){
-                if(prev->VBICsens) FREE(prev->VBICsens);
-                FREE(prev);
-            }
-            prev = here;
+    while (mod) {
+        VBICmodel *next_mod = mod->VBICnextModel;
+        VBICinstance *inst = mod->VBICinstances;
+        while (inst) {
+            VBICinstance *next_inst = inst->VBICnextInstance;
+            FREE(inst->VBICsens);
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev){
-            if(prev->VBICsens) FREE(prev->VBICsens);
-            FREE(prev);
-        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

@@ -10,28 +10,25 @@ Author: 1987 Kanwar Jit Singh
 
 
 void
-ASRCdestroy(GENmodel **model)
+ASRCdestroy(GENmodel **inModel)
 {
-    ASRCmodel **start = (ASRCmodel**) model; /* starting model */
-    ASRCinstance *here;     /* current instance */
-    ASRCinstance *next;
-    ASRCmodel *mod = *start;    /* current model */
-    ASRCmodel *nextmod;
+    ASRCmodel *mod = *(ASRCmodel**) inModel;
 
-    for (; mod ; mod = nextmod) {
-        for (here = mod->ASRCinstances; here; here = next) {
-            next = here->ASRCnextInstance;
-            FREE(here->ASRCacValues);
-            INPfreeTree(here->ASRCtree);
-            if (here->ASRCposptr)
-                free(here->ASRCposptr);
-            if (here->ASRCvars)
-                free(here->ASRCvars);
-            FREE(here);
+    while (mod) {
+        ASRCmodel *next_mod = mod->ASRCnextModel;
+        ASRCinstance *inst = mod->ASRCinstances;
+        while (inst) {
+            ASRCinstance *next_inst = inst->ASRCnextInstance;
+            INPfreeTree(inst->ASRCtree);
+            FREE(inst->ASRCacValues);
+            FREE(inst->ASRCposptr);
+            FREE(inst->ASRCvars);
+            FREE(inst);
+            inst = next_inst;
         }
-        nextmod = mod->ASRCnextModel;
         FREE(mod);
+        mod = next_mod;
     }
 
-    *model = NULL;
+    *inModel = NULL;
 }

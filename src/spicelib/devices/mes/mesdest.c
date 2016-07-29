@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 S. Hwang
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "mesdefs.h"
@@ -13,22 +11,19 @@ Author: 1985 S. Hwang
 void
 MESdestroy(GENmodel **inModel)
 {
-    MESmodel **model = (MESmodel**)inModel;
-    MESinstance *here;
-    MESinstance *prev = NULL;
-    MESmodel *mod = *model;
-    MESmodel *oldmod = NULL;
+    MESmodel *mod = *(MESmodel**) inModel;
 
-    for( ; mod ; mod = mod->MESnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->MESinstances ; here ; here = here->MESnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        MESmodel *next_mod = mod->MESnextModel;
+        MESinstance *inst = mod->MESinstances;
+        while (inst) {
+            MESinstance *next_inst = inst->MESnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

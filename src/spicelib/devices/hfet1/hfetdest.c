@@ -11,23 +11,19 @@ Modified: Paolo Nenzi
 void
 HFETAdestroy(GENmodel **inModel)
 {
-    HFETAmodel **model = (HFETAmodel**)inModel;
-    HFETAinstance *here;
-    HFETAinstance *prev = NULL;
-    HFETAmodel *mod = *model;
-    HFETAmodel *oldmod = NULL;
+    HFETAmodel *mod = *(HFETAmodel**) inModel;
 
-    for( ; mod ; mod = mod->HFETAnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->HFETAinstances ; here ; here = here->HFETAnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        HFETAmodel *next_mod = mod->HFETAnextModel;
+        HFETAinstance *inst = mod->HFETAinstances;
+        while (inst) {
+            HFETAinstance *next_inst = inst->HFETAnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }

@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "tradefs.h"
@@ -13,22 +11,19 @@ Author: 1985 Thomas L. Quarles
 void
 TRAdestroy(GENmodel **inModel)
 {
-    TRAmodel **model = (TRAmodel **)inModel;
-    TRAinstance *here;
-    TRAinstance *prev = NULL;
-    TRAmodel *mod = *model;
-    TRAmodel *oldmod = NULL;
+    TRAmodel *mod = *(TRAmodel **) inModel;
 
-    for( ; mod ; mod = mod->TRAnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->TRAinstances ; here ; here = here->TRAnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        TRAmodel *next_mod = mod->TRAnextModel;
+        TRAinstance *inst = mod->TRAinstances;
+        while (inst) {
+            TRAinstance *next_inst = inst->TRAnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

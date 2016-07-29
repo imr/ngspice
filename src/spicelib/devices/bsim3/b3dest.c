@@ -12,53 +12,41 @@
 #include "bsim3def.h"
 #include "ngspice/suffix.h"
 
+
 void
-BSIM3destroy(
-    GENmodel **inModel)
+BSIM3destroy(GENmodel **inModel)
 {
-    BSIM3model **model = (BSIM3model**)inModel;
-    BSIM3instance *here;
-    BSIM3instance *prev = NULL;
-    BSIM3model *mod = *model;
-    BSIM3model *oldmod = NULL;
+    BSIM3model *mod = *(BSIM3model**) inModel;
 
-    for (; mod ; mod = mod->BSIM3nextModel) {
-    /** added to get rid of link list pSizeDependParamKnot **/      
-        struct bsim3SizeDependParam *pParam, *pParamOld=NULL;
-
-        pParam = mod->pSizeDependParamKnot;
-
-        for (; pParam ; pParam = pParam->pNext) {
-            FREE(pParamOld);
-            pParamOld = pParam;
-        }
-        FREE(pParamOld);
-        pParam = NULL;
-     /** end of extra code **/
-        if(oldmod) {
-            FREE(oldmod->BSIM3version);
-            FREE(oldmod);
-        }
-        oldmod = mod;
-        prev = NULL;
-        for (here = mod->BSIM3instances; here; here = here->BSIM3nextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
-        }
-        if(prev) FREE(prev);
-    }
-    if(oldmod) {
-#ifdef USE_OMP
+    #ifdef USE_OMP
         /* free just once for all models */
-        FREE(oldmod->BSIM3InstanceArray);
-#endif
-        /* oldmod->BSIM3modName to be freed in INPtabEnd() */
-        FREE(oldmod->BSIM3version);
-        FREE(oldmod);
+        FREE(mod->BSIM3InstanceArray);
+    #endif
+
+    while (mod) {
+        BSIM3model *next_mod = mod->BSIM3nextModel;
+        BSIM3instance *inst = mod->BSIM3instances;
+
+        /** added to get rid of link list pSizeDependParamKnot **/
+        struct bsim3SizeDependParam *p = mod->pSizeDependParamKnot;
+        while (p) {
+            struct bsim3SizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
+        /** end of extra code **/
+
+        while (inst) {
+            BSIM3instance *next_inst = inst->BSIM3nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+
+        /* mod->BSIM3modName to be freed in INPtabEnd() */
+        FREE(mod->BSIM3version);
+        FREE(mod);
+        mod = next_mod;
     }
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }
-
-
-

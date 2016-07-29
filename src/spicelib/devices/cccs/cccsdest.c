@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "cccsdefs.h"
@@ -12,24 +10,20 @@ Author: 1985 Thomas L. Quarles
 
 void
 CCCSdestroy(GENmodel **inModel)
-
 {
-    CCCSmodel **model = (CCCSmodel**)inModel;
-    CCCSinstance *here;
-    CCCSinstance *prev = NULL;
-    CCCSmodel *mod = *model;
-    CCCSmodel *oldmod = NULL;
+    CCCSmodel *mod = *(CCCSmodel**) inModel;
 
-    for( ; mod ; mod = mod->CCCSnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->CCCSinstances ; here ; here = here->CCCSnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        CCCSmodel *next_mod = mod->CCCSnextModel;
+        CCCSinstance *inst = mod->CCCSinstances;
+        while (inst) {
+            CCCSinstance *next_inst = inst->CCCSnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

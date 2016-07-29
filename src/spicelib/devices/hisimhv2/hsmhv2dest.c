@@ -3,14 +3,14 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2014 Hiroshima University & STARC
 
- MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
+ MODEL NAME : HiSIM_HV
+ ( VERSION : 2  SUBVERSION : 2  REVISION : 0 )
  Model Parameter 'VERSION' : 2.20
  FILE : hsmhvdest.c
 
  DATE : 2014.6.11
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -31,8 +31,8 @@ support. Hiroshima University or STARC and its employees are not liable
 for the condition or performance of the software.
 
 Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
+irrevocable, worldwide, non-exclusive, royalty-free license with respect
+to the software as set forth below.
 
 Hiroshima University and STARC hereby disclaims all implied warranties.
 
@@ -54,33 +54,30 @@ to others."
 Toshimasa Asahara, President, Hiroshima University
 Mitiko Miura-Mattausch, Professor, Hiroshima University
 Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
+June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
 #include "hsmhv2def.h"
 #include "ngspice/suffix.h"
 
-void HSMHV2destroy(
-     GENmodel **inModel)
-{
-  HSMHV2model **model = (HSMHV2model**)inModel;
-  HSMHV2instance *here;
-  HSMHV2instance *prev = NULL;
-  HSMHV2model *mod = *model;
-  HSMHV2model *oldmod = NULL;
-  
-  for ( ;mod ;mod = mod->HSMHV2nextModel ) {
-    if (oldmod) FREE(oldmod);
-    oldmod = mod;
-    prev = (HSMHV2instance *)NULL;
-    for ( here = mod->HSMHV2instances ;here ;here = here->HSMHV2nextInstance ) {
-      if (prev) FREE(prev);
-      prev = here;
-    }
-    if (prev) FREE(prev);
-  }
-  if (oldmod) FREE(oldmod);
-  *model = NULL;
-}
 
+void
+HSMHV2destroy(GENmodel **inModel)
+{
+    HSMHV2model *mod = *(HSMHV2model**) inModel;
+
+    while (mod) {
+        HSMHV2model *next_mod = mod->HSMHV2nextModel;
+        HSMHV2instance *inst = mod->HSMHV2instances;
+        while (inst) {
+            HSMHV2instance *next_inst = inst->HSMHV2nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
+    }
+
+    *inModel = NULL;
+}

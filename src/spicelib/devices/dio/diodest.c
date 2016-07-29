@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "diodefs.h"
@@ -13,22 +11,19 @@ Author: 1985 Thomas L. Quarles
 void
 DIOdestroy(GENmodel **inModel)
 {
-    DIOmodel **model = (DIOmodel**)inModel;
-    DIOinstance *here;
-    DIOinstance *prev = NULL;
-    DIOmodel *mod = *model;
-    DIOmodel *oldmod = NULL;
+    DIOmodel *mod = *(DIOmodel**) inModel;
 
-    for( ; mod ; mod = mod->DIOnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->DIOinstances ; here ; here = here->DIOnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        DIOmodel *next_mod = mod->DIOnextModel;
+        DIOinstance *inst = mod->DIOinstances;
+        while (inst) {
+            DIOinstance *next_inst = inst->DIOnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }

@@ -15,35 +15,26 @@
  **********/
 
 #include "ngspice/ngspice.h"
-
 #include "b4soidef.h"
 #include "ngspice/suffix.h"
 
+
 void
-B4SOIdestroy(
-GENmodel **inModel)
+B4SOIdestroy(GENmodel **inModel)
 {
-B4SOImodel **model = (B4SOImodel**)inModel;
-B4SOIinstance *here;
-B4SOIinstance *prev = NULL;
-B4SOImodel *mod = *model;
-B4SOImodel *oldmod = NULL;
+    B4SOImodel *mod = *(B4SOImodel**) inModel;
 
-    for (; mod ; mod = mod->B4SOInextModel)
-    {    if(oldmod) FREE(oldmod);
-         oldmod = mod;
-         prev = (B4SOIinstance *)NULL;
-         for (here = mod->B4SOIinstances; here; here = here->B4SOInextInstance)
-         {
-              if(prev) FREE(prev);
-              prev = here;
-         }
-         if(prev) FREE(prev);
+    while (mod) {
+        B4SOImodel *next_mod = mod->B4SOInextModel;
+        B4SOIinstance *inst = mod->B4SOIinstances;
+        while (inst) {
+            B4SOIinstance *next_inst = inst->B4SOInextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-    return;
+
+    *inModel = NULL;
 }
-
-
-

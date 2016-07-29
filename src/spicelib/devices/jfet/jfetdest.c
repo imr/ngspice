@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "jfetdefs.h"
@@ -13,22 +11,19 @@ Author: 1985 Thomas L. Quarles
 void
 JFETdestroy(GENmodel **inModel)
 {
-    JFETmodel **model = (JFETmodel**)inModel;
-    JFETinstance *here;
-    JFETinstance *prev = NULL;
-    JFETmodel *mod = *model;
-    JFETmodel *oldmod = NULL;
+    JFETmodel *mod = *(JFETmodel**) inModel;
 
-    for( ; mod ; mod = mod->JFETnextModel) {
-        if(oldmod) FREE(oldmod);
-        oldmod = mod;
-        prev = NULL;
-        for(here = mod->JFETinstances ; here ; here = here->JFETnextInstance) {
-            if(prev) FREE(prev);
-            prev = here;
+    while (mod) {
+        JFETmodel *next_mod = mod->JFETnextModel;
+        JFETinstance *inst = mod->JFETinstances;
+        while (inst) {
+            JFETinstance *next_inst = inst->JFETnextInstance;
+            FREE(inst);
+            inst = next_inst;
         }
-        if(prev) FREE(prev);
+        FREE(mod);
+        mod = next_mod;
     }
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
+
+    *inModel = NULL;
 }
