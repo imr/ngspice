@@ -120,6 +120,7 @@ com_quit(wordlist *wl)
     cp_remvar_all();
     if (Infile_Path)
         tfree(Infile_Path);
+    cp_free_control();
 
 #ifdef SHARED_MODULE
     /* add 1000 to notify that we exit from 'quit' */

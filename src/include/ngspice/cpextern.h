@@ -168,6 +168,7 @@ extern struct variable *cp_setparse(wordlist *wl);
 extern wordlist *vareval(char *string);
 extern char *span_var_expr(char *t);
 extern void cp_remvar_all(void);
+extern void cp_free_control(void);
 
 /* var2.c */
 extern void cp_vprint(void);
