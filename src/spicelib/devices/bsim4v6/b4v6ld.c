@@ -4868,7 +4868,7 @@ line900:
            here->BSIM4v6_25 = m * (gcrgb + gcgmbb);
 
            here->BSIM4v6_26 = m * gcdgmb;
-           here->BSIM4v6_26 = m * gcrg;
+           here->BSIM4v6_27 = m * gcrg;
            here->BSIM4v6_28 = m * gcsgmb;
            here->BSIM4v6_29 = m * gcbgmb;
 
