@@ -116,6 +116,7 @@ com_meas(wordlist *wl)
         fprintf(stdout,
                 " meas %s failed!\n"
                 "   unspecified output var name\n\n", line_in);
+        tfree(line_in);
         return;
     }
     outvar = wl_count->wl_word;
@@ -124,6 +125,7 @@ com_meas(wordlist *wl)
 
     if (fail) {
         fprintf(stdout, " meas %s failed!\n\n", line_in);
+        tfree(line_in);
         return;
     }
 
