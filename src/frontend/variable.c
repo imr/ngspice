@@ -858,6 +858,12 @@ vareval(char *string)
 }
 
 
+struct xxx {
+    struct variable *x_v;
+    char x_char;
+};
+
+
 static int
 vcmp(const void *a, const void *b)
 {
