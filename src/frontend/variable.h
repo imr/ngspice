@@ -29,11 +29,6 @@ struct variable {
 #define va_string va_V.vV_string
 #define va_vlist  va_V.vV_list
 
-struct xxx {
-    struct variable *x_v;
-    char x_char;
-};
-
 
 extern struct variable *variables;
 extern bool cp_echo;
