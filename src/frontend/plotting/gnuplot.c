@@ -307,8 +307,6 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     int i, numVecs;
     bool appendwrite;
 
-    char filename_data[128];
-
     NG_IGNORE(xlims);
     NG_IGNORE(ylims);
     NG_IGNORE(title);
@@ -317,7 +315,6 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     NG_IGNORE(gridtype);
     NG_IGNORE(plottype);
 
-    sprintf(filename_data, "%s.data", filename);
     appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
 
     /* Sanity checking. */
@@ -328,7 +325,7 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
         return;
 
     /* Open the output data file. */
-    if ((file_data = fopen(filename_data, appendwrite ? "a" : "w")) == NULL) {
+    if ((file_data = fopen(filename, appendwrite ? "a" : "w")) == NULL) {
         perror(filename);
         return;
     }
