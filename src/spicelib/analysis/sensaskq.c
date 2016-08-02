@@ -39,7 +39,7 @@ SENSask(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case SENS_DEFTOL:
-	job->deftol = value->rValue;
+	value->rValue = job->deftol;
 	break;
 
     case SENS_DEFPERTURB:
