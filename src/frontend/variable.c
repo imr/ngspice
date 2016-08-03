@@ -412,21 +412,22 @@ cp_remvar(char *varname)
     for (p = &variables; *p; p = &(*p)->va_next)
         if (eq((*p)->va_name, varname))
             break;
-    if (*p == NULL) {
+
+    if (*p == NULL)
         for (p = &uv1; *p; p = &(*p)->va_next)
             if (eq((*p)->va_name, varname))
                 break;
-    }
-    if (*p == NULL && ft_curckt) {
+
+    if (*p == NULL && ft_curckt)
         for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next)
             if (eq((*p)->va_name, varname))
                 break;
-    }
+
     v = *p;
-    if (!v) {
-        /* Gotta make up a var struct for cp_usrset()... */
+
+    /* make up an auxiliary struct variable for cp_usrset() */
+    if (!v)
         v = var_alloc_num(copy(varname), 0, NULL);
-    }
 
     /* Note that 'unset history' doesn't do anything here... Causes
      * trouble...  */
