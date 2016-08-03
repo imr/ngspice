@@ -406,13 +406,13 @@ cp_remvar(char *varname)
     struct variable *v, *u, *lv = NULL;
     struct variable *uv1, *uv2;
     bool found = TRUE;
-    int i, var_index = 0;
+    int i, var_index;
 
     uv1 = cp_usrvars();
     uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
+    var_index = 0;
     for (v = variables; v; v = v->va_next) {
-        var_index = 0;
         if (eq(v->va_name, varname))
             break;
         lv = v;
