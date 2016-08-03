@@ -404,12 +404,11 @@ void
 cp_remvar(char *varname)
 {
     struct variable *v, *u, *lv = NULL;
-    struct variable *uv1, *uv2;
+    struct variable *uv1;
     bool found = TRUE;
     int i, var_index;
 
     uv1 = cp_usrvars();
-    uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
     var_index = 0;
     for (v = variables; v; v = v->va_next) {
@@ -426,10 +425,10 @@ cp_remvar(char *varname)
             lv = v;
         }
     }
-    if (v == NULL) {
+    if (v == NULL && ft_curckt) {
         var_index = 2;
         lv = NULL;
-        for (v = uv2; v; v = v->va_next) {
+        for (v = ft_curckt->ci_vars; v; v = v->va_next) {
             if (eq(v->va_name, varname))
                 break;
             lv = v;
@@ -534,10 +533,9 @@ bool
 cp_getvar(char *name, enum cp_types type, void *retval)
 {
     struct variable *v;
-    struct variable *uv1, *uv2;
+    struct variable *uv1;
 
     uv1 = cp_usrvars();
-    uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -549,8 +547,8 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     if (v == NULL)
         for (v = uv1; v && !eq(name, v->va_name); v = v->va_next)
             ;
-    if (v == NULL)
-        for (v = uv2; v && !eq(name, v->va_name); v = v->va_next)
+    if (v == NULL && ft_curckt)
+        for (v = ft_curckt->ci_vars; v && !eq(name, v->va_name); v = v->va_next)
             ;
 
     if (v == NULL) {
@@ -598,7 +596,6 @@ cp_getvar(char *name, enum cp_types type, void *retval)
             break;
         }
         free_struct_variable(uv1);
-        // tfree(uv2);
         return (TRUE);
 
     } else {
@@ -912,19 +909,19 @@ void
 cp_vprint(void)
 {
     struct variable *v;
-    struct variable *uv1, *uv2;
+    struct variable *uv1;
     wordlist *wl;
     int i, j;
     char *s;
     struct xxx *vars;
 
     uv1 = cp_usrvars();
-    uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
     for (v = uv1, i = 0; v; v = v->va_next)
         i++;
-    for (v = uv2; v; v = v->va_next)
-        i++;
+    if (ft_curckt)
+        for (v = ft_curckt->ci_vars; v; v = v->va_next)
+            i++;
     for (v = variables; v; v = v->va_next)
         i++;
 
@@ -939,10 +936,11 @@ cp_vprint(void)
         vars[i].x_v = v;
         vars[i].x_char = '*';
     }
-    for (v = uv2; v; v = v->va_next, i++) {
-        vars[i].x_v = v;
-        vars[i].x_char = '+';
-    }
+    if (ft_curckt)
+        for (v = ft_curckt->ci_vars; v; v = v->va_next, i++) {
+            vars[i].x_v = v;
+            vars[i].x_char = '+';
+        }
 
     qsort(vars, (size_t) i, sizeof(*vars), vcmp);
 
