@@ -188,6 +188,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
 
     case US_DONTRECORD:
+        /* 'curplot' 'curplotname' 'curplottitle' 'curplotdate' */
         /* Do nothing... */
         if (alreadythere) {
             fprintf(cp_err, "cp_vset: Internal Error: "
@@ -198,6 +199,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
 
     case US_READONLY:
+        /* 'plots' and any var in plot_cur->pl_env */
         fprintf(cp_err, "Error: %s is a read-only variable.\n", v->va_name);
         if (alreadythere)
             fprintf(cp_err, "cp_vset: Internal Error: "
@@ -205,6 +207,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
 
     case US_SIMVAR:
+        /* variables processed by if_option(ft_curckt->ci_ckt, ...) */
         if (alreadythere) {
             /* somehow it got into the front-end list of variables */
             if (w) {
@@ -240,6 +243,7 @@ cp_vset(char *varname, enum cp_types type, void *value)
         break;
 
     case US_NOSIMVAR:
+        /* variables processed by if_option(NULL, ...) */
         /* What do you do? */
         free_struct_variable(v);
         break;
@@ -476,12 +480,14 @@ cp_remvar(char *varname)
         break;
 
     case US_DONTRECORD:
+        /* 'curplot' 'curplotname' 'curplottitle' 'curplotdate' */
         /* Do nothing... */
         if (found)
             fprintf(cp_err, "cp_remvar: Internal Error: var %d\n", *varname);
         break;
 
     case US_READONLY:
+        /* 'plots' and any var in plot_cur->pl_env */
         /* Badness... */
         fprintf(cp_err, "Error: %s is read-only.\n", v->va_name);
         if (found)
@@ -489,6 +495,7 @@ cp_remvar(char *varname)
         break;
 
     case US_SIMVAR:
+        /* variables processed by if_option(ft_curckt->ci_ckt, ...) */
         fprintf(stderr, "it's a US_SIMVAR!\n");
         lv = NULL;
         if (ft_curckt) {
@@ -507,7 +514,9 @@ cp_remvar(char *varname)
         }
         break;
 
+    case US_NOSIMVAR:
     default:
+        /* variables processed by if_option(NULL, ...) */
         fprintf(cp_err, "cp_remvar: Internal Error: US val %d\n", i);
         break;
     }
