@@ -106,8 +106,8 @@ cp_enqvar(char *word)
 
 /* Return the plot and ckt env vars, $plots, and $curplot{name,title,date,} */
 
-void
-cp_usrvars(struct variable **v1, struct variable **v2)
+struct variable *
+cp_usrvars(void)
 {
     struct variable *v, *tv;
 
@@ -134,8 +134,7 @@ cp_usrvars(struct variable **v1, struct variable **v2)
         v = tv;
     }
 
-    *v1 = v;
-    *v2 = ft_curckt ? ft_curckt->ci_vars : NULL;
+    return v;
 }
 
 

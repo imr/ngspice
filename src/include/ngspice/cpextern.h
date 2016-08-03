@@ -184,7 +184,7 @@ extern void ft_cpinit(void);
 extern struct comm *cp_coms;
 extern char *cp_program;
 extern struct variable *cp_enqvar(char *word);
-extern void cp_usrvars(struct variable **v1, struct variable **v2);
+extern struct variable *cp_usrvars(void);
 int cp_usrset(struct variable *var, bool isset);
 extern void fatal(void);
 
