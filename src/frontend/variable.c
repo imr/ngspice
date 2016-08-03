@@ -403,7 +403,7 @@ free_struct_variable(struct variable *v)
 void
 cp_remvar(char *varname)
 {
-    struct variable *v, *u, **p;
+    struct variable *v, **p;
     struct variable *uv1;
     bool found = TRUE;
     int i;
@@ -411,27 +411,28 @@ cp_remvar(char *varname)
     uv1 = cp_usrvars();
 
     p = &variables;
-    for (v = variables; v; v = v->va_next) {
-        if (eq(v->va_name, varname))
+    for (; *p;) {
+        if (eq((*p)->va_name, varname))
             break;
-        p = &v->va_next;
+        p = &(*p)->va_next;
     }
-    if (v == NULL) {
+    if (*p == NULL) {
         p = &uv1;
-        for (v = uv1; v; v = v->va_next) {
-            if (eq(v->va_name, varname))
+        for (; *p;) {
+            if (eq((*p)->va_name, varname))
                 break;
-            p = &v->va_next;
+            p = &(*p)->va_next;
         }
     }
-    if (v == NULL && ft_curckt) {
+    if (*p == NULL && ft_curckt) {
         p = &ft_curckt->ci_vars;
-        for (v = ft_curckt->ci_vars; v; v = v->va_next) {
-            if (eq(v->va_name, varname))
+        for (; *p;) {
+            if (eq((*p)->va_name, varname))
                 break;
-            p = &v->va_next;
+            p = &(*p)->va_next;
         }
     }
+    v = *p;
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
         v = var_alloc_num(copy(varname), 0, NULL);
@@ -486,12 +487,13 @@ cp_remvar(char *varname)
         fprintf(stderr, "it's a US_SIMVAR!\n");
         if (ft_curckt) {
             p = &ft_curckt->ci_vars;
-            for (u = ft_curckt->ci_vars; u; u = u->va_next) {
-                if (eq(varname, u->va_name))
+            for (; *p;) {
+                if (eq(varname, (*p)->va_name))
                     break;
-                p = &u->va_next;
+                p = &(*p)->va_next;
             }
-            if (u) {
+            if (*p) {
+                struct variable *u = *p;
                 *p = u->va_next;
                 tfree(u);
             }
