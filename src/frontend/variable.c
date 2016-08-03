@@ -404,7 +404,8 @@ cp_remvar(char *varname)
     bool found = TRUE;
     int i, var_index = 0;
 
-    cp_usrvars(&uv1, &uv2);
+    uv1 = cp_usrvars();
+    uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
     for (v = variables; v; v = v->va_next) {
         var_index = 0;
@@ -526,7 +527,8 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     struct variable *v;
     struct variable *uv1, *uv2;
 
-    cp_usrvars(&uv1, &uv2);
+    uv1 = cp_usrvars();
+    uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
 #ifdef TRACE
     /* SDB debug statement */
@@ -907,7 +909,8 @@ cp_vprint(void)
     char *s;
     struct xxx *vars;
 
-    cp_usrvars(&uv1, &uv2);
+    uv1 = cp_usrvars();
+    uv2 = ft_curckt ? ft_curckt->ci_vars : NULL;
 
     for (v = uv1, i = 0; v; v = v->va_next)
         i++;
