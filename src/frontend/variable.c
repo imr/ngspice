@@ -410,27 +410,18 @@ cp_remvar(char *varname)
 
     uv1 = cp_usrvars();
 
-    p = &variables;
-    for (; *p;) {
+    for (p = &variables; *p; p = &(*p)->va_next)
         if (eq((*p)->va_name, varname))
             break;
-        p = &(*p)->va_next;
-    }
     if (*p == NULL) {
-        p = &uv1;
-        for (; *p;) {
+        for (p = &uv1; *p; p = &(*p)->va_next)
             if (eq((*p)->va_name, varname))
                 break;
-            p = &(*p)->va_next;
-        }
     }
     if (*p == NULL && ft_curckt) {
-        p = &ft_curckt->ci_vars;
-        for (; *p;) {
+        for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next)
             if (eq((*p)->va_name, varname))
                 break;
-            p = &(*p)->va_next;
-        }
     }
     v = *p;
     if (!v) {
@@ -486,12 +477,9 @@ cp_remvar(char *varname)
         /* variables processed by if_option(ft_curckt->ci_ckt, ...) */
         fprintf(stderr, "it's a US_SIMVAR!\n");
         if (ft_curckt) {
-            p = &ft_curckt->ci_vars;
-            for (; *p;) {
+            for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next)
                 if (eq(varname, (*p)->va_name))
                     break;
-                p = &(*p)->va_next;
-            }
             if (*p) {
                 struct variable *u = *p;
                 *p = u->va_next;
