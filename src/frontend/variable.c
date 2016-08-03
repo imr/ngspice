@@ -405,7 +405,6 @@ cp_remvar(char *varname)
 {
     struct variable *v, **p;
     struct variable *uv1;
-    bool found = TRUE;
     int i;
 
     uv1 = cp_usrvars();
@@ -427,7 +426,6 @@ cp_remvar(char *varname)
     if (!v) {
         /* Gotta make up a var struct for cp_usrset()... */
         v = var_alloc_num(copy(varname), 0, NULL);
-        found = FALSE;
     }
 
     /* Note that 'unset history' doesn't do anything here... Causes
@@ -453,7 +451,7 @@ cp_remvar(char *varname)
 
     case US_OK:
         /* Normal case. */
-        if (found) {
+        if (*p) {
             *p = v->va_next;
         }
         break;
@@ -461,7 +459,7 @@ cp_remvar(char *varname)
     case US_DONTRECORD:
         /* 'curplot' 'curplotname' 'curplottitle' 'curplotdate' */
         /* Do nothing... */
-        if (found)
+        if (*p)
             fprintf(cp_err, "cp_remvar: Internal Error: var %d\n", *varname);
         break;
 
@@ -469,7 +467,7 @@ cp_remvar(char *varname)
         /* 'plots' and any var in plot_cur->pl_env */
         /* Badness... */
         fprintf(cp_err, "Error: %s is read-only.\n", v->va_name);
-        if (found)
+        if (*p)
             fprintf(cp_err, "cp_remvar: Internal Error: var %d\n", *varname);
         break;
 
