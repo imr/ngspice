@@ -975,10 +975,9 @@ inp_dodeck(
     ct->ci_inprogress = FALSE;
     ct->ci_runonce = FALSE;
     ct->ci_commands = end;
-    if (filename)
-        ct->ci_filename = copy(filename);
-    else
-        ct->ci_filename = NULL;
+    if (reuse)
+        tfree(ct->ci_filename);
+    ct->ci_filename = copy(filename);
 
     if (!noparse) {
         /*
