@@ -2,8 +2,11 @@
 Copyright 2008 Holger Vogt
 **********/
 /* Care about random numbers
-   The seed value is set as random number in main.c, line 746.
-   A fixed seed value may be set by 'set rndseed=value'.
+   The seed value is obtained from getpid() in main.c upon start-up
+   and stored in a variable named 'rndseed'.
+   A fixed seed value may be set by 'set rndseed=value' in .spiceinit
+   or interactively. This value then is acknowledged by the next call
+   to checkseed().
 */
 
 
@@ -68,9 +71,13 @@ void rgauss(double* py1, double* py2);
 
 
 /* Check if a seed has been set by the command 'set rndseed=value'
-   in spinit with integer value > 0. If available, call srand(value).
-   This will override the call to srand in main.c.
-   Checkseed should be put in front of any call to rand or CombLCGTaus.. .
+   in spinit, .spiceinit or in a .control section
+   with integer value > 0. If available, call srand(value).
+   rndseed set in main.c to getpid will be used, if no 'set rndseed=val' is given.
+   Checkseed should be put in front of any call to rand or CombLCGTaus
+   to catch any change of rndseed.
+   Checkseed may not be used to reset the random number generator, if
+   rndseed has not been changed.
 */
 void checkseed(void)
 {
@@ -81,10 +88,10 @@ void checkseed(void)
       if ((newseed > 0) && (oldseed != newseed)) {
          srand((unsigned int)newseed);
          TausSeed();
+         if (oldseed > 0) /* no printout upon start-up */
+             printf("Seed value for random number generator is set to %d\n", newseed);
          oldseed = newseed;
-         printf("Seed value for random number generator is set to %d\n", newseed);
       }
-/*      else printf("Oldseed %d, newseed %d\n", oldseed, newseed); */
    }
    
 }
@@ -190,16 +197,18 @@ unsigned int CombLCGTausInt2(void)
 }
 
 
-/***  gauss  ***/
-
+/***  gauss  ***
+ for speed reasons get two values per pass */
 double gauss0(void)
 {
   static bool gliset = TRUE;
   static double glgset = 0.0;
   double fac,r,v1,v2;
   if (gliset) {
+    checkseed();
     do {
-      v1 = drand();  v2 = drand();
+      v1 = 2.0 * CombLCGTaus() - 1.0;
+      v2 = 2.0 * CombLCGTaus() - 1.0;
       r = v1*v1 + v2*v2;
     } while (r >= 1.0);
 /*    printf("v1 %f, v2 %f\n", v1, v2); */
@@ -213,6 +222,24 @@ double gauss0(void)
   }
 }
 
+
+/***  gauss  ***
+  to be reproducible, we just use one value per pass */
+double gauss1(void)
+{
+    double fac, r, v1, v2;
+    checkseed();
+    do {
+        v1 = 2.0 * CombLCGTaus() - 1.0;
+        v2 = 2.0 * CombLCGTaus() - 1.0;
+        r = v1*v1 + v2*v2;
+    } while (r >= 1.0);
+    /*    printf("v1 %f, v2 %f\n", v1, v2); */
+    fac = sqrt(-2.0 * log(r) / r);
+    return v2 * fac;
+}
+
+
 /* Polar form of the Box-Muller generator for Gaussian distributed
    random variates.
    Generator will be fed with two uniformly distributed random variates.
@@ -222,14 +249,14 @@ double gauss0(void)
 void rgauss(double* py1, double* py2)
 {
 	double x1, x2, w;
+    checkseed();
+    do {
+        x1 = 2.0 * CombLCGTaus() - 1.0;
+        x2 = 2.0 * CombLCGTaus() - 1.0;
+        w = x1 * x1 + x2 * x2;
+    } while ( w >= 1.0 );
 
-         do {
-                 x1 = 2.0 * CombLCGTaus() - 1.0;
-                 x2 = 2.0 * CombLCGTaus() - 1.0;
-                 w = x1 * x1 + x2 * x2;
-         } while ( w >= 1.0 );
-
-         w = sqrt( (-2.0 * log( w ) ) / w );
+    w = sqrt( (-2.0 * log( w ) ) / w );
 
 	*py1 = x1 * w;
 	*py2 = x2 * w;
@@ -243,6 +270,7 @@ int poisson(double lambda)
 {
   int k=0;                          //Counter
   const int max_k = 1000;           //k upper limit
+  checkseed();
   double p = CombLCGTaus();         //uniform random number
   double P = exp(-lambda);        //probability
   double sum=P;                     //cumulant
