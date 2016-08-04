@@ -7,6 +7,7 @@ extern void initw(void);
 extern void checkseed(void);    /* seed random or set by 'set rndseed=value'*/
 extern double drand(void);
 extern double gauss0(void);
+extern double gauss1(void);
 extern int poisson(double);
 extern double exprand(double);
 
