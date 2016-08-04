@@ -1879,7 +1879,7 @@ agauss(double nominal_val, double abs_variation, double sigma)
 {
     double stdvar;
     stdvar = abs_variation / sigma;
-    return (nominal_val + stdvar * gauss0());
+    return (nominal_val + stdvar * gauss1());
 }
 
 
@@ -1888,7 +1888,7 @@ gauss(double nominal_val, double rel_variation, double sigma)
 {
     double stdvar;
     stdvar = nominal_val * rel_variation / sigma;
-    return (nominal_val + stdvar * gauss0());
+    return (nominal_val + stdvar * gauss1());
 }
 
 
