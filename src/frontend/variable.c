@@ -512,8 +512,8 @@ cp_remvar(char *varname)
     }
 
     v->va_next = NULL;
-    tfree(v->va_name);
     free_struct_variable(v);
+
     free_struct_variable(uv1);
 }
 
