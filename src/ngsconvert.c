@@ -31,6 +31,7 @@ bool cp_nocc = TRUE;
 bool ft_stricterror = FALSE;
 bool ft_parsedb = FALSE;
 struct circ *ft_curckt = NULL;
+struct plot *plot_cur = NULL;
 
 char *cp_program = "sconvert";
 

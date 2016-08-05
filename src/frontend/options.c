@@ -104,14 +104,14 @@ cp_enqvar(char *word)
 }
 
 
-/* Return the plot and ckt env vars, $plots, and $curplot{name,title,date,} */
+/* Return $plots, $curplot, $curplottitle, $curplotname, $curplotdate */
 
 struct variable *
 cp_usrvars(void)
 {
     struct variable *v, *tv;
 
-    v =  plot_cur ? plot_cur->pl_env : NULL;
+    v = NULL;
 
     if ((tv = cp_enqvar("plots")) != NULL) {
         tv->va_next = v;
