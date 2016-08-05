@@ -83,6 +83,7 @@
 #include "resource.h"
 #include "diff.h"
 #include "com_strcmp.h"
+#include "ngspice/randnumb.h"
 
 #include "arg.h"
 
@@ -193,6 +194,10 @@ struct comm spcp_coms[] = {
       { 040000, 0, 0, 0 }, E_DEFHMASK, 0, 1,
       NULL,
       "[vecname] : Change default scale of current working plot." } ,
+    { "setseed", com_sseed, FALSE, FALSE,
+      { 04, 0, 0, 0 }, E_DEFHMASK, 0, 1,
+      NULL,
+      "[seed value] : Reset the random number generator with new seed value." } ,
     { "transpose", com_transpose, FALSE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 1, LOTS,
       NULL,
@@ -666,6 +671,10 @@ struct comm nutcp_coms[] = {
       { 040000, 0, 0, 0 }, E_DEFHMASK, 0, 1,
       NULL,
       "[vecname] : Change default scale of current working plot." } ,
+    { "setseed", com_sseed, FALSE, FALSE,
+      { 04, 0, 0, 0 }, E_DEFHMASK, 0, 1,
+      NULL,
+      "[seed value] : Reset therandom number generator with new seed value." } ,
     { "transpose", com_transpose, FALSE, FALSE,
       { 040000, 040000, 040000, 040000 }, E_DEFHMASK, 1, LOTS,
       NULL,
