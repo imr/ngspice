@@ -418,6 +418,11 @@ cp_remvar(char *varname)
             if (eq((*p)->va_name, varname))
                 break;
 
+    if (*p == NULL && plot_cur)
+        for (p = &plot_cur->pl_env; *p; p = &(*p)->va_next)
+            if (eq((*p)->va_name, varname))
+                break;
+
     if (*p == NULL && ft_curckt)
         for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next)
             if (eq((*p)->va_name, varname))
@@ -522,6 +527,11 @@ cp_getvar(char *name, enum cp_types type, void *retval)
 
     if (!v)
         for (v = uv1; v; v = v->va_next)
+            if (eq(name, v->va_name))
+                break;
+
+    if (!v && plot_cur)
+        for (v = plot_cur->pl_env; v; v = v->va_next)
             if (eq(name, v->va_name))
                 break;
 
@@ -882,6 +892,9 @@ cp_vprint(void)
         i++;
     for (v = uv1; v; v = v->va_next)
         i++;
+    if (plot_cur)
+        for (v = plot_cur->pl_env; v; v = v->va_next)
+            i++;
     if (ft_curckt)
         for (v = ft_curckt->ci_vars; v; v = v->va_next)
             i++;
@@ -897,6 +910,11 @@ cp_vprint(void)
         vars[i].x_v = v;
         vars[i].x_char = '*';
     }
+    if (plot_cur)
+        for (v = plot_cur->pl_env; v; v = v->va_next, i++) {
+            vars[i].x_v = v;
+            vars[i].x_char = '*';
+        }
     if (ft_curckt)
         for (v = ft_curckt->ci_vars; v; v = v->va_next, i++) {
             vars[i].x_v = v;
