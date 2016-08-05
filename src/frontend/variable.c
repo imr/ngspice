@@ -937,6 +937,7 @@ cp_vprint(void)
         }
     }
 
+    free_struct_variable(uv1);
     tfree(vars);
 }
 
