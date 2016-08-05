@@ -1,6 +1,9 @@
 #ifndef ngspice_RANDNUMB_H
 #define ngspice_RANDNUMB_H
 
+#include "ngspice/wordlist.h"
+extern void com_sseed(wordlist *wl);
+
 /* initialize random number generators */
 extern void initw(void);
 
