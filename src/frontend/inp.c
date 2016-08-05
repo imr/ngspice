@@ -342,18 +342,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     /* inp_source() called with fp: load from file
        or fp == NULL, intfile == TRUE: load circarray */
     if (fp || intfile) {
-        if (mc_deck) {
-            line_free_x(mc_deck, TRUE);
-            mc_deck = NULL;
-        }
         deck = inp_readall(fp, dir_name, comfile, intfile);
 
         /* files starting with *ng_script are user supplied command files */
         if (deck && ciprefix("*ng_script", deck->li_line))
             comfile = TRUE;
         /* save a copy of the deck for later reloading with 'mc_source' */
-        if (!comfile)
+        if (deck && !comfile) {
+            if (mc_deck)
+                mc_free();
             mc_deck = inp_deckcopy_oc(deck);
+        }
     }
     /* inp_spsource() called with *fp == NULL: we want to reload circuit for MC simulation */
     else {
