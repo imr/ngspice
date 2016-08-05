@@ -516,89 +516,76 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     fprintf(stderr, "in cp_getvar, trying to get value of variable %s.\n", name);
 #endif
 
-    for (v = variables; v && !eq(name, v->va_name); v = v->va_next)
-        ;
-    if (v == NULL)
-        for (v = uv1; v && !eq(name, v->va_name); v = v->va_next)
-            ;
-    if (v == NULL && ft_curckt)
-        for (v = ft_curckt->ci_vars; v && !eq(name, v->va_name); v = v->va_next)
-            ;
+    for (v = variables; v; v = v->va_next)
+        if (eq(name, v->va_name))
+            break;
 
-    if (v == NULL) {
+    if (!v)
+        for (v = uv1; v; v = v->va_next)
+            if (eq(name, v->va_name))
+                break;
+
+    if (!v && ft_curckt)
+        for (v = ft_curckt->ci_vars; v; v = v->va_next)
+            if (eq(name, v->va_name))
+                break;
+
+    if (!v) {
         if (type == CP_BOOL && retval)
-            * (bool *) retval = FALSE;
+            *(bool *) retval = FALSE;
         free_struct_variable(uv1);
         return (FALSE);
     }
 
     if (v->va_type == type) {
-      if (retval)
-        switch (type) {
-        case CP_BOOL:
-                * (bool *) retval = TRUE;
-            break;
-        case CP_NUM: {
-            int *i;
-            i = (int *) retval;
-            *i = v->va_num;
-            break;
-        }
-        case CP_REAL: {
-            double *d;
-            d = (double *) retval;
-            *d = v->va_real;
-            break;
-        }
-        case CP_STRING: { /* Gotta be careful to have room. */
-            char *s;
-            s = cp_unquote(v->va_string);
-            cp_wstrip(s);
-            (void) strcpy((char*) retval, s);
-            tfree(s);/*DG*/
-            break;
-        }
-        case CP_LIST: { /* Funny case... */
-            struct variable **tv;
-            tv = (struct variable **) retval;
-            *tv = v->va_vlist;
-            break;
-        }
-        default:
-            fprintf(cp_err,
-                    "cp_getvar: Internal Error: bad var type %d.\n", type);
-            break;
-        }
+
+        if (retval)
+            switch (type) {
+            case CP_BOOL:
+                *(bool *) retval = TRUE;
+                break;
+            case CP_NUM:
+                *(int *) retval = v->va_num;
+                break;
+            case CP_REAL:
+                *(double *) retval = v->va_real;
+                break;
+            case CP_STRING: {   /* Gotta be careful to have room. */
+                char *s = cp_unquote(v->va_string);
+                cp_wstrip(s);
+                strcpy((char*) retval, s);
+                tfree(s);
+                break;
+            }
+            case CP_LIST:       /* Funny case... */
+                *(struct variable **) retval = v->va_vlist;
+                break;
+            default:
+                fprintf(cp_err,
+                        "cp_getvar: Internal Error: bad var type %d.\n", type);
+                break;
+            }
+
         free_struct_variable(uv1);
         return (TRUE);
+    }
 
+    /* Try to coerce it.. */
+    if ((type == CP_NUM) && (v->va_type == CP_REAL)) {
+        *(int *) retval = (int) v->va_real;
+    } else if ((type == CP_REAL) && (v->va_type == CP_NUM)) {
+        *(double *) retval = (double) v->va_num;
+    } else if ((type == CP_STRING) && (v->va_type == CP_NUM)) {
+        sprintf((char*) retval, "%d", v->va_num);
+    } else if ((type == CP_STRING) && (v->va_type == CP_REAL)) {
+        sprintf((char*) retval, "%f", v->va_real);
     } else {
-
-        /* Try to coerce it.. */
-        if ((type == CP_NUM) && (v->va_type == CP_REAL)) {
-            int *i;
-            i = (int *) retval;
-            *i = (int) v->va_real;
-            free_struct_variable(uv1);
-            return (TRUE);
-        } else if ((type == CP_REAL) && (v->va_type == CP_NUM)) {
-            double *d;
-            d = (double *) retval;
-            *d = (double) v->va_num;
-            free_struct_variable(uv1);
-            return (TRUE);
-        } else if ((type == CP_STRING) && (v->va_type == CP_NUM)) {
-            (void) sprintf((char*) retval, "%d", v->va_num);
-            free_struct_variable(uv1);
-            return (TRUE);
-        } else if ((type == CP_STRING) && (v->va_type == CP_REAL)) {
-            (void) sprintf((char*) retval, "%f", v->va_real);
-            free_struct_variable(uv1);
-            return (TRUE);
-        }
         free_struct_variable(uv1);
         return (FALSE);
     }
+
+    free_struct_variable(uv1);
+    return (TRUE);
 }
 
 
