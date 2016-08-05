@@ -292,3 +292,35 @@ double exprand(double mean)
     expval = -log(CombLCGTaus()) * mean;
     return expval;
 }
+
+
+/* seed random number generators immediately
+* command "setseed"
+*   take value of variable rndseed as seed
+* command "setcirc <n>"
+*   seed with number <n>
+*/
+void
+com_sseed(wordlist *wl)
+{
+    int newseed;
+
+    if (wl == NULL) {
+        if (!cp_getvar("rndseed", CP_NUM, &newseed)) {
+            newseed = getpid();
+            cp_vset("rndseed", CP_NUM, &newseed);
+        }
+        srand((unsigned int)newseed);
+        TausSeed();
+    }
+    else
+        if ((sscanf(wl->wl_word, " %d ", &newseed) != 1) || (newseed <= 0) || (newseed > INT_MAX)) {
+            fprintf(cp_err, "Warning: Cannot use %s as seed!\n\n", wl->wl_word);
+            return;
+        }
+        else {
+            srand((unsigned int)newseed);
+            TausSeed();
+        }
+    printf("\nSeed value for random number generator is set to %d\n", newseed);
+}
