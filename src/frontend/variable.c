@@ -403,35 +403,33 @@ free_struct_variable(struct variable *v)
 void
 cp_remvar(char *varname)
 {
-    struct variable *v, *u, *lv = NULL;
+    struct variable *v, *u, **p;
     struct variable *uv1;
     bool found = TRUE;
-    int i, var_index;
+    int i;
 
     uv1 = cp_usrvars();
 
-    var_index = 0;
+    p = &variables;
     for (v = variables; v; v = v->va_next) {
         if (eq(v->va_name, varname))
             break;
-        lv = v;
+        p = &v->va_next;
     }
     if (v == NULL) {
-        var_index = 1;
-        lv = NULL;
+        p = &uv1;
         for (v = uv1; v; v = v->va_next) {
             if (eq(v->va_name, varname))
                 break;
-            lv = v;
+            p = &v->va_next;
         }
     }
     if (v == NULL && ft_curckt) {
-        var_index = 2;
-        lv = NULL;
+        p = &ft_curckt->ci_vars;
         for (v = ft_curckt->ci_vars; v; v = v->va_next) {
             if (eq(v->va_name, varname))
                 break;
-            lv = v;
+            p = &v->va_next;
         }
     }
     if (!v) {
@@ -464,17 +462,7 @@ cp_remvar(char *varname)
     case US_OK:
         /* Normal case. */
         if (found) {
-            if (lv)
-                lv->va_next = v->va_next;
-            else
-                if (var_index == 0) {
-                    variables = v->va_next;
-                } else if (var_index == 1) {
-                    uv1 = v->va_next;
-                } else {
-                    ft_curckt->ci_vars = v->va_next;
-                }
-
+            *p = v->va_next;
         }
         break;
 
@@ -496,18 +484,15 @@ cp_remvar(char *varname)
     case US_SIMVAR:
         /* variables processed by if_option(ft_curckt->ci_ckt, ...) */
         fprintf(stderr, "it's a US_SIMVAR!\n");
-        lv = NULL;
         if (ft_curckt) {
+            p = &ft_curckt->ci_vars;
             for (u = ft_curckt->ci_vars; u; u = u->va_next) {
                 if (eq(varname, u->va_name))
                     break;
-                lv = u;
+                p = &u->va_next;
             }
             if (u) {
-                if (lv)
-                    lv->va_next = u->va_next;
-                else
-                    ft_curckt->ci_vars = u->va_next;
+                *p = u->va_next;
                 tfree(u);
             }
         }
