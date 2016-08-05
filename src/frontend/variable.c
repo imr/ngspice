@@ -533,9 +533,9 @@ cp_getvar(char *name, enum cp_types type, void *retval)
     }
 
     if (v->va_type == type) {
+      if (retval)
         switch (type) {
         case CP_BOOL:
-            if (retval)
                 * (bool *) retval = TRUE;
             break;
         case CP_NUM: {
