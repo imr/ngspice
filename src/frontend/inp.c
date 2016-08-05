@@ -40,6 +40,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "numparam/numpaif.h"
 #include "ngspice/stringskip.h"
+#include "ngspice/randnumb.h"
 
 
 #define line_free(line, flag)                   \

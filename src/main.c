@@ -52,6 +52,7 @@ extern int rl_catch_signals;        /* missing from editline/readline.h */
 #include "frontend/signal_handler.h"
 #include "frontend/misccoms.h"
 #include "ngspice/compatmode.h"
+#include "ngspice/randnumb.h"
 
 /* saj xspice headers */
 #ifdef XSPICE
@@ -204,8 +205,6 @@ extern void OUTerrorf(int, const char *fmt, ...);
 #endif
 
 extern int OUTattributes(runDesc *, IFuid, int, IFvalue *);
-
-extern void initw(void);
 
 IFfrontEnd nutmeginfo = {
     IFnewUid,

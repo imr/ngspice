@@ -277,8 +277,6 @@ extern struct plot *raw_read(char *name);
 extern bool do_measure(char *what, bool chk_only);
 extern bool check_autostop(char *what);
 
-/* randnumb.c */
-extern void TausSeed(void);
 /* resource.c */
 
 extern void ft_ckspace(void);

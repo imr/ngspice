@@ -60,6 +60,7 @@ myfputc(int inp, FILE* f)
 
 #include "ngspice/ngspice.h"
 #include "misc/misc_time.h"
+#include "ngspice/randnumb.h"
 
 /*Use Windows threads if on W32 without pthreads*/
 #ifndef HAVE_LIBPTHREAD
@@ -170,7 +171,6 @@ extern void DevInit(void);
 extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
 extern void create_circbyline(char *line);
-extern void initw(void);
 
 
 /*The current run (to get variable names, etc)*/

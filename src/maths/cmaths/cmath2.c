@@ -18,16 +18,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/dvec.h"
+#include "ngspice/randnumb.h"
 
 #include "cmath.h"
 #include "cmath2.h"
-
-
-extern void checkseed(void); /* seed random or set by 'set rndseed=value'*/
-extern double drand(void);  /* from randnumb.c */
-extern double gauss0(void);  /* from randnumb.c */
-extern int poisson(double);  /* from randnumb.c */
-extern double exprand(double);  /* from randnumb.c */
 
 
 static double

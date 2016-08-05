@@ -981,6 +981,7 @@
     <ClInclude Include="..\src\include\ngspice\profile.h" />
     <ClInclude Include="..\src\include\ngspice\pssdefs.h" />
     <ClInclude Include="..\src\include\ngspice\pzdefs.h" />
+    <ClInclude Include="..\src\include\ngspice\randnumb.h" />
     <ClInclude Include="..\src\include\ngspice\sen2defs.h" />
     <ClInclude Include="..\src\include\ngspice\sensdefs.h" />
     <ClInclude Include="..\src\include\ngspice\sensgen.h" />

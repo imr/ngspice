@@ -1,8 +1,4 @@
-
-extern double drand(void);
-extern double exprand(double);
-extern int poisson(double);
-extern double gauss0(void);
+#include "ngspice/randnumb.h"
 
 void f_alpha(int n_pts, int n_exp, double X[], double Q_d,
 double alpha);

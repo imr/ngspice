@@ -1015,6 +1015,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     <ClInclude Include="..\src\include\ngspice\profile.h" />
     <ClInclude Include="..\src\include\ngspice\pssdefs.h" />
     <ClInclude Include="..\src\include\ngspice\pzdefs.h" />
+    <ClInclude Include="..\src\include\ngspice\randnumb.h" />
     <ClInclude Include="..\src\include\ngspice\sen2defs.h" />
     <ClInclude Include="..\src\include\ngspice\sensdefs.h" />
     <ClInclude Include="..\src\include\ngspice\sensgen.h" />

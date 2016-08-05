@@ -26,6 +26,7 @@
 /**********************************************************************/
 
 #include "ngspice/ngspice.h"
+#include "ngspice/randnumb.h"
 #include "misc/misc_time.h"
 #include <tcl.h>
 

@@ -16,8 +16,7 @@
 
 
 /* random numbers in /maths/misc/randnumb.c */
-extern double gauss0(void);
-extern double drand(void);
+#include "ngspice/randnumb.h"
 
 /************ keywords ************/
 
