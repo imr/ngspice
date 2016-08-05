@@ -875,13 +875,13 @@ cp_vprint(void)
 
     uv1 = cp_usrvars();
 
-    for (v = uv1, i = 0; v; v = v->va_next)
+    for (v = variables, i = 0; v; v = v->va_next)
+        i++;
+    for (v = uv1; v; v = v->va_next)
         i++;
     if (ft_curckt)
         for (v = ft_curckt->ci_vars; v; v = v->va_next)
             i++;
-    for (v = variables; v; v = v->va_next)
-        i++;
 
     vars = TMALLOC(struct xxx, i);
 
