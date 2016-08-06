@@ -20,8 +20,8 @@
     * without the reset switch there is some strange drift
     * towards lower and lower frequencies
     reset
-    set run ="$&run"              $ create a variable from the vector
-    set rndseed = $run            $ set the rnd seed value to the loop index
+    set run = $&run              $ create a variable from the vector
+    setseed $run            $ set the rnd seed value to the loop index
     source MC_2_circ.sp           $ load the circuit, including model data
     tran 15p 200n 0
     write mc_ring{$run}.out buf   $ write each sim output to its own rawfile
