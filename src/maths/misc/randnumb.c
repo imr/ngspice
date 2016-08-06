@@ -99,7 +99,6 @@ void checkseed(void)
 /* uniform random number generator, interval [-1 .. +1[ */
 double drand(void)
 {
-   checkseed();
 //   return ( 2.0*((double) (RR_MAX-abs(rand())) / (double)RR_MAX-0.5));
    return 2.0 * CombLCGTaus() - 1.0;
 }
@@ -205,7 +204,6 @@ double gauss0(void)
   static double glgset = 0.0;
   double fac,r,v1,v2;
   if (gliset) {
-    checkseed();
     do {
       v1 = 2.0 * CombLCGTaus() - 1.0;
       v2 = 2.0 * CombLCGTaus() - 1.0;
@@ -228,7 +226,6 @@ double gauss0(void)
 double gauss1(void)
 {
     double fac, r, v1, v2;
-    checkseed();
     do {
         v1 = 2.0 * CombLCGTaus() - 1.0;
         v2 = 2.0 * CombLCGTaus() - 1.0;
@@ -249,7 +246,6 @@ double gauss1(void)
 void rgauss(double* py1, double* py2)
 {
 	double x1, x2, w;
-    checkseed();
     do {
         x1 = 2.0 * CombLCGTaus() - 1.0;
         x2 = 2.0 * CombLCGTaus() - 1.0;
@@ -270,7 +266,6 @@ int poisson(double lambda)
 {
   int k=0;                          //Counter
   const int max_k = 1000;           //k upper limit
-  checkseed();
   double p = CombLCGTaus();         //uniform random number
   double P = exp(-lambda);        //probability
   double sum=P;                     //cumulant
@@ -288,7 +283,6 @@ int poisson(double lambda)
 double exprand(double mean)
 {
     double expval;
-    checkseed();
     expval = -log(CombLCGTaus()) * mean;
     return expval;
 }
@@ -313,14 +307,20 @@ com_sseed(wordlist *wl)
         srand((unsigned int)newseed);
         TausSeed();
     }
-    else
-        if ((sscanf(wl->wl_word, " %d ", &newseed) != 1) || (newseed <= 0) || (newseed > INT_MAX)) {
-            fprintf(cp_err, "Warning: Cannot use %s as seed!\n\n", wl->wl_word);
-            return;
-        }
-        else {
-            srand((unsigned int)newseed);
-            TausSeed();
-        }
+    else if ((sscanf(wl->wl_word, " %d ", &newseed) != 1) ||
+             (newseed <= 0) || (newseed > INT_MAX))
+    {
+        fprintf(cp_err,
+                "\nWarning: Cannot use %s as seed!\n"
+                "    Command 'setseed %s' ignored.\n\n",
+                wl->wl_word, wl->wl_word);
+        return;
+    }
+    else {
+        srand((unsigned int)newseed);
+        TausSeed();
+        cp_vset("rndseed", CP_NUM, &newseed);
+    }
+
     printf("\nSeed value for random number generator is set to %d\n", newseed);
 }

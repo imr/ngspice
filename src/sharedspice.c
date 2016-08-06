@@ -635,9 +635,10 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /* program name*/
     cp_program = ft_sim->simulator;
 
-    int ii = getpid();
+    /* initialze random number generator with seed = 1 */
+    int ii = 1;
     cp_vset("rndseed", CP_NUM, &ii);
-    checkseed();
+    com_sseed(NULL);
 
     /* set a boolean variable to be used in .control sections */
     bool sm = TRUE;
