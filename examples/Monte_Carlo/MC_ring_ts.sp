@@ -22,9 +22,9 @@ begin
   let halfffts = unitvec(mc_runsp)$ vector for storing measure results at -40dB rising
   unlet mc_runsp
 
-  set mc_runs ="$&mc_runs"        $ create a variable from the vector
+  set mc_runs = $&mc_runs         $ create a variable from the vector
   let seeds = mc_runs + 2
-  set rndseed = "$&seeds"
+  setseed $&seeds
   unlet seeds
 
   echo source the input file
@@ -44,7 +44,7 @@ begin
 
   dowhile run <= mc_runs
 
-    set run ="$&run"              $ create a variable from the vector
+    set run = $&run               $ create a variable from the vector
 
     * run=0 simulates with nominal parameters
     if run > 0
@@ -52,7 +52,7 @@ begin
       echo * * * * * *
       echo Source the circuit again internally for run no. $run
       echo * * * * * *
-      set rndseed = $run
+      setseed $run
       mc_source  $ re-source the input file
     else
       echo run no. $run
@@ -136,7 +136,7 @@ else
   * put data into the correct bins
   let run = 0
   dowhile run < mc_runs
-    set run = "$&run"             $ create a variable from the vector
+    set run = $&run              $ create a variable from the vector
     let val = maxffts[{$run}]
     let part = 0
     * Check if val fits into a bin. If yes, raise bin by 1
