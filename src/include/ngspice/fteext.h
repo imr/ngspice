@@ -215,6 +215,7 @@ extern struct line *inp_readall(FILE *fp, char *dir_name, bool comfile, bool int
 extern FILE *inp_pathopen(char *name, char *mode);
 extern char *search_identifier(char *str, const char *identifier, char *str_begin);
 extern void mc_free(void);
+void eval_seed_opt(struct line *deck);
 
 extern char** circarray;
 
