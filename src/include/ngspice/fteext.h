@@ -218,6 +218,7 @@ extern char *search_identifier(char *str, const char *identifier, char *str_begi
 extern struct line *line_nconc(struct line *head, struct line *rest);
 extern struct line *line_reverse(struct line *head);
 extern void mc_free(void);
+void eval_seed_opt(struct line *deck);
 
 extern char** circarray;
 
