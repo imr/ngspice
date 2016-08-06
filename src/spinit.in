@@ -2,7 +2,7 @@
 alias exit quit
 alias acct rusage all
 set x11lineararcs
-*set rndseed=12
+*setseed 12
 ** ascii rawfile **
 *set filetype=ascii
 ** frontend debug output **
