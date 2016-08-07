@@ -6,7 +6,7 @@
 * A simple BSIM3 inverter R.O. serves as an MC example wtihout need for a library.
 .control
 begin
-  let mc_runs = 100             $ number of runs for monte carlo
+  let mc_runs = 30                $ number of runs for monte carlo
   let run = 0                     $ number of actual run
   set curplot = new               $ create a new plot
   set curplottitle = "Transient outputs"
@@ -29,7 +29,8 @@ begin
 
   echo source the input file
 * Path of your circuit file and library file here
-  set sourcepath = ( D:\Spice_general\tests\lib-test\jts\ D:\Spice_general\tests\lib-test\ts14\ D:\Spice_general\tests\lib-test\x-fab\orig\xh018\lpmos )
+* set sourcepath = ( D:\Spice_general\tests\lib-test\jts\ D:\Spice_general\tests\lib-test\ts14\ D:\Spice_general\tests\lib-test\x-fab\orig\xh018\lpmos )
+  set sourcepath = ( D:\Spice_general\ngspice\examples\Monte_Carlo )
 * source with file name of your circuit file
   source mc_ring_circ.net
 
@@ -118,9 +119,17 @@ if $?batchmode
   rusage
   quit
 else
-  plot {$plot_out}.vout0          $ just plot the tran output with nominal parameters
+  if $?sharedmode
+    gnuplot np_pl1 {$plot_out}.vout0   $ just plot the tran output with nominal parameters    
+  else
+    plot {$plot_out}.vout0          $ just plot the tran output with nominal parameters
+  end
   setplot $plot_fft
-  plot db(mag(ally)) xlimit 0 1G ylimit -80 10
+  if $?sharedmode
+    gnuplot np_pl2 db(mag(ally)) xlimit 0 1G ylimit -80 10
+  else
+    plot db(mag(ally)) xlimit 0 1G ylimit -80 10
+  end
 *
 * create a histogram from vector maxffts
   setplot $max_fft                $ make 'max_fft' the active plot
@@ -152,7 +161,11 @@ else
   * plot the histogram
   set plotstyle=combplot
   let count = yvec - 1             $ subtract 1 because we started with unitvec containing ones
-  plot count vs osc_frequ
+  if $?sharedmode
+    gnuplot np_pl3 count vs osc_frequ
+  else
+    plot count vs osc_frequ
+  end
 * calculate jitter
   let diff40 = (vecmax(halfffts) - vecmin(halfffts))*1e-6
   echo
