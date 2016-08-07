@@ -171,7 +171,7 @@ else
   * put data into the correct bins
   let run = 0
   dowhile run < mc_runs
-    set run = "$&run"             $ create a variable from the vector
+    set run = $&run               $ create a variable from the vector
     let val = maxffts[{$run}]
     let part = 0
     * Check if val fits into a bin. If yes, raise bin by 1
