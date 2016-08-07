@@ -587,6 +587,10 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     cp_vset("rndseed", CP_NUM, &ii);
     com_sseed(NULL);
 
+    /* set a boolean variable to be used in .control sections */
+    bool sm = TRUE;
+    cp_vset("sharedmode", CP_BOOL, &sm);
+
     /*parameter fetcher, used in show, alter, altermod */
     if_getparam = spif_getparam_special;
 
