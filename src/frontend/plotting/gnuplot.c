@@ -232,16 +232,21 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         }
     }
     fprintf(file, "\n");
-    fprintf(file, "set terminal push\n");
-    if (terminal_type == 1) {
-        fprintf(file, "set terminal postscript eps color noenhanced\n");
-        fprintf(file, "set out \'%s.eps\'\n", filename);
-    } else {
-        fprintf(file, "set terminal png noenhanced\n");
-        fprintf(file, "set out \'%s.png\'\n", filename);
+
+    /* do not print an eps or png file if filename start with 'np_' */
+    if (!ciprefix("np_", filename)) {
+        fprintf(file, "set terminal push\n");
+        if (terminal_type == 1) {
+            fprintf(file, "set terminal postscript eps color noenhanced\n");
+            fprintf(file, "set out \'%s.eps\'\n", filename);
+        }
+        else {
+            fprintf(file, "set terminal png noenhanced\n");
+            fprintf(file, "set out \'%s.png\'\n", filename);
+        }
+        fprintf(file, "replot\n");
+        fprintf(file, "set term pop\n");
     }
-    fprintf(file, "replot\n");
-    fprintf(file, "set term pop\n");
 
     fprintf(file, "replot\n");
 
