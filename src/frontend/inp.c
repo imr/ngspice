@@ -1544,19 +1544,39 @@ cktislinear(CKTcircuit *ckt, struct line *deck)
 char **circarray;
 
 
+/* called by int ngSpice_Circ(): copy line by line to circarray, if line == NULL
+   (sent after last entry), then finish.
+   called by com_circbyline(): lines are entered manually. If a circuit is entered,
+   the first line is a title line. The entry will be finished by entering .end.
+   Circuit parsing is then started automatically.
+   If a script is to be generated, start with *ng_script, followed by .control
+   and finished by .endc */
 void
 create_circbyline(char *line)
 {
     static int linec = 0;
     static int memlen = 256;
+    static bool is_script = FALSE;
     FILE *fp = NULL;
+
+    if (line && (linec == 0))
+        is_script = ciprefix("*ng_script", line);
     if (!circarray)
         circarray = TMALLOC(char*, memlen);
     circarray[linec++] = line;
+    if (line == NULL) {
+        inp_spsource(fp, is_script, "", TRUE);
+        is_script = FALSE;
+        linec = 0;
+        return;
+    }
+
     if (linec < memlen) {
-        if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4]))) {
+        if ((is_script && ciprefix(".endc", line)) ||
+           (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4])))) {
             circarray[linec] = NULL;
-            inp_spsource(fp, FALSE, "", TRUE);
+            inp_spsource(fp, is_script, "", TRUE);
+            is_script = FALSE;
             linec = 0;
         }
     }
