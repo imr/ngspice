@@ -774,6 +774,7 @@ int ngSpice_Circ(char** circa){
             newline = copy(circa[i]);
             create_circbyline(newline);
         }
+        create_circbyline(NULL);
         return 0;
     }
     /* upon error */
