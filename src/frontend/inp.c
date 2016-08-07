@@ -352,6 +352,9 @@ eval_seed_opt(struct line *deck)
         if (*line == '*')
             continue;
         if (ciprefix(".option", line) || ciprefix("option", line)) {
+            /* option seedinfo */
+            if (strstr(line, "seedinfo"))
+                setseedinfo();
             char *begtok = strstr(line, "seed=");
             if (begtok)
                 begtok = &begtok[5]; /*skip seed=*/
@@ -359,7 +362,7 @@ eval_seed_opt(struct line *deck)
                 if (has_seed)
                     fprintf(cp_err, "Warning: Multiple 'option seed=val|random' found!\n");
                 char *token = gettok(&begtok);
-                /* option seed=random */
+                /* option seed=random [seed='random'] */
                 if (eq(token, "random") || eq(token, "{random}")) {
                     time_t acttime = time(NULL);
                     /* get random value from time in seconds since 1.1.1970 */
