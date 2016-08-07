@@ -38,7 +38,7 @@
   let part = 0
   dowhile part < no_buck
     let value = bucket[part] - 1
-    set value = "$&value"
+    set value = $&value
 * print the buckets' contents
     echo $value                                
     let part = part + 1	

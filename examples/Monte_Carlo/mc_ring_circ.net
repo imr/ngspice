@@ -4,7 +4,7 @@ Perform Monte Carlo simulation in ngspice
 * Tested with 3 different commercial HSPICE libraries from 2 vendors.
 * To be started with script MC_ring_ts.sp
 
-.options noacct
+.options noacct seedinfo
 
 vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
 vdd dd 0 dc 3.3
