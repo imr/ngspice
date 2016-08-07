@@ -3,6 +3,7 @@
 
 #include "ngspice/wordlist.h"
 extern void com_sseed(wordlist *wl);
+extern void setseedinfo(void);
 
 /* initialize random number generators */
 extern void initw(void);
