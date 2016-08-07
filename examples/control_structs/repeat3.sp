@@ -140,7 +140,7 @@ Test sequences for ngspice control structures
   label starthe 
   echo start $loop
   let loop = $loop + 1  $ expression needs vector at lhs
-  set loop = "$&loop"   $ convert vector contents to variable
+  set loop = $&loop     $ convert vector contents to variable
   if $loop < 3
     goto starthe
   end  
