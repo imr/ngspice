@@ -6,6 +6,7 @@
 
 #include "numpaif.h"
 #include "ngspice/hash.h"
+#include "ngspice/inpdefs.h"
 
 /***** numparam internals ********/
 
@@ -35,6 +36,7 @@ typedef struct entry_s {
     double vl;                  /* float value if defined */
     int  ivl;                   /* int value or string buffer index */
     char *sbbase;               /* string buffer base address if any */
+    struct nscope *levelinfo;
 } entry_t;
 
 
@@ -66,5 +68,5 @@ bool nupa_subcktcall(dico_t *, const char *s, const char *x,
         char *inst_name);
 void nupa_subcktexit(dico_t *);
 entry_t *entrynb(dico_t *dico, char *s);
-entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op);
+entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op, struct nscope *level);
 void del_attrib(void *);
