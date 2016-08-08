@@ -236,7 +236,7 @@ inp_subcktexpand(struct line *deck) {
         /* get the subckt names from the deck */
         for (c = deck; c; c = c->li_next)    /* first Numparam pass */
             if (ciprefix(".subckt", c->li_line))
-                nupa_scan(c->li_line, c->li_linenum, TRUE);
+                nupa_scan(c->li_line, c->li_linenum, TRUE, c->level);
         /* now copy instances */
         for (c = deck; c; c = c->li_next)  /* first Numparam pass */
             c->li_line = nupa_copy(c->li_line, c->li_linenum);
