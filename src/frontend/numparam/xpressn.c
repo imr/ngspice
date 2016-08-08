@@ -243,7 +243,7 @@ message(dico_t *dico, const char *fmt, ...)
 void
 initdico(dico_t *dico)
 {
-    int asize = 10;           /* default allocation depth of the synbol stack */
+    int asize = NESTINGDEPTH; /* default allocation depth of the synbol stack */
     COMPATMODE_T compat_mode;
 
     spice_dstring_init(&(dico->option));
