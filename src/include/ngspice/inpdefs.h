@@ -16,6 +16,7 @@ Modified: 2000 AlansFixes
 typedef struct INPtables INPtables;
 typedef struct INPmodel INPmodel;
 
+#define NESTINGDEPTH 10
 
 struct INPtab {
     char *t_ent;

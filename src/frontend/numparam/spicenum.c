@@ -480,7 +480,7 @@ nupa_add_param(char *param_name, double value)
 
     htable_p = dico->symbols[dico->stack_depth];
 
-    entry = attrib(dico, htable_p, param_name, 'N');
+    entry = attrib(dico, htable_p, param_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
         entry->tp = NUPA_REAL;
@@ -499,7 +499,7 @@ nupa_add_inst_param(char *param_name, double value)
     if (!(dico->inst_symbols))
         dico->inst_symbols = nghash_init(NGHASH_MIN_SIZE);
 
-    entry = attrib(dico, dico->inst_symbols, param_name, 'N');
+    entry = attrib(dico, dico->inst_symbols, param_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
         entry->tp = NUPA_REAL;
