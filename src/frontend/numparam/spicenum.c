@@ -533,12 +533,12 @@ nupa_done(void)
 
 /* SJB - Scan the line for subcircuits */
 void
-nupa_scan(char *s, int linenum, int is_subckt)
+nupa_scan(char *s, int linenum, int is_subckt, struct nscope *level)
 {
     if (is_subckt)
-        defsubckt(dicoS, s, linenum, 'U');
+        defsubckt(dicoS, s, linenum, 'U', level);
     else
-        defsubckt(dicoS, s, linenum, 'O');
+        defsubckt(dicoS, s, linenum, 'O', level);
 }
 
 
@@ -661,7 +661,7 @@ nupa_add_param(char *param_name, double value)
 
     htable_p = dico->symbols[dico->stack_depth];
 
-    entry = attrib(dico, htable_p, up_name, 'N');
+    entry = attrib(dico, htable_p, up_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
         entry->tp = 'R';
@@ -688,7 +688,7 @@ nupa_add_inst_param(char *param_name, double value)
     if (!(dico->inst_symbols))
         dico->inst_symbols = nghash_init(NGHASH_MIN_SIZE);
 
-    entry = attrib(dico, dico->inst_symbols, up_name, 'N');
+    entry = attrib(dico, dico->inst_symbols, up_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
         entry->tp = 'R';
