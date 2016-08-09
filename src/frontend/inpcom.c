@@ -2329,14 +2329,14 @@ expand_section_ref(struct line *c, char *dir_name)
 {
     char *line = c->li_line;
 
-    char *s, *t, *y;
+    char *s, *s_e, *y;
 
     s = skip_non_ws(line);
     while (isspace_c(*s) || isquote(*s))
         s++;
-    for (t = s; *t && !isspace_c(*t) && !isquote(*t); t++)
+    for (s_e = s; *s_e && !isspace_c(*s_e) && !isquote(*s_e); s_e++)
         ;
-    y = t;
+    y = s_e;
     while (isspace_c(*y) || isquote(*y))
         y++;
 
@@ -2345,15 +2345,15 @@ expand_section_ref(struct line *c, char *dir_name)
 
         struct line *section_def;
         char keep_char1, keep_char2;
-        char *z;
+        char *y_e;
         struct library *lib;
 
-        for (z = y; *z && !isspace_c(*z) && !isquote(*z); z++)
+        for (y_e = y; *y_e && !isspace_c(*y_e) && !isquote(*y_e); y_e++)
             ;
-        keep_char1 = *t;
-        keep_char2 = *z;
-        *t = '\0';
-        *z = '\0';
+        keep_char1 = *s_e;
+        keep_char2 = *y_e;
+        *s_e = '\0';
+        *y_e = '\0';
 
         lib = read_a_lib(s, dir_name);
 
@@ -2414,8 +2414,8 @@ expand_section_ref(struct line *c, char *dir_name)
         }
 
         *line = '*';  /* comment out .lib line */
-        *t = keep_char1;
-        *z = keep_char2;
+        *s_e = keep_char1;
+        *y_e = keep_char2;
     }
 
     return c;
