@@ -3042,10 +3042,9 @@ static char*
 inp_expand_macro_in_str(struct function_env *env, char *str)
 {
     struct function *function;
-    char *c;
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
     char *curr_ptr, *macro_str, *curr_str = NULL;
-    int  num_parens, num_params, i;
+    int  num_params, i;
     char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
     char keep;
 
@@ -3073,20 +3072,24 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
             continue;
 
         /* find the closing paren */
-        num_parens = 1;
-        for (c = open_paren_ptr + 1; *c; c++) {
-            if (*c == '(')
-                num_parens++;
-            if (*c == ')' && --num_parens == 0)
-                break;
-        }
+        {
+            int num_parens = 1;
+            char *c = open_paren_ptr + 1;
 
-        if (num_parens) {
-            fprintf(stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str);
-            controlled_exit(EXIT_FAILURE);
-        }
+            for (; *c; c++) {
+                if (*c == '(')
+                    num_parens++;
+                if (*c == ')' && --num_parens == 0)
+                    break;
+            }
 
-        close_paren_ptr = c;
+            if (num_parens) {
+                fprintf(stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str);
+                controlled_exit(EXIT_FAILURE);
+            }
+
+            close_paren_ptr = c;
+        }
 
         /*
          * if (ciprefix("v(", curr_ptr)) {
