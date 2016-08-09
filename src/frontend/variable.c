@@ -1029,12 +1029,6 @@ var_set_vlist(struct variable *v, struct variable *value)
 void
 cp_remvar_all(void)
 {
-    struct variable *uv1, *uv2;
-
-    cp_usrvars(&uv1, &uv2);
-
     free_struct_variable(variables);
     variables = NULL;
-    free_struct_variable(uv1);
-    free_struct_variable(uv2);
 }
