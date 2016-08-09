@@ -1215,10 +1215,11 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
             char *fcn_b;
 
-            if ((fcn_b = strstr(line, "nand(")) != NULL ||
-                (fcn_b = strstr(line, "and(")) != NULL ||
-                (fcn_b = strstr(line, "nor(")) != NULL ||
-                (fcn_b = strstr(line, "or(")) != NULL)
+            if (((fcn_b = strstr(line, "nand(")) != NULL ||
+                 (fcn_b = strstr(line, "and(")) != NULL ||
+                 (fcn_b = strstr(line, "nor(")) != NULL ||
+                 (fcn_b = strstr(line, "or(")) != NULL) &&
+                isspace_c(fcn_b[-1]))
             {
                 struct line *a_card, *model_card, *next_card;
                 char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
@@ -1227,6 +1228,19 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 char *xy_values2_b, *xy_values1_e, *ctrl_nodes_b, *ctrl_nodes_e;
                 int  xy_count1, xy_count2;
                 bool ok = FALSE;
+
+#ifndef XSPICE
+                fprintf(stderr,
+                        "\n"
+                        "Error: XSPICE is required to run the 'multi-input pwl' option in line %d\n"
+                        "  %s\n"
+                        "\n"
+                        "See manual chapt. 31 for installation instructions\n",
+                        *line_number,
+                        line
+                    );
+                controlled_exit(EXIT_BAD);
+#endif
 
                 do {
                     ref_e = skip_non_ws(line);
