@@ -41,6 +41,11 @@ extern void sh_delete_myvec(void);
 extern void sh_delvecs(void);
 #endif
 
+#ifdef HAS_WINGUI
+#include <signal.h>
+extern RETSIGTYPE sigsegv(void);
+#endif
+
 
 void
 com_quit(wordlist *wl)
@@ -51,6 +56,22 @@ com_quit(wordlist *wl)
         (wl  &&  wl->wl_word  &&  1 == sscanf(wl->wl_word, "%d", &exitcode)) ||
         (wl  &&  wl->wl_word  &&  cieq(wl->wl_word, "noask"))  ||
         !cp_getvar("askquit", CP_BOOL, NULL);
+
+    /* work around a segmentation fault during LONGJMP(jbuf, 1) from
+       signal_handler.c:93 in Windows 10 upon WM_CLOSE:
+       upon seg fault directly go to com_quit via cp_evloop.
+       See winmain.c, WM_CLOSE */
+#ifdef HAS_WINGUI
+#ifdef NGDEBUG
+    /* use standard signalling */
+    signal(SIGSEGV, SIG_DFL);
+#else
+    /* Restore original signal: Allow a comment and graceful shutdown after seg fault.
+       Prevents loop if segfault occurs in com_quit and signal function has been
+       set to cp_evloop */
+    signal(SIGSEGV, (SIGNAL_FUNCTION)sigsegv);
+#endif
+#endif
 
     /* update screen and reset terminal */
     gr_clean();
