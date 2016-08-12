@@ -17,6 +17,7 @@
 #include <assert.h>         // assert macro
 #include "ngspice/stringutil.h" // copy
 #include <io.h>             // _read
+//#include <VersionHelpers.h> // check for OS
 
 #include <errno.h>
 
@@ -94,6 +95,7 @@ static int HistPtr   = 0;              /* History management */
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
+extern int cp_evloop(char *string);
 
 #include "winmain.h"
 
@@ -444,6 +446,12 @@ static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
     case WM_CLOSE:
         /* Put Spice commmand "Quit" to end the program into the text buffer */
         PostSpiceCommand( "quit");
+
+        /* work around a segmentation fault during LONGJMP(jbuf, 1) from
+           signal_handler.c:93 in Windows 10 upon WM_CLOSE:
+           upon seg fault directly go to com_quit via cp_evloop.
+           To avoid potential loop, singnal will be reset in com_quit */
+        signal(SIGSEGV, (void (*)(int))cp_evloop(NULL));
 
         /* If simulation is running, set a breakpoint */ 
         raise (SIGINT);   
