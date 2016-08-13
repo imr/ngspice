@@ -28,6 +28,7 @@ static wordlist *hpattern(char *buf);
 static wordlist *hprefix(char *buf);
 static wordlist *getevent(int num);
 #if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
+static void cp_hprint(int eventhi, int eventlo, bool rev);
 static void freehist(int num);
 #endif
 static char *dohs(char *pat, char *str);
@@ -405,11 +406,13 @@ getevent(int num)
 }
 
 
+#if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
+
 /* Print out history between eventhi and eventlo.
  * This doesn't remember quoting, so 'hodedo' prints as hodedo.
  */
 
-void
+static void
 cp_hprint(int eventhi, int eventlo, bool rev)
 {
     struct histent *hi;
@@ -439,8 +442,6 @@ cp_hprint(int eventhi, int eventlo, bool rev)
     }
 }
 
-
-#if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
 
 /* This just gets rid of the first num entries on the history list, and
  * decrements histlength.

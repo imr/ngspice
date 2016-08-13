@@ -98,7 +98,6 @@ extern char cp_hat;
 extern int cp_maxhistlength;
 extern struct histent *cp_lastone;
 extern void cp_addhistent(int event, wordlist *wlist);
-void cp_hprint(int eventhi, int eventlo, bool rev);
 extern wordlist *cp_histsubst(wordlist *wlist);
 
 /* lexical.c */
