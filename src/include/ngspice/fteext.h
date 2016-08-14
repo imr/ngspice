@@ -279,9 +279,6 @@ extern bool check_autostop(char *what);
 
 /* randnumb.c */
 extern void TausSeed(void);
-/* rnorrexp.c */
-extern void zigset(unsigned long jsrseed);
-
 /* resource.c */
 
 extern void ft_ckspace(void);
