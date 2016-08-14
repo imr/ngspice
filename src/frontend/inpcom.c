@@ -4063,7 +4063,7 @@ b_transformation_wanted(const char *p)
 }
 
 
-static char *
+char *
 search_identifier(char *str, const char *identifier, char *str_begin)
 {
     while ((str = strstr(str, identifier)) != NULL) {

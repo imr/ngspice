@@ -213,6 +213,7 @@ extern void inp_casefix(char *string);
 extern void inp_list(FILE *file, struct line *deck, struct line *extras, int type);
 extern struct line *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile);
 extern FILE *inp_pathopen(char *name, char *mode);
+extern char *search_identifier(char *str, const char *identifier, char *str_begin);
 
 extern char** circarray;
 
