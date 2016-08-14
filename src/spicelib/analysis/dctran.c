@@ -39,7 +39,6 @@ extern struct dbcomm *dbs;
 extern int add_bkpt(void);
 extern int sharedsync(double*, double*, double, double, double, int, int*, int);
 extern int ng_ident;      /* for debugging */
-static double del_before; /* for debugging */
 #endif
 
 #define INIT_STATS() \
