@@ -1,11 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 
-includedir = $(pkgdatadir)/include/ngspice
-
-nodist_include_HEADERS = \
+nodist_pkginclude_HEADERS = \
 	config.h
 
-include_HEADERS = \
+pkginclude_HEADERS = \
 	tclspice.h	\
 	acdefs.h	\
 	bdrydefs.h	\
