@@ -164,27 +164,25 @@ inp_getopts(struct line *deck)
 }
 
 
-/* Extract the option lines from a comfile (spinit, .spiceinit) */
+/* copy the given option line,
+ *   (presumably from a comfile, e.g. spinit or .spiceinit)
+ * substitute '.options' for 'option'
+ * then put it in front of the given 'options' list */
+
 struct line *
-inp_getoptsc(char *in_line, struct line *com_options)
+inp_getoptsc(char *line, struct line *options)
 {
-    struct line *next = NULL;
-    char *line;
+    gettok_nc(&line);           /* skip option */
 
-    /* option -> .options */
-    /* skip option */
-    gettok_nc(&in_line);
-    line = tprintf(".options %s", in_line);
+    struct line *next = TMALLOC(struct line, 1);
 
-    next = TMALLOC(struct line, 1);
-    next->li_line    = line;
+    next->li_line    = tprintf(".options %s", line);
     next->li_linenum = 0;
     next->li_error   = NULL;
     next->li_actual  = NULL;
 
     /* put new line in front */
-    if (com_options)
-        next->li_next = com_options;
+    next->li_next = options;
 
     return next;
 }

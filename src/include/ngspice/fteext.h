@@ -250,7 +250,7 @@ extern bool ft_controldb;
 extern bool ft_asyncdb;
 extern char *ft_setkwords[];
 extern struct line *inp_getopts(struct line *deck);
-extern struct line *inp_getoptsc(char *in_line, struct line *com_options);
+extern struct line *inp_getoptsc(char *line, struct line *options);
 extern bool ft_ngdebug;
 extern bool ft_stricterror;
 
