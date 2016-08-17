@@ -35,8 +35,10 @@ pkginclude_HEADERS = \
 	dvec.h		\
 	elctdefs.h	\
 	enh.h		\
+	enhtypes.h	\
 	evt.h		\
 	evtproto.h	\
+	evttypes.h	\
 	evtudn.h	\
 	ftedbgra.h	\
 	ftedebug.h	\
@@ -98,6 +100,7 @@ pkginclude_HEADERS = \
 	profile.h	\
 	pssdefs.h	\
 	pzdefs.h	\
+	randnumb.h	\
 	sen2defs.h	\
 	sensdefs.h	\
 	sensgen.h	\
@@ -106,6 +109,7 @@ pkginclude_HEADERS = \
 	smpdefs.h	\
 	sperror.h	\
 	spmatrix.h	\
+	stringskip.h	\
 	stringutil.h	\
 	suffix.h	\
 	swec.h		\
