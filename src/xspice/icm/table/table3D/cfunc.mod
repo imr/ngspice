@@ -378,6 +378,7 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         char *cFile, *cThisPtr, *cThisLine, *cThisLinePtr;
         int   isNewline;     /* Boolean indicating we've read a CR or LF */
         long  lFileLen;      /* Length of file */
+        long  lFileRead;     /* Length of file read in */
         long  lIndex;        /* Index into cThisLine array */
         int   lLineCount;    /* Current line number */
         long  lStartPos;     /* Offset of start of current line */
@@ -429,9 +430,11 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
             loc->init_err = 1;
             return;
         }
-        /* read whole file into memory */
-        fread(cFile, (size_t) lFileLen, 1, loc->state->fp); /* Read the entire file into cFile */
+        /* read whole file into cFile */
+        lFileRead = fread(cFile, sizeof(char), lFileLen, loc->state->fp);
         fclose(loc->state->fp);
+        /* Number of chars read may be less than lFileLen, because /r are skipt by 'fread' */
+        cFile[lFileRead] = '\0';
 
         cThisPtr = cFile;
         cThisLinePtr = cThisLine;
@@ -444,12 +447,12 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
             lStartPos = lTotalChars;
 
             while (*cThisPtr) {           /* Read until reaching null char */
-                if (!isNewline) {         /* Haven't read a CR or LF yet */
-                    if (*cThisPtr == '\r' || *cThisPtr == '\n') /* This char IS a CR or LF */
+                if (!isNewline) {         /* Haven't read a LF yet */
+                    if (*cThisPtr == '\n') /* This char IS a LF */
                         isNewline = 1;    /* Set flag */
                 }
 
-                else if (*cThisPtr != '\r' && *cThisPtr != '\n') /* Already found CR or LF */
+                else if (*cThisPtr != '\n') /* Already found LF */
                     break;                /* Done with line */
 
                 cThisLinePtr[lIndex++] = *cThisPtr++; /* Add char to output and increment */
@@ -459,7 +462,7 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
             cThisLinePtr[lIndex] = '\0';       /* Terminate the string */
             lLineCount++;                      /* Increment the line counter */
             /* continue if comment or empty */
-            if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\0') {
+            if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\n') {
                 lLineCount--;   /* we count only real lines */
                 continue;
             }
