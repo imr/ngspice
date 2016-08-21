@@ -50,6 +50,7 @@ struct comm {
 };
 
 #define LOTS        1000
+#define NLOTS       10000
 
 /* The history list. Things get put here after the first (basic) parse.
  * The word list will change later, so be sure to copy it.

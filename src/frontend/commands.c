@@ -496,7 +496,7 @@ struct comm spcp_coms[] = {
       NULL,
       "[-r] [number] : Print command history." } ,
     { "echo", com_echo, FALSE, FALSE,
-      { 1, 1, 1, 1 }, E_DEFHMASK, 0, LOTS,
+      { 1, 1, 1, 1 }, E_DEFHMASK, 0, NLOTS,
       NULL,
       "[stuff ...] : Print stuff." } ,
     { "shell", com_shell, FALSE, TRUE,
