@@ -295,6 +295,22 @@ line_free_x(struct line *deck, bool recurse)
     }
 }
 
+/* reverse the linked list struct line */
+struct line *
+line_reverse(struct line *head)
+{
+    struct line *prev = NULL;
+    struct line *next;
+
+    while (head) {
+        next = head->li_next;
+        head->li_next = prev;
+        prev = head;
+        head = next;
+    }
+
+    return prev;
+}
 
 /* free mc_deck */
 void
@@ -687,17 +703,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (!options && com_options)
                 options = inp_deckcopy(com_options);
             else if (options && com_options) {
-                /* move to end of copy from com_options and add options */
-                struct line *tmp_options = inp_deckcopy(com_options);
-                struct line *new_options = tmp_options;
-                while (tmp_options) {
-                    if (!tmp_options->li_next)
+                /* add a copy from com_options to end of options */
+                struct line *new_options = options;
+                while (options) {
+                    if (!options->li_next)
                         break;
-                    tmp_options = tmp_options->li_next;
+                    options = options->li_next;
                 }
-                tmp_options->li_next = options;
+                options->li_next = inp_deckcopy(com_options);
                 options = new_options;
             }
+            options = line_reverse(options);
 
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
