@@ -7,6 +7,7 @@ d_dlatch
 d_fdiv
 d_inverter
 d_jkff
+d_lut
 d_nand
 d_nor
 d_open_c
