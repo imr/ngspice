@@ -679,21 +679,24 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* handle .if ... .elseif ... .else ... .endif statements. */
             dotifeval(deck);
 
-            /* merge the two option line structs,
-               keep com_options, options is loaded into circuit and freed
-               when circuit is removed */
+            /* merge the two option line structs
+               com_options (comfile == TRUE, filled in from spinit, .spiceinit, and *ng_sript), and
+               options (comfile == FALSE, filled in from circuit with .OPTIONS)
+               into options, thus keeping com_options,
+               options is loaded into circuit and freed when circuit is removed */
             if (!options && com_options)
                 options = inp_deckcopy(com_options);
             else if (options && com_options) {
                 /* move to end of copy from com_options and add options */
                 struct line *tmp_options = inp_deckcopy(com_options);
+                struct line *new_options = tmp_options;
                 while (tmp_options) {
                     if (!tmp_options->li_next)
                         break;
                     tmp_options = tmp_options->li_next;
                 }
                 tmp_options->li_next = options;
-                options = tmp_options;
+                options = new_options;
             }
 
             /* prepare parse trees from 'temper' expressions */
