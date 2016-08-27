@@ -239,6 +239,8 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_jkff\d_jkff-ifspec.c" />
+    <ClCompile Include="icm\digital\d_lut\d_lut-cfunc.c" />
+    <ClCompile Include="icm\digital\d_lut\d_lut-ifspec.c" />
     <ClCompile Include="icm\digital\d_nand\d_nand-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -328,6 +330,8 @@
     <None Include="..\..\src\xspice\icm\digital\d_inverter\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_jkff\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_jkff\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\digital\d_lut\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\digital\d_lut\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_nand\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_nand\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_nor\cfunc.mod" />
