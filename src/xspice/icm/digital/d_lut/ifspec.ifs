@@ -1,0 +1,77 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+
+AUTHORS
+
+    25 Aug 2016     Tim Edwards         efabless inc., San Jose, CA
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    digital d_lut code model.
+
+LICENSE
+
+    This software is in the public domain.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_d_lut
+Spice_Model_Name:      d_lut
+Description:           "digital n-input look-up table gate"
+
+
+PORT_TABLE:
+
+Port_Name:           in                 out
+Description:         "input"            "output"
+Direction:           in                 out
+Default_Type:        d                  d
+Allowed_Types:       [d]                [d]
+Vector:              yes                no
+Vector_Bounds:       [1 -]              -
+Null_Allowed:        no                 no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rise_delay                  fall_delay
+Description:        "rise delay"                "fall delay"
+Data_Type:          real                        real
+Default_Value:      1.0e-9                      1.0e-9
+Limits:             [1e-12 -]                   [1e-12 -]
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     input_load
+Description:        "input load value (F)"
+Data_Type:          real
+Default_Value:      1.0e-12
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     table_values
+Description:        "lookup table values"
+Data_Type:          string
+Default_Value:      "0"
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       no
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "lookup table"
+Data_Type:          pointer
