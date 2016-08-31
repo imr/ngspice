@@ -295,6 +295,23 @@ line_free_x(struct line *deck, bool recurse)
     }
 }
 
+
+/* concatenate two lists, destructively altering the first one */
+struct line *
+line_nconc(struct line *head, struct line *rest)
+{
+    struct line *p = head;
+    if (!rest)
+        return head;
+    if (!head)
+        return rest;
+    while (p->li_next)
+        p = p->li_next;
+    p->li_next = rest;
+    return head;
+}
+
+
 /* reverse the linked list struct line */
 struct line *
 line_reverse(struct line *head)
