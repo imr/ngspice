@@ -293,6 +293,22 @@ line_free_x(struct line *deck, bool recurse)
 }
 
 
+/* concatenate two lists, destructively altering the first one */
+struct line *
+line_nconc(struct line *head, struct line *rest)
+{
+    struct line *p = head;
+    if (!rest)
+        return head;
+    if (!head)
+        return rest;
+    while (p->li_next)
+        p = p->li_next;
+    p->li_next = rest;
+    return head;
+}
+
+
 /* reverse the linked list struct line */
 struct line *
 line_reverse(struct line *head)
@@ -610,20 +626,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                options (comfile == FALSE, filled in from circuit with .OPTIONS)
                into options, thus keeping com_options,
                options is loaded into circuit and freed when circuit is removed */
-            if (!options && com_options)
-                options = inp_deckcopy(com_options);
-            else if (options && com_options) {
-                /* add a copy from com_options to end of options */
-                struct line *new_options = options;
-                while (options) {
-                    if (!options->li_next)
-                        break;
-                    options = options->li_next;
-                }
-                options->li_next = inp_deckcopy(com_options);
-                options = new_options;
-            }
-            options = line_reverse(options);
+            options = line_reverse(line_nconc(options, inp_deckcopy(com_options)));
 
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
