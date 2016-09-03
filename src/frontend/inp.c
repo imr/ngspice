@@ -717,8 +717,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                options (comfile == FALSE, filled in from circuit with .OPTIONS)
                into options, thus keeping com_options,
                options is loaded into circuit and freed when circuit is removed */
-            options = line_nconc(options, inp_deckcopy(com_options));
-            options = line_reverse(options);
+            options = line_nconc(options, line_reverse(inp_deckcopy(com_options)));
 
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
