@@ -56,7 +56,7 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
         else
             converged = spice3_gmin(ckt, firstmode, continuemode, iterlim);
         if (converged == 0) /* If gmin-stepping worked... move out */
-            return (0);
+            return converged;
     }
 
     /* ... otherwise try stepping sources ...
@@ -77,7 +77,7 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
     ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 #endif
 
-    return (converged);
+    return converged;
 }
 
 
@@ -97,17 +97,17 @@ CKTconvTest (CKTcircuit *ckt)
         if (DEVices[i] && DEVices[i]->DEVconvTest && ckt->CKThead[i]) {
             int error = DEVices[i]->DEVconvTest (ckt->CKThead[i], ckt);
             if (error)
-                return (error);
+                return error;
         }
 
         if (ckt->CKTnoncon) {
             /* printf("convTest: device %s failed\n",
              * DEVices[i]->DEVpublic.name); */
-            return (OK);
+            return OK;
         }
     }
 
-    return (OK);
+    return OK;
 }
 
 
@@ -237,7 +237,7 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
 #endif
     }
 
-    return (converged);
+    return converged;
 }
 
 
@@ -312,7 +312,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
                               "gmin stepping failed");
     }
 
-    return (converged);
+    return converged;
 }
 
 
@@ -493,11 +493,11 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
         ckt->CKTcurrentAnalysis = DOING_TRAN;
         SPfrontEnd->IFerrorf (ERR_WARNING,
                               "source stepping failed");
-        return (E_ITERLIM);
+        return E_ITERLIM;
     } else {
         SPfrontEnd->IFerrorf (ERR_INFO,
                               "Source stepping completed");
-        return (0);
+        return 0;
     }
 }
 
@@ -542,7 +542,7 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
             /* gtri - wbk - add convergence problem reporting flags */
             ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 #endif
-            return (converged);
+            return converged;
         }
         SPfrontEnd->IFerrorf (ERR_INFO,
                               "One successful source step");
@@ -557,5 +557,5 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
     ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 #endif
 
-    return (0);
+    return 0;
 }
