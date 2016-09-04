@@ -46,7 +46,7 @@ cx_mag(void *data, short int type, int length, int *newlength, short int *newtyp
     *newtype = VF_REAL;
     if (type == VF_REAL)
         for (i = 0; i < length; i++)
-            d[i] = FTEcabs(dd[i]);
+            d[i] = fabs(dd[i]);
     else
         for (i = 0; i < length; i++)
             d[i] = cmag(cc[i]);

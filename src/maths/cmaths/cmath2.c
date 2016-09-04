@@ -41,8 +41,8 @@ cx_max_local(void *data, short int type, int length)
         int i;
 
         for (i = 0; i < length; i++)
-            if (largest < FTEcabs(dd[i]))
-                largest = FTEcabs(dd[i]);
+            if (largest < fabs(dd[i]))
+                largest = fabs(dd[i]);
     }
     return largest;
 }
@@ -467,7 +467,7 @@ cx_vector(void *data, short int type, int length, int *newlength, short int *new
     NG_IGNORE(length);
 
     if (type == VF_REAL)
-        len = (int)FTEcabs(*dd);
+        len = (int)fabs(*dd);
     else
         len = (int)cmag(*cc);
     if (len == 0)
@@ -494,7 +494,7 @@ cx_unitvec(void *data, short int type, int length, int *newlength, short int *ne
     NG_IGNORE(length);
 
     if (type == VF_REAL)
-        len = (int)FTEcabs(*dd);
+        len = (int)fabs(*dd);
     else
         len = (int)cmag(*cc);
     if (len == 0)
@@ -649,9 +649,9 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
         d = alloc_d(length);
         for (i = 0; i < length; i++) {
-            r1 = (int)floor(FTEcabs(dd1[i]));
+            r1 = (int)floor(fabs(dd1[i]));
             rcheck(r1 > 0, "mod");
-            r2 = (int)floor(FTEcabs(dd2[i]));
+            r2 = (int)floor(fabs(dd2[i]));
             rcheck(r2 > 0, "mod");
             r3 = r1 % r2;
             d[i] = (double) r3;
@@ -672,13 +672,13 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
             } else {
                 c2 = cc2[i];
             }
-            r1 = (int)floor(FTEcabs(realpart(c1)));
+            r1 = (int)floor(fabs(realpart(c1)));
             rcheck(r1 > 0, "mod");
-            r2 = (int)floor(FTEcabs(realpart(c2)));
+            r2 = (int)floor(fabs(realpart(c2)));
             rcheck(r2 > 0, "mod");
-            i1 = (int)floor(FTEcabs(imagpart(c1)));
+            i1 = (int)floor(fabs(imagpart(c1)));
             rcheck(i1 > 0, "mod");
-            i2 = (int)floor(FTEcabs(imagpart(c2)));
+            i2 = (int)floor(fabs(imagpart(c2)));
             rcheck(i2 > 0, "mod");
             r3 = r1 % r2;
             i3 = i1 % i2;

@@ -69,7 +69,6 @@ typedef struct {
 #endif
 
 /* Some defines used mainly in cmath.c. */
-#define FTEcabs(d)  (((d) < 0.0) ? - (d) : (d))
 #define cph(c)    (atan2(imagpart(c), (realpart(c))))
 #define cmag(c)  (hypot(realpart(c), imagpart(c)))
 #define radtodeg(c) (cx_degrees ? ((c) * (180 / M_PI)) : (c))
@@ -82,7 +81,7 @@ typedef struct {
 #define cdiv(r1, i1, r2, i2, r3, i3)            \
 {                           \
     double r, s;                    \
-    if (FTEcabs(r2) > FTEcabs(i2)) {          \
+    if (fabs(r2) > fabs(i2)) {          \
         r = (i2) / (r2);            \
         s = (r2) + r * (i2);            \
         (r3) = ((r1) + r * (i1)) / s;       \
@@ -94,11 +93,6 @@ typedef struct {
         (i3) = (r * (i1) - (r1)) / s;       \
     }                       \
 }
-
-
-
-
-#define DC_ABS(a,b) (fabs(a) + fabs(b))
 
 
 /*
