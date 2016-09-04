@@ -136,7 +136,7 @@ main (int argc, char **argv)
     exit(1);
   }
 
-  if ( (k<0.0?-k:k) >=1.0 ) {
+  if (fabs(k) >= 1.0) {
     fprintf(stderr,"Error: |k| must be less than 1.0\n");
     fflush(stderr);
     exit(1);
