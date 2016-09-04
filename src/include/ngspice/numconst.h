@@ -13,13 +13,6 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 #ifndef ngspice_NUMCONST_H
 #define ngspice_NUMCONST_H
 
-/* Mathematical Constants */
-#ifdef PI
-#undef PI
-#endif
-#define  PI	        3.14159265358979323846264338327950288419716939937511
-#define  TWO_PI		(2.0 * PI)
-#define  ROOT_TWO	1.41421356237309504880168872420969807856967187537694
 
 /* Basic Physical Constants */
 #ifdef CHARGE

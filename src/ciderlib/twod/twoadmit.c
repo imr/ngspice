@@ -78,10 +78,10 @@ NUMD2admittance(TWOdevice *pDevice, double omega, SPcomplex *yd)
     if (SORFailed && AcAnalysisMethod == SOR) {
       AcAnalysisMethod = DIRECT;
       printf("SOR failed at %g Hz, switching to direct-method ac analysis.\n",
-	  omega / (TWO_PI * TNorm) );
+	  omega / (2 * M_PI * TNorm) );
     } else if (SORFailed) {	/* Told to only do SOR, so give up. */
       printf("SOR failed at %g Hz, returning null admittance.\n",
-	  omega / (TWO_PI * TNorm) );
+	  omega / (2 * M_PI * TNorm) );
       CMPLX_ASSIGN_VALUE(*yd, 0.0, 0.0);
       return (AcAnalysisMethod);
     }
@@ -199,10 +199,10 @@ NBJT2admittance(TWOdevice *pDevice, double omega, SPcomplex *yIeVce,
     if (SORFailed && AcAnalysisMethod == SOR) {
       AcAnalysisMethod = DIRECT;
       printf("SOR failed at %g Hz, switching to direct-method ac analysis.\n",
-	  omega / (TWO_PI * TNorm) );
+	  omega / (2 * M_PI * TNorm) );
     } else if (SORFailed) {	/* Told to only do SOR, so give up. */
       printf("SOR failed at %g Hz, returning null admittance.\n",
-	  omega / (TWO_PI * TNorm) );
+	  omega / (2 * M_PI * TNorm) );
       CMPLX_ASSIGN_VALUE(*yIeVce, 0.0, 0.0);
       CMPLX_ASSIGN_VALUE(*yIcVce, 0.0, 0.0);
       CMPLX_ASSIGN_VALUE(*yIeVbe, 0.0, 0.0);
@@ -236,10 +236,10 @@ NBJT2admittance(TWOdevice *pDevice, double omega, SPcomplex *yIeVce,
       if (SORFailed && AcAnalysisMethod == SOR) {
 	AcAnalysisMethod = DIRECT;
 	printf("SOR failed at %g Hz, switching to direct-method ac analysis.\n",
-	    omega / (TWO_PI * TNorm) );
+	    omega / (2 * M_PI * TNorm) );
       } else if (SORFailed) {	/* Told to only do SOR, so give up. */
 	printf("SOR failed at %g Hz, returning null admittance.\n",
-	    omega / (TWO_PI * TNorm) );
+	    omega / (2 * M_PI * TNorm) );
 	CMPLX_ASSIGN_VALUE(*yIeVce, 0.0, 0.0);
 	CMPLX_ASSIGN_VALUE(*yIcVce, 0.0, 0.0);
 	CMPLX_ASSIGN_VALUE(*yIeVbe, 0.0, 0.0);
@@ -390,10 +390,10 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
     if (SORFailed && AcAnalysisMethod == SOR) {
       AcAnalysisMethod = DIRECT;
       printf("SOR failed at %g Hz, switching to direct-method ac analysis.\n",
-	  omega / (TWO_PI * TNorm) );
+	  omega / (2 * M_PI * TNorm) );
     } else if (SORFailed) {	/* Told to only do SOR, so give up. */
       printf("SOR failed at %g Hz, returning null admittance.\n",
-	  omega / (TWO_PI * TNorm) );
+	  omega / (2 * M_PI * TNorm) );
       CMPLX_ASSIGN_VALUE(yAc->yIdVdb, 0.0, 0.0);
       CMPLX_ASSIGN_VALUE(yAc->yIdVsb, 0.0, 0.0);
       CMPLX_ASSIGN_VALUE(yAc->yIdVgb, 0.0, 0.0);
@@ -435,10 +435,10 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
       if (SORFailed && AcAnalysisMethod == SOR) {
 	AcAnalysisMethod = DIRECT;
 	printf("SOR failed at %g Hz, switching to direct-method ac analysis.\n",
-	    omega / (TWO_PI * TNorm) );
+	    omega / (2 * M_PI * TNorm) );
       } else if (SORFailed) {	/* Told to only do SOR, so give up. */
 	printf("SOR failed at %g Hz, returning null admittance.\n",
-	    omega / (TWO_PI * TNorm) );
+	    omega / (2 * M_PI * TNorm) );
 	CMPLX_ASSIGN_VALUE(yAc->yIdVdb, 0.0, 0.0);
 	CMPLX_ASSIGN_VALUE(yAc->yIdVsb, 0.0, 0.0);
 	CMPLX_ASSIGN_VALUE(yAc->yIdVgb, 0.0, 0.0);
@@ -482,10 +482,10 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
 	if (SORFailed && AcAnalysisMethod == SOR) {
 	  AcAnalysisMethod = DIRECT;
 	  printf("SOR failed at %g Hz, switching to direct-method ac analysis.\n",
-	      omega / (TWO_PI * TNorm) );
+	      omega / (2 * M_PI * TNorm) );
 	} else if (SORFailed) {	/* Told to only do SOR, so give up. */
 	  printf("SOR failed at %g Hz, returning null admittance.\n",
-	      omega / (TWO_PI * TNorm) );
+	      omega / (2 * M_PI * TNorm) );
 	  CMPLX_ASSIGN_VALUE(yAc->yIdVdb, 0.0, 0.0);
 	  CMPLX_ASSIGN_VALUE(yAc->yIdVsb, 0.0, 0.0);
 	  CMPLX_ASSIGN_VALUE(yAc->yIdVgb, 0.0, 0.0);
