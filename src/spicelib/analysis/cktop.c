@@ -73,9 +73,8 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
     }
 
 #ifdef XSPICE
-    /* gtri - begin - wbk - add convergence problem reporting flags */
+    /* gtri - wbk - add convergence problem reporting flags */
     ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-    /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
     return (converged);
@@ -233,9 +232,8 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
         SPfrontEnd->IFerrorf (ERR_INFO,
                               "Dynamic gmin stepping completed");
 #ifdef XSPICE
-        /* gtri - begin - wbk - add convergence problem reporting flags */
+        /* gtri - wbk - add convergence problem reporting flags */
         ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-        /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
     }
 
@@ -305,9 +303,8 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
                               "gmin stepping completed");
 
 #ifdef XSPICE
-        /* gtri - begin - wbk - add convergence problem reporting flags */
+        /* gtri - wbk - add convergence problem reporting flags */
         ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-        /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
     } else {
@@ -373,9 +370,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
             fprintf (stderr, "Trying gmin = %12.4E ", ckt->CKTdiagGmin);
 
 #ifdef XSPICE
-            /* gtri - begin - wbk - add convergence problem reporting flags */
+            /* gtri - wbk - add convergence problem reporting flags */
             ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
-            /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
             ckt->CKTnoncon = 1;
@@ -386,9 +382,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
                 SPfrontEnd->IFerrorf (ERR_WARNING,
                                       "gmin step failed");
 #ifdef XSPICE
-                /* gtri - begin - wbk - add convergence problem reporting flags */
+                /* gtri - wbk - add convergence problem reporting flags */
                 ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-                /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
                 break;
             }
@@ -429,9 +424,8 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
                      "Supplies reduced to %8.4f%% ", ckt->CKTsrcFact * 100);
 
 #ifdef XSPICE
-            /* gtri - begin - wbk - add convergence problem reporting flags */
+            /* gtri - wbk - add convergence problem reporting flags */
             ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
-            /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
             iters = ckt->CKTstat->STATnumIter;
@@ -534,9 +528,8 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
     for (i = 0; i <= ckt->CKTnumSrcSteps; i++) {
         ckt->CKTsrcFact = ((double) i) / ((double) ckt->CKTnumSrcSteps);
 #ifdef XSPICE
-        /* gtri - begin - wbk - add convergence problem reporting flags */
+        /* gtri - wbk - add convergence problem reporting flags */
         ckt->enh->conv_debug.last_NIiter_call = MIF_TRUE;
-        /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
         converged = NIiter (ckt, ckt->CKTdcTrcvMaxIter);
         ckt->CKTmode = continuemode;
@@ -546,9 +539,8 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
             SPfrontEnd->IFerrorf (ERR_WARNING,
                                   "source stepping failed");
 #ifdef XSPICE
-            /* gtri - begin - wbk - add convergence problem reporting flags */
+            /* gtri - wbk - add convergence problem reporting flags */
             ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-            /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
             return (converged);
         }
@@ -561,9 +553,8 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
     ckt->CKTsrcFact = 1;
 
 #ifdef XSPICE
-    /* gtri - begin - wbk - add convergence problem reporting flags */
+    /* gtri - wbk - add convergence problem reporting flags */
     ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-    /* gtri - end - wbk - add convergence problem reporting flags */
 #endif
 
     return (0);
