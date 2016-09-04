@@ -1760,7 +1760,7 @@ find_roots(double a1, double a2, double a3, double *x1, double *x2, double *x3)
        if (q != 0.0) {
           t = atan(sqrt((double)-t)/q);
           if (t < 0.0)
-             t += 3.141592654;
+             t += M_PI;
           t /= 3.0;
           x = 2.0 * pow(p, 0.16666667) * cos(t) - a1 / 3.0;
        } else {

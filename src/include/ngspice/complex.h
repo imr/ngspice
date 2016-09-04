@@ -72,8 +72,8 @@ typedef struct {
 #define FTEcabs(d)  (((d) < 0.0) ? - (d) : (d))
 #define cph(c)    (atan2(imagpart(c), (realpart(c))))
 #define cmag(c)  (hypot(realpart(c), imagpart(c)))
-#define radtodeg(c) (cx_degrees ? ((c) / 3.14159265358979323846 * 180) : (c))
-#define degtorad(c) (cx_degrees ? ((c) * 3.14159265358979323846 / 180) : (c))
+#define radtodeg(c) (cx_degrees ? ((c) * (180 / M_PI)) : (c))
+#define degtorad(c) (cx_degrees ? ((c) * (M_PI / 180)) : (c))
 #define rcheck(cond, name)      if (!(cond)) { \
     fprintf(cp_err, "Error: argument out of range for %s\n", name); \
     return (NULL); }

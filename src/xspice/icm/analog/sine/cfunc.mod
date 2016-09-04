@@ -57,8 +57,6 @@ NON-STANDARD FEATURES
 
 /*=== CONSTANTS ========================*/
 
-#define PI 3.14159265358979323846
-
 #define INT1 1
 
 char *allocation_error = "\n**** Error ****\nSINE: Error allocating sine block storage \n";
@@ -216,7 +214,7 @@ cm_sine(ARGS)
         center = (output_hi + output_low) / 2;
 
         *phase = *phase1 + freq*(TIME - T(1));
-        radian = *phase * 2.0 * PI;
+        radian = *phase * 2.0 * M_PI;
 
         OUTPUT(out) = peak * sin(radian) + center;
         PARTIAL(out, cntl_in) = 0;

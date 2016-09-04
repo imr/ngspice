@@ -4,7 +4,6 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 #include "ngspice/ngspice.h"
-#include "ngspice/numconst.h"
 
 #ifndef HAVE_ERFC
 
@@ -12,7 +11,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 double erfc (double x)
 {
     double sqrtPi, n, temp1, xSq, sum1, sum2;
-    sqrtPi = sqrt( PI );
+    sqrtPi = sqrt( M_PI );
     x = ABS( x );
     n = 1.0;
     xSq = 2.0 * x * x;
