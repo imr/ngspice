@@ -674,39 +674,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (ft_ngdebug) {
                 /*debug: print into file*/
                 FILE *fdo = fopen("debug-out2.txt", "w");
-                struct line *t = NULL;
+                struct line *te = NULL;
                 fprintf(fdo, "**************** uncommented deck **************\n\n");
                 /* always print first line */
                 fprintf(fdo, "%6d  %6d  %s\n", deck->li_linenum_orig, deck->li_linenum, deck->li_line);
                 /* here without out-commented lines */
-                for (t = deck->li_next; t; t = t->li_next) {
-                    if (*(t->li_line) == '*')
+                for (te = deck->li_next; te; te = te->li_next) {
+                    if (*(te->li_line) == '*')
                         continue;
-                    fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                    fprintf(fdo, "%6d  %6d  %s\n", te->li_linenum_orig, te->li_linenum, te->li_line);
                 }
                 fprintf(fdo, "\n****************** complete deck ***************\n\n");
                 /* now completely */
-                for (t = deck; t; t = t->li_next)
-                    fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                for (te = deck; te; te = te->li_next)
+                    fprintf(fdo, "%6d  %6d  %s\n", te->li_linenum_orig, te->li_linenum, te->li_line);
                 fclose(fdo);
-            }
-            for (dd = deck; dd; dd = dd->li_next) {
-                /* get csparams and create vectors, being
-                   available in .control section, in plot 'const' */
-                if (ciprefix(".csparam", dd->li_line)) {
-                    wordlist *wlist = NULL;
-                    char *cstoken[3];
-                    int i;
-                    dd->li_line[0] = '*';
-                    s = skip_ws(dd->li_line + 8);
-                    cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
-                    cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
-                    cstoken[2] = gettok(&s);
-                    for (i = 3; --i >= 0;)
-                        wlist = wl_cons(cstoken[i], wlist);
-                    com_let(wlist);
-                    wl_free(wlist);
-                }
             }
 
             /* handle .if ... .elseif ... .else ... .endif statements. */
@@ -816,20 +798,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         if (ft_ngdebug) {
             /*debug: print into file*/
             FILE *fdo = fopen("debug-out3.txt", "w");
-            struct line *t = NULL;
+            struct line *tz = NULL;
             fprintf(fdo, "**************** uncommented deck **************\n\n");
             /* always print first line */
             fprintf(fdo, "%6d  %6d  %s\n", deck->li_linenum_orig, deck->li_linenum, deck->li_line);
             /* here without out-commented lines */
-            for (t = deck->li_next; t; t = t->li_next) {
-                if (*(t->li_line) == '*')
+            for (tz = deck->li_next; tz; tz = tz->li_next) {
+                if (*(tz->li_line) == '*')
                     continue;
-                fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                fprintf(fdo, "%6d  %6d  %s\n", tz->li_linenum_orig, tz->li_linenum, tz->li_line);
             }
             fprintf(fdo, "\n****************** complete deck ***************\n\n");
             /* now completely */
-            for (t = deck; t; t = t->li_next)
-                fprintf(fdo, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            for (tz = deck; tz; tz = tz->li_next)
+                fprintf(fdo, "%6d  %6d  %s\n", tz->li_linenum_orig, tz->li_linenum, tz->li_line);
             fclose(fdo);
         }
 

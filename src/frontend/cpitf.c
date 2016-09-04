@@ -20,6 +20,23 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "completion.h"
 #include "variable.h"
 
+char *predefs[] = {
+	"yes",      "1",
+	"TRUE",     "1",
+	"no",       "0",
+	"FALSE",    "0",
+	"pi",       "3.1415926535897932384626433832795028841971693993751058",
+	"e",        "2.7182818284590452353602874713526624977572470936999595",
+	"c",        "299792458e00",
+	"i",        "(0,1)",
+	"kelvin",   "-273.15",
+	"echarge",  "1.6021766e-19",
+	"boltz",    "1.38065e-23",
+	"planck",   "6.62607e-34"
+};
+
+int szpredefs = NUMELEMS(predefs);
+
 /* Set some standard variables and aliases, etc, and init the ccom stuff.
    Called by fcn main() */
 
@@ -31,21 +48,6 @@ ft_cpinit(void)
     struct comm *c;
     int i;
     FILE *fp;
-
-    static char *predefs[] = {
-        "yes",      "1",
-        "TRUE",     "1",
-        "no",       "0",
-        "FALSE",    "0",
-        "pi",       "3.14159265358979323846",
-        "e",        "2.71828182845904523536",
-        "c",        "2.997925e8",
-        "i",        "0,1",
-        "kelvin",   "-273.15",
-        "echarge",  "1.60219e-19",
-        "boltz",    "1.38062e-23",
-        "planck",   "6.62620e-34"
-    };
 
     static char *udfs[] = {
         "max(x,y)", "(x gt y) * x + (x le y) * y",
@@ -206,7 +208,7 @@ ft_cpinit(void)
         wl3.wl_prev = &wl2;
         wl3.wl_next = NULL;
         wl2.wl_word = "=";
-        for (i = 0; (size_t) i < NUMELEMS(predefs); i += 2) {
+	for (i = 0; (size_t) i < szpredefs; i += 2) {
             wl1.wl_word = predefs[i];
             wl3.wl_word = predefs[i + 1];
             com_let(&wl1);

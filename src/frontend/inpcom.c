@@ -17,6 +17,8 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/dvec.h"
 #include "ngspice/fteinp.h"
 #include "ngspice/compatmode.h"
+#include "cpitf.h"
+#include "com_let.h"
 
 #include <limits.h>
 #include <stdlib.h>
@@ -103,7 +105,7 @@ long dynsubst; /* spicenum.c 221 */
 /* Expression handling with 'temper' parameter required */
 bool expr_w_temper = FALSE;
 
-
+static void add_all_constants_as_params(struct line *cc); /* mhx */
 static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct line *deck, bool cs);
@@ -191,6 +193,18 @@ xx_new_line(struct line *next, char *line, int linenum, int linenum_orig, unsign
     return x;
 }
 
+static void add_all_constants_as_params(struct line *cc) {
+	char buf[4096] = ".param "; char *p = buf;  int i;
+	for (i = 0; i < szpredefs; i += 2) {
+		strcat_s(p, 4096, predefs[i]);     strcat_s(p, 4096, " = ");
+		strcat_s(p, 4096, predefs[i + 1]); strcat_s(p, 4096, " ");
+		if (strlen(p) > 4000) {
+			fprintf(cp_err, "ERROR: not enough space for predefined constants.\n");
+			controlled_exit(EXIT_FAILURE);
+		}
+	}
+	cc->li_next = xx_new_line(cc->li_next, copy(buf), 2, 1, NULL);
+}
 
 static struct library *
 new_lib(void)
@@ -550,6 +564,37 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
         inp_expand_macros_in_deck(NULL, working);
         inp_fix_param_values(working);
 
+	/* 
+	 * mhx: Had to move this section here because it defines extra .param lines, 
+	 *      and this must be done before inp_spsource() moves such lines to a 
+	 *      continguous block at the top of the file.
+	 *      See "all parameter lines should be sequentially ordered and placed at beginning of deck" in inp.c 
+	 */
+	{ 
+		struct line *dd; char *s;
+		for (dd = cc; dd; dd = dd->li_next) {
+			/* get csparams and create vectors, available in the .control section, in plot 'const' */
+			if (ciprefix(".csparam", dd->li_line)) {
+				wordlist *wlist = NULL, *wl = NULL; char *cstoken[3]; int i;
+				s = dd->li_line;
+				/* mhx: Instead of making the original line a comment, we reuse it as a the .param line. */
+				/* 01234567 */
+				/* .csparam */
+				/* .param   */
+				for (i = 1; i <= 5; i++) dd->li_line[i] = dd->li_line[i + 2];
+				dd->li_line[i] = ' '; dd->li_line[i + 1] = ' ';
+				s = dd->li_line + 8;
+				while (isspace((int)*s)) s++;
+				cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
+				cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
+				cstoken[2] = gettok(&s);
+				for (i = 0; i < 3; i++) wl_append_word(&wlist, &wl, cstoken[i]);
+				com_let(wlist);
+				wl_free(wlist);
+			}
+		}
+	}
+
         inp_reorder_params(subckt_w_params, cc);
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
@@ -656,10 +701,10 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     int line_count = 0;
 #endif
     char *new_title = NULL;
-    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
-    int line_number_orig = 1;
-    int cirlinecount = 0; /* length of circarray */
-    static int is_control = 0; /* We are reading from a .control section */
+    int line_number = 2;	/* sjb - renamed to avoid confusion with struct line */
+    int line_number_orig = 2;	/* mhx: this was 1, but we need line 1 to define all constants as .params */
+    int cirlinecount = 0;	/* length of circarray */
+    static int is_control = 0;	/* We are reading from a .control section */
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
 
@@ -1008,7 +1053,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         comfile = TRUE;
 
     if (call_depth == 0 && !comfile) {
-        cc->li_next = xx_new_line(cc->li_next, copy(".global gnd"), 1, 0, NULL);
+        cc->li_next = xx_new_line(cc->li_next, copy(".global gnd"), 1, 0, NULL); /* uses line #0 */
+	add_all_constants_as_params(cc); /* uses up line #1, therefore first line will be 2 */
 
         if (inp_compat_mode == COMPATMODE_ALL ||
             inp_compat_mode == COMPATMODE_HS  ||
@@ -3032,7 +3078,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
  Lerror:
     // fixme, free()
-    fprintf(stderr, "ERROR: faild to parse .func in: %s\n", orig_line);
+    fprintf(stderr, "ERROR: failed to parse .func in: %s\n", orig_line);
     controlled_exit(EXIT_FAILURE);
 }
 
