@@ -135,8 +135,7 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
     CKTnode *n;
 
     ckt->CKTmode = firstmode;
-    SPfrontEnd->IFerrorf (ERR_INFO,
-                          "Starting dynamic gmin stepping");
+    SPfrontEnd->IFerrorf (ERR_INFO, "Starting dynamic gmin stepping");
 
     NumNodes = 0;
     for (n = ckt->CKTnodes; n; n = n->next)
@@ -166,8 +165,7 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
 
         if (converged == 0) {
             ckt->CKTmode = continuemode;
-            SPfrontEnd->IFerrorf (ERR_INFO,
-                                  "One successful gmin step");
+            SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
 
             if (ckt->CKTdiagGmin <= gtarget)
                 break;          /* successfull */
@@ -197,12 +195,10 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
             }
         } else {
             if (factor < 1.00005) {
-                SPfrontEnd->IFerrorf (ERR_WARNING,
-                                      "Last gmin step failed");
+                SPfrontEnd->IFerrorf (ERR_WARNING, "Last gmin step failed");
                 break;          /* failed */
             }
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "Further gmin increment");
+            SPfrontEnd->IFerrorf (ERR_WARNING, "Further gmin increment");
             factor = sqrt (sqrt (factor));
             ckt->CKTdiagGmin = OldGmin / factor;
 
@@ -226,11 +222,9 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
     converged = NIiter (ckt, iterlim);
 
     if (converged != 0) {
-        SPfrontEnd->IFerrorf (ERR_WARNING,
-                              "Dynamic gmin stepping failed");
+        SPfrontEnd->IFerrorf (ERR_WARNING, "Dynamic gmin stepping failed");
     } else {
-        SPfrontEnd->IFerrorf (ERR_INFO,
-                              "Dynamic gmin stepping completed");
+        SPfrontEnd->IFerrorf (ERR_INFO, "Dynamic gmin stepping completed");
 #ifdef XSPICE
         /* gtri - wbk - add convergence problem reporting flags */
         ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
@@ -260,8 +254,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
     int converged, i;
 
     ckt->CKTmode = firstmode;
-    SPfrontEnd->IFerrorf (ERR_INFO,
-                          "Starting gmin stepping");
+    SPfrontEnd->IFerrorf (ERR_INFO, "Starting gmin stepping");
 
     ckt->CKTdiagGmin =
         (ckt->CKTgshunt == 0) ? ckt->CKTgmin :  ckt->CKTgshunt;
@@ -277,16 +270,14 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
 
         if (converged != 0) {
             ckt->CKTdiagGmin = ckt->CKTgshunt;
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "gmin step failed");
+            SPfrontEnd->IFerrorf (ERR_WARNING, "gmin step failed");
             break;
         }
 
         ckt->CKTdiagGmin /= ckt->CKTgminFactor;
         ckt->CKTmode = continuemode;
 
-        SPfrontEnd->IFerrorf (ERR_INFO,
-                              "One successful gmin step");
+        SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
     }
 
     ckt->CKTdiagGmin = ckt->CKTgshunt;
@@ -299,8 +290,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
     converged = NIiter (ckt, iterlim);
 
     if (converged == 0) {
-        SPfrontEnd->IFerrorf (ERR_INFO,
-                              "gmin stepping completed");
+        SPfrontEnd->IFerrorf (ERR_INFO, "gmin stepping completed");
 
 #ifdef XSPICE
         /* gtri - wbk - add convergence problem reporting flags */
@@ -308,8 +298,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
 #endif
 
     } else {
-        SPfrontEnd->IFerrorf (ERR_WARNING,
-                              "gmin stepping failed");
+        SPfrontEnd->IFerrorf (ERR_WARNING, "gmin stepping failed");
     }
 
     return converged;
@@ -338,8 +327,7 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
     NG_IGNORE(iterlim);
 
     ckt->CKTmode = firstmode;
-    SPfrontEnd->IFerrorf (ERR_INFO,
-                          "Starting source stepping");
+    SPfrontEnd->IFerrorf (ERR_INFO, "Starting source stepping");
 
     ckt->CKTsrcFact = 0;
     ConvFact = 0;
@@ -379,8 +367,7 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
             if (converged != 0) {
                 ckt->CKTdiagGmin = ckt->CKTgshunt;
-                SPfrontEnd->IFerrorf (ERR_WARNING,
-                                      "gmin step failed");
+                SPfrontEnd->IFerrorf (ERR_WARNING, "gmin step failed");
 #ifdef XSPICE
                 /* gtri - wbk - add convergence problem reporting flags */
                 ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
@@ -390,8 +377,7 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
             ckt->CKTdiagGmin /= 10;
             ckt->CKTmode = continuemode;
-            SPfrontEnd->IFerrorf (ERR_INFO,
-                                  "One successful gmin step");
+            SPfrontEnd->IFerrorf (ERR_INFO, "One successful gmin step");
         }
         ckt->CKTdiagGmin = ckt->CKTgshunt;
     }
@@ -415,8 +401,7 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
         memcpy(OldCKTstate0, ckt->CKTstate0,
                (size_t) ckt->CKTnumStates * sizeof(double));
 
-        SPfrontEnd->IFerrorf (ERR_INFO,
-                              "One successful source step");
+        SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
         ckt->CKTsrcFact = ConvFact + raise;
 
         do {
@@ -443,8 +428,7 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
                 memcpy(OldCKTstate0, ckt->CKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
 
-                SPfrontEnd->IFerrorf (ERR_INFO,
-                                      "One successful source step");
+                SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
 
                 ckt->CKTsrcFact = ConvFact + raise;
 
@@ -491,12 +475,10 @@ gillespie_src (CKTcircuit *ckt, long int firstmode,
 
     if (ConvFact != 1) {
         ckt->CKTcurrentAnalysis = DOING_TRAN;
-        SPfrontEnd->IFerrorf (ERR_WARNING,
-                              "source stepping failed");
+        SPfrontEnd->IFerrorf (ERR_WARNING, "source stepping failed");
         return E_ITERLIM;
     } else {
-        SPfrontEnd->IFerrorf (ERR_INFO,
-                              "Source stepping completed");
+        SPfrontEnd->IFerrorf (ERR_INFO, "Source stepping completed");
         return 0;
     }
 }
@@ -522,8 +504,7 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
     NG_IGNORE(iterlim);
 
     ckt->CKTmode = firstmode;
-    SPfrontEnd->IFerrorf (ERR_INFO,
-                          "Starting source stepping");
+    SPfrontEnd->IFerrorf (ERR_INFO, "Starting source stepping");
 
     for (i = 0; i <= ckt->CKTnumSrcSteps; i++) {
         ckt->CKTsrcFact = ((double) i) / ((double) ckt->CKTnumSrcSteps);
@@ -536,20 +517,17 @@ spice3_src (CKTcircuit *ckt, long int firstmode,
         if (converged != 0) {
             ckt->CKTsrcFact = 1;
             ckt->CKTcurrentAnalysis = DOING_TRAN;
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "source stepping failed");
+            SPfrontEnd->IFerrorf (ERR_WARNING, "source stepping failed");
 #ifdef XSPICE
             /* gtri - wbk - add convergence problem reporting flags */
             ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
 #endif
             return converged;
         }
-        SPfrontEnd->IFerrorf (ERR_INFO,
-                              "One successful source step");
+        SPfrontEnd->IFerrorf (ERR_INFO, "One successful source step");
     }
 
-    SPfrontEnd->IFerrorf (ERR_INFO,
-                          "Source stepping completed");
+    SPfrontEnd->IFerrorf (ERR_INFO, "Source stepping completed");
     ckt->CKTsrcFact = 1;
 
 #ifdef XSPICE
