@@ -34,14 +34,14 @@ cx_max_local(void *data, short int type, int length)
 	int i;
 
         for (i = 0; i < length; i++)
-            if (cmag(cc[i]) > largest)
+            if (largest < cmag(cc[i]))
                 largest = cmag(cc[i]);
     } else {
 	double *dd = (double *) data;
 	int i;
 
         for (i = 0; i < length; i++)
-            if (FTEcabs(dd[i]) > largest)
+            if (largest < FTEcabs(dd[i]))
                 largest = FTEcabs(dd[i]);
     }
     return largest;
@@ -657,7 +657,8 @@ cx_max(void *data, short int type, int length, int *newlength, short int *newtyp
       *newtype = VF_REAL;
       largest=dd[0];
       for (i = 1; i < length; i++)
-        if (dd[i]>largest) largest=dd[i];
+        if (largest < dd[i])
+            largest = dd[i];
       *d=largest;
       return ((void *) d);
     } else { 
@@ -672,8 +673,10 @@ cx_max(void *data, short int type, int length, int *newlength, short int *newtyp
       largest_real=realpart(*cc);
       largest_complex=imagpart(*cc);
       for (i = 0; i < length; i++) {
-        if (realpart(cc[i])>largest_real) largest_real=realpart(cc[i]);
-        if (imagpart(cc[i])>largest_complex) largest_complex=imagpart(cc[i]);
+        if (largest_real < realpart(cc[i]))
+            largest_real = realpart(cc[i]);
+        if (largest_complex < imagpart(cc[i]))
+            largest_complex = imagpart(cc[i]);
         }
         realpart(*c) = largest_real;
         imagpart(*c) = largest_complex;
@@ -698,7 +701,8 @@ cx_min(void *data, short int type, int length, int *newlength, short int *newtyp
       *newtype = VF_REAL;
       smallest=dd[0];
       for (i = 1; i < length; i++)
-        if (dd[i]<smallest) smallest=dd[i];
+        if (smallest > dd[i])
+            smallest = dd[i];
       *d=smallest;
       return ((void *) d);
     } else { 
@@ -713,8 +717,10 @@ cx_min(void *data, short int type, int length, int *newlength, short int *newtyp
       smallest_real=realpart(*cc);
       smallest_complex=imagpart(*cc);
       for (i = 1; i < length; i++) {
-        if (realpart(cc[i])<smallest_real) smallest_real=realpart(cc[i]);
-        if (imagpart(cc[i])<smallest_complex) smallest_complex=imagpart(cc[i]);
+        if (smallest_real > realpart(cc[i]))
+            smallest_real = realpart(cc[i]);
+        if (smallest_complex > imagpart(cc[i]))
+            smallest_complex = imagpart(cc[i]);
         }
         realpart(*c) = smallest_real;
         imagpart(*c) = smallest_complex;
