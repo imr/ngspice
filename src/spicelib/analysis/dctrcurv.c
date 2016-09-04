@@ -217,9 +217,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     for (;;) {
 
         if (job->TRCVvType[i] == vcode) { /* voltage source */
-            if ((((VSRCinstance*)(job->TRCVvElt[i]))->VSRCdcValue) *
-                SGN(job->TRCVvStep[i]) -
-                SGN(job->TRCVvStep[i]) * job->TRCVvStop[i] >
+            if (SGN(job->TRCVvStep[i]) *
+                (((VSRCinstance*)(job->TRCVvElt[i]))->VSRCdcValue -
+                 job->TRCVvStop[i]) >
                 DBL_EPSILON * 1e+03)
             {
                 i++;
@@ -230,9 +230,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 goto nextstep;
             }
         } else if (job->TRCVvType[i] == icode) { /* current source */
-            if ((((ISRCinstance*)(job->TRCVvElt[i]))->ISRCdcValue) *
-                SGN(job->TRCVvStep[i]) -
-                SGN(job->TRCVvStep[i]) * job->TRCVvStop[i] >
+            if (SGN(job->TRCVvStep[i]) *
+                (((ISRCinstance*)(job->TRCVvElt[i]))->ISRCdcValue -
+                 job->TRCVvStop[i]) >
                 DBL_EPSILON * 1e+03)
             {
                 i++;
@@ -243,9 +243,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 goto nextstep;
             }
         } else if (job->TRCVvType[i] == rcode) { /* resistance */
-            if ((((RESinstance*)(job->TRCVvElt[i]))->RESresist) *
-                SGN(job->TRCVvStep[i]) -
-                SGN(job->TRCVvStep[i]) * job->TRCVvStop[i] >
+            if (SGN(job->TRCVvStep[i]) *
+                (((RESinstance*)(job->TRCVvElt[i]))->RESresist -
+                 job->TRCVvStop[i]) >
                 DBL_EPSILON * 1e+03)
             {
                 i++;
@@ -256,8 +256,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 goto nextstep;
             }
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temp sweep */
-            if (((ckt->CKTtemp) - CONSTCtoK) * SGN(job->TRCVvStep[i]) -
-                SGN(job->TRCVvStep[i]) * job->TRCVvStop[i] >
+            if (SGN(job->TRCVvStep[i]) *
+                ((ckt->CKTtemp - CONSTCtoK) - job->TRCVvStop[i]) >
                 DBL_EPSILON * 1e+03)
             {
                 i++;
