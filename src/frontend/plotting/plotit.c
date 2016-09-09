@@ -454,6 +454,14 @@ plotit(wordlist *wl, char *hcopy, char *devname)
             pfound = TRUE;
         }
     }
+    if (getflag(wl, "noretraceplot")) {
+        if (pfound) {
+            fprintf(cp_err, "Warning: too many plot types given\n");
+        } else {
+            ptype = PLOT_MONOLIN;
+            pfound = TRUE;
+        }
+    }
     if (getflag(wl, "combplot")) {
         if (pfound) {
             fprintf(cp_err, "Warning: too many plot types given\n");
@@ -475,6 +483,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         if (cp_getvar("plotstyle", CP_STRING, buf)) {
             if (eq(buf, "linplot"))
                 ptype = PLOT_LIN;
+            else if (eq(buf, "noretraceplot"))
+                ptype = PLOT_MONOLIN;
             else if (eq(buf, "combplot"))
                 ptype = PLOT_COMB;
             else if (eq(buf, "pointplot"))
