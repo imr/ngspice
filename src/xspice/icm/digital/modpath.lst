@@ -5,6 +5,7 @@ d_buffer
 d_dff
 d_dlatch
 d_fdiv
+d_genlut
 d_inverter
 d_jkff
 d_lut
