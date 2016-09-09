@@ -20,7 +20,7 @@ enum dvec_flags {
 
 /* Plot types. */
 typedef enum {
-    PLOT_LIN, PLOT_COMB, PLOT_POINT
+    PLOT_LIN, PLOT_COMB, PLOT_POINT, PLOT_MONOLIN
 } PLOTTYPE;
 
 

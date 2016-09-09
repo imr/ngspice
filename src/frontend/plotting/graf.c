@@ -267,7 +267,7 @@ gr_point(struct dvec *dv,
     switch (currentgraph->plottype) {
         double    *tics;
     case PLOT_LIN:
-
+    case PLOT_MONOLIN:
         /* If it's a linear plot, ignore first point since we don't
            want to connect with oldx and oldy. */
         if (np)
