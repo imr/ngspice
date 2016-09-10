@@ -252,6 +252,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     (void) fclose(file);
 
     /* Write out the data and setup arrays */
+    bool mono = (plottype == PLOT_MONOLIN);
     dir = 0;
     prev_xval = NAN;
     for (i = 0; i < scale->v_length; i++) {
@@ -264,7 +265,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             yval = isreal(v) ?
                    v->v_realdata[i] : realpart(v->v_compdata[i]);
 
-            if (i > 0 && scale->v_plot && scale->v_plot->pl_scale == scale) {
+            if (i > 0 && (mono || (scale->v_plot && scale->v_plot->pl_scale == scale))) {
                 if (dir * (xval - prev_xval) < 0) {
                     /* direction reversal, start a new graph */
                     fprintf(file_data, "\n");
