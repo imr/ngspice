@@ -118,12 +118,12 @@ cx_uminus(void *data, short int type, int length, int *newlength, short int *new
 }
 
 
-/* random integers drawn from a uniform distribution 
-   *data in: integer numbers, their absolut values are used, 
-       maximum is RAND_MAX (32767) 
-   *data out: random integers in interval [0, data[i][ 
-       standard library function rand() is used
-*/
+/* random integers drawn from a uniform distribution
+ *   data in: integer numbers, their absolut values are used,
+ *            maximum is RAND_MAX (32767)
+ *   data out: random integers in interval [0, data[i][
+ *             standard library function rand() is used
+ */
 void *
 cx_rnd(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -160,9 +160,9 @@ cx_rnd(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
-/* random numbers drawn from a uniform distribution 
-   *data out: random numbers in interval [-1, 1[ 
-*/
+/* random numbers drawn from a uniform distribution
+ *   data out: random numbers in interval [-1, 1[
+ */
 void *
 cx_sunif(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -194,11 +194,11 @@ cx_sunif(void *data, short int type, int length, int *newlength, short int *newt
     }
 }
 
-/* random numbers drawn from a poisson distribution 
-   *data in:  lambda
-   *data out: random integers according to poisson distribution, 
-       with lambda given by each vector element 
-*/
+/* random numbers drawn from a poisson distribution
+ *   data in:  lambda
+ *   data out: random integers according to poisson distribution,
+ *             with lambda given by each vector element
+ */
 void *
 cx_poisson(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -232,11 +232,11 @@ cx_poisson(void *data, short int type, int length, int *newlength, short int *ne
     }
 }
 
-/* random numbers drawn from an exponential distribution 
-   *data in:  Mean values
-   *data out: exponentially distributed random numbers, 
-       with mean given by each vector element 
-*/
+/* random numbers drawn from an exponential distribution
+ *   data in:  Mean values
+ *   data out: exponentially distributed random numbers,
+ *             with mean given by each vector element
+ */
 void *
 cx_exponential(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -308,10 +308,11 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
 
 
 /* Compute the avg of a vector.
-   Created by A.M.Roldan 2005-05-21  */
+ * Created by A.M.Roldan 2005-05-21
+ */
    
-void 
-*cx_avg(void *data, short int type, int length, int *newlength, short int *newtype)
+void *
+cx_avg(void *data, short int type, int length, int *newlength, short int *newtype)
 {
     double sum_real = 0.0, sum_imag = 0.0;
     int i;
@@ -575,10 +576,10 @@ cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int
             } else {
                 c2 = cc2[i];
             }
-            realpart(c[i]) = realpart(c1) * realpart(c2)
-                - imagpart(c1) * imagpart(c2);
-            imagpart(c[i]) = imagpart(c1) * realpart(c2)
-                + realpart(c1) * imagpart(c2);
+            realpart(c[i]) =
+                realpart(c1) * realpart(c2) - imagpart(c1) * imagpart(c2);
+            imagpart(c[i]) =
+                imagpart(c1) * realpart(c2) + realpart(c1) * imagpart(c2);
         }
         return ((void *) c);
     }
@@ -764,7 +765,7 @@ cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
       imagpart(c[length-1])=imagpart(cc[length-1])-imagpart(cc[length-2]);
       
       
-      for (i = 1; i < (length-1); i++) {
+      for (i = 1; i < length - 1; i++) {
         realpart(c[i])=realpart(cc[i+1])-realpart(cc[i-1]);
         imagpart(c[i])=imagpart(cc[i+1])-imagpart(cc[i-1]);
 
