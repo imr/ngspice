@@ -272,7 +272,7 @@ gr_point(struct dvec *dv,
            want to connect with oldx and oldy. */
         if (np)
             DevDrawLine(fromx, fromy, tox, toy);
-        if ((tics = (double *) currentgraph->ticdata) != NULL) {
+        if ((tics = currentgraph->ticdata) != NULL) {
             for (; *tics < HUGE; tics++)
                 if (*tics == (double) np) {
                     DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
