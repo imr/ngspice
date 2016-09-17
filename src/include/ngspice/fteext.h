@@ -88,6 +88,7 @@ extern void *cx_sgauss(void *, short int , int , int *, short int *);
 extern void *cx_poisson(void *, short int , int , int *, short int *);
 extern void *cx_exponential(void *, short int , int , int *, short int *);
 extern void *cx_mean(void *, short int , int , int *, short int *);
+extern void *cx_stddev(void *, short int , int , int *, short int *);
 extern void *cx_length(void *, short int , int , int *, short int *);
 extern void *cx_vector(void *, short int , int , int *, short int *);
 extern void *cx_unitvec(void *, short int , int , int *, short int *);

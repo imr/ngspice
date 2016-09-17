@@ -395,6 +395,47 @@ cx_mean(void *data, short int type, int length, int *newlength, short int *newty
 }
 
 
+/* Compute the standard deviation of all elements of a vector. */
+
+void *
+cx_stddev(void *data, short int type, int length, int *newlength, short int *newtype)
+{
+    *newlength = 1;
+    rcheck(length > 1, "stddev");
+    if (type == VF_REAL) {
+        double *mean = (double *)cx_mean(data, type, length, newlength, newtype);
+        double *d, sum = 0.;
+        double *dd = (double *)data;
+        int i;
+
+        d = alloc_d(1);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++)
+            sum += (dd[i] - *mean) * (dd[i] - *mean);
+        *d = sqrt(sum / (length - 1));
+        tfree(mean);
+        return ((void *)d);
+    }
+    else {
+        ngcomplex_t *cmean = (ngcomplex_t *)cx_mean(data, type, length, newlength, newtype);
+        double *d, sum = 0., a, b;
+        ngcomplex_t *cc = (ngcomplex_t *)data;
+        int i;
+
+        d = alloc_d(1);
+        *newtype = VF_REAL;
+        for (i = 0; i < length; i++) {
+            a = realpart(cc[i]) - realpart(*cmean);
+            b = imagpart(cc[i]) - imagpart(*cmean);
+            sum += a * a + b * b;
+        }
+        *d = sqrt(sum / (length - 1));
+        tfree(cmean);
+        return ((void *)d);
+    }
+}
+
+
 void *
 cx_length(void *data, short int type, int length, int *newlength, short int *newtype)
 {
