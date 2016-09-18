@@ -202,8 +202,6 @@ cx_sunif(void *data, short int type, int length, int *newlength, short int *newt
 void *
 cx_poisson(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    NG_IGNORE(data);
-
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
@@ -240,8 +238,6 @@ cx_poisson(void *data, short int type, int length, int *newlength, short int *ne
 void *
 cx_exponential(void *data, short int type, int length, int *newlength, short int *newtype)
 {
-    NG_IGNORE(data);
-
     *newlength = length;
     checkseed();
     if (type == VF_COMPLEX) {
