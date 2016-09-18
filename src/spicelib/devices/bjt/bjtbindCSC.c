@@ -58,6 +58,12 @@ BJTbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(BJTbasePrimeBasePrimePtr, BJTbasePrimeBasePrimeBinding, BJTbasePrimeNode, BJTbasePrimeNode);
             CREATE_KLU_BINDING_TABLE(BJTemitPrimeEmitPrimePtr, BJTemitPrimeEmitPrimeBinding, BJTemitPrimeNode, BJTemitPrimeNode);
             CREATE_KLU_BINDING_TABLE(BJTsubstSubstPtr, BJTsubstSubstBinding, BJTsubstNode, BJTsubstNode);
+            if (model->BJTsubs == LATERAL)
+            {
+              here->BJTsubstConSubstConPtr = here->BJTbasePrimeBasePrimePtr ;
+            } else {
+              here->BJTsubstConSubstConPtr = here->BJTcolPrimeColPrimePtr ;
+            }
             CREATE_KLU_BINDING_TABLE(BJTsubstConSubstPtr, BJTsubstConSubstBinding, BJTsubstConNode, BJTsubstNode);
             CREATE_KLU_BINDING_TABLE(BJTsubstSubstConPtr, BJTsubstSubstConBinding, BJTsubstNode, BJTsubstConNode);
             CREATE_KLU_BINDING_TABLE(BJTbaseColPrimePtr, BJTbaseColPrimeBinding, BJTbaseNode, BJTcolPrimeNode);
@@ -101,6 +107,12 @@ BJTbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTbasePrimeBasePrimePtr, BJTbasePrimeBasePrimeBinding, BJTbasePrimeNode, BJTbasePrimeNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTemitPrimeEmitPrimePtr, BJTemitPrimeEmitPrimeBinding, BJTemitPrimeNode, BJTemitPrimeNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstSubstPtr, BJTsubstSubstBinding, BJTsubstNode, BJTsubstNode);
+            if (model->BJTsubs == LATERAL)
+            {
+              here->BJTsubstConSubstConPtr = here->BJTbasePrimeBasePrimePtr ;
+            } else {
+              here->BJTsubstConSubstConPtr = here->BJTcolPrimeColPrimePtr ;
+            }
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstConSubstPtr, BJTsubstConSubstBinding, BJTsubstConNode, BJTsubstNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstSubstConPtr, BJTsubstSubstConBinding, BJTsubstNode, BJTsubstConNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTbaseColPrimePtr, BJTbaseColPrimeBinding, BJTbaseNode, BJTcolPrimeNode);
@@ -144,6 +156,12 @@ BJTbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTbasePrimeBasePrimePtr, BJTbasePrimeBasePrimeBinding, BJTbasePrimeNode, BJTbasePrimeNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTemitPrimeEmitPrimePtr, BJTemitPrimeEmitPrimeBinding, BJTemitPrimeNode, BJTemitPrimeNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstSubstPtr, BJTsubstSubstBinding, BJTsubstNode, BJTsubstNode);
+            if (model->BJTsubs == LATERAL)
+            {
+              here->BJTsubstConSubstConPtr = here->BJTbasePrimeBasePrimePtr ;
+            } else {
+              here->BJTsubstConSubstConPtr = here->BJTcolPrimeColPrimePtr ;
+            }
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstConSubstPtr, BJTsubstConSubstBinding, BJTsubstConNode, BJTsubstNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstSubstConPtr, BJTsubstSubstConBinding, BJTsubstNode, BJTsubstConNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTbaseColPrimePtr, BJTbaseColPrimeBinding, BJTbaseNode, BJTcolPrimeNode);
