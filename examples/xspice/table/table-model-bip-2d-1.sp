@@ -16,7 +16,7 @@ vee2 ee 0 0
 *** table model of npn bipolar transistor ***
 * bip qinn from national op-amp CLC409
 abip1 %vd(c e) %id(bint e) %id(c e) biptable1
-.model biptable1 table2d (offset=0.0 gain=0.955 order=2 file="qinn-clc409-2d-1.table")
+.model biptable1 table2d (offset=0.0 gain=1 order=2 file="qinn-clc409-2d-1.table")
 * CJE=1.632E-13
 Cje b e 1.632E-13
 * CJC=1.720E-13
