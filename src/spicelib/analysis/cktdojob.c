@@ -112,6 +112,12 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 
     fprintf(stdout, "Doing analysis at TEMP = %f and TNOM = %f\n\n", 
     ckt->CKTtemp - CONSTCtoK, ckt->CKTnomTemp - CONSTCtoK);
+
+    /* call altermod and alter on device and model parameters assembled in
+       devtlist and modtlist (if using temper) because we have a new temperature */
+    if (expr_w_temper)
+        inp_evaluate_temper();
+
     error = 0;
 
     if (reset) {
