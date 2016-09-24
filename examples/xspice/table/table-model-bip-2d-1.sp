@@ -12,11 +12,17 @@ ib2 0 bb 2u
 vce2 cc 0 1
 vee2 ee 0 0
 
+.options temp=1
+
 .subckt tbqnpn c b e
 *** table model of npn bipolar transistor ***
 * bip qinn from national op-amp CLC409
+* table values extracted at nominal temperature of 27°C
+* simple behavioral temperature model
+.param fact = 0.05
+.param tgain = 1. + (TEMPER / 27. - 1.) * {fact}
 abip1 %vd(c e) %id(bint e) %id(c e) biptable1
-.model biptable1 table2d (offset=0.0 gain=1 order=2 file="qinn-clc409-2d-1.table")
+.model biptable1 table2d (offset=0.0 gain={tgain} order=2 file="qinn-clc409-2d-1.table")
 * CJE=1.632E-13
 Cje b e 1.632E-13
 * CJC=1.720E-13
