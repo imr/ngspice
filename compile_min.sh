@@ -53,14 +53,14 @@ if test "$1" = "d"; then
   echo "configuring for 64 bit debug"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-klu --enable-openmp prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-klu --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
