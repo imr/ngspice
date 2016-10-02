@@ -428,6 +428,9 @@
 /* Client-Server via socket. */
 /* #undef IPC_UNIX_SOCKETS */
 
+/* Define if we want KLU linear systems solver */
+#define KLU /**/
+
 /* The NDEV interface */
 /* #undef NDEV */
 
