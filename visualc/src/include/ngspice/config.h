@@ -437,6 +437,10 @@
 /* Do not trigger unwanted traps by default */
 /* #undef NEWTRUNC */
 
+#ifdef SHARED_MODULE
+#define NGSPICEBINDIR "../bin"
+#define NGSPICEDATADIR "../share/ngspice"
+#else
 #ifdef NGDEBUG
 #ifdef CONFIG64
 /* Define the directory for executables */
@@ -460,6 +464,7 @@
 #define NGSPICEBINDIR "C:/Spice/bin"
 /* Define the directory for architecture independent data files */
 #define NGSPICEDATADIR "C:/Spice/share/ngspice"
+#endif
 #endif
 #endif
 
