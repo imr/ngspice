@@ -347,6 +347,9 @@ wl_chop_rest(wordlist *wl)
 wordlist *
 wl_find(const char *string, const wordlist *wl)
 {
+    if (!string)
+        return NULL;
+
     for (; wl; wl = wl->wl_next)
         if (eq(string, wl->wl_word))
             break;
