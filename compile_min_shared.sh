@@ -1,5 +1,5 @@
 #!/bin/bash
-# ngspice build script for MINGW-w64, release version, 32 or 64 bit
+# ngspice build script for TDM MINGW or MINGW-w64, release version of shared ngspice, 32 or 64 bit
 # compile_min.sh
 
 #Procedure:
@@ -9,7 +9,7 @@
 #     (allows to generate either 32 or 64 bit executables by setting flag -m32 or -m64)
 # set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
 # start compiling with
-# './compile_min.sh' or './compile_min.sh 64'
+# './compile_min_shared.sh' or './compile_min_shared.sh 64'
 
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
