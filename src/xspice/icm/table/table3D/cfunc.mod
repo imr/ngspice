@@ -68,6 +68,9 @@ NON-STANDARD FEATURES
 #include <string.h>
 #include <math.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "mada/eno2.h"
 #include "mada/eno3.h"
 
@@ -377,12 +380,12 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         double tmp;
         char *cFile, *cThisPtr, *cThisLine, *cThisLinePtr;
         int   isNewline;     /* Boolean indicating we've read a CR or LF */
-        long  lFileLen;      /* Length of file */
-        long  lFileRead;     /* Length of file read in */
+        size_t lFileLen;      /* Length of file */
+        size_t lFileRead;     /* Length of file read in */
         long  lIndex;        /* Index into cThisLine array */
         int   lLineCount;    /* Current line number */
-        long  lStartPos;     /* Offset of start of current line */
-        long  lTotalChars;   /* Total characters read */
+        size_t lStartPos;     /* Offset of start of current line */
+        size_t lTotalChars;   /* Total characters read */
         int   lTableCount;   /* Number of tables */
         int   interporder;   /* order of interpolation for eno */
 
@@ -408,22 +411,21 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
                 loc->state->fp = fopen(pp, "r");
                 free(pp);
             }
-            if (!loc->state->fp) {
-                cm_message_printf("cannot open file %s", PARAM(file));
-                loc->state->atend = 1;
-                loc->init_err = 1;
-                return;
-            }
+        }
+        struct stat st;
+        if (!loc->state->fp || fstat(fileno(loc->state->fp), &st)) {
+            cm_message_printf("cannot open file %s", PARAM(file));
+            loc->state->atend = 1;
+            loc->init_err = 1;
+            return;
         }
         /* get file length */
-        fseek(loc->state->fp, 0L, SEEK_END);   /* Position to end of file */
-        lFileLen = ftell(loc->state->fp);      /* Get file length */
-        rewind(loc->state->fp);                /* Back to start of file */
+        lFileLen = (size_t) st.st_size;
 
         /* create string to hold the whole file */
-        cFile = calloc((size_t) lFileLen + 1, sizeof(char));
+        cFile = calloc(lFileLen + 1, sizeof(char));
         /* create another string long enough for file manipulation */
-        cThisLine = calloc((size_t) lFileLen + 1, sizeof(char));
+        cThisLine = calloc(lFileLen + 1, sizeof(char));
         if (cFile == NULL || cThisLine == NULL) {
             cm_message_printf("Insufficient memory to read file %s", PARAM(file));
             loc->state->atend = 1;
