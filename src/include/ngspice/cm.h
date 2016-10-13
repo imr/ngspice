@@ -47,6 +47,13 @@ NON-STANDARD FEATURES
 
 #include <math.h>
 
+#if defined(_MSC_VER)
+#include <malloc.h>
+#define fileno _fileno
+#else
+#include <unistd.h>
+#endif
+
 #ifndef M_PI
 #  define M_PI       3.14159265358979323846
 #endif
