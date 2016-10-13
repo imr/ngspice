@@ -4,15 +4,16 @@ alias acct rusage all
 set x11lineararcs
 *set rndseed=12
 ** ascii rawfile **
-set filetype=ascii
+*set filetype=ascii
 ** frontend debug output **
 *set ngdebug
 ** asking after quit **
 *set askquit
 ** set the number of threads in openmp
 ** default (if compiled with --enable-openmp) is: 2
-set num_threads=4
-set interactive
+*set num_threads=4
+*set interactive
+set nomoremode
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
