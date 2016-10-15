@@ -333,10 +333,10 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     with_windows=no
 
     AC_SUBST([STATIC], [-shared])
+    LIB_VERSION="1:1:0"
 
     TCL_PACKAGE_PATH=""
     TCL_LIB_SPEC=""
-
 
 ##########################################################################
 #
@@ -482,11 +482,13 @@ EOF
     fi
 
     AC_SUBST([STATIC], [-shared])
+    LIB_VERSION="3:5:1"
 
 else
     TCL_PACKAGE_PATH=""
     TCL_LIB_SPEC=""
     AC_SUBST([STATIC], [-static])
+    LIB_VERSION=""
 fi
 
 
@@ -499,6 +501,7 @@ AM_CONDITIONAL([TCLCYG], [test "x$has_tclcyg" = xtrue])
 
 AC_SUBST([TCL_PACKAGE_PATH])
 AC_SUBST([TCL_LIB_SPEC])
+AC_SUBST([LIB_VERSION])
 ##################################################################
 #
 #
