@@ -44,6 +44,14 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 # In the following ../configure commands you will find an additional entry to the CFLAGS
 # '-fno-omit-frame-pointer'. This entry compensates for a compiler bug of actual mingw gcc 4.6.1. 
 
+#libtool versioning current:revision:age
+#current The most recent interface number that this library implements.
+#revision The implementation number of the current interface.
+#age The difference between the newest and oldest interfaces that this library implements.
+#In other words, the library implements all the interface numbers in the
+#range from number current - age to current.
+#libtool in msys2 generates a single version number current - age
+
 echo
 if test "$1" = "64"; then
    cd release64-sh
@@ -51,7 +59,7 @@ if test "$1" = "64"; then
   echo "configuring for 64 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s" LIB_VERSION="5:2:1"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi

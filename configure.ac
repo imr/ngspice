@@ -333,7 +333,8 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     with_windows=no
 
     AC_SUBST([STATIC], [-shared])
-    LIB_VERSION="1:1:0"
+
+    LIB_VERSION=$LIB_VERSION
 
     TCL_PACKAGE_PATH=""
     TCL_LIB_SPEC=""
@@ -482,7 +483,7 @@ EOF
     fi
 
     AC_SUBST([STATIC], [-shared])
-    LIB_VERSION="3:5:1"
+    LIB_VERSION=$LIB_VERSION
 
 else
     TCL_PACKAGE_PATH=""
