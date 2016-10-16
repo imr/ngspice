@@ -1,15 +1,19 @@
 #!/bin/bash
-# ngspice build script for TDM MINGW or MINGW-w64, release version of shared ngspice, 32 or 64 bit
-# compile_min.sh
+# ngspice build script for release version of shared ngspice, 32 or 64 bit
+# compile_shared.sh
+# tested with TDM MINGW or MINGW-w64, or LINUX
 
 #Procedure:
-# Install MSYS, plus bison, flex, auto tools, perl, libiconv, libintl
-# Install MINGW-w64, activate OpenMP support
+# Install plus bison, flex, auto tools, perl, libiconv, libintl
+# For Windows: Install MSYS2, MINGW-w64, activate OpenMP support
 #     See either http://mingw-w64.sourceforge.net/ or http://tdm-gcc.tdragon.net/
 #     (allows to generate either 32 or 64 bit executables by setting flag -m32 or -m64)
-# set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
+# msys: set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
+# msys2: set path variable to gcc in msys2
 # start compiling with
-# './compile_min_shared.sh' or './compile_min_shared.sh 64'
+# './compile_shared.sh' or './compile_shared.sh 64'
+
+# LINUX users: remove (or check) entry 'prefix="..." in calls ../configure ... (see below).
 
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
@@ -49,8 +53,9 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 #revision The implementation number of the current interface.
 #age The difference between the newest and oldest interfaces that this library implements.
 #In other words, the library implements all the interface numbers in the
-#range from number current - age to current.
-#libtool in msys2 generates a single version number current - age
+#range from numbers (current - age) to current.
+#libtool in msys2 generates a single version number (current - age)
+#libtool in LINUX generates the numbers as: (current-age).revision.age
 
 echo
 if test "$1" = "64"; then
@@ -59,14 +64,14 @@ if test "$1" = "64"; then
   echo "configuring for 64 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s" LIB_VERSION="5:2:1"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s" LIB_VERSION="1:0:0"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi
   echo "configuring for 32 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared  --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
+  ../configure --with-ngshared  --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s" LIB_VERSION="1:0:0"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
