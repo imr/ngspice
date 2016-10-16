@@ -55,7 +55,7 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 #In other words, the library implements all the interface numbers in the
 #range from numbers (current - age) to current.
 #libtool in msys2 generates a single version number (current - age)
-#libtool in LINUX generates the numbers as: (current-age).revision.age
+#libtool in LINUX generates the numbers as: (current-age).age.revision
 
 echo
 if test "$1" = "64"; then
