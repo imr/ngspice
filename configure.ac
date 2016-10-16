@@ -14,6 +14,17 @@
 # Initialisation of configure
 AC_INIT([ngspice], [26], [http://ngspice.sourceforge.net/bugrep.html])
 
+#libtool versioning for shared libraries current:revision:age
+#current The most recent interface number that this library implements.
+#revision The implementation number of the current interface.
+#age The difference between the newest and oldest interfaces that this library implements.
+#In other words, the library implements all the interface numbers in the
+#range from numbers (current - age) to current.
+#libtool in msys2 generates a single version number (current-age)
+#libtool in LINUX generates the numbers as: (current-age).age.revision
+#LIBRARY_VERSION may be overridden by external LIB_VERSION
+LIBRARY_VERSION="1:0:0"
+
 # Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
 
@@ -305,6 +316,12 @@ else
     dprefix=$prefix
 fi
 
+# external LIB_VERSION ?
+ext_LIB_VERSION=${LIB_VERSION+yes}
+if test "x$ext_LIB_VERSION" != xyes; then
+    LIB_VERSION=$LIBRARY_VERSION
+fi
+
 ##########################################################################
 #
 # ngspice as shared library (ngspice.so or ngspice.dll)
@@ -333,8 +350,6 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     with_windows=no
 
     AC_SUBST([STATIC], [-shared])
-
-    LIB_VERSION=$LIB_VERSION
 
     TCL_PACKAGE_PATH=""
     TCL_LIB_SPEC=""
@@ -483,7 +498,6 @@ EOF
     fi
 
     AC_SUBST([STATIC], [-shared])
-    LIB_VERSION=$LIB_VERSION
 
 else
     TCL_PACKAGE_PATH=""
