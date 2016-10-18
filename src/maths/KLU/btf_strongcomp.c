@@ -11,6 +11,7 @@
  */
 
 #include "ngspice/btf.h"
+#include "ngspice/defines.h"
 #include "btf_internal.h"
 
 #define UNVISITED (-2)      /* Flag [j] = UNVISITED if node j not visited yet */

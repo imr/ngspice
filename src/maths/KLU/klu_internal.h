@@ -10,6 +10,7 @@
 #include "ngspice/klu.h"
 #include "ngspice/btf.h"
 #include "klu_version.h"
+#include "klu_proto.h"
 
 /* ========================================================================== */
 /* make sure debugging and printing is turned off */
