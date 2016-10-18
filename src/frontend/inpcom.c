@@ -3647,8 +3647,8 @@ get_number_terminals(char *c)
             return 0;
         return i - j - 2;
         break;
-    case 'q': /* recognition of 3/4 terminal bjt's needed */
-        /* QXXXXXXX NC NB NE <NS> MNAME <AREA> <OFF> <IC=VBE, VCE> <TEMP=T> */
+    case 'q': /* recognition of 3, 4 or 5 terminal bjt's needed */
+        /* QXXXXXXX NC NB NE <NS> <NT> MNAME <AREA> <OFF> <IC=VBE, VCE> <TEMP=T> */
         /* 12 tokens maximum */
         i = j = 0;
         while ((i < 12) && (*c != '\0')) {
