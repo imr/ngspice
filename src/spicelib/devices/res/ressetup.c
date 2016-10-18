@@ -21,7 +21,9 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
 {
     RESmodel *model = (RESmodel *)inModel;
     RESinstance *here;
-
+#ifdef USE_CUSPICE
+    int i, j, status ;
+#endif
     NG_IGNORE(state);
     NG_IGNORE(ckt);
 
@@ -54,7 +56,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, status ;
+//    int i, j, status ;
 
     /* Counting the instances */
     for (model = (RESmodel *)inModel ; model != NULL ; model = model->RESnextModel)

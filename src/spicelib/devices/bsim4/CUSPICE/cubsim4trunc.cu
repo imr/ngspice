@@ -2,9 +2,9 @@
 Copyright 2014 - NGSPICE Software
 Author: 2014 Francesco Lannutti
 **********/
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
-#include "CUSPICE/cucktterr.cuh"
+#include "cucktterr.cuh"
 #include "bsim4def.h"
 
 extern "C"

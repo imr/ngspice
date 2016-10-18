@@ -2,10 +2,10 @@
 Copyright 2014 - NGSPICE Software
 Author: 2014 Francesco Lannutti
 **********/
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
-#include "CUSPICE/cucktterr.cuh"
-#include "inddefs.h"
+#include "cucktterr.cuh"
+#include "../inddefs.h"
 
 extern "C"
 __global__ void cuINDtrunc_kernel (INDparamGPUstruct, int, double **, double *, double,

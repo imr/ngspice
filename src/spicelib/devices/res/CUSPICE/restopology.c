@@ -25,7 +25,7 @@
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "resdefs.h"
+#include "../resdefs.h"
 #include "ngspice/sperror.h"
 
 #define TopologyMatrixInsert(Ptr, instance_ID, offset, Value, global_ID) \

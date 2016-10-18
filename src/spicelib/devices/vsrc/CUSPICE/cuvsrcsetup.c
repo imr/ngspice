@@ -25,7 +25,7 @@
 
 #include "ngspice/config.h"
 #include "cuda_runtime_api.h"
-#include "vsrcdefs.h"
+#include "../vsrcdefs.h"
 #include "ngspice/CUSPICE/CUSPICE.h"
 
 /* cudaMalloc MACRO to check it for errors --> CUDAMALLOCCHECK(name of pointer, dimension, type, status) */

@@ -25,7 +25,7 @@
 
 #include "ngspice/config.h"
 #include "cuda_runtime_api.h"
-#include "capdefs.h"
+#include "../capdefs.h"
 #include "ngspice/CUSPICE/CUSPICE.h"
 
 int

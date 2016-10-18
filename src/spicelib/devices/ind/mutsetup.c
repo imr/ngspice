@@ -26,7 +26,11 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     MUTmodel *model = (MUTmodel*)inModel;
     MUTinstance *here;
     int ktype;
-
+#ifdef USE_CUSPICE
+    int i, j, status ;
+    INDmodel *indmodel ;
+    INDinstance *indhere ;
+#endif
     NG_IGNORE(states);
 
     /*  loop through all the mutual inductor models */
@@ -71,9 +75,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, status ;
-    INDmodel *indmodel ;
-    INDinstance *indhere ;
+
 
     /* Counting the instances */
     for (model = (MUTmodel *)inModel ; model != NULL ; model = model->MUTnextModel)

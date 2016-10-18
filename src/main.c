@@ -196,7 +196,13 @@ extern int OUTwData(runDesc *,int,IFvalue *,void *), OUTwEnd(runDesc *), OUTendP
 extern int OUTbeginDomain(runDesc *,IFuid,int,IFvalue *);
 extern int OUTendDomain(runDesc *), OUTstopnow(void);
 extern void OUTerror(int,char *,IFuid *);
-extern void OUTerrorf(int, const char *fmt, ...)  __attribute__ ((format (__printf__, 2, 3)));
+
+#ifdef __GNUC__
+extern void OUTerrorf(int, const char *fmt, ...)  __attribute__((format(__printf__, 2, 3)));
+#else
+extern void OUTerrorf(int, const char *fmt, ...);
+#endif
+
 extern int OUTattributes(runDesc *,IFuid,int,IFvalue *);
 
 extern void initw(void);

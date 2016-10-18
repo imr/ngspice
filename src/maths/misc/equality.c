@@ -3,6 +3,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
 #include "ngspice/ngspice.h"
+#include "ngspice/missing_math.h"
 #include <assert.h>
 #include <stdint.h>
 

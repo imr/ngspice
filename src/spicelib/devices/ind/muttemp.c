@@ -23,11 +23,11 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
     MUTinstance *here;
     double ind1, ind2;
 
-    NG_IGNORE(ckt);
-
 #ifdef USE_CUSPICE
     int i, status ;
 #endif
+
+    NG_IGNORE(ckt);
 
     /*  loop through all the mutual inductor models */
     for( ; model != NULL; model = model->MUTnextModel ) {

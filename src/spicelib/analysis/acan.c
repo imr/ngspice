@@ -57,7 +57,9 @@ ACan(CKTcircuit *ckt, int restart)
     IFuid freqUid;
     static runDesc *acPlot = NULL;
     runDesc *plot = NULL;
-
+#ifdef KLU
+    int i ;
+#endif
 
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
@@ -242,7 +244,6 @@ ACan(CKTcircuit *ckt, int restart)
     ckt->CKTcurrentAnalysis = DOING_AC;
 
 #ifdef KLU
-    int i ;
 
     if (ckt->CKTmatrix->CKTkluMODE)
     {

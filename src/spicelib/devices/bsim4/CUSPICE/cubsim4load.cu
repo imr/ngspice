@@ -22,12 +22,12 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
 #include "ngspice/const.h"
 #include "ngspice/macros.h"
 #include "ngspice/CUSPICE/cuniinteg.cuh"
-#include "bsim4def.h"
+#include "../bsim4def.h"
 
 #define MAX_EXPL 2.688117142e+43
 #define MIN_EXPL 3.720075976e-44
@@ -55,6 +55,9 @@
             C = B;                                                            \
         }                                                                     \
     }
+
+/* without this linking fails */
+double CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK ) / CHARGE;
 
 extern "C"
 __device__

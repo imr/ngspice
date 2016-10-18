@@ -97,10 +97,23 @@ Compress (int *Ai, int *Bp, int num_rows, int n_COO)
 int
 CKTsetup(CKTcircuit *ckt)
 {
+    int i;
+    int error;
+
 #ifdef USE_CUSPICE
     int status ;
     cusparseStatus_t cusparseStatus ;
+#endif
 
+#ifdef XSPICE
+ /* gtri - begin - Setup for adding rshunt option resistors */
+    CKTnode *node;
+    int     num_nodes;
+ /* gtri - end - Setup for adding rshunt option resistors */
+#endif
+    SMPmatrix *matrix;
+
+#ifdef USE_CUSPICE
     ckt->total_n_values = 0 ;
     ckt->total_n_Ptr = 0 ;
 
@@ -110,15 +123,7 @@ CKTsetup(CKTcircuit *ckt)
     ckt->total_n_timeSteps = 0 ;
 #endif
 
-    int i;
-    int error;
-#ifdef XSPICE
- /* gtri - begin - Setup for adding rshunt option resistors */
-    CKTnode *node;
-    int     num_nodes;
- /* gtri - end - Setup for adding rshunt option resistors */
-#endif
-    SMPmatrix *matrix;
+
     ckt->CKTnumStates=0;
 
 #ifdef WANT_SENSE2
@@ -168,13 +173,24 @@ CKTsetup(CKTcircuit *ckt)
 #ifdef KLU
     if (ckt->CKTmatrix->CKTkluMODE)
     {
-        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+
 
         int i ;
         int n = SMPmatSize (ckt->CKTmatrix) ;
+        int nz = ckt->CKTmatrix->CKTklunz ;
+#ifdef USE_CUSPICE
+        /* In the DEVsetup the Position Vectors must be assigned and copied to the GPU */
+        int j, k, u, TopologyNNZ ;
+        int uRHS, TopologyNNZRHS ;
+        int ret ;
+        Element *TopologyStruct ;
+        Element *TopologyStructRHS ;
+#endif
+        fprintf (stderr, "Using KLU as Direct Linear Solver\n") ;
+
         ckt->CKTmatrix->CKTkluN = n ;
 
-        int nz = ckt->CKTmatrix->CKTklunz ;
+
 
         ckt->CKTmatrix->CKTkluAp           = TMALLOC (int, n + 1) ;
         ckt->CKTmatrix->CKTkluAi           = TMALLOC (int, nz) ;
@@ -204,12 +220,6 @@ CKTsetup(CKTcircuit *ckt)
 
 #ifdef USE_CUSPICE
         fprintf (stderr, "Using CUSPICE (NGSPICE on CUDA Platforms)\n") ;
-
-        /* In the DEVsetup the Position Vectors must be assigned and copied to the GPU */
-        int j, k, u, TopologyNNZ ;
-        int uRHS, TopologyNNZRHS ;
-        int ret ;
-
 
         /* CKTloadOutput Vector allocation - DIRECTLY in the GPU memory */
 
@@ -272,7 +282,7 @@ CKTsetup(CKTcircuit *ckt)
 
         /* COO format to CSR format Conversion using Quick Sort */
 
-        Element *TopologyStruct ;
+
         TopologyStruct = TMALLOC (Element, TopologyNNZ) ;
 
         for (i = 0 ; i < TopologyNNZ ; i++)
@@ -295,7 +305,7 @@ CKTsetup(CKTcircuit *ckt)
 
         /* COO format to CSR format Conversion for the RHS using Quick Sort */
 
-        Element *TopologyStructRHS ;
+
         TopologyStructRHS = TMALLOC (Element, TopologyNNZRHS) ;
 
         for (i = 0 ; i < TopologyNNZRHS ; i++)

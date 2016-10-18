@@ -25,7 +25,7 @@
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "isrcdefs.h"
+#include "../isrcdefs.h"
 #include "ngspice/sperror.h"
 
 #define TopologyMatrixInsertRHS(offset, instance_ID, offsetRHS, Value, global_ID) \
@@ -36,12 +36,12 @@
 int
 ISRCtopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
 {
-    NG_IGNORE (i) ;
+
 
     ISRCmodel *model = (ISRCmodel *)inModel ;
     ISRCinstance *here ;
     int k ;
-
+    NG_IGNORE (i) ;
     /*  loop through all the voltage source models */
     for ( ; model != NULL ; model = model->ISRCnextModel)
     {

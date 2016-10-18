@@ -22,10 +22,10 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
 #include "ngspice/CUSPICE/cuniinteg.cuh"
-#include "inddefs.h"
+#include "../inddefs.h"
 
 /* cudaMalloc MACRO to check it for errors --> CUDAMALLOCCHECK(name of pointer, dimension, type, status) */
 #define CUDAMALLOCCHECK(a, b, c, d) \

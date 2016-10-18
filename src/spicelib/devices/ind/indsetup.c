@@ -24,7 +24,9 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     INDinstance *here;
     int error;
     CKTnode *tmp;
-
+#ifdef USE_CUSPICE
+    int i, j, k, status ;
+#endif
     /*  loop through all the inductor models */
     for ( ; model != NULL ; model = model->INDnextModel)
     {
@@ -106,7 +108,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, k, status ;
+//    int i, j, k, status ;
 
     /* Counting the instances */
     for (model = (INDmodel *)inModel ; model != NULL ; model = model->INDnextModel)

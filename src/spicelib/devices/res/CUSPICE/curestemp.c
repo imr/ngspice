@@ -25,7 +25,7 @@
 
 #include "ngspice/config.h"
 #include "cuda_runtime_api.h"
-#include "resdefs.h"
+#include "../resdefs.h"
 #include "ngspice/CUSPICE/CUSPICE.h"
 
 /* cudaMemcpy MACRO to check it for errors --> CUDAMEMCPYCHECK(name of pointer, dimension, type, status) */

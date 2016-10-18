@@ -22,9 +22,9 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
-#include "resdefs.h"
+#include "../resdefs.h"
 
 extern "C"
 __global__ void cuRESload_kernel (RESparamGPUstruct, double *, int, int *, double *) ;

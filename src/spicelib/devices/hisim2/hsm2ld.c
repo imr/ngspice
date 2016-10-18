@@ -14,7 +14,7 @@
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
-
+//#pragma optimize( "", off )
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "hsm2def.h"

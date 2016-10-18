@@ -25,7 +25,7 @@
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "inddefs.h"
+#include "../inddefs.h"
 #include "ngspice/sperror.h"
 
 #define TopologyMatrixInsert(Ptr, instance_ID, offset, Value, global_ID) \
@@ -36,13 +36,13 @@
 int
 MUTtopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
 {
-    NG_IGNORE (j) ;
 
     MUTmodel *model = (MUTmodel *)inModel ;
     MUTinstance *here ;
     int k ;
     double *basePtr ;
     basePtr = ckt->CKTmatrix->CKTkluAx ;
+    NG_IGNORE (j) ;
 
     /*  loop through all the mutual inductor models */
     for ( ; model != NULL ; model = model->MUTnextModel)

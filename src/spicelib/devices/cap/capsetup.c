@@ -26,7 +26,9 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
     CAPmodel *model = (CAPmodel*)inModel;
     CAPinstance *here;
-
+#ifdef USE_CUSPICE
+    int i, j, k, status ;
+#endif
     /*  loop through all the capacitor models */
     for( ; model != NULL; model = model->CAPnextModel ) {
 
@@ -122,7 +124,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, k, status ;
+//    int i, j, k, status ;
 
     /* Counting the instances */
     for (model = (CAPmodel *)inModel ; model != NULL ; model = model->CAPnextModel)

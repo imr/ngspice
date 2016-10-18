@@ -48,10 +48,10 @@ CKTload(CKTcircuit *ckt)
 {
 #ifdef USE_CUSPICE
     cusparseStatus_t cusparseStatus ;
-    double alpha, beta ;
+    double alpha=1.0, beta=0.0 ;
     int status ;
-    alpha = 1.0 ;
-    beta = 0.0 ;
+//    alpha = 1.0 ;
+//    beta = 0.0 ;
 #else
     int size ;
 #endif

@@ -22,11 +22,13 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
 #include "ngspice/CUSPICE/cuniinteg.cuh"
-#include "isrcdefs.h"
-
+#include "../isrcdefs.h"
+#ifndef	M_PI
+#  define M_PI       3.14159265358979323846
+#endif
 #ifdef XSPICE_EXP
 /* gtri - begin - wbk - modify for supply ramping option */
 #include "ngspice/cmproto.h"

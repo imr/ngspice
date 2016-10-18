@@ -66,7 +66,9 @@ JOB   *job;
 unsigned int idx, InstCount;
 BSIM4instance **InstArray;
 #endif
-
+#ifdef USE_CUSPICE
+    int i, j, jRHS, l, lRHS, lTimeSteps, status ;
+#endif
     /* Search for a noise analysis request */
     for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
         if(strcmp(job->JOBname,"Noise Analysis")==0) {
@@ -2575,7 +2577,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     }
 
 #ifdef USE_CUSPICE
-    int i, j, jRHS, l, lRHS, lTimeSteps, status ;
+//    int i, j, jRHS, l, lRHS, lTimeSteps, status ;
 
     /* Counting the instances */
     for (model = (BSIM4model *)inModel ; model != NULL ; model = model->BSIM4nextModel)

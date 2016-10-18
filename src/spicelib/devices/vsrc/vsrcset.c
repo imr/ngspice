@@ -25,7 +25,9 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     VSRCinstance *here;
     CKTnode *tmp;
     int error;
-
+#ifdef USE_CUSPICE
+    int i, j, k, status ;
+#endif
     NG_IGNORE(state);
 
     /*  loop through all the voltage source models */
@@ -61,7 +63,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, k, status ;
 
     /* Counting the instances */
     for (model = (VSRCmodel *)inModel ; model != NULL ; model = model->VSRCnextModel)

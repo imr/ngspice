@@ -22,10 +22,10 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#define COMPILED_BY_NVCC
 #include "ngspice/config.h"
 #include "ngspice/CUSPICE/cuniinteg.cuh"
-#include "vsrcdefs.h"
+#include "../vsrcdefs.h"
 
 
 
@@ -47,7 +47,9 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 
 #define TRUE 1
 #define FALSE 0
-
+#ifndef	M_PI
+#  define M_PI       3.14159265358979323846
+#endif
 /* From Bruce Dawson, Comparing floating point numbers,
    http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm
    Original this function is named AlmostEqual2sComplement but we leave it to AlmostEqualUlps
