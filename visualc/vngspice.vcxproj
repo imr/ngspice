@@ -1,49 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="console_debug|Win32">
-      <Configuration>console_debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="console_debug|x64">
       <Configuration>console_debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="console_release_omp|Win32">
-      <Configuration>console_release_omp</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="console_release_omp|x64">
-      <Configuration>console_release_omp</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="console_release|Win32">
-      <Configuration>console_release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="console_release|x64">
       <Configuration>console_release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseOMP|Win32">
-      <Configuration>ReleaseOMP</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseOMP|x64">
-      <Configuration>ReleaseOMP</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -51,81 +19,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}</ProjectGuid>
-    <RootNamespace>vngspice</RootNamespace>
-    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{DC3AC42E-B987-3B9C-212A-2D8F8B42A2FD}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -141,110 +56,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\$(Platform)\</IntDir>
-    <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</PreBuildEventUseInBuild>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateManifest>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Configuration)64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Configuration)64\$(Platform)\</IntDir>
     <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</PreBuildEventUseInBuild>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Configuration)64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">$(Configuration)\$(Platform)\</IntDir>
-    <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">true</PreBuildEventUseInBuild>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">$(Configuration)64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">$(Configuration)64\$(Platform)\</IntDir>
     <PreBuildEventUseInBuild Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">true</PreBuildEventUseInBuild>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">false</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">$(Configuration)\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">$(Configuration)64\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">$(Configuration)64\$(Platform)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">$(Configuration)\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">$(Configuration)64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">$(Configuration)64\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">$(Configuration)\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">$(Configuration)64\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">$(Configuration)64\$(Platform)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">false</LinkIncremental>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">$(ProjectName)_omp</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_d</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">$(ProjectName)_omp_c</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">$(ProjectName)_c</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)64_d</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectName)64</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">$(ProjectName)64_omp</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">$(ProjectName)64_cd</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">$(ProjectName)64_c</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">$(ProjectName)64_omp_c</TargetName>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PreBuildEvent>
-      <Command>del $(Configuration)\$(Platform)\conf.obj</Command>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;XSPICE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <OpenMPSupport>false</OpenMPSupport>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <CompileAsManaged>false</CompileAsManaged>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_d.exe</OutputFile>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
       <Command>del $(Configuration)64\$(Platform)\conf.obj</Command>
@@ -263,23 +96,19 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8\include;$(ProjectDir)..\src\spicelib\devices\bsim4;$(ProjectDir)..\src\spicelib\analysis\CUSPICE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR; __EDG__;NGDEBUG;USE_CUSPICE;KLU;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;nvcuvid.lib;OpenCL.lib;cusparse.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)64_d.exe</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -291,58 +120,13 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\src\maths\KLU\x64\Debug;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8\lib\x64;%(AdditionalLibraryDirectories)%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <OpenMPSupport>false</OpenMPSupport>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-    <PreBuildEvent>
-      <Command>del $(Configuration)\$(Platform)\conf.obj</Command>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Defines>
+      </Defines>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <CustomBuildStep>
@@ -359,13 +143,9 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONFIG64;RELBUILD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)include;$(ProjectDir)..\src\include;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8\include;$(ProjectDir)..\src\spicelib\devices\bsim4;$(ProjectDir)..\src\spicelib\analysis\CUSPICE;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR; __EDG__;CONFIG64;RELBUILD64;USE_CUSPICE;KLU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -373,11 +153,12 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;nvcuvid.lib;OpenCL.lib;cusparse.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)64.exe</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -394,6 +175,8 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\src\maths\KLU\x64\Release;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8\lib\x64;%(AdditionalLibraryDirectories)%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/cgthreads:8 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
       <Command>del $(Configuration)64\$(Platform)\conf.obj</Command>
@@ -401,51 +184,14 @@
     <PreBuildEvent>
       <Message>Custom defined Build: Recompile conf.c with actual date</Message>
     </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
-    <PreBuildEvent>
-      <Command>del $(Configuration)\$(Platform)\conf.obj</Command>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;XSPICE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_cd.exe</OutputFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
+    <CudaLink>
+      <AdditionalOptions>/cgthreads:8 %(AdditionalOptions)</AdditionalOptions>
+    </CudaLink>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Defines>
+      </Defines>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <PreBuildEvent>
@@ -466,10 +212,8 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR; __EDG__;NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -477,7 +221,6 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -494,56 +237,11 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_c.exe</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-    <PreBuildEvent>
-      <Command>del $(Configuration)\$(Platform)\conf.obj</Command>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Defines>
+      </Defines>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <CustomBuildStep>
@@ -560,12 +258,9 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR; __EDG__;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -573,7 +268,6 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -599,225 +293,18 @@
     <PreBuildEvent>
       <Message>Custom defined Build: Recompile conf.c with actual date</Message>
     </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>false</ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_omp.exe</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-    <PreBuildEvent>
-      <Command>del $(Configuration)\$(Platform)\conf.obj</Command>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;USE_OMP;CONFIG64;RELBUILD64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)64_omp.exe</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>4194304</StackReserveSize>
-      <StackCommitSize>16394</StackCommitSize>
-      <OptimizeReferences>
-      </OptimizeReferences>
-      <EnableCOMDATFolding>
-      </EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX64</TargetMachine>
-    </Link>
-    <PreBuildEvent>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_omp_c.exe</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-    <PreBuildEvent>
-      <Command>del $(Configuration)\$(Platform)\conf.obj</Command>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
-    <CustomBuildStep>
-      <Message>
-      </Message>
-      <Command>
-      </Command>
-      <Outputs>
-      </Outputs>
-    </CustomBuildStep>
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\src\maths\poly;$(ProjectDir)..\src\frontend;$(ProjectDir)..\src\spicelib\devices;$(ProjectDir)..\src\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;CONSOLE;CONFIG64;RELBUILD64;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <ExceptionHandling>
-      </ExceptionHandling>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <CompileAs>CompileAsC</CompileAs>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)64_omp_c.exe</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <SubSystem>Console</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>4194304</StackReserveSize>
-      <StackCommitSize>16384</StackCommitSize>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <RandomizedBaseAddress>true</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX64</TargetMachine>
-    </Link>
-    <PreBuildEvent>
-      <Command>del $(Configuration)64\$(Platform)\conf.obj</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Custom defined Build: Recompile conf.c with actual date</Message>
-    </PreBuildEvent>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <Defines>
+      </Defines>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\include\ngspice\1-f-code.h" />
+    <ClInclude Include="..\src\maths\KLU\amd_internal.h" />
+    <ClInclude Include="..\src\maths\KLU\btf_internal.h" />
+    <ClInclude Include="..\src\maths\KLU\klu_internal.h" />
+    <ClInclude Include="..\src\maths\KLU\klu_version.h" />
     <ClInclude Include="..\src\maths\misc\accuracy.h" />
     <ClInclude Include="..\src\include\ngspice\acdefs.h" />
     <ClInclude Include="..\src\frontend\plotting\agraf.h" />
@@ -825,6 +312,7 @@
     <ClInclude Include="..\src\spicelib\analysis\analysis.h" />
     <ClInclude Include="..\src\frontend\arg.h" />
     <ClInclude Include="..\src\frontend\aspice.h" />
+    <ClInclude Include="..\src\spicelib\analysis\CUSPICE\cucktterr.cuh" />
     <ClInclude Include="..\src\spicelib\devices\asrc\asrcdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\asrc\asrcext.h" />
     <ClInclude Include="..\src\spicelib\devices\asrc\asrcinit.h" />
@@ -846,7 +334,6 @@
     <ClInclude Include="..\src\spicelib\devices\bsimsoi\b4soiinit.h" />
     <ClInclude Include="..\src\spicelib\devices\bsimsoi\b4soiitf.h" />
     <ClInclude Include="..\src\frontend\parser\backq.h" />
-    <ClInclude Include="..\src\include\ngspice\bdrydefs.h" />
     <ClInclude Include="..\src\maths\misc\bernoull.h" />
     <ClInclude Include="..\src\spicelib\devices\bjt\bjtdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\bjt\bjtdset.h" />
@@ -916,15 +403,12 @@
     <ClInclude Include="..\src\include\ngspice\cktdefs.h" />
     <ClInclude Include="..\src\frontend\plotting\clip.h" />
     <ClInclude Include="..\src\include\ngspice\cluster.h" />
-    <ClInclude Include="..\src\include\ngspice\cm.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath1.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath2.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath3.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath4.h" />
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
-    <ClInclude Include="..\src\include\ngspice\cmproto.h" />
-    <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
     <ClInclude Include="..\src\frontend\com_ahelp.h" />
     <ClInclude Include="..\src\frontend\com_alias.h" />
     <ClInclude Include="..\src\frontend\com_asciiplot.h" />
@@ -961,7 +445,6 @@
     <ClInclude Include="..\src\frontend\completion.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
     <ClInclude Include="..\src\conf.h" />
-    <ClInclude Include="include\ngspice\config.h" />
     <ClInclude Include="..\src\include\ngspice\const.h" />
     <ClInclude Include="..\src\include\ngspice\contdefs.h" />
     <ClInclude Include="..\src\frontend\control.h" />
@@ -1000,12 +483,7 @@
     <ClInclude Include="..\src\misc\dup2.h" />
     <ClInclude Include="..\src\include\ngspice\dvec.h" />
     <ClInclude Include="..\src\include\ngspice\elctdefs.h" />
-    <ClInclude Include="..\src\include\ngspice\enh.h" />
-    <ClInclude Include="..\src\frontend\error.h" />
     <ClInclude Include="..\src\frontend\evaluate.h" />
-    <ClInclude Include="..\src\include\ngspice\evt.h" />
-    <ClInclude Include="..\src\include\ngspice\evtproto.h" />
-    <ClInclude Include="..\src\include\ngspice\evtudn.h" />
     <ClInclude Include="..\src\include\ngspice\FastNorm3.h" />
     <ClInclude Include="..\src\include\ngspice\fftext.h" />
     <ClInclude Include="..\src\maths\fft\fftlib.h" />
@@ -1042,7 +520,6 @@
     <ClInclude Include="..\src\spicelib\devices\hfet1\hfetext.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet1\hfetinit.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet1\hfetitf.h" />
-    <ClInclude Include="..\src\spicelib\devices\hisim2\hisim.h" />
     <ClInclude Include="..\src\spicelib\devices\hisimhv1\hisimhv.h" />
     <ClInclude Include="..\src\include\ngspice\hlpdefs.h" />
     <ClInclude Include="..\src\frontend\hpgl.h" />
@@ -1079,10 +556,6 @@
     <ClInclude Include="..\src\frontend\parser\input.h" />
     <ClInclude Include="..\src\frontend\interp.h" />
     <ClInclude Include="..\src\maths\poly\interpolate.h" />
-    <ClInclude Include="include\inttypes.h" />
-    <ClInclude Include="..\src\include\ngspice\ipc.h" />
-    <ClInclude Include="..\src\include\ngspice\ipcproto.h" />
-    <ClInclude Include="..\src\include\ngspice\ipctiein.h" />
     <ClInclude Include="..\src\spicelib\devices\isrc\isrcdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\isrc\isrcext.h" />
     <ClInclude Include="..\src\spicelib\devices\isrc\isrcinit.h" />
@@ -1110,7 +583,6 @@
     <ClInclude Include="..\src\include\ngspice\matldefs.h" />
     <ClInclude Include="..\src\maths\fft\matlib.h" />
     <ClInclude Include="..\src\include\ngspice\memory.h" />
-    <ClInclude Include="..\src\misc\mempool.h" />
     <ClInclude Include="..\src\spicelib\devices\mesa\mesadefs.h" />
     <ClInclude Include="..\src\spicelib\devices\mesa\mesaext.h" />
     <ClInclude Include="..\src\spicelib\devices\mesa\mesainit.h" />
@@ -1122,12 +594,6 @@
     <ClInclude Include="..\src\spicelib\devices\mes\mesinit.h" />
     <ClInclude Include="..\src\spicelib\devices\mes\mesitf.h" />
     <ClInclude Include="..\src\include\ngspice\methdefs.h" />
-    <ClInclude Include="..\src\include\ngspice\mif.h" />
-    <ClInclude Include="..\src\include\ngspice\mifcmdat.h" />
-    <ClInclude Include="..\src\include\ngspice\mifdefs.h" />
-    <ClInclude Include="..\src\include\ngspice\mifparse.h" />
-    <ClInclude Include="..\src\include\ngspice\mifproto.h" />
-    <ClInclude Include="..\src\include\ngspice\miftypes.h" />
     <ClInclude Include="..\src\misc\misc_time.h" />
     <ClInclude Include="..\src\frontend\misccoms.h" />
     <ClInclude Include="..\src\frontend\miscvars.h" />
@@ -1157,44 +623,20 @@
     <ClInclude Include="..\src\spicelib\devices\mos9\mos9itf.h" />
     <ClInclude Include="..\src\include\ngspice\multi_line.h" />
     <ClInclude Include="..\src\frontend\mw_coms.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt2\nbjt2def.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt2\nbjt2ext.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt2\nbjt2itf.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtdefs.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtext.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtinit.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtitf.h" />
-    <ClInclude Include="..\src\spicelib\devices\nbjt2\nbt2init.h" />
     <ClInclude Include="..\src\frontend\newcoms.h" />
     <ClInclude Include="..\src\include\ngspice\ngspice.h" />
     <ClInclude Include="..\src\include\ngspice\noisedef.h" />
     <ClInclude Include="..\src\maths\misc\norm.h" />
     <ClInclude Include="..\src\include\ngspice\numcards.h" />
     <ClInclude Include="..\src\include\ngspice\numconst.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd2\numd2def.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd2\numd2ext.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd2\numd2init.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd2\numd2itf.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd\numddefs.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd\numdext.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd\numdinit.h" />
-    <ClInclude Include="..\src\spicelib\devices\numd\numditf.h" />
     <ClInclude Include="..\src\include\ngspice\numenum.h" />
     <ClInclude Include="..\src\include\ngspice\numgen.h" />
     <ClInclude Include="..\src\include\ngspice\numglobs.h" />
-    <ClInclude Include="..\src\spicelib\devices\numos\numosdef.h" />
-    <ClInclude Include="..\src\spicelib\devices\numos\numosext.h" />
-    <ClInclude Include="..\src\spicelib\devices\numos\numosinit.h" />
-    <ClInclude Include="..\src\spicelib\devices\numos\numositf.h" />
     <ClInclude Include="..\src\frontend\numparam\numpaif.h" />
     <ClInclude Include="..\src\frontend\numparam\numparam.h" />
     <ClInclude Include="..\src\frontend\parser\numparse.h" />
     <ClInclude Include="..\src\frontend\nutinp.h" />
     <ClInclude Include="..\src\frontend\nutmegif.h" />
-    <ClInclude Include="..\src\ciderlib\oned\oneddefs.h" />
-    <ClInclude Include="..\src\include\ngspice\onedev.h" />
-    <ClInclude Include="..\src\ciderlib\oned\onedext.h" />
-    <ClInclude Include="..\src\include\ngspice\onemesh.h" />
     <ClInclude Include="..\src\include\ngspice\opdefs.h" />
     <ClInclude Include="..\src\include\ngspice\optdefs.h" />
     <ClInclude Include="..\src\frontend\options.h" />
@@ -1247,7 +689,6 @@
     <ClInclude Include="..\src\include\ngspice\sperror.h" />
     <ClInclude Include="..\src\frontend\spiceif.h" />
     <ClInclude Include="..\src\include\ngspice\spmatrix.h" />
-    <ClInclude Include="include\stdint.h" />
     <ClInclude Include="..\src\frontend\streams.h" />
     <ClInclude Include="..\src\include\ngspice\stringutil.h" />
     <ClInclude Include="..\src\frontend\subckt.h" />
@@ -1267,10 +708,6 @@
     <ClInclude Include="..\src\include\ngspice\trandefs.h" />
     <ClInclude Include="..\src\include\ngspice\trcvdefs.h" />
     <ClInclude Include="..\src\include\ngspice\tskdefs.h" />
-    <ClInclude Include="..\src\ciderlib\twod\twoddefs.h" />
-    <ClInclude Include="..\src\include\ngspice\twodev.h" />
-    <ClInclude Include="..\src\ciderlib\twod\twodext.h" />
-    <ClInclude Include="..\src\include\ngspice\twomesh.h" />
     <ClInclude Include="..\src\spicelib\devices\txl\txldefs.h" />
     <ClInclude Include="..\src\spicelib\devices\txl\txlext.h" />
     <ClInclude Include="..\src\spicelib\devices\txl\txlinit.h" />
@@ -1312,10 +749,77 @@
     <ClInclude Include="..\src\frontend\plotting\xgraph.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\xspice\icm\objects.inc" />
+    <CudaCompile Include="..\src\spicelib\analysis\CUSPICE\cuckttrunc.cu" />
+    <CudaCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\cubsim4load.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\cubsim4trunc.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\cap\CUSPICE\cucapload.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\cap\CUSPICE\cucaptrunc.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\ind\CUSPICE\cuindload.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\ind\CUSPICE\cuindtrunc.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\ind\CUSPICE\cumutload.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\isrc\CUSPICE\cuisrcload.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\res\CUSPICE\curesload.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="..\src\spicelib\devices\vsrc\CUSPICE\cuvsrcload.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\frontend\trannoise\1-f-code.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_1.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_2.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_aat.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_control.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_defaults.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_dump.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_global.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_info.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_order.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_postorder.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_post_tree.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_preprocess.c" />
+    <ClCompile Include="..\src\maths\KLU\amd_valid.c" />
+    <ClCompile Include="..\src\maths\KLU\btf_maxtrans.c" />
+    <ClCompile Include="..\src\maths\KLU\btf_order.c" />
+    <ClCompile Include="..\src\maths\KLU\btf_strongcomp.c" />
+    <ClCompile Include="..\src\maths\KLU\colamd.c" />
+    <ClCompile Include="..\src\maths\KLU\colamd_global.c" />
+    <ClCompile Include="..\src\maths\KLU\klu.c" />
+    <ClCompile Include="..\src\maths\KLU\klusmp.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_analyze.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_analyze_given.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_defaults.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_diagnostics.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_dump.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_extract.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_factor.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_free_numeric.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_free_symbolic.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_kernel.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_memory.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_refactor.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_scale.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_solve.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_sort.c" />
+    <ClCompile Include="..\src\maths\KLU\klu_tsolve.c" />
+    <ClCompile Include="..\src\maths\sparse\spCSC.c" />
     <ClCompile Include="..\src\spicelib\analysis\acan.c" />
     <ClCompile Include="..\src\spicelib\analysis\acaskq.c" />
     <ClCompile Include="..\src\maths\misc\accuracy.c" />
@@ -1325,6 +829,12 @@
     <ClCompile Include="..\src\spicelib\analysis\analysis.c" />
     <ClCompile Include="..\src\frontend\arg.c" />
     <ClCompile Include="..\src\frontend\aspice.c" />
+    <ClCompile Include="..\src\spicelib\analysis\CUSPICE\cucktflush.c" />
+    <ClCompile Include="..\src\spicelib\analysis\CUSPICE\cucktnonconupdate.c" />
+    <ClCompile Include="..\src\spicelib\analysis\CUSPICE\cucktrhsoldupdate.c" />
+    <ClCompile Include="..\src\spicelib\analysis\CUSPICE\cucktsetup.c" />
+    <ClCompile Include="..\src\spicelib\analysis\CUSPICE\cucktstatesupdate.c" />
+    <ClCompile Include="..\src\spicelib\analysis\CUSPICE\cucktsystem.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrc.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcacld.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcask.c" />
@@ -1340,9 +850,11 @@
     <ClCompile Include="..\src\spicelib\devices\asrc\asrcset.c" />
     <ClCompile Include="..\src\spicelib\devices\asrc\asrctemp.c" />
     <ClCompile Include="..\src\maths\deriv\atander.c" />
+    <ClCompile Include="..\src\spicelib\devices\bjt\bjtbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim1\b1bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1del.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\b1dest.c" />
@@ -1364,6 +876,7 @@
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim2\b2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2del.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2dest.c" />
@@ -1380,9 +893,16 @@
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2set.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2temp.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim2\b2trunc.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3soi_dd\b3soiddbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3soi_fd\b3soifdbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3soi_pd\b3soipdbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v0\b3v0bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v1\b3v1bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3\b3bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3del.c" />
@@ -1510,9 +1030,13 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32soachk.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32temp.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32trunc.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v4\b4v4bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v5\b4v5bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\b4bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4del.c" />
@@ -1528,9 +1052,15 @@
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4pzld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4set.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4\b4soachk.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\b4topology.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\cubsim4free.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\cubsim4getic.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\cubsim4setup.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim4\CUSPICE\cubsim4temp.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soi.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soiacld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soiask.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soibindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soicheck.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soicvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsimsoi\b4soidel.c" />
@@ -1610,7 +1140,6 @@
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6temp.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim4v6\b4v6trunc.c" />
     <ClCompile Include="..\src\frontend\parser\backq.c" />
-    <ClCompile Include="..\src\ciderlib\input\bdryset.c" />
     <ClCompile Include="..\src\maths\misc\bernoull.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjt.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtacld.c" />
@@ -1638,7 +1167,6 @@
     <ClCompile Include="..\src\spicelib\devices\bjt\bjtsupd.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\bjt\bjttrunc.c" />
-    <ClCompile Include="..\src\ciderlib\input\boundary.c" />
     <ClCompile Include="..\src\frontend\breakp.c" />
     <ClCompile Include="..\src\frontend\breakp2.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim1\bsim1init.c" />
@@ -1654,6 +1182,7 @@
     <ClCompile Include="..\src\spicelib\devices\cap\cap.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capacld.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\capbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capdel.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capdest.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capgetic.c" />
@@ -1673,9 +1202,14 @@
     <ClCompile Include="..\src\spicelib\devices\cap\capsupd.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\captemp.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\captrunc.c" />
-    <ClCompile Include="..\src\ciderlib\input\cards.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\CUSPICE\captopology.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\CUSPICE\cucapfree.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\CUSPICE\cucapgetic.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\CUSPICE\cucapsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\cap\CUSPICE\cucaptemp.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccs.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cccs\cccsbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsdel.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsdest.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsinit.c" />
@@ -1690,6 +1224,7 @@
     <ClCompile Include="..\src\spicelib\devices\cccs\cccssset.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvs.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsdel.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsdest.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsfbr.c" />
@@ -1772,15 +1307,58 @@
     <ClCompile Include="..\src\spicelib\analysis\ckttyplk.c" />
     <ClCompile Include="..\src\frontend\plotting\clip.c" />
     <ClCompile Include="..\src\spicelib\analysis\cluster.c" />
-    <ClCompile Include="..\src\xspice\cm\cm.c" />
+    <ClCompile Include="..\src\spicelib\devices\csw\cswbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\dio\diobindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\hfet1\hfetbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\cuindfree.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\cuindsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\cuindtemp.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\cumutfree.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\cumutsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\cumuttemp.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\indtopology.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\CUSPICE\muttopology.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\indbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\ind\mutbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\isrc\CUSPICE\cuisrcfree.c" />
+    <ClCompile Include="..\src\spicelib\devices\isrc\CUSPICE\cuisrcsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\isrc\CUSPICE\cuisrctemp.c" />
+    <ClCompile Include="..\src\spicelib\devices\isrc\CUSPICE\isrctopology.c" />
+    <ClCompile Include="..\src\spicelib\devices\isrc\isrcsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\jfet\jfetbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\ltra\ltrabindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mesa\mesabindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mes\mesbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos1\mos1bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos2\mos2bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos3\mos3bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos6\mos6bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos9\mos9bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\CUSPICE\curesfree.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\CUSPICE\curessetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\CUSPICE\curestemp.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\CUSPICE\restopology.c" />
+    <ClCompile Include="..\src\spicelib\devices\res\resbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\soi3\soi3bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\sw\swbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\tra\trabindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\txl\txlbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\vbic\vbicbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\vccs\vccsbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\CUSPICE\cuvsrcfree.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\CUSPICE\cuvsrcsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\CUSPICE\cuvsrctemp.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\CUSPICE\vsrctopology.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcbindCSC.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath1.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath2.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath3.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath4.c" />
-    <ClCompile Include="..\src\xspice\cm\cmevt.c" />
-    <ClCompile Include="..\src\xspice\cm\cmexport.c" />
-    <ClCompile Include="..\src\xspice\cm\cmmeters.c" />
-    <ClCompile Include="..\src\xspice\cm\cmutil.c" />
     <ClCompile Include="..\src\frontend\com_ahelp.c" />
     <ClCompile Include="..\src\frontend\com_alias.c" />
     <ClCompile Include="..\src\frontend\com_asciiplot.c" />
@@ -1814,9 +1392,7 @@
     <ClCompile Include="..\src\frontend\commands.c" />
     <ClCompile Include="..\src\frontend\parser\complete.c" />
     <ClCompile Include="..\src\conf.c" />
-    <ClCompile Include="..\src\ciderlib\input\contact.c" />
     <ClCompile Include="..\src\frontend\control.c" />
-    <ClCompile Include="..\src\ciderlib\input\contset.c" />
     <ClCompile Include="..\src\maths\deriv\cosderiv.c" />
     <ClCompile Include="..\src\frontend\cpitf.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cpl.c" />
@@ -1848,7 +1424,6 @@
     <ClCompile Include="..\src\spicelib\devices\csw\cswtrunc.c" />
     <ClCompile Include="..\src\maths\deriv\cubeder.c" />
     <ClCompile Include="..\src\spicelib\analysis\daskq.c" />
-    <ClCompile Include="..\src\ciderlib\support\database.c" />
     <ClCompile Include="..\src\spicelib\analysis\dcoaskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\dcop.c" />
     <ClCompile Include="..\src\spicelib\analysis\dcosetp.c" />
@@ -1860,7 +1435,6 @@
     <ClCompile Include="..\src\frontend\define.c" />
     <ClCompile Include="..\src\spicelib\devices\dev.c" />
     <ClCompile Include="..\src\frontend\device.c" />
-    <ClCompile Include="..\src\ciderlib\support\devprint.c" />
     <ClCompile Include="..\src\spicelib\devices\devsup.c" />
     <ClCompile Include="..\src\frontend\diff.c" />
     <ClCompile Include="..\src\frontend\dimens.c" />
@@ -1895,39 +1469,15 @@
     <ClCompile Include="..\src\maths\deriv\divderiv.c" />
     <ClCompile Include="..\src\spicelib\analysis\dkerproc.c" />
     <ClCompile Include="..\src\spicelib\analysis\dloadfns.c" />
-    <ClCompile Include="..\src\ciderlib\input\domain.c" />
-    <ClCompile Include="..\src\ciderlib\input\domnset.c" />
-    <ClCompile Include="..\src\ciderlib\input\doping.c" />
-    <ClCompile Include="..\src\ciderlib\input\dopset.c" />
     <ClCompile Include="..\src\frontend\dotcards.c" />
     <ClCompile Include="..\src\spicelib\analysis\dsetparm.c" />
     <ClCompile Include="..\src\misc\dstring.c" />
     <ClCompile Include="..\src\misc\dup2.c" />
-    <ClCompile Include="..\src\ciderlib\input\elctset.c" />
-    <ClCompile Include="..\src\ciderlib\input\electrod.c" />
-    <ClCompile Include="..\src\xspice\enh\enh.c" />
-    <ClCompile Include="..\src\xspice\enh\enhtrans.c" />
     <ClCompile Include="..\src\maths\deriv\equalder.c" />
     <ClCompile Include="..\src\maths\misc\equality.c" />
     <ClCompile Include="..\src\maths\misc\erfc.c" />
     <ClCompile Include="..\src\frontend\error.c" />
     <ClCompile Include="..\src\frontend\evaluate.c" />
-    <ClCompile Include="..\src\xspice\evt\evtaccept.c" />
-    <ClCompile Include="..\src\xspice\evt\evtbackup.c" />
-    <ClCompile Include="..\src\xspice\evt\evtcall_hybrids.c" />
-    <ClCompile Include="..\src\xspice\evt\evtdeque.c" />
-    <ClCompile Include="..\src\xspice\evt\evtdump.c" />
-    <ClCompile Include="..\src\xspice\evt\evtinit.c" />
-    <ClCompile Include="..\src\xspice\evt\evtiter.c" />
-    <ClCompile Include="..\src\xspice\evt\evtload.c" />
-    <ClCompile Include="..\src\xspice\evt\evtnext_time.c" />
-    <ClCompile Include="..\src\xspice\evt\evtnode_copy.c" />
-    <ClCompile Include="..\src\xspice\evt\evtop.c" />
-    <ClCompile Include="..\src\xspice\evt\evtplot.c" />
-    <ClCompile Include="..\src\xspice\evt\evtprint.c" />
-    <ClCompile Include="..\src\xspice\evt\evtqueue.c" />
-    <ClCompile Include="..\src\xspice\evt\evtsetup.c" />
-    <ClCompile Include="..\src\xspice\evt\evttermi.c" />
     <ClCompile Include="..\src\maths\deriv\expderiv.c" />
     <ClCompile Include="..\src\frontend\trannoise\FastNorm3.c" />
     <ClCompile Include="..\src\maths\fft\fftext.c" />
@@ -1935,10 +1485,8 @@
     <ClCompile Include="..\src\frontend\fourier.c" />
     <ClCompile Include="..\src\frontend\ftesopt.c" />
     <ClCompile Include="..\src\frontend\gens.c" />
-    <ClCompile Include="..\src\ciderlib\support\geominfo.c" />
     <ClCompile Include="..\src\misc\getopt_long_bsd.c" />
     <ClCompile Include="..\src\frontend\parser\glob.c" />
-    <ClCompile Include="..\src\ciderlib\support\globals.c" />
     <ClCompile Include="..\src\frontend\plotting\gnuplot.c" />
     <ClCompile Include="..\src\frontend\plotting\graf.c" />
     <ClCompile Include="..\src\frontend\plotting\graphdb.c" />
@@ -2019,7 +1567,6 @@
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvsoachk.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvtemp.c" />
     <ClCompile Include="..\src\spicelib\devices\hisimhv1\hsmhvtrunc.c" />
-    <ClCompile Include="..\src\xspice\idn\idndig.c" />
     <ClCompile Include="..\src\spicelib\parser\ifeval.c" />
     <ClCompile Include="..\src\spicelib\parser\ifnewuid.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\ind.c" />
@@ -2099,17 +1646,10 @@
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />
     <ClCompile Include="..\src\spicelib\parser\inptyplk.c" />
     <ClCompile Include="..\src\frontend\parser\input.c" />
-    <ClCompile Include="..\src\ciderlib\support\integset.c" />
-    <ClCompile Include="..\src\ciderlib\support\integuse.c" />
     <ClCompile Include="..\src\frontend\interp.c" />
     <ClCompile Include="..\src\maths\poly\interpolate.c" />
     <ClCompile Include="..\src\maths\deriv\invderiv.c" />
     <ClCompile Include="..\src\frontend\inventory.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipc.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipcaegis.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipcsockets.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipcstdio.c" />
-    <ClCompile Include="..\src\xspice\ipc\ipctiein.c" />
     <ClCompile Include="..\src\spicelib\devices\isrc\isrc.c" />
     <ClCompile Include="..\src\spicelib\devices\isrc\isrcacct.c" />
     <ClCompile Include="..\src\spicelib\devices\isrc\isrcacld.c" />
@@ -2161,7 +1701,6 @@
     <ClCompile Include="..\src\spicelib\devices\limit.c" />
     <ClCompile Include="..\src\frontend\linear.c" />
     <ClCompile Include="..\src\maths\misc\logb.c" />
-    <ClCompile Include="..\src\ciderlib\support\logfile.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltra.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraacct.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraacld.c" />
@@ -2179,10 +1718,7 @@
     <ClCompile Include="..\src\spicelib\devices\ltra\ltratemp.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltratrun.c" />
     <ClCompile Include="..\src\main.c" />
-    <ClCompile Include="..\src\ciderlib\support\mater.c" />
-    <ClCompile Include="..\src\ciderlib\input\material.c" />
     <ClCompile Include="..\src\maths\fft\matlib.c" />
-    <ClCompile Include="..\src\ciderlib\input\matlset.c" />
     <ClCompile Include="..\src\frontend\measure.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mes.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesa.c" />
@@ -2208,8 +1744,6 @@
     <ClCompile Include="..\src\spicelib\devices\mes\mesdisto.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesdset.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesgetic.c" />
-    <ClCompile Include="..\src\ciderlib\input\mesh.c" />
-    <ClCompile Include="..\src\ciderlib\input\meshset.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesinit.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesload.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesmask.c" />
@@ -2221,32 +1755,10 @@
     <ClCompile Include="..\src\spicelib\devices\mes\messetup.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mestemp.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mestrunc.c" />
-    <ClCompile Include="..\src\ciderlib\input\method.c" />
-    <ClCompile Include="..\src\xspice\mif\mif.c" />
-    <ClCompile Include="..\src\xspice\mif\mif_inp2.c" />
-    <ClCompile Include="..\src\xspice\mif\mifask.c" />
-    <ClCompile Include="..\src\xspice\mif\mifconvt.c" />
-    <ClCompile Include="..\src\xspice\mif\mifdelete.c" />
-    <ClCompile Include="..\src\xspice\mif\mifdestr.c" />
-    <ClCompile Include="..\src\xspice\mif\mifgetmod.c" />
-    <ClCompile Include="..\src\xspice\mif\mifgetvalue.c" />
-    <ClCompile Include="..\src\xspice\mif\mifload.c" />
-    <ClCompile Include="..\src\xspice\mif\mifmask.c" />
-    <ClCompile Include="..\src\xspice\mif\mifmdelete.c" />
-    <ClCompile Include="..\src\xspice\mif\mifmpara.c" />
-    <ClCompile Include="..\src\xspice\mif\mifsetup.c" />
-    <ClCompile Include="..\src\xspice\mif\miftrunc.c" />
-    <ClCompile Include="..\src\xspice\mif\mifutil.c" />
-    <ClCompile Include="..\src\ciderlib\support\misc.c" />
     <ClCompile Include="..\src\misc\misc_time.c" />
     <ClCompile Include="..\src\frontend\misccoms.c" />
     <ClCompile Include="..\src\frontend\miscvars.c" />
     <ClCompile Include="..\src\misc\mktemp.c" />
-    <ClCompile Include="..\src\ciderlib\support\mobil.c" />
-    <ClCompile Include="..\src\ciderlib\input\mobility.c" />
-    <ClCompile Include="..\src\ciderlib\input\mobset.c" />
-    <ClCompile Include="..\src\ciderlib\input\models.c" />
-    <ClCompile Include="..\src\ciderlib\input\modlset.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1acld.c" />
     <ClCompile Include="..\src\spicelib\devices\mos1\mos1ask.c" />
@@ -2376,36 +1888,6 @@
     <ClCompile Include="..\src\frontend\mw_coms.c" />
     <ClCompile Include="..\src\frontend\numparam\mystring.c" />
     <ClCompile Include="..\src\spicelib\analysis\naskq.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjt.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtacld.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtask.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtdest.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtdump.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtinit.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtload.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtmdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtmpar.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtparm.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtpzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtset.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttemp.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttrun.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2acld.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2ask.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2del.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2dest.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2dump.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2init.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2load.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2mdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2mpar.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2parm.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2pzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2set.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2temp.c" />
-    <ClCompile Include="..\src\spicelib\devices\nbjt2\nbt2trun.c" />
     <ClCompile Include="..\src\spicelib\analysis\nevalsrc.c" />
     <ClCompile Include="..\src\frontend\newcoms.c" />
     <ClCompile Include="..\src\ngspice.c" />
@@ -2426,73 +1908,11 @@
     <ClCompile Include="..\src\spicelib\analysis\noisean.c" />
     <ClCompile Include="..\src\maths\misc\norm.c" />
     <ClCompile Include="..\src\spicelib\analysis\nsetparm.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2acld.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2ask.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2del.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2dest.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2dump.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2load.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2mdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2mpar.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2parm.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2pzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2set.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2temp.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\nud2trun.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numd.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd2\numd2init.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdacld.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdask.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numddel.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numddest.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numddump.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdinit.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdload.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdmdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdmpar.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdparm.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdpzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdset.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdtemp.c" />
-    <ClCompile Include="..\src\spicelib\devices\numd\numdtrun.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\numm.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummacld.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummask.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummdest.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummdump.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummload.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummmdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummmpar.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummparm.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummpzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummset.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummtemp.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\nummtrun.c" />
-    <ClCompile Include="..\src\spicelib\devices\numos\numosinit.c" />
     <ClCompile Include="..\src\frontend\parser\numparse.c" />
     <ClCompile Include="..\src\frontend\nutinp.c" />
     <ClCompile Include="..\src\frontend\nutmegif.c" />
-    <ClCompile Include="..\src\ciderlib\oned\oneadmit.c" />
-    <ClCompile Include="..\src\ciderlib\oned\oneaval.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onecond.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onecont.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onedest.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onedopng.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onefreez.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onemesh.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onepoiss.c" />
-    <ClCompile Include="..\src\ciderlib\oned\oneprint.c" />
-    <ClCompile Include="..\src\ciderlib\oned\oneproj.c" />
-    <ClCompile Include="..\src\ciderlib\oned\oneread.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onesetup.c" />
-    <ClCompile Include="..\src\ciderlib\oned\onesolve.c" />
     <ClCompile Include="..\src\frontend\options.c" />
-    <ClCompile Include="..\src\ciderlib\input\optionsc.c" />
     <ClCompile Include="..\src\frontend\outitf.c" />
-    <ClCompile Include="..\src\ciderlib\input\outpset.c" />
-    <ClCompile Include="..\src\ciderlib\input\output.c" />
     <ClCompile Include="..\src\frontend\parse.c" />
     <ClCompile Include="..\src\frontend\plotting\plot5.c" />
     <ClCompile Include="..\src\frontend\plotting\plotcurv.c" />
@@ -2521,7 +1941,6 @@
     <ClCompile Include="..\src\maths\misc\randnumb.c" />
     <ClCompile Include="..\src\frontend\rawfile.c" />
     <ClCompile Include="..\src\frontend\help\readhelp.c" />
-    <ClCompile Include="..\src\ciderlib\support\recomb.c" />
     <ClCompile Include="..\src\spicelib\devices\res\res.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resask.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resdel.c" />
@@ -2576,7 +1995,6 @@
     <ClCompile Include="..\src\frontend\spiceif.c" />
     <ClCompile Include="..\src\frontend\numparam\spicenum.c" />
     <ClCompile Include="..\src\maths\sparse\spoutput.c" />
-    <ClCompile Include="..\src\maths\sparse\spsmp.c" />
     <ClCompile Include="..\src\maths\sparse\spsolve.c" />
     <ClCompile Include="..\src\maths\sparse\sputils.c" />
     <ClCompile Include="..\src\maths\deriv\sqrtder.c" />
@@ -2584,8 +2002,6 @@
     <ClCompile Include="..\src\frontend\streams.c" />
     <ClCompile Include="..\src\misc\string.c" />
     <ClCompile Include="..\src\frontend\subckt.c" />
-    <ClCompile Include="..\src\ciderlib\support\suprem.c" />
-    <ClCompile Include="..\src\ciderlib\support\suprmitf.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\sw.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swacload.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swask.c" />
@@ -2625,28 +2041,6 @@
     <ClCompile Include="..\src\spicelib\devices\tra\trasetup.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\tratemp.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\tratrunc.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twoadmit.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twoaval.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twocond.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twocont.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twocurr.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twodest.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twodopng.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twoelect.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twofield.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twomesh.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twomobdv.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twomobfn.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twomobil.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twoncont.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twopcont.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twopoiss.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twoprint.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twoproj.c" />
-    <ClCompile Include="..\src\ciderlib\twod\tworead.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twosetbc.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twosetup.c" />
-    <ClCompile Include="..\src\ciderlib\twod\twosolve.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txl.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlacct.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlask.c" />
@@ -2752,5 +2146,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 8.0.targets" />
   </ImportGroup>
 </Project>
