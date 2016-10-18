@@ -1504,7 +1504,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
 
     n = inp_numnodes(c);
 
-    /* Added this code for variable number of nodes on BSIM3SOI/CPL devices  */
+    /* Added this code for variable number of nodes on certain devices.  */
     /* The consequence of this code is that the value returned by the    */
     /* inp_numnodes(c) call must be regarded as "maximum number of nodes */
     /* for a given device type.                                          */
@@ -1512,12 +1512,12 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
 
     /* I hope that works, this code is very very untested */
 
-    if ((c == 'm') || (c == 'p')) {              /* IF this is a mos or cpl */
+    if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
         i = 0;
         s = buf;
         gotit = 0;
         gettok_nc(&s);          /* Skip component name */
-        while ((i < n) && (*s) && !gotit) {
+        while ((i <= n) && (*s) && !gotit) {
             t = gettok_node(&s);       /* get nodenames . . .  */
             for (wl = modnames; wl; wl = wl->wl_next)
                 if (model_name_match(t, wl->wl_word)) {
@@ -1532,31 +1532,21 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
         /* "while" cycle increments the counter even when a model is */
         /* recognized. This code may be better!                      */
 
-        if (i < 5) {
+        if ((i < 4) && (c == 'q')) {
+            fprintf(cp_err, "Error: too few nodes for BJT: %s\n", name);
+            return (0);
+        }
+        if ((i < 5) && ((c == 'm') || (c == 'p'))) {
             fprintf(cp_err, "Error: too few nodes for MOS or CPL: %s\n", name);
             return (0);
         }
         return (i-1); /* compensate the unnecessary increment in the while cycle */
     } /* if (c == 'm' . . .  */
 
-    if (nobjthack || (c != 'q'))
+    if (nobjthack || (c != 'q')) /* for all other elements */
         return (n);
 
-    for (s = buf, i = 0; *s && (i < 4); i++)
-        gettok_nc(&s);
-
-    if (i == 3)
-        return (3);
-    else if (i < 4) {
-        fprintf(cp_err, "Error: too few nodes for BJT: %s\n", name);
-        return (0);
-    }
-
-    /* Now, is this a model? */
-    t = gettok(&s);
-    wl = wl_find(t, modnames);
-    tfree(t);
-    return wl ? 3 : 4;
+    return (0);
 }
 
 
@@ -2027,8 +2017,8 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 
 
 /*----------------------------------------------------------------------*
- * inp_numnodes returns the number of nodes (netnames) attached to the
- * component.
+ * inp_numnodes returns the maximum number of nodes (netnames) attached
+ * to the component.
  * This is a spice-dependent thing.  It should probably go somewhere
  * else, but...  Note that we pretend that dependent sources and mutual
  * inductors have more nodes than they really do...
