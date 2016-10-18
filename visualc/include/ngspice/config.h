@@ -446,9 +446,9 @@
 
 #ifdef CONFIG64
 /* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice64/bin"
+#define NGSPICEBINDIR "../bin"
 /* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice64/share/ngspice"
+#define NGSPICEDATADIR "../share/ngspice"
 #else
 /* Define the directory for executables */
 #define NGSPICEBINDIR "C:/Spice/bin"
