@@ -1,95 +1,15 @@
-H. Vogt 31.10.09
-(Translation of some commands from German to English is required)
-Many more details of ngspice usage under Windows is described
-in how-to-use-ngspice091031.txt from the binary distribution.
+H. Vogt 18.10.2016
 
-This directory (visualc) with its files 
-vngspice.sln (project starter) and
-vngspice.vcproj (project contents)
-allows to compile and link ngspice with MS Visual Studio 2008.
-The project is probably not compatible with Visual Studio 2005.
+CUSPICE
+ngspice for CUDA
 
-CIDER and XSPICE are included, but the code models for XSPICE
-(*.cm) are not (yet) made. You may however use the code models
-created with MINGW (which in fact are dlls), as e.g. found in 
-the ngspice binary distribution.
+compiled with MS Visual Studio 2015 Community and CUDA toolkit 8.0 for Windows
 
-There is currently no installation procedure provided, you may
-however install the executable manually as described in the
-installation tree below.
+derived from branch CUSPICE
+XSPICE and CIDER are not included
+only 64 biut compilation is possible because runtime library cusparse64_80.dll is only 64 bit.
 
-/visualc/include contains a dedicated config.h file. It contains the
-preprocessor definitions required to properly compile the code.
-strings.h has been necessary during setting up the project.
+To compile, install VS 2015 and CUDA toolkit 8.0 from https://developer.nvidia.com/cuda-downloads.
 
+To distribute the executable, add CUDA distributable run-time libraries cudart64_80.dll and cusparse64_80.dll.
 
-Install Microsoft Visual Studio 2008 C++
-
-Goto 
-/ng-spice-rework/visualc
-
-Start MS Visual Studio 2008 by double click onto 
-vngspice.sln
-
-After MS Visual Studio has opened up, select debug or release version 
-by checking 'Erstellen' , 'Konfigurations-Manager' 'Debug' or 'Release'
-
-Start making ngspice (called vngspice.exe) by selecting 'Erstellen' and 
-'vngspice neu erstellen'.
-
-Object files will be created and stored in visualc/debug or visualc/release.
-The executable will be stored to visualc/debug/bin or visualc/release/bin.
-
-Installation tree (as provided with MINGW make install) and also used by
-vngspice:
-
-C:\Spice\
-	bin\
-		ngspice.exe
-		nghelp.exe
-		ngmakeidx.exe
-		ngnutmeg.exe
-		cmpp.exe
-	lib\
-		spice\
-			analog.cm
-			digital.cm
-			spice2poly.cm
-			extradev.cm
-			extravt.cm
-	share\
-		info\
-			dir
-			ngspice.info
-			ngspice.info-1
-			..
-			ngspice.info-10
-		man\
-			man1\
-				ngmultidec.1
-				ngnutmeg.1
-				ngsconvert.1
-				ngspice.1
-		ng-spice-rework\
-			helpdir\
-				ngspice.idx
-				ngspice.txt
-			scripts\
-				ciderinit
-				devaxis
-				devload
-				setplot
-				spectrum
-				spinit
-		
-If spinit is not found in the directory cited above,
-vngspice.exe also searches for spinit in its own directory. If you give 
-a relative path for the codemodel directories in spinit, you may 
-determine your own directory tree.
-
-If you want to generate a console ngspice (without GUI, 
-without graphics interface, but usable in batch mode (-b)), 
-then you have to do the following before compilation:
-select console_debug or console_release from the configuration manager.
-ngspice.exe will search for spinit in the directory tree shown above, or, 
-if not found, in its own directory.
