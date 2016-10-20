@@ -126,7 +126,6 @@ struct subs {
  * list of translated names (i.e. after subckt expansion)
  */
 
-static bool nobjthack = FALSE;
 /* flag indicating use of the experimental numparams library */
 static bool use_numparams = FALSE;
 
@@ -219,7 +218,6 @@ inp_subcktexpand(struct line *deck) {
         (void) strcpy(model, ".model");
     if (!cp_getvar("modelline", CP_STRING, model))
         (void) strcpy(model, ".model");
-    nobjthack = cp_getvar("nobjthack", CP_BOOL, NULL);
 
     use_numparams = cp_getvar("numparams", CP_BOOL, NULL);
 
@@ -1510,8 +1508,6 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     /* for a given device type.                                          */
     /* Paolo Nenzi Jan-2001                                              */
 
-    /* I hope that works, this code is very very untested */
-
     if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
         i = 0;
         s = buf;
@@ -1541,12 +1537,10 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
             return (0);
         }
         return (i-1); /* compensate the unnecessary increment in the while cycle */
-    } /* if (c == 'm' . . .  */
-
-    if (nobjthack || (c != 'q')) /* for all other elements */
+    } else {
+        /* for all other elements */
         return (n);
-
-    return (0);
+    }
 }
 
 

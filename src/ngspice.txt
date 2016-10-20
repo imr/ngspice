@@ -5621,7 +5621,6 @@ TEXT: H                   no  circuits  suspended and no plots un-
 TEXT: H                   saved.  Normally Spice3 warns  the  user
 TEXT: H                   when  he  tries  to  quit if this is the
 TEXT: H                   case.
-TEXT: H nobjthack         Assume that BJTs have 4 nodes.
 TEXT: H noparse           Don't attempt to parse input files  when
 TEXT: H                   they are read in (useful for debugging).
 TEXT: H                   Of course, they cannot be  run  if  they
@@ -5807,9 +5806,7 @@ TEXT: H      BJTs can have either 3 or 4 nodes, which makes it  dif-
 TEXT: H ficult  for the subcircuit expansion routines to decide what
 TEXT: H to rename.  If the fourth parameter has been declared  as  a
 TEXT: H model  name, then it is assumed that there are 3 nodes, oth-
-TEXT: H erwise it is considered a node.  To disable  this,  you  can
-TEXT: H set  the  variable  "nobjthack"  which forces BJTs to have 4
-TEXT: H nodes (for the purposes of subcircuit expansion, at least).
+TEXT: H erwise it is considered a node.
 TEXT: H
 TEXT: H      The @name[param] notation might not  work  with  trace,
 TEXT: H iplot, etc.  yet.

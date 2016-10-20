@@ -7743,10 +7743,6 @@ Do not check to make sure that there are no circuits suspended and no
 plots un saved.  Normally Ngspice warns the user when he tries to quit if
 this is the case.
 
-@item nobjthack
-
-Assume that BJTs have 4 nodes.
-
 @item noparse
 
 Don't attempt to parse input files when they are read in (useful for
@@ -7956,9 +7952,7 @@ recognized.
 BJTs can have either 3 or 4 nodes, which makes it difficult for the
 subcircuit expansion routines to decide what to rename.  If the fourth
 parameter has been declared as a model name, then it is assumed that
-there are 3 nodes, otherwise it is considered a node.  To disable this,
-you can set the variable "nobjthack" which forces BJTs to have 4 nodes
-(for the purposes of subcircuit expansion, at least).
+there are 3 nodes, otherwise it is considered a node.
 
 The @@name[param] notation might not work with trace, iplot, etc.  yet.
 

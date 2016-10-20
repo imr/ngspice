@@ -81,7 +81,6 @@ char *ft_setkwords[] = {
     "moremode",
     "nfreqs",
     "noasciiplotvalue",
-    "nobjthack",
     "nobreak",
     "noclobber",
     "node",
