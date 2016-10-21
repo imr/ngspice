@@ -799,8 +799,9 @@ fi
 
 AM_CONDITIONAL([RELPATH], [test "x$enable_relpath" = xyes])
 if test "x$enable_relpath" = xyes; then
-AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo ../bin`"], [Define the directory for executables])
-AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo ../share/ngspice`"], [Define the directory for architecture independent data files])
+    AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo ../bin`"], [Define the directory for executables])
+    AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo ../share/ngspice`"], [Define the directory for architecture independent data files])
+    AC_DEFINE([HAS_RELPATH], [1], [rel. path of libraries and scripts])
 else
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
