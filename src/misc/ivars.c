@@ -2,6 +2,11 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#include <Windows.h>
+#endif
+
+
 #include "ngspice/ngspice.h"
 #include "ivars.h"
 #include "../misc/util.h" /* ngdirname() */
@@ -12,13 +17,51 @@ char *Help_Path;
 char *Lib_Path;
 char *Inp_Path;
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+static char*
+get_abs_path()
+{
+    char path[MAX_PATH];
+    HMODULE hm = NULL;
 
-static void
+    if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        (LPCTSTR)get_abs_path,
+        &hm))
+    {
+        int ret = GetLastError();
+        fprintf(stderr, "GetModuleHandle returned %d\n", ret);
+    }
+    GetModuleFileNameA(hm, path, sizeof(path));
+    return ngdirname(path);
+}
+#else
+#define _GNU_SOURCE         /* See feature_test_macros(7) */
+#include <dlfcn.h>
+static char*
+get_abs_path()
+{
+    Dl_info  DlInfo;
+    int  nRet;
+
+    // Lookup the name of the function given the function pointer
+    if ((nRet = dladdr(get_abs_path, &DlInfo)) != 0)
+        return DlInfo.dli_sname;
+    return NULL;
+}
+#endif
+
+
+static bool
 env_overr(char **v, char *e)
 {
     char *p;
-    if (v && e && (p = getenv(e)) != NULL)
+    if (v && e && (p = getenv(e)) != NULL) {
         *v = p;
+        return (TRUE);
+    }
+    else
+        return (FALSE);
 }
 
 static void
@@ -41,10 +84,27 @@ ivars(char *argv0)
     NGSPICEBINDIR has been set to $dprefix/bin in config.h,
     NGSPICEDATADIR has been set to $dprefix/share/ngspice in config.h,
     Spice_Exec_Dir has been set to NGSPICEBINDIR in conf.c,
+    may be overridden here by environmental variable SPICE_EXEC_DIR
     Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c;
-    may be overridden here by environmental variable SPICE_EXEC_DIR */
-    env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
+    may be overridden here by absolute path to library location if shared library
+    may be overridden here by environmental variable SPICE_LIB_DIR */
+
+#if defined (SHARED_MODULE) && defined (HAS_RELPATH)
+    if (!env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR")) {
+        /* get the absolute path of the ngspice library as reference to other paths */
+        char *Shared_Dir = get_abs_path();
+        /* Here we determeine the path relative to the library directory */
+        char *Lib_Dir = tprintf("%s/../share/ngspice", Shared_Dir);
+        char Spice_Lib_Dir[2048];
+        strncpy(Spice_Lib_Dir, Lib_Dir, 2048);
+        printf("Shared lib is located in %s\n", Shared_Dir);
+        tfree(Shared_Dir);
+        tfree(Lib_Dir);
+    }
+#else
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
+#endif
+    env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
 
     /* for printing a news file */
     mkvar(&News_File, Spice_Lib_Dir, "news", "SPICE_NEWS");

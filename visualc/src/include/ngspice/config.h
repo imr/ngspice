@@ -46,6 +46,9 @@
 /* Define if you want to debug frontend */
 /* #undef FTEDEBUG */
 
+/* rel. path of libraries and scripts */
+#define HAS_RELPATH 1
+
 /* CONSOLE flag set in configurations console_debug and console_release */
 #if !defined(CONSOLE) && !defined(SHARED_MODULE)
 /* define to specify MS Windows GUI executable */
