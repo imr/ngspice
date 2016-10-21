@@ -270,7 +270,7 @@ lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -370,7 +370,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -466,7 +466,7 @@ lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -566,7 +566,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -617,7 +617,7 @@ lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -671,7 +671,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -724,7 +724,7 @@ lib /machine:x86 /def:..\..\fftw-3.3.4-dll32\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -778,7 +778,7 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;$(IntDir)libfftw3-3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>

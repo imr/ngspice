@@ -127,7 +127,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -169,7 +169,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
