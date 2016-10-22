@@ -13,7 +13,8 @@
 # start compiling with
 # './compile_shared.sh' or './compile_shared.sh 64'
 
-# LINUX users: remove (or check) entry 'prefix="..." in calls ../configure ... (see below).
+# LINUX: remove (or check) entry 'prefix="..."' in ../configure ... (see below).
+# LINUX: remove (or check) entry '--enable-relpath' in ../configure ... (see below).
 
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
