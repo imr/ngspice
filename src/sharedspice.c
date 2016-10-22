@@ -1172,6 +1172,14 @@ sh_fputsll(const char *input, FILE* outf)
     if (noprintfwanted)
         return -1;
 
+#define outdebug
+#ifdef outdebug
+    /*debug: print into file*/
+    FILE *fd = fopen("ng-string-out.txt", "a");
+    fprintf(fd, "%s", input);
+    fclose(fd);
+#endif
+
     if (outf == stderr) {
         if (!outstringerr)
             delstring = outstringerr = copy(input);
