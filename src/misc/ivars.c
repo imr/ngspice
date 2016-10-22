@@ -93,13 +93,10 @@ ivars(char *argv0)
     if (!env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR")) {
         /* get the absolute path of the ngspice library as reference to other paths */
         char *Shared_Dir = get_abs_path();
-        /* Here we determeine the path relative to the library directory */
-        char *Lib_Dir = tprintf("%s/../share/ngspice", Shared_Dir);
-        char Spice_Lib_Dir[2048];
-        strncpy(Spice_Lib_Dir, Lib_Dir, 2048);
+        /* Here we determine the path relative to the library directory */
+        Spice_Lib_Dir = temp = tprintf("%s/../share/ngspice", Shared_Dir);
         printf("Shared lib is located in %s\n", Shared_Dir);
         tfree(Shared_Dir);
-        tfree(Lib_Dir);
     }
 #else
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
@@ -114,6 +111,8 @@ ivars(char *argv0)
     mkvar(&Lib_Path, Spice_Lib_Dir, "scripts", "SPICE_SCRIPTS");
     /* used to call ngspice with aspice command, not used in Windows mode */
     mkvar(&Spice_Path, Spice_Exec_Dir, "ngspice", "SPICE_PATH");
+    /* use temp to free because we are not sure if Spice_Lib_Dir is on the heap */
+    tfree(temp);
     /* may be used to store input files (*.lib, *.include, ...) */
     /* get directory where ngspice resides */
 #if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
