@@ -44,9 +44,9 @@ get_abs_path()
     Dl_info  DlInfo;
     int  nRet;
 
-    // Lookup the name of the function given the function pointer
+    // Lookup the path of the library given the pointer to a function from within the library
     if ((nRet = dladdr(get_abs_path, &DlInfo)) != 0)
-        return DlInfo.dli_sname;
+        return ngdirname(DlInfo.dli_fname);
     return NULL;
 }
 #endif
