@@ -95,7 +95,9 @@ ivars(char *argv0)
         char *Shared_Dir = get_abs_path();
         /* Here we determine the path relative to the library directory */
         Spice_Lib_Dir = temp = tprintf("%s/../share/ngspice", Shared_Dir);
+#ifdef outdebug
         printf("Shared lib is located in %s\n", Shared_Dir);
+#endif
         tfree(Shared_Dir);
     }
 #else

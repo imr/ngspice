@@ -1172,7 +1172,6 @@ sh_fputsll(const char *input, FILE* outf)
     if (noprintfwanted)
         return -1;
 
-#define outdebug
 #ifdef outdebug
     /*debug: print into file*/
     FILE *fd = fopen("ng-string-out.txt", "a");
