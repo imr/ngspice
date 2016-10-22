@@ -259,7 +259,7 @@ ft_cpinit(void)
                 tcap_init();
                 return;
             }
-            int ii = 0;
+            size_t ii = 0;
             for (r = buf; *s && ii < sl; r++, s++, ii++)
                 *r = *s;
 #else
