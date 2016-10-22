@@ -247,7 +247,7 @@ ft_cpinit(void)
         /* jump over leading spaces */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
             s = skip_ws(s);
-#ifdef outdebug
+#ifdef OUTDEBUG
             printf("cpitf.c, spinit path is %s\n", s);
 #endif
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(HAS_WINGUI)
