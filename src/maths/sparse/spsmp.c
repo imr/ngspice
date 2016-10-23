@@ -560,16 +560,16 @@ SMPzeroRow(SMPmatrix *eMatrix, int Row)
  * SMPconstMult()
  */
 void
-SMPconstMult (SMPmatrix *Matrix, double constant)
+SMPconstMult(SMPmatrix *Matrix, double constant)
 {
-    spConstMult (Matrix->SPmatrix, constant) ;
+    spConstMult(Matrix->SPmatrix, constant);
 }
 
 /*
  * SMPmultiply()
  */
 void
-SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
+SMPmultiply(SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, double *iSolution)
 {
-    spMultiply (Matrix->SPmatrix, RHS, Solution, iRHS, iSolution) ;
+    spMultiply(Matrix->SPmatrix, RHS, Solution, iRHS, iSolution);
 }
