@@ -110,6 +110,8 @@ CKTsetup(CKTcircuit *ckt)
 
     ckt->total_n_valuesRHS = 0 ;
     ckt->total_n_PtrRHS = 0 ;
+
+    ckt->total_n_timeSteps = 0 ;
 #endif
 
     int i;

@@ -54,7 +54,11 @@ SPICEdev BSIM4info = {
     BSIM4unsetup,  /* DEVunsetup     */
     BSIM4setup,    /* DEVpzSetup     */
     BSIM4temp,     /* DEVtemperature */
+#ifdef USE_CUSPICE
+    cuBSIM4trunc,  /* DEVtrunc       */
+#else
     BSIM4trunc,    /* DEVtrunc       */
+#endif
     NULL,          /* DEVfindBranch  */
     BSIM4acLoad,   /* DEVacLoad      */
     NULL,          /* DEVaccept      */
