@@ -8,8 +8,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-#ifdef MUTUAL
-
 void
 MUTdestroy(GENmodel **inModel)
 {
@@ -29,5 +27,3 @@ MUTdestroy(GENmodel **inModel)
 
     *inModel = NULL;
 }
-
-#endif

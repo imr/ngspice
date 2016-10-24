@@ -18,6 +18,23 @@ Modified: 2000 AlansFixes
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#include "cuda_runtime.h"
+#include "cusparse_v2.h"
+
+/* cudaMemcpy MACRO to check it for errors --> CUDAMEMCPYCHECK(name of pointer, dimension, type, status) */
+#define CUDAMEMCPYCHECK(a, b, c, d) \
+    if (d != cudaSuccess) \
+    { \
+        fprintf (stderr, "cuCKTload routine...\n") ; \
+        fprintf (stderr, "Error: cudaMemcpy failed on %s size of %d bytes\n", #a, (int)(b * sizeof(c))) ; \
+        fprintf (stderr, "Error: %s = %d, %s\n", #d, d, cudaGetErrorString (d)) ; \
+        return (E_NOMEM) ; \
+    }
+
+#endif
+
 #ifdef XSPICE
 #include "ngspice/enh.h"
 /* gtri - add - wbk - 11/26/90 - add include for MIF global data */
@@ -30,8 +47,17 @@ static int ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum);
 int
 CKTload(CKTcircuit *ckt)
 {
+#ifdef USE_CUSPICE
+    cusparseStatus_t cusparseStatus ;
+    double alpha, beta ;
+    int status ;
+    alpha = 1.0 ;
+    beta = 0.0 ;
+#else
+    int size ;
+#endif
+
     int i;
-    int size;
     double startTime;
     CKTnode *node;
     int error;
@@ -50,18 +76,43 @@ CKTload(CKTcircuit *ckt)
 #endif
 
     startTime = SPfrontEnd->IFseconds();
-    size = SMPmatSize(ckt->CKTmatrix);
-    for (i = 0; i <= size; i++) {
-        ckt->CKTrhs[i] = 0;
-    }
-    SMPclear(ckt->CKTmatrix);
+
+#ifdef USE_CUSPICE
+    status = cuCKTflush (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#else
+    size = SMPmatSize (ckt->CKTmatrix) ;
+    for (i = 0 ; i <= size ; i++)
+        *(ckt->CKTrhs + i) = 0 ;
+
+    SMPclear (ckt->CKTmatrix) ;
+#endif
+
 #ifdef STEPDEBUG
     noncon = ckt->CKTnoncon;
 #endif /* STEPDEBUG */
 
+#ifdef USE_CUSPICE
+    status = cuCKTnonconUpdateHtoD (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+
+    status = cuCKTrhsOldUpdateHtoD (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#endif
+
     for (i = 0; i < DEVmaxnum; i++) {
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
             error = DEVices[i]->DEVload (ckt->CKThead[i], ckt);
+
+#ifdef USE_CUSPICE
+            status = cuCKTnonconUpdateDtoH (ckt) ;
+            if (status != 0)
+                return (E_NOMEM) ;
+#endif
+
             if (ckt->CKTnoncon)
                 ckt->CKTtroubleNode = 0;
 #ifdef STEPDEBUG
@@ -75,6 +126,48 @@ CKTload(CKTcircuit *ckt)
         }
     }
 
+#ifdef USE_CUSPICE
+    /* Copy the CKTdiagGmin value to the GPU */
+    status = cudaMemcpy (ckt->d_CKTloadOutput + ckt->total_n_values, &(ckt->CKTdiagGmin), sizeof(double), cudaMemcpyHostToDevice) ;
+    CUDAMEMCPYCHECK (ckt->d_CKTloadOutput + ckt->total_n_values, 1, double, status)
+
+    /* Performing CSRMV for the Sparse Matrix using CUSPARSE */
+    cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
+                                     CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                     ckt->CKTmatrix->CKTklunz, ckt->total_n_values + 1,
+                                     ckt->total_n_Ptr + ckt->CKTdiagElements,
+                                     &alpha, (cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr),
+                                     ckt->d_CKTtopologyMatrixCSRx, ckt->d_CKTtopologyMatrixCSRp,
+                                     ckt->d_CKTtopologyMatrixCSRj, ckt->d_CKTloadOutput, &beta,
+                                     ckt->CKTmatrix->d_CKTkluAx) ;
+
+    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+    {
+        fprintf (stderr, "CUSPARSE MATRIX Call Error\n") ;
+        return (E_NOMEM) ;
+    }
+
+    /* Performing CSRMV for the RHS using CUSPARSE */
+    cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
+                                     CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                     ckt->CKTmatrix->CKTkluN + 1, ckt->total_n_valuesRHS, ckt->total_n_PtrRHS,
+                                     &alpha, (cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr),
+                                     ckt->d_CKTtopologyMatrixCSRxRHS, ckt->d_CKTtopologyMatrixCSRpRHS,
+                                     ckt->d_CKTtopologyMatrixCSRjRHS, ckt->d_CKTloadOutputRHS, &beta,
+                                     ckt->CKTmatrix->d_CKTrhs) ;
+
+    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+    {
+        fprintf (stderr, "CUSPARSE RHS Call Error\n") ;
+        return (E_NOMEM) ;
+    }
+
+    cudaDeviceSynchronize () ;
+
+    status = cuCKTsystemDtoH (ckt) ;
+    if (status != 0)
+        return (E_NOMEM) ;
+#endif
 
 #ifdef XSPICE
     /* gtri - add - wbk - 11/26/90 - reset the MIF init flags */

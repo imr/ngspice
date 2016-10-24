@@ -10,7 +10,6 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-#ifdef MUTUAL
 
 /*ARGSUSED*/
 int
@@ -98,4 +97,3 @@ MUTask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
     }
     /* NOTREACHED */
 }
-#endif /* MUTUAL */

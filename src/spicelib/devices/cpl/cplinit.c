@@ -81,6 +81,11 @@ SPICEdev CPLinfo = {
  /* DEVbindCSCComplexToReal */ CPLbindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */ NULL,
+ /* DEVtopology  */ NULL,
+#endif
+
 };
 
 SPICEdev *

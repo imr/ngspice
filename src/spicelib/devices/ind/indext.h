@@ -46,4 +46,9 @@ extern int MUTbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int MUTbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
 
+#ifdef USE_CUSPICE
+extern int INDtopology (GENmodel *, CKTcircuit *, int *, int *) ;
+extern int MUTtopology (GENmodel *, CKTcircuit *, int *, int *) ;
+#endif
+
 #endif

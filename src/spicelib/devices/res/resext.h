@@ -27,3 +27,7 @@ extern int RESbindCSC (GENmodel*, CKTcircuit*) ;
 extern int RESbindCSCComplex (GENmodel*, CKTcircuit*) ;
 extern int RESbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
 #endif
+
+#ifdef USE_CUSPICE
+extern int REStopology (GENmodel *, CKTcircuit *, int *, int *) ;
+#endif

@@ -123,6 +123,13 @@ typedef struct SPICEdev {
         /* routine to convert Complex CSC array to Real CSC array */
 #endif
 
+#ifdef USE_CUSPICE
+    int (*cuDEVdestroy)(GENmodel *) ;
+        /* routine to Destroy the CUSPICE allocations */
+    int (*DEVtopology)(GENmodel *, CKTcircuit *, int *, int *) ;
+        /* routine to create the Topology Matrix */
+#endif
+
 } SPICEdev;  /* instance of structure for each possible type of device */
 
 

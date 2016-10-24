@@ -31,6 +31,10 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 #define Kb 1.3806226e-23
 #define KboQ 8.617087e-5
 #define EPS0 8.85418e-12
@@ -91,6 +95,10 @@ double n,n0, Vgsteff, Vgs_eff, niter, toxpf, toxpi, Tcen, toxe, epsrox, vddeot;
 double vtfbphi2eot, phieot, TempRatioeot, Vtm0eot, Vtmeot,vbieot;
 
 int Size_Not_Found, i;
+
+#ifdef USE_CUSPICE
+    int j, status ;
+#endif
 
     /*  loop through all the BSIM4 device models */
     for (; model != NULL; model = model->BSIM4nextModel)
@@ -405,6 +413,9 @@ int Size_Not_Found, i;
              fprintf(stderr, "BVS reset to %g.\n", model->BSIM4bvs);
          }
 
+#ifdef USE_CUSPICE
+        j = 0 ;
+#endif
 
          /* loop through all the instances of the model */
          for (here = model->BSIM4instances; here != NULL;
@@ -2348,7 +2359,199 @@ int Size_Not_Found, i;
                   SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.0 parameter checking for %s in model %s", model->BSIM4modName, here->BSIM4name);
                   return(E_BADPARM);
               }
+
+#ifdef USE_CUSPICE
+            model->BSIM4paramCPU.BSIM4gbsRWArray [j] = here->BSIM4gbs ;
+            model->BSIM4paramCPU.BSIM4cbsRWArray [j] = here->BSIM4cbs ;
+            model->BSIM4paramCPU.BSIM4gbdRWArray [j] = here->BSIM4gbd ;
+            model->BSIM4paramCPU.BSIM4cbdRWArray [j] = here->BSIM4cbd ;
+            model->BSIM4paramCPU.BSIM4vonRWArray [j] = here->BSIM4von ;
+            model->BSIM4paramCPU.BSIM4vdsatRWArray [j] = here->BSIM4vdsat ;
+            model->BSIM4paramCPU.BSIM4csubRWArray [j] = here->BSIM4csub ;
+            model->BSIM4paramCPU.BSIM4gdsRWArray [j] = here->BSIM4gds ;
+            model->BSIM4paramCPU.BSIM4gmRWArray [j] = here->BSIM4gm ;
+            model->BSIM4paramCPU.BSIM4gmbsRWArray [j] = here->BSIM4gmbs ;
+            model->BSIM4paramCPU.BSIM4gcrgRWArray [j] = here->BSIM4gcrg ;
+            model->BSIM4paramCPU.BSIM4IgidlRWArray [j] = here->BSIM4Igidl ;
+            model->BSIM4paramCPU.BSIM4IgislRWArray [j] = here->BSIM4Igisl ;
+            model->BSIM4paramCPU.BSIM4IgcsRWArray [j] = here->BSIM4Igcs ;
+            model->BSIM4paramCPU.BSIM4IgcdRWArray [j] = here->BSIM4Igcd ;
+            model->BSIM4paramCPU.BSIM4IgsRWArray [j] = here->BSIM4Igs ;
+            model->BSIM4paramCPU.BSIM4IgdRWArray [j] = here->BSIM4Igd ;
+            model->BSIM4paramCPU.BSIM4IgbRWArray [j] = here->BSIM4Igb ;
+            model->BSIM4paramCPU.BSIM4cdRWArray [j] = here->BSIM4cd ;
+            model->BSIM4paramCPU.BSIM4qinvRWArray [j] = here->BSIM4qinv ;
+            model->BSIM4paramCPU.BSIM4cggbRWArray [j] = here->BSIM4cggb ;
+            model->BSIM4paramCPU.BSIM4cgsbRWArray [j] = here->BSIM4cgsb ;
+            model->BSIM4paramCPU.BSIM4cgdbRWArray [j] = here->BSIM4cgdb ;
+            model->BSIM4paramCPU.BSIM4cdgbRWArray [j] = here->BSIM4cdgb ;
+            model->BSIM4paramCPU.BSIM4cdsbRWArray [j] = here->BSIM4cdsb ;
+            model->BSIM4paramCPU.BSIM4cddbRWArray [j] = here->BSIM4cddb ;
+            model->BSIM4paramCPU.BSIM4cbgbRWArray [j] = here->BSIM4cbgb ;
+            model->BSIM4paramCPU.BSIM4cbsbRWArray [j] = here->BSIM4cbsb ;
+            model->BSIM4paramCPU.BSIM4cbdbRWArray [j] = here->BSIM4cbdb ;
+            model->BSIM4paramCPU.BSIM4csgbRWArray [j] = here->BSIM4csgb ;
+            model->BSIM4paramCPU.BSIM4cssbRWArray [j] = here->BSIM4cssb ;
+            model->BSIM4paramCPU.BSIM4csdbRWArray [j] = here->BSIM4csdb ;
+            model->BSIM4paramCPU.BSIM4cgbbRWArray [j] = here->BSIM4cgbb ;
+            model->BSIM4paramCPU.BSIM4csbbRWArray [j] = here->BSIM4csbb ;
+            model->BSIM4paramCPU.BSIM4cdbbRWArray [j] = here->BSIM4cdbb ;
+            model->BSIM4paramCPU.BSIM4cbbbRWArray [j] = here->BSIM4cbbb ;
+            model->BSIM4paramCPU.BSIM4gtauRWArray [j] = here->BSIM4gtau ;
+            model->BSIM4paramCPU.BSIM4qgateRWArray [j] = here->BSIM4qgate ;
+            model->BSIM4paramCPU.BSIM4qbulkRWArray [j] = here->BSIM4qbulk ;
+            model->BSIM4paramCPU.BSIM4qdrnRWArray [j] = here->BSIM4qdrn ;
+            model->BSIM4paramCPU.BSIM4qsrcRWArray [j] = here->BSIM4qsrc ;
+            model->BSIM4paramCPU.BSIM4capbsRWArray [j] = here->BSIM4capbs ;
+            model->BSIM4paramCPU.BSIM4capbdRWArray [j] = here->BSIM4capbd ;
+            model->BSIM4paramCPU.BSIM4icVDSArray [j] = here->BSIM4icVDS ;
+            model->BSIM4paramCPU.BSIM4icVGSArray [j] = here->BSIM4icVGS ;
+            model->BSIM4paramCPU.BSIM4icVBSArray [j] = here->BSIM4icVBS ;
+            model->BSIM4paramCPU.BSIM4vth0Array [j] = here->BSIM4vth0 ;
+            model->BSIM4paramCPU.BSIM4gbbsArray [j] = here->BSIM4gbbs ;
+            model->BSIM4paramCPU.BSIM4ggidlbArray [j] = here->BSIM4ggidlb ;
+            model->BSIM4paramCPU.BSIM4gbgsArray [j] = here->BSIM4gbgs ;
+            model->BSIM4paramCPU.BSIM4ggidlgArray [j] = here->BSIM4ggidlg ;
+            model->BSIM4paramCPU.BSIM4gbdsArray [j] = here->BSIM4gbds ;
+            model->BSIM4paramCPU.BSIM4ggidldArray [j] = here->BSIM4ggidld ;
+            model->BSIM4paramCPU.BSIM4ggislsArray [j] = here->BSIM4ggisls ;
+            model->BSIM4paramCPU.BSIM4ggislgArray [j] = here->BSIM4ggislg ;
+            model->BSIM4paramCPU.BSIM4ggislbArray [j] = here->BSIM4ggislb ;
+            model->BSIM4paramCPU.BSIM4gIgsgArray [j] = here->BSIM4gIgsg ;
+            model->BSIM4paramCPU.BSIM4gIgcsgArray [j] = here->BSIM4gIgcsg ;
+            model->BSIM4paramCPU.BSIM4gIgcsdArray [j] = here->BSIM4gIgcsd ;
+            model->BSIM4paramCPU.BSIM4gIgcsbArray [j] = here->BSIM4gIgcsb ;
+            model->BSIM4paramCPU.BSIM4gIgdgArray [j] = here->BSIM4gIgdg ;
+            model->BSIM4paramCPU.BSIM4gIgcdgArray [j] = here->BSIM4gIgcdg ;
+            model->BSIM4paramCPU.BSIM4gIgcddArray [j] = here->BSIM4gIgcdd ;
+            model->BSIM4paramCPU.BSIM4gIgcdbArray [j] = here->BSIM4gIgcdb ;
+            model->BSIM4paramCPU.BSIM4gIgbgArray [j] = here->BSIM4gIgbg ;
+            model->BSIM4paramCPU.BSIM4gIgbdArray [j] = here->BSIM4gIgbd ;
+            model->BSIM4paramCPU.BSIM4gIgbbArray [j] = here->BSIM4gIgbb ;
+            model->BSIM4paramCPU.BSIM4ggidlsArray [j] = here->BSIM4ggidls ;
+            model->BSIM4paramCPU.BSIM4ggisldArray [j] = here->BSIM4ggisld ;
+            model->BSIM4paramCPU.BSIM4gstotArray [j] = here->BSIM4gstot ;
+            model->BSIM4paramCPU.BSIM4gstotdArray [j] = here->BSIM4gstotd ;
+            model->BSIM4paramCPU.BSIM4gstotgArray [j] = here->BSIM4gstotg ;
+            model->BSIM4paramCPU.BSIM4gstotbArray [j] = here->BSIM4gstotb ;
+            model->BSIM4paramCPU.BSIM4gdtotArray [j] = here->BSIM4gdtot ;
+            model->BSIM4paramCPU.BSIM4gdtotdArray [j] = here->BSIM4gdtotd ;
+            model->BSIM4paramCPU.BSIM4gdtotgArray [j] = here->BSIM4gdtotg ;
+            model->BSIM4paramCPU.BSIM4gdtotbArray [j] = here->BSIM4gdtotb ;
+            model->BSIM4paramCPU.BSIM4cgdoArray [j] = here->BSIM4cgdo ;
+            model->BSIM4paramCPU.BSIM4qgdoArray [j] = here->BSIM4qgdo ;
+            model->BSIM4paramCPU.BSIM4cgsoArray [j] = here->BSIM4cgso ;
+            model->BSIM4paramCPU.BSIM4qgsoArray [j] = here->BSIM4qgso ;
+            model->BSIM4paramCPU.BSIM4AseffArray [j] = here->BSIM4Aseff ;
+            model->BSIM4paramCPU.BSIM4PseffArray [j] = here->BSIM4Pseff ;
+            model->BSIM4paramCPU.BSIM4nfArray [j] = here->BSIM4nf ;
+            model->BSIM4paramCPU.BSIM4XExpBVSArray [j] = here->BSIM4XExpBVS ;
+            model->BSIM4paramCPU.BSIM4vjsmFwdArray [j] = here->BSIM4vjsmFwd ;
+            model->BSIM4paramCPU.BSIM4IVjsmFwdArray [j] = here->BSIM4IVjsmFwd ;
+            model->BSIM4paramCPU.BSIM4vjsmRevArray [j] = here->BSIM4vjsmRev ;
+            model->BSIM4paramCPU.BSIM4IVjsmRevArray [j] = here->BSIM4IVjsmRev ;
+            model->BSIM4paramCPU.BSIM4SslpRevArray [j] = here->BSIM4SslpRev ;
+            model->BSIM4paramCPU.BSIM4SslpFwdArray [j] = here->BSIM4SslpFwd ;
+            model->BSIM4paramCPU.BSIM4AdeffArray [j] = here->BSIM4Adeff ;
+            model->BSIM4paramCPU.BSIM4PdeffArray [j] = here->BSIM4Pdeff ;
+            model->BSIM4paramCPU.BSIM4XExpBVDArray [j] = here->BSIM4XExpBVD ;
+            model->BSIM4paramCPU.BSIM4vjdmFwdArray [j] = here->BSIM4vjdmFwd ;
+            model->BSIM4paramCPU.BSIM4IVjdmFwdArray [j] = here->BSIM4IVjdmFwd ;
+            model->BSIM4paramCPU.BSIM4vjdmRevArray [j] = here->BSIM4vjdmRev ;
+            model->BSIM4paramCPU.BSIM4IVjdmRevArray [j] = here->BSIM4IVjdmRev ;
+            model->BSIM4paramCPU.BSIM4DslpRevArray [j] = here->BSIM4DslpRev ;
+            model->BSIM4paramCPU.BSIM4DslpFwdArray [j] = here->BSIM4DslpFwd ;
+            model->BSIM4paramCPU.BSIM4SjctTempRevSatCurArray [j] = here->BSIM4SjctTempRevSatCur ;
+            model->BSIM4paramCPU.BSIM4SswTempRevSatCurArray [j] = here->BSIM4SswTempRevSatCur ;
+            model->BSIM4paramCPU.BSIM4SswgTempRevSatCurArray [j] = here->BSIM4SswgTempRevSatCur ;
+            model->BSIM4paramCPU.BSIM4DjctTempRevSatCurArray [j] = here->BSIM4DjctTempRevSatCur ;
+            model->BSIM4paramCPU.BSIM4DswTempRevSatCurArray [j] = here->BSIM4DswTempRevSatCur ;
+            model->BSIM4paramCPU.BSIM4DswgTempRevSatCurArray [j] = here->BSIM4DswgTempRevSatCur ;
+            model->BSIM4paramCPU.BSIM4vbscArray [j] = here->BSIM4vbsc ;
+            model->BSIM4paramCPU.BSIM4thetavthArray [j] = here->BSIM4thetavth ;
+            model->BSIM4paramCPU.BSIM4eta0Array [j] = here->BSIM4eta0 ;
+            model->BSIM4paramCPU.BSIM4k2oxArray [j] = here->BSIM4k2ox ;
+            model->BSIM4paramCPU.BSIM4nstarArray [j] = here->BSIM4nstar ;
+            model->BSIM4paramCPU.BSIM4vfbArray [j] = here->BSIM4vfb ;
+            model->BSIM4paramCPU.BSIM4vgs_effArray [j] = here->BSIM4vgs_eff ;
+            model->BSIM4paramCPU.BSIM4vgd_effArray [j] = here->BSIM4vgd_eff ;
+            model->BSIM4paramCPU.BSIM4dvgs_eff_dvgArray [j] = here->BSIM4dvgs_eff_dvg ;
+            model->BSIM4paramCPU.BSIM4dvgd_eff_dvgArray [j] = here->BSIM4dvgd_eff_dvg ;
+            model->BSIM4paramCPU.BSIM4VgsteffArray [j] = here->BSIM4Vgsteff ;
+            model->BSIM4paramCPU.BSIM4grdswArray [j] = here->BSIM4grdsw ;
+            model->BSIM4paramCPU.BSIM4AbulkArray [j] = here->BSIM4Abulk ;
+            model->BSIM4paramCPU.BSIM4vtfbphi1Array [j] = here->BSIM4vtfbphi1 ;
+            model->BSIM4paramCPU.BSIM4ueffArray [j] = here->BSIM4ueff ;
+            model->BSIM4paramCPU.BSIM4u0tempArray [j] = here->BSIM4u0temp ;
+            model->BSIM4paramCPU.BSIM4vsattempArray [j] = here->BSIM4vsattemp ;
+            model->BSIM4paramCPU.BSIM4EsatLArray [j] = here->BSIM4EsatL ;
+            model->BSIM4paramCPU.BSIM4VdseffArray [j] = here->BSIM4Vdseff ;
+            model->BSIM4paramCPU.BSIM4vtfbphi2Array [j] = here->BSIM4vtfbphi2 ;
+            model->BSIM4paramCPU.BSIM4CoxeffArray [j] = here->BSIM4Coxeff ;
+            model->BSIM4paramCPU.BSIM4AbovVgst2VtmArray [j] = here->BSIM4AbovVgst2Vtm ;
+            model->BSIM4paramCPU.BSIM4IdovVdsArray [j] = here->BSIM4IdovVds ;
+            model->BSIM4paramCPU.BSIM4gcrgdArray [j] = here->BSIM4gcrgd ;
+            model->BSIM4paramCPU.BSIM4gcrgbArray [j] = here->BSIM4gcrgb ;
+            model->BSIM4paramCPU.BSIM4gcrggArray [j] = here->BSIM4gcrgg ;
+            model->BSIM4paramCPU.BSIM4grgeltdArray [j] = here->BSIM4grgeltd ;
+            model->BSIM4paramCPU.BSIM4gcrgsArray [j] = here->BSIM4gcrgs ;
+            model->BSIM4paramCPU.BSIM4sourceConductanceArray [j] = here->BSIM4sourceConductance ;
+            model->BSIM4paramCPU.BSIM4drainConductanceArray [j] = here->BSIM4drainConductance ;
+            model->BSIM4paramCPU.BSIM4gstotsArray [j] = here->BSIM4gstots ;
+            model->BSIM4paramCPU.BSIM4gdtotsArray [j] = here->BSIM4gdtots ;
+            model->BSIM4paramCPU.BSIM4vfbzbArray [j] = here->BSIM4vfbzb ;
+            model->BSIM4paramCPU.BSIM4gIgssArray [j] = here->BSIM4gIgss ;
+            model->BSIM4paramCPU.BSIM4gIgddArray [j] = here->BSIM4gIgdd ;
+            model->BSIM4paramCPU.BSIM4gIgbsArray [j] = here->BSIM4gIgbs ;
+            model->BSIM4paramCPU.BSIM4gIgcssArray [j] = here->BSIM4gIgcss ;
+            model->BSIM4paramCPU.BSIM4gIgcdsArray [j] = here->BSIM4gIgcds ;
+            model->BSIM4paramCPU.BSIM4noiGd0Array [j] = here->BSIM4noiGd0 ;
+            model->BSIM4paramCPU.BSIM4cqdbArray [j] = here->BSIM4cqdb ;
+            model->BSIM4paramCPU.BSIM4cqsbArray [j] = here->BSIM4cqsb ;
+            model->BSIM4paramCPU.BSIM4cqgbArray [j] = here->BSIM4cqgb ;
+            model->BSIM4paramCPU.BSIM4qchqsArray [j] = here->BSIM4qchqs ;
+            model->BSIM4paramCPU.BSIM4cqbbArray [j] = here->BSIM4cqbb ;
+            model->BSIM4paramCPU.BSIM4taunetArray [j] = here->BSIM4taunet ;
+            model->BSIM4paramCPU.BSIM4gtgArray [j] = here->BSIM4gtg ;
+            model->BSIM4paramCPU.BSIM4gtdArray [j] = here->BSIM4gtd ;
+            model->BSIM4paramCPU.BSIM4gtsArray [j] = here->BSIM4gts ;
+            model->BSIM4paramCPU.BSIM4gtbArray [j] = here->BSIM4gtb ;
+            model->BSIM4paramCPU.BSIM4mArray [j] = here->BSIM4m ;
+            model->BSIM4paramCPU.BSIM4grbpdArray [j] = here->BSIM4grbpd ;
+            model->BSIM4paramCPU.BSIM4grbdbArray [j] = here->BSIM4grbdb ;
+            model->BSIM4paramCPU.BSIM4grbpbArray [j] = here->BSIM4grbpb ;
+            model->BSIM4paramCPU.BSIM4grbpsArray [j] = here->BSIM4grbps ;
+            model->BSIM4paramCPU.BSIM4grbsbArray [j] = here->BSIM4grbsb ;
+            model->BSIM4paramCPU.BSIM4offArray [j] = here->BSIM4off ;
+            model->BSIM4paramCPU.BSIM4dNodePrimeArray [j] = here->BSIM4dNodePrime ;
+            model->BSIM4paramCPU.BSIM4sNodePrimeArray [j] = here->BSIM4sNodePrime ;
+            model->BSIM4paramCPU.BSIM4gNodePrimeArray [j] = here->BSIM4gNodePrime ;
+            model->BSIM4paramCPU.BSIM4bNodePrimeArray [j] = here->BSIM4bNodePrime ;
+            model->BSIM4paramCPU.BSIM4gNodeExtArray [j] = here->BSIM4gNodeExt ;
+            model->BSIM4paramCPU.BSIM4gNodeMidArray [j] = here->BSIM4gNodeMid ;
+            model->BSIM4paramCPU.BSIM4dbNodeArray [j] = here->BSIM4dbNode ;
+            model->BSIM4paramCPU.BSIM4sbNodeArray [j] = here->BSIM4sbNode ;
+            model->BSIM4paramCPU.BSIM4sNodeArray [j] = here->BSIM4sNode ;
+            model->BSIM4paramCPU.BSIM4dNodeArray [j] = here->BSIM4dNode ;
+            model->BSIM4paramCPU.BSIM4qNodeArray [j] = here->BSIM4qNode ;
+            model->BSIM4paramCPU.BSIM4rbodyModArray [j] = here->BSIM4rbodyMod ;
+            model->BSIM4paramCPU.BSIM4modeArray [j] = here->BSIM4mode ;
+            model->BSIM4paramCPU.BSIM4rgateModArray [j] = here->BSIM4rgateMod ;
+            model->BSIM4paramCPU.BSIM4trnqsModArray [j] = here->BSIM4trnqsMod ;
+            model->BSIM4paramCPU.BSIM4acnqsModArray [j] = here->BSIM4acnqsMod ;
+            model->BSIM4paramCPU.BSIM4statesArray [j] = here->BSIM4states ;
+
+            j++ ;
+#endif
+
          } /* End instance */
+
+#ifdef USE_CUSPICE
+        status = cuBSIM4temp ((GENmodel *)model) ;
+        if (status != 0)
+            return (E_NOMEM) ;
+#endif
+
     }
-    return(OK);
+    return (OK) ;
 }

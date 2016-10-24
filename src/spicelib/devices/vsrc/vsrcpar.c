@@ -26,6 +26,11 @@ static void copy_coeffs(VSRCinstance *here, IFvalue *value)
     here->VSRCcoeffsGiven = TRUE;
 
     memcpy(here->VSRCcoeffs, value->v.vec.rVec, (size_t) n * sizeof(double));
+
+#ifdef USE_CUSPICE
+    here->n_coeffs = n ;
+#endif
+
 }
 
 

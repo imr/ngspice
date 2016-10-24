@@ -24,12 +24,11 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
     double m;
     int error;
 
-#ifdef MUTUAL
     MUTinstance *muthere;
     MUTmodel *mutmodel;
     int ktype;
     int itype;
-#endif
+
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = model->INDnextModel ) {
@@ -49,7 +48,6 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
                                                         *(ckt->CKTrhsOld + here->INDbrEq);
                 }
             }
-#ifdef MUTUAL
         }
     }
     ktype = CKTtypelook("mutual");
@@ -84,7 +82,6 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->INDinstances; here != NULL ;
                 here=here->INDnextInstance) {
 
-#endif /*MUTUAL*/
             if(ckt->CKTmode & MODEDC) {
                 req = 0.0;
                 veq = 0.0;
