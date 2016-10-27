@@ -469,9 +469,10 @@ Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
     /* Expand Status Elements */
     h = cy - LineHeight + StatusFrame - 1;
-    MoveWindow(hwSource, StatusFrame, h, SourceLength, StatusElHeight, TRUE);
+    int statbegin = 3 * StatusFrame + QuitButtonLength + AnalyseLength + 20;
+    MoveWindow(hwSource, StatusFrame, h, cx - statbegin - BorderSize, StatusElHeight, TRUE);
     MoveWindow(hwAnalyse,
-               cx - 3 * StatusFrame - QuitButtonLength - AnalyseLength - 20,
+               cx - statbegin,
                h, AnalyseLength, StatusElHeight, TRUE);
     MoveWindow(hwQuitButton,
                cx - StatusFrame - QuitButtonLength - 20,
@@ -937,7 +938,9 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCm
         HDC textDC;
         HFONT font;
         TEXTMETRIC tm;
-        font = GetStockFont(ANSI_FIXED_FONT);
+        font = CreateFont(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
+        if (!font)
+            font = GetStockFont(ANSI_FIXED_FONT);
         SetWindowFont(twText, font, FALSE);
         textDC = GetDC(twText);
         if (textDC) {
@@ -989,6 +992,11 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCm
 
     if (!hwQuitButton)
         goto THE_END;
+
+    /* Define a minimum width */
+    int MinWidth = AnalyseLength + SourceLength + QuitButtonLength + 48;
+    if (WinLineWidth < MinWidth)
+        WinLineWidth = MinWidth;
 
     /* Make main window and subwindows visible.
        Size of windows allows display of 80 character line.
