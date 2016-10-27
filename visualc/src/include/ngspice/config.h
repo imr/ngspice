@@ -437,31 +437,11 @@
 /* Do not trigger unwanted traps by default */
 /* #undef NEWTRUNC */
 
-#ifdef NGDEBUG
-#ifdef CONFIG64
 /* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice64d/bin"
+/* Not used in MS Windows */
+#define NGSPICEBINDIR "../bin"
 /* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice64d/share/ngspice"
-#else
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spiced/bin"
-/* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spiced/share/ngspice"
-#endif
-#else
-#ifdef CONFIG64
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice64/bin"
-/* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice64/share/ngspice"
-#else
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice/bin"
-/* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice/share/ngspice"
-#endif
-#endif
+#define NGSPICEDATADIR "../share/ngspice"
 
 /* Define if we want NOBYPASS */
 /* #undef NOBYPASS */
