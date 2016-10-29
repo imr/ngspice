@@ -161,42 +161,54 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <LocalDebuggerWorkingDirectory>$(ProjectName)\$(Configuration).$(Platform)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
