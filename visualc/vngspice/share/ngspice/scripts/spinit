@@ -1,0 +1,69 @@
+* Special ngspice init file
+* to be read by ngspice.exe from within VS
+alias exit quit
+alias acct rusage all
+
+** ascii rawfile **
+set filetype=ascii
+** frontend debug output **
+*set ngdebug
+** asking after quit **
+*set askquit
+** set the number of threads in openmp
+** default (if compiled with --enable-openmp) is: 2
+set num_threads=4
+set interactive
+
+
+strcmp __flag $program "ngspice"
+if $__flag = 0
+
+  strcmp __flag1 $pg_config "r32"
+  if $__flag1 = 0
+    set configuration = "win32"
+    set rord = "Release"
+    set platform = ""
+
+  else
+    strcmp __flag1 $pg_config "d32"
+    if $__flag1 = 0
+
+      set configuration = "win32"
+      set rord = "Debug"
+      set platform = ""
+
+    else
+      strcmp __flag1 $pg_config "r64"
+      if $__flag1 = 0
+
+        set configuration = "x64"
+        set rord = "Release"
+        set platform = "64"
+
+      else
+        strcmp __flag1 $pg_config "d64"
+        if $__flag1 = 0
+
+          set configuration = "x64"
+          set rord = "Debug"
+          set platform = "64"
+
+        end
+      end
+    end
+  end
+  codemodel ../../codemodels/{$configuration}/{$rord}/spice2poly{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$rord}/analog{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$rord}/digital{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$rord}/xtradev{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$rord}/xtraevt{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$rord}/table{$platform}.cm
+  
+  echo ngspice{$platform} {$configuration} {$rord}
+end
+unset __flag
+unset __flag1
+unset configuration
+unset rord
+unset platform
+
