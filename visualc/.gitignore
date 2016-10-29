@@ -14,7 +14,18 @@
 /xspice/icm/
 /xspice/intermediate/
 
-/vngspice/
+/vngspice/console_debug.Win32/
+/vngspice/console_release.Win32/
+/vngspice/console_release_omp.Win32/
+/vngspice/console_debug.x64/
+/vngspice/console_release.x64/
+/vngspice/console_release_omp.x64/
+/vngspice/Debug.Win32/
+/vngspice/Debug.x64/
+/vngspice/Release.Win32/
+/vngspice/Release.x64/
+/vngspice/ReleaseOMP.Win32/
+/vngspice/ReleaseOMP.x64/
 /vngspice-fftw/
 /sharedspice/
 
