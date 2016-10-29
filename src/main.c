@@ -1138,7 +1138,7 @@ main(int argc, char **argv)
             /* load user's initialisation file
                try accessing the initialisation file in the current directory
                if that fails try the alternate name */
-            if (FALSE == read_initialisation_file("", INITSTR)  &&
+            if (FALSE == read_initialisation_file("", INITSTR) &&
                 FALSE == read_initialisation_file("", ALT_INITSTR)) {
                 /* if that failed try in the user's home directory
                    if their HOME environment variable is set */
