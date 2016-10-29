@@ -2,6 +2,10 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#include <Windows.h>
+#endif
+
 #include "ngspice/ngspice.h"
 #include "ivars.h"
 #include "../misc/util.h" /* ngdirname() */
@@ -11,6 +15,45 @@ char *News_File;
 char *Help_Path;
 char *Lib_Path;
 char *Inp_Path;
+
+#if defined (SHARED_MODULE) && defined (HAS_RELPATH)
+#if defined(__MINGW32__) || defined(_MSC_VER)
+
+static char *
+get_abs_path(void)
+{
+    char path[MAX_PATH];
+    HMODULE hm = NULL;
+
+    if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                            (LPCTSTR)get_abs_path,
+                            &hm))
+    {
+        int ret = GetLastError();
+        fprintf(stderr, "GetModuleHandle returned %d\n", ret);
+    }
+    GetModuleFileNameA(hm, path, sizeof(path));
+    return ngdirname(path);
+}
+
+#else
+
+#include <dlfcn.h>
+
+static char *
+get_abs_path(void)
+{
+    Dl_info info;
+
+    // Lookup the path of the library given the pointer to a function from within the library
+    if (dladdr(get_abs_path, &info))
+        return ngdirname(info.dli_fname);
+    return NULL;
+}
+
+#endif
+#endif
 
 
 static void
@@ -37,12 +80,30 @@ void
 ivars(char *argv0)
 {
     char *temp=NULL;
-	 /* $dprefix has been set to /usr/local or C:/Spice (Windows) in configure.ac,
-    NGSPICEBINDIR has been set to $dprefix/bin in configure.ac, 
+    /* $dprefix has been set to /usr/local or C:/Spice (Windows) in configure.ac,
+    NGSPICEBINDIR has been set to $dprefix/bin in config.h,
+    NGSPICEDATADIR has been set to $dprefix/share/ngspice in config.h,
     Spice_Exec_Dir has been set to NGSPICEBINDIR in conf.c,
-    may be overridden here by environmental variable SPICE_EXEC_DIR */
-    env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
+    may be overridden here by environmental variable SPICE_EXEC_DIR
+    Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c;
+    may be overridden here by absolute path to library location if shared library
+    may be overridden here by environmental variable SPICE_LIB_DIR */
+
+#if defined (SHARED_MODULE) && defined (HAS_RELPATH)
+    if (!env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR")) {
+        /* get the absolute path of the ngspice library as reference to other paths */
+        char *Shared_Dir = get_abs_path();
+        /* Here we determine the path relative to the library directory */
+        Spice_Lib_Dir = temp = tprintf("%s/../share/ngspice", Shared_Dir);
+#ifdef OUTDEBUG
+        printf("Shared lib is located in %s\n", Shared_Dir);
+#endif
+        tfree(Shared_Dir);
+    }
+#else
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
+#endif
+    env_overr(&Spice_Exec_Dir, "SPICE_EXEC_DIR");
 
     /* for printing a news file */
     mkvar(&News_File, Spice_Lib_Dir, "news", "SPICE_NEWS");
