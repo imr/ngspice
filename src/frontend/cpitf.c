@@ -269,6 +269,9 @@ ft_cpinit(void)
         /* jump over leading spaces */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
             s = skip_ws(s);
+#ifdef OUTDEBUG
+            printf("cpitf.c, spinit path is %s\n", s);
+#endif
             /* copy s into buf until space is seen, r is the actual position */
             for (r = buf; *s && !isspace_c(*s); r++, s++)
                 *r = *s;
