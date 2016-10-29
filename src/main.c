@@ -1138,16 +1138,26 @@ main(int argc, char **argv)
             /* load user's initialisation file
                try accessing the initialisation file in the current directory
                if that fails try the alternate name */
-            if (FALSE == read_initialisation_file("", INITSTR)  &&
+            if (FALSE == read_initialisation_file("", INITSTR) &&
                 FALSE == read_initialisation_file("", ALT_INITSTR)) {
                 /* if that failed try in the user's home directory
                    if their HOME environment variable is set */
                 char *homedir = getenv("HOME");
-                if (homedir)
-                    if (FALSE == read_initialisation_file(homedir, INITSTR)  &&
+                if (homedir) {
+                    if (FALSE == read_initialisation_file(homedir, INITSTR) &&
                         FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
                         ;
                     }
+                }
+                else {
+                    /* If there is no HOME environment (e.g. MS Windows), try user's profile directory */
+                    homedir = getenv("USERPROFILE");
+                    if (homedir)
+                        if (FALSE == read_initialisation_file(homedir, INITSTR) &&
+                            FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
+                            ;
+                        }
+                }
             }
         }
 
