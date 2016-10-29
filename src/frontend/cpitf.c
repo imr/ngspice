@@ -244,6 +244,23 @@ ft_cpinit(void)
 
         /* Now source the standard startup file spinit or tclspinit. */
 
+        /* set variables to read program configuration into spinit for VS */
+#ifdef _MSC_VER
+#ifdef CONFIG64
+#ifdef NGDEBUG
+        cp_vset("pg_config", CP_STRING, "d64");
+#else
+        cp_vset("pg_config", CP_STRING, "r64");
+#endif
+#else
+#ifdef NGDEBUG
+        cp_vset("pg_config", CP_STRING, "d32");
+#else
+        cp_vset("pg_config", CP_STRING, "r32");
+#endif
+#endif
+#endif
+
         /* jump over leading spaces */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
             s = skip_ws(s);
