@@ -49,13 +49,19 @@ com_save2(wordlist *wl, char *name)
 void
 settrace(wordlist *wl, int what, char *name)
 {
-    struct dbcomm *d, *td;
+    struct dbcomm *d, *last;
     char *s;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
+
+    if (dbs)
+        for (last = dbs; last->db_next; last = last->db_next)
+            ;
+    else
+        last = NULL;
 
     while (wl) {
         s = cp_unquote(wl->wl_word);
@@ -96,13 +102,12 @@ settrace(wordlist *wl, int what, char *name)
 
         tfree(s);              /*DG avoid memoy leak */
 
-        if (dbs) {
-            for (td = dbs; td->db_next; td = td->db_next)
-                ;
-            td->db_next = d;
-        } else {
+        if (last)
+            last->db_next = d;
+        else
             ft_curckt->ci_dbs = dbs = d;
-        }
+
+        last = d;
 
         wl = wl->wl_next;
     }
