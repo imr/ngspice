@@ -92,7 +92,7 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end);
-static int numnodes(const char *name, struct subs *subs, wordlist const *modnames);
+static int numnodes(const char *line, struct subs *subs, wordlist const *modnames);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct line *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct line *deck, char *subname, wordlist * const orig_modnames);
@@ -1354,7 +1354,7 @@ gettrans(const char *name, const char *name_end)
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
-numnodes(const char *name, struct subs *subs, wordlist const *modnames)
+numnodes(const char *line, struct subs *subs, wordlist const *modnames)
 {
     /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
     /* 'A' type devices since the callers will not know how to find the */
@@ -1364,13 +1364,13 @@ numnodes(const char *name, struct subs *subs, wordlist const *modnames)
     char c;
     int n;
 
-    name = skip_ws(name);
+    line = skip_ws(line);
 
-    c = tolower_c(*name);
+    c = tolower_c(*line);
 
     if (c == 'x') {     /* Handle this ourselves. */
-        const char *xname_e = skip_back_ws(strchr(name, '\0'), name);
-        const char *xname = skip_back_non_ws(xname_e, name);
+        const char *xname_e = skip_back_ws(strchr(line, '\0'), line);
+        const char *xname = skip_back_non_ws(xname_e, line);
         for (; subs; subs = subs->su_next)
             if (eq_substr(xname, xname_e, subs->su_name))
                 return subs->su_numargs;
@@ -1382,9 +1382,9 @@ numnodes(const char *name, struct subs *subs, wordlist const *modnames)
          */
         {
             int nodes = -2;
-            while (*name) {
+            while (*line) {
                 nodes++;
-                name = skip_ws(skip_non_ws(name));
+                line = skip_ws(skip_non_ws(line));
             }
             return (nodes);
         }
@@ -1402,7 +1402,7 @@ numnodes(const char *name, struct subs *subs, wordlist const *modnames)
         char *s, buf[4 * BSIZE_SP];
         int i, gotit;
 
-        (void) strncpy(buf, name, sizeof(buf));
+        (void) strncpy(buf, line, sizeof(buf));
 
         i = 0;
         gotit = 0;
@@ -1424,11 +1424,11 @@ numnodes(const char *name, struct subs *subs, wordlist const *modnames)
         /* recognized. This code may be better!                      */
 
         if ((i < 4) && (c == 'q')) {
-            fprintf(cp_err, "Error: too few nodes for BJT: %s\n", name);
+            fprintf(cp_err, "Error: too few nodes for BJT: %s\n", line);
             return (0);
         }
         if ((i < 5) && ((c == 'm') || (c == 'p'))) {
-            fprintf(cp_err, "Error: too few nodes for MOS or CPL: %s\n", name);
+            fprintf(cp_err, "Error: too few nodes for MOS or CPL: %s\n", line);
             return (0);
         }
         return (i-1); /* compensate the unnecessary increment in the while cycle */
