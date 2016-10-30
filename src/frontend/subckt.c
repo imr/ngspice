@@ -1503,31 +1503,20 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     /* instead.                                                         */
     /* gtri - end - wbk - 10/23/90 */
     char c;
-    struct subs *sss;
     char *s, *t, buf[4 * BSIZE_SP];
     const wordlist *wl;
     int n, i, gotit;
 
     name = skip_ws(name);
 
-    c = *name;
-    if (isupper_c(c))
-        c = tolower_c(c);
+    c = tolower_c(*name);
 
-    (void) strncpy(buf, name, sizeof(buf));
-    s = buf;
     if (c == 'x') {     /* Handle this ourselves. */
-        while (*s)
-            s++;
-        s--;
-        while ((*s == ' ') || (*s == '\t'))
-            *s-- = '\0';
-        while ((*s != ' ') && (*s != '\t'))
-            s--;
-        s++;
-        for (sss = subs; sss; sss = sss->su_next)
-            if (eq(sss->su_name, s))
-                return (sss->su_numargs);
+        const char *xname_e = skip_back_ws(strchr(name, '\0'), name);
+        const char *xname = skip_back_non_ws(xname_e, name);
+        for (; subs; subs = subs->su_next)
+            if (eq_substr(xname, xname_e, subs->su_name))
+                return subs->su_numargs;
         /*
          * number of nodes not known so far.
          * lets count the nodes ourselves,
@@ -1536,10 +1525,9 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
          */
         {
             int nodes = -2;
-            for (s = buf; *s; ) {
+            while (*name) {
                 nodes++;
-                s = skip_non_ws(s);
-                s = skip_ws(s);
+                name = skip_ws(skip_non_ws(name));
             }
             return (nodes);
         }
@@ -1554,6 +1542,8 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     /* Paolo Nenzi Jan-2001                                              */
 
     if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
+        (void) strncpy(buf, name, sizeof(buf));
+
         i = 0;
         s = buf;
         gotit = 0;
