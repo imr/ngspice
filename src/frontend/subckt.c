@@ -92,7 +92,7 @@ struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
 static int settrans(char *formal, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end);
-static int numnodes(char *name, struct subs *subs, wordlist const *modnames);
+static int numnodes(const char *name, struct subs *subs, wordlist const *modnames);
 static int  numdevs(char *s);
 static wordlist *modtranslate(struct line *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct line *deck, char *subname, wordlist * const orig_modnames);
@@ -1495,7 +1495,7 @@ gettrans(const char *name, const char *name_end)
 /*-------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 static int
-numnodes(char *name, struct subs *subs, wordlist const *modnames)
+numnodes(const char *name, struct subs *subs, wordlist const *modnames)
 {
     /* gtri - comment - wbk - 10/23/90 - Do not modify this routine for */
     /* 'A' type devices since the callers will not know how to find the */
@@ -1503,9 +1503,7 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     /* instead.                                                         */
     /* gtri - end - wbk - 10/23/90 */
     char c;
-    char *s, *t, buf[4 * BSIZE_SP];
-    const wordlist *wl;
-    int n, i, gotit;
+    int n;
 
     name = skip_ws(name);
 
@@ -1542,14 +1540,17 @@ numnodes(char *name, struct subs *subs, wordlist const *modnames)
     /* Paolo Nenzi Jan-2001                                              */
 
     if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
+        char *s, buf[4 * BSIZE_SP];
+        int i, gotit;
+
         (void) strncpy(buf, name, sizeof(buf));
 
         i = 0;
-        s = buf;
         gotit = 0;
-        s = nexttok(s);          /* Skip component name */
+        s = nexttok(buf);       /* Skip the instance name */
         while ((i <= n) && (*s) && !gotit) {
-            t = gettok_node(&s);       /* get nodenames . . .  */
+            const wordlist *wl;
+            char *t = gettok_node(&s);       /* get nodenames . . .  */
             for (wl = modnames; wl; wl = wl->wl_next)
                 if (model_name_match(t, wl->wl_word)) {
                     gotit = 1;
