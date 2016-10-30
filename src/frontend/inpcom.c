@@ -5407,14 +5407,14 @@ replace_token(char *string, char *token, int wherereplace, int total)
 
     /* get total number of tokens */
     while (*actstring) {
-        gettok_nc(&actstring);
+        actstring = nexttok(actstring);
         count++;
     }
     /* If total number of tokens correct */
     if (count == total) {
         actstring = string;
         for (i = 1; i < wherereplace; i++)
-            gettok_nc(&actstring);
+            actstring = nexttok(actstring);
         /* If token to be replaced at right position */
         if (ciprefix(token, actstring)) {
             actstring[0] = ' ';
@@ -5888,9 +5888,9 @@ inp_poly_err(struct line *card)
         if ((ciprefix("e", curr_line)) || (ciprefix("g", curr_line)) ||
             (ciprefix("f", curr_line)) || (ciprefix("h", curr_line)))
         {
-            gettok_nc(&curr_line);
-            gettok_nc(&curr_line);
-            gettok_nc(&curr_line);
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
             if (ciprefix("poly", curr_line)) {
                 fprintf(stderr,
                         "\nError: XSPICE is required to run the 'poly' option in line %d\n",
@@ -6158,7 +6158,7 @@ inp_fix_temper_in_param(struct line *deck)
             /* if we have inserted into a .param line, convert to .func */
             if (prefix(".param", new_str)) {
                 char *new_tmp_str = new_str;
-                gettok_nc(&new_tmp_str);
+                new_tmp_str = nexttok(new_tmp_str);
                 funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
                 funcbody = copy(new_tmp_str + 1);
                 *funcs_tail_ptr =

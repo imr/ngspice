@@ -1319,7 +1319,7 @@ com_alterparam(wordlist *wl)
         if (subcktname) {
             /* find subcircuit */
             if (ciprefix(".subckt", curr_line)) {
-                gettok_nc(&curr_line); /* skip .subckt */
+                curr_line = nexttok(curr_line); /* skip .subckt */
                 char *sname = gettok(&curr_line);
                 if (eq(sname, subcktname)) {
                     tfree(sname);
@@ -1348,12 +1348,12 @@ com_alterparam(wordlist *wl)
                             if (*xline == 'x') {
                                 xline = strstr(xline, bsubb);
                                 if (xline) {
-                                    gettok_nc(&xline); /* skip subcktname */
+                                    xline = nexttok(xline); /* skip subcktname */
                                     int ii;
                                     for (ii = 0; ii < notok; ii++)
-                                        gettok_nc(&xline); /* skip parameter values */
+                                        xline = nexttok(xline); /* skip parameter values */
                                     char *beg = copy_substring(xx->li_line, xline);
-                                    gettok_nc(&xline); /* skip parameter value to be replaced */
+                                    xline = nexttok(xline); /* skip parameter value to be replaced */
                                     char *newline = tprintf("%s %s %s", beg, pval, xline);
                                     tfree(xx->li_line);
                                     xx->li_line = newline;
@@ -1375,7 +1375,7 @@ com_alterparam(wordlist *wl)
         /* alterparam pname=vpval */
         else {
             if (ciprefix(".param", curr_line)) {
-                gettok_nc(&curr_line); /* skip .param */
+                curr_line = nexttok(curr_line); /* skip .param */
                 char *name = gettok_char(&curr_line, '=', FALSE, FALSE);
                 if (eq(name, pname)) {
                     curr_line = dd->li_line;
@@ -1718,7 +1718,7 @@ inp_parse_temper(struct line *card)
         if (prefix(".model", curr_line)) {
             struct pt_temper *modtlistnew = NULL;
             /* remove '.model' */
-            gettok_nc(&curr_line);
+            curr_line = nexttok(curr_line);
             devmodname = gettok(&curr_line);
             beg_tstr = curr_line;
             while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
