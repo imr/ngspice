@@ -242,10 +242,8 @@ ft_cpinit(void)
             wl_free(wl);
         }
 
-        /* Now source the standard startup file spinit or tclspinit. */
-
-        /* set variables to read program configuration into spinit for VS */
 #ifdef _MSC_VER
+        /* set variables to read program configuration into spinit for VS */
 #ifdef CONFIG64
 #ifdef NGDEBUG
         cp_vset("pg_config", CP_STRING, "d64");
@@ -261,15 +259,31 @@ ft_cpinit(void)
 #endif
 #endif
 
-        /* jump over leading spaces */
+        /* Now source the standard startup file spinit or tclspinit. */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
+            /* jump over leading spaces */
             s = skip_ws(s);
 #ifdef OUTDEBUG
             printf("cpitf.c, spinit path is %s\n", s);
 #endif
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(HAS_WINGUI)
+            /* MS Windows allows path names with spaces, e.g. "Program Files".
+               The old code below does not do then.
+               So just copy the whole string s into buf */
+            size_t sl = strlen(s);
+            if (sl >= BSIZE_SP) {
+                fprintf(cp_err, "Note: Cannot evaluate spinit, path is too long!\n");
+                tcap_init();
+                return;
+            }
+            size_t ii = 0;
+            for (r = buf; *s && ii < sl; r++, s++, ii++)
+                *r = *s;
+#else
             /* copy s into buf until space is seen, r is the actual position */
             for (r = buf; *s && !isspace_c(*s); r++, s++)
                 *r = *s;
+#endif
             tfree(copys);
             /* add a path separator to buf at actual position */
             (void) strcpy(r, DIR_PATHSEP);
