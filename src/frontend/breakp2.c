@@ -50,7 +50,6 @@ void
 settrace(wordlist *wl, int what, char *name)
 {
     struct dbcomm *d, *last;
-    char *s;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -63,44 +62,48 @@ settrace(wordlist *wl, int what, char *name)
     else
         last = NULL;
 
-    while (wl) {
-        s = cp_unquote(wl->wl_word);
-        d = TMALLOC(struct dbcomm, 1);
-        d->db_number = debugnumber++;
-        d->db_analysis = name;
+    for (;wl ;wl = wl->wl_next) {
+        char *s = cp_unquote(wl->wl_word);
+        char *db_nodename1 = NULL;
+        char db_type = 0;
         if (eq(s, "all")) {
             switch (what) {
             case VF_PRINT:
-                d->db_type = DB_TRACEALL;
+                db_type = DB_TRACEALL;
                 break;
  /*         case VF_PLOT:
-                d->db_type = DB_IPLOTALL;
+                db_type = DB_IPLOTALL;
                 break; */
             case VF_ACCUM:
-                /* d->db_type = DB_SAVEALL; */
-                d->db_nodename1 = copy(s);
-                d->db_type = DB_SAVE;
+                /* db_type = DB_SAVEALL; */
+                db_nodename1 = copy(s);
+                db_type = DB_SAVE;
                 break;
             }
             /* wrd_chtrace(NULL, TRUE, what); */
         } else {
             switch (what) {
             case VF_PRINT:
-                d->db_type = DB_TRACENODE;
+                db_type = DB_TRACENODE;
                 break;
 /*          case VF_PLOT:
-                d->db_type = DB_IPLOT;
+                db_type = DB_IPLOT;
                 break; */
             case VF_ACCUM:
-                d->db_type = DB_SAVE;
+                db_type = DB_SAVE;
                 break;
             }
             /* v(2) --> 2, i(vds) --> vds#branch */
-            d->db_nodename1 = copynode(s);
+            db_nodename1 = copynode(s);
             /* wrd_chtrace(s, TRUE, what); */
         }
 
         tfree(s);              /*DG avoid memoy leak */
+        d = TMALLOC(struct dbcomm, 1);
+        d->db_analysis = name;
+        d->db_type = db_type;
+        d->db_nodename1 = db_nodename1;
+        d->db_number = debugnumber++;
 
         if (last)
             last->db_next = d;
@@ -108,8 +111,6 @@ settrace(wordlist *wl, int what, char *name)
             ft_curckt->ci_dbs = dbs = d;
 
         last = d;
-
-        wl = wl->wl_next;
     }
 }
 
