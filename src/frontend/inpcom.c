@@ -6498,14 +6498,15 @@ inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, in
 
                 char *rest = s + strlen(deps[i].param_name);
 
-                if ((isspace_c(s[-1]) || s[-1] == '=') &&
+                if (s > curr_line &&
+                    (isspace_c(s[-1]) || s[-1] == '=') &&
                     (isspace_c(*rest) || *rest == '\0' || *rest == ')'))
                 {
                     int prefix_len;
 
                     if (isspace_c(s[-1])) {
-                        s = depreciated_skip_back_ws(s);
-                        if (s[-1] == '{')
+                        s = skip_back_ws(s, curr_line);
+                        if (s > curr_line && s[-1] == '{')
                             s--;
                     }
 
