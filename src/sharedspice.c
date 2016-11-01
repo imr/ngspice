@@ -244,7 +244,6 @@ static char* no_init = "Error: ngspice is not initialized!\n   Run ngSpice_Init 
 /* identifier for this ngspice invocation */
 int ng_ident = 0;
 
-
 static struct plot *
 get_plot_byname(char* plotname)
 {
@@ -595,6 +594,19 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         nobgtrwanted = TRUE;
     immediate = FALSE;
 
+#ifdef OUTDEBUG
+    /*debug: print into file*/
+    FILE *fd = fopen("ng-outputs.txt", "w");
+    fprintf(fd, "%s\n\n", "*** shared ngspice debug: list of all strings printed ***");
+    fclose(fd);
+#endif
+#ifdef INDEBUG
+    /*debug: print into file*/
+    FILE *fdi = fopen("ng-inputs.txt", "w");
+    fprintf(fdi, "%s\n\n", "*** shared ngspice debug: list of all inputs to ngspice ***");
+    fclose(fdi);
+#endif
+
 #ifdef THREADS
     /* init the mutexes */
 #ifdef HAVE_LIBPTHREAD
@@ -779,7 +791,12 @@ int  ngSpice_Command(char* comexec)
            fprintf(stderr, no_init);
            return 1;
        }
-
+#ifdef INDEBUG
+        /*debug: print into file*/
+        FILE *fdi = fopen("ng-inputs.txt", "a");
+        fprintf(fdi, "%s\n", comexec);
+        fclose(fdi);
+#endif
        runc(comexec);
        /* main thread prepares immediate detaching of dll */
        immediate = TRUE;
@@ -798,6 +815,13 @@ pvector_info  ngGet_Vec_Info(char* vecname)
         fprintf(stderr, no_init);
         return NULL;
     }
+
+#ifdef INDEBUG
+    /*debug: print into file*/
+    FILE *fdi = fopen("ng-inputs.txt", "a");
+    fprintf(fdi, "\n*+*+*+* Return info about vector %s\n", vecname);
+    fclose(fdi);
+#endif
 
     newvec = vec_get(vecname);
 
@@ -840,6 +864,15 @@ int ngSpice_Circ(char** circa){
             newline = copy(circa[i]);
             create_circbyline(newline);
         }
+#ifdef INDEBUG
+        /*debug: print into file*/
+        FILE *fdi = fopen("ng-inputs.txt", "a");
+        fprintf(fdi, "\n*+*+*+* Circuit sent by ngSpice_Circ\n");
+        for (i = 0; i < entries; i++) {
+            fprintf(fdi, "%s\n", circa[i]);
+        }
+        fclose(fdi);
+#endif
         return 0;
     }
     /* upon error */
@@ -852,6 +885,12 @@ IMPEXP
 char* ngSpice_CurPlot(void)
 {
     struct plot *pl = plot_cur;
+#ifdef INDEBUG
+    /*debug: print into file*/
+    FILE *fdi = fopen("ng-inputs.txt", "a");
+    fprintf(fdi, "\n*+*+*+* Return the current plot name %s\n", pl->pl_typename);
+    fclose(fdi);
+#endif
     return pl->pl_typename;
 }
 
@@ -862,6 +901,14 @@ char** ngSpice_AllPlots(void)
 {
     int len = 0, i = 0;
     struct plot *pl = plot_list;
+
+#ifdef INDEBUG
+    /*debug: print into file*/
+    FILE *fdi = fopen("ng-inputs.txt", "a");
+    fprintf(fdi, "\n*+*+*+* Return a list of all plots\n");
+    fclose(fdi);
+#endif
+
     if (allplots)
         tfree(allplots);
 
@@ -887,6 +934,13 @@ char** ngSpice_AllVecs(char* plotname)
     struct dvec *d;
     int len = 0, i = 0;
     struct plot *pl;
+
+#ifdef INDEBUG
+    /*debug: print into file*/
+    FILE *fdi = fopen("ng-inputs.txt", "a");
+    fprintf(fdi, "\n*+*+*+* Get all vectors from plot %s\n", plotname);
+    fclose(fdi);
+#endif
 
     if (allvecs)
         tfree(allvecs);
@@ -928,6 +982,13 @@ bool ngSpice_SetBkpt(double time)
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return(FALSE);
     }
+
+#ifdef INDEBUG
+    /*debug: print into file*/
+    FILE *fdi = fopen("ng-inputs.txt", "a");
+    fprintf(fdi, "\nSet a breakpoint at %f\n", time);
+    fclose(fdi);
+#endif
 
     ckt = ft_curckt->ci_ckt;
     if (ckt->CKTbreakSize == 0) {
@@ -1174,7 +1235,7 @@ sh_fputsll(const char *input, FILE* outf)
 
 #ifdef OUTDEBUG
     /*debug: print into file*/
-    FILE *fd = fopen("ng-string-out.txt", "a");
+    FILE *fd = fopen("ng-outputs.txt", "a");
     fprintf(fd, "%s", input);
     fclose(fd);
 #endif
