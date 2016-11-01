@@ -2686,7 +2686,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                 if (p) {
                     int num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
 
-                    if (num_subckt_params == 0 || !found_mult_param(num_subckt_params, subckt_param_names))
+                    if (!found_mult_param(num_subckt_params, subckt_param_names))
                         inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
 
                     for (i = 0; i < num_subckt_params; i++) {
