@@ -541,7 +541,7 @@ libngspice_la_LIBADD += \
 
 libngspice_la_CFLAGS = -shared
 
-libngspice_la_LDFLAGS =  -shared
+libngspice_la_LDFLAGS =  -shared -version-info @LIB_VERSION@
 
 if SHWIN
 libngspice_la_LDFLAGS += -Wl,--output-def=ngspice.def  -Wl,--out-implib=ngspice.dll.a
