@@ -49,6 +49,10 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 # You may add LIB_VERSION="a:b:c" to the ../configure statement to override LIBRARY_VERSION
 # in configure.ac, where you can find details on the selection of a, b, and c.
 
+# You may add -DOUTDEBUG and/or -DINDEBUG to CFLAGS= in ../configure to enable printing of 
+# all printed output from or commands sent to ngspice into files ng-inputs.txt or ng-outputs.txt.
+# You may need administrator rights to do so, depending on the location of shared ngspice.
+
 echo
 if test "$1" = "64"; then
    cd release64-sh
