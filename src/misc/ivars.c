@@ -56,12 +56,16 @@ get_abs_path(void)
 #endif
 
 
-static void
+static bool
 env_overr(char **v, char *e)
 {
     char *p;
-    if (v && e && (p = getenv(e)) != NULL)
+    if (v && e && (p = getenv(e)) != NULL) {
         *v = p;
+        return (TRUE);
+    }
+    else
+        return (FALSE);
 }
 
 static void
@@ -113,6 +117,7 @@ ivars(char *argv0)
     mkvar(&Lib_Path, Spice_Lib_Dir, "scripts", "SPICE_SCRIPTS");
     /* used to call ngspice with aspice command, not used in Windows mode */
     mkvar(&Spice_Path, Spice_Exec_Dir, "ngspice", "SPICE_PATH");
+    tfree(temp);
     /* may be used to store input files (*.lib, *.include, ...) */
     /* get directory where ngspice resides */
 #if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
