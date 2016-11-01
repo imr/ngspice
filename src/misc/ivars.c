@@ -56,12 +56,16 @@ get_abs_path(void)
 #endif
 
 
-static void
+static bool
 env_overr(char **v, char *e)
 {
     char *p;
-    if (v && e && (p = getenv(e)) != NULL)
+    if (v && e && (p = getenv(e)) != NULL) {
         *v = p;
+        return (TRUE);
+    }
+    else
+        return (FALSE);
 }
 
 static void
