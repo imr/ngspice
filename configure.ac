@@ -852,6 +852,9 @@ if test "x$enable_pss" = xyes; then
     AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
 if test "x$enable_relan" = xyes; then
+    AC_MSG_RESULT([checking for GSL library, since Reliability Analysis has been requested])
+    AC_CHECK_LIB([gslcblas], [cblas_dgemm], [], [AC_MSG_ERROR([GSL Library not found, please install it])])
+    AC_CHECK_LIB([gsl], [gsl_blas_dgemm], [], [AC_MSG_ERROR([GSL Library not found, please install it])])
     AC_DEFINE([RELAN], [], [Define if you want Reliability Analysis])
     AC_MSG_RESULT([WARNING: Reliability Analysis enabled])
 fi
