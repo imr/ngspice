@@ -129,7 +129,7 @@ pkginclude_HEADERS = \
 
 
 if RELAN_WANTED
-include_HEADERS += \
+pkginclude_HEADERS += \
 	relandefs.h
 endif
 
