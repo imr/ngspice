@@ -26,6 +26,7 @@ typedef struct sRELMODELrelStruct {
     int IsON ;
     RELMODELrelList *deltaVthList ;
     unsigned int semiPeriods ;
+    double Vstress ;
 } RELMODELrelStruct ;
 
 typedef struct sRELMODELmodel
@@ -47,6 +48,21 @@ typedef struct sRELMODELmodel
     double RELMODELbeta1 ;
     int RELMODELrelmodel ;
 
+    int RELMODELtype ;
+
+    double RELMODELalpha_new ;
+    double RELMODELb_new ;
+    double RELMODELbeta_new ;
+    double RELMODELe0_new ;
+    double RELMODELk_new ;
+    double RELMODELkb_new ;
+    double RELMODELtau_c_fast_new ;
+    double RELMODELtau_c_slow_new ;
+    double RELMODELtau_e_fast_new ;
+    double RELMODELtau_e_slow_new ;
+    double RELMODELt_r_new ;
+    double RELMODELt_s_new ;
+
     unsigned RELMODELk_bGiven : 1 ;
     unsigned RELMODELh_cutGiven : 1 ;
     unsigned RELMODELntsGiven : 1 ;
@@ -59,6 +75,21 @@ typedef struct sRELMODELmodel
     unsigned RELMODELtau_eGiven : 1 ;
     unsigned RELMODELbeta1Given : 1 ;
     unsigned RELMODELrelmodelGiven : 1 ;
+
+    unsigned RELMODELtypeGiven : 1 ;
+
+    unsigned RELMODELalpha_newGiven : 1 ;
+    unsigned RELMODELb_newGiven : 1 ;
+    unsigned RELMODELbeta_newGiven : 1 ;
+    unsigned RELMODELe0_newGiven : 1 ;
+    unsigned RELMODELk_newGiven : 1 ;
+    unsigned RELMODELkb_newGiven : 1 ;
+    unsigned RELMODELtau_c_fast_newGiven : 1 ;
+    unsigned RELMODELtau_c_slow_newGiven : 1 ;
+    unsigned RELMODELtau_e_fast_newGiven : 1 ;
+    unsigned RELMODELtau_e_slow_newGiven : 1 ;
+    unsigned RELMODELt_r_newGiven : 1 ;
+    unsigned RELMODELt_s_newGiven : 1 ;
 } RELMODELmodel ;
 
 
@@ -75,6 +106,21 @@ typedef struct sRELMODELmodel
 #define RELMODEL_MOD_TAUE     10
 #define RELMODEL_MOD_BETA1    11
 #define RELMODEL_MOD_RELMODEL 12
+
+#define RELMODEL_MOD_TYPE 13
+
+#define RELMODEL_MOD_ALPHA_NEW      14
+#define RELMODEL_MOD_B_NEW          15
+#define RELMODEL_MOD_BETA_NEW       16
+#define RELMODEL_MOD_E0_NEW         17
+#define RELMODEL_MOD_K_NEW          18
+#define RELMODEL_MOD_KB_NEW         19
+#define RELMODEL_MOD_TAU_C_FAST_NEW 20
+#define RELMODEL_MOD_TAU_C_SLOW_NEW 21
+#define RELMODEL_MOD_TAU_E_FAST_NEW 22
+#define RELMODEL_MOD_TAU_E_SLOW_NEW 23
+#define RELMODEL_MOD_T_R_NEW        24
+#define RELMODEL_MOD_T_S_NEW        25
 
 
 #include "relmodelext.h"

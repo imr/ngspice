@@ -31,6 +31,11 @@ Modified by Pankaj Kumar Thakur, 07/23/2012
 
 #ifdef RELAN
 #include "../relmodel/relmodeldefs.h"
+
+typedef struct sBSIM4vgsList {
+    double vgs ;
+    struct sBSIM4vgsList *next ;
+} BSIM4vgsList ;
 #endif
 
 typedef struct sBSIM4instance
@@ -580,6 +585,7 @@ typedef struct sBSIM4instance
 
 #ifdef RELAN
     RELMODELrelStruct *relStruct ;
+    BSIM4vgsList *vgsList ;
 #endif
 
 } BSIM4instance ;

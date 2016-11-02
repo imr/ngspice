@@ -2667,6 +2667,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
                 here->relStruct->IsON = -1 ;
                 here->relStruct->deltaVthList = NULL ;
                 here->relStruct->semiPeriods = 0 ;
+                here->relStruct->Vstress = 0 ;
             }
 #endif
 

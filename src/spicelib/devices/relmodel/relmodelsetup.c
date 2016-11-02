@@ -74,6 +74,75 @@ RELMODELsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
         {
             model->RELMODELbeta1 = 0.112 ;
         }
+
+/////
+
+        if (!model->RELMODELtypeGiven)
+        {
+            model->RELMODELtype = 2 ;
+        }
+
+
+
+        if (!model->RELMODELalpha_newGiven)
+        {
+            model->RELMODELalpha_new = 0.3 ;
+        }
+
+        if (!model->RELMODELb_newGiven)
+        {
+            model->RELMODELb_new = 0.075 ;
+        }
+
+        if (!model->RELMODELbeta_newGiven)
+        {
+            model->RELMODELbeta_new = 0.5 ;
+        }
+
+        if (!model->RELMODELe0_newGiven)
+        {
+            model->RELMODELe0_new = 0.1897 ;
+        }
+
+        if (!model->RELMODELk_newGiven)
+        {
+            model->RELMODELk_new = 420 ;
+        }
+
+        if (!model->RELMODELkb_newGiven)
+        {
+            model->RELMODELkb_new = 8.6e-5 ;
+        }
+
+        if (!model->RELMODELtau_c_fast_newGiven)
+        {
+            model->RELMODELtau_c_fast_new = 1e-3 ;
+        }
+
+        if (!model->RELMODELtau_c_slow_newGiven)
+        {
+            model->RELMODELtau_c_slow_new = 1e3 ;
+        }
+
+        if (!model->RELMODELtau_e_fast_newGiven)
+        {
+            model->RELMODELtau_e_fast_new = 20e-6 ;
+        }
+
+        if (!model->RELMODELtau_e_slow_newGiven)
+        {
+            model->RELMODELtau_e_slow_new = 1e6 ;
+        }
+
+        if (!model->RELMODELt_r_newGiven)
+        {
+            model->RELMODELt_r_new = 0.0 ;
+        }
+
+        if (!model->RELMODELt_s_newGiven)
+        {
+            model->RELMODELt_s_new = 0.0 ;
+        }
     }
 
     return (OK) ;

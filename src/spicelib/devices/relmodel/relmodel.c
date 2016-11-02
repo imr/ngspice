@@ -22,6 +22,21 @@ IOP ("tau_0", RELMODEL_MOD_TAU0, IF_REAL, "tau_0"),
 IOP ("beta", RELMODEL_MOD_BETA, IF_REAL, "beta"),
 IOP ("tau_e", RELMODEL_MOD_TAUE, IF_REAL, "tau_e"),
 IOP ("beta1", RELMODEL_MOD_BETA1, IF_REAL, "beta1"),
+
+IOP ("type", RELMODEL_MOD_TYPE, IF_INTEGER, "beta1"),
+
+IOP ("alpha_new", RELMODEL_MOD_ALPHA_NEW, IF_REAL, "beta1"),
+IOP ("b_new", RELMODEL_MOD_B_NEW, IF_REAL, "beta1"),
+IOP ("beta_new", RELMODEL_MOD_BETA_NEW, IF_REAL, "beta1"),
+IOP ("e0_new", RELMODEL_MOD_E0_NEW, IF_REAL, "beta1"),
+IOP ("k_new", RELMODEL_MOD_K_NEW, IF_REAL, "beta1"),
+IOP ("kb_new", RELMODEL_MOD_K_NEW, IF_REAL, "beta1"),
+IOP ("tau_c_fast_new", RELMODEL_MOD_TAU_C_FAST_NEW, IF_REAL, "beta1"),
+IOP ("tau_c_slow_new", RELMODEL_MOD_TAU_C_SLOW_NEW, IF_REAL, "beta1"),
+IOP ("tau_e_fast_new", RELMODEL_MOD_TAU_E_FAST_NEW, IF_REAL, "beta1"),
+IOP ("tau_e_slow_new", RELMODEL_MOD_TAU_E_SLOW_NEW, IF_REAL, "beta1"),
+IOP ("t_r_new", RELMODEL_MOD_T_R_NEW, IF_REAL, "beta1"),
+IOP ("t_s_new", RELMODEL_MOD_T_S_NEW, IF_REAL, "beta1"),
 IP  ("relmodel", RELMODEL_MOD_RELMODEL,  IF_FLAG, "Flag to indicate RELMODEL")
 } ;
 
