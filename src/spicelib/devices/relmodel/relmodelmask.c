@@ -63,6 +63,10 @@ RELMODELmAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->RELMODELbeta1 ;
             return (OK) ;
 
+        case RELMODEL_MOD_TYPE:
+            value->iValue = model->RELMODELtype ;
+            return (OK) ;
+
         case RELMODEL_MOD_RELMODEL:
             value->iValue = model->RELMODELrelmodel ;
             return (OK) ;

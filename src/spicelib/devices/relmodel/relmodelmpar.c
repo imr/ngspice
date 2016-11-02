@@ -71,6 +71,11 @@ RELMODELmParam (int param, IFvalue *value, GENmodel *inMod)
             model->RELMODELbeta1Given = TRUE ;
             return (OK) ;
 
+        case RELMODEL_MOD_TYPE:
+            model->RELMODELtype = value->iValue ;
+            model->RELMODELtypeGiven = TRUE ;
+            return (OK) ;
+
         case RELMODEL_MOD_RELMODEL:
             model->RELMODELrelmodel = 1 ;
             model->RELMODELrelmodelGiven = TRUE ;
