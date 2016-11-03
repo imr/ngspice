@@ -19,6 +19,17 @@ RELMODELmAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 
     switch (which)
     {
+        // RELMODEL type
+        case RELMODEL_MOD_TYPE:
+            value->iValue = model->RELMODELtype ;
+            return (OK) ;
+
+        // RELMODEL flag
+        case RELMODEL_MOD_RELMODEL:
+            value->iValue = model->RELMODELrelmodel ;
+            return (OK) ;
+
+        // 1: Giorgio Liatis (Sapienza University - DIET - Ultra Thin Oxide)
         case RELMODEL_MOD_KB:
             value->rValue = model->RELMODELk_b ;
             return (OK) ;
@@ -63,12 +74,53 @@ RELMODELmAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->RELMODELbeta1 ;
             return (OK) ;
 
-        case RELMODEL_MOD_TYPE:
-            value->iValue = model->RELMODELtype ;
+        // 2: 65nm found over Internet
+        case RELMODEL_MOD_ALPHA_NEW:
+            value->rValue = model->RELMODELalpha_new ;
             return (OK) ;
 
-        case RELMODEL_MOD_RELMODEL:
-            value->iValue = model->RELMODELrelmodel ;
+        case RELMODEL_MOD_B_NEW:
+            value->rValue = model->RELMODELb_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_BETA_NEW:
+            value->rValue = model->RELMODELbeta_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_E0_NEW:
+            value->rValue = model->RELMODELe0_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_K_NEW:
+            value->rValue = model->RELMODELk_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_KB_NEW:
+            value->rValue = model->RELMODELkb_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_C_FAST_NEW:
+            value->rValue = model->RELMODELtau_c_fast_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_C_SLOW_NEW:
+            value->rValue = model->RELMODELtau_c_slow_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_E_FAST_NEW:
+            value->rValue = model->RELMODELtau_e_fast_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_E_SLOW_NEW:
+            value->rValue = model->RELMODELtau_e_slow_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_T_R_NEW:
+            value->rValue = model->RELMODELt_r_new ;
+            return (OK) ;
+
+        case RELMODEL_MOD_T_S_NEW:
+            value->rValue = model->RELMODELt_s_new ;
             return (OK) ;
 
         default:

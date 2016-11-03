@@ -20,6 +20,16 @@ RELMODELsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     /*  loop through all the RELMODEL device models */
     for ( ; model != NULL ; model = model->RELMODELnextModel)
     {
+        // RELMODEL type
+        // 1: Giorgio Liatis (Sapienza University - DIET - Ultra Thin Oxide)
+        // 2: 65nm found over Internet
+
+        if (!model->RELMODELtypeGiven)
+        {
+            model->RELMODELtype = 2 ;
+        }
+
+        // 1: Giorgio Liatis (Sapienza University - DIET - Ultra Thin Oxide)
         if (!model->RELMODELk_bGiven)
         {
             model->RELMODELk_b = 8.6e-5 ;
@@ -75,15 +85,7 @@ RELMODELsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
             model->RELMODELbeta1 = 0.112 ;
         }
 
-/////
-
-        if (!model->RELMODELtypeGiven)
-        {
-            model->RELMODELtype = 2 ;
-        }
-
-
-
+        // 2: 65nm found over Internet
         if (!model->RELMODELalpha_newGiven)
         {
             model->RELMODELalpha_new = 0.3 ;

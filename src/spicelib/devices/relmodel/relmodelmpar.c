@@ -16,6 +16,19 @@ RELMODELmParam (int param, IFvalue *value, GENmodel *inMod)
 
     switch (param)
     {
+        // RELMODEL type
+        case RELMODEL_MOD_TYPE:
+            model->RELMODELtype = value->iValue ;
+            model->RELMODELtypeGiven = TRUE ;
+            return (OK) ;
+
+        // RELMODEL flag
+        case RELMODEL_MOD_RELMODEL:
+            model->RELMODELrelmodel = 1 ;
+            model->RELMODELrelmodelGiven = TRUE ;
+            return (OK) ;
+
+        // 1: Giorgio Liatis (Sapienza University - DIET - Ultra Thin Oxide)
         case RELMODEL_MOD_KB:
             model->RELMODELk_b = value->rValue ;
             model->RELMODELk_bGiven = TRUE ;
@@ -71,19 +84,68 @@ RELMODELmParam (int param, IFvalue *value, GENmodel *inMod)
             model->RELMODELbeta1Given = TRUE ;
             return (OK) ;
 
-        case RELMODEL_MOD_TYPE:
-            model->RELMODELtype = value->iValue ;
-            model->RELMODELtypeGiven = TRUE ;
+        // 2: 65nm found over Internet
+        case RELMODEL_MOD_ALPHA_NEW:
+            model->RELMODELalpha_new = value->rValue ;
+            model->RELMODELalpha_newGiven = TRUE ;
             return (OK) ;
 
-        case RELMODEL_MOD_RELMODEL:
-            model->RELMODELrelmodel = 1 ;
-            model->RELMODELrelmodelGiven = TRUE ;
-            break ;
+        case RELMODEL_MOD_B_NEW:
+            model->RELMODELb_new = value->rValue ;
+            model->RELMODELb_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_BETA_NEW:
+            model->RELMODELbeta_new = value->rValue ;
+            model->RELMODELbeta_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_E0_NEW:
+            model->RELMODELe0_new = value->rValue ;
+            model->RELMODELe0_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_K_NEW:
+            model->RELMODELk_new = value->rValue ;
+            model->RELMODELk_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_KB_NEW:
+            model->RELMODELkb_new = value->rValue ;
+            model->RELMODELkb_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_C_FAST_NEW:
+            model->RELMODELtau_c_fast_new = value->rValue ;
+            model->RELMODELtau_c_fast_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_C_SLOW_NEW:
+            model->RELMODELtau_c_slow_new = value->rValue ;
+            model->RELMODELtau_c_slow_new = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_E_FAST_NEW:
+            model->RELMODELtau_e_fast_new = value->rValue ;
+            model->RELMODELtau_e_fast_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_TAU_E_SLOW_NEW:
+            model->RELMODELtau_e_slow_new = value->rValue ;
+            model->RELMODELtau_e_slow_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_T_R_NEW:
+            model->RELMODELt_r_new = value->rValue ;
+            model->RELMODELt_r_newGiven = TRUE ;
+            return (OK) ;
+
+        case RELMODEL_MOD_T_S_NEW:
+            model->RELMODELt_s_new = value->rValue ;
+            model->RELMODELt_s_newGiven = TRUE ;
+            return (OK) ;
 
         default:
             return (E_BADPARM) ;
     }
-
-    return (OK) ;
 }
