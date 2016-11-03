@@ -2738,50 +2738,50 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 
                 for (d = deck; (d = bogus_find_subckt(d, subckt_name)) != NULL; d = d->li_next) {
                     char *subckt_line = d->li_line;
-                        subckt_line = skip_non_ws(subckt_line);
-                        subckt_line = skip_ws(subckt_line);
+                    subckt_line = skip_non_ws(subckt_line);
+                    subckt_line = skip_ws(subckt_line);
 
-                            int num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
-                            int num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
+                    int num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
+                    int num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
 
-                            // make sure that if have inst params that one matches subckt
-                            if (num_inst_params != 0) {
-                                bool found_param_match = FALSE;
-                                int j, k;
+                    // make sure that if have inst params that one matches subckt
+                    if (num_inst_params != 0) {
+                        bool found_param_match = FALSE;
+                        int j, k;
 
-                                for (j = 0; j < num_inst_params; j++) {
-                                    for (k = 0; k < num_subckt_params; k++)
-                                        if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
-                                            found_param_match = TRUE;
-                                            break;
-                                        }
-                                    if (found_param_match)
-                                        break;
+                        for (j = 0; j < num_inst_params; j++) {
+                            for (k = 0; k < num_subckt_params; k++)
+                                if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
+                                    found_param_match = TRUE;
+                                    break;
                                 }
+                            if (found_param_match)
+                                break;
+                        }
 
-                                if (!found_param_match) {
-                                    // comment out .subckt and continue
-                                    while (d != NULL && !ciprefix(".ends", d->li_line)) {
-                                        *(d->li_line) = '*';
-                                        d = d->li_next;
-                                    }
-                                    *(d->li_line) = '*';
-                                    continue;
-                                }
+                        if (!found_param_match) {
+                            // comment out .subckt and continue
+                            while (d != NULL && !ciprefix(".ends", d->li_line)) {
+                                *(d->li_line) = '*';
+                                d = d->li_next;
                             }
+                            *(d->li_line) = '*';
+                            continue;
+                        }
+                    }
 
-                            c->li_line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
-                            for (i = 0; i < num_subckt_params; i++) {
-                                tfree(subckt_param_names[i]);
-                                tfree(subckt_param_values[i]);
-                            }
+                    c->li_line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
+                    for (i = 0; i < num_subckt_params; i++) {
+                        tfree(subckt_param_names[i]);
+                        tfree(subckt_param_values[i]);
+                    }
 
-                            for (i = 0; i < num_inst_params; i++) {
-                                tfree(inst_param_names[i]);
-                                tfree(inst_param_values[i]);
-                            }
+                    for (i = 0; i < num_inst_params; i++) {
+                        tfree(inst_param_names[i]);
+                        tfree(inst_param_values[i]);
+                    }
 
-                            break;
+                    break;
                 }
             }
 
