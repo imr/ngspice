@@ -70,7 +70,12 @@ SPICEdev B3SOIDDinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &B3SOIDDiSize,
- /* DEVmodSize    */ &B3SOIDDmSize
+ /* DEVmodSize    */ &B3SOIDDmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
+
 };
 
 SPICEdev *

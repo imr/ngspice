@@ -74,7 +74,11 @@ SPICEdev NUMOSinfo = {
 #endif
                     
  /* DEVinstSize   */ &NUMOSiSize,
- /* DEVmodSize    */ &NUMOSmSize
+ /* DEVmodSize    */ &NUMOSmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

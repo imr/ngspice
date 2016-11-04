@@ -71,7 +71,11 @@ SPICEdev HSMHVinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &HSMHViSize,
- /* DEVmodSize    */ &HSMHVmSize
+ /* DEVmodSize    */ &HSMHVmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

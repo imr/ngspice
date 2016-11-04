@@ -73,7 +73,11 @@ SPICEdev JFET2info = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &JFET2iSize,
- /* DEVmodSize    */ &JFET2mSize
+ /* DEVmodSize    */ &JFET2mSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

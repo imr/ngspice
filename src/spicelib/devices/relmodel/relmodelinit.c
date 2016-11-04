@@ -59,7 +59,7 @@ SPICEdev RELMODELinfo = {
     NULL,           /* DEVsoaCheck    */
     &RELMODELiSize, /* DEVinstSize    */
     &RELMODELmSize, /* DEVmodSize     */
-    NULL           /* DEVreliability */
+    NULL            /* DEVreliability */
 } ;
 
 

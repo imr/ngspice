@@ -74,7 +74,11 @@ SPICEdev NDEVinfo = {
 #endif               
                     
  /* DEVinstSize   */ &NDEViSize,
- /* DEVmodSize    */ &NDEVmSize
+ /* DEVmodSize    */ &NDEVmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

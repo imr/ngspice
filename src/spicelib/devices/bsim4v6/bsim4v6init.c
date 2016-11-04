@@ -73,7 +73,12 @@ SPICEdev BSIM4v6info = {
     NULL,          /* DEVacct        */
 #endif
     &BSIM4v6iSize,   /* DEVinstSize    */
-    &BSIM4v6mSize    /* DEVmodSize     */
+    &BSIM4v6mSize,    /* DEVmodSize     */
+
+#ifdef RELAN
+    NULL /* DEVreliability */
+#endif
+
 };
 
 

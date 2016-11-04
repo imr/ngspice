@@ -74,7 +74,12 @@ SPICEdev ASRCinfo = {
     /* DEVacct       */ NULL,
 #endif
     /* DEVinstSize   */ &ASRCiSize,
-    /* DEVmodSize    */ &ASRCmSize
+    /* DEVmodSize    */ &ASRCmSize,
+
+#ifdef RELAN
+    /* DEVreliability */ NULL
+#endif
+
 };
 
 

@@ -71,7 +71,12 @@ SPICEdev B3SOIFDinfo = {
  /* DEVacct       */ NULL,
 #endif    
  /* DEVinstSize*/	&B3SOIFDiSize,
- /* DEVmodSize*/	&B3SOIFDmSize
+ /* DEVmodSize*/	&B3SOIFDmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
+
 };
 
 

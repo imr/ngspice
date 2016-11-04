@@ -71,7 +71,12 @@ SPICEdev B4SOIinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &B4SOIiSize,
- /* DEVmodSize    */ &B4SOImSize
+ /* DEVmodSize    */ &B4SOImSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
+
 };
 
 SPICEdev *

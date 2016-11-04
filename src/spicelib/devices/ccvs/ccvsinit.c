@@ -73,7 +73,11 @@ SPICEdev CCVSinfo = {
  /* DEVacct       */ NULL,
 #endif
  /* DEVinstSize   */ &CCVSiSize,
- /* DEVmodSize    */ &CCVSmSize
+ /* DEVmodSize    */ &CCVSmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

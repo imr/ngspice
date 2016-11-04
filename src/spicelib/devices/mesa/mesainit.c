@@ -73,7 +73,11 @@ SPICEdev MESAinfo = {
  /* DEVacct       */ NULL,
 #endif                        
  /* DEVinstSize   */ &MESAiSize,
- /* DEVmodSize    */ &MESAmSize
+ /* DEVmodSize    */ &MESAmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

@@ -74,7 +74,11 @@ SPICEdev NUMDinfo = {
 #endif
                     
  /* DEVinstSize   */ &NUMDiSize,
- /* DEVmodSize    */ &NUMDmSize
+ /* DEVmodSize    */ &NUMDmSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 

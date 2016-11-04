@@ -73,7 +73,12 @@ SPICEdev MOS2info = {
  /* DEVacct       */ NULL,
 #endif    
  /* DEVinstSize   */ &MOS2iSize,
- /* DEVmodSize    */ &MOS2mSize
+ /* DEVmodSize    */ &MOS2mSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
+
 };
 
 

@@ -74,7 +74,11 @@ SPICEdev NBJT2info = {
 #endif  
                     
  /* DEVinstSize   */ &NBJT2iSize,
- /* DEVmodSize    */ &NBJT2mSize
+ /* DEVmodSize    */ &NBJT2mSize,
+
+#ifdef RELAN
+ /* DEVreliability */ NULL
+#endif
 
 };
 
