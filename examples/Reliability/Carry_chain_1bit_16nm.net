@@ -1,0 +1,103 @@
+carry_chain_1bit_16nm
+
+.include ./models/16nm_HP.pm
+.include ./subckt/sottocircuiti
+
+.subckt FA_SUB       0 node1 nodeSo nodeCo nodeC nodeB nodeA   XX=1
+
+Mn1 nodecon     nodeb     node4     0     nmos W={2*XX*Wmin} L={Lmin}
+Mp1 1         nodea     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn2 node4     nodea     0     0     nmos W={2*XX*Wmin} L={Lmin}
+Mp2 1         nodeb     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+
+Mn3 5         nodea     0     0     nmos W={2*XX*Wmin} L={Lmin}
+
+Mp3 4         nodea     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+Mp4  nodecon     nodeb     4     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn4 5         nodeb     0     0     nmos W={2*XX*Wmin} L={Lmin}
+
+Mp5 nodecon     nodec     1     node1     pmos W={4*XX*Wmin} L={Lmin}
+Mn5 nodecon     nodec     5     0     nmos W={2*XX*Wmin} L={Lmin}
+
+Mp6 2         nodea     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn6 3         nodea     0     0     nmos W={2*XX*Wmin} L={Lmin} 
+Mp7 2         nodeb     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn7 3         nodeb     0     0     nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp8 2         nodec     node1     node1     pmos W={4*XX*Wmin} L={Lmin} 
+
+Mn8 3         nodec     0     0     nmos W={2*XX*Wmin} L={Lmin}  
+
+Mp9 nodeson     nodecon 2     node1     pmos W={4*XX*Wmin} L={Lmin}
+ 
+Mn9 nodeson    nodecon 3     0     nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp10 9         nodea     node1     node1     pmos W={6*XX*Wmin} L={Lmin} 
+Mn10 7         nodea     0     0     nmos W={3*XX*Wmin} L={Lmin}
+Mp11 8         nodeb     9     node1     pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn11 6         nodeb     7     0     nmos W={3*XX*Wmin} L={Lmin}
+Mp12 nodeSon     nodec     8     node1     pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn12 nodeSon     nodec     6     0     nmos W={3*XX*Wmin} L={Lmin}
+
+Mp13 nodeCo     nodecon node1     node1     pmos W={4*XX*Wmin} L={Lmin} 
+Mn13 nodeCo     nodecon 0     0     nmos W={2*XX*Wmin} L={Lmin}   
+
+Mp14 nodeSo     nodeSon node1     node1     pmos W={4*XX*Wmin} L={Lmin}  
+Mn14 nodeSo     nodeSon 0     0     nmos W={2*XX*Wmin} L={Lmin}
+.ends
+
+
+.options temp=125 tnom=125
+.model p1_ra relmodel level=1 type=1
+.appendmodel p1_ra pmos
+.relan 315360000 0.002ns 1.4ns
+
+.TRAN 0.002ns 1.4ns
+
+.PARAM Y=0.78
+.PARAM XX=1
+.PARAM Lmin=16n
+.PARAM Wmin=16n
+
+*.meas tran delay_LH trig v(cin) val='0.9*Y*0.5' rise=1 targ v(cout) val='0.9*Y*0.5' fall=1
+.meas tran delay_HL trig v(cin) val='0.9*Y*0.5' fall=1 targ v(cout) val='0.9*Y*0.5' fall=1
+.meas tran delay_HL_1 trig v(cin) val='0.9*Y*0.5' fall=1 targ v(xfa_1.nodecon) val='0.9*Y*0.5' rise=1
+.meas tran delay_HL_2 trig v(xfa_1.nodecon) val='0.9*Y*0.5' rise=1 targ v(cout) val='0.9*Y*0.5' fall=1
+
+*.meas tran delay_LH_c trig v(cin) val={0.45*Y} rise=1 targ v(1) val={0.45*Y} rise=1
+*.meas tran delay_HL_c trig v(cin) val={0.45*Y} fall=1 targ v(1) val={0.45*Y} fall=1
+*.meas tran delay_HL_s trig v(cin) val={0.45*Y} rise=1 targ v(out1) val={0.45*Y} fall=1
+*.meas tran delay_LH_s trig v(cin) val={0.45*Y} fall=1 targ v(out1) val={0.45*Y} rise=1
+
+Vdd VDD 0 {0.9*Y}
+
+Vina1 ina1 0 0
+
+Vinb1 inb1 0 {0.9*Y}
+
+
+* Francesco
+*vcin cin 0 PWL(0 0 0.100ns 0 0.120ns {0.9*Y})
+vcin cin 0 PWL(0 {0.9*Y} 0.100ns {0.9*Y} 0.120ns 0)
+
+ 
+*vcin cin 0 PWL(0   {0.9*Y} 0.100ns   {0.9*Y} 0.120ns  0)
+*vcin cin 0 PWL(0 0 0.100ns 0 0.120ns  {0.9*Y})
+
+XFA_1 0 VDD out cout cin inb1 ina1 FA_SUB
+
+xNOT4_1 0 VDD out1 out NOT4_SUB
+xNOT4_2 0 VDD cout1 cout NOT4_SUB
+
+.CONTROL
+run
+.ENDC
+
+.END

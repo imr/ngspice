@@ -1,0 +1,906 @@
+************************************************************************************************
+*esempi
+*xnand1 0 node1 nodeZ nodeA nodeB NAND2_SUB       <--drive strength di default=1
+*xnand2 0 node1 nodeZ nodeA nodeB NAND2_SUB XX=2  <--drive strength =2
+*xxor1  0 node1 nodeZ nodeB nodeA XOR2_SUB
+
+
+.subckt NOT4_SUB 1 2 3 4 XX=4
+Mn1 3 4 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mp1 3 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+.ends
+
+
+
+
+************************************************************************************************
+* not
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos 
+*
+*drive strength ---------+
+*inA -----------------+  |
+*uscita ------------+ |  |
+*vdd -------------+ | |  |
+*massa ---------+ | | |  |
+*               | | | |  |
+*               v v v v  v
+.subckt NOT_SUB 1 2 3 4 XX=1
+Mn1 3 4 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mp1 3 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* nand2 
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+
+*drive strength ------------+
+*inB ----mos uscita-------+ |
+*inA ----mos massa------+ | |
+*uscita --------------+ | | |
+*vdd ---------------+ | | | |
+*massa -----------+ | | | | |
+*                 | | | | | |
+*                 v v v v v v
+.subckt NAND2_SUB 1 2 3 4 5 XX=1
+Mn1 6 4 1 1 nmos W={2*XX*Wmin} L={Lmin}
+Mn2 3 5 6 1 nmos W={2*XX*Wmin} L={Lmin}
+Mp1 3 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp2 3 5 2 2 pmos W={2*XX*Wmin} L={Lmin}
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* nand3
+************************************************************************************************
+*drive strength---------------+ 
+*inC------------------------+ | 
+*inB ---------------------+ | | 
+*inA -------------------+ | | | 
+*output --------------+ | | | | 
+*vdd ---------------+ | | | | | 
+*ground-----------+ | | | | | | 
+*                 | | | | | | | 
+*                 v v v v v v v 
+.subckt NAND3_SUB 1 2 3 4 5 6 XX=1
+Mn1 7 4 1 1 nmos W={3*XX*Wmin} L={Lmin}
+Mn2 8 5 7 1 nmos W={3*XX*Wmin} L={Lmin}
+Mn3 3 6 8 1 nmos W={3*XX*Wmin} L={Lmin}
+
+Mp1 3 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp2 3 5 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp3 3 6 2 2 pmos W={2*XX*Wmin} L={Lmin}
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* nand4
+************************************************************************************************
+*drive strengh------------------+
+*inD--------------------------+ |
+*inC------------------------+ | |
+*inB ---------------------+ | | |
+*inA -------------------+ | | | |
+*output --------------+ | | | | |
+*vdd ---------------+ | | | | | |
+*ground-----------+ | | | | | | |
+*                 | | | | | | | |
+*                 v v v v v v v v
+.subckt NAND4_SUB 1 2 3 4 5 6 7 XX=1
+Mn1 8 4 1 1  nmos W={4*XX*Wmin} L={Lmin}
+Mn2 9 5 8 1  nmos W={4*XX*Wmin} L={Lmin}
+Mn3 10 6 9 1 nmos W={4*XX*Wmin} L={Lmin}
+Mn4 3 7 10 1 nmos W={4*XX*Wmin} L={Lmin}
+
+Mp1 3 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp2 3 5 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp3 3 6 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp4 3 7 2 2 pmos W={2*XX*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* nor2
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante  Wmin, Lmin ed il modello per i mos
+
+*drive strength -----------+
+*inB ---mos uscita-------+ |
+*inA ---mos vdd--------+ | |
+*uscita -------------+ | | |
+*vdd --------------+ | | | |
+*massa ----------+ | | | | |
+*                | | | | | |
+*                v v v v v v
+.subckt NOR2_SUB 1 2 3 4 5 XX=1
+Mn1 3 4 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mn2 3 5 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mp1 6 4 2 2 pmos W={4*XX*Wmin} L={Lmin}
+Mp2 3 5 6 2 pmos W={4*XX*Wmin} L={Lmin}
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* nor3
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante  Wmin, Lmin ed il modello per i mos
+*
+*drive strenght--------------+
+*inC--- -------------------+ |
+*inB --------------------+ | |
+*inA ------------------+ | | |
+*output -------------+ | | | |
+*vdd --------------+ | | | | |
+*ground----------+ | | | | | |
+*                | | | | | | |
+*                v v v v v v v
+.subckt NOR3_SUB 1 2 3 4 5 6 XX=1
+
+Mn1 3 4 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mn2 3 5 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mn3 3 6 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mp1 7 4 2 2 pmos W={6*XX*Wmin} L={Lmin}
+Mp2 8 5 7 2 pmos W={6*XX*Wmin} L={Lmin}
+Mp3 3 6 8 2 pmos W={6*XX*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* nor4
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante  Wmin, Lmin ed il modello per i mos
+*
+*drive strenght------------------+
+*in4-------------------------+   |
+*in3--- -------------------+ |   |
+*in2 --------------------+ | |   |
+*in1 ------------------+ | | |   |
+*output -------------+ | | | |   |
+*vdd --------------+ | | | | |   |
+*ground----------+ | | | | | |   |
+*                | | | | | | |   |
+*                v v v v v v v   v
+.subckt NOR4_SUB 1 2 3 4 5 6 7  XX=1
+Mn1 3 4 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mn2 3 5 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mn3 3 6 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mn4 3 7 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mp1 10 4 2 2 pmos W={8*XX*Wmin} L={Lmin}
+Mp2 9 5 10 2 pmos W={8*XX*Wmin} L={Lmin}
+Mp3 8 6 9 2 pmos W={8*XX*Wmin} L={Lmin}
+Mp4 3 7 8 2 pmos W={8*XX*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* xor2
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante  Wmin, Lmin ed il modello per i mos
+*
+*drive strength -------------+
+*inB --------------------+   |
+*inA ------------------+ |   |
+*uscita -------------+ | |   |
+*vdd --------------+ | | |   |
+*massa ----------+ | | | |   |
+*                | | | | |   |
+*                v v v v v   v
+.subckt XOR2_SUB 1 2 3 4 5  XX=1
+*NOT
+Mp5 node5n 5 2 2 pmos L={Lmin} W={2*XX*Wmin}         
+Mn5 node5n 5 1 1 nmos L={Lmin} W={XX*Wmin}         
+Mp6 node4n 4 2 2 pmos L={Lmin} W={2*XX*Wmin}         
+Mn6 node4n 4 1 1 nmos L={Lmin} W={XX*Wmin}         
+ 
+*PULL UP
+Mp1 3      4     int4  2 pmos L={Lmin}  W={4*XX*Wmin} 
+Mp2 3    node4n  int1  2 pmos L={Lmin}  W={4*XX*Wmin}         
+Mp3 int4 node5n   2    2 pmos L={Lmin}  W={4*XX*Wmin}          
+Mp4 int1   5      2    2 pmos L={Lmin}  W={4*XX*Wmin}          
+
+*PULL DOWN
+Mn4 6 4 1 1 nmos L={Lmin} W={2*XX*Wmin} 
+Mn3 3 5 6 1 nmos L={Lmin} W={2*XX*Wmin}          
+Mn2 int3 node4n 1 1 nmos L={Lmin} W={2*XX*Wmin}          
+Mn1 3 node5n int3 1 nmos L={Lmin} W={2*XX*Wmin}  
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* and2 
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength--------------+
+*inB ----mos uscita-------+  |
+*inA ----mos massa------+ |  |
+*uscita --------------+ | |  |
+*vdd ---------------+ | | |  |  
+*massa -----------+ | | | |  |  
+*                 | | | | |  |  
+*                 v v v v v  v 
+.subckt AND2_SUB  1 2 3 4 5  XX=1
+Mn1 6 4 1 1 nmos W={2*XX*Wmin} L={Lmin}
+Mn2 7 5 6 1 nmos W={2*XX*Wmin} L={Lmin}
+Mp1 7 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp2 7 5 2 2 pmos W={2*XX*Wmin} L={Lmin}
+
+Mp3 3 7 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mn3 3 7 1 1 nmos W={1*XX*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* and3 
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength----------------+
+*inC------------------------+  |
+*inB ----mos output-------+ |  |
+*inA ----mos ground-----+ | |  |
+*output --------------+ | | |  |
+*vdd ---------------+ | | | |  |
+*groung-----------+ | | | | |  |
+*                 | | | | | |  |
+*                 v v v v v v  v
+.subckt AND3_SUB  1 2 3 4 5 6  XX=1
+
+Mn1 7 4 1 1 nmos W={3*XX*Wmin} L={Lmin}
+Mn2 8 5 7 1 nmos W={3*XX*Wmin} L={Lmin}
+Mn3 9 6 8 1 nmos W={3*XX*Wmin} L={Lmin}
+Mp1 9 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp2 9 5 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp3 9 6 2 2 pmos W={2*XX*Wmin} L={Lmin}
+
+Mp4 3 9 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mn4 3 9 1 1 nmos W={1*XX*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* and4 
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength------------------+
+*inD--------------------------+  |
+*inC------------------------+ |  |
+*inB ----mos output-------+ | |  |
+*inA ----mos ground-----+ | | |  |
+*output --------------+ | | | |  | 
+*vdd ---------------+ | | | | |  |
+*groung-----------+ | | | | | |  |
+*                 | | | | | | |  |
+*                 v v v v v v v  v
+.subckt AND4_SUB  1 2 3 4 5 6 7 XX=1
+
+Mn1 10 4 1 1 nmos W={4*XX*Wmin} L={Lmin}
+Mn2 9 5 10 1 nmos W={4*XX*Wmin} L={Lmin}
+Mn3 8 6 9 1 nmos W={4*XX*Wmin} L={Lmin}
+Mn4 11 7 8 1 nmos W={4*XX*Wmin} L={Lmin}
+
+Mp1 11 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp2 11 5 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp3 11 6 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mp4 11 7 2 2 pmos W={2*XX*Wmin} L={Lmin}
+
+Mp5 3 11 2 2 pmos W={2*XX*Wmin} L={Lmin}
+Mn5 3 11 1 1 nmos W={1*XX*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* mux21
+************************************************************************************************
+*drive strength--------------------------------------+
+*inC-(nodeS0)---------------------------------+      |
+*inB-(nodeD1)---------------------------+     |	     |
+*inA-(nodeD0)---------------------+     |     |      |
+*output---------------------+     |     |     |      |
+*vdd -----------------+     |     |     |     |      |   
+*ground-----------+   |     |     |     |     |      | 
+*                 |   |     |     |     |     |      | 
+*                 v   v     v     v     v     v      v
+.subckt mux21_SUB 0 node1 nodez nodea nodeb nodec   XX=1
+
+*RETE PASS TRANSISTOR
+Mn4 nodea nodecn nodeu 0 nmos W={2*XX*Wmin} L={Lmin}
+Mn5 nodeb nodec nodeu 0 nmos W={2*XX*Wmin} L={Lmin}  
+Mp4 nodea nodec nodeu node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mp5 nodeb nodecn nodeu node1 pmos W={2*XX*Wmin} L={Lmin}  
+
+*INVERTER FINALI
+Mn3 nodez nodeun 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mp3 nodez nodeun node1 node1 pmos W={2*XX*Wmin} L={Lmin}
+Mn2 nodeun nodeu 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mp2 nodeun nodeu node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+
+*NOT
+Mp1 nodecn nodec node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mn1 nodecn nodec 0 0 nmos W={XX*Wmin} L={Lmin}
+.ends
+
+************************************************************************************************
+
+************************************************************************************************
+* mux31
+************************************************************************************************
+*drive strength----------------------------------------------------+
+*in5-(nodeS1)----------------------------------------------+       |
+*in4-(nodeS0)----------------------------------------+     |       |
+*in3-(nodeD2)---------------------------------+      |     |       |
+*in2-(nodeD1)---------------------------+     |	     |     |       |
+*in1-(nodeD0)---------------------+     |     |      |     |       |
+*output---------------------+     |     |     |      |     |       |
+*vdd -----------------+     |     |     |     |      |     |       |
+*ground-----------+   |     |     |     |     |      |     |       |
+*                 |   |     |     |     |     |      |     |       |
+*                 v   v     v     v     v     v      v     v       v
+.subckt mux31_SUB 0 node1 nodeZ nodeA nodeB nodeC nodeD nodeE   XX=1
+
+Mp8 nodeU1 nodee nodeU2 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mp3 nodea noded nodeU1 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mp2 nodeeN nodee node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mp1 nodedN noded node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mp4 nodeb nodedN nodeU1 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mn3 nodea nodedN nodeU1 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mn8 nodeU1 nodeeN nodeU2 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mn4 nodeb noded nodeU1 0 nmos W={3*XX*Wmin} L={Lmin} 
+
+Mn7 nodez 1 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mp7 nodez 1 node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mn6 1 nodeU2 0 0 nmos W={XX*Wmin} L={Lmin} 
+
+Mp6 1 nodeU2 node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mp5 nodec nodeeN nodeU2 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mn2 nodeeN nodee 0 0 nmos W={XX*Wmin} L={Lmin} 
+
+Mn1 nodedN noded 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mn5 nodec nodee nodeU2 0 nmos W={2*XX*Wmin} L={Lmin} 
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* mux41
+************************************************************************************************
+*drive strength--------------------------------------------------------+
+*in6-(nodeS1)--------------------------------------------------+       |
+*in5-(nodeS0)----------------------------------------------+   |       |
+*in4-(nodeD3)----------------------------------------+     |   |       |	
+*in3-(nodeD2)---------------------------------+      |     |   |       |
+*in2-(nodeD1)---------------------------+     |	     |     |   |       |
+*in1-(nodeD0)---------------------+     |     |      |     |   |       |
+*output---------------------+     |     |     |      |     |   |       |
+*vdd -----------------+     |     |     |     |      |     |   |       |
+*ground-----------+   |     |     |     |     |      |     |   |       |
+*                 |   |     |     |     |     |      |     |   |       |
+*                 v   v     v     v     v     v      v     v   v       v
+.subckt mux41_SUB 0 node1 nodeZ nodeA nodeB nodeC nodeD nodeE nodeF   XX=1
+
+Mn1 nodeeN nodee 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mp1 nodeeN nodee node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mn2 nodefN nodef 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mp2 nodefN nodef node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mp3 nodea  nodee nodeU1 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mn3 nodea  nodeeN nodeU1 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mn4 nodeb  nodee nodeU1 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mp4 nodeb  nodeeN nodeU1 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mp5 nodec  nodee nodeU2 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mn5 nodec  nodeeN nodeU2 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mp6 noded  nodeeN nodeU2 node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mn6 noded  nodee nodeU2 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mp7 nodeU1  nodef nodez node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mn7 nodeU1  nodefN nodeU3 0 nmos W={3*XX*Wmin} L={Lmin} 
+Mp8 nodeU2  nodefN nodez node1 pmos W={3*XX*Wmin} L={Lmin} 
+Mn8 nodeU2  nodef nodeU3 0 nmos W={3*XX*Wmin} L={Lmin} 
+
+Mp9 1 nodeU3 node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+Mn9 1 nodeU3 0 0 nmos W={XX*Wmin} L={Lmin} 
+
+Mn10 nodez 1 0 0 nmos W={XX*Wmin} L={Lmin} 
+Mp10 nodez 1 node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* DLatch
+************************************************************************************************
+*drive strength--------------------------------+      
+*inB ---(like i/p)-nodeD-----------------+     |      
+*inA ---(like clk)-nodeG-----------+     |     |      
+*output----------------------+     |     |     |      
+*vdd ------------------+     |     |     |     |         
+*ground------------+   |     |     |     |     |       
+*                  |   |     |     |     |     |       
+*                  v   v     v     v     v     v      
+.subckt DLatch_SUB 0 node1 nodeZ nodea nodeb XX=1   
+
+Mp41 nodeb nodeaN node21 node1 		pmos W={2*XX*Wmin} L={Lmin} 
+Mn4 nodeb nodea node21 0 		nmos W={2*XX*Wmin} L={Lmin}
+Mn3 nodez 1 0 0 			nmos W={XX*Wmin} L={Lmin} 
+Mp3 nodez 1 node1 node1 		pmos W={2*XX*Wmin} L={Lmin} 
+
+*REAZIONE +
+Mn1 node21 1 0 0 			nmos W={XX*Wmin} L={2*Lmin} 
+Mp1 node21 1 node1 node1 		pmos W={XX*Wmin} L={2*Lmin} 
+Mn2 1 node21 0 0 			nmos W={1*XX*Wmin} L={Lmin} 
+Mp2 1 node21 node1 node1 		pmos W={2*XX*Wmin} L={Lmin} 
+
+*G NEGATO
+Mp5 nodeaN nodea node1 node1 		pmos W={2*XX*Wmin} L={Lmin}
+Mn5 nodeaN nodea 0 0 			nmos W={XX*Wmin} L={Lmin}
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO12
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength---------------+
+*inC ----mos out-gnd--------+ |
+*inB ----mos Vdd-gnd------+ | |
+*inA ----mos Vdd-out----+ | | |
+*uscita --------------+ | | | |
+*vdd ---------------+ | | | | |  
+*massa -----------+ | | | | | |  
+*                 | | | | | | |  
+*                 v v v v v v v 
+.subckt AO12_SUB  1 2 3 4 5 6 XX=1
+Mn1 9 4 8 1 nmos W={2*XX*Wmin} L={Lmin} 
+Mn2 8 5 1 1 nmos W={2*XX*Wmin} L={Lmin} 
+Mn3 9 6 1 1 nmos W={1*XX*Wmin} L={Lmin}
+
+Mp1 7 4 2 2 pmos W={4*XX*Wmin} L={Lmin} 
+Mp2 7 5 2 2 pmos W={4*XX*Wmin} L={Lmin}
+Mp3 9 6 7 2 pmos W={4*XX*Wmin} L={Lmin} 
+
+Mn4 3 9 1 1 nmos W={XX*Wmin} L={Lmin} 
+Mp4 3 9 2 2 pmos W={2*XX*Wmin} L={Lmin} 
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO22
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength-----------------+
+*inD ----mos Vdd-gnd----------+ | 
+*inC ----mos Vdd-out--------+ | | 
+*inB ----mos out-gnd------+ | | | 
+*inA ----mos out-out----+ | | | | 
+*uscita --------------+ | | | | | 
+*vdd ---------------+ | | | | | | 
+*massa -----------+ | | | | | | | 
+*                 | | | | | | | | 
+*                 v v v v v v v v 
+.subckt AO22_SUB  1 2 3 4 5 6 7 XX=1
+*   D  G  S  B  Name W L
+*PULL DOWN
+Mn1 11 4  9  1  nmos W={2*XX*Wmin} L={Lmin}
+Mn2 9  5  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+
+Mn3 11 6  10 1  nmos W={2*XX*Wmin} L={Lmin}
+Mn4 10 7  1  1  nmos W={2*XX*Wmin} L={Lmin}
+
+*PULL UP
+Mp1 11 4  8  2  pmos w={4*XX*Wmin} L={Lmin}                                                                         
+Mp2 11 5  8  2  pmos W={4*XX*Wmin} L={Lmin}   
+
+Mp3 8  6  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp4 8  7  2  2  pmos W={4*XX*Wmin} L={Lmin}
+
+*USCITA
+Mn5 3  11 1  1  nmos W={Wmin} L={Lmin}
+Mp5 3  11 2  2  pmos W={2*Wmin} L={Lmin}
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO31
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength---------------------+
+*inD ----mos out-out--------------+ | 
+*inC ----mos Vdd-gnd------------+ | | 
+*inB ----mos Vdd-mid,mid------+ | | | 
+*inA ----mos Vdd-out--------+ | | | | 
+*uscita ------------------+ | | | | | 
+*vdd -------------------+ | | | | | | 
+*massa ---------------+ | | | | | | | 
+*                     | | | | | | | | 
+*                     v v v v v v v v 
+.subckt AO31_SUB      1 2 3 4 5 6 7 XX=1
+*   D  G  S  B  Name W L
+
+Mn1 9  4  10 1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn2 10 5  11 1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn3 11 6  1  1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn4 9  7  1  1  nmos W={1*XX*Wmin} L={Lmin} 
+
+Mp1 8  4  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp2 8  5  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp3 8  6  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp4 9  7  8  2  pmos W={4*XX*Wmin} L={Lmin} 
+
+Mn5 3  9  1  1  nmos W={1*XX*Wmin} L={Lmin} 
+Mp5 3  9  2  2  pmos W={2*XX*Wmin} L={Lmin} 
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO32
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength------------------------+
+*inE ----mos out-gnd----------------+  |
+*inD ----mos out-out--------------+ |  |
+*inC ----mos Vdd-gnd------------+ | |  |
+*inB ----mos Vdd-mid,mid------+ | | |  |
+*inA ----mos Vdd-out--------+ | | | |  |
+*uscita ------------------+ | | | | |  | 
+*vdd -------------------+ | | | | | |  |
+*massa ---------------+ | | | | | | |  |
+*                     | | | | | | | |  |
+*                     v v v v v v v v  V 
+.subckt AO32_SUB      1 2 3 4 5 6 7 8 XX=1
+*    D  G  S  B  Name W L
+
+Mn6  3  10 1  1  nmos W={XX*Wmin} L={Lmin}
+Mp6  3  10 2  2  pmos W={2*XX*Wmin} L={Lmin}
+
+Mn1  10 4  11 1  nmos W={3*XX*Wmin} L={Lmin}
+Mn2  11 5  12 1  nmos W={3*XX*Wmin} L={Lmin}    
+Mn3  12 6  1  1  nmos W={3*XX*Wmin} L={Lmin}                            
+Mn4  10 7  13 1  nmos W={2*XX*Wmin} L={Lmin}    
+Mn5  13 8  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+ 
+Mp1  10 7  9  2  pmos W={4*XX*Wmin} L={Lmin}  
+Mp2  10 8  9  2  pmos W={4*XX*Wmin} L={Lmin}    
+Mp3  9  4  2  2  pmos W={4*XX*Wmin} L={Lmin}
+Mp4  9  5  2  2  pmos W={4*XX*Wmin} L={Lmin}
+Mp5  9  6  2  2  pmos W={4*XX*Wmin} L={Lmin}    
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO33
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength--------------------------+
+*inF ----mos out-gnd------------------+  |
+*inE ----mos out-mid,mid------------+ |  |
+*inD ----mos out-out--------------+ | |  |
+*inC ----mos Vdd-gnd------------+ | | |  |
+*inB ----mos Vdd-mid,mid------+ | | | |  |
+*inA ----mos Vdd-out--------+ | | | | |  |
+*uscita ------------------+ | | | | | |  |
+*vdd -------------------+ | | | | | | |  |
+*massa ---------------+ | | | | | | | |  |  
+*                     | | | | | | | | |  |  
+*                     v v v v v v v v v  v 
+.subckt AO33_SUB      1 2 3 4 5 6 7 8 9  XX=1
+*   D  G  S  B  Name W L
+Mn1 11 4  12 1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn2 12 5  13 1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn3 13 6  1  1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn4 11 7  14 1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn5 14 8  15 1  nmos W={3*XX*Wmin} L={Lmin} 
+Mn6 15 9  1  1  nmos W={3*XX*Wmin} L={Lmin} 
+
+Mp1 10 4  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp2 10 5  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp3 10 6  2  2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp4 11 7  10 2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp5 11 8  10 2  pmos W={4*XX*Wmin} L={Lmin} 
+Mp6 11 9  10 2  pmos W={4*XX*Wmin} L={Lmin} 
+
+Mn7 3  11 1  1  nmos W={XX*Wmin} L={Lmin} 
+Mp7 3  11 2  2  pmos W={2*XX*Wmin} L={Lmin} 
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO112
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength---------------------+
+*inD ----mos out-out--------------+ |
+*inC ----mos mid,mid-gnd--------+ | |
+*inB ----mos Vdd-gnd----------+ | | |
+*inA ----mos Vdd-out--------+ | | | |
+*uscita ------------------+ | | | | |
+*vdd -------------------+ | | | | | |
+*massa ---------------+ | | | | | | |  
+*                     | | | | | | | |  
+*                     v v v v v v v v 
+.subckt AO112_SUB     1 2 3 4 5 6 7 XX=1
+*   D  G  S  B  Name W L
+
+Mn1 10 4  11 1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn2 11 5  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn3 10 6  1  1  nmos W={1*XX*Wmin} L={Lmin} 
+Mn4 10 7  1  1  nmos W={1*XX*Wmin} L={Lmin} 
+
+Mp1 8  4  2  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp2 8  5  2  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp3 9  6  8  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp4 10 7  9  2  pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn5 3  10 1  1  nmos W={XX*Wmin} L={Lmin} 
+Mp5 3  10 2  2  pmos W={2*XX*Wmin} L={Lmin} 
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* AO212
+************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength-----------------------+
+*inE ----mos out-gnd----------------+ |
+*inD ----mos Vdd-gnd--------------+ | |
+*inC ----mos Vdd-out------------+ | | |
+*inB ----mos mid,mid-gnd------+ | | | |
+*inA ----mos Vdd-out--------+ | | | | |
+*uscita ------------------+ | | | | | |
+*vdd -------------------+ | | | | | | |
+*massa ---------------+ | | | | | | | | 
+*                     | | | | | | | | | 
+*                     v v v v v v v v v
+.subckt AO212_SUB     1 2 3 4 5 6 7 8 XX=1
+*   D  G  S  B  Name W L
+
+Mn1 12 4  13 1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn2 13 5  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn3 12 6  14 1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn4 14 7  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn5 12 8  1  1  nmos W={XX*Wmin} L={Lmin} 
+
+Mp1 11 4  9  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp2 11 5  9  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp3 9  6  2  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp4 9  7  2  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp5 12 8  11 2  pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn7 3  12 1  1  nmos W={XX*Wmin} L={Lmin} 
+Mp7 3  12 2  2  pmos W={2*XX*Wmin} L={Lmin} 
+
+.ends
+*************************************************************************************************
+
+*************************************************************************************************
+* AO222
+*************************************************************************************************
+* devono essere dichiarate nel listato chiamante Wmin, Lmin ed il modello per i mos
+*
+*drive strength-------------------------+
+*inF ----mos Vdd-gnd------------------+ |
+*inE ----mos Vdd-out----------------+ | |
+*inD ----mos mid,mid-gnd----------+ | | |
+*inC ----mos mid,mid-out--------+ | | | |
+*inB ----mos out-gnd----------+ | | | | |
+*inA ----mos out-out--------+ | | | | | |
+*uscita ------------------+ | | | | | | |
+*vdd -------------------+ | | | | | | | |
+*massa ---------------+ | | | | | | | | |
+*                     | | | | | | | | | |
+*                     v v v v v v v v v v
+.subckt AO222_SUB     1 2 3 4 5 6 7 8 9 XX=1
+*   D  G  S  B  Name W L
+
+Mn1 12 4  13 1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn2 13 5  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn3 12 6  14 1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn4 14 7  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn5 12 8  15 1  nmos W={2*XX*Wmin} L={Lmin} 
+Mn6 15 9  1  1  nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp1 12 4  11 2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp2 12 5  11 2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp3 11 6  10 2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp4 11 7  10 2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp5 10 8  2  2  pmos W={6*XX*Wmin} L={Lmin} 
+Mp6 10 9  2  2  pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn7 3  12 1  1  nmos W={XX*Wmin} L={Lmin} 
+Mp7 3  12 2  2  pmos W={2*XX*Wmin} L={Lmin} 
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* DFPQ
+************************************************************************************************
+*drive strength---------------------------------+      
+*inB ---(like i/p)-nodeD------------------+     |      
+*inA ---(like clk)-nodeA-----------+      |     |      
+*output----------------------+     |      |     |      
+*vdd ------------------+     |     |      |     |         
+*ground------------+   |     |     |      |     |       
+*                  |   |     |     |      |     |       
+*                  v   v     v     v      v     v      
+.subckt DFPQ_SUB   0 node1 nodeZ nodeCP noded XX=1   
+ 
+Mp41 noded nodeCP node21 node1 	pmos W={2*XX*Wmin} L={Lmin}  
+Mn4  noded nodeCPn node21 0 	nmos W={2*XX*Wmin} L={Lmin} 
+
+Mn5  noded5 nodeCP node51 0 	nmos W={2*XX*Wmin} L={Lmin}  
+Mp51 noded5 nodeCPn node51 node1 pmos W={2*XX*Wmin} L={Lmin} 
+
+Mn11 nodeCPn nodeCP 0 	0 	nmos W={1*XX*Wmin} L={Lmin}  
+Mp11 nodeCPn nodeCP node1 node1 pmos W={2*XX*Wmin} L={Lmin} 
+
+Mp1 node21 noded5 node1 node1 	pmos W={1*XX*Wmin} L={2*Lmin} 
+Mn1 node21 noded5 0 0 		nmos W={1*XX*Wmin} L={2*Lmin}  
+
+Mp2 noded5 node21 node1 node1   pmos W={2*Wmin} L={Lmin} 
+Mn2 noded5 node21 0 0 		nmos W={1*Wmin} L={Lmin}  
+
+Mp6 nodez  node51 node1 node1   pmos W={2*XX*Wmin} L={Lmin}  
+Mn6 nodez  node51 0 0 		nmos W={1*XX*Wmin} L={Lmin}  
+
+Mp7 node51 nodez node1 node1    pmos W={1*XX*Wmin} L={Lmin}  
+Mn7 node51 nodez 0 0 		nmos W={1*XX*Wmin} L={Lmin} 
+.ends 
+*************************************************************************************************
+
+*************************************************************************************************
+* DFPRQN
+*************************************************************************************************
+*drive strength-----------------------------------------+
+*in3----(like resest)-nodeRN-----------------------+    |  
+*in2 ---(like i/p)-nodeD---------------------+     |    |  
+*in1 ---(like clk)-nodeCP-------------+      |     |    |  
+*output-------------------------+     |      |     |    |  
+*vdd ---------------------+     |     |      |     |    |     
+*ground--------------+   |      |     |      |     |    |   
+*                    |   |      |     |      |     |    |   
+*                    v   v      v     v      v     v    v  
+.subckt DFPRQN_SUB   0 node1  nodez nodeCP noded nodeRN XX=1   
+
+*REACTION + 
+Mn8 nodez  node22 0     0     nmos W={2*XX*Wmin}   L={Lmin}  
+Mp8 nodez  node22 node1 node1 pmos W={4*XX*Wmin}   L={Lmin}  
+Mn7 node22 nodez  0 	0     nmos W={1*XX*Wmin}   L={Lmin}                
+Mp7 node22 nodez  node1 node1 pmos W={1*XX*Wmin}   L={Lmin}  
+Mn2 1 	   node21 0 	0     nmos W={2*XX*Wmin}   L={Lmin} 
+Mp2 1 	   node21 node1 node1 pmos W={4*XX*Wmin}   L={Lmin}  
+Mn1 node21 1 	0 	0     nmos W={1*XX*Wmin}   L={2*Lmin}  
+Mp1 node21 1 	node1   node1 pmos W={1*XX*Wmin}   L={2*Lmin}
+
+*TRANSMISSION GATE
+Mp41 noded nodeCP node21 node1 pmos W={2*XX*Wmin} L={Lmin}
+Mn4 noded nodeCPN node21 0     nmos W={2*XX*Wmin} L={Lmin}  
+Mn5 2 nodeCP node22 0          nmos W={2*XX*Wmin} L={Lmin} 
+Mp51 2 nodeCPN node22 node1    pmos W={2*XX*Wmin} L={Lmin}
+*RESET  
+Mn21 3 nodeRN 0 0              nmos W={4*XX*Wmin} L={Lmin}  
+Mn20 2 1 3 0 		      nmos W={4*XX*Wmin} L={Lmin}  
+Mp12 node22 nodeRN node1 node1 pmos W={2*XX*Wmin} L={Lmin}  
+Mp11 2 nodeRN node1 node1      pmos W={4*XX*Wmin} L={Lmin}  
+Mp10 2 1 node1 node1          pmos W={4*XX*Wmin} L={Lmin}
+*
+Mn3 nodeCPN nodeCP 0 0          nmos W={1*XX*Wmin} L={Lmin}
+Mp3 nodeCPN nodeCP node1 node1  pmos W={2*XX*Wmin} L={Lmin}  
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* DFPHQ
+************************************************************************************************
+*drive strength-----------------------------------------+
+*in3----(like i/p)-nodeD---------------------------+    |  
+*in2 ---(like clk)-nodeCP--------------------+     |    |  
+*in1 ---(like enable)-nodeE-----------+      |     |    |  
+*output-------------------------+     |      |     |    |  
+*vdd ---------------------+     |     |      |     |    |     
+*ground--------------+   |      |     |      |     |    |   
+*                    |   |      |     |      |     |    |   
+*                    v   v      v     v      v     v    v  
+.subckt DFPHQ_SUB   0 node1  nodeZ nodeE nodeCP nodeD XX=1   
+
+Mn6 nodeD nodeEN 1 0 			nmos W={3*XX*Wmin} L={Lmin} 
+Mp9 nodeEN nodeE node1 node1 		pmos W={2*XX*Wmin} L={Lmin} 
+Mn5 noded2 nodeCP node22 0 		nmos W={2*XX*Wmin} L={Lmin} 
+Mp41 1 nodeCP node21 node1 		pmos W={3*XX*Wmin} L={Lmin} 
+Mp8 nodeZ node22 node1 node1 		pmos W={4*XX*Wmin} L={Lmin} 
+Mn4 1 nodeCPN node21 0 			nmos W={3*XX*Wmin} L={Lmin} 
+Mp7 node22 nodeZ node1 node1 		pmos W={1*XX*Wmin} L={Lmin} 
+Mn3 nodeCPN nodeCP 0 0 			nmos W={1*XX*Wmin} L={Lmin} 
+Mp51 noded2 nodeCPN node22 node1 	pmos W={2*XX*Wmin} L={Lmin} 
+Mn2 noded2 node21 0 0 			nmos W={2*XX*Wmin} L={Lmin} 
+Mn1 node21 noded2 0 0 			nmos W={1*XX*Wmin} L={2*Lmin} 
+Mp61 nodeD nodeE 1 node1 		pmos W={3*XX*Wmin} L={Lmin} 
+Mp3 nodeCPN nodeCP node1 node1 		pmos W={2*XX*Wmin} L={Lmin} 
+Mn9 nodeEN nodeE 0 0 			nmos W={1*XX*Wmin} L={Lmin} 
+Mp2 noded2 node21 node1 node1 		pmos W={4*XX*Wmin} L={Lmin} 
+Mn8 nodeZ node22 0 0 			nmos W={2*XX*Wmin} L={Lmin} 
+Mp1 node21 noded2 node1 node1 		pmos W={1*XX*Wmin} L={2*Lmin} 
+Mn7 node22 nodeZ 0 0 			nmos W={1*XX*Wmin} L={Lmin} 
+
+.ends
+************************************************************************************************
+
+************************************************************************************************
+* Full Adder
+************************************************************************************************
+*drive strength------------------------------------------------+
+*in3---------------------------nodeA--------------------+      |  
+*in2 --------------------nodeB---------------------+    |      |  
+*in1 -------------nodeC----------------------+     |    |      |  
+*output2-(Carry)----------------------+      |     |    |      |
+*output1-(sum)------------------+     |      |     |    |      |
+*vdd ---------------------+     |     |      |     |    |      |
+*ground--------------+   |      |     |      |     |    |      |
+*                    |   |      |     |      |     |    |      |
+*                    v   v      v     v      v     v    v      v 
+.subckt FA_SUB       0 node1 nodeSo nodeCo nodeC nodeB nodeA   XX=1
+
+Mn1 nodecon 	nodea 	node4 	0 	nmos W={2*XX*Wmin} L={Lmin}
+Mp1 1 		nodea 	node1 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+
+Mn2 node4 	nodeb 	0 	0 	nmos W={2*XX*Wmin} L={Lmin}
+Mp2 1 		nodeb 	node1 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+
+
+Mn3 5 		nodea 	0 	0 	nmos W={2*XX*Wmin} L={Lmin}
+
+Mp3 4 		nodeb 	node1 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+Mp4  nodecon 	nodea 	4 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+
+Mn4 5 		nodeb 	0 	0 	nmos W={2*XX*Wmin} L={Lmin}
+
+Mp5 nodecon 	nodec 	1 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+Mn5 nodecon 	nodec 	5 	0 	nmos W={2*XX*Wmin} L={Lmin}
+
+Mp6 2 		nodea 	node1 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+
+Mn6 3 		nodea 	0 	0 	nmos W={2*XX*Wmin} L={Lmin} 
+Mp7 2 		nodeb 	node1 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+
+Mn7 3 		nodeb 	0 	0 	nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp8 2 		nodec 	node1 	node1 	pmos W={4*XX*Wmin} L={Lmin} 
+
+Mn8 3 		nodec 	0 	0 	nmos W={2*XX*Wmin} L={Lmin}  
+
+Mp9 nodeson 	nodecon 2 	node1 	pmos W={4*XX*Wmin} L={Lmin}
+ 
+Mn9 nodeson	nodecon 3 	0 	nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp10 9 		nodea 	node1 	node1 	pmos W={6*XX*Wmin} L={Lmin} 
+Mn10 7 		nodea 	0 	0 	nmos W={3*XX*Wmin} L={Lmin} 
+Mp11 8 		nodeb 	9 	node1 	pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn11 6 		nodeb 	7 	0 	nmos W={3*XX*Wmin} L={Lmin} 
+Mp12 nodeSon 	nodec 	8 	node1 	pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn12 nodeSon 	nodec 	6 	0 	nmos W={3*XX*Wmin} L={Lmin}
+
+Mp13 nodeCo 	nodecon node1 	node1 	pmos W={4*XX*Wmin} L={Lmin} 
+Mn13 nodeCo 	nodecon 0 	0 	nmos W={2*XX*Wmin} L={Lmin}   
+
+Mp14 nodeSo 	nodeSon node1 	node1 	pmos W={4*XX*Wmin} L={Lmin}  
+
+Mn14 nodeSo 	nodeSon 0 	0 	nmos W={2*XX*Wmin} L={Lmin}
+.ends
+

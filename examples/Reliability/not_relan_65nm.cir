@@ -1,0 +1,37 @@
+*not per Fra
+
+*.options temp=125
+
+.include ./models/65nm_bulk.pm
+
+*.model p1_ra relmodel level=1 h_cut=b nts=c m_star=f w=g tau_0=h beta=i tau_e=j beta1=k
+*.model p1_ra relmodel level=1 tau_0=5e-12 beta=0.746
+.model p1_ra relmodel level=1 type=2
+.appendmodel p1_ra pmos
+
+.PARAM Lmin=65n
+.PARAM Wmin=65n
+.PARAM Vnom=1.2
+
+Mp1 OUT IN Vdd Vdd pmos L={Lmin} W={2*Wmin}
+Mn1 OUT IN 0 0     nmos L={Lmin} W={Wmin}
+
+Cl out 0 10f
+
+Valim Vdd 0 {Vnom}
+
+Vin IN 0 pwl(0 0 2n 0 2.01n {Vnom} 4n {Vnom} 4.01n 0 6n 0 6.01n {Vnom} 8n {Vnom} 8.01n 0 10n 0 10.01n {Vnom} 12n {Vnom} 12.01n 0 14n 0 14.01n {Vnom} 16n {Vnom}
++            16.01n 0 18n 0 18.01n {Vnom} 20n {Vnom} 20.01n 0 22n 0 22.01n {Vnom} 24n {Vnom} 24.01n 0 26n 0 26.01n {Vnom} 28n {Vnom} 28.01n 0 30n 0 30.01n {Vnom} 32n {Vnom}
++            32.01n 0 34n 0 34.01n {Vnom} 36n {Vnom} 36.01n 0 38n 0 38.01n {Vnom} 40n {Vnom} 40.01n 0 42n 0 42.01n {Vnom} 44n {Vnom} 44.01n 0 46n 0 46.01n {Vnom} 48n {Vnom})
+*Vin IN 0 0
+*Vin IN 0 pwl(0 0 2n 0 2.01n {Vnom})
+
+.relan 315360000 10p 48n
+.tran 10p 48n
+
+.meas tran delay_LH trig v(in) val={0.5*Vnom} fall=1 targ v(out) val={0.5*Vnom} rise=1
+.meas tran delay_HL trig v(in) val={0.5*Vnom} rise=1 targ v(out) val={0.5*Vnom} fall=1
+
+.control 
+  run
+.endc

@@ -1,0 +1,187 @@
+carry_chain_32bit_65nm
+
+.include ./models/65nm_bulk.pm
+
+.subckt NOT4_SUB 1 2 3 4 XX=4
+Mn1 3 4 1 1 nmos W={1*XX*Wmin} L={Lmin}
+Mp1 3 4 2 2 pmos W={2*XX*Wmin} L={Lmin}
+.ends
+
+.subckt FA_SUB       0 node1 nodeSo nodeCo nodeC nodeB nodeA   XX=1
+
+Mn1 nodecon     nodeb     node4     0     nmos W={2*XX*Wmin} L={Lmin}
+Mp1 1         nodea     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn2 node4     nodea     0     0     nmos W={2*XX*Wmin} L={Lmin}
+Mp2 1         nodeb     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn3 5         nodea     0     0     nmos W={2*XX*Wmin} L={Lmin}
+
+Mp3 4         nodea     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+Mp4  nodecon     nodeb     4     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn4 5         nodeb     0     0     nmos W={2*XX*Wmin} L={Lmin}
+
+Mp5 nodecon     nodec     1     node1     pmos W={4*XX*Wmin} L={Lmin}
+Mn5 nodecon     nodec     5     0     nmos W={2*XX*Wmin} L={Lmin}
+
+Mp6 2         nodea     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn6 3         nodea     0     0     nmos W={2*XX*Wmin} L={Lmin} 
+Mp7 2         nodeb     node1     node1     pmos W={4*XX*Wmin} L={Lmin}
+
+Mn7 3         nodeb     0     0     nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp8 2         nodec     node1     node1     pmos W={4*XX*Wmin} L={Lmin} 
+
+Mn8 3         nodec     0     0     nmos W={2*XX*Wmin} L={Lmin}  
+
+Mp9 nodeson     nodecon 2     node1     pmos W={4*XX*Wmin} L={Lmin}
+ 
+Mn9 nodeson    nodecon 3     0     nmos W={2*XX*Wmin} L={Lmin} 
+
+Mp10 9         nodea     node1     node1     pmos W={6*XX*Wmin} L={Lmin} 
+Mn10 7         nodea     0     0     nmos W={3*XX*Wmin} L={Lmin}
+Mp11 8         nodeb     9     node1     pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn11 6         nodeb     7     0     nmos W={3*XX*Wmin} L={Lmin}
+Mp12 nodeSon     nodec     8     node1     pmos W={6*XX*Wmin} L={Lmin} 
+
+Mn12 nodeSon     nodec     6     0     nmos W={3*XX*Wmin} L={Lmin}
+
+Mp13 nodeCo     nodecon node1     node1     pmos W={4*XX*Wmin} L={Lmin} 
+Mn13 nodeCo     nodecon 0     0     nmos W={2*XX*Wmin} L={Lmin}   
+
+Mp14 nodeSo     nodeSon node1     node1     pmos W={4*XX*Wmin} L={Lmin}  
+Mn14 nodeSo     nodeSon 0     0     nmos W={2*XX*Wmin} L={Lmin}
+.ends
+
+
+.model p1_ra relmodel level=1 type=2
+.appendmodel p1_ra pmos
+.relan 315360000 4ps 4ns
+
+.TRAN 4ps 4ns
+
+.PARAM Y=1.33
+.PARAM XX=1
+.PARAM Lmin=65n
+.PARAM Wmin=65n
+
+*.meas tran delay_LH trig v(cin) val='0.9*Y*0.5' rise=1 targ v(cout32) val='0.9*Y*0.5' rise=1
+.meas tran delay_HL trig v(cin) val='0.9*Y*0.5' fall=1 targ v(cout32) val='0.9*Y*0.5' fall=1
+
+
+Vdd VDD  0 {0.9*Y}
+
+Vina1 ina1 0 0
+Vina2 ina2 0 0
+Vina3 ina3 0 0
+Vina4 ina4 0 0
+Vina5 ina5 0 0
+Vina6 ina6 0 0
+Vina7 ina7 0 0
+Vina8 ina8 0 0
+Vina9 ina9 0 0
+Vina10 ina10 0 0
+Vina11 ina11 0 0
+Vina12 ina12 0 0
+Vina13 ina13 0 0
+Vina14 ina14 0 0
+Vina15 ina15 0 0
+Vina16 ina16 0 0
+Vina17 ina17 0 0 
+Vina18 ina18 0 0
+Vina19 ina19 0 0
+Vina20 ina20 0 0
+Vina21 ina21 0 0
+Vina22 ina22 0 0
+Vina23 ina23 0 0
+Vina24 ina24 0 0
+Vina25 ina25 0 0
+Vina26 ina26 0 0
+Vina27 ina27 0 0
+Vina28 ina28 0 0
+Vina29 ina29 0 0
+Vina30 ina30 0 0
+Vina31 ina31 0 0
+Vina32 ina32 0 0
+
+Vinb1 inb1 0 {0.9*Y}
+Vinb2 inb2 0 {0.9*Y}
+Vinb3 inb3 0 {0.9*Y}
+Vinb4 inb4 0 {0.9*Y}
+Vinb5 inb5 0 {0.9*Y}
+Vinb6 inb6 0 {0.9*Y}
+Vinb7 inb7 0 {0.9*Y}
+Vinb8 inb8 0 {0.9*Y}
+Vinb9 inb9 0 {0.9*Y}
+Vinb10 inb10 0 {0.9*Y}
+Vinb11 inb11 0 {0.9*Y}
+Vinb12 inb12 0 {0.9*Y}
+Vinb13 inb13 0 {0.9*Y}
+Vinb14 inb14 0 {0.9*Y}
+Vinb15 inb15 0 {0.9*Y}
+Vinb16 inb16 0 {0.9*Y}
+Vinb17 inb17 0 {0.9*Y}
+Vinb18 inb18 0 {0.9*Y}
+Vinb19 inb19 0 {0.9*Y}
+Vinb20 inb20 0 {0.9*Y}
+Vinb21 inb21 0 {0.9*Y}
+Vinb22 inb22 0 {0.9*Y}
+Vinb23 inb23 0 {0.9*Y}
+Vinb24 inb24 0 {0.9*Y}
+Vinb25 inb25 0 {0.9*Y}
+Vinb26 inb26 0 {0.9*Y}
+Vinb27 inb27 0 {0.9*Y}
+Vinb28 inb28 0 {0.9*Y}
+Vinb29 inb29 0 {0.9*Y}
+Vinb30 inb30 0 {0.9*Y}
+Vinb31 inb31 0 {0.9*Y}
+Vinb32 inb32 0 {0.9*Y}
+
+*vcin cin 0 PWL(0 0 0.100ns 0 0.120ns {0.9*Y})
+*vcin cin 0 PWL(0 {0.9*Y} 0.100ns {0.9*Y} 0.120ns 0)
+vcin cin 0 PWL(0 {0.9*Y} 0.100ns {0.9*Y} 0.120ns 0 1.120ns 0 1.140ns {0.9*Y} 2.140ns {0.9*Y} 2.160ns 0)
+
+XFA_1 0 VDD out1 cout1 cin inb1 ina1  FA_SUB
+XFA_2 0 VDD out2 cout2 cout1 inb2 ina2 FA_SUB
+XFA_3 0 VDD out3 cout3 cout2 inb3 ina3 FA_SUB
+XFA_4 0 VDD out4 cout4 cout3 inb4 ina4 FA_SUB
+XFA_5 0 VDD out5 cout5 cout4 inb5 ina5 FA_SUB
+XFA_6 0 VDD out6 cout6 cout5 inb6 ina6 FA_SUB
+XFA_7 0 VDD out7 cout7 cout6 inb7 ina7 FA_SUB
+XFA_8 0 VDD out8 cout8 cout7 inb8 ina8 FA_SUB
+XFA_9 0 VDD out9 cout9 cout8 inb9 ina9 FA_SUB
+XFA_10 0 VDD out10 cout10 cout9 inb10 ina10 FA_SUB
+XFA_11 0 VDD out11 cout11 cout10 inb11 ina11 FA_SUB
+XFA_12 0 VDD out12 cout12 cout11 inb12 ina12 FA_SUB
+XFA_13 0 VDD out13 cout13 cout12 inb13 ina13 FA_SUB
+XFA_14 0 VDD out14 cout14 cout13 inb14 ina14 FA_SUB
+XFA_15 0 VDD out15 cout15 cout14 inb15 ina15 FA_SUB
+XFA_16 0 VDD out16 cout16 cout15 inb16 ina16 FA_SUB
+XFA_17 0 VDD out17 cout17 cout16 inb17 ina17 FA_SUB
+XFA_18 0 VDD out18 cout18 cout17 inb18 ina18 FA_SUB
+XFA_19 0 VDD out19 cout19 cout18 inb19 ina19 FA_SUB
+XFA_20 0 VDD out20 cout20 cout19 inb20 ina20 FA_SUB
+XFA_21 0 VDD out21 cout21 cout20 inb21 ina21 FA_SUB
+XFA_22 0 VDD out22 cout22 cout21 inb22 ina22 FA_SUB
+XFA_23 0 VDD out23 cout23 cout22 inb23 ina23 FA_SUB
+XFA_24 0 VDD out24 cout24 cout23 inb24 ina24 FA_SUB
+XFA_25 0 VDD out25 cout25 cout24 inb25 ina25 FA_SUB
+XFA_26 0 VDD out26 cout26 cout25 inb26 ina26 FA_SUB
+XFA_27 0 VDD out27 cout27 cout26 inb27 ina27 FA_SUB
+XFA_28 0 VDD out28 cout28 cout27 inb28 ina28 FA_SUB
+XFA_29 0 VDD out29 cout29 cout28 inb29 ina29 FA_SUB
+XFA_30 0 VDD out30 cout30 cout29 inb30 ina30 FA_SUB
+XFA_31 0 VDD out31 cout31 cout30 inb31 ina31 FA_SUB
+XFA_32 0 VDD out32 cout32 cout31 inb32 ina32 FA_SUB
+
+xNOT4_1 0 VDD out_load out32 NOT4_SUB
+xNOT4_2 0 VDD cout_load cout32 NOT4_SUB
+
+.CONTROL
+run
+.ENDC
+
+.END
