@@ -112,6 +112,8 @@ com_scirc(wordlist *wl)
     dbs = ft_curckt->ci_dbs;
     /* set the numparam dicos structure for use with measure */
     nupa_set_dicoslist(ft_curckt->ci_dicos);
+    /* set the temper lists */
+    set_tlist(ft_curckt);
 }
 
 

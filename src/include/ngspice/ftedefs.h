@@ -25,7 +25,19 @@ struct save_info {
     int		used;
 };
 
-/* The curcuits that are currently available to the user. */
+
+/* structure used to save expression parse trees for .model and
+* device instance lines
+*/
+struct pt_temper {
+    char *expression;
+    wordlist *wl;
+    wordlist *wlend;
+    INPparseTree *pt;
+    struct pt_temper *next;
+};
+
+/* The circuits that are currently available to the user. */
 
 struct circ {
     char *ci_name;    /* What the circuit can be called. */
@@ -54,7 +66,8 @@ struct circ {
     JOB *ci_curOpt;    /* the most recent options anal. for the circuit */
     char *ci_last_an;   /* name of last analysis run */
     int ci_dicos;      /* index to the numparam dicoS structure for this circuit*/
-
+    struct pt_temper *modtlist; /* List of all expressions with 'temper' in .model lines */
+    struct pt_temper *devtlist; /* List of all expressions with 'temper' in device instance lines */
     FTESTATistics *FTEstats; /* Statistics for the front end */
 } ;
 

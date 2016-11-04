@@ -207,7 +207,7 @@ extern bool gr_circular;
 /* inp.c */
 
 void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
-		struct line *options, char *filename);
+        struct line *options, char *filename);
 extern void inp_source(char *file);
 void inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
 extern void inp_casefix(char *string);
@@ -221,12 +221,14 @@ extern void mc_free(void);
 void eval_seed_opt(struct line *deck);
 
 extern char** circarray;
+extern void set_tlist(struct circ *curckt);
+extern void rem_tlist(void);
 
 /* nutinp.c */
 
 void inp_nutsource(FILE *fp, bool comfile, char *filename);
 void nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, 
-		   struct line *options, char *filename);
+        struct line *options, char *filename);
 extern void nutcom_source(wordlist *wl);
 
 /* interpolate.c */

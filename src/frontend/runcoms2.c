@@ -259,6 +259,7 @@ com_remcirc(wordlist *wl)
         tfree(ft_curckt->ci_name);
     if (ft_curckt->ci_filename)
         tfree(ft_curckt->ci_filename);
+    rem_tlist();
 
     /* delete the actual circuit entry from ft_circuits */
     for (p = ft_circuits; p; p = p->ci_next) {
@@ -284,5 +285,6 @@ com_remcirc(wordlist *wl)
         modtab = ft_curckt->ci_modtab;
         dbs = ft_curckt->ci_dbs;
         nupa_set_dicoslist(ft_curckt->ci_dicos);
+        set_tlist(ft_curckt);
     }
 }

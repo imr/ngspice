@@ -69,18 +69,6 @@ void inp_evaluate_temper(void);
 
 extern bool ft_batchmode;
 
-/* structure used to save expression parse trees for .model and
- * device instance lines
- */
-
-struct pt_temper {
-    char *expression;
-    wordlist *wl;
-    wordlist *wlend;
-    INPparseTree *pt;
-    struct pt_temper *next;
-};
-
 /*
  * create an unique artificial *unusable* FILE ptr
  *   meant to be used with Xprintf() only to eventually
@@ -1697,9 +1685,13 @@ inp_parse_temper(struct line *card)
 {
     int error = 0;
     char *end_tstr, *beg_tstr, *beg_pstr, *str_ptr, *devmodname, *paramname;
+    /* reset lists */
+    modtlist = NULL;
+    devtlist = NULL;
 
     /* skip title line */
     card = card->li_next;
+
     for (; card; card = card->li_next) {
 
         char *curr_line = card->li_line;
@@ -1830,11 +1822,39 @@ inp_parse_temper_trees(void)
 
     for(d = devtlist; d; d = d->next)
         INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    ft_curckt->devtlist = devtlist;
 
     for(d = modtlist; d; d = d->next)
         INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    ft_curckt->modtlist = modtlist;
 }
 
+ /* set modtlist and devtlist. Called from com_scirc(), when another circuit is selected */
+void
+set_tlist(struct circ *curckt)
+{
+    modtlist = curckt->modtlist;
+    devtlist = curckt->devtlist;
+    expr_w_temper = (modtlist || devtlist);
+}
+
+/* remove the actual modtlist and devtlist */
+void
+rem_tlist(void)
+{
+    if (devtlist) {
+        // tfree(devtlist->expression);
+        wl_free(devtlist->wl);
+        /*should we remove the parse tree pt ?*/
+        tfree(devtlist);
+    }
+    if (modtlist) {
+        //  tfree(modtlist->expression);
+        wl_free(modtlist->wl);
+        /*should we remove the parse tree pt ?*/
+        tfree(modtlist);
+    }
+}
 
 void
 inp_evaluate_temper(void)
