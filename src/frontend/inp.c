@@ -56,7 +56,7 @@ static struct line *mc_deck = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 static void dotifeval(struct line *deck);
 static int inp_parse_temper(struct line *deck);
-static void inp_parse_temper_trees(void);
+static void inp_parse_temper_trees(struct circ *ckt);
 
 static wordlist *inp_savecurrents(struct line *deck, struct line *options, wordlist *wl, wordlist *controls);
 
@@ -66,6 +66,13 @@ void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
 
 extern bool ft_batchmode;
+
+/* List of all expressions found in .model lines */
+static struct pt_temper *modtlist = NULL;
+
+/* List of all expressions found in device instance lines */
+static struct pt_temper *devtlist = NULL;
+
 
 /*
  * create an unique artificial *unusable* FILE ptr
@@ -820,10 +827,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             fclose(fdo);
         }
 
+        ft_curckt->devtlist = devtlist;
+        ft_curckt->modtlist = modtlist;
         /* Now the circuit is defined, so generate the parse trees */
-        inp_parse_temper_trees();
+        inp_parse_temper_trees(ft_curckt);
         /* Get the actual data for model and device instance parameters */
-        inp_evaluate_temper();
+        inp_evaluate_temper(ft_curckt);
 
        /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
           (When controls are executed later on, also stores TRACE, IPLOT, and STOP data) */
@@ -1643,12 +1652,6 @@ dotifeval(struct line *deck)
 }
 
 
-/* List of all expressions found in .model lines */
-static struct pt_temper *modtlist = NULL;
-
-/* List of all expressions found in device instance lines */
-static struct pt_temper *devtlist = NULL;
-
 /*
     Evaluate expressions containing 'temper' keyword, found in
     .model lines or device instance lines.
@@ -1812,21 +1815,19 @@ inp_parse_temper(struct line *card)
 
 
 static void
-inp_parse_temper_trees(void)
+inp_parse_temper_trees(struct circ *circ)
 {
     struct pt_temper *d;
 
-    for(d = devtlist; d; d = d->next) {
+    for(d = circ->devtlist; d; d = d->next) {
         char *expression = d->expression;
-        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+        INPgetTree(&expression, &d->pt, circ->ci_ckt, NULL);
     }
-    ft_curckt->devtlist = devtlist;
 
-    for(d = modtlist; d; d = d->next) {
+    for(d = circ->modtlist; d; d = d->next) {
         char *expression = d->expression;
-        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+        INPgetTree(&expression, &d->pt, circ->ci_ckt, NULL);
     }
-    ft_curckt->modtlist = modtlist;
 }
 
  /* set modtlist and devtlist. Called from com_scirc(), when another circuit is selected */
@@ -1864,12 +1865,12 @@ rem_tlist(struct circ *circ)
 }
 
 void
-inp_evaluate_temper(void)
+inp_evaluate_temper(struct circ *circ)
 {
     struct pt_temper *d;
     double result;
 
-    for(d = devtlist; d; d = d->next) {
+    for(d = circ->devtlist; d; d = d->next) {
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         if (d->wlend->wl_word)
             tfree(d->wlend->wl_word);
@@ -1877,12 +1878,12 @@ inp_evaluate_temper(void)
         com_alter(d->wl);
     }
 
-    for(d = modtlist; d; d = d->next) {
+    for(d = circ->modtlist; d; d = d->next) {
         char *name = d->wl->wl_word;
-        INPretrieve(&name, ft_curckt->ci_symtab);
+        INPretrieve(&name, circ->ci_symtab);
         /* only evaluate models which have been entered into the
            hash table ckt->MODnameHash */
-        if (ft_sim->findModel (ft_curckt->ci_ckt, name) == NULL)
+        if (ft_sim->findModel (circ->ci_ckt, name) == NULL)
             continue;
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         if (d->wlend->wl_word)

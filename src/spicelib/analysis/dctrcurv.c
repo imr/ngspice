@@ -13,6 +13,7 @@ Modified: 1999 Paolo Nenzi
 #include "ngspice/cktdefs.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
+#include "ngspice/fteext.h"
 
 #ifdef XSPICE
 #include "ngspice/evt.h"
@@ -143,7 +144,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             job->TRCVvSave[i] = ckt->CKTtemp; /* Saves the old circuit temperature */
             job->TRCVvType[i] = TEMP_CODE;    /* Set the sweep type code */
             ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK; /* Set the new circuit temp */
-            inp_evaluate_temper();
+            inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
             goto found;
         }
@@ -275,7 +276,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     job->TRCVvStart[i];
             } else if (job->TRCVvType[i] == TEMP_CODE) {
                 ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK;
-                inp_evaluate_temper();
+                inp_evaluate_temper(ft_curckt);
                 CKTtemp(ckt);
             } else if (job->TRCVvType[i] == rcode) {
                 ((RESinstance *)(job->TRCVvElt[i]))->RESresist =
@@ -468,7 +469,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
-            inp_evaluate_temper();
+            inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
         }
 
@@ -505,7 +506,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = job->TRCVvSave[i];
-            inp_evaluate_temper();
+            inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
         }
 

@@ -9,6 +9,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/sperror.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/cpextern.h"
+#include "ngspice/fteext.h"
 
 #include "analysis.h"
 
@@ -114,7 +115,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 
     /* call altermod and alter on device and model parameters assembled in
        devtlist and modtlist (if using temper) because we have a new temperature */
-    inp_evaluate_temper();
+    inp_evaluate_temper(ft_curckt);
 
     error = 0;
 
