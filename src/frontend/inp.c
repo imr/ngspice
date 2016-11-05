@@ -1833,19 +1833,9 @@ inp_parse_temper_trees(struct circ *circ)
 
 /* remove the actual modtlist and devtlist */
 void
-rem_tlist(struct circ *circ)
+rem_tlist(struct pt_temper *p)
 {
-    struct pt_temper *p;
-
-    for (p = circ->devtlist; p;) {
-        struct pt_temper *next_p = p->next;
-        tfree(p->expression);
-        wl_free(p->wl);
-        INPfreeTree((IFparseTree *) p->pt);
-        tfree(p);
-        p = next_p;
-    }
-    for (p = circ->modtlist; p;) {
+    while (p) {
         struct pt_temper *next_p = p->next;
         tfree(p->expression);
         wl_free(p->wl);

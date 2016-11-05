@@ -221,7 +221,7 @@ extern void mc_free(void);
 void eval_seed_opt(struct line *deck);
 
 extern char** circarray;
-extern void rem_tlist(struct circ *curckt);
+extern void rem_tlist(struct pt_temper *p);
 
 /* nutinp.c */
 
