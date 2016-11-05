@@ -259,7 +259,7 @@ com_remcirc(wordlist *wl)
         tfree(ft_curckt->ci_name);
     if (ft_curckt->ci_filename)
         tfree(ft_curckt->ci_filename);
-    rem_tlist();
+    rem_tlist(ft_curckt);
 
     /* delete the actual circuit entry from ft_circuits */
     for (p = ft_circuits; p; p = p->ci_next) {

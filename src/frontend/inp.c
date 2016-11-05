@@ -1839,11 +1839,11 @@ set_tlist(struct circ *curckt)
 
 /* remove the actual modtlist and devtlist */
 void
-rem_tlist(void)
+rem_tlist(struct circ *circ)
 {
     struct pt_temper *p;
 
-    for (p = devtlist; p;) {
+    for (p = circ->devtlist; p;) {
         struct pt_temper *next_p = p->next;
         tfree(p->expression);
         wl_free(p->wl);
@@ -1851,7 +1851,7 @@ rem_tlist(void)
         tfree(p);
         p = next_p;
     }
-    for (p = modtlist; p;) {
+    for (p = circ->modtlist; p;) {
         struct pt_temper *next_p = p->next;
         tfree(p->expression);
         wl_free(p->wl);

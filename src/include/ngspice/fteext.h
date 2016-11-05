@@ -222,7 +222,7 @@ void eval_seed_opt(struct line *deck);
 
 extern char** circarray;
 extern void set_tlist(struct circ *curckt);
-extern void rem_tlist(void);
+extern void rem_tlist(struct circ *curckt);
 
 /* nutinp.c */
 
