@@ -285,6 +285,5 @@ com_remcirc(wordlist *wl)
         modtab = ft_curckt->ci_modtab;
         dbs = ft_curckt->ci_dbs;
         nupa_set_dicoslist(ft_curckt->ci_dicos);
-        set_tlist(ft_curckt);
     }
 }

@@ -1830,13 +1830,6 @@ inp_parse_temper_trees(struct circ *circ)
     }
 }
 
- /* set modtlist and devtlist. Called from com_scirc(), when another circuit is selected */
-void
-set_tlist(struct circ *curckt)
-{
-    modtlist = curckt->modtlist;
-    devtlist = curckt->devtlist;
-}
 
 /* remove the actual modtlist and devtlist */
 void
@@ -1860,8 +1853,6 @@ rem_tlist(struct circ *circ)
         tfree(p);
         p = next_p;
     }
-    devtlist = NULL;
-    modtlist = NULL;
 }
 
 void
