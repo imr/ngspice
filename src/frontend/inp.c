@@ -1820,12 +1820,16 @@ inp_parse_temper_trees(void)
 {
     struct pt_temper *d;
 
-    for(d = devtlist; d; d = d->next)
-        INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    for(d = devtlist; d; d = d->next) {
+        char *expression = d->expression;
+        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    }
     ft_curckt->devtlist = devtlist;
 
-    for(d = modtlist; d; d = d->next)
-        INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    for(d = modtlist; d; d = d->next) {
+        char *expression = d->expression;
+        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    }
     ft_curckt->modtlist = modtlist;
 }
 
@@ -1843,15 +1847,15 @@ void
 rem_tlist(void)
 {
     if (devtlist) {
-        // tfree(devtlist->expression);
+        tfree(devtlist->expression);
         wl_free(devtlist->wl);
-        /*should we remove the parse tree pt ?*/
+        INPfreeTree((IFparseTree *) devtlist->pt);
         tfree(devtlist);
     }
     if (modtlist) {
-        //  tfree(modtlist->expression);
+        tfree(modtlist->expression);
         wl_free(modtlist->wl);
-        /*should we remove the parse tree pt ?*/
+        INPfreeTree((IFparseTree *) modtlist->pt);
         tfree(modtlist);
     }
 }
