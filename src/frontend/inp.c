@@ -62,8 +62,6 @@ static wordlist *inp_savecurrents(struct line *deck, struct line *options, wordl
 void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
 
-void inp_evaluate_temper(void);
-
 extern bool ft_batchmode;
 
 /* structure used to save expression parse trees for .model and
