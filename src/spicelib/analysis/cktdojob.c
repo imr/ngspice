@@ -114,8 +114,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
 
     /* call altermod and alter on device and model parameters assembled in
        devtlist and modtlist (if using temper) because we have a new temperature */
-    if (expr_w_temper)
-        inp_evaluate_temper();
+    inp_evaluate_temper();
 
     error = 0;
 
