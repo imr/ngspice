@@ -65,8 +65,6 @@ static void eval_agauss(struct line *deck, char *fcn);
 void line_free_x(struct line *deck, bool recurse);
 void create_circbyline(char *line);
 
-void inp_evaluate_temper(void);
-
 extern bool ft_batchmode;
 
 /*

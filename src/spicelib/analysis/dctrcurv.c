@@ -27,8 +27,6 @@ Modified: 1999 Paolo Nenzi
 static double actval, actdiff;
 #endif
 
-extern void inp_evaluate_temper(void);
-
 
 int
 DCtrCurv(CKTcircuit *ckt, int restart)

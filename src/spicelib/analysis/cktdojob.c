@@ -23,7 +23,6 @@ Modified: 2000 AlansFixes
 #endif
 
 extern SPICEanalysis *analInfo[];
-extern void inp_evaluate_temper(void);
 
 int
 CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
