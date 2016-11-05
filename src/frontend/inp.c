@@ -1846,17 +1846,22 @@ set_tlist(struct circ *curckt)
 void
 rem_tlist(void)
 {
-    if (devtlist) {
+    struct pt_temper *dmtmp;
+    while (devtlist) {
+        dmtmp = devtlist->next;
         tfree(devtlist->expression);
         wl_free(devtlist->wl);
         INPfreeTree((IFparseTree *) devtlist->pt);
         tfree(devtlist);
+        devtlist = dmtmp;
     }
-    if (modtlist) {
+    while (modtlist) {
+        dmtmp = modtlist->next;
         tfree(modtlist->expression);
         wl_free(modtlist->wl);
         INPfreeTree((IFparseTree *) modtlist->pt);
         tfree(modtlist);
+        modtlist = dmtmp;
     }
 }
 
