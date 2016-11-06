@@ -32,6 +32,9 @@ B4SOIdestroy(GENmodel **inModel)
             FREE(inst);
             inst = next_inst;
         }
+#ifdef USE_OMP
+        FREE(mod->B4SOIInstanceArray);
+#endif
         FREE(mod);
         mod = next_mod;
     }

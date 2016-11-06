@@ -58,11 +58,6 @@ int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
 
-#ifdef USE_OMP
-int idx, InstCount;
-BSIM4v7instance **InstArray;
-#endif
-
     /* Search for a noise analysis request */
     for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
         if(strcmp(job->JOBname,"Noise Analysis")==0) {
@@ -2573,35 +2568,24 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     }
 
 #ifdef USE_OMP
-    InstCount = 0;
-    model = (BSIM4v7model*)inModel;
-    /* loop through all the BSIM4v7 device models 
-       to count the number of instances */
-    
-    for( ; model != NULL; model = model->BSIM4v7nextModel )
+    for (model = (BSIM4v7model*)inModel; model; model = model->BSIM4v7nextModel)
     {
-        /* loop through all the instances of the model */
-        for (here = model->BSIM4v7instances; here != NULL ;
-             here=here->BSIM4v7nextInstance) 
-        { 
-            InstCount++;
-        }
-    }
-    InstArray = TMALLOC(BSIM4v7instance*, InstCount);
-    model = (BSIM4v7model*)inModel;
-    idx = 0;
-    for( ; model != NULL; model = model->BSIM4v7nextModel )
-    {
-        /* loop through all the instances of the model */
-        for (here = model->BSIM4v7instances; here != NULL ;
-             here=here->BSIM4v7nextInstance) 
-        { 
-            InstArray[idx] = here;
+        BSIM4v7instance **InstArray;
+        int idx;
+
+        idx = 0;
+        for (here = model->BSIM4v7instances; here; here = here->BSIM4v7nextInstance)
             idx++;
-        }
-        /* set the array pointer and instance count into each model */
-        model->BSIM4v7InstCount = InstCount;
-        model->BSIM4v7InstanceArray = InstArray;		
+
+        model->BSIM4v7InstCount = idx;
+
+        InstArray = TMALLOC(BSIM4v7instance*, idx);
+
+        idx = 0;
+        for (here = model->BSIM4v7instances; here; here = here->BSIM4v7nextInstance)
+            InstArray[idx++] = here;
+
+        model->BSIM4v7InstanceArray = InstArray;
     }
 #endif
 

@@ -52,11 +52,6 @@ int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
 
-#ifdef USE_OMP
-int idx, InstCount;
-BSIM4v5instance **InstArray;
-#endif
-
     /* Search for a noise analysis request */
     for (job = ft_curckt->ci_curTask->jobs; job; job = job->JOBnextJob) {
         if(strcmp(job->JOBname,"Noise Analysis")==0) {
@@ -2083,34 +2078,23 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_OMP
-    InstCount = 0;
-    model = (BSIM4v5model*)inModel;
-    /* loop through all the BSIM4v6 device models
-    to count the number of instances */
+    for (model = (BSIM4v5model*)inModel; model; model = model->BSIM4v5nextModel)
+    {
+        BSIM4v5instance **InstArray;
+        int idx;
 
-    for (; model != NULL; model = model->BSIM4v5nextModel)
-    {
-        /* loop through all the instances of the model */
-        for (here = model->BSIM4v5instances; here != NULL;
-            here = here->BSIM4v5nextInstance)
-        {
-            InstCount++;
-        }
-    }
-    InstArray = TMALLOC(BSIM4v5instance*, InstCount);
-    model = (BSIM4v5model*)inModel;
-    idx = 0;
-    for (; model != NULL; model = model->BSIM4v5nextModel)
-    {
-        /* loop through all the instances of the model */
-        for (here = model->BSIM4v5instances; here != NULL;
-            here = here->BSIM4v5nextInstance)
-        {
-            InstArray[idx] = here;
+        idx = 0;
+        for (here = model->BSIM4v5instances; here; here = here->BSIM4v5nextInstance)
             idx++;
-        }
-        /* set the array pointer and instance count into each model */
-        model->BSIM4v5InstCount = InstCount;
+
+        model->BSIM4v5InstCount = idx;
+
+        InstArray = TMALLOC(BSIM4v5instance*, idx);
+
+        idx = 0;
+        for (here = model->BSIM4v5instances; here; here = here->BSIM4v5nextInstance)
+            InstArray[idx++] = here;
+
         model->BSIM4v5InstanceArray = InstArray;
     }
 #endif

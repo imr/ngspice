@@ -53,11 +53,6 @@ double Cboxt;
 /* v3.2 */
 double Vbs0t, Qsi;
 
-#ifdef USE_OMP
-int idx, InstCount;
-B4SOIinstance **InstArray;
-#endif
-
     /*  loop through all the B4SOI device models */
     for( ; model != NULL; model = model->B4SOInextModel )
     {
@@ -2706,35 +2701,24 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     }
 
 #ifdef USE_OMP
-    InstCount = 0;
-    model = (B4SOImodel*)inModel;
-    /* loop through all the B4SOI device models 
-       to count the number of instances */
-    
-    for( ; model != NULL; model = model->B4SOInextModel )
+    for (model = (B4SOImodel*)inModel; model; model = model->B4SOInextModel)
     {
-        /* loop through all the instances of the model */
-        for (here = model->B4SOIinstances; here != NULL ;
-             here=here->B4SOInextInstance) 
-        { 
-            InstCount++;
-        }
-    }
-    InstArray = TMALLOC(B4SOIinstance*, InstCount);
-    model = (B4SOImodel*)inModel;
-    idx = 0;
-    for( ; model != NULL; model = model->B4SOInextModel )
-    {
-        /* loop through all the instances of the model */
-        for (here = model->B4SOIinstances; here != NULL ;
-             here=here->B4SOInextInstance) 
-        { 
-            InstArray[idx] = here;
+        B4SOIinstance **InstArray;
+        int idx;
+
+        idx = 0;
+        for (here = model->B4SOIinstances; here; here = here->B4SOInextInstance)
             idx++;
-        }
-        /* set the array pointer and instance count into each model */
-        model->B4SOIInstCount = InstCount;
-        model->B4SOIInstanceArray = InstArray;		
+
+        model->B4SOIInstCount = idx;
+
+        InstArray = TMALLOC(B4SOIinstance*, idx);
+
+        idx = 0;
+        for (here = model->B4SOIinstances; here; here = here->B4SOInextInstance)
+            InstArray[idx++] = here;
+
+        model->B4SOIInstanceArray = InstArray;
     }
 #endif
 

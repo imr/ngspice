@@ -64,11 +64,6 @@ HSM2destroy(GENmodel **inModel)
 {
     HSM2model *mod = *(HSM2model**) inModel;
 
-#ifdef USE_OMP
-    /* free just once for all models */
-    FREE(mod->HSM2InstanceArray);
-#endif
-
     while (mod) {
         HSM2model *next_mod = mod->HSM2nextModel;
         HSM2instance *inst = mod->HSM2instances;
@@ -77,6 +72,9 @@ HSM2destroy(GENmodel **inModel)
             FREE(inst);
             inst = next_inst;
         }
+#ifdef USE_OMP
+        FREE(mod->HSM2InstanceArray);
+#endif
         FREE(mod);
         mod = next_mod;
     }
