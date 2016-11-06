@@ -60,6 +60,11 @@ int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
 
+#ifdef USE_OMP
+int idx, InstCount;
+BSIM4instance **InstArray;
+#endif
+
     /* Search for a noise analysis request */
     for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
         if(strcmp(job->JOBname,"Noise Analysis")==0) {
@@ -2652,24 +2657,35 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     }
 
 #ifdef USE_OMP
-    for (model = (BSIM4model*)inModel; model; model = model->BSIM4nextModel)
+    InstCount = 0;
+    model = (BSIM4model*)inModel;
+    /* loop through all the BSIM4 device models 
+       to count the number of instances */
+    
+    for( ; model != NULL; model = model->BSIM4nextModel )
     {
-        BSIM4instance **InstArray;
-        int idx;
-
-        idx = 0;
-        for (here = model->BSIM4instances; here; here = here->BSIM4nextInstance)
+        /* loop through all the instances of the model */
+        for (here = model->BSIM4instances; here != NULL ;
+             here=here->BSIM4nextInstance) 
+        { 
+            InstCount++;
+        }
+    }
+    InstArray = TMALLOC(BSIM4instance*, InstCount);
+    model = (BSIM4model*)inModel;
+    idx = 0;
+    for( ; model != NULL; model = model->BSIM4nextModel )
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM4instances; here != NULL ;
+             here=here->BSIM4nextInstance) 
+        { 
+            InstArray[idx] = here;
             idx++;
-
-        model->BSIM4InstCount = idx;
-
-        InstArray = TMALLOC(BSIM4instance*, idx);
-
-        idx = 0;
-        for (here = model->BSIM4instances; here; here = here->BSIM4nextInstance)
-            InstArray[idx++] = here;
-
-        model->BSIM4InstanceArray = InstArray;
+        }
+        /* set the array pointer and instance count into each model */
+        model->BSIM4InstCount = InstCount;
+        model->BSIM4InstanceArray = InstArray;		
     }
 #endif
 

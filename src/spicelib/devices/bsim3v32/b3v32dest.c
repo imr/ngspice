@@ -19,6 +19,11 @@ BSIM3v32destroy (GENmodel **inModel)
 {
     BSIM3v32model *mod = *(BSIM3v32model**) inModel;
 
+#ifdef USE_OMP
+    /* free just once for all models */
+    FREE(mod->BSIM3v32InstanceArray);
+#endif
+
     while (mod) {
         BSIM3v32model *next_mod = mod->BSIM3v32nextModel;
         BSIM3v32instance *inst = mod->BSIM3v32instances;
@@ -35,9 +40,6 @@ BSIM3v32destroy (GENmodel **inModel)
             FREE(inst);
             inst = next_inst;
         }
-#ifdef USE_OMP
-        FREE(mod->BSIM3v32InstanceArray);
-#endif
         FREE(mod->BSIM3v32version);
         FREE(mod);
         mod = next_mod;
