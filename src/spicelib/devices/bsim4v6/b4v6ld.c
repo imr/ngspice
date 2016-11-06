@@ -5210,6 +5210,7 @@ void BSIM4v6LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for(idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
+       model = here->BSIM4v6modPtr;
         /* Update b for Ax = b */
            (*(ckt->CKTrhs + here->BSIM4v6dNodePrime) += here->BSIM4v6rhsdPrime);
            (*(ckt->CKTrhs + here->BSIM4v6gNodePrime) -= here->BSIM4v6rhsgPrime);

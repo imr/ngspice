@@ -3438,6 +3438,7 @@ void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for (idx = 0; idx < InstCount; idx++) {
         here = InstArray[idx];
+        model = here->BSIM3v32modPtr;
         /* Update b for Ax = b */
         (*(ckt->CKTrhs + here->BSIM3v32gNode) -= here->BSIM3v32rhsG);
         (*(ckt->CKTrhs + here->BSIM3v32bNode) -= here->BSIM3v32rhsB);
