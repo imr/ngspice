@@ -135,12 +135,12 @@ void cm_d_lut(ARGS)
     if (INIT) {  /* initial pass */
 
         /* allocate storage for the lookup table */
-        STATIC_VAR (locdata) = calloc(tablelen, sizeof(Digital_State_t));
+        STATIC_VAR (locdata) = calloc((size_t) tablelen, sizeof(Digital_State_t));
         lookup_table = STATIC_VAR (locdata);
 
         /* allocate storage for the outputs */
         cm_event_alloc(0, sizeof(Digital_State_t));
-        cm_event_alloc(1, (size_t) size * sizeof(Digital_State_t));
+        cm_event_alloc(1, size * (int) sizeof(Digital_State_t));
 
         /* set loading for inputs */
         for (i = 0; i < size; i++)
