@@ -6746,7 +6746,10 @@ inp_add_levels(struct line *deck)
 {
     struct line *card,  *card_prev = deck;
     int skip_control = 0, subs = 0, i;
-    static unsigned short levelinfo[NESTINGDEPTH];
+    unsigned short levelinfo[NESTINGDEPTH];
+
+    for (i = 0; i < NESTINGDEPTH; i++)
+        levelinfo[i] = 0;
 
     for (card = deck; card; card = card->li_next) {
 
@@ -6770,8 +6773,7 @@ inp_add_levels(struct line *deck)
 
         if (*curr_line == '.') {
             if (ciprefix(".subckt", curr_line)) {
-                subs++;
-                levelinfo[subs - 1]++;
+                levelinfo[subs++]++;
                 for (i = 0; i < NESTINGDEPTH; i++)
                     card->level[i] = levelinfo[i];
                 card_prev = card;
