@@ -10969,6 +10969,7 @@ void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for(idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
+       model = here->B4SOImodPtr;
         /* Update b for Ax = b */
 
             /* v3.1 */

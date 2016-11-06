@@ -1502,6 +1502,7 @@ void HSM2LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for (idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
+       model = here->HSM2modPtr;
         /* Update b for Ax = b */
         *(ckt->CKTrhs + here->HSM2dNodePrime) += here->HSM2rhsdPrime;
         *(ckt->CKTrhs + here->HSM2gNodePrime) -= here->HSM2rhsgPrime;
