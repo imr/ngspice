@@ -421,7 +421,7 @@ fetchnumentry(dico_t *dico, char *s, bool *perr)
 /*******  writing dictionary entries *********/
 
 entry_t *
-attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op, unsigned short levelinfo[])
+attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op, struct nscope *levelinfo)
 {
     /* seek or attribute dico entry number for string t.
        Option  op='N' : force a new entry, if tos>level and old is  valid.
@@ -436,14 +436,11 @@ attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op, unsigned short leveli
     }
 
     if (!entry) {
-        int i;
         entry = TMALLOC(entry_t, 1);
         entry->symbol = strdup(t);
         entry->tp = '?';      /* signal Unknown */
         entry->level = dico->stack_depth;
-        if (levelinfo)
-            for (i = 0; i < NESTINGDEPTH; i++)
-                entry->levelinfo[i] = levelinfo[i];
+        entry->levelinfo = levelinfo;
         nghash_insert(htable_p, t, entry);
     }
 
@@ -475,7 +472,7 @@ nupa_define(dico_t *dico,
        double z,                /* float value if any */
        int w,                   /* integer value if any */
        char *base,              /* string pointer if any */
-       unsigned short level[])  /* level info */
+       struct nscope *level)  /* level info */
 {
     /*define t as real or integer,
       opcode= 'N' impose a new item under local conditions.
@@ -531,6 +528,7 @@ nupa_define(dico_t *dico,
             /* FIXME: better do this recursively in a new function */
             /* No new entry defined, but previous entry with same name returned
                from function attrib(), compare levels, if not equal, o.k. (for now) */
+#if 0
             unsigned short newlevel[NESTINGDEPTH];
             unsigned short oldlevel[NESTINGDEPTH];
             int i;
@@ -553,6 +551,7 @@ nupa_define(dico_t *dico,
                 && (newlevel[2] > 0) && (oldlevel[2] > 1)
                 && (newlevel[3] == 0) && (oldlevel[3] == 0))
                 fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
+#endif
         }
     }
 
@@ -561,7 +560,7 @@ nupa_define(dico_t *dico,
 
 
 bool
-defsubckt(dico_t *dico, char *s, int w, char categ, unsigned short level[])
+defsubckt(dico_t *dico, char *s, int w, char categ, struct nscope *level)
 /* called on 1st pass of spice source code,
    to enter subcircuit (categ=U) and model (categ=O) names
 */

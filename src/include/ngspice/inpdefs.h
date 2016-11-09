@@ -62,6 +62,20 @@ struct INPtables{
     GENmodel *defZmod;
 };
 
+struct modellist;
+
+struct nscope {
+    struct nscope *next;
+    struct line_assoc *subckts;
+    struct modellist *models;
+};
+
+struct line_assoc {
+    const char *name;
+    struct line *line;
+    struct line_assoc *next;
+};
+
 struct card{
     int linenum;
     int linenum_orig;
@@ -69,7 +83,7 @@ struct card{
     char *error;
     card *nextcard;
     card *actualLine;
-    unsigned short level[NESTINGDEPTH];
+    struct nscope *level;
 };
 
 /* structure used to save models in after they are read during pass 1 */

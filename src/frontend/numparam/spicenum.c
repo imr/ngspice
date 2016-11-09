@@ -533,7 +533,7 @@ nupa_done(void)
 
 /* SJB - Scan the line for subcircuits */
 void
-nupa_scan(char *s, int linenum, int is_subckt, unsigned short level[])
+nupa_scan(char *s, int linenum, int is_subckt, struct nscope *level)
 {
     if (is_subckt)
         defsubckt(dicoS, s, linenum, 'U', level);

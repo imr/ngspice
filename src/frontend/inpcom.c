@@ -149,11 +149,12 @@ static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct line *deck, int numb);
-static void inp_add_levels(struct line *deck);
-bool inp_check_scope_mod(unsigned short elem_level[], unsigned short mod_level[]);
-bool inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[]);
+static struct nscope *inp_add_levels(struct line *deck);
 static char inp_get_elem_ident(char *type);
-static void inp_rem_unused_models(struct line *deck);
+static void inp_rem_unused_models(struct nscope *root, struct line *deck);
+static struct line_assoc *find_subckt(struct nscope *scope, const char *name);
+static struct modellist *find_model(struct nscope *scope, const char *name);
+
 
 struct inp_read_t
 { struct line *cc;
@@ -169,9 +170,8 @@ static void inp_poly_err(struct line *deck);
 
 
 static struct line *
-xx_new_line(struct line *next, char *line, int linenum, int linenum_orig, unsigned short level[])
+xx_new_line(struct line *next, char *line, int linenum, int linenum_orig, struct nscope *level)
 {
-    int i;
     struct line *x = TMALLOC(struct line, 1);
 
     x->li_next = next;
@@ -180,13 +180,7 @@ xx_new_line(struct line *next, char *line, int linenum, int linenum_orig, unsign
     x->li_line = line;
     x->li_linenum = linenum;
     x->li_linenum_orig = linenum_orig;
-
-    if (level)
-        for (i = 0; i < NESTINGDEPTH; i++)
-            x->level[i] = level[i];
-    else
-        for (i = 0; i < NESTINGDEPTH; i++)
-            x->level[i] = 0;
+    x->level = level;
 
     return x;
 }
@@ -522,7 +516,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
         delete_libs();
 
-        inp_add_levels(working);
+        struct nscope *root = inp_add_levels(working);
         inp_fix_for_numparam(subckt_w_params, working);
 
 
@@ -531,7 +525,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
 
         comment_out_unused_subckt_models(working);
 //      tprint(working, tpr++);
-        inp_rem_unused_models(working);
+        inp_rem_unused_models(root, working);
 //      tprint(working, tpr++);
 
         subckt_params_to_param(working);
@@ -2752,24 +2746,6 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
 }
 
 
-/* a bogus search for a .subckt with given name,
- *   which does not honour scoping rules
- */
-
-static struct line *
-bogus_find_subckt(struct line *d, const char *subckt_name)
-{
-    const size_t len = strlen(subckt_name);
-    for (; d; d = d->li_next)
-        if (ciprefix(".subckt", d->li_line)) {
-            const char *n = skip_ws(skip_non_ws(d->li_line));
-            if ((strncmp(n, subckt_name, len) == 0) && (!n[len] || isspace_c(n[len])))
-                break;
-        }
-    return d;
-}
-
-
 static void
 inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck)
 {
@@ -2793,11 +2769,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct line *d, *p = NULL;
-
-                // iterate through the deck to find the subckt (last one defined wins)
-                for (d = deck; (d = bogus_find_subckt(d, subckt_name)) != NULL; d = d->li_next)
-                    p = d;
+                struct line *p = find_subckt(c->level, subckt_name)->line;
 
                 if (p) {
                     int num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
@@ -2833,39 +2805,14 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             if (find_name(subckt_w_params, subckt_name)) {
                 struct line *d;
 
-                for (d = deck; (d = bogus_find_subckt(d, subckt_name)) != NULL; d = d->li_next) {
+                d = find_subckt(c->level, subckt_name)->line;
+                {
                     char *subckt_line = d->li_line;
                     subckt_line = skip_non_ws(subckt_line);
                     subckt_line = skip_ws(subckt_line);
 
                     int num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
                     int num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
-
-                    // make sure that if have inst params that one matches subckt
-                    if (num_inst_params != 0) {
-                        bool found_param_match = FALSE;
-                        int j, k;
-
-                        for (j = 0; j < num_inst_params; j++) {
-                            for (k = 0; k < num_subckt_params; k++)
-                                if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
-                                    found_param_match = TRUE;
-                                    break;
-                                }
-                            if (found_param_match)
-                                break;
-                        }
-
-                        if (!found_param_match && inp_check_scope_sub(c->level, d->level)) {
-                            // comment out .subckt and continue
-                            while (d != NULL && !ciprefix(".ends", d->li_line)) {
-                                *(d->li_line) = '*';
-                                d = d->li_next;
-                            }
-                            *(d->li_line) = '*';
-                            continue;
-                        }
-                    }
 
                     c->li_line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
                     for (i = 0; i < num_subckt_params; i++) {
@@ -2877,8 +2824,6 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                         tfree(inst_param_names[i]);
                         tfree(inst_param_values[i]);
                     }
-
-                    break;
                 }
             }
 
@@ -5922,10 +5867,9 @@ tprint(struct line *t, int numb)
         if (*(tmp->li_line) != '*') {
             fprintf(fd, "%6d  %6d  %s", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
             fprintf(fd, "  level: ");
-            int i;
-            for (i = 0; i < NESTINGDEPTH; i++) {
-                fprintf(fd, "%3d", tmp->level[i]);
-            }
+            struct nscope *x = tmp->level;
+            for (; x; x = x->next)
+                fprintf(fd, "/%p", tmp->level); /* fixme */
             fprintf(fd, "\n");
         }
     fprintf(fd, "\n*********************************************************************************\n");
@@ -6739,17 +6683,90 @@ inp_meas_current(struct line *deck)
 }
 
 
+static struct line_assoc *
+find_subckt_1(struct nscope *scope, const char *name) {
+    struct line_assoc *p = scope->subckts;
+    for (; p; p = p->next)
+        if (eq(name, p->name))
+            break;
+    return p;
+}
+
+
+static struct line_assoc *
+find_subckt(struct nscope *scope, const char *name) {
+    for(; scope; scope = scope->next) {
+        struct line_assoc *p = find_subckt_1(scope, name);
+        if (p)
+            return p;
+    }
+    return NULL;
+}
+
+
+static void
+add_subckt(struct nscope *scope, struct line *subckt_line)
+{
+    char *n = skip_ws(skip_non_ws(subckt_line->li_line));
+    char *name = copy_substring(n, skip_non_ws(n));
+    if (find_subckt_1(scope, name)) {
+        fprintf(stderr, "redefinition of .subckt %s\n", name);
+        exit(1);
+    }
+    struct line_assoc *entry = TMALLOC(struct line_assoc, 1);
+    entry->name = name;
+    entry->line = subckt_line;
+    entry->next = scope->subckts;
+    scope->subckts = entry;
+}
+
+
+/* linked list of models, includes use info */
+struct modellist
+{
+    struct line *model;
+    char *modelname;
+    bool used;
+    char elemb;
+    struct modellist *next;
+};
+
+
+static struct modellist *
+find_model_1(struct nscope *scope, const char *name) {
+    struct modellist *p = scope->models;
+    for (; p; p = p->next)
+        if (model_name_match(name, p->modelname))
+            break;
+    return p;
+}
+
+
+static struct modellist *
+find_model(struct nscope *scope, const char *name) {
+    for(; scope; scope = scope->next) {
+        struct modellist *p = find_model_1(scope, name);
+        if (p)
+            return p;
+    }
+    return NULL;
+}
+
+
 /* scan through deck and add level information to all struct line
  * depending on nested subcircuits */
-static void
+static struct nscope *
 inp_add_levels(struct line *deck)
 {
-    struct line *card,  *card_prev = deck;
-    int skip_control = 0, subs = 0, i;
-    unsigned short levelinfo[NESTINGDEPTH];
+    struct line *card;
+    int skip_control = 0;
 
-    for (i = 0; i < NESTINGDEPTH; i++)
-        levelinfo[i] = 0;
+    struct nscope *root = TMALLOC(struct nscope, 1);
+    root->next = NULL;
+    root->subckts = NULL;
+    root->models = NULL;
+
+    struct nscope *lvl = root;
 
     for (card = deck; card; card = card->li_next) {
 
@@ -6768,71 +6785,36 @@ inp_add_levels(struct line *deck)
             continue;
         }
 
-        if (*curr_line == '*')
-            continue;
-
         if (*curr_line == '.') {
             if (ciprefix(".subckt", curr_line)) {
-                levelinfo[subs++]++;
-                for (i = 0; i < NESTINGDEPTH; i++)
-                    card->level[i] = levelinfo[i];
-                card_prev = card;
+                add_subckt(lvl, card);
+                card->level = lvl;
+                lvl = TMALLOC(struct nscope, 1);
+                // lvl->name = ..., or just point to the deck
+                lvl->next = card->level;
+                lvl->subckts = NULL;
+                lvl->models = NULL;
             }
             else if (ciprefix(".ends", curr_line)) {
-                subs--;
-                for (i = 0; i < NESTINGDEPTH; i++)
-                    if (i < subs)
-                       card->level[i] = card_prev->level[i];
-                    else
-                       card->level[i] = 0;
-                card_prev = card;
+                if (lvl == root) {
+                    fprintf(stderr, ".suckt/.ends not balanced\n");
+                    exit(1);
+                }
+                lvl = card->level = lvl->next;
             }
             else {
-                for (i = 0; i < NESTINGDEPTH; i++)
-                    card->level[i] = card_prev->level[i];
-                card_prev = card;
+                card->level = lvl;
             }
         }
         else {
-            for (i = 0; i < NESTINGDEPTH; i++)
-                card->level[i] = card_prev->level[i];
-            card_prev = card;
+            card->level = lvl;
         }
     }
-}
 
+    if (lvl != root)
+        fprintf(stderr, "nesting error\n");
 
-/* return TRUE if element is within scope of model */
-bool
-inp_check_scope_mod(unsigned short elem_level[], unsigned short mod_level[])
-{
-    int i;
-    /* model at top level, accessible from all devices */
-    if (mod_level[0] == 0)
-        return TRUE;
-    /* model at nesting level */
-    for (i = 0; i < NESTINGDEPTH - 1; i++)
-        if ((elem_level[i] > 0) && (elem_level[i] == mod_level[i]) && (mod_level[i + 1] == 0))
-            return TRUE;
-    if ((elem_level[NESTINGDEPTH - 1] > 0) && (elem_level[NESTINGDEPTH - 1] == mod_level[NESTINGDEPTH - 1]))
-        return TRUE;
-    return FALSE;
-}
-
-
-/* not yet checked.
- * Question: how to express overloading a sub at a lower level ? */
-bool
-inp_check_scope_sub(unsigned short x_level[], unsigned short subckt_level[])
-{
-    int i;
-    /* subcircuit at top level, accessible from all x lines */
-    if ((subckt_level[0] > 0) && (subckt_level[1] == 0))
-        return TRUE;
-    for (i = 1; i < NESTINGDEPTH - 1; i++)
-        if ((x_level[i] == subckt_level[i]) && (x_level[i + 1] == 0))
-            return TRUE;
-    return FALSE;
+    return root;
 }
 
 
@@ -6896,23 +6878,41 @@ inp_get_elem_ident(char *type)
 }
 
 
-/* linked list of models, includes use info */
-struct modellist
+static void
+rem_unused_xxx(struct nscope *level)
 {
-    struct line *model;
-    char *modelname;
-    bool used;
-    char elemb;
-    struct modellist *next;
-};
+    struct modellist *m = level->models;
+    while (m) {
+        struct modellist *next_m = m->next;
+        if (!m->used)
+            m->model->li_line[0] = '*';
+        tfree(m->modelname);
+        tfree(m);
+        m = next_m;
+    }
+    level->models = NULL;
+
+    struct line_assoc *p = level->subckts;
+    for (; p; p = p->next)
+        rem_unused_xxx(p->line->li_next->level);
+}
+
 
 static void
-inp_rem_unused_models(struct line *deck)
+mark_all_binned(struct nscope *scope, char *name)
+{
+    struct modellist *p = scope->models;
+
+    for (; p; p = p->next)
+        if (model_name_match(name, p->modelname))
+            p->used = TRUE;
+}
+
+
+static void
+inp_rem_unused_models(struct nscope *root, struct line *deck)
 {
     struct line *card;
-    struct modellist *modl = NULL, *modl_new;
-    int nested, i;
-    struct modellist *modn;
     int skip_control = 0;
 
     /* create a list of .model */
@@ -6937,17 +6937,19 @@ inp_rem_unused_models(struct line *deck)
             continue;
 
         if (ciprefix(".model", curr_line)) {
+            struct modellist *modl_new;
             modl_new = TMALLOC(struct modellist, 1);
             char *model_type = get_model_type(curr_line);
             modl_new->elemb = inp_get_elem_ident(model_type);
             modl_new->modelname = get_subckt_model_name(curr_line);
             modl_new->model = card;
             modl_new->used = FALSE;
-            modl_new->next = modl;
-            modl = modl_new;
+            modl_new->next = card->level->models;
+            card->level->models = modl_new;
             tfree(model_type);
         }
     }
+
     /* scan through all element lines  that require or may need a model */
     for (card = deck; card; card = card->li_next) {
 
@@ -6986,10 +6988,6 @@ inp_rem_unused_models(struct line *deck)
             break;
         }
 
-        for (nested = 0; nested < NESTINGDEPTH; nested++)
-            if (card->level[nested] == 0)
-                break;
-
         /* check if correct model name */
         int num_terminals = get_number_terminals(curr_line);
         /* num_terminals may be 0 for a elements */
@@ -7001,56 +6999,24 @@ inp_rem_unused_models(struct line *deck)
                 elem_model_name = get_model_name(curr_line, num_terminals);
 
             if (is_a_modelname(elem_model_name)) {
-                /* if element is on top level, do faster here */
-                if (nested == 0) {
-                    for (modn = modl; modn; modn = modn->next)
-                        /* check if model is at top level, element is o.k., and model name is fitting */
-                        if ((modn->model->level[0] == 0) && (*curr_line == modn->elemb) && model_name_match(elem_model_name, modn->modelname))
-                            modn->used = TRUE;
+
+                struct modellist *m = find_model(card->level, elem_model_name);
+                if (m) {
+                    if (*curr_line != m->elemb)
+                        fprintf(stderr, "warning, model type mismatch\n");
+                    mark_all_binned(m->model->level, elem_model_name);
+                } else {
+                    fprintf(stderr, "warning, can't find model %s\n", elem_model_name);
                 }
-                else {
-                    /* scan through levels, starting with element level */
-                    for (i = nested - 1; i >= 0; i--) {
-                        bool got_a_model = FALSE;
-                        for (modn = modl; modn; modn = modn->next) {
-                            /* check if element o.k., model name is fitting, and level is o.k. */
-                            if ((*curr_line == modn->elemb) && model_name_match(elem_model_name, modn->modelname) && (card->level[i] == modn->model->level[i])) {
-                                modn->used = TRUE;
-                                got_a_model = TRUE;
-                                /* repeat for binning models, leave immediately after lowest possible level matches */
-                            }
-                            /* model is at top level, element level does not matter  */
-                            if ((i == 0) && (*curr_line == modn->elemb) && model_name_match(elem_model_name, modn->modelname) && (modn->model->level[i] == 0)) {
-                                modn->used = TRUE;
-                                got_a_model = TRUE;
-                                /* repeat for binning models, leave immediately after lowest possible level matches */
-                            }
-                        }
-                        if (got_a_model) {
-                            tfree(elem_model_name);
-                            goto nextcard;
-                        }
-                    }
-                }
+
+            } else {
+                fprintf(stderr, "warning, not a valid modelname %s\n", elem_model_name);
             }
+
             tfree(elem_model_name);
         }
-
-nextcard:
-        ;
     }
 
-    /* discard all unused models */
-    for (modn = modl; modn; modn = modn->next)
-        if (modn->used == FALSE)
-            modn->model->li_line[0] = '*';
-
-    /* remove modellist */
-    for (modn = modl; modn; ) {
-        struct modellist *modn_prev;
-        tfree(modn->modelname);
-        modn_prev = modn;
-        modn = modn->next;
-        tfree(modn_prev);
-    }
+    // disable unused .model lines, and free the models assoc lists
+    rem_unused_xxx(root);
 }
