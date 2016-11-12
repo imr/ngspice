@@ -208,7 +208,7 @@ SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
 
   if(j < 0) {
       fprintf(stderr, "internal error in %s, bye !\n", __FUNCTION__);
-      exit(1);
+      controlled_exit(1);
   }
 
   siIndex = j;
@@ -344,7 +344,7 @@ SUPascRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
 
   if(j < 0) {
       fprintf(stderr, "internal error in %s, bye !\n", __FUNCTION__);
-      exit(1);
+      controlled_exit(1);
   }
 
   siIndex = j;

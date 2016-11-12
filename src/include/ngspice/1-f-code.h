@@ -53,7 +53,7 @@ trnoise_state_get(struct trnoise_state *this, CKTcircuit *ckt, size_t index)
     if(index + TRNOISE_STATE_MEM_LEN < this->top) {
         fprintf(stderr, "ouch, trying to fetch from the past %d %d\n",
                 (int)index, (int)this->top);
-        exit(1);
+        controlled_exit(1);
     }
 
     return this->points[index % TRNOISE_STATE_MEM_LEN];

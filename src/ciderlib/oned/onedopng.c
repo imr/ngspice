@@ -36,7 +36,7 @@ ONEdopingValue(DOPprofile *pProfile, DOPtable *pTable, double x)
     if (pTable == NULL) {
       fprintf(stderr, "Error: unknown impurity profile %d\n",
 	  ((int)pProfile->IMPID));
-      exit(1);
+      controlled_exit(1);
     }
   }
   /* Find distances */
