@@ -45,7 +45,7 @@ extern void txfree(const void *ptr);
     do {                                                                \
         if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
             SPfrontEnd->IFerrorf(E_PANIC, "Out of Memory");             \
-            exit(1);                                                    \
+            controlled_exit(1);                                         \
         }                                                               \
     } while(0)
 
@@ -53,7 +53,7 @@ extern void txfree(const void *ptr);
     do {                                                                \
         if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
             fprintf(stderr, "Out of Memory\n");                         \
-            exit(1);                                                    \
+            controlled_exit(1);                                         \
         }                                                               \
     } while(0)
 
