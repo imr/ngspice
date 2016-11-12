@@ -641,24 +641,27 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         if (ft_ngdebug) {
             /*debug: print into file*/
             FILE *fd = fopen("debug-out.txt", "w");
-            struct line *t;
-            fprintf(fd, "**************** uncommented deck **************\n\n");
-            /* always print first line */
-            fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
-            /* here without out-commented lines */
-            for (t = cc->li_next; t; t = t->li_next) {
-                if (*(t->li_line) == '*')
-                    continue;
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            if(!fd)
+                fprintf(cp_err, "Could not open file debug-out.txt for writing debug info. \n");
+            else {
+                struct line *t;
+                fprintf(fd, "**************** uncommented deck **************\n\n");
+                /* always print first line */
+                fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
+                /* here without out-commented lines */
+                for (t = cc->li_next; t; t = t->li_next) {
+                    if (*(t->li_line) == '*')
+                        continue;
+                    fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                }
+                fprintf(fd, "\n****************** complete deck ***************\n\n");
+                /* now completely */
+                for (t = cc; t; t = t->li_next)
+                    fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                fclose(fd);
             }
-            fprintf(fd, "\n****************** complete deck ***************\n\n");
-            /* now completely */
-            for (t = cc; t; t = t->li_next)
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-            fclose(fd);
-
             fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                    (int) max_line_length, no_braces, dynmaxline);
+                (int)max_line_length, no_braces, dynmaxline);
         }
     }
     /* remove white spaces in command files */
