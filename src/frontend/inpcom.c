@@ -1736,8 +1736,9 @@ get_adevice_model_name(char *line)
 static int
 is_a_modelname(const char *s)
 {
-    /* first character of model name is character from alphabet */
-    if (isalpha_c(s[0]))
+    /* first character of model name is character from alphabet
+     * and second character is not '=', as in c=1e-12 */
+    if (isalpha_c(s[0]) && s[1] != '=')
         return TRUE;
 
     /* e.g. 1N4002, but do not accept floats (for example 1E2) */
