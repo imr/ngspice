@@ -1718,8 +1718,8 @@ is_a_modelname(const char *s)
     if (isalpha_c(s[0]))
         return TRUE;
 
-    /* e.g. 1N4002 */
-    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isdigit_c(s[2]))
+    /* e.g. 1N4002, but do not accept floats (for example 1E2) */
+    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isdigit_c(s[2]) && toupper_c(s[1]) != 'E')
         return TRUE;
 
     /* e.g. 2SK456 */
@@ -6711,7 +6711,7 @@ add_subckt(struct nscope *scope, struct line *subckt_line)
     char *name = copy_substring(n, skip_non_ws(n));
     if (find_subckt_1(scope, name)) {
         fprintf(stderr, "redefinition of .subckt %s\n", name);
-        exit(1);
+        controlled_exit(1);
     }
     struct line_assoc *entry = TMALLOC(struct line_assoc, 1);
     entry->name = name;
@@ -6798,7 +6798,7 @@ inp_add_levels(struct line *deck)
             else if (ciprefix(".ends", curr_line)) {
                 if (lvl == root) {
                     fprintf(stderr, ".suckt/.ends not balanced\n");
-                    exit(1);
+                    controlled_exit(1);
                 }
                 lvl = card->level = lvl->next;
             }
@@ -6998,6 +6998,9 @@ inp_rem_unused_models(struct nscope *root, struct line *deck)
             else
                 elem_model_name = get_model_name(curr_line, num_terminals);
 
+            /* ignore certain cases, for example
+             *    C5 node1 node2 42.0
+             */
             if (is_a_modelname(elem_model_name)) {
 
                 struct modellist *m = find_model(card->level, elem_model_name);
@@ -7009,8 +7012,6 @@ inp_rem_unused_models(struct nscope *root, struct line *deck)
                     fprintf(stderr, "warning, can't find model %s\n", elem_model_name);
                 }
 
-            } else {
-                fprintf(stderr, "warning, not a valid modelname %s\n", elem_model_name);
             }
 
             tfree(elem_model_name);
