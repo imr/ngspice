@@ -1677,7 +1677,7 @@ get_subckt_model_name(char *line)
 static char*
 get_model_name(char *line, int num_terminals)
 {
-    char *beg_ptr, *end_ptr;
+    char *beg_ptr, *end_ptr, *new_token;
     int  i = 0;
 
     beg_ptr = skip_non_ws(line); /* eat device name */
@@ -1695,8 +1695,11 @@ get_model_name(char *line, int num_terminals)
         }
 
     end_ptr = skip_non_ws(beg_ptr);
-
-    return copy_substring(beg_ptr, end_ptr);
+    /* check if an '=' sign is in the token -> not a model */
+    new_token = copy_substring(beg_ptr, end_ptr);
+    if (strchr(new_token, '='))
+        new_token[0] = '\0';
+    return new_token;
 }
 
 
@@ -1739,9 +1742,8 @@ get_adevice_model_name(char *line)
 static int
 is_a_modelname(const char *s)
 {
-    /* first character of model name is character from alphabet
-     * and second character is not '=', as in c=1e-12 */
-    if (isalpha_c(s[0]) && s[1] != '=')
+    /* first character of model name is character from alphabet */
+    if (isalpha_c(s[0]))
         return TRUE;
 
     /* e.g. 1N4002, but do not accept floats (for example 1E2) */
