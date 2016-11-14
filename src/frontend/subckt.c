@@ -1637,10 +1637,16 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 {
     int found;
 
+    struct bxx_buffer buffer;
+    bxx_init(&buffer);
+
+
     for (; s; s = s->li_next) {
 
-        char *buffer, *t, c, *name, *next_name;
+        char *t, c, *name, *next_name;
         wordlist *wlsub;
+
+        bxx_rewind(&buffer);
 
         t = s->li_line;
 
@@ -1653,8 +1659,6 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
         c = *t;                           /* set c to first char in line. . . . */
         if (isupper_c(c))
             c = tolower_c(c);
-
-        buffer = TMALLOC(char, strlen(t) + strlen(subname) + 4);
 
         switch (c) {
 
@@ -1674,7 +1678,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 
             /* first do refdes. */
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
 
             /* now do remainder of line. */
@@ -1690,7 +1694,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 
                 } else {
                     /* next_name holds something.  Write name into the buffer and continue. */
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     tfree(name);
                 }
             }  /* while  */
@@ -1703,9 +1707,9 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
             tfree(name);
 
@@ -1714,9 +1718,9 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             printf("In devmodtranslate, translated codemodel line= %s\n", buffer);
 #endif
 
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             break;
 
 #endif /* XSPICE */
@@ -1725,13 +1729,13 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
         case 'c':
         case 'l':
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get first netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get second netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
 
             if (*t) {    /* if there is a model, process it. . . . */
@@ -1739,9 +1743,9 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 wlsub = wl_find(name, orig_modnames);
 
                 if (!wlsub)
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                 else
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                    bxx_printf(&buffer, "%s:%s ", subname, name);
                 tfree(name);
             }
 
@@ -1750,40 +1754,40 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 wlsub = wl_find(name, orig_modnames);
 
                 if (!wlsub)
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                 else
-                    (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                    bxx_printf(&buffer, "%s:%s ", subname, name);
                 tfree(name);
             }
 
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             break;
 
         case 'd':
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get first attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get second attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
 
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
             tfree(name);
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             break;
 
         case 'u': /* urc transmissionline */
@@ -1792,30 +1796,30 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
         case 'j': /* jfet */
         case 'z': /* hfet, mesa */
             name = gettok(&t);
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
 
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
             tfree(name);
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             break;
 
             /* 4 terminal devices */
@@ -1827,51 +1831,51 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 which occur in real Analog Devices SPICE models.
             */
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get first attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get second attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get third attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get fourth attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
 
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             tfree(name);
             break;
 
              /* 4-7 terminal mos devices */
         case 'm':
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get first attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get second attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get third attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get fourth attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok(&t);
 
@@ -1884,7 +1888,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                         break;
                     }
                 if (!found) { /* name was not a model - was a netname */
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     tfree(name);
                     name = gettok(&t);
                     if (name == NULL) {
@@ -1895,29 +1899,29 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             }  /* while  */
 
             if (!found)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             tfree(name);
             break;
 
             /* 3-5 terminal bjt devices */
         case 'q':
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get first attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get second attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* get third attached netname */
-            (void) sprintf(buffer + strlen(buffer), "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
 
@@ -1925,7 +1929,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 
             if (!wlsub)
                 if (*t) { /* There is another token - perhaps a model */
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     tfree(name);
                     name = gettok(&t);
                     wlsub = wl_find(name, orig_modnames);
@@ -1934,7 +1938,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 #ifdef ADMS
             if (!wlsub)
                 if (*t) { /* There is another token - perhaps a model */
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     tfree(name);
                     name = gettok(&t);
                     wlsub = wl_find(name, orig_modnames);
@@ -1942,21 +1946,21 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 #endif
 
             if (!wlsub) /* Fallback w/o subckt name before */
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
             tfree(name);
 
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             break;
 
             /* 4-18 terminal devices */
         case 'p': /* cpl */
             name = gettok(&t);  /* get refdes */
-            (void) sprintf(buffer, "%s ", name);
+            bxx_printf(&buffer, "%s ", name);
             tfree(name);
 
             /* now do remainder of line. */
@@ -1970,7 +1974,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                     break;
                 } else {
                     /* next_name holds something.  Write name into the buffer and continue. */
-                    (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                    bxx_printf(&buffer, "%s ", name);
                     tfree(name);
                 }
             }  /* while  */
@@ -1978,22 +1982,23 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                (void) sprintf(buffer + strlen(buffer), "%s ", name);
+                bxx_printf(&buffer, "%s ", name);
             else
-                (void) sprintf(buffer + strlen(buffer), "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s ", subname, name);
 
             tfree(name);
 
-            (void) strcat(buffer, t);
+            bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
-            s->li_line = buffer;
+            s->li_line = copy(bxx_buffer(&buffer));
             break;
 
         default:
-            tfree(buffer);
             break;
         }
     }
+
+    bxx_free(&buffer);
 }
 
 
