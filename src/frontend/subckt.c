@@ -1063,7 +1063,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* Next iterate over all nodes (netnames) found and translate them. */
             nnodes = numnodes(c->li_line, subs, modnames);
 
-            while (nnodes-- > 0) {
+            while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few nodes: %s\n",
@@ -1127,7 +1127,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             /* Now translate the controlling source/nodes */
             nnodes = dim * numdevs(c->li_line);
-            while (nnodes-- > 0) {
+            while (--nnodes >= 0) {
                 nametofree = name = gettok_node(&s);   /* name points to the returned token  */
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
@@ -1206,7 +1206,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             /* Next iterate over all nodes (netnames) found and translate them. */
             nnodes = numnodes(c->li_line, subs, modnames);
-            while (nnodes-- > 0) {
+            while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few nodes: %s\n", c->li_line);
@@ -1232,7 +1232,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              * source devices above . . . .
              */
             nnodes = numdevs(c->li_line);
-            while (nnodes-- > 0) {
+            while (--nnodes >= 0) {
                 t = name = gettok_node(&s);
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
