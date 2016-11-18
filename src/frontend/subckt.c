@@ -923,7 +923,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 {
     struct line *c;
     struct bxx_buffer buffer;
-    char *next_name, dev_type, *name, *s, *t, ch, *nametofree, *paren_ptr, *new_str;
+    char *next_name, dev_type, *name, *s, *t, ch, *nametofree, *paren_ptr;
     int nnodes, i, dim;
     int rtn = 0;
 
@@ -953,32 +953,31 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 #endif
 
         if (ciprefix(".ic", c->li_line) || ciprefix(".nodeset", c->li_line)) {
-            paren_ptr = s = c->li_line;
-            while ((paren_ptr = strchr(paren_ptr, '('))  != NULL) {
-                *paren_ptr = '\0';
-                paren_ptr++;
-                name = paren_ptr;
+            bxx_rewind(&buffer);
+            s = c->li_line;
+            while ((paren_ptr = strchr(s, '('))  != NULL) {
+                name = paren_ptr + 1;
 
-                if ((paren_ptr = strchr(paren_ptr, ')')) == NULL) {
-                    *(name-1) = '(';
+                if ((paren_ptr = strchr(name, ')')) == NULL) {
                     fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
                     goto quit;
                 }
-                *paren_ptr = '\0';
-                t = gettrans(name, NULL);
 
+                bxx_put_substring(&buffer, s, name);
+
+                t = gettrans(name, paren_ptr);
                 if (t) {
-                    new_str = tprintf("%s(%s)%s", s, t, paren_ptr+1);
+                    bxx_put_cstring(&buffer, t);
                 } else {
-                    new_str = tprintf("%s(%s.%s)%s", s, scname, name, paren_ptr+1);
+                    bxx_printf(&buffer, "%s.%.*s", scname, (int) (paren_ptr - name), name);
                 }
 
-                paren_ptr = new_str + strlen(s) + 1;
-
-                tfree(s);
-                s = new_str;
+                s = paren_ptr;
             }
-            c->li_line = s;
+            bxx_put_cstring(&buffer, s); /* rest of line */
+
+            tfree(c->li_line);
+            c->li_line = copy(bxx_buffer(&buffer));
             continue;
         }
 
