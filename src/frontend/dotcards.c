@@ -573,7 +573,7 @@ gettoks(char *s)
 
     /* stripWhite.... uses copy() to return a malloc'ed s, so we have to free it,
        using s0 as its starting address */
-    if (strstr(s, "("))
+    if (strchr(s, '('))
         s0 = s = stripWhiteSpacesInsideParens(s);
     else
         s0 = s = copy(s);

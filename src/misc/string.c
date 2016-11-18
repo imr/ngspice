@@ -666,7 +666,7 @@ get_comma_separated_values( char *values[], char *str ) {
   int count = 0;
   char *ptr, *comma_ptr, keep;
   
-  while ( ( comma_ptr = strstr( str, "," ) ) != NULL ) {
+  while ( ( comma_ptr = strchr( str, ',' ) ) != NULL ) {
     ptr = comma_ptr - 1;
     while ( isspace_c(*ptr) ) ptr--;
     ptr++; keep = *ptr; *ptr = '\0';

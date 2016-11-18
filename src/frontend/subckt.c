@@ -909,12 +909,12 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
         if (ciprefix(".ic", c->li_line) || ciprefix(".nodeset", c->li_line)) {
             paren_ptr = s = c->li_line;
-            while ((paren_ptr = strstr(paren_ptr, "("))  != NULL) {
+            while ((paren_ptr = strchr(paren_ptr, '('))  != NULL) {
                 *paren_ptr = '\0';
                 paren_ptr++;
                 name = paren_ptr;
 
-                if ((paren_ptr = strstr(paren_ptr, ")")) == NULL) {
+                if ((paren_ptr = strchr(paren_ptr, ')')) == NULL) {
                     *(name-1) = '(';
                     fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
                     goto quit;

@@ -73,7 +73,7 @@ com_stop(wordlist *wl)
         } else if (eq(wl->wl_word, "when") && wl->wl_next) {
             /* cp_lexer(string) will not discriminate '=', so we have
                to do it here */
-            if (strstr(wl->wl_next->wl_word, "=") &&
+            if (strchr(wl->wl_next->wl_word, '=') &&
                 (!(wl->wl_next->wl_next) ||
                  strstr(wl->wl_next->wl_next->wl_word, "when") ||
                  strstr(wl->wl_next->wl_next->wl_word, "after")))
@@ -82,7 +82,7 @@ com_stop(wordlist *wl)
                 wordlist *wln;
                 char **charr = TMALLOC(char*, 4);
                 char *tok = copy(wl->wl_next->wl_word);
-                char *tokeq = strstr(tok, "=");
+                char *tokeq = strchr(tok, '=');
                 char *tokafter = copy(tokeq + 1);
                 *tokeq = '\0';
                 charr[0] = tok;

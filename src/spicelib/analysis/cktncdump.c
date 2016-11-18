@@ -21,7 +21,7 @@ CKTncDump(
   fprintf(stdout,"%-30s %20s %20s\n", "Node", "Last Voltage", "Previous Iter");
   fprintf(stdout,"%-30s %20s %20s\n", "----", "------------", "-------------");
   for(node=ckt->CKTnodes->next;node;node=node->next) {
-    if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
+    if (strstr(node->name, "#branch") || !strchr(node->name, '#')) {
       new =  ckt->CKTrhsOld [i] ;
       old =  ckt->CKTrhs [i] ;
       fprintf(stdout,"%-30s %20g %20g", node->name, new, old);

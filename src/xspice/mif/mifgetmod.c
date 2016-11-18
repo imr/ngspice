@@ -113,7 +113,7 @@ char *MIFgetMod(
 
     /* maschmann : remove : from name
      *    char *pos;
-     * if((pos=strstr(name,":"))!=NULL) *pos=0;   
+     * if((pos=strchr(name,':'))!=NULL) *pos=0;   
      */
 
     /*------------------------------------

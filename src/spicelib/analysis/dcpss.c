@@ -300,7 +300,7 @@ DCpss(CKTcircuit *ckt,
             fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
                                                                "-------------");
             for(node=ckt->CKTnodes->next;node;node=node->next) {
-                if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
+                if (strstr(node->name, "#branch") || !strchr(node->name, '#')) {
                     new =  ckt->CKTrhsOld [i] ;
                     old =  ckt->CKTrhs [i] ;
                     fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
@@ -326,7 +326,7 @@ DCpss(CKTcircuit *ckt,
             fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
             fprintf(stdout,"%-30s %15s\n", "----", "-------");
             for(node=ckt->CKTnodes->next;node;node=node->next) {
-                if (strstr(node->name, "#branch") || !strstr(node->name, "#"))
+                if (strstr(node->name, "#branch") || !strchr(node->name, '#'))
                     fprintf(stdout,"%-30s %15g\n", node->name,
                                               ckt->CKTrhsOld[node->number]);
             }
@@ -793,7 +793,7 @@ DCpss(CKTcircuit *ckt,
             for (i = 0, node = ckt->CKTnodes->next ; node ; i++, node = node->next)
             {
                 /* Voltage Node */
-                if (!strstr (node->name, "#"))
+                if (!strchr (node->name, '#'))
                 {
                     if (fabs (err_conv [i]) > (fabs (RHS_max [i] - RHS_min [i]) * ckt->CKTreltol + ckt->CKTvoltTol) *
                         ckt->CKTtrtol * ckt->CKTsteady_coeff)
