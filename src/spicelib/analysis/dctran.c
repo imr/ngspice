@@ -241,7 +241,7 @@ DCtran(CKTcircuit *ckt,
             fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
                                                                "-------------");
             for(node=ckt->CKTnodes->next;node;node=node->next) {
-                if (strstr(node->name, "#branch") || !strstr(node->name, "#")) {
+                if (strstr(node->name, "#branch") || !strchr(node->name, '#')) {
                     new =  ckt->CKTrhsOld [i] ;
                     old =  ckt->CKTrhs [i] ;
                     fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
@@ -267,7 +267,7 @@ DCtran(CKTcircuit *ckt,
             fprintf(stdout,"%-30s %15s\n", "Node", "Voltage");
             fprintf(stdout,"%-30s %15s\n", "----", "-------");
             for(node=ckt->CKTnodes->next;node;node=node->next) {
-                if (strstr(node->name, "#branch") || !strstr(node->name, "#"))
+                if (strstr(node->name, "#branch") || !strchr(node->name, '#'))
                     fprintf(stdout,"%-30s %15g\n", node->name,
                                               ckt->CKTrhsOld[node->number]);
             }

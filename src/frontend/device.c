@@ -1415,7 +1415,7 @@ com_alter_mod(wordlist *wl)
     }
     input = wl_flatten(wl);
     /* get the file name */
-    eqword = strstr(input, "=");
+    eqword = strchr(input, '=');
     if (eqword) {
         eqword++;
         while (*eqword == ' ')

@@ -89,12 +89,12 @@ correct_vec(MEASUREPTR meas)
     char *vec = meas->m_vec;
 
     /* return if not of type VM() etc */
-    if ((*vec != 'v') || (!strstr(vec, "(")))
+    if ((*vec != 'v') || (!strchr(vec, '(')))
         return;
 
     if (vec[1] != '(') {
         meas->m_vectype = vec[1];
-        meas->m_vec = tprintf("%c%s", vec[0], strstr(vec, "("));
+        meas->m_vec = tprintf("%c%s", vec[0], strchr(vec, '('));
         tfree(vec);
     }
 
@@ -102,7 +102,7 @@ correct_vec(MEASUREPTR meas)
 
     if (vec && (vec[1] != '(')) {
         meas->m_vectype2 = vec[1];
-        meas->m_vec2 = tprintf("%c%s", vec[0], strstr(vec, "("));
+        meas->m_vec2 = tprintf("%c%s", vec[0], strchr(vec, '('));
         tfree(vec);
     }
 }
