@@ -923,7 +923,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 {
     struct line *c;
     struct bxx_buffer buffer;
-    char *next_name, dev_type, *name, *s, *t, ch, *nametofree, *paren_ptr;
+    char *next_name, dev_type, *name, *s, *t, *nametofree, *paren_ptr;
     int nnodes, i, dim;
     int rtn = 0;
 
@@ -1005,7 +1005,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             name = MIFgettok(&s);
 
             bxx_rewind(&buffer);
-            bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
+            if (name[0] != 'x')
+                bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
+            else
+                bxx_printf(&buffer, "%s.%s", scname, name);
             bxx_putc(&buffer, ' ');
 
 
@@ -1101,9 +1104,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* Here's where we translate the refdes to e.g. F:subcircuitname:57
              * and stick the translated name into buffer.
              */
-            ch = *name;           /* ch identifies the type of component */
             bxx_rewind(&buffer);
-            bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
+            if (name[0] != 'x')
+                bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
+            else
+                bxx_printf(&buffer, "%s.%s", scname, name);
             tfree(t);
             bxx_putc(&buffer, ' ');
 
@@ -1194,9 +1199,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     printf("In translate, found type f or h\n");
 #endif
 
-                    ch = *name;         /*  ch is the first char of the token.  */
-
-                    bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
+                    if (name[0] != 'x')
+                        bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
+                    else
+                        bxx_printf(&buffer, "%s.%s", scname, name);
                     /* From Vsense and Urefdes creates V.Urefdes.sense */
                 } else {                            /* Handle netname */
 
@@ -1242,12 +1248,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* Here's where we translate the refdes to e.g. R:subcircuitname:57
              * and stick the translated name into buffer.
              */
-            ch = *name;
 
             bxx_rewind(&buffer);
 
-            if (ch != 'x')
-                bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
+            if (name[0] != 'x')
+                bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
             else
                 bxx_printf(&buffer, "%s.%s", scname, name);
 
@@ -1289,10 +1294,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
                     goto quit;
                 }
-                ch = *name;
 
-                if (ch != 'x')
-                    bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
+                if (name[0] != 'x')
+                    bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
                 else
                     bxx_printf(&buffer, "%s.%s", scname, name);
 
@@ -1406,8 +1410,10 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             /*
              * i(instance_name)
              */
-            bxx_putc(t, buf[0]);
-            bxx_putc(t, '.');
+            if (buf[0] != 'x') {
+                bxx_putc(t, buf[0]);
+                bxx_putc(t, '.');
+            }
             bxx_put_cstring(t, scname);
             bxx_putc(t, '.');
             bxx_put_substring(t, buf, buf_end);
