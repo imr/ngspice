@@ -1351,29 +1351,30 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             bxx_putc(t, *src++);
             continue;
         }
+        which = *src;
         s = skip_ws(src + 1);
         if (!*s || (*s != '(')) {
             lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);
             continue;
         }
+        src = skip_ws(s + 1);
         lastwasalpha = 0;
-        bxx_putc(t, which = *src);
-        src = s;
-        bxx_putc(t, *src++);
-        src = skip_ws(src);
+        bxx_putc(t, which);
+        bxx_putc(t, '(');
         for (buf = src; *src && !isspace_c(*src) && *src != ',' && *src != ')'; )
             src++;
         buf_end = src;
 
-        if ((which == 'v') || (which == 'V'))
+        if ((which == 'v') || (which == 'V')) {
             s = gettrans(buf, buf_end);
-        else
+        } else {
             s = NULL;
+        }
 
         if (s) {
             bxx_put_cstring(t, s);
-        } else {  /* just a normal netname . . . . */
+        } else {
             /*
               i(vname) -> i(v.subckt.vname)
               i(ename) -> i(e.subckt.ename)
@@ -1385,10 +1386,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
                  || buf[0] == 'b' || buf[0] == 'B')) {
                 bxx_putc(t, buf[0]);
                 bxx_putc(t, '.');
-                /*i = 1; */
-            } /* else {
-                 i = 0;
-                 } */
+            }
             bxx_put_cstring(t, scname);
             bxx_putc(t, '.');
             bxx_put_substring(t, buf, buf_end);
@@ -1403,8 +1401,8 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             if (*src && *src != ')') {
                 for (buf = src; *src && !isspace_c(*src) && (*src != ')'); )
                     src++;
-                s = gettrans(buf, buf_end = src);
                 bxx_putc(t, ',');
+                s = gettrans(buf, buf_end = src);
                 if (s) {
                     bxx_put_cstring(t, s);
                 } else {
