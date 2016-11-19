@@ -1371,26 +1371,10 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             if (s) {
                 bxx_put_cstring(t, s);
             } else {
-                /*
-                  i(vname) -> i(v.subckt.vname)
-                  i(ename) -> i(e.subckt.ename)
-                  i(hname) -> i(h.subckt.hname)
-                  i(bname) -> i(b.subckt.hname)
-                */
-                if ((which == 'i' || which == 'I') &&
-                    (buf[0] == 'v' || buf[0] == 'V' || buf[0] == 'e' || buf[0] == 'h'
-                     || buf[0] == 'b' || buf[0] == 'B')) {
-                    bxx_putc(t, buf[0]);
-                    bxx_putc(t, '.');
-                }
                 bxx_put_cstring(t, scname);
                 bxx_putc(t, '.');
                 bxx_put_substring(t, buf, buf_end);
             }
-        } else {
-            s = NULL;
-        if (s) {
-            bxx_put_cstring(t, s);
         } else {
             /*
               i(vname) -> i(v.subckt.vname)
@@ -1407,7 +1391,6 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             bxx_put_cstring(t, scname);
             bxx_putc(t, '.');
             bxx_put_substring(t, buf, buf_end);
-        }
         }
 
 
