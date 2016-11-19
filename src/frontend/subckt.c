@@ -1921,10 +1921,10 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                     bxx_printf(&buffer, "%s ", name);
                     tfree(name);
                     name = gettok(&t);
-                    wlsub = wl_find(name, orig_modnames);
                 }
 #endif
 
+            wlsub = wl_find(name, orig_modnames);
             if (!wlsub) /* Fallback w/o subckt name before */
                 bxx_printf(&buffer, "%s", name);
             else
