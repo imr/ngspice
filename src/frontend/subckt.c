@@ -1984,6 +1984,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 }
 #endif
 
+            wlsub = wl_find(name, orig_modnames);
             if (!wlsub) /* Fallback w/o subckt name before */
                 bxx_printf(&buffer, "%s ", name);
             else
