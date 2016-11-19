@@ -1005,7 +1005,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             name = MIFgettok(&s);
 
             bxx_rewind(&buffer);
-            bxx_printf(&buffer, "a.%s.%s", scname, name);
+            bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
             bxx_putc(&buffer, ' ');
 
 
