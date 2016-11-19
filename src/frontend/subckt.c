@@ -1287,7 +1287,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 if (ch != 'x')
                     bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
                 else
-                    bxx_printf(&buffer, "%s ", scname);
+                    bxx_printf(&buffer, "%s.%s ", scname, name);
 
                 tfree(t);
             } /* while (nnodes--. . . . */
