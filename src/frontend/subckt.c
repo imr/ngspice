@@ -1337,9 +1337,8 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
               i(hname) -> i(h.subckt.hname)
               i(bname) -> i(b.subckt.hname)
             */
-            if ((which == 'i' || which == 'I') &&
-                (buf[0] == 'v' || buf[0] == 'V' || buf[0] == 'e' || buf[0] == 'h'
-                 || buf[0] == 'b' || buf[0] == 'B')) {
+            if (buf[0] == 'v' || buf[0] == 'V' || buf[0] == 'e' || buf[0] == 'h'
+                || buf[0] == 'b' || buf[0] == 'B') {
                 bxx_putc(t, buf[0]);
                 bxx_putc(t, '.');
             }
