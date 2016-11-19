@@ -1605,6 +1605,23 @@ modtranslate(struct line *c, char *subname, wordlist *new_modnames)
  *            Q1 c b e 2N3904
  *  after:    Q1 c b e U1:2N3904
  *-------------------------------------------------------------------*/
+
+static void
+translate_mod_name(struct bxx_buffer *buffer, char *modname, char *subname, struct wordlist *orig_modnames)
+{
+    /*
+     *  Note that we compare against orig_modnames,
+     *    which is the list of untranslated names of models.
+     */
+    wordlist *wlsub = wl_find(modname, orig_modnames);
+
+    if (!wlsub)
+        bxx_printf(buffer, "%s", modname);
+    else
+        bxx_printf(buffer, "%s:%s", subname, modname);
+}
+
+
 static void
 devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 {
@@ -1672,18 +1689,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 }
             }  /* while  */
 
-
-            /*
-             *  Note that we compare against orig_modnames,
-             *    which is the list of untranslated names of models.
-             */
-            wlsub = wl_find(name, orig_modnames);
-
-            if (!wlsub)
-                bxx_printf(&buffer, "%s", name);
-            else
-                bxx_printf(&buffer, "%s:%s", subname, name);
-
+            translate_mod_name(&buffer, name, subname, orig_modnames);
             tfree(name);
             bxx_putc(&buffer, ' ');
 
@@ -1714,24 +1720,14 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 
             if (*t) {    /* if there is a model, process it. . . . */
                 name = gettok(&t);
-                wlsub = wl_find(name, orig_modnames);
-
-                if (!wlsub)
-                    bxx_printf(&buffer, "%s", name);
-                else
-                    bxx_printf(&buffer, "%s:%s", subname, name);
+                translate_mod_name(&buffer, name, subname, orig_modnames);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
             }
 
             if (*t) {
                 name = gettok(&t);
-                wlsub = wl_find(name, orig_modnames);
-
-                if (!wlsub)
-                    bxx_printf(&buffer, "%s", name);
-                else
-                    bxx_printf(&buffer, "%s:%s", subname, name);
+                translate_mod_name(&buffer, name, subname, orig_modnames);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
             }
@@ -1753,12 +1749,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             tfree(name);
             name = gettok(&t);
 
-            wlsub = wl_find(name, orig_modnames);
-
-            if (!wlsub)
-                bxx_printf(&buffer, "%s", name);
-            else
-                bxx_printf(&buffer, "%s:%s", subname, name);
+            translate_mod_name(&buffer, name, subname, orig_modnames);
 
             tfree(name);
             bxx_putc(&buffer, ' ');
@@ -1786,13 +1777,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             tfree(name);
             name = gettok(&t);
 
-            wlsub = wl_find(name, orig_modnames);
-
-            if (!wlsub)
-                bxx_printf(&buffer, "%s", name);
-            else
-                bxx_printf(&buffer, "%s:%s", subname, name);
-
+            translate_mod_name(&buffer, name, subname, orig_modnames);
             tfree(name);
             bxx_putc(&buffer, ' ');
             bxx_put_cstring(&buffer, t);
@@ -1825,13 +1810,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             tfree(name);
             name = gettok(&t);
 
-            wlsub = wl_find(name, orig_modnames);
-
-            if (!wlsub)
-                bxx_printf(&buffer, "%s", name);
-            else
-                bxx_printf(&buffer, "%s:%s", subname, name);
-
+            translate_mod_name(&buffer, name, subname, orig_modnames);
             bxx_putc(&buffer, ' ');
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
@@ -1924,12 +1903,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 }
 #endif
 
-            wlsub = wl_find(name, orig_modnames);
-            if (!wlsub) /* Fallback w/o subckt name before */
-                bxx_printf(&buffer, "%s", name);
-            else
-                bxx_printf(&buffer, "%s:%s", subname, name);
-
+            translate_mod_name(&buffer, name, subname, orig_modnames);
             tfree(name);
             bxx_putc(&buffer, ' ');
 
@@ -1960,13 +1934,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 }
             }  /* while  */
 
-            wlsub = wl_find(name, orig_modnames);
-
-            if (!wlsub)
-                bxx_printf(&buffer, "%s", name);
-            else
-                bxx_printf(&buffer, "%s:%s", subname, name);
-
+            translate_mod_name(&buffer, name, subname, orig_modnames);
             tfree(name);
             bxx_putc(&buffer, ' ');
 
