@@ -937,6 +937,21 @@ translate_node_name(struct bxx_buffer *buffer, const char *scname, const char *n
     }
 }
 
+static void
+translate_inst_name(struct bxx_buffer *buffer, const char *scname, const char *name, const char *name_e)
+{
+    if (!name_e)
+        name_e = strchr(name, '\0');
+
+    if (tolower_c(*name) != 'x') {
+        bxx_putc(buffer, *name);
+        bxx_putc(buffer, '.');
+    }
+    bxx_put_cstring(buffer, scname);
+    bxx_putc(buffer, '.');
+    bxx_put_substring(buffer, name, name_e);
+}
+
 
 static int
 translate(struct line *deck, char *formal, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
@@ -1019,10 +1034,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             name = MIFgettok(&s);
 
             bxx_rewind(&buffer);
-            if (name[0] != 'x')
-                bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
-            else
-                bxx_printf(&buffer, "%s.%s", scname, name);
+            translate_inst_name(&buffer, scname, name, NULL);
             bxx_putc(&buffer, ' ');
 
 
@@ -1114,10 +1126,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              * and stick the translated name into buffer.
              */
             bxx_rewind(&buffer);
-            if (name[0] != 'x')
-                bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
-            else
-                bxx_printf(&buffer, "%s.%s", scname, name);
+            translate_inst_name(&buffer, scname, name, NULL);
             tfree(t);
             bxx_putc(&buffer, ' ');
 
@@ -1199,10 +1208,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     printf("In translate, found type f or h\n");
 #endif
 
-                    if (name[0] != 'x')
-                        bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
-                    else
-                        bxx_printf(&buffer, "%s.%s", scname, name);
+                    translate_inst_name(&buffer, scname, name, NULL);
                     /* From Vsense and Urefdes creates V.Urefdes.sense */
                 } else {                            /* Handle netname */
 
@@ -1240,11 +1246,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             bxx_rewind(&buffer);
 
-            if (name[0] != 'x')
-                bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
-            else
-                bxx_printf(&buffer, "%s.%s", scname, name);
-
+            translate_inst_name(&buffer, scname, name, NULL);
             tfree(nametofree);
             bxx_putc(&buffer, ' ');
 
@@ -1274,11 +1276,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     goto quit;
                 }
 
-                if (name[0] != 'x')
-                    bxx_printf(&buffer, "%c.%s.%s", name[0], scname, name);
-                else
-                    bxx_printf(&buffer, "%s.%s", scname, name);
-
+                translate_inst_name(&buffer, scname, name, NULL);
                 tfree(t);
                 bxx_putc(&buffer, ' ');
             } /* while (nnodes--. . . . */
@@ -1374,13 +1372,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             /*
              * i(instance_name)
              */
-            if (buf[0] != 'x') {
-                bxx_putc(t, buf[0]);
-                bxx_putc(t, '.');
-            }
-            bxx_put_cstring(t, scname);
-            bxx_putc(t, '.');
-            bxx_put_substring(t, buf, buf_end);
+            translate_inst_name(t, scname, buf, buf_end);
         }
     }
 }
