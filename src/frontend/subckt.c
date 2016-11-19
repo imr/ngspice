@@ -960,7 +960,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             name = MIFgettok(&s);
 
             bxx_rewind(&buffer);
-            bxx_printf(&buffer, "a.%s.%s ", scname, name);
+            bxx_printf(&buffer, "a.%s.%s", scname, name);
+            bxx_putc(&buffer, ' ');
 
 
             /* Now translate the nodes, looking ahead one token to recognize */
@@ -1004,10 +1005,11 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     /* must be a node name at this point, so translate it */
                     t = gettrans(name, NULL);
                     if (t) {
-                        bxx_printf(&buffer, "%s ", t);
+                        bxx_printf(&buffer, "%s", t);
                     } else {
-                        bxx_printf(&buffer, "%s.%s ", scname, name);
+                        bxx_printf(&buffer, "%s.%s", scname, name);
                     }
+                    bxx_putc(&buffer, ' ');
                     break;
 
                 } /* switch */
@@ -1056,8 +1058,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              */
             ch = *name;           /* ch identifies the type of component */
             bxx_rewind(&buffer);
-            bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+            bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
             tfree(t);
+            bxx_putc(&buffer, ' ');
 
             /* Next iterate over all nodes (netnames) found and translate them. */
             nnodes = numnodes(c->li_line, subs, modnames);
@@ -1074,13 +1077,14 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 t = gettrans(name, NULL);
 
                 if (t) {   /* the netname was used during the invocation; print it into the buffer */
-                    bxx_printf(&buffer, "%s ", t);
+                    bxx_printf(&buffer, "%s", t);
                 } else {
                     /* net netname was not used during the invocation; place a
                      * translated name into the buffer.*/
-                    bxx_printf(&buffer, "%s.%s ", scname, name);
+                    bxx_printf(&buffer, "%s.%s", scname, name);
                 }
                 tfree(name);
+                bxx_putc(&buffer, ' ');
             }  /* while (nnodes-- . . . . */
 
 
@@ -1147,7 +1151,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
                     ch = *name;         /*  ch is the first char of the token.  */
 
-                    bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+                    bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
                     /* From Vsense and Urefdes creates V.Urefdes.sense */
                 } else {                            /* Handle netname */
 
@@ -1160,16 +1164,17 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     t = gettrans(name, NULL);
 
                     if (t) {   /* the netname was used during the invocation; print it into the buffer */
-                        bxx_printf(&buffer, "%s ", t);
+                        bxx_printf(&buffer, "%s", t);
                     } else {
                         /* net netname was not used during the invocation; place a
                          * translated name into the buffer.
                          */
-                        bxx_printf(&buffer, "%s.%s ", scname, name);
+                        bxx_printf(&buffer, "%s.%s", scname, name);
                         /* From netname and Urefdes creates Urefdes:netname */
                     }
                 }
                 tfree(nametofree);
+                bxx_putc(&buffer, ' ');
             }      /* while (nnodes--. . . . */
 
             /* Now write out remainder of line (polynomial coeffs) */
@@ -1197,11 +1202,12 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             bxx_rewind(&buffer);
 
             if (ch != 'x')
-                bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+                bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
             else
-                bxx_printf(&buffer, "%s.%s ", scname, name);
+                bxx_printf(&buffer, "%s.%s", scname, name);
 
             tfree(nametofree);
+            bxx_putc(&buffer, ' ');
 
             /* Next iterate over all nodes (netnames) found and translate them. */
             nnodes = numnodes(c->li_line, subs, modnames);
@@ -1216,14 +1222,15 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 t = gettrans(name, NULL);
 
                 if (t) {   /* the netname was used during the invocation; print it into the buffer */
-                    bxx_printf(&buffer, "%s ", t);
+                    bxx_printf(&buffer, "%s", t);
                 } else {
                     /* net netname was not used during the invocation; place a
                      * translated name into the buffer.
                      */
-                    bxx_printf(&buffer, "%s.%s ", scname, name);
+                    bxx_printf(&buffer, "%s.%s", scname, name);
                 }
                 tfree(name);
+                bxx_putc(&buffer, ' ');
             }  /* while (nnodes-- . . . . */
 
             /* Now translate any devices (i.e. controlling sources).
@@ -1240,11 +1247,12 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 ch = *name;
 
                 if (ch != 'x')
-                    bxx_printf(&buffer, "%c.%s.%s ", ch, scname, name);
+                    bxx_printf(&buffer, "%c.%s.%s", ch, scname, name);
                 else
-                    bxx_printf(&buffer, "%s.%s ", scname, name);
+                    bxx_printf(&buffer, "%s.%s", scname, name);
 
                 tfree(t);
+                bxx_putc(&buffer, ' ');
             } /* while (nnodes--. . . . */
 
             /* Now we finish off the line.  For most components (R, C, etc),
@@ -1707,11 +1715,12 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
 
             tfree(name);
+            bxx_putc(&buffer, ' ');
 
 #ifdef TRACE
             /* SDB debug statement */
@@ -1743,10 +1752,11 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 wlsub = wl_find(name, orig_modnames);
 
                 if (!wlsub)
-                    bxx_printf(&buffer, "%s ", name);
+                    bxx_printf(&buffer, "%s", name);
                 else
-                    bxx_printf(&buffer, "%s:%s ", subname, name);
+                    bxx_printf(&buffer, "%s:%s", subname, name);
                 tfree(name);
+                bxx_putc(&buffer, ' ');
             }
 
             if (*t) {
@@ -1754,10 +1764,11 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
                 wlsub = wl_find(name, orig_modnames);
 
                 if (!wlsub)
-                    bxx_printf(&buffer, "%s ", name);
+                    bxx_printf(&buffer, "%s", name);
                 else
-                    bxx_printf(&buffer, "%s:%s ", subname, name);
+                    bxx_printf(&buffer, "%s:%s", subname, name);
                 tfree(name);
+                bxx_putc(&buffer, ' ');
             }
 
             bxx_put_cstring(&buffer, t);
@@ -1780,11 +1791,12 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
 
             tfree(name);
+            bxx_putc(&buffer, ' ');
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
             s->li_line = copy(bxx_buffer(&buffer));
@@ -1812,11 +1824,12 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
 
             tfree(name);
+            bxx_putc(&buffer, ' ');
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
             s->li_line = copy(bxx_buffer(&buffer));
@@ -1850,10 +1863,11 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
 
+            bxx_putc(&buffer, ' ');
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
             s->li_line = copy(bxx_buffer(&buffer));
@@ -1899,9 +1913,10 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             }  /* while  */
 
             if (!found)
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
+            bxx_putc(&buffer, ' ');
 
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
@@ -1946,11 +1961,12 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
 #endif
 
             if (!wlsub) /* Fallback w/o subckt name before */
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
 
             tfree(name);
+            bxx_putc(&buffer, ' ');
 
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
@@ -1982,11 +1998,12 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             wlsub = wl_find(name, orig_modnames);
 
             if (!wlsub)
-                bxx_printf(&buffer, "%s ", name);
+                bxx_printf(&buffer, "%s", name);
             else
-                bxx_printf(&buffer, "%s:%s ", subname, name);
+                bxx_printf(&buffer, "%s:%s", subname, name);
 
             tfree(name);
+            bxx_putc(&buffer, ' ');
 
             bxx_put_cstring(&buffer, t);
             tfree(s->li_line);
