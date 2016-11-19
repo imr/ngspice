@@ -918,6 +918,26 @@ bxx_buffer(struct bxx_buffer *t)
  * scname = refdes (- first letter) used at invocation (e.g. "example") (string)
  * subname = copy of the subcircuit name
  *-------------------------------------------------------------------------------------------*/
+
+static void
+translate_node_name(struct bxx_buffer *buffer, const char *scname, const char *name, const char *name_e)
+{
+
+    const char *t;
+    if (!name_e)
+        name_e = strchr(name, '\0');
+
+    t = gettrans(name, name_e);
+    if (t) {
+        bxx_put_cstring(buffer, t);
+    } else {
+        bxx_put_cstring(buffer, scname);
+        bxx_putc(buffer, '.');
+        bxx_put_substring(buffer, name, name_e);
+    }
+}
+
+
 static int
 translate(struct line *deck, char *formal, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
 {
@@ -964,13 +984,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 }
 
                 bxx_put_substring(&buffer, s, name);
-
-                t = gettrans(name, paren_ptr);
-                if (t) {
-                    bxx_put_cstring(&buffer, t);
-                } else {
-                    bxx_printf(&buffer, "%s.%.*s", scname, (int) (paren_ptr - name), name);
-                }
+                translate_node_name(&buffer, scname, name, paren_ptr);
 
                 s = paren_ptr;
             }
@@ -1051,12 +1065,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 default:
 
                     /* must be a node name at this point, so translate it */
-                    t = gettrans(name, NULL);
-                    if (t) {
-                        bxx_printf(&buffer, "%s", t);
-                    } else {
-                        bxx_printf(&buffer, "%s.%s", scname, name);
-                    }
+                    translate_node_name(&buffer, scname, name, NULL);
                     bxx_putc(&buffer, ' ');
                     break;
 
@@ -1123,16 +1132,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     goto quit;
                 }
 
-                /* call gettrans and see if netname was used in the invocation */
-                t = gettrans(name, NULL);
-
-                if (t) {   /* the netname was used during the invocation; print it into the buffer */
-                    bxx_printf(&buffer, "%s", t);
-                } else {
-                    /* net netname was not used during the invocation; place a
-                     * translated name into the buffer.*/
-                    bxx_printf(&buffer, "%s.%s", scname, name);
-                }
+                translate_node_name(&buffer, scname, name, NULL);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
             }  /* while (nnodes-- . . . . */
@@ -1211,18 +1211,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     printf("In translate, found type e or g\n");
 #endif
 
-                    /* call gettrans and see if netname was used in the invocation */
-                    t = gettrans(name, NULL);
-
-                    if (t) {   /* the netname was used during the invocation; print it into the buffer */
-                        bxx_printf(&buffer, "%s", t);
-                    } else {
-                        /* net netname was not used during the invocation; place a
-                         * translated name into the buffer.
-                         */
-                        bxx_printf(&buffer, "%s.%s", scname, name);
-                        /* From netname and Urefdes creates Urefdes:netname */
-                    }
+                    translate_node_name(&buffer, scname, name, NULL);
                 }
                 tfree(nametofree);
                 bxx_putc(&buffer, ' ');
@@ -1268,17 +1257,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     goto quit;
                 }
 
-                /* call gettrans and see if netname was used in the invocation */
-                t = gettrans(name, NULL);
-
-                if (t) {   /* the netname was used during the invocation; print it into the buffer */
-                    bxx_printf(&buffer, "%s", t);
-                } else {
-                    /* net netname was not used during the invocation; place a
-                     * translated name into the buffer.
-                     */
-                    bxx_printf(&buffer, "%s.%s", scname, name);
-                }
+                translate_node_name(&buffer, scname, name, NULL);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
             }  /* while (nnodes-- . . . . */
@@ -1378,15 +1357,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
         buf_end = src;
 
         if ((which == 'v') || (which == 'V')) {
-            s = gettrans(buf, buf_end);
-            if (s) {
-                bxx_put_cstring(t, s);
-            } else {
-                bxx_put_cstring(t, scname);
-                bxx_putc(t, '.');
-                bxx_put_substring(t, buf, buf_end);
-            }
-
+            translate_node_name(t, scname, buf, buf_end);
 
             /* translate the reference node, as in the "2" in "v(4,2)" */
 
@@ -1397,14 +1368,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
                 for (buf = src; *src && !isspace_c(*src) && (*src != ')'); )
                     src++;
                 bxx_putc(t, ',');
-                s = gettrans(buf, buf_end = src);
-                if (s) {
-                    bxx_put_cstring(t, s);
-                } else {
-                    bxx_put_cstring(t, scname);
-                    bxx_putc(t, '.');
-                    bxx_put_substring(t, buf, buf_end);
-                }
+                translate_node_name(t, scname, buf, buf_end);
             }
         } else {
             /*
