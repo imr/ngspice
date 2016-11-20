@@ -914,7 +914,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 {
     struct line *c;
     struct bxx_buffer buffer;
-    char *next_name, dev_type, *name, *s, *t, *nametofree, *paren_ptr;
+    char *next_name, *name, *t, *nametofree, *paren_ptr;
     int nnodes, i, dim;
     int rtn = 0;
 
@@ -936,16 +936,16 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
     /* now iterate through the .subckt deck and translate the cards. */
     for (c = deck; c; c = c->li_next) {
-        dev_type = *(c->li_line);
-        s = c->li_line;
+        char *s = c->li_line;
+        char dev_type = tolower_c(s[0]);
         bxx_rewind(&buffer);
 
 #ifdef TRACE
         /* SDB debug statement */
-        printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, c->li_line);
+        printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, s);
 #endif
 
-        if (ciprefix(".ic", c->li_line) || ciprefix(".nodeset", c->li_line)) {
+        if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
             while ((paren_ptr = strchr(s, '('))  != NULL) {
                 name = paren_ptr + 1;
 
@@ -981,7 +981,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* since they have a more involved and variable length node syntax */
 
         case 'a':
-        case 'A':
 
             /* translate the instance name according to normal rules */
             name = MIFgettok(&s);
@@ -1056,13 +1055,9 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              * changes were made in here.
              * 4.21.2003 -- SDB.  mailto:sdb@cloud9.net
              */
-        case 'E':
         case 'e':
-        case 'F':
         case 'f':
-        case 'G':
         case 'g':
-        case 'H':
         case 'h':
 
             t = name = gettok(&s);    /* name points to the refdes  */
@@ -1146,10 +1141,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     goto quit;
                 }
 
-                if ((dev_type == 'f') ||
-                    (dev_type == 'F') ||
-                    (dev_type == 'h') ||
-                    (dev_type == 'H')) {
+                if ((dev_type == 'f') || (dev_type == 'h')) {
 
                     /* Handle voltage source name */
 
