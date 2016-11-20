@@ -1060,7 +1060,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         case 'g':
         case 'h':
 
-            t = name = gettok(&s);    /* name points to the refdes  */
+            name = gettok(&s);    /* name points to the refdes  */
             if (!name)
                 continue;
             if (!*name) {
@@ -1072,7 +1072,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              * and stick the translated name into buffer.
              */
             translate_inst_name(&buffer, scname, name, NULL);
-            tfree(t);
+            tfree(name);
             bxx_putc(&buffer, ' ');
 
             /* Next iterate over all nodes (netnames) found and translate them. */
@@ -1135,7 +1135,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* Now translate the controlling source/nodes */
             nnodes = dim * numdevs(c->li_line);
             while (--nnodes >= 0) {
-                nametofree = name = gettok_node(&s);   /* name points to the returned token  */
+                name = gettok_node(&s);   /* name points to the returned token  */
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
                     goto quit;
@@ -1161,7 +1161,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
                     translate_node_name(&buffer, scname, name, NULL);
                 }
-                tfree(nametofree);
+                tfree(name);
                 bxx_putc(&buffer, ' ');
             }      /* while (nnodes--. . . . */
 
@@ -1173,7 +1173,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             /*=================   Default case  ===================*/
         default:            /* this section handles ordinary components */
-            nametofree = name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
+            name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
             if (!name)
                 continue;
             if (!*name) {
@@ -1187,7 +1187,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
 
             translate_inst_name(&buffer, scname, name, NULL);
-            tfree(nametofree);
+            tfree(name);
             bxx_putc(&buffer, ' ');
 
             /* Next iterate over all nodes (netnames) found and translate them. */
@@ -1210,14 +1210,14 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              */
             nnodes = numdevs(c->li_line);
             while (--nnodes >= 0) {
-                t = name = gettok_node(&s);
+                name = gettok_node(&s);
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
                     goto quit;
                 }
 
                 translate_inst_name(&buffer, scname, name, NULL);
-                tfree(t);
+                tfree(name);
                 bxx_putc(&buffer, ' ');
             } /* while (nnodes--. . . . */
 
