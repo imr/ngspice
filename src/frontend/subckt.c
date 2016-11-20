@@ -989,6 +989,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, s);
 #endif
 
+        switch (dev_type) {
+        case '.':
         if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
             while ((paren_ptr = strchr(s, '('))  != NULL) {
                 name = paren_ptr + 1;
@@ -1005,17 +1007,14 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             }
             bxx_put_cstring(&buffer, s); /* rest of line */
 
-            tfree(c->li_line);
-            c->li_line = copy(bxx_buffer(&buffer));
+            break;
+        } else {
             continue;
         }
 
-        /* Rename the device. */
-        switch (dev_type) {
         case '\0':
         case '*':
         case '$':
-        case '.':
             continue;
 
 #ifdef XSPICE
