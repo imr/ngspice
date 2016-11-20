@@ -1055,33 +1055,33 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 case '[':
                 case ']':
                 case '~':
-                    bxx_printf(&buffer, "%s ", name);
+                    bxx_put_cstring(&buffer, name);
                     break;
 
                 case '%':
-                    bxx_printf(&buffer, "%%");
+                    bxx_putc(&buffer, '%');
                     /* don't translate the port type identifier */
                     if (name)
                         tfree(name);
                     name = next_name;
                     next_name = MIFgettok(&s);
-                    bxx_printf(&buffer, "%s ", name);
+                    bxx_put_cstring(&buffer, name);
                     break;
 
                 default:
 
                     /* must be a node name at this point, so translate it */
                     translate_node_name(&buffer, scname, name, NULL);
-                    bxx_putc(&buffer, ' ');
                     break;
 
                 } /* switch */
+                bxx_putc(&buffer, ' ');
 
             } /* while */
 
             /* copy in the last token, which is the model name */
             if (name) {
-                bxx_printf(&buffer, "%s", name);
+                bxx_put_cstring(&buffer, name);
                 tfree(name);
             }
             break; /* case 'a' */
@@ -1181,26 +1181,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     goto quit;
                 }
 
-                if ((dev_type == 'f') || (dev_type == 'h')) {
-
-                    /* Handle voltage source name */
-
-#ifdef TRACE
-                    /* SDB debug statement */
-                    printf("In translate, found type f or h\n");
-#endif
-
+                if ((dev_type == 'f') || (dev_type == 'h'))
                     translate_inst_name(&buffer, scname, name, NULL);
-                    /* From Vsense and Urefdes creates V.Urefdes.sense */
-                } else {                            /* Handle netname */
-
-#ifdef TRACE
-                    /* SDB debug statement */
-                    printf("In translate, found type e or g\n");
-#endif
-
+                else
                     translate_node_name(&buffer, scname, name, NULL);
-                }
                 tfree(name);
                 bxx_putc(&buffer, ' ');
             }      /* while (nnodes--. . . . */
