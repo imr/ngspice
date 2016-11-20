@@ -972,8 +972,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         case '*':
         case '$':
         case '.':
-            /* Just a pointer to the line into s and then break */
-            break;
+            continue;
 
 #ifdef XSPICE
             /*===================  case A  ====================*/
@@ -1041,9 +1040,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 bxx_printf(&buffer, "%s", name);
                 tfree(name);
             }
-            /* Set s to null string for compatibility with code */
-            /* after switch statement                           */
-            s = "";
             break; /* case 'a' */
 
             /* gtri - end - wbk - 10/23/90 */
@@ -1167,7 +1163,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             /* Now write out remainder of line (polynomial coeffs) */
             finishLine(&buffer, s, scname);
-            s = "";
             break;
 
 
@@ -1227,11 +1222,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              * i(something)...
              */
             finishLine(&buffer, s, scname);
-            s = "";
+            break;
 
         } /* switch (c->li_line . . . . */
 
-        bxx_printf(&buffer, "%s", s);
         tfree(c->li_line);
         c->li_line = copy(bxx_buffer(&buffer));
 
