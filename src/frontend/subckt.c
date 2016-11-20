@@ -981,6 +981,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
     /* now iterate through the .subckt deck and translate the cards. */
     for (c = deck; c; c = c->li_next) {
         dev_type = *(c->li_line);
+        s = c->li_line;
+        bxx_rewind(&buffer);
 
 #ifdef TRACE
         /* SDB debug statement */
@@ -988,8 +990,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 #endif
 
         if (ciprefix(".ic", c->li_line) || ciprefix(".nodeset", c->li_line)) {
-            bxx_rewind(&buffer);
-            s = c->li_line;
             while ((paren_ptr = strchr(s, '('))  != NULL) {
                 name = paren_ptr + 1;
 
@@ -1017,8 +1017,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         case '$':
         case '.':
             /* Just a pointer to the line into s and then break */
-            bxx_rewind(&buffer);
-            s = c->li_line;
             break;
 
 #ifdef XSPICE
@@ -1030,10 +1028,8 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         case 'A':
 
             /* translate the instance name according to normal rules */
-            s = c->li_line;
             name = MIFgettok(&s);
 
-            bxx_rewind(&buffer);
             translate_inst_name(&buffer, scname, name, NULL);
             bxx_putc(&buffer, ' ');
 
@@ -1113,7 +1109,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         case 'H':
         case 'h':
 
-            s = c->li_line;       /* s now holds the SPICE line */
             t = name = gettok(&s);    /* name points to the refdes  */
             if (!name)
                 continue;
@@ -1125,7 +1120,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* Here's where we translate the refdes to e.g. F:subcircuitname:57
              * and stick the translated name into buffer.
              */
-            bxx_rewind(&buffer);
             translate_inst_name(&buffer, scname, name, NULL);
             tfree(t);
             bxx_putc(&buffer, ' ');
@@ -1231,7 +1225,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             /*=================   Default case  ===================*/
         default:            /* this section handles ordinary components */
-            s = c->li_line;
             nametofree = name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
             if (!name)
                 continue;
@@ -1244,7 +1237,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              * and stick the translated name into buffer.
              */
 
-            bxx_rewind(&buffer);
 
             translate_inst_name(&buffer, scname, name, NULL);
             tfree(nametofree);
