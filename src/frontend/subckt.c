@@ -934,39 +934,38 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
         goto quit;
     }
 
-    /* now iterate through the .subckt deck and translate the cards. */
     for (c = deck; c; c = c->li_next) {
         char *s = c->li_line;
         char dev_type = tolower_c(s[0]);
+
         bxx_rewind(&buffer);
 
 #ifdef TRACE
-        /* SDB debug statement */
         printf("\nIn translate, examining line (dev_type: %c, subname: %s, instance: %s) %s \n", dev_type, subname, scname, s);
 #endif
 
         switch (dev_type) {
+
         case '.':
-        if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
-            while ((paren_ptr = strchr(s, '('))  != NULL) {
-                name = paren_ptr + 1;
+            if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
+                while ((paren_ptr = strchr(s, '(')) != NULL) {
+                    name = paren_ptr + 1;
 
-                if ((paren_ptr = strchr(name, ')')) == NULL) {
-                    fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
-                    goto quit;
+                    if ((paren_ptr = strchr(name, ')')) == NULL) {
+                        fprintf(cp_err, "Error: missing closing ')' for .ic|.nodeset statement %s\n", c->li_line);
+                        goto quit;
+                    }
+
+                    bxx_put_substring(&buffer, s, name);
+                    translate_node_name(&buffer, scname, name, paren_ptr);
+
+                    s = paren_ptr;
                 }
-
-                bxx_put_substring(&buffer, s, name);
-                translate_node_name(&buffer, scname, name, paren_ptr);
-
-                s = paren_ptr;
+                bxx_put_cstring(&buffer, s); /* rest of line */
+                break;
+            } else {
+                continue;
             }
-            bxx_put_cstring(&buffer, s); /* rest of line */
-
-            break;
-        } else {
-            continue;
-        }
 
         case '\0':
         case '*':
@@ -985,7 +984,6 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
             translate_inst_name(&buffer, scname, name, NULL);
             bxx_putc(&buffer, ' ');
-
 
             /* Now translate the nodes, looking ahead one token to recognize */
             /* when we reach the model name which should not be translated   */
@@ -1024,21 +1022,20 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     break;
 
                 default:
-
                     /* must be a node name at this point, so translate it */
                     translate_node_name(&buffer, scname, name, NULL);
                     break;
 
-                } /* switch */
+                }
                 bxx_putc(&buffer, ' ');
-
-            } /* while */
+            }
 
             /* copy in the last token, which is the model name */
             if (name) {
                 bxx_put_cstring(&buffer, name);
                 tfree(name);
             }
+
             break; /* case 'a' */
 
             /* gtri - end - wbk - 10/23/90 */
@@ -1084,22 +1081,20 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 translate_node_name(&buffer, scname, name, NULL);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
-            }  /* while (nnodes-- . . . . */
+            }
 
-
-            /*  Next we handle the POLY (if any) */
+            /* Next we handle the POLY (if any) */
             /* get next token */
             t = s;
             next_name = gettok_noparens(&t);
             if ((strcmp(next_name, "POLY") == 0) ||
-                (strcmp(next_name, "poly") == 0)) {         /* found POLY . . . . */
+                (strcmp(next_name, "poly") == 0)) {
 
 #ifdef TRACE
-                /* SDB debug statement */
                 printf("In translate, looking at e, f, g, h found poly\n");
 #endif
 
-                /* move pointer ahead of (  */
+                /* move pointer ahead of '(' */
                 if (get_l_paren(&s) == 1) {
                     fprintf(cp_err, "Error: no left paren after POLY %s\n",
                             c->li_line);
@@ -1111,7 +1106,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 dim = atoi(nametofree);  /* convert returned string to int */
                 tfree(nametofree);
 
-                /* move pointer ahead of ) */
+                /* move pointer ahead of ')' */
                 if (get_r_paren(&s) == 1) {
                     fprintf(cp_err, "Error: no right paren after POLY %s\n",
                             c->li_line);
@@ -1121,8 +1116,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
 
                 /* Write POLY(dim) into buffer */
                 bxx_printf(&buffer, "POLY( %d ) ", dim);
-
-            } /* if ((strcmp(next_name, "POLY") == 0) . . .  */
+            }
             else
                 dim = 1;    /* only one controlling source . . . */
             tfree(next_name);
@@ -1130,7 +1124,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
             /* Now translate the controlling source/nodes */
             nnodes = dim * numdevs(c->li_line);
             while (--nnodes >= 0) {
-                name = gettok_node(&s);   /* name points to the returned token  */
+                name = gettok_node(&s);   /* name points to the returned token */
                 if (name == NULL) {
                     fprintf(cp_err, "Error: too few devs: %s\n", c->li_line);
                     goto quit;
@@ -1142,14 +1136,12 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                     translate_node_name(&buffer, scname, name, NULL);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
-            }      /* while (nnodes--. . . . */
+            }
 
             /* Now write out remainder of line (polynomial coeffs) */
             finishLine(&buffer, s, scname);
             break;
 
-
-            /*=================   Default case  ===================*/
         default:            /* this section handles ordinary components */
             name = gettok_node(&s);  /* changed to gettok_node to handle netlists with ( , ) */
             if (!name)
@@ -1159,16 +1151,10 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 continue;
             }
 
-            /* Here's where we translate the refdes to e.g. R:subcircuitname:57
-             * and stick the translated name into buffer.
-             */
-
-
             translate_inst_name(&buffer, scname, name, NULL);
             tfree(name);
             bxx_putc(&buffer, ' ');
 
-            /* Next iterate over all nodes (netnames) found and translate them. */
             nnodes = numnodes(c->li_line, subs, modnames);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
@@ -1180,7 +1166,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 translate_node_name(&buffer, scname, name, NULL);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
-            }  /* while (nnodes-- . . . . */
+            }
 
             /* Now translate any devices (i.e. controlling sources).
              * This may be superfluous because we handle dependent
@@ -1197,7 +1183,7 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
                 translate_inst_name(&buffer, scname, name, NULL);
                 tfree(name);
                 bxx_putc(&buffer, ' ');
-            } /* while (nnodes--. . . . */
+            }
 
             /* Now we finish off the line.  For most components (R, C, etc),
              * this involves adding the component value to the buffer.
@@ -1206,20 +1192,17 @@ translate(struct line *deck, char *formal, char *actual, char *scname, const cha
              */
             finishLine(&buffer, s, scname);
             break;
-
-        } /* switch (c->li_line . . . . */
+        }
 
         tfree(c->li_line);
         c->li_line = copy(bxx_buffer(&buffer));
 
 #ifdef TRACE
-        /* SDB debug statement */
         printf("In translate, translated line = %s \n", c->li_line);
 #endif
-
-    }  /* for (c = deck . . . . */
+    }
     rtn = 1;
-quit:
+ quit:
     for (i = 0; ; i++) {
         if (!table[i].t_old && !table[i].t_new)
             break;
@@ -1779,7 +1762,7 @@ devmodtranslate(struct line *s, char *subname, wordlist * const orig_modnames)
             tfree(name);
             break;
 
-             /* 4-7 terminal mos devices */
+            /* 4-7 terminal mos devices */
         case 'm':
             name = gettok(&t);  /* get refdes */
             bxx_printf(&buffer, "%s ", name);
