@@ -35,11 +35,16 @@ wordlist *wl_find(const char *string, const wordlist *wlist);
 void wl_delete_slice(wordlist *from, wordlist *to);
 
 
+#ifdef QUOTE_CHAR
 /* For quoting individual characters. '' strings are all quoted, but
  * `` and "" strings are maintained as single words with the quotes
  * around them.  Note that this won't work on non-ascii machines.  */
 #define quote(c)    ((c) | 0200)
 #define strip(c)    ((c) & 0177)
+#else
+#define quote(c) (c)
+#define strip(c) (c)
+#endif
 
 
 #endif
