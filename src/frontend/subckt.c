@@ -1310,7 +1310,7 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
                 for (buf = src; *src && !isspace_c(*src) && (*src != ')'); )
                     src++;
                 bxx_putc(t, ',');
-                translate_node_name(t, scname, buf, buf_end);
+                translate_node_name(t, scname, buf, buf_end = src);
             }
         } else {
             /*
