@@ -185,13 +185,13 @@ nloop:
 
         if (c != EOF)           /* Don't need to do this really. */
             c = strip(c);
-#ifdef QUOTE_CHAR
+
         /* if '\' or '^', add following character to linebuf */
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
             c = quote(cp_readchar(&string, cp_inp_cur));
             push(&linebuf, strip(c));
         }
-#endif
+
         /* if reading from fcn backeval() for backquote subst. */
         if ((c == '\n') && cp_bqflag)
             c = ' ';
