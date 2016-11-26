@@ -136,7 +136,7 @@ PS_Init(void)
      */
 
     if (!cp_getvar("hcopyfont", CP_STRING, psfont))
-        strcpy(psfont, "Helvetica");
+        strcpy(psfont, "Courier");
     if (!cp_getvar("hcopyfontsize", CP_STRING, psfontsize)) {
         fontsize = 10;
         fontwidth = 6;
@@ -202,7 +202,20 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "%%%%Creator: nutmeg\n");
     fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n", x1, y1, x2, y2);
 
-    fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
+    /* ReEncoding to allow 'extended asccii'
+     * thanks to http://apps.jcns.fz-juelich.de/doku/sc/ps-latin/ */
+    fprintf(plotfile, "/ReEncode { %% inFont outFont encoding | -\n");
+    fprintf(plotfile, "   /MyEncoding exch def\n");
+    fprintf(plotfile, "      exch findfont\n");
+    fprintf(plotfile, "      dup length dict\n");
+    fprintf(plotfile, "      begin\n");
+    fprintf(plotfile, "         {def} forall\n");
+    fprintf(plotfile, "         /Encoding MyEncoding def\n");
+    fprintf(plotfile, "         currentdict\n");
+    fprintf(plotfile, "      end\n");
+    fprintf(plotfile, "      definefont\n");
+    fprintf(plotfile, "} def\n");
+    fprintf(plotfile, "/%s /%sLatin1 ISOLatin1Encoding ReEncode\n", psfont, psfont);
 
     if (colorflag == 1) {
         /* set the background to color given in spinit (or 0) */
@@ -215,7 +228,7 @@ PS_NewViewport(GRAPH *graph)
     }
 
     /* set up a reasonable font */
-    fprintf(plotfile, "/%s findfont %d scalefont setfont\n\n",
+    fprintf(plotfile, "/%sLatin1 findfont %d scalefont setfont\n\n",
             psfont, (int) (fontsize * scale));
 
     graph->devdep = TMALLOC(PSdevdep, 1);
