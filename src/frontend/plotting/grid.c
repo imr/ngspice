@@ -146,6 +146,11 @@ gr_redrawgrid(GRAPH *graph)
                         graph->absolute.height / 2);
         }
     }
+    /* draw postscript title */
+    if (graph->plotname && eq(dispdev->name, "postscript"))
+            DevDrawText(graph->plotname,
+                        graph->fontwidth,
+                        graph->absolute.height - graph->fontheight);
 
     switch (graph->grid.gridtype) {
     case GRID_POLAR:
