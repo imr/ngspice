@@ -188,7 +188,7 @@ int  sp_Tk_SetColor(int colorid);
 int  sp_Tk_SetLinestyle(int linestyleid);
 int  sp_Tk_DefineLinestyle(int linestyleid, int mask);
 int  sp_Tk_DefineColor(int colorid, double red, double green, double blue);
-int  sp_Tk_Text(char *text, int x, int y);
+int  sp_Tk_Text(char *text, int x, int y, int angle);
 int  sp_Tk_Arc(int x0, int y0, int radius, double theta, double delta_theta);
 int  sp_Tk_DrawLine(int x1, int y1, int x2, int y2);
 int  sp_Tk_Clear(void);
@@ -1632,9 +1632,10 @@ sp_Tk_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 
 
 int
-sp_Tk_Text(char *text, int x, int y)
+sp_Tk_Text(char *text, int x, int y, int angle)
 {
     char buf[1024];
+    NG_IGNORE(angle);
     sprintf(buf, "spice_gr_Text \"%s\" %i %i", text, x, y);
     if (Tcl_Eval(spice_interp, buf) != TCL_OK) {
         Tcl_ResetResult(spice_interp);
