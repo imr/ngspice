@@ -287,7 +287,7 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
     PushGraphContext(graph);
     text[nbytes] = '\0';
     SetColor(1);
-    DevDrawText(text, keyev->x, graph->absolute.height - keyev->y);
+    DevDrawText(text, keyev->x, graph->absolute.height - keyev->y, 0);
     /* save it */
     SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
     /* warp mouse so user can type in sequence */
@@ -549,10 +549,11 @@ X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 
 /* note: x and y are the LOWER left corner of text */
 int
-X11_Text(char *text, int x, int y)
+X11_Text(char *text, int x, int y, int angle)
 {
     /* We specify text position by lower left corner, so have to adjust for
        X11's font nonsense. */
+    NG_IGNORE(angle);
 
     if (DEVDEP(currentgraph).isopen)
         XDrawString(display, DEVDEP(currentgraph).window,
