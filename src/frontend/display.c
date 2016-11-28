@@ -247,9 +247,9 @@ DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta)
 
 
 void
-DevDrawText(char *text, int x, int y)
+DevDrawText(char *text, int x, int y, int angle)
 {
-    dispdev->DrawText (text, x, y);
+    dispdev->DrawText (text, x, y, angle);
 }
 
 

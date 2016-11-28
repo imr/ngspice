@@ -859,11 +859,12 @@ WIN_Text_old(char *text, int x, int y, int degrees)
 
 
 int
-WIN_Text(char *text, int x, int y)
+WIN_Text(char *text, int x, int y, int angle)
 {
     tpWindowData wd;
     HFONT hfont;
     LOGFONT lf;
+    NG_IGNORE(angle);
 
     int CentiDegrees = 0;
 

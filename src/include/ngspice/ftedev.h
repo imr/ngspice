@@ -20,7 +20,7 @@ typedef int  disp_fn_Close_t (void);
 typedef int  disp_fn_Clear_t (void);
 typedef int  disp_fn_DrawLine_t (int x1, int y1, int x2, int y2);
 typedef int  disp_fn_Arc_t (int x0, int y0, int radius, double theta, double delta_theta);
-typedef int  disp_fn_Text_t (char *text, int x, int y);
+typedef int  disp_fn_Text_t (char *text, int x, int y, int angle);
 typedef int  disp_fn_DefineColor_t (int colorid, double red, double green, double blue);
 typedef int  disp_fn_DefineLinestyle_t (int linestyleid, int mask);
 typedef int  disp_fn_SetLinestyle_t (int linestyleid);

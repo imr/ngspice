@@ -170,9 +170,10 @@ Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
 
 
 int
-Plt5_Text(char *text, int x, int y)
+Plt5_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle;
+    NG_IGNORE(angle);
 
     /* set linestyle to solid
        or may get funny color text on some plotters */
