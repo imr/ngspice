@@ -190,7 +190,7 @@ IOP( "dvt2w", B4SOI_MOD_DVT2W, IF_REAL, "Narrow Width effect coeff. 2"),
 IOP( "drout", B4SOI_MOD_DROUT, IF_REAL, "DIBL coefficient of output resistance"),
 IOP( "dsub", B4SOI_MOD_DSUB, IF_REAL, "DIBL coefficient in the subthreshold region"),
 IOP( "vth0", B4SOI_MOD_VTH0, IF_REAL,"Threshold voltage"),
-IOP( "vtho", B4SOI_MOD_VTH0, IF_REAL,"Threshold voltage"),
+IOPR( "vtho", B4SOI_MOD_VTH0, IF_REAL,"Threshold voltage"),
 IOP( "vfb", B4SOI_MOD_VFB, IF_REAL, "Flat Band Voltage"),  /* v4.1 */
 IOP( "ua", B4SOI_MOD_UA, IF_REAL, "Linear gate dependence of mobility"),
 IOP( "ua1", B4SOI_MOD_UA1, IF_REAL, "Temperature coefficient of ua"),
