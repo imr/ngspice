@@ -638,7 +638,7 @@ param_forall(dgen *dg, int flags)
 
     for (i = 0; i < xcount; i++)
         if ((plist[i].dataType & IF_ASK)
-            && !(plist[i].dataType & IF_REDUNDANT)
+            && !(i > 0 && plist[i - 1].id == plist[i].id)
             && ((plist[i].dataType & IF_SET) || dg->ckt->CKTrhsOld)
             && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
         {
@@ -672,7 +672,7 @@ param_forall_old(dgen *dg, int flags)
 
     for (i = 0; i < xcount; i++)
         if ((plist[i].dataType & IF_ASK)
-            && !(plist[i].dataType & IF_REDUNDANT)
+            && !(i > 0 && plist[i - 1].id == plist[i].id)
             && ((plist[i].dataType & IF_SET) || dg->ckt->CKTrhsOld)
             && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
         {

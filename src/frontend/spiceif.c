@@ -647,9 +647,9 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
             /* It is a device */
             for (i = 0; i < *(device->numInstanceParms); i++) {
                 opt = &device->instanceParms[i];
-                if (opt->dataType & IF_REDUNDANT || !opt->description)
+                if (i > 0 && device->instanceParms[i - 1].id == device->instanceParms[i].id)
                     continue;
-                if (!(opt->dataType & IF_ASK))
+                if (!opt->description || !(opt->dataType & IF_ASK))
                     continue;
                 pv = doask(ckt, typecode, dev, mod, opt, ind);
                 if (pv) {
@@ -675,7 +675,9 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
             /* It is a model */
             for (i = 0; i < *(device->numModelParms); i++) {
                 opt = &device->modelParms[i];
-                if (opt->dataType & IF_REDUNDANT || !opt->description)
+                if (i > 0 && device->modelParms[i - 1].id == device->modelParms[i].id)
+                    continue;
+                if (!opt->description)
                     continue;
 
                 /* We check that the parameter is interesting and therefore is
@@ -779,9 +781,9 @@ spif_getparam(CKTcircuit *ckt, char **name, char *param, int ind, int do_model)
         device = ft_sim->devices[typecode];
         for (i = 0; i < *(device->numInstanceParms); i++) {
             opt = &device->instanceParms[i];
-            if (opt->dataType & IF_REDUNDANT || !opt->description)
+            if (i > 0 && device->instanceParms[i - 1].id == device->instanceParms[i].id)
                 continue;
-            if (!(opt->dataType & IF_ASK))
+            if (!opt->description || !(opt->dataType & IF_ASK))
                 continue;
             pv = doask(ckt, typecode, dev, mod, opt, ind);
             if (pv) {
@@ -1038,7 +1040,7 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
                       ((dev->instanceParms[i].dataType & IF_ASK) && inout == 0)) &&
                      cieq(dev->instanceParms[i].keyword, param))
             {
-                while ((dev->instanceParms[i].dataType & IF_REDUNDANT) && (i > 0))
+                while (i > 0 && dev->instanceParms[i - 1].id == dev->instanceParms[i].id)
                     i--;
                 return (&dev->instanceParms[i]);
             }
@@ -1052,7 +1054,7 @@ parmlookup(IFdevice *dev, GENinstance **inptr, char *param, int do_model, int in
                  ((dev->modelParms[i].dataType & IF_ASK) && inout == 0)) &&
                 eq(dev->modelParms[i].keyword, param))
             {
-                while ((dev->modelParms[i].dataType & IF_REDUNDANT) && (i > 0))
+                while (i > 0 && dev->modelParms[i - 1].id == dev->modelParms[i].id)
                     i--;
                 return (&dev->modelParms[i]);
             }

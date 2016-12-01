@@ -135,7 +135,7 @@ struct IFparm {
 #define IF_UNIMP_MASK (~0xfff)
 
 /* Used by sensetivity to check if a parameter is or is not useful */
-#define IF_REDUNDANT      0x0010000
+#define IF_REDUNDANT      0x0000000
 #define IF_PRINCIPAL      0x0020000
 #define IF_AC             0x0040000
 #define IF_AC_ONLY        0x0080000
