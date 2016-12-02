@@ -2,7 +2,7 @@
 * Perform Monte Carlo simulation in ngspice
 * script for use with 25 stage Ring-Osc. BSIM3
 * circuit is in MC_2_circ.sp
-* edit 'set sourcepath' for your path to circuit file
+* edit 'setcs sourcepath' for your path to circuit file
 * start script by 'ngspice -o MC_2_control.log MC_2_control.sp'
 *
 .control
@@ -10,7 +10,7 @@
   let run = 1                     $ number of the actual run
 
 * Where to find the circuit netlist file MC_2_circ.sp
-  set sourcepath = ( D:\Spice_general\ngspice\examples\Monte_Carlo )
+  setcs sourcepath = ( D:\Spice_general\ngspice\examples\Monte_Carlo )
 
 * create file for frequency information
   echo Monte Carlo, frequency of R.O. > MC_frequ.log

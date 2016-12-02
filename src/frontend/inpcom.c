@@ -963,11 +963,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 !ciprefix("source", buffer) &&
                 !ciprefix("load", buffer) &&
                 !ciprefix("plot", buffer) &&
-                !ciprefix("print", buffer) &&
-                !ciprefix("asciiplot", buffer) &&
-                !ciprefix("gnuplot", buffer) &&
                 !ciprefix("hardcopy", buffer) &&
-                !(ciprefix("set", buffer) && strstr(buffer, "sourcepath"))
+                !ciprefix("setcf", buffer)
                 )
             {
                 /* lower case for all other lines */

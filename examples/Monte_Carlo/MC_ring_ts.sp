@@ -30,7 +30,7 @@ begin
   echo source the input file
 * Path of your circuit file and library file here
 * Will be added to the already existing sourcepath
-  set sourcepath = ( $inputdir $sourcepath ./ngspice/examples/Monte_Carlo )
+  setcs sourcepath = ( $inputdir $sourcepath ./ngspice/examples/Monte_Carlo )
 * source with file name of your circuit file
   source mc_ring_circ.net
 

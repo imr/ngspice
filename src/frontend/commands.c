@@ -127,7 +127,10 @@ struct comm spcp_coms[] = {
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a variable." } ,
-
+    { "setcs", com_set, FALSE, TRUE,
+      { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
+      arg_set,
+      "[option] [option = value] ... : Set a variable, case remains as given." } ,
 
 /* support for altering options in interactive mode,
    using either command 'option' or 'options'*/
@@ -634,7 +637,10 @@ struct comm nutcp_coms[] = {
       { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
       arg_set,
       "[option] [option = value] ... : Set a variable." } ,
-
+    { "setcs", com_set, FALSE, TRUE,
+      { 020000, 020000, 020000, 020000 }, E_DEFHMASK, 0, LOTS,
+      arg_set,
+      "[option] [option = value] ... : Set a variable, case remains as given." } ,
 #ifdef EXPERIMENTAL_CODE
 /* PN support for altering options in interactive mode */
     { "option", com_option, TRUE, TRUE,
