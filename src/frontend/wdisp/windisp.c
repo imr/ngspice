@@ -69,7 +69,7 @@ extern void        com_hardcopy(wordlist *wl);
 #define M_LN10  2.30258509299404568402
 #endif
 
-#define DEF_FONTW "Courier"
+#define DEF_FONTW "Arial"
 
 /* local variables */
 static int           IsRegistered = 0;             /* 1 if window class is registered */
@@ -801,9 +801,6 @@ int WIN_Text( char * text, int x, int y, int angle)
    tpWindowData wd;
    HFONT hfont;
    LOGFONT lf;
-   NG_IGNORE(angle);
-
-   int CentiDegrees = 0;
 
    if (!currentgraph) return 0;
    wd = pWindowData(currentgraph);
@@ -811,8 +808,8 @@ int WIN_Text( char * text, int x, int y, int angle)
 
    lf.lfHeight         = (int) (1.1 * currentgraph->fontheight) ; 
    lf.lfWidth          = 0 ;
-   lf.lfEscapement     = CentiDegrees ;
-   lf.lfOrientation    = CentiDegrees ;
+   lf.lfEscapement     = angle * 10;
+   lf.lfOrientation    = angle * 10;
    lf.lfWeight         = 500 ;
    lf.lfItalic         = 0 ;
    lf.lfUnderline      = 0 ;
@@ -828,10 +825,8 @@ int WIN_Text( char * text, int x, int y, int angle)
       (void) lstrcpy(lf.lfFaceName, DEF_FONTW);
    }
    if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
-      lf.lfHeight  = (int) (1.1 * currentgraph->fontheight) ;
+      lf.lfHeight  = (int) (1.3 * currentgraph->fontheight) ;
    }
-     
-//   lstrcpy (lf.lfFaceName, "Courier"/*"Times New Roman"*/) ;
 
    hfont = CreateFontIndirect (&lf);
    SelectObject(wd->hDC, hfont);
