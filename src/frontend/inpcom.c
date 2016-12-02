@@ -917,7 +917,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 !ciprefix("source", buffer) &&
                 !ciprefix("load", buffer) &&
                 !ciprefix("plot", buffer) &&
-                !ciprefix("hardcopy", buffer)
+                !ciprefix("hardcopy", buffer) &&
+                !ciprefix("setcf", buffer)
                 )
             {
                 /* lower case for all other lines */
