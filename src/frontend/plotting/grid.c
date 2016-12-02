@@ -141,7 +141,13 @@ gr_redrawgrid(GRAPH *graph)
                         graph->fontwidth,
                         (graph->absolute.height * 3) / 4, 0);
         } else {
-            DevDrawText(graph->grid.ylabel,
+            if (eq(dispdev->name, "postscript") || eq(dispdev->name, "Windows"))
+                DevDrawText(graph->grid.ylabel,
+                        graph->fontwidth,
+                        /*vertical text, midpoint in y is aligned midpoint of text string */
+                        (graph->absolute.height - (int) strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+            else /* FIXME: for now excluding X11 and others */
+                DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         graph->absolute.height / 2, 90);
         }
@@ -312,6 +318,8 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         max = graph->absolute.width - graph->viewportxoff;
     } else {
         graph->viewportxoff = (digits + 5 + mag - mag3) * graph->fontwidth;
+        if (graph->grid.ylabel)
+            graph->viewportxoff += graph->fontheight;
         margin = graph->viewportyoff;
         /*max = graph->viewport.height + graph->viewportyoff;*/
         max = graph->absolute.height - graph->viewportyoff;
