@@ -15,14 +15,19 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/gendefs.h"
 #include "ngspice/cktdefs.h"
 
+typedef struct sINDinstance INDinstance;
+typedef struct sINDmodel INDmodel;
+typedef struct sMUTinstance MUTinstance;
+typedef struct sMUTmodel MUTmodel;
+
 /* structures used to descrive inductors */
 
 
 /* information needed for each instance */
 
-typedef struct sINDinstance {
-    struct sINDmodel *INDmodPtr;    /* backpointer to model */
-    struct sINDinstance *INDnextInstance;   /* pointer to next instance of
+struct sINDinstance {
+    INDmodel *INDmodPtr;    /* backpointer to model */
+    INDinstance *INDnextInstance;   /* pointer to next instance of
                                              * current model*/
     IFuid INDname;  /* pointer to character string naming this instance */
     int INDstate;   /* pointer to beginning of state vector for inductor */
@@ -63,7 +68,7 @@ typedef struct sINDinstance {
     int  INDsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
-} INDinstance ;
+};
 
 #define INDflux INDstate    /* flux in the inductor */
 #define INDvolt INDstate+1  /* voltage - save an entry in table */
@@ -74,9 +79,9 @@ beginning of the array */
 
 /* per model data */
 
-typedef struct sINDmodel {       /* model structure for an inductor */
+struct sINDmodel {       /* model structure for an inductor */
     int INDmodType; /* type index of this device type */
-    struct sINDmodel *INDnextModel; /* pointer to next possible model in
+    INDmodel *INDnextModel; /* pointer to next possible model in
                                      * linked list */
     INDinstance * INDinstances; /* pointer to list of instances that have this
                                  * model */
@@ -103,7 +108,7 @@ typedef struct sINDmodel {       /* model structure for an inductor */
     unsigned INDmIndGiven  : 1; /* flag to indicate model inductance given */
 
     double INDspecInd;     /* Specific (one turn) inductance */
-} INDmodel;
+};
 
 
 #ifdef MUTUAL
@@ -113,9 +118,9 @@ typedef struct sINDmodel {       /* model structure for an inductor */
 
 /* information needed for each instance */
 
-typedef struct sMUTinstance {
-struct sMUTmodel *MUTmodPtr;    /* backpointer to model */
-struct sMUTinstance *MUTnextInstance;   /* pointer to next instance of
+struct sMUTinstance {
+MUTmodel *MUTmodPtr;    /* backpointer to model */
+MUTinstance *MUTnextInstance;   /* pointer to next instance of
                                              * current model*/
 IFuid MUTname;  /* pointer to character string naming this instance */
 double MUTcoupling;     /* mutual inductance input by user */
@@ -132,14 +137,14 @@ int  MUTsenParmNo;   /* parameter # for sensitivity use;
             set equal to  0 if not a design parameter*/
 
 
-} MUTinstance ;
+};
 
 
 /* per model data */
 
-typedef struct sMUTmodel {       /* model structure for a mutual inductor */
+struct sMUTmodel {       /* model structure for a mutual inductor */
 int MUTmodType; /* type index of this device type */
-struct sMUTmodel *MUTnextModel; /* pointer to next possible model in
+MUTmodel *MUTnextModel; /* pointer to next possible model in
                                      * linked list */
 MUTinstance * MUTinstances; /* pointer to list of instances that have this
                                  * model */
@@ -147,7 +152,7 @@ IFuid MUTmodName;       /* pointer to character string naming this model */
 
 /* --- end of generic struct GENmodel --- */
 
-} MUTmodel;
+};
 
 #endif /*MUTUAL*/
 
