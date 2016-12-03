@@ -29,7 +29,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
             /*           _______
              * M = k * \/L1 * L2
              */
-            here->MUTfactor = here->MUTcoupling * sqrt(ind1 * ind2);
+            here->MUTfactor = here->MUTcoupling * sqrt(fabs(ind1 * ind2));
         }
 
     return(OK);
