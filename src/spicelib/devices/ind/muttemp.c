@@ -15,6 +15,12 @@ cholesky(double *a, int n)
 {
 #define A(r,c) a[n*r + c]
     int i, j, k;
+    if (0)
+        for (i = 0; i < n; i++) {
+            for (j = 0; j <= i; j++)
+                printf(" %10g", A(i,j));
+            printf("\n");
+        }
     for (i = 0; i < n; i++)
         for (j = 0; j <= i; j++) {
             double Summe = A(i, j);
@@ -26,6 +32,12 @@ cholesky(double *a, int n)
                 A(i, i) = sqrt(Summe);
             else
                 return 0;
+        }
+    if (0)
+        for (i = 0; i < n; i++) {
+            for (j = 0; j <= i; j++)
+                printf(" %10g", A(i,j));
+            printf("\n");
         }
     return 1;
 #undef A
