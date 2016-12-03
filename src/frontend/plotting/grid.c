@@ -316,8 +316,12 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         margin = graph->viewportxoff;
         /*max = graph->viewport.width + graph->viewportxoff;*/
         max = graph->absolute.width - graph->viewportxoff;
+        /* don't subtract font height from right border of grid */
+        if (graph->grid.ylabel)
+            max += graph->fontheight;
     } else {
         graph->viewportxoff = (digits + 5 + mag - mag3) * graph->fontwidth;
+        /* add height of the vertical text to offset*/
         if (graph->grid.ylabel)
             graph->viewportxoff += graph->fontheight;
         margin = graph->viewportyoff;
