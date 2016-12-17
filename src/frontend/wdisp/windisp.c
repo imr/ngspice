@@ -70,6 +70,7 @@ extern void        com_hardcopy(wordlist *wl);
 #endif
 
 #define DEF_FONTW "Arial"
+#define DEFW_FONTW L"Arial"
 
 /* local variables */
 static int           IsRegistered = 0;             /* 1 if window class is registered */
@@ -77,6 +78,8 @@ static int           IsRegistered = 0;             /* 1 if window class is regis
 static COLORREF      ColorTable[NumWinColors];     /* color memory */
 static char *        WindowName = "Spice Plot";    /* window name */
 static WNDCLASS      TheWndClass;                  /* Plot-window class */
+static wchar_t *     WindowNameW = L"Spice Plot";    /* window name */
+static WNDCLASSW     TheWndClassW;                  /* Plot-window class */
 static HFONT         PlotFont;                     /* which font */
 #define              ID_DRUCKEN      0xEFF0        /* System Menue: print */
 #define              ID_DRUCKEINR    0xEFE0        /* System Menue: printer setup */
@@ -88,6 +91,10 @@ static char *        STR_DRUCKEN   = "Printer..."; /* System menue strings */
 static char *        STR_DRUCKEINR = "Printer setup...";
 static char *        STR_HARDCOPY = "Postscript file, color";
 static char *        STR_HARDCOPY_BW = "Postscript file, b&w";
+static wchar_t *     STRW_DRUCKEN   = L"Printer..."; /* System menue strings */
+static wchar_t *     STRW_DRUCKEINR = L"Printer setup...";
+static wchar_t *     STRW_HARDCOPY  = L"Postscript file, color";
+static wchar_t *     STRW_HARDCOPY_BW = L"Postscript file, b&w";
 static bool          isblack = TRUE;               /* background color of plot is black */
 static bool          isblackold = TRUE;
 static int           linewidth = 0;                /* linewidth of grid and plot */
@@ -110,6 +117,7 @@ int WIN_Init(void)
    char colorstring[BSIZE_SP];
 
    LOGFONT lf;
+   LOGFONTW lfw;
 
    /* Initialization of display descriptor */
    dispdev->width         = GetSystemMetrics( SM_CXSCREEN);
@@ -178,38 +186,72 @@ int WIN_Init(void)
       /* Ansii fixed font */
 //      PlotFont = GetStockFont( ANSI_FIXED_FONT);
 
-      lf.lfHeight = 18;
-      lf.lfWidth = 0;
-      lf.lfEscapement = 0;
-      lf.lfOrientation = 0;
-      lf.lfWeight = 500;
-      lf.lfItalic = 0;
-      lf.lfUnderline = 0;
-      lf.lfStrikeOut = 0;
-      lf.lfCharSet = 0;
-      lf.lfOutPrecision = 0;
-      lf.lfClipPrecision = 0;
-      lf.lfQuality = 0;
-      lf.lfPitchAndFamily = 0;
-      (void)lstrcpy(lf.lfFaceName, "SegeoUI");
+      if (ext_asc) {
+          lf.lfHeight = 18;
+          lf.lfWidth = 0;
+          lf.lfEscapement = 0;
+          lf.lfOrientation = 0;
+          lf.lfWeight = 500;
+          lf.lfItalic = 0;
+          lf.lfUnderline = 0;
+          lf.lfStrikeOut = 0;
+          lf.lfCharSet = 0;
+          lf.lfOutPrecision = 0;
+          lf.lfClipPrecision = 0;
+          lf.lfQuality = 0;
+          lf.lfPitchAndFamily = 0;
+          (void)lstrcpy(lf.lfFaceName, "SegeoUI");
+          PlotFont = CreateFontIndirect(&lf);
+          /* register window class */
+          TheWndClass.lpszClassName = WindowName;
+          TheWndClass.hInstance = hInst;
+          TheWndClass.lpfnWndProc = PlotWindowProc;
+          TheWndClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+          TheWndClass.lpszMenuName = NULL;
+          TheWndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+          if (isblack)
+              TheWndClass.hbrBackground = GetStockObject(BLACK_BRUSH);
+          else
+              TheWndClass.hbrBackground = GetStockObject(WHITE_BRUSH);
+          TheWndClass.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(2));
+          TheWndClass.cbClsExtra = 0;
+          TheWndClass.cbWndExtra = sizeof(GRAPH *);
+          if (!RegisterClass(&TheWndClass)) return 1;
+      }
+      else {
+          lfw.lfHeight = 18;
+          lfw.lfWidth = 0;
+          lfw.lfEscapement = 0;
+          lfw.lfOrientation = 0;
+          lfw.lfWeight = 500;
+          lfw.lfItalic = 0;
+          lfw.lfUnderline = 0;
+          lfw.lfStrikeOut = 0;
+          lfw.lfCharSet = 0;
+          lfw.lfOutPrecision = 0;
+          lfw.lfClipPrecision = 0;
+          lfw.lfQuality = 0;
+          lfw.lfPitchAndFamily = 0;
+          (void)lstrcpyW(lfw.lfFaceName, L"SegeoUI");
+          PlotFont = CreateFontIndirectW(&lfw);
+          /* register window class */
+          TheWndClassW.lpszClassName = WindowNameW;
+          TheWndClassW.hInstance = hInst;
+          TheWndClassW.lpfnWndProc = PlotWindowProc;
+          TheWndClassW.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+          TheWndClassW.lpszMenuName = NULL;
+          TheWndClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512) /*IDC_ARROW*/);
+          if (isblack)
+              TheWndClassW.hbrBackground = GetStockObject(BLACK_BRUSH);
+          else
+              TheWndClassW.hbrBackground = GetStockObject(WHITE_BRUSH);
+          TheWndClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(2));
+          TheWndClassW.cbClsExtra = 0;
+          TheWndClassW.cbWndExtra = sizeof(GRAPH *);
+          if (!RegisterClassW(&TheWndClassW)) return 1;
+      }
 
-      PlotFont = CreateFontIndirect(&lf);
 
-      /* register window class */
-      TheWndClass.lpszClassName  = WindowName;
-      TheWndClass.hInstance      = hInst;
-      TheWndClass.lpfnWndProc    = PlotWindowProc;
-      TheWndClass.style       = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-      TheWndClass.lpszMenuName   = NULL;
-      TheWndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-      if (isblack)
-         TheWndClass.hbrBackground  = GetStockObject( BLACK_BRUSH);
-      else
-         TheWndClass.hbrBackground  = GetStockObject( WHITE_BRUSH);
-      TheWndClass.hIcon          = LoadIcon(hInst, MAKEINTRESOURCE(2));
-      TheWndClass.cbClsExtra     = 0;
-      TheWndClass.cbWndExtra     = sizeof(GRAPH *);
-      if (!RegisterClass(&TheWndClass)) return 1;
    }
     /* not first time */
 	else if (isblackold != isblack) {
@@ -238,7 +280,10 @@ int WIN_Init(void)
 /* (attach to window) */
 static GRAPH * pGraph( HWND hwnd)
 {
-   return (GRAPH *) GetWindowLongPtr( hwnd, 0);
+    if(ext_asc)
+        return (GRAPH *) GetWindowLongPtr( hwnd, 0);
+    else
+        return (GRAPH *) GetWindowLongPtrW( hwnd, 0);
 }
 
 /* return line style for plotting */
@@ -577,8 +622,11 @@ LRESULT CALLBACK PlotWindowProc( HWND hwnd,
       return 0;
 
    default:
-WIN_DEFAULT:
-      return DefWindowProc( hwnd, uMsg, wParam, lParam);
+   WIN_DEFAULT:
+       if(ext_asc)
+           return DefWindowProc( hwnd, uMsg, wParam, lParam);
+       else
+           return DefWindowProcW( hwnd, uMsg, wParam, lParam);
    }
 }
 
@@ -629,8 +677,8 @@ int WIN_NewViewport( GRAPH * graph)
        MultiByteToWideChar(CP_UTF8, 0, WindowName, strlen(WindowName), wtext2, 2 * strlen(WindowName) + 1);
        window = CreateWindowW(wtext2, wtext, WS_OVERLAPPEDWINDOW,
           0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
-//       tfree(wtext);
-//       tfree(wtext2);
+       tfree(wtext);
+       tfree(wtext2);
    }
 
    if (!window) return 1;
@@ -836,35 +884,68 @@ int WIN_Text( char * text, int x, int y, int angle)
    tpWindowData wd;
    HFONT hfont;
    LOGFONT lf;
+   LOGFONTW lfw;
 
    if (!currentgraph) return 0;
    wd = pWindowData(currentgraph);
    if (!wd) return 0;
 
+   if (ext_asc) {
+       lf.lfHeight = (int)(1.1 * currentgraph->fontheight);
+       lf.lfWidth = 0;
+       lf.lfEscapement = angle * 10;
+       lf.lfOrientation = angle * 10;
+       lf.lfWeight = 500;
+       lf.lfItalic = 0;
+       lf.lfUnderline = 0;
+       lf.lfStrikeOut = 0;
+       lf.lfCharSet = 0;
+       lf.lfOutPrecision = 0;
+       lf.lfClipPrecision = 0;
+       lf.lfQuality = 0;
+       lf.lfPitchAndFamily = 0;
 
-   lf.lfHeight = (int)(1.1 * currentgraph->fontheight);
-   lf.lfWidth = 0;
-   lf.lfEscapement = angle * 10;
-   lf.lfOrientation = angle * 10;
-   lf.lfWeight = 500;
-   lf.lfItalic = 0;
-   lf.lfUnderline = 0;
-   lf.lfStrikeOut = 0;
-   lf.lfCharSet = 0;
-   lf.lfOutPrecision = 0;
-   lf.lfClipPrecision = 0;
-   lf.lfQuality = 0;
-   lf.lfPitchAndFamily = 0;
-
-   /* set up fonts */
-   if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
-       (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
+       /* set up fonts */
+       if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
+           (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
+       }
+       if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
+           lf.lfHeight = (int)(1.3 * currentgraph->fontheight);
+       }
+       hfont = CreateFontIndirect(&lf);
    }
-   if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
-       lf.lfHeight = (int)(1.3 * currentgraph->fontheight);
+   else
+   {
+       char facename[32];
+       lfw.lfHeight = (int)(1.1 * currentgraph->fontheight);
+       lfw.lfWidth = 0;
+       lfw.lfEscapement = angle * 10;
+       lfw.lfOrientation = angle * 10;
+       lfw.lfWeight = 500;
+       lfw.lfItalic = 0;
+       lfw.lfUnderline = 0;
+       lfw.lfStrikeOut = 0;
+       lfw.lfCharSet = 0;
+       lfw.lfOutPrecision = 0;
+       lfw.lfClipPrecision = 0;
+       lfw.lfQuality = 0;
+       lfw.lfPitchAndFamily = 0;
+
+       /* set up fonts */
+       if (!cp_getvar("wfont", CP_STRING, facename)) {
+           (void)lstrcpyW(lfw.lfFaceName, DEFW_FONTW);
+       }
+       else {
+           wchar_t wface[32];
+           swprintf(wface, 32, L"%S", facename);
+           (void)lstrcpyW(lfw.lfFaceName, wface);
+       }
+       if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight))) {
+           lfw.lfHeight = (int)(1.3 * currentgraph->fontheight);
+       }
+       hfont = CreateFontIndirectW(&lfw);
    }
 
-   hfont = CreateFontIndirect(&lf);
    SelectObject(wd->hDC, hfont);
 
    SetTextColor(wd->hDC, ColorTable[wd->ColorIndex]);
