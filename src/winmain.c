@@ -26,6 +26,8 @@
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include "ngspice/bool.h"           /* bool defined as unsigned char */
+#include "ngspice/cpextern.h"
+#include "ngspice/memory.h"
 #include "misc/misc_time.h" /* timediff */
 
 /* Constants */
@@ -35,7 +37,7 @@
 #define LF 10               // Line Feed
 #define SE 0                // String termination
 #define BorderSize 8        // Umrandung des Stringfeldes
-#define SBufSize 100        // Groesze des Stringbuffers
+#define SBufSize 256        // Groesze des Stringbuffers
 #define IOBufSize 16348      // Groesze des printf-Buffers
 #define HistSize 20         // Zeilen History-Buffer
 #define StatusHeight 25         // Hoehe des Status Bars
@@ -44,6 +46,8 @@
 #define SourceLength 500        // Platz fuer Source File Name
 #define AnalyseLength 100       // Platz fuer Analyse
 #define QuitButtonLength 80
+
+#define TMALLOC(t, n)       (t*) tmalloc(sizeof(t) * (size_t)(n))
 
 /* macro to ignore unused variables and parameters */
 #define NG_IGNORE(x)  (void)x
@@ -94,6 +98,7 @@ static int HistPtr   = 0;              /* History management */
 
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
+extern bool ext_asc;    /* variable 'encoding' set 'to extended_ascii' */
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 extern int cp_evloop(char *string);
 
@@ -333,7 +338,15 @@ static void AppendString( const char * Line)
 static void DisplayText( void)
 {
     // Darstellen
-    Edit_SetText( twText, TBuffer);
+    if (ext_asc)
+        Edit_SetText( twText, TBuffer);
+    else {
+        wchar_t *TWBuffer;
+        TWBuffer = TMALLOC(wchar_t, 2 * strlen(TBuffer) + 1);
+        MultiByteToWideChar(CP_UTF8, 0, TBuffer, strlen(TBuffer), TWBuffer, 2 * strlen(TBuffer) + 1);
+        SetWindowTextW(twText, TWBuffer);
+        tfree(TWBuffer);
+    }
     // Scroller updaten, neuen Text darstellen
     AdjustScroller();
 }
@@ -467,6 +480,28 @@ DEFAULT_AFTER:
     }
 }
 
+void HistoryGetPrevW(HWND hwnd)
+{
+    char *hgp = HistoryGetPrev();
+    wchar_t *whgp;
+
+    whgp = TMALLOC(wchar_t, 2 * strlen(hgp) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, hgp, strlen(hgp), whgp, 2 * strlen(hgp) + 1);
+    SetWindowTextW(hwnd, whgp);
+    tfree(whgp);
+}
+
+void HistoryGetNextW(HWND hwnd)
+{
+    char *hgn = HistoryGetNext();
+    wchar_t *whgn;
+
+    whgn = TMALLOC(wchar_t, 2 * strlen(hgn) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, hgn, strlen(hgn), whgn, 2 * strlen(hgn) + 1);
+    SetWindowTextW(hwnd, whgn);
+    tfree(whgn);
+}
+
 /* Procedure for string window */
 static LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -479,7 +514,15 @@ static LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
         i = (UINT) wParam;
         if ((i == VK_UP) || (i == VK_DOWN)) {
             /* Set old text to new */
-            SetWindowText( hwnd, i == VK_UP? HistoryGetPrev(): HistoryGetNext());
+            /* if utf-8: read history entry, convert to wide char for text output */
+            if (!ext_asc) {
+                if (i == VK_UP)
+                    HistoryGetPrevW(hwnd);
+                else
+                    HistoryGetNextW(hwnd);
+            }
+            else
+                SetWindowText( hwnd, i == VK_UP? HistoryGetPrev(): HistoryGetNext());
             /* Put cursor to end of line */
             CallWindowProc( swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
             return 0;
@@ -495,7 +538,13 @@ static LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
     case WM_CHAR:
             c = (char) wParam;
             if (c == CR) {
-                GetWindowText( hwnd, SBuffer, SBufSize);
+                if (!ext_asc) {
+                    wchar_t WSBuffer[SBufSize];
+                    GetWindowTextW( hwnd, WSBuffer, SBufSize);
+                    WideCharToMultiByte(CP_UTF8, 0, WSBuffer, wcslen(WSBuffer), SBuffer, SBufSize, NULL, NULL);
+                }
+                else
+                    GetWindowText( hwnd, SBuffer, SBufSize);
                 HistoryEnter( SBuffer);
                 strcat( SBuffer, CRLF);
                 ClearInput();
@@ -858,7 +907,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
         HDC textDC;
         HFONT font;
         TEXTMETRIC tm;
-        font = CreateFont(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
+//        font = CreateFont(14, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Lucida Console");
+//        if(!font)
+            font = CreateFont(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
         if(!font)
             font = GetStockFont(ANSI_FIXED_FONT);
         SetWindowFont( twText, font, FALSE);
@@ -1019,9 +1070,26 @@ int fp_u_t_c(int __c, FILE * __stream)
         return fputc( __c, __stream);
 }
 
+/* fputs output to console */
 int fp_u_t_s(const char * __s, FILE * __stream)
 {
-//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {    hvogt 14.6.2000
+    if ((__stream == stdout) || (__stream == stderr)) {
+        int c = SE;
+        if (!__s) return EOF;
+        for (;;) {
+            if (*__s) {
+                c = *__s++;
+                fp_u_t_c(c, __stream);
+            }
+            else
+                return c;
+        }
+    } else
+        return fputs( __s, __stream);
+}
+/*
+int fp_u_t_w_s(const wchar_t * __s, FILE * __stream)
+{
     if ((__stream == stdout) || (__stream == stderr)) {
 
         int c = SE;
@@ -1030,13 +1098,15 @@ int fp_u_t_s(const char * __s, FILE * __stream)
             if (*__s) {
                 c = *__s++;
                 fp_u_t_c(c, __stream);
-            } else
+            }
+            else
                 return c;
         }
-    } else
-        return fputs( __s, __stream);
+    }
+    else
+        return fputws(__s, __stream);
 }
-
+*/
 int fp_r_i_n_t_f(FILE * __stream, const char * __format, ...)
 {
     int result;
@@ -1046,10 +1116,9 @@ int fp_r_i_n_t_f(FILE * __stream, const char * __format, ...)
 
 //  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
     if ((__stream == stdout) || (__stream == stderr)) {
-
         s[0] = SE;
         result = vsprintf( s, __format, args);
-        fp_u_t_s( s, __stream);
+        fp_u_t_s(s, __stream);
     } else
         result = vfprintf( __stream, __format, args);
 
@@ -1198,10 +1267,9 @@ int p_r_i_n_t_f(const char * __format, ...)
     char s [IOBufSize];
     va_list args;
     va_start(args, __format);
-
     s[0] = SE;
     result = vsprintf( s, __format, args);
-    fp_u_t_s( s, stdout);
+    fp_u_t_s(s, stdout);
     va_end(args);
     return result;
 }

@@ -17,6 +17,11 @@ Modified: 2001 AlansFixes
 
 #include <stdlib.h>
 
+#ifdef HAS_WINGUI
+#undef BOOLEAN
+#include <windows.h>
+#endif
+
 #define RAD_TO_DEG      (180.0 / M_PI)
 
 typedef enum { x_axis, y_axis } Axis;
@@ -141,11 +146,20 @@ gr_redrawgrid(GRAPH *graph)
                         graph->fontwidth,
                         (graph->absolute.height * 3) / 4, 0);
         } else {
-            if (eq(dispdev->name, "postscript") || eq(dispdev->name, "Windows"))
+            if (eq(dispdev->name, "postscript") || (eq(dispdev->name, "Windows") && ext_asc))
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height -strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+                        (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+            /* Windows and UTF-8: make the y position correction later */
+            else if (eq(dispdev->name, "Windows") && !ext_asc) {
+                /* utf-8: figure out the real length of the y label */
+                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, strlen(graph->grid.ylabel), NULL, 0);
+                DevDrawText(graph->grid.ylabel,
+                        graph->fontwidth,
+                        /*vertical text, midpoint in y is aligned midpoint of text string */
+                        (graph->absolute.height - (wlen - 1) * graph->fontwidth) / 2, 90);                
+            }
             else /* FIXME: for now excluding X11 and others */
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,

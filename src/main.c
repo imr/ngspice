@@ -81,6 +81,7 @@ static bool ft_servermode = FALSE;
 bool ft_batchmode = FALSE;
 bool ft_pipemode = FALSE;
 bool rflag = FALSE; /* has rawfile */
+bool ext_asc = FALSE; /* variable 'encoding' not set to 'extended_ascii' */
 
 /* Frontend options */
 bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've been interrupted. */
@@ -1160,6 +1161,11 @@ main(int argc, char **argv)
                 }
             }
         }
+        char encode[64];
+        if (cp_getvar("encoding", CP_STRING, encode) && eq(encode, "extended_ascii"))
+            ext_asc = TRUE;
+        else
+            ext_asc = FALSE;
 
         if (!ft_batchmode) {
             com_version(NULL);

@@ -109,6 +109,8 @@ int WIN_Init(void)
 {
    char colorstring[BSIZE_SP];
 
+   LOGFONT lf;
+
    /* Initialization of display descriptor */
    dispdev->width         = GetSystemMetrics( SM_CXSCREEN);
    dispdev->height        = GetSystemMetrics( SM_CYSCREEN);
@@ -174,7 +176,24 @@ int WIN_Init(void)
       ColorTable[22]= RGB(255,128,128);   /* pink */
 
       /* Ansii fixed font */
-      PlotFont = GetStockFont( ANSI_FIXED_FONT);
+//      PlotFont = GetStockFont( ANSI_FIXED_FONT);
+
+      lf.lfHeight = 18;
+      lf.lfWidth = 0;
+      lf.lfEscapement = 0;
+      lf.lfOrientation = 0;
+      lf.lfWeight = 500;
+      lf.lfItalic = 0;
+      lf.lfUnderline = 0;
+      lf.lfStrikeOut = 0;
+      lf.lfCharSet = 0;
+      lf.lfOutPrecision = 0;
+      lf.lfClipPrecision = 0;
+      lf.lfQuality = 0;
+      lf.lfPitchAndFamily = 0;
+      (void)lstrcpy(lf.lfFaceName, "SegeoUI");
+
+      PlotFont = CreateFontIndirect(&lf);
 
       /* register window class */
       TheWndClass.lpszClassName  = WindowName;
@@ -596,8 +615,24 @@ int WIN_NewViewport( GRAPH * graph)
 
    /* Create the window */
    i = GetSystemMetrics( SM_CYSCREEN) / 3;
-   window = CreateWindow( WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
-      0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
+   if (ext_asc) {
+      window = CreateWindow( WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
+         0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
+   }
+   /* UTF-8 support */
+   else {
+       wchar_t *wtext, *wtext2;
+       wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
+       wtext2 = TMALLOC(wchar_t, 2 * strlen(WindowName) + 1);
+       /* translate UTF-8 to UTF-16 */
+       MultiByteToWideChar(CP_UTF8, 0, graph->plotname, strlen(graph->plotname), wtext, 2 * strlen(graph->plotname) + 1);
+       MultiByteToWideChar(CP_UTF8, 0, WindowName, strlen(WindowName), wtext2, 2 * strlen(WindowName) + 1);
+       window = CreateWindowW(wtext2, wtext, WS_OVERLAPPEDWINDOW,
+          0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
+//       tfree(wtext);
+//       tfree(wtext2);
+   }
+
    if (!window) return 1;
    
    /* change the background color of all windows (both new and already plotted) 
@@ -806,36 +841,46 @@ int WIN_Text( char * text, int x, int y, int angle)
    wd = pWindowData(currentgraph);
    if (!wd) return 0;
 
-   lf.lfHeight         = (int) (1.1 * currentgraph->fontheight) ; 
-   lf.lfWidth          = 0 ;
-   lf.lfEscapement     = angle * 10;
-   lf.lfOrientation    = angle * 10;
-   lf.lfWeight         = 500 ;
-   lf.lfItalic         = 0 ;
-   lf.lfUnderline      = 0 ;
-   lf.lfStrikeOut      = 0 ;
-   lf.lfCharSet        = 0 ;
-   lf.lfOutPrecision   = 0 ;
-   lf.lfClipPrecision  = 0 ;
-   lf.lfQuality        = 0 ;
-   lf.lfPitchAndFamily = 0 ;
+
+   lf.lfHeight = (int)(1.1 * currentgraph->fontheight);
+   lf.lfWidth = 0;
+   lf.lfEscapement = angle * 10;
+   lf.lfOrientation = angle * 10;
+   lf.lfWeight = 500;
+   lf.lfItalic = 0;
+   lf.lfUnderline = 0;
+   lf.lfStrikeOut = 0;
+   lf.lfCharSet = 0;
+   lf.lfOutPrecision = 0;
+   lf.lfClipPrecision = 0;
+   lf.lfQuality = 0;
+   lf.lfPitchAndFamily = 0;
 
    /* set up fonts */
    if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
-      (void) lstrcpy(lf.lfFaceName, DEF_FONTW);
+       (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
    }
    if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
-      lf.lfHeight  = (int) (1.3 * currentgraph->fontheight) ;
+       lf.lfHeight = (int)(1.3 * currentgraph->fontheight);
    }
 
-   hfont = CreateFontIndirect (&lf);
+   hfont = CreateFontIndirect(&lf);
    SelectObject(wd->hDC, hfont);
 
-   SetTextColor( wd->hDC, ColorTable[wd->ColorIndex]);
-   TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
+   SetTextColor(wd->hDC, ColorTable[wd->ColorIndex]);
+
+   if (ext_asc) {
+       TextOut( wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
+   }
+   else {
+       wchar_t *wtext;
+       wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
+       MultiByteToWideChar(CP_UTF8, 0, text, strlen(text), wtext, 2 * strlen(text) + 1);
+       TextOutW(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
+       tfree(wtext);
+   }
 
    DeleteObject(SelectObject(wd->hDC, GetStockObject(SYSTEM_FONT)));
-
    return (0);
 }
 
