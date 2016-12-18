@@ -10,6 +10,60 @@ Author: 2003 Paolo Nenzi
 #include "ngspice/suffix.h"
 
 
+/* From EISPACK */
+
+/* S: real, symmetric matrix
+   n: dimension of S
+   w: contains unsorted eigenvalues
+   RETURNS: >0 : number of jacobi iterations
+   -1 : number of jacobi iterations exceeded 50
+*/
+
+static int jacobi(double *a, unsigned int n, double w[]) {
+    unsigned int i, j, iq, ip;
+    double tresh, theta, tau, t, sm, s, h, g, c;
+    int nrot = 0;
+    double * const b = (double *)malloc(n * sizeof(double)) - 1;
+    double * const z = (double *)malloc(n * sizeof(double)) - 1;
+#define A(r,c) a[n*(r-1)+c-1]
+#define W(c) w[c-1]
+#define ROTATE(i,j,k,l) g=A(i,j);h=A(k,l);A(i,j)=g-s*(h+g*tau);A(k,l)=h+s*(g-h*tau)
+    for (ip = 1; ip <= n; ip++) { b[ip] = W(ip) = A(ip,ip); z[ip] = 0; }
+    for (i = 1; i <= 50; i++) {
+        sm = 0;
+        for (ip = 1; ip <= n - 1; ip++) for (iq = ip + 1; iq <= n; iq++) sm += fabs(A(ip,iq));
+        if (sm == 0) { /*free(z++); free(b++);*/ return nrot; }
+        tresh = (i<4) ? 0.2*sm / (n*n) : 0;
+        for (ip = 1; ip <= n - 1; ip++) {
+            for (iq = ip + 1; iq <= n; iq++) {
+                g = 100*fabs(A(ip, iq));
+                if (i > 4 && fabs(W(ip)) + g == fabs(W(ip)) && fabs(W(iq)) + g == fabs(W(iq)))
+                    A(ip, iq) = 0;
+                else if (fabs(A(ip, iq)) > tresh) {
+                    h = W(iq) - W(ip);
+                    if (fabs(h) + g == fabs(h))
+                        t = A(ip, iq) / h;
+                    else {
+                        theta = 0.5*h / A(ip, iq);
+                        t = 1 / (fabs(theta) + sqrt(1 + theta*theta));
+                        if (theta < 0) t = -t;
+                    }
+                    c = 1 / sqrt(1 + t*t); s = t*c; tau = s / (1 + c); h = t*A(ip, iq);
+                    z[ip] -= h; z[iq] += h; W(ip) -= h; W(iq) += h;  A(ip, iq) = 0;
+                    for (j = 1;      j <= ip - 1; j++) { ROTATE(j, ip, j, iq); }
+                    for (j = ip + 1; j <= iq - 1; j++) { ROTATE(ip, j, j, iq); }
+                    for (j = iq + 1; j <= n;      j++) { ROTATE(ip, j, iq, j); }
+                    ++nrot;
+                }
+            }
+        }
+        for (ip = 1; ip <= n; ip++) { b[ip] += z[ip]; W(ip) = b[ip]; z[ip] = 0; }
+    }
+    free(z + 1); free(b + 1); return -1;
+#undef A
+}
+
+
 static int
 cholesky(double *a, int n)
 {
@@ -175,7 +229,28 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 INDmatrix [j * sz + k] = INDmatrix [k * sz + j] = mut->MUTfactor;
             }
 
-            positive = cholesky(INDmatrix, sz);
+            static int use_cholesky = 1;
+            if (use_cholesky)
+                positive = cholesky(INDmatrix, sz);
+            else
+            {
+                double *ev = TMALLOC(double, sz);
+
+                int ret = jacobi(INDmatrix, (unsigned int)sz, ev);
+                if (ret < 0) {
+                    fprintf(stderr, "jacobi() did not properly terminate, skipping the check\n");
+                    FREE(ev);
+                    continue;
+                }
+
+                positive = 1;
+                for (i = 0; i < sz; i++)
+                    if (ev [i] < 0) {
+                        positive = 0;
+                        break;
+                    }
+                FREE(ev);
+            }
 
             if (!positive) {
                 positive = 1;
