@@ -151,6 +151,7 @@ gr_redrawgrid(GRAPH *graph)
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
                         (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+#ifdef HAS_WINGUI
             /* Windows and UTF-8: make the y position correction later */
             else if (eq(dispdev->name, "Windows") && !ext_asc) {
                 /* utf-8: figure out the real length of the y label */
@@ -160,6 +161,7 @@ gr_redrawgrid(GRAPH *graph)
                         /*vertical text, midpoint in y is aligned midpoint of text string */
                         (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);                
             }
+#endif
             else /* FIXME: for now excluding X11 and others */
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
