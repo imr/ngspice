@@ -114,6 +114,9 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_BYPASS:
         task->TSKbypass = val->iValue;
         break;
+    case OPT_INDVERBOSITY:
+        task->TSKindverbosity = val->iValue;
+        break;
     case OPT_XMU:
         task->TSKxmu = val->rValue;
         break;
@@ -268,6 +271,7 @@ static IFparm OPTtbl[] = {
  { "lvltim", 0, IF_INTEGER,"Type of timestep control" },
  { "method", OPT_METHOD, IF_SET|IF_STRING,"Integration method" },
  { "maxord", OPT_MAXORD, IF_SET|IF_INTEGER,"Maximum integration order" },
+ { "indverbosity", OPT_INDVERBOSITY, IF_SET|IF_INTEGER,"Control Inductive Systems Check (coupling)" },
  { "xmu", OPT_XMU, IF_SET|IF_REAL,"Coefficient for trapezoidal method" },
  { "defm", OPT_DEFM,IF_SET|IF_REAL,"Default MOSfet Multiplier" },
  { "defl", OPT_DEFL,IF_SET|IF_REAL,"Default MOSfet length" },

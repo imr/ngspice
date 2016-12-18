@@ -39,6 +39,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnomTemp         = def->TSKnomTemp;
         tsk->TSKmaxOrder        = def->TSKmaxOrder;
         tsk->TSKintegrateMethod = def->TSKintegrateMethod;
+        tsk->TSKindverbosity    = def->TSKindverbosity;
         tsk->TSKxmu             = def->TSKxmu;
         tsk->TSKbypass          = def->TSKbypass;
         tsk->TSKdcMaxIter       = def->TSKdcMaxIter;
@@ -99,6 +100,8 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKdcTrcvMaxIter   = 50;
         tsk->TSKintegrateMethod = TRAPEZOIDAL;
         tsk->TSKmaxOrder        = 2;
+        /* full check, and full verbosity */
+        tsk->TSKindverbosity    = 2;
         /*
          * when using trapezoidal method
          *   xmu=0:    Backward Euler
