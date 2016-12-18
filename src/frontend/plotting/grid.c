@@ -158,7 +158,7 @@ gr_redrawgrid(GRAPH *graph)
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - (wlen - 1) * graph->fontwidth) / 2, 90);                
+                        (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);                
             }
             else /* FIXME: for now excluding X11 and others */
                 DevDrawText(graph->grid.ylabel,
@@ -337,7 +337,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         graph->viewportxoff = (digits + 5 + mag - mag3) * graph->fontwidth;
         /* add height of the vertical text to offset*/
         if (graph->grid.ylabel)
-            graph->viewportxoff += graph->fontheight;
+            graph->viewportxoff += (int)(1.6 * graph->fontheight);
         margin = graph->viewportyoff;
         /*max = graph->viewport.height + graph->viewportyoff;*/
         max = graph->absolute.height - graph->viewportyoff;

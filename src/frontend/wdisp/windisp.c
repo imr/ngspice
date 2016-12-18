@@ -114,148 +114,118 @@ WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 
 int WIN_Init(void)
 {
-   char colorstring[BSIZE_SP];
+    char colorstring[BSIZE_SP];
+    char facename[32];
 
-   LOGFONT lf;
-   LOGFONTW lfw;
+    LOGFONT lf;
+    LOGFONTW lfw;
 
-   /* Initialization of display descriptor */
-   dispdev->width         = GetSystemMetrics( SM_CXSCREEN);
-   dispdev->height        = GetSystemMetrics( SM_CYSCREEN);
-   dispdev->numlinestyles = 5;   /* see implications in WinPrint! */
-   dispdev->numcolors     = NumWinColors;
+    /* Initialization of display descriptor */
+    dispdev->width = GetSystemMetrics(SM_CXSCREEN);
+    dispdev->height = GetSystemMetrics(SM_CYSCREEN);
+    dispdev->numlinestyles = 5;   /* see implications in WinPrint! */
+    dispdev->numcolors = NumWinColors;
 
-   /* always, user may have set color0 to white */
-   /* get background color information from spinit, only "white"
-      is recognized as a suitable option! */
-   if (cp_getvar("color0", CP_STRING, colorstring)) {
-      if (cieq(colorstring, "white")) isblack = FALSE; 
-      else isblack = TRUE;	
-   }	
-      /* get linewidth information from spinit */
-      if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
-         linewidth = 0;
-      if (linewidth < 0) linewidth = 0;  
+    /* always, user may have set color0 to white */
+    /* get background color information from spinit, only "white"
+       is recognized as a suitable option! */
+    if (cp_getvar("color0", CP_STRING, colorstring)) {
+        if (cieq(colorstring, "white")) isblack = FALSE;
+        else isblack = TRUE;
+    }
+    /* get linewidth information from spinit */
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
+        linewidth = 0;
+    if (linewidth < 0) linewidth = 0;
 
-   /* only for the first time: */
-   if (!IsRegistered) {
+    /* only for the first time: */
+    if (!IsRegistered) {
 
-	  isblackold = isblack;
-	  
-      /* get linewidth information from spinit 
-      if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
-         linewidth = 0;
-      if (linewidth < 0) linewidth = 0;        */
+        isblackold = isblack;
 
-      /* Initialize colors */
-      if (isblack) {
-         ColorTable[0] = RGB(  0,  0,  0);   /* black   = background */
-         ColorTable[1] = RGB(255,255,255);   /* white    = text and grid */
-      }
-      else {
-         ColorTable[0] = RGB(255,255,255);   /* white   = background */
-         ColorTable[1] = RGB(  0,  0,  0);   /* black   = text and grid */
-      }
-	  
-      ColorTable[2] = RGB(  0,255,  0);   /* green   = first line */
-      ColorTable[3] = RGB(255,  0,  0);   /* red */
-      ColorTable[4] = RGB(  0,  0,255);   /* blue */
-      ColorTable[5] = RGB(255,255,  0);   /* yellow */
-      ColorTable[6] = RGB(255,  0,255);   /* violett */
-      ColorTable[7] = RGB(  0,255,255);   /* azur */
-      ColorTable[8] = RGB(255,128,  0);   /* orange */
-      ColorTable[9] = RGB(128, 64,  0);   /* brown */
-      ColorTable[10]= RGB(128,  0,255);   /* light violett */
-      ColorTable[11]= RGB(255,128,128);   /* pink */
-      /* 2. color bank (with different line style */
-      if (isblack)
-         ColorTable[12]= RGB(255,255,255);   /* white */
-      else
-         ColorTable[12]= RGB(  0,  0,  0);   /* black */
-      ColorTable[13]= RGB(  0,255,  0);   /* green */
-      ColorTable[14]= RGB(255,  0,  0);   /* red */
-      ColorTable[15]= RGB(  0,  0,255);   /* blue */
-      ColorTable[16]= RGB(255,255,  0);   /* yellow */
-      ColorTable[17]= RGB(255,  0,255);   /* violett */
-      ColorTable[18]= RGB(  0,255,255);   /* azur */
-      ColorTable[19]= RGB(255,128,  0);   /* orange */
-      ColorTable[20]= RGB(128, 64,  0);   /* brown */
-      ColorTable[21]= RGB(128,  0,255);   /* light violett */
-      ColorTable[22]= RGB(255,128,128);   /* pink */
+        /* get linewidth information from spinit
+        if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
+           linewidth = 0;
+        if (linewidth < 0) linewidth = 0;        */
 
-      /* Ansii fixed font */
-//      PlotFont = GetStockFont( ANSI_FIXED_FONT);
+        /* Initialize colors */
+        if (isblack) {
+            ColorTable[0] = RGB(0, 0, 0);   /* black   = background */
+            ColorTable[1] = RGB(255, 255, 255);   /* white    = text and grid */
+        }
+        else {
+            ColorTable[0] = RGB(255, 255, 255);   /* white   = background */
+            ColorTable[1] = RGB(0, 0, 0);   /* black   = text and grid */
+        }
 
-      if (ext_asc) {
-          lf.lfHeight = 18;
-          lf.lfWidth = 0;
-          lf.lfEscapement = 0;
-          lf.lfOrientation = 0;
-          lf.lfWeight = 500;
-          lf.lfItalic = 0;
-          lf.lfUnderline = 0;
-          lf.lfStrikeOut = 0;
-          lf.lfCharSet = 0;
-          lf.lfOutPrecision = 0;
-          lf.lfClipPrecision = 0;
-          lf.lfQuality = 0;
-          lf.lfPitchAndFamily = 0;
-          (void)lstrcpy(lf.lfFaceName, "SegeoUI");
-          PlotFont = CreateFontIndirect(&lf);
-          /* register window class */
-          TheWndClass.lpszClassName = WindowName;
-          TheWndClass.hInstance = hInst;
-          TheWndClass.lpfnWndProc = PlotWindowProc;
-          TheWndClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-          TheWndClass.lpszMenuName = NULL;
-          TheWndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-          if (isblack)
-              TheWndClass.hbrBackground = GetStockObject(BLACK_BRUSH);
-          else
-              TheWndClass.hbrBackground = GetStockObject(WHITE_BRUSH);
-          TheWndClass.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(2));
-          TheWndClass.cbClsExtra = 0;
-          TheWndClass.cbWndExtra = sizeof(GRAPH *);
-          if (!RegisterClass(&TheWndClass)) return 1;
-      }
-      else {
-          lfw.lfHeight = 18;
-          lfw.lfWidth = 0;
-          lfw.lfEscapement = 0;
-          lfw.lfOrientation = 0;
-          lfw.lfWeight = 500;
-          lfw.lfItalic = 0;
-          lfw.lfUnderline = 0;
-          lfw.lfStrikeOut = 0;
-          lfw.lfCharSet = 0;
-          lfw.lfOutPrecision = 0;
-          lfw.lfClipPrecision = 0;
-          lfw.lfQuality = 0;
-          lfw.lfPitchAndFamily = 0;
-          (void)lstrcpyW(lfw.lfFaceName, L"SegeoUI");
-          PlotFont = CreateFontIndirectW(&lfw);
-          /* register window class */
-          TheWndClassW.lpszClassName = WindowNameW;
-          TheWndClassW.hInstance = hInst;
-          TheWndClassW.lpfnWndProc = PlotWindowProc;
-          TheWndClassW.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-          TheWndClassW.lpszMenuName = NULL;
-          TheWndClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512) /*IDC_ARROW*/);
-          if (isblack)
-              TheWndClassW.hbrBackground = GetStockObject(BLACK_BRUSH);
-          else
-              TheWndClassW.hbrBackground = GetStockObject(WHITE_BRUSH);
-          TheWndClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(2));
-          TheWndClassW.cbClsExtra = 0;
-          TheWndClassW.cbWndExtra = sizeof(GRAPH *);
-          if (!RegisterClassW(&TheWndClassW)) return 1;
-      }
+        ColorTable[2] = RGB(0, 255, 0);   /* green   = first line */
+        ColorTable[3] = RGB(255, 0, 0);   /* red */
+        ColorTable[4] = RGB(0, 0, 255);   /* blue */
+        ColorTable[5] = RGB(255, 255, 0);   /* yellow */
+        ColorTable[6] = RGB(255, 0, 255);   /* violett */
+        ColorTable[7] = RGB(0, 255, 255);   /* azur */
+        ColorTable[8] = RGB(255, 128, 0);   /* orange */
+        ColorTable[9] = RGB(128, 64, 0);   /* brown */
+        ColorTable[10] = RGB(128, 0, 255);   /* light violett */
+        ColorTable[11] = RGB(255, 128, 128);   /* pink */
+        /* 2. color bank (with different line style */
+        if (isblack)
+            ColorTable[12] = RGB(255, 255, 255);   /* white */
+        else
+            ColorTable[12] = RGB(0, 0, 0);   /* black */
+        ColorTable[13] = RGB(0, 255, 0);   /* green */
+        ColorTable[14] = RGB(255, 0, 0);   /* red */
+        ColorTable[15] = RGB(0, 0, 255);   /* blue */
+        ColorTable[16] = RGB(255, 255, 0);   /* yellow */
+        ColorTable[17] = RGB(255, 0, 255);   /* violett */
+        ColorTable[18] = RGB(0, 255, 255);   /* azur */
+        ColorTable[19] = RGB(255, 128, 0);   /* orange */
+        ColorTable[20] = RGB(128, 64, 0);   /* brown */
+        ColorTable[21] = RGB(128, 0, 255);   /* light violett */
+        ColorTable[22] = RGB(255, 128, 128);   /* pink */
+
+        /* Ansii fixed font */
+  //      PlotFont = GetStockFont( ANSI_FIXED_FONT);
+        if (ext_asc) {
+            /* register window class */
+            TheWndClass.lpszClassName = WindowName;
+            TheWndClass.hInstance = hInst;
+            TheWndClass.lpfnWndProc = PlotWindowProc;
+            TheWndClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+            TheWndClass.lpszMenuName = NULL;
+            TheWndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+            if (isblack)
+                TheWndClass.hbrBackground = GetStockObject(BLACK_BRUSH);
+            else
+                TheWndClass.hbrBackground = GetStockObject(WHITE_BRUSH);
+            TheWndClass.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(2));
+            TheWndClass.cbClsExtra = 0;
+            TheWndClass.cbWndExtra = sizeof(GRAPH *);
+            if (!RegisterClass(&TheWndClass)) return 1;
+        }
+        else {
+            /* register window class */
+            TheWndClassW.lpszClassName = WindowNameW;
+            TheWndClassW.hInstance = hInst;
+            TheWndClassW.lpfnWndProc = PlotWindowProc;
+            TheWndClassW.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+            TheWndClassW.lpszMenuName = NULL;
+            TheWndClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512) /*IDC_ARROW*/);
+            if (isblack)
+                TheWndClassW.hbrBackground = GetStockObject(BLACK_BRUSH);
+            else
+                TheWndClassW.hbrBackground = GetStockObject(WHITE_BRUSH);
+            TheWndClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(2));
+            TheWndClassW.cbClsExtra = 0;
+            TheWndClassW.cbWndExtra = sizeof(GRAPH *);
+            if (!RegisterClassW(&TheWndClassW)) return 1;
+        }
+    }
 
 
-   }
     /* not first time */
-	else if (isblackold != isblack) {
-	  if (isblack) {
+    else if (isblackold != isblack) {
+      if (isblack) {
          ColorTable[0] = RGB(  0,  0,  0);   /* black   = background */
          ColorTable[1] = RGB(255,255,255);   /* white    = text and grid */
       }
@@ -267,10 +237,60 @@ int WIN_Init(void)
          ColorTable[12]= RGB(255,255,255);   /* white */
       else
          ColorTable[12]= RGB(  0,  0,  0);   /* black */
-		 		 
+
       isblackold=isblack;
-   }	
+   }
    IsRegistered = 1;
+   if (ext_asc) {
+       //          lf.lfHeight = 18;
+       lf.lfWidth = 0;
+       lf.lfEscapement = 0;
+       lf.lfOrientation = 0;
+       lf.lfWeight = 500;
+       lf.lfItalic = 0;
+       lf.lfUnderline = 0;
+       lf.lfStrikeOut = 0;
+       lf.lfCharSet = 0;
+       lf.lfOutPrecision = 0;
+       lf.lfClipPrecision = 0;
+       lf.lfQuality = 0;
+       lf.lfPitchAndFamily = 0;
+       /* set up fonts */
+       if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
+           (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
+       }
+       if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
+           lf.lfHeight = (int)(1.3 * currentgraph->fontheight);
+       }
+       PlotFont = CreateFontIndirect(&lf);
+   }
+   else {
+       //          lfw.lfHeight = 18;
+       lfw.lfWidth = 0;
+       lfw.lfEscapement = 0;
+       lfw.lfOrientation = 0;
+       lfw.lfWeight = 500;
+       lfw.lfItalic = 0;
+       lfw.lfUnderline = 0;
+       lfw.lfStrikeOut = 0;
+       lfw.lfCharSet = 0;
+       lfw.lfOutPrecision = 0;
+       lfw.lfClipPrecision = 0;
+       lfw.lfQuality = 0;
+       lfw.lfPitchAndFamily = 0;
+       if (!cp_getvar("wfont", CP_STRING, facename)) {
+           (void)lstrcpyW(lfw.lfFaceName, DEFW_FONTW);
+       }
+       else {
+           wchar_t wface[32];
+           swprintf(wface, 32, L"%S", facename);
+           (void)lstrcpyW(lfw.lfFaceName, wface);
+       }
+       if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight))) {
+           lfw.lfHeight = 18;
+       }
+       PlotFont = CreateFontIndirectW(&lfw);
+   }
 
    /* ready */
    return (0);
@@ -644,6 +664,7 @@ int WIN_NewViewport( GRAPH * graph)
    HWND     window;
    HDC      dc;
    TEXTMETRIC  tm;
+   TEXTMETRICW  tmw;
    tpWindowData   wd;
    HMENU    sysmenu;
 
@@ -727,10 +748,17 @@ int WIN_NewViewport( GRAPH * graph)
    SelectObject( dc, PlotFont);
 
    /* query the font parameters */
-   if (GetTextMetrics( dc, &tm)) {
-      graph->fontheight = tm.tmHeight;
-      graph->fontwidth  = tm.tmAveCharWidth;
+   if (ext_asc) {
+       if (GetTextMetrics(dc, &tm)) {
+           graph->fontheight = tm.tmHeight;
+           graph->fontwidth = tm.tmAveCharWidth;
+       }
    }
+   else
+       if (GetTextMetricsW(dc, &tmw)) {
+           graph->fontheight = tmw.tmHeight;
+           graph->fontwidth = tmw.tmAveCharWidth;
+       }
 
    /* set viewport parameters */
    graph->viewport.height  = wd->Area.bottom;
@@ -943,6 +971,11 @@ int WIN_Text( char * text, int x, int y, int angle)
        if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight))) {
            lfw.lfHeight = (int)(1.3 * currentgraph->fontheight);
        }
+       else {
+           currentgraph->fontheight = lfw.lfHeight;
+           currentgraph->fontwidth = (int)(lfw.lfHeight*0.52);
+       }
+
        hfont = CreateFontIndirectW(&lfw);
    }
 
