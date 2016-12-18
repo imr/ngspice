@@ -260,7 +260,7 @@ int WIN_Init(void)
            (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
        }
        if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
-           lf.lfHeight = (int)(1.3 * currentgraph->fontheight);
+           lf.lfHeight = 18;
        }
        PlotFont = CreateFontIndirect(&lf);
    }
@@ -757,7 +757,7 @@ int WIN_NewViewport( GRAPH * graph)
    else
        if (GetTextMetricsW(dc, &tmw)) {
            graph->fontheight = tmw.tmHeight;
-           graph->fontwidth = tmw.tmAveCharWidth;
+           graph->fontwidth = tmw.tmAveCharWidth + 1;
        }
 
    /* set viewport parameters */
@@ -938,7 +938,7 @@ int WIN_Text( char * text, int x, int y, int angle)
            (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
        }
        if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
-           lf.lfHeight = (int)(1.3 * currentgraph->fontheight);
+           lf.lfHeight = 18;
        }
        hfont = CreateFontIndirect(&lf);
    }
@@ -969,7 +969,7 @@ int WIN_Text( char * text, int x, int y, int angle)
            (void)lstrcpyW(lfw.lfFaceName, wface);
        }
        if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight))) {
-           lfw.lfHeight = (int)(1.3 * currentgraph->fontheight);
+           lfw.lfHeight = 18;
        }
        else {
            currentgraph->fontheight = lfw.lfHeight;
