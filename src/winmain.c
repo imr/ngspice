@@ -2,7 +2,7 @@
     Autor: Wolfgang Muees
     Stand: 28.10.97
     Autor: Holger Vogt
-    Stand: 17.10.2009
+    Stand: 16.12.16
 */
 #include "ngspice/config.h"
 #ifdef HAS_WINGUI
@@ -70,22 +70,35 @@ HWND            hwQuitButton;       /* Pause button */
 static int      nReturnCode = 0;    /* WinMain return value */
 static int      nShowState;         /* Display mode of main window */
 static WNDCLASS hwMainClass;        /* Class definition for the main window */
+static WNDCLASSW hwMainClassW;        /* Class definition for the main window */
 static LPCTSTR  hwClassName  = "SPICE_TEXT_WND";/* Class name of the main window */
 static LPCTSTR hwWindowName = PACKAGE_STRING;   /* main window displayed name */
+static LPCWSTR  hwClassNameW = L"SPICE_TEXT_WND";/* Class name of the main window */
+static LPCWSTR hwWindowNameW = L"ngspice 26";   /* main window displayed name */
 static WNDCLASS twTextClass;                    /* Class definition for the text box */
+static WNDCLASSW twTextClassW;                    /* Class definition for the text box */
 static LPCTSTR twClassName  = "SPICE_TEXT_BOX"; /* Class name for the text box */
 static LPCTSTR twWindowName = "TextOut";        /* text box name */
+static LPCWSTR twClassNameW = L"SPICE_TEXT_BOX"; /* Class name for the text box */
+static LPCWSTR twWindowNameW = L"TextOut";        /* text box name */
 static size_t   TBufEnd = 0;                    /* Pointer to \0 */
 static char TBuffer [TBufSize+1];               /* Text buffer */
 static SBufLine SBuffer;                        /* Input buffer */
 static WNDCLASS swStringClass;                  /* Class definition of string window */
 static LPCTSTR swClassName  = "SPICE_STR_IN";   /* Class name of text input */
 static LPCTSTR swWindowName = "StringIn";       /* Window name */
+static WNDCLASSW swStringClassW;                  /* Class definition of string window */
+static LPCWSTR swClassNameW = L"SPICE_STR_IN";   /* Class name of text input */
+static LPCWSTR swWindowNameW = L"StringIn";       /* Window name */
 static char CRLF [] = { CR, LF, SE} ;           /* CR/LF */
 static WNDCLASS hwElementClass;                 /* Class definition of status displays */
 static LPCTSTR hwElementClassName = "ElementClass";
 static LPCTSTR hwSourceWindowName = "SourceDisplay";
 static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
+static WNDCLASSW hwElementClassW;                 /* Class definition of status displays */
+static LPCWSTR hwElementClassNameW = L"ElementClass";
+static LPCWSTR hwSourceWindowNameW = L"SourceDisplay";
+static LPCWSTR hwAnalyseWindowNameW = L"AnalyseDisplay";
 static int RowHeight = 16;             /* Height of line of text */
 static int LineHeight = 25;            /* Height of input line */
 static int VisibleRows = 10;           /* Number of visible lines in text window */
@@ -101,6 +114,8 @@ extern bool ft_batchmode;
 extern bool ext_asc;    /* variable 'encoding' set 'to extended_ascii' */
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 extern int cp_evloop(char *string);
+
+static bool set_ext_asc(void);
 
 #include "winmain.h"
 
@@ -192,10 +207,17 @@ static void ClearInput(void)
 /* New text to Source file window */
 void SetSource( char * Name)
 {
-    if (hwSource) {
-        SetWindowText( hwSource, Name);
+    if (hwSource) 
+        if (ext_asc)
+            SetWindowText( hwSource, Name);
+        else {
+            wchar_t *NameW;
+            NameW = TMALLOC(wchar_t, 2 * strlen(Name) + 1);
+            MultiByteToWideChar(CP_UTF8, 0, Name, strlen(Name), NameW, 2 * strlen(Name) + 1);
+            SetWindowTextW(hwSource, NameW);
+            tfree(NameW);
+        }
         InvalidateRgn( hwSource, NULL, TRUE);
-    }
 }
 
 // ------------------------------<Analyse-Fenster>-----------------------------
@@ -259,8 +281,18 @@ void SetAnalyse(
          strncpy(OldAn, Analyse, 127);
       }
           
-      SetWindowText( hwAnalyse, s);
-      SetWindowText( hwMain, t);
+      if (ext_asc) {
+          SetWindowText(hwAnalyse, s);
+          SetWindowText(hwMain, t);
+      }
+      else {
+          wchar_t sw[256];
+          wchar_t tw[256];
+          swprintf(sw, 256, L"%S", s);
+          swprintf(tw, 256, L"%S", t);
+          SetWindowTextW(hwAnalyse, sw);
+          SetWindowTextW(hwMain, tw);
+      }
       InvalidateRgn( hwAnalyse, NULL, TRUE);
       InvalidateRgn( hwMain, NULL, TRUE);
    }
@@ -475,8 +507,11 @@ static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
         goto DEFAULT_AFTER;
 
     default:
-DEFAULT_AFTER:
-        return DefWindowProc( hwnd, uMsg, wParam, lParam);
+    DEFAULT_AFTER:
+        if(ext_asc)
+            return DefWindowProc( hwnd, uMsg, wParam, lParam);
+        else
+            return DefWindowProcW( hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -566,8 +601,11 @@ static LRESULT CALLBACK StringWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
                 return 0;
             }
     default:
-DEFAULT:
-        return CallWindowProc( swProc, hwnd, uMsg, wParam, lParam);
+    DEFAULT:
+        if(ext_asc)
+            return CallWindowProc( swProc, hwnd, uMsg, wParam, lParam);
+        else
+            return CallWindowProcW( swProc, hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -601,8 +639,11 @@ static LRESULT CALLBACK TextWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
             return 0;
         }
     default:
-DEFAULT_TEXT:
-        return CallWindowProc( twProc, hwnd, uMsg, wParam, lParam);
+    DEFAULT_TEXT:
+        if(ext_asc)
+            return CallWindowProc( twProc, hwnd, uMsg, wParam, lParam);
+        else
+            return CallWindowProcW( twProc, hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -614,6 +655,7 @@ static void Element_OnPaint(HWND hwnd)
     RECT s;
     HGDIOBJ o;
     char buffer[128];
+    wchar_t bufferW[256];
     int i;
 
     /* Prepare */
@@ -642,17 +684,30 @@ static void Element_OnPaint(HWND hwnd)
     FillRect( hdc, &s, o);
 
     /* Draw contents */
-    buffer[0] = '\0';
-    i = GetWindowText( hwnd, buffer, 127);
-    s.left      = r.left+1;
-    s.right     = r.right-1;
-    s.top       = r.top+1;
-    s.bottom    = r.bottom-1;
-    o = GetStockObject( LTGRAY_BRUSH);
-    FillRect( hdc, &s, o);
-    SetBkMode( hdc, TRANSPARENT);
-    ExtTextOut( hdc, s.left+1, s.top+1, ETO_CLIPPED, &s, buffer, (unsigned)i, NULL);
-
+    if (ext_asc) {
+        buffer[0] = '\0';
+        i = GetWindowText(hwnd, buffer, 127);
+        s.left = r.left + 1;
+        s.right = r.right - 1;
+        s.top = r.top + 1;
+        s.bottom = r.bottom - 1;
+        o = GetStockObject(LTGRAY_BRUSH);
+        FillRect(hdc, &s, o);
+        SetBkMode(hdc, TRANSPARENT);
+        ExtTextOut(hdc, s.left + 1, s.top + 1, ETO_CLIPPED, &s, buffer, (unsigned)i, NULL);
+    }
+    else {
+        bufferW[0] = '\0';
+        i = GetWindowTextW(hwnd, bufferW, 255);
+        s.left = r.left + 1;
+        s.right = r.right - 1;
+        s.top = r.top + 1;
+        s.bottom = r.bottom - 1;
+        o = GetStockObject(LTGRAY_BRUSH);
+        FillRect(hdc, &s, o);
+        SetBkMode(hdc, TRANSPARENT);
+        ExtTextOutW(hdc, s.left + 1, s.top + 1, ETO_CLIPPED, &s, bufferW, (unsigned)i, NULL);
+    }
     /* End */
     EndPaint( hwnd, &ps);
 }
@@ -668,7 +723,10 @@ static LRESULT CALLBACK ElementWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, 
         return 0;
 
     default:
-        return DefWindowProc( hwnd, uMsg, wParam, lParam);
+        if(ext_asc)
+            return DefWindowProc( hwnd, uMsg, wParam, lParam);
+        else
+            return DefWindowProcW( hwnd, uMsg, wParam, lParam);
     }
 }
 
@@ -841,68 +899,136 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     SBuffer[0] = SE;
     HistoryInit();
 
+    /* Try to figure out if 'extended_ascii' has been set in spinit or .spiceinit */
+    set_ext_asc();
+
     /* Define main window class */
-    hwMainClass.style           = CS_HREDRAW | CS_VREDRAW;
-    hwMainClass.lpfnWndProc     = MainWindowProc;
-    hwMainClass.cbClsExtra      = 0;
-    hwMainClass.cbWndExtra      = 0;
-    hwMainClass.hInstance       = hInst;
-    hwMainClass.hIcon           = LoadIcon( hInst, MAKEINTRESOURCE(1));
-    hwMainClass.hCursor         = LoadCursor( NULL, IDC_ARROW);
-    hwMainClass.hbrBackground   = GetStockObject( LTGRAY_BRUSH);
-    hwMainClass.lpszMenuName    = NULL;
-    hwMainClass.lpszClassName   = hwClassName;
-    if (!RegisterClass( &hwMainClass)) goto THE_END;
+    if (ext_asc) {
+        hwMainClass.style = CS_HREDRAW | CS_VREDRAW;
+        hwMainClass.lpfnWndProc = MainWindowProc;
+        hwMainClass.cbClsExtra = 0;
+        hwMainClass.cbWndExtra = 0;
+        hwMainClass.hInstance = hInst;
+        hwMainClass.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(1));
+        hwMainClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+        hwMainClass.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+        hwMainClass.lpszMenuName = NULL;
+        hwMainClass.lpszClassName = hwClassName;
+        if (!RegisterClass(&hwMainClass)) goto THE_END;
+    }
+    else {
+        hwMainClassW.style = CS_HREDRAW | CS_VREDRAW;
+        hwMainClassW.lpfnWndProc = MainWindowProc;
+        hwMainClassW.cbClsExtra = 0;
+        hwMainClassW.cbWndExtra = 0;
+        hwMainClassW.hInstance = hInst;
+        hwMainClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(1));
+        hwMainClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512));
+        hwMainClassW.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+        hwMainClassW.lpszMenuName = NULL;
+        hwMainClassW.lpszClassName = hwClassNameW;
+        if (!RegisterClassW(&hwMainClassW)) goto THE_END;
+    }
 
     /* Define text window class */
-    if (!GetClassInfo( NULL, "EDIT", &twTextClass)) goto THE_END;
-    twProc = twTextClass.lpfnWndProc;
-    twTextClass.lpfnWndProc     = TextWindowProc;
-    twTextClass.hInstance       = hInst;
-    twTextClass.lpszMenuName    = NULL;
-    twTextClass.lpszClassName   = twClassName;
-    if (!RegisterClass( &twTextClass)) goto THE_END;
+    if (ext_asc) {
+        if (!GetClassInfo(NULL, "EDIT", &twTextClass)) goto THE_END;
+        twProc = twTextClass.lpfnWndProc;
+        twTextClass.lpfnWndProc = TextWindowProc;
+        twTextClass.hInstance = hInst;
+        twTextClass.lpszMenuName = NULL;
+        twTextClass.lpszClassName = twClassName;
+        if (!RegisterClass(&twTextClass)) goto THE_END;
+    }
+    else {
+        if (!GetClassInfoW(NULL, L"EDIT", &twTextClassW)) goto THE_END;
+        twProc = twTextClassW.lpfnWndProc;
+        twTextClassW.lpfnWndProc = TextWindowProc;
+        twTextClassW.hInstance = hInst;
+        twTextClassW.lpszMenuName = NULL;
+        twTextClassW.lpszClassName = twClassNameW;
+        if (!RegisterClassW(&twTextClassW)) goto THE_END;
+    }
 
     /* Define string window class */
-    if (!GetClassInfo( NULL, "EDIT", &swStringClass)) goto THE_END;
-    swProc = swStringClass.lpfnWndProc;
-    swStringClass.lpfnWndProc   = StringWindowProc;
-    swStringClass.hInstance     = hInst;
-    swStringClass.lpszMenuName  = NULL;
-    swStringClass.lpszClassName = swClassName;
-    if (!RegisterClass( &swStringClass)) goto THE_END;
+    if (ext_asc) {
+        if (!GetClassInfo(NULL, "EDIT", &swStringClass)) goto THE_END;
+        swProc = swStringClass.lpfnWndProc;
+        swStringClass.lpfnWndProc = StringWindowProc;
+        swStringClass.hInstance = hInst;
+        swStringClass.lpszMenuName = NULL;
+        swStringClass.lpszClassName = swClassName;
+        if (!RegisterClass(&swStringClass)) goto THE_END;
+    }
+    else {
+        if (!GetClassInfoW(NULL, L"EDIT", &swStringClassW)) goto THE_END;
+        swProc = swStringClassW.lpfnWndProc;
+        swStringClassW.lpfnWndProc = StringWindowProc;
+        swStringClassW.hInstance = hInst;
+        swStringClassW.lpszMenuName = NULL;
+        swStringClassW.lpszClassName = swClassNameW;
+        if (!RegisterClassW(&swStringClassW)) goto THE_END;
+    }
 
     /* Define status element class */
-    hwElementClass.style            = CS_HREDRAW | CS_VREDRAW;
-    hwElementClass.lpfnWndProc      = ElementWindowProc;
-    hwElementClass.cbClsExtra       = 0;
-    hwElementClass.cbWndExtra       = 0;
-    hwElementClass.hInstance        = hInst;
-    hwElementClass.hIcon            = NULL;
-    hwElementClass.hCursor          = LoadCursor( NULL, IDC_ARROW);
-    hwElementClass.hbrBackground    = GetStockObject( LTGRAY_BRUSH);
-    hwElementClass.lpszMenuName     = NULL;
-    hwElementClass.lpszClassName    = hwElementClassName;
-    if (!RegisterClass( &hwElementClass)) goto THE_END;
+    if (ext_asc) {
+        hwElementClass.style = CS_HREDRAW | CS_VREDRAW;
+        hwElementClass.lpfnWndProc = ElementWindowProc;
+        hwElementClass.cbClsExtra = 0;
+        hwElementClass.cbWndExtra = 0;
+        hwElementClass.hInstance = hInst;
+        hwElementClass.hIcon = NULL;
+        hwElementClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+        hwElementClass.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+        hwElementClass.lpszMenuName = NULL;
+        hwElementClass.lpszClassName = hwElementClassName;
+        if (!RegisterClass(&hwElementClass)) goto THE_END;
+    }
+    else {
+        hwElementClassW.style = CS_HREDRAW | CS_VREDRAW;
+        hwElementClassW.lpfnWndProc = ElementWindowProc;
+        hwElementClassW.cbClsExtra = 0;
+        hwElementClassW.cbWndExtra = 0;
+        hwElementClassW.hInstance = hInst;
+        hwElementClassW.hIcon = NULL;
+        hwElementClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512));
+        hwElementClassW.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+        hwElementClassW.lpszMenuName = NULL;
+        hwElementClassW.lpszClassName = hwElementClassNameW;
+        if (!RegisterClassW(&hwElementClassW)) goto THE_END;
+    }
 
     /*Create main window */
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
+    if(ext_asc)
+        SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
+    else
+        SystemParametersInfoW(SPI_GETWORKAREA, 0, &wsize, 0);
     iy = wsize.bottom;
-	iyt = iy / 3;
-	ix = wsize.right;
+    iyt = iy / 3;
+    ix = wsize.right;
 //    iy = GetSystemMetrics( SM_CYSCREEN);
 //    iyt = GetSystemMetrics( SM_CYSCREEN) / 3;
 //    ix = GetSystemMetrics( SM_CXSCREEN);
-    hwMain = CreateWindow( hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-        0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
+    if(ext_asc)
+        hwMain = CreateWindow( hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+            0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
+    else
+        hwMain = CreateWindowW( hwClassNameW, hwWindowNameW, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+            0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
     if (!hwMain) goto THE_END;
 
     /* Create text window */
+    if(ext_asc)
     twText = CreateWindowEx(WS_EX_NOPARENTNOTIFY, twClassName, twWindowName,
+        ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_BORDER | WS_VSCROLL,
+        20,20,300,100, hwMain, NULL, hInst, NULL);
+    else
+    twText = CreateWindowExW(WS_EX_NOPARENTNOTIFY, twClassNameW, twWindowNameW,
         ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_BORDER | WS_VSCROLL,
         20,20,300,100, hwMain, NULL, hInst, NULL);
     if (!twText) goto THE_END;
     /* Ansii fixed font */
+    if(ext_asc)
     {
         HDC textDC;
         HFONT font;
@@ -923,40 +1049,95 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
             ReleaseDC( twText, textDC);
         }
     }
+    else
+    {
+        HDC textDC;
+        HFONT font;
+        TEXTMETRICW tm;
+//        font = CreateFontW(14, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Lucida Console");
+//        if(!font)
+            font = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");
+        if(!font)
+            font = GetStockFont(ANSI_FIXED_FONT);
+        SetWindowFont( twText, font, FALSE);
+        textDC = GetDC( twText);
+        if (textDC) {
+            SelectObject( textDC, font);
+            if (GetTextMetricsW( textDC, &tm)) {
+                RowHeight = tm.tmHeight;
+                WinLineWidth = 90 * tm.tmAveCharWidth;
+            }
+            ReleaseDC( twText, textDC);
+        }
+    }
 
     /* Create string window */
-    swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
-        ES_LEFT | WS_CHILD | WS_BORDER, 20,20,300,100, hwMain, NULL, hInst, NULL);
-    if (!swString) goto THE_END;
-    {
-        HDC stringDC;
-        TEXTMETRIC tm;
-        stringDC = GetDC( swString);
-        if (stringDC) {
-            if (GetTextMetrics( stringDC, &tm))
-                LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
-            ReleaseDC( swString, stringDC);
+    if (ext_asc) {
+        swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
+            ES_LEFT | WS_CHILD | WS_BORDER, 20, 20, 300, 100, hwMain, NULL, hInst, NULL);
+        if (!swString) goto THE_END;
+        {
+            HDC stringDC;
+            TEXTMETRIC tm;
+            stringDC = GetDC(swString);
+            if (stringDC) {
+                if (GetTextMetrics(stringDC, &tm))
+                    LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
+                ReleaseDC(swString, stringDC);
+            }
+        }
+    }
+    else {
+        swString = CreateWindowExW(WS_EX_NOPARENTNOTIFY, swClassNameW, swWindowNameW,
+            ES_LEFT | WS_CHILD | WS_BORDER, 20, 20, 300, 100, hwMain, NULL, hInst, NULL);
+        if (!swString) goto THE_END;
+        {
+            HDC stringDC;
+            TEXTMETRICW tm;
+            stringDC = GetDC(swString);
+            if (stringDC) {
+                if (GetTextMetricsW(stringDC, &tm))
+                    LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
+                ReleaseDC(swString, stringDC);
+            }
         }
     }
 
     /* Create source window */
-    hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
-        hwSourceWindowName, WS_CHILD, 0,0, SourceLength, StatusElHeight, hwMain,
-        NULL, hInst, NULL);
-    if (!hwSource) goto THE_END;
-
+    if (ext_asc) {
+        hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
+            hwSourceWindowName, WS_CHILD, 0, 0, SourceLength, StatusElHeight, hwMain,
+            NULL, hInst, NULL);
+        if (!hwSource) goto THE_END;
+    }
+    else {
+        hwSource = CreateWindowExW(WS_EX_NOPARENTNOTIFY, hwElementClassNameW,
+            hwSourceWindowNameW, WS_CHILD, 0, 0, SourceLength, StatusElHeight, hwMain,
+            NULL, hInst, NULL);
+        if (!hwSource) goto THE_END;
+    }
 
     /* Create analysis window */
+    if(ext_asc)
     hwAnalyse = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
         hwAnalyseWindowName, WS_CHILD, 0,0, AnalyseLength, StatusElHeight, hwMain,
         NULL, hInst, NULL);
+    else
+    hwAnalyse = CreateWindowExW(WS_EX_NOPARENTNOTIFY, hwElementClassNameW,
+        hwAnalyseWindowNameW, WS_CHILD, 0,0, AnalyseLength, StatusElHeight, hwMain,
+        NULL, hInst, NULL);
+
     if (!hwAnalyse) goto THE_END;
 
     /* Create "Quit" button */
+    if(ext_asc)
     hwQuitButton = CreateWindow("BUTTON", "Quit", WS_CHILD | 
        BS_PUSHBUTTON, 0, 0, QuitButtonLength, 
        StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
-    
+    else
+    hwQuitButton = CreateWindowW(L"BUTTON", L"Quit", WS_CHILD | 
+       BS_PUSHBUTTON, 0, 0, QuitButtonLength, 
+       StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
     if (!hwQuitButton) goto THE_END;
 
     /* Define a minimum width */
@@ -1499,6 +1680,41 @@ void winmessage(char* new_msg)
     /* open a message box only if message is not written into -o xxx.log */
    if (!flogp)
       MessageBox(NULL, new_msg, "Ngspice Info", MB_OK|MB_ICONERROR);
+}
+
+/* Try to figure out if 'extended_ascii' has been set in .spiceinit.
+   Required to open the appropriate ASCII or wide char window */
+static bool set_ext_asc(void)
+{
+    char *path, *dir;
+    char *name = ".spiceinit";
+    FILE *fp;
+    char line[256];
+
+    fp = fopen(name, "r");
+    if (!fp) {
+        dir = getenv("USERPROFILE");
+        if (!dir)
+            return FALSE;
+        path = tprintf("%s\\%s", dir, name);
+        if (!path)
+            return FALSE;    /* memory allocation error */
+        fp = fopen(path, "r");
+        if (!fp) {
+            tfree(path);
+            return FALSE;
+        }
+        tfree(path);
+    }
+    /* read the file and check if 'set encoding=extended_ascii' is found */
+    while (fgets(line, 255, fp))
+        if (!strcmp(line, "set encoding=extended_ascii\n")) {
+            ext_asc = TRUE;
+            break;
+        }
+
+    fclose(fp);
+    return TRUE;
 }
 
 #endif /* HAS_WINGUI */
