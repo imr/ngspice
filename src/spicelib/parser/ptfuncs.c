@@ -69,14 +69,7 @@ PTdivide(double arg1, double arg2)
 double
 PTpower(double arg1, double arg2)
 {
-    if (arg1 < 0.0) {
-        if (fabs(arg2 - ((int) arg2)) / (arg2 + 0.001) < 0.000001) {
-            arg2 = (int) arg2;
-        } else {
-            arg1 = -arg1;
-        }
-    }
-    return (pow(arg1, arg2));
+    return pow(fabs(arg1), arg2);
 }
 
 double
