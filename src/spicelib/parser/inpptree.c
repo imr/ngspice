@@ -296,33 +296,37 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
         break;
 
     case PT_POWER:
-        if (p->right->type == PT_CONSTANT) {
+#define a  p->left
+#define b  p->right
+        if (b->type == PT_CONSTANT) {
             /*
-             * D(f^C) = C * f^(C-1) * D(f)
+             * D(a^C) = C * a^(C-1) * D(a)
              */
-            arg1 = PTdifferentiate(p->left, varnum);
+            arg1 = PTdifferentiate(a, varnum);
 
             newp = mkb(PT_TIMES, mkb(PT_TIMES,
-                                     mkcon(p->right->constant),
-                                     mkb(PT_POWER, p->left,
-                                         mkcon(p->right->constant - 1))),
+                                     mkcon(b->constant),
+                                     mkb(PT_POWER, a,
+                                         mkcon(b->constant - 1))),
                        arg1);
         } else {
             /*
-             * D(f^g) = D(exp(g*log(f)))
-             *              = exp(g*log(f)) * D(g*log(f))
-             *              = exp(g*log(f)) * (D(g)*log(f) + g*D(f)/f)
+             * D(a^b) = D(exp(b*log(a)))
+             *              = exp(b*log(a)) * D(b*log(a))
+             *              = exp(b*log(a)) * (D(b)*log(a) + b*D(a)/a)
              */
-            arg1 = PTdifferentiate(p->left, varnum);
-            arg2 = PTdifferentiate(p->right, varnum);
+            arg1 = PTdifferentiate(a, varnum);
+            arg2 = PTdifferentiate(b, varnum);
             newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                  p->right, mkf(PTF_LOG,
-                                                                p->left))),
+                                                  b, mkf(PTF_LOG,
+                                                         a))),
                        mkb(PT_PLUS,
-                           mkb(PT_TIMES, p->right,
-                               mkb(PT_DIVIDE, arg1, p->left)),
-                           mkb(PT_TIMES, arg2, mkf(PTF_LOG, p->left))));
+                           mkb(PT_TIMES, b,
+                               mkb(PT_DIVIDE, arg1, a)),
+                           mkb(PT_TIMES, arg2, mkf(PTF_LOG, a))));
         }
+#undef b
+#undef a
         break;
 
     case PT_TERN: /* ternary_fcn(cond,exp1,exp2) */
@@ -552,17 +556,19 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
         pow(a,b)
         p->left: ','    p->left->left: a       p->left->right: b
         */
+#define a  p->left->left
+#define b  p->left->right
 
-            if (p->left->right->type == PT_CONSTANT) {
+            if (b->type == PT_CONSTANT) {
                 /*
                  * D(f^C) = C * f^(C-1) * D(f)
                  */
-                arg1 = PTdifferentiate(p->left->left, varnum);
+                arg1 = PTdifferentiate(a, varnum);
 
                 newp = mkb(PT_TIMES, mkb(PT_TIMES,
-                                     mkcon(p->left->right->constant),
-                                     mkb(PT_POWER, p->left->left,
-                                         mkcon(p->left->right->constant - 1))),
+                                     mkcon(b->constant),
+                                     mkb(PT_POWER, a,
+                                         mkcon(b->constant - 1))),
                              arg1);
 #ifdef TRACE
             printf("pow, %s, returns; ", __func__);
@@ -575,17 +581,19 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
              *              = exp(g*log(f)) * D(g*log(f))
              *              = exp(g*log(f)) * (D(g)*log(f) + g*D(f)/f)
              */
-             arg1 = PTdifferentiate(p->left->left, varnum);
-             arg2 = PTdifferentiate(p->left->right, varnum);
+             arg1 = PTdifferentiate(a, varnum);
+             arg2 = PTdifferentiate(b, varnum);
              newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                p->left->right, mkf(PTF_LOG,
-                                                p->left->left))),
+                                                b, mkf(PTF_LOG,
+                                                a))),
                                 mkb(PT_PLUS,
-                                    mkb(PT_TIMES, p->left->right,
-                                    mkb(PT_DIVIDE, arg1, p->left->left)),
-                                    mkb(PT_TIMES, arg2, mkf(PTF_LOG, p->left->left))));
+                                    mkb(PT_TIMES, b,
+                                    mkb(PT_DIVIDE, arg1, a)),
+                                    mkb(PT_TIMES, arg2, mkf(PTF_LOG, a))));
             }
             return mkfirst(newp, p);
+#undef b
+#undef a
         }
 
         break;
