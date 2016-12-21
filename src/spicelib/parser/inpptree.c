@@ -319,22 +319,21 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 #define b  p->right
         if (b->type == PT_CONSTANT) {
             arg1 = PTdifferentiate(a, varnum);
-
-            newp = mkb(PT_TIMES, mkb(PT_TIMES,
-                                     mkcon(b->constant),
-                                     mkb(PT_POWER, a,
-                                         mkcon(b->constant - 1))),
+            newp = mkb(PT_TIMES,
+                       mkb(PT_TIMES,
+                           mkcon(b->constant),
+                           mkf(PTF_PWR,
+                               mkb(PT_COMMA, a, mkcon(b->constant - 1.0)))),
                        arg1);
         } else {
             arg1 = PTdifferentiate(a, varnum);
             arg2 = PTdifferentiate(b, varnum);
-            newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                  b, mkf(PTF_LOG,
-                                                         a))),
+            newp = mkb(PT_TIMES,
+                       mkf(PTF_POW, mkb(PT_COMMA, a, b)),
                        mkb(PT_PLUS,
                            mkb(PT_TIMES, b,
                                mkb(PT_DIVIDE, arg1, a)),
-                           mkb(PT_TIMES, arg2, mkf(PTF_LOG, a))));
+                           mkb(PT_TIMES, arg2, mkf(PTF_LOG, mkf(PTF_ABS, a)))));
         }
 #undef b
 #undef a
@@ -591,27 +590,29 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 
             if (b->type == PT_CONSTANT) {
                 arg1 = PTdifferentiate(a, varnum);
-
-                newp = mkb(PT_TIMES, mkb(PT_TIMES,
-                                     mkcon(b->constant),
-                                     mkb(PT_POWER, a,
-                                         mkcon(b->constant - 1))),
-                             arg1);
+                newp = mkb(PT_TIMES,
+                           mkb(PT_TIMES,
+                               mkcon(b->constant),
+                               mkf(PTF_PWR,
+                                   mkb(PT_COMMA, a, mkcon(b->constant - 1)))),
+                           arg1);
 #ifdef TRACE
-            printf("pow, %s, returns; ", __func__);
-            printTree(newp);
-            printf("\n");
+                printf("pow, %s, returns; ", __func__);
+                printTree(newp);
+                printf("\n");
 #endif
             } else {
-             arg1 = PTdifferentiate(a, varnum);
-             arg2 = PTdifferentiate(b, varnum);
-             newp = mkb(PT_TIMES, mkf(PTF_EXP, mkb(PT_TIMES,
-                                                b, mkf(PTF_LOG,
-                                                a))),
-                                mkb(PT_PLUS,
-                                    mkb(PT_TIMES, b,
-                                    mkb(PT_DIVIDE, arg1, a)),
-                                    mkb(PT_TIMES, arg2, mkf(PTF_LOG, a))));
+                arg1 = PTdifferentiate(a, varnum);
+                arg2 = PTdifferentiate(b, varnum);
+                newp = mkb(PT_TIMES,
+                           mkf(PTF_POW, mkb(PT_COMMA, a, b)),
+                           mkb(PT_PLUS,
+                               mkb(PT_TIMES,
+                                   b,
+                                   mkb(PT_DIVIDE, arg1, a)),
+                               mkb(PT_TIMES,
+                                   arg2,
+                                   mkf(PTF_LOG, mkf(PTF_ABS, a)))));
             }
             return mkfirst(newp, p);
 #undef b
@@ -654,32 +655,22 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                 newp = mkb(PT_TIMES,
                            mkb(PT_TIMES,
                                mkcon(b->constant),
-                               mkb(PT_POWER,
-                                   mkf(PTF_ABS, a),
-                                   mkcon(b->constant - 1.0))),
+                               mkf(PTF_POW,
+                                   mkb(PT_COMMA, a, mkcon(b->constant - 1.0)))),
                            arg1);
 #ifdef TRACE
-            printf("pwr, %s, returns; ", __func__);
-            printTree(newp);
-            printf("\n");
+                printf("pwr, %s, returns; ", __func__);
+                printTree(newp);
+                printf("\n");
 #endif
             } else {
-             arg1 = PTdifferentiate(a, varnum);
-             arg2 = PTdifferentiate(b, varnum);
-             newp = mkb(PT_PLUS,
-                        mkb(PT_TIMES,
-                            mkf(PTF_SGN, a),
-                            mkb(PT_TIMES,
-                                mkb(PT_POWER, mkf(PTF_ABS, a), b),
-                                mkb(PT_TIMES, arg2,
-                                    mkf(PTF_LOG, mkf(PTF_ABS, a))))),
-                        mkb(PT_TIMES,
-                            mkb(PT_TIMES,
-                                mkb(PT_POWER,
-                                    mkf(PTF_ABS, a),
-                                    mkb(PT_MINUS, b, mkcon(1.0))),
-                                b),
-                            arg1));
+                arg1 = PTdifferentiate(a, varnum);
+                arg2 = PTdifferentiate(b, varnum);
+                newp = mkb(PT_TIMES,
+                           mkf(PTF_PWR, mkb(PT_COMMA, a, b)),
+                           mkb(PT_PLUS,
+                               mkb(PT_TIMES, b, mkb(PT_DIVIDE, arg1, a)),
+                               mkb(PT_TIMES, arg2, mkf(PTF_LOG, mkf(PTF_ABS, a)))));
             }
             return mkfirst(newp, p);
 #undef b
