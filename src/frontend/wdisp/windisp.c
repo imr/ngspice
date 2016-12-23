@@ -757,7 +757,7 @@ int WIN_NewViewport( GRAPH * graph)
    else
        if (GetTextMetricsW(dc, &tmw)) {
            graph->fontheight = tmw.tmHeight;
-           graph->fontwidth = tmw.tmAveCharWidth + 1;
+           graph->fontwidth = tmw.tmAveCharWidth + 1; /*FIXME relationship between height and width for various fonts*/
        }
 
    /* set viewport parameters */
