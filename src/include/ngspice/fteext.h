@@ -226,7 +226,7 @@ extern void rem_tlist(struct pt_temper *p);
 
 /* inpcom.c */
 
-extern bool is_absolute_pathname(const char *p);
+//extern bool is_absolute_pathname(const char *p);
 
 /* nutinp.c */
 
