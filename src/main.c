@@ -82,6 +82,7 @@ bool ft_batchmode = FALSE;
 bool ft_pipemode = FALSE;
 bool rflag = FALSE; /* has rawfile */
 bool ext_asc = FALSE; /* variable 'encoding' not set to 'extended_ascii' */
+bool old_x11 = FALSE; /* if FALSE, use xft, if TRUE use old X11 text output */
 
 /* Frontend options */
 bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've been interrupted. */

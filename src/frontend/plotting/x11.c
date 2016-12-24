@@ -37,6 +37,8 @@ Author: 1988 Jeffrey M. Hsu
 #  include <X11/Shell.h>
 #  include <X11/Intrinsic.h>
 
+#include <X11/Xft/Xft.h>
+
 #  ifdef DEBUG
 #     include <X11/Xlib.h> /* for _Xdebug */
 #  endif
@@ -66,6 +68,10 @@ typedef struct x11info {
     int lastx, lasty;   /* used in X_DrawLine */
     int lastlinestyle;  /* used in X_DrawLine */
     Pixel colors[NUMCOLORS];
+    /* use with xft */
+    char txtcolor[16];
+    char fname[BSIZE_SP];
+    int fsize;
 } X11devdep;
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
@@ -91,6 +97,8 @@ static Bool noclear = False;
 static GRAPH *lasthardcopy; /* graph user selected */
 static int X11_Open = 0;
 static int numdispplanes;
+static int xfont_size;
+static char fontname[513];
 
 /* static functions */
 static void initlinestyles(void);
@@ -138,6 +146,9 @@ X11_Init(void)
         internalerror("Can't open X display.");
         return (1);
     }
+
+    if (cp_getvar("old_x11", CP_BOOL, NULL))
+        old_x11 = TRUE;
 
 #  ifdef DEBUG
     _Xdebug = 1;
@@ -235,6 +246,10 @@ initcolors(GRAPH *graph)
             (void) sprintf(buf, "color%d", i);
             if (!cp_getvar(buf, CP_STRING, colorstring))
                 (void) strcpy(colorstring, colornames[i]);
+            /* text color info for xft */
+            if((!old_x11) && (i == 1))
+                    strncpy(DEVDEP(graph).txtcolor, colorstring, 15);
+
             if (!XAllocNamedColor(display,
                                   DefaultColormap(display, DefaultScreen(display)),
                                   colorstring, &visualcolor, &exactcolor)) {
@@ -348,7 +363,7 @@ handle_wm_messages(Widget w, XtPointer client_data, XEvent *ev, Boolean *cont)
 int
 X11_NewViewport(GRAPH *graph)
 {
-    char fontname[513]; /* who knows . . . */
+//    char fontname[513]; /* who knows . . . */
     char *p, *q;
     Cursor cursor;
     XSetWindowAttributes w_attrs;
@@ -376,8 +391,8 @@ X11_NewViewport(GRAPH *graph)
     };
     static Arg viewargs[] = {
         { XtNresizable, (XtArgVal) TRUE },
-        { XtNwidth, (XtArgVal) 300 },
-        { XtNheight, (XtArgVal) 300 },
+        { XtNwidth, (XtArgVal) 600 },
+        { XtNheight, (XtArgVal) 500 },
         { XtNright, (XtArgVal) XtChainRight }
     };
     int trys;
@@ -427,32 +442,45 @@ X11_NewViewport(GRAPH *graph)
     /* set up fonts */
     if (!cp_getvar("xfont", CP_STRING, fontname))
         (void) strcpy(fontname, DEF_FONT);
-
-    for (p = fontname; *p && *p <= ' '; p++)
-        ;
-
-    if (p != fontname) {
-        for (q = fontname; *p; *q++ = *p++)
+    if(old_x11) {
+        for (p = fontname; *p && *p <= ' '; p++)
             ;
-        *q = '\0';
-    }
 
-    trys = 1;
-    while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
-        sprintf(ErrorMessage, "can't open font %s", fontname);
-        strcpy(fontname, "fixed");
-        if (trys > 1) {
-            internalerror(ErrorMessage);
-            RECOVERNEWVIEWPORT();
-            return (1);
+        if (p != fontname) {
+            for (q = fontname; *p; *q++ = *p++)
+                ;
+            *q = '\0';
         }
-        trys += 1;
+        trys = 1;
+        while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
+            sprintf(ErrorMessage, "can't open font %s", fontname);
+            strcpy(fontname, "fixed");
+            if (trys > 1) {
+                internalerror(ErrorMessage);
+                RECOVERNEWVIEWPORT();
+                return (1);
+            }
+            trys += 1;
+        }
     }
 
-    graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
-        DEVDEP(graph).font->min_bounds.lbearing + 1;
-    graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
-        DEVDEP(graph).font->max_bounds.descent + 1;
+        /* font size */
+    if (!cp_getvar("xfont_size", CP_NUM, &xfont_size))
+        xfont_size = 16;
+
+    if(old_x11) {
+        graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
+            DEVDEP(graph).font->min_bounds.lbearing + 1;
+        graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
+            DEVDEP(graph).font->max_bounds.descent + 1;
+    }
+    else {
+        int wl, wh;
+        Xget_str_length("ABCD", &wl, &wh);
+        graph->fontwidth = (int)(wl / 4);
+        graph->fontheight = wh;
+        DEVDEP(graph).fsize = xfont_size;
+    }
 
     XtRealizeWidget(DEVDEP(graph).shell);
 
@@ -461,13 +489,21 @@ X11_NewViewport(GRAPH *graph)
     w_attrs.bit_gravity = ForgetGravity;
     XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
                             &w_attrs);
+
     /* have to note font and set mask GCFont in XCreateGC, p.w.h. */
-    gcvalues.font = DEVDEP(graph).font->fid;
     gcvalues.line_width = MW_LINEWIDTH;
     gcvalues.cap_style = CapNotLast;
     gcvalues.function = GXcopy;
-    DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
+    if (old_x11) {
+        gcvalues.font = DEVDEP(graph).font->fid;
+        DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
                                  GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
+    }
+    else
+        DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
+                                 GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
+
+
 
     /* should absolute.positions really be shell.pos? */
     graph->absolute.xpos = DEVDEP(graph).view->core.x;
@@ -553,16 +589,50 @@ X11_Text(char *text, int x, int y, int angle)
 {
     /* We specify text position by lower left corner, so have to adjust for
        X11's font nonsense. */
-    NG_IGNORE(angle);
 
-    if (DEVDEP(currentgraph).isopen)
-        XDrawString(display, DEVDEP(currentgraph).window,
-                    DEVDEP(currentgraph).gc, x,
-                    currentgraph->absolute.height
-                    - (y + DEVDEP(currentgraph).font->max_bounds.descent),
-                    text, (int) strlen(text));
+    if(old_x11) {
+        if (DEVDEP(currentgraph).isopen)
+            XDrawString(display, DEVDEP(currentgraph).window,
+                        DEVDEP(currentgraph).gc, x,
+                        currentgraph->absolute.height
+                        - (y + DEVDEP(currentgraph).font->max_bounds.descent),
+                        text, (int) strlen(text));
 
-    /* note: unlike before, we do not save any text here */
+        /* note: unlike before, we do not save any text here */
+        return 0;
+    }
+
+    /* new font selection with rotation */
+    XftPattern *new_pat = XftPatternCreate(); // the pattern we will use for rotating
+    XftPatternAddString(new_pat, XFT_FAMILY, DEVDEP(currentgraph).fname);
+    XftPatternAddDouble (new_pat, XFT_PIXEL_SIZE, (double)DEVDEP(currentgraph).fsize);
+
+    if(angle != 0){
+        XftMatrix m;
+        XftMatrixInit(&m);
+        XftMatrixRotate(&m,cos(M_PI*angle/180.),sin(M_PI*angle/180.));
+        XftPatternAddMatrix (new_pat, XFT_MATRIX,&m);
+    }
+
+    XftResult rot_result;
+    XftPattern *rot_pat = XftFontMatch(display, 0, new_pat, &rot_result); /* do not destroy!*/
+    XftFont *new_font = XftFontOpenPattern(display, rot_pat);
+    XftPatternDestroy(new_pat);
+
+    Colormap cmap = DefaultColormap(display, 0);
+    XftColor color;
+    XftColorAllocName(display, DefaultVisual(display, 0), cmap, DEVDEP(currentgraph).txtcolor, &color);
+    XftDraw* draw = XftDrawCreate(
+        display, DEVDEP(currentgraph).window, DefaultVisual(display, 0), cmap
+    );
+    /* Draw text */
+    XftDrawStringUtf8(
+        draw, &color, new_font,
+        x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text)
+    );
+    XftFontClose( display, new_font);
+    XftDrawDestroy(draw);
+    XftColorFree(display, DefaultVisual(display, 0), cmap, &color);
     return 0;
 }
 
@@ -905,7 +975,8 @@ RemoveWindow(GRAPH *graph)
         /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */
         XtUnmapWidget(DEVDEP(graph).shell);
         XtDestroyWidget(DEVDEP(graph).shell);
-        XFreeFont(display, DEVDEP(graph).font);
+        if (old_x11)
+            XFreeFont(display, DEVDEP(graph).font);
         XFreeGC(display, DEVDEP(graph).gc);
     }
 
@@ -1102,10 +1173,35 @@ linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
     }
 }
 
+    /* After font selection for XftTextExtentsUtf8
+     * to measure character string length.
+     * Same as rotation below, but 0° angle */
+int
+Xget_str_length(char *text, int* wlen, int* wheight) {
+    XGlyphInfo extents;
+    XftPattern *ext_pat = XftPatternCreate(); // the pattern we will use for rotating
+    XftPatternAddString(ext_pat, XFT_FAMILY, fontname);
+    XftPatternAddDouble (ext_pat, XFT_PIXEL_SIZE, (double)xfont_size);
+    XftResult ext_result;
+    XftFont *ext_font = XftFontOpenPattern(display, XftFontMatch(display, 0, ext_pat, &ext_result));
+    XftTextExtentsUtf8( display, ext_font, (XftChar8 *)text, strlen(text), &extents );
+    XftFontClose( display, ext_font);
+    XftPatternDestroy(ext_pat);
+    /* size of the string */
+    *wlen = extents.width;
+    *wheight = extents.height;
+    return 0;
+}
 
 #else
 
 int x11_dummy_symbol;
 /* otherwise, some linkers get upset */
-
+int
+Xget_str_length(char *text, int*l, int*w) {
+    NG_IGNORE(text);
+    NG_IGNORE(*l);
+    NG_IGNORE(*w);
+    return 0;
+}
 #endif /* X_DISPLAY_MISSING */

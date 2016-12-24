@@ -361,7 +361,10 @@ extern void vec_transpose(struct dvec *v);
 extern bool ft_intrpt;
 extern bool ft_setflag;
 extern bool ext_asc;
+extern bool old_x11;
 
-/* error.c */
+/* x11.c */
+extern int Xget_str_length(char *text, int *w, int *l);
+
 
 #endif

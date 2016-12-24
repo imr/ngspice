@@ -159,10 +159,19 @@ gr_redrawgrid(GRAPH *graph)
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);                
+                        (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);
             }
 #endif
-            else /* FIXME: for now excluding X11 and others */
+            /* new x11 with xft and utf-8 */
+            else if ((!old_x11) && (!ext_asc)) {
+                int wlen = 0, wheight = 0;
+                Xget_str_length(graph->grid.ylabel, &wlen, &wheight);
+                DevDrawText(graph->grid.ylabel,
+                        (int)(1.2 * wheight),
+                        /*vertical text, midpoint in y is aligned midpoint of text string */
+                        (graph->absolute.height - wlen) / 2, 90);
+            }
+            else /* others */
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         graph->absolute.height / 2, 90);
