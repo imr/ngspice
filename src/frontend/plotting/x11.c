@@ -160,7 +160,8 @@ X11_Init(void)
   argv[2] = "-geometry";
   argv[3] = "=1x1+2+2";
 */
-
+    /* initialze internationalization (i18n) */
+    XtSetLanguageProc(NULL, NULL, NULL);
     /* initialize X toolkit */
     toplevel = XtInitialize("ngspice", "Nutmeg", NULL, 0, &argc, argv);
 
@@ -503,8 +504,6 @@ X11_NewViewport(GRAPH *graph)
         DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
                                  GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
 
-
-
     /* should absolute.positions really be shell.pos? */
     graph->absolute.xpos = DEVDEP(graph).view->core.x;
     graph->absolute.ypos = DEVDEP(graph).view->core.y;
@@ -517,6 +516,7 @@ X11_NewViewport(GRAPH *graph)
     /* set up cursor */
     cursor = XCreateFontCursor(display, XC_left_ptr);
     XDefineCursor(display, DEVDEP(graph).window, cursor);
+
 
     /* WM_DELETE_WINDOW protocol */
     atom_wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
