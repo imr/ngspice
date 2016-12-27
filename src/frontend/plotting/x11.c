@@ -71,6 +71,7 @@ typedef struct x11info {
     Pixel colors[NUMCOLORS];
     /* use with xft */
     char txtcolor[16];
+    char bgcolor[16];
     char fname[BSIZE_SP];
     int fsize;
 } X11devdep;
@@ -252,6 +253,8 @@ initcolors(GRAPH *graph)
             /* text color info for xft */
             if((!old_x11) && (i == 1))
                     strncpy(DEVDEP(graph).txtcolor, colorstring, 15);
+            else if((!old_x11) && (i == 0))
+                    strncpy(DEVDEP(graph).bgcolor, colorstring, 15);
 
             if (!XAllocNamedColor(display,
                                   DefaultColormap(display, DefaultScreen(display)),
@@ -445,6 +448,7 @@ X11_NewViewport(GRAPH *graph)
     /* set up fonts */
     if (!cp_getvar("xfont", CP_STRING, fontname))
         (void) strcpy(fontname, DEF_FONT);
+    strncpy(DEVDEP(graph).fname, fontname, BSIZE_SP - 1);
     if(old_x11) {
         for (p = fontname; *p && *p <= ' '; p++)
             ;
@@ -899,8 +903,9 @@ zoomin(GRAPH *graph)
                        "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e; setplot $curplot\n",
                        buf2, graph->commandline, fx0, fx1, fy0, fy1);
     } else {
-        (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
-                       graph->commandline, fx0, fx1, fy0, fy1);
+        /* set the foreground and background colors to the "calling" window's colors */
+        (void) sprintf(buf, "set color0=%s; set color1=%s; %s xlimit %e %e ylimit %e %e\n",
+                       DEVDEP(graph).bgcolor, DEVDEP(graph).txtcolor, graph->commandline, fx0, fx1, fy0, fy1);
     }
 
 /* don't use the following if using GNU Readline or BSD EditLine */
@@ -927,7 +932,7 @@ hardcopy(Widget w, XtPointer client_data, XtPointer call_data)
     NG_IGNORE(call_data);
     NG_IGNORE(w);
 
-    /* com_hardcopy() -> gr_resize() -> setcolor() dirung postscript
+    /* com_hardcopy() -> gr_resize() -> setcolor() during postscript
        printing will act on currentgraph with a DEVDEP inherited from PSdevdep.
        But currentgraph had not changed its devdep, which was derived from
        incompatible X11devdep, thus overwriting some variables. Here you find a
