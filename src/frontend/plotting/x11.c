@@ -14,6 +14,7 @@ Author: 1988 Jeffrey M. Hsu
 #  include <sys/time.h>
 #  include <sys/types.h>  /* PN */
 #  include <unistd.h>     /* PN */
+#  include <locale.h>
 
 #  include "ngspice/graph.h"
 #  include "ngspice/ftedbgra.h"
@@ -164,6 +165,7 @@ X11_Init(void)
     XtSetLanguageProc(NULL, NULL, NULL);
     /* initialize X toolkit */
     toplevel = XtInitialize("ngspice", "Nutmeg", NULL, 0, &argc, argv);
+    setlocale(LC_NUMERIC, "C");
 
     display = XtDisplay(toplevel);
 
