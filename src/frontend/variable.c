@@ -18,6 +18,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "quote.h"
 #include "ngspice/cpextern.h"
 #include "variable.h"
+#include "numparam/numpaif.h"
 
 
 bool cp_noglob = TRUE;
@@ -718,7 +719,8 @@ vareval(char *string)
     char buf[BSIZE_SP], *s;
     char *oldstring = copy(string);
     char *range = NULL;
-    int i, up, low;
+    int i, up, low, found;
+    double val;
 
     cp_wstrip(string);
     if ((s = strchr(string, '[')) != NULL) {
@@ -782,6 +784,18 @@ vareval(char *string)
         tfree(oldstring);
         free_struct_variable(vfree); /* bug: free still used struct variable */
         return (wl);
+
+    case '.': /* mhx: evaluate parameters */
+	string++;
+	val = nupa_get_param(string, &found);
+	if (!found) {
+	   fprintf(cp_err, "ERROR: %s: no such parameter.\n", string);
+	   tfree(oldstring);
+	   return NULL;
+	 }
+	 wl = wl_cons(tprintf("%20.16e", val), NULL);
+	 tfree(oldstring);
+	 return wl;
 
     case '\0':
         wl = wl_cons(copy("$"), NULL);
