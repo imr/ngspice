@@ -105,6 +105,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
     char *s;                    /* value of dynamic string */
     char *t_p;                  /* value of t dynamic string */
     SPICE_DSTRING tstr;         /* temporary dynamic string */
+    char type;
 
     n = 0;
     spice_dstring_init(&tstr);
@@ -117,7 +118,12 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
         if (s[i] == '{') {
 
             /* something to strip */
-            j = i + 1;
+	    switch (s[i + 1]) {
+	    case '%': type = '%'; break;
+	    case '$': type = '$'; break;
+	    default:  type = '0';
+	    }
+	    j = i + 1;
             nest = 1;
             n++;
 
@@ -139,8 +145,8 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
             cadd(&tstr, ' ');
             {
-                char buf[25+1];
-                sprintf(buf, "numparm__________%08lx", placeholder);
+                char buf[ACT_CHARACTS + 1];
+                sprintf(buf, "numparm__________%07lx%c", placeholder, type); /* mhx */
                 sadd(&tstr, buf);
             }
             cadd(&tstr, ' ');

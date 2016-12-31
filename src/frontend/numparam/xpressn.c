@@ -23,7 +23,6 @@
 extern char *nupa_inst_name;    /* see spicenum.c */
 extern long dynsubst;           /* see inpcom.c */
 
-#define ACT_CHARACTS 25      /* actual string length to be inserted and replaced */
 
 #define  S_init   0
 #define  S_atom   1
@@ -1142,10 +1141,15 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     entry_t *entry;
     bool numeric, done, nolookup;
     bool err;
+    char type = '0';
 
     spice_dstring_reinit(qstr_p);
     numeric = 0;
     err = 0;
+
+	 if (t[0] == '%') { type = '%'; t++; }
+    else if (t[0] == '$') { type = '$'; t++; }
+    else type = '0';
 
     if (mode == 1) {
         /* string? */
@@ -1205,8 +1209,16 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
          */
 
         char buf[ACT_CHARACTS + 1];
-        if (snprintf(buf, sizeof(buf), "% 25.17e", u) != ACT_CHARACTS) {
-            fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
+	bool errs = NO;
+	switch (type) {
+	case '0': errs = (snprintf(buf, sizeof(buf), "% *.17e", ACT_CHARACTS, u) != ACT_CHARACTS); break;
+	case '$': errs = (snprintf(buf, sizeof(buf), "% *s", ACT_CHARACTS, u ? "yes" : "no") != ACT_CHARACTS); break;
+	case '%': errs = (snprintf(buf, sizeof(buf), "% *d", ACT_CHARACTS, (int)u) != ACT_CHARACTS); break;
+	default : errs = YES;
+	}
+	if (errs) {
+            fprintf(cp_err, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
+	    fprintf(cp_err, "Expression under consideration = `%s', value to be substituted = %g\n", t, u);
             controlled_exit(1);
         }
         scopys(qstr_p, buf);
@@ -1227,18 +1239,15 @@ insertnumber(dico_t *dico, int i, char *s, SPICE_DSTRINGPTR ustr_p)
     char buf[ACT_CHARACTS+1];
 
     long id = 0;
-    int  n  = 0;
+    int  n  = 0, res = 0;
 
     char *p = strstr(s+i, "numparm__________");
 
-    if (p &&
-        (1 == sscanf(p, "numparm__________%8lx%n", &id, &n)) &&
-        (n == ACT_CHARACTS) &&
-        (id > 0) && (id < dynsubst + 1) &&
-        (snprintf(buf, sizeof(buf), "%-25s", u) == ACT_CHARACTS))
-    {
-        memcpy(p, buf, ACT_CHARACTS);
-        return (int)(p - s) + ACT_CHARACTS;
+    if (p) res = sscanf(p, "numparm__________%7lx%n", &id, &n);
+    if (p && (res == 1) && (n == ACT_CHARACTS) && (id > 0) && (id < dynsubst + 1) &&
+	(snprintf(buf, sizeof(buf), "%-*s", ACT_CHARACTS, u) == ACT_CHARACTS)) {
+	memcpy(p, buf, ACT_CHARACTS); *(p + ACT_CHARACTS) = ' ';
+	return (int)(p - s) + ACT_CHARACTS;
     }
 
     message

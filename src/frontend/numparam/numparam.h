@@ -65,3 +65,5 @@ dico_t *nupa_fetchinstance(void);
 char getidtype(dico_t *, char *s);
 entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op, struct nscope *level);
 void del_attrib(void *);
+
+#define ACT_CHARACTS 24      /* actual string length to be inserted and replaced */
