@@ -13,6 +13,7 @@
 #include "ngspice/dvec.h"
 #include "../frontend/variable.h"
 #include "ngspice/compatmode.h"
+#include "../../src/spicelib/parser/inpxx.h"
 
 
 /* random numbers in /maths/misc/randnumb.c */
@@ -79,17 +80,22 @@ limit(double nominal_val, double abs_variation)
     return (nominal_val + (drand() > 0 ? abs_variation : -1. * abs_variation));
 }
 
+static double table(double x, int n, double *data) {
+	struct pwldata { int n; double *vals; } pdata;
+	pdata.n = n; pdata.vals = data;
+	return PTpwl(x, &pdata);
+}
 
 static const char *fmathS =     /* all math functions */
     "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG LOG10 SINH COSH"
     " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
-    " ASIN ACOS ATAN ASINH ACOSH ATANH TAN NINT";
+    " ASIN ACOS ATAN ASINH ACOSH ATANH TAN NINT TABLE";
 
 
 enum {
     XFU_SQR = 1, XFU_SQRT, XFU_SIN, XFU_COS, XFU_EXP, XFU_LN, XFU_ARCTAN, XFU_ABS, XFU_POW, XFU_PWR, XFU_MAX, XFU_MIN, XFU_INT, XFU_LOG, XFU_LOG10, XFU_SINH, XFU_COSH,
     XFU_TANH, XFU_TERNARY_FCN, XFU_AGAUSS, XFU_SGN, XFU_GAUSS, XFU_UNIF, XFU_AUNIF, XFU_LIMIT, XFU_CEIL, XFU_FLOOR,
-    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT
+    XFU_ASIN, XFU_ACOS, XFU_ATAN, XFU_ASINH, XFU_ACOSH, XFU_ATANH, XFU_TAN, XFU_NINT, XFU_TABLE
 };
 
 
@@ -906,6 +912,7 @@ operate(char op, double x, double y)
 
 
 #define nprece 9 /* maximal nb of precedence levels */
+#define MAXARGS 256
 
 static double
 formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
@@ -955,11 +962,11 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
         char c = *s;
         if (c == '(') {
             /* sub-formula or math function */
-            double v = 1.0, w = 0.0;
-            /* new: must support multi-arg functions */
-            const char *kptr = ++s;
-            const char *arg2 = NULL;
-            const char *arg3 = NULL;
+	    double wx[MAXARGS] = { 0 };		 /* mhx */
+	    const char *arg[MAXARGS] = { NULL }; /* mhx */
+	    double v = 1, w = 0;
+	    const char *kptr = ++s;
+	    int argi = 2;
             char d;
 
             level = 1;
@@ -974,13 +981,11 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                 else if (d == ')')
                     level--;
 
-                if ((d == ',') && (level == 1)) {
-                    if (arg2 == NULL)
-                        arg2 = kptr;
-                    else
-                        arg3 = kptr; /* kludge for more than 2 args (ternary expression) */
-                }                 /* comma list? */
-
+                if ((d == ',') && (level == 1)) arg[argi++] = kptr;
+		if (argi >= MAXARGS) { 
+			fprintf(cp_err, "ERROR: Too many (>%d) arguments.\n", MAXARGS); 
+			controlled_exit(1); 
+		}
             } while ((kptr <= s_end) && !((d == ')') && (level <= 0)));
 
             // fixme, here level = 0 !!!!! (almost)
@@ -988,16 +993,13 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             if (kptr > s_end) {
                 error = message(dico, "Closing \")\" not found.\n");
                 natom++;        /* shut up other error message */
-            } else {
-                if (arg2 > s) {
-                    v = formula(dico, s, arg2 - 1, &error);
-                    s = arg2;
-                }
-                if (arg3 > s) {
-                    w = formula(dico, s, arg3 - 1, &error);
-                    s = arg3;
-                }
-                u = formula(dico, s, kptr - 1, &error);
+	    }
+	    else {
+		int ix;
+		for (ix = 2; ix < argi; ix++) /* mhx */
+		    if (arg[ix] > s) { wx[ix] = formula(dico, s, arg[ix] - 1, &error); s = arg[ix]; }
+		    u = formula(dico, s, kptr - 1, &error);
+		    v = wx[2]; w = wx[3]; wx[argi] = u; /* mhx */
                 state = S_atom;
                 if (fu > 0) {
                     if ((fu == XFU_TERNARY_FCN))
@@ -1012,6 +1014,8 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                         u = aunif(v, u);
                     else if ((fu == XFU_LIMIT))
                         u = limit(v, u);
+		    else if ((fu == XFU_TABLE))
+			u = table(wx[2], argi - 2, &wx[3]); /* mhx */
                     else
                         u = mathfunction(fu, v, u);
                 }
