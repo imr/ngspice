@@ -265,6 +265,7 @@ extern char *Spice_Path;
 extern char *Help_Path;
 extern char *Lib_Path;
 extern char *Inp_Path;
+extern char *Outp_Path;
 extern char *Infile_Path;
 
 #ifdef TCL_MODULE
