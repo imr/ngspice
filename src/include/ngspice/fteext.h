@@ -226,6 +226,10 @@ void eval_seed_opt(struct line *deck);
 extern char **circarray;
 extern void rem_tlist(struct pt_temper *p);
 
+/* inpcom.c */
+
+extern bool is_absolute_pathname(const char *p);
+
 /* nutinp.c */
 
 void inp_nutsource(FILE *fp, bool comfile, char *filename);
@@ -286,6 +290,7 @@ extern int raw_prec;
 extern void raw_write(char *name, struct plot *pl, bool app, bool binary);
 extern void spar_write(char *name, struct plot *pl, double val);
 extern struct plot *raw_read(char *name);
+extern char *set_output_path(char *filename);
 
 /* meas.c */
 extern bool do_measure(char *what, bool chk_only);

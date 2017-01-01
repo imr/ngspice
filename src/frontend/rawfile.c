@@ -58,6 +58,9 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         return;
     }
 
+    /* add user defined path (nnmae has to be freed after usage) */
+    char *nname = set_output_path(name);
+
     if (raw_prec != -1)
         prec = raw_prec;
     else
@@ -67,29 +70,33 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     /* - Binary file binary write -  hvogt 15.03.2000 ---------------------*/
     if (binary) {
-        if ((fp = fopen(name, app ? "ab" : "wb")) == NULL) {
-            perror(name);
+        if ((fp = fopen(nname, app ? "ab" : "wb")) == NULL) {
+            perror(nname);
+            tfree(nname);
             return;
         }
-        fprintf(cp_out, "binary raw file \"%s\"\n", name);
+        fprintf(cp_out, "binary raw file \"%s\"\n", nname);
     } else {
-        if ((fp = fopen(name, app ? "a" : "w")) == NULL) {
-            perror(name);
+        if ((fp = fopen(nname, app ? "a" : "w")) == NULL) {
+            perror(nname);
+            tfree(nname);
             return;
         }
-        fprintf(cp_out, "ASCII raw file \"%s\"\n", name);
+        fprintf(cp_out, "ASCII raw file \"%s\"\n", nname);
     }
     /* --------------------------------------------------------------------*/
 
 #else
 
-    if (!(fp = fopen(name, app ? "a" : "w"))) {
-        perror(name);
+    if (!(fp = fopen(nname, app ? "a" : "w"))) {
+        perror(nname);
+        tfree(nname);
         return;
     }
 
 #endif
 
+    tfree(nname);
     numdims = nvars = length = 0;
     for (v = pl->pl_dvecs; v; v = v->v_next) {
         if (iscomplex(v))
@@ -792,4 +799,37 @@ spar_write(char *name, struct plot *pl, double Rbaseval)
     }
 
     (void) fclose(fp);
+}
+
+
+/* Add a user selectable path to the filename for output. Directory given must already exist.
+ * absolute mingw path + filename: transform to Windows path, copy and return
+ * absolute path + filename: copy and return
+ * variable outputpath contains an output path: add filename to path, copy and return
+ * environment variable NGSPICE_OUTPUT_DIR has output path: add filename to path, copy and return
+ * neither outputpath nor NGSPICE_OUTPUT_DIR is set: copy and return filename */
+char *
+set_output_path(char *filename)
+{
+    char varpath[BSIZE_SP];
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
+    if (cp_getvar("mingwpath", CP_BOOL, NULL) && filename[0] == DIR_TERM_LINUX && isalpha_c(filename[1]) && filename[2] == DIR_TERM_LINUX) {
+        char buf[BSIZE_SP];
+        strcpy(buf, filename);
+        buf[0] = buf[1];
+        buf[1] = ':';
+        return set_output_path(buf);
+    }
+#endif
+
+    if (is_absolute_pathname(filename))
+        return copy(filename);
+    else if (cp_getvar("outputpath", CP_STRING, &varpath))
+        return tprintf("%s/%s", varpath, filename);
+    else if (Outp_Path)
+        return tprintf("%s/%s", Outp_Path, filename);
+    else
+        return copy(filename);
 }
