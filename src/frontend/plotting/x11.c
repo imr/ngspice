@@ -409,6 +409,7 @@ X11_NewViewport(GRAPH *graph)
     DEVDEP(graph).shell = XtCreateApplicationShell
         ("shell", topLevelShellWidgetClass, NULL, 0);
 
+    XtVaSetValues(DEVDEP(graph).shell, XtNtitleEncoding, XInternAtom(display, "UTF8_STRING", False), NULL);
     XtVaSetValues(DEVDEP(graph).shell, XtNtitle, graph->plotname, NULL);
 
     /* set up form widget */
@@ -449,6 +450,7 @@ X11_NewViewport(GRAPH *graph)
     if (!cp_getvar("xfont", CP_STRING, fontname))
         (void) strcpy(fontname, DEF_FONT);
     strncpy(DEVDEP(graph).fname, fontname, BSIZE_SP - 1);
+
     if(old_x11) {
         for (p = fontname; *p && *p <= ' '; p++)
             ;
