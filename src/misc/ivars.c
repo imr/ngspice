@@ -15,6 +15,7 @@ char *News_File;
 char *Help_Path;
 char *Lib_Path;
 char *Inp_Path;
+char *Outp_Path;
 
 #if defined (SHARED_MODULE) && defined (HAS_RELPATH)
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -135,6 +136,8 @@ ivars(char *argv0)
     env_overr(&Inp_Path, "NGSPICE_INPUT_DIR");
     Inp_Path = copy(Inp_Path); /* allow tfree */
 #endif
+    env_overr(&Outp_Path, "NGSPICE_OUTPUT_DIR");
+    Outp_Path = copy(Outp_Path); /* allow tfree */
     env_overr(&Spice_Host, "SPICE_HOST"); /* aspice */
     env_overr(&Bug_Addr, "SPICE_BUGADDR");
     env_overr(&Def_Editor, "SPICE_EDITOR");
@@ -156,4 +159,5 @@ destroy_ivars(void)
     tfree(Lib_Path);
     tfree(Spice_Path);
     tfree(Inp_Path);
+    tfree(Outp_Path);
 }

@@ -1080,7 +1080,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 }
 
 
-static bool
+bool
 is_absolute_pathname(const char *p)
 {
 #if defined(__MINGW32__) || defined(_MSC_VER)
