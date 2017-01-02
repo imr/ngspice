@@ -563,11 +563,14 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
          entry;
          entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
     {
-        if (entry->tp == 'R') {
+        if (entry->tp == 'R' || entry->tp == 'S') {
             spice_dstring_reinit(& dico->lookup_buf);
             scopy_lower(& dico->lookup_buf, entry->symbol);
             name = spice_dstring_value(& dico->lookup_buf);
-            fprintf(fp, "       ---> %s = %g\n", name, entry->vl);
+	    fprintf(fp, "       ---> %s = ", name);
+	    if(entry->tp == 'R') 
+	         fprintf(fp, "%g\n", entry->vl); 
+	    else fprintf(fp, "%s\n", entry->sbbase);
             spice_dstring_free(& dico->lookup_buf);
         }
     }
@@ -613,7 +616,7 @@ nupa_list_params(FILE *fp)
  * table.
  * ----------------------------------------------------------------- */
 double
-nupa_get_param(char *param_name, int *found)
+nupa_get_param(char *param_name, int *found, char **text)
 {
     int depth;                  /* nested subcircit depth */
     char *up_name;              /* current parameter upper case */
@@ -632,10 +635,13 @@ nupa_get_param(char *param_name, int *found)
         if (htable_p) {
             entry = (entry_t *) nghash_find(htable_p, up_name);
             if (entry) {
-                result = entry->vl;
-                *found = 1;
-                break;
-            }
+		    switch (entry->tp) {
+		    case 'S': result = 1; *found = 'S'; *text = entry->sbbase; break;
+		    case 'R': result = entry->vl; *found = 'R'; break;
+		    default:  *found = 0; fprintf(cp_err, "ERROR: nupa found an unrecognized type (%c).\n", entry->tp);
+		    }
+		    break;
+	    }
         }
     }
 

@@ -998,8 +998,8 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 		int ix;
 		for (ix = 2; ix < argi; ix++) /* mhx */
 		    if (arg[ix] > s) { wx[ix] = formula(dico, s, arg[ix] - 1, &error); s = arg[ix]; }
-		    u = formula(dico, s, kptr - 1, &error);
-		    v = wx[2]; w = wx[3]; wx[argi] = u; /* mhx */
+		u = formula(dico, s, kptr - 1, &error);
+		v = wx[2]; w = wx[3]; wx[argi] = u; /* mhx */
                 state = S_atom;
                 if (fu > 0) {
                     if ((fu == XFU_TERNARY_FCN))
@@ -1552,6 +1552,9 @@ nupa_assignment(dico_t *dico, char *s, char mode)
             error = message(dico, " Identifier expected\n");
 
         if (!error) {
+	    int ix; 
+	    char *strptr = NULL;
+
             /* assignment expressions */
             while ((i <= ls) && (s[i - 1] != '='))
                 i++;
@@ -1559,7 +1562,12 @@ nupa_assignment(dico_t *dico, char *s, char mode)
             if (i > ls)
                 error = message(dico, " = sign expected.\n");
 
-            dtype = getexpress(s, &ustr, &i);
+	    for (ix = i; ix < ls - 1; ix++) { /* change delimiters {` and `} to double quotes */
+		    if (s[ix] == '{' && s[ix + 1] == '`') { s[ix] = ' '; s[ix + 1] = '"'; strptr = &s[ix + 1]; }
+		    if (s[ix] == '`' && s[ix + 1] == '}') { s[ix] = '"'; s[ix + 1] = '\0'; }
+	    }
+
+	    dtype = getexpress(s, &ustr, &i);
 
             if (dtype == 'R') {
                 const char *tmp = spice_dstring_value(&ustr);
@@ -1573,7 +1581,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
             }
 
             err = nupa_define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,
-                         dtype, rval, wval, NULL, NULL);
+                         dtype, rval, wval, strptr, NULL);
             error = error || err;
         }
 
