@@ -1,0 +1,33 @@
+* indentify non-viable inductive systems (4x4 case)
+
+* this excersices the "merging" case in muttemp.c
+
+* (compile (concat "../../../w32/src/ngspice " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../w32/src/ngspice " buffer-file-name) t)
+
+.subckt ind4 a b c d L11=0 L22=0 L33=0 L44=0 L12=0 L13=0 L14=0 L23=0 L24=0 L34=0
+R1 a 1 1k
+R2 b 2 1k
+R3 c 3 1k
+R4 d 4 1k
+L1 a 0 {L11}
+L2 b 0 {L22}
+L3 c 0 {L33}
+L4 d 0 {L44}
+K13 L1 L3 {L13/sqrt(abs(L11*L33))}
+K14 L1 L4 {L14/sqrt(abs(L11*L44))}
+K23 L2 L3 {L23/sqrt(abs(L22*L33))}
+K24 L2 L4 {L24/sqrt(abs(L22*L44))}
+K12 L1 L2 {L12/sqrt(abs(L11*L22))}
+K34 L3 L4 {L34/sqrt(abs(L33*L44))}
+.ends
+
+Xgood1 a b c d ind4 L11=1u L22=4u L33=3u L44=5u L12=1n L13=1n L14=1n L23=1n L24=1n L34=1n
+
+.control
+op
+remcirc
+quit 0
+.endc
+
+.end

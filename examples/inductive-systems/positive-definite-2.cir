@@ -1,0 +1,31 @@
+* indentify non-viable inductive systems (3xx case)
+
+* (compile (concat "../../../w32/src/ngspice " buffer-file-name) t)
+* (compile (concat "valgrind --track-origins=yes --leak-check=full --show-reachable=yes ../../../w32/src/ngspice " buffer-file-name) t)
+
+.subckt ind3 a b c L11=10u L22=11u L33=10u K12=0 K13=0 K23=0
+R1 a n1 1k
+R2 b n2 1k
+R4 c n3 1k
+L1 n1 0 {L11}
+L2 n2 0 {L22}
+L3 n3 0 {L33}
+K12 L1 L2 {K12}
+K13 L1 L3 {K13}
+K23 L2 L3 {K23}
+.ends
+
+Xgood1 a b c ind3
+Xgood2 a b c ind3 K12=0.96 K23=0.99 K13=0.98
+Xgood3 a b c ind3 K12=0.96 K23=0.99 K13=0.9898988607
+Xbad4  a b c ind3 K12=0.96 K23=0.99 K13=0.9898988608
+Xborder5  a b c ind3 K12=1 K23=1 K13=1
+Xbad6  a b c ind3 K12=1.01 K23=1 K13=1
+
+.control
+op
+remcirc
+quit 0
+.endc
+
+.end
