@@ -715,11 +715,12 @@ wordlist *
 vareval(char *string)
 {
     struct variable *v, *vfree = NULL;
-    wordlist *wl;
+    wordlist *wl = NULL;
     char buf[BSIZE_SP], *s;
     char *oldstring = copy(string);
     char *range = NULL;
     int i, up, low, found;
+    char *text, *snew = NULL;
     double val;
 
     cp_wstrip(string);
@@ -785,17 +786,23 @@ vareval(char *string)
         free_struct_variable(vfree); /* bug: free still used struct variable */
         return (wl);
 
-    case '.': /* mhx: evaluate parameters */
+    case '.': /* mhx: evaluate a numeric/string .parameter */
 	string++;
-	val = nupa_get_param(string, &found);
+	val = nupa_get_param(string, &found, &text);
 	if (!found) {
-	   fprintf(cp_err, "ERROR: %s: no such parameter.\n", string);
-	   tfree(oldstring);
-	   return NULL;
-	 }
-	 wl = wl_cons(tprintf("%20.16e", val), NULL);
-	 tfree(oldstring);
-	 return wl;
+	    fprintf(cp_err, "ERROR: %s: no such parameter.\n", string);
+	    tfree(oldstring);
+	    return NULL;
+	}
+	if (found == 'R')
+	    wl = wl_cons(tprintf("%20.16e", val), NULL);
+	else if (text && found == 'S') {
+	    snew = copy(text + 1);
+	    snew[MAX(0, strlen(snew) - 1)] = '\0'; /* strip leading and trailing quote */
+	    wl = wl_cons(snew, NULL);
+	}
+	tfree(oldstring);
+	return wl;
 
     case '\0':
         wl = wl_cons(copy("$"), NULL);
