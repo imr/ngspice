@@ -125,6 +125,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
             if (sz < system->size)
                 sz = system->size;
 
+        char *pop = TMALLOC(char, sz * sz);
         double *INDmatrix = TMALLOC(double, sz * sz);
 
         for (system = first_system; system; system = system->next_system) {
@@ -135,6 +136,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             sz = system->size;
 
+            memset(pop, 0, (size_t)(sz*sz));
             memset(INDmatrix, 0, (size_t)(sz*sz) * sizeof(double));
 
             INDinstance *ind = system->first_ind;
@@ -144,9 +146,19 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             MUTinstance *mut = system->first_mut;
+            int expect = (sz*sz - sz) / 2;
+            int repetitions = 0;
             for (; mut; mut = mut->system_next_mut) {
                 int j = mut->MUTind1->system_idx;
                 int k = mut->MUTind2->system_idx;
+                if (j < k)
+                    SWAP(int, j, k);
+                if (pop[j*sz + k]) {
+                    repetitions ++;
+                } else {
+                    pop[j*sz + k] = 1;
+                    expect --;
+                }
                 INDmatrix [j * sz + k] = INDmatrix [k * sz + j] = mut->MUTfactor;
             }
 
@@ -167,7 +179,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     }
             }
 
-            if (!positive) {
+            if (!positive || repetitions || expect) {
                 fprintf(stderr, "The Inductive System consisting of\n");
                 for (ind = system->first_ind; ind; ind = ind->system_next_ind)
                     fprintf(stderr, " %s", ind->INDname);
@@ -175,17 +187,23 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 for (mut = system->first_mut; mut; mut = mut->system_next_mut)
                     fprintf(stderr, " %s", mut->MUTname);
                 fprintf(stderr, "\n");
-                fprintf(stderr, "is not positive definite\n");
+                if (!positive)
+                    fprintf(stderr, "is not positive definite\n");
                 for (mut = system->first_mut; mut; mut = mut->system_next_mut)
                     if (fabs(mut->MUTcoupling) > 1.0)
                         fprintf(stderr, " |%s| > 1\n", mut->MUTname);
                 for (ind = system->first_ind; ind; ind = ind->system_next_ind)
                     if (ind->INDinduct < 0)
                         fprintf(stderr, " %s < 0\n", ind->INDname);
+                if (repetitions)
+                    fprintf(stderr, "has dupplicate K instances\n");
+                if (expect)
+                    fprintf(stderr, "has an incomplete set of K couplings, (missing ones are implicitly 0)\n");
                 fprintf(stderr, "\n");
             }
         }
 
+        tfree(pop);
         tfree(INDmatrix);
 
         for (system = first_system; system;) {
