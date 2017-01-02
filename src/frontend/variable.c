@@ -617,7 +617,8 @@ char cp_dol = '$';
  * special...
  */
 
-#define VALIDCHARS "$-_<#?@.()[]&"
+/* mhx added %. */
+#define VALIDCHARS "$-_<#?@.()[]&%"
 
 char *
 span_var_expr(char *t)
@@ -719,7 +720,8 @@ vareval(char *string)
     char buf[BSIZE_SP], *s;
     char *oldstring = copy(string);
     char *range = NULL;
-    int i, up, low, found;
+#define INTEGER 0
+    int i, up, low, found, fmt = !INTEGER;
     char *text, *snew = NULL;
     double val;
 
@@ -786,6 +788,7 @@ vareval(char *string)
         free_struct_variable(vfree); /* bug: free still used struct variable */
         return (wl);
 
+    case '%': fmt = INTEGER; /* fall through */
     case '.': /* mhx: evaluate a numeric/string .parameter */
 	string++;
 	val = nupa_get_param(string, &found, &text);
@@ -795,7 +798,9 @@ vareval(char *string)
 	    return NULL;
 	}
 	if (found == 'R')
-	    wl = wl_cons(tprintf("%20.16e", val), NULL);
+	   wl = (fmt==INTEGER) ?
+	     wl_cons(tprintf("%lld", (size_t)val), NULL) :
+	     wl_cons(tprintf("%20.16e", val), NULL) ;
 	else if (text && found == 'S') {
 	    snew = copy(text + 1);
 	    snew[MAX(0, strlen(snew) - 1)] = '\0'; /* strip leading and trailing quote */
@@ -809,6 +814,7 @@ vareval(char *string)
         tfree(oldstring);
         return (wl);
     }
+#undef INTEGER
 
     /* The notation var[stuff] has two meanings...  If this is a real
      * variable, then the [] denotes range, but if this is a strange
