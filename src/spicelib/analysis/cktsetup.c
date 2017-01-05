@@ -77,6 +77,7 @@ CKTsetup(CKTcircuit *ckt)
     SetAnalyse("Device Setup", 0);
 #endif
 
+    ckt->prev_CKTlastNode = ckt->CKTlastNode;
     for (i=0;i<DEVmaxnum;i++) {
         if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {
             error = DEVices[i]->DEVsetup (matrix, ckt->CKThead[i], ckt,
@@ -163,6 +164,9 @@ CKTunsetup(CKTcircuit *ckt)
                 error = e2;
         }
     }
+    if (ckt->prev_CKTlastNode != ckt->CKTlastNode)
+        fprintf(stderr, "Warning: CKTunsetup() was incomplete, this will cause serious problems, please report this issue !\n");
+
     ckt->CKTisSetup = 0;
     if(error) return(error);
 
