@@ -2500,6 +2500,20 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
                 here->BSIM4v6dbNode = 0;
             }
 
+            if (here->BSIM4v6gNodePrime
+                && here->BSIM4v6gNodePrime != here->BSIM4v6gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6gNodePrime);
+                here->BSIM4v6gNodePrime = 0;
+            }
+
+            if (here->BSIM4v6gNodeMid
+                && here->BSIM4v6gNodeMid != here->BSIM4v6gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6gNodeMid);
+                here->BSIM4v6gNodeMid = 0;
+            }
+
             if (here->BSIM4v6qNode)
             {
                 CKTdltNNum(ckt, here->BSIM4v6qNode);

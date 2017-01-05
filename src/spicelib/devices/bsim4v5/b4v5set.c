@@ -2163,6 +2163,18 @@ BSIM4v5unsetup(
                 CKTdltNNum(ckt, here->BSIM4v5dbNode);
                 here->BSIM4v5dbNode = 0;
             }
+            if (here->BSIM4v5gNodePrime
+                && here->BSIM4v5gNodePrime != here->BSIM4v5gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v5gNodePrime);
+                here->BSIM4v5gNodePrime = 0;
+            }
+            if (here->BSIM4v5gNodeMid
+                && here->BSIM4v5gNodeMid != here->BSIM4v5gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v5gNodeMid);
+                here->BSIM4v5gNodeMid = 0;
+            }
             if (here->BSIM4v5qNode)
             {
                 CKTdltNNum(ckt, here->BSIM4v5qNode);
