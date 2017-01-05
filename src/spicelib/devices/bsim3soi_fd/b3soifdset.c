@@ -1358,6 +1358,7 @@ B3SOIFDunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->B3SOIFDsNodePrime);
                 here->B3SOIFDsNodePrime = 0;
             }
+            // FIXME, lots missing !
         }
     }
     return OK;

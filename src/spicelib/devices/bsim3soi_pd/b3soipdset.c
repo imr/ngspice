@@ -1473,6 +1473,7 @@ B3SOIPDunsetup(
                 CKTdltNNum(ckt, here->B3SOIPDsNodePrime);
                 here->B3SOIPDsNodePrime = 0;
             }
+            // FIXME, lots missing !
         }
     }
     return OK;

@@ -412,12 +412,14 @@ HFETAunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->HFETAinstances; here != NULL;
                 here=here->HFETAnextInstance)
         {
+            // ouch, reorder, this is still needed some lines down
             if (here->HFETAdrainPrimeNode
                     && here->HFETAdrainPrimeNode != here->HFETAdrainNode)
             {
                 CKTdltNNum(ckt, here->HFETAdrainPrimeNode);
                 here->HFETAdrainPrimeNode = 0;
             }
+            // ouch, reorder, this is still needed some lines down
             if (here->HFETAsourcePrimeNode
                     && here->HFETAsourcePrimeNode != here->HFETAsourceNode)
             {

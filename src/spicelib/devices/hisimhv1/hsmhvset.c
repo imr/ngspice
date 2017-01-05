@@ -1504,6 +1504,7 @@ HSMHVunsetup(
                 CKTdltNNum(ckt, here->HSMHVsbNode);
                 here->HSMHVsbNode = 0;
             }
+            // FIXME, HSMHVtempNode HSMHVqiNode HSMHVqbNode
         }
     }
 #endif

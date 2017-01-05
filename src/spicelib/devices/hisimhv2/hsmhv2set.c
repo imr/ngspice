@@ -1772,6 +1772,7 @@ HSMHV2unsetup(
                 CKTdltNNum(ckt, here->HSMHV2sbNode);
                 here->HSMHV2sbNode = 0;
             }
+            // FIXME, HSMHV2tempNode HSMHV2qiNode HSMHV2qbNode
         }
     }
 #endif

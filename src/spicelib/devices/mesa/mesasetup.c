@@ -419,12 +419,14 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->MESAinstances; here != NULL;
                 here=here->MESAnextInstance)
         {
+            // ouch, reorder, this is still needed some lines down
             if (here->MESAdrainPrimeNode
                     && here->MESAdrainPrimeNode != here->MESAdrainNode)
             {
                 CKTdltNNum(ckt, here->MESAdrainPrimeNode);
                 here->MESAdrainPrimeNode = 0;
             }
+            // ouch, reorder, this is still needed some lines down
             if (here->MESAsourcePrimeNode
                     && here->MESAsourcePrimeNode != here->MESAsourceNode)
             {

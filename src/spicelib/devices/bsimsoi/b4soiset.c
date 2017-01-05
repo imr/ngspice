@@ -2768,6 +2768,7 @@ B4SOIunsetup(
                 CKTdltNNum(ckt, here->B4SOIsNodePrime);
                 here->B4SOIsNodePrime = 0;
             }
+            // FIXME, lots missing !
         }
     }
 #endif

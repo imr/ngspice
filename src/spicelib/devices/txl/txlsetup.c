@@ -179,6 +179,7 @@ TXLunsetup(GENmodel *inModel, CKTcircuit *ckt)
                CKTdltNNum(ckt, here->TXLibr2);
                here->TXLibr2 = 0;
           }
+          // FIXME TXLbranch
 
     here->TXLdcGiven=0;
 
