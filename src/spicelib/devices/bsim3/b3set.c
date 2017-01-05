@@ -1146,6 +1146,11 @@ BSIM3unsetup(
                 CKTdltNNum(ckt, here->BSIM3sNodePrime);
                 here->BSIM3sNodePrime = 0;
             }
+            if (here->BSIM3qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM3qNode);
+                here->BSIM3qNode = 0;
+            }
         }
     }
     return OK;

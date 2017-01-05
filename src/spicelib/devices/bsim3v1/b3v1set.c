@@ -976,6 +976,11 @@ BSIM3v1unsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->BSIM3v1sNodePrime);
                 here->BSIM3v1sNodePrime = 0;
             }
+            if (here->BSIM3v1qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM3v1qNode);
+                here->BSIM3v1qNode = 0;
+            }
         }
     }
     return OK;

@@ -1158,6 +1158,11 @@ BSIM3v32unsetup(
                 CKTdltNNum(ckt, here->BSIM3v32sNodePrime);
                 here->BSIM3v32sNodePrime = 0;
             }
+            if (here->BSIM3v32qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM3v32qNode);
+                here->BSIM3v32qNode = 0;
+            }
         }
     }
     return OK;
