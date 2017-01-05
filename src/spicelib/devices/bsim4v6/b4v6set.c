@@ -2499,6 +2499,12 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->BSIM4v6dbNode);
                 here->BSIM4v6dbNode = 0;
             }
+
+            if (here->BSIM4v6qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6qNode);
+                here->BSIM4v6qNode = 0;
+            }
         }
     }
 #endif

@@ -2163,6 +2163,11 @@ BSIM4v5unsetup(
                 CKTdltNNum(ckt, here->BSIM4v5dbNode);
                 here->BSIM4v5dbNode = 0;
             }
+            if (here->BSIM4v5qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v5qNode);
+                here->BSIM4v5qNode = 0;
+            }
         }
     }
 #endif

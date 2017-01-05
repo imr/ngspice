@@ -2653,6 +2653,11 @@ CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->BSIM4v7dbNode);
                 here->BSIM4v7dbNode = 0;
             }
+            if (here->BSIM4v7qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v7qNode);
+                here->BSIM4v7qNode = 0;
+            }
         }
     }
 #endif
