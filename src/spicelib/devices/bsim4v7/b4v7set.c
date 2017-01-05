@@ -2635,6 +2635,24 @@ CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->BSIM4v7sNodePrime);
                 here->BSIM4v7sNodePrime = 0;
             }
+            if (here->BSIM4v7sbNode
+                && here->BSIM4v7sbNode != here->BSIM4v7bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v7sbNode);
+                here->BSIM4v7sbNode = 0;
+            }
+            if (here->BSIM4v7bNodePrime
+                && here->BSIM4v7bNodePrime != here->BSIM4v7bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v7bNodePrime);
+                here->BSIM4v7bNodePrime = 0;
+            }
+            if (here->BSIM4v7dbNode
+                && here->BSIM4v7dbNode != here->BSIM4v7bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v7dbNode);
+                here->BSIM4v7dbNode = 0;
+            }
         }
     }
 #endif
