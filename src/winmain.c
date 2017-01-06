@@ -875,9 +875,12 @@ outahere:
 }
 
 
-
 /* Main entry point for our Windows application */
+#ifdef EXT_ASC
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
+#else
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR wlpszCmdLine, int nCmdShow)
+#endif
 {
     int ix, iy; /* width and height of screen */
     int iyt; /* height of screen divided by 3 */
@@ -889,6 +892,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	RECT wsize; /* size of usable window */
 
     NG_IGNORE(hPrevInstance);
+
+#ifndef EXT_ASC
+    /* convert wchar to utf-8 */
+    char lpszCmdLine[1024];
+    WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
+#endif
 
     /* fill global variables */
     hInst = hInstance;
