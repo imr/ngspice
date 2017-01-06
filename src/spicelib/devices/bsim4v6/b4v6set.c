@@ -2456,7 +2456,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 int
 BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     BSIM4v6model *model;
     BSIM4v6instance *here;
 
@@ -2521,6 +2520,6 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
             }
         }
     }
-#endif
+
     return OK;
 }

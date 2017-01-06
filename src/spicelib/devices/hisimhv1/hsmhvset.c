@@ -1458,7 +1458,6 @@ HSMHVunsetup(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     HSMHVmodel *model;
     HSMHVinstance *here;
  
@@ -1507,6 +1506,6 @@ HSMHVunsetup(
             // FIXME, HSMHVtempNode HSMHVqiNode HSMHVqbNode
         }
     }
-#endif
+
     return OK;
 }

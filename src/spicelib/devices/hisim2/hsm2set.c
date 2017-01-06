@@ -1297,7 +1297,6 @@ HSM2unsetup(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     HSM2model *model;
     HSM2instance *here;
  
@@ -1345,6 +1344,6 @@ HSM2unsetup(
             }
         }
     }
-#endif
+
     return OK;
 }

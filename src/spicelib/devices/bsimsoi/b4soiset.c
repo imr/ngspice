@@ -2746,7 +2746,6 @@ B4SOIunsetup(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     B4SOImodel *model;
     B4SOIinstance *here;
 
@@ -2771,6 +2770,6 @@ B4SOIunsetup(
             // FIXME, lots missing !
         }
     }
-#endif
+
     return OK;
 }

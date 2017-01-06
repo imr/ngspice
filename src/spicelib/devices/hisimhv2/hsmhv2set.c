@@ -1726,7 +1726,6 @@ HSMHV2unsetup(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
-#ifndef HAS_BATCHSIM
     HSMHV2model *model;
     HSMHV2instance *here;
  
@@ -1775,6 +1774,6 @@ HSMHV2unsetup(
             // FIXME, HSMHV2tempNode HSMHV2qiNode HSMHV2qbNode
         }
     }
-#endif
+
     return OK;
 }
