@@ -412,47 +412,45 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     MESAmodel *model;
     MESAinstance *here;
- 
+
     for (model = (MESAmodel *)inModel; model != NULL;
-            model = model->MESAnextModel)
+         model = model->MESAnextModel)
     {
         for (here = model->MESAinstances; here != NULL;
-                here=here->MESAnextInstance)
+             here = here->MESAnextInstance)
         {
-            // ouch, reorder, this is still needed some lines down
-            if (here->MESAdrainPrimeNode
-                    && here->MESAdrainPrimeNode != here->MESAdrainNode)
-            {
-                CKTdltNNum(ckt, here->MESAdrainPrimeNode);
-                here->MESAdrainPrimeNode = 0;
-            }
-            // ouch, reorder, this is still needed some lines down
-            if (here->MESAsourcePrimeNode
-                    && here->MESAsourcePrimeNode != here->MESAsourceNode)
-            {
-                CKTdltNNum(ckt, here->MESAsourcePrimeNode);
-                here->MESAsourcePrimeNode = 0;
-            }
-            if (here->MESAgatePrimeNode
-                    && here->MESAgatePrimeNode != here->MESAgateNode)
-            {
-                CKTdltNNum(ckt, here->MESAgatePrimeNode);
-                here->MESAgatePrimeNode = 0;
-            }          
-            if (here->MESAsourcePrmPrmNode
-                    && here->MESAsourcePrmPrmNode != here->MESAsourcePrimeNode)
-            {
-                CKTdltNNum(ckt, here->MESAsourcePrmPrmNode);
-                here->MESAsourcePrmPrmNode = 0;
-            }
             if (here->MESAdrainPrmPrmNode
-                    && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)
+                && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)
             {
                 CKTdltNNum(ckt, here->MESAdrainPrmPrmNode);
                 here->MESAdrainPrmPrmNode = 0;
             }
-        
+            if (here->MESAsourcePrmPrmNode
+                && here->MESAsourcePrmPrmNode != here->MESAsourcePrimeNode)
+            {
+                CKTdltNNum(ckt, here->MESAsourcePrmPrmNode);
+                here->MESAsourcePrmPrmNode = 0;
+            }
+            if (here->MESAgatePrimeNode
+                && here->MESAgatePrimeNode != here->MESAgateNode)
+            {
+                CKTdltNNum(ckt, here->MESAgatePrimeNode);
+                here->MESAgatePrimeNode = 0;
+            }
+            if (here->MESAdrainPrimeNode
+                && here->MESAdrainPrimeNode != here->MESAdrainNode)
+            {
+                CKTdltNNum(ckt, here->MESAdrainPrimeNode);
+                here->MESAdrainPrimeNode = 0;
+            }
+            if (here->MESAsourcePrimeNode
+                && here->MESAsourcePrimeNode != here->MESAsourceNode)
+            {
+                CKTdltNNum(ckt, here->MESAsourcePrimeNode);
+                here->MESAsourcePrimeNode = 0;
+            }
         }
     }
+
     return OK;
 }
