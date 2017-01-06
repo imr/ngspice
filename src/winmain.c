@@ -213,7 +213,7 @@ void SetSource( char * Name)
         else {
             wchar_t *NameW;
             NameW = TMALLOC(wchar_t, 2 * strlen(Name) + 1);
-            MultiByteToWideChar(CP_UTF8, 0, Name, strlen(Name), NameW, 2 * strlen(Name) + 1);
+            MultiByteToWideChar(CP_UTF8, 0, Name, -1, NameW, 2 * strlen(Name) + 1);
             SetWindowTextW(hwSource, NameW);
             tfree(NameW);
         }
@@ -375,7 +375,7 @@ static void DisplayText( void)
     else {
         wchar_t *TWBuffer;
         TWBuffer = TMALLOC(wchar_t, 2 * strlen(TBuffer) + 1);
-        MultiByteToWideChar(CP_UTF8, 0, TBuffer, strlen(TBuffer), TWBuffer, 2 * strlen(TBuffer) + 1);
+        MultiByteToWideChar(CP_UTF8, 0, TBuffer, strlen(TBuffer) + 1, TWBuffer, 2 * strlen(TBuffer) + 1);
         SetWindowTextW(twText, TWBuffer);
         tfree(TWBuffer);
     }
@@ -521,7 +521,7 @@ void HistoryGetPrevW(HWND hwnd)
     wchar_t *whgp;
 
     whgp = TMALLOC(wchar_t, 2 * strlen(hgp) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, hgp, strlen(hgp), whgp, 2 * strlen(hgp) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, hgp, -1, whgp, 2 * strlen(hgp) + 1);
     SetWindowTextW(hwnd, whgp);
     tfree(whgp);
 }
@@ -532,7 +532,7 @@ void HistoryGetNextW(HWND hwnd)
     wchar_t *whgn;
 
     whgn = TMALLOC(wchar_t, 2 * strlen(hgn) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, hgn, strlen(hgn), whgn, 2 * strlen(hgn) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, hgn, -1, whgn, 2 * strlen(hgn) + 1);
     SetWindowTextW(hwnd, whgn);
     tfree(whgn);
 }

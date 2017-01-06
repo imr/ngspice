@@ -155,7 +155,7 @@ gr_redrawgrid(GRAPH *graph)
             /* Windows and UTF-8: make the y position correction later */
             else if (eq(dispdev->name, "Windows") && !ext_asc) {
                 /* utf-8: figure out the real length of the y label */
-                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, strlen(graph->grid.ylabel), NULL, 0);
+                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1, NULL, 0);
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
