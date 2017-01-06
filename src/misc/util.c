@@ -249,3 +249,20 @@ ngdirname(const char *name)
 }
 
 #endif
+
+#ifndef EXT_ASC
+#if defined(__MINGW__) || defined(_MSC_VER)
+#undef BOOLEAN
+#include <windows.h>
+FILE *
+newfopen(char *fn, char* md)
+{
+    wchar_t wfn[BSIZE_SP];
+    wchar_t wmd[16];
+    MultiByteToWideChar(CP_UTF8, 0, md, -1, wmd, 15);
+    MultiByteToWideChar(CP_UTF8, 0, fn, -1, wfn, BSIZE_SP - 1);
+    return _wfopen(wfn, wmd);
+}
+#endif
+#endif
+
