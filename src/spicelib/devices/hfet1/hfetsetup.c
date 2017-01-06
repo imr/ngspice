@@ -405,49 +405,46 @@ HFETAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 {
     HFETAmodel *model;
     HFETAinstance *here;
- 
+
     for (model = (HFETAmodel *)inModel; model != NULL;
-            model = model->HFETAnextModel)
+         model = model->HFETAnextModel)
     {
         for (here = model->HFETAinstances; here != NULL;
-                here=here->HFETAnextInstance)
+             here = here->HFETAnextInstance)
         {
-            // ouch, reorder, this is still needed some lines down
+	    if (here->HFETAsourcePrmPrmNode
+                && here->HFETAsourcePrmPrmNode != here->HFETAsourcePrimeNode)
+            {
+                CKTdltNNum(ckt, here->HFETAsourcePrmPrmNode);
+                here->HFETAsourcePrmPrmNode = 0;
+            }
+	    if (here->HFETAdrainPrmPrmNode
+                && here->HFETAdrainPrmPrmNode != here->HFETAdrainPrimeNode)
+            {
+                CKTdltNNum(ckt, here->HFETAdrainPrmPrmNode);
+                here->HFETAdrainPrmPrmNode = 0;
+            }
+	    if (here->HFETAgatePrimeNode
+                && here->HFETAgatePrimeNode != here->HFETAgateNode)
+            {
+                CKTdltNNum(ckt, here->HFETAgatePrimeNode);
+                here->HFETAgatePrimeNode = 0;
+            }
             if (here->HFETAdrainPrimeNode
-                    && here->HFETAdrainPrimeNode != here->HFETAdrainNode)
+                && here->HFETAdrainPrimeNode != here->HFETAdrainNode)
             {
                 CKTdltNNum(ckt, here->HFETAdrainPrimeNode);
                 here->HFETAdrainPrimeNode = 0;
             }
-            // ouch, reorder, this is still needed some lines down
             if (here->HFETAsourcePrimeNode
-                    && here->HFETAsourcePrimeNode != here->HFETAsourceNode)
+                && here->HFETAsourcePrimeNode != here->HFETAsourceNode)
             {
                 CKTdltNNum(ckt, here->HFETAsourcePrimeNode);
                 here->HFETAsourcePrimeNode = 0;
             }
-	    if (here->HFETAgatePrimeNode
-        			&& here->HFETAgatePrimeNode != here->HFETAgateNode)
-            {
-        		CKTdltNNum(ckt, here->HFETAgatePrimeNode);
-        		here->HFETAgatePrimeNode = 0;
-            }
-	    
-	    if (here->HFETAdrainPrmPrmNode
-        			&& here->HFETAdrainPrmPrmNode != here->HFETAdrainPrimeNode)
-            {
-        		CKTdltNNum(ckt, here->HFETAdrainPrmPrmNode);
-        		here->HFETAdrainPrmPrmNode = 0;
-            }
-	    if (here->HFETAsourcePrmPrmNode
-        			&& here->HFETAsourcePrmPrmNode != here->HFETAsourcePrimeNode)
-            {
-        		CKTdltNNum(ckt, here->HFETAsourcePrmPrmNode);
-        		here->HFETAsourcePrmPrmNode = 0;
-            }
-	    
-        }	
+        }
     }
+
     return OK;
 }
 
