@@ -9,7 +9,6 @@ libtxl_la_SOURCES = \
 	txldefs.h  \
 	txldest.c  \
 	txlext.h   \
-	txlfbr.c   \
 	txlinit.h  \
 	txlitf.h   \
 	txlload.c  \

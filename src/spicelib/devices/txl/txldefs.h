@@ -27,7 +27,6 @@ typedef struct sTXLinstance {
 	TXLine *txline2;  /* pointer to SWEC txline type. temporary storage */
 	char *in_node_name;
 	char *out_node_name;
-	int TXLbranch;       /* unused */
 	
 	double *TXLposPosptr;
 	double *TXLposNegptr;
