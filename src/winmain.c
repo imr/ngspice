@@ -108,7 +108,7 @@ static WNDPROC twProc = NULL;          /* original text window procedure */
 static SBufLine HistBuffer[HistSize];  /* History buffer for string window */
 static int HistIndex = 0;              /* History management */
 static int HistPtr   = 0;              /* History management */
-
+static HFONT sfont;                    /* Font for source and analysis window */
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
 extern bool ext_asc;    /* variable 'encoding' set 'to extended_ascii' */
@@ -706,6 +706,7 @@ static void Element_OnPaint(HWND hwnd)
         o = GetStockObject(LTGRAY_BRUSH);
         FillRect(hdc, &s, o);
         SetBkMode(hdc, TRANSPARENT);
+        SelectObject(hdc, sfont);
         ExtTextOutW(hdc, s.left + 1, s.top + 1, ETO_CLIPPED, &s, bufferW, (unsigned)i, NULL);
     }
     /* End */
@@ -998,6 +999,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
         if (!RegisterClassW(&hwElementClassW)) goto THE_END;
     }
 
+    /* Font for element status windows (source, analysis) */
+    sfont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Arial");
+
     /*Create main window */
     if(ext_asc)
         SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
@@ -1035,7 +1039,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
         TEXTMETRIC tm;
 //        font = CreateFont(14, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Lucida Console");
 //        if(!font)
-            font = CreateFont(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
+        font = CreateFont(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, "Courier");
         if(!font)
             font = GetStockFont(ANSI_FIXED_FONT);
         SetWindowFont( twText, font, FALSE);
