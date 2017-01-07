@@ -26,8 +26,8 @@ IFparm TXLmPTable[] = { /* model parameters */
 };
 
 char *TXLnames[] = {
-	"Y+",
-	"Y-"
+	"Y+",                   /* 1 */
+	"Y-"                    /* 2 */
 };
 
 int TXLnSize = NUMELEMS(TXLnames);

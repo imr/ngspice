@@ -17,9 +17,13 @@ typedef struct sTXLinstance {
 
     IFuid TXLname;  /* pointer to character string naming this instance */
     
-        int dimensions; /* may we not need this but ... */
+        int dimensions; /* struct GENinstance.GENstate, not used here */
+
+    /* GENnode[] { */
 	int TXLposNode;
 	int TXLnegNode;
+    /* } */
+
 	double TXLlength;
 	int TXLibr1;
 	int TXLibr2;
