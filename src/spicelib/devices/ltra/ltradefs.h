@@ -23,10 +23,13 @@ typedef struct sLTRAinstance {
                                              * current model*/
     IFuid LTRAname;      /* pointer to character string naming this instance */
     int LTRAstate;	 /* not used */
+
+    /* GENnode[] { */
     int LTRAposNode1;    /* number of positive node of end 1 of t. line */
     int LTRAnegNode1;    /* number of negative node of end 1 of t. line */
     int LTRAposNode2;    /* number of positive node of end 2 of t. line */
     int LTRAnegNode2;    /* number of negative node of end 2 of t. line */
+    /* } */
 
     int LTRAbrEq1;       /* number of branch equation for end 1 of t. line */
     int LTRAbrEq2;       /* number of branch equation for end 2 of t. line */

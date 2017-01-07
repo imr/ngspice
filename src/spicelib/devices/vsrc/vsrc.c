@@ -43,8 +43,8 @@ IFparm VSRCpTable[] = { /* parameters */
 };
 
 char *VSRCnames[] = {
-    "V+",
-    "V-"
+    "V+",                       /* 1 */
+    "V-"                        /* 2 */
 };
 
 int     VSRCnSize = NUMELEMS(VSRCnames);

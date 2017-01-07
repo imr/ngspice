@@ -48,8 +48,8 @@ IFparm NUMD2mPTable[] = {	/* model parameters */
 };
 
 char *NUMD2names[] = {
-  "Anode",
-  "Cathode"
+  "Anode",                      /* 1 */
+  "Cathode"                     /* 2 */
 };
 
 int NUMD2nSize = NUMELEMS(NUMD2names);

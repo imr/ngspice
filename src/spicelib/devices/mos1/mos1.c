@@ -152,10 +152,10 @@ IFparm MOS1mPTable[] = { /* model parameters */
 };
 
 char *MOS1names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int	MOS1nSize = NUMELEMS(MOS1names);

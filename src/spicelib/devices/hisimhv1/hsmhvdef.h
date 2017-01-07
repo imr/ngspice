@@ -219,12 +219,15 @@ typedef struct sHSMHVinstance {
   IFuid HSMHVname; /* pointer to character string naming this instance */
   int HSMHVstates; /* index into state table for this device */
 
+  /* GENnode[] { */
   int HSMHVdNode;      /* number of the drain node of the mosfet */
   int HSMHVgNode;      /* number of the gate node of the mosfet */
   int HSMHVsNode;      /* number of the source node of the mosfet */
   int HSMHVbNode;      /* number of the bulk node of the mosfet */
   int HSMHVsubNode;    /* number of the substrate node */
   int HSMHVtempNode;   /* number of the temp node----------SHE--------*/
+  /* } */
+
   int HSMHVdNodePrime; /* number od the inner drain node */
   int HSMHVgNodePrime; /* number of the inner gate node */
   int HSMHVsNodePrime; /* number od the inner source node */

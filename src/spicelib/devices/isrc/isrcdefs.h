@@ -25,8 +25,10 @@ typedef struct sISRCinstance {
     IFuid ISRCname; /* pointer to character string naming this instance */
     int ISRCstate;  /* not used */
 
+    /* GENnode[] { */
     int ISRCnegNode;    /* number of negative node of source */
     int ISRCposNode;    /* number of positive node of source */
+    /* } */ /* ouch revers to ISRCnames ! */
 
     int ISRCfunctionType;   /* code number of function type for source */
     int ISRCfunctionOrder;  /* order of the function for the source */

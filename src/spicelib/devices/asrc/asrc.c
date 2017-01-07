@@ -27,8 +27,8 @@ IFparm ASRCpTable[] = { /* parameters */
 
 
 char *ASRCnames[] = {
-    "src+",
-    "src-"
+    "src+",                     /* 1 */
+    "src-"                      /* 2 */
 };
 
 

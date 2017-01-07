@@ -48,8 +48,8 @@ IFparm ISRCpTable[] = { /* parameters */
 };
 
 char *ISRCnames[] = {
-    "I+",
-    "I-"
+    "I+",                       /* 1 */
+    "I-"                        /* 2 */
 };
 
 int     ISRCnSize = NUMELEMS(ISRCnames);

@@ -131,10 +131,10 @@ IFparm B1mPTable[] = { /* model parameters */
 };
 
 char *B1names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int	B1nSize = NUMELEMS(B1names);

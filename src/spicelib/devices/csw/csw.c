@@ -30,8 +30,8 @@ IFparm CSWmPTable[] = { /* model parameters */
 };
 
 char *CSWnames[] = {
-    "W+",
-    "W-"
+    "W+",                       /* 1 */
+    "W-"                        /* 2 */
 };
 
 int	CSWnSize = NUMELEMS(CSWnames);

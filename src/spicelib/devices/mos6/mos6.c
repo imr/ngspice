@@ -156,10 +156,10 @@ IFparm MOS6mPTable[] = { /* model parameters */
 };
 
 char *MOS6names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int     MOS6nSize = NUMELEMS(MOS6names);

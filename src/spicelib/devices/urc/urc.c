@@ -27,9 +27,9 @@ IFparm URCmPTable[] = { /* model parameters */
 };
 
 char *URCnames[] = {
-    "P1",
-    "P2",
-    "Ref"
+    "P1",                       /* 1 */
+    "P2",                       /* 2 */
+    "Ref"                       /* 3 */
 };
 
 int	URCnSize = NUMELEMS(URCnames);

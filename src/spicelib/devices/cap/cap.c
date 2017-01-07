@@ -59,8 +59,8 @@ IFparm CAPmPTable[] = { /* names of model parameters */
 };
 
 char *CAPnames[] = {
-    "C+",
-    "C-"
+    "C+",                       /* 1 */
+    "C-"                        /* 2 */
 };
 
 

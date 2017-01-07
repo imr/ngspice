@@ -730,12 +730,12 @@ IFparm HSMHVmPTable[] = { /* model parameters */
 };
 
 char *HSMHVnames[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk",
-    "Substrate",
-    "Temp"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk",                     /* 4 */
+    "Substrate",                /* 5 */
+    "Temp"                      /* 6 */
 };
 
 int	HSMHVnSize = NUMELEMS(HSMHVnames);

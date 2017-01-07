@@ -34,8 +34,8 @@ static IFparm CCCSmPTable[] = {
 #endif
 
 char *CCCSnames[] = {
-    "F+",
-    "F-"
+    "F+",                       /* 1 */
+    "F-"                        /* 2 */
 };
 
 int	CCCSnSize = NUMELEMS(CCCSnames);

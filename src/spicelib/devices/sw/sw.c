@@ -33,10 +33,10 @@ IFparm SWmPTable[] = { /* model parameters */
 };
 
 char *SWnames[] = {
-    "S+",
-    "S-",
-    "SC+",
-    "SC-"
+    "S+",                       /* 1 */
+    "S-",                       /* 2 */
+    "SC+",                      /* 3 */
+    "SC-"                       /* 4 */
 };
 
 int	SWnSize = NUMELEMS(SWnames);

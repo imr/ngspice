@@ -23,10 +23,13 @@ typedef struct sBJTinstance {
     IFuid BJTname;  /* pointer to character string naming this instance */
     int BJTstate; /* pointer to start of state vector for bjt */
 
+    /* GENnode[] { */
     int BJTcolNode; /* number of collector node of bjt */
     int BJTbaseNode;    /* number of base node of bjt */
     int BJTemitNode;    /* number of emitter node of bjt */
     int BJTsubstNode;   /* number of substrate node of bjt */
+    /* } */
+
     int BJTcolPrimeNode;    /* number of internal collector node of bjt */
     int BJTbasePrimeNode;   /* number of internal base node of bjt */
     int BJTemitPrimeNode;   /* number of internal emitter node of bjt */

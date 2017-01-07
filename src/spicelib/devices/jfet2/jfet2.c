@@ -65,9 +65,9 @@ IFparm JFET2mPTable[] = { /* model parameters */
 
 
 char *JFET2names[] = {
-    "Drain",
-    "Gate",
-    "Source"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source"                    /* 3 */
 };
 
 int	JFET2nSize = NUMELEMS(JFET2names);

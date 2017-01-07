@@ -24,9 +24,12 @@ typedef struct sURCinstance {
                                              * current model*/
     IFuid URCname;  /* pointer to character string naming this instance */
     int URCstate;	/* not used */
+
+    /* GENnode[] { */
     int URCposNode;   /* number of positive node of URC */
     int URCnegNode;   /* number of negative node of URC */
     int URCgndNode;   /* number of the "ground" node of the URC */
+    /* } */
 
     double URClength;   /* length of line */
     int URClumps;   /* number of lumps in line */

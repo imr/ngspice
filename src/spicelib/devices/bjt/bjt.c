@@ -219,10 +219,10 @@ IFparm BJTmPTable[] = { /* model parameters */
 };
 
 char *BJTnames[] = {
-    "collector",
-    "base",
-    "emitter",
-    "substrate"
+    "collector",                /* 1 */
+    "base",                     /* 2 */
+    "emitter",                  /* 3 */
+    "substrate"                 /* 4 */
 };
 
 

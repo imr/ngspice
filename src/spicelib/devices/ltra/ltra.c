@@ -57,10 +57,10 @@ IFparm LTRAmPTable[] = {	/* model parameters */
 };
 
 char *LTRAnames[] = {
-  "P1+",
-  "P1-",
-  "P2+",
-  "P2-"
+  "P1+",                        /* 1 */
+  "P1-",                        /* 2 */
+  "P2+",                        /* 3 */
+  "P2-"                         /* 4 */
 };
 
 int LTRAnSize = NUMELEMS(LTRAnames);

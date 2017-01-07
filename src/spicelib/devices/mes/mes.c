@@ -64,9 +64,9 @@ IFparm MESmPTable[] = { /* model parameters */
 };
 
 char *MESnames[] = {
-    "Drain",
-    "Gate",
-    "Source"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source"                    /* 3 */
 };
 
 int	MESnSize = NUMELEMS(MESnames);

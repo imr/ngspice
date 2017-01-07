@@ -48,10 +48,13 @@ typedef struct sNUMOSinstance {
 #define NUMOSdIgDVgb NUMOSstate+14
 #define NUMOSnumStates 15
 
+  /* GENnode[] { */
   int NUMOSdrainNode;		/* number of drain node of MOSFET */
   int NUMOSgateNode;		/* number of gate node of MOSFET */
   int NUMOSsourceNode;		/* number of source node of MOSFET */
   int NUMOSbulkNode;		/* number of bulk node of MOSFET */
+  /* } */
+
   double NUMOSarea;		/* area factor for the mosfet */
   double NUMOSwidth;		/* width factor for the mosfet */
   double NUMOSlength;		/* length factor for the mosfet */

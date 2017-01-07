@@ -30,7 +30,11 @@ typedef struct sNDEVinstance {
   IFuid NDEVname;		/* pointer to character string naming this
 				 * instance */
   int NDEVstate;		/* pointer to start of state vector for diode */
+
+  /* GENnode[] { */
   int pin[7];                   /* max 7 terminals are allowed */
+  /* } */
+
   int  term;                    /* the real number of terminals */
   CKTnode *node[7];		/* the array of CKT node's node pointer */
   char *bname[7];               /* the electrode boundary label for numerical solver */

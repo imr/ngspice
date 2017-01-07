@@ -87,9 +87,9 @@ IFparm HFET2mPTable[] = { /* model parameters */
 };
 
 char *HFET2names[] = {
-    "Drain",
-    "Gate",
-    "Source"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source"                    /* 3 */
 };
 
 int HFET2nSize = NUMELEMS(HFET2names);

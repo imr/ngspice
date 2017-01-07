@@ -22,8 +22,10 @@ typedef struct sCCVSinstance {
     IFuid CCVSname; /* pointer to character string naming this instance */
     int CCVSstate; /* not used */
 
+    /* GENnode[] { */
     int CCVSposNode;    /* number of positive node of source */
     int CCVSnegNode;    /* number of negative node of source */
+    /* } */
 
     IFuid CCVScontName; /* pointer to name of controlling instance */
     int CCVSbranch; /* equation number of branch equation added for v source */

@@ -23,8 +23,11 @@ typedef struct sASRCinstance {
                                              * current model */
     IFuid ASRCname;            /* pointer to character string naming this instance */
     int ASRCstates;            /* state info */
+
+    /* GENnode[] { */
     int ASRCposNode;           /* number of positive node of source */
     int ASRCnegNode;           /* number of negative node of source */
+    /* } */
 
     int ASRCtype;              /* Whether source is voltage or current */
     int ASRCbranch;            /* number of branch equation added for v source */

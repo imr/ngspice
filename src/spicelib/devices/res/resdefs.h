@@ -25,8 +25,11 @@ typedef struct sRESinstance {
 
     IFuid RESname;      /* pointer to character string naming this instance */
     int RESstate;       /* not used but needed for sructure consistency */
+
+    /* GENnode[] { */
     int RESposNode;     /* number of positive node of resistor */
     int RESnegNode;     /* number of negative node of resistor */
+    /* } */
 
     double REStemp;     /* temperature at which this resistor operates */
     double RESdtemp;    /* delta-temperature of a particular instance  */

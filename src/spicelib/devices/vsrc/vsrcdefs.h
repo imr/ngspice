@@ -27,8 +27,10 @@ typedef struct sVSRCinstance {
     IFuid VSRCname; /* pointer to character string naming this instance */
     int VSRCstate;  /* not used */
 
+    /* GENnode[] { */
     int VSRCposNode;    /* number of positive node of source */
     int VSRCnegNode;    /* number of negative node of source */
+    /* } */
 
     int VSRCbranch; /* equation number of branch equation added for source */
 

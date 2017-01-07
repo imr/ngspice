@@ -14,9 +14,12 @@ typedef struct sHFET2instance {
     IFuid HFET2name;
     int HFET2state;   /* index into state table for this device */
      
+    /* GENnode[] { */
     int HFET2drainNode;
     int HFET2gateNode;
     int HFET2sourceNode;
+    /* } */
+
     int HFET2drainPrimeNode;
     int HFET2sourcePrimeNode;
     double HFET2length;

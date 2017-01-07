@@ -201,10 +201,10 @@ IFparm B2mPTable[] = { /* model parameters */
 };
 
 char *B2names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int	B2nSize = NUMELEMS(B2names);

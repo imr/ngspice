@@ -160,10 +160,10 @@ IFparm MOS3mPTable[] = { /* model parameters */
 };
 
 char *MOS3names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int	MOS3nSize = NUMELEMS(MOS3names);

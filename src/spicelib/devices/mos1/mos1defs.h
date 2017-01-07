@@ -24,10 +24,13 @@ typedef struct sMOS1instance {
     IFuid MOS1name; /* pointer to character string naming this instance */
     int MOS1states;     /* index into state table for this device */
 
+    /* GENnode[] { */
     int MOS1dNode;  /* number of the gate node of the mosfet */
     int MOS1gNode;  /* number of the gate node of the mosfet */
     int MOS1sNode;  /* number of the source node of the mosfet */
     int MOS1bNode;  /* number of the bulk node of the mosfet */
+    /* } */
+
     int MOS1dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS1sNodePrime; /* number of the internal source node of the mosfet */
     

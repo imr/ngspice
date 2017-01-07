@@ -34,8 +34,11 @@ typedef struct sNUMDinstance {
 #define NUMDconduct NUMDstate+2
 #define NUMDnumStates 3
 
+  /* GENnode[] { */
   int NUMDposNode;		/* number of positive node of diode */
   int NUMDnegNode;		/* number of negative node of diode */
+  /* } */
+
   ONEdevice *NUMDpDevice;
   GLOBvalues NUMDglobals;	/* Temp.-Dep. Global Parameters */
   int NUMDtype;			/* device type pn or np */

@@ -68,8 +68,8 @@ IFparm RESmPTable[] = { /* model parameters */
 };
 
 char *RESnames[] = {
-    "R+",
-    "R-"
+    "R+",                       /* 1 */
+    "R-"                        /* 2 */
 };
 
 int	RESnSize = NUMELEMS(RESnames);

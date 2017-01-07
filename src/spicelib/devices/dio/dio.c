@@ -112,8 +112,8 @@ IFparm DIOmPTable[] = { /* model parameters */
 };
 
 char *DIOnames[] = {
-    "D+",
-    "D-"
+    "D+",                       /* 1 */
+    "D-"                        /* 2 */
 };
 
 int DIOnSize = NUMELEMS(DIOnames);

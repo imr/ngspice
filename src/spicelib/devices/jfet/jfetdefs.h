@@ -26,9 +26,13 @@ typedef struct sJFETinstance {
                                              * current model*/
     IFuid JFETname; /* pointer to character string naming this instance */
     int JFETstate; /* pointer to start of state vector for jfet */
+
+    /* GENnode[] { */
     int JFETdrainNode;  /* number of drain node of jfet */
     int JFETgateNode;   /* number of gate node of jfet */
     int JFETsourceNode; /* number of source node of jfet */
+    /* } */
+
     int JFETdrainPrimeNode; /* number of internal drain node of jfet */
     int JFETsourcePrimeNode;    /* number of internal source node of jfet */
 

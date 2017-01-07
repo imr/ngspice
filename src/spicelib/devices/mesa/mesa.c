@@ -119,9 +119,9 @@ IFparm MESAmPTable[] = { /* model parameters */
 };
 
 char *MESAnames[] = {
-    "Drain",
-    "Gate",
-    "Source"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source"                    /* 3 */
 };
 
 int MESAnSize = NUMELEMS(MESAnames);

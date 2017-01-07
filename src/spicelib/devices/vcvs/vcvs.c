@@ -31,10 +31,10 @@ IFparm VCVSpTable[] = { /* parameters */
 };
 
 char *VCVSnames[] = {
-    "V+",
-    "V-",
-    "VC+",
-    "VC-"
+    "V+",                       /* 1 */
+    "V-",                       /* 2 */
+    "VC+",                      /* 3 */
+    "VC-"                       /* 4 */
 };
 
 int	VCVSnSize = NUMELEMS(VCVSnames);

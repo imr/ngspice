@@ -21,10 +21,14 @@ typedef struct sMOS6instance {
                                               *current model*/
     IFuid MOS6name; /* pointer to character string naming this instance */
     int MOS6states;     /* index into state table for this device */
+
+    /* GENnode[] { */
     int MOS6dNode;  /* number of the gate node of the mosfet */
     int MOS6gNode;  /* number of the gate node of the mosfet */
     int MOS6sNode;  /* number of the source node of the mosfet */
     int MOS6bNode;  /* number of the bulk node of the mosfet */
+    /* } */
+
     int MOS6dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS6sNodePrime; /* number of the internal source node of the mosfet */
 

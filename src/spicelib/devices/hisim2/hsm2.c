@@ -708,10 +708,10 @@ IFparm HSM2mPTable[] = { /* model parameters */
 };
 
 char *HSM2names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int	HSM2nSize = NUMELEMS(HSM2names);

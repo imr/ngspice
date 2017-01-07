@@ -161,10 +161,10 @@ IFparm MOS9mPTable[] = { /* model parameters */
 };
 
 char *MOS9names[] = {
-    "Drain",
-    "Gate",
-    "Source",
-    "Bulk"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source",                   /* 3 */
+    "Bulk"                      /* 4 */
 };
 
 int	MOS9nSize = NUMELEMS(MOS9names);

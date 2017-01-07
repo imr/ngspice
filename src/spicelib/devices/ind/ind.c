@@ -52,8 +52,8 @@ IFparm INDmPTable[] = { /* model parameters */
 
 
 char *INDnames[] = {
-    "L+",
-    "L-"
+    "L+",                       /* 1 */
+    "L-"                        /* 2 */
 };
 
 

@@ -29,8 +29,8 @@ IFparm CCVSpTable[] = { /* parameters */
 };
 
 char *CCVSnames[] = {
-    "H+",
-    "H-"
+    "H+",                       /* 1 */
+    "H-"                        /* 2 */
 };
 
 int	CCVSnSize = NUMELEMS(CCVSnames);

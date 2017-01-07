@@ -114,9 +114,9 @@ IFparm HFETAmPTable[] = { /* model parameters */
 };
 
 char *HFETAnames[] = {
-    "Drain",
-    "Gate",
-    "Source"
+    "Drain",                    /* 1 */
+    "Gate",                     /* 2 */
+    "Source"                    /* 3 */
 };
 
 int HFETAnSize = NUMELEMS(HFETAnames);

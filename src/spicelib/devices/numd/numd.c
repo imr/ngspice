@@ -42,8 +42,8 @@ IFparm NUMDmPTable[] = {	/* model parameters */
 };
 
 char *NUMDnames[] = {
-  "D+",
-  "D-"
+  "D+",                         /* 1 */
+  "D-"                          /* 2 */
 };
 
 int NUMDnSize = NUMELEMS(NUMDnames);

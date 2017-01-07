@@ -23,13 +23,13 @@ IFparm NDEVmPTable[] = {	/* model parameters */
 };
 
 char *NDEVnames[] = {
-  "pin1",
-  "pin2",
-  "pin3",
-  "pin4",
-  "pin5",
-  "pin6",
-  "pin7"
+  "pin1",                       /* 1 */
+  "pin2",                       /* 2 */
+  "pin3",                       /* 3 */
+  "pin4",                       /* 4 */
+  "pin5",                       /* 5 */
+  "pin6",                       /* 6 */
+  "pin7"                        /* 7 */
 };
 
 int NDEVnSize = NUMELEMS(NDEVnames);

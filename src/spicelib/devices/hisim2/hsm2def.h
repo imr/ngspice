@@ -143,10 +143,13 @@ typedef struct sHSM2instance {
   IFuid HSM2name; /* pointer to character string naming this instance */
   int HSM2states; /* index into state table for this device */
 
+  /* GENnode[] { */
   int HSM2dNode;      /* number of the drain node of the mosfet */
   int HSM2gNode;      /* number of the gate node of the mosfet */
   int HSM2sNode;      /* number of the source node of the mosfet */
   int HSM2bNode;      /* number of the bulk node of the mosfet */
+  /* } */
+
   int HSM2dNodePrime; /* number od the inner drain node */
   int HSM2gNodePrime; /* number of the inner gate node */
   int HSM2sNodePrime; /* number od the inner source node */

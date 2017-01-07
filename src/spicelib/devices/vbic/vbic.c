@@ -191,10 +191,10 @@ IFparm VBICmPTable[] = { /* model parameters */
 };
 
 char *VBICnames[] = {
-    "collector",
-    "base",
-    "emitter",
-    "substrate"
+    "collector",                /* 1 */
+    "base",                     /* 2 */
+    "emitter",                  /* 3 */
+    "substrate"                 /* 4 */
 };
 
 

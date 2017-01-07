@@ -80,10 +80,10 @@ IFparm NUMOSmPTable[] = {	/* model parameters */
 };
 
 char *NUMOSnames[] = {
-  "Drain",
-  "Gate",
-  "Source",
-  "Substrate"
+  "Drain",                      /* 1 */
+  "Gate",                       /* 2 */
+  "Source",                     /* 3 */
+  "Substrate"                   /* 4 */
 };
 
 int NUMOSnSize = NUMELEMS(NUMOSnames);
