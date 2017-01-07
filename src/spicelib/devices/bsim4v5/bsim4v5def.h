@@ -24,10 +24,15 @@ typedef struct sBSIM4v5instance
     struct sBSIM4v5instance *BSIM4v5nextInstance;
     IFuid BSIM4v5name;
     int BSIM4v5states;     /* index into state table for this device */
+
+    /* GENnode[] { */
     int BSIM4v5dNode;
     int BSIM4v5gNodeExt;
     int BSIM4v5sNode;
     int BSIM4v5bNode;
+    // FIXME, BSIM4v5qNode must be moved up to here
+    /* } */
+
     int BSIM4v5dNodePrime;
     int BSIM4v5gNodePrime;
     int BSIM4v5gNodeMid;

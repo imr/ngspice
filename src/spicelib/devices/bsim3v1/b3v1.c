@@ -432,11 +432,11 @@ IOP( "hdif", BSIM3v1_MOD_HDIF,  IF_REAL, "S/D junction extension"),
 };
 
 char *BSIM3v1names[] = {
-   "Drain",
-   "Gate",
-   "Source",
-   "Bulk",
-   "Charge"
+   "Drain",                     /* 1 */
+   "Gate",                      /* 2 */
+   "Source",                    /* 3 */
+   "Bulk",                      /* 4 */
+   "Charge"                     /* 5 */
 };
 
 int	BSIM3v1nSize = NUMELEMS(BSIM3v1names);

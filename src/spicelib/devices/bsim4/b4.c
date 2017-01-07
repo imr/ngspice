@@ -1047,11 +1047,11 @@ IP( "pmos", BSIM4_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 };
 
 char *BSIM4names[] = {
-   "Drain",
-   "Gate",
-   "Source",
-   "Bulk",
-   "Charge"
+   "Drain",                     /* 1 */
+   "Gate",                      /* 2 */
+   "Source",                    /* 3 */
+   "Bulk",                      /* 4 */
+   "Charge"                     /* 5 */
 };
 
 int	BSIM4nSize = NUMELEMS(BSIM4names);
