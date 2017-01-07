@@ -1134,7 +1134,15 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
         return accu[topop];
 }
 
-
+/*
+   mhx: formula() cannot return a string. Currently there are no functions
+        operating on strings that evaluate to another string, with the trivial
+	exception of an expression "$var" where var is a string variable.
+	Instead of adapting formula()'s internal logic and have it return
+	the union of a char* and a double, for now we simply check the
+	input s to have one and only one string variable. If that is the
+	case, change its mode from 0 (expression) to 1 (simple variable).
+*/
 static bool
 evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
@@ -1150,6 +1158,8 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     spice_dstring_reinit(qstr_p);
     numeric = 0;
     err = 0;
+
+    if (t[0] == '$' && !strchr(t + 1, '$')) mode = 1; /* force simple variable */
 
 	 if (t[0] == '%') { type = '%'; t++; }
     else if (t[0] == '$') { type = '$'; t++; }
@@ -1441,12 +1451,13 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
     while ((ia < ls) && (s[ia - 1] <= ' '))
         ia++;                   /*white space ? */
 
-    if (s[ia - 1] == '"') {
+    if (s[ia - 1] == '"' || s[ia - 1] == '#') { 
         /* string constant */
-        ia++;
+	/* mhx: allow also #xxx# strings */
+	ia++;
         i = ia;
 
-        while ((i < ls) && (s[i - 1] != '"'))
+	while ((i < ls) && ((s[i - 1] != '"') || (s[i - 1] != '#')))
             i++;
 
         tpe = 'S';
@@ -1562,9 +1573,14 @@ nupa_assignment(dico_t *dico, char *s, char mode)
             if (i > ls)
                 error = message(dico, " = sign expected.\n");
 
-	    for (ix = i; ix < ls - 1; ix++) { /* change delimiters {` and `} to double quotes */
-		    if (s[ix] == '{' && s[ix + 1] == '`') { s[ix] = ' '; s[ix + 1] = '"'; strptr = &s[ix + 1]; }
-		    if (s[ix] == '`' && s[ix + 1] == '}') { s[ix] = '"'; s[ix + 1] = '\0'; }
+	    for (ix = i; ix < ls - 1; ix++) { /* change delimiters {# and #} to double quotes */
+		int ssharp = 0;
+		if (s[ix] == '{' &&  s[ix + 1] == '#') { s[ix] = ' '; s[ix + 1] = '"'; strptr = &s[ix + 1]; }
+		if (s[ix] == '#' &&  s[ix + 1] == '}') { s[ix] = '"'; s[ix + 1] = '\0'; }
+		if (s[ix] == '#' && !s[ix + 1] == '}') {
+		    s[ix] = '"'; ssharp++;
+		    if (ssharp == 2) { s[ix + 1] = '\0'; ssharp = 0; }
+		}
 	    }
 
 	    dtype = getexpress(s, &ustr, &i);
@@ -1577,7 +1593,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
                             " Formula() error.\n"
                             "      %s\n", s);
             } else if (dtype == 'S') {
-                wval = i;
+                wval = 0; 
             }
 
             err = nupa_define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,

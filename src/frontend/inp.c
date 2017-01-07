@@ -1382,7 +1382,8 @@ com_alterparam(wordlist *wl)
                     curr_line = dd->li_line;
                     char *start = gettok_char(&curr_line, '=', TRUE, FALSE);
                     tfree(dd->li_line);
-                    dd->li_line = tprintf("%s%s", start, pval);
+		    /* mhx: re-inserted braces. It works/ed (sometimes) without them. */
+                    dd->li_line = tprintf("%s{%s}", start, pval);
                     found = TRUE;
                     tfree(start);
                 }
