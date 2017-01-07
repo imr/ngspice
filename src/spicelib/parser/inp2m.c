@@ -275,19 +275,13 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             (type == INPtypelook ("SOI3"))) {
         switch (nodeflag) {
         case 0:
-            fast->GENnode5 = -1;
-            fast->GENnode6 = -1;
-            fast->GENnode7 = -1;
             break;
         case 1:
             IFC (bindNode, (ckt, fast, 5, node5));
-            fast->GENnode6 = -1;
-            fast->GENnode7 = -1;
             break;
         case 2:
             IFC (bindNode, (ckt, fast, 5, node5));
             IFC (bindNode, (ckt, fast, 6, node6));
-            fast->GENnode7 = -1;
             break;
         case 3:
             IFC (bindNode, (ckt, fast, 5, node5));
