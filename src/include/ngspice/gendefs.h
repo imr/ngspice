@@ -21,14 +21,18 @@ struct GENinstance {
                                      * current model*/
     IFuid GENname;  /* pointer to character string naming this instance */
     int GENstate;   /* state index number */
-    int GENnode1;   /* appropriate node numbers */
-    int GENnode2;   /* appropriate node numbers */
-    int GENnode3;   /* appropriate node numbers */
-    int GENnode4;   /* appropriate node numbers */
-    int GENnode5;   /* appropriate node numbers */
-    int GENnode6;   /* added to create body node 01/06/99 */
-    int GENnode7;   /* added to create temp node  2/03/99 */
+    int GENnode[7]; /* node numbers to which this instance is connected to */
+                    /* carefull, thats overlayed into the actual device structs */
 };
+
+/* argh, terminals are counted from 1 */
+#define GENnode1 GENnode[0]
+#define GENnode2 GENnode[1]
+#define GENnode3 GENnode[2]
+#define GENnode4 GENnode[3]
+#define GENnode5 GENnode[4]
+#define GENnode6 GENnode[5]
+#define GENnode7 GENnode[6]
 
 
 /* per model data */
