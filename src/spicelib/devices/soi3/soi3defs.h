@@ -43,13 +43,15 @@ typedef struct sSOI3instance {
     IFuid SOI3name;     /* pointer to character string naming this instance */
     int SOI3states;     /* index into state table for this device */
 
-
+    /* GENnode[] { */
     int SOI3dNode;  /* number of the drain node of the mosfet */
     int SOI3gfNode;  /* number of the front gate node of the mosfet */
     int SOI3sNode;  /* number of the source node of the mosfet */
     int SOI3gbNode;   /* number of the back gate node of the mosfet */
     int SOI3bNode;  /* number of the bulk node of the mosfet */
     int SOI3toutNode;  /* number of thermal output node (tout) */
+    // surprise, a SOI with really matching SOI3names[] !
+    /* } */
 
     int SOI3branch; /* branch number for zero voltage source if no thermal */
 

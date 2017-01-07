@@ -28,12 +28,12 @@ ngspice integration
 
 
 char *SOI3names[] = {
-    "Drain",
-    "Front Gate",
-    "Source",
-    "Back Gate",
-    "Bulk",
-    "Thermal"
+    "Drain",                    /* 1 */
+    "Front Gate",               /* 2 */
+    "Source",                   /* 3 */
+    "Back Gate",                /* 4 */
+    "Bulk",                     /* 5 */
+    "Thermal"                   /* 6 */
 };
 
 

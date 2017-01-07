@@ -465,14 +465,14 @@ IP( "pmos", B3SOIFD_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 };
 
 char *B3SOIFDnames[] = {
-   "Drain",
-   "Gate",
-   "Source",
-   "Backgate",
-   "",
-   "Body",
-   "Temp",
-   "Charge",
+   "Drain",                     /* 1 */
+   "Gate",                      /* 2 */
+   "Source",                    /* 3 */
+   "Backgate",                  /* 4 */
+   "",                          /* 5 */ /* ouch ! */
+   "Body",                      /* 6 */
+   "Temp",                      /* 7 */
+   "Charge",                    /* 8 */
 };
 
 int	B3SOIFDnSize = NUMELEMS(B3SOIFDnames);

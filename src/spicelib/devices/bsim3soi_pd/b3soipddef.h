@@ -30,6 +30,7 @@ typedef struct sB3SOIPDinstance
     IFuid B3SOIPDname;
     int B3SOIPDstates;     /* index into state table for this device */
 
+    /* GENnode[] { */
     int B3SOIPDdNode;
     int B3SOIPDgNode;
     int B3SOIPDsNode;
@@ -37,6 +38,9 @@ typedef struct sB3SOIPDinstance
     int B3SOIPDpNode;
     int B3SOIPDbNode;
     int B3SOIPDtempNode;
+    /* The contract is: B3SOIPDnames, completely disordered ! */
+    /* } */
+
     int B3SOIPDdNodePrime;
     int B3SOIPDsNodePrime;
 

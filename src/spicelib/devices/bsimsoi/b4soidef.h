@@ -31,6 +31,7 @@ typedef struct sB4SOIinstance
     IFuid B4SOIname;
     int B4SOIstates;     /* index into state table for this device */
 
+    /* GENnode[] { */
     int B4SOIdNode;
     int B4SOIgNodeExt; /* v3.1 changed gNode to gNodeExt */
     int B4SOIsNode;
@@ -38,6 +39,9 @@ typedef struct sB4SOIinstance
     int B4SOIpNode;
     int B4SOIbNode;
     int B4SOItempNode;
+    // FIXME completely messed up with respect to B4SOInames[] and INP2M
+    /* } */
+
     int B4SOIdNodePrime;
     int B4SOIsNodePrime;
     int B4SOIgNode;    /* v3.1 */

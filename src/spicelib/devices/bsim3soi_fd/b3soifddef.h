@@ -26,6 +26,7 @@ typedef struct sB3SOIFDinstance
     IFuid B3SOIFDname;
     int B3SOIFDstates;     /* index into state table for this device */
 
+    /* GENnode[] { */
     int B3SOIFDdNode;
     int B3SOIFDgNode;
     int B3SOIFDsNode;
@@ -33,6 +34,9 @@ typedef struct sB3SOIFDinstance
     int B3SOIFDbNode;
     int B3SOIFDtempNode;
     int B3SOIFDpNode;  
+    // FIXME completely messed up with respect to B3SOIFDnames[] and INP2M
+    /* } */
+
     int B3SOIFDdNodePrime;
     int B3SOIFDsNodePrime;
 
