@@ -29,30 +29,8 @@ CKTinst2Node(CKTcircuit *ckt, void *instPtr, int terminal, CKTnode **node, IFuid
     type = ((GENinstance *)instPtr)->GENmodPtr->GENmodType;
 
     if(*(DEVices[type]->DEVpublic.terms) >= terminal && terminal > 0) {
-        switch(terminal) {
-            default: return(E_NOTERM);
-            case 1:
-                nodenum = ((GENinstance *)instPtr)->GENnode1;
-                break;
-            case 2:
-                nodenum = ((GENinstance *)instPtr)->GENnode2;
-                break;
-            case 3:
-                nodenum = ((GENinstance *)instPtr)->GENnode3;
-                break;
-            case 4:
-                nodenum = ((GENinstance *)instPtr)->GENnode4;
-                break;
-            case 5:
-                nodenum = ((GENinstance *)instPtr)->GENnode5;
-                break;
-	    case 6:
-                nodenum = ((GENinstance *)instPtr)->GENnode6;
-                break;
-	    case 7:
-                nodenum = ((GENinstance *)instPtr)->GENnode7;
-                break;	
-        }
+        /* argh, terminals are counted from 1 */
+        nodenum = ((GENinstance *)instPtr)->GENnode[terminal - 1];
         /* ok, now we know its number, so we just have to find it.*/
         for(here = ckt->CKTnodes;here;here = here->next) {
             if(here->number == nodenum) {
