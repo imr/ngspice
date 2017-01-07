@@ -146,14 +146,22 @@ gr_redrawgrid(GRAPH *graph)
                         graph->fontwidth,
                         (graph->absolute.height * 3) / 4, 0);
         } else {
-            if (eq(dispdev->name, "postscript") || (eq(dispdev->name, "Windows") && ext_asc))
+
+            if (eq(dispdev->name, "postscript"))
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
                         (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+#ifdef EXT_ASC
+            else if (eq(dispdev->name, "Windows"))
+                DevDrawText(graph->grid.ylabel,
+                        graph->fontwidth,
+                        /*vertical text, midpoint in y is aligned midpoint of text string */
+                        (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+#else
 #ifdef HAS_WINGUI
             /* Windows and UTF-8: make the y position correction later */
-            else if (eq(dispdev->name, "Windows") && !ext_asc) {
+            else if (eq(dispdev->name, "Windows")) {
                 /* utf-8: figure out the real length of the y label */
                 int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1, NULL, 0);
                 DevDrawText(graph->grid.ylabel,
@@ -163,7 +171,7 @@ gr_redrawgrid(GRAPH *graph)
             }
 #endif
             /* new x11 with xft and utf-8 */
-            else if ((!old_x11) && (!ext_asc)) {
+            else if (!old_x11) {
                 int wlen = 0, wheight = 0;
                 Xget_str_length(graph->grid.ylabel, &wlen, &wheight);
                 DevDrawText(graph->grid.ylabel,
@@ -171,6 +179,7 @@ gr_redrawgrid(GRAPH *graph)
                         /*vertical text, midpoint in y is aligned midpoint of text string */
                         (graph->absolute.height - wlen) / 2, 90);
             }
+#endif
             else /* others */
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,

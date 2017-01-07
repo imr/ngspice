@@ -332,9 +332,9 @@ PS_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
 
-    if (!ext_asc)
+#ifndef EXT_ASC
        utf8_to_latin9(text, text, strlen(text));
-
+#endif
     /* set linestyle to solid
        or may get funny color text on some plotters */
     savedlstyle = currentgraph->linestyle;

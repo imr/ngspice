@@ -134,11 +134,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #if !defined(__MINGW__) && !defined(_MSC_VER) && !defined(__CYGWIN__)
     fprintf(file, "set terminal X11 noenhanced\n");
 #elif defined(__CYGWIN__)
-    if (!ext_asc)
+#ifndef EXT_ASC
         fprintf(file, "set encoding utf8\n");
+#endif
 #else
-    if (!ext_asc)
+#ifndef EXT_ASC
         fprintf(file, "set encoding utf8\n");
+#endif
     fprintf(file, "set termoption noenhanced\n");
 #endif
     if (title) {

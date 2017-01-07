@@ -360,7 +360,6 @@ extern void vec_transpose(struct dvec *v);
 /* main.c */
 extern bool ft_intrpt;
 extern bool ft_setflag;
-extern bool ext_asc;
 extern bool old_x11;
 
 /* x11.c */

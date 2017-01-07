@@ -1102,8 +1102,10 @@ inp_pathopen(char *name, char *mode)
 
 /* for MultiByteToWideChar */
 #if defined(__MINGW32__) || defined(_MSC_VER)
+#ifndef EXT_ASC
 #undef BOOLEAN
 #include <windows.h>
+#endif
 #endif
 
 /*-------------------------------------------------------------------------*

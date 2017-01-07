@@ -555,3 +555,6 @@
 
 /* Define as `fork' if `vfork' does not work. */
 #define vfork fork
+
+/* Define if utf-8 is not wanted, but only extended ascii. */
+/* #define EXT_ASC */
