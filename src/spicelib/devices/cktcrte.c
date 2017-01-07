@@ -21,7 +21,7 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
   GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
 
     SPICEdev **DEVices;
-    int type;
+    int type, terminal;
 
     DEVices = devices();
 
@@ -46,6 +46,10 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
     instPtr = (GENinstance *) tmalloc((size_t) *DEVices[type]->DEVinstSize);
     if (instPtr == NULL)
 	return E_NOMEM;
+
+    /* initialise terminals to be unconnected aka node number -1 */
+    for (terminal = 0; terminal < *(DEVices[type]->DEVpublic.terms); terminal++)
+        instPtr->GENnode[terminal - 1] = -1;
 
     /* PN: adding instance number for statistical purpose */
     ckt->CKTstat->STATdevNum[type].instNum ++;
