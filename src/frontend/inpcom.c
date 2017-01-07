@@ -1100,6 +1100,11 @@ inp_pathopen(char *name, char *mode)
     return NULL;
 }
 
+/* for MultiByteToWideChar */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#undef BOOLEAN
+#include <windows.h>
+#endif
 
 /*-------------------------------------------------------------------------*
   Look up the variable sourcepath and try everything in the list in order
@@ -1126,8 +1131,24 @@ inp_pathresolve(const char *name)
 #endif
 
     /* just try it */
+
+    /* convert to wide string */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#ifdef EXT_ASC
     if (stat(name, &st) == 0)
         return copy(name);
+#else
+    wchar_t wfn[BSIZE_SP];
+    MultiByteToWideChar(CP_UTF8, 0, name, -1, wfn, BSIZE_SP - 1);
+    if (_wstat(wfn, &st) == 0)
+        return copy(name);
+#endif
+#else
+    if (stat(name, &st) == 0)
+        return copy(name);
+#endif
+
+
 
     /* fail if this was an absolute filename or if there is no sourcepath var */
     if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
