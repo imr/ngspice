@@ -881,6 +881,8 @@ outahere:
 /* Main entry point for our Windows application */
 #ifdef EXT_ASC
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
+#elif __MINGW32__ /* MINGW bug not knowing wWinMain */
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR nolpszCmdLine, int nCmdShow)
 #else
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR wlpszCmdLine, int nCmdShow)
 #endif
@@ -898,8 +900,35 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR wlpszCm
 
 #ifndef EXT_ASC
     /* convert wchar to utf-8 */
+
+    /* MINGW bug not knowing wWinMain 
+    https://github.com/coderforlife/mingw-unicode-main/blob/master/mingw-unicode-gui.c 
+    */
+#ifdef __MINGW32__
+    NG_IGNORE(nolpszCmdLine);
+    char lpszCmdLine[1024];
+    wchar_t *lpCmdLine = GetCommandLineW();
+    if (__argc == 1) { // avoids GetCommandLineW bug that does not always quote the program name if no arguments
+        do { ++lpCmdLine; } while (*lpCmdLine);
+}
+    else {
+        BOOL quoted = lpCmdLine[0] == L'"';
+        ++lpCmdLine; // skips the " or the first letter (all paths are at least 1 letter)
+        while (*lpCmdLine) {
+            if (quoted && lpCmdLine[0] == L'"') { quoted = FALSE; } // found end quote
+            else if (!quoted && lpCmdLine[0] == L' ') {
+                // found an unquoted space, now skip all spaces
+                do { ++lpCmdLine; } while (lpCmdLine[0] == L' ');
+                break;
+            }
+            ++lpCmdLine;
+        }
+    }
+    WideCharToMultiByte(CP_UTF8, 0, lpCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
+#else
     char lpszCmdLine[1024];
     WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
+#endif
 #endif
 
     /* fill global variables */
