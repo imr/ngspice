@@ -23,8 +23,12 @@ typedef struct sCPLinstance {
     IFuid CPLname;  /* pointer to character string naming this instance */
     int CPLstate;   /* not used */
 
+    /* GENnode[] { */
 	int *CPLposNodes;
 	int *CPLnegNodes;
+    // FIXME, worst case, two array here within GENnode[] !
+    /* } */
+
         int dimension;
 	double CPLlength;
 	int *CPLibr1;

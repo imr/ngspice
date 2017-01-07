@@ -27,8 +27,8 @@ IFparm CPLmPTable[] = { /* model parameters */
 };
 
 char *CPLnames[] = {
-	"P+",
-	"P-"
+	"P+",                   /* 1 */ /* doesn't fit either ! */
+	"P-"                    /* 2 */ /* doesn't fit either ! */
 };
 
 int CPLnSize = NUMELEMS(CPLnames);

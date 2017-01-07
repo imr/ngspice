@@ -11,8 +11,8 @@ SPICEdev CPLinfo = {
     "CplLines",
     "Simple Coupled Multiconductor Lines",
 
-    &CPLnSize,
-    &CPLnSize,
+    &CPLnSize,                  /* FIXME, should be say 0 here for this special case ? */
+    &CPLnSize,                  /* FIXME, should be say 0 here for this special case ? */
     CPLnames,
 
     &CPLpTSize,
