@@ -251,8 +251,9 @@ initdico(dico_t *dico)
     int asize = NESTINGDEPTH; /* default allocation depth of the synbol stack */
     COMPATMODE_T compat_mode;
 
-    spice_dstring_init(&(dico->option));
-    spice_dstring_init(&(dico->srcfile));
+    spice_dstring_init  (&(dico->option));
+    spice_dstring_value (&dico->option) = "spice-3"; /* mhx: If not, nupa uppercases quoted strings */
+    spice_dstring_init  (&(dico->srcfile));
 
     dico->srcline = -1;
     dico->errcount = 0;
@@ -1539,6 +1540,10 @@ nupa_assignment(dico_t *dico, char *s, char mode)
     SPICE_DSTRING tstr;         /* temporary dstring */
     SPICE_DSTRING ustr;         /* temporary dstring */
 
+#define SHARP(x) (s[x] == '#' || s[x] == '"')
+#define LBRAC(x) (s[x] == '{')
+#define RBRAC(x) (s[x] == '}')
+
     spice_dstring_init(&tstr);
     spice_dstring_init(&ustr);
     ls = length(s);
@@ -1573,14 +1578,10 @@ nupa_assignment(dico_t *dico, char *s, char mode)
             if (i > ls)
                 error = message(dico, " = sign expected.\n");
 
-	    for (ix = i; ix < ls - 1; ix++) { /* change delimiters {# and #} to double quotes */
-		int ssharp = 0;
-		if (s[ix] == '{' &&  s[ix + 1] == '#') { s[ix] = ' '; s[ix + 1] = '"'; strptr = &s[ix + 1]; }
-		if (s[ix] == '#' &&  s[ix + 1] == '}') { s[ix] = '"'; s[ix + 1] = '\0'; }
-		if (s[ix] == '#' && !s[ix + 1] == '}') {
-		    s[ix] = '"'; ssharp++;
-		    if (ssharp == 2) { s[ix + 1] = '\0'; ssharp = 0; }
-		}
+	    strptr = strchr(&s[i], '\"');	/* mhx: maybe this is a quoted string already; .param x = "hello" */
+	    for (ix = i; ix < ls - 1; ix++) {	/* change possible delimiters {# and #} to double quotes */
+		if (LBRAC(ix) && SHARP(ix + 1)) { s[ix] = ' '; s[ix + 1] = '"'; strptr = &s[ix + 1]; }
+		if (SHARP(ix) && RBRAC(ix + 1)) { s[ix] = '"'; s[ix + 1] = '\0'; }
 	    }
 
 	    dtype = getexpress(s, &ustr, &i);
@@ -1611,6 +1612,9 @@ nupa_assignment(dico_t *dico, char *s, char mode)
     spice_dstring_free(&ustr);
 
     return error;
+#undef SHARP 
+#undef RBRAC
+#undef LBRAC
 }
 
 

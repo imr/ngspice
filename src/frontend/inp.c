@@ -589,8 +589,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 /* lines .width, .four, .plot, .print, .save added to wl_first, removed from deck */
                 /* lines .op, .meas, .tf added to wl_first */
                 inp_casefix(s); /* s: first token from line */
-                inp_casefix(dd->li_line);
-                if (eq(s, ".width") ||
+		if (!ciprefix(".param", s))
+		    /* mhx: casefix strips quotes(!?), and .PARAM therefore does not see them. */
+		    /* maybe .func shold also be allowed?  */
+		    inp_casefix(dd->li_line);
+		if (eq(s, ".width") ||
                     ciprefix(".four", s) ||
                     eq(s, ".plot") ||
                     eq(s, ".print") ||
@@ -1382,8 +1385,7 @@ com_alterparam(wordlist *wl)
                     curr_line = dd->li_line;
                     char *start = gettok_char(&curr_line, '=', TRUE, FALSE);
                     tfree(dd->li_line);
-		    /* mhx: re-inserted braces. It works/ed (sometimes) without them. */
-                    dd->li_line = tprintf("%s{%s}", start, pval);
+                    dd->li_line = tprintf("%s%s", start, pval);
                     found = TRUE;
                     tfree(start);
                 }
