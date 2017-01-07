@@ -15,21 +15,18 @@ Author: 1985 Thomas L. Quarles
 
 #include "dev.h"
 
+
 int
 CKTbindNode(CKTcircuit *ckt, GENinstance *instance, int term, CKTnode *node)
 {
-    int mappednode;
-    SPICEdev **devs;
+    SPICEdev **devs = devices();
     int type = instance->GENmodPtr->GENmodType;
 
     NG_IGNORE(ckt);
 
-    devs = devices();
-    mappednode = node->number;
-
     if (*(devs[type]->DEVpublic.terms) >= term && term > 0) {
         /* argh, terminals are counted from 1 */
-        instance->GENnode[term - 1] = mappednode;
+        instance->GENnode[term - 1] = node->number;
         return OK;
     } else {
         return E_NOTERM;
