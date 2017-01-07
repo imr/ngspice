@@ -170,6 +170,7 @@ gr_redrawgrid(GRAPH *graph)
                         (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);
             }
 #endif
+#ifndef X_DISPLAY_MISSING
             /* new x11 with xft and utf-8 */
             else if (!old_x11) {
                 int wlen = 0, wheight = 0;
@@ -179,6 +180,7 @@ gr_redrawgrid(GRAPH *graph)
                         /*vertical text, midpoint in y is aligned midpoint of text string */
                         (graph->absolute.height - wlen) / 2, 90);
             }
+#endif
 #endif
             else /* others */
                 DevDrawText(graph->grid.ylabel,
