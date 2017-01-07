@@ -40,9 +40,14 @@ typedef struct sNBJT2instance {
 #define NBJT2dIcDVbe NBJT2state+7
 #define NBJT2numStates 8
 
+  /* GENnode[] { */
   int NBJT2colNode;		/* number of collector node of bjt */
   int NBJT2baseNode;		/* number of base node of bjt */
   int NBJT2emitNode;		/* number of emitter node of bjt */
+  // FIXME,  substrate missing, see NBJTnames[]
+  // the next variable NBJTpDevice is in real danger !
+  /* } */
+
   double NBJT2width;		/* width factor for the bjt */
   double NBJT2area;		/* area factor for the bjt */
   TWOdevice *NBJT2pDevice;

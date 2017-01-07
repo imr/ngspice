@@ -58,10 +58,10 @@ IFparm NBJT2mPTable[] = {	/* model parameters */
 
 
 char *NBJT2names[] = {
-  "Collector",
-  "Base",
-  "Emitter",
-  "Substrate"
+  "Collector",                  /* 1 */
+  "Base",                       /* 2 */
+  "Emitter",                    /* 3 */
+  "Substrate"                   /* 4 */ // FIXME, excess entry ?!
 };
 
 int NBJT2nSize = NUMELEMS(NBJT2names);

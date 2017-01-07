@@ -40,9 +40,14 @@ typedef struct sNBJTinstance {
 #define NBJTdIcDVbe NBJTstate+7
 #define NBJTnumStates 8
 
+  /* GENnode[] { */
   int NBJTcolNode;		/* number of collector node of bjt */
   int NBJTbaseNode;		/* number of base node of bjt */
   int NBJTemitNode;		/* number of emitter node of bjt */
+  // FIXME,  substrate missing, see NBJTnames[]
+  // the next variable NBJTpDevice is in real danger !
+  /* } */
+
   ONEdevice *NBJTpDevice;
   GLOBvalues NBJTglobals;	/* Temp.-Dep. Global Parameters */
   int NBJTtype;
