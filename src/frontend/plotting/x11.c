@@ -1206,11 +1206,5 @@ Xget_str_length(char *text, int* wlen, int* wheight) {
 
 int x11_dummy_symbol;
 /* otherwise, some linkers get upset */
-int
-Xget_str_length(char *text, int*l, int*w) {
-    NG_IGNORE(text);
-    NG_IGNORE(*l);
-    NG_IGNORE(*w);
-    return 0;
-}
+
 #endif /* X_DISPLAY_MISSING */
