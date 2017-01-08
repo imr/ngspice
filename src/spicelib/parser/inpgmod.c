@@ -135,11 +135,8 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 static bool
 parse_line( char* line, char* tokens[], int num_tokens, double values[], bool found[] )
 {
-  char*     token = NULL;
   int       get_index = -1;
   int       i;
-  bool      flag = TRUE;
-  int       error;
 
   for ( i = 0; i < num_tokens; i++ )
     found[i] = FALSE;
@@ -147,12 +144,14 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
   while (*line) {
 
     if ( get_index != -1 ) {
+      int error;
       values[get_index] = INPevaluate( &line, &error, 1 );
       found[get_index]  = TRUE;
       get_index         = -1;
       continue;
     }
 
+    char *token = NULL;
     INPgetNetTok( &line, &token, 1 );
 
     for ( i = 0; i < num_tokens; i++ )
@@ -162,12 +161,10 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
   }
 
   for ( i = 0; i < num_tokens; i++ )
-    if ( found[i] == FALSE ) {
-      flag = FALSE;
-      break;
-    }
+    if (!found[i])
+        return FALSE;
 
-  return flag;
+  return TRUE;
 }
 
 static bool
@@ -192,7 +189,6 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   bool         parse_found[4];
   static char* instance_tokens[] = { "l", "w" };
   static char* model_tokens[]    = { "lmin", "lmax", "wmin", "wmax" };
-  int          error;
   double       scale;
 
   if (!cp_getvar("scale", CP_REAL, &scale))
@@ -241,7 +237,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     if ( in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
         /* create unless model is already defined */
         if ( !modtmp->INPmodfast ) {
-            error = create_model( ckt, modtmp, tab );
+            int error = create_model( ckt, modtmp, tab );
             if ( error )
                 return NULL;
         }
@@ -256,7 +252,6 @@ char *
 INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 {
   INPmodel *modtmp;
-  int error;
 
 #ifdef TRACE
   printf("In INPgetMod, examining model %s ...\n", name);
@@ -285,7 +280,7 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 
       /* create unless model is already defined */
       if (! modtmp->INPmodfast) {
-        error = create_model( ckt, modtmp, tab );
+        int error = create_model( ckt, modtmp, tab );
         if ( error ) {
             *model = NULL;
             return INPerror(error);
@@ -322,13 +317,10 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
     card *txtCard;        /* Text description of a card */
     GENcard *tmpCard;        /* Processed description of a card */
     IFcardInfo *info = NULL;        /* Info about the type of card located */
-    char *line;
     char *cardName = NULL;        /* name of a card */
-    char *parm;                /* name of a parameter */
     int cardNum = 0;        /* number of this card in the overall line */
     char *err = NULL;    /* Strings for error messages */
-    IFvalue *value;
-    int error, idx, invert;
+    int error;
 
     /* Chase down to the top of the list of actual cards */
     txtCard = model->INPmodLine->actualLine;
@@ -340,7 +332,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 
     /* Now parse each remaining card */
     for (; txtCard; txtCard = txtCard->nextcard) {
-        line = txtCard->line;
+        char *line = txtCard->line;
         cardNum++;
 
         /* Skip the initial '+' and any whitespace. */
@@ -410,17 +402,17 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 
         /* parse the rest of this line */
         while (*line) {
+            int invert = FALSE;
             /* Strip leading carat from booleans */
             if (*line == '^') {
                 invert = TRUE;
                 line++;
-            } else {
-                invert = FALSE;
             }
+            char *parm;                /* name of a parameter */
             INPgetTok(&line,&parm,1);
             if (!*parm)
                 break;
-            idx = INPfindParm(parm, info->cardParms, info->numParms);
+            int idx = INPfindParm(parm, info->cardParms, info->numParms);
             if (idx == E_MISSING) {
                 /* parm not found */
                 err = INPerrCat(err,
@@ -432,7 +424,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                                 tprintf("Error on card %d : ambiguous parameter (%s) - ignored",
                                         cardNum, parm));
             } else {
-                value = INPgetValue( ckt, &line, info->cardParms[idx].dataType, tab );
+                IFvalue *value = INPgetValue( ckt, &line, info->cardParms[idx].dataType, tab );
                 /* invert if this is a boolean entry */
                 if (invert) {
                     if ((info->cardParms[idx].dataType & IF_VARTYPES) == IF_FLAG) {
