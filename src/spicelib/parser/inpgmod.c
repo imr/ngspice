@@ -62,7 +62,9 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
     error = INPparseNumMod( ckt, modtmp, tab, &err );
     if (error)
         return error;
-  } else {
+    modtmp->INPmodLine->error = err;
+    return 0;
+  }
 #endif
 
   /* parameter isolation, identification, binding */
@@ -122,9 +124,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
       }
       FREE(parm);
     }
-#ifdef CIDER
-  }
-#endif
+
   modtmp->INPmodLine->error = err;
 
   return 0;
