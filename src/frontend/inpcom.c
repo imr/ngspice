@@ -1124,8 +1124,6 @@ inp_pathresolve(const char *name)
     struct variable *v;
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-    struct _stat st;
-
     /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
     if (cp_getvar("mingwpath", CP_BOOL, NULL) && name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) && name[2] == DIR_TERM_LINUX) {
         strcpy(buf, name);
@@ -1133,23 +1131,23 @@ inp_pathresolve(const char *name)
         buf[1] = ':';
         return inp_pathresolve(buf);
     }
-#else
+#endif
+
     struct stat st;
-#endif
 
-    /* just try it */
-#if defined(__MINGW32__) || defined(_MSC_VER)
-#ifndef EXT_ASC
-#define statm newstat
-#else
-#define statm stat
-#endif
-#else
-#define statm stat
-#endif
-
-    if (statm(name, &st) == 0)
+    if (stat(name, &st) == 0)
         return copy(name);
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    wchar_t wname[BSIZE_SP];
+    if (MultiByteToWideChar(CP_UTF8, 0, name, -1, wname, 2 * strlen(name) + 1) == 0) {
+        fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
+        fprintf(stderr, "%s could not be converted\n", name);
+        return NULL;
+    }
+    if (_waccess(wname, 0) == 0)
+        return copy(name);
+#endif
 
     /* fail if this was an absolute filename or if there is no sourcepath var */
     if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
@@ -1174,8 +1172,18 @@ inp_pathresolve(const char *name)
             break;
         }
 
-        if (statm(buf, &st) == 0)
+        if (stat(buf, &st) == 0)
             return copy(buf);
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        if (MultiByteToWideChar(CP_UTF8, 0, buf, -1, wname, 2 * strlen(buf) + 1) == 0) {
+            fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
+            fprintf(stderr, "%s could not be converted\n", buf);
+            return NULL;
+        }
+        if (_waccess(wname, 0) == 0)
+            return copy(buf);
+#endif
     }
 
     return (NULL);
@@ -7051,13 +7059,3 @@ inp_rem_unused_models(struct nscope *root, struct line *deck)
     // disable unused .model lines, and free the models assoc lists
     rem_unused_xxx(root);
 }
-
-
-/* stat input converted to wide string */
-#if defined(__MINGW32__) || defined(_MSC_VER)
-int newstat(const char *name, struct _stat *pst) {
-    wchar_t wfn[BSIZE_SP];
-    MultiByteToWideChar(CP_UTF8, 0, name, -1, wfn, BSIZE_SP - 1);
-    return _wstat(wfn, pst);
-}
-#endif
