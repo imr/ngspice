@@ -292,7 +292,10 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 
       if (! modtmp->INPmodfast) {   /* Check if model is already defined */
         error = create_model( ckt, modtmp, tab );
-        if ( error ) return INPerror(error);
+        if ( error ) {
+            *model = NULL;
+            return INPerror(error);
+        }
       }
       *model = modtmp;
       return (NULL);
