@@ -18,11 +18,11 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/numgen.h"
 #include "ngspice/suffix.h"
 
-extern IFcardInfo *INPcardTab[];
-extern int INPnumCards;
 #define E_MISSING        -1
 #define E_AMBIGUOUS        -2
 
+extern IFcardInfo *INPcardTab[];
+extern int INPnumCards;
 static int INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMessage );
 static int INPfindCard( char *name, IFcardInfo *table[], int numCards );
 static int INPfindParm( char *name, IFparm *table, int numParms );
