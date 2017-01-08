@@ -49,7 +49,8 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
   /* not already defined, so create & give parameters */
   error = ft_sim->newModel (ckt, modtmp->INPmodType, &(modtmp->INPmodfast), modtmp->INPmodName);
 
-  if (error) return error;
+  if (error)
+      return error;
 
 #ifdef CIDER
   /* Handle Numerical Models Differently */
@@ -59,7 +60,8 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
        modtmp->INPmodType == INPtypelook("NBJT2") ||
        modtmp->INPmodType == INPtypelook("NUMOS") ) {
     error = INPparseNumMod( ckt, modtmp, tab, &err );
-    if (error) return error;
+    if (error)
+        return error;
   } else {
 #endif
 
@@ -154,7 +156,8 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
     INPgetNetTok( &line, &token, 1 );
 
     for ( i = 0; i < num_tokens; i++ )
-      if ( strcmp( tokens[i], token ) == 0 ) get_index = i;
+      if ( strcmp( tokens[i], token ) == 0 )
+          get_index = i;
     txfree(token);
   }
 
@@ -244,7 +247,8 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         /* create unless model is already defined */
         if ( !modtmp->INPmodfast ) {
             error = create_model( ckt, modtmp, tab );
-            if ( error ) return NULL;
+            if ( error )
+                return NULL;
         }
         *model = modtmp;
         return NULL;
@@ -253,7 +257,8 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
   return NULL;
 }
 
-char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
+char *
+INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
 {
   INPmodel *modtmp;
   char *err = NULL;
