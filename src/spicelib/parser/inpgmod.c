@@ -57,7 +57,8 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
        modtmp->INPmodType == INPtypelook("NBJT") ||
        modtmp->INPmodType == INPtypelook("NUMD2") ||
        modtmp->INPmodType == INPtypelook("NBJT2") ||
-       modtmp->INPmodType == INPtypelook("NUMOS") ) {
+       modtmp->INPmodType == INPtypelook("NUMOS") )
+  {
     error = INPparseNumMod( ckt, modtmp, tab, &err );
     if (error)
         return error;
@@ -83,11 +84,9 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 
       for (j = 0; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
 
-        if (strcmp(parm, "txl") == 0) {
-          if (strcmp("cpl", ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
+        if (strcmp(parm, "txl") == 0)
+          if (strcmp("cpl", ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0)
             strcpy(parm, "cpl");
-          }
-        }
 
         if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
 
@@ -116,11 +115,10 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
             perror("strtod");
             controlled_exit(EXIT_FAILURE);
         }
-        if (endptr == parm) { /* it was no number - it is really a string */
+        if (endptr == parm) /* it was no number - it is really a string */
           err = INPerrCat(err,
                           tprintf("unrecognized parameter (%s) - ignored",
                                   parm));
-        }
       }
       FREE(parm);
     }
@@ -219,8 +217,10 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         && modtmp->INPmodType != INPtypelook ("BSIM4v7")
         && modtmp->INPmodType != INPtypelook ("HiSIM2")
         && modtmp->INPmodType != INPtypelook ("HiSIMHV1")
-        && modtmp->INPmodType != INPtypelook ("HiSIMHV2")
-       ) continue;
+        && modtmp->INPmodType != INPtypelook ("HiSIMHV2"))
+    {
+        continue;
+    }
 
     /* if illegal device type */
     if (modtmp->INPmodType < 0) {
@@ -427,13 +427,12 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 IFvalue *value = INPgetValue( ckt, &line, info->cardParms[idx].dataType, tab );
                 /* invert if this is a boolean entry */
                 if (invert) {
-                    if ((info->cardParms[idx].dataType & IF_VARTYPES) == IF_FLAG) {
+                    if ((info->cardParms[idx].dataType & IF_VARTYPES) == IF_FLAG)
                         value->iValue = 0;
-                    } else {
+                    else
                         err = INPerrCat(err,
                                         tprintf("Error on card %d : non-boolean parameter (%s) - \'^\' ignored",
                                                 cardNum, parm));
-                    }
                 }
                 error = info->setCardParm (info->cardParms[idx].id, value, tmpCard );
                 if (error)
