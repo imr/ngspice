@@ -164,10 +164,15 @@ gr_redrawgrid(GRAPH *graph)
             else if (eq(dispdev->name, "Windows")) {
                 /* utf-8: figure out the real length of the y label */
                 int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1, NULL, 0);
-                DevDrawText(graph->grid.ylabel,
-                        graph->fontwidth,
-                        /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);
+                if (wlen == 0) {
+                    fprintf(stderr, "UTF-8 to multibyte conversion failed with 0x%x\n", GetLastError());
+                    fprintf(stderr, "%s could not be converted\n", graph->grid.ylabel);
+                }
+                else
+                    DevDrawText(graph->grid.ylabel,
+                            graph->fontwidth,
+                            /*vertical text, midpoint in y is aligned midpoint of text string */
+                            (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);
             }
 #endif
 #ifndef X_DISPLAY_MISSING

@@ -261,6 +261,11 @@ newfopen(char *fn, char* md)
     wchar_t wmd[16];
     MultiByteToWideChar(CP_UTF8, 0, md, -1, wmd, 15);
     MultiByteToWideChar(CP_UTF8, 0, fn, -1, wfn, BSIZE_SP - 1);
+    if (MultiByteToWideChar(CP_UTF8, 0, fn, -1, wfn, BSIZE_SP - 1) == 0) {
+        fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
+        fprintf(stderr, "%s could not be converted\n", fn);
+        return NULL;
+    }
     return _wfopen(wfn, wmd);
 }
 #endif

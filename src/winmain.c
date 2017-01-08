@@ -372,7 +372,8 @@ static void DisplayText( void)
 #else
     wchar_t *TWBuffer;
     TWBuffer = TMALLOC(wchar_t, 2 * strlen(TBuffer) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, TBuffer, strlen(TBuffer) + 1, TWBuffer, 2 * strlen(TBuffer) + 1);
+    if (MultiByteToWideChar(CP_UTF8, 0, TBuffer, -1, TWBuffer, 2 * strlen(TBuffer) + 1) == 0)
+        swprintf(TWBuffer, 2 * strlen(TBuffer), L"UTF-8 to UTF-16 conversion failed with 0x%x\n%hs could not be converted\n", GetLastError(), TBuffer);
     SetWindowTextW(twText, TWBuffer);
     tfree(TWBuffer);
 #endif
@@ -901,7 +902,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR wlpszCm
 #ifndef EXT_ASC
     /* convert wchar to utf-8 */
 
-    /* MINGW bug not knowing wWinMain 
+    /* MINGW not knowing wWinMain
     https://github.com/coderforlife/mingw-unicode-main/blob/master/mingw-unicode-gui.c 
     */
 #ifdef __MINGW32__
