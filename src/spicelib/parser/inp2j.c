@@ -46,7 +46,6 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, card * current)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetTok(&line, &model, 1);
     INPinsert(&model, tab);
-    thismodel = NULL;
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
 	if (thismodel->INPmodType != INPtypelook("JFET")

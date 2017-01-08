@@ -78,7 +78,6 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     INPgetNetTok (&line, &nname5, 1);      /*  get 5th token  */
     save = line; /* saj - save the posn for later if
                   the default mosfet model is used */
-    thismodel = NULL;
 #ifdef TRACE
     printf("INP2M: checking for 4 node device\n");
 #endif
@@ -93,7 +92,6 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
         /*  5th token is not a model in the table  */
         nodeflag = 1;          /*  now specify a 5 node device  */
         INPgetNetTok (&line, &nname6, 1);   /*  get next token  */
-        thismodel = NULL;
 #ifdef TRACE
         printf("INP2M: checking for 5 node device\n");
 #endif
@@ -103,7 +101,6 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             /*  6th token is not a model in the table  */
             nodeflag = 2;              /*  now specify a 6 node device  */
             INPgetNetTok (&line, &nname7, 1);       /*  get next token  */
-            thismodel = NULL;
 #ifdef TRACE
             printf("INP2M: checking for 6 node device\n");
 #endif
@@ -192,7 +189,6 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 
 
     INPinsert (&model, tab);
-    thismodel = NULL;
 #ifdef TRACE
     printf("INP2M: Looking up model\n");
 #endif

@@ -72,7 +72,6 @@ int lenvalgiven = 0;
     INPgetTok(&line,&model,1);
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
-            thismodel = NULL;
             current->error = INPgetMod(ckt,model,&thismodel,tab);
             INPgetTok(&line,&model,1);
             if (strcmp(model, "len") == 0) {

@@ -83,7 +83,6 @@ int num, i;
     INPgetTok(&line,&model,1);
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
-            thismodel = NULL;
             current->error = INPgetMod(ckt,model,&thismodel,tab);
             if(thismodel != NULL) {
                     if(mytype != thismodel->INPmodType) {
