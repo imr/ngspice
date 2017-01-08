@@ -470,7 +470,7 @@ INPfindCard( char *name, IFcardInfo *table[], int numCards )
     /* compare all the names in the card table to this name */
     for ( test = 0; test < numCards; test++ ) {
         int match = cimatch( name, table[test]->name );
-        if ((match == bestMatch ) && (match > 0)){
+        if ((match > 0) && (match == bestMatch )){
             best = E_AMBIGUOUS;
         } else if ((match > bestMatch) && (match == length)) {
             best = test;
@@ -501,7 +501,7 @@ INPfindParm( char *name, IFparm *table, int numParms )
             return test;
         }
         int id = table[test].id;
-        if ((match == bestMatch) && (match > 0) && (id != bestId)) {
+        if ((match > 0) && (match == bestMatch) && (id != bestId)) {
             best = E_AMBIGUOUS;
         } else if ((match > bestMatch) && (match == length)) {
             bestMatch = match;
