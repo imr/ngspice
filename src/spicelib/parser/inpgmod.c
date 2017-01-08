@@ -461,18 +461,15 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
 static int
 INPfindCard( char *name, IFcardInfo *table[], int numCards )
 {
-    int test;
-    int match, bestMatch;
-    int best;
-    int length;
+    int length = (int) strlen(name);
+    int best = E_MISSING;
+    int bestMatch = 0;
 
-    length = (int) strlen(name);
+    int test;
 
     /* compare all the names in the card table to this name */
-    best = E_MISSING;
-    bestMatch = 0;
     for ( test = 0; test < numCards; test++ ) {
-        match = cimatch( name, table[test]->name );
+        int match = cimatch( name, table[test]->name );
         if ((match == bestMatch ) && (match > 0)){
             best = E_AMBIGUOUS;
         } else if ((match > bestMatch) && (match == length)) {
@@ -489,26 +486,21 @@ INPfindCard( char *name, IFcardInfo *table[], int numCards )
 static int
 INPfindParm( char *name, IFparm *table, int numParms )
 {
-    int test, best;
-    int match, bestMatch;
-    int id, bestId;
-    int length;
+    int length = (int) strlen(name);
+    int best = E_MISSING;
+    int bestMatch = 0;
+    int bestId = -1;
 
-    length = (int) strlen(name);
+    int test;
 
     /* compare all the names in the parameter table to this name */
-    best = E_MISSING;
-    bestId = -1;
-    bestMatch = 0;
     for ( test = 0; test < numParms; test++ ) {
-        match = cimatch( name, table[test].keyword );
+        int match = cimatch( name, table[test].keyword );
         if ( (match == length) && (match == (int) strlen(table[test].keyword)) ) {
             /* exact match */
-            best = test;
-            /* all done */
-            break;
+            return test;
         }
-        id = table[test].id;
+        int id = table[test].id;
         if ((match == bestMatch) && (match > 0) && (id != bestId)) {
             best = E_AMBIGUOUS;
         } else if ((match > bestMatch) && (match == length)) {
