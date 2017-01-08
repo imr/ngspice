@@ -69,7 +69,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
     line = modtmp->INPmodLine->line;
 
 #ifdef TRACE
-    printf("In INPgetMod, inserting new model into table.  line = %s . . . \n", line);
+    printf("In INPgetMod, inserting new model into table.  line = %s ...\n", line);
 #endif
 
     INPgetTok(&line, &parm, 1);        /* throw away '.model' */
@@ -229,7 +229,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     /* if illegal device type */
     if (modtmp->INPmodType < 0) {
       *model = NULL;
-      return tprintf("Unknown device type for model %s \n", name);
+      return tprintf("Unknown device type for model %s\n", name);
     }
 
     if (!parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ))
@@ -259,13 +259,13 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
   int error;
 
 #ifdef TRACE
-  printf("In INPgetMod, examining model %s . . . \n", name);
+  printf("In INPgetMod, examining model %s ...\n", name);
 #endif
 
   for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
 #ifdef TRACE
-    printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, modtmp->INPmodName);
+    printf("In INPgetMod, comparing %s against stored model %s ...\n", name, modtmp->INPmodName);
 #endif
 
     if (strcmp(modtmp->INPmodName, name) == 0) {
@@ -276,11 +276,11 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
       if (modtmp->INPmodType < 0) {
 
 #ifdef TRACE
-        printf("In INPgetMod, illegal device type for model %s . . . \n", name);
+        printf("In INPgetMod, illegal device type for model %s ...\n", name);
 #endif
 
         *model = NULL;
-        return tprintf("Unknown device type for model %s \n", name);
+        return tprintf("Unknown device type for model %s\n", name);
       }
 
       /* create unless model is already defined */
@@ -297,11 +297,11 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
   }
 
 #ifdef TRACE
-  printf("In INPgetMod, didn't find model for %s, using default . . . \n", name);
+  printf("In INPgetMod, didn't find model for %s, using default ...\n", name);
 #endif
 
   *model = NULL;
-  return tprintf("Unable to find definition of model %s - default assumed \n", name);
+  return tprintf("Unable to find definition of model %s - default assumed\n", name);
 }
 
 #ifdef CIDER
