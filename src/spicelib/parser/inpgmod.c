@@ -38,12 +38,9 @@ static int
 create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 {
   IFvalue* val;
-  char*    err = NULL;
-  char*    line;
-  char*    parm;
-  int      error = 0;
-  int      j;
-  char *endptr; double dval;
+  char    *err = NULL, *line, *parm, *endptr;
+  int     error, j;
+  double  dval;
 
   /* not already defined, so create & give parameters */
   error = ft_sim->newModel (ckt, modtmp->INPmodType, &(modtmp->INPmodfast), modtmp->INPmodName);
@@ -206,18 +203,17 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         continue;
 
     /* skip if not binnable */
-    if (
-           modtmp->INPmodType != INPtypelook ("BSIM3")
-        && modtmp->INPmodType != INPtypelook ("BSIM3v32")
-        && modtmp->INPmodType != INPtypelook ("BSIM3v0")
-        && modtmp->INPmodType != INPtypelook ("BSIM3v1")
-        && modtmp->INPmodType != INPtypelook ("BSIM4")
-        && modtmp->INPmodType != INPtypelook ("BSIM4v5")
-        && modtmp->INPmodType != INPtypelook ("BSIM4v6")
-        && modtmp->INPmodType != INPtypelook ("BSIM4v7")
-        && modtmp->INPmodType != INPtypelook ("HiSIM2")
-        && modtmp->INPmodType != INPtypelook ("HiSIMHV1")
-        && modtmp->INPmodType != INPtypelook ("HiSIMHV2"))
+    if (modtmp->INPmodType != INPtypelook ("BSIM3") &&
+        modtmp->INPmodType != INPtypelook ("BSIM3v32") &&
+        modtmp->INPmodType != INPtypelook ("BSIM3v0") &&
+        modtmp->INPmodType != INPtypelook ("BSIM3v1") &&
+        modtmp->INPmodType != INPtypelook ("BSIM4") &&
+        modtmp->INPmodType != INPtypelook ("BSIM4v5") &&
+        modtmp->INPmodType != INPtypelook ("BSIM4v6") &&
+        modtmp->INPmodType != INPtypelook ("BSIM4v7") &&
+        modtmp->INPmodType != INPtypelook ("HiSIM2") &&
+        modtmp->INPmodType != INPtypelook ("HiSIMHV1") &&
+        modtmp->INPmodType != INPtypelook ("HiSIMHV2"))
     {
         continue;
     }
