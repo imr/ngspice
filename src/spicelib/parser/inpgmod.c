@@ -173,17 +173,14 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
 static bool
 is_equal( double result, double expectedResult )
 {
-  if (fabs(result - expectedResult) < 1e-15) return TRUE;
-  else                                       return FALSE;
+  return fabs(result - expectedResult) < 1e-15;
 }
 
 static bool
 in_range( double value, double min, double max )
 {
   /* the standard binning rule is: min <= value < max */
-  if ( (is_equal( value, min ) == TRUE) ||
-       (min < value && value < max) ) return TRUE;
-  else                                return FALSE;
+  return is_equal(value, min) || (min < value && value < max);
 }
 
 char*
