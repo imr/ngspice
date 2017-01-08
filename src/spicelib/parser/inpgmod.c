@@ -80,7 +80,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
     tfree(parm);
     INPgetTok(&line, &parm, 1);        /* throw away 'modname' */
     tfree(parm);
-    while (*line != '\0') {
+    while (*line) {
       INPgetTok(&line, &parm, 1);
       if (!*parm)
         continue;
@@ -147,7 +147,7 @@ parse_line( char* line, char* tokens[], int num_tokens, double values[], bool fo
   for ( i = 0; i < num_tokens; i++ )
     found[i] = FALSE;
 
-  while( *line != '\0' ) {
+  while (*line) {
 
     if ( get_index != -1 ) {
       values[get_index] = INPevaluate( &line, &error, 1 );
@@ -205,13 +205,13 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
 
   *model = NULL;
 
-  if ( parse_line( line, instance_tokens, 2, parse_values, parse_found ) != TRUE )
+  if (!parse_line( line, instance_tokens, 2, parse_values, parse_found ))
     return NULL;
 
   l = parse_values[0]*scale;
   w = parse_values[1]*scale;
 
-  for ( modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel ) {
+  for ( modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel ) {
 
     if ( model_name_match(name, modtmp->INPmodName) < 2 )
         continue;
@@ -237,7 +237,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
       return (err);
     } /* end of checking for illegal model */
 
-    if ( parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ) != TRUE )
+    if (!parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ))
       continue;
 
     lmin = parse_values[0]; lmax = parse_values[1];
@@ -266,7 +266,7 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
   printf("In INPgetMod, examining model %s . . . \n", name);
 #endif
 
-  for (modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel) {
+  for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
 #ifdef TRACE
     /* SDB debug statement */
