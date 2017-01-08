@@ -299,7 +299,7 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
         }
       }
       *model = modtmp;
-      return (NULL);
+      return NULL;
     }
   }
   *model = NULL;
@@ -394,7 +394,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                     info = INPcardTab[lastType];
                     error = info->newCard (&tmpCard, model->INPmodfast );
                     if (error)
-                        return(error);
+                        return error;
                     /* Handle parameter-less cards */
                 } else if (cinprefix( cardName, "title", 3 ) ) {
                     /* Do nothing */
@@ -403,7 +403,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 } else if (cinprefix( cardName, "end", 3 ) ) {
                     /* Terminate parsing */
                     *errMessage = err;
-                    return( 0 );
+                    return 0;
                 } else {
                     /* Error */
                     tmp = tprintf("Error on card %d : unrecognized name (%s) - ignored",
@@ -453,14 +453,14 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 }
                 error = info->setCardParm (info->cardParms[idx].id, value, tmpCard );
                 if (error)
-                    return(error);
+                    return error;
             }
             FREE(parm);
         }
     }
 
     *errMessage = err;
-    return( 0 );
+    return 0;
 }
 
 /*
@@ -488,7 +488,7 @@ INPfindCard( char *name, IFcardInfo *table[], int numCards )
             bestMatch = match;
         }
     }
-    return(best);
+    return best;
 }
 
 /*
@@ -525,7 +525,7 @@ INPfindParm( char *name, IFparm *table, int numParms )
             best = test;
         }
     }
-    return(best);
+    return best;
 }
 
 #endif /* CIDER */
