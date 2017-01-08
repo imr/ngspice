@@ -13,7 +13,6 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include <errno.h>
 
 #ifdef CIDER
-/* begin Cider Integration */
 #include "ngspice/numcards.h"
 #include "ngspice/carddefs.h"
 #include "ngspice/numgen.h"
@@ -28,13 +27,12 @@ static int INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, cha
 static int INPfindCard( char *name, IFcardInfo *table[], int numCards );
 static int INPfindParm( char *name, IFparm *table, int numParms );
 
-/* end Cider Integration */
-#endif /* CIDER */
+#endif
 
 extern INPmodel *modtab;
 
 /*
-  code moved from INPgetMod
+ * code moved from INPgetMod
  */
 static int
 create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
@@ -53,10 +51,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
 
   if (error) return error;
 
-  /* parameter isolation, identification, binding */
-
 #ifdef CIDER
-  /* begin cider integration */
   /* Handle Numerical Models Differently */
   if ( modtmp->INPmodType == INPtypelook("NUMD") ||
        modtmp->INPmodType == INPtypelook("NBJT") ||
@@ -66,13 +61,13 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
     error = INPparseNumMod( ckt, modtmp, tab, &err );
     if (error) return error;
   } else {
-    /* It's an analytical model */
-#endif /* CIDER */
+#endif
+
+  /* parameter isolation, identification, binding */
 
     line = modtmp->INPmodLine->line;
 
 #ifdef TRACE
-    /* SDB debug statement */
     printf("In INPgetMod, inserting new model into table.  line = %s . . . \n", line);
 #endif
 
@@ -104,7 +99,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
             return error;
           break;
         }
-      } /* end for(j = 0 . . .*/
+      }
 
       if (strcmp(parm, "level") == 0) {
         /* just grab the level number and throw away */
@@ -128,7 +123,7 @@ create_model( CKTcircuit* ckt, INPmodel* modtmp, INPtables* tab )
       FREE(parm);
     }
 #ifdef CIDER
-  } /* analytical vs. numerical model parsing */
+  }
 #endif
   modtmp->INPmodLine->error = err;
 
@@ -182,7 +177,8 @@ is_equal( double result, double expectedResult )
 static bool
 in_range( double value, double min, double max )
 {
-  if ( (is_equal( value, min ) == TRUE) || /* the standard binning rule is: min <= value < max */
+  /* the standard binning rule is: min <= value < max */
+  if ( (is_equal( value, min ) == TRUE) ||
        (min < value && value < max) ) return TRUE;
   else                                return FALSE;
 }
@@ -216,7 +212,8 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     if ( model_name_match(name, modtmp->INPmodName) < 2 )
         continue;
 
-    if ( /* This is the list of binable models */
+    /* skip if not binnable */
+    if (
            modtmp->INPmodType != INPtypelook ("BSIM3")
         && modtmp->INPmodType != INPtypelook ("BSIM3v32")
         && modtmp->INPmodType != INPtypelook ("BSIM3v0")
@@ -228,14 +225,14 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
         && modtmp->INPmodType != INPtypelook ("HiSIM2")
         && modtmp->INPmodType != INPtypelook ("HiSIMHV1")
         && modtmp->INPmodType != INPtypelook ("HiSIMHV2")
-       ) continue; /* We left the loop if the model is not in the list */
+       ) continue;
 
-    if (modtmp->INPmodType < 0) {  /* First check for illegal model type */
-      /* illegal device type, so can't handle */
+    /* if illegal device type */
+    if (modtmp->INPmodType < 0) {
       *model = NULL;
       err = tprintf("Unknown device type for model %s \n", name);
       return (err);
-    } /* end of checking for illegal model */
+    }
 
     if (!parse_line( modtmp->INPmodLine->line, model_tokens, 4, parse_values, parse_found ))
       continue;
@@ -244,6 +241,7 @@ INPgetModBin( CKTcircuit* ckt, char* name, INPmodel** model, INPtables* tab, cha
     wmin = parse_values[2]; wmax = parse_values[3];
 
     if ( in_range( l, lmin, lmax ) && in_range( w, wmin, wmax ) ) {
+        /* create unless model is already defined */
         if ( !modtmp->INPmodfast ) {
             error = create_model( ckt, modtmp, tab );
             if ( error ) return NULL;
@@ -262,14 +260,12 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
   int error;
 
 #ifdef TRACE
-  /* SDB debug statement */
   printf("In INPgetMod, examining model %s . . . \n", name);
 #endif
 
   for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
 #ifdef TRACE
-    /* SDB debug statement */
     printf("In INPgetMod, comparing %s against stored model %s . . . \n", name, modtmp->INPmodName);
 #endif
 
@@ -277,20 +273,20 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
       /* found the model in question - now instantiate if necessary */
       /* and return an appropriate pointer to it */
 
-      if (modtmp->INPmodType < 0) {    /* First check for illegal model type */
-        /* illegal device type, so can't handle */
+      /* if illegal device type */
+      if (modtmp->INPmodType < 0) {
         *model = NULL;
         err = tprintf("Unknown device type for model %s \n", name);
 
 #ifdef TRACE
-        /* SDB debug statement */
         printf("In INPgetMod, illegal device type for model %s . . . \n", name);
 #endif
 
         return (err);
-      }  /* end of checking for illegal model */
+      }
 
-      if (! modtmp->INPmodfast) {   /* Check if model is already defined */
+      /* create unless model is already defined */
+      if (! modtmp->INPmodfast) {
         error = create_model( ckt, modtmp, tab );
         if ( error ) {
             *model = NULL;
@@ -301,12 +297,10 @@ char *INPgetMod(CKTcircuit *ckt, char *name, INPmodel ** model, INPtables * tab)
       return (NULL);
     }
   }
-  /* didn't find model - ERROR  - return model */
   *model = NULL;
   err = tprintf("Unable to find definition of model %s - default assumed \n", name);
 
 #ifdef TRACE
-  /* SDB debug statement */
   printf("In INPgetMod, didn't find model for %s, using default . . . \n", name);
 #endif
 
@@ -374,7 +368,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 err = INPerrCat(err,tmp);
                 continue;
             }
-            while (*line == '+') /* Skip leading '+'s */
+            /* Skip leading '+'s */
+            while (*line == '+')
                 line++;
             break;
         default:
@@ -421,7 +416,7 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
             /* Strip leading carat from booleans */
             if (*line == '^') {
                 invert = TRUE;
-                line++;        /* Skip the '^' */
+                line++;
             } else {
                 invert = FALSE;
             }
@@ -441,7 +436,8 @@ INPparseNumMod( CKTcircuit* ckt, INPmodel *model, INPtables *tab, char **errMess
                 err = INPerrCat(err, tmp);
             } else {
                 value = INPgetValue( ckt, &line, info->cardParms[idx].dataType, tab );
-                if (invert) { /* invert if it's a boolean entry */
+                /* invert if this is a boolean entry */
+                if (invert) {
                     if ((info->cardParms[idx].dataType & IF_VARTYPES) == IF_FLAG) {
                         value->iValue = 0;
                     } else {
