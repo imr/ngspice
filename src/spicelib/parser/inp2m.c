@@ -84,9 +84,8 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     err_msg = INPgetMod (ckt, nname5, &thismodel, tab);
     tfree(err_msg);
     /* check if using model binning -- pass in line since need 'l' and 'w' */
-    if (!thismodel) {
+    if (!thismodel)
         INPgetModBin( ckt, nname5, &thismodel, tab, line );
-    }
 
     if (!thismodel) {
         /*  5th token is not a model in the table  */
@@ -116,11 +115,11 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                 err_msg = INPgetMod (ckt, model, &thismodel, tab);      /*  get pointer to the model  */
                 tfree(err_msg);
                 if (thismodel) {
-                    if ((thismodel->INPmodType != INPtypelook ("B4SOI"))   &&
-                            (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
-                            (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
-                            (thismodel->INPmodType != INPtypelook ("B3SOIDD"))
-                       ) {
+                    if (thismodel->INPmodType != INPtypelook ("B4SOI")   &&
+                            thismodel->INPmodType != INPtypelook ("B3SOIPD") &&
+                            thismodel->INPmodType != INPtypelook ("B3SOIFD") &&
+                            thismodel->INPmodType != INPtypelook ("B3SOIDD"))
+                    {
                         /*  if model is not variable node B3SOIPD/FD/DD model, error!  */
                         LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
                         return;
@@ -143,14 +142,14 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                 /*saj*/
             } else {
                 /*  7th token is a model - only have 6 terminal device  */
-                if ((thismodel->INPmodType != INPtypelook ("B4SOI"))   &&
-                        (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
-                        (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
-                        (thismodel->INPmodType != INPtypelook ("B3SOIDD")) &&
-                        (thismodel->INPmodType != INPtypelook ("HiSIMHV1")) &&
-                        (thismodel->INPmodType != INPtypelook ("HiSIMHV2")) &&
-                        (thismodel->INPmodType != INPtypelook ("SOI3"))
-                   ) {
+                if (thismodel->INPmodType != INPtypelook ("B4SOI")   &&
+                        thismodel->INPmodType != INPtypelook ("B3SOIPD") &&
+                        thismodel->INPmodType != INPtypelook ("B3SOIFD") &&
+                        thismodel->INPmodType != INPtypelook ("B3SOIDD") &&
+                        thismodel->INPmodType != INPtypelook ("HiSIMHV1") &&
+                        thismodel->INPmodType != INPtypelook ("HiSIMHV2") &&
+                        thismodel->INPmodType != INPtypelook ("SOI3"))
+                {
                     /*  if model is not variable node B3SOIPD/FD/DD or STAG model, error!  */
                     LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
                     return;
@@ -163,14 +162,14 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             }
         } else {
             /*  6th token is a model - only have 5 terminal device  */
-            if ((thismodel->INPmodType != INPtypelook ("B4SOI"))   &&
-                    (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
-                    (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
-                    (thismodel->INPmodType != INPtypelook ("B3SOIDD")) &&
-                    (thismodel->INPmodType != INPtypelook ("HiSIMHV1")) &&
-                    (thismodel->INPmodType != INPtypelook ("HiSIMHV2")) &&
-                    (thismodel->INPmodType != INPtypelook ("SOI3"))
-               ) {
+            if (thismodel->INPmodType != INPtypelook ("B4SOI")   &&
+                    thismodel->INPmodType != INPtypelook ("B3SOIPD") &&
+                    thismodel->INPmodType != INPtypelook ("B3SOIFD") &&
+                    thismodel->INPmodType != INPtypelook ("B3SOIDD") &&
+                    thismodel->INPmodType != INPtypelook ("HiSIMHV1") &&
+                    thismodel->INPmodType != INPtypelook ("HiSIMHV2") &&
+                    thismodel->INPmodType != INPtypelook ("SOI3"))
+            {
                 /*  if model is not variable node B3SOIPD/FD/DD  model, error!  */
                 LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
                 return;
@@ -180,9 +179,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
                 model = nname6;      /*  make model point to the correct token  */
             }
         }
-    }
-
-    else {
+    } else {
         /*  5th token is a model - only have 4 terminal device  */
         model = nname5;        /*  make model point to the correct token  */
     }
@@ -236,13 +233,13 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #endif
                 && thismodel->INPmodType != INPtypelook ("HiSIM2")
                 && thismodel->INPmodType != INPtypelook ("HiSIMHV1")
-                && thismodel->INPmodType != INPtypelook ("HiSIMHV2")
-           ) {
+                && thismodel->INPmodType != INPtypelook ("HiSIMHV2"))
+        {
             LITERR ("incorrect model type");
             return;
         }
         type = thismodel->INPmodType;
-        mdfast = (thismodel->INPmodfast);
+        mdfast = thismodel->INPmodfast;
     } else {
         type = INPtypelook ("Mos1");
         if (type < 0) {
@@ -262,13 +259,14 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     IFC (bindNode, (ckt, fast, 3, node3));
     IFC (bindNode, (ckt, fast, 4, node4));
     /* use type - not thismodel->INPmodType as it might not exist! */
-    if ((type == INPtypelook ("B4SOI"))   ||
-            (type == INPtypelook ("B3SOIPD")) ||
-            (type == INPtypelook ("B3SOIFD")) ||
-            (type == INPtypelook ("B3SOIDD")) ||
-            (type == INPtypelook ("HiSIMHV1")) ||
-            (type == INPtypelook ("HiSIMHV2")) ||
-            (type == INPtypelook ("SOI3"))) {
+    if (type == INPtypelook ("B4SOI")   ||
+            type == INPtypelook ("B3SOIPD") ||
+            type == INPtypelook ("B3SOIFD") ||
+            type == INPtypelook ("B3SOIDD") ||
+            type == INPtypelook ("HiSIMHV1") ||
+            type == INPtypelook ("HiSIMHV2") ||
+            type == INPtypelook ("SOI3"))
+    {
         switch (nodeflag) {
         case 0:
             fast->GENnode5 = -1;
@@ -296,7 +294,6 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     }
 
     PARSECALL ((&line, ckt, type, fast, &leadval, &waslead, tab));
-    if (waslead) {
+    if (waslead)
         LITERR (" error:  no unlabeled parameter permitted on mosfet\n");
-    }
 }
