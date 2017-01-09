@@ -84,11 +84,11 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     err_msg = INPgetMod (ckt, nname5, &thismodel, tab);
     tfree(err_msg);
     /* check if using model binning -- pass in line since need 'l' and 'w' */
-    if ( thismodel == NULL ) {
+    if (!thismodel) {
         INPgetModBin( ckt, nname5, &thismodel, tab, line );
     }
 
-    if (thismodel == NULL) {
+    if (!thismodel) {
         /*  5th token is not a model in the table  */
         nodeflag = 1;          /*  now specify a 5 node device  */
         INPgetNetTok (&line, &nname6, 1);   /*  get next token  */
@@ -97,7 +97,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #endif
         err_msg = INPgetMod (ckt, nname6, &thismodel, tab);
         tfree(err_msg);
-        if (thismodel == NULL) {
+        if (!thismodel) {
             /*  6th token is not a model in the table  */
             nodeflag = 2;              /*  now specify a 6 node device  */
             INPgetNetTok (&line, &nname7, 1);       /*  get next token  */
@@ -106,7 +106,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #endif
             err_msg = INPgetMod (ckt, nname7, &thismodel, tab);
             tfree(err_msg);
-            if (thismodel == NULL) {
+            if (!thismodel) {
                 /*  7th token is not a model in the table  */
                 nodeflag = 3;              /*  now specify a 7 node device  */
                 INPgetTok (&line, &model, 1);           /*  get model name  */
@@ -115,7 +115,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #endif
                 err_msg = INPgetMod (ckt, model, &thismodel, tab);      /*  get pointer to the model  */
                 tfree(err_msg);
-                if (thismodel != NULL) {
+                if (thismodel) {
                     if ((thismodel->INPmodType != INPtypelook ("B4SOI"))   &&
                             (thismodel->INPmodType != INPtypelook ("B3SOIPD")) &&
                             (thismodel->INPmodType != INPtypelook ("B3SOIFD")) &&
@@ -194,9 +194,9 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #endif
 
     err_msg = INPgetMod (ckt, model, &thismodel, tab);
-    if ( thismodel == NULL ) {
+    if (!thismodel) {
         INPgetModBin( ckt, model, &thismodel, tab, save );
-        if ( thismodel == NULL )
+        if (!thismodel)
             current->error = err_msg;
         else
             tfree(err_msg);
@@ -204,7 +204,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     else
         tfree(err_msg);
 
-    if (thismodel != NULL) {
+    if (thismodel) {
         if (thismodel->INPmodType != INPtypelook ("Mos1")
                 && thismodel->INPmodType != INPtypelook ("Mos2")
                 && thismodel->INPmodType != INPtypelook ("Mos3")
