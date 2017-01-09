@@ -56,7 +56,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
     printf("INP2M: Parsing '%s'\n",current->line);
 #endif
 
-    nodeflag = 0;                  /*  initially specify a 4 terminal device  */
+    nodeflag = 4;                  /*  initially specify a 4 terminal device  */
     line = current->line;
     INPgetTok (&line, &name, 1);
     INPinsert (&name, tab);
@@ -89,7 +89,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 
     if (!thismodel) {
         /*  5th token is not a model in the table  */
-        nodeflag = 1;          /*  now specify a 5 node device  */
+        nodeflag = 5;          /*  now specify a 5 node device  */
         INPgetNetTok (&line, &nname6, 1);   /*  get next token  */
 #ifdef TRACE
         printf("INP2M: checking for 5 node device\n");
@@ -98,7 +98,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
         tfree(err_msg);
         if (!thismodel) {
             /*  6th token is not a model in the table  */
-            nodeflag = 2;              /*  now specify a 6 node device  */
+            nodeflag = 6;              /*  now specify a 6 node device  */
             INPgetNetTok (&line, &nname7, 1);       /*  get next token  */
 #ifdef TRACE
             printf("INP2M: checking for 6 node device\n");
@@ -107,7 +107,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             tfree(err_msg);
             if (!thismodel) {
                 /*  7th token is not a model in the table  */
-                nodeflag = 3;              /*  now specify a 7 node device  */
+                nodeflag = 7;              /*  now specify a 7 node device  */
                 INPgetTok (&line, &model, 1);           /*  get model name  */
 #ifdef TRACE
                 printf("INP2M: checking for 7 node device\n");
@@ -135,7 +135,7 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
 #ifdef TRACE
                     printf("INP2M: couldn't workout number of nodes, assuming 4\n");
 #endif
-                    nodeflag = 0;                  /*  now reset to a 4 node device  */
+                    nodeflag = 4;                  /*  now reset to a 4 node device  */
                     model = nname5;/* mosfet*/
                     line = save;   /* reset the posn to what it sould be */
                 }
@@ -267,22 +267,22 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
             type == INPtypelook ("SOI3"))
     {
         switch (nodeflag) {
-        case 0:
+        case 4:
             fast->GENnode5 = -1;
             fast->GENnode6 = -1;
             fast->GENnode7 = -1;
             break;
-        case 1:
+        case 5:
             IFC (bindNode, (ckt, fast, 5, node5));
             fast->GENnode6 = -1;
             fast->GENnode7 = -1;
             break;
-        case 2:
+        case 6:
             IFC (bindNode, (ckt, fast, 5, node5));
             IFC (bindNode, (ckt, fast, 6, node6));
             fast->GENnode7 = -1;
             break;
-        case 3:
+        case 7:
             IFC (bindNode, (ckt, fast, 5, node5));
             IFC (bindNode, (ckt, fast, 6, node6));
             IFC (bindNode, (ckt, fast, 7, node7));
