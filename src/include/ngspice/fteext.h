@@ -362,8 +362,4 @@ extern bool ft_intrpt;
 extern bool ft_setflag;
 extern bool old_x11;
 
-/* x11.c */
-extern int Xget_str_length(char *text, int *w, int *l);
-
-
 #endif

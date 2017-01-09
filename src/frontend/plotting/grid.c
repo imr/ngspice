@@ -178,12 +178,11 @@ gr_redrawgrid(GRAPH *graph)
 #ifndef X_DISPLAY_MISSING
             /* new x11 with xft and utf-8 */
             else if (!old_x11) {
-                int wlen = 0, wheight = 0;
-                Xget_str_length(graph->grid.ylabel, &wlen, &wheight);
+                /* calculate and add offsets in fcn X11_Text in X11.c */
                 DevDrawText(graph->grid.ylabel,
-                        (int)(1.2 * wheight),
-                        /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - wlen) / 2, 90);
+                        0,
+                        /*vertical text, y is midpoint of graph height */
+                        (graph->absolute.height) / 2, 90);
             }
 #endif
 #endif

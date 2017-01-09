@@ -109,6 +109,7 @@ static void X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
 static void linear_arc(int x0, int y0, int radius, double theta, double delta_theta);
 static void slopelocation(GRAPH *graph, int x0, int y0);
 static void zoomin(GRAPH *graph);
+static int Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* name, int fsize);
 
 //XtEventHandler
 static void handlekeypressed(Widget w, XtPointer clientdata, XEvent *ev, Boolean *continue_dispatch);
@@ -485,7 +486,7 @@ X11_NewViewport(GRAPH *graph)
     }
     else {
         int wl, wh;
-        Xget_str_length("ABCD", &wl, &wh);
+        Xget_str_length("ABCD", &wl, &wh, NULL, fontname, xfont_size);
         graph->fontwidth = (int)(wl / 4);
         graph->fontheight = wh;
         DEVDEP(graph).fsize = xfont_size;
@@ -597,6 +598,7 @@ X11_Text(char *text, int x, int y, int angle)
 {
     /* We specify text position by lower left corner, so have to adjust for
        X11's font nonsense. */
+    int wlen = 0, wheight = 0;
 
     if(old_x11) {
         if (DEVDEP(currentgraph).isopen)
@@ -627,6 +629,11 @@ X11_Text(char *text, int x, int y, int angle)
     XftFont *new_font = XftFontOpenPattern(display, rot_pat);
     XftPatternDestroy(new_pat);
 
+    /* calculate and add offset, if ylabel with angle 90° */
+    if (angle == 90) {
+        Xget_str_length(text, &wlen, &wheight, new_font, NULL, 0);
+    }
+
     Colormap cmap = DefaultColormap(display, 0);
     XftColor color;
     XftColorAllocName(display, DefaultVisual(display, 0), cmap, DEVDEP(currentgraph).txtcolor, &color);
@@ -636,7 +643,7 @@ X11_Text(char *text, int x, int y, int angle)
     /* Draw text */
     XftDrawStringUtf8(
         draw, &color, new_font,
-        x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text)
+        x + (int)(1.5 * wlen), currentgraph->absolute.height - y + (int)(0.5 * wheight), (FcChar8*)text, strlen(text)
     );
     XftFontClose( display, new_font);
     XftDrawDestroy(draw);
@@ -1185,17 +1192,24 @@ linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
     /* After font selection for XftTextExtentsUtf8
      * to measure character string length.
      * Same as rotation below, but 0° angle */
-int
-Xget_str_length(char *text, int* wlen, int* wheight) {
+static int
+Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* foname, int fsize) {
     XGlyphInfo extents;
-    XftPattern *ext_pat = XftPatternCreate(); // the pattern we will use for rotating
-    XftPatternAddString(ext_pat, XFT_FAMILY, fontname);
-    XftPatternAddDouble (ext_pat, XFT_PIXEL_SIZE, (double)xfont_size);
-    XftResult ext_result;
-    XftFont *ext_font = XftFontOpenPattern(display, XftFontMatch(display, 0, ext_pat, &ext_result));
-    XftTextExtentsUtf8( display, ext_font, (XftChar8 *)text, strlen(text), &extents );
-    XftFontClose( display, ext_font);
-    XftPatternDestroy(ext_pat);
+    XftFont* hfont = NULL;
+    /* if font name and font size are given */
+    if (gfont == NULL) {
+        XftPattern *ext_pat = XftPatternCreate(); // the pattern we will use for rotating
+        XftPatternAddString(ext_pat, XFT_FAMILY, foname);
+        XftPatternAddDouble(ext_pat, XFT_PIXEL_SIZE, (double)fsize);
+        XftResult ext_result;
+        hfont = gfont = XftFontOpenPattern(display, XftFontMatch(display, 0, ext_pat, &ext_result));
+        XftTextExtentsUtf8(display, gfont, (XftChar8 *)text, strlen(text), &extents);
+        XftPatternDestroy(ext_pat);
+    }
+    XftTextExtentsUtf8( display, gfont, (XftChar8 *)text, strlen(text), &extents );
+    if(hfont)
+        XftFontClose( display,hfont);
+
     /* size of the string */
     *wlen = extents.width;
     *wheight = extents.height;
