@@ -202,38 +202,38 @@ INP2M (CKTcircuit *ckt, INPtables * tab, card * current)
         tfree(err_msg);
 
     if (thismodel) {
-        if (thismodel->INPmodType != INPtypelook ("Mos1")
-                && thismodel->INPmodType != INPtypelook ("Mos2")
-                && thismodel->INPmodType != INPtypelook ("Mos3")
-                && thismodel->INPmodType != INPtypelook ("Mos5")
-                && thismodel->INPmodType != INPtypelook ("Mos6")
-                && thismodel->INPmodType != INPtypelook ("Mos8")
-                && thismodel->INPmodType != INPtypelook ("Mos9")
-                && thismodel->INPmodType != INPtypelook ("BSIM1")
-                && thismodel->INPmodType != INPtypelook ("BSIM2")
-                && thismodel->INPmodType != INPtypelook ("BSIM3")
-                && thismodel->INPmodType != INPtypelook ("BSIM3v32")
-                && thismodel->INPmodType != INPtypelook ("B4SOI")
-                && thismodel->INPmodType != INPtypelook ("B3SOIPD")
-                && thismodel->INPmodType != INPtypelook ("B3SOIFD")
-                && thismodel->INPmodType != INPtypelook ("B3SOIDD")
-                && thismodel->INPmodType != INPtypelook ("BSIM4")
-                && thismodel->INPmodType != INPtypelook ("BSIM4v5")
-                && thismodel->INPmodType != INPtypelook ("BSIM4v6")
-                && thismodel->INPmodType != INPtypelook ("BSIM4v7")
-                && thismodel->INPmodType != INPtypelook ("BSIM3v0")
-                && thismodel->INPmodType != INPtypelook ("BSIM3v1")
-                && thismodel->INPmodType != INPtypelook ("SOI3")
+        if (thismodel->INPmodType != INPtypelook ("Mos1") &&
+            thismodel->INPmodType != INPtypelook ("Mos2") &&
+            thismodel->INPmodType != INPtypelook ("Mos3") &&
+            thismodel->INPmodType != INPtypelook ("Mos5") &&
+            thismodel->INPmodType != INPtypelook ("Mos6") &&
+            thismodel->INPmodType != INPtypelook ("Mos8") &&
+            thismodel->INPmodType != INPtypelook ("Mos9") &&
+            thismodel->INPmodType != INPtypelook ("BSIM1") &&
+            thismodel->INPmodType != INPtypelook ("BSIM2") &&
+            thismodel->INPmodType != INPtypelook ("BSIM3") &&
+            thismodel->INPmodType != INPtypelook ("BSIM3v32") &&
+            thismodel->INPmodType != INPtypelook ("B4SOI") &&
+            thismodel->INPmodType != INPtypelook ("B3SOIPD") &&
+            thismodel->INPmodType != INPtypelook ("B3SOIFD") &&
+            thismodel->INPmodType != INPtypelook ("B3SOIDD") &&
+            thismodel->INPmodType != INPtypelook ("BSIM4") &&
+            thismodel->INPmodType != INPtypelook ("BSIM4v5") &&
+            thismodel->INPmodType != INPtypelook ("BSIM4v6") &&
+            thismodel->INPmodType != INPtypelook ("BSIM4v7") &&
+            thismodel->INPmodType != INPtypelook ("BSIM3v0") &&
+            thismodel->INPmodType != INPtypelook ("BSIM3v1") &&
+            thismodel->INPmodType != INPtypelook ("SOI3") &&
 #ifdef CIDER
-                && thismodel->INPmodType != INPtypelook ("NUMOS")
+            thismodel->INPmodType != INPtypelook ("NUMOS") &&
 #endif
 #ifdef ADMS
-                && thismodel->INPmodType != INPtypelook ("ekv")
-                && thismodel->INPmodType != INPtypelook ("psp102")
+            thismodel->INPmodType != INPtypelook ("ekv") &&
+            thismodel->INPmodType != INPtypelook ("psp102") &&
 #endif
-                && thismodel->INPmodType != INPtypelook ("HiSIM2")
-                && thismodel->INPmodType != INPtypelook ("HiSIMHV1")
-                && thismodel->INPmodType != INPtypelook ("HiSIMHV2"))
+            thismodel->INPmodType != INPtypelook ("HiSIM2") &&
+            thismodel->INPmodType != INPtypelook ("HiSIMHV1") &&
+            thismodel->INPmodType != INPtypelook ("HiSIMHV2"))
         {
             LITERR ("incorrect model type");
             return;
