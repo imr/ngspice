@@ -1326,9 +1326,9 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
             {
                 struct line *a_card, *model_card, *next_card;
                 char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str, *xy_values1_b, *ref_str, *fcn_name, *fcn_e, *out_b, *out_e, *ref_e;
+                char *out_str, *ctrl_nodes_str, *xy_values1_b=NULL, *ref_str, *fcn_name, *fcn_e=NULL, *out_b, *out_e, *ref_e;
                 char *m_instance, *m_model;
-                char *xy_values2_b, *xy_values1_e, *ctrl_nodes_b, *ctrl_nodes_e;
+                char *xy_values2_b=NULL, *xy_values1_e=NULL, *ctrl_nodes_b=NULL, *ctrl_nodes_e=NULL;
                 int  xy_count1, xy_count2;
                 bool ok = FALSE;
 
@@ -4286,7 +4286,7 @@ inp_compat(struct line *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
-    char *xline;
+    char *xline = NULL;
     size_t xlen, i, pai = 0, paui = 0, ii;
     char *ckt_array[100];
     struct line *new_line;
@@ -4294,8 +4294,7 @@ inp_compat(struct line *card)
     struct line  *param_end = NULL, *param_beg = NULL;
     int skip_control = 0;
 
-    char *equation, *tc1_ptr = NULL, *tc2_ptr = NULL;
-    double tc1 = 0.0, tc2 = 0.0;
+    char *equation, *tc1_ptr, *tc2_ptr;
 
     for (; card; card = card->li_next) {
 
@@ -4846,37 +4845,22 @@ inp_compat(struct line *card)
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
-            str_ptr = strstr(cut_line, "tc1");
-            if (str_ptr) {
-                /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr)
-                        tc1 = atof(tc1_ptr+1);
-                }
-            }
-            str_ptr = strstr(cut_line, "tc2");
-            if (str_ptr) {
+                tc1_ptr = strstr(cut_line, "tc1");
+                tc2_ptr = strstr(cut_line, "tc2");
+		if (str_ptr) {
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr)
-                        tc2 = atof(tc2_ptr+1);
                 }
             }
-            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
-                        node1, node2, equation);
-            } else if (tc2_ptr == NULL) {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
-                        node1, node2, equation, tc1);
-            } else {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
-                        node1, node2, equation, tc1, tc2);
-            }
-            tc1_ptr = NULL;
-            tc2_ptr = NULL;
-            new_line = xx_new_line(card->li_next, xline, 0, 0, card->level);
+            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) 
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2, node1, node2, equation);
+            else if (tc1_ptr && tc2_ptr) 
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+	    else if (tc1_ptr)
+		xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr);
+	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    new_line = xx_new_line(card->li_next, xline, 0, 0, card->level);
 
             // comment out current old R line
             *(card->li_line)   = '*';
@@ -4921,26 +4905,10 @@ inp_compat(struct line *card)
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
-            str_ptr = strstr(cut_line, "tc1");
-            if (str_ptr) {
-                /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr)
-                        tc1 = atof(tc1_ptr+1);
-                }
-            }
-            str_ptr = strstr(cut_line, "tc2");
-            if (str_ptr) {
-                /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr)
-                        tc2 = atof(tc2_ptr+1);
-                }
-            }
+            tc1_ptr = strstr(cut_line, "tc1");
+            tc2_ptr = strstr(cut_line, "tc2");
             // Exxx  n-aux 0  n1 n2  1
-            ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1",
+            ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1", 
                     title_tok, title_tok, node1, node2);
             // Cxxx  n-aux 0  1
             ckt_array[1] = tprintf("c%s %s_int2 0 1", title_tok, title_tok);
@@ -4948,16 +4916,13 @@ inp_compat(struct line *card)
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
                         title_tok, node2, node1, title_tok, equation);
-            } else if (tc2_ptr == NULL) {
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
-                        title_tok, node2, node1, title_tok, equation, tc1);
-            } else {
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=1",
-                        title_tok, node2, node1, title_tok, equation, tc1, tc2);
-            }
-            tc1_ptr = NULL;
-            tc2_ptr = NULL;
-            // insert new B source line immediately after current line
+	    }
+	    else if (tc1_ptr && tc2_ptr) 
+		ckt_array[2] = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+	    else  if (tc1_ptr) 
+		ckt_array[2] = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr);
+	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0, card->level);
 
@@ -5015,24 +4980,8 @@ inp_compat(struct line *card)
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
-            str_ptr = strstr(cut_line, "tc1");
-            if (str_ptr) {
-                /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr)
-                        tc1 = atof(tc1_ptr+1);
-                }
-            }
-            str_ptr = strstr(cut_line, "tc2");
-            if (str_ptr) {
-                /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr)
-                        tc2 = atof(tc2_ptr+1);
-                }
-            }
+            tc1_ptr = strstr(cut_line, "tc1");
+            tc2_ptr = strstr(cut_line, "tc2");
             // Fxxx  n-aux 0  Bxxx  1
             ckt_array[0] = tprintf("f%s %s_int2 0 b%s -1",
                     title_tok, title_tok, title_tok);
@@ -5042,15 +4991,12 @@ inp_compat(struct line *card)
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s)",
                         title_tok, node1, node2, title_tok, equation);
-            } else if (tc2_ptr == NULL) {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e reciproctc=0",
-                        title_tok, node2, node1, title_tok, equation, tc1);
-            } else {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=0",
-                        title_tok, node2, node1, title_tok, equation, tc1, tc2);
-            }
-            tc1_ptr = NULL;
-            tc2_ptr = NULL;
+	    }
+	    else if (tc1_ptr && tc2_ptr) 
+		ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=1", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+	    else if(tc1_ptr)
+		ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=1", title_tok, node2, node1, title_tok, equation, tc1_ptr);
+	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0, card->level);
@@ -5535,6 +5481,7 @@ static char *
 inp_modify_exp(char* expr)
 {
     char *s;
+    bool sign = 0;
     wordlist *wl = NULL, *wlist = NULL;
 
     /* scan the expression and remove all '{' and '}' */
@@ -5550,20 +5497,19 @@ inp_modify_exp(char* expr)
 
         wl_append_word(&wlist, &wl, NULL);
 
-        if ((c == ',') || (c == '(') || (c == ')') ||
-            (c == '*') || (c == '/') || (c == '^') ||
-            (c == '+') || (c == '?') || (c == ':') ||
-            (c == '-'))
-        {
-            if ((c == '*') && (s[1] == '*')) {
-                wl->wl_word = tprintf("**");
-                s += 2;
-            } else {
-                wl->wl_word = tprintf("%c", c);
-                s++;
-            }
-        } else if ((c == '>') || (c == '<') ||
-                   (c == '!') || (c == '='))
+	if ((c == ',') || (c == '(') || (c == ')') || (c == '*') || (c == '/') ||
+	    (c == '^') || (c == '+') || (c == '?') || (c == ':') || (c == '-')) 
+	{
+		    char storec[3] = { 0 };
+		    storec[0] = c;
+		    switch (c) {
+			    case '*': if (s[1] == '*') { s++; storec[1] = c; } break;
+			    case '-': if (isdigit_c(s[1])) { sign = 1; storec[0] = '\0'; } break;
+		    }
+		    wl->wl_word = tprintf("%s", storec); s++;
+	} 
+	else if ((c == '>') || (c == '<') ||
+                 (c == '!') || (c == '='))
         {
             /* >=, <=, !=, ==, <>, ... */
             char *beg = s++;
@@ -5628,7 +5574,8 @@ inp_modify_exp(char* expr)
             int error1;
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&s, &error1, 0);
-            wl->wl_word = tprintf("%18.10e", dvalue);
+	    wl->wl_word = tprintf("%s%-.16g", sign ? "-" : "", dvalue);
+	    sign = 0;
             /* skip the `unit', FIXME INPevaluate() should do this */
             while (isalpha_c(*s))
                 s++;
