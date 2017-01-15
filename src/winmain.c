@@ -253,7 +253,7 @@ void SetAnalyse(
       DELTATIME given value, or if analysis has changed, else return */
    if (hwAnalyse && ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse))) {
         if (DecaPercent < 0) {
-            sprintf( s, "--ready--");
+            sprintf( s, " --ready--");
             sprintf( t, "%s", PACKAGE_STRING);
         }   
       else if (DecaPercent == 0) {
@@ -454,12 +454,12 @@ static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
     MoveWindow( swString, 0, h, cx, LineHeight, TRUE);
 
     /* Expand Status Elements */
-    h = cy - LineHeight + StatusFrame -1;
+    h = cy - LineHeight + StatusFrame - 2;
     int statbegin = 3 * StatusFrame + QuitButtonLength + AnalyseLength + 20;
     MoveWindow( hwSource, StatusFrame, h, cx - statbegin - BorderSize, StatusElHeight, TRUE);
     MoveWindow( hwAnalyse, cx - statbegin, h, AnalyseLength, StatusElHeight, TRUE);
-    MoveWindow( hwQuitButton, cx - StatusFrame - QuitButtonLength - 20, 
-       h, QuitButtonLength, StatusElHeight, TRUE);
+    MoveWindow( hwQuitButton, cx - StatusFrame - QuitButtonLength - 1,
+       h + 1, QuitButtonLength, StatusElHeight, TRUE);
 }
 
 /* Write a command into the command buffer */
@@ -706,7 +706,7 @@ static void Element_OnPaint(HWND hwnd)
     s.right = r.right - 1;
     s.top = r.top + 1;
     s.bottom = r.bottom - 1;
-    o = GetStockObject(LTGRAY_BRUSH);
+    o = GetSysColorBrush(COLOR_BTNFACE);
     FillRect(hdc, &s, o);
     SetBkMode(hdc, TRANSPARENT);
     SelectObject(hdc, sfont);
@@ -911,7 +911,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR wlpszCm
     wchar_t *lpCmdLine = GetCommandLineW();
     if (__argc == 1) { // avoids GetCommandLineW bug that does not always quote the program name if no arguments
         do { ++lpCmdLine; } while (*lpCmdLine);
-}
+    }
     else {
         BOOL quoted = lpCmdLine[0] == L'"';
         ++lpCmdLine; // skips the " or the first letter (all paths are at least 1 letter)
@@ -1035,7 +1035,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR wlpszCm
 #endif
 
     /* Font for element status windows (source, analysis) */
-    sfont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Arial");
+    sfont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, L"");
+//    sfont = CreateFontW(15, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");
 
     /*Create main window */
 #ifdef EXT_ASC
