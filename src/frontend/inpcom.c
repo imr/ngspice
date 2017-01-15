@@ -4816,7 +4816,8 @@ inp_compat(struct line *card)
 
         /* Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
            -->
-           BRxxx pos neg I = V(pos, neg)/{equation}
+           BRxxx pos neg I = V(pos, neg)/{equation} reciproctc=1
+	   (reciproctc = 1/0 when B source has I= / V= respectively.)
         */
         else if (*curr_line == 'r') {
             cut_line = curr_line;
@@ -4877,8 +4878,9 @@ inp_compat(struct line *card)
            -->
            Exxx  n-aux 0  n1 n2  1
            Cxxx  n-aux 0         1
-           Bxxx  n2 n1  I = i(Exxx) * equation
-        */
+           Bxxx  n2 n1  I = i(Exxx) * equation  reciproctc=1
+	   (reciproctc = 1/0 when B source has I= / V= respectively.)
+	   */
         else if (*curr_line == 'c') {
             cut_line = curr_line;
             title_tok = gettok(&cut_line);
@@ -4952,7 +4954,8 @@ inp_compat(struct line *card)
            -->
            Fxxx n-aux 0  Bxxx -1
            Lxxx n-aux 0      1
-           Bxxx n1 n2 V = v(n-aux) * equation
+           Bxxx n1 n2 V = v(n-aux) * equation  reciproctc=0
+	   (reciproctc = 1/0 when B source has I= / V= respectively.)
         */
         else if (*curr_line == 'l') {
             cut_line = curr_line;
@@ -4973,7 +4976,7 @@ inp_compat(struct line *card)
                 /* if not, equation may start with a '(' */
                 str_ptr = strchr(cut_line, '(');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
+                    fprintf(stderr, "ERROR: malformed L line: %s\n", curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
                 equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
@@ -4993,9 +4996,9 @@ inp_compat(struct line *card)
                         title_tok, node1, node2, title_tok, equation);
 	    }
 	    else if (tc1_ptr && tc2_ptr) 
-		ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=1", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+		ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else if(tc1_ptr)
-		ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=1", title_tok, node2, node1, title_tok, equation, tc1_ptr);
+		ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
 	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
