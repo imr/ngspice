@@ -1736,6 +1736,16 @@ HSMHV2unsetup(
         for (here = model->HSMHV2instances; here != NULL;
                 here=here->HSMHV2nextInstance)
         {
+            if (here->HSMHV2qbNode)
+            {
+                CKTdltNNum(ckt, here->HSMHV2qbNode);
+                here->HSMHV2qbNode = 0;
+            }
+            if (here->HSMHV2qiNode)
+            {
+                CKTdltNNum(ckt, here->HSMHV2qiNode);
+                here->HSMHV2qiNode = 0;
+            }
             if (here->HSMHV2sbNode
                     && here->HSMHV2sbNode != here->HSMHV2bNode)
             {

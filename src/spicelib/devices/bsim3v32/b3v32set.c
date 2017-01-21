@@ -1146,6 +1146,11 @@ BSIM3v32unsetup(
         for (here = model->BSIM3v32instances; here != NULL;
                 here=here->BSIM3v32nextInstance)
         {
+            if (here->BSIM3v32qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM3v32qNode);
+                here->BSIM3v32qNode = 0;
+            }
             if (here->BSIM3v32sNodePrime
                     && here->BSIM3v32sNodePrime != here->BSIM3v32sNode)
             {

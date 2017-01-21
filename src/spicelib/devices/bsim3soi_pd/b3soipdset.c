@@ -1461,6 +1461,103 @@ B3SOIPDunsetup(
         for (here = model->B3SOIPDinstances; here != NULL;
                 here=here->B3SOIPDnextInstance)
         {
+            /* here for debugging purpose only */
+            if (here->B3SOIPDqjdNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDqjdNode);
+                here->B3SOIPDqjdNode = 0;
+            }
+            if (here->B3SOIPDqjsNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDqjsNode);
+                here->B3SOIPDqjsNode = 0;
+            }
+            if (here->B3SOIPDqbfNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDqbfNode);
+                here->B3SOIPDqbfNode = 0;
+            }
+            if (here->B3SOIPDcbgNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDcbgNode);
+                here->B3SOIPDcbgNode = 0;
+            }
+            if (here->B3SOIPDcbdNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDcbdNode);
+                here->B3SOIPDcbdNode = 0;
+            }
+            if (here->B3SOIPDcbbNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDcbbNode);
+                here->B3SOIPDcbbNode = 0;
+            }
+            if (here->B3SOIPDibpNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDibpNode);
+                here->B3SOIPDibpNode = 0;
+            }
+            if (here->B3SOIPDitunNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDitunNode);
+                here->B3SOIPDitunNode = 0;
+            }
+            if (here->B3SOIPDigidlNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDigidlNode);
+                here->B3SOIPDigidlNode = 0;
+            }
+            if (here->B3SOIPDgigbNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDgigbNode);
+                here->B3SOIPDgigbNode = 0;
+            }
+            if (here->B3SOIPDgigdNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDgigdNode);
+                here->B3SOIPDgigdNode = 0;
+            }
+            if (here->B3SOIPDgiggNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDgiggNode);
+                here->B3SOIPDgiggNode = 0;
+            }
+            if (here->B3SOIPDigNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDigNode);
+                here->B3SOIPDigNode = 0;
+            }
+            if (here->B3SOIPDiiiNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDiiiNode);
+                here->B3SOIPDiiiNode = 0;
+            }
+            if (here->B3SOIPDibdNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDibdNode);
+                here->B3SOIPDibdNode = 0;
+            }
+            if (here->B3SOIPDibsNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDibsNode);
+                here->B3SOIPDibsNode = 0;
+            }
+            if (here->B3SOIPDicNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDicNode);
+                here->B3SOIPDicNode = 0;
+            }
+            if (here->B3SOIPDidsNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDidsNode);
+                here->B3SOIPDidsNode = 0;
+            }
+            if (here->B3SOIPDvbsNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDvbsNode);
+                here->B3SOIPDvbsNode = 0;
+            }
+
             if (here->B3SOIPDsNodePrime
                     && here->B3SOIPDsNodePrime != here->B3SOIPDsNode)
             {
