@@ -2623,6 +2623,11 @@ CKTcircuit *ckt)
         for (here = model->BSIM4v7instances; here != NULL;
                 here=here->BSIM4v7nextInstance)
         {
+            if (here->BSIM4v7qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v7qNode);
+                here->BSIM4v7qNode = 0;
+            }
             if (here->BSIM4v7sNodePrime
                     && here->BSIM4v7sNodePrime != here->BSIM4v7sNode)
             {
