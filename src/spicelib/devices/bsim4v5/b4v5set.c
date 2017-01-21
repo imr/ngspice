@@ -2133,6 +2133,11 @@ BSIM4v5unsetup(
         for (here = model->BSIM4v5instances; here != NULL;
                 here=here->BSIM4v5nextInstance)
         {
+            if (here->BSIM4v5qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v5qNode);
+                here->BSIM4v5qNode = 0;
+            }
             if (here->BSIM4v5sNodePrime
                     && here->BSIM4v5sNodePrime != here->BSIM4v5sNode)
             {

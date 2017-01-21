@@ -1468,6 +1468,16 @@ HSMHVunsetup(
         for (here = model->HSMHVinstances; here != NULL;
                 here=here->HSMHVnextInstance)
         {
+            if (here->HSMHVqbNode)
+            {
+                CKTdltNNum(ckt, here->HSMHVqbNode);
+                here->HSMHVqbNode = 0;
+            }
+            if (here->HSMHVqiNode)
+            {
+                CKTdltNNum(ckt, here->HSMHVqiNode);
+                here->HSMHVqiNode = 0;
+            }
             if (here->HSMHVsbNode
                     && here->HSMHVsbNode != here->HSMHVbNode)
             {
