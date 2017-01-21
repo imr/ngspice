@@ -2765,6 +2765,11 @@ CKTcircuit *ckt)
         for (here = model->BSIM4instances; here != NULL;
                 here=here->BSIM4nextInstance)
         {
+            if (here->BSIM4qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4qNode);
+                here->BSIM4qNode = 0;
+            }
             if (here->BSIM4sNodePrime
                     && here->BSIM4sNodePrime != here->BSIM4sNode)
             {

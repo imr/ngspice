@@ -2476,6 +2476,11 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->BSIM4v6instances; here != NULL;
                 here=here->BSIM4v6nextInstance)
         {
+            if (here->BSIM4v6qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6qNode);
+                here->BSIM4v6qNode = 0;
+            }
             if (here->BSIM4v6sNodePrime
                     && here->BSIM4v6sNodePrime != here->BSIM4v6sNode)
             {
