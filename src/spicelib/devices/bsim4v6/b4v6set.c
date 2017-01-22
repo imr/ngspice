@@ -2481,6 +2481,36 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->BSIM4v6qNode);
                 here->BSIM4v6qNode = 0;
             }
+            if (here->BSIM4v6sbNode &&
+                here->BSIM4v6sbNode != here->BSIM4v6bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6sbNode);
+                here->BSIM4v6sbNode = 0;
+            }
+            if (here->BSIM4v6bNodePrime &&
+                here->BSIM4v6bNodePrime != here->BSIM4v6bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6bNodePrime);
+                here->BSIM4v6bNodePrime = 0;
+            }
+            if (here->BSIM4v6dbNode &&
+                here->BSIM4v6dbNode != here->BSIM4v6bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6dbNode);
+                here->BSIM4v6dbNode = 0;
+            }
+            if (here->BSIM4v6gNodeMid &&
+                here->BSIM4v6gNodeMid != here->BSIM4v6gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6gNodeMid);
+                here->BSIM4v6gNodeMid = 0;
+            }
+            if (here->BSIM4v6gNodePrime &&
+                here->BSIM4v6gNodePrime != here->BSIM4v6gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6gNodePrime);
+                here->BSIM4v6gNodePrime = 0;
+            }
             if (here->BSIM4v6sNodePrime
                     && here->BSIM4v6sNodePrime != here->BSIM4v6sNode)
             {

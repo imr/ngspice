@@ -2863,6 +2863,31 @@ B4SOIunsetup(
                 here->B4SOIvbsNode = 0;
             }
 
+            if (here->B4SOIsbNode &&
+                here->B4SOIsbNode != here->B4SOIbNode)
+            {
+                CKTdltNNum(ckt, here->B4SOIsbNode);
+                here->B4SOIsbNode = 0;
+            }
+            if (here->B4SOIdbNode &&
+                here->B4SOIdbNode != here->B4SOIbNode)
+            {
+                CKTdltNNum(ckt, here->B4SOIdbNode);
+                here->B4SOIdbNode = 0;
+            }
+            if (here->B4SOIgNodeMid &&
+                here->B4SOIgNodeMid != here->B4SOIgNodeExt)
+            {
+                CKTdltNNum(ckt, here->B4SOIgNodeMid);
+                here->B4SOIgNodeMid = 0;
+            }
+            if (here->B4SOIgNode &&
+                here->B4SOIgNode != here->B4SOIgNodeExt)
+            {
+                CKTdltNNum(ckt, here->B4SOIgNode);
+                here->B4SOIgNode = 0;
+            }
+
             if (here->B4SOIsNodePrime
                     && here->B4SOIsNodePrime != here->B4SOIsNode)
             {
