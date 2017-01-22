@@ -2766,17 +2766,17 @@ B4SOIunsetup(
         for (here = model->B4SOIinstances; here != NULL;
                 here=here->B4SOInextInstance)
         {
-            if (here->B4SOIdNodePrime
-                    && here->B4SOIdNodePrime != here->B4SOIdNode)
-            {
-                CKTdltNNum(ckt, here->B4SOIdNodePrime);
-                here->B4SOIdNodePrime = 0;
-            }
             if (here->B4SOIsNodePrime
                     && here->B4SOIsNodePrime != here->B4SOIsNode)
             {
                 CKTdltNNum(ckt, here->B4SOIsNodePrime);
                 here->B4SOIsNodePrime = 0;
+            }
+            if (here->B4SOIdNodePrime
+                    && here->B4SOIdNodePrime != here->B4SOIdNode)
+            {
+                CKTdltNNum(ckt, here->B4SOIdNodePrime);
+                here->B4SOIdNodePrime = 0;
             }
         }
     }

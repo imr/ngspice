@@ -674,11 +674,30 @@ SOI3unsetup(GENmodel *inModel, CKTcircuit *ckt)
        for (here = model->SOI3instances; here != NULL;
                 here=here->SOI3nextInstance)
 		 {
-	       if (here->SOI3dNodePrime
-             && here->SOI3dNodePrime != here->SOI3dNode)
+	       if (here->SOI3tout4Node)
           {
-             CKTdltNNum(ckt, here->SOI3dNodePrime);
-		       here->SOI3dNodePrime= 0;
+		       CKTdltNNum(ckt, here->SOI3tout4Node);
+		       here->SOI3tout4Node = 0;
+	       }
+	       if (here->SOI3tout3Node)
+	       {
+             CKTdltNNum(ckt, here->SOI3tout3Node);
+		       here->SOI3tout3Node = 0;
+	       }
+	       if (here->SOI3tout2Node)
+	       {
+		       CKTdltNNum(ckt, here->SOI3tout2Node);
+		       here->SOI3tout2Node = 0;
+	       }
+	       if (here->SOI3tout1Node)
+	       {
+             CKTdltNNum(ckt, here->SOI3tout1Node);
+		       here->SOI3tout1Node = 0;
+	       }
+	       if (here->SOI3branch)
+	       {
+		       CKTdltNNum(ckt, here->SOI3branch);
+		       here->SOI3branch=0;
 	       }
 	       if (here->SOI3sNodePrime
 		       && here->SOI3sNodePrime != here->SOI3sNode)
@@ -686,30 +705,11 @@ SOI3unsetup(GENmodel *inModel, CKTcircuit *ckt)
 		       CKTdltNNum(ckt, here->SOI3sNodePrime);
 		       here->SOI3sNodePrime= 0;
 	       }
-	       if (here->SOI3branch)
+	       if (here->SOI3dNodePrime
+             && here->SOI3dNodePrime != here->SOI3dNode)
 	       {
-		       CKTdltNNum(ckt, here->SOI3branch);
-		       here->SOI3branch=0;
-	       }
-	       if (here->SOI3tout1Node)
-	       {
-             CKTdltNNum(ckt, here->SOI3tout1Node);
-		       here->SOI3tout1Node = 0;
-	       }
-	       if (here->SOI3tout2Node)
-	       {
-		       CKTdltNNum(ckt, here->SOI3tout2Node);
-		       here->SOI3tout2Node = 0;
-	       }
-	       if (here->SOI3tout3Node)
-	       {
-             CKTdltNNum(ckt, here->SOI3tout3Node);
-		       here->SOI3tout3Node = 0;
-	       }
-	       if (here->SOI3tout4Node)
-	       {
-		       CKTdltNNum(ckt, here->SOI3tout4Node);
-		       here->SOI3tout4Node = 0;
+             CKTdltNNum(ckt, here->SOI3dNodePrime);
+		       here->SOI3dNodePrime= 0;
 	       }
 	    }
     }

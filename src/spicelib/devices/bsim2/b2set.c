@@ -581,17 +581,17 @@ B2unsetup(
         for (here = model->B2instances; here != NULL;
                 here=here->B2nextInstance)
 	{
-	    if (here->B2dNodePrime
-		    && here->B2dNodePrime != here->B2dNode)
-	    {
-		CKTdltNNum(ckt, here->B2dNodePrime);
-		here->B2dNodePrime = 0;
-	    }
 	    if (here->B2sNodePrime
 		    && here->B2sNodePrime != here->B2sNode)
 	    {
 		CKTdltNNum(ckt, here->B2sNodePrime);
 		here->B2sNodePrime = 0;
+	    }
+	    if (here->B2dNodePrime
+		    && here->B2dNodePrime != here->B2dNode)
+	    {
+		CKTdltNNum(ckt, here->B2dNodePrime);
+		here->B2dNodePrime = 0;
 	    }
 	}
     }

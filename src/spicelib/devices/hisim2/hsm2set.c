@@ -1312,23 +1312,11 @@ HSM2unsetup(
         for (here = model->HSM2instances; here != NULL;
                 here=here->HSM2nextInstance)
         {
-            if (here->HSM2dNodePrime
-                    && here->HSM2dNodePrime != here->HSM2dNode)
+            if (here->HSM2sbNode
+                    && here->HSM2sbNode != here->HSM2bNode)
             {
-                CKTdltNNum(ckt, here->HSM2dNodePrime);
-                here->HSM2dNodePrime = 0;
-            }
-            if (here->HSM2sNodePrime
-                    && here->HSM2sNodePrime != here->HSM2sNode)
-            {
-                CKTdltNNum(ckt, here->HSM2sNodePrime);
-                here->HSM2sNodePrime = 0;
-            }
-            if (here->HSM2gNodePrime
-                    && here->HSM2gNodePrime != here->HSM2gNode)
-            {
-                CKTdltNNum(ckt, here->HSM2gNodePrime);
-                here->HSM2gNodePrime = 0;
+                CKTdltNNum(ckt, here->HSM2sbNode);
+                here->HSM2sbNode = 0;
             }
             if (here->HSM2bNodePrime
                     && here->HSM2bNodePrime != here->HSM2bNode)
@@ -1342,11 +1330,23 @@ HSM2unsetup(
                 CKTdltNNum(ckt, here->HSM2dbNode);
                 here->HSM2dbNode = 0;
             }
-            if (here->HSM2sbNode
-                    && here->HSM2sbNode != here->HSM2bNode)
+            if (here->HSM2gNodePrime
+                    && here->HSM2gNodePrime != here->HSM2gNode)
             {
-                CKTdltNNum(ckt, here->HSM2sbNode);
-                here->HSM2sbNode = 0;
+                CKTdltNNum(ckt, here->HSM2gNodePrime);
+                here->HSM2gNodePrime = 0;
+            }
+            if (here->HSM2sNodePrime
+                    && here->HSM2sNodePrime != here->HSM2sNode)
+            {
+                CKTdltNNum(ckt, here->HSM2sNodePrime);
+                here->HSM2sNodePrime = 0;
+            }
+            if (here->HSM2dNodePrime
+                    && here->HSM2dNodePrime != here->HSM2dNode)
+            {
+                CKTdltNNum(ckt, here->HSM2dNodePrime);
+                here->HSM2dNodePrime = 0;
             }
         }
     }

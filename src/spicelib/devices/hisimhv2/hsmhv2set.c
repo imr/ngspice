@@ -1741,23 +1741,11 @@ HSMHV2unsetup(
         for (here = model->HSMHV2instances; here != NULL;
                 here=here->HSMHV2nextInstance)
         {
-            if (here->HSMHV2dNodePrime
-                    && here->HSMHV2dNodePrime != here->HSMHV2dNode)
+            if (here->HSMHV2sbNode
+                    && here->HSMHV2sbNode != here->HSMHV2bNode)
             {
-                CKTdltNNum(ckt, here->HSMHV2dNodePrime);
-                here->HSMHV2dNodePrime = 0;
-            }
-            if (here->HSMHV2sNodePrime
-                    && here->HSMHV2sNodePrime != here->HSMHV2sNode)
-            {
-                CKTdltNNum(ckt, here->HSMHV2sNodePrime);
-                here->HSMHV2sNodePrime = 0;
-            }
-            if (here->HSMHV2gNodePrime
-                    && here->HSMHV2gNodePrime != here->HSMHV2gNode)
-            {
-                CKTdltNNum(ckt, here->HSMHV2gNodePrime);
-                here->HSMHV2gNodePrime = 0;
+                CKTdltNNum(ckt, here->HSMHV2sbNode);
+                here->HSMHV2sbNode = 0;
             }
             if (here->HSMHV2bNodePrime
                     && here->HSMHV2bNodePrime != here->HSMHV2bNode)
@@ -1771,11 +1759,23 @@ HSMHV2unsetup(
                 CKTdltNNum(ckt, here->HSMHV2dbNode);
                 here->HSMHV2dbNode = 0;
             }
-            if (here->HSMHV2sbNode
-                    && here->HSMHV2sbNode != here->HSMHV2bNode)
+            if (here->HSMHV2gNodePrime
+                    && here->HSMHV2gNodePrime != here->HSMHV2gNode)
             {
-                CKTdltNNum(ckt, here->HSMHV2sbNode);
-                here->HSMHV2sbNode = 0;
+                CKTdltNNum(ckt, here->HSMHV2gNodePrime);
+                here->HSMHV2gNodePrime = 0;
+            }
+            if (here->HSMHV2sNodePrime
+                    && here->HSMHV2sNodePrime != here->HSMHV2sNode)
+            {
+                CKTdltNNum(ckt, here->HSMHV2sNodePrime);
+                here->HSMHV2sNodePrime = 0;
+            }
+            if (here->HSMHV2dNodePrime
+                    && here->HSMHV2dNodePrime != here->HSMHV2dNode)
+            {
+                CKTdltNNum(ckt, here->HSMHV2dNodePrime);
+                here->HSMHV2dNodePrime = 0;
             }
         }
     }

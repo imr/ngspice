@@ -2476,17 +2476,17 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->BSIM4v6instances; here != NULL;
                 here=here->BSIM4v6nextInstance)
         {
-            if (here->BSIM4v6dNodePrime
-                    && here->BSIM4v6dNodePrime != here->BSIM4v6dNode)
-            {
-                CKTdltNNum(ckt, here->BSIM4v6dNodePrime);
-                here->BSIM4v6dNodePrime = 0;
-            }
             if (here->BSIM4v6sNodePrime
                     && here->BSIM4v6sNodePrime != here->BSIM4v6sNode)
             {
                 CKTdltNNum(ckt, here->BSIM4v6sNodePrime);
                 here->BSIM4v6sNodePrime = 0;
+            }
+            if (here->BSIM4v6dNodePrime
+                    && here->BSIM4v6dNodePrime != here->BSIM4v6dNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v6dNodePrime);
+                here->BSIM4v6dNodePrime = 0;
             }
         }
     }

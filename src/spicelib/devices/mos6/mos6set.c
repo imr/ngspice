@@ -233,17 +233,17 @@ MOS6unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->MOS6instances; here != NULL;
                 here=here->MOS6nextInstance)
 	{
-	    if (here->MOS6dNodePrime
-		    && here->MOS6dNodePrime != here->MOS6dNode)
-	    {
-		CKTdltNNum(ckt, here->MOS6dNodePrime);
-		here->MOS6dNodePrime= 0;
-	    }
 	    if (here->MOS6sNodePrime
 		    && here->MOS6sNodePrime != here->MOS6sNode)
 	    {
 		CKTdltNNum(ckt, here->MOS6sNodePrime);
 		here->MOS6sNodePrime= 0;
+	    }
+	    if (here->MOS6dNodePrime
+		    && here->MOS6dNodePrime != here->MOS6dNode)
+	    {
+		CKTdltNNum(ckt, here->MOS6dNodePrime);
+		here->MOS6dNodePrime= 0;
 	    }
 	}
     }

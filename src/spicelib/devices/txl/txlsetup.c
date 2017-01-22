@@ -170,14 +170,14 @@ TXLunsetup(GENmodel *inModel, CKTcircuit *ckt)
     for (here = model->TXLinstances; here != NULL;
         here = here->TXLnextInstance) {
   
-          if (here->TXLibr1) {
-               CKTdltNNum(ckt, here->TXLibr1);
-               here->TXLibr1 = 0;
-          }
-
           if (here->TXLibr2) {
                CKTdltNNum(ckt, here->TXLibr2);
                here->TXLibr2 = 0;
+          }
+
+          if (here->TXLibr1) {
+               CKTdltNNum(ckt, here->TXLibr1);
+               here->TXLibr1 = 0;
           }
 
     here->TXLdcGiven=0;

@@ -1357,17 +1357,17 @@ B3SOIDDunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->B3SOIDDinstances; here != NULL;
                 here=here->B3SOIDDnextInstance)
         {
-            if (here->B3SOIDDdNodePrime
-                    && here->B3SOIDDdNodePrime != here->B3SOIDDdNode)
-            {
-                CKTdltNNum(ckt, here->B3SOIDDdNodePrime);
-                here->B3SOIDDdNodePrime = 0;
-            }
             if (here->B3SOIDDsNodePrime
                     && here->B3SOIDDsNodePrime != here->B3SOIDDsNode)
             {
                 CKTdltNNum(ckt, here->B3SOIDDsNodePrime);
                 here->B3SOIDDsNodePrime = 0;
+            }
+            if (here->B3SOIDDdNodePrime
+                    && here->B3SOIDDdNodePrime != here->B3SOIDDdNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIDDdNodePrime);
+                here->B3SOIDDdNodePrime = 0;
             }
         }
     }
