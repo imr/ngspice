@@ -34,6 +34,9 @@ typedef struct sB3SOIPDinstance
     int B3SOIPDgNode;
     int B3SOIPDsNode;
     int B3SOIPDeNode;
+    int B3SOIPDbNodeExt;
+    int B3SOIPDtempNodeExt;
+    int B3SOIPDpNodeExt;
     int B3SOIPDpNode;
     int B3SOIPDbNode;
     int B3SOIPDtempNode;

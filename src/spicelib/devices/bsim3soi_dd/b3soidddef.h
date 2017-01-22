@@ -30,6 +30,9 @@ typedef struct sB3SOIDDinstance
     int B3SOIDDgNode;
     int B3SOIDDsNode;
     int B3SOIDDeNode;
+    int B3SOIDDbNodeExt;
+    int B3SOIDDtempNodeExt;
+    int B3SOIDDpNodeExt;
     int B3SOIDDbNode;
     int B3SOIDDtempNode;
     int B3SOIDDpNode;  

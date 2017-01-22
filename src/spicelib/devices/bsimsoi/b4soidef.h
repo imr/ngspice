@@ -35,6 +35,9 @@ typedef struct sB4SOIinstance
     int B4SOIgNodeExt; /* v3.1 changed gNode to gNodeExt */
     int B4SOIsNode;
     int B4SOIeNode;
+    int B4SOIpNodeExt;
+    int B4SOIbNodeExt;
+    int B4SOItempNodeExt;
     int B4SOIpNode;
     int B4SOIbNode;
     int B4SOItempNode;

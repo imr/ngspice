@@ -223,8 +223,10 @@ typedef struct sHSMHVinstance {
   int HSMHVgNode;      /* number of the gate node of the mosfet */
   int HSMHVsNode;      /* number of the source node of the mosfet */
   int HSMHVbNode;      /* number of the bulk node of the mosfet */
+  int HSMHVsubNodeExt; /* number of the substrate node */
+  int HSMHVtempNodeExt;/* number of the temp node----------SHE--------*/
   int HSMHVsubNode;    /* number of the substrate node */
-  int HSMHVtempNode;   /* number of the temp node----------SHE--------*/
+  int HSMHVtempNode;   /* number of the temp node */
   int HSMHVdNodePrime; /* number od the inner drain node */
   int HSMHVgNodePrime; /* number of the inner gate node */
   int HSMHVsNodePrime; /* number od the inner source node */

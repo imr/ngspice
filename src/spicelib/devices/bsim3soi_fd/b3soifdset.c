@@ -1001,6 +1001,11 @@ IFuid tmpName;
             model->B3SOIFDadice = model->B3SOIFDadice0  / ( 1 + Cboxt / model->B3SOIFDcox);
 
             here->B3SOIFDfloat = 0;
+
+            here->B3SOIFDpNode = here->B3SOIFDpNodeExt;
+            here->B3SOIFDbNode = here->B3SOIFDbNodeExt;
+            here->B3SOIFDtempNode = here->B3SOIFDtempNodeExt;
+
 	    if (here->B3SOIFDbNode == -1) 
             /* no internal body node is needed for SPICE iteration  */
             {   here->B3SOIFDbNode = here->B3SOIFDpNode = 0;
@@ -1562,6 +1567,23 @@ B3SOIFDunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->B3SOIFDvbsNode);
                 here->B3SOIFDvbsNode = 0;
             }
+
+            if (here->B3SOIFDtempNode &&
+                here->B3SOIFDtempNode != here->B3SOIFDtempNodeExt &&
+                here->B3SOIFDtempNode != here->B3SOIFDbNodeExt &&
+                here->B3SOIFDtempNode != here->B3SOIFDpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B3SOIFDtempNode);
+                here->B3SOIFDtempNode = 0;
+            }
+            if (here->B3SOIFDbNode &&
+                here->B3SOIFDbNode != here->B3SOIFDbNodeExt &&
+                here->B3SOIFDbNode != here->B3SOIFDpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B3SOIFDbNode);
+                here->B3SOIFDbNode = 0;
+            }
+            here->B3SOIFDpNode = 0;
 
             if (here->B3SOIFDsNodePrime
                     && here->B3SOIFDsNodePrime != here->B3SOIFDsNode)
