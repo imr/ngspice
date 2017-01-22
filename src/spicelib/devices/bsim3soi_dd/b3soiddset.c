@@ -998,6 +998,11 @@ IFuid tmpName;
             model->B3SOIDDadice = model->B3SOIDDadice0  / ( 1 + Cboxt / model->B3SOIDDcox);
 
             here->B3SOIDDfloat = 0;
+
+            here->B3SOIDDpNode = here->B3SOIDDpNodeExt;
+            here->B3SOIDDbNode = here->B3SOIDDbNodeExt;
+            here->B3SOIDDtempNode = here->B3SOIDDtempNodeExt;
+
 	    if (here->B3SOIDDbNode == -1) 
             /* no body contact but bNode to be created for SPICE iteration */
             {  error = CKTmkVolt(ckt,&tmp,here->B3SOIDDname,"Body");
@@ -1573,6 +1578,23 @@ B3SOIDDunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->B3SOIDDvbsNode);
                 here->B3SOIDDvbsNode = 0;
             }
+
+            if (here->B3SOIDDtempNode &&
+                here->B3SOIDDtempNode != here->B3SOIDDtempNodeExt &&
+                here->B3SOIDDtempNode != here->B3SOIDDbNodeExt &&
+                here->B3SOIDDtempNode != here->B3SOIDDpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B3SOIDDtempNode);
+                here->B3SOIDDtempNode = 0;
+            }
+            if (here->B3SOIDDbNode &&
+                here->B3SOIDDbNode != here->B3SOIDDbNodeExt &&
+                here->B3SOIDDbNode != here->B3SOIDDpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B3SOIDDbNode);
+                here->B3SOIDDbNode = 0;
+            }
+            here->B3SOIDDpNode = 0;
 
             if (here->B3SOIDDsNodePrime
                     && here->B3SOIDDsNodePrime != here->B3SOIDDsNode)
