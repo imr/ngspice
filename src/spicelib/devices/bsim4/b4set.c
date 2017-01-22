@@ -2707,17 +2707,17 @@ CKTcircuit *ckt)
         for (here = model->BSIM4instances; here != NULL;
                 here=here->BSIM4nextInstance)
         {
-            if (here->BSIM4dNodePrime
-                    && here->BSIM4dNodePrime != here->BSIM4dNode)
-            {
-                CKTdltNNum(ckt, here->BSIM4dNodePrime);
-                here->BSIM4dNodePrime = 0;
-            }
             if (here->BSIM4sNodePrime
                     && here->BSIM4sNodePrime != here->BSIM4sNode)
             {
                 CKTdltNNum(ckt, here->BSIM4sNodePrime);
                 here->BSIM4sNodePrime = 0;
+            }
+            if (here->BSIM4dNodePrime
+                    && here->BSIM4dNodePrime != here->BSIM4dNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4dNodePrime);
+                here->BSIM4dNodePrime = 0;
             }
         }
     }

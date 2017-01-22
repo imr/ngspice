@@ -904,17 +904,17 @@ BSIM3v0unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->BSIM3v0instances; here != NULL;
                 here=here->BSIM3v0nextInstance)
         {
-            if (here->BSIM3v0dNodePrime
-                    && here->BSIM3v0dNodePrime != here->BSIM3v0dNode)
-            {
-                CKTdltNNum(ckt, here->BSIM3v0dNodePrime);
-                here->BSIM3v0dNodePrime = 0;
-            }
             if (here->BSIM3v0sNodePrime
                     && here->BSIM3v0sNodePrime != here->BSIM3v0sNode)
             {
                 CKTdltNNum(ckt, here->BSIM3v0sNodePrime);
                 here->BSIM3v0sNodePrime = 0;
+            }
+            if (here->BSIM3v0dNodePrime
+                    && here->BSIM3v0dNodePrime != here->BSIM3v0dNode)
+            {
+                CKTdltNNum(ckt, here->BSIM3v0dNodePrime);
+                here->BSIM3v0dNodePrime = 0;
             }
         }
     }
