@@ -1168,6 +1168,11 @@ IFuid tmpName;
 
 
             here->B3SOIPDfloat = 0;
+
+            here->B3SOIPDpNode = here->B3SOIPDpNodeExt;
+            here->B3SOIPDbNode = here->B3SOIPDbNodeExt;
+            here->B3SOIPDtempNode = here->B3SOIPDtempNodeExt;
+
             if (here->B3SOIPDpNode == -1) {  /*  floating body case -- 4-node  */
                 error = CKTmkVolt(ckt,&tmp,here->B3SOIPDname,"Body");
                 if (error) return(error);
@@ -1557,6 +1562,23 @@ B3SOIPDunsetup(
                 CKTdltNNum(ckt, here->B3SOIPDvbsNode);
                 here->B3SOIPDvbsNode = 0;
             }
+
+            if (here->B3SOIPDtempNode &&
+                here->B3SOIPDtempNode != here->B3SOIPDtempNodeExt &&
+                here->B3SOIPDtempNode != here->B3SOIPDbNodeExt &&
+                here->B3SOIPDtempNode != here->B3SOIPDpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDtempNode);
+                here->B3SOIPDtempNode = 0;
+            }
+            if (here->B3SOIPDbNode &&
+                here->B3SOIPDbNode != here->B3SOIPDbNodeExt &&
+                here->B3SOIPDbNode != here->B3SOIPDpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B3SOIPDbNode);
+                here->B3SOIPDbNode = 0;
+            }
+            here->B3SOIPDpNode = 0;
 
             if (here->B3SOIPDsNodePrime
                     && here->B3SOIPDsNodePrime != here->B3SOIPDsNode)

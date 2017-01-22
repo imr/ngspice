@@ -1139,6 +1139,9 @@ int HSMHV2setup(
 	here->HSMHV2dbNode = here->HSMHV2bNodePrime = here->HSMHV2sbNode = here->HSMHV2bNode;
       }
 
+      here->HSMHV2tempNode = here->HSMHV2tempNodeExt;
+      here->HSMHV2subNode = here->HSMHV2subNodeExt;
+
       if ( here->HSMHV2_cosubnode == 0 && here->HSMHV2subNode >= 0 ) {
         if ( here->HSMHV2tempNode >= 0 ) {
       /* FATAL Error when 6th node is defined and COSUBNODE=0 */
@@ -1736,6 +1739,15 @@ HSMHV2unsetup(
         for (here = model->HSMHV2instances; here != NULL;
                 here=here->HSMHV2nextInstance)
         {
+            if (here->HSMHV2tempNode > 0 &&
+                here->HSMHV2tempNode != here->HSMHV2tempNodeExt &&
+                here->HSMHV2tempNode != here->HSMHV2subNodeExt)
+            {
+                CKTdltNNum(ckt, here->HSMHV2tempNode);
+                here->HSMHV2tempNode = 0;
+            }
+            here->HSMHV2subNode = 0;
+
             if (here->HSMHV2qbNode)
             {
                 CKTdltNNum(ckt, here->HSMHV2qbNode);
