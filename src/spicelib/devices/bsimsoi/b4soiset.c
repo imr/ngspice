@@ -2259,6 +2259,10 @@ B4SOIinstance **InstArray;
                }
             }
 
+            here->B4SOIpNode = here->B4SOIpNodeExt;
+            here->B4SOIbNode = here->B4SOIbNodeExt;
+            here->B4SOItempNode = here->B4SOItempNodeExt;
+
             here->B4SOIfloat = 0;
             if (here->B4SOIsoiMod == 2) /* v3.2 */
             {
@@ -2887,6 +2891,23 @@ B4SOIunsetup(
                 CKTdltNNum(ckt, here->B4SOIgNode);
                 here->B4SOIgNode = 0;
             }
+
+            if (here->B4SOItempNode &&
+                here->B4SOItempNode != here->B4SOItempNodeExt &&
+                here->B4SOItempNode != here->B4SOIbNodeExt &&
+                here->B4SOItempNode != here->B4SOIpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B4SOItempNode);
+                here->B4SOItempNode = 0;
+            }
+            if (here->B4SOIbNode &&
+                here->B4SOIbNode != here->B4SOIbNodeExt &&
+                here->B4SOIbNode != here->B4SOIpNodeExt)
+            {
+                CKTdltNNum(ckt, here->B4SOIbNode);
+                here->B4SOIbNode = 0;
+            }
+            here->B4SOIpNode = 0;
 
             if (here->B4SOIsNodePrime
                     && here->B4SOIsNodePrime != here->B4SOIsNode)

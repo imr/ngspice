@@ -921,6 +921,9 @@ int HSMHVsetup(
 	here->HSMHVdbNode = here->HSMHVbNodePrime = here->HSMHVsbNode = here->HSMHVbNode;
       }
 
+      here->HSMHVtempNode = here->HSMHVtempNodeExt;
+      here->HSMHVsubNode = here->HSMHVsubNodeExt;
+
       if ( here->HSMHV_cosubnode == 0 && here->HSMHVsubNode >= 0 ) {
         if ( here->HSMHVtempNode >= 0 ) {
        /* FATAL Error when 6th node is defined and COSUBNODE=0 */
@@ -1483,6 +1486,16 @@ HSMHVunsetup(
                 CKTdltNNum(ckt, here->HSMHVqiNode);
                 here->HSMHVqiNode = 0;
             }
+
+            if (here->HSMHVtempNode > 0 &&
+                here->HSMHVtempNode != here->HSMHVtempNodeExt &&
+                here->HSMHVtempNode != here->HSMHVsubNodeExt)
+            {
+                CKTdltNNum(ckt, here->HSMHVtempNode);
+                here->HSMHVtempNode = 0;
+            }
+            here->HSMHVsubNode = 0;
+
             if (here->HSMHVsbNode
                     && here->HSMHVsbNode != here->HSMHVbNode)
             {
