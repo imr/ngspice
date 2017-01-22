@@ -168,17 +168,17 @@ MESunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->MESinstances; here != NULL;
                 here=here->MESnextInstance)
 	{
-	    if (here->MESsourcePrimeNode
-		    && here->MESsourcePrimeNode != here->MESsourceNode)
-	    {
-		CKTdltNNum(ckt, here->MESsourcePrimeNode);
-		here->MESsourcePrimeNode = 0;
-	    }
 	    if (here->MESdrainPrimeNode
 		    && here->MESdrainPrimeNode != here->MESdrainNode)
 	    {
 		CKTdltNNum(ckt, here->MESdrainPrimeNode);
 		here->MESdrainPrimeNode = 0;
+	    }
+	    if (here->MESsourcePrimeNode
+		    && here->MESsourcePrimeNode != here->MESsourceNode)
+	    {
+		CKTdltNNum(ckt, here->MESsourcePrimeNode);
+		here->MESsourcePrimeNode = 0;
 	    }
 	}
     }

@@ -1346,17 +1346,17 @@ B3SOIFDunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->B3SOIFDinstances; here != NULL;
                 here=here->B3SOIFDnextInstance)
         {
-            if (here->B3SOIFDdNodePrime
-                    && here->B3SOIFDdNodePrime != here->B3SOIFDdNode)
-            {
-                CKTdltNNum(ckt, here->B3SOIFDdNodePrime);
-                here->B3SOIFDdNodePrime = 0;
-            }
             if (here->B3SOIFDsNodePrime
                     && here->B3SOIFDsNodePrime != here->B3SOIFDsNode)
             {
                 CKTdltNNum(ckt, here->B3SOIFDsNodePrime);
                 here->B3SOIFDsNodePrime = 0;
+            }
+            if (here->B3SOIFDdNodePrime
+                    && here->B3SOIFDdNodePrime != here->B3SOIFDdNode)
+            {
+                CKTdltNNum(ckt, here->B3SOIFDdNodePrime);
+                here->B3SOIFDdNodePrime = 0;
             }
         }
     }
