@@ -324,16 +324,16 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
 
             for (m = 0; m < noL; m++) {
-                if (here->CPLibr1[m]) {
-                    CKTdltNNum(ckt, here->CPLibr1[m]);
-                    here->CPLibr1[m] = 0;
+                if (here->CPLibr2[m]) {
+                    CKTdltNNum(ckt, here->CPLibr2[m]);
+                    here->CPLibr2[m] = 0;
                 }
             }
 
             for (m = 0; m < noL; m++) {
-                if (here->CPLibr2[m]) {
-                    CKTdltNNum(ckt, here->CPLibr2[m]);
-                    here->CPLibr2[m] = 0;
+                if (here->CPLibr1[m]) {
+                    CKTdltNNum(ckt, here->CPLibr1[m]);
+                    here->CPLibr1[m] = 0;
                 }
             }
 

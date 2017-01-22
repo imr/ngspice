@@ -419,6 +419,24 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->MESAinstances; here != NULL;
                 here=here->MESAnextInstance)
         {
+            if (here->MESAdrainPrmPrmNode
+                    && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)
+            {
+                CKTdltNNum(ckt, here->MESAdrainPrmPrmNode);
+                here->MESAdrainPrmPrmNode = 0;
+            }
+            if (here->MESAsourcePrmPrmNode
+                    && here->MESAsourcePrmPrmNode != here->MESAsourcePrimeNode)
+            {
+                CKTdltNNum(ckt, here->MESAsourcePrmPrmNode);
+                here->MESAsourcePrmPrmNode = 0;
+            }
+            if (here->MESAgatePrimeNode
+                    && here->MESAgatePrimeNode != here->MESAgateNode)
+            {
+                CKTdltNNum(ckt, here->MESAgatePrimeNode);
+                here->MESAgatePrimeNode = 0;
+            }          
             if (here->MESAdrainPrimeNode
                     && here->MESAdrainPrimeNode != here->MESAdrainNode)
             {
@@ -430,24 +448,6 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
             {
                 CKTdltNNum(ckt, here->MESAsourcePrimeNode);
                 here->MESAsourcePrimeNode = 0;
-            }
-            if (here->MESAgatePrimeNode
-                    && here->MESAgatePrimeNode != here->MESAgateNode)
-            {
-                CKTdltNNum(ckt, here->MESAgatePrimeNode);
-                here->MESAgatePrimeNode = 0;
-            }          
-            if (here->MESAsourcePrmPrmNode
-                    && here->MESAsourcePrmPrmNode != here->MESAsourcePrimeNode)
-            {
-                CKTdltNNum(ckt, here->MESAsourcePrmPrmNode);
-                here->MESAsourcePrmPrmNode = 0;
-            }
-            if (here->MESAdrainPrmPrmNode
-                    && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)
-            {
-                CKTdltNNum(ckt, here->MESAdrainPrmPrmNode);
-                here->MESAdrainPrmPrmNode = 0;
             }
         
         }
