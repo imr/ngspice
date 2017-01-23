@@ -24,8 +24,8 @@ typedef struct sCAPinstance {
                                              * current model*/
     IFuid CAPname;  /* pointer to character string naming this instance */
     int CAPstate;   /* pointer to start of capacitor state vector */
-    int CAPposNode; /* number of positive node of capacitor */
-    int CAPnegNode; /* number of negative node of capacitor */
+    const int CAPposNode; /* number of positive node of capacitor */
+    const int CAPnegNode; /* number of negative node of capacitor */
 
     double CAPtemp;     /* temperature at which this capacitor operates */
     double CAPdtemp;    /* delta-temperature of this instance */

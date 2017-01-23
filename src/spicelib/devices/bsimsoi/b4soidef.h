@@ -31,13 +31,13 @@ typedef struct sB4SOIinstance
     IFuid B4SOIname;
     int B4SOIstates;     /* index into state table for this device */
 
-    int B4SOIdNode;
-    int B4SOIgNodeExt; /* v3.1 changed gNode to gNodeExt */
-    int B4SOIsNode;
-    int B4SOIeNode;
-    int B4SOIpNodeExt;
-    int B4SOIbNodeExt;
-    int B4SOItempNodeExt;
+    const int B4SOIdNode;
+    const int B4SOIgNodeExt; /* v3.1 changed gNode to gNodeExt */
+    const int B4SOIsNode;
+    const int B4SOIeNode;
+    const int B4SOIpNodeExt;
+    const int B4SOIbNodeExt;
+    const int B4SOItempNodeExt;
     int B4SOIpNode;
     int B4SOIbNode;
     int B4SOItempNode;

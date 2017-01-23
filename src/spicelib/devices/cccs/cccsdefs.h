@@ -22,8 +22,8 @@ typedef struct sCCCSinstance {
     IFuid CCCSname; /* pointer to character string naming this instance */
     int CCCSstate; /* not used */
 
-    int CCCSposNode;    /* number of positive node of source */
-    int CCCSnegNode;    /* number of negative node of source */
+    const int CCCSposNode; /* number of positive node of source */
+    const int CCCSnegNode; /* number of negative node of source */
     int CCCScontBranch;    /* number of branch eq of controlling source */
 
     char *CCCScontName; /* pointer to name of controlling instance */

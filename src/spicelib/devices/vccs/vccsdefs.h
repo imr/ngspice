@@ -24,10 +24,10 @@ typedef struct sVCCSinstance {
     IFuid VCCSname; /* pointer to character string naming this instance */
     int VCCSstates;         /* state info */
 
-    int VCCSposNode;    /* number of positive node of source */
-    int VCCSnegNode;    /* number of negative node of source */
-    int VCCScontPosNode;    /* number of positive node of controlling source */
-    int VCCScontNegNode;    /* number of negative node of controlling source */
+    const int VCCSposNode;    /* number of positive node of source */
+    const int VCCSnegNode;    /* number of negative node of source */
+    const int VCCScontPosNode;    /* number of positive node of controlling source */
+    const int VCCScontNegNode;    /* number of negative node of controlling source */
 
     double VCCSinitCond;    /* initial condition (of controlling source) */
     double VCCScoeff;       /* coefficient */

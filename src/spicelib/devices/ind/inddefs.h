@@ -32,8 +32,8 @@ struct sINDinstance {
                                    * current model */
     IFuid INDname;  /* pointer to character string naming this instance */
     int INDstate;   /* pointer to beginning of state vector for inductor */
-    int INDposNode; /* number of positive node of inductor */
-    int INDnegNode; /* number of negative node of inductor */
+    const int INDposNode; /* number of positive node of inductor */
+    const int INDnegNode; /* number of negative node of inductor */
 
     int INDbrEq;    /* number of the branch equation added for current */
     double INDinduct;    /* inductance */

@@ -25,8 +25,8 @@ typedef struct sCSWinstance {
     IFuid CSWname;  /* pointer to character string naming this instance */
     int CSWstate;   /* pointer to start of switch's section of state vector */
 
-    int CSWposNode; /* number of positive node of switch */
-    int CSWnegNode; /* number of negative node of switch */
+    const int CSWposNode; /* number of positive node of switch */
+    const int CSWnegNode; /* number of negative node of switch */
     int CSWcontBranch; /* number of branch of controlling current */
 
     IFuid CSWcontName; /* name of controlling source */
