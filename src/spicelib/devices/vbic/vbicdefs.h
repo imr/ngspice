@@ -25,10 +25,10 @@ typedef struct sVBICinstance {
     IFuid VBICname;  /* pointer to character string naming this instance */
     int VBICstate;   /* pointer to start of state vector for vbic */
 
-    int VBICcollNode;   /* number of collector node of vbic */
-    int VBICbaseNode;   /* number of base node of vbic */
-    int VBICemitNode;   /* number of emitter node of vbic */
-    int VBICsubsNode;   /* number of substrate node of vbic */
+    const int VBICcollNode;   /* number of collector node of vbic */
+    const int VBICbaseNode;   /* number of base node of vbic */
+    const int VBICemitNode;   /* number of emitter node of vbic */
+    const int VBICsubsNode;   /* number of substrate node of vbic */
     int VBICcollCXNode; /* number of internal collector node of vbic */
     int VBICcollCINode; /* number of internal collector node of vbic */
     int VBICbaseBXNode; /* number of internal base node of vbic */

@@ -23,10 +23,10 @@ typedef struct sMOS2instance {
                                               *current model*/
     IFuid MOS2name; /* pointer to character string naming this instance */
     int MOS2states;     /* index into state table for this device */
-    int MOS2dNode;  /* number of the gate node of the mosfet */
-    int MOS2gNode;  /* number of the gate node of the mosfet */
-    int MOS2sNode;  /* number of the source node of the mosfet */
-    int MOS2bNode;  /* number of the bulk node of the mosfet */
+    const int MOS2dNode;  /* number of the gate node of the mosfet */
+    const int MOS2gNode;  /* number of the gate node of the mosfet */
+    const int MOS2sNode;  /* number of the source node of the mosfet */
+    const int MOS2bNode;  /* number of the bulk node of the mosfet */
     int MOS2dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS2sNodePrime; /* number of the internal source node of the mosfet */
 

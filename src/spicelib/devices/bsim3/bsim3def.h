@@ -22,10 +22,10 @@ typedef struct sBSIM3instance
     struct sBSIM3instance *BSIM3nextInstance;
     IFuid BSIM3name;
     int BSIM3states;     /* index into state table for this device */
-    int BSIM3dNode;
-    int BSIM3gNode;
-    int BSIM3sNode;
-    int BSIM3bNode;
+    const int BSIM3dNode;
+    const int BSIM3gNode;
+    const int BSIM3sNode;
+    const int BSIM3bNode;
     int BSIM3dNodePrime;
     int BSIM3sNodePrime;
     int BSIM3qNode; /* MCJ */

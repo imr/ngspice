@@ -34,8 +34,8 @@ typedef struct sNUMD2instance {
 #define NUMD2conduct NUMD2state+2
 #define NUMD2numStates 3
 
-  int NUMD2posNode;		/* number of positive node of diode */
-  int NUMD2negNode;		/* number of negative node of diode */
+  const int NUMD2posNode;	/* number of positive node of diode */
+  const int NUMD2negNode;	/* number of negative node of diode */
   TWOdevice *NUMD2pDevice;
   GLOBvalues NUMD2globals;	/* Temp.-Dep. Global Parameters */
   int NUMD2type;		/* device type pn or np */

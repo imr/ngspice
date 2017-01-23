@@ -26,13 +26,13 @@ typedef struct sB3SOIDDinstance
     IFuid B3SOIDDname;
     int B3SOIDDstates;     /* index into state table for this device */
 
-    int B3SOIDDdNode;
-    int B3SOIDDgNode;
-    int B3SOIDDsNode;
-    int B3SOIDDeNode;
-    int B3SOIDDbNodeExt;
-    int B3SOIDDtempNodeExt;
-    int B3SOIDDpNodeExt;
+    const int B3SOIDDdNode;
+    const int B3SOIDDgNode;
+    const int B3SOIDDsNode;
+    const int B3SOIDDeNode;
+    const int B3SOIDDbNodeExt;
+    const int B3SOIDDtempNodeExt;
+    const int B3SOIDDpNodeExt;
     int B3SOIDDbNode;
     int B3SOIDDtempNode;
     int B3SOIDDpNode;  
