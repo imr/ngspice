@@ -25,9 +25,9 @@ typedef struct sMESinstance {
                                              * current model*/
     IFuid MESname; /* pointer to character string naming this instance */
     int MESstate; /* pointer to start of state vector for mesfet */
-    int MESdrainNode;  /* number of drain node of mesfet */
-    int MESgateNode;   /* number of gate node of mesfet */
-    int MESsourceNode; /* number of source node of mesfet */
+    const int MESdrainNode;  /* number of drain node of mesfet */
+    const int MESgateNode;   /* number of gate node of mesfet */
+    const int MESsourceNode; /* number of source node of mesfet */
     int MESdrainPrimeNode; /* number of internal drain node of mesfet */
     int MESsourcePrimeNode;    /* number of internal source node of mesfet */
 
