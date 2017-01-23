@@ -25,10 +25,10 @@ typedef struct sVCVSinstance {
     IFuid VCVSname; /* pointer to character string naming this instance */
     int VCVSstates; /* state info */
 
-    int VCVSposNode;    /* number of positive node of source */
-    int VCVSnegNode;    /* number of negative node of source */
-    int VCVScontPosNode;    /* number of positive node of controlling source */
-    int VCVScontNegNode;    /* number of negative node of controlling source */
+    const int VCVSposNode;    /* number of positive node of source */
+    const int VCVSnegNode;    /* number of negative node of source */
+    const int VCVScontPosNode;    /* number of positive node of controlling source */
+    const int VCVScontNegNode;    /* number of negative node of controlling source */
     int VCVSbranch; /* equation number of branch equation added for v source */
 
     double VCVSinitCond;    /* initial condition (of controlling source) */

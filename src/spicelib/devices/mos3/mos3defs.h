@@ -23,10 +23,10 @@ typedef struct sMOS3instance {
                                               *current model*/
     IFuid MOS3name; /* pointer to character string naming this instance */
     int MOS3states;     /* index into state table for this device */
-    int MOS3dNode;  /* number of the gate node of the mosfet */
-    int MOS3gNode;  /* number of the gate node of the mosfet */
-    int MOS3sNode;  /* number of the source node of the mosfet */
-    int MOS3bNode;  /* number of the bulk node of the mosfet */
+    const int MOS3dNode;  /* number of the gate node of the mosfet */
+    const int MOS3gNode;  /* number of the gate node of the mosfet */
+    const int MOS3sNode;  /* number of the source node of the mosfet */
+    const int MOS3bNode;  /* number of the bulk node of the mosfet */
     int MOS3dNodePrime; /* number of the internal drain node of the mosfet */
     int MOS3sNodePrime; /* number of the internal source node of the mosfet */
 

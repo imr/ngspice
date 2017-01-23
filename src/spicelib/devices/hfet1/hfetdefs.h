@@ -20,9 +20,9 @@ typedef struct sHFETAinstance {
     IFuid HFETAname;
     int HFETAstate;   /* index into state table for this device */
     
-    int HFETAdrainNode;
-    int HFETAgateNode;
-    int HFETAsourceNode;
+    const int HFETAdrainNode;
+    const int HFETAgateNode;
+    const int HFETAsourceNode;
     int HFETAdrainPrimeNode;
     int HFETAgatePrimeNode;
     int HFETAsourcePrimeNode;

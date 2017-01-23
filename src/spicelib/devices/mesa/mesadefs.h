@@ -24,9 +24,9 @@ typedef struct sMESAinstance {
     IFuid MESAname; /* pointer to character string naming this instance */
     int MESAstate; /* pointer to start of state vector for MESAfet */
     
-    int MESAdrainNode;  /* number of drain node of MESAfet */
-    int MESAgateNode;   /* number of gate node of MESAfet */
-    int MESAsourceNode; /* number of source node of MESAfet */
+    const int MESAdrainNode;  /* number of drain node of MESAfet */
+    const int MESAgateNode;   /* number of gate node of MESAfet */
+    const int MESAsourceNode; /* number of source node of MESAfet */
     int MESAdrainPrimeNode; /* number of internal drain node of MESAfet */
     int MESAgatePrimeNode; /* number of internal gate node of MESAfet */
     int MESAsourcePrimeNode;    /* number of internal source node of MESAfet */

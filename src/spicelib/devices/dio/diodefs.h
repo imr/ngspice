@@ -23,8 +23,8 @@ typedef struct sDIOinstance {
                                              * current model*/
     IFuid DIOname;      /* pointer to character string naming this instance */
     int DIOstate;   /* pointer to start of state vector for diode */
-    int DIOposNode;     /* number of positive node of diode */
-    int DIOnegNode;     /* number of negative node of diode */
+    const int DIOposNode;     /* number of positive node of diode */
+    const int DIOnegNode;     /* number of negative node of diode */
     int DIOposPrimeNode;    /* number of positive prime node of diode */
 
     double *DIOposPosPrimePtr;      /* pointer to sparse matrix at 

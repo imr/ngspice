@@ -23,10 +23,10 @@ typedef struct sTRAinstance {
                                              * current model*/
     IFuid TRAname;      /* pointer to character string naming this instance */
     int TRAstate;	/* not used */
-    int TRAposNode1;    /* number of positive node of end 1 of t. line */
-    int TRAnegNode1;    /* number of negative node of end 1 of t. line */
-    int TRAposNode2;    /* number of positive node of end 2 of t. line */
-    int TRAnegNode2;    /* number of negative node of end 2 of t. line */
+    const int TRAposNode1;    /* number of positive node of end 1 of t. line */
+    const int TRAnegNode1;    /* number of negative node of end 1 of t. line */
+    const int TRAposNode2;    /* number of positive node of end 2 of t. line */
+    const int TRAnegNode2;    /* number of negative node of end 2 of t. line */
     int TRAintNode1;    /* number of internal node of end 1 of t. line */
     int TRAintNode2;    /* number of internal node of end 2 of t. line */
 

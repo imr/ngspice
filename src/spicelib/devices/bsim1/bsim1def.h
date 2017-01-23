@@ -26,10 +26,10 @@ typedef struct sBSIM1instance {
     IFuid B1name; /* pointer to character string naming this instance */
     int B1states;     /* index into state table for this device */
 
-    int B1dNode;  /* number of the gate node of the mosfet */
-    int B1gNode;  /* number of the gate node of the mosfet */
-    int B1sNode;  /* number of the source node of the mosfet */
-    int B1bNode;  /* number of the bulk node of the mosfet */
+    const int B1dNode;  /* number of the gate node of the mosfet */
+    const int B1gNode;  /* number of the gate node of the mosfet */
+    const int B1sNode;  /* number of the source node of the mosfet */
+    const int B1bNode;  /* number of the bulk node of the mosfet */
     int B1dNodePrime; /* number of the internal drain node of the mosfet */
     int B1sNodePrime; /* number of the internal source node of the mosfet */
 

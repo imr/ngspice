@@ -34,10 +34,10 @@ typedef struct sBSIM4v7instance
     struct sBSIM4v7instance *BSIM4v7nextInstance;
     IFuid BSIM4v7name;
     int BSIM4v7states;     /* index into state table for this device */
-    int BSIM4v7dNode;
-    int BSIM4v7gNodeExt;
-    int BSIM4v7sNode;
-    int BSIM4v7bNode;
+    const int BSIM4v7dNode;
+    const int BSIM4v7gNodeExt;
+    const int BSIM4v7sNode;
+    const int BSIM4v7bNode;
     int BSIM4v7dNodePrime;
     int BSIM4v7gNodePrime;
     int BSIM4v7gNodeMid;

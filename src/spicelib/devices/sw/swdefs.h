@@ -25,10 +25,10 @@ typedef struct sSWinstance {
     IFuid SWname;  /* pointer to character string naming this instance */
     int SWstate;   /* pointer to start of switch's section of state vector */
 
-    int SWposNode; /* number of positive node of switch */
-    int SWnegNode; /* number of negative node of switch */
-    int SWposCntrlNode; /* number of positive controlling node of switch */
-    int SWnegCntrlNode; /* number of negative controlling node of switch */
+    const int SWposNode; /* number of positive node of switch */
+    const int SWnegNode; /* number of negative node of switch */
+    const int SWposCntrlNode; /* number of positive controlling node of switch */
+    const int SWnegCntrlNode; /* number of negative controlling node of switch */
 
     double *SWposPosPtr;  /* pointer to sparse matrix diagonal at
                                 (positive,positive) for switch conductance */
