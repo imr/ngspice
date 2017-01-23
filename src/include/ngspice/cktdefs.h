@@ -152,6 +152,7 @@ struct CKTcircuit {
 
     CKTnode *CKTnodes;          /* ??? */
     CKTnode *CKTlastNode;       /* ??? */
+    CKTnode *prev_CKTlastNode;  /* just before model setup */
 
     /* This define should be somewhere else ??? */
 #define NODENAME(ckt,nodenum) CKTnodName(ckt,nodenum)

@@ -23,6 +23,11 @@ CKTdltNNum(CKTcircuit *ckt, int num)
     CKTnode *n, *prev, *node, *sprev;
     int	error;
 
+    if (!ckt->prev_CKTlastNode->number || num <= ckt->prev_CKTlastNode->number) {
+        fprintf(stderr, "Internal Error: CKTdltNNum() removing a non device-local node, this will cause serious problems, please report this issue !\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
     prev  = NULL;
     node  = NULL;
     sprev = NULL;
