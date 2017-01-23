@@ -77,6 +77,13 @@ CKTsetup(CKTcircuit *ckt)
     SetAnalyse("Device Setup", 0);
 #endif
 
+    /* preserve CKTlastNode before invoking DEVsetup()
+     * so we can check for incomplete CKTdltNNum() invocations
+     * during DEVunsetup() causing an erronous circuit matrix
+     *   when reinvoking CKTsetup()
+     */
+    ckt->prev_CKTlastNode = ckt->CKTlastNode;
+
     for (i=0;i<DEVmaxnum;i++) {
         if ( DEVices[i] && DEVices[i]->DEVsetup && ckt->CKThead[i] ) {
             error = DEVices[i]->DEVsetup (matrix, ckt->CKThead[i], ckt,
@@ -163,6 +170,13 @@ CKTunsetup(CKTcircuit *ckt)
                 error = e2;
         }
     }
+
+    if (ckt->prev_CKTlastNode != ckt->CKTlastNode) {
+        fprintf(stderr, "Internal Error: incomplete CKTunsetup(), this will cause serious problems, please report this issue !\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+    ckt->prev_CKTlastNode = NULL;
+
     ckt->CKTisSetup = 0;
     if(error) return(error);
 
