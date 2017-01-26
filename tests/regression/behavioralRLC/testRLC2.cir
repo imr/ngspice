@@ -1,0 +1,40 @@
+.TITLE Test non-linear RLC2
+
+.param ape=13 bear=69 giraffe=bear/ape*1u
+
+X1 0 1 2 dummy a={3*ape} b={sqrt(bear)} c={giraffe+5}
+
+Vx nodetc2001 0 dc=2
+Rx 1 2 1k
+Bx 1 0 v = {bear*1.23*pi/ape} tc1=-300u tc2=10m 
+
+R1 2 0 R='12+1u*25'
+R2 2 0 R='24+v(nodetc2001)*2u'
+R3 2 0 R='36+v(nodetc2001)*2u' tc1=-300u tc2=10m 
+
+C1 2 0 C='1u*25'
+C2 2 0 C='v(nodetc2001)*2u'
+C3 2 0 C='v(nodetc2001)*2u' tc1=-300u' tc2=10m
+
+L1 2 0 L='1u*25'
+L2 2 x L='v(nodetc2001)*2u'
+Ri x 0 1
+L3 2 0 L='v(nodetc2001)*2u' tc1=-300u tc2=10m
+
+.subckt dummy 0 1 2  a=1 b=2 c=3
+r1 1 0 {a}
+r2 2 0 {b}
+r3 1 2 {c}
+.ends dummy
+
+.tran {1u*3} 1ms uic
+.options method=trap reltol=1m temp=120
+
+.control
+   listing e
+   run
+   set filetype=ascii
+   write testRLC2.raw
+.endc
+
+.end

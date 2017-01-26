@@ -1,0 +1,56 @@
+.TITLE Test non-linear RLC
+
+.param lin=0 ape=13 bear=69 giraffe=bear/ape
+
+Vc ctrl 0 dc=2
+V1 1 0 dc=0 pulse(0 10 0 1u 1u 10u 20u) 
+
+
+* Implement linear R/L/C with behavioral sources
+R1 1 2 R='v(ctrl)*1.23' 			tc1=-10u tc2=-20u 
+L1 2 3 L='v(ctrl)*1m'    	   ic=0 	tc1=-10u tc2=-20u 
+.if (lin)
+C1  3 0 C='v(ctrl)*2.34u' 	   ic=-30 	tc1=-10u tc2=-20u 
+.else
+C1 3 0 C='(1.9+tanh(v(3)))*2.34u'  ic=-30 	tc1=-10u tc2=-20u 
+.endif
+Rd 3 0 100T $ For convergence
+
+* Specify different temperature coefficients
+R2 1 0 'v(ctrl)*1.23' 		   tc1=-10u tc2=-20u  $ both tc1 and tc2
+R3 1 0 'v(ctrl)*1.23' 		   tc1=-10u 	      $ tc1 but no tc2
+R4 1 0 'v(ctrl)*1.23' 		   	    tc2=-20u  $ only tc2
+R5 1 0 'v(ctrl)*1.23' 		   	    	      $ no tc
+
+* Expressions for  tc
+R6 1 0 1001 tc1='-3*100u/4' tc2='sqrt(100)*1.3m'
+R7 1 0 1001 tc1='-3*100u/4'
+R8 1 0 1001 tc1='-3*100u/4' tc2='sqrt(100)*1.3m' temp='100+1' dtemp='24*2/4'
+
+R9  1 0 '1.23*10'                tc1='-3*100u/4' tc2='sqrt(100)*1.3m'
+*bug R10 1 0 'v(ctrl)*1.23*{pi/10}'   tc1='-3*100u/4' tc2='sqrt(100)*1.3m'
+*bug B11 4 0 v = v(ctrl)*{1.23*pi/10} tc1='-3*100u/4' tc2='sqrt(100)*1.3m' 
+Rxx 4 0 1k
+
+*bug B12 5 0 v = {bear*1.23*pi/ape} tc1='-3*100u/ape' tc2='sqrt(100)*giraffe' 
+L1  5 6 0.1mH
+C3  6 0 C='1u*25'
+
+* test for names imbedded in other names
+V2 nodetc1001 0 2
+C4 6 0 C='v(nodetc1001)*2u'
+*bug C5 6 0 C='v(nodetc1001)*2u' tc1='-3*100u/ape' tc2='sqrt(100)*giraffe' 
+
+.tran 1u 1ms uic
+.options method=trap reltol=1m
+
+*.inc ngspice.inc
+.control
+   listing e
+   run
+   set filetype=ascii
+   write testRLC.raw
+*  quit
+.endc
+
+.end
