@@ -40,7 +40,9 @@ unset ngdebug
 run
 display
 * plot the inputs and outputs, use offset to plot on top of each other
-plot  v(1) v(は2)+4 v(7)+8 
+let れ1 = 4
+let れ2 = 8
+plot  v(1) v(は2)+れ1 v(7)+れ2
 endif
 .endc
 
