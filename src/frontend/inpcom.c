@@ -2120,7 +2120,7 @@ inp_casefix(char *string)
                 if (*string == '"')
                     *string = ' ';
             }
-            if (!isspace_c(*string) && !isprint_c(*string))
+            if (!isspace_c(*string) && !isprint_c(*string) && !((*string) & 0200))
                 *string = '_';
             if (isupper_c(*string))
                 *string = tolower_c(*string);

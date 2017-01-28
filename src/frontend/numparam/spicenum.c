@@ -89,7 +89,7 @@ stripsomespace(SPICE_DSTRINGPTR dstr_p, unsigned char incontrol)
     ls = spice_dstring_length(dstr_p);
 
     i = 0;
-    while ((i < ls) && (sstr[i] <= ' '))
+    while ((i < ls) && ((unsigned char)sstr[i] <= ' '))
         i++;
 
     if ((i > 0) && (i < ls) && (cpos(sstr[i], spice_dstring_value(&markers)) >= 0))
@@ -134,7 +134,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
             t_p = spice_dstring_value(&tstr);
 
-            if (t_p[i - 1] > ' ')
+            if ((unsigned char)t_p[i - 1] > ' ')
                 cadd(&tstr, ' ');
 
             cadd(&tstr, ' ');
@@ -145,7 +145,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             }
             cadd(&tstr, ' ');
 
-            if (s[j] >= ' ')
+            if ((unsigned char)s[j] >= ' ')
                 cadd(&tstr, ' ');
 
             i = spice_dstring_length(&tstr);
@@ -191,12 +191,11 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
     while ((k >= 0) && (!found)) {
 
         /* skip space, then non-space */
-        while ((k >= 0) && (s[k] <= ' '))
+        while ((k >= 0) && ((unsigned char)s[k] <= ' '))
             k--;
 
         h = k + 1;              /* at h: space */
-        while ((k >= 0) && (s[k] > ' ')) {
-
+        while ((k >= 0) && ((unsigned char)s[k] > ' ')) {
             if (s[k] == '}') {
                 nest = 1;
                 k--;
@@ -216,7 +215,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             }
         }
 
-        found = (k >= 0) && alfanum(s[k + 1]); /* suppose an identifier */
+        found = (k >= 0) && (alfanum(s[k + 1])); /* suppose an identifier */
         if (found) {
             /* check for known subckt name */
             spice_dstring_reinit(&name);
@@ -339,7 +338,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, unsigned char nostripping,
         k = 1;
 
         t = spice_dstring_value(&tstr);
-        while (t[k] > ' ') {
+        while ((unsigned char)t[k] > ' ') {
             cadd(u_p, t[k]);
             k++;
         }
@@ -758,7 +757,7 @@ nupa_copy(char *s, int linenum)
     spice_dstring_init(&keywd);
     ls = length(s);
 
-    while ((ls > 0) && (s[ls - 1] <= ' '))
+    while ((ls > 0) && ((unsigned char)s[ls - 1] <= ' '))
         ls--;
 
     pscopy(&u, s, 0, ls);       /* strip trailing space, CrLf and so on */

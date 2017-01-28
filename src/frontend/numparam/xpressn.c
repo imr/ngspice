@@ -574,15 +574,15 @@ defsubckt(dico_t *dico, char *s, int w, char categ, struct nscope *level)
     while ((i < ls) && (s[i] != '.'))
         i++;                    /* skip 1st dotword */
 
-    while ((i < ls) && (s[i] > ' '))
+    while ((i < ls) && ((unsigned char)s[i] > ' '))
         i++;
 
-    while ((i < ls) && (s[i] <= ' '))
+    while ((i < ls) && ((unsigned char)s[i] <= ' '))
         i++;                    /* skip blank */
 
     j = i;
 
-    while ((j < ls) && (s[j] > ' '))
+    while ((j < ls) && ((unsigned char)s[j] > ' '))
         j++;
 
     if (j > i) {
@@ -614,12 +614,12 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
 
     k = length(s);
 
-    while ((k >= 0) && (s[k] <= ' '))
+    while ((k >= 0) && ((unsigned char)s[k] <= ' '))
         k--;
 
     j = k;
 
-    while ((k >= 0) && (s[k] > ' '))
+    while ((k >= 0) && ((unsigned char)s[k] > ' '))
         k--;
 
     pscopy_up(&ustr, s, k + 1, j - k);
@@ -653,7 +653,7 @@ keyword(const char *keys, const char *s, const char *s_end)
         const char *p = s;
         while ((p < s_end) && (upcase(*p) == *keys))
             p++, keys++;
-        if ((p >= s_end) && (*keys <= ' '))
+        if ((p >= s_end) && ((unsigned char)(*keys) <= ' '))
             return j;
         keys = strchr(keys, ' ');
         if (!keys)
@@ -802,7 +802,7 @@ fetchoperator(dico_t *dico,
         level = 8;
     } else {
         state = S_init;
-        if (c > ' ')
+        if ((unsigned char)c > ' ')
             error = message(dico, "Syntax error: letter [%c]\n", c);
     }
 
@@ -940,7 +940,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
     }
 
     /* trim trailing whitespace */
-    while ((s_end > s) && (s_end[-1] <= ' '))
+    while ((s_end > s) && ((unsigned char)s_end[-1] <= ' '))
         s_end--;
 
     state = S_init;
@@ -1180,7 +1180,7 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
                 if (cpos('3', spice_dstring_value(&dico->option)) <= 0)
                     dt = upcase(dt); /* spice-2 */
 
-                done = (dt == '\"') || (dt < ' ') || (lq > 99);
+                done = (dt == '\"') || ((unsigned char)dt < ' ') || (lq > 99);
 
                 if (!done)
                     cadd(qstr_p, dt);
@@ -1321,7 +1321,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
             }
 
             i++;
-            while ((i < ls) && (s[i - 1] <= ' '))
+            while ((i < ls) && ((unsigned char)s[i - 1] <= ' '))
                 i++;
 
             k = i;
@@ -1365,7 +1365,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                     else
                         d = s[k - 1];
 
-                } while ((k <= ls) && (d > ' '));
+                } while ((k <= ls) && ((unsigned char)d > ' '));
 
                 pscopy(&tstr, s, i-1, k - i);
                 err = evaluate(dico, &qstr, spice_dstring_value(&tstr), 1);
@@ -1425,7 +1425,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
     ls = length(s);
     ia = i + 1;
 
-    while ((ia < ls) && (s[ia - 1] <= ' '))
+    while ((ia < ls) && ((unsigned char)s[ia - 1] <= ' '))
         ia++;                   /*white space ? */
 
     if (s[ia - 1] == '"') {
@@ -1440,7 +1440,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
 
         do
             i++;
-        while ((i <= ls) && (s[i - 1] <= ' '));
+        while ((i <= ls) && (unsigned char)(s[i - 1] <= ' '));
 
     } else {
 
@@ -1521,14 +1521,14 @@ nupa_assignment(dico_t *dico, char *s, char mode)
     error = 0;
     i = 0;
 
-    while ((i < ls) && (s[i] <= ' '))
+    while ((i < ls) && ((unsigned char)s[i] <= ' '))
         i++;
 
     if (s[i] == Intro)
         i++;
 
     if (s[i] == '.')            /* skip any dot keyword */
-        while (s[i] > ' ')
+        while ((unsigned char)s[i] > ' ')
             i++;
 
     while ((i < ls) && !error) {
@@ -1619,7 +1619,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
     if (j >= 0) {
         j = j + 6;              /* fetch its name - skip subckt */
         t_p = spice_dstring_value(&tstr);
-        while ((j < ls) && (t_p[j] <= ' '))
+        while ((j < ls) && ((unsigned char)t_p[j] <= ' '))
             j++;
 
         while (t_p[j] != ' ') {
@@ -1709,7 +1709,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
             j = j + spice_dstring_length(&subname) + 1; /* 1st position of arglist: j */
 
             t_p = spice_dstring_value(&tstr);
-            while ((j < ls) && ((t_p[j] <= ' ') || (t_p[j] == ',')))
+            while ((j < ls) && (((unsigned char)t_p[j] <= ' ') || (t_p[j] == ',')))
                 j++;
 
             while (j < ls) {
@@ -1746,7 +1746,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
                 if (alfanum(t_p[k]) || t_p[k] == '.') {
                     /* number, identifier */
                     h = k;
-                    while (t_p[k] > ' ')
+                    while ((unsigned char)t_p[k] > ' ')
                         k++;
                     pscopy(&ustr, spice_dstring_value(&tstr), h, k - h);
                     j = k;
@@ -1755,7 +1755,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, bool err)
                     j--;       /* confusion: j was in Turbo Pascal convention */
                 } else {
                     j++;
-                    if (t_p[k] > ' ')
+                    if ((unsigned char)t_p[k] > ' ')
                         message(dico, "Subckt call, symbol %c not understood\n", t_p[k]);
                 }
 
