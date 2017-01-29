@@ -4853,13 +4853,16 @@ inp_compat(struct line *card)
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
 	    tc1_ptr = strstr(str_ptr, "tc1");
             tc2_ptr = strstr(str_ptr, "tc2");
-            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) 
-                xline = tprintf("b%s %s %s i={v(%s, %s)/(%s)}", title_tok, node1, node2, node1, node2, equation);
+            if (tc1_ptr == NULL && tc2_ptr == NULL) 
+                 xline = tprintf("b%s %s %s i={v(%s,%s)/(%s)}", title_tok, node1, node2, node1, node2, equation);
             else if (tc1_ptr && tc2_ptr) 
-                xline = tprintf("b%s %s %s i={v(%s, %s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+                 xline = tprintf("b%s %s %s i={v(%s,%s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else if (tc1_ptr)
-		xline = tprintf("b%s %s %s i={v(%s, %s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr);
-	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+		 xline = tprintf("b%s %s %s i={v(%s,%s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr);
+	    else {
+		    xline = tprintf("b%s %s %s i={v(%s,%s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc2_ptr);
+		    fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    }
 	    new_line = xx_new_line(card->li_next, xline, 0, 0, card->level);
 
             // comment out current old R line
@@ -4926,7 +4929,10 @@ inp_compat(struct line *card)
 		    ckt_array[2] = tprintf("b%s %s %s i={i(e%s)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else  if (tc1_ptr)				
 		    ckt_array[2] = tprintf("b%s %s %s i={i(e%s)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
-	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    else {
+		    ckt_array[2] = tprintf("b%s %s %s i={i(e%s)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc2_ptr);
+		    fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    }
 	    // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0, card->level);
@@ -5005,7 +5011,10 @@ inp_compat(struct line *card)
 		    ckt_array[2] = tprintf("b%s %s %s v={v(%s_int2)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else if(tc1_ptr)
 		    ckt_array[2] = tprintf("b%s %s %s v={v(%s_int2)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
-	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    else {
+		    ckt_array[2] = tprintf("b%s %s %s v={v(%s_int2)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc2_ptr);
+		    fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
+	    }
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0, card->level);
@@ -5342,12 +5351,27 @@ replace_token(char *string, char *token, int wherereplace, int total)
    but skip function names like exp (search for 'exp(' to detect fcn name),
    functions containing nodes like v(node), v(node1, node2), i(branch)
    and other keywords like TEMPER. --> Only parameter replacement in numparam
+
+   mhx: A B-source line may not only have an expression, but can look like
+   "b1 1 0 v={expr} temp={expr} dtemp={expr}." Therefore we split the line
+   before the first xx=yyy part, do as described above, then add back the
+   split-off part. It is found that the line at this point does not have
+   any excess spaces. We can therefore break at the first space.
+
 */
+static char *findassigns(char *str) {
+	char *s = str, *tmp = NULL;
+	while (*s != '\0' && *s != ' ') s++;
+	if (*s == '\0') return NULL;
+	/* truncate str and return the rest. */
+	tmp = copy(s); *s = '\0';
+	return tmp;
+}
 
 static void
 inp_bsource_compat(struct line *card)
 {
-    char *equal_ptr, *str_ptr, *new_str, *final_str;
+    char *equal_ptr, *str_ptr, *new_str, *final_str, *rest = NULL;
     struct line *new_line;
     int skip_control = 0;
 
@@ -5374,14 +5398,16 @@ inp_bsource_compat(struct line *card)
             equal_ptr = strchr(curr_line, '=');
             /* check for errors */
             if (equal_ptr == NULL) {
-                fprintf(stderr, "ERROR: mal formed B line: %s\n", curr_line);
+                fprintf(stderr, "ERROR: malformed B line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
             /* find the m={m} token and remove it */
             if ((str_ptr = strstr(curr_line, "m={m}")) != NULL)
                 memcpy(str_ptr, "     ", 5);
-            new_str = inp_modify_exp(equal_ptr + 1);
-            final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line), curr_line, new_str);
+	    rest = findassigns(equal_ptr + 1);
+	      new_str = inp_modify_exp(equal_ptr + 1);
+	      final_str = tprintf("%.*s %s %s", (int)(equal_ptr + 1 - curr_line), curr_line, new_str, rest ? rest : "\0");
+	    tfree(rest);
 
             /* Copy old line numbers into new B source line */
             new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig, card->level);
