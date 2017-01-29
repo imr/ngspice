@@ -4816,10 +4816,10 @@ inp_compat(struct line *card)
 
         /* Rxxx n1 n2 R = {equation} or Rxxx n1 n2 {equation}
            -->
-           BRxxx pos neg I = V(pos, neg)/{equation} [tc1|2=a] [tc2|1=b] reciproctc=1
-	   (reciproctc = 1/0 when B source divides/multiplies respectively.)
+           BRxxx pos neg I={V(pos,neg)/equation} [tc1|2=a] [tc2|1=b] [temp=c] [dtemp=d] reciproctc=1
+	   Reciproctc = 1/0 when B source divides/multiplies respectively.
+	   Adding braces and leaving out spaces conforms to how lines should look at this point.
 	   FIXME: When tc1 is absent, but tc2 is present, a WARNING is issued and tc2 is NOT used.
-	   FIXME: the parameters temp and dtemp should be supported (easy)
 	   FIXME: the parameters ac, m, noisy, scale are not supported (very complex,
 	          the device line parser needs to be modified)
 	   FIXME: 'a' and 'b' cannot be expressions (complications with the device line parser).
@@ -4854,11 +4854,11 @@ inp_compat(struct line *card)
 	    tc1_ptr = strstr(str_ptr, "tc1");
             tc2_ptr = strstr(str_ptr, "tc2");
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) 
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2, node1, node2, equation);
+                xline = tprintf("b%s %s %s i={v(%s, %s)/(%s)}", title_tok, node1, node2, node1, node2, equation);
             else if (tc1_ptr && tc2_ptr) 
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+                xline = tprintf("b%s %s %s i={v(%s, %s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else if (tc1_ptr)
-		xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr);
+		xline = tprintf("b%s %s %s i={v(%s, %s)/(%s)} %s reciproctc=1", title_tok, node1, node2, node1, node2, equation, tc1_ptr);
 	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
 	    new_line = xx_new_line(card->li_next, xline, 0, 0, card->level);
 
@@ -4877,10 +4877,10 @@ inp_compat(struct line *card)
            -->
            Exxx  n-aux 0  n1 n2  1
            Cxxx  n-aux 0         1
-           Bxxx  n2 n1  I = i(Exxx) * equation  reciproctc=1
-	   (reciproctc = 1/0 when B source divides/multiplies respectively.)
+           Bxxx  n2 n1  I={i(Exxx)*equation} [tc1|2=a] [tc2|1=b] [temp=c] [dtemp=d] reciproctc=1
+	   Reciproctc = 1/0 when B source divides/multiplies respectively.
+	   Adding braces and leaving out spaces conforms to how lines should look at this point.
 	   FIXME: When tc1 is absent, but tc2 is present, a WARNING is issued and tc2 is NOT used.
-	   FIXME: the parameters temp and dtemp should be supported (easy)
 	   FIXME: the capacitor's IC=init parameter must be supported.
 	   FIXME: the parameters ac, m, noisy, scale are not supported (very complex,
 		  the device line parser needs to be modified)
@@ -4921,11 +4921,11 @@ inp_compat(struct line *card)
             ckt_array[1] = tprintf("c%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n2 n1  I = i(Exxx) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) 
-		    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)", title_tok, node2, node1, title_tok, equation);
+		    ckt_array[2] = tprintf("b%s %s %s i={i(e%s)*(%s)}", title_tok, node2, node1, title_tok, equation);
 	    else if (tc1_ptr && tc2_ptr) 		
-		    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+		    ckt_array[2] = tprintf("b%s %s %s i={i(e%s)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else  if (tc1_ptr)				
-		    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
+		    ckt_array[2] = tprintf("b%s %s %s i={i(e%s)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
 	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
 	    // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
@@ -4957,10 +4957,10 @@ inp_compat(struct line *card)
            -->
            Fxxx n-aux 0  Bxxx -1
            Lxxx n-aux 0      1
-           Bxxx n1 n2 V = v(n-aux) * equation  reciproctc=0
-	   (reciproctc = 1/0 when B source divides/multiplies respectively.)
+           Bxxx n1 n2 V={v(n-aux)*equation} [tc1|2=a] [tc2|1=b] [temp=c] [dtemp=d] reciproctc=0
+	   Reciproctc = 1/0 when B source divides/multiplies respectively.
+	   Adding braces and leaving out spaces conforms to how lines should look at this point.
 	   FIXME: When tc1 is absent, but tc2 is present, a WARNING is issued and tc2 is NOT used.
-	   FIXME: the parameters temp and dtemp should be supported (easy)
 	   FIXME: the inductor's IC=init parameter must be supported.
 	   FIXME: the parameters ac, m, noisy, scale are not supported (very complex,
 		  the device line parser needs to be modified)
@@ -5000,11 +5000,11 @@ inp_compat(struct line *card)
             ckt_array[1] = tprintf("l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) 
-		    ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s)", title_tok, node2, node1, title_tok, equation);
+		    ckt_array[2] = tprintf("b%s %s %s v={v(%s_int2)*(%s)}", title_tok, node2, node1, title_tok, equation);
 	    else if (tc1_ptr && tc2_ptr)
-		    ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
+		    ckt_array[2] = tprintf("b%s %s %s v={v(%s_int2)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr < tc2_ptr ? tc1_ptr : tc2_ptr);
 	    else if(tc1_ptr)
-		    ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
+		    ckt_array[2] = tprintf("b%s %s %s v={v(%s_int2)*(%s)} %s reciproctc=0", title_tok, node2, node1, title_tok, equation, tc1_ptr);
 	    else if (tc2_ptr) fprintf(cp_err, "WARNING: tc2 specified (%s) but tc1 undefined.\n", tc2_ptr);
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++) {
