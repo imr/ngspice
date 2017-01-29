@@ -481,24 +481,20 @@ BJTunsetup(
         for (here = model->BJTinstances; here != NULL;
                 here=here->BJTnextInstance)
         {
-           if (here->BJTemitPrimeNode
+           if (here->BJTemitPrimeNode > 0
                && here->BJTemitPrimeNode != here->BJTemitNode)
-           {
-                CKTdltNNum(ckt, here->BJTemitPrimeNode);
-                here->BJTemitPrimeNode = 0;
-           }
-           if (here->BJTbasePrimeNode
+               CKTdltNNum(ckt, here->BJTemitPrimeNode);
+           here->BJTemitPrimeNode = 0;
+
+           if (here->BJTbasePrimeNode > 0
                && here->BJTbasePrimeNode != here->BJTbaseNode)
-           {
-                CKTdltNNum(ckt, here->BJTbasePrimeNode);
-                here->BJTbasePrimeNode = 0;
-           }
-           if (here->BJTcolPrimeNode
+               CKTdltNNum(ckt, here->BJTbasePrimeNode);
+           here->BJTbasePrimeNode = 0;
+
+           if (here->BJTcolPrimeNode > 0
                && here->BJTcolPrimeNode != here->BJTcolNode)
-           {
                 CKTdltNNum(ckt, here->BJTcolPrimeNode);
-                here->BJTcolPrimeNode = 0;
-            }
+           here->BJTcolPrimeNode = 0;
         }
     }
     return OK;

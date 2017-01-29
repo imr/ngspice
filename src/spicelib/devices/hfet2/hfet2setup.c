@@ -216,18 +216,15 @@ HFET2unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->HFET2instances; here != NULL;
                 here=here->HFET2nextInstance)
         {
-            if (here->HFET2drainPrimeNode
+            if (here->HFET2drainPrimeNode > 0
                     && here->HFET2drainPrimeNode != here->HFET2drainNode)
-            {
                 CKTdltNNum(ckt, here->HFET2drainPrimeNode);
-                here->HFET2drainPrimeNode = 0;
-            }
-            if (here->HFET2sourcePrimeNode
+            here->HFET2drainPrimeNode = 0;
+
+            if (here->HFET2sourcePrimeNode > 0
                     && here->HFET2sourcePrimeNode != here->HFET2sourceNode)
-            {
                 CKTdltNNum(ckt, here->HFET2sourcePrimeNode);
-                here->HFET2sourcePrimeNode = 0;
-            }
+            here->HFET2sourcePrimeNode = 0;
         }
     
     }

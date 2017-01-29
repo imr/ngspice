@@ -412,18 +412,15 @@ B1unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->B1instances; here != NULL;
                 here=here->B1nextInstance)
 	{
-	    if (here->B1sNodePrime
+	    if (here->B1sNodePrime > 0
 		    && here->B1sNodePrime != here->B1sNode)
-	    {
 		CKTdltNNum(ckt, here->B1sNodePrime);
-		here->B1sNodePrime = 0;
-	    }
-	    if (here->B1dNodePrime
+            here->B1sNodePrime = 0;
+
+	    if (here->B1dNodePrime > 0
 		    && here->B1dNodePrime != here->B1dNode)
-	    {
 		CKTdltNNum(ckt, here->B1dNodePrime);
-		here->B1dNodePrime = 0;
-	    }
+            here->B1dNodePrime = 0;
 	}
     }
     return OK;

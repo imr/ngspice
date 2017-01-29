@@ -558,45 +558,37 @@ VBICunsetup(
         for (here = model->VBICinstances; here != NULL;
                 here=here->VBICnextInstance)
         {
-            if (here->VBICbaseBINode)
-            {
+            if (here->VBICbaseBINode > 0)
                 CKTdltNNum(ckt, here->VBICbaseBINode);
-                here->VBICbaseBINode = 0;
-            }
-            if (here->VBICbaseBPNode)
-            {
+            here->VBICbaseBINode = 0;
+
+            if (here->VBICbaseBPNode > 0)
                 CKTdltNNum(ckt, here->VBICbaseBPNode);
-                here->VBICbaseBPNode = 0;
-            }
-            if (here->VBICcollCINode)
-            {
+            here->VBICbaseBPNode = 0;
+
+            if (here->VBICcollCINode > 0)
                 CKTdltNNum(ckt, here->VBICcollCINode);
-                here->VBICcollCINode = 0;
-            }
-            if (here->VBICsubsSINode
+            here->VBICcollCINode = 0;
+
+            if (here->VBICsubsSINode > 0
                 && here->VBICsubsSINode != here->VBICsubsNode)
-            {
                 CKTdltNNum(ckt, here->VBICsubsSINode);
-                here->VBICsubsSINode = 0;
-            }
-            if (here->VBICemitEINode
+            here->VBICsubsSINode = 0;
+
+            if (here->VBICemitEINode > 0
                 && here->VBICemitEINode != here->VBICemitNode)
-            {
                 CKTdltNNum(ckt, here->VBICemitEINode);
-                here->VBICemitEINode = 0;
-            }
-            if (here->VBICbaseBXNode
+            here->VBICemitEINode = 0;
+
+            if (here->VBICbaseBXNode > 0
                 && here->VBICbaseBXNode != here->VBICbaseNode)
-            {
                 CKTdltNNum(ckt, here->VBICbaseBXNode);
-                here->VBICbaseBXNode = 0;
-            }
-            if (here->VBICcollCXNode
+            here->VBICbaseBXNode = 0;
+
+            if (here->VBICcollCXNode > 0
                 && here->VBICcollCXNode != here->VBICcollNode)
-            {
                 CKTdltNNum(ckt, here->VBICcollCXNode);
-                here->VBICcollCXNode = 0;
-            }
+            here->VBICcollCXNode = 0;
         }
     }
     return OK;

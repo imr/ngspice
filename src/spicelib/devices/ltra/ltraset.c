@@ -229,14 +229,13 @@ LTRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
       model = model->LTRAnextModel) {
     for (here = model->LTRAinstances; here != NULL;
 	here = here->LTRAnextInstance) {
-      if (here->LTRAbrEq2) {
+      if (here->LTRAbrEq2 > 0)
 	CKTdltNNum(ckt, here->LTRAbrEq2);
-	here->LTRAbrEq2 = 0;
-      }
-      if (here->LTRAbrEq1) {
+      here->LTRAbrEq2 = 0;
+
+      if (here->LTRAbrEq1 > 0)
 	CKTdltNNum(ckt, here->LTRAbrEq1);
-	here->LTRAbrEq1 = 0;
-      }
+      here->LTRAbrEq1 = 0;
     }
   }
   return OK;
