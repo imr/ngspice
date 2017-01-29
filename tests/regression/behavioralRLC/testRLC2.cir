@@ -6,20 +6,20 @@ X1 0 1 2 dummy a={3*ape} b={sqrt(bear)} c={giraffe+5}
 
 Vx nodetc2001 0 dc=2
 Rx 1 2 1k
-Bx 1 0 v = {bear*1.23*pi/ape} tc1=-300u tc2=10m 
+Bx 1 0 v = {bear*1.23*pi/ape} tc1=-300u tc2=10m temp=100 dtemp=5
 
 R1 2 0 R='12+1u*25'
 R2 2 0 R='24+v(nodetc2001)*2u'
-R3 2 0 R='36+v(nodetc2001)*2u' tc1=-300u tc2=10m 
+R3 2 0 R='36+v(nodetc2001)*2u' tc1=-300u tc2=10m temp=100
 
 C1 2 0 C='1u*25'
 C2 2 0 C='v(nodetc2001)*2u'
-C3 2 0 C='v(nodetc2001)*2u' tc1=-300u' tc2=10m
+C3 2 0 C='v(nodetc2001)*2u' tc1=-300u tc2=10m dtemp=5
 
 L1 2 0 L='1u*25'
 L2 2 x L='v(nodetc2001)*2u'
 Ri x 0 1
-L3 2 0 L='v(nodetc2001)*2u' tc1=-300u tc2=10m
+L3 2 0 L='v(nodetc2001)*2u' tc1=-300u tc2=10m temp=100
 
 .subckt dummy 0 1 2  a=1 b=2 c=3
 r1 1 0 {a}

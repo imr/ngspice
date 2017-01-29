@@ -1,6 +1,6 @@
 .TITLE Test non-linear RLC
 
-.param lin=0 ape=13 bear=69 giraffe=bear/ape
+.param lin=0 ape=13 bear=69 giraffe=bear/ape pi=3.1459
 
 Vc ctrl 0 dc=2
 V1 1 0 dc=0 pulse(0 10 0 1u 1u 10u 20u) 
@@ -27,30 +27,32 @@ R6 1 0 1001 tc1='-3*100u/4' tc2='sqrt(100)*1.3m'
 R7 1 0 1001 tc1='-3*100u/4'
 R8 1 0 1001 tc1='-3*100u/4' tc2='sqrt(100)*1.3m' temp='100+1' dtemp='24*2/4'
 
-R9  1 0 '1.23*10'                tc1='-3*100u/4' tc2='sqrt(100)*1.3m'
-*bug R10 1 0 'v(ctrl)*1.23*{pi/10}'   tc1='-3*100u/4' tc2='sqrt(100)*1.3m'
-*bug B11 4 0 v = v(ctrl)*{1.23*pi/10} tc1='-3*100u/4' tc2='sqrt(100)*1.3m' 
+R9  1 0 '1.23*10'                tc1='-3*100u/4' tc2='sqrt(100)*1.3m' temp='100/20' 
+R10 1 0 'v(ctrl)*1.23*{ape/10}'  tc1='-3*100u/4' tc2='sqrt(100)*1.3m' dtemp='5*pi'
+B11 4 0 v = v(ctrl)*{1.23/10}    tc1='-3*100u/4' tc2='sqrt(100)*1.3m' temp='100/20' 
 Rxx 4 0 1k
 
-*bug B12 5 0 v = {bear*1.23*pi/ape} tc1='-3*100u/ape' tc2='sqrt(100)*giraffe' 
+B12 5 0 v = {bear*1.23/ape} 	 tc1='-3*100u/ape' tc2='sqrt(100)*giraffe'  dtemp='5*12'
 L1  5 6 0.1mH
 C3  6 0 C='1u*25'
 
 * test for names imbedded in other names
 V2 nodetc1001 0 2
 C4 6 0 C='v(nodetc1001)*2u'
-*bug C5 6 0 C='v(nodetc1001)*2u' tc1='-3*100u/ape' tc2='sqrt(100)*giraffe' 
+C5 6 0 C='v(nodetc1001)*2u' tc1='-3*100u/ape' tc2='sqrt(100)*giraffe' 
+
+* A normal one
+B99 7 0 v = tanh( pi * v(ctrl,1) )
+R99 7 0 1k
 
 .tran 1u 1ms uic
 .options method=trap reltol=1m
 
-*.inc ngspice.inc
 .control
    listing e
    run
    set filetype=ascii
    write testRLC.raw
-*  quit
 .endc
 
 .end
