@@ -223,18 +223,15 @@ MOS1unsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->MOS1instances; here != NULL;
                 here=here->MOS1nextInstance)
 	{
-	    if (here->MOS1sNodePrime
+	    if (here->MOS1sNodePrime > 0
 		    && here->MOS1sNodePrime != here->MOS1sNode)
-	    {
 		CKTdltNNum(ckt, here->MOS1sNodePrime);
-		here->MOS1sNodePrime= 0;
-	    }
-	    if (here->MOS1dNodePrime
+            here->MOS1sNodePrime= 0;
+
+	    if (here->MOS1dNodePrime > 0
 		    && here->MOS1dNodePrime != here->MOS1dNode)
-	    {
 		CKTdltNNum(ckt, here->MOS1dNodePrime);
-		here->MOS1dNodePrime= 0;
-	    }
+            here->MOS1dNodePrime= 0;
 	}
     }
     return OK;

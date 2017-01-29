@@ -128,10 +128,10 @@ ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
     for (; model; model = model->ASRCnextModel)
         for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
-            if (here->ASRCbranch) {
+            if (here->ASRCbranch > 0)
                 CKTdltNNum(ckt, here->ASRCbranch);
-                here->ASRCbranch = 0;
-            }
+            here->ASRCbranch = 0;
+
             FREE(here->ASRCposptr);
             FREE(here->ASRCvars);
             FREE(here->ASRCacValues);
