@@ -2633,53 +2633,45 @@ CKTcircuit *ckt)
         for (here = model->BSIM4v7instances; here != NULL;
                 here=here->BSIM4v7nextInstance)
         {
-            if (here->BSIM4v7qNode)
-            {
+            if (here->BSIM4v7qNode > 0)
                 CKTdltNNum(ckt, here->BSIM4v7qNode);
-                here->BSIM4v7qNode = 0;
-            }
-            if (here->BSIM4v7sbNode &&
+            here->BSIM4v7qNode = 0;
+
+            if (here->BSIM4v7sbNode > 0 &&
                 here->BSIM4v7sbNode != here->BSIM4v7bNode)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7sbNode);
-                here->BSIM4v7sbNode = 0;
-            }
-            if (here->BSIM4v7bNodePrime &&
+            here->BSIM4v7sbNode = 0;
+
+            if (here->BSIM4v7bNodePrime > 0 &&
                 here->BSIM4v7bNodePrime != here->BSIM4v7bNode)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7bNodePrime);
-                here->BSIM4v7bNodePrime = 0;
-            }
-            if (here->BSIM4v7dbNode &&
+            here->BSIM4v7bNodePrime = 0;
+
+            if (here->BSIM4v7dbNode > 0 &&
                 here->BSIM4v7dbNode != here->BSIM4v7bNode)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7dbNode);
-                here->BSIM4v7dbNode = 0;
-            }
-            if (here->BSIM4v7gNodeMid &&
+            here->BSIM4v7dbNode = 0;
+
+            if (here->BSIM4v7gNodeMid > 0 &&
                 here->BSIM4v7gNodeMid != here->BSIM4v7gNodeExt)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7gNodeMid);
-                here->BSIM4v7gNodeMid = 0;
-            }
-            if (here->BSIM4v7gNodePrime &&
+            here->BSIM4v7gNodeMid = 0;
+
+            if (here->BSIM4v7gNodePrime > 0 &&
                 here->BSIM4v7gNodePrime != here->BSIM4v7gNodeExt)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7gNodePrime);
-                here->BSIM4v7gNodePrime = 0;
-            }
-            if (here->BSIM4v7sNodePrime
+            here->BSIM4v7gNodePrime = 0;
+
+            if (here->BSIM4v7sNodePrime > 0
                     && here->BSIM4v7sNodePrime != here->BSIM4v7sNode)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7sNodePrime);
-                here->BSIM4v7sNodePrime = 0;
-            }
-            if (here->BSIM4v7dNodePrime
+            here->BSIM4v7sNodePrime = 0;
+
+            if (here->BSIM4v7dNodePrime > 0
                     && here->BSIM4v7dNodePrime != here->BSIM4v7dNode)
-            {
                 CKTdltNNum(ckt, here->BSIM4v7dNodePrime);
-                here->BSIM4v7dNodePrime = 0;
-            }
+            here->BSIM4v7dNodePrime = 0;
+
         }
     }
 #endif

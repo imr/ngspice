@@ -2771,156 +2771,126 @@ B4SOIunsetup(
                 here=here->B4SOInextInstance)
         {
             /* here for debugging purpose only */
-            if (here->B4SOIqjdNode)
-            {
+            if (here->B4SOIqjdNode > 0)
                 CKTdltNNum(ckt, here->B4SOIqjdNode);
-                here->B4SOIqjdNode = 0;
-            }
-            if (here->B4SOIqjsNode)
-            {
+            here->B4SOIqjdNode = 0;
+
+            if (here->B4SOIqjsNode > 0)
                 CKTdltNNum(ckt, here->B4SOIqjsNode);
-                here->B4SOIqjsNode = 0;
-            }
-            if (here->B4SOIqbfNode)
-            {
+            here->B4SOIqjsNode = 0;
+
+            if (here->B4SOIqbfNode > 0)
                 CKTdltNNum(ckt, here->B4SOIqbfNode);
-                here->B4SOIqbfNode = 0;
-            }
-            if (here->B4SOIcbgNode)
-            {
+            here->B4SOIqbfNode = 0;
+
+            if (here->B4SOIcbgNode > 0)
                 CKTdltNNum(ckt, here->B4SOIcbgNode);
-                here->B4SOIcbgNode = 0;
-            }
-            if (here->B4SOIcbdNode)
-            {
+            here->B4SOIcbgNode = 0;
+
+            if (here->B4SOIcbdNode > 0)
                 CKTdltNNum(ckt, here->B4SOIcbdNode);
-                here->B4SOIcbdNode = 0;
-            }
-            if (here->B4SOIcbbNode)
-            {
+            here->B4SOIcbdNode = 0;
+
+            if (here->B4SOIcbbNode > 0)
                 CKTdltNNum(ckt, here->B4SOIcbbNode);
-                here->B4SOIcbbNode = 0;
-            }
-            if (here->B4SOIibpNode)
-            {
+            here->B4SOIcbbNode = 0;
+
+            if (here->B4SOIibpNode > 0)
                 CKTdltNNum(ckt, here->B4SOIibpNode);
-                here->B4SOIibpNode = 0;
-            }
-            if (here->B4SOIitunNode)
-            {
+            here->B4SOIibpNode = 0;
+
+            if (here->B4SOIitunNode > 0)
                 CKTdltNNum(ckt, here->B4SOIitunNode);
-                here->B4SOIitunNode = 0;
-            }
-            if (here->B4SOIigidlNode)
-            {
+            here->B4SOIitunNode = 0;
+
+            if (here->B4SOIigidlNode > 0)
                 CKTdltNNum(ckt, here->B4SOIigidlNode);
-                here->B4SOIigidlNode = 0;
-            }
-            if (here->B4SOIgigbNode)
-            {
+            here->B4SOIigidlNode = 0;
+
+            if (here->B4SOIgigbNode > 0)
                 CKTdltNNum(ckt, here->B4SOIgigbNode);
-                here->B4SOIgigbNode = 0;
-            }
-            if (here->B4SOIgigdNode)
-            {
+            here->B4SOIgigbNode = 0;
+
+            if (here->B4SOIgigdNode > 0)
                 CKTdltNNum(ckt, here->B4SOIgigdNode);
-                here->B4SOIgigdNode = 0;
-            }
-            if (here->B4SOIgiggNode)
-            {
+            here->B4SOIgigdNode = 0;
+
+            if (here->B4SOIgiggNode > 0)
                 CKTdltNNum(ckt, here->B4SOIgiggNode);
-                here->B4SOIgiggNode = 0;
-            }
-            if (here->B4SOIigNode)
-            {
+            here->B4SOIgiggNode = 0;
+
+            if (here->B4SOIigNode > 0)
                 CKTdltNNum(ckt, here->B4SOIigNode);
-                here->B4SOIigNode = 0;
-            }
-            if (here->B4SOIiiiNode)
-            {
+            here->B4SOIigNode = 0;
+
+            if (here->B4SOIiiiNode > 0)
                 CKTdltNNum(ckt, here->B4SOIiiiNode);
-                here->B4SOIiiiNode = 0;
-            }
-            if (here->B4SOIibdNode)
-            {
+            here->B4SOIiiiNode = 0;
+
+            if (here->B4SOIibdNode > 0)
                 CKTdltNNum(ckt, here->B4SOIibdNode);
-                here->B4SOIibdNode = 0;
-            }
-            if (here->B4SOIibsNode)
-            {
+            here->B4SOIibdNode = 0;
+
+            if (here->B4SOIibsNode > 0)
                 CKTdltNNum(ckt, here->B4SOIibsNode);
-                here->B4SOIibsNode = 0;
-            }
-            if (here->B4SOIicNode)
-            {
+            here->B4SOIibsNode = 0;
+
+            if (here->B4SOIicNode > 0)
                 CKTdltNNum(ckt, here->B4SOIicNode);
-                here->B4SOIicNode = 0;
-            }
-            if (here->B4SOIidsNode)
-            {
+            here->B4SOIicNode = 0;
+
+            if (here->B4SOIidsNode > 0)
                 CKTdltNNum(ckt, here->B4SOIidsNode);
-                here->B4SOIidsNode = 0;
-            }
-            if (here->B4SOIvbsNode)
-            {
+            here->B4SOIidsNode = 0;
+
+            if (here->B4SOIvbsNode > 0)
                 CKTdltNNum(ckt, here->B4SOIvbsNode);
-                here->B4SOIvbsNode = 0;
-            }
+            here->B4SOIvbsNode = 0;
 
-            if (here->B4SOIsbNode &&
+            if (here->B4SOIsbNode > 0 &&
                 here->B4SOIsbNode != here->B4SOIbNode)
-            {
                 CKTdltNNum(ckt, here->B4SOIsbNode);
-                here->B4SOIsbNode = 0;
-            }
-            if (here->B4SOIdbNode &&
-                here->B4SOIdbNode != here->B4SOIbNode)
-            {
-                CKTdltNNum(ckt, here->B4SOIdbNode);
-                here->B4SOIdbNode = 0;
-            }
-            if (here->B4SOIgNodeMid &&
-                here->B4SOIgNodeMid != here->B4SOIgNodeExt)
-            {
-                CKTdltNNum(ckt, here->B4SOIgNodeMid);
-                here->B4SOIgNodeMid = 0;
-            }
-            if (here->B4SOIgNode &&
-                here->B4SOIgNode != here->B4SOIgNodeExt)
-            {
-                CKTdltNNum(ckt, here->B4SOIgNode);
-                here->B4SOIgNode = 0;
-            }
+            here->B4SOIsbNode = 0;
 
-            if (here->B4SOItempNode &&
+            if (here->B4SOIdbNode > 0 &&
+                here->B4SOIdbNode != here->B4SOIbNode)
+                CKTdltNNum(ckt, here->B4SOIdbNode);
+            here->B4SOIdbNode = 0;
+
+            if (here->B4SOIgNodeMid > 0 &&
+                here->B4SOIgNodeMid != here->B4SOIgNodeExt)
+                CKTdltNNum(ckt, here->B4SOIgNodeMid);
+            here->B4SOIgNodeMid = 0;
+
+            if (here->B4SOIgNode > 0 &&
+                here->B4SOIgNode != here->B4SOIgNodeExt)
+                CKTdltNNum(ckt, here->B4SOIgNode);
+            here->B4SOIgNode = 0;
+
+            if (here->B4SOItempNode > 0 &&
                 here->B4SOItempNode != here->B4SOItempNodeExt &&
                 here->B4SOItempNode != here->B4SOIbNodeExt &&
                 here->B4SOItempNode != here->B4SOIpNodeExt)
-            {
                 CKTdltNNum(ckt, here->B4SOItempNode);
-                here->B4SOItempNode = 0;
-            }
-            if (here->B4SOIbNode &&
+            here->B4SOItempNode = 0;
+
+            if (here->B4SOIbNode > 0 &&
                 here->B4SOIbNode != here->B4SOIbNodeExt &&
                 here->B4SOIbNode != here->B4SOIpNodeExt)
-            {
                 CKTdltNNum(ckt, here->B4SOIbNode);
-                here->B4SOIbNode = 0;
-            }
+            here->B4SOIbNode = 0;
+
             here->B4SOIpNode = 0;
 
-            if (here->B4SOIsNodePrime
+            if (here->B4SOIsNodePrime > 0
                     && here->B4SOIsNodePrime != here->B4SOIsNode)
-            {
                 CKTdltNNum(ckt, here->B4SOIsNodePrime);
-                here->B4SOIsNodePrime = 0;
-            }
-            if (here->B4SOIdNodePrime
+            here->B4SOIsNodePrime = 0;
+
+            if (here->B4SOIdNodePrime > 0
                     && here->B4SOIdNodePrime != here->B4SOIdNode)
-            {
                 CKTdltNNum(ckt, here->B4SOIdNodePrime);
-                here->B4SOIdNodePrime = 0;
-            }
+            here->B4SOIdNodePrime = 0;
         }
     }
 #endif

@@ -256,12 +256,10 @@ DIOunsetup(
                 here=here->DIOnextInstance)
         {
 
-            if (here->DIOposPrimeNode
+            if (here->DIOposPrimeNode > 0
               && here->DIOposPrimeNode != here->DIOposNode)
-            {
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
-                here->DIOposPrimeNode = 0;
-            }
+            here->DIOposPrimeNode = 0;
         }
     }
     return OK;

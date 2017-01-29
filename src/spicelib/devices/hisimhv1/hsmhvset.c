@@ -1476,62 +1476,52 @@ HSMHVunsetup(
         for (here = model->HSMHVinstances; here != NULL;
                 here=here->HSMHVnextInstance)
         {
-            if (here->HSMHVqbNode)
-            {
+            if (here->HSMHVqbNode > 0)
                 CKTdltNNum(ckt, here->HSMHVqbNode);
-                here->HSMHVqbNode = 0;
-            }
-            if (here->HSMHVqiNode)
-            {
+            here->HSMHVqbNode = 0;
+
+            if (here->HSMHVqiNode > 0)
                 CKTdltNNum(ckt, here->HSMHVqiNode);
-                here->HSMHVqiNode = 0;
-            }
+            here->HSMHVqiNode = 0;
 
             if (here->HSMHVtempNode > 0 &&
                 here->HSMHVtempNode != here->HSMHVtempNodeExt &&
                 here->HSMHVtempNode != here->HSMHVsubNodeExt)
-            {
                 CKTdltNNum(ckt, here->HSMHVtempNode);
-                here->HSMHVtempNode = 0;
-            }
+            here->HSMHVtempNode = 0;
+
             here->HSMHVsubNode = 0;
 
-            if (here->HSMHVsbNode
+            if (here->HSMHVsbNode > 0
                     && here->HSMHVsbNode != here->HSMHVbNode)
-            {
                 CKTdltNNum(ckt, here->HSMHVsbNode);
-                here->HSMHVsbNode = 0;
-            }
-            if (here->HSMHVbNodePrime
+            here->HSMHVsbNode = 0;
+
+            if (here->HSMHVbNodePrime > 0
                     && here->HSMHVbNodePrime != here->HSMHVbNode)
-            {
                 CKTdltNNum(ckt, here->HSMHVbNodePrime);
-                here->HSMHVbNodePrime = 0;
-            }
-            if (here->HSMHVdbNode
+            here->HSMHVbNodePrime = 0;
+
+            if (here->HSMHVdbNode > 0
                     && here->HSMHVdbNode != here->HSMHVbNode)
-            {
                 CKTdltNNum(ckt, here->HSMHVdbNode);
-                here->HSMHVdbNode = 0;
-            }
-            if (here->HSMHVgNodePrime
+            here->HSMHVdbNode = 0;
+
+            if (here->HSMHVgNodePrime > 0
                     && here->HSMHVgNodePrime != here->HSMHVgNode)
-            {
                 CKTdltNNum(ckt, here->HSMHVgNodePrime);
-                here->HSMHVgNodePrime = 0;
-            }
-            if (here->HSMHVsNodePrime
+            here->HSMHVgNodePrime = 0;
+
+            if (here->HSMHVsNodePrime > 0
                     && here->HSMHVsNodePrime != here->HSMHVsNode)
-            {
                 CKTdltNNum(ckt, here->HSMHVsNodePrime);
-                here->HSMHVsNodePrime = 0;
-            }
-            if (here->HSMHVdNodePrime
+            here->HSMHVsNodePrime = 0;
+
+            if (here->HSMHVdNodePrime > 0
                     && here->HSMHVdNodePrime != here->HSMHVdNode)
-            {
                 CKTdltNNum(ckt, here->HSMHVdNodePrime);
-                here->HSMHVdNodePrime = 0;
-            }
+            here->HSMHVdNodePrime = 0;
+
         }
     }
 #endif

@@ -419,36 +419,31 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->MESAinstances; here != NULL;
                 here=here->MESAnextInstance)
         {
-            if (here->MESAdrainPrmPrmNode
+            if (here->MESAdrainPrmPrmNode > 0
                     && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)
-            {
                 CKTdltNNum(ckt, here->MESAdrainPrmPrmNode);
-                here->MESAdrainPrmPrmNode = 0;
-            }
-            if (here->MESAsourcePrmPrmNode
+            here->MESAdrainPrmPrmNode = 0;
+
+            if (here->MESAsourcePrmPrmNode > 0
                     && here->MESAsourcePrmPrmNode != here->MESAsourcePrimeNode)
-            {
                 CKTdltNNum(ckt, here->MESAsourcePrmPrmNode);
-                here->MESAsourcePrmPrmNode = 0;
-            }
-            if (here->MESAgatePrimeNode
+            here->MESAsourcePrmPrmNode = 0;
+
+            if (here->MESAgatePrimeNode > 0
                     && here->MESAgatePrimeNode != here->MESAgateNode)
-            {
                 CKTdltNNum(ckt, here->MESAgatePrimeNode);
-                here->MESAgatePrimeNode = 0;
-            }          
-            if (here->MESAdrainPrimeNode
+            here->MESAgatePrimeNode = 0;
+
+            if (here->MESAdrainPrimeNode > 0
                     && here->MESAdrainPrimeNode != here->MESAdrainNode)
-            {
                 CKTdltNNum(ckt, here->MESAdrainPrimeNode);
-                here->MESAdrainPrimeNode = 0;
-            }
-            if (here->MESAsourcePrimeNode
+            here->MESAdrainPrimeNode = 0;
+
+            if (here->MESAsourcePrimeNode > 0
                     && here->MESAsourcePrimeNode != here->MESAsourceNode)
-            {
                 CKTdltNNum(ckt, here->MESAsourcePrimeNode);
-                here->MESAsourcePrimeNode = 0;
-            }
+            here->MESAsourcePrimeNode = 0;
+
         
         }
     }
