@@ -118,10 +118,9 @@ INDunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->INDinstances; here != NULL;
                 here=here->INDnextInstance)
 	{
-	    if (here->INDbrEq) {
+	    if (here->INDbrEq > 0)
 		CKTdltNNum(ckt, here->INDbrEq);
-		here->INDbrEq = 0;
-	    }
+            here->INDbrEq = 0;
 	}
     }
     return OK;

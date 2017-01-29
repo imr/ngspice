@@ -73,10 +73,9 @@ VCVSunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->VCVSinstances; here != NULL;
                 here=here->VCVSnextInstance)
 	{
-	    if (here->VCVSbranch) {
+	    if (here->VCVSbranch > 0)
 		CKTdltNNum(ckt, here->VCVSbranch);
-		here->VCVSbranch = 0;
-	    }
+            here->VCVSbranch = 0;
 	}
     }
     return OK;

@@ -195,18 +195,15 @@ JFETunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->JFETinstances; here != NULL;
                 here=here->JFETnextInstance)
         {
-            if (here->JFETdrainPrimeNode
+            if (here->JFETdrainPrimeNode > 0
                     && here->JFETdrainPrimeNode != here->JFETdrainNode)
-            {
                 CKTdltNNum(ckt, here->JFETdrainPrimeNode);
-                here->JFETdrainPrimeNode = 0;
-            }
-            if (here->JFETsourcePrimeNode
+            here->JFETdrainPrimeNode = 0;
+
+            if (here->JFETsourcePrimeNode > 0
                     && here->JFETsourcePrimeNode != here->JFETsourceNode)
-            {
                 CKTdltNNum(ckt, here->JFETsourcePrimeNode);
-                here->JFETsourcePrimeNode = 0;
-            }
+            here->JFETsourcePrimeNode = 0;
         }
     }
     return OK;

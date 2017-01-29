@@ -126,22 +126,21 @@ TRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->TRAinstances; here != NULL;
                 here=here->TRAnextInstance)
 	{
-	    if (here->TRAintNode2) {
+	    if (here->TRAintNode2 > 0)
 		CKTdltNNum(ckt, here->TRAintNode2);
-		here->TRAintNode2= 0;
-	    }
-	    if (here->TRAintNode1) {
+            here->TRAintNode2= 0;
+
+	    if (here->TRAintNode1 > 0)
 		CKTdltNNum(ckt, here->TRAintNode1);
-		here->TRAintNode1= 0;
-	    }
-	    if (here->TRAbrEq2) {
+            here->TRAintNode1= 0;
+
+	    if (here->TRAbrEq2 > 0)
 		CKTdltNNum(ckt, here->TRAbrEq2);
-		here->TRAbrEq2= 0;
-	    }
-	    if (here->TRAbrEq1) {
+            here->TRAbrEq2= 0;
+
+	    if (here->TRAbrEq1 > 0)
 		CKTdltNNum(ckt, here->TRAbrEq1);
-		here->TRAbrEq1= 0;
-	    }
+            here->TRAbrEq1= 0;
 	}
     }
     return OK;
