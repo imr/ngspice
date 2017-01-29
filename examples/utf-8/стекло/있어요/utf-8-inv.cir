@@ -32,6 +32,9 @@ VIN1B  は2  0   DC 0 PULSE(0 3 0 5NS 5NS   30NS  100NS)
 *.include ./Modelcards/modelcard32.pmos
 
 .control
+* for CYGWIN
+setcf xfont='Noto Sans CJK JP Medium'
+set xfont_size=16
 if $?batchmode
 else
 pre_set strict_errorhandling
