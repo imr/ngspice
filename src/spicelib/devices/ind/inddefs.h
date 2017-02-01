@@ -68,6 +68,10 @@ struct sINDinstance {
     unsigned INDntGiven    : 1;   /* flag to indicate number of turns given */
     int  INDsenParmNo;       /* parameter # for sensitivity use;
                               * set equal to  0 if not a design parameter */
+
+    struct INDsystem *system;
+    INDinstance *system_next_ind;
+    int system_idx;
 };
 
 #define INDflux INDstate     /* flux in the inductor */
@@ -135,6 +139,8 @@ struct sMUTinstance {
     unsigned MUTindGiven : 1;   /* flag to indicate inductance was specified */
     int  MUTsenParmNo;          /* parameter # for sensitivity use;
                                  * set equal to  0 if not a design parameter */
+
+    MUTinstance *system_next_mut;
 };
 
 
@@ -149,6 +155,14 @@ struct sMUTmodel {             /* model structure for a mutual inductor */
     IFuid MUTmodName;          /* pointer to character string naming this model */
 
 /* --- end of generic struct GENmodel --- */
+};
+
+
+struct INDsystem {
+    int size;
+    INDinstance *first_ind;
+    MUTinstance *first_mut;
+    struct INDsystem *next_system;
 };
 
 #endif /*MUTUAL*/
