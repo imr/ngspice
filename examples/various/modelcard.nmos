@@ -1,6 +1,5 @@
 .model N1 NMOS
 +Level=        8 version=3.3.0
-+Lmin= .35 Lmax= 20 Wmin= .6 Wmax= 20
 +Tnom=27.0
 +Nch= 2.498E+17  Tox=9E-09 Xj=1.00000E-07
 +Lint=9.36e-8 Wint=1.47e-7
