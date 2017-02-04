@@ -1,9 +1,5 @@
 Perform Monte Carlo simulation in ngspice
-* 25 stage Ring-Osc. BSIM3 with statistical variation of various model parameters
-* cd into ngspice/examples/Monte_Carlo
-* start in interactive mode 'ngspice MC_ring.sp' with several plots for output
-* or start in batch mode, controlled by .control section (Control mode)
-* with 'ngspice -b -r MC_ring.raw -o MC_ring.log MC_ring.sp'.
+* 25 stage Ring-Osc. BSIM3
 
 vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
 vdd dd 0 dc 3.3
@@ -35,7 +31,7 @@ cout  buf ss 0.2pF
 .options noacct
 .control
   save buf                        $ we just need buf, save memory by more than 10x
-  let mc_runs = 10             $ number of runs for monte carlo
+  let mc_runs = 30             $ number of runs for monte carlo
   let run = 0                     $ number of actual run
   set curplot = new               $ create a new plot
   set curplottitle = "Transient outputs"
@@ -64,39 +60,38 @@ cout  buf ss 0.2pF
 * of the BSIM3 model for the NMOS and PMOS transistors.
 * We may obtain the nominal values (nom) by manually extracting them from
 * the parameter set. Here we get them automatically and store them into
-* variables. This has the advantage that you may change the parameter set 
+* vectors. This has the advantage that you may change the parameter set
 * without having to look up the values again.
-  set n1vth0=@n1[vth0]
-  set n1u0=@n1[u0]
-  set n1tox=@n1[tox]
-  set n1lint=@n1[lint]
-  set n1wint=@n1[wint]
-  set p1vth0=@p1[vth0]
-  set p1u0=@p1[u0]
-  set p1tox=@p1[tox]
-  set p1lint=@p1[lint]
-  set p1wint=@p1[wint]
+  let n1vth0=@n1[vth0]
+  let n1u0=@n1[u0]
+  let n1tox=@n1[tox]
+  let n1lint=@n1[lint]
+  let n1wint=@n1[wint]
+  let p1vth0=@p1[vth0]
+  let p1u0=@p1[u0]
+  let p1tox=@p1[tox]
+  let p1lint=@p1[lint]
+  let p1wint=@p1[wint]
+
 *
 * run the simulation loop
   dowhile run <= mc_runs
-    * without the reset switch there is some strange drift
-    * towards lower and lower frequencies
-    reset
     * run=0 simulates with nominal parameters
     if run > 0
-      altermod @n1[vth0]=gauss($n1vth0, 0.1, 3)
-      altermod @n1[u0]=gauss($n1u0, 0.05, 3)
-      altermod @n1[tox]=gauss($n1tox, 0.1, 3)
-      altermod @n1[lint]=gauss($n1lint, 0.1, 3)
-      altermod @n1[wint]=gauss($n1wint, 0.1, 3)	  
-      altermod @p1[vth0]=gauss($p1vth0, 0.1, 3)
-      altermod @p1[u0]=gauss($p1u0, 0.1, 3)
-      altermod @p1[tox]=gauss($p1tox, 0.1, 3)
-      altermod @p1[lint]=gauss($p1lint, 0.1, 3)
-      altermod @p1[wint]=gauss($p1wint, 0.1, 3)
+      setplot $max_fft
+      altermod @n1[vth0] = gauss(n1vth0, 0.1, 3)
+      altermod @n1[u0] = gauss(n1u0, 0.05, 3)
+      altermod @n1[tox] = gauss(n1tox, 0.1, 3)
+      altermod @n1[lint] = gauss(n1lint, 0.1, 3)
+      altermod @n1[wint] = gauss(n1wint, 0.1, 3)
+      altermod @p1[vth0] = gauss(p1vth0, 0.1, 3)
+      altermod @p1[u0] = gauss(p1u0, 0.1, 3)
+      altermod @p1[tox] = gauss(p1tox, 0.1, 3 )
+      altermod @p1[lint] = gauss(p1lint, 0.1, 3)
+      altermod @p1[wint] = gauss(p1wint, 0.1, 3)
     end
-    tran 15p 50n 0
-* select stop and step so that number of data points after linearization is not too 
+    tran 15p 100n 0
+* select stop and step so that number of data points after linearization is not too
 * close to 8192, which would yield varying number of line length and thus scale for fft.
 *
 * We have to figure out what to do if a single simulation will not converge.
@@ -108,8 +103,10 @@ cout  buf ss 0.2pF
     set run ="$&run"              $ create a variable from the vector
     set mc_runs ="$&mc_runs"      $ create a variable from the vector
     echo simulation run no. $run of $mc_runs
+	set dt = $curplot
     * save the linearized data for having equal time scales for all runs
     linearize buf                 $ linearize only buf, no other vectors needed
+    destroy $dt                   $ delete the tran i plot
     set dt = $curplot             $ store the current plot to dt (tran i+1)
     setplot $plot_out             $ make 'plt_out' the active plot
     * firstly save the time scale once to become the default scale
@@ -119,11 +116,14 @@ cout  buf ss 0.2pF
     let vout{$run}={$dt}.buf      $ store the output vector to plot 'plot_out'
     setplot $dt                   $ go back to the previous plot (tran i+1)
     fft buf $ run fft on vector buf
+	destroy $dt                   $ delete the tran i+1 plot
     let buf2=db(mag(buf))
     * find the frequency where buf has its maximum of the fft signal
     meas sp fft_max MAX_AT buf2 from=0.1G to=0.7G
     * find the frequency where buf is -40dB at rising fft signal
-    meas sp fft_40 WHEN buf2=-40 RISE=1 from=0.1G to=0.7G	
+    meas sp fft_40 WHEN buf2=-40 RISE=1 from=0.1G to=0.7G
+    echo
+	echo
     * store the fft vector
     set dt = $curplot             $ store the current plot to dt (spec i)
     setplot $plot_fft             $ make 'plot_fft' the active plot
@@ -135,27 +135,14 @@ cout  buf ss 0.2pF
     setplot $max_fft              $ make 'max_fft' the active plot
     let maxffts[{$run}]={$dt}.fft_max
 	let halfffts[{$run}]={$dt}.fft_40
-*   setplot $plot_out
-* The following command does not work here. Why not? Probably not a real copy.
-*    destroy $dt                   $ save memory, we don't need this plot (spec) any more
-    setplot $dt                   $ go back to the previous plot
     let run = run + 1
   end
 ***** plotting **********************************************************
-if $?batchmode
-  echo
-  echo Plotting not available in batch mode
-  echo Write linearized vout0 to vout{$mc_runs} to rawfile $rawfile
-  echo
-  write $rawfile {$plot_out}.allv
-  rusage
-  quit
-else
-*  plot {$plot_out}.allv
-  plot {$plot_out}.vout0          $ just plot the tran output with nominal parameters
-*  setplot $plot_fft
-*  plot db(mag(ally)) xlimit .1G 1G ylimit -80 10
-  plot db(mag({$plot_fft}.ally)) xlimit .1G 1G ylimit -80 10
+  setplot $plot_out
+  plot vout0  ylabel 'RO output, original parameters'        $ just plot the tran output with nominal parameters
+  setplot $plot_fft
+  settype decibel ally
+  plot db(mag(ally)) xlimit .1G 1G ylimit -80 10 ylabel 'fft output'
 *
 * create a histogram from vector maxffts
   setplot $max_fft                $ make 'max_fft' the active plot
@@ -171,7 +158,7 @@ else
   * put data into the correct bins
   let run = 0
   dowhile run < mc_runs
-    set run = $&run               $ create a variable from the vector
+    set run = "$&run"             $ create a variable from the vector
     let val = maxffts[{$run}]
     let part = 0
     * Check if val fits into a bin. If yes, raise bin by 1
@@ -184,14 +171,21 @@ else
     end
     let run = run + 1
   end
+
   * plot the histogram
   set plotstyle=combplot
-  plot yvec-1 vs xvec             $ subtract 1 because we started with unitvec containing ones
+  plot yvec-1 vs xvec   xlabel 'oscillation frequency' ylabel 'bin count'     $ subtract 1 because we started with unitvec containing ones
+
+  * plot simulation series
+  set plotstyle=linplot
+  let xx = vector(mc_runsp)
+  settype frequency maxffts
+  plot maxffts vs xx xlabel 'iteration no.' ylabel 'RO frequency'
+
 * calculate jitter
   let diff40 = (vecmax(halfffts) - vecmin(halfffts))*1e-6
   echo
   echo Max. jitter is "$&diff40" MHz
-end
   rusage
 .endc
 ********************************************************************************
@@ -207,11 +201,11 @@ end
 +k3b=2.233
 +vsat=86301.58  ua=6.47e-9  ub=4.23e-18  uc=-4.706281e-11
 +rdsw=650  u0=388.3203 wr=1
-+a0=.3496967 ags=.1    b0=0.546    b1=1  
++a0=.3496967 ags=.1    b0=0.546    b1=1
 +dwg=-6.0e-09 dwb=-3.56e-09 prwb=-.213
 +keta=-3.605872e-02  a1=2.778747e-02  a2=.9
 +voff=-6.735529e-02  nfactor=1.139926  cit=1.622527e-04
-+cdsc=-2.147181e-05  
++cdsc=-2.147181e-05
 +cdscb=0  dvt0w=0 dvt1w=0 dvt2w=0
 +cdscd=0 prwg=0
 +eta0=1.0281729e-02  etab=-5.042203e-03
