@@ -13,6 +13,7 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/dvec.h"
 #include "ngspice/fteparse.h"
 #include "xgraph.h"
+#include "ngspice/fteext.h"
 
 
 #define XG_MAXVECTORS 64
@@ -80,10 +81,14 @@ ft_xgraph(double *xlims, double *ylims, char *filename, char *title, char *xlabe
     }
 
     /* Open the output file. */
-    if ((file = fopen(filename, "w")) == NULL) {
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(filename);
+    if ((file = fopen(nname, "w")) == NULL) {
         perror(filename);
+        tfree(nname);
         return;
     }
+    tfree(nname);
 
     /* Set up the file header. */
     if (title) {

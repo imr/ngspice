@@ -18,6 +18,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "rawfile.h"
 #include "variable.h"
 #include "../misc/misc_time.h"
+#include <sys/stat.h>
 
 
 static void fixdims(struct dvec *v, char *s);
@@ -755,10 +756,15 @@ spar_write(char *name, struct plot *pl, double Rbaseval)
          }*/
     }
 
-    if ((fp = fopen(name, "w")) == NULL) {
-        perror(name);
+    /* add user defined path (nnmae has to be freed after usage) */
+    char *nname = set_output_path(name);
+
+    if ((fp = fopen(nname, "w")) == NULL) {
+        perror(nname);
+        tfree(nname);
         return;
     }
+    tfree(nname);
 
     fprintf(fp, "!2-port S-parameter file\n");
     fprintf(fp, "!Title: %s\n", pl->pl_title);
@@ -812,6 +818,9 @@ char *
 set_output_path(char *filename)
 {
     char varpath[BSIZE_SP];
+    char *ret;
+    struct stat st;
+    char *fpath, *dirloc = NULL;
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
     /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
@@ -825,11 +834,32 @@ set_output_path(char *filename)
 #endif
 
     if (is_absolute_pathname(filename))
-        return copy(filename);
+        ret = copy(filename);
     else if (cp_getvar("outputpath", CP_STRING, &varpath))
-        return tprintf("%s/%s", varpath, filename);
+        ret = tprintf("%s%c%s", varpath, DIR_TERM, filename);
     else if (Outp_Path)
-        return tprintf("%s/%s", Outp_Path, filename);
+        ret = tprintf("%s%c%s", Outp_Path, DIR_TERM, filename);
     else
-        return copy(filename);
+        ret = copy(filename);
+    /* get path string */
+    dirloc = strrchr(ret, DIR_TERM);
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    if(!dirloc)
+        dirloc = strrchr(ret, DIR_TERM_LINUX);
+#endif
+    if (dirloc)
+        fpath = copy_substring(ret, dirloc);
+    else
+        fpath = copy(ret);
+    /* test if path exists */
+    if (stat(fpath, &st) == 0) {
+        tfree(fpath);
+        return ret;
+    }
+    else {
+        fprintf(cp_err, "Error: Output path %s does not exist\n", fpath);
+        tfree(ret);
+        tfree(fpath);
+        controlled_exit(1);
+    }
 }
