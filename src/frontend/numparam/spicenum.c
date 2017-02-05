@@ -426,8 +426,11 @@ putlogfile(char c, int num, char *t)
 
     if (!logfileS) {
         char *fname = tprintf("logfile.%d", ++nblogS);
-        logfileS = fopen(fname, "w");
+        /* add user defined path (nname has to be freed after usage) */
+        char *nname = set_output_path(fname);
+        logfileS = fopen(nname, "w");
         tfree(fname);
+        tfree(nname);
     }
 
     if (logfileS)

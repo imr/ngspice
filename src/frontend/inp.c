@@ -678,7 +678,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* print out the expanded deck into debug-out2.txt */
             if (ft_ngdebug) {
                 /*debug: print into file*/
-                FILE *fdo = fopen("debug-out2.txt", "w");
+                /* add user defined path (nname has to be freed after usage) */
+                char *nname = set_output_path("debug-out2.txt");
+                FILE *fdo = fopen(nname, "w");
+                tfree(nname);
                 if (!fdo)
                     fprintf(cp_err, "Could not open file debug-out2.txt for writing debug info. \n");
                 else {
@@ -832,7 +835,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         /* print out the expanded deck into debug-out3.txt */
         if (ft_ngdebug) {
             /*debug: print into file*/
-            FILE *fdo = fopen("debug-out3.txt", "w");
+            /* add user defined path (nname has to be freed after usage) */
+            char *nname = set_output_path("debug-out3.txt");
+            FILE *fdo = fopen(nname, "w");
+            tfree(nname);
             if (!fdo)
                 fprintf(cp_err, "Could not open file debug-out3.txt for writing debug info. \n");
             else {
