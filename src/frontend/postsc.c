@@ -168,11 +168,15 @@ PS_NewViewport(GRAPH *graph)
     int x1, x2, y1, y2;
     hcopygraphid = graph->graphid;
     /* devdep initially contains name of output file */
-    if ((plotfile = fopen((char*)graph->devdep, "w")) == NULL) {
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path((char*)graph->devdep);
+    if ((plotfile = fopen(nname, "w")) == NULL) {
         perror((char*)graph->devdep);
         graph->devdep = NULL;
+        tfree(nname);
         return (1);
     }
+    tfree(nname);
 
     if (graph->absolute.width) {
         /* hardcopying from the screen */

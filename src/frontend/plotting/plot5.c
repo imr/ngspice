@@ -45,11 +45,15 @@ Plt5_Init(void)
 int
 Plt5_NewViewport(GRAPH *graph)
 {
-    if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path((char*) graph->devdep);
+    if ((plotfile = fopen(nname, "w")) == NULL) {
         graph->devdep = NULL;
         perror((char*) graph->devdep);
+        tfree(nname);
         return (1);
     }
+    tfree(nname);
 
     if (graph->absolute.width) {
 
