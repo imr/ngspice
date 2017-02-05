@@ -116,11 +116,14 @@ GL_NewViewport(GRAPH *graph)
 {
     hcopygraphid = graph->graphid;
 
-    if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
-        perror((char*) graph->devdep);
-        graph->devdep = NULL;
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(graph->devdep);
+    if ((plotfile = fopen((char*) nname, "w")) == NULL) {
+        perror(nname);
+        tfree(nname);
         return (1);
     }
+    tfree(nname);
 
     if (graph->absolute.width) {
         /* hardcopying from the screen */

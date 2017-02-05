@@ -1039,7 +1039,10 @@ main(int argc, char **argv)
         /* Open the log file */
 #ifdef HAS_WINGUI
         /* flogp used by winmain's putc which writes to file 'log_file' */
-        flogp = fopen(log_file, "w");
+        /* add user defined path (nname has to be freed after usage) */
+        char *nname = set_output_path(log_file);
+        flogp = fopen(nname, "w");
+        tfree(nname);
         if (!flogp) {
             perror(log_file);
             sp_shutdown(EXIT_BAD);
@@ -1060,8 +1063,11 @@ main(int argc, char **argv)
 
         fprintf(stdout, "\nSOA warnings go to log-file: %s\n", soa_log_file);
 
+        /* add user defined path (nname has to be freed after usage) */
+        char *nname = set_output_path(soa_log_file);
         /* Open the soa log file */
-        slogp = fopen(soa_log_file, "w");
+        slogp = fopen(nname, "w");
+        tfree(nname);
         if (!slogp) {
             perror(soa_log_file);
             sp_shutdown(EXIT_BAD);
@@ -1229,7 +1235,10 @@ main(int argc, char **argv)
 
             if (tempfile == NULL) {
                 tpf = smktemp("sp");
-                tempfile = fopen(tpf, "w+bTD");
+                /* add user defined path (nname has to be freed after usage) */
+                char *nname = set_output_path(tpf);
+                tempfile = fopen(nname, "w+bTD");
+                tfree(nname);
                 if (tempfile == NULL) {
                     fprintf(stderr, "Could not open a temporary file to save and use optional arguments.");
                     sp_shutdown(EXIT_BAD);

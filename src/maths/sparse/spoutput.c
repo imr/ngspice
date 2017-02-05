@@ -60,6 +60,7 @@ int Printer_Width = PRINTER_WIDTH;
 #include "ngspice/wstdio.h"
 #endif
 
+extern char *set_output_path(char *filename);
 
 
 #if DOCUMENTATION
@@ -449,8 +450,13 @@ spFileMatrix(MatrixPtr Matrix, char *File, char *Label, int Reordered,
     assert( IS_SPARSE( Matrix ) );
 
     /* Open file matrix file in write mode. */
-    if ((pMatrixFile = fopen(File, "w")) == NULL)
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(File);
+    if ((pMatrixFile = fopen(nname, "w")) == NULL) {
+        SP_FREE(nname);
         return 0;
+    }
+    SP_FREE(nname);
 
     /* Output header. */
     Size = Matrix->Size;
@@ -604,10 +610,13 @@ spFileVector(MatrixPtr Matrix, char *File, RealVector RHS, RealVector iRHS)
     assert( IS_SPARSE( Matrix ) && RHS != NULL);
 
     if (File) {
+        /* add user defined path (nname has to be freed after usage) */
+        char *nname = set_output_path(File);
         /* Open File in append mode. */
-        pMatrixFile = fopen(File,"a");
+        pMatrixFile = fopen(nname,"a");
+        SP_FREE(nname);
         if (pMatrixFile == NULL)
-	    return 0;
+            return 0;
     }
     else 
         pMatrixFile=stdout;

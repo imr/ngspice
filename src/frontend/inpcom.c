@@ -644,8 +644,11 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 
         if (ft_ngdebug) {
             /*debug: print into file*/
-            FILE *fd = fopen("debug-out.txt", "w");
-            if(!fd)
+            /* add user defined path (nname has to be freed after usage) */
+            char *nname = set_output_path("debug-out.txt");
+            FILE *fd = fopen(nname, "w");
+            tfree(nname);
+            if (!fd)
                 fprintf(cp_err, "Could not open file debug-out.txt for writing debug info. \n");
             else {
                 struct card *t;
@@ -5725,7 +5728,16 @@ tprint(struct card *t, int numb)
     char *filename = tprintf("tprint-out%d.txt", numb);
 
     /*debug: print into file*/
-    FILE *fd = fopen(filename, "w");
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(filename);
+    FILE *fd = fopen(nname, "w");
+    tfree(nname);
+    if (!fd) {
+        fprintf(cp_err, "Could not open file debug file %s for writing debug info. \n", filename);
+        tfree(filename);
+        return;
+    }
+    tfree(filename);
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*')
             fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum, tmp->line);
@@ -5741,7 +5753,6 @@ tprint(struct card *t, int numb)
         if (*(tmp->line) != '*')
             fprintf(fd, "%s\n",tmp->line);
     fclose(fd);
-    tfree(filename);
 }
 
 

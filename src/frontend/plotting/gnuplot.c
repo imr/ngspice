@@ -124,11 +124,15 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         return;
     }
 
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(filename_plt);
     /* Open the output gnuplot file. */
-    if ((file = fopen(filename_plt, "w")) == NULL) {
-        perror(filename);
+    if ((file = fopen(nname, "w")) == NULL) {
+        perror(nname);
+        tfree(nname);
         return;
     }
+    tfree(nname);
 
     /* Set up the file header. */
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
@@ -209,11 +213,15 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         strcpy(plotstyle, "lines");
     }
 
+    /* add user defined path (nname has to be freed after usage) */
+    nname = set_output_path(filename_data);
     /* Open the output gnuplot data file. */
-    if ((file_data = fopen(filename_data, "w")) == NULL) {
-        perror(filename);
+    if ((file_data = fopen(nname, "w")) == NULL) {
+        perror(nname);
+        tfree(nname);
         return;
     }
+    tfree(nname);
     fprintf(file, "set format y \"%%g\"\n");
     fprintf(file, "set format x \"%%g\"\n");
     fprintf(file, "plot ");
@@ -356,11 +364,15 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
             maxlen = MAX(v->v_scale->v_length, maxlen);
     }
 
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(filename);
     /* Open the output data file. */
-    if ((file_data = fopen(filename, appendwrite ? "a" : "w")) == NULL) {
-        perror(filename);
+    if ((file_data = fopen(nname, appendwrite ? "a" : "w")) == NULL) {
+        perror(nname);
+        tfree(nname);
         return;
     }
+    tfree(nname);
 
     /* If option numdgt is set, use it for printout precision. */
     if (cp_numdgt > 0)

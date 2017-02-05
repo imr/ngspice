@@ -11,6 +11,7 @@
 #include "quote.h"
 #include "ngspice/cpextern.h"
 #include "streams.h"
+#include "ngspice/fteext.h"
 
 
 bool cp_debug = FALSE;
@@ -134,9 +135,11 @@ cp_redirect(wordlist *wl)
                 fprintf(stderr, "Error: %s: file exists\n", fname);
                 goto error;
             }
-
-            fp = fopen(fname, append ? "a" : "w+");
+            /* add user defined path (nname has to be freed after usage) */
+            char *nname = set_output_path(fname);
+            fp = fopen(nname, append ? "a" : "w+");
             tfree(fname);
+            tfree(nname);
 
             if (!fp) {
                 perror(fname);

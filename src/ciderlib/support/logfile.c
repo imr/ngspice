@@ -8,6 +8,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 static char *LogFileName = "cider.log";
 static int LogError = 0;
+extern char *set_output_path(char *filename);
 
 void
 LOGmakeEntry(char *name, char *description)
@@ -27,14 +28,17 @@ LOGmakeEntry(char *name, char *description)
 #ifdef ultrix
   if ((fpLog = fopen(LogFileName, "A")) == NULL) {
 #else
-  if ((fpLog = fopen(LogFileName, "a")) == NULL) {
+ /* add user defined path (nname has to be freed after usage) */
+  char *nname = set_output_path(LogFileName);
+  if ((fpLog = fopen(nname, "a")) == NULL) {
 #endif
     if (!LogError)
-      perror(LogFileName);
+      perror(nname);
     LogError = 1;
   } else {
     fprintf(fpLog, "<%05d> %s: %s\n", procStamp, name, description);
     fclose(fpLog);
     LogError = 0;
   }
+  tfree(nname);
 }

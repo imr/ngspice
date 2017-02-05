@@ -1620,9 +1620,10 @@ void com_snsave(wordlist *wl)
         fprintf(cp_err, "Only saving of tran analysis is implemented\n");
         return;
     }
-
-    file = fopen(wl->wl_word, "wb");
-
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path(wl->wl_word);
+    file = fopen(nname, "wb");
+    tfree(nname);
     if (!file) {
         fprintf(cp_err,
                 "Error: Couldn't open \"%s\" for writing\n", wl->wl_word);
