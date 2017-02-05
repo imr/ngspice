@@ -261,33 +261,41 @@ dosim(
     if (dofile) {
         if (!*wl->wl_word)
             rawfileFp = stdout;
-#if defined(__MINGW32__) || defined(_MSC_VER)
         /* ask if binary or ASCII, open file with wb or w */
-        else if (ascii) {
-            if ((rawfileFp = fopen(wl->wl_word, "w")) == NULL) {
-                perror(wl->wl_word);
-                ft_setflag = FALSE;
-                return 1;
+        else {
+            /* add user defined path (nname has to be freed after usage) */
+            char *nname = set_output_path(wl->wl_word);
+#if defined(__MINGW32__) || defined(_MSC_VER)
+            if (ascii) {
+                if ((rawfileFp = fopen(nname, "w")) == NULL) {
+                    perror(wl->wl_word);
+                    ft_setflag = FALSE;
+                    tfree(nname);
+                    return 1;
+                }
+                fprintf(cp_out, "ASCII raw file \"%s\"\n", nname);
             }
-            fprintf(cp_out, "ASCII raw file \"%s\"\n", wl->wl_word);
-        }
-        else if (!ascii) {
-            if ((rawfileFp = fopen(wl->wl_word, "wb")) == NULL) {
-                perror(wl->wl_word);
-                ft_setflag = FALSE;
-                return 1;
+            else {
+                if ((rawfileFp = fopen(nname, "wb")) == NULL) {
+                    perror(wl->wl_word);
+                    ft_setflag = FALSE;
+                    tfree(nname);
+                    return 1;
+                }
+                fprintf(cp_out, "binary raw file \"%s\"\n", nname);
             }
-            fprintf(cp_out, "binary raw file \"%s\"\n", wl->wl_word);
-        }
 /*---------------------------------------------------------------------------*/
 #else
-        else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
-            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-            perror(wl->wl_word);
-            ft_setflag = FALSE;
-            return 1;
-        }
+            if (!(rawfileFp = fopen(nname, "w"))) {
+                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+                perror(wl->wl_word);
+                ft_setflag = FALSE;
+                tfree(nname);
+                return 1;
+            }
 #endif /* __MINGW32__ */
+            tfree(nname);
+        }
         rawfileBinary = !ascii;
     } else {
         rawfileFp = NULL;

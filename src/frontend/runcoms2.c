@@ -106,30 +106,41 @@ com_resume(wordlist *wl)
             rawfileFp = stdout;
 #if defined(__MINGW32__) || defined(_MSC_VER)
         /* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
-        else if (ascii) {
-            if ((rawfileFp = fopen(last_used_rawfile, "a")) == NULL) {
-                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-                perror(last_used_rawfile);
-                ft_setflag = FALSE;
-                return;
+        else {
+            /* add user defined path (nname has to be freed after usage) */
+            char *nname = set_output_path(last_used_rawfile);
+            if (ascii) {
+                if ((rawfileFp = fopen(nname, "a")) == NULL) {
+                    setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+                    perror(last_used_rawfile);
+                    ft_setflag = FALSE;
+                    tfree(nname);
+                    return;
+                }
             }
-        } else if (!ascii) {
-            if ((rawfileFp = fopen(last_used_rawfile, "ab")) == NULL) {
-                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-                perror(last_used_rawfile);
-                ft_setflag = FALSE;
-                return;
+            else {
+                if ((rawfileFp = fopen(nname, "ab")) == NULL) {
+                    setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+                    perror(last_used_rawfile);
+                    ft_setflag = FALSE;
+                    tfree(nname);
+                    return;
+                }
             }
-        }
-        /*---------------------------------------------------------------------------*/
+            /*---------------------------------------------------------------------------*/
 #else
-        else if (!(rawfileFp = fopen(last_used_rawfile, "a"))) {
-            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
-            perror(last_used_rawfile);
-            ft_setflag = FALSE;
-            return;
-        }
+        else {
+            char *nname = set_output_path(last_used_rawfile);
+            if (!(rawfileFp = fopen(nname, "a"))) {
+                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
+                perror(last_used_rawfile);
+                ft_setflag = FALSE;
+                tfree(nname);
+                return;
+            }
 #endif
+            tfree(nname);
+        }
         rawfileBinary = !ascii;
     } else {
         rawfileFp = NULL;
