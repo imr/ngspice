@@ -176,8 +176,6 @@ extern void create_circbyline(char *line);
 /*The current run (to get variable names, etc)*/
 static runDesc *cur_run;
 
-extern bool ext_asc; /* variable 'encoding' set to 'extended_ascii' */
-
 void sh_stdflush(FILE *f);
 double getisrcval(double time, char *iname);
 
@@ -705,12 +703,6 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
                 }
         }
     }
-
-    char encode[64];
-    if (cp_getvar("encoding", CP_STRING, encode) && eq(encode, "extended_ascii"))
-        ext_asc = TRUE;
-    else
-        ext_asc = FALSE;
 
 #endif /* ~ HAVE_PWD_H */
 bot:
