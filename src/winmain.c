@@ -901,7 +901,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     /* Make main window and subwindows visible.
       Size of windows allows display of 80 character line.
       Limit window to screen size (if only VGA). */
-   if (ix < WinLineWidth) WinLineWidth = ix;
+   if (WinLineWidth > ix)
+       WinLineWidth = ix;
     MoveWindow( hwMain, 0, (iyt * 2), WinLineWidth, iyt, FALSE);
     ShowWindow( hwMain,   nShowState);
     ShowWindow( twText,   SW_SHOWNORMAL);
@@ -1097,7 +1098,7 @@ int fs_c_a_n_f(FILE * __stream, const char * __format, ...)
         assert(FALSE);
         return 0;
     }
-    result = fscanf( __stream, __format, args);
+    result = vfscanf(__stream, __format, args);
     va_end(args);
     return result;
 }
