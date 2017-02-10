@@ -1,6 +1,6 @@
 /* I/O Redirection for Spice 3F4 under Win32s
-	Autor: Wolfgang Muees
-	Stand: 21.05.95
+ *      Autor: Wolfgang Muees
+ *      Stand: 21.05.95
  */
 
 #ifndef ngspice_WSTDIO_H
@@ -100,6 +100,6 @@ int    win_x_fputchar(int c);
 #define ferror          win_x_ferror
 #define fputchar        win_x_fputchar
 
-/*----------------------------------------------------------------------------*/
+/* --------------------------------------------------------------------------- */
 
 #endif

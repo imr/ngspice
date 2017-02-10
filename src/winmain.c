@@ -102,7 +102,8 @@ extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 /* --------------------------<history management>------------------------------ */
 
 /* Clear history buffer, set pointer to the beginning */
-static void HistoryInit(void)
+static void
+HistoryInit(void)
 {
     int i;
     HistIndex = 0;
@@ -113,21 +114,27 @@ static void HistoryInit(void)
 
 
 /* Delete first line of buffer, all other lines move one down */
-static void HistoryScroll(void)
+static void
+HistoryScroll(void)
 {
     memmove(&(HistBuffer[0]), &(HistBuffer[1]), sizeof(SBufLine) * (HistSize-1));
     HistBuffer[HistSize-1][0] = SE;
-    if (HistIndex) HistIndex--;
-    if (HistPtr)   HistPtr--;
+    if (HistIndex)
+        HistIndex--;
+    if (HistPtr)
+        HistPtr--;
 }
 
 
 /* Enter new input line into history buffer */
-static void HistoryEnter(char *newLine)
+static void
+HistoryEnter(char *newLine)
 {
-    if (!newLine || !*newLine) return;
+    if (!newLine || !*newLine)
+        return;
 
-    if (HistPtr == HistSize) HistoryScroll();
+    if (HistPtr == HistSize)
+        HistoryScroll();
 
     strcpy(HistBuffer[HistPtr], newLine);
     HistPtr++;
@@ -136,18 +143,23 @@ static void HistoryEnter(char *newLine)
 
 
 // Mit dem Index eine Zeile zurueckgehen und den dort stehenden Eintrag zurueckgeben
-static char *HistoryGetPrev(void)
+static char *
+HistoryGetPrev(void)
 {
-    if (HistIndex) HistIndex--;
+    if (HistIndex)
+        HistIndex--;
     return &(HistBuffer[HistIndex][0]);
 }
 
 
 // Mit dem Index eine Zeile vorgehen und den dort stehenden Eintrag zurueckgeben
-static char *HistoryGetNext(void)
+static char *
+HistoryGetNext(void)
 {
-    if (HistIndex < HistPtr) HistIndex++;
-    if (HistIndex == HistPtr) return ""; //HistIndex--;
+    if (HistIndex < HistPtr)
+        HistIndex++;
+    if (HistIndex == HistPtr)
+        return ""; //HistIndex--;
     return &(HistBuffer[HistIndex][0]);
 }
 
@@ -155,7 +167,8 @@ static char *HistoryGetNext(void)
 // ---------------------------<Message Handling>-------------------------------
 
 // Warte, bis keine Messages mehr zu bearbeiten sind
-void WaitForIdle(void)
+void
+WaitForIdle(void)
 {
     MSG m;
     // arbeite alle Nachrichten ab
@@ -170,7 +183,8 @@ void WaitForIdle(void)
 
 // Warte, bis keine Messages mehr zu bearbeiten sind,
 // dann warte auf neue Message (Input handling ohne Dauerloop)
-static void WaitForMessage(void)
+static void
+WaitForMessage(void)
 {
     MSG m;
     // arbeite alle Nachrichten ab
@@ -185,7 +199,8 @@ static void WaitForMessage(void)
 // -----------------------------<Stringfenster>--------------------------------
 
 // Loeschen des Stringfensters
-static void ClearInput(void)
+static void
+ClearInput(void)
 {
     // Darstellen
     Edit_SetText(swString, "");
@@ -194,7 +209,8 @@ static void ClearInput(void)
 // ---------------------------<SourceFile-Fenster>-----------------------------
 
 /* New text to Source file window */
-void SetSource(char *Name)
+void
+SetSource(char *Name)
 {
     if (hwSource) {
         SetWindowText(hwSource, Name);
@@ -210,11 +226,10 @@ void SetSource(char *Name)
 
 #define DELTATIME 150
 
-void SetAnalyse(
-    char *Analyse,  /* in: analysis type */
-    int DecaPercent /* in: 10 times the progress [%]*/
-    /* HWND hwAnalyse, in: global handle to analysis window */
-    ) {
+void
+SetAnalyse(char *Analyse,   /* in: analysis type */
+           int DecaPercent) /* in: 10 times the progress [%] */
+{
     static int OldPercent = -2;     /* Previous progress value */
     static char OldAn[128];         /* Previous analysis type */
     char s[128], t[128];            /* outputs to analysis window and task bar */
@@ -224,7 +239,8 @@ void SetAnalyse(
 
     WaitForIdle();
 
-    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) return;
+    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
+        return;
 
     /* get actual time */
     ftime(&timenow);
@@ -234,9 +250,8 @@ void SetAnalyse(
        actual time, progress,
        to catch linearity of progress of simulation */
     if (ft_ngdebug && !strcmp(Analyse, "tran"))
-        if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.)) {
+        if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.))
             win_x_printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());
-        }
 
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
@@ -283,7 +298,8 @@ void SetAnalyse(
 
 // Anpassen des Scrollers im Textfenster
 // Stellt gleichzeitig den Text neu dar
-static void AdjustScroller(void)
+static void
+AdjustScroller(void)
 {
     int LineCount;
     int FirstLine;
@@ -292,7 +308,8 @@ static void AdjustScroller(void)
     FirstLine = Edit_GetFirstVisibleLine(twText);
     MyFirstLine = LineCount - VisibleRows;
 
-    if (MyFirstLine < 0 ) MyFirstLine = 0;
+    if (MyFirstLine < 0 )
+        MyFirstLine = 0;
 
     Edit_Scroll(twText, MyFirstLine - FirstLine, 0);
     // Das wars
@@ -301,7 +318,8 @@ static void AdjustScroller(void)
 
 
 // Loeschen einer Zeile im Textbuffer
-static void _DeleteFirstLine(void)
+static void
+_DeleteFirstLine(void)
 {
     char *cp = strchr(TBuffer, LF);
     if (!cp) {
@@ -318,7 +336,8 @@ static void _DeleteFirstLine(void)
 
 
 // Anfuegen eines chars an den TextBuffer
-static void AppendChar(char c)
+static void
+AppendChar(char c)
 {
     // Textbuffer nicht zu grosz werden lassen
     while ((TBufEnd + 4) >= TBufSize)
@@ -334,10 +353,12 @@ static void AppendChar(char c)
 
 
 // Anfuegen eines Strings an den TextBuffer
-static void AppendString(const char *Line)
+static void
+AppendString(const char *Line)
 {
     size_t i;
-    if (!Line) return;
+    if (!Line)
+        return;
 
     // Zeilenlaenge bestimmen
     i = strlen(Line);
@@ -352,7 +373,8 @@ static void AppendString(const char *Line)
 
 
 // Text neu darstellen
-static void DisplayText(void)
+static void
+DisplayText(void)
 {
     // Darstellen
     Edit_SetText(twText, TBuffer);
@@ -361,11 +383,13 @@ static void DisplayText(void)
 }
 
 
-/*
 // Anfuegen einer Zeile an den Textbuffer
-void AppendLine(const char *Line)
+#if 0
+void
+AppendLine(const char *Line)
 {
-    if (!Line) return;
+    if (!Line)
+        return;
 
     // String anhaengen
     AppendString(Line);
@@ -373,13 +397,14 @@ void AppendLine(const char *Line)
     // CRLF anhaengen
     AppendString(CRLF);
 }
-*/
+#endif
 
 
 // -----------------------------------<User-IO>--------------------------------
 
 // Lese ein Zeichen ein
-static int w_getch(void)
+static int
+w_getch(void)
 {
     int c;
 
@@ -412,7 +437,8 @@ static int w_getch(void)
 
 
 // Gebe ein Zeichen aus
-static int w_putch(int c)
+static int
+w_putch(int c)
 {
     if (c)
         AppendChar((char) c);
@@ -423,7 +449,8 @@ static int w_putch(int c)
 /* -------------------------------<Window procedures>-------------------------- */
 
 /* Main window changes size */
-static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
+static void
+Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
     int h = cy - LineHeight - StatusHeight;
 
@@ -441,15 +468,18 @@ static void Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
     /* Expand Status Elements */
     h = cy - LineHeight + StatusFrame - 1;
     MoveWindow(hwSource, StatusFrame, h, SourceLength, StatusElHeight, TRUE);
-    MoveWindow(hwAnalyse, cx - 3 * StatusFrame - QuitButtonLength - AnalyseLength - 20,
+    MoveWindow(hwAnalyse,
+               cx - 3 * StatusFrame - QuitButtonLength - AnalyseLength - 20,
                h, AnalyseLength, StatusElHeight, TRUE);
-    MoveWindow(hwQuitButton, cx - StatusFrame - QuitButtonLength - 20,
+    MoveWindow(hwQuitButton,
+               cx - StatusFrame - QuitButtonLength - 20,
                h, QuitButtonLength, StatusElHeight, TRUE);
 }
 
 
 /* Write a command into the command buffer */
-static void PostSpiceCommand(const char *const cmd)
+static void
+PostSpiceCommand(const char * const cmd)
 {
     strcpy(SBuffer, cmd);
     strcat(SBuffer, CRLF);
@@ -457,20 +487,22 @@ static void PostSpiceCommand(const char *const cmd)
 
 
 /* Main Window procedure */
-static LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK
+MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
 
         /* command issued by pushing the "Quit" button */
     case WM_COMMAND:
         if (HIWORD(wParam) == BN_CLICKED)
-            if (ft_batchmode && (MessageBox(NULL, "Do you want to quit ngspice?", "Quit", MB_OKCANCEL|MB_ICONERROR)
-                                 == IDCANCEL)) goto DEFAULT_AFTER;
-        if (LOWORD(wParam) == QUIT_BUTTON_ID) {
+            if (ft_batchmode &&
+                (MessageBox(NULL, "Do you want to quit ngspice?", "Quit", MB_OKCANCEL | MB_ICONERROR) == IDCANCEL))
+                goto DEFAULT_AFTER;
+        if (LOWORD(wParam) == QUIT_BUTTON_ID)
             SendMessage(GetParent((HWND)lParam), WM_CLOSE, 0, 0);
-        }
         /* write all achieved so far to log file */
-        if (flogp) win_x_fflush(flogp);
+        if (flogp)
+            win_x_fflush(flogp);
         goto DEFAULT_AFTER;
 
     case WM_CLOSE:
@@ -493,7 +525,8 @@ static LRESULT CALLBACK MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
 
 /* Procedure for string window */
-static LRESULT CALLBACK StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK
+StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     char c;
     UINT i;
@@ -504,7 +537,7 @@ static LRESULT CALLBACK StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
         i = (UINT) wParam;
         if ((i == VK_UP) || (i == VK_DOWN)) {
             /* Set old text to new */
-            SetWindowText(hwnd, i == VK_UP ? HistoryGetPrev() : HistoryGetNext());
+            SetWindowText(hwnd, (i == VK_UP) ? HistoryGetPrev() : HistoryGetNext());
             /* Put cursor to end of line */
             CallWindowProc(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
             return 0;
@@ -547,7 +580,8 @@ static LRESULT CALLBACK StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 
 /* Procedure for text window */
-static LRESULT CALLBACK TextWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK
+TextWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     unsigned char c;
     UINT i;
@@ -582,7 +616,8 @@ static LRESULT CALLBACK TextWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 }
 
 
-static void Element_OnPaint(HWND hwnd)
+static void
+Element_OnPaint(HWND hwnd)
 {
     PAINTSTRUCT ps;
     RECT r;
@@ -634,7 +669,8 @@ static void Element_OnPaint(HWND hwnd)
 
 
 /* Procedure for element window */
-static LRESULT CALLBACK ElementWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK
+ElementWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
 
@@ -667,15 +703,16 @@ static LRESULT CALLBACK ElementWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
   -1 on failure
 */
 
-static int MakeArgcArgv(char *cmdline, int *argc, char ***argv)
+static int
+MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 {
     char  *pC1;                     /* a temporary character pointer */
     char  *pWorkString = NULL;      /* a working copy of cmdline */
     int    i;                       /* a loop counter */
     int    quoteflag = 0;           /* for the finite state machine parsing cmdline */
     bool   firstspace = TRUE;       /* count only the first space */
-    int    numargs = 1;             /*  the number of command line arguments, later
-                                        copied to *argc */
+    int    numargs = 1;             /* the number of command line arguments,
+                                       later copied to *argc */
     char **tmpargv;                 /* the temporary argv, later copied to *argv */
     int    status = ERROR_SUCCESS;  /* status */
     char   buffer[MAX_PATH + 1];
@@ -683,8 +720,7 @@ static int MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 
 
     /* make sure we aren't dealing with any NULL pointers */
-    if ((NULL == argc)
-        || (NULL == argv))
+    if ((NULL == argc) || (NULL == argv))
     {
         status = -1;
         goto outahere;
@@ -726,14 +762,13 @@ static int MakeArgcArgv(char *cmdline, int *argc, char ***argv)
                 and I couldn't tell what delimiter that I had bumped
                 against */
             for (i = 0; i < (signed)strlen(pWorkString); i++)
-            {
                 switch (pWorkString[i])
                 {
                 case SPACE:
-                    if (!quoteflag)
-                    {
+                    if (!quoteflag) {
                         pWorkString[i] = DELIMITER;  /* change space to delimiter */
-                        if (firstspace) numargs++; /* count only the first space */
+                        if (firstspace) /* count only the first space */
+                            numargs++;
                         firstspace = FALSE;
                     }
                     break;
@@ -744,7 +779,6 @@ static int MakeArgcArgv(char *cmdline, int *argc, char ***argv)
                     firstspace = TRUE;
                     break;
                 }
-            }
 
             /*  Now, we should have ctrl-Zs everywhere that
                 there used to be a space not protected by
@@ -774,13 +808,14 @@ static int MakeArgcArgv(char *cmdline, int *argc, char ***argv)
     pC1 = NULL;
     /*  Now actually strdup all the arguments out of the string
         and store them in the argv */
-    for (i = 1; i < numargs; i++)
-    {
+    for (i = 1; i < numargs; i++) {
         if (NULL == pC1)
             pC1 = pWorkString;
 
-        if (i == 1) tmpargv[i] = copy(strtok(pC1, deli));
-        else tmpargv[i] = copy(strtok(NULL, deli));
+        if (i == 1)
+            tmpargv[i] = copy(strtok(pC1, deli));
+        else
+            tmpargv[i] = copy(strtok(NULL, deli));
     }
 
     /*  copy the working values over to the arguments */
@@ -792,14 +827,14 @@ static int MakeArgcArgv(char *cmdline, int *argc, char ***argv)
     if (pWorkString)
         free(pWorkString);
 
-    /* return status */
     return status;
 }
 
 
 
 /* Main entry point for our Windows application */
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
+int WINAPI
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
     int ix, iy; /* width and height of screen */
     int iyt;    /* height of screen divided by 3 */
@@ -834,10 +869,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     hwMainClass.lpszMenuName    = NULL;
     hwMainClass.lpszClassName   = hwClassName;
 
-    if (!RegisterClass(&hwMainClass)) goto THE_END;
+    if (!RegisterClass(&hwMainClass))
+        goto THE_END;
 
     /* Define text window class */
-    if (!GetClassInfo(NULL, "EDIT", &twTextClass)) goto THE_END;
+    if (!GetClassInfo(NULL, "EDIT", &twTextClass))
+        goto THE_END;
 
     twProc = twTextClass.lpfnWndProc;
     twTextClass.lpfnWndProc     = TextWindowProc;
@@ -845,10 +882,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     twTextClass.lpszMenuName    = NULL;
     twTextClass.lpszClassName   = twClassName;
 
-    if (!RegisterClass(&twTextClass)) goto THE_END;
+    if (!RegisterClass(&twTextClass))
+        goto THE_END;
 
     /* Define string window class */
-    if (!GetClassInfo(NULL, "EDIT", &swStringClass)) goto THE_END;
+    if (!GetClassInfo(NULL, "EDIT", &swStringClass))
+        goto THE_END;
 
     swProc = swStringClass.lpfnWndProc;
     swStringClass.lpfnWndProc   = StringWindowProc;
@@ -856,7 +895,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     swStringClass.lpszMenuName  = NULL;
     swStringClass.lpszClassName = swClassName;
 
-    if (!RegisterClass(&swStringClass)) goto THE_END;
+    if (!RegisterClass(&swStringClass))
+        goto THE_END;
 
     /* Define status element class */
     hwElementClass.style            = CS_HREDRAW | CS_VREDRAW;
@@ -870,7 +910,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     hwElementClass.lpszMenuName     = NULL;
     hwElementClass.lpszClassName    = hwElementClassName;
 
-    if (!RegisterClass(&hwElementClass)) goto THE_END;
+    if (!RegisterClass(&hwElementClass))
+        goto THE_END;
 
     /*Create main window */
     SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
@@ -882,13 +923,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 //    ix = GetSystemMetrics(SM_CXSCREEN);
     hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                           0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
-    if (!hwMain) goto THE_END;
+    if (!hwMain)
+        goto THE_END;
 
     /* Create text window */
     twText = CreateWindowEx(WS_EX_NOPARENTNOTIFY, twClassName, twWindowName,
                             ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_BORDER | WS_VSCROLL,
                             20, 20, 300, 100, hwMain, NULL, hInst, NULL);
-    if (!twText) goto THE_END;
+    if (!twText)
+        goto THE_END;
 
     /* Ansii fixed font */
     {
@@ -910,8 +953,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
     /* Create string window */
     swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
-                              ES_LEFT | WS_CHILD | WS_BORDER, 20,20,300,100, hwMain, NULL, hInst, NULL);
-    if (!swString) goto THE_END;
+                              ES_LEFT | WS_CHILD | WS_BORDER,
+                              20, 20, 300, 100, hwMain, NULL, hInst, NULL);
+    if (!swString)
+        goto THE_END;
 
     {
         HDC stringDC;
@@ -925,24 +970,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     }
 
     /* Create source window */
-    hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
-                              hwSourceWindowName, WS_CHILD, 0,0, SourceLength, StatusElHeight, hwMain,
-                              NULL, hInst, NULL);
-    if (!hwSource) goto THE_END;
+    hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName, hwSourceWindowName,
+                              WS_CHILD,
+                              0, 0, SourceLength, StatusElHeight, hwMain, NULL, hInst, NULL);
+    if (!hwSource)
+        goto THE_END;
 
 
     /* Create analysis window */
-    hwAnalyse = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName,
-                               hwAnalyseWindowName, WS_CHILD, 0,0, AnalyseLength, StatusElHeight, hwMain,
-                               NULL, hInst, NULL);
-    if (!hwAnalyse) goto THE_END;
+    hwAnalyse = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName, hwAnalyseWindowName,
+                               WS_CHILD,
+                               0, 0, AnalyseLength, StatusElHeight, hwMain, NULL, hInst, NULL);
+    if (!hwAnalyse)
+        goto THE_END;
 
     /* Create "Quit" button */
-    hwQuitButton = CreateWindow("BUTTON", "Quit", WS_CHILD |
-                                BS_PUSHBUTTON, 0, 0, QuitButtonLength,
+    hwQuitButton = CreateWindow("BUTTON", "Quit", WS_CHILD | BS_PUSHBUTTON, 0, 0, QuitButtonLength,
                                 StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
 
-    if (!hwQuitButton) goto THE_END;
+    if (!hwQuitButton)
+        goto THE_END;
 
     /* Make main window and subwindows visible.
        Size of windows allows display of 80 character line.
@@ -986,7 +1033,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
    Man schaue also nach, bevor man eine Funktion benutzt!
 */
 
-int win_x_fflush(FILE *stream)
+int
+win_x_fflush(FILE *stream)
 {
     if (((stream == stdout) && !flogp) || (stream == stderr))
         return 0;
@@ -995,20 +1043,22 @@ int win_x_fflush(FILE *stream)
 }
 
 
-int win_x_fgetc(FILE *stream)
+int
+win_x_fgetc(FILE *stream)
 {
     if (stream == stdin) {
         int c;
-        do {
+        do
             c = w_getch();
-        } while (c == CR);
+        while (c == CR);
         return c;
     } else
         return fgetc(stream);
 }
 
 
-int win_x_fgetpos(FILE *stream, fpos_t *pos)
+int
+win_x_fgetpos(FILE *stream, fpos_t *pos)
 {
     int result;
     if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
@@ -1020,7 +1070,8 @@ int win_x_fgetpos(FILE *stream, fpos_t *pos)
 }
 
 
-char *win_x_fgets(char *s, int n, FILE *stream)
+char *
+win_x_fgets(char *s, int n, FILE *stream)
 {
     if (stream == stdin) {
         int i = 0;
@@ -1041,7 +1092,8 @@ char *win_x_fgets(char *s, int n, FILE *stream)
 }
 
 
-int win_x_fputc(int c, FILE *stream)
+int
+win_x_fputc(int c, FILE *stream)
 {
     if (!flogp && ((stream == stdout) || (stream == stderr))) {
         if (c == LF)
@@ -1055,13 +1107,15 @@ int win_x_fputc(int c, FILE *stream)
 }
 
 
-int win_x_fputs(const char *s, FILE *stream)
+int
+win_x_fputs(const char *s, FILE *stream)
 {
 //  if (((stream == stdout) && !flogp) || (stream == stderr)) {    hvogt 14.6.2000
     if ((stream == stdout) || (stream == stderr)) {
 
         int c = SE;
-        if (!s) return EOF;
+        if (!s)
+            return EOF;
         for (;;) {
             if (*s) {
                 c = *s++;
@@ -1074,7 +1128,8 @@ int win_x_fputs(const char *s, FILE *stream)
 }
 
 
-int win_x_fprintf(FILE *stream, const char *format, ...)
+int
+win_x_fprintf(FILE *stream, const char *format, ...)
 {
     int result;
     char s[IOBufSize];
@@ -1096,7 +1151,8 @@ int win_x_fprintf(FILE *stream, const char *format, ...)
 }
 
 
-int win_x_fclose(FILE *stream)
+int
+win_x_fclose(FILE *stream)
 {
     if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
@@ -1106,7 +1162,8 @@ int win_x_fclose(FILE *stream)
 }
 
 
-size_t win_x_fread(void *ptr, size_t size, size_t n, FILE *stream)
+size_t
+win_x_fread(void *ptr, size_t size, size_t n, FILE *stream)
 {
 //  if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
     if (((stream == stdout) && !flogp) || (stream == stderr)) {
@@ -1136,7 +1193,8 @@ size_t win_x_fread(void *ptr, size_t size, size_t n, FILE *stream)
 }
 
 
-FILE *win_x_freopen(const char *path, const char *mode, FILE *stream)
+FILE *
+win_x_freopen(const char *path, const char *mode, FILE *stream)
 {
     if ((stream == stdin)/* || ((stream == stdout) && !flogp) || (stream == stderr)*/) {
         assert(FALSE);
@@ -1146,7 +1204,8 @@ FILE *win_x_freopen(const char *path, const char *mode, FILE *stream)
 }
 
 
-int win_x_fscanf(FILE *stream, const char *format, ...)
+int
+win_x_fscanf(FILE *stream, const char *format, ...)
 {
     int result;
     va_list args;
@@ -1162,7 +1221,8 @@ int win_x_fscanf(FILE *stream, const char *format, ...)
 }
 
 
-int win_x_fseek(FILE *stream, long offset, int whence)
+int
+win_x_fseek(FILE *stream, long offset, int whence)
 {
     if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
@@ -1172,7 +1232,8 @@ int win_x_fseek(FILE *stream, long offset, int whence)
 }
 
 
-int win_x_fsetpos(FILE *stream, const fpos_t *pos)
+int
+win_x_fsetpos(FILE *stream, const fpos_t *pos)
 {
     if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
@@ -1182,7 +1243,8 @@ int win_x_fsetpos(FILE *stream, const fpos_t *pos)
 }
 
 
-long win_x_ftell(FILE *stream)
+long
+win_x_ftell(FILE *stream)
 {
     if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
@@ -1192,7 +1254,8 @@ long win_x_ftell(FILE *stream)
 }
 
 
-size_t win_x_fwrite(const void *ptr, size_t size, size_t n, FILE *stream)
+size_t
+win_x_fwrite(const void *ptr, size_t size, size_t n, FILE *stream)
 {
 //  win_x_printf("entered fwrite, size %d, n %d \n", size, n);
     if (stream == stdin) {
@@ -1208,7 +1271,8 @@ size_t win_x_fwrite(const void *ptr, size_t size, size_t n, FILE *stream)
 
 //      win_x_printf("test1 %s\n", s);
 
-        if (!s) return 0 /* EOF */;
+        if (!s)
+            return 0 /* EOF */;
 
         for (i = 0; i < (size * n); i++) {
             if (*s) {
@@ -1226,13 +1290,15 @@ size_t win_x_fwrite(const void *ptr, size_t size, size_t n, FILE *stream)
 }
 
 
-char *win_x_gets(char *s)
+char *
+win_x_gets(char *s)
 {
     return win_x_fgets(s, 10000, stdin);
 }
 
 
-void win_x_perror(const char *s)
+void
+win_x_perror(const char *s)
 {
     const char *cp;
 //  char s[IOBufSize];
@@ -1244,7 +1310,8 @@ void win_x_perror(const char *s)
 }
 
 
-int win_x_printf(const char *format, ...)
+int
+win_x_printf(const char *format, ...)
 {
     int result;
     char s[IOBufSize];
@@ -1260,13 +1327,15 @@ int win_x_printf(const char *format, ...)
 }
 
 
-int win_x_puts(const char *s)
+int
+win_x_puts(const char *s)
 {
     return win_x_fputs(s, stdout);
 }
 
 
-int win_x_scanf(const char *format, ...)
+int
+win_x_scanf(const char *format, ...)
 {
     NG_IGNORE(format);
     assert(FALSE);
@@ -1274,7 +1343,8 @@ int win_x_scanf(const char *format, ...)
 }
 
 
-int win_x_ungetc(int c, FILE *stream)
+int
+win_x_ungetc(int c, FILE *stream)
 {
     NG_IGNORE(c);
     NG_IGNORE(stream);
@@ -1283,7 +1353,8 @@ int win_x_ungetc(int c, FILE *stream)
 }
 
 
-int win_x_vfprintf(FILE *stream, const char *format, void *arglist)
+int
+win_x_vfprintf(FILE *stream, const char *format, void *arglist)
 {
     int result;
     char s[IOBufSize];
@@ -1300,7 +1371,9 @@ int win_x_vfprintf(FILE *stream, const char *format, void *arglist)
 }
 
 
-/*int win_x_vfscanf(FILE *stream, const char *format, void *arglist)
+#if 0
+int
+win_x_vfscanf(FILE *stream, const char *format, void *arglist)
 {
     if (stream == stdin) {
         assert(FALSE);
@@ -1308,10 +1381,11 @@ int win_x_vfprintf(FILE *stream, const char *format, void *arglist)
     }
     return vfscanf(stream, format, arglist);
 }
-*/
+#endif
 
 
-int win_x_vprintf(const char *format, void *arglist)
+int
+win_x_vprintf(const char *format, void *arglist)
 {
     int result;
     char s[IOBufSize];
@@ -1323,14 +1397,18 @@ int win_x_vprintf(const char *format, void *arglist)
 }
 
 
-/*int win_x_vscanf(const char *format, void *arglist)
+#if 0
+int
+win_x_vscanf(const char *format, void *arglist)
 {
     assert(FALSE);
     return FALSE;
-} */
+}
+#endif
 
 
-int win_x_read(int fd, char *buf, int n)
+int
+win_x_read(int fd, char *buf, int n)
 {
     if (fd == 0) {
         int i = 0;
@@ -1347,7 +1425,7 @@ int win_x_read(int fd, char *buf, int n)
         }
 //      s[i] = SE;
         buf = &s[0];
-        return (i);
+        return i;
     }
     else {
         return _read(fd, buf, n);
@@ -1355,31 +1433,36 @@ int win_x_read(int fd, char *buf, int n)
 }
 
 
-int win_x_getc(FILE *fp)
+int
+win_x_getc(FILE *fp)
 {
     return win_x_fgetc(fp);
 }
 
 
-int win_x_getchar(void)
+int
+win_x_getchar(void)
 {
     return win_x_fgetc(stdin);
 }
 
 
-int win_x_putchar(const int c)
+int
+win_x_putchar(const int c)
 {
     return win_x_fputc(c, stdout);
 }
 
 
-int win_x_putc(const int c, FILE *fp)
+int
+win_x_putc(const int c, FILE *fp)
 {
     return win_x_fputc(c, fp);
 }
 
 
-int win_x_feof(FILE *fp)
+int
+win_x_feof(FILE *fp)
 {
     if ((fp == stdin) || (fp == stdout) || (fp == stderr)) {
         assert(FALSE);
@@ -1389,7 +1472,8 @@ int win_x_feof(FILE *fp)
 }
 
 
-int win_x_ferror(FILE *fp)
+int
+win_x_ferror(FILE *fp)
 {
     if ((fp == stdin) || (fp == stdout) || (fp == stderr)) {
         assert(FALSE);
@@ -1399,7 +1483,8 @@ int win_x_ferror(FILE *fp)
 }
 
 
-int win_x_fputchar(int c)
+int
+win_x_fputchar(int c)
 {
     return win_x_fputc(c, stdout);
 }
@@ -1407,8 +1492,9 @@ int win_x_fputchar(int c)
 
 // --------------------------<Verfuegbarer Speicher>----------------------------
 
-/*
-size_t _memavl(void)
+#if 0
+size_t
+_memavl(void)
 {
     MEMORYSTATUS ms;
     DWORD sum;
@@ -1417,12 +1503,15 @@ size_t _memavl(void)
     sum = ms.dwAvailPhys + ms.dwAvailPageFile;
     return (size_t) sum;
 }
+#endif
 
 
 // ---------------------<Aufruf eines anderen Programms>-----------------------
 
+#if 0
 #ifndef _MSC_VER
-int system(const char *command)
+int
+system(const char *command)
 {
     // info-Bloecke
     STARTUPINFO si;
@@ -1446,28 +1535,33 @@ int system(const char *command)
             NULL,   // address of current directory name
             &si,    // address of STARTUPINFO
             &pi     // address of PROCESS_INFORMATION
-            )) return -1;
+            ))
+        return -1;
 
     // dieses Handle musz da sein
-    if (!pi.hProcess) return -1;
+    if (!pi.hProcess)
+        return -1;
 
     do {
         // Multitasking ermoeglichen
         WaitForIdle();
         // hole mir den Exit-Code des Prozesses
-        if (!GetExitCodeProcess(pi.hProcess, &ExitStatus)) return -1;
+        if (!GetExitCodeProcess(pi.hProcess, &ExitStatus))
+            return -1;
         // solange er existiert
     } while (ExitStatus == STILL_ACTIVE);
 
     // Handles freigeben
-    if (pi.hThread)  CloseHandle(pi.hThread);
-    if (pi.hProcess) CloseHandle(pi.hProcess);
+    if (pi.hThread)
+        CloseHandle(pi.hThread);
+    if (pi.hProcess)
+        CloseHandle(pi.hProcess);
 
     // fertig
     return 0;
 } // system Windows95
 #endif
-*/
+#endif
 
 
 #ifdef __CYGWIN__
@@ -1499,7 +1593,8 @@ rlead(char *s)
 #endif
 
 
-void winmessage(char *new_msg)
+void
+winmessage(char *new_msg)
 {
     /* open a message box only if message is not written into -o xxx.log */
     if (!flogp)
