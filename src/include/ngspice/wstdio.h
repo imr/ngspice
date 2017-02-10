@@ -59,7 +59,6 @@ int    p_u_t_char(const int __c);
 int    p_u_t_c(const int __c, FILE * __fp);
 int    f_e_o_f(FILE * __fp);
 int    f_e_r_r_o_r(FILE * __fp);
-int    fg_e_t_char(void);
 int    fp_u_t_char(int __c);
 
 /* ------------------------------<New macros>---------------------------------*/
@@ -73,7 +72,7 @@ int    fp_u_t_char(int __c);
 #define fputc		fp_u_t_c
 #define fputs		fp_u_t_s
 #define fread		f_r_e_a_d
-#define afreopen	f_r_e_o_p_e_n    /* hvogt  10.05.2000 */
+/* #define freopen	f_r_e_o_p_e_n    hvogt  10.05.2000 */
 #define fscanf		fs_c_a_n_f
 #define fseek		f_s_e_e_k
 #define fsetpos	f_s_e_t_p_o_s
@@ -96,7 +95,6 @@ int    fp_u_t_char(int __c);
 #define putc		p_u_t_c
 #define feof		f_e_o_f
 #define ferror		f_e_r_r_o_r
-#define fgetchar	fg_e_t_char
 #define fputchar	fp_u_t_char
 
 

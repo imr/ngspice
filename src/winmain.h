@@ -70,5 +70,4 @@ int p_u_t_char(const int __c);
 int p_u_t_c(const int __c, FILE * __fp);
 int f_e_o_f(FILE * __fp);
 int f_e_r_r_o_r(FILE * __fp);
-int fg_e_t_char(void);
 int fp_u_t_char(int __c);

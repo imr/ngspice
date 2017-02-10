@@ -1315,11 +1315,6 @@ int f_e_r_r_o_r(FILE * __fp)
     return ferror( __fp);
 }
 
-int fg_e_t_char(void)
-{
-    return fg_e_t_c( stdin);
-}
-
 int fp_u_t_char(int __c)
 {
     return fp_u_t_c( __c, stdout);
