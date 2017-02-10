@@ -219,7 +219,7 @@ void SetAnalyse(
       to catch linearity of progress of simulation */
    if (ft_ngdebug && !strcmp(Analyse, "tran")) 
       if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.)) {
-         p_r_i_n_t_f("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());                
+         win_x_printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());                
       }   
    OldPercent = DecaPercent;   
    /* output only into hwAnalyse window and if time elapsed is larger than
@@ -248,7 +248,7 @@ void SetAnalyse(
       /* info when previous analysis period has finished */
       if (strcmp(OldAn, Analyse)) {
          if (ft_ngdebug && (strcmp(OldAn, "")))
-            p_r_i_n_t_f("%s finished after %4.2f seconds.\n", OldAn, seconds());
+            win_x_printf("%s finished after %4.2f seconds.\n", OldAn, seconds());
          strncpy(OldAn, Analyse, 127);
       }
           
@@ -438,7 +438,7 @@ static LRESULT CALLBACK MainWindowProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPA
               SendMessage(GetParent((HWND)lParam), WM_CLOSE, 0, 0);
            }
            /* write all achieved so far to log file */
-           if (flogp) f_f_l_u_s_h(flogp);
+           if (flogp) win_x_fflush(flogp);
         goto DEFAULT_AFTER;
 
     case WM_CLOSE:
@@ -941,130 +941,130 @@ THE_END:
     Man schaue also nach, bevor man eine Funktion benutzt!
 */
 
-int f_f_l_u_s_h( FILE * __stream)
+int win_x_fflush( FILE * stream)
 {
-    if (((__stream == stdout) && !flogp) || (__stream == stderr))
+    if (((stream == stdout) && !flogp) || (stream == stderr))
         return 0;
     else
-        return fflush(__stream);
+        return fflush(stream);
 }
 
-int fg_e_t_c( FILE * __stream)
+int win_x_fgetc( FILE * stream)
 {
-    if (__stream == stdin) {
+    if (stream == stdin) {
         int c;
         do {
             c = w_getch();
         } while( c == CR);
         return c;
     } else
-        return fgetc(__stream);
+        return fgetc(stream);
 }
 
-int f_g_e_t_p_o_s( FILE * __stream, fpos_t * __pos)
+int win_x_fgetpos( FILE * stream, fpos_t * pos)
 {
     int result;
-    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     } else
-        result = fgetpos(__stream, __pos);
+        result = fgetpos(stream, pos);
     return result;
 }
 
-char * fg_e_t_s(char * __s, int __n, FILE * __stream)
+char * win_x_fgets(char * s, int n, FILE * stream)
 {
-    if (__stream == stdin) {
+    if (stream == stdin) {
         int i = 0;
         int c;
-        while ( i < (__n-1)) {
+        while ( i < (n-1)) {
             c = w_getch();
             if (c == LF) {
-                __s[i++] = LF;
+                s[i++] = LF;
                 break;
             }
             if (c != CR)
-                __s[i++] = (char)c;
+                s[i++] = (char)c;
         }
-        __s[i] = SE;
-        return __s;
+        s[i] = SE;
+        return s;
     } else
-        return fgets( __s, __n, __stream);
+        return fgets( s, n, stream);
 }
 
-int fp_u_t_c(int __c, FILE * __stream)
+int win_x_fputc(int c, FILE * stream)
 {
-    if (!flogp && ((__stream == stdout) || (__stream == stderr))) {
-        if ( __c == LF)
+    if (!flogp && ((stream == stdout) || (stream == stderr))) {
+        if ( c == LF)
             w_putch( CR);
-        return w_putch(__c);
+        return w_putch(c);
 //   Ausgabe in Datei *.log  14.6.2000
-    } else if (flogp && ((__stream == stdout) || __stream == stderr)) {
-        return fputc( __c, flogp);
+    } else if (flogp && ((stream == stdout) || stream == stderr)) {
+        return fputc( c, flogp);
     } else
-        return fputc( __c, __stream);
+        return fputc( c, stream);
 }
 
-int fp_u_t_s(const char * __s, FILE * __stream)
+int win_x_fputs(const char * s, FILE * stream)
 {
-//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {    hvogt 14.6.2000
-    if ((__stream == stdout) || (__stream == stderr)) {
+//  if (((stream == stdout) && !flogp) || (stream == stderr)) {    hvogt 14.6.2000
+    if ((stream == stdout) || (stream == stderr)) {
 
         int c = SE;
-        if (!__s) return EOF;
+        if (!s) return EOF;
         for (;;) {
-            if (*__s) {
-                c = *__s++;
-                fp_u_t_c(c, __stream);
+            if (*s) {
+                c = *s++;
+                win_x_fputc(c, stream);
             } else
                 return c;
         }
     } else
-        return fputs( __s, __stream);
+        return fputs( s, stream);
 }
 
-int fp_r_i_n_t_f(FILE * __stream, const char * __format, ...)
+int win_x_fprintf(FILE * stream, const char * format, ...)
 {
     int result;
     char s [IOBufSize];
     va_list args;
-    va_start(args, __format);
+    va_start(args, format);
 
-//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
-    if ((__stream == stdout) || (__stream == stderr)) {
+//  if (((stream == stdout) && !flogp) || (stream == stderr)) {
+    if ((stream == stdout) || (stream == stderr)) {
 
         s[0] = SE;
-        result = vsprintf( s, __format, args);
-        fp_u_t_s( s, __stream);
+        result = vsprintf( s, format, args);
+        win_x_fputs( s, stream);
     } else
-        result = vfprintf( __stream, __format, args);
+        result = vfprintf( stream, format, args);
 
     va_end(args);
     return result;
 }
 
-int f_c_l_o_s_e( FILE * __stream)
+int win_x_fclose( FILE * stream)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     }
-    return fclose( __stream);
+    return fclose( stream);
 }
 
-size_t f_r_e_a_d(void * __ptr, size_t __size, size_t __n, FILE * __stream)
+size_t win_x_fread(void * ptr, size_t size, size_t n, FILE * stream)
 {
-//  if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
-    if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
+//  if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
+    if (((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     }
     
-    if (__stream == stdin) {
+    if (stream == stdin) {
         size_t i = 0;
         int c;
         char s [IOBufSize];
-        while ( i < (__size * __n - 1)) {
+        while ( i < (size * n - 1)) {
             c = w_getch();
             if (c == LF) {
 //              s[i++] = LF;
@@ -1074,193 +1074,193 @@ size_t f_r_e_a_d(void * __ptr, size_t __size, size_t __n, FILE * __stream)
                 s[i++] = (char)c;
         }
 //      s[i] = SE;
-        __ptr = &s[0];
-        return (size_t)(i/__size);
+        ptr = &s[0];
+        return (size_t)(i/size);
     }   
-    return fread( __ptr, __size, __n, __stream);
+    return fread( ptr, size, n, stream);
 }
 
-FILE * f_r_e_o_p_e_n(const char * __path, const char * __mode, FILE * __stream)
+FILE * win_x_freopen(const char * path, const char * mode, FILE * stream)
 {
-    if ((__stream == stdin)/* || ((__stream == stdout) && !flogp) || (__stream == stderr)*/) {
+    if ((stream == stdin)/* || ((stream == stdout) && !flogp) || (stream == stderr)*/) {
         assert(FALSE);
         return 0;
     }
-    return freopen( __path, __mode, __stream);
+    return freopen( path, mode, stream);
 }
 
-int fs_c_a_n_f(FILE * __stream, const char * __format, ...)
+int win_x_fscanf(FILE * stream, const char * format, ...)
 {
     int result;
     va_list args;
-    va_start(args, __format);
-    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    va_start(args, format);
+    if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     }
-    result = vfscanf(__stream, __format, args);
+    result = vfscanf(stream, format, args);
     va_end(args);
     return result;
 }
 
-int f_s_e_e_k(FILE * __stream, long __offset, int __whence)
+int win_x_fseek(FILE * stream, long offset, int whence)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     }
-    return fseek( __stream, __offset, __whence);
+    return fseek( stream, offset, whence);
 }
 
-int f_s_e_t_p_o_s(FILE * __stream, const fpos_t *__pos)
+int win_x_fsetpos(FILE * stream, const fpos_t *pos)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     }
-    return fsetpos( __stream, __pos);
+    return fsetpos( stream, pos);
 }
 
-long f_t_e_l_l(FILE * __stream)
+long win_x_ftell(FILE * stream)
 {
-    if ((__stream == stdin) || ((__stream == stdout) && !flogp) || (__stream == stderr)) {
+    if ((stream == stdin) || ((stream == stdout) && !flogp) || (stream == stderr)) {
         assert(FALSE);
         return 0;
     }
-    return ftell( __stream);
+    return ftell( stream);
 }
 
-size_t f_w_r_i_t_e(const void * __ptr, size_t __size, size_t __n, FILE * __stream)
+size_t win_x_fwrite(const void * ptr, size_t size, size_t n, FILE * stream)
 {
-//  p_r_i_n_t_f("entered fwrite, size %d, n %d \n", __size, __n);
-    if (__stream == stdin)  {
+//  win_x_printf("entered fwrite, size %d, n %d \n", size, n);
+    if (stream == stdin)  {
         assert(FALSE);
-//      p_r_i_n_t_f("False \n");
+//      win_x_printf("False \n");
         return 0;
     }
-    if ((__stream == stdout) || (__stream == stderr)) {
-        const char * __s = __ptr;
+    if ((stream == stdout) || (stream == stderr)) {
+        const char * s = ptr;
         int c = SE;
         size_t i = 0;
 //      char *out;
 
-//      p_r_i_n_t_f("test1 %s\n", __s);
+//      win_x_printf("test1 %s\n", s);
 
-        if (!__s) return 0 /*EOF*/;
-        for (i = 0; i< (__size * __n); i++) {
-            if (*__s) {
-                c = *__s++;
-                fp_u_t_c(c, __stream);
+        if (!s) return 0 /*EOF*/;
+        for (i = 0; i< (size * n); i++) {
+            if (*s) {
+                c = *s++;
+                win_x_fputc(c, stream);
             } else
                 break;
         }
-//      f_r_e_a_d(out, __size, __n, __stream);
-//      p_r_i_n_t_f("test2 %s", out);
-        return (int)(i/__size);
+//      win_x_fread(out, size, n, stream);
+//      win_x_printf("test2 %s", out);
+        return (int)(i/size);
     }
-//  p_r_i_n_t_f("test3 %s\n", __ptr);
-    return fwrite( __ptr, __size, __n, __stream);
+//  win_x_printf("test3 %s\n", ptr);
+    return fwrite( ptr, size, n, stream);
 }
 
-char * g_e_t_s(char * __s)
+char * win_x_gets(char * s)
 {
-    return fg_e_t_s( __s, 10000, stdin);
+    return win_x_fgets( s, 10000, stdin);
 }
 
-void p_e_r_r_o_r(const char * __s)
+void win_x_perror(const char * s)
 {
     const char * cp;
 //  char s [IOBufSize];
     cp = strerror(errno);
-    fp_r_i_n_t_f(stderr, "%s: %s\n", __s, cp);
+    win_x_fprintf(stderr, "%s: %s\n", s, cp);
     /* output to message box 
-    sprintf(s, "%s: %s\n", __s, cp);
+    sprintf(s, "%s: %s\n", s, cp);
     if (!flogp) winmessage(s);*/
 }
 
-int p_r_i_n_t_f(const char * __format, ...)
+int win_x_printf(const char * format, ...)
 {
     int result;
     char s [IOBufSize];
     va_list args;
-    va_start(args, __format);
+    va_start(args, format);
 
     s[0] = SE;
-    result = vsprintf( s, __format, args);
-    fp_u_t_s( s, stdout);
+    result = vsprintf( s, format, args);
+    win_x_fputs( s, stdout);
     va_end(args);
     return result;
 }
 
-int p_u_t_s(const char * __s)
+int win_x_puts(const char * s)
 {
-    return fp_u_t_s( __s, stdout);
+    return win_x_fputs( s, stdout);
 }
 
-int s_c_a_n_f(const char * __format, ...)
+int win_x_scanf(const char * format, ...)
 {
-    NG_IGNORE(__format);
+    NG_IGNORE(format);
     assert( FALSE);
     return FALSE;
 }
 
-int ung_e_t_c(int __c, FILE * __stream)
+int win_x_ungetc(int c, FILE * stream)
 {
-    NG_IGNORE(__c);
-    NG_IGNORE(__stream);
+    NG_IGNORE(c);
+    NG_IGNORE(stream);
     assert( FALSE);
     return FALSE;
 }
 
-int vfp_r_i_n_t_f(FILE * __stream, const char * __format, void * __arglist)
+int win_x_vfprintf(FILE * stream, const char * format, void * arglist)
 {
     int result;
     char s [IOBufSize];
 
     s[0] = SE;
-//  if (((__stream == stdout) && !flogp) || (__stream == stderr)) {
-    if ((__stream == stdout) || (__stream == stderr)) {
+//  if (((stream == stdout) && !flogp) || (stream == stderr)) {
+    if ((stream == stdout) || (stream == stderr)) {
 
-        result = vsprintf( s, __format, __arglist);
-        fp_u_t_s( s, stdout);
+        result = vsprintf( s, format, arglist);
+        win_x_fputs( s, stdout);
     } else
-        result = vfprintf( __stream, __format, __arglist);
+        result = vfprintf( stream, format, arglist);
     return result;
 }
 
-/*int vfs_c_a_n_f(FILE * __stream, const char * __format, void * __arglist)
+/*int win_x_vfscanf(FILE * stream, const char * format, void * arglist)
 {
-    if (__stream == stdin) {
+    if (stream == stdin) {
         assert(FALSE);
         return 0;
     }
-    return vfscanf( __stream, __format, __arglist);
+    return vfscanf( stream, format, arglist);
 }
 */
-int vp_r_i_n_t_f(const char * __format, void * __arglist)
+int win_x_vprintf(const char * format, void * arglist)
 {
     int result;
     char s [IOBufSize];
 
     s[0] = SE;
-    result = vsprintf( s, __format, __arglist);
-    fp_u_t_s( s, stdout);
+    result = vsprintf( s, format, arglist);
+    win_x_fputs( s, stdout);
     return result;
 }
 
-/*int vs_c_a_n_f(const char * __format, void * __arglist)
+/*int win_x_vscanf(const char * format, void * arglist)
 {
     assert( FALSE);
     return FALSE;
 } */
 
-int r_e_a_d(int fd, char * __buf, int __n)
+int win_x_read(int fd, char * buf, int n)
 {
     if (fd == 0) {
         int i = 0;
         int c;
         char s [IOBufSize];
-        while ( i < __n ) {
+        while ( i < n ) {
             c = w_getch();
             if (c == LF) {
 //              s[i++] = LF;
@@ -1270,54 +1270,54 @@ int r_e_a_d(int fd, char * __buf, int __n)
                 s[i++] = (char)c;
         }
 //      s[i] = SE;
-        __buf = &s[0];
+        buf = &s[0];
         return (i);
     } 
     else {
-       return _read(fd, __buf, __n);
+       return _read(fd, buf, n);
     }
 }
-int g_e_t_c(FILE * __fp)
+int win_x_getc(FILE * fp)
 {
-    return fg_e_t_c( __fp);
+    return win_x_fgetc( fp);
 }
 
-int g_e_t_char(void)
+int win_x_getchar(void)
 {
-    return fg_e_t_c( stdin);
+    return win_x_fgetc( stdin);
 }
 
-int p_u_t_char(const int __c)
+int win_x_putchar(const int c)
 {
-    return fp_u_t_c( __c, stdout);
+    return win_x_fputc( c, stdout);
 }
 
-int p_u_t_c(const int __c, FILE * __fp)
+int win_x_putc(const int c, FILE * fp)
 {
-    return fp_u_t_c( __c, __fp);
+    return win_x_fputc( c, fp);
 }
 
-int f_e_o_f(FILE * __fp)
+int win_x_feof(FILE * fp)
 {
-    if ((__fp == stdin) || (__fp == stdout) || (__fp == stderr)) {
+    if ((fp == stdin) || (fp == stdout) || (fp == stderr)) {
         assert(FALSE);
         return 0;
     }
-    return feof( __fp);
+    return feof( fp);
 }
 
-int f_e_r_r_o_r(FILE * __fp)
+int win_x_ferror(FILE * fp)
 {
-    if ((__fp == stdin) || (__fp == stdout) || (__fp == stderr)) {
+    if ((fp == stdin) || (fp == stdout) || (fp == stderr)) {
         assert(FALSE);
         return 0;
     }
-    return ferror( __fp);
+    return ferror( fp);
 }
 
-int fp_u_t_char(int __c)
+int win_x_fputchar(int c)
 {
-    return fp_u_t_c( __c, stdout);
+    return win_x_fputc( c, stdout);
 }
 
 // --------------------------<Verfuegbarer Speicher>----------------------------

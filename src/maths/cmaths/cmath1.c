@@ -25,7 +25,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "cmath1.h"
 
 #ifdef HAS_WINGUI
-#define fp_r_i_n_t_f fprintf
+#define win_x_fprintf fprintf
 #endif
 
 /* This flag determines whether degrees or radians are used. The radtodeg
