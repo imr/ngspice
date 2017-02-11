@@ -14,13 +14,6 @@ Author: 1988 Jeffrey M. Hsu
 #include "input.h"
 #include "ngspice/cpextern.h"
 #include "../display.h"
-#ifdef _MSC_VER
-#include "BaseTsd.h" /* for SSIZE_T */
-#define ssize_t SSIZE_T
-#ifndef HAS_WINGUI
-#define read _read /* only for console */
-#endif
-#endif
 
 
 /* A special 'getc' so that we can deal with ^D properly. There is no way for
@@ -32,7 +25,7 @@ int
 inchar(FILE *fp)
 {
 
-#ifndef HAS_WINGUI
+#if !(defined(HAS_WINGUI) || defined(_MSC_VER) && defined(CONSOLE))
     if (cp_interactive && !cp_nocc) {
         char c;
         ssize_t i;
