@@ -131,7 +131,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     /* Set up the file header. */
-#if !defined(__MINGW__) && !defined(_MSC_VER)
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
     fprintf(file, "set terminal X11 noenhanced\n");
 #else
     fprintf(file, "set termoption noenhanced\n");
