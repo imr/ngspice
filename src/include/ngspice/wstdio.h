@@ -44,18 +44,6 @@ int    win_x_vfprintf(FILE *stream, const char *format, void *arglist);
 int    win_x_vprintf(const char *format, void *arglist);
 /* int    win_x_vscanf(const char *format, void *arglist); */
 
-#ifdef _MSC_VER
-#if _MSC_VER < 1500
-/* VC++ 6.0, VC++ 2005 */
-_CRTIMP int __cdecl read(int fd,  void *buf, unsigned int n);
-#else
-/* VC++ 2008 */
-_CRTIMP int __cdecl read(int fd, _Out_bytecap_(_MaxCharCount) void *buf, _In_ unsigned int n);
-#endif
-#else
-int    win_x_read(int fd, char *buf, int n);
-#endif
-
 int    win_x_getc(FILE *fp);
 int    win_x_getchar(void);
 int    win_x_putchar(const int c);

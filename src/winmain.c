@@ -1408,32 +1408,6 @@ win_x_vscanf(const char *format, void *arglist)
 
 
 int
-win_x_read(int fd, char *buf, int n)
-{
-    if (fd == 0) {
-        int i = 0;
-        int c;
-        char s[IOBufSize];
-        while (i < n) {
-            c = w_getch();
-            if (c == LF) {
-//              s[i++] = LF;
-                break;
-            }
-            if (c != CR)
-                s[i++] = (char)c;
-        }
-//      s[i] = SE;
-        buf = &s[0];
-        return i;
-    }
-    else {
-        return _read(fd, buf, n);
-    }
-}
-
-
-int
 win_x_getc(FILE *fp)
 {
     return win_x_fgetc(fp);
