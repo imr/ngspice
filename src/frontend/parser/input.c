@@ -25,7 +25,7 @@ int
 inchar(FILE *fp)
 {
 
-#if !(defined(HAS_WINGUI) || defined(_MSC_VER))
+#if !(defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__))
     if (cp_interactive && !cp_nocc) {
         char c;
         ssize_t i;
