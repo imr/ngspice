@@ -423,6 +423,14 @@ tesCreateSystemInfo(TesSystemInfo *info)
             versionStr = "Windows Vista";
         else if (minor == 1)
             versionStr = "Windows 7";
+        else if (minor == 2)
+            versionStr = "Windows 8";
+        else if (minor == 3)
+            versionStr = "Windows 8.1";
+        break;
+    case 10:
+        if (minor == 0)
+            versionStr = "Windows 10";
         break;
     default:
         break;
