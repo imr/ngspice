@@ -21,15 +21,10 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-#ifdef __MINGW32__  /* access to GlobalMemoryStatusEx in winbase.h:1558 */
-#define WINVER 0x0500
-#endif
-
 #undef BOOLEAN
 #include "windows.h"
-#if defined(__MINGW32__) || (_MSC_VER > 1200) /* Exclude VC++ 6.0 from using the psapi */
 #include <psapi.h>
-#endif
+
 #endif
 
 #include "stdio.h"
