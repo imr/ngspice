@@ -13,6 +13,8 @@
 #include "ngspice/carddefs.h"
 #include "ngspice/bool.h"
 #include "ngspice/complex.h"
+
+#define BOOLEAN int
  
 /* oneadmit.c */
 extern int NUMDadmittance(ONEdevice *, double, SPcomplex *);

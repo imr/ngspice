@@ -121,6 +121,7 @@ double MuLim, MutLim;
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
  */
+#define BOOLEAN int
 BOOLEAN ONEacDebug   = FALSE;
 BOOLEAN ONEdcDebug   = TRUE;
 BOOLEAN ONEtranDebug = TRUE;

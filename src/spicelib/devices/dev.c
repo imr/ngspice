@@ -44,7 +44,6 @@
 #include <dlfcn.h> /* to load libraries*/
 typedef void *  funptr_t;
 #else /* ifdef HAS_WINGUI */
-#undef BOOLEAN
 #include <windows.h>
 typedef FARPROC funptr_t;
 void *dlopen (const char *, int);

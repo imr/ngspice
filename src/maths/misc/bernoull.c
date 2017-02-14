@@ -19,7 +19,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
  */
 
 void bernoulli (double x, double *pfx, double *pDfxDx, double *pfMx, 
-                double *pDfMxDx, BOOLEAN derivAlso)
+                double *pDfMxDx, bool derivAlso)
 {
     double fx, fMx; 
     double dFxDx = 0.0; 

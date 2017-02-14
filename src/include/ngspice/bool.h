@@ -6,7 +6,6 @@ typedef int bool;
 
 typedef int BOOL ;
 
-#define BOOLEAN int
 #define TRUE  1
 #define FALSE 0
 #define NO    0

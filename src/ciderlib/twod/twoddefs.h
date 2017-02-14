@@ -7,6 +7,8 @@
 
 /* Debug statements */
 
+#define BOOLEAN int
+
 extern BOOLEAN TWOacDebug;
 extern BOOLEAN TWOdcDebug;
 extern BOOLEAN TWOtranDebug;

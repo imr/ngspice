@@ -21,7 +21,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-#undef BOOLEAN
 #include "windows.h"
 #include <psapi.h>
 

@@ -12,6 +12,8 @@
 #include "ngspice/gendev.h"
 #include "ngspice/profile.h"
 
+#define BOOLEAN int
+
 /* externals for database.c */
 extern struct plot* DBread( char *);
 extern double *DBgetData( struct plot *, char *, int );

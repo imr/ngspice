@@ -12,7 +12,6 @@ Modified: 2002 R. Oktas, <roktas@omu.edu.tr>
 #endif
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
-#undef BOOLEAN
 #include <windows.h> /* win32 functions */
 #include "shlobj.h"  /* SHGetFolderPath */
 #endif
