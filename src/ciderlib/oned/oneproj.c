@@ -220,7 +220,7 @@ NBJTproject(ONEdevice *pDevice, double delVce, double delVbe,
 /* functions to update device states for full-LU algorithm */
 
 void 
-NUMDupdate(ONEdevice *pDevice, double delV, BOOLEAN updateBoundary)
+NUMDupdate(ONEdevice *pDevice, double delV, bool updateBoundary)
 {
   ONEelem *pElem = pDevice->elemArray[pDevice->numNodes - 1];
   ONEnode *pNode;
@@ -254,7 +254,7 @@ NUMDupdate(ONEdevice *pDevice, double delV, BOOLEAN updateBoundary)
 
 void 
 NBJTupdate(ONEdevice *pDevice, double delVce, double delVbe, 
-           double vbe, BOOLEAN updateBoundary)
+           double vbe, bool updateBoundary)
 {
   ONEelem *pLastElem = pDevice->elemArray[pDevice->numNodes - 1];
   ONEelem *pBaseElem = pDevice->elemArray[pDevice->baseIndex - 1];

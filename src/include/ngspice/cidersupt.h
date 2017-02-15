@@ -12,8 +12,6 @@
 #include "ngspice/gendev.h"
 #include "ngspice/profile.h"
 
-#define BOOLEAN int
-
 /* externals for database.c */
 extern struct plot* DBread( char *);
 extern double *DBgetData( struct plot *, char *, int );
@@ -84,8 +82,8 @@ extern void SUPascRead( char *, float *, float *, int *, int * );
 /* externals for misc.c */
 extern double guessNewConc(double , double );
 extern double lookup(double **, double );
-extern BOOLEAN hasSORConverged(double *, double *, int);
-extern BOOLEAN foundError(int );
+extern bool hasSORConverged(double *, double *, int);
+extern bool foundError(int );
 
 
 

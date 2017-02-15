@@ -27,17 +27,17 @@ extern IFfrontEnd *SPfrontEnd;
 
 /* the iteration driving loop and convergence check */
 void
-TWOdcSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN newSolver, 
-           BOOLEAN tranAnalysis, TWOtranInfo *info)
+TWOdcSolve(TWOdevice *pDevice, int iterationLimit, bool newSolver, 
+           bool tranAnalysis, TWOtranInfo *info)
 {
   TWOnode *pNode;
   TWOelem *pElem;
   int size = pDevice->numEqns;
   int index, eIndex, error;
   int timesConverged = 0;
-  BOOLEAN quitLoop;
-  BOOLEAN debug;
-  BOOLEAN negConc = FALSE;
+  bool quitLoop;
+  bool debug;
+  bool negConc = FALSE;
   double *rhs = pDevice->rhs;
   double *solution = pDevice->dcSolution;
   double *delta = pDevice->dcDeltaSolution;
@@ -283,12 +283,12 @@ TWOdcSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN newSolver,
   }
 }
 
-BOOLEAN
+bool
 TWOdeltaConverged(TWOdevice *pDevice)
 {
   /* This function returns a TRUE if converged else a FALSE. */
   int index;
-  BOOLEAN converged = TRUE;
+  bool converged = TRUE;
   double xOld, xNew, tol;
 
   for (index = 1; index <= pDevice->numEqns; index++) {
@@ -303,11 +303,11 @@ TWOdeltaConverged(TWOdevice *pDevice)
   return (converged);
 }
 
-BOOLEAN
+bool
 TWOdeviceConverged(TWOdevice *pDevice)
 {
   int index, eIndex;
-  BOOLEAN converged = TRUE;
+  bool converged = TRUE;
   double *solution = pDevice->dcSolution;
   TWOnode *pNode;
   TWOelem *pElem;
@@ -434,7 +434,7 @@ TWOstoreNeutralGuess(TWOdevice *pDevice)
 void
 TWOequilSolve(TWOdevice *pDevice)
 {
-  BOOLEAN newSolver = FALSE;
+  bool newSolver = FALSE;
   int error;
   int nIndex, eIndex;
   TWOelem *pElem;
@@ -515,10 +515,10 @@ TWOequilSolve(TWOdevice *pDevice)
 /* compute the solution under an applied bias */
 /* the equilibrium solution is taken as an initial guess */
 void
-TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis, 
+TWObiasSolve(TWOdevice *pDevice, int iterationLimit, bool tranAnalysis, 
              TWOtranInfo *info)
 {
-  BOOLEAN newSolver = FALSE;
+  bool newSolver = FALSE;
   int error;
   int index, eIndex;
   TWOelem *pElem;
@@ -730,11 +730,11 @@ TWOstoreInitialGuess(TWOdevice *pDevice)
  */
 
 void
-oldTWOnewDelta(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+oldTWOnewDelta(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   int index;
   double newNorm, fib, lambda, fibn, fibp;
-  BOOLEAN acceptable = FALSE;
+  bool acceptable = FALSE;
   lambda = 1.0;
   fibn = 1.0;
   fibp = 1.0;
@@ -802,12 +802,12 @@ oldTWOnewDelta(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
 
 
 int
-TWOnewDelta(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+TWOnewDelta(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   int index, iterNum = 0;
   double newNorm;
   double fib, lambda, fibn, fibp;
-  BOOLEAN acceptable = FALSE, error = FALSE;
+  bool acceptable = FALSE, error = FALSE;
 
   lambda = 1.0;
   fibn = 1.0;
@@ -1034,7 +1034,7 @@ TWOsaveState(TWOdevice *pDevice)
  * Fermi levels. This should be better since we are looking at potentials in
  * all (psi, phin, phip)
  */
-BOOLEAN
+bool
 TWOpsiDeltaConverged(TWOdevice *pDevice)
 {
   int index, nIndex, eIndex;
@@ -1043,7 +1043,7 @@ TWOpsiDeltaConverged(TWOdevice *pDevice)
   double xOld, xNew, xDelta, tol;
   double psi, newPsi, nConc, pConc, newN, newP;
   double phiN, phiP, newPhiN, newPhiP;
-  BOOLEAN converged = TRUE;
+  bool converged = TRUE;
 
   /* equilibrium solution */
   if (pDevice->poissonOnly) {
@@ -1138,7 +1138,7 @@ TWOnuNorm(TWOdevice *pDevice)
  * models are being incorporated.
  */
 void
-TWOjacCheck(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+TWOjacCheck(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   int index, rIndex;
   double del, diff, tol, *dptr;

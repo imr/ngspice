@@ -237,7 +237,7 @@ void
  */
 
 void 
-  TWOPsysLoad(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+  TWOPsysLoad(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   TWOelem *pElem;
   TWOnode *pNode;
@@ -548,7 +548,7 @@ void
 
 /* load only the Rhs vector */
 void 
-  TWOPrhsLoad(TWOdevice *pDevice, BOOLEAN tranAnalysis, TWOtranInfo *info)
+  TWOPrhsLoad(TWOdevice *pDevice, bool tranAnalysis, TWOtranInfo *info)
 {
   TWOelem *pElem;
   TWOnode *pNode;
@@ -664,8 +664,8 @@ void
  *  mobilities and their derivatives
  */
 void 
-  TWOPcommonTerms(TWOdevice *pDevice, BOOLEAN currentOnly, 
-                  BOOLEAN tranAnalysis, TWOtranInfo *info)
+  TWOPcommonTerms(TWOdevice *pDevice, bool currentOnly, 
+                  bool tranAnalysis, TWOtranInfo *info)
 {
   TWOelem *pElem;
   TWOedge *pEdge;

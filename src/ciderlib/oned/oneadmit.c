@@ -42,7 +42,7 @@ NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
   double *solutionReal, *solutionImag;
   SPcomplex yAc, cOmega;
   SPcomplex *y;
-  BOOLEAN SORFailed;
+  bool SORFailed;
   double startTime;
 
 
@@ -167,7 +167,7 @@ NBJTadmittance(ONEdevice *pDevice, double omega, SPcomplex *yIeVce,
   int index, i;
   double area = pDevice->area;
   double *solutionReal, *solutionImag;
-  BOOLEAN SORFailed;
+  bool SORFailed;
   SPcomplex *y;
   SPcomplex cOmega, pIeVce, pIcVce, pIeVbe, pIcVbe;
   double startTime;
@@ -372,7 +372,7 @@ NBJTadmittance(ONEdevice *pDevice, double omega, SPcomplex *yIeVce,
   return (AcAnalysisMethod);
 }
 
-BOOLEAN
+bool
 ONEsorSolve(ONEdevice *pDevice, double *xReal, double *xImag, double omega)
 {
   ONEnode *pNode;
@@ -381,8 +381,8 @@ ONEsorSolve(ONEdevice *pDevice, double *xReal, double *xImag, double omega)
   double *rhsSOR = pDevice->rhsImag;
   int numEqns = pDevice->numEqns;
   int numNodes = pDevice->numNodes;
-  BOOLEAN SORConverged = FALSE;
-  BOOLEAN SORFailed = FALSE;
+  bool SORConverged = FALSE;
+  bool SORFailed = FALSE;
   int i, index, indexN, indexP, iterationNum;
   double dx;
 
@@ -649,7 +649,7 @@ NBJTys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yIeVce,
 /* cOmega is the complex frequency */
 
 SPcomplex *
-computeAdmittance(ONEnode *pNode, BOOLEAN delVContact, double *xReal, 
+computeAdmittance(ONEnode *pNode, bool delVContact, double *xReal, 
                   double *xImag, SPcomplex *cOmega)
 {
   ONEnode *pHNode;

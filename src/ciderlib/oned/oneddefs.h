@@ -7,10 +7,10 @@
 
 /* Debug statements */
 
-extern BOOLEAN ONEacDebug;
-extern BOOLEAN ONEdcDebug;
-extern BOOLEAN ONEtranDebug;
-extern BOOLEAN ONEjacDebug;
+extern bool ONEacDebug;
+extern bool ONEdcDebug;
+extern bool ONEtranDebug;
+extern bool ONEjacDebug;
 
 /* Now some defines for the one dimensional simulator
  * library.

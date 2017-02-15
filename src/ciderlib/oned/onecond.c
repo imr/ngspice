@@ -17,7 +17,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "oneddefs.h"
 
 void
-NUMDconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis, 
+NUMDconductance(ONEdevice *pDevice, bool tranAnalysis, 
                 double *intCoeff, double *gd)
 {
   ONEelem *pElem = pDevice->elemArray[pDevice->numNodes - 1];
@@ -63,7 +63,7 @@ NUMDconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis,
 }
 
 void
-NBJTconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff,
+NBJTconductance(ONEdevice *pDevice, bool tranAnalysis, double *intCoeff,
     double *dIeDVce, double *dIcDVce, double *dIeDVbe, double *dIcDVbe)
 {
   ONEelem *pLastElem = pDevice->elemArray[pDevice->numNodes - 1];
@@ -165,7 +165,7 @@ NBJTconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff,
 }
 
 void
-NUMDcurrent(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff, 
+NUMDcurrent(ONEdevice *pDevice, bool tranAnalysis, double *intCoeff, 
             double *id)
 {
   ONEnode *pNode;
@@ -195,7 +195,7 @@ NUMDcurrent(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff,
 }
 
 void
-NBJTcurrent(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff, 
+NBJTcurrent(ONEdevice *pDevice, bool tranAnalysis, double *intCoeff, 
             double *ie, double *ic)
 {
   ONEnode *pNode;

@@ -399,7 +399,7 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
    modified two-level Newton methods
    */
 
-void NUMD2update(TWOdevice *pDevice, double delV, BOOLEAN updateBoundary)
+void NUMD2update(TWOdevice *pDevice, double delV, bool updateBoundary)
 {
   TWOnode *pNode;
   TWOelem *pElem;
@@ -447,7 +447,7 @@ void NUMD2update(TWOdevice *pDevice, double delV, BOOLEAN updateBoundary)
 
 
 void NBJT2update(TWOdevice *pDevice, double delVce, double delVbe, 
-                 BOOLEAN updateBoundary)
+                 bool updateBoundary)
 {
   TWOnode *pNode;
   TWOelem *pElem;
@@ -513,7 +513,7 @@ void NBJT2update(TWOdevice *pDevice, double delVce, double delVbe,
 
 
 void NUMOSupdate(TWOdevice *pDevice, double delVdb, double delVsb, 
-                 double delVgb, BOOLEAN updateBoundary)
+                 double delVgb, bool updateBoundary)
 {
   TWOnode *pNode;
   TWOelem *pElem;

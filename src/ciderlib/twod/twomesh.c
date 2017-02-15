@@ -34,7 +34,7 @@ TWObuildMesh(TWOdevice *pDevice, TWOdomain *pDomain,
   TWOdomain *pD;
   TWOelectrode *pE;
   TWOmaterial *pM;
-  BOOLEAN interiorNode;
+  bool interiorNode;
   int poiEqn, numEqn, numElem, numNodes, numEdges;
   int numXNodes = pDevice->numXNodes;
   int numYNodes = pDevice->numYNodes;

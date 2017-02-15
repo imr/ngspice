@@ -178,7 +178,7 @@ TWOsetDoping(TWOdevice *pDevice, DOPprofile *pProfile, DOPtable *pTable)
   DOPprofile *pP;
   double conc;
   int index, eIndex;
-  BOOLEAN dopeMe;
+  bool dopeMe;
 
   /* Clear doping info for all nodes. */
   for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {

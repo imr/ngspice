@@ -121,16 +121,15 @@ double MuLim, MutLim;
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
  */
-#define BOOLEAN int
-BOOLEAN ONEacDebug   = FALSE;
-BOOLEAN ONEdcDebug   = TRUE;
-BOOLEAN ONEtranDebug = TRUE;
-BOOLEAN ONEjacDebug  = FALSE;
+bool ONEacDebug   = FALSE;
+bool ONEdcDebug   = TRUE;
+bool ONEtranDebug = TRUE;
+bool ONEjacDebug  = FALSE;
 
-BOOLEAN TWOacDebug   = FALSE;
-BOOLEAN TWOdcDebug   = TRUE;
-BOOLEAN TWOtranDebug = TRUE;
-BOOLEAN TWOjacDebug  = FALSE;
+bool TWOacDebug   = FALSE;
+bool TWOdcDebug   = TRUE;
+bool TWOtranDebug = TRUE;
+bool TWOjacDebug  = FALSE;
 
 /* CIDER Global Variable Declarations */
 

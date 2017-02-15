@@ -14,17 +14,15 @@
 #include "ngspice/bool.h"
 #include "ngspice/complex.h"
 
-#define BOOLEAN int
- 
 /* twoadmit.c */
 extern int NUMD2admittance(TWOdevice *, double, SPcomplex *);
 extern int NBJT2admittance(TWOdevice *, double, SPcomplex *,
                           SPcomplex *, SPcomplex *, SPcomplex *);
 extern int NUMOSadmittance(TWOdevice *, double, struct mosAdmittances *);
-extern BOOLEAN TWOsorSolve(TWOdevice *, double *, double  *, double);
-extern SPcomplex *contactAdmittance(TWOdevice *, TWOcontact *, BOOLEAN,
+extern bool TWOsorSolve(TWOdevice *, double *, double  *, double);
+extern SPcomplex *contactAdmittance(TWOdevice *, TWOcontact *, bool,
                                     double *, double *, SPcomplex *);
-extern SPcomplex *oxideAdmittance(TWOdevice *, TWOcontact *,BOOLEAN, 
+extern SPcomplex *oxideAdmittance(TWOdevice *, TWOcontact *,bool, 
                                   double *, double *, SPcomplex *);				    
 				    
 extern void NUMD2ys(TWOdevice *, SPcomplex *, SPcomplex *);
@@ -36,29 +34,29 @@ extern void NUMOSys(TWOdevice *, SPcomplex *, struct mosAdmittances *);
 extern double TWOavalanche(TWOelem *, TWOnode *);
 
 /* twocond.c */
-extern void NUMD2conductance(TWOdevice *, BOOLEAN, double *, double *);
-extern void NBJT2conductance(TWOdevice *, BOOLEAN, double *, double *, 
+extern void NUMD2conductance(TWOdevice *, bool, double *, double *);
+extern void NBJT2conductance(TWOdevice *, bool, double *, double *, 
                              double *, double *, double *);
-extern void NUMOSconductance(TWOdevice *, BOOLEAN, double *, 
+extern void NUMOSconductance(TWOdevice *, bool, double *, 
                              struct mosConductances *);
 extern double contactCurrent(TWOdevice *, TWOcontact *);
-extern double oxideCurrent(TWOdevice *, TWOcontact *, BOOLEAN);	
-extern double contactConductance(TWOdevice *, TWOcontact *, BOOLEAN,
-			                     double *, BOOLEAN, double *);
-extern double oxideConductance(TWOdevice *, TWOcontact *, BOOLEAN, 
-			double *, BOOLEAN, double *);		     			     
-extern void NUMD2current(TWOdevice *, BOOLEAN, double *, double *);
-extern void NBJT2current(TWOdevice *, BOOLEAN, double *, double *, 
+extern double oxideCurrent(TWOdevice *, TWOcontact *, bool);	
+extern double contactConductance(TWOdevice *, TWOcontact *, bool,
+			                     double *, bool, double *);
+extern double oxideConductance(TWOdevice *, TWOcontact *, bool, 
+			double *, bool, double *);		     			     
+extern void NUMD2current(TWOdevice *, bool, double *, double *);
+extern void NBJT2current(TWOdevice *, bool, double *, double *, 
                         double *);
-extern void NUMOScurrent(TWOdevice *, BOOLEAN , double *, double *, double *, 
+extern void NUMOScurrent(TWOdevice *, bool , double *, double *, double *, 
                          double *);		
 
 /* twocont */
 extern void TWO_jacBuild(TWOdevice *);
-extern void TWO_sysLoad(TWOdevice *, BOOLEAN, TWOtranInfo *);
+extern void TWO_sysLoad(TWOdevice *, bool, TWOtranInfo *);
 extern void TWO_jacLoad(TWOdevice *);
-extern void TWO_rhsLoad(TWOdevice *, BOOLEAN, TWOtranInfo *);
-extern void TWO_commonTerms(TWOdevice *, BOOLEAN, BOOLEAN, TWOtranInfo *);
+extern void TWO_rhsLoad(TWOdevice *, bool, TWOtranInfo *);
+extern void TWO_commonTerms(TWOdevice *, bool, bool, TWOtranInfo *);
 
 /* twocurr.c */
 extern void nodeCurrents(TWOelem *, TWOnode *, double *, double *,
@@ -103,17 +101,17 @@ extern void TWOPmobility(TWOelem *, double);
 
 /* twoncont.c */
 extern void TWONjacBuild(TWOdevice *);
-extern void TWONsysLoad(TWOdevice *, BOOLEAN, TWOtranInfo *);
+extern void TWONsysLoad(TWOdevice *, bool, TWOtranInfo *);
 extern void TWONjacLoad(TWOdevice *);
-extern void TWONrhsLoad(TWOdevice *, BOOLEAN, TWOtranInfo *);
-extern void TWONcommonTerms(TWOdevice *, BOOLEAN, BOOLEAN, TWOtranInfo *);
+extern void TWONrhsLoad(TWOdevice *, bool, TWOtranInfo *);
+extern void TWONcommonTerms(TWOdevice *, bool, bool, TWOtranInfo *);
 
 /* twopcont.c */
 extern void TWOPjacBuild(TWOdevice *);
-extern void TWOPsysLoad(TWOdevice *, BOOLEAN, TWOtranInfo *);
+extern void TWOPsysLoad(TWOdevice *, bool, TWOtranInfo *);
 extern void TWOPjacLoad(TWOdevice *);
-extern void TWOPrhsLoad(TWOdevice *, BOOLEAN, TWOtranInfo *);
-extern void TWOPcommonTerms(TWOdevice *, BOOLEAN, BOOLEAN, TWOtranInfo *);
+extern void TWOPrhsLoad(TWOdevice *, bool, TWOtranInfo *);
+extern void TWOPcommonTerms(TWOdevice *, bool, bool, TWOtranInfo *);
 
 /* twopoiss.c */
 extern void TWOQjacBuild(TWOdevice *);
@@ -131,9 +129,9 @@ extern void TWOcpuStats(FILE *, TWOdevice *);
 extern void NUMD2project(TWOdevice *, double);
 extern void NBJT2project(TWOdevice *, double, double);
 extern void NUMOSproject(TWOdevice *, double, double, double);
-extern void NUMD2update(TWOdevice *,double, BOOLEAN);
-extern void NBJT2update(TWOdevice *, double, double, BOOLEAN);
-extern void NUMOSupdate(TWOdevice *, double, double, double, BOOLEAN);
+extern void NUMD2update(TWOdevice *,double, bool);
+extern void NBJT2update(TWOdevice *, double, double, bool);
+extern void NUMOSupdate(TWOdevice *, double, double, double, bool);
 extern void storeNewRhs(TWOdevice *, TWOcontact *);
 
 /* tworead.c */
@@ -150,22 +148,22 @@ extern void TWOsetBCparams(TWOdevice *, BDRYcard *);
 extern void TWOnormalize(TWOdevice *);
 
 /* twosolve.c */
-extern void TWOdcSolve(TWOdevice *, int, BOOLEAN, BOOLEAN, TWOtranInfo *);
-extern BOOLEAN TWOdeltaConverged(TWOdevice *);
-extern BOOLEAN TWOdeviceConverged(TWOdevice *);
+extern void TWOdcSolve(TWOdevice *, int, bool, bool, TWOtranInfo *);
+extern bool TWOdeltaConverged(TWOdevice *);
+extern bool TWOdeviceConverged(TWOdevice *);
 extern void TWOresetJacobian(TWOdevice *);
 extern void TWOstoreNeutralGuess(TWOdevice *);
 extern void TWOequilSolve(TWOdevice *);
-extern void TWObiasSolve(TWOdevice *, int, BOOLEAN, TWOtranInfo *);
+extern void TWObiasSolve(TWOdevice *, int, bool, TWOtranInfo *);
 extern void TWOstoreEquilibGuess(TWOdevice *);
 extern void TWOstoreInitialGuess(TWOdevice *);
-extern void oldTWOnewDelta(TWOdevice *, BOOLEAN, TWOtranInfo *);
-extern int TWOnewDelta(TWOdevice *, BOOLEAN, TWOtranInfo *);
+extern void oldTWOnewDelta(TWOdevice *, bool, TWOtranInfo *);
+extern int TWOnewDelta(TWOdevice *, bool, TWOtranInfo *);
 extern void TWOpredict(TWOdevice *, TWOtranInfo *);
 extern double TWOtrunc(TWOdevice *, TWOtranInfo *, double);
 extern void TWOsaveState(TWOdevice *);
-extern BOOLEAN TWOpsiDeltaConverged(TWOdevice *);
+extern bool TWOpsiDeltaConverged(TWOdevice *);
 extern double TWOnuNorm(TWOdevice *);
-extern void TWOjacCheck(TWOdevice *, BOOLEAN, TWOtranInfo *);
+extern void TWOjacCheck(TWOdevice *, bool, TWOtranInfo *);
 
 #endif
