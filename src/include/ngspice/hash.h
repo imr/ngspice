@@ -321,10 +321,10 @@ Function:
     Returns the table size to the closest power of 2.
 */
 
-extern void *_nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status) ;
+extern void *_nghash_find(NGHASHPTR hashtable, void * user_key, bool *status) ;
 extern void *nghash_find(NGHASHPTR hashtable, void * user_key) ;
 extern void *nghash_find_again(NGHASHPTR hashtable, void * user_key) ;
-extern void *_nghash_find_again(NGHASHPTR hashtable, void * user_key,BOOL *status) ;
+extern void *_nghash_find_again(NGHASHPTR hashtable, void * user_key, bool *status) ;
 extern void *nghash_delete(NGHASHPTR hashtable, void * user_key) ;
 extern void *nghash_insert(NGHASHPTR hashtable, void * user_key, void * data) ;
 /*
@@ -415,7 +415,7 @@ Function:
     }
 */
 
-extern void *nghash_enumeratek(NGHASHPTR hashtable,void **key_ret,BOOL flag) ;
+extern void *nghash_enumeratek(NGHASHPTR hashtable,void **key_ret, bool flag) ;
 /*
 Function:
     Since this is a threaded hash table, we can enumerate the elements of
@@ -446,7 +446,7 @@ Function:
    }
 */
 
-extern void *nghash_enumerate(NGHASHPTR hashtable,BOOL flag) ;
+extern void *nghash_enumerate(NGHASHPTR hashtable, bool flag) ;
 /*
 Function:
     Like above but we don't return the key.
@@ -463,7 +463,7 @@ Function:
 
 */
 
-extern BOOL nghash_deleteItem( NGHASHPTR  hashtable, void *key, void *data ) ;
+extern bool nghash_deleteItem( NGHASHPTR  hashtable, void *key, void *data ) ;
 /*
 Function:
     Delete a specific item in the hash table.  Returns true if the item was

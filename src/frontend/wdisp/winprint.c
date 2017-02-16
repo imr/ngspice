@@ -85,7 +85,7 @@ void WPRINT_PrintInit(HWND hwnd)
 }
 
 /* Abort-Procedur zum Drucken */
-BOOL CALLBACK WPRINT_Abort( HDC hdc, int iError)
+bool CALLBACK WPRINT_Abort( HDC hdc, int iError)
 {
     NG_IGNORE(hdc);
     NG_IGNORE(iError);

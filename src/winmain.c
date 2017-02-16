@@ -26,7 +26,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
-#include "ngspice/bool.h"   /* bool defined as unsigned char */
+#include "ngspice/bool.h"
 #include "misc/misc_time.h" /* timediff */
 
 /* Constants */
@@ -86,7 +86,7 @@ static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
 static int RowHeight = 16;             /* Height of line of text */
 static int LineHeight = 25;            /* Height of input line */
 static int VisibleRows = 10;           /* Number of visible lines in text window */
-static BOOL DoUpdate = FALSE;          /* Update text window */
+static bool DoUpdate = FALSE;          /* Update text window */
 static WNDPROC swProc = NULL;          /* original string window procedure */
 static WNDPROC twProc = NULL;          /* original text window procedure */
 static SBufLine HistBuffer[HistSize];  /* History buffer for string window */

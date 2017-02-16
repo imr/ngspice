@@ -40,8 +40,8 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR hhtable,void *user_key,void *data)
 NGHASHPTR nghash_init_with_parms(nghash_compare_func_t *comp_func, nghash_func_t *hash_func, int num, 
                                  int max, double growth, NGHASHFLAGS_T flags)
 {
-    BOOL unique ;			/* entries are to be unique */
-    BOOL power_of_two ;			/* want hash table power of 2 */
+    bool unique ;			/* entries are to be unique */
+    bool power_of_two ;			/* want hash table power of 2 */
     NGHASHPTR  hashtable ;
 
     unique = flags & NGHASH_UNIQUE ;
@@ -224,7 +224,7 @@ void nghash_free_string_hashtable(NGHASHPTR hashtable)
  * Now nghash_search is broken into four routines: nghash_find,
  * nghash_find_again, nghash_delete, and nghash_insert.
 ----------------------------------------------------------------- */
-void * _nghash_find(NGHASHPTR hashtable, void * user_key,BOOL *status)
+void * _nghash_find(NGHASHPTR hashtable, void * user_key, bool *status)
 {
     int  ret_code ;
     unsigned int hsum ;
@@ -296,7 +296,7 @@ void * nghash_find(NGHASHPTR hashtable, void * user_key)
 } /* end nghash_find() */
 
 
-void * _nghash_find_again(NGHASHPTR hashtable, void * user_key,BOOL *status)
+void * _nghash_find_again(NGHASHPTR hashtable, void * user_key, bool *status)
 {
     int  ret_code ;		/* comparison return code */
     NGTABLEPTR curPtr ;		/* current hashtable entry */
@@ -550,7 +550,7 @@ static NGTABLEPTR _nghash_find_item(NGHASHPTR htable,void * user_key,void * data
 
 
 
-void * nghash_enumeratek(NGHASHPTR htable, void * *key_return, BOOL start_flag)
+void * nghash_enumeratek(NGHASHPTR htable, void * *key_return, bool start_flag)
 {
     NGTABLEPTR current_spot ;	/* current place in threaded list */
 
@@ -573,7 +573,7 @@ void * nghash_enumeratek(NGHASHPTR htable, void * *key_return, BOOL start_flag)
     
 } /* end nghash_enumeratek() */
 
-void * nghash_enumerate(NGHASHPTR htable,BOOL start_flag)
+void * nghash_enumerate(NGHASHPTR htable, bool start_flag)
 {
     NGTABLEPTR current_spot ;	/* current place in threaded list */
 
@@ -727,7 +727,7 @@ void nghash_dump(NGHASHPTR htable, void (*print_key) (void *))
  * To be useful, unique flag should be off.  Otherwise just use nghash_delete.
  * Returns true if item was deleted.
 ----------------------------------------------------------------- */
-BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
+bool nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 {
     int  ret_code ;
     unsigned long hsum ;
@@ -804,7 +804,7 @@ BOOL nghash_deleteItem(NGHASHPTR hashtable, void * user_key, void * data)
 int nghash_table_size(int minEntries)
 {
   int   i;
-  BOOL  isPrime;
+  bool  isPrime;
   int   prime;
   int   testPrime;
   static int   primes[PRIMECOUNT] =
