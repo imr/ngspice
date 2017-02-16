@@ -62,14 +62,10 @@ typedef pthread_t threadId_t;
 #include <stdio.h>
 #if defined(__MINGW32__)
 #include <stdarg.h>
-/* remove type incompatibility with winnt.h*/
-#undef BOOLEAN
 #include <windef.h>
 #include <winbase.h>  /* Sleep */
 #elif defined(_MSC_VER)
 #include <stdarg.h>
-/* remove type incompatibility with winnt.h*/
-#undef BOOLEAN
 #include <windows.h> /* Sleep */
 #include <process.h> /* _getpid */
 #define dup _dup
