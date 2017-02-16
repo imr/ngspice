@@ -8,6 +8,7 @@
 	fftInit every time you call ffts. For example you could have someting like:
 	#define FFT(a,n) if(!fftInit(roundtol(LOG2(n)))) ffts(a,roundtol(LOG2(n)),1);else printf("fft error\n");
 *******************************************************************/
+#include "ngspice/config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -15,7 +16,6 @@
 #include "fftlib.h"
 #include "matlib.h"
 #include "ngspice/fftext.h"
-#include "ngspice/config.h"
 #include "ngspice/memory.h"
 
 #ifndef M_PI

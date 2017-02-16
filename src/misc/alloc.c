@@ -2,6 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
+#include "ngspice/ngspice.h"
+
 /* for thread handling */
 #if defined __MINGW32__ || defined _MSC_VER
 #include <windows.h>
@@ -10,7 +12,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 /*
  * Memory alloction functions
  */
-#include "ngspice/ngspice.h"
 
 
 #ifdef SHARED_MODULE

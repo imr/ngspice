@@ -1,6 +1,6 @@
-#include <stddef.h>
 
 #include "ngspice/ngspice.h"
+#include <stddef.h>
 #include "ngspice/bool.h"
 #include "ngspice/wordlist.h"
 

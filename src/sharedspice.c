@@ -5,6 +5,8 @@
 
 /* For comments and explanations see sharedspice.h */
 
+#include "ngspice/config.h"
+
 /*******************/
 /*   Defines       */
 /*******************/
