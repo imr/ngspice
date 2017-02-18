@@ -96,13 +96,22 @@ abridge22 [dclk xsinc.ddivndel1 xsinc.ddivndel2 dv] [acclk acset acres acin] dac
 save inp inm adaclout adaccout ; save memory space
 tran 0.1u $&simtime
 * analog out, scaled 'manually'; sinc filter counter; analog differential in
-plot 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6
+if $?win_console
+* temporary plot file starts with np_ : extra postscript output suppressed
+  gnuplot np_tmp 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6
+else
+  plot 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6
+end
 * modulator dig out
-* eprint dv > digi1.txt
+*eprvcd dv > digi1.vcd
 * 
-*eprint dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 
-*+ xsinc.dout1 xsinc.dout2 xsinc.dout3 xsinc.dout4 xsinc.dout5
-*+ xsinc.dout6 xsinc.dout7 xsinc.dout8 xsinc.dout9 xsinc.dout10 > digi4b.txt
+eprvcd dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 
++ xsinc.dout1 xsinc.dout2 xsinc.dout3 xsinc.dout4 xsinc.dout5
++ xsinc.dout6 xsinc.dout7 xsinc.dout8 xsinc.dout9 xsinc.dout10 > digi4b.vcd
+
+* plotting the vcd file (e.g. with GTKWave)
+shell digi4b.vcd
+
 .endc
 
 .end
