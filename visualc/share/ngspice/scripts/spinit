@@ -1,0 +1,77 @@
+* Special ngspice init file
+* to be read by ngspice.exe from within VS
+echo spinit special for debugging with VS
+alias exit quit
+alias acct rusage all
+
+** ascii rawfile **
+set filetype=ascii
+** frontend debug output **
+*set ngdebug
+** asking after quit **
+*set askquit
+** set the number of threads in openmp
+** default (if compiled with --enable-openmp) is: 2
+set num_threads=4
+set interactive
+
+strcmp __flag $program "ngspice"
+if $__flag = 0
+
+* check for the version (32 or 64 bit, debug or release)
+* select code models accordingly
+  strcmp __flag1 $pg_config "r32"
+  if $__flag1 = 0
+
+    set configuration = "Win32"
+    set platform = ""
+    set exe_build = "Release"
+
+  else
+    strcmp __flag1 $pg_config "d32"
+    if $__flag1 = 0
+
+      set configuration = "Win32"
+      set platform = ""
+      set exe_build = "Debug"
+
+    else
+      strcmp __flag1 $pg_config "r64"
+      if $__flag1 = 0
+
+        set configuration = "x64"
+        set platform = "64"
+        set exe_build = "Release"
+
+      else
+        strcmp __flag1 $pg_config "d64"
+        if $__flag1 = 0
+
+          set configuration = "x64"
+          set platform = "64"
+          set exe_build = "Debug"
+
+        else
+          echo No configuration found in spinit!
+          goto noconfig
+        end
+      end
+    end
+  end
+
+  echo {$configuration}, {$exe_build} version
+  codemodel ../../codemodels/{$configuration}/{$exe_build}/spice2poly{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$exe_build}/analog{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$exe_build}/digital{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$exe_build}/xtradev{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$exe_build}/xtraevt{$platform}.cm
+  codemodel ../../codemodels/{$configuration}/{$exe_build}/table{$platform}.cm
+
+  unset configuration
+  unset exe_build
+  unset platform
+end
+
+label noconfig
+unset __flag
+unset __flag1
