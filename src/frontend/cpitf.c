@@ -240,6 +240,11 @@ ft_cpinit(void)
 #endif
 #endif
 
+/* set a variable to announce windows console (to be used in unselecting plotting) */
+#if (defined(_MSC_VER) || defined(__MINGW32__)) && !defined(HAS_WINGUI)
+    cp_vset("win_console", CP_BOOL, &t);
+#endif
+
     /* NGSPICEDATADIR has been set to path "$dprefix/share/ngspice" in configure.ac,
        Spice_Lib_Dir has been set to NGSPICEDATADIR in conf.c,
        may be overridden by environmental variable SPICE_LIB_DIR in ivars().
