@@ -1,12 +1,12 @@
 /**********
-Copyright 2008 Holger Vogt
+Copyright 2008, 2017 Holger Vogt
 **********/
 /* Care about random numbers
-   The seed value is obtained from getpid() in main.c upon start-up
+   The seed value is set to 1 in main.c upon start-up
    and stored in a variable named 'rndseed'.
    A fixed seed value may be set by 'set rndseed=value' in .spiceinit
-   or interactively. This value then is acknowledged by the next call
-   to checkseed().
+   or interactively. This value then is then used as seed after
+   a call to 'setseed'.
 */
 
 
@@ -74,11 +74,8 @@ static bool seedinfo = FALSE;
 /* Check if a seed has been set by the command 'set rndseed=value'
    in spinit, .spiceinit or in a .control section
    with integer value > 0. If available, call srand(value).
-   rndseed set in main.c to getpid will be used, if no 'set rndseed=val' is given.
-   Checkseed should be put in front of any call to rand or CombLCGTaus
-   to catch any change of rndseed.
-   Checkseed may not be used to reset the random number generator, if
-   rndseed has not been changed.
+   rndseed set in main.c to 1, if no 'set rndseed=val' is given.
+   Called from functions in cmath2.c.
 */
 void checkseed(void)
 {
@@ -292,7 +289,7 @@ double exprand(double mean)
 /* seed random number generators immediately
 * command "setseed"
 *   take value of variable rndseed as seed
-* command "setcirc <n>"
+* command "setseed <n>"
 *   seed with number <n>
 */
 void
