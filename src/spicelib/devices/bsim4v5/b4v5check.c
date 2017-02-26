@@ -22,6 +22,7 @@
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 BSIM4v5checkModel(
@@ -32,8 +33,9 @@ CKTcircuit *ckt)
 struct bsim4v5SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
-    
-    if ((fplog = fopen("bsim4v5.out", "w")) != NULL)
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path("bsim4v5.out");
+    if ((fplog = fopen(nname, "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4v5: Berkeley Short Channel IGFET Model-4\n");
         fprintf(fplog, "Developed by Xuemei (Jane) Xi, Mohan Dunga, Prof. Ali Niknejad and Prof. Chenming Hu in 2003.\n");
@@ -810,7 +812,7 @@ FILE *fplog;
     else
     {   fprintf(stderr, "Warning: Can't open log file. Parameter checking skipped.\n");
     }
-
+    tfree(nname);
     return(Fatal_Flag);
 }
 
