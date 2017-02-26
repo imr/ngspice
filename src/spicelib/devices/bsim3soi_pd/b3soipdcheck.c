@@ -22,6 +22,7 @@ Modifies by Paolo Nenzi 2002
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 B3SOIPDcheckModel(B3SOIPDmodel *model, B3SOIPDinstance *here, CKTcircuit *ckt)
@@ -31,8 +32,9 @@ int Fatal_Flag = 0;
 FILE *fplog;
 
     NG_IGNORE(ckt);
-    
-    if ((fplog = fopen("b3soipdv223check.log", "w")) != NULL)
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path("b3soipdv223check.log");
+    if ((fplog = fopen(nname, "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "B3SOIPDV223 Parameter Check\n");
 	fprintf(fplog, "Model = %s\n", model->B3SOIPDmodName);
@@ -736,7 +738,7 @@ FILE *fplog;
     else
     {   fprintf(stderr, "Warning: Can't open log file. Parameter checking skipped.\n");
     }
-
+    tfree(nname);
     return(Fatal_Flag);
 }
 

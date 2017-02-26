@@ -18,6 +18,7 @@
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 BSIM3checkModel(
@@ -30,8 +31,9 @@ int Fatal_Flag = 0;
 FILE *fplog;
     
     NG_IGNORE(ckt);
-
-    if ((fplog = fopen("b3v33check.log", "w")) != NULL)
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path("b3v33check.log");
+    if ((fplog = fopen(nname, "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM3v3.3.0 Parameter Checking.\n");
         if ((strncmp(model->BSIM3version, "3.3.0", 5)) && (strncmp(model->BSIM3version, "3.30", 4)) && (strncmp(model->BSIM3version, "3.3", 3)))
@@ -449,7 +451,7 @@ FILE *fplog;
     else
     {   fprintf(stderr, "Warning: Can't open log file. Parameter checking skipped.\n");
     }
-
+    tfree(nname);
     return(Fatal_Flag);
 }
 

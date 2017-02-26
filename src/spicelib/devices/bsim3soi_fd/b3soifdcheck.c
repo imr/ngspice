@@ -18,6 +18,7 @@ File: b3soifdcheck.c          98/5/01
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 B3SOIFDcheckModel(B3SOIFDmodel *model, B3SOIFDinstance *here, CKTcircuit *ckt)
@@ -28,7 +29,9 @@ FILE *fplog;
 
     NG_IGNORE(ckt);
     
-    if ((fplog = fopen("b3soifdv2check.log", "w")) != NULL)
+    /* add user defined path (nname has to be freed after usage) */
+    char *nname = set_output_path("b3soifdv2check.log");
+    if ((fplog = fopen(nname, "w")) != NULL)
     {   pParam = here->pParam;
 	fprintf(fplog, "B3SOI (FD) Version 2.1 Parameter Check\n");
 	fprintf(fplog, "Model = %s\n", model->B3SOIFDmodName);
@@ -501,7 +504,7 @@ FILE *fplog;
     else
     {   fprintf(stderr, "Warning: Can't open log file. Parameter checking skipped.\n");
     }
-
+    tfree(nname);
     return(Fatal_Flag);
 }
 
