@@ -265,7 +265,7 @@ dosim(
                 ft_setflag = FALSE;
                 return 1;
             }
-            fprintf(cp_out, "ASCII raw file\n");
+            fprintf(cp_out, "ASCII raw file \"%s\"\n", wl->wl_word);
         }
         else if (!ascii) {
             if ((rawfileFp = fopen(wl->wl_word, "wb")) == NULL) {
@@ -273,7 +273,7 @@ dosim(
                 ft_setflag = FALSE;
                 return 1;
             }
-            fprintf(cp_out, "binary raw file\n");
+            fprintf(cp_out, "binary raw file \"%s\"\n", wl->wl_word);
         }
 /*---------------------------------------------------------------------------*/
 #else

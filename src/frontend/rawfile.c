@@ -71,13 +71,13 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
             perror(name);
             return;
         }
-        fprintf(cp_out, "binary raw file\n");
+        fprintf(cp_out, "binary raw file \"%s\"\n", name);
     } else {
         if ((fp = fopen(name, app ? "a" : "w")) == NULL) {
             perror(name);
             return;
         }
-        fprintf(cp_out, "ASCII raw file\n");
+        fprintf(cp_out, "ASCII raw file \"%s\"\n", name);
     }
     /* --------------------------------------------------------------------*/
 
