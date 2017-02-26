@@ -847,19 +847,20 @@ set_output_path(char *filename)
     if(!dirloc)
         dirloc = strrchr(ret, DIR_TERM_LINUX);
 #endif
-    if (dirloc)
+    if (dirloc) {
         fpath = copy_substring(ret, dirloc);
+        /* test if path exists */
+        if (stat(fpath, &st) == 0) {
+            tfree(fpath);
+            return ret;
+        }
+        else {
+            fprintf(cp_err, "Error: Output path %s does not exist\n", fpath);
+            tfree(fpath);
+            return ret; /* fopen will catch this error */
+        }
+    }
+    /* no path, just use the file name */
     else
-        fpath = copy(ret);
-    /* test if path exists */
-    if (stat(fpath, &st) == 0) {
-        tfree(fpath);
         return ret;
-    }
-    else {
-        fprintf(cp_err, "Error: Output path %s does not exist\n", fpath);
-        tfree(ret);
-        tfree(fpath);
-        controlled_exit(1);
-    }
 }
