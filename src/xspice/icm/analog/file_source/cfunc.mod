@@ -12,6 +12,7 @@ AUTHORS
 
     20 May 2011     Thomas Sailer
     03 Sep 2012     Holger Vogt
+    27 Feb 2017     Marcel Hendrix
 
 
 MODIFICATIONS   
@@ -71,7 +72,6 @@ NON-STANDARD FEATURES
 
 struct filesource_state {
     FILE *fp;
-    long pos;
     unsigned char atend;
 };
 
@@ -107,6 +107,8 @@ AUTHORS
 MODIFICATIONS   
 
     07 Sept 2012    Holger Vogt
+    27 Feb  2017    Marcel Hendrix
+    
 
 SUMMARY
 
@@ -139,7 +141,7 @@ NON-STANDARD FEATURES
 
 void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.     */
 {
-    int size;
+    int size = PORT_SIZE(out);
     int amplscalesize;
     int amploffssize;
 
@@ -149,7 +151,6 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
     if(ANALYSIS == MIF_AC) {
         return;
     }
-    size = PORT_SIZE(out);
     if (INIT == 1) {
 
         int i;
@@ -167,7 +168,6 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         for (i = 0; i < size; ++i)
             loc->amplinterval[2 * i] = loc->amplinterval[2 * i + 1] = PARAM_NULL(amploffset) ? 0.0 : PARAM(amploffset[i]);
         loc->state->fp = fopen_with_path(PARAM(file), "r");
-        loc->state->pos = 0;
         loc->state->atend = 0;
         if (!loc->state->fp) {
             char *lbuffer, *p;
@@ -188,22 +188,29 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
     amplscalesize = PARAM_NULL(amplscale) ? 0 : PARAM_SIZE(amplscale);
     amploffssize = PARAM_NULL(amploffset) ? 0 : PARAM_SIZE(amploffset);
     loc = STATIC_VAR (locdata);
+
+    /* The file pointer is at the same position it was for the last simulator TIME ... */	
+    /* When TIME was *less* than the last read time, originally the code would read nothing at all. */
+    
+    if (TIME < loc->timeinterval[0]) {
+    	rewind(loc->state->fp); /* mhx: e.g. ALTER statement */
+    	loc->timeinterval[0] = loc->timeinterval[1] = PARAM_NULL(timeoffset) ? 0.0 : PARAM(timeoffset);
+    }
+
     while (TIME >= loc->timeinterval[1] && !loc->state->atend) {
         char line[512];
         char *cp, *cpdel;
         char *cp2;
         double t;
         int i;
-        if (ftell(loc->state->fp) != loc->state->pos) {
-            clearerr(loc->state->fp);
-            fseek(loc->state->fp, loc->state->pos, SEEK_SET);
-        }
+
         if (!fgets(line, sizeof(line), loc->state->fp)) {
             loc->state->atend = 1;
             break;
         }
-        loc->state->pos = ftell(loc->state->fp);
         cpdel = cp = strdup(line);
+
+	/* read the time channel; update the time difference */
         while (*cp && isspace_c(*cp))
             ++cp;
         if (*cp == '#' || *cp == ';') {
@@ -224,6 +231,8 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             t += PARAM(timeoffset);
         loc->timeinterval[0] = loc->timeinterval[1];
         loc->timeinterval[1] = t;
+        
+	/* read the channels; update the amplitude difference of each channel */
         for (i = 0; i < size; ++i)
             loc->amplinterval[2 * i] = loc->amplinterval[2 * i + 1];
         for (i = 0; i < size; ++i) {
@@ -241,7 +250,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         }
         free(cpdel);
     }
-    if (TIME < loc->timeinterval[1] && loc->timeinterval[0] < loc->timeinterval[1] && 0.0 <= loc->timeinterval[0]) {
+    if (!loc->state->atend && TIME <= loc->timeinterval[1] && TIME >= loc->timeinterval[0]) {
         if (!PARAM_NULL(amplstep) && PARAM(amplstep) == MIF_TRUE) {
             int i;
             for (i = 0; i < size; ++i)
