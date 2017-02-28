@@ -20,7 +20,7 @@ if !SHARED_MODULE
 bin_PROGRAMS =  ngspice ngnutmeg
 
 if !WINGUI
-bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec ngmakeidx
+bin_PROGRAMS += ngproc2mod ngmultidec ngmakeidx
 helpdatadir = $(pkgdatadir)/helpdir
 helpdata_DATA = ngspice.txt ngspice.idx
 if !NO_HELP
@@ -249,17 +249,6 @@ nghelp_LDADD += \
 	frontend/help/libhlp.la
 endif !NO_X
 endif !NO_HELP
-
-
-## sconvert:
-
-ngsconvert_SOURCES =  ngsconvert.c
-
-ngsconvert_LDADD =  \
-	frontend/libfte.la \
-	frontend/parser/libparser.la \
-	maths/misc/libmathmisc.la \
-	misc/libmisc.la
 
 
 ## proc2mod:
