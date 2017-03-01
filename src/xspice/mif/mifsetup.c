@@ -449,11 +449,9 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
     MIFmodel *model;
     MIFinstance *here;
     Mif_Smp_Ptr_t  *smp_data_out;
-/*    Mif_Smp_Ptr_t  *smp_data_cntl;*/
-/*    Mif_Port_Type_t  type, in_type, out_type;*/
-    Mif_Port_Type_t  in_type, out_type;
-    Mif_Cntl_Src_Type_t  cntl_src_type;
-    int num_conn,num_port,i,j,k,l,num_port_k;
+    Mif_Port_Type_t type;
+    Mif_Boolean_t   is_input, is_output;
+    int             num_conn, num_port, i, j;
 
 
     for (model = (MIFmodel *)inModel; model != NULL;
@@ -497,54 +495,22 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                     /* create the matrix data needed      */
                     if( (is_output && (type == MIF_VOLTAGE || type == MIF_DIFF_VOLTAGE)) ||
                                      (type == MIF_RESISTANCE || type == MIF_DIFF_RESISTANCE) ) {
-
-                        /* first, make the current equation */
-                        suffix = tprintf("branch_%d_%d", i, j);
-                        error = CKTmkCur(ckt, &tmp, here->MIFname, suffix);
-                        FREE(suffix);
-                        if(error)
-                            return(error);
-                        smp_data_out->branch = tmp->number;
-
-                        /* ibranch is needed to find the input equation for RESISTANCE type */
-                        smp_data_out->ibranch = tmp->number;
-
-                        /* then make the matrix pointers */
-                        TSTALLOC(pos_branch, pos_node, branch);
-                        TSTALLOC(neg_branch, neg_node, branch);
-                        TSTALLOC(branch_pos, branch,  pos_node);
-                        TSTALLOC(branch_neg, branch,  neg_node);
+                        CKTdltNNum(ckt, smp_data_out->branch);
+                        smp_data_out->branch = 0;
+                        smp_data_out->ibranch = 0;
                     } /* end if current input */
 
                     /* if it is a current input */
                     /* create the matrix data needed for the associated zero-valued V source */
                     if(is_input && (type == MIF_CURRENT || type == MIF_DIFF_CURRENT)) {
-
-                        /* first, make the current equation */
-                        suffix = tprintf("ibranch_%d_%d", i, j);
-                        error = CKTmkCur(ckt, &tmp, here->MIFname, suffix);
-                        FREE(suffix);
-                        if(error)
-                            return(error);
-                        smp_data_out->ibranch = tmp->number;
-
-                        /* then make the matrix pointers */
-                        TSTALLOC(pos_ibranch, pos_node, ibranch);
-                        TSTALLOC(neg_ibranch, neg_node, ibranch);
-                        TSTALLOC(ibranch_pos, ibranch,  pos_node);
-                        TSTALLOC(ibranch_neg, ibranch,  neg_node);
+                        CKTdltNNum(ckt, smp_data_out->ibranch);
+                        smp_data_out->ibranch = 0;
                     } /* end if current input */
 
                     /* if it is a vsource current input (refers to a vsource elsewhere */
                     /* in the circuit), locate the source and get its equation number  */
                     if(is_input && (type == MIF_VSOURCE_CURRENT)) {
-                        smp_data_out->ibranch = CKTfndBranch(ckt,
-                                                 here->conn[i]->port[j]->vsource_str);
-                        if(smp_data_out->ibranch == 0) {
-                            SPfrontEnd->IFerrorf (ERR_FATAL,
-                                    "%s: unknown controlling source %s", here->MIFname, here->conn[i]->port[j]->vsource_str);
-                            return(E_BADPARM);
-                        }
+                        smp_data_out->ibranch = 0;
                     } /* end if vsource current input */
 
                 } /* end for number of ports */
