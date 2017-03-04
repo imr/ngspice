@@ -652,6 +652,7 @@ static void  MIFinit_inst(
     fast->analog = MIF_FALSE;
     fast->event_driven = MIF_FALSE;
     fast->inst_index = 0;
+    fast->callback = NULL;
 }
 
 

@@ -172,6 +172,15 @@ typedef enum {
 } Mif_Cntl_Src_Type_t;
 
 
+/*
+ * The "reason" for a callback invocation
+ */
+
+typedef enum {
+    MIF_CB_DESTROY = 1,   /* MIFdestroy has been invoked, its time to clean up */
+}  Mif_Callback_Reason_t;
+
+
 /* ***************************************************************************** */
 
 
@@ -213,6 +222,8 @@ typedef struct Mif_Inst_Var_Info Mif_Inst_Var_Info_t;
 
 /* types from mifcmdat.h */
 typedef struct Mif_Private Mif_Private_t;
+
+typedef void (* Mif_Callback_t)(Mif_Private_t *, Mif_Callback_Reason_t);
 
 
 #endif

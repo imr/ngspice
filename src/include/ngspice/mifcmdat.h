@@ -366,6 +366,7 @@ struct Mif_Private {
     Mif_Param_Data_t       **param;       /* Information about each parameter     */
     int                    num_inst_var;  /* Number of instance variables         */
     Mif_Inst_Var_Data_t    **inst_var;    /* Information about each inst variable */
+    Mif_Callback_t         *callback;     /* Callback function */
 
 };
 
