@@ -52,8 +52,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     bool xlog, ylog, nogrid, markers;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
-    char filename_data[128];
-    char filename_plt[128];
+    char filename_data[256];
+    char filename_plt[256];
 
     sprintf(filename_data, "%s.data", filename);
     sprintf(filename_plt, "%s.plt", filename);
@@ -125,14 +125,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     /* add user defined path (nname has to be freed after usage) */
-    char *nname = set_output_path(filename_plt);
+    char *nname_plt = set_output_path(filename_plt);
     /* Open the output gnuplot file. */
-    if ((file = fopen(nname, "w")) == NULL) {
-        perror(nname);
-        tfree(nname);
+    if ((file = fopen(nname_plt, "w")) == NULL) {
+        perror(nname_plt);
+        tfree(nname_plt);
         return;
     }
-    tfree(nname);
 
     /* Set up the file header. */
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
@@ -214,14 +213,13 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     /* add user defined path (nname has to be freed after usage) */
-    nname = set_output_path(filename_data);
+    char *nname_data = set_output_path(filename_data);
     /* Open the output gnuplot data file. */
-    if ((file_data = fopen(nname, "w")) == NULL) {
-        perror(nname);
-        tfree(nname);
+    if ((file_data = fopen(nname_data, "w")) == NULL) {
+        perror(nname_data);
+        tfree(nname_data);
         return;
     }
-    tfree(nname);
     fprintf(file, "set format y \"%%g\"\n");
     fprintf(file, "set format x \"%%g\"\n");
     fprintf(file, "plot ");
@@ -234,7 +232,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             i = i + 2;
             if (i > 2) fprintf(file, ",\\\n");
             fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                    filename_data, i-1, i, plotstyle, linewidth);
+                    nname_data, i-1, i, plotstyle, linewidth);
             quote_gnuplot_string(file, v->v_name);
         }
     }
@@ -297,14 +295,15 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #if defined(__MINGW32__) || defined(_MSC_VER)
     /* for external fcn system() */
     // (void) sprintf(buf, "start /B wgnuplot %s -" ,  filename_plt);
-    (void) sprintf(buf, "start /B wgnuplot -persist %s " ,  filename_plt);
+    (void) sprintf(buf, "start /B wgnuplot -persist %s " ,  nname_plt);
     _flushall();
 #else
     /* for external fcn system() from LINUX environment */
-    (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
+    (void) sprintf(buf, "xterm -e gnuplot %s - &", nname_plt);
 #endif
     err = system(buf);
-
+    tfree(nname_plt);
+    tfree(nname_data);
 }
 
 
