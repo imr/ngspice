@@ -29,12 +29,14 @@ begin
 
   echo source the input file
 * Path of your circuit file and library file here
-* set sourcepath = ( D:\Spice_general\tests\lib-test\jts\ D:\Spice_general\tests\lib-test\ts14\ D:\Spice_general\tests\lib-test\x-fab\orig\xh018\lpmos )
   set sourcepath = ( D:\Spice_general\ngspice\examples\Monte_Carlo )
 * source with file name of your circuit file
   source mc_ring_circ.net
 
   save buf                        $ we just need buf, save memory by more than 10x
+
+* Output path (directory has already to be there)
+  set outputpath = 'D:\Spice_general\ngspice\examples\Monte_Carlo\out'
 
 * run the simulation loop
 
@@ -99,6 +101,7 @@ begin
        let frequency={$dt2}.frequency
     end
     let fft{$run}={$dt2}.buf      $ store the output vector to plot 'plot_fft'
+    settype decibel fft{$run}
     * store the measured value
     setplot $max_fft              $ make 'max_fft' the active plot
     let maxffts[{$run}]={$dt2}.fft_max
@@ -119,13 +122,13 @@ if $?batchmode
   rusage
   quit
 else
-  if $?sharedmode
+  if $?sharedmode or $?win_console
     gnuplot np_pl1 {$plot_out}.vout0   $ just plot the tran output with nominal parameters    
   else
     plot {$plot_out}.vout0          $ just plot the tran output with nominal parameters
   end
   setplot $plot_fft
-  if $?sharedmode
+  if $?sharedmode or $?win_console
     gnuplot np_pl2 db(mag(ally)) xlimit 0 1G ylimit -80 10
   else
     plot db(mag(ally)) xlimit 0 1G ylimit -80 10
@@ -161,7 +164,7 @@ else
   * plot the histogram
   set plotstyle=combplot
   let count = yvec - 1             $ subtract 1 because we started with unitvec containing ones
-  if $?sharedmode
+  if $?sharedmode or $?win_console
     gnuplot np_pl3 count vs osc_frequ
   else
     plot count vs osc_frequ
