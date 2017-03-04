@@ -437,6 +437,7 @@ MIFload(
             cm_data.param = here->param;
             cm_data.num_inst_var = here->num_inst_var;
             cm_data.inst_var = here->inst_var;
+            cm_data.callback = &(here->callback);
 
             /* Initialize the auto_partial flag to false */
             g_mif_info.auto_partial.local = MIF_FALSE;

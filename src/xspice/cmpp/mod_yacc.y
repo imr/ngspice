@@ -336,6 +336,7 @@ static void append (char *str)
 
 %token TOK_ARGS
 %token TOK_INIT
+%token TOK_CALLBACK
 %token TOK_ANALYSIS
 %token TOK_NEW_TIMEPOINT
 %token TOK_TIME
@@ -426,6 +427,8 @@ c_char			: TOK_IDENTIFIER {fputs (mod_yytext, mod_yyout);}
 
 macro			: TOK_INIT
 			   {fprintf (mod_yyout, "mif_private->circuit.init");}
+			| TOK_CALLBACK
+			   {fprintf (mod_yyout, "*(mif_private->callback)");}
 			| TOK_ARGS
 			   {fprintf (mod_yyout, "Mif_Private_t *mif_private");}
 			| TOK_ANALYSIS
