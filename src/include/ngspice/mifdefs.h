@@ -49,10 +49,10 @@ NON-STANDARD FEATURES
 
 /* The per-instance data structure */
 
-typedef struct sMIFinstance {
+struct MIFinstance {
 
-    struct sMIFmodel    *MIFmodPtr;       /* backpointer to model */
-    struct sMIFinstance *MIFnextInstance; /* pointer to next instance of current model */
+    struct MIFmodel     *MIFmodPtr;       /* backpointer to model */
+    struct MIFinstance  *MIFnextInstance; /* pointer to next instance of current model */
     IFuid               MIFname;          /* pointer to character string naming this instance */
 
     int                 num_conn;         /* number of connections on the code model */
@@ -80,17 +80,17 @@ typedef struct sMIFinstance {
 
     int                 inst_index;       /* Index into inst_table in evt struct in ckt */
 
-} MIFinstance ;
+};
 
 
 
 /* The per model data structure */
 
-typedef struct sMIFmodel {
+struct MIFmodel {
 
     int              MIFmodType;      /* type index of this device type */
-    struct sMIFmodel *MIFnextModel;   /* pointer to next possible model in linked list */
-    MIFinstance      *MIFinstances;   /* pointer to list of instances that have this model */
+    struct MIFmodel *MIFnextModel;    /* pointer to next possible model in linked list */
+    struct MIFinstance *MIFinstances; /* pointer to list of instances that have this model */
     IFuid            MIFmodName;      /* pointer to character string naming this model */
 
     /* --- end of generic struct GENmodel --- */
@@ -101,7 +101,7 @@ typedef struct sMIFmodel {
     Mif_Boolean_t    analog;          /* true if this model is analog or hybrid type */
     Mif_Boolean_t    event_driven;    /* true if this model is event-driven or hybrid type */
 
-} MIFmodel;
+};
 
 
 

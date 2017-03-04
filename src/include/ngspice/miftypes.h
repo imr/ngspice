@@ -214,5 +214,9 @@ typedef struct Mif_Inst_Var_Info Mif_Inst_Var_Info_t;
 /* types from mifcmdat.h */
 typedef struct Mif_Private Mif_Private_t;
 
+/* types from mifdefs.h */
+typedef struct MIFinstance MIFinstance;
+typedef struct MIFmodel MIFmodel;
+
 
 #endif
