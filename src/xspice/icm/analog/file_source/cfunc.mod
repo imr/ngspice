@@ -138,6 +138,22 @@ NON-STANDARD FEATURES
 /*=== CM_FILESOURCE ROUTINE ===*/
                                                    
 
+static void
+cm_filesource_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+    case MIF_CB_DESTROY:
+        Local_Data_t *loc = STATIC_VAR (locdata);
+        fclose(loc->state->fp);
+        free(loc->state);
+        free(loc->amplinterval);
+        free(loc->timeinterval);
+        free(loc);
+        break;
+    }
+}
+
+
 void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.     */
 {
     int size = PORT_SIZE(out);
@@ -153,6 +169,8 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
     if (INIT == 1) {
 
         int i;
+
+        CALLBACK = cm_filesource_callback;
 
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
