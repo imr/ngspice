@@ -78,9 +78,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     INPgetNetTok(&line, &nname5, 1);
     save = line;                     /* saj - save the posn for later if
                                         the default mosfet model is used */
-#ifdef TRACE
-    printf("INP2M: checking for 4 node device\n");
-#endif
 
     err_msg = INPgetMod(ckt, nname5, &thismodel, tab);
     tfree(err_msg);
@@ -93,10 +90,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         nodeflag = 5;
         INPgetNetTok(&line, &nname6, 1);
 
-#ifdef TRACE
-        printf("INP2M: checking for 5 node device\n");
-#endif
-
         err_msg = INPgetMod(ckt, nname6, &thismodel, tab);
         tfree(err_msg);
 
@@ -104,20 +97,12 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             nodeflag = 6;
             INPgetNetTok(&line, &nname7, 1);
 
-#ifdef TRACE
-            printf("INP2M: checking for 6 node device\n");
-#endif
-
             err_msg = INPgetMod(ckt, nname7, &thismodel, tab);
             tfree(err_msg);
 
             if (!thismodel) {
                 nodeflag = 7;
                 INPgetTok(&line, &model, 1);
-
-#ifdef TRACE
-                printf("INP2M: checking for 7 node device\n");
-#endif
 
                 err_msg = INPgetMod(ckt, model, &thismodel, tab);
                 tfree(err_msg);
@@ -138,9 +123,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     }
                 }
                 else {
-#ifdef TRACE
-                    printf("INP2M: couldn't workout number of nodes, assuming 4\n");
-#endif
                     nodeflag = 4;   /* now reset to a 4 node device */
                     model = nname5;
                     line = save;    /* reset the posn to what it sould be */
