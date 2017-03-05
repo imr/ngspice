@@ -159,14 +159,13 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
                 if (thismodel) {
                     /* nodeflag == 7 */
-                    if (!valid_numnodes(nodeflag, thismodel, current)) {
+                    if (!valid_numnodes(nodeflag, thismodel, current))
                         return;
-                    } else {
-                        INPtermInsert(ckt, &nname5, tab, &node5);
-                        INPtermInsert(ckt, &nname6, tab, &node6);
-                        INPtermInsert(ckt, &nname7, tab, &node7);
-                        model = nname8;
-                    }
+
+                    INPtermInsert(ckt, &nname5, tab, &node5);
+                    INPtermInsert(ckt, &nname6, tab, &node6);
+                    INPtermInsert(ckt, &nname7, tab, &node7);
+                    model = nname8;
                 }
                 else {
                     nodeflag = 4;   /* now reset to a 4 node device */
@@ -177,22 +176,20 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 }
             } else {
                 /* nodeflag == 6 */
-                if (!valid_numnodes(nodeflag, thismodel, current)) {
+                if (!valid_numnodes(nodeflag, thismodel, current))
                     return;
-                } else {
-                    INPtermInsert(ckt, &nname5, tab, &node5);
-                    INPtermInsert(ckt, &nname6, tab, &node6);
-                    model = nname7;
-                }
+
+                INPtermInsert(ckt, &nname5, tab, &node5);
+                INPtermInsert(ckt, &nname6, tab, &node6);
+                model = nname7;
             }
         } else {
             /* nodeflag == 5 */
-            if (!valid_numnodes(nodeflag, thismodel, current)) {
+            if (!valid_numnodes(nodeflag, thismodel, current))
                 return;
-            } else {
-                INPtermInsert(ckt, &nname5, tab, &node5);
-                model = nname6;
-            }
+
+            INPtermInsert(ckt, &nname5, tab, &node5);
+            model = nname6;
         }
     } else {
         /* nodeflag == 4 */
