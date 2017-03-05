@@ -124,8 +124,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 }
                 else {
                     nodeflag = 4;   /* now reset to a 4 node device */
-                    model = nname5;
                     line = save;    /* reset the posn to what it sould be */
+
+                    model = nname5;
                 }
             } else {
                 /* 7th token is a model - only have 6 terminal device */
