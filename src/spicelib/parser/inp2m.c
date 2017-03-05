@@ -76,6 +76,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node6 = NULL;
     node7 = NULL;
 
+    /* nodeflag == 4 */
     INPgetNetTok(&line, &nname5, 1);
     save = line;                     /* saj - save the posn for later if
                                         the default mosfet model is used */
@@ -109,6 +110,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 tfree(err_msg);
 
                 if (thismodel) {
+                    /* nodeflag == 7 */
                     if (thismodel->INPmodType != INPtypelook("B4SOI") &&
                         thismodel->INPmodType != INPtypelook("B3SOIPD") &&
                         thismodel->INPmodType != INPtypelook("B3SOIFD") &&
@@ -128,9 +130,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     nodeflag = 4;   /* now reset to a 4 node device */
                     line = save;    /* reset the posn to what it sould be */
 
+                    /* nodeflag == 4 */
                     model = nname5;
                 }
             } else {
+                /* nodeflag == 6 */
                 /* 7th token is a model - only have 6 terminal device */
                 if (thismodel->INPmodType != INPtypelook("B4SOI") &&
                     thismodel->INPmodType != INPtypelook("B3SOIPD") &&
@@ -150,6 +154,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 }
             }
         } else {
+            /* nodeflag == 5 */
             /* 6th token is a model - only have 5 terminal device */
             if (thismodel->INPmodType != INPtypelook("B4SOI") &&
                 thismodel->INPmodType != INPtypelook("B3SOIPD") &&
@@ -168,6 +173,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             }
         }
     } else {
+        /* nodeflag == 4 */
         model = nname5;
     }
 
