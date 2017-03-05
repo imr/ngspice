@@ -158,53 +158,24 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
 
                 if (thismodel) {
-                    /* nodeflag == 7 */
-                    if (!valid_numnodes(nodeflag, thismodel, current))
-                        return;
-
-                    for (i = 4; i < nodeflag; i++)
-                        INPtermInsert(ckt, &nname[i], tab, &node[i]);
-                    model = nname[nodeflag];
                 }
                 else {
                     nodeflag = 4;   /* now reset to a 4 node device */
                     line = save;    /* reset the posn to what it sould be */
-
-                    /* nodeflag == 4 */
-                    if (!valid_numnodes(nodeflag, thismodel, current))
-                        return;
-
-                    for (i = 4; i < nodeflag; i++)
-                        INPtermInsert(ckt, &nname[i], tab, &node[i]);
-                    model = nname[nodeflag];
                 }
             } else {
-                /* nodeflag == 6 */
-                if (!valid_numnodes(nodeflag, thismodel, current))
-                    return;
-
-                for (i = 4; i < nodeflag; i++)
-                    INPtermInsert(ckt, &nname[i], tab, &node[i]);
-                model = nname[nodeflag];
             }
         } else {
-            /* nodeflag == 5 */
-            if (!valid_numnodes(nodeflag, thismodel, current))
-                return;
-
-            for (i = 4; i < nodeflag; i++)
-                INPtermInsert(ckt, &nname[i], tab, &node[i]);
-            model = nname[nodeflag];
         }
     } else {
-        /* nodeflag == 4 */
-        if (!valid_numnodes(nodeflag, thismodel, current))
-            return;
-
-        for (i = 4; i < nodeflag; i++)
-            INPtermInsert(ckt, &nname[i], tab, &node[i]);
-        model = nname[nodeflag];
     }
+
+    if (!valid_numnodes(nodeflag, thismodel, current))
+        return;
+
+    for (i = 4; i < nodeflag; i++)
+        INPtermInsert(ckt, &nname[i], tab, &node[i]);
+    model = nname[nodeflag];
 
     INPinsert(&model, tab);
 
