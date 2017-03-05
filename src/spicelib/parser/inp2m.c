@@ -172,6 +172,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     line = save;    /* reset the posn to what it sould be */
 
                     /* nodeflag == 4 */
+                    if (!valid_numnodes(nodeflag, thismodel, current))
+                        return;
+
                     model = nname5;
                 }
             } else {
@@ -193,6 +196,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         }
     } else {
         /* nodeflag == 4 */
+        if (!valid_numnodes(nodeflag, thismodel, current))
+            return;
+
         model = nname5;
     }
 
