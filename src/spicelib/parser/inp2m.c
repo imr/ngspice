@@ -112,36 +112,36 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node[6] = NULL;
 
     /* nodeflag == 4 */
-    INPgetNetTok(&line, &nname[4], 1);
+    INPgetNetTok(&line, &nname[nodeflag], 1);
     save = line;                     /* saj - save the posn for later if
                                         the default mosfet model is used */
 
-    err_msg = INPgetMod(ckt, nname[4], &thismodel, tab);
+    err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
     tfree(err_msg);
 
     /* check if using model binning -- pass in line since need 'l' and 'w' */
     if (!thismodel)
-        INPgetModBin(ckt, nname[4], &thismodel, tab, line);
+        INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
 
     if (!thismodel) {
         nodeflag = 5;
-        INPgetNetTok(&line, &nname[5], 1);
+        INPgetNetTok(&line, &nname[nodeflag], 1);
 
-        err_msg = INPgetMod(ckt, nname[5], &thismodel, tab);
+        err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
         tfree(err_msg);
 
         if (!thismodel) {
             nodeflag = 6;
-            INPgetNetTok(&line, &nname[6], 1);
+            INPgetNetTok(&line, &nname[nodeflag], 1);
 
-            err_msg = INPgetMod(ckt, nname[6], &thismodel, tab);
+            err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
             tfree(err_msg);
 
             if (!thismodel) {
                 nodeflag = 7;
-                INPgetTok(&line, &nname[7], 1);
+                INPgetTok(&line, &nname[nodeflag], 1);
 
-                err_msg = INPgetMod(ckt, nname[7], &thismodel, tab);
+                err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
                 tfree(err_msg);
 
                 if (thismodel) {
@@ -152,7 +152,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     INPtermInsert(ckt, &nname[4], tab, &node[4]);
                     INPtermInsert(ckt, &nname[5], tab, &node[5]);
                     INPtermInsert(ckt, &nname[6], tab, &node[6]);
-                    model = nname[7];
+                    model = nname[nodeflag];
                 }
                 else {
                     nodeflag = 4;   /* now reset to a 4 node device */
@@ -162,7 +162,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     if (!valid_numnodes(nodeflag, thismodel, current))
                         return;
 
-                    model = nname[4];
+                    model = nname[nodeflag];
                 }
             } else {
                 /* nodeflag == 6 */
@@ -171,7 +171,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
                 INPtermInsert(ckt, &nname[4], tab, &node[4]);
                 INPtermInsert(ckt, &nname[5], tab, &node[5]);
-                model = nname[6];
+                model = nname[nodeflag];
             }
         } else {
             /* nodeflag == 5 */
@@ -179,14 +179,14 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 return;
 
             INPtermInsert(ckt, &nname[4], tab, &node[4]);
-            model = nname[5];
+            model = nname[nodeflag];
         }
     } else {
         /* nodeflag == 4 */
         if (!valid_numnodes(nodeflag, thismodel, current))
             return;
 
-        model = nname[4];
+        model = nname[nodeflag];
     }
 
     INPinsert(&model, tab);
