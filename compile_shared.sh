@@ -60,18 +60,31 @@ if test "$1" = "64"; then
   echo "configuring for 64 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices
-# Set up for MINGW, for LINUX you might want to remove prefix="C:/Spice64"
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
+
+# Set up for MINGW
+#  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
+
+#set up for Linux, CYGWIN
+../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
+
 # special configure for KiCad and MINGW
-#  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
+# prefix path is used for installing the dll and associated files to C:\Programs\kicad
+# --enable-relpath defines the search path for spinit and the code model search path within spinit relativ to the dll
+# For the following you have to start MSYS as admin:
+#  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug --enable-relpath prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
+# prefix path is used for assembling the dll, a path with writing permission is required (use forward slashes '/' !).
+# Relative paths in prefix are not allowed.
+# Installing is done by copying the dll and associated files to the final destination, e.g. C:\Programs\kicad (you will need admin rights).  
+# The following is o.k. for non-admin users (select a path of your choice where yo have write permission):  
+# ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="D:/Spice_general/ng-kicad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"  
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi
   echo "configuring for 32 bit"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices
+# You may add --enable-adms to the following command for adding adms generated devices
 # Set up for MINGW, for LINUX you might want to remove prefix="C:/Spice"
-  ../configure --with-ngshared  --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
+  ../configure --with-ngshared  --enable-xspice --enable-cider --enable-openmp --disable-debug --enable-relpath prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
