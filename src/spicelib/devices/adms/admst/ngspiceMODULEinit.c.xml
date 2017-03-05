@@ -65,7 +65,7 @@ SPICEdev $(module)info = {
     $(module)mParam,   /* DEVmodParam    */
     $(module)load,     /* DEVload        */
     $(module)setup,    /* DEVsetup       */
-    NULL,  /* DEVunsetup     */
+    $(module)unsetup,  /* DEVunsetup     */
     $(module)setup,    /* DEVpzSetup     */
     $(module)temp,     /* DEVtemperature */
     $(module)trunc,    /* DEVtrunc       */
