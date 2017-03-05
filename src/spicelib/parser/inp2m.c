@@ -121,7 +121,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     tfree(err_msg);
 
     /* check if using model binning -- pass in line since need 'l' and 'w' */
-    if (!thismodel)
+    if (!thismodel && nodeflag < 5)
         INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
 
     if (!thismodel) {
@@ -131,6 +131,10 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
         tfree(err_msg);
 
+        /* check if using model binning -- pass in line since need 'l' and 'w' */
+        if (!thismodel && nodeflag < 5)
+            INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
+
         if (!thismodel) {
             nodeflag = 6;
             INPgetNetTok(&line, &nname[nodeflag], 1);
@@ -138,12 +142,20 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
             tfree(err_msg);
 
+            /* check if using model binning -- pass in line since need 'l' and 'w' */
+            if (!thismodel && nodeflag < 5)
+                INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
+
             if (!thismodel) {
                 nodeflag = 7;
                 INPgetTok(&line, &nname[nodeflag], 1);
 
                 err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
                 tfree(err_msg);
+
+                /* check if using model binning -- pass in line since need 'l' and 'w' */
+                if (!thismodel && nodeflag < 5)
+                    INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
 
                 if (thismodel) {
                     /* nodeflag == 7 */
