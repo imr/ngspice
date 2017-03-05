@@ -87,6 +87,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     GENmodel *mdfast;          /* pointer to the actual model */
     IFuid uid;                 /* uid for default model */
     char *err_msg;
+    int i;
 
 #ifdef TRACE
     printf("INP2M: Parsing '%s'\n", current->line);
@@ -149,9 +150,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     if (!valid_numnodes(nodeflag, thismodel, current))
                         return;
 
-                    INPtermInsert(ckt, &nname[4], tab, &node[4]);
-                    INPtermInsert(ckt, &nname[5], tab, &node[5]);
-                    INPtermInsert(ckt, &nname[6], tab, &node[6]);
+                    for (i = 4; i < nodeflag; i++)
+                        INPtermInsert(ckt, &nname[i], tab, &node[i]);
                     model = nname[nodeflag];
                 }
                 else {
@@ -162,6 +162,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     if (!valid_numnodes(nodeflag, thismodel, current))
                         return;
 
+                    for (i = 4; i < nodeflag; i++)
+                        INPtermInsert(ckt, &nname[i], tab, &node[i]);
                     model = nname[nodeflag];
                 }
             } else {
@@ -169,8 +171,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 if (!valid_numnodes(nodeflag, thismodel, current))
                     return;
 
-                INPtermInsert(ckt, &nname[4], tab, &node[4]);
-                INPtermInsert(ckt, &nname[5], tab, &node[5]);
+                for (i = 4; i < nodeflag; i++)
+                    INPtermInsert(ckt, &nname[i], tab, &node[i]);
                 model = nname[nodeflag];
             }
         } else {
@@ -178,7 +180,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             if (!valid_numnodes(nodeflag, thismodel, current))
                 return;
 
-            INPtermInsert(ckt, &nname[4], tab, &node[4]);
+            for (i = 4; i < nodeflag; i++)
+                INPtermInsert(ckt, &nname[i], tab, &node[i]);
             model = nname[nodeflag];
         }
     } else {
@@ -186,6 +189,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         if (!valid_numnodes(nodeflag, thismodel, current))
             return;
 
+        for (i = 4; i < nodeflag; i++)
+            INPtermInsert(ckt, &nname[i], tab, &node[i]);
         model = nname[nodeflag];
     }
 
