@@ -13,6 +13,54 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "inpxx.h"
 
 
+static bool
+valid_numnodes(int numnodes, INPmodel *thismodel, card *current)
+{
+    bool valid;
+
+    switch (numnodes) {
+    case 7:
+        valid =
+            thismodel->INPmodType == INPtypelook("B4SOI") ||
+            thismodel->INPmodType == INPtypelook("B3SOIPD") ||
+            thismodel->INPmodType == INPtypelook("B3SOIFD") ||
+            thismodel->INPmodType == INPtypelook("B3SOIDD");
+        if (!valid)
+            LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
+        return valid;
+
+    case 6:
+        valid =
+            thismodel->INPmodType == INPtypelook("B4SOI") ||
+            thismodel->INPmodType == INPtypelook("B3SOIPD") ||
+            thismodel->INPmodType == INPtypelook("B3SOIFD") ||
+            thismodel->INPmodType == INPtypelook("B3SOIDD") ||
+            thismodel->INPmodType == INPtypelook("HiSIMHV1") ||
+            thismodel->INPmodType == INPtypelook("HiSIMHV2") ||
+            thismodel->INPmodType == INPtypelook("SOI3");
+        if (!valid)
+            LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
+        return valid;
+
+    case 5:
+        valid =
+            thismodel->INPmodType == INPtypelook("B4SOI") ||
+            thismodel->INPmodType == INPtypelook("B3SOIPD") ||
+            thismodel->INPmodType == INPtypelook("B3SOIFD") ||
+            thismodel->INPmodType == INPtypelook("B3SOIDD") ||
+            thismodel->INPmodType == INPtypelook("HiSIMHV1") ||
+            thismodel->INPmodType == INPtypelook("HiSIMHV2") ||
+            thismodel->INPmodType == INPtypelook("SOI3");
+        if (!valid)
+            LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
+        return valid;
+
+    default:
+        return TRUE;
+    }
+}
+
+
 void
 INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 {
@@ -111,13 +159,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
                 if (thismodel) {
                     /* nodeflag == 7 */
-                    if (thismodel->INPmodType != INPtypelook("B4SOI") &&
-                        thismodel->INPmodType != INPtypelook("B3SOIPD") &&
-                        thismodel->INPmodType != INPtypelook("B3SOIFD") &&
-                        thismodel->INPmodType != INPtypelook("B3SOIDD"))
-                    {
-                        /* if model is not variable node B3SOIPD/FD/DD model, error! */
-                        LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
+                    if (!valid_numnodes(nodeflag, thismodel, current)) {
                         return;
                     } else {
                         INPtermInsert(ckt, &nname5, tab, &node5);
@@ -135,17 +177,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 }
             } else {
                 /* nodeflag == 6 */
-                /* 7th token is a model - only have 6 terminal device */
-                if (thismodel->INPmodType != INPtypelook("B4SOI") &&
-                    thismodel->INPmodType != INPtypelook("B3SOIPD") &&
-                    thismodel->INPmodType != INPtypelook("B3SOIFD") &&
-                    thismodel->INPmodType != INPtypelook("B3SOIDD") &&
-                    thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
-                    thismodel->INPmodType != INPtypelook("HiSIMHV2") &&
-                    thismodel->INPmodType != INPtypelook("SOI3"))
-                {
-                    /* if model is not variable node B3SOIPD/FD/DD or STAG model, error! */
-                    LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
+                if (!valid_numnodes(nodeflag, thismodel, current)) {
                     return;
                 } else {
                     INPtermInsert(ckt, &nname5, tab, &node5);
@@ -155,17 +187,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             }
         } else {
             /* nodeflag == 5 */
-            /* 6th token is a model - only have 5 terminal device */
-            if (thismodel->INPmodType != INPtypelook("B4SOI") &&
-                thismodel->INPmodType != INPtypelook("B3SOIPD") &&
-                thismodel->INPmodType != INPtypelook("B3SOIFD") &&
-                thismodel->INPmodType != INPtypelook("B3SOIDD") &&
-                thismodel->INPmodType != INPtypelook("HiSIMHV1") &&
-                thismodel->INPmodType != INPtypelook("HiSIMHV2") &&
-                thismodel->INPmodType != INPtypelook("SOI3"))
-            {
-                /* if model is not variable node B3SOIPD/FD/DD  model, error! */
-                LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
+            if (!valid_numnodes(nodeflag, thismodel, current)) {
                 return;
             } else {
                 INPtermInsert(ckt, &nname5, tab, &node5);
