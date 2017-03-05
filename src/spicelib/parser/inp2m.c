@@ -112,21 +112,13 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node[5] = NULL;
     node[6] = NULL;
 
-    /* nodeflag == 4 */
-    INPgetNetTok(&line, &nname[nodeflag], 1);
-    save = line;                     /* saj - save the posn for later if
-                                        the default mosfet model is used */
+    for (nodeflag = 4; nodeflag < 8; nodeflag++) {
 
-    err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
-    tfree(err_msg);
-
-    /* check if using model binning -- pass in line since need 'l' and 'w' */
-    if (!thismodel && nodeflag < 5)
-        INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
-
-    if (!thismodel) {
-        nodeflag = 5;
         INPgetNetTok(&line, &nname[nodeflag], 1);
+
+        if (nodeflag == 4)
+            save = line;                     /* saj - save the posn for later if
+                                                the default mosfet model is used */
 
         err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
         tfree(err_msg);
@@ -135,34 +127,14 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         if (!thismodel && nodeflag < 5)
             INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
 
-        if (!thismodel) {
-            nodeflag = 6;
-            INPgetNetTok(&line, &nname[nodeflag], 1);
+        if (thismodel)
+            break;
+    }
 
-            err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
-            tfree(err_msg);
-
-            /* check if using model binning -- pass in line since need 'l' and 'w' */
-            if (!thismodel && nodeflag < 5)
-                INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
-
-            if (!thismodel) {
-                nodeflag = 7;
-                INPgetTok(&line, &nname[nodeflag], 1);
-
-                err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
-                tfree(err_msg);
-
-                /* check if using model binning -- pass in line since need 'l' and 'w' */
-                if (!thismodel && nodeflag < 5)
-                    INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
-
-                if (!thismodel) {
-                    nodeflag = 4;   /* now reset to a 4 node device */
-                    line = save;    /* reset the posn to what it sould be */
-                }
-            }
-        }
+    /* nothing found, reset and process as if it were a 4 node device */
+    if (nodeflag >= 8) {
+        nodeflag = 4;
+        line = save;
     }
 
     if (!valid_numnodes(nodeflag, thismodel, current))
