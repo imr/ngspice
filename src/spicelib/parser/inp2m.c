@@ -75,9 +75,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node6 = NULL;
     node7 = NULL;
 
-    /* See if 5th token after device specification is a model name */
-
-    INPgetNetTok(&line, &nname5, 1); /* get 5th token */
+    INPgetNetTok(&line, &nname5, 1);
     save = line;                     /* saj - save the posn for later if
                                         the default mosfet model is used */
 #ifdef TRACE
@@ -92,8 +90,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         INPgetModBin(ckt, nname5, &thismodel, tab, line);
 
     if (!thismodel) {
-        /* 5th token is not a model in the table */
-        nodeflag = 5;                    /* now specify a 5 node device */
+        nodeflag = 5;
         INPgetNetTok(&line, &nname6, 1);
 
 #ifdef TRACE
@@ -104,8 +101,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         tfree(err_msg);
 
         if (!thismodel) {
-            /* 6th token is not a model in the table */
-            nodeflag = 6;                    /* now specify a 6 node device */
+            nodeflag = 6;
             INPgetNetTok(&line, &nname7, 1);
 
 #ifdef TRACE
@@ -116,9 +112,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             tfree(err_msg);
 
             if (!thismodel) {
-                /* 7th token is not a model in the table */
-                nodeflag = 7;                /* now specify a 7 node device */
-                INPgetTok(&line, &model, 1); /* get model name */
+                nodeflag = 7;
+                INPgetTok(&line, &model, 1);
 
 #ifdef TRACE
                 printf("INP2M: checking for 7 node device\n");
@@ -137,22 +132,19 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                         LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
                         return;
                     } else {
-                        /* if looking at B3SOIPD/FD/DD or B4SOI model, allocate the 7th node */
                         INPtermInsert(ckt, &nname5, tab, &node5);
                         INPtermInsert(ckt, &nname6, tab, &node6);
                         INPtermInsert(ckt, &nname7, tab, &node7);
                     }
                 }
-                /* saj - unbreak the default model creation */
                 else {
 #ifdef TRACE
                     printf("INP2M: couldn't workout number of nodes, assuming 4\n");
 #endif
                     nodeflag = 4;   /* now reset to a 4 node device */
-                    model = nname5; /* mosfet*/
+                    model = nname5;
                     line = save;    /* reset the posn to what it sould be */
                 }
-                /*saj*/
             } else {
                 /* 7th token is a model - only have 6 terminal device */
                 if (thismodel->INPmodType != INPtypelook("B4SOI") &&
@@ -167,7 +159,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                     LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
                     return;
                 } else {
-                    /* if looking at B3SOIPD/FD/DD, B4SOI, STAG (SOI3) or HiSIMHV model, allocate the 6th node */
                     INPtermInsert(ckt, &nname5, tab, &node5);
                     INPtermInsert(ckt, &nname6, tab, &node6);
                     model = nname7;
@@ -187,14 +178,12 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
                 return;
             } else {
-                /* if looking at B3SOIPD/FD/DD, B4SOI, STAG (SOI3) or HiSIMHV model, allocate the 5th node */
                 INPtermInsert(ckt, &nname5, tab, &node5);
-                model = nname6; /* make model point to the correct token */
+                model = nname6;
             }
         }
     } else {
-        /* 5th token is a model - only have 4 terminal device */
-        model = nname5;         /* make model point to the correct token */
+        model = nname5;
     }
 
     INPinsert(&model, tab);
