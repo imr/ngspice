@@ -2,7 +2,7 @@
 Copyright 1991 Regents of the University of California.  All rights reserved.
 **********/
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(_MSC_VER) || defined(__CYGWIN__)
 #include <Windows.h>
 #endif
 
@@ -18,7 +18,9 @@ char *Inp_Path;
 char *Outp_Path;
 
 #if defined (SHARED_MODULE) && defined (HAS_RELPATH)
-#if defined(__MINGW32__) || defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(_MSC_VER) || defined(__CYGWIN__)
+
+/* CYGWIN here, because it does not have dladdr() */
 
 static char *
 get_abs_path(void)
