@@ -32,6 +32,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     char *nname5;              /* the fifth node's name */
     char *nname6;              /* the sixt node's name */
     char *nname7;              /* the seventh node's name */
+    char *nname8;
     char *save;                /* saj - used to save the posn of the start of
                                   the parameters if the model is a mosfet*/
     CKTnode *node1;            /* the first node's node pointer */
@@ -102,9 +103,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
             if (!thismodel) {
                 nodeflag = 7;
-                INPgetTok(&line, &model, 1);
+                INPgetTok(&line, &nname8, 1);
 
-                err_msg = INPgetMod(ckt, model, &thismodel, tab);
+                err_msg = INPgetMod(ckt, nname8, &thismodel, tab);
                 tfree(err_msg);
 
                 if (thismodel) {
@@ -120,6 +121,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                         INPtermInsert(ckt, &nname5, tab, &node5);
                         INPtermInsert(ckt, &nname6, tab, &node6);
                         INPtermInsert(ckt, &nname7, tab, &node7);
+                        model = nname8;
                     }
                 }
                 else {
