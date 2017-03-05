@@ -157,17 +157,12 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                 if (!thismodel && nodeflag < 5)
                     INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
 
-                if (thismodel) {
-                }
-                else {
+                if (!thismodel) {
                     nodeflag = 4;   /* now reset to a 4 node device */
                     line = save;    /* reset the posn to what it sould be */
                 }
-            } else {
             }
-        } else {
         }
-    } else {
     }
 
     if (!valid_numnodes(nodeflag, thismodel, current))
