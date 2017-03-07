@@ -16,15 +16,19 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 static int
 model_numnodes(int type)
 {
-    if (type == INPtypelook("B4SOI") ||
-        type == INPtypelook("B3SOIPD") ||
-        type == INPtypelook("B3SOIFD") ||
-        type == INPtypelook("B3SOIDD") ||
-        type == INPtypelook("HiSIMHV1") ||
-        type == INPtypelook("HiSIMHV2") ||
-        type == INPtypelook("SOI3"))
+    if (type == INPtypelook("B4SOI") ||     /* 7 ; B4SOInames */
+        type == INPtypelook("B3SOIPD") ||   /* 7 ; B3SOIPDnames */
+        type == INPtypelook("B3SOIFD") ||   /* 7 ; B3SOIFDnames */
+        type == INPtypelook("B3SOIDD"))     /* 7 ; B3SOIDDnames */
     {
         return 7;
+    }
+
+    if (type == INPtypelook("HiSIMHV1") ||  /* 6 ; HSMHVnames */
+        type == INPtypelook("HiSIMHV2") ||  /* 6 ; HSMHV2names */
+        type == INPtypelook("SOI3"))        /* 6 ; SOI3names */
+    {
+        return 6;
     }
 
     return 4;
