@@ -232,14 +232,10 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     }
 
     IFC (newInstance, (ckt, mdfast, &fast, name));
-    IFC (bindNode, (ckt, fast, 1, node[0]));
-    IFC (bindNode, (ckt, fast, 2, node[1]));
-    IFC (bindNode, (ckt, fast, 3, node[2]));
-    IFC (bindNode, (ckt, fast, 4, node[3]));
 
     /* use type - not thismodel->INPmodType as it might not exist! */
     int model_numnodes_ = model_numnodes(type);
-    for (i = 4; i < model_numnodes_; i++)
+    for (i = 0; i < model_numnodes_; i++)
         if (i < numnodes)
             IFC (bindNode, (ckt, fast, i + 1, node[i]));
         else
