@@ -67,7 +67,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     printf("INP2M: Parsing '%s'\n", current->line);
 #endif
 
-    numnodes = 4;               /* initially specify a 4 terminal device */
     line = current->line;
 
     INPgetTok(&line, &name, 1);
@@ -86,29 +85,31 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node[5] = NULL;
     node[6] = NULL;
 
-    for (numnodes = 4; numnodes < 8; numnodes++) {
+    for (i = 4; i < 8; i++) {
 
-        INPgetNetTok(&line, &nname[numnodes], 1);
+        INPgetNetTok(&line, &nname[i], 1);
 
-        if (numnodes == 4)
+        if (i == 4)
             save = line;                     /* saj - save the posn for later if
                                                 the default mosfet model is used */
 
-        err_msg = INPgetMod(ckt, nname[numnodes], &thismodel, tab);
+        err_msg = INPgetMod(ckt, nname[i], &thismodel, tab);
         tfree(err_msg);
 
         /* check if using model binning -- pass in line since need 'l' and 'w' */
-        if (!thismodel && numnodes < 5)
-            INPgetModBin(ckt, nname[numnodes], &thismodel, tab, line);
+        if (!thismodel && i < 5)
+            INPgetModBin(ckt, nname[i], &thismodel, tab, line);
 
         if (thismodel)
             break;
     }
 
     /* nothing found, reset and process as if it were a 4 node device */
-    if (numnodes >= 8) {
+    if (i >= 8) {
         numnodes = 4;
         line = save;
+    } else {
+        numnodes = i;
     }
 
     if (numnodes > model_numnodes(thismodel->INPmodType)) {
