@@ -78,7 +78,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
                                   the parameters if the model is a mosfet*/
     CKTnode *node[7];
     int error;                 /* error code temporary */
-    int nodeflag;              /* flag indicating 4 or 5 (or 6 or 7) nodes */
+    int numnodes;              /* flag indicating 4 or 5 (or 6 or 7) nodes */
     GENinstance *fast;         /* pointer to the actual instance */
     int waslead;               /* flag to indicate that funny unlabeled number was found */
     double leadval;            /* actual value of unlabeled number */
@@ -93,7 +93,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     printf("INP2M: Parsing '%s'\n", current->line);
 #endif
 
-    nodeflag = 4;               /* initially specify a 4 terminal device */
+    numnodes = 4;               /* initially specify a 4 terminal device */
     line = current->line;
 
     INPgetTok(&line, &name, 1);
@@ -112,37 +112,37 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node[5] = NULL;
     node[6] = NULL;
 
-    for (nodeflag = 4; nodeflag < 8; nodeflag++) {
+    for (numnodes = 4; numnodes < 8; numnodes++) {
 
-        INPgetNetTok(&line, &nname[nodeflag], 1);
+        INPgetNetTok(&line, &nname[numnodes], 1);
 
-        if (nodeflag == 4)
+        if (numnodes == 4)
             save = line;                     /* saj - save the posn for later if
                                                 the default mosfet model is used */
 
-        err_msg = INPgetMod(ckt, nname[nodeflag], &thismodel, tab);
+        err_msg = INPgetMod(ckt, nname[numnodes], &thismodel, tab);
         tfree(err_msg);
 
         /* check if using model binning -- pass in line since need 'l' and 'w' */
-        if (!thismodel && nodeflag < 5)
-            INPgetModBin(ckt, nname[nodeflag], &thismodel, tab, line);
+        if (!thismodel && numnodes < 5)
+            INPgetModBin(ckt, nname[numnodes], &thismodel, tab, line);
 
         if (thismodel)
             break;
     }
 
     /* nothing found, reset and process as if it were a 4 node device */
-    if (nodeflag >= 8) {
-        nodeflag = 4;
+    if (numnodes >= 8) {
+        numnodes = 4;
         line = save;
     }
 
-    if (!valid_numnodes(nodeflag, thismodel, current))
+    if (!valid_numnodes(numnodes, thismodel, current))
         return;
 
-    for (i = 4; i < nodeflag; i++)
+    for (i = 4; i < numnodes; i++)
         INPtermInsert(ckt, &nname[i], tab, &node[i]);
-    model = nname[nodeflag];
+    model = nname[numnodes];
 
     INPinsert(&model, tab);
 
@@ -228,7 +228,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         type == INPtypelook("HiSIMHV2") ||
         type == INPtypelook("SOI3"))
     {
-        switch (nodeflag) {
+        switch (numnodes) {
         case 4:
             fast->GENnode5 = -1;
             fast->GENnode6 = -1;
