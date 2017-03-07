@@ -38,48 +38,12 @@ model_numnodes(int type)
 static bool
 valid_numnodes(int numnodes, INPmodel *thismodel, card *current)
 {
-    bool valid;
+    bool valid = model_numnodes(thismodel->INPmodType) >= numnodes;
 
-    switch (numnodes) {
-    case 7:
-        valid =
-            thismodel->INPmodType == INPtypelook("B4SOI") ||
-            thismodel->INPmodType == INPtypelook("B3SOIPD") ||
-            thismodel->INPmodType == INPtypelook("B3SOIFD") ||
-            thismodel->INPmodType == INPtypelook("B3SOIDD");
-        if (!valid)
-            LITERR ("only level 55-58: B3SOI(PD|FD|DD) and B4SOI can have 7 nodes");
-        return valid;
+    if (!valid)
+        LITERR ("too much nodes connected to instance");
 
-    case 6:
-        valid =
-            thismodel->INPmodType == INPtypelook("B4SOI") ||
-            thismodel->INPmodType == INPtypelook("B3SOIPD") ||
-            thismodel->INPmodType == INPtypelook("B3SOIFD") ||
-            thismodel->INPmodType == INPtypelook("B3SOIDD") ||
-            thismodel->INPmodType == INPtypelook("HiSIMHV1") ||
-            thismodel->INPmodType == INPtypelook("HiSIMHV2") ||
-            thismodel->INPmodType == INPtypelook("SOI3");
-        if (!valid)
-            LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 6 nodes");
-        return valid;
-
-    case 5:
-        valid =
-            thismodel->INPmodType == INPtypelook("B4SOI") ||
-            thismodel->INPmodType == INPtypelook("B3SOIPD") ||
-            thismodel->INPmodType == INPtypelook("B3SOIFD") ||
-            thismodel->INPmodType == INPtypelook("B3SOIDD") ||
-            thismodel->INPmodType == INPtypelook("HiSIMHV1") ||
-            thismodel->INPmodType == INPtypelook("HiSIMHV2") ||
-            thismodel->INPmodType == INPtypelook("SOI3");
-        if (!valid)
-            LITERR ("only level 55-58,61,62: B3SOI(PD|FD|DD), B4SOI, STAG (SOI3) and HiSIMHV can have 5 nodes");
-        return valid;
-
-    default:
-        return TRUE;
-    }
+    return valid;
 }
 
 
