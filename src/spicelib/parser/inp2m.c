@@ -35,18 +35,6 @@ model_numnodes(int type)
 }
 
 
-static bool
-valid_numnodes(int numnodes, INPmodel *thismodel, card *current)
-{
-    bool valid = model_numnodes(thismodel->INPmodType) >= numnodes;
-
-    if (!valid)
-        LITERR ("too much nodes connected to instance");
-
-    return valid;
-}
-
-
 void
 INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 {
@@ -123,8 +111,10 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         line = save;
     }
 
-    if (!valid_numnodes(numnodes, thismodel, current))
+    if (numnodes > model_numnodes(thismodel->INPmodType)) {
+        LITERR ("too much nodes connected to instance");
         return;
+    }
 
     for (i = 4; i < numnodes; i++)
         INPtermInsert(ckt, &nname[i], tab, &node[i]);
