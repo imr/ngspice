@@ -13,6 +13,24 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "inpxx.h"
 
 
+static int
+model_numnodes(int type)
+{
+    if (type == INPtypelook("B4SOI") ||
+        type == INPtypelook("B3SOIPD") ||
+        type == INPtypelook("B3SOIFD") ||
+        type == INPtypelook("B3SOIDD") ||
+        type == INPtypelook("HiSIMHV1") ||
+        type == INPtypelook("HiSIMHV2") ||
+        type == INPtypelook("SOI3"))
+    {
+        return 7;
+    }
+
+    return 4;
+}
+
+
 static bool
 valid_numnodes(int numnodes, INPmodel *thismodel, card *current)
 {
@@ -220,13 +238,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     IFC (bindNode, (ckt, fast, 4, node[3]));
 
     /* use type - not thismodel->INPmodType as it might not exist! */
-    if (type == INPtypelook("B4SOI") ||
-        type == INPtypelook("B3SOIPD") ||
-        type == INPtypelook("B3SOIFD") ||
-        type == INPtypelook("B3SOIDD") ||
-        type == INPtypelook("HiSIMHV1") ||
-        type == INPtypelook("HiSIMHV2") ||
-        type == INPtypelook("SOI3"))
+    if (model_numnodes(type) > 4)
     {
         switch (numnodes) {
         case 4:
