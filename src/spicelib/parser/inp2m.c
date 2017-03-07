@@ -230,24 +230,24 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     {
         switch (numnodes) {
         case 4:
-            fast->GENnode5 = -1;
-            fast->GENnode6 = -1;
-            fast->GENnode7 = -1;
+            fast->GENnode[4] = -1;
+            fast->GENnode[5] = -1;
+            fast->GENnode[6] = -1;
             break;
         case 5:
-            IFC (bindNode, (ckt, fast, 5, node[4]));
-            fast->GENnode6 = -1;
-            fast->GENnode7 = -1;
+            IFC (bindNode, (ckt, fast, 4 + 1, node[4]));
+            fast->GENnode[5] = -1;
+            fast->GENnode[6] = -1;
             break;
         case 6:
-            IFC (bindNode, (ckt, fast, 5, node[4]));
-            IFC (bindNode, (ckt, fast, 6, node[5]));
-            fast->GENnode7 = -1;
+            IFC (bindNode, (ckt, fast, 4 + 1, node[4]));
+            IFC (bindNode, (ckt, fast, 5 + 1, node[5]));
+            fast->GENnode[6] = -1;
             break;
         case 7:
-            IFC (bindNode, (ckt, fast, 5, node[4]));
-            IFC (bindNode, (ckt, fast, 6, node[5]));
-            IFC (bindNode, (ckt, fast, 7, node[6]));
+            IFC (bindNode, (ckt, fast, 4 + 1, node[4]));
+            IFC (bindNode, (ckt, fast, 5 + 1, node[5]));
+            IFC (bindNode, (ckt, fast, 6 + 1, node[6]));
             break;
         default:
             break;
