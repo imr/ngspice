@@ -49,7 +49,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Parsing '%s'\n", current->line);
 #endif
 
-    nodeflag = 0;               /*  initially specify a 4 terminal device  */
+    nodeflag = 4;               /*  initially specify a 4 terminal device  */
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
@@ -95,14 +95,14 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
                node5 = gnode; /* 4-terminal adms device - thermal node to ground */
                nname5 = copy("0");
                INPtermInsert(ckt, &nname5, tab, &node5);
-               nodeflag = 1;  /* now specify a 5 node device  */
+               nodeflag = 5;  /* now specify a 5 node device  */
            }
         } else {
            /* 5-terminal device */
 #ifdef TRACE
            printf("INP2Q: checking for 5 node device\n");
 #endif
-           nodeflag = 1;                /*  now specify a 5 node device  */
+           nodeflag = 5;                /*  now specify a 5 node device  */
            nname5 = model;
            INPtermInsert(ckt, &nname5, tab, &node5);
            INPgetTok(&line, &model, 1);
@@ -133,9 +133,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             return;
         }
 #ifdef ADMS
-        if ((nodeflag && (thismodel->INPmodType != INPtypelook("hicum0")))
-         && (nodeflag && (thismodel->INPmodType != INPtypelook("hicum2")))
-         && (nodeflag && (thismodel->INPmodType != INPtypelook("bjt504t"))))
+        if ((nodeflag > 4 && (thismodel->INPmodType != INPtypelook("hicum0")))
+         && (nodeflag > 4 && (thismodel->INPmodType != INPtypelook("hicum2")))
+         && (nodeflag > 4 && (thismodel->INPmodType != INPtypelook("bjt504t"))))
         {
             LITERR("Too much nodes for this model type");
             return;
@@ -172,7 +172,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     IFC(bindNode, (ckt, fast, 4, node4));
 
 #ifdef ADMS
-    if (nodeflag) { /* 5-node device */
+    if (nodeflag > 4) { /* 5-node device */
         IFC(bindNode, (ckt, fast, 5, node5));
     }
 #endif
