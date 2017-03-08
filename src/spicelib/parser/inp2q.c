@@ -37,19 +37,12 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     int type;                   /* the type the model says it is */
     char *line;                 /* the part of the current line left to parse */
     char *name;                 /* the resistor's name */
-    char *nname1;               /* the first node's name */
-    char *nname2;               /* the second node's name */
-    char *nname3;               /* the third node's name */
-    char *nname4;               /* the fourth node's name */
 #ifdef ADMS
-    char *nname5;               /* the fifth node's name */
-#endif
-    CKTnode *node1;             /* the first node's node pointer */
-    CKTnode *node2;             /* the second node's node pointer */
-    CKTnode *node3;             /* the third node's node pointer */
-    CKTnode *node4;             /* the fourth node's node pointer */
-#ifdef ADMS
-    CKTnode *node5;             /* the fifth node's node pointer */
+    char *nname[5];
+    CKTnode *node[5];
+#else
+    char *nname[4];
+    CKTnode *node[4];
 #endif
     int error;                  /* error code temporary */
     int nodeflag;               /* flag indicating 4 or 5 nodes */
@@ -70,27 +63,27 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetNetTok(&line, &nname1, 1);
-    INPtermInsert(ckt, &nname1, tab, &node1);
-    INPgetNetTok(&line, &nname2, 1);
-    INPtermInsert(ckt, &nname2, tab, &node2);
-    INPgetNetTok(&line, &nname3, 1);
-    INPtermInsert(ckt, &nname3, tab, &node3);
+    INPgetNetTok(&line, &nname[0], 1);
+    INPtermInsert(ckt, &nname[0], tab, &node[0]);
+    INPgetNetTok(&line, &nname[1], 1);
+    INPtermInsert(ckt, &nname[1], tab, &node[1]);
+    INPgetNetTok(&line, &nname[2], 1);
+    INPtermInsert(ckt, &nname[2], tab, &node[2]);
     INPgetTok(&line, &model, 1);
 
     thismodel = NULL;
     /*  See if 4th token after device specification is a model name  */
     if (INPlookMod(model)) {
         /* 3-terminal device - substrate to ground */
-        node4 = gnode;
+        node[3] = gnode;
         INPinsert(&model, tab);
 #ifdef TRACE
         printf("INP2Q: 3-terminal device - substrate to ground\n");
 #endif
         current->error = INPgetMod(ckt, model, &thismodel, tab);
     } else {
-        nname4 = model;
-        INPtermInsert(ckt, &nname4, tab, &node4);
+        nname[3] = model;
+        INPtermInsert(ckt, &nname[3], tab, &node[3]);
         INPgetTok(&line, &model, 1);
         /*  See if 5th token after device specification is a model name  */
 #ifdef TRACE
@@ -106,9 +99,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         	   controlled_exit(EXIT_BAD);
            }
            if (5 == model_numnodes(thismodel->INPmodType)) {
-               node5 = gnode; /* 4-terminal adms device - thermal node to ground */
-               nname5 = copy("0");
-               INPtermInsert(ckt, &nname5, tab, &node5);
+               node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
+               nname[4] = copy("0");
+               INPtermInsert(ckt, &nname[4], tab, &node[4]);
                nodeflag = 5;  /* now specify a 5 node device  */
            }
         } else {
@@ -117,8 +110,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            printf("INP2Q: checking for 5 node device\n");
 #endif
            nodeflag = 5;                /*  now specify a 5 node device  */
-           nname5 = model;
-           INPtermInsert(ckt, &nname5, tab, &node5);
+           nname[4] = model;
+           INPtermInsert(ckt, &nname[4], tab, &node[4]);
            INPgetTok(&line, &model, 1);
            INPinsert(&model, tab);
            current->error = INPgetMod(ckt, model, &thismodel, tab);
@@ -176,14 +169,14 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
 #endif
     IFC(newInstance, (ckt, mdfast, &fast, name));
-    IFC(bindNode, (ckt, fast, 1, node1));
-    IFC(bindNode, (ckt, fast, 2, node2));
-    IFC(bindNode, (ckt, fast, 3, node3));
-    IFC(bindNode, (ckt, fast, 4, node4));
+    IFC(bindNode, (ckt, fast, 0 + 1, node[0]));
+    IFC(bindNode, (ckt, fast, 1 + 1, node[1]));
+    IFC(bindNode, (ckt, fast, 2 + 1, node[2]));
+    IFC(bindNode, (ckt, fast, 3 + 1, node[3]));
 
 #ifdef ADMS
     if (nodeflag > 4) { /* 5-node device */
-        IFC(bindNode, (ckt, fast, 5, node5));
+        IFC(bindNode, (ckt, fast, 4 + 1, node[4]));
     }
 #endif
 
