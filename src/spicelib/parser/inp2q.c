@@ -146,7 +146,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             LITERR("incorrect model type");
             return;
         }
-        if (nodeflag > 4 && 4 == model_numnodes(thismodel->INPmodType))
+        if (nodeflag > model_numnodes(thismodel->INPmodType))
         {
             LITERR("Too much nodes for this model type");
             return;
