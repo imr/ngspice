@@ -54,6 +54,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     INPmodel *thismodel;        /* pointer to model description for user's model */
     GENmodel *mdfast;           /* pointer to the actual model */
     IFuid uid;                  /* uid of default model */
+    int i;
 
 #ifdef TRACE
     printf("INP2Q: Parsing '%s'\n", current->line);
@@ -63,12 +64,11 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    INPgetNetTok(&line, &nname[0], 1);
-    INPtermInsert(ckt, &nname[0], tab, &node[0]);
-    INPgetNetTok(&line, &nname[1], 1);
-    INPtermInsert(ckt, &nname[1], tab, &node[1]);
-    INPgetNetTok(&line, &nname[2], 1);
-    INPtermInsert(ckt, &nname[2], tab, &node[2]);
+    for (i = 0; i < 3; i++) {
+        INPgetNetTok(&line, &nname[i], 1);
+        INPtermInsert(ckt, &nname[i], tab, &node[i]);
+    }
+
     INPgetTok(&line, &model, 1);
 
     thismodel = NULL;
@@ -169,16 +169,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
 #endif
     IFC(newInstance, (ckt, mdfast, &fast, name));
-    IFC(bindNode, (ckt, fast, 0 + 1, node[0]));
-    IFC(bindNode, (ckt, fast, 1 + 1, node[1]));
-    IFC(bindNode, (ckt, fast, 2 + 1, node[2]));
-    IFC(bindNode, (ckt, fast, 3 + 1, node[3]));
-
-#ifdef ADMS
-    if (nodeflag > 4) { /* 5-node device */
-        IFC(bindNode, (ckt, fast, 4 + 1, node[4]));
-    }
-#endif
+    for (i = 0; i < nodeflag; i++)
+        IFC(bindNode, (ckt, fast, i + 1, node[i]));
 
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead) {
