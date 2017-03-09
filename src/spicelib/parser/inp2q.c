@@ -69,6 +69,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         INPtermInsert(ckt, &nname[i], tab, &node[i]);
     }
 
+    i = 3;
     INPgetTok(&line, &model, 1);
 
     thismodel = NULL;
@@ -79,8 +80,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         INPinsert(&model, tab);
         current->error = INPgetMod(ckt, model, &thismodel, tab);
     } else {
-        nname[3] = model;
-        INPtermInsert(ckt, &nname[3], tab, &node[3]);
+        nname[i] = model;
+        INPtermInsert(ckt, &nname[i], tab, &node[i]);
+        i = 4;
         INPgetTok(&line, &model, 1);
         if (INPlookMod(model)) {
            /* 4-terminal device - special case with tnodeout flag not handled */
@@ -99,8 +101,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            }
         } else {
            nodeflag = 5;                /*  now specify a 5 node device  */
-           nname[4] = model;
-           INPtermInsert(ckt, &nname[4], tab, &node[4]);
+           nname[i] = model;
+           INPtermInsert(ckt, &nname[i], tab, &node[i]);
+           i = 5;
            INPgetTok(&line, &model, 1);
            INPinsert(&model, tab);
            current->error = INPgetMod(ckt, model, &thismodel, tab);
