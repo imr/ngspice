@@ -133,9 +133,10 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             return;
         }
 #ifdef ADMS
-        if ((nodeflag > 4 && (thismodel->INPmodType != INPtypelook("hicum0")))
-         && (nodeflag > 4 && (thismodel->INPmodType != INPtypelook("hicum2")))
-         && (nodeflag > 4 && (thismodel->INPmodType != INPtypelook("bjt504t"))))
+        if (nodeflag > 4 &&
+            !(thismodel->INPmodType == INPtypelook("hicum0") ||
+              thismodel->INPmodType == INPtypelook("hicum2") ||
+              thismodel->INPmodType == INPtypelook("bjt504t")))
         {
             LITERR("Too much nodes for this model type");
             return;
