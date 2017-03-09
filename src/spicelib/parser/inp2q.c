@@ -77,18 +77,11 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         /* 3-terminal device - substrate to ground */
         node[3] = gnode;
         INPinsert(&model, tab);
-#ifdef TRACE
-        printf("INP2Q: 3-terminal device - substrate to ground\n");
-#endif
         current->error = INPgetMod(ckt, model, &thismodel, tab);
     } else {
         nname[3] = model;
         INPtermInsert(ckt, &nname[3], tab, &node[3]);
         INPgetTok(&line, &model, 1);
-        /*  See if 5th token after device specification is a model name  */
-#ifdef TRACE
-        printf("INP2Q: checking for 4 node device\n");
-#endif
         if (INPlookMod(model)) {
            /* 4-terminal device - special case with tnodeout flag not handled */
            INPinsert(&model, tab);
@@ -105,10 +98,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
                nodeflag = 5;  /* now specify a 5 node device  */
            }
         } else {
-           /* 5-terminal device */
-#ifdef TRACE
-           printf("INP2Q: checking for 5 node device\n");
-#endif
            nodeflag = 5;                /*  now specify a 5 node device  */
            nname[4] = model;
            INPtermInsert(ckt, &nname[4], tab, &node[4]);
