@@ -83,20 +83,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         i = 4;
         INPgetTok(&line, &model, 1);
         if (INPlookMod(model)) {
-           /* 4-terminal device - special case with tnodeout flag not handled */
            INPinsert(&model, tab);
            current->error = INPgetMod(ckt, model, &thismodel, tab);
 #ifdef ADMS
-           if (thismodel == NULL) {
-        	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
-        	   controlled_exit(EXIT_BAD);
-           }
-           if (5 == model_numnodes(thismodel->INPmodType)) {
-               node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
-               nname[4] = copy("0");
-               INPtermInsert(ckt, &nname[4], tab, &node[4]);
-               nodeflag = 5;  /* now specify a 5 node device  */
-           }
         } else {
            nodeflag = 5;                /*  now specify a 5 node device  */
            nname[i] = model;
@@ -113,6 +102,23 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         /* 3-terminal device - substrate to ground */
         node[3] = gnode;
         nodeflag = 4;
+    }
+
+    if (i == 4) {
+        nodeflag = 4;
+#ifdef ADMS
+        /* 4-terminal device - special case with tnodeout flag not handled */
+        if (thismodel == NULL) {
+            fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
+            controlled_exit(EXIT_BAD);
+        }
+        if (5 == model_numnodes(thismodel->INPmodType)) {
+            node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
+            nname[4] = copy("0");
+            INPtermInsert(ckt, &nname[4], tab, &node[4]);
+            nodeflag = 5;  /* now specify a 5 node device  */
+        }
+#endif
     }
 
 #ifdef TRACE
