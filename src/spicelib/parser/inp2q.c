@@ -87,7 +87,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            current->error = INPgetMod(ckt, model, &thismodel, tab);
 #ifdef ADMS
         } else {
-           nodeflag = 5;                /*  now specify a 5 node device  */
            nname[i] = model;
            INPtermInsert(ckt, &nname[i], tab, &node[i]);
            i = 5;
@@ -120,6 +119,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         }
 #endif
     }
+
+    if (i == 5)
+        nodeflag = 5;
 
 #ifdef TRACE
     printf("INP2Q: Looking up model\n");
