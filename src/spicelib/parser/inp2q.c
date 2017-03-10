@@ -75,8 +75,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     thismodel = NULL;
     /*  See if 4th token after device specification is a model name  */
     if (INPlookMod(model)) {
-        /* 3-terminal device - substrate to ground */
-        node[3] = gnode;
         INPinsert(&model, tab);
         current->error = INPgetMod(ckt, model, &thismodel, tab);
     } else {
@@ -109,6 +107,12 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            current->error = INPgetMod(ckt, model, &thismodel, tab);
 #endif
         }
+    }
+
+    if (i == 3) {
+        /* 3-terminal device - substrate to ground */
+        node[3] = gnode;
+        nodeflag = 4;
     }
 
 #ifdef TRACE
