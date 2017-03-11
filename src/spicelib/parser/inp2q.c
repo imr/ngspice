@@ -39,11 +39,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     char *name;                 /* the resistor's name */
 #ifdef ADMS
     const int max_i = 4;
-    char *nname[6];
     CKTnode *node[5];
 #else
     const int max_i = 5;
-    char *nname[5];
     CKTnode *node[4];
 #endif
     int error;                  /* error code temporary */
@@ -52,7 +50,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     IFvalue ptemp;              /* a value structure to package resistance into */
     int waslead;                /* flag to indicate that funny unlabeled number was found */
     double leadval;             /* actual value of unlabeled number */
-    char *model;                /* the name of the model */
     INPmodel *thismodel;        /* pointer to model description for user's model */
     GENmodel *mdfast;           /* pointer to the actual model */
     int i;
@@ -66,14 +63,12 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
 
-    model = NULL;
-
     for (i = 0; ; i++) {
-        INPgetTok(&line, &nname[i], 1);
-        if (i >= 3 && INPlookMod(nname[i])) {
-            model = nname[i];
-            INPinsert(&model, tab);
-            INPgetMod(ckt, model, &thismodel, tab);
+        char *token;
+        INPgetTok(&line, &token, 1);
+        if (i >= 3 && INPlookMod(token)) {
+            INPinsert(&token, tab);
+            INPgetMod(ckt, token, &thismodel, tab);
             if (!thismodel) {
                 LITERR ("Unable to find definition of given model");
                 return;
@@ -84,7 +79,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             LITERR ("could not find a valid modelname");
             return;
         }
-        INPtermInsert(ckt, &nname[i], tab, &node[i]);
+        INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
     if (i == 3) {
@@ -97,9 +92,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         nodeflag = 4;
 #ifdef ADMS
         if (5 == model_numnodes(thismodel->INPmodType)) {
+            char *token = copy("0");
             node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
-            nname[4] = copy("0");
-            INPtermInsert(ckt, &nname[4], tab, &node[4]);
+            INPtermInsert(ckt, &token, tab, &node[4]);
             nodeflag = 5;  /* now specify a 5 node device  */
         }
 #endif
