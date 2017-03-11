@@ -58,8 +58,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Parsing '%s'\n", current->line);
 #endif
 
-    nodeflag = 4;               /*  initially specify a 4 terminal device  */
+    nodeflag = 4;               /* initially specify a 4 terminal device */
     line = current->line;
+
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
 
@@ -105,45 +106,49 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Looking up model\n");
 #endif
 
-        if (thismodel->INPmodType != INPtypelook("BJT") &&
+    if (thismodel->INPmodType != INPtypelook("BJT") &&
 #ifdef CIDER
-         thismodel->INPmodType != INPtypelook("NBJT") &&
-         thismodel->INPmodType != INPtypelook("NBJT2") &&
+        thismodel->INPmodType != INPtypelook("NBJT") &&
+        thismodel->INPmodType != INPtypelook("NBJT2") &&
 #endif
 #ifdef ADMS
-         thismodel->INPmodType != INPtypelook("hicum0") &&
-         thismodel->INPmodType != INPtypelook("hicum2") &&
-         thismodel->INPmodType != INPtypelook("bjt504t") &&
+        thismodel->INPmodType != INPtypelook("hicum0") &&
+        thismodel->INPmodType != INPtypelook("hicum2") &&
+        thismodel->INPmodType != INPtypelook("bjt504t") &&
 #endif
-         thismodel->INPmodType != INPtypelook("VBIC"))
-        {
-            LITERR("incorrect model type");
-            return;
-        }
-        if (nodeflag > model_numnodes(thismodel->INPmodType))
-        {
-            LITERR("Too much nodes for this model type");
-            return;
-        }
-        type = thismodel->INPmodType;
-        mdfast = thismodel->INPmodfast;
+        thismodel->INPmodType != INPtypelook("VBIC"))
+    {
+        LITERR("incorrect model type");
+        return;
+    }
+
+    if (nodeflag > model_numnodes(thismodel->INPmodType))
+    {
+        LITERR("Too much nodes for this model type");
+        return;
+    }
+
+    type = thismodel->INPmodType;
+    mdfast = thismodel->INPmodfast;
 
 #ifdef TRACE
     printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
 #endif
+
     IFC(newInstance, (ckt, mdfast, &fast, name));
     for (i = 0; i < nodeflag; i++)
         IFC(bindNode, (ckt, fast, i + 1, node[i]));
 
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
+
     if (waslead) {
 #ifdef CIDER
-        if( type == INPtypelook("NBJT2") ) {
+        if (type == INPtypelook("NBJT2")) {
             LITERR(" error: no unlabeled parameter permitted on NBJT2\n");
             return;
         }
 #endif
-            ptemp.rValue = leadval;
-            GCA(INPpName, ("area", &ptemp, ckt, type, fast));
-   }
+        ptemp.rValue = leadval;
+        GCA(INPpName, ("area", &ptemp, ckt, type, fast));
+    }
 }
