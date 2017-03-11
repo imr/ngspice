@@ -45,7 +45,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     CKTnode *node[4];
 #endif
     int error;                  /* error code temporary */
-    int nodeflag;               /* flag indicating 4 or 5 nodes */
+    int numnodes;               /* flag indicating 4 or 5 nodes */
     GENinstance *fast;          /* pointer to the actual instance */
     IFvalue ptemp;              /* a value structure to package resistance into */
     int waslead;                /* flag to indicate that funny unlabeled number was found */
@@ -58,7 +58,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Parsing '%s'\n", current->line);
 #endif
 
-    nodeflag = 4;               /* initially specify a 4 terminal device */
     line = current->line;
 
     INPgetTok(&line, &name, 1);
@@ -83,24 +82,17 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    if (i == 3) {
-        /* 3-terminal device - substrate to ground */
-        node[3] = gnode;
-        nodeflag = 4;
+    int model_numnodes_ = model_numnodes(thismodel->INPmodType);
+    if (i > model_numnodes_) {
+        LITERR("Too much nodes for this model type");
+        return;
     }
 
-    if (i == 4) {
-        nodeflag = 4;
-        if (5 == model_numnodes(thismodel->INPmodType)) {
-            char *token = copy("0");
-            node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
-            INPtermInsert(ckt, &token, tab, &node[4]);
-            nodeflag = 5;  /* now specify a 5 node device  */
-        }
-    }
+    /* tie missing ports to ground, (substrate and thermal node) */
+    while (i < model_numnodes_)
+        node[i++] = gnode;
 
-    if (i == 5)
-        nodeflag = 5;
+    numnodes = i;
 
 #ifdef TRACE
     printf("INP2Q: Looking up model\n");
@@ -122,21 +114,15 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         return;
     }
 
-    if (nodeflag > model_numnodes(thismodel->INPmodType))
-    {
-        LITERR("Too much nodes for this model type");
-        return;
-    }
-
     type = thismodel->INPmodType;
     mdfast = thismodel->INPmodfast;
 
 #ifdef TRACE
-    printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
+    printf("INP2Q: Type: %d numnodes: %d instancename: %s\n", type, numnodes, name);
 #endif
 
     IFC(newInstance, (ckt, mdfast, &fast, name));
-    for (i = 0; i < nodeflag; i++)
+    for (i = 0; i < numnodes; i++)
         IFC(bindNode, (ckt, fast, i + 1, node[i]));
 
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
