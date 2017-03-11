@@ -86,8 +86,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            model = nname[i];
            INPinsert(&model, tab);
            current->error = INPgetMod(ckt, model, &thismodel, tab);
-#ifdef ADMS
         } else {
+#ifdef ADMS
            INPtermInsert(ckt, &nname[i], tab, &node[i]);
            i = 5;
            INPgetTok(&line, &nname[i], 1);
