@@ -88,7 +88,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
         	   controlled_exit(EXIT_BAD);
            }
-           else if ((thismodel->INPmodType == INPtypelook("hicum0"))
+           if ((thismodel->INPmodType == INPtypelook("hicum0"))
             || (thismodel->INPmodType == INPtypelook("hicum2"))
             || (thismodel->INPmodType == INPtypelook("bjt504t")))
            {
@@ -182,12 +182,10 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 #ifdef CIDER
         if( type == INPtypelook("NBJT2") ) {
             LITERR(" error: no unlabeled parameter permitted on NBJT2\n");
-        } else {
+            return;
+        }
 #endif
             ptemp.rValue = leadval;
             GCA(INPpName, ("area", &ptemp, ckt, type, fast));
-        }
-#ifdef CIDER
    }
-#endif
 }
