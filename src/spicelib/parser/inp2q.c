@@ -55,7 +55,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     char *model;                /* the name of the model */
     INPmodel *thismodel;        /* pointer to model description for user's model */
     GENmodel *mdfast;           /* pointer to the actual model */
-    IFuid uid;                  /* uid of default model */
     int i;
 
 #ifdef TRACE
@@ -68,14 +67,17 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     INPinsert(&name, tab);
 
     model = NULL;
-    thismodel = NULL;
 
     for (i = 0; ; i++) {
         INPgetTok(&line, &nname[i], 1);
         if (i >= 3 && INPlookMod(nname[i])) {
             model = nname[i];
             INPinsert(&model, tab);
-            current->error = INPgetMod(ckt, model, &thismodel, tab);
+            INPgetMod(ckt, model, &thismodel, tab);
+            if (!thismodel) {
+                LITERR ("Unable to find definition of given model");
+                return;
+            }
             break;
         }
         if (i >= max_i) {
@@ -94,11 +96,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     if (i == 4) {
         nodeflag = 4;
 #ifdef ADMS
-        /* 4-terminal device - special case with tnodeout flag not handled */
-        if (thismodel == NULL) {
-            fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
-            controlled_exit(EXIT_BAD);
-        }
         if (5 == model_numnodes(thismodel->INPmodType)) {
             node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
             nname[4] = copy("0");
@@ -115,7 +112,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     printf("INP2Q: Looking up model\n");
 #endif
 
-    if (thismodel != NULL) {
         if (thismodel->INPmodType != INPtypelook("BJT") &&
 #ifdef CIDER
          thismodel->INPmodType != INPtypelook("NBJT") &&
@@ -138,24 +134,6 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         }
         type = thismodel->INPmodType;
         mdfast = thismodel->INPmodfast;
-    } else {
-       /* no model found */
-       type = INPtypelook("BJT");
-        if (type < 0) {
-            LITERR("Device type BJT not supported by this binary\n");
-            return;
-        }
-        if (!tab->defQmod) {
-            /* create default Q model */
-            char *err;
-            IFnewUid(ckt, &uid, NULL, "Q", UID_MODEL, NULL);
-            IFC(newModel, (ckt, type, &(tab->defQmod), uid));
-            err = tprintf("Unable to find definition of model %s\n", model);
-            LITERR(err);
-            tfree(err);
-        }
-        mdfast = tab->defQmod;
-    }
 
 #ifdef TRACE
     printf("INP2Q: Type: %d nodeflag: %d instancename: %s\n", type, nodeflag, name);
