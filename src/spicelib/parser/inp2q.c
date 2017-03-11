@@ -11,6 +11,23 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
+
+static int
+model_numnodes(int type)
+{
+#ifdef ADMS
+    if (type == INPtypelook("hicum0") ||
+        type == INPtypelook("hicum2") ||
+        type == INPtypelook("bjt504t"))
+        return 5;
+#else
+    NG_IGNORE(type);
+#endif
+
+    return 4;
+}
+
+
 void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 {
 
@@ -88,10 +105,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
         	   controlled_exit(EXIT_BAD);
            }
-           if (thismodel->INPmodType == INPtypelook("hicum0") ||
-               thismodel->INPmodType == INPtypelook("hicum2") ||
-               thismodel->INPmodType == INPtypelook("bjt504t"))
-           {
+           if (5 == model_numnodes(thismodel->INPmodType)) {
                node5 = gnode; /* 4-terminal adms device - thermal node to ground */
                nname5 = copy("0");
                INPtermInsert(ckt, &nname5, tab, &node5);
@@ -132,16 +146,11 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             LITERR("incorrect model type");
             return;
         }
-#ifdef ADMS
-        if (nodeflag > 4 &&
-            !(thismodel->INPmodType == INPtypelook("hicum0") ||
-              thismodel->INPmodType == INPtypelook("hicum2") ||
-              thismodel->INPmodType == INPtypelook("bjt504t")))
+        if (nodeflag > 4 && 4 == model_numnodes(thismodel->INPmodType))
         {
             LITERR("Too much nodes for this model type");
             return;
         }
-#endif
         type = thismodel->INPmodType;
         mdfast = thismodel->INPmodfast;
     } else {
