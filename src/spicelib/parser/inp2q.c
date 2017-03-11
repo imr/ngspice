@@ -90,14 +90,12 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 
     if (i == 4) {
         nodeflag = 4;
-#ifdef ADMS
         if (5 == model_numnodes(thismodel->INPmodType)) {
             char *token = copy("0");
             node[4] = gnode; /* 4-terminal adms device - thermal node to ground */
             INPtermInsert(ckt, &token, tab, &node[4]);
             nodeflag = 5;  /* now specify a 5 node device  */
         }
-#endif
     }
 
     if (i == 5)
