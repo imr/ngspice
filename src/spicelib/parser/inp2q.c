@@ -88,9 +88,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         	   fprintf(stderr, "%s\nPlease check model, level or number of terminals!\n", current->error);
         	   controlled_exit(EXIT_BAD);
            }
-           if ((thismodel->INPmodType == INPtypelook("hicum0"))
-            || (thismodel->INPmodType == INPtypelook("hicum2"))
-            || (thismodel->INPmodType == INPtypelook("bjt504t")))
+           if (thismodel->INPmodType == INPtypelook("hicum0") ||
+               thismodel->INPmodType == INPtypelook("hicum2") ||
+               thismodel->INPmodType == INPtypelook("bjt504t"))
            {
                node5 = gnode; /* 4-terminal adms device - thermal node to ground */
                nname5 = copy("0");
@@ -117,17 +117,17 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 #endif
 
     if (thismodel != NULL) {
-        if ((thismodel->INPmodType != INPtypelook("BJT"))
+        if (thismodel->INPmodType != INPtypelook("BJT") &&
 #ifdef CIDER
-         && (thismodel->INPmodType != INPtypelook("NBJT"))
-         && (thismodel->INPmodType != INPtypelook("NBJT2"))
+         thismodel->INPmodType != INPtypelook("NBJT") &&
+         thismodel->INPmodType != INPtypelook("NBJT2") &&
 #endif
 #ifdef ADMS
-         && (thismodel->INPmodType != INPtypelook("hicum0"))
-         && (thismodel->INPmodType != INPtypelook("hicum2"))
-         && (thismodel->INPmodType != INPtypelook("bjt504t"))
+         thismodel->INPmodType != INPtypelook("hicum0") &&
+         thismodel->INPmodType != INPtypelook("hicum2") &&
+         thismodel->INPmodType != INPtypelook("bjt504t") &&
 #endif
-         && (thismodel->INPmodType != INPtypelook("VBIC")))
+         thismodel->INPmodType != INPtypelook("VBIC"))
         {
             LITERR("incorrect model type");
             return;
@@ -141,8 +141,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             return;
         }
 #endif
-        type = (thismodel->INPmodType);
-        mdfast = (thismodel->INPmodfast);
+        type = thismodel->INPmodType;
+        mdfast = thismodel->INPmodfast;
     } else {
        /* no model found */
        type = INPtypelook("BJT");
