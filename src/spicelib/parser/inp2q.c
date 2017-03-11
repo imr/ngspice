@@ -78,14 +78,11 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
             current->error = INPgetMod(ckt, model, &thismodel, tab);
             break;
         }
-        if (i >= max_i)
-            break;
+        if (i >= max_i) {
+            LITERR ("could not find a valid modelname");
+            return;
+        }
         INPtermInsert(ckt, &nname[i], tab, &node[i]);
-    }
-
-    if (!model) {
-        LITERR ("could not find a valid modelname");
-        return;
     }
 
     if (i == 3) {
