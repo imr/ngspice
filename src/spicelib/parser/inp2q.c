@@ -66,17 +66,13 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     line = current->line;
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
-    for (i = 0; i < 3; i++) {
-        INPgetNetTok(&line, &nname[i], 1);
-        INPtermInsert(ckt, &nname[i], tab, &node[i]);
-    }
 
     model = NULL;
     thismodel = NULL;
 
-    for (i = 3; ; i++) {
+    for (i = 0; ; i++) {
         INPgetTok(&line, &nname[i], 1);
-        if (INPlookMod(nname[i])) {
+        if (i >= 3 && INPlookMod(nname[i])) {
             model = nname[i];
             INPinsert(&model, tab);
             current->error = INPgetMod(ckt, model, &thismodel, tab);
