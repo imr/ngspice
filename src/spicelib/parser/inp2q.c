@@ -69,6 +69,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         INPtermInsert(ckt, &nname[i], tab, &node[i]);
     }
 
+    model = NULL;
+
     i = 3;
     INPgetTok(&line, &nname[i], 1);
 
@@ -91,11 +93,18 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
            INPtermInsert(ckt, &nname[i], tab, &node[i]);
            i = 5;
            INPgetTok(&line, &nname[i], 1);
-           model = nname[i];
-           INPinsert(&model, tab);
-           current->error = INPgetMod(ckt, model, &thismodel, tab);
+           if (INPlookMod(nname[i])) {
+               model = nname[i];
+               INPinsert(&model, tab);
+               current->error = INPgetMod(ckt, model, &thismodel, tab);
+           }
 #endif
         }
+    }
+
+    if (!model) {
+        LITERR ("could not find a valid modelname");
+        return;
     }
 
     if (i == 3) {
