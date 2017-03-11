@@ -38,9 +38,11 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     char *line;                 /* the part of the current line left to parse */
     char *name;                 /* the resistor's name */
 #ifdef ADMS
+    const int max_i = 4;
     char *nname[6];
     CKTnode *node[5];
 #else
+    const int max_i = 5;
     char *nname[5];
     CKTnode *node[4];
 #endif
@@ -70,36 +72,19 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     }
 
     model = NULL;
-
-    i = 3;
-    INPgetTok(&line, &nname[i], 1);
-
     thismodel = NULL;
-    /*  See if 4th token after device specification is a model name  */
-    if (INPlookMod(nname[i])) {
-        model = nname[i];
-        INPinsert(&model, tab);
-        current->error = INPgetMod(ckt, model, &thismodel, tab);
-    } else {
-        INPtermInsert(ckt, &nname[i], tab, &node[i]);
-        i = 4;
+
+    for (i = 3; ; i++) {
         INPgetTok(&line, &nname[i], 1);
         if (INPlookMod(nname[i])) {
-           model = nname[i];
-           INPinsert(&model, tab);
-           current->error = INPgetMod(ckt, model, &thismodel, tab);
-        } else {
-#ifdef ADMS
-           INPtermInsert(ckt, &nname[i], tab, &node[i]);
-           i = 5;
-           INPgetTok(&line, &nname[i], 1);
-           if (INPlookMod(nname[i])) {
-               model = nname[i];
-               INPinsert(&model, tab);
-               current->error = INPgetMod(ckt, model, &thismodel, tab);
-           }
-#endif
+            model = nname[i];
+            INPinsert(&model, tab);
+            current->error = INPgetMod(ckt, model, &thismodel, tab);
+            break;
         }
+        if (i >= max_i)
+            break;
+        INPtermInsert(ckt, &nname[i], tab, &node[i]);
     }
 
     if (!model) {
