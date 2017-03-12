@@ -77,7 +77,7 @@
 <admst:text format="\n};\n"/>
 
 char *$(module)names[] = {
-<admst:join select="node[grounded='no']" separator=",\n">
+<admst:join select="node[location='external' and grounded='no']" separator=",\n">
   <admst:choose>
     <admst:when test="attribute[name='name']">
       <admst:for-each select="attribute[name='name']">
