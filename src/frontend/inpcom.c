@@ -2738,9 +2738,6 @@ found_mult_param(int num_params, char *param_names[])
 /* If a subcircuit invocation (X-line) is found, which contains the
    multiplier parameter 'm', m is added to all lines inside
    the corresponding subcircuit except of some excluded in the code below
-   (FIXME: It may be necessary to exclude more of them, at least
-   for all devices that are not supporting the 'm' parameter).
-
    Function is called from inp_fix_inst_calls_for_numparam() */
 
 static int
@@ -2768,8 +2765,8 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct card *subckt_car
          card && !ciprefix(".ends", card->line);
          card = card->nextcard) {
         char *curr_line = card->line;
-        /* no 'm' for B, V, E, H or comment line */
-        if (strchr("*bveh", curr_line[0]))
+        /* no 'm' for comment line, B, V, E, H and some others that are not using 'm' in their model description */
+        if (strchr("*bvehaknopstuwy", curr_line[0]))
             continue;
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
