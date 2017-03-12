@@ -5724,10 +5724,6 @@ tprint(struct card *t, int numb)
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*') {
             fprintf(fd, "%6d  %6d  %s", tmp->linenum_orig, tmp->linenum, tmp->line);
-            fprintf(fd, "  level: ");
-            struct nscope *x = tmp->level;
-            for (; x; x = x->next)
-                fprintf(fd, "/%p", tmp->level); /* fixme */
             fprintf(fd, "\n");
         }
     fprintf(fd, "\n*********************************************************************************\n");
