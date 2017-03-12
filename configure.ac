@@ -934,9 +934,9 @@ if test "x$enable_adms" = xyes ; then
     AC_MSG_RESULT([**********************************
 * ADMS  support is  experimental *
 **********************************])
-    AC_CHECK_PROGS([ADMSXML], [admsXml admsXml.exe], [no])
+    AC_CHECK_PROGS([ADMSXML], [admsXml admsXml.exe])
 
-    if test "x$ADMSXML" = xno; then
+    if test "x$ADMSXML" = x; then
         AC_MSG_ERROR([If you want Verilog-A models you should install admsXml])
     fi
     AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
@@ -969,7 +969,6 @@ else
 
 fi
 
-AC_SUBST([ADMSXML])
 AC_SUBST([VLADEVDIR])
 AC_SUBST([VLADEV])
 AC_SUBST([NOTVLADEVDIR])

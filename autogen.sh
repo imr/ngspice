@@ -15,7 +15,7 @@ PROJECT=ngspice
 
 ADMSDIR=src/spicelib/devices/adms
 XMLPATH=src/spicelib/devices/adms/admst
-ADMSXML=admsXml
+ADMSXML=${ADMSXML:-admsXml}
 ADMS=0
 
 # Exit variable
@@ -96,7 +96,7 @@ check_autoconf()
 
 check_adms()
 {
-    (admsXml --version)   < /dev/null > /dev/null 2>&1 || {
+    ($ADMSXML --version) < /dev/null > /dev/null 2>&1 || {
         echo
 	echo "You must have admsXml installed to compile adms models."
 	echo "See http://mot-adms.sourceforge.net"

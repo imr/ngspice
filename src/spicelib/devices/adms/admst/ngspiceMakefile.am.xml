@@ -109,7 +109,7 @@ DISTCLEANFILES = Makefile.am \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
-	admsXml -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
+	\$(ADMSXML) -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
