@@ -38,10 +38,10 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
     char *line;                 /* the part of the current line left to parse */
     char *name;                 /* the resistor's name */
 #ifdef ADMS
-    const int max_i = 4;
+    const int max_i = 5;
     CKTnode *node[5];
 #else
-    const int max_i = 5;
+    const int max_i = 4;
     CKTnode *node[4];
 #endif
     int error;                  /* error code temporary */
