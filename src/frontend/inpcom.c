@@ -152,6 +152,8 @@ static void inp_rem_unused_models(struct nscope *root, struct line *deck);
 static struct line_assoc *find_subckt(struct nscope *scope, const char *name);
 static struct modellist *find_model(struct nscope *scope, const char *name);
 
+static bool inp_strip_braces(char *s);
+
 
 struct inp_read_t
 { struct line *cc;
@@ -2756,7 +2758,19 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
             continue;
-        new_str = tprintf("%s m={m}", curr_line);
+
+        /* Get old and new 'm' parameters and multiply them */
+        char *mpar = strstr(curr_line, " m=");
+        if (mpar) {
+            mpar += 3;
+            char *oldmult = gettok(&mpar);
+            inp_strip_braces(oldmult);
+            /* add the new 'm=valold*valnew' string at the end, thus override the previous m parameter */
+            new_str = tprintf("%s m={(%s)*m}", curr_line, oldmult);
+            tfree(oldmult);
+        }
+        else
+            new_str = tprintf("%s m={m}", curr_line);
 
         tfree(card->li_line);
         card->li_line = new_str;
