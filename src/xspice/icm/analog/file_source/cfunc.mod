@@ -211,8 +211,8 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
     /* When TIME was *less* than the last read time, originally the code would read nothing at all. */
 
     if (TIME < loc->timeinterval[0]) {
-    	rewind(loc->state->fp); /* mhx: e.g. ALTER statement */
-    	loc->timeinterval[0] = loc->timeinterval[1] = PARAM_NULL(timeoffset) ? 0.0 : PARAM(timeoffset);
+        rewind(loc->state->fp); /* mhx: e.g. ALTER statement */
+        loc->timeinterval[0] = loc->timeinterval[1] = PARAM_NULL(timeoffset) ? 0.0 : PARAM(timeoffset);
     }
 
     while (TIME >= loc->timeinterval[1] && !loc->state->atend) {
@@ -228,7 +228,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         }
         cpdel = cp = strdup(line);
 
-	/* read the time channel; update the time difference */
+        /* read the time channel; update the time difference */
         while (*cp && isspace_c(*cp))
             ++cp;
         if (*cp == '#' || *cp == ';') {
@@ -250,7 +250,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->timeinterval[0] = loc->timeinterval[1];
         loc->timeinterval[1] = t;
 
-	/* read the channels; update the amplitude difference of each channel */
+        /* read the channels; update the amplitude difference of each channel */
         for (i = 0; i < size; ++i)
             loc->amplinterval[2 * i] = loc->amplinterval[2 * i + 1];
         for (i = 0; i < size; ++i) {
