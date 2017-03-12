@@ -2812,8 +2812,10 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
                 if (a) {
                     int num_subckt_params = inp_get_params(a->line->line, subckt_param_names, subckt_param_values);
 
-                    if (!found_mult_param(num_subckt_params, subckt_param_names))
+                    if (!found_mult_param(num_subckt_params, subckt_param_names)) {
                         inp_fix_subckt_multiplier(subckt_w_params, a->line, num_subckt_params, subckt_param_names, subckt_param_values);
+                        inp_fix_inst_calls_for_numparam(subckt_w_params, deck);
+                    }
 
                     for (i = 0; i < num_subckt_params; i++) {
                         tfree(subckt_param_names[i]);
