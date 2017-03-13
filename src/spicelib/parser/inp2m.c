@@ -113,7 +113,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     }
 
     if (numnodes > model_numnodes(thismodel->INPmodType)) {
-        LITERR ("too much nodes connected to instance");
+        LITERR ("too many nodes connected to instance");
         return;
     }
 

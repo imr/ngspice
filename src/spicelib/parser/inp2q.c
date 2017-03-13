@@ -84,7 +84,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 
     int model_numnodes_ = model_numnodes(thismodel->INPmodType);
     if (i > model_numnodes_) {
-        LITERR("Too much nodes for this model type");
+        LITERR("Too many nodes for this model type");
         return;
     }
 
