@@ -249,10 +249,10 @@ SMPmatSize(SMPmatrix *Matrix)
  * SMPnewMatrix()
  */
 int
-SMPnewMatrix(SMPmatrix **pMatrix)
+SMPnewMatrix(SMPmatrix **pMatrix, int size)
 {
     int Error;
-    *pMatrix = spCreate( 0, 1, &Error );
+    *pMatrix = spCreate( size, 1, &Error );
     return Error;
 }
 

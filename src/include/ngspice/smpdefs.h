@@ -27,7 +27,7 @@ void SMPcaSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
 void SMPcSolve( SMPmatrix *, double [], double [], double [], double []);
 void SMPsolve( SMPmatrix *, double [], double []);
 int SMPmatSize( SMPmatrix *);
-int SMPnewMatrix( SMPmatrix ** );
+int SMPnewMatrix( SMPmatrix **, int );
 void SMPdestroy( SMPmatrix *);
 int SMPpreOrder( SMPmatrix *);
 void SMPprint( SMPmatrix * , char *);

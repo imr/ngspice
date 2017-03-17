@@ -25,5 +25,5 @@ NIinit(CKTcircuit *ckt)
     int Error;
 #endif /* SPARSE */
     ckt->CKTniState = NIUNINITIALIZED;
-    return(SMPnewMatrix( &(ckt->CKTmatrix) ) );
+    return SMPnewMatrix(&(ckt->CKTmatrix), 0);
 }
