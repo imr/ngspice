@@ -70,17 +70,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     INPinsert(&name, tab);
 
     INPgetNetTok(&line, &nname[0], 1);
-    INPtermInsert(ckt, &nname[0], tab, &node[0]);
     INPgetNetTok(&line, &nname[1], 1);
-    INPtermInsert(ckt, &nname[1], tab, &node[1]);
     INPgetNetTok(&line, &nname[2], 1);
-    INPtermInsert(ckt, &nname[2], tab, &node[2]);
     INPgetNetTok(&line, &nname[3], 1);
-    INPtermInsert(ckt, &nname[3], tab, &node[3]);
-
-    node[4] = NULL;
-    node[5] = NULL;
-    node[6] = NULL;
 
     for (i = 4; ; i++) {
 
@@ -107,7 +99,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         return;
     }
 
-    for (i = 4; i < numnodes; i++)
+    for (i = 0; i < numnodes; i++)
         INPtermInsert(ckt, &nname[i], tab, &node[i]);
     model = nname[numnodes];
 
