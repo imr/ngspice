@@ -91,12 +91,13 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    numnodes = i;
-
-    if (numnodes > model_numnodes(thismodel->INPmodType)) {
+    int model_numnodes_ = model_numnodes(thismodel->INPmodType);
+    if (i > model_numnodes_) {
         LITERR ("too much nodes connected to instance");
         return;
     }
+
+    numnodes = i;
 
         if (thismodel->INPmodType != INPtypelook("Mos1") &&
             thismodel->INPmodType != INPtypelook("Mos2") &&
@@ -139,8 +140,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
     IFC (newInstance, (ckt, mdfast, &fast, name));
 
-    /* use type - not thismodel->INPmodType as it might not exist! */
-    int model_numnodes_ = model_numnodes(type);
     for (i = 0; i < model_numnodes_; i++)
         if (i < numnodes)
             IFC (bindNode, (ckt, fast, i + 1, node[i]));
