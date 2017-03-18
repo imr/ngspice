@@ -80,13 +80,17 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         if (!thismodel)
             txfree(INPgetModBin(ckt, nname[i], &thismodel, tab, line));
 
-        if (thismodel)
+        if (thismodel) {
+            model = nname[i];
+            INPinsert(&model, tab);
             break;
+         }
         }
         if (i >= max_i) {
             LITERR ("could not find a valid modelname");
             return;
         }
+        INPtermInsert(ckt, &nname[i], tab, &node[i]);
     }
 
     numnodes = i;
@@ -95,12 +99,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         LITERR ("too much nodes connected to instance");
         return;
     }
-
-    for (i = 0; i < numnodes; i++)
-        INPtermInsert(ckt, &nname[i], tab, &node[i]);
-    model = nname[numnodes];
-
-    INPinsert(&model, tab);
 
         if (thismodel->INPmodType != INPtypelook("Mos1") &&
             thismodel->INPmodType != INPtypelook("Mos2") &&
