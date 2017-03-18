@@ -63,7 +63,7 @@ void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
     line=saveline;
     term=(term-2)/2;
     if (term > 7) {
-	LITERR("Numerical device has too much nodes, the limitation is 7\n");
+	LITERR("Numerical device has too many nodes, the limitation is 7\n");
 	return;
     }
     for(i=0;i<term;i++) {   
