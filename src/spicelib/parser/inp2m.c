@@ -69,15 +69,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     INPgetTok(&line, &name, 1);
     INPinsert(&name, tab);
 
-    INPgetNetTok(&line, &nname[0], 1);
-    INPgetNetTok(&line, &nname[1], 1);
-    INPgetNetTok(&line, &nname[2], 1);
-    INPgetNetTok(&line, &nname[3], 1);
-
-    for (i = 4; ; i++) {
+    for (i = 0; ; i++) {
 
         INPgetNetTok(&line, &nname[i], 1);
 
+        if (i >= 4) {
         txfree(INPgetMod(ckt, nname[i], &thismodel, tab));
 
         /* check if using model binning -- pass in line since need 'l' and 'w' */
@@ -86,6 +82,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
         if (thismodel)
             break;
+        }
         if (i >= max_i) {
             LITERR ("could not find a valid modelname");
             return;
