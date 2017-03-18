@@ -93,12 +93,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             save = line;                     /* saj - save the posn for later if
                                                 the default mosfet model is used */
 
-        err_msg = INPgetMod(ckt, nname[i], &thismodel, tab);
-        tfree(err_msg);
+        txfree(INPgetMod(ckt, nname[i], &thismodel, tab));
 
         /* check if using model binning -- pass in line since need 'l' and 'w' */
         if (!thismodel && i < 5)
-            INPgetModBin(ckt, nname[i], &thismodel, tab, line);
+            txfree(INPgetModBin(ckt, nname[i], &thismodel, tab, line));
 
         if (thismodel)
             break;

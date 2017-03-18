@@ -68,7 +68,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
         INPgetTok(&line, &token, 1);
         if (i >= 3 && INPlookMod(token)) {
             INPinsert(&token, tab);
-            INPgetMod(ckt, token, &thismodel, tab);
+            txfree(INPgetMod(ckt, token, &thismodel, tab));
             if (!thismodel) {
                 LITERR ("Unable to find definition of given model");
                 return;
