@@ -47,7 +47,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     int type;                  /* the type the model says it is */
     char *line;                /* the part of the current line left to parse */
     char *name;                /* the resistor's name */
-    char *nname[8];
     const int max_i = 7;
     CKTnode *node[7];
     int error;                 /* error code temporary */
@@ -55,7 +54,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     GENinstance *fast;         /* pointer to the actual instance */
     int waslead;               /* flag to indicate that funny unlabeled number was found */
     double leadval;            /* actual value of unlabeled number */
-    char *model;               /* the name of the model */
     INPmodel *thismodel;       /* pointer to model description for user's model */
     GENmodel *mdfast;          /* pointer to the actual model */
     int i;
@@ -71,18 +69,18 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
     for (i = 0; ; i++) {
 
-        INPgetNetTok(&line, &nname[i], 1);
+        char *token;
+        INPgetNetTok(&line, &token, 1);
 
         if (i >= 4) {
-        txfree(INPgetMod(ckt, nname[i], &thismodel, tab));
+        txfree(INPgetMod(ckt, token, &thismodel, tab));
 
         /* check if using model binning -- pass in line since need 'l' and 'w' */
         if (!thismodel)
-            txfree(INPgetModBin(ckt, nname[i], &thismodel, tab, line));
+            txfree(INPgetModBin(ckt, token, &thismodel, tab, line));
 
         if (thismodel) {
-            model = nname[i];
-            INPinsert(&model, tab);
+            INPinsert(&token, tab);
             break;
          }
         }
@@ -90,7 +88,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
             LITERR ("could not find a valid modelname");
             return;
         }
-        INPtermInsert(ckt, &nname[i], tab, &node[i]);
+        INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
     numnodes = i;
