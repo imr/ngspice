@@ -48,8 +48,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     char *line;                /* the part of the current line left to parse */
     char *name;                /* the resistor's name */
     char *nname[8];
-    char *save;                /* saj - used to save the posn of the start of
-                                  the parameters if the model is a mosfet*/
+    const int max_i = 7;
     CKTnode *node[7];
     int error;                 /* error code temporary */
     int numnodes;              /* flag indicating 4 or 5 (or 6 or 7) nodes */
@@ -59,8 +58,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     char *model;               /* the name of the model */
     INPmodel *thismodel;       /* pointer to model description for user's model */
     GENmodel *mdfast;          /* pointer to the actual model */
-    IFuid uid;                 /* uid for default model */
-    char *err_msg;
     int i;
 
 #ifdef TRACE
@@ -85,13 +82,9 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
     node[5] = NULL;
     node[6] = NULL;
 
-    for (i = 4; i < 8; i++) {
+    for (i = 4; ; i++) {
 
         INPgetNetTok(&line, &nname[i], 1);
-
-        if (i == 4)
-            save = line;                     /* saj - save the posn for later if
-                                                the default mosfet model is used */
 
         txfree(INPgetMod(ckt, nname[i], &thismodel, tab));
 
@@ -101,15 +94,13 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
         if (thismodel)
             break;
+        if (i >= max_i) {
+            LITERR ("could not find a valid modelname");
+            return;
+        }
     }
 
-    /* nothing found, reset and process as if it were a 4 node device */
-    if (i >= 8) {
-        numnodes = 4;
-        line = save;
-    } else {
-        numnodes = i;
-    }
+    numnodes = i;
 
     if (numnodes > model_numnodes(thismodel->INPmodType)) {
         LITERR ("too much nodes connected to instance");
@@ -122,21 +113,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 
     INPinsert(&model, tab);
 
-#ifdef TRACE
-    printf("INP2M: Looking up model\n");
-#endif
-
-    err_msg = INPgetMod(ckt, model, &thismodel, tab);
-    if (!thismodel) {
-        INPgetModBin(ckt, model, &thismodel, tab, save);
-        if (!thismodel) {
-            current->error = err_msg;
-            err_msg = NULL;
-        }
-    }
-    tfree(err_msg);
-
-    if (thismodel) {
         if (thismodel->INPmodType != INPtypelook("Mos1") &&
             thismodel->INPmodType != INPtypelook("Mos2") &&
             thismodel->INPmodType != INPtypelook("Mos3") &&
@@ -175,19 +151,6 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         }
         type = thismodel->INPmodType;
         mdfast = thismodel->INPmodfast;
-    } else {
-        type = INPtypelook("Mos1");
-        if (type < 0) {
-            LITERR ("Device type MOS1 not supported by this binary\n");
-            return;
-        }
-        if (!tab->defMmod) {
-            /* create default M model */
-            IFnewUid(ckt, &uid, NULL, "M", UID_MODEL, NULL);
-            IFC (newModel, (ckt, type, &(tab->defMmod), uid));
-        }
-        mdfast = tab->defMmod;
-    }
 
     IFC (newInstance, (ckt, mdfast, &fast, name));
 
