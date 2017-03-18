@@ -96,7 +96,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         txfree(INPgetMod(ckt, nname[i], &thismodel, tab));
 
         /* check if using model binning -- pass in line since need 'l' and 'w' */
-        if (!thismodel && i < 5)
+        if (!thismodel)
             txfree(INPgetModBin(ckt, nname[i], &thismodel, tab, line));
 
         if (thismodel)
