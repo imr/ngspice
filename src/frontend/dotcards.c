@@ -66,7 +66,7 @@ ft_dotsaves(void)
         if (ciprefix(".save", iline->wl_word)) {
             s = iline->wl_word;
             /* skip .save */
-            gettok_nc(&s);
+            s = nexttok(s);
             wl = wl_append(wl, gettoks(s));
         }
 
@@ -111,7 +111,7 @@ ft_savedotargs(void)
             isaplot = 0;
 
         if (isaplot || ciprefix(".print", s)) {
-            gettok_nc(&s);
+            s = nexttok(s);
             name = gettok(&s);
 
             if ((w = gettoks(s)) == NULL) {
@@ -137,8 +137,8 @@ ft_savedotargs(void)
                 com_save2(w, name);
             }
         } else if (ciprefix(".four", s)) {
-            gettok_nc(&s);
-            gettok_nc(&s);
+            s = nexttok(s);
+            s = nexttok(s);
             if ((w = gettoks(s)) == NULL) {
                 fprintf(cp_err, "Warning: no nodes given: %s\n", iline->wl_word);
             } else {

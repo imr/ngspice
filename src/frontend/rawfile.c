@@ -474,7 +474,7 @@ raw_read(char *name) {
                     (void) fgets(buf, BSIZE_SP, fp);
                     s = buf;
                 }
-                gettok_nc(&s);  /* The strchr field. */
+                s = nexttok(s);  /* The strchr field. */
                 if ((t = gettok(&s)) != NULL) {
                     v->v_name = t;
                 } else {
