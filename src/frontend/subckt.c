@@ -1316,8 +1316,8 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
         lastwasalpha = 0;
         bxx_putc(t, which);
         src = s;
-        bxx_putc(t, *src++);
-        src = skip_ws(src);
+        bxx_putc(t, '(');
+        src = skip_ws(src + 1);
         for (buf = src; *src && !isspace_c(*src) && *src != ',' && *src != ')'; )
             src++;
         buf_end = src;
