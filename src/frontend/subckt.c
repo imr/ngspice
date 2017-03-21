@@ -1306,14 +1306,15 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             bxx_putc(t, *src++);
             continue;
         }
+        which = *src;
         s = skip_ws(src + 1);
-        if (!*s || (*s != '(')) {
+        if (*s != '(') {
             lastwasalpha = isalpha_c(*src);
             bxx_putc(t, *src++);
             continue;
         }
         lastwasalpha = 0;
-        bxx_putc(t, which = *src);
+        bxx_putc(t, which);
         src = s;
         bxx_putc(t, *src++);
         src = skip_ws(src);
