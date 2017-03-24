@@ -111,20 +111,15 @@ tprintf(const char *fmt, ...)
 int
 substring(const char *sub, const char *str)
 {
-    const char *s, *t;
-
-    while (*str) {
+    for (; *str; str++)
         if (*str == *sub) {
-            t = str;
-            for (s = sub; *s; s++) {
-                if (!*t || (*s != *t++))
+            const char *s = sub, *t = str;
+            for (; *s; s++, t++)
+                if (!*t || (*s != *t))
                     break;
-            }
             if (*s == '\0')
                 return TRUE;
         }
-        str++;
-    }
 
     return FALSE;
 }
@@ -166,13 +161,9 @@ scannum(char *str)
 int
 cieq(const char *p, const char *s)
 {
-    while (*p) {
-        if ((isupper_c(*p) ? tolower_c(*p) : *p) !=
-            (isupper_c(*s) ? tolower_c(*s) : *s))
+    for (; *p; p++, s++)
+        if (tolower_c(*p) != tolower_c(*s))
             return FALSE;
-        p++;
-        s++;
-    }
 
     return *s == '\0';
 }
@@ -183,13 +174,9 @@ cieq(const char *p, const char *s)
 int
 ciprefix(const char *p, const char *s)
 {
-    while (*p) {
-        if ((isupper_c(*p) ? tolower_c(*p) : *p) !=
-            (isupper_c(*s) ? tolower_c(*s) : *s))
+    for (; *p; p++, s++)
+        if (tolower_c(*p) != tolower_c(*s))
             return FALSE;
-        p++;
-        s++;
-    }
 
     return TRUE;
 }
@@ -198,24 +185,22 @@ ciprefix(const char *p, const char *s)
 void
 strtolower(char *str)
 {
-    if (str)
-        while (*str) {
-            if (isupper_c(*str))
-                *str = tolower_c(*str);
-            str++;
-        }
+    if (!str)
+        return;
+
+    for (; *str; str++)
+        *str = tolower_c(*str);
 }
 
 
 void
 strtoupper(char *str)
 {
-    if (str)
-        while (*str) {
-            if (islower_c(*str))
-                *str = toupper_c(*str);
-            str++;
-        }
+    if (!str)
+        return;
+
+    for (; *str; str++)
+        *str = toupper_c(*str);
 }
 
 
@@ -239,13 +224,9 @@ cinprefix(char *p, char *s, int n)
     if (!p || !s)
         return 0;
 
-    while (*p) {
-        if ((isupper_c(*p) ? tolower_c(*p) : *p) != (isupper_c(*s) ? tolower_c(*s) : *s))
+    for (; *p; p++, s++, n--)
+        if (tolower_c(*p) != tolower_c(*s))
             return 0;
-        p++;
-        s++;
-        n--;
-    }
 
     return n <= 0;
 }
@@ -265,13 +246,9 @@ cimatch(char *p, char *s)
     if (!p || !s)
         return 0;
 
-    while (*p) {
-        if ((isupper_c(*p) ? tolower_c(*p) : *p) != (isupper_c(*s) ? tolower_c(*s) : *s))
+    for (; *p; p++, s++, n++)
+        if (tolower_c(*p) != tolower_c(*s))
             return n;
-        p++;
-        s++;
-        n++;
-    }
 
     return n;
 }
@@ -367,7 +344,7 @@ gettok_iv(char **s)
     SPICE_DSTRING buf;       /* allow any length string */
 
     paren = 0;
-    while ((isspace_c(**s)) || (**s == '='))
+    while (isspace_c(**s) || (**s == '='))
         (*s)++;
 
     if ((!**s) || ((**s != 'v') && (**s != 'i') && (**s != 'V') && (**s != 'I')))
@@ -495,26 +472,23 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
         else
             q = '(';
         /* add string in front of q, excluding q */
-        while ((c = **s) != '\0' && (**s != q)) {
+        while ((c = **s) != '\0' && (**s != q))
             (*s)++;
-        }
         /* return if nested bracket found, excluding its character */
         while ((c = **s) != '\0') {
             if (c == q)
                 count++;
             else if (c == p)
                 count--;
-            if (count == 0) {
+            if (count == 0)
                 break;
-            }
             (*s)++;
         }
     }
     else
         /* just look for p and return string, excluding p */
-        while ((c = **s) != '\0' && (**s != p)) {
+        while ((c = **s) != '\0' && (**s != p))
             (*s)++;
-        }
 
     if (c == '\0')
         /* p not found */
@@ -565,9 +539,8 @@ gettok_node(char **s)
            (**s != '(') &&
            (**s != ')') &&
            (**s != ',')
-        ) {           /* collect chars until whitespace or ( , ) */
+        )            /* collect chars until whitespace or ( , ) */
         (*s)++;
-    }
 
     token_e = *s;
 
@@ -643,18 +616,16 @@ stripWhiteSpacesInsideParens(char *str)
         i++;
 
     spice_dstring_init(&buf);
-    for (i = i; str[i] != '\0'; i++) {
+    for (; str[i]; i++)
         if (str[i] != '(') {
             spice_dstring_append_char(&buf, str[i]);
         } else {
             spice_dstring_append_char(&buf, str[i]);
-            while ((str[i++] != ')')) {
+            while (str[i++] != ')')
                 if (str[i] != ' ')
                     spice_dstring_append_char(&buf, str[i]);
-            }
             i--;
         }
-    }
 
     token = copy(spice_dstring_value(&buf));
     spice_dstring_free(&buf);
@@ -679,11 +650,9 @@ is_arith_char(char c)
 bool
 str_has_arith_char(char *s)
 {
-    while (*s && *s != '\0') {
+    for (; *s; s++)
         if (is_arith_char(*s))
             return TRUE;
-        s++;
-    }
 
     return FALSE;
 }
