@@ -1399,14 +1399,10 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
     /* Paolo Nenzi Jan-2001                                              */
 
     if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
-        char *s, buf[4 * BSIZE_SP];
-        int i, gotit;
+        char *s = nexttok(line);       /* Skip the instance name */
+        int gotit = 0;
+        int i = 0;
 
-        (void) strncpy(buf, line, sizeof(buf));
-
-        i = 0;
-        gotit = 0;
-        s = nexttok(buf);       /* Skip the instance name */
         while ((i <= n) && (*s) && !gotit) {
             char *t = gettok_node(&s);       /* get nodenames . . .  */
             const wordlist *wl;
@@ -1417,7 +1413,7 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
                 }
             i++;
             tfree(t);
-        } /* while . . . . */
+        }
 
         /* Note: node checks must be done on #_of_node-1 because the */
         /* "while" cycle increments the counter even when a model is */
