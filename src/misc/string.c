@@ -20,10 +20,7 @@ prefix(const char *p, const char *s)
     while (*p && (*p == *s))
         p++, s++;
 
-    if (!*p)
-        return (TRUE);
-    else
-        return (FALSE);
+    return *p == '\0';
 }
 
 
@@ -39,7 +36,7 @@ copy(const char *str)
 
     if ((p = TMALLOC(char, strlen(str) + 1)) != NULL)
         (void) strcpy(p, str);
-    return(p);
+    return p;
 }
 
 
@@ -56,7 +53,7 @@ copy_substring(const char *str, const char *end)
         (void) strncpy(p, str, n);
         p[n] = '\0';
     }
-    return(p);
+    return p;
 }
 
 
@@ -124,12 +121,12 @@ substring(const char *sub, const char *str)
                     break;
             }
             if (*s == '\0')
-                return (TRUE);
+                return TRUE;
         }
         str++;
     }
 
-    return (FALSE);
+    return FALSE;
 }
 
 
@@ -143,7 +140,6 @@ appendc(char *s, char c)
         s++;
     *s++ = c;
     *s = '\0';
-    return;
 }
 
 
@@ -160,7 +156,7 @@ scannum(char *str)
     while (isdigit_c(*str))
         i = i * 10 + *(str++) - '0';
 
-    return(i);
+    return i;
 }
 
 
@@ -173,12 +169,12 @@ cieq(const char *p, const char *s)
     while (*p) {
         if ((isupper_c(*p) ? tolower_c(*p) : *p) !=
             (isupper_c(*s) ? tolower_c(*s) : *s))
-            return(FALSE);
+            return FALSE;
         p++;
         s++;
     }
 
-    return (*s ? FALSE : TRUE);
+    return *s == '\0';
 }
 
 
@@ -190,12 +186,12 @@ ciprefix(const char *p, const char *s)
     while (*p) {
         if ((isupper_c(*p) ? tolower_c(*p) : *p) !=
             (isupper_c(*s) ? tolower_c(*s) : *s))
-            return(FALSE);
+            return FALSE;
         p++;
         s++;
     }
 
-    return (TRUE);
+    return TRUE;
 }
 
 
@@ -241,20 +237,17 @@ int
 cinprefix(char *p, char *s, int n)
 {
     if (!p || !s)
-        return(0);
+        return 0;
 
     while (*p) {
         if ((isupper_c(*p) ? tolower_c(*p) : *p) != (isupper_c(*s) ? tolower_c(*s) : *s))
-            return(0);
+            return 0;
         p++;
         s++;
         n--;
     }
 
-    if (n > 0)
-        return(0);
-    else
-        return(1);
+    return n <= 0;
 }
 
 
@@ -270,17 +263,17 @@ cimatch(char *p, char *s)
     int n = 0;
 
     if (!p || !s)
-        return(0);
+        return 0;
 
     while (*p) {
         if ((isupper_c(*p) ? tolower_c(*p) : *p) != (isupper_c(*s) ? tolower_c(*s) : *s))
-            return(n);
+            return n;
         p++;
         s++;
         n++;
     }
 
-    return(n);
+    return n;
 }
 
 #endif /* CIDER */
@@ -305,7 +298,7 @@ gettok(char **s)
 
     *s = skip_ws(*s);
     if (!**s)
-        return (NULL);
+        return NULL;
 
     beg = *s;
     while ((c = **s) != '\0' && !isspace_c(c)) {
@@ -322,7 +315,7 @@ gettok(char **s)
     while (isspace_c(**s) || **s == ',')
         (*s)++;
 
-    return (token);
+    return token;
 }
 
 
@@ -378,7 +371,7 @@ gettok_iv(char **s)
         (*s)++;
 
     if ((!**s) || ((**s != 'v') && (**s != 'i') && (**s != 'V') && (**s != 'I')))
-        return (NULL);
+        return NULL;
 
     // initialize string
     spice_dstring_init(&buf);
@@ -404,7 +397,7 @@ gettok_iv(char **s)
 
     token = copy(spice_dstring_value(&buf));
     spice_dstring_free(&buf);
-    return (token);
+    return token;
 }
 
 
@@ -425,7 +418,7 @@ gettok_noparens(char **s)
     *s = skip_ws(*s);
 
     if (!**s)
-        return (NULL);  /* return NULL if we come to end of line */
+        return NULL;  /* return NULL if we come to end of line */
 
     beg = *s;
     while ((c = **s) != '\0' &&
@@ -440,7 +433,7 @@ gettok_noparens(char **s)
 
     *s = skip_ws(*s);
 
-    return (token);
+    return token;
 }
 
 
@@ -453,7 +446,7 @@ gettok_instance(char **s)
     *s = skip_ws(*s);
 
     if (!**s)
-        return (NULL);  /* return NULL if we come to end of line */
+        return NULL;  /* return NULL if we come to end of line */
 
     beg = *s;
     while ((c = **s) != '\0' &&
@@ -468,7 +461,7 @@ gettok_instance(char **s)
     /* Now iterate up to next non-whitespace char */
     *s = skip_ws(*s);
 
-    return (token);
+    return token;
 }
 
 
@@ -488,7 +481,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
     *s = skip_ws(*s);
 
     if (!**s)
-        return (NULL);  /* return NULL if we come to end of line */
+        return NULL;  /* return NULL if we come to end of line */
 
     beg = *s;
     if (nested && ((p == '}') || (p == ')') || (p == ']'))) {
@@ -525,7 +518,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
 
     if (c == '\0')
         /* p not found */
-        return (NULL);
+        return NULL;
 
     if (inc_p)
         /* add p */
@@ -536,7 +529,7 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
     /* Now iterate up to next non-whitespace char */
     *s = skip_ws(*s);
 
-    return (token);
+    return token;
 }
 
 
@@ -564,7 +557,7 @@ gettok_node(char **s)
         (*s)++;   /* iterate over whitespace and ( , ) */
 
     if (!**s)
-        return (NULL);  /* return NULL if we come to end of line */
+        return NULL;  /* return NULL if we come to end of line */
 
     token = *s;
     while ((c = **s) != '\0' &&
@@ -586,7 +579,7 @@ gettok_node(char **s)
         )
         (*s)++;   /* iterate over whitespace and ( , ) */
 
-    return (token);
+    return token;
 }
 
 
@@ -604,14 +597,11 @@ get_l_paren(char **s)
         (*s)++;
 
     if (!**s)
-        return (1);
+        return 1;
 
     (*s)++;
 
-    if (!**s)
-        return (1);
-    else
-        return 0;
+    return **s == '\0';
 }
 
 
@@ -629,14 +619,11 @@ get_r_paren(char **s)
         (*s)++;
 
     if (!**s)
-        return (1);
+        return 1;
 
     (*s)++;
 
-    if (!**s)
-        return (1);
-    else
-        return 0;
+    return **s == '\0';
 }
 
 /*-------------------------------------------------------------------------*
@@ -671,24 +658,21 @@ stripWhiteSpacesInsideParens(char *str)
 
     token = copy(spice_dstring_value(&buf));
     spice_dstring_free(&buf);
-    return (token);
+    return token;
 }
 
 
 bool
 isquote(char ch)
 {
-    return (ch == '\'' || ch == '"');
+    return ch == '\'' || ch == '"';
 }
 
 
 bool
 is_arith_char(char c)
 {
-    if (c != '\0' && strchr("+-*/()<>?:|&^!%\\", c))
-        return TRUE;
-    else
-        return FALSE;
+    return c != '\0' && strchr("+-*/()<>?:|&^!%\\", c);
 }
 
 
