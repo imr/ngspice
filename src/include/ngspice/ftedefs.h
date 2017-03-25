@@ -56,6 +56,11 @@ struct circ {
     JOB *ci_curOpt;           /* most recent options anal. for the circuit */
     char *ci_last_an;         /* name of last analysis run */
 
+    struct pt_temper *modtlist; /* all expressions with 'temper'
+                                   in .model lines */
+    struct pt_temper *devtlist; /* all expressions with 'temper'
+                                   in device instantiation lines */
+
     FTESTATistics *FTEstats;  /* Statistics for the front end */
 } ;
 

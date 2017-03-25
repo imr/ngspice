@@ -79,12 +79,6 @@ static int inp_parse_temper(struct line *deck,
                             struct pt_temper **devtlist_p);
 static void inp_parse_temper_trees(struct circ *ckt);
 
-/* List of all expressions found in .model lines */
-static struct pt_temper *modtlist = NULL;
-
-/* List of all expressions found in device instance lines */
-static struct pt_temper *devtlist = NULL;
-
 
 /*
  * create an unique artificial *unusable* FILE ptr
@@ -563,10 +557,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             printf("test temperature %f\n", testemp);
         }
 
-        /* reset lists */
-        modtlist = NULL;
-        devtlist = NULL;
-
         /* We are done handling the control stuff.  Now process remainder of deck.
            Go on if there is something left after the controls.*/
         if (deck->li_next) {
@@ -641,6 +631,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                options is loaded into circuit and freed when circuit is removed */
             options = line_reverse(line_nconc(options, inp_deckcopy(com_options)));
 
+            /* List of all expressions found in instance and .model lines */
+            struct pt_temper *devtlist = NULL;
+            struct pt_temper *modtlist = NULL;
+
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
                 inp_parse_temper(deck, &modtlist, &devtlist);
@@ -651,6 +645,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* now load deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
+
+            ft_curckt->devtlist = devtlist;
+            ft_curckt->modtlist = modtlist;
+
             /* inp_dodeck did take ownership */
             tt = NULL;
             options = NULL;
@@ -1579,12 +1577,12 @@ inp_parse_temper_trees(struct circ *circ)
 {
     struct pt_temper *d;
 
-    for(d = devtlist; d; d = d->next) {
+    for(d = circ->devtlist; d; d = d->next) {
         char *expression = d->expression;
         INPgetTree(&expression, &d->pt, circ->ci_ckt, NULL);
     }
 
-    for(d = modtlist; d; d = d->next) {
+    for(d = circ->modtlist; d; d = d->next) {
         char *expression = d->expression;
         INPgetTree(&expression, &d->pt, circ->ci_ckt, NULL);
     }
@@ -1597,7 +1595,7 @@ inp_evaluate_temper(struct circ *circ)
     struct pt_temper *d;
     double result;
 
-    for(d = devtlist; d; d = d->next) {
+    for(d = circ->devtlist; d; d = d->next) {
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         if (d->wlend->wl_word)
             tfree(d->wlend->wl_word);
@@ -1605,7 +1603,7 @@ inp_evaluate_temper(struct circ *circ)
         com_alter(d->wl);
     }
 
-    for(d = modtlist; d; d = d->next) {
+    for(d = circ->modtlist; d; d = d->next) {
         char *name = d->wl->wl_word;
         INPretrieve(&name, circ->ci_symtab);
         /* only evaluate models which have been entered into the
