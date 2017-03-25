@@ -238,7 +238,7 @@ strtoupper(char *str)
  */
 
 int
-cinprefix(register char *p, register char *s, register int n)
+cinprefix(char *p, char *s, int n)
 {
     if (!p || !s)
         return(0);
@@ -265,9 +265,9 @@ cinprefix(register char *p, register char *s, register int n)
  */
 
 int
-cimatch(register char *p, register char *s)
+cimatch(char *p, char *s)
 {
-    register int n = 0;
+    int n = 0;
 
     if (!p || !s)
         return(0);
