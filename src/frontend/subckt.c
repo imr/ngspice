@@ -209,15 +209,15 @@ inp_subcktexpand(struct line *deck) {
     wordlist *modnames = NULL;
 
     if (!cp_getvar("substart", CP_STRING, start))
-        (void) strcpy(start, ".subckt");
+        strcpy(start, ".subckt");
     if (!cp_getvar("subend", CP_STRING, sbend))
-        (void) strcpy(sbend, ".ends");
+        strcpy(sbend, ".ends");
     if (!cp_getvar("subinvoke", CP_STRING, invoke))
-        (void) strcpy(invoke, "x");
+        strcpy(invoke, "x");
     if (!cp_getvar("modelcard", CP_STRING, model))
-        (void) strcpy(model, ".model");
+        strcpy(model, ".model");
     if (!cp_getvar("modelline", CP_STRING, model))
-        (void) strcpy(model, ".model");
+        strcpy(model, ".model");
 
     use_numparams = cp_getvar("numparams", CP_BOOL, NULL);
 
@@ -267,10 +267,9 @@ inp_subcktexpand(struct line *deck) {
                 continue;
 
             if (ciprefix(model, c->li_line)) {
-                char *s = c->li_line;
-                s = nexttok(s); /* discard the model keyword */
+                char *s = nexttok(c->li_line);
                 modnames = wl_cons(gettok(&s), modnames);
-            } /* model name finding routine */
+            }
         }
     }
 
@@ -809,7 +808,7 @@ bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
         int ret;
         int size = (int)(t->limit - t->dst);
         va_start(ap, fmt);
-        ret  = vsnprintf(t->dst, (size_t) size, fmt, ap);
+        ret = vsnprintf(t->dst, (size_t) size, fmt, ap);
         va_end(ap);
         if (ret == -1) {
             bxx_extend(t, bxx_chunksize);
@@ -1258,9 +1257,9 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
             translate_node_name(t, scname, buf, buf_end);
 
             /* translate the reference node, as in the "2" in "v(4,2)" */
-            while (*src && (isspace_c(*src) || *src == ',')) {
+            while (*src && (isspace_c(*src) || *src == ','))
                 src++;
-            }
+
             if (*src && *src != ')') {
                 for (buf = src; *src && !isspace_c(*src) && (*src != ')'); )
                     src++;
