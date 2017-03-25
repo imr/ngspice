@@ -10,7 +10,11 @@
 #include "ngspice/wordlist.h"
 
 #ifndef free_pnode
-#define free_pnode(ptr)  free_pnode_x(ptr); ptr=NULL;
+#define free_pnode(ptr)                         \
+    do {                                        \
+        free_pnode_x(ptr);                      \
+        ptr = NULL;                             \
+    } while(0)
 #endif
 
 
