@@ -1590,6 +1590,20 @@ inp_parse_temper_trees(struct circ *circ)
 
 
 void
+rem_tlist(struct pt_temper *p)
+{
+    while (p) {
+        struct pt_temper *next_p = p->next;
+        tfree(p->expression);
+        wl_free(p->wl);
+        INPfreeTree((IFparseTree *) p->pt);
+        tfree(p);
+        p = next_p;
+    }
+}
+
+
+void
 inp_evaluate_temper(struct circ *circ)
 {
     struct pt_temper *d;

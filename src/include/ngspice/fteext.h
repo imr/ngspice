@@ -219,6 +219,7 @@ extern struct line *line_nconc(struct line *head, struct line *rest);
 extern struct line *line_reverse(struct line *head);
 
 extern char **circarray;
+extern void rem_tlist(struct pt_temper *p);
 
 /* nutinp.c */
 
