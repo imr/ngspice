@@ -748,7 +748,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Now the circuit is defined, so generate the parse trees */
             inp_parse_temper_trees();
             /* Get the actual data for model and device instance parameters */
-            inp_evaluate_temper();
+            inp_evaluate_temper(ft_curckt);
         }
 
        /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
@@ -1583,7 +1583,7 @@ inp_parse_temper_trees(void)
 
 
 void
-inp_evaluate_temper(void)
+inp_evaluate_temper(struct circ *circ)
 {
     struct pt_temper *d;
     double result;
@@ -1598,10 +1598,10 @@ inp_evaluate_temper(void)
 
     for(d = modtlist; d; d = d->next) {
         char *name = d->wl->wl_word;
-        INPretrieve(&name, ft_curckt->ci_symtab);
+        INPretrieve(&name, circ->ci_symtab);
         /* only evaluate models which have been entered into the
            hash table ckt->MODnameHash */
-        if (ft_sim->findModel (ft_curckt->ci_ckt, name) == NULL)
+        if (ft_sim->findModel (circ->ci_ckt, name) == NULL)
             continue;
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         if (d->wlend->wl_word)

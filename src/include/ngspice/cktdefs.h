@@ -449,6 +449,7 @@ extern int NIpred(CKTcircuit *ckt);
 extern IFfrontEnd *SPfrontEnd;
 extern bool expr_w_temper;
 
-extern void inp_evaluate_temper(void);
+struct circ;
+extern void inp_evaluate_temper(struct circ *ckt);
 
 #endif
