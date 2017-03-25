@@ -661,18 +661,14 @@ str_has_arith_char(char *s)
 int
 get_comma_separated_values(char *values[], char *str) {
     int count = 0;
-    char *ptr, *comma_ptr, keep;
+    char *comma_ptr;
 
     while ((comma_ptr = strchr(str, ',')) != NULL) {
-        ptr = comma_ptr - 1;
-        while (isspace_c(*ptr))
-            ptr--;
-        ptr++; keep = *ptr; *ptr = '\0';
-        values[count++] = strdup(str);
-        *ptr = keep;
+        char *ptr = skip_back_ws(comma_ptr, str);
+        values[count++] = copy_substring(str, ptr);
         str = skip_ws(comma_ptr + 1);
     }
-    values[count++] = strdup(str);
+    values[count++] = copy(str);
     return count;
 }
 
