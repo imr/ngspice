@@ -55,7 +55,7 @@ static struct line *com_options = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 static void dotifeval(struct line *deck);
 static int inp_parse_temper(struct line *deck);
-static void inp_parse_temper_trees(void);
+static void inp_parse_temper_trees(struct circ *ckt);
 
 static wordlist *inp_savecurrents(struct line *deck, struct line *options, wordlist *wl, wordlist *controls);
 
@@ -746,7 +746,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         if (expr_w_temper) {
             /* Now the circuit is defined, so generate the parse trees */
-            inp_parse_temper_trees();
+            inp_parse_temper_trees(ft_curckt);
             /* Get the actual data for model and device instance parameters */
             inp_evaluate_temper(ft_curckt);
         }
@@ -1566,18 +1566,18 @@ inp_parse_temper(struct line *card)
 
 
 static void
-inp_parse_temper_trees(void)
+inp_parse_temper_trees(struct circ *circ)
 {
     struct pt_temper *d;
 
     for(d = devtlist; d; d = d->next) {
         char *expression = d->expression;
-        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+        INPgetTree(&expression, &d->pt, circ->ci_ckt, NULL);
     }
 
     for(d = modtlist; d; d = d->next) {
         char *expression = d->expression;
-        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+        INPgetTree(&expression, &d->pt, circ->ci_ckt, NULL);
     }
 }
 
