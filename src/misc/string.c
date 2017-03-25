@@ -292,7 +292,7 @@ gettok(char **s)
 {
     char c;
     int paren;
-    char *beg, *token; /* return token */
+    const char *token, *token_e;
 
     paren = 0;
 
@@ -300,7 +300,7 @@ gettok(char **s)
     if (!**s)
         return NULL;
 
-    beg = *s;
+    token = *s;
     while ((c = **s) != '\0' && !isspace_c(c)) {
         if (c == '(')
             paren += 1;
@@ -310,12 +310,12 @@ gettok(char **s)
             break;
         (*s)++;
     }
-    token = copy_substring(beg, *s);
+    token_e = *s;
 
     while (isspace_c(**s) || **s == ',')
         (*s)++;
 
-    return token;
+    return copy_substring(token, token_e);
 }
 
 
@@ -413,14 +413,14 @@ char *
 gettok_noparens(char **s)
 {
     char c;
-    char *beg, *token;                         /* return token */
+    const char *token, *token_e;
 
     *s = skip_ws(*s);
 
     if (!**s)
         return NULL;  /* return NULL if we come to end of line */
 
-    beg = *s;
+    token = *s;
     while ((c = **s) != '\0' &&
            !isspace_c(c) &&
            (**s != '(') &&
@@ -429,11 +429,11 @@ gettok_noparens(char **s)
         ) {
         (*s)++;
     }
-    token = copy_substring(beg, *s);
+    token_e = *s;
 
     *s = skip_ws(*s);
 
-    return token;
+    return copy_substring(token, token_e);
 }
 
 
@@ -441,14 +441,14 @@ char *
 gettok_instance(char **s)
 {
     char c;
-    char *beg, *token;                         /* return token */
+    const char *token, *token_e;
 
     *s = skip_ws(*s);
 
     if (!**s)
         return NULL;  /* return NULL if we come to end of line */
 
-    beg = *s;
+    token = *s;
     while ((c = **s) != '\0' &&
            !isspace_c(c) &&
            (**s != '(') &&
@@ -456,12 +456,12 @@ gettok_instance(char **s)
         ) {
         (*s)++;
     }
-    token = copy_substring(beg, *s);
+    token_e = *s;
 
     /* Now iterate up to next non-whitespace char */
     *s = skip_ws(*s);
 
-    return token;
+    return copy_substring(token, token_e);
 }
 
 
@@ -476,14 +476,14 @@ char *
 gettok_char(char **s, char p, bool inc_p, bool nested)
 {
     char c;
-    char *beg, *token;                         /* return token */
+    const char *token, *token_e;
 
     *s = skip_ws(*s);
 
     if (!**s)
         return NULL;  /* return NULL if we come to end of line */
 
-    beg = *s;
+    token = *s;
     if (nested && ((p == '}') || (p == ')') || (p == ']'))) {
         char q;
         int count = 0;
@@ -524,12 +524,12 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
         /* add p */
         (*s)++;
 
-    token = copy_substring(beg, *s);
+    token_e = *s;
 
     /* Now iterate up to next non-whitespace char */
     *s = skip_ws(*s);
 
-    return token;
+    return copy_substring(token, token_e);
 }
 
 
@@ -544,7 +544,7 @@ char *
 gettok_node(char **s)
 {
     char c;
-    char *token;                               /* return token */
+    const char *token, *token_e;
 
     if (*s == NULL)
         return NULL;
@@ -569,7 +569,7 @@ gettok_node(char **s)
         (*s)++;
     }
 
-    token = copy_substring(token, *s);
+    token_e = *s;
 
     /* Now iterate up to next non-whitespace char */
     while (isspace_c(**s) ||
@@ -579,7 +579,7 @@ gettok_node(char **s)
         )
         (*s)++;   /* iterate over whitespace and ( , ) */
 
-    return token;
+    return copy_substring(token, token_e);
 }
 
 
