@@ -122,7 +122,7 @@ static void inp_sort_params(struct line *param_cards, struct line *card_bf_start
 static char *inp_remove_ws(char *s);
 static void inp_compat(struct line *deck);
 static void inp_bsource_compat(struct line *deck);
-static void inp_temper_compat(struct line *card);
+static bool inp_temper_compat(struct line *card);
 static void inp_dot_if(struct line *deck);
 static char *inp_modify_exp(char* expression);
 static struct func_temper *inp_new_func(char *funcname, char *funcbody, struct line *card,
@@ -544,7 +544,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile)
             /* B source numparam compatibility transformation */
             inp_bsource_compat(working);
             inp_dot_if(working);
-            inp_temper_compat(working);
+            expr_w_temper = inp_temper_compat(working);
         } else {
             expr_w_temper = FALSE;
         }
@@ -5387,13 +5387,13 @@ inp_bsource_compat(struct line *card)
  * a modified card->li_line
  */
 
-static void
+static bool
 inp_temper_compat(struct line *card)
 {
     int skip_control = 0;
     char *beg_str, *end_str, *beg_tstr, *end_tstr, *exp_str;
 
-    expr_w_temper = FALSE;
+    bool with_temper = FALSE;
     for (; card; card = card->li_next) {
 
         char *new_str = NULL;
@@ -5430,7 +5430,7 @@ inp_temper_compat(struct line *card)
         while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
             char *modified_exp;
             /* set the global variable */
-            expr_w_temper = TRUE;
+            with_temper = TRUE;
             /* find the expression: first go back to the opening '{',
                then find the closing '}' */
             while ((*beg_tstr) != '{')
@@ -5453,6 +5453,7 @@ inp_temper_compat(struct line *card)
         tfree(card->li_line);
         card->li_line = inp_remove_ws(new_str);
     }
+    return with_temper;
 }
 
 
