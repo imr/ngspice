@@ -54,8 +54,6 @@ static bool doedit(char *filename);
 static struct line *com_options = NULL;
 static void cktislinear(CKTcircuit *ckt, struct line *deck);
 static void dotifeval(struct line *deck);
-static int inp_parse_temper(struct line *deck);
-static void inp_parse_temper_trees(struct circ *ckt);
 
 static wordlist *inp_savecurrents(struct line *deck, struct line *options, wordlist *wl, wordlist *controls);
 
@@ -75,6 +73,11 @@ struct pt_temper {
     INPparseTree *pt;
     struct pt_temper *next;
 };
+
+static int inp_parse_temper(struct line *deck,
+                            struct pt_temper **motdlist_p,
+                            struct pt_temper **devtlist_p);
+static void inp_parse_temper_trees(struct circ *ckt);
 
 /* List of all expressions found in .model lines */
 static struct pt_temper *modtlist = NULL;
@@ -640,7 +643,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* prepare parse trees from 'temper' expressions */
             if (expr_w_temper)
-                inp_parse_temper(deck);
+                inp_parse_temper(deck, &modtlist, &devtlist);
 
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
@@ -1435,10 +1438,13 @@ dotifeval(struct line *deck)
 */
 
 static int
-inp_parse_temper(struct line *card)
+inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_temper **devtlist_p)
 {
     int error = 0;
     char *end_tstr, *beg_tstr, *beg_pstr, *str_ptr, *devmodname, *paramname;
+
+    struct pt_temper *modtlist = NULL;
+    struct pt_temper *devtlist = NULL;
 
     /* skip title line */
     card = card->li_next;
@@ -1560,6 +1566,9 @@ inp_parse_temper(struct line *card)
             tfree(devmodname);
         }
     }
+
+    *modtlist_p = modtlist;
+    *devtlist_p = devtlist;
 
     return error;
 }
