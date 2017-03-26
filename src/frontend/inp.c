@@ -76,6 +76,13 @@ struct pt_temper {
     struct pt_temper *next;
 };
 
+/* List of all expressions found in .model lines */
+static struct pt_temper *modtlist = NULL;
+
+/* List of all expressions found in device instance lines */
+static struct pt_temper *devtlist = NULL;
+
+
 /*
  * create an unique artificial *unusable* FILE ptr
  *   meant to be used with Xprintf() only to eventually
@@ -552,6 +559,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             cp_getvar("pretemp", CP_REAL, &testemp);
             printf("test temperature %f\n", testemp);
         }
+
+        /* reset lists */
+        modtlist = NULL;
+        devtlist = NULL;
+
         /* We are done handling the control stuff.  Now process remainder of deck.
            Go on if there is something left after the controls.*/
         if (deck->li_next) {
@@ -1394,12 +1406,6 @@ dotifeval(struct line *deck)
     }
 }
 
-
-/* List of all expressions found in .model lines */
-static struct pt_temper *modtlist = NULL;
-
-/* List of all expressions found in device instance lines */
-static struct pt_temper *devtlist = NULL;
 
 /*
     Evaluate expressions containing 'temper' keyword, found in
