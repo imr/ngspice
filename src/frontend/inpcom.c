@@ -5391,6 +5391,7 @@ inp_temper_compat(struct line *card)
     int skip_control = 0;
     char *beg_str, *end_str, *beg_tstr, *end_tstr, *exp_str;
 
+    expr_w_temper = FALSE;
     for (; card; card = card->li_next) {
 
         char *new_str = NULL;
