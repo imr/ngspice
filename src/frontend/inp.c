@@ -352,6 +352,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     wordlist *controls = NULL, *pre_controls = NULL;
     FILE *lastin, *lastout, *lasterr;
     double temperature_value;
+    bool expr_w_temper = FALSE;
 
     double startTime, endTime;
 
@@ -364,7 +365,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    deck = inp_readall(fp, dir_name, comfile, intfile);
+    deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
     endTime = seconds();
     tfree(dir_name);
 

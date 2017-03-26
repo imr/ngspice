@@ -1439,7 +1439,7 @@ com_alter_mod(wordlist *wl)
     modfile = inp_pathopen(filename, readmode);
     {
         char *dir_name = ngdirname(filename);
-        modeldeck = inp_readall(modfile, dir_name, 0, 0);
+        modeldeck = inp_readall(modfile, dir_name, 0, 0, NULL);
         free(dir_name);
     }
     tfree(input);

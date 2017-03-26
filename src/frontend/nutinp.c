@@ -35,7 +35,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
 
-    deck = inp_readall(fp, NULL, comfile, FALSE); /* still to check if . or filename instead of NULL */
+    deck = inp_readall(fp, NULL, comfile, FALSE, NULL); /* still to check if . or filename instead of NULL */
     if (!deck)
         return;
 
