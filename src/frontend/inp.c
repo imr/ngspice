@@ -745,12 +745,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             fclose(fdo);
         }
 
-        if (expr_w_temper) {
-            /* Now the circuit is defined, so generate the parse trees */
-            inp_parse_temper_trees(ft_curckt);
-            /* Get the actual data for model and device instance parameters */
-            inp_evaluate_temper(ft_curckt);
-        }
+        /* Now the circuit is defined, so generate the parse trees */
+        inp_parse_temper_trees(ft_curckt);
+        /* Get the actual data for model and device instance parameters */
+        inp_evaluate_temper(ft_curckt);
 
        /* linked list dbs is used to store the "save" or .save data (defined in breakp2.c),
           (When controls are executed later on, also stores TRACE, IPLOT, and STOP data) */

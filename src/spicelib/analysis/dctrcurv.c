@@ -144,8 +144,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             job->TRCVvSave[i] = ckt->CKTtemp; /* Saves the old circuit temperature */
             job->TRCVvType[i] = TEMP_CODE;    /* Set the sweep type code */
             ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK; /* Set the new circuit temp */
-            if (expr_w_temper)
-                inp_evaluate_temper(ft_curckt);
+            inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
             goto found;
         }
@@ -277,8 +276,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     job->TRCVvStart[i];
             } else if (job->TRCVvType[i] == TEMP_CODE) {
                 ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK;
-                if (expr_w_temper)
-                    inp_evaluate_temper(ft_curckt);
+                inp_evaluate_temper(ft_curckt);
                 CKTtemp(ckt);
             } else if (job->TRCVvType[i] == rcode) {
                 ((RESinstance *)(job->TRCVvElt[i]))->RESresist =
@@ -471,8 +469,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
-            if (expr_w_temper)
-                inp_evaluate_temper(ft_curckt);
+            inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
         }
 
@@ -509,8 +506,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = job->TRCVvSave[i];
-            if (expr_w_temper)
-                inp_evaluate_temper(ft_curckt);
+            inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
         }
 
