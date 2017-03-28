@@ -44,7 +44,7 @@ IFparm HFETApTable[] = { /* parameters */
 
 IFparm HFETAmPTable[] = { /* model parameters */
  IOP( "vt0",     HFETA_MOD_VTO,    IF_REAL,"Pinch-off voltage"),
- IOP( "vto",     HFETA_MOD_VTO,    IF_REAL,"Pinch-off voltage"),
+ IOPR("vto",     HFETA_MOD_VTO,    IF_REAL,"Pinch-off voltage"),
  IOP( "lambda",  HFETA_MOD_LAMBDA, IF_REAL,"Output conductance parameter"),
  IOP( "rd",      HFETA_MOD_RD,     IF_REAL,"Drain ohmic resistance"),
  IOP( "rs",      HFETA_MOD_RS,     IF_REAL,"Source ohmic resistance"),

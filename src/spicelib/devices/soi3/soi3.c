@@ -142,7 +142,7 @@ IFparm SOI3pTable[] = { /* parameters */
 
 IFparm SOI3mPTable[] = { /* model parameters */
  IOP("vto",   SOI3_MOD_VTO,   IF_REAL   ,"Threshold voltage"),
- IOP("vt0",   SOI3_MOD_VTO,   IF_REAL   ,"Threshold voltage"),
+ IOPR("vt0",  SOI3_MOD_VTO,   IF_REAL   ,"Threshold voltage"),
  IOP("vfbf",  SOI3_MOD_VFBF,  IF_REAL   ,"Flat band voltage"),
  IOP("kp",    SOI3_MOD_KP,    IF_REAL   ,"Transconductance parameter"),
  IOP("gamma", SOI3_MOD_GAMMA, IF_REAL   ,"Body Factor"),
@@ -172,7 +172,7 @@ IFparm SOI3mPTable[] = { /* model parameters */
  IOP("tb",    SOI3_MOD_TB,    IF_REAL   ,"Bulk film thickness"),
  IOP("ld",    SOI3_MOD_LD,    IF_REAL   ,"Lateral diffusion"),
  IOP("u0",    SOI3_MOD_U0,    IF_REAL   ,"Surface mobility"),
- IOP("uo",    SOI3_MOD_U0,    IF_REAL   ,"Surface mobility"),
+ IOPR("uo",   SOI3_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOP("fc",    SOI3_MOD_FC,    IF_REAL   ,"Forward bias jct. fit parm."),
  IP("nsoi",   SOI3_MOD_NSOI3,  IF_FLAG   ,"N type SOI3fet model"),
  IP("psoi",   SOI3_MOD_PSOI3,  IF_FLAG   ,"P type SOI3fet model"),

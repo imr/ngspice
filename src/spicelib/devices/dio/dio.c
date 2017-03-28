@@ -83,8 +83,6 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "ctc", DIO_MOD_CTA, IF_REAL, "Area junction capacitance temperature coefficient"),
  IOP( "ctp", DIO_MOD_CTP, IF_REAL, "Perimeter junction capacitance temperature coefficient"),
 
- IOP( "ctp", DIO_MOD_CTP, IF_REAL, "Perimeter junction capacitance temperature coefficient"),
-
  IOP( "tpb", DIO_MOD_TPB, IF_REAL, "Area junction potential temperature coefficient"),
  IOPR( "tvj", DIO_MOD_TPB, IF_REAL, "Area junction potential temperature coefficient"),
  IOP( "tphp", DIO_MOD_TPHP, IF_REAL, "Perimeter junction potential temperature coefficient"),

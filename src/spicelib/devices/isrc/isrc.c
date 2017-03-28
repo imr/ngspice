@@ -16,8 +16,8 @@ IFparm ISRCpTable[] = { /* parameters */
  IOPAAU("acphase", ISRC_AC_PHASE,  IF_REAL   ,"AC Phase"),
  /* Modified to allow print @Iin[sin] A.Roldan */
  IOP ("pulse",   ISRC_PULSE,     IF_REALVEC,"Pulse description"),
- IOP ("sine",    ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
  IOP ("sin",     ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
+ IOPR("sine",    ISRC_SINE,      IF_REALVEC,"Sinusoidal source description"),
  IOP ("exp",     ISRC_EXP,       IF_REALVEC,"Exponential source description"),
  IOP ("pwl",     ISRC_PWL,       IF_REALVEC,"Piecewise linear description"),
  IOP ("sffm",    ISRC_SFFM,      IF_REALVEC,"Single freq. FM description"),

@@ -80,9 +80,9 @@ IFparm HFET2mPTable[] = { /* model parameters */
  IOP( "vsigma",  HFET2_MOD_VSIGMA,  IF_REAL,""), 
  IOP( "vsigmat", HFET2_MOD_VSIGMAT, IF_REAL,""),
  IOP( "vt0",     HFET2_MOD_VTO,     IF_REAL,"Pinch-off voltage"),
+ IOPR("vto",     HFET2_MOD_VTO,     IF_REAL,"Pinch-off voltage"),
  IOP( "vt1",     HFET2_MOD_VT1,     IF_REAL,""),
- IOP( "vt2",     HFET2_MOD_VT2,     IF_REAL,""),
- IOP( "vto",     HFET2_MOD_VTO,     IF_REAL,"Pinch-off voltage")
+ IOP( "vt2",     HFET2_MOD_VT2,     IF_REAL,"")
  
 };
 

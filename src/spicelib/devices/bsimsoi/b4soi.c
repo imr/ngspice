@@ -88,7 +88,6 @@ IOP( "nrb", B4SOI_NRB,    IF_REAL,    "Number of squares in body"),
 IOP( "frbody", B4SOI_FRBODY,    IF_REAL,    "layout dependent body-resistance coefficient"),
 
 /* v4.0 */
-IOP( "nf",  B4SOI_NF,     IF_REAL   , "Number of fingers"),
 IOP( "rbdb", B4SOI_RBDB,  IF_REAL   , "Body resistance"),
 IOP( "rbsb", B4SOI_RBSB,  IF_REAL   , "Body resistance"),
 IOP( "delvto", B4SOI_DELVTO,  IF_REAL, "Zero bias threshold voltage variation"),
@@ -481,7 +480,7 @@ IOP( "dlbg", B4SOI_MOD_DLBG, IF_REAL, "Length offset fitting parameter for backg
 
 /* v2.2 release */
 IOP( "igmod",  B4SOI_MOD_IGBMOD, IF_INTEGER, "gate-body tunneling current model selector"), /* v3.1.1 */
-IOP( "igbmod", B4SOI_MOD_IGBMOD, IF_INTEGER, "gate-body tunneling current model selector"), /* v3.0 */
+IOPR("igbmod", B4SOI_MOD_IGBMOD, IF_INTEGER, "gate-body tunneling current model selector"), /* v3.0 */
 IOP( "igcmod", B4SOI_MOD_IGCMOD, IF_INTEGER, "gate-channel tunneling current model selector"), /* v3.0 */
 IOP( "toxqm", B4SOI_MOD_TOXQM, IF_REAL, "effective oxide thickness considering quantum effect"),
 IOP( "wth0", B4SOI_MOD_WTH0, IF_REAL, "Minimum width for thermal resistance calculation"),
@@ -607,7 +606,7 @@ IOP( "lnch",  B4SOI_MOD_LNPEAK, IF_REAL, "Length dependence of nch"),
 IOP( "lnsub", B4SOI_MOD_LNSUB, IF_REAL, "Length dependence of nsub"),
 IOP( "lngate", B4SOI_MOD_LNGATE, IF_REAL, "Length dependence of ngate"),
 IOP( "lnsd",  B4SOI_MOD_LNSD, IF_REAL, "Length dependence of nsd"),
-IOP( "lvth0", B4SOI_MOD_LVTH0, IF_REAL,"Length dependence of vto"),
+IOP( "lvth0", B4SOI_MOD_LVTH0, IF_REAL,"Length dependence of vth0"),
 IOP( "lvfb", B4SOI_MOD_LVFB, IF_REAL, "Length dependence of vfb"),  /* v4.1 */
 IOP( "lk1",   B4SOI_MOD_LK1,  IF_REAL, "Length dependence of k1"),
 IOP( "lk1w1",   B4SOI_MOD_LK1W1,  IF_REAL, "Length dependence of k1w1"),
@@ -784,7 +783,7 @@ IOP( "wnch",  B4SOI_MOD_WNPEAK, IF_REAL, "Width dependence of nch"),
 IOP( "wnsub", B4SOI_MOD_WNSUB, IF_REAL, "Width dependence of nsub"),
 IOP( "wngate", B4SOI_MOD_WNGATE, IF_REAL, "Width dependence of ngate"),
 IOP( "wnsd",  B4SOI_MOD_WNSD, IF_REAL, "Width dependence of nsd"),
-IOP( "wvth0", B4SOI_MOD_WVTH0, IF_REAL,"Width dependence of vto"),
+IOP( "wvth0", B4SOI_MOD_WVTH0, IF_REAL,"Width dependence of vth0"),
 IOP( "wvfb", B4SOI_MOD_WVFB, IF_REAL, "Width dependence of vfb"), /* v4.1 */
 IOP( "wk1",   B4SOI_MOD_WK1,  IF_REAL, "Width dependence of k1"),
 IOP( "wk1w1",   B4SOI_MOD_WK1W1,  IF_REAL, "Width dependence of k1w1"),
@@ -963,7 +962,7 @@ IOP( "pnch",  B4SOI_MOD_PNPEAK, IF_REAL, "Cross-term dependence of nch"),
 IOP( "pnsub", B4SOI_MOD_PNSUB, IF_REAL, "Cross-term dependence of nsub"),
 IOP( "pnsd", B4SOI_MOD_PNSD, IF_REAL, "Cross-term dependence of nsd"),
 IOP( "pngate", B4SOI_MOD_PNGATE, IF_REAL, "Cross-term dependence of ngate"),
-IOP( "pvth0", B4SOI_MOD_PVTH0, IF_REAL,"Cross-term dependence of vto"),
+IOP( "pvth0", B4SOI_MOD_PVTH0, IF_REAL,"Cross-term dependence of vth0"),
 IOP( "pvfb", B4SOI_MOD_PVFB, IF_REAL, "Cross-term dependence of vfb"),  /* v4.1 */
 IOP( "pk1",   B4SOI_MOD_PK1,  IF_REAL, "Cross-term dependence of k1"),
 IOP( "pk1w1",   B4SOI_MOD_PK1W1,  IF_REAL, "Cross-term dependence of k1w1"),
