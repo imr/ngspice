@@ -154,6 +154,7 @@ extern int        DEVmaxnum;    /* size of DEVices array */
 # define IOPN(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_NOISE,		d }
 # define IOPR(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_REDUNDANT,		NULL }
 # define IOPX(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_NONSENSE,		d }
+# define IOPXR(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_NONSENSE|IF_REDUNDANT, d }
 # define IOPXU(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_NONSENSE|IF_UNINTERESTING,\
 									d }
 # define IOPQ(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_SETQUERY,		d }

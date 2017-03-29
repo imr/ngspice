@@ -54,7 +54,7 @@ IFparm RESmPTable[] = { /* model parameters */
     IOPR(  "tc2r",   RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
     IOPQ(  "tce",    RES_MOD_TCE,      IF_REAL,"exponential temp. coefficient"),
     IOPX(  "defw",   RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),
-    IOPR(  "w",      RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),
+    IOPXR(  "w",     RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),
     IOPX(  "l",      RES_MOD_DEFLENGTH,IF_REAL,"Default device length"),
     IOPQ(  "kf",     RES_MOD_KF,       IF_REAL,"Flicker noise coefficient"),
     IOPQ(  "af",     RES_MOD_AF,       IF_REAL,"Flicker noise exponent"),
