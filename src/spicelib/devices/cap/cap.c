@@ -11,8 +11,8 @@ Modified: September 2003 - Paolo Nenzi
 
 IFparm CAPpTable[] = { /* parameters */
     IOPAP("capacitance", CAP_CAP,             IF_REAL, "Device capacitance"),
-    IOPAP("cap",         CAP_CAP,             IF_REAL, "Device capacitance"),
-    IOPAP("c",           CAP_CAP,             IF_REAL, "Device capacitance"),
+    IOPAPR("cap",        CAP_CAP,             IF_REAL, "Device capacitance"),
+    IOPAPR("c",          CAP_CAP,             IF_REAL, "Device capacitance"),
     IOPAU("ic",          CAP_IC,              IF_REAL, "Initial capacitor voltage"),
     IOPZU("temp",        CAP_TEMP,            IF_REAL, "Instance operating temperature"),
     IOPZ( "dtemp",       CAP_DTEMP,           IF_REAL,

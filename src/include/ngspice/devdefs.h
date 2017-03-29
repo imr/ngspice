@@ -146,6 +146,7 @@ extern int        DEVmaxnum;    /* size of DEVices array */
 # define IOPA(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_AC,			d }
 # define IOPAU(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_AC|IF_UNINTERESTING,d }
 # define IOPAP(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_AC|IF_PRINCIPAL,	d }
+# define IOPAPR(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_AC|IF_PRINCIPAL|IF_REDUNDANT, d }
 # define IOPAA(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_AC_ONLY,		d }
 # define IOPAAU(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_AC_ONLY|IF_UNINTERESTING,d}
 # define IOPPA(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_AC_ONLY|IF_PRINCIPAL, d }
