@@ -45,7 +45,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "jsw", DIO_MOD_JSW,  IF_REAL, "Sidewall Saturation current"),
 
  IOPU( "tnom",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
- IOPR( "tref",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
+ IOPUR("tref",DIO_MOD_TNOM,IF_REAL, "Parameter measurement temperature"),
  IOP( "rs",  DIO_MOD_RS,  IF_REAL, "Ohmic resistance"),
  IOP( "trs", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),
  IOPR( "trs1", DIO_MOD_TRS, IF_REAL, "Ohmic resistance 1st order temp. coeff."),

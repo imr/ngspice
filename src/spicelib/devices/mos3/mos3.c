@@ -137,7 +137,7 @@ IFparm MOS3mPTable[] = { /* model parameters */
  IOP("wd",    MOS3_MOD_WD,    IF_REAL   ,"Width Narrowing (Diffusion)"),
  IOP("xw",    MOS3_MOD_XW,    IF_REAL   ,"Width mask adjustment"),
  IOPU("delvto",   MOS3_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
- IOPR("delvt0",   MOS3_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
+ IOPUR("delvt0",  MOS3_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
  IOP("u0",    MOS3_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOPR("uo",    MOS3_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOP("fc",    MOS3_MOD_FC,    IF_REAL   ,"Forward bias jct. fit parm."),

@@ -11,7 +11,7 @@ Author: 1987 Thomas L. Quarles
 
 IFparm TRApTable[] = { /* parameters */ 
  IOPU( "z0", TRA_Z0,   IF_REAL   , "Characteristic impedance"),
- IOPR( "zo", TRA_Z0,   IF_REAL   , "Characteristic impedance"),
+ IOPUR( "zo", TRA_Z0,  IF_REAL   , "Characteristic impedance"),
  IOPAU( "f",  TRA_FREQ, IF_REAL   , "Frequency"),
  IOPAU( "td", TRA_TD,   IF_REAL   , "Transmission delay"),
  IOPAU( "nl", TRA_NL,   IF_REAL   , "Normalized length at frequency given"),

@@ -138,7 +138,7 @@ IFparm MOS9mPTable[] = { /* model parameters */
  IOP("wd",    MOS9_MOD_WD,    IF_REAL   ,"Width Narrowing (Diffusion)"),
  IOP("xw",    MOS9_MOD_XW,    IF_REAL   ,"Width mask adjustment"),
  IOPU("delvto",   MOS9_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
- IOPR("delvt0",   MOS9_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
+ IOPUR("delvt0",  MOS9_MOD_DELVTO,   IF_REAL   ,"Threshold voltage Adjust"),
  IOP("u0",    MOS9_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOPR("uo",    MOS9_MOD_U0,    IF_REAL   ,"Surface mobility"),
  IOP("fc",    MOS9_MOD_FC,    IF_REAL   ,"Forward bias jct. fit parm."),

@@ -21,7 +21,7 @@ IFparm RESpTable[] = { /* parameters */
     IOPZU( "w",		RES_WIDTH,	     IF_REAL,    "Width"),
     IOPU(  "m",		RES_M,		     IF_REAL,    "Multiplication factor"),
     IOPU(  "tc",		RES_TC1,	     IF_REAL,    "First order temp. coefficient"),
-    IOPU(  "tc1",		RES_TC1,	     IF_REAL,    "First order temp. coefficient"),
+    IOPUR( "tc1",		RES_TC1,	     IF_REAL,    "First order temp. coefficient"),
     IOPU(  "tc2",		RES_TC2,	     IF_REAL,    "Second order temp. coefficient"),
     IOPU(  "tce",		RES_TCE,	     IF_REAL,    "exponential temp. coefficient"),
     IOP(   "bv_max",	RES_BV_MAX,	     IF_REAL,    "maximum voltage over resistor"),
