@@ -1564,11 +1564,15 @@ inp_parse_temper_trees(void)
 {
     struct pt_temper *d;
 
-    for(d = devtlist; d; d = d->next)
-        INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    for(d = devtlist; d; d = d->next) {
+        char *expression = d->expression;
+        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    }
 
-    for(d = modtlist; d; d = d->next)
-        INPgetTree(&d->expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    for(d = modtlist; d; d = d->next) {
+        char *expression = d->expression;
+        INPgetTree(&expression, &d->pt, ft_curckt->ci_ckt, NULL);
+    }
 }
 
 
