@@ -1,4 +1,7 @@
 
+#ifndef PARAMR
+#define PARAMR(code,id,flag,ref,default,descrip)
+#endif
 #ifndef PARAMA
 #define PARAMA(code,id,flag,ref,default,descrip) PARAM(code,id,flag,ref,default,descrip)
 #endif
@@ -33,7 +36,8 @@
     PARAM("lfg2",  128,          JFET2lfg2Given, JFET2lfg2,     0, "")
     PARAM("n",     129,             JFET2nGiven, JFET2n,        1, "gate junction ideality factor")
     PARAM("p",     130,             JFET2pGiven, JFET2p,        2, "Power law (triode region)")
-    PARAM("pb",    JFET2_MOD_PB,   JFET2phiGiven, JFET2phi,      1, "Gate junction potential")
+    PARAM("vbi",   JFET2_MOD_PB,   JFET2phiGiven, JFET2phi,     1, "Gate junction potential")
+    PARAMR("pb",   JFET2_MOD_PB,   JFET2phiGiven, JFET2phi,     1, "Gate junction potential")
     PARAM("q",     132,             JFET2qGiven, JFET2q,        2, "Power Law (Saturated region)")
     PARAM("rd",    133,            JFET2rdGiven, JFET2rd,       0, "Drain ohmic resistance")
     PARAM("rs",    134,            JFET2rsGiven, JFET2rs,       0, "Source ohmic resistance")
@@ -42,11 +46,13 @@
     PARAM("vbd",   137,           JFET2vbdGiven, JFET2vbd,      1, "Breakdown potential of diode jnc")
     PARAM("ver",   139,           JFET2verGiven, JFET2ver,      0, "version number of PS model")
     PARAM("vst",   140,           JFET2vstGiven, JFET2vst,      0, "Crit Poten subthreshold conductn")
-    PARAM("vto",   JFET2_MOD_VTO,  JFET2vtoGiven, JFET2vto,     -2, "Threshold voltage")
+    PARAM("vt0",   JFET2_MOD_VTO,  JFET2vtoGiven, JFET2vto,    -2, "Threshold voltage")
+    PARAMR("vto",  JFET2_MOD_VTO,  JFET2vtoGiven, JFET2vto,    -2, "Threshold voltage")
     PARAM("xc",    142,            JFET2xcGiven, JFET2xc,       0, "amount of cap. red at pinch-off")
     PARAM("xi",    143,            JFET2xiGiven, JFET2xi,    1000, "velocity saturation index")
     PARAM("z",     144,             JFET2zGiven, JFET2z,        1, "rate of velocity saturation")
     PARAM("hfgam", 145,           JFET2hfgGiven, JFET2hfgam, model->JFET2lfgam, "high freq drain feedback parm")
 #undef   PARAM
+#undef  PARAMR
 #undef  PARAMA
 

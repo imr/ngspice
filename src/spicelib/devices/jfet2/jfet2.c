@@ -52,9 +52,8 @@ IFparm JFET2mPTable[] = { /* model parameters */
  OP("type",     JFET2_MOD_TYPE,    IF_STRING, "N-type or P-type JFET2 model"),
  IOP("njf",     JFET2_MOD_NJF,     IF_FLAG,"N type JFET2 model"),
  IOP("pjf",     JFET2_MOD_PJF,     IF_FLAG,"P type JFET2 model"),
- IOPR("vt0",    JFET2_MOD_VTO,     IF_REAL,"Threshold voltage"),
- IOPR("vbi",    JFET2_MOD_PB,      IF_REAL,"Gate junction potential"),
 #define  PARAM(code,id,flag,ref,default,descrip) IOP(code,id,IF_REAL,descrip),
+#define PARAMR(code,id,flag,ref,default,descrip) IOPR(code,id,IF_REAL,descrip),
 #define PARAMA(code,id,flag,ref,default,descrip) IOPA(code,id,IF_REAL,descrip),
 #include "jfet2parm.h"
 
