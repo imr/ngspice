@@ -1467,7 +1467,6 @@ inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_tem
             devmodname = gettok(&curr_line);
             beg_tstr = curr_line;
             while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                wordlist *wl = NULL, *wlend = NULL;
                 modtlistnew = TMALLOC(struct pt_temper, 1);
                 while ((*beg_tstr) != '=')
                     beg_tstr--;
@@ -1497,14 +1496,14 @@ inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_tem
                 for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
                     *str_ptr = ' ';
 
+                 /* to be filled in by evaluation function */
+                modtlistnew->wlend = wl_cons(NULL, NULL);
                 /* create wordlist suitable for com_altermod */
-                wl_append_word(&wl, &wlend, copy(devmodname));
-                wl_append_word(&wl, &wlend, paramname);
-                wl_append_word(&wl, &wlend, copy("="));
-                /* to be filled in by evaluation function */
-                wl_append_word(&wl, &wlend, NULL);
-                modtlistnew->wl = wl;
-                modtlistnew->wlend = wlend;
+                modtlistnew->wl =
+                    wl_cons(copy(devmodname),
+                            wl_cons(paramname,
+                                    wl_cons(copy("="),
+                                            modtlistnew->wlend)));
 
                 /* fill in the linked parse tree list */
                 modtlistnew->next = modtlist;
@@ -1517,7 +1516,6 @@ inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_tem
             devmodname = gettok(&curr_line);
             beg_tstr = curr_line;
             while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                wordlist *wl = NULL, *wlend = NULL;
                 devtlistnew = TMALLOC(struct pt_temper, 1);
                 while ((*beg_tstr) != '=')
                     beg_tstr--;
@@ -1547,14 +1545,13 @@ inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_tem
                 for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
                     *str_ptr = ' ';
 
-                /* create wordlist suitable for com_altermod */
-                wl_append_word(&wl, &wlend, copy(devmodname));
-                wl_append_word(&wl, &wlend, paramname);
-                wl_append_word(&wl, &wlend, copy("="));
                 /* to be filled in by evaluation function */
-                wl_append_word(&wl, &wlend, NULL);
-                devtlistnew->wl = wl;
-                devtlistnew->wlend = wlend;
+                devtlistnew->wlend = wl_cons(NULL, NULL);
+                /* create wordlist suitable for com_altermod */
+                devtlistnew->wl =
+                    wl_cons(copy(devmodname),
+                            wl_cons(paramname,
+                                    wl_cons(copy("="), devtlistnew->wlend)));
 
                 /* fill in the linked parse tree list */
                 devtlistnew->next = devtlist;
