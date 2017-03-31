@@ -99,7 +99,7 @@ double tempInoise;
 double noizDens[BSIM4NSRCS];
 double lnNdens[BSIM4NSRCS];
 
-double T0, T1, T2, T3, T4, T5, T6, T7, T8, T10, T11;
+double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11;
 double Vds, Ssi, Swi;
 double tmp=0.0, gdpr, gspr, npart_theta=0.0, npart_beta=0.0, igsquare, bodymode;
 
@@ -407,45 +407,113 @@ double m;
 
                                   T8 = here->BSIM4Vgsteff / here->BSIM4EsatL;
                                   T8 *= T8;
-                                  npart_c = model->BSIM4rnoic * (1.0 + T8
-                                          * model->BSIM4tnoic * Leff);
-                                  ctnoi = epsilon / sqrt(gamma * delta)
-                                      * (2.5316 * npart_c);
+                                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+                                      npart_c = model->BSIM4rnoic * (1.0 + T8
+                                              * model->BSIM4tnoic * Leff);
+                                      ctnoi = epsilon / sqrt(gamma * delta)
+                                          * (2.5316 * npart_c);
 
-                                  npart_beta = model->BSIM4rnoia * (1.0 + T8
-                                      * model->BSIM4tnoia * Leff);
-                                  npart_theta = model->BSIM4rnoib * (1.0 + T8
-                                      * model->BSIM4tnoib * Leff);
-                                  gamma = gamma * (3.0 * npart_beta * npart_beta);
-                                  delta = delta * (3.75 * npart_theta * npart_theta);
+                                      npart_beta = model->BSIM4rnoia * (1.0 + T8
+                                          * model->BSIM4tnoia * Leff);
+                                      npart_theta = model->BSIM4rnoib * (1.0 + T8
+                                          * model->BSIM4tnoib * Leff);
+                                      gamma = gamma * (3.0 * npart_beta * npart_beta);
+                                      delta = delta * (3.75 * npart_theta * npart_theta);
 
-                                  GammaGd0 = gamma * here->BSIM4noiGd0;
-                                  C0 = here->BSIM4Coxeff * pParam->BSIM4weffCV * here->BSIM4nf * pParam->BSIM4leffCV;
-                                  T0 = C0 / here->BSIM4noiGd0;
-                                  sigrat = T0 * sqrt(delta / gamma);
+                                      GammaGd0 = gamma * here->BSIM4noiGd0;
+                                      C0 = here->BSIM4Coxeff * pParam->BSIM4weffCV * here->BSIM4nf * pParam->BSIM4leffCV;
+                                      T0 = C0 / here->BSIM4noiGd0;
+                                      sigrat = T0 * sqrt(delta / gamma);
+                                  }
+                                  else
+                                  {
+                                      npart_c = model->BSIM4rnoic * (1.0 + T8
+                                             * model->BSIM4tnoic * Leff);
+                                      /* Limits added for rnoia, rnoib, rnoic, tnoia, tnoib and tnoic in BSIM4.8.1 */
+                                      T9 = gamma * delta ;
+                                      if (T9 > 0)
+                                          ctnoi   = epsilon / sqrt( gamma * delta) * (2.5316 * npart_c);
+                                      else
+                                          ctnoi   = 1.0 ;
+                                      if (ctnoi > 1)
+                                          ctnoi=1;
+                                      if (ctnoi < 0)
+                                          ctnoi=0;
+
+                                      npart_beta = model->BSIM4rnoia * (1.0 + T8
+                                          * model->BSIM4tnoia * Leff);
+                                      npart_theta = model->BSIM4rnoib * (1.0 + T8
+                                          * model->BSIM4tnoib * Leff);
+                                      gamma = gamma * (3.0 * npart_beta * npart_beta);
+                                      delta = delta * (3.75 * npart_theta * npart_theta);
+
+                                      GammaGd0 = gamma * here->BSIM4noiGd0;
+                                          C0 = here->BSIM4Coxeff * pParam->BSIM4weffCV * here->BSIM4nf * pParam->BSIM4leffCV;
+                                      T0 = C0 / here->BSIM4noiGd0;
+
+                                      if (gamma > 0 && delta > 0)
+                                          sigrat = T0 * sqrt(delta / gamma);
+                                      else
+                                          sigrat = 0.0;
+                                  }
                               }
+
                               switch(model->BSIM4tnoiMod)
                               {  case 0:
-                                      T0 = here->BSIM4ueff * fabs(here->BSIM4qinv);
-                                      T1 = T0 * tmp + pParam->BSIM4leff
-                                         * pParam->BSIM4leff;
-                                      NevalSrc(&noizDens[BSIM4IDNOIZ],
-                                               &lnNdens[BSIM4IDNOIZ], ckt,
-                                               THERMNOISE, here->BSIM4dNodePrime,
-                                               here->BSIM4sNodePrime,
-                                               (T0 / T1) * model->BSIM4ntnoi * m);
+                                      if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+                                          T0 = here->BSIM4ueff * fabs(here->BSIM4qinv);
+                                          T1 = T0 * tmp + pParam->BSIM4leff
+                                             * pParam->BSIM4leff;
+                                          NevalSrc(&noizDens[BSIM4IDNOIZ],
+                                                   &lnNdens[BSIM4IDNOIZ], ckt,
+                                                   THERMNOISE, here->BSIM4dNodePrime,
+                                                   here->BSIM4sNodePrime,
+                                                   (T0 / T1) * model->BSIM4ntnoi * m);
+                                      }
+                                      else
+                                      {
+                                          T0 = here->BSIM4ueff * fabs(here->BSIM4qinv);
+                                          T1 = T0 * tmp + pParam->BSIM4leff
+                                                  * pParam->BSIM4leff;
+                                          NevalSrc(&noizDens[BSIM4IDNOIZ],
+                                                  &lnNdens[BSIM4IDNOIZ], ckt,
+                                                  THERMNOISE, here->BSIM4dNodePrime,
+                                                  here->BSIM4sNodePrime,
+                                                  (T0 / T1) * model->BSIM4ntnoi * m);
+
+                                          noizDens[BSIM4CORLNOIZ] = 0.0;
+                                          lnNdens[BSIM4CORLNOIZ] = log(MAX(noizDens[BSIM4CORLNOIZ], N_MINLOG));
+                                      }
                                       break;
                                  case 1:
-                                      T0 = here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
-                                      T0 *= T0;
-                                      igsquare = npart_theta * npart_theta * T0 / here->BSIM4IdovVds;
-                                      T1 = npart_beta * (here->BSIM4gm
-                                         + here->BSIM4gmbs) + here->BSIM4gds;
-                                      T2 = T1 * T1 / here->BSIM4IdovVds;
-                                      NevalSrc(&noizDens[BSIM4IDNOIZ],
-                                               &lnNdens[BSIM4IDNOIZ], ckt,
-                                               THERMNOISE, here->BSIM4dNodePrime,
-                                               here->BSIM4sNodePrime, (T2 - igsquare) * m);
+                                      if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+                                          T0 = here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
+                                          T0 *= T0;
+                                          igsquare = npart_theta * npart_theta * T0 / here->BSIM4IdovVds;
+                                          T1 = npart_beta * (here->BSIM4gm
+                                             + here->BSIM4gmbs) + here->BSIM4gds;
+                                          T2 = T1 * T1 / here->BSIM4IdovVds;
+                                          NevalSrc(&noizDens[BSIM4IDNOIZ],
+                                                   &lnNdens[BSIM4IDNOIZ], ckt,
+                                                   THERMNOISE, here->BSIM4dNodePrime,
+                                                   here->BSIM4sNodePrime, (T2 - igsquare) * m);
+                                      }
+                                      else
+                                      {
+                                          T0 = here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
+                                          T0 *= T0;
+                                          igsquare = npart_theta * npart_theta * T0 / here->BSIM4IdovVds;
+                                          T1 = npart_beta * (here->BSIM4gm
+                                          + here->BSIM4gmbs) + here->BSIM4gds;
+                                          T2 = T1 * T1 / here->BSIM4IdovVds;
+                                          NevalSrc(&noizDens[BSIM4IDNOIZ],
+                                                  &lnNdens[BSIM4IDNOIZ], ckt,
+                                                  THERMNOISE, here->BSIM4dNodePrime,
+                                                  here->BSIM4sNodePrime, (T2 - igsquare) * m);
+
+                                          noizDens[BSIM4CORLNOIZ] = 0.0;
+                                          lnNdens[BSIM4CORLNOIZ] = log(MAX(noizDens[BSIM4CORLNOIZ], N_MINLOG));
+                                      }
                                       break;
                                   case 2:
                                       T2 = GammaGd0;

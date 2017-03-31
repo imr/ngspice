@@ -1349,10 +1349,32 @@ int Size_Not_Found, i;
                                             / pParam->BSIM4poxedge / pParam->BSIM4poxedge;
                   pParam->BSIM4Aechvb = (model->BSIM4type == NMOS) ? 4.97232e-7 : 3.42537e-7;
                   pParam->BSIM4Bechvb = (model->BSIM4type == NMOS) ? 7.45669e11 : 1.16645e12;
-                  pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
-                                          * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;
-                  pParam->BSIM4AechvbEdgeD = pParam->BSIM4Aechvb * pParam->BSIM4weff
-                                          * model->BSIM4dlcigd * pParam->BSIM4ToxRatioEdge;
+
+                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81")))
+                  {  
+                      pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
+                                              * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;
+                      pParam->BSIM4AechvbEdgeD = pParam->BSIM4Aechvb * pParam->BSIM4weff
+                                              * model->BSIM4dlcigd * pParam->BSIM4ToxRatioEdge;
+                  }
+                  else
+                  {
+                      if (model->BSIM4dlcig < 0.0)
+                      {
+                          printf("Warning: dlcig = %g is negative. Set to zero.\n", model->BSIM4dlcig);
+                          model->BSIM4dlcig = 0.0;
+                      }
+                      pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
+                          * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;
+                      if (model->BSIM4dlcigd < 0.0)
+                      {
+                          printf("Warning: dlcigd = %g is negative. Set to zero.\n", model->BSIM4dlcigd);
+                          model->BSIM4dlcigd = 0.0;
+                      }
+                      pParam->BSIM4AechvbEdgeD = pParam->BSIM4Aechvb * pParam->BSIM4weff
+                          * model->BSIM4dlcigd * pParam->BSIM4ToxRatioEdge;
+                  }
+
                   pParam->BSIM4BechvbEdge = -pParam->BSIM4Bechvb
                                           * toxe * pParam->BSIM4poxedge;
                   pParam->BSIM4Aechvb *= pParam->BSIM4weff * pParam->BSIM4leff
@@ -2289,8 +2311,6 @@ int Size_Not_Found, i;
 
                     /* Calculate n */
                     tmp1 = epssub / pParam->BSIM4Xdep0;
-                    here->BSIM4nstar = Vtmeot / Charge_q *
-                      (model->BSIM4coxe        + tmp1 + pParam->BSIM4cit);
                     tmp2 = pParam->BSIM4nfactor * tmp1;
                     tmp3 = (tmp2 + pParam->BSIM4cdsc * Theta0 + pParam->BSIM4cit) / model->BSIM4coxe;
                     if (tmp3 >= -0.5)
@@ -2337,7 +2357,7 @@ int Size_Not_Found, i;
                         niter++;
                       } while ((niter<=4)&&(ABS(toxpf-toxpi)>1e-12));
                       here->BSIM4toxp = toxpf;
-                      here->BSIM4coxp = epsrox * EPS0 / model->BSIM4toxp;
+                      here->BSIM4coxp = epsrox * EPS0 / here->BSIM4toxp;
                 } else {
                     here->BSIM4toxp = model->BSIM4toxp;
                     here->BSIM4coxp = model->BSIM4coxp;
@@ -2345,7 +2365,7 @@ int Size_Not_Found, i;
 
               if (BSIM4checkModel(model, here, ckt))
               {
-                  SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during BSIM4.6.0 parameter checking for %s in model %s", model->BSIM4modName, here->BSIM4name);
+                  SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during BSIM4.8.1 parameter checking for %s in model %s", model->BSIM4modName, here->BSIM4name);
                   return(E_BADPARM);
               }
          } /* End instance */

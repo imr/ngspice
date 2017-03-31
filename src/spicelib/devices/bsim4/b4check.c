@@ -48,9 +48,9 @@ FILE *fplog;
         fprintf(fplog, "\n");
         fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if ((strcmp(model->BSIM4version, "4.8.0")) && (strcmp(model->BSIM4version, "4.80")) && (strcmp(model->BSIM4version, "4.8")))
-        {  fprintf(fplog, "Warning: This model is BSIM4.8.0; you specified a wrong version number.\n");
-           printf("Warning: This model is BSIM4.8.0; you specified a wrong version number.\n");
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81")) && (strcmp(model->BSIM4version, "4.8")))
+        {  fprintf(fplog, "Warning: This model is BSIM4.8.1; you specified a deviating version number.\n");
+           printf("Warning: This model is BSIM4.8.1; you specified a deviating version number.\n");
         }
         fprintf(fplog, "Model = %s\n", model->BSIM4modName);
 
@@ -772,42 +772,72 @@ FILE *fplog;
             printf("Warning: cgbo = %g is negative. Set to zero.\n", model->BSIM4cgbo);
             model->BSIM4cgbo = 0.0;
         }      
-
-        /* v4.7 */
-        if (model->BSIM4tnoiMod == 1 || model->BSIM4tnoiMod == 2) { 
-            if (model->BSIM4tnoia < 0.0) {   
-                fprintf(fplog, "Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
-                printf("Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
-                model->BSIM4tnoia = 0.0;
-            }
-            if (model->BSIM4tnoib < 0.0) {   
-                fprintf(fplog, "Warning: tnoib = %g is negative. Set to zero.\n", model->BSIM4tnoib);
-                printf("Warning: tnoib = %g is negative. Set to zero.\n", model->BSIM4tnoib);
-                model->BSIM4tnoib = 0.0;
-            }
-            if (model->BSIM4rnoia < 0.0) { 
-                fprintf(fplog, "Warning: rnoia = %g is negative. Set to zero.\n", model->BSIM4rnoia);
-                printf("Warning: rnoia = %g is negative. Set to zero.\n", model->BSIM4rnoia);
-                model->BSIM4rnoia = 0.0;
-            }
-            if (model->BSIM4rnoib < 0.0) {
-                fprintf(fplog, "Warning: rnoib = %g is negative. Set to zero.\n", model->BSIM4rnoib);
-                printf("Warning: rnoib = %g is negative. Set to zero.\n", model->BSIM4rnoib);
-                model->BSIM4rnoib = 0.0;
-            }
+        if (model->BSIM4tnoiMod == 1){
+            printf("Warning: TNOIMOD=1 is not supported and may be removed from future version.\n");
         }
 
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
         /* v4.7 */
-        if (model->BSIM4tnoiMod == 2) { 
-            if (model->BSIM4tnoic < 0.0) {
-                fprintf(fplog, "Warning: tnoic = %g is negative. Set to zero.\n", model->BSIM4tnoic);
-                printf("Warning: tnoic = %g is negative. Set to zero.\n", model->BSIM4tnoic);
-                model->BSIM4tnoic = 0.0;
+            if (model->BSIM4tnoiMod == 1 || model->BSIM4tnoiMod == 2) { 
+                if (model->BSIM4tnoia < 0.0) {   
+                    fprintf(fplog, "Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
+                    printf("Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
+                    model->BSIM4tnoia = 0.0;
+                }
+                if (model->BSIM4tnoib < 0.0) {   
+                    fprintf(fplog, "Warning: tnoib = %g is negative. Set to zero.\n", model->BSIM4tnoib);
+                    printf("Warning: tnoib = %g is negative. Set to zero.\n", model->BSIM4tnoib);
+                    model->BSIM4tnoib = 0.0;
+                }
+                if (model->BSIM4rnoia < 0.0) { 
+                    fprintf(fplog, "Warning: rnoia = %g is negative. Set to zero.\n", model->BSIM4rnoia);
+                    printf("Warning: rnoia = %g is negative. Set to zero.\n", model->BSIM4rnoia);
+                    model->BSIM4rnoia = 0.0;
+                }
+                if (model->BSIM4rnoib < 0.0) {
+                    fprintf(fplog, "Warning: rnoib = %g is negative. Set to zero.\n", model->BSIM4rnoib);
+                    printf("Warning: rnoib = %g is negative. Set to zero.\n", model->BSIM4rnoib);
+                    model->BSIM4rnoib = 0.0;
+                }
             }
-            if (model->BSIM4rnoic < 0.0) {
-                fprintf(fplog, "Warning: rnoic = %g is negative. Set to zero.\n", model->BSIM4rnoic);
-                printf("Warning: rnoic = %g is negative. Set to zero.\n", model->BSIM4rnoic);
-                model->BSIM4rnoic = 0.0;
+
+            /* v4.7 */
+            if (model->BSIM4tnoiMod == 2) { 
+                if (model->BSIM4tnoic < 0.0) {
+                    fprintf(fplog, "Warning: tnoic = %g is negative. Set to zero.\n", model->BSIM4tnoic);
+                    printf("Warning: tnoic = %g is negative. Set to zero.\n", model->BSIM4tnoic);
+                    model->BSIM4tnoic = 0.0;
+                }
+                if (model->BSIM4rnoic < 0.0) {
+                    fprintf(fplog, "Warning: rnoic = %g is negative. Set to zero.\n", model->BSIM4rnoic);
+                    printf("Warning: rnoic = %g is negative. Set to zero.\n", model->BSIM4rnoic);
+                    model->BSIM4rnoic = 0.0;
+                }
+            }
+        }
+        else
+        {
+            if (model->BSIM4tnoiMod == 1){
+                if (model->BSIM4tnoia < 0.0) {
+                    fprintf(fplog, "Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
+                    printf("Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
+                    model->BSIM4tnoia = 0.0;
+                }
+                if (model->BSIM4tnoib < 0.0) {
+                    fprintf(fplog, "Warning: tnoib = %g is negative. Set to zero.\n", model->BSIM4tnoib);
+                    printf("Warning: tnoib = %g is negative. Set to zero.\n", model->BSIM4tnoib);
+                    model->BSIM4tnoib = 0.0;
+                }
+                if (model->BSIM4rnoia < 0.0) {
+                    fprintf(fplog, "Warning: rnoia = %g is negative. Set to zero.\n", model->BSIM4rnoia);
+                    printf("Warning: rnoia = %g is negative. Set to zero.\n", model->BSIM4rnoia);
+                    model->BSIM4rnoia = 0.0;
+                }
+                if (model->BSIM4rnoib < 0.0) {
+                    fprintf(fplog, "Warning: rnoib = %g is negative. Set to zero.\n", model->BSIM4rnoib);
+                    printf("Warning: rnoib = %g is negative. Set to zero.\n", model->BSIM4rnoib);
+                    model->BSIM4rnoib = 0.0;
+                }
             }
         }
 

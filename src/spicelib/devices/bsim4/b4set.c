@@ -210,7 +210,7 @@ BSIM4instance **InstArray;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = copy("4.8.0");
+            model->BSIM4version = copy("4.8.1");
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
@@ -348,18 +348,31 @@ BSIM4instance **InstArray;
             model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
         if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
-        if (!model->BSIM4uaGiven)
-            model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81")))
+        {  
+            if (!model->BSIM4uaGiven)
+                model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
+            if (!model->BSIM4ucGiven)
+                model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;   
+            if (!model->BSIM4uc1Given)
+                model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
+        }
+        else
+        {
+            if (!model->BSIM4uaGiven)
+                model->BSIM4ua = ((model->BSIM4mobMod == 2 || model->BSIM4mobMod == 6)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
+            /*printf("warning:ua=%g",model->BSIM4ua);*/
+            if (!model->BSIM4ucGiven)
+                model->BSIM4uc = (model->BSIM4mobMod == 1 || model->BSIM4mobMod == 5) ? -0.0465 : -0.0465e-9;
+            if (!model->BSIM4uc1Given)
+                model->BSIM4uc1 = (model->BSIM4mobMod == 1 || model->BSIM4mobMod == 5) ? -0.056 : -0.056e-9;
+        }
         if (!model->BSIM4ua1Given)
             model->BSIM4ua1 = 1.0e-9;      /* unit m/V */
         if (!model->BSIM4ubGiven)
             model->BSIM4ub = 1.0e-19;     /* unit (m/V)**2 */
         if (!model->BSIM4ub1Given)
             model->BSIM4ub1 = -1.0e-18;     /* unit (m/V)**2 */
-        if (!model->BSIM4ucGiven)
-            model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;   
-        if (!model->BSIM4uc1Given)
-            model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
         if (!model->BSIM4udGiven)
             model->BSIM4ud = 0.0;     /* unit m**(-2) */
         if (!model->BSIM4ud1Given)
