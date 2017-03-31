@@ -1438,7 +1438,6 @@ static int
 inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_temper **devtlist_p)
 {
     int error = 0;
-    char *end_tstr, *beg_tstr, *beg_pstr, *str_ptr, *devmodname, *paramname;
 
     struct pt_temper *modtlist = NULL;
     struct pt_temper *devtlist = NULL;
@@ -1450,115 +1449,73 @@ inp_parse_temper(struct line *card, struct pt_temper **modtlist_p, struct pt_tem
         char *curr_line = card->li_line;
 
         /* exclude some elements */
-        if ((*curr_line == '*') || (*curr_line == 'v') || (*curr_line == 'b') || (*curr_line == 'i') ||
-            (*curr_line == 'e') || (*curr_line == 'g') || (*curr_line == 'f') || (*curr_line == 'h'))
+        if (strchr("*vbiegfh", curr_line[0]))
             continue;
         /* exclude all dot commands except .model */
-        if ((*curr_line == '.') && (!prefix(".model", curr_line)))
+        if (curr_line[0] == '.' && !prefix(".model", curr_line))
             continue;
         /* exclude lines not containing 'temper' */
-        if (strstr(curr_line, "temper") == NULL)
+        if (!strstr(curr_line, "temper"))
             continue;
-        /* now start processing of the remaining lines containing 'temper' */
-        if (prefix(".model", curr_line)) {
-            struct pt_temper *modtlistnew = NULL;
-            /* remove '.model' */
+
+        bool is_model = prefix(".model", curr_line);
+
+        /* skip ".model" */
+        if (is_model)
             curr_line = nexttok(curr_line);
-            devmodname = gettok(&curr_line);
-            beg_tstr = curr_line;
-            while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                modtlistnew = TMALLOC(struct pt_temper, 1);
-                while ((*beg_tstr) != '=')
-                    beg_tstr--;
-                beg_pstr = beg_tstr;
-                /* go back over param name */
-                while(isspace_c(*beg_pstr))
-                    beg_pstr--;
-                while(!isspace_c(*beg_pstr))
-                    beg_pstr--;
-                /* get parameter name */
-                paramname = copy_substring(beg_pstr + 1, beg_tstr);
-                /* find end of expression string */
-                while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
-                    end_tstr++;
-                /* go back over next param name */
-                if (*end_tstr == '=') {
-                    end_tstr--;
-                    while(isspace_c(*end_tstr))
-                        end_tstr--;
-                    while(!isspace_c(*end_tstr))
-                        end_tstr--;
-                }
-                /* copy the expression */
-                modtlistnew->expression = copy_substring(beg_tstr + 1, end_tstr);
-                /* now remove this parameter entry by overwriting with ' '
-                   ngspice then will use the default parameter to set up the circuit */
-                for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
-                    *str_ptr = ' ';
 
-                 /* to be filled in by evaluation function */
-                modtlistnew->wlend = wl_cons(NULL, NULL);
-                /* create wordlist suitable for com_altermod */
-                modtlistnew->wl =
-                    wl_cons(copy(devmodname),
-                            wl_cons(paramname,
-                                    wl_cons(copy("="),
-                                            modtlistnew->wlend)));
-
-                /* fill in the linked parse tree list */
-                modtlistnew->next = modtlist;
-                modtlist = modtlistnew;
+        /* now start processing of the remaining lines containing 'temper' */
+        char *name = gettok(&curr_line);
+        char *t = curr_line;
+        while ((t = search_identifier(t, "temper", curr_line)) != NULL) {
+            struct pt_temper *alter = TMALLOC(struct pt_temper, 1);
+            char *eq_ptr = find_back_assignment(t, curr_line);
+            if (!eq_ptr) {
+                t = t + 1;
+                continue;
             }
-            tfree(devmodname);
-        } else { /* instance expression with 'temper' */
-            struct pt_temper *devtlistnew = NULL;
-            /* get device name */
-            devmodname = gettok(&curr_line);
-            beg_tstr = curr_line;
-            while ((end_tstr = beg_tstr = strstr(beg_tstr, "temper")) != NULL) {
-                devtlistnew = TMALLOC(struct pt_temper, 1);
-                while ((*beg_tstr) != '=')
-                    beg_tstr--;
-                beg_pstr = beg_tstr;
-                /* go back over param name */
-                while(isspace_c(*beg_pstr))
-                    beg_pstr--;
-                while(!isspace_c(*beg_pstr))
-                    beg_pstr--;
-                /* get parameter name */
-                paramname = copy_substring(beg_pstr + 1, beg_tstr);
-                /* find end of expression string */
-                while (((*end_tstr) != '\0') && ((*end_tstr) != '='))
-                    end_tstr++;
-                /* go back over next param name */
-                if (*end_tstr == '=') {
-                    end_tstr--;
-                    while(isspace_c(*end_tstr))
-                        end_tstr--;
-                    while(!isspace_c(*end_tstr))
-                        end_tstr--;
-                }
-                /* copy the expression */
-                devtlistnew->expression = copy_substring(beg_tstr + 1, end_tstr);
-                /* now remove this parameter entry by overwriting with ' '
-                   ngspice then will use the default parameter to set up the circuit */
-                for (str_ptr = beg_pstr; str_ptr < end_tstr; str_ptr++)
-                    *str_ptr = ' ';
-
-                /* to be filled in by evaluation function */
-                devtlistnew->wlend = wl_cons(NULL, NULL);
-                /* create wordlist suitable for com_altermod */
-                devtlistnew->wl =
-                    wl_cons(copy(devmodname),
-                            wl_cons(paramname,
-                                    wl_cons(copy("="), devtlistnew->wlend)));
-
-                /* fill in the linked parse tree list */
-                devtlistnew->next = devtlist;
-                devtlist = devtlistnew;
+            /* go back over param name */
+            char *end_param = skip_back_ws(eq_ptr, curr_line);
+            char *beg_param = skip_back_non_ws(end_param, curr_line);
+            /* find end of expression string */
+            char *beg_expr = skip_ws(eq_ptr + 1);
+            char *end_expr = find_assignment(beg_expr);
+            if (end_expr) {
+                end_expr = skip_back_ws(end_expr, curr_line);
+                end_expr = skip_back_non_ws(end_expr, curr_line);
+            } else {
+                end_expr = strchr(beg_expr, '\0');
             }
-            tfree(devmodname);
+            end_expr = skip_back_ws(end_expr, curr_line);
+            /* overwrite this parameter assignment with ' '
+             *   the backend will use a default
+             * later, after evaluation, "alter" the parameter
+             */
+            alter->expression = copy_substring(beg_expr, end_expr);
+
+            /* to be filled in by evaluation function */
+            alter->wlend = wl_cons(NULL, NULL);
+            /* create wordlist suitable for com_altermod */
+            alter->wl =
+                wl_cons(copy(name),
+                        wl_cons(copy_substring(beg_param, end_param),
+                                wl_cons(copy("="),
+                                        alter->wlend)));
+
+            memset(beg_param, ' ', (size_t) (end_expr - beg_param));
+
+            /* fill in the linked parse tree list */
+            if (is_model) {
+                alter->next = modtlist;
+                modtlist = alter;
+            } else {
+                alter->next = devtlist;
+                devtlist = alter;
+            }
+
+            t = end_expr;
         }
+        tfree(name);
     }
 
     *modtlist_p = modtlist;
