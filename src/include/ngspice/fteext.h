@@ -216,6 +216,8 @@ extern struct line *inp_readall(FILE *fp, char *dir_name, bool comfile, bool int
 extern FILE *inp_pathopen(char *name, char *mode);
 extern char *search_identifier(char *str, const char *identifier, char *str_begin);
 extern char *find_assignment(const char *s);
+extern char *find_back_assignment(const char *s, const char *start);
+
 extern struct line *line_nconc(struct line *head, struct line *rest);
 extern struct line *line_reverse(struct line *head);
 

@@ -436,6 +436,27 @@ find_assignment(const char *str)
 }
 
 
+/*
+ * backward search for an assignment
+ *   fixme, doesn't honour neither " nor ' quotes
+ */
+
+char *
+find_back_assignment(const char *p, const char *start)
+{
+    while (--p >= start) {
+        if (*p != '=')
+            continue;
+        // check for '!=', '<=', '>=', '=='
+        if (p <= start || !strchr("!<=>", p[-1]))
+            return (char *) p;
+        p--;
+    }
+
+    return NULL;
+}
+
+
 /*-------------------------------------------------------------------------
   Read the entire input file and return  a pointer to the first line of
   the linked list of 'card' records in data.  The pointer is stored in
