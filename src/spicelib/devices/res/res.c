@@ -51,7 +51,7 @@ IFparm RESmPTable[] = { /* model parameters */
     IOPQ(  "tc1",    RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
     IOPQR( "tc1r",   RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
     IOPQO( "tc2",    RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
-    IOPR(  "tc2r",   RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
+    IOPQOR("tc2r",   RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
     IOPQ(  "tce",    RES_MOD_TCE,      IF_REAL,"exponential temp. coefficient"),
     IOPX(  "defw",   RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),
     IOPXR(  "w",     RES_MOD_DEFWIDTH, IF_REAL,"Default device width"),
