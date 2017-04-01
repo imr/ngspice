@@ -31,7 +31,7 @@ IFparm LTRAmPTable[] = {	/* model parameters */
   IOP("ltra", LTRA_MOD_LTRA, IF_FLAG, "LTRA model"),
   IOPU("r", LTRA_MOD_R, IF_REAL, "Resistance per metre"),
   IOPAU("l", LTRA_MOD_L, IF_REAL, "Inductance per metre"),
-  IOPR("g", LTRA_MOD_G, IF_REAL, "Conductance per metre"),
+  IOP("g", LTRA_MOD_G, IF_REAL, "Conductance per metre"),
   IOPAU("c", LTRA_MOD_C, IF_REAL, "Capacitance per metre"),
   IOPU("len", LTRA_MOD_LEN, IF_REAL, "length of line"),
   OP("rel", LTRA_MOD_RELTOL, IF_REAL, "Rel. rate of change of deriv. for bkpt"),

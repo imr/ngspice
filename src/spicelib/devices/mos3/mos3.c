@@ -151,7 +151,7 @@ IFparm MOS3mPTable[] = { /* model parameters */
  IOP("alpha", MOS3_MOD_ALPHA, IF_REAL ,"Alpha"),
  IOP("eta",   MOS3_MOD_ETA,   IF_REAL ,"Vds dependence of threshold voltage"),
  IOP("delta", MOS3_MOD_DELTA, IF_REAL   ,"Width effect on threshold"),
- IOPR("input_delta", MOS3_DELTA, IF_REAL ,""),
+ IOP("input_delta", MOS3_DELTA, IF_REAL ,""),
  IOP("theta", MOS3_MOD_THETA, IF_REAL ,"Vgs dependence on mobility"),
  IOP("kappa", MOS3_MOD_KAPPA, IF_REAL ,"Kappa"),
  IOPU("tnom",  MOS3_MOD_TNOM,  IF_REAL ,"Parameter measurement temperature"),
