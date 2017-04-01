@@ -5431,14 +5431,13 @@ inp_temper_compat(struct line *card)
             continue;
         }
         /* exclude some elements */
-        if ((*curr_line == '*') || (*curr_line == 'v') || (*curr_line == 'b') || (*curr_line == 'i') ||
-            (*curr_line == 'e') || (*curr_line == 'g') || (*curr_line == 'f') || (*curr_line == 'h'))
+        if (strchr("*vbiegfh", curr_line[0]))
             continue;
         /* exclude all dot commands except .model */
-        if ((*curr_line == '.') && (!prefix(".model", curr_line)))
+        if (curr_line[0] == '.' && !prefix(".model", curr_line))
             continue;
         /* exclude lines not containing 'temper' */
-        if (strstr(curr_line, "temper") == NULL)
+        if (!strstr(curr_line, "temper"))
             continue;
         /* now start processing of the remaining lines containing 'temper' */
         /* remove white spaces of everything inside {}*/
