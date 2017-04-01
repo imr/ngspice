@@ -11,6 +11,7 @@ Author: 1987 Thomas L. Quarles
 
 IFparm ISRCpTable[] = { /* parameters */
  IOPP("dc",      ISRC_DC,        IF_REAL   ,"DC value of source"),
+ IOPPR("c",      ISRC_DC,        IF_REAL,   "Current through current source"),
  IOP ( "m",      ISRC_M,         IF_REAL   ,"Parallel multiplier"),
  IOPPA("acmag",   ISRC_AC_MAG,    IF_REAL   ,"AC Magnitude"),
  IOPAAU("acphase", ISRC_AC_PHASE,  IF_REAL   ,"AC Phase"),
@@ -37,7 +38,6 @@ IFparm ISRCpTable[] = { /* parameters */
  IP  ("ac",      ISRC_AC,        IF_REALVEC,"AC magnitude, phase vector"),
  OP  ("v",       ISRC_VOLTS,     IF_REAL,   "Voltage across the supply"),
  OP  ("p",       ISRC_POWER,     IF_REAL,   "Power supplied by the source"),
- IP  ("c",       ISRC_DC,        IF_REAL,   "Current through current source"),
 /* gtri - begin - add parameter for current source value */
 #ifdef XSPICE
  OP  ("current", ISRC_CURRENT,   IF_REAL,   "Current in DC or Transient mode"),
