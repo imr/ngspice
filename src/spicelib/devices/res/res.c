@@ -12,7 +12,7 @@ Modified: 2000 AlansFixes
 
 IFparm RESpTable[] = { /* parameters */
     IOPP(  "resistance", 	RES_RESIST, 	     IF_REAL,    "Resistance"),
-    IOPR(  "r", 	RES_RESIST, 	     IF_REAL,    "Resistance"),
+    IOPPR( "r", 	RES_RESIST, 	     IF_REAL,    "Resistance"),
     IOPAA( "ac",		RES_ACRESIST,	     IF_REAL,    "AC resistance value"),
     IOPZU( "temp",		RES_TEMP,	     IF_REAL,    "Instance operating temperature"),
     IOPZ(  "dtemp",	RES_DTEMP,	     IF_REAL,
