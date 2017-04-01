@@ -49,7 +49,7 @@ IFparm RESmPTable[] = { /* model parameters */
     IOPZ(  "short",  RES_MOD_SHORT,    IF_REAL,"Shortening of resistor"),
     IOPZR( "dlr",    RES_MOD_SHORT,    IF_REAL,"Shortening of resistor"),
     IOPQ(  "tc1",    RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
-    IOPR(  "tc1r",   RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
+    IOPQR( "tc1r",   RES_MOD_TC1,      IF_REAL,"First order temp. coefficient"),
     IOPQO( "tc2",    RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
     IOPR(  "tc2r",   RES_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
     IOPQ(  "tce",    RES_MOD_TCE,      IF_REAL,"exponential temp. coefficient"),

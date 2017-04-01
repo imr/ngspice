@@ -160,6 +160,7 @@ extern int        DEVmaxnum;    /* size of DEVices array */
 # define IOPXU(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_NONSENSE|IF_UNINTERESTING,\
 									d }
 # define IOPQ(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_SETQUERY,		d }
+# define IOPQR(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_SETQUERY|IF_REDUNDANT, d }
 # define IOPQU(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_SETQUERY|IF_UNINTERESTING,\
 									d }
 # define IOPZ(a,b,c,d)  { a, b, c|IF_SET|IF_ASK|IF_CHKQUERY,		d }
