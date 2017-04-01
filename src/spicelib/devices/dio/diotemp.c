@@ -66,6 +66,9 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     model->DIOmodName);
             model->DIOdepletionSWcapCoeff=.95;
         }
+        /* set lower limit of saturation current */
+        if (model->DIOsatCur < ckt->CKTepsmin)
+            model->DIOsatCur = ckt->CKTepsmin;
         if((!model->DIOresistGiven) || (model->DIOresist==0)) {
             model->DIOconductance = 0.0;
         } else {
