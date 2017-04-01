@@ -121,6 +121,7 @@ typedef struct {
 #define OPT_NOOPAC       68
 #define OPT_XMU          69
 #define OPT_INDVERBOSITY 70
+#define OPT_EPSMIN       71
 
 
 #ifdef XSPICE

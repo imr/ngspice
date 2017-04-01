@@ -48,6 +48,7 @@ com_option(wordlist *wl)
         printf("MaxOrder = %d\n", circuit->CKTmaxOrder);
         printf("xmu = %g\n", circuit->CKTxmu);
         printf("indverbosity = %d\n", circuit->CKTindverbosity);
+        printf("epsmin = %g\n", circuit->CKTepsmin);
 
         printf("\nTolerances (absolute):\n");
         printf("abstol      (current) = %g\n", circuit->CKTabstol);

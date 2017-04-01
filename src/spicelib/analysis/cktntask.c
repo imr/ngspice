@@ -74,6 +74,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKabsDv           = def->TSKabsDv;
         tsk->TSKrelDv           = def->TSKrelDv;
         tsk->TSKnoopac          = def->TSKnoopac;
+        tsk->TSKepsmin          = def->TSKepsmin;
 #ifdef NEWTRUNC
         tsk->TSKlteReltol       = def->TSKlteReltol;
         tsk->TSKlteAbstol       = def->TSKlteAbstol;
@@ -129,6 +130,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKnodeDamping     = 0;
         tsk->TSKabsDv           = 0.5;
         tsk->TSKrelDv           = 2.0;
+        tsk->TSKepsmin          = 1e-28;
 
 #if (1) /*CDHW*/
     }

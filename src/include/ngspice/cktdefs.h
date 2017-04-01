@@ -293,6 +293,8 @@ struct CKTcircuit {
                            a safe operating area (SOA) check is executed */
     int CKTsoaMaxWarns; /* specifies the maximum number of SOA warnings */
 
+    double CKTepsmin; /* minimum argument value for some log functions, e.g. diode saturation current*/
+
     NGHASHPTR DEVnameHash;
     NGHASHPTR MODnameHash;
 

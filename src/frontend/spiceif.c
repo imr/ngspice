@@ -1411,6 +1411,7 @@ void com_snload(wordlist *wl)
     _t(CKTintegrateMethod);
     _t(CKTxmu);
     _t(CKTindverbosity);
+    _t(CKTepsmin);
 
     _t(CKTniState);
 

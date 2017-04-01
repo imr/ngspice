@@ -169,6 +169,9 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_NOOPAC:
         task->TSKnoopac = (val->iValue != 0);
         break;
+    case OPT_EPSMIN:
+        task->TSKepsmin = val->rValue;
+        break;
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
     case OPT_EVT_MAX_OP_ALTER:
@@ -323,7 +326,9 @@ static IFparm OPTtbl[] = {
  { "reldv", OPT_RELDV, IF_SET|IF_REAL,
         "Maximum relative iter-iter node voltage change" },
  { "noopac", OPT_NOOPAC, IF_SET|IF_FLAG,
-        "No op calculation in ac if circuit is linear" }
+        "No op calculation in ac if circuit is linear" },
+ { "epsmin", OPT_EPSMIN, IF_SET|IF_REAL,
+        "Minimum value for log" }
 };
 
 int OPTcount = NUMELEMS(OPTtbl);
