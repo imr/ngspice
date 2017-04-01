@@ -2648,14 +2648,14 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
     for (card = subckt_card->li_next;
          card && !ciprefix(".ends", card->li_line);
          card = card->li_next) {
+        char *curr_line = card->li_line;
         /* no 'm' for B, V, E, H or comment line */
-        if ((*(card->li_line) == '*') || (*(card->li_line) == 'b') || (*(card->li_line) == 'v') ||
-            (*(card->li_line) == 'e') || (*(card->li_line) == 'h'))
+        if (strchr("*bveh", curr_line[0]))
             continue;
         /* no 'm' for model cards */
-        if (ciprefix(".model", card->li_line))
+        if (ciprefix(".model", curr_line))
             continue;
-        new_str = tprintf("%s m={m}", card->li_line);
+        new_str = tprintf("%s m={m}", curr_line);
 
         tfree(card->li_line);
         card->li_line = new_str;
