@@ -1510,7 +1510,7 @@ inp_fix_macro_param_func_paren_io(struct line *card)
             }
         }
 
-        if (ciprefix(".param", card->li_line)) {
+        if (ciprefix(".para", card->li_line)) {
             bool is_func = FALSE;
             str_ptr = skip_non_ws(card->li_line);  // skip over .param
             str_ptr = skip_ws(str_ptr);
@@ -1806,7 +1806,7 @@ comment_out_unused_subckt_models(struct line *start_card)
             has_models = TRUE;
         if (ciprefix(".cmodel", card->li_line))
             has_models = TRUE;
-        if (ciprefix(".param", card->li_line) && !strchr(card->li_line, '='))
+        if (ciprefix(".para", card->li_line) && !strchr(card->li_line, '='))
             *card->li_line = '*';
     }
 
@@ -3315,7 +3315,7 @@ inp_fix_param_values(struct line *c)
     for (; c; c = c->li_next) {
         char *line = c->li_line;
 
-        if (*line == '*' || (ciprefix(".param", line) && strchr(line, '{')))
+        if (*line == '*' || (ciprefix(".para", line) && strchr(line, '{')))
             continue;
 
         if (ciprefix(".control", line)) {
@@ -3834,7 +3834,7 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
 
         char *curr_line = card->li_line;
 
-        if (!ciprefix(".param", curr_line))
+        if (!ciprefix(".para", curr_line))
             break;
 
         param_ptr = strchr(curr_line, ' ');
@@ -3910,7 +3910,7 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
             return c;
         }
 
-        if (ciprefix(".param", curr_line)) {
+        if (ciprefix(".para", curr_line)) {
             if (first_param_card)
                 last_param_card->li_next = c;
             else
@@ -3965,7 +3965,7 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
             controlled_exit(EXIT_FAILURE);
         }
 
-        if (ciprefix(".param", curr_line)) {
+        if (ciprefix(".para", curr_line)) {
             if (first_param_card)
                 last_param_card->li_next = c;
             else
@@ -4002,7 +4002,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
         if (*curr_line == '*')
             continue;
 
-        if (ciprefix(".param", curr_line)) {
+        if (ciprefix(".para", curr_line)) {
 
             struct line *param_end, *param_beg;
             char *equal_ptr, **array;
@@ -5932,7 +5932,7 @@ inp_fix_temper_in_param(struct line *deck)
             continue;
         }
 
-        if (ciprefix(".param", curr_line)) {
+        if (ciprefix(".para", curr_line)) {
 
             char *p, *temper, *equal_ptr, *lhs_b, *lhs_e;
 
@@ -6057,7 +6057,7 @@ inp_fix_temper_in_param(struct line *deck)
             new_str = inp_remove_ws(new_str);
 
             /* if we have inserted into a .param line, convert to .func */
-            if (prefix(".param", new_str)) {
+            if (prefix(".para", new_str)) {
                 char *new_tmp_str = new_str;
                 new_tmp_str = nexttok(new_tmp_str);
                 funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);

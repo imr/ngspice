@@ -736,7 +736,7 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *
 	/* ignore .meas statements -- these will be handled after analysis */
 	/* also ignore .param statements */
 	/* ignore .prot, .unprot */
-	else if (strcmp(token, ".meas") == 0 || strcmp(token, ".param") == 0 || strcmp(token, ".measure") == 0 ||
+	else if (strcmp(token, ".meas") == 0 || ciprefix(".para", token) || strcmp(token, ".measure") == 0 ||
 	         strcmp(token, ".prot") == 0 || strcmp(token, ".unprot") == 0) {
 		rtn = 0;
 		goto quit;

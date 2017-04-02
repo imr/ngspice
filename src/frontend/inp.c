@@ -667,10 +667,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         for (dd = deck; dd; dd = dd->li_next) {
             /* all parameter lines should be sequentially ordered and placed at
                beginning of deck */
-            if (ciprefix(".param", dd->li_line)) {
+            if (ciprefix(".para", dd->li_line)) {
                 ft_curckt->ci_param = dd;
                 /* find end of .param statements */
-                while (ciprefix(".param", dd->li_line)) {
+                while (ciprefix(".para", dd->li_line)) {
                     prev_param = dd;
                     dd = dd->li_next;
                     if (dd == NULL)
