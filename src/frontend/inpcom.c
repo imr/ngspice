@@ -5532,7 +5532,7 @@ inp_modify_exp(char* expr)
             if ((*s == '|') || (*s == '&'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
-        } else if (isalpha_c(c)) {
+        } else if (isalpha_c(c) || c == '_') {
 
             char buf[512];
             int i = 0;
