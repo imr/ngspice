@@ -414,6 +414,11 @@ gettok_noparens(char **s)
 }
 
 
+/*
+ * consider m={(nf*multi)}
+ *  shall be parsed as one token
+ */
+
 char *
 gettok_instance(char **s)
 {
@@ -431,6 +436,13 @@ gettok_instance(char **s)
            (**s != '(') &&
            (**s != ')')
         ) {
+        if (**s == '{') {
+            char *close = strchr(*s, '}');
+            if (close) {
+                *s = close;
+                continue;
+            }
+        }
         (*s)++;
     }
     token_e = *s;
