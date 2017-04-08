@@ -1202,6 +1202,7 @@ AC_CONFIG_FILES([Makefile
                  tests/mos6/Makefile
                  tests/polezero/Makefile
                  tests/regression/Makefile
+                 tests/regression/agauss/Makefile
                  tests/regression/subckt-processing/Makefile
                  tests/regression/lib-processing/Makefile
                  tests/regression/parser/Makefile

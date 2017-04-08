@@ -1,0 +1,40 @@
+* test-agauss-2, agauss parameter correlation
+
+* check this usage pattern for dependent/correlated random parameters
+*   .param foo = agauss
+*   .param bar = foo
+*   v.. 'bar'
+*   v.. 'bar'
+
+.param p0 = agauss(13, 2, 1)
+.param p1 = p0
+
+.subckt stdev mean sigma 1 2 3 4 5
+emean  mean 0 vol = '(v(1)+v(2)+v(3)+v(4)+v(5))/5'
+esigma sigma 0 vol = 'sqrt((v(1,mean)**2 + v(2,mean)**2 + v(3,mean)**2 + v(4,mean)**2 + v(5,mean)**2)/5)'
+.ends
+
+v1 1 0  'p1'
+v2 2 0  'p1'
+v3 3 0  'p1'
+v4 4 0  'p1'
+v5 5 0  'p1'
+
+xprobe  Omean Osigma 1 2 3 4 5  stdev
+
+
+.control
+
+op
+
+if v(Osigma) < 0.1
+  echo "INFO: success"
+  quit 0
+else
+  echo "ERROR: test values expected to be correlated"
+  quit 1
+end
+
+.endc
+
+.end
