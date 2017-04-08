@@ -7,5 +7,6 @@ void com_alter(wordlist *wl);
 void com_altermod(wordlist *wl);
 void com_meas(wordlist *wl);
 void com_sysinfo(wordlist *wl);
+void com_check_ifparm(wordlist *wl);
 
 #endif

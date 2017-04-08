@@ -1514,3 +1514,101 @@ com_alter_mod(wordlist *wl)
     tfree(arglist[0]);
     tfree(arglist[3]);
 }
+
+
+#ifdef HAVE_TSEARCH
+
+#include <search.h>
+
+static int
+check_ifparm_compare(const void *a, const void *b)
+{
+    IFparm *pa = (IFparm *) a;
+    IFparm *pb = (IFparm *) b;
+    return pa->id - pb->id;
+}
+
+
+static void
+check_ifparm_freenode(void *node)
+{
+    NG_IGNORE(node);
+}
+
+
+static void
+check_ifparm(IFdevice *device, int instance_flag)
+{
+    int i, xcount;
+    IFparm *plist;
+
+    if (instance_flag) {
+        plist = device->instanceParms;
+        if (!plist)
+            return;
+        fprintf(stderr," checking %s instanceParams\n", device->name);
+        xcount = *device->numInstanceParms;
+    } else {
+        plist = device->modelParms;
+        if (!plist)
+            return;
+        fprintf(stderr," checking %s modelParams\n", device->name);
+        xcount = *device->numModelParms;
+    }
+
+    void *root = NULL;
+
+    for (i = 0; i < xcount; i++) {
+
+        IFparm *psearch = *(IFparm **) tsearch(plist + i, &root,
+                                               check_ifparm_compare);
+
+        int type_err = (psearch->dataType ^ plist[i].dataType) & ~IF_REDUNDANT;
+        if (type_err)
+            fprintf(stderr,
+                    " ERROR, dataType mismatch \"%s\" \"%s\" %08x\n",
+                    psearch->keyword, plist[i].keyword, type_err);
+
+        if ((plist[i].dataType & IF_REDUNDANT) &&
+            (i == 0 || plist[i-1].id != plist[i].id)) {
+            fprintf(stderr,
+                    "ERROR, alias \"%s\" has non matching predecessor \"%s\"\n",
+                    plist[i].keyword, plist[i-1].keyword);
+        }
+
+        if (i == 0)
+            continue;
+
+        if (plist[i-1].id != plist[i].id) {
+            if (psearch != plist + i)
+                fprintf(stderr,
+                        "ERROR: non neighbored duplicate id: \"%s\" \"%s\"\n",
+                        psearch->keyword, plist[i].keyword);
+        } else if (!(plist[i].dataType & IF_REDUNDANT)) {
+            fprintf(stderr,
+                    "ERROR: non R duplicate id: \"%s\" \"%s\"\n",
+                    plist[i-1].keyword, plist[i].keyword);
+        }
+    }
+
+#ifdef HAVE_TDESTROY
+    tdestroy (root, check_ifparm_freenode);
+#endif
+}
+
+
+void
+com_check_ifparm(wordlist *wl)
+{
+    NG_IGNORE(wl);
+
+    int k;
+
+    for (k = 0; k < ft_sim->numDevices; k++)
+        if (ft_sim->devices[k]) {
+            check_ifparm(ft_sim->devices[k], 0);
+            check_ifparm(ft_sim->devices[k], 1);
+        }
+}
+
+#endif

@@ -712,7 +712,7 @@ AC_CHECK_FUNCS([isatty tcgetattr tcsetattr])
 
 # Check for a few functions:
 AC_FUNC_FORK([])
-AC_CHECK_FUNCS([access qsort dup2 popen])
+AC_CHECK_FUNCS([access qsort dup2 popen tsearch tdestroy])
 AC_CHECK_FUNCS([strchr index], [break])
 AC_CHECK_FUNCS([strrchr rindex], [break])
 AC_CHECK_FUNCS([getcwd getwd], [break])

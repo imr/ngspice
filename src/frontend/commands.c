@@ -586,6 +586,12 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
       ": Print circuit inventory" },
+#ifdef HAVE_TSEARCH
+    { "check_ifparm", com_check_ifparm, TRUE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
+      NULL,
+      ": Check model ifparm descriptors (for developpers)" },
+#endif
     { NULL, NULL, FALSE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
