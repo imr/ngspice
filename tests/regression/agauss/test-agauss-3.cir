@@ -1,0 +1,45 @@
+* test-agauss-3, agauss parameter correlation
+
+* check this usage pattern for independent/non-correlated random parameters
+*   .param foo = agauss
+*   .subckt sub ...
+*   v.. 'foo'
+*   .ends
+*   x..
+*   x..
+
+.param p1 = agauss(13, 2, 1)
+
+.subckt stdev mean sigma 1 2 3 4 5
+emean  mean 0 vol = '(v(1)+v(2)+v(3)+v(4)+v(5))/5'
+esigma sigma 0 vol = 'sqrt((v(1,mean)**2 + v(2,mean)**2 + v(3,mean)**2 + v(4,mean)**2 + v(5,mean)**2)/5)'
+.ends
+
+.subckt baz 1 0
+v1 1 0  'p1'
+.ends
+
+xv1 1 0  baz
+xv2 2 0  baz
+xv3 3 0  baz
+xv4 4 0  baz
+xv5 5 0  baz
+
+xprobe  Omean Osigma 1 2 3 4 5  stdev
+
+
+.control
+
+op
+
+if v(Osigma) > 0.1
+  echo "INFO: success"
+  quit 0
+else
+  echo "ERROR: test values expected to be non-correlated"
+  quit 1
+end
+
+.endc
+
+.end
