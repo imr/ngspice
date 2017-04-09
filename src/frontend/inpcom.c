@@ -5978,8 +5978,6 @@ inp_fix_temper_in_param(struct line *deck)
 * Then scan new_func, for each xxx1 scan all lines of deck,
 * find all xxx1 and convert them to a function:
 * xxx1   --->  xxx1()
-* If this happens to be in another .param line, convert it to .func,
-* add info to end of new_func and continue scanning.
 *
 * In a second step, after subcircuits have been expanded, all occurencies
 * of agauss in a b-line are replaced by their suitable value (function
@@ -6165,23 +6163,9 @@ inp_fix_agauss_in_param(struct line *deck)
             new_str = INPstrCat(firsttok_str, new_str, " ");
             new_str = inp_remove_ws(new_str);
 
-            /* if we have inserted into a .param line, convert to .func */
-            if (prefix(".para", new_str)) {
-                char *new_tmp_str = new_str;
-                txfree(gettok(&new_tmp_str));
-                funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
-                funcbody = copy(new_tmp_str + 1);
-                *funcs_tail_ptr =
-                    inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
-                funcs_tail_ptr = &(*funcs_tail_ptr)->next;
-                tfree(new_str);
-                tfree(funcbody);
-            }
-            else {
-                *card->li_line = '*';
-                /* Enter new line into deck */
-                insert_new_line(card, new_str, 0, card->li_linenum);
-            }
+            *card->li_line = '*';
+            /* Enter new line into deck */
+            insert_new_line(card, new_str, 0, card->li_linenum);
         }
     }
 
