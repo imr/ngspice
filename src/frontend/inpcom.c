@@ -1641,8 +1641,8 @@ is_a_modelname(const char *s)
     if (isalpha_c(s[0]))
         return TRUE;
 
-    /* e.g. 1N4002 */
-    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isdigit_c(s[2]))
+    /* e.g. 1N4002, but do not accept floats (for example 1E2) */
+    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isdigit_c(s[2]) && toupper_c(s[1]) != 'E')
         return TRUE;
 
     /* e.g. 2SK456 */
