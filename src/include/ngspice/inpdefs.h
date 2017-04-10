@@ -17,6 +17,7 @@ typedef struct INPtables INPtables;
 typedef struct card card;
 typedef struct INPmodel INPmodel;
 
+#define NESTINGDEPTH 10
 
 struct INPtab {
     char *t_ent;
