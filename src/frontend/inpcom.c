@@ -2808,7 +2808,6 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                 struct line *d;
 
                 d = find_subckt(c->level, subckt_name)->line;
-                #warning "if not d ..."
                 {
                     char *subckt_line = d->li_line;
                     subckt_line = skip_non_ws(subckt_line);
