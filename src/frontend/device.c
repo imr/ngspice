@@ -1166,10 +1166,12 @@ com_alter_common(wordlist *wl, int do_model)
                 wl2 = wlin;
                 wl = NULL;
             } else if (strlen(argument) > 1) {
-                wl2 = wl_cons(copy_substring(argument, eqptr),
-                              wl_cons(copy("="),
-                                      wl_cons(copy(eqptr + 1),
-                                              NULL)));
+                wl2 = NULL;
+                if (eqptr[1])
+                    wl2 = wl_cons(copy(eqptr + 1), wl2);
+                wl2 = wl_cons(copy("="), wl2);
+                if (eqptr > argument)
+                    wl2 = wl_cons(copy_substring(argument, eqptr), wl2);
                 /* combine wordlists into wl2, free wl */
                 wl_splice(wl, wl2);
                 wl = NULL;
