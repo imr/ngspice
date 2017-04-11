@@ -2272,6 +2272,21 @@ IFvalue *value)
         case BSIM4v5_MOD_VBD_MAX:
             value->rValue = model->BSIM4v5vbdMax;
             return(OK);
+        case BSIM4v5_MOD_VGSR_MAX:
+            value->rValue = model->BSIM4v5vgsrMax;
+            return(OK);
+        case BSIM4v5_MOD_VGDR_MAX:
+            value->rValue = model->BSIM4v5vgdrMax;
+            return(OK);
+        case BSIM4v5_MOD_VGBR_MAX:
+            value->rValue = model->BSIM4v5vgbrMax;
+            return(OK);
+        case BSIM4v5_MOD_VBSR_MAX:
+            value->rValue = model->BSIM4v5vbsrMax;
+            return(OK);
+        case BSIM4v5_MOD_VBDR_MAX:
+            value->rValue = model->BSIM4v5vbdrMax;
+            return(OK);
 
         default:
             return(E_BADPARM);

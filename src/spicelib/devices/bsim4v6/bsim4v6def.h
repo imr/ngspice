@@ -1701,6 +1701,11 @@ typedef struct sBSIM4v6model
     double BSIM4v6vdsMax;
     double BSIM4v6vbsMax;
     double BSIM4v6vbdMax;
+    double BSIM4v6vgsrMax;
+    double BSIM4v6vgdrMax;
+    double BSIM4v6vgbrMax;
+    double BSIM4v6vbsrMax;
+    double BSIM4v6vbdrMax;
 
     struct bsim4v6SizeDependParam *pSizeDependParamKnot;
 
@@ -2509,6 +2514,11 @@ typedef struct sBSIM4v6model
     unsigned  BSIM4v6vdsMaxGiven  :1;
     unsigned  BSIM4v6vbsMaxGiven  :1;
     unsigned  BSIM4v6vbdMaxGiven  :1;
+    unsigned  BSIM4v6vgsrMaxGiven  :1;
+    unsigned  BSIM4v6vgdrMaxGiven  :1;
+    unsigned  BSIM4v6vgbrMaxGiven  :1;
+    unsigned  BSIM4v6vbsrMaxGiven  :1;
+    unsigned  BSIM4v6vbdrMaxGiven  :1;
 
     unsigned  BSIM4v6LintGiven   :1;
     unsigned  BSIM4v6LlGiven   :1;
@@ -3569,6 +3579,11 @@ typedef struct sBSIM4v6model
 #define BSIM4v6_MOD_VDS_MAX            1304
 #define BSIM4v6_MOD_VBS_MAX            1305
 #define BSIM4v6_MOD_VBD_MAX            1306
+#define BSIM4v6_MOD_VGSR_MAX           1307
+#define BSIM4v6_MOD_VGDR_MAX           1308
+#define BSIM4v6_MOD_VGBR_MAX           1309
+#define BSIM4v6_MOD_VBSR_MAX           1310
+#define BSIM4v6_MOD_VBDR_MAX           1311
 
 #include "bsim4v6ext.h"
 

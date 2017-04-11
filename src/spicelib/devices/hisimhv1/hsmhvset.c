@@ -744,6 +744,11 @@ int HSMHVsetup(
     if (!model->HSMHVvdsMaxGiven) model->HSMHVvdsMax = 1e99;
     if (!model->HSMHVvbsMaxGiven) model->HSMHVvbsMax = 1e99;
     if (!model->HSMHVvbdMaxGiven) model->HSMHVvbdMax = 1e99;
+    if (!model->HSMHVvgsrMaxGiven) model->HSMHVvgsrMax = 1e99;
+    if (!model->HSMHVvgdrMaxGiven) model->HSMHVvgdrMax = 1e99;
+    if (!model->HSMHVvgbrMaxGiven) model->HSMHVvgbrMax = 1e99;
+    if (!model->HSMHVvbsrMaxGiven) model->HSMHVvbsrMax = 1e99;
+    if (!model->HSMHVvbdrMaxGiven) model->HSMHVvbdrMax = 1e99;
 
     /* For Symmetrical Device */
     if (  model->HSMHV_cosym ) {

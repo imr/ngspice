@@ -1740,6 +1740,26 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32vbdMax = value->rValue;
             mod->BSIM3v32vbdMaxGiven = TRUE;
             break;
+        case BSIM3v32_MOD_VGSR_MAX:
+            mod->BSIM3v32vgsrMax = value->rValue;
+            mod->BSIM3v32vgsrMaxGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VGDR_MAX:
+            mod->BSIM3v32vgdrMax = value->rValue;
+            mod->BSIM3v32vgdrMaxGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VGBR_MAX:
+            mod->BSIM3v32vgbrMax = value->rValue;
+            mod->BSIM3v32vgbrMaxGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VBSR_MAX:
+            mod->BSIM3v32vbsrMax = value->rValue;
+            mod->BSIM3v32vbsrMaxGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VBDR_MAX:
+            mod->BSIM3v32vbdrMax = value->rValue;
+            mod->BSIM3v32vbdrMaxGiven = TRUE;
+            break;
 
         case  BSIM3v32_MOD_NMOS  :
             if(value->iValue) {

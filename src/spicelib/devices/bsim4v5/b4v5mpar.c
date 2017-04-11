@@ -3085,6 +3085,26 @@ GENmodel *inMod)
             mod->BSIM4v5vbdMax = value->rValue;
             mod->BSIM4v5vbdMaxGiven = TRUE;
             break;
+        case BSIM4v5_MOD_VGSR_MAX:
+            mod->BSIM4v5vgsrMax = value->rValue;
+            mod->BSIM4v5vgsrMaxGiven = TRUE;
+            break;
+        case BSIM4v5_MOD_VGDR_MAX:
+            mod->BSIM4v5vgdrMax = value->rValue;
+            mod->BSIM4v5vgdrMaxGiven = TRUE;
+            break;
+        case BSIM4v5_MOD_VGBR_MAX:
+            mod->BSIM4v5vgbrMax = value->rValue;
+            mod->BSIM4v5vgbrMaxGiven = TRUE;
+            break;
+        case BSIM4v5_MOD_VBSR_MAX:
+            mod->BSIM4v5vbsrMax = value->rValue;
+            mod->BSIM4v5vbsrMaxGiven = TRUE;
+            break;
+        case BSIM4v5_MOD_VBDR_MAX:
+            mod->BSIM4v5vbdrMax = value->rValue;
+            mod->BSIM4v5vbdrMaxGiven = TRUE;
+            break;
 
         case  BSIM4v5_MOD_NMOS  :
             if(value->iValue) {

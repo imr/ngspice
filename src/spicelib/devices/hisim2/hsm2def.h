@@ -1266,6 +1266,11 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   double HSM2vdsMax;
   double HSM2vbsMax;
   double HSM2vbdMax;
+  double HSM2vgsrMax;
+  double HSM2vgdrMax;
+  double HSM2vgbrMax;
+  double HSM2vbsrMax;
+  double HSM2vbdrMax;
 
   HSM2modelMKSParam modelMKS ; /* unit-converted parameters */
 
@@ -1839,6 +1844,11 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
   unsigned  HSM2vdsMaxGiven  :1;
   unsigned  HSM2vbsMaxGiven  :1;
   unsigned  HSM2vbdMaxGiven  :1;
+  unsigned  HSM2vgsrMaxGiven  :1;
+  unsigned  HSM2vgdrMaxGiven  :1;
+  unsigned  HSM2vgbrMaxGiven  :1;
+  unsigned  HSM2vbsrMaxGiven  :1;
+  unsigned  HSM2vbdrMaxGiven  :1;
 
 } HSM2model;
 
@@ -2521,6 +2531,11 @@ typedef struct sHSM2model {       	/* model structure for a resistor */
 #define HSM2_MOD_VDS_MAX    4004
 #define HSM2_MOD_VBS_MAX    4005
 #define HSM2_MOD_VBD_MAX    4006
+#define HSM2_MOD_VGSR_MAX   4007
+#define HSM2_MOD_VGDR_MAX   4008
+#define HSM2_MOD_VGBR_MAX   4009
+#define HSM2_MOD_VBSR_MAX   4010
+#define HSM2_MOD_VBDR_MAX   4011
 
 #include "hsm2ext.h"
 

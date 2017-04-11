@@ -2995,6 +2995,26 @@ int HSMHV2mParam(
     mod->HSMHV2vbdMax = value->rValue;
     mod->HSMHV2vbdMaxGiven = TRUE;
     break;
+  case HSMHV2_MOD_VGSR_MAX:
+      mod->HSMHV2vgsrMax = value->rValue;
+      mod->HSMHV2vgsrMaxGiven = TRUE;
+      break;
+  case HSMHV2_MOD_VGDR_MAX:
+      mod->HSMHV2vgdrMax = value->rValue;
+      mod->HSMHV2vgdrMaxGiven = TRUE;
+      break;
+  case HSMHV2_MOD_VGBR_MAX:
+      mod->HSMHV2vgbrMax = value->rValue;
+      mod->HSMHV2vgbrMaxGiven = TRUE;
+      break;
+  case HSMHV2_MOD_VBSR_MAX:
+      mod->HSMHV2vbsrMax = value->rValue;
+      mod->HSMHV2vbsrMaxGiven = TRUE;
+      break;
+  case HSMHV2_MOD_VBDR_MAX:
+      mod->HSMHV2vbdrMax = value->rValue;
+      mod->HSMHV2vbdrMaxGiven = TRUE;
+      break;
 
   default:
     return(E_BADPARM);

@@ -2116,12 +2116,22 @@ typedef struct sB4SOImodel
     double B4SOIvdsMax;
     double B4SOIvbsMax;
     double B4SOIvbdMax;
+    double B4SOIvgsrMax;
+    double B4SOIvgdrMax;
+    double B4SOIvgbrMax;
+    double B4SOIvbsrMax;
+    double B4SOIvbdrMax;
     unsigned  B4SOIvgsMaxGiven  :1;
     unsigned  B4SOIvgdMaxGiven  :1;
     unsigned  B4SOIvgbMaxGiven  :1;
     unsigned  B4SOIvdsMaxGiven  :1;
     unsigned  B4SOIvbsMaxGiven  :1;
     unsigned  B4SOIvbdMaxGiven  :1;
+    unsigned  B4SOIvgsrMaxGiven  :1;
+    unsigned  B4SOIvgdrMaxGiven  :1;
+    unsigned  B4SOIvgbrMaxGiven  :1;
+    unsigned  B4SOIvbsrMaxGiven  :1;
+    unsigned  B4SOIvbdrMaxGiven  :1;
 
     struct b4soiSizeDependParam *pSizeDependParamKnot;
 
@@ -4258,12 +4268,17 @@ typedef struct sB4SOImodel
 #define B4SOI_MOD_WNLX            2106
 #define B4SOI_MOD_PNLX            2107
 
-#define B4SOI_MOD_VGS_MAX            2201
-#define B4SOI_MOD_VGD_MAX            2202
-#define B4SOI_MOD_VGB_MAX            2203
-#define B4SOI_MOD_VDS_MAX            2204
-#define B4SOI_MOD_VBS_MAX            2205
-#define B4SOI_MOD_VBD_MAX            2206
+#define B4SOI_MOD_VGS_MAX          2201
+#define B4SOI_MOD_VGD_MAX          2202
+#define B4SOI_MOD_VGB_MAX          2203
+#define B4SOI_MOD_VDS_MAX          2204
+#define B4SOI_MOD_VBS_MAX          2205
+#define B4SOI_MOD_VBD_MAX          2206
+#define B4SOI_MOD_VGSR_MAX         2207
+#define B4SOI_MOD_VGDR_MAX         2208
+#define B4SOI_MOD_VGBR_MAX         2209
+#define B4SOI_MOD_VBSR_MAX         2210
+#define B4SOI_MOD_VBDR_MAX         2211
 
 #include "b4soiext.h"
 

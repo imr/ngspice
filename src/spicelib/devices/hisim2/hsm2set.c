@@ -765,6 +765,11 @@ int HSM2setup(
     if (!model->HSM2vdsMaxGiven) model->HSM2vdsMax = 1e99;
     if (!model->HSM2vbsMaxGiven) model->HSM2vbsMax = 1e99;
     if (!model->HSM2vbdMaxGiven) model->HSM2vbdMax = 1e99;
+    if (!model->HSM2vgsrMaxGiven) model->HSM2vgsrMax = 1e99;
+    if (!model->HSM2vgdrMaxGiven) model->HSM2vgdrMax = 1e99;
+    if (!model->HSM2vgbrMaxGiven) model->HSM2vgbrMax = 1e99;
+    if (!model->HSM2vbsrMaxGiven) model->HSM2vbsrMax = 1e99;
+    if (!model->HSM2vbdrMaxGiven) model->HSM2vbdrMax = 1e99;
 
     if ( model->HSM2_codep ) {
       RANGERESET(model->HSM2_ndepm,      5e15,   2e17,  "NDEPM" ) ;

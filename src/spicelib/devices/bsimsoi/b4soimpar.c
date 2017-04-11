@@ -3783,6 +3783,26 @@ case B4SOI_MOD_UD:
             mod->B4SOIvbdMax = value->rValue;
             mod->B4SOIvbdMaxGiven = TRUE;
             break;
+        case B4SOI_MOD_VGSR_MAX:
+            mod->B4SOIvgsrMax = value->rValue;
+            mod->B4SOIvgsrMaxGiven = TRUE;
+            break;
+        case B4SOI_MOD_VGDR_MAX:
+            mod->B4SOIvgdrMax = value->rValue;
+            mod->B4SOIvgdrMaxGiven = TRUE;
+            break;
+        case B4SOI_MOD_VGBR_MAX:
+            mod->B4SOIvgbrMax = value->rValue;
+            mod->B4SOIvgbrMaxGiven = TRUE;
+            break;
+        case B4SOI_MOD_VBSR_MAX:
+            mod->B4SOIvbsrMax = value->rValue;
+            mod->B4SOIvbsrMaxGiven = TRUE;
+            break;
+        case B4SOI_MOD_VBDR_MAX:
+            mod->B4SOIvbdrMax = value->rValue;
+            mod->B4SOIvbdrMaxGiven = TRUE;
+            break;
 
         case  B4SOI_MOD_NMOS  :
             if(value->iValue) {

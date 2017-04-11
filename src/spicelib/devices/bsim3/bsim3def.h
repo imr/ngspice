@@ -870,6 +870,11 @@ typedef struct sBSIM3model
     double BSIM3vdsMax;
     double BSIM3vbsMax;
     double BSIM3vbdMax;
+    double BSIM3vgsrMax;
+    double BSIM3vgdrMax;
+    double BSIM3vgbrMax;
+    double BSIM3vbsrMax;
+    double BSIM3vbdrMax;
 
     struct bsim3SizeDependParam *pSizeDependParamKnot;
 
@@ -1298,6 +1303,11 @@ typedef struct sBSIM3model
     unsigned  BSIM3vdsMaxGiven  :1;
     unsigned  BSIM3vbsMaxGiven  :1;
     unsigned  BSIM3vbdMaxGiven  :1;
+    unsigned  BSIM3vgsrMaxGiven  :1;
+    unsigned  BSIM3vgdrMaxGiven  :1;
+    unsigned  BSIM3vgbrMaxGiven  :1;
+    unsigned  BSIM3vbsrMaxGiven  :1;
+    unsigned  BSIM3vbdrMaxGiven  :1;
 
     unsigned  BSIM3LintGiven   :1;
     unsigned  BSIM3LlGiven   :1;
@@ -1881,12 +1891,17 @@ typedef struct sBSIM3model
 #define BSIM3_CBDB                 792
 #define BSIM3_CBSB                 793
 
-#define BSIM3_MOD_VGS_MAX            801
-#define BSIM3_MOD_VGD_MAX            802
-#define BSIM3_MOD_VGB_MAX            803
-#define BSIM3_MOD_VDS_MAX            804
-#define BSIM3_MOD_VBS_MAX            805
-#define BSIM3_MOD_VBD_MAX            806
+#define BSIM3_MOD_VGS_MAX          801
+#define BSIM3_MOD_VGD_MAX          802
+#define BSIM3_MOD_VGB_MAX          803
+#define BSIM3_MOD_VDS_MAX          804
+#define BSIM3_MOD_VBS_MAX          805
+#define BSIM3_MOD_VBD_MAX          806
+#define BSIM3_MOD_VGSR_MAX         807
+#define BSIM3_MOD_VGDR_MAX         808
+#define BSIM3_MOD_VGBR_MAX         809
+#define BSIM3_MOD_VBSR_MAX         810
+#define BSIM3_MOD_VBDR_MAX         811
 
 #include "bsim3ext.h"
 

@@ -875,6 +875,11 @@ typedef struct sBSIM3v32model
     double BSIM3v32vdsMax;
     double BSIM3v32vbsMax;
     double BSIM3v32vbdMax;
+    double BSIM3v32vgsrMax;
+    double BSIM3v32vgdrMax;
+    double BSIM3v32vgbrMax;
+    double BSIM3v32vbsrMax;
+    double BSIM3v32vbdrMax;
 
     struct bsim3v32SizeDependParam *pSizeDependParamKnot;
 
@@ -1326,6 +1331,11 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32vdsMaxGiven  :1;
     unsigned  BSIM3v32vbsMaxGiven  :1;
     unsigned  BSIM3v32vbdMaxGiven  :1;
+    unsigned  BSIM3v32vgsrMaxGiven  :1;
+    unsigned  BSIM3v32vgdrMaxGiven  :1;
+    unsigned  BSIM3v32vgbrMaxGiven  :1;
+    unsigned  BSIM3v32vbsrMaxGiven  :1;
+    unsigned  BSIM3v32vbdrMaxGiven  :1;
 
 } BSIM3v32model;
 
@@ -1890,6 +1900,11 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_VDS_MAX          804
 #define BSIM3v32_MOD_VBS_MAX          805
 #define BSIM3v32_MOD_VBD_MAX          806
+#define BSIM3v32_MOD_VGSR_MAX         807
+#define BSIM3v32_MOD_VGDR_MAX         808
+#define BSIM3v32_MOD_VGBR_MAX         809
+#define BSIM3v32_MOD_VBSR_MAX         810
+#define BSIM3v32_MOD_VBDR_MAX         811
 
 #include "bsim3v32ext.h"
 

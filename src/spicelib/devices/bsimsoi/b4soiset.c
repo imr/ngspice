@@ -2066,6 +2066,16 @@ B4SOIinstance **InstArray;
             model->B4SOIvbsMax = 1e99;
         if (!model->B4SOIvbdMaxGiven)
             model->B4SOIvbdMax = 1e99;
+        if (!model->B4SOIvgsrMaxGiven)
+            model->B4SOIvgsrMax = 1e99;
+        if (!model->B4SOIvgdrMaxGiven)
+            model->B4SOIvgdrMax = 1e99;
+        if (!model->B4SOIvgbrMaxGiven)
+            model->B4SOIvgbrMax = 1e99;
+        if (!model->B4SOIvbsrMaxGiven)
+            model->B4SOIvbsrMax = 1e99;
+        if (!model->B4SOIvbdrMaxGiven)
+            model->B4SOIvbdrMax = 1e99;
 
         if (!model->B4SOIfdModGiven)
             model->B4SOIfdMod = 0;

@@ -2818,6 +2818,21 @@ IFvalue *value)
         case B4SOI_MOD_VBD_MAX:
             value->rValue = model->B4SOIvbdMax;
             return(OK);
+        case B4SOI_MOD_VGSR_MAX:
+            value->rValue = model->B4SOIvgsrMax;
+            return(OK);
+        case B4SOI_MOD_VGDR_MAX:
+            value->rValue = model->B4SOIvgdrMax;
+            return(OK);
+        case B4SOI_MOD_VGBR_MAX:
+            value->rValue = model->B4SOIvgbrMax;
+            return(OK);
+        case B4SOI_MOD_VBSR_MAX:
+            value->rValue = model->B4SOIvbsrMax;
+            return(OK);
+        case B4SOI_MOD_VBDR_MAX:
+            value->rValue = model->B4SOIvbdrMax;
+            return(OK);
 
         default:
             return(E_BADPARM);

@@ -908,7 +908,12 @@ IFparm HSMHV2mPTable[] = { /* model parameters */
   IOP("vgb_max", HSMHV2_MOD_VGB_MAX, IF_REAL, "maximum voltage G-B branch"),
   IOP("vds_max", HSMHV2_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
   IOP("vbs_max", HSMHV2_MOD_VBS_MAX, IF_REAL, "maximum voltage B-S branch"),
-  IOP("vbd_max", HSMHV2_MOD_VBD_MAX, IF_REAL, "maximum voltage B-D branch")
+  IOP("vbd_max", HSMHV2_MOD_VBD_MAX, IF_REAL, "maximum voltage B-D branch"),
+  IOP("vgsr_max", HSMHV2_MOD_VGSR_MAX, IF_REAL, "maximum voltage G-S branch"),
+  IOP("vgdr_max", HSMHV2_MOD_VGDR_MAX, IF_REAL, "maximum voltage G-D branch"),
+  IOP("vgbr_max", HSMHV2_MOD_VGBR_MAX, IF_REAL, "maximum voltage G-B branch"),
+  IOP("vbsr_max", HSMHV2_MOD_VBSR_MAX, IF_REAL, "maximum voltage B-S branch"),
+  IOP("vbdr_max", HSMHV2_MOD_VBDR_MAX, IF_REAL, "maximum voltage B-D branch")
 
 };
 

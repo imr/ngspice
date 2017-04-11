@@ -907,6 +907,16 @@ BSIM3instance **InstArray;
             model->BSIM3vbsMax = 1e99;
         if (!model->BSIM3vbdMaxGiven)
             model->BSIM3vbdMax = 1e99;
+        if (!model->BSIM3vgsrMaxGiven)
+            model->BSIM3vgsrMax = 1e99;
+        if (!model->BSIM3vgdrMaxGiven)
+            model->BSIM3vgdrMax = 1e99;
+        if (!model->BSIM3vgbrMaxGiven)
+            model->BSIM3vgbrMax = 1e99;
+        if (!model->BSIM3vbsrMaxGiven)
+            model->BSIM3vbsrMax = 1e99;
+        if (!model->BSIM3vbdrMaxGiven)
+            model->BSIM3vbdrMax = 1e99;
 
         /* loop through all the instances of the model */
         for (here = model->BSIM3instances; here != NULL ;

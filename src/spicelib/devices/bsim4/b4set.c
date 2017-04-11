@@ -2233,6 +2233,16 @@ BSIM4instance **InstArray;
             model->BSIM4vbsMax = 1e99;
         if (!model->BSIM4vbdMaxGiven)
             model->BSIM4vbdMax = 1e99;
+        if (!model->BSIM4vgsrMaxGiven)
+            model->BSIM4vgsrMax = 1e99;
+        if (!model->BSIM4vgdrMaxGiven)
+            model->BSIM4vgdrMax = 1e99;
+        if (!model->BSIM4vgbrMaxGiven)
+            model->BSIM4vgbrMax = 1e99;
+        if (!model->BSIM4vbsrMaxGiven)
+            model->BSIM4vbsrMax = 1e99;
+        if (!model->BSIM4vbdrMaxGiven)
+            model->BSIM4vbdrMax = 1e99;
 
         /* stress effect */
         if (!model->BSIM4sarefGiven)

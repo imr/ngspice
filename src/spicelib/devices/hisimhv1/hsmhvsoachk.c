@@ -37,71 +37,302 @@ HSMHVsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
         for (here = model->HSMHVinstances; here; here = here->HSMHVnextInstance) {
 
-            vgs = fabs(ckt->CKTrhsOld [here->HSMHVgNode] -
-                       ckt->CKTrhsOld [here->HSMHVsNodePrime]);
+            vgs = ckt->CKTrhsOld [here->HSMHVgNode] -
+                  ckt->CKTrhsOld [here->HSMHVsNodePrime];
 
-            vgd = fabs(ckt->CKTrhsOld [here->HSMHVgNode] -
-                       ckt->CKTrhsOld [here->HSMHVdNodePrime]);
+            vgd = ckt->CKTrhsOld [here->HSMHVgNode] -
+                  ckt->CKTrhsOld [here->HSMHVdNodePrime];
 
-            vgb = fabs(ckt->CKTrhsOld [here->HSMHVgNode] -
-                       ckt->CKTrhsOld [here->HSMHVbNode]);
+            vgb = ckt->CKTrhsOld [here->HSMHVgNode] -
+                  ckt->CKTrhsOld [here->HSMHVbNodePrime];
 
-            vds = fabs(ckt->CKTrhsOld [here->HSMHVdNodePrime] -
-                       ckt->CKTrhsOld [here->HSMHVsNodePrime]);
+            vds = ckt->CKTrhsOld [here->HSMHVdNode] -
+                  ckt->CKTrhsOld [here->HSMHVsNodePrime];
 
-            vbs = fabs(ckt->CKTrhsOld [here->HSMHVbNode] -
-                       ckt->CKTrhsOld [here->HSMHVsNodePrime]);
+            vbs = ckt->CKTrhsOld [here->HSMHVbNode] -
+                  ckt->CKTrhsOld [here->HSMHVsNodePrime];
 
-            vbd = fabs(ckt->CKTrhsOld [here->HSMHVbNode] -
-                       ckt->CKTrhsOld [here->HSMHVdNodePrime]);
+            vbd = ckt->CKTrhsOld [here->HSMHVbNode] -
+                  ckt->CKTrhsOld [here->HSMHVdNodePrime];
 
-            if (vgs > model->HSMHVvgsMax)
-                if (warns_vgs < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "|Vgs|=%g has exceeded Vgs_max=%g\n",
-                               vgs, model->HSMHVvgsMax);
-                    warns_vgs++;
+            if (!model->HSMHVvgsrMaxGiven) {
+                if (fabs(vgs) > model->HSMHVvgsMax)
+                    if (warns_vgs < maxwarns) {
+                        soa_printf(ckt, (GENinstance*) here,
+                                   "Vgs=%g has exceeded Vgs_max=%g\n",
+                                   vgs, model->HSMHVvgsMax);
+                        warns_vgs++;
+                    }
+                if (!model->HSMHVvgbMaxGiven) {
+                    if (fabs(vgb) > model->HSMHVvgsMax)
+                        if (warns_vgb < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgb=%g has exceeded Vgs_max=%g\n",
+                                       vgb, model->HSMHVvgsMax);
+                            warns_vgb++;
+                        }
+                } else {
+                    if (fabs(vgb) > model->HSMHVvgbMax)
+                        if (warns_vgb < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgb=%g has exceeded Vgb_max=%g\n",
+                                       vgb, model->HSMHVvgbMax);
+                            warns_vgb++;
+                        }
                 }
-
-            if (vgd > model->HSMHVvgdMax)
-                if (warns_vgd < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "|Vgd|=%g has exceeded Vgd_max=%g\n",
-                               vgd, model->HSMHVvgdMax);
-                    warns_vgd++;
+            } else {
+                if (model->HSMHV_type > 0) {
+                    if (vgs > model->HSMHVvgsMax)
+                        if (warns_vgs < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgs=%g has exceeded Vgs_max=%g\n",
+                                       vgs, model->HSMHVvgsMax);
+                            warns_vgs++;
+                        }
+                    if (-1*vgs > model->HSMHVvgsrMax)
+                        if (warns_vgs < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgs=%g has exceeded Vgsr_max=%g\n",
+                                       vgs, model->HSMHVvgsrMax);
+                            warns_vgs++;
+                        }
+                } else {
+                    if (vgs > model->HSMHVvgsrMax)
+                        if (warns_vgs < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgs=%g has exceeded Vgsr_max=%g\n",
+                                       vgs, model->HSMHVvgsrMax);
+                            warns_vgs++;
+                        }
+                    if (-1*vgs > model->HSMHVvgsMax)
+                        if (warns_vgs < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgs=%g has exceeded Vgs_max=%g\n",
+                                       vgs, model->HSMHVvgsMax);
+                            warns_vgs++;
+                        }
                 }
+            }
 
-            if (vgb > model->HSMHVvgbMax)
-                if (warns_vgb < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "|Vgb|=%g has exceeded Vgb_max=%g\n",
-                               vgb, model->HSMHVvgbMax);
-                    warns_vgb++;
+            if (!model->HSMHVvgdrMaxGiven) {
+                if (fabs(vgd) > model->HSMHVvgdMax)
+                    if (warns_vgd < maxwarns) {
+                        soa_printf(ckt, (GENinstance*) here,
+                                   "Vgd=%g has exceeded Vgd_max=%g\n",
+                                   vgd, model->HSMHVvgdMax);
+                        warns_vgd++;
+                    }
+            } else {
+                if (model->HSMHV_type > 0) {
+                    if (vgd > model->HSMHVvgdMax)
+                        if (warns_vgd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgd=%g has exceeded Vgd_max=%g\n",
+                                       vgd, model->HSMHVvgdMax);
+                            warns_vgd++;
+                        }
+                    if (-1*vgd > model->HSMHVvgdrMax)
+                        if (warns_vgd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgd=%g has exceeded Vgdr_max=%g\n",
+                                       vgd, model->HSMHVvgdrMax);
+                            warns_vgd++;
+                        }
+                } else {
+                    if (vgd > model->HSMHVvgdrMax)
+                        if (warns_vgd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgd=%g has exceeded Vgdr_max=%g\n",
+                                       vgd, model->HSMHVvgdrMax);
+                            warns_vgd++;
+                        }
+                    if (-1*vgd > model->HSMHVvgdMax)
+                        if (warns_vgd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgd=%g has exceeded Vgd_max=%g\n",
+                                       vgd, model->HSMHVvgdMax);
+                            warns_vgd++;
+                        }
                 }
+            }
 
-            if (vds > model->HSMHVvdsMax)
+            if (fabs(vds) > model->HSMHVvdsMax)
                 if (warns_vds < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "|Vds|=%g has exceeded Vds_max=%g\n",
+                               "Vds=%g has exceeded Vds_max=%g\n",
                                vds, model->HSMHVvdsMax);
                     warns_vds++;
                 }
 
-            if (vbs > model->HSMHVvbsMax)
-                if (warns_vbs < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "|Vbs|=%g has exceeded Vbs_max=%g\n",
-                               vbs, model->HSMHVvbsMax);
-                    warns_vbs++;
+            if (!model->HSMHVvgbrMaxGiven) {
+                if (fabs(vgb) > model->HSMHVvgbMax)
+                    if (warns_vgb < maxwarns) {
+                        soa_printf(ckt, (GENinstance*) here,
+                                   "Vgb=%g has exceeded Vgb_max=%g\n",
+                                   vgb, model->HSMHVvgbMax);
+                        warns_vgb++;
+                    }
+            } else {
+                if (model->HSMHV_type > 0) {
+                    if (vgb > model->HSMHVvgbMax)
+                        if (warns_vgb < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgb=%g has exceeded Vgb_max=%g\n",
+                                       vgb, model->HSMHVvgbMax);
+                            warns_vgb++;
+                        }
+                    if (-1*vgb > model->HSMHVvgbrMax)
+                        if (warns_vgb < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgb=%g has exceeded Vgbr_max=%g\n",
+                                       vgb, model->HSMHVvgbrMax);
+                            warns_vgb++;
+                        }
+                } else {
+                    if (vgb > model->HSMHVvgbrMax)
+                        if (warns_vgb < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgb=%g has exceeded Vgbr_max=%g\n",
+                                       vgb, model->HSMHVvgbrMax);
+                            warns_vgb++;
+                        }
+                    if (-1*vgb > model->HSMHVvgbMax)
+                        if (warns_vgb < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vgb=%g has exceeded Vgb_max=%g\n",
+                                       vgb, model->HSMHVvgbMax);
+                            warns_vgb++;
+                        }
                 }
+            }
 
-            if (vbd > model->HSMHVvbdMax)
-                if (warns_vbd < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "|Vbd|=%g has exceeded Vbd_max=%g\n",
-                               vbd, model->HSMHVvbdMax);
-                    warns_vbd++;
+            if (!model->HSMHVvbsrMaxGiven) {
+                if (!model->HSMHVvbsMaxGiven) {
+                    if (fabs(vbs) > model->HSMHVvbdMax)
+                        if (warns_vbs < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vbs=%g has exceeded Vbd_max=%g\n",
+                                       vbs, model->HSMHVvbdMax);
+                            warns_vbs++;
+                        }
+                } else {
+                    if (fabs(vbs) > model->HSMHVvbsMax)
+                        if (warns_vbs < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vbs=%g has exceeded Vbs_max=%g\n",
+                                       vbs, model->HSMHVvbsMax);
+                            warns_vbs++;
+                        }
                 }
+            } else {
+                if (!model->HSMHVvbsMaxGiven) {
+                    if (model->HSMHV_type > 0) {
+                        if (vbs > model->HSMHVvbdMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbd_max=%g\n",
+                                           vbs, model->HSMHVvbdMax);
+                                warns_vbs++;
+                            }
+                        if (-1*vbs > model->HSMHVvbsrMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbsr_max=%g\n",
+                                           vbs, model->HSMHVvbsrMax);
+                                warns_vbs++;
+                            }
+                    } else {
+                        if (vbs > model->HSMHVvbsrMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbsr_max=%g\n",
+                                           vbs, model->HSMHVvbsrMax);
+                                warns_vbs++;
+                            }
+                        if (-1*vbs > model->HSMHVvbdMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbd_max=%g\n",
+                                           vbs, model->HSMHVvbdMax);
+                                warns_vbs++;
+                            }
+                    }
+                } else {
+                    if (model->HSMHV_type > 0) {
+                        if (vbs > model->HSMHVvbsMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbs_max=%g\n",
+                                           vbs, model->HSMHVvbsMax);
+                                warns_vbs++;
+                            }
+                        if (-1*vbs > model->HSMHVvbsrMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbsr_max=%g\n",
+                                           vbs, model->HSMHVvbsrMax);
+                                warns_vbs++;
+                            }
+                    } else {
+                        if (vbs > model->HSMHVvbsrMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbsr_max=%g\n",
+                                           vbs, model->HSMHVvbsrMax);
+                                warns_vbs++;
+                            }
+                        if (-1*vbs > model->HSMHVvbsMax)
+                            if (warns_vbs < maxwarns) {
+                                soa_printf(ckt, (GENinstance*) here,
+                                           "Vbs=%g has exceeded Vbs_max=%g\n",
+                                           vbs, model->HSMHVvbsMax);
+                                warns_vbs++;
+                            }
+                    }
+                }
+            }
+
+            if (!model->HSMHVvbdrMaxGiven) {
+                if (fabs(vbd) > model->HSMHVvbdMax)
+                    if (warns_vbd < maxwarns) {
+                        soa_printf(ckt, (GENinstance*) here,
+                                   "Vbd=%g has exceeded Vbd_max=%g\n",
+                                   vbd, model->HSMHVvbdMax);
+                        warns_vbd++;
+                    }
+            } else {
+                if (model->HSMHV_type > 0) {
+                    if (vbd > model->HSMHVvbdMax)
+                        if (warns_vbd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vbd=%g has exceeded Vbd_max=%g\n",
+                                       vbd, model->HSMHVvbdMax);
+                            warns_vbd++;
+                        }
+                    if (-1*vbd > model->HSMHVvbdrMax)
+                        if (warns_vbd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vbd=%g has exceeded Vbdr_max=%g\n",
+                                       vbd, model->HSMHVvbdrMax);
+                            warns_vbd++;
+                        }
+                } else {
+                    if (vbd > model->HSMHVvbdrMax)
+                        if (warns_vbd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vbd=%g has exceeded Vbdr_max=%g\n",
+                                       vbd, model->HSMHVvbdrMax);
+                            warns_vbd++;
+                        }
+                    if (-1*vbd > model->HSMHVvbdMax)
+                        if (warns_vbd < maxwarns) {
+                            soa_printf(ckt, (GENinstance*) here,
+                                       "Vbd=%g has exceeded Vbd_max=%g\n",
+                                       vbd, model->HSMHVvbdMax);
+                            warns_vbd++;
+                        }
+                }
+            }
 
         }
     }
