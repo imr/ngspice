@@ -1827,17 +1827,17 @@ BSIM4v4unsetup(
         for (here = model->BSIM4v4instances; here != NULL;
                 here=here->BSIM4v4nextInstance)
         {
-            if (here->BSIM4v4dNodePrime
-                    && here->BSIM4v4dNodePrime != here->BSIM4v4dNode)
-            {
-                CKTdltNNum(ckt, here->BSIM4v4dNodePrime);
-                here->BSIM4v4dNodePrime = 0;
-            }
             if (here->BSIM4v4sNodePrime
                     && here->BSIM4v4sNodePrime != here->BSIM4v4sNode)
             {
                 CKTdltNNum(ckt, here->BSIM4v4sNodePrime);
                 here->BSIM4v4sNodePrime = 0;
+            }
+            if (here->BSIM4v4dNodePrime
+                    && here->BSIM4v4dNodePrime != here->BSIM4v4dNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v4dNodePrime);
+                here->BSIM4v4dNodePrime = 0;
             }
         }
     }
