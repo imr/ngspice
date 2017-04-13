@@ -1592,6 +1592,11 @@ BSIM4v0unsetup(inModel,ckt)
         for (here = model->BSIM4v0instances; here != NULL;
                 here=here->BSIM4v0nextInstance)
         {
+            if (here->BSIM4v0qNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v0qNode);
+                here->BSIM4v0qNode = 0;
+            }
             if (here->BSIM4v0sNodePrime
                     && here->BSIM4v0sNodePrime != here->BSIM4v0sNode)
             {
