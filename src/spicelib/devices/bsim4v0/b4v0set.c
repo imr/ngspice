@@ -1597,6 +1597,36 @@ BSIM4v0unsetup(inModel,ckt)
                 CKTdltNNum(ckt, here->BSIM4v0qNode);
                 here->BSIM4v0qNode = 0;
             }
+            if (here->BSIM4v0sbNode &&
+                here->BSIM4v0sbNode != here->BSIM4v0bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v0sbNode);
+                here->BSIM4v0sbNode = 0;
+            }
+            if (here->BSIM4v0bNodePrime &&
+                here->BSIM4v0bNodePrime != here->BSIM4v0bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v0bNodePrime);
+                here->BSIM4v0bNodePrime = 0;
+            }
+            if (here->BSIM4v0dbNode &&
+                here->BSIM4v0dbNode != here->BSIM4v0bNode)
+            {
+                CKTdltNNum(ckt, here->BSIM4v0dbNode);
+                here->BSIM4v0dbNode = 0;
+            }
+            if (here->BSIM4v0gNodeMid &&
+                here->BSIM4v0gNodeMid != here->BSIM4v0gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v0gNodeMid);
+                here->BSIM4v0gNodeMid = 0;
+            }
+            if (here->BSIM4v0gNodePrime &&
+                here->BSIM4v0gNodePrime != here->BSIM4v0gNodeExt)
+            {
+                CKTdltNNum(ckt, here->BSIM4v0gNodePrime);
+                here->BSIM4v0gNodePrime = 0;
+            }
             if (here->BSIM4v0sNodePrime
                     && here->BSIM4v0sNodePrime != here->BSIM4v0sNode)
             {
