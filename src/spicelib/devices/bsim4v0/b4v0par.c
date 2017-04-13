@@ -15,11 +15,11 @@
 #include "ngspice/fteext.h"
 
 int
-BSIM4v0param(param,value,inst,select)
-int param;
-IFvalue *value;
-GENinstance *inst;
-IFvalue *select;
+BSIM4v0param(
+int param,
+IFvalue *value,
+GENinstance *inst,
+IFvalue *select)
 {
     BSIM4v0instance *here = (BSIM4v0instance*)inst;
 

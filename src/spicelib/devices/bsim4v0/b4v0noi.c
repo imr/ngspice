@@ -23,10 +23,10 @@
  */
 
 static double
-Eval1ovFNoise(Vds, model, here, freq, temp)
-double Vds, freq, temp;
-BSIM4v0model *model;
-BSIM4v0instance *here;
+Eval1ovFNoise(
+double Vds, BSIM4v0model *model,
+BSIM4v0instance *here,
+double freq, double temp)
 {
 struct bsim4v0SizeDependParam *pParam;
 double cd, esat, DelClm, EffFreq, N0, Nl;
@@ -63,12 +63,12 @@ double T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, Ssi;
 
 
 int
-BSIM4v0noise (mode, operation, inModel, ckt, data, OnDens)
-int mode, operation;
-GENmodel *inModel;
-CKTcircuit *ckt;
-Ndata *data;
-double *OnDens;
+BSIM4v0noise (
+int mode, int operation,
+GENmodel *inModel,
+CKTcircuit *ckt,
+Ndata *data,
+double *OnDens)
 {
 NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 

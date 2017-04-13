@@ -15,10 +15,10 @@
 #include "ngspice/suffix.h"
 
 int
-BSIM4v0pzLoad(inModel,ckt,s)
-GENmodel *inModel;
-CKTcircuit *ckt;
-SPcomplex *s;
+BSIM4v0pzLoad(
+GENmodel *inModel,
+CKTcircuit *ckt,
+SPcomplex *s)
 {
 BSIM4v0model *model = (BSIM4v0model*)inModel;
 BSIM4v0instance *here;

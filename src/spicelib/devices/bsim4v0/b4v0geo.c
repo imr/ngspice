@@ -23,9 +23,10 @@ int
 BSIM4v0RdsEndSha(double, double, double, double, double, double, int, int, double *);
 
 static int
-BSIM4v0NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS)
-int minSD;
-double nf, *nuIntD, *nuEndD, *nuIntS, *nuEndS;
+BSIM4v0NumFingerDiff(
+double nf,
+int minSD,
+double *nuIntD, double *nuEndD, double *nuIntS, double *nuEndS)
 {
 int NF;
         NF = (int)nf;
@@ -52,10 +53,11 @@ return 0;
 
 
 int
-BSIM4v0PAeffGeo(nf, geo, minSD, Weffcj, DMCG, DMCI, DMDG, Ps, Pd, As, Ad)
-int geo, minSD; 
-double Weffcj, DMCG, DMCI, DMDG;
-double nf, *Ps, *Pd, *As, *Ad;
+BSIM4v0PAeffGeo(
+double nf,
+int geo, int minSD,
+double Weffcj, double DMCG, double DMCI, double DMDG,
+double *Ps, double *Pd, double *As, double *Ad)
 {
 double T0, T1, T2;
 double ADiso, ADsha, ADmer, ASiso, ASsha, ASmer;
@@ -152,10 +154,12 @@ return 0;
 
 
 int
-BSIM4v0RdseffGeo(nf, geo, rgeo, minSD, Weffcj, Rsh, DMCG, DMCI, DMDG, Type, Rtot)
-int geo, rgeo, minSD, Type;
-double nf, Weffcj, Rsh, DMCG, DMCI, DMDG;
-double *Rtot;
+BSIM4v0RdseffGeo(
+double nf,
+int geo, int rgeo, int minSD,
+double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
+int Type,
+double *Rtot)
 {
 double Rint, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
@@ -269,10 +273,11 @@ return 0;
 
 
 int
-BSIM4v0RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
-double Weffcj, Rsh, DMCG, DMCI, DMDG;
-int rgeo, Type;
-double nuEnd, *Rend;
+BSIM4v0RdsEndIso(
+double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
+double nuEnd,
+int rgeo, int Type,
+double *Rend)
 {	
 	NG_IGNORE(DMDG);
 
@@ -329,10 +334,11 @@ return 0;
 
 
 int
-BSIM4v0RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
-double Weffcj, Rsh, DMCG, DMCI, DMDG;
-int rgeo, Type;
-double nuEnd, *Rend;
+BSIM4v0RdsEndSha(
+double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
+double nuEnd,
+int rgeo, int Type,
+double *Rend)
 {
         NG_IGNORE(DMCI);
         NG_IGNORE(DMDG);

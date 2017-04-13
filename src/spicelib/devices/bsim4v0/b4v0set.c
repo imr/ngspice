@@ -26,11 +26,11 @@
 #define Charge_q 1.60219e-19
 
 int
-BSIM4v0setup(matrix,inModel,ckt,states)
-SMPmatrix *matrix;
-GENmodel *inModel;
-CKTcircuit *ckt;
-int *states;
+BSIM4v0setup(
+SMPmatrix *matrix,
+GENmodel *inModel,
+CKTcircuit *ckt,
+int *states)
 {
 BSIM4v0model *model = (BSIM4v0model*)inModel;
 BSIM4v0instance *here;
@@ -1578,9 +1578,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 }  
 
 int
-BSIM4v0unsetup(inModel,ckt)
-    GENmodel *inModel;
-    CKTcircuit *ckt;
+BSIM4v0unsetup(
+    GENmodel *inModel,
+    CKTcircuit *ckt)
 {
 #ifndef HAS_BATCHSIM
     BSIM4v0model *model;

@@ -17,10 +17,10 @@
 #include "ngspice/suffix.h"
 
 int
-BSIM4v0checkModel(model, here, ckt)
-BSIM4v0model *model;
-BSIM4v0instance *here;
-CKTcircuit *ckt;
+BSIM4v0checkModel(
+BSIM4v0model *model,
+BSIM4v0instance *here,
+CKTcircuit *ckt)
 {
 struct bsim4v0SizeDependParam *pParam;
 int Fatal_Flag = 0;

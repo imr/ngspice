@@ -26,9 +26,9 @@
 #define Charge_q 1.60219e-19
 
 static int
-BSIM4v0DioIjthVjmEval(Nvtm, Ijth, Isb, XExpBV, Vjm)
-double Nvtm, Ijth, Isb, XExpBV;
-double *Vjm;
+BSIM4v0DioIjthVjmEval(
+double Nvtm, double Ijth, double Isb, double XExpBV,
+double *Vjm)
 {
 double Tb, Tc, EVjmovNv;
 
@@ -42,9 +42,9 @@ return 0;
 
 
 int
-BSIM4v0temp(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v0temp(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v0model *model = (BSIM4v0model*) inModel;
 BSIM4v0instance *here;

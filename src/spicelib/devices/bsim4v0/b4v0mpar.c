@@ -15,10 +15,10 @@
 #include "ngspice/const.h"
 
 int
-BSIM4v0mParam(param,value,inMod)
-int param;
-IFvalue *value;
-GENmodel *inMod;
+BSIM4v0mParam(
+int param,
+IFvalue *value,
+GENmodel *inMod)
 {
     BSIM4v0model *mod = (BSIM4v0model*)inMod;
     switch(param)

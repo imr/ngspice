@@ -28,9 +28,9 @@
 
 
 int
-BSIM4v0load(inModel,ckt)
-GENmodel *inModel;
-CKTcircuit *ckt;
+BSIM4v0load(
+GENmodel *inModel,
+CKTcircuit *ckt)
 {
 BSIM4v0model *model = (BSIM4v0model*)inModel;
 BSIM4v0instance *here;

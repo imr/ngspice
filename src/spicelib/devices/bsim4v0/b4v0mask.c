@@ -16,11 +16,11 @@
 #include "ngspice/suffix.h"
 
 int
-BSIM4v0mAsk(ckt,inst,which,value)
-CKTcircuit *ckt;
-GENmodel *inst;
-int which;
-IFvalue *value;
+BSIM4v0mAsk(
+CKTcircuit *ckt,
+GENmodel *inst,
+int which,
+IFvalue *value)
 {
     BSIM4v0model *model = (BSIM4v0model *)inst;
 
