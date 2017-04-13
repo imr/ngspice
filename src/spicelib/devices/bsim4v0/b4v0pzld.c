@@ -26,7 +26,7 @@ BSIM4v0instance *here;
 double gjbd, gjbs, geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb;
 double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
 double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
-double gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, Gm, Gmbs;
+double gds, capbd, capbs, FwdSum, RevSum, Gm, Gmbs;
 double gstot, gstotd, gstotg, gstots, gstotb, gspr;
 double gdtot, gdtotd, gdtotg, gdtots, gdtotb, gdpr;
 double gIstotg, gIstotd, gIstots, gIstotb;
@@ -41,7 +41,7 @@ double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
-double T0=0.0, T1, CoxWL, qcheq, Cdg, Cdd, Cds, Cdb, Csg, Csd, Css, Csb;
+double T0=0.0, T1, CoxWL, qcheq, Cdg, Cdd, Cds, Csg, Csd, Css;
 double ScalingFactor = 1.0e-9;
 struct bsim4v0SizeDependParam *pParam;
 
