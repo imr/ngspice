@@ -21,7 +21,7 @@ IFparm NUMOSpTable[] = {	/* parameters */
   IOP("w", NUMOS_WIDTH, IF_REAL, "Width factor"),
   IOP("l", NUMOS_LENGTH, IF_REAL, "Length factor"),
   IP("save", NUMOS_PRINT, IF_INTEGER, "Save solutions"),
-  IP("print", NUMOS_PRINT, IF_INTEGER, "Print solutions"),
+  IPR("print", NUMOS_PRINT, IF_INTEGER, "Print solutions"),
   OP("g11", NUMOS_G11, IF_REAL, "Conductance"),
   OP("c11", NUMOS_C11, IF_REAL, "Capacitance"),
   OP("y11", NUMOS_Y11, IF_COMPLEX, "Admittance"),

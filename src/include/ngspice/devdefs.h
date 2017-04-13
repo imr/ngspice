@@ -171,6 +171,7 @@ extern int        DEVmaxnum;    /* size of DEVices array */
 # define IOPQOR(a,b,c,d) { a, b, c|IF_SET|IF_ASK|IF_ORQUERY|IF_REDUNDANT, d }
 
 # define IP(a,b,c,d) { a , b , c|IF_SET , d }
+# define IPR(a,b,c,d) { a , b , c|IF_SET|IF_REDUNDANT , d }
 # define OP(a,b,c,d) { a , b , c|IF_ASK , d }
 # define OPU(a,b,c,d) { a , b , c|IF_ASK|IF_UNINTERESTING , d }
 # define OPR(a,b,c,d) { a , b , c|IF_ASK|IF_REDUNDANT , d }

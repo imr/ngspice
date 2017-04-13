@@ -19,7 +19,7 @@ IFparm NBJT2pTable[] = {	/* parameters */
   IOP("w", NBJT2_WIDTH, IF_REAL, "Width factor"),
   IOP("area", NBJT2_AREA, IF_REAL, "Area factor"),
   IP("save", NBJT2_PRINT, IF_INTEGER, "Save solutions"),
-  IP("print", NBJT2_PRINT, IF_INTEGER, "Print solutions"),
+  IPR("print", NBJT2_PRINT, IF_INTEGER, "Print solutions"),
   OP("g11", NBJT2_G11, IF_REAL, "Conductance"),
   OP("c11", NBJT2_C11, IF_REAL, "Capacitance"),
   OP("y11", NBJT2_Y11, IF_COMPLEX, "Admittance"),

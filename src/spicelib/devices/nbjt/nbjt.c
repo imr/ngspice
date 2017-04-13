@@ -18,7 +18,7 @@ IFparm NBJTpTable[] = {		/* parameters */
   IP("ic.file", NBJT_IC_FILE, IF_STRING, "Initial condition file"),
   IOP("area", NBJT_AREA, IF_REAL, "Area factor"),
   IP("save", NBJT_PRINT, IF_INTEGER, "Save Solutions"),
-  IP("print", NBJT_PRINT, IF_INTEGER, "Print Solutions"),
+  IPR("print", NBJT_PRINT, IF_INTEGER, "Print Solutions"),
   OP("g11", NBJT_G11, IF_REAL, "Conductance"),
   OP("c11", NBJT_C11, IF_REAL, "Capacitance"),
   OP("y11", NBJT_Y11, IF_COMPLEX, "Admittance"),

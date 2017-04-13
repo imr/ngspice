@@ -13,11 +13,15 @@ IFparm NUMDpTable[] = {		/* parameters */
   IP("ic.file", NUMD_IC_FILE, IF_REAL, "Initial conditions file"),
   IOP("area", NUMD_AREA, IF_REAL, "Area factor"),
   IP("save", NUMD_PRINT, IF_INTEGER, "Save Solutions"),
-  IP("print", NUMD_PRINT, IF_INTEGER, "Print Solutions"),
+  IPR("print", NUMD_PRINT, IF_INTEGER, "Print Solutions"),
   OP("vd", NUMD_VD, IF_REAL, "Voltage"),
+  OPR("voltage", NUMD_VD, IF_REAL, "Voltage"),
   OP("id", NUMD_ID, IF_REAL, "Current"),
+  OPR("current", NUMD_ID, IF_REAL, "Current"),
   OP("g11", NUMD_G11, IF_REAL, "Conductance"),
+  OPR("conductance", NUMD_G11, IF_REAL, "Conductance"),
   OP("c11", NUMD_C11, IF_REAL, "Capacitance"),
+  OPR("capacitance", NUMD_C11, IF_REAL, "Capacitance"),
   OP("y11", NUMD_Y11, IF_COMPLEX, "Admittance"),
   OPU("g12", NUMD_G12, IF_REAL, "Conductance"),
   OPU("c12", NUMD_C12, IF_REAL, "Capacitance"),
@@ -28,10 +32,6 @@ IFparm NUMDpTable[] = {		/* parameters */
   OPU("g22", NUMD_G22, IF_REAL, "Conductance"),
   OPU("c22", NUMD_C22, IF_REAL, "Capacitance"),
   OPU("y22", NUMD_Y22, IF_COMPLEX, "Admittance"),
-  OPR("voltage", NUMD_VD, IF_REAL, "Voltage"),
-  OPR("current", NUMD_ID, IF_REAL, "Current"),
-  OPR("conductance", NUMD_G11, IF_REAL, "Conductance"),
-  OPR("capacitance", NUMD_C11, IF_REAL, "Capacitance"),
   IOP("temp", NUMD_TEMP, IF_REAL, "Instance Temperature")
 };
 

@@ -19,11 +19,15 @@ IFparm NUMD2pTable[] = {	/* parameters */
   IOP("w", NUMD2_WIDTH, IF_REAL, "Width factor"),
   IOP("area", NUMD2_AREA, IF_REAL, "Area factor"),
   IP("save", NUMD2_PRINT, IF_INTEGER, "Save solutions"),
-  IP("print", NUMD2_PRINT, IF_INTEGER, "Print solutions"),
+  IPR("print", NUMD2_PRINT, IF_INTEGER, "Print solutions"),
   OP("vd", NUMD2_VD, IF_REAL, "Voltage"),
+  OPR("voltage", NUMD2_VD, IF_REAL, "Voltage"),
   OP("id", NUMD2_ID, IF_REAL, "Current"),
+  OPR("current", NUMD2_ID, IF_REAL, "Current"),
   OP("g11", NUMD2_G11, IF_REAL, "Conductance"),
+  OPR("conductance", NUMD2_G11, IF_REAL, "Conductance"),
   OP("c11", NUMD2_C11, IF_REAL, "Capacitance"),
+  OPR("capacitance", NUMD2_C11, IF_REAL, "Capacitance"),
   OP("y11", NUMD2_Y11, IF_COMPLEX, "Admittance"),
   OPU("g12", NUMD2_G12, IF_REAL, "Conductance"),
   OPU("c12", NUMD2_C12, IF_REAL, "Capacitance"),
@@ -34,10 +38,6 @@ IFparm NUMD2pTable[] = {	/* parameters */
   OPU("g22", NUMD2_G22, IF_REAL, "Conductance"),
   OPU("c22", NUMD2_C22, IF_REAL, "Capacitance"),
   OPU("y22", NUMD2_Y22, IF_COMPLEX, "Admittance"),
-  OPR("voltage", NUMD2_VD, IF_REAL, "Voltage"),
-  OPR("current", NUMD2_ID, IF_REAL, "Current"),
-  OPR("conductance", NUMD2_G11, IF_REAL, "Conductance"),
-  OPR("capacitance", NUMD2_C11, IF_REAL, "Capacitance"),
   IOP("temp", NUMD2_TEMP, IF_REAL, "Instance Temperature")
 };
 
