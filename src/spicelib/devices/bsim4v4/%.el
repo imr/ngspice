@@ -5,3 +5,16 @@
 
 ;;; whitespace cleanup
 (compile "perl -i -pe 's/[ \\t\\r]*\\n/\\n/g;' *.c *.h")
+
+;;; code transformation
+(compile "perl -i -pe 's/BSIM4(?!\\.4\\.0)/BSIM4v4/g;' *.c *.h")
+(compile "perl -i -pe 's/bsim4/bsim4v4/g;' *.c *.h")
+
+(compile "perl -i -pe 's|#include \"spice.h\"|#include \"ngspice/ngspice.h\"|g;' *.c *.h")
+(compile "perl -i -pe 's/#include \"(devdefs|suffix|const|ifsim|cktdefs|sperror|complex|noisedef|smpdefs|iferrmsg|noisedef|gendefs|trandefs).h\"/#include \"ngspice\\/$1.h\"/g;' *.c *.h")
+
+(compile "perl -i -pe 's/^#include <stdio.h>[ \\t]*\\n//g;' *.c *.h")
+(compile "perl -i -pe 's/FABS/fabs/g;' *.c *.h")
+
+(compile "perl -i -pe 's/^#include <math.h>[ \\t]*\\n//g;' *.c *.h")
+(compile "perl -i -pe 's/^#include \"util.h\"[ \\t]*\\n//g;' *.c *.h")
