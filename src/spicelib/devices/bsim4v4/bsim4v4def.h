@@ -2907,5 +2907,7 @@ extern void BSIM4v4evaluate(double,double,double,BSIM4v4instance*,BSIM4v4model*,
         double*, double*, double*, double*, CKTcircuit*);
 extern int BSIM4v4debug(BSIM4v4model*, BSIM4v4instance*, CKTcircuit*, int);
 extern int BSIM4v4checkModel(BSIM4v4model*, BSIM4v4instance*, CKTcircuit*);
+extern int BSIM4v4PAeffGeo(double, int, int, double, double, double, double, double *, double *, double *, double *);
+extern int BSIM4v4RdseffGeo(double, int, int, int, double, double, double, double, double, int, double *);
 
 #endif /*BSIM4v4*/
