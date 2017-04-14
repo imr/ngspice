@@ -18,3 +18,12 @@
 
 (compile "perl -i -pe 's/^#include <math.h>[ \\t]*\\n//g;' *.c *.h")
 (compile "perl -i -pe 's/^#include \"util.h\"[ \\t]*\\n//g;' *.c *.h")
+
+;;---
+
+(compile "for i in init.c init.h ; do cp ../bsim4v5/bsim4v5$i bsim4v4$i ; git add bsim4v4$i ; done")
+(compile "for i in soachk.c ; do cp ../bsim4v5/b4v5$i b4v4$i ; git add b4v4$i ; done")
+(compile "for i in Makefile.am ; do cp ../bsim4v5/$i $i ; git add $i ; done")
+
+(compile "perl -i -pe 's/(bsim4)v5/${1}v4/ig;' *.c *.h")
+(compile "perl -i -pe 's/(b(?:sim)?4)v5/${1}v4/ig;' Makefile.am")
