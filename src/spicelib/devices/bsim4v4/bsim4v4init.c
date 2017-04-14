@@ -2,25 +2,25 @@
 
 #include "ngspice/devdefs.h"
 
-#include "bsim4v5itf.h"
-#include "bsim4v5ext.h"
-#include "bsim4v5init.h"
+#include "bsim4v4itf.h"
+#include "bsim4v4ext.h"
+#include "bsim4v4init.h"
 
 
-SPICEdev BSIM4v5info = {
+SPICEdev BSIM4v4info = {
     {
-        "BSIM4v5",
+        "BSIM4v4",
         "Berkeley Short Channel IGFET Model-4",
 
-        &BSIM4v5nSize,
-        &BSIM4v5nSize,
-        BSIM4v5names,
+        &BSIM4v4nSize,
+        &BSIM4v4nSize,
+        BSIM4v4names,
 
-        &BSIM4v5pTSize,
-        BSIM4v5pTable,
+        &BSIM4v4pTSize,
+        BSIM4v4pTable,
 
-        &BSIM4v5mPTSize,
-        BSIM4v5mPTable,
+        &BSIM4v4mPTSize,
+        BSIM4v4mPTable,
 
 #ifdef XSPICE
 /*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
@@ -40,25 +40,25 @@ SPICEdev BSIM4v5info = {
         DEV_DEFAULT
     },
 
-    BSIM4v5param,    /* DEVparam       */
-    BSIM4v5mParam,   /* DEVmodParam    */
-    BSIM4v5load,     /* DEVload        */
-    BSIM4v5setup,    /* DEVsetup       */
-    BSIM4v5unsetup,  /* DEVunsetup     */
-    BSIM4v5setup,    /* DEVpzSetup     */
-    BSIM4v5temp,     /* DEVtemperature */
-    BSIM4v5trunc,    /* DEVtrunc       */
+    BSIM4v4param,    /* DEVparam       */
+    BSIM4v4mParam,   /* DEVmodParam    */
+    BSIM4v4load,     /* DEVload        */
+    BSIM4v4setup,    /* DEVsetup       */
+    BSIM4v4unsetup,  /* DEVunsetup     */
+    BSIM4v4setup,    /* DEVpzSetup     */
+    BSIM4v4temp,     /* DEVtemperature */
+    BSIM4v4trunc,    /* DEVtrunc       */
     NULL,          /* DEVfindBranch  */
-    BSIM4v5acLoad,   /* DEVacLoad      */
+    BSIM4v4acLoad,   /* DEVacLoad      */
     NULL,          /* DEVaccept      */
-    BSIM4v5destroy,  /* DEVdestroy     */
-    BSIM4v5mDelete,  /* DEVmodDelete   */
-    BSIM4v5delete,   /* DEVdelete      */
-    BSIM4v5getic,    /* DEVsetic       */
-    BSIM4v5ask,      /* DEVask         */
-    BSIM4v5mAsk,     /* DEVmodAsk      */
-    BSIM4v5pzLoad,   /* DEVpzLoad      */
-    BSIM4v5convTest, /* DEVconvTest    */
+    BSIM4v4destroy,  /* DEVdestroy     */
+    BSIM4v4mDelete,  /* DEVmodDelete   */
+    BSIM4v4delete,   /* DEVdelete      */
+    BSIM4v4getic,    /* DEVsetic       */
+    BSIM4v4ask,      /* DEVask         */
+    BSIM4v4mAsk,     /* DEVmodAsk      */
+    BSIM4v4pzLoad,   /* DEVpzLoad      */
+    BSIM4v4convTest, /* DEVconvTest    */
     NULL,          /* DEVsenSetup    */
     NULL,          /* DEVsenLoad     */
     NULL,          /* DEVsenUpdate   */
@@ -66,19 +66,19 @@ SPICEdev BSIM4v5info = {
     NULL,          /* DEVsenPrint    */
     NULL,          /* DEVsenTrunc    */
     NULL,          /* DEVdisto       */
-    BSIM4v5noise,    /* DEVnoise       */
-    BSIM4v5soaCheck, /* DEVsoaCheck    */
+    BSIM4v4noise,    /* DEVnoise       */
+    BSIM4v4soaCheck, /* DEVsoaCheck    */
 #ifdef CIDER
     NULL,          /* DEVdump        */
     NULL,          /* DEVacct        */
 #endif
-    &BSIM4v5iSize,   /* DEVinstSize    */
-    &BSIM4v5mSize    /* DEVmodSize     */
+    &BSIM4v4iSize,   /* DEVinstSize    */
+    &BSIM4v4mSize    /* DEVmodSize     */
 };
 
 
 SPICEdev *
-get_bsim4v5_info(void)
+get_bsim4v4_info(void)
 {
-    return &BSIM4v5info;
+    return &BSIM4v4info;
 }

@@ -1,13 +1,13 @@
-#ifndef _BSIM4V5INIT_H
-#define _BSIM4V5INIT_H
+#ifndef _BSIM4v4INIT_H
+#define _BSIM4v4INIT_H
 
-extern IFparm BSIM4v5pTable[ ];
-extern IFparm BSIM4v5mPTable[ ];
-extern char *BSIM4v5names[ ];
-extern int BSIM4v5pTSize;
-extern int BSIM4v5mPTSize;
-extern int BSIM4v5nSize;
-extern int BSIM4v5iSize;
-extern int BSIM4v5mSize;
+extern IFparm BSIM4v4pTable[ ];
+extern IFparm BSIM4v4mPTable[ ];
+extern char *BSIM4v4names[ ];
+extern int BSIM4v4pTSize;
+extern int BSIM4v4mPTSize;
+extern int BSIM4v4nSize;
+extern int BSIM4v4iSize;
+extern int BSIM4v4mSize;
 
 #endif

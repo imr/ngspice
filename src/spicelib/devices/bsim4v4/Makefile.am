@@ -1,33 +1,33 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LTLIBRARIES = libbsim4v5.la
+noinst_LTLIBRARIES = libbsim4v4.la
 
-libbsim4v5_la_SOURCES =	\
-	b4v5.c		\
-	b4v5acld.c	\
-	b4v5ask.c	\
-	b4v5check.c	\
-	b4v5cvtest.c	\
-	b4v5del.c	\
-	b4v5dest.c	\
-	b4v5geo.c	\
-	b4v5getic.c	\
-	b4v5ld.c	\
-	b4v5mask.c	\
-	b4v5mdel.c	\
-	b4v5mpar.c	\
-	b4v5noi.c	\
-	b4v5par.c	\
-	b4v5pzld.c	\
-	b4v5set.c	\
-	b4v5soachk.c	\
-	b4v5temp.c	\
-	b4v5trunc.c	\
-	bsim4v5def.h	\
-	bsim4v5ext.h	\
-	bsim4v5init.c	\
-	bsim4v5init.h	\
-	bsim4v5itf.h
+libbsim4v4_la_SOURCES =	\
+	b4v4.c		\
+	b4v4acld.c	\
+	b4v4ask.c	\
+	b4v4check.c	\
+	b4v4cvtest.c	\
+	b4v4del.c	\
+	b4v4dest.c	\
+	b4v4geo.c	\
+	b4v4getic.c	\
+	b4v4ld.c	\
+	b4v4mask.c	\
+	b4v4mdel.c	\
+	b4v4mpar.c	\
+	b4v4noi.c	\
+	b4v4par.c	\
+	b4v4pzld.c	\
+	b4v4set.c	\
+	b4v4soachk.c	\
+	b4v4temp.c	\
+	b4v4trunc.c	\
+	bsim4v4def.h	\
+	bsim4v4ext.h	\
+	bsim4v4init.c	\
+	bsim4v4init.h	\
+	bsim4v4itf.h
 
 
 
