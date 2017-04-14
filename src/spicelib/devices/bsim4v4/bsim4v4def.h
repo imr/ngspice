@@ -358,6 +358,125 @@ typedef struct sBSIM4v4instance
     double *BSIM4v4GPqPtr;
     double *BSIM4v4SPqPtr;
 
+#ifdef USE_OMP
+    /* per instance storage of results, to update matrix at a later stge */
+    double BSIM4v4rhsdPrime;
+    double BSIM4v4rhsgPrime;
+    double BSIM4v4rhsgExt;
+    double BSIM4v4grhsMid;
+    double BSIM4v4rhsbPrime;
+    double BSIM4v4rhssPrime;
+    double BSIM4v4rhsdb;
+    double BSIM4v4rhssb;
+    double BSIM4v4rhsd;
+    double BSIM4v4rhss;
+    double BSIM4v4rhsq;
+
+    double BSIM4v4_1;
+    double BSIM4v4_2;
+    double BSIM4v4_3;
+    double BSIM4v4_4;
+    double BSIM4v4_5;
+    double BSIM4v4_6;
+    double BSIM4v4_7;
+    double BSIM4v4_8;
+    double BSIM4v4_9;
+    double BSIM4v4_10;
+    double BSIM4v4_11;
+    double BSIM4v4_12;
+    double BSIM4v4_13;
+    double BSIM4v4_14;
+    double BSIM4v4_15;
+    double BSIM4v4_16;
+    double BSIM4v4_17;
+    double BSIM4v4_18;
+    double BSIM4v4_19;
+    double BSIM4v4_20;
+    double BSIM4v4_21;
+    double BSIM4v4_22;
+    double BSIM4v4_23;
+    double BSIM4v4_24;
+    double BSIM4v4_25;
+    double BSIM4v4_26;
+    double BSIM4v4_27;
+    double BSIM4v4_28;
+    double BSIM4v4_29;
+    double BSIM4v4_30;
+    double BSIM4v4_31;
+    double BSIM4v4_32;
+    double BSIM4v4_33;
+    double BSIM4v4_34;
+    double BSIM4v4_35;
+    double BSIM4v4_36;
+    double BSIM4v4_37;
+    double BSIM4v4_38;
+    double BSIM4v4_39;
+    double BSIM4v4_40;
+    double BSIM4v4_41;
+    double BSIM4v4_42;
+    double BSIM4v4_43;
+    double BSIM4v4_44;
+    double BSIM4v4_45;
+    double BSIM4v4_46;
+    double BSIM4v4_47;
+    double BSIM4v4_48;
+    double BSIM4v4_49;
+    double BSIM4v4_50;
+    double BSIM4v4_51;
+    double BSIM4v4_52;
+    double BSIM4v4_53;
+    double BSIM4v4_54;
+    double BSIM4v4_55;
+    double BSIM4v4_56;
+    double BSIM4v4_57;
+    double BSIM4v4_58;
+    double BSIM4v4_59;
+    double BSIM4v4_60;
+    double BSIM4v4_61;
+    double BSIM4v4_62;
+    double BSIM4v4_63;
+    double BSIM4v4_64;
+    double BSIM4v4_65;
+    double BSIM4v4_66;
+    double BSIM4v4_67;
+    double BSIM4v4_68;
+    double BSIM4v4_69;
+    double BSIM4v4_70;
+    double BSIM4v4_71;
+    double BSIM4v4_72;
+    double BSIM4v4_73;
+    double BSIM4v4_74;
+    double BSIM4v4_75;
+    double BSIM4v4_76;
+    double BSIM4v4_77;
+    double BSIM4v4_78;
+    double BSIM4v4_79;
+    double BSIM4v4_80;
+    double BSIM4v4_81;
+    double BSIM4v4_82;
+    double BSIM4v4_83;
+    double BSIM4v4_84;
+    double BSIM4v4_85;
+    double BSIM4v4_86;
+    double BSIM4v4_87;
+    double BSIM4v4_88;
+    double BSIM4v4_89;
+    double BSIM4v4_90;
+    double BSIM4v4_91;
+    double BSIM4v4_92;
+    double BSIM4v4_93;
+    double BSIM4v4_94;
+    double BSIM4v4_95;
+    double BSIM4v4_96;
+    double BSIM4v4_97;
+    double BSIM4v4_98;
+    double BSIM4v4_99;
+    double BSIM4v4_100;
+    double BSIM4v4_101;
+    double BSIM4v4_102;
+    double BSIM4v4_103;
+
+#endif
 
 #define BSIM4v4vbd BSIM4v4states+ 0
 #define BSIM4v4vbs BSIM4v4states+ 1
@@ -1388,6 +1507,11 @@ typedef struct sBSIM4v4model
     double BSIM4v4vbdrMax;
 
     struct bsim4v4SizeDependParam *pSizeDependParamKnot;
+
+#ifdef USE_OMP
+    int BSIM4v4InstCount;
+    struct sBSIM4v4instance **BSIM4v4InstanceArray;
+#endif
 
     /* Flags */
     unsigned  BSIM4v4mobModGiven :1;

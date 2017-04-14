@@ -22,6 +22,11 @@ BSIM4v4instance *prev = NULL;
 BSIM4v4model *mod = *model;
 BSIM4v4model *oldmod = NULL;
 
+#ifdef USE_OMP
+    /* free just once for all models */
+    FREE(mod->BSIM4v4InstanceArray);
+#endif
+
     for (; mod ; mod = mod->BSIM4v4nextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;

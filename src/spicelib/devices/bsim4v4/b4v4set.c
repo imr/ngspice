@@ -23,6 +23,10 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_OMP
+#include "ngspice/cpextern.h"
+#endif
+
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
@@ -45,6 +49,11 @@ CKTnode *tmp;
 int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
+
+#ifdef USE_OMP
+int idx, InstCount;
+BSIM4v4instance **InstArray;
+#endif
 
     /* Search for a noise analysis request */
     for (job = ((TSKtask *)ft_curckt->ci_curTask)->jobs;job;job = job->JOBnextJob) {
@@ -1833,6 +1842,40 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             }
         }
     }
+
+#ifdef USE_OMP
+    InstCount = 0;
+    model = (BSIM4v4model*)inModel;
+    /* loop through all the BSIM4v6 device models
+    to count the number of instances */
+
+    for (; model != NULL; model = model->BSIM4v4nextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM4v4instances; here != NULL;
+            here = here->BSIM4v4nextInstance)
+        {
+            InstCount++;
+        }
+    }
+    InstArray = TMALLOC(BSIM4v4instance*, InstCount);
+    model = (BSIM4v4model*)inModel;
+    idx = 0;
+    for (; model != NULL; model = model->BSIM4v4nextModel)
+    {
+        /* loop through all the instances of the model */
+        for (here = model->BSIM4v4instances; here != NULL;
+            here = here->BSIM4v4nextInstance)
+        {
+            InstArray[idx] = here;
+            idx++;
+        }
+        /* set the array pointer and instance count into each model */
+        model->BSIM4v4InstCount = InstCount;
+        model->BSIM4v4InstanceArray = InstArray;
+    }
+#endif
+
     return(OK);
 }
 
