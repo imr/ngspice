@@ -1533,6 +1533,8 @@ JOB   *job;
                 here->BSIM4v4l = 5.0e-6;
             if (!here->BSIM4v4wGiven)
                 here->BSIM4v4w = 5.0e-6;
+            if (!here->BSIM4v4mGiven)
+                here->BSIM4v4m = 1.0;
             if (!here->BSIM4v4nfGiven)
                 here->BSIM4v4nf = 1.0;
             if (!here->BSIM4v4minGiven)
@@ -1639,7 +1641,7 @@ JOB   *job;
                      } else if (!here->BSIM4v4drainSquaresGiven
                                        && (here->BSIM4v4rgeoMod != 0))
                      {
-                          BSIM4v4RdseffGeo(here->BSIM4v4nf, here->BSIM4v4geoMod,
+                          BSIM4v4RdseffGeo(here->BSIM4v4nf*here->BSIM4v4m, here->BSIM4v4geoMod,
                                   here->BSIM4v4rgeoMod, here->BSIM4v4min,
                                   here->BSIM4v4w, model->BSIM4v4sheetResistance,
                                   DMCGeff, DMCIeff, DMDGeff, 0, &Rtot);
@@ -1671,7 +1673,7 @@ JOB   *job;
                      } else if (!here->BSIM4v4sourceSquaresGiven
                                         && (here->BSIM4v4rgeoMod != 0))
                      {
-                          BSIM4v4RdseffGeo(here->BSIM4v4nf, here->BSIM4v4geoMod,
+                          BSIM4v4RdseffGeo(here->BSIM4v4nf*here->BSIM4v4m, here->BSIM4v4geoMod,
                                   here->BSIM4v4rgeoMod, here->BSIM4v4min,
                                   here->BSIM4v4w, model->BSIM4v4sheetResistance,
                                   DMCGeff, DMCIeff, DMDGeff, 1, &Rtot);

@@ -21,6 +21,7 @@
 IFparm BSIM4v4pTable[] = { /* parameters */
 IOP( "l",   BSIM4v4_L,      IF_REAL   , "Length"),
 IOP( "w",   BSIM4v4_W,      IF_REAL   , "Width"),
+IOP( "m",   BSIM4v4_M,      IF_REAL   , "Separate Parallel multiplier"),
 IOP( "nf",  BSIM4v4_NF,     IF_REAL   , "Number of fingers"),
 IOP( "sa",  BSIM4v4_SA,     IF_REAL   , "distance between  OD edge to poly of one side "),
 IOP( "sb",  BSIM4v4_SB,     IF_REAL   , "distance between  OD edge to poly of the other side"),

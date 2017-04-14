@@ -38,6 +38,10 @@ IFvalue *select)
             here->BSIM4v4l = value->rValue;
             here->BSIM4v4lGiven = TRUE;
             break;
+        case BSIM4v4_M:
+            here->BSIM4v4m = value->rValue;
+            here->BSIM4v4mGiven = TRUE;
+            break;
         case BSIM4v4_NF:
             here->BSIM4v4nf = value->rValue;
             here->BSIM4v4nfGiven = TRUE;

@@ -210,6 +210,11 @@ FILE *fplog;
 	    Fatal_Flag = 1;
 	}
 
+        if (here->BSIM4v4m <= 0.0)
+        {   fprintf(fplog, "Fatal: multiplier = %g is not positive.\n", here->BSIM4v4m);
+            printf("Fatal: multiplier = %g is not positive.\n", here->BSIM4v4m);
+            Fatal_Flag = 1;
+        }
         if (here->BSIM4v4nf < 1.0)
         {   fprintf(fplog, "Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4v4nf);
             printf("Fatal: Number of finger = %g is smaller than one.\n", here->BSIM4v4nf);
