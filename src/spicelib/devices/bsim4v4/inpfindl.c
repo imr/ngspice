@@ -5,17 +5,15 @@ Author: 2000 Weidong Liu
 
 /* INPfindLev(line)
  * Find the 'level' parameter value on the model file
- * The BSIM4 model is level 14 in SPICE3.
+ * The BSIM4v4 model is level 14 in SPICE3.
  * Please note BSIM5 and BSIM6 will take level 15 and 16 in the future, respectively.
  */
 
-#include "spice.h"
+#include "ngspice/ngspice.h"
 #include "misc.h"
 #include "strext.h"
-#include <stdio.h>
 #include "inpdefs.h"
-#include "util.h"
-#include "suffix.h"
+#include "ngspice/suffix.h"
 
 char *
 INPfindLev(line,level)
@@ -30,7 +28,7 @@ INPfindLev(line,level)
     while(1)
     { where = index(where,'l');
       if(where == 0) /* no 'l' in the line => no 'level' => default */
-      { *level = 14; /* the default model is BSIM4 */
+      { *level = 14; /* the default model is BSIM4v4 */
         return((char *)NULL);
       }
       if(strncmp(where,"level",5)!=0)
@@ -114,8 +112,8 @@ INPfindLev(line,level)
       }
       else
       {  *level=14;
-         printf("illegal argument to 'level' - BSIM4 assumed\n");
-         return(INPmkTemp("illegal argument to 'level' - BSIM4 assumed"));
+         printf("illegal argument to 'level' - BSIM4v4 assumed\n");
+         return(INPmkTemp("illegal argument to 'level' - BSIM4v4 assumed"));
       }
     }
 }

@@ -8,27 +8,25 @@
  * Project Director: Prof. Chenming Hu.
  **********/
 
-#include "spice.h"
-#include <stdio.h>
-#include "util.h"
-#include "bsim4def.h"
-#include "suffix.h"
+#include "ngspice/ngspice.h"
+#include "bsim4v4def.h"
+#include "ngspice/suffix.h"
 
 void
-BSIM4destroy(inModel)
+BSIM4v4destroy(inModel)
 GENmodel **inModel;
 {
-BSIM4model **model = (BSIM4model**)inModel;
-BSIM4instance *here;
-BSIM4instance *prev = NULL;
-BSIM4model *mod = *model;
-BSIM4model *oldmod = NULL;
+BSIM4v4model **model = (BSIM4v4model**)inModel;
+BSIM4v4instance *here;
+BSIM4v4instance *prev = NULL;
+BSIM4v4model *mod = *model;
+BSIM4v4model *oldmod = NULL;
 
-    for (; mod ; mod = mod->BSIM4nextModel)
+    for (; mod ; mod = mod->BSIM4v4nextModel)
     {    if(oldmod) FREE(oldmod);
          oldmod = mod;
-         prev = (BSIM4instance *)NULL;
-         for (here = mod->BSIM4instances; here; here = here->BSIM4nextInstance)
+         prev = (BSIM4v4instance *)NULL;
+         for (here = mod->BSIM4v4instances; here; here = here->BSIM4v4nextInstance)
 	 {    if(prev) FREE(prev);
               prev = here;
          }

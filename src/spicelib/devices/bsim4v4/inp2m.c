@@ -3,13 +3,12 @@ Copyright 2000 Regents of the University of California.  All rights reserved.
 Author: 2000 Weidong Liu
 **********/
 
-#include "spice.h"
-#include <stdio.h>
-#include "ifsim.h"
+#include "ngspice/ngspice.h"
+#include "ngspice/ifsim.h"
 #include "inpdefs.h"
 #include "inpmacs.h"
 #include "fteext.h"
-#include "suffix.h"
+#include "ngspice/suffix.h"
 
 void
 INP2M(ckt,tab,current)
@@ -70,7 +69,7 @@ IFuid uid;      /* uid for default model */
                 && thismodel->INPmodType != INPtypelook("BSIM1")
                 && thismodel->INPmodType != INPtypelook("BSIM2")
                 && thismodel->INPmodType != INPtypelook("BSIM3")
-                && thismodel->INPmodType != INPtypelook("BSIM4")
+                && thismodel->INPmodType != INPtypelook("BSIM4v4")
 		)
 	{
             LITERR("incorrect model type")

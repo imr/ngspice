@@ -5,15 +5,14 @@ Author: 2000 Weidong Liu
 Author: 2001- Xuemei Xi
 **********/
 
-#include "spice.h"
-#include <stdio.h>
+#include "ngspice/ngspice.h"
 #include "strext.h"
 #include "acdefs.h"
-#include "cktdefs.h"
+#include "ngspice/cktdefs.h"
 #include "fteconst.h"
-#include "iferrmsg.h"
-#include "noisedef.h"
-#include "sperror.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/noisedef.h"
+#include "ngspice/sperror.h"
 #ifdef HAS_FLAT_INCLUDES
 #include "vsrcdefs.h"
 #include "isrcdefs.h"
@@ -21,8 +20,7 @@ Author: 2001- Xuemei Xi
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
 #endif
-#include "util.h"
-#include "suffix.h"
+#include "ngspice/suffix.h"
 
 int
 NOISEan (ckt, restart)

@@ -3,13 +3,11 @@ Copyright 2000 Regents of the University of California. All rights reserved.
 Author: 2000 Weidong Liu
 **********/
 
-#include "spice.h"
-#include <stdio.h>
-#include "iferrmsg.h"
-#include "util.h"
+#include "ngspice/ngspice.h"
+#include "ngspice/iferrmsg.h"
 #include "inpdefs.h"
 #include "strext.h"
-#include "suffix.h"
+#include "ngspice/suffix.h"
 
 /*ARGSUSED*/
 char *
@@ -129,10 +127,10 @@ INPdomodel(ckt,image,tab)
                 }
                 break;
             case 14:
-                type = INPtypelook("BSIM4");
+                type = INPtypelook("BSIM4v4");
                 if(type < 0) {
                     err = INPmkTemp(
-                            "Device type BSIM4 not available in this binary\n");
+                            "Device type BSIM4v4 not available in this binary\n");
                 }
                 break;
             case 15:

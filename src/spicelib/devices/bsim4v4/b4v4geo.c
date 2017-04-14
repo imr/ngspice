@@ -8,19 +8,16 @@
  * Project Director: Prof. Chenming Hu.
  **********/
 
-#include "util.h"
-#include <stdio.h>
-#include <math.h>
 
 /*
  * WDLiu:
  * This subrutine is a special module to process the geometry dependent
- * parasitics for BSIM4, which calculates Ps, Pd, As, Ad, and Rs and  Rd
+ * parasitics for BSIM4v4, which calculates Ps, Pd, As, Ad, and Rs and  Rd
  * for multi-fingers and varous GEO and RGEO options.
  */
 
 int
-BSIM4NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS)
+BSIM4v4NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS)
 int minSD;
 double nf, *nuIntD, *nuEndD, *nuIntS, *nuEndS;
 {
@@ -49,7 +46,7 @@ return 0;
 
 
 int
-BSIM4PAeffGeo(nf, geo, minSD, Weffcj, DMCG, DMCI, DMDG, Ps, Pd, As, Ad)
+BSIM4v4PAeffGeo(nf, geo, minSD, Weffcj, DMCG, DMCI, DMDG, Ps, Pd, As, Ad)
 int geo, minSD;
 double Weffcj, DMCG, DMCI, DMDG;
 double nf, *Ps, *Pd, *As, *Ad;
@@ -60,7 +57,7 @@ double PDiso, PDsha, PDmer, PSiso, PSsha, PSmer;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 
 	if (geo < 9) /* For geo = 9 and 10, the numbers of S/D diffusions already known */
-	BSIM4NumFingerDiff(nf, minSD, &nuIntD, &nuEndD, &nuIntS, &nuEndS);
+	BSIM4v4NumFingerDiff(nf, minSD, &nuIntD, &nuEndD, &nuIntS, &nuEndS);
 
 	T0 = DMCG + DMCI;
 	T1 = DMCG + DMCG;
@@ -149,7 +146,7 @@ return 0;
 
 
 int
-BSIM4RdseffGeo(nf, geo, rgeo, minSD, Weffcj, Rsh, DMCG, DMCI, DMDG, Type, Rtot)
+BSIM4v4RdseffGeo(nf, geo, rgeo, minSD, Weffcj, Rsh, DMCG, DMCI, DMDG, Type, Rtot)
 int geo, rgeo, minSD, Type;
 double nf, Weffcj, Rsh, DMCG, DMCI, DMDG;
 double *Rtot;
@@ -158,7 +155,7 @@ double Rint, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 
         if (geo < 9) /* since geo = 9 and 10 only happen when nf = even */
-        {   BSIM4NumFingerDiff(nf, minSD, &nuIntD, &nuEndD, &nuIntS, &nuEndS);
+        {   BSIM4v4NumFingerDiff(nf, minSD, &nuIntD, &nuEndD, &nuIntS, &nuEndS);
 
             /* Internal S/D resistance -- assume shared S or D and all wide contacts */
 	    if (Type == 1)
@@ -178,47 +175,47 @@ double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
         /* End S/D resistance  -- geo dependent */
         switch(geo)
         {   case 0:
-		if (Type == 1) BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
+		if (Type == 1) BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
 					      nuEndS, rgeo, 1, &Rend);
-		else           BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
+		else           BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
 			     		      nuEndD, rgeo, 0, &Rend);
                 break;
             case 1:
-                if (Type == 1) BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                if (Type == 1) BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndS, rgeo, 1, &Rend);
-                else           BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                else           BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
 					      nuEndD, rgeo, 0, &Rend);
                 break;
             case 2:
-                if (Type == 1) BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                if (Type == 1) BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
 					      nuEndS, rgeo, 1, &Rend);
-                else           BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                else           BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
 					      nuEndD, rgeo, 0, &Rend);
                 break;
             case 3:
-                if (Type == 1) BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                if (Type == 1) BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndS, rgeo, 1, &Rend);
-                else           BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                else           BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndD, rgeo, 0, &Rend);
                 break;
             case 4:
-                if (Type == 1) BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                if (Type == 1) BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndS, rgeo, 1, &Rend);
                 else           Rend = Rsh * DMDG / Weffcj;
                 break;
             case 5:
-                if (Type == 1) BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                if (Type == 1) BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndS, rgeo, 1, &Rend);
                 else           Rend = Rsh * DMDG / (Weffcj * nuEndD);
                 break;
             case 6:
                 if (Type == 1) Rend = Rsh * DMDG / Weffcj;
-                else           BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                else           BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndD, rgeo, 0, &Rend);
                 break;
             case 7:
                 if (Type == 1) Rend = Rsh * DMDG / (Weffcj * nuEndS);
-                else           BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
+                else           BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG,
                                               nuEndD, rgeo, 0, &Rend);
                 break;
             case 8:
@@ -267,7 +264,7 @@ return 0;
 
 
 int
-BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
+BSIM4v4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
 double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
@@ -325,7 +322,7 @@ return 0;
 
 
 int
-BSIM4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
+BSIM4v4RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
 double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
