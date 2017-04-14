@@ -29,7 +29,7 @@
  */
 
 static double
-Eval1ovFNoise(
+BSIM4v4Eval1ovFNoise(
 double Vds, BSIM4v4model *model,
 BSIM4v4instance *here,
 double freq, double temp)
@@ -328,7 +328,7 @@ int i;
 			              if (Vds < 0.0)
 			                  Vds = -Vds;
 
-                                      Ssi = Eval1ovFNoise(Vds, model, here,
+                                      Ssi = BSIM4v4Eval1ovFNoise(Vds, model, here,
                                           data->freq, ckt->CKTtemp);
                                       T10 = model->BSIM4v4oxideTrapDensityA
                                           * CONSTboltz * ckt->CKTtemp;
