@@ -28,7 +28,7 @@ BSIM4v4instance *here;
 double gjbd, gjbs, geltd, gcrg, gcrgg, gcrgd, gcrgs, gcrgb;
 double xcggb, xcgdb, xcgsb, xcgbb, xcbgb, xcbdb, xcbsb, xcbbb;
 double xcdgb, xcddb, xcdsb, xcdbb, xcsgb, xcsdb, xcssb, xcsbb;
-double gds, gbd, gbs, capbd, capbs, FwdSum, RevSum, Gm, Gmbs;
+double gds, capbd, capbs, FwdSum, RevSum, Gm, Gmbs;
 double gstot, gstotd, gstotg, gstots, gstotb, gspr;
 double gdtot, gdtotd, gdtotg, gdtots, gdtotb, gdpr;
 double gIstotg, gIstotd, gIstots, gIstotb;
@@ -36,17 +36,17 @@ double gIdtotg, gIdtotd, gIdtots, gIdtotb;
 double gIbtotg, gIbtotd, gIbtots, gIbtotb;
 double gIgtotg, gIgtotd, gIgtots, gIgtotb;
 double cgso, cgdo, cgbo;
-double xcdbdb, xcsbsb, xcgmgmb, xcgmdb, xcgmsb, xcdgmb, xcsgmb;
-double xcgmbb, xcbgmb;
-double dxpart, sxpart, xgtg, xgtd, xgts, xgtb, xcqgb, xcqdb, xcqsb, xcqbb;
+double xcdbdb=0.0, xcsbsb=0.0, xcgmgmb=0.0, xcgmdb=0.0, xcgmsb=0.0, xcdgmb=0.0, xcsgmb=0.0;
+double xcgmbb=0.0, xcbgmb=0.0;
+double dxpart, sxpart, xgtg, xgtd, xgts, xgtb, xcqgb=0.0, xcqdb=0.0, xcqsb=0.0, xcqbb=0.0;
 double gbspsp, gbbdp, gbbsp, gbspg, gbspb;
 double gbspdp, gbdpdp, gbdpg, gbdpb, gbdpsp;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
-double T0, T1, CoxWL, qcheq, Cdg, Cdd, Cds, Cdb, Csg, Csd, Css, Csb;
+double T0=0.0, T1, CoxWL, qcheq, Cdg, Cdd, Cds, Csg, Csd, Css;
 double ScalingFactor = 1.0e-9;
 struct bsim4v4SizeDependParam *pParam;
-double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
+double ggidld, ggidlg, ggidlb, ggislg, ggislb, ggisls;
 
 
     for (; model != NULL; model = model->BSIM4v4nextModel)

@@ -163,7 +163,7 @@ double Weffcj, double Rsh, double DMCG, double DMCI, double DMDG,
 int Type,
 double *Rtot)
 {
-double Rint, Rend = 0.0;
+double Rint=0.0, Rend = 0.0;
 double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 
         if (geo < 9) /* since geo = 9 and 10 only happen when nf = even */

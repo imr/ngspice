@@ -42,7 +42,6 @@ BSIM4v4model *model = (BSIM4v4model*)inModel;
 BSIM4v4instance *here;
 int error;
 CKTnode *tmp;
-double tmp1, tmp2;
 int    noiseAnalGiven = 0, createNode;  /* Criteria for new node creation */
 double Rtot, DMCGeff, DMCIeff, DMDGeff;
 JOB   *job;
