@@ -1960,6 +1960,41 @@ IFvalue *value)
         case BSIM4v4_MOD_KF:
             value->rValue = model->BSIM4v4kf;
             return(OK);
+
+        case BSIM4v4_MOD_VGS_MAX:
+            value->rValue = model->BSIM4v4vgsMax;
+            return(OK);
+        case BSIM4v4_MOD_VGD_MAX:
+            value->rValue = model->BSIM4v4vgdMax;
+            return(OK);
+        case BSIM4v4_MOD_VGB_MAX:
+            value->rValue = model->BSIM4v4vgbMax;
+            return(OK);
+        case BSIM4v4_MOD_VDS_MAX:
+            value->rValue = model->BSIM4v4vdsMax;
+            return(OK);
+        case BSIM4v4_MOD_VBS_MAX:
+            value->rValue = model->BSIM4v4vbsMax;
+            return(OK);
+        case BSIM4v4_MOD_VBD_MAX:
+            value->rValue = model->BSIM4v4vbdMax;
+            return(OK);
+        case BSIM4v4_MOD_VGSR_MAX:
+            value->rValue = model->BSIM4v4vgsrMax;
+            return(OK);
+        case BSIM4v4_MOD_VGDR_MAX:
+            value->rValue = model->BSIM4v4vgdrMax;
+            return(OK);
+        case BSIM4v4_MOD_VGBR_MAX:
+            value->rValue = model->BSIM4v4vgbrMax;
+            return(OK);
+        case BSIM4v4_MOD_VBSR_MAX:
+            value->rValue = model->BSIM4v4vbsrMax;
+            return(OK);
+        case BSIM4v4_MOD_VBDR_MAX:
+            value->rValue = model->BSIM4v4vbdrMax;
+            return(OK);
+
         default:
             return(E_BADPARM);
     }

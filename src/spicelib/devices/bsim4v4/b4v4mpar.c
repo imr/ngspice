@@ -2781,6 +2781,52 @@ GENmodel *inMod)
             mod->BSIM4v4kf = value->rValue;
             mod->BSIM4v4kfGiven = TRUE;
             break;
+
+        case BSIM4v4_MOD_VGS_MAX:
+            mod->BSIM4v4vgsMax = value->rValue;
+            mod->BSIM4v4vgsMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VGD_MAX:
+            mod->BSIM4v4vgdMax = value->rValue;
+            mod->BSIM4v4vgdMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VGB_MAX:
+            mod->BSIM4v4vgbMax = value->rValue;
+            mod->BSIM4v4vgbMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VDS_MAX:
+            mod->BSIM4v4vdsMax = value->rValue;
+            mod->BSIM4v4vdsMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VBS_MAX:
+            mod->BSIM4v4vbsMax = value->rValue;
+            mod->BSIM4v4vbsMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VBD_MAX:
+            mod->BSIM4v4vbdMax = value->rValue;
+            mod->BSIM4v4vbdMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VGSR_MAX:
+            mod->BSIM4v4vgsrMax = value->rValue;
+            mod->BSIM4v4vgsrMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VGDR_MAX:
+            mod->BSIM4v4vgdrMax = value->rValue;
+            mod->BSIM4v4vgdrMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VGBR_MAX:
+            mod->BSIM4v4vgbrMax = value->rValue;
+            mod->BSIM4v4vgbrMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VBSR_MAX:
+            mod->BSIM4v4vbsrMax = value->rValue;
+            mod->BSIM4v4vbsrMaxGiven = TRUE;
+            break;
+        case BSIM4v4_MOD_VBDR_MAX:
+            mod->BSIM4v4vbdrMax = value->rValue;
+            mod->BSIM4v4vbdrMaxGiven = TRUE;
+            break;
+
         case  BSIM4v4_MOD_NMOS  :
             if(value->iValue) {
                 mod->BSIM4v4type = 1;

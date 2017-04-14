@@ -1373,6 +1373,18 @@ typedef struct sBSIM4v4model
     double BSIM4v4af;
     double BSIM4v4kf;
 
+    double BSIM4v4vgsMax;
+    double BSIM4v4vgdMax;
+    double BSIM4v4vgbMax;
+    double BSIM4v4vdsMax;
+    double BSIM4v4vbsMax;
+    double BSIM4v4vbdMax;
+    double BSIM4v4vgsrMax;
+    double BSIM4v4vgdrMax;
+    double BSIM4v4vgbrMax;
+    double BSIM4v4vbsrMax;
+    double BSIM4v4vbdrMax;
+
     struct bsim4v4SizeDependParam *pSizeDependParamKnot;
 
     /* Flags */
@@ -2032,6 +2044,18 @@ typedef struct sBSIM4v4model
     unsigned  BSIM4v4efGiven  :1;
     unsigned  BSIM4v4afGiven  :1;
     unsigned  BSIM4v4kfGiven  :1;
+
+    unsigned  BSIM4v4vgsMaxGiven  :1;
+    unsigned  BSIM4v4vgdMaxGiven  :1;
+    unsigned  BSIM4v4vgbMaxGiven  :1;
+    unsigned  BSIM4v4vdsMaxGiven  :1;
+    unsigned  BSIM4v4vbsMaxGiven  :1;
+    unsigned  BSIM4v4vbdMaxGiven  :1;
+    unsigned  BSIM4v4vgsrMaxGiven  :1;
+    unsigned  BSIM4v4vgdrMaxGiven  :1;
+    unsigned  BSIM4v4vgbrMaxGiven  :1;
+    unsigned  BSIM4v4vbsrMaxGiven  :1;
+    unsigned  BSIM4v4vbdrMaxGiven  :1;
 
     unsigned  BSIM4v4LintGiven   :1;
     unsigned  BSIM4v4LlGiven   :1;
@@ -2901,6 +2925,17 @@ typedef struct sBSIM4v4model
 #define BSIM4v4_IGB		   1008
 #define BSIM4v4_IGCS		   1009
 #define BSIM4v4_IGCD		   1010
+#define BSIM4v4_MOD_VGS_MAX             1201
+#define BSIM4v4_MOD_VGD_MAX             1202
+#define BSIM4v4_MOD_VGB_MAX             1203
+#define BSIM4v4_MOD_VDS_MAX             1204
+#define BSIM4v4_MOD_VBS_MAX             1205
+#define BSIM4v4_MOD_VBD_MAX             1206
+#define BSIM4v4_MOD_VGSR_MAX            1207
+#define BSIM4v4_MOD_VGDR_MAX            1208
+#define BSIM4v4_MOD_VGBR_MAX            1209
+#define BSIM4v4_MOD_VBSR_MAX            1210
+#define BSIM4v4_MOD_VBDR_MAX            1211
 
 #include "bsim4v4ext.h"
 
