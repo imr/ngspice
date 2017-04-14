@@ -20,6 +20,7 @@ Author: 2001- Xuemei Xi
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
 #endif
+#include "util.h"
 #include "ngspice/suffix.h"
 
 int

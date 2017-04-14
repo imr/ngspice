@@ -16,6 +16,7 @@
 #include "bsim4v4def.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 BSIM4v4param(param,value,inst,select)

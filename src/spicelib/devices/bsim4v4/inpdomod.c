@@ -5,6 +5,7 @@ Author: 2000 Weidong Liu
 
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
+#include "util.h"
 #include "inpdefs.h"
 #include "strext.h"
 #include "ngspice/suffix.h"

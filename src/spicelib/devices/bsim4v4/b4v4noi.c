@@ -16,7 +16,6 @@
 #include "ngspice/ngspice.h"
 #include "bsim4v4def.h"
 #include "ngspice/cktdefs.h"
-#include "fteconst.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/noisedef.h"
 #include "ngspice/suffix.h"

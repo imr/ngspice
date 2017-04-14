@@ -13,6 +13,7 @@ Author: 2000 Weidong Liu
 #include "misc.h"
 #include "strext.h"
 #include "inpdefs.h"
+#include "util.h"
 #include "ngspice/suffix.h"
 
 char *

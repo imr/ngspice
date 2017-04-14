@@ -14,8 +14,8 @@
  **********/
 
 #include "ngspice/ngspice.h"
-#include "jobdefs.h"
-#include "ftedefs.h"
+#include "ngspice/jobdefs.h"
+#include "ngspice/ftedefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
 #include "bsim4v4def.h"
