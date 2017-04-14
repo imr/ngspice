@@ -194,7 +194,7 @@ int error, i;
 				  {   gspr = here->BSIM4sourceConductance;
                                       gdpr = here->BSIM4drainConductance;
 				      if (here->BSIM4grdsw > 0.0)
-				          tmp = 1.0 / here->BSIM4grdsw; /* tmp used below */ 
+				          tmp = 1.0 / here->BSIM4grdsw; /* tmp used below */
 				      else
 					  tmp = 0.0;
 				  }
@@ -227,7 +227,7 @@ int error, i;
 				  else
 				      gdpr = gdpr / (1.0 + npart_theta * npart_theta * gdpr
                                            / here->BSIM4IdovVds);
-			      } 
+			      }
 
 		              NevalSrc(&noizDens[BSIM4RDNOIZ],
 				       &lnNdens[BSIM4RDNOIZ], ckt, THERMNOISE,
@@ -282,7 +282,7 @@ int error, i;
                                        here->BSIM4grbdb);
                               }
                               else
-                              {   noizDens[BSIM4RBPSNOIZ] = noizDens[BSIM4RBPDNOIZ] = 0.0;   
+                              {   noizDens[BSIM4RBPSNOIZ] = noizDens[BSIM4RBPDNOIZ] = 0.0;
                                   noizDens[BSIM4RBPBNOIZ] = 0.0;
                                   noizDens[BSIM4RBSBNOIZ] = noizDens[BSIM4RBDBNOIZ] = 0.0;
                                   lnNdens[BSIM4RBPSNOIZ] =
@@ -397,13 +397,13 @@ int error, i;
 				     + noizDens[BSIM4IDNOIZ] + noizDens[BSIM4FLNOIZ]
                                      + noizDens[BSIM4IGSNOIZ] + noizDens[BSIM4IGDNOIZ]
                                      + noizDens[BSIM4IGBNOIZ];
-		              lnNdens[BSIM4TOTNOIZ] = 
+		              lnNdens[BSIM4TOTNOIZ] =
 				     log(MAX(noizDens[BSIM4TOTNOIZ], N_MINLOG));
 
 		              *OnDens += noizDens[BSIM4TOTNOIZ];
 
 		              if (data->delFreq == 0.0)
-			      {   /* if we haven't done any previous 
+			      {   /* if we haven't done any previous
 				     integration, we need to initialize our
 				     "history" variables.
 				    */

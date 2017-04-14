@@ -21,8 +21,8 @@ INP2M(ckt,tab,current)
 
     /* Mname <node> <node> <node> <node> <model> [L=<val>]
      *       [W=<val>] [AD=<val>] [AS=<val>] [PD=<val>]
-     *       [PS=<val>] [NRD=<val>] [NRS=<val>] [OFF] 
-     *       [IC=<val>,<val>,<val>] 
+     *       [PS=<val>] [NRD=<val>] [NRS=<val>] [OFF]
+     *       [IC=<val>,<val>,<val>]
      */
 
 int type;   /* the type the model says it is */

@@ -32,7 +32,7 @@ register CKTcircuit *ckt;
 register BSIM4model *model = (BSIM4model*)inModel;
 register BSIM4instance *here;
 double delvbd, delvbs, delvds, delvgd, delvgs;
-double delvdbd, delvsbs; 
+double delvdbd, delvsbs;
 double delvbd_jct, delvbs_jct;
 double vds, vgs, vgd, vgdo, vbs, vbd;
 double vdbd, vdbs, vsbs;
@@ -44,7 +44,7 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
 
     for (; model != NULL; model = model->BSIM4nextModel)
     {    for (here = model->BSIM4instances; here != NULL ;
-              here=here->BSIM4nextInstance) 
+              here=here->BSIM4nextInstance)
 	 {    vds = model->BSIM4type
                   * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)
                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
@@ -59,14 +59,14 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                    - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vsbs = model->BSIM4type
                    * (*(ckt->CKTrhsOld + here->BSIM4sbNode)
-                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));              
+                   - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vses = model->BSIM4type
                    * (*(ckt->CKTrhsOld + here->BSIM4sNode)
                    - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
               vdes = model->BSIM4type
                    * (*(ckt->CKTrhsOld + here->BSIM4dNode)
                    - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
-              
+
               vgdo = *(ckt->CKTstate0 + here->BSIM4vgs)
                     - *(ckt->CKTstate0 + here->BSIM4vds);
               vbd = vbs - vds;
@@ -113,9 +113,9 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
               }
               else
                {   Idtot = here->BSIM4cd + here->BSIM4cbd - here->BSIM4Igidl; /* bugfix */
-                   cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs 
-                         * delvbd + here->BSIM4gm * delvgd 
-                         - (here->BSIM4gds + here->BSIM4ggidls) * delvds 
+                   cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs
+                         * delvbd + here->BSIM4gm * delvgd
+                         - (here->BSIM4gds + here->BSIM4ggidls) * delvds
                          - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
 
                   Igstot = here->BSIM4Igs + here->BSIM4Igcd;
@@ -163,7 +163,7 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
                       || (FABS(cdedhat - Idedtot) >= tol2))
 		  {   ckt->CKTnoncon++;
                       return(OK);
-                  } 
+                  }
 
                   if ((FABS(cgshat - Igstot) >= tol3) || (FABS(cgdhat - Igdtot) >= tol4)
                       || (FABS(cgbhat - Igbtot) >= tol5))
@@ -181,15 +181,15 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
 			    - here->BSIM4ggislg * delvgd - here->BSIM4ggislb* delvbd + here->BSIM4ggisls * delvds ;
 		  }
 		  else
-		  {   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd 
+		  {   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd
                          * delvbd_jct - (here->BSIM4gbbs + here->BSIM4ggislb) * delvbd
                          - (here->BSIM4gbgs + here->BSIM4ggislg) * delvgd
 			 + (here->BSIM4gbds + here->BSIM4ggisld - here->BSIM4ggidls) * delvds
-			 - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs; 
+			 - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
 		  }
-                  tol6 = ckt->CKTreltol * MAX(FABS(cbhat), 
+                  tol6 = ckt->CKTreltol * MAX(FABS(cbhat),
 			FABS(Ibtot)) + ckt->CKTabstol;
-                  if (FABS(cbhat - Ibtot) > tol6) 
+                  if (FABS(cbhat - Ibtot) > tol6)
 		  {   ckt->CKTnoncon++;
                       return(OK);
                   }

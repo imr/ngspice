@@ -25,7 +25,7 @@
 #include "suffix.h"
 
 #define Kb 1.3806226e-23
-#define KboQ 8.617087e-5 
+#define KboQ 8.617087e-5
 #define EPS0 8.85418e-12
 #define EPSSI 1.03594e-10
 #define PI 3.141592654
@@ -84,7 +84,7 @@ int Size_Not_Found, i;
     /*  loop through all the BSIM4 device models */
     for (; model != NULL; model = model->BSIM4nextModel)
     {    Temp = ckt->CKTtemp;
-         if (model->BSIM4SbulkJctPotential < 0.1)  
+         if (model->BSIM4SbulkJctPotential < 0.1)
 	 {   model->BSIM4SbulkJctPotential = 0.1;
 	     fprintf(stderr, "Given pbs is less than 0.1. Pbs is set to 0.1.\n");
 	 }
@@ -97,7 +97,7 @@ int Size_Not_Found, i;
 	     fprintf(stderr, "Given pbswgs is less than 0.1. Pbswgs is set to 0.1.\n");
 	 }
 
-         if (model->BSIM4DbulkJctPotential < 0.1) 
+         if (model->BSIM4DbulkJctPotential < 0.1)
          {   model->BSIM4DbulkJctPotential = 0.1;
              fprintf(stderr, "Given pbd is less than 0.1. Pbd is set to 0.1.\n");
          }
@@ -149,7 +149,7 @@ int Size_Not_Found, i;
 
          Vtm0 = model->BSIM4vtm0 = KboQ * Tnom;
          Eg0 = 1.16 - 7.02e-4 * Tnom * Tnom / (Tnom + 1108.0);
-         ni = 1.45e10 * (Tnom / 300.15) * sqrt(Tnom / 300.15) 
+         ni = 1.45e10 * (Tnom / 300.15) * sqrt(Tnom / 300.15)
             * exp(21.5565981 - Eg0 / (2.0 * Vtm0));
 
          model->BSIM4vtm = KboQ * Temp;
@@ -231,7 +231,7 @@ int Size_Not_Found, i;
 	     if (model->BSIM4DunitLengthSidewallJctCap > 0.0)
              {   model->BSIM4DunitLengthSidewallTempJctCap = 0.0;
                  fprintf(stderr, "Temperature effect has caused cjswd to be negative. Cjswd is clamped to zero.\n");
-             }	
+             }
 	 }
          T0 = model->BSIM4tcjswg * delTemp;
 	 if (T0 >= -1.0)
@@ -337,7 +337,7 @@ int Size_Not_Found, i;
 
          /* loop through all the instances of the model */
          for (here = model->BSIM4instances; here != NULL;
-              here = here->BSIM4nextInstance) 
+              here = here->BSIM4nextInstance)
 	 {    pSizeDependParamKnot = model->pSizeDependParamKnot;
 	      Size_Not_Found = 1;
 	      while ((pSizeDependParamKnot != NULL) && Size_Not_Found)
@@ -389,7 +389,7 @@ int Size_Not_Found, i;
                        + model->BSIM4Wwl / (T2 * T3);
                   pParam->BSIM4dw = model->BSIM4Wint + tmp1;
                   tmp2 = model->BSIM4Wlc / T2 + model->BSIM4Wwc / T3
-                       + model->BSIM4Wwlc / (T2 * T3); 
+                       + model->BSIM4Wwlc / (T2 * T3);
                   pParam->BSIM4dwc = model->BSIM4dwc + tmp2;
                   pParam->BSIM4dwj = model->BSIM4dwj + tmp2;
 
@@ -468,13 +468,13 @@ int Size_Not_Found, i;
 		  pParam->BSIM4cdscb = model->BSIM4cdscb
 				     + model->BSIM4lcdscb * Inv_L
 				     + model->BSIM4wcdscb * Inv_W
-				     + model->BSIM4pcdscb * Inv_LW; 
-				     
+				     + model->BSIM4pcdscb * Inv_LW;
+
     		  pParam->BSIM4cdscd = model->BSIM4cdscd
 				     + model->BSIM4lcdscd * Inv_L
 				     + model->BSIM4wcdscd * Inv_W
-				     + model->BSIM4pcdscd * Inv_LW; 
-				     
+				     + model->BSIM4pcdscd * Inv_LW;
+
 		  pParam->BSIM4cit = model->BSIM4cit
 				   + model->BSIM4lcit * Inv_L
 				   + model->BSIM4wcit * Inv_W
@@ -498,13 +498,13 @@ int Size_Not_Found, i;
 		  pParam->BSIM4a0 = model->BSIM4a0
 				  + model->BSIM4la0 * Inv_L
 				  + model->BSIM4wa0 * Inv_W
-				  + model->BSIM4pa0 * Inv_LW; 
-				  
+				  + model->BSIM4pa0 * Inv_LW;
+
 		  pParam->BSIM4ags = model->BSIM4ags
 				  + model->BSIM4lags * Inv_L
 				  + model->BSIM4wags * Inv_W
 				  + model->BSIM4pags * Inv_LW;
-				  
+
 		  pParam->BSIM4a1 = model->BSIM4a1
 				  + model->BSIM4la1 * Inv_L
 				  + model->BSIM4wa1 * Inv_W
@@ -1030,11 +1030,11 @@ int Size_Not_Found, i;
                   pParam->BSIM4rs0 = T3 / PowWeffWr;
                   pParam->BSIM4rswmin = T4 / PowWeffWr;
 
-                  if (pParam->BSIM4u0 > 1.0) 
+                  if (pParam->BSIM4u0 > 1.0)
                       pParam->BSIM4u0 = pParam->BSIM4u0 / 1.0e4;
 
                   pParam->BSIM4u0temp = pParam->BSIM4u0
-				      * pow(TRatio, pParam->BSIM4ute); 
+				      * pow(TRatio, pParam->BSIM4ute);
                   if (pParam->BSIM4eu < 0.0)
                   {   pParam->BSIM4eu = 0.0;
 		      printf("Warning: eu has been negative; reset to 0.0.\n");
@@ -1042,7 +1042,7 @@ int Size_Not_Found, i;
 
                 /* Source End Velocity Limit  */
       	          if((model->BSIM4vtlGiven) && (model->BSIM4vtl > 0.0) )
-            	  {  
+            	  {
                      if(model->BSIM4lc < 0.0) pParam->BSIM4lc = 0.0;
                      else   pParam->BSIM4lc = model->BSIM4lc ;
                      T0 = pParam->BSIM4leff / (pParam->BSIM4xn * pParam->BSIM4leff + pParam->BSIM4lc);
@@ -1068,7 +1068,7 @@ int Size_Not_Found, i;
 
                   pParam->BSIM4Xdep0 = sqrt(2.0 * EPSSI / (Charge_q
 				     * pParam->BSIM4ndep * 1.0e6))
-                                     * pParam->BSIM4sqrtPhi; 
+                                     * pParam->BSIM4sqrtPhi;
                   pParam->BSIM4sqrtXdep0 = sqrt(pParam->BSIM4Xdep0);
                   pParam->BSIM4litl = sqrt(3.0 * pParam->BSIM4xj
 				    * model->BSIM4toxe);
@@ -1135,14 +1135,14 @@ int Size_Not_Found, i;
                   }
                   else
 	          {   if (!model->BSIM4vbxGiven)
-                          pParam->BSIM4vbx = pParam->BSIM4phi - 7.7348e-4 
+                          pParam->BSIM4vbx = pParam->BSIM4phi - 7.7348e-4
                                            * pParam->BSIM4ndep
 					   * pParam->BSIM4xt * pParam->BSIM4xt;
 	              if (pParam->BSIM4vbx > 0.0)
 		          pParam->BSIM4vbx = -pParam->BSIM4vbx;
 	              if (pParam->BSIM4vbm > 0.0)
                           pParam->BSIM4vbm = -pParam->BSIM4vbm;
-           
+
                       if (!model->BSIM4gamma1Given)
                           pParam->BSIM4gamma1 = 5.753e-12
 					      * sqrt(pParam->BSIM4ndep)
@@ -1162,7 +1162,7 @@ int Size_Not_Found, i;
 				      * pParam->BSIM4k2 * sqrt(pParam->BSIM4phi
 				      - pParam->BSIM4vbm);
                   }
- 
+
 		  if (pParam->BSIM4k2 < 0.0)
 		  {   T0 = 0.5 * pParam->BSIM4k1 / pParam->BSIM4k2;
                       pParam->BSIM4vbsc = 0.9 * (pParam->BSIM4phi - T0 * T0);
@@ -1202,7 +1202,7 @@ int Size_Not_Found, i;
 		     - pParam->BSIM4vfb - pParam->BSIM4phi;
 		  T4 = T3 + T3;
 		  T5 = 2.5 * T3;
-                  pParam->BSIM4vtfbphi1 = (model->BSIM4type == NMOS) ? T4 : T5; 
+                  pParam->BSIM4vtfbphi1 = (model->BSIM4type == NMOS) ? T4 : T5;
 		  if (pParam->BSIM4vtfbphi1 < 0.0)
 		      pParam->BSIM4vtfbphi1 = 0.0;
 
@@ -1261,7 +1261,7 @@ int Size_Not_Found, i;
                       T3 = T2 * T2;
                       T4 = T3 + 2.0 * T1 * MIN_EXP;
                       T9 = T1 / T4;
-                  } 
+                  }
                   else
                       T9 = 1.0 / (MAX_EXP - 2.0);
                   T9 = pParam->BSIM4dvt0 * T9 * tmp1;
@@ -1305,11 +1305,11 @@ int Size_Not_Found, i;
               } /* End of SizeNotFound */
 
               /*  stress effect */
-              if( (here->BSIM4sa > 0.0) && (here->BSIM4sb > 0.0) && 
+              if( (here->BSIM4sa > 0.0) && (here->BSIM4sb > 0.0) &&
                	 ((here->BSIM4nf == 1.0) || ((here->BSIM4nf > 1.0) && (here->BSIM4sd > 0.0))) )
 	      {	  Inv_sa = 0;
               	  Inv_sb = 0;
-	    	  
+
 	    	  if (model->BSIM4wlod < 0.0)
 	          {   fprintf(stderr, "Warning: WLOD = %g is less than 0. Set to 0.0\n",model->BSIM4wlod);
                	      model->BSIM4wlod = 0.0;
@@ -1322,14 +1322,14 @@ int Size_Not_Found, i;
             	  {   fprintf(stderr, "Warning: KVSAT = %g is too big; Reset to 1.0.\n",model->BSIM4kvsat);
            	      model->BSIM4kvsat = 1.0;
             	  }
-              	  
+
 	      	  for(i = 0; i < here->BSIM4nf; i++){
                    	T0 = 1.0 / here->BSIM4nf / (here->BSIM4sa + 0.5*Ldrn + i * (here->BSIM4sd +Ldrn));
                     	T1 = 1.0 / here->BSIM4nf / (here->BSIM4sb + 0.5*Ldrn + i * (here->BSIM4sd +Ldrn));
                    	Inv_sa += T0;
                     	Inv_sb += T1;
                   }
-                  Inv_ODeff = Inv_sa + Inv_sb; 
+                  Inv_ODeff = Inv_sa + Inv_sb;
                   rho = model->BSIM4ku0 / pParam->BSIM4ku0temp * Inv_ODeff;
                   T0 = (1.0 + rho)/(1.0 + pParam->BSIM4rho_ref);
                   here->BSIM4u0temp = pParam->BSIM4u0temp * T0;
@@ -1347,7 +1347,7 @@ int Size_Not_Found, i;
 
 	          if (!model->BSIM4vfbGiven && !model->BSIM4vth0Given)
                        here->BSIM4vfb = -1.0;
-                  else  
+                  else
                        here->BSIM4vfb = pParam->BSIM4vfb + model->BSIM4type * dvth0_lod;
                   here->BSIM4vfbzb = pParam->BSIM4vfbzb + model->BSIM4type * dvth0_lod;
 
@@ -1362,7 +1362,7 @@ int Size_Not_Found, i;
                   here->BSIM4vtfbphi2 = 4.0 * T3;
                   if (here->BSIM4vtfbphi2 < 0.0)
                       here->BSIM4vtfbphi2 = 0.0;
-		  
+
 		  here->BSIM4k2 = pParam->BSIM4k2 + dk2_lod;
                   if (here->BSIM4k2 < 0.0)
                   {   T0 = 0.5 * pParam->BSIM4k1 / here->BSIM4k2;
@@ -1393,10 +1393,10 @@ int Size_Not_Found, i;
                       here->BSIM4k2ox = pParam->BSIM4k2ox;
                       here->BSIM4eta0 = pParam->BSIM4eta0;
               }
-                   
+
               here->BSIM4cgso = pParam->BSIM4cgso;
               here->BSIM4cgdo = pParam->BSIM4cgdo;
-              
+
               if (here->BSIM4rbodyMod)
               {   if (here->BSIM4rbdb < 1.0e-3)
                       here->BSIM4grbdb = 1.0e3; /* in mho */
@@ -1421,7 +1421,7 @@ int Size_Not_Found, i;
               }
 
 
-              /* 
+              /*
                * Process geomertry dependent parasitics
 	       */
 
@@ -1445,11 +1445,11 @@ int Size_Not_Found, i;
 	      {   if (model->BSIM4perMod == 0)
 	              here->BSIM4Pseff = here->BSIM4sourcePerimeter;
 		  else
-		      here->BSIM4Pseff = here->BSIM4sourcePerimeter 
+		      here->BSIM4Pseff = here->BSIM4sourcePerimeter
 				       - pParam->BSIM4weffCJ * here->BSIM4nf;
 	      }
 	      else
-	          BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min, 
+	          BSIM4PAeffGeo(here->BSIM4nf, here->BSIM4geoMod, here->BSIM4min,
                                     pParam->BSIM4weffCJ, DMCGeff, DMCIeff, DMDGeff,
 				    &(here->BSIM4Pseff), &dumPd, &dumAs, &dumAd);
 
@@ -1457,7 +1457,7 @@ int Size_Not_Found, i;
               {   if (model->BSIM4perMod == 0)
                       here->BSIM4Pdeff = here->BSIM4drainPerimeter;
                   else
-                      here->BSIM4Pdeff = here->BSIM4drainPerimeter 
+                      here->BSIM4Pdeff = here->BSIM4drainPerimeter
 				       - pParam->BSIM4weffCJ * here->BSIM4nf;
               }
               else
@@ -1541,7 +1541,7 @@ int Size_Not_Found, i;
               {
                   here->BSIM4drainConductance = 0.0;
               }
-           
+
                /* End of Rsd processing */
 
 
@@ -1561,10 +1561,10 @@ int Size_Not_Found, i;
 			  if ((model->BSIM4bvs / Nvtms) > EXP_THRESHOLD)
 			      here->BSIM4XExpBVS = model->BSIM4xjbvs * MIN_EXP;
 			  else
-	                      here->BSIM4XExpBVS = model->BSIM4xjbvs * exp(-model->BSIM4bvs / Nvtms);	
+	                      here->BSIM4XExpBVS = model->BSIM4xjbvs * exp(-model->BSIM4bvs / Nvtms);
 		          break;
                       case 1:
-                          BSIM4DioIjthVjmEval(Nvtms, model->BSIM4ijthsfwd, SourceSatCurrent, 
+                          BSIM4DioIjthVjmEval(Nvtms, model->BSIM4ijthsfwd, SourceSatCurrent,
 			                      0.0, &(here->BSIM4vjsmFwd));
                           here->BSIM4IVjsmFwd = SourceSatCurrent * exp(here->BSIM4vjsmFwd / Nvtms);
                           break;
@@ -1576,10 +1576,10 @@ int Size_Not_Found, i;
                           else
 			  {   here->BSIM4XExpBVS = exp(-model->BSIM4bvs / Nvtms);
 			      tmp = here->BSIM4XExpBVS;
-		              here->BSIM4XExpBVS *= model->BSIM4xjbvs;	
+		              here->BSIM4XExpBVS *= model->BSIM4xjbvs;
 			  }
 
-                          BSIM4DioIjthVjmEval(Nvtms, model->BSIM4ijthsfwd, SourceSatCurrent, 
+                          BSIM4DioIjthVjmEval(Nvtms, model->BSIM4ijthsfwd, SourceSatCurrent,
                                		      here->BSIM4XExpBVS, &(here->BSIM4vjsmFwd));
 		          T0 = exp(here->BSIM4vjsmFwd / Nvtms);
                           here->BSIM4IVjsmFwd = SourceSatCurrent * (T0 - here->BSIM4XExpBVS / T0
@@ -1591,7 +1591,7 @@ int Size_Not_Found, i;
 			  if (T2 < 1.0)
 			  {   T2 = 10.0;
 			      fprintf(stderr, "Warning: ijthsrev too small and set to 10 times IsbSat.\n");
-			  } 
+			  }
                           here->BSIM4vjsmRev = -model->BSIM4bvs
 					     - Nvtms * log((T2 - 1.0) / model->BSIM4xjbvs);
 			  T1 = model->BSIM4xjbvs * exp(-(model->BSIM4bvs
@@ -1647,7 +1647,7 @@ int Size_Not_Found, i;
                                                * (T0 + here->BSIM4XExpBVD / T0) / Nvtmd;
 
                           T2 = model->BSIM4ijthdrev / DrainSatCurrent;
-                          if (T2 < 1.0) 
+                          if (T2 < 1.0)
                           {   T2 = 10.0;
                               fprintf(stderr, "Warning: ijthdrev too small and set to 10 times IdbSat.\n");
                           }
@@ -1689,7 +1689,7 @@ int Size_Not_Found, i;
 		here->BSIM4DswTempRevSatCur = T4 * here->BSIM4Pdeff * model->BSIM4jtsswd;
 		here->BSIM4SswgTempRevSatCur = T5 * T10 * model->BSIM4jtsswgs;
 		here->BSIM4DswgTempRevSatCur = T6 * T10 * model->BSIM4jtsswgd;
-                
+
 
               if (BSIM4checkModel(model, here, ckt))
               {   IFuid namarray[2];

@@ -50,7 +50,7 @@ return 0;
 
 int
 BSIM4PAeffGeo(nf, geo, minSD, Weffcj, DMCG, DMCI, DMDG, Ps, Pd, As, Ad)
-int geo, minSD; 
+int geo, minSD;
 double Weffcj, DMCG, DMCI, DMDG;
 double nf, *Ps, *Pd, *As, *Ad;
 {
@@ -142,7 +142,7 @@ double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
                 *Ad = ADiso + (nf - 1.0) * ADsha;
                 break;
 	    default:
-		printf("Warning: Specified GEO = %d not matched\n", geo); 
+		printf("Warning: Specified GEO = %d not matched\n", geo);
 	}
 return 0;
 }
@@ -165,12 +165,12 @@ double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
 	    {   if (nuIntS == 0.0)
 		    Rint = 0.0;
 	        else
-		    Rint = Rsh * DMCG / ( Weffcj * nuIntS); 
+		    Rint = Rsh * DMCG / ( Weffcj * nuIntS);
 	    }
 	    else
 	    {  if (nuIntD == 0.0)
                    Rint = 0.0;
-               else        
+               else
                    Rint = Rsh * DMCG / ( Weffcj * nuIntD);
 	    }
 	}
@@ -222,7 +222,7 @@ double nuIntD = 0.0, nuEndD = 0.0, nuIntS = 0.0, nuEndS = 0.0;
                                               nuEndD, rgeo, 0, &Rend);
                 break;
             case 8:
-                Rend = Rsh * DMDG / Weffcj;	
+                Rend = Rsh * DMDG / Weffcj;
                 break;
             case 9: /* all wide contacts assumed for geo = 9 and 10 */
 		if (Type == 1)
@@ -271,7 +271,7 @@ BSIM4RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, Type, Rend)
 double Weffcj, Rsh, DMCG, DMCI, DMDG;
 int rgeo, Type;
 double nuEnd, *Rend;
-{	
+{
 	if (Type == 1)
 	{   switch(rgeo)
             {	case 1:

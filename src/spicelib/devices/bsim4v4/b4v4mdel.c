@@ -28,8 +28,8 @@ BSIM4instance *prev = NULL;
 BSIM4model **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->BSIM4nextModel)) 
-    {    if ((*model)->BSIM4modName == modname || 
+    for (; *model ; model = &((*model)->BSIM4nextModel))
+    {    if ((*model)->BSIM4modName == modname ||
              (modfast && *model == modfast))
 	     goto delgot;
          oldmod = model;

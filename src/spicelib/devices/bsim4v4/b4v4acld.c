@@ -54,9 +54,9 @@ struct bsim4SizeDependParam *pParam;
 double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->BSIM4nextModel) 
+    for (; model != NULL; model = model->BSIM4nextModel)
     {    for (here = model->BSIM4instances; here!= NULL;
-              here = here->BSIM4nextInstance) 
+              here = here->BSIM4nextInstance)
 	 {    pParam = here->pParam;
               capbd = here->BSIM4capbd;
               capbs = here->BSIM4capbs;
@@ -139,7 +139,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
               }
 
 
-              if (here->BSIM4mode >= 0) 
+              if (here->BSIM4mode >= 0)
 	      {   Gmr = gmr;
                   Gmbsr = gmbsr;
                   FwdSumr = Gmr + Gmbsr;
@@ -217,16 +217,16 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                       xcgmdb = -cgdo * omega;
                       xcgmsb = -cgso * omega;
                       xcgmbb = -pParam->BSIM4cgbo * omega;
-    
+
                       xcdgmb = xcgmdb;
                       xcsgmb = xcgmsb;
                       xcbgmb = xcgmbb;
-    
+
                       xcggbr = Cggr * omega;
                       xcgdbr = Cgdr * omega;
                       xcgsbr = Cgsr * omega;
                       xcgbbr = -(xcggbr + xcgdbr + xcgsbr);
-    
+
                       xcdgbr = Cdgr * omega;
                       xcsgbr = Csgr * omega;
                       xcbgb = here->BSIM4cbgb * omega;
@@ -236,18 +236,18 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                       xcgdbr = (Cgdr - cgdo) * omega;
                       xcgsbr = (Cgsr - cgso) * omega;
                       xcgbbr = -(xcggbr + xcgdbr + xcgsbr);
-    
+
                       xcdgbr = (Cdgr - cgdo) * omega;
                       xcsgbr = (Csgr - cgso) * omega;
                       xcbgb = (here->BSIM4cbgb - pParam->BSIM4cgbo) * omega;
-    
+
                       xcdgmb = xcsgmb = xcbgmb = 0.0;
                   }
                   xcddbr = (Cddr + here->BSIM4capbd + cgdo) * omega;
                   xcdsbr = Cdsr * omega;
                   xcsdbr = Csdr * omega;
                   xcssbr = (here->BSIM4capbs + cgso + Cssr) * omega;
-    
+
                   if (!here->BSIM4rbodyMod)
                   {   xcdbbr = -(xcdgbr + xcddbr + xcdsbr + xcdgmb);
                       xcsbbr = -(xcsgbr + xcsdbr + xcssbr + xcsgmb);
@@ -263,7 +263,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 
                       xcbdb = here->BSIM4cbdb * omega;
                       xcbsb = here->BSIM4cbsb * omega;
-    
+
                       xcdbdb = -here->BSIM4capbd * omega;
                       xcsbsb = -here->BSIM4capbs * omega;
                   }
@@ -281,7 +281,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   xcgdbi = Cgdi;
                   xcgsbi = Cgsi;
                   xcgbbi = Cgbi;
-              } 
+              }
               else /* Reverse mode */
               {   Gmr = -gmr;
                   Gmbsr = -gmbsr;
@@ -361,16 +361,16 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                       xcgmdb = -cgdo * omega;
                       xcgmsb = -cgso * omega;
                       xcgmbb = -pParam->BSIM4cgbo * omega;
-    
+
                       xcdgmb = xcgmdb;
                       xcsgmb = xcgmsb;
                       xcbgmb = xcgmbb;
-   
+
                       xcggbr = Cggr * omega;
                       xcgdbr = Cgsr * omega;
                       xcgsbr = Cgdr * omega;
                       xcgbbr = -(xcggbr + xcgdbr + xcgsbr);
-    
+
                       xcdgbr = Csgr * omega;
                       xcsgbr = Cdgr * omega;
                       xcbgb = here->BSIM4cbgb * omega;
@@ -380,18 +380,18 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                       xcgdbr = (Cgsr - cgdo) * omega;
                       xcgsbr = (Cgdr - cgso) * omega;
                       xcgbbr = -(xcggbr + xcgdbr + xcgsbr);
-    
+
                       xcdgbr = (Csgr - cgdo) * omega;
                       xcsgbr = (Cdgr - cgso) * omega;
                       xcbgb = (here->BSIM4cbgb - pParam->BSIM4cgbo) * omega;
-    
+
                       xcdgmb = xcsgmb = xcbgmb = 0.0;
                   }
                   xcddbr = (here->BSIM4capbd + cgdo + Cssr) * omega;
                   xcdsbr = Csdr * omega;
                   xcsdbr = Cdsr * omega;
                   xcssbr = (Cddr + here->BSIM4capbs + cgso) * omega;
-    
+
                   if (!here->BSIM4rbodyMod)
                   {   xcdbbr = -(xcdgbr + xcddbr + xcdsbr + xcdgmb);
                       xcsbbr = -(xcsgbr + xcsdbr + xcssbr + xcsgmb);
@@ -502,7 +502,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   *(here->BSIM4GMgePtr) -= geltd;
                   *(here->BSIM4GMgmPtr) += geltd + gcrg;
                   *(here->BSIM4GMgmPtr +1) += xcgmgmb;
-   
+
                   *(here->BSIM4GMdpPtr) += gcrgd;
                   *(here->BSIM4GMdpPtr +1) += xcgmdb;
                   *(here->BSIM4GMgpPtr) += gcrgg;
@@ -510,12 +510,12 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   *(here->BSIM4GMspPtr +1) += xcgmsb;
                   *(here->BSIM4GMbpPtr) += gcrgb;
                   *(here->BSIM4GMbpPtr +1) += xcgmbb;
-   
+
                   *(here->BSIM4DPgmPtr +1) += xcdgmb;
                   *(here->BSIM4GPgmPtr) -= gcrg;
                   *(here->BSIM4SPgmPtr +1) += xcsgmb;
                   *(here->BSIM4BPgmPtr +1) += xcbgmb;
-   
+
                   *(here->BSIM4GPgpPtr) -= gcrgg - xcggbi - gIgtotg;
                   *(here->BSIM4GPgpPtr +1) += xcggbr;
                   *(here->BSIM4GPdpPtr) -= gcrgd - xcgdbi - gIgtotd;
@@ -546,7 +546,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
               }
 
               *(here->BSIM4DPdpPtr +1) += xcddbr + gdsi + RevSumi;
-              *(here->BSIM4DPdpPtr) += gdpr + xcddbi + gdsr + here->BSIM4gbd 
+              *(here->BSIM4DPdpPtr) += gdpr + xcddbi + gdsr + here->BSIM4gbd
 				     - gdtotd + RevSumr + gbdpdp - gIdtotd;
               *(here->BSIM4DPdPtr) -= gdpr + gdtot;
               *(here->BSIM4DPgpPtr +1) += xcdgbr + Gmi;
@@ -617,7 +617,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   (*(here->BSIM4DBdpPtr +1) += xcdbdb);
                   (*(here->BSIM4DBdpPtr) -= here->BSIM4gbd);
                   (*(here->BSIM4DBdbPtr +1) -= xcdbdb);
-                  (*(here->BSIM4DBdbPtr) += here->BSIM4gbd + here->BSIM4grbpd 
+                  (*(here->BSIM4DBdbPtr) += here->BSIM4gbd + here->BSIM4grbpd
                                           + here->BSIM4grbdb);
                   (*(here->BSIM4DBbpPtr) -= here->BSIM4grbpd);
                   (*(here->BSIM4DBbPtr) -= here->BSIM4grbdb);
@@ -625,7 +625,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   (*(here->BSIM4BPdbPtr) -= here->BSIM4grbpd);
                   (*(here->BSIM4BPbPtr) -= here->BSIM4grbpb);
                   (*(here->BSIM4BPsbPtr) -= here->BSIM4grbps);
-                  (*(here->BSIM4BPbpPtr) += here->BSIM4grbpd + here->BSIM4grbps 
+                  (*(here->BSIM4BPbpPtr) += here->BSIM4grbpd + here->BSIM4grbps
 					  + here->BSIM4grbpb);
 		  /* WDLiu: (-here->BSIM4gbbs) already added to BPbpPtr */
 

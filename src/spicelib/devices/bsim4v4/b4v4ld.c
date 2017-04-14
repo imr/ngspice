@@ -120,14 +120,14 @@ double DeltaPhi, dDeltaPhi_dVg;
 double Cox, Tox, Tcen, dTcen_dVg, dTcen_dVd, dTcen_dVb;
 double Ccen, Coxeff, dCoxeff_dVd, dCoxeff_dVg, dCoxeff_dVb;
 double Denomi, dDenomi_dVg, dDenomi_dVd, dDenomi_dVb;
-double ueff, dueff_dVg, dueff_dVd, dueff_dVb; 
+double ueff, dueff_dVg, dueff_dVd, dueff_dVb;
 double Esat, dEsat_dVg, dEsat_dVd, dEsat_dVb, Vdsat, Vdsat0;
 double EsatL, dEsatL_dVg, dEsatL_dVd, dEsatL_dVb;
 double Ilimit, Iexp, dIexp_dVg, dIexp_dVd, dIexp_dVb;
-double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, Vasat, dAlphaz_dVg, dAlphaz_dVb; 
-double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, Va2, dVa_dVd, dVa_dVg, dVa_dVb; 
-double Vbseff, dVbseff_dVb, VbseffCV, dVbseffCV_dVb; 
-double Arg1, Arg2, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL; 
+double dVdsat_dVg, dVdsat_dVb, dVdsat_dVd, Vasat, dAlphaz_dVg, dAlphaz_dVb;
+double dVasat_dVg, dVasat_dVb, dVasat_dVd, Va, Va2, dVa_dVd, dVa_dVg, dVa_dVb;
+double Vbseff, dVbseff_dVb, VbseffCV, dVbseffCV_dVb;
+double Arg1, Arg2, One_Third_CoxWL, Two_Third_CoxWL, Alphaz, CoxWL;
 double T0, dT0_dVg, dT0_dVd, dT0_dVb;
 double T1, dT1_dVg, dT1_dVd, dT1_dVb;
 double T2, dT2_dVg, dT2_dVd, dT2_dVb;
@@ -138,7 +138,7 @@ double T6, dT6_dVg, dT6_dVd, dT6_dVb;
 double T7, dT7_dVg, dT7_dVd, dT7_dVb;
 double T8, dT8_dVg, dT8_dVd, dT8_dVb;
 double T9, dT9_dVg, dT9_dVd, dT9_dVb;
-double T10, dT10_dVg, dT10_dVb, dT10_dVd; 
+double T10, dT10_dVg, dT10_dVb, dT10_dVd;
 double T11, T12, T13, T14;
 double tmp, Abulk, dAbulk_dVb, Abulk0, dAbulk0_dVb;
 double Cclm, dCclm_dVg, dCclm_dVd, dCclm_dVb;
@@ -153,9 +153,9 @@ double Thetarout, dThetarout_dVb, TempRatio, tmp1, tmp2, tmp3, tmp4;
 double DIBL_Sft, dDIBL_Sft_dVd, DIBL_fact, Lambda, dLambda_dVg;
 double Idtot, Ibtot, a1, ScalingFactor;
 
-double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb; 
-double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb; 
-double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb; 
+double Vgsteff, dVgsteff_dVg, dVgsteff_dVd, dVgsteff_dVb;
+double Vdseff, dVdseff_dVg, dVdseff_dVd, dVdseff_dVb;
+double VdseffCV, dVdseffCV_dVg, dVdseffCV_dVd, dVdseffCV_dVb;
 double diffVds, diffVdsCV, dAbulk_dVg;
 double beta, dbeta_dVg, dbeta_dVd, dbeta_dVb;
 double gche, dgche_dVg, dgche_dVd, dgche_dVb;
@@ -176,8 +176,8 @@ double gcqdb, gcqsb, gcqgb, gcqbb;
 double dxpart, sxpart, ggtg, ggtd, ggts, ggtb;
 double ddxpart_dVd, ddxpart_dVg, ddxpart_dVb, ddxpart_dVs;
 double dsxpart_dVd, dsxpart_dVg, dsxpart_dVb, dsxpart_dVs;
-double gbspsp, gbbdp, gbbsp, gbspg, gbspb, gbspdp; 
-double gbdpdp, gbdpg, gbdpb, gbdpsp; 
+double gbspsp, gbbdp, gbbsp, gbspg, gbspb, gbspdp;
+double gbdpdp, gbdpg, gbdpb, gbdpsp;
 double qgdo, qgso, cgdo, cgso, cqbs, cqbd;
 double Cgg, Cgd, Cgs, Cgb, Cdg, Cdd, Cds, Cdb, Qg, Qd;
 double Csg, Csd, Css, Csb, Cbg, Cbd, Cbs, Cbb, Qs, Qb;
@@ -194,13 +194,13 @@ struct bsim4SizeDependParam *pParam;
 int ByPass, ChargeComputationNeeded, error, Check, Check1, Check2;
 
 ScalingFactor = 1.0e-9;
-ChargeComputationNeeded =  
+ChargeComputationNeeded =
                  ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
 
 for (; model != NULL; model = model->BSIM4nextModel)
-{    for (here = model->BSIM4instances; here != NULL; 
+{    for (here = model->BSIM4instances; here != NULL;
           here = here->BSIM4nextInstance)
      {    Check = Check1 = Check2 = 1;
           ByPass = 0;
@@ -255,13 +255,13 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	      {   vds = 0.1;
 		  vdes = 0.11;
 	  	  vses = -0.01;
-                  vgs = vges = vgms = model->BSIM4type 
+                  vgs = vges = vgms = model->BSIM4type
                                     * here->BSIM4vth0 + 0.1;
                   vbs = vdbs = vsbs = 0.0;
               }
           }
-	  else if ((ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) && 
-                  (here->BSIM4off)) 
+	  else if ((ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) &&
+                  (here->BSIM4off))
           {   vds = vgs = vbs = vges = vgms = 0.0;
               vdbs = vsbs = vdes = vses = qdef = 0.0;
 	  }
@@ -270,11 +270,11 @@ for (; model != NULL; model = model->BSIM4nextModel)
 #ifndef PREDICTOR
                if ((ckt->CKTmode & MODEINITPRED))
 	       {   xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
-                   *(ckt->CKTstate0 + here->BSIM4vds) = 
+                   *(ckt->CKTstate0 + here->BSIM4vds) =
                          *(ckt->CKTstate1 + here->BSIM4vds);
                    vds = (1.0 + xfact)* (*(ckt->CKTstate1 + here->BSIM4vds))
                          - (xfact * (*(ckt->CKTstate2 + here->BSIM4vds)));
-                   *(ckt->CKTstate0 + here->BSIM4vgs) = 
+                   *(ckt->CKTstate0 + here->BSIM4vgs) =
                          *(ckt->CKTstate1 + here->BSIM4vgs);
                    vgs = (1.0 + xfact)* (*(ckt->CKTstate1 + here->BSIM4vgs))
                          - (xfact * (*(ckt->CKTstate2 + here->BSIM4vgs)));
@@ -286,11 +286,11 @@ for (; model != NULL; model = model->BSIM4nextModel)
                          *(ckt->CKTstate1 + here->BSIM4vgms);
                    vgms = (1.0 + xfact)* (*(ckt->CKTstate1 + here->BSIM4vgms))
                          - (xfact * (*(ckt->CKTstate2 + here->BSIM4vgms)));
-                   *(ckt->CKTstate0 + here->BSIM4vbs) = 
+                   *(ckt->CKTstate0 + here->BSIM4vbs) =
                          *(ckt->CKTstate1 + here->BSIM4vbs);
                    vbs = (1.0 + xfact)* (*(ckt->CKTstate1 + here->BSIM4vbs))
                          - (xfact * (*(ckt->CKTstate2 + here->BSIM4vbs)));
-                   *(ckt->CKTstate0 + here->BSIM4vbd) = 
+                   *(ckt->CKTstate0 + here->BSIM4vbd) =
                          *(ckt->CKTstate0 + here->BSIM4vbs)
                          - *(ckt->CKTstate0 + here->BSIM4vds);
                    *(ckt->CKTstate0 + here->BSIM4vdbs) =
@@ -325,7 +325,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                        * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)
                        - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
                    vgs = model->BSIM4type
-                       * (*(ckt->CKTrhsOld + here->BSIM4gNodePrime) 
+                       * (*(ckt->CKTrhsOld + here->BSIM4gNodePrime)
                        - *(ckt->CKTrhsOld + here->BSIM4sNodePrime));
                    vbs = model->BSIM4type
                        * (*(ckt->CKTrhsOld + here->BSIM4bNodePrime)
@@ -394,14 +394,14 @@ for (; model != NULL; model = model->BSIM4nextModel)
 			 + here->BSIM4Igidl;
                    cdhat = Idtot - here->BSIM4gbd * delvbd_jct
                          + (here->BSIM4gmbs + here->BSIM4gbbs + here->BSIM4ggidlb) * delvbs
-                         + (here->BSIM4gm + here->BSIM4gbgs + here->BSIM4ggidlg) * delvgs 
+                         + (here->BSIM4gm + here->BSIM4gbgs + here->BSIM4ggidlg) * delvgs
                          + (here->BSIM4gds + here->BSIM4gbds + here->BSIM4ggidld) * delvds;
-                   Ibtot = here->BSIM4cbs + here->BSIM4cbd 
+                   Ibtot = here->BSIM4cbs + here->BSIM4cbd
 			 - here->BSIM4Igidl - here->BSIM4Igisl - here->BSIM4csub;
                    cbhat = Ibtot + here->BSIM4gbd * delvbd_jct
                          + here->BSIM4gbs * delvbs_jct - (here->BSIM4gbbs + here->BSIM4ggidlb)
                          * delvbs - (here->BSIM4gbgs + here->BSIM4ggidlg) * delvgs
-			 - (here->BSIM4gbds + here->BSIM4ggidld - here->BSIM4ggisls) * delvds 
+			 - (here->BSIM4gbds + here->BSIM4ggidld - here->BSIM4ggisls) * delvds
 			 - here->BSIM4ggislg * delvgd - here->BSIM4ggislb* delvbd;
 
 		   Igstot = here->BSIM4Igs + here->BSIM4Igcs;
@@ -418,17 +418,17 @@ for (; model != NULL; model = model->BSIM4nextModel)
                }
                else
                {   Idtot = here->BSIM4cd + here->BSIM4cbd - here->BSIM4Igidl; /* bugfix */
-                   cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs 
-                         * delvbd + here->BSIM4gm * delvgd 
-                         - (here->BSIM4gds + here->BSIM4ggidls) * delvds 
+                   cdhat = Idtot + here->BSIM4gbd * delvbd_jct + here->BSIM4gmbs
+                         * delvbd + here->BSIM4gm * delvgd
+                         - (here->BSIM4gds + here->BSIM4ggidls) * delvds
                          - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
-                   Ibtot = here->BSIM4cbs + here->BSIM4cbd 
+                   Ibtot = here->BSIM4cbs + here->BSIM4cbd
 			 - here->BSIM4Igidl - here->BSIM4Igisl - here->BSIM4csub;
-                   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd 
+                   cbhat = Ibtot + here->BSIM4gbs * delvbs_jct + here->BSIM4gbd
                          * delvbd_jct - (here->BSIM4gbbs + here->BSIM4ggislb) * delvbd
                          - (here->BSIM4gbgs + here->BSIM4ggislg) * delvgd
 			 + (here->BSIM4gbds + here->BSIM4ggisld - here->BSIM4ggidls) * delvds
-			 - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs; 
+			 - here->BSIM4ggidlg * delvgs - here->BSIM4ggidlb * delvbs;
 
                    Igstot = here->BSIM4Igs + here->BSIM4Igcd;
                    cgshat = Igstot + here->BSIM4gIgsg * delvgs + here->BSIM4gIgcdg * delvgd
@@ -455,7 +455,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
 
 #ifndef NOBYPASS
-               /* Following should be one IF statement, but some C compilers 
+               /* Following should be one IF statement, but some C compilers
                 * can't handle that all at once, so we split it into several
                 * successive IF's */
 
@@ -468,7 +468,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                    FABS(*(ckt->CKTstate0 + here->BSIM4vbs))) + ckt->CKTvoltTol)))
                if ((FABS(delvbd) < (ckt->CKTreltol * MAX(FABS(vbd),
                    FABS(*(ckt->CKTstate0 + here->BSIM4vbd))) + ckt->CKTvoltTol)))
-	       if ((here->BSIM4rgateMod == 0) || (here->BSIM4rgateMod == 1) 
+	       if ((here->BSIM4rgateMod == 0) || (here->BSIM4rgateMod == 1)
       		   || (FABS(delvges) < (ckt->CKTreltol * MAX(FABS(vges),
 		   FABS(*(ckt->CKTstate0 + here->BSIM4vges))) + ckt->CKTvoltTol)))
 	       if ((here->BSIM4rgateMod != 3) || (FABS(delvgms) < (ckt->CKTreltol
@@ -525,13 +525,13 @@ for (; model != NULL; model = model->BSIM4nextModel)
                    vbs_jct = (!here->BSIM4rbodyMod) ? vbs : vsbs;
                    vbd_jct = (!here->BSIM4rbodyMod) ? vbd : vdbd;
 
-/*** qdef should not be kept fixed even if vgs, vds & vbs has converged 
-****               qdef = *(ckt->CKTstate0 + here->BSIM4qdef);  
+/*** qdef should not be kept fixed even if vgs, vds & vbs has converged
+****               qdef = *(ckt->CKTstate0 + here->BSIM4qdef);
 ***/
                    cdrain = here->BSIM4cd;
 
-                   if ((ckt->CKTmode & (MODETRAN | MODEAC)) || 
-                       ((ckt->CKTmode & MODETRANOP) && 
+                   if ((ckt->CKTmode & (MODETRAN | MODEAC)) ||
+                       ((ckt->CKTmode & MODETRANOP) &&
                        (ckt->CKTmode & MODEUIC)))
 		   {   ByPass = 1;
 
@@ -608,13 +608,13 @@ for (; model != NULL; model = model->BSIM4nextModel)
                                         CONSTvt0, model->BSIM4vcrit, &Check2);
                        if ((Check1 == 0) && (Check2 == 0))
                            Check = 0;
-                       else 
+                       else
                            Check = 1;
                    }
                }
 	       else
                {   vbd = DEVpnjlim(vbd, *(ckt->CKTstate0 + here->BSIM4vbd),
-                                   CONSTvt0, model->BSIM4vcrit, &Check); 
+                                   CONSTvt0, model->BSIM4vcrit, &Check);
                    vbs = vbd + vds;
                    if (here->BSIM4rbodyMod)
                    {   vdbd = DEVpnjlim(vdbd, *(ckt->CKTstate0 + here->BSIM4vdbd),
@@ -687,9 +687,9 @@ for (; model != NULL; model = model->BSIM4nextModel)
 		      else
 		      {   T0 = here->BSIM4IVjsmFwd / Nvtms;
                           here->BSIM4gbs = T0 + ckt->CKTgmin;
-                          here->BSIM4cbs = here->BSIM4IVjsmFwd - SourceSatCurrent + T0 
+                          here->BSIM4cbs = here->BSIM4IVjsmFwd - SourceSatCurrent + T0
 					 * (vbs_jct - here->BSIM4vjsmFwd) + ckt->CKTgmin * vbs_jct;
-		      }	
+		      }
                       break;
                   case 2:
                       if (vbs_jct < here->BSIM4vjsmRev)
@@ -708,7 +708,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 			     * (vbs_jct - here->BSIM4vjsmRev);
 			  here->BSIM4gbs = devbs_dvb * T2 + T1 * here->BSIM4SslpRev + ckt->CKTgmin;
                           here->BSIM4cbs = T1 * T2 + ckt->CKTgmin * vbs_jct;
-                      }         
+                      }
                       else if (vbs_jct <= here->BSIM4vjsmFwd)
                       {   T0 = vbs_jct / Nvtms;
                           if (T0 < -EXP_THRESHOLD)
@@ -826,7 +826,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                           else
                           {   T2 = exp(-T1);
                               T3 = -T2 /Nvtmd;
-                          }     
+                          }
                           here->BSIM4gbd = DrainSatCurrent * (devbd_dvb - model->BSIM4xjbvd * T3)
                                          + ckt->CKTgmin;
                           here->BSIM4cbd = DrainSatCurrent * (evbd + here->BSIM4XExpBVD - 1.0
@@ -840,7 +840,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                       break;
                   default: break;
               }
-          } 
+          }
 
 	  /* trap-assisted tunneling and recombination current for reverse bias  */
           Nvtmrssw = model->BSIM4vtm0 * model->BSIM4njtsswtemp;
@@ -848,10 +848,10 @@ for (; model != NULL; model = model->BSIM4nextModel)
           Nvtmrs = model->BSIM4vtm0 * model->BSIM4njtstemp;
 
         if ((model->BSIM4vtss - vbs) < 1e-3)
-        { T9 = 1.0e3; 
+        { T9 = 1.0e3;
           T0 = - vbs / Nvtmrs * T9;
           DEXP(T0, T1, T10);
-          dT1_dVb = T10 / Nvtmrs * T9; 
+          dT1_dVb = T10 / Nvtmrs * T9;
         } else {
           T9 = 1.0 / (model->BSIM4vtss - vbs);
           T0 = -vbs / Nvtmrs * model->BSIM4vtss * T9;
@@ -861,10 +861,10 @@ for (; model != NULL; model = model->BSIM4nextModel)
         }
 
         if ((model->BSIM4vtsd - vbd) < 1e-3)
-        { T9 = 1.0e3; 
+        { T9 = 1.0e3;
           T0 = -vbd / Nvtmrs * T9;
           DEXP(T0, T2, T10);
-          dT2_dVb = T10 / Nvtmrs * T9; 
+          dT2_dVb = T10 / Nvtmrs * T9;
         } else {
           T9 = 1.0 / (model->BSIM4vtsd - vbd);
           T0 = -vbd / Nvtmrs * model->BSIM4vtsd * T9;
@@ -872,12 +872,12 @@ for (; model != NULL; model = model->BSIM4nextModel)
           DEXP(T0, T2, T10);
           dT2_dVb = T10 * dT0_dVb;
         }
-        
+
         if ((model->BSIM4vtssws - vbs) < 1e-3)
-        { T9 = 1.0e3; 
+        { T9 = 1.0e3;
           T0 = -vbs / Nvtmrssw * T9;
           DEXP(T0, T3, T10);
-          dT3_dVb = T10 / Nvtmrssw * T9; 
+          dT3_dVb = T10 / Nvtmrssw * T9;
         } else {
           T9 = 1.0 / (model->BSIM4vtssws - vbs);
           T0 = -vbs / Nvtmrssw * model->BSIM4vtssws * T9;
@@ -886,10 +886,10 @@ for (; model != NULL; model = model->BSIM4nextModel)
           dT3_dVb = T10 * dT0_dVb;
         }
         if ((model->BSIM4vtsswd - vbd) < 1e-3)
-        { T9 = 1.0e3; 
+        { T9 = 1.0e3;
           T0 = -vbd / Nvtmrssw * T9;
           DEXP(T0, T4, T10);
-          dT4_dVb = T10 / Nvtmrssw * T9; 
+          dT4_dVb = T10 / Nvtmrssw * T9;
         } else {
           T9 = 1.0 / (model->BSIM4vtsswd - vbd);
           T0 = -vbd / Nvtmrssw * model->BSIM4vtsswd * T9;
@@ -899,10 +899,10 @@ for (; model != NULL; model = model->BSIM4nextModel)
         }
 
         if ((model->BSIM4vtsswgs - vbs) < 1e-3)
-        { T9 = 1.0e3; 
+        { T9 = 1.0e3;
           T0 = -vbs / Nvtmrsswg * T9;
           DEXP(T0, T5, T10);
-          dT5_dVb = T10 / Nvtmrsswg * T9; 
+          dT5_dVb = T10 / Nvtmrsswg * T9;
         } else {
           T9 = 1.0 / (model->BSIM4vtsswgs - vbs);
           T0 = -vbs / Nvtmrsswg * model->BSIM4vtsswgs * T9;
@@ -911,10 +911,10 @@ for (; model != NULL; model = model->BSIM4nextModel)
           dT5_dVb = T10 * dT0_dVb;
         }
         if ((model->BSIM4vtsswgd - vbd) < 1e-3)
-        { T9 = 1.0e3; 
+        { T9 = 1.0e3;
           T0 = -vbd / Nvtmrsswg * T9;
           DEXP(T0, T6, T10);
-          dT6_dVb = T10 / Nvtmrsswg * T9; 
+          dT6_dVb = T10 / Nvtmrsswg * T9;
         } else {
           T9 = 1.0 / (model->BSIM4vtsswgd - vbd);
           T0 = -vbd / Nvtmrsswg * model->BSIM4vtsswgd * T9;
@@ -925,16 +925,16 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
 	  here->BSIM4gbs += here->BSIM4SjctTempRevSatCur * dT1_dVb
 	  			+ here->BSIM4SswTempRevSatCur * dT3_dVb
-	  			+ here->BSIM4SswgTempRevSatCur * dT5_dVb; 
+	  			+ here->BSIM4SswgTempRevSatCur * dT5_dVb;
 	  here->BSIM4cbs -= here->BSIM4SjctTempRevSatCur * (T1 - 1.0)
 	  			+ here->BSIM4SswTempRevSatCur * (T3 - 1.0)
-	  			+ here->BSIM4SswgTempRevSatCur * (T5 - 1.0); 
+	  			+ here->BSIM4SswgTempRevSatCur * (T5 - 1.0);
 	  here->BSIM4gbd += here->BSIM4DjctTempRevSatCur * dT2_dVb
 	  			+ here->BSIM4DswTempRevSatCur * dT4_dVb
-	  			+ here->BSIM4DswgTempRevSatCur * dT6_dVb; 
-	  here->BSIM4cbd -= here->BSIM4DjctTempRevSatCur * (T2 - 1.0) 
+	  			+ here->BSIM4DswgTempRevSatCur * dT6_dVb;
+	  here->BSIM4cbd -= here->BSIM4DjctTempRevSatCur * (T2 - 1.0)
 	  			+ here->BSIM4DswTempRevSatCur * (T4 - 1.0)
-	  			+ here->BSIM4DswgTempRevSatCur * (T6 - 1.0); 
+	  			+ here->BSIM4DswgTempRevSatCur * (T6 - 1.0);
 
           /* End of diode DC model */
 
@@ -975,7 +975,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           Phis = pParam->BSIM4phi - Vbseff;
           dPhis_dVb = -1.0;
           sqrtPhis = sqrt(Phis);
-          dsqrtPhis_dVb = -0.5 / sqrtPhis; 
+          dsqrtPhis_dVb = -0.5 / sqrtPhis;
 
 
           Xdep = pParam->BSIM4Xdep0 * sqrtPhis / pParam->BSIM4sqrtPhi;
@@ -996,7 +996,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	  }
 	  else
 	  {   T4 = 1.0 / (3.0 + 8.0 * T0);
-	      T1 = (1.0 + 3.0 * T0) * T4; 
+	      T1 = (1.0 + 3.0 * T0) * T4;
 	      T2 = pParam->BSIM4dvt2 * T4 * T4;
 	  }
           lt1 = model->BSIM4factor1 * T3 * T1;
@@ -1009,7 +1009,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	  }
 	  else
 	  {   T4 = 1.0 / (3.0 + 8.0 * T0);
-	      T1 = (1.0 + 3.0 * T0) * T4; 
+	      T1 = (1.0 + 3.0 * T0) * T4;
 	      T2 = pParam->BSIM4dvt2w * T4 * T4;
 	  }
           ltw = model->BSIM4factor1 * T3 * T1;
@@ -1040,7 +1040,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
               T3 = T2 * T2;
               T4 = T3 + 2.0 * T1 * MIN_EXP;
               T5 = T1 / T4;
-              dT1_dVb = -T0 * T1 * dltw_dVb / ltw; 
+              dT1_dVb = -T0 * T1 * dltw_dVb / ltw;
               dT5_dVb = dT1_dVb * (T4 - 2.0 * T1 * (T2 + MIN_EXP)) / T4 / T4;
           }
           else
@@ -1088,7 +1088,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           /* Calculate n */
           tmp1 = EPSSI / Xdep;
 	  here->BSIM4nstar = model->BSIM4vtm / Charge_q * (model->BSIM4coxe
-			   + tmp1 + pParam->BSIM4cit);  
+			   + tmp1 + pParam->BSIM4cit);
           tmp2 = pParam->BSIM4nfactor * tmp1;
           tmp3 = pParam->BSIM4cdsc + pParam->BSIM4cdscb * Vbseff
                + pParam->BSIM4cdscd * Vds;
@@ -1141,7 +1141,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
     	  BSIM4polyDepletion(T0, pParam->BSIM4ngate, model->BSIM4coxe, vgs, &vgs_eff, &dvgs_eff_dvg);
 
     	  BSIM4polyDepletion(T0, pParam->BSIM4ngate, model->BSIM4coxe, vgd, &vgd_eff, &dvgd_eff_dvg);
-    	  
+
     	  if(here->BSIM4mode>0) {
     	  	Vgs_eff = vgs_eff;
     	  	dVgs_eff_dVg = dvgs_eff_dvg;
@@ -1220,8 +1220,8 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
           /* Calculate Effective Channel Geometry */
           T9 = sqrtPhis - pParam->BSIM4sqrtPhi;
-          Weff = pParam->BSIM4weff - 2.0 * (pParam->BSIM4dwg * Vgsteff 
-               + pParam->BSIM4dwb * T9); 
+          Weff = pParam->BSIM4weff - 2.0 * (pParam->BSIM4dwg * Vgsteff
+               + pParam->BSIM4dwb * T9);
           dWeff_dVg = -2.0 * pParam->BSIM4dwg;
           dWeff_dVb = -2.0 * pParam->BSIM4dwb * dsqrtPhis_dVb;
 
@@ -1253,11 +1253,11 @@ for (; model != NULL; model = model->BSIM4nextModel)
               dRds_dVb = T4 * dT3_dVb;
 
 	      if (Rds > 0.0)
-		  here->BSIM4grdsw = 1.0 / Rds; 
+		  here->BSIM4grdsw = 1.0 / Rds;
 	      else
                   here->BSIM4grdsw = 0.0;
           }
-	  
+
           /* Calculate Abulk */
 	  T9 = 0.5 * pParam->BSIM4k1ox * Lpe_Vb / sqrtPhis;
           T1 = T9 + here->BSIM4k2ox - pParam->BSIM4k3b * Vth_NarrowW;
@@ -1265,21 +1265,21 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
           T9 = sqrt(pParam->BSIM4xj * Xdep);
           tmp1 = Leff + 2.0 * T9;
-          T5 = Leff / tmp1; 
+          T5 = Leff / tmp1;
           tmp2 = pParam->BSIM4a0 * T5;
-          tmp3 = pParam->BSIM4weff + pParam->BSIM4b1; 
+          tmp3 = pParam->BSIM4weff + pParam->BSIM4b1;
           tmp4 = pParam->BSIM4b0 / tmp3;
           T2 = tmp2 + tmp4;
           dT2_dVb = -T9 / tmp1 / Xdep * dXdep_dVb;
           T6 = T5 * T5;
           T7 = T5 * T6;
 
-          Abulk0 = 1.0 + T1 * T2; 
+          Abulk0 = 1.0 + T1 * T2;
           dAbulk0_dVb = T1 * tmp2 * dT2_dVb + T2 * dT1_dVb;
 
           T8 = pParam->BSIM4ags * pParam->BSIM4a0 * T7;
           dAbulk_dVg = -T1 * T8;
-          Abulk = Abulk0 + dAbulk_dVg * Vgsteff; 
+          Abulk = Abulk0 + dAbulk_dVg * Vgsteff;
           dAbulk_dVb = dAbulk0_dVb - T8 * Vgsteff * (dT1_dVb
 		     + 3.0 * T1 * dT2_dVb);
 
@@ -1366,7 +1366,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
           /* Saturation Drain Voltage  Vdsat */
           WVCox = Weff * here->BSIM4vsattemp * model->BSIM4coxe;
-          WVCoxRds = WVCox * Rds; 
+          WVCoxRds = WVCox * Rds;
 
           Esat = 2.0 * here->BSIM4vsattemp / ueff;
           here->BSIM4EsatL = EsatL = Esat * Leff;
@@ -1374,7 +1374,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           dEsatL_dVg = T0 * dueff_dVg;
           dEsatL_dVd = T0 * dueff_dVd;
           dEsatL_dVb = T0 * dueff_dVb;
-  
+
 	  /* Sqrt() */
           a1 = pParam->BSIM4a1;
 	  if (a1 == 0.0)
@@ -1411,14 +1411,14 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	      T2 = Vgst2Vtm * T0;
               T3 = EsatL * Vgst2Vtm;
               Vdsat = T3 * T0;
-                           
+
               dT0_dVg = -(Abulk * dEsatL_dVg + EsatL * dAbulk_dVg + 1.0) * T1;
-              dT0_dVd = -(Abulk * dEsatL_dVd) * T1; 
-              dT0_dVb = -(Abulk * dEsatL_dVb + dAbulk_dVb * EsatL) * T1;   
+              dT0_dVd = -(Abulk * dEsatL_dVd) * T1;
+              dT0_dVb = -(Abulk * dEsatL_dVb + dAbulk_dVb * EsatL) * T1;
 
               dVdsat_dVg = T3 * dT0_dVg + T2 * dEsatL_dVg + EsatL * T0;
               dVdsat_dVd = T3 * dT0_dVd + T2 * dEsatL_dVd;
-              dVdsat_dVb = T3 * dT0_dVb + T2 * dEsatL_dVb;   
+              dVdsat_dVb = T3 * dT0_dVb + T2 * dEsatL_dVb;
           }
           else
           {   tmp1 = dLambda_dVg / (Lambda * Lambda);
@@ -1426,15 +1426,15 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	      T8 = Abulk * T9;
 	      T7 = Vgst2Vtm * T9;
               T6 = Vgst2Vtm * WVCoxRds;
-              T0 = 2.0 * Abulk * (T9 - 1.0 + 1.0 / Lambda); 
+              T0 = 2.0 * Abulk * (T9 - 1.0 + 1.0 / Lambda);
               dT0_dVg = 2.0 * (T8 * tmp2 - Abulk * tmp1
 		      + (2.0 * T9 + 1.0 / Lambda - 1.0) * dAbulk_dVg);
-             
+
               dT0_dVb = 2.0 * (T8 * (2.0 / Abulk * dAbulk_dVb + tmp3)
 		      + (1.0 / Lambda - 1.0) * dAbulk_dVb);
-	      dT0_dVd = 0.0; 
+	      dT0_dVd = 0.0;
               T1 = Vgst2Vtm * (2.0 / Lambda - 1.0) + Abulk * EsatL + 3.0 * T7;
-             
+
               dT1_dVg = (2.0 / Lambda - 1.0) - 2.0 * Vgst2Vtm * tmp1
 		      + Abulk * dEsatL_dVg + EsatL * dAbulk_dVg + 3.0 * (T9
 		      + T7 * tmp2 + T6 * dAbulk_dVg);
@@ -1499,17 +1499,17 @@ for (; model != NULL; model = model->BSIM4nextModel)
           if (Vds == 0.0)
           {  Vdseff = 0.0;
              dVdseff_dVg = 0.0;
-             dVdseff_dVb = 0.0; 
+             dVdseff_dVb = 0.0;
           }
 
           if (Vdseff > Vds)
               Vdseff = Vds;
           diffVds = Vds - Vdseff;
           here->BSIM4Vdseff = Vdseff;
-          
+
           /* Velocity Overshoot */
         if((model->BSIM4lambdaGiven) && (model->BSIM4lambda > 0.0) )
-        {  
+        {
           T1 =  Leff * ueff;
           T2 = pParam->BSIM4lambda / T1;
           T3 = -T2 / T1 * Leff;
@@ -1519,8 +1519,8 @@ for (; model != NULL; model = model->BSIM4nextModel)
           T5 = 1.0 / (Esat * pParam->BSIM4litl);
           T4 = -T5 / EsatL;
           dT5_dVg = dEsatL_dVg * T4;
-          dT5_dVd = dEsatL_dVd * T4; 
-          dT5_dVb = dEsatL_dVb * T4; 
+          dT5_dVd = dEsatL_dVd * T4;
+          dT5_dVb = dEsatL_dVb * T4;
           T6 = 1.0 + diffVds  * T5;
           dT6_dVg = dT5_dVg * diffVds - dVdseff_dVg * T5;
           dT6_dVd = dT5_dVd * diffVds + (1.0 - dVdseff_dVd) * T5;
@@ -1553,18 +1553,18 @@ for (; model != NULL; model = model->BSIM4nextModel)
           T9 = WVCoxRds * Vgsteff;
 	  T8 = T9 / Vgst2Vtm;
           T0 = EsatL + Vdsat + 2.0 * T9 * tmp4;
-         
+
           T7 = 2.0 * WVCoxRds * tmp4;
           dT0_dVg = dEsatL_dVg + dVdsat_dVg + T7 * (1.0 + tmp2 * Vgsteff)
 		  - T8 * (Abulk * dVdsat_dVg - Abulk * Vdsat / Vgst2Vtm
-		  + Vdsat * dAbulk_dVg);   
-		  
+		  + Vdsat * dAbulk_dVg);
+
           dT0_dVb = dEsatL_dVb + dVdsat_dVb + T7 * tmp3 * Vgsteff
 		  - T8 * (dAbulk_dVb * Vdsat + Abulk * dVdsat_dVb);
           dT0_dVd = dEsatL_dVd + dVdsat_dVd - T8 * Abulk * dVdsat_dVd;
 
-          T9 = WVCoxRds * Abulk; 
-          T1 = 2.0 / Lambda - 1.0 + T9; 
+          T9 = WVCoxRds * Abulk;
+          T1 = 2.0 / Lambda - 1.0 + T9;
           dT1_dVg = -2.0 * tmp1 +  WVCoxRds * (Abulk * tmp2 + dAbulk_dVg);
           dT1_dVb = dAbulk_dVb * WVCoxRds + T9 * tmp3;
 
@@ -1807,7 +1807,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           T9 = diffVds / VADITS;
           T0 = 1.0 + T9;
           dIdsa_dVg = T0 * dIdsa_dVg - Idsa * (dVdseff_dVg + T9 * dVADITS_dVg) / VADITS;
-          dIdsa_dVd = T0 * dIdsa_dVd + Idsa 
+          dIdsa_dVd = T0 * dIdsa_dVd + Idsa
 		    * (1.0 - dVdseff_dVd - T9 * dVADITS_dVd) / VADITS;
           dIdsa_dVb = T0 * dIdsa_dVb - Idsa * dVdseff_dVb / VADITS;
           Idsa *= T0;
@@ -1874,9 +1874,9 @@ for (; model != NULL; model = model->BSIM4nextModel)
           T0 = 1.0 + T9;
           Ids = Idsa * T0;
 
-          Gm = T0 * dIdsa_dVg - Idsa 
+          Gm = T0 * dIdsa_dVg - Idsa
 	     * (dVdseff_dVg + T9 * dVASCBE_dVg) / VASCBE;
-          Gds = T0 * dIdsa_dVd + Idsa 
+          Gds = T0 * dIdsa_dVd + Idsa
 	      * (1.0 - dVdseff_dVd - T9 * dVASCBE_dVd) / VASCBE;
           Gmb = T0 * dIdsa_dVb - Idsa
 	      * (dVdseff_dVb + T9 * dVASCBE_dVb) / VASCBE;
@@ -1893,7 +1893,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	      + Vdseff * tmp2) * dVbseff_dVb;
 
           cdrain = Ids * Vdseff;
-          
+
           /* Source End Velocity Limit  */
         if((model->BSIM4vtlGiven) && (model->BSIM4vtl > 0.0) ) {
           T12 = 1.0 / Leff / CoxeffWovL;
@@ -1905,9 +1905,9 @@ for (; model != NULL; model = model->BSIM4nextModel)
           dvs_dVb = Gmb * T11 + cdrain * T10 * dVgsteff_dVb;
           T0 = 2 * MM;
           T1 = vs / (pParam->BSIM4vtl * pParam->BSIM4tfactor);
-          if(T1 > 0.0)  
+          if(T1 > 0.0)
           {	T2 = 1.0 + exp(T0 * log(T1));
-          	T3 = (T2 - 1.0) * T0 / vs; 
+          	T3 = (T2 - 1.0) * T0 / vs;
           	Fsevl = 1.0 / exp(log(T2)/ T0);
           	dT2_dVg = T3 * dvs_dVg;
           	dT2_dVd = T3 * dvs_dVd;
@@ -1929,8 +1929,8 @@ for (; model != NULL; model = model->BSIM4nextModel)
           Gds *=Fsevl;
           Gds += cdrain * dFsevl_dVd;
 
-          cdrain *= Fsevl; 
-        } 
+          cdrain *= Fsevl;
+        }
 
           here->BSIM4gds = Gds;
           here->BSIM4gm = Gm;
@@ -1950,12 +1950,12 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	      here->BSIM4gcrg = pParam->BSIM4xrcrg1 * ( T0 + Ids);
 	      here->BSIM4gcrgd = pParam->BSIM4xrcrg1 * (dT0_dVd + tmp1);
               here->BSIM4gcrgb = pParam->BSIM4xrcrg1 * (dT0_dVb + tmp2)
-	 		       * dVbseff_dVb;	
+	 		       * dVbseff_dVb;
               here->BSIM4gcrgg = pParam->BSIM4xrcrg1 * (dT0_dVg + tmp3)
 			       * dVgsteff_dVg;
 
 	      if (here->BSIM4nf != 1.0)
-	      {   here->BSIM4gcrg *= here->BSIM4nf; 
+	      {   here->BSIM4gcrg *= here->BSIM4nf;
 		  here->BSIM4gcrgg *= here->BSIM4nf;
 		  here->BSIM4gcrgd *= here->BSIM4nf;
 		  here->BSIM4gcrgb *= here->BSIM4nf;
@@ -2080,7 +2080,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                   Ggidlg = Igidl * dT1_dVg;
                   Igidl *= T1;
               }
-        
+
               T4 = vbd * vbd;
               T5 = -vbd * T4;
               T6 = pParam->BSIM4cgidl + T5;
@@ -2109,19 +2109,19 @@ for (; model != NULL; model = model->BSIM4nextModel)
               dT1_dVd = 1.0 / T0;
               dT1_dVg = -dvgd_eff_dvg * dT1_dVd;
               T2 = pParam->BSIM4bgidl / T1;
-              if (T2 < 100.0) 
+              if (T2 < 100.0)
               {   Igisl = pParam->BSIM4agidl * pParam->BSIM4weffCJ * T1 * exp(-T2);
                   T3 = Igisl * (1.0 + T2) / T1;
                   Ggisls = T3 * dT1_dVd;
                   Ggislg = T3 * dT1_dVg;
               }
-              else 
+              else
               {   Igisl = pParam->BSIM4agidl * pParam->BSIM4weffCJ * 3.720075976e-44;
                   Ggisls = Igisl * dT1_dVd;
                   Ggislg = Igisl * dT1_dVg;
                   Igisl *= T1;
               }
-        
+
               T4 = vbs * vbs;
               T5 = -vbs * T4;
               T6 = pParam->BSIM4cgidl + T5;
@@ -2250,7 +2250,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                   T12 = Vgsteff + 1.0e-20;
                   T13 = T11 / T12 / T12;
                   T14 = -T13 / T12;
-                  Pigcd = T13 * (1.0 - 0.5 * Vdseff / T12); 
+                  Pigcd = T13 * (1.0 - 0.5 * Vdseff / T12);
                   dPigcd_dVg = T14 * (2.0 + 0.5 * (dVdseff_dVg
                              * Vgsteff - 3.0 * Vdseff) / T12);
                   dPigcd_dVd = 0.5 * T14 * dVdseff_dVd
@@ -2409,7 +2409,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
               else
               {   ExpVxNVt = exp(VxNVt);
                   Vaux = T0 * log(1.0 + ExpVxNVt);
-                  dVaux_dVb = ExpVxNVt / (1.0 + ExpVxNVt); 
+                  dVaux_dVb = ExpVxNVt / (1.0 + ExpVxNVt);
                   dVaux_dVg = -dVaux_dVb * dVgs_eff_dVg;
               }
 
@@ -2509,7 +2509,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           }
           else
           {  here->BSIM4Igb = here->BSIM4gIgbg = here->BSIM4gIgbd
-			    = here->BSIM4gIgbs = here->BSIM4gIgbb = 0.0;   
+			    = here->BSIM4gIgbs = here->BSIM4gIgbb = 0.0;
           } /* End of Gate current */
 
 	  if (here->BSIM4nf != 1.0)
@@ -2518,7 +2518,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
               here->BSIM4gm *= here->BSIM4nf;
               here->BSIM4gmbs *= here->BSIM4nf;
 	      here->BSIM4IdovVds *= here->BSIM4nf;
-                   
+
               here->BSIM4gbbs *= here->BSIM4nf;
               here->BSIM4gbgs *= here->BSIM4nf;
               here->BSIM4gbds *= here->BSIM4nf;
@@ -2528,7 +2528,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
               here->BSIM4ggidld *= here->BSIM4nf;
               here->BSIM4ggidlg *= here->BSIM4nf;
 	      here->BSIM4ggidlb *= here->BSIM4nf;
-	
+
               here->BSIM4Igisl *= here->BSIM4nf;
               here->BSIM4ggisls *= here->BSIM4nf;
               here->BSIM4ggislg *= here->BSIM4nf;
@@ -2605,7 +2605,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
               here->BSIM4cbgb = here->BSIM4cbsb = here->BSIM4cbdb = 0.0;
               here->BSIM4csgb = here->BSIM4cssb = here->BSIM4csdb = 0.0;
               here->BSIM4cgbb = here->BSIM4csbb = here->BSIM4cdbb = here->BSIM4cbbb = 0.0;
-              here->BSIM4cqdb = here->BSIM4cqsb = here->BSIM4cqgb 
+              here->BSIM4cqdb = here->BSIM4cqsb = here->BSIM4cqgb
                               = here->BSIM4cqbb = 0.0;
               here->BSIM4gtau = 0.0;
               goto finished;
@@ -2622,11 +2622,11 @@ for (; model != NULL; model = model->BSIM4nextModel)
               }
 
               Vfb = pParam->BSIM4vfbcv;
-              Vth = Vfb + pParam->BSIM4phi + pParam->BSIM4k1ox * sqrtPhis; 
+              Vth = Vfb + pParam->BSIM4phi + pParam->BSIM4k1ox * sqrtPhis;
               Vgst = Vgs_eff - Vth;
-              dVth_dVb = pParam->BSIM4k1ox * dsqrtPhis_dVb; 
+              dVth_dVb = pParam->BSIM4k1ox * dsqrtPhis_dVb;
               dVgst_dVb = -dVth_dVb;
-              dVgst_dVg = dVgs_eff_dVg; 
+              dVgst_dVg = dVgs_eff_dVg;
 
               CoxWL = model->BSIM4coxe * pParam->BSIM4weffCV
                     * pParam->BSIM4leffCV * here->BSIM4nf;
@@ -2660,7 +2660,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	          here->BSIM4cggb = T0 * dVgs_eff_dVg;
 	          here->BSIM4cgdb = 0.0;
                   here->BSIM4cgsb = T0 * (dVbseff_dVb - dVgs_eff_dVg);
-   
+
                   here->BSIM4cdgb = 0.0;
                   here->BSIM4cddb = 0.0;
                   here->BSIM4cdsb = 0.0;
@@ -2677,7 +2677,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                   dAbulkCV_dVb = pParam->BSIM4abulkCVfactor * dAbulk0_dVb;
 	          Vdsat = Vgst / AbulkCV;
 	          dVdsat_dVg = dVgs_eff_dVg / AbulkCV;
-	          dVdsat_dVb = - (Vdsat * dAbulkCV_dVb + dVth_dVb)/ AbulkCV; 
+	          dVdsat_dVb = - (Vdsat * dAbulkCV_dVb + dVth_dVb)/ AbulkCV;
 
                   if (model->BSIM4xpart > 0.5)
 		  {   /* 0/100 Charge partition model */
@@ -2695,7 +2695,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	                  T2 = -One_Third_CoxWL * dVdsat_dVb;
 	                  here->BSIM4cgsb = -(here->BSIM4cggb + T2);
                           here->BSIM4cgdb = 0.0;
-       
+
                           here->BSIM4cdgb = 0.0;
                           here->BSIM4cddb = 0.0;
                           here->BSIM4cdsb = 0.0;
@@ -2716,12 +2716,12 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	                  T4 = T9 * Alphaz;
 	                  T7 = 2.0 * Vds - T1 - 3.0 * T3;
 	                  T8 = T3 - T1 - 2.0 * Vds;
-	                  qgate = CoxWL * (Vgs_eff - Vfb 
+	                  qgate = CoxWL * (Vgs_eff - Vfb
 			        - pParam->BSIM4phi - 0.5 * (Vds - T3));
 	                  T10 = T4 * T8;
 	                  qdrn = T4 * T7;
 	                  qbulk = -(qgate + qdrn + T10);
-  
+
                           T5 = T3 / T1;
                           here->BSIM4cggb = CoxWL * (1.0 - T5 * dVdsat_dVg)
 					  * dVgs_eff_dVg;
@@ -2746,12 +2746,12 @@ for (; model != NULL; model = model->BSIM4nextModel)
                           T10 = (T8 * dAlphaz_dVg - T9 * dVdsat_dVg)
 			      * dVgs_eff_dVg;
                           T11 = T8 * dAlphaz_dVb - T9 * dVdsat_dVb;
-                          T12 = T4 * (2.0 * T2 + T5 - 1.0); 
+                          T12 = T4 * (2.0 * T2 + T5 - 1.0);
                           T0 = -(T10 + T11 + T12);
 
                           here->BSIM4cbgb = -(here->BSIM4cggb
 					  + here->BSIM4cdgb + T10);
-                          here->BSIM4cbdb = -(here->BSIM4cgdb 
+                          here->BSIM4cbdb = -(here->BSIM4cgdb
 					  + here->BSIM4cddb + T12);
                           here->BSIM4cbsb = -(here->BSIM4cgsb
 					  + here->BSIM4cdsb + T0);
@@ -2768,19 +2768,19 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	                  qbulk = -(qgate + T2);
 	                  qdrn = 0.4 * T2;
 
-	                  here->BSIM4cggb = One_Third_CoxWL * (3.0 
+	                  here->BSIM4cggb = One_Third_CoxWL * (3.0
 					  - dVdsat_dVg) * dVgs_eff_dVg;
 	                  T2 = -One_Third_CoxWL * dVdsat_dVb;
 	                  here->BSIM4cgsb = -(here->BSIM4cggb + T2);
         	          here->BSIM4cgdb = 0.0;
-       
+
 			  T3 = 0.4 * Two_Third_CoxWL;
                           here->BSIM4cdgb = -T3 * dVgs_eff_dVg;
                           here->BSIM4cddb = 0.0;
 			  T4 = T3 * dVth_dVb;
                           here->BSIM4cdsb = -(T4 + here->BSIM4cdgb);
 
-	                  here->BSIM4cbgb = -(here->BSIM4cggb 
+	                  here->BSIM4cbgb = -(here->BSIM4cggb
 					  - Two_Third_CoxWL * dVgs_eff_dVg);
 	                  T3 = -(T2 + Two_Third_CoxWL * dVth_dVb);
 	                  here->BSIM4cbsb = -(here->BSIM4cbgb + T3);
@@ -2802,7 +2802,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 					  * dVgs_eff_dVg;
                           tmp = -CoxWL * T5 * dVdsat_dVb;
                           here->BSIM4cgdb = CoxWL * (T2 - 0.5 + 0.5 * T5);
-                          here->BSIM4cgsb = -(here->BSIM4cggb 
+                          here->BSIM4cgsb = -(here->BSIM4cggb
 					  + here->BSIM4cgdb + tmp);
 
 			  T6 = 1.0 / Vdsat;
@@ -2825,7 +2825,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                           here->BSIM4cddb = T4 * (2.0 - (1.0 / (3.0 * T1
 					  * T1) + 2.0 * tmp) * T6 + T8
 					  * (6.0 * Vdsat - 2.4 * Vds));
-                          here->BSIM4cdsb = -(here->BSIM4cdgb 
+                          here->BSIM4cdsb = -(here->BSIM4cdgb
 					  + T10 + here->BSIM4cddb);
 
 			  T7 = 2.0 * (T1 + T3);
@@ -2835,14 +2835,14 @@ for (; model != NULL; model = model->BSIM4nextModel)
 			  T12 = (-T7 * dAlphaz_dVg - here->BSIM4cdgb
 			      - T0 * dVdsat_dVg) * dVgs_eff_dVg;
 			  T11 = -T7 * dAlphaz_dVb - T10 - T0 * dVdsat_dVb;
-			  T10 = -4.0 * T4 * (T2 - 0.5 + 0.5 * T5) 
+			  T10 = -4.0 * T4 * (T2 - 0.5 + 0.5 * T5)
 			      - here->BSIM4cddb;
                           tmp = -(T10 + T11 + T12);
 
-                          here->BSIM4cbgb = -(here->BSIM4cggb 
+                          here->BSIM4cbgb = -(here->BSIM4cggb
 					  + here->BSIM4cdgb + T12);
                           here->BSIM4cbdb = -(here->BSIM4cgdb
-					  + here->BSIM4cddb + T10);  
+					  + here->BSIM4cddb + T10);
                           here->BSIM4cbsb = -(here->BSIM4cgsb
 					  + here->BSIM4cdsb + tmp);
                       }
@@ -2863,13 +2863,13 @@ for (; model != NULL; model = model->BSIM4nextModel)
 	                  T2 = -One_Third_CoxWL * dVdsat_dVb;
 	                  here->BSIM4cgsb = -(here->BSIM4cggb + T2);
         	          here->BSIM4cgdb = 0.0;
-       
+
                           here->BSIM4cdgb = -One_Third_CoxWL * dVgs_eff_dVg;
                           here->BSIM4cddb = 0.0;
 			  T4 = One_Third_CoxWL * dVth_dVb;
                           here->BSIM4cdsb = -(T4 + here->BSIM4cdgb);
 
-	                  here->BSIM4cbgb = -(here->BSIM4cggb 
+	                  here->BSIM4cbgb = -(here->BSIM4cggb
 					  - Two_Third_CoxWL * dVgs_eff_dVg);
 	                  T3 = -(T2 + Two_Third_CoxWL * dVth_dVb);
 	                  here->BSIM4cbsb = -(here->BSIM4cbgb + T3);
@@ -2891,7 +2891,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 					  * dVgs_eff_dVg;
                           tmp = -CoxWL * T5 * dVdsat_dVb;
                           here->BSIM4cgdb = CoxWL * (T2 - 0.5 + 0.5 * T5);
-                          here->BSIM4cgsb = -(here->BSIM4cggb 
+                          here->BSIM4cgsb = -(here->BSIM4cggb
 					  + here->BSIM4cgdb + tmp);
 
 			  T6 = 1.0 / Vdsat;
@@ -2920,7 +2920,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                       } /* end of linear region */
 	          } /* end of 50/50 partition */
 	      } /* end of inversion */
-          } /* end of capMod=0 */ 
+          } /* end of capMod=0 */
 	  else
 	  {   if (Vbseff < 0.0)
 	      {   VbseffCV = Vbseff;
@@ -3002,7 +3002,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
                   dQsub0_dVg = T2 * (dVgs_eff_dVg - dVfbeff_dVg - dVgsteff_dVg);
                   dQsub0_dVd = -T2 * dVgsteff_dVd;
-                  dQsub0_dVb = -T2 * (dVfbeff_dVb + dVbseffCV_dVb 
+                  dQsub0_dVb = -T2 * (dVfbeff_dVb + dVbseffCV_dVb
                              + dVgsteff_dVb);
 
                   AbulkCV = Abulk0 * pParam->BSIM4abulkCVfactor;
@@ -3011,7 +3011,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
 	 	  T0 = VdsatCV - Vds - DELTA_4;
 		  dT0_dVg = 1.0 / AbulkCV;
-		  dT0_dVb = -VdsatCV * dAbulkCV_dVb / AbulkCV; 
+		  dT0_dVb = -VdsatCV * dAbulkCV_dVb / AbulkCV;
 		  T1 = sqrt(T0 * T0 + 4.0 * DELTA_4 * VdsatCV);
                   dT1_dVg = (T0 + DELTA_4 + DELTA_4) / T1;
                   dT1_dVd = -T0 / T1;
@@ -3106,8 +3106,8 @@ for (; model != NULL; model = model->BSIM4nextModel)
 		  {   /* 50/50 Charge petition model */
                       qsrc = -0.5 * (qgate + qbulk);
                       Csg = -0.5 * (Cgg1 + Cbg1);
-                      Csb = -0.5 * (Cgb1 + Cbb1); 
-                      Csd = -0.5 * (Cgd1 + Cbd1); 
+                      Csb = -0.5 * (Cgb1 + Cbb1);
+                      Csd = -0.5 * (Cgd1 + Cbd1);
                   }
 
 		  qgate += Qac0 + Qsub0;
@@ -3136,7 +3136,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                   here->BSIM4cbgb = Cbg;
 	          here->BSIM4cbsb = -(Cbg + Cbd + Cbb);
 	          here->BSIM4cbdb = Cbd;
-	      } 
+	      }
 
               /* Charge-Thickness capMod (CTM) begins */
 	      else if (model->BSIM4capMod == 2)
@@ -3194,7 +3194,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                   QovCox = Qac0 / Coxeff;
                   dQac0_dVg = CoxWLcen * dVfbeff_dVg
                             + QovCox * dCoxeff_dVg;
-                  dQac0_dVb = CoxWLcen * dVfbeff_dVb 
+                  dQac0_dVb = CoxWLcen * dVfbeff_dVb
 			    + QovCox * dCoxeff_dVb;
 
                   T0 = 0.5 * pParam->BSIM4k1ox;
@@ -3226,7 +3226,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
                       T0 = 0.5 * pParam->BSIM4sqrtPhi;
 		  }
 		  else
-		  {   Denomi = pParam->BSIM4moin * Vtm 
+		  {   Denomi = pParam->BSIM4moin * Vtm
 			     * pParam->BSIM4k1ox * pParam->BSIM4k1ox;
                       T0 = pParam->BSIM4k1ox * pParam->BSIM4sqrtPhi;
 		  }
@@ -3301,11 +3301,11 @@ for (; model != NULL; model = model->BSIM4nextModel)
 
                   qgate = CoxWLcen * (T1 - T0 * (0.5 - T3));
 		  QovCox = qgate / Coxeff;
-		  Cgg1 = CoxWLcen * (T4 * (1.0 - dDeltaPhi_dVg) 
+		  Cgg1 = CoxWLcen * (T4 * (1.0 - dDeltaPhi_dVg)
 		       + T5 * dVdseffCV_dVg);
-		  Cgd1 = CoxWLcen * T5 * dVdseffCV_dVd + Cgg1 
+		  Cgd1 = CoxWLcen * T5 * dVdseffCV_dVd + Cgg1
 		       * dVgsteff_dVd + QovCox * dCoxeff_dVd;
-		  Cgb1 = CoxWLcen * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb) 
+		  Cgb1 = CoxWLcen * (T5 * dVdseffCV_dVb + T6 * dAbulkCV_dVb)
 		       + Cgg1 * dVgsteff_dVb + QovCox * dCoxeff_dVb;
 		  Cgg1 = Cgg1 * dVgsteff_dVg + QovCox * dCoxeff_dVg;
 
@@ -3321,14 +3321,14 @@ for (; model != NULL; model = model->BSIM4nextModel)
 		  QovCox = qbulk / Coxeff;
 		  Cbg1 = CoxWLcen * (T10 + T11 * dVdseffCV_dVg);
 		  Cbd1 = CoxWLcen * T11 * dVdseffCV_dVd + Cbg1
-		       * dVgsteff_dVd + QovCox * dCoxeff_dVd; 
+		       * dVgsteff_dVd + QovCox * dCoxeff_dVd;
 		  Cbb1 = CoxWLcen * (T11 * dVdseffCV_dVb + T12 * dAbulkCV_dVb)
 		       + Cbg1 * dVgsteff_dVb + QovCox * dCoxeff_dVb;
 		  Cbg1 = Cbg1 * dVgsteff_dVg + QovCox * dCoxeff_dVg;
 
                   if (model->BSIM4xpart > 0.5)
 		  {   /* 0/100 partition */
-		      qsrc = -CoxWLcen * (T1 / 2.0 + T0 / 4.0 
+		      qsrc = -CoxWLcen * (T1 / 2.0 + T0 / 4.0
 			   - 0.5 * T0 * T0 / T2);
 		      QovCox = qsrc / Coxeff;
 		      T2 += T2;
@@ -3349,29 +3349,29 @@ for (; model != NULL; model = model->BSIM4nextModel)
 		  {   /* 40/60 partition */
 		      T2 = T2 / 12.0;
 		      T3 = 0.5 * CoxWLcen / (T2 * T2);
-                      T4 = T1 * (2.0 * T0 * T0 / 3.0 + T1 * (T1 - 4.0 
+                      T4 = T1 * (2.0 * T0 * T0 / 3.0 + T1 * (T1 - 4.0
                          * T0 / 3.0)) - 2.0 * T0 * T0 * T0 / 15.0;
 		      qsrc = -T3 * T4;
 		      QovCox = qsrc / Coxeff;
 		      T8 = 4.0 / 3.0 * T1 * (T1 - T0) + 0.4 * T0 * T0;
-		      T5 = -2.0 * qsrc / T2 - T3 * (T1 * (3.0 * T1 - 8.0 
+		      T5 = -2.0 * qsrc / T2 - T3 * (T1 * (3.0 * T1 - 8.0
 			 * T0 / 3.0) + 2.0 * T0 * T0 / 3.0);
 		      T6 = AbulkCV * (qsrc / T2 + T3 * T8);
-		      T7 = T6 * VdseffCV / AbulkCV; 
+		      T7 = T6 * VdseffCV / AbulkCV;
 
-		      Csg = T5 * (1.0 - dDeltaPhi_dVg) + T6 * dVdseffCV_dVg; 
-		      Csd = Csg * dVgsteff_dVd + T6 * dVdseffCV_dVd 
+		      Csg = T5 * (1.0 - dDeltaPhi_dVg) + T6 * dVdseffCV_dVg;
+		      Csd = Csg * dVgsteff_dVd + T6 * dVdseffCV_dVd
 			  + QovCox * dCoxeff_dVd;
-		      Csb = Csg * dVgsteff_dVb + T6 * dVdseffCV_dVb 
-		          + T7 * dAbulkCV_dVb + QovCox * dCoxeff_dVb; 
+		      Csb = Csg * dVgsteff_dVb + T6 * dVdseffCV_dVb
+		          + T7 * dAbulkCV_dVb + QovCox * dCoxeff_dVb;
 		      Csg = Csg * dVgsteff_dVg + QovCox * dCoxeff_dVg;
                   }
 		  else
 		  {   /* 50/50 partition */
                       qsrc = -0.5 * qgate;
                       Csg = -0.5 * Cgg1;
-                      Csd = -0.5 * Cgd1; 
-                      Csb = -0.5 * Cgb1; 
+                      Csd = -0.5 * Cgd1;
+                      Csb = -0.5 * Cgb1;
                   }
 
 		  qgate += Qac0 + Qsub0 - qbulk;
@@ -3444,7 +3444,7 @@ for (; model != NULL; model = model->BSIM4nextModel)
           }
 
 
-finished: 
+finished:
 
 	  /* Calculate junction C-V */
           if (ChargeComputationNeeded)
@@ -3477,7 +3477,7 @@ finished:
                           sarg = 1.0 / sqrt(arg);
 		      else
                           sarg = exp(-MJS * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbs) = model->BSIM4PhiBS * czbs 
+                      *(ckt->CKTstate0 + here->BSIM4qbs) = model->BSIM4PhiBS * czbs
 			               * (1.0 - arg * sarg) / (1.0 - MJS);
 		      here->BSIM4capbs = czbs * sarg;
 		  }
@@ -3509,8 +3509,8 @@ finished:
               }
 	      else
 	      {   T0 = czbs + czbssw + czbsswg;
-                  T1 = vbs_jct * (czbs * MJS / model->BSIM4PhiBS + czbssw * MJSWS 
-                     / model->BSIM4PhiBSWS + czbsswg * MJSWGS / model->BSIM4PhiBSWGS);    
+                  T1 = vbs_jct * (czbs * MJS / model->BSIM4PhiBS + czbssw * MJSWS
+                     / model->BSIM4PhiBSWS + czbsswg * MJSWGS / model->BSIM4PhiBSWGS);
                   *(ckt->CKTstate0 + here->BSIM4qbs) = vbs_jct * (T0 + 0.5 * T1);
                   here->BSIM4capbs = T0 + T1;
               }
@@ -3527,7 +3527,7 @@ finished:
                           sarg = 1.0 / sqrt(arg);
 		      else
                           sarg = exp(-MJD * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbd) = model->BSIM4PhiBD* czbd 
+                      *(ckt->CKTstate0 + here->BSIM4qbd) = model->BSIM4PhiBD* czbd
 			               * (1.0 - arg * sarg) / (1.0 - MJD);
                       here->BSIM4capbd = czbd * sarg;
 		  }
@@ -3541,7 +3541,7 @@ finished:
                           sarg = 1.0 / sqrt(arg);
 		      else
                           sarg = exp(-MJSWD * log(arg));
-                      *(ckt->CKTstate0 + here->BSIM4qbd) += model->BSIM4PhiBSWD * czbdsw 
+                      *(ckt->CKTstate0 + here->BSIM4qbd) += model->BSIM4PhiBSWD * czbdsw
 			               * (1.0 - arg * sarg) / (1.0 - MJSWD);
                       here->BSIM4capbd += czbdsw * sarg;
 		  }
@@ -3561,7 +3561,7 @@ finished:
                   T1 = vbd_jct * (czbd * MJD / model->BSIM4PhiBD + czbdsw * MJSWD
                      / model->BSIM4PhiBSWD + czbdswg * MJSWGD / model->BSIM4PhiBSWGD);
                   *(ckt->CKTstate0 + here->BSIM4qbd) = vbd_jct * (T0 + 0.5 * T1);
-                  here->BSIM4capbd = T0 + T1; 
+                  here->BSIM4capbd = T0 + T1;
               }
           }
 
@@ -3574,7 +3574,7 @@ finished:
 	  {   if (Check == 1)
 	      {   ckt->CKTnoncon++;
 #ifndef NEWCONV
-              } 
+              }
 	      else
               {   if (here->BSIM4mode >= 0)
                   {   Idtot = here->BSIM4cd + here->BSIM4csub
@@ -3630,21 +3630,21 @@ finished:
 
 
           if (!ChargeComputationNeeded)
-              goto line850; 
+              goto line850;
 
-	  if (here->BSIM4rgateMod == 3) 
-	  {   
-	          vgdx = vgmd; 
+	  if (here->BSIM4rgateMod == 3)
+	  {
+	          vgdx = vgmd;
 	          vgsx = vgms;
-	  }  
+	  }
 	  else  /* For rgateMod == 0, 1 and 2 */
 	  {
 	          vgdx = vgd;
 	          vgsx = vgs;
 	  }
-	  if (model->BSIM4capMod == 0) 
-	  {  
-	          cgdo = pParam->BSIM4cgdo; 
+	  if (model->BSIM4capMod == 0)
+	  {
+	          cgdo = pParam->BSIM4cgdo;
 	          qgdo = pParam->BSIM4cgdo * vgdx;
 	          cgso = pParam->BSIM4cgso;
 	          qgso = pParam->BSIM4cgso * vgsx;
@@ -3655,7 +3655,7 @@ finished:
 	      T2 = 0.5 * (T0 - T1);
 
 	      T3 = pParam->BSIM4weffCV * pParam->BSIM4cgdl;
-	      T4 = sqrt(1.0 - 4.0 * T2 / pParam->BSIM4ckappad); 
+	      T4 = sqrt(1.0 - 4.0 * T2 / pParam->BSIM4ckappad);
 	      cgdo = pParam->BSIM4cgdo + T3 - T3 * (1.0 - 1.0 / T4)
 		   * (0.5 - 0.5 * T0 / T1);
 	      qgdo = (pParam->BSIM4cgdo + T3) * vgdx - T3 * (T2
@@ -3677,7 +3677,7 @@ finished:
 	      cgso *= here->BSIM4nf;
               qgdo *= here->BSIM4nf;
               qgso *= here->BSIM4nf;
-	  }	
+	  }
           here->BSIM4cgdo = cgdo;
           here->BSIM4qgdo = qgdo;
           here->BSIM4cgso = cgso;
@@ -3701,7 +3701,7 @@ line755:
 
 		      gcggb = here->BSIM4cggb * ag0;
                       gcgdb = here->BSIM4cgdb * ag0;
-                      gcgsb = here->BSIM4cgsb * ag0;   
+                      gcgsb = here->BSIM4cgsb * ag0;
                       gcgbb = -(gcggb + gcgdb + gcgsb);
 
 		      gcdgb = here->BSIM4cdgb * ag0;
@@ -3749,7 +3749,7 @@ line755:
                       gcdbdb = 0.0; gcsbsb = 0.0;
                   }
                   else
-                  {   gcdbb  = -(here->BSIM4cddb + here->BSIM4cdgb 
+                  {   gcdbb  = -(here->BSIM4cddb + here->BSIM4cdgb
                              + here->BSIM4cdsb) * ag0;
                       gcsbb = -(gcsgb + gcsdb + gcssb + gcsgmb)
 			    + here->BSIM4capbs * ag0;
@@ -4125,13 +4125,13 @@ line755:
           }
 
           error = NIintegrate(ckt, &geq, &ceq, 0.0, here->BSIM4qb);
-          if (error) 
+          if (error)
               return(error);
           error = NIintegrate(ckt, &geq, &ceq, 0.0, here->BSIM4qg);
-          if (error) 
+          if (error)
               return(error);
           error = NIintegrate(ckt, &geq, &ceq, 0.0, here->BSIM4qd);
-          if (error) 
+          if (error)
               return(error);
 
           if (here->BSIM4rgateMod == 3)
@@ -4141,10 +4141,10 @@ line755:
 
           if (here->BSIM4rbodyMod)
           {   error = NIintegrate(ckt, &geq, &ceq, 0.0, here->BSIM4qbs);
-              if (error) 
+              if (error)
                   return(error);
               error = NIintegrate(ckt, &geq, &ceq, 0.0, here->BSIM4qbd);
-              if (error) 
+              if (error)
                   return(error);
           }
 
@@ -4183,7 +4183,7 @@ line850:
 
           goto line900;
 
-            
+
 line860:
           /* Calculate equivalent charge current */
 
@@ -4202,11 +4202,11 @@ line860:
               ceqqgmid = *(ckt->CKTstate0 + here->BSIM4cqgmid)
                        + gcgmdb * vbd + gcgmsb * vbs - gcgmgmb * vgmb;
 	  else
- 	      ceqqgmid = 0.0;	
+ 	      ceqqgmid = 0.0;
 
           if (here->BSIM4rbodyMod)
           {   ceqqjs = *(ckt->CKTstate0 + here->BSIM4cqbs) + gcsbsb * vbs_jct;
-              ceqqjd = *(ckt->CKTstate0 + here->BSIM4cqbd) + gcdbdb * vbd_jct; 
+              ceqqjd = *(ckt->CKTstate0 + here->BSIM4cqbd) + gcdbdb * vbd_jct;
           }
 
           if (here->BSIM4trnqsMod)
@@ -4258,12 +4258,12 @@ line900:
                     - (here->BSIM4gbds + here->BSIM4ggidld) * vds
 		    - (here->BSIM4gbgs + here->BSIM4ggidlg) * vgs
 		    - (here->BSIM4gbbs + here->BSIM4ggidlb) * vbs);
-              ceqbs = model->BSIM4type * (here->BSIM4Igisl + here->BSIM4ggisls * vds 
+              ceqbs = model->BSIM4type * (here->BSIM4Igisl + here->BSIM4ggisls * vds
               	    - here->BSIM4ggislg * vgd - here->BSIM4ggislb * vbd);
 
               gbbdp = -(here->BSIM4gbds);
-              gbbsp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs; 
-		    
+              gbbsp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs;
+
               gbdpg = here->BSIM4gbgs;
               gbdpdp = here->BSIM4gbds;
               gbdpb = here->BSIM4gbbs;
@@ -4313,7 +4313,7 @@ line900:
                   gIgtotd = gIstotd + gIdtotd + gIbtotd ;
                   gIgtots = gIstots + gIdtots + gIbtots;
                   gIgtotb = gIstotb + gIdtotb + gIbtotb;
-                  Igtoteq = Istoteq + Idtoteq + Ibtoteq; 
+                  Igtoteq = Istoteq + Idtoteq + Ibtoteq;
 	      }
 	      else
 	          gIgtotg = gIgtotd = gIgtots = gIgtotb = Igtoteq = 0.0;
@@ -4345,15 +4345,15 @@ line900:
               ceqdrn = -model->BSIM4type * (cdrain + here->BSIM4gds * vds
                      + Gm * vgd + Gmbs * vbd);
 
-              ceqbs = model->BSIM4type * (here->BSIM4csub + here->BSIM4Igisl 
+              ceqbs = model->BSIM4type * (here->BSIM4csub + here->BSIM4Igisl
                     + (here->BSIM4gbds + here->BSIM4ggisls) * vds
 		    - (here->BSIM4gbgs + here->BSIM4ggislg) * vgd
                     - (here->BSIM4gbbs + here->BSIM4ggislb) * vbd);
-              ceqbd = model->BSIM4type * (here->BSIM4Igidl - here->BSIM4ggidld * vds 
+              ceqbd = model->BSIM4type * (here->BSIM4Igidl - here->BSIM4ggidld * vds
               		- here->BSIM4ggidlg * vgs - here->BSIM4ggidlb * vbs);
 
               gbbsp = -(here->BSIM4gbds);
-              gbbdp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs; 
+              gbbdp = here->BSIM4gbds + here->BSIM4gbgs + here->BSIM4gbbs;
 
               gbdpg = 0.0;
               gbdpsp = 0.0;
@@ -4457,7 +4457,7 @@ line900:
                ceqjd = (here->BSIM4cbd - here->BSIM4gbd * vbd_jct);
            }
 	   else
-           {   ceqjs = -(here->BSIM4cbs - here->BSIM4gbs * vbs_jct); 
+           {   ceqjs = -(here->BSIM4cbs - here->BSIM4gbs * vbs_jct);
                ceqjd = -(here->BSIM4cbd - here->BSIM4gbd * vbd_jct);
                ceqqg = -ceqqg;
                ceqqd = -ceqqd;
@@ -4496,19 +4496,19 @@ line900:
            if (!here->BSIM4rbodyMod)
            {   (*(ckt->CKTrhs + here->BSIM4bNodePrime) += (ceqbd + ceqbs - ceqjd
                                                         - ceqjs - ceqqb + Ibtoteq));
-               (*(ckt->CKTrhs + here->BSIM4sNodePrime) += (ceqdrn - ceqbs + ceqjs 
+               (*(ckt->CKTrhs + here->BSIM4sNodePrime) += (ceqdrn - ceqbs + ceqjs
                               + ceqqg + ceqqb + ceqqd + ceqqgmid - ceqgstot + Istoteq));
            }
            else
            {   (*(ckt->CKTrhs + here->BSIM4dbNode) -= (ceqjd + ceqqjd));
                (*(ckt->CKTrhs + here->BSIM4bNodePrime) += (ceqbd + ceqbs - ceqqb + Ibtoteq));
                (*(ckt->CKTrhs + here->BSIM4sbNode) -= (ceqjs + ceqqjs));
-               (*(ckt->CKTrhs + here->BSIM4sNodePrime) += (ceqdrn - ceqbs + ceqjs + ceqqd 
+               (*(ckt->CKTrhs + here->BSIM4sNodePrime) += (ceqdrn - ceqbs + ceqjs + ceqqd
                 + ceqqg + ceqqb + ceqqjd + ceqqjs + ceqqgmid - ceqgstot + Istoteq));
            }
 
            if (model->BSIM4rdsMod)
-	   {   (*(ckt->CKTrhs + here->BSIM4dNode) -= ceqgdtot); 
+	   {   (*(ckt->CKTrhs + here->BSIM4dNode) -= ceqgdtot);
 	       (*(ckt->CKTrhs + here->BSIM4sNode) += ceqgstot);
 	   }
 
@@ -4547,12 +4547,12 @@ line900:
    	       (*(here->BSIM4GPspPtr) += gcgsb - ggts + gIgtots);
 	       (*(here->BSIM4GPbpPtr) += gcgbb - ggtb + gIgtotb);
            } /* WDLiu: gcrg already subtracted from all gcrgg below */
-           else if (here->BSIM4rgateMod == 2)	
+           else if (here->BSIM4rgateMod == 2)
 	   {   (*(here->BSIM4GEgePtr) += gcrg);
                (*(here->BSIM4GEgpPtr) += gcrgg);
                (*(here->BSIM4GEdpPtr) += gcrgd);
                (*(here->BSIM4GEspPtr) += gcrgs);
-	       (*(here->BSIM4GEbpPtr) += gcrgb);	
+	       (*(here->BSIM4GEbpPtr) += gcrgb);
 
                (*(here->BSIM4GPgePtr) -= gcrg);
   	       (*(here->BSIM4GPgpPtr) += gcggb  - gcrgg - ggtg + gIgtotg);
@@ -4661,7 +4661,7 @@ line900:
                (*(here->BSIM4SPsbPtr) -= here->BSIM4gbs - gcsbsb);
 
                (*(here->BSIM4DBdpPtr) += gcdbdb - here->BSIM4gbd);
-               (*(here->BSIM4DBdbPtr) += here->BSIM4gbd - gcdbdb 
+               (*(here->BSIM4DBdbPtr) += here->BSIM4gbd - gcdbdb
                                        + here->BSIM4grbpd + here->BSIM4grbdb);
                (*(here->BSIM4DBbpPtr) -= here->BSIM4grbpd);
                (*(here->BSIM4DBbPtr) -= here->BSIM4grbdb);
@@ -4669,14 +4669,14 @@ line900:
                (*(here->BSIM4BPdbPtr) -= here->BSIM4grbpd);
                (*(here->BSIM4BPbPtr) -= here->BSIM4grbpb);
                (*(here->BSIM4BPsbPtr) -= here->BSIM4grbps);
-               (*(here->BSIM4BPbpPtr) += here->BSIM4grbpd + here->BSIM4grbps 
+               (*(here->BSIM4BPbpPtr) += here->BSIM4grbpd + here->BSIM4grbps
                                        + here->BSIM4grbpb);
-	       /* WDLiu: (gcbbb - here->BSIM4gbbs) already added to BPbpPtr */	
+	       /* WDLiu: (gcbbb - here->BSIM4gbbs) already added to BPbpPtr */
 
                (*(here->BSIM4SBspPtr) += gcsbsb - here->BSIM4gbs);
                (*(here->BSIM4SBbpPtr) -= here->BSIM4grbps);
                (*(here->BSIM4SBbPtr) -= here->BSIM4grbsb);
-               (*(here->BSIM4SBsbPtr) += here->BSIM4gbs - gcsbsb 
+               (*(here->BSIM4SBsbPtr) += here->BSIM4gbs - gcsbsb
                                        + here->BSIM4grbps + here->BSIM4grbsb);
 
                (*(here->BSIM4BdbPtr) -= here->BSIM4grbdb);
@@ -4718,7 +4718,7 @@ int BSIM4polyDepletion(
     double T1, T2, T3, T4, T5, T6, T7, T8;
 
     /* Poly Gate Si Depletion Effect */
-    if ((ngate > 1.0e18) && 
+    if ((ngate > 1.0e18) &&
         (ngate < 1.0e25) && (Vgs > phi)) {
         T1 = 1.0e6 * CHARGE * EPSSI * ngate / (coxe * coxe);
         T8 = Vgs - phi;
@@ -4729,7 +4729,7 @@ int BSIM4polyDepletion(
         T6 = sqrt(T7 * T7 + 0.224);
         T5 = 1.12 - 0.5 * (T7 + T6);
         *Vgs_eff = Vgs - T5;
-        *dVgs_eff_dVg = 1.0 - (0.5 - 0.5 / T4) * (1.0 + T7 / T6); 
+        *dVgs_eff_dVg = 1.0 - (0.5 - 0.5 / T4) * (1.0 + T7 / T6);
     }
     else {
         *Vgs_eff = Vgs;

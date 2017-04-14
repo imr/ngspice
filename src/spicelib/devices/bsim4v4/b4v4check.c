@@ -34,7 +34,7 @@ CKTcircuit *ckt;
 struct bsim4SizeDependParam *pParam;
 int Fatal_Flag = 0;
 FILE *fplog;
-    
+
     if ((fplog = fopen("bsim4.out", "w")) != NULL)
     {   pParam = here->pParam;
         fprintf(fplog, "BSIM4: Berkeley Short Channel IGFET Model-4\n");
@@ -114,11 +114,11 @@ FILE *fplog;
         if (pParam->BSIM4phi <= 0.0)
         {   fprintf(fplog, "Fatal: Phi = %g is not positive. Please check Phin and Ndep\n",
                     pParam->BSIM4phi);
-            fprintf(fplog, "	   Phin = %g  Ndep = %g \n", 
+            fprintf(fplog, "	   Phin = %g  Ndep = %g \n",
             	    pParam->BSIM4phin, pParam->BSIM4ndep);
             printf("Fatal: Phi = %g is not positive. Please check Phin and Ndep\n",
                     pParam->BSIM4phi);
-            printf("	   Phin = %g  Ndep = %g \n", 
+            printf("	   Phin = %g  Ndep = %g \n",
             	    pParam->BSIM4phin, pParam->BSIM4ndep);
             Fatal_Flag = 1;
         }
@@ -152,23 +152,23 @@ FILE *fplog;
 
 	if (pParam->BSIM4dvt1 < 0.0)
 	{   fprintf(fplog, "Fatal: Dvt1 = %g is negative.\n",
-		    pParam->BSIM4dvt1);   
-	    printf("Fatal: Dvt1 = %g is negative.\n", pParam->BSIM4dvt1);   
+		    pParam->BSIM4dvt1);
+	    printf("Fatal: Dvt1 = %g is negative.\n", pParam->BSIM4dvt1);
 	    Fatal_Flag = 1;
 	}
-	    
+
 	if (pParam->BSIM4dvt1w < 0.0)
 	{   fprintf(fplog, "Fatal: Dvt1w = %g is negative.\n",
 		    pParam->BSIM4dvt1w);
 	    printf("Fatal: Dvt1w = %g is negative.\n", pParam->BSIM4dvt1w);
 	    Fatal_Flag = 1;
 	}
-	    
+
 	if (pParam->BSIM4w0 == -pParam->BSIM4weff)
 	{   fprintf(fplog, "Fatal: (W0 + Weff) = 0 causing divided-by-zero.\n");
 	    printf("Fatal: (W0 + Weff) = 0 causing divided-by-zero.\n");
 	    Fatal_Flag = 1;
-        }   
+        }
 
 	if (pParam->BSIM4dsub < 0.0)
 	{   fprintf(fplog, "Fatal: Dsub = %g is negative.\n", pParam->BSIM4dsub);
@@ -179,20 +179,20 @@ FILE *fplog;
 	{   fprintf(fplog, "Fatal: (B1 + Weff) = 0 causing divided-by-zero.\n");
 	    printf("Fatal: (B1 + Weff) = 0 causing divided-by-zero.\n");
 	    Fatal_Flag = 1;
-        }  
+        }
         if (here->BSIM4u0temp <= 0.0)
 	{   fprintf(fplog, "Fatal: u0 at current temperature = %g is not positive.\n", here->BSIM4u0temp);
 	    printf("Fatal: u0 at current temperature = %g is not positive.\n",
 		   here->BSIM4u0temp);
 	    Fatal_Flag = 1;
         }
-    
+
         if (pParam->BSIM4delta < 0.0)
 	{   fprintf(fplog, "Fatal: Delta = %g is less than zero.\n",
 		    pParam->BSIM4delta);
 	    printf("Fatal: Delta = %g is less than zero.\n", pParam->BSIM4delta);
 	    Fatal_Flag = 1;
-        }      
+        }
 
 	if (here->BSIM4vsattemp <= 0.0)
 	{   fprintf(fplog, "Fatal: Vsat at current temperature = %g is not positive.\n", here->BSIM4vsattemp);
@@ -219,7 +219,7 @@ FILE *fplog;
             Fatal_Flag = 1;
         }
 
-        if((here->BSIM4sa > 0.0) && (here->BSIM4sb > 0.0) && 
+        if((here->BSIM4sa > 0.0) && (here->BSIM4sb > 0.0) &&
        	((here->BSIM4nf == 1.0) || ((here->BSIM4nf > 1.0) && (here->BSIM4sd > 0.0))) )
         {   if (model->BSIM4saref <= 0.0)
             {   fprintf(fplog, "Fatal: SAref = %g is not positive.\n",model->BSIM4saref);
@@ -316,7 +316,7 @@ FILE *fplog;
 	{   fprintf(fplog, "Fatal: Clc = %g is negative.\n", pParam->BSIM4clc);
 	    printf("Fatal: Clc = %g is negative.\n", pParam->BSIM4clc);
 	    Fatal_Flag = 1;
-        }      
+        }
 
         /* Check overlap capacitance parameters */
         if (pParam->BSIM4ckappas < 0.02)
@@ -334,35 +334,35 @@ FILE *fplog;
 
       if (model->BSIM4paramChk ==1)
       {
-/* Check L and W parameters */ 
+/* Check L and W parameters */
 	if (pParam->BSIM4leff <= 1.0e-9)
-	{   fprintf(fplog, "Warning: Leff = %g <= 1.0e-9. Recommended Leff >= 1e-8 \n", 
+	{   fprintf(fplog, "Warning: Leff = %g <= 1.0e-9. Recommended Leff >= 1e-8 \n",
 		    pParam->BSIM4leff);
 	    printf("Warning: Leff = %g <= 1.0e-9. Recommended Leff >= 1e-8 \n",
 		    pParam->BSIM4leff);
-	}    
-	
+	}
+
 	if (pParam->BSIM4leffCV <= 1.0e-9)
 	{   fprintf(fplog, "Warning: Leff for CV = %g <= 1.0e-9. Recommended LeffCV >=1e-8 \n",
 		    pParam->BSIM4leffCV);
 	    printf("Warning: Leff for CV = %g <= 1.0e-9. Recommended LeffCV >=1e-8 \n",
 		    pParam->BSIM4leffCV);
-	}  
-	
+	}
+
         if (pParam->BSIM4weff <= 1.0e-9)
 	{   fprintf(fplog, "Warning: Weff = %g <= 1.0e-9. Recommended Weff >=1e-7 \n",
 		    pParam->BSIM4weff);
 	    printf("Warning: Weff = %g <= 1.0e-9. Recommended Weff >=1e-7 \n",
 		   pParam->BSIM4weff);
-	}             
-	
+	}
+
 	if (pParam->BSIM4weffCV <= 1.0e-9)
 	{   fprintf(fplog, "Warning: Weff for CV = %g <= 1.0e-9. Recommended WeffCV >= 1e-7 \n",
 		    pParam->BSIM4weffCV);
 	    printf("Warning: Weff for CV = %g <= 1.0e-9. Recommended WeffCV >= 1e-7 \n",
 		    pParam->BSIM4weffCV);
-	}        
-	
+	}
+
         /* Check threshold voltage parameters */
 	if (model->BSIM4toxe < 1.0e-10)
 	{   fprintf(fplog, "Warning: Toxe = %g is less than 1A. Recommended Toxe >= 5A\n",
@@ -413,13 +413,13 @@ FILE *fplog;
 	    printf("Warning: Ngate = %g is less than 1.E18cm^-3.\n",
 	           pParam->BSIM4ngate);
 	}
-       
+
         if (pParam->BSIM4dvt0 < 0.0)
 	{   fprintf(fplog, "Warning: Dvt0 = %g is negative.\n",
-		    pParam->BSIM4dvt0);   
-	    printf("Warning: Dvt0 = %g is negative.\n", pParam->BSIM4dvt0);   
+		    pParam->BSIM4dvt0);
+	    printf("Warning: Dvt0 = %g is negative.\n", pParam->BSIM4dvt0);
 	}
-	    
+
 	if (fabs(1.0e-8 / (pParam->BSIM4w0 + pParam->BSIM4weff)) > 10.0)
 	{   fprintf(fplog, "Warning: (W0 + Weff) may be too small.\n");
 	    printf("Warning: (W0 + Weff) may be too small.\n");
@@ -444,16 +444,16 @@ FILE *fplog;
 /* Check DIBL parameters */
 	if (here->BSIM4eta0 < 0.0)
 	{   fprintf(fplog, "Warning: Eta0 = %g is negative.\n",
-		    here->BSIM4eta0); 
-	    printf("Warning: Eta0 = %g is negative.\n", here->BSIM4eta0); 
+		    here->BSIM4eta0);
+	    printf("Warning: Eta0 = %g is negative.\n", here->BSIM4eta0);
 	}
-	      
-/* Check Abulk parameters */	    
+
+/* Check Abulk parameters */
 	 if (fabs(1.0e-8 / (pParam->BSIM4b1 + pParam->BSIM4weff)) > 10.0)
        	{   fprintf(fplog, "Warning: (B1 + Weff) may be too small.\n");
        	    printf("Warning: (B1 + Weff) may be too small.\n");
-        }    
-    
+        }
+
 
 /* Check Saturation parameters */
      	if (pParam->BSIM4a2 < 0.01)
@@ -515,7 +515,7 @@ FILE *fplog;
 	   printf("Warning: Vsat at current temperature = %g may be too small.\n", pParam->BSIM4vsattemp);
 	}
 
-      if((model->BSIM4lambdaGiven) && (pParam->BSIM4lambda > 0.0) ) 
+      if((model->BSIM4lambdaGiven) && (pParam->BSIM4lambda > 0.0) )
       {
         if (pParam->BSIM4lambda > 1.0e-9)
 	{   fprintf(fplog, "Warning: Lambda = %g may be too large.\n", pParam->BSIM4lambda);
@@ -524,7 +524,7 @@ FILE *fplog;
       }
 
       if((model->BSIM4vtlGiven) && (pParam->BSIM4vtl > 0.0) )
-      {  
+      {
         if (pParam->BSIM4vtl < 6.0e4)
 	{   fprintf(fplog, "Warning: Thermal velocity vtl = %g may be too small.\n", pParam->BSIM4vtl);
 	   printf("Warning: Thermal velocity vtl = %g may be too small.\n", pParam->BSIM4vtl);
@@ -554,8 +554,8 @@ FILE *fplog;
 	    printf("Warning: Pdibl2 = %g is negative.\n", pParam->BSIM4pdibl2);
 	}
 
-/* Check stress effect parameters */        
-        if((here->BSIM4sa > 0.0) && (here->BSIM4sb > 0.0) && 
+/* Check stress effect parameters */
+        if((here->BSIM4sa > 0.0) && (here->BSIM4sb > 0.0) &&
        	((here->BSIM4nf == 1.0) || ((here->BSIM4nf > 1.0) && (here->BSIM4sd > 0.0))) )
         {   if (model->BSIM4lodk2 <= 0.0)
             {   fprintf(fplog, "Warning: LODK2 = %g is not positive.\n",model->BSIM4lodk2);
@@ -567,7 +567,7 @@ FILE *fplog;
             }
  	}
 
-/* Check gate resistance parameters */        
+/* Check gate resistance parameters */
         if (here->BSIM4rgateMod == 1)
         {   if (model->BSIM4rshg <= 0.0)
 	        printf("Warning: rshg should be positive for rgateMod = 1.\n");
@@ -584,7 +584,7 @@ FILE *fplog;
             else if (pParam->BSIM4xrcrg1 <= 0.0)
                      printf("Warning: xrcrg1 should be positive for rgateMod = 3.\n");
          }
-         
+
 /* Check capacitance parameters */
         if (pParam->BSIM4noff < 0.1)
         {   fprintf(fplog, "Warning: Noff = %g is too small.\n",
@@ -626,14 +626,14 @@ FILE *fplog;
 	{   fprintf(fplog, "Warning: cgdo = %g is negative. Set to zero.\n", model->BSIM4cgdo);
 	    printf("Warning: cgdo = %g is negative. Set to zero.\n", model->BSIM4cgdo);
 	    model->BSIM4cgdo = 0.0;
-        }      
+        }
         if (model->BSIM4cgso < 0.0)
 	{   fprintf(fplog, "Warning: cgso = %g is negative. Set to zero.\n", model->BSIM4cgso);
 	    printf("Warning: cgso = %g is negative. Set to zero.\n", model->BSIM4cgso);
 	    model->BSIM4cgso = 0.0;
-        }      
+        }
 
-      if (model->BSIM4tnoiMod == 1) { 
+      if (model->BSIM4tnoiMod == 1) {
         if (model->BSIM4tnoia < 0.0)
         {   fprintf(fplog, "Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
             printf("Warning: tnoia = %g is negative. Set to zero.\n", model->BSIM4tnoia);
@@ -730,7 +730,7 @@ FILE *fplog;
             model->BSIM4ntnoi = 0.0;
         }
 
-     }/* loop for the parameter check for warning messages */      
+     }/* loop for the parameter check for warning messages */
 	fclose(fplog);
     }
     else

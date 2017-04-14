@@ -49,7 +49,7 @@ SPICEdev B4info = {
     BSIM4destroy,
 #ifdef DELETES
     BSIM4mDelete,
-    BSIM4delete, 
+    BSIM4delete,
 #else /* DELETES */
     NULL,
     NULL,

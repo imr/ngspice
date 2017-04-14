@@ -27,7 +27,7 @@ GENinstance *inst;
 IFvalue *select;
 {
     BSIM4instance *here = (BSIM4instance*)inst;
-    switch(param) 
+    switch(param)
     {   case BSIM4_W:
             here->BSIM4w = value->rValue;
             here->BSIM4wGiven = TRUE;

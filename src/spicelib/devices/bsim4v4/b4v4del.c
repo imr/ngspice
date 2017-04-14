@@ -28,9 +28,9 @@ BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance **prev = NULL;
 BSIM4instance *here;
 
-    for (; model ; model = model->BSIM4nextModel) 
+    for (; model ; model = model->BSIM4nextModel)
     {    prev = &(model->BSIM4instances);
-         for (here = *prev; here ; here = *prev) 
+         for (here = *prev; here ; here = *prev)
 	 {    if (here->BSIM4name == name || (fast && here==*fast))
 	      {   *prev= here->BSIM4nextInstance;
                   FREE(here);

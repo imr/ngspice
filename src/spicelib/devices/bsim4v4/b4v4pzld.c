@@ -50,9 +50,9 @@ struct bsim4SizeDependParam *pParam;
 double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 
 
-    for (; model != NULL; model = model->BSIM4nextModel) 
+    for (; model != NULL; model = model->BSIM4nextModel)
     {    for (here = model->BSIM4instances; here!= NULL;
-              here = here->BSIM4nextInstance) 
+              here = here->BSIM4nextInstance)
 	 {    pParam = here->pParam;
               capbd = here->BSIM4capbd;
               capbs = here->BSIM4capbs;
@@ -60,7 +60,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
               cgdo = here->BSIM4cgdo;
               cgbo = pParam->BSIM4cgbo;
 
-              if (here->BSIM4mode >= 0) 
+              if (here->BSIM4mode >= 0)
               {   Gm = here->BSIM4gm;
                   Gmbs = here->BSIM4gmbs;
                   FwdSum = Gm + Gmbs;
@@ -195,9 +195,9 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                       xgtg = xgtd = xgts = xgtb = 0.0;
 		      sxpart = 0.6;
                       dxpart = 0.4;
-		      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb 
+		      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb
 				  = ddxpart_dVs = 0.0;
-		      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb 
+		      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
 				  = dsxpart_dVs = 0.0;
                   }
                   else
@@ -248,7 +248,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 			      + here->BSIM4cbsb);
 		          ddxpart_dVs = (Cds - dxpart * (Cds + Css)) / qcheq;
 
-		          ddxpart_dVb = -(ddxpart_dVd + ddxpart_dVg 
+		          ddxpart_dVb = -(ddxpart_dVd + ddxpart_dVg
 				      + ddxpart_dVs);
 		      }
 		      sxpart = 1.0 - dxpart;
@@ -334,7 +334,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                           xcgmdb = -cgdo;
                           xcgmsb = -cgso;
                           xcgmbb = -pParam->BSIM4cgbo;
-   
+
                           xcdgmb = xcgmdb;
                           xcsgmb = xcgmsb;
                           xcbgmb = xcgmbb;
@@ -393,9 +393,9 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                       xgtg = xgtd = xgts = xgtb = 0.0;
 		      sxpart = 0.4;
                       dxpart = 0.6;
-		      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb 
+		      ddxpart_dVd = ddxpart_dVg = ddxpart_dVb
 				  = ddxpart_dVs = 0.0;
-		      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb 
+		      dsxpart_dVd = dsxpart_dVg = dsxpart_dVb
 				  = dsxpart_dVs = 0.0;
                   }
                   else
@@ -446,7 +446,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
 			      + here->BSIM4cbsb);
 		          dsxpart_dVd = (Csd - sxpart * (Csd + Cdd)) / qcheq;
 
-		          dsxpart_dVb = -(dsxpart_dVd + dsxpart_dVg 
+		          dsxpart_dVb = -(dsxpart_dVd + dsxpart_dVg
 				      + dsxpart_dVs);
 		      }
 		      dxpart = 1.0 - sxpart;
@@ -545,7 +545,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   *(here->BSIM4GMgmPtr) += geltd + gcrg;
                   *(here->BSIM4GMgmPtr ) += xcgmgmb * s->real;
                   *(here->BSIM4GMgmPtr +1) += xcgmgmb * s->imag;
-  
+
                   *(here->BSIM4GMdpPtr) += gcrgd;
                   *(here->BSIM4GMdpPtr ) += xcgmdb * s->real;
                   *(here->BSIM4GMdpPtr +1) += xcgmdb * s->imag;
@@ -556,7 +556,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   *(here->BSIM4GMbpPtr) += gcrgb;
                   *(here->BSIM4GMbpPtr ) += xcgmbb * s->real;
                   *(here->BSIM4GMbpPtr +1) += xcgmbb * s->imag;
-  
+
                   *(here->BSIM4DPgmPtr ) += xcdgmb * s->real;
                   *(here->BSIM4DPgmPtr +1) += xcdgmb * s->imag;
                   *(here->BSIM4GPgmPtr) -= gcrg;
@@ -564,7 +564,7 @@ double ggidld, ggidlg, ggidlb,ggisld, ggislg, ggislb, ggisls;
                   *(here->BSIM4SPgmPtr +1) += xcsgmb * s->imag;
                   *(here->BSIM4BPgmPtr ) += xcbgmb * s->real;
                   *(here->BSIM4BPgmPtr +1) += xcbgmb * s->imag;
-  
+
                   *(here->BSIM4GPgpPtr) -= gcrgg + xgtg - gIgtotg;
                   *(here->BSIM4GPgpPtr ) += xcggb * s->real;
                   *(here->BSIM4GPgpPtr +1) += xcggb * s->imag;

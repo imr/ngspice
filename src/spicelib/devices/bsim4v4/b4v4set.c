@@ -62,9 +62,9 @@ JOB   *job;
     for( ; model != NULL; model = model->BSIM4nextModel )
     {   /* process defaults of model parameters */
         if (!model->BSIM4typeGiven)
-            model->BSIM4type = NMOS;     
+            model->BSIM4type = NMOS;
 
-        if (!model->BSIM4mobModGiven) 
+        if (!model->BSIM4mobModGiven)
             model->BSIM4mobMod = 0;
 	else if ((model->BSIM4mobMod != 0) && (model->BSIM4mobMod != 1)
 	         && (model->BSIM4mobMod != 2))
@@ -72,9 +72,9 @@ JOB   *job;
             printf("Warning: mobMod has been set to its default value: 0.\n");
 	}
 
-        if (!model->BSIM4binUnitGiven) 
+        if (!model->BSIM4binUnitGiven)
             model->BSIM4binUnit = 1;
-        if (!model->BSIM4paramChkGiven) 
+        if (!model->BSIM4paramChkGiven)
             model->BSIM4paramChk = 1;
 
         if (!model->BSIM4dioModGiven)
@@ -85,7 +85,7 @@ JOB   *job;
             printf("Warning: dioMod has been set to its default value: 1.\n");
         }
 
-        if (!model->BSIM4capModGiven) 
+        if (!model->BSIM4capModGiven)
             model->BSIM4capMod = 2;
         else if ((model->BSIM4capMod != 0) && (model->BSIM4capMod != 1)
             && (model->BSIM4capMod != 2))
@@ -124,7 +124,7 @@ JOB   *job;
         if (!model->BSIM4geoModGiven)
             model->BSIM4geoMod = 0;
 
-        if (!model->BSIM4fnoiModGiven) 
+        if (!model->BSIM4fnoiModGiven)
             model->BSIM4fnoiMod = 1;
         else if ((model->BSIM4fnoiMod != 0) && (model->BSIM4fnoiMod != 1))
         {   model->BSIM4fnoiMod = 1;
@@ -138,7 +138,7 @@ JOB   *job;
         }
 
         if (!model->BSIM4trnqsModGiven)
-            model->BSIM4trnqsMod = 0; 
+            model->BSIM4trnqsMod = 0;
         else if ((model->BSIM4trnqsMod != 0) && (model->BSIM4trnqsMod != 1))
         {   model->BSIM4trnqsMod = 0;
             printf("Warning: trnqsMod has been set to its default value: 0.\n");
@@ -169,7 +169,7 @@ JOB   *job;
             printf("Warning: tempMod has been set to its default value: 0.\n");
         }
 
-        if (!model->BSIM4versionGiven) 
+        if (!model->BSIM4versionGiven)
             model->BSIM4version = "4.4.0";
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
@@ -187,7 +187,7 @@ JOB   *job;
         if (!model->BSIM4cdscGiven)
 	    model->BSIM4cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM4cdscbGiven)
-	    model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */    
+	    model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */
 	    if (!model->BSIM4cdscdGiven)
 	    model->BSIM4cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM4citGiven)
@@ -197,11 +197,11 @@ JOB   *job;
         if (!model->BSIM4xjGiven)
             model->BSIM4xj = .15e-6;
         if (!model->BSIM4vsatGiven)
-            model->BSIM4vsat = 8.0e4;    /* unit m/s */ 
+            model->BSIM4vsat = 8.0e4;    /* unit m/s */
         if (!model->BSIM4atGiven)
-            model->BSIM4at = 3.3e4;    /* unit m/s */ 
+            model->BSIM4at = 3.3e4;    /* unit m/s */
         if (!model->BSIM4a0Given)
-            model->BSIM4a0 = 1.0;  
+            model->BSIM4a0 = 1.0;
         if (!model->BSIM4agsGiven)
             model->BSIM4ags = 0.0;
         if (!model->BSIM4a1Given)
@@ -231,13 +231,13 @@ JOB   *job;
         if (!model->BSIM4kt2Given)
             model->BSIM4kt2 = 0.022;      /* No unit */
         if (!model->BSIM4k3Given)
-            model->BSIM4k3 = 80.0;      
+            model->BSIM4k3 = 80.0;
         if (!model->BSIM4k3bGiven)
-            model->BSIM4k3b = 0.0;      
+            model->BSIM4k3b = 0.0;
         if (!model->BSIM4w0Given)
-            model->BSIM4w0 = 2.5e-6;    
+            model->BSIM4w0 = 2.5e-6;
         if (!model->BSIM4lpe0Given)
-            model->BSIM4lpe0 = 1.74e-7;     
+            model->BSIM4lpe0 = 1.74e-7;
         if (!model->BSIM4lpebGiven)
             model->BSIM4lpeb = 0.0;
         if (!model->BSIM4dvtp0Given)
@@ -245,23 +245,23 @@ JOB   *job;
         if (!model->BSIM4dvtp1Given)
             model->BSIM4dvtp1 = 0.0;
         if (!model->BSIM4dvt0Given)
-            model->BSIM4dvt0 = 2.2;    
+            model->BSIM4dvt0 = 2.2;
         if (!model->BSIM4dvt1Given)
-            model->BSIM4dvt1 = 0.53;      
+            model->BSIM4dvt1 = 0.53;
         if (!model->BSIM4dvt2Given)
-            model->BSIM4dvt2 = -0.032;   /* unit 1 / V */     
+            model->BSIM4dvt2 = -0.032;   /* unit 1 / V */
 
         if (!model->BSIM4dvt0wGiven)
-            model->BSIM4dvt0w = 0.0;    
+            model->BSIM4dvt0w = 0.0;
         if (!model->BSIM4dvt1wGiven)
-            model->BSIM4dvt1w = 5.3e6;    
+            model->BSIM4dvt1w = 5.3e6;
         if (!model->BSIM4dvt2wGiven)
-            model->BSIM4dvt2w = -0.032;   
+            model->BSIM4dvt2w = -0.032;
 
         if (!model->BSIM4droutGiven)
-            model->BSIM4drout = 0.56;     
+            model->BSIM4drout = 0.56;
         if (!model->BSIM4dsubGiven)
-            model->BSIM4dsub = model->BSIM4drout;     
+            model->BSIM4dsub = model->BSIM4drout;
         if (!model->BSIM4vth0Given)
             model->BSIM4vth0 = (model->BSIM4type == NMOS) ? 0.7 : -0.7;
         if (!model->BSIM4euGiven)
@@ -275,13 +275,13 @@ JOB   *job;
         if (!model->BSIM4ub1Given)
             model->BSIM4ub1 = -1.0e-18;     /* unit (m/V)**2 */
         if (!model->BSIM4ucGiven)
-            model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;   
+            model->BSIM4uc = (model->BSIM4mobMod == 1) ? -0.0465 : -0.0465e-9;
         if (!model->BSIM4uc1Given)
-            model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;   
+            model->BSIM4uc1 = (model->BSIM4mobMod == 1) ? -0.056 : -0.056e-9;
         if (!model->BSIM4u0Given)
             model->BSIM4u0 = (model->BSIM4type == NMOS) ? 0.067 : 0.025;
         if (!model->BSIM4uteGiven)
-	    model->BSIM4ute = -1.5;    
+	    model->BSIM4ute = -1.5;
         if (!model->BSIM4voffGiven)
 	    model->BSIM4voff = -0.08;
         if (!model->BSIM4vofflGiven)
@@ -296,7 +296,7 @@ JOB   *job;
             model->BSIM4pditsd = 0.0;
         if (!model->BSIM4pditslGiven)
             model->BSIM4pditsl = 0.0;
-        if (!model->BSIM4deltaGiven)  
+        if (!model->BSIM4deltaGiven)
            model->BSIM4delta = 0.01;
         if (!model->BSIM4rdswminGiven)
             model->BSIM4rdswmin = 0.0;
@@ -305,7 +305,7 @@ JOB   *job;
         if (!model->BSIM4rswminGiven)
             model->BSIM4rswmin = 0.0;
         if (!model->BSIM4rdswGiven)
-	    model->BSIM4rdsw = 200.0; /* in ohm*um */     
+	    model->BSIM4rdsw = 200.0; /* in ohm*um */
         if (!model->BSIM4rdwGiven)
             model->BSIM4rdw = 100.0;
         if (!model->BSIM4rswGiven)
@@ -313,43 +313,43 @@ JOB   *job;
         if (!model->BSIM4prwgGiven)
             model->BSIM4prwg = 1.0; /* in 1/V */
         if (!model->BSIM4prwbGiven)
-            model->BSIM4prwb = 0.0;      
+            model->BSIM4prwb = 0.0;
         if (!model->BSIM4prtGiven)
         if (!model->BSIM4prtGiven)
-            model->BSIM4prt = 0.0;      
+            model->BSIM4prt = 0.0;
         if (!model->BSIM4eta0Given)
-            model->BSIM4eta0 = 0.08;      /* no unit  */ 
+            model->BSIM4eta0 = 0.08;      /* no unit  */
         if (!model->BSIM4etabGiven)
-            model->BSIM4etab = -0.07;      /* unit  1/V */ 
+            model->BSIM4etab = -0.07;      /* unit  1/V */
         if (!model->BSIM4pclmGiven)
-            model->BSIM4pclm = 1.3;      /* no unit  */ 
+            model->BSIM4pclm = 1.3;      /* no unit  */
         if (!model->BSIM4pdibl1Given)
             model->BSIM4pdibl1 = 0.39;    /* no unit  */
         if (!model->BSIM4pdibl2Given)
-            model->BSIM4pdibl2 = 0.0086;    /* no unit  */ 
+            model->BSIM4pdibl2 = 0.0086;    /* no unit  */
         if (!model->BSIM4pdiblbGiven)
-            model->BSIM4pdiblb = 0.0;    /* 1/V  */ 
+            model->BSIM4pdiblb = 0.0;    /* 1/V  */
         if (!model->BSIM4pscbe1Given)
-            model->BSIM4pscbe1 = 4.24e8;     
+            model->BSIM4pscbe1 = 4.24e8;
         if (!model->BSIM4pscbe2Given)
-            model->BSIM4pscbe2 = 1.0e-5;    
+            model->BSIM4pscbe2 = 1.0e-5;
         if (!model->BSIM4pvagGiven)
-            model->BSIM4pvag = 0.0;     
-        if (!model->BSIM4wrGiven)  
+            model->BSIM4pvag = 0.0;
+        if (!model->BSIM4wrGiven)
             model->BSIM4wr = 1.0;
-        if (!model->BSIM4dwgGiven)  
+        if (!model->BSIM4dwgGiven)
             model->BSIM4dwg = 0.0;
-        if (!model->BSIM4dwbGiven)  
+        if (!model->BSIM4dwbGiven)
             model->BSIM4dwb = 0.0;
         if (!model->BSIM4b0Given)
             model->BSIM4b0 = 0.0;
-        if (!model->BSIM4b1Given)  
+        if (!model->BSIM4b1Given)
             model->BSIM4b1 = 0.0;
-        if (!model->BSIM4alpha0Given)  
+        if (!model->BSIM4alpha0Given)
             model->BSIM4alpha0 = 0.0;
         if (!model->BSIM4alpha1Given)
             model->BSIM4alpha1 = 0.0;
-        if (!model->BSIM4beta0Given)  
+        if (!model->BSIM4beta0Given)
             model->BSIM4beta0 = 30.0;
         if (!model->BSIM4agidlGiven)
             model->BSIM4agidl = 0.0;
@@ -422,15 +422,15 @@ JOB   *job;
         if (!model->BSIM4lambdaGiven)
             model->BSIM4lambda = 0.0;
         if (!model->BSIM4vtlGiven)
-            model->BSIM4vtl = 2.0e5;    /* unit m/s */ 
+            model->BSIM4vtl = 2.0e5;    /* unit m/s */
         if (!model->BSIM4xnGiven)
-            model->BSIM4xn = 3.0;   
+            model->BSIM4xn = 3.0;
         if (!model->BSIM4lcGiven)
-            model->BSIM4lc = 5.0e-9;   
-        if (!model->BSIM4vfbsdoffGiven)  
-            model->BSIM4vfbsdoff = 0.0;  /* unit v */  
+            model->BSIM4lc = 5.0e-9;
+        if (!model->BSIM4vfbsdoffGiven)
+            model->BSIM4vfbsdoff = 0.0;  /* unit v */
         if (!model->BSIM4lintnoiGiven)
-            model->BSIM4lintnoi = 0.0;  /* unit m */  
+            model->BSIM4lintnoi = 0.0;  /* unit m */
 
         if (!model->BSIM4xjbvsGiven)
             model->BSIM4xjbvs = 1.0; /* no unit */
@@ -454,19 +454,19 @@ JOB   *job;
         if (!model->BSIM4rbpdGiven)
             model->BSIM4rbpd = 50.0;
 
-        if (!model->BSIM4cgslGiven)  
+        if (!model->BSIM4cgslGiven)
             model->BSIM4cgsl = 0.0;
-        if (!model->BSIM4cgdlGiven)  
+        if (!model->BSIM4cgdlGiven)
             model->BSIM4cgdl = 0.0;
-        if (!model->BSIM4ckappasGiven)  
+        if (!model->BSIM4ckappasGiven)
             model->BSIM4ckappas = 0.6;
         if (!model->BSIM4ckappadGiven)
             model->BSIM4ckappad = model->BSIM4ckappas;
-        if (!model->BSIM4clcGiven)  
+        if (!model->BSIM4clcGiven)
             model->BSIM4clc = 0.1e-6;
-        if (!model->BSIM4cleGiven)  
+        if (!model->BSIM4cleGiven)
             model->BSIM4cle = 0.6;
-        if (!model->BSIM4vfbcvGiven)  
+        if (!model->BSIM4vfbcvGiven)
             model->BSIM4vfbcv = -1.0;
         if (!model->BSIM4acdeGiven)
             model->BSIM4acde = 1.0;
@@ -510,7 +510,7 @@ JOB   *job;
 	    model->BSIM4lcdsc = 0.0;
         if (!model->BSIM4lcdscbGiven)
 	    model->BSIM4lcdscb = 0.0;
-	    if (!model->BSIM4lcdscdGiven) 
+	    if (!model->BSIM4lcdscdGiven)
 	    model->BSIM4lcdscd = 0.0;
         if (!model->BSIM4lcitGiven)
 	    model->BSIM4lcit = 0.0;
@@ -523,7 +523,7 @@ JOB   *job;
         if (!model->BSIM4latGiven)
             model->BSIM4lat = 0.0;
         if (!model->BSIM4la0Given)
-            model->BSIM4la0 = 0.0; 
+            model->BSIM4la0 = 0.0;
         if (!model->BSIM4lagsGiven)
             model->BSIM4lags = 0.0;
         if (!model->BSIM4la1Given)
@@ -547,39 +547,39 @@ JOB   *job;
         if (!model->BSIM4lxtGiven)
 	    model->BSIM4lxt = 0.0;
         if (!model->BSIM4lkt1Given)
-            model->BSIM4lkt1 = 0.0; 
+            model->BSIM4lkt1 = 0.0;
         if (!model->BSIM4lkt1lGiven)
             model->BSIM4lkt1l = 0.0;
         if (!model->BSIM4lkt2Given)
             model->BSIM4lkt2 = 0.0;
         if (!model->BSIM4lk3Given)
-            model->BSIM4lk3 = 0.0;      
+            model->BSIM4lk3 = 0.0;
         if (!model->BSIM4lk3bGiven)
-            model->BSIM4lk3b = 0.0;      
+            model->BSIM4lk3b = 0.0;
         if (!model->BSIM4lw0Given)
-            model->BSIM4lw0 = 0.0;    
+            model->BSIM4lw0 = 0.0;
         if (!model->BSIM4llpe0Given)
             model->BSIM4llpe0 = 0.0;
         if (!model->BSIM4llpebGiven)
-            model->BSIM4llpeb = 0.0; 
+            model->BSIM4llpeb = 0.0;
         if (!model->BSIM4ldvtp0Given)
             model->BSIM4ldvtp0 = 0.0;
         if (!model->BSIM4ldvtp1Given)
             model->BSIM4ldvtp1 = 0.0;
         if (!model->BSIM4ldvt0Given)
-            model->BSIM4ldvt0 = 0.0;    
+            model->BSIM4ldvt0 = 0.0;
         if (!model->BSIM4ldvt1Given)
-            model->BSIM4ldvt1 = 0.0;      
+            model->BSIM4ldvt1 = 0.0;
         if (!model->BSIM4ldvt2Given)
             model->BSIM4ldvt2 = 0.0;
         if (!model->BSIM4ldvt0wGiven)
-            model->BSIM4ldvt0w = 0.0;    
+            model->BSIM4ldvt0w = 0.0;
         if (!model->BSIM4ldvt1wGiven)
-            model->BSIM4ldvt1w = 0.0;      
+            model->BSIM4ldvt1w = 0.0;
         if (!model->BSIM4ldvt2wGiven)
             model->BSIM4ldvt2w = 0.0;
         if (!model->BSIM4ldroutGiven)
-            model->BSIM4ldrout = 0.0;     
+            model->BSIM4ldrout = 0.0;
         if (!model->BSIM4ldsubGiven)
             model->BSIM4ldsub = 0.0;
         if (!model->BSIM4lvth0Given)
@@ -599,7 +599,7 @@ JOB   *job;
         if (!model->BSIM4lu0Given)
             model->BSIM4lu0 = 0.0;
         if (!model->BSIM4luteGiven)
-	    model->BSIM4lute = 0.0;    
+	    model->BSIM4lute = 0.0;
         if (!model->BSIM4lvoffGiven)
 	    model->BSIM4lvoff = 0.0;
         if (!model->BSIM4lminvGiven)
@@ -610,7 +610,7 @@ JOB   *job;
             model->BSIM4lpdits = 0.0;
         if (!model->BSIM4lpditsdGiven)
             model->BSIM4lpditsd = 0.0;
-        if (!model->BSIM4ldeltaGiven)  
+        if (!model->BSIM4ldeltaGiven)
             model->BSIM4ldelta = 0.0;
         if (!model->BSIM4lrdswGiven)
             model->BSIM4lrdsw = 0.0;
@@ -629,7 +629,7 @@ JOB   *job;
         if (!model->BSIM4letabGiven)
             model->BSIM4letab = -0.0;
         if (!model->BSIM4lpclmGiven)
-            model->BSIM4lpclm = 0.0; 
+            model->BSIM4lpclm = 0.0;
         if (!model->BSIM4lpdibl1Given)
             model->BSIM4lpdibl1 = 0.0;
         if (!model->BSIM4lpdibl2Given)
@@ -641,22 +641,22 @@ JOB   *job;
         if (!model->BSIM4lpscbe2Given)
             model->BSIM4lpscbe2 = 0.0;
         if (!model->BSIM4lpvagGiven)
-            model->BSIM4lpvag = 0.0;     
-        if (!model->BSIM4lwrGiven)  
+            model->BSIM4lpvag = 0.0;
+        if (!model->BSIM4lwrGiven)
             model->BSIM4lwr = 0.0;
-        if (!model->BSIM4ldwgGiven)  
+        if (!model->BSIM4ldwgGiven)
             model->BSIM4ldwg = 0.0;
-        if (!model->BSIM4ldwbGiven)  
+        if (!model->BSIM4ldwbGiven)
             model->BSIM4ldwb = 0.0;
         if (!model->BSIM4lb0Given)
             model->BSIM4lb0 = 0.0;
-        if (!model->BSIM4lb1Given)  
+        if (!model->BSIM4lb1Given)
             model->BSIM4lb1 = 0.0;
-        if (!model->BSIM4lalpha0Given)  
+        if (!model->BSIM4lalpha0Given)
             model->BSIM4lalpha0 = 0.0;
         if (!model->BSIM4lalpha1Given)
             model->BSIM4lalpha1 = 0.0;
-        if (!model->BSIM4lbeta0Given)  
+        if (!model->BSIM4lbeta0Given)
             model->BSIM4lbeta0 = 0.0;
         if (!model->BSIM4lagidlGiven)
             model->BSIM4lagidl = 0.0;
@@ -715,27 +715,27 @@ JOB   *job;
         if (!model->BSIM4llambdaGiven)
             model->BSIM4llambda = 0.0;
         if (!model->BSIM4lvtlGiven)
-            model->BSIM4lvtl = 0.0;  
+            model->BSIM4lvtl = 0.0;
         if (!model->BSIM4lxnGiven)
-            model->BSIM4lxn = 0.0;  
+            model->BSIM4lxn = 0.0;
         if (!model->BSIM4lvfbsdoffGiven)
-            model->BSIM4lvfbsdoff = 0.0;   
+            model->BSIM4lvfbsdoff = 0.0;
 
-        if (!model->BSIM4lcgslGiven)  
+        if (!model->BSIM4lcgslGiven)
             model->BSIM4lcgsl = 0.0;
-        if (!model->BSIM4lcgdlGiven)  
+        if (!model->BSIM4lcgdlGiven)
             model->BSIM4lcgdl = 0.0;
-        if (!model->BSIM4lckappasGiven)  
+        if (!model->BSIM4lckappasGiven)
             model->BSIM4lckappas = 0.0;
         if (!model->BSIM4lckappadGiven)
             model->BSIM4lckappad = 0.0;
-        if (!model->BSIM4lclcGiven)  
+        if (!model->BSIM4lclcGiven)
             model->BSIM4lclc = 0.0;
-        if (!model->BSIM4lcleGiven)  
+        if (!model->BSIM4lcleGiven)
             model->BSIM4lcle = 0.0;
-        if (!model->BSIM4lcfGiven)  
+        if (!model->BSIM4lcfGiven)
             model->BSIM4lcf = 0.0;
-        if (!model->BSIM4lvfbcvGiven)  
+        if (!model->BSIM4lvfbcvGiven)
             model->BSIM4lvfbcv = 0.0;
         if (!model->BSIM4lacdeGiven)
             model->BSIM4lacde = 0.0;
@@ -750,7 +750,7 @@ JOB   *job;
         if (!model->BSIM4wcdscGiven)
 	    model->BSIM4wcdsc = 0.0;
         if (!model->BSIM4wcdscbGiven)
-	    model->BSIM4wcdscb = 0.0;  
+	    model->BSIM4wcdscb = 0.0;
 	    if (!model->BSIM4wcdscdGiven)
 	    model->BSIM4wcdscd = 0.0;
         if (!model->BSIM4wcitGiven)
@@ -764,7 +764,7 @@ JOB   *job;
         if (!model->BSIM4watGiven)
             model->BSIM4wat = 0.0;
         if (!model->BSIM4wa0Given)
-            model->BSIM4wa0 = 0.0; 
+            model->BSIM4wa0 = 0.0;
         if (!model->BSIM4wagsGiven)
             model->BSIM4wags = 0.0;
         if (!model->BSIM4wa1Given)
@@ -788,39 +788,39 @@ JOB   *job;
         if (!model->BSIM4wxtGiven)
 	    model->BSIM4wxt = 0.0;
         if (!model->BSIM4wkt1Given)
-            model->BSIM4wkt1 = 0.0; 
+            model->BSIM4wkt1 = 0.0;
         if (!model->BSIM4wkt1lGiven)
             model->BSIM4wkt1l = 0.0;
         if (!model->BSIM4wkt2Given)
             model->BSIM4wkt2 = 0.0;
         if (!model->BSIM4wk3Given)
-            model->BSIM4wk3 = 0.0;      
+            model->BSIM4wk3 = 0.0;
         if (!model->BSIM4wk3bGiven)
-            model->BSIM4wk3b = 0.0;      
+            model->BSIM4wk3b = 0.0;
         if (!model->BSIM4ww0Given)
-            model->BSIM4ww0 = 0.0;    
+            model->BSIM4ww0 = 0.0;
         if (!model->BSIM4wlpe0Given)
             model->BSIM4wlpe0 = 0.0;
         if (!model->BSIM4wlpebGiven)
-            model->BSIM4wlpeb = 0.0; 
+            model->BSIM4wlpeb = 0.0;
         if (!model->BSIM4wdvtp0Given)
             model->BSIM4wdvtp0 = 0.0;
         if (!model->BSIM4wdvtp1Given)
             model->BSIM4wdvtp1 = 0.0;
         if (!model->BSIM4wdvt0Given)
-            model->BSIM4wdvt0 = 0.0;    
+            model->BSIM4wdvt0 = 0.0;
         if (!model->BSIM4wdvt1Given)
-            model->BSIM4wdvt1 = 0.0;      
+            model->BSIM4wdvt1 = 0.0;
         if (!model->BSIM4wdvt2Given)
             model->BSIM4wdvt2 = 0.0;
         if (!model->BSIM4wdvt0wGiven)
-            model->BSIM4wdvt0w = 0.0;    
+            model->BSIM4wdvt0w = 0.0;
         if (!model->BSIM4wdvt1wGiven)
-            model->BSIM4wdvt1w = 0.0;      
+            model->BSIM4wdvt1w = 0.0;
         if (!model->BSIM4wdvt2wGiven)
             model->BSIM4wdvt2w = 0.0;
         if (!model->BSIM4wdroutGiven)
-            model->BSIM4wdrout = 0.0;     
+            model->BSIM4wdrout = 0.0;
         if (!model->BSIM4wdsubGiven)
             model->BSIM4wdsub = 0.0;
         if (!model->BSIM4wvth0Given)
@@ -840,7 +840,7 @@ JOB   *job;
         if (!model->BSIM4wu0Given)
             model->BSIM4wu0 = 0.0;
         if (!model->BSIM4wuteGiven)
-	    model->BSIM4wute = 0.0;    
+	    model->BSIM4wute = 0.0;
         if (!model->BSIM4wvoffGiven)
 	    model->BSIM4wvoff = 0.0;
         if (!model->BSIM4wminvGiven)
@@ -851,7 +851,7 @@ JOB   *job;
             model->BSIM4wpdits = 0.0;
         if (!model->BSIM4wpditsdGiven)
             model->BSIM4wpditsd = 0.0;
-        if (!model->BSIM4wdeltaGiven)  
+        if (!model->BSIM4wdeltaGiven)
             model->BSIM4wdelta = 0.0;
         if (!model->BSIM4wrdswGiven)
             model->BSIM4wrdsw = 0.0;
@@ -870,7 +870,7 @@ JOB   *job;
         if (!model->BSIM4wetabGiven)
             model->BSIM4wetab = 0.0;
         if (!model->BSIM4wpclmGiven)
-            model->BSIM4wpclm = 0.0; 
+            model->BSIM4wpclm = 0.0;
         if (!model->BSIM4wpdibl1Given)
             model->BSIM4wpdibl1 = 0.0;
         if (!model->BSIM4wpdibl2Given)
@@ -882,22 +882,22 @@ JOB   *job;
         if (!model->BSIM4wpscbe2Given)
             model->BSIM4wpscbe2 = 0.0;
         if (!model->BSIM4wpvagGiven)
-            model->BSIM4wpvag = 0.0;     
-        if (!model->BSIM4wwrGiven)  
+            model->BSIM4wpvag = 0.0;
+        if (!model->BSIM4wwrGiven)
             model->BSIM4wwr = 0.0;
-        if (!model->BSIM4wdwgGiven)  
+        if (!model->BSIM4wdwgGiven)
             model->BSIM4wdwg = 0.0;
-        if (!model->BSIM4wdwbGiven)  
+        if (!model->BSIM4wdwbGiven)
             model->BSIM4wdwb = 0.0;
         if (!model->BSIM4wb0Given)
             model->BSIM4wb0 = 0.0;
-        if (!model->BSIM4wb1Given)  
+        if (!model->BSIM4wb1Given)
             model->BSIM4wb1 = 0.0;
-        if (!model->BSIM4walpha0Given)  
+        if (!model->BSIM4walpha0Given)
             model->BSIM4walpha0 = 0.0;
         if (!model->BSIM4walpha1Given)
             model->BSIM4walpha1 = 0.0;
-        if (!model->BSIM4wbeta0Given)  
+        if (!model->BSIM4wbeta0Given)
             model->BSIM4wbeta0 = 0.0;
         if (!model->BSIM4wagidlGiven)
             model->BSIM4wagidl = 0.0;
@@ -956,27 +956,27 @@ JOB   *job;
         if (!model->BSIM4wlambdaGiven)
             model->BSIM4wlambda = 0.0;
         if (!model->BSIM4wvtlGiven)
-            model->BSIM4wvtl = 0.0;  
+            model->BSIM4wvtl = 0.0;
         if (!model->BSIM4wxnGiven)
-            model->BSIM4wxn = 0.0;  
+            model->BSIM4wxn = 0.0;
         if (!model->BSIM4wvfbsdoffGiven)
-            model->BSIM4wvfbsdoff = 0.0;   
+            model->BSIM4wvfbsdoff = 0.0;
 
-        if (!model->BSIM4wcgslGiven)  
+        if (!model->BSIM4wcgslGiven)
             model->BSIM4wcgsl = 0.0;
-        if (!model->BSIM4wcgdlGiven)  
+        if (!model->BSIM4wcgdlGiven)
             model->BSIM4wcgdl = 0.0;
-        if (!model->BSIM4wckappasGiven)  
+        if (!model->BSIM4wckappasGiven)
             model->BSIM4wckappas = 0.0;
         if (!model->BSIM4wckappadGiven)
             model->BSIM4wckappad = 0.0;
-        if (!model->BSIM4wcfGiven)  
+        if (!model->BSIM4wcfGiven)
             model->BSIM4wcf = 0.0;
-        if (!model->BSIM4wclcGiven)  
+        if (!model->BSIM4wclcGiven)
             model->BSIM4wclc = 0.0;
-        if (!model->BSIM4wcleGiven)  
+        if (!model->BSIM4wcleGiven)
             model->BSIM4wcle = 0.0;
-        if (!model->BSIM4wvfbcvGiven)  
+        if (!model->BSIM4wvfbcvGiven)
             model->BSIM4wvfbcv = 0.0;
         if (!model->BSIM4wacdeGiven)
             model->BSIM4wacde = 0.0;
@@ -991,7 +991,7 @@ JOB   *job;
         if (!model->BSIM4pcdscGiven)
 	    model->BSIM4pcdsc = 0.0;
         if (!model->BSIM4pcdscbGiven)
-	    model->BSIM4pcdscb = 0.0;   
+	    model->BSIM4pcdscb = 0.0;
 	    if (!model->BSIM4pcdscdGiven)
 	    model->BSIM4pcdscd = 0.0;
         if (!model->BSIM4pcitGiven)
@@ -1005,8 +1005,8 @@ JOB   *job;
         if (!model->BSIM4patGiven)
             model->BSIM4pat = 0.0;
         if (!model->BSIM4pa0Given)
-            model->BSIM4pa0 = 0.0; 
-            
+            model->BSIM4pa0 = 0.0;
+
         if (!model->BSIM4pagsGiven)
             model->BSIM4pags = 0.0;
         if (!model->BSIM4pa1Given)
@@ -1030,17 +1030,17 @@ JOB   *job;
         if (!model->BSIM4pxtGiven)
 	    model->BSIM4pxt = 0.0;
         if (!model->BSIM4pkt1Given)
-            model->BSIM4pkt1 = 0.0; 
+            model->BSIM4pkt1 = 0.0;
         if (!model->BSIM4pkt1lGiven)
             model->BSIM4pkt1l = 0.0;
         if (!model->BSIM4pkt2Given)
             model->BSIM4pkt2 = 0.0;
         if (!model->BSIM4pk3Given)
-            model->BSIM4pk3 = 0.0;      
+            model->BSIM4pk3 = 0.0;
         if (!model->BSIM4pk3bGiven)
-            model->BSIM4pk3b = 0.0;      
+            model->BSIM4pk3b = 0.0;
         if (!model->BSIM4pw0Given)
-            model->BSIM4pw0 = 0.0;    
+            model->BSIM4pw0 = 0.0;
         if (!model->BSIM4plpe0Given)
             model->BSIM4plpe0 = 0.0;
         if (!model->BSIM4plpebGiven)
@@ -1050,19 +1050,19 @@ JOB   *job;
         if (!model->BSIM4pdvtp1Given)
             model->BSIM4pdvtp1 = 0.0;
         if (!model->BSIM4pdvt0Given)
-            model->BSIM4pdvt0 = 0.0;    
+            model->BSIM4pdvt0 = 0.0;
         if (!model->BSIM4pdvt1Given)
-            model->BSIM4pdvt1 = 0.0;      
+            model->BSIM4pdvt1 = 0.0;
         if (!model->BSIM4pdvt2Given)
             model->BSIM4pdvt2 = 0.0;
         if (!model->BSIM4pdvt0wGiven)
-            model->BSIM4pdvt0w = 0.0;    
+            model->BSIM4pdvt0w = 0.0;
         if (!model->BSIM4pdvt1wGiven)
-            model->BSIM4pdvt1w = 0.0;      
+            model->BSIM4pdvt1w = 0.0;
         if (!model->BSIM4pdvt2wGiven)
             model->BSIM4pdvt2w = 0.0;
         if (!model->BSIM4pdroutGiven)
-            model->BSIM4pdrout = 0.0;     
+            model->BSIM4pdrout = 0.0;
         if (!model->BSIM4pdsubGiven)
             model->BSIM4pdsub = 0.0;
         if (!model->BSIM4pvth0Given)
@@ -1082,7 +1082,7 @@ JOB   *job;
         if (!model->BSIM4pu0Given)
             model->BSIM4pu0 = 0.0;
         if (!model->BSIM4puteGiven)
-	    model->BSIM4pute = 0.0;    
+	    model->BSIM4pute = 0.0;
         if (!model->BSIM4pvoffGiven)
 	    model->BSIM4pvoff = 0.0;
         if (!model->BSIM4pminvGiven)
@@ -1093,7 +1093,7 @@ JOB   *job;
             model->BSIM4ppdits = 0.0;
         if (!model->BSIM4ppditsdGiven)
             model->BSIM4ppditsd = 0.0;
-        if (!model->BSIM4pdeltaGiven)  
+        if (!model->BSIM4pdeltaGiven)
             model->BSIM4pdelta = 0.0;
         if (!model->BSIM4prdswGiven)
             model->BSIM4prdsw = 0.0;
@@ -1112,7 +1112,7 @@ JOB   *job;
         if (!model->BSIM4petabGiven)
             model->BSIM4petab = 0.0;
         if (!model->BSIM4ppclmGiven)
-            model->BSIM4ppclm = 0.0; 
+            model->BSIM4ppclm = 0.0;
         if (!model->BSIM4ppdibl1Given)
             model->BSIM4ppdibl1 = 0.0;
         if (!model->BSIM4ppdibl2Given)
@@ -1124,22 +1124,22 @@ JOB   *job;
         if (!model->BSIM4ppscbe2Given)
             model->BSIM4ppscbe2 = 0.0;
         if (!model->BSIM4ppvagGiven)
-            model->BSIM4ppvag = 0.0;     
-        if (!model->BSIM4pwrGiven)  
+            model->BSIM4ppvag = 0.0;
+        if (!model->BSIM4pwrGiven)
             model->BSIM4pwr = 0.0;
-        if (!model->BSIM4pdwgGiven)  
+        if (!model->BSIM4pdwgGiven)
             model->BSIM4pdwg = 0.0;
-        if (!model->BSIM4pdwbGiven)  
+        if (!model->BSIM4pdwbGiven)
             model->BSIM4pdwb = 0.0;
         if (!model->BSIM4pb0Given)
             model->BSIM4pb0 = 0.0;
-        if (!model->BSIM4pb1Given)  
+        if (!model->BSIM4pb1Given)
             model->BSIM4pb1 = 0.0;
-        if (!model->BSIM4palpha0Given)  
+        if (!model->BSIM4palpha0Given)
             model->BSIM4palpha0 = 0.0;
         if (!model->BSIM4palpha1Given)
             model->BSIM4palpha1 = 0.0;
-        if (!model->BSIM4pbeta0Given)  
+        if (!model->BSIM4pbeta0Given)
             model->BSIM4pbeta0 = 0.0;
         if (!model->BSIM4pagidlGiven)
             model->BSIM4pagidl = 0.0;
@@ -1198,27 +1198,27 @@ JOB   *job;
         if (!model->BSIM4plambdaGiven)
             model->BSIM4plambda = 0.0;
         if (!model->BSIM4pvtlGiven)
-            model->BSIM4pvtl = 0.0;  
+            model->BSIM4pvtl = 0.0;
         if (!model->BSIM4pxnGiven)
-            model->BSIM4pxn = 0.0;  
+            model->BSIM4pxn = 0.0;
         if (!model->BSIM4pvfbsdoffGiven)
-            model->BSIM4pvfbsdoff = 0.0;   
+            model->BSIM4pvfbsdoff = 0.0;
 
-        if (!model->BSIM4pcgslGiven)  
+        if (!model->BSIM4pcgslGiven)
             model->BSIM4pcgsl = 0.0;
-        if (!model->BSIM4pcgdlGiven)  
+        if (!model->BSIM4pcgdlGiven)
             model->BSIM4pcgdl = 0.0;
-        if (!model->BSIM4pckappasGiven)  
+        if (!model->BSIM4pckappasGiven)
             model->BSIM4pckappas = 0.0;
         if (!model->BSIM4pckappadGiven)
             model->BSIM4pckappad = 0.0;
-        if (!model->BSIM4pcfGiven)  
+        if (!model->BSIM4pcfGiven)
             model->BSIM4pcf = 0.0;
-        if (!model->BSIM4pclcGiven)  
+        if (!model->BSIM4pclcGiven)
             model->BSIM4pclc = 0.0;
-        if (!model->BSIM4pcleGiven)  
+        if (!model->BSIM4pcleGiven)
             model->BSIM4pcle = 0.0;
-        if (!model->BSIM4pvfbcvGiven)  
+        if (!model->BSIM4pvfbcvGiven)
             model->BSIM4pvfbcv = 0.0;
         if (!model->BSIM4pacdeGiven)
             model->BSIM4pacde = 0.0;
@@ -1255,59 +1255,59 @@ JOB   *job;
             model->BSIM4pvbx = 0.0;
 
         /* unit degree celcius */
-        if (!model->BSIM4tnomGiven)  
-	    model->BSIM4tnom = ckt->CKTnomTemp; 
-        if (!model->BSIM4LintGiven)  
+        if (!model->BSIM4tnomGiven)
+	    model->BSIM4tnom = ckt->CKTnomTemp;
+        if (!model->BSIM4LintGiven)
            model->BSIM4Lint = 0.0;
-        if (!model->BSIM4LlGiven)  
+        if (!model->BSIM4LlGiven)
            model->BSIM4Ll = 0.0;
         if (!model->BSIM4LlcGiven)
            model->BSIM4Llc = model->BSIM4Ll;
-        if (!model->BSIM4LlnGiven)  
+        if (!model->BSIM4LlnGiven)
            model->BSIM4Lln = 1.0;
-        if (!model->BSIM4LwGiven)  
+        if (!model->BSIM4LwGiven)
            model->BSIM4Lw = 0.0;
         if (!model->BSIM4LwcGiven)
            model->BSIM4Lwc = model->BSIM4Lw;
-        if (!model->BSIM4LwnGiven)  
+        if (!model->BSIM4LwnGiven)
            model->BSIM4Lwn = 1.0;
-        if (!model->BSIM4LwlGiven)  
+        if (!model->BSIM4LwlGiven)
            model->BSIM4Lwl = 0.0;
         if (!model->BSIM4LwlcGiven)
            model->BSIM4Lwlc = model->BSIM4Lwl;
-        if (!model->BSIM4LminGiven)  
+        if (!model->BSIM4LminGiven)
            model->BSIM4Lmin = 0.0;
-        if (!model->BSIM4LmaxGiven)  
+        if (!model->BSIM4LmaxGiven)
            model->BSIM4Lmax = 1.0;
-        if (!model->BSIM4WintGiven)  
+        if (!model->BSIM4WintGiven)
            model->BSIM4Wint = 0.0;
-        if (!model->BSIM4WlGiven)  
+        if (!model->BSIM4WlGiven)
            model->BSIM4Wl = 0.0;
         if (!model->BSIM4WlcGiven)
            model->BSIM4Wlc = model->BSIM4Wl;
-        if (!model->BSIM4WlnGiven)  
+        if (!model->BSIM4WlnGiven)
            model->BSIM4Wln = 1.0;
-        if (!model->BSIM4WwGiven)  
+        if (!model->BSIM4WwGiven)
            model->BSIM4Ww = 0.0;
         if (!model->BSIM4WwcGiven)
            model->BSIM4Wwc = model->BSIM4Ww;
-        if (!model->BSIM4WwnGiven)  
+        if (!model->BSIM4WwnGiven)
            model->BSIM4Wwn = 1.0;
-        if (!model->BSIM4WwlGiven)  
+        if (!model->BSIM4WwlGiven)
            model->BSIM4Wwl = 0.0;
         if (!model->BSIM4WwlcGiven)
            model->BSIM4Wwlc = model->BSIM4Wwl;
-        if (!model->BSIM4WminGiven)  
+        if (!model->BSIM4WminGiven)
            model->BSIM4Wmin = 0.0;
-        if (!model->BSIM4WmaxGiven)  
+        if (!model->BSIM4WmaxGiven)
            model->BSIM4Wmax = 1.0;
-        if (!model->BSIM4dwcGiven)  
+        if (!model->BSIM4dwcGiven)
            model->BSIM4dwc = model->BSIM4Wint;
-        if (!model->BSIM4dlcGiven)  
+        if (!model->BSIM4dlcGiven)
            model->BSIM4dlc = model->BSIM4Lint;
-        if (!model->BSIM4xlGiven)  
+        if (!model->BSIM4xlGiven)
            model->BSIM4xl = 0.0;
-        if (!model->BSIM4xwGiven)  
+        if (!model->BSIM4xwGiven)
            model->BSIM4xw = 0.0;
         if (!model->BSIM4dlcigGiven)
            model->BSIM4dlcig = model->BSIM4Lint;
@@ -1505,7 +1505,7 @@ JOB   *job;
          */
 
         for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+             here=here->BSIM4nextInstance)
 	{   /* allocate a chunk of the state vector */
             here->BSIM4states = *states;
             *states += BSIM4numStates;
@@ -1555,7 +1555,7 @@ JOB   *job;
             if (!here->BSIM4rbpdGiven)
                 here->BSIM4rbpd = model->BSIM4rbpd;
 
-                    
+
             /* Process instance model selectors, some
              * may override their global counterparts
 	     */
@@ -1636,7 +1636,7 @@ JOB   *job;
             else
             {   here->BSIM4dNodePrime = here->BSIM4dNode;
             }
-            
+
             /* process source series resistance */
             createNode = 0;
             if ( (model->BSIM4rdsMod != 0)
@@ -1683,7 +1683,7 @@ JOB   *job;
             }
             else
                 here->BSIM4gNodeMid = here->BSIM4gNodeExt;
-            
+
 
             /* internal body nodes for body resistance model */
             if (here->BSIM4rbodyMod)
@@ -1708,15 +1708,15 @@ JOB   *job;
 				  = here->BSIM4bNode;
 
             /* NQS node */
-            if ((here->BSIM4trnqsMod) && (here->BSIM4qNode == 0)) 
+            if ((here->BSIM4trnqsMod) && (here->BSIM4qNode == 0))
 	    {   error = CKTmkVolt(ckt,&tmp,here->BSIM4name,"charge");
                 if(error) return(error);
                 here->BSIM4qNode = tmp->number;
             }
-	    else 
+	    else
 	        here->BSIM4qNode = 0;
 
-/* set Sparse Matrix Pointers 
+/* set Sparse Matrix Pointers
  * macro to make elements with built-in out-of-memory test */
 #define TSTALLOC(ptr,first,second) \
 if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
@@ -1749,7 +1749,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
             TSTALLOC(BSIM4SPdpPtr, BSIM4sNodePrime, BSIM4dNodePrime)
 
             TSTALLOC(BSIM4QqPtr, BSIM4qNode, BSIM4qNode)
-            TSTALLOC(BSIM4QbpPtr, BSIM4qNode, BSIM4bNodePrime) 
+            TSTALLOC(BSIM4QbpPtr, BSIM4qNode, BSIM4bNodePrime)
             TSTALLOC(BSIM4QdpPtr, BSIM4qNode, BSIM4dNodePrime)
             TSTALLOC(BSIM4QspPtr, BSIM4qNode, BSIM4sNodePrime)
             TSTALLOC(BSIM4QgpPtr, BSIM4qNode, BSIM4gNodePrime)
@@ -1776,7 +1776,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
                 TSTALLOC(BSIM4GEgmPtr, BSIM4gNodeExt, BSIM4gNodeMid)
                 TSTALLOC(BSIM4SPgmPtr, BSIM4sNodePrime, BSIM4gNodeMid)
                 TSTALLOC(BSIM4BPgmPtr, BSIM4bNodePrime, BSIM4gNodeMid)
-            }	
+            }
 
             if (here->BSIM4rbodyMod)
             {   TSTALLOC(BSIM4DPdbPtr, BSIM4dNodePrime, BSIM4dbNode)
@@ -1813,7 +1813,7 @@ if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NULL){\
         }
     }
     return(OK);
-}  
+}
 
 int
 BSIM4unsetup(inModel,ckt)

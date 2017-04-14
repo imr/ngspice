@@ -6,7 +6,7 @@ Author: 2000 Weidong Liu
 /* INPfindLev(line)
  * Find the 'level' parameter value on the model file
  * The BSIM4 model is level 14 in SPICE3.
- * Please note BSIM5 and BSIM6 will take level 15 and 16 in the future, respectively. 
+ * Please note BSIM5 and BSIM6 will take level 15 and 16 in the future, respectively.
  */
 
 #include "spice.h"
@@ -23,7 +23,7 @@ INPfindLev(line,level)
     int *level;
 {   char *where;
     char LevArray[3]; /* save individual level numerals */
-    char *LevNumString; /* points to the level string */                
+    char *LevNumString; /* points to the level string */
     int i_array = 0;
     where = line;
 
@@ -33,7 +33,7 @@ INPfindLev(line,level)
       { *level = 14; /* the default model is BSIM4 */
         return((char *)NULL);
       }
-      if(strncmp(where,"level",5)!=0) 
+      if(strncmp(where,"level",5)!=0)
       { /* this l isn't in the word 'level', try again */
         where++;    /* make sure we don't match same char again */
         continue;

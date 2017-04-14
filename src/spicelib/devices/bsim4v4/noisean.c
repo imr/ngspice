@@ -96,7 +96,7 @@ int restart;
             break;
 
         case LINEAR:
-            job->NfreqDelta = (job->NstopFreq - 
+            job->NfreqDelta = (job->NstopFreq -
                             job->NstartFreq)/
 			    (job->NnumSteps+1);
             break;
@@ -152,7 +152,7 @@ int restart;
 	    data->freq = job->NstartFreq * exp (step *
 		     log (job->NfreqDelta));
             break;
-            
+
         case LINEAR:
 	    data->freq = job->NstartFreq + step *
 		     job->NfreqDelta;
@@ -184,7 +184,7 @@ int restart;
     /* do the noise analysis over all frequencies */
 
     while (data->freq <= job->NstopFreq + freqTol) {
-        if( (*(SPfrontEnd->IFpauseTest))() ) { 
+        if( (*(SPfrontEnd->IFpauseTest))() ) {
 	    job->NsavFstp = step;   /* save our results */
 	    job->NsavOnoise = data->outNoiz; /* up until now     */
 	    job->NsavInoise = data->inNoise;
@@ -223,7 +223,7 @@ int restart;
         }
 
 	/*
-	data->outNumber = 1;       
+	data->outNumber = 1;
 	*/
 
 	data->outNumber = 0;
@@ -253,7 +253,7 @@ int restart;
         case LINEAR:
 	    data->freq += job->NfreqDelta;
 	    break;
-        
+
 	default:
 	    return(E_INTERN);
         }

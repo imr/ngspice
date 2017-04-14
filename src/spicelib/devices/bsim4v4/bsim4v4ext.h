@@ -20,7 +20,7 @@ extern void BSIM4mosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,
         double, double, double, double, double, double, double*,
         double*, double*, double*, double*, double*, double*, double*,
-        double*, double*, double*, double*, double*, double*, double*, 
+        double*, double*, double*, double*, double*, double*, double*,
         double*);
 extern int BSIM4param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int BSIM4pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
