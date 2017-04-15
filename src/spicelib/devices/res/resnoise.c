@@ -35,7 +35,6 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     RESmodel *firstModel = (RESmodel *) genmodel;
     RESmodel *model;
     RESinstance *inst;
-    char name[N_MXVLNTH];
     double tempOutNoise;
     double tempInNoise;
     double noizDens[RESNSRCS];
@@ -73,43 +72,14 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 
                     case N_DENS:
                         for (i=0; i < RESNSRCS; i++) {
-                        (void)sprintf(name,"onoise_%s%s",
-                                      inst->RESname, RESnNames[i]);
-
-                        data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-                        if (!data->namelist) return(E_NOMEM);
-                        SPfrontEnd->IFnewUid (ckt,
-                            &(data->namelist[data->numPlots++]),
-                            NULL, name, UID_OTHER, NULL);
-                                /* we've added one more plot */
+                            NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->RESname, RESnNames[i]);
                         }
                         break;
 
                     case INT_NOIZ:
                         for (i=0; i < RESNSRCS; i++) {
-                            (void)sprintf(name,"onoise_total_%s%s",
-                                          inst->RESname, RESnNames[i]);
-
-
-                            data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-                            if (!data->namelist) return(E_NOMEM);
-                            SPfrontEnd->IFnewUid (ckt,
-                                &(data->namelist[data->numPlots++]),
-                                NULL, name, UID_OTHER, NULL);
-                                /* we've added one more plot */
-
-
-                            (void)sprintf(name,"inoise_total_%s%s",
-                                inst->RESname,RESnNames[i]);
-
-
-                            data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-                            if (!data->namelist) return(E_NOMEM);
-                            SPfrontEnd->IFnewUid (ckt,
-                                &(data->namelist[data->numPlots++]),
-                                NULL, name, UID_OTHER, NULL);
-                                /* we've added one more plot */
-
+                            NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->RESname, RESnNames[i]);
+                            NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->RESname, RESnNames[i]);
                         }
                         break;
                     }

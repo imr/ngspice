@@ -32,7 +32,6 @@ JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
     JFET2model *firstModel = (JFET2model *) genmodel;
     JFET2model *model;
     JFET2instance *inst;
-    char name[N_MXVLNTH];
     double tempOnoise;
     double tempInoise;
     double noizDens[JFET2NSRCS];
@@ -66,43 +65,14 @@ JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
 
 		    case N_DENS:
 			for (i=0; i < JFET2NSRCS; i++) {
-			    (void)sprintf(name,"onoise_%s%s",inst->JFET2name,JFET2nNames[i]);
-
-
-data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-if (!data->namelist) return(E_NOMEM);
-		SPfrontEnd->IFnewUid (ckt,
-			&(data->namelist[data->numPlots++]),
-			NULL, name, UID_OTHER, NULL);
-				/* we've added one more plot */
-
-
+			    NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->JFET2name, JFET2nNames[i]);
 			}
 			break;
 
 		    case INT_NOIZ:
 			for (i=0; i < JFET2NSRCS; i++) {
-			    (void)sprintf(name,"onoise_total_%s%s",inst->JFET2name,JFET2nNames[i]);
-
-
-data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-if (!data->namelist) return(E_NOMEM);
-		SPfrontEnd->IFnewUid (ckt,
-			&(data->namelist[data->numPlots++]),
-			NULL, name, UID_OTHER, NULL);
-				/* we've added one more plot */
-
-
-			    (void)sprintf(name,"inoise_total_%s%s",inst->JFET2name,JFET2nNames[i]);
-
-
-data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1);
-if (!data->namelist) return(E_NOMEM);
-		SPfrontEnd->IFnewUid (ckt,
-			&(data->namelist[data->numPlots++]),
-			NULL, name, UID_OTHER, NULL);
-				/* we've added one more plot */
-
+			    NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->JFET2name, JFET2nNames[i]);
+			    NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->JFET2name, JFET2nNames[i]);
 			}
 			break;
 		    }
