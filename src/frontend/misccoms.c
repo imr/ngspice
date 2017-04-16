@@ -56,6 +56,11 @@ com_quit(wordlist *wl)
         if (!noask && !confirm_quit())
             return;
 
+#ifndef SHARED_MODULE
+	if (!ft_ngdebug)
+	    exit(exitcode);
+#endif
+
     /* start to clean up the mess */
 
 #ifdef SHARED_MODULE
