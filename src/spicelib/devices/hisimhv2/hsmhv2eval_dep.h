@@ -142,7 +142,7 @@ June 2008 (revised October 2011)
 
 
   double C_QE2, C_ESI2, Tn2 ; 
-  double q_Nsub, Ndepm2, q_Ndepm ; 
+  double Ndepm2, q_Ndepm ; 
   double C_2ESIpq_Ndepm, C_2ESIpq_Ndepm_inv , C_2ESI_q_Ndepm ; 
   double C_2ESIpq_Nsub , C_2ESIpq_Nsub_inv ; 
   double ps_conv3 , ps_conv23 ; 

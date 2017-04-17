@@ -272,10 +272,10 @@ static double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 ;
   double xmax2 = (xmax) * (xmax) ; \
   double xp = 1.0 , xmp = 1.0 ; \
   int   m =0, mm =0; \
-  double arg =0.0, dnm =0.0; \
+  double arg_cp =0.0, dnm =0.0; \
   for ( m = 0 ; m < pw ; m ++ ) { xp *= x2 ; xmp *= xmax2 ; } \
-  arg = xp + xmp ; \
-  dnm = arg ; \
+  arg_cp = xp + xmp ; \
+  dnm = arg_cp ; \
   if ( pw == 1 || pw == 2 || pw == 4 || pw == 8 ) { \
     if ( pw == 1 ) { mm = 1 ; \
     } else if ( pw == 2 ) { mm = 2 ; \
@@ -285,7 +285,7 @@ static double TMF0 , TMF1 , TMF2 , TMF3 , TMF4 ;
   } else { dnm = Fn_Pow( dnm , 1.0 / ( 2.0 * pw ) ) ; } \
   dnm = 1.0 / dnm ; \
   y = (x) * (xmax) * dnm ; \
-  dx = (xmax) * xmp * dnm / arg ; \
+  dx = (xmax) * xmp * dnm / arg_cp ; \
 }
 
 /*---------------------------------------------------*
