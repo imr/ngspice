@@ -390,7 +390,8 @@ inp_stitch_continuation_lines(struct line *working)
                 end->li_next = working;
                 tfree(s);
             } else {
-                prev->li_actual = xx_new_line(working, s, prev->li_linenum, 0);
+                prev->li_actual = xx_new_line(NULL, s, prev->li_linenum, 0);
+                prev->li_actual->li_next = working;
             }
             working = prev->li_next;
             break;
