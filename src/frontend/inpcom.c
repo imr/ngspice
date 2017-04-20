@@ -1336,12 +1336,10 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s",
                                      ref_str, ctrl_nodes_str, out_str, ref_str);
                 m_instance[0] = 'a';
-                a_card = xx_new_line(NULL, m_instance, (*line_number)++, 0);
 
                 m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
                                   ref_str, xy_values1[0], xy_values2[0],
                                   xy_values1[1], xy_values2[1], fcn_name);
-                model_card = xx_new_line(NULL, m_model, (*line_number)++, 0);
 
                 tfree(ref_str);
                 tfree(out_str);
@@ -1354,7 +1352,9 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
 
                 *c->li_line = '*';
                 next_card   = c->li_next;
+                a_card = xx_new_line(NULL, m_instance, (*line_number)++, 0);
                 c->li_next  = a_card;
+                model_card = xx_new_line(NULL, m_model, (*line_number)++, 0);
                 a_card->li_next     = model_card;
                 model_card->li_next = next_card;
                 // skip these two new cards
