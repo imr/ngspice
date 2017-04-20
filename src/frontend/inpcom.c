@@ -1398,15 +1398,21 @@ inp_add_control_section(struct line *deck, int *line_number)
             found_control = FALSE;
 
             if (!found_run) {
+                // c === prev_card->li_next
                 prev_card->li_next = xx_new_line(c, copy("run"), (*line_number)++, 0);
+                // c === prev_card->li_next->li_next
                 prev_card = prev_card->li_next;
+                // c === prev_card->li_next
                 found_run = TRUE;
             }
 
             if (cp_getvar("rawfile", CP_STRING, rawfile)) {
                 line = tprintf("write %s", rawfile);
+                // c === prev_card->li_next
                 prev_card->li_next = xx_new_line(c, line, (*line_number)++, 0);
+                // c === prev_card->li_next->li_next
                 prev_card = prev_card->li_next;
+                // c === prev_card->li_next
             }
         }
 
