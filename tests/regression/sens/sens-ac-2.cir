@@ -15,9 +15,9 @@ set gold = $curplot
 let s = (0,2) * pi * 1e6
 let v1_acmag = ( 0.1258214312760609, -0.5915026769337883 )
 let r1 = ( -38.77993150952251u, 196.2381768346785u )
-let c2_c = ( -4912987.937722201,  -1131146.799006112 )
+let c2 = ( -4912987.937722201,  -1131146.799006112 )
 let l3 = ( -1670.021661737812, -453.4103177577211 )
-let c4_c = ( -7419488.478291172, -1226939.0306441 )
+let c4 = ( -7419488.478291172, -1226939.0306441 )
 let r5 = ( 1.952734115993878E-5, -1.180848266533405E-4 )
 
 * run a "sens" analysis
@@ -36,7 +36,7 @@ define mismatch(a,b,err) abs(a-b)>err*abs(b)
 let total_count = 0
 let fail_count = 0
 
-foreach n v1_acmag r1 c2_c l3 c4_c r5
+foreach n v1_acmag r1 c2 l3 c4 r5
   set n_test = "$n"
   set n_gold = "{$gold}.$n"
   if mismatch($n_test, $n_gold, 1e-3)
