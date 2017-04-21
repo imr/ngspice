@@ -4055,6 +4055,8 @@ inp_split_multi_param_lines(struct line *card, int line_num)
                 curr_line = end_param;
             }
 
+            // comment out current multi-param line
+            *(card->li_line)   = '*';
             param_beg = param_end = NULL;
 
             for (i = 0; i < counter; i++) {
@@ -4070,8 +4072,6 @@ inp_split_multi_param_lines(struct line *card, int line_num)
 
             tfree(array);
 
-            // comment out current multi-param line
-            *(card->li_line)   = '*';
             // insert new param lines immediately after current line
             param_end->li_next = card->li_next;
             card->li_next      = param_beg;
@@ -4377,7 +4377,10 @@ inp_compat(struct line *card)
                         title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
                         midline, lnumber + delta, lastlastno);
 
+                // comment out current variable e line
+                *(card->li_line)   = '*';
                 // insert new B source line immediately after current line
+                param_beg = param_end = NULL;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4388,15 +4391,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable e line
-                *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 tfree(firstno);
                 tfree(lastlastno);
                 tfree(title_tok);
@@ -4429,7 +4429,10 @@ inp_compat(struct line *card)
                 ckt_array[1] = tprintf("b%s %s_int1 0 v = %s",
                         title_tok, title_tok, str_ptr);
 
+                // comment out current variable e line
+                *(card->li_line)   = '*';
                 // insert new B source line immediately after current line
+                param_beg = param_end = NULL;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4440,15 +4443,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable e line
-                *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
@@ -4563,7 +4563,10 @@ inp_compat(struct line *card)
                         title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
                         midline, lnumber + delta, lastlastno);
 
+                // comment out current variable e line
+                *(card->li_line)   = '*';
                 // insert new B source line immediately after current line
+                param_beg = param_end = NULL;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4574,15 +4577,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable e line
-                *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 tfree(firstno);
                 tfree(lastlastno);
                 tfree(title_tok);
@@ -4627,7 +4627,10 @@ inp_compat(struct line *card)
                 ckt_array[1] = tprintf("b%s %s_int1 0 v = %s",
                         title_tok, title_tok, str_ptr);
 
+                // comment out current variable g line
+                *(card->li_line)   = '*';
                 // insert new B source line immediately after current line
+                param_beg = param_end = NULL;
                 for (i = 0; i < 2; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4638,15 +4641,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable g line
-                *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 tfree(title_tok);
                 tfree(m_token);
                 tfree(node1);
@@ -4687,7 +4687,10 @@ inp_compat(struct line *card)
                 //VBFxxx int1 0 0
                 ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
                         title_tok, title_tok);
+                // comment out current variable f line
+                *(card->li_line)   = '*';
                 // insert new three lines immediately after current line
+                param_beg = param_end = NULL;
                 for (i = 0; i < 3; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4698,15 +4701,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable f line
-                *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 tfree(title_tok);
                 tfree(vnamstr);
                 tfree(equastr);
@@ -4747,7 +4747,10 @@ inp_compat(struct line *card)
                 //VBHxxx int1 0 0
                 ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
                         title_tok, title_tok);
+                // comment out current variable h line
+                *(card->li_line)   = '*';
                 // insert new three lines immediately after current line
+                param_beg = param_end = NULL;
                 for (i = 0; i < 3; i++) {
                     struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4758,15 +4761,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable h line
-                *(card->li_line)   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 tfree(title_tok);
                 tfree(vnamstr);
                 tfree(equastr);
@@ -4836,14 +4836,15 @@ inp_compat(struct line *card)
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
-            new_line = xx_new_line(card->li_next, xline, 0, 0);
 
             // comment out current old R line
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
+            new_line = xx_new_line(card->li_next, xline, 0, 0);
             card->li_next     = new_line;
             // point 'card' pointer to the new line
             card              = new_line;
+
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
@@ -4917,7 +4918,10 @@ inp_compat(struct line *card)
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
+            // comment out current variable capacitor line
+            *(card->li_line)   = '*';
             // insert new B source line immediately after current line
+            param_beg = param_end = NULL;
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -4928,15 +4932,12 @@ inp_compat(struct line *card)
 
                 param_end = x;
             }
-            // comment out current variable capacitor line
-            *(card->li_line)   = '*';
             // insert new param lines immediately after current line
             param_end->li_next = card->li_next;
             card->li_next      = param_beg;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
-            param_beg = param_end = NULL;
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
@@ -5011,7 +5012,10 @@ inp_compat(struct line *card)
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
+            // comment out current variable inductor line
+            *(card->li_line)   = '*';
             // insert new B source line immediately after current line
+            param_beg = param_end = NULL;
             for (i = 0; i < 3; i++) {
                 struct line *x = xx_new_line(NULL, ckt_array[i], 0, 0);
 
@@ -5022,15 +5026,12 @@ inp_compat(struct line *card)
 
                 param_end = x;
             }
-            // comment out current variable inductor line
-            *(card->li_line)   = '*';
             // insert new param lines immediately after current line
             param_end->li_next = card->li_next;
             card->li_next      = param_beg;
             // point 'card' pointer to last in scalar list
             card               = param_end;
 
-            param_beg = param_end = NULL;
             tfree(title_tok);
             tfree(node1);
             tfree(node2);
@@ -5171,6 +5172,7 @@ inp_compat(struct line *card)
                 // remove white spaces
                 card->li_line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
+                param_beg = param_end = NULL;
                 for (ii = paui; ii < pai; ii++) {
                     struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
 
@@ -5188,7 +5190,6 @@ inp_compat(struct line *card)
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 paui = pai;
             } else if ((ciprefix(".save", curr_line)) ||
                        (ciprefix(".four", curr_line)) ||
@@ -5277,7 +5278,10 @@ inp_compat(struct line *card)
                     continue;
                 // remove white spaces
                 card->li_line = inp_remove_ws(curr_line);
+                // comment out current variable capacitor line
+                // *(ckt_array[0])   = '*';
                 // insert new B source line immediately after current line
+                param_beg = param_end = NULL;
                 for (ii = paui; ii < pai; ii++) {
                     struct line *x = xx_new_line(NULL, ckt_array[ii], 0, 0);
 
@@ -5288,15 +5292,12 @@ inp_compat(struct line *card)
 
                     param_end = x;
                 }
-                // comment out current variable capacitor line
-                // *(ckt_array[0])   = '*';
                 // insert new param lines immediately after current line
                 param_end->li_next = card->li_next;
                 card->li_next      = param_beg;
                 // point 'card' pointer to last in scalar list
                 card               = param_end;
 
-                param_beg = param_end = NULL;
                 paui = pai;
                 // continue;
             } // if .print etc.
@@ -5388,12 +5389,11 @@ inp_bsource_compat(struct line *card)
             new_str = inp_modify_exp(equal_ptr + 1);
             final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line), curr_line, new_str);
 
-            /* Copy old line numbers into new B source line */
-            new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
-
             // comment out current line (old B source line)
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
+            /* Copy old line numbers into new B source line */
+            new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
             card->li_next     = new_line;
             // point 'card' pointer to the new line
             card              = new_line;
@@ -6129,8 +6129,9 @@ inp_new_func(char *funcname, char *funcbody, struct line *card,
 
     /* replace line in deck */
     new_str = tprintf(".func %s() %s", funcname, funcbody);
-    card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
+
     *card->li_line = '*';
+    card->li_next = xx_new_line(card->li_next, new_str, 0, card->li_linenum);
 
     return f;
 }
