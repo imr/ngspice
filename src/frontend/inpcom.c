@@ -4233,7 +4233,6 @@ inp_compat(struct line *card)
     char *xline;
     size_t xlen, i, pai = 0, paui = 0, ii;
     char *ckt_array[100];
-    struct line *new_line;
 
     int skip_control = 0;
 
@@ -4739,10 +4738,7 @@ inp_compat(struct line *card)
             // comment out current old R line
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
-            new_line = xx_new_line(card->li_next, xline, 0, 0);
-            card->li_next     = new_line;
-            // point 'card' pointer to the new line
-            card              = new_line;
+            card = card->li_next = xx_new_line(card->li_next, xline, 0, 0);
 
             tfree(title_tok);
             tfree(node1);
@@ -5196,7 +5192,6 @@ static void
 inp_bsource_compat(struct line *card)
 {
     char *equal_ptr, *str_ptr, *new_str, *final_str;
-    struct line *new_line;
     int skip_control = 0;
 
     for (; card; card = card->li_next) {
@@ -5235,10 +5230,7 @@ inp_bsource_compat(struct line *card)
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
             /* Copy old line numbers into new B source line */
-            new_line = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
-            card->li_next     = new_line;
-            // point 'card' pointer to the new line
-            card              = new_line;
+            card = card->li_next = xx_new_line(card->li_next, final_str, card->li_linenum, card->li_linenum_orig);
 
             tfree(new_str);
         } /* end of if 'b' */
