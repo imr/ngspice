@@ -1351,9 +1351,8 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 tfree(xy_values2[1]);
 
                 *c->li_line = '*';
-                next_card   = c->li_next;
-                c = c->li_next = xx_new_line(NULL, m_instance, (*line_number)++, 0);
-                model_card = xx_new_line(next_card, m_model, (*line_number)++, 0);
+                c = c->li_next = xx_new_line(c->li_next, m_instance, (*line_number)++, 0);
+                model_card = xx_new_line(c->li_next, m_model, (*line_number)++, 0);
                 c->li_next = model_card;
                 // skip these two new cards
                 c = model_card;
