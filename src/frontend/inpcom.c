@@ -1357,6 +1357,8 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 c->li_next  = a_card;
                 a_card->li_next     = model_card;
                 model_card->li_next = next_card;
+                // skip these two new cards
+                c = model_card;
             }
         }
     }
