@@ -5545,14 +5545,12 @@ inp_add_series_resistor(struct line *deck)
             char *newL = tprintf("%s %s %s_intern__ %s", title_tok, node1, title_tok, cut_line);
             char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok, title_tok, node2, rval);
 
-            struct line *d;
-
             // comment out current L line
-            // insert new new L and R lines immediately after current line
             *(card->li_line) = '*';
-            d = xx_new_line(card->li_next, newR, 0, 0);
-            card->li_next = xx_new_line(d, newL, 0, 0);
-            card = d;
+
+            // insert new new L and R lines immediately after current line
+            card = card->li_next = xx_new_line(card->li_next, newL, 0, 0);
+            card = card->li_next = xx_new_line(card->li_next, newR, 0, 0);
 
             tfree(title_tok);
             tfree(node1);
