@@ -3722,7 +3722,7 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
 {
     int  i, j, num_params, ind = 0, max_level;
 
-    struct line *c, *tail;
+    struct line *c;
     int  skipped;
     int arr_size;
 
@@ -3787,17 +3787,14 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
     }
 
     c = card_bf_start;
-    tail = c->li_next;
 
     ind = 0;
     for (i = 0; i <= max_level; i++)
         for (j = 0; j < num_params; j++)
             if (!deps[j].skip && deps[j].level == i) {
-                c = c->li_next = deps[j].card;
+                c = insert_deck(c, deps[j].card);
                 ind++;
             }
-
-    c->li_next = tail;
 
     num_params -= skipped;
     if (ind != num_params) {
