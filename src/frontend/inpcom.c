@@ -2418,7 +2418,7 @@ expand_section_ref(struct line *c, char *dir_name)
 
         /* insert the library section definition into `c' */
         {
-            struct line *cend = c, *newl;
+            struct line *newl;
             struct line *rest = c->li_next;
             struct line *t = section_def;
             for (; t; t=t->li_next) {
@@ -2427,8 +2427,8 @@ expand_section_ref(struct line *c, char *dir_name)
                     newl->li_line[0] = '*';
                     newl->li_line[1] = '<';
                 }
-                cend->li_next = newl;
-                cend = newl;
+                c->li_next = newl;
+                c = newl;
                 if(ciprefix(".endl", t->li_line))
                     break;
             }
@@ -2436,11 +2436,11 @@ expand_section_ref(struct line *c, char *dir_name)
                 fprintf(stderr, "ERROR, .endl not found\n");
                 controlled_exit(EXIT_FAILURE);
             }
-            cend->li_line[0] = '*';
-            cend->li_line[1] = '>';
-            cend->li_next = rest;
+            c->li_line[0] = '*';
+            c->li_line[1] = '>';
+            c->li_next = rest;
 
-            c = cend;
+            c = c;
         }
 
         *line = '*';  /* comment out .lib line */
