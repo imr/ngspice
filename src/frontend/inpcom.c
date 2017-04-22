@@ -2155,8 +2155,8 @@ find_name(struct names *p, char *name)
 static char*
 inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
-    struct line *head = NULL, *first_param_card = NULL, *c = NULL;
-    char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
+    struct line *head, *first_param_card, *c;
+    char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str;
 
     equal = strchr(s, '=');
     if (equal && !strstr(s, "params:")) {
@@ -2205,6 +2205,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         inp_sort_params(first_param_card, head, NULL, NULL);
 
         /* create new ordered parameter string for subckt call */
+        new_str = NULL;
         for (c = head->li_next; c; c = c->li_next)
             if (new_str == NULL) {
                 new_str = strdup(c->li_line);
