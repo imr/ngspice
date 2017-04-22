@@ -2195,11 +2195,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
             beg = ptr2;
 
-            c  = xx_new_line(NULL, copy_substring(ptr1, ptr2), 0, 0);
-
-            if (last_param_card)
-                last_param_card->li_next = c;
-            last_param_card = c;
+            c = last_param_card = insert_new_line(last_param_card, copy_substring(ptr1, ptr2), 0, 0);
 
             if (!first_param_card)
                 first_param_card = last_param_card;
