@@ -2423,7 +2423,7 @@ expand_section_ref(struct line *c, char *dir_name)
             struct line *t = section_def;
             for (; t; t=t->li_next) {
                 newl = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
-                if (cend)
+                if (t != section_def)
                     cend->li_next = newl;
                 else {
                     c->li_next = newl;
