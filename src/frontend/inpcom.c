@@ -2426,17 +2426,16 @@ expand_section_ref(struct line *c, char *dir_name)
                     c->li_line[0] = '*';
                     c->li_line[1] = '<';
                 }
-                if(ciprefix(".endl", t->li_line))
+                if(ciprefix(".endl", t->li_line)) {
+                    c->li_line[0] = '*';
+                    c->li_line[1] = '>';
                     break;
+                }
             }
             if (!t) {
                 fprintf(stderr, "ERROR, .endl not found\n");
                 controlled_exit(EXIT_FAILURE);
             }
-            c->li_line[0] = '*';
-            c->li_line[1] = '>';
-
-            c = c;
         }
 
         *line = '*';  /* comment out .lib line */
