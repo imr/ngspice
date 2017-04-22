@@ -158,22 +158,6 @@ static void inp_poly_err(struct line *deck);
 #endif
 
 
-static struct line *
-xx_new_line(struct line *next, char *line, int linenum, int linenum_orig)
-{
-    struct line *x = TMALLOC(struct line, 1);
-
-    x->li_next = next;
-    x->li_error = NULL;
-    x->li_actual = NULL;
-    x->li_line = line;
-    x->li_linenum = linenum;
-    x->li_linenum_orig = linenum_orig;
-
-    return x;
-}
-
-
 /* insert a new card, just behind the given card */
 static struct line *
 insert_new_line(struct line *card, char *line, int linenum, int linenum_orig)
