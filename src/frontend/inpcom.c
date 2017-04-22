@@ -5550,8 +5550,10 @@ inp_add_series_resistor(struct line *deck)
             // comment out current L line
             // insert new new L and R lines immediately after current line
             *(card->li_line) = '*';
-            d = xx_new_line(card->li_next, newR, 0, 0);
-            card->li_next = xx_new_line(d, newL, 0, 0);
+            d = xx_new_line(NULL, newR, 0, 0);
+            d->li_next = card->li_next;
+            card = card->li_next = xx_new_line(NULL, newL, 0, 0);
+            card->li_next = d;
             card = d;
 
             tfree(title_tok);
