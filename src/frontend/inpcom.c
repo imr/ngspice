@@ -2419,17 +2419,14 @@ expand_section_ref(struct line *c, char *dir_name)
 
         /* insert the library section definition into `c' */
         {
-            struct line *newl;
             struct line *rest = c->li_next;
             struct line *t = section_def;
             for (; t; t=t->li_next) {
-                newl = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+                c = c->li_next = xx_new_line(NULL, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
                 if (t == section_def) {
-                    newl->li_line[0] = '*';
-                    newl->li_line[1] = '<';
+                    c->li_line[0] = '*';
+                    c->li_line[1] = '<';
                 }
-                c->li_next = newl;
-                c = newl;
                 if(ciprefix(".endl", t->li_line))
                     break;
             }
