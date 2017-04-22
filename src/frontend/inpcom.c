@@ -2155,7 +2155,7 @@ find_name(struct names *p, char *name)
 static char*
 inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
-    struct line *head = NULL, *first_param_card = NULL, *last_param_card = NULL, *c = NULL;
+    struct line *head = NULL, *first_param_card = NULL, *c = NULL;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str = NULL;
 
     equal = strchr(s, '=');
@@ -2177,6 +2177,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
         head = insert_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
+        first_param_card = c = NULL;
         while ((ptr1 = strchr(beg, '=')) != NULL) {
             ptr2 = skip_ws(ptr1 + 1);
             ptr1 = skip_back_ws(ptr1, beg);
@@ -2195,10 +2196,10 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
             beg = ptr2;
 
-            c = last_param_card = insert_new_line(last_param_card, copy_substring(ptr1, ptr2), 0, 0);
+            c = insert_new_line(c, copy_substring(ptr1, ptr2), 0, 0);
 
             if (!first_param_card)
-                first_param_card = last_param_card;
+                first_param_card = c;
         }
         /* now sort parameters in order of dependencies */
         inp_sort_params(first_param_card, head, NULL, NULL);
