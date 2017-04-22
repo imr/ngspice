@@ -2199,10 +2199,10 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
             if (last_param_card)
                 last_param_card->li_next = c;
-            else
-                first_param_card = c;
-
             last_param_card = c;
+
+            if (!first_param_card)
+                first_param_card = last_param_card;
         }
         /* now sort parameters in order of dependencies */
         inp_sort_params(first_param_card, head, NULL, NULL);
