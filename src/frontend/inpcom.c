@@ -178,6 +178,9 @@ xx_new_line(struct line *next, char *line, int linenum, int linenum_orig)
 static struct line *
 insert_new_line(struct line *card, char *line, int linenum, int linenum_orig)
 {
+    if (!card)
+        return  xx_new_line(NULL, line, linenum, linenum_orig);
+
     card = card->li_next = xx_new_line(card->li_next, line, linenum, linenum_orig);
     return card;
 }
@@ -399,7 +402,7 @@ inp_stitch_continuation_lines(struct line *working)
                 end->li_next = working;
                 tfree(s);
             } else {
-                prev->li_actual = xx_new_line(NULL, s, prev->li_linenum, 0);
+                prev->li_actual = insert_new_line(NULL, s, prev->li_linenum, 0);
                 prev->li_actual->li_next = working;
             }
             working = prev->li_next;
@@ -829,11 +832,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
             /* append `buffer' to the (cc, end) chain of decks */
             {
-                struct line *x = xx_new_line(NULL, copy(buffer), line_number, line_number);
-
-                if (end)
-                    end->li_next = x;
-                end = x;
+                end = insert_new_line(end, copy(buffer), line_number, line_number);
 
                 if (!cc)
                     cc = end;
@@ -910,11 +909,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         shell_eol_continuation = chk_for_line_continuation(buffer);
 
         {
-            struct line *x = xx_new_line(NULL, copy(buffer), line_number++, line_number_orig++);
-
-            if (end)
-                end->li_next = x;
-            end = x;
+            end = insert_new_line(end, copy(buffer), line_number++, line_number_orig++);
 
             if (!cc)
                 cc = end;
@@ -2180,7 +2175,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         beg = skip_back_non_ws(beg, s);
         beg[-1] = '\0';         /* fixme can be < s */
 
-        head = xx_new_line(NULL, NULL, 0, 0);
+        head = insert_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
         while ((ptr1 = strchr(beg, '=')) != NULL) {
             ptr2 = skip_ws(ptr1 + 1);
