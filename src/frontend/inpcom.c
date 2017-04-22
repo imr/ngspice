@@ -178,6 +178,20 @@ insert_new_line(struct line *card, char *line, int linenum, int linenum_orig)
 }
 
 
+/* insert new_card, just behind the given card */
+static struct line *
+insert_deck(struct line *card, struct line *new_card)
+{
+    if (card) {
+        new_card->li_next = card->li_next;
+        card->li_next = new_card;
+    } else {
+        new_card->li_next = NULL;
+    }
+    return new_card;
+}
+
+
 static struct library *
 new_lib(void)
 {
@@ -3893,14 +3907,11 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
         if (ciprefix(".para", curr_line)) {
             prev_card->li_next = c->li_next;
 
-            if (first_param_card)
-                last_param_card->li_next = c;
-            else
-                first_param_card = c;
+            last_param_card = insert_deck(last_param_card, c);
 
-            last_param_card    = c;
+            if (!first_param_card)
+                first_param_card = last_param_card;
 
-            last_param_card->li_next = NULL;
             c = prev_card->li_next;
             continue;
         }
@@ -3949,14 +3960,11 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
         if (ciprefix(".para", curr_line)) {
             prev_card->li_next = c->li_next;
 
-            if (first_param_card)
-                last_param_card->li_next = c;
-            else
-                first_param_card = c;
+            last_param_card = insert_deck(last_param_card, c);
 
-            last_param_card    = c;
+            if (!first_param_card)
+                first_param_card = last_param_card;
 
-            last_param_card->li_next = NULL;
             c = prev_card->li_next;
             continue;
         }
