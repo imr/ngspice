@@ -144,6 +144,10 @@ static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct card *deck);
+static struct nscope *inp_add_levels(struct card *deck);
+static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
+static void inp_rem_levels(struct nscope *root);
+
 
 struct inp_read_t
 { struct card *cc;
@@ -170,6 +174,7 @@ insert_new_line(struct card *card, char *line, int linenum, int linenum_orig)
     x->line = line;
     x->linenum = linenum;
     x->linenum_orig = linenum_orig;
+    x->level = card ? card->level : NULL;
 
     if (card)
         card->nextcard = x;
@@ -409,6 +414,7 @@ inp_stitch_continuation_lines(struct card *working)
                 tfree(s);
             } else {
                 prev->actualLine = insert_new_line(NULL, s, prev->linenum, 0);
+                prev->actualLine->level = prev->level;
                 prev->actualLine->nextcard = working;
             }
             working = prev->nextcard;
@@ -510,6 +516,7 @@ find_back_assignment(const char *p, const char *start)
   start preparation of input deck for numparam
   ...
   debug printout to debug-out.txt
+  remove the 'level' entries from each card
   *-------------------------------------------------------------------------*/
 
 struct card *
@@ -541,6 +548,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         struct card *working = cc->nextcard;
 
         delete_libs();
+
+        struct nscope *root = inp_add_levels(working);
         inp_fix_for_numparam(subckt_w_params, working);
 
 
@@ -635,6 +644,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
                     (int) max_line_length, no_braces, dynmaxline);
         }
+        inp_rem_levels(root);
     }
 
     return cc;
@@ -6041,4 +6051,122 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
             }
         }
     }
+}
+
+
+static struct card_assoc *
+find_subckt_1(struct nscope *scope, const char *name) {
+    struct card_assoc *p = scope->subckts;
+    for (; p; p = p->next)
+        if (eq(name, p->name))
+            break;
+    return p;
+}
+
+
+static struct card_assoc *
+find_subckt(struct nscope *scope, const char *name) {
+    for(; scope; scope = scope->next) {
+        struct card_assoc *p = find_subckt_1(scope, name);
+        if (p)
+            return p;
+    }
+    return NULL;
+}
+
+
+static void
+add_subckt(struct nscope *scope, struct card *subckt_line)
+{
+    char *n = skip_ws(skip_non_ws(subckt_line->line));
+    char *name = copy_substring(n, skip_non_ws(n));
+    if (find_subckt_1(scope, name)) {
+        fprintf(stderr, "redefinition of .subckt %s\n", name);
+        controlled_exit(1);
+    }
+    struct card_assoc *entry = TMALLOC(struct card_assoc, 1);
+    entry->name = name;
+    entry->line = subckt_line;
+    entry->next = scope->subckts;
+    scope->subckts = entry;
+}
+
+
+/* scan through deck and add level information to all struct card
+ * depending on nested subcircuits */
+static struct nscope *
+inp_add_levels(struct card *deck)
+{
+    struct card *card;
+    int skip_control = 0;
+
+    struct nscope *root = TMALLOC(struct nscope, 1);
+    root->next = NULL;
+    root->subckts = NULL;
+
+    struct nscope *lvl = root;
+
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line = card->line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*curr_line == '.') {
+            if (ciprefix(".subckt", curr_line)) {
+                add_subckt(lvl, card);
+                struct nscope *scope = TMALLOC(struct nscope, 1);
+                // lvl->name = ..., or just point to the deck
+                scope->next = lvl;
+                scope->subckts = NULL;
+                lvl = card->level = scope;
+            }
+            else if (ciprefix(".ends", curr_line)) {
+                if (lvl == root) {
+                    fprintf(stderr, ".subckt/.ends not balanced\n");
+                    controlled_exit(1);
+                }
+                card->level = lvl;
+                lvl = lvl->next;
+            }
+            else {
+                card->level = lvl;
+            }
+        }
+        else {
+            card->level = lvl;
+        }
+    }
+
+    if (lvl != root)
+        fprintf(stderr, "nesting error\n");
+
+    return root;
+}
+
+
+/* remove the level and subckts entries */
+static void
+inp_rem_levels(struct nscope *root)
+{
+    struct card_assoc *p = root->subckts;
+    while (p) {
+        inp_rem_levels(p->line->level);
+        tfree(p->name);
+        struct card_assoc *pn = p->next;
+        tfree(p);
+        p = pn;
+    }
+    tfree(root);
 }
