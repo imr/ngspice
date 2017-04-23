@@ -1421,19 +1421,19 @@ inp_add_control_section(struct line *deck, int *line_number)
     // check if need to add control section
     if (!found_run && found_end) {
 
-        insert_new_line(deck, copy(".endc"), (*line_number)++, 0);
+        deck = insert_new_line(deck, copy(".control"), (*line_number)++, 0);
+
+        deck = insert_new_line(deck, copy("run"), (*line_number)++, 0);
+
+        if (op_line)
+            deck = insert_new_line(deck, copy(op_line), (*line_number)++, 0);
 
         if (cp_getvar("rawfile", CP_STRING, rawfile)) {
             line = tprintf("write %s", rawfile);
-            insert_new_line(deck, line, (*line_number)++, 0);
+            deck = insert_new_line(deck, line, (*line_number)++, 0);
         }
 
-        if (op_line)
-            insert_new_line(deck, copy(op_line), (*line_number)++, 0);
-
-        insert_new_line(deck, copy("run"), (*line_number)++, 0);
-
-        insert_new_line(deck, copy(".control"), (*line_number)++, 0);
+        deck = insert_new_line(deck, copy(".endc"), (*line_number)++, 0);
     }
 }
 
