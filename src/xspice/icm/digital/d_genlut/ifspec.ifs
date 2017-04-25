@@ -1,18 +1,18 @@
 /*.......1.........2.........3.........4.........5.........6.........7.........8
 ================================================================================
-Copyright 2016
-efabless inc., San Jose, CA
-All Rights Reserved
 
 AUTHORS
 
-    25 Aug 2016     Tim Edwards
-
+    25 Aug 2016     Tim Edwards		efabless inc., San Jose, CA
 
 SUMMARY
 
     This file contains the interface specification file for the
     digital d_genlut code model.
+
+LICENSE
+
+    This software is in the public domain.
 
 ===============================================================================*/
 
