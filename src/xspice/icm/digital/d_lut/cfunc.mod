@@ -3,20 +3,18 @@
 
 FILE d_lut/cfunc.mod
 
-Copyright 2016
-efabless inc., San Jose, CA
-All Rights Reserved
-
 AUTHORS
 
-    25 Aug 2016     Tim Edwards
-
+    25 Aug 2016     Tim Edwards		efabless inc., San Jose, CA
 
 SUMMARY
 
     This file contains the functional description of the d_lut
     code model.
 
+LICENSE
+
+    This software is in the public domain.
 
 INTERFACES
 
