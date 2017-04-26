@@ -8,6 +8,7 @@ ekvacld.c ekvask.c ekv.c ekvdel.c ekvdest.c ekvguesstopology.c ekvinit.c ekvload
 
 scripts = \
 	-e ../../admst/ngspiceVersion.xml \
+	-e ../../admst/analogfunction.xml \
 	-e ../../admst/ngspiceMODULEitf.h.xml \
 	-e ../../admst/ngspiceMODULEinit.c.xml \
 	-e ../../admst/ngspiceMODULEinit.h.xml \
