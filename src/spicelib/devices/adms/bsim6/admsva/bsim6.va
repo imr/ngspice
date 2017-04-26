@@ -3010,11 +3010,13 @@ DevTemp = $temperature + DTEMP;
 		ku0_temp = kstress_u0 * (1.0 + TKU0 * T0) + 1.0e-9;
 
 		Inv_sa = 0;	Inv_sb = 0;//Initialization of for loop
-		for (i = 0; i < NF; i = i+1) begin : forloop
+		i=0;
+		while (i < NF) begin
 			T0 = 1.0 / NF / (SA + 0.5*L_mult + i * (SD +L_mult));
 			T1 = 1.0 / NF / (SB + 0.5*L_mult + i * (SD +L_mult));
 			Inv_sa = Inv_sa + T0;
 			Inv_sb = Inv_sb + T1;
+			i = i + 1;
 		end
 
 		Inv_saref = 1.0 / (SAREF + 0.5 * L_mult);
