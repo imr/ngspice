@@ -8,6 +8,7 @@ psp102acld.c psp102ask.c psp102.c psp102del.c psp102dest.c psp102guesstopology.c
 
 scripts = \
 	-e ../../admst/ngspiceVersion.xml \
+	-e ../../admst/analogfunction.xml \
 	-e ../../admst/ngspiceMODULEitf.h.xml \
 	-e ../../admst/ngspiceMODULEinit.c.xml \
 	-e ../../admst/ngspiceMODULEinit.h.xml \
