@@ -366,6 +366,7 @@ extern void plot_new(struct plot *pl);
 extern char *vec_basename(struct dvec *v);
 extern bool plot_prefix(char *pre, char *str);
 extern void vec_transpose(struct dvec *v);
+extern bool vec_clip(char* vecname, double xmin, double xmax);
 
 /* main.c */
 extern bool ft_intrpt;

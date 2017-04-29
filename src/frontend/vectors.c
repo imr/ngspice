@@ -1151,3 +1151,49 @@ plot_prefix(char *pre, char *str)
     else
         return (TRUE);
 }
+
+/* clip a vector between hte two scale values xmin and xmax
+add a copy of the vector to the current plot
+Set all data outside xmin and xmax will be set to NAN */
+bool
+vec_clip(char* vecname, double xmin, double xmax)
+{
+	/* check for xmin and xmax */
+	if (xmax < xmin) {
+		double tmp = xmin;
+		xmin = xmax;
+		xmax = tmp;
+	}
+	else if (xmax == xmin) {
+		fprintf(stderr, "Warnig: Cannot clip vector %s\n", vecname);
+		return FALSE;
+	}
+	/* Create new vector as copy within current plot */
+	struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
+	struct dvec *newvec = vec_copy(oldvec);
+	char *oldname = oldvec->v_name;
+	char *newname = tprintf("cl_%s", oldname);
+//	char * newname = copy("new1");
+	tfree(newvec->v_name);
+	newvec->v_name = newname;
+	vec_new(newvec);
+	newvec->v_flags = oldvec->v_flags;
+	/* Compare newvec->v_scale to xmin, xmax */
+	int length = newvec->v_length;
+	int i;
+	for (i = 0; i < length; i++) {
+		if ((plot_cur->pl_scale->v_realdata[i] < xmin) || (plot_cur->pl_scale->v_realdata[i] > xmax))
+			if (isreal(newvec)) {
+				newvec->v_realdata[i] = NAN;
+			}
+			else {
+				newvec->v_compdata[i].cx_real = NAN;
+				newvec->v_compdata[i].cx_imag = NAN;
+			}
+		else
+			continue;
+	}
+	vec_rebuild_lookup_table(plot_cur);
+	return TRUE;
+}
+

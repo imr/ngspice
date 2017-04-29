@@ -5,4 +5,5 @@ void com_plot(wordlist *wl);
 #ifdef TCL_MODULE
 void com_bltplot(wordlist *wl);
 #endif
+void com_clip(wordlist *wl);
 #endif
