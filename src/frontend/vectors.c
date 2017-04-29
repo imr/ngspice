@@ -1173,12 +1173,11 @@ vec_clip(char* vecname, double xmin, double xmax)
 	struct dvec *newvec = vec_copy(oldvec);
 	char *oldname = oldvec->v_name;
 	char *newname = tprintf("cl_%s", oldname);
-//	char * newname = copy("new1");
 	tfree(newvec->v_name);
 	newvec->v_name = newname;
 	vec_new(newvec);
 	newvec->v_flags = oldvec->v_flags;
-	/* Compare newvec->v_scale to xmin, xmax */
+	/* Compare scale vector to xmin, xmax */
 	int length = newvec->v_length;
 	int i;
 	for (i = 0; i < length; i++) {
@@ -1193,7 +1192,6 @@ vec_clip(char* vecname, double xmin, double xmax)
 		else
 			continue;
 	}
-	vec_rebuild_lookup_table(plot_cur);
 	return TRUE;
 }
 
