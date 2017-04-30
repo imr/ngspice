@@ -720,6 +720,7 @@ vec_copy(struct dvec *v)
     nv->v_next = NULL;
     nv->v_link2 = NULL;
     nv->v_scale = v->v_scale;
+	nv->v_unclipped = v->v_unclipped;
 
     return (nv);
 }

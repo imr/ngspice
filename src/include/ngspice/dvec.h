@@ -58,6 +58,7 @@ struct dvec {
     struct dvec *v_next;	/* Link for list of plot vectors. */
     struct dvec *v_link2;	/* Extra link for things like print. */
     struct dvec *v_scale;	/* If this has a non-standard scale... */
+    struct dvec *v_unclipped;	/* If clipped, this is the original vector */
 } ;
 
 #define isreal(v)   ((v)->v_flags & VF_REAL)
