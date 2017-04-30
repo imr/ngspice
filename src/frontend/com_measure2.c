@@ -436,6 +436,11 @@ com_measure_when(
             scaleValue = dScale->v_realdata[i];
         }
 
+		/* check for NAN */
+		if (isnan(value))
+			continue;
+		/* end of check */
+
         if (has_d2) {
             if (ac_check) {
                 if (d2->v_compdata)
@@ -450,6 +455,11 @@ com_measure_when(
             } else {
                 value2 = d2->v_realdata[i];
             }
+
+			/* check for NAN */
+			if (isnan(value2))
+				continue;
+			/* end of check */
         } else {
             value2 = NAN;
         }
@@ -668,6 +678,11 @@ measure_at(
             svalue = dScale->v_realdata[i];
         }
 
+		/* check for NAN */
+		if (isnan(value))
+			continue;
+		/* end of check */
+
         if ((i > 0) && (psvalue <= at) && (svalue >= at)) {
             meas->m_measured = pvalue + (at - psvalue) * (value - pvalue) / (svalue - psvalue);
             return;
@@ -763,6 +778,11 @@ measure_minMaxAvg(
             value = d->v_realdata[i];
             svalue = dScale->v_realdata[i];
         }
+
+		/* check for NAN */
+		if (isnan(value))
+			continue;
+		/* end of check */
 
         if (dc_check) {
             /* dc: start from pos or neg scale value */
@@ -933,6 +953,11 @@ measure_rms_integral(
             value = d->v_realdata[i];
             xvalue = xScale->v_realdata[i];
         }
+
+		/* check for NAN */
+		if (isnan(value))
+			continue;
+		/* end of check */
 
         if (xvalue < meas->m_from)
             continue;
