@@ -9,6 +9,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		README.adms contrib \
 		doc examples m4 visualc @NOTXGRAPH@ \
 		xgraph/aclocal.m4 \
+		cross-compile.sh cross-compile-shared.sh \
 		compile_min.sh .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 ar-lib compile config.guess \
