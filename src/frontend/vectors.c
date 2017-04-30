@@ -1153,8 +1153,8 @@ plot_prefix(char *pre, char *str)
         return (TRUE);
 }
 
-/* clip a vector between hte two scale values xmin and xmax
-add a copy of the vector to the current plot
+/* Clip a vector between the two scale values xmin and xmax,
+Store the pointer to the original vector in v_unclipped.
 Set all data outside xmin and xmax will be set to NAN */
 bool
 vec_clip(char* vecname, double xmin, double xmax)
@@ -1165,6 +1165,14 @@ vec_clip(char* vecname, double xmin, double xmax)
 		xmin = xmax;
 		xmax = tmp;
 	}
+	else if (xmax == 0 && xmin == 0) {
+		/* Restore unclipped vector */
+        struct dvec *curvec = vec_fromplot(vecname, plot_cur);
+		struct dvec *restorevec = curvec->v_unclipped;
+		vec_free_x(curvec);
+		vec_new(restorevec);
+		return TRUE;
+	}
 	else if (xmax == xmin) {
 		fprintf(stderr, "Warnig: Cannot clip vector %s\n", vecname);
 		return FALSE;
@@ -1172,10 +1180,26 @@ vec_clip(char* vecname, double xmin, double xmax)
 	/* Create new vector as copy within current plot */
 	struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
 	struct dvec *newvec = vec_copy(oldvec);
-	char *oldname = oldvec->v_name;
-	char *newname = tprintf("cl_%s", oldname);
-	tfree(newvec->v_name);
-	newvec->v_name = newname;
+	newvec->v_unclipped = oldvec;
+
+    /* remove oldvec from the current plot, but don't delete it */
+	plot_cur->pl_lookup_valid = FALSE;
+	if (plot_cur->pl_dvecs == oldvec) {
+		plot_cur->pl_dvecs = oldvec->v_next;
+	}
+	else {
+		struct dvec *lv = plot_cur->pl_dvecs;
+		if (lv)
+			for (; lv->v_next; lv = lv->v_next)
+				if (lv->v_next == oldvec)
+					break;
+		if (lv && lv->v_next)
+			lv->v_next = oldvec->v_next;
+		else
+			fprintf(cp_err,
+				"vec_free: Internal Error: %s not in plot\n",
+				oldvec->v_name);
+	}
 	vec_new(newvec);
 	newvec->v_flags = oldvec->v_flags;
 	/* Compare scale vector to xmin, xmax */
