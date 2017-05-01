@@ -5,7 +5,7 @@ FILE d_genlut/cfunc.mod
 
 AUTHORS
 
-    25 Aug 2016     Tim Edwards		efabless inc., San Jose, CA
+    25 Aug 2016     Tim Edwards         efabless inc., San Jose, CA
 
 SUMMARY
 
