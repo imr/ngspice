@@ -1,0 +1,127 @@
+* mult4bit.spi ---
+*
+*   Example use of d_lut and d_genlut xspice models
+*
+*   4 bit parallel multiplier using the d_genlut xspice cell to represent
+*   full and half adders, and using the d_lut xspice cell to represent the
+*   AND gates.
+*
+*   The LUTs are represented by a string indicating the output for each
+*   combination of inputs.  So a 2-input AND gate is represented by
+*   "0001".  The d_genlut model allows multiple outputs, and the string
+*   result is the same as a d_lut with the strings for each output
+*   concatenated.  So the sum output of a full adder is "01101001"
+*   (A ^ B ^ C), and the carry output is "00010111" (AB + BC + AC), so the
+*   string representation of the d_genlut output is "0110100100010111".
+*
+*   subcircuit inputs are aa[3:0] and ab[3:0], output is ap[7:0]
+*   testbench inputs are a[3:0] and b[3:0], output is p[7:0]
+*---------------------------------------------------------------------------
+
+.subckt mult4bit ap7 ap6 ap5 ap4 ap3 ap2 ap1 ap0 aa3 aa2 aa1 aa0 ab3 ab2 ab1 ab0
+
+* A-to-D and D-to-A bridges
+.MODEL todig_3v adc_bridge(in_high=0.7 in_low=0.3 rise_delay=100n fall_delay=100n)
+.MODEL toana_3v dac_bridge(out_high=1.0 out_low=0.0)
+
+AA2D00 [ab3 ab2 ab1 ab0 aa3 aa2 aa1 aa0] [db3 db2 db1 db0 da3 da2 da1 da0] todig_3v
+AD2A00 [dp7 dp6 dp5 dp4 dp3 dp2 dp1 dp0] [ap7 ap6 ap5 ap4 ap3 ap2 ap1 ap0] toana_3v
+
+* Instantiate the 4-bit multiplier
+* LUT model representing a 2-input AND gate
+.model d_lut_and2 d_lut (rise_delay=50n fall_delay=50n input_load=1.0p
++ table_values "0001")
+
+* genLUT model representing a half adder
+.model d_genlut_ha d_genlut (rise_delay=[50n 50n] fall_delay=[50n 50n]
++ input_load=[1.0p 1.0p] input_delay=[2n 2n] table_values "01100001")
+
+* genLUT model representing a full adder
+.model d_genlut_fa d_genlut (rise_delay=[50n 50n] fall_delay=[50n 50n]
++ input_load=[1.0p 1.0p 1.0p] input_delay=[2n 2n 2n] table_values "0110100100010111")
+
+* Instantiate the 4-bit multiplier
+AAND00 [da0 db0] dp0 d_lut_and2
+AAND10 [da1 db0] h0a d_lut_and2
+AAND11 [da0 db1] h0b d_lut_and2
+AAND20 [da2 db0] f0a d_lut_and2
+AAND21 [da1 db1] f0b d_lut_and2
+AAND22 [da0 db2] h1b d_lut_and2
+AAND30 [da3 db0] f1a d_lut_and2
+AAND31 [da2 db1] f1b d_lut_and2
+AAND32 [da1 db2] f2b d_lut_and2
+AAND33 [da0 db3] h2b d_lut_and2
+AAND40 [da3 db1] h3b d_lut_and2
+AAND41 [da2 db2] f3b d_lut_and2
+AAND42 [da1 db3] f4b d_lut_and2
+AAND50 [da3 db2] f5b d_lut_and2
+AAND51 [da2 db3] f6b d_lut_and2
+AAND60 [da3 db3] f7b d_lut_and2
+
+AHA0 [h0a h0b] [dp1 f0c] d_genlut_ha
+AHA1 [h1a h1b] [dp2 f2c] d_genlut_ha
+AHA2 [h2a h2b] [dp3 f4c] d_genlut_ha
+AHA3 [h3a h3b] [f3a f5a] d_genlut_ha
+
+AFA0 [f0a f0b f0c] [h1a f1c] d_genlut_fa
+AFA1 [f1a f1b f1c] [f2a h3a] d_genlut_fa
+AFA2 [f2a f2b f2c] [h2a f3c] d_genlut_fa
+AFA3 [f3a f3b f3c] [f4a f5c] d_genlut_fa
+AFA4 [f4a f4b f4c] [dp4 f6c] d_genlut_fa
+AFA5 [f5a f5b f5c] [f6a f7a] d_genlut_fa
+AFA6 [f6a f6b f6c] [dp5 f7c] d_genlut_fa
+AFA7 [f7a f7b f7c] [dp6 dp7] d_genlut_fa
+
+.ends
+
+* Testbench to exercise the multiplier
+
+* Eight pulsed voltage sources to run through the bits of a and b
+VV7 b3 0 DC=0 PULSE(0 1 6400u 100n 100n 6400u 12800u)
+VV6 b2 0 DC=0 PULSE(0 1 3200u 100n 100n 3200u  6400u)
+VV5 b1 0 DC=0 PULSE(0 1 1600u 100n 100n 1600u  3200u)
+VV4 b0 0 DC=0 PULSE(0 1  800u 100n 100n  800u  1600u)
+VV3 a3 0 DC=0 PULSE(0 1  400u 100n 100n  400u   800u)
+VV2 a2 0 DC=0 PULSE(0 1  200u 100n 100n  200u   400u)
+VV1 a1 0 DC=0 PULSE(0 1  100u 100n 100n  100u   200u)
+VV0 a0 0 DC=0 PULSE(0 1   50u 100n 100n   50u   100u)
+
+* Give a capacitive load to the outputs
+C7 p7 0 10f
+C6 p6 0 10f
+C5 p5 0 10f
+C4 p4 0 10f
+C3 p3 0 10f
+C2 p2 0 10f
+C1 p1 0 10f
+C0 p0 0 10f
+
+Xmult4 p7 p6 p5 p4 p3 p2 p1 p0 a3 a2 a1 a0 b3 b2 b1 b0 mult4bit
+
+* Run the transient simulation
+
+.control
+
+tran 50us 12825us 25us
+linearize
+
+let aa = (((v(a3))*2 + v(a2))*2 + v(a1))*2 + v(a0)
+let bb = (((v(b3))*2 + v(b2))*2 + v(b1))*2 + v(b0)
+
+let pp = (((((((v(p7))*2 + v(p6))*2 + v(p5))*2 + v(p4))*2 + v(p3))*2 + v(p2))*2 + v(p1))*2 + v(p0)
+
+let pp_gold = aa * bb
+
+plot aa bb pp
+
+let err = vecmax(abs(pp - pp_gold))
+
+if $&err > 1e-6
+  echo "ERROR: multiplier output does not match golden response"
+else
+  echo "INFO: multiplier output does match golden response"
+end
+
+.endc
+
+.end
