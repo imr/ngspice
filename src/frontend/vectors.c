@@ -1153,32 +1153,53 @@ plot_prefix(char *pre, char *str)
         return (TRUE);
 }
 
-/* Clip a vector between the two scale values xmin and xmax,
+/* Clip a vector between the two scale values xmin and xmax.
 Store the pointer to the original vector in v_unclipped.
-Set all data outside xmin and xmax will be set to NAN */
+Set all vector data outside xmin and xmax to NAN.
+If 'clip vecname 0 0' is given, restore previous vector.
+If clipping an already clipped vector, restore it before clipping again. */
 bool
 vec_clip(char* vecname, double xmin, double xmax)
 {
+	/* Check for scale vector */
+	if (cieq(plot_cur->pl_scale->v_name, vecname)) {
+		fprintf(stderr, "Warning: Scale vector %s cannot be clipped!\n", vecname);
+		return FALSE;
+	}
+
+	struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
+	bool onlyrestore = (xmax == 0 && xmin == 0);
+
+	/* Check for curve-fitting, only allow 'clip vecname 0 0' to unclip vector */
+	int gridsize;
+	if (cp_getvar("gridsize", CP_NUM, &gridsize) && !(oldvec->v_unclipped) && !onlyrestore) {
+		fprintf(stderr, "Warning: Cannot clip a vector, if curve-fitting with variable 'gridsize' is used!\n");
+		return FALSE;
+	}
+	
+	
 	/* check for xmin and xmax */
 	if (xmax < xmin) {
 		double tmp = xmin;
 		xmin = xmax;
 		xmax = tmp;
 	}
-	else if (xmax == 0 && xmin == 0) {
-		/* Restore unclipped vector */
-        struct dvec *curvec = vec_fromplot(vecname, plot_cur);
-		struct dvec *restorevec = curvec->v_unclipped;
-		vec_free_x(curvec);
+	else if ((oldvec->v_unclipped) && ((xmax != xmin) || onlyrestore)) {
+		/* If vector is already clipped, restore unclipped vector */
+		struct dvec *restorevec = oldvec->v_unclipped;
+		vec_free_x(oldvec);
 		vec_new(restorevec);
-		return TRUE;
+		oldvec = restorevec;
+		oldvec->v_unclipped = NULL; /* should be NULL anyway */
+		/* Just exit function after restoring previous vector, if command 'clip vecname 0 0' is given. */
+		if (onlyrestore)
+		    return TRUE;
 	}
 	else if (xmax == xmin) {
 		fprintf(stderr, "Warnig: Cannot clip vector %s\n", vecname);
 		return FALSE;
 	}
 	/* Create new vector as copy within current plot */
-	struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
 	struct dvec *newvec = vec_copy(oldvec);
 	newvec->v_unclipped = oldvec;
 

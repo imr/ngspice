@@ -63,6 +63,11 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         return;
     }
 
+	if (gridsize && v->v_unclipped) {
+		fprintf(cp_err, "Error: cannot interpolate clipped vector %s\n", v->v_name);
+		return;
+	}
+
     if (gridsize && xs) {
         if (isreal(xs)) {
             increasing = (xs->v_realdata[0] < xs->v_realdata[1]);
@@ -137,16 +142,17 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                 realpart(xs->v_compdata[i]);
             dy = isreal(v) ? v->v_realdata[i] :
                 realpart(v->v_compdata[i]);
-			/* check for NAN */
-			if (isnan(dy)) {
-				lx = dx;
-				ly = dy;
-				continue;
-			}
-			else if (!isnan(dy) && isnan(ly)) {
-				lx = dx;
-				ly = dy;
-			}
+			/* check for NAN, used in clipping */
+			if(v->v_unclipped)
+				if (isnan(dy)) {
+					lx = dx;
+					ly = dy;
+					continue;
+				}
+				else if (!isnan(dy) && isnan(ly)) {
+					lx = dx;
+					ly = dy;
+				}
 			/* end of check */
             if ((i == 0 || (dir > 0 ? lx > dx : dir < 0 ? lx < dx : 0)) &&
                 (mono || (xs->v_plot && xs->v_plot->pl_scale == xs)))
