@@ -165,14 +165,14 @@
 
 `define BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, TYPE, Rend) \
 	if (TYPE == 1) begin \
-		case(rgeo) \
-		1, 2, 5: begin \
+		if(rgeo == 1 || rgeo == 2 || rgeo == 5) \
+		begin \
 			if (nuEnd == 0.0) \
 				Rend = 0.0; \
 			else \
 				Rend = Rsh * DMCG / (Weffcj * nuEnd); \
 		end \
-		3, 4, 6: begin \
+		else if(rgeo == 3 || rgeo == 4 || rgeo == 6) begin \
 			if ((DMCG + DMCI) == 0.0) \
 				`STROBE("(DMCG + DMCI) can not be equal to zero"); \
 			if (nuEnd == 0.0) \
@@ -180,22 +180,21 @@
 			else \
 				Rend = Rsh * Weffcj / (3.0 * nuEnd * (DMCG + DMCI)); \
 		end \
-		default: begin \
+		else begin \
 			`STROBE2("Warning: (instance %M) Specified RGEO = %d not matched (BSIM6RdsEndIso), \
 			Rend is set to zero.", rgeo); \
 			Rend = 0.0; \
 		end \
-		endcase \
 	end \
 	else begin \
-		case(rgeo) \
-		1, 3, 7: begin \
+		if(rgeo == 1 || rgeo == 3 || rgeo == 7) \
+		begin \
 			if (nuEnd == 0.0) \
 				Rend = 0.0; \
 			else \
 				Rend = Rsh * DMCG / (Weffcj * nuEnd); \
 		end \
-		2, 4, 8: begin \
+		else if(rgeo == 2 || rgeo == 4 || rgeo == 8) begin \
 			if ((DMCG + DMCI) == 0.0) \
 				`STROBE("(DMCG + DMCI) can not be equal to zero"); \
 			if (nuEnd == 0.0) \
@@ -203,26 +202,25 @@
 			else \
 				Rend = Rsh * Weffcj / (3.0 * nuEnd * (DMCG + DMCI)); \
 		end \
-		default: begin \
+		else begin \
 			`STROBE2("Warning: (instance %M) Specified RGEO=%d not matched (BSIM6RdsEndIso \
 			type 2), Rend is set to zero.", rgeo); \
 			Rend = 0.0; \
 		end \
-		endcase \
 	end
 
 
 `define BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, TYPE, Rend) \
 	begin \
 		if (TYPE == 1) begin \
-			case(rgeo) \
-			1, 2, 5: begin \
+			if(rgeo == 1 || rgeo == 2 || rgeo == 5) \
+			begin \
 				if (nuEnd == 0.0) \
 					Rend = 0.0; \
 				else \
 					Rend = Rsh * DMCG / (Weffcj * nuEnd); \
 			end \
-			3, 4, 6: begin \
+			else if (rgeo == 3 || rgeo == 4 || rgeo == 6) begin \
 				if (DMCG == 0.0) \
 					`STROBE("DMCG can not be equal to zero"); \
 				if (nuEnd == 0.0) \
@@ -230,22 +228,21 @@
 				else \
 					Rend = Rsh * Weffcj / (6.0 * nuEnd * DMCG); \
 			end \
-			default: begin \
+			else begin \
 				`STROBE2("Warning: (instance %M) Specified RGEO = %d not matched (BSIM6RdsEndSha), \
 				Rend is set to zero.", rgeo); \
 				Rend = 0.0; \
 			end \
-			endcase \
 		end \
 		else begin \
-			case(rgeo) \
-			1, 3, 7: begin \
+			if(rgeo == 1 || rgeo == 3 || rgeo == 7) \
+			begin \
 				if (nuEnd == 0.0) \
 					Rend = 0.0; \
 				else \
 					Rend = Rsh * DMCG / (Weffcj * nuEnd); \
 			end \
-			2, 4, 8: begin \
+			else if (rgeo == 2 || rgeo == 4 || rgeo == 8) begin \
 				if (DMCG == 0.0) \
 					`STROBE("DMCG can not be equal to zero"); \
 				if (nuEnd == 0.0) \
@@ -253,12 +250,11 @@
 				else \
 					Rend = Rsh * Weffcj / (6.0 * nuEnd * DMCG); \
 			end \
-			default: begin \
+			else begin \
 				`STROBE2("Warning: (instance %M) Specified RGEO=%d not matched (BSIM6RdsEndSha \
 				type 2), Rend is set to zero.", rgeo); \
 				Rend = 0.0; \
 			end \
-			endcase \
 		end \
 	end
 
@@ -279,8 +275,8 @@
 					Rint = Rsh * DMCG / ( Weffcj * nuIntD); \
 			end \
 		end \
-		case(geo) \
-		0: begin \
+		if (geo == 0) \
+		begin \
 			if (TYPE == 1) \
 				`BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
 				rgeo, 1, Rend) \
@@ -288,7 +284,7 @@
 				`BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndD, \
 				rgeo, 0, Rend) \
 		end \
-		1: begin \
+		else if (geo == 1) begin \
 			if (TYPE == 1) \
 				`BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
 				rgeo, 1, Rend) \
@@ -296,7 +292,7 @@
 				`BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndD, \
 				rgeo, 0, Rend) \
 		end \
-		2: begin \
+		else if (geo == 2) begin \
 			if (TYPE == 1) \
 				`BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
 				rgeo, 1, Rend) \
@@ -304,7 +300,7 @@
 				`BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndD, \
 				rgeo, 0, Rend) \
 		end \
-		3: begin \
+		else if (geo == 3) begin \
 			if (TYPE == 1) \
 				`BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
 				rgeo, 1, Rend) \
@@ -312,14 +308,14 @@
 				`BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndD, \
 				rgeo, 0, Rend) \
 		end \
-		4: begin \
+		else if (geo == 4) begin \
 			if (TYPE == 1) \
 				`BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
 				rgeo, 1, Rend) \
 			else \
 				Rend = Rsh * DMDG / Weffcj; \
 		end \
-		5: begin \
+		else if (geo == 5) begin \
 			if (TYPE == 1) \
 				`BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
 				rgeo, 1, Rend) \
@@ -330,14 +326,14 @@
 					Rend = Rsh * DMDG / (Weffcj * nuEndD); \
 				end\
 		end \
-		6: begin \
+		else if (geo == 6) begin \
 			if (TYPE == 1) \
 				Rend = Rsh * DMDG / Weffcj; \
 			else \
 				`BSIM6RdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndD, \
 				rgeo, 0, Rend) \
 		end \
-		7:begin \
+		else if (geo == 7) begin \
 			if (TYPE == 1) begin \
 					if (nuEndS==0) \
 						Rend = 0; \
@@ -347,10 +343,10 @@
 				`BSIM6RdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndD, \
 				rgeo, 0, Rend) \
 		end \
-		8: begin \
+		else if (geo == 8) begin \
 			Rend = Rsh * DMDG / Weffcj; \
 		end \
-		9: begin /* all wide contacts assumed for geo = 9 and 10 */\
+		else if (geo == 9) begin /* all wide contacts assumed for geo = 9 and 10 */\
 			if (TYPE == 1) begin \
 				Rend = 0.5 * Rsh * DMCG / Weffcj; \
 				if (nf == 2.0) \
@@ -363,7 +359,7 @@
 				Rint = Rsh * DMCG / (Weffcj * nf); \
 			end \
 		end \
-		10: begin \
+		else if (geo == 10) begin \
 			if (TYPE == 1) begin \
 				Rend = 0.0; \
 				Rint = Rsh * DMCG / (Weffcj * nf); \
@@ -376,12 +372,11 @@
 					Rint = Rsh * DMCG / (Weffcj * (nf - 2.0)); \
 			end \
 		end \
-		default: begin \
+		else begin \
 			`STROBE2("Warning: (instance %M) Specified RGEO=%d not matched (BSIM6RdseffGeo \
 			), Rint is set to zero.", rgeo); \
 			Rint = 0.0; \
 		end \
-		endcase \
 		if (Rint <= 0.0) \
 			Rtot = Rend; \
 		else if (Rend <= 0.0) \
@@ -412,74 +407,74 @@
 	ADsha = DMCG * Weffcj;\
 	ASmer = DMDG * Weffcj;	\
 	ADmer = DMDG * Weffcj;	\
-		case(geo) \
-		0: begin \
+		if(geo == 0) \
+		begin \
 			Ps = nuEndS * PSiso + nuIntS * PSsha;\
 			Pd = nuEndD * PDiso + nuIntD * PDsha;\
 			As = nuEndS * ASiso + nuIntS * ASsha;\
 			Ad = nuEndD * ADiso + nuIntD * ADsha;\
 		end \
-		1: begin \
+		else if(geo == 1) begin \
 			Ps = nuEndS * PSiso + nuIntS * PSsha;\
                 	Pd = (nuEndD + nuIntD) * PDsha;\
                 	As = nuEndS * ASiso + nuIntS * ASsha;\
                 	Ad = (nuEndD + nuIntD) * ADsha;\
 		end \
-		2: begin \
+		else if(geo == 2) begin \
 			Ps = (nuEndS + nuIntS) * PSsha;\
                 	Pd = nuEndD * PDiso + nuIntD * PDsha;\
                 	As = (nuEndS + nuIntS) * ASsha;\
                 	Ad = nuEndD * ADiso + nuIntD * ADsha;\
 		end \
-		3: begin \
+		else if(geo == 3) begin \
 			Ps = (nuEndS + nuIntS) * PSsha;\
                 	Pd = (nuEndD + nuIntD) * PDsha;\
                 	As = (nuEndS + nuIntS) * ASsha;\
                 	Ad = (nuEndD + nuIntD) * ADsha;\
 		end \
-		4: begin \
+		else if(geo == 4) begin \
 			Ps = nuEndS * PSiso + nuIntS * PSsha;\
                 	Pd = nuEndD * PDmer + nuIntD * PDsha;\
                 	As = nuEndS * ASiso + nuIntS * ASsha;\
                 	Ad = nuEndD * ADmer + nuIntD * ADsha;\
 		end \
-		5: begin \
+		else if(geo == 5) begin \
 			Ps = (nuEndS + nuIntS) * PSsha;\
                 	Pd = nuEndD * PDmer + nuIntD * PDsha;\
                 	As = (nuEndS + nuIntS) * ASsha;\
                 	Ad = nuEndD * ADmer + nuIntD * ADsha;\
 		end \
-		6: begin \
+		else if(geo == 6) begin \
 			Ps = nuEndS * PSmer + nuIntS * PSsha;\
                 	Pd = nuEndD * PDiso + nuIntD * PDsha;\
                 	As = nuEndS * ASmer + nuIntS * ASsha;\
                 	Ad = nuEndD * ADiso + nuIntD * ADsha;\
 		end \
-		7: begin \
+		else if(geo == 7) begin \
 			Ps = nuEndS * PSmer + nuIntS * PSsha;\
                 	Pd = (nuEndD + nuIntD) * PDsha;\
                 	As = nuEndS * ASmer + nuIntS * ASsha;\
                 	Ad = (nuEndD + nuIntD) * ADsha;\
 		end \
-		8: begin \
+		else if(geo == 8) begin \
 			Ps = nuEndS * PSmer + nuIntS * PSsha;\
                 	Pd = nuEndD * PDmer + nuIntD * PDsha;\
                 	As = nuEndS * ASmer + nuIntS * ASsha;\
                 	Ad = nuEndD * ADmer + nuIntD * ADsha;\
 		end \
-		9: begin \
+		else if(geo == 9) begin \
 			Ps = PSiso + (nf - 1.0) * PSsha;\
                 	Pd = nf * PDsha;\
                 	As = ASiso + (nf - 1.0) * ASsha;\
                 	Ad = nf * ADsha;\
 		end \
-		10: begin \
+		else if(geo == 10) begin \
 			Ps = nf * PSsha;\
                 	Pd = PDiso + (nf - 1.0) * PDsha;\
                 	As = nf * ASsha;\
                 	Ad = ADiso + (nf - 1.0) * ADsha;\
 		end \
-		default: begin \
+		else begin \
 			`STROBE2("Warning: (instance %M) Specified GEO=%d not matched (BSIM6RdseffGeo \
 			), PS,PD,AS,AD set to zero.", geo); \
 			Ps = 0;\
@@ -487,7 +482,6 @@
                 	As = 0;\
                 	Ad = 0;\
 		end \
-		endcase \
 	end \
 
 //******************************************************
@@ -3977,8 +3971,7 @@ DevTemp = $temperature + DTEMP;
 	thetanoisq = T4 * T4;
 
 	cm_igid=0; //Initialization
-	case(TNOIMOD)
-	0: begin
+	if(TNOIMOD == 0) begin
 `endif
 		QSi = - NF * Weff * Leff * Cox *Vt * Qs;
 		QDi = - NF * Weff * Leff * Cox *Vt * Qd;
@@ -3989,7 +3982,7 @@ DevTemp = $temperature + DTEMP;
 		I(`IntrinsicDrain, `IntrinsicSource) <+ white_noise(sidn, "id");
 `ifdef __TNOISW__
 	end
-	1: begin
+	else if(TNOIMOD == 1) begin
 		Vtn = 2.0 * nq * nVt;
 		T0 = ueff * Dptwg * Moc * Cox * Vtn;
 		T1 = 0.5 * (qs + qdeff);
@@ -4028,7 +4021,6 @@ DevTemp = $temperature + DTEMP;
 		I(`IntrinsicGate,`IntrinsicSource)  <+  ddt(0.5 * ((1.0 + sigvds) * mig * Cox * Weff * NF * Leff * V(NC)));
 		I(`IntrinsicGate,`IntrinsicDrain)  <+  ddt(0.5 * ((1.0 - sigvds) * mig * Cox * Weff * NF * Leff * V(NC)));
 	end
-	endcase
 
 	I(N2)   <+  V(N2);
 	I(NR)   <+  V(NR);
