@@ -63,11 +63,11 @@ inline double _d0_exp(double arg)          { return exp(arg); }
 inline double _sqrt(double arg)            { return  sqrt(arg); }
 inline double _d0_sqrt(double arg)         { return (1.0/sqrt(arg)/2.0); }
 
-inline double _abs(double arg)             { return std::abs(arg); }
+inline double _abs(double arg)             { return fabs(arg); }
 inline double _d0_abs(double arg)          { return (((arg)&gt;=0)?(+1.0):(-1.0)); }
 
 inline int _floor(double arg)              { return  floor(arg); }
-inline int _d0_floor(double)               { return (1.0); }
+inline int _d0_floor(double arg)           { return (1.0); }
 
 inline int _ceil(double arg)               { return  ceil(arg); }
 
@@ -94,7 +94,7 @@ inline double _limexp(double arg)          { return ((arg)&lt;(80))?(exp(arg)):(
 inline double _d0_limexp(double arg)       { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)); }
 
 inline double _vt(double arg)              { return 1.3806503e-23*arg/1.602176462e-19; }
-inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-19; }
+inline double _d0_vt(double arg)           { return 1.3806503e-23/1.602176462e-19; }
 
 </admst:template>
 
@@ -1108,7 +1108,7 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
 
 #include &lt;stdio.h&gt;
 #include &quot;$(module).analogfunction.h&quot;
-#include &lt;cmath&gt;
+#include &lt;math.h&gt;
 
 <admst:text format="\n"/>
   <admst:apply-templates select="." match="qucs:c:math_h"/>
