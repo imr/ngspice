@@ -2198,6 +2198,7 @@
     <ClCompile Include="..\src\xspice\evt\evtprint.c" />
     <ClCompile Include="..\src\xspice\evt\evtqueue.c" />
     <ClCompile Include="..\src\xspice\evt\evtsetup.c" />
+    <ClCompile Include="..\src\xspice\evt\evtshared.c" />
     <ClCompile Include="..\src\xspice\evt\evttermi.c" />
     <ClCompile Include="..\src\xspice\idn\idndig.c" />
     <ClCompile Include="..\src\xspice\ipc\ipc.c" />
