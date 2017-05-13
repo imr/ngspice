@@ -25,8 +25,8 @@ module r2_cmc(t, b);
    parameter real vc1 = 0;
    parameter real vc2 = 0;
    parameter real type = 0; // 0=n, 1=p
+   real dT, rsh_t, c, r, Ir, Qc, Ceff, pwrR;
    analog begin : L
-       real dT, rsh_t, c, r, Ir, Qc, Ceff, pwrR;
        if ($param_given(tcr))
           $finish(4);
        if ($param_given(tcr))
