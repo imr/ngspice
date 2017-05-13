@@ -27,6 +27,10 @@ module r2_cmc(t, b);
    parameter real type = 0; // 0=n, 1=p
    analog begin : L
        real dT, rsh_t, c, r, Ir, Qc, Ceff, pwrR;
+       if ($param_given(tcr))
+          $finish(4);
+       if ($param_given(tcr))
+          $finish(4);
        if (nc > 2)
           $finish(0);
        begin : initializeModel
