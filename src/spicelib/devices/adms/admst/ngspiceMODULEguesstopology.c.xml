@@ -295,7 +295,7 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
   <admst:variable name="module" select="%(attribute[name='ngspicename']/value)"/>
   <admst:open file="$(module)guesstopology.c">
     <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
-    <admst:text format=" *** created by: %(/simulator/fullname) - %(/simulator/currentdate) ***/\n"/>
+    <admst:text format=" *** created by: %(/simulator/fullname) ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:message format="$(module)guesstopology.c: file created\n"/>

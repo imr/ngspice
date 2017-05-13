@@ -78,7 +78,7 @@ $(module)noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Nd
 <admst:for-each select="/module">
   <admst:open file="%(attribute[name='ngspicename']/value)noise.c">
     <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
-    <admst:text format=" *** created by: %(/simulator/fullname) - %(/simulator/currentdate) ***/\n"/>
+    <admst:text format=" *** created by: %(/simulator/fullname) ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:message format="%(attribute[name='ngspicename']/value)noise.c: file created\n"/>

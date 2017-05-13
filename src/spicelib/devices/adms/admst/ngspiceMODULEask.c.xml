@@ -73,11 +73,8 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
 <admst:for-each select="/module">
   <admst:value-of select="attribute[name='ngspicename']/value"/>
   <admst:open file="%sask.c">
-    <admst:value-of select="/simulator/package_string"/>
-    <admst:text format="/***\n*** Interface: %s\n"/>
-    <admst:value-of select="/simulator/currentdate"/>
-    <admst:value-of select="/simulator/fullname"/>
-    <admst:text format=" *** created by: %s - %s ***/\n"/>
+    <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
+    <admst:text format=" *** created by: %(/simulator/fullname) ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:value-of select="attribute[name='ngspicename']/value"/>
