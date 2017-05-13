@@ -11,6 +11,9 @@
 <admst:variable name="epq"/>
 
 <admst:template match="c:math_h">
+#define  ELECTRON_CHARGE        1.602191770e-19         /* C */
+#define  BOLTZMANN              1.38062259e-23          /* J/oK */
+
 /* arithmetics */
 #define EXP90 1.220403294317841e+039
 #define m00_hypot(v00,x,y)      v00 = sqrt((x)*(x)+(y)*(y));
