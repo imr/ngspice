@@ -25,9 +25,9 @@
 </admst:for-each>
 
 <!--
-* c:math_h template - applied in analogfunction.xml
+* qucs:c:math_h template - applied in analogfunction.xml
 -->
-<admst:template match="c:math_h">
+<admst:template match="qucs:c:math_h">
 /* math functions and appropriate derivatives */
 inline double _cos(double arg)             { return  cos(arg); }
 inline double _d0_cos(double arg)          { return (-sin(arg)); }
@@ -99,21 +99,21 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
 </admst:template>
 
 <!-- expression//function: mapping verilog-name == C-name of function -->
-<admst:template match="function:getname">
+<admst:template match="qucs:function:getname">
   <admst:choose>
-    <admst:when test="[name='abs']"><admst:return name="function:getname" value="abs"/></admst:when>
-    <admst:when test="[name='\$shrinkl']"><admst:return name="function:getname" value="shrinkl"/></admst:when>
-    <admst:when test="[name='\$shrinka']"><admst:return name="function:getname" value="shrinka"/></admst:when>
-    <admst:when test="[name='log']"><admst:return name="function:getname" value="log10"/></admst:when>
-    <admst:when test="[name='ln']"><admst:return name="function:getname" value="logE"/></admst:when>
-    <admst:when test="[name='limexp']"><admst:return name="function:getname" value="limexp"/></admst:when>
-    <admst:when test="[name='\$limexp']"><admst:return name="function:getname" value="limexp"/></admst:when>
-    <admst:when test="[name='\$vt']"><admst:return name="function:getname" value="vt"/></admst:when>
-    <admst:when test="[name='\$model']"><admst:return name="function:getname" value="_modelname"/></admst:when>
-    <admst:when test="[name='\$instance']"><admst:return name="function:getname" value="_instancename"/></admst:when>
-    <admst:when test="[name='\$temperature']"><admst:return name="function:getname" value="_circuit_temp"/></admst:when>
-    <admst:when test="[name='\$nominal_temperature']"><admst:return name="function:getname" value="_circuit_tnom"/></admst:when>
-    <admst:otherwise><admst:value-of select="name"/><admst:return name="function:getname" value="%s"/></admst:otherwise>
+    <admst:when test="[name='abs']"><admst:return name="qucs:function:getname" value="abs"/></admst:when>
+    <admst:when test="[name='\$shrinkl']"><admst:return name="qucs:function:getname" value="shrinkl"/></admst:when>
+    <admst:when test="[name='\$shrinka']"><admst:return name="qucs:function:getname" value="shrinka"/></admst:when>
+    <admst:when test="[name='log']"><admst:return name="qucs:function:getname" value="log10"/></admst:when>
+    <admst:when test="[name='ln']"><admst:return name="qucs:function:getname" value="logE"/></admst:when>
+    <admst:when test="[name='limexp']"><admst:return name="qucs:function:getname" value="limexp"/></admst:when>
+    <admst:when test="[name='\$limexp']"><admst:return name="qucs:function:getname" value="limexp"/></admst:when>
+    <admst:when test="[name='\$vt']"><admst:return name="qucs:function:getname" value="vt"/></admst:when>
+    <admst:when test="[name='\$model']"><admst:return name="qucs:function:getname" value="_modelname"/></admst:when>
+    <admst:when test="[name='\$instance']"><admst:return name="qucs:function:getname" value="_instancename"/></admst:when>
+    <admst:when test="[name='\$temperature']"><admst:return name="qucs:function:getname" value="_circuit_temp"/></admst:when>
+    <admst:when test="[name='\$nominal_temperature']"><admst:return name="qucs:function:getname" value="_circuit_tnom"/></admst:when>
+    <admst:otherwise><admst:value-of select="name"/><admst:return name="qucs:function:getname" value="%s"/></admst:otherwise>
   </admst:choose>
 </admst:template>
 
@@ -565,8 +565,8 @@ inline double _d0_vt(double)               { return 1.3806503e-23/1.602176462e-1
     </admst:when>
 
     <admst:when test="adms[datatypename='function']">
-      <admst:apply-templates select="." match="function:getname">
-        <admst:value-of select="returned('function:getname')/value"/>
+      <admst:apply-templates select="." match="qucs:function:getname">
+        <admst:value-of select="returned('qucs:function:getname')/value"/>
         <admst:variable name="function" select="%s"/>
       </admst:apply-templates>
       <admst:variable name="args" select=""/>
@@ -1111,7 +1111,7 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
 #include &lt;cmath&gt;
 
 <admst:text format="\n"/>
-  <admst:apply-templates select="." match="c:math_h"/>
+  <admst:apply-templates select="." match="qucs:c:math_h"/>
   <admst:apply-templates select="/module" match="analogfunctionC"/>
 <admst:text format="\n"/>
 </admst:open>
