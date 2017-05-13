@@ -139,6 +139,8 @@ if(isinf((double) var)) \\
 #define _d_sin(val,dval,arg)     val = sin(arg);     dval = (cos(arg));
 #define _tan(val,arg)            val = tan(arg);
 #define _d_tan(val,dval,arg)     val = tan(arg);     dval = (1.0/cos(arg)/cos(arg));
+#define _asinh(val,arg)          val = asinh(arg);
+#define _d_asinh(val,dval,arg)   val = asinh(arg);   dval = (1.0/sqrt(arg*arg + 1));
 #define _hypot(xy,x,y)           xy = sqrt((x)*(x)+(y)*(y));
 #define _dx_hypot(dx,xy,x,y)     dx = (x)/(xy);
 #define _dy_hypot(dy,xy,x,y)     dy = (y)/(xy);
