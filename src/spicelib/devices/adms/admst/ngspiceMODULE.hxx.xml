@@ -1877,19 +1877,18 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:variable name="xpq" select="$epq"/>
       <admst:variable name="e" select="_DDT($x)"/>
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
       <admst:variable name="arg1" select="%(arguments[1])"/>
-      <admst:assert test="$arg1/adms[datatypename='variable']" format="\$given: argument is not a variable\n"/>
-      <admst:assert test="$arg1/[input='yes']" format="\$given(%(name)): argument is not a parameter\n"/>
+      <admst:assert test="$arg1/[datatypename='variable' and input='yes']" format="%(name): argument is not a parameter\n"/>
       <admst:choose>
         <admst:when test="$arg1/[parametertype='model']">
-          <admst:variable name="e" select="_mpg(%(name),%(name)Given)"/>
+          <admst:variable name="e" select="(model->%(arguments[1])_Given)"/>
         </admst:when>
         <admst:when test="$arg1/[parametertype='instance']">
-          <admst:variable name="e" select="_ipg(%(name),%(name)Given)"/>
+          <admst:variable name="e" select="(here->%(arguments[1])_Given)"/>
         </admst:when>
         <admst:otherwise>
-          <admst:fatal format="$given(): should not be reached\n"/>
+          <admst:fatal format="%(name): should not be reached\n"/>
         </admst:otherwise>
       </admst:choose>
     </admst:when>
@@ -2005,7 +2004,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:choose>
     <admst:when test="[name='absdelay']">
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
     </admst:when>
     <admst:when test="[name='\$temperature']">
     </admst:when>
@@ -2074,7 +2073,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:choose>
     <admst:when test="[name='absdelay']">
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
     </admst:when>
     <admst:when test="[name='\$temperature']">
     </admst:when>

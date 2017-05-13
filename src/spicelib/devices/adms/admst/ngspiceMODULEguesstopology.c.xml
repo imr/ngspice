@@ -56,15 +56,9 @@
     <admst:when test="[name='analysis']">
       <admst:apply-templates select="." match="function:analysis"/>
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
       <admst:for-each select="arguments[position(.)=1]">
-        <admst:if test="[datatypename!='variable']">
-          <admst:error format="$given: argument is not a variable\n"/>
-        </admst:if>
-        <admst:if test="[input='no']">
-          <admst:value-of select="name"/>
-          <admst:error format="$given(%s): argument is not a parameter\n"/>
-        </admst:if>
+        <admst:assert test="[datatypename='variable' and input='yes']" format="%(../name)(%(../arguments[1])): argument is not a parameter\n"/>
         <admst:choose>
           <admst:when test="[parametertype='model']">
             <admst:value-of select="name"/>
@@ -75,7 +69,7 @@
             <admst:value-to select="/simulator/tmp" value="here->%s_Given"/>
           </admst:when>
           <admst:otherwise>
-            <admst:error format="$given(%s): should not be reached\n"/>
+            <admst:error format="%(../name)(%(../arguments[1])): should not be reached\n"/>
           </admst:otherwise>
         </admst:choose>
       </admst:for-each>
