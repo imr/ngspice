@@ -172,6 +172,11 @@ extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
 extern void create_circbyline(char *line);
 
+#ifdef XSPICE
+extern struct evt_shared_data *EVTshareddata(char *node_name);
+extern char** EVTallnodes(void);
+#endif
+
 
 /*The current run (to get variable names, etc)*/
 static runDesc *cur_run;
@@ -957,6 +962,22 @@ bool ngSpice_SetBkpt(double time)
         return(FALSE);
     return(TRUE);
 }
+
+#ifdef XSPICE
+/* get info about the event node vector */
+IMPEXP
+pevt_shared_data ngGet_Evt_NodeInfo(char* node_name)
+{
+    return EVTshareddata(node_name);
+}
+
+/* get a list of all event nodes */
+IMPEXP
+char** ngSpice_AllEvtNodes(void)
+{
+    return EVTallnodes();
+}
+#endif
 
 
 /* add the preliminary breakpoints to the list.

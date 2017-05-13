@@ -3,7 +3,7 @@ FILE    EVTshared.c
 
 MEMBER OF process XSPICE
 
-This code is in the public domain
+This code is in the public domain.
 
 AUTHORS
 
@@ -16,7 +16,7 @@ MODIFICATIONS
 SUMMARY
 
     This file function to prepare event node data for transfer over the
-	shared ngspice interface.
+    shared ngspice interface.
 
 INTERFACES
 
@@ -33,7 +33,7 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include "ngspice/ngspice.h"
-
+#include "ngspice/sharedspice.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/fteext.h"
@@ -48,29 +48,30 @@ NON-STANDARD FEATURES
 
 
 static int get_index(char *node_name);
+/*
 
-struct evt_data {
-	Mif_Boolean_t dcop;
-	double        step;
-	char          *node_value;
-};
+// typedefs are done in sharedspice.h
 
-struct evt_shared_data {
-	struct evt_data *evt_dect;
-	int num_steps;
-};
+typedef struct evt_data {
+    Mif_Boolean_t dcop;
+    double        step;
+    char          *node_value;
+} evt_data, *pevt_data;
 
-struct evt_data *return_node;
-struct evt_shared_data *return_all;
+typedef struct evt_shared_data {
+    pevt_data evt_dect;
+    int num_steps;
+} evt_shared_data, *pevt_shared_data;
+*/
 
 
-struct evt_shared_data
-*EVTshareddata(
-    char *node_name)    /* The command line called by ngGet_EVT_Info(char* nodename) */
+pevt_shared_data
+EVTshareddata(
+    char *node_name)    /* The command called by ngGet_EVT_Info(char* nodename) */
 {
 
     int i;
-    int nodes;
+    int num_points;
 
     int         node_index;
     int         udn_index;
@@ -89,6 +90,9 @@ struct evt_shared_data
     double      this_step;
 
     char        *value;
+
+    pevt_data return_node;
+    pevt_shared_data return_all;
 
     /* Get needed pointers */
     ckt = g_mif_info.ckt;
@@ -136,23 +140,23 @@ struct evt_shared_data
             next_step = node_data->step;
     }
 
-    /* Count the neumber of node data */
-	count_data = node_data;
-	nodes = 0;
-	while (count_data) {
-		nodes++;
-		count_data = count_data->next;
-	}
+    /* Count the number of data points of this node */
+    count_data = node_data;
+    num_points = 0;
+    while (count_data) {
+        num_points++;
+        count_data = count_data->next;
+    }
 
-	/* Store the data */
-	return_node = TMALLOC(struct evt_data, nodes);
-	return_node[0].dcop = dcop;
-	return_node[0].node_value = copy(value);
-	return_node[0].step = step;
+    /* Store the data */
+    return_node = TMALLOC(evt_data, num_points);
+    return_node[0].dcop = dcop;
+    return_node[0].node_value = copy(value);
+    return_node[0].step = step;
 
     /* While there is more data, get the next values and print */
-	i = 1;
-	while(more) {
+    i = 1;
+    while(more) {
 
         more = MIF_FALSE;
         this_step = next_step;
@@ -173,15 +177,16 @@ struct evt_shared_data
 
         } /* end if node_data not NULL */
 
-		return_node[i].dcop = dcop;
-		return_node[i].node_value = copy(value);
-		return_node[i].step = this_step;
-		i++;
+        return_node[i].dcop = dcop;
+        return_node[i].node_value = copy(value);
+        return_node[i].step = this_step;
+        i++;
     } /* end while there is more data */
-	return_all = TMALLOC(struct evt_shared_data, 1);
-	return_all->evt_dect = return_node;
-	return_all->num_steps = i;
-	return return_all;
+    return_all = TMALLOC(evt_shared_data, 1);
+    return_all->evt_dect = return_node;
+    return_all->num_steps = i;
+    
+    return return_all;
 }
 
 
@@ -239,3 +244,34 @@ static int get_index(
 }
 
 
+char** EVTallnodes(void)
+{
+    static char** allnodes;
+    int len = 0, i = 0;
+    Evt_Node_Info_t  *node;
+    CKTcircuit       *ckt = g_mif_info.ckt;
+    if (!ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return NULL;
+    }
+    if (allnodes)
+        tfree(allnodes);
+    node = ckt->evt->info.node_list;
+    /* count the event nodes */
+    while (node) {
+        len++;
+        node = node->next;
+    }
+    if (len == 0) {
+        fprintf(cp_err, "Error: no event nodes found.\n");
+        return NULL;
+    }
+    allnodes = TMALLOC(char*, len + 1);
+    node = ckt->evt->info.node_list;
+    for (i = 0; i < len; i++) {
+        allnodes[i] = node->name;
+        node = node->next;
+    }
+    allnodes[len] = '\0';
+    return allnodes;
+}

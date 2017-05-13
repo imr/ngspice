@@ -44,6 +44,18 @@ receives the name of a vector (may be in the form 'vectorname' or
 The caller may then directly assess the vector data (but probably should
 not modify them).
 
+***************** If XSPICE is enabled *************************************
+**
+ngGet_Evt_NodeInfo(char*)
+receives the name of a event node vector (may be in the form 'vectorname' or
+<plotname>.vectorname) and returns a pointer to a evt_node_info struct.
+The caller may then directly assess the vector data.
+
+**
+char** ngSpice_AllEvtNodes(void);
+returns to the caller a pointer to an array of all event node names.
+****************************************************************************
+
 **
 ngSpice_Circ(char**)
 sends an array of null-terminated char* to ngspice.dll. Each char* contains a
@@ -162,6 +174,24 @@ typedef struct vecinfoall
     pvecinfo *vecs;
 
 } vecinfoall, *pvecinfoall;
+
+/* to be used by ngGet_Evt_NodeInfo, returns all data of a specific node after simulation */
+#ifdef XSPICE
+/* a single data point */
+typedef struct evt_data
+{
+    int           dcop;        /* t.b.d. */
+    double        step;        /* simulation time */
+    char          *node_value; /* one of 0s, 1s, Us, 0r, 1r, Ur, 0z, 1z, Uz, 0u, 1u, Uu */
+} evt_data, *pevt_data;
+
+/* a list of all data points of the node selected by the char* argument to ngGet_Evt_NodeInfo */
+typedef struct evt_shared_data
+{
+    pevt_data evt_dect;  /* array of data */
+    int num_steps;       /* length of the array */
+} evt_shared_data, *pevt_shared_data;
+#endif
 
 
 /* callback functions
@@ -286,6 +316,16 @@ int  ngSpice_Command(char* command);
 /* get info about a vector */
 IMPEXP
 pvector_info ngGet_Vec_Info(char* vecname);
+
+#ifdef XSPICE
+/* get info about the event node vector */
+IMPEXP
+pevt_shared_data ngGet_Evt_NodeInfo(char* nodename);
+
+/* get a list of all event nodes */
+IMPEXP
+char** ngSpice_AllEvtNodes(void);
+#endif
 
 
 /* send a circuit to ngspice.dll
