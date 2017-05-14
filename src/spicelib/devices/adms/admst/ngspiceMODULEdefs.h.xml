@@ -89,19 +89,7 @@
 #endif
 
 #define EXIT_IF_ISNAN(var) \\
-if(isnan((double) var)) \\
 { \\
-  printf(&quot;%%s:%%i:bug:isnan:&quot;#var&quot;\\n&quot;,__FILE__,__LINE__); \\
-  printf(&quot;Please send this message to laurent.lemaitre@freescale.com\\n&quot;); \\
-  NGSPICE_DEBUG \\
-  exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
-} \\
-if(isinf((double) var)) \\
-{ \\
-  printf(&quot;%%s:%%i:bug:isinf:&quot;#var&quot;\\n&quot;,__FILE__,__LINE__); \\
-  printf(&quot;Please send this message to laurent.lemaitre@freescale.com\\n&quot;); \\
-  NGSPICE_DEBUG \\
-  exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
 }
 
 static inline double max(double x,double y)  { return ((x)&gt;(y))?(x):(y); }
