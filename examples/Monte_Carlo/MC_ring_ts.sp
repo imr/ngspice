@@ -29,7 +29,8 @@ begin
 
   echo source the input file
 * Path of your circuit file and library file here
-  setcf sourcepath = ( D:\Spice_general\ngspice\examples\Monte_Carlo )
+* Will be added to the already existing sourcepath
+  setcf sourcepath = ( D:/Spice_general/ngspice/examples/Monte_Carlo $sourcepath )
 * source with file name of your circuit file
   source mc_ring_circ.net
 
@@ -123,13 +124,13 @@ if $?batchmode
   quit
 else
   if $?sharedmode or $?win_console
-    gnuplot np_pl1 {$plot_out}.vout0   $ just plot the tran output with nominal parameters
+    gnuplot xnp_pl1 {$plot_out}.vout0   $ just plot the tran output with nominal parameters
   else
     plot {$plot_out}.vout0          $ just plot the tran output with nominal parameters
   end
   setplot $plot_fft
   if $?sharedmode or $?win_console
-    gnuplot np_pl2 db(mag(ally)) xlimit 0 1G ylimit -80 10
+    gnuplot xnp_pl2 db(mag(ally)) xlimit 0 1G ylimit -80 10
   else
     plot db(mag(ally)) xlimit 0 1G ylimit -80 10
   end
