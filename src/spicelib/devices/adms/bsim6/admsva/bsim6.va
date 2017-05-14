@@ -568,7 +568,7 @@
 `define IPIoz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(  0:inf);
 
 
-//`define __THERMAL_NODE__
+`define __THERMAL_NODE__
 `ifdef __THERMAL_NODE__
 
 	module bsim6(d, g, s, b, t);
@@ -2382,7 +2382,7 @@ analog begin
 	AT_i = AT_i * (1.0 + Inv_L * ATL);
 	PTWGT_i = PTWGT_i * (1.0 + Inv_L * PTWGTL);
  `ifdef __THERMAL_NODE__
-   if ($port_connected(t) == 0) begin
+   if (1 == 0) begin
      `ifdef __SHMOD__
           $strobe("5 terminal Module, while 't' node is not connected, SH is activated.");
      `else
