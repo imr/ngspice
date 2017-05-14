@@ -142,7 +142,7 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 <admst:value-of select="name"/>
         if(here->%sNode == -1)
         {
-          error=CKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,&quot;$info&quot;);
+          error=CKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,&quot;X%(name)X&quot;);
           if(error) return(error);
           here->%sNode = tmp->number;
         }
