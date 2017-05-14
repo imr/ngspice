@@ -104,6 +104,9 @@ if(isinf((double) var)) \\
   exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
 }
 
+static inline double max(double x,double y)  { return ((x)&gt;(y))?(x):(y); }
+static inline double min(double x,double y)  { return ((x)&lt;(y))?(x):(y); }
+
 /* ngspice \$simparam variables
     gdev                (1/Ohms): Additional conductance to be added to nonlinear branches for conductance homotopy convergence algorithm.
     gmin                (1/Ohms): Minimum conductance placed in parallel with nonlinear branches.
