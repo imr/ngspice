@@ -30,7 +30,7 @@ begin
   echo source the input file
 * Path of your circuit file and library file here
 * Will be added to the already existing sourcepath
-  setcf sourcepath = ( D:/Spice_general/ngspice/examples/Monte_Carlo $sourcepath )
+  setcf sourcepath = ( D:/Spice_general/ngspice/examples/Monte_Carlo $sourcepath ./ngspice/examples/Monte_Carlo )
 * source with file name of your circuit file
   source mc_ring_circ.net
 
@@ -38,7 +38,8 @@ begin
 
 * Output path (directory has already to be there)
   setcf outputpath = 'D:\Spice_general\ngspice\examples\Monte_Carlo\out'
-
+* If your current directory is the 'ngspice' directory
+*  setcf outputpath = './examples/Monte_Carlo/out' $ LINUX alternative
 * run the simulation loop
 
 * We have to figure out what to do if a single simulation will not converge.
@@ -163,12 +164,11 @@ else
     let run = run + 1
   end
   * plot the histogram
-  set plotstyle=combplot
   let count = yvec - 1             $ subtract 1 because we started with unitvec containing ones
   if $?sharedmode or $?win_console
-    gnuplot np_pl3 count vs osc_frequ
+    gnuplot np_pl3 count vs osc_frequ combplot
   else
-    plot count vs osc_frequ
+    plot count vs osc_frequ combplot
   end
 * calculate jitter
   let diff40 = (vecmax(halfffts) - vecmin(halfffts))*1e-6
