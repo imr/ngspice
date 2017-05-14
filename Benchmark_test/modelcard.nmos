@@ -1,6 +1,6 @@
 *modelcard for BSIM6_BD
 
-.model nmos bsim6
+.model mn NMOS level=16
 +LLONG =2E-06
 +WWIDE =1E-05
 +TYPE =1
