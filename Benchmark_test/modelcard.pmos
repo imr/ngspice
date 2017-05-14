@@ -1,6 +1,6 @@
 *modelcard for BSIM6_BD
 
-.model pmos bsim6
+.model mp NMOS level=16
 +TYPE	 = -1.0
 +toxe    = 2.34e-009       
 +toxp    = 1.925e-009       

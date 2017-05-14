@@ -1,10 +1,10 @@
 *Samle netlist for BSIM6.0
+* (exec-spice "ngspice %s" t)
 * Drain Noise Simulation 
 
 .option abstol=1e-6 reltol=1e-6 post ingold
 .temp 27
 
-.hdl "bsim6.va"
 .include "modelcard.nmos"
 
 * --- Voltage Sources ---
@@ -16,7 +16,7 @@ vbs bulk 0 dc=0v
 lbias 1 drain 1m
 cload drain 2 1m
 rload 2 0 R=1 noise=0
-X1 drain gate 0 bulk nmos W  = 10e-6 L = 10e-6
+M1 drain gate 0 bulk0  mn W  = 10e-6 L = 10e-6
 
 * --- Analysis ---
 .op
@@ -27,5 +27,8 @@ X1 drain gate 0 bulk nmos W  = 10e-6 L = 10e-6
 *.print ac v(drain)
 *.print dc v(drain)
 .print noise inoise onoise
+.control
+run
+.endc
 .end
 
