@@ -154,7 +154,7 @@ else
     let part = 0
     * Check if val fits into a bin. If yes, raise bin by 1
     dowhile part < bin_count
-      if ((val < (startfreq + (part+1)*bin_size)) & (val > (startfreq + part*bin_size)))
+      if ((val < (startfreq + (part+1)*bin_size)) & (val >= (startfreq + part*bin_size)))
         let yvec[part] = yvec[part] + 1
                 break
       end
