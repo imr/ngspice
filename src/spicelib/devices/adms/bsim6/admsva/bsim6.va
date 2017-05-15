@@ -1857,6 +1857,8 @@ real AIGS_i, BIGS_i, CIGS_i, AIGD_i, BIGD_i, CIGD_i, POXEDGE_i, PIGCD_i;
 real DLCIG_i, DLCIGD_i, NTOX_i;
 real IGT_i;
 
+real _circuit_gmin;
+
 //stress effect
 real W_tmp_stress, tmp1_stress, kstress_u0, tmp1_stress_vth, kstress_vth0, ku0_temp;
 real Inv_sa, Inv_sb, Inv_saref, Inv_sbref, Inv_odref, rho_ref, Inv_od,rho;
@@ -4470,14 +4472,14 @@ end
 	// Diode Current and Capacitance
 `ifdef __RBODYMOD__
 	if(RBODYMOD != 0) begin
-		I(sbulk, `IntrinsicSource) <+ devsign * Ibs;
-		I(dbulk, `IntrinsicDrain)  <+ devsign * Ibd;
+		I(sbulk, `IntrinsicSource) <+ devsign * Ibs + _circuit_gmin*Vbs_jct;
+		I(dbulk, `IntrinsicDrain)  <+ devsign * Ibd + _circuit_gmin*Vbd_jct;
 		I(sbulk, `IntrinsicSource) <+ devsign * ddt(Qbs);
 		I(dbulk, `IntrinsicDrain)  <+ devsign * ddt(Qbd);
 	end else begin
 `endif
-		I(`IntrinsicBody, `IntrinsicSource) <+ devsign * Ibs;
-		I(`IntrinsicBody, `IntrinsicDrain)  <+ devsign * Ibd;
+		I(`IntrinsicBody, `IntrinsicSource) <+ devsign * Ibs + _circuit_gmin*Vbs_jct;
+		I(`IntrinsicBody, `IntrinsicDrain)  <+ devsign * Ibd + _circuit_gmin*Vbd_jct;
 		I(`IntrinsicBody, `IntrinsicSource) <+ devsign * ddt(Qbs);
 		I(`IntrinsicBody, `IntrinsicDrain)  <+ devsign * ddt(Qbd);
 `ifdef __RBODYMOD__
