@@ -74,6 +74,17 @@
         </admst:choose>
       </admst:for-each>
     </admst:when>
+    <!-- fixme, seems to be necessairy only because dependency detection does not drop an unneeded expression requiring $vt -->
+    <admst:when test="[name='\$vt']">
+      <admst:choose>
+        <admst:when test="[nilled(arguments)]">
+          <admst:value-to select="/simulator/tmp" value="((BOLTZMANN/ELECTRON_CHARGE)*ckt->CKTtemp)"/>
+        </admst:when>
+        <admst:when test="arguments[count(.)=1]">
+          <admst:value-to select="/simulator/tmp" value="((BOLTZMANN/ELECTRON_CHARGE)*(%(arguments[1])))"/>
+        </admst:when>
+      </admst:choose>
+    </admst:when>
     <admst:otherwise>
       <admst:variable name="mycode" select=""/>
       <admst:if test="[exists(arguments)]">
@@ -207,6 +218,9 @@
 #include &quot;ngspice/sperror.h&quot;
 #include &quot;ngspice/ifsim.h&quot;
 #include &quot;ngspice/suffix.h&quot;
+
+#define  ELECTRON_CHARGE        1.602191770e-19         /* C */
+#define  BOLTZMANN              1.38062259e-23          /* J/oK */
 
 #define jacobian(a,b) here-&gt;PTR_J_##a##_##b##_required=1;
 #define static_jacobian4(p,q,r,s)  jacobian(p,r) jacobian(p,s) jacobian(q,r) jacobian(q,s)
