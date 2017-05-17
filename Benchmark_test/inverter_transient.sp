@@ -12,8 +12,8 @@ vin  vi  0 dc=0.5 sin (0.5 0.5 1MEG)
 
 * --- Inverter Subcircuit ---
 .subckt inverter vin vout vdd gnd
-    Mp1 vout vin vdd gnd 0  mp W=10u L=10u
-    Mn1 vout vin gnd gnd 0  mn W=10u L=10u
+    Mp1 vout vin vdd gnd  mp W=10u L=10u
+    Mn1 vout vin gnd gnd  mn W=10u L=10u
 .ends
 
 * --- Inverter ---
