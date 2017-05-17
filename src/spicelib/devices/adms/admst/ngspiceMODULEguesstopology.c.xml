@@ -232,6 +232,7 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 {
   NG_IGNOREABLE(matrix);
   NG_IGNOREABLE(ckt);
+
 <admst:template match="evaluate.localvariables">
   <admst:choose>
     <admst:when test="[datatypename='assignment']">
