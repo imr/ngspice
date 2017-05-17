@@ -64,7 +64,7 @@
 `define __TNOISW__
 `define __RGATEMOD__
 `define __RBODYMOD__
-`define __SHMOD__
+//`define __SHMOD__
 
 
 // Normalized pinch-off voltage including PD
@@ -568,7 +568,7 @@
 `define IPIoz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(  0:inf);
 
 
-`define __THERMAL_NODE__
+//`define __THERMAL_NODE__
 `ifdef __THERMAL_NODE__
 
 	module bsim6(d, g, s, b, t);
