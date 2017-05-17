@@ -1,8 +1,8 @@
 *Sample netlist for BSIM6.0
 *Drain current symmetry for nmos
+* (exec-spice "ngspice %s" t)
 .option abstol=1e-6 reltol=1e-6 post ingold
 
-.hdl "bsim6.va"
 .include "modelcard.nmos"
 
 * --- Voltage Sources ---
@@ -13,7 +13,7 @@ vbulk bulk 0 dc=0.0
 
 
 * --- Transistor ---
-X1 drain gate source bulk bsim6 W=10u L=10u 
+M1 drain gate source bulk  mn W=10u L=10u 
 
 * --- DC Analysis ---
 .dc vdrain -0.1 0.1 0.001 vgate 0.0 1.0 0.2
@@ -24,4 +24,8 @@ X1 drain gate source bulk bsim6 W=10u L=10u
 .probe dc gx4=deriv(gx3)
 .print dc par'ids' par'gx' par'gx2' par'gx3' par 'gx4'
 
+.control
+run
+plot -i(vdrain)
+.endc
 .end
