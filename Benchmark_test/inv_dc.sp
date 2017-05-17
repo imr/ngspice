@@ -11,8 +11,8 @@ vin   vi 0 dc=0.5
 
 * --- Inverter Subcircuit ---
 .subckt inverter vin vout vdd gnd
-    mXp1 vout vin vdd gnd 0  mp W=10u L=10u
-    mXn1 vout vin gnd gnd 0  mn W=10u L=10u
+    mXp1 vout vin vdd gnd  mp W=10u L=10u
+    mXn1 vout vin gnd gnd  mn W=10u L=10u
 .ends
 
 * --- Inverter ---
