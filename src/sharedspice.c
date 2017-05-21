@@ -964,7 +964,14 @@ bool ngSpice_SetBkpt(double time)
 }
 
 #ifdef XSPICE
-/* get info about the event node vector */
+/* return callback initialization addresses to caller */
+IMPEXP
+int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void* userData)
+{
+}
+
+/* Get info about the event node vector.
+If node_name is NULL, just delete previous data */
 IMPEXP
 pevt_shared_data ngGet_Evt_NodeInfo(char* node_name)
 {

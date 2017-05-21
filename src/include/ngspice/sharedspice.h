@@ -281,6 +281,14 @@ typedef int (GetSyncData)(double, double*, double, int, int, int, void*);
    void*       return pointer received from caller
 */
 
+#ifdef XSPICE
+/* callback functions
+addresses received from caller with ngSpice_Init_Evt() function
+*/
+typedef int (SendEvtData)();
+typedef int (SendInitEvtData)();
+#endif
+
 /* ngspice initialization,
 printfcn: pointer to callback function for reading printf, fprintf
 statfcn: pointer to callback function for the status string and percent value
@@ -325,6 +333,14 @@ pevt_shared_data ngGet_Evt_NodeInfo(char* nodename);
 /* get a list of all event nodes */
 IMPEXP
 char** ngSpice_AllEvtNodes(void);
+
+/* initialization of XSPICE callback functions 
+sevtdata:
+sinitevtdata:
+userData: pointer to user-defined data, will not be modified, but
+handed over back to caller during Callback, e.g. address of calling object */
+IMPEXP
+int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void* userData);
 #endif
 
 
