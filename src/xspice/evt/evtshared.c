@@ -64,6 +64,20 @@ typedef struct evt_shared_data {
 } evt_shared_data, *pevt_shared_data;
 */
 
+pevt_data return_node;
+pevt_shared_data return_all;
+
+/* delete the information return structures */
+void
+delete_ret(void)
+{
+    if (return_node) {
+        tfree(return_node->node_value);
+        tfree(return_node);
+    }
+    if (return_all)
+        tfree(return_all);
+}
 
 pevt_shared_data
 EVTshareddata(
@@ -91,8 +105,7 @@ EVTshareddata(
 
     char        *value;
 
-    pevt_data return_node;
-    pevt_shared_data return_all;
+    delete_ret();
 
     /* Get needed pointers */
     ckt = g_mif_info.ckt;
@@ -149,7 +162,7 @@ EVTshareddata(
     }
 
     /* Store the data */
-    return_node = TMALLOC(evt_data, num_points);
+    return_node = TMALLOC(evt_data, num_points + 1);
     return_node[0].dcop = dcop;
     return_node[0].node_value = copy(value);
     return_node[0].step = step;
