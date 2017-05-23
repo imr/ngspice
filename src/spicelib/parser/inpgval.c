@@ -58,7 +58,7 @@ IFvalue *INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables * tab)
     } else if (type == IF_FLAG) {
 	temp.iValue = 1;
     } else if (type == IF_NODE) {
-	INPgetTok(line, &word, 1);
+	INPgetNetTok(line, &word, 1);
 	INPtermInsert(ckt, &word, tab, &(temp.nValue));
     } else if (type == IF_INSTANCE) {
 	INPgetTok(line, &word, 1);
