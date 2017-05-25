@@ -866,6 +866,11 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         goto quit;
     }
 
+    if(isinf(ylims[0]) || isinf(ylims[1])) {
+        fprintf(cp_err, "Error: Y values must not be infinite\n");
+        goto quit;
+    }
+
     /* Fix the plot limits for smith and polar grids. */
     if ((!xlim || !ylim) && (gtype == GRID_POLAR)) {
         double mx, my, rad;
