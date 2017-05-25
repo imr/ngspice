@@ -1161,77 +1161,76 @@ If clipping an already clipped vector, restore it before clipping again. */
 bool
 vec_clip(char* vecname, double xmin, double xmax)
 {
-	/* Check for scale vector */
-	if (cieq(plot_cur->pl_scale->v_name, vecname)) {
-		fprintf(stderr, "Warning: Scale vector %s cannot be clipped!\n", vecname);
-		return FALSE;
-	}
+    /* Check for scale vector */
+    if (cieq(plot_cur->pl_scale->v_name, vecname)) {
+        fprintf(stderr, "Warning: Scale vector %s cannot be clipped!\n", vecname);
+        return FALSE;
+    }
 
-	struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
-	if (!oldvec) {
-		fprintf(stderr, "Warning: Cannot clip a vector that is not defined in the current plot!\n");
+    struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
+    if (!oldvec) {
+        fprintf(stderr, "Warning: Cannot clip a vector that is not defined in the current plot!\n");
         fprintf(stderr, "  e.g.: don't use clip cph(v(3))..., but: let cpv3 = cph(v(3)); clip cpv3...\n");
-		return FALSE;
-	}
-	bool onlyrestore = (xmax == 0 && xmin == 0);
+        return FALSE;
+    }
+    bool onlyrestore = (xmax == 0 && xmin == 0);
 
-	/* Check for curve-fitting, only allow 'clip vecname 0 0' to unclip vector */
-	int gridsize;
-	if (cp_getvar("gridsize", CP_NUM, &gridsize) && !(oldvec->v_unclipped) && !onlyrestore) {
-		fprintf(stderr, "Warning: Cannot clip a vector, if curve-fitting with variable 'gridsize' is used!\n");
-		return FALSE;
-	}
-	
-	
-	/* check for xmin and xmax */
-	if (xmax < xmin) {
-		double tmp = xmin;
-		xmin = xmax;
-		xmax = tmp;
-	}
-	else if ((oldvec->v_unclipped) && ((xmax != xmin) || onlyrestore)) {
-		/* If vector is already clipped, restore unclipped vector */
-		struct dvec *restorevec = oldvec->v_unclipped;
-		vec_free_x(oldvec);
-		vec_new(restorevec);
-		oldvec = restorevec;
-		oldvec->v_unclipped = NULL; /* should be NULL anyway */
-		/* Just exit function after restoring previous vector, if command 'clip vecname 0 0' is given. */
-		if (onlyrestore)
-		    return TRUE;
-	}
-	else if (xmax == xmin) {
-		fprintf(stderr, "Warnig: Cannot clip vector %s\n", vecname);
-		return FALSE;
-	}
-	/* Create new vector as copy within current plot */
-	struct dvec *newvec = vec_copy(oldvec);
-	newvec->v_unclipped = oldvec;
+    /* Check for curve-fitting, only allow 'clip vecname 0 0' to unclip vector */
+    int gridsize;
+    if (cp_getvar("gridsize", CP_NUM, &gridsize) && !(oldvec->v_unclipped) && !onlyrestore) {
+        fprintf(stderr, "Warning: Cannot clip a vector, if curve-fitting with variable 'gridsize' is used!\n");
+        return FALSE;
+    }
+
+    /* check for xmin and xmax */
+    if (xmax < xmin) {
+        double tmp = xmin;
+        xmin = xmax;
+        xmax = tmp;
+    }
+    else if ((oldvec->v_unclipped) && ((xmax != xmin) || onlyrestore)) {
+        /* If vector is already clipped, restore unclipped vector */
+        struct dvec *restorevec = oldvec->v_unclipped;
+        vec_free_x(oldvec);
+        vec_new(restorevec);
+        oldvec = restorevec;
+        oldvec->v_unclipped = NULL; /* should be NULL anyway */
+        /* Just exit function after restoring previous vector, if command 'clip vecname 0 0' is given. */
+        if (onlyrestore)
+            return TRUE;
+    }
+    else if (xmax == xmin) {
+        fprintf(stderr, "Warnig: Cannot clip vector %s\n", vecname);
+        return FALSE;
+    }
+    /* Create new vector as copy within current plot */
+    struct dvec *newvec = vec_copy(oldvec);
+    newvec->v_unclipped = oldvec;
 
     /* remove oldvec from the current plot, but don't delete it */
-	plot_cur->pl_lookup_valid = FALSE;
-	if (plot_cur->pl_dvecs == oldvec) {
-		plot_cur->pl_dvecs = oldvec->v_next;
-	}
-	else {
-		struct dvec *lv = plot_cur->pl_dvecs;
-		if (lv)
-			for (; lv->v_next; lv = lv->v_next)
-				if (lv->v_next == oldvec)
-					break;
-		if (lv && lv->v_next)
-			lv->v_next = oldvec->v_next;
-		else
-			fprintf(cp_err,
-				"vec_free: Internal Error: %s not in plot\n",
-				oldvec->v_name);
-	}
-	vec_new(newvec);
-	newvec->v_flags = oldvec->v_flags;
-	/* Compare scale vector to xmin, xmax */
-	int length = newvec->v_length;
-	int i;
-	for (i = 0; i < length; i++) {
+    plot_cur->pl_lookup_valid = FALSE;
+    if (plot_cur->pl_dvecs == oldvec) {
+        plot_cur->pl_dvecs = oldvec->v_next;
+    }
+    else {
+        struct dvec *lv = plot_cur->pl_dvecs;
+        if (lv)
+            for (; lv->v_next; lv = lv->v_next)
+                if (lv->v_next == oldvec)
+                    break;
+        if (lv && lv->v_next)
+            lv->v_next = oldvec->v_next;
+        else
+            fprintf(cp_err,
+                "vec_free: Internal Error: %s not in plot\n",
+                oldvec->v_name);
+    }
+    vec_new(newvec);
+    newvec->v_flags = oldvec->v_flags;
+    /* Compare scale vector to xmin, xmax */
+    int length = newvec->v_length;
+    int i;
+    for (i = 0; i < length; i++) {
         if (isreal(plot_cur->pl_scale)) {
             if ((plot_cur->pl_scale->v_realdata[i] < xmin) || (plot_cur->pl_scale->v_realdata[i] > xmax))
                 if (isreal(newvec)) {
@@ -1257,7 +1256,7 @@ vec_clip(char* vecname, double xmin, double xmax)
             else
                 continue;
         }
-	}
-	return TRUE;
+    }
+    return TRUE;
 }
 
