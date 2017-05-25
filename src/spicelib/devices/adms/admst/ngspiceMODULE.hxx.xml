@@ -1900,6 +1900,16 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:assert test="[nilled(arguments)]" format="%(name): should not have arguments\n"/>
       <admst:variable name="e" select="MFACTOR"/>
     </admst:when>
+    <admst:when test="[name='\$simparam']">
+      <admst:choose>
+        <admst:when test="[arguments[1]/value='gmin']">
+          <admst:variable name="e" select="_circuit_gmin"/>
+        </admst:when>
+        <admst:otherwise>
+          <admst:fatal format="%(.): not implemented\n"/>
+        </admst:otherwise>
+      </admst:choose>
+    </admst:when>
     <admst:when test="[name='\$vt']">
       <admst:choose>
         <admst:when test="[nilled(arguments)]">
@@ -2010,6 +2020,8 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     </admst:when>
     <admst:when test="[name='\$mfactor']">
     </admst:when>
+    <admst:when test="[name='\$simparam']">
+    </admst:when>
     <admst:when test="[name='\$vt']">
       <admst:choose>
         <admst:when test="[nilled(arguments)]">
@@ -2078,6 +2090,8 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='\$temperature']">
     </admst:when>
     <admst:when test="[name='\$mfactor']">
+    </admst:when>
+    <admst:when test="[name='\$simparam']">
     </admst:when>
     <admst:when test="[name='\$vt']">
       <admst:choose>
@@ -2296,14 +2310,14 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:variable name="rhs" select="%(rhs)"/>
   <admst:variable name="lhs" select="%(lhs)"/>
   <admst:text test="[dynamic='yes']" format="#if defined(_DYNAMIC)\n"/>
-  <admst:text test="rhs/function" format="{\n"/>
+  <admst:text test="rhs/function[name!='\$simparam']" format="{\n"/>
         <admst:for-each select="lhs/probe">
           <admst:variable name="pprobe" select="%(.)"/>
           <admst:if test="$lhs/ddxprobe/branch/pnode[.=$pprobe/branch/pnode or .=$pprobe/branch/nnode]">
             <admst:variable name="ddxinsidederivate" select="yes"/>
           </admst:if>
         </admst:for-each>
-  <admst:apply-templates select="rhs/function" match="function:precomputation"/>
+  <admst:apply-templates select="rhs/function[name!='\$simparam']" match="function:precomputation"/>
   <admst:if test="lhs[insource='yes']">
     <admst:apply-templates select="rhs[not(nilled(function))]" match="function:derivate:precomputation"/>
   </admst:if>
@@ -2401,7 +2415,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:text format="EXIT_IF_ISNAN($e)\n"/>
     </admst:otherwise>
   </admst:choose>
-  <admst:text test="rhs/function" format="}\n"/>
+  <admst:text test="rhs/function[name!='\$simparam']" format="}\n"/>
   <admst:text test="[dynamic='yes']" format="#endif\n"/>
 </admst:template>
 
@@ -2507,14 +2521,14 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 </admst:template>
 
 <admst:template match="contribution:nonoise">
-  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin' and name!='\$simparam']))]">
     <admst:choose>
       <admst:when test="[dynamic='yes']">
         <admst:text format="#if defined(_DYNAMIC)\n"/>
       </admst:when>
     </admst:choose>
     <admst:text format="{\n"/>
-    <admst:for-each select="rhs/function">
+    <admst:for-each select="rhs/function[name!='\$simparam']">
       <admst:value-of select="position(.)-1"/>
       <admst:apply-templates select="." match="function:getname">
         <admst:value-of select="returned('function:getname')/value"/>
@@ -2592,7 +2606,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:if>
     </admst:if>
   </admst:for-each>
-  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin' and name!='\$simparam']))]">
     <admst:text format="}\n"/>
     <admst:if test="[dynamic='yes']">
       <admst:text format="#endif /* _DYNAMIC */\n"/>
