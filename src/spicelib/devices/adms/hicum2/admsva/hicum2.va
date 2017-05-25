@@ -3,7 +3,7 @@
 //dw 09/10: Modifications for ngspice and adms:
 // backup to ddx for capacitance calculation
 // all V(...) <+ 0.0; are replaced by I(...) < V(...)/`MIN_R;
-// using GMIN from ngspice: _circuit_gmin
+// using GMIN from ngspice: $simparam("gmin")
 // switch of section for correlated noise (see below)
 // removed obsolete variables S_avl, f_p
 // don't like internal variable declaration
@@ -708,8 +708,6 @@ parameter real dt       = 0.0                           `ATTR(info="Temperature 
 //
 
     //Declaration of variables
-
-    real _circuit_gmin;
 
     //Temperature and drift
     real VT,Tdev,qtt0,ln_qtt0,r_VgVT,V_gT,dT,k;
@@ -1499,8 +1497,8 @@ end     //of Model_evaluation
 
 begin : Load_sources
 
-    I(br_biei)      <+ _circuit_gmin*V(br_biei);
-    I(br_bici)      <+ _circuit_gmin*V(br_bici);
+    I(br_biei)      <+ $simparam("gmin")*V(br_biei);
+    I(br_bici)      <+ $simparam("gmin")*V(br_bici);
 
     I(br_bci)       <+ ddt(qjcx0_t_i);
     I(br_bci)       <+ ddt(cbcpar1*V(br_bci));

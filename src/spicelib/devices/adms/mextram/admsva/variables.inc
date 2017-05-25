@@ -2,8 +2,6 @@
 
 real _x, _x0, _a, _dxa;
 
-real _circuit_gmin;
-
 // Model constants   
       
 real An, Bn;   
