@@ -2516,8 +2516,10 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:text format="{\n"/>
     <admst:for-each select="rhs/function">
       <admst:value-of select="position(.)-1"/>
-      <admst:apply-templates select="." match="function:getname"/>
-      <admst:text format="double __%s_%s=0.0;\n"/>
+      <admst:apply-templates select="." match="function:getname">
+        <admst:value-of select="returned('function:getname')/value"/>
+        <admst:text format="double __%s_%s=0.0;\n"/>
+      </admst:apply-templates>
     </admst:for-each>
     <admst:apply-templates select="." match="ddx:function:computation"/>
   </admst:if>
