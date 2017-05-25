@@ -353,8 +353,6 @@ module hic0_full (c,b,e,s,tnode);
 
 // Declaration of the variables: begin
 
-        real _circuit_gmin;
-
 	real HICUMtype `P(spice:name="type" info="Device type from npn or pnp flags" unit="no" ask="yes");
 
 	// QCJMOD
@@ -779,33 +777,33 @@ analog begin
 //
 // Define branch sources
 //
-	I(br_biei)	<+ _circuit_gmin*V(br_biei);
-	I(br_bici)	<+ _circuit_gmin*V(br_bici);
+	I(br_biei)	<+ $simparam("gmin")*V(br_biei);
+	I(br_bici)	<+ $simparam("gmin")*V(br_bici);
 		
 	I(br_bs) 		<+ HSI_Tsu;
-	I(br_sci)		<+ ijsc	+ _circuit_gmin*V(br_sci);	//`P(spectre:gmin="add" spectre:pwl_passive="1e10");
+	I(br_sci)		<+ ijsc	+ $simparam("gmin")*V(br_sci);	//`P(spectre:gmin="add" spectre:pwl_passive="1e10");
 	I(br_sci)		<+ ddt(qjs);
 	I(br_bci)		<+ ddt(qjcx);
 	I(br_bci)	  	<+ ddt(Qbci);
 	I(br_be)		<+ ddt(Qbe);
 	if (re >= `MIN_R) begin
-	I(br_eie_i)	  	<+ Veie/re_t + _circuit_gmin*V(br_eie_i);//`P(spectre:gmin="add");
+	I(br_eie_i)	  	<+ Veie/re_t + $simparam("gmin")*V(br_eie_i);//`P(spectre:gmin="add");
 	end else begin
 	V(br_eie_v)		<+ 0.0;
 	end
 	if (rcx >= `MIN_R) begin
-	I(br_cic_i)	  	<+ Vcic/rcx_t + _circuit_gmin*V(br_cic_i);//`P(spectre:gmin="add");
+	I(br_cic_i)	  	<+ Vcic/rcx_t + $simparam("gmin")*V(br_cic_i);//`P(spectre:gmin="add");
 	end else begin
 	V(br_cic_v)		<+ 0.0;
 	end
 	if (rbi0 >= `MIN_R || rbx >= `MIN_R) begin
-	I(br_bbi_i)	  	<+ Vbbi/rb + _circuit_gmin*V(br_bbi_i);	//`P(spectre:gmin="add");
+	I(br_bbi_i)	  	<+ Vbbi/rb + $simparam("gmin")*V(br_bbi_i);	//`P(spectre:gmin="add");
 	end else begin
 	V(br_bbi_v)		<+ 0.0;
 	end
-	I(br_bici)	<+ Ibici + _circuit_gmin*V(br_bici);		//`P(spectre:gmin="add" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="imax/0.025" spectre:pwl_rev_current="imax" spectre:pwl_rev_cond="IMAX/0.025");
+	I(br_bici)	<+ Ibici + $simparam("gmin")*V(br_bici);		//`P(spectre:gmin="add" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="imax/0.025" spectre:pwl_rev_current="imax" spectre:pwl_rev_cond="IMAX/0.025");
 	I(br_bici)	<+ ddt(Qbici);
-	I(br_biei)	<+ ijbe + _circuit_gmin*V(br_biei);		//`P(spectre:gmin="add" spectre:pwl_fwd_current="IBEIS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IBEIS*exp(25.0)/0.025" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="IMAX/0.025" spectre:pwl_passive="1e10");
+	I(br_biei)	<+ ijbe + $simparam("gmin")*V(br_biei);		//`P(spectre:gmin="add" spectre:pwl_fwd_current="IBEIS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IBEIS*exp(25.0)/0.025" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="IMAX/0.025" spectre:pwl_passive="1e10");
 	I(br_biei)	<+ ddt(Qbiei);
 	I(br_ciei)	<+ it					`P(spectre:pwl_fwd_current="IS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IS*exp(25.0)/0.025"   spectre:pwl_rev_current="IMAX" spectre:pwl_rev_cond="IMAX/0.025" spectre:pwl_passive="1e10");
 	
@@ -814,7 +812,7 @@ analog begin
 	if(flsh == 0 || rth < `MIN_R) begin
 		I(br_sht) 	<+ Vrth/`MIN_R;
 	end else begin
-		I(br_sht) 	<+ Vrth/rth-pterm + _circuit_gmin*V(br_sht);//`P(spectre:gmin="add");
+		I(br_sht) 	<+ Vrth/rth-pterm + $simparam("gmin")*V(br_sht);//`P(spectre:gmin="add");
 		I(br_sht) 	<+ ddt(cth*Vrth);
 	end
 	// ******************************************
