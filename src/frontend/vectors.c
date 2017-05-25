@@ -1168,6 +1168,11 @@ vec_clip(char* vecname, double xmin, double xmax)
 	}
 
 	struct dvec *oldvec = vec_fromplot(vecname, plot_cur);
+	if (!oldvec) {
+		fprintf(stderr, "Warning: Cannot clip a vector that is not defined in the current plot!\n");
+        fprintf(stderr, "  e.g.: don't use clip cph(v(3))..., but: let cpv3 = cph(v(3)); clip cpv3...\n");
+		return FALSE;
+	}
 	bool onlyrestore = (xmax == 0 && xmin == 0);
 
 	/* Check for curve-fitting, only allow 'clip vecname 0 0' to unclip vector */
@@ -1227,16 +1232,31 @@ vec_clip(char* vecname, double xmin, double xmax)
 	int length = newvec->v_length;
 	int i;
 	for (i = 0; i < length; i++) {
-		if ((plot_cur->pl_scale->v_realdata[i] < xmin) || (plot_cur->pl_scale->v_realdata[i] > xmax))
-			if (isreal(newvec)) {
-				newvec->v_realdata[i] = NAN;
-			}
-			else {
-				newvec->v_compdata[i].cx_real = NAN;
-				newvec->v_compdata[i].cx_imag = NAN;
-			}
-		else
-			continue;
+        if (isreal(plot_cur->pl_scale)) {
+            if ((plot_cur->pl_scale->v_realdata[i] < xmin) || (plot_cur->pl_scale->v_realdata[i] > xmax))
+                if (isreal(newvec)) {
+                    newvec->v_realdata[i] = NAN;
+                }
+                else {
+                    newvec->v_compdata[i].cx_real = NAN;
+                    newvec->v_compdata[i].cx_imag = NAN;
+                }
+            else
+                continue;
+        }
+        else {
+            /* for example scale frequency */
+            if ((plot_cur->pl_scale->v_compdata[i].cx_real < xmin) || (plot_cur->pl_scale->v_compdata[i].cx_real > xmax))
+                if (isreal(newvec)) {
+                    newvec->v_realdata[i] = NAN;
+                }
+                else {
+                    newvec->v_compdata[i].cx_real = NAN;
+                    newvec->v_compdata[i].cx_imag = NAN;
+                }
+            else
+                continue;
+        }
 	}
 	return TRUE;
 }
