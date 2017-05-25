@@ -1729,6 +1729,7 @@ endfunction
 // Common Variables
 real PSiso,PDiso,PSsha,PDsha,PSmer,PDmer,ASiso,ADiso,ASsha,ADsha,ASmer,ADmer;
 real T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12;
+real T3y;
 real Tb;
 real epssi, epsox, ni, Weff, Leff, Weff1, Leff1, Wact, Lact, Weffcj, Eg, Eg0;
 real dLIV, dWIV, dLB, dWB, dLCV, dWCV, dWJ, Cox, epsratio;
@@ -2850,14 +2851,14 @@ DevTemp = $temperature + DTEMP;
 
 	T0 = Eg0 / Vtm0 - Eg / Vtm;
 	T1 = lln(TRatio);
-	T3 = lexp((T0 + XTIS * T1) / NJS);
-	JSS_t = JSS * T3;
-	JSWS_t = JSWS * T3;
-	JSWGS_t = JSWGS * T3;
-	T3 = lexp((T0 + XTID * T1) / NJD);
-	JSD_t = JSD * T3;
-	JSWD_t = JSWD * T3;
-	JSWGD_t = JSWGD * T3;
+	T3y = lexp((T0 + XTIS * T1) / NJS);
+	JSS_t = JSS * T3y;
+	JSWS_t = JSWS * T3y;
+	JSWGS_t = JSWGS * T3y;
+	T3y = lexp((T0 + XTID * T1) / NJD);
+	JSD_t = JSD * T3y;
+	JSWD_t = JSWD * T3y;
+	JSWGD_t = JSWGD * T3y;
 	JTSS_t = JTSS * lexp(Eg0 * XTSS * (TRatio - 1.0) / Vtm);
 	JTSSWS_t = JTSSWS * lexp(Eg0 * XTSSWS * (TRatio - 1.0) / Vtm);
 	JTSSWGS_t = JTSSWGS * (sqrt(JTWEFF / Weffcj) + 1.0) * lexp(Eg0 * XTSSWGS * (TRatio - 1) / Vtm);
