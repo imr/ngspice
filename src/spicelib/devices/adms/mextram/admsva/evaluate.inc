@@ -86,7 +86,7 @@ Vsc3 = Vsc4 - Vc3c4 ;
    pW = 2.0 *  eVb2c1VDC / (1.0 + Kw);   
    if (pW < `TEN_M40) pW = 0; 
    Ec = Vt * (K0 - Kw - ln((K0 + 1.0) / (Kw + 1.0)) );    
-   Ic1c2 =  (Ec + Vc1c2) / RCV_TM + _circuit_gmin * Vc1c2;     
+   Ic1c2 =  (Ec + Vc1c2) / RCV_TM + $simparam("gmin") * Vc1c2;
   
    if (Ic1c2 > 0.0) begin   
       
@@ -206,11 +206,11 @@ Vsc3 = Vsc4 - Vc3c4 ;
   
    Ib1_s = XIBI * Ibf0 * (eVb1e1 - 1.0);   
    `expLin(tmpExp,Vb2e1 * VtINV / MLF)
-   Ib2 = IBF_TM * (tmpExp - 1.0) + _circuit_gmin * Vb2e1;       
+   Ib2 = IBF_TM * (tmpExp - 1.0) + $simparam("gmin") * Vb2e1;
    `expLin(tmpExp,0.5 * Vb1c4 * VtINV)
    Ib3 = IBR_TM * (eVb1c4 - 1.0) /   
          (tmpExp + exp(0.5 * VLR * VtINV)) +    
-         _circuit_gmin  * Vb1c4;    
+         $simparam("gmin") * Vb1c4;
    
 // begin  RvdT, November 2008, MXT504.8_alpha
 
@@ -317,7 +317,7 @@ if (ICSS < 0.0)
    qBQ = q1Q * (1.0 + 0.5 * (n0 + nB));    
   
    Rb2 = 3.0 * RBV_TM / qBQ;   
-   Ib1b2 =  (2.0 * Vt * (eVb1b2 - 1.0) + Vb1b2) / Rb2 + _circuit_gmin * Vb1b2;   
+   Ib1b2 =  (2.0 * Vt * (eVb1b2 - 1.0) + Vb1b2) / Rb2 + $simparam("gmin") * Vb1b2;
    
    // Weak-avalanche current   
       
