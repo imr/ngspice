@@ -70,9 +70,9 @@
 // Normalized pinch-off voltage including PD
 
 `define PO_psip(vg_vfb,gamma,DPD,phif,psip) \
-	T1 = 1.0 + DPD; \
-	vgfbPD = vg_vfb/T1; \
-	gammaPD = gamma/T1; \
+	T1y = 1.0 + DPD; \
+	vgfbPD = vg_vfb/T1y; \
+	gammaPD = gamma/T1y; \
 	T1 = 0.5*vgfbPD - 3.0*(1.0 + gammaPD/`M_SQRT2); \
 	T2 = T1 + sqrt(T1*T1 + 6.0*vgfbPD); \
 	if (vgfbPD < 0.0) begin \
@@ -393,12 +393,12 @@
 	begin if (geo < 9) \
 			`BSIM6NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS) \
 	T0 = DMCG + DMCI;\
-	T1 = DMCG + DMCG;\
+	T1y = DMCG + DMCG;\
 	T2y = DMDG + DMDG;\
 	PSiso = T0 + T0 + Weffcj;\
 	PDiso = T0 + T0 + Weffcj;\
-	PSsha = T1;\
-	PDsha = T1;\
+	PSsha = T1y;\
+	PDsha = T1y;\
 	PSmer = T2y;\
 	PDmer = T2y;\
 	ASiso = T0 * Weffcj;\
@@ -1729,7 +1729,7 @@ endfunction
 // Common Variables
 real PSiso,PDiso,PSsha,PDsha,PSmer,PDmer,ASiso,ADiso,ASsha,ADsha,ASmer,ADmer;
 real T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12;
-real T2y, T3y;
+real T1y, T2y, T3y;
 real Tb;
 real epssi, epsox, ni, Weff, Leff, Weff1, Leff1, Wact, Lact, Weffcj, Eg, Eg0;
 real dLIV, dWIV, dLB, dWB, dLCV, dWCV, dWJ, Cox, epsratio;
@@ -2273,12 +2273,12 @@ analog begin
 
 	// Geometrical scaling
 	T0 = NDEPL1 * max( pow(Inv_L, NDEPLEXP1) - pow(Inv_Llong, NDEPLEXP1), 0) + NDEPL2 * max( pow(Inv_L, NDEPLEXP2) - pow(Inv_Llong, NDEPLEXP2), 0);
-	T1 = NDEPW * max( pow(Inv_W, NDEPWEXP) - pow(Inv_Wwide, NDEPWEXP), 0) + NDEPWL * pow(Inv_W * Inv_L, NDEPWLEXP);
-	NDEP_i = NDEP_i * (1.0 + T0 + T1);
+	T1y = NDEPW * max( pow(Inv_W, NDEPWEXP) - pow(Inv_Wwide, NDEPWEXP), 0) + NDEPWL * pow(Inv_W * Inv_L, NDEPWLEXP);
+	NDEP_i = NDEP_i * (1.0 + T0 + T1y);
 
 	T0 = NFACTORL * max( pow(Inv_L, NFACTORLEXP) - pow(Inv_Llong, NFACTORLEXP), 0);
-	T1 = NFACTORW * max( pow(Inv_W, NFACTORWEXP) - pow(Inv_Wwide, NFACTORWEXP), 0) + NFACTORWL * pow(Inv_WL, NFACTORWLEXP);
-	NFACTOR_i = NFACTOR_i * (1.0 + T0 + T1);
+	T1y = NFACTORW * max( pow(Inv_W, NFACTORWEXP) - pow(Inv_Wwide, NFACTORWEXP), 0) + NFACTORWL * pow(Inv_WL, NFACTORWLEXP);
+	NFACTOR_i = NFACTOR_i * (1.0 + T0 + T1y);
 
 	T0 = (1.0 + CDSCDL * max( pow(Inv_L, CDSCDLEXP) - pow(Inv_Llong, CDSCDLEXP), 0) );
 	CDSCD_i = CDSCD_i * T0;
@@ -2304,22 +2304,22 @@ analog begin
 	end
 
 	T0 = UAL * max( pow(Inv_L, UALEXP) - pow(Inv_Llong, UALEXP), 0);
-	T1 = UAW * max( pow(Inv_W, UAWEXP) - pow(Inv_Wwide, UAWEXP), 0) + UAWL * pow(Inv_WL, UAWLEXP);
-	UA_i = UA_i * (1.0 + T0 + T1);
+	T1y = UAW * max( pow(Inv_W, UAWEXP) - pow(Inv_Wwide, UAWEXP), 0) + UAWL * pow(Inv_WL, UAWLEXP);
+	UA_i = UA_i * (1.0 + T0 + T1y);
 	if(ASYMMOD != 0)
-		UAR_i = UAR_i * (1.0 + T0 + T1);
+		UAR_i = UAR_i * (1.0 + T0 + T1y);
 	T0 = EUL * max( pow(Inv_L, EULEXP) - pow(Inv_Llong, EULEXP), 0);
-	T1 = EUW * max( pow(Inv_W, EUWEXP) - pow(Inv_Wwide, EUWEXP), 0) + EUWL * pow(Inv_WL, EUWLEXP);
-	EU_i = EU_i * (1.0 + T0 + T1);
+	T1y = EUW * max( pow(Inv_W, EUWEXP) - pow(Inv_Wwide, EUWEXP), 0) + EUWL * pow(Inv_WL, EUWLEXP);
+	EU_i = EU_i * (1.0 + T0 + T1y);
 	T0 = 1.0 + UDL * max( pow(Inv_L, UDLEXP) - pow(Inv_Llong, UDLEXP), 0);
 	UD_i = UD_i * T0;
 	if(ASYMMOD != 0)
 		UDR_i = UDR_i * T0;
 	T0 = UCL * max( pow(Inv_L, UCLEXP) - pow(Inv_Llong, UCLEXP), 0);
-	T1 = UCW * max( pow(Inv_W, UCWEXP) - pow(Inv_Wwide, UCWEXP), 0) + UCWL * pow(Inv_WL, UCWLEXP);
-	UC_i = UC_i * (1.0 + T0 + T1);
+	T1y = UCW * max( pow(Inv_W, UCWEXP) - pow(Inv_Wwide, UCWEXP), 0) + UCWL * pow(Inv_WL, UCWLEXP);
+	UC_i = UC_i * (1.0 + T0 + T1y);
 	if(ASYMMOD != 0)
-		UCR_i = UCR_i * (1.0 + T0 + T1);
+		UCR_i = UCR_i * (1.0 + T0 + T1y);
 	T0 = max( pow(Inv_L, DSUB) - pow(Inv_Llong, DSUB), 0);
 	ETA0_i = ETA0_i * T0;
 	if(ASYMMOD != 0)
@@ -2343,10 +2343,10 @@ analog begin
 	end
 
 	T0 = VSATL * max( pow(Inv_L, VSATLEXP) - pow(Inv_Llong, VSATLEXP), 0);
-	T1 = VSATW * max( pow(Inv_W, VSATWEXP) - pow(Inv_Wwide, VSATWEXP), 0) + VSATWL * pow(Inv_WL, VSATWLEXP);
-	VSAT_i = VSAT_i * (1.0 + T0 + T1);
+	T1y = VSATW * max( pow(Inv_W, VSATWEXP) - pow(Inv_Wwide, VSATWEXP), 0) + VSATWL * pow(Inv_WL, VSATWLEXP);
+	VSAT_i = VSAT_i * (1.0 + T0 + T1y);
 	if(ASYMMOD != 0)
-		VSATR_i = VSATR_i * (1.0 + T0 + T1);
+		VSATR_i = VSATR_i * (1.0 + T0 + T1y);
 
 	PSAT_i = max(PSAT_i * (1.0 + PSATL * max( pow(Inv_L, PSATLEXP) - pow(Inv_Llong, PSATLEXP), 0)), 0.25);
 	if(ASYMMOD != 0)
@@ -2368,26 +2368,26 @@ analog begin
 	PIGCD_i = PIGCD * (1.0 + PIGCDL * Inv_L);
 
 	T0 = NDEPCVL1 * max( pow(Inv_Lact, NDEPCVLEXP1) - pow(Inv_Llong, NDEPCVLEXP1), 0) + NDEPCVL2 * max( pow(Inv_Lact, NDEPCVLEXP2) - pow(Inv_Llong, NDEPCVLEXP2), 0);
-	T1 = NDEPCVW * max( pow(Inv_Wact, NDEPCVWEXP) - pow(Inv_Wwide, NDEPCVWEXP), 0) + NDEPCVWL * pow(Inv_Wact * Inv_Lact, NDEPCVWLEXP);
-	NDEPCV_i = NDEPCV_i * (1.0 + T0 + T1);
+	T1y = NDEPCVW * max( pow(Inv_Wact, NDEPCVWEXP) - pow(Inv_Wwide, NDEPCVWEXP), 0) + NDEPCVWL * pow(Inv_Wact * Inv_Lact, NDEPCVWLEXP);
+	NDEPCV_i = NDEPCV_i * (1.0 + T0 + T1y);
 
 	T0 = VFBCVL * max( pow(Inv_Lact, VFBCVLEXP) - pow(Inv_Llong, VFBCVLEXP), 0);
-	T1 = VFBCVW * max( pow(Inv_Wact, VFBCVWEXP) - pow(Inv_Wwide, VFBCVWEXP), 0) + VFBCVWL * pow(Inv_WL, VFBCVWLEXP);
-	VFBCV_i = VFBCV_i * (1.0 + T0 + T1);
+	T1y = VFBCVW * max( pow(Inv_Wact, VFBCVWEXP) - pow(Inv_Wwide, VFBCVWEXP), 0) + VFBCVWL * pow(Inv_WL, VFBCVWLEXP);
+	VFBCV_i = VFBCV_i * (1.0 + T0 + T1y);
 
 	T0 = VSATCVL * max( pow(Inv_Lact, VSATCVLEXP) - pow(Inv_Llong, VSATCVLEXP), 0);
-	T1 = VSATCVW * max( pow(Inv_W, VSATCVWEXP) - pow(Inv_Wwide, VSATCVWEXP), 0) + VSATCVWL * pow(Inv_WL, VSATCVWLEXP);
-	VSATCV_i = VSATCV_i * (1.0 + T0 + T1);
+	T1y = VSATCVW * max( pow(Inv_W, VSATCVWEXP) - pow(Inv_Wwide, VSATCVWEXP), 0) + VSATCVWL * pow(Inv_WL, VSATCVWLEXP);
+	VSATCV_i = VSATCV_i * (1.0 + T0 + T1y);
 	PCLMCV_i = PCLMCV_i * (1.0 + PCLMCVL * max( pow(Inv_Lact, PCLMCVLEXP) - pow(Inv_Llong, PCLMCVLEXP), 0));
 	PCLMCV_i = max(PCLMCV_i,0);
 
 	T0 = K1L * max( pow(Inv_L, K1LEXP) - pow(Inv_Llong, K1LEXP), 0);
-	T1 = K1W * max( pow(Inv_W, K1WEXP) - pow(Inv_Wwide, K1WEXP), 0) + K1WL * pow(Inv_WL, K1WLEXP);
-	K1_i = K1_i * (1.0 + T0 + T1);
+	T1y = K1W * max( pow(Inv_W, K1WEXP) - pow(Inv_Wwide, K1WEXP), 0) + K1WL * pow(Inv_WL, K1WLEXP);
+	K1_i = K1_i * (1.0 + T0 + T1y);
 
 	T0 = K2L * max( pow(Inv_L, K2LEXP) - pow(Inv_Llong, K2LEXP), 0);
-	T1 = K2W * max( pow(Inv_W, K2WEXP) - pow(Inv_Wwide, K2WEXP), 0) + K2WL * pow(Inv_WL, K2WLEXP);
-	K2_i = K2_i * (1.0 + T0 + T1);
+	T1y = K2W * max( pow(Inv_W, K2WEXP) - pow(Inv_Wwide, K2WEXP), 0) + K2WL * pow(Inv_WL, K2WLEXP);
+	K2_i = K2_i * (1.0 + T0 + T1y);
 
 	PRWB_i = PRWB_i * (1.0 + PRWBL * max( pow(Inv_L, PRWBLEXP) - pow(Inv_Llong, PRWBLEXP), 0));
 
@@ -2683,10 +2683,10 @@ analog begin
 `endif
 
 	T0 = TOXE * TOXE;
-	T1 = TOXE * POXEDGE_i;
-	T2y = T1 * T1;
+	T1y = TOXE * POXEDGE_i;
+	T2y = T1y * T1y;
 	ToxRatio = exp(NTOX_i * ln(TOXREF / TOXE))/ T0;
-	ToxRatioEdge = exp(NTOX_i * ln(TOXREF / T1)) /T2y;
+	ToxRatioEdge = exp(NTOX_i * ln(TOXREF / T1y)) /T2y;
 
 	Aechvb = (TYPE == `ntype) ? 4.97232e-7 : 3.42537e-7;
 	Bechvb = (TYPE == `ntype) ? 7.45669e11 : 1.16645e12;
@@ -2747,8 +2747,8 @@ DevTemp = $temperature + DTEMP;
 	Eg = BG0SUB - TBGASUB * DevTemp * DevTemp / (DevTemp + TBGBSUB);
 	Eg0 = BG0SUB - TBGASUB * Tnom * Tnom / (Tnom + TBGBSUB);
 
-	T1 = (DevTemp / Tnom) * sqrt(DevTemp / Tnom);
-	ni = NI0SUB * T1 * lexp(Eg / (2.0 * Vtm0) - Eg / (2.0 * Vtm));
+	T1y = (DevTemp / Tnom) * sqrt(DevTemp / Tnom);
+	ni = NI0SUB * T1y * lexp(Eg / (2.0 * Vtm0) - Eg / (2.0 * Vtm));
 `ifdef __SHMOD__
     if ((SHMOD != 0) && (RTH0 > 0)) begin
         T0 = lln(NDEP_i/ni);
@@ -2850,12 +2850,12 @@ DevTemp = $temperature + DTEMP;
 	PBSWGD_t = hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0E-3) + 0.01;
 
 	T0 = Eg0 / Vtm0 - Eg / Vtm;
-	T1 = lln(TRatio);
-	T3y = lexp((T0 + XTIS * T1) / NJS);
+	T1y = lln(TRatio);
+	T3y = lexp((T0 + XTIS * T1y) / NJS);
 	JSS_t = JSS * T3y;
 	JSWS_t = JSWS * T3y;
 	JSWGS_t = JSWGS * T3y;
-	T3y = lexp((T0 + XTID * T1) / NJD);
+	T3y = lexp((T0 + XTID * T1y) / NJD);
 	JSD_t = JSD * T3y;
 	JSWD_t = JSWD * T3y;
 	JSWGD_t = JSWGD * T3y;
@@ -2935,9 +2935,9 @@ DevTemp = $temperature + DTEMP;
 		SslpFwd = Isbs * (T0 + XExpBVS / T0) / Nvtms;
 		T2y = hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
 		VjsmRev = -BVS - Nvtms * lln((T2y - 1.0) / XJBVS);
-		T1 = XJBVS * lexp(-(BVS + VjsmRev) / Nvtms);
-		IVjsmRev = Isbs * (1.0 + T1);
-		SslpRev = -Isbs * T1 / Nvtms;
+		T1y = XJBVS * lexp(-(BVS + VjsmRev) / Nvtms);
+		IVjsmRev = Isbs * (1.0 + T1y);
+		SslpRev = -Isbs * T1y / Nvtms;
 	end else begin
 		Nvtms = 0;
 		XExpBVS = 0;
@@ -2962,9 +2962,9 @@ DevTemp = $temperature + DTEMP;
 		DslpFwd = Isbd * (T0 + XExpBVD / T0) / Nvtmd;
 		T2y = hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
 		VjdmRev = -BVD - Nvtmd * lln((T2y - 1.0) / XJBVD);
-		T1 = XJBVD * lexp(-(BVD + VjdmRev) / Nvtmd);
-		IVjdmRev = Isbd * (1.0 + T1);
-		DslpRev = -Isbd * T1 / Nvtmd;
+		T1y = XJBVD * lexp(-(BVD + VjdmRev) / Nvtmd);
+		IVjdmRev = Isbd * (1.0 + T1y);
+		DslpRev = -Isbd * T1y / Nvtmd;
 	end else begin
 		Nvtmd = 0;
 		XExpBVD = 0;
@@ -2991,14 +2991,14 @@ DevTemp = $temperature + DTEMP;
 
 		W_tmp_stress = Wnew + WLOD;
 
-		T1 = pow(W_tmp_stress, WLODKU0);
-		tmp1_stress = LKU0 / T0 + WKU0 / T1 + PKU0 / (T0 * T1);
+		T1y = pow(W_tmp_stress, WLODKU0);
+		tmp1_stress = LKU0 / T0 + WKU0 / T1y + PKU0 / (T0 * T1y);
 
 		kstress_u0 = 1.0 + tmp1_stress;
 
 		T0 = pow(Lnew, LLODVTH);
-		T1 = pow(W_tmp_stress, WLODVTH);
-		tmp1_stress_vth = LKVTH0 / T0 + WKVTH0 / T1 + PKVTH0 / (T0 * T1);
+		T1y = pow(W_tmp_stress, WLODVTH);
+		tmp1_stress_vth = LKVTH0 / T0 + WKVTH0 / T1y + PKVTH0 / (T0 * T1y);
 		kstress_vth0 = 1.0 + tmp1_stress_vth;
 
 		T0 = (TRatio - 1.0);
@@ -3008,9 +3008,9 @@ DevTemp = $temperature + DTEMP;
 		i=0;
 		while (i < NF) begin
 			T0 = 1.0 / NF / (SA + 0.5*L_mult + i * (SD +L_mult));
-			T1 = 1.0 / NF / (SB + 0.5*L_mult + i * (SD +L_mult));
+			T1y = 1.0 / NF / (SB + 0.5*L_mult + i * (SD +L_mult));
 			Inv_sa = Inv_sa + T0;
-			Inv_sb = Inv_sb + T1;
+			Inv_sb = Inv_sb + T1y;
 			i = i + 1;
 		end
 
@@ -3043,15 +3043,15 @@ DevTemp = $temperature + DTEMP;
 		local_scc = SCC;
 		if(!$param_given(SCA) && !$param_given(SCB) && !$param_given(SCC)) begin
 			if($param_given(SC) && SC > 0.0) begin
-				T1 = SC + Wdrn;
+				T1y = SC + Wdrn;
 				T2y = 1.0 / SCREF;
-				local_sca = SCREF * SCREF / (SC * T1);
+				local_sca = SCREF * SCREF / (SC * T1y);
 				local_scb = ( (0.1 * SC + 0.01 * SCREF) *
-							exp(-10.0 * SC * T2y)  - (0.1 * T1 + 0.01 * SCREF) *
-							exp(-10.0 * T1 * T2y) ) / Wdrn;
+							exp(-10.0 * SC * T2y)  - (0.1 * T1y + 0.01 * SCREF) *
+							exp(-10.0 * T1y * T2y) ) / Wdrn;
 				local_scc = ( (0.05 * SC + 0.0025 * SCREF) *
-							exp(-20.0 * SC * T2y)  - (0.05 * T1 + 0.0025 * SCREF) *
-							exp(-20.0 * T1 * T2y) ) / Wdrn;
+							exp(-20.0 * SC * T2y)  - (0.05 * T1y + 0.0025 * SCREF) *
+							exp(-20.0 * T1y * T2y) ) / Wdrn;
 			end
 			else
 				`STROBE("Warning: (Instance BSIM6) No WPE as none of SCA, SCB, SCC, SC is given and/or SC not positive.");
