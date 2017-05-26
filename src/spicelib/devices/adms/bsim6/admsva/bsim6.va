@@ -648,13 +648,8 @@ analog function real lln;
 endfunction
 
 // Hyperbolic smoothing function
-analog function real hypsmooth;
-	input x , c;
-	real x , c;
-	begin
-		hypsmooth = 0.5 * (x + sqrt(x*x + 4.0*c*c));
-	end
-endfunction
+`define hypsmooth(x,c) \
+        (0.5 * ((x) + sqrt((x)*(x) + 4.0*(c)*(c))))
 /***************************/
 /*  Instance Parameters    */
 /***************************/
@@ -2785,7 +2780,7 @@ DevTemp = $temperature + DTEMP;
 	T1DEP = sqrt(2.0 * epssi / (`q * NDEP_i));
 	litl  = sqrt((epssi / epsox) * TOXE * XJ_i);//SCBE Rout
 
-	NFACTOR_t = NFACTOR_i * hypsmooth((1.0 + TNFACTOR * (TRatio - 1.0)),1e-3);
+	NFACTOR_t = NFACTOR_i * `hypsmooth((1.0 + TNFACTOR * (TRatio - 1.0)),1e-3);
 	ETA0_t = ETA0_i * (1.0 + TETA0 * (TRatio - 1.0));
 	if(ASYMMOD != 0)
 		ETA0R_t = ETA0R_i * (1.0 + TETA0 * (TRatio - 1.0));
@@ -2793,14 +2788,14 @@ DevTemp = $temperature + DTEMP;
 	eta_mu = (TYPE != `ntype) ? (`Oneby3 * ETAMOB) : (0.5 * ETAMOB);
 
 	U0_t = U0_i * pow(TRatio, UTE_i);
-	UA_t = UA_i * hypsmooth(1.0 + UA1_i*delTemp - 1.0E-6, 1.0E-3);
-	UC_t = UC_i * hypsmooth(1.0 + UC1_i*delTemp - 1.0E-6, 1.0E-3);
+	UA_t = UA_i * `hypsmooth(1.0 + UA1_i*delTemp - 1.0E-6, 1.0E-3);
+	UC_t = UC_i * `hypsmooth(1.0 + UC1_i*delTemp - 1.0E-6, 1.0E-3);
 	UD_t = UD_i * pow(TRatio, UD1_i);
 	UCS_t = UCS_i * pow(TRatio, UCSTE_i);
 	if(ASYMMOD != 0) begin
 		U0R_t = U0R_i * pow(TRatio, UTE_i);
-		UAR_t = UAR_i * hypsmooth(1.0 + UA1_i*delTemp - 1.0E-6, 1.0E-3);
-		UCR_t = UCR_i * hypsmooth(1.0 + UC1_i*delTemp - 1.0E-6, 1.0E-3);
+		UAR_t = UAR_i * `hypsmooth(1.0 + UA1_i*delTemp - 1.0E-6, 1.0E-3);
+		UCR_t = UCR_i * `hypsmooth(1.0 + UC1_i*delTemp - 1.0E-6, 1.0E-3);
 		UDR_t = UDR_i * pow(TRatio, UD1_i);
 		UCSR_t = UCSR_i * pow(TRatio, UCSTE_i);
 	end
@@ -2826,32 +2821,32 @@ DevTemp = $temperature + DTEMP;
 		VSATCV_t = 100.0;
 	end
 
-	DELTA_t = 1.0 / ( hypsmooth((1.0/DELTA_i) * (1.0 + TDELTA * delTemp)-2.0 , 1.0E-3) + 2.0);
-	PTWG_t = PTWG_i * hypsmooth(1.0 - PTWGT_i*delTemp - 1.0E-6, 1.0E-3);
+	DELTA_t = 1.0 / ( `hypsmooth((1.0/DELTA_i) * (1.0 + TDELTA * delTemp)-2.0 , 1.0E-3) + 2.0);
+	PTWG_t = PTWG_i * `hypsmooth(1.0 - PTWGT_i*delTemp - 1.0E-6, 1.0E-3);
 	if(ASYMMOD != 0)
-		PTWGR_t = PTWGR_i * hypsmooth(1.0 - PTWGT_i*delTemp - 1.0E-6, 1.0E-3);
+		PTWGR_t = PTWGR_i * `hypsmooth(1.0 - PTWGT_i*delTemp - 1.0E-6, 1.0E-3);
 
-	A1_t = A1_i * hypsmooth(1.0 + A11_i*delTemp - 1.0E-6, 1.0E-3);
-	A2_t = A2_i * hypsmooth(1.0 + A21_i*delTemp - 1.0E-6, 1.0E-3);
+	A1_t = A1_i * `hypsmooth(1.0 + A11_i*delTemp - 1.0E-6, 1.0E-3);
+	A2_t = A2_i * `hypsmooth(1.0 + A21_i*delTemp - 1.0E-6, 1.0E-3);
 
 	BETA0_t = BETA0_i * pow(TRatio, IIT_i);
-	BGIDL_t = BGIDL_i * hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
-	BGISL_t = BGISL_i * hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
+	BGIDL_t = BGIDL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
+	BGISL_t = BGISL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
 	igtemp = lexp(IGT_i * lln(TRatio)); //pow(TRatio, IGT_i);
 
 	//***Diode Model temperature Code Start***//
-	CJS_t = CJS * hypsmooth(1.0 + TCJ * delTemp - 1.0E-6, 1.0E-3);
-	CJD_t = CJD * hypsmooth(1.0 + TCJ * delTemp - 1.0E-6, 1.0E-3);
-	CJSWS_t = CJSWS * hypsmooth(1.0 + TCJSW * delTemp - 1.0E-6, 1.0E-3);
-	CJSWD_t = CJSWD * hypsmooth(1.0 + TCJSW * delTemp - 1.0E-6, 1.0E-3);
-	CJSWGS_t = CJSWGS * hypsmooth(1.0 + TCJSWG * delTemp - 1.0E-6, 1.0E-3);
-	CJSWGD_t = CJSWGD * hypsmooth(1.0 + TCJSWG * delTemp - 1.0E-6, 1.0E-3);
-	PBS_t = hypsmooth(PBS - TPB * delTemp - 0.01, 1.0E-3) + 0.01;
-	PBD_t = hypsmooth(PBD - TPB * delTemp - 0.01, 1.0E-3) + 0.01;
-	PBSWS_t = hypsmooth(PBSWS - TPBSW * delTemp - 0.01, 1.0E-3) + 0.01;
-	PBSWD_t = hypsmooth(PBSWD - TPBSW * delTemp - 0.01, 1.0E-3) + 0.01;
-	PBSWGS_t = hypsmooth(PBSWGS - TPBSWG * delTemp - 0.01, 1.0E-3) + 0.01;
-	PBSWGD_t = hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0E-3) + 0.01;
+	CJS_t = CJS * `hypsmooth(1.0 + TCJ * delTemp - 1.0E-6, 1.0E-3);
+	CJD_t = CJD * `hypsmooth(1.0 + TCJ * delTemp - 1.0E-6, 1.0E-3);
+	CJSWS_t = CJSWS * `hypsmooth(1.0 + TCJSW * delTemp - 1.0E-6, 1.0E-3);
+	CJSWD_t = CJSWD * `hypsmooth(1.0 + TCJSW * delTemp - 1.0E-6, 1.0E-3);
+	CJSWGS_t = CJSWGS * `hypsmooth(1.0 + TCJSWG * delTemp - 1.0E-6, 1.0E-3);
+	CJSWGD_t = CJSWGD * `hypsmooth(1.0 + TCJSWG * delTemp - 1.0E-6, 1.0E-3);
+	PBS_t = `hypsmooth(PBS - TPB * delTemp - 0.01, 1.0E-3) + 0.01;
+	PBD_t = `hypsmooth(PBD - TPB * delTemp - 0.01, 1.0E-3) + 0.01;
+	PBSWS_t = `hypsmooth(PBSWS - TPBSW * delTemp - 0.01, 1.0E-3) + 0.01;
+	PBSWD_t = `hypsmooth(PBSWD - TPBSW * delTemp - 0.01, 1.0E-3) + 0.01;
+	PBSWGS_t = `hypsmooth(PBSWGS - TPBSWG * delTemp - 0.01, 1.0E-3) + 0.01;
+	PBSWGD_t = `hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0E-3) + 0.01;
 
 	T0y = Eg0 / Vtm0 - Eg / Vtm;
 	T1y = lln(TRatio);
@@ -2871,12 +2866,12 @@ DevTemp = $temperature + DTEMP;
 	JTSSWGD_t = JTSSWGD * (sqrt(JTWEFF / Weffcj) + 1.0) * lexp(Eg0 * XTSSWGD * (TRatio - 1) / Vtm);
 
 	//All NJT*'s smoothed to 0.01 to prevent divide by zero / negative values
-	NJTS_t = hypsmooth(NJTS * (1.0 + TNJTS * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
-	NJTSSW_t = hypsmooth(NJTSSW * (1.0 + TNJTSSW * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
-	NJTSSWG_t = hypsmooth(NJTSSWG * (1.0 + TNJTSSWG * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
-	NJTSD_t = hypsmooth(NJTSD * (1.0 + TNJTSD * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
-	NJTSSWD_t = hypsmooth(NJTSSWD * (1.0 + TNJTSSWD * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
-	NJTSSWGD_t = hypsmooth(NJTSSWGD * (1.0 + TNJTSSWGD * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
+	NJTS_t = `hypsmooth(NJTS * (1.0 + TNJTS * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
+	NJTSSW_t = `hypsmooth(NJTSSW * (1.0 + TNJTSSW * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
+	NJTSSWG_t = `hypsmooth(NJTSSWG * (1.0 + TNJTSSWG * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
+	NJTSD_t = `hypsmooth(NJTSD * (1.0 + TNJTSD * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
+	NJTSSWD_t = `hypsmooth(NJTSSWD * (1.0 + TNJTSSWD * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
+	NJTSSWGD_t = `hypsmooth(NJTSSWGD * (1.0 + TNJTSSWGD * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
 	//***Diode Model temperature Code End***//
 
 	// Effective Source/Drain junction area and perimeter
@@ -2937,7 +2932,7 @@ DevTemp = $temperature + DTEMP;
 		T0y = lexp(VjsmFwd / Nvtms);
 		IVjsmFwd = Isbs * (T0y - XExpBVS / T0y + XExpBVS - 1.0);
 		SslpFwd = Isbs * (T0y + XExpBVS / T0y) / Nvtms;
-		T2y = hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
+		T2y = `hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
 		VjsmRev = -BVS - Nvtms * lln((T2y - 1.0) / XJBVS);
 		T1y = XJBVS * lexp(-(BVS + VjsmRev) / Nvtms);
 		IVjsmRev = Isbs * (1.0 + T1y);
@@ -2964,7 +2959,7 @@ DevTemp = $temperature + DTEMP;
 		T0y = lexp(VjdmFwd / Nvtmd);
 		IVjdmFwd = Isbd * (T0y - XExpBVD / T0y + XExpBVD - 1.0);
 		DslpFwd = Isbd * (T0y + XExpBVD / T0y) / Nvtmd;
-		T2y = hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
+		T2y = `hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
 		VjdmRev = -BVD - Nvtmd * lln((T2y - 1.0) / XJBVD);
 		T1y = XJBVD * lexp(-(BVD + VjdmRev) / Nvtmd);
 		IVjdmRev = Isbd * (1.0 + T1y);
@@ -3199,9 +3194,9 @@ DevTemp = $temperature + DTEMP;
 //********************************************Threshold Voltage for Operating Point Information**************************************************************//
 	gam	= sqrt(2.0 * `q * epssi*NDEP_i * inv_Vt)/Cox;
 	q_vth	= 0.5;
-	T0 	= hypsmooth((2*phib+Vs*inv_Vt),1e-3);
+	T0 	= `hypsmooth((2*phib+Vs*inv_Vt),1e-3);
 	nq	= 1.0+ gam/(2.0*sqrt(T0));
-	psip_th	= hypsmooth((Vs*inv_Vt+2*phib+ln(q_vth)+2*q_vth+ln(2*nq/gam * (2*q_vth*nq/gam + 2*sqrt(T0)))),1e-3);
+	psip_th	= `hypsmooth((Vs*inv_Vt+2*phib+ln(q_vth)+2*q_vth+ln(2*nq/gam * (2*q_vth*nq/gam + 2*sqrt(T0)))),1e-3);
 	VTH	= VFB_i+ (psip_th-Vs*inv_Vt)*Vt + Vt*gam*sqrt(psip_th)+ Vth_shift;
 //******************************************************************************************************************//
 
@@ -3399,7 +3394,7 @@ DevTemp = $temperature + DTEMP;
 	Vgst2Vtm 	= qia + 2.0 * nVt;
 	if (DIBLfactor > 0) begin
 		T3 		= Vgst2Vtm / (Vdssat + Vgst2Vtm);
-		T4 		= hypsmooth((1.0 + PDIBLCB_i * Vbsx),1e-3);
+		T4 		= `hypsmooth((1.0 + PDIBLCB_i * Vbsx),1e-3);
 		T5		= 1/T4;
 		VaDIBL 	        = Vgst2Vtm / DIBLfactor * T3 * PVAGfactor * T5;
 		Moc 		= 1.0 + diffVds / VaDIBL;
@@ -3675,12 +3670,12 @@ DevTemp = $temperature + DTEMP;
 			T6 = 0.0;
 		end else begin
 			T1 = (- Vgd_noswap - EGIDL_i + Vfbsdr) / T0y;
-			T1 =  hypsmooth(T1, 1.0E-2);
+			T1 =  `hypsmooth(T1, 1.0E-2);
 			T2 = BGIDL_t / (T1 + 1.0E-3);
 			if (CGIDL_i !=0) begin
 				T3 = Vdb_noswap*Vdb_noswap*Vdb_noswap;
 				T4 = CGIDL_i + abs(T3) + 1.0E-9;
-				T5 = hypsmooth(T3/T4, 1.0E-6) - 1.0E-6;
+				T5 = `hypsmooth(T3/T4, 1.0E-6) - 1.0E-6;
 			end else
 				T5 = 1.0;
 			T6 = AGIDL_i * Weff * T1 * lexp(-T2) * T5;
@@ -3692,12 +3687,12 @@ DevTemp = $temperature + DTEMP;
 			T6 = 0.0;
 		end else begin
 			T1 = (- Vgs_noswap - EGISL_i + Vfbsdr) / T0y;
-			T1 =  hypsmooth(T1, 1.0E-2);
+			T1 =  `hypsmooth(T1, 1.0E-2);
 			T2 = BGISL_t / (T1 + 1.0E-3);
 			if (CGISL_i !=0) begin
 				T3 = Vsb_noswap*Vsb_noswap*Vsb_noswap;
 				T4 = CGISL_i + abs(T3) + 1.0E-9;
-				T5 = hypsmooth(T3/T4, 1.0E-6) - 1.0E-6;
+				T5 = `hypsmooth(T3/T4, 1.0E-6) - 1.0E-6;
 			end else
 				T5 = 1.0;
 			T6 = AGISL_i * Weff * T1 * lexp(-T2) * T5;
@@ -4224,7 +4219,7 @@ end
 	// Edge FET Model Implementation
 	//****************************************************
 	if (EDGEFET == 1) begin
-		NFACTOREDGE_t = NFACTOREDGE * hypsmooth((1.0 + TNFACTOREDGE * (TRatio - 1.0)),1e-3);
+		NFACTOREDGE_t = NFACTOREDGE * `hypsmooth((1.0 + TNFACTOREDGE * (TRatio - 1.0)),1e-3);
 		ETA0EDGE_t = ETA0EDGE * (1.0 + TETA0EDGE * (TRatio - 1.0));
 
 		cdsc = CITEDGE + NFACTOREDGE_t + CDSCDEDGE * Vdsx - CDSCBEDGE * Vbsx;
