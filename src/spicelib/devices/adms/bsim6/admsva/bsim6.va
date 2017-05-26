@@ -394,13 +394,13 @@
 			`BSIM6NumFingerDiff(nf, minSD, nuIntD, nuEndD, nuIntS, nuEndS) \
 	T0 = DMCG + DMCI;\
 	T1 = DMCG + DMCG;\
-	T2 = DMDG + DMDG;\
+	T2y = DMDG + DMDG;\
 	PSiso = T0 + T0 + Weffcj;\
 	PDiso = T0 + T0 + Weffcj;\
 	PSsha = T1;\
 	PDsha = T1;\
-	PSmer = T2;\
-	PDmer = T2;\
+	PSmer = T2y;\
+	PDmer = T2y;\
 	ASiso = T0 * Weffcj;\
 	ADiso = T0 * Weffcj;\
 	ASsha = DMCG * Weffcj;\
@@ -1729,7 +1729,7 @@ endfunction
 // Common Variables
 real PSiso,PDiso,PSsha,PDsha,PSmer,PDmer,ASiso,ADiso,ASsha,ADsha,ASmer,ADmer;
 real T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12;
-real T3y;
+real T2y, T3y;
 real Tb;
 real epssi, epsox, ni, Weff, Leff, Weff1, Leff1, Wact, Lact, Weffcj, Eg, Eg0;
 real dLIV, dWIV, dLB, dWB, dLCV, dWCV, dWJ, Cox, epsratio;
@@ -2684,9 +2684,9 @@ analog begin
 
 	T0 = TOXE * TOXE;
 	T1 = TOXE * POXEDGE_i;
-	T2 = T1 * T1;
+	T2y = T1 * T1;
 	ToxRatio = exp(NTOX_i * ln(TOXREF / TOXE))/ T0;
-	ToxRatioEdge = exp(NTOX_i * ln(TOXREF / T1)) /T2;
+	ToxRatioEdge = exp(NTOX_i * ln(TOXREF / T1)) /T2y;
 
 	Aechvb = (TYPE == `ntype) ? 4.97232e-7 : 3.42537e-7;
 	Bechvb = (TYPE == `ntype) ? 7.45669e11 : 1.16645e12;
@@ -2927,14 +2927,14 @@ DevTemp = $temperature + DTEMP;
 	if(Isbs > 0.0) begin
 		Nvtms = Vtm * NJS;
 		XExpBVS = lexp(-BVS / Nvtms) * XJBVS;
-		T2 = max(IJTHSFWD / Isbs, 10.0);
-		Tb = 1.0 + T2 - XExpBVS;
+		T2y = max(IJTHSFWD / Isbs, 10.0);
+		Tb = 1.0 + T2y - XExpBVS;
 		VjsmFwd = Nvtms * lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVS)));
 		T0 = lexp(VjsmFwd / Nvtms);
 		IVjsmFwd = Isbs * (T0 - XExpBVS / T0 + XExpBVS - 1.0);
 		SslpFwd = Isbs * (T0 + XExpBVS / T0) / Nvtms;
-		T2 = hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
-		VjsmRev = -BVS - Nvtms * lln((T2 - 1.0) / XJBVS);
+		T2y = hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
+		VjsmRev = -BVS - Nvtms * lln((T2y - 1.0) / XJBVS);
 		T1 = XJBVS * lexp(-(BVS + VjsmRev) / Nvtms);
 		IVjsmRev = Isbs * (1.0 + T1);
 		SslpRev = -Isbs * T1 / Nvtms;
@@ -2954,14 +2954,14 @@ DevTemp = $temperature + DTEMP;
 	if(Isbd > 0.0) begin
 		Nvtmd = Vtm * NJD;
 		XExpBVD = lexp(-BVD / Nvtmd) * XJBVD;
-		T2 = max(IJTHDFWD / Isbd, 10.0);
-		Tb = 1.0 + T2 - XExpBVD;
+		T2y = max(IJTHDFWD / Isbd, 10.0);
+		Tb = 1.0 + T2y - XExpBVD;
 		VjdmFwd = Nvtmd * lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVD)));
 		T0 = lexp(VjdmFwd / Nvtmd);
 		IVjdmFwd = Isbd * (T0 - XExpBVD / T0 + XExpBVD - 1.0);
 		DslpFwd = Isbd * (T0 + XExpBVD / T0) / Nvtmd;
-		T2 = hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
-		VjdmRev = -BVD - Nvtmd * lln((T2 - 1.0) / XJBVD);
+		T2y = hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
+		VjdmRev = -BVD - Nvtmd * lln((T2y - 1.0) / XJBVD);
 		T1 = XJBVD * lexp(-(BVD + VjdmRev) / Nvtmd);
 		IVjdmRev = Isbd * (1.0 + T1);
 		DslpRev = -Isbd * T1 / Nvtmd;
@@ -3044,14 +3044,14 @@ DevTemp = $temperature + DTEMP;
 		if(!$param_given(SCA) && !$param_given(SCB) && !$param_given(SCC)) begin
 			if($param_given(SC) && SC > 0.0) begin
 				T1 = SC + Wdrn;
-				T2 = 1.0 / SCREF;
+				T2y = 1.0 / SCREF;
 				local_sca = SCREF * SCREF / (SC * T1);
 				local_scb = ( (0.1 * SC + 0.01 * SCREF) *
-							exp(-10.0 * SC * T2)  - (0.1 * T1 + 0.01 * SCREF) *
-							exp(-10.0 * T1 * T2) ) / Wdrn;
+							exp(-10.0 * SC * T2y)  - (0.1 * T1 + 0.01 * SCREF) *
+							exp(-10.0 * T1 * T2y) ) / Wdrn;
 				local_scc = ( (0.05 * SC + 0.0025 * SCREF) *
-							exp(-20.0 * SC * T2)  - (0.05 * T1 + 0.0025 * SCREF) *
-							exp(-20.0 * T1 * T2) ) / Wdrn;
+							exp(-20.0 * SC * T2y)  - (0.05 * T1 + 0.0025 * SCREF) *
+							exp(-20.0 * T1 * T2y) ) / Wdrn;
 			end
 			else
 				`STROBE("Warning: (Instance BSIM6) No WPE as none of SCA, SCB, SCC, SC is given and/or SC not positive.");
@@ -3426,8 +3426,8 @@ DevTemp = $temperature + DTEMP;
 	// Calculate Vadits -- Ref BSIM4
 	T1 = lexp(PDITSD_i * Vds);
 	if (PDITS_i > 0.0) begin
-		T2 		= 1.0 + PDITSL * Leff;
-		VaDITS 	= (1.0 + T2 * T1) / PDITS_i;
+		T2y 		= 1.0 + PDITSL * Leff;
+		VaDITS 	= (1.0 + T2y * T1) / PDITS_i;
 		VaDITS 	= VaDITS * Fp;
 	end else
 		VaDITS 	= `MAX_EXPL;
@@ -3937,7 +3937,7 @@ DevTemp = $temperature + DTEMP;
 			if (DelClm < 0.0)  DelClm = 0.0;
 		end
 		T1 = `q * `q * `q * Vt * abs(ids) * ueff;
-		T2 = 1.0e10 * Cox * Leffnoisq;
+		T2y = 1.0e10 * Cox * Leffnoisq;
 		N0 = 2.0 * nq * Cox * Vt * qs / `q;
 		Nl = 2.0 * nq * Cox * Vt * qdeff / `q;
 		Nstar = Vt / `q * (Cox + Cdep + CIT);
@@ -3948,7 +3948,7 @@ DevTemp = $temperature + DTEMP;
 		T7 = 1.0e10 * Leffnoisq * Weff * NF;
 		T8 = NOIA + NOIB * Nl + NOIC * Nl * Nl;
 		T9 = (Nl + Nstar) * (Nl + Nstar);
-		Ssi = T1 / T2 * (T3 + T4 + T5) + T6 / T7 * DelClm * T8 / T9;
+		Ssi = T1 / T2y * (T3 + T4 + T5) + T6 / T7 * DelClm * T8 / T9;
 		T10 = NOIA * `q * Vt;
 		T11 = Weff * NF * Leffnoi * 1.0e10 * Nstar * Nstar;
 		Swi = T10 / T11 * ids * ids;
