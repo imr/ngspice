@@ -515,6 +515,7 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
 
                 } /* end for number of ports */
             } /* end for number of connections */
+            here->initialized = MIF_FALSE;
         } /* end for all instances */
 	}
     /* printf("MIFunsetup completed.\n");*/
