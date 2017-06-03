@@ -76,14 +76,31 @@ cx_cph(void *data, short int type, int length, int *newlength, short int *newtyp
 {
     double *d = alloc_d(length);
     ngcomplex_t *cc = (ngcomplex_t *) data;
-    int i;
+    int i, j;
 
     *newlength = length;
     *newtype = VF_REAL;
     if (type == VF_COMPLEX) {
-        double last_ph = cph(cc[0]);
-        d[0] = radtodeg(last_ph);
-        for (i = 1; i < length; i++) {
+        /* check for clipped values (NaNs) */
+        double last_ph;
+        for (j = 0; j < length; j++) {
+            if (isnan(cc[j].cx_real)) {
+                d[j] = NAN;
+                continue;
+            }
+            else {
+                /* get the first non-NaN as reference */
+                last_ph = cph(cc[j]);
+                break;
+            }
+        }
+        if (j == length - 1) {
+            fprintf(cp_err, "Error: Cannot calculate phase values due to NaN vector values\n");
+            return ((void *) d);
+        }
+
+        d[j] = radtodeg(last_ph);
+        for (i = j + 1; i < length; i++) {
             double ph = cph(cc[i]);
             last_ph = ph - (2*M_PI) * floor((ph - last_ph)/(2*M_PI) + 0.5);
             d[i] = radtodeg(last_ph);
