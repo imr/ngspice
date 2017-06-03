@@ -165,8 +165,12 @@ com_fft(wordlist *wl)
         in = fftw_malloc(sizeof(double) * (unsigned int) length);
         out = fftw_malloc(sizeof(fftw_complex) * (unsigned int) fpts);
 
-        for (j = 0; j < length; j++)
-            in[j] = tdvec[i][j]*win[j];
+        for (j = 0; j < length; j++) {
+            in[j] = tdvec[i][j] * win[j];
+            /* check for clipped values (NaNs) */
+            if (isnan(in[j]))
+                in[j] = 0.0;
+        }
 
         plan_forward = fftw_plan_dft_r2c_1d(length, in, out, FFTW_ESTIMATE);
 
@@ -191,6 +195,9 @@ com_fft(wordlist *wl)
         in = TMALLOC(double, N);
         for (j = 0; j < length; j++) {
             in[j] = tdvec[i][j]*win[j];
+            /* check for clipped values (NaNs) */
+            if (isnan(in[j]))
+                in[j] = 0.0;
         }
         for (j = length; j < N; j++) {
             in[j] = 0.0;
