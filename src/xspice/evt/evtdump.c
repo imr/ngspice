@@ -16,17 +16,20 @@ AUTHORS
 
 MODIFICATIONS
 
-    <date> <person name> <nature of modifications>
+    06/05/17  Holger Vogt Shared ngspice additions
 
 SUMMARY
 
     This file contains functions used
     to send event-driven node results data to the IPC channel when
     the simulator is used with CAE software.
+    It also sends data to a caller via callback, if shared ngspice
+    is enabled.
 
 INTERFACES
 
     EVTdump()
+    EVTshareddump()
 
 REFERENCED FILES
 
@@ -59,6 +62,7 @@ NON-STANDARD FEATURES
 /* global flag, TRUE if callback is used */
 extern bool wantevtdata;
 extern void shared_send_event(int, double, double, char *, void *, int);
+extern void shared_send_dict(char*);
 static void EVTshareddump(
     CKTcircuit    *ckt,  /* The circuit structure */
     Ipc_Anal_t    mode,  /* The analysis mode for this call */
@@ -466,33 +470,30 @@ static void EVTshareddump(
     if (num_send_nodes <= 0)
         return;
 
-    /* If this is the first call, send the dictionary */
+    /* If this is the first call, send the dictionary (the list of event nodes, line by line) */
     if (firstcall) {
-        ipc_send_evtdict_prefix();
         for (i = 0; i < num_nodes; i++) {
             if (node_dict[i].send) {
                 sprintf(buff, "%d %s %s", node_dict[i].ipc_index,
                     node_dict[i].node_name_str,
                     node_dict[i].udn_type_str);
-                ipc_send_line(buff);
+                /* send it directly to sharedspice.c */
+                shared_send_dict(buff);
             }
         }
-        ipc_send_evtdict_suffix();
     }
 
     /* If this is the first call, send the operating point solution */
     /* and return. */
     if (firstcall) {
-        ipc_send_evtdata_prefix();
         for (i = 0; i < num_nodes; i++) {
             if (node_dict[i].send) {
-                EVTsend_line(node_dict[i].ipc_index,
+                EVTsharedsend_line(node_dict[i].ipc_index,
                     step,
                     rhsold[i].node_value,
                     node_table[i]->udn_index);
             }
         }
-        ipc_send_evtdata_suffix();
         return;
     }
 
@@ -503,7 +504,6 @@ static void EVTshareddump(
 
     if (mode == IPC_ANAL_DCTRCURVE) {
         /* Send data prefix */
-        ipc_send_evtdata_prefix();
         /* Loop through event nodes */
         for (i = 0; i < num_nodes; i++) {
             /* If dictionary indicates this node should be sent */
@@ -523,22 +523,18 @@ static void EVTshareddump(
                     &equal);
                 /* If value in rhsold is different, send it */
                 if (!equal) {
-                    EVTsend_line(node_dict[i].ipc_index,
+                    EVTsharedsend_line(node_dict[i].ipc_index,
                         step,
                         rhsold[i].node_value,
                         node_table[i]->udn_index);
                 }
             }
         }
-        /* Send data suffix and return */
-        ipc_send_evtdata_suffix();
         return;
     }
 
 
     if (mode == IPC_ANAL_TRAN) {
-        /* Send data prefix */
-        ipc_send_evtdata_prefix();
         /* Loop through list of nodes modified since last time */
         num_modified = node_data->num_modified;
         for (i = 0; i < num_modified; i++) {
@@ -549,15 +545,13 @@ static void EVTshareddump(
                 /* Scan through new events and send the data for each event */
                 here = *(node_data->last_step[index]);
                 while ((here = here->next) != NULL) {
-                    EVTsend_line(node_dict[index].ipc_index,
+                    EVTsharedsend_line(node_dict[index].ipc_index,
                         here->step,
                         here->node_value,
                         node_table[index]->udn_index);
                 }
             }
         }
-        /* Send data suffix and return */
-        ipc_send_evtdata_suffix();
         return;
     }
 
@@ -599,7 +593,7 @@ static void EVTsharedsend_line(
         len = 0;
     }
 
-    /* Send it to the IPC channel */
+    /* Send it to sharedspice.c */
     shared_send_event(ipc_index, step, dvalue, svalue, pvalue, len);
 }
 
