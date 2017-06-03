@@ -600,7 +600,7 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     if (!bgtr)
         nobgtrwanted = TRUE;
     immediate = FALSE;
-
+    wantevtdata = TRUE;
 #ifdef THREADS
     /* init the mutexes */
 #ifdef HAVE_LIBPTHREAD
@@ -1938,5 +1938,13 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
 }
 
 void shared_send_event(int index, double step, double dvalue, char *svalue, void *pvalue, int len)
-{}
+{
+    printf("");
+    return;
+}
+
+void shared_send_dict(char* dictline)
+{
+    printf("%s", dictline);
+}
 
