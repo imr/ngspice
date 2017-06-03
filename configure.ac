@@ -259,6 +259,9 @@ if test "x$enable_cuspice" = xyes; then
     SM_35=$(echo $NVCC_OUTPUT | grep "sm_35")
     C_50=$(echo $NVCC_OUTPUT | grep "compute_50")
     SM_50=$(echo $NVCC_OUTPUT | grep "sm_50")
+    C_52=$(echo $NVCC_OUTPUT | grep "compute_52")
+    SM_52=$(echo $NVCC_OUTPUT | grep "sm_52")
+
     AC_MSG_RESULT([CUSPICE will be compiled for the following architectures:])
     if test "$C_20" != "" && test "$SM_20" != ""
     then
@@ -286,6 +289,12 @@ if test "x$enable_cuspice" = xyes; then
     then
         CUDA_CFLAGS+=" -gencode arch=compute_50,\"code=sm_50\""
         AC_MSG_RESULT([    Compute Capability: 5.0])
+    fi
+    if test "$C_52" != "" && test "$SM_52" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_52,\"code=sm_52\""
+        CUDA_CFLAGS+=" -gencode arch=compute_52,\"code=compute_52\""
+        AC_MSG_RESULT([    Compute Capability: 5.2])
     fi
 
     CUDA_CFLAGS+=" -DCOMPILED_BY_NVCC"
