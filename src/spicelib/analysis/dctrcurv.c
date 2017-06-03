@@ -376,7 +376,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         /* If first time through, call CKTdump to output Operating Point info */
         /* for Mspice compatibility */
 
-        if (g_ipc.enabled && firstTime) {
+        if (((g_ipc.enabled) || wantevtdata) && firstTime) {
             ipc_send_dcop_prefix();
             CKTdump(ckt, 0.0, plot);
             ipc_send_dcop_suffix();

@@ -476,7 +476,7 @@ DCpss(CKTcircuit *ckt,
 #ifdef XSPICE
 /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 
-    if(g_ipc.enabled) {
+    if ((g_ipc.enabled) || wantevtdata) {
 
         if (pss_state == PSS)
         {

@@ -90,6 +90,7 @@ typedef struct {
 
 
 extern  Ipc_Tiein_t  g_ipc;
+extern bool wantevtdata;
 
 
 #endif

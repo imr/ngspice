@@ -429,7 +429,7 @@ DCtran(CKTcircuit *ckt,
 #ifdef XSPICE
 /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 
-    if(g_ipc.enabled) {
+    if ((g_ipc.enabled) || wantevtdata) {
 
         /* Send event-driven results */
         EVTdump(ckt, IPC_ANAL_TRAN, 0.0);
