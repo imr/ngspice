@@ -971,6 +971,7 @@ int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void
 {
     if (sevtdata)
         wantevtdata = TRUE;
+    return(TRUE);
 }
 
 /* Get info about the event node vector.
@@ -1937,7 +1938,7 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
     }
 }
 
-void shared_send_event(int index, double step, double dvalue, char *svalue, void *pvalue, int len)
+void shared_send_event(int index, double step, double dvalue, char *svalue, void *pvalue, int plen, int mode)
 {
     printf("");
     return;

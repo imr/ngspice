@@ -73,7 +73,8 @@ static void EVTsharedsend_line(
     int         ipc_index,         /* The index used in the dictionary */
     double      step,              /* The analysis step */
     void        *node_value,       /* The node value */
-    int         udn_index);        /* The user-defined node index */
+    int         udn_index,         /* The user-defined node index */
+    int         mode);             /* mode (op, dc, tran) we are in */
 #endif
 
 static void EVTsend_line(
@@ -481,6 +482,8 @@ static void EVTshareddump(
                 shared_send_dict(buff);
             }
         }
+        /* last entry to list */
+        shared_send_dict(NULL);
     }
 
     /* If this is the first call, send the operating point solution */
@@ -491,7 +494,8 @@ static void EVTshareddump(
                 EVTsharedsend_line(node_dict[i].ipc_index,
                     step,
                     rhsold[i].node_value,
-                    node_table[i]->udn_index);
+                    node_table[i]->udn_index,
+                    mode);
             }
         }
         return;
@@ -526,7 +530,8 @@ static void EVTshareddump(
                     EVTsharedsend_line(node_dict[i].ipc_index,
                         step,
                         rhsold[i].node_value,
-                        node_table[i]->udn_index);
+                        node_table[i]->udn_index,
+                        mode);
                 }
             }
         }
@@ -548,7 +553,8 @@ static void EVTshareddump(
                     EVTsharedsend_line(node_dict[index].ipc_index,
                         here->step,
                         here->node_value,
-                        node_table[index]->udn_index);
+                        node_table[index]->udn_index,
+                        mode);
                 }
             }
         }
@@ -568,7 +574,8 @@ static void EVTsharedsend_line(
     int         ipc_index,         /* The index used in the dictionary */
     double      step,              /* The analysis step */
     void        *node_value,       /* The node value */
-    int         udn_index)         /* The user-defined node index */
+    int         udn_index,         /* The user-defined node index */
+    int         mode)              /* the mode (op, dc, tran) we are in */
 {
     double dvalue;
     char   *svalue;
@@ -594,7 +601,7 @@ static void EVTsharedsend_line(
     }
 
     /* Send it to sharedspice.c */
-    shared_send_event(ipc_index, step, dvalue, svalue, pvalue, len);
+    shared_send_event(ipc_index, step, dvalue, svalue, pvalue, len, mode);
 }
 
 
