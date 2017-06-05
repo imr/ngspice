@@ -57,31 +57,31 @@ INDtopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
         {
             if ((here->INDposNode != 0) && (here->INDbrEq != 0))
             {
-                TopologyMatrixInsert (INDposIbrptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (INDposIbrPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->INDnegNode != 0) && (here->INDbrEq != 0))
             {
-                TopologyMatrixInsert (INDnegIbrptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (INDnegIbrPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->INDbrEq != 0) && (here->INDnegNode != 0))
             {
-                TopologyMatrixInsert (INDibrNegptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (INDibrNegPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->INDbrEq != 0) && (here->INDposNode != 0))
             {
-                TopologyMatrixInsert (INDibrPosptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (INDibrPosPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->INDbrEq != 0) && (here->INDbrEq != 0))
             {
-                TopologyMatrixInsert (INDibrIbrptr, k, 1, -1, *i) ;
+                TopologyMatrixInsert (INDibrIbrPtr, k, 1, -1, *i) ;
                 (*i)++ ;
             }
 

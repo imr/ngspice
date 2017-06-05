@@ -54,13 +54,13 @@ MUTtopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
         {
             if ((here->MUTind1->INDbrEq != 0) && (here->MUTind2->INDbrEq != 0))
             {
-                TopologyMatrixInsert (MUTbr1br2, k, 0, -1, *i) ;
+                TopologyMatrixInsert (MUTbr1br2Ptr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->MUTind2->INDbrEq != 0) && (here->MUTind1->INDbrEq != 0))
             {
-                TopologyMatrixInsert (MUTbr2br1, k, 0, -1, *i) ;
+                TopologyMatrixInsert (MUTbr2br1Ptr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
