@@ -54,25 +54,25 @@ REStopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
         {
             if ((here->RESposNode != 0) && (here->RESposNode != 0))
             {
-                TopologyMatrixInsert (RESposPosptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (RESposPosPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->RESnegNode != 0) && (here->RESnegNode != 0))
             {
-                TopologyMatrixInsert (RESnegNegptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (RESnegNegPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->RESposNode != 0) && (here->RESnegNode != 0))
             {
-                TopologyMatrixInsert (RESposNegptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (RESposNegPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->RESnegNode != 0) && (here->RESposNode != 0))
             {
-                TopologyMatrixInsert (RESnegPosptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (RESnegPosPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 

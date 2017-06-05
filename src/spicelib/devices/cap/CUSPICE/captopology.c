@@ -57,25 +57,25 @@ CAPtopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
         {
             if ((here->CAPposNode != 0) && (here->CAPposNode != 0))
             {
-                TopologyMatrixInsert (CAPposPosptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (CAPposPosPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->CAPnegNode != 0) && (here->CAPnegNode != 0))
             {
-                TopologyMatrixInsert (CAPnegNegptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (CAPnegNegPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->CAPposNode != 0) && (here->CAPnegNode != 0))
             {
-                TopologyMatrixInsert (CAPposNegptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (CAPposNegPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->CAPnegNode != 0) && (here->CAPposNode != 0))
             {
-                TopologyMatrixInsert (CAPnegPosptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (CAPnegPosPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 

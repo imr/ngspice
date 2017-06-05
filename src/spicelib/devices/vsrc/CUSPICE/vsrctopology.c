@@ -57,25 +57,25 @@ VSRCtopology (GENmodel *inModel, CKTcircuit *ckt, int *i, int *j)
         {
             if ((here->VSRCposNode != 0) && (here->VSRCbranch != 0))
             {
-                TopologyMatrixInsert (VSRCposIbrptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (VSRCposIbrPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->VSRCnegNode != 0) && (here->VSRCbranch != 0))
             {
-                TopologyMatrixInsert (VSRCnegIbrptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (VSRCnegIbrPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->VSRCbranch != 0) && (here->VSRCposNode != 0))
             {
-                TopologyMatrixInsert (VSRCibrPosptr, k, 0, 1, *i) ;
+                TopologyMatrixInsert (VSRCibrPosPtr, k, 0, 1, *i) ;
                 (*i)++ ;
             }
 
             if ((here->VSRCbranch != 0) && (here->VSRCnegNode != 0))
             {
-                TopologyMatrixInsert (VSRCibrNegptr, k, 0, -1, *i) ;
+                TopologyMatrixInsert (VSRCibrNegPtr, k, 0, -1, *i) ;
                 (*i)++ ;
             }
 
