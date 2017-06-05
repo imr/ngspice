@@ -2,8 +2,8 @@
 
 V1 0 1 pulse(0 1 0p 200p 200p 1n 2n)
 R1 1 2 10
-L1 2 0 10
-L2 3 0 10
+L1 2 0 10n
+L2 3 0 10n
 K1 L1 L2 0.5
 
 .tran 1ps 1ns
