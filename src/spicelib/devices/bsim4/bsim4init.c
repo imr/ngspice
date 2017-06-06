@@ -81,6 +81,11 @@ SPICEdev BSIM4info = {
     BSIM4bindCSCComplexToReal, /* DEVbindCSCComplexToReal */
 #endif
 
+#ifdef USE_CUSPICE
+    NULL,         /* cuDEVdestroy */
+    NULL,         /* DEVtopology  */
+#endif
+
 };
 
 

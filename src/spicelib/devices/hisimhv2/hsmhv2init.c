@@ -79,6 +79,11 @@ SPICEdev HSMHV2info = {
  /* DEVbindCSCComplexToReal */ HSMHV2bindCSCComplexToReal,
 #endif
 
+#ifdef USE_CUSPICE
+ /* cuDEVdestroy */  NULL,
+ /* DEVtopology  */  NULL,
+#endif
+
 };
 
 
