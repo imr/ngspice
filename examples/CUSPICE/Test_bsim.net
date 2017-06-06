@@ -1,0 +1,47 @@
+* cuda i(vd) plot
+* (exec-spice "ngspice %s" t)
+
+.include "Circuits/technology/45nm_HP.pm"
+
+vd nd 0 dc 1.8
+vs ns 0 dc 0
+vb nb 0 dc 0
+vg ng 0 dc 0.8
+
+m1  nd ng ns nb  nmos
++ l=0.12u     w=0.44u
++ as=0.1166p  ad=0.1166p
++ ps=1.41u    pd=1.41u
+
+.control
+
+set curplot = new
+set p = $curplot
+
+set n_d = 55
+set n_g = 5
+
+let m_vd = vector($n_d)/($n_d - 1) * 2.0
+let m_vg = vector($n_g)/($n_g - 1) * 1.8
+
+
+let i_idx = vector($n_d)
+let k_idx = vector($n_g)
+
+let i_d = vector($n_d * $n_g)
+reshape i_d [$n_g][$n_d]
+
+
+foreach k $&k_idx
+  alter @vg[dc] m_vg[$k]
+  foreach i $&i_idx
+    alter @vd[dc] m_vd[$i]
+    op
+    let {$p}.i_d[$k][$i] = -i(vd)
+    setplot $p
+  end
+end
+
+plot i_d vs m_vd
+
+.endc
