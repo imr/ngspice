@@ -1,3 +1,4 @@
+#error "FATAL, on this branch the cuda changes which where intended for bsim4v7 have incorrectly been applied to the bsim4v8 model. Use a newer branch !"
 /**** BSIM4.8.0 Released by Navid Paydavosi 11/01/2013 ****/
 /**** OpenMP support ngspice 06/28/2010 ****/
 /**********
