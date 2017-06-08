@@ -1163,6 +1163,9 @@ com_alter_common(wordlist *wl, int do_model)
             if (strlen(argument) == 1) {
                 step = -1;
                 wl2 = wlin;
+                /* step back in the wordlist, if we have moved forward, to catch 'm1' */
+                for (i = step; i > 0; i--)
+                    wl2 = wl2->wl_prev;
             } else if (strlen(argument) > 1) {
                 wl2 = NULL;
                 if (eqptr[1])
@@ -1172,6 +1175,9 @@ com_alter_common(wordlist *wl, int do_model)
                     wl2 = wl_cons(copy_substring(argument, eqptr), wl2);
                 /* combine wordlists into wl2, free wl */
                 wl_splice(wl, wl2);
+                /* step back in the wordlist, if we have moved forward, to catch 'm1' */
+                for (i = step; i > 0; i--)
+                    wl2 = wl2->wl_prev;
             }
             break;
         }
@@ -1184,9 +1190,6 @@ com_alter_common(wordlist *wl, int do_model)
     }
 
     if (eqfound) {
-        /* step back in the wordlist, if we have moved forward, to catch 'm1' */
-        for (i = step; i > 0; i--)
-            wl2 = wl2->wl_prev;
     } else {
         /* no equal sign found, probably a pre3f4 input format
            'alter device value'
