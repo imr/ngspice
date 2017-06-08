@@ -107,7 +107,6 @@ extern bool cp_bqflag;
 extern bool cp_interactive;
 extern char *cp_altprompt;
 extern char *cp_promptstring;
-extern char cp_hash;
 extern int cp_event;
 extern wordlist *cp_lexer(char *string);
 extern int inchar(FILE *fp);

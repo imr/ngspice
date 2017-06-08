@@ -54,7 +54,6 @@ bool cp_interactive = TRUE;
 bool cp_bqflag = FALSE;
 char *cp_promptstring = NULL;
 char *cp_altprompt = NULL;
-char cp_hash = '#';
 
 static int numeofs = 0;
 
@@ -199,9 +198,9 @@ nloop:
         if ((c == EOF) && cp_bqflag)
             c = '\n';
 
-        /* '#' as the first character in a line,
+        /* '#' or '*' as the first character in a line,
            starts a comment line, drop it */
-        if ((c == cp_hash || c == '#') && (linebuf.i == 1)) {
+        if ((c == '#' || c == '*') && (linebuf.i == 1)) {
             if (string) {
                 wl_free(wlist);
                 tfree(buf.s);
