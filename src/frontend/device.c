@@ -1161,10 +1161,8 @@ com_alter_common(wordlist *wl, int do_model)
             /* We found '=' */
             eqfound = TRUE;
             if (strlen(argument) == 1) {
-                wl = wl->wl_next;
                 step = -1;
                 wl2 = wlin;
-                wl = NULL;
             } else if (strlen(argument) > 1) {
                 wl2 = NULL;
                 if (eqptr[1])
@@ -1174,7 +1172,6 @@ com_alter_common(wordlist *wl, int do_model)
                     wl2 = wl_cons(copy_substring(argument, eqptr), wl2);
                 /* combine wordlists into wl2, free wl */
                 wl_splice(wl, wl2);
-                wl = NULL;
             }
             break;
         }
