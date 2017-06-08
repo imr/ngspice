@@ -220,9 +220,6 @@ ft_cpinit(void)
         }
     }
 
-    /* Reset this for the front end. */
-    cp_hash = '*';
-
     /* set variables to read program configuration into special spinit for VS */
 #ifdef _MSC_VER
 #ifdef CONFIG64
