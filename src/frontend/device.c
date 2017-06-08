@@ -1176,12 +1176,14 @@ com_alter_common(wordlist *wl, int do_model)
                 wl_splice(wl, wl2);
                 wl = NULL;
             }
-        } else {
-            /* deal with 'altermod m1 vth0=0.7' by moving
-               forward beyond 'm1' */
-            wl = wl->wl_next;
-            step++;
+            break;
         }
+
+        /* deal with 'altermod m1 vth0=0.7' by moving
+         *  forward beyond 'm1'
+         */
+        wl = wl->wl_next;
+        step++;
     }
 
     if (eqfound) {
