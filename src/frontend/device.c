@@ -1161,11 +1161,7 @@ com_alter_common(wordlist *wl, int do_model)
             /* We found '=' */
             eqfound = TRUE;
             if (strlen(argument) == 1) {
-                step = -1;
                 wl2 = wlin;
-                /* step back in the wordlist, if we have moved forward, to catch 'm1' */
-                for (i = step; i > 0; i--)
-                    wl2 = wl2->wl_prev;
             } else if (strlen(argument) > 1) {
                 wl2 = NULL;
                 if (eqptr[1])
