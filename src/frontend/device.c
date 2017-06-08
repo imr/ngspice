@@ -1124,7 +1124,6 @@ com_alter_common(wordlist *wl, int do_model)
     /* DIE 2009_02_06 */
     int step = 0, i, wlen, maxelem = 3;
     wordlist *wl2 = NULL, *wlin, *rhs;
-    bool eqfound = FALSE;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -1159,7 +1158,6 @@ com_alter_common(wordlist *wl, int do_model)
            ...and if found split argument into three chars and make a new wordlist */
         if (eqptr) {
             /* We found '=' */
-            eqfound = TRUE;
             if (strlen(argument) == 1) {
                 wl2 = wlin;
             } else if (strlen(argument) > 1) {
@@ -1185,8 +1183,7 @@ com_alter_common(wordlist *wl, int do_model)
         step++;
     }
 
-    if (eqfound) {
-    } else {
+    if (!wl) {
         /* no equal sign found, probably a pre3f4 input format
            'alter device value'
            'alter device parameter value'
