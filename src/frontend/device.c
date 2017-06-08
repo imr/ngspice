@@ -1191,7 +1191,6 @@ com_alter_common(wordlist *wl, int do_model)
            'alter device parameter value parameter value [ parameter value ]'
            multiple param value pairs are not supported!
         */
-        wl2 = wlin;
         wlen = wl_length(wlin);
         /* Return the last element of wlin */
         wlin = wl_nthelem(100, wlin); /* no more than 100 vector elements */
