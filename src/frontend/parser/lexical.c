@@ -201,7 +201,7 @@ nloop:
 
         /* '#' as the first character in a line,
            starts a comment line, drop it */
-        if ((c == cp_hash) && !cp_interactive && (linebuf.i == 1)) {
+        if ((c == cp_hash || c == '#') && (linebuf.i == 1)) {
             if (string) {
                 wl_free(wlist);
                 tfree(buf.s);
