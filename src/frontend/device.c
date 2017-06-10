@@ -1124,7 +1124,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     /* DIE 2009_02_06 */
     int i, wlen, maxelem = 3;
-    wordlist *wl2, *wlin;
+    wordlist *wl2;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -1146,7 +1146,6 @@ com_alter_common(wordlist *wl, int do_model)
       If 'expression' is a vector (e.g. [ 1.0 1.2 1.4 ] ), its elements
       in wl2 have to follow the splitting. wl_splice() will take care of this.
     */
-    wlin = wl;
     for (; wl; wl = wl->wl_next) {
         char *argument = wl->wl_word;
         /* searching for '=' ... */
@@ -1180,6 +1179,7 @@ com_alter_common(wordlist *wl, int do_model)
            'alter device parameter value parameter value [ parameter value ]'
            multiple param value pairs are not supported!
         */
+        wordlist *wlin = parent->wl_next;
         wlen = wl_length(wlin);
         /* Return the last element of wlin */
         wlin = wl_nthelem(100, wlin); /* no more than 100 vector elements */
