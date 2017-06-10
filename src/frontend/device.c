@@ -1123,7 +1123,7 @@ com_alter_common(wordlist *wl, int do_model)
     struct pnode *names;
 
     /* DIE 2009_02_06 */
-    int i, wlen, maxelem = 3;
+    int i;
     wordlist *wl2;
 
     if (!ft_curckt) {
@@ -1180,7 +1180,8 @@ com_alter_common(wordlist *wl, int do_model)
            multiple param value pairs are not supported!
         */
         wordlist *wlin = parent->wl_next;
-        wlen = wl_length(wlin);
+        int wlen = wl_length(wlin);
+        int maxelem = 3;
         /* Return the last element of wlin */
         wlin = wl_nthelem(100, wlin); /* no more than 100 vector elements */
 
