@@ -1210,16 +1210,8 @@ com_alter_common(wordlist *wl, int do_model)
     wl = parent->wl_next;
 
     /* Everything is ready, parsing of the wordlist starts here. */
-    words = wl;
-    while (words) {
-        p = words->wl_word;
-        eqword = words;
-        words = words->wl_next;
-        if (eq(p, "="))
-            break;
-    }
-
-    if (!words) {
+    eqword = wl_find("=", wl);
+    if (!eqword || !eqword->wl_next) {
         fprintf(cp_err, "Error: no assignment found.\n");
         fprintf(cp_err, "Cannot alter parameters.\n");
         return;
