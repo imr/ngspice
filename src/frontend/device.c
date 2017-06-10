@@ -1124,7 +1124,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     /* DIE 2009_02_06 */
     int i, wlen, maxelem = 3;
-    wordlist *wl2 = NULL, *wlin, *rhs;
+    wordlist *wl2 = NULL, *wlin;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -1205,8 +1205,7 @@ com_alter_common(wordlist *wl, int do_model)
         }
         /* add the '=' */
         wlin = wlin->wl_prev;
-        rhs = wl_chop_rest(wlin);
-        wlin = wl_append(wlin, wl_cons(copy("="), rhs));
+        wlin = wl_append(wlin, wl_cons(copy("="), wl_chop_rest(wlin)));
         /* step back until 'alter' or 'altermod' is found,
            then move one step forward */
         while (!ciprefix("alter", wlin->wl_word)) //while (!ciprefix(wlin->wl_word, "alter"))
