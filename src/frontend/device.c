@@ -40,17 +40,19 @@ static void if_set_binned_model(CKTcircuit *, char *, char *, struct dvec *);
  *   Options: -csv (comma separated value for generating docs)
  */
 
-void com_devhelp(wordlist *wl)
+void
+com_devhelp(wordlist *wl)
 {
     /* Just a simple driver now */
     devhelp(wl);
 }
 
 
-void devhelp(wordlist *wl)
+void
+devhelp(wordlist *wl)
 {
     int i, k = 0;
-    int devindex = -1, devInstParNo = 0 , devModParNo = 0;
+    int devindex = -1, devInstParNo = 0, devModParNo = 0;
     bool found = FALSE;
     bool csv = FALSE;
     wordlist *wlist;
@@ -184,6 +186,7 @@ void devhelp(wordlist *wl)
  * Pretty print parameter descriptions
  * This function prints description of device parameters
  */
+
 void
 printdesc(IFparm p, bool csv)
 {
@@ -227,7 +230,7 @@ printdesc(IFparm p, bool csv)
  *   show t : param param param, t : param param
  */
 
-static  int     count;
+static int count;
 
 void
 com_showmod(wordlist *wl)
@@ -640,16 +643,16 @@ param_forall(dgen *dg, int flags)
             && ((plist[i].dataType & IF_SET) || dg->ckt->CKTrhsOld)
             && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
         {
-                j = 0;
-                do {
-                    fprintf(cp_out, "    %-19s=", plist[i].keyword);
+            j = 0;
+            do {
+                fprintf(cp_out, "    %-19s=", plist[i].keyword);
 
-                    k = dgen_for_n(dg, count, printvals, (plist + i), j);
-                    fprintf(cp_out, "\n");
-                    j += 1;
+                k = dgen_for_n(dg, count, printvals, (plist + i), j);
+                fprintf(cp_out, "\n");
+                j += 1;
 
-                } while (k);
-            }
+            } while (k);
+        }
 }
 
 
@@ -674,18 +677,18 @@ param_forall_old(dgen *dg, int flags)
             && ((plist[i].dataType & IF_SET) || dg->ckt->CKTrhsOld)
             && (!(plist[i].dataType & IF_UNINTERESTING) || (flags == DGEN_ALLPARAMS)))
         {
-                j = 0;
-                do {
-                    if (!j)
-                        fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH,
-                                plist[i].keyword);
-                    else
-                        fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
-                    k = dgen_for_n(dg, count, printvals_old, (plist + i), j);
-                    fprintf(cp_out, "\n");
-                    j += 1;
-                } while (k);
-            }
+            j = 0;
+            do {
+                if (!j)
+                    fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH,
+                            plist[i].keyword);
+                else
+                    fprintf(cp_out, "%*.*s", LEFT_WIDTH, LEFT_WIDTH, " ");
+                k = dgen_for_n(dg, count, printvals_old, (plist + i), j);
+                fprintf(cp_out, "\n");
+                j += 1;
+            } while (k);
+        }
 }
 
 
@@ -714,7 +717,7 @@ listparam(wordlist *p, dgen *dg)
 
     if (found) {
         if (dg->ckt->CKTrhsOld ||
-             (plist[i].dataType & IF_SET))
+            (plist[i].dataType & IF_SET))
         {
             j = 0;
             do {
@@ -1170,9 +1173,8 @@ com_alter_common(wordlist *wl, int do_model)
             for (i = 0; i < 100; i++) { /* no more than 100 vector elements */
                 wlin = wlin->wl_prev;
                 maxelem++;
-                if (eq(wlin->wl_word, "[")) {
+                if (eq(wlin->wl_word, "["))
                     break;
-                }
                 if (wlin->wl_prev == NULL) {
                     fprintf(cp_err, "Error: '[' is missing.\n");
                     fprintf(cp_err, "Cannot alter parameters.\n");
@@ -1306,7 +1308,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     if_setparam(ft_curckt->ci_ckt, &dev, param, dv, do_model);
 
-done:
+ done:
     /* va: garbage collection for dv, if pnode names is no simple value */
     if (names && !names->pn_value && dv)
         vec_free(dv);
@@ -1333,13 +1335,14 @@ devexpand(char *name)
     }
 
     wl_sort(wl);
-    return (wl);
+    return wl;
 }
 
 
 /* altermod mod_1 [mod_nn] file=modelparam.mod
    load model file and overwrite models mod_1 till mod_nn with
    all new parameters (limited to 16 models) */
+
 static void
 com_alter_mod(wordlist *wl)
 {
@@ -1437,7 +1440,7 @@ com_alter_mod(wordlist *wl)
     }
     /* read the model line, generate the altermod commands as a wordlist,
        and call com_alter_common() */
-    arglist = TMALLOC(char*, 4);
+    arglist = TMALLOC(char *, 4);
     arglist[0] = copy("altermod");
     arglist[3] = NULL;
     /* for each model name of altermod command */
@@ -1502,13 +1505,13 @@ check_ifparm(IFdevice *device, int instance_flag)
         plist = device->instanceParms;
         if (!plist)
             return;
-        fprintf(stderr," checking %s instanceParams\n", device->name);
+        fprintf(stderr, " checking %s instanceParams\n", device->name);
         xcount = *device->numInstanceParms;
     } else {
         plist = device->modelParms;
         if (!plist)
             return;
-        fprintf(stderr," checking %s modelParams\n", device->name);
+        fprintf(stderr, " checking %s modelParams\n", device->name);
         xcount = *device->numModelParms;
     }
 
