@@ -1124,7 +1124,6 @@ com_alter_common(wordlist *wl, int do_model)
 
     /* DIE 2009_02_06 */
     int i;
-    wordlist *wl2;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -1208,10 +1207,10 @@ com_alter_common(wordlist *wl, int do_model)
         wlin = wl_append(wlin, wl_cons(copy("="), wl_chop_rest(wlin)));
     }
 
-    wl2 = parent->wl_next;
+    wl = parent->wl_next;
 
     /* Everything is ready, parsing of the wordlist starts here. */
-    words = wl2;
+    words = wl;
     while (words) {
         p = words->wl_word;
         eqword = words;
@@ -1233,7 +1232,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     dev = NULL;
     param = NULL;
-    words = wl2;
+    words = wl;
     while (words != eqword) {
         p = words->wl_word;
         if (param) {
