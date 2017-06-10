@@ -1116,7 +1116,7 @@ static void
 com_alter_common(wordlist *wl, int do_model)
 {
     wordlist *parent = wl->wl_prev;
-    wordlist *eqword = NULL, *words;
+    wordlist *eqword, *words;
     char *dev, *param;
     struct dvec *dv;
     struct pnode *names;
