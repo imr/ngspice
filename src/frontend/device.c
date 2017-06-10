@@ -1117,8 +1117,7 @@ com_alter_common(wordlist *wl, int do_model)
 {
     wordlist *parent = wl->wl_prev;
     wordlist *eqword = NULL, *words;
-    char *dev, *p;
-    char *param;
+    char *dev, *param;
     struct dvec *dv;
     struct pnode *names;
 
@@ -1226,7 +1225,7 @@ com_alter_common(wordlist *wl, int do_model)
     param = NULL;
     words = wl;
     while (words != eqword) {
-        p = words->wl_word;
+        char *p = words->wl_word;
         if (param) {
             fprintf(cp_err, "Warning: excess parameter name \"%s\" ignored.\n", p);
         } else if (dev) {
