@@ -1115,6 +1115,7 @@ if_set_binned_model(CKTcircuit *ckt, char *devname, char *param, struct dvec *va
 static void
 com_alter_common(wordlist *wl, int do_model)
 {
+    wordlist *parent = wl->wl_prev;
     wordlist *eqword = NULL, *words;
     char *dev, *p;
     char *param;
@@ -1122,7 +1123,7 @@ com_alter_common(wordlist *wl, int do_model)
     struct pnode *names;
 
     /* DIE 2009_02_06 */
-    int step = 0, i, wlen, maxelem = 3;
+    int i, wlen, maxelem = 3;
     wordlist *wl2 = NULL, *wlin, *rhs;
 
     if (!ft_curckt) {
@@ -1146,7 +1147,7 @@ com_alter_common(wordlist *wl, int do_model)
       in wl2 have to follow the splitting. wl_splice() will take care of this.
     */
     wlin = wl;
-    while (wl) {
+    for (; wl; wl = wl->wl_next) {
         char *argument = wl->wl_word;
         /* searching for '=' ... */
         char *eqptr = strchr(argument, '=');
@@ -1157,33 +1158,20 @@ com_alter_common(wordlist *wl, int do_model)
            or token1=token2
            ...and if found split argument into three chars and make a new wordlist */
         if (eqptr) {
-            /* We found '=' */
-            if (strlen(argument) == 1) {
-                wl2 = wlin;
-            } else if (strlen(argument) > 1) {
+            if (strlen(argument) > 1) {
                 wordlist *wn = NULL;
                 if (eqptr[1])
                     wn = wl_cons(copy(eqptr + 1), wn);
                 wn = wl_cons(copy("="), wn);
                 if (eqptr > argument)
                     wn = wl_cons(copy_substring(argument, eqptr), wn);
-                /* combine wordlists into wn, free wl */
                 wl_splice(wl, wn);
-                /* step back in the wordlist, if we have moved forward, to catch 'm1' */
-                wl2 = wn;
-                for (i = step; i > 0; i--)
-                    wl2 = wl2->wl_prev;
             }
             break;
         }
-
-        /* deal with 'altermod m1 vth0=0.7' by moving
-         *  forward beyond 'm1'
-         */
-        wl = wl->wl_next;
-        step++;
     }
 
+    wl2 = parent->wl_next;
     if (!wl) {
         /* no equal sign found, probably a pre3f4 input format
            'alter device value'
