@@ -1170,7 +1170,6 @@ com_alter_common(wordlist *wl, int do_model)
         }
     }
 
-    wl2 = parent->wl_next;
     if (!wl) {
         /* no equal sign found, probably a pre3f4 input format
            'alter device value'
@@ -1207,13 +1206,9 @@ com_alter_common(wordlist *wl, int do_model)
         /* add the '=' */
         wlin = wlin->wl_prev;
         wlin = wl_append(wlin, wl_cons(copy("="), wl_chop_rest(wlin)));
-        /* step back until 'alter' or 'altermod' is found,
-           then move one step forward */
-        while (!ciprefix("alter", wlin->wl_word)) //while (!ciprefix(wlin->wl_word, "alter"))
-            wlin = wlin->wl_prev;
-        wlin = wlin->wl_next;
-        wl2 = wlin;
     }
+
+    wl2 = parent->wl_next;
 
     /* Everything is ready, parsing of the wordlist starts here. */
     words = wl2;
