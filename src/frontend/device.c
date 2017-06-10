@@ -1124,7 +1124,7 @@ com_alter_common(wordlist *wl, int do_model)
 
     /* DIE 2009_02_06 */
     int i, wlen, maxelem = 3;
-    wordlist *wl2 = NULL, *wlin;
+    wordlist *wl2, *wlin;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
