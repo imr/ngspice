@@ -571,7 +571,7 @@ This function formats the event node data and sends it to the caller via shareds
 
 
 static void EVTsharedsend_line(
-    int         ipc_index,         /* The index used in the dictionary */
+    int         dict_index,        /* The index used in the dictionary */
     double      step,              /* The analysis step */
     void        *node_value,       /* The node value */
     int         udn_index,         /* The user-defined node index */
@@ -601,7 +601,7 @@ static void EVTsharedsend_line(
     }
 
     /* Send it to sharedspice.c */
-    shared_send_event(ipc_index, step, dvalue, svalue, pvalue, len, mode);
+    shared_send_event(dict_index, step, dvalue, svalue, pvalue, len, mode);
 }
 
 

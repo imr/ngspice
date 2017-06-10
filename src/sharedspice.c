@@ -232,6 +232,9 @@ static bool coquit = FALSE;
 static jmp_buf errbufm, errbufc;
 static int intermj = 1;
 bool wantevtdata = FALSE;
+static SendInitEvtData* sendinitevt;
+static SendEvtData* sendevt;
+static void* euserptr;
 
 
 // thread IDs
@@ -600,7 +603,7 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     if (!bgtr)
         nobgtrwanted = TRUE;
     immediate = FALSE;
-    wantevtdata = TRUE;
+
 #ifdef THREADS
     /* init the mutexes */
 #ifdef HAVE_LIBPTHREAD
@@ -971,6 +974,11 @@ int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void
 {
     if (sevtdata)
         wantevtdata = TRUE;
+    else
+        wantevtdata = FALSE;
+    sendinitevt = sinitevtdata;
+    sendevt = sevtdata;
+    euserptr = userData;
     return(TRUE);
 }
 
@@ -1940,12 +1948,14 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
 
 void shared_send_event(int index, double step, double dvalue, char *svalue, void *pvalue, int plen, int mode)
 {
-    printf("");
+    if(wantevtdata)
+        sendevt(index, step, dvalue, svalue, pvalue, plen, mode, euserptr);
     return;
 }
 
 void shared_send_dict(char* dictline)
 {
-    printf("%s", dictline);
+    if (sendinitevt)
+        sendinitevt(dictline, euserptr);
 }
 

@@ -285,8 +285,13 @@ typedef int (GetSyncData)(double, double*, double, int, int, int, void*);
 /* callback functions
 addresses received from caller with ngSpice_Init_Evt() function
 */
-typedef int (SendEvtData)();
-typedef int (SendInitEvtData)();
+typedef int (SendEvtData)(int, double, double, char *, void *, int, int, void*);
+/* int index, double step, double dvalue, char *svalue, void *pvalue, int plen, int mode */
+typedef int (SendInitEvtData)(char*, void*);
+/*
+   char*       string with node info: "index name udn-name"
+   void*       return pointer received from caller
+*/
 #endif
 
 /* ngspice initialization,
@@ -335,8 +340,8 @@ IMPEXP
 char** ngSpice_AllEvtNodes(void);
 
 /* initialization of XSPICE callback functions 
-sevtdata:
-sinitevtdata:
+sevtdata: data for a specific event node at time 'step'
+sinitevtdata: single line entry of event node dictionary (list)
 userData: pointer to user-defined data, will not be modified, but
 handed over back to caller during Callback, e.g. address of calling object */
 IMPEXP
