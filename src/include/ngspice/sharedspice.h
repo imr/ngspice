@@ -188,7 +188,7 @@ typedef struct evt_data
 /* a list of all data points of the node selected by the char* argument to ngGet_Evt_NodeInfo */
 typedef struct evt_shared_data
 {
-    pevt_data evt_dect;  /* array of data */
+    pevt_data *evt_dect; /* array of data */
     int num_steps;       /* length of the array */
 } evt_shared_data, *pevt_shared_data;
 #endif

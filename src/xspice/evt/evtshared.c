@@ -64,18 +64,19 @@ typedef struct evt_shared_data {
 } evt_shared_data, *pevt_shared_data;
 */
 
-pevt_data return_node;
+pevt_data *return_node;
 pevt_shared_data return_all;
 
 /* delete the information return structures */
 void
 delete_ret(void)
 {
-    if (return_node) {
-        tfree(return_node->node_value);
-        tfree(return_node);
-    }
+    int i;
     if (return_all)
+        for (i = 0; i < return_all->num_steps; i++) {
+            tfree(return_all->evt_dect[i]->node_value);
+            tfree(return_all->evt_dect[i]);
+        }
         tfree(return_all);
 }
 
@@ -106,6 +107,10 @@ EVTshareddata(
     char        *value;
 
     delete_ret();
+
+    /* just return if only deletion of previous data is requested */
+    if (!node_name)
+        return NULL;
 
     /* Get needed pointers */
     ckt = g_mif_info.ckt;
@@ -162,10 +167,12 @@ EVTshareddata(
     }
 
     /* Store the data */
-    return_node = TMALLOC(evt_data, num_points + 1);
-    return_node[0].dcop = dcop;
-    return_node[0].node_value = copy(value);
-    return_node[0].step = step;
+    return_node = TMALLOC(pevt_data, num_points + 1);
+    pevt_data newnode = TMALLOC(evt_data, 1);
+    newnode->dcop = dcop;
+    newnode->node_value = copy(value);
+    newnode->step = step;
+    return_node[0] = newnode;
 
     /* While there is more data, get the next values and print */
     i = 1;
@@ -190,9 +197,11 @@ EVTshareddata(
 
         } /* end if node_data not NULL */
 
-        return_node[i].dcop = dcop;
-        return_node[i].node_value = copy(value);
-        return_node[i].step = this_step;
+        newnode = TMALLOC(evt_data, 1);
+        newnode->dcop = dcop;
+        newnode->node_value = copy(value);
+        newnode->step = this_step;
+        return_node[i] = newnode;
         i++;
     } /* end while there is more data */
     return_all = TMALLOC(evt_shared_data, 1);
