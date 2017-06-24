@@ -455,9 +455,13 @@ DCtran(CKTcircuit *ckt,
         if( (ckt->CKTtime >= (g_ipc.mintime + g_ipc.last_time)) ||
             ipc_firsttime || ipc_secondtime || ipc_delta_cut ) {
 
-            ipc_send_data_prefix(ckt->CKTtime);
-            CKTdump(ckt, ckt->CKTtime, job->TRANplot);
-            ipc_send_data_suffix();
+            if (wantevtdata)
+                CKTdump(ckt, ckt->CKTtime, job->TRANplot);
+            else {
+                ipc_send_data_prefix(ckt->CKTtime);
+                CKTdump(ckt, ckt->CKTtime, job->TRANplot);
+                ipc_send_data_suffix();
+            }
 
             if(ipc_firsttime) {
                 ipc_firsttime = IPC_FALSE;
