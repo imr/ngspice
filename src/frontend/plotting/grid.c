@@ -51,9 +51,6 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
 {
     double *dd;
 
-    if (graph->grid.gridtype == GRID_NONE)
-        graph->grid.gridtype = GRID_LIN;
-
     SetColor(1);
     SetLinestyle(1);
 
@@ -541,6 +538,20 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
                             graph->viewport.width + graph->viewportxoff,
                             graph->viewportyoff + i);
         }
+        else {
+            if (i == 0) {
+                /* Just draw the x- and y-axes through the origin at x,y=0 */
+                if (axis == x_axis)
+                    DevDrawLine(graph->viewportxoff,
+                                graph->viewportyoff, graph->viewportxoff,
+                                graph->viewport.height + graph->viewportyoff);
+                else
+                    DevDrawLine(graph->viewportxoff,
+                                graph->viewportyoff,
+                                graph->viewport.width + graph->viewportxoff,
+                                graph->viewportyoff);
+            }
+        }
         if (j == 0)
             SetLinestyle(1);
 
@@ -705,7 +716,20 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
                             + graph->viewportxoff,
                             graph->viewportyoff + i);
         }
-
+        else {
+            /* Just draw the x- and y-axes through the origin at x,y=0 */
+            if (i == 0) {
+                if (axis == x_axis)
+                    DevDrawLine(graph->viewportxoff,
+                        graph->viewportyoff, graph->viewportxoff,
+                        graph->viewport.height + graph->viewportyoff);
+                else
+                    DevDrawLine(graph->viewportxoff,
+                        graph->viewportyoff,
+                        graph->viewport.width + graph->viewportxoff,
+                        graph->viewportyoff);
+            }
+        }
         if (j == -2)
             (void) sprintf(buf, "0.01");
         else if (j == -1)
