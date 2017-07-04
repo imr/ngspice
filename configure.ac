@@ -798,10 +798,8 @@ if test "x$getopt_long" = xtrue; then
     AC_DEFINE([HAVE_GETOPT_LONG], [1], [Have fcn getopt_long()])
 fi
 
-AM_CONDITIONAL([DPATH],[test "x$enable_datapath" != x  &&  test "x$enable_datapath" != xno && test "x$enable_datapath" != xyes])
 if test "x$enable_datapath" != x  &&  test "x$enable_datapath" != xno && test "x$enable_datapath" != xyes; then
     AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $enable_datapath`"], [Define the directory for architecture independent data files])
-    AC_SUBST([enable_datapath])
 else
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
 fi

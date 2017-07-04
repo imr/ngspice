@@ -282,11 +282,7 @@ ngspice.idx: ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
 endif !SHWIN
 endif !WINGUI
 
-if DPATH
-  spinitpath=@enable_datapath@
-else
-  spinitpath=$(pkglibdir)
-endif
+spinitpath=$(pkglibdir)
 
 ## create spinit at compile time, see
 ##   (info "(autoconf) Installation Directory Variables")
