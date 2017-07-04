@@ -182,10 +182,10 @@ AC_ARG_ENABLE([help],
 AC_ARG_ENABLE([xgraph],
     [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
 
-# --enable-datapath: User defined path for binary and data. Default is "no".
-# ngspice shared may want special paths for spinit etc.
-AC_ARG_ENABLE([datapath],
-    [AS_HELP_STRING([--enable-datapath=newpath], [Enable user defined data path for spinit etc.])])
+# --enable-relpath: Relative path for binary and data. Default is "no".
+# ngspice shared may want relative paths for spinit etc.
+AC_ARG_ENABLE([relpath],
+    [AS_HELP_STRING([--enable-relpath], [Enable relative paths for spinit etc.])])
 
 # --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 AC_ARG_WITH([readline],
@@ -798,12 +798,15 @@ if test "x$getopt_long" = xtrue; then
     AC_DEFINE([HAVE_GETOPT_LONG], [1], [Have fcn getopt_long()])
 fi
 
-if test "x$enable_datapath" != x  &&  test "x$enable_datapath" != xno && test "x$enable_datapath" != xyes; then
-    AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $enable_datapath`"], [Define the directory for architecture independent data files])
+AM_CONDITIONAL([RELPATH], [test "x$enable_relpath" = xyes])
+if test "x$enable_relpath" = xyes; then
+    AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo ../bin`"], [Define the directory for executables])
+    AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo ../share/ngspice`"], [Define the directory for architecture independent data files])
+    AC_DEFINE([HAS_RELPATH], [1], [rel. path of libraries and scripts])
 else
+AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
 fi
-AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["`date`"], [Define the build date])
 
 if test "x$with_wingui" = xyes; then
