@@ -65,7 +65,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
 
     for (i = 0; ; i++) {
         char *token;
-        INPgetTok(&line, &token, 1);
+        INPgetNetTok(&line, &token, 1);
         if (i >= 3 && INPlookMod(token)) {
             INPinsert(&token, tab);
             txfree(INPgetMod(ckt, token, &thismodel, tab));
