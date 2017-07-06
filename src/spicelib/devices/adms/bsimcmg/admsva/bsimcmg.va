@@ -1,0 +1,117 @@
+// ********************************************************
+// **** BSIM-CMG 110.0.0 released by Sourabh Khandelwal on 01/01/2016 *****/
+// *  BSIM Common Multi-Gate Model Equations (Verilog-A)
+// ********************************************************
+//
+// ********************************************************
+// * Copyright 2016 Regents of the University of California. 
+// * All rights reserved.
+// *
+// * Project Director: Prof. Chenming Hu.
+// * Authors: Sriramkumar V., Navid Paydavosi, Juan Duarte, Darsen Lu, Sourabh Khandelwal
+// *          Chung-Hsun Lin, Mohan Dunga, Shijing Yao,
+// *          Ali Niknejad, Chenming Hu
+// ********************************************************
+// ********************************************************
+// *   NONDISCLOSURE STATEMENT
+// Software is distributed as is, completely without warranty or service
+// support. The University of California and its employees are not liable
+// for the condition or performance of the software.
+// The University of California owns the copyright and grants users a perpetual,
+// irrevocable, worldwide, non-exclusive, royalty-free license with 
+// respect to the software as set forth below.
+// The University of California hereby disclaims all implied warranties.
+// The University of California grants the users the right to modify, copy,
+// and redistribute the software and documentation, both within the user's
+// organization and externally, subject to the following restrictions
+// 1. The users agree not to charge for the University of California code
+// itself but may charge for additions, extensions, or support.
+// 2. In any product based on the software, the users agree to acknowledge
+// the University of California that developed the software. This
+// acknowledgment shall appear in the product documentation.
+// 3. The users agree to obey all U.S. Government restrictions governing
+// redistribution or export of the software.
+// 4. The users agree to reproduce any copyright notice which appears on
+// the software on any copy or modification of such made available
+// to others
+// Agreed to on __Jan 01, 2016__________________
+// By: ___University of California, Berkeley____ 
+//     ___Chenming Hu_____________________ 
+//     ___Professor in Graduate School _______
+// ********************************************************
+
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+/**************************************************************/
+/* SHMOD is a model parameter                                 */
+/*   SHMOD = 1 : Self-heating turned on                       */
+/*   SHMOD = 0 : Self-heating turned off                      */
+/*                                                            */
+/* RDSMOD is a model parameter                                */
+/*   RDSMOD = 1 : External source/drain resistance model      */
+/*   RDSMOD = 0 : Internal source/drain resistance model      */
+/*     RDSMOD = 2 : Internal Bias Dependent and Bias Independent part of source/drain resistance */
+/*                                                            */
+/* NQSMOD is a model parameter                                */
+/*   NQSMOD = 1 : NQS Resistance / gi node turned on          */
+/*   NQSMOD = 0 : NQS Resistance / gi node turned off         */
+/*                                                            */
+/* RGATEMOD is a model parameter                              */
+/*   RGATEMOD = 1 : Gate Resistance / ge node turned on       */
+/*   RGATEMOD = 0 : Gate Resistance / ge node turned off      */
+/**************************************************************/
+//
+// In Verilog-A the number of internal nodes cannot be controlled by
+//   a model parameter.  Therefore we use `define statements
+//   to control it.  Comment the following lines whenever 
+//   possible for best computational efficiency.
+`define __OPINFO__
+`define __DEBUG__
+`define __SHMOD__
+`define __RDSMOD__
+//`define __NQSMOD1__
+//`define __NQSMOD2__
+`define __RGATEMOD__
+`define __TNOIMOD1__              //Correlated Thermal Noise Switch
+
+`include "common_defs.include"
+`include "bsimcmg_cfringe.include"
+
+
+module bsimcmg(d, g, s, e, t);
+   inout      g, d, s, e, t;
+   electrical g, d, s, e;
+   electrical si, di;
+
+`ifdef __NQSMOD1__
+   electrical gi;
+`endif
+
+`ifdef __NQSMOD2__
+   electrical q;
+`endif
+
+`ifdef __RGATEMOD__
+   electrical ge;
+`endif
+
+`ifdef __SHMOD__
+   thermal t;
+   branch (t) rth_branch;
+   branch (t) ith_branch;
+`else
+   thermal t;
+`endif    
+
+// Internal node controlled by Correlated Thermal Noise Switch
+`ifdef  __TNOIMOD1__
+    electrical N;
+`endif
+      
+`include "bsimcmg_body.include"
+
+
+endmodule
+
