@@ -1,0 +1,103 @@
+// ********************************************************
+// **** BSIM-CMG 110.0.0 released by Sourabh Khandelwal on 01/01/2016****/
+// *  BSIM Common Multi-Gate Model Equations (Verilog-A)
+// ********************************************************
+//
+// ********************************************************
+// * Copyright 2016 Regents of the University of California. 
+// * All rights reserved.
+// *
+// * Project Director: Prof. Chenming Hu.
+// * Authors: Sriramkumar V., Navid Paydavosi, Juan Duarte, Darsen Lu, Sourabh Khandelwal,
+// *          Chung-Hsun Lin, Mohan Dunga, Shijing Yao,
+// *          Ali Niknejad, Chenming Hu
+// ********************************************************
+// ********************************************************
+// *   NONDISCLOSURE STATEMENT
+// Software is distributed as is, completely without warranty or service
+// support. The University of California and its employees are not liable
+// for the condition or performance of the software.
+// The University of California owns the copyright and grants users a perpetual,
+// irrevocable, worldwide, non-exclusive, royalty-free license with 
+// respect to the software as set forth below.
+// The University of California hereby disclaims all implied warranties.
+// The University of California grants the users the right to modify, copy,
+// and redistribute the software and documentation, both within the user's
+// organization and externally, subject to the following restrictions
+// 1. The users agree not to charge for the University of California code
+// itself but may charge for additions, extensions, or support.
+// 2. In any product based on the software, the users agree to acknowledge
+// the University of California that developed the software. This
+// acknowledgment shall appear in the product documentation.
+// 3. The users agree to obey all U.S. Government restrictions governing
+// redistribution or export of the software.
+// 4. The users agree to reproduce any copyright notice which appears on
+// the software on any copy or modification of such made available
+// to others
+// Agreed to on __Jan 01, 2016__________________
+// By: ___University of California, Berkeley____ 
+//     ___Chenming Hu_____________________ 
+//     ___Professor in Graduate School _______
+// ********************************************************
+
+// ********************************************************
+//   Macro for the geometry-dependent fringing capacitance
+//       model
+// ********************************************************
+`define Cfringe_2d(block_name, Hg, Hc, Lext, Wfin, Lc, Lg, Tox, Cf1, Cgg) \
+begin : block_name                                                    \
+    real Hr, Lr, Hgdelta, Lmax, y, x;                    \
+    real CcgSat, Cnon, TT1, Ccg1, r1cf, Rcf, Ccg2;                    \
+    real Ccg, C1, C2, C3, Cfglog, dcf, TT0;                           \
+    real TT2, Cfgsat, delta, Cfg;                                     \
+    \
+    Hr =  2.3 + 0.2 * ((Hg) + (Tox)) / (Hc);                           \
+    Lr =  1.05;                                                        \
+    Hgdelta    =  abs((Hg) + (Tox) - (Hc));                               \
+    Lmax =  (Lext) * Lr;                                               \
+    \
+    y    =  min((Hc), (Hg) + (Tox));                                      \
+    x    =  (Lext) / (Hr + 1.0);                                          \
+    Cnon =  1.7e12;                                                    \
+    CcgSat =  epssp * (y - x) / (Lext);                                \
+    TT1    =  Cnon * CcgSat;                                              \
+    if(TT1 > `EXPL_THRESHOLD)                                         \
+        Ccg1 =  CcgSat;                                                \
+    else                                                              \
+        Ccg1 =  1.0 / Cnon * ln(1.0 + lexp(TT1));                      \
+    \
+    r1cf =  0.5 *                                                      \
+                min((Hc) / ((Hg) + (Tox)), ((Hg) + (Tox)) / (Hc));     \
+    Rcf  =  Hgdelta * r1cf;                                             \
+    Ccg2 =  epssp * 2 / `M_PI *                                        \
+                ln(((Lext) + 0.5 * `M_PI * Rcf) / (Lext));             \
+    \
+    Ccg  =  (Wfin) * (Ccg1 + Ccg2);                                     \
+    \
+    x    =  Lmax / (Hg);                                                  \
+    C1   =  4.0 / (sqrt(2.0 * (x + 1)) * `M_PI);                         \
+    C2   =  sqrt((Tox) * (Tox) + 2.0 * (Hg) * (Tox) +                    \
+                (Hg) * (Hg) * (x + 1)) * sqrt(x + 1) + (Tox) +               \
+                (Hg) * x + (Hg);                                             \
+    C3   =  (Tox) * sqrt((x + 1) * (x + 4)) + Tox * (x + 2);             \
+    Cfglog =  epssp * (C1 * ln(C2 / C3) + 12.27);                      \
+    \
+    dcf    =  Hr * Lr;                                                    \
+    TT0    =  sqrt(dcf * dcf + 1.0);                                      \
+    TT1    =  sqrt((dcf * dcf + 1) * ((dcf * (Tox)) * (dcf * (Tox)) +     \
+                2 * dcf * Lmax * (Tox) + (dcf * dcf + 1) * Lmax * Lmax))    \
+                + dcf * (Tox) + dcf * dcf * Lmax + Lmax;                    \
+    TT2    =  (TT0 + 1.0) * (dcf * (Tox));                                \
+    Cfgsat =  2.0 * epssp * sqrt(2) / `M_PI * (Cf1) * dcf              \
+                / TT0 * ln(TT1 / TT2);                                   \
+    \
+    delta  =  1.2e-12;                                                  \
+    TT1    =  Cfgsat - Cfglog - delta;                                    \
+    Cfg    =  (Wfin) * (Cfgsat - 0.5 * (TT1 +                             \
+                sqrt(TT1 * TT1 + 4 * delta * Cfgsat)));                     \
+    Cgg    =  Ccg + Cfg;                                                  \
+end
+
+
+
+
