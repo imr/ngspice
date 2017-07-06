@@ -98,25 +98,26 @@ set tranplot = $curplot
 clip v(buf) simtime/6 2*simtime/6
 fft v(buf)
 let plotbuf = mag(v(buf))
-plot plotbuf ylimit 0 3m
+plot plotbuf ylimit 0 20m
 clip plotbuf 300Meg 600Meg
 meas sp mfreq MAX_AT plotbuf
 setplot $tranplot
 clip v(buf) 3*simtime/6 4*simtime/6
 fft v(buf)
 let plotbuf = mag(v(buf))
-plot plotbuf ylimit 0 3m
+plot plotbuf ylimit 0 20m
 clip plotbuf 300Meg 600Meg
 meas sp mfreq MAX_AT plotbuf
 setplot $tranplot
 clip v(buf) 5*simtime/6 simtime
 fft v(buf)
 let plotbuf = mag(v(buf))
-plot plotbuf ylimit 0 3m
+plot plotbuf ylimit 0 20m
 clip plotbuf 300Meg 600Meg
 meas sp mfreq MAX_AT plotbuf
-clip plotbuf 0 0 
+clip plotbuf 0 0
 setplot $tranplot
+clip buf 0 0
 .endc
 
 ** model = bsim3v3
