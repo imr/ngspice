@@ -16,6 +16,7 @@ Using: /home/larice/s/ngspice.work/work/ngspice/adms/ADMS/testcases/../admsXml/a
 (compile "cd src/spicelib/devices/adms/mextram/admsva && make -if my.mak to")
 (compile "cd src/spicelib/devices/adms/psp102/admsva && make -if my.mak to")
 (compile "cd src/spicelib/devices/adms/ekv/admsva && make -if my.mak to")
+(compile "cd src/spicelib/devices/adms/bsimcmg/admsva && make -if my.mak to")
 
 ;; note only some blessed module names are accepted, see ngspiceVersion.xml
 ;; here I reuse r2_cmc
@@ -38,3 +39,7 @@ and all the code in bsim..h
 ((GEOMOD)==(0))
 
 kommt in /* case */ als GEOMOD statt here->GEOMOD
+
+(compile "wget http://bsim.berkeley.edu/BSIMCMG/BSIMCMG110.0.0_20160101.tar.gz")
+(compile "mkdir -p src/spicelib/devices/adms/bsimcmg/admsva")
+(compile "tar --dir src/spicelib/devices/adms/bsimcmg/admsva -zxvf BSIMCMG110.0.0_20160101.tar.gz code")
