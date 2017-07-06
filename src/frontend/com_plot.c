@@ -31,17 +31,30 @@ com_bltplot(wordlist *wl)
 void
 com_clip(wordlist *wl)
 {
-    struct pnode *names;
+    struct pnode *names, *delnames;
     struct dvec *vec;
     double xmin, xmax;
     char *vecname = wl->wl_word;
     wl = wl->wl_next;
-    names = ft_getpnames(wl, TRUE);
+    delnames = names = ft_getpnames(wl, TRUE);
     vec = ft_evaluate(names);
+    if (!vec) {
+        fprintf(cp_err, "Error: Cannot evaluate xmin for %s.\n  No clipping done!\n", vecname);
+        return;
+    }
     xmin = vec->v_realdata[0];
+    if (names->pn_value == NULL)
+        vec_free(vec);
     names = names->pn_next;
     vec = ft_evaluate(names);
+    if (!vec) {
+        fprintf(cp_err, "Error: Cannot evaluate xmax for %s.\n  No clipping done!\n", vecname);
+        return;
+    }
     xmax = vec->v_realdata[0];
+    if (names->pn_value == NULL)
+        vec_free(vec);
     vec_clip(vecname, xmin, xmax);
+    free_pnode(delnames);
 }
 
