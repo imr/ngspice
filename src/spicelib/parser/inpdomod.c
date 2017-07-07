@@ -335,6 +335,13 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 				    INPmkTemp
 				    ("Device type BSIM6 not available in this binary\n");}
 			    break;
+			case 17:
+			    type = INPtypelook("BSIMCMG");
+			    if (type < 0) {
+				    err =
+				    INPmkTemp
+				    ("Device type BSIMCMG not available in this binary\n");}
+			    break;
 #ifdef ADMS
 			case 44:
 				type = INPtypelook("ekv");
