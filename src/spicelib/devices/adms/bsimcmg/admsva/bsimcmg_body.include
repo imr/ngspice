@@ -1046,6 +1046,8 @@ real Cins, Ach, Weff_UFCM, qdep,rc, vth_fixed_factor_Sub, vth_fixed_factor_SI, q
 real fieldnormalizationfactor, auxQMfact, QMFACTORCVfinal;
 real psipclamp, sqrtpsip, nq, F0;
 
+`Cfringe_2d_vars();
+
 //===================================================
 //               analog block begins
 //===================================================
