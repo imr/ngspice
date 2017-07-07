@@ -72,6 +72,10 @@
 `define lln(x) \
        ln(max((x) , `N_MINLOG))
 
+// Hyperbolic Smoothing Function
+`define hypsmooth(x,c) \
+        (0.5 * ((x) + sqrt((x)*(x) + 4.0*(c)*(c))))
+
 // Mathematical functions
 //`define SINH(x)        (0.5 * (`lexp(x) - `lexp(-(x))))
 `define COSH(x)        (0.5 * (`lexp(x) + `lexp(-(x))))
