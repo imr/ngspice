@@ -853,7 +853,7 @@ real ni, epssub, epssp, epsratio, Eg, Eg0, Nc;
 real Lg, deltaL, deltaL1, deltaLCV, Leff, Leff1, LeffCV, LeffCV_acc, Weff0, WeffCV0;
 real cox, cdsc, cbox;
 real nbody, phib, deltaPhi;
-real T0, T1, T2, T3, T4, T4a, T5, T6, T7, T8, T9;
+real T0, T1, T2, T3, T3y, T4, T4a, T5, T6, T7, T8, T9;
 real Vtm, Vtm0, nVtm;
 real beta, beta0 ;
 real wf, wr;
@@ -1199,7 +1199,7 @@ analog begin
       RDDRR_t     =  0.0;
       RSDRR_t     =  0.0;
       Rdsi        =  0.0;
-      T3          =  0.0;
+      T3y         =  0.0;
       Tcen0       =  0.0;
       veseff      =  0.0;
       U0R_t       =  0.0;
@@ -2211,12 +2211,12 @@ analog begin
             eta  =  rhorsd * lt / RHOC;
             T1   =  T0 * (1.0 + eta);
             T2   =  T1 + 1.0 - eta;
-            T3   =  T1 - 1.0 + eta;
+            T3y  =  T1 - 1.0 + eta;
          end else begin
             T2   =  T0 + 1.0;
-            T3   =  T0 - 1.0;
+            T3y  =  T0 - 1.0;
          end
-         RrsdTML  =  rhorsd * lt * T2 / (arsd_total * T3);
+         RrsdTML  =  rhorsd * lt * T2 / (arsd_total * T3y);
          
          if (HEPI < -1.0e-10) begin
             Rrsdside  =  RHOC / (-HEPI * TFIN * NFIN);
