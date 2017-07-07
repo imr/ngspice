@@ -58,59 +58,58 @@
 */
 
 `define Cfringe_2d_vars() \
+    real x42_Hr, x42_Lr, x42_Hgdelta, x42_Lmax, x42_y, x42_x;                    \
+    real x42_CcgSat, x42_Cnon, x42_TT1, x42_Ccg1, x42_r1cf, x42_Rcf, x42_Ccg2;                    \
+    real x42_Ccg, x42_C1, x42_C2, x42_C3, x42_Cfglog, x42_dcf, x42_TT0;                           \
+    real x42_TT2, x42_Cfgsat, x42_delta, Cfg;
 
 `define Cfringe_2d(block_name, Hg, Hc, Lext, Wfin, Lc, Lg, Tox, Cf1, Cgg) \
 begin : block_name                                                    \
-    real Hr, Lr, Hgdelta, Lmax, y, x;                    \
-    real CcgSat, Cnon, TT1, Ccg1, r1cf, Rcf, Ccg2;                    \
-    real Ccg, C1, C2, C3, Cfglog, dcf, TT0;                           \
-    real TT2, Cfgsat, delta, Cfg;                                     \
+    x42_Hr =  2.3 + 0.2 * ((Hg) + (Tox)) / (Hc);                           \
+    x42_Lr =  1.05;                                                        \
+    x42_Hgdelta    =  abs((Hg) + (Tox) - (Hc));                               \
+    x42_Lmax =  (Lext) * x42_Lr;                                               \
     \
-    Hr =  2.3 + 0.2 * ((Hg) + (Tox)) / (Hc);                           \
-    Lr =  1.05;                                                        \
-    Hgdelta    =  abs((Hg) + (Tox) - (Hc));                               \
-    Lmax =  (Lext) * Lr;                                               \
-    \
-    y    =  min((Hc), (Hg) + (Tox));                                      \
-    x    =  (Lext) / (Hr + 1.0);                                          \
-    Cnon =  1.7e12;                                                    \
-    CcgSat =  epssp * (y - x) / (Lext);                                \
-    TT1    =  Cnon * CcgSat;                                              \
-    if(TT1 > `EXPL_THRESHOLD)                                         \
-        Ccg1 =  CcgSat;                                                \
+    x42_y    =  min((Hc), (Hg) + (Tox));                                      \
+    x42_x    =  (Lext) / (x42_Hr + 1.0);                                          \
+    x42_Cnon =  1.7e12;                                                    \
+    x42_CcgSat =  epssp * (x42_y - x42_x) / (Lext);                                \
+    x42_TT1    =  x42_Cnon * x42_CcgSat;                                              \
+    if(x42_TT1 > `EXPL_THRESHOLD)                                         \
+        x42_Ccg1 =  x42_CcgSat;                                                \
     else                                                              \
-        Ccg1 =  1.0 / Cnon * ln(1.0 + lexp(TT1));                      \
+        x42_Ccg1 =  1.0 / x42_Cnon * ln(1.0 + lexp(x42_TT1));                      \
     \
-    r1cf =  0.5 *                                                      \
+    x42_r1cf =  0.5 *                                                      \
                 min((Hc) / ((Hg) + (Tox)), ((Hg) + (Tox)) / (Hc));     \
-    Rcf  =  Hgdelta * r1cf;                                             \
-    Ccg2 =  epssp * 2 / `M_PI *                                        \
-                ln(((Lext) + 0.5 * `M_PI * Rcf) / (Lext));             \
+    x42_Rcf  =  x42_Hgdelta * x42_r1cf;                                             \
+    x42_Ccg2 =  epssp * 2 / `M_PI *                                        \
+                ln(((Lext) + 0.5 * `M_PI * x42_Rcf) / (Lext));             \
     \
-    Ccg  =  (Wfin) * (Ccg1 + Ccg2);                                     \
+    x42_Ccg  =  (Wfin) * (x42_Ccg1 + x42_Ccg2);                                     \
     \
-    x    =  Lmax / (Hg);                                                  \
-    C1   =  4.0 / (sqrt(2.0 * (x + 1)) * `M_PI);                         \
-    C2   =  sqrt((Tox) * (Tox) + 2.0 * (Hg) * (Tox) +                    \
-                (Hg) * (Hg) * (x + 1)) * sqrt(x + 1) + (Tox) +               \
-                (Hg) * x + (Hg);                                             \
-    C3   =  (Tox) * sqrt((x + 1) * (x + 4)) + Tox * (x + 2);             \
-    Cfglog =  epssp * (C1 * ln(C2 / C3) + 12.27);                      \
+    x42_x    =  x42_Lmax / (Hg);                                                  \
+    x42_C1   =  4.0 / (sqrt(2.0 * (x42_x + 1)) * `M_PI);                         \
+    x42_C2   =  sqrt((Tox) * (Tox) + 2.0 * (Hg) * (Tox) +                    \
+                (Hg) * (Hg) * (x42_x + 1)) * sqrt(x42_x + 1) + (Tox) +               \
+                (Hg) * x42_x + (Hg);                                             \
+    x42_C3   =  (Tox) * sqrt((x42_x + 1) * (x42_x + 4)) + Tox * (x42_x + 2);             \
+    x42_Cfglog =  epssp * (x42_C1 * ln(x42_C2 / x42_C3) + 12.27);                      \
     \
-    dcf    =  Hr * Lr;                                                    \
-    TT0    =  sqrt(dcf * dcf + 1.0);                                      \
-    TT1    =  sqrt((dcf * dcf + 1) * ((dcf * (Tox)) * (dcf * (Tox)) +     \
-                2 * dcf * Lmax * (Tox) + (dcf * dcf + 1) * Lmax * Lmax))    \
-                + dcf * (Tox) + dcf * dcf * Lmax + Lmax;                    \
-    TT2    =  (TT0 + 1.0) * (dcf * (Tox));                                \
-    Cfgsat =  2.0 * epssp * sqrt(2) / `M_PI * (Cf1) * dcf              \
-                / TT0 * ln(TT1 / TT2);                                   \
+    x42_dcf    =  x42_Hr * x42_Lr;                                                    \
+    x42_TT0    =  sqrt(x42_dcf * x42_dcf + 1.0);                                      \
+    x42_TT1    =  sqrt((x42_dcf * x42_dcf + 1) * ((x42_dcf * (Tox)) * (x42_dcf * (Tox)) +     \
+                2 * x42_dcf * x42_Lmax * (Tox) + (x42_dcf * x42_dcf + 1) * x42_Lmax * x42_Lmax))    \
+                + x42_dcf * (Tox) + x42_dcf * x42_dcf * x42_Lmax + x42_Lmax;                    \
+    x42_TT2    =  (x42_TT0 + 1.0) * (x42_dcf * (Tox));                                \
+    x42_Cfgsat =  2.0 * epssp * sqrt(2) / `M_PI * (Cf1) * x42_dcf              \
+                / x42_TT0 * ln(x42_TT1 / x42_TT2);                                   \
     \
-    delta  =  1.2e-12;                                                  \
-    TT1    =  Cfgsat - Cfglog - delta;                                    \
-    Cfg    =  (Wfin) * (Cfgsat - 0.5 * (TT1 +                             \
-                sqrt(TT1 * TT1 + 4 * delta * Cfgsat)));                     \
-    Cgg    =  Ccg + Cfg;                                                  \
+    x42_delta  =  1.2e-12;                                                  \
+    x42_TT1    =  x42_Cfgsat - x42_Cfglog - x42_delta;                                    \
+    Cfg    =  (Wfin) * (x42_Cfgsat - 0.5 * (x42_TT1 +                             \
+                sqrt(x42_TT1 * x42_TT1 + 4 * x42_delta * x42_Cfgsat)));                     \
+    Cgg    =  x42_Ccg + Cfg;                                                  \
 end
 
 
