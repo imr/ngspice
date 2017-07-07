@@ -63,10 +63,15 @@
 `define MEL           9.11e-31            // kg
 `define KboQ          8.617087e-5         // Joule / degree
 
+// Clamped Exponential Function
+`define lexp(x) \
+        (((x) > `EXPL_THRESHOLD) ? (`MAX_EXPL * (1.0 + (x) - `EXPL_THRESHOLD)) : \
+         (((x) < -`EXPL_THRESHOLD) ? (`MIN_EXPL) : exp(x)))
+
 // Mathematical functions
-//`define SINH(x)        (0.5 * (lexp(x) - lexp(-(x))))
-`define COSH(x)        (0.5 * (lexp(x) + lexp(-(x))))
-//`define TANH(x)        ((lexp(x) - lexp(-(x))) / (lexp(x) + lexp(-(x))))
+//`define SINH(x)        (0.5 * (`lexp(x) - `lexp(-(x))))
+`define COSH(x)        (0.5 * (`lexp(x) + `lexp(-(x))))
+//`define TANH(x)        ((`lexp(x) - `lexp(-(x))) / (`lexp(x) + `lexp(-(x))))
 `define COT(x)         ((x)>=`M_PI/2 ? 0 :  ((x)<=-`M_PI/2 ? 0 : 1.0/tan(x)))
 
 // Junction capacitance
@@ -77,31 +82,31 @@
             T1 = vex / PB;                                      \
             if (T1 < 0.9) begin                                 \
                 if (SJ > 0.0) begin  /*second-step junction*/   \
-                    vec =  PB * (1.0 - lexp((1.0 / MJ) * lln(1.0/SJ))); /*Switch over voltage*/\
-                    pb2 =  PB * SJ * MJ2 / MJ / lexp(- (1.0 + MJ) * lln(1.0 - vec / PB)); /*PB for second doping region*/\
+                    vec =  PB * (1.0 - `lexp((1.0 / MJ) * lln(1.0/SJ))); /*Switch over voltage*/\
+                    pb2 =  PB * SJ * MJ2 / MJ / `lexp(- (1.0 + MJ) * lln(1.0 - vec / PB)); /*PB for second doping region*/\
                     if (vex > vec) begin                                    \
                         arg =  1.0 - T1;                                    \
                         if (MJ == 0.5) sarg  =  1.0 / sqrt(arg);            \
-                        else           sarg  =  lexp(-MJ * lln(arg));       \
+                        else           sarg  =  `lexp(-MJ * lln(arg));       \
                         Qej =  PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ);   \
                     end else begin  /*vex < vec*/                           \
                         arg =  1.0 - vec / PB;                              \
                         if (MJ == 0.5) sarg  =  1.0 / sqrt(arg);            \
-                        else           sarg  =  lexp(-MJ * lln(arg));       \
+                        else           sarg  =  `lexp(-MJ * lln(arg));       \
                         Qec =  PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ);   \
                         arg =  1.0 - (vex - vec) / pb2;                     \
                         if (MJ2 == 0.5) sarg  =  1.0 / sqrt(arg);           \
-                        else            sarg  =  lexp(-MJ2 * lln(arg));     \
+                        else            sarg  =  `lexp(-MJ2 * lln(arg));     \
                         Qej =  Qec + SJ * pb2 * Cz * (1.0 - arg * sarg) / (1.0 - MJ2);   \
                     end                                                                  \
                 end else begin  /*single junction*/                                      \
                     arg =  1.0 - T1;                                                     \
                     if (MJ == 0.5) sarg  =  1.0 / sqrt(arg);                             \
-                    else           sarg  =  lexp(-MJ * lln(arg));                        \
+                    else           sarg  =  `lexp(-MJ * lln(arg));                        \
                     Qej =  PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ);                    \
                 end                                                                      \
             end else begin  /*vex/PB>=0.9*/                                              \
-                T2  =  lexp(-MJ * lln(0.1));                                             \
+                T2  =  `lexp(-MJ * lln(0.1));                                             \
                 T3  =  1.0 / (1.0-MJ);                                                   \
                 T4  =  T2 * (T1 - 1.0) * (5.0 * MJ * (T1-1.0) + (1.0 + MJ) );            \
                 T5  =  T3 * (1.0 - 0.05 * MJ * (1.0 + MJ) * T2 );                        \
