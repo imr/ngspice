@@ -1,0 +1,266 @@
+ ****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+  Copyright (C) 2012 Synopsys, Inc. All Rights Reserved.                        
+  Unpublished-rights reserved under US copyright laws.
+  This program is protected by law and is subject to the
+  terms and conditions of the license agreement from Synopsys.
+  Use of this program is your acceptance to be bound by the
+  license agreement. HSPICE is the trademark of Synopsys, Inc.
+  Input File: rdsgeo.sp                                                         
+  Command line options: -hdlpath ../code -i rdsgeo.sp -o rdsgeo
+ lic:  
+ lic: FLEXlm: v10.8 
+ lic: USER:   sourabh              HOSTNAME: bwrcr720-2.eecs.berkeley.edu 
+ lic: HOSTID:                      PID:      15450 
+ lic: Using FLEXlm license file: 
+ lic: 1701@sunv40z-1.eecs.berkeley.edu 
+ lic: Checkout 1 hspice 
+ lic: License/Maintenance for hspice will expire on 18-nov-2016/2015.06 
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER sunv40z-1.eecs.berkeley.
+ lic:   
+ Init: read install configuration file: /tools/synopsys/hspice/G-2012.06/hspice/meta.cfg
+ **info** *pvaI* Module (bsimcmg): 5 unexpanded port, 0 init, 2015 behav, 64 contrib, 49/3015 expr(s)
+
+ **info** *pvaI* Resizing DB size for v count = 1
+
+ **info** *pvaI* Resizing DB size for v count = 2
+
+ **info** *pvaI*        Has DIS (PC SB), 5 afCount
+
+ **info** *pvaI*        0 const-G and 0 const-C, Has switch branch.
+
+ **info** *pvaI* Module (bsimcmg): generated 4 flow node(s) during compilation.
+
+ **info** *pvaI* #### Total 762 line-size(s), 49 expr(s), 64 contr(s), 0 init(s), 2015 behav(s), 5 port(s)
+
+ Loading pVA library rdsgeo.pvadir/pvaRTL_linux.so...
+1****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+ ******  
+ *sample netlist for bsim-mg
+
+  ******  circuit name directory
+ circuit number to circuit name directory
+   number circuitname                     definition         multiplier
+        0 main circuit
+        1 xn1.                            bsimcmg(va)        1.00 
+        2 xn2.                            bsimcmg(va)        1.00 
+        3 xn3.                            bsimcmg(va)        1.00 
+        4 xn4.                            bsimcmg(va)        1.00 
+        5 xp1.                            bsimcmg(va)        1.00 
+        6 xp2.                            bsimcmg(va)        1.00 
+        7 xp3.                            bsimcmg(va)        1.00 
+        8 xp4.                            bsimcmg(va)        1.00 
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP4
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP3
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP2
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP1
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN4
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN3
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN2
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN1
+
+  
+      
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 3         bypass  = 2         
+  Opening plot unit= 15
+ file=rdsgeo.pa0                                                               
+
+ ******  
+ *sample netlist for bsim-mg
+
+  ******  dc transfer curves tnom=  25.000 temp=  27.000 *****
+x
+
+        volt                                                      
+                 xn1:rsgeo    xn2:rsgeo    xn3:rsgeo    xn4:rsgeo 
+    0.           92.4167      51.1616      38.7941      33.4992   
+y
+-----------------------------------------------
+x
+
+        volt                                                      
+                 xp1:rsgeo    xp2:rsgeo    xp3:rsgeo    xp4:rsgeo 
+    0.           93.1709      52.2258      40.1291      35.0566   
+y
+-----------------------------------------------
+
+          ***** job concluded
+1****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+ ******  
+ *sample netlist for bsim-mg
+
+  ******  job statistics summary tnom=  25.000 temp=  27.000 *****
+  
+  
+ ******  Machine Information  ******
+ CPU:
+ model name	: Intel(R) Xeon(R) CPU E5-2643 0 @ 3.30GHz
+ cpu MHz	: 3299.813
+  
+ OS:
+ Linux version 2.6.32-573.7.1.el6.x86_64 (mockbuild@x86-031.build.eng.bos.redhat.com) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-16) (GCC) ) #1 SMP Thu Sep 10 13:42:16 EDT 2015
+
+
+  ******  HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :     8
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =      44 # elements   =      11
+  # resistors   =       0 # capacitors =       0 # inductors   =       0
+  # mutual_inds =       0 # vccs       =       0 # vcvs        =       0
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       3
+  # curr_srcs   =       0 # diodes     =       0 # bjts        =       0
+  # jfets       =       0 # mosfets    =       0 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       8
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.00           1           0
+  dc sweep           0.00           1           3
+  readin             3.08
+  errchk             0.07
+  setup              0.00
+  output             0.00
+
+
+           peak memory used        119.86 megabytes
+           total cpu time            3.15 seconds
+           total elapsed time        8.63 seconds
+           job started at     08:29:15 12/31/2015
+           job ended   at     08:29:24 12/31/2015
+
+
+ Loading pVA library rdsgeo.pvadir/pvaRTL_linux.so...
+1****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+ ******  
+ 
+
+  ******  circuit name directory
+ circuit number to circuit name directory
+   number circuitname                     definition         multiplier
+        0 main circuit
+        1 xn1.                            bsimcmg(va)        1.00 
+        2 xn2.                            bsimcmg(va)        1.00 
+        3 xn3.                            bsimcmg(va)        1.00 
+        4 xn4.                            bsimcmg(va)        1.00 
+        5 xp1.                            bsimcmg(va)        1.00 
+        6 xp2.                            bsimcmg(va)        1.00 
+        7 xp3.                            bsimcmg(va)        1.00 
+        8 xp4.                            bsimcmg(va)        1.00 
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP4
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP3
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP2
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XP1
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN4
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN3
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN2
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XN1
+
+  
+      
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 3         bypass  = 2         
+  Opening plot unit= 15
+ file=rdsgeo.pa1                                                               
+
+ ******  
+ 
+
+  ******  dc transfer curves tnom=  25.000 temp=  27.000 *****
+x
+
+        volt                                                      
+                 xn1:rsgeo    xn2:rsgeo    xn3:rsgeo    xn4:rsgeo 
+    0.           54.9319      31.7047      24.6842      21.6429   
+y
+-----------------------------------------------
+x
+
+        volt                                                      
+                 xp1:rsgeo    xp2:rsgeo    xp3:rsgeo    xp4:rsgeo 
+    0.           55.7969      32.7308      25.8523      22.9295   
+y
+-----------------------------------------------
+
+          ***** job concluded
+1****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+ ******  
+ 
+
+  ******  job statistics summary tnom=  25.000 temp=  27.000 *****
+  
+  
+ ******  Machine Information  ******
+ CPU:
+ model name	: Intel(R) Xeon(R) CPU E5-2643 0 @ 3.30GHz
+ cpu MHz	: 3299.813
+  
+ OS:
+ Linux version 2.6.32-573.7.1.el6.x86_64 (mockbuild@x86-031.build.eng.bos.redhat.com) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-16) (GCC) ) #1 SMP Thu Sep 10 13:42:16 EDT 2015
+
+
+  ******  HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :     8
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =      44 # elements   =      11
+  # resistors   =       0 # capacitors =       0 # inductors   =       0
+  # mutual_inds =       0 # vccs       =       0 # vcvs        =       0
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       3
+  # curr_srcs   =       0 # diodes     =       0 # bjts        =       0
+  # jfets       =       0 # mosfets    =       0 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       8
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.00           1           0
+  dc sweep           0.00           1           3
+  readin             0.01
+  errchk             0.08
+  setup              0.00
+  output             0.00
+
+
+           peak memory used        120.07 megabytes
+           total cpu time            0.10 seconds
+           total elapsed time        0.10 seconds
+           job started at     08:29:15 12/31/2015
+           job ended   at     08:29:24 12/31/2015
+
+
+ lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.21(s)
