@@ -381,7 +381,7 @@
 `MPRcc( CRATIO         ,0.5            ,""            ,0.0         ,1.0         ,"Ratio of the corner area filled with silicon to the total corner area" ) 
 `MPRoo( DELTAPRSD      ,0.0            ,"m"           ,-FPITCH     ,inf         ,"Change in silicon/silicide interface length due to non-rectangular epi" ) 
 `MPIcc( SDTERM         ,0              ,""            ,0           ,1           ,"Indicator of whether the source/drain are terminated with silicide" ) 
-`MPRnb( LSP            ,(0.2*(L + XL)) ,"m"           ,"Thickness of the gate sidewall spacer" ) 
+`MPRnb( LSP            ,(0.2*(3.0e-8 + XL)) ,"m"           ,"Thickness of the gate sidewall spacer" ) 
 `MPRco( EPSRSP         ,3.9            ,""            ,1.0         ,inf         ,"Relative dielectric constant of the spacer" ) 
 `MPRoz( TGATE          ,3.0e-8         ,"m"           ,"Gate height on top of the hard mask" ) 
 `MPRcz( TMASK          ,3.0e-8         ,"m"           ,"Height of hard mask on top of the fin" ) 
