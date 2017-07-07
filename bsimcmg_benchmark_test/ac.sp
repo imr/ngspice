@@ -1,9 +1,10 @@
 *Sample netlist for BSIM-MG
+* (exec-spice "ngspice %s" t)
 *AC Response 
 
 .option abstol=1e-6 reltol=1e-6 post ingold
 
-.hdl "bsimcmg.va"
+*.hdl "bsimcmg.va"
 .include "modelcard.nmos"
 
 .param myvdd=1.0
@@ -14,7 +15,7 @@ vsig  gate  0 dc=0.5 ac=1
 vbs bulk 0 dc=0
 
 * --- Transistor ---
-X1 vout gate 0 bulk nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
+m1 vout gate 0 bulk 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 
 * --- Load ---
 rl supply vout r=2k
@@ -30,6 +31,13 @@ cl supply vout c=10f
 
 *.alter
 *.param myvdd=2.0
+
+.control
+run
+plot vdb(vout)
+plot cph(vout)
+.endc
+
 
 .end
 
