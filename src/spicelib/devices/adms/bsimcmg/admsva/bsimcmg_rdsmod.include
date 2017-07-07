@@ -51,7 +51,7 @@ case(RDSMOD)
         T4       =  1.0 + PRWGS_i * vgs_eff; 
         T1       =  1.0 / T4; 
         T0       =  0.5 * (T1 + sqrt(T1 * T1 + 0.01));
-        T5       =  RSW_i * (1.0 + RSDR_a * `lexp(0.5 * PRSDR * lln(V(si,s) * V(si,s) + 1.0E-6))); 
+        T5       =  RSW_i * (1.0 + RSDR_a * `lexp(0.5 * PRSDR * `lln(V(si,s) * V(si,s) + 1.0E-6))); 
         Rsource  =  rdstemp * (RSourceGeo + (RSWMIN_i + T5 * T0) * WeffWRFactor); 
                             
         T2       =  vgd_noswap - vfbsd; 
@@ -60,7 +60,7 @@ case(RDSMOD)
         T4       =  1.0 + PRWGD_i * vgd_eff; 
         T1       =  1.0 / T4; 
         T0       =  0.5 * (T1 + sqrt(T1 * T1 + 0.01));
-        T5       =  RDW_i * (1.0 + RDDR_a * `lexp(0.5 * PRDDR * lln(V(di,d) * V(di,d) + 1.0E-6)));
+        T5       =  RDW_i * (1.0 + RDDR_a * `lexp(0.5 * PRDDR * `lln(V(di,d) * V(di,d) + 1.0E-6)));
         Rdrain   =  rdstemp * (RDrainGeo + (RDWMIN_i + T5 * T0) * WeffWRFactor); 
     end
     0: begin
