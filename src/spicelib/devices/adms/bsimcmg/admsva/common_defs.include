@@ -76,6 +76,11 @@
 `define hypsmooth(x,c) \
         (0.5 * ((x) + sqrt((x)*(x) + 4.0*(c)*(c))))
 
+// Hyperbolic Smoothing max Function
+`define hypmax(x,xmin,c) \
+        ((xmin) + 0.5 * ((x) - (xmin) - (c) + sqrt(((x) - (xmin) - (c)) * ((x) - (xmin) - (c)) - 4.0 * (xmin) * (c))))
+
+
 // Mathematical functions
 //`define SINH(x)        (0.5 * (`lexp(x) - `lexp(-(x))))
 `define COSH(x)        (0.5 * (`lexp(x) + `lexp(-(x))))
