@@ -1,0 +1,232 @@
+ ****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+  Copyright (C) 2012 Synopsys, Inc. All Rights Reserved.                        
+  Unpublished-rights reserved under US copyright laws.
+  This program is protected by law and is subject to the
+  terms and conditions of the license agreement from Synopsys.
+  Use of this program is your acceptance to be bound by the
+  license agreement. HSPICE is the trademark of Synopsys, Inc.
+  Input File: invdc.sp                                                          
+  Command line options: -hdlpath ../code -i invdc.sp -o invdc
+ lic:  
+ lic: FLEXlm: v10.8 
+ lic: USER:   sourabh              HOSTNAME: bwrcr720-2.eecs.berkeley.edu 
+ lic: HOSTID:                      PID:      15128 
+ lic: Using FLEXlm license file: 
+ lic: 1701@sunv40z-1.eecs.berkeley.edu 
+ lic: Checkout 1 hspice 
+ lic: License/Maintenance for hspice will expire on 18-nov-2016/2015.06 
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER sunv40z-1.eecs.berkeley.
+ lic:   
+ Init: read install configuration file: /tools/synopsys/hspice/G-2012.06/hspice/meta.cfg
+ **info** *pvaI* Module (bsimcmg): 5 unexpanded port, 0 init, 2015 behav, 64 contrib, 49/3015 expr(s)
+
+ **info** *pvaI* Resizing DB size for v count = 1
+
+ **info** *pvaI* Resizing DB size for v count = 2
+
+ **info** *pvaI*        Has DIS (PC SB), 5 afCount
+
+ **info** *pvaI*        0 const-G and 0 const-C, Has switch branch.
+
+ **info** *pvaI* Module (bsimcmg): generated 4 flow node(s) during compilation.
+
+ **info** *pvaI* #### Total 762 line-size(s), 49 expr(s), 64 contr(s), 0 init(s), 2015 behav(s), 5 port(s)
+
+  **warning** (invdc.sp:15) Global net name, "gnd", in subckt pin list. The pin will be connected to the local net. Recommend to not use global net names in subckt pin lists.
+ Loading pVA library invdc.pvadir/pvaRTL_linux.so...
+1****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+ ******  
+ *sample netlist for bsim-mg
+
+  ******  circuit name directory
+ circuit number to circuit name directory
+   number circuitname                     definition         multiplier
+        0 main circuit
+        1 xinv1.                          mg_inv             1.00 
+        2 xinv1.xp1.                      bsimcmg(va)        1.00 
+        3 xinv1.xn1.                      bsimcmg(va)        1.00 
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XINV1.XN1
+
+ **info** *pvaI* Creating Verilog-A module 'bsimcmg' for XINV1.XP1
+
+  
+      
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 3         bypass  = 2         
+  Opening plot unit= 15
+ file=invdc.pa0                                                                
+
+ **info** dc convergence successful
+ you can increase the efficiency of the
+ operating point calculation by setting dcon= 1
+ in the .option statement
+ ******  
+ *sample netlist for bsim-mg
+
+  ******  dc transfer curves tnom=  25.000 temp=  25.000 *****
+x
+
+        volt    voltage      voltage    
+                    vi           vo     
+    0.            0.           1.0000   
+  1.0000e-02    1.000e-02      1.0000   
+  2.0000e-02    2.000e-02      1.0000   
+  3.0000e-02    3.000e-02      1.0000   
+  4.0000e-02    4.000e-02      1.0000   
+  5.0000e-02    5.000e-02      0.9999   
+  6.0000e-02    6.000e-02      0.9999   
+  7.0000e-02    7.000e-02      0.9999   
+  8.0000e-02    8.000e-02      0.9999   
+  9.0000e-02    9.000e-02      0.9998   
+    0.10000       0.1000       0.9998   
+    0.11000       0.1100       0.9997   
+    0.12000       0.1200       0.9996   
+    0.13000       0.1300       0.9994   
+    0.14000       0.1400       0.9992   
+    0.15000       0.1500       0.9989   
+    0.16000       0.1600       0.9986   
+    0.17000       0.1700       0.9981   
+    0.18000       0.1800       0.9975   
+    0.19000       0.1900       0.9968   
+    0.20000       0.2000       0.9958   
+    0.21000       0.2100       0.9946   
+    0.22000       0.2200       0.9932   
+    0.23000       0.2300       0.9914   
+    0.24000       0.2400       0.9892   
+    0.25000       0.2500       0.9865   
+    0.26000       0.2600       0.9834   
+    0.27000       0.2700       0.9796   
+    0.28000       0.2800       0.9752   
+    0.29000       0.2900       0.9700   
+    0.30000       0.3000       0.9640   
+    0.31000       0.3100       0.9568   
+    0.32000       0.3200       0.9483   
+    0.33000       0.3300       0.9381   
+    0.34000       0.3400       0.9258   
+    0.35000       0.3500       0.9104   
+    0.36000       0.3600       0.8904   
+    0.37000       0.3700       0.8630   
+    0.38000       0.3800       0.8219   
+    0.39000       0.3900       0.7516   
+    0.40000       0.4000       0.6160   
+    0.41000       0.4100       0.3972   
+    0.42000       0.4200       0.2098   
+    0.43000       0.4300       0.1378   
+    0.44000       0.4400       0.1049   
+    0.45000       0.4500     8.445e-02  
+    0.46000       0.4600     6.975e-02  
+    0.47000       0.4700     5.842e-02  
+    0.48000       0.4800     4.931e-02  
+    0.49000       0.4900     4.179e-02  
+    0.50000       0.5000     3.548e-02  
+    0.51000       0.5100     3.012e-02  
+    0.52000       0.5200     2.554e-02  
+    0.53000       0.5300     2.161e-02  
+    0.54000       0.5400     1.822e-02  
+    0.55000       0.5500     1.529e-02  
+    0.56000       0.5600     1.278e-02  
+    0.57000       0.5700     1.061e-02  
+    0.58000       0.5800     8.760e-03  
+    0.59000       0.5900     7.179e-03  
+    0.60000       0.6000     5.838e-03  
+    0.61000       0.6100     4.709e-03  
+    0.62000       0.6200     3.765e-03  
+    0.63000       0.6300     2.984e-03  
+    0.64000       0.6400     2.343e-03  
+    0.65000       0.6500     1.823e-03  
+    0.66000       0.6600     1.405e-03  
+    0.67000       0.6700     1.073e-03  
+    0.68000       0.6800     8.129e-04  
+    0.69000       0.6900     6.108e-04  
+    0.70000       0.7000     4.555e-04  
+    0.71000       0.7100     3.375e-04  
+    0.72000       0.7200     2.485e-04  
+    0.73000       0.7300     1.821e-04  
+    0.74000       0.7400     1.327e-04  
+    0.75000       0.7500     9.640e-05  
+    0.76000       0.7600     6.978e-05  
+    0.77000       0.7700     5.036e-05  
+    0.78000       0.7800     3.628e-05  
+    0.79000       0.7900     2.609e-05  
+    0.80000       0.8000     1.874e-05  
+    0.81000       0.8100     1.345e-05  
+    0.82000       0.8200     9.646e-06  
+    0.83000       0.8300     6.918e-06  
+    0.84000       0.8400     4.960e-06  
+    0.85000       0.8500     3.557e-06  
+    0.86000       0.8600     2.550e-06  
+    0.87000       0.8700     1.829e-06  
+    0.88000       0.8800     1.312e-06  
+    0.89000       0.8900     9.413e-07  
+    0.90000       0.9000     6.755e-07  
+    0.91000       0.9100       0.       
+    0.92000       0.9200       0.       
+    0.93000       0.9300       0.       
+    0.94000       0.9400       0.       
+    0.95000       0.9500       0.       
+    0.96000       0.9600       0.       
+    0.97000       0.9700       0.       
+    0.98000       0.9800       0.       
+    0.99000       0.9900       0.       
+    1.00000       1.0000       0.       
+y
+-----------------------------------------------
+
+          ***** job concluded
+1****** HSPICE -- G-2012.06 32-BIT (May 27 2012) RHEL32 ******                  
+ ******  
+ *sample netlist for bsim-mg
+
+  ******  job statistics summary tnom=  25.000 temp=  25.000 *****
+  
+  
+ ******  Machine Information  ******
+ CPU:
+ model name	: Intel(R) Xeon(R) CPU E5-2643 0 @ 3.30GHz
+ cpu MHz	: 3299.813
+  
+ OS:
+ Linux version 2.6.32-573.7.1.el6.x86_64 (mockbuild@x86-031.build.eng.bos.redhat.com) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-16) (GCC) ) #1 SMP Thu Sep 10 13:42:16 EDT 2015
+
+
+  ******  HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :     8
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =      14 # elements   =       4
+  # resistors   =       0 # capacitors =       0 # inductors   =       0
+  # mutual_inds =       0 # vccs       =       0 # vcvs        =       0
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       2
+  # curr_srcs   =       0 # diodes     =       0 # bjts        =       0
+  # jfets       =       0 # mosfets    =       0 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       2
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.00           1           0
+  dc sweep           0.06         101         480
+  readin             3.05
+  errchk             0.06
+  setup              0.00
+  output             0.00
+
+
+           peak memory used        119.38 megabytes
+           total cpu time            3.17 seconds
+           total elapsed time        8.71 seconds
+           job started at     08:28:24 12/31/2015
+           job ended   at     08:28:33 12/31/2015
+
+
+ lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.21(s)
