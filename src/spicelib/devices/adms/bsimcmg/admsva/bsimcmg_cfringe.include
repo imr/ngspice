@@ -44,6 +44,21 @@
 //   Macro for the geometry-dependent fringing capacitance
 //       model
 // ********************************************************
+
+/*
+  (while (re-search-forward
+          (rx bow
+              (or "Hr" "Lr" "Hgdelta" "Lmax" "y" "x"
+                  "CcgSat" "Cnon" "TT1" "Ccg1" "r1cf" "Rcf" "Ccg2"
+                  "Ccg" "C1" "C2" "C3" "Cfglog" "dcf" "TT0"
+                  "TT2" "Cfgsat" "delta" "xCfg")
+              eow)
+          nil t)
+    (replace-match "x42_\\&" t))
+*/
+
+`define Cfringe_2d_vars() \
+
 `define Cfringe_2d(block_name, Hg, Hc, Lext, Wfin, Lc, Lg, Tox, Cf1, Cgg) \
 begin : block_name                                                    \
     real Hr, Lr, Hgdelta, Lmax, y, x;                    \
