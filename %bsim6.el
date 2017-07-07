@@ -43,3 +43,8 @@ kommt in /* case */ als GEOMOD statt here->GEOMOD
 (compile "wget http://bsim.berkeley.edu/BSIMCMG/BSIMCMG110.0.0_20160101.tar.gz")
 (compile "mkdir -p src/spicelib/devices/adms/bsimcmg/admsva")
 (compile "tar --dir src/spicelib/devices/adms/bsimcmg/admsva -zxvf BSIMCMG110.0.0_20160101.tar.gz code")
+(compile "mkdir -p bsimcmg_benchmark_test")
+(compile "tar --dir bsimcmg_benchmark_test -zxvf BSIMCMG110.0.0_20160101.tar.gz benchmark_test")
+(compile "cd bsimcmg_benchmark_test && mv benchmark_test/* .")
+(compile "git add bsimcmg_benchmark_test")
+
