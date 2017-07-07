@@ -31,7 +31,8 @@ model_numnodes(int type)
         return 6;
     }
 
-    if (type == INPtypelook("BSIM6"))       /* bsim6.va with __THERMAL_NODE__ */
+    if (type == INPtypelook("BSIM6") ||     /* bsim6.va with __THERMAL_NODE__ */
+        type == INPtypelook("BSIMCMG"))     /* bsimcmg.va */
     {
         return 5;
     }
@@ -140,6 +141,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("ekv") &&
         thismodel->INPmodType != INPtypelook("psp102") &&
         thismodel->INPmodType != INPtypelook("bsim6") &&
+        thismodel->INPmodType != INPtypelook("bsimcmg") &&
 #endif
         thismodel->INPmodType != INPtypelook("HiSIM2") &&
         thismodel->INPmodType != INPtypelook("HiSIMHV1") &&

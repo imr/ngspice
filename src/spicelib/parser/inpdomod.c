@@ -212,7 +212,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			INPmakeMod(modname, type, image);
     }
 
-    /*  ------  Check if model is a VDMOS FET ------- */
+    /*  --------  Check if model is a MOSFET --------- */
     else if ((strcmp(type_name, "vdmos") == 0) ||
              (strcmp(type_name, "vdmosn") == 0) ||
              (strcmp(type_name, "vdmosp") == 0)) {
@@ -298,7 +298,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    if (prefix("3.1", ver)) {
 			      type = INPtypelook("BSIM3v1");
 			    }
-			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
+			    if ( prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
 			      type = INPtypelook("BSIM3v32");
 			    }
 			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) ) {
@@ -348,6 +348,13 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 				    err =
 				    INPmkTemp
 				    ("Device type BSIM6 not available in this binary\n");}
+			    break;
+			case 17:
+			    type = INPtypelook("BSIMCMG");
+			    if (type < 0) {
+				    err =
+				    INPmkTemp
+				    ("Device type BSIMCMG not available in this binary\n");}
 			    break;
 			case 44:
 				type = INPtypelook("ekv");
@@ -461,7 +468,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			INPmakeMod(modname, type, image);
     }
 
-    /*  --------  Check if model is a PSPICE resistor --------- */
+    /*  --------  Check if model is a transmission line of some sort --------- */
     else if (strcmp(type_name, "res") == 0) {
         type = INPtypelook("Resistor");
         if (type < 0) {
