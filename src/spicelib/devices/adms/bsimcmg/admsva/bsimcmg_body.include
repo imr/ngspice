@@ -41,16 +41,6 @@
 //     ___Professor in Graduate School _______
 // ********************************************************
 
-// Hyperbolic Smoothing max Function
-analog function real hypmax;
-   input x, xmin, c;
-   real x, xmin, c;
-
-   begin
-      hypmax  =  xmin + 0.5 * (x - xmin - c + sqrt((x - xmin - c) * (x - xmin - c) - 4.0 * xmin * c));
-   end
-endfunction
-
 // Temperature Dependence Type
 analog function real Tempdep;
    input PARAML, PARAMT, DELTEMP, TEMPMOD;
@@ -58,7 +48,7 @@ analog function real Tempdep;
 
    begin
       if (TEMPMOD != 0) begin
-         Tempdep  =  PARAML + hypmax(PARAMT * DELTEMP, -PARAML, 1.0e-6);
+         Tempdep  =  PARAML + `hypmax(PARAMT * DELTEMP, -PARAML, 1.0e-6);
       end else begin
          Tempdep  =  PARAML * `hypsmooth(1.0 + PARAMT * DELTEMP - 1.0e-6, 1.0e-3);
       end
@@ -2408,18 +2398,18 @@ analog begin
       ETA0_t   =  Tempdep(ETA0_i, TETA0, delTemp, TEMPMOD);
       ETA0R_t  =  Tempdep(ETA0R_i, TETA0R, delTemp, TEMPMOD);
       T1       =  U0_i * pow(TRatio, UTE_i);
-      U0_t     =  T1 + hypmax(UTL_i * delTemp, -0.9 * T1, 1.0e-4); 
+      U0_t     =  T1 + `hypmax(UTL_i * delTemp, -0.9 * T1, 1.0e-4); 
       u0       =  U0_t; 
       if (ASYMMOD == 1) begin
          T1     =  U0R_i * pow(TRatio, UTER_i);
-         U0R_t  =  T1 + hypmax(UTLR_i * delTemp, -0.9 * T1, 1.0e-4); 
+         U0R_t  =  T1 + `hypmax(UTLR_i * delTemp, -0.9 * T1, 1.0e-4); 
          u0r    =  U0R_t;
       end
       
       ETAMOB_t  =  Tempdep(ETAMOB_i, EMOBT_i, delTemp, TEMPMOD);
-      UA_t      =  UA_i + hypmax(UA1_i*delTemp, -UA_i, 1.0e-6);
+      UA_t      =  UA_i + `hypmax(UA1_i*delTemp, -UA_i, 1.0e-6);
       if (ASYMMOD != 0) begin
-         UAR_t  =  UAR_i + hypmax(UA1R_i * delTemp, -UAR_i, 1.0e-6);
+         UAR_t  =  UAR_i + `hypmax(UA1R_i * delTemp, -UAR_i, 1.0e-6);
       end
       
       if (BULKMOD != 0) begin  
@@ -2503,26 +2493,26 @@ analog begin
       SII0_t      =  SII0_i * (`hypsmooth(1.0 + TII_i * (TRatio - 1.0) - 0.01, 1.0e-3) + 0.01);
       
       K0_t        =  K0_i + K01_i * delTemp;
-      K0SI_t      =  K0SI_i + hypmax(K0SI1_i * delTemp, -K0SI_i, 1.0e-6);
-      K2SI_t      =  K2SI_i + hypmax(K2SI1_i * delTemp, -K2SI_i, 1.0e-6);
-      K1_t        =  K1_i + hypmax(K11_i * delTemp, -K1_i, 1.0e-6);
+      K0SI_t      =  K0SI_i + `hypmax(K0SI1_i * delTemp, -K0SI_i, 1.0e-6);
+      K2SI_t      =  K2SI_i + `hypmax(K2SI1_i * delTemp, -K2SI_i, 1.0e-6);
+      K1_t        =  K1_i + `hypmax(K11_i * delTemp, -K1_i, 1.0e-6);
       K2SAT_t     =  K2SAT_i + K2SAT1_i * delTemp;
       A1_t        =  A1_i + A11_i * delTemp;
       A2_t        =  A2_i + A21_i * delTemp;
-      K2_t        =  K2_i + hypmax(K21_i * delTemp, -K2_i, 1.0e-6);
+      K2_t        =  K2_i + `hypmax(K21_i * delTemp, -K2_i, 1.0e-6);
       K0SISAT_t   =  K0SISAT_i + K0SISAT1_i * delTemp;
       K2SISAT_t   =  K2SISAT_i + K2SISAT1_i * delTemp;
-      AIGBINV_t   =  AIGBINV_i + hypmax(AIGBINV1_i * delTemp, -AIGBINV_i, 1.0e-6);
-      AIGBACC_t   =  AIGBACC_i + hypmax(AIGBACC1_i * delTemp, -AIGBACC_i, 1.0e-6);
-      AIGC_t      =  AIGC_i + hypmax(AIGC1_i * delTemp, -AIGC_i, 1.0e-6);
-      AIGS_t      =  AIGS_i + hypmax(AIGS1_i * delTemp, -AIGS_i, 1.0e-6);
-      AIGD_t      =  AIGD_i + hypmax(AIGD1_i * delTemp, -AIGD_i, 1.0e-6);
+      AIGBINV_t   =  AIGBINV_i + `hypmax(AIGBINV1_i * delTemp, -AIGBINV_i, 1.0e-6);
+      AIGBACC_t   =  AIGBACC_i + `hypmax(AIGBACC1_i * delTemp, -AIGBACC_i, 1.0e-6);
+      AIGC_t      =  AIGC_i + `hypmax(AIGC1_i * delTemp, -AIGC_i, 1.0e-6);
+      AIGS_t      =  AIGS_i + `hypmax(AIGS1_i * delTemp, -AIGS_i, 1.0e-6);
+      AIGD_t      =  AIGD_i + `hypmax(AIGD1_i * delTemp, -AIGD_i, 1.0e-6);
       BGIDL_t     =  BGIDL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0e-6, 1.0e-3);
       BGISL_t     =  BGISL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0e-6, 1.0e-3);
-      ALPHA0_t    =  ALPHA0_i + hypmax(ALPHA01 * delTemp, -ALPHA0_i, 1.0e-6);
-      ALPHA1_t    =  ALPHA1_i + hypmax(ALPHA11 * delTemp, -ALPHA1_i, 1.0e-6);
-      ALPHAII0_t  =  ALPHAII0_i + hypmax(ALPHAII01 * delTemp, -ALPHAII0_i, 1.0e-25);  
-      ALPHAII1_t  =  ALPHAII1_i + hypmax(ALPHAII11 * delTemp, -ALPHAII1_i, 1.0e-20);   
+      ALPHA0_t    =  ALPHA0_i + `hypmax(ALPHA01 * delTemp, -ALPHA0_i, 1.0e-6);
+      ALPHA1_t    =  ALPHA1_i + `hypmax(ALPHA11 * delTemp, -ALPHA1_i, 1.0e-6);
+      ALPHAII0_t  =  ALPHAII0_i + `hypmax(ALPHAII01 * delTemp, -ALPHAII0_i, 1.0e-25);  
+      ALPHAII1_t  =  ALPHAII1_i + `hypmax(ALPHAII11 * delTemp, -ALPHAII1_i, 1.0e-20);   
       igtemp      =  `lexp(IGT_i * `lln(TRatio));
       igsd_mult   =  igsd_mult0 * igtemp;
 
@@ -3211,7 +3201,7 @@ analog begin
             Vdiff    =  vds - Vdsatii;
             T0       =  BETAII2_i + BETAII1_i * Vdiff + BETAII0_i * Vdiff * Vdiff;
             T1       =  sqrt(T0 * T0 + 1.0e-10);
-            Ratio    =  -hypmax( -ALPHAII * `lexp(Vdiff / T1), -10.0, IIMOD2CLAMP3);
+            Ratio    =  -`hypmax( -ALPHAII * `lexp(Vdiff / T1), -10.0, IIMOD2CLAMP3);
             Iii      =  Ratio * ids;
          end
       end  // End of IIMOD=2      
