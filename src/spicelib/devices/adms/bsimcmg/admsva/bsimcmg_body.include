@@ -853,7 +853,7 @@ real ni, epssub, epssp, epsratio, Eg, Eg0, Nc;
 real Lg, deltaL, deltaL1, deltaLCV, Leff, Leff1, LeffCV, LeffCV_acc, Weff0, WeffCV0;
 real cox, cdsc, cbox;
 real nbody, phib, deltaPhi;
-real T0, T1, T2, T3, T3y, T4, T4a, T5, T6, T7, T8, T9;
+real T0, T1, T2, T2y, T3, T3y, T4, T4a, T5, T6, T7, T8, T9;
 real Vtm, Vtm0, nVtm;
 real beta, beta0 ;
 real wf, wr;
@@ -2141,12 +2141,12 @@ analog begin
            if (BSHEXP != 0.0)  begin 
             T1  =  WTH0 * pow(NF, BSHEXP); 
            end 
-            T2  =  FPITCH; 
+            T2y  =  FPITCH; 
            if (ASHEXP != 0.0) begin 
-            T2 = FPITCH * pow(NFINtotal, ASHEXP); 
+            T2y = FPITCH * pow(NFINtotal, ASHEXP); 
            end 
-            gth  =  (T1 + T2)/ RTH0;
-            cth  =  CTH0 * (T1 + T2);
+            gth  =  (T1 + T2y)/ RTH0;
+            cth  =  CTH0 * (T1 + T2y);
          end else begin
             gth  =  1.0;
             cth  =  0.0;
@@ -2210,13 +2210,13 @@ analog begin
          if (SDTERM == 1.0) begin
             eta  =  rhorsd * lt / RHOC;
             T1   =  T0 * (1.0 + eta);
-            T2   =  T1 + 1.0 - eta;
+            T2y  =  T1 + 1.0 - eta;
             T3y  =  T1 - 1.0 + eta;
          end else begin
-            T2   =  T0 + 1.0;
+            T2y  =  T0 + 1.0;
             T3y  =  T0 - 1.0;
          end
-         RrsdTML  =  rhorsd * lt * T2 / (arsd_total * T3y);
+         RrsdTML  =  rhorsd * lt * T2y / (arsd_total * T3y);
          
          if (HEPI < -1.0e-10) begin
             Rrsdside  =  RHOC / (-HEPI * TFIN * NFIN);
@@ -2389,9 +2389,9 @@ analog begin
 
       T0  =  TOXG * TOXG;
       T1  =  TOXG * POXEDGE_i;
-      T2  =  T1 * T1;
+      T2y =  T1 * T1;
       Toxratio      =  lexp(NTOX_i * lln(TOXREF / TOXG)) / T0;
-      Toxratioedge  =  lexp(NTOX_i * lln(TOXREF / T1)) / T2;
+      Toxratioedge  =  lexp(NTOX_i * lln(TOXREF / T1)) / T2y;
       igsd_mult0    =  Weff0 * Aechvb * Toxratioedge;
 
       if (TNOM < -`P_CELSIUS0) begin 
