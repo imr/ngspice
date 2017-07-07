@@ -1,10 +1,11 @@
 *Sample netlist for BSIM-MG
+* (exec-spice "ngspice %s" t)
 *Id-Vg Characteristics for PMOS (T = 27 C)
 
 .option abstol=1e-6 reltol=1e-6 post ingold
 .temp -55
 
-.hdl "bsimcmg.va"
+*.hdl "bsimcmg.va"
 .include "modelcard.pmos.1"
 
 * --- Voltage Sources ---
@@ -13,7 +14,7 @@ vgs gate  0 dc=-1
 vbs bulk  0 dc=0
 
 * --- Transistor ---
-X1 supply gate 0 bulk pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
+m1 supply gate 0 bulk 0 pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 
 * --- DC Analysis ---
 .dc vgs 0.5 -1.0 -0.01 
@@ -26,5 +27,11 @@ X1 supply gate 0 bulk pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 
 .alter
 .temp 100
+
+.control
+run
+plot i(vds)
+* fixme, second temperature, and nasty reset issues
+.endc
 
 .end
