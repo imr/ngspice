@@ -853,7 +853,7 @@ real ni, epssub, epssp, epsratio, Eg, Eg0, Nc;
 real Lg, deltaL, deltaL1, deltaLCV, Leff, Leff1, LeffCV, LeffCV_acc, Weff0, WeffCV0;
 real cox, cdsc, cbox;
 real nbody, phib, deltaPhi;
-real T0, T1, T1y, T2, T2y, T3, T3y, T4, T4a, T5, T6, T7, T8, T9;
+real T0, T0y, T1, T1y, T2, T2y, T3, T3y, T4, T4a, T5, T6, T7, T8, T9;
 real Vtm, Vtm0, nVtm;
 real beta, beta0 ;
 real wf, wr;
@@ -2205,16 +2205,16 @@ analog begin
          prsd_total  =  Prsd * NFIN + PRSDEND;
          lt          =  sqrt(RHOC * arsd_total / (rhorsd * prsd_total));
          alpha       =  LRSD / lt;
-         T0          =  lexp(alpha + alpha);
+         T0y          =  lexp(alpha + alpha);
 
          if (SDTERM == 1.0) begin
             eta  =  rhorsd * lt / RHOC;
-            T1y   =  T0 * (1.0 + eta);
+            T1y   =  T0y * (1.0 + eta);
             T2y  =  T1y + 1.0 - eta;
             T3y  =  T1y - 1.0 + eta;
          end else begin
-            T2y  =  T0 + 1.0;
-            T3y  =  T0 - 1.0;
+            T2y  =  T0y + 1.0;
+            T3y  =  T0y - 1.0;
          end
          RrsdTML  =  rhorsd * lt * T2y / (arsd_total * T3y);
          
@@ -2292,9 +2292,9 @@ analog begin
          // Top Component
          if (TMASK > 0.0) begin
             // Capacitance Model by Chung-Hsun Lin (IBM)
-            T0       =  3.467e-11 * lln(1.0e-7 * EPSRSP / (3.9 * LSP));
+            T0y       =  3.467e-11 * lln(1.0e-7 * EPSRSP / (3.9 * LSP));
             T1y       =  0.942 * Hrsd * epssp / LSP;
-            Cgg_top  =  (T0 + T1y) * (TFIN + (FPITCH - TFIN) * CRATIO);
+            Cgg_top  =  (T0y + T1y) * (TFIN + (FPITCH - TFIN) * CRATIO);
          end else begin
             `Cfringe_2d(cfr_top_trigate, Hg, Hrsd, LSP, TFIN, LRSD, Lg, TOXP, 0.85, Cgg_top)
          end
@@ -2322,9 +2322,9 @@ analog begin
       end
       
       // Source/Gate/Drain-to-Substrate Parasitic Capacitances
-      T0     =  CSDESW * lln(1.0 + HFIN / EOTBOX);
-      csbox  =  cbox * ASEO + T0 * max(0.0, PSEO - FPITCH * NFINtotal);
-      cdbox  =  cbox * ADEO + T0 * max(0.0, PDEO - FPITCH * NFINtotal);
+      T0y     =  CSDESW * lln(1.0 + HFIN / EOTBOX);
+      csbox  =  cbox * ASEO + T0y * max(0.0, PSEO - FPITCH * NFINtotal);
+      cdbox  =  cbox * ADEO + T0y * max(0.0, PDEO - FPITCH * NFINtotal);
       cgbox  =  (CGBO * NF * NGCON + CGBN * NFINtotal) * Lg;
       
       // Mobility Degradation
@@ -2369,12 +2369,12 @@ analog begin
 
       tmp  =  DSUB_i * Leff / scl + 1.0e-6;
       if (tmp < 40.0) begin
-         T0  =  1.0 / max((1.0 + DVTP2 * (cosh(tmp) - 2.0)), 1.0e-6);
+         T0y  =  1.0 / max((1.0 + DVTP2 * (cosh(tmp) - 2.0)), 1.0e-6);
       end else begin
-         T0  =  exp(-tmp) / max((exp(-tmp) + DVTP2), 1.0e-6);
+         T0y  =  exp(-tmp) / max((exp(-tmp) + DVTP2), 1.0e-6);
       end
 
-      Theta_DITS  =  T0;
+      Theta_DITS  =  T0y;
       nbody       =  NBODY_i;
       qbs         =  `q * nbody * Ach / Cins;
 
@@ -2387,10 +2387,10 @@ analog begin
          Bechvb  =  1.16645e12;  // PMOS
       end         
 
-      T0  =  TOXG * TOXG;
+      T0y  =  TOXG * TOXG;
       T1y  =  TOXG * POXEDGE_i;
       T2y =  T1y * T1y;
-      Toxratio      =  lexp(NTOX_i * lln(TOXREF / TOXG)) / T0;
+      Toxratio      =  lexp(NTOX_i * lln(TOXREF / TOXG)) / T0y;
       Toxratioedge  =  lexp(NTOX_i * lln(TOXREF / T1y)) / T2y;
       igsd_mult0    =  Weff0 * Aechvb * Toxratioedge;
 
@@ -2429,9 +2429,9 @@ analog begin
       
       // Quantum Mechanical Vth Correction (Ref: Trivedi et al., EDL 2005)
       kT       =  Vtm * `q;
-      T0       =  `HBAR * `M_PI / (2*Ach/Weff_UFCM );
-      E0       =  T0 * T0 / (2.0 * mx);
-      E0prime  =  T0 * T0 / (2.0 * mxprime);
+      T0y       =  `HBAR * `M_PI / (2*Ach/Weff_UFCM );
+      E0       =  T0y * T0y / (2.0 * mx);
+      E0prime  =  T0y * T0y / (2.0 * mxprime);
       E1       =  4.0 * E0;
       E1prime  =  4.0 * E0prime;
       T1       =  gprime * mdprime / (gfactor * md);
