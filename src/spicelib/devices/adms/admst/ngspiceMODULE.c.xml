@@ -33,27 +33,37 @@
 #include &quot;$(module)defs.h&quot;
 #include &quot;ngspice/suffix.h&quot;
 
-<admst:text format="IFparm $(module)pTable[] = {\n"/>
-<admst:join select="variable[parametertype='instance' and input='yes']" separator=",\n">
+IFparm $(module)pTable[] = {
+<admst:for-each select="variable[parametertype='instance' and input='yes']">
   <admst:choose>
     <admst:when test="[type='real']">
-      <admst:value-of select="name"/>
-      <admst:value-of select="name"/>
-      <admst:value-of select="lower-case(name)"/>
-      <admst:text format=" IOP(&quot;%s&quot;,$(module)_instance_%s,IF_REAL,&quot;%s&quot;)"/>
+  IOP("%(lower-case(name))",$(module)_instance_%(name),IF_REAL,"%(name)"),
     </admst:when>
     <admst:when test="[type='integer']">
-      <admst:value-of select="name"/>
-      <admst:value-of select="name"/>
-      <admst:value-of select="lower-case(name)"/>
-      <admst:text format=" IOP(&quot;%s&quot;,$(module)_instance_%s,IF_INTEGER,&quot;%s&quot;)"/>
+  IOP("%(lower-case(name))",$(module)_instance_%(name),IF_INTEGER,"%(name)"),
     </admst:when>
     <admst:otherwise>
       <admst:fatal format="parameter of type 'string' not supported\n"/>
     </admst:otherwise>
   </admst:choose>
-</admst:join>
-<admst:text format="\n};\n"/>
+</admst:for-each>
+
+<admst:for-each select="variable">
+  <admst:if test="attribute[name='desc']">
+    <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
+      <admst:choose>
+        <admst:when test="[type='real']">
+  OP("%(lower-case(name))",$(module)_ask_%(name),IF_REAL,"%(attribute[name='desc']/value)"),
+        </admst:when>
+        <admst:otherwise>
+          <admst:fatal format="parameter of type 'string' not supported\n"/>
+        </admst:otherwise>
+      </admst:choose>
+    </admst:if>
+  </admst:if>
+</admst:for-each>
+};
+
 <admst:text format="IFparm $(module)mPTable[] = {\n"/>
 <admst:join select="variable[parametertype='model' and input='yes']" separator=",\n">
   <admst:choose>
