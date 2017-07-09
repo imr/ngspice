@@ -113,6 +113,8 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 </admst:for-each>
       }
 </admst:if>
+       ((GENinstance*)here)->GENstate = *states;
+       *states += $(module)numStates;
       /* set states */
 <admst:for-each select="source[dynamic='yes']">
 <admst:value-of select="branch/nnode/name"/>

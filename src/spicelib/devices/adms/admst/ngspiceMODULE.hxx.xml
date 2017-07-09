@@ -1147,6 +1147,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[input='no' and scope='global_instance']">
       <admst:variable name="e" select="pInst-&gt;%(name)"/>
     </admst:when>
+    <admst:when test="attribute[name='desc']">
+      <admst:variable name="e" select="ckt->CKTstate0[((GENinstance*)here)->GENstate + %(name)]"/>
+    </admst:when>
     <admst:otherwise>
       <admst:variable name="e" select="%(name)"/>
     </admst:otherwise>
@@ -2363,7 +2366,14 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
           </admst:when>
         </admst:choose>
       </admst:for-each>
-      <admst:text format="%(lhs/name)=$allep;\n"/>
+      <admst:choose>
+        <admst:when test="lhs/attribute[name='desc']">
+          <admst:text format="ckt->CKTstate0[((GENinstance*)here)->GENstate + %(lhs/name)]=$allep; /* indeed 3 */\n"/>
+        </admst:when>
+        <admst:otherwise>
+          <admst:text format="%(lhs/name)=$allep; /* indeed 3 */\n"/>
+        </admst:otherwise>
+      </admst:choose>
       <admst:text format="EXIT_IF_ISNAN(%(lhs/name))\n"/>
       <admst:text format="#endif\n"/>
     </admst:when>
@@ -2718,7 +2728,13 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   </admst:new>
   <admst:if test="block/adms[datatypename='module']">
     <admst:text test="[static='no' and dynamic='yes']" format="#if defined(_DYNAMIC)\n"/>
-    <admst:text test="[scope='local']" format="%(vtype(.)) %(name);\n"/>
+    <admst:choose>
+      <admst:when test="attribute[name='desc']">
+      </admst:when>
+      <admst:otherwise>
+        <admst:text test="[scope='local']" format="%(vtype(.)) %(name);\n"/>
+      </admst:otherwise>
+    </admst:choose>
     <admst:if test="[insource='yes']/probe">
       <admst:for-each select="probe">
         <admst:variable name="pprobe" select="%(.)"/>

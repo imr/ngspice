@@ -62,6 +62,23 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
     </admst:choose>
     <admst:text format="    return OK;\n"/>
   </admst:for-each>
+  <admst:for-each select="variable">
+    <admst:if test="attribute[name='desc']">
+      <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
+        <admst:choose>
+          <admst:when test="[type='real']">
+  case  $(module)_ask_%(name) :
+    value->rValue = ckt->CKTstate0[inst->GENstate + %(name)];
+    return OK;
+          </admst:when>
+          <admst:otherwise>
+            <admst:fatal format="parameter of type 'string' not supported\n"/>
+          </admst:otherwise>
+        </admst:choose>
+      </admst:if>
+    </admst:if>
+  </admst:for-each>
+
   default:
     return(-1);
   }

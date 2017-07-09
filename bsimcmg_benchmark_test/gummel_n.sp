@@ -26,8 +26,11 @@ m1 drain gate source bulk 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 .print dc par'ids' par'gx' par'gx2' par'gx3' par 'gx4'
 
 .control
+save @m1[VDSSAT]
 run
+show all
 plot -i(vdrain)
+plot @m1[VDSSAT]
 .endc
 
 .end

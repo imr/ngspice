@@ -253,10 +253,18 @@ typedef struct s$(module)instance {
   </admst:if>
 </admst:for-each>
 
-#define $(module)numStates 0
-
 } $(module)instance ;
 
+enum {
+<admst:for-each select="variable">
+  <admst:if test="attribute[name='desc']">
+    <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
+      %(name),
+    </admst:if>
+  </admst:if>
+</admst:for-each>
+    $(module)numStates
+};
 
 /* per model data */
 
@@ -306,6 +314,13 @@ typedef struct s$(module)model {         /* model structure */
   <admst:for-each select="variable[parametertype='instance' and input='yes']">
     <admst:value-of select="name"/>
     <admst:text format="  $(module)_instance_%s,\n"/>
+  </admst:for-each>
+  <admst:for-each select="variable">
+    <admst:if test="attribute[name='desc']">
+      <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
+        $(module)_ask_%(name),
+      </admst:if>
+    </admst:if>
   </admst:for-each>
   <admst:text format="  DUMMY_INSTANCE"/>
   <admst:text format="\n} e_$(module)_instance;\n"/>
