@@ -75,172 +75,172 @@ module ekv (d,g,s,b);
 
    // Model parameters
    
-   parameter integer nmos=1 from [0:1] `P(info="MOS type : nmos:0");
-   parameter integer pmos=1 from [0:1] `P(info="MOS type : pmos:0");
+   parameter integer nmos=1 from [0:1] `P(desc="MOS type : nmos:0");
+   parameter integer pmos=1 from [0:1] `P(desc="MOS type : pmos:0");
    parameter integer MTYPE=(nmos==0 ? (pmos==0 ? 0 : 1) : (pmos==0 ? -1 : 1));
    parameter real TNOM=27 from (-273.15:inf) 
-                  `P(info="Nominal temperature [degC]");
+                  `P(desc="Nominal temperature [degC]");
    parameter real IMAX=1 from (0:inf) 
-                  `P(info="Maximum forward junction current before linearization [A]");
+                  `P(desc="Maximum forward junction current before linearization [A]");
    
    // - intrinsic model (optional, section 4.2.1)
    parameter real TOX=0 from [0:inf) 
-                  `P(info="Oxide thickness [m]");
+                  `P(desc="Oxide thickness [m]");
    parameter real NSUB=0 from [0:inf)
-                  `P(info="Channel doping [cm^-3]");
+                  `P(desc="Channel doping [cm^-3]");
    parameter real VFB=1001.0 from (-inf:inf)        // use 1001V as "not specified"
-                  `P(info="Flat-band voltage [V]");
+                  `P(desc="Flat-band voltage [V]");
    parameter real UO=0 from [0:inf) 
-                  `P(info="Low-field mobility [cm^2/Vs]");
+                  `P(desc="Low-field mobility [cm^2/Vs]");
    parameter real VMAX=0 from [0:inf) 
-                  `P(info="Saturation velocity [m/s]");
+                  `P(desc="Saturation velocity [m/s]");
    parameter real THETA=0 from [0:inf) 
-                  `P(info="Mobility reduction coefficient [V^-1]");
+                  `P(desc="Mobility reduction coefficient [V^-1]");
    
    // - intrinsic model (process related, section 4.1)
    parameter real COX=((TOX>0) ? (`EPSOX/TOX) : 0.7m) from [0:inf) 
-                  `P(info="Oxide capacitance [F/m^2]");
+                  `P(desc="Oxide capacitance [F/m^2]");
    parameter real XJ=0.1u from [1n:inf) 
-                  `P(info="Junction depth [m]");
+                  `P(desc="Junction depth [m]");
    parameter real DL=0    from (-inf:inf) 
-                  `P(info="Length correction [m]");
+                  `P(desc="Length correction [m]");
    parameter real DW=0    from (-inf:inf) 
-                  `P(info="Width correction [m]");
+                  `P(desc="Width correction [m]");
    
    // - intrinsic model (basic, section 4.2)
    parameter real GAMMA=((NSUB>0) ? (sqrt(2*`P_Q*`EPSSI*NSUB*1e6)/COX) : 1) from [0:inf) 
-                  `P(info="Body effect parameter [V^0.5]");
+                  `P(desc="Body effect parameter [V^0.5]");
    parameter real PHI=((NSUB>0) ? (2*`VT((TNOM+273.15))*ln(max(NSUB,1)*1e6/`NI((TNOM+273.15)))) : 0.7) from [0.1:inf) 
-                  `P(info="Bulk Fermi potential (*2) [V]");
+                  `P(desc="Bulk Fermi potential (*2) [V]");
    parameter real VTO=((VFB<1000.0) ? (VFB+MTYPE*(PHI+GAMMA*sqrt(PHI))) : 0.5) from (-inf:inf) 
-                  `P(info="Long-channel threshold voltage [V]");
+                  `P(desc="Long-channel threshold voltage [V]");
    parameter real KP=((UO>0) ? (UO*1e-4*COX) : 50u) from (0:inf) 
-                  `P(info="Transconductance parameter [A/V^2]");
+                  `P(desc="Transconductance parameter [A/V^2]");
    parameter real UCRIT=(((VMAX>0) && (UO>0)) ? (VMAX/(UO*1e-4)) : 2e6 ) from [100k:inf) 
-                  `P(info="Longitudinal critical field [V/m]");
+                  `P(desc="Longitudinal critical field [V/m]");
    parameter real E0=((THETA>0) ? 0 : 1e12) from [100k:inf) 
-                  `P(info="Mobility reduction coefficient [V/m]");
+                  `P(desc="Mobility reduction coefficient [V/m]");
    
    // - intrinsic model (channel length modulation and charge sharing, section 4.3)
    parameter real LAMBDA=0.5 from [0:inf) 
-                  `P(info="Depletion length coefficient (CLM)");
+                  `P(desc="Depletion length coefficient (CLM)");
    parameter real WETA=0.25 from (-inf:inf) 
-                  `P(info="Narrow-channel effect coefficient");
+                  `P(desc="Narrow-channel effect coefficient");
    parameter real LETA=0.1 from (-inf:inf) 
-                  `P(info="Short-channel effect coefficient");
+                  `P(desc="Short-channel effect coefficient");
    
    // - intrinsic model (reverse short channel effect, section 4.4)
    parameter real Q0=0 from (-inf:inf) 
-                  `P(info="RSCE peak charge density [C/m^2]");
+                  `P(desc="RSCE peak charge density [C/m^2]");
    parameter real LK=0.29u from [10n:inf) 
-                  `P(info="RSCE characteristic length [m]");
+                  `P(desc="RSCE characteristic length [m]");
    
    // - intrinsic model (impact ionization, section 4.5)
    parameter real IBA=0 from (-inf:inf) 
-                  `P(info="First impact ionization coefficient [m^-1]");
+                  `P(desc="First impact ionization coefficient [m^-1]");
    parameter real IBB=3e8 from [1e8:inf) 
-                  `P(info="Second impact ionization coefficient [V/m]");
+                  `P(desc="Second impact ionization coefficient [V/m]");
    parameter real IBN=1 from [0.1:inf) 
-                  `P(info="Saturation voltage factor for impact ionization");
+                  `P(desc="Saturation voltage factor for impact ionization");
    
    // - intrinsic model (temperature, section 4.6)
    parameter real TCV=1m from (-inf:inf) 
-                  `P(info="Threshold voltage TC [V/K]");
+                  `P(desc="Threshold voltage TC [V/K]");
    parameter real BEX=-1.5 from (-inf:inf)
-                  `P(info="Mobility temperature exponent");
+                  `P(desc="Mobility temperature exponent");
    parameter real UCEX=0.8 from (-inf:inf) 
-                  `P(info="Longitudinal critical field temperature exponent");
+                  `P(desc="Longitudinal critical field temperature exponent");
    parameter real IBBT=9e-4 from (-inf:inf) 
-                  `P(info="Temperature coefficient for IBB [K^-1]");
+                  `P(desc="Temperature coefficient for IBB [K^-1]");
    
    // - intrinsic model (matching, section 4.7)
    parameter real AVTO=0 from (-inf:inf)
-                  `P(info="Area related VTO mismatch parameter [Vm]");
+                  `P(desc="Area related VTO mismatch parameter [Vm]");
    parameter real AKP=0 from (-inf:inf)
-                  `P(info="Area related KP mismatch parameter [m]");
+                  `P(desc="Area related KP mismatch parameter [m]");
    parameter real AGAMMA=0 from (-inf:inf) 
-                  `P(info="Area related GAMMA mismatch parameter [V^0.5*m]");
+                  `P(desc="Area related GAMMA mismatch parameter [V^0.5*m]");
    
    // - intrinsic model (flicker noise, section 4.8)
    parameter real KF=0 from [0:inf)
-                  `P(info="Flicker noise coefficient");
+                  `P(desc="Flicker noise coefficient");
    parameter real AF=1 from (-inf:inf)
-                  `P(info="Flicker noise exponent");
+                  `P(desc="Flicker noise exponent");
    
    // - intrinsic model (setup, section 4.9)
    parameter real NQS=0 from [0:1]
-                  `P(info="Non-quasi-static operation switch");
+                  `P(desc="Non-quasi-static operation switch");
    parameter real SATLIM=exp(4) from (0:inf) 
-                  `P(info="Saturation limit (if/ir)");
+                  `P(desc="Saturation limit (if/ir)");
    parameter real XQC=0.4 from [0:1]
-                  `P(info="Charge/capacitance model selector");
+                  `P(desc="Charge/capacitance model selector");
    
    // - external parasitic parameters
    parameter real HDIF=0 from [0:inf) 
-                  `P(info="S/D diffusion length (/2) [m]");
+                  `P(desc="S/D diffusion length (/2) [m]");
    parameter real RSH=0 from [0:inf) 
-                  `P(info="S/D sheet resistance [ohm]");
+                  `P(desc="S/D sheet resistance [ohm]");
    parameter real JS=0 from [0:inf) 
-                  `P(info="S/D junction saturation current density [A/m^2]");
+                  `P(desc="S/D junction saturation current density [A/m^2]");
    parameter real JSW=0 from [0:inf) 
-                  `P(info="S/D junction sidewall saturation current density [A/m]");
+                  `P(desc="S/D junction sidewall saturation current density [A/m]");
    parameter real XTI=0 from [0:inf) 
-                  `P(info="S/D diode saturation current temperature exponent");
+                  `P(desc="S/D diode saturation current temperature exponent");
    parameter real N=1 from [0.5:10]
-                  `P(info="S/D diode emission coefficient");
+                  `P(desc="S/D diode emission coefficient");
    parameter real CJ=0 from [0:inf)
-                  `P(info="S/D zero-bias junction capacitance per area [F/m^2]");
+                  `P(desc="S/D zero-bias junction capacitance per area [F/m^2]");
    parameter real CJSW=0 from [0:inf)
-                  `P(info="S/D zero-bias junction capacitance per perimeter [F/m]");
+                  `P(desc="S/D zero-bias junction capacitance per perimeter [F/m]");
    parameter real PB=0.8 from (0:inf)
-                  `P(info="S/D bottom junction builtin potential [V]");
+                  `P(desc="S/D bottom junction builtin potential [V]");
    parameter real PBSW=PB from (0:inf)
-                  `P(info="S/D sidewall junction builtin potential [V]");
+                  `P(desc="S/D sidewall junction builtin potential [V]");
    parameter real MJ=0.5 from (0:inf)
-                  `P(info="S/D bottom junction grading coefficient");
+                  `P(desc="S/D bottom junction grading coefficient");
    parameter real MJSW=0.333 from (0:inf)
-                  `P(info="S/D sidewall junction grading coefficient");
+                  `P(desc="S/D sidewall junction grading coefficient");
    parameter real FC=0.5 from (0:inf)
-                  `P(info="S/D bottom junction forward-bias threshold");
+                  `P(desc="S/D bottom junction forward-bias threshold");
    parameter real FCSW=FC from (0:inf)
-                  `P(info="S/D sidewall junction forward-bias threshold");
+                  `P(desc="S/D sidewall junction forward-bias threshold");
    parameter real CGSO=0 from [0:inf)
-                  `P(info="Gate-source overlap capacitance per width [F/m]");
+                  `P(desc="Gate-source overlap capacitance per width [F/m]");
    parameter real CGDO=0 from [0:inf)
-                  `P(info="Gate-drain overlap capacitance per width [F/m]");
+                  `P(desc="Gate-drain overlap capacitance per width [F/m]");
    parameter real CGBO=0 from [0:inf)
-                  `P(info="Gate-bulk overlap capacitance per length [F/m]");
+                  `P(desc="Gate-bulk overlap capacitance per length [F/m]");
 
 
    // Instance parameters
 
    // - intrinsic model
    parameter real L=10u from [0:inf] 
-                  `P(type="instance" info="Drawn length [m]" unit="m");
+                  `P(type="instance" desc="Drawn length [m]" unit="m");
    parameter real W=10u from [0:inf] 
-                  `P(type="instance" info="Drawn width [m]" unit="m");
+                  `P(type="instance" desc="Drawn width [m]" unit="m");
    parameter real M=1   from [0:inf] 
-                  `P(type="instance" info="Parallel multiplier" unit="m");
+                  `P(type="instance" desc="Parallel multiplier" unit="m");
 //   parameter real N=1   from [0:inf] 
-//                  `P(type="instance" info="Series multiplier" unit="m");
+//                  `P(type="instance" desc="Series multiplier" unit="m");
 
    // - external parasitics
    parameter real AD=((HDIF>0) ? (2*HDIF*W) : 0) from [0:inf) 
-                  `P(info="Drain area [m^2]" type="instance");
+                  `P(desc="Drain area [m^2]" type="instance");
    parameter real AS=((HDIF>0) ? (2*HDIF*W) : 0) from [0:inf) 
-                  `P(info="Source area [m^2]" type="instance");
+                  `P(desc="Source area [m^2]" type="instance");
    parameter real PD=((HDIF>0) ? (4*HDIF+2*W) : 0) from [0:inf) 
-                  `P(info="Drain perimeter [m]" type="instance");
+                  `P(desc="Drain perimeter [m]" type="instance");
    parameter real PS=((HDIF>0) ? (4*HDIF+2*W) : 0) from [0:inf) 
-                  `P(info="Source perimeter [m]" type="instance");
+                  `P(desc="Source perimeter [m]" type="instance");
    parameter real NRD=((HDIF>0) ? (HDIF/W) : 0) from [0:inf)
-                  `P(info="Drain no. squares" type="instance");
+                  `P(desc="Drain no. squares" type="instance");
    parameter real NRS=((HDIF>0) ? (HDIF/W) : 0) from [0:inf)
-                  `P(info="Source no. squares" type="instance");
+                  `P(desc="Source no. squares" type="instance");
    parameter real RS=((RSH>0) ? (RSH*NRS) : 0) from [0:inf)
-                  `P(info="Source resistance [ohms]" type="instance");
+                  `P(desc="Source resistance [ohms]" type="instance");
    parameter real RD=((RSH>0) ? (RSH*NRD) : 0) from [0:inf)
-                  `P(info="Drain resistance [ohms]" type="instance");
+                  `P(desc="Drain resistance [ohms]" type="instance");
 
 
    // Declaration of variables
