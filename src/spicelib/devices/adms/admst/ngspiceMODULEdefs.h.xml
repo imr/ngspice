@@ -259,7 +259,8 @@ enum {
 <admst:for-each select="variable">
   <admst:if test="attribute[name='desc']">
     <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
-      %(name),
+      hide_%(name),
+#define %(name) ((struct hides *)hide_%(name))
     </admst:if>
   </admst:if>
 </admst:for-each>
