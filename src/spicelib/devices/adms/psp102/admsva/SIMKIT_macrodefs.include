@@ -36,7 +36,8 @@
     // Note 2: In this va-code, the "from" keyword in the parameter
     // list is not used. Silent clipping is used instead. One could enable
     // the Verilog-A range checking by redefining the `from-macro below.
-    `define P(txt)
+//    `define P(txt)
+    `define P(txt) (*txt*) 
     `define AT_MODEL
     `define AT_INSTANCE
     `define AT_NOISE

@@ -86,134 +86,134 @@
     ///////////////////////////////////////////////////
 
     //  Special model parameters, some are also simulator global variables
-    parameter real    LEVEL    =  102                             `P(info="Model level" unit="" );
-    parameter real    TYPE     =  1.0      `from(   -1.0,1.0    ) `P(info="Channel type parameter, +1=NMOS -1=PMOS" unit="" );
-    parameter real    TR       =  21.0     `from( -273.0,inf    ) `P(info="nominal (reference) temperature" unit="C" );
+    parameter real    LEVEL    =  102                             `P(desc="Model level" unit="" );
+    parameter real    TYPE     =  1.0      `from(   -1.0,1.0    ) `P(desc="Channel type parameter, +1=NMOS -1=PMOS" unit="" );
+    parameter real    TR       =  21.0     `from( -273.0,inf    ) `P(desc="nominal (reference) temperature" unit="C" );
 
     //  Switch parameters that turn models or effects on or off
-    parameter real    SWIGATE  =  0.0      `from(    0.0,1.0    ) `P(info="Flag for gate current, 0=turn off IG" unit="" );
-    parameter real    SWIMPACT =  0.0      `from(    0.0,1.0    ) `P(info="Flag for impact ionization current, 0=turn off II" unit="" );
-    parameter real    SWGIDL   =  0.0      `from(    0.0,1.0    ) `P(info="Flag for GIDL current, 0=turn off IGIDL" unit="" );
-    parameter real    SWJUNCAP =  0.0      `from(    0.0,3.0    ) `P(info="Flag for juncap, 0=turn off juncap" unit="" );
-    parameter real    QMC      =  1.0      `from(    0.0,inf    ) `P(info="Quantum-mechanical correction factor" unit="" );
+    parameter real    SWIGATE  =  0.0      `from(    0.0,1.0    ) `P(desc="Flag for gate current, 0=turn off IG" unit="" );
+    parameter real    SWIMPACT =  0.0      `from(    0.0,1.0    ) `P(desc="Flag for impact ionization current, 0=turn off II" unit="" );
+    parameter real    SWGIDL   =  0.0      `from(    0.0,1.0    ) `P(desc="Flag for GIDL current, 0=turn off IGIDL" unit="" );
+    parameter real    SWJUNCAP =  0.0      `from(    0.0,3.0    ) `P(desc="Flag for juncap, 0=turn off juncap" unit="" );
+    parameter real    QMC      =  1.0      `from(    0.0,inf    ) `P(desc="Quantum-mechanical correction factor" unit="" );
 
     //  Process parameters
-    parameter real    VFB      = -1.0                             `P(info="Flatband voltage at TR" unit="V" );
-    parameter real    STVFB    =  5.0e-4                          `P(info="Temperature dependence of VFB" unit="V/K" );
-    parameter real    TOX      =  2.0e-09  `from(  1e-10,inf    ) `P(info="Gate oxide thickness" unit="m" );
-    parameter real    NEFF     =  5.0e+23  `from(   1e20,1e26   ) `P(info="Effective substrate doping" unit="m^-3" );
-    parameter real    VNSUB    =  0.0                             `P(info="Effective doping bias-dependence parameter" unit="V" );
-    parameter real    NSLP     =  0.05     `from(   1e-3,inf    ) `P(info="Effective doping bias-dependence parameter" unit="V" );
-    parameter real    DNSUB    =  0.0      `from(    0.0,1.0    ) `P(info="Effective doping bias-dependence parameter" unit="V^-1" );
-    parameter real    DPHIB    =  0.0                             `P(info="Offset parameter for PHIB" unit="V" );
-    parameter real    NP       =  1.0e+26  `from(    0.0,inf    ) `P(info="Gate poly-silicon doping" unit="m^-3" );
-    parameter real    CT       =  0.0      `from(    0.0,inf    ) `P(info="Interface states factor" unit="" );
-    parameter real    TOXOV    =  2.0e-09  `from(  1e-10,inf    ) `P(info="Overlap oxide thickness" unit="m" );
-    parameter real    NOV      =  5.0e+25  `from(   1e20,1e27   ) `P(info="Effective doping of overlap region" unit="m^-3" );
+    parameter real    VFB      = -1.0                             `P(desc="Flatband voltage at TR" unit="V" );
+    parameter real    STVFB    =  5.0e-4                          `P(desc="Temperature dependence of VFB" unit="V/K" );
+    parameter real    TOX      =  2.0e-09  `from(  1e-10,inf    ) `P(desc="Gate oxide thickness" unit="m" );
+    parameter real    NEFF     =  5.0e+23  `from(   1e20,1e26   ) `P(desc="Effective substrate doping" unit="m^-3" );
+    parameter real    VNSUB    =  0.0                             `P(desc="Effective doping bias-dependence parameter" unit="V" );
+    parameter real    NSLP     =  0.05     `from(   1e-3,inf    ) `P(desc="Effective doping bias-dependence parameter" unit="V" );
+    parameter real    DNSUB    =  0.0      `from(    0.0,1.0    ) `P(desc="Effective doping bias-dependence parameter" unit="V^-1" );
+    parameter real    DPHIB    =  0.0                             `P(desc="Offset parameter for PHIB" unit="V" );
+    parameter real    NP       =  1.0e+26  `from(    0.0,inf    ) `P(desc="Gate poly-silicon doping" unit="m^-3" );
+    parameter real    CT       =  0.0      `from(    0.0,inf    ) `P(desc="Interface states factor" unit="" );
+    parameter real    TOXOV    =  2.0e-09  `from(  1e-10,inf    ) `P(desc="Overlap oxide thickness" unit="m" );
+    parameter real    NOV      =  5.0e+25  `from(   1e20,1e27   ) `P(desc="Effective doping of overlap region" unit="m^-3" );
 
     //  DIBL parameters
-    parameter real    CF       =  0.0      `from(    0.0,inf    ) `P(info="DIBL-parameter" unit="V^-1" );
-    parameter real    CFB      =  0.0      `from(    0.0,1.0    ) `P(info="Back bias dependence of CF" unit="V^-1" );
+    parameter real    CF       =  0.0      `from(    0.0,inf    ) `P(desc="DIBL-parameter" unit="V^-1" );
+    parameter real    CFB      =  0.0      `from(    0.0,1.0    ) `P(desc="Back bias dependence of CF" unit="V^-1" );
 
     //  Mobility parameters
-    parameter real    BETN     =  7e-2     `from(    0.0,inf    ) `P(info="Channel aspect ratio times zero-field mobility" unit="m^2/V/s" );
-    parameter real    STBET    =  1.0                             `P(info="Temperature dependence of BETN" unit="" );
-    parameter real    MUE      =  0.5      `from(    0.0,inf    ) `P(info="Mobility reduction coefficient at TR" unit="m/V" );
-    parameter real    STMUE    =  0.0                             `P(info="Temperature dependence of MUE" unit="" );
-    parameter real    THEMU    =  1.5      `from(    0.0,inf    ) `P(info="Mobility reduction exponent at TR" unit="" );
-    parameter real    STTHEMU  =  1.5                             `P(info="Temperature dependence of THEMU" unit="" );
-    parameter real    CS       =  0.0      `from(    0.0,inf    ) `P(info="Coulomb scattering parameter at TR" unit="" );
-    parameter real    STCS     =  0.0                             `P(info="Temperature dependence of CS" unit="" );
-    parameter real    XCOR     =  0.0      `from(    0.0,inf    ) `P(info="Non-universality factor" unit="V^-1" );
-    parameter real    STXCOR   =  0.0                             `P(info="Temperature dependence of XCOR" unit="" );
-    parameter real    FETA     =  1.0      `from(    0.0,inf    ) `P(info="Effective field parameter" unit="" );
+    parameter real    BETN     =  7e-2     `from(    0.0,inf    ) `P(desc="Channel aspect ratio times zero-field mobility" unit="m^2/V/s" );
+    parameter real    STBET    =  1.0                             `P(desc="Temperature dependence of BETN" unit="" );
+    parameter real    MUE      =  0.5      `from(    0.0,inf    ) `P(desc="Mobility reduction coefficient at TR" unit="m/V" );
+    parameter real    STMUE    =  0.0                             `P(desc="Temperature dependence of MUE" unit="" );
+    parameter real    THEMU    =  1.5      `from(    0.0,inf    ) `P(desc="Mobility reduction exponent at TR" unit="" );
+    parameter real    STTHEMU  =  1.5                             `P(desc="Temperature dependence of THEMU" unit="" );
+    parameter real    CS       =  0.0      `from(    0.0,inf    ) `P(desc="Coulomb scattering parameter at TR" unit="" );
+    parameter real    STCS     =  0.0                             `P(desc="Temperature dependence of CS" unit="" );
+    parameter real    XCOR     =  0.0      `from(    0.0,inf    ) `P(desc="Non-universality factor" unit="V^-1" );
+    parameter real    STXCOR   =  0.0                             `P(desc="Temperature dependence of XCOR" unit="" );
+    parameter real    FETA     =  1.0      `from(    0.0,inf    ) `P(desc="Effective field parameter" unit="" );
 
     //  Series-resistance parameters (for resistance modeling as part of intrinsic mobility reduction)
-    parameter real    RS       =  30       `from(    0.0,inf    ) `P(info="Series resistance at TR" unit="Ohm" );
-    parameter real    STRS     =  1.0                             `P(info="Temperature dependence of RS" unit="" );
-    parameter real    RSB      =  0.0      `from(   -0.5,1.0    ) `P(info="Back-bias dependence of series resistance" unit="V^-1" );
-    parameter real    RSG      =  0.0      `from(   -0.5,inf    ) `P(info="Gate-bias dependence of series resistance" unit="V^-1" );
+    parameter real    RS       =  30       `from(    0.0,inf    ) `P(desc="Series resistance at TR" unit="Ohm" );
+    parameter real    STRS     =  1.0                             `P(desc="Temperature dependence of RS" unit="" );
+    parameter real    RSB      =  0.0      `from(   -0.5,1.0    ) `P(desc="Back-bias dependence of series resistance" unit="V^-1" );
+    parameter real    RSG      =  0.0      `from(   -0.5,inf    ) `P(desc="Gate-bias dependence of series resistance" unit="V^-1" );
 
     //  Velocity saturation parameters
-    parameter real    THESAT   =  1.0      `from(    0.0,inf    ) `P(info="Velocity saturation parameter at TR" unit="V^-1" );
-    parameter real    STTHESAT =  1.0                             `P(info="Temperature dependence of THESAT" unit="" );
-    parameter real    THESATB  =  0.0      `from(   -0.5,1.0    ) `P(info="Back-bias dependence of velocity saturation" unit="V^-1" );
-    parameter real    THESATG  =  0.0      `from(   -0.5,inf    ) `P(info="Gate-bias dependence of velocity saturation" unit="V^-1" );
+    parameter real    THESAT   =  1.0      `from(    0.0,inf    ) `P(desc="Velocity saturation parameter at TR" unit="V^-1" );
+    parameter real    STTHESAT =  1.0                             `P(desc="Temperature dependence of THESAT" unit="" );
+    parameter real    THESATB  =  0.0      `from(   -0.5,1.0    ) `P(desc="Back-bias dependence of velocity saturation" unit="V^-1" );
+    parameter real    THESATG  =  0.0      `from(   -0.5,inf    ) `P(desc="Gate-bias dependence of velocity saturation" unit="V^-1" );
 
     //  Saturation voltage parameters
-    parameter real    AX       =  3.0      `from(    2.0,inf    ) `P(info="Linear/saturation transition factor" unit="" );
+    parameter real    AX       =  3.0      `from(    2.0,inf    ) `P(desc="Linear/saturation transition factor" unit="" );
 
     //  Channel length modulation (CLM) parameters
-    parameter real    ALP      =  0.01     `from(    0.0,inf    ) `P(info="CLM pre-factor" unit="" );
-    parameter real    ALP1     =  0.00     `from(    0.0,inf    ) `P(info="CLM enhancement factor above threshold" unit="V" );
-    parameter real    ALP2     =  0.00     `from(    0.0,inf    ) `P(info="CLM enhancement factor below threshold" unit="V^-1" );
-    parameter real    VP       =  0.05     `from(  1e-10,inf    ) `P(info="CLM logarithm dependence factor" unit="V" );
+    parameter real    ALP      =  0.01     `from(    0.0,inf    ) `P(desc="CLM pre-factor" unit="" );
+    parameter real    ALP1     =  0.00     `from(    0.0,inf    ) `P(desc="CLM enhancement factor above threshold" unit="V" );
+    parameter real    ALP2     =  0.00     `from(    0.0,inf    ) `P(desc="CLM enhancement factor below threshold" unit="V^-1" );
+    parameter real    VP       =  0.05     `from(  1e-10,inf    ) `P(desc="CLM logarithm dependence factor" unit="V" );
 
     //  Impact ionization (II) parameters
-    parameter real    A1       =  1.0      `from(   0.0,inf     ) `P(info="Impact-ionization pre-factor" unit="" );
-    parameter real    A2       = 10.0      `from(   0.0,inf     ) `P(info="Impact-ionization exponent at TR" unit="V" );
-    parameter real    STA2     =  0.0                             `P(info="Temperature dependence of A2" unit="V" );
-    parameter real    A3       =  1.0      `from(   0.0,inf     ) `P(info="Saturation-voltage dependence of impact-ionization" unit="" );
-    parameter real    A4       =  0.0      `from(   0.0,inf     ) `P(info="Back-bias dependence of impact-ionization" unit="V^-0.5" );
+    parameter real    A1       =  1.0      `from(   0.0,inf     ) `P(desc="Impact-ionization pre-factor" unit="" );
+    parameter real    A2       = 10.0      `from(   0.0,inf     ) `P(desc="Impact-ionization exponent at TR" unit="V" );
+    parameter real    STA2     =  0.0                             `P(desc="Temperature dependence of A2" unit="V" );
+    parameter real    A3       =  1.0      `from(   0.0,inf     ) `P(desc="Saturation-voltage dependence of impact-ionization" unit="" );
+    parameter real    A4       =  0.0      `from(   0.0,inf     ) `P(desc="Back-bias dependence of impact-ionization" unit="V^-0.5" );
 
     //  Gate current parameters
-    parameter real    GCO      =  0.0      `from( -10.0,10.0    ) `P(info="Gate tunnelling energy adjustment" unit="" );
-    parameter real    IGINV    =  0.0      `from(   0.0,inf     ) `P(info="Gate channel current pre-factor" unit="A" );
-    parameter real    IGOV     =  0.0      `from(   0.0,inf     ) `P(info="Gate overlap current pre-factor" unit="A" );
-    parameter real    STIG     =  2.0                             `P(info="Temperature dependence of IGINV and IGOV" unit="" );
-    parameter real    GC2      =  0.375    `from(   0.0,10.0    ) `P(info="Gate current slope factor" unit="" );
-    parameter real    GC3      =  0.063    `from(  -2.0,2.0     ) `P(info="Gate current curvature factor" unit="" );
-    parameter real    CHIB     =  3.1      `from(   1.0,inf     ) `P(info="Tunnelling barrier height" unit="V" );
+    parameter real    GCO      =  0.0      `from( -10.0,10.0    ) `P(desc="Gate tunnelling energy adjustment" unit="" );
+    parameter real    IGINV    =  0.0      `from(   0.0,inf     ) `P(desc="Gate channel current pre-factor" unit="A" );
+    parameter real    IGOV     =  0.0      `from(   0.0,inf     ) `P(desc="Gate overlap current pre-factor" unit="A" );
+    parameter real    STIG     =  2.0                             `P(desc="Temperature dependence of IGINV and IGOV" unit="" );
+    parameter real    GC2      =  0.375    `from(   0.0,10.0    ) `P(desc="Gate current slope factor" unit="" );
+    parameter real    GC3      =  0.063    `from(  -2.0,2.0     ) `P(desc="Gate current curvature factor" unit="" );
+    parameter real    CHIB     =  3.1      `from(   1.0,inf     ) `P(desc="Tunnelling barrier height" unit="V" );
 
     //  Gate Induced Drain/Source Leakage (GIDL) parameters
-    parameter real    AGIDL    =  0.0      `from(   0.0,inf     ) `P(info="GIDL pre-factor" unit="A/V^3" );
-    parameter real    BGIDL    = 41.0      `from(   0.0,inf     ) `P(info="GIDL probability factor at TR" unit="V" );
-    parameter real    STBGIDL  =  0.0                             `P(info="Temperature dependence of BGIDL" unit="V/K" );
-    parameter real    CGIDL    =  0.0                             `P(info="Back-bias dependence of GIDL" unit="" );
+    parameter real    AGIDL    =  0.0      `from(   0.0,inf     ) `P(desc="GIDL pre-factor" unit="A/V^3" );
+    parameter real    BGIDL    = 41.0      `from(   0.0,inf     ) `P(desc="GIDL probability factor at TR" unit="V" );
+    parameter real    STBGIDL  =  0.0                             `P(desc="Temperature dependence of BGIDL" unit="V/K" );
+    parameter real    CGIDL    =  0.0                             `P(desc="Back-bias dependence of GIDL" unit="" );
  
     //  Charge model parameters
-    parameter real    COX      =  1.0e-14  `from(    0.0,inf    ) `P(info="Oxide capacitance for intrinsic channel" unit="F" );
-    parameter real    CGOV     =  1.0e-15  `from(    0.0,inf    ) `P(info="Oxide capacitance for gate-drain/source overlap" unit="F" );
-    parameter real    CGBOV    =  0.0      `from(    0.0,inf    ) `P(info="Oxide capacitance for gate-bulk overlap" unit="F" );
-    parameter real    CFR      =  0.0      `from(    0.0,inf    ) `P(info="Outer fringe capacitance" unit="F" );
+    parameter real    COX      =  1.0e-14  `from(    0.0,inf    ) `P(desc="Oxide capacitance for intrinsic channel" unit="F" );
+    parameter real    CGOV     =  1.0e-15  `from(    0.0,inf    ) `P(desc="Oxide capacitance for gate-drain/source overlap" unit="F" );
+    parameter real    CGBOV    =  0.0      `from(    0.0,inf    ) `P(desc="Oxide capacitance for gate-bulk overlap" unit="F" );
+    parameter real    CFR      =  0.0      `from(    0.0,inf    ) `P(desc="Outer fringe capacitance" unit="F" );
 
     //  Noise parameters
-    parameter real    FNT      =  1.0      `from(    0.0,inf    ) `P(info="Thermal noise coefficient" unit="" );
-    parameter real    NFA      =  8.0e+22  `from(    0.0,inf    ) `P(info="First coefficient of flicker noise" unit="V^-1/m^4" );
-    parameter real    NFB      =  3.0e+07  `from(    0.0,inf    ) `P(info="Second coefficient of flicker noise" unit="V^-1/m^2" );
-    parameter real    NFC      =  0.0      `from(    0.0,inf    ) `P(info="Third coefficient of flicker noise" unit="V^-1" );
+    parameter real    FNT      =  1.0      `from(    0.0,inf    ) `P(desc="Thermal noise coefficient" unit="" );
+    parameter real    NFA      =  8.0e+22  `from(    0.0,inf    ) `P(desc="First coefficient of flicker noise" unit="V^-1/m^4" );
+    parameter real    NFB      =  3.0e+07  `from(    0.0,inf    ) `P(desc="Second coefficient of flicker noise" unit="V^-1/m^2" );
+    parameter real    NFC      =  0.0      `from(    0.0,inf    ) `P(desc="Third coefficient of flicker noise" unit="V^-1" );
 `ifdef NQSmodel
 
     //  NQS parameters
-    parameter real    SWNQS    =  0.0      `from(    0.0,9.0    ) `P(info="Flag for NQS, 0=off, 1, 2, 3, 5, or 9=number of collocation points" unit="" );
-    parameter real    MUNQS    =  1.0      `from(    0.0,inf    ) `P(info="Relative mobility for NQS modelling" );
-    parameter real    RG       =  1.0e-3   `from( 1.0e-6,inf    ) `P(info="Gate resistance" unit="Ohm" );
-    parameter real    RBULK    =  1.0e-3   `from( 1.0e-6,inf    ) `P(info="Bulk resistance between node BP and BI" unit="Ohm" );
-    parameter real    RWELL    =  1.0e-3   `from( 1.0e-6,inf    ) `P(info="Well resistance between node BI and B" unit="Ohm" );
-    parameter real    RJUNS    =  1.0e-3   `from( 1.0e-6,inf    ) `P(info="Source-side bulk resistance between node BI and BS" unit="Ohm" );
-    parameter real    RJUND    =  1.0e-3   `from( 1.0e-6,inf    ) `P(info="Drain-side bulk resistance between node BI and BD" unit="Ohm" );
+    parameter real    SWNQS    =  0.0      `from(    0.0,9.0    ) `P(desc="Flag for NQS, 0=off, 1, 2, 3, 5, or 9=number of collocation points" unit="" );
+    parameter real    MUNQS    =  1.0      `from(    0.0,inf    ) `P(desc="Relative mobility for NQS modelling" );
+    parameter real    RG       =  1.0e-3   `from( 1.0e-6,inf    ) `P(desc="Gate resistance" unit="Ohm" );
+    parameter real    RBULK    =  1.0e-3   `from( 1.0e-6,inf    ) `P(desc="Bulk resistance between node BP and BI" unit="Ohm" );
+    parameter real    RWELL    =  1.0e-3   `from( 1.0e-6,inf    ) `P(desc="Well resistance between node BI and B" unit="Ohm" );
+    parameter real    RJUNS    =  1.0e-3   `from( 1.0e-6,inf    ) `P(desc="Source-side bulk resistance between node BI and BS" unit="Ohm" );
+    parameter real    RJUND    =  1.0e-3   `from( 1.0e-6,inf    ) `P(desc="Drain-side bulk resistance between node BI and BD" unit="Ohm" );
 `endif // NQSmodel
 
     // JUNCAP Parameters
-    parameter real    TRJ      = 21        `from(`TRJ_cliplow,inf) `P(info="reference temperature" unit="C" );
+    parameter real    TRJ      = 21        `from(`TRJ_cliplow,inf) `P(desc="reference temperature" unit="C" );
     `include "JUNCAP200_parlist.include"
 
     //  Other parameters
-    parameter real    DTA      =  0.0                             `P(info="Temperature offset w.r.t. ambient temperature" unit="K" );
+    parameter real    DTA      =  0.0                             `P(desc="Temperature offset w.r.t. ambient temperature" unit="K" );
 
     //  Instance parameters
-    parameter real    ABSOURCE   = 1e-12   `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of source junction" unit="m^2" );
-    parameter real    LSSOURCE   = 1e-6    `from(`LS_cliplow,inf) `P(type="instance" info="STI-edge length of source junction" unit="m" );
-    parameter real    LGSOURCE   = 1e-6    `from(`LG_cliplow,inf) `P(type="instance" info="Gate-edge length of source junction" unit="m" );
-    parameter real    ABDRAIN    = 1e-12   `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of drain junction" unit="m^2" );
-    parameter real    LSDRAIN    = 1e-6    `from(`LS_cliplow,inf) `P(type="instance" info="STI-edge length of drain junction" unit="m" );
-    parameter real    LGDRAIN    = 1e-6    `from(`LG_cliplow,inf) `P(type="instance" info="Gate-edge length of drain junction" unit="m" );
-    parameter real    AS         = 1E-12   `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of source junction" unit="m^2" );
-    parameter real    PS         = 1E-6    `from(`LS_cliplow,inf) `P(type="instance" info="Perimeter of source junction" unit="m" );
-    parameter real    AD         = 1E-12   `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of drain junction" unit="m^2" );
-    parameter real    PD         = 1E-6    `from(`LS_cliplow,inf) `P(type="instance" info="Perimeter of drain junction" unit="m" );
-    parameter real    JW         = 1E-6    `from(`LG_cliplow,inf) `P(type="instance" info="Gate-edge length of source/drain junction" unit="m" );
-    parameter real    MULT       = 1.0     `from(    0.0,inf    ) `P(type="instance" info="Number of devices in parallel" unit="" );
+    parameter real    ABSOURCE   = 1e-12   `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of source junction" unit="m^2" );
+    parameter real    LSSOURCE   = 1e-6    `from(`LS_cliplow,inf) `P(type="instance" desc="STI-edge length of source junction" unit="m" );
+    parameter real    LGSOURCE   = 1e-6    `from(`LG_cliplow,inf) `P(type="instance" desc="Gate-edge length of source junction" unit="m" );
+    parameter real    ABDRAIN    = 1e-12   `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of drain junction" unit="m^2" );
+    parameter real    LSDRAIN    = 1e-6    `from(`LS_cliplow,inf) `P(type="instance" desc="STI-edge length of drain junction" unit="m" );
+    parameter real    LGDRAIN    = 1e-6    `from(`LG_cliplow,inf) `P(type="instance" desc="Gate-edge length of drain junction" unit="m" );
+    parameter real    AS         = 1E-12   `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of source junction" unit="m^2" );
+    parameter real    PS         = 1E-6    `from(`LS_cliplow,inf) `P(type="instance" desc="Perimeter of source junction" unit="m" );
+    parameter real    AD         = 1E-12   `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of drain junction" unit="m^2" );
+    parameter real    PD         = 1E-6    `from(`LS_cliplow,inf) `P(type="instance" desc="Perimeter of drain junction" unit="m" );
+    parameter real    JW         = 1E-6    `from(`LG_cliplow,inf) `P(type="instance" desc="Gate-edge length of source/drain junction" unit="m" );
+    parameter real    MULT       = 1.0     `from(    0.0,inf    ) `P(type="instance" desc="Number of devices in parallel" unit="" );
 `else // LocalModel
 `ifdef Binning
 
@@ -225,239 +225,239 @@
     ///////////////////////////////////////////////////
 
     //  Special model parameters
-    parameter real    LEVEL    =  1020                            `P(info="Model level" unit="" );
-    parameter real    TYPE     =  1.0      `from(     -1,1      ) `P(info="Channel type parameter, +1=NMOS -1=PMOS" unit="" );
+    parameter real    LEVEL    =  1020                            `P(desc="Model level" unit="" );
+    parameter real    TYPE     =  1.0      `from(     -1,1      ) `P(desc="Channel type parameter, +1=NMOS -1=PMOS" unit="" );
 
     // Reference Temperature
-    parameter real    TR       =  21.0     `from( -273.0,inf    ) `P(info="nominal (reference) temperature" unit="C" );
+    parameter real    TR       =  21.0     `from( -273.0,inf    ) `P(desc="nominal (reference) temperature" unit="C" );
 
     //  Switch parameters that turn models or effects on or off
-    parameter real    SWIGATE  =  0.0      `from(    0.0,1.0    ) `P(info="Flag for gate current, 0=turn off IG" unit="" );
-    parameter real    SWIMPACT =  0.0      `from(    0.0,1.0    ) `P(info="Flag for impact ionization current, 0=turn off II" unit="" );
-    parameter real    SWGIDL   =  0.0      `from(    0.0,1.0    ) `P(info="Flag for GIDL current, 0=turn off IGIDL" unit="" );
-    parameter real    SWJUNCAP =  0.0      `from(    0.0,3.0    ) `P(info="Flag for juncap, 0=turn off juncap" unit="" );
-    parameter real    QMC      =  1.0      `from(    0.0,inf    ) `P(info="Quantum-mechanical correction factor" unit="" );
+    parameter real    SWIGATE  =  0.0      `from(    0.0,1.0    ) `P(desc="Flag for gate current, 0=turn off IG" unit="" );
+    parameter real    SWIMPACT =  0.0      `from(    0.0,1.0    ) `P(desc="Flag for impact ionization current, 0=turn off II" unit="" );
+    parameter real    SWGIDL   =  0.0      `from(    0.0,1.0    ) `P(desc="Flag for GIDL current, 0=turn off IGIDL" unit="" );
+    parameter real    SWJUNCAP =  0.0      `from(    0.0,3.0    ) `P(desc="Flag for juncap, 0=turn off juncap" unit="" );
+    parameter real    QMC      =  1.0      `from(    0.0,inf    ) `P(desc="Quantum-mechanical correction factor" unit="" );
 
     // Process Parameters
-    parameter real    LVARO    =  0.0                             `P(info="Geom. independent difference between actual and programmed gate length" unit="m" );
-    parameter real    LVARL    =  0.0                             `P(info="Length dependence of LVAR" unit="" );
-    parameter real    LVARW    =  0.0                             `P(info="Width dependence of LVAR" unit="" );
-    parameter real    LAP      =  0.0                             `P(info="Effective channel length reduction per side" unit="m" );
-    parameter real    WVARO    =  0.0                             `P(info="Geom. independent difference between actual and programmed field-oxide opening" unit="m" );
-    parameter real    WVARL    =  0.0                             `P(info="Length dependence of WVAR" unit="" );
-    parameter real    WVARW    =  0.0                             `P(info="Width dependence of WVAR" unit="" );
-    parameter real    WOT      =  0.0                             `P(info="Effective channel width reduction per side" unit="m" );
-    parameter real    DLQ      =  0.0                             `P(info="Effective channel length reduction for CV" unit="m" );
-    parameter real    DWQ      =  0.0                             `P(info="Effective channel width reduction for CV" unit="m" );
-    parameter real    VFBO     = -1.0                             `P(info="Geometry-independent flat-band voltage at TR" unit="V" );
-    parameter real    VFBL     =  0.0                             `P(info="Length dependence of flat-band voltage" unit="" );
-    parameter real    VFBW     =  0.0                             `P(info="Width dependence of flat-band voltage" unit="" );
-    parameter real    VFBLW    =  0.0                             `P(info="Area dependence of flat-band voltage" unit="" );
-    parameter real    STVFBO   =  5e-4                            `P(info="Geometry-independent temperature dependence of VFB" unit="V/K" );
-    parameter real    STVFBL   =  0.0                             `P(info="Length dependence of temperature dependence of VFB" unit="" );
-    parameter real    STVFBW   =  0.0                             `P(info="Width dependence of temperature dependence of VFB" unit="" );
-    parameter real    STVFBLW  =  0.0                             `P(info="Area dependence of temperature dependence of VFB" unit="" );
-    parameter real    TOXO     =  2e-9     `from(  1e-10,inf    ) `P(info="Gate oxide thickness" unit="m" );
-    parameter real    NSUBO    =  3e23     `from(   1e20,inf    ) `P(info="Geometry independent substrate doping" unit="m^-3" );
-    parameter real    NSUBW    =  0.0                             `P(info="Width dependence of background doping NSUBO due to segregation" unit="" );
-    parameter real    WSEG     =  1e-8     `from(  1e-10,inf    ) `P(info="Char. length of segregation of background doping NSUBO" unit="m" );
-    parameter real    NPCK     =  1e24     `from(    0.0,inf    ) `P(info="Pocket doping level" unit="m^-3" );
-    parameter real    NPCKW    =  0.0                             `P(info="Width dependence of pocket doping NPCK due to segregation" unit="" );
-    parameter real    WSEGP    =  1e-8     `from(  1e-10,inf    ) `P(info="Char. length of segregation of pocket doping NPCK" unit="m" );
-    parameter real    LPCK     =  1e-8     `from(  1e-10,inf    ) `P(info="Char. length of lateral doping profile" unit="m" );
-    parameter real    LPCKW    =  0.0                             `P(info="Width dependence of char. length of lateral doping profile" unit="" );
-    parameter real    FOL1     =  0.0                             `P(info="First length dependence coefficient for short channel body effect" unit="" );
-    parameter real    FOL2     =  0.0                             `P(info="Second length dependence coefficient for short channel body effect" unit="" );
-    parameter real    VNSUBO   =  0.0                             `P(info="Effective doping bias-dependence parameter" unit="V" );
-    parameter real    NSLPO    =  0.05                            `P(info="Effective doping bias-dependence parameter" unit="V" );
-    parameter real    DNSUBO   =  0.0                             `P(info="Effective doping bias-dependence parameter" unit="V^-1" );
-    parameter real    DPHIBO   =  0.0                             `P(info="Geometry independent offset of PHIB" unit="V" );
-    parameter real    DPHIBL   =  0.0                             `P(info="Length dependence offset of PHIB" unit="V" );
-    parameter real    DPHIBLEXP=  1.0                             `P(info="Exponent for length dependence of offset of PHIB" unit="" );
-    parameter real    DPHIBW   =  0.0                             `P(info="Width dependence of offset of PHIB" unit="" );
-    parameter real    DPHIBLW  =  0.0                             `P(info="Area dependence of offset of PHIB" unit="" );
-    parameter real    NPO      =  1e26                            `P(info="Geometry-independent gate poly-silicon doping" unit="m^-3" );
-    parameter real    NPL      =  0.0                             `P(info="Length dependence of gate poly-silicon doping" unit="" );
-    parameter real    CTO      =  0.0                             `P(info="Geometry-independent interface states factor" unit="" );
-    parameter real    CTL      =  0.0                             `P(info="Length dependence of interface states factor" unit="" );
-    parameter real    CTLEXP   =  1.0                             `P(info="Exponent for length dependence of interface states factor" unit="" );
-    parameter real    CTW      =  0.0                             `P(info="Width dependence of interface states factor" unit="" );
-    parameter real    CTLW     =  0.0                             `P(info="Area dependence of interface states factor" unit="" );
-    parameter real    TOXOVO   =  2e-9     `from(  1e-10,inf    ) `P(info="Overlap oxide thickness" unit="m" );
-    parameter real    LOV      =  0        `from(    0.0,inf    ) `P(info="Overlap length for gate/drain and gate/source overlap capacitance" unit="m" );
-    parameter real    NOVO     =  5e25                            `P(info="Effective doping of overlap region" unit="m^-3" );
+    parameter real    LVARO    =  0.0                             `P(desc="Geom. independent difference between actual and programmed gate length" unit="m" );
+    parameter real    LVARL    =  0.0                             `P(desc="Length dependence of LVAR" unit="" );
+    parameter real    LVARW    =  0.0                             `P(desc="Width dependence of LVAR" unit="" );
+    parameter real    LAP      =  0.0                             `P(desc="Effective channel length reduction per side" unit="m" );
+    parameter real    WVARO    =  0.0                             `P(desc="Geom. independent difference between actual and programmed field-oxide opening" unit="m" );
+    parameter real    WVARL    =  0.0                             `P(desc="Length dependence of WVAR" unit="" );
+    parameter real    WVARW    =  0.0                             `P(desc="Width dependence of WVAR" unit="" );
+    parameter real    WOT      =  0.0                             `P(desc="Effective channel width reduction per side" unit="m" );
+    parameter real    DLQ      =  0.0                             `P(desc="Effective channel length reduction for CV" unit="m" );
+    parameter real    DWQ      =  0.0                             `P(desc="Effective channel width reduction for CV" unit="m" );
+    parameter real    VFBO     = -1.0                             `P(desc="Geometry-independent flat-band voltage at TR" unit="V" );
+    parameter real    VFBL     =  0.0                             `P(desc="Length dependence of flat-band voltage" unit="" );
+    parameter real    VFBW     =  0.0                             `P(desc="Width dependence of flat-band voltage" unit="" );
+    parameter real    VFBLW    =  0.0                             `P(desc="Area dependence of flat-band voltage" unit="" );
+    parameter real    STVFBO   =  5e-4                            `P(desc="Geometry-independent temperature dependence of VFB" unit="V/K" );
+    parameter real    STVFBL   =  0.0                             `P(desc="Length dependence of temperature dependence of VFB" unit="" );
+    parameter real    STVFBW   =  0.0                             `P(desc="Width dependence of temperature dependence of VFB" unit="" );
+    parameter real    STVFBLW  =  0.0                             `P(desc="Area dependence of temperature dependence of VFB" unit="" );
+    parameter real    TOXO     =  2e-9     `from(  1e-10,inf    ) `P(desc="Gate oxide thickness" unit="m" );
+    parameter real    NSUBO    =  3e23     `from(   1e20,inf    ) `P(desc="Geometry independent substrate doping" unit="m^-3" );
+    parameter real    NSUBW    =  0.0                             `P(desc="Width dependence of background doping NSUBO due to segregation" unit="" );
+    parameter real    WSEG     =  1e-8     `from(  1e-10,inf    ) `P(desc="Char. length of segregation of background doping NSUBO" unit="m" );
+    parameter real    NPCK     =  1e24     `from(    0.0,inf    ) `P(desc="Pocket doping level" unit="m^-3" );
+    parameter real    NPCKW    =  0.0                             `P(desc="Width dependence of pocket doping NPCK due to segregation" unit="" );
+    parameter real    WSEGP    =  1e-8     `from(  1e-10,inf    ) `P(desc="Char. length of segregation of pocket doping NPCK" unit="m" );
+    parameter real    LPCK     =  1e-8     `from(  1e-10,inf    ) `P(desc="Char. length of lateral doping profile" unit="m" );
+    parameter real    LPCKW    =  0.0                             `P(desc="Width dependence of char. length of lateral doping profile" unit="" );
+    parameter real    FOL1     =  0.0                             `P(desc="First length dependence coefficient for short channel body effect" unit="" );
+    parameter real    FOL2     =  0.0                             `P(desc="Second length dependence coefficient for short channel body effect" unit="" );
+    parameter real    VNSUBO   =  0.0                             `P(desc="Effective doping bias-dependence parameter" unit="V" );
+    parameter real    NSLPO    =  0.05                            `P(desc="Effective doping bias-dependence parameter" unit="V" );
+    parameter real    DNSUBO   =  0.0                             `P(desc="Effective doping bias-dependence parameter" unit="V^-1" );
+    parameter real    DPHIBO   =  0.0                             `P(desc="Geometry independent offset of PHIB" unit="V" );
+    parameter real    DPHIBL   =  0.0                             `P(desc="Length dependence offset of PHIB" unit="V" );
+    parameter real    DPHIBLEXP=  1.0                             `P(desc="Exponent for length dependence of offset of PHIB" unit="" );
+    parameter real    DPHIBW   =  0.0                             `P(desc="Width dependence of offset of PHIB" unit="" );
+    parameter real    DPHIBLW  =  0.0                             `P(desc="Area dependence of offset of PHIB" unit="" );
+    parameter real    NPO      =  1e26                            `P(desc="Geometry-independent gate poly-silicon doping" unit="m^-3" );
+    parameter real    NPL      =  0.0                             `P(desc="Length dependence of gate poly-silicon doping" unit="" );
+    parameter real    CTO      =  0.0                             `P(desc="Geometry-independent interface states factor" unit="" );
+    parameter real    CTL      =  0.0                             `P(desc="Length dependence of interface states factor" unit="" );
+    parameter real    CTLEXP   =  1.0                             `P(desc="Exponent for length dependence of interface states factor" unit="" );
+    parameter real    CTW      =  0.0                             `P(desc="Width dependence of interface states factor" unit="" );
+    parameter real    CTLW     =  0.0                             `P(desc="Area dependence of interface states factor" unit="" );
+    parameter real    TOXOVO   =  2e-9     `from(  1e-10,inf    ) `P(desc="Overlap oxide thickness" unit="m" );
+    parameter real    LOV      =  0        `from(    0.0,inf    ) `P(desc="Overlap length for gate/drain and gate/source overlap capacitance" unit="m" );
+    parameter real    NOVO     =  5e25                            `P(desc="Effective doping of overlap region" unit="m^-3" );
 
     // DIBL Parameters
-    parameter real    CFL      =  0.0                             `P(info="Length dependence of DIBL-parameter" unit="V^-1" );
-    parameter real    CFLEXP   =  2.0                             `P(info="Exponent for length dependence of CF" unit="" );
-    parameter real    CFW      =  0.0                             `P(info="Width dependence of CF" unit="" );
-    parameter real    CFBO     =  0.0                             `P(info="Back-bias dependence of CF" unit="V^-1" );
+    parameter real    CFL      =  0.0                             `P(desc="Length dependence of DIBL-parameter" unit="V^-1" );
+    parameter real    CFLEXP   =  2.0                             `P(desc="Exponent for length dependence of CF" unit="" );
+    parameter real    CFW      =  0.0                             `P(desc="Width dependence of CF" unit="" );
+    parameter real    CFBO     =  0.0                             `P(desc="Back-bias dependence of CF" unit="V^-1" );
 
     // Mobility Parameters
-    parameter real    UO       =  5e-2                            `P(info="Zero-field mobility at TR" unit="m^2/V/s" );
-    parameter real    FBET1    =  0.0                             `P(info="Relative mobility decrease due to first lateral profile" unit="" );
-    parameter real    FBET1W   =  0.0                             `P(info="Width dependence of relative mobility decrease due to first lateral profile" unit="" );
-    parameter real    LP1      =  1e-8     `from(  1e-10,inf    ) `P(info="Mobility-related characteristic length of first lateral profile" unit="m" );
-    parameter real    LP1W     =  0.0                             `P(info="Width dependence of mobility-related characteristic length of first lateral profile" unit="" );
-    parameter real    FBET2    =  0.0                             `P(info="Relative mobility decrease due to second lateral profile" unit="" );
-    parameter real    LP2      =  1e-8     `from(  1e-10,inf    ) `P(info="Mobility-related characteristic length of second lateral profile" unit="m" );
-    parameter real    BETW1    =  0.0                             `P(info="First higher-order width scaling coefficient of BETN" unit="" );
-    parameter real    BETW2    =  0.0                             `P(info="Second higher-order width scaling coefficient of BETN" unit="" );
-    parameter real    WBET     =  1e-9     `from(  1e-10,inf    ) `P(info="Characteristic width for width scaling of BETN" unit="m" );
-    parameter real    STBETO   =  1.0                             `P(info="Geometry independent temperature dependence of BETN" unit="" );
-    parameter real    STBETL   =  0.0                             `P(info="Length dependence of temperature dependence of BETN" unit="" );
-    parameter real    STBETW   =  0.0                             `P(info="Width dependence of temperature dependence of BETN" unit="" );
-    parameter real    STBETLW  =  0.0                             `P(info="Area dependence of temperature dependence of BETN" unit="" );
-    parameter real    MUEO     =  0.5                             `P(info="Geometry independent mobility reduction coefficient at TR" unit="m/V" );
-    parameter real    MUEW     =  0.0                             `P(info="Width dependence of mobility reduction coefficient at TR" unit="" );
-    parameter real    STMUEO   =  0.0                             `P(info="Temperature dependence of MUE" unit="" );
-    parameter real    THEMUO   =  1.5                             `P(info="Mobility reduction exponent at TR" unit="" );
-    parameter real    STTHEMUO =  1.5                             `P(info="Temperature dependence of THEMU" unit="" );
-    parameter real    CSO      =  0.0                             `P(info="Geometry independent coulomb scattering parameter at TR" unit="" );
-    parameter real    CSL      =  0.0                             `P(info="Length dependence of CS" unit="" );
-    parameter real    CSLEXP   =  0.0                             `P(info="Exponent for length dependence of CS" unit="" );
-    parameter real    CSW      =  0.0                             `P(info="Width dependence of CS" unit="" );
-    parameter real    CSLW     =  0.0                             `P(info="Area dependence of CS" unit="" );
-    parameter real    STCSO    =  0.0                             `P(info="Temperature dependence of CS" unit="" );
-    parameter real    XCORO    =  0.0                             `P(info="Geometry independent non-universality parameter" unit="V^-1" );
-    parameter real    XCORL    =  0.0                             `P(info="Length dependence of non-universality parameter" unit="" );
-    parameter real    XCORW    =  0.0                             `P(info="Width dependence of non-universality parameter" unit="" );
-    parameter real    XCORLW   =  0.0                             `P(info="Area dependence of non-universality parameter" unit="" );
-    parameter real    STXCORO  =  0.0                             `P(info="Temperature dependence of XCOR" unit="" );
-    parameter real    FETAO    =  1.0                             `P(info="Effective field parameter" unit="" );
+    parameter real    UO       =  5e-2                            `P(desc="Zero-field mobility at TR" unit="m^2/V/s" );
+    parameter real    FBET1    =  0.0                             `P(desc="Relative mobility decrease due to first lateral profile" unit="" );
+    parameter real    FBET1W   =  0.0                             `P(desc="Width dependence of relative mobility decrease due to first lateral profile" unit="" );
+    parameter real    LP1      =  1e-8     `from(  1e-10,inf    ) `P(desc="Mobility-related characteristic length of first lateral profile" unit="m" );
+    parameter real    LP1W     =  0.0                             `P(desc="Width dependence of mobility-related characteristic length of first lateral profile" unit="" );
+    parameter real    FBET2    =  0.0                             `P(desc="Relative mobility decrease due to second lateral profile" unit="" );
+    parameter real    LP2      =  1e-8     `from(  1e-10,inf    ) `P(desc="Mobility-related characteristic length of second lateral profile" unit="m" );
+    parameter real    BETW1    =  0.0                             `P(desc="First higher-order width scaling coefficient of BETN" unit="" );
+    parameter real    BETW2    =  0.0                             `P(desc="Second higher-order width scaling coefficient of BETN" unit="" );
+    parameter real    WBET     =  1e-9     `from(  1e-10,inf    ) `P(desc="Characteristic width for width scaling of BETN" unit="m" );
+    parameter real    STBETO   =  1.0                             `P(desc="Geometry independent temperature dependence of BETN" unit="" );
+    parameter real    STBETL   =  0.0                             `P(desc="Length dependence of temperature dependence of BETN" unit="" );
+    parameter real    STBETW   =  0.0                             `P(desc="Width dependence of temperature dependence of BETN" unit="" );
+    parameter real    STBETLW  =  0.0                             `P(desc="Area dependence of temperature dependence of BETN" unit="" );
+    parameter real    MUEO     =  0.5                             `P(desc="Geometry independent mobility reduction coefficient at TR" unit="m/V" );
+    parameter real    MUEW     =  0.0                             `P(desc="Width dependence of mobility reduction coefficient at TR" unit="" );
+    parameter real    STMUEO   =  0.0                             `P(desc="Temperature dependence of MUE" unit="" );
+    parameter real    THEMUO   =  1.5                             `P(desc="Mobility reduction exponent at TR" unit="" );
+    parameter real    STTHEMUO =  1.5                             `P(desc="Temperature dependence of THEMU" unit="" );
+    parameter real    CSO      =  0.0                             `P(desc="Geometry independent coulomb scattering parameter at TR" unit="" );
+    parameter real    CSL      =  0.0                             `P(desc="Length dependence of CS" unit="" );
+    parameter real    CSLEXP   =  0.0                             `P(desc="Exponent for length dependence of CS" unit="" );
+    parameter real    CSW      =  0.0                             `P(desc="Width dependence of CS" unit="" );
+    parameter real    CSLW     =  0.0                             `P(desc="Area dependence of CS" unit="" );
+    parameter real    STCSO    =  0.0                             `P(desc="Temperature dependence of CS" unit="" );
+    parameter real    XCORO    =  0.0                             `P(desc="Geometry independent non-universality parameter" unit="V^-1" );
+    parameter real    XCORL    =  0.0                             `P(desc="Length dependence of non-universality parameter" unit="" );
+    parameter real    XCORW    =  0.0                             `P(desc="Width dependence of non-universality parameter" unit="" );
+    parameter real    XCORLW   =  0.0                             `P(desc="Area dependence of non-universality parameter" unit="" );
+    parameter real    STXCORO  =  0.0                             `P(desc="Temperature dependence of XCOR" unit="" );
+    parameter real    FETAO    =  1.0                             `P(desc="Effective field parameter" unit="" );
 
     // Series Resistance
-    parameter real    RSW1     =  2.5e3                           `P(info="Source/drain series resistance for 1 um wide channel at TR" unit="Ohm" );
-    parameter real    RSW2     =  0.0                             `P(info="Higher-order width scaling of RS" unit="" );
-    parameter real    STRSO    =  1.0                             `P(info="Temperature dependence of RS" unit="" );
-    parameter real    RSBO     =  0.0                             `P(info="Back-bias dependence of series resistance" unit="V^-1" );
-    parameter real    RSGO     =  0.0                             `P(info="Gate-bias dependence of series resistance" unit="V^-1" );
+    parameter real    RSW1     =  2.5e3                           `P(desc="Source/drain series resistance for 1 um wide channel at TR" unit="Ohm" );
+    parameter real    RSW2     =  0.0                             `P(desc="Higher-order width scaling of RS" unit="" );
+    parameter real    STRSO    =  1.0                             `P(desc="Temperature dependence of RS" unit="" );
+    parameter real    RSBO     =  0.0                             `P(desc="Back-bias dependence of series resistance" unit="V^-1" );
+    parameter real    RSGO     =  0.0                             `P(desc="Gate-bias dependence of series resistance" unit="V^-1" );
 
     // Velocity Saturation
-    parameter real    THESATO  =  0.0                             `P(info="Geometry independent velocity saturation parameter at TR" unit="V^-1" );
-    parameter real    THESATL  =  0.05                            `P(info="Length dependence of THESAT" unit="V^-1" );
-    parameter real    THESATLEXP= 1.0                             `P(info="Exponent for length dependence of THESAT" unit="" );
-    parameter real    THESATW  =  0.0                             `P(info="Width dependence of velocity saturation parameter" unit="" );
-    parameter real    THESATLW =  0.0                             `P(info="Area dependence of velocity saturation parameter" unit="" );
-    parameter real    STTHESATO=  1.0                             `P(info="Geometry independent temperature dependence of THESAT" unit="" );
-    parameter real    STTHESATL=  0.0                             `P(info="Length dependence of temperature dependence of THESAT" unit="" );
-    parameter real    STTHESATW=  0.0                             `P(info="Width dependence of temperature dependence of THESAT" unit="" );
-    parameter real    STTHESATLW= 0.0                             `P(info="Area dependence of temperature dependence of THESAT" unit="" );
-    parameter real    THESATBO =  0.0                             `P(info="Back-bias dependence of velocity saturation" unit="V^-1" );
-    parameter real    THESATGO =  0.0                             `P(info="Gate-bias dependence of velocity saturation" unit="V^-1" );
+    parameter real    THESATO  =  0.0                             `P(desc="Geometry independent velocity saturation parameter at TR" unit="V^-1" );
+    parameter real    THESATL  =  0.05                            `P(desc="Length dependence of THESAT" unit="V^-1" );
+    parameter real    THESATLEXP= 1.0                             `P(desc="Exponent for length dependence of THESAT" unit="" );
+    parameter real    THESATW  =  0.0                             `P(desc="Width dependence of velocity saturation parameter" unit="" );
+    parameter real    THESATLW =  0.0                             `P(desc="Area dependence of velocity saturation parameter" unit="" );
+    parameter real    STTHESATO=  1.0                             `P(desc="Geometry independent temperature dependence of THESAT" unit="" );
+    parameter real    STTHESATL=  0.0                             `P(desc="Length dependence of temperature dependence of THESAT" unit="" );
+    parameter real    STTHESATW=  0.0                             `P(desc="Width dependence of temperature dependence of THESAT" unit="" );
+    parameter real    STTHESATLW= 0.0                             `P(desc="Area dependence of temperature dependence of THESAT" unit="" );
+    parameter real    THESATBO =  0.0                             `P(desc="Back-bias dependence of velocity saturation" unit="V^-1" );
+    parameter real    THESATGO =  0.0                             `P(desc="Gate-bias dependence of velocity saturation" unit="V^-1" );
 
     // Saturation Voltage
-    parameter real    AXO      =  18                              `P(info="Geometry independent linear/saturation transition factor" unit="" );
-    parameter real    AXL      =  0.4      `from(    0.0,inf    ) `P(info="Length dependence of AX" unit="" );
+    parameter real    AXO      =  18                              `P(desc="Geometry independent linear/saturation transition factor" unit="" );
+    parameter real    AXL      =  0.4      `from(    0.0,inf    ) `P(desc="Length dependence of AX" unit="" );
 
     // Channel Length Modulation
-    parameter real    ALPL     =  5e-4                            `P(info="Length dependence of ALP" unit="" );
-    parameter real    ALPLEXP  =  1.0                             `P(info="Exponent for length dependence of ALP" unit="" );
-    parameter real    ALPW     =  0.0                             `P(info="Width dependence of ALP" unit="" );
-    parameter real    ALP1L1   =  0.0                             `P(info="Length dependence of CLM enhancement factor above threshold" unit="V" );
-    parameter real    ALP1LEXP =  0.5                             `P(info="Exponent for length dependence of ALP1" unit="" );
-    parameter real    ALP1L2   =  0.0      `from(    0.0,inf    ) `P(info="Second_order length dependence of ALP1" unit="" );
-    parameter real    ALP1W    =  0.0                             `P(info="Width dependence of ALP1" unit="" );
-    parameter real    ALP2L1   =  0.0                             `P(info="Length dependence of CLM enhancement factor below threshold" unit="V^-1" );
-    parameter real    ALP2LEXP =  0.5                             `P(info="Exponent for length dependence of ALP2" unit="" );
-    parameter real    ALP2L2   =  0.0      `from(    0.0,inf    ) `P(info="Second_order length dependence of ALP2" unit="" );
-    parameter real    ALP2W    =  0.0                             `P(info="Width dependence of ALP2" unit="" );
-    parameter real    VPO      =  0.05                            `P(info="CLM logarithmic dependence parameter" unit="V" );
+    parameter real    ALPL     =  5e-4                            `P(desc="Length dependence of ALP" unit="" );
+    parameter real    ALPLEXP  =  1.0                             `P(desc="Exponent for length dependence of ALP" unit="" );
+    parameter real    ALPW     =  0.0                             `P(desc="Width dependence of ALP" unit="" );
+    parameter real    ALP1L1   =  0.0                             `P(desc="Length dependence of CLM enhancement factor above threshold" unit="V" );
+    parameter real    ALP1LEXP =  0.5                             `P(desc="Exponent for length dependence of ALP1" unit="" );
+    parameter real    ALP1L2   =  0.0      `from(    0.0,inf    ) `P(desc="Second_order length dependence of ALP1" unit="" );
+    parameter real    ALP1W    =  0.0                             `P(desc="Width dependence of ALP1" unit="" );
+    parameter real    ALP2L1   =  0.0                             `P(desc="Length dependence of CLM enhancement factor below threshold" unit="V^-1" );
+    parameter real    ALP2LEXP =  0.5                             `P(desc="Exponent for length dependence of ALP2" unit="" );
+    parameter real    ALP2L2   =  0.0      `from(    0.0,inf    ) `P(desc="Second_order length dependence of ALP2" unit="" );
+    parameter real    ALP2W    =  0.0                             `P(desc="Width dependence of ALP2" unit="" );
+    parameter real    VPO      =  0.05                            `P(desc="CLM logarithmic dependence parameter" unit="V" );
 
     // Weak-avalanche parameters
-    parameter real    A1O      =  1.0                             `P(info="Geometry independent impact-ionization pre-factor" unit="" );
-    parameter real    A1L      =  0.0                             `P(info="Length dependence of A1" unit="" );
-    parameter real    A1W      =  0.0                             `P(info="Width dependence of A1" unit="" );
-    parameter real    A2O      =  10                              `P(info="Impact-ionization exponent at TR" unit="V" );
-    parameter real    STA2O    =  0.0                             `P(info="Temperature dependence of A2" unit="V" );
-    parameter real    A3O      =  1.0                             `P(info="Geometry independent saturation-voltage dependence of II" unit="" );
-    parameter real    A3L      =  0.0                             `P(info="Length dependence of A3" unit="" );
-    parameter real    A3W      =  0.0                             `P(info="Width dependence of A3" unit="" );
-    parameter real    A4O      =  0.0                             `P(info="Geometry independent back-bias dependence of II" unit="V^-0.5" );
-    parameter real    A4L      =  0.0                             `P(info="Length dependence of A4" unit="" );
-    parameter real    A4W      =  0.0                             `P(info="Width dependence of A4" unit="" );
+    parameter real    A1O      =  1.0                             `P(desc="Geometry independent impact-ionization pre-factor" unit="" );
+    parameter real    A1L      =  0.0                             `P(desc="Length dependence of A1" unit="" );
+    parameter real    A1W      =  0.0                             `P(desc="Width dependence of A1" unit="" );
+    parameter real    A2O      =  10                              `P(desc="Impact-ionization exponent at TR" unit="V" );
+    parameter real    STA2O    =  0.0                             `P(desc="Temperature dependence of A2" unit="V" );
+    parameter real    A3O      =  1.0                             `P(desc="Geometry independent saturation-voltage dependence of II" unit="" );
+    parameter real    A3L      =  0.0                             `P(desc="Length dependence of A3" unit="" );
+    parameter real    A3W      =  0.0                             `P(desc="Width dependence of A3" unit="" );
+    parameter real    A4O      =  0.0                             `P(desc="Geometry independent back-bias dependence of II" unit="V^-0.5" );
+    parameter real    A4L      =  0.0                             `P(desc="Length dependence of A4" unit="" );
+    parameter real    A4W      =  0.0                             `P(desc="Width dependence of A4" unit="" );
 
     // Gate current parameters
-    parameter real    GCOO     =  0.0                             `P(info="Gate tunnelling energy adjustment" unit="" );
-    parameter real    IGINVLW  =  0.0                             `P(info="Gate channel current pre-factor for 1 um^2 channel area" unit="A" );
-    parameter real    IGOVW    =  0.0                             `P(info="Gate overlap current pre-factor for 1 um wide channel" unit="A" );
-    parameter real    STIGO    =  2.0                             `P(info="Temperature dependence of IGINV and IGOV" unit="" );
-    parameter real    GC2O     =  0.375                           `P(info="Gate current slope factor" unit="" );
-    parameter real    GC3O     =  0.063                           `P(info="Gate current curvature factor" unit="" );
-    parameter real    CHIBO    =  3.1                             `P(info="Tunnelling barrier height" unit="V" );
+    parameter real    GCOO     =  0.0                             `P(desc="Gate tunnelling energy adjustment" unit="" );
+    parameter real    IGINVLW  =  0.0                             `P(desc="Gate channel current pre-factor for 1 um^2 channel area" unit="A" );
+    parameter real    IGOVW    =  0.0                             `P(desc="Gate overlap current pre-factor for 1 um wide channel" unit="A" );
+    parameter real    STIGO    =  2.0                             `P(desc="Temperature dependence of IGINV and IGOV" unit="" );
+    parameter real    GC2O     =  0.375                           `P(desc="Gate current slope factor" unit="" );
+    parameter real    GC3O     =  0.063                           `P(desc="Gate current curvature factor" unit="" );
+    parameter real    CHIBO    =  3.1                             `P(desc="Tunnelling barrier height" unit="V" );
 
     // Gate-induced drain leakage parameters
-    parameter real    AGIDLW   =  0.0                             `P(info="Width dependence of GIDL pre-factor" unit="A/V^3" );
-    parameter real    BGIDLO   =  41                              `P(info="GIDL probability factor at TR" unit="V" );
-    parameter real    STBGIDLO =  0.0                             `P(info="Temperature dependence of BGIDL" unit="V/K" );
-    parameter real    CGIDLO   =  0.0                             `P(info="Back-bias dependence of GIDL" unit="" );
+    parameter real    AGIDLW   =  0.0                             `P(desc="Width dependence of GIDL pre-factor" unit="A/V^3" );
+    parameter real    BGIDLO   =  41                              `P(desc="GIDL probability factor at TR" unit="V" );
+    parameter real    STBGIDLO =  0.0                             `P(desc="Temperature dependence of BGIDL" unit="V/K" );
+    parameter real    CGIDLO   =  0.0                             `P(desc="Back-bias dependence of GIDL" unit="" );
 
     // Charge Model Parameters
-    parameter real    CGBOVL   =  0.0                             `P(info="Oxide capacitance for gate-bulk overlap for 1 um^2 area" unit="F" );
-    parameter real    CFRW     =  0.0                             `P(info="Outer fringe capacitance for 1 um wide channel" unit="F" );
+    parameter real    CGBOVL   =  0.0                             `P(desc="Oxide capacitance for gate-bulk overlap for 1 um^2 area" unit="F" );
+    parameter real    CFRW     =  0.0                             `P(desc="Outer fringe capacitance for 1 um wide channel" unit="F" );
 
     // Noise Model Parameters
-    parameter real    FNTO     =  1.0                             `P(info="Thermal noise coefficient" unit="" );
-    parameter real    NFALW    =  8e22                            `P(info="First coefficient of flicker noise for 1 um^2 channel area" unit="V^-1/m^4" );
-    parameter real    NFBLW    =  3e7                             `P(info="Second coefficient of flicker noise for 1 um^2 channel area" unit="V^-1/m^2" );
-    parameter real    NFCLW    =  0.0                             `P(info="Third coefficient of flicker noise for 1 um^2 channel area" unit="V^-1" );
+    parameter real    FNTO     =  1.0                             `P(desc="Thermal noise coefficient" unit="" );
+    parameter real    NFALW    =  8e22                            `P(desc="First coefficient of flicker noise for 1 um^2 channel area" unit="V^-1/m^4" );
+    parameter real    NFBLW    =  3e7                             `P(desc="Second coefficient of flicker noise for 1 um^2 channel area" unit="V^-1/m^2" );
+    parameter real    NFCLW    =  0.0                             `P(desc="Third coefficient of flicker noise for 1 um^2 channel area" unit="V^-1" );
 
     // Other Parameters
-    parameter real    DTA      =  0                               `P(info="Temperature offset w.r.t. ambient circuit temperature" unit="K" );
+    parameter real    DTA      =  0                               `P(desc="Temperature offset w.r.t. ambient circuit temperature" unit="K" );
 `endif // Binning
 `ifdef NQSmodel
 
     //  NQS parameters
-    parameter real    SWNQS    =  0.0      `from(   0.0,9.0     ) `P(info="Flag for NQS, 0=off, 1, 2, 3, 5, or 9=number of collocation points" unit="" );
-    parameter real    MUNQSO   =  1.0                             `P(info="Relative mobility for NQS modelling" );    
-    parameter real    RGO      =  1.0e-3                          `P(info="Gate resistance" );                        
-    parameter real    RBULKO   =  1.0e-3                          `P(info="Bulk resistance between node BP and BI" unit="Ohm" ); 
-    parameter real    RWELLO   =  1.0e-3                          `P(info="Well resistance between node BI and B" unit="Ohm" );  
-    parameter real    RJUNSO   =  1.0e-3                          `P(info="Source-side bulk resistance between node BI and BS" unit="Ohm" ); 
-    parameter real    RJUNDO   =  1.0e-3                          `P(info="Drain-side bulk resistance between node BI and BD" unit="Ohm" ); 
+    parameter real    SWNQS    =  0.0      `from(   0.0,9.0     ) `P(desc="Flag for NQS, 0=off, 1, 2, 3, 5, or 9=number of collocation points" unit="" );
+    parameter real    MUNQSO   =  1.0                             `P(desc="Relative mobility for NQS modelling" );    
+    parameter real    RGO      =  1.0e-3                          `P(desc="Gate resistance" );                        
+    parameter real    RBULKO   =  1.0e-3                          `P(desc="Bulk resistance between node BP and BI" unit="Ohm" ); 
+    parameter real    RWELLO   =  1.0e-3                          `P(desc="Well resistance between node BI and B" unit="Ohm" );  
+    parameter real    RJUNSO   =  1.0e-3                          `P(desc="Source-side bulk resistance between node BI and BS" unit="Ohm" ); 
+    parameter real    RJUNDO   =  1.0e-3                          `P(desc="Drain-side bulk resistance between node BI and BD" unit="Ohm" ); 
 `endif // NQSmodel
 
     // Stress Model Parameters
-    parameter real    SAREF    =  1.0e-6   `from(   1e-9,inf    ) `P(info="Reference distance beteen OD-edge to poly from one side" unit="m" );
-    parameter real    SBREF    =  1.0e-6   `from(   1e-9,inf    ) `P(info="Reference distance beteen OD-edge to poly from other side" unit="m" );
-    parameter real    WLOD     =  0                               `P(info="Width parameter" unit="m" );
-    parameter real    KUO      =  0                               `P(info="Mobility degradation/enhancement coefficient" unit="m" );
-    parameter real    KVSAT    =  0        `from(   -1.0,1.0    ) `P(info="Saturation velocity degradation/enhancement coefficient" unit="m" );
-    parameter real    TKUO     =  0                               `P(info="Temperature dependence of KUO" unit="" );
-    parameter real    LKUO     =  0                               `P(info="Length dependence of KUO" unit="m^LLODKUO" );
-    parameter real    WKUO     =  0                               `P(info="Width dependence of KUO" unit="m^WLODKUO" );
-    parameter real    PKUO     =  0                               `P(info="Cross-term dependence of KUO" unit="m^(LLODKUO+WLODKUO)" );
-    parameter real    LLODKUO  =  0        `from(    0.0,inf    ) `P(info="Length parameter for UO stress effect" unit="" );
-    parameter real    WLODKUO  =  0        `from(    0.0,inf    ) `P(info="Width parameter for UO stress effect" unit="" );
-    parameter real    KVTHO    =  0                               `P(info="Threshold shift parameter" unit="Vm" );
-    parameter real    LKVTHO   =  0                               `P(info="Length dependence of KVTHO" unit="m^LLODVTH" );
-    parameter real    WKVTHO   =  0                               `P(info="Width dependence of KVTHO" unit="m^WLODVTH" );
-    parameter real    PKVTHO   =  0                               `P(info="Cross-term dependence of KVTHO" unit="m^(LLODVTH+WLODVTH)" );
-    parameter real    LLODVTH  =  0        `from(    0.0,inf    ) `P(info="Length parameter for VTH-stress effect" unit="" );
-    parameter real    WLODVTH  =  0        `from(    0.0,inf    ) `P(info="Width parameter for VTH-stress effect" unit="" );
-    parameter real    STETAO   =  0                               `P(info="eta0 shift factor related to VTHO change" unit="m" );
-    parameter real    LODETAO  =  1.0      `from(    0.0,inf    ) `P(info="eta0 shift modifaction factor for stress effect" unit="" );
+    parameter real    SAREF    =  1.0e-6   `from(   1e-9,inf    ) `P(desc="Reference distance beteen OD-edge to poly from one side" unit="m" );
+    parameter real    SBREF    =  1.0e-6   `from(   1e-9,inf    ) `P(desc="Reference distance beteen OD-edge to poly from other side" unit="m" );
+    parameter real    WLOD     =  0                               `P(desc="Width parameter" unit="m" );
+    parameter real    KUO      =  0                               `P(desc="Mobility degradation/enhancement coefficient" unit="m" );
+    parameter real    KVSAT    =  0        `from(   -1.0,1.0    ) `P(desc="Saturation velocity degradation/enhancement coefficient" unit="m" );
+    parameter real    TKUO     =  0                               `P(desc="Temperature dependence of KUO" unit="" );
+    parameter real    LKUO     =  0                               `P(desc="Length dependence of KUO" unit="m^LLODKUO" );
+    parameter real    WKUO     =  0                               `P(desc="Width dependence of KUO" unit="m^WLODKUO" );
+    parameter real    PKUO     =  0                               `P(desc="Cross-term dependence of KUO" unit="m^(LLODKUO+WLODKUO)" );
+    parameter real    LLODKUO  =  0        `from(    0.0,inf    ) `P(desc="Length parameter for UO stress effect" unit="" );
+    parameter real    WLODKUO  =  0        `from(    0.0,inf    ) `P(desc="Width parameter for UO stress effect" unit="" );
+    parameter real    KVTHO    =  0                               `P(desc="Threshold shift parameter" unit="Vm" );
+    parameter real    LKVTHO   =  0                               `P(desc="Length dependence of KVTHO" unit="m^LLODVTH" );
+    parameter real    WKVTHO   =  0                               `P(desc="Width dependence of KVTHO" unit="m^WLODVTH" );
+    parameter real    PKVTHO   =  0                               `P(desc="Cross-term dependence of KVTHO" unit="m^(LLODVTH+WLODVTH)" );
+    parameter real    LLODVTH  =  0        `from(    0.0,inf    ) `P(desc="Length parameter for VTH-stress effect" unit="" );
+    parameter real    WLODVTH  =  0        `from(    0.0,inf    ) `P(desc="Width parameter for VTH-stress effect" unit="" );
+    parameter real    STETAO   =  0                               `P(desc="eta0 shift factor related to VTHO change" unit="m" );
+    parameter real    LODETAO  =  1.0      `from(    0.0,inf    ) `P(desc="eta0 shift modifaction factor for stress effect" unit="" );
 
     // JUNCAP Parameters
-    parameter real    TRJ      = 21        `from(`TRJ_cliplow,inf) `P(info="reference temperature" unit="C");
+    parameter real    TRJ      = 21        `from(`TRJ_cliplow,inf) `P(desc="reference temperature" unit="C");
     `include "JUNCAP200_parlist.include"
 
     // Instance parameters
-    parameter real    L        =  10e-6    `from(   1e-9,inf    ) `P(type="instance" info="Design length" unit="m" );
-    parameter real    W        =  10e-6    `from(   1e-9,inf    ) `P(type="instance" info="Design width" unit="m" );
-    parameter real    SA       =  0.0                             `P(type="instance" info="Distance beteen OD-edge to poly from one side" unit="m" );
-    parameter real    SB       =  0.0                             `P(type="instance" info="Distance beteen OD-edge to poly from other side" unit="m" );
-    parameter real    ABSOURCE = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of source junction" unit="m^2" );
-    parameter real    LSSOURCE = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" info="STI-edge length of source junction" unit="m" );
-    parameter real    LGSOURCE = 1E-6      `from(`LG_cliplow,inf) `P(type="instance" info="Gate-edge length of source junction" unit="m" );
-    parameter real    ABDRAIN  = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of drain junction" unit="m^2" );
-    parameter real    LSDRAIN  = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" info="STI-edge length of drain junction" unit="m" );
-    parameter real    LGDRAIN  = 1E-6      `from(`LG_cliplow,inf) `P(type="instance" info="Gate-edge length of drain junction" unit="m" );
-    parameter real    AS       = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of source junction" unit="m^2" );
-    parameter real    PS       = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" info="Perimeter of source junction" unit="m" );
-    parameter real    AD       = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" info="Bottom area of drain junction" unit="m^2" );
-    parameter real    PD       = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" info="Perimeter of drain junction" unit="m" );
-    parameter real    MULT     =  1.0      `from(    0.0,inf    ) `P(type="instance" info="Number of devices in parallel" unit="" );
+    parameter real    L        =  10e-6    `from(   1e-9,inf    ) `P(type="instance" desc="Design length" unit="m" );
+    parameter real    W        =  10e-6    `from(   1e-9,inf    ) `P(type="instance" desc="Design width" unit="m" );
+    parameter real    SA       =  0.0                             `P(type="instance" desc="Distance beteen OD-edge to poly from one side" unit="m" );
+    parameter real    SB       =  0.0                             `P(type="instance" desc="Distance beteen OD-edge to poly from other side" unit="m" );
+    parameter real    ABSOURCE = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of source junction" unit="m^2" );
+    parameter real    LSSOURCE = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" desc="STI-edge length of source junction" unit="m" );
+    parameter real    LGSOURCE = 1E-6      `from(`LG_cliplow,inf) `P(type="instance" desc="Gate-edge length of source junction" unit="m" );
+    parameter real    ABDRAIN  = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of drain junction" unit="m^2" );
+    parameter real    LSDRAIN  = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" desc="STI-edge length of drain junction" unit="m" );
+    parameter real    LGDRAIN  = 1E-6      `from(`LG_cliplow,inf) `P(type="instance" desc="Gate-edge length of drain junction" unit="m" );
+    parameter real    AS       = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of source junction" unit="m^2" );
+    parameter real    PS       = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" desc="Perimeter of source junction" unit="m" );
+    parameter real    AD       = 1E-12     `from(`AB_cliplow,inf) `P(type="instance" desc="Bottom area of drain junction" unit="m^2" );
+    parameter real    PD       = 1E-6      `from(`LS_cliplow,inf) `P(type="instance" desc="Perimeter of drain junction" unit="m" );
+    parameter real    MULT     =  1.0      `from(    0.0,inf    ) `P(type="instance" desc="Number of devices in parallel" unit="" );
 
     //////////////////////////
     //
@@ -632,98 +632,98 @@
 
     real id_op, is, ig, ib, P_D, facvsb, facvsb0, sig1k;
 
-    real ctype     `P(ask="yes" info="Flag for channel type" unit="");
-    real sdint     `P(ask="yes" info="Flag for source-drain interchange" unit="");
+    real ctype     `P(ask="yes" desc="Flag for channel type" unit="");
+    real sdint     `P(ask="yes" desc="Flag for source-drain interchange" unit="");
     
-    real ise       `P(ask="yes" info="Total source current" unit="A");
-    real ige       `P(ask="yes" info="Total gate current" unit="A");
-    real ide       `P(ask="yes" info="Total drain current" unit="A");
-    real ibe       `P(ask="yes" info="Total bulk current" unit="A");
-    real ids       `P(ask="yes" info="Drain current, excl. avalanche, tunnel, GISL, GIDL, and junction currents" unit="A");
-    real idb       `P(ask="yes" info="Drain to bulk current" unit="A");
-    real isb       `P(ask="yes" info="Source to bulk current" unit="A");
-    real igs       `P(ask="yes" info="Gate-source tunneling current" unit="A");
-    real igd       `P(ask="yes" info="Gate-drain tunneling current" unit="A");
-    real igb       `P(ask="yes" info="Gate-bulk tunneling current" unit="A");
-    real igcs      `P(ask="yes" info="Gate-channel tunneling current (source component)" unit="A");
-    real igcd      `P(ask="yes" info="Gate-channel tunneling current (drain component)" unit="A");
-    real iavl      `P(ask="yes" info="Substrate current due to weak avelanche" unit="A");
-    real igisl     `P(ask="yes" info="Gate-induced source leakage current" unit="A");
-    real igidl     `P(ask="yes" info="Gate-induced drain leakage current" unit="A");
+    real ise       `P(ask="yes" desc="Total source current" unit="A");
+    real ige       `P(ask="yes" desc="Total gate current" unit="A");
+    real ide       `P(ask="yes" desc="Total drain current" unit="A");
+    real ibe       `P(ask="yes" desc="Total bulk current" unit="A");
+    real ids       `P(ask="yes" desc="Drain current, excl. avalanche, tunnel, GISL, GIDL, and junction currents" unit="A");
+    real idb       `P(ask="yes" desc="Drain to bulk current" unit="A");
+    real isb       `P(ask="yes" desc="Source to bulk current" unit="A");
+    real igs       `P(ask="yes" desc="Gate-source tunneling current" unit="A");
+    real igd       `P(ask="yes" desc="Gate-drain tunneling current" unit="A");
+    real igb       `P(ask="yes" desc="Gate-bulk tunneling current" unit="A");
+    real igcs      `P(ask="yes" desc="Gate-channel tunneling current (source component)" unit="A");
+    real igcd      `P(ask="yes" desc="Gate-channel tunneling current (drain component)" unit="A");
+    real iavl      `P(ask="yes" desc="Substrate current due to weak avelanche" unit="A");
+    real igisl     `P(ask="yes" desc="Gate-induced source leakage current" unit="A");
+    real igidl     `P(ask="yes" desc="Gate-induced drain leakage current" unit="A");
 
-    real ijs       `P(ask="yes" info="Total source junction current" unit="A");
-    real ijsbot    `P(ask="yes" info="Source junction current (bottom component)" unit="A");
-    real ijsgat    `P(ask="yes" info="Source junction current (gate-edge component)" unit="A");
-    real ijssti    `P(ask="yes" info="Source junction current (STI-edge component)" unit="A");
-    real ijd       `P(ask="yes" info="Total drain junction current" unit="A");
-    real ijdbot    `P(ask="yes" info="Drain junction current (bottom component)" unit="A");
-    real ijdgat    `P(ask="yes" info="Drain junction current (gate-edge component)" unit="A");
-    real ijdsti    `P(ask="yes" info="Drain junction current (STI-edge component)" unit="A");
+    real ijs       `P(ask="yes" desc="Total source junction current" unit="A");
+    real ijsbot    `P(ask="yes" desc="Source junction current (bottom component)" unit="A");
+    real ijsgat    `P(ask="yes" desc="Source junction current (gate-edge component)" unit="A");
+    real ijssti    `P(ask="yes" desc="Source junction current (STI-edge component)" unit="A");
+    real ijd       `P(ask="yes" desc="Total drain junction current" unit="A");
+    real ijdbot    `P(ask="yes" desc="Drain junction current (bottom component)" unit="A");
+    real ijdgat    `P(ask="yes" desc="Drain junction current (gate-edge component)" unit="A");
+    real ijdsti    `P(ask="yes" desc="Drain junction current (STI-edge component)" unit="A");
 
-    real vds       `P(ask="yes" info="Drain-source voltage" unit="V");
-    real vgs       `P(ask="yes" info="Gate-source voltage" unit="V");
-    real vsb       `P(ask="yes" info="Source-bulk voltage" unit="V");
-    real vto       `P(ask="yes" info="Zero-bias threshold voltage" unit="V");
-    real vts       `P(ask="yes" info="Threshold voltage including back bias effects" unit="V");
-    real vth       `P(ask="yes" info="Threshold voltage including back bias and drain bias effects" unit="V");
-    real vgt       `P(ask="yes" info="Effective gate drive voltage including back bias and drain bias effects" unit="V");
-    real vdss      `P(ask="yes" info="Drain saturation voltage at actual bias" unit="V");
-    real vsat      `P(ask="yes" info="Saturation limit" unit="V");
+    real vds       `P(ask="yes" desc="Drain-source voltage" unit="V");
+    real vgs       `P(ask="yes" desc="Gate-source voltage" unit="V");
+    real vsb       `P(ask="yes" desc="Source-bulk voltage" unit="V");
+    real vto       `P(ask="yes" desc="Zero-bias threshold voltage" unit="V");
+    real vts       `P(ask="yes" desc="Threshold voltage including back bias effects" unit="V");
+    real vth       `P(ask="yes" desc="Threshold voltage including back bias and drain bias effects" unit="V");
+    real vgt       `P(ask="yes" desc="Effective gate drive voltage including back bias and drain bias effects" unit="V");
+    real vdss      `P(ask="yes" desc="Drain saturation voltage at actual bias" unit="V");
+    real vsat      `P(ask="yes" desc="Saturation limit" unit="V");
     
-    real gm        `P(ask="yes" info="Transconductance" unit="1/Ohm");
-    real gmb       `P(ask="yes" info="Substrate transconductance" unit="1/Ohm");
-    real gds       `P(ask="yes" info="Output conductance" unit="1/Ohm");
-    real gjs       `P(ask="yes" info="Source junction conductance" unit="1/Ohm");
-    real gjd       `P(ask="yes" info="Drain junction conductance" unit="1/Ohm");
+    real gm        `P(ask="yes" desc="Transconductance" unit="1/Ohm");
+    real gmb       `P(ask="yes" desc="Substrate transconductance" unit="1/Ohm");
+    real gds       `P(ask="yes" desc="Output conductance" unit="1/Ohm");
+    real gjs       `P(ask="yes" desc="Source junction conductance" unit="1/Ohm");
+    real gjd       `P(ask="yes" desc="Drain junction conductance" unit="1/Ohm");
     
-    real cdd       `P(ask="yes" info="Drain capacitance" unit="F");
-    real cdg       `P(ask="yes" info="Drain-gate capacitance" unit="F");
-    real cds       `P(ask="yes" info="Drain-source capacitance" unit="F");
-    real cdb       `P(ask="yes" info="Drain-bulk capacitance" unit="F");
-    real cgd       `P(ask="yes" info="Gate-drain capacitance" unit="F");
-    real cgg       `P(ask="yes" info="Gate capacitance" unit="F");
-    real cgs       `P(ask="yes" info="Gate-source capacitance" unit="F");
-    real cgb       `P(ask="yes" info="Gate-bulk capacitance" unit="F");
-    real csd       `P(ask="yes" info="Source-drain capacitance" unit="F");
-    real csg       `P(ask="yes" info="Source-gate capacitance" unit="F");
-    real css       `P(ask="yes" info="Source capacitance" unit="F");
-    real csb       `P(ask="yes" info="Source-bulk capacitance" unit="F");
-    real cbd       `P(ask="yes" info="Bulk-drain capacitance" unit="F");
-    real cbg       `P(ask="yes" info="Bulk-gate capacitance" unit="F");
-    real cbs       `P(ask="yes" info="Bulk-source capacitance" unit="F");
-    real cbb       `P(ask="yes" info="Bulk capacitance" unit="F");
-    real cgsol     `P(ask="yes" info="Total gate-source overlap capacitance" unit="F");
-    real cgdol     `P(ask="yes" info="Total gate-drain overlap capacitance" unit="F");
+    real cdd       `P(ask="yes" desc="Drain capacitance" unit="F");
+    real cdg       `P(ask="yes" desc="Drain-gate capacitance" unit="F");
+    real cds       `P(ask="yes" desc="Drain-source capacitance" unit="F");
+    real cdb       `P(ask="yes" desc="Drain-bulk capacitance" unit="F");
+    real cgd       `P(ask="yes" desc="Gate-drain capacitance" unit="F");
+    real cgg       `P(ask="yes" desc="Gate capacitance" unit="F");
+    real cgs       `P(ask="yes" desc="Gate-source capacitance" unit="F");
+    real cgb       `P(ask="yes" desc="Gate-bulk capacitance" unit="F");
+    real csd       `P(ask="yes" desc="Source-drain capacitance" unit="F");
+    real csg       `P(ask="yes" desc="Source-gate capacitance" unit="F");
+    real css       `P(ask="yes" desc="Source capacitance" unit="F");
+    real csb       `P(ask="yes" desc="Source-bulk capacitance" unit="F");
+    real cbd       `P(ask="yes" desc="Bulk-drain capacitance" unit="F");
+    real cbg       `P(ask="yes" desc="Bulk-gate capacitance" unit="F");
+    real cbs       `P(ask="yes" desc="Bulk-source capacitance" unit="F");
+    real cbb       `P(ask="yes" desc="Bulk capacitance" unit="F");
+    real cgsol     `P(ask="yes" desc="Total gate-source overlap capacitance" unit="F");
+    real cgdol     `P(ask="yes" desc="Total gate-drain overlap capacitance" unit="F");
     
-    real cjs       `P(ask="yes" info="Total source junction capacitance" unit="F");
-    real cjsbot    `P(ask="yes" info="Source junction capacitance (bottom component)" unit="F");
-    real cjsgat    `P(ask="yes" info="Source junction capacitance (gate-edge component)" unit="F");
-    real cjssti    `P(ask="yes" info="Source junction capacitance (STI-edge component)" unit="F");
-    real cjd       `P(ask="yes" info="Total drain junction capacitance" unit="F");
-    real cjdbot    `P(ask="yes" info="Drain junction capacitance (bottom component)" unit="F");
-    real cjdgat    `P(ask="yes" info="Drain junction capacitance (gate-edge component)" unit="F");
-    real cjdsti    `P(ask="yes" info="Drain junction capacitance (STI-edge component)" unit="F");
+    real cjs       `P(ask="yes" desc="Total source junction capacitance" unit="F");
+    real cjsbot    `P(ask="yes" desc="Source junction capacitance (bottom component)" unit="F");
+    real cjsgat    `P(ask="yes" desc="Source junction capacitance (gate-edge component)" unit="F");
+    real cjssti    `P(ask="yes" desc="Source junction capacitance (STI-edge component)" unit="F");
+    real cjd       `P(ask="yes" desc="Total drain junction capacitance" unit="F");
+    real cjdbot    `P(ask="yes" desc="Drain junction capacitance (bottom component)" unit="F");
+    real cjdgat    `P(ask="yes" desc="Drain junction capacitance (gate-edge component)" unit="F");
+    real cjdsti    `P(ask="yes" desc="Drain junction capacitance (STI-edge component)" unit="F");
     
-    real weff      `P(ask="yes" info="Effective channel width for geometrical models" unit="m");
-    real leff      `P(ask="yes" info="Effective channel length for geometrical models" unit="m");
-    real u         `P(ask="yes" info="Transistor gain" unit="");
-    real rout      `P(ask="yes" info="Small-signal output resistance" unit="Ohm");
-    real vearly    `P(ask="yes" info="Equivalent Early voltage" unit="V");
-    real beff      `P(ask="yes" info="Gain factor" unit="A/V^2");
-    real fug       `P(ask="yes" info="Unity gain frequency at actual bias" unit="Hz");
+    real weff      `P(ask="yes" desc="Effective channel width for geometrical models" unit="m");
+    real leff      `P(ask="yes" desc="Effective channel length for geometrical models" unit="m");
+    real u         `P(ask="yes" desc="Transistor gain" unit="");
+    real rout      `P(ask="yes" desc="Small-signal output resistance" unit="Ohm");
+    real vearly    `P(ask="yes" desc="Equivalent Early voltage" unit="V");
+    real beff      `P(ask="yes" desc="Gain factor" unit="A/V^2");
+    real fug       `P(ask="yes" desc="Unity gain frequency at actual bias" unit="Hz");
 
-    real sfl       `P(ask="yes" info="Flicker noise current density at 1 Hz" unit="A/Hz");
-    real sqrtsff   `P(ask="yes" info="Input-referred RMS white noise voltage density at 1 kHz" unit="V/sqrt(Hz)");
-    real sqrtsfw   `P(ask="yes" info="Input-referred RMS white noise voltage density" unit="V/sqrt(Hz)");
-    real sid       `P(ask="yes" info="White noise current density" unit="A^2/Hz");
-    real sig       `P(ask="yes" info="Induced gate noise current density at 1 Hz" unit="A^2/Hz");
-    real cigid     `P(ask="yes" info="Imaginary part of correlation coefficient between Sig and Sid" unit="");
-    real fknee     `P(ask="yes" info="Cross-over frequency above which  white noise is dominant" unit="Hz");
-    real sigs      `P(ask="yes" info="Gate-source current noise spectral density" unit="A^2/Hz");
-    real sigd      `P(ask="yes" info="Gate-drain current noise spectral density" unit="A^2/Hz");
-    real siavl     `P(ask="yes" info="Impact ionization current noise spectral density" unit="A^2/Hz");
-    real ssi       `P(ask="yes" info="Total source junction current noise spectral density" unit="A^2/Hz");
-    real sdi       `P(ask="yes" info="Total drain junction current noise specral density" unit="A^2/Hz");
+    real sfl       `P(ask="yes" desc="Flicker noise current density at 1 Hz" unit="A/Hz");
+    real sqrtsff   `P(ask="yes" desc="Input-referred RMS white noise voltage density at 1 kHz" unit="V/sqrt(Hz)");
+    real sqrtsfw   `P(ask="yes" desc="Input-referred RMS white noise voltage density" unit="V/sqrt(Hz)");
+    real sid       `P(ask="yes" desc="White noise current density" unit="A^2/Hz");
+    real sig       `P(ask="yes" desc="Induced gate noise current density at 1 Hz" unit="A^2/Hz");
+    real cigid     `P(ask="yes" desc="Imaginary part of correlation coefficient between Sig and Sid" unit="");
+    real fknee     `P(ask="yes" desc="Cross-over frequency above which  white noise is dominant" unit="Hz");
+    real sigs      `P(ask="yes" desc="Gate-source current noise spectral density" unit="A^2/Hz");
+    real sigd      `P(ask="yes" desc="Gate-drain current noise spectral density" unit="A^2/Hz");
+    real siavl     `P(ask="yes" desc="Impact ionization current noise spectral density" unit="A^2/Hz");
+    real ssi       `P(ask="yes" desc="Total source junction current noise spectral density" unit="A^2/Hz");
+    real sdi       `P(ask="yes" desc="Total drain junction current noise specral density" unit="A^2/Hz");
 `endif // OPinfo
 
     /////////////////////////////////////////////////////////////////////////////
