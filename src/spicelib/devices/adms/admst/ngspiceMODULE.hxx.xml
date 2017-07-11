@@ -1148,7 +1148,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:variable name="e" select="pInst-&gt;%(name)"/>
     </admst:when>
     <admst:when test="attribute[name='desc']">
-      <admst:variable name="e" select="ckt->CKTstate0[((GENinstance*)here)->GENstate + %(name)]"/>
+      <admst:variable name="e" select="ckt->CKTstate0[((GENinstance*)here)->GENstate + hide_%(name)]"/>
     </admst:when>
     <admst:otherwise>
       <admst:variable name="e" select="%(name)"/>
@@ -2368,7 +2368,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:for-each>
       <admst:choose>
         <admst:when test="lhs/attribute[name='desc']">
-          <admst:text format="ckt->CKTstate0[((GENinstance*)here)->GENstate + %(lhs/name)]=$allep; /* indeed 3 */\n"/>
+          <admst:text format="ckt->CKTstate0[((GENinstance*)here)->GENstate + hide_%(lhs/name)]=$allep; /* indeed 3 */\n"/>
         </admst:when>
         <admst:otherwise>
           <admst:text format="%(lhs/name)=$allep; /* indeed 3 */\n"/>

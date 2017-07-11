@@ -68,7 +68,7 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
         <admst:choose>
           <admst:when test="[type='real']">
   case  $(module)_ask_%(name) :
-    value->rValue = ckt->CKTstate0[inst->GENstate + %(name)];
+    value->rValue = ckt->CKTstate0[inst->GENstate + hide_%(name)];
     return OK;
           </admst:when>
           <admst:otherwise>
