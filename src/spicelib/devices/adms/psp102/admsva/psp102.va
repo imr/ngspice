@@ -36,7 +36,7 @@
 module PSP102VA(D, G, S, B)
 
 `P(
-  info = "PSP MOSFET Model"
+  desc = "PSP MOSFET Model"
   version = `VERS
   revision = `VREV
   simkit:name = "psp1020"
