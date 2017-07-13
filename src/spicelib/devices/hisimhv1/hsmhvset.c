@@ -77,9 +77,8 @@ int HSMHVsetup(
         model->HSMHV_version = "1.24" ;
        printf("          1.24 is selected for VERSION. (default) \n");
     } else {
-      if (strcmp(model->HSMHV_version,"1.24") != 0 ) {
+      if (strncmp(model->HSMHV_version,"1.24", 4) != 0 ) {
        model->HSMHV_version = "1.24" ;
-//       printf("          1.24 is only available for VERSION. \n");
        printf("          1.24 is selected for VERSION. (default) \n");
       } else {
        printf("           %s is selected for VERSION \n", model->HSMHV_version);

@@ -383,7 +383,7 @@ BSIM4instance **InstArray;
             model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
         if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
-        if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81")))
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)))
         {  
             if (!model->BSIM4uaGiven)
                 model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */

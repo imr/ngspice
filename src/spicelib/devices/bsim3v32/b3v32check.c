@@ -38,10 +38,10 @@ FILE *fplog;
         fprintf (fplog, "W = %g, L = %g, M = %g\n", here->BSIM3v32w,
                  here->BSIM3v32l, here->BSIM3v32m);
 
-        if ((strcmp(model->BSIM3v32version, "3.2.4")) && (strcmp(model->BSIM3v32version, "3.24"))
-         && (strcmp(model->BSIM3v32version, "3.2.3")) && (strcmp(model->BSIM3v32version, "3.23"))
-         && (strcmp(model->BSIM3v32version, "3.2.2")) && (strcmp(model->BSIM3v32version, "3.22"))
-         && (strcmp(model->BSIM3v32version, "3.2")) && (strcmp(model->BSIM3v32version, "3.20")))
+        if ((strcmp(model->BSIM3v32version, "3.2.4")) && (strncmp(model->BSIM3v32version, "3.24", 4))
+         && (strcmp(model->BSIM3v32version, "3.2.3")) && (strncmp(model->BSIM3v32version, "3.23", 4))
+         && (strcmp(model->BSIM3v32version, "3.2.2")) && (strncmp(model->BSIM3v32version, "3.22", 4))
+         && (strncmp(model->BSIM3v32version, "3.2", 3)) && (strncmp(model->BSIM3v32version, "3.20", 4)))
         {
             fprintf (fplog,
                 "Warning: This model supports BSIM3v3.2, BSIM3v3.2.2, BSIM3v3.2.3, BSIM3v3.2.4\n");

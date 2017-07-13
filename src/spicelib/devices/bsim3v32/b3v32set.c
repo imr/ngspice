@@ -82,13 +82,13 @@ BSIM3v32instance **InstArray;
          * is faster than comparing strings.
          * Paolo Nenzi 2002
          */
-        if ((!strcmp(model->BSIM3v32version, "3.2.4"))||(!strcmp(model->BSIM3v32version, "3.24")))
+        if ((!strcmp(model->BSIM3v32version, "3.2.4"))||(!strncmp(model->BSIM3v32version, "3.24", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V324;
-        else if ((!strcmp(model->BSIM3v32version, "3.2.3"))||(!strcmp(model->BSIM3v32version, "3.23")))
+        else if ((!strcmp(model->BSIM3v32version, "3.2.3"))||(!strncmp(model->BSIM3v32version, "3.23", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V323;
-        else if ((!strcmp(model->BSIM3v32version, "3.2.2"))||(!strcmp(model->BSIM3v32version, "3.22")))
+        else if ((!strcmp(model->BSIM3v32version, "3.2.2"))||(!strncmp(model->BSIM3v32version, "3.22", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V322;
-        else if ((!strcmp(model->BSIM3v32version, "3.2"))||(!strcmp(model->BSIM3v32version, "3.20")))
+        else if ((!strncmp(model->BSIM3v32version, "3.2", 3))||(!strncmp(model->BSIM3v32version, "3.20", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V32;
         else
                 model->BSIM3v32intVersion = BSIM3v32V3OLD;

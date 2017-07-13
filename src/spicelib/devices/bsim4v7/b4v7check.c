@@ -46,7 +46,7 @@ FILE *fplog;
         fprintf(fplog, "\n");
         fprintf(fplog, "++++++++++ BSIM4v7 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if ((strcmp(model->BSIM4v7version, "4.7.0")) && (strcmp(model->BSIM4v7version, "4.70")) && (strcmp(model->BSIM4v7version, "4.7")))
+        if ((strcmp(model->BSIM4v7version, "4.7.0")) && (strncmp(model->BSIM4v7version, "4.70", 4)) && (strncmp(model->BSIM4v7version, "4.7", 3)))
         {  fprintf(fplog, "Warning: This model is BSIM4.7.0; you specified a wrong version number.\n");
            printf("Warning: This model is BSIM4.7.0; you specified a wrong version number.\n");
         }

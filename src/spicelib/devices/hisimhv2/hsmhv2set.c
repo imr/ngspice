@@ -138,10 +138,10 @@ int HSMHV2setup(
       printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHV2modName);
       model->HSMHV2_subversion = 2 ;
     } else {
-      if (strcmp(model->HSMHV2_version,"2.20") == 0 ) {
+      if (strncmp(model->HSMHV2_version,"2.20", 4) == 0 ) {
         printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHV2modName);
         model->HSMHV2_subversion = 2 ;
-      } else if (strcmp(model->HSMHV2_version,"2.2") == 0 ) {
+      } else if (strncmp(model->HSMHV2_version,"2.2", 3) == 0 ) {
         printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHV2modName);
         model->HSMHV2_subversion = 2 ;
       } else {

@@ -410,7 +410,7 @@ double m;
 
                                   T8 = here->BSIM4Vgsteff / here->BSIM4EsatL;
                                   T8 *= T8;
-                                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+                                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4))) {
                                       npart_c = model->BSIM4rnoic * (1.0 + T8
                                               * model->BSIM4tnoic * Leff);
                                       ctnoi = epsilon / sqrt(gamma * delta)
@@ -463,7 +463,7 @@ double m;
 
                               switch(model->BSIM4tnoiMod)
                               {  case 0:
-                                      if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+                                      if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4))) {
                                           T0 = here->BSIM4ueff * fabs(here->BSIM4qinv);
                                           T1 = T0 * tmp + pParam->BSIM4leff
                                              * pParam->BSIM4leff;
@@ -489,7 +489,7 @@ double m;
                                       }
                                       break;
                                  case 1:
-                                      if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+                                      if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4))) {
                                           T0 = here->BSIM4gm + here->BSIM4gmbs + here->BSIM4gds;
                                           T0 *= T0;
                                           igsquare = npart_theta * npart_theta * T0 / here->BSIM4IdovVds;

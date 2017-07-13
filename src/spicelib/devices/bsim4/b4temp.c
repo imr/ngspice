@@ -1385,7 +1385,7 @@ int Size_Not_Found, i;
                   pParam->BSIM4Aechvb = (model->BSIM4type == NMOS) ? 4.97232e-7 : 3.42537e-7;
                   pParam->BSIM4Bechvb = (model->BSIM4type == NMOS) ? 7.45669e11 : 1.16645e12;
 
-                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81")))
+                  if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)))
                   {  
                       pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
                                               * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;

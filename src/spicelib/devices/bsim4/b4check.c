@@ -84,7 +84,7 @@ FILE *fplog;
         fprintf(fplog, "\n");
         fprintf(fplog, "++++++++++ BSIM4 PARAMETER CHECKING BELOW ++++++++++\n");
 
-        if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81")) && (strcmp(model->BSIM4version, "4.8")))
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) && (strncmp(model->BSIM4version, "4.8", 3)))
         {  fprintf(fplog, "Warning: This model is BSIM4.8.1; you specified a deviating version number.\n");
            printf("Warning: This model is BSIM4.8.1; you specified a deviating version number.\n");
         }
@@ -812,7 +812,7 @@ FILE *fplog;
             printf("Warning: TNOIMOD=1 is not supported and may be removed from future version.\n");
         }
 
-        if ((strcmp(model->BSIM4version, "4.8.1")) && (strcmp(model->BSIM4version, "4.81"))) {
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4))) {
         /* v4.7 */
             if (model->BSIM4tnoiMod == 1 || model->BSIM4tnoiMod == 2) { 
                 if (model->BSIM4tnoia < 0.0) {   
