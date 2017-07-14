@@ -2633,6 +2633,37 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:text select="if[dynamic='yes']" format="#endif /* if(...) */\n"/>
 </admst:template>
 
+<!-- analog//case -->
+<admst:template match="case">
+  <admst:text format="/* -- CASE BEGIN -- */;\n"/>
+  <admst:variable name="casecondition" path="case"/>
+  <admst:variable name="havedefault" string="no"/>
+  <!-- check for default -->
+  <admst:for-each select="caseitem/[defaultcase='yes']">
+    <admst:variable name="havedefault" string="yes"/>
+  </admst:for-each>
+  <admst:for-each select="caseitem/[defaultcase='no']">
+    <admst:text format="/* CASE ITEM */\n"/>
+    <admst:text format="if\n("/>
+    <admst:join select="condition" separator="||">
+      <admst:text format="((%(e($casecondition/tree)))==(%(.)))"/>
+    </admst:join>
+    <admst:text format=")\n"/>
+    <admst:text test="code/[datatypename!='block']" format="{\n"/>
+    <admst:apply-templates select="code" match="%(datatypename)" required="yes"/>
+    <admst:text test="code/[datatypename!='block']" format="}\n"/>
+    <admst:text format="else\n"/>
+  </admst:for-each>
+  <admst:text select="[$havedefault='no']" format="{ /* no default */ }\n"/>
+  <admst:for-each select="caseitem/[defaultcase='yes']">
+    <admst:text format="/* CASE DEFAULT */\n"/>
+    <admst:text test="code/[datatypename!='block']" format="{\n"/>
+    <admst:apply-templates select="code" match="%(datatypename)" required="yes"/>
+    <admst:text test="code/[datatypename!='block']" format="}\n"/>
+  </admst:for-each>
+  <admst:text format="/* -- CASE END -- */;\n"/>
+</admst:template>
+
 <!-- analog//nilled -->
 <admst:template match="nilled">
 </admst:template>
@@ -2738,8 +2769,13 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="adms[datatypename='callfunction']"/>
     <admst:when test="adms[datatypename='nilled']"/>
     <admst:when test="adms[datatypename='blockvariable']"/>
+    <admst:when test="adms[datatypename='case']">
+      <admst:for-each select="caseitem">
+        <admst:apply-templates select="code" match="block:local:declaration"/>
+      </admst:for-each>
+    </admst:when>
     <admst:otherwise>
-      <admst:fatal format="'datatypename=%(adms/datatypename)': should not be reached %s\n"/>
+      <admst:fatal format="'datatypename=%(adms/datatypename)': should not be reached !\n"/>
     </admst:otherwise>
   </admst:choose>
 </admst:template>
