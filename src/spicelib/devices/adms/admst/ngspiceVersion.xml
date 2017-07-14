@@ -1599,8 +1599,35 @@
 
 <!-- analog//case -->
 <admst:template match="case">
-  <admst:error format="case statement: please implement me! (inside block)\n"/>
-  <admst:text format="/*CASE*/;\n"/>
+  <admst:text format="/* -- CASE BEGIN -- */;\n"/>
+  <admst:variable name="casecondition" path="case"/>
+  <admst:variable name="havedefault" string="no"/>
+  <!-- check for default -->
+  <admst:for-each select="caseitem/[defaultcase='yes']">
+    <admst:variable name="havedefault" string="yes"/>
+  </admst:for-each>
+  <admst:for-each select="caseitem/[defaultcase='no']">
+      <admst:text format="/* CASE ITEM */\n"/>
+      <admst:text format="if\n("/>
+      <admst:join select="condition" separator="||">
+        <admst:apply-templates select="$casecondition" match="expression:stringify:noprobe"/>
+        <admst:text format="((%s)==(%(.)))"/>
+      </admst:join>
+      <admst:text format=")\n"/>
+      <admst:text test="code/[datatypename!='block']" format="{\n"/>
+      <admst:apply-templates select="code" match="%(datatypename)" required="yes"/>
+      <admst:text test="code/[datatypename!='block']" format="}\n"/>
+      <admst:text format="else\n"/>
+  </admst:for-each>
+  <admst:text select="[$havedefault='no']" format="{ /* no default */ }\n"/>
+  <admst:for-each select="caseitem/[defaultcase='yes']">
+      <admst:text format="/* CASE DEFAULT */\n"/>
+      <admst:text test="code/[datatypename!='block']" format="{\n"/>
+      <admst:apply-templates select="code" match="%(datatypename)" required="yes"/>
+      <admst:text test="code/[datatypename!='block']" format="}\n"/>
+  </admst:for-each>
+  <admst:text format="/* -- CASE END -- */;\n"/>
+
 </admst:template>
 
 <!-- analog//nilled -->
