@@ -2216,39 +2216,40 @@
                 vsat       = Vds - vdss;
 
                 temp       = Idse + Iimpacte + Igidle - Igde - isjun; // Total drain-current
-                gm         =  CHNL_TYPE * ddx(temp, V(`Gint, S));
-                gmb        = -CHNL_TYPE * ddx(temp, V(S, `Bint));
-                gds        = -CHNL_TYPE * ddx(temp, V(D, S)) - (gm + gmb);
+                gm         = ddx( CHNL_TYPE * temp, V(`Gint, S));
+                gmb        = ddx(-CHNL_TYPE * temp, V(S, `Bint));
+                gds        = ddx(-CHNL_TYPE * temp, V(D, S));
+                gds        = gds - (gm + gmb);
 
-                gjs        = -ddx(idjun, V(D, `Bjd));
-                gjd        = -ddx(isjun, V(S, `Bjs));
+                gjs        = ddx(-idjun, V(D, `Bjd));
+                gjd        = ddx(-isjun, V(S, `Bjs));
 
-                css        =  CHNL_TYPE * ddx(Qd, V(D, S));
-                csg        = -CHNL_TYPE * ddx(Qd, V(`Gint, S));
-                csb        =  CHNL_TYPE * ddx(Qd, V(S, `Bint));
+                css        = ddx( CHNL_TYPE * Qd, V(D, S));
+                csg        = ddx(-CHNL_TYPE * Qd, V(`Gint, S));
+                csb        = ddx( CHNL_TYPE * Qd, V(S, `Bint));
                 csd        =  css - csg - csb;
-                cgs        = -CHNL_TYPE * ddx(Qg, V(D, S));
-                cgg        =  CHNL_TYPE * ddx(Qg, V(`Gint, S));
-                cgb        =  CHNL_TYPE * ddx(Qg, V(S, `Bint));
+                cgs        = ddx(-CHNL_TYPE * Qg, V(D, S));
+                cgg        = ddx( CHNL_TYPE * Qg, V(`Gint, S));
+                cgb        = ddx( CHNL_TYPE * Qg, V(S, `Bint));
                 cgd        =  cgg - cgs - cgb;
-                cds        = -CHNL_TYPE * ddx(Qs, V(D, S));
-                cdg        = -CHNL_TYPE * ddx(Qs, V(`Gint, S));
-                cdb        =  CHNL_TYPE * ddx(Qs, V(S, `Bint));
+                cds        = ddx(-CHNL_TYPE * Qs, V(D, S));
+                cdg        = ddx(-CHNL_TYPE * Qs, V(`Gint, S));
+                cdb        = ddx( CHNL_TYPE * Qs, V(S, `Bint));
                 cdd        =  cdg + cds + cdb;
-                cbs        = -CHNL_TYPE * ddx(Qb, V(D, S));
-                cbg        = -CHNL_TYPE * ddx(Qb, V(`Gint, S));
-                cbb        = -CHNL_TYPE * ddx(Qb, V(S, `Bint));
+                cbs        = ddx(-CHNL_TYPE * Qb, V(D, S));
+                cbg        = ddx(-CHNL_TYPE * Qb, V(`Gint, S));
+                cbb        = ddx(-CHNL_TYPE * Qb, V(S, `Bint));
                 cbd        =  cbb - cbs - cbg;
-                cgsol      = -CHNL_TYPE * ddx(Qfgd, V(D, S));
-                cgdol      =  CHNL_TYPE * ddx(Qfgs, V(`Gint, S));
+                cgsol      = ddx(-CHNL_TYPE * Qfgd, V(D, S));
+                cgdol      = ddx( CHNL_TYPE * Qfgs, V(`Gint, S));
 
-                cjsbot     = -MULT_i * CHNL_TYPE * ABDRAIN_i * ddx(qdjunbot, V(D, `Bjd));
-                cjsgat     = -MULT_i * CHNL_TYPE * LGDRAIN_i * ddx(qdjungat, V(D, `Bjd));
-                cjssti     = -MULT_i * CHNL_TYPE * LSDRAIN_i * ddx(qdjunsti, V(D, `Bjd));
+                cjsbot     = ddx(-MULT_i * CHNL_TYPE * ABDRAIN_i * qdjunbot, V(D, `Bjd));
+                cjsgat     = ddx(-MULT_i * CHNL_TYPE * LGDRAIN_i * qdjungat, V(D, `Bjd));
+                cjssti     = ddx(-MULT_i * CHNL_TYPE * LSDRAIN_i * qdjunsti, V(D, `Bjd));
                 cjs        =  cjsbot + cjsgat + cjssti;
-                cjdbot     = -MULT_i * CHNL_TYPE * ABSOURCE_i * ddx(qsjunbot, V(S, `Bjs));
-                cjdgat     = -MULT_i * CHNL_TYPE * LGSOURCE_i * ddx(qsjungat, V(S, `Bjs));
-                cjdsti     = -MULT_i * CHNL_TYPE * LSSOURCE_i * ddx(qsjunsti, V(S, `Bjs));
+                cjdbot     = ddx(-MULT_i * CHNL_TYPE * ABSOURCE_i * qsjunbot, V(S, `Bjs));
+                cjdgat     = ddx(-MULT_i * CHNL_TYPE * LGSOURCE_i * qsjungat, V(S, `Bjs));
+                cjdsti     = ddx(-MULT_i * CHNL_TYPE * LSSOURCE_i * qsjunsti, V(S, `Bjs));
                 cjd        =  cjdbot + cjdgat + cjdsti;                                     
             end else begin
                 ise        = is - isjun;
@@ -2287,39 +2288,39 @@
                 vsat       = Vds - vdss;
 
                 temp       = Idse + Iimpacte + Igidle - Igde - idjun;
-                gm         =  CHNL_TYPE * ddx(temp, V(`Gint, S));
-                gmb        = -CHNL_TYPE * ddx(temp, V(S, `Bint));
-                gds        =  CHNL_TYPE * ddx(temp, V(D, S));
+                gm         = ddx( CHNL_TYPE * temp, V(`Gint, S));
+                gmb        = ddx(-CHNL_TYPE * temp, V(S, `Bint));
+                gds        = ddx( CHNL_TYPE * temp, V(D, S));
 
-                gjs        = -ddx(isjun, V(S, `Bjs));
-                gjd        = -ddx(idjun, V(D, `Bjd));
+                gjs        = ddx(-isjun, V(S, `Bjs));
+                gjd        = ddx(-idjun, V(D, `Bjd));
 
-                cdd        =  CHNL_TYPE * ddx(Qd, V(D, S));
-                cdg        = -CHNL_TYPE * ddx(Qd, V(`Gint, S));
-                cdb        =  CHNL_TYPE * ddx(Qd, V(S, `Bint));
+                cdd        = ddx( CHNL_TYPE * Qd, V(D, S));
+                cdg        = ddx(-CHNL_TYPE * Qd, V(`Gint, S));
+                cdb        = ddx( CHNL_TYPE * Qd, V(S, `Bint));
                 cds        =  cdd - cdg - cdb;
-                cgd        = -CHNL_TYPE * ddx(Qg, V(D, S));
-                cgg        =  CHNL_TYPE * ddx(Qg, V(`Gint, S));
-                cgb        =  CHNL_TYPE * ddx(Qg, V(S, `Bint));
+                cgd        = ddx(-CHNL_TYPE * Qg, V(D, S));
+                cgg        = ddx( CHNL_TYPE * Qg, V(`Gint, S));
+                cgb        = ddx( CHNL_TYPE * Qg, V(S, `Bint));
                 cgs        =  cgg - cgd - cgb;
-                csd        = -CHNL_TYPE * ddx(Qs, V(D, S));
-                csg        = -CHNL_TYPE * ddx(Qs, V(`Gint, S));
-                csb        =  CHNL_TYPE * ddx(Qs, V(S, `Bint));
+                csd        = ddx(-CHNL_TYPE * Qs, V(D, S));
+                csg        = ddx(-CHNL_TYPE * Qs, V(`Gint, S));
+                csb        = ddx( CHNL_TYPE * Qs, V(S, `Bint));
                 css        =  csg + csd + csb;
-                cbd        = -CHNL_TYPE * ddx(Qb, V(D, S));
-                cbg        = -CHNL_TYPE * ddx(Qb, V(`Gint, S));
-                cbb        = -CHNL_TYPE * ddx(Qb, V(S, `Bint));
+                cbd        = ddx(-CHNL_TYPE * Qb, V(D, S));
+                cbg        = ddx(-CHNL_TYPE * Qb, V(`Gint, S));
+                cbb        = ddx(-CHNL_TYPE * Qb, V(S, `Bint));
                 cbs        =  cbb - cbd - cbg;
-                cgsol      =  CHNL_TYPE * ddx(Qfgs, V(`Gint, S));
-                cgdol      = -CHNL_TYPE * ddx(Qfgd, V(D, S));
+                cgsol      = ddx( CHNL_TYPE * Qfgs, V(`Gint, S));
+                cgdol      = ddx(-CHNL_TYPE * Qfgd, V(D, S));
 
-                cjsbot     = -MULT_i * CHNL_TYPE * ABSOURCE_i * ddx(qsjunbot, V(S, `Bjs));
-                cjsgat     = -MULT_i * CHNL_TYPE * LGSOURCE_i * ddx(qsjungat, V(S, `Bjs));
-                cjssti     = -MULT_i * CHNL_TYPE * LSSOURCE_i * ddx(qsjunsti, V(S, `Bjs));
+                cjsbot     = ddx(-MULT_i * CHNL_TYPE * ABSOURCE_i * qsjunbot, V(S, `Bjs));
+                cjsgat     = ddx(-MULT_i * CHNL_TYPE * LGSOURCE_i * qsjungat, V(S, `Bjs));
+                cjssti     = ddx(-MULT_i * CHNL_TYPE * LSSOURCE_i * qsjunsti, V(S, `Bjs));
                 cjs        =  cjsbot + cjsgat + cjssti;                                     
-                cjdbot     = -MULT_i * CHNL_TYPE * ABDRAIN_i * ddx(qdjunbot, V(D, `Bjd));
-                cjdgat     = -MULT_i * CHNL_TYPE * LGDRAIN_i * ddx(qdjungat, V(D, `Bjd));
-                cjdsti     = -MULT_i * CHNL_TYPE * LSDRAIN_i * ddx(qdjunsti, V(D, `Bjd));
+                cjdbot     = ddx(-MULT_i * CHNL_TYPE * ABDRAIN_i * qdjunbot, V(D, `Bjd));
+                cjdgat     = ddx(-MULT_i * CHNL_TYPE * LGDRAIN_i * qdjungat, V(D, `Bjd));
+                cjdsti     = ddx(-MULT_i * CHNL_TYPE * LSDRAIN_i * qdjunsti, V(D, `Bjd));
                 cjd        =  cjdbot + cjdgat + cjdsti;
             end
 `ifdef LocalModel
