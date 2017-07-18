@@ -38,13 +38,6 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             model->DIOnomTemp = ckt->CKTnomTemp;
         }
         vtnom = CONSTKoverQ * model->DIOnomTemp;
-        /* limit grading coeff to max of .9 */
-        if(model->DIOgradingCoeff>.9) {
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                    "%s: grading coefficient too large, limited to 0.9",
-                    model->DIOmodName);
-            model->DIOgradingCoeff=.9;
-        }
         /* limit activation energy to min of .1 */
         if(model->DIOactivationEnergy<.1) {
             SPfrontEnd->IFerrorf (ERR_WARNING,
@@ -93,16 +86,6 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             factor = 1.0 + (model->DIOgradCoeffTemp1 * dt)
                          + (model->DIOgradCoeffTemp2 * dt * dt);
             here->DIOtGradingCoeff = model->DIOgradingCoeff * factor;
-
-            /* limit temperature adjusted grading coeff
-             * to max of .9
-             */
-            if(here->DIOtGradingCoeff>.9) {
-              SPfrontEnd->IFerrorf (ERR_WARNING,
-                    "%s: temperature adjusted grading coefficient too large, limited to 0.9",
-                    here->DIOname);
-              here->DIOtGradingCoeff=.9;
-            }
 
             vt = CONSTKoverQ * here->DIOtemp;
             /* this part gets really ugly - I won't even try to
