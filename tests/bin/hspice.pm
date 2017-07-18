@@ -6,6 +6,7 @@
 #
 #  Rel  Date            Who             Comments
 # ====  ==========      =============   ========
+#  1.4  04/06/11        Geoffrey Coram  Fixed version detection; fixed ac-freq result printing
 #  1.3  06/21/07        Rob Jones       Verilog-A model support added
 #                                       HSPICE version detection updated
 #  1.2  06/30/06        Colin McAndrew/ Floating node support added
@@ -15,12 +16,18 @@
 #
 
 package simulate;
-$simulatorCommand="hspice";
+if (defined($main::simulatorCommand)) {
+    $simulatorCommand=$main::simulatorCommand;
+} else {
+    $simulatorCommand="hspice";
+}
 $netlistFile="hspiceCkt";
 use strict;
 
 sub version {
-    my($version);
+    my($version,$vaVersion);
+    $version="unknown";
+    $vaVersion="unknown";
     if (!open(OF,">$simulate::netlistFile")) {
         die("ERROR: cannot open file $simulate::netlistFile, stopped");
     }
@@ -30,7 +37,6 @@ sub version {
     print OF ".op";
     print OF ".end";
     close(OF);
-    $version="unknown";
     if (!open(SIMULATE,"$simulate::simulatorCommand $simulate::netlistFile 2>/dev/null|")) {
         die("ERROR: cannot run $main::simulatorName, stopped");
     }
@@ -38,12 +44,16 @@ sub version {
         chomp;
         if (s/.+HSPICE\s+-*\s*//) {
             ($version=$_)=~s/\s+.*//;
+            last;
         }
     }
     close(SIMULATE);
     if (! $main::debug) {
         unlink($simulate::netlistFile);
         unlink("$simulate::netlistFile.st0");
+        if (defined($main::verilogaFile)) {
+            unlink("$simulate::netlistFile.val");
+        }
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
@@ -52,7 +62,7 @@ sub version {
         unlink("hspice.errors");
         unlink("simout.tmp");
     }
-    return($version);
+    return($version,$vaVersion);
 }
 
 sub runNoiseTest {
@@ -92,19 +102,44 @@ sub runNoiseTest {
                     if ($main::isFloatingPin{$pin}) {
                         print OF "i_$pin $pin 0 0";
                     } elsif ($pin eq $main::biasListPin) {
-                        print OF "v_$pin $pin 0 $biasVoltage";
+                        if (defined($main::referencePinFor{$pin})) {
+                            print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} $biasVoltage";
+                            print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+                        } else {
+                            print OF "v_$pin $pin 0 $biasVoltage";
+                        }
                     } elsif ($pin eq $main::biasSweepPin) {
-                        print OF "v_$pin $pin 0 $sweepVoltage";
+                        if (defined($main::referencePinFor{$pin})) {
+                            print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} $sweepVoltage";
+                            print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+                        } else {
+                            print OF "v_$pin $pin 0 $sweepVoltage";
+                        }
                     } else {
-                        print OF "v_$pin $pin 0 $main::BiasFor{$pin}";
+                        if (defined($main::referencePinFor{$pin})) {
+                            print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} $main::BiasFor{$pin}";
+                            print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+                        } else {
+                            print OF "v_${pin} ${pin} 0 $main::BiasFor{$pin}";
+                        }
                     }
                 }
                 print OF "x1 ".join(" ",@main::Pin)." mysub";
-                print OF "fn 0 n_$noisePin v_$noisePin 1";
-                print OF "rn 0 n_$noisePin rmod";
-                print OF ".ac $main::frequencySpec";
-#               print OF ".noise v(n_$noisePin) vin $main::frequencySpec";
-                print OF ".noise v(n_$noisePin) vin ";
+                if ($main::outputNoise == 2) {
+                    print OF ".ac $main::frequencySpec";
+                    print OF ".noise v($noisePin,$main::Outputs[1]) vin";
+                } else {
+                    if (! $main::isFloatingPin{$noisePin}) {
+                        print OF "fn 0 n_$noisePin v_$noisePin 1";
+                        print OF "rn 0 n_$noisePin rmod";
+                    }
+                    print OF ".ac $main::frequencySpec";
+                    if ($main::isFloatingPin{$noisePin}) {
+                        print OF ".noise v($noisePin) vin";
+                    } else {
+                        print OF ".noise v(n_$noisePin) vin";
+                    }
+                }
                 print OF ".print noise onoise";
                 print OF ".end";
                 close(OF);
@@ -144,10 +179,11 @@ sub runNoiseTest {
     } else {
         printf OF ("Freq");
     }
-    foreach (@main::Outputs) {
-        printf OF (" N($_)");
+    if ($main::outputNoise == 2) {
+        print OF (" N($noisePin,$main::Outputs[1])");
+    } else {
+        print OF (" N($noisePin)");
     }
-    printf OF ("\n");
     for ($i=0;$i<=$#X;++$i) {
         if (defined($Noise[$i])) {printf OF ("$X[$i] $Noise[$i]\n")}
     }
@@ -160,6 +196,9 @@ sub runNoiseTest {
     if (! $main::debug) {
         unlink($simulate::netlistFile);
         unlink("$simulate::netlistFile.st0");
+        if (defined($main::verilogaFile)) {
+            unlink("$simulate::netlistFile.val");
+        }
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
@@ -170,9 +209,9 @@ sub runNoiseTest {
 
 sub runAcTest {
     my($variant,$outputFile)=@_;
-    my($arg,$name,$value,$type,$pin,$mPin,$fPin,%NextPin);
-    my(@BiasList,$i,@Field);
-    my(@X,$omega,%g,%c,$twoPi,$temperature,$biasVoltage,$sweepVoltage);
+    my($arg,$name,$value,$type,$pin,$mPin,$fPin,%NextPin,%PrevPin,$first_fPin);
+    my(@BiasList,$i,$j,@Field);
+    my(@X,$omega,%g,%c,%q,$twoPi,$temperature,$biasVoltage,$sweepVoltage);
     my($inData,$inResults,$outputLine);
     $twoPi=8.0*atan2(1.0,1.0);
 
@@ -187,16 +226,22 @@ sub runAcTest {
 #   of this subckt.
 #
 
+    foreach $mPin (@main::Pin) {
+        if ($main::needAcStimulusFor{$mPin}) {
+            $first_fPin=$mPin;
+            last;
+        }
+    }
     if (!open(OF,">$simulate::netlistFile")) {
         die("ERROR: cannot open file $simulate::netlistFile, stopped");
     }
     print OF "* AC simulation for $main::simulatorName";
-    &generateCommonNetlistInfo($variant);
+    &generateCommonNetlistInfo($variant,$main::Temperature[0]);
     @BiasList=split(/\s+/,$main::biasListSpec);
     print OF ".param vbias=$BiasList[0]";
     print OF ".param vsweep=$main::BiasSweepList[0]";
     foreach $pin (@main::Pin) {
-        if ($pin eq $main::Pin[0]) {
+        if ($pin eq $first_fPin) {
             print OF ".param ac_$pin=1";
         } else {
             print OF ".param ac_$pin=0";
@@ -204,37 +249,61 @@ sub runAcTest {
         if ($main::isFloatingPin{$pin}) {
             print OF "i_$pin $pin 0 0";
         } elsif ($pin eq $main::biasListPin) {
-            print OF "v_$pin $pin 0 vbias ac ac_$pin";
+            if (defined($main::referencePinFor{$pin})) {
+                print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} vbias ac ac_$pin";
+                print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+            } else {
+                print OF "v_${pin} ${pin} 0 vbias ac ac_$pin";
+            }
         } elsif ($pin eq $main::biasSweepPin) {
-            print OF "v_$pin $pin 0 vsweep ac ac_$pin";
+            if (defined($main::referencePinFor{$pin})) {
+                print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} vsweep ac ac_$pin";
+                print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+            } else {
+                print OF "v_${pin} ${pin} 0 vsweep ac ac_$pin";
+            }
         } else {
-            print OF "v_$pin $pin 0 $main::BiasFor{$pin} ac ac_$pin";
+            if (defined($main::referencePinFor{$pin})) {
+                print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} $main::BiasFor{$pin} ac ac_$pin";
+                print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+            } else {
+                print OF "v_${pin} ${pin} 0 $main::BiasFor{$pin} ac ac_$pin";
+            }
         }
     }
     print OF "x1 ".join(" ",@main::Pin)." mysub";
     print OF ".ac $main::frequencySpec";
     foreach $pin (@main::Pin) {print OF ".print ac ir(v_$pin) ii(v_$pin)"}
-    $NextPin{$main::Pin[0]}=$main::Pin[$#main::Pin];
-    for ($i=1;$i<=$#main::Pin;++$i) {
-        $NextPin{$main::Pin[$i]}=$main::Pin[$i-1];
+    for ($i=0;$i<=$#main::Pin;++$i) {
+        next if (!$main::needAcStimulusFor{$main::Pin[$i]});
+        $j=$i;
+        while (1) {
+            --$j;
+            $j=$#main::Pin if ($j < 0);
+            if ($main::needAcStimulusFor{$main::Pin[$j]}) {
+                $PrevPin{$main::Pin[$i]}=$main::Pin[$j];
+                last;
+            }
+        }
     }
     foreach $temperature (@main::Temperature) {
         foreach $biasVoltage (@BiasList) {
             foreach $sweepVoltage (@main::BiasSweepList) {
                 foreach $pin (@main::Pin) {
+                    next if (!$main::needAcStimulusFor{$pin});
                     next if ($temperature == $main::Temperature[0] && $biasVoltage == $BiasList[0]
-                             && $sweepVoltage == $main::BiasSweepList[0] && $pin eq $main::Pin[0]);
+                             && $sweepVoltage == $main::BiasSweepList[0] && $pin eq $first_fPin);
                     print OF ".alter";
-                    if ($biasVoltage == $BiasList[0] && $sweepVoltage == $main::BiasSweepList[0] && $pin eq $main::Pin[0]) {
+                    if ($biasVoltage == $BiasList[0] && $sweepVoltage == $main::BiasSweepList[0] && $pin eq $first_fPin) {
                         print OF ".temp $temperature";
                     }
                     if ($sweepVoltage == $main::BiasSweepList[0] && $pin eq $main::Pin[0]) {
                         print OF ".param vbias=$biasVoltage";
                     }
-                    if ($pin eq $main::Pin[0]) {
+                    if ($pin eq $first_fPin) {
                         print OF ".param vsweep=$sweepVoltage";
                     }
-                    print OF ".param ac_$NextPin{$pin}=0";
+                    print OF ".param ac_$PrevPin{$pin}=0";
                     print OF ".param ac_$pin=1";
                 }
             }
@@ -251,12 +320,21 @@ sub runAcTest {
         foreach $fPin (@main::Pin) {
             @{$g{$mPin,$fPin}}=();
             @{$c{$mPin,$fPin}}=();
+            @{$q{$mPin,$fPin}}=();
         }
     }
-    for ($i=0;$i<$#main::Pin;++$i) {
-        $NextPin{$main::Pin[$i]}=$main::Pin[$i+1];
+    for ($i=0;$i<=$#main::Pin;++$i) {
+        next if (!$main::needAcStimulusFor{$main::Pin[$i]});
+        $j=$i;
+        while (1) {
+            ++$j;
+            $j=0 if ($j > $#main::Pin);
+            if ($main::needAcStimulusFor{$main::Pin[$j]}) {
+                $NextPin{$main::Pin[$i]}=$main::Pin[$j];
+                last;
+            }
+        }
     }
-    $NextPin{$main::Pin[$#main::Pin]}=$main::Pin[0];
     if (!open(SIMULATE,"$simulate::simulatorCommand $simulate::netlistFile 2>/dev/null|")) {
         die("ERROR: cannot run $main::simulatorName, stopped");
     }
@@ -269,11 +347,11 @@ sub runAcTest {
             }
         }
     }
-    $fPin=$main::Pin[0];
+    $fPin=$first_fPin;
     while (<SIMULATE>) {
         chomp;
-        if (/ac\s+analysis/i) {$inResults=1;$inData=0;next}
-        if (/job\s+concluded/) {$inResults=0;$fPin=$NextPin{$fPin}}
+        if (/ac\s+analysis/i && /temp=/i) {$inResults=1;$inData=0;next}
+        if (/info/i && /job\s+concluded/) {$inResults=0;$fPin=$NextPin{$fPin}}
         next if (!$inResults);
         s/^\s+//;s/\s+$//;
         if (/^v_([a-zA-z][a-zA-Z0-9]*)/) {$mPin=$1;$inData=1;next;}
@@ -286,7 +364,7 @@ sub runAcTest {
             next;
         }
         next if (! $inData);
-        if (($main::fMin != $main::fMax) && ($mPin eq $main::Pin[0]) && ($mPin eq $fPin)) {
+        if (($main::fMin != $main::fMax) && ($fPin eq $first_fPin)) {
             push(@X,&modelQa::unScale($Field[0]));
         }
         $omega=$twoPi*&modelQa::unScale($Field[0]);
@@ -295,6 +373,11 @@ sub runAcTest {
             push(@{$c{$mPin,$fPin}},&modelQa::unScale($Field[2])/$omega);
         } else {
             push(@{$c{$mPin,$fPin}},-1*&modelQa::unScale($Field[2])/$omega);
+        }
+        if (abs(&modelQa::unScale($Field[1])) > 1.0e-99) {
+            push(@{$q{$mPin,$fPin}},&modelQa::unScale($Field[2])/&modelQa::unScale($Field[1]));
+        } else {
+            push(@{$q{$mPin,$fPin}},1.0e99);
         }
     }
     close(SIMULATE);
@@ -326,9 +409,15 @@ sub runAcTest {
                 } else {
                     undef($outputLine);last;
                 }
-            } else {
+            } elsif ($type eq "c") {
                 if (defined(${$c{$mPin,$fPin}}[$i])) {
                     $outputLine.=" ${$c{$mPin,$fPin}}[$i]";
+                } else {
+                    undef($outputLine);last;
+                }
+            } else {
+                if (defined(${$q{$mPin,$fPin}}[$i])) {
+                    $outputLine.=" ${$q{$mPin,$fPin}}[$i]";
                 } else {
                     undef($outputLine);last;
                 }
@@ -345,6 +434,9 @@ sub runAcTest {
     if (! $main::debug) {
         unlink($simulate::netlistFile);
         unlink("$simulate::netlistFile.st0");
+        if (defined($main::verilogaFile)) {
+            unlink("$simulate::netlistFile.val");
+        }
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
@@ -377,7 +469,7 @@ sub runDcTest {
         die("ERROR: cannot open file $simulate::netlistFile, stopped");
     }
     print OF "* DC simulation for $main::simulatorName";
-    &generateCommonNetlistInfo($variant);
+    &generateCommonNetlistInfo($variant,$main::Temperature[0]);
     @BiasList=split(/\s+/,$main::biasListSpec);
     ($start,$stop,$step)=split(/\s+/,$main::biasSweepSpec);
     $start-=$step;
@@ -386,11 +478,26 @@ sub runDcTest {
         if ($main::isFloatingPin{$pin}) {
             print OF "i_$pin $pin 0 0";
         } elsif ($pin eq $main::biasListPin) {
-            print OF "v_$pin $pin 0 vbias";
+            if (defined($main::referencePinFor{$pin})) {
+                print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} vbias";
+                print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+            } else {
+                print OF "v_${pin} ${pin} 0 vbias";
+            }
         } elsif ($pin eq $main::biasSweepPin) {
-            print OF "v_$pin $pin 0 $start";
+            if (defined($main::referencePinFor{$pin})) {
+                print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} $start";
+                print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+            } else {
+                print OF "v_${pin} ${pin} 0 $start";
+            }
         } else {
-            print OF "v_$pin $pin 0 $main::BiasFor{$pin}";
+            if (defined($main::referencePinFor{$pin})) {
+                print OF "v_${pin} ${pin} ${pin}_$main::referencePinFor{$pin} $main::BiasFor{$pin}";
+                print OF "e_${pin} ${pin}_$main::referencePinFor{$pin} 0 $main::referencePinFor{$pin} 0 1";
+            } else {
+                print OF "v_${pin} ${pin} 0 $main::BiasFor{$pin}";
+            }
         }
     }
     print OF "x1 ".join(" ",@main::Pin)." mysub";
@@ -479,6 +586,9 @@ sub runDcTest {
     if (! $main::debug) {
         unlink($simulate::netlistFile);
         unlink("$simulate::netlistFile.st0");
+        if (defined($main::verilogaFile)) {
+            unlink("$simulate::netlistFile.val");
+        }
         if (!opendir(DIRQA,".")) {
             die("ERROR: cannot open directory ., stopped");
         }
@@ -490,10 +600,10 @@ sub runDcTest {
 }
 
 sub generateCommonNetlistInfo {
-    my($variant)=$_[0];
+    my($variant,$temperature) = @_;
     my(@Pin_x,$arg,$name,$value,$eFactor,$fFactor,$pin);
-    print OF ".option tnom=27 gmin=1e-15 abstol=1e-14 reltol=1e-8 ingold=2 numdgt=7"; # default temp for HSPICE is 25
-    print OF ".temp $main::Temperature[0]";
+    print OF ".option tnom=27 reltol=1u vntol=1n abstol=1f"; # default for HSPICE is 25
+    print OF ".temp $temperature";
     if ($variant=~/^scale$/) {
         print OF ".option scale=$main::scaleFactor";
     }
@@ -518,8 +628,17 @@ sub generateCommonNetlistInfo {
     foreach $pin (@main::Pin) {push(@Pin_x,"${pin}_x")}
     print OF ".subckt mysub ".join(" ",@Pin_x);
     foreach $pin (@main::Pin) {
-        if ($main::isFloatingPin{$pin}) { # assumed "dt" thermal pin, no scaling sign change
-            print OF "v_$pin ${pin} ${pin}_x 0";
+        if ($main::isFloatingPin{$pin}) {
+            if ($main::outputNoise && $pin eq $main::Outputs[0]) {
+                if ($variant =~ /^m$/) {
+                    $eFactor = sqrt($main::mFactor);
+                } else {
+                    $eFactor = 1;
+                }
+                print OF "e_$pin ${pin}_x 0 ${pin} 0 $eFactor";
+            } else { # assumed "dt" thermal pin, no scaling sign change
+                print OF "v_$pin ${pin} ${pin}_x 0";
+            }
         } elsif ($variant=~/^Flip/ && defined($main::flipPin{$pin})) {
             print OF "e_$pin ${pin}_v 0 $main::flipPin{$pin}_x 0 $eFactor";
             print OF "v_$pin ${pin}_v ${pin} 0";
