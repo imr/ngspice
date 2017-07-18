@@ -72,7 +72,7 @@ run_test() {
     for version in `ls -C1 ${qaResultsDirectory}/${simname}` ; do
         for platform in `ls -C1 ${qaResultsDirectory}/${simname}/${version}` ; do
 
-            if [ ${version} = ${localVersion}  -a  ${platform} = ${localPlatform} ]
+            if [ "${version}" = "${localVersion}" -a "${platform}" = "${localPlatform}" ]
             then
                 break
             fi
