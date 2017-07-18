@@ -2,7 +2,7 @@
 eval 'exec perl -S -x -w $0 ${1+"$@"}'
 #!perl
 
-# 
+#
 # compareSimulationResults.pl: program to do a toleranced comparison of compact model simulation results
 #
 #  Rel  Date            Who             Comments
@@ -177,41 +177,39 @@ sub compareResults {
     use strict;
     my($refFile,$simFile,$clip,$nDigits,$relTol)=@_;
     my(@Ref,@Sim,$i,$j,$relErr,$maxRelErr,$absErr,$maxAbsErr);
-    my(@RefRes,@SimRes,$matchType,$mag,$lo,$hi);
+    my(@RefRes,@SimRes,@ColNames,$matchType,$mag,$lo,$hi);
 
     return("ERROR: cannot open file $refFile") if (!open(IF,"$refFile"));
-    while (<IF>) {
-        s/\s+$//;
-        push(@Ref,$_);
-    }
+    while (<IF>) {chomp;push(@Ref,$_)}
     close(IF);
     return("ERROR: cannot open file $simFile") if (!open(IF,"$simFile"));
-    while (<IF>) {
-        s/\s+$//;
-        push(@Sim,$_);
-    }
+    while (<IF>) {chomp;push(@Sim,$_)}
     close(IF);
+    if ($main::verbose && $#Ref != $#Sim) {print STDERR "Reference points: $#Ref\nSimulated points: $#Sim"}
     return("FAIL        (probably from some simulation failure)") if ($#Ref != $#Sim || $#Sim<1);
+    if ($main::verbose && $Ref[0] ne $Sim[0]) {print STDERR "Reference quantities: $Ref[0]\nSimulated quantities: $Sim[0]"}
     return("FAIL        (simulation output quantities differ)")   if ($Ref[0] ne $Sim[0]);
     $maxAbsErr=0;$maxRelErr=0;$matchType=0;
+    @ColNames=split(/\s+/,$Ref[0]);
     for ($j=1;$j<=$#Ref;++$j) {
         @RefRes=split(/\s+/,$Ref[$j]);
         @SimRes=split(/\s+/,$Sim[$j]);
-        return("FAIL        (number of quantities simulated are different") if ($#RefRes != $#SimRes);
+        if ($main::verbose && $#RefRes != $#SimRes) {print STDERR "Line $j: Ref data: $#RefRes\tSim data: $#SimRes"}
+        return("FAIL        (number of quantities simulated are different)") if ($#RefRes != $#SimRes);
         for ($i=1;$i<=$#RefRes;++$i) { # ignore first column, this is the sweep variable
             if ($RefRes[$i] !~ /^$main::number$/ || $SimRes[$i] !~ /^$main::number$/) {
                 return("FAIL        (non-numeric results");
             }
             next if ($RefRes[$i] == $SimRes[$i]);
             $matchType=1 if ($matchType<1);
-            #next if (abs($RefRes[$i]) < $clip && abs($SimRes[$i]) < $clip);
-            next if (abs($RefRes[$i]) < $clip || abs($SimRes[$i]) < $clip);
+            next if (abs($RefRes[$i]) < $clip && abs($SimRes[$i]) < $clip);
+            #next if (abs($RefRes[$i]) < $clip || abs($SimRes[$i]) < $clip);
             if ($RefRes[$i]*$SimRes[$i] <= 0.0) {
                 $matchType=2 if ($matchType<2);
                 $absErr=abs($RefRes[$i]-$SimRes[$i]);
                 $relErr=$absErr/(0.5*(abs($RefRes[$i])+abs($SimRes[$i])+$absErr));
                 $maxRelErr=$relErr if ($relErr > $maxRelErr);
-                if ($main::verbose) {print STDERR $RefRes[$i],$SimRes[$i],100*$relErr."\%"}
+                if ($main::verbose) {print STDERR $ColNames[$i],$RefRes[$i],$SimRes[$i],100*$relErr."\%"}
                 next;
             }
             $lo=abs($RefRes[$i]);
@@ -229,7 +227,7 @@ sub compareResults {
             $absErr=abs($RefRes[$i]-$SimRes[$i]);
             $relErr=$absErr/(0.5*(abs($RefRes[$i])+abs($SimRes[$i])+$absErr));
             next if ($relErr<$relTol);
-            if ($main::verbose) {print STDERR $RefRes[$i],$SimRes[$i],100*$relErr."\%"}
+            if ($main::verbose) {print STDERR $ColNames[$i],$RefRes[$i],$SimRes[$i],100*$relErr."\%"}
             $matchType=2 if ($matchType<2);
             $maxRelErr=$relErr if ($relErr > $maxRelErr);
         }
