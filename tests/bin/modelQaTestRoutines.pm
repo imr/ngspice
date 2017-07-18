@@ -6,6 +6,8 @@
 #
 #  Rel  Date            Who             Comments
 # ====  ==========      =============   ========
+#  1.4                  Colin McAndrew  Q added as AC output option
+#                                       Unused AC simulations skipped
 #  1.2  06/30/06        Colin McAndrew  Floating node support added
 #                                       Noise simulation added
 #                                       Other general cleanup
@@ -156,9 +158,9 @@ sub processSetup {
     if (!defined($main::keyLetter)) {
         die("ERROR: no keyLetter specified, stopped");
     }
-    if (!defined($main::nTypeSelectionArguments)) {
-        die("ERROR: no model selection arguments specified, stopped");
-    }
+    # if (!defined($main::nTypeSelectionArguments)) {
+    #    die("ERROR: no model selection arguments specified, stopped");
+    #}
     @main::Variants=("standard");
     if ($main::doPinFlipTest&&$main::doPNFlipTest) {
         push(@main::Variants,"Flip_N");
@@ -197,10 +199,19 @@ sub processTestSpec {
     @main::InstanceParameters=();
     @main::Outputs=();
     @main::ModelParameters=();
+    @main::TestVariants=@main::Variants;
     undef(%main::BiasFor);
-    %main::isFloatingPin=%main::isGeneralFloatingPin;
+    if (%main::isGeneralFloatingPin) {
+        %main::isFloatingPin=%main::isGeneralFloatingPin;
+    } else {
+        undef(%main::isFloatingPin);
+    }
     undef(%isAnalysisPin);
     undef(@main::Temperature);
+    undef(%main::referencePinFor);
+    foreach $pin (@main::Pin) {
+        $main::needAcStimulusFor{$pin}=0;
+    }
     foreach (@Spec) {
         if (s/^output[s]?\s+//i) {
             s/\(/ /g;s/\)//g;
@@ -214,7 +225,7 @@ sub processTestSpec {
                     }
                     push(@main::Outputs,$Field[$i]);
                 }
-                if ($Field[$i] =~ /^[CG]$/) {
+                if ($Field[$i] =~ /^[CGQ]$/) {
                     $main::outputAc=1;
                     push(@main::Outputs,lc($Field[$i]));
                     ++$i;
@@ -228,24 +239,39 @@ sub processTestSpec {
                         die("ERROR: pin $Field[$i] listed for AC output is not a specified pin, stopped");
                     }
                     $main::Outputs[$#main::Outputs].=" $Field[$i]";
+                    $main::needAcStimulusFor{$Field[$i]}=1;
                     $isAnalysisPin{$Field[$i]}=1;
                 }
                 if ($Field[$i] =~ /^N$/) {
+                    my($noi1,$noi2);
                     $main::outputNoise=1;
                     ++$i;
-                    if (!$main::isPin{$Field[$i]}) {
-                        die("ERROR: pin $Field[$i] listed for noise output is not a specified pin, stopped");
+                    $noi1 = $Field[$i];
+                    $isAnalysisPin{$noi1}=1;
+                    if (!$main::isPin{$noi1}) {
+                        die("ERROR: pin $noi1 listed for noise output is not a specified pin, stopped");
                     }
                     if ($#main::Outputs==0) {
                         die("ERROR: can only specify one pin for noise output, stopped");
                     }
-                    push(@main::Outputs,$Field[$i]);
-                    $isAnalysisPin{$Field[$i]}=1;
+                    push(@main::Outputs,$noi1);
+                    ++$i;
+                    if ($i <= $#Field) {
+                        $noi2 = $Field[$i];
+                        $isAnalysisPin{$noi2}=1;
+                        if (!$main::isPin{$noi2}) {
+                            die("ERROR: pin $noi2 listed for noise output is not a specified pin, stopped");
+                        }
+                        $main::outputNoise=2;
+                        push(@main::Outputs,$noi2);
+                    }
                 }
             }
             next;
         }
         if (/^biases\s+/i) {
+            s/V\s*\(\s*/V(/;s/\s*\)/)/;
+            s/V\(([a-zA-Z0-9]+),([a-zA-Z0-9]+)\)/V($1_$2)/; # convert V(n1,n2) to V(n1_n2)
             @Field=split(/[\s,]+/,$_);
             for ($i=1;$i<=$#Field;++$i) {
                 if ($Field[$i] !~ /=/) {
@@ -255,6 +281,9 @@ sub processTestSpec {
                 ($pin,$bias)=split("=",$Field[$i]);
                 if ($bias !~ /^$main::number$/) {
                     die("ERROR: biases specifications must be V(pin)=number, stopped");
+                }
+                if ($pin =~ s/_([a-zA-Z0-9]+)$//) { # this a V(n1,n2) pin (not ground) referenced bias
+                    $main::referencePinFor{$pin}=$1;
                 }
                 $main::BiasFor{$pin}=$bias;
             }
@@ -312,6 +341,26 @@ sub processTestSpec {
             }
             $main::biasListSpec=join(" ",@Field[1..$#Field]);
             $main::BiasFor{$main::biasListPin}=$Field[1];
+            next;
+        }
+        if (s/^verilogAfile\s+//i) {
+            $main::verilogaFile=$_;
+            if (! -f $main::verilogaFile) {
+                die("ERROR: cannot find file $main::verilogaFile, stopped");
+            }
+            next;
+        }
+        if (s/^(pins|terminals)\s+//i) {
+            foreach $pin (@main::Pin) {
+                $main::isPin{$pin}=0;
+            }
+            @main::Pin = split(/[\s,]+/,$_);
+            foreach $pin (@main::Pin) {
+                $main::isPin{$pin}=1;
+                if ($pin !~ /^[a-zA-Z][a-zA-Z0-9]*$/) { # underscores are not allowed
+                    die("ERROR: bad pin name specification $pin, stopped");
+                }
+            }
             next;
         }
         if (s/^instanceParameters\s+//i) {
@@ -410,19 +459,34 @@ sub processTestSpec {
             }
             next;
         }
+        if (/^symmetric(Pins|Terminals)/i) {
+            @Field=split(/[\s,]+/,$_);
+            if ($#Field == 2) {
+                die("ERROR: cannot add symmetric pin specification per test, stopped");
+            } else {
+                @main::TestVariants=();
+                foreach $variant (@main::Variants) {
+                    if ($variant ne "Flip_N" && $variant ne "Flip_P") {
+                        push(@main::TestVariants,$variant);
+                    }
+                }
+            }
+            next;
+        }
         die("ERROR: unknown test directive\n$_\nstopped");
     }
     unless (@main::Temperature) {
         @main::Temperature=@main::DefaultTemperature;
     }
-    if (abs($main::outputDc+$main::outputAc+$main::outputNoise-1) > 0.001) {
+    if (abs($main::outputDc+$main::outputAc+($main::outputNoise>0)-1) > 0.001) {
         die("ERROR: outputs specified must be one of DC, AC or noise, stopped");
     }
     if ($main::outputDc && !defined($main::biasSweepSpec)) {
         die("ERROR: no bias sweep spec defined for DC testing, stopped");
     }
-    if ($main::outputNoise && !defined($main::frequencySpec)) {
-        die("ERROR: no frequency spec defined for noise testing, stopped");
+    if ($main::outputNoise && !defined($main::frequencySpec)) { # default for noise is f=1
+        $main::frequencySpec="lin 1 1 1";
+        $main::fType="lin";$main::fSteps=1;$main::fMin=1;$main::fMax=1;
     }
     if ($main::outputAc && !defined($main::frequencySpec)) { # default for AC is omega=1
         $oneOverTwoPi=1.0/(8.0*atan2(1.0,1.0));
@@ -441,7 +505,7 @@ sub processTestSpec {
         if ($main::isSymmetryPin{$pin} && $main::isFloatingPin{$pin}) {
             die("ERROR: a floating pin cannot be specified as a symmetry pin, stopped");
         }
-        if ($isAnalysisPin{$pin} && $main::isFloatingPin{$pin}) {
+        if ($isAnalysisPin{$pin} && $main::isFloatingPin{$pin} && !main::outputNoise) {
             die("ERROR: a floating pin can only have its voltage measured in DC analyses, stopped");
         }
     }
@@ -457,8 +521,13 @@ sub processTestSpec {
         } else {
             $main::biasSweepPin=$main::Pin[0];
         }
-        $main::biasSweepSpec="$main::BiasFor{$main::biasSweepPin} $main::BiasFor{$main::biasSweepPin} 0"; 
-        @main::BiasSweepList=($main::BiasFor{$main::biasSweepPin});
+        if (!defined($main::BiasFor{$main::biasSweepPin})) {
+            $main::biasSweepSpec="0 0 0";
+            @main::BiasSweepList="vin";
+        } else {
+            $main::biasSweepSpec="$main::BiasFor{$main::biasSweepPin} $main::BiasFor{$main::biasSweepPin} 0";
+            @main::BiasSweepList=($main::BiasFor{$main::biasSweepPin});
+        }
     } elsif (defined($main::isFloatingPin{$main::biasSweepPin})) {
         die("ERROR: a bias sweep cannot be specified for a floating pin, stopped");
     }
@@ -586,7 +655,7 @@ sub processIfdefs {
                     if ($ifdefLevel > $maxIfdefLevel) {$maxIfdefLevel=$ifdefLevel}
                 }
                 if ($Input[$end] =~ /^`end/)  {--$ifdefLevel}
-                if ($Input[$end] =~ /^`else/) {$middle=$end}
+                if ($Input[$end] =~ /^`else/ && $ifdefLevel == 1) {$middle=$end}
                 last if ($ifdefLevel == 0);
             }
             if (($end > $#Input) && ($ifdefLevel > 0)) {
@@ -682,7 +751,7 @@ sub platform {
     use Config;
     my($osName,$osVer,$archName)=($modelQa::Config{osname},$modelQa::Config{osvers},$modelQa::Config{archname});
     my($platform);
-    
+
     if ($osName !~ /win/i) {
         open(UNAME,"uname -p|") or die("ERROR: cannot determine processore and OS information, stopped");
         chomp($archName=<UNAME>);close(UNAME);
@@ -693,7 +762,7 @@ sub platform {
         open(UNAME,"uname -r|");chomp($osVer =<UNAME>);close(UNAME);
     }
     $platform = "${archName}_${osName}_${osVer}";
-    $platform =~ s|[()/]||g; 
+    $platform =~ s/\s+/-/g;
     return($platform);
 }
 
