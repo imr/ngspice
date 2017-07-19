@@ -80,6 +80,12 @@
 `define hypmax(x,xmin,c) \
         ((xmin) + 0.5 * ((x) - (xmin) - (c) + sqrt(((x) - (xmin) - (c)) * ((x) - (xmin) - (c)) - 4.0 * (xmin) * (c))))
 
+// Temperature Dependence Type
+`define Tempdep(PARAML, PARAMT, DELTEMP, TEMPMOD) \
+  (((TEMPMOD) != 0) \
+   ? ((PARAML) + `hypmax((PARAMT) * (DELTEMP), -(PARAML), 1.0e-6)) \
+   : ((PARAML) * `hypsmooth(1.0 + (PARAMT) * (DELTEMP) - 1.0e-6, 1.0e-3)))
+
 
 // Mathematical functions
 //`define SINH(x)        (0.5 * (`lexp(x) - `lexp(-(x))))
