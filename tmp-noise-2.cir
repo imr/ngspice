@@ -1,0 +1,24 @@
+* (exec-spice "ngspice %s" t)
+* actually not noise but temp coeff
+
+v1  1 0  dc 100 ac=1
+
+b2  2 0  i=v(1) tc1=0.001
+v2  0 2  0
+
+b3  3 0  v=v(1) tc1=0.001
+
+.temp 127.0
+
+.control
+op
+let idc2=i(v2)
+let vdc3=v(3)
+print idc2 vdc3
+
+ac dec 1 1kHz 1kHz
+let iac2=i(v2)
+let vac3=v(3)
+print iac2 vac3
+
+.endc
