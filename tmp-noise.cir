@@ -1,0 +1,22 @@
+* (exec-spice "ngspice %s" t)
+
+v1  1 0  dc 0 ac 1e-4
+v2  200 0 dc=1
+
+R1  1 2  1k
+R2  2 0  1k
+
+R10 1 20 1k
+R20 20 0 '1k*v(200)'
+
+.control
+op
+listing e
+
+noise v(2) v1 dec 1 1kHz 1kHz
+print all
+
+noise v(20) v1 dec 1 1kHz 1kHz
+print all
+
+.endc

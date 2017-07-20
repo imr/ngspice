@@ -4304,7 +4304,7 @@ inp_compat(struct line *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
-    char *xline;
+    char *xline, *x2line, *x3line;
     size_t xlen, i, pai = 0, paui = 0, ii;
     char *ckt_array[100];
 
@@ -4799,12 +4799,22 @@ inp_compat(struct line *card)
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
                         node1, node2, equation);
+                x2line = tprintf("b%s_1 %s %s i = v(%s_3)/sqrt(%s)",
+                                 title_tok, node1, node2,
+                                 title_tok,
+                                 equation);
+                x3line = tprintf("r%s_2 %s_3 0 1.0",
+                                 title_tok, title_tok);
             } else if (tc2_ptr == NULL) {
                 xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
                         node1, node2, equation, tc1);
+                x2line = NULL;
+                x3line = NULL;
             } else {
                 xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
                         node1, node2, equation, tc1, tc2);
+                x2line = NULL;
+                x3line = NULL;
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
@@ -4813,6 +4823,10 @@ inp_compat(struct line *card)
             *(card->li_line)   = '*';
             // insert new B source line immediately after current line
             card = insert_new_line(card, xline, 0, 0);
+            if (x2line) {
+                card = insert_new_line(card, x2line, 0, 0);
+                card = insert_new_line(card, x3line, 0, 0);
+            }
 
             tfree(title_tok);
             tfree(node1);
