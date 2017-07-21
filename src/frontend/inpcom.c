@@ -2189,13 +2189,20 @@ inp_stripcomments_line(char *s, bool cs)
         return;                 /* empty line */
     if (*s == '*')
         return;                 /* line is already a comment */
+
+    /* If variable "yosys" is set, enable node names starting with '$'.
+       The end-of-line commenmts now requires "$ " that is a blank after '$'.
+       May be a compromise between Yosys and HSPICE requirements.*/
+    if (cp_getvar("yosys", CP_BOOL, NULL))
+        cs = TRUE;
+
     /* look for comments */
     while ((c = *d) != '\0') {
         d++;
         if (*d == ';') {
             break;
         } else if (!cs && (c == '$')) { /* outside of .control section */
-            /* The character before '&' has to be ',' or ' ' or tab.
+            /* The character before '$' has to be ',' or ' ' or tab.
                A valid numerical expression directly before '$' is not yet supported. */
             if ((d - 2 >= s) && ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
                 d--;
