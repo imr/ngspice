@@ -29,19 +29,19 @@ bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
 
 
-/* The user-supplied routine to query the values of variables. This
- * recognises the $&varname notation, and also searches the values of
- * plot and circuit environment variables.
- */
+/* The user-supplied routines to query the values of variables. */
 
-/* this is broken, returns sometimes "new" struct variable
- * and sometimes already/still "used" struct variable (owned by someone else)
+/* It is split into two functions: cp_enqvar1 returns variables with
+ * newly allocated memory. This recognises the $&varname notation.
+ * Variables may be freed, if no longer in use.
+ * If it fails, cp_enqvar2 searches the values of
+ * already existing plot and circuit environment variables. These
+ * should typically not be freed, because they are owned by others.
  */
 struct variable *
-cp_enqvar(char *word)
+cp_enqvar1(char *word)
 {
     struct dvec *d;
-    struct variable *vv;
 
     if (*word == '&') {
 
@@ -74,11 +74,7 @@ cp_enqvar(char *word)
     }
 
     if (plot_cur) {
-        for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
-            if (eq(vv->va_name, word))
-                return (vv);    /* <= return an already used struct variable */
         if (eq(word, "curplotname"))
-            /* return a new allocaed struct variable */
             return var_alloc_string(copy(word), copy(plot_cur->pl_name), NULL);
         if (eq(word, "curplottitle"))
             return var_alloc_string(copy(word), copy(plot_cur->pl_title), NULL);
@@ -94,6 +90,20 @@ cp_enqvar(char *word)
             return var_alloc_vlist(copy(word), list, NULL);
         }
     }
+    return (NULL);
+}
+
+
+struct variable *
+cp_enqvar2(char *word)
+{
+    struct variable *vv;
+
+    if (plot_cur) {
+        for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
+            if (eq(vv->va_name, word))
+                return (vv);
+        }
 
     if (ft_curckt)
         for (vv = ft_curckt->ci_vars; vv; vv = vv->va_next)
@@ -113,23 +123,23 @@ cp_usrvars(void)
 
     v = NULL;
 
-    if ((tv = cp_enqvar("plots")) != NULL) {
+    if ((tv = cp_enqvar1("plots")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplot")) != NULL) {
+    if ((tv = cp_enqvar1("curplot")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplottitle")) != NULL) {
+    if ((tv = cp_enqvar1("curplottitle")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplotname")) != NULL) {
+    if ((tv = cp_enqvar1("curplotname")) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplotdate")) != NULL) {
+    if ((tv = cp_enqvar1("curplotdate")) != NULL) {
         tv->va_next = v;
         v = tv;
     }

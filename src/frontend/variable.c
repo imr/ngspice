@@ -755,10 +755,12 @@ vareval(char *string)
             if (eq(v->va_name, string))
                 break;
         if (!v)
-            vfree = v = cp_enqvar(string);
+            vfree = v = cp_enqvar1(string);
+        if (!v)
+            v = cp_enqvar2(string);
         wl = wl_cons(copy(v ? "1" : "0"), NULL);
         tfree(oldstring);
-        free_struct_variable(vfree); /* bug: free still used struct variable */
+        free_struct_variable(vfree); /* free only, if newly generated */
         return (wl);
 
     case '#':
@@ -767,7 +769,9 @@ vareval(char *string)
             if (eq(v->va_name, string))
                 break;
         if (!v)
-            vfree = v = cp_enqvar(string);
+            vfree = v = cp_enqvar1(string);
+        if (!v)
+            v = cp_enqvar2(string);
         if (!v) {
             fprintf(cp_err, "Error: %s: no such variable.\n", string);
             tfree(oldstring);
@@ -780,7 +784,7 @@ vareval(char *string)
             i = (v->va_type != CP_BOOL);
         wl = wl_cons(tprintf("%d", i), NULL);
         tfree(oldstring);
-        free_struct_variable(vfree); /* bug: free still used struct variable */
+        free_struct_variable(vfree);
         return (wl);
 
     case '\0':
@@ -805,7 +809,10 @@ vareval(char *string)
     if (!v) {
         range = NULL;
         string = oldstring;
-        vfree = v = cp_enqvar(string);
+        if (!v)
+            vfree = v = cp_enqvar1(string);
+        if (!v)
+            v = cp_enqvar2(string);
     }
     if (!v && (s = getenv(string)) != NULL) {
         wl = wl_cons(copy(s), NULL);
@@ -818,7 +825,7 @@ vareval(char *string)
         return (NULL);
     }
     wl = cp_varwl(v);
-    free_struct_variable(vfree); /* bug: free still used struct variable */
+    free_struct_variable(vfree);
 
     /* Now parse and deal with 'range' ... */
     if (range) {
