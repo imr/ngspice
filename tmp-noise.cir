@@ -22,6 +22,8 @@ noise v(2) v1 dec 1 1kHz 1kHz
 let r = 1/(1/1000 + 1/1100)
 let gold = sqrt(4*boltz*(273.15+127.0)*r)
 print all gold
+let gold = sqrt(4*boltz*(273.15+$temp)*r)
+print gold
 
 noise v(20) v1 dec 1 1kHz 1kHz
 print all
