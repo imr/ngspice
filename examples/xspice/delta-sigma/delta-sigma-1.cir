@@ -110,7 +110,10 @@ eprvcd dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10
 + xsinc.dout6 xsinc.dout7 xsinc.dout8 xsinc.dout9 xsinc.dout10 > digi4b.vcd
 
 * plotting the vcd file (e.g. with GTKWave)
-shell digi4b.vcd
+* For Windows: returns control to ngspice
+shell start gtkwave digi4b.vcd --script nggtk.tcl
+* Others
+shell gtkwave digi4b.vcd --script nggtk.tcl &
 
 .endc
 
