@@ -1949,13 +1949,13 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
 void shared_send_event(int index, double step, double dvalue, char *svalue, void *pvalue, int plen, int mode)
 {
     if(wantevtdata)
-        sendevt(index, step, dvalue, svalue, pvalue, plen, mode, euserptr);
+        sendevt(index, step, dvalue, svalue, pvalue, plen, mode, ng_ident, euserptr);
     return;
 }
 
-void shared_send_dict(char* dictline)
+void shared_send_dict(int index, int no_of_nodes, char* name, char*type)
 {
     if (sendinitevt)
-        sendinitevt(dictline, euserptr);
+        sendinitevt(index, no_of_nodes, name, type, ng_ident, euserptr);
 }
 
