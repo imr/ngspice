@@ -1,0 +1,81 @@
+* counter, latch DAC
+
+* 10 bit synchronous digital counter
+* inhibit at overflow, no revolving
+.subckt count10 din dinb dclk drs dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10 
+
+* j k clk set reset out nout
+ajk1 din dinb diclk ds1 drs dout1 dnout1 jkflop
+ajk2 dout1 dout1 diclk ds2 drs dout2 dnout2 jkflop
+ajk3 djk3 djk3 diclk ds3 drs dout3 dnout3 jkflop
+ajk4 djk4 djk4 diclk ds4 drs dout4 dnout4 jkflop
+ajk5 djk5 djk5 diclk ds1 drs dout5 dnout5 jkflop
+ajk6 djk6 djk6 diclk ds2 drs dout6 dnout6 jkflop
+ajk7 djk7 djk7 diclk ds3 drs dout7 dnout8 jkflop
+ajk8 djk8 djk8 diclk ds4 drs dout8 dnout8 jkflop
+ajk9 djk9 djk9 diclk ds3 drs dout9 dnout9 jkflop
+ajk10 djk10 djk10 diclk ds4 drs dout10 dnout10 jkflop
+
+aand1 [dout1 dout2] djk3 and1
+aand2 [dout1 dout2 dout3] djk4 and1
+aand3 [dout1 dout2 dout3 dout4] djk5 and1
+aand4 [dout1 dout2 dout3 dout4 dout5] djk6 and1
+aand5 [dout1 dout2 dout3 dout4 dout5 dout6] djk7 and1
+aand6 [dout1 dout2 dout3 dout4 dout5 dout6 dout7] djk8 and1
+aand7 [dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8] djk9 and1
+aand8 [dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9] djk10 and1
+
+* inhibit revolving of counter, just let it saturate
+* (footnote p. 57)
+aand_all [dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10] dinhibit nand1
+aandclk [dclk dinhibit] diclk and1
+
+
+.model nand1 d_nand(rise_delay = 1e-9 fall_delay = 1e-9
++ input_load = 0.5e-12)
+
+.model and1 d_and(rise_delay = 1e-9 fall_delay = 1e-9
++ input_load = 0.5e-12)
+
+.model jkflop d_jkff(clk_delay = 1.0e-9 set_delay = 1e-9
++ reset_delay = 1e-9 ic = 0 rise_delay = 1.0e-9
++ fall_delay = 1e-9)
+
+.ends count 10
+
+** 10 bit edge triggered latch
+.subckt latch10 din1 din2 din3 din4 din5 din6 din7 din8 din9 din10
++ dout1 dout2 dout3 dout4 dout5 dout6 dout7 dout8 dout9 dout10 dclk
+
+*data clk set reset out nout
+aff1 din1 dclk dzero dzero dout1 dnout1 flop1
+aff2 din2 dclk dzero dzero dout2 dnout2 flop1
+aff3 din3 dclk dzero dzero dout3 dnout3 flop1
+aff4 din4 dclk dzero dzero dout4 dnout4 flop1
+aff5 din5 dclk dzero dzero dout5 dnout5 flop1
+aff6 din6 dclk dzero dzero dout6 dnout6 flop1
+aff7 din7 dclk dzero dzero dout7 dnout7 flop1
+aff8 din8 dclk dzero dzero dout8 dnout8 flop1
+aff9 din9 dclk dzero dzero dout9 dnout9 flop1
+aff10 din10 dclk dzero dzero dout10 dnout10 flop1
+
+.model flop1 d_dff(clk_delay = 1e-9 set_delay = 0
++ reset_delay = 0 ic = 0 rise_delay = 1e-9
++ fall_delay = 1e-9)
+
+.ends latch10
+
+** emulation of 10 bit DAC
+.subckt dac10  din1 din2 din3 din4 din5 din6 din7 din8 din9 din10 aout
+.param vref=1
+abridge1 [din1 din2 din3 din4 din5 din6 din7 din8 din9 din10] 
++ [ain1 ain2 ain3 ain4 ain5 ain6 ain7 ain8 ain9 ain10] dac1
+BVout aout 0 V = 'vref'*(v(ain10)/2 + v(ain9)/4 + v(ain8)/8 + v(ain7)/16 + v(ain6)/32 +
++ v(ain5)/64 + v(ain4)/128 + v(ain3)/256 + v(ain2)/512 + v(ain1)/1024)
+
+.model dac1 dac_bridge(out_low = 0 out_high = 1 out_undef = 0.5
++ input_load = 5.0e-12 t_rise = 1e-9
++ t_fall = 1e-9)
+
+.ends dac10
+

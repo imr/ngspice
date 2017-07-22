@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25029.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ng_shared_test_v", "ng_shared_test_v\ng_shared_test_v.vcxproj", "{01B94AD4-AF8F-4173-9BF8-120638B8BC6C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01B94AD4-AF8F-4173-9BF8-120638B8BC6C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{01B94AD4-AF8F-4173-9BF8-120638B8BC6C}.Debug|Win32.Build.0 = Debug|Win32
+		{01B94AD4-AF8F-4173-9BF8-120638B8BC6C}.Release|Win32.ActiveCfg = Release|Win32
+		{01B94AD4-AF8F-4173-9BF8-120638B8BC6C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
