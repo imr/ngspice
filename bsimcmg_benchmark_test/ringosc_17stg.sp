@@ -15,7 +15,10 @@ vdd supply  0 dc=1.0
 * --- Inverter Subcircuit ---
 .subckt mg_inv vin vout vdd gnd
     mp1 vout vin vdd gnd 0 pmos1 TFIN=15n L=30n NFIN=10 ASEO=1.5e-14 ADEO=1.5e-14 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
     mn1 vout vin gnd gnd 0 nmos1 TFIN=15n L=30n NFIN=10 ASEO=1.5e-14 ADEO=1.5e-14 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
+
 .ends
 
 * --- 17 Stage Ring oscillator ---
