@@ -15,7 +15,10 @@ vin   vi 0 dc=0.5
 * --- Inverter Subcircuit ---
 .subckt mg_inv vin vout vdd gnd
     mp1 vout vin vdd gnd 0 pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
     mn1 vout vin gnd gnd 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
+
 .ends
 
 * --- Inverter ---
