@@ -14,7 +14,7 @@ vgs gate  0 dc=1.0
 vbs bulk  0 dc=0.2
 
 * --- Transistor ---
-m1 drain gate 0 bulk 0 nmos1 TFIN=15n L=40n NFIN=10 NRS=1 NRD=1
+m1 drain gate 0 bulk 0 nmos1 TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
 
 * --- DC Analysis ---
 .dc vds 0 1 0.01 vgs 0 1.0 0.1
