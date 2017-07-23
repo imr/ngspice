@@ -15,7 +15,7 @@ vbs bulk  0 dc=0
 vt   t    0 dc= 0
 
 * --- Transistor ---
-m1 supply gate 0 bulk  t nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
+m1 supply gate 0 bulk  t nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1 D=40n
 
 * --- DC Analysis ---
 .dc vgs -0.5 1.0 0.01 vds 0.05 1 0.95
