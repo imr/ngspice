@@ -16,6 +16,7 @@ vbs bulk 0 dc=0
 
 * --- Transistor ---
 m1 vout gate 0 bulk 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
 
 * --- Load ---
 rl supply vout r=2k

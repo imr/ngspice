@@ -16,6 +16,7 @@ vbulk bulk 0 dc=0
 
 * --- Transistor ---
 m1 drain gate source bulk 0 pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
 
 * --- DC Analysis ---
 .dc vdrain -0.1 0.1 0.001 vgate 0.0 -1.0 -0.2
