@@ -3985,54 +3985,57 @@ analog begin
 
       // Intrinsic Capacitances (Physical)
       CGGI  =  ddx(QGI, V(`IntrinsicGate));
-      CGSI  =  -ddx(QGI, V(si));
-      CGDI  =  -ddx(QGI, V(di));
-      CGEI  =  -ddx(QGI, V(e));                    
+      CGSI  =  ddx(-QGI, V(si));
+      CGDI  =  ddx(-QGI, V(di));
+      CGEI  =  ddx(-QGI, V(e));                    
 
-      CSGI  =  -ddx(QSI, V(`IntrinsicGate));
-      CSDI  =  -ddx(QSI, V(di));
+      CSGI  =  ddx(-QSI, V(`IntrinsicGate));
+      CSDI  =  ddx(-QSI, V(di));
       CSSI  =  ddx(QSI, V(si));
-      CSEI  =  -ddx(QSI, V(e));                    // Should be zero everywhere
+      CSEI  =  ddx(-QSI, V(e));                    // Should be zero everywhere
 
-      CDGI  =  -ddx(QDI, V(`IntrinsicGate));
+      CDGI  =  ddx(-QDI, V(`IntrinsicGate));
       CDDI  =  ddx(QDI, V(di));
-      CDSI  =  -ddx(QDI, V(si));
-      CDEI  =  -ddx(QDI, V(e));
+      CDSI  =  ddx(-QDI, V(si));
+      CDEI  =  ddx(-QDI, V(e));
 
-      CEGI  =  -ddx(QBI, V(`IntrinsicGate));       
-      CEDI  =  -ddx(QBI, V(di));                   // Should be zero everywhere
-      CESI  =  -ddx(QBI, V(si));                   // Should be zero everywhere
+      CEGI  =  ddx(-QBI, V(`IntrinsicGate));       
+      CEDI  =  ddx(-QBI, V(di));                   // Should be zero everywhere
+      CESI  =  ddx(-QBI, V(si));                   // Should be zero everywhere
       CEEI  =  ddx(QBI, V(e));
 
       // Total Capacitances
       CGG  =  ddx(QG, V(`IntrinsicGate));
-      CGS  =  -ddx(QG, V(si));
-      CGD  =  -ddx(QG, V(di));
-      CGE  =  -ddx(QG, V(e));
+      CGS  =  ddx(-QG, V(si));
+      CGD  =  ddx(-QG, V(di));
+      CGE  =  ddx(-QG, V(e));
 
-      CSG  =  -ddx(QS, V(`IntrinsicGate));
-      CSD  =  -ddx(QS, V(di));
+      CSG  =  ddx(-QS, V(`IntrinsicGate));
+      CSD  =  ddx(-QS, V(di));
       CSS  =  ddx(QS, V(si));
-      CSE  =  -ddx(QS, V(e));
+      CSE  =  ddx(-QS, V(e));
 
-      CDG  =  -ddx(QD, V(`IntrinsicGate));
+      CDG  =  ddx(-QD, V(`IntrinsicGate));
       CDD  =  ddx(QD, V(di));
-      CDS  =  -ddx(QD, V(si));
-      CDE  =  -ddx(QD, V(e));
+      CDS  =  ddx(-QD, V(si));
+      CDE  =  ddx(-QD, V(e));
 
-      CEG  =  -ddx(QB, V(`IntrinsicGate));
-      CED  =  -ddx(QB, V(di));
-      CES  =  -ddx(QB, V(si));
+      CEG  =  ddx(-QB, V(`IntrinsicGate));
+      CED  =  ddx(-QB, V(di));
+      CES  =  ddx(-QB, V(si));
       CEE  =  ddx(QB, V(e));
 
       // Total extrinsic capacitance
-      CGSEXT  =  -ddx(qgs_parasitic + (CGEOMOD == 1 ? qgs_fr : 0),V(si));  // Gate-Source Overlap + outer fringing 
-      CGDEXT  =  -ddx(qgd_parasitic + (CGEOMOD == 1 ? qgd_fr : 0),V(di));  // Gate-Drain Overlap + outer fringing 
-      CGBOV   =  -devsign * ddx(Qeg,V(e));                                 // Gate-Body Overlap
+      CGSEXT  =  ddx(-(qgs_parasitic + (CGEOMOD == 1 ? qgs_fr : 0)),V(si));  // Gate-Source Overlap + outer fringing 
+      CGDEXT  =  ddx(-(qgd_parasitic + (CGEOMOD == 1 ? qgd_fr : 0)),V(di));  // Gate-Drain Overlap + outer fringing 
+      CGBOV   =  ddx(Qeg,V(e));                                 // Gate-Body Overlap
+      CGBOV   = -devsign * CGBOV;
 
       // Total of Junction Capacitance and Source/Drain-Body Overlap Capacitance
-      CJST  =  -devsign * ddx(Qes, V(si));
-      CJDT  =  -devsign * ddx(Qed, V(di));
+      CJST  =  ddx(Qes, V(si));
+      CJST  =  -devsign * CJST;
+      CJDT  =  ddx(Qed, V(di));
+      CJDT  =  -devsign * CJDT;
 
       RSGEO  =  RSourceGeo;                                                // External bias independent Source Resistance
       RDGEO  =  RDrainGeo;                                                 // External bias independent Drain Resistance
@@ -4057,41 +4060,65 @@ analog begin
             IGBACC  =  devsign * igbacc;
          end
 
-         DIDSDVG  =  devsign * sigvds * ddx(ids, V(`IntrinsicGate));
-         DIDSDVS  =  devsign * sigvds * ddx(ids, V(si));
-         DIDSDVD  =  devsign * sigvds * ddx(ids, V(di));
+         DIDSDVG  = ddx(ids, V(`IntrinsicGate));
+         DIDSDVG  =  devsign * sigvds * DIDSDVG;
+         DIDSDVS  = ddx(ids, V(si));
+         DIDSDVS  =  devsign * sigvds * DIDSDVS;
+         DIDSDVD  = ddx(ids, V(di));
+         DIDSDVD  =  devsign * sigvds * DIDSDVD;
          `ifdef __SHMOD__
-            DIDSDVTH  =  devsign * sigvds * ddx(ids, Temp(t));
+            DIDSDVTH  = ddx(ids, Temp(t));
+            DIDSDVTH  =  devsign * sigvds * DIDSDVTH;
          `endif
-         DIGSDVG  =  devsign * ddx(igs + igcs, V(`IntrinsicGate));
-         DIGSDVS  =  devsign * ddx(igs + igcs, V(si));
-         DIGSDVD  =  devsign * ddx(igs + igcs, V(di));
+         DIGSDVG  = ddx(igs + igcs, V(`IntrinsicGate));
+         DIGSDVG  =  devsign * DIGSDVG;
+         DIGSDVS  = ddx(igs + igcs, V(si));
+         DIGSDVS  =  devsign * DIGSDVS;
+         DIGSDVD  = ddx(igs + igcs, V(di));
+         DIGSDVD  =  devsign * DIGSDVD;
          `ifdef __SHMOD__
-            DIGSDVTH  =  devsign * ddx(igs + igcs, Temp(t));
+            DIGSDVTH  = ddx(igs + igcs, Temp(t));
+            DIGSDVTH  =  devsign * DIGSDVTH;
          `endif
-         DIGDDVG  =  devsign * ddx(igd + igcd, V(`IntrinsicGate));
-         DIGDDVS  =  devsign * ddx(igd + igcd, V(si));
-         DIGDDVD  =  devsign * ddx(igd + igcd, V(di));
+         DIGDDVG  = ddx(igd + igcd, V(`IntrinsicGate));
+         DIGDDVG  =  devsign * DIGDDVG;
+         DIGDDVS  = ddx(igd + igcd, V(si));
+         DIGDDVS  =  devsign * DIGDDVS;
+         DIGDDVD  = ddx(igd + igcd, V(di));
+         DIGDDVD  =  devsign * DIGDDVD;
          `ifdef __SHMOD__
-            DIGDDVTH  =  devsign * ddx(igd + igcd, Temp(t));
+            DIGDDVTH  = ddx(igd + igcd, Temp(t));
+            DIGDDVTH  =  devsign * DIGDDVTH;
          `endif
-         DIIIDVG  =  devsign * ddx(Iii, V(`IntrinsicGate));
-         DIIIDVS  =  devsign * ddx(Iii, V(si));
-         DIIIDVD  =  devsign * ddx(Iii, V(di));
+         DIIIDVG  = ddx(Iii, V(`IntrinsicGate));
+         DIIIDVG  =  devsign * DIIIDVG;
+         DIIIDVS  = ddx(Iii, V(si));
+         DIIIDVS  =  devsign * DIIIDVS;
+         DIIIDVD  = ddx(Iii, V(di));
+         DIIIDVD  =  devsign * DIIIDVD;
          `ifdef __SHMOD__
-            DIIIDVTH  =  devsign * ddx(Iii, Temp(t));
+            DIIIDVTH  = ddx(Iii, Temp(t));
+            DIIIDVTH  =  devsign * DIIIDVTH;
          `endif
-         DIGIDLDVG  =  devsign * ddx(igidl, V(`IntrinsicGate));
-         DIGIDLDVS  =  devsign * ddx(igidl, V(si));
-         DIGIDLDVD  =  devsign * ddx(igidl, V(di));
+         DIGIDLDVG  = ddx(igidl, V(`IntrinsicGate));
+         DIGIDLDVG  =  devsign * DIGIDLDVG;
+         DIGIDLDVS  = ddx(igidl, V(si));
+         DIGIDLDVS  =  devsign * DIGIDLDVS;
+         DIGIDLDVD  = ddx(igidl, V(di));
+         DIGIDLDVD  =  devsign * DIGIDLDVD;
          `ifdef __SHMOD__
-            DIGIDLDVTH  =  devsign * ddx(igidl, Temp(t));
+            DIGIDLDVTH  = ddx(igidl, Temp(t));
+            DIGIDLDVTH  =  devsign * DIGIDLDVTH;
          `endif
-         DIGISLDVG  =  devsign * ddx(igisl, V(`IntrinsicGate));
-         DIGISLDVS  =  devsign * ddx(igisl, V(si));
-         DIGISLDVD  =  devsign * ddx(igisl, V(di));
+         DIGISLDVG  = ddx(igisl, V(`IntrinsicGate));
+         DIGISLDVG  =  devsign * DIGISLDVG;
+         DIGISLDVS  = ddx(igisl, V(si));
+         DIGISLDVS  =  devsign * DIGISLDVS;
+         DIGISLDVD  = ddx(igisl, V(di));
+         DIGISLDVD  =  devsign * DIGISLDVD;
          `ifdef __SHMOD__
-            DIGISLDVTH  =  devsign * ddx(igisl, Temp(t));
+            DIGISLDVTH  = ddx(igisl, Temp(t));
+            DIGISLDVTH  =  devsign * DIGISLDVTH;
          `endif
 
          `ifdef __SHMOD__
