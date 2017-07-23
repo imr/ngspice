@@ -3,7 +3,6 @@
 *Id-Vg Characteristics for PMOS (T = 27 C)
 
 .option abstol=1e-6 reltol=1e-6 post ingold
-.temp -55
 
 *.hdl "bsimcmg.va"
 .include "modelcard.pmos.1"
@@ -23,16 +22,37 @@ m1 supply gate 0 bulk 0 pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 .probe dc gds=deriv(ids)
 .print dc par'ids' par'-gds'
 
-.alter
-.temp 27
-
-.alter
-.temp 100
-
 .control
+
+save @m1[gm]
+
+set temp = 27
 run
-plot i(vds)
-* fixme, second temperature, and nasty reset issues
+let ids = i(vds)
+let xgds = deriv(ids)
+plot ids
+plot xgds
+plot @m1[gm]
+reset
+
+set temp = -55
+run
+let ids = i(vds)
+let xgds = deriv(ids)
+plot ids
+plot xgds
+plot @m1[gm]
+reset
+
+set temp = 100
+run
+let ids = i(vds)
+let xgds = deriv(ids)
+plot ids
+plot xgds
+plot @m1[gm]
+reset
+
 .endc
 
 .end

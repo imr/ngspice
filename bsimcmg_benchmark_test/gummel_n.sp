@@ -30,10 +30,21 @@ m1 drain gate source bulk 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 
 .control
 save @m1[VDSSAT]
+save @m1[GDS]
 run
 show all
-plot -i(vdrain)
+let ids = -i(vdrain)
+let gx = deriv(ids)
+let gx2 = deriv(gx)
+let gx3 = deriv(gx2)
+let gx4 = deriv(gx3)
+plot ids
 plot @m1[VDSSAT]
+plot @m1[GDS]
+plot gx
+plot gx2
+plot gx3
+plot gx4
 .endc
 
 .end

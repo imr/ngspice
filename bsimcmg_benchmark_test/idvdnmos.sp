@@ -25,20 +25,29 @@ m1 drain gate 0 bulk 0 nmos1 TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
 save @m1[gds]
 set temp = -55
 run
-plot -i(vds)
+let ids = -i(vds)
+let xgds = deriv(ids)
+plot ids
+plot xgds
 plot @m1[gds]
 
 reset
 save @m1[gds]
 set temp = 27
 run
-plot -i(vds)
+let ids = -i(vds)
+let xgds = deriv(ids)
+plot ids
+plot xgds
 plot @m1[gds]
 
 reset
 set temp = 100
 run
-plot -i(vds)
+let ids = -i(vds)
+let xgds = deriv(ids)
+plot ids
+plot xgds
 plot @m1[gds]
 
 *show all
