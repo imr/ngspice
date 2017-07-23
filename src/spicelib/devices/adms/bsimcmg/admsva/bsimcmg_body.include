@@ -3964,10 +3964,10 @@ analog begin
       VTH  =  VFB + devsign * (Vtm * lln(T2 / T3) + dvch_qm + phib + qbs + Vtm + dvth_all - DELVTRAND);
 
       // Conductances
-      GM   =  ddx(IDS,V(`IntrinsicGate));      // Transconductance
-      GDS  =  ddx(IDS,V(di));                  // Output Conductance
+      GM   =  ddx(devsign * ids,V(`IntrinsicGate));      // Transconductance
+      GDS  =  ddx(devsign * ids,V(di));                  // Output Conductance
       if (BULKMOD != 0)
-         GMBS  =  ddx(IDS,V(e));               // Body Transconductance
+         GMBS  =  ddx(devsign * ids,V(e));               // Body Transconductance
       else   
          GMBS  =  0.0;
 
