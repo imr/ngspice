@@ -17,6 +17,7 @@ lbias 1 drain 1m
 cload drain 2 1m
 rload 2 0 R=1 noise=0
 X1 drain gate 0 bulk nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
++ FPITCH  = 4.00E-08
 
 * --- Analysis ---
 .op
