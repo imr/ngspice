@@ -3,7 +3,6 @@
 *Id-Vd Characteristics for NMOS (T = 27 C)
 
 .option abstol=1e-6 reltol=1e-6 post ingold
-.temp -55
 
 *.hdl "bsimcmg.va"
 .include "modelcard.nmos.1"
@@ -22,16 +21,28 @@ m1 drain gate 0 bulk 0 nmos1 TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
 .probe dc gds=deriv(ids)
 .print dc par'ids' par'gds'
 
-.alter
-.temp 27
-
-.alter
-.temp 100
-
 .control
+save @m1[gds]
+set temp = -55
 run
 plot -i(vds)
-* fixme, second temperature, and nasty reset issues
+plot @m1[gds]
+
+reset
+save @m1[gds]
+set temp = 27
+run
+plot -i(vds)
+plot @m1[gds]
+
+reset
+set temp = 100
+run
+plot -i(vds)
+plot @m1[gds]
+
+*show all
+
 .endc
 
 .end
