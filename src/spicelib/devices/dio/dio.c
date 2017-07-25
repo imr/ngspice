@@ -27,6 +27,7 @@ IFparm DIOpTable[] = { /* parameters */
  OP("gd",   DIO_CONDUCT,IF_REAL, "Diode conductance"),
  OP("cd",   DIO_CAP, IF_REAL, "Diode capacitance"),
  OPU("charge", DIO_CHARGE, IF_REAL, "Diode capacitor charge"),
+ OPUR("qd", DIO_CHARGE, IF_REAL, "Diode capacitor charge"),
  OPU("capcur", DIO_CAPCUR, IF_REAL, "Diode capacitor current"),
  OPU("p",      DIO_POWER,  IF_REAL, "Diode power"),
  OPU("sens_dc",DIO_QUEST_SENS_DC,     IF_REAL,   "dc sensitivity "),

@@ -18,11 +18,11 @@ d1 1 0 myd
 + IBV = 10u)
 
 .control
-save @d1[gd] @d1[cd] @d1[charge]
+save @d1[gd] @d1[cd] @d1[qd]
 dc v1 -5 .1 0.01
 plot @d1[gd]
 plot @d1[cd]
-plot @d1[charge]
+plot @d1[qd]
 .endc
 *
 .END
