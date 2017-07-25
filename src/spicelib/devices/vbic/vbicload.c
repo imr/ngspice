@@ -786,7 +786,7 @@ next1:
             Ibcp += ckt->CKTgmin*Vbcp;
             Ibcp_Vbcp += ckt->CKTgmin;
 
-            if( (ckt->CKTmode & (MODETRAN | MODEAC)) ||
+            if( (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ||
                     (ckt->CKTmode & MODEINITSMSIG)) {
                 /*

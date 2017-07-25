@@ -534,7 +534,7 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
             gmu=gbc/here->BJTtBetaR+gbcn;
             go=(gbc+(cex-cbc)*dqbdvc/qb)/qb;
             gm=(gex-(cex-cbc)*dqbdve/qb)/qb-go;
-            if( (ckt->CKTmode & (MODETRAN | MODEAC)) ||
+            if( (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ||
                     (ckt->CKTmode & MODEINITSMSIG)) {
                 /*

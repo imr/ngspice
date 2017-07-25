@@ -300,7 +300,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
             }
 
-            if ((ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) ||
+            if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                      ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
               /*
                *   charge storage elements
