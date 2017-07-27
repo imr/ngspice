@@ -138,7 +138,7 @@ sub processSetup {
             die("ERROR: floating pin $pin is not a specified device pin, stopped");
         }
     }
-    if (!defined(@main::DefaultTemperature)) {
+    unless (@main::DefaultTemperature) {
         @main::DefaultTemperature=(27);
     }
     foreach $temperature (@main::DefaultTemperature) {
@@ -475,7 +475,7 @@ sub processTestSpec {
         }
         die("ERROR: unknown test directive\n$_\nstopped");
     }
-    if (!defined(@main::Temperature)) {
+    unless (@main::Temperature) {
         @main::Temperature=@main::DefaultTemperature;
     }
     if (abs($main::outputDc+$main::outputAc+($main::outputNoise>0)-1) > 0.001) {
