@@ -1,0 +1,8 @@
+#!/bin/sh
+
+simulator="$1"
+if [ -z "$1" ] ; then
+  simulator="ngspice"
+fi 
+
+../../bin/run_cmc_check clean_${simulator} $simulator | tee cmcqa_${simulator}.log

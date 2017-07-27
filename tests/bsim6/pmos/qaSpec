@@ -1,0 +1,888 @@
+
+//
+// test specification for bsim6 (version 6.1.1_beta1)
+//
+
+//
+// Simulator specific information
+// These arguments are added to the model card
+// specification to invoke the desired model in
+// different simulators (which can have different
+// names or levels for the same model) and to switch
+// between nType and pType polarities.
+// It is assumed that there are no polarity specific
+// parameters.
+//
+
+`ifdef hspice
+nTypeSelectionArguments nmos level=77 version=6.1.1
+pTypeSelectionArguments pmos level=77 version=6.1.1
+`endif
+`ifdef ngspice
+nTypeSelectionArguments nmos level=16
+pTypeSelectionArguments pmos level=16
+`endif
+
+//
+// General test-independent information
+//
+
+keyLetter                   m
+pins                        d g s b
+//verilogaFile               code/bsim6.1.1_beta1.va
+//linearScale                 w l ps pd
+//areaScale                   as ad
+temperature                 27 -50 150
+checkPolarity               no
+symmetricPins               d s
+//scaleParameters             m
+
+//
+// Specific tests
+//
+
+//Just the core device 
+test                        Idvg_core_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvg_core_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvg_core_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvg_core_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvgb_core_sw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvgb_core_lw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvgb_core_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvgb_core_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvd_core_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvd_core_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvd_core_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvd_core_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvdb_core_sw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvdb_core_lw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvdb_core_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvdb_core_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvg_core_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvg_core_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvg_core_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvg_core_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvgb_core_sw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvgb_core_lw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvgb_core_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvgb_core_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvd_core_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvd_core_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvd_core_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvd_core_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvdb_core_sw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvdb_core_lw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvdb_core_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvdb_core_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acfreq_core_sw
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acfreq_core_lw
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acfreq_core_lt
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acfreq_core_st
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+//Just the core device with diodes //no need for corner scaling here as these currents/charges don't scale well with w/l, no VG effect either
+
+test                        Idvd_diode_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        Idvdb_diode_lt
+biases                      V(s)=0 V(b)=-0.5
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvd_diode_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.1999,0.2,0.2001
+outputs                     G(d,b) G(s,b) C(d,b) C(s,b) C(b,b) G(b,b)
+instanceParameters          w=0.5e-6 l=1e-6  as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acvdb_diode_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,b) G(s,b) C(d,b) C(s,b) C(b,b) G(b,b) 
+instanceParameters          w=0.5e-6 l=1e-6  as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+test                        acfreq_diode_lt
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     G(d,b) G(s,b) C(d,b) C(s,b) C(b,b) G(b,b)
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=0 gidlmod=0
+
+//core device with gate currents 
+
+test                        Idvg_ig_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvg_ig_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvg_ig_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvg_ig_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+
+test                        Idvgb_ig_sw
+biases                      V(s)=0 V(b)=-0.25
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvgb_ig_lw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvgb_ig_lt
+biases                      V(s)=0 V(b)=-0.25
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvgb_ig_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=-0.05,-1.0
+biasSweep                   V(g)=-1.2,-0.2,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.11e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvd_ig_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvd_ig_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvd_ig_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvd_ig_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvdb_ig_sw
+biases                      V(s)=0 V(b)=-0.5
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvdb_ig_lw
+biases                      V(s)=0 V(b)=-0.2
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=10.0e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvdb_ig_lt
+biases                      V(s)=0 V(b)=-0.2
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        Idvdb_ig_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.15,-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0,0.1
+outputs                     I(d) I(g) I(b) I(s)
+instanceParameters          w=0.5e-6 l=0.1e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvg_ig_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvg_ig_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvg_ig_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvg_ig_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvgb_ig_sw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvgb_ig_lw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvgb_ig_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvgb_ig_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(d)=0,-1.0
+biasSweep                   V(g)=-1.2,1.2,0.4
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvd_ig_sw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvd_ig_lw
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvd_ig_lt
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvd_ig_st
+biases                      V(s)=0 V(b)=0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvdb_ig_sw
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvdb_ig_lw
+biases                      V(s)=0 V(b)=-0.5
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvdb_ig_lt
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acvdb_ig_st
+biases                      V(s)=0 V(b)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+biasSweep                   V(d)=-1.2,0.2,0.2
+outputs                     G(d,g) C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acfreq_ig_sw
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=0.1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acfreq_ig_lw
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=10.0e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acfreq_ig_lt
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+test                        acfreq_ig_st
+temperature                 27
+biases                      V(s)=0 V(b)=0 V(d)=-1.0 V(g)=-1.0
+freq                        dec 10 1e3 1e8
+outputs                     C(g,g) C(g,s) C(g,d)
+instanceParameters          w=0.5e-6 l=1e-6 
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=1 igcmod=1 gidlmod=0
+
+//missing impact ionization
+//Core with GIDL model parameters turn gidl off so no tests here
+//core with STI stress parameters seem to have no effect on STI stress so no tests here
+//noise tests with everything, but igb
+
+test                        acnoise1g_sw
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g)
+instanceParameters          w=10.0e-6 l=0.1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2g_sw
+biases                      V(s)=0 V(b)=0 V(d)=-0.05
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g)
+instanceParameters          w=10.0e-6 l=0.1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise1g_lw
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g)
+instanceParameters          w=10.0e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2g_lw
+biases                      V(s)=0 V(b)=0 V(d)=-0.05
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g) 
+instanceParameters          w=10.0e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise1g_lt
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g) 
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2g_lt
+biases                      V(s)=0 V(b)=0 V(d)=-0.05
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g) 
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise1g_st
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g) 
+instanceParameters          w=0.5e-6 l=0.1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2g_st
+biases                      V(s)=0 V(b)=0 V(d)=-0.05
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(g) 
+instanceParameters          w=0.5e-6 l=0.1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise1d_sw
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=0.1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2d_sw
+biases                      V(s)=0 V(b)=0 V(d)=-0.05
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=0.1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise1d_lw
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2d_lw
+biases                      V(s)=0 V(b)=0 V(d)=-0.05
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(d)
+instanceParameters          w=10.0e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise1d_lt
+biases                      V(s)=0 V(b)=0 V(d)=-1.0
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(d)
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+test                        acnoise2d_lt
+biases                      V(s)=0 V(b)=0 V(d)=-0.1
+biasList                    V(g)=-0.25,-0.5,-0.75,-1.0
+freq                        dec 10 1e2 1e8
+outputs                     N(d)
+instanceParameters          w=0.5e-6 l=1e-6 as=5e-12 ad=5e-12 ps=21e-6 pd=21e-6
+modelParameters             parameters/pmosParameters
+modelParameters             igbmod=0 igcmod=1 gidlmod=1
+modelparameters             saref=3.0e-6 sbref=3.0e-6 kuo=2e-8 kvsat=0.1 kvtho=2.5e-9
+
+
