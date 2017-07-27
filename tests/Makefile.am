@@ -10,6 +10,7 @@ endif
 SUBDIRS +=		\
 	bsim3		\
 	bsim4		\
+	bsim6		\
 	bsimsoi		\
 	hisim		\
 	hisimhv1	\
@@ -23,6 +24,7 @@ DIST_SUBDIRS =		\
 	bsim3soifd	\
 	bsim3soipd	\
 	bsim4		\
+	bsim6		\
 	bsimsoi		\
 	filters		\
 	general		\
