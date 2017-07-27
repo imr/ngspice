@@ -32,6 +32,7 @@ Options:
     -nw                    do not print warning messages
     -platform              prints the hardware platform and operating system version
     -p                     plot results (limited, only standard test variant)
+    -P                     plot results (complete, for all test variants)
     -r                     re-use previously simulated results if they exist
                            (default is to resimulate, even if results exist)
     -sv                    prints the simulator version being run
@@ -69,7 +70,6 @@ undef($qaSpecFile);
 undef(@Setup);
 undef(@Test);
 undef(@Variants);
-undef(@TestVariants);
 $debug=0;
 $verbose=0;
 $reallyVerbose=0;
@@ -98,7 +98,6 @@ undef($acClip);undef($acNdigit);undef($acRelTol);
 undef($noiseClip);undef($noiseNdigit);undef($noiseRelTol);
 undef($mFactor);undef($shrinkPercent);undef($scaleFactor);undef(%TestSpec);
 undef($refrnceDirectory);
-undef($simulatorCommand);
 
 #
 #   These are the tolerances used to compare results
@@ -231,13 +230,9 @@ if (!$onlyDoComparison) {
 #
 
 if (!$onlyDoComparison) {
-    ($version,$vaVersion)=&simulate::version();
+    $version=&simulate::version();
     if ($onlyDoSimulatorVersion) {
-        if ($vaVersion eq "unknown") {
-            print $version;exit(0);
-        } else {
-            print $version,$vaVersion;exit(0);
-        }
+        print $version;exit(0);
     }
 }
 $qaSpecFile=$ARGV[0];
@@ -302,7 +297,7 @@ if ($reallyVerbose) {
     $flag="";
 }
 foreach $test (@Test) {
-    next if (%doTest && !$doTest{$test});
+    next if (!$doTest{$test});
 
     if ($verbose) {print "\n****** Running test ($simulatorName): $test"}
 
@@ -310,13 +305,13 @@ foreach $test (@Test) {
     undef($outputAc);
     undef($outputNoise);
     &modelQa::processTestSpec(@{$TestSpec{$test}});
-    foreach $variant (@TestVariants) {
+    foreach $variant (@Variants) {
         if ($variant eq "standard") {
             $refFile="$refrnceDirectory/$test.standard";
         } else {
             $refFile="$resultsDirectory/$test.standard";
         }
-        next if (%doVariant && !$doVariant{$variant});
+        next if (!$doVariant{$variant});
         $simFile="$resultsDirectory/$test.$variant";
         if ($outputDc) {
             if (($forceSimulation || ! -r $simFile) && !$onlyDoComparison) {
