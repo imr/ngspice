@@ -45,7 +45,7 @@ run_test() {
     simname="$1"
 
     localPlatform=`${testProgramName} -platform`
-    localVersion=`${testProgramName} -sv -s ${simname} ${qaSpecFile}`
+    localVersion=`${testProgramName} ${testProgramFlags} -sv -s ${simname} ${qaSpecFile}`
 
     echo ""
     echo "******"
