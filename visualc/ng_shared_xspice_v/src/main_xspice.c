@@ -56,6 +56,8 @@ bool not_yet = true;
 bool will_unload = false;
 bool error_ngspice = false;
 
+static bool firsttime = TRUE;
+
 int cieq(register char *p, register char *s);
 int ciprefix(const char *p, const char *s);
 
@@ -177,14 +179,16 @@ int main()
     /* general callback initialization */
     ret = ((int * (*)(SendChar*, SendStat*, ControlledExit*, SendData*, SendInitData*,
         BGThreadRunning*, void*)) ngSpice_Init_handle)(ng_getchar, ng_getstat,
-            ng_exit, NULL, ng_initdata, ng_thread_runs, NULL);
+            ng_exit, ng_data, ng_initdata, ng_thread_runs, NULL);
 
     /* event data initialization */
     ret = ((int * (*)(SendEvtData*, SendInitEvtData*, void*)) ngSpice_Init_Evt_handle)(ng_getevtdata, 
             ng_getinitevtdata, NULL);
 
+//    goto test2;
+
     testnumber = 1;
-    printf("\n**  Test no. %d with sourcing input file **\n\n", testnumber);
+    printf("\n**  Test no. %d with sourcing digital input file **\n\n", testnumber);
     error_ngspice = false;
     will_unload = false;
 
@@ -198,9 +202,10 @@ int main()
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ../examples/counter-test.cir");
     //    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source adder_mos.cir");
 #endif
-
+    /* reset firsttime for ng_data() */
+    firsttime = TRUE;
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_run");
-    printf("We are back again\n");
+    printf("Background thread started\n");
 
     /* wait to catch error signal, if available */
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -323,21 +328,113 @@ endsim:
         ((pevt_shared_data(*)(char*)) ngSpice_EVT_handle)(NULL);
     }
     else
-        printf("Not enough nodes for selection\n");
+        printf("Not enough nodes for selection\n\n");
+
+test2:
+    testnumber = 2;
+    printf("\n**  Test no. %d with sourcing analog input file **\n\n", testnumber);
+    error_ngspice = false;
+    will_unload = false;
+
+#if defined(__CYGWIN__)
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source /cygdrive/d/Spice_general/ngspice_sh/examples/shared-ngspice/counter-test.cir");
+#elif __MINGW32__
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source D:\\Spice_general\\ngspice_sh\\examples\\shared-ngspice\\counter-test.cir");
+#elif _MSC_VER
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ./examples/adder_mos.cir");
+#else
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ../examples/counter-test.cir");
+    //    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source adder_mos.cir");
+#endif
+    /* test the new feature */
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("save none");
+    /* reset firsttime for ng_data() */
+    firsttime = TRUE;
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_run");
+    printf("Background thread started\n");
+
+    /* wait to catch error signal, if available */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    Sleep(100);
+#else
+    usleep(100000);
+#endif
+    /* Upon error: unload ngspice and skip rest of test code */
+    if (error_ngspice) {
+        printf("Error detected, let's unload\n");
+        ret = ((int * (*)(char*)) ngSpice_Command_handle)("quit");
+        dlclose(ngdllhandle);
+        printf("ngspice.dll unloaded\n\n");
+        ngdllhandle = NULL;
+        return 0;
+    }
+
+    /* simulate for 500 milli seconds or until simulation has finished */
+    for (i = 0; i < 5; i++) {
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(100);
+#else
+        usleep(100000);
+#endif
+        /* we are faster than anticipated */
+        if (no_bg)
+            goto endsim;
+    }
+
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_halt");
+    for (i = 3; i > 0; i--) {
+        printf("Pause for %d seconds\n", i);
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(1000);
+#else
+        usleep(1000000);
+#endif
+    }
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_resume");
+
+    /* wait for 1s while simulation continues */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    Sleep(1000);
+#else
+    usleep(1000000);
+#endif
+    /* read current plot while simulation continues */
+    curplot = ((char * (*)()) ngSpice_CurPlot_handle)();
+    printf("\nCurrent plot is %s\n\n", curplot);
+
+    vecarray = ((char ** (*)(char*)) ngSpice_AllVecs_handle)(curplot);
+    /* get length of first vector */
+    if (vecarray) {
+        char plotvec[256];
+        pvector_info myvec;
+        int veclength;
+        vecname = vecarray[0];
+        sprintf(plotvec, "%s.%s", curplot, vecname);
+        myvec = ((pvector_info(*)(char*)) ngSpice_GVI_handle)(plotvec);
+        veclength = myvec->v_length;
+        printf("\nActual length of vector %s is %d\n\n", plotvec, veclength);
+    }
+
+    /* wait until simulation finishes */
+    for (;;) {
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(100);
+#else
+        usleep(100000);
+#endif
+        if (no_bg)
+            break;
+    }
 
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("quit");
-#if 0
     /* unload now */
     dlclose(ngdllhandle);
     ngdllhandle = NULL;
     printf("Unloaded\n\n");
-#endif
-    if (will_unload) {
-        printf("Unload now\n");
-        dlclose(ngdllhandle);
-        ngdllhandle = NULL;
-        printf("Unloaded\n\n");
-    }
+
+/* wait before closing the command window */
+    puts("\nPress <enter> to quit:");
+    getchar();
 
     return 0;
 }
@@ -407,24 +504,31 @@ ng_exit(int exitstatus, bool immediate, bool quitexit, int ident, void* userdata
 int
 ng_data(pvecvaluesall vdata, int numvecs, int ident, void* userdata)
 {
-    int *ret;
-
-    v2dat = vdata->vecsa[vecgetnumber]->creal;
-    if (!has_break && (v2dat > 0.5)) {
-    /* using signal SIGTERM by sending to main thread, alterp() then is run from the main thread,
-      (not on Windows though!)  */
-#ifndef _MSC_VER
-        if (testnumber == 4)
-            pthread_kill(mainthread, SIGTERM);
-#endif
-        has_break = true;
-    /* leave bg thread for a while to allow halting it from main */
-#if defined(__MINGW32__) || defined(_MSC_VER)
-        Sleep (100);
-#else
-        usleep (100000);
-#endif
-//        ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_halt");
+    double tscale;
+    static double olddat = 0.0;
+    static int i, j;
+    if (firsttime) {
+        for (i = 0; i < numvecs; i++) {
+            /* We have a look at vector V(6) from adder_mos.cir.
+               Get the index i */
+            if (cieq(vdata->vecsa[i]->name, "V(6)"))
+                break;
+        }
+        firsttime = FALSE;
+        /* get the scale vector index j */
+        for (j = 0; j < numvecs; j++) {
+            if (vdata->vecsa[j]->is_scale)
+                break;
+        }
+    }
+    if (testnumber == 2) {
+        v2dat = vdata->vecsa[i]->creal;
+        /* print output value only if it has changed */
+        if (olddat != v2dat) {
+            tscale = vdata->vecsa[j]->creal;
+            printf("real value of vector %s is %e at %e\n", vdata->vecsa[i]->name, v2dat, tscale);
+        }
+        olddat = v2dat;
     }
     return 0;
 }
