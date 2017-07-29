@@ -41,7 +41,7 @@ sub version {
         chomp;
         # Check whether this line is the one we are looking for.
         # Also the term in parenthesis "()" stores the number to $1 which we can reuse later.
-        if (s/.+ngspice-([0-9]+)//) {
+        if (m/.+ngspice-([0-9]+)/) {
             # Simple read the stored group from the matching in the if clause
             $version=$1;
             last;

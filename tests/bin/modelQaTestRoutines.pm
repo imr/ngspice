@@ -270,7 +270,7 @@ sub processTestSpec {
             next;
         }
         if (/^biases\s+/i) {
-            s%V\s*\(\s*%V(%;s%\s*\)%)%;
+            s/V\s*\(\s*/V(/;s/\s*\)/)/;
             s/V\(([a-zA-Z0-9]+),([a-zA-Z0-9]+)\)/V($1_$2)/; # convert V(n1,n2) to V(n1_n2)
             @Field=split(/[\s,]+/,$_);
             for ($i=1;$i<=$#Field;++$i) {
