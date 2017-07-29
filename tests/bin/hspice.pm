@@ -600,7 +600,7 @@ sub runDcTest {
 }
 
 sub generateCommonNetlistInfo {
-    my($variant,$temperature)=@_;
+    my($variant,$temperature) = @_;
     my(@Pin_x,$arg,$name,$value,$eFactor,$fFactor,$pin);
     print OF ".option tnom=27 reltol=1u vntol=1n abstol=1f"; # default for HSPICE is 25
     print OF ".temp $temperature";
@@ -630,10 +630,10 @@ sub generateCommonNetlistInfo {
     foreach $pin (@main::Pin) {
         if ($main::isFloatingPin{$pin}) {
             if ($main::outputNoise && $pin eq $main::Outputs[0]) {
-                if ($variant=~/^m$/) {
-                    $eFactor=sqrt($main::mFactor);
+                if ($variant =~ /^m$/) {
+                    $eFactor = sqrt($main::mFactor);
                 } else {
-                    $eFactor=1;
+                    $eFactor = 1;
                 }
                 print OF "e_$pin ${pin}_x 0 ${pin} 0 $eFactor";
             } else { # assumed "dt" thermal pin, no scaling sign change
@@ -699,4 +699,3 @@ sub generateCommonNetlistInfo {
 }
 
 1;
-

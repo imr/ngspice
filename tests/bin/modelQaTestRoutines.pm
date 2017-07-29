@@ -158,7 +158,7 @@ sub processSetup {
     if (!defined($main::keyLetter)) {
         die("ERROR: no keyLetter specified, stopped");
     }
-   # if (!defined($main::nTypeSelectionArguments)) {
+    # if (!defined($main::nTypeSelectionArguments)) {
     #    die("ERROR: no model selection arguments specified, stopped");
     #}
     @main::Variants=("standard");
@@ -522,10 +522,10 @@ sub processTestSpec {
             $main::biasSweepPin=$main::Pin[0];
         }
         if (!defined($main::BiasFor{$main::biasSweepPin})) {
-            $main::biasSweepSpec="0 0 0"; 
+            $main::biasSweepSpec="0 0 0";
             @main::BiasSweepList="vin";
         } else {
-            $main::biasSweepSpec="$main::BiasFor{$main::biasSweepPin} $main::BiasFor{$main::biasSweepPin} 0"; 
+            $main::biasSweepSpec="$main::BiasFor{$main::biasSweepPin} $main::BiasFor{$main::biasSweepPin} 0";
             @main::BiasSweepList=($main::BiasFor{$main::biasSweepPin});
         }
     } elsif (defined($main::isFloatingPin{$main::biasSweepPin})) {
@@ -751,7 +751,7 @@ sub platform {
     use Config;
     my($osName,$osVer,$archName)=($modelQa::Config{osname},$modelQa::Config{osvers},$modelQa::Config{archname});
     my($platform);
- 
+
     if ($osName !~ /win/i) {
         open(UNAME,"uname -p|") or die("ERROR: cannot determine processore and OS information, stopped");
         chomp($archName=<UNAME>);close(UNAME);
