@@ -1,0 +1,28 @@
+Enabling XSPICE data transfer over the shared ngspice api.
+
+This branch enhances shared ngspice capability to event driven XSPICE data transfer.
+
+The shared library (dll) exports three new function:
+ngSpice_Init_Evt() provides addresses for two new callback functions.
+  To be called upon initialization.
+ngGet_Evt_NodeInfo() provides info for a specific node.
+ngSpice_AllEvtNodes() provides a list of all event nodes.
+
+There are two new callback functions
+
+sendinitevt() sends info upon the event nodes: name, type an dcorresponding index
+and is calles once per event nodes upon initialization of the circuit.
+
+sendevt() is called each time, when for a given event node, that is determined
+by index, a time step has been accepted and its value has changed. This allows
+to immediately make use of that value in the calling process.
+
+For details on the definitions you may have a look at sharedspice.h.
+
+There is an example caller file (currently tested only under Windows,
+and compiled with Visual Studio) in directory ngspice\visualc\ng_shared_xspice_v.
+
+There is also a new feature: The 'save' command accepts the flag none of run in
+shared mode. Then there is no internal storage of analog output data, they are
+still available with the callback function ng_data. The above mentioned example
+file now includes a testrun2 to demonstrate this feature.

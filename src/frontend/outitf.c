@@ -90,6 +90,8 @@ static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 static bool interpolated = FALSE;
 static double *valueold, *valuenew;
 
+static bool savenone = FALSE;
+
 /* The two "begin plot" routines share all their internals... */
 
 int
@@ -207,6 +209,16 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     saves[i].used = 1;
                     continue;
                 }
+#ifdef SHARED_MODULE
+                /* this may happen if shared ngspice*/
+                if (cieq(saves[i].name, "none")) {
+                    savenone = TRUE;
+                    saveall = TRUE;
+                    savesused[i] = TRUE;
+                    saves[i].used = 1;
+                    continue;
+                }
+#endif
             }
         }
 
@@ -1065,6 +1077,11 @@ plotAddRealValue(dataDesc *desc, double value)
 {
     struct dvec *v = desc->vec;
 
+#ifdef SHARED_MODULE
+    if(savenone)
+        v->v_length = 0;
+#endif
+
     if (v->v_length >= v->v_alloc_length)
         dvec_extend(v, v->v_length + vlength2delta(v->v_length));
 
@@ -1085,6 +1102,11 @@ static void
 plotAddComplexValue(dataDesc *desc, IFcomplex value)
 {
     struct dvec *v = desc->vec;
+
+#ifdef SHARED_MODULE
+    if (savenone)
+        v->v_length = 0;
+#endif
 
     if (v->v_length >= v->v_alloc_length)
         dvec_extend(v, v->v_length + vlength2delta(v->v_length));
