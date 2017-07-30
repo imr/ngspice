@@ -42,6 +42,14 @@
 </admst:template>
 
 <admst:template match="function">
+  <admst:choose>
+    <admst:when test="[name='\$port_connected']">
+      <admst:message format="ZZ 11!! port_connecte, this one\n"/>
+      <admst:for-each select="arguments[position(.)=1]">
+        <admst:value-to select="/simulator/tmp" value="(here->%(.)Node_connected /* port_connected 13 */)"/>
+      </admst:for-each>
+    </admst:when>
+    <admst:otherwise>
   <admst:variable name="function" select="%(name)"/>
   <admst:variable name="args" select=""/>
   <admst:for-each select="arguments">
@@ -103,6 +111,8 @@
       </admst:if>
       <admst:variable name="mycode" select="%(fname(.)/[name='fname']/value)$mycode"/>
       <admst:value-to select="/simulator/tmp" value="$mycode"/>
+    </admst:otherwise>
+  </admst:choose>
     </admst:otherwise>
   </admst:choose>
 </admst:template>
