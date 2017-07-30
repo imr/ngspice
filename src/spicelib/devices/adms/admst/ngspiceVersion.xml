@@ -609,6 +609,11 @@
         <admst:value-to select="/simulator/tmp" value="%s"/>
       </admst:for-each>
     </admst:when>
+    <admst:when test="[name='\$port_connected']">
+      <admst:for-each select="arguments[position(.)=1]">
+        <admst:value-to select="/simulator/tmp" value="(here->%(.)Node_connected /* port_connected 14 */)"/>
+      </admst:for-each>
+    </admst:when>
     <admst:when test="[name='\$given' or name='\$param_given']">
       <admst:for-each select="arguments[position(.)=1]">
         <admst:assert test="[datatypename='variable' and input='yes']" format="%(../name)(%(../arguments[1])): argument is not a parameter\n"/>
