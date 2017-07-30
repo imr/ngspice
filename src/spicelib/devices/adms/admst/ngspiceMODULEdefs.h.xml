@@ -199,6 +199,9 @@ typedef struct s$(module)instance {
   </admst:if>
   <admst:text format="\n"/>
 </admst:for-each>
+<admst:for-each select="node[grounded='no']">
+  <admst:text format="  unsigned %(name)Node_connected :1;\n"/>
+</admst:for-each>
   /* instance parameters */
 <admst:for-each select="variable[parametertype='instance' and input='yes']">
   <admst:value-of select="name"/>
