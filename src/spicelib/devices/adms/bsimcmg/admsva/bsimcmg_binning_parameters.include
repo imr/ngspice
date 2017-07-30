@@ -1,0 +1,756 @@
+// ********************************************************
+// **** BSIM-CMG 110.0.0 released by Sourabh Khandelwal on 01/01/2016 ****/
+// *  BSIM Common Multi-Gate Model Equations (Verilog-A)
+// ********************************************************
+//
+// ********************************************************
+// * Copyright 2016 Regents of the University of California. 
+// * All rights reserved.
+// *
+// * Project Director: Prof. Chenming Hu.
+// * Authors: Sriramkumar V., Navid Paydavosi, Juan Duarte, Darsen Lu, Sourabh Khandelwal 
+// *          Chung-Hsun Lin, Mohan Dunga, Shijing Yao,
+// *          Ali Niknejad, Chenming Hu
+// ********************************************************
+// ********************************************************
+// *   NONDISCLOSURE STATEMENT
+// Software is distributed as is, completely without warranty or service
+// support. The University of California and its employees are not liable
+// for the condition or performance of the software.
+// The University of California owns the copyright and grants users a perpetual,
+// irrevocable, worldwide, non-exclusive, royalty-free license with 
+// respect to the software as set forth below.
+// The University of California hereby disclaims all implied warranties.
+// The University of California grants the users the right to modify, copy,
+// and redistribute the software and documentation, both within the user's
+// organization and externally, subject to the following restrictions
+// 1. The users agree not to charge for the University of California code
+// itself but may charge for additions, extensions, or support.
+// 2. In any product based on the software, the users agree to acknowledge
+// the University of California that developed the software. This
+// acknowledgment shall appear in the product documentation.
+// 3. The users agree to obey all U.S. Government restrictions governing
+// redistribution or export of the software.
+// 4. The users agree to reproduce any copyright notice which appears on
+// the software on any copy or modification of such made available
+// to others
+// Agreed to on __Jan 01, 2016_________________
+// By: ___University of California, Berkeley____ 
+//     ___Chenming Hu_____________________ 
+//     ___Professor in Graduate School _______
+// ********************************************************
+`MPRnb( LNBODY         ,0.0            ,"m^-2"                  ,"" ) 
+`MPRnb( NNBODY         ,0.0            ,"m^-2"                  ,"" ) 
+`MPRnb( PNBODY         ,0.0            ,"m^-1"                  ,"" ) 
+
+`MPRnb( LPHIG          ,0.0            ,"m*eV"                  ,"" ) 
+`MPRnb( NPHIG          ,0.0            ,"m*eV"                  ,"" ) 
+`MPRnb( PPHIG          ,0.0            ,"(m^2)*eV"              ,"" ) 
+
+`MPRnb( LNGATE         ,0.0            ,"m^-2"                  ,"" ) 
+`MPRnb( NNGATE         ,0.0            ,"m^-2"                  ,"" ) 
+`MPRnb( PNGATE         ,0.0            ,"m^-1"                  ,"" ) 
+
+`MPRnb( LCIT           ,0.0            ,"F/m"                   ,"" ) 
+`MPRnb( NCIT           ,0.0            ,"F/m"                   ,"" ) 
+`MPRnb( PCIT           ,0.0            ,"F"                     ,"" ) 
+
+`MPRnb( LCITR          ,LCIT           ,""                      ,"" )
+`MPRnb( NCITR          ,NCIT           ,""                      ,"" ) 
+`MPRnb( PCITR          ,PCIT           ,""                      ,"" ) 
+
+`MPRnb( LCDSC          ,0.0            ,"F/m"                   ,"" ) 
+`MPRnb( NCDSC          ,0.0            ,"F/m"                   ,"" ) 
+`MPRnb( PCDSC          ,0.0            ,"F"                     ,"" ) 
+
+`MPRnb( LCDSCD         ,0.0            ,"F/m"                   ,"" ) 
+`MPRnb( NCDSCD         ,0.0            ,"F/m"                   ,"" ) 
+`MPRnb( PCDSCD         ,0.0            ,"F"                     ,"" ) 
+
+`MPRnb( LCDSCDR        ,LCDSCD         ,"F/m"                   ,"" ) 
+`MPRnb( NCDSCDR        ,NCDSCD         ,"F/m"                   ,"" ) 
+`MPRnb( PCDSCDR        ,PCDSCD         ,"F"                     ,"" ) 
+
+`MPRnb( LDVT0          ,0.0            ,""                      ,"" ) 
+`MPRnb( NDVT0          ,0.0            ,""                      ,"" ) 
+`MPRnb( PDVT0          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LDVT1          ,0.0            ,""                      ,"" ) 
+`MPRnb( NDVT1          ,0.0            ,""                      ,"" ) 
+`MPRnb( PDVT1          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LDVT1SS        ,LDVT1          ,""                      ,"" ) 
+`MPRnb( NDVT1SS        ,NDVT1          ,""                      ,"" ) 
+`MPRnb( PDVT1SS        ,PDVT1          ,""                      ,"" ) 
+
+`MPRnb( LPHIN          ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NPHIN          ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PPHIN          ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LETA0          ,0.0            ,""                      ,"" ) 
+`MPRnb( NETA0          ,0.0            ,""                      ,"" ) 
+`MPRnb( PETA0          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LETA0R         ,LETA0          ,""                      ,"" ) 
+`MPRnb( NETA0R         ,NETA0          ,""                      ,"" ) 
+`MPRnb( PETA0R         ,PETA0          ,""                      ,"" ) 
+
+`MPRnb( LDSUB          ,0.0            ,""                      ,"" ) 
+`MPRnb( NDSUB          ,0.0            ,""                      ,"" ) 
+`MPRnb( PDSUB          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK1RSCE        ,0.0            ,"m*V^(1/2)"             ,"" ) 
+`MPRnb( NK1RSCE        ,0.0            ,"m*V^(1/2)"             ,"" ) 
+`MPRnb( PK1RSCE        ,0.0            ,"(m^2)*V^(1/2)"         ,"" ) 
+
+`MPRnb( LLPE0          ,0.0            ,"m^2"                   ,"" ) 
+`MPRnb( NLPE0          ,0.0            ,"m^2"                   ,"" ) 
+`MPRnb( PLPE0          ,0.0            ,"m^3"                   ,"" ) 
+
+`MPRnb( LDVTSHIFT      ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NDVTSHIFT      ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PDVTSHIFT      ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LDVTSHIFTR     ,LDVTSHIFT      ,""                      ,"" ) 
+`MPRnb( NDVTSHIFTR     ,NDVTSHIFT      ,""                      ,"" ) 
+`MPRnb( PDVTSHIFTR     ,PDVTSHIFT      ,""                      ,"" ) 
+
+`MPRnb( LPHIBE         ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NPHIBE         ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PPHIBE         ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LK0            ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NK0            ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PK0            ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LK01           ,0.0            ,"(m*V)/K"               ,"" ) 
+`MPRnb( NK01           ,0.0            ,"(m*V)/K"               ,"" ) 
+`MPRnb( PK01           ,0.0            ,"(m^2*V)/K"             ,"" ) 
+
+`MPRnb( LK0SI          ,0.0            ,""                      ,"" ) 
+`MPRnb( NK0SI          ,0.0            ,""                      ,"" ) 
+`MPRnb( PK0SI          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK0SI1         ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( NK0SI1         ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( PK0SI1         ,0.0            ,"(m^2)/K"               ,"" ) 
+
+`MPRnb( LK1            ,0.0            ,"m*V^(1/2)"             ,"" ) 
+`MPRnb( NK1            ,0.0            ,"m*V^(1/2)"             ,"" ) 
+`MPRnb( PK1            ,0.0            ,"(m^2)*V^(1/2)"         ,"" ) 
+
+`MPRnb( LK11           ,0.0            ,"(m*V^(-1/2))/K"        ,"" ) 
+`MPRnb( NK11           ,0.0            ,"(m*V^(-1/2))/K"        ,"" ) 
+`MPRnb( PK11           ,0.0            ,"(m^2*V^(-1/2))/K"      ,"" ) 
+
+`MPRnb( LK2SI          ,LK0SI          ,""                      ,"" ) 
+`MPRnb( NK2SI          ,NK0SI          ,""                      ,"" ) 
+`MPRnb( PK2SI          ,PK0SI          ,""                      ,"" ) 
+
+`MPRnb( LK2SI1         ,LK0SI1         ,""                      ,"" ) 
+`MPRnb( NK2SI1         ,NK0SI1         ,""                      ,"" ) 
+`MPRnb( PK2SI1         ,PK0SI1         ,""                      ,"" ) 
+
+`MPRnb( LK0SISAT       ,0.0            ,""                      ,"" ) 
+`MPRnb( NK0SISAT       ,0.0            ,""                      ,"" ) 
+`MPRnb( PK0SISAT       ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK0SISAT1      ,0.0            ,""                      ,"" ) 
+`MPRnb( NK0SISAT1      ,0.0            ,""                      ,"" ) 
+`MPRnb( PK0SISAT1      ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK2SISAT       ,LK0SISAT       ,""                      ,"" ) 
+`MPRnb( NK2SISAT       ,NK0SISAT       ,""                      ,"" ) 
+`MPRnb( PK2SISAT       ,PK0SISAT       ,""                      ,"" ) 
+
+`MPRnb( LK2SISAT1      ,LK0SISAT1      ,""                      ,"" ) 
+`MPRnb( NK2SISAT1      ,NK0SISAT1      ,""                      ,"" ) 
+`MPRnb( PK2SISAT1      ,PK0SISAT1      ,""                      ,"" ) 
+
+`MPRnb( LK2SAT         ,0.0            ,""                      ,"" ) 
+`MPRnb( NK2SAT         ,0.0            ,""                      ,"" ) 
+`MPRnb( PK2SAT         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK2SAT1        ,0.0            ,""                      ,"" ) 
+`MPRnb( NK2SAT1        ,0.0            ,""                      ,"" ) 
+`MPRnb( PK2SAT1        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK2            ,0.0            ,""                      ,"" ) 
+`MPRnb( NK2            ,0.0            ,""                      ,"" ) 
+`MPRnb( PK2            ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LK21           ,0.0            ,""                      ,"" ) 
+`MPRnb( NK21           ,0.0            ,""                      ,"" ) 
+`MPRnb( PK21           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LDVTB          ,0.0            ,""                      ,"" ) 
+`MPRnb( NDVTB          ,0.0            ,""                      ,"" ) 
+`MPRnb( PDVTB          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LLPEB          ,0.0            ,""                      ,"" ) 
+`MPRnb( NLPEB          ,0.0            ,""                      ,"" ) 
+`MPRnb( PLPEB          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LQMFACTOR      ,0.0            ,""                      ,"" ) 
+`MPRnb( NQMFACTOR      ,0.0            ,""                      ,"" ) 
+`MPRnb( PQMFACTOR      ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LQMTCENCV      ,0.0            ,""                      ,"" ) 
+`MPRnb( NQMTCENCV      ,0.0            ,""                      ,"" ) 
+`MPRnb( PQMTCENCV      ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LQMTCENCVA     ,0.0            ,""                      ,"" ) 
+`MPRnb( NQMTCENCVA     ,0.0            ,""                      ,"" ) 
+`MPRnb( PQMTCENCVA     ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LVSAT          ,0.0            ,"(m^2)/s"               ,"" ) 
+`MPRnb( NVSAT          ,0.0            ,"(m^2)/s"               ,"" ) 
+`MPRnb( PVSAT          ,0.0            ,"(m^3)/s"               ,"" ) 
+
+`MPRnb( LVSATR         ,LVSAT          ,""                      ,"" ) 
+`MPRnb( NVSATR         ,NVSAT          ,""                      ,"" ) 
+`MPRnb( PVSATR         ,PVSAT          ,""                      ,"" ) 
+
+`MPRnb( LVSAT1         ,LVSAT          ,""                      ,"" ) 
+`MPRnb( NVSAT1         ,NVSAT          ,""                      ,"" ) 
+`MPRnb( PVSAT1         ,PVSAT          ,""                      ,"" ) 
+
+`MPRnb( LVSAT1R        ,LVSAT1         ,"(m^2)/s"               ,"" ) 
+`MPRnb( NVSAT1R        ,NVSAT1         ,"(m^2)/s"               ,"" ) 
+`MPRnb( PVSAT1R        ,PVSAT1         ,"(m^3)/s"              ,"" ) 
+
+`MPRnb( LPSAT          ,0.0            ,""                      ,"" ) 
+`MPRnb( NPSAT          ,0.0            ,""                      ,"" ) 
+`MPRnb( PPSAT          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LDELTAVSAT     ,0.0            ,""                      ,"" ) 
+`MPRnb( NDELTAVSAT     ,0.0            ,""                      ,"" ) 
+`MPRnb( PDELTAVSAT     ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LKSATIV        ,0.0            ,""                      ,"" ) 
+`MPRnb( NKSATIV        ,0.0            ,""                      ,"" ) 
+`MPRnb( PKSATIV        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LKSATIVR       ,LKSATIV        ,""                      ,"" ) 
+`MPRnb( NKSATIVR       ,NKSATIV        ,""                      ,"" ) 
+`MPRnb( PKSATIVR       ,PKSATIV        ,""                      ,"" ) 
+
+`MPRnb( LVSATCV        ,0.0            ,"(m^2)/s"               ,"" ) 
+`MPRnb( NVSATCV        ,0.0            ,"(m^2)/s"               ,"" ) 
+`MPRnb( PVSATCV        ,0.0            ,"(m^3)/s"               ,"" ) 
+
+`MPRnb( LPSATCV        ,0.0            ,""                      ,"" ) 
+`MPRnb( NPSATCV        ,0.0            ,""                      ,"" ) 
+`MPRnb( PPSATCV        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LDELTAVSATCV   ,0.0            ,""                      ,"" ) 
+`MPRnb( NDELTAVSATCV   ,0.0            ,""                      ,"" ) 
+`MPRnb( PDELTAVSATCV   ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LMEXP          ,0.0            ,""                      ,"" ) 
+`MPRnb( NMEXP          ,0.0            ,""                      ,"" ) 
+`MPRnb( PMEXP          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LMEXPR         ,LMEXP          ,""                      ,"" ) 
+`MPRnb( NMEXPR         ,NMEXP          ,""                      ,"" ) 
+`MPRnb( PMEXPR         ,PMEXP          ,""                      ,"" ) 
+
+`MPRnb( LPTWG          ,0.0            ,"m*(V^-2)"              ,"" ) 
+`MPRnb( NPTWG          ,0.0            ,"m*(V^-2)"              ,"" ) 
+`MPRnb( PPTWG          ,0.0            ,"m^2*(V^-2)"            ,"" ) 
+
+`MPRnb( LPTWGR         ,LPTWG          ,"m*(V^-2)"              ,"" ) 
+`MPRnb( NPTWGR         ,NPTWG          ,"m*(V^-2)"              ,"" ) 
+`MPRnb( PPTWGR         ,PPTWG          ,"m^2*(V^-2)"            ,"" ) 
+
+`MPRnb( LU0            ,0.0            ,"(m^3)/V*s"             ,"" ) 
+`MPRnb( NU0            ,0.0            ,"(m^3)/V*s"             ,"" ) 
+`MPRnb( PU0            ,0.0            ,"(m^4)/V*s"             ,"" ) 
+
+`MPRnb( LU0R           ,LU0            ,""                      ,"" ) 
+`MPRnb( NU0R           ,NU0            ,""                      ,"" ) 
+`MPRnb( PU0R           ,PU0            ,""                      ,"" ) 
+
+`MPRnb( LETAMOB        ,0.0            ,""                      ,"" ) 
+`MPRnb( NETAMOB        ,0.0            ,""                      ,"" ) 
+`MPRnb( PETAMOB        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUP            ,0.0            ,"m*(um^LPA)"            ,"" ) 
+`MPRnb( NUP            ,0.0            ,"m*(um^LPA)"            ,"" ) 
+`MPRnb( PUP            ,0.0            ,"m^2*(um^LPA)"          ,"" ) 
+
+`MPRnb( LUPR           ,LUP            ,""                      ,"" ) 
+`MPRnb( NUPR           ,NUP            ,""                      ,"" ) 
+`MPRnb( PUPR           ,PUP            ,""                      ,"" ) 
+
+`MPRnb( LUA            ,0.0            ,"m*((cm/MV)^EU)"        ,"" ) 
+`MPRnb( NUA            ,0.0            ,"m*((cm/MV)^EU)"        ,"" ) 
+`MPRnb( PUA            ,0.0            ,"m^2*((cm/MV)^EU)"      ,"" ) 
+
+`MPRnb( LUAR           ,LUA            ,""                      ,"" ) 
+`MPRnb( NUAR           ,NUA            ,""                      ,"" ) 
+`MPRnb( PUAR           ,PUA            ,""                      ,"" ) 
+
+`MPRnb( LUC            ,0.0            ,""                      ,"" ) 
+`MPRnb( NUC            ,0.0            ,""                      ,"" ) 
+`MPRnb( PUC            ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUCR           ,LUC            ,""                      ,"" ) 
+`MPRnb( NUCR           ,NUC            ,""                      ,"" ) 
+`MPRnb( PUCR           ,PUC            ,""                      ,"" ) 
+
+`MPRnb( LEU            ,0.0            ,"m*(cm/MV)"             ,"" ) 
+`MPRnb( NEU            ,0.0            ,"m*(cm/MV)"             ,"" ) 
+`MPRnb( PEU            ,0.0            ,"m^2*(cm/MV)"           ,"" ) 
+
+`MPRnb( LEUR           ,LEU            ,""                      ,"" ) 
+`MPRnb( NEUR           ,NEU            ,""                      ,"" ) 
+`MPRnb( PEUR           ,PEU            ,""                      ,"" ) 
+
+`MPRnb( LUD            ,0.0            ,"m*(cm/MV)"             ,"" ) 
+`MPRnb( NUD            ,0.0            ,"m*(cm/MV)"             ,"" ) 
+`MPRnb( PUD            ,0.0            ,"m^2*(cm/MV)"           ,"" ) 
+
+`MPRnb( LUDR           ,LUD            ,""                      ,"" ) 
+`MPRnb( NUDR           ,NUD            ,""                      ,"" ) 
+`MPRnb( PUDR           ,PUD            ,""                      ,"" ) 
+
+`MPRnb( LUCS           ,0.0            ,""                      ,"" ) 
+`MPRnb( NUCS           ,0.0            ,""                      ,"" ) 
+`MPRnb( PUCS           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPCLM          ,0.0            ,""                      ,"" ) 
+`MPRnb( NPCLM          ,0.0            ,""                      ,"" ) 
+`MPRnb( PPCLM          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPCLMR         ,LPCLM          ,""                      ,"" ) 
+`MPRnb( NPCLMR         ,NPCLM          ,""                      ,"" ) 
+`MPRnb( PPCLMR         ,PPCLM          ,""                      ,"" ) 
+
+`MPRnb( LPCLMG         ,0.0            ,""                      ,"" ) 
+`MPRnb( NPCLMG         ,0.0            ,""                      ,"" ) 
+`MPRnb( PPCLMG         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPCLMCV        ,LPCLM          ,""                      ,"" ) 
+`MPRnb( NPCLMCV        ,NPCLM          ,""                      ,"" ) 
+`MPRnb( PPCLMCV        ,PPCLM          ,""                      ,"" ) 
+
+`MPRnb( LA1            ,0.0            ,"m*(V^-2)"              ,"" ) 
+`MPRnb( NA1            ,0.0            ,"m*(V^-2)"              ,"" ) 
+`MPRnb( PA1            ,0.0            ,"m^2*(V^-2)"            ,"" ) 
+
+`MPRnb( LA11           ,0.0            ,"m*(V^-2/K)"            ,"" ) 
+`MPRnb( NA11           ,0.0            ,"m*(V^-2/K)"            ,"" ) 
+`MPRnb( PA11           ,0.0            ,"m^2*(V^-2/K)"          ,"" ) 
+
+`MPRnb( LA2            ,0.0            ,"m*(V^-1)"              ,"" ) 
+`MPRnb( NA2            ,0.0            ,"m*(V^-1)"              ,"" ) 
+`MPRnb( PA2            ,0.0            ,"m^2*(V^-1)"            ,"" ) 
+
+`MPRnb( LA21           ,0.0            ,"m*(V^-1/K)"            ,"" ) 
+`MPRnb( NA21           ,0.0            ,"m*(V^-1/K)"            ,"" ) 
+`MPRnb( PA21           ,0.0            ,"m^2*(V^-1/K)"          ,"" ) 
+
+`MPRnb( LRDSW          ,0.0            ,"m*(ohm-um^WR)"         ,"" ) 
+`MPRnb( NRDSW          ,0.0            ,"m*(ohm-um^WR)"         ,"" ) 
+`MPRnb( PRDSW          ,0.0            ,"(m^2)*(ohm-um^WR)"     ,"" ) 
+
+`MPRnb( LRSW           ,0.0            ,"m*(ohm-um^WR)"         ,"" ) 
+`MPRnb( NRSW           ,0.0            ,"m*(ohm-um^WR)"         ,"" ) 
+`MPRnb( PRSW           ,0.0            ,"(m^2)*(ohm-um^WR)"     ,"" ) 
+
+`MPRnb( LRDW           ,0.0            ,"m*(ohm-um^WR)"         ,"" ) 
+`MPRnb( NRDW           ,0.0            ,"m*(ohm-um^WR)"         ,"" ) 
+`MPRnb( PRDW           ,0.0            ,"(m^2)*(ohm-um^WR)"     ,"" ) 
+
+`MPRnb( LPRWGS         ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NPRWGS         ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PPRWGS         ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LPRWGD         ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NPRWGD         ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PPRWGD         ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LWR            ,0.0            ,""                      ,"" ) 
+`MPRnb( NWR            ,0.0            ,""                      ,"" ) 
+`MPRnb( PWR            ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPDIBL1        ,0.0            ,""                      ,"" ) 
+`MPRnb( NPDIBL1        ,0.0            ,""                      ,"" ) 
+`MPRnb( PPDIBL1        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPDIBL1R       ,LPDIBL1        ,""                      ,"" ) 
+`MPRnb( NPDIBL1R       ,NPDIBL1        ,""                      ,"" ) 
+`MPRnb( PPDIBL1R       ,PPDIBL1        ,""                      ,"" ) 
+
+`MPRnb( LPDIBL2        ,0.0            ,""                      ,"" ) 
+`MPRnb( NPDIBL2        ,0.0            ,""                      ,"" ) 
+`MPRnb( PPDIBL2        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPDIBL2R       ,LPDIBL2        ,""                      ,"" ) 
+`MPRnb( NPDIBL2R       ,NPDIBL2        ,""                      ,"" ) 
+`MPRnb( PPDIBL2R       ,PPDIBL2        ,""                      ,"" ) 
+
+`MPRnb( LDROUT         ,0.0            ,""                      ,"" ) 
+`MPRnb( NDROUT         ,0.0            ,""                      ,"" ) 
+`MPRnb( PDROUT         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPVAG          ,0.0            ,""                      ,"" ) 
+`MPRnb( NPVAG          ,0.0            ,""                      ,"" ) 
+`MPRnb( PPVAG          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAIGBINV       ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( NAIGBINV       ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( PAIGBINV       ,0.0            ,"((F*s^2/g)^0.5)*m"     ,"" ) 
+
+`MPRnb( LAIGBINV1      ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( NAIGBINV1      ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( PAIGBINV1      ,0.0            ,"((F*s^2/g)^0.5)*(m/K)" ,"" ) 
+
+`MPRnb( LBIGBINV       ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( NBIGBINV       ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( PBIGBINV       ,0.0            ,"((F*s^2/g)^0.5)*(m/V)" ,"" ) 
+
+`MPRnb( LCIGBINV       ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NCIGBINV       ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PCIGBINV       ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LEIGBINV       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NEIGBINV       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PEIGBINV       ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LNIGBINV       ,0.0            ,""                      ,"" ) 
+`MPRnb( NNIGBINV       ,0.0            ,""                      ,"" ) 
+`MPRnb( PNIGBINV       ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAIGBACC       ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( NAIGBACC       ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( PAIGBACC       ,0.0            ,"((F*s^2/g)^0.5)*m"     ,"" ) 
+
+`MPRnb( LAIGBACC1      ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( NAIGBACC1      ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( PAIGBACC1      ,0.0            ,"((F*s^2/g)^0.5)*(m/K)" ,"" ) 
+
+`MPRnb( LBIGBACC       ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( NBIGBACC       ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( PBIGBACC       ,0.0            ,"((F*s^2/g)^0.5)*(m/V)" ,"" ) 
+
+`MPRnb( LCIGBACC       ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NCIGBACC       ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PCIGBACC       ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LNIGBACC       ,0.0            ,""                      ,"" ) 
+`MPRnb( NNIGBACC       ,0.0            ,""                      ,"" ) 
+`MPRnb( PNIGBACC       ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAIGC          ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( NAIGC          ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( PAIGC          ,0.0            ,"((F*s^2/g)^0.5)*m"     ,"" ) 
+
+`MPRnb( LAIGC1         ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( NAIGC1         ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( PAIGC1         ,0.0            ,"((F*s^2/g)^0.5)*(m/K)" ,"" ) 
+
+`MPRnb( LBIGC          ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( NBIGC          ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( PBIGC          ,0.0            ,"((F*s^2/g)^0.5)*(m/V)" ,"" ) 
+
+`MPRnb( LCIGC          ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NCIGC          ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PCIGC          ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LPIGCD         ,0.0            ,""                      ,"" ) 
+`MPRnb( NPIGCD         ,0.0            ,""                      ,"" ) 
+`MPRnb( PPIGCD         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAIGS          ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( NAIGS          ,0.0            ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( PAIGS          ,0.0            ,"((F*s^2/g)^0.5)*m"     ,"" ) 
+
+`MPRnb( LAIGS1         ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( NAIGS1         ,0.0            ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( PAIGS1         ,0.0            ,"((F*s^2/g)^0.5)*(m/K)" ,"" ) 
+
+`MPRnb( LBIGS          ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( NBIGS          ,0.0            ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( PBIGS          ,0.0            ,"((F*s^2/g)^0.5)*(m/V)" ,"" ) 
+
+`MPRnb( LCIGS          ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NCIGS          ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PCIGS          ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LAIGD          ,LAIGS          ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( NAIGD          ,NAIGS          ,"(F*s^2/g)^0.5"         ,"" ) 
+`MPRnb( PAIGD          ,PAIGS          ,"((F*s^2/g)^0.5)*m"     ,"" ) 
+
+`MPRnb( LAIGD1         ,LAIGS1         ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( NAIGD1         ,NAIGS1         ,"((F*s^2/g)^0.5)/K"     ,"" ) 
+`MPRnb( PAIGD1         ,PAIGS1         ,"((F*s^2/g)^0.5)*(m/K)" ,"" ) 
+
+`MPRnb( LBIGD          ,LBIGS          ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( NBIGD          ,NBIGS          ,"((F*s^2/g)^0.5)/V"     ,"" ) 
+`MPRnb( PBIGD          ,PBIGS          ,"((F*s^2/g)^0.5)*(m/V)" ,"" ) 
+
+`MPRnb( LCIGD          ,LCIGS          ,"m/V"                   ,"" ) 
+`MPRnb( NCIGD          ,NCIGS          ,"m/V"                   ,"" ) 
+`MPRnb( PCIGD          ,PCIGS          ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LNTOX          ,0.0            ,""                      ,"" ) 
+`MPRnb( NNTOX          ,0.0            ,""                      ,"" ) 
+`MPRnb( PNTOX          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPOXEDGE       ,0.0            ,""                      ,"" ) 
+`MPRnb( NPOXEDGE       ,0.0            ,""                      ,"" ) 
+`MPRnb( PPOXEDGE       ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAGISL         ,0.0            ,"m/ohm"                 ,"" ) 
+`MPRnb( NAGISL         ,0.0            ,"m/ohm"                 ,"" ) 
+`MPRnb( PAGISL         ,0.0            ,"(m^2)/ohm"             ,"" ) 
+
+`MPRnb( LBGISL         ,0.0            ,"V"                     ,"" ) 
+`MPRnb( NBGISL         ,0.0            ,"V"                     ,"" ) 
+`MPRnb( PBGISL         ,0.0            ,"m*V"                   ,"" ) 
+
+`MPRnb( LCGISL         ,0.0            ,"m*(V^3)"               ,"" ) 
+`MPRnb( NCGISL         ,0.0            ,"m*(V^3)"               ,"" ) 
+`MPRnb( PCGISL         ,0.0            ,"(m^2)*(V^3)"           ,"" ) 
+
+`MPRnb( LEGISL         ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NEGISL         ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PEGISL         ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LPGISL         ,0.0            ,""                      ,"" ) 
+`MPRnb( NPGISL         ,0.0            ,""                      ,"" ) 
+`MPRnb( PPGISL         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAGIDL         ,LAGISL         ,"m/ohm"                 ,"" ) 
+`MPRnb( NAGIDL         ,NAGISL         ,"m/ohm"                 ,"" ) 
+`MPRnb( PAGIDL         ,PAGISL         ,"(m^2)/ohm"             ,"" ) 
+
+`MPRnb( LBGIDL         ,LBGISL         ,"V"                     ,"" ) 
+`MPRnb( NBGIDL         ,NBGISL         ,"V"                     ,"" ) 
+`MPRnb( PBGIDL         ,PBGISL         ,"m*V"                   ,"" ) 
+
+`MPRnb( LCGIDL         ,LCGISL         ,"m*(V^3)"               ,"" ) 
+`MPRnb( NCGIDL         ,NCGISL         ,"m*(V^3)"               ,"" ) 
+`MPRnb( PCGIDL         ,PCGISL         ,"(m^2)*(V^3)"           ,"" ) 
+
+`MPRnb( LEGIDL         ,LEGISL         ,"m*V"                   ,"" ) 
+`MPRnb( NEGIDL         ,NEGISL         ,"m*V"                   ,"" ) 
+`MPRnb( PEGIDL         ,PEGISL         ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LPGIDL         ,LPGISL         ,""                      ,"" ) 
+`MPRnb( NPGIDL         ,NPGISL         ,""                      ,"" ) 
+`MPRnb( PPGIDL         ,PPGISL         ,""                      ,"" ) 
+
+`MPRnb( LALPHA0        ,0.0            ,"(m^2)/V"               ,"" ) 
+`MPRnb( NALPHA0        ,0.0            ,"(m^2)/V"               ,"" ) 
+`MPRnb( PALPHA0        ,0.0            ,"(m^3)/V"               ,"" ) 
+
+`MPRnb( LALPHA1        ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NALPHA1        ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PALPHA1        ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LALPHAII0      ,0.0            ,"(m^2)/V"               ,"" ) 
+`MPRnb( NALPHAII0      ,0.0            ,"(m^2)/V"               ,"" ) 
+`MPRnb( PALPHAII0      ,0.0            ,"(m^3)/V"               ,"" ) 
+
+`MPRnb( LALPHAII1      ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NALPHAII1      ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PALPHAII1      ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LBETA0         ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NBETA0         ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PBETA0         ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LBETAII0       ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NBETAII0       ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PBETAII0       ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LBETAII1       ,0.0            ,""                      ,"" ) 
+`MPRnb( NBETAII1       ,0.0            ,""                      ,"" ) 
+`MPRnb( PBETAII1       ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LBETAII2       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NBETAII2       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PBETAII2       ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LESATII        ,0.0            ,"V"                     ,"" ) 
+`MPRnb( NESATII        ,0.0            ,"V"                     ,"" ) 
+`MPRnb( PESATII        ,0.0            ,"m*V"                   ,"" ) 
+
+`MPRnb( LLII           ,0.0            ,"(m^2)*V"               ,"" ) 
+`MPRnb( NLII           ,0.0            ,"(m^2)*V"               ,"" ) 
+`MPRnb( PLII           ,0.0            ,"(m^3)*V"               ,"" ) 
+
+`MPRnb( LSII0          ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( NSII0          ,0.0            ,"m/V"                   ,"" ) 
+`MPRnb( PSII0          ,0.0            ,"(m^2)/V"               ,"" ) 
+
+`MPRnb( LSII1          ,0.0            ,""                      ,"" ) 
+`MPRnb( NSII1          ,0.0            ,""                      ,"" ) 
+`MPRnb( PSII1          ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LSII2          ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NSII2          ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PSII2          ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LSIID          ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NSIID          ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PSIID          ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LCFS           ,0.0            ,"F"                     ,"" ) 
+`MPRnb( NCFS           ,0.0            ,"F"                     ,"" ) 
+`MPRnb( PCFS           ,0.0            ,"F*m"                   ,"" ) 
+
+`MPRnb( LCFD           ,LCFS           ,"F"                     ,"" ) 
+`MPRnb( NCFD           ,NCFS           ,"F"                     ,"" ) 
+`MPRnb( PCFD           ,PCFS           ,"F*m"                   ,"" ) 
+
+`MPRnb( LCOVS          ,0.0            ,"F"                     ,"" ) 
+`MPRnb( NCOVS          ,0.0            ,"F"                     ,"" ) 
+`MPRnb( PCOVS          ,0.0            ,"F*m"                   ,"" ) 
+
+`MPRnb( LCOVD          ,LCOVS          ,"F"                     ,"" ) 
+`MPRnb( NCOVD          ,NCOVS          ,"F"                     ,"" ) 
+`MPRnb( PCOVD          ,PCOVS          ,"F*m"                   ,"" ) 
+
+`MPRnb( LCGSL          ,0.0            ,"F"                     ,"" ) 
+`MPRnb( NCGSL          ,0.0            ,"F"                     ,"" ) 
+`MPRnb( PCGSL          ,0.0            ,"F*m"                   ,"" ) 
+
+`MPRnb( LCGDL          ,LCGSL          ,"F"                     ,"" ) 
+`MPRnb( NCGDL          ,NCGSL          ,"F"                     ,"" ) 
+`MPRnb( PCGDL          ,PCGSL          ,"F*m"                   ,"" ) 
+
+`MPRnb( LCKAPPAS       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NCKAPPAS       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PCKAPPAS       ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LCKAPPAD       ,LCKAPPAS       ,"m*V"                   ,"" ) 
+`MPRnb( NCKAPPAD       ,NCKAPPAS       ,"m*V"                   ,"" ) 
+`MPRnb( PCKAPPAD       ,PCKAPPAS       ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LCGBL          ,0.0            ,"F"                     ,"" ) 
+`MPRnb( NCGBL          ,0.0            ,"F"                     ,"" ) 
+`MPRnb( PCGBL          ,0.0            ,"F*m"                   ,"" ) 
+
+`MPRnb( LCKAPPAB       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NCKAPPAB       ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PCKAPPAB       ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LNTGEN         ,0.0            ,""                      ,"" ) 
+`MPRnb( NNTGEN         ,0.0            ,""                      ,"" ) 
+`MPRnb( PNTGEN         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LAIGEN         ,0.0            ,"(m^-2)*(V^-1)"         ,"" ) 
+`MPRnb( NAIGEN         ,0.0            ,"(m^-2)*(V^-1)"         ,"" ) 
+`MPRnb( PAIGEN         ,0.0            ,"(m^-1)*(V^-1)"         ,"" ) 
+
+`MPRnb( LBIGEN         ,0.0            ,"(m^-2)*(V^-3)"         ,"" ) 
+`MPRnb( NBIGEN         ,0.0            ,"(m^-2)*(V^-3)"         ,"" ) 
+`MPRnb( PBIGEN         ,0.0            ,"(m^-1)*(V^-3)"         ,"" ) 
+
+`MPRnb( LXRCRG1        ,0.0            ,""                      ,"" ) 
+`MPRnb( NXRCRG1        ,0.0            ,""                      ,"" ) 
+`MPRnb( PXRCRG1        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LXRCRG2        ,0.0            ,""                      ,"" ) 
+`MPRnb( NXRCRG2        ,0.0            ,""                      ,"" ) 
+`MPRnb( PXRCRG2        ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUTE           ,0.0            ,""                      ,"" ) 
+`MPRnb( NUTE           ,0.0            ,""                      ,"" ) 
+`MPRnb( PUTE           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUTER          ,LUTE           ,""                      ,"" ) 
+`MPRnb( NUTER          ,NUTE           ,""                      ,"" ) 
+`MPRnb( PUTER          ,PUTE           ,""                      ,"" ) 
+
+`MPRnb( LUTL           ,0.0            ,""                      ,"" ) 
+`MPRnb( NUTL           ,0.0            ,""                      ,"" ) 
+`MPRnb( PUTL           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUTLR          ,LUTL           ,""                      ,"" ) 
+`MPRnb( NUTLR          ,NUTL           ,""                      ,"" ) 
+`MPRnb( PUTLR          ,PUTL           ,""                      ,"" ) 
+
+`MPRnb( LEMOBT         ,0.0            ,""                      ,"" ) 
+`MPRnb( NEMOBT         ,0.0            ,""                      ,"" ) 
+`MPRnb( PEMOBT         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUA1           ,0.0            ,""                      ,"" ) 
+`MPRnb( NUA1           ,0.0            ,""                      ,"" ) 
+`MPRnb( PUA1           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUA1R          ,LUA1           ,""                      ,"" ) 
+`MPRnb( NUA1R          ,NUA1           ,""                      ,"" ) 
+`MPRnb( PUA1R          ,PUA1           ,""                      ,"" ) 
+
+`MPRnb( LUC1           ,0.0            ,""                      ,"" ) 
+`MPRnb( NUC1           ,0.0            ,""                      ,"" ) 
+`MPRnb( PUC1           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUC1R          ,LUC1           ,""                      ,"" ) 
+`MPRnb( NUC1R          ,NUC1           ,""                      ,"" ) 
+`MPRnb( PUC1R          ,PUC1           ,""                      ,"" ) 
+
+`MPRnb( LUD1           ,0.0            ,""                      ,"" ) 
+`MPRnb( NUD1           ,0.0            ,""                      ,"" ) 
+`MPRnb( PUD1           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LUD1R          ,LUD1           ,""                      ,"" ) 
+`MPRnb( NUD1R          ,NUD1           ,""                      ,"" ) 
+`MPRnb( PUD1R          ,PUD1           ,""                      ,"" ) 
+
+`MPRnb( LUCSTE         ,0.0            ,""                      ,"" ) 
+`MPRnb( NUCSTE         ,0.0            ,""                      ,"" ) 
+`MPRnb( PUCSTE         ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPTWGT         ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( NPTWGT         ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( PPTWGT         ,0.0            ,"(m^2)/K"               ,"" ) 
+
+`MPRnb( LAT            ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( NAT            ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( PAT            ,0.0            ,"(m^2)/K"               ,"" ) 
+
+`MPRnb( LATR           ,LAT            ,""                      ,"" ) 
+`MPRnb( NATR           ,NAT            ,""                      ,"" ) 
+`MPRnb( PATR           ,PAT            ,""                      ,"" ) 
+
+`MPRnb( LATCV          ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( NATCV          ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( PATCV          ,0.0            ,"(m^2)/K"               ,"" ) 
+
+`MPRnb( LSTTHETASAT    ,0.0            ,""                      ,"" ) 
+`MPRnb( NSTTHETASAT    ,0.0            ,""                      ,"" ) 
+`MPRnb( PSTTHETASAT    ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LPRT           ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( NPRT           ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( PPRT           ,0.0            ,"(m^2)/K"               ,"" ) 
+
+`MPRnb( LKT1           ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( NKT1           ,0.0            ,"m*V"                   ,"" ) 
+`MPRnb( PKT1           ,0.0            ,"(m^2)*V"               ,"" ) 
+
+`MPRnb( LTSS           ,0.0            ,""                      ,"" ) 
+`MPRnb( NTSS           ,0.0            ,""                      ,"" ) 
+`MPRnb( PTSS           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LIIT           ,0.0            ,""                      ,"" ) 
+`MPRnb( NIIT           ,0.0            ,""                      ,"" ) 
+`MPRnb( PIIT           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LTII           ,0.0            ,""                      ,"" ) 
+`MPRnb( NTII           ,0.0            ,""                      ,"" ) 
+`MPRnb( PTII           ,0.0            ,""                      ,"" ) 
+
+`MPRnb( LTGIDL         ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( NTGIDL         ,0.0            ,"m/K"                   ,"" ) 
+`MPRnb( PTGIDL         ,0.0            ,"(m^2)/K"               ,"" ) 
+
+`MPRnb( LIGT           ,0.0            ,""                      ,"" ) 
+`MPRnb( NIGT           ,0.0            ,""                      ,"" ) 
+`MPRnb( PIGT           ,0.0            ,""                      ,"" ) 

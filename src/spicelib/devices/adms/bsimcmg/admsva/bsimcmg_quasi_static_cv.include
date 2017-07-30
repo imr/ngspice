@@ -1,0 +1,89 @@
+// ********************************************************
+// **** BSIM-CMG 110.0.0 released by Sourabh Khandelwal on 01/01/2016 ****/
+// *  BSIM Common Multi-Gate Model Equations (Verilog-A)
+// ********************************************************
+//
+// ********************************************************
+// * Copyright 2016 Regents of the University of California. 
+// * All rights reserved.
+// *
+// * Project Director: Prof. Chenming Hu.
+// * Authors: Sriramkumar V., Navid Paydavosi, Juan Duarte, Darsen Lu, 
+// *          Chung-Hsun Lin, Mohan Dunga, Shijing Yao,
+// *          Ali Niknejad, Chenming Hu
+// ********************************************************
+// ********************************************************
+// *   NONDISCLOSURE STATEMENT
+// Software is distributed as is, completely without warranty or service
+// support. The University of California and its employees are not liable
+// for the condition or performance of the software.
+// The University of California owns the copyright and grants users a perpetual,
+// irrevocable, worldwide, non-exclusive, royalty-free license with 
+// respect to the software as set forth below.
+// The University of California hereby disclaims all implied warranties.
+// The University of California grants the users the right to modify, copy,
+// and redistribute the software and documentation, both within the user's
+// organization and externally, subject to the following restrictions
+// 1. The users agree not to charge for the University of California code
+// itself but may charge for additions, extensions, or support.
+// 2. In any product based on the software, the users agree to acknowledge
+// the University of California that developed the software. This
+// acknowledgment shall appear in the product documentation.
+// 3. The users agree to obey all U.S. Government restrictions governing
+// redistribution or export of the software.
+// 4. The users agree to reproduce any copyright notice which appears on
+// the software on any copy or modification of such made available
+// to others
+// Agreed to on __Jan 01, 2016_________________
+// By: ___University of California, Berkeley____ 
+//     ___Chenming Hu_____________________ 
+//     ___Professor in Graduate School _______
+// ********************************************************
+// *** Quasi Static CV Model *** 
+
+    T11 = (2.0*qia+nVtm)/DvsatCV;//G
+    qg  = qia+dqi*dqi/(6.0*T11);//qc
+    qd  = -0.5*(qia-(dqi/(6.0))*(1.0-(dqi/T11)*(1+dqi/(5.0*T11))));//qd
+    // Including CLM in qg and qd
+    inv_MclmCV = 1.0 / MclmCV;
+    qg         = inv_MclmCV * qg + (MclmCV - 1.0) * qid;
+    qd         = inv_MclmCV * inv_MclmCV * qd + 0.5 * (MclmCV - inv_MclmCV) * qid;
+    
+//Calculating partition for NQSMOD2
+`ifdef __NQSMOD2__
+    if(NQSMOD == 2)    xdpart  =  qd / qg;
+    else               xdpart  =  0;                
+`endif
+
+    qs     = -qg-qd; //from charge conservation qs = -qg-qd;
+    T6     = NFINtotal*WeffCV0 * LeffCV * coxeff;
+
+    qg     = T6*qg;
+    qd     = T6*qd;
+    qs     = T6*qs;
+   qinv    = qg ;
+   if(BULKMOD != 0) begin
+       T1  =  NFINtotal * WeffCV0 * LeffCV_acc * cox_acc;
+       T7  =  qi_acc_for_QM;//qbulk
+       T10 =  T7 * T1;
+    qg_acc =  - T10;
+    qb_acc =  T10;
+        T1 =  NFINtotal * WeffCV0 * LeffCV * cox;
+        T2 = qba - qi_acc_for_QM;
+       T10 = T1*T2;
+    qg_acc =  qg_acc - T10;
+    qb_acc =  qb_acc + T10;
+        T1 =  NFINtotal * WeffCV0 * LeffCV * cox;
+        T2 = (nq-1.0)*0.5*(qia+(dqi*dqi/(6.0*T11)));
+       T10 = T1*T2;
+    qg_acc =  qg_acc - T10;
+    qb_acc =  qb_acc + T10;
+   end
+
+// if vds is negative, physical charge on qd is qs
+   if (sigvds < 0) begin
+       T1  =  qd;
+       qd  =  qs;     
+       qs  =  T1;
+   end
+
