@@ -14,8 +14,6 @@ vbulk bulk 0 dc=0.0
 
 
 * --- Transistor ---
-* FIXME, parameter LSP has a different default !!
-*  see commit for bsimcmg_body.include
 m1 drain gate source bulk 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 + FPITCH  = 4.00E-08
 
