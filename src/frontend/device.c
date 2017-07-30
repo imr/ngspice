@@ -1118,7 +1118,7 @@ if_set_binned_model(CKTcircuit *ckt, char *devname, char *param, struct dvec *va
 static void
 com_alter_common(wordlist *wl, int do_model)
 {
-    wordlist *parent = wl->wl_prev;
+    wordlist *wl_head = wl;
     wordlist *eqword, *words;
     char *dev, *param;
     struct dvec *dv;
@@ -1150,6 +1150,8 @@ com_alter_common(wordlist *wl, int do_model)
                 if (eqptr > argument)
                     wn = wl_cons(copy_substring(argument, eqptr), wn);
                 wl_splice(wl, wn);
+                if (wl_head == wl)
+                    wl_head = wn;
             }
             break;
         }
@@ -1163,7 +1165,7 @@ com_alter_common(wordlist *wl, int do_model)
          *   'alter device parameter value parameter value [ parameter value ]'
          * with multiple param value pairs are not supported!
          */
-        wordlist *wlin = parent->wl_next;
+        wordlist *wlin = wl_head;
         int wlen = wl_length(wlin);
         int maxelem = 3;
         /* Return the last element of wlin */
@@ -1192,7 +1194,7 @@ com_alter_common(wordlist *wl, int do_model)
         wlin = wl_append(wlin, wl_cons(copy("="), wl_chop_rest(wlin)));
     }
 
-    wl = parent->wl_next;
+    wl = wl_head;
 
     /* Everything is ready, parsing of the wordlist starts here. */
     eqword = wl_find("=", wl);
