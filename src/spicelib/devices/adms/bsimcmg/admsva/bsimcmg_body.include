@@ -381,7 +381,7 @@
 `MPRcc( CRATIO         ,0.5            ,""            ,0.0         ,1.0         ,"Ratio of the corner area filled with silicon to the total corner area" ) 
 `MPRoo( DELTAPRSD      ,0.0            ,"m"           ,-FPITCH     ,inf         ,"Change in silicon/silicide interface length due to non-rectangular epi" ) 
 `MPIcc( SDTERM         ,0              ,""            ,0           ,1           ,"Indicator of whether the source/drain are terminated with silicide" ) 
-`MPRnb( LSP            ,(0.2*(3.0e-8 + XL)) ,"m"           ,"Thickness of the gate sidewall spacer" ) 
+`MPRnb( LSP            ,-1             ,"m"           ,"Thickness of the gate sidewall spacer" ) 
 `MPRco( EPSRSP         ,3.9            ,""            ,1.0         ,inf         ,"Relative dielectric constant of the spacer" ) 
 `MPRoz( TGATE          ,3.0e-8         ,"m"           ,"Gate height on top of the hard mask" ) 
 `MPRcz( TMASK          ,3.0e-8         ,"m"           ,"Height of hard mask on top of the fin" ) 
@@ -985,6 +985,8 @@ real K2_i, K21_i;
 real Cins, Ach, Weff_UFCM, qdep,rc, vth_fixed_factor_Sub, vth_fixed_factor_SI, qm, Qdep_ov_Cins, qi_acc_for_QM;
 real fieldnormalizationfactor, auxQMfact, QMFACTORCVfinal;
 real psipclamp, sqrtpsip, nq, F0;
+
+real LSP_i;
 
 `Cfringe_2d_vars();
 
@@ -2224,6 +2226,10 @@ analog begin
 
       // Parasitic Source/Drain to Gate Fringe Capacitance Model
       if (CGEOMOD == 2) begin
+         if ($param_given(LSP))
+           LSP_i = LSP;
+         else
+           LSP_i = 0.2*(L + XL);
          Hg    =  TGATE + TMASK;
          Trsd  =  0.5 * (FPITCH - TFIN);
          Wg    =  max(0.0, Trsd - TOXP);
@@ -2232,18 +2238,18 @@ analog begin
          // Top Component
          if (TMASK > 0.0) begin
             // Capacitance Model by Chung-Hsun Lin (IBM)
-            T0y       =  3.467e-11 * `lln(1.0e-7 * EPSRSP / (3.9 * LSP));
-            T1y       =  0.942 * Hrsd * epssp / LSP;
+            T0y       =  3.467e-11 * `lln(1.0e-7 * EPSRSP / (3.9 * LSP_i));
+            T1y       =  0.942 * Hrsd * epssp / LSP_i;
             Cgg_top  =  (T0y + T1y) * (TFIN + (FPITCH - TFIN) * CRATIO);
          end else begin
-            `Cfringe_2d(cfr_top_trigate, Hg, Hrsd, LSP, TFIN, LRSD, Lg, TOXP, 0.85, Cgg_top)
+            `Cfringe_2d(cfr_top_trigate, Hg, Hrsd, LSP_i, TFIN, LRSD, Lg, TOXP, 0.85, Cgg_top)
          end
 
          // Side Component
          if (TMASK > 0) begin
-            `Cfringe_2d(cfr_side_dblgate, Wg, Trsd, LSP, HFIN, LRSD, Lg, TOXP, 0.70, Cgg_side)
+            `Cfringe_2d(cfr_side_dblgate, Wg, Trsd, LSP_i, HFIN, LRSD, Lg, TOXP, 0.70, Cgg_side)
          end else begin
-            `Cfringe_2d(cfr_side_trigate, Wg, Trsd, LSP, HFIN, LRSD, Lg, TOXP, 0.85, Cgg_side)
+            `Cfringe_2d(cfr_side_trigate, Wg, Trsd, LSP_i, HFIN, LRSD, Lg, TOXP, 0.85, Cgg_side)
          end
 
          // Corner Component
@@ -2256,7 +2262,7 @@ analog begin
                 Acorner  =  (FPITCH - TFIN) * Hrsd;
             end
          end
-         Ccorner  =  (NFIN * Acorner + ARSDEND + ASILIEND) * epssp / LSP;
+         Ccorner  =  (NFIN * Acorner + ARSDEND + ASILIEND) * epssp / LSP_i;
          Cfr_geo  =  (Ccorner + Cgg_top * NFIN + CGEOE * Cgg_side * NFIN * 2.0) * NF;
          Cfr_geo  =  Cfr_geo * max(0.0, CGEOA + CGEOB * TFIN + CGEOC * FPITCH + CGEOD * LRSD);
       end
