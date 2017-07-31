@@ -156,6 +156,9 @@
             </admst:otherwise>
           </admst:choose>
         </admst:when>
+        <admst:when test="[name='\$port_connected']">
+          <admst:value-to select="dependency" string="constant"/>
+        </admst:when>
         <admst:otherwise>
           <admst:apply-templates select="arguments" match="e:dependency"/>
           <admst:choose>
@@ -187,6 +190,7 @@
           name='\$abstime' or
           name='\$realtime' or
           name='\$temperature' or
+          name='\$port_connected' or
           name='\$vt' or
           name='idt' or
           name='ddt' or
