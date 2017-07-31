@@ -9,6 +9,8 @@ bsim6acld.c bsim6.analogfunction.c bsim6ask.c bsim6.c bsim6del.c bsim6dest.c bsi
 to : $(SRCS:%.c=%.o)
 
 scripts = \
+	-x \
+	-e ../../admst/adms.implicit.xml \
 	-e ../../admst/ngspiceVersion.xml \
 	-e ../../admst/analogfunction.xml \
 	-e ../../admst/ngspiceMODULEitf.h.xml \
