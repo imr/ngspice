@@ -88,6 +88,7 @@ DISTCLEANFILES = Makefile.am \\
 	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
 	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
  : \$(srcdir)/admsva/\%.va \\
+	\$(ADMSXMLINTERFACE)/adms.implicit.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	\$(ADMSXMLINTERFACE)/analogfunction.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
@@ -113,6 +114,8 @@ DISTCLEANFILES = Makefile.am \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
 	\$(ADMSXML) -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
+	-x \\
+	-e \$(ADMSXMLINTERFACE)/adms.implicit.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
 	-e \$(ADMSXMLINTERFACE)/analogfunction.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
