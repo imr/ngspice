@@ -11,6 +11,8 @@ bsimcmgacld.c bsimcmg.analogfunction.c bsimcmgask.c bsimcmg.c bsimcmgdel.c bsimc
 to : $(SRCS:%.c=%.o)
 
 scripts = \
+	-x \
+	-e ../../admst/adms.implicit.xml \
 	-e ../../admst/ngspiceVersion.xml \
 	-e ../../admst/analogfunction.xml \
 	-e ../../admst/ngspiceMODULEitf.h.xml \

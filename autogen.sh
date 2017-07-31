@@ -175,7 +175,8 @@ $znew
                     echo "-->"$ADMSDIR/$adms_dir
                     (
                         cd $ADMSDIR/$adms_dir
-                        $ADMSXML `ls admsva/*.va` -Iadmsva -xv \
+                        $ADMSXML `ls admsva/*.va` -Iadmsva -xv -x \
+                            -e ../admst/adms.implicit.xml \
                             -e ../admst/ngspiceVersion.xml \
                             -e ../admst/ngspiceMakefile.am.xml
                     )
