@@ -1209,7 +1209,7 @@ analog begin
       cbox      =  EPSROX * `EPS0 / EOTBOX;
       epsratio  =  EPSRSUB / EPSROX;
 
-      if (1 /*$port_connected(t)*/ == 1) begin
+      if ($port_connected(t) == 1) begin
           `ifdef __SHMOD__
               if (SHMOD == 0) begin
                   if (SH_WARN == 1) begin
