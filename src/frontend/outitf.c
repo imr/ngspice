@@ -1058,6 +1058,12 @@ plotInit(runDesc *run)
 static inline int
 vlength2delta(int l)
 {
+#ifdef SHARED_MODULE
+    if (savenone)
+        /* We need just a vector length of 1 */
+        return 1;
+#endif
+
     if (l < 50000)
         return 512;
     if (l < 200000)
@@ -1078,7 +1084,8 @@ plotAddRealValue(dataDesc *desc, double value)
     struct dvec *v = desc->vec;
 
 #ifdef SHARED_MODULE
-    if(savenone)
+    if (savenone)
+        /* always save new data to same location */
         v->v_length = 0;
 #endif
 
