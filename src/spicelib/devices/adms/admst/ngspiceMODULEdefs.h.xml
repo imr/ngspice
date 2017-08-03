@@ -200,7 +200,15 @@ typedef struct s$(module)instance {
   <admst:text format="\n"/>
 </admst:for-each>
 <admst:for-each select="node[grounded='no']">
-  <admst:text format="  unsigned %(name)Node_connected :1;\n"/>
+  <admst:choose>
+    <admst:when test="[location='internal']">
+      <admst:text format="  unsigned %(name)Node_mine :1;\n"/>
+    </admst:when>
+    <admst:otherwise>
+      <admst:text format="  unsigned %(name)Node_mine :1;\n"/>
+      <admst:text format="  unsigned %(name)Node_connected :1;\n"/>
+    </admst:otherwise>
+  </admst:choose>
 </admst:for-each>
   /* instance parameters */
 <admst:for-each select="variable[parametertype='instance' and input='yes']">

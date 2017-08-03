@@ -114,6 +114,7 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 </admst:for-each>
 <admst:value-of select="name"/>
         here->%sNode = -1;
+        here->%(name)Node_mine = 0;
 </admst:for-each>
       }
 </admst:if>
@@ -144,13 +145,12 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
   <admst:value-of select="value"/>
   <admst:variable name="info" select="%s"/>
 </admst:for-each>
-<admst:value-of select="name"/>
-<admst:value-of select="name"/>
-        if(here->%sNode == -1)
+        if(here->%(name)Node == -1)
         {
           error=CKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,&quot;X%(name)X&quot;);
           if(error) return(error);
-          here->%sNode = tmp->number;
+          here->%(name)Node = tmp->number;
+          here->%(name)Node_mine = 1;
         }
 </admst:for-each>
       }
@@ -185,16 +185,20 @@ $(module)unsetup(GENmodel *inModel, CKTcircuit *ckt)
     for ( here = $(module)instances(model) ;here != NULL ; here = $(module)nextInstance(here) )
     {
 <admst:for-each select="node[location='external']">
-        if (!here->%(name)Node_connected && here->%(name)Node >= 0) {
-            CKTdltNNum(ckt, here->%(name)Node);
-            here->%(name)Node = -1;
+        if (here->%(name)Node_mine) {
+            if (here->%(name)Node > 0)
+                CKTdltNNum(ckt, here->%(name)Node);
+            here->%(name)Node_mine = 0;
         }
+        if (!here->%(name)Node_connected)
+            here->%(name)Node = -1;
 </admst:for-each>
 <admst:for-each select="reverse(node[location='internal'])">
-        if (here->%(name)Node > 0) {
-            CKTdltNNum(ckt, here->%(name)Node);
-            here->%(name)Node = -1;
-        }
+        if (here->%(name)Node_mine)
+            if (here->%(name)Node > 0)
+                CKTdltNNum(ckt, here->%(name)Node);
+        here->%(name)Node = -1;
+        here->%(name)Node_mine = 0;
 </admst:for-each>
     }
   }
