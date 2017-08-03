@@ -1,3 +1,8 @@
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015, Auburn University
+// All rights reserved, see IP_NOTICE_DISCLAIMER_LICENSE for further information.
+
 // Temperature scaling of parameters   
       
    // The excess transistor temperature due to the self-heating 
@@ -14,15 +19,7 @@
 `endif
                                        
    // Temperature variables
-
-    
-`ifdef insideADMS 
-   Tk   = Trk + DTA + Vdt;     
-   Tamb = Trk + DTA;  
-`else 
-   Tk   = $temperature + DTA + Vdt;     
-   Tamb = $temperature + DTA;  
-`endif 
+   Tk   = Tamb + Vdt;      
     
    tN  = Tk / Trk;    
    Vt  = `KBdivQQ * Tk;    
@@ -160,7 +157,7 @@
    DEG_T = DEG * exp(lntN * AQBO);      
    
 `ifdef SELFHEATING
-  // Tempearature scaling of the thermal resistance   
+  // Temperature scaling of the thermal resistance   
  
    RTH_Tamb = RTH * pow(Tamb / Trk, ATH); 
 `endif

@@ -1,12 +1,26 @@
-// Evaluate the operating point (outout) variables
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015, Auburn University
+// All rights reserved, see IP_NOTICE_DISCLAIMER_LICENSE for further information.
+
+// Evaluate the operating point (output) variables
 begin 
 
 `ifdef __VAMS_COMPACT_MODELING__
 
+   
 // The external currents and the current gain
 OP_ic     = I(<c>);        // External DC collector current
 OP_ib     = I(<b>);        // External DC base Current
-OP_betadc = OP_ic / OP_ib; // External DC Current gain
+
+if (OP_ib == 0)
+  begin
+   OP_betadc = 0.0 ;
+  end
+else
+  begin
+    OP_betadc = OP_ic / OP_ib; // External DC Current gain
+  end
 
 // begin added in MXT 504.9:
 OP_ie     = I(<e>);        // External DC emitter current
@@ -208,7 +222,7 @@ rz = alpha_ft * rx;
 ry = (1.0 - OP_grcvz * rz) / OP_grcvy;
 rb1b2 = gammax * rx + gammay * ry + gammaz * rz;
 rex = rz + rb1b2 - OP_rcbli;
-xrex = rex + RBC_TM * ((gbfx + OP_gmux) * rx + (gbfy + OP_gmuy) * ry +
+xrex = rz + rb1b2 + RBC_TM * ((gbfx + OP_gmux) * rx + (gbfy + OP_gmuy) * ry +
        (gbfz + OP_gmuz) * rz) - OP_rcbli - OP_rcblx;
 
 taut = OP_scbe * (rx + rb1b2) + (OP_cbex + OP_cbcx) * rx + (OP_cbey + OP_cbcy) *
