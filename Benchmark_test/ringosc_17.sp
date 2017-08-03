@@ -12,8 +12,8 @@ vdd supply  0 dc=1.0
 
 * --- Inverter Subcircuit ---
 .subckt inverter vin vout vdd gnd
-    Mp1 vout vin vdd gnd  mp  W=10e-6 L=10e-6
-    Mn1 vout vin gnd gnd  mn  W=10e-6 L=10e-6
+    Mp1 vout vin vdd gnd t1  mp  W=10e-6 L=10e-6
+    Mn1 vout vin gnd gnd t2  mn  W=10e-6 L=10e-6
 .ends
 
 * --- 17 Stage Ring oscillator ---
