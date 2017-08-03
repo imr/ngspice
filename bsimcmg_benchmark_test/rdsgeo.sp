@@ -60,7 +60,6 @@ run
 plot @Mn1[RSGEO] @Mn2[RSGEO] @Mn3[RSGEO] @Mn4[RSGEO]
 plot @Mp1[RSGEO] @Mp2[RSGEO] @Mp3[RSGEO] @Mp4[RSGEO]
 
-reset
 alter @mn1[FPITCH] = 90n
 alter @mn2[FPITCH] = 90n
 alter @mn3[FPITCH] = 90n

@@ -31,7 +31,6 @@ plot ids
 plot xgds
 plot @m1[gds]
 
-reset
 save @m1[gds]
 set temp = 27
 run
@@ -41,7 +40,6 @@ plot ids
 plot xgds
 plot @m1[gds]
 
-reset
 set temp = 100
 run
 let ids = -i(vds)
