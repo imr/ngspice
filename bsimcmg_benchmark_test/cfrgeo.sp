@@ -45,19 +45,16 @@ showmod #nmos2 : HFIN
 run
 plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
 
-reset
 altermod nmos2 hfin = 40n
 showmod #nmos2 : HFIN
 run
 plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
 
-reset
 altermod nmos2 hfin = 50n
 showmod #nmos2 : HFIN
 run
 plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
 
-reset
 altermod nmos2 hfin = 60n
 showmod #nmos2 : HFIN
 run

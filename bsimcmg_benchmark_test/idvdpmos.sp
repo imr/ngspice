@@ -33,7 +33,6 @@ let xgds = deriv(ids)
 plot ids
 plot xgds
 plot @m1[gds]
-reset
 
 set temp = -55
 run
@@ -42,7 +41,6 @@ let xgds = deriv(ids)
 plot ids
 plot xgds
 plot @m1[gds]
-reset
 
 set temp = 100
 run
@@ -51,7 +49,6 @@ let xgds = deriv(ids)
 plot ids
 plot xgds
 plot @m1[gds]
-reset
 
 .endc
 

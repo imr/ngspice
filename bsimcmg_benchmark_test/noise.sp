@@ -33,11 +33,9 @@ M1 drain gate 0 bulk 0 nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 .control
 op
 
-reset
 ac dec 11 1k 100g
 plot vdb(drain)
 
-reset
 noise v(drain) vgs dec 11 1k 100g
 print all
 echo "silence in the studio, no noise today"

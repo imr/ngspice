@@ -28,14 +28,10 @@ run
 plot -i(vds)
 plot -i(vbs)
 
-reset
-
 set temp = -55
 run
 plot -i(vds)
 plot -i(vbs)
-
-reset
 
 set temp = 100
 run
