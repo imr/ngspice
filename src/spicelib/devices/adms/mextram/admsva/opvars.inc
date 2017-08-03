@@ -1,3 +1,8 @@
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015, Auburn University
+// All rights reserved, see IP_NOTICE_DISCLAIMER_LICENSE for further information.
+
 //
 // Operation point (output) variables
 //
@@ -102,8 +107,8 @@
 `OPP(OP_rcblx,       Ohm, Extrinsic buried layer resistance)
 `OPP(OP_rcbli,       Ohm, Intrinsic buried layer resistance)
 `ifdef SUBSTRATE
-`OPP(OP_gs,        S,   Conductance parasistic PNP transistor)
-`OPP(OP_xgs,       S,   Conductance parasistic PNP transistor)
+`OPP(OP_gs,        S,   Conductance parasitic PNP transistor)
+`OPP(OP_xgs,       S,   Conductance parasitic PNP transistor)
 `OPP(OP_gsf,       S,   Conductance substrate failure current)
 `endif
 //Small signal equivalent circuit capacitances
@@ -149,4 +154,3 @@
 real dydx, dydz, gpi;
 real gammax, gammay, gammaz, gbfx, gbfy, gbfz, alpha_ft;
 real rx, ry, rz, rb1b2, rex, xrex, taut;
-
