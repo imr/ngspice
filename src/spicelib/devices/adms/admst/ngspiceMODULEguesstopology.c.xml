@@ -183,12 +183,12 @@
         <admst:choose>
           <admst:when test="lhs/branch[grounded='no']">
             <admst:text test="lhs/branch/nnode[location='internal']"
-              format="here->%(lhs/branch/nnode/name)Node = here->%(lhs/branch/pnode/name)Node; /* nnode collapsed */ \n"/>
+              format="here->%(lhs/branch/nnode/name)Node = here->%(lhs/branch/pnode/name)Node; /* nnode collapsed */\n  here->%(lhs/branch/nnode/name)Node_mine = 0;\n"/>
             <admst:text test="lhs/branch/pnode[location='internal']"
-              format="here->%(lhs/branch/pnode/name)Node = here->%(lhs/branch/nnode/name)Node; /* pnode collapsed */ \n"/>
+              format="here->%(lhs/branch/pnode/name)Node = here->%(lhs/branch/nnode/name)Node; /* pnode collapsed */\n  here->%(lhs/branch/pnode/name)Node_mine = 0;\n"/>
           </admst:when>
           <admst:otherwise>
-            <admst:text format="here->%(lhs/branch/pnode/name)Node = 0; /* pnode collapsed to GND */ \n"/>
+            <admst:text format="here->%(lhs/branch/pnode/name)Node = 0; /* pnode collapsed to GND */ \n  here->%(lhs/branch/pnode/name)Node_mine = 0;\n"/>
           </admst:otherwise>
         </admst:choose>
       </admst:if>
