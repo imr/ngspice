@@ -98,7 +98,7 @@ NOISEan (CKTcircuit *ckt, int restart)
             case LINEAR:
                 job->NfreqDelta = (job->NstopFreq -
                                 job->NstartFreq)/
-                    (job->NnumSteps - 1);
+                            (job->NnumSteps - 1);
                 break;
 
             default:
@@ -150,9 +150,9 @@ NOISEan (CKTcircuit *ckt, int restart)
 
         if (!data->squared)
             for (i = 0; i < data->numPlots; i++)
-            data->squared_value[i] =
-                ciprefix("inoise", data->namelist[i]) ||
-                ciprefix("onoise", data->namelist[i]);
+                data->squared_value[i] =
+                    ciprefix("inoise", data->namelist[i]) ||
+                    ciprefix("onoise", data->namelist[i]);
 
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                            data->squared
@@ -172,19 +172,19 @@ NOISEan (CKTcircuit *ckt, int restart)
         step = (int)(job->NsavFstp);
         switch (job->NstpType) {
 
-        case DECADE:
+            case DECADE:
             case OCTAVE:
-            data->freq = job->NstartFreq * exp (step *
-                 log (job->NfreqDelta));
-                break;
+                data->freq = job->NstartFreq * exp (step *
+                     log (job->NfreqDelta));
+                    break;
 
-        case LINEAR:
-            data->freq = job->NstartFreq + step *
-                 job->NfreqDelta;
-                break;
+            case LINEAR:
+                data->freq = job->NstartFreq + step *
+                     job->NfreqDelta;
+                    break;
 
-        default:
-            return(E_BADPARM);
+            default:
+                return(E_BADPARM);
 
         }
         job->NsavFstp = 0;
