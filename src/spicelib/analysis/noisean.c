@@ -46,10 +46,34 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
     GENinstance *inst = CKTfndDev(ckt, job->input);
+    bool frequequal = AlmostEqualUlps(job->NstartFreq, job->NstopFreq, 3);
 
     posOutNode = (job->output) -> number;
     negOutNode = (job->outputRef) -> number;
 
+	if (job->NnumSteps < 1) {
+		SPfrontEnd->IFerrorf(ERR_WARNING,
+			"Number of steps for noise measurement has to be larger than 0,\n    but currently is %d\n",
+			job->NnumSteps);
+		return(E_PARMVAL);
+	}
+	else if ((job->NnumSteps == 1) && (job->NstpType == LINEAR)) {
+		if (!frequequal) {
+			job->NstopFreq = job->NstartFreq;
+		    SPfrontEnd->IFerrorf(ERR_WARNING,
+			    "Noise measurement at a single frequency %g only!\n",
+				job->NstartFreq);
+		}
+	}
+	else {
+		if (frequequal) {
+			job->NstopFreq = job->NstartFreq;
+			job->NnumSteps = 1;
+		    SPfrontEnd->IFerrorf(ERR_WARNING,
+			    "Noise measurement at a single frequency %g only!\n",
+				job->NstartFreq);
+		}
+	}
     /* see if the source specified is AC */
     {
         bool ac_given = FALSE;
@@ -97,9 +121,11 @@ NOISEan (CKTcircuit *ckt, int restart)
             break;
 
         case LINEAR:
-            job->NfreqDelta = (job->NstopFreq - 
-                            job->NstartFreq)/
-			    (job->NnumSteps - 1);
+			if (job->NnumSteps == 1)
+				job->NfreqDelta = 0;
+			else
+                job->NfreqDelta = (job->NstopFreq -
+                    job->NstartFreq) / (job->NnumSteps - 1);
             break;
 
         default:
@@ -292,6 +318,9 @@ NOISEan (CKTcircuit *ckt, int restart)
 	    return(E_INTERN);
         }
 	step++;
+
+	if ((job->NnumSteps == 1) && (job->NstpType == LINEAR))
+		break;
     }
 
     error = CKTnoise(ckt,N_DENS,N_CLOSE,data);
