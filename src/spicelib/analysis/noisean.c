@@ -284,7 +284,10 @@ NOISEan (CKTcircuit *ckt, int restart)
                 break;
 
             case LINEAR:
-                data->freq += job->NfreqDelta;
+                if (job->NfreqDelta > 1e-6)
+                    data->freq += job->NfreqDelta;
+                else
+                    data->freq += (job->NfreqDelta+job->NstartFreq*ckt->CKTreltol);
                 break;
 
             default:
