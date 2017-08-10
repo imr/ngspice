@@ -45,7 +45,15 @@ NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case N_STEPS:
-        job->NnumSteps = value->iValue;
+        if ((job->NstpType == LINEAR) && (value->iValue < 1)) {
+            errMsg = copy("Linear sweep at least 1 points");
+            return(E_PARMVAL);
+        }
+        if ((job->NstpType == LINEAR) && (value->iValue == 1)) {
+            job->NnumSteps = 2;
+        } else {
+            job->NnumSteps = value->iValue;
+        }
         break;
 
     case N_START:
