@@ -70,9 +70,6 @@ sub runNoiseTest {
 
     @X=();@Noise=();
     $noisePin=$main::Outputs[0];
-    if ($main::fMin == $main::fMax) {
-        $main::frequencySpec="lin 0 $main::fMin ".(10*$main::fMin); # spice3f5 bug workaround
-    }
     foreach $temperature (@main::Temperature) {
         foreach $biasVoltage (split(/\s+/,$main::biasListSpec)) {
             if ($main::fMin == $main::fMax) {
