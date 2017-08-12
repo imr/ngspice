@@ -68,7 +68,7 @@ abridge-w1 [d_divout d_ref d_Un d_D] [s1 s2 u1n d1] dac1
 + input_load = 5.0e-12 t_rise = 1e-10 t_fall = 1e-10)
 
 .control
-save vcont s1 s2 u1 d1
+save vcont s1 s2 u1n d1
 iplot vcont
 ** calculate breakpoint for switching frequency
 let t1_3 = simtime/3
@@ -92,7 +92,7 @@ resume
 alter @vref[pulse] = [ 0 3.3 10n 1n 1n  $&pw3 $&per3 ]
 resume
 rusage
-plot vcont s1 s2+1.2 u1+2.4 d1+3.6 xlimit 15u 16u
+plot vcont s1 s2+1.2 u1n+2.4 d1+3.6 xlimit 15u 16u
 *plot vcont
 .endc
 
