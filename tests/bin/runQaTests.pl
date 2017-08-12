@@ -329,7 +329,7 @@ if ($reallyVerbose) {
     $flag="";
 }
 foreach $test (@Test) {
-    next if (%doTest && !$doTest{$test});
+    next if (defined(%doTest) && !$doTest{$test});
 
     if ($verbose) {print "\n****** Running test ($simulatorName): $test"}
 
@@ -343,7 +343,7 @@ foreach $test (@Test) {
         } else {
             $refFile="$resultsDirectory/$test.standard";
         }
-        next if (%doVariant && !$doVariant{$variant});
+        next if (defined(%doVariant) && !$doVariant{$variant});
         $simFile="$resultsDirectory/$test.$variant";
         if ($outputDc) {
             if (($forceSimulation || ! -r $simFile) && !$onlyDoComparison) {

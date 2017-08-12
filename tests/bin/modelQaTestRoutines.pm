@@ -201,7 +201,7 @@ sub processTestSpec {
     @main::ModelParameters=();
     @main::TestVariants=@main::Variants;
     undef(%main::BiasFor);
-    if (%main::isGeneralFloatingPin) {
+    if (defined(%main::isGeneralFloatingPin)) {
         %main::isFloatingPin=%main::isGeneralFloatingPin;
     } else {
         undef(%main::isFloatingPin);
