@@ -1,0 +1,141 @@
+ngspice User-oriented bug fixes and updates
+since ngspice 26
+for current master branch and scope-inpcom-16 branch
+
+*** scope-inpcom-16 ***
+variable yosis added to enforce ' $ ' as inline comment delimiter
+add noise to behavioral resistor
+extend the edisplay command
+re-enable flag nogrid of the plot command
+ebable setting an output path
+vertical text on y axis for postscript and WinGUI plots
+enabling extended ascii
+versioning using libtool, to be set in ./configure
+compile_shared.sh, compile instructions for shared lib
+enable path names with spaces (MS Windows)
+special spinit file for debugging with Visual Studio
+redo power function
+gnuplot, plot, and hardcopy lables: no automatic lower casing
+add command 'setcf' like 'set', but to preserve case of following parameters
+text rotation for y label in postscript plot and Windows GUI
+internal usage of 8th bit of a char removed, enable 'extended ascii'
+libtool versioning in configure.ac
+scalable source window in Windows GUI
+new command 'setseed'
+update to random number generators, use variable 'rndseed'
+no automatic to lower case in titles for postscript plotting
+xspice add function cm_get_circuit to allow accessing ckt structure in a code model
+variable 'noretraceplot' to prevent retracing of graph during plotting
+.options seedinfo: print new seed values on request
+enable .options seed=val||random to request random seed value or set fixed value val
+random numbers, add function setseed
+enable measured current I(device) as parameter to B source
+add command 'alterparam paramname=pvalue', changing the value of a global .param
+compile instructions for LINUX as scripts
+add variable 'sim_status' to indicate if a simulation has been aborted
+new command 'mc_source' to internally reload circuit for Monte Carlo simulation
+files starting with *ng_script are user supplied command files
+redo removal of unused model, compliant with commercial libraries (subckt on top level only)
+enable evaluation of all statistical functions agauss, gauss, aunif, unif, limit
+patch no. 16 by Thomy add a function cm_get_circuit to allow accessing the circuit structure ckt from within an XSPICE code model.
+current measurement through device XYZ by i(XYZ), top-level or within subckt, no nesting
+
+*bug fixes*
+bug fix in inp_chk_for_multi_in_vcvs()
+bug fix for handling options
+bug fix 275, commands plot, hardcopy: not enforcing lower case letters in tokens following xlabel, ylabel, title
+bug fix 291 allow let xyz = [] let xyz = [3 -5.6 9] let xyz = [5 $rr -7.9]
+
+
+*** master up to here ***
+*updates*
+check for correct inductor coefficients
+add variable 'win_console'
+--enable-relpath configure flag to set preprocessor flag HAS_RELPATH
+   sets search path for spinit relativ to current directory
+shared ngspice: search path for spinit: current dir, HOME dir, USERPROFILE dir
+new function stddev to calculate the standard deviation of all elements of a vector
+xspice digital n-input x m-output look-up table gate
+xspice digital model d_lut (digital n-input look-up table gate)
+add variable $sharedmode (if shared ngspice is running), to be used in scripts
+enable msys2 for mingw compilation
+OMP support for bsim3v3.24 model
+bsim3v3.24: add model parameter lmlt (Channel length scaling)
+OMP support for BSIM4.5 model
+update and extension of command 'wrdata'
+option xmu to set damping in trapezoid integration
+command 'linearize' will take time data from transient analysis vector if no circuit is loaded
+two new commands: edisplay and eprvcd
+    'edisplay' will show a list of all event nodes
+    'eprvcd' will print all event nodes in vcd format
+XSPICE 2D and 3D table models
+add variable 'batchmode' which is set when command line option `-b' is active
+enable backquote substitution for Visual Studio console apps
+update how-to-ngspice-vstudio.txt
+update visualc directory and project files, add XSPICE code model generation by VS2015
+allow access to 4 GB memory of 32 bit ngspice on 64 bit Windows, 8 TB for 64 bit ngspice
+new variable `interactive'
+xspice, introduce cm_message_printf()
+add variable `width' to command "print line ..."
+support msys2
+favor exponential temperatur equation if all parameters tc1, tc2 and tce are given for R
+move libfftw3 sideways out of the ngspice tree
+remove visual studio 2008 .vcproj files
+visualc/sharedspice.vcxproj, updated and migrated with visual studio 2015
+`E..table {expr} {pairs}', `G..', allow an optional `=' after `table'
+`E..value=', `G..value=', allow `=' being optional
+introduce TCE, exponential temperature coefficient for R
+allow `temper' to be recognised when preceded by '='
+allow cross-compilation, especially for MinGW-w64
+allow "plot xlog ylog" (equiv to "plot loglog")
+extend qa test to hisimhv version 2
+update hisimhv model to version 2.2.0
+update hisim model to version 2.8.0
+.control variable "sqrnoise" to deliver noise data in squared representation
+noise analysis, deliver results in V/sqrt(Hz) and A/sqrt(Hz)
+add delvt0 for bsim4 models
+bug fixes for diode model
+allow a xspice circuit with exclusively xspice event nodes
+man pages for cmpp ngmakeidx and ngproc2mod
+implement `nint()'
+everywhere: ln to the base e, log to the base e, log10 to the base 10
+allow an optional '=' in ".func foo() = {expr}"
+bsim4, update to version 4.8
+update hisimhv to version 1.2.4
+cmc quality check for bsim3 model
+nested indexing for vectors
+option savecurrents to save current through all devices
+option interp to plot interpolated raw file data
+MS VS 2010 project file added for compatibility
+XSPICE: new callback function cm_get_path
+
+*bug fixes*
+bug fix, #348
+bug fix, #339
+bug fix, #338
+bug fix, #335
+bug fix, #330
+bug fix, #328
+bug fix, #326
+bug fix, #321
+bug fix, #318
+bug fix, #317
+bug fix, #316
+bug fix, #315
+bug fix, #310
+bug fix, #301
+bug fix, #300
+bug fix, #299
+bug fix, "#287
+bug fix, "#302
+workaround for bug #307
+bug fix, "#306
+bugfix #304
+bug fix, #298
+add patch #26
+bug fix, #295
+bug fix #294
+bug fix #293
+bug fix #286
+bug fix #285
+bug fix #279
