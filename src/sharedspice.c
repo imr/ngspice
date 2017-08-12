@@ -463,7 +463,60 @@ runc(char* command)
     return 0;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Read an initialisation file.
+dir    is the directory (use NULL or "" for current directory)
+name   is the initialisation file's name
+Return true on success
+SJB 25th April 2005 */
+static bool
+read_initialisation_file(char *dir, char *name)
+{
+    char *path;
+    bool result = FALSE;
 
+    /* check name */
+    if (!name || *name == '\0')
+        return FALSE;   /* Fail; name needed */
+
+                        /* contruct the full path */
+    if (!dir || *dir == '\0') {
+        path = name;
+    }
+    else {
+        path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
+        if (!path)
+            return FALSE;    /* memory allocation error */
+    }
+
+    /* now access the file */
+#ifdef HAVE_UNISTD_H
+    if (access(path, R_OK) == 0)
+        result = TRUE;
+#else
+    {
+        FILE *fp = fopen(path, "r");
+        if (fp) {
+            fclose(fp);
+            result = TRUE;
+        }
+    }
+#endif
+
+    if (result) {
+        inp_source(path);
+#ifdef TRACE
+        printf("Init file: '%s'\n", path);
+#endif
+    }
+
+    if (path != name)
+        tfree(path);
+
+    return result;
+}
+
+/* -------------------------------------------------------------------------- */
 
 /**********************************************************/
 /* The functions exported explicitely from shared ngspice */
@@ -622,14 +675,31 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         tfree(s);
     }
 #else /* ~ HAVE_PWD_H */
-    {
-        FILE *fp;
-        /* Try to source the file ".spiceinit" in the current directory.  */
-        if ((fp = fopen(".spiceinit", "r")) != NULL) {
-            (void) fclose(fp);
-            inp_source(".spiceinit");
+    /* load user's initialisation file
+       try accessing the initialisation file in the current directory
+       if that fails try the alternate name */
+    if (FALSE == read_initialisation_file("", INITSTR) &&
+        FALSE == read_initialisation_file("", ALT_INITSTR)) {
+        /* if that failed try in the user's home directory
+        if their HOME environment variable is set */
+        char *homedir = getenv("HOME");
+        if (homedir) {
+            if (FALSE == read_initialisation_file(homedir, INITSTR) &&
+                FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
+                ;
+            }
+        }
+        else {
+            /* If there is no HOME environment (e.g. MS Windows), try user's profile directory */
+            homedir = getenv("USERPROFILE");
+            if (homedir)
+                if (FALSE == read_initialisation_file(homedir, INITSTR) &&
+                    FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
+                    ;
+                }
         }
     }
+
 #endif /* ~ HAVE_PWD_H */
 bot:
     signal(SIGINT, old_sigint);
