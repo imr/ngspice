@@ -1,0 +1,8 @@
+test                        FGummel_SH_Vdt
+temperature                 25
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     V(dt)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
