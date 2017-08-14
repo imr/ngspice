@@ -1,0 +1,12 @@
+#!/bin/csh
+echo "\n---------------------------"
+echo "run all tests with mult=1.0\n"
+rm ../test_specs/set_mult.inc 
+cp ../test_specs/mult_1p0.inc ../test_specs/set_mult.inc 
+rm reference/*
+cp reference_mult_1p0/* reference/ 
+rm -rf results/$1
+make $1
+make -f Makefile_npn $1
+make -f Makefile_pnp $1
+

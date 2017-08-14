@@ -1,0 +1,166 @@
+
+RUNNING Mextram TESTS
+=====================
+
+Tests for the various variants of the Mextram model for bipolar devices,
+
+bjt504   - with    substrate, without self-heating,
+bjt504t  - with    substrate, with    self-heating,
+bjtd504  - without substrate, without self-heating,
+bjtd504t - without substrate, with    self-heating,
+
+can be executed in the corresponding directories, by means
+of the commands
+
+  run_all_tests_bjt504t $simulator_name
+
+etc, e.g.
+
+  run_all_tests_bjt504t hspice
+
+These commands print some information to the screen and in turn run
+the scripts
+
+  run_all_tests_mult_1p0
+  run_all_tests_mult_1p5
+
+that are kept in the scripts directory.
+
+These scripts basically select the value for Mextrams `Mult' parameter
+that is to be applied in all the tests that are to be executed next.
+The templates for these latter tests are kept in the test_specs
+directory.  More explanation about both the handling of Mult and test
+templates can be found below.
+
+Within the scripts run_all_tests_mult_*, actual tests are launched by
+the sequence:
+
+make $1                 - all tests that should show near npn/pnp symmetry;
+                          automated polarity check is included. 
+make -f Makefile_npn $1 - dedicated tests for npn type; no polarity check
+make -f Makefile_pnp $1 - dedicated tests for pnp type; no polarity check
+
+Examples of the dedicated tests are tests in the avalanche regime.
+
+The top-level script run_all_tests simply runs all the tests for all
+the model variants bjt*.
+
+
+
+SPECIFICATIONS OF TESTS ADDRESSING Mextram
+==========================================
+The actual test specifications are kept in the directory test_specs/.
+These test specifications are general and are applied in the bjt*
+directories with appropriate adjustments to all the variants of the
+model.  The *.inc files in the various directories serve these
+adjustments.
+
+In our experience, working with general test templates that can be
+applied to any of the variants of the model helps keeping the test
+suite maintainable.
+
+
+
+FOCUS OF THE TESTS
+==================
+The purpose of the tests is to help in conformance checking between
+various implementations.
+
+Tests have been carefully developed to focus on physically relevant
+parts of the transistor characteristics and avoid extremely low- or
+extremely high current regimes, where the output of simulations is
+known to be highly simulator dependent.
+
+Large bias steps and extreme initial steps have been avoided, so as to
+avoid bearing on the convergency aids of the numerical solvers
+involved.
+
+Robustness testing is explicitly not within the focus of this test
+suite.
+
+
+
+TYPICAL OUTPUT
+==============
+In our experience, typical output when running tests and comparing
+output of different sound simulator / model implementation
+combinations looks like:
+
+
+
+504.7/bjt504t> run_all_tests_bjt504t ads
+
+******
+****** qaSpec tests for ads
+****** (for version 313.200 on platform x86_64_Linux_2.6.18.8-0.10-default)
+******
+
+****** Checking test (ads): FGummel_low_Ic
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 0.0297%)
+     variant: noFlip_P            (compared to: standard ) MATCH       (within specified tolerances)
+
+****** Checking test (ads): FGummel_low_Ib
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 0.0309%)
+     variant: noFlip_P            (compared to: standard ) MATCH       (within specified tolerances)
+
+****** Checking test (ads): FGummel_low_MLF_Ic
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 0.0297%)
+     variant: noFlip_P            (compared to: standard ) MATCH       (within specified tolerances)
+
+
+
+etc.
+
+The above may serve as an impression of the relative errors that can be
+expected when comparing different, but correct, model implementations as
+evaluated by different simulators.
+
+As shown above, the typical result of a test is the maximum relative
+error that was observed during the test.  To make interpretation of this
+quantity easier, we have drastically limited the number of output
+quantities for the individual tests.  We have also avoided nested
+sweeps.
+
+
+
+MULT SCALING 
+============
+In Verilog-A, Mextram's MULT parameter is a model parameter.
+Therefore, in the Q&A test suite it is addressed as a model
+parameter.
+
+In some simulator interfaces the MULT parameter is defined to
+be an instance parameter. In the qaSpec files this can be taken 
+into account by defining the variable MULT_INSTANCE by means of:
+
+`define MULT_INSTANCE
+
+If this variable is set, MULT will be addressed as an instance
+parameter in the tests.
+
+As indicated above, the scipts 
+
+  scripts/run_all_tests_mult_1p0 and
+  scripts/run_all_tests_mult_1p5 
+
+control the value of the Mult parameter.  The scripts also control the
+reference data.  Reference data correspondoing to mult=1.0 is kept in
+the directories
+
+  */reference_mult_1p0/      
+
+whereas reference data correspondoing to mult=1.5 is kept in the directories 
+
+  */reference_mult_1p5.
+
+The data from these is copied to the corresponding /reference
+directory by the scripts when corresponding tests are to be run.
+
+In this way, all tests can be run automatically for different values
+of Mult.
+
+
+July 28, 2008, 
+Delft University of Technology, 
+RvdT.
+
