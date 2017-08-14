@@ -1,0 +1,7 @@
+#!/bin/csh
+echo "\n========================="
+echo "\nRUN ALL TESTS FOR bjt504t\n"
+../scripts/run_all_tests_mult_1p0 $1
+../scripts/run_all_tests_mult_1p5 $1
+
+

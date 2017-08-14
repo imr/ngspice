@@ -1,0 +1,60 @@
+test                        acNoise_dRc_Nc_1
+temperature                 25
+biases                      V(e)=1.0 V(c)=0.0 V(b)=1.0
+`include substrate_bias.inc
+freq                        lin 1 1.0e8 1.0e8
+outputs                     N(c)
+`include dtestpars.inc
+modelParameters             RCC=4 RCBLX=4 RCBLI=4
+`include ../test_specs/set_mult.inc
+
+test                        acNoise_dRc_Nb_1
+temperature                 25
+biases                      V(e)=1.0 V(c)=0.0 V(b)=1.0
+`include substrate_bias.inc
+freq                        lin 1 1.0e8 1.0e8
+outputs                     N(b)
+`include dtestpars.inc
+modelParameters             RCC=4 RCBLX=4 RCBLI=4
+`include ../test_specs/set_mult.inc
+
+test                        acNoise_dRc_Nc_2
+temperature                 25
+biases                      V(e)=1.0 V(c)=0.0 V(b)=1.0
+`include substrate_bias.inc
+freq                        lin 1 1.0e8 1.0e8
+outputs                     N(c)
+`include dtestpars.inc
+modelParameters             RCC=1 RCBLX=5 RCBLI=6
+`include ../test_specs/set_mult.inc
+
+test                        acNoise_dRc_Nb_2
+temperature                 25
+biases                      V(e)=1.0 V(c)=0.0 V(b)=1.0
+`include substrate_bias.inc
+freq                        lin 1 1.0e8 1.0e8
+outputs                     N(b)
+`include dtestpars.inc
+modelParameters             RCC=1 RCBLX=5 RCBLI=6
+`include ../test_specs/set_mult.inc
+
+test                        acNoise_dRc_Nc_3
+temperature                 25
+biases                      V(e)=0.0 V(c)=0.1 V(b)=1.0
+`include substrate_bias.inc
+freq                        lin 1 1.0e8 1.0e8
+outputs                     N(c)
+`include dtestpars.inc
+modelParameters             RCC=1 RCBLX=5 RCBLI=6
+`include ../test_specs/set_mult.inc
+
+test                        acNoise_dRc_Nb_3
+temperature                 25
+biases                      V(e)=0.0 V(c)=0.1 V(b)=1.0
+`include substrate_bias.inc
+freq                        lin 1 1.0e8 1.0e8
+outputs                     N(b)
+`include dtestpars.inc
+modelParameters             RCC=1 RCBLX=5 RCBLI=6
+`include ../test_specs/set_mult.inc
+

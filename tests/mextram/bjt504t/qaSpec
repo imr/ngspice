@@ -1,0 +1,50 @@
+//
+// Test specification for Mextram 504.10 bjt504t
+//
+// with    substrate
+// with    self-heating
+
+//
+// Simulator specific information
+// These arguments are added to the model card
+// specification to invoke the desired model in
+// different simulators (which can have different
+// names or levels for the same model) and to switch
+// between nType and pType polarities.
+// It is assumed that there are no polarity specific
+// parameters.
+//
+
+`ifdef ngspice
+nTypeSelectionArguments     npn level=6 type=1
+pTypeSelectionArguments     pnp level=6 type=-1
+keyLetter                   q
+`endif
+
+`ifdef hspice
+// -- VERILOG A --
+nTypeSelectionArguments     bjt504tva level=504 TYPE=1
+pTypeSelectionArguments     bjt504tva level=504 TYPE=-1
+keyLetter                   x
+verilogaFile                ../../../src/spicelib/devices/adms/mextram/admsva/bjt504t.va
+// BUILT-IN
+//nTypeSelectionArguments     npn level=6 vers=504
+//pTypeSelectionArguments     pnp level=6 vers=504
+//keyLetter                   q
+`endif
+
+//
+// General test-independent information
+//
+
+pins                        c b e s dt
+float                       dt
+checkPolarity               y
+
+//
+// Specific tests
+//
+
+`include ../test_specs/common.tests
+`include ../test_specs/substrate.tests
+`include ../test_specs/thermal_node.tests

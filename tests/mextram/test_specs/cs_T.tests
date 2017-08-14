@@ -1,0 +1,108 @@
+test                        cs_T_1_Ic
+temperature                 100
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             ICSS=48.0e-17
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_2_Ic
+temperature                 150
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             ICSS=48.0e-17
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_3_Ic
+temperature                 100
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             ICSS=48.0E-17 ASUB=1.25
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_4_Ic
+temperature                 150
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             ICSS=48.0E-17 ASUB=1.25
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_1_Is
+temperature                 100
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(s)
+`include dtestpars.inc
+modelParameters             ICSS=48.0e-17
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_2_Is
+temperature                 150
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(s)
+`include dtestpars.inc
+modelParameters             ICSS=48.0e-17
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_3_Is
+temperature                 100
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(s)
+`include dtestpars.inc
+modelParameters             ICSS=48.0E-17 ASUB=1.25
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_4_Is
+temperature                 150
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(s)
+`include dtestpars.inc
+modelParameters             ICSS=48.0E-17 ASUB=1.25
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_1_Ib
+temperature                 100
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             ICSS=48.0e-17
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_2_Ib
+temperature                 150
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             ICSS=48.0e-17
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_3_Ib
+temperature                 100
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             ICSS=48.0E-17 ASUB=1.25
+`include ../test_specs/set_mult.inc
+
+test                        cs_T_4_Ib
+temperature                 150
+biases                      V(b)=0 V(c)=0.0 V(s)=-1.0
+biasSweep                   V(e)=0.0,-0.35,-0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             ICSS=48.0E-17 ASUB=1.25
+`include ../test_specs/set_mult.inc
+

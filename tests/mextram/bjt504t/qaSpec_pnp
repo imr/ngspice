@@ -1,0 +1,45 @@
+//
+// Test specification for Mextram 504.10 bjt504t
+//
+// with    substrate
+// with    self-heating
+
+//
+// Simulator specific information
+// These arguments are added to the model card
+// specification to invoke the desired model in
+// different simulators (which can have different
+// names or levels for the same model)
+// In the tests below we address pnp type devices
+//
+
+`ifdef ngspice
+TypeSelectionArguments      pnp level=6 type=-1
+keyLetter                   q
+`endif
+
+`ifdef hspice
+// -- VERILOG A --
+TypeSelectionArguments      bjt504tva level=504 TYPE=-1
+keyLetter                   x
+verilogaFile                ../../../src/spicelib/devices/adms/mextram/admsva/bjt504t.va
+// BUILT-IN
+//TypeSelectionArguments      pnp level=6 vers=504
+//keyLetter                   q
+`endif
+
+//
+// General test-independent information
+//
+
+pins                        c b e s dt
+float                       dt
+checkPolarity               n
+
+//
+// Specific tests for pnp variant
+//
+
+// avalanche tests
+
+`include ../test_specs/avalanche_pnp.tests

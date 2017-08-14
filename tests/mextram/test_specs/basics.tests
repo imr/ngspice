@@ -1,0 +1,589 @@
+test                        FGummel_low_Ic
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,0.9,0.01
+outputs                     I(c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_low_Ib
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,0.9,0.01
+outputs                     I(b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_low_MLF_Ic
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,0.9,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             MLF=2.1
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_low_MLF_Ib
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,0.9,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             MLF=2.1
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_Ic
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_Ib
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_dta_Ic
+temperature                 25
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             DTA=45.0
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_dta_Ib
+temperature                 25
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             DTA=45.0
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_XIBI_Ic
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             XIBI=0.25
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_XIBI_Ib
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             XIBI=0.25
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_AE_Ic
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             AE=0.3
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_AE_Ib
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             AE=0.3
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_AB_Ic
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             AB=1.2
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_AB_Ib
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             AB=1.2
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_AC_Ic
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             AC=2.17
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_AC_Ib
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             AC=2.17
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_DAIS_Ic
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(c)
+`include dtestpars.inc
+modelParameters             DAIS=0.45
+`include ../test_specs/set_mult.inc
+
+test                        FGummel_DAIS_Ib
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             DAIS=0.45
+`include ../test_specs/set_mult.inc
+
+test                        RGummel_Ie
+temperature                 25
+biases                      V(c)=0 V(e)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(e)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        RGummel_Ib
+temperature                 25
+biases                      V(c)=0 V(e)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        RGummel_highT_Ie
+temperature                 100
+biases                      V(c)=0 V(e)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(e)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        RGummel_highT_Ib
+temperature                 100
+biases                      V(c)=0 V(e)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        RGummel_No_EXMOD_Ie
+temperature                 25 100
+biases                      V(c)=0 V(e)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(e)
+`include dtestpars.inc
+modelParameters             EXMOD=0
+`include ../test_specs/set_mult.inc
+
+test                        RGummel_No_EXMOD_Ib
+temperature                 25 100
+biases                      V(c)=0 V(e)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.5,1.2,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             EXMOD=0
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Gbb
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     G(b,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Cbb
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     C(b,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Gcb
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     G(c,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Ccb
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     C(c,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Gbc
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     G(b,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Cbc
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     C(b,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Gcc
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     G(c,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_Ccc
+temperature                 25 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     C(c,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acBias_CBCO
+temperature                 25
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     C(b,c)
+`include dtestpars.inc
+modelParameters             CBCO=11.7e-015
+`include ../test_specs/set_mult.inc
+
+test                        acBias_CBEO
+temperature                 25
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     C(c,b)
+`include dtestpars.inc
+modelParameters             CBEO=31.7e-015
+`include ../test_specs/set_mult.inc
+
+// ac frequency sweeps at ref T
+
+test                        acFreq_Gbb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(b,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Cbb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(b,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Gcb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(c,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Ccb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(c,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Gbc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(b,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Cbc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(b,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Gcc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(c,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_Ccc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(c,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+// ac frequency sweeps at high T:
+
+
+test                        acFreq_highT_Gbb
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(b,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Cbb
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(b,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Gcb
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(c,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Ccb
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(c,b)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Gbc
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(b,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Cbc
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(b,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Gcc
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(c,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_highT_Ccc
+temperature                 100
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(c,c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+// EXPHI tests:
+
+
+test                        acFreq_no_EXPHI_Gbb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(b,b)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Cbb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(b,b)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Gcb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(c,b)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Ccb
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(c,b)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Gbc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(b,c)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Cbc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(b,c)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Gcc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     G(c,c)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+test                        acFreq_no_EXPHI_Ccc
+temperature                 25
+biases                      V(e)=0 V(b)=0.85 V(c)=2.0
+`include substrate_bias.inc
+freq                        dec 1 1e6 1e9
+outputs                     C(c,c)
+`include dtestpars.inc
+modelParameters             EXPHI=0
+`include ../test_specs/set_mult.inc
+
+// noise tests
+
+
+test                        acNoise_standT
+temperature                 25
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+freq                        lin 1 1.0e9 1.0e9
+outputs                     N(c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc
+
+test                        acNoise_hightT
+temperature                 100
+biases                      V(e)=0 V(c)=1.0
+`include substrate_bias.inc
+biasSweep                   V(b)=0.7,1.0,0.02
+`include substrate_bias.inc
+freq                        lin 1 1.0e9 1.0e9
+outputs                     N(c)
+`include dtestpars.inc
+`include ../test_specs/set_mult.inc

@@ -1,0 +1,70 @@
+test                        Zener_Ib_1
+temperature                 25
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12
+`include ../test_specs/set_mult.inc
+
+test                        Zener_Ib_2
+temperature                 25
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12 NZEB=12.0
+`include ../test_specs/set_mult.inc
+
+test                        Zener_Ib_3
+temperature                 100
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12
+`include ../test_specs/set_mult.inc
+
+test                        Zener_Ib_4
+temperature                 150
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12
+`include ../test_specs/set_mult.inc
+
+test                        Zener_Ib_5
+temperature                 100
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12 VGZEB=0.9
+`include ../test_specs/set_mult.inc
+
+test                        Zener_Ib_6
+temperature                 100
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12 VGZEB=0.9 AVGEB=800.0e-6
+`include ../test_specs/set_mult.inc
+
+test                        Zener_Ib_7
+temperature                 100
+biases                      V(b)=0 V(c)=0.0
+`include substrate_bias.inc
+biasSweep                   V(e)=1.6,2.5,0.01
+outputs                     I(b)
+`include dtestpars.inc
+modelParameters             IZEB=10.0e-12 VGZEB=0.9 AVGEB=800.0E-6 TVGEB=36.0
+`include ../test_specs/set_mult.inc
+
