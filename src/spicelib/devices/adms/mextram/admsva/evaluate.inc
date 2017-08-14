@@ -28,6 +28,11 @@ begin  // Currents and charges
  in case of vanishing resistance corresponding node
  is not addressed: */
 
+`ifdef insideADMS
+//dw we have limited all the RCXXX to MIN_R
+  Vc4c1 = TYPE * V(c4, c1);
+  Vc3c4 = TYPE * V(c3, c4);
+`else
 if (RCBLX > 0.0)
  begin
   if (RCBLI > 0.0)
@@ -54,6 +59,7 @@ else
      Vc3c4 = 0 ;
     end
  end
+`endif
 
    Vb1c4 = Vb1b2 + Vb2c2 - Vc1c2 - Vc4c1 ;
    Vcc3  = - Vbc + Vbb1 + Vb1c4 - Vc3c4 ;
@@ -257,9 +263,9 @@ Vsc3 = Vsc4 - Vc3c4 ;
 // nBex since MXT 504.10.1: Ackn. Jos Peters, Geoffrey Coram
    nBex = (g1 - If0) / (1.0 + sqrt(1.0 + g1));
    pWex = g2 / (1.0 + sqrt(1.0 + g2));
-/* Iex until and including MXT 504.9:
-   Iex = (1.0 / BRI_T) * (0.5 * IK_TM * nBex - IS_TM);
-*/
+// Iex until and including MXT 504.9:
+// Iex = (1.0 / BRI_T) * (0.5 * IK_TM * nBex - IS_TM);
+//
 // Iex since MXT 504.10: RvdT@TUDelft Q1, 2011:
    Iex = IK_TM * nBex / (2.0 * BRI_T) ;
 
@@ -295,7 +301,7 @@ if (ICSS < 0.0)
    XIsub = 0.0;
 `endif
 
-/* begin: RvdT, Q4 2012, Mextram 504.11: added EXMOD=2 option:     */
+// begin: RvdT, Q4 2012, Mextram 504.11: added EXMOD=2 option:
    if (EXMOD == 1 || EXMOD == 2)
     begin
 
@@ -310,9 +316,9 @@ if (ICSS < 0.0)
 //       XnBex = Xg1 / (1.0 + sqrt(1.0 + Xg1));
 // XnBex in MXT 504.10.1: Ackn. Jos Peters, Geoffrey Coram:
    XnBex = (Xg1 - If0) / (1.0 + sqrt(1.0 + Xg1));
-/* XIMex until and including MXT 504.9:
-       XIMex = XEXT * (0.5 * IK_TM * XnBex - IS_TM) / BRI_T;
-*/
+// XIMex until and including MXT 504.9:
+//     XIMex = XEXT * (0.5 * IK_TM * XnBex - IS_TM) / BRI_T;
+//
 // XIMex in MXT 504.10: RvdT@TUDelft Q1, 2011:
       XIMex = XEXT * 0.5 * IK_TM * XnBex / BRI_T;
 
@@ -592,9 +598,19 @@ This construct supports the case
 RCBLI = 0.0 and or RCBLX = 0.0 .
 It is up to the compiler to adjust the circuit topology
 and perform a node-collapse in such cases. */
-if (RCBLX > 0.0)
- begin
+`ifdef insideADMS
+//dw we have limited all the RCXXX to MIN_R
   I(b,  c3) <+ TYPE * XIex;
+  I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
+  I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));
+  I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
+  I(b1, c4) <+ TYPE * (Ib3 + Iex);
+  I(c3, c4) <+ TYPE * Vc3c4 * GCCex_TM ;
+  I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+`else
+  if (RCBLX > 0.0)
+   begin
+    I(b,  c3) <+ TYPE * XIex;
   I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
   I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));
   if (RCBLI > 0.0)
@@ -635,4 +651,5 @@ else
             I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
           end
  end
+`endif
 
