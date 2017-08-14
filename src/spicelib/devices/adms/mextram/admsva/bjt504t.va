@@ -37,14 +37,14 @@ module bjt504tva (c, b, e, s, dt);
 
 `include "parameters.inc"
 `include "variables.inc"
-`include "opvars.inc"
+//`include "opvars.inc"
 
 analog begin
 `include "initialize.inc"
 `include "tscaling.inc"
 `include "evaluate.inc"
 `include "noise.inc"
-`include "opinfo.inc"
+//`include "opinfo.inc"
 
 // The following can be used to print OP-info to std out:
 // `include "op_print.inc"
