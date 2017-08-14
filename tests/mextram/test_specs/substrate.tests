@@ -1,0 +1,7 @@
+`include ../test_specs/RGummel.tests
+
+// Mextram 504.9:
+`include ../test_specs/cs_T.tests
+
+// Mextram 504.10:
+`include ../test_specs/EXSUB_T.tests
