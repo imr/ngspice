@@ -172,7 +172,7 @@ com_fft(wordlist *wl)
 
         fftw_execute(plan_forward);
 
-        scale = (double) length;
+        scale = (double) fpts - 1.0;
         for (j = 0; j < fpts; j++) {
             fdvec[i][j].cx_real = out[j][0]/scale;
             fdvec[i][j].cx_imag = out[j][1]/scale;
@@ -200,7 +200,7 @@ com_fft(wordlist *wl)
         rffts(in, M, 1);
         fftFree();
 
-        scale = (double) N;
+        scale = (double) fpts - 1.0;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         fdvec[i][0].cx_real = in[0]/scale;
         fdvec[i][0].cx_imag = 0.0;
