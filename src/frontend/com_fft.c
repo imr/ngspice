@@ -355,11 +355,10 @@ com_psd(wordlist *wl)
     vec_new(f);
     freq = f->v_realdata;
 
+    for (i = 0; i < fpts; i++)
 #ifdef HAVE_LIBFFTW3
-    for (i = 0; i <= fpts; i++)
         freq[i] = i*1./span;
 #else
-    for (i = 0; i <= fpts; i++)
         freq[i] = i*1./span*length/N;
 #endif
 
@@ -449,7 +448,7 @@ com_psd(wordlist *wl)
 #endif
 
         printf("Total noise power up to Nyquist frequency %5.3e Hz:\n%e V^2 (or A^2), \nnoise voltage or current %e V (or A)\n",
-               freq[fpts], noipower, sqrt(noipower));
+               freq[fpts-1], noipower, sqrt(noipower));
 
         /* smoothing with rectangular window of width "smooth",
            plotting V/sqrt(Hz) or I/sqrt(Hz) */
@@ -473,7 +472,7 @@ com_psd(wordlist *wl)
         }
         for (j = fpts-hsmooth; j < fpts; j++) {
             sum = 0.;
-            for (jj = 0; jj < smooth; jj++)
+            for (jj = 0; jj < hsmooth; jj++)
                 sum += fdvec[i][j-hsmooth+jj].cx_real;
             sum /= (fpts - j + hsmooth - 1);
             reald[j] = (sqrt(sum)/scaling);

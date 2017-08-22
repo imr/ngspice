@@ -37,7 +37,7 @@ f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
     ha = alpha/2.0;
     // Q_d = sqrt(Q_d); /* find the deviation of the noise */
 #ifdef HAVE_LIBFFTW3
-    length = 2 * (n_pts/2 + 1);
+    length = n_pts + 2;
 #else
     length = n_pts;
 #endif
