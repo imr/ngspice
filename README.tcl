@@ -63,8 +63,8 @@ tcl : the tcl command interpreter, for interpretion of user scipt
 tk  : the graphical extension of tcl, to represent data graphically and for GUIs
 blt : BLT toolkit gives number handling and plotting features to tcl/tk
 
-The most tested configuration is the latest:
-tclspice-26
+The latest configuration is (not much tested):
+tclspice-27
 tcl 8.4
 tk 8.4
 blt 2.4

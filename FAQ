@@ -1,6 +1,6 @@
-  Ngspice F.A.Q.Version 2.0 (ngspice 26 release)
+  Ngspice F.A.Q.Version 2.1 (ngspice-27 release)
   Maintained by Paolo Nenzi, Holger Vogt
-  Last update: 02-01-2014
+  Last update: 08-23-2017
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -17,9 +17,9 @@
      1.5 What is the project's goal?
      1.6 What you are going to do?
      1.7 Legal issues
-     1.8 What mailing lists exist for ngspice?
-     1.9 Are the mailing lists archived anywhere?
-     1.10 What newsgroups exist for ngspice?
+     1.8 Discussion groups
+     1.9 What mailing lists exist for ngspice?
+     1.10 Are the mailing lists archived anywhere?
      1.11 Where can I get a copy of ngspice?
      1.12 Where should I look on the World Wide Web for ngspice stuff?
      1.13 Where should I look on the World Wide Web for Spice documentation?
@@ -73,7 +73,7 @@
     and simulation of digital components through an embedded event
     driven algorithm.
 
-  The NG prefix has lot of meanings: Next Generation, New Good, etc.
+  The NG prefix has lot of meanings: Next Generation, New (and) Good, etc.
   Choose or invent the one you prefer. The heart of the project is the
   ngspice program, with its tremendous advancements.
 
@@ -94,6 +94,7 @@
   from a tcl script and vector plotted or post processed using tcl. A small
   GUI may be built by the user to analyze a circuit or a set of circuits.
   Tclspice is obtained compiling ngspice activating an additional option.
+  This has not been used and tested for some time.
 
 
  1.4 Why resurrecting Berkeley's Spice?
@@ -158,7 +159,18 @@
   for details.
 
 
- 1.8  What mailing lists exist for ngspice?
+ 1.8  Discussion groups
+
+  Vivid discussion are going on in the ngspice discussion groups.
+  They are found at https://sourceforge.net/p/ngspice/discussion/
+  A new group 'ngspice tips and examples' will present interesting
+  ngspice tips (your input is welcome!)
+
+
+ 1.9  What mailing lists exist for ngspice?
+
+  Mailing lists have somewhat lost importance compared to the
+  discussion groups described above.
 
   There are two general mailing lists dedicated to the ngspice project.
 
@@ -187,7 +199,7 @@
      http://www.gnu.org/software/mailman/mailman-member
 
 
- 1.9   Are the mailing lists archived anywhere ?
+ 1.10  Are the mailing lists archived anywhere ?
 
   Yes, the lists are archived. There are two places where to look for
   archives. The project started on the IEEE Central and South Italy
@@ -195,18 +207,6 @@
   archiving service that cam be accessed via the summary page:
 
   http://sourceforge.net/p/ngspice/mailman/
-
-
-
- 1.10  What newsgroups exist for ngspice?
-
-  There is no ngspice specific newsgroup. Sourceforge offers additional
-  discussion groups for ngspice, please see
-
-  http://sourceforge.net/p/ngspice/discussion/
-
-  ngspice threads may appear on newsgroups dedicated to circuit
-  simulation and electronic design.
 
 
  1.11  Where can I get a copy of ngspice?
@@ -240,45 +240,74 @@
 
   The latest version released is:
 
-  * ngspice-26 (released on 04/01/2013)
+  * ngspice-27 (released on 28/08/2017)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-        + add temperature coefficients for B source
-        + commands "mdump", "mrdump" to dump matrix to file
-        + allow `time', `temper', and `hertz' in expressions with behavioral R, L, C
-        + Enable ctrl-c to interrupt a simulation also for Windows GUI
-        + tests/bsim4: use the standard CMC model check
-        + implement exit code for command "quit"
-        + .nodeset all = value
-        + memristor code model in extradev
-        + new scalable diode model including tunnel component
-        + variable xtrtol may override the XSPICE reduction of trtol
-        + XSPICE example: delta-sigma converter
-        + XSPICE: new d_source model
-        + new option noopac
-        + bsim3: make additonal parameters accessible with @mxx[par]
-        + enable Mac OS X compilation
-        + option reseries = val
-        + commands "snsave", "snload"
-        + update hisim to version 2.7.0, new qa tests
-        + hisimhv update to version 1.2.3, new qa tests
-        + allow Ctrl-d to quit
-        + jfet model temperature extension, tcv and bex parameter
-        + speed up vector handling by hash table for vector address storage and retrieval
-        + update PSS code
-
+    + check for correct inductor coefficients
+    + add variable 'win_console'
+    + --enable-relpath configure flag to set preprocessor flag HAS_RELPATH
+    +    sets search path for spinit relativ to current directory
+    + shared ngspice: search path for spinit: current dir, HOME dir, USERPROFILE dir
+    + new function stddev to calculate the standard deviation of all elements of a vector
+    + xspice digital n-input x m-output look-up table gate
+    + xspice digital model d_lut (digital n-input look-up table gate)
+    + add variable $sharedmode (if shared ngspice is running), to be used in scripts
+    + enable msys2 for mingw compilation
+    + OMP support for bsim3v3.24 model
+    + bsim3v3.24: add model parameter lmlt (Channel length scaling)
+    + OMP support for BSIM4.5 model
+    + update and extension of command 'wrdata'
+    + option xmu to set damping in trapezoid integration
+    + command 'linearize' will take time data from transient analysis vector if no circuit is loaded
+    + two new commands: edisplay and eprvcd
+    +     'edisplay' will show a list of all event nodes
+    +     'eprvcd' will print all event nodes in vcd format
+    + XSPICE 2D and 3D table models
+    + add variable 'batchmode' which is set when command line option `-b' is active
+    + enable backquote substitution for Visual Studio console apps
+    + update how-to-ngspice-vstudio.txt
+    + update visualc directory and project files, add XSPICE code model generation by VS2015
+    + allow access to 4 GB memory of 32 bit ngspice on 64 bit Windows, 8 TB for 64 bit ngspice
+    + new variable `interactive'
+    + xspice, introduce cm_message_printf()
+    + add variable `width' to command "print line ..."
+    + support msys2
+    + favor exponential temperatur equation if all parameters tc1, tc2 and tce are given for R
+    + move libfftw3 sideways out of the ngspice tree
+    + remove visual studio 2008 .vcproj files
+    + visualc/sharedspice.vcxproj, updated and migrated with visual studio 2015
+    + `E..table {expr} {pairs}', `G..', allow an optional `=' after `table'
+    + `E..value=', `G..value=', allow `=' being optional
+    + introduce TCE, exponential temperature coefficient for R
+    + allow `temper' to be recognised when preceded by '='
+    + allow cross-compilation, especially for MinGW-w64
+    + allow "plot xlog ylog" (equiv to "plot loglog")
+    + extend qa test to hisimhv version 2
+    + update hisimhv model to version 2.2.0
+    + update hisim model to version 2.8.0
+    + .control variable "sqrnoise" to deliver noise data in squared representation
+    + noise analysis, deliver results in V/sqrt(Hz) and A/sqrt(Hz)
+    + add delvt0 for bsim4 models
+    + bug fixes for diode model
+    + allow a xspice circuit with exclusively xspice event nodes
+    + man pages for cmpp ngmakeidx and ngproc2mod
+    + implement `nint()'
+    + everywhere: ln to the base e, log to the base e, log10 to the base 10
+    + allow an optional '=' in ".func foo() = {expr}"
+    + bsim4, update to version 4.8
+    + update hisimhv to version 1.2.4
+    + cmc quality check for bsim3 model
+    + nested indexing for vectors
+    + option savecurrents to save current through all devices
+    + option interp to plot interpolated raw file data
+    + MS VS 2010 project file added for compatibility
+    + XSPICE: new callback function cm_get_path
 
 - Bug fixes:
-    + many, many ... please see
-          http://ngspice.git.sourceforge.net/git/gitweb.cgi?p=ngspice/ngspice;a=shortlog;pg=0
-    + remove memory leaks
-    + update tclspice for MS Windows
-    + adms3 removed due to licensing issues
-    + Many small bugs
-
+    + many, many ... as always
 
 
  2.3.  What does it look like?
@@ -331,7 +360,7 @@
 
   This is a one-million-euros question :).
 
-  Write a mail to the user's list describing the problem and providing
+  Write to the user's discussion group describing the problem and providing
   information on the type of hardware, the flavour of operating system.
 
 
@@ -351,12 +380,7 @@
  4.1.  Feedback
 
   Send your comments about this F.A.Q. to:
-
-  Paolo Nenzi <p.nenzi@ieee.org>.
-
-  Send your comments about ngspice to:
-
-  Paolo Nenzi <p.nenzi@ieee.org>.
+  https://sourceforge.net/p/ngspice/discussion/127605/
 
 
  4.2.  Formats in which this FAQ is available
@@ -367,7 +391,8 @@
 
  4.3.  Authorship and acknowledgements
 
-  Parts of the questions and answers are originate from Paolo Nenzi.
+  Parts of the questions and answers are originate from Paolo Nenzi
+  and are updated by Holger Vogt.
 
 
  4.4.  Disclaimer and Copyright

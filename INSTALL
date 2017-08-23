@@ -5,7 +5,7 @@ Table of contents
 
   1 Ngspice installation (LINUX)
    1.1 Prerequisites
-   1.2 Install from tarball (e.g. ngspice-26.tar.gz)
+   1.2 Install from tarball (e.g. ngspice-27.tar.gz)
    1.3 Install from git repository
    1.4 Advanced Install
     1.4.1 Most useful options
@@ -20,10 +20,10 @@ Table of contents
   8 Operation Controls
   9 NGSPICE COMPILATION UNDER WINDOWS OS
    9.1 How to make ngspice with MINGW and MSYS
-   9.2 make ngspice with MS Visual Studio 2008
+   9.2 make ngspice with MS Visual Studio 2015/2017
    9.3 make ngspice with pure CYGWIN
    9.4 ngspice console app with MINGW or CYGWIN
-
+  10 NGSPICE COMPILATION UNDER MAC OS X
 
 This file describes the procedures to install ngspice from sources.
 
@@ -33,7 +33,7 @@ This file describes the procedures to install ngspice from sources.
 
 1.1 Prerequisites
 
-     Ngspice is written in C and thus a complete C compilation environment
+ Ngspice is written in C and thus a complete C compilation environment
  is needed. Almost any LINUX offers a complete C development environment.
  Ngspice is developed on GNU/Linux with gcc and GNU make.
 
@@ -51,14 +51,14 @@ This file describes the procedures to install ngspice from sources.
  information on ngspice and its usage.
 
 
-1.2 Install from tarball (e.g. ngspice-26.tar.gz)
+1.2 Install from tarball (e.g. ngspice-27.tar.gz)
 
  This covers installation from a release distribution (for example
- ngspice-26.tar.gz, the so called tar ball).
+ ngspice-27.tar.gz, the so called tar ball).
 
  After downloading the tar ball to a local directory unpack it using:
 
- $ tar -zxvf ngspice-26.tar.gz
+ $ tar -zxvf ngspice-27.tar.gz
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -160,7 +160,7 @@ This file describes the procedures to install ngspice from sources.
  --enable-adms
         ADMS is an experimental model compiler that translates
         Verilog-A compact models into C code that can be compiled into
-        ngspice. This is (as of ngspice-26) still experimental, some
+        ngspice. This is (as of ngspice-27) still experimental, some
         features (e.g. noise) are missing. If you want to use it, please
         refer to the ADMS section on ngspice web site.
 
@@ -451,8 +451,8 @@ Most of the options now following are not well maintained, are not tested or eve
  to the standard install (FLEX and BISON have to be made available in MSYS).
  Some links are given below which describe the procedures.
 
-     Installing from the tarball, e.g. ngspice-26.tar.gz, is now simple: After
- expanding, you may just run ./compile_min.sh from the ngspice-26 directory.
+     Installing from the tarball, e.g. ngspice-27.tar.gz, is now simple: After
+ expanding, you may just run ./compile_min.sh from the ngspice-27 directory.
 
      The default installation location of ngspice is the Windows path
  C:\spice. The install path can be altered by passing --prefix=NEWPATH
@@ -466,7 +466,7 @@ Most of the options now following are not well maintained, are not tested or eve
  The procedure of compiling a distribution (for example, a tarball from
  the ngspice website), is as follows:
 
- $ cd ngspice-26
+ $ cd ngspice-27
  $ mkdir release
  $ cd release
  $ ../configure --with-wingui ...and other options
@@ -548,12 +548,10 @@ Most of the options now following are not well maintained, are not tested or eve
 
 9.2 make ngspice with MS Visual Studio 2008
 
- ngspice may be compiled with MS Visual Studio 2008 or 2010.
+ ngspice may be compiled with MS Visual Studio 2015 or newer.
 
- CIDER and XSPICE are included, but the code models for XSPICE
- (*.cm) are not (yet) made. You may however use the code models
- created with MINGW (which in fact are dlls), as e.g. found in
- the ngspice binary distribution our made as described in 9.1.
+ CIDER and XSPICE are included, the code models for XSPICE
+ (*.cm) are made as well.
 
  There is currently no installation procedure provided, you may
  however install the executable manually as described in the
@@ -562,21 +560,23 @@ Most of the options now following are not well maintained, are not tested or eve
      The directory (visualc) with its files
  vngspice.sln (project starter) and
  vngspice.vcproj (project contents)
- allows to compile and link ngspice with MS Visual Studio 2008.
+ allows to compile and link ngspice with MS Visual Studio 2015.
  Newer Visual Studio versions will translate the project files
- into their compatible format (tested with MS Visual Studio 2010).
+ into their compatible format (tested with MS Visual Studio 2017).
+ You may however deny the translation and compile in a VS 2015
+ compatibility mode.
 
  /visualc/include contains a dedicated config.h file. It contains the
  preprocessor definitions required to properly compile the code.
  strings.h has been necessary during setting up the project.
 
- Install Microsoft Visual Studio 2008 C++ . The
- MS VS 2008 C++ Express Edition (which is available at no cost from
- http://www.microsoft.com/express/product/default.aspx) is adequate.
+ Install Microsoft Visual Studio 2017 Community with C/C++. For
+ example the  German edition is available at no cost from
+ https://www.visualstudio.com/de/vs/community/.
 
  Goto  /ngspice/visualc.
 
- Start MS Visual Studio 2008 by double click onto vngspice.sln.
+ Start MS Visual Studio 2017 by double click onto vngspice.sln.
 
  After MS Visual Studio has opened up, select debug or release version
  by checking 'Erstellen' , 'Konfigurations-Manager' 'Debug' or 'Release'.
