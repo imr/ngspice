@@ -1,3 +1,16 @@
+2017-08-25  h_vogt
+This ChangeLog is no longer maintained.
+Starting with ngspice-26, for code changes
+please refer to the git repository at
+https://sourceforge.net/p/ngspice/ngspice/ci/master/tree/.
+Especially the 'history' button on the top of the page
+will give all the change log information.
+
+There are still some other ChangeLog files in various
+subdirectories. All of them are no longer in use and are
+kept only for historical reasons.
+
+
 2014-01-03  h_vogt <h_vogt>
  * INSTALL,
  * configure.ac,

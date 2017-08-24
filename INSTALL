@@ -9,8 +9,9 @@ Table of contents
    1.3 Install from git repository
    1.4 Advanced Install
     1.4.1 Most useful options
-    1.4.2 Options Specific to Using Ngspice
-    1.4.3 Options Useful for Debugging Ngspice
+    1.4.2 Options Specific to Enable Ngspice as a shared library
+    1.4.3 Options Specific to Using Ngspice
+    1.4.4 Options Useful for Debugging Ngspice
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -23,7 +24,7 @@ Table of contents
    9.2 make ngspice with MS Visual Studio 2015/2017
    9.3 make ngspice with pure CYGWIN
    9.4 ngspice console app with MINGW or CYGWIN
-  10 NGSPICE COMPILATION UNDER MAC OS X
+  10 NGSPICE COMPILATION UNDER macOS
 
 This file describes the procedures to install ngspice from sources.
 
@@ -188,7 +189,24 @@ This file describes the procedures to install ngspice from sources.
         normal use.
 
 
-1.4.2 Options Specific to Using Ngspice
+1.4.2 Options Specific to Enable Ngspice as a shared library
+
+ --with-ngshared
+        This option let you compile ngspice as a shared
+        library or dll, allowing an application controlling
+        ngspice. This option excludes using --with-x or
+        --with-wingui. Useful additional options are
+        --enable-xspice --enable-cider --enable-openmp.
+        No graphics inetrface is provided, this has to be
+        handled by the controlling application.
+
+ --with-tcl=tcldir
+        When configured with this option the tcl module
+        "tclspice" is compiled and installed instead of
+        plain ngspice.
+
+
+1.4.3 Options Specific to Using Ngspice
 
 Most of the options now following are not well maintained, are not tested or even maybe obsolete.
 
@@ -220,7 +238,7 @@ Most of the options now following are not well maintained, are not tested or eve
         http://gss-tcad.sourceforge.net
 
  --enable-newpred
-                Enable the NEWPRED symbol in the code.
+        Enable the NEWPRED symbol in the code.
 
  --enable-newtrunc
         Enable the newtrunc option
@@ -245,22 +263,8 @@ Most of the options now following are not well maintained, are not tested or eve
         Enables the use of the BSD editline library (libedit).
         See http://www.thrysoee.dk/editline/
 
- --with-tcl=tcldir
-        When configured with this option the tcl module
-        "tclspice" is compiled and installed instead of
-        plain ngspice.
 
- --with-ngshared
-        This option let you compile ngspice as a shared
-        library or dll, allowing an application controlling
-        ngspice. This option excludes using --with-x or
-        --with-wingui. Useful additional options are
-        --enable-xspice --enable-cider --enable-openmp.
-        No graphics inetrface is provided, this has to be
-        handled by the controlling application.
-
-
-1.4.3 Options Useful for Debugging Ngspice
+1.4.4 Options Useful for Debugging Ngspice
 
  --enable-ansi
         Configure will try to find an option for your compiler so that
@@ -670,7 +674,7 @@ Most of the options now following are not well maintained, are not tested or eve
 
 
 
-10 NGSPICE COMPILATION UNDER MAC OS X
+10 NGSPICE COMPILATION UNDER macOS
    ==================================
 
 10.1 Use precompiled binary package
