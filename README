@@ -28,6 +28,18 @@ suggestions and reports. What we will be able to do depends mostly on
 user interests, contributions and feedback.
 
 
+
+USER DISCUSSION FORUMS:
+-----------------------
+
+ For discussions on ngspice, there are five discussion forums, to be
+ found at https://sourceforge.net/p/ngspice/discussion/. These
+ typically provide quick answers to any question concerning ngspice.
+ A new section on 'tips and examples' assembles useful tips provided
+ by maintainers and users.
+
+
+
 MAILING LISTS:
 -------------
 
@@ -51,4 +63,5 @@ WEB SITEs:
 
 This project is hosted on Sourceforge.net.
 The home page is http://ngspice.sourceforge.net
-The summary page is http://sourceforge.net/projects/ngspice
+The page offering source code and user interaction is
+ http://sourceforge.net/projects/ngspice
