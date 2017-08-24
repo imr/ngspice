@@ -24,6 +24,7 @@ Table of contents
    9.2 make ngspice with MS Visual Studio 2015/2017
    9.3 make ngspice with pure CYGWIN
    9.4 ngspice console app with MINGW or CYGWIN
+   9.5 cross compiling ngspice for Windows from LINUX
   10 NGSPICE COMPILATION UNDER macOS
 
 This file describes the procedures to install ngspice from sources.
@@ -671,7 +672,14 @@ Most of the options now following are not well maintained, are not tested or eve
  ./configure --enable-adms --enable-xspice --enable-cider --enable-openmp
  --disable-debug CFLAGS=-m32 LDFLAGS=-m32 prefix=C:/Spice
  tested with TDM mingw.
+ 
 
+9.5 cross compiling ngspice for Windows from LINUX
+
+Two scripts are available in the ngspice directory that allow cross
+compiling for NMS Windows, if you are running LINUX. ngspice.exe or
+ngspice.dll may be made. For details please see cross-compile.sh or
+cross-compile-shared.sh.
 
 
 10 NGSPICE COMPILATION UNDER macOS
