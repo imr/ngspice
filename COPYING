@@ -55,6 +55,9 @@ license. (http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm)
 On 2008, December 1st, tclspice changes license from GPL to LGPLv2, in
 accordance with Multigig Ltd, the copyright holder.
 
+The CIDER license (see below) does not contain the controversial advertisement
+clause and thus is compatible to the new BSD license.
+
 The following table is just a reminder on license status, please don't rely
 on it:
           Author            License  Notes
@@ -64,7 +67,7 @@ numparam  Georg Post        LGPL     Applies to the code in
 adms      Laurent Lemaitre  LGPL     Applies to scripts in the
                                      spicelib/dev/adms
 tclspice  Stefan Jones      LGPL     TCL integration
-cider     U. of California  Old BSD  Device level simulator
+cider     U. of California  New BSD  Device level simulator
 xspice    Georgia Tech.     Public D Mixed signals
 spice     U. of California  New BSD  Analog circuit simulation
 
