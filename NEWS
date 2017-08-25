@@ -6,7 +6,7 @@ Ngspice-27, Aug 28th, 2017
     + add variable 'win_console'
     + --enable-relpath configure flag to set preprocessor flag HAS_RELPATH
     +    sets search path for spinit relativ to current directory
-    + shared ngspice: search path for spinit: current dir, HOME dir, USERPROFILE dir
+    + The search path for .spiceinit is: current dir, HOME dir, USERPROFILE dir
     + new function stddev to calculate the standard deviation of all elements of a vector
     + xspice digital n-input x m-output look-up table gate
     + xspice digital model d_lut (digital n-input look-up table gate)
