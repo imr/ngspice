@@ -397,14 +397,19 @@ com_psd(wordlist *wl)
         scaling = (double) length;
 
         intres = (double)length * (double)length;
-        noipower = 0.0;
-        for (j = 0; j < fpts; j++) {
+        fdvec[i][0].cx_real = out[0][0]*out[0][0]/intres;
+        fdvec[i][0].cx_imag = 0;
+        noipower = fdvec[i][0].cx_real;
+        for (j = 1; j < fpts-1; j++) {
             fdvec[i][j].cx_real = 2.* (out[j][0]*out[j][0] + out[j][1]*out[j][1])/intres;
             fdvec[i][j].cx_imag = 0;
             noipower += fdvec[i][j].cx_real;
             if (!finite(noipower))
                 break;
         }
+        fdvec[i][fpts-1].cx_real = out[fpts-1][0]*out[fpts-1][0]/intres;
+        fdvec[i][fpts-1].cx_imag = 0;
+        noipower += fdvec[i][fpts-1].cx_real;
 
 #else /* Green's FFT */
 
