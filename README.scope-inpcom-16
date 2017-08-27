@@ -3,7 +3,8 @@ since ngspice 26
 for current master branch and scope-inpcom-16 branch
 
 *** scope-inpcom-16 ***
-variable yosis added to enforce ' $ ' as inline commant delimiter
+variable no_auto_gnd added to suppress automatic gnd to 0 setting
+variable yosis added to enforce ' $ ' as inline comment delimiter
 add noise to behavioral resistor
 extend the edisplay command
 re-enable flag nogrid of the plot command
