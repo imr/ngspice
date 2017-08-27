@@ -3,6 +3,7 @@ since ngspice 26
 for current master branch and scope-inpcom-16 branch
 
 *** scope-inpcom-16 ***
+variable no_auto_gnd added to suppress automatic gnd to 0 setting
 variable yosis added to enforce ' $ ' as inline comment delimiter
 add noise to behavioral resistor
 extend the edisplay command

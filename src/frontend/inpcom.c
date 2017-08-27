@@ -594,7 +594,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         delete_names(subckt_w_params);
         subckt_w_params = NULL;
 
-        inp_fix_gnd_name(working);
+        if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL))
+            inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &rv. line_number);
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
@@ -1054,7 +1055,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
     if (call_depth == 0 && !comfile) {
 //#warning "fixme first line, does have a scope to be copied ?, this is inp_read, thus before inp_add_levels, thus NULL anyway"
-        insert_new_line(cc, copy(".global gnd"), 1, 0);
+        if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL))
+            insert_new_line(cc, copy(".global gnd"), 1, 0);
 
         if (inp_compat_mode == COMPATMODE_ALL ||
             inp_compat_mode == COMPATMODE_HS  ||
@@ -1294,7 +1296,8 @@ readline(FILE *fd)
 
 
 /* replace "gnd" by " 0 "
-   Delimiters of gnd may be ' ' or ',' or '(' or ')' */
+   Delimiters of gnd may be ' ' or ',' or '(' or ')',
+   may be disabled by setting variable no_auto_gnd*/
 
 static void
 inp_fix_gnd_name(struct card *c)
