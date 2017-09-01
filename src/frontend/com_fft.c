@@ -252,7 +252,7 @@ com_psd(wordlist *wl)
 #endif
 
     double *reald = NULL;
-    double scaling, sum;
+    double sum;
     int order;
 
     if (!plot_cur || !plot_cur->pl_scale) {
@@ -394,8 +394,6 @@ com_psd(wordlist *wl)
 
         fftw_execute(plan_forward);
 
-        scaling = (double) length;
-
         intres = (double)length * (double)length;
         fdvec[i][0].cx_real = out[0][0]*out[0][0]/intres;
         fdvec[i][0].cx_imag = 0;
@@ -413,7 +411,7 @@ com_psd(wordlist *wl)
 
 #else /* Green's FFT */
 
-    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, N, N-length);
+    printf("PSD: Time span: %g s, input length: %d, zero padding: %d\n", span, length, N-length);
     printf("PSD: Frequency resolution: %g Hz, output length: %d\n", 1.0/span, fpts);
 
     reald = TMALLOC(double, N);
@@ -430,8 +428,6 @@ com_psd(wordlist *wl)
         fftInit(M);
         rffts(reald, M, 1);
         fftFree();
-
-        scaling = (double) N;
 
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
         intres = (double)N * (double)N;
@@ -452,38 +448,35 @@ com_psd(wordlist *wl)
 
 #endif
 
-        printf("Total noise power up to Nyquist frequency %5.3e Hz:\n%e V^2 (or A^2), \nnoise voltage or current %e V (or A)\n",
+        printf("Total noise power up to Nyquist frequency %5.3e Hz: %e V^2 (or A^2), \nNoise voltage or current: %e V (or A)\n",
                freq[fpts-1], noipower, sqrt(noipower));
 
         /* smoothing with rectangular window of width "smooth",
-           plotting V/sqrt(Hz) or I/sqrt(Hz) */
-        if (smooth < 1)
-            continue;
-
+           plotting V^2/Hz or I^2/Hz */
         hsmooth = smooth>>1;
         for (j = 0; j < hsmooth; j++) {
             sum = 0.;
             for (jj = 0; jj < hsmooth + j; jj++)
                 sum += fdvec[i][jj].cx_real;
-            sum /= (hsmooth + j);
-            reald[j] = (sqrt(sum)/scaling);
+            sum /= (double) (hsmooth + j);
+            reald[j] = sum;
         }
         for (j = hsmooth; j < fpts-hsmooth; j++) {
             sum = 0.;
             for (jj = 0; jj < smooth; jj++)
                 sum += fdvec[i][j-hsmooth+jj].cx_real;
-            sum /= smooth;
-            reald[j] = (sqrt(sum)/scaling);
+            sum /= (double) smooth;
+            reald[j] = sum;
         }
         for (j = fpts-hsmooth; j < fpts; j++) {
             sum = 0.;
-            for (jj = 0; jj < hsmooth; jj++)
-                sum += fdvec[i][j-hsmooth+jj].cx_real;
-            sum /= (fpts - j + hsmooth - 1);
-            reald[j] = (sqrt(sum)/scaling);
+            for (jj = 0; jj < smooth-(j-(fpts-hsmooth))-1; jj++)
+                sum += fdvec[i][j-hsmooth+jj+1].cx_real;
+            sum /= (double) (fpts-j+hsmooth-1);
+            reald[j] = sum;
         }
         for (j = 0; j < fpts; j++)
-            fdvec[i][j].cx_real = reald[j];
+            fdvec[i][j].cx_real = reald[j] * (double)fpts / freq[fpts - 1];
     }
 
 done:
