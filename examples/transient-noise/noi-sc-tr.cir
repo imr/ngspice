@@ -45,7 +45,7 @@ plot mag(v(3)) loglog xlimit 1e4 1e8 ylimit 1e-10 1e-4
 setplot tran1
 linearize
 psd 101 v(3)
-plot mag(v(3)) xlimit 0 3e7 ylimit 0 10u
+plot mag(v(3)) xlimit 0 3e7 ylabel V^2/Hz
 
 .endc
 
