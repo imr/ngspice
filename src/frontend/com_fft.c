@@ -470,9 +470,9 @@ com_psd(wordlist *wl)
         }
         for (j = fpts-hsmooth; j < fpts; j++) {
             sum = 0.;
-            for (jj = 0; jj < smooth-(j-(fpts-hsmooth))-1; jj++)
+            for (jj = 0; jj < fpts+hsmooth-j-1; jj++)
                 sum += fdvec[i][j-hsmooth+jj+1].cx_real;
-            sum /= (double) (fpts-j+hsmooth-1);
+            sum /= (double) (fpts+hsmooth-j-1);
             reald[j] = sum;
         }
         for (j = 0; j < fpts; j++)
