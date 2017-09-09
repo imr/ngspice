@@ -45,9 +45,6 @@ fi
 #./autogen.sh --adms
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# In the following ../configure commands you will find an additional entry to the CFLAGS
-# '-fno-omit-frame-pointer'. This entry compensates for a compiler bug of actual mingw gcc 4.6.1. 
-
 echo
 if test "$1" = "64"; then
    cd release64
