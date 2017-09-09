@@ -10,6 +10,7 @@
 # set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
 # start compiling with
 # './compile_min.sh' or './compile_min.sh 64'
+# As an (more recent) alternative install MSYS2 and the tools cited above.
 
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
@@ -18,6 +19,9 @@
 # CIDER, XSPICE, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
+# ngspice as shared library:
+# Replace --with-wingui by --with-ngshared in line ../configure ... .
+# Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 
 if test "$1" = "64"; then
    if [ ! -d "release64" ]; then
