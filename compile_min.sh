@@ -22,6 +22,7 @@
 # ngspice as shared library:
 # Replace --with-wingui by --with-ngshared in line ../configure ... .
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
+# It might be necessary to uncomment and run ./autogen.sh .
 
 if test "$1" = "64"; then
    if [ ! -d "release64" ]; then
