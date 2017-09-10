@@ -257,10 +257,20 @@ if test "x$enable_cuspice" = xyes; then
     SM_32=$(echo $NVCC_OUTPUT | grep "sm_32")
     C_35=$(echo $NVCC_OUTPUT | grep "compute_35")
     SM_35=$(echo $NVCC_OUTPUT | grep "sm_35")
+    C_37=$(echo $NVCC_OUTPUT | grep "compute_37")
+    SM_37=$(echo $NVCC_OUTPUT | grep "sm_37")
     C_50=$(echo $NVCC_OUTPUT | grep "compute_50")
     SM_50=$(echo $NVCC_OUTPUT | grep "sm_50")
     C_52=$(echo $NVCC_OUTPUT | grep "compute_52")
     SM_52=$(echo $NVCC_OUTPUT | grep "sm_52")
+    C_53=$(echo $NVCC_OUTPUT | grep "compute_53")
+    SM_53=$(echo $NVCC_OUTPUT | grep "sm_53")
+    C_60=$(echo $NVCC_OUTPUT | grep "compute_60")
+    SM_60=$(echo $NVCC_OUTPUT | grep "sm_60")
+    C_61=$(echo $NVCC_OUTPUT | grep "compute_61")
+    SM_61=$(echo $NVCC_OUTPUT | grep "sm_61")
+    C_62=$(echo $NVCC_OUTPUT | grep "compute_62")
+    SM_62=$(echo $NVCC_OUTPUT | grep "sm_62")
 
     AC_MSG_RESULT([CUSPICE will be compiled for the following architectures:])
     if test "$C_20" != "" && test "$SM_20" != ""
@@ -285,6 +295,11 @@ if test "x$enable_cuspice" = xyes; then
         CUDA_CFLAGS+=" -gencode arch=compute_35,\"code=sm_35\""
         AC_MSG_RESULT([    Compute Capability: 3.5])
     fi
+    if test "$C_37" != "" && test "$SM_37" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_37,\"code=sm_37\""
+        AC_MSG_RESULT([    Compute Capability: 3.7])
+    fi
     if test "$C_50" != "" && test "$SM_50" != ""
     then
         CUDA_CFLAGS+=" -gencode arch=compute_50,\"code=sm_50\""
@@ -293,16 +308,35 @@ if test "x$enable_cuspice" = xyes; then
     if test "$C_52" != "" && test "$SM_52" != ""
     then
         CUDA_CFLAGS+=" -gencode arch=compute_52,\"code=sm_52\""
-        CUDA_CFLAGS+=" -gencode arch=compute_52,\"code=compute_52\""
         AC_MSG_RESULT([    Compute Capability: 5.2])
+    fi
+    if test "$C_53" != "" && test "$SM_53" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_53,\"code=sm_53\""
+        AC_MSG_RESULT([    Compute Capability: 5.3])
+    fi
+    if test "$C_60" != "" && test "$SM_60" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_60,\"code=sm_60\""
+        AC_MSG_RESULT([    Compute Capability: 6.0])
+    fi
+    if test "$C_61" != "" && test "$SM_61" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_61,\"code=sm_61\""
+        AC_MSG_RESULT([    Compute Capability: 6.1])
+    fi
+    if test "$C_62" != "" && test "$SM_62" != ""
+    then
+        CUDA_CFLAGS+=" -gencode arch=compute_62,\"code=sm_62\""
+        AC_MSG_RESULT([    Compute Capability: 6.2])
     fi
 
     CUDA_CFLAGS+=" -DCOMPILED_BY_NVCC"
 
     if test "x$enable_debug" = xno; then
-        CUDA_CFLAGS+=" -O2"
+        CUDA_CFLAGS+=" -O2 -Wno-deprecated-gpu-targets"
     else
-        CUDA_CFLAGS+=" -g -O1 -G"
+        CUDA_CFLAGS+=" -g -O1 -G -Wno-deprecated-gpu-targets"
     fi
     AC_SUBST(CUDA_CFLAGS)
 
