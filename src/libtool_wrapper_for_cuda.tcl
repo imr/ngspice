@@ -27,11 +27,25 @@ if {[lindex $argv 1] == "-static"} {
 exec /bin/sh -c $command
 
 # Determine the libtool version (including compiler version)
-catch {exec libtool --help} output
-set output [split $output "\n"]
-foreach elem $output {
-  if {[regexp -- {libtool:\t(.+)$} $elem -> version]} {
-    break
+set output ""
+catch {exec uname -a | grep "Darwin"} output
+if {$output != ""} {
+  # Mac version
+  catch {exec glibtool --version} output
+  set output [split $output "\n"]
+  foreach elem $output {
+    if {[regexp -- {glibtool \(GNU libtool\) (.+)$} $elem -> version]} {
+      break
+    }
+  }
+} else {
+  # Linux version
+  catch {exec libtool --help} output
+  set output [split $output "\n"]
+  foreach elem $output {
+    if {[regexp -- {libtool:\t(.+)$} $elem -> version]} {
+      break
+    }
   }
 }
 
