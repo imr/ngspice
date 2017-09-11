@@ -28,8 +28,8 @@ exec /bin/sh -c $command
 
 # Determine the libtool version (including compiler version)
 set output ""
-catch {exec uname -a | grep "Darwin"} output
-if {$output != ""} {
+catch {exec uname} output
+if {$output == "Darwin"} {
   # Mac version
   catch {exec glibtool --version} output
   set output [split $output "\n"]
@@ -38,15 +38,18 @@ if {$output != ""} {
       break
     }
   }
-} else {
+} elseif {$output == "Linux"} {
   # Linux version
-  catch {exec libtool --help} output
+  catch {exec libtoolize --version} output
   set output [split $output "\n"]
   foreach elem $output {
-    if {[regexp -- {libtool:\t(.+)$} $elem -> version]} {
+    if {[regexp -- {libtoolize \(GNU libtool\) (.+)$} $elem -> version]} {
       break
     }
   }
+} else {
+  puts "Unknown architecture '$output'"
+  exit 1
 }
 
 # Generate the .lo libtool object file
