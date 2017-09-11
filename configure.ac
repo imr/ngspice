@@ -220,23 +220,34 @@ if test "x$enable_cuspice" = xyes; then
     AC_ARG_WITH([cuda],
         [AS_HELP_STRING([--with-cuda=PATH], [Define the prefix where cuda is installed (default=/usr/local/cuda)])])
     ARCH=`uname -m`
+    OS_NAME=`uname`
     if test -n "$with_cuda"
     then
         CUDA_CPPFLAGS="-I$with_cuda/include"
-        if [[ $ARCH == "x86_64" ]]
+        if test "$OS_NAME" == "Darwin"
         then
-            CUDA_LIBS="-L$with_cuda/lib64 -lcuda -lcudart"
-        else
             CUDA_LIBS="-L$with_cuda/lib -lcuda -lcudart"
+        else
+            if [[ $ARCH == "x86_64" ]]
+            then
+                CUDA_LIBS="-L$with_cuda/lib64 -lcuda -lcudart"
+            else
+                CUDA_LIBS="-L$with_cuda/lib -lcuda -lcudart"
+            fi
         fi
         NVCC="$with_cuda/bin/nvcc"
     else
         CUDA_CPPFLAGS="-I/usr/local/cuda/include"
-        if [[ $ARCH == "x86_64" ]]
+        if test "$OS_NAME" == "Darwin"
         then
-            CUDA_LIBS="-L/usr/local/cuda/lib64 -lcuda -lcudart"
-        else
             CUDA_LIBS="-L/usr/local/cuda/lib -lcuda -lcudart"
+        else
+            if [[ $ARCH == "x86_64" ]]
+            then
+                CUDA_LIBS="-L/usr/local/cuda/lib64 -lcuda -lcudart"
+            else
+                CUDA_LIBS="-L/usr/local/cuda/lib -lcuda -lcudart"
+            fi
         fi
         AC_PATH_PROG(NVCC, nvcc, "no")
         AS_IF([test "x$NVCC" = xno],
