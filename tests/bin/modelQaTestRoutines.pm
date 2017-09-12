@@ -763,6 +763,7 @@ sub platform {
     }
     $platform = "${archName}_${osName}_${osVer}";
     $platform =~ s/\s+/-/g;
+    $platform =~ s|[()/]||g;
     return($platform);
 }
 
