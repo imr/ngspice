@@ -128,8 +128,12 @@ CKTload(CKTcircuit *ckt)
 
 #ifdef USE_CUSPICE
     /* Copy the CKTdiagGmin value to the GPU */
-    status = cudaMemcpy (ckt->d_CKTloadOutput + ckt->total_n_values, &(ckt->CKTdiagGmin), sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTloadOutput + ckt->total_n_values, 1, double, status)
+    // The real Gmin is needed only when the matrix will reside entirely on the GPU
+    // Right now, only some models support CUDA, so the matrix is only partially created on the GPU
+    cudaMemset (ckt->d_CKTloadOutput + ckt->total_n_values, 0, sizeof(double)) ;
+    //cudaError_t statusMemcpy ;
+    //statusMemcpy = cudaMemcpy (ckt->d_CKTloadOutput + ckt->total_n_values, &(ckt->CKTdiagGmin), sizeof(double), cudaMemcpyHostToDevice) ;
+    //CUDAMEMCPYCHECK (ckt->d_CKTloadOutput + ckt->total_n_values, 1, double, statusMemcpy)
 
     /* Performing CSRMV for the Sparse Matrix using CUSPARSE */
     cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
