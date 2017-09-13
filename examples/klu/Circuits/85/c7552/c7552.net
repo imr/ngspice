@@ -3,7 +3,7 @@
 * by Jingye Xu @ VLSI group, Dept of ECE, UIC
 
 .INCLUDE ../../technology/45nm_HP.pm
-.OPTIONS GMIN=1e-012 ABSTOL=1e-18 ACCT
+.OPTIONS GMIN=1e-015 ABSTOL=1e-13 ACCT
 
 * the voltage souces: 
 Vdd vdd gnd DC 1.8
