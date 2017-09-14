@@ -25,7 +25,9 @@ if mismatch(foo, 5.0, 1e-9)
   echo "ERROR: foo failed"
 end
 
-print v(1) v(2) foo
+echo "Note: v(1) = $&v(1)"
+echo "Note: v(2) = $&v(2)"
+echo "Note: foo = $&v(foo)"
 
 echo "INFO: -- yes we can, print dash dash --"
 echo "INFO: -- yes we can, print upper and lower case --"

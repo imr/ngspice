@@ -5,8 +5,5 @@ Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
 
 
 No. of Data Rows : 1
-v(1) = 5.000000e+00
-v(2) = 5.000000e+00
-foo = 5.000000e+00
 INFO: -- yes we can, print dash dash --
 INFO: -- yes we can, print upper and lower case --

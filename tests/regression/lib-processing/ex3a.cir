@@ -15,7 +15,8 @@ Vcheck2  9 check2  2.0V
 .control
 op
 
-print v(check1) v(check2)
+echo "Note: v(check1) = $&v(check1)"
+echo "Note: v(check2) = $&v(check2)"
 
 if abs(v(check1)) > 1e-9
   quit 1

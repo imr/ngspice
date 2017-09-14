@@ -15,7 +15,7 @@ R2  n1 n2  2k
 .control
 op
 
-print v(check0)
+echo "Note: v(check0) = $&v(check0)"
 
 if abs(v(check0)) > 1e-9
   quit 1
