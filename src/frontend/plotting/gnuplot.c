@@ -69,7 +69,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         return;
     }
 
-    if (fabs((ylims[1]-ylims[0])/ylims[0]) < 1.0e-6) {
+    if (ylims && (fabs((ylims[1]-ylims[0])/ylims[0]) < 1.0e-6)) {
         fprintf(cp_err, "Error: range min ... max too small for using gnuplot.\n");
         fprintf(cp_err, "  Consider plotting with offset %g.\n", ylims[0]);
         return;
@@ -168,7 +168,6 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         if (xlims)
             fprintf(file, "set xrange [%1.0e:%1.0e]\n", 
                 pow(10, floor(log10(xlims[0]))), pow(10, ceil(log10(xlims[1]))));
-            fprintf(file, "set xrange [%e:%e]\n", xlims[0], xlims[1]);
             fprintf(file, "set mxtics 10\n");
             fprintf(file, "set grid mxtics\n");
     } else {
