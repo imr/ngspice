@@ -457,7 +457,7 @@ BSIM3v32instance **InstArray;
             model->BSIM3v32wcdsc = 0.0;
         if (!model->BSIM3v32wcdscbGiven)
             model->BSIM3v32wcdscb = 0.0;
-            if (!model->BSIM3v32wcdscdGiven)
+        if (!model->BSIM3v32wcdscdGiven)
             model->BSIM3v32wcdscd = 0.0;
         if (!model->BSIM3v32wcitGiven)
             model->BSIM3v32wcit = 0.0;

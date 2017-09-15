@@ -68,7 +68,7 @@ IFuid tmpName;
 	    model->BSIM3v1cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM3v1cdscbGiven)
 	    model->BSIM3v1cdscb = 0.0;   /* unit Q/V/m^2  */
-	    if (!model->BSIM3v1cdscdGiven)
+        if (!model->BSIM3v1cdscdGiven)
 	    model->BSIM3v1cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM3v1citGiven)
 	    model->BSIM3v1cit = 0.0;   /* unit Q/V/m^2  */
@@ -216,7 +216,7 @@ IFuid tmpName;
 	    model->BSIM3v1lcdsc = 0.0;
         if (!model->BSIM3v1lcdscbGiven)
 	    model->BSIM3v1lcdscb = 0.0;
-	    if (!model->BSIM3v1lcdscdGiven)
+        if (!model->BSIM3v1lcdscdGiven)
 	    model->BSIM3v1lcdscd = 0.0;
         if (!model->BSIM3v1lcitGiven)
 	    model->BSIM3v1lcit = 0.0;
@@ -364,7 +364,7 @@ IFuid tmpName;
 	    model->BSIM3v1wcdsc = 0.0;
         if (!model->BSIM3v1wcdscbGiven)
 	    model->BSIM3v1wcdscb = 0.0;
-	    if (!model->BSIM3v1wcdscdGiven)
+        if (!model->BSIM3v1wcdscdGiven)
 	    model->BSIM3v1wcdscd = 0.0;
         if (!model->BSIM3v1wcitGiven)
 	    model->BSIM3v1wcit = 0.0;
@@ -511,7 +511,7 @@ IFuid tmpName;
 	    model->BSIM3v1pcdsc = 0.0;
         if (!model->BSIM3v1pcdscbGiven)
 	    model->BSIM3v1pcdscb = 0.0;
-	    if (!model->BSIM3v1pcdscdGiven)
+        if (!model->BSIM3v1pcdscdGiven)
 	    model->BSIM3v1pcdscd = 0.0;
         if (!model->BSIM3v1pcitGiven)
 	    model->BSIM3v1pcit = 0.0;

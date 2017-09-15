@@ -415,7 +415,7 @@ int HSMHVsetup(
     if ( !model->HSMHV_rdsp_Given     ) model->HSMHV_rdsp      = 1.0 ;
     if ( !model->HSMHV_rdtemp1_Given  ) model->HSMHV_rdtemp1   = 0.0 ;
     if ( !model->HSMHV_rdtemp2_Given  ) model->HSMHV_rdtemp2   = 0.0 ;
-                                        model->HSMHV_rth0r     = 0.0 ; /* not used in this version */
+    model->HSMHV_rth0r     = 0.0 ; /* not used in this version */
     if ( !model->HSMHV_rdvdtemp1_Given) model->HSMHV_rdvdtemp1 = 0.0 ;
     if ( !model->HSMHV_rdvdtemp2_Given) model->HSMHV_rdvdtemp2 = 0.0 ;
     if ( !model->HSMHV_rth0w_Given    ) model->HSMHV_rth0w     = 0.0 ;
@@ -845,7 +845,7 @@ int HSMHVsetup(
 
       if (  model->HSMHV_cosym ) {
          if ( !here->HSMHV_lovers_Given   && !model->HSMHV_lovers_Given ) here->HSMHV_lovers = here->HSMHV_loverld ;
-                                                                          here->HSMHV_lover  = here->HSMHV_lovers ;
+         here->HSMHV_lover  = here->HSMHV_lovers ;
          if ( !here->HSMHV_ldrift1s_Given && !model->HSMHV_ldrift1s_Given ) here->HSMHV_ldrift1s = here->HSMHV_ldrift1 ;
          if ( !here->HSMHV_ldrift2s_Given && !model->HSMHV_ldrift2s_Given ) here->HSMHV_ldrift2s = here->HSMHV_ldrift2 ;
       }

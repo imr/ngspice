@@ -6888,8 +6888,8 @@ start_of_mobility:
           sarg = 1.0 / sqrt(arg) ;
         else
           sarg = Fn_Pow( arg , -model->HSM2_mj ) ;
-          Qbs = model->HSM2_pb * czbs * (1.0 - arg * sarg) / (1.0 - model->HSM2_mj) ;
-          Capbs = czbs * sarg ;
+        Qbs = model->HSM2_pb * czbs * (1.0 - arg * sarg) / (1.0 - model->HSM2_mj) ;
+        Capbs = czbs * sarg ;
       } else {
         Qbs = 0.0 ;
         Capbs = 0.0 ;

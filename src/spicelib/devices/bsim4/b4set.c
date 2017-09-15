@@ -277,7 +277,7 @@ BSIM4instance **InstArray;
             model->BSIM4cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM4cdscbGiven)
             model->BSIM4cdscb = 0.0;   /* unit Q/V/m^2  */    
-            if (!model->BSIM4cdscdGiven)
+        if (!model->BSIM4cdscdGiven)
             model->BSIM4cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM4citGiven)
             model->BSIM4cit = 0.0;   /* unit Q/V/m^2  */
@@ -821,7 +821,7 @@ BSIM4instance **InstArray;
             model->BSIM4lcdsc = 0.0;
         if (!model->BSIM4lcdscbGiven)
             model->BSIM4lcdscb = 0.0;
-            if (!model->BSIM4lcdscdGiven) 
+        if (!model->BSIM4lcdscdGiven)
             model->BSIM4lcdscd = 0.0;
         if (!model->BSIM4lcitGiven)
             model->BSIM4lcit = 0.0;
@@ -1198,7 +1198,7 @@ BSIM4instance **InstArray;
             model->BSIM4wcdsc = 0.0;
         if (!model->BSIM4wcdscbGiven)
             model->BSIM4wcdscb = 0.0;  
-            if (!model->BSIM4wcdscdGiven)
+        if (!model->BSIM4wcdscdGiven)
             model->BSIM4wcdscd = 0.0;
         if (!model->BSIM4wcitGiven)
             model->BSIM4wcit = 0.0;
@@ -1522,7 +1522,7 @@ BSIM4instance **InstArray;
             model->BSIM4wxrcrg2 = 0.0;
         if (!model->BSIM4weuGiven)
             model->BSIM4weu = 0.0;
-            if (!model->BSIM4wucsGiven)
+        if (!model->BSIM4wucsGiven)
             model->BSIM4wucs = 0.0;
         if (!model->BSIM4wvfbGiven)
             model->BSIM4wvfb = 0.0;
@@ -1575,7 +1575,7 @@ BSIM4instance **InstArray;
             model->BSIM4pcdsc = 0.0;
         if (!model->BSIM4pcdscbGiven)
             model->BSIM4pcdscb = 0.0;   
-            if (!model->BSIM4pcdscdGiven)
+        if (!model->BSIM4pcdscdGiven)
             model->BSIM4pcdscd = 0.0;
         if (!model->BSIM4pcitGiven)
             model->BSIM4pcit = 0.0;

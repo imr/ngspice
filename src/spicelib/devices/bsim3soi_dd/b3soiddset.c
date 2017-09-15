@@ -75,7 +75,7 @@ IFuid tmpName;
 	    model->B3SOIDDcdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->B3SOIDDcdscbGiven)
 	    model->B3SOIDDcdscb = 0.0;   /* unit Q/V/m^2  */    
-	    if (!model->B3SOIDDcdscdGiven)
+        if (!model->B3SOIDDcdscdGiven)
 	    model->B3SOIDDcdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->B3SOIDDcitGiven)
 	    model->B3SOIDDcit = 0.0;   /* unit Q/V/m^2  */

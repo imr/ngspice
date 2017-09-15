@@ -255,8 +255,8 @@ B4SOIinstance **InstArray;
             model->B4SOInpeak = 1.7e17;   /* unit 1/cm3 */
         if (!model->B4SOIngateGiven)
             model->B4SOIngate = 0;   /* unit 1/cm3 */
-            if (!model->B4SOInsdGiven)
-                    model->B4SOInsd = 1.0e20;
+        if (!model->B4SOInsdGiven)
+            model->B4SOInsd = 1.0e20;
         if (!model->B4SOIvbmGiven)
             model->B4SOIvbm = -3.0;
         if (!model->B4SOIxtGiven)
@@ -2083,7 +2083,7 @@ B4SOIinstance **InstArray;
             model->B4SOIvsce = 0.0;
         if (!model->B4SOIcdsbsGiven)
             model->B4SOIcdsbs = 0.0;
-            if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
+        if (!model->B4SOIminvcvGiven)     /* v4.1 for Vgsteffcv */
             model->B4SOIminvcv = 0.0;
         if (!model->B4SOIlminvcvGiven)    /* v4.1 for Vgsteffcv */
             model->B4SOIlminvcv = 0.0;

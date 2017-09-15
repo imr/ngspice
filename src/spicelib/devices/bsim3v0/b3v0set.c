@@ -58,7 +58,7 @@ IFuid tmpName;
 	    model->BSIM3v0cdsc = 2.4e-4;   /* unit Q/V/m^2  */
         if (!model->BSIM3v0cdscbGiven)
 	    model->BSIM3v0cdscb = 0.0;   /* unit Q/V/m^2  */    
-	    if (!model->BSIM3v0cdscdGiven)
+        if (!model->BSIM3v0cdscdGiven)
 	    model->BSIM3v0cdscd = 0.0;   /* unit Q/V/m^2  */
         if (!model->BSIM3v0citGiven)
 	    model->BSIM3v0cit = 0.0;   /* unit Q/V/m^2  */
@@ -206,7 +206,7 @@ IFuid tmpName;
 	    model->BSIM3v0lcdsc = 0.0;
         if (!model->BSIM3v0lcdscbGiven)
 	    model->BSIM3v0lcdscb = 0.0;
-	    if (!model->BSIM3v0lcdscdGiven) 
+        if (!model->BSIM3v0lcdscdGiven)
 	    model->BSIM3v0lcdscd = 0.0;
         if (!model->BSIM3v0lcitGiven)
 	    model->BSIM3v0lcit = 0.0;
@@ -352,7 +352,7 @@ IFuid tmpName;
 	    model->BSIM3v0wcdsc = 0.0;
         if (!model->BSIM3v0wcdscbGiven)
 	    model->BSIM3v0wcdscb = 0.0;  
-	    if (!model->BSIM3v0wcdscdGiven)
+        if (!model->BSIM3v0wcdscdGiven)
 	    model->BSIM3v0wcdscd = 0.0;
         if (!model->BSIM3v0wcitGiven)
 	    model->BSIM3v0wcit = 0.0;
@@ -497,7 +497,7 @@ IFuid tmpName;
 	    model->BSIM3v0pcdsc = 0.0;
         if (!model->BSIM3v0pcdscbGiven)
 	    model->BSIM3v0pcdscb = 0.0;   
-	    if (!model->BSIM3v0pcdscdGiven)
+        if (!model->BSIM3v0pcdscdGiven)
 	    model->BSIM3v0pcdscd = 0.0;
         if (!model->BSIM3v0pcitGiven)
 	    model->BSIM3v0pcit = 0.0;
@@ -677,7 +677,7 @@ IFuid tmpName;
            model->BSIM3v0dwc = model->BSIM3v0Wint;
         if (!model->BSIM3v0dlcGiven)  
            model->BSIM3v0dlc = model->BSIM3v0Lint;
-	   if (!model->BSIM3v0cfGiven)
+        if (!model->BSIM3v0cfGiven)
             model->BSIM3v0cf = 2.0 * EPSOX / PI
 			   * log(1.0 + 0.4e-6 / model->BSIM3v0tox);
         if (!model->BSIM3v0cgdoGiven)
