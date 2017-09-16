@@ -9,6 +9,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		README.adms contrib \
 		doc examples m4 visualc @NOTXGRAPH@ \
 		xgraph/aclocal.m4 \
+		build-for-mac-os.sh \
 		cross-compile.sh cross-compile-shared.sh \
 		compile_min.sh .gitignore
 
