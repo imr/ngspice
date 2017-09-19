@@ -27,6 +27,11 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
   /* loop through all the transmission line models */
   for (; model != NULL; model = LTRAnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
     if (!model->LTRAnlGiven) {
       model->LTRAnl = .25;
     }

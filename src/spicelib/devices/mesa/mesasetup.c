@@ -28,6 +28,12 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = MESAnextModel(model)) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         if( (model->MESAtype != NMF) ) {
             fprintf(stderr, "Only nmf model type supported, set to nmf\n");
             model->MESAtype = NMF;

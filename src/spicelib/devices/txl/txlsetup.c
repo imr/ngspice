@@ -87,6 +87,11 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     /*  loop through all the models */
     for( ; model != NULL; model = TXLnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         if (!model->Rgiven) {
            SPfrontEnd->IFerrorf (ERR_FATAL,
                "model %s: lossy line series resistance not given", model->TXLmodName);

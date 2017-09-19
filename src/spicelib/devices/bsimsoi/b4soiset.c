@@ -61,8 +61,13 @@ B4SOIinstance **InstArray;
     /*  loop through all the B4SOI device models */
     for( ; model != NULL; model = B4SOInextModel(model))
     {
-/* Default value Processing for B4SOI MOSFET Models */
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
+        /* Default value Processing for B4SOI MOSFET Models */
         if (!model->B4SOItypeGiven)
             model->B4SOItype = NMOS;
         if (!model->B4SOImobModGiven)

@@ -26,6 +26,11 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the MOS2 device models */
     for( ; model != NULL; model = MOS2nextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         if(!model->MOS2typeGiven) {
             model->MOS2type = NMOS;
         }

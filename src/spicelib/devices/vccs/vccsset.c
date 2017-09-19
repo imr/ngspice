@@ -30,6 +30,11 @@ VCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the current source models */
     for( ; model != NULL; model = VCCSnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         /* loop through all the instances of the model */
         for (here = VCCSinstances(model); here != NULL ;
                 here=VCCSnextInstance(here)) {

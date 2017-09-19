@@ -25,6 +25,11 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     for (; model; model = SWnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0;
+#endif
+
         /* Default Value Processing for Switch Model */
         if (!model->SWthreshGiven)
             model->SWvThreshold = 0;

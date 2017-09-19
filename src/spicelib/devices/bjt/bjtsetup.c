@@ -34,6 +34,11 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the diode models */
     for( ; model != NULL; model = BJTnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         if(model->BJTtype != NPN && model->BJTtype != PNP) {
             model->BJTtype = NPN;
         }

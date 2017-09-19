@@ -43,7 +43,13 @@ IFuid tmpName;
     /*  loop through all the BSIM3v1 device models */
     for( ; model != NULL; model = BSIM3v1nextModel(model))
     {
-/* Default value Processing for BSIM3v1 MOSFET Models */
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
+        /* Default value Processing for BSIM3v1 MOSFET Models */
         if (!model->BSIM3v1typeGiven)
             model->BSIM3v1type = NMOS;
         if (!model->BSIM3v1mobModGiven)

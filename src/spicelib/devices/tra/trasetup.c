@@ -30,6 +30,11 @@ TRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     /*  loop through all the transmission line models */
     for( ; model != NULL; model = TRAnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         /* loop through all the instances of the model */
         for (here = TRAinstances(model); here != NULL ;
                 here=TRAnextInstance(here)) {
