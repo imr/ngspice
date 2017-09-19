@@ -1189,6 +1189,10 @@ typedef struct sB4SOImodel
     B4SOIinstance *B4SOIinstances;
     IFuid B4SOImodName;
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int B4SOItype;

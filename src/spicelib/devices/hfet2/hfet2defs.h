@@ -108,6 +108,10 @@ typedef struct sHFET2model {
     struct sHFET2model *HFET2nextModel;
     HFET2instance * HFET2instances;
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     IFuid HFET2modName;

@@ -852,6 +852,10 @@ typedef struct sBSIM4v5model
     BSIM4v5instance *BSIM4v5instances;
     IFuid BSIM4v5modName; 
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int BSIM4v5type;

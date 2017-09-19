@@ -89,6 +89,10 @@ typedef struct sCPLmodel {       /* model structure for a cpl */
                                  * model */
     IFuid CPLmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 	double *Rm;

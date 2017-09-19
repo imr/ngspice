@@ -116,6 +116,10 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
                                  * model */
     IFuid CAPmodName;   /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     double CAPtnom;       /* temperature at which capacitance measured */

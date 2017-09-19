@@ -30,6 +30,11 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the MOS3 device models */
     for( ; model != NULL; model = model->MOS3nextModel ) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         /* perform model defaulting */
         if(!model->MOS3typeGiven) {
             model->MOS3type = NMOS;

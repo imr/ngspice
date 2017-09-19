@@ -72,6 +72,10 @@ typedef struct sCSWmodel {      /* model structure for a switch */
                                  * model */
     IFuid CSWmodName;   /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     double CSWonResistance;  /* switch "on" resistance */

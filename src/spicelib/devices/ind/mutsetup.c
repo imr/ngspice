@@ -79,6 +79,9 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* How much instances we have */
         model->n_instances = i;
+
+        /* This model supports CUDA */
+        model->has_cuda = 1 ;
     }
 
     /*  loop through all the mutual inductor models */

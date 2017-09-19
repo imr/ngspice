@@ -164,6 +164,10 @@ typedef struct sHFETAmodel {
     HFETAinstance *HFETAinstances;
     IFuid HFETAmodName;
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int HFETAtype;

@@ -145,6 +145,10 @@ typedef struct sRESmodel {       /* model structure for a resistor */
                                  * model */
     IFuid RESmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     double REStnom;         /* temperature at which resistance measured */

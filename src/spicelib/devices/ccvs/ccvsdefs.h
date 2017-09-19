@@ -66,6 +66,10 @@ typedef struct sCCVSmodel {       /* model structure for a CCVsource */
                                              that have this model */
     IFuid CCVSmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 } CCVSmodel;

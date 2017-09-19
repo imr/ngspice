@@ -412,6 +412,10 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     IFuid VBICmodName;                /* pointer to character string naming 
                                          this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int VBICtype;

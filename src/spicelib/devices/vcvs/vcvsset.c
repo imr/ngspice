@@ -28,6 +28,11 @@ VCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->VCVSnextModel ) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         /* loop through all the instances of the model */
         for (here = model->VCVSinstances; here != NULL ;
                 here=here->VCVSnextInstance) {

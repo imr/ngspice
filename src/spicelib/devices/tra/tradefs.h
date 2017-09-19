@@ -119,6 +119,10 @@ typedef struct sTRAmodel {       /* model structure for a transmission lines */
                                  * model */
     IFuid TRAmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 } TRAmodel;

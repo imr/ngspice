@@ -26,6 +26,11 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the diode models */
     for( ; model != NULL; model = model->MESnextModel ) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         if( (model->MEStype != NMF) && (model->MEStype != PMF) ) {
             model->MEStype = NMF;
         }

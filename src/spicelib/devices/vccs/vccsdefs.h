@@ -69,6 +69,10 @@ typedef struct sVCCSmodel {       /* model structure for a source */
                                       * that have this model */
     IFuid VCCSmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 } VCCSmodel;

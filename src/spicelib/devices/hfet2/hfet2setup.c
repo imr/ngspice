@@ -21,6 +21,12 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
   CKTnode *tmp;
 
   for( ; model != NULL; model = model->HFET2nextModel ) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
     if((TYPE != NHFET) && (TYPE != PHFET) )
       TYPE = NHFET;
     if(!model->HFET2cfGiven)

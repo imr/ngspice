@@ -253,6 +253,10 @@ typedef struct sMESAmodel {       /* model structure for a MESAfet */
                                    * that have this model */
     IFuid MESAmodName; /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int MESAtype;

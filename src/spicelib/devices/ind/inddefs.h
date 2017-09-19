@@ -126,6 +126,10 @@ struct sINDmodel {             /* model structure for an inductor */
                                 * model */
     IFuid INDmodName;          /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     double INDmInd;        /* Model inductance */
@@ -244,7 +248,12 @@ struct sMUTmodel {             /* model structure for a mutual inductor */
                                 * model */
     IFuid MUTmodName;          /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
 /* --- end of generic struct GENmodel --- */
+
 #ifdef USE_CUSPICE
     MUTparamCPUstruct MUTparamCPU;
     MUTparamGPUstruct MUTparamGPU;

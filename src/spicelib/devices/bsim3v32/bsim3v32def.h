@@ -435,6 +435,10 @@ typedef struct sBSIM3v32model
     BSIM3v32instance *BSIM3v32instances;
     IFuid BSIM3v32modName;
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int BSIM3v32type;

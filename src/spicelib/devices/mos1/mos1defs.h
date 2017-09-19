@@ -344,6 +344,10 @@ typedef struct sMOS1model {       /* model structure for a resistor */
                                    * that have this model */
     IFuid MOS1modName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int MOS1type;       /* device type : 1 = nmos,  -1 = pmos */

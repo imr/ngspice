@@ -104,6 +104,10 @@ typedef struct sLTRAmodel {       /* model structure for a transmission lines */
                                  * model */
     IFuid LTRAmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 	double LTRAh1dashFirstVal; /* first needed value of h1dasg at 

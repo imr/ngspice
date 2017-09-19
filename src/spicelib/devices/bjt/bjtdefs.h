@@ -357,6 +357,10 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
                                  * that have this model */
     IFuid BJTmodName; /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int BJTtype;

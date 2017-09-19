@@ -67,6 +67,10 @@ typedef struct sASRCmodel {       /* model structure for a source */
                                    * that have this model */
     IFuid ASRCmodName;            /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 } ASRCmodel;

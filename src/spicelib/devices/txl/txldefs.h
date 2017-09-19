@@ -79,6 +79,10 @@ typedef struct sTXLmodel {       /* model structure for a txl */
                                  * model */
     IFuid TXLmodName;       /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
 	double R;

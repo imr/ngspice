@@ -29,6 +29,11 @@ CCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = model->CCCSnextModel ) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         /* loop through all the instances of the model */
         for (here = model->CCCSinstances; here != NULL ;
                 here=here->CCCSnextInstance) {

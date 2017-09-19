@@ -193,6 +193,10 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
                                    * that have this model */
     IFuid JFETmodName; /* pointer to character string naming this model */
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
     /* --- end of generic struct GENmodel --- */
 
     int JFETtype;
