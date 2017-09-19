@@ -246,6 +246,8 @@ CKTsetup(CKTcircuit *ckt)
         ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
 
 
+        if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+
         /* Topology Matrix Pre-Allocation in CSR format */
         ckt->CKTtopologyMatrixCSRp = TMALLOC (int, nz + 1) ;
 
@@ -325,6 +327,7 @@ CKTsetup(CKTcircuit *ckt)
         ret = Compress (ckt->CKTtopologyMatrixCOOiRHS, ckt->CKTtopologyMatrixCSRpRHS, n + 1, TopologyNNZRHS) ;
 
         /* Multiply the Topology Matrix by the M Vector to build the Final CSC Matrix - after the CKTload Call */
+        }
 #endif
 
     } else {
@@ -337,6 +340,7 @@ CKTsetup(CKTcircuit *ckt)
     }
 
 #ifdef USE_CUSPICE
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
         ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
         status = cuCKTsetup (ckt) ;
         if (status != 0)
@@ -361,6 +365,7 @@ CKTsetup(CKTcircuit *ckt)
         /* CUSPARSE Matrix Properties Definition */
         cusparseSetMatType ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_MATRIX_TYPE_GENERAL) ;
         cusparseSetMatIndexBase ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_INDEX_BASE_ZERO) ;
+    }
 #endif
 
 #ifdef WANT_SENSE2

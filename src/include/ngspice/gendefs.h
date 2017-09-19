@@ -44,6 +44,10 @@ struct GENmodel {       /* model structure for a resistor */
     GENinstance *GENinstances;  /* pointer to list of instances that have this
                                  * model */
     IFuid GENmodName;           /* pointer to character string naming this model */
+
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;   /* flag to indicate is the model supports CUDA */
+#endif
 };
 
 

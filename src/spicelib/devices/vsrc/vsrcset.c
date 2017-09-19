@@ -80,6 +80,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
         /* How much instances we have */
         model->n_instances = i ;
+
+        /* This model supports CUDA */
+        model->gen.has_cuda = 1 ;
     }
 
     /*  loop through all the voltage source models */

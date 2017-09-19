@@ -76,6 +76,7 @@ CKTcircuit *ckt
     size2 = (long unsigned int)ckt->CKTnumStates ;
     size3 = (long unsigned int)ckt->total_n_timeSteps ;
 
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
         /* Topology Matrix Handling */
         status = cudaMalloc ((void **)&(ckt->CKTmatrix->d_CKTrhs), (n + 1) * sizeof(double)) ;
         CUDAMALLOCCHECK (ckt->CKTmatrix->d_CKTrhs, (n + 1), double, status)
@@ -158,6 +159,7 @@ CKTcircuit *ckt
         CUDAMALLOCCHECK (ckt->d_CKTtimeSteps, size3, double, status)
         status = cudaMalloc ((void **)&(ckt->d_CKTtimeStepsOut), size3 * sizeof(double)) ;
         CUDAMALLOCCHECK (ckt->d_CKTtimeStepsOut, size3, double, status)
+    }
 
     return (OK) ;
 }
