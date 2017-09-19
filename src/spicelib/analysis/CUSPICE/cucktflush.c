@@ -35,16 +35,16 @@ cuCKTflush
 CKTcircuit *ckt
 )
 {
-    long unsigned int m, mRHS ;
+        long unsigned int m, mRHS ;
 
-    m = (long unsigned int)(ckt->total_n_values + 1) ; // + 1 because of CKTdiagGmin
-    mRHS = (long unsigned int)ckt->total_n_valuesRHS ;
+        m = (long unsigned int)(ckt->total_n_values + 1) ; // + 1 because of CKTdiagGmin
+        mRHS = (long unsigned int)ckt->total_n_valuesRHS ;
 
-    /* Clean-up the CKTloadOutput */
-    cudaMemset (ckt->d_CKTloadOutput, 0, m * sizeof(double)) ;
+        /* Clean-up the CKTloadOutput */
+        cudaMemset (ckt->d_CKTloadOutput, 0, m * sizeof(double)) ;
 
-    /* Clean-up the CKTloadOutputRHS */
-    cudaMemset (ckt->d_CKTloadOutputRHS, 0, mRHS * sizeof(double)) ;
+        /* Clean-up the CKTloadOutputRHS */
+        cudaMemset (ckt->d_CKTloadOutputRHS, 0, mRHS * sizeof(double)) ;
 
     return (OK) ;
 }

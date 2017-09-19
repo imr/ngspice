@@ -31,63 +31,63 @@ cuCKTtrunc
 CKTcircuit *ckt, double timetemp, double *timeStep
 )
 {
-    long unsigned int size ;
-    double timetempGPU ;
-    int thread_x, thread_y, block_x ;
+        long unsigned int size ;
+        double timetempGPU ;
+        int thread_x, thread_y, block_x ;
 
-    cudaError_t status ;
+        cudaError_t status ;
 
-    /* Determining how many blocks should exist in the kernel */
-    thread_x = 1 ;
-    thread_y = 256 ;
-    if (ckt->total_n_timeSteps % thread_y != 0)
-        block_x = (int)((ckt->total_n_timeSteps + thread_y - 1) / thread_y) ;
-    else
-        block_x = ckt->total_n_timeSteps / thread_y ;
+        /* Determining how many blocks should exist in the kernel */
+        thread_x = 1 ;
+        thread_y = 256 ;
+        if (ckt->total_n_timeSteps % thread_y != 0)
+            block_x = (int)((ckt->total_n_timeSteps + thread_y - 1) / thread_y) ;
+        else
+            block_x = ckt->total_n_timeSteps / thread_y ;
 
-    dim3 thread (thread_x, thread_y) ;
+        dim3 thread (thread_x, thread_y) ;
 
-    /* Kernel launch */
-    status = cudaGetLastError () ; // clear error status
+        /* Kernel launch */
+        status = cudaGetLastError () ; // clear error status
 
-    cuCKTtrunc_kernel <<< block_x, thread, thread_y * sizeof(double) >>> (ckt->d_CKTtimeSteps, ckt->d_CKTtimeStepsOut, ckt->total_n_timeSteps) ;
+        cuCKTtrunc_kernel <<< block_x, thread, thread_y * sizeof(double) >>> (ckt->d_CKTtimeSteps, ckt->d_CKTtimeStepsOut, ckt->total_n_timeSteps) ;
 
-    cudaDeviceSynchronize () ;
+        cudaDeviceSynchronize () ;
 
-    status = cudaGetLastError () ; // check for launch error
-    if (status != cudaSuccess)
-    {
-        fprintf (stderr, "Kernel 1 launch failure in cuCKTtrunc\n\n") ;
-        return (E_NOMEM) ;
-    }
+        status = cudaGetLastError () ; // check for launch error
+        if (status != cudaSuccess)
+        {
+            fprintf (stderr, "Kernel 1 launch failure in cuCKTtrunc\n\n") ;
+            return (E_NOMEM) ;
+        }
 
-    cuCKTtrunc_kernel <<< 1, thread, thread_y * sizeof(double) >>> (ckt->d_CKTtimeStepsOut, ckt->d_CKTtimeSteps, block_x) ;
+        cuCKTtrunc_kernel <<< 1, thread, thread_y * sizeof(double) >>> (ckt->d_CKTtimeStepsOut, ckt->d_CKTtimeSteps, block_x) ;
 
-    cudaDeviceSynchronize () ;
+        cudaDeviceSynchronize () ;
 
-    status = cudaGetLastError () ; // check for launch error
-    if (status != cudaSuccess)
-    {
-        fprintf (stderr, "Kernel 2 launch failure in cuCKTtrunc\n\n") ;
-        return (E_NOMEM) ;
-    }
+        status = cudaGetLastError () ; // check for launch error
+        if (status != cudaSuccess)
+        {
+            fprintf (stderr, "Kernel 2 launch failure in cuCKTtrunc\n\n") ;
+            return (E_NOMEM) ;
+        }
 
-    /* Copy back the reduction result */
-    size = (long unsigned int)(1) ;
-    status = cudaMemcpy (&timetempGPU, ckt->d_CKTtimeSteps, size * sizeof(double), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (&timetempGPU, size, double, status)
+        /* Copy back the reduction result */
+        size = (long unsigned int)(1) ;
+        status = cudaMemcpy (&timetempGPU, ckt->d_CKTtimeSteps, size * sizeof(double), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (&timetempGPU, size, double, status)
 
-    /* Final Comparison */
-    if (timetempGPU < timetemp)
-    {
-        timetemp = timetempGPU ;
-    }
-    if (2 * *timeStep < timetemp)
-    {
-        *timeStep = 2 * *timeStep ;
-    } else {
-        *timeStep = timetemp ;
-    }
+        /* Final Comparison */
+        if (timetempGPU < timetemp)
+        {
+            timetemp = timetempGPU ;
+        }
+        if (2 * *timeStep < timetemp)
+        {
+            *timeStep = 2 * *timeStep ;
+        } else {
+            *timeStep = timetemp ;
+        }
 
     return 0 ;
 }
