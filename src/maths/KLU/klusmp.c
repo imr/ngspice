@@ -273,7 +273,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
     {
         *NumSwaps = 1 ;
         spSetComplex (Matrix->SPmatrix) ;
-//        Matrix->CKTkluCommon->tol = PivTol ;
+        Matrix->CKTkluCommon->tol = PivRel ;
 
         if (Matrix->CKTkluNumeric != NULL)
         {
@@ -310,7 +310,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     {
         spSetReal (Matrix->SPmatrix) ;
         LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
-//        Matrix->CKTkluCommon->tol = PivTol ;
+        Matrix->CKTkluCommon->tol = PivRel ;
 
         if (Matrix->CKTkluNumeric != NULL)
         {
