@@ -27,6 +27,11 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     /*  loop through all the MOS1 device models */
     for( ; model != NULL; model = MOS1nextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
         if(!model->MOS1typeGiven) {
             model->MOS1type = NMOS;
         }

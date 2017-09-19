@@ -110,7 +110,14 @@ BSIM4instance **InstArray;
 
     /*  loop through all the BSIM4 device models */
     for( ; model != NULL; model = BSIM4nextModel(model))
-    {   /* process defaults of model parameters */
+    {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
+        /* process defaults of model parameters */
         if (!model->BSIM4typeGiven)
             model->BSIM4type = NMOS;     
 

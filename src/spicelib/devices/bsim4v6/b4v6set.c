@@ -74,7 +74,14 @@ BSIM4v6instance **InstArray;
 
     /*  loop through all the BSIM4v6 device models */
     for( ; model != NULL; model = BSIM4v6nextModel(model))
-    {   /* process defaults of model parameters */
+    {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
+        /* process defaults of model parameters */
         if (!model->BSIM4v6typeGiven)
             model->BSIM4v6type = NMOS;     
 

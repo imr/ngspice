@@ -65,6 +65,12 @@ int HSMHVsetup(
   
   /*  loop through all the HSMHV device models */
   for ( ;model != NULL ;model = HSMHVnextModel(model)) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
     /* Default value Processing for HVMOS Models */
     if ( !model->HSMHV_type_Given )
       model->HSMHV_type = NMOS ;

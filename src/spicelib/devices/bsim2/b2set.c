@@ -25,8 +25,13 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /*  loop through all the B2 device models */
     for( ; model != NULL; model = B2nextModel(model)) {
-    
-/* Default value Processing for B2 MOSFET Models */
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->gen.has_cuda = 0 ;
+#endif
+
+        /* Default value Processing for B2 MOSFET Models */
         if( ! model->B2typeGiven) {
             model->B2type = NMOS;  /* NMOS */
         }
