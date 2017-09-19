@@ -11,7 +11,7 @@ Author: 1987 Gary W. Ng
 
 #include "analysis.h"
 
-int 
+int
 NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     NOISEAN *job = (NOISEAN *) anal;
@@ -21,16 +21,16 @@ NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     switch(which) {
 
     case N_OUTPUT:
-	job->output = value->nValue;
-	break;
+        job->output = value->nValue;
+        break;
 
     case N_OUTREF:
-	job->outputRef = value->nValue;
-	break;
+        job->outputRef = value->nValue;
+        break;
 
     case N_INPUT:
-	job->input = value->uValue;
-	break;
+        job->input = value->uValue;
+        break;
 
     case N_DEC:
         job->NstpType = DECADE;
@@ -49,21 +49,21 @@ NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case N_START:
-	if (value->rValue <= 0.0) {
-	    errMsg = copy("Frequency of 0 is invalid");
-            job->NstartFreq = 1.0;
-	    return(E_PARMVAL);
-	}
+        if (value->rValue <= 0.0) {
+            errMsg = copy("Frequency of 0 is invalid");
+                job->NstartFreq = 1.0;
+            return(E_PARMVAL);
+        }
 
         job->NstartFreq = value->rValue;
         break;
 
     case N_STOP:
-	if (value->rValue <= 0.0) {
-	    errMsg = copy("Frequency of 0 is invalid");
-            job->NstartFreq = 1.0;
-	    return(E_PARMVAL);
-	}
+        if (value->rValue <= 0.0) {
+            errMsg = copy("Frequency of 0 is invalid");
+                job->NstartFreq = 1.0;
+            return(E_PARMVAL);
+        }
 
         job->NstopFreq = value->rValue;
         break;
@@ -81,7 +81,7 @@ NsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 
 static IFparm Nparms[] = {
     { "output",     N_OUTPUT,       IF_SET|IF_STRING,  "output noise summation node" },
-    { "outputref",  N_OUTREF,   IF_SET|IF_STRING,  "output noise reference node" },
+    { "outputref",  N_OUTREF,       IF_SET|IF_STRING,  "output noise reference node" },
     { "input",      N_INPUT,        IF_SET|IF_STRING,  "input noise source" },
     { "dec",        N_DEC,          IF_SET|IF_FLAG,    "step by decades" },
     { "oct",        N_OCT,          IF_SET|IF_FLAG,    "step by octaves" },
@@ -93,7 +93,7 @@ static IFparm Nparms[] = {
 };
 
 SPICEanalysis NOISEinfo  = {
-    { 
+    {
         "NOISE",
         "Noise analysis",
 
