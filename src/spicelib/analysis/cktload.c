@@ -103,8 +103,15 @@ CKTload(CKTcircuit *ckt)
         return (E_NOMEM) ;
 #endif
 
+    /* Load Sparse Matrix and RHS of all the CUDA supported models */
     for (i = 0; i < DEVmaxnum; i++) {
+
+#ifdef USE_CUSPICE
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] && ckt->CKThead[i]->has_cuda) {
+#else
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
+#endif
+
             error = DEVices[i]->DEVload (ckt->CKThead[i], ckt);
 
 #ifdef USE_CUSPICE
@@ -127,6 +134,13 @@ CKTload(CKTcircuit *ckt)
     }
 
 #ifdef USE_CUSPICE
+    int TopologyNNZ, TopologyNNZRHS ;
+
+    TopologyNNZ = ckt->total_n_Ptr + ckt->CKTdiagElements ; // + ckt->CKTdiagElements because of CKTdiagGmin
+                                                                // without the zeroes along the diagonal
+    TopologyNNZRHS = ckt->total_n_PtrRHS ;
+
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
         /* Copy the CKTdiagGmin value to the GPU */
         // The real Gmin is needed only when the matrix will reside entirely on the GPU
         // Right now, only some models support CUDA, so the matrix is only partially created on the GPU
@@ -171,6 +185,26 @@ CKTload(CKTcircuit *ckt)
         status = cuCKTsystemDtoH (ckt) ;
         if (status != 0)
             return (E_NOMEM) ;
+    }
+
+    /* Load Sparse Matrix and RHS of all the CUDA unsupported models */
+    for (i = 0; i < DEVmaxnum; i++) {
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] && !ckt->CKThead[i]->has_cuda) {
+            error = DEVices[i]->DEVload (ckt->CKThead[i], ckt);
+
+            if (ckt->CKTnoncon)
+                ckt->CKTtroubleNode = 0;
+#ifdef STEPDEBUG
+            if (noncon != ckt->CKTnoncon) {
+                printf("device type %s nonconvergence\n",
+                       DEVices[i]->DEVpublic.name);
+                noncon = ckt->CKTnoncon;
+            }
+#endif /* STEPDEBUG */
+            if (error) return(error);
+        }
+    }
+
 #endif
 
 #ifdef XSPICE

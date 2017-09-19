@@ -35,6 +35,7 @@ cuCKTflush
 CKTcircuit *ckt
 )
 {
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
         long unsigned int m, mRHS ;
 
         m = (long unsigned int)(ckt->total_n_values + 1) ; // + 1 because of CKTdiagGmin
@@ -45,6 +46,15 @@ CKTcircuit *ckt
 
         /* Clean-up the CKTloadOutputRHS */
         cudaMemset (ckt->d_CKTloadOutputRHS, 0, mRHS * sizeof(double)) ;
+    } else {
+        int i, size ;
+
+        size = SMPmatSize (ckt->CKTmatrix) ;
+        for (i = 0 ; i <= size ; i++)
+            *(ckt->CKTrhs + i) = 0 ;
+
+        SMPclear (ckt->CKTmatrix) ;
+    }
 
     return (OK) ;
 }
