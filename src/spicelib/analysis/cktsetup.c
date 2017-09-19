@@ -337,30 +337,30 @@ CKTsetup(CKTcircuit *ckt)
     }
 
 #ifdef USE_CUSPICE
-    ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
-    status = cuCKTsetup (ckt) ;
-    if (status != 0)
-        return (E_NOMEM) ;
+        ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
+        status = cuCKTsetup (ckt) ;
+        if (status != 0)
+            return (E_NOMEM) ;
 
-    /* CUSPARSE Handle Creation */
-    cusparseStatus = cusparseCreate ((cusparseHandle_t *)(&(ckt->CKTmatrix->CKTcsrmvHandle))) ;
-    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
-    {
-        fprintf (stderr, "CUSPARSE Handle Setup Error\n") ;
-        return (E_NOMEM) ;
-    }
+        /* CUSPARSE Handle Creation */
+        cusparseStatus = cusparseCreate ((cusparseHandle_t *)(&(ckt->CKTmatrix->CKTcsrmvHandle))) ;
+        if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+        {
+            fprintf (stderr, "CUSPARSE Handle Setup Error\n") ;
+            return (E_NOMEM) ;
+        }
 
-    /* CUSPARSE Matrix Descriptor Creation */
-    cusparseStatus = cusparseCreateMatDescr ((cusparseMatDescr_t *)(&(ckt->CKTmatrix->CKTcsrmvDescr))) ;
-    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
-    {
-        fprintf (stderr, "CUSPARSE Matrix Descriptor Setup Error\n") ;
-        return (E_NOMEM) ;
-    }
+        /* CUSPARSE Matrix Descriptor Creation */
+        cusparseStatus = cusparseCreateMatDescr ((cusparseMatDescr_t *)(&(ckt->CKTmatrix->CKTcsrmvDescr))) ;
+        if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+        {
+            fprintf (stderr, "CUSPARSE Matrix Descriptor Setup Error\n") ;
+            return (E_NOMEM) ;
+        }
 
-    /* CUSPARSE Matrix Properties Definition */
-    cusparseSetMatType ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_MATRIX_TYPE_GENERAL) ;
-    cusparseSetMatIndexBase ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_INDEX_BASE_ZERO) ;
+        /* CUSPARSE Matrix Properties Definition */
+        cusparseSetMatType ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_MATRIX_TYPE_GENERAL) ;
+        cusparseSetMatIndexBase ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_INDEX_BASE_ZERO) ;
 #endif
 
 #ifdef WANT_SENSE2

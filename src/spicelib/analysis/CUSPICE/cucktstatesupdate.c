@@ -47,8 +47,8 @@ CKTcircuit *ckt
 {
     long unsigned int size ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    cudaMemset (ckt->d_CKTstate0, 0, size * sizeof(double)) ;
+        size = (long unsigned int)ckt->CKTnumStates ;
+        cudaMemset (ckt->d_CKTstate0, 0, size * sizeof(double)) ;
 
     return (OK) ;
 }
@@ -62,9 +62,9 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    status = cudaMemcpy (ckt->d_CKTstate0, ckt->CKTstate0, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate0, size, double, status)
+        size = (long unsigned int)ckt->CKTnumStates ;
+        status = cudaMemcpy (ckt->d_CKTstate0, ckt->CKTstate0, size * sizeof(double), cudaMemcpyHostToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate0, size, double, status)
 
     return (OK) ;
 }
@@ -78,9 +78,9 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    status = cudaMemcpy (ckt->CKTstate0, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (ckt->CKTstate0, size, double, status)
+        size = (long unsigned int)ckt->CKTnumStates ;
+        status = cudaMemcpy (ckt->CKTstate0, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (ckt->CKTstate0, size, double, status)
 
     return (OK) ;
 }
@@ -91,12 +91,12 @@ cuCKTstate01copy
 CKTcircuit *ckt
 )
 {
-    long unsigned int size ;
-    cudaError_t status ;
+        long unsigned int size ;
+        cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    status = cudaMemcpy (ckt->d_CKTstate1, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate1, size, double, status)
+        size = (long unsigned int)ckt->CKTnumStates ;
+        status = cudaMemcpy (ckt->d_CKTstate1, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate1, size, double, status)
 
     return (OK) ;
 }
@@ -110,11 +110,11 @@ CKTcircuit *ckt
     int i ;
     double *temp ;
 
-    temp = ckt->d_CKTstates [ckt->CKTmaxOrder + 1] ;
-    for (i = ckt->CKTmaxOrder ; i >= 0 ; i--)
-        ckt->d_CKTstates [i + 1] = ckt->d_CKTstates [i] ;
+        temp = ckt->d_CKTstates [ckt->CKTmaxOrder + 1] ;
+        for (i = ckt->CKTmaxOrder ; i >= 0 ; i--)
+            ckt->d_CKTstates [i + 1] = ckt->d_CKTstates [i] ;
 
-    ckt->d_CKTstates [0] = temp ;
+        ckt->d_CKTstates [0] = temp ;
 
     return (OK) ;
 }
@@ -125,16 +125,16 @@ cuCKTstate123copy
 CKTcircuit *ckt
 )
 {
-    long unsigned int size ;
-    cudaError_t status ;
+        long unsigned int size ;
+        cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
+        size = (long unsigned int)ckt->CKTnumStates ;
 
-    status = cudaMemcpy (ckt->d_CKTstate2, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate2, size, double, status)
+        status = cudaMemcpy (ckt->d_CKTstate2, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate2, size, double, status)
 
-    status = cudaMemcpy (ckt->d_CKTstate3, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate3, size, double, status)
+        status = cudaMemcpy (ckt->d_CKTstate3, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate3, size, double, status)
 
     return (OK) ;
 }
@@ -147,8 +147,8 @@ CKTcircuit *ckt
 {
     cudaError_t status ;
 
-    status = cudaMemcpy (ckt->d_CKTdeltaOld, ckt->CKTdeltaOld, 7 * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTdeltaOld, 7, double, status)
+        status = cudaMemcpy (ckt->d_CKTdeltaOld, ckt->CKTdeltaOld, 7 * sizeof(double), cudaMemcpyHostToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTdeltaOld, 7, double, status)
 
     return (OK) ;
 }

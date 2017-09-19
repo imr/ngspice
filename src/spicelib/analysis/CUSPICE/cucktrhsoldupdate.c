@@ -47,8 +47,8 @@ CKTcircuit *ckt
 {
     long unsigned int size ;
 
-    size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
-    cudaMemset (ckt->d_CKTrhsOld, 0, size * sizeof(double)) ;
+        size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
+        cudaMemset (ckt->d_CKTrhsOld, 0, size * sizeof(double)) ;
 
     return (OK) ;
 }
@@ -62,9 +62,9 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
-    status = cudaMemcpy (ckt->d_CKTrhsOld, ckt->CKTrhsOld, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTrhsOld, size, double, status)
+        size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
+        status = cudaMemcpy (ckt->d_CKTrhsOld, ckt->CKTrhsOld, size * sizeof(double), cudaMemcpyHostToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTrhsOld, size, double, status)
 
     return (OK) ;
 }
@@ -78,9 +78,9 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
-    status = cudaMemcpy (ckt->CKTrhsOld, ckt->d_CKTrhsOld, size * sizeof(double), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (ckt->CKTrhsOld, size, double, status)
+        size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
+        status = cudaMemcpy (ckt->CKTrhsOld, ckt->d_CKTrhsOld, size * sizeof(double), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (ckt->CKTrhsOld, size, double, status)
 
     return (OK) ;
 }

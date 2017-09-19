@@ -47,8 +47,8 @@ CKTcircuit *ckt
 {
     cudaError_t status ;
 
-    status = cudaMemcpy (ckt->d_CKTnoncon, &(ckt->CKTnoncon), sizeof(int), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTnoncon, 1, int, status)
+        status = cudaMemcpy (ckt->d_CKTnoncon, &(ckt->CKTnoncon), sizeof(int), cudaMemcpyHostToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTnoncon, 1, int, status)
 
     return (OK) ;
 }
@@ -61,8 +61,8 @@ CKTcircuit *ckt
 {
     cudaError_t status ;
 
-    status = cudaMemcpy (&(ckt->CKTnoncon), ckt->d_CKTnoncon, sizeof(int), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (&(ckt->CKTnoncon), 1, int, status)
+        status = cudaMemcpy (&(ckt->CKTnoncon), ckt->d_CKTnoncon, sizeof(int), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (&(ckt->CKTnoncon), 1, int, status)
 
     return (OK) ;
 }
