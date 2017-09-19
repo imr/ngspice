@@ -996,6 +996,40 @@ LoadGmin (SMPmatrix *eMatrix, double Gmin)
 SMPelement *
 SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
 {
+
+#ifdef KLU
+    if (eMatrix->CKTkluMODE) {
+        int *Ai, *Ap, i ;
+        double *Ax ;
+
+        Ai = eMatrix->CKTkluAi ;
+        Ap = eMatrix->CKTkluAp ;
+        Ax = eMatrix->CKTkluAx ;
+
+        Row = eMatrix->SPmatrix->ExtToIntRowMap [Row] ;
+        Col = eMatrix->SPmatrix->ExtToIntColMap [Col] ;
+
+        if ((Row > 0) && (Col > 0)) {
+            for (i = Ap [Col - 1] ; i < Ap [Col] ; i++) {
+                if (Ai [i] == Row - 1) {
+                    return (SMPelement *)&(Ax [i]) ;
+                }
+            }
+        }
+        return NULL ;
+    } else {
+        MatrixPtr Matrix = eMatrix->SPmatrix ;
+        ElementPtr Element ;
+
+        /* Begin `SMPfindElt'. */
+        assert (IS_SPARSE (Matrix)) ;
+        Row = Matrix->ExtToIntRowMap [Row] ;
+        Col = Matrix->ExtToIntColMap [Col] ;
+        Element = Matrix->FirstInCol [Col] ;
+        Element = spcFindElementInCol (Matrix, &Element, Row, Col, CreateIfMissing) ;
+        return (SMPelement *)Element ;
+    }
+#else
     MatrixPtr Matrix = eMatrix->SPmatrix ;
     ElementPtr Element ;
 
@@ -1006,6 +1040,8 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
     Element = Matrix->FirstInCol [Col] ;
     Element = spcFindElementInCol (Matrix, &Element, Row, Col, CreateIfMissing) ;
     return (SMPelement *)Element ;
+#endif
+
 }
 
 /* XXX The following should probably be implemented in spUtils */

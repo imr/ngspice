@@ -25,15 +25,52 @@ CKTic(CKTcircuit *ckt)
 
     for(node = ckt->CKTnodes;node != NULL; node = node->next) {
         if(node->nsGiven) {
+
+#ifdef KLU
+            if (ckt->CKTmatrix->CKTkluMODE) {
+                if (node->number > 0) {
+                    int i ;
+
+                    for (i = node->number - 1 ; i < node->number ; i++) {
+                        if (ckt->CKTmatrix->CKTkluAi [i] == node->number - 1) {
+                            node->ptr = &(ckt->CKTmatrix->CKTkluAx [i]) ;
+                        }
+                    }
+                }
+            } else {
+                node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,node->number);
+            }
+#else
             node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,node->number);
+#endif
+
             if(node->ptr == NULL) return(E_NOMEM);
             ckt->CKThadNodeset = 1;
             ckt->CKTrhs[node->number] = node->nodeset;
         }
         if(node->icGiven) {
             if(! ( node->ptr)) {
+
+#ifdef KLU
+                if (ckt->CKTmatrix->CKTkluMODE) {
+                    if (node->number > 0) {
+                        int i ;
+
+                        for (i = node->number - 1 ; i < node->number ; i++) {
+                            if (ckt->CKTmatrix->CKTkluAi [i] == node->number - 1) {
+                                node->ptr = &(ckt->CKTmatrix->CKTkluAx [i]) ;
+                            }
+                        }
+                    }
+                } else {
+                    node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,
+                            node->number);
+                }
+#else
                 node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,
                         node->number);
+#endif
+
                 if(node->ptr == NULL) return(E_NOMEM);
             }
             ckt->CKTrhs[node->number] = node->ic;
