@@ -482,6 +482,12 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 #define SOI3instances(inst) ((SOI3instance *)((inst)->gen.GENinstances))
 #define SOI3modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int SOI3type;       /* device type : 1 = nsoi,  -1 = psoi */
     double SOI3tnom;        /* temperature at which parameters measured */
     double SOI3latDiff;

@@ -197,6 +197,12 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
 #define JFETinstances(inst) ((JFETinstance *)((inst)->gen.GENinstances))
 #define JFETmodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int JFETtype;
 
     double JFETthreshold;

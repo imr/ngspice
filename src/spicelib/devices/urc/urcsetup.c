@@ -62,6 +62,12 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     dtype = CKTtypelook("Diode");
     /*  loop through all the URC models */
     for( ; model != NULL; model = URCnextModel(model)) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
 	if(!model->URCkGiven)
 	    model->URCk = 1.5;
 	if(!model->URCfmaxGiven)

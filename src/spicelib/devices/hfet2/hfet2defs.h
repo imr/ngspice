@@ -115,6 +115,12 @@ typedef struct sHFET2model {
 #define HFET2instances(inst) ((HFET2instance *)((inst)->gen.GENinstances))
 #define HFET2modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int HFET2type;
     
     double HFET2cf;

@@ -28,6 +28,7 @@
 #include "ngspice/sperror.h"
 #include "cuda_runtime_api.h"
 #include "ngspice/CUSPICE/CUSPICE.h"
+#include <string.h>
 
 /* cudaMemcpy MACRO to check it for errors --> CUDAMEMCPYCHECK(name of pointer, dimension, type, status) */
 #define CUDAMEMCPYCHECK(a, b, c, d) \
@@ -47,8 +48,10 @@ CKTcircuit *ckt
 {
     long unsigned int size ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    cudaMemset (ckt->d_CKTstate0, 0, size * sizeof(double)) ;
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        size = (long unsigned int)ckt->CKTnumStates ;
+        cudaMemset (ckt->d_CKTstate0, 0, size * sizeof(double)) ;
+    }
 
     return (OK) ;
 }
@@ -62,9 +65,11 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    status = cudaMemcpy (ckt->d_CKTstate0, ckt->CKTstate0, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate0, size, double, status)
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        size = (long unsigned int)ckt->CKTnumStates ;
+        status = cudaMemcpy (ckt->d_CKTstate0, ckt->CKTstate0, size * sizeof(double), cudaMemcpyHostToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate0, size, double, status)
+    }
 
     return (OK) ;
 }
@@ -78,9 +83,11 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    status = cudaMemcpy (ckt->CKTstate0, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (ckt->CKTstate0, size, double, status)
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        size = (long unsigned int)ckt->CKTnumStates ;
+        status = cudaMemcpy (ckt->CKTstate0, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (ckt->CKTstate0, size, double, status)
+    }
 
     return (OK) ;
 }
@@ -91,12 +98,16 @@ cuCKTstate01copy
 CKTcircuit *ckt
 )
 {
-    long unsigned int size ;
-    cudaError_t status ;
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        long unsigned int size ;
+        cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
-    status = cudaMemcpy (ckt->d_CKTstate1, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate1, size, double, status)
+        size = (long unsigned int)ckt->CKTnumStates ;
+        status = cudaMemcpy (ckt->d_CKTstate1, ckt->d_CKTstate0, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate1, size, double, status)
+    } else {
+        memcpy (ckt->CKTstate1, ckt->CKTstate0, (size_t) ckt->CKTnumStates * sizeof(double)) ;
+    }
 
     return (OK) ;
 }
@@ -110,11 +121,19 @@ CKTcircuit *ckt
     int i ;
     double *temp ;
 
-    temp = ckt->d_CKTstates [ckt->CKTmaxOrder + 1] ;
-    for (i = ckt->CKTmaxOrder ; i >= 0 ; i--)
-        ckt->d_CKTstates [i + 1] = ckt->d_CKTstates [i] ;
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        temp = ckt->d_CKTstates [ckt->CKTmaxOrder + 1] ;
+        for (i = ckt->CKTmaxOrder ; i >= 0 ; i--)
+            ckt->d_CKTstates [i + 1] = ckt->d_CKTstates [i] ;
 
-    ckt->d_CKTstates [0] = temp ;
+        ckt->d_CKTstates [0] = temp ;
+    } else {
+        temp = ckt->CKTstates [ckt->CKTmaxOrder + 1] ;
+        for (i = ckt->CKTmaxOrder ; i >= 0 ; i--) {
+            ckt->CKTstates [i + 1] = ckt->CKTstates [i] ;
+        }
+        ckt->CKTstates [0] = temp ;
+    }
 
     return (OK) ;
 }
@@ -125,16 +144,21 @@ cuCKTstate123copy
 CKTcircuit *ckt
 )
 {
-    long unsigned int size ;
-    cudaError_t status ;
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        long unsigned int size ;
+        cudaError_t status ;
 
-    size = (long unsigned int)ckt->CKTnumStates ;
+        size = (long unsigned int)ckt->CKTnumStates ;
 
-    status = cudaMemcpy (ckt->d_CKTstate2, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate2, size, double, status)
+        status = cudaMemcpy (ckt->d_CKTstate2, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate2, size, double, status)
 
-    status = cudaMemcpy (ckt->d_CKTstate3, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTstate3, size, double, status)
+        status = cudaMemcpy (ckt->d_CKTstate3, ckt->d_CKTstate1, size * sizeof(double), cudaMemcpyDeviceToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTstate3, size, double, status)
+    } else {
+        memcpy (ckt->CKTstate2, ckt->CKTstate1, (size_t) ckt->CKTnumStates * sizeof(double)) ;
+        memcpy (ckt->CKTstate3, ckt->CKTstate1, (size_t) ckt->CKTnumStates * sizeof(double)) ;
+    }
 
     return (OK) ;
 }
@@ -147,8 +171,10 @@ CKTcircuit *ckt
 {
     cudaError_t status ;
 
-    status = cudaMemcpy (ckt->d_CKTdeltaOld, ckt->CKTdeltaOld, 7 * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK (ckt->d_CKTdeltaOld, 7, double, status)
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        status = cudaMemcpy (ckt->d_CKTdeltaOld, ckt->CKTdeltaOld, 7 * sizeof(double), cudaMemcpyHostToDevice) ;
+        CUDAMEMCPYCHECK (ckt->d_CKTdeltaOld, 7, double, status)
+    }
 
     return (OK) ;
 }

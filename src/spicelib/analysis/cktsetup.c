@@ -246,6 +246,8 @@ CKTsetup(CKTcircuit *ckt)
         ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
 
 
+        if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+
         /* Topology Matrix Pre-Allocation in CSR format */
         ckt->CKTtopologyMatrixCSRp = TMALLOC (int, nz + 1) ;
 
@@ -325,6 +327,7 @@ CKTsetup(CKTcircuit *ckt)
         ret = Compress (ckt->CKTtopologyMatrixCOOiRHS, ckt->CKTtopologyMatrixCSRpRHS, n + 1, TopologyNNZRHS) ;
 
         /* Multiply the Topology Matrix by the M Vector to build the Final CSC Matrix - after the CKTload Call */
+        }
 #endif
 
     } else {
@@ -337,30 +340,32 @@ CKTsetup(CKTcircuit *ckt)
     }
 
 #ifdef USE_CUSPICE
-    ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
-    status = cuCKTsetup (ckt) ;
-    if (status != 0)
-        return (E_NOMEM) ;
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
+        status = cuCKTsetup (ckt) ;
+        if (status != 0)
+            return (E_NOMEM) ;
 
-    /* CUSPARSE Handle Creation */
-    cusparseStatus = cusparseCreate ((cusparseHandle_t *)(&(ckt->CKTmatrix->CKTcsrmvHandle))) ;
-    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
-    {
-        fprintf (stderr, "CUSPARSE Handle Setup Error\n") ;
-        return (E_NOMEM) ;
+        /* CUSPARSE Handle Creation */
+        cusparseStatus = cusparseCreate ((cusparseHandle_t *)(&(ckt->CKTmatrix->CKTcsrmvHandle))) ;
+        if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+        {
+            fprintf (stderr, "CUSPARSE Handle Setup Error\n") ;
+            return (E_NOMEM) ;
+        }
+
+        /* CUSPARSE Matrix Descriptor Creation */
+        cusparseStatus = cusparseCreateMatDescr ((cusparseMatDescr_t *)(&(ckt->CKTmatrix->CKTcsrmvDescr))) ;
+        if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+        {
+            fprintf (stderr, "CUSPARSE Matrix Descriptor Setup Error\n") ;
+            return (E_NOMEM) ;
+        }
+
+        /* CUSPARSE Matrix Properties Definition */
+        cusparseSetMatType ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_MATRIX_TYPE_GENERAL) ;
+        cusparseSetMatIndexBase ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_INDEX_BASE_ZERO) ;
     }
-
-    /* CUSPARSE Matrix Descriptor Creation */
-    cusparseStatus = cusparseCreateMatDescr ((cusparseMatDescr_t *)(&(ckt->CKTmatrix->CKTcsrmvDescr))) ;
-    if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
-    {
-        fprintf (stderr, "CUSPARSE Matrix Descriptor Setup Error\n") ;
-        return (E_NOMEM) ;
-    }
-
-    /* CUSPARSE Matrix Properties Definition */
-    cusparseSetMatType ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_MATRIX_TYPE_GENERAL) ;
-    cusparseSetMatIndexBase ((cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr), CUSPARSE_INDEX_BASE_ZERO) ;
 #endif
 
 #ifdef WANT_SENSE2

@@ -32,6 +32,12 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(states);
 
     for (; model; model = ASRCnextModel(model)) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         for (here = ASRCinstances(model); here; here=ASRCnextInstance(here)) {
 
             if (!here->ASRCtree)

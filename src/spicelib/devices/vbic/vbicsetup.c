@@ -35,6 +35,11 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the transistor models */
     for( ; model != NULL; model = VBICnextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         if(model->VBICtype != NPN && model->VBICtype != PNP) {
             model->VBICtype = NPN;
         }

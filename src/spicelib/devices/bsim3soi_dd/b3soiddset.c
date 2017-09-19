@@ -49,8 +49,13 @@ IFuid tmpName;
     /*  loop through all the B3SOIDD device models */
     for( ; model != NULL; model = B3SOIDDnextModel(model))
     {
-/* Default value Processing for B3SOIDD MOSFET Models */
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
+        /* Default value Processing for B3SOIDD MOSFET Models */
         if (!model->B3SOIDDtypeGiven)
             model->B3SOIDDtype = NMOS;     
         if (!model->B3SOIDDmobModGiven) 

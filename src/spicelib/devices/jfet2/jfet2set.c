@@ -30,6 +30,11 @@ JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the diode models */
     for( ; model != NULL; model = JFET2nextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         if( (model->JFET2type != NJF) && (model->JFET2type != PJF) ) {
             model->JFET2type = NJF;
         }

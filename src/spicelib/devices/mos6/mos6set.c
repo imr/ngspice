@@ -27,6 +27,11 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     /*  loop through all the MOS6 device models */
     for( ; model != NULL; model = MOS6nextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         if(!model->MOS6typeGiven) {
             model->MOS6type = NMOS;
         }

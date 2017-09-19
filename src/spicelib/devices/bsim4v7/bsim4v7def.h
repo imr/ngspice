@@ -1435,6 +1435,12 @@ typedef struct sBSIM4v7model
 #define BSIM4v7instances(inst) ((BSIM4v7instance *)((inst)->gen.GENinstances))
 #define BSIM4v7modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int BSIM4v7type;
 
     int    BSIM4v7mobMod;

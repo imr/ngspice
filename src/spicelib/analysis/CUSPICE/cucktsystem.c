@@ -48,16 +48,18 @@ CKTcircuit *ckt
     long unsigned int nz, n ;
     cudaError_t status ;
 
-    nz = (long unsigned int)ckt->CKTmatrix->CKTklunz ;
-    n = (long unsigned int)ckt->CKTmatrix->CKTkluN ;
+    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+        nz = (long unsigned int)ckt->CKTmatrix->CKTklunz ;
+        n = (long unsigned int)ckt->CKTmatrix->CKTkluN ;
 
-    /* Copy back the Matrix */
-    status = cudaMemcpy (ckt->CKTmatrix->CKTkluAx, ckt->CKTmatrix->d_CKTkluAx, nz * sizeof(double), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (ckt->CKTmatrix->CKTkluAx, nz, double, status)
+        /* Copy back the Matrix */
+        status = cudaMemcpy (ckt->CKTmatrix->CKTkluAx, ckt->CKTmatrix->d_CKTkluAx, nz * sizeof(double), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (ckt->CKTmatrix->CKTkluAx, nz, double, status)
 
-    /* Copy back the RHS */
-    status = cudaMemcpy (ckt->CKTrhs, ckt->CKTmatrix->d_CKTrhs, (n + 1) * sizeof(double), cudaMemcpyDeviceToHost) ;
-    CUDAMEMCPYCHECK (ckt->CKTrhs, (n + 1), double, status)
+        /* Copy back the RHS */
+        status = cudaMemcpy (ckt->CKTrhs, ckt->CKTmatrix->d_CKTrhs, (n + 1) * sizeof(double), cudaMemcpyDeviceToHost) ;
+        CUDAMEMCPYCHECK (ckt->CKTrhs, (n + 1), double, status)
+    }
 
     return (OK) ;
 }

@@ -81,6 +81,12 @@ typedef struct sTXLmodel {       /* model structure for a txl */
 #define TXLinstances(inst) ((TXLinstance *)((inst)->gen.GENinstances))
 #define TXLmodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
 	double R;
 	double L;
 	double G;

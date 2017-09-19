@@ -55,6 +55,11 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the SOI3 device models */
     for( ; model != NULL; model = SOI3nextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         if(!model->SOI3typeGiven) {
             model->SOI3type = NSOI3;
         }

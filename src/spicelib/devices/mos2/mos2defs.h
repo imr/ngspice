@@ -354,6 +354,12 @@ typedef struct sMOS2model {       /* model structure for a resistor */
 #define MOS2instances(inst) ((MOS2instance *)((inst)->gen.GENinstances))
 #define MOS2modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int MOS2type;       /* device type : 1 = nmos,  -1 = pmos */
     int MOS2gateType;
 

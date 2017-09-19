@@ -349,6 +349,12 @@ typedef struct sBSIM1model {       /* model structure for a resistor */
 #define B1instances(inst) ((B1instance *)((inst)->gen.GENinstances))
 #define B1modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int B1type;       /* device type : 1 = nmos,  -1 = pmos */
 
     double B1vfb0;

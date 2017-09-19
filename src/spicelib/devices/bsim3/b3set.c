@@ -51,7 +51,13 @@ BSIM3instance **InstArray;
     /*  loop through all the BSIM3 device models */
     for( ; model != NULL; model = BSIM3nextModel(model))
     {
-/* Default value Processing for BSIM3 MOSFET Models */
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
+        /* Default value Processing for BSIM3 MOSFET Models */
         if (!model->BSIM3typeGiven)
             model->BSIM3type = NMOS;
         if (!model->BSIM3mobModGiven)

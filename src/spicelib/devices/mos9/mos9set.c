@@ -30,6 +30,11 @@ MOS9setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the MOS9 device models */
     for( ; model != NULL; model = MOS9nextModel(model)) {
 
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         /* perform model defaulting */
         if(!model->MOS9typeGiven) {
             model->MOS9type = NMOS;

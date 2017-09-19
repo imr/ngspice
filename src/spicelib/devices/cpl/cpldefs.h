@@ -91,6 +91,12 @@ typedef struct sCPLmodel {       /* model structure for a cpl */
 #define CPLinstances(inst) ((CPLinstance *)((inst)->gen.GENinstances))
 #define CPLmodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
 	double *Rm;
         int Rm_counter;
 	double *Gm;

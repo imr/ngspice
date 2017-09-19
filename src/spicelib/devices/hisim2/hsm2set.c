@@ -121,6 +121,12 @@ int HSM2setup(
 
   /*  loop through all the HSM2 device models */
   for ( ;model != NULL ;model = HSM2nextModel(model)) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
     /* Default value Processing for HSM2 MOSFET Models */
     if ( !model->HSM2_type_Given )
       model->HSM2_type = NMOS ;

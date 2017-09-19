@@ -75,6 +75,12 @@ typedef struct sCSWmodel {      /* model structure for a switch */
 #define CSWinstances(inst) ((CSWinstance *)((inst)->gen.GENinstances))
 #define CSWmodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     double CSWonResistance;  /* switch "on" resistance */
     double CSWoffResistance; /* switch "off" resistance */
     double CSWiThreshold;    /* switching threshold current */

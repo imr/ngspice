@@ -69,6 +69,12 @@ typedef struct sCCVSmodel {       /* model structure for a CCVsource */
 #define CCVSinstances(inst) ((CCVSinstance *)((inst)->gen.GENinstances))
 #define CCVSmodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
 } CCVSmodel;
 
 /* device parameters */

@@ -209,6 +209,12 @@ typedef struct sJFET2model {       /* model structure for a jfet */
 #define JFET2instances(inst) ((JFET2instance *)((inst)->gen.GENinstances))
 #define JFET2modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int JFET2type;
 
 #define  PARAM(code,id,flag,ref,default,descrip) double ref;

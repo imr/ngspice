@@ -24,6 +24,12 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /*  loop through all the current source models */
     for( ; model != NULL; model = CSWnextModel(model)) {
+
+#ifdef USE_CUSPICE
+        /* This model doesn't support CUDA */
+        model->has_cuda = 0 ;
+#endif
+
         /* Default Value Processing for Switch Model */
         if (!model->CSWthreshGiven) {
             model->CSWiThreshold = 0;

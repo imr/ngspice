@@ -1195,6 +1195,12 @@ typedef struct sB4SOImodel
 #define B4SOIinstances(inst) ((B4SOIinstance *)((inst)->gen.GENinstances))
 #define B4SOImodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int B4SOItype;
 
     int    B4SOImobMod;

@@ -2601,6 +2601,9 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
 
         /* How much instances we have */
         model->n_instances = i ;
+
+        /* This model supports CUDA */
+        model->has_cuda = 1 ;
     }
 
     /*  loop through all the BSIM4v7 models */

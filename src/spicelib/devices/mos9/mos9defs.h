@@ -354,6 +354,12 @@ typedef struct sMOS9model {       /* model structure for a resistor */
 #define MOS9instances(inst) ((MOS9instance *)((inst)->gen.GENinstances))
 #define MOS9modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int MOS9type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS9tnom;        /* temperature at which parameters measured */
     double MOS9latDiff;

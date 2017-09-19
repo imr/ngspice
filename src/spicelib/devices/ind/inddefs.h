@@ -130,6 +130,12 @@ struct sINDmodel {             /* model structure for an inductor */
 #define INDinstances(inst) ((INDinstance *)((inst)->gen.GENinstances))
 #define INDmodName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     double INDmInd;        /* Model inductance */
     double INDtnom;        /* temperature at which inductance measured */
     double INDtempCoeff1;  /* first temperature coefficient */
@@ -250,6 +256,12 @@ struct sMUTmodel {             /* model structure for a mutual inductor */
 #define MUTnextModel(inst) ((MUTmodel *)((inst)->gen.GENnextModel))
 #define MUTinstances(inst) ((MUTinstance *)((inst)->gen.GENinstances))
 #define MUTmodName gen.GENmodName
+
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+/* --- end of generic struct GENmodel --- */
 
 #ifdef USE_CUSPICE
     MUTparamCPUstruct MUTparamCPU;

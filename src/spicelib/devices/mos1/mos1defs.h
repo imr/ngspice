@@ -347,6 +347,12 @@ typedef struct sMOS1model {       /* model structure for a resistor */
 #define MOS1instances(inst) ((MOS1instance *)((inst)->gen.GENinstances))
 #define MOS1modName gen.GENmodName
 
+#ifdef USE_CUSPICE
+    unsigned int has_cuda:1 ;
+#endif
+
+    /* --- end of generic struct GENmodel --- */
+
     int MOS1type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS1tnom;        /* temperature at which parameters measured */
     double MOS1latDiff;
