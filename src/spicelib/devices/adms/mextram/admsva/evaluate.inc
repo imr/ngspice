@@ -33,32 +33,32 @@ begin  // Currents and charges
   Vc4c1 = TYPE * V(c4, c1);
   Vc3c4 = TYPE * V(c3, c4);
 `else
-if (RCBLX > 0.0)
- begin
-  if (RCBLI > 0.0)
-    begin
-     Vc4c1 = TYPE * V(c4, c1);
-     Vc3c4 = TYPE * V(c3, c4);
-    end
-   else
-    begin
-     Vc4c1 = 0 ;
-     Vc3c4 = TYPE * V(c3, c1);
-    end
- end
-else
- begin
-  if (RCBLI > 0.0)
-    begin
-     Vc4c1 = TYPE * V(c4, c1);
-     Vc3c4 = 0 ;
-    end
-   else
-    begin
-     Vc4c1 = 0 ;
-     Vc3c4 = 0 ;
-    end
- end
+  if (RCBLX > 0.0)
+   begin
+    if (RCBLI > 0.0)
+      begin
+       Vc4c1 = TYPE * V(c4, c1);
+       Vc3c4 = TYPE * V(c3, c4);
+      end
+     else
+      begin
+       Vc4c1 = 0 ;
+       Vc3c4 = TYPE * V(c3, c1);
+      end
+   end
+  else
+   begin
+    if (RCBLI > 0.0)
+      begin
+       Vc4c1 = TYPE * V(c4, c1);
+       Vc3c4 = 0 ;
+      end
+     else
+      begin
+       Vc4c1 = 0 ;
+       Vc3c4 = 0 ;
+      end
+   end
 `endif
 
    Vb1c4 = Vb1b2 + Vb2c2 - Vc1c2 - Vc4c1 ;
@@ -143,7 +143,7 @@ Vsc3 = Vsc4 - Vc3c4 ;
 
    end else begin
 
-        Iqs = 0.0 ;
+     Iqs = 0.0 ;
      p0star = 2.0 * eVb2c2VDC / (1.0 + K0);
      eVb2c2star = eVb2c2;
      if ((abs(Vc1c2) < 1.0e-5 * Vt) ||
@@ -611,45 +611,45 @@ and perform a node-collapse in such cases. */
   if (RCBLX > 0.0)
    begin
     I(b,  c3) <+ TYPE * XIex;
-  I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
-  I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));
-  if (RCBLI > 0.0)
-   begin
-     I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
-     I(b1, c4) <+ TYPE * (Ib3 + Iex);
-     I(c3, c4) <+ TYPE * Vc3c4 * GCCex_TM ;
-     I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+    I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
+    I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));
+    if (RCBLI > 0.0)
+     begin
+       I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
+       I(b1, c4) <+ TYPE * (Ib3 + Iex);
+       I(c3, c4) <+ TYPE * Vc3c4 * GCCex_TM ;
+       I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+     end
+    else
+     begin
+       V(c4, c1) <+ 0.0 ;
+       I(b1, c1) <+ TYPE * (Ib3 + Iex);
+       I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
+       I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+     end
    end
   else
    begin
-     V(c4, c1) <+ 0.0 ;
-     I(b1, c1) <+ TYPE * (Ib3 + Iex);
-     I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
-     I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+    V(c3, c4) <+ 0 ;
+    if (RCBLI > 0.0)
+      begin
+        I(b,  c4) <+ TYPE * XIex;
+        I(c,  c4) <+ TYPE * Vcc3  * GCCxx_TM ;
+        I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
+        I(b1, c4) <+ TYPE * (Ib3 + Iex);
+        I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+        I(b,  c4) <+ ddt(TYPE * (XQtex + XQex));
+      end
+    else
+      begin
+        I(b,  c1) <+ TYPE * XIex;
+        I(c,  c1) <+ TYPE * Vcc3  * GCCxx_TM ;
+        V(c4, c1) <+ 0.0 ;
+        I(b1, c1) <+ TYPE * (Ib3 + Iex);
+        I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
+        I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));
+        I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+      end
    end
- end
-else
- begin
-  V(c3, c4) <+ 0 ;
-       if (RCBLI > 0.0)
-          begin
-            I(b,  c4) <+ TYPE * XIex;
-            I(c,  c4) <+ TYPE * Vcc3  * GCCxx_TM ;
-            I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
-            I(b1, c4) <+ TYPE * (Ib3 + Iex);
-            I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
-            I(b,  c4) <+ ddt(TYPE * (XQtex + XQex));
-          end
-       else
-          begin
-            I(b,  c1) <+ TYPE * XIex;
-            I(c,  c1) <+ TYPE * Vcc3  * GCCxx_TM ;
-            V(c4, c1) <+ 0.0 ;
-            I(b1, c1) <+ TYPE * (Ib3 + Iex);
-            I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
-            I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));
-            I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
-          end
- end
 `endif
 
