@@ -28,11 +28,11 @@ begin  // Currents and charges
  in case of vanishing resistance corresponding node
  is not addressed: */
 
-`ifdef insideADMS 
+`ifdef insideADMS
 //dw we have limited all the RCXXX to MIN_R
   Vc4c1 = TYPE * V(c4, c1);
   Vc3c4 = TYPE * V(c3, c4);
-`else 
+`else
   if (RCBLX > 0.0)
    begin
     if (RCBLI > 0.0)
@@ -59,7 +59,7 @@ begin  // Currents and charges
        Vc3c4 = 0 ;
       end
    end
-`endif 
+`endif
 
    Vb1c4 = Vb1b2 + Vb2c2 - Vc1c2 - Vc4c1 ;
    Vcc3  = - Vbc + Vbb1 + Vb1c4 - Vc3c4 ;
@@ -598,7 +598,7 @@ This construct supports the case
 RCBLI = 0.0 and or RCBLX = 0.0 .
 It is up to the compiler to adjust the circuit topology
 and perform a node-collapse in such cases. */
-`ifdef insideADMS 
+`ifdef insideADMS
 //dw we have limited all the RCXXX to MIN_R
   I(b,  c3) <+ TYPE * XIex;
   I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
@@ -622,7 +622,7 @@ and perform a node-collapse in such cases. */
      end
     else
      begin
-       V(c4, c1) <+ 0.0 ;    
+       V(c4, c1) <+ 0.0 ;
        I(b1, c1) <+ TYPE * (Ib3 + Iex);
        I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
        I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
@@ -630,7 +630,7 @@ and perform a node-collapse in such cases. */
    end
   else
    begin
-    V(c3, c4) <+ 0 ;    
+    V(c3, c4) <+ 0 ;
     if (RCBLI > 0.0)
       begin
         I(b,  c4) <+ TYPE * XIex;
@@ -644,7 +644,7 @@ and perform a node-collapse in such cases. */
       begin
         I(b,  c1) <+ TYPE * XIex;
         I(c,  c1) <+ TYPE * Vcc3  * GCCxx_TM ;
-        V(c4, c1) <+ 0.0 ;    
+        V(c4, c1) <+ 0.0 ;
         I(b1, c1) <+ TYPE * (Ib3 + Iex);
         I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
         I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));

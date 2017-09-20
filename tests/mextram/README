@@ -36,7 +36,7 @@ Within the scripts run_all_tests_mult_*, actual tests are launched by
 the sequence:
 
 make $1                 - all tests that should show near npn/pnp symmetry;
-                          automated polarity check is included. 
+                          automated polarity check is included.
 make -f Makefile_npn $1 - dedicated tests for npn type; no polarity check
 make -f Makefile_pnp $1 - dedicated tests for pnp type; no polarity check
 
@@ -123,14 +123,14 @@ sweeps.
 
 
 
-MULT SCALING 
+MULT SCALING
 ============
 In Verilog-A, Mextram's MULT parameter is a model parameter.
 Therefore, in the Q&A test suite it is addressed as a model
 parameter.
 
 In some simulator interfaces the MULT parameter is defined to
-be an instance parameter. In the qaSpec files this can be taken 
+be an instance parameter. In the qaSpec files this can be taken
 into account by defining the variable MULT_INSTANCE by means of:
 
 `define MULT_INSTANCE
@@ -138,18 +138,18 @@ into account by defining the variable MULT_INSTANCE by means of:
 If this variable is set, MULT will be addressed as an instance
 parameter in the tests.
 
-As indicated above, the scipts 
+As indicated above, the scipts
 
   scripts/run_all_tests_mult_1p0 and
-  scripts/run_all_tests_mult_1p5 
+  scripts/run_all_tests_mult_1p5
 
 control the value of the Mult parameter.  The scripts also control the
 reference data.  Reference data correspondoing to mult=1.0 is kept in
 the directories
 
-  */reference_mult_1p0/      
+  */reference_mult_1p0/
 
-whereas reference data correspondoing to mult=1.5 is kept in the directories 
+whereas reference data correspondoing to mult=1.5 is kept in the directories
 
   */reference_mult_1p5.
 
@@ -160,7 +160,7 @@ In this way, all tests can be run automatically for different values
 of Mult.
 
 
-July 28, 2008, 
-Delft University of Technology, 
+July 28, 2008,
+Delft University of Technology,
 RvdT.
 

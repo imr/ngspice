@@ -77,24 +77,24 @@
    RBC_T = RBC * exp(lntN * AEX);   
 
 // RvdT, 30-11-2007: new collector resistances RCCxx_T, RCCex_T, RCCin_T
-`ifdef insideADMS 
+`ifdef insideADMS
 //dw limiting all the RCXXX to MIN_R
-   if (RCC > 0.0) 
-       RCCxx_T = RCC * exp(lntN * AC);   
+   if (RCC > 0.0)
+       RCCxx_T = RCC * exp(lntN * AC);
    else
-       RCCxx_T = `MIN_R * exp(lntN * AC);   
-   if (RCBLX > 0.0) 
-       RCCex_T = RCBLX * exp(lntN * ACBL);   
+       RCCxx_T = `MIN_R * exp(lntN * AC);
+   if (RCBLX > 0.0)
+       RCCex_T = RCBLX * exp(lntN * ACBL);
    else
-       RCCex_T = `MIN_R * exp(lntN * ACBL);   
-   if (RCBLI > 0.0) 
-       RCCin_T = RCBLI * exp(lntN * ACBL);   
+       RCCex_T = `MIN_R * exp(lntN * ACBL);
+   if (RCBLI > 0.0)
+       RCCin_T = RCBLI * exp(lntN * ACBL);
    else
-       RCCin_T = `MIN_R * exp(lntN * ACBL);   
+       RCCin_T = `MIN_R * exp(lntN * ACBL);
 `else
-    RCCxx_T = RCC * exp(lntN * AC);   
-    RCCex_T = RCBLX * exp(lntN * ACBL);   
-    RCCin_T = RCBLI * exp(lntN * ACBL);   
+    RCCxx_T = RCC * exp(lntN * AC);
+    RCCex_T = RCBLX * exp(lntN * ACBL);
+    RCCin_T = RCBLI * exp(lntN * ACBL);
 `endif
 
    RCV_T = RCV * exp(lntN * AEPI);    
@@ -223,11 +223,11 @@
  
 
 // RvdT, 03-12-2007: new collector conductances
-`ifdef insideADMS 
+`ifdef insideADMS
 //dw we have limited all the RCXXX to MIN_R
-   GCCxx_TM = 1.0 / RCCxx_TM ;   
-   GCCex_TM = 1.0 / RCCex_TM ;   
-   GCCin_TM = 1.0 / RCCin_TM ;   
+   GCCxx_TM = 1.0 / RCCxx_TM ;
+   GCCex_TM = 1.0 / RCCex_TM ;
+   GCCin_TM = 1.0 / RCCin_TM ;
 `else
    if (RCC > 0.0) 
     begin 

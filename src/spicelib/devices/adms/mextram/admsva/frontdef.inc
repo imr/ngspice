@@ -25,7 +25,7 @@
 `ifdef insideADMS
 //dw needed for RCXXX limiting
   `define MIN_R 0.001
-`endif 
+`endif
 
 // Desriptions and units
 `ifdef __VAMS_COMPACT_MODELING__
@@ -38,16 +38,16 @@
   `define PAI(des,uni) parameter integer
 `endif 
 
-// ADMS specific definitions 
-`ifdef insideADMS 
-  `define MODEL @(initial_model) 
-  `define INSTANCE @(initial_instance) 
-  `define NOISE @(noise) 
-`else 
-  `define MODEL 
-  `define INSTANCE 
-  `define NOISE 
-`endif 
+// ADMS specific definitions
+`ifdef insideADMS
+  `define MODEL @(initial_model)
+  `define INSTANCE @(initial_instance)
+  `define NOISE @(noise)
+`else
+  `define MODEL
+  `define INSTANCE
+  `define NOISE
+`endif
 
 // Smooth limitting functions  
 `define max_hyp0(result, x, epsilon)\

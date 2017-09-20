@@ -69,7 +69,7 @@ temperature                 25
 biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.5,1.2,0.01
-outputs                     I(b) 
+outputs                     I(b)
 `include dtestpars.inc
 modelParameters             DTA=45.0
 `include ../test_specs/set_mult.inc
@@ -79,7 +79,7 @@ temperature                 25 100
 biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.5,1.2,0.01
-outputs                     I(c) 
+outputs                     I(c)
 `include dtestpars.inc
 modelParameters             XIBI=0.25
 `include ../test_specs/set_mult.inc
@@ -89,7 +89,7 @@ temperature                 25 100
 biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.5,1.2,0.01
-outputs                     I(b) 
+outputs                     I(b)
 `include dtestpars.inc
 modelParameters             XIBI=0.25
 `include ../test_specs/set_mult.inc
@@ -169,7 +169,7 @@ temperature                 100
 biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.5,1.2,0.01
-outputs                     I(b) 
+outputs                     I(b)
 `include dtestpars.inc
 modelParameters             DAIS=0.45
 `include ../test_specs/set_mult.inc
@@ -306,12 +306,12 @@ biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.7,1.0,0.02
 freq                        lin 1 1.0e9 1.0e9
-outputs                     C(c,c) 
+outputs                     C(c,c)
 `include dtestpars.inc
 `include ../test_specs/set_mult.inc
 
 test                        acBias_CBCO
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.7,1.0,0.02
@@ -322,7 +322,7 @@ modelParameters             CBCO=11.7e-015
 `include ../test_specs/set_mult.inc
 
 test                        acBias_CBEO
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(c)=1.0
 `include substrate_bias.inc
 biasSweep                   V(b)=0.7,1.0,0.02
@@ -335,7 +335,7 @@ modelParameters             CBEO=31.7e-015
 // ac frequency sweeps at ref T
 
 test                        acFreq_Gbb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -344,7 +344,7 @@ outputs                     G(b,b)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Cbb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -353,7 +353,7 @@ outputs                     C(b,b)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Gcb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -362,7 +362,7 @@ outputs                     G(c,b)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Ccb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -371,7 +371,7 @@ outputs                     C(c,b)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Gbc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -380,7 +380,7 @@ outputs                     G(b,c)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Cbc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -389,7 +389,7 @@ outputs                     C(b,c)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Gcc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -398,7 +398,7 @@ outputs                     G(c,c)
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_Ccc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -485,7 +485,7 @@ outputs                     C(c,c)
 
 
 test                        acFreq_no_EXPHI_Gbb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -495,7 +495,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Cbb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -505,7 +505,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Gcb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -515,7 +515,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Ccb
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -525,7 +525,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Gbc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -535,7 +535,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Cbc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -545,7 +545,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Gcc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
@@ -555,7 +555,7 @@ modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
 test                        acFreq_no_EXPHI_Ccc
-temperature                 25 
+temperature                 25
 biases                      V(e)=0 V(b)=0.85 V(c)=2.0
 `include substrate_bias.inc
 freq                        dec 1 1e6 1e9
