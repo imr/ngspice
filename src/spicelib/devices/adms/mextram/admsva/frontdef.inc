@@ -44,9 +44,9 @@
   `define INSTANCE @(initial_instance)
   `define NOISE @(noise)
 `else
-`define MODEL 
-`define INSTANCE 
-`define NOISE 
+  `define MODEL
+  `define INSTANCE
+  `define NOISE
 `endif
 
 // Smooth limitting functions  

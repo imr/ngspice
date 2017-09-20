@@ -92,9 +92,9 @@
    else
        RCCin_T = `MIN_R * exp(lntN * ACBL);
 `else
-   RCCxx_T = RCC * exp(lntN * AC);   
-   RCCex_T = RCBLX * exp(lntN * ACBL);   
-   RCCin_T = RCBLI * exp(lntN * ACBL);   
+    RCCxx_T = RCC * exp(lntN * AC);
+    RCCex_T = RCBLX * exp(lntN * ACBL);
+    RCCin_T = RCBLI * exp(lntN * ACBL);
 `endif
 
    RCV_T = RCV * exp(lntN * AEPI);    
