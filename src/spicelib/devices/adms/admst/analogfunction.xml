@@ -76,7 +76,8 @@ inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
 inline double _d1_hypot(double x,double y) { return (y)/sqrt((x)*(x)+(y)*(y)); }
 
 inline double _atan2(double x,double y)    { return atan2(x,y); }
-// TODO atan2 derivatives?
+inline double _d0_atan2(double x,double y) { return (-y)/((x)*(x)+(y)*(y)); }
+inline double _d1_atan2(double x,double y) { return (x)/((x)*(x)+(y)*(y)); }
 
 inline double _max(double x,double y)      { return ((x)&gt;(y))?(x):(y); }
 inline double _d0_max(double x,double y)   { return ((x)&gt;(y))?1.0:0.0; }
