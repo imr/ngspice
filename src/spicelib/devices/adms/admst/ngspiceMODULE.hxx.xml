@@ -65,8 +65,8 @@
 #define m00_limexp(v00,x)       v00 = ((x)&lt;90.0?exp(x):EXP90*(x-89.0));
 #define m10_limexp(v10,v00,x)   v10 = ((x)&lt;90.0?(v00):EXP90);
 #define m00_atan2(v00,x,y)      v00 = atan2(x,y);
-#define m10_atan2(v10,x,y)      v10 = (-y/(x*x+y*y));
-#define m11_atan2(v11,x,y)      v11 = (x/(x*x+y*y));
+#define m10_atan2(v10,x,y)      v10 = (-(y)/((x)*(x)+(y)*(y)));
+#define m11_atan2(v11,x,y)      v11 = ((x)/((x)*(x)+(y)*(y)));
 #define m00_acosh(v00,x)        v00 = acosh(x);
 #define m10_acosh(v10,v00,x)    v10 = (1.0/(sqrt(x-1)*sqrt(x+1)));
 #define m00_asinh(v00,x)        v00 = asinh(x);
@@ -134,8 +134,8 @@ inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
 inline double _d1_hypot(double x,double y) { return (y)/sqrt((x)*(x)+(y)*(y)); }
 
 inline double _atan2(double x,double y)    { return atan2(x,y); }
-inline double _d0_atan2(double x,double y) { return (-y)/((x)*(x)+(y)*(y)); }
-inline double _d1_atan2(double x,double y) { return (x)/((x)*(x)+(y)*(y)); }
+inline double _d0_atan2(double x,double y) { return -y / (x*x + y*y); }
+inline double _d1_atan2(double x,double y) { return  x / (x*x + y*y); }
 
 inline double _max(double x,double y)      { return ((x)&gt;(y))?(x):(y); }
 inline double _d0_max(double x,double y)   { return ((x)&gt;(y))?1.0:0.0; }
