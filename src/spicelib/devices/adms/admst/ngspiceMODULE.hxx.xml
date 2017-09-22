@@ -133,6 +133,10 @@ inline double _hypot(double x,double y)    { return sqrt((x)*(x)+(y)*(y)); }
 inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
 inline double _d1_hypot(double x,double y) { return (y)/sqrt((x)*(x)+(y)*(y)); }
 
+inline double _atan2(double x,double y)    { return atan2(x,y); }
+inline double _d0_atan2(double x,double y) { return (-y)/((x)*(x)+(y)*(y)); }
+inline double _d1_atan2(double x,double y) { return (x)/((x)*(x)+(y)*(y)); }
+
 inline double _max(double x,double y)      { return ((x)&gt;(y))?(x):(y); }
 inline double _d0_max(double x,double y)   { return ((x)&gt;(y))?1.0:0.0; }
 inline double _d1_max(double x,double y)   { return ((x)&gt;(y))?0.0:1.0; }
@@ -691,7 +695,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:for-each>
       <admst:choose>
         <admst:when test="[ name='cos' or name='sin' or name='tan' or name='cosh' or name='sinh' or name='tanh' or name='acos' or name='asin'
-                            or name='asinh' or name='acosh' or name='atanh'
+                            or name='asinh' or name='acosh' or name='atanh' or name='atan2'
                             or name='atan' or name='ln' or name='log' or name='exp' or name='sqrt' or name='abs' or name='limexp'
                             or name='div' or name='pow' or name='hypot' or name='min' or name='max' ]">
           <admst:return name="x" value="_$function($args)"/>
@@ -1969,7 +1973,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:for-each>
       <admst:variable name="e" select="$(fname)($args)"/>
     </admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:assert test="arguments[count(.)=1]" format="%(name): should have one argument exactly\n"/>
       <admst:variable name="index" select="%(index(subexpression/expression/function,.))"/>
       <admst:variable name="fname" select="%(funcname(.)/[name='fname']/value)"/>
@@ -1980,7 +1984,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:variable name="xpq" select="$epq"/>
       <admst:variable name="e" select="d00_$(fname)$index"/>
     </admst:when>
-    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
+    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='atan2']">
       <admst:assert test="arguments[count(.)=2]" format="%(name): should have two argument exactly\n"/>
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:variable name="fname" select="%(funcname(.)/[name='fname']/value)"/>
@@ -2057,7 +2061,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='ddt']">
       <admst:variable name="ep" select="$xp"/>
     </admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:variable name="index" select="%(index(subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xp='0.0']">
@@ -2068,7 +2072,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         </admst:otherwise>
       </admst:choose>
     </admst:when>
-    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
+    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='atan2']">
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xp='0.0' and $yp='0.0']">
@@ -2130,7 +2134,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='ddt']">
       <admst:variable name="eq" select="$xq"/>
     </admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:variable name="index" select="%(index(subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xq='0.0']">
@@ -2141,7 +2145,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         </admst:otherwise>
       </admst:choose>
     </admst:when>
-    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
+    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='atan2']">
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xq='0.0' and $yq='0.0']">
@@ -2164,7 +2168,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   </admst:choose>
 
   <admst:choose>
-    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:variable name="fname" select="%(funcname(.)/[name='fname']/value)"/>
       <admst:choose>

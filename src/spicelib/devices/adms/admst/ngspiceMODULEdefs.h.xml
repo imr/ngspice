@@ -165,6 +165,10 @@ static inline double min(double x,double y)  { return ((x)&lt;(y))?(x):(y); }
 #define _dx_pow(dx,xy,x,y)       dx = (x==0.0)?0.0:((y/x)*xy);
 #define _dy_pow(dy,xy,x,y)       dy = (x==0.0)?0.0:((log(x)/exp(0.0))*xy);
 
+#define _atan2(xy,x,y)           xy = atan2(x,y);
+#define _dx_atan2(dx,x,y)        dx = -(y)/((x)*(x)+(y)*(y));
+#define _dy_atan2(dy,x,y)        dy = (x)/((x)*(x)+(y)*(y));
+
 #define _div1(x,y)               ((x)/(y))
 #define _div0(xy,x,y)            xy=(x)/(y);
 #define _div(xy,dx,x,y)          dx=1/(y); xy=(x)*dx;
