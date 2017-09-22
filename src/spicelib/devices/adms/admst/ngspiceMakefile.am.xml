@@ -62,11 +62,12 @@ lib$(module)_la_SOURCES = 	\\
 CLEANFILES = \\
 	\$(BUILT_SOURCES)	\\
 	$(module)noise.c	\\
-	*.analogfunction.c	\\
+	$(module).analogfunction.c \\
 	.$(module).va.adms \\
 	.adms.implicit.xml \\
 	.interface.xml \\
-	*.vams \\
+	constants.vams \\
+	disciplines.vams \\
 	*.h \\
 	*.xml
 
