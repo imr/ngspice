@@ -66,10 +66,11 @@ inline double _d0_sqrt(double arg)         { return (1.0/sqrt(arg)/2.0); }
 inline double _abs(double arg)             { return fabs(arg); }
 inline double _d0_abs(double arg)          { return (((arg)&gt;=0)?(+1.0):(-1.0)); }
 
-inline int _floor(double arg)              { return  floor(arg); }
-inline int _d0_floor(double arg)           { return (1.0); }
+inline double _floor(double arg)           { return  floor(arg); }
+inline double _d0_floor(double arg)        { (void) arg; return 0.0; }
 
-inline int _ceil(double arg)               { return  ceil(arg); }
+inline double _ceil(double arg)            { return  ceil(arg); }
+inline double _d0_ceil(double arg)         { (void) arg; return 0.0; }
 
 inline double _hypot(double x,double y)    { return sqrt((x)*(x)+(y)*(y)); }
 inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
@@ -94,8 +95,8 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 inline double _limexp(double arg)          { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)*(1.0+(arg-80))); }
 inline double _d0_limexp(double arg)       { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)); }
 
-inline double _vt(double arg)              { return 1.3806503e-23*arg/1.602176462e-19; }
-inline double _d0_vt(double arg)           { return 1.3806503e-23/1.602176462e-19; }
+inline double _vt(double arg)              { return (1.3806503e-23 / 1.602176462e-19) * arg; }
+inline double _d0_vt(double arg)           { (void) arg; return (1.3806503e-23 / 1.602176462e-19); }
 
   </admst:template>
 
@@ -1104,9 +1105,9 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
  *
  */
 
-#if HAVE_CONFIG_H
-# include &lt;config.h&gt;
-#endif
+// #if HAVE_CONFIG_H
+// # include &lt;config.h&gt;
+// #endif
 
 #include &lt;stdio.h&gt;
 #include &quot;%(attribute[name='ngspicename']/value).analogfunction.h&quot;
