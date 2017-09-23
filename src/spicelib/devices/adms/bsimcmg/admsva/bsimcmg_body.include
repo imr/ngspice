@@ -41,6 +41,16 @@
 //     ___Professor in Graduate School _______
 // ********************************************************
 
+// Hyperbolic Smoothing Function
+analog function real hypsmooth;
+   input x, c;
+   real x, c;
+
+   begin
+      hypsmooth  =  0.5 * (x + sqrt(x * x + 4.0 * c * c));
+   end
+endfunction
+
 // Hyperbolic Smoothing max Function
 analog function real hypmax;
    input x, xmin, c;
@@ -60,7 +70,7 @@ analog function real Tempdep;
       if (TEMPMOD != 0) begin
          Tempdep  =  PARAML + hypmax(PARAMT * DELTEMP, -PARAML, 1.0e-6);
       end else begin
-         Tempdep  =  PARAML * `hypsmooth(1.0 + PARAMT * DELTEMP - 1.0e-6, 1.0e-3);
+         Tempdep  =  PARAML * hypsmooth(1.0 + PARAMT * DELTEMP - 1.0e-6, 1.0e-3);
       end
    end
 endfunction
@@ -2395,7 +2405,7 @@ analog begin
       T1       =  (DevTemp / 300.15) * sqrt(DevTemp / 300.15);
       ni       =  NI0SUB * T1 * `lexp(BG0SUB / (2.0 * `KboQ * 300.15) - Eg / (2.0 * Vtm));
       Nc       =  NC0SUB * T1;
-      ThetaSS  =  `hypsmooth(1.0 + TSS_i * delTemp - 1.0e-6, 1.0e-3);
+      ThetaSS  =  hypsmooth(1.0 + TSS_i * delTemp - 1.0e-6, 1.0e-3);
       
       // Quantum Mechanical Vth Correction (Ref: Trivedi et al., EDL 2005)
       kT       =  Vtm * `q;
@@ -2449,7 +2459,7 @@ analog begin
 
       UCS_t  =  UCS_i * pow(TRatio, UCSTE_i);
 
-      rdstemp  =  `hypsmooth(1.0 + PRT_i * delTemp - 1.0e-6, 1.0e-3);
+      rdstemp  =  hypsmooth(1.0 + PRT_i * delTemp - 1.0e-6, 1.0e-3);
       RSDR_t   =  Tempdep(RSDR, TRSDR, delTemp, TEMPMOD);
       if (ASYMMOD != 0) begin
          RSDRR_t  =  Tempdep(RSDRR, TRSDR, delTemp, TEMPMOD);
@@ -2494,9 +2504,9 @@ analog begin
          VSATCV_t  =  1000; 
       end  
 
-      MEXP_t  =  `hypsmooth(MEXP_i * (1.0 + TMEXP * delTemp) - 2.0, 1.0e-3) + 2.0;
+      MEXP_t  =  hypsmooth(MEXP_i * (1.0 + TMEXP * delTemp) - 2.0, 1.0e-3) + 2.0;
       if (ASYMMOD != 0) begin
-         MEXPR_t  =  `hypsmooth(MEXPR_i * (1.0 + TMEXPR * delTemp) - 2.0, 1.0e-3) + 2.0;
+         MEXPR_t  =  hypsmooth(MEXPR_i * (1.0 + TMEXPR * delTemp) - 2.0, 1.0e-3) + 2.0;
       end
 
       PTWG_t  =  Tempdep(PTWG_i, -PTWGT_i, delTemp, TEMPMOD);
@@ -2506,7 +2516,7 @@ analog begin
 
       dvth_temp   =  (KT1_i + KT1L / Leff) * (TRatio - 1.0);
       BETA0_t     =  BETA0_i * pow(TRatio, IIT_i);
-      SII0_t      =  SII0_i * (`hypsmooth(1.0 + TII_i * (TRatio - 1.0) - 0.01, 1.0e-3) + 0.01);
+      SII0_t      =  SII0_i * (hypsmooth(1.0 + TII_i * (TRatio - 1.0) - 0.01, 1.0e-3) + 0.01);
       
       K0_t        =  K0_i + K01_i * delTemp;
       K0SI_t      =  K0SI_i + hypmax(K0SI1_i * delTemp, -K0SI_i, 1.0e-6);
@@ -2523,8 +2533,8 @@ analog begin
       AIGC_t      =  AIGC_i + hypmax(AIGC1_i * delTemp, -AIGC_i, 1.0e-6);
       AIGS_t      =  AIGS_i + hypmax(AIGS1_i * delTemp, -AIGS_i, 1.0e-6);
       AIGD_t      =  AIGD_i + hypmax(AIGD1_i * delTemp, -AIGD_i, 1.0e-6);
-      BGIDL_t     =  BGIDL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0e-6, 1.0e-3);
-      BGISL_t     =  BGISL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0e-6, 1.0e-3);
+      BGIDL_t     =  BGIDL_i * hypsmooth(1.0 + TGIDL_i * delTemp - 1.0e-6, 1.0e-3);
+      BGISL_t     =  BGISL_i * hypsmooth(1.0 + TGIDL_i * delTemp - 1.0e-6, 1.0e-3);
       ALPHA0_t    =  ALPHA0_i + hypmax(ALPHA01 * delTemp, -ALPHA0_i, 1.0e-6);
       ALPHA1_t    =  ALPHA1_i + hypmax(ALPHA11 * delTemp, -ALPHA1_i, 1.0e-6);
       ALPHAII0_t  =  ALPHAII0_i + hypmax(ALPHAII01 * delTemp, -ALPHAII0_i, 1.0e-25);  
@@ -2540,12 +2550,12 @@ analog begin
          CJSWGS_t  =  Tempdep(CJSWGS, TCJSWG, delTemp, TEMPMOD);
          CJSWGD_t  =  Tempdep(CJSWGD, TCJSWG, delTemp, TEMPMOD);
 
-         PBS_t     =  `hypsmooth(PBS - TPB * delTemp - 0.01, 1.0e-3) + 0.01;
-         PBD_t     =  `hypsmooth(PBD - TPB * delTemp - 0.01, 1.0e-3) + 0.01;
-         PBSWS_t   =  `hypsmooth(PBSWS - TPBSW * delTemp - 0.01, 1.0e-3) + 0.01;
-         PBSWD_t   =  `hypsmooth(PBSWD - TPBSW * delTemp - 0.01, 1.0e-3) + 0.01;
-         PBSWGS_t  =  `hypsmooth(PBSWGS - TPBSWG * delTemp - 0.01, 1.0e-3) + 0.01;
-         PBSWGD_t  =  `hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0e-3) + 0.01;
+         PBS_t     =  hypsmooth(PBS - TPB * delTemp - 0.01, 1.0e-3) + 0.01;
+         PBD_t     =  hypsmooth(PBD - TPB * delTemp - 0.01, 1.0e-3) + 0.01;
+         PBSWS_t   =  hypsmooth(PBSWS - TPBSW * delTemp - 0.01, 1.0e-3) + 0.01;
+         PBSWD_t   =  hypsmooth(PBSWD - TPBSW * delTemp - 0.01, 1.0e-3) + 0.01;
+         PBSWGS_t  =  hypsmooth(PBSWGS - TPBSWG * delTemp - 0.01, 1.0e-3) + 0.01;
+         PBSWGD_t  =  hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0e-3) + 0.01;
          
          T0        =  Eg0 / Vtm0 - Eg / Vtm;
          T1        =  `lln(TRatio);
@@ -2567,19 +2577,19 @@ analog begin
          JTSSWGD_t  =  JTSSWGD * (sqrt(JTWEFF / Weff0) + 1.0) * `lexp(Eg0 * XTSSWGD * (TRatio - 1.0) / Vtm);
 
          // All NJT's Smoothed to 0.01 to Prevent Divide-by-zero / Negative Values
-         NJTS_t      =  `hypsmooth(NJTS * (1.0 + TNJTS * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
-         NJTSD_t     =  `hypsmooth(NJTSD * (1.0 + TNJTSD * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
-         NJTSSW_t    =  `hypsmooth(NJTSSW * (1.0 + TNJTSSW * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
-         NJTSSWD_t   =  `hypsmooth(NJTSSWD * (1.0 + TNJTSSWD * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
-         NJTSSWG_t   =  `hypsmooth(NJTSSWG * (1.0 + TNJTSSWG * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
-         NJTSSWGD_t  =  `hypsmooth(NJTSSWGD * (1.0 + TNJTSSWGD * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;           
+         NJTS_t      =  hypsmooth(NJTS * (1.0 + TNJTS * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
+         NJTSD_t     =  hypsmooth(NJTSD * (1.0 + TNJTSD * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
+         NJTSSW_t    =  hypsmooth(NJTSSW * (1.0 + TNJTSSW * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
+         NJTSSWD_t   =  hypsmooth(NJTSSWD * (1.0 + TNJTSSWD * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
+         NJTSSWG_t   =  hypsmooth(NJTSSWG * (1.0 + TNJTSSWG * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
+         NJTSSWGD_t  =  hypsmooth(NJTSSWGD * (1.0 + TNJTSSWGD * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;           
       end
       
       if (!$param_given(VFBSD)) begin
           if (NGATE > 0.0) begin
-             vfbsd  =  devsign * (`hypsmooth(0.5 * Eg - Vtm * `lln(NGATE / ni), 1.0e-4) - (0.5 * Eg - devsign * (0.5 * Eg - `hypsmooth(0.5 * Eg - Vtm * `lln(NSD / ni), 1.0e-4))));
+             vfbsd  =  devsign * (hypsmooth(0.5 * Eg - Vtm * `lln(NGATE / ni), 1.0e-4) - (0.5 * Eg - devsign * (0.5 * Eg - hypsmooth(0.5 * Eg - Vtm * `lln(NSD / ni), 1.0e-4))));
           end else begin
-             vfbsd  =  devsign * (PHIG_i - (EASUB + 0.5 * Eg - devsign * (0.5 * Eg - `hypsmooth(0.5 * Eg - Vtm * `lln(NSD / ni), 1.0e-4))));
+             vfbsd  =  devsign * (PHIG_i - (EASUB + 0.5 * Eg - devsign * (0.5 * Eg - hypsmooth(0.5 * Eg - Vtm * `lln(NSD / ni), 1.0e-4))));
           end
       end else begin
          vfbsd  =  VFBSD;
@@ -2638,7 +2648,7 @@ analog begin
             T0        =  `lexp(VjsmFwd / Nvtms);
             IVjsmFwd  =  Isbs * (T0 - XExpBVS / T0 + XExpBVS - 1.0);
             SslpFwd   =  Isbs * (T0 + XExpBVS / T0) / Nvtms;
-            T2        =  `hypsmooth(IJTHSREV / Isbs - 10.0, 1.0e-3) + 10.0;
+            T2        =  hypsmooth(IJTHSREV / Isbs - 10.0, 1.0e-3) + 10.0;
             VjsmRev   =  -BVS - Nvtms * `lln((T2 - 1.0) / XJBVS);
             T1        =  XJBVS * `lexp(-(BVS + VjsmRev) / Nvtms);
             IVjsmRev  =  Isbs * (1.0 + T1);
@@ -2656,7 +2666,7 @@ analog begin
             T0        =  `lexp(VjdmFwd / Nvtmd);
             IVjdmFwd  =  Isbd * (T0 - XExpBVD / T0 + XExpBVD - 1.0);
             DslpFwd   =  Isbd * (T0 + XExpBVD / T0) / Nvtmd;
-            T2        =  `hypsmooth(IJTHDREV / Isbd - 10.0, 1.0e-3) + 10.0;
+            T2        =  hypsmooth(IJTHDREV / Isbd - 10.0, 1.0e-3) + 10.0;
             VjdmRev   =  -BVD - Nvtmd * `lln((T2 - 1.0) / XJBVD);
             T1        =  XJBVD * `lexp(-(BVD + VjdmRev) / Nvtmd);
             IVjdmRev  =  Isbd * (1.0 + T1);
@@ -2803,13 +2813,13 @@ analog begin
       beta0     =  u0_a * cox * Weff0 / Leff;
       T0        =  -(dvch_qm + nVtm * `lln(2.0 * cox * Imin / (beta0 * nVtm * `q * Nc * TFIN)));
       T1        =  vgsfb + T0 + DELVTRAND;
-      vgsfbeff  =  `hypsmooth(T1 , 1.0e-4) - T0;
+      vgsfbeff  =  hypsmooth(T1 , 1.0e-4) - T0;
 
       // Core Model Calculation at Source Side
       vch  =  0.0 + dvch_qm;
 
       if (BULKMOD != 0) begin 
-          T1  =  `hypsmooth(2.0 * phib + vch - ves, 0.1);
+          T1  =  hypsmooth(2.0 * phib + vch - ves, 0.1);
           T3  =  (-K1_t / (2.0 * nVtm)) * (sqrt(T1) - sqrt(2.0 * phib));
           T0  =  -qdep - T3 + vth_fixed_factor_Sub + QMFACTORCVfinal * pow(-qdep, 2.0/3.0);
           T1  =  -qdep - T3 + vth_fixed_factor_SI;
@@ -2883,7 +2893,7 @@ analog begin
          Tc     =  T6 * (EsatL + 2.0 * T6 * T0); 
          Vdsat  =  (Tb - sqrt(Tb * Tb - 2.0 * Ta * Tc)) / Ta; 
       end 
-      Vdsat   =  `hypsmooth(Vdsat - 1.0e-3, 1.0e-5) + 1.0e-3; 
+      Vdsat   =  hypsmooth(Vdsat - 1.0e-3, 1.0e-5) + 1.0e-3; 
       T7      =  pow(vds / Vdsat , MEXP_a); 
       T8      =  pow(1.0 + T7, inv_MEXP); 
       Vdseff  =  vds / T8;
@@ -2896,7 +2906,7 @@ analog begin
       vch  =  Vdseff + dvch_qm;
 
       if (BULKMOD != 0) begin 
-         T1  = `hypsmooth(2.0 * phib + vch - ves, 0.1);
+         T1  = hypsmooth(2.0 * phib + vch - ves, 0.1);
          T3  = (-K1_t / (2.0 * nVtm)) * (sqrt(T1) - sqrt(2.0 * phib));
          T0  = -qdep - T3 + vth_fixed_factor_Sub + QMFACTORCVfinal * pow(-qdep, 2.0 / 3.0);
          T1  = -qdep - T3 + vth_fixed_factor_SI;
@@ -3099,7 +3109,7 @@ analog begin
 
       // Body-Effect Factor for BULKMOD = 2
       if (BULKMOD == 2) begin
-         T0      =  `hypsmooth((K2_t + K2SAT_t * vdsx), 1.0e-6);
+         T0      =  hypsmooth((K2_t + K2SAT_t * vdsx), 1.0e-6);
          T1      =  T0 / (max(0, K2SI_t + K2SISAT_t * dqi * dqi) * qia + 2.0 * nVtm);
          T3      =  sqrt(PHIBE_i - veseff) - sqrt(PHIBE_i);
          Mob     =  `lexp(- T1 * T3);
@@ -3208,9 +3218,9 @@ analog begin
          end else begin
             T0       =  ESATII_i * Leff;
             T1       =  SII0_t * T0 / (1.0 + T0);
-            T0       =  1.0 / (1.0 + `hypsmooth(SII1_i * vgsfbeff, IIMOD2CLAMP1)); // T0 = 1 / (1 + SII1_i * vgsfbeff)
+            T0       =  1.0 / (1.0 + hypsmooth(SII1_i * vgsfbeff, IIMOD2CLAMP1)); // T0 = 1 / (1 + SII1_i * vgsfbeff)
             T3       =  T0 + SII2_i;
-            T2       =  `hypsmooth(vgsfbeff * T3, IIMOD2CLAMP2);                   // T2 = vgsfbeff * T3
+            T2       =  hypsmooth(vgsfbeff * T3, IIMOD2CLAMP2);                   // T2 = vgsfbeff * T3
             T3       =  1.0 / (1.0 + SIID_i * vds);
             VgsStep  =  T1 * T2 * T3;
             Vdsatii  =  VgsStep * (1.0 - LII_i / Leff);
@@ -3289,7 +3299,7 @@ analog begin
          T0       =  vgs_noswap - vfbsd;
          vgs_eff  =  sqrt(T0 * T0 + 1.0e-4);
       if (IGCLAMP == 1) begin
-         T1  =  `hypsmooth((AIGS_t - BIGS_i * vgs_eff), 1.0e-6);
+         T1  =  hypsmooth((AIGS_t - BIGS_i * vgs_eff), 1.0e-6);
          if (CIGS_i < 0.01) begin
             CIGS_i = 0.01;
          end
@@ -3309,7 +3319,7 @@ analog begin
          T0       =  vgd_noswap - vfbsd;
          vgd_eff  =  sqrt(T0 * T0 + 1.0e-4);
       if (IGCLAMP == 1) begin
-         T1  =  `hypsmooth((AIGD_t - BIGD_i * vgd_eff), 1.0e-6);
+         T1  =  hypsmooth((AIGD_t - BIGD_i * vgd_eff), 1.0e-6);
          if (CIGD_i < 0.01) begin
             CIGD_i = 0.01;
          end
@@ -3338,13 +3348,13 @@ analog begin
             T6  =  0.0;
          end else begin
             T1  =  (-vgd_noswap - EGIDL_i + vfbsd) / T0;
-            T1  =  `hypsmooth(T1, 1.0e-2);
+            T1  =  hypsmooth(T1, 1.0e-2);
             T2  =  BGIDL_t / (T1 + 1.0e-3);
             T3  =  `lexp(PGIDL_i * `lln(T1));
             if (BULKMOD != 0) begin
                 T4   =  -ved_jct*ved_jct*ved_jct;
                 T4a  =  CGIDL_i + abs(T4) + 1.0e-5;
-                T5   =  `hypsmooth(T4/T4a, 1.0e-6) - 1.0e-6;
+                T5   =  hypsmooth(T4/T4a, 1.0e-6) - 1.0e-6;
                 T6   =  AGIDL_i * Weff0 * T3 * `lexp(-T2) * T5;
             end else begin
                 T6   =  AGIDL_i * Weff0 * T3 * `lexp(-T2) * vds_noswap;
@@ -3362,13 +3372,13 @@ analog begin
             T6  =  0.0;
          end else begin
             T1  =  (-vgs_noswap - EGISL_i + vfbsd) / T0;
-            T1  =  `hypsmooth(T1, 1.0e-2);
+            T1  =  hypsmooth(T1, 1.0e-2);
             T2  =  BGISL_t / (T1 + 1.0e-3);
             T3  =  `lexp(PGISL_i * `lln(T1));
             if (BULKMOD != 0) begin
                 T4   =  -ves_jct * ves_jct * ves_jct;
                 T4a  =  CGISL_i + abs(T4) + 1.0e-5;
-                T5   =  `hypsmooth(T4/T4a, 1.0e-6) - 1.0e-6;
+                T5   =  hypsmooth(T4/T4a, 1.0e-6) - 1.0e-6;
                 T6   =  AGISL_i * Weff0 * T3 * `lexp(-T2) * T5;
             end else
                 T6   =  AGISL_i * Weff0 * T3 * `lexp(-T2) * (-vds_noswap);
