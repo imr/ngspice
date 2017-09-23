@@ -1073,8 +1073,9 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
 
 <admst:variable name="globalanalogfunction"/>
 
-<admst:open file="$(module).analogfunction.h">/*
- * $(module).analogfunction.h - analog function header
+<admst:for-each select="/module">
+<admst:open file="%(attribute[name='ngspicename']/value).analogfunction.h">/*
+ * %(attribute[name='ngspicename']/value).analogfunction.h - analog function header
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1091,10 +1092,10 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
 #endif /* __$(module)_ANALOGFUNCTION_H__ */
 <admst:text format="\n"/>
 </admst:open>
-<admst:message format="$(module).analogfunction.h created\n"/>
+<admst:message format="%(attribute[name='ngspicename']/value).analogfunction.h created\n"/>
 
-<admst:open file="$(module).analogfunction.c">/*
- * $(module).analogfunction.c - analog function implementations
+<admst:open file="%(attribute[name='ngspicename']/value).analogfunction.c">/*
+ * %(attribute[name='ngspicename']/value).analogfunction.c - analog function implementations
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1116,5 +1117,6 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
   <admst:apply-templates select="/module" match="analogfunctionC"/>
 <admst:text format="\n"/>
 </admst:open>
-<admst:message format="$(module).analogfunction.c created\n"/>
+<admst:message format="%(attribute[name='ngspicename']/value).analogfunction.c created\n"/>
+</admst:for-each>
 </admst>
