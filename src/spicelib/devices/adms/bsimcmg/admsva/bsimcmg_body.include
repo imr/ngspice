@@ -41,6 +41,20 @@
 //     ___Professor in Graduate School _______
 // ********************************************************
 
+// Temperature Dependence Type
+analog function real Tempdep;
+   input PARAML, PARAMT, DELTEMP, TEMPMOD;
+   real PARAML, PARAMT, DELTEMP, TEMPMOD;
+
+   begin
+      if (TEMPMOD != 0) begin
+         Tempdep  =  PARAML + `hypmax(PARAMT * DELTEMP, -PARAML, 1.0e-6);
+      end else begin
+         Tempdep  =  PARAML * `hypsmooth(1.0 + PARAMT * DELTEMP - 1.0e-6, 1.0e-3);
+      end
+   end
+endfunction
+
 // Node Definitions
 `ifdef __RGATEMOD__
    `define GateEdgeNode ge
@@ -2387,8 +2401,8 @@ analog begin
       dvch_qm  =  QMFACTOR_i * (E0 / `q + T2);
       
       // Temperature Dependence
-      ETA0_t   =  `Tempdep(ETA0_i, TETA0, delTemp, TEMPMOD);
-      ETA0R_t  =  `Tempdep(ETA0R_i, TETA0R, delTemp, TEMPMOD);
+      ETA0_t   =  Tempdep(ETA0_i, TETA0, delTemp, TEMPMOD);
+      ETA0R_t  =  Tempdep(ETA0R_i, TETA0R, delTemp, TEMPMOD);
       T1       =  U0_i * pow(TRatio, UTE_i);
       U0_t     =  T1 + `hypmax(UTL_i * delTemp, -0.9 * T1, 1.0e-4); 
       u0       =  U0_t; 
@@ -2398,7 +2412,7 @@ analog begin
          u0r    =  U0R_t;
       end
       
-      ETAMOB_t  =  `Tempdep(ETAMOB_i, EMOBT_i, delTemp, TEMPMOD);
+      ETAMOB_t  =  Tempdep(ETAMOB_i, EMOBT_i, delTemp, TEMPMOD);
       UA_t      =  UA_i + `hypmax(UA1_i*delTemp, -UA_i, 1.0e-6);
       if (ASYMMOD != 0) begin
          UAR_t  =  UAR_i + `hypmax(UA1R_i * delTemp, -UAR_i, 1.0e-6);
@@ -2406,9 +2420,9 @@ analog begin
       
       if (BULKMOD != 0) begin  
          if (TEMPMOD == 0) begin 
-            UC_t  =  `Tempdep(UC_i, UC1_i, delTemp, 0);
+            UC_t  =  Tempdep(UC_i, UC1_i, delTemp, 0);
             if (ASYMMOD != 0) begin
-               UCR_t  =  `Tempdep(UCR_i, UC1R_i, delTemp, 0);
+               UCR_t  =  Tempdep(UCR_i, UC1R_i, delTemp, 0);
             end
          end else begin
             UC_t  =  UC_i + UC1_i * delTemp;
@@ -2426,45 +2440,45 @@ analog begin
       UCS_t  =  UCS_i * pow(TRatio, UCSTE_i);
 
       rdstemp  =  `hypsmooth(1.0 + PRT_i * delTemp - 1.0e-6, 1.0e-3);
-      RSDR_t   =  `Tempdep(RSDR, TRSDR, delTemp, TEMPMOD);
+      RSDR_t   =  Tempdep(RSDR, TRSDR, delTemp, TEMPMOD);
       if (ASYMMOD != 0) begin
-         RSDRR_t  =  `Tempdep(RSDRR, TRSDR, delTemp, TEMPMOD);
+         RSDRR_t  =  Tempdep(RSDRR, TRSDR, delTemp, TEMPMOD);
       end
 
-      RDDR_t  = `Tempdep(RDDR, TRDDR, delTemp, TEMPMOD);
+      RDDR_t  = Tempdep(RDDR, TRDDR, delTemp, TEMPMOD);
       if (ASYMMOD != 0) begin
-         RDDRR_t  =  `Tempdep(RDDRR, TRDDR, delTemp, TEMPMOD);
+         RDDRR_t  =  Tempdep(RDDRR, TRDDR, delTemp, TEMPMOD);
       end
 
-      VSAT_t  =  `Tempdep(VSAT_i, -AT_i, delTemp, TEMPMOD);
+      VSAT_t  =  Tempdep(VSAT_i, -AT_i, delTemp, TEMPMOD);
       if (VSAT_t < 1000) begin 
          $strobe("Warning: VSAT(%f) = %e is less than 1K, setting it to 1K.", DevTemp, VSAT_t); 
          VSAT_t =  1000; 
       end 
 
       if (ASYMMOD != 0) begin 
-      VSATR_t   = `Tempdep(VSATR_i, -ATR_i, delTemp, TEMPMOD);
+      VSATR_t   = Tempdep(VSATR_i, -ATR_i, delTemp, TEMPMOD);
           if (VSATR_t < 1000) begin 
              $strobe("Warning: VSATR(%f) = %e is less than 1K, setting it to 1K.", DevTemp, VSATR_t); 
              VSATR_t =  1000; 
           end 
       end
 
-      VSAT1_t  =  `Tempdep(VSAT1_i, -AT_i, delTemp, TEMPMOD);
+      VSAT1_t  =  Tempdep(VSAT1_i, -AT_i, delTemp, TEMPMOD);
       if (VSAT1_t < 1000) begin 
          $strobe("Warning: VSAT1(%f) = %e is less than 1K, setting it to 1K.", DevTemp, VSAT1_t); 
          VSAT1_t  =  1000; 
       end
 
       if (ASYMMOD != 0) begin
-         VSAT1R_t   = `Tempdep(VSAT1R_i, -AT_i, delTemp, TEMPMOD);
+         VSAT1R_t   = Tempdep(VSAT1R_i, -AT_i, delTemp, TEMPMOD);
          if (VSAT1R_t < 1000) begin 
             $strobe("Warning: VSAT1R(%f) = %e is less than 1K, setting it to 1K.", DevTemp, VSAT1R_t); 
             VSAT1R_t  =  1000; 
          end
       end
 
-      VSATCV_t  =  `Tempdep(VSATCV_i, -ATCV_i, delTemp, TEMPMOD);
+      VSATCV_t  =  Tempdep(VSATCV_i, -ATCV_i, delTemp, TEMPMOD);
       if (VSATCV_t < 1000) begin 
          $strobe("Warning: VSATCV(%f) = %e is less than 1K, setting it to 1K.", DevTemp, VSATCV_t); 
          VSATCV_t  =  1000; 
@@ -2475,9 +2489,9 @@ analog begin
          MEXPR_t  =  `hypsmooth(MEXPR_i * (1.0 + TMEXPR * delTemp) - 2.0, 1.0e-3) + 2.0;
       end
 
-      PTWG_t  =  `Tempdep(PTWG_i, -PTWGT_i, delTemp, TEMPMOD);
+      PTWG_t  =  Tempdep(PTWG_i, -PTWGT_i, delTemp, TEMPMOD);
       if (ASYMMOD != 0) begin
-         PTWGR_t  =  `Tempdep(PTWGR_i, -PTWGT_i, delTemp, TEMPMOD);
+         PTWGR_t  =  Tempdep(PTWGR_i, -PTWGT_i, delTemp, TEMPMOD);
       end
 
       dvth_temp   =  (KT1_i + KT1L / Leff) * (TRatio - 1.0);
@@ -2509,12 +2523,12 @@ analog begin
       igsd_mult   =  igsd_mult0 * igtemp;
 
       if (BULKMOD != 0) begin
-         CJS_t     =  `Tempdep(CJS, TCJ, delTemp, TEMPMOD);
-         CJD_t     =  `Tempdep(CJD, TCJ, delTemp, TEMPMOD);
-         CJSWS_t   =  `Tempdep(CJSWS, TCJSW, delTemp, TEMPMOD);
-         CJSWD_t   =  `Tempdep(CJSWD, TCJSW, delTemp, TEMPMOD);
-         CJSWGS_t  =  `Tempdep(CJSWGS, TCJSWG, delTemp, TEMPMOD);
-         CJSWGD_t  =  `Tempdep(CJSWGD, TCJSWG, delTemp, TEMPMOD);
+         CJS_t     =  Tempdep(CJS, TCJ, delTemp, TEMPMOD);
+         CJD_t     =  Tempdep(CJD, TCJ, delTemp, TEMPMOD);
+         CJSWS_t   =  Tempdep(CJSWS, TCJSW, delTemp, TEMPMOD);
+         CJSWD_t   =  Tempdep(CJSWD, TCJSW, delTemp, TEMPMOD);
+         CJSWGS_t  =  Tempdep(CJSWGS, TCJSWG, delTemp, TEMPMOD);
+         CJSWGD_t  =  Tempdep(CJSWGD, TCJSWG, delTemp, TEMPMOD);
 
          PBS_t     =  `hypsmooth(PBS - TPB * delTemp - 0.01, 1.0e-3) + 0.01;
          PBD_t     =  `hypsmooth(PBD - TPB * delTemp - 0.01, 1.0e-3) + 0.01;
