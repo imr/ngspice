@@ -41,6 +41,16 @@
 //     ___Professor in Graduate School _______
 // ********************************************************
 
+// Clamped log Function
+analog function real lln;
+   input x;
+   real x;
+
+   begin
+      lln  =  ln(max(x, `N_MINLOG));
+   end
+endfunction
+
 // Hyperbolic Smoothing Function
 analog function real hypsmooth;
    input x, c;
@@ -1305,7 +1315,7 @@ analog begin
       NBODY_i  =  NBODY + Inv_L * LNBODY + Inv_NFIN * NNBODY + Inv_LNFIN * PNBODY;
      
       if (NBODYN1 != 0.0) begin
-         NBODY_i  =  NBODY_i * (1.0 + NBODYN1/NFIN * `lln(1.0 + NFIN/NBODYN2));
+         NBODY_i  =  NBODY_i * (1.0 + NBODYN1/NFIN * lln(1.0 + NFIN/NBODYN2));
       end
 
       // Model Parameters for Unified FinFET Compact Model by Juan Duarte 10/2013
@@ -1613,39 +1623,39 @@ analog begin
       // Geometrical Scaling
       // NFIN Scaling
       if (PHIGN1 != 0.0) begin
-         PHIG_i  =  PHIG_i * (1.0 + PHIGN1 / NFIN * `lln(1.0 + NFIN / PHIGN2));
+         PHIG_i  =  PHIG_i * (1.0 + PHIGN1 / NFIN * lln(1.0 + NFIN / PHIGN2));
       end
 
       if (ETA0N1 != 0.0) begin
-         ETA0_i  =  ETA0_i * (1.0 + ETA0N1 / NFIN * `lln(1.0 + NFIN / ETA0N2));
+         ETA0_i  =  ETA0_i * (1.0 + ETA0N1 / NFIN * lln(1.0 + NFIN / ETA0N2));
       end
 
       if (CDSCN1 != 0.0) begin
-         CDSC_i  =  CDSC_i * (1.0 + CDSCN1 / NFIN * `lln(1.0 + NFIN / CDSCN2));
+         CDSC_i  =  CDSC_i * (1.0 + CDSCN1 / NFIN * lln(1.0 + NFIN / CDSCN2));
       end
 
       if (CDSCDN1 != 0.0) begin
-         CDSCD_i  =  CDSCD_i * (1.0 + CDSCDN1 / NFIN * `lln(1.0 + NFIN / CDSCDN2));
+         CDSCD_i  =  CDSCD_i * (1.0 + CDSCDN1 / NFIN * lln(1.0 + NFIN / CDSCDN2));
       end
 
       if (CDSCDRN1 != 0.0) begin
-         CDSCDR_i  =  CDSCDR_i * (1.0 + CDSCDRN1 / NFIN * `lln(1.0 + NFIN / CDSCDRN2));
+         CDSCDR_i  =  CDSCDR_i * (1.0 + CDSCDRN1 / NFIN * lln(1.0 + NFIN / CDSCDRN2));
       end
 
       if (VSATN1 != 0.0) begin
-         VSAT_i  =  VSAT_i * (1.0 + VSATN1 / NFIN * `lln(1.0 + NFIN / VSATN2));
+         VSAT_i  =  VSAT_i * (1.0 + VSATN1 / NFIN * lln(1.0 + NFIN / VSATN2));
       end
 
       if (VSAT1N1 != 0.0) begin
-         VSAT1_i  =  VSAT1_i * (1.0 + VSAT1N1 / NFIN * `lln(1.0 + NFIN / VSAT1N2));
+         VSAT1_i  =  VSAT1_i * (1.0 + VSAT1N1 / NFIN * lln(1.0 + NFIN / VSAT1N2));
       end
 
       if (VSAT1RN1 != 0.0) begin
-         VSAT1R_i  =  VSAT1R_i * (1.0 + VSAT1RN1 / NFIN * `lln(1.0 + NFIN / VSAT1RN2));
+         VSAT1R_i  =  VSAT1R_i * (1.0 + VSAT1RN1 / NFIN * lln(1.0 + NFIN / VSAT1RN2));
       end
 
       if (U0N1 != 0.0) begin
-         U0_i  =  U0_i * (1.0 + U0N1 / NFIN * `lln(1.0 + NFIN / U0N2));
+         U0_i  =  U0_i * (1.0 + U0N1 / NFIN * lln(1.0 + NFIN / U0N2));
       end
 
       if ($param_given(NFINNOM)) begin
@@ -1655,7 +1665,7 @@ analog begin
       end
 
       if (U0N1R != 0.0) begin
-         U0R_i  =  U0R_i * (1.0 + U0N1R / NFIN * `lln(1.0 + NFIN / U0N2R));
+         U0R_i  =  U0R_i * (1.0 + U0N1R / NFIN * lln(1.0 + NFIN / U0N2R));
       end
 
       // Length Scaling
@@ -2272,7 +2282,7 @@ analog begin
          // Top Component
          if (TMASK > 0.0) begin
             // Capacitance Model by Chung-Hsun Lin (IBM)
-            T0y       =  3.467e-11 * `lln(1.0e-7 * EPSRSP / (3.9 * LSP_i));
+            T0y       =  3.467e-11 * lln(1.0e-7 * EPSRSP / (3.9 * LSP_i));
             T1y       =  0.942 * Hrsd * epssp / LSP_i;
             Cgg_top  =  (T0y + T1y) * (TFIN + (FPITCH - TFIN) * CRATIO);
          end else begin
@@ -2302,7 +2312,7 @@ analog begin
       end
       
       // Source/Gate/Drain-to-Substrate Parasitic Capacitances
-      T0y     =  CSDESW * `lln(1.0 + HFIN / EOTBOX);
+      T0y     =  CSDESW * lln(1.0 + HFIN / EOTBOX);
       csbox  =  cbox * ASEO + T0y * max(0.0, PSEO - FPITCH * NFINtotal);
       cdbox  =  cbox * ADEO + T0y * max(0.0, PDEO - FPITCH * NFINtotal);
       cgbox  =  (CGBO * NF * NGCON + CGBN * NFINtotal) * Lg;
@@ -2370,8 +2380,8 @@ analog begin
       T0y  =  TOXG * TOXG;
       T1y  =  TOXG * POXEDGE_i;
       T2y =  T1y * T1y;
-      Toxratio      =  `lexp(NTOX_i * `lln(TOXREF / TOXG)) / T0y;
-      Toxratioedge  =  `lexp(NTOX_i * `lln(TOXREF / T1y)) / T2y;
+      Toxratio      =  `lexp(NTOX_i * lln(TOXREF / TOXG)) / T0y;
+      Toxratioedge  =  `lexp(NTOX_i * lln(TOXREF / T1y)) / T2y;
       igsd_mult0    =  Weff0 * Aechvb * Toxratioedge;
 
       if (TNOM < -`P_CELSIUS0) begin 
@@ -2417,7 +2427,7 @@ analog begin
       T1       =  gprime * mdprime / (gfactor * md);
       gam0     =  1.0 + T1 * `lexp((E0 - E0prime) / kT);
       gam1     =  gam0 + `lexp((E0 - E1) / kT) + T1 * `lexp((E0 - E1prime) / kT);
-      T2       =  -Vtm * `lln(gfactor * md / (`M_PI * `HBAR * `HBAR * Nc) * kT / (2.0 * Ach / Weff_UFCM) * gam1);
+      T2       =  -Vtm * lln(gfactor * md / (`M_PI * `HBAR * `HBAR * Nc) * kT / (2.0 * Ach / Weff_UFCM) * gam1);
       dvch_qm  =  QMFACTOR_i * (E0 / `q + T2);
       
       // Temperature Dependence
@@ -2539,7 +2549,7 @@ analog begin
       ALPHA1_t    =  ALPHA1_i + hypmax(ALPHA11 * delTemp, -ALPHA1_i, 1.0e-6);
       ALPHAII0_t  =  ALPHAII0_i + hypmax(ALPHAII01 * delTemp, -ALPHAII0_i, 1.0e-25);  
       ALPHAII1_t  =  ALPHAII1_i + hypmax(ALPHAII11 * delTemp, -ALPHAII1_i, 1.0e-20);   
-      igtemp      =  `lexp(IGT_i * `lln(TRatio));
+      igtemp      =  `lexp(IGT_i * lln(TRatio));
       igsd_mult   =  igsd_mult0 * igtemp;
 
       if (BULKMOD != 0) begin
@@ -2558,7 +2568,7 @@ analog begin
          PBSWGD_t  =  hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0e-3) + 0.01;
          
          T0        =  Eg0 / Vtm0 - Eg / Vtm;
-         T1        =  `lln(TRatio);
+         T1        =  lln(TRatio);
          T3        =  `lexp((T0 + XTIS * T1) / NJS);
          JSS_t     =  JSS * T3;
          JSWS_t    =  JSWS * T3;
@@ -2587,9 +2597,9 @@ analog begin
       
       if (!$param_given(VFBSD)) begin
           if (NGATE > 0.0) begin
-             vfbsd  =  devsign * (hypsmooth(0.5 * Eg - Vtm * `lln(NGATE / ni), 1.0e-4) - (0.5 * Eg - devsign * (0.5 * Eg - hypsmooth(0.5 * Eg - Vtm * `lln(NSD / ni), 1.0e-4))));
+             vfbsd  =  devsign * (hypsmooth(0.5 * Eg - Vtm * lln(NGATE / ni), 1.0e-4) - (0.5 * Eg - devsign * (0.5 * Eg - hypsmooth(0.5 * Eg - Vtm * lln(NSD / ni), 1.0e-4))));
           end else begin
-             vfbsd  =  devsign * (PHIG_i - (EASUB + 0.5 * Eg - devsign * (0.5 * Eg - hypsmooth(0.5 * Eg - Vtm * `lln(NSD / ni), 1.0e-4))));
+             vfbsd  =  devsign * (PHIG_i - (EASUB + 0.5 * Eg - devsign * (0.5 * Eg - hypsmooth(0.5 * Eg - Vtm * lln(NSD / ni), 1.0e-4))));
           end
       end else begin
          vfbsd  =  VFBSD;
@@ -2603,24 +2613,24 @@ analog begin
  
       `ifdef __SHMOD__
          if (SHMOD != 0 && RTH0 > 0.0) begin
-            T0    =  Vtm * `lln(nbody / ni);
+            T0    =  Vtm * lln(nbody / ni);
             phib  =  sqrt(T0 * T0 + 1.0e-6);
          end else begin
-            phib  =  Vtm * `lln(nbody / ni);
+            phib  =  Vtm * lln(nbody / ni);
          end
       `else
-         phib  =  Vtm * `lln(nbody/ni);
+         phib  =  Vtm * lln(nbody/ni);
       `endif
 
       `ifdef __SHMOD__
          if (SHMOD != 0 && RTH0 > 0.0) begin
-            T0   =  Vtm * `lln(nbody * NSD / (ni * ni));
+            T0   =  Vtm * lln(nbody * NSD / (ni * ni));
             vbi  =  sqrt(T0 * T0 + 1.0e-6);
          end else begin
-            vbi  =  Vtm * `lln(nbody * NSD / (ni * ni));
+            vbi  =  Vtm * lln(nbody * NSD / (ni * ni));
          end
       `else
-         vbi  =  Vtm * `lln(nbody * NSD / (ni * ni));
+         vbi  =  Vtm * lln(nbody * NSD / (ni * ni));
       `endif
 
       // deltaPhi definition and Polysilicon Depletion
@@ -2644,12 +2654,12 @@ analog begin
             XExpBVS   =  `lexp(-BVS / Nvtms) * XJBVS;
             T2        =  max(IJTHSFWD / Isbs, 10.0);
             Tb        =  1.0 + T2 - XExpBVS;
-            VjsmFwd   =  Nvtms * `lln(0.5 * (Tb + sqrt(Tb * Tb + 4.0 * XExpBVS)));
+            VjsmFwd   =  Nvtms * lln(0.5 * (Tb + sqrt(Tb * Tb + 4.0 * XExpBVS)));
             T0        =  `lexp(VjsmFwd / Nvtms);
             IVjsmFwd  =  Isbs * (T0 - XExpBVS / T0 + XExpBVS - 1.0);
             SslpFwd   =  Isbs * (T0 + XExpBVS / T0) / Nvtms;
             T2        =  hypsmooth(IJTHSREV / Isbs - 10.0, 1.0e-3) + 10.0;
-            VjsmRev   =  -BVS - Nvtms * `lln((T2 - 1.0) / XJBVS);
+            VjsmRev   =  -BVS - Nvtms * lln((T2 - 1.0) / XJBVS);
             T1        =  XJBVS * `lexp(-(BVS + VjsmRev) / Nvtms);
             IVjsmRev  =  Isbs * (1.0 + T1);
             SslpRev   =  -Isbs * T1 / Nvtms;
@@ -2662,12 +2672,12 @@ analog begin
             XExpBVD   =  `lexp(-BVD / Nvtmd) * XJBVD;
             T2        =  max(IJTHDFWD / Isbd, 10.0);
             Tb        =  1.0 + T2 - XExpBVD;
-            VjdmFwd   =  Nvtmd * `lln(0.5 * (Tb + sqrt(Tb * Tb + 4.0 * XExpBVD)));
+            VjdmFwd   =  Nvtmd * lln(0.5 * (Tb + sqrt(Tb * Tb + 4.0 * XExpBVD)));
             T0        =  `lexp(VjdmFwd / Nvtmd);
             IVjdmFwd  =  Isbd * (T0 - XExpBVD / T0 + XExpBVD - 1.0);
             DslpFwd   =  Isbd * (T0 + XExpBVD / T0) / Nvtmd;
             T2        =  hypsmooth(IJTHDREV / Isbd - 10.0, 1.0e-3) + 10.0;
-            VjdmRev   =  -BVD - Nvtmd * `lln((T2 - 1.0) / XJBVD);
+            VjdmRev   =  -BVD - Nvtmd * lln((T2 - 1.0) / XJBVD);
             T1        =  XJBVD * `lexp(-(BVD + VjdmRev) / Nvtmd);
             IVjdmRev  =  Isbd * (1.0 + T1);
             DslpRev   =  -Isbd * T1 / Nvtmd;
@@ -2811,7 +2821,7 @@ analog begin
    
       // Vgs Clamping for Inversion Region Calculation in Accumulation
       beta0     =  u0_a * cox * Weff0 / Leff;
-      T0        =  -(dvch_qm + nVtm * `lln(2.0 * cox * Imin / (beta0 * nVtm * `q * Nc * TFIN)));
+      T0        =  -(dvch_qm + nVtm * lln(2.0 * cox * Imin / (beta0 * nVtm * `q * Nc * TFIN)));
       T1        =  vgsfb + T0 + DELVTRAND;
       vgsfbeff  =  hypsmooth(T1 , 1.0e-4) - T0;
 
@@ -3076,7 +3086,7 @@ analog begin
          end else begin 
             T1  =  PCLM_a + PCLMG_i * qia; 
          end
-         Mclm  =  1.0 + T1 * `lln(1.0 + (vds - Vdseff) / T1 / (Vdsat + EsatL)); 
+         Mclm  =  1.0 + T1 * lln(1.0 + (vds - Vdseff) / T1 / (Vdsat + EsatL)); 
       end else begin
          Mclm  =  1.0;
       end
@@ -3086,9 +3096,9 @@ analog begin
       // Current Degradation Factor Due to Velocity Saturation
       Esat1   =  2.0 * VSAT1_a / ueff; 
       Esat1L  =  Esat1 * Leff; 
-      T0      =  `lexp(PSAT_i * `lln(dqi / Esat1L));
-      Ta      =  (1.0 + `lexp(1.0 / PSAT_i * `lln(DELTAVSAT_i))); 
-      Dvsat   =  (1.0 + `lexp(1.0 / PSAT_i * `lln(DELTAVSAT_i + T0))) / Ta; 
+      T0      =  `lexp(PSAT_i * lln(dqi / Esat1L));
+      Ta      =  (1.0 + `lexp(1.0 / PSAT_i * lln(DELTAVSAT_i))); 
+      Dvsat   =  (1.0 + `lexp(1.0 / PSAT_i * lln(DELTAVSAT_i + T0))) / Ta; 
       Dvsat   =  Dvsat + 0.5 * PTWG_a * qia * dqi * dqi;
 
       // Non-Saturation Effect
@@ -3119,13 +3129,13 @@ analog begin
       // Velocity Saturation Factor for C-V
       EsatCV   =  2.0 * VSATCV_t * Dmob_cv / u0_a; 
       EsatCVL  =  EsatCV * LeffCV; 
-      T0       =  `lexp(PSATCV_i * `lln(dqi / EsatCVL)); 
-      Ta       =  (1.0 + `lexp(1.0 / PSATCV_i * `lln(DELTAVSATCV_i))); 
-      DvsatCV  =  (1.0 + `lexp(1.0 / PSATCV_i * `lln(DELTAVSATCV_i + T0))) / Ta; 
+      T0       =  `lexp(PSATCV_i * lln(dqi / EsatCVL)); 
+      Ta       =  (1.0 + `lexp(1.0 / PSATCV_i * lln(DELTAVSATCV_i))); 
+      DvsatCV  =  (1.0 + `lexp(1.0 / PSATCV_i * lln(DELTAVSATCV_i + T0))) / Ta; 
 
       // Channel Length Modulation factor for C-V
       if (PCLMCV_i != 0) begin
-         MclmCV  =  1.0 + PCLMCV_i * `lln(1.0 + (vds - Vdseff) / PCLMCV_i / (Vdsat + EsatCVL));
+         MclmCV  =  1.0 + PCLMCV_i * lln(1.0 + (vds - Vdseff) / PCLMCV_i / (Vdsat + EsatCVL));
       end else begin
          MclmCV  =  1.0;
       end
@@ -3244,7 +3254,7 @@ analog begin
       if (IGBMOD != 0) begin
          // Igbinv
          T1      =  (qia - EIGBINV_i) / NIGBINV_i / Vtm;
-         Vaux_Igbinv  =  NIGBINV_i * Vtm * `lln(1.0 + `lexp(T1));
+         Vaux_Igbinv  =  NIGBINV_i * Vtm * lln(1.0 + `lexp(T1));
          T2      =  AIGBINV_t - BIGBINV_i * qia;
          T3      =  1.0 + CIGBINV_i * qia;
          T4      =  -9.82222e11 * TOXG * T2 * T3;
@@ -3257,7 +3267,7 @@ analog begin
          vfbzb  =  deltaPhi - (Eg / 2.0) - phib;
          T0     =  vfbzb - vge;
          T1     =  T0 / NIGBACC_i / Vtm;
-         Vaux_Igbacc  =  NIGBACC_i * Vtm * `lln(1.0 + `lexp(T1));
+         Vaux_Igbacc  =  NIGBACC_i * Vtm * lln(1.0 + `lexp(T1));
          if (BULKMOD != 0) begin
             Voxacc  =  qi_acc_for_QM;
          end else begin
@@ -3350,7 +3360,7 @@ analog begin
             T1  =  (-vgd_noswap - EGIDL_i + vfbsd) / T0;
             T1  =  hypsmooth(T1, 1.0e-2);
             T2  =  BGIDL_t / (T1 + 1.0e-3);
-            T3  =  `lexp(PGIDL_i * `lln(T1));
+            T3  =  `lexp(PGIDL_i * lln(T1));
             if (BULKMOD != 0) begin
                 T4   =  -ved_jct*ved_jct*ved_jct;
                 T4a  =  CGIDL_i + abs(T4) + 1.0e-5;
@@ -3374,7 +3384,7 @@ analog begin
             T1  =  (-vgs_noswap - EGISL_i + vfbsd) / T0;
             T1  =  hypsmooth(T1, 1.0e-2);
             T2  =  BGISL_t / (T1 + 1.0e-3);
-            T3  =  `lexp(PGISL_i * `lln(T1));
+            T3  =  `lexp(PGISL_i * lln(T1));
             if (BULKMOD != 0) begin
                 T4   =  -ves_jct * ves_jct * ves_jct;
                 T4a  =  CGISL_i + abs(T4) + 1.0e-5;
@@ -3588,7 +3598,7 @@ analog begin
             DelClm  =  0.0;
          end else begin
             T0      =  (diffVds / litl + EM) / Esatnoi;
-            DelClm  =  litl * `lln(T0);
+            DelClm  =  litl * lln(T0);
             if (DelClm < 0.0) begin
                DelClm  =  0.0;
             end
@@ -3598,7 +3608,7 @@ analog begin
          N0     =  coxeff * qis / `q;
          Nl     =  coxeff * qid / `q;
          Nstar  =  Vtm / `q * (coxeff + CIT_a);
-         T3     =  NOIA * `lln((N0 + Nstar) / (Nl + Nstar));
+         T3     =  NOIA * lln((N0 + Nstar) / (Nl + Nstar));
          T4     =  NOIB * (N0 - Nl);
          T5     =  0.5 * NOIC * (N0 * N0 - Nl * Nl);         
          T6     =  `q * Vtm * ids * ids;
@@ -3932,7 +3942,7 @@ analog begin
       BETA    =  beta;                               // Drain Current prefactor per fin per finger
       VDSSAT  =  Vdsat;                              // Drain-Source saturation Voltage
       if (NGATE_i > 0)                               // Flatband Voltage
-         VFB  =  -devsign * (phib + Vtm * `lln(NGATE_i / ni));
+         VFB  =  -devsign * (phib + Vtm * lln(NGATE_i / ni));
       else
          VFB  =  PHIG_i - (EASUB + 0.5 * Eg + devsign * phib);
 
@@ -3941,7 +3951,7 @@ analog begin
       T1   =  Vtm * (Vtm + q0);
       T2   =  cox * cox * T1;
       T3   =  2.0 * `q * ni * epssub * Vtm;
-      VTH  =  VFB + devsign * (Vtm * `lln(T2 / T3) + dvch_qm + phib + qbs + Vtm + dvth_all - DELVTRAND);
+      VTH  =  VFB + devsign * (Vtm * lln(T2 / T3) + dvch_qm + phib + qbs + Vtm + dvth_all - DELVTRAND);
 
       // Conductances
       GM   =  ddx(devsign * ids,V(`IntrinsicGate));      // Transconductance
