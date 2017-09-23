@@ -630,9 +630,19 @@ electrical d, g, s, b;
 `endif
 
 // Clamped exponential function
-`define lexp(x) \
-        (((x) > `EXPL_THRESHOLD) ? (`MAX_EXPL * (1.0+(x)-`EXPL_THRESHOLD)) : \
-         (((x) < -`EXPL_THRESHOLD) ? (`MIN_EXPL) : exp(x)))
+analog function real lexp;
+	input x;
+	real x;
+	begin
+		if(x > `EXPL_THRESHOLD) begin
+			lexp = `MAX_EXPL * (1.0+(x)-`EXPL_THRESHOLD);
+		end else if(x < -`EXPL_THRESHOLD) begin
+			lexp = `MIN_EXPL;
+		end else begin
+			lexp = exp(x);
+		end
+	end
+endfunction
 
 // Clamped log function
 analog function real lln;
@@ -2743,7 +2753,7 @@ DevTemp = $temperature + DTEMP;
 	Eg0 = BG0SUB - TBGASUB * Tnom * Tnom / (Tnom + TBGBSUB);
 
 	T1y = (DevTemp / Tnom) * sqrt(DevTemp / Tnom);
-	ni = NI0SUB * T1y * `lexp(Eg / (2.0 * Vtm0) - Eg / (2.0 * Vtm));
+	ni = NI0SUB * T1y * lexp(Eg / (2.0 * Vtm0) - Eg / (2.0 * Vtm));
 `ifdef __SHMOD__
     if ((SHMOD != 0) && (RTH0 > 0)) begin
         T0 = lln(NDEP_i/ni);
@@ -2828,7 +2838,7 @@ DevTemp = $temperature + DTEMP;
 	BETA0_t = BETA0_i * pow(TRatio, IIT_i);
 	BGIDL_t = BGIDL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
 	BGISL_t = BGISL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
-	igtemp = `lexp(IGT_i * lln(TRatio)); //pow(TRatio, IGT_i);
+	igtemp = lexp(IGT_i * lln(TRatio)); //pow(TRatio, IGT_i);
 
 	//***Diode Model temperature Code Start***//
 	CJS_t = CJS * `hypsmooth(1.0 + TCJ * delTemp - 1.0E-6, 1.0E-3);
@@ -2846,20 +2856,20 @@ DevTemp = $temperature + DTEMP;
 
 	T0y = Eg0 / Vtm0 - Eg / Vtm;
 	T1y = lln(TRatio);
-	T3y = `lexp((T0y + XTIS * T1y) / NJS);
+	T3y = lexp((T0y + XTIS * T1y) / NJS);
 	JSS_t = JSS * T3y;
 	JSWS_t = JSWS * T3y;
 	JSWGS_t = JSWGS * T3y;
-	T3y = `lexp((T0y + XTID * T1y) / NJD);
+	T3y = lexp((T0y + XTID * T1y) / NJD);
 	JSD_t = JSD * T3y;
 	JSWD_t = JSWD * T3y;
 	JSWGD_t = JSWGD * T3y;
-	JTSS_t = JTSS * `lexp(Eg0 * XTSS * (TRatio - 1.0) / Vtm);
-	JTSSWS_t = JTSSWS * `lexp(Eg0 * XTSSWS * (TRatio - 1.0) / Vtm);
-	JTSSWGS_t = JTSSWGS * (sqrt(JTWEFF / Weffcj) + 1.0) * `lexp(Eg0 * XTSSWGS * (TRatio - 1) / Vtm);
-	JTSD_t = JTSD * `lexp(Eg0 * XTSD * (TRatio - 1.0) / Vtm);
-	JTSSWD_t = JTSSWD * `lexp(Eg0 * XTSSWD * (TRatio - 1.0) / Vtm);
-	JTSSWGD_t = JTSSWGD * (sqrt(JTWEFF / Weffcj) + 1.0) * `lexp(Eg0 * XTSSWGD * (TRatio - 1) / Vtm);
+	JTSS_t = JTSS * lexp(Eg0 * XTSS * (TRatio - 1.0) / Vtm);
+	JTSSWS_t = JTSSWS * lexp(Eg0 * XTSSWS * (TRatio - 1.0) / Vtm);
+	JTSSWGS_t = JTSSWGS * (sqrt(JTWEFF / Weffcj) + 1.0) * lexp(Eg0 * XTSSWGS * (TRatio - 1) / Vtm);
+	JTSD_t = JTSD * lexp(Eg0 * XTSD * (TRatio - 1.0) / Vtm);
+	JTSSWD_t = JTSSWD * lexp(Eg0 * XTSSWD * (TRatio - 1.0) / Vtm);
+	JTSSWGD_t = JTSSWGD * (sqrt(JTWEFF / Weffcj) + 1.0) * lexp(Eg0 * XTSSWGD * (TRatio - 1) / Vtm);
 
 	//All NJT*'s smoothed to 0.01 to prevent divide by zero / negative values
 	NJTS_t = `hypsmooth(NJTS * (1.0 + TNJTS * (TRatio-1.0)) - 0.01, 1.0E-3) + 0.01;
@@ -2921,16 +2931,16 @@ DevTemp = $temperature + DTEMP;
 	Isbs = ASeff * JSS_t + PSeff * JSWS_t + Weffcj * NF * JSWGS_t;
 	if(Isbs > 0.0) begin
 		Nvtms = Vtm * NJS;
-		XExpBVS = `lexp(-BVS / Nvtms) * XJBVS;
+		XExpBVS = lexp(-BVS / Nvtms) * XJBVS;
 		T2y = max(IJTHSFWD / Isbs, 10.0);
 		Tb = 1.0 + T2y - XExpBVS;
 		VjsmFwd = Nvtms * lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVS)));
-		T0y = `lexp(VjsmFwd / Nvtms);
+		T0y = lexp(VjsmFwd / Nvtms);
 		IVjsmFwd = Isbs * (T0y - XExpBVS / T0y + XExpBVS - 1.0);
 		SslpFwd = Isbs * (T0y + XExpBVS / T0y) / Nvtms;
 		T2y = `hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
 		VjsmRev = -BVS - Nvtms * lln((T2y - 1.0) / XJBVS);
-		T1y = XJBVS * `lexp(-(BVS + VjsmRev) / Nvtms);
+		T1y = XJBVS * lexp(-(BVS + VjsmRev) / Nvtms);
 		IVjsmRev = Isbs * (1.0 + T1y);
 		SslpRev = -Isbs * T1y / Nvtms;
 	end else begin
@@ -2948,16 +2958,16 @@ DevTemp = $temperature + DTEMP;
   	Isbd = ADeff * JSD_t + PDeff * JSWD_t + Weffcj * NF * JSWGD_t;
 	if(Isbd > 0.0) begin
 		Nvtmd = Vtm * NJD;
-		XExpBVD = `lexp(-BVD / Nvtmd) * XJBVD;
+		XExpBVD = lexp(-BVD / Nvtmd) * XJBVD;
 		T2y = max(IJTHDFWD / Isbd, 10.0);
 		Tb = 1.0 + T2y - XExpBVD;
 		VjdmFwd = Nvtmd * lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVD)));
-		T0y = `lexp(VjdmFwd / Nvtmd);
+		T0y = lexp(VjdmFwd / Nvtmd);
 		IVjdmFwd = Isbd * (T0y - XExpBVD / T0y + XExpBVD - 1.0);
 		DslpFwd = Isbd * (T0y + XExpBVD / T0y) / Nvtmd;
 		T2y = `hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
 		VjdmRev = -BVD - Nvtmd * lln((T2y - 1.0) / XJBVD);
-		T1y = XJBVD * `lexp(-(BVD + VjdmRev) / Nvtmd);
+		T1y = XJBVD * lexp(-(BVD + VjdmRev) / Nvtmd);
 		IVjdmRev = Isbd * (1.0 + T1y);
 		DslpRev = -Isbd * T1y / Nvtmd;
 	end else begin
@@ -3419,7 +3429,7 @@ DevTemp = $temperature + DTEMP;
 	Moc = Moc * MdL;
 
 	// Calculate Vadits -- Ref BSIM4
-	T1 = `lexp(PDITSD_i * Vds);
+	T1 = lexp(PDITSD_i * Vds);
 	if (PDITS_i > 0.0) begin
 		T2y 		= 1.0 + PDITSL * Leff;
 		VaDITS 	= (1.0 + T2y * T1) / PDITS_i;
@@ -3562,7 +3572,7 @@ DevTemp = $temperature + DTEMP;
 		Iii = 0.0;
 	else if (diffVds > BETA0_t / `EXPL_THRESHOLD) begin
 		T1 = - BETA0_t / diffVds;
-		Iii = ALPHA0_i * diffVds * ids * `lexp(T1)/Mscbe;
+		Iii = ALPHA0_i * diffVds * ids * lexp(T1)/Mscbe;
 	end else begin
 		Iii = ALPHA0_i * diffVds * ids * `MIN_EXPL/Mscbe;
 	end
@@ -3583,21 +3593,21 @@ DevTemp = $temperature + DTEMP;
 		// Igbinv
 	if (IGBMOD != 0) begin
 		T1 = Voxmacc / NIGBACC_i / Vt; //representative of Qb in acc
-		Vaux_Igbacc = NIGBACC_i * Vt * lln(1 + `lexp(-T1));
+		Vaux_Igbacc = NIGBACC_i * Vt * lln(1 + lexp(-T1));
 		T2 = AIGBACC_i - BIGBACC_i * Voxmacc;
 		T3 = 1.0 + CIGBACC_i * Voxmacc;
 		T4 = -7.45669e11 * TOXE * T2 * T3;
-		T5 = `lexp(T4);
+		T5 = lexp (T4);
 		T6 = 4.97232e-7;
 		igbacc = NF * Weff * Leff * T6 * ToxRatio * Vg * Vaux_Igbacc * T5;
 		igbacc = igbacc * igtemp;
 
 		T1 = (Voxminv - EIGBINV_i) / NIGBINV_i / Vt;
-		Vaux_Igbinv = NIGBINV_i * Vt * lln(1.0 + `lexp(T1));
+		Vaux_Igbinv = NIGBINV_i * Vt * lln(1.0 + lexp(T1));
 		T2 = AIGBINV_i - BIGBINV_i * Voxminv;
 		T3 = 1.0 + CIGBINV_i * Voxminv;
 		T4 = -9.82222e11 * TOXE * T2 * T3;
-		T5 = `lexp(T4);
+		T5 = lexp (T4);
 		T6 = 3.75956e-7;
 		igbinv = NF * Weff * Leff * T6 * ToxRatio * Vg * Vaux_Igbinv * T5;
 		igbinv = igbinv * igtemp;
@@ -3609,13 +3619,13 @@ DevTemp = $temperature + DTEMP;
 		T1 = AIGC_i - BIGC_i * Voxminv;
 		T2 = 1.0 + CIGC_i * Voxminv;
 		T3 = Bechvb * T1 * T2;
-		T4 = nq * nVt * (qs + qdeff) * `lexp(T3);
+		T4 = nq * nVt * (qs + qdeff) * lexp(T3);
 		igc0 = NF * Aechvb * T4 * (Vg + 0.5 *Vdsx - 0.5*(Vs+Vd)) * igtemp;
 
 		// Gate-current partitioning
 		Vdseffx = sqrt(Vdseff*Vdseff + 0.01) - 0.1;
 		T1 = PIGCD_i * Vdseffx;
-		T1_exp = `lexp(-T1);
+		T1_exp = lexp(-T1);
 		T3 = T1 + T1_exp -1.0 + 1.0E-4;
 		T4 = 1.0 - (T1 + 1.0) * T1_exp + 1.0E-4;
 		T5 = T1 * T1 + 2.0E-4;
@@ -3633,7 +3643,7 @@ DevTemp = $temperature + DTEMP;
 		T1 = AIGS_i - BIGS_i * Vgs_eff;
 		T2 = 1.0 + CIGS_i * Vgs_eff;
 		T3 = BechvbEdge * T1 * T2;
-		T4 = `lexp(T3);
+		T4 = lexp(T3);
 		igs_mult = igtemp * NF * AechvbEdge * DLCIG_i;
 		igs = igs_mult * Vgs_noswap * Vgs_eff * T4;
 
@@ -3644,7 +3654,7 @@ DevTemp = $temperature + DTEMP;
 		T1 = AIGD_i - BIGD_i * Vgd_eff;
 		T2 = 1.0 + CIGD_i * Vgd_eff;
 		T3 = BechvbEdge * T1 * T2;
-		T4 = `lexp(T3);
+		T4 = lexp(T3);
 		igd_mult = igtemp * NF * AechvbEdge * DLCIGD_i;
 		igd = igd_mult * Vgd_noswap * Vgd_eff * T4;
 	end
@@ -3674,7 +3684,7 @@ DevTemp = $temperature + DTEMP;
 				T5 = `hypsmooth(T3/T4, 1.0E-6) - 1.0E-6;
 			end else
 				T5 = 1.0;
-			T6 = AGIDL_i * Weff * T1 * `lexp(-T2) * T5;
+			T6 = AGIDL_i * Weff * T1 * lexp(-T2) * T5;
 		end
 		igidl = T6;
 
@@ -3691,7 +3701,7 @@ DevTemp = $temperature + DTEMP;
 				T5 = `hypsmooth(T3/T4, 1.0E-6) - 1.0E-6;
 			end else
 				T5 = 1.0;
-			T6 = AGISL_i * Weff * T1 * `lexp(-T2) * T5;
+			T6 = AGISL_i * Weff * T1 * lexp(-T2) * T5;
 		end
 		igisl = T6;
 	end // GIDLMOD
@@ -3704,14 +3714,14 @@ DevTemp = $temperature + DTEMP;
 	if(Isbs > 0.0) begin
 		if (Vbs_jct < VjsmRev) begin
 			T0 = Vbs_jct / Nvtms;
-			T1 = `lexp(T0) - 1.0;
+			T1 = lexp(T0) - 1.0;
 			T2 = IVjsmRev + SslpRev * (Vbs_jct - VjsmRev);
 			Ibs = T1 * T2;
 		end else if (Vbs_jct <= VjsmFwd) begin
 			T0 = Vbs_jct / Nvtms;
 			T1 = (BVS + Vbs_jct) / Nvtms;
-			T2 = `lexp(-T1);
-			Ibs = Isbs * (`lexp(T0) + XExpBVS - 1.0 - XJBVS * T2);
+			T2 = lexp(-T1);
+			Ibs = Isbs * (lexp(T0) + XExpBVS - 1.0 - XJBVS * T2);
 		end else
 			Ibs = IVjsmFwd + SslpFwd * (Vbs_jct - VjsmFwd);
 	end else
@@ -3721,33 +3731,33 @@ DevTemp = $temperature + DTEMP;
 	if(JTSS_t > 0.0) begin
 		if((VTSS - Vbs_jct) < (VTSS * 1.0e-3)) begin
 			T0 = -Vbs_jct / Vtm0 / NJTS_t;
-			T1 = `lexp(T0 * 1.0e+3) - 1.0;
+			T1 = lexp(T0 * 1.0e+3) - 1.0;
 			Ibs = Ibs - ASeff * JTSS_t * T1;
 		end else begin
 			T0 = -Vbs_jct / Vtm0 / NJTS_t;
-			T1 = `lexp(T0 * VTSS / (VTSS - Vbs_jct)) - 1.0;
+			T1 = lexp(T0 * VTSS / (VTSS - Vbs_jct)) - 1.0;
 			Ibs = Ibs - ASeff * JTSS_t * T1;
 		end
 	end
 	if(JTSSWS_t > 0.0) begin
 		if((VTSSWS - Vbs_jct) < (VTSSWS * 1.0e-3)) begin
 			T0 = -Vbs_jct / Vtm0 / NJTSSW_t;
-			T1 = `lexp(T0 * 1.0e+3) - 1.0;
+			T1 = lexp(T0 * 1.0e+3) - 1.0;
 			Ibs = Ibs - PSeff * JTSSWS_t * T1;
 		end else begin
 			T0 = -Vbs_jct / Vtm0 / NJTSSW_t;
-			T1 = `lexp(T0 * VTSSWS / (VTSSWS - Vbs_jct)) - 1.0;
+			T1 = lexp(T0 * VTSSWS / (VTSSWS - Vbs_jct)) - 1.0;
 			Ibs = Ibs - PSeff * JTSSWS_t * T1;
 		end
 	end
 	if(JTSSWGS_t > 0.0) begin
 		if((VTSSWGS - Vbs_jct) < (VTSSWGS * 1.0e-3)) begin
 			T0 = -Vbs_jct / Vtm0 / NJTSSWG_t;
-			T1 = `lexp(T0 * 1.0e+3) - 1.0;
+			T1 = lexp(T0 * 1.0e+3) - 1.0;
 			Ibs = Ibs - Weffcj * NF * JTSSWGS_t * T1;
 		end else begin
 			T0 = -Vbs_jct / Vtm0 / NJTSSWG_t;
-			T1 = `lexp(T0 * VTSSWGS / (VTSSWGS - Vbs_jct)) - 1.0;
+			T1 = lexp(T0 * VTSSWGS / (VTSSWGS - Vbs_jct)) - 1.0;
 			Ibs = Ibs - Weffcj * NF * JTSSWGS_t * T1;
 		end
 	end
@@ -3757,14 +3767,14 @@ DevTemp = $temperature + DTEMP;
 	if(Isbd > 0.0) begin
 		if (Vbd_jct < VjdmRev) begin
 			T0 = Vbd_jct / Nvtmd;
-			T1 = `lexp(T0) - 1.0;
+			T1 = lexp(T0) - 1.0;
 			T2 = IVjdmRev + DslpRev * (Vbd_jct - VjdmRev);
 			Ibd = T1 * T2;
 		end else if (Vbd_jct <= VjdmFwd) begin
 			T0 = Vbd_jct / Nvtmd;
 			T1 = (BVD + Vbd_jct) / Nvtmd;
-			T2 = `lexp(-T1);
-			Ibd = Isbd * (`lexp(T0) + XExpBVD - 1.0 - XJBVD * T2);
+			T2 = lexp(-T1);
+			Ibd = Isbd * (lexp(T0) + XExpBVD - 1.0 - XJBVD * T2);
 		end else
 			Ibd = IVjdmFwd + DslpFwd * (Vbd_jct - VjdmFwd);
 	end else
@@ -3774,33 +3784,33 @@ DevTemp = $temperature + DTEMP;
 	if(JTSD_t > 0.0) begin
 		if((VTSD - Vbd_jct) < (VTSD * 1.0e-3)) begin
 			T0 = -Vbd_jct / Vtm0 / NJTSD_t;
-			T1 = `lexp(T0 * 1.0e+3) - 1.0;
+			T1 = lexp(T0 * 1.0e+3) - 1.0;
 			Ibd = Ibd - ADeff * JTSD_t * T1;
 		end else begin
 			T0 = -Vbd_jct / Vtm0 / NJTSD_t;
-			T1 = `lexp(T0 * VTSD/ (VTSD - Vbd_jct)) - 1.0;
+			T1 = lexp(T0 * VTSD/ (VTSD - Vbd_jct)) - 1.0;
 			Ibd = Ibd - ADeff * JTSD_t * T1;
 		end
 	end
 	if(JTSSWD_t > 0.0) begin
 		if((VTSSWD - Vbd_jct) < (VTSSWD * 1.0e-3)) begin
 			T0 = -Vbd_jct / Vtm0 / NJTSSWD_t;
-			T1 = `lexp(T0 * 1.0e+3) - 1.0;
+			T1 = lexp(T0 * 1.0e+3) - 1.0;
 			Ibd = Ibd - PDeff * JTSSWD_t * T1;
 		end else begin
 			T0 = -Vbd_jct / Vtm0 / NJTSSWD_t;
-			T1 = `lexp(T0 * VTSSWD / (VTSSWD - Vbd_jct)) - 1.0;
+			T1 = lexp(T0 * VTSSWD / (VTSSWD - Vbd_jct)) - 1.0;
 			Ibd = Ibd - PDeff * JTSSWD_t * T1;
 		end
 	end
 	if(JTSSWGD_t > 0.0) begin
 		if((VTSSWGD - Vbd_jct) < (VTSSWGD * 1.0e-3)) begin
 			T0 = -Vbd_jct / Vtm0 / NJTSSWGD_t;
-			T1 = `lexp(T0 * 1.0e+3) - 1.0;
+			T1 = lexp(T0 * 1.0e+3) - 1.0;
 			Ibd = Ibd - Weffcj * NF * JTSSWGD_t * T1;
 		end else begin
 			T0 = -Vbd_jct / Vtm0 / NJTSSWGD_t;
-			T1 = `lexp(T0 * VTSSWGD / (VTSSWGD - Vbd_jct)) - 1.0;
+			T1 = lexp(T0 * VTSSWGD / (VTSSWGD - Vbd_jct)) - 1.0;
 			Ibd = Ibd - Weffcj * NF * JTSSWGD_t * T1;
 		end
 	end
@@ -3812,7 +3822,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJS == 0.5)  sarg = 1.0 / sqrt(arg);
-			else             sarg = `lexp(-MJS * lln(arg));
+			else             sarg = lexp(-MJS * lln(arg));
 			Qbs = PBS_t * Czbs * (1.0 - arg * sarg) / (1.0 - MJS);
 		end else begin
 			T2 = pow(0.1,-MJS);
@@ -3830,7 +3840,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWS == 0.5)  sarg = 1.0 / sqrt(arg);
-			else               sarg = `lexp(-MJSWS * lln(arg));
+			else               sarg = lexp(-MJSWS * lln(arg));
 			Qbs = Qbs + PBSWS_t * Czbssw * (1.0 - arg * sarg) / (1.0 - MJSWS);
 		end else begin
 			T2 = pow(0.1,-MJSWS);
@@ -3846,7 +3856,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWGS == 0.5)  sarg = 1.0 / sqrt(arg);
-			else                sarg = `lexp(-MJSWGS * lln(arg));
+			else                sarg = lexp(-MJSWGS * lln(arg));
 			Qbs = Qbs + PBSWGS_t * Czbsswg * (1.0 - arg * sarg) / (1.0 - MJSWGS);
 		end else begin
 			T2 = pow(0.1,-MJSWGS);
@@ -3863,7 +3873,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJD == 0.5)  sarg = 1.0 / sqrt(arg);
-			else             sarg = `lexp(-MJD * lln(arg));
+			else             sarg = lexp(-MJD * lln(arg));
 			Qbd = PBD_t * Czbd * (1.0 - arg * sarg) / (1.0 - MJD);
 		end else begin
 			T2 = pow(0.1,-MJD);
@@ -3881,7 +3891,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWD == 0.5)  sarg = 1.0 / sqrt(arg);
-			else               sarg = `lexp(-MJSWD * lln(arg));
+			else               sarg = lexp(-MJSWD * lln(arg));
 			Qbd = Qbd + PBSWD_t * Czbdsw * (1.0 - arg * sarg) / (1.0 - MJSWD);
 		end else begin
 			T2 = pow(0.1,-MJSWD);
@@ -3897,7 +3907,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWGD == 0.5)  sarg = 1.0 / sqrt(arg);
-			else                sarg = `lexp(-MJSWGD * lln(arg));
+			else                sarg = lexp(-MJSWGD * lln(arg));
 			Qbd = Qbd + PBSWGD_t * Czbdswg * (1.0 - arg * sarg) / (1.0 - MJSWGD);
 		end else begin
 			T2 = pow(0.1,-MJSWGD);
