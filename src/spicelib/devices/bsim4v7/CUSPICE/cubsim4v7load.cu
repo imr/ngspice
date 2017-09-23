@@ -29,6 +29,10 @@
 #include "ngspice/CUSPICE/cuniinteg.cuh"
 #include "bsim4v7def.h"
 
+#ifdef _MSC_VER
+double CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK) / CHARGE;
+#endif
+
 #define MAX_EXPL 2.688117142e+43
 #define MIN_EXPL 3.720075976e-44
 #define EXPL_THRESHOLD 100.0
