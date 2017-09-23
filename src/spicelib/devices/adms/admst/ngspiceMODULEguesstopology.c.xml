@@ -341,6 +341,7 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 
 <admst:variable name="localvariables"/>
 <admst:for-each select="/module">
+  <!-- fixme, this $(module) variable diverts from other usage pattern -->
   <admst:variable name="module" select="%(attribute[name='ngspicename']/value)"/>
   <admst:open file="$(module)guesstopology.c">
     <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
