@@ -78,7 +78,7 @@ begin : block_name                                                    \
     if(x42_TT1 > `EXPL_THRESHOLD)                                         \
         x42_Ccg1 =  x42_CcgSat;                                                \
     else                                                              \
-        x42_Ccg1 =  1.0 / x42_Cnon * ln(1.0 + `lexp(x42_TT1));                      \
+        x42_Ccg1 =  1.0 / x42_Cnon * ln(1.0 + lexp(x42_TT1));                      \
     \
     x42_r1cf =  0.5 *                                                      \
                 min((Hc) / ((Hg) + (Tox)), ((Hg) + (Tox)) / (Hc));     \
