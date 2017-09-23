@@ -41,6 +41,22 @@
 //     ___Professor in Graduate School _______
 // ********************************************************
 
+// Clamped Exponential Function
+analog function real lexp;
+   input x;
+   real x;
+
+   begin
+      if (x > `EXPL_THRESHOLD) begin
+         lexp  =  `MAX_EXPL * (1.0 + x - `EXPL_THRESHOLD);
+      end else if (x < -`EXPL_THRESHOLD) begin
+         lexp  =  `MIN_EXPL;
+      end else begin
+         lexp  =  exp(x);
+      end
+   end
+endfunction
+
 // Clamped log Function
 analog function real lln;
    input x;
@@ -1675,9 +1691,9 @@ analog begin
       end else begin
          U0_i  =  U0_i * (1.0 - UP_i); 
       end
-      UA_i  =  UA_i + AUA * `lexp(-Leff / BUA); 
-      UD_i  =  UD_i + AUD * `lexp(-Leff / BUD); 
-      EU_i  =  EU_i + AEU * `lexp(-Leff / BEU);
+      UA_i  =  UA_i + AUA * lexp(-Leff / BUA); 
+      UD_i  =  UD_i + AUD * lexp(-Leff / BUD); 
+      EU_i  =  EU_i + AEU * lexp(-Leff / BEU);
       
       if (ASYMMOD != 0) begin
          if (LPAR > 0.0) begin
@@ -1685,19 +1701,19 @@ analog begin
          end else begin
             U0R_i  =  U0R_i * (1.0 - UPR_i); 
          end
-         UAR_i  =  UAR_i + AUAR * `lexp(-Leff / BUAR);
-         UDR_i  =  UDR_i + AUDR * `lexp(-Leff / BUDR);
-         EUR_i  =  EUR_i + AEUR * `lexp(-Leff / BEUR);
+         UAR_i  =  UAR_i + AUAR * lexp(-Leff / BUAR);
+         UDR_i  =  UDR_i + AUDR * lexp(-Leff / BUDR);
+         EUR_i  =  EUR_i + AEUR * lexp(-Leff / BEUR);
       end
          
       if (RDSMOD == 1) begin 
-         RSW_i  =  RSW_i + ARSW * `lexp(-Leff / BRSW); 
-         RDW_i  =  RDW_i + ARDW * `lexp(-Leff / BRDW); 
+         RSW_i  =  RSW_i + ARSW * lexp(-Leff / BRSW); 
+         RDW_i  =  RDW_i + ARDW * lexp(-Leff / BRDW); 
       end else begin 
-         RDSW_i  =  RDSW_i + ARDSW * `lexp(-Leff / BRDSW); 
+         RDSW_i  =  RDSW_i + ARDSW * lexp(-Leff / BRDSW); 
       end 
       
-      PCLM_i  =  PCLM_i + APCLM * `lexp(-Leff / BPCLM);
+      PCLM_i  =  PCLM_i + APCLM * lexp(-Leff / BPCLM);
       if (ASYMMOD != 0) begin
          PCLMR_i  =  PCLMR_i + APCLMR * pow(Leff, -BPCLMR);
       end
@@ -1707,28 +1723,28 @@ analog begin
          MEXPR_i  =  MEXPR_i + AMEXPR * pow(Leff, -BMEXPR);
       end
 
-      PTWG_i  =  PTWG_i + APTWG * `lexp(-Leff / BPTWG); 
+      PTWG_i  =  PTWG_i + APTWG * lexp(-Leff / BPTWG); 
       if (ASYMMOD != 0) begin
-         PTWGR_i  =  PTWGR_i + APTWG * `lexp(-Leff / BPTWG);
+         PTWGR_i  =  PTWGR_i + APTWG * lexp(-Leff / BPTWG);
       end
 
-      VSAT_i    =  VSAT_i + AVSAT * `lexp(-Leff / BVSAT); 
-      VSAT1_i   =  VSAT1_i + AVSAT1 * `lexp(-Leff / BVSAT1);
+      VSAT_i    =  VSAT_i + AVSAT * lexp(-Leff / BVSAT); 
+      VSAT1_i   =  VSAT1_i + AVSAT1 * lexp(-Leff / BVSAT1);
       if (ASYMMOD != 0) begin
-         VSAT1R_i =  VSAT1R_i + AVSAT1 * `lexp(-Leff / BVSAT1);
+         VSAT1R_i =  VSAT1R_i + AVSAT1 * lexp(-Leff / BVSAT1);
       end
 
-      PSAT_i    =  PSAT_i + APSAT * `lexp(-Leff / BPSAT);
-      PSATCV_i  =  PSATCV_i + APSATCV * `lexp(-Leff / BPSATCV); 
-      VSATCV_i  =  VSATCV_i + AVSATCV * `lexp(-LeffCV / BVSATCV);
+      PSAT_i    =  PSAT_i + APSAT * lexp(-Leff / BPSAT);
+      PSATCV_i  =  PSATCV_i + APSATCV * lexp(-Leff / BPSATCV); 
+      VSATCV_i  =  VSATCV_i + AVSATCV * lexp(-LeffCV / BVSATCV);
       
       // Scaling for DITS Parameters
-      DVTP0_i   =  DVTP0 + ADVTP0 * `lexp(-Leff / BDVTP0);
-      DVTP1_i   =  DVTP1 + ADVTP1 * `lexp(-Leff / BDVTP1);
+      DVTP0_i   =  DVTP0 + ADVTP0 * lexp(-Leff / BDVTP0);
+      DVTP1_i   =  DVTP1 + ADVTP1 * lexp(-Leff / BDVTP1);
       
       // Geometrical Scaling for Toxeff / Charge Centroid Tcen
       if (QMTCENCV_i > 0.0 || QMTCENCVA_i > 0.0) begin
-         MTcen  =  1.0 + AQMTCEN * `lexp(- (2.0 * Ach / Weff_UFCM) / BQMTCEN);
+         MTcen  =  1.0 + AQMTCEN * lexp(- (2.0 * Ach / Weff_UFCM) / BQMTCEN);
          Tcen0  =  (2.0 * Ach / Weff_UFCM ) * MTcen;
       end
       
@@ -2191,7 +2207,7 @@ analog begin
          prsd_total  =  Prsd * NFIN + PRSDEND;
          lt          =  sqrt(RHOC * arsd_total / (rhorsd * prsd_total));
          alpha       =  LRSD / lt;
-         T0y          =  `lexp(alpha + alpha);
+         T0y          =  lexp(alpha + alpha);
 
          if (SDTERM == 1.0) begin
             eta  =  rhorsd * lt / RHOC;
@@ -2380,8 +2396,8 @@ analog begin
       T0y  =  TOXG * TOXG;
       T1y  =  TOXG * POXEDGE_i;
       T2y =  T1y * T1y;
-      Toxratio      =  `lexp(NTOX_i * lln(TOXREF / TOXG)) / T0y;
-      Toxratioedge  =  `lexp(NTOX_i * lln(TOXREF / T1y)) / T2y;
+      Toxratio      =  lexp(NTOX_i * lln(TOXREF / TOXG)) / T0y;
+      Toxratioedge  =  lexp(NTOX_i * lln(TOXREF / T1y)) / T2y;
       igsd_mult0    =  Weff0 * Aechvb * Toxratioedge;
 
       if (TNOM < -`P_CELSIUS0) begin 
@@ -2413,7 +2429,7 @@ analog begin
       Eg       =  BG0SUB - TBGASUB * DevTemp * DevTemp / (DevTemp + TBGBSUB);
       Eg0      =  BG0SUB - TBGASUB * Tnom * Tnom / (Tnom + TBGBSUB);
       T1       =  (DevTemp / 300.15) * sqrt(DevTemp / 300.15);
-      ni       =  NI0SUB * T1 * `lexp(BG0SUB / (2.0 * `KboQ * 300.15) - Eg / (2.0 * Vtm));
+      ni       =  NI0SUB * T1 * lexp(BG0SUB / (2.0 * `KboQ * 300.15) - Eg / (2.0 * Vtm));
       Nc       =  NC0SUB * T1;
       ThetaSS  =  hypsmooth(1.0 + TSS_i * delTemp - 1.0e-6, 1.0e-3);
       
@@ -2425,8 +2441,8 @@ analog begin
       E1       =  4.0 * E0;
       E1prime  =  4.0 * E0prime;
       T1       =  gprime * mdprime / (gfactor * md);
-      gam0     =  1.0 + T1 * `lexp((E0 - E0prime) / kT);
-      gam1     =  gam0 + `lexp((E0 - E1) / kT) + T1 * `lexp((E0 - E1prime) / kT);
+      gam0     =  1.0 + T1 * lexp((E0 - E0prime) / kT);
+      gam1     =  gam0 + lexp((E0 - E1) / kT) + T1 * lexp((E0 - E1prime) / kT);
       T2       =  -Vtm * lln(gfactor * md / (`M_PI * `HBAR * `HBAR * Nc) * kT / (2.0 * Ach / Weff_UFCM) * gam1);
       dvch_qm  =  QMFACTOR_i * (E0 / `q + T2);
       
@@ -2549,7 +2565,7 @@ analog begin
       ALPHA1_t    =  ALPHA1_i + hypmax(ALPHA11 * delTemp, -ALPHA1_i, 1.0e-6);
       ALPHAII0_t  =  ALPHAII0_i + hypmax(ALPHAII01 * delTemp, -ALPHAII0_i, 1.0e-25);  
       ALPHAII1_t  =  ALPHAII1_i + hypmax(ALPHAII11 * delTemp, -ALPHAII1_i, 1.0e-20);   
-      igtemp      =  `lexp(IGT_i * lln(TRatio));
+      igtemp      =  lexp(IGT_i * lln(TRatio));
       igsd_mult   =  igsd_mult0 * igtemp;
 
       if (BULKMOD != 0) begin
@@ -2569,22 +2585,22 @@ analog begin
          
          T0        =  Eg0 / Vtm0 - Eg / Vtm;
          T1        =  lln(TRatio);
-         T3        =  `lexp((T0 + XTIS * T1) / NJS);
+         T3        =  lexp((T0 + XTIS * T1) / NJS);
          JSS_t     =  JSS * T3;
          JSWS_t    =  JSWS * T3;
          JSWGS_t   =  JSWGS * T3;
 
-         T3        =  `lexp((T0 + XTID * T1) / NJD);
+         T3        =  lexp((T0 + XTID * T1) / NJD);
          JSD_t     =  JSD * T3;
          JSWD_t    =  JSWD * T3;
          JSWGD_t   =  JSWGD * T3;
 
-         JTSS_t     =  JTSS * `lexp(Eg0 * XTSS * (TRatio - 1.0) / Vtm);
-         JTSD_t     =  JTSD * `lexp(Eg0 * XTSD * (TRatio - 1.0) / Vtm);
-         JTSSWS_t   =  JTSSWS * `lexp(Eg0 * XTSSWS * (TRatio - 1.0) / Vtm);
-         JTSSWD_t   =  JTSSWD * `lexp(Eg0 * XTSSWD * (TRatio - 1.0) / Vtm);
-         JTSSWGS_t  =  JTSSWGS * (sqrt(JTWEFF / Weff0) + 1.0) * `lexp(Eg0 * XTSSWGS * (TRatio - 1.0) / Vtm);
-         JTSSWGD_t  =  JTSSWGD * (sqrt(JTWEFF / Weff0) + 1.0) * `lexp(Eg0 * XTSSWGD * (TRatio - 1.0) / Vtm);
+         JTSS_t     =  JTSS * lexp(Eg0 * XTSS * (TRatio - 1.0) / Vtm);
+         JTSD_t     =  JTSD * lexp(Eg0 * XTSD * (TRatio - 1.0) / Vtm);
+         JTSSWS_t   =  JTSSWS * lexp(Eg0 * XTSSWS * (TRatio - 1.0) / Vtm);
+         JTSSWD_t   =  JTSSWD * lexp(Eg0 * XTSSWD * (TRatio - 1.0) / Vtm);
+         JTSSWGS_t  =  JTSSWGS * (sqrt(JTWEFF / Weff0) + 1.0) * lexp(Eg0 * XTSSWGS * (TRatio - 1.0) / Vtm);
+         JTSSWGD_t  =  JTSSWGD * (sqrt(JTWEFF / Weff0) + 1.0) * lexp(Eg0 * XTSSWGD * (TRatio - 1.0) / Vtm);
 
          // All NJT's Smoothed to 0.01 to Prevent Divide-by-zero / Negative Values
          NJTS_t      =  hypsmooth(NJTS * (1.0 + TNJTS * (TRatio-1.0)) - 0.01, 1.0e-3) + 0.01;
@@ -2651,16 +2667,16 @@ analog begin
          Isbs  =  ASEJ * JSS_t + PSEJ * JSWS_t + TFIN * NFINtotal * JSWGS_t;
          if (Isbs > 0.0) begin
             Nvtms     =  Vtm * NJS;
-            XExpBVS   =  `lexp(-BVS / Nvtms) * XJBVS;
+            XExpBVS   =  lexp(-BVS / Nvtms) * XJBVS;
             T2        =  max(IJTHSFWD / Isbs, 10.0);
             Tb        =  1.0 + T2 - XExpBVS;
             VjsmFwd   =  Nvtms * lln(0.5 * (Tb + sqrt(Tb * Tb + 4.0 * XExpBVS)));
-            T0        =  `lexp(VjsmFwd / Nvtms);
+            T0        =  lexp(VjsmFwd / Nvtms);
             IVjsmFwd  =  Isbs * (T0 - XExpBVS / T0 + XExpBVS - 1.0);
             SslpFwd   =  Isbs * (T0 + XExpBVS / T0) / Nvtms;
             T2        =  hypsmooth(IJTHSREV / Isbs - 10.0, 1.0e-3) + 10.0;
             VjsmRev   =  -BVS - Nvtms * lln((T2 - 1.0) / XJBVS);
-            T1        =  XJBVS * `lexp(-(BVS + VjsmRev) / Nvtms);
+            T1        =  XJBVS * lexp(-(BVS + VjsmRev) / Nvtms);
             IVjsmRev  =  Isbs * (1.0 + T1);
             SslpRev   =  -Isbs * T1 / Nvtms;
          end
@@ -2669,16 +2685,16 @@ analog begin
          Isbd  =  ADEJ * JSD_t + PDEJ * JSWD_t + TFIN * NFINtotal * JSWGD_t;
          if (Isbd > 0.0) begin
             Nvtmd     =  Vtm * NJD;
-            XExpBVD   =  `lexp(-BVD / Nvtmd) * XJBVD;
+            XExpBVD   =  lexp(-BVD / Nvtmd) * XJBVD;
             T2        =  max(IJTHDFWD / Isbd, 10.0);
             Tb        =  1.0 + T2 - XExpBVD;
             VjdmFwd   =  Nvtmd * lln(0.5 * (Tb + sqrt(Tb * Tb + 4.0 * XExpBVD)));
-            T0        =  `lexp(VjdmFwd / Nvtmd);
+            T0        =  lexp(VjdmFwd / Nvtmd);
             IVjdmFwd  =  Isbd * (T0 - XExpBVD / T0 + XExpBVD - 1.0);
             DslpFwd   =  Isbd * (T0 + XExpBVD / T0) / Nvtmd;
             T2        =  hypsmooth(IJTHDREV / Isbd - 10.0, 1.0e-3) + 10.0;
             VjdmRev   =  -BVD - Nvtmd * lln((T2 - 1.0) / XJBVD);
-            T1        =  XJBVD * `lexp(-(BVD + VjdmRev) / Nvtmd);
+            T1        =  XJBVD * lexp(-(BVD + VjdmRev) / Nvtmd);
             IVjdmRev  =  Isbd * (1.0 + T1);
             DslpRev   =  -Isbd * T1 / Nvtmd;
          end
@@ -2695,7 +2711,7 @@ analog begin
       // Generation-Recombination Current
       T0        =  Eg / Vtm * (TRatio - 1.0);
       T1        =  T0 / NTGEN_i;
-      igentemp  =  `lexp(T1);
+      igentemp  =  lexp(T1);
    
    end  //  End of temperature dependent calculations
    
@@ -3003,7 +3019,7 @@ analog begin
 
       T0   = pow(Vdseff, 2.0) / 6.25e-4;   // pow(Vdseff,2.0) / pow(25e-3, 2.0)
       if (CHARGEWF != 0.0)    
-         qia2 = 0.5 * (qis + qid) + CHARGEWF * (1.0 - `lexp(-T0)) * 0.5 * dqi;   
+         qia2 = 0.5 * (qis + qid) + CHARGEWF * (1.0 - lexp(-T0)) * 0.5 * dqi;   
       else
          qia2 = 0.5 * (qis + qid);
 
@@ -3096,9 +3112,9 @@ analog begin
       // Current Degradation Factor Due to Velocity Saturation
       Esat1   =  2.0 * VSAT1_a / ueff; 
       Esat1L  =  Esat1 * Leff; 
-      T0      =  `lexp(PSAT_i * lln(dqi / Esat1L));
-      Ta      =  (1.0 + `lexp(1.0 / PSAT_i * lln(DELTAVSAT_i))); 
-      Dvsat   =  (1.0 + `lexp(1.0 / PSAT_i * lln(DELTAVSAT_i + T0))) / Ta; 
+      T0      =  lexp(PSAT_i * lln(dqi / Esat1L));
+      Ta      =  (1.0 + lexp(1.0 / PSAT_i * lln(DELTAVSAT_i))); 
+      Dvsat   =  (1.0 + lexp(1.0 / PSAT_i * lln(DELTAVSAT_i + T0))) / Ta; 
       Dvsat   =  Dvsat + 0.5 * PTWG_a * qia * dqi * dqi;
 
       // Non-Saturation Effect
@@ -3112,7 +3128,7 @@ analog begin
       // Lateral Non-uniform doping effect (IV-CV Vth shift) factor
       if (K0_t != 0) begin
          T1    =  K0_t / (max(0, K0SI_t + K0SISAT_t * dqi * dqi) * qia + 2.0 * nVtm);
-         Mnud  =  `lexp(-T1);
+         Mnud  =  lexp(-T1);
       end else begin
          Mnud  =  1.0;
       end
@@ -3122,16 +3138,16 @@ analog begin
          T0      =  hypsmooth((K2_t + K2SAT_t * vdsx), 1.0e-6);
          T1      =  T0 / (max(0, K2SI_t + K2SISAT_t * dqi * dqi) * qia + 2.0 * nVtm);
          T3      =  sqrt(PHIBE_i - veseff) - sqrt(PHIBE_i);
-         Mob     =  `lexp(- T1 * T3);
+         Mob     =  lexp(- T1 * T3);
       end else
          Mob  =  1.0;
 
       // Velocity Saturation Factor for C-V
       EsatCV   =  2.0 * VSATCV_t * Dmob_cv / u0_a; 
       EsatCVL  =  EsatCV * LeffCV; 
-      T0       =  `lexp(PSATCV_i * lln(dqi / EsatCVL)); 
-      Ta       =  (1.0 + `lexp(1.0 / PSATCV_i * lln(DELTAVSATCV_i))); 
-      DvsatCV  =  (1.0 + `lexp(1.0 / PSATCV_i * lln(DELTAVSATCV_i + T0))) / Ta; 
+      T0       =  lexp(PSATCV_i * lln(dqi / EsatCVL)); 
+      Ta       =  (1.0 + lexp(1.0 / PSATCV_i * lln(DELTAVSATCV_i))); 
+      DvsatCV  =  (1.0 + lexp(1.0 / PSATCV_i * lln(DELTAVSATCV_i + T0))) / Ta; 
 
       // Channel Length Modulation factor for C-V
       if (PCLMCV_i != 0) begin
@@ -3219,7 +3235,7 @@ analog begin
             Iii  =  0.0;
          else begin
             T1   =  -BETA0_t / (diffVds + 1.0e-30);
-            Iii  =  T0 * diffVds * ids * `lexp(T1);
+            Iii  =  T0 * diffVds * ids * lexp(T1);
          end
       end else if (IIMOD == 2) begin    //End of IIMOD=1
          ALPHAII  =  (ALPHAII0_t + ALPHAII1_t * Leff) / Leff;
@@ -3237,7 +3253,7 @@ analog begin
             Vdiff    =  vds - Vdsatii;
             T0       =  BETAII2_i + BETAII1_i * Vdiff + BETAII0_i * Vdiff * Vdiff;
             T1       =  sqrt(T0 * T0 + 1.0e-10);
-            Ratio    =  -hypmax( -ALPHAII * `lexp(Vdiff / T1), -10.0, IIMOD2CLAMP3);
+            Ratio    =  -hypmax( -ALPHAII * lexp(Vdiff / T1), -10.0, IIMOD2CLAMP3);
             Iii      =  Ratio * ids;
          end
       end  // End of IIMOD=2      
@@ -3254,11 +3270,11 @@ analog begin
       if (IGBMOD != 0) begin
          // Igbinv
          T1      =  (qia - EIGBINV_i) / NIGBINV_i / Vtm;
-         Vaux_Igbinv  =  NIGBINV_i * Vtm * lln(1.0 + `lexp(T1));
+         Vaux_Igbinv  =  NIGBINV_i * Vtm * lln(1.0 + lexp(T1));
          T2      =  AIGBINV_t - BIGBINV_i * qia;
          T3      =  1.0 + CIGBINV_i * qia;
          T4      =  -9.82222e11 * TOXG * T2 * T3;
-         T5      =  `lexp(T4);
+         T5      =  lexp(T4);
          T6      =  3.75956e-7;
          igbinv  =  Weff0 * Leff * T6 * Toxratio * vge * Vaux_Igbinv * T5;
          igbinv  =  igbinv * igtemp;
@@ -3267,7 +3283,7 @@ analog begin
          vfbzb  =  deltaPhi - (Eg / 2.0) - phib;
          T0     =  vfbzb - vge;
          T1     =  T0 / NIGBACC_i / Vtm;
-         Vaux_Igbacc  =  NIGBACC_i * Vtm * lln(1.0 + `lexp(T1));
+         Vaux_Igbacc  =  NIGBACC_i * Vtm * lln(1.0 + lexp(T1));
          if (BULKMOD != 0) begin
             Voxacc  =  qi_acc_for_QM;
          end else begin
@@ -3279,7 +3295,7 @@ analog begin
          T2      =  AIGBACC_t - BIGBACC_i * Voxacc;
          T3      =  1.0 + CIGBACC_i * Voxacc;
          T4      =  -7.45669e11 * TOXG * T2 * T3;
-         T5      =  `lexp(T4);
+         T5      =  lexp(T4);
          T6      =  4.97232e-7;
          igbacc  =  Weff0 * Leff * T6 * Toxratio * vge * Vaux_Igbacc * T5;
          igbacc  =  igbacc * igtemp;
@@ -3291,14 +3307,14 @@ analog begin
          T1    =  AIGC_t - BIGC_i * qia;
          T2    =  1.0 + CIGC_i * qia;
          T3    =  -Bechvb * TOXG * T1 * T2;
-         T4    =  qia * `lexp(T3);
+         T4    =  qia * lexp(T3);
          T5    =  (vge + 0.5 * vdsx + 0.5 * (ves_jct + ved_jct));
          igc0  =  Weff0 * Leff * Aechvb * Toxratio * T4 * T5 * igtemp;
          
          // Gate-Current Partitioning
          Vdseffx  =  sqrt(Vdseff * Vdseff + 0.01) - 0.1;
          T1       =  PIGCD_i * Vdseffx;
-         T1_exp   =  `lexp(-T1);
+         T1_exp   =  lexp(-T1);
          T3       =  T1 + T1_exp - 1.0 + 1.0e-4;
          T4       =  1.0 - (T1 + 1.0) * T1_exp + 1.0e-4;
          T5       =  T1 * T1 + 2.0e-4;
@@ -3318,7 +3334,7 @@ analog begin
       end
          T2  =  1.0 + CIGS_i * vgs_eff;
          T3  =  -Bechvb * TOXG * POXEDGE_i * T1 * T2;
-         T4  =  `lexp(T3);
+         T4  =  lexp(T3);
          if (sigvds > 0.0) begin
             igs  =  igsd_mult * DLCIGS * vgs_noswap * vgs_eff * T4;
          end else begin
@@ -3338,7 +3354,7 @@ analog begin
       end
          T2  =  1.0 + CIGD_i * vgd_eff;
          T3  =  -Bechvb * TOXG * POXEDGE_i * T1 * T2;
-         T4  =  `lexp(T3);
+         T4  =  lexp(T3);
 
          if (sigvds > 0.0) begin
             igd  =  igsd_mult * DLCIGD * vgd_noswap * vgd_eff * T4;
@@ -3360,14 +3376,14 @@ analog begin
             T1  =  (-vgd_noswap - EGIDL_i + vfbsd) / T0;
             T1  =  hypsmooth(T1, 1.0e-2);
             T2  =  BGIDL_t / (T1 + 1.0e-3);
-            T3  =  `lexp(PGIDL_i * lln(T1));
+            T3  =  lexp(PGIDL_i * lln(T1));
             if (BULKMOD != 0) begin
                 T4   =  -ved_jct*ved_jct*ved_jct;
                 T4a  =  CGIDL_i + abs(T4) + 1.0e-5;
                 T5   =  hypsmooth(T4/T4a, 1.0e-6) - 1.0e-6;
-                T6   =  AGIDL_i * Weff0 * T3 * `lexp(-T2) * T5;
+                T6   =  AGIDL_i * Weff0 * T3 * lexp(-T2) * T5;
             end else begin
-                T6   =  AGIDL_i * Weff0 * T3 * `lexp(-T2) * vds_noswap;
+                T6   =  AGIDL_i * Weff0 * T3 * lexp(-T2) * vds_noswap;
             end
          end
 
@@ -3384,14 +3400,14 @@ analog begin
             T1  =  (-vgs_noswap - EGISL_i + vfbsd) / T0;
             T1  =  hypsmooth(T1, 1.0e-2);
             T2  =  BGISL_t / (T1 + 1.0e-3);
-            T3  =  `lexp(PGISL_i * lln(T1));
+            T3  =  lexp(PGISL_i * lln(T1));
             if (BULKMOD != 0) begin
                 T4   =  -ves_jct * ves_jct * ves_jct;
                 T4a  =  CGISL_i + abs(T4) + 1.0e-5;
                 T5   =  hypsmooth(T4/T4a, 1.0e-6) - 1.0e-6;
-                T6   =  AGISL_i * Weff0 * T3 * `lexp(-T2) * T5;
+                T6   =  AGISL_i * Weff0 * T3 * lexp(-T2) * T5;
             end else
-                T6   =  AGISL_i * Weff0 * T3 * `lexp(-T2) * (-vds_noswap);
+                T6   =  AGISL_i * Weff0 * T3 * lexp(-T2) * (-vds_noswap);
          end
 
          if (sigvds > 0.0) begin
@@ -3408,14 +3424,14 @@ analog begin
          if (Isbs > 0.0) begin
             if (ves_jct < VjsmRev) begin
                 T0   =  ves_jct / Nvtms;
-                T1   =  `lexp(T0) - 1.0;
+                T1   =  lexp(T0) - 1.0;
                 T2   =  IVjsmRev + SslpRev * (ves_jct - VjsmRev);
                 Ies  =  T1 * T2;
             end else if (ves_jct <= VjsmFwd) begin
                 T0   =  ves_jct / Nvtms;
                 T1   =  (BVS + ves_jct) / Nvtms;
-                T2   =  `lexp(-T1);
-                Ies  =  Isbs * (`lexp(T0) + XExpBVS - 1.0 - XJBVS * T2);
+                T2   =  lexp(-T1);
+                Ies  =  Isbs * (lexp(T0) + XExpBVS - 1.0 - XJBVS * T2);
             end else begin
                 Ies  =  IVjsmFwd + SslpFwd * (ves_jct - VjsmFwd);
             end
@@ -3427,11 +3443,11 @@ analog begin
          if (JTSS_t > 0.0) begin
             if ((VTSS - ves_jct) < (VTSS * 1.0e-3)) begin
                 T0   =  -ves_jct / Vtm0 / NJTS_t;
-                T1   =  `lexp(T0 * 1.0e3) - 1.0;
+                T1   =  lexp(T0 * 1.0e3) - 1.0;
                 Ies  =  Ies - ASEJ * JTSS_t * T1;
             end else begin
                 T0   =  -ves_jct / Vtm0 / NJTS_t;
-                T1   =  `lexp(T0 * VTSS / (VTSS - ves_jct)) - 1.0;
+                T1   =  lexp(T0 * VTSS / (VTSS - ves_jct)) - 1.0;
                 Ies  =  Ies - ASEJ * JTSS_t * T1;
             end
          end
@@ -3439,11 +3455,11 @@ analog begin
          if (JTSSWS_t > 0.0) begin
             if ((VTSSWS - ves_jct) < (VTSSWS * 1.0e-3)) begin
                 T0   =  -ves_jct / Vtm0 / NJTSSW_t;
-                T1   =  `lexp(T0 * 1.0e3) - 1.0;
+                T1   =  lexp(T0 * 1.0e3) - 1.0;
                 Ies  =  Ies - PSEJ * JTSSWS_t * T1;
             end else begin
                 T0   =  -ves_jct / Vtm0 / NJTSSW_t;
-                T1   =  `lexp(T0 * VTSSWS / (VTSSWS - ves_jct)) - 1.0;
+                T1   =  lexp(T0 * VTSSWS / (VTSSWS - ves_jct)) - 1.0;
                 Ies  =  Ies - PSEJ * JTSSWS_t * T1;
             end
          end
@@ -3451,11 +3467,11 @@ analog begin
          if (JTSSWGS_t > 0.0) begin
             if ((VTSSWGS - ves_jct) < (VTSSWGS * 1.0e-3)) begin
                 T0   =  -ves_jct / Vtm0 / NJTSSWG_t;
-                T1   =  `lexp(T0 * 1.0e3) - 1.0;
+                T1   =  lexp(T0 * 1.0e3) - 1.0;
                 Ies  =  Ies - Weff0 * NFINtotal * JTSSWGS_t * T1;
             end else begin
                 T0   =  -ves_jct / Vtm0 / NJTSSWG_t;
-                T1   =  `lexp(T0 * VTSSWGS / (VTSSWGS - ves_jct)) - 1.0;
+                T1   =  lexp(T0 * VTSSWGS / (VTSSWGS - ves_jct)) - 1.0;
                 Ies  =  Ies - Weff0 * NFINtotal * JTSSWGS_t * T1;
             end
          end
@@ -3464,14 +3480,14 @@ analog begin
          if (Isbd > 0.0) begin
             if (ved_jct < VjdmRev) begin
                 T0   =  ved_jct / Nvtmd;
-                T1   =  `lexp(T0) - 1.0;
+                T1   =  lexp(T0) - 1.0;
                 T2   =  IVjdmRev + DslpRev * (ved_jct - VjdmRev);
                 Ied  =  T1 * T2;
             end else if (ved_jct <= VjdmFwd) begin
                 T0   =  ved_jct / Nvtmd;
                 T1   =  (BVD + ved_jct) / Nvtmd;
-                T2   =  `lexp(-T1);
-                Ied  =  Isbd * (`lexp(T0) + XExpBVD - 1.0 - XJBVD * T2);
+                T2   =  lexp(-T1);
+                Ied  =  Isbd * (lexp(T0) + XExpBVD - 1.0 - XJBVD * T2);
             end else
                 Ied  =  IVjdmFwd + DslpFwd * (ved_jct - VjdmFwd);
          end else
@@ -3481,33 +3497,33 @@ analog begin
          if (JTSD_t > 0.0) begin
             if ((VTSD - ved_jct) < (VTSD * 1.0e-3)) begin
                 T0 =  -ved_jct / Vtm0 / NJTSD_t;
-                T1 =  `lexp(T0 * 1.0e3) - 1.0;
+                T1 =  lexp(T0 * 1.0e3) - 1.0;
                 Ied  =  Ied - ADEJ * JTSD_t * T1;
             end else begin
                 T0   =  -ved_jct / Vtm0 / NJTSD_t;
-                T1   =  `lexp(T0 * VTSD/ (VTSD - ved_jct)) - 1.0;
+                T1   =  lexp(T0 * VTSD/ (VTSD - ved_jct)) - 1.0;
                 Ied  =  Ied - ADEJ * JTSD_t * T1;
             end
          end
          if (JTSSWD_t > 0.0) begin
             if ((VTSSWD - ved_jct) < (VTSSWD * 1.0e-3)) begin
                 T0   =  -ved_jct / Vtm0 / NJTSSWD_t;
-                T1   =  `lexp(T0 * 1.0e3) - 1.0;
+                T1   =  lexp(T0 * 1.0e3) - 1.0;
                 Ied  =  Ied - PDEJ * JTSSWD_t * T1;
             end else begin
                 T0   =  -ved_jct / Vtm0 / NJTSSWD_t;
-                T1   =  `lexp(T0 * VTSSWD / (VTSSWD - ved_jct)) - 1.0;
+                T1   =  lexp(T0 * VTSSWD / (VTSSWD - ved_jct)) - 1.0;
                 Ied  =  Ied - PDEJ * JTSSWD_t * T1;
             end
          end
          if (JTSSWGD_t > 0.0) begin
             if ((VTSSWGD - ved_jct) < (VTSSWGD * 1.0e-3)) begin
                 T0   =  -ved_jct / Vtm0 / NJTSSWGD_t;
-                T1   =  `lexp(T0 * 1.0e3) - 1.0;
+                T1   =  lexp(T0 * 1.0e3) - 1.0;
                 Ied  =  Ied - Weff0 * NFINtotal * JTSSWGD_t * T1;
             end else begin
                 T0   =  -ved_jct / Vtm0 / NJTSSWGD_t;
-                T1   =  `lexp(T0 * VTSSWGD / (VTSSWGD - ved_jct)) - 1.0;
+                T1   =  lexp(T0 * VTSSWGD / (VTSSWGD - ved_jct)) - 1.0;
                 Ied  =  Ied - Weff0 * NFINtotal * JTSSWGD_t * T1;
             end
          end
