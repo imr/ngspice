@@ -27,6 +27,9 @@
 #include "ngspice/CUSPICE/cuniinteg.cuh"
 #include "vsrcdefs.h"
 
+#ifndef M_PI
+# define M_PI       3.14159265358979323846
+#endif
 
 
 /*** STUFF NEEDED BECAUSE OF SOME INCLUSIONS IN NGSPICE THAT ARE NOT AVAILABLE IN CUDA ***/
