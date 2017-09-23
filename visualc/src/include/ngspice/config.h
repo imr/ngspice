@@ -12,7 +12,7 @@
 /* #undef CAPBYPASS */
 
 /* The CIDER enhancements */
-#define CIDER 1
+/* #undef CIDER */
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 /* #undef CLOSEDIR_VOID */
@@ -546,7 +546,7 @@
 #define WITH_PSS /**/
 
 /* The xspice enhancements */
-#define XSPICE 1
+/* undef XSPICE */
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #define X_DISPLAY_MISSING 1
