@@ -1109,7 +1109,7 @@ double $(module)_d_$(function) (<admst:join select="variable[input='yes']" separ
 #endif
 
 #include &lt;stdio.h&gt;
-#include &quot;$(module).analogfunction.h&quot;
+#include &quot;%(attribute[name='ngspicename']/value).analogfunction.h&quot;
 #include &lt;math.h&gt;
 
       <admst:text format="\n"/>
