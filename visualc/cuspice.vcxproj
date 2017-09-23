@@ -33,6 +33,7 @@
     <Keyword>Win32Proj</Keyword>
     <CudaToolkitCustomDir>
     </CudaToolkitCustomDir>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -176,7 +177,7 @@
       <Keep>false</Keep>
       <KeepDir>$(CudaIntDir)</KeepDir>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_50,sm_50</CodeGeneration>
       <GPUDebugInfo>true</GPUDebugInfo>
       <Defines>COMPILED_BY_NVCC</Defines>
     </CudaCompile>
@@ -205,13 +206,13 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;KLU_REAL.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;nvcuvid.lib;OpenCL.lib;cusparse.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -250,9 +251,15 @@
       <Keep>false</Keep>
       <KeepDir>$(CudaIntDir)</KeepDir>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_50,sm_50</CodeGeneration>
       <GPUDebugInfo>false</GPUDebugInfo>
       <Defines>COMPILED_BY_NVCC</Defines>
+      <UseHostDefines>true</UseHostDefines>
+      <Optimization>O2</Optimization>
+      <Runtime>MT</Runtime>
+      <RuntimeChecks>Default</RuntimeChecks>
+      <TypeInfo>false</TypeInfo>
+      <Warning>W4</Warning>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
@@ -316,8 +323,9 @@
       <Keep>false</Keep>
       <KeepDir>$(CudaIntDir)</KeepDir>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_50,sm_50</CodeGeneration>
       <Defines>COMPILED_BY_NVCC</Defines>
+      <GPUDebugInfo>true</GPUDebugInfo>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
@@ -340,7 +348,8 @@
       </ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
@@ -350,7 +359,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;KLU_COMPLEX.lib;KLU_REAL.lib;cuda.lib;cudadevrt.lib;cudart.lib;cudart_static.lib;nvcuvid.lib;OpenCL.lib;cusparse.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <HeapReserveSize>0</HeapReserveSize>
       <HeapCommitSize>0</HeapCommitSize>
@@ -387,7 +396,7 @@
       <Keep>false</Keep>
       <KeepDir>$(CudaIntDir)</KeepDir>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_50,sm_50</CodeGeneration>
       <Defines>COMPILED_BY_NVCC</Defines>
     </CudaCompile>
   </ItemDefinitionGroup>
@@ -461,7 +470,7 @@
       <Keep>false</Keep>
       <KeepDir>$(CudaIntDir)</KeepDir>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_50,sm_50</CodeGeneration>
       <Defines>COMPILED_BY_NVCC</Defines>
     </CudaCompile>
   </ItemDefinitionGroup>
@@ -533,7 +542,7 @@
       <Keep>false</Keep>
       <KeepDir>$(CudaIntDir)</KeepDir>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_50,sm_50</CodeGeneration>
       <Defines>COMPILED_BY_NVCC</Defines>
     </CudaCompile>
   </ItemDefinitionGroup>
