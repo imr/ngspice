@@ -37,6 +37,7 @@ BUILT_SOURCES = \\
 	$(module).c	\\
 	$(module).hxx	\\
 	$(module)acld.c	\\
+	$(module).analogfunction.c \\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
 	$(module)del.c	\\
@@ -62,7 +63,6 @@ lib$(module)_la_SOURCES = 	\\
 CLEANFILES = \\
 	\$(BUILT_SOURCES)	\\
 	$(module)noise.c	\\
-	$(module).analogfunction.c \\
 	.$(module).va.adms \\
 	.adms.implicit.xml \\
 	.interface.xml \\
@@ -85,7 +85,7 @@ DISTCLEANFILES = Makefile.am \\
 	Makefile.in
 
 \%.c \%.hxx \\
-	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
+	\%acld.c \%.analogfunction.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
 	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
 	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
  : \$(srcdir)/admsva/\%.va \\

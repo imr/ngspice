@@ -2018,7 +2018,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         <admst:apply-templates select="." match="ddx"/>
         <admst:variable name="dargs" select="$dargs$ep"/>
       </admst:for-each>
-      <admst:variable name="e" select="$(fname)($args)"/>
+      <admst:variable name="e" select="$(module)_$(fname)($args)"/>
     </admst:otherwise>
   </admst:choose>
 
@@ -2090,7 +2090,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:choose>
     </admst:when>
     <admst:otherwise>
-      <admst:variable name="ep" select="d_$(fname)($args,$dargs)"/>
+      <admst:variable name="ep" select="$(module)_d_$(fname)($args,$dargs)"/>
     </admst:otherwise>
   </admst:choose>
   <admst:if test="$qprobe">
@@ -2163,7 +2163,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:choose>
     </admst:when>
     <admst:otherwise>
-      <admst:variable name="eq" select="d_$(fname)($args,$dargs)"/>
+      <admst:variable name="eq" select="$(module)_d_$(fname)($args,$dargs)"/>
     </admst:otherwise>
   </admst:choose>
 
