@@ -635,8 +635,13 @@ electrical d, g, s, b;
          (((x) < -`EXPL_THRESHOLD) ? (`MIN_EXPL) : exp(x)))
 
 // Clamped log function
-`define lln(x) \
-       ln(max((x) , `N_MINLOG))
+analog function real lln;
+	input x;
+	real x;
+	begin
+		lln = ln(max(x , `N_MINLOG));
+	end
+endfunction
 
 // Hyperbolic smoothing function
 `define hypsmooth(x,c) \
@@ -2741,26 +2746,26 @@ DevTemp = $temperature + DTEMP;
 	ni = NI0SUB * T1y * `lexp(Eg / (2.0 * Vtm0) - Eg / (2.0 * Vtm));
 `ifdef __SHMOD__
     if ((SHMOD != 0) && (RTH0 > 0)) begin
-        T0 = `lln(NDEP_i/ni);
+        T0 = lln(NDEP_i/ni);
         phib  =  sqrt(T0 * T0 + 1.0E-6);
     end else begin
-        phib  =   `lln(NDEP_i/ni);
+        phib  =   lln(NDEP_i/ni);
     end
 `else
-    phib  =   `lln(NDEP_i/ni);
+    phib  =   lln(NDEP_i/ni);
 `endif
 `ifdef __SHMOD__
     if ((SHMOD != 0) && (RTH0 > 0)) begin
-        T0 = `lln(NDEP_i*NSD/ni*ni);
+        T0 = lln(NDEP_i*NSD/ni*ni);
         Vbi  =  sqrt(T0 * T0 + 1.0E-6);
     end else begin
-        Vbi  =   `lln(NDEP_i*NSD/ni*ni);
+        Vbi  =   lln(NDEP_i*NSD/ni*ni);
     end
 `else
-    Vbi  =   `lln(NDEP_i*NSD/ni*ni);
+    Vbi  =   lln(NDEP_i*NSD/ni*ni);
 `endif
 	if(NGATE_i > 0)
-	Vfbsdr = -devsign * Vt * `lln(NGATE_i/NSD_i) + VFBSDOFF;
+	Vfbsdr = -devsign * Vt * lln(NGATE_i/NSD_i) + VFBSDOFF;
 
 	else
 		Vfbsdr = 0.0;
@@ -2823,7 +2828,7 @@ DevTemp = $temperature + DTEMP;
 	BETA0_t = BETA0_i * pow(TRatio, IIT_i);
 	BGIDL_t = BGIDL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
 	BGISL_t = BGISL_i * `hypsmooth(1.0 + TGIDL_i * delTemp - 1.0E-6, 1.0E-3);
-	igtemp = `lexp(IGT_i * `lln(TRatio)); //pow(TRatio, IGT_i);
+	igtemp = `lexp(IGT_i * lln(TRatio)); //pow(TRatio, IGT_i);
 
 	//***Diode Model temperature Code Start***//
 	CJS_t = CJS * `hypsmooth(1.0 + TCJ * delTemp - 1.0E-6, 1.0E-3);
@@ -2840,7 +2845,7 @@ DevTemp = $temperature + DTEMP;
 	PBSWGD_t = `hypsmooth(PBSWGD - TPBSWG * delTemp - 0.01, 1.0E-3) + 0.01;
 
 	T0y = Eg0 / Vtm0 - Eg / Vtm;
-	T1y = `lln(TRatio);
+	T1y = lln(TRatio);
 	T3y = `lexp((T0y + XTIS * T1y) / NJS);
 	JSS_t = JSS * T3y;
 	JSWS_t = JSWS * T3y;
@@ -2919,12 +2924,12 @@ DevTemp = $temperature + DTEMP;
 		XExpBVS = `lexp(-BVS / Nvtms) * XJBVS;
 		T2y = max(IJTHSFWD / Isbs, 10.0);
 		Tb = 1.0 + T2y - XExpBVS;
-		VjsmFwd = Nvtms * `lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVS)));
+		VjsmFwd = Nvtms * lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVS)));
 		T0y = `lexp(VjsmFwd / Nvtms);
 		IVjsmFwd = Isbs * (T0y - XExpBVS / T0y + XExpBVS - 1.0);
 		SslpFwd = Isbs * (T0y + XExpBVS / T0y) / Nvtms;
 		T2y = `hypsmooth(IJTHSREV / Isbs - 10.0, 1.0E-3) + 10.0;
-		VjsmRev = -BVS - Nvtms * `lln((T2y - 1.0) / XJBVS);
+		VjsmRev = -BVS - Nvtms * lln((T2y - 1.0) / XJBVS);
 		T1y = XJBVS * `lexp(-(BVS + VjsmRev) / Nvtms);
 		IVjsmRev = Isbs * (1.0 + T1y);
 		SslpRev = -Isbs * T1y / Nvtms;
@@ -2946,12 +2951,12 @@ DevTemp = $temperature + DTEMP;
 		XExpBVD = `lexp(-BVD / Nvtmd) * XJBVD;
 		T2y = max(IJTHDFWD / Isbd, 10.0);
 		Tb = 1.0 + T2y - XExpBVD;
-		VjdmFwd = Nvtmd * `lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVD)));
+		VjdmFwd = Nvtmd * lln(0.5 * (Tb + sqrt(Tb * Tb + 4 * XExpBVD)));
 		T0y = `lexp(VjdmFwd / Nvtmd);
 		IVjdmFwd = Isbd * (T0y - XExpBVD / T0y + XExpBVD - 1.0);
 		DslpFwd = Isbd * (T0y + XExpBVD / T0y) / Nvtmd;
 		T2y = `hypsmooth(IJTHDREV / Isbd - 10.0, 1.0E-3) + 10.0;
-		VjdmRev = -BVD - Nvtmd * `lln((T2y - 1.0) / XJBVD);
+		VjdmRev = -BVD - Nvtmd * lln((T2y - 1.0) / XJBVD);
 		T1y = XJBVD * `lexp(-(BVD + VjdmRev) / Nvtmd);
 		IVjdmRev = Isbd * (1.0 + T1y);
 		DslpRev = -Isbd * T1y / Nvtmd;
@@ -3164,7 +3169,7 @@ DevTemp = $temperature + DTEMP;
 		else
 			T2 = exp(T0);
 		T3 = Leff + DVTP0_i * (1.0 + T2);
-		dVth_ldop = -nVt * `lln(Leff / T3);
+		dVth_ldop = -nVt * lln(Leff / T3);
 	end else
 		dVth_ldop = 0;
 
@@ -3408,7 +3413,7 @@ DevTemp = $temperature + DTEMP;
 			T1 = PCLM_a / (1.0 - PCLMG * qia / EsatL)/Fp;
 		else
 			T1 = PCLM_a * (1.0 + PCLMG * qia / EsatL)/Fp;
-		MdL = 1.0 + T1 * `lln(1.0 + diffVds / T1 / Vasat);
+		MdL = 1.0 + T1 * lln(1.0 + diffVds / T1 / Vasat);
 	end else
 		MdL = 1.0;
 	Moc = Moc * MdL;
@@ -3578,7 +3583,7 @@ DevTemp = $temperature + DTEMP;
 		// Igbinv
 	if (IGBMOD != 0) begin
 		T1 = Voxmacc / NIGBACC_i / Vt; //representative of Qb in acc
-		Vaux_Igbacc = NIGBACC_i * Vt * `lln(1 + `lexp(-T1));
+		Vaux_Igbacc = NIGBACC_i * Vt * lln(1 + `lexp(-T1));
 		T2 = AIGBACC_i - BIGBACC_i * Voxmacc;
 		T3 = 1.0 + CIGBACC_i * Voxmacc;
 		T4 = -7.45669e11 * TOXE * T2 * T3;
@@ -3588,7 +3593,7 @@ DevTemp = $temperature + DTEMP;
 		igbacc = igbacc * igtemp;
 
 		T1 = (Voxminv - EIGBINV_i) / NIGBINV_i / Vt;
-		Vaux_Igbinv = NIGBINV_i * Vt * `lln(1.0 + `lexp(T1));
+		Vaux_Igbinv = NIGBINV_i * Vt * lln(1.0 + `lexp(T1));
 		T2 = AIGBINV_i - BIGBINV_i * Voxminv;
 		T3 = 1.0 + CIGBINV_i * Voxminv;
 		T4 = -9.82222e11 * TOXE * T2 * T3;
@@ -3807,7 +3812,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJS == 0.5)  sarg = 1.0 / sqrt(arg);
-			else             sarg = `lexp(-MJS * `lln(arg));
+			else             sarg = `lexp(-MJS * lln(arg));
 			Qbs = PBS_t * Czbs * (1.0 - arg * sarg) / (1.0 - MJS);
 		end else begin
 			T2 = pow(0.1,-MJS);
@@ -3825,7 +3830,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWS == 0.5)  sarg = 1.0 / sqrt(arg);
-			else               sarg = `lexp(-MJSWS * `lln(arg));
+			else               sarg = `lexp(-MJSWS * lln(arg));
 			Qbs = Qbs + PBSWS_t * Czbssw * (1.0 - arg * sarg) / (1.0 - MJSWS);
 		end else begin
 			T2 = pow(0.1,-MJSWS);
@@ -3841,7 +3846,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWGS == 0.5)  sarg = 1.0 / sqrt(arg);
-			else                sarg = `lexp(-MJSWGS * `lln(arg));
+			else                sarg = `lexp(-MJSWGS * lln(arg));
 			Qbs = Qbs + PBSWGS_t * Czbsswg * (1.0 - arg * sarg) / (1.0 - MJSWGS);
 		end else begin
 			T2 = pow(0.1,-MJSWGS);
@@ -3858,7 +3863,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJD == 0.5)  sarg = 1.0 / sqrt(arg);
-			else             sarg = `lexp(-MJD * `lln(arg));
+			else             sarg = `lexp(-MJD * lln(arg));
 			Qbd = PBD_t * Czbd * (1.0 - arg * sarg) / (1.0 - MJD);
 		end else begin
 			T2 = pow(0.1,-MJD);
@@ -3876,7 +3881,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWD == 0.5)  sarg = 1.0 / sqrt(arg);
-			else               sarg = `lexp(-MJSWD * `lln(arg));
+			else               sarg = `lexp(-MJSWD * lln(arg));
 			Qbd = Qbd + PBSWD_t * Czbdsw * (1.0 - arg * sarg) / (1.0 - MJSWD);
 		end else begin
 			T2 = pow(0.1,-MJSWD);
@@ -3892,7 +3897,7 @@ DevTemp = $temperature + DTEMP;
 		if (T1<0.9) begin
 			arg = 1.0 - T1;
 			if (MJSWGD == 0.5)  sarg = 1.0 / sqrt(arg);
-			else                sarg = `lexp(-MJSWGD * `lln(arg));
+			else                sarg = `lexp(-MJSWGD * lln(arg));
 			Qbd = Qbd + PBSWGD_t * Czbdswg * (1.0 - arg * sarg) / (1.0 - MJSWGD);
 		end else begin
 			T2 = pow(0.1,-MJSWGD);
@@ -3923,7 +3928,7 @@ DevTemp = $temperature + DTEMP;
 			DelClm = 0.0;
 		else begin
 			T0 = (diffVds / litl + EM) / Esatnoi;
-			DelClm = litl * `lln(T0);
+			DelClm = litl * lln(T0);
 			if (DelClm < 0.0)  DelClm = 0.0;
 		end
 		T1 = `q * `q * `q * Vt * abs(ids) * ueff;
@@ -3931,7 +3936,7 @@ DevTemp = $temperature + DTEMP;
 		N0 = 2.0 * nq * Cox * Vt * qs / `q;
 		Nl = 2.0 * nq * Cox * Vt * qdeff / `q;
 		Nstar = Vt / `q * (Cox + Cdep + CIT);
-		T3 = NOIA * `lln((N0 + Nstar) / (Nl + Nstar));
+		T3 = NOIA * lln((N0 + Nstar) / (Nl + Nstar));
 		T4 = NOIB * (N0 - Nl);
 		T5 = 0.5 * NOIC * (N0 * N0 - Nl * Nl);
 		T6 = `q * Vt * ids * ids;
@@ -4127,7 +4132,7 @@ if (CVMOD==1) begin
 
 end
 	if(PCLMCV_i != 0) begin
-		MdL = 1.0 + PCLMCV_i * `lln(1.0 + diffVds / PCLMCV_i / Vasat);
+		MdL = 1.0 + PCLMCV_i * lln(1.0 + diffVds / PCLMCV_i / Vasat);
 	end else
 		MdL = 1.0;
 
