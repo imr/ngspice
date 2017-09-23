@@ -29,74 +29,74 @@
   -->
   <admst:template match="qucs:c:math_h">
 /* math functions and appropriate derivatives */
-inline double _cos(double arg)             { return  cos(arg); }
-inline double _d0_cos(double arg)          { return (-sin(arg)); }
-inline double _sin(double arg)             { return  sin(arg); }
-inline double _d0_sin(double arg)          { return (cos(arg)); }
-inline double _tan(double arg)             { return  tan(arg); }
-inline double _d0_tan(double arg)          { return (1.0/cos(arg)/cos(arg)); }
-inline double _cosh(double arg)            { return  cosh(arg); }
-inline double _d0_cosh(double arg)         { return (sinh(arg)); }
-inline double _sinh(double arg)            { return  sinh(arg); }
-inline double _d0_sinh(double arg)         { return (cosh(arg)); }
-inline double _tanh(double arg)            { return  tanh(arg); }
-inline double _d0_tanh(double arg)         { return (1.0/cosh(arg)/cosh(arg)); }
-inline double _acos(double arg)            { return  acos(arg); }
-inline double _d0_acos(double arg)         { return (-1.0/sqrt(1-arg*arg)); }
-inline double _asin(double arg)            { return  asin(arg); }
-inline double _d0_asin(double arg)         { return (+1.0/sqrt(1-arg*arg)); }
-inline double _atan(double arg)            { return  atan(arg); }
-inline double _d0_atan(double arg)         { return (+1.0/(1+arg*arg)); }
-inline double _acosh(double arg)           { return  acosh(arg); }
-inline double _d0_acosh(double arg)        { return (1.0/(sqrt(arg-1)*sqrt(arg+1))); }
-inline double _asinh(double arg)           { return  asinh(arg); }
-inline double _d0_asinh(double arg)        { return (1.0/(sqrt(arg*arg+1))); }
-inline double _atanh(double arg)           { return  atanh(arg); }
-inline double _d0_atanh(double arg)        { return (+1.0/(1-arg*arg)); }
+static inline double _cos(double arg)             { return  cos(arg); }
+static inline double _d0_cos(double arg)          { return (-sin(arg)); }
+static inline double _sin(double arg)             { return  sin(arg); }
+static inline double _d0_sin(double arg)          { return (cos(arg)); }
+static inline double _tan(double arg)             { return  tan(arg); }
+static inline double _d0_tan(double arg)          { return (1.0/cos(arg)/cos(arg)); }
+static inline double _cosh(double arg)            { return  cosh(arg); }
+static inline double _d0_cosh(double arg)         { return (sinh(arg)); }
+static inline double _sinh(double arg)            { return  sinh(arg); }
+static inline double _d0_sinh(double arg)         { return (cosh(arg)); }
+static inline double _tanh(double arg)            { return  tanh(arg); }
+static inline double _d0_tanh(double arg)         { return (1.0/cosh(arg)/cosh(arg)); }
+static inline double _acos(double arg)            { return  acos(arg); }
+static inline double _d0_acos(double arg)         { return (-1.0/sqrt(1-arg*arg)); }
+static inline double _asin(double arg)            { return  asin(arg); }
+static inline double _d0_asin(double arg)         { return (+1.0/sqrt(1-arg*arg)); }
+static inline double _atan(double arg)            { return  atan(arg); }
+static inline double _d0_atan(double arg)         { return (+1.0/(1+arg*arg)); }
+static inline double _acosh(double arg)           { return  acosh(arg); }
+static inline double _d0_acosh(double arg)        { return (1.0/(sqrt(arg-1)*sqrt(arg+1))); }
+static inline double _asinh(double arg)           { return  asinh(arg); }
+static inline double _d0_asinh(double arg)        { return (1.0/(sqrt(arg*arg+1))); }
+static inline double _atanh(double arg)           { return  atanh(arg); }
+static inline double _d0_atanh(double arg)        { return (+1.0/(1-arg*arg)); }
 
-inline double _logE(double arg)            { return  log(arg); }
-inline double _d0_logE(double arg)         { return (1.0/arg); }
-inline double _log10(double arg)           { return  log10(arg); }
-inline double _d0_log10(double arg)        { return (1.0/arg/log(10.0)); }
-inline double _exp(double arg)             { return  exp(arg); }
-inline double _d0_exp(double arg)          { return exp(arg); }
-inline double _sqrt(double arg)            { return  sqrt(arg); }
-inline double _d0_sqrt(double arg)         { return (1.0/sqrt(arg)/2.0); }
+static inline double _logE(double arg)            { return  log(arg); }
+static inline double _d0_logE(double arg)         { return (1.0/arg); }
+static inline double _log10(double arg)           { return  log10(arg); }
+static inline double _d0_log10(double arg)        { return (1.0/arg/log(10.0)); }
+static inline double _exp(double arg)             { return  exp(arg); }
+static inline double _d0_exp(double arg)          { return exp(arg); }
+static inline double _sqrt(double arg)            { return  sqrt(arg); }
+static inline double _d0_sqrt(double arg)         { return (1.0/sqrt(arg)/2.0); }
 
-inline double _abs(double arg)             { return fabs(arg); }
-inline double _d0_abs(double arg)          { return (((arg)&gt;=0)?(+1.0):(-1.0)); }
+static inline double _abs(double arg)             { return fabs(arg); }
+static inline double _d0_abs(double arg)          { return (((arg)&gt;=0)?(+1.0):(-1.0)); }
 
-inline double _floor(double arg)           { return  floor(arg); }
-inline double _d0_floor(double arg)        { (void) arg; return 0.0; }
+static inline double _floor(double arg)           { return  floor(arg); }
+static inline double _d0_floor(double arg)        { (void) arg; return 0.0; }
 
-inline double _ceil(double arg)            { return  ceil(arg); }
-inline double _d0_ceil(double arg)         { (void) arg; return 0.0; }
+static inline double _ceil(double arg)            { return  ceil(arg); }
+static inline double _d0_ceil(double arg)         { (void) arg; return 0.0; }
 
-inline double _hypot(double x,double y)    { return sqrt((x)*(x)+(y)*(y)); }
-inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
-inline double _d1_hypot(double x,double y) { return (y)/sqrt((x)*(x)+(y)*(y)); }
+static inline double _hypot(double x,double y)    { return sqrt((x)*(x)+(y)*(y)); }
+static inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
+static inline double _d1_hypot(double x,double y) { return (y)/sqrt((x)*(x)+(y)*(y)); }
 
-inline double _atan2(double x,double y)    { return atan2(x,y); }
-inline double _d0_atan2(double x,double y) { return -y / (x*x + y*y); }
-inline double _d1_atan2(double x,double y) { return  x / (x*x + y*y); }
+static inline double _atan2(double x,double y)    { return atan2(x,y); }
+static inline double _d0_atan2(double x,double y) { return -y / (x*x + y*y); }
+static inline double _d1_atan2(double x,double y) { return  x / (x*x + y*y); }
 
-inline double _max(double x,double y)      { return ((x)&gt;(y))?(x):(y); }
-inline double _d0_max(double x,double y)   { return ((x)&gt;(y))?1.0:0.0; }
-inline double _d1_max(double x,double y)   { return ((x)&gt;(y))?0.0:1.0; }
+static inline double _max(double x,double y)      { return ((x)&gt;(y))?(x):(y); }
+static inline double _d0_max(double x,double y)   { return ((x)&gt;(y))?1.0:0.0; }
+static inline double _d1_max(double x,double y)   { return ((x)&gt;(y))?0.0:1.0; }
 
-inline double _min(double x,double y)      { return ((x)&lt;(y))?(x):(y); }
-inline double _d0_min(double x,double y)   { return ((x)&lt;(y))?1.0:0.0; }
-inline double _d1_min(double x,double y)   { return ((x)&lt;(y))?0.0:1.0; }
+static inline double _min(double x,double y)      { return ((x)&lt;(y))?(x):(y); }
+static inline double _d0_min(double x,double y)   { return ((x)&lt;(y))?1.0:0.0; }
+static inline double _d1_min(double x,double y)   { return ((x)&lt;(y))?0.0:1.0; }
 
-inline double _pow(double x,double y)      { return pow(x,y); }
-inline double _d0_pow(double x,double y)   { return (x==0.0)?0.0:((y/x)*pow(x,y)); }
-inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.0))*pow(x,y)); }
+static inline double _pow(double x,double y)      { return pow(x,y); }
+static inline double _d0_pow(double x,double y)   { return (x==0.0)?0.0:((y/x)*pow(x,y)); }
+static inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.0))*pow(x,y)); }
 
-inline double _limexp(double arg)          { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)*(1.0+(arg-80))); }
-inline double _d0_limexp(double arg)       { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)); }
+static inline double _limexp(double arg)          { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)*(1.0+(arg-80))); }
+static inline double _d0_limexp(double arg)       { return ((arg)&lt;(80))?(exp(arg)):(exp(80.0)); }
 
-inline double _vt(double arg)              { return (1.3806503e-23 / 1.602176462e-19) * arg; }
-inline double _d0_vt(double arg)           { (void) arg; return (1.3806503e-23 / 1.602176462e-19); }
+static inline double _vt(double arg)              { return (1.3806503e-23 / 1.602176462e-19) * arg; }
+static inline double _d0_vt(double arg)           { (void) arg; return (1.3806503e-23 / 1.602176462e-19); }
 
   </admst:template>
 
