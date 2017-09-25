@@ -641,7 +641,7 @@
                             or name='asinh' or name='acosh' or name='atanh' or name='atan2'
                             or name='atan' or name='ln' or name='log' or name='exp' or name='sqrt' or name='abs' or name='limexp'
                             or name='div' or name='pow' or name='hypot' or name='min' or name='max' ]">
-          <admst:return name="x" value="_$function($args)"/>
+          <admst:return name="x" value="_f_$function($args)"/>
           <admst:for-each select="$globalanalogfunction/variable[input='yes']">
             <admst:value-of select="name"/> <admst:variable name="name" select="%s"/>
             <admst:variable name="ret" select=""/>
