@@ -26,7 +26,7 @@
 <!-- expression//function: mapping verilog-name == C-name of function -->
 <admst:template match="fname">
   <admst:choose>
-    <admst:when test="[name='div']"><admst:return name="fname" value="_div1"/></admst:when>
+    <admst:when test="[name='div']"><admst:return name="fname" value="_f_div1"/></admst:when>
     <admst:when test="[name='abs']"><admst:return name="fname" value="fabs"/></admst:when>
     <admst:when test="[name='\$shrinkl']"><admst:return name="fname" value="shrinkl"/></admst:when>
     <admst:when test="[name='\$shrinka']"><admst:return name="fname" value="shrinka"/></admst:when>

@@ -1184,7 +1184,7 @@
         <admst:value-of select="position(.)-1"/>
         <admst:apply-templates select="." match="function:getname"/>
         <admst:apply-templates select="." match="function:getname"/>
-        <admst:text format="_%s(__%s_%s,"/>
+        <admst:text format="_f_%s(__%s_%s,"/>
         <admst:join select="arguments" separator=",">
           <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
           <admst:text format="(%s)"/>
@@ -1198,7 +1198,7 @@
         <admst:value-of select="position(.)-1"/>
         <admst:apply-templates select="." match="function:getname"/>
         <admst:apply-templates select="." match="function:getname"/>
-        <admst:text format="_%s"/>
+        <admst:text format="_f_%s"/>
         <admst:text test="[name='div']" format="0"/>
         <admst:text format="(__%s_%s,"/>
         <admst:join select="arguments" separator=",">
@@ -1277,7 +1277,7 @@
                 <admst:value-of select="../position(.)-1"/>
                 <admst:apply-templates select=".." match="function:getname"/>
                 <admst:apply-templates select=".." match="function:getname"/>
-                <admst:text format="_%s(__%s_%s,(%s))\n"/>
+                <admst:text format="_f_%s(__%s_%s,(%s))\n"/>
               </admst:otherwise>
             </admst:choose>
           </admst:for-each>
@@ -1286,7 +1286,7 @@
           <admst:value-of select="./position(.)-1"/>
           <admst:apply-templates select="." match="function:getname"/>
           <admst:apply-templates select="." match="function:getname"/>
-          <admst:text format="_%s(__%s_%s,"/>
+          <admst:text format="_f_%s(__%s_%s,"/>
           <admst:text test="[name='div']" format="__dFx_%(name)_%(position(.)-1),"/>
           <admst:join select="arguments" separator=",">
             <admst:apply-templates select="." match="subexpression:stringify:noprobe"/>
