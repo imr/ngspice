@@ -21,9 +21,6 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model =  (RESmodel *)inModel;
     RESinstance *here;
-    double factor;
-    double difference;
-    double tc1, tc2, tce;
 
 
     /*  loop through all the resistor models */
@@ -32,6 +29,34 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = model->RESinstances; here != NULL ;
                 here=here->RESnextInstance) {
+
+            /* Default Value Processing for Resistor Instance */
+
+            if (!here->REStempGiven) {
+                here->REStemp = ckt->CKTtemp;
+                if (!here->RESdtempGiven)
+                    here->RESdtemp = 0.0;
+            } else {
+                here->RESdtemp = 0.0;
+                if (here->RESdtempGiven)
+                    printf("%s: Instance temperature specified, dtemp ignored\n", here->RESname);
+            }
+
+            RESupdate_conduct(here);
+        }
+    }
+
+    return OK;
+}
+
+
+void
+RESupdate_conduct(RESinstance *here)
+{
+    RESmodel *model = here->RESmodPtr;
+    double factor;
+    double difference;
+    double tc1, tc2, tce;
 
             if (!here->RESresGiven) {
                 if (here->RESlength * here->RESwidth * model->RESsheetRes > 0.0) {
@@ -46,17 +71,6 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                                           "%s: resistance to low, set to 1 mOhm", here->RESname);
                     here->RESresist = 1e-03;
                 }
-            }
-
-            /* Default Value Processing for Resistor Instance */
-
-            if(!here->REStempGiven) {
-                here->REStemp   = ckt->CKTtemp;
-                if(!here->RESdtempGiven)   here->RESdtemp  = 0.0;
-            } else { /* REStempGiven */
-                here->RESdtemp = 0.0;
-                if (here->RESdtempGiven)
-                    printf("%s: Instance temperature specified, dtemp ignored\n", here->RESname);
             }
 
             difference = (here->REStemp + here->RESdtemp) - model->REStnom;
@@ -92,7 +106,4 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here -> RESacConduct = here -> RESconduct;
                 here -> RESacResist = here -> RESresist;
             }
-        }
-    }
-    return(OK);
 }

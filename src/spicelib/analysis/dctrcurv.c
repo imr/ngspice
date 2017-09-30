@@ -281,9 +281,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             } else if (job->TRCVvType[i] == rcode) {
                 ((RESinstance *)(job->TRCVvElt[i]))->RESresist =
                     job->TRCVvStart[i];
-                /* RESload() needs conductance as well */
-                ((RESinstance *)(job->TRCVvElt[i]))->RESconduct =
-                    1 / (((RESinstance *)(job->TRCVvElt[i]))->RESresist);
+                RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]));
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
             }
 
@@ -463,9 +461,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         } else if (job->TRCVvType[i] == rcode) { /* resistance */
             ((RESinstance*)(job->TRCVvElt[i]))->RESresist +=
                 job->TRCVvStep[i];
-            /* RESload() needs conductance as well */
-            ((RESinstance*)(job->TRCVvElt[i]))->RESconduct =
-                1 / (((RESinstance*)(job->TRCVvElt[i]))->RESresist);
+            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]));
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
@@ -499,10 +495,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ((ISRCinstance*)(job->TRCVvElt[i]))->ISRCdcGiven = (job->TRCVgSave[i] != 0);
         } else  if (job->TRCVvType[i] == rcode) { /* Resistance */
             ((RESinstance*)(job->TRCVvElt[i]))->RESresist = job->TRCVvSave[i];
-            /* RESload() needs conductance as well */
-            ((RESinstance*)(job->TRCVvElt[i]))->RESconduct =
-                1 / (((RESinstance*)(job->TRCVvElt[i]))->RESresist);
             ((RESinstance*)(job->TRCVvElt[i]))->RESresGiven = (job->TRCVgSave[i] != 0);
+            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]));
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = job->TRCVvSave[i];
