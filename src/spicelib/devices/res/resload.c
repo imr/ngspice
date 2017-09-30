@@ -57,7 +57,7 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
              here = here->RESnextInstance) {
 
             if (here->RESacresGiven)
-                g = here->RESm * here->RESacConduct;
+                g = here->RESacConductX;
             else
                 g = here->RESm * here->RESconduct;
 

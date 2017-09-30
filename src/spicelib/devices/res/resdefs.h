@@ -35,7 +35,7 @@ typedef struct sRESinstance {
     double REScurrentX; /* The dc current in the resistor */
     /* serban */
     double RESacResist;             /* AC resistance, useful for fancy .ac analyses */
-    double RESacConduct;            /* AC conductance */
+    double RESacConductX;           /* AC conductance */
     double RESwidth;                /* width of the resistor */
     double RESlength;               /* length of the resistor */
     double RESscale;                /* Scale factor */

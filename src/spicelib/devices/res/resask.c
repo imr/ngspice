@@ -43,7 +43,7 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         value->rValue = fast->RESresist;
         return(OK);
     case RES_ACCONDUCT:
-        value->rValue = fast->RESm * fast->RESacConduct;
+        value->rValue = fast->RESacConductX;
         return (OK);
     case RES_ACRESIST:
         value->rValue = fast->RESacResist;

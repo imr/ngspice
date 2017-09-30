@@ -102,9 +102,9 @@ RESupdate_conduct(RESinstance *here, bool spill_warnings)
 
     /* Paolo Nenzi:  AC value */
     if (here->RESacresGiven) {
-        here->RESacConduct = (1.0/(here->RESacResist * factor * here->RESscale));
+        here->RESacConductX = here->RESm / (here->RESacResist * factor * here->RESscale);
     } else {
-        here->RESacConduct = here->RESconduct;
+        here->RESacConductX = here->RESm * here->RESconduct;
         here->RESacResist = here->RESresist;
     }
 }
