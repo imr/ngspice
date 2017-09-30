@@ -85,5 +85,6 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     default:
         return(E_BADPARM);
     }
+    RESupdate_conduct(here);
     return(OK);
 }
