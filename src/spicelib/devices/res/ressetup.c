@@ -58,8 +58,8 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
                 here->RESbv_max = model->RESbv_max;
 
             if((here->RESwidthGiven)||(here->RESlengthGiven))
-                here->RESeffNoiseArea = pow((here->RESlength-model->RESshort),model->RESlf)
-                                       *pow((here->RESwidth-model->RESnarrow),model->RESwf);
+                here->RESeffNoiseArea = pow(here->RESlength - 2 * model->RESshort, model->RESlf)
+                                       *pow(here->RESwidth - 2 * model->RESnarrow, model->RESwf);
             else
                 here->RESeffNoiseArea = 1.0;
 

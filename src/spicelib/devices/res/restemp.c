@@ -36,8 +36,8 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             if (!here->RESresGiven) {
                 if (here->RESlength * here->RESwidth * model->RESsheetRes > 0.0) {
                     here->RESresist =
-                        (here->RESlength - model->RESshort) /
-                        (here->RESwidth - model->RESnarrow) *
+                        (here->RESlength - 2 * model->RESshort) /
+                        (here->RESwidth - 2 * model->RESnarrow) *
                         model->RESsheetRes;
                 } else if (model->RESresGiven) {
                     here->RESresist = model->RESres;
