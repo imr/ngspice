@@ -1,0 +1,38 @@
+compare a m=2 resistor with two parallel instances
+* The expectation is identical inoise and onoise
+* (exec-spice "ngspice %s" t)
+
+.temp 25
+
+i1 1 0 dc 10ma ac=1
+r1 1 0 100 rmodel l=1u w=10u m=2
+
+i2  2 0 dc 10mA ac=1
+r2a 2 0 100 rmodel l=1u w=10u
+r2b 2 0 100 rmodel l=1u w=10u
+
+.model rmodel r kf=100e-18 af=1.1
++ dlr=0.01u dw=0.01u
+
+.control
+
+noise v(1) i1 dec 5 1k 100k
+print all
+
+noise v(2) i2 dec 5 1k 100k
+print all
+
+let relerr = noise4.onoise_total / noise2.onoise_total - 1
+
+echo "Note: relative relerr = $&relerr"
+
+if abs(relerr) > 1e-6
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
+.end

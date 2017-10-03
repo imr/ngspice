@@ -1,0 +1,49 @@
+Paolo's carbon resistor noise (Motchenbacher p. 290)
+* (exec-spice "ngspice %s" t)
+*
+* check whether resistor flicker noise behaves as expected
+
+.temp 25
+
+i1 1 0 dc 1e-3
+r1 1 2 1k rmodel l=1u w=10u
+v1 2 0 dc 0 ac 1
+
+.model rmodel r tc1=0.01 kf=100e-18 af=1.1
++ dlr=0.01u dw=0.01u
++ tnom=25
+
+.control
+
+* output noise in v/sqrt(Hz)
+compose wanted_onoise values 2.2637m 1.7981m 1.4283m 1.1345m 901.2011u 715.8494u 568.6194u 451.6705u 358.7746u 284.9848u 226.3715u
+
+* equivalent input noise in v/sqrt(Hz)
+*   extern_onoise / H
+let wanted_inoise = wanted_onoise
+
+noise v(1) v1 dec 5 1k 100k
+
+setplot noise2
+*print all
+
+setplot noise1
+*print onoise_spectrum wanted_onoise
+*print inoise_spectrum wanted_inoise
+
+let inoise_relerr = vecmax(abs(inoise_spectrum / wanted_inoise - 1))
+let onoise_relerr = vecmax(abs(onoise_spectrum / wanted_onoise - 1))
+
+echo "Note: relative inoise_relerr = $&inoise_relerr"
+echo "Note: relative onoise_relerr = $&onoise_relerr"
+
+if inoise_relerr > 1e-4 or onoise_relerr > 1e-4
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
+.end
