@@ -154,9 +154,16 @@ void ft_gnuplot(double *xlims, double *ylims,
     }
 
     /* Set up the file header. */
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#if !defined(__MINGW__) && !defined(_MSC_VER) && !defined(__CYGWIN__)
     fprintf(file, "set terminal X11 noenhanced\n");
+#elif defined(__CYGWIN__)
+#ifndef EXT_ASC
+        fprintf(file, "set encoding utf8\n");
+#endif
 #else
+#ifndef EXT_ASC
+        fprintf(file, "set encoding utf8\n");
+#endif
     fprintf(file, "set termoption noenhanced\n");
 #endif
     if (title) {
