@@ -76,6 +76,7 @@ static int hcopygraphid;
 void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
 void PS_Stroke(void);
+size_t utf8_to_latin9(char *const output, const char *const input, const size_t length);
 
 
 /* Set scale, color and size of the plot */
@@ -136,7 +137,7 @@ PS_Init(void)
      */
 
     if (!cp_getvar("hcopyfont", CP_STRING, psfont))
-        strcpy(psfont, "Helvetica");
+        strcpy(psfont, "Courier");
     if (!cp_getvar("hcopyfontsize", CP_STRING, psfontsize)) {
         fontsize = 10;
         fontwidth = 6;
@@ -167,6 +168,7 @@ PS_NewViewport(GRAPH *graph)
 {
     int x1, x2, y1, y2;
     hcopygraphid = graph->graphid;
+
     /* devdep initially contains name of output file */
     if ((plotfile = fopen((char*)graph->devdep, "w")) == NULL) {
         perror((char*)graph->devdep);
@@ -202,8 +204,22 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "%%%%Creator: nutmeg\n");
     fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n", x1, y1, x2, y2);
 
-    fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
+    /* ReEncoding to allow 'extended ascii'
+        * thanks to http://apps.jcns.fz-juelich.de/doku/sc/ps-latin/ */
+    fprintf(plotfile, "/ReEncode { %% inFont outFont encoding | -\n");
+    fprintf(plotfile, "   /MyEncoding exch def\n");
+    fprintf(plotfile, "      exch findfont\n");
+    fprintf(plotfile, "      dup length dict\n");
+    fprintf(plotfile, "      begin\n");
+    fprintf(plotfile, "         {def} forall\n");
+    fprintf(plotfile, "         /Encoding MyEncoding def\n");
+    fprintf(plotfile, "         currentdict\n");
+    fprintf(plotfile, "      end\n");
+    fprintf(plotfile, "      definefont\n");
+    fprintf(plotfile, "} def\n");
+    fprintf(plotfile, "/%s /%sLatin1 ISOLatin1Encoding ReEncode\n", psfont, psfont);
 
+    fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
     if (colorflag == 1) {
         /* set the background to color given in spinit (or 0) */
         PS_SelectColor(setbgcolor);
@@ -214,9 +230,9 @@ PS_NewViewport(GRAPH *graph)
         fprintf(plotfile, "closepath fill\n");
     }
 
-    /* set up a reasonable font */
-    fprintf(plotfile, "/%s findfont %d scalefont setfont\n\n",
-            psfont, (int) (fontsize * scale));
+     /* set up a reasonable font */
+    fprintf(plotfile, "/%sLatin1 findfont %d scalefont setfont\n\n",
+         psfont, (int)(fontsize * scale));
 
     graph->devdep = TMALLOC(PSdevdep, 1);
     DEVDEP(graph).lastlinestyle = -1;
@@ -312,10 +328,13 @@ PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 
 
 int
-PS_Text(char *text, int x, int y)
+PS_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
 
+#ifndef EXT_ASC
+       utf8_to_latin9(text, text, strlen(text));
+#endif
     /* set linestyle to solid
        or may get funny color text on some plotters */
     savedlstyle = currentgraph->linestyle;
@@ -334,7 +353,11 @@ PS_Text(char *text, int x, int y)
     PS_Stroke();
     /* move to (x, y) */
     fprintf(plotfile, "%d %d moveto\n", x + xoff + xtadj, y + yoff + ytadj);
+    /* rotate the text counterclockwise by 'angle' degrees */
+    fprintf(plotfile, "%d rotate\n", angle);
     fprintf(plotfile, "(%s) show\n", text);
+    /* rotate the text back clockwise by 'angle' degrees */
+    fprintf(plotfile, "-%d rotate\n", angle);
 
     DEVDEP(currentgraph).lastx = -1;
     DEVDEP(currentgraph).lasty = -1;
@@ -509,4 +532,140 @@ PS_Stroke(void)
         fprintf(plotfile, "stroke\n");
         DEVDEP(currentgraph).linecount = 0;
     }
+}
+
+/* UTF-8 to ISO-8859-1/ISO-8859-15 mapper.
+* Return 0..255 for valid ISO-8859-15 code points, 256 otherwise.
+*/
+static inline unsigned int to_latin9(const unsigned int code)
+{
+    /* Code points 0 to U+00FF are the same in both. */
+    if (code < 256U)
+        return code;
+    switch (code) {
+    case 0x0152U: return 188U; /* U+0152 = 0xBC: OE ligature */
+    case 0x0153U: return 189U; /* U+0153 = 0xBD: oe ligature */
+    case 0x0160U: return 166U; /* U+0160 = 0xA6: S with caron */
+    case 0x0161U: return 168U; /* U+0161 = 0xA8: s with caron */
+    case 0x0178U: return 190U; /* U+0178 = 0xBE: Y with diaresis */
+    case 0x017DU: return 180U; /* U+017D = 0xB4: Z with caron */
+    case 0x017EU: return 184U; /* U+017E = 0xB8: z with caron */
+    case 0x20ACU: return 164U; /* U+20AC = 0xA4: Euro */
+    default:      return 256U;
+    }
+}
+
+/* Convert an UTF-8 string to ISO-8859-15.
+* All invalid sequences are ignored.
+* Note: output == input is allowed,
+* but   input < output < input + length
+* is not.
+* Output has to have room for (length+1) chars, including the trailing NUL byte.
+from http://stackoverflow.com/questions/11156473/is-there-a-way-to-convert-from-utf8-to-iso-8859-1#11173493 
+*/
+size_t utf8_to_latin9(char *const output, const char *const input, const size_t length)
+{
+    unsigned char             *out = (unsigned char *)output;
+    const unsigned char       *in = (const unsigned char *)input;
+    const unsigned char *const end = (const unsigned char *)input + length;
+    unsigned int               c;
+
+    while (in < end)
+        if (*in < 128)
+            *(out++) = *(in++); /* Valid codepoint */
+        else
+            if (*in < 192)
+                in++;               /* 10000000 .. 10111111 are invalid */
+            else
+                if (*in < 224) {        /* 110xxxxx 10xxxxxx */
+                    if (in + 1 >= end)
+                        break;
+                    if ((in[1] & 192U) == 128U) {
+                        c = to_latin9((((unsigned int)(in[0] & 0x1FU)) << 6U)
+                            | ((unsigned int)(in[1] & 0x3FU)));
+                        if (c < 256)
+                            *(out++) = (unsigned char)c;
+                    }
+                    in += 2;
+
+                }
+                else
+                    if (*in < 240) {        /* 1110xxxx 10xxxxxx 10xxxxxx */
+                        if (in + 2 >= end)
+                            break;
+                        if ((in[1] & 192U) == 128U &&
+                            (in[2] & 192U) == 128U) {
+                            c = to_latin9((((unsigned int)(in[0] & 0x0FU)) << 12U)
+                                | (((unsigned int)(in[1] & 0x3FU)) << 6U)
+                                | ((unsigned int)(in[2] & 0x3FU)));
+                            if (c < 256)
+                                *(out++) = (unsigned char)c;
+                        }
+                        in += 3;
+
+                    }
+                    else
+                        if (*in < 248) {        /* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
+                            if (in + 3 >= end)
+                                break;
+                            if ((in[1] & 192U) == 128U &&
+                                (in[2] & 192U) == 128U &&
+                                (in[3] & 192U) == 128U) {
+                                c = to_latin9((((unsigned int)(in[0] & 0x07U)) << 18U)
+                                    | (((unsigned int)(in[1] & 0x3FU)) << 12U)
+                                    | (((unsigned int)(in[2] & 0x3FU)) << 6U)
+                                    | ((unsigned int)(in[3] & 0x3FU)));
+                                if (c < 256)
+                                    *(out++) = (unsigned char)c;
+                            }
+                            in += 4;
+
+                        }
+                        else
+                            if (*in < 252) {        /* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+                                if (in + 4 >= end)
+                                    break;
+                                if ((in[1] & 192U) == 128U &&
+                                    (in[2] & 192U) == 128U &&
+                                    (in[3] & 192U) == 128U &&
+                                    (in[4] & 192U) == 128U) {
+                                    c = to_latin9((((unsigned int)(in[0] & 0x03U)) << 24U)
+                                        | (((unsigned int)(in[1] & 0x3FU)) << 18U)
+                                        | (((unsigned int)(in[2] & 0x3FU)) << 12U)
+                                        | (((unsigned int)(in[3] & 0x3FU)) << 6U)
+                                        | ((unsigned int)(in[4] & 0x3FU)));
+                                    if (c < 256)
+                                        *(out++) = (unsigned char)c;
+                                }
+                                in += 5;
+
+                            }
+                            else
+                                if (*in < 254) {        /* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+                                    if (in + 5 >= end)
+                                        break;
+                                    if ((in[1] & 192U) == 128U &&
+                                        (in[2] & 192U) == 128U &&
+                                        (in[3] & 192U) == 128U &&
+                                        (in[4] & 192U) == 128U &&
+                                        (in[5] & 192U) == 128U) {
+                                        c = to_latin9((((unsigned int)(in[0] & 0x01U)) << 30U)
+                                            | (((unsigned int)(in[1] & 0x3FU)) << 24U)
+                                            | (((unsigned int)(in[2] & 0x3FU)) << 18U)
+                                            | (((unsigned int)(in[3] & 0x3FU)) << 12U)
+                                            | (((unsigned int)(in[4] & 0x3FU)) << 6U)
+                                            | ((unsigned int)(in[5] & 0x3FU)));
+                                        if (c < 256)
+                                            *(out++) = (unsigned char)c;
+                                    }
+                                    in += 6;
+
+                                }
+                                else
+                                    in++;               /* 11111110 and 11111111 are invalid */
+
+                                                        /* Terminate the output string. */
+    *out = '\0';
+
+    return (size_t)(out - (unsigned char *)output);
 }
