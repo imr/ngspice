@@ -1632,8 +1632,10 @@ sp_Tk_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 
 
 int
-sp_Tk_Text(char *text, int x, int y)
+sp_Tk_Text(char *text, int x, int y, int angle)
 {
+    NG_IGNORE(angle);
+
     char buf[1024];
     sprintf(buf, "spice_gr_Text \"%s\" %i %i", text, x, y);
     if (Tcl_Eval(spice_interp, buf) != TCL_OK) {
