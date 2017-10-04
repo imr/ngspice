@@ -145,6 +145,14 @@ static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct line *deck);
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#ifndef EXT_ASC
+static int newstat(const char *name, struct _stat *st);
+#endif
+#endif
+#ifndef EXT_ASC
+static void utf8_syntax_check(struct line *deck);
+#endif
 struct inp_read_t
 { struct line *cc;
     int line_number;
@@ -541,6 +549,9 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         struct line *working = cc->li_next;
 
         delete_libs();
+#ifndef EXT_ASC
+        utf8_syntax_check(working);
+#endif
         inp_fix_for_numparam(subckt_w_params, working);
 
 
@@ -616,22 +627,25 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         if (ft_ngdebug) {
             /*debug: print into file*/
             FILE *fd = fopen("debug-out.txt", "w");
-            struct line *t;
-            fprintf(fd, "**************** uncommented deck **************\n\n");
-            /* always print first line */
-            fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
-            /* here without out-commented lines */
-            for (t = cc->li_next; t; t = t->li_next) {
-                if (*(t->li_line) == '*')
-                    continue;
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            if(!fd)
+                fprintf(cp_err, "Could not open file debug-out.txt for writing debug info. \n");
+            else {
+                struct line *t;
+                fprintf(fd, "**************** uncommented deck **************\n\n");
+                /* always print first line */
+                fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
+                /* here without out-commented lines */
+                for (t = cc->li_next; t; t = t->li_next) {
+                    if (*(t->li_line) == '*')
+                        continue;
+                    fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                }
+                fprintf(fd, "\n****************** complete deck ***************\n\n");
+                /* now completely */
+                for (t = cc; t; t = t->li_next)
+                    fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                fclose(fd);
             }
-            fprintf(fd, "\n****************** complete deck ***************\n\n");
-            /* now completely */
-            for (t = cc; t; t = t->li_next)
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
-            fclose(fd);
-
             fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
                     (int) max_line_length, no_braces, dynmaxline);
         }
@@ -862,9 +876,13 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             (void) strncpy(buffer + 1, "end of: ", 8);
         }   /*  end of .include handling  */
 
-        /* loop through 'buffer' until end is reached.  Then test for
-           premature end.  If premature end is reached, spew
-           error and zap the line. */
+        /* loop through 'buffer' until end is reached. Make all letters lower
+         * case except for the commands given below. Special treatment for
+         * commands 'hardcopy' and 'plot', where all letters are made lower
+         * case except for the tokens following xlabel, ylabel and title.
+         * These tokens may contain spaces, if they are enclosed in single or
+         * double quotes. Single quotes are later on swallowed and disappear,
+         * double quotes are printed. */
         {
             char *s;
             /* no lower case letters for lines beginning with: */
@@ -876,14 +894,79 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                  !ciprefix("echo", buffer) &&
                  !ciprefix("shell", buffer) &&
                  !ciprefix("source", buffer) &&
-                 !ciprefix("load", buffer)
-                )
+                !ciprefix("load", buffer) &&
+                !ciprefix("plot", buffer) &&
+                !ciprefix("gnuplot", buffer) &&
+                !ciprefix("hardcopy", buffer) &&
+                !ciprefix("setcf", buffer)
+            )
             {
                 /* lower case for all lines (exceptions see above!) */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     *s = tolower_c(*s);
+            } else if (ciprefix("plot", buffer) || ciprefix("gnuplot", buffer) ||ciprefix("hardcopy", buffer)) {
+                /* lower case excluded for tokens following title, xlabel, ylabel.
+                 * tokens may contain spaces, then they have to be enclosed in quotes.
+                 * keywords and tokens have to be separated by spaces. */
+                int j;
+                char t = ' ';
+                for (s = buffer; *s && (*s != '\n'); s++) {
+                    *s = tolower_c(*s);
+                    if (ciprefix("title", s)) {
+                        /* jump beyond title */
+                        for (j = 0; j < 5; j++) {
+                            s++;
+                            *s = tolower_c(*s);
+                        }
+                        while (*s == ' ')
+                            s++;
+                        if (!s || (*s == '\n'))
+                            break;
+                        /* check if single quote is at start of token */
+                        else if (*s == '\'') {
+                            s++;
+                            t = '\'';
+                        }
+                        /* check if double quote is at start of token */
+                        else if (*s == '\"') {
+                            s++;
+                            t = '\"';
+                        }
+                        else
+                            t = ' ';
+                        /* jump beyond token without lower casing */
+                        while ((*s != '\n') && (*s != t))
+                            s++;
+                    }
+                    else if (ciprefix("xlabel", s) || ciprefix("ylabel", s)) {
+                        /* jump beyond xlabel, ylabel */
+                        for (j = 0; j < 6; j++) {
+                            s++;
+                            *s = tolower_c(*s);
+                        }
+                        while (*s == ' ')
+                            s++;
+                        if (!s || (*s == '\n'))
+                            break;
+                        /* check if single quote is at start of token */
+                        else if (*s == '\'') {
+                            s++;
+                            t = '\'';
+                        }
+                        /* check if double quote is at start of token */
+                        else if (*s == '\"') {
+                            s++;
+                            t = '\"';
+                        }
+                        else
+                            t = ' ';
+                        /* jump beyond token without lower casing */
+                        while ((*s != '\n') && (*s != t))
+                            s++;
+                    }
+                }
             } else {
-                /* exclude some commands to preserve filename case */
+                /* exclude commands listed above to preserve filename case */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     ;
             }
@@ -1025,6 +1108,13 @@ inp_pathopen(char *name, char *mode)
     return NULL;
 }
 
+/* for MultiByteToWideChar */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#ifndef EXT_ASC
+#undef BOOLEAN
+#include <windows.h>
+#endif
+#endif
 
 /*-------------------------------------------------------------------------*
   Look up the variable sourcepath and try everything in the list in order
@@ -1054,6 +1144,17 @@ inp_pathresolve(const char *name)
     if (stat(name, &st) == 0)
         return copy(name);
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    wchar_t wname[BSIZE_SP];
+    if (MultiByteToWideChar(CP_UTF8, 0, name, -1, wname, 2 * strlen(name) + 1) == 0) {
+        fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
+        fprintf(stderr, "%s could not be converted\n", name);
+        return NULL;
+    }
+    if (_waccess(wname, 0) == 0)
+        return copy(name);
+#endif
+
     /* fail if this was an absolute filename or if there is no sourcepath var */
     if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
         return NULL;
@@ -1079,6 +1180,16 @@ inp_pathresolve(const char *name)
 
         if (stat(buf, &st) == 0)
             return copy(buf);
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        if (MultiByteToWideChar(CP_UTF8, 0, buf, -1, wname, 2 * strlen(buf) + 1) == 0) {
+            fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
+            fprintf(stderr, "%s could not be converted\n", buf);
+            return NULL;
+        }
+        if (_waccess(wname, 0) == 0)
+            return copy(buf);
+#endif
     }
 
     return (NULL);
@@ -2001,7 +2112,7 @@ inp_casefix(char *string)
                 if (*string == '"')
                     *string = ' ';
             }
-            if (!isspace_c(*string) && !isprint_c(*string))
+            if (!isspace_c(*string) && !isprint_c(*string) && !((*string) & 0200))
                 *string = '_';
             if (isupper_c(*string))
                 *string = tolower_c(*string);
@@ -6042,3 +6153,81 @@ inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, in
         }
     }
 }
+
+/* Markus Kuhn <http://www.cl.cam.ac.uk/~mgk25/> -- 2005-03-30
+ * License: Modified BSD (see http://www.cl.cam.ac.uk/~mgk25/short-license.html)
+ * The utf8_check() function scans the '\0'-terminated string starting
+ * at s. It returns a pointer to the first byte of the first malformed
+ * or overlong UTF-8 sequence found, or NULL if the string contains
+ * only correct UTF-8. It also spots UTF-8 sequences that could cause
+ * trouble if converted to UTF-16, namely surrogate characters
+ * (U+D800..U+DFFF) and non-Unicode positions (U+FFFE..U+FFFF).*/
+#ifndef EXT_ASC
+static unsigned char*
+utf8_check(unsigned char *s)
+{
+    while (*s) {
+        if (*s < 0x80)
+            /* 0xxxxxxx */
+            s++;
+        else if ((s[0] & 0xe0) == 0xc0) {
+            /* 110XXXXx 10xxxxxx */
+            if ((s[1] & 0xc0) != 0x80 ||
+                (s[0] & 0xfe) == 0xc0)                        /* overlong? */
+                return s;
+            else
+                s += 2;
+        }
+        else if ((s[0] & 0xf0) == 0xe0) {
+            /* 1110XXXX 10Xxxxxx 10xxxxxx */
+            if ((s[1] & 0xc0) != 0x80 ||
+                (s[2] & 0xc0) != 0x80 ||
+                (s[0] == 0xe0 && (s[1] & 0xe0) == 0x80) ||    /* overlong? */
+                (s[0] == 0xed && (s[1] & 0xe0) == 0xa0) ||    /* surrogate? */
+                (s[0] == 0xef && s[1] == 0xbf &&
+                (s[2] & 0xfe) == 0xbe))                      /* U+FFFE or U+FFFF? */
+                return s;
+            else
+                s += 3;
+        }
+        else if ((s[0] & 0xf8) == 0xf0) {
+            /* 11110XXX 10XXxxxx 10xxxxxx 10xxxxxx */
+            if ((s[1] & 0xc0) != 0x80 ||
+                (s[2] & 0xc0) != 0x80 ||
+                (s[3] & 0xc0) != 0x80 ||
+                (s[0] == 0xf0 && (s[1] & 0xf0) == 0x80) ||    /* overlong? */
+                (s[0] == 0xf4 && s[1] > 0x8f) || s[0] > 0xf4) /* > U+10FFFF? */
+                return s;
+            else
+                s += 4;
+        }
+        else
+            return s;
+    }
+
+    return NULL;
+}
+
+/* Scan through input deck and check for utf-8 syntax errors */
+static void
+utf8_syntax_check(struct line *deck)
+{
+    struct line *card;
+    unsigned char *s;
+
+    for (card = deck; card; card = card->li_next) {
+
+        char *curr_line = card->li_line;
+
+        if (*curr_line == '*')
+            continue;
+
+        s = utf8_check((unsigned char*)curr_line);
+
+        if (s) {
+            fprintf(stderr, "Error: UTF-8 syntax error in line %d at %s\n", card->li_linenum_orig, s);
+            controlled_exit(1);
+        }
+    }
+}
+#endif
