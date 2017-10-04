@@ -680,6 +680,7 @@ fi
 # (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
 
 if test "x$no_x" != xyes ; then
+    X_CFLAGS="$X_CFLAGS -I/usr/include/freetype2"
     AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"],
         [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS $X_EXTRA_LIBS])
     AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"],
@@ -687,7 +688,11 @@ if test "x$no_x" != xyes ; then
     X_LIBS="$X_LIBS -lXt"
     AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"],
         [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
+    AC_CHECK_LIB([Xft], [main], [X_LIBS="$X_LIBS -lXft"],
+        [AC_MSG_ERROR([Couldn't find Xft library])], [$X_LIBS $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lX11"
+    AC_CHECK_LIB([fontconfig], [main], [X_LIBS="$X_LIBS -lfontconfig"],
+        [AC_MSG_ERROR([Couldn't find fontconfig library])], [$X_LIBS $X_EXTRA_LIBS])
     has_no_x=false
 else
     AC_DEFINE([X_DISPLAY_MISSING])
