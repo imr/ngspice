@@ -22,6 +22,10 @@ Modified: 2001 AlansFixes
 #include <windows.h>
 #endif
 
+#ifndef X_DISPLAY_MISSING
+extern bool old_x11;
+#endif
+
 #define RAD_TO_DEG      (180.0 / M_PI)
 
 typedef enum { x_axis, y_axis } Axis;
