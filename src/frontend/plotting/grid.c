@@ -36,6 +36,10 @@ extern bool old_x11;
 extern int X11_GetLenStr(GRAPH *gr, char* instring);
 #endif
 
+#ifndef X_DISPLAY_MISSING
+extern bool old_x11;
+#endif
+
 #define RAD_TO_DEG      (180.0 / M_PI)
 #define RELPOSXUNIT 0.6 /* old position of the UNIT label */
 
