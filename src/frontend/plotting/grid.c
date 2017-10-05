@@ -20,6 +20,15 @@ Modified: 2001 AlansFixes
 #ifdef HAS_WINGUI
 #undef BOOLEAN
 #include <windows.h>
+typedef struct {      /* Extra window data */
+    HWND  wnd;        /* window */
+    HDC   hDC;        /* Device context of window */
+    RECT  Area;       /* plot area */
+    int   ColorIndex; /* Index of actual color */
+    int   PaintFlag;  /* 1 with WM_PAINT */
+    int   FirstFlag;  /* 1 before first update */
+} tWindowData;
+typedef tWindowData *tpWindowData;       /* pointer to it */
 #endif
 
 #ifndef X_DISPLAY_MISSING
@@ -167,16 +176,25 @@ gr_redrawgrid(GRAPH *graph)
             /* Windows and UTF-8: make the y position correction later */
             else if (eq(dispdev->name, "Windows")) {
                 /* utf-8: figure out the real length of the y label */
-                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1, NULL, 0);
+                wchar_t *wtext;
+                wtext = TMALLOC(wchar_t, 2 * strlen(graph->grid.ylabel) + 1);
+                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1, wtext, 2 * strlen(graph->grid.ylabel) + 1);
                 if (wlen == 0) {
-                    fprintf(stderr, "UTF-8 to multibyte conversion failed with 0x%x\n", GetLastError());
+                    fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
                     fprintf(stderr, "%s could not be converted\n", graph->grid.ylabel);
                 }
-                else
+                else {
+                    SIZE sz;
+                    TEXTMETRICW tmw;
+                    tpWindowData wd = graph->devdep;
+                    GetTextMetricsW(wd->hDC, &tmw);
+                    GetTextExtentPoint32W(wd->hDC, wtext, wlen, &sz);
+//                    printf("length: %d, deviation: %d\n", sz.cx, sz.cx - graph->fontwidth*wlen);
                     DevDrawText(graph->grid.ylabel,
-                            graph->fontwidth,
-                            /*vertical text, midpoint in y is aligned midpoint of text string */
-                            (graph->absolute.height - wlen * graph->fontwidth) / 2, 90);
+                        graph->fontwidth,
+                        /*vertical text, midpoint in y is aligned midpoint of text string */
+                        (graph->absolute.height - sz.cx + tmw.tmOverhang) / 2, 90);
+                }
             }
 #endif
 #ifndef X_DISPLAY_MISSING
