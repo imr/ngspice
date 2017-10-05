@@ -60,6 +60,8 @@ Author: 1988 Jeffrey M. Hsu
 
 #define NUMCOLORS 20
 
+bool old_x11 = FALSE; /* if FALSE, use xft, if TRUE use old X11 text output */
+
 typedef struct x11info {
     Window window;
     int isopen;
