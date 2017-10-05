@@ -193,7 +193,7 @@ gr_redrawgrid(GRAPH *graph)
                     DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - sz.cx + tmw.tmOverhang) / 2, 90);
+                        (graph->absolute.height - (int)(1.2*sz.cx + tmw.tmOverhang)) / 2, 90);
                 }
             }
 #endif
