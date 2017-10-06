@@ -108,8 +108,11 @@ int Plt5_Clear(void)
 }
 
 
-int Plt5_DrawLine(int x1, int y1, int x2, int y2)
+int
+Plt5_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
+    NG_IGNORE(isgrid);
+
     putc('l', plotfile);
     putsi(x1);
     putsi(y1);

@@ -31,7 +31,7 @@
 #pragma hdrstop
 #endif /* _MSC_VER */
 
-#include "winprint.h"	/* function prototypes */
+#include "winprint.h"   /* function prototypes */
 
 /* Typen */
 typedef struct { /* Extra Printdaten */
@@ -126,7 +126,7 @@ WPRINT_Init() gibt 0 zurueck, falls kein Fehler auftrat.
 int WPRINT_Init(void)
 {
     int    pWidth;
-    int	 pHeight;
+    int  pHeight;
 
     /* Printer-DC holen */
     if (!PrinterDC) {
@@ -198,19 +198,19 @@ int WPRINT_Init(void)
 
         /* Initialisierungen des Display-Descriptors */
         dispdev->width         = PrinterWidth;
-        dispdev->height 	   = PrinterHeight;
+        dispdev->height        = PrinterHeight;
         dispdev->numlinestyles = NumLines;
         dispdev->numcolors     = NumPrintColors;
 
         /* Farben initialisieren */
-        ColorTable[0] = RGB(255,255,255);	/* Weisz */
-        ColorTable[1] = RGB(0,  0,  0);	/* Schwarz */
+        ColorTable[0] = RGB(255,255,255);   /* Weisz */
+        ColorTable[1] = RGB(0,  0,  0); /* Schwarz */
 
         /* LineStyles initialisieren */
         LineTable[0] = PS_SOLID;
-        LineTable[1] = PS_DOT;   	/* Gitter */
+        LineTable[1] = PS_DOT;      /* Gitter */
         LineTable[2] = PS_SOLID;    /* Erste Linie */
-        LineTable[3] = PS_DOT;   	/* Zweite Linie */
+        LineTable[3] = PS_DOT;      /* Zweite Linie */
         LineTable[4] = PS_DASH;     /* usw */
         LineTable[5] = PS_DASHDOT;
         LineTable[6] = PS_DASHDOTDOT;
@@ -239,9 +239,9 @@ int WPRINT_Init(void)
 
 int WPRINT_NewViewport(GRAPH * graph)
 {
-    TEXTMETRIC 		tm;
-    tpPrintData 	pd;
-    DOCINFO			di;
+    TEXTMETRIC      tm;
+    tpPrintData     pd;
+    DOCINFO         di;
 
     /* Parameter testen */
     if (!graph) {
@@ -276,8 +276,8 @@ int WPRINT_NewViewport(GRAPH * graph)
     pd->LineIndex = 0;
 
     /* Viewport-Parameter setzen */
-    graph->viewport.height 	= PrinterHeight;
-    graph->viewport.width  	= PrinterWidth;
+    graph->viewport.height  = PrinterHeight;
+    graph->viewport.width   = PrinterWidth;
 
     /* Absolut-Parameter setzen */
     graph->absolute.xpos    = 0;
@@ -286,9 +286,9 @@ int WPRINT_NewViewport(GRAPH * graph)
     graph->absolute.height  = PrinterHeight;
 
     /* Druckauftrag anmelden */
-    di.cbSize 		= sizeof(DOCINFO);
-    di.lpszDocName 	= graph->plotname;
-    di.lpszOutput	= NULL;
+    di.cbSize       = sizeof(DOCINFO);
+    di.lpszDocName  = graph->plotname;
+    di.lpszOutput   = NULL;
     if (StartDoc(PrinterDC, &di) <= 0) {
         return 1;
     }
@@ -333,12 +333,14 @@ int WPRINT_Clear(void)
 }
 
 
-int WPRINT_DrawLine(int x1, int y1, int x2, int y2)
+int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
+    NG_IGNORE(isgrid);
+
     tpPrintData  pd;
-    HPEN 		 OldPen;
-    HPEN    	 NewPen;
-    int			 ColIndex;
+    HPEN         OldPen;
+    HPEN         NewPen;
+    int          ColIndex;
 
     if (!currentgraph) return 0;
     pd = pPrintData(currentgraph);
@@ -350,12 +352,12 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2)
         ColIndex = 1;
 
     MoveToEx(PrinterDC, x1, PrinterHeight - y1, NULL);
-    NewPen = CreatePen(LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
+    NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
     OldPen = SelectObject(PrinterDC, NewPen);
     LineTo(PrinterDC, x2, PrinterHeight - y2);
     OldPen = SelectObject(PrinterDC, OldPen);
-    DeleteObject(NewPen);
-    return 0;
+    DeleteObject( NewPen);
+    return (0);
 }
 
 
