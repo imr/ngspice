@@ -150,6 +150,7 @@ gr_redrawgrid(GRAPH *graph)
                     (int) (graph->absolute.width * 0.35),
                     graph->fontheight, 0);
     }
+    /* y axis: vertical text, centered to graph */
     if (graph->grid.ylabel) {
         if (graph->grid.gridtype == GRID_POLAR ||
             graph->grid.gridtype == GRID_SMITH ||
@@ -173,7 +174,8 @@ gr_redrawgrid(GRAPH *graph)
                         (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
 #else
 #ifdef HAS_WINGUI
-            /* Windows and UTF-8: make the y position correction later */
+            /* Windows and UTF-8: check for string length (in pixels),
+               place vertical text centered in y with respect to grid */
             else if (eq(dispdev->name, "Windows")) {
                 /* utf-8: figure out the real length of the y label */
                 wchar_t *wtext;
