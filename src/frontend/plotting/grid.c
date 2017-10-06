@@ -146,9 +146,31 @@ gr_redrawgrid(GRAPH *graph)
     SetLinestyle(1);
     /* draw labels */
     if (graph->grid.xlabel) {
+#if defined(EXT_ASC) || !defined  HAS_WINGUI
         DevDrawText(graph->grid.xlabel,
-                    (int) (graph->absolute.width * 0.35),
-                    graph->fontheight, 0);
+            (int)(graph->absolute.width * 0.35),
+            graph->fontheight, 0);
+#else
+        /* x axis centered to graphics on Windows */
+        /* utf-8: figure out the real length of the x label */
+        wchar_t *wtext;
+        wtext = TMALLOC(wchar_t, 2 * strlen(graph->grid.xlabel) + 1);
+        int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.xlabel, -1, wtext, 2 * strlen(graph->grid.xlabel) + 1);
+        if (wlen == 0) {
+            fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
+            fprintf(stderr, "%s could not be converted\n", graph->grid.xlabel);
+        }
+        else {
+            SIZE sz;
+            TEXTMETRICW tmw;
+            tpWindowData wd = graph->devdep;
+            GetTextMetricsW(wd->hDC, &tmw);
+            GetTextExtentPoint32W(wd->hDC, wtext, wlen, &sz);
+            DevDrawText(graph->grid.xlabel,
+                (int)((graph->absolute.width -sz.cx + tmw.tmOverhang) / 2),
+                graph->fontheight, 0);
+        }
+#endif
     }
     /* y axis: vertical text, centered to graph */
     if (graph->grid.ylabel) {
