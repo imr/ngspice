@@ -36,8 +36,11 @@ extern bool old_x11;
 #endif
 
 #define RAD_TO_DEG      (180.0 / M_PI)
+#define RELPOSXUNIT 0.6 /* old position of the UNIT label */
 
 typedef enum { x_axis, y_axis } Axis;
+
+static int unitshift; /* shift of unit label if x label is too large */
 
 
 static double *lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis);
@@ -169,6 +172,11 @@ gr_redrawgrid(GRAPH *graph)
             DevDrawText(graph->grid.xlabel,
                 (int)((graph->absolute.width -sz.cx + tmw.tmOverhang) / 2),
                 graph->fontheight, 0);
+            /* fix the position of the UNIT label */
+            if (RELPOSXUNIT * graph->absolute.width < (graph->absolute.width + sz.cx + tmw.tmOverhang) / 2)
+                unitshift = (int)((graph->absolute.width + sz.cx + tmw.tmOverhang) / 2 - RELPOSXUNIT * graph->absolute.width);
+            else
+                unitshift = 0; /* reset for next plot window */
         }
 #endif
     }
@@ -647,7 +655,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
             j += 1000;
     }
     if (axis == x_axis)
-        DevDrawText(units, (int) (graph->absolute.width * 0.6),
+        DevDrawText(units, (int) (graph->absolute.width * RELPOSXUNIT + unitshift),
                     graph->fontheight, 0);
     else
         DevDrawText(units, graph->fontwidth,
@@ -842,7 +850,7 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
     }
 
     if (axis == x_axis)
-        DevDrawText(units, (int) (graph->absolute.width * 0.6),
+        DevDrawText(units, (int) (graph->absolute.width * RELPOSXUNIT + unitshift),
                     graph->fontheight, 0);
     else
         DevDrawText(units, graph->fontwidth,
