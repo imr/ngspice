@@ -628,12 +628,12 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
             if (axis == x_axis)
                 DevDrawLine(graph->viewportxoff + i,
                             graph->viewportyoff, graph->viewportxoff + i,
-                            graph->viewport.height + graph->viewportyoff);
+                            graph->viewport.height + graph->viewportyoff, TRUE);
             else
                 DevDrawLine(graph->viewportxoff,
                             graph->viewportyoff + i,
                             graph->viewport.width + graph->viewportxoff,
-                            graph->viewportyoff + i);
+                            graph->viewportyoff + i, TRUE);
         }
         if (j == 0)
             SetLinestyle(1);
@@ -788,14 +788,14 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
                 DevDrawLine(graph->viewportxoff + i,
                             graph->viewportyoff,
                             graph->viewportxoff + i,
-                            graph->viewport.height
-                            +graph->viewportyoff);
+                            graph->viewport.height + graph->viewportyoff,
+                            TRUE);
             else
                 DevDrawLine(graph->viewportxoff,
                             graph->viewportyoff + i,
-                            graph->viewport.width
-                            + graph->viewportxoff,
-                            graph->viewportyoff + i);
+                            graph->viewport.width + graph->viewportxoff,
+                            graph->viewportyoff + i,
+                            TRUE);
         }
 
         if (j == -2)
@@ -835,14 +835,14 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
                         DevDrawLine(graph->viewportxoff + m,
                                     graph->viewportyoff,
                                     graph->viewportxoff + m,
-                                    graph->viewport.height
-                                    + graph->viewportyoff);
+                                    graph->viewport.height + graph->viewportyoff,
+                                    TRUE);
                     else
                         DevDrawLine(graph->viewportxoff,
                                     graph->viewportyoff + m,
-                                    graph->viewport.width
-                                    + graph->viewportxoff,
-                                    graph->viewportyoff + m);
+                                    graph->viewport.width + graph->viewportxoff,
+                                    graph->viewportyoff + m,
+                                    TRUE);
                 }
             }
             SetLinestyle(0);
@@ -1029,7 +1029,7 @@ drawpolargrid(GRAPH *graph)
                                 graph->grid.yaxis.circular.center,
                                 graph->grid.xaxis.circular.radius))
             {
-                DevDrawLine(x1, y1, x2, y2);
+                DevDrawLine(x1, y1, x2, y2, TRUE);
                 /* Add a label here */
                 /*XXXX*/
                 adddeglabel(graph, i * 30, x2, y2, x1, y1,
@@ -1065,7 +1065,7 @@ drawpolargrid(GRAPH *graph)
                                 graph->grid.xaxis.circular.center,
                                 graph->grid.yaxis.circular.center,
                                 graph->grid.xaxis.circular.radius)) {
-                DevDrawLine(x1, y1, x2, y2);
+                DevDrawLine(x1, y1, x2, y2, TRUE);
                 /* Put on the label */
                 adddeglabel(graph, i, x2, y2, x1, y1,
                             graph->grid.xaxis.circular.center,
@@ -1404,7 +1404,7 @@ drawsmithgrid(GRAPH *graph)
         if (zheight < 0)
             zheight = - zheight;
         DevDrawLine(gr_xcenter - zheight, gr_ycenter + yoff,
-                    gr_xcenter + zheight, gr_ycenter + yoff);
+                    gr_xcenter + zheight, gr_ycenter + yoff, TRUE);
         DevDrawText("0", gr_xcenter + zheight + gi_fntwidth, gr_ycenter + yoff -
                     gi_fntheight / 2, 0);
         DevDrawText("o", gr_xcenter + zheight + gi_fntwidth * 2, gr_ycenter + yoff, 0);

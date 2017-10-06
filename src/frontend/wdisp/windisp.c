@@ -100,6 +100,7 @@ static wchar_t *     STRW_HARDCOPY_BW = L"Postscript file, b&w";
 static bool          isblack = TRUE;               /* background color of plot is black */
 static bool          isblackold = TRUE;
 static int           linewidth = 0;                /* linewidth of grid and plot */
+static int           gridlinewidth = 0;            /* linewidth of grid */
 
 /******************************************************************************
 WIN_Init() makes connection to graphics. We have to determine
@@ -139,23 +140,23 @@ WIN_Init(void)
         if (cieq(colorstring, "white")) isblack = FALSE;
         else isblack = TRUE;
     }
+
     /* get linewidth information from spinit */
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
         linewidth = 0;
     if (linewidth < 0)
         linewidth = 0;
 
+    /* get linewidth for grid from spinit */
+    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth))
+        gridlinewidth = linewidth;
+    if (gridlinewidth < 0)
+        gridlinewidth = 0;
+
     /* only for the first time: */
     if (!IsRegistered) {
 
         isblackold = isblack;
-
-        /* get linewidth information from spinit
-         * if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
-         *     linewidth = 0;
-         * if (linewidth < 0)
-         *     linewidth = 0;
-         */
 
         /* Initialize colors */
         if (isblack) {
@@ -866,7 +867,7 @@ WIN_Clear(void)
 
 
 int
-WIN_DrawLine(int x1, int y1, int x2, int y2)
+WIN_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
     tpWindowData wd;
     HPEN      OldPen;
@@ -880,7 +881,10 @@ WIN_DrawLine(int x1, int y1, int x2, int y2)
         return 0;
 
     MoveToEx(wd->hDC, x1, wd->Area.bottom - y1, NULL);
-    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex]);
+    if (isgrid)
+        NewPen = CreatePen(LType(wd->ColorIndex), gridlinewidth, ColorTable[wd->ColorIndex]);
+    else
+        NewPen = CreatePen(LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     LineTo(wd->hDC, x2, wd->Area.bottom - y2);
     OldPen = SelectObject(wd->hDC, OldPen);

@@ -17,7 +17,7 @@ void DevInit(void);
 int NewViewport(GRAPH *pgraph);
 void DevClose(void);
 void DevClear(void);
-void DevDrawLine(int x1, int y1, int x2, int y2);
+void DevDrawLine(int x1, int y1, int x2, int y2, bool isgrid);
 void DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta);
 void DevDrawText(char *text, int x, int y, int angle);
 void DefineColor(int colorid, double red, double green, double blue);

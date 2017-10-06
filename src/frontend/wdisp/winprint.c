@@ -316,8 +316,10 @@ int WPRINT_Clear(void)
 }
 
 
-int WPRINT_DrawLine(int x1, int y1, int x2, int y2)
+int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
+    NG_IGNORE(isgrid);
+
 	tpPrintData  pd;
 	HPEN 		 OldPen;
 	HPEN    	 NewPen;
