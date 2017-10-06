@@ -560,8 +560,9 @@ X11_Close(void)
 
 
 int
-X11_DrawLine(int x1, int y1, int x2, int y2)
+X11_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
+    NG_IGNORE(isgrid);
     if (DEVDEP(currentgraph).isopen)
         XDrawLine(display, DEVDEP(currentgraph).window,
                   DEVDEP(currentgraph).gc,
