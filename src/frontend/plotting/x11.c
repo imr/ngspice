@@ -1194,7 +1194,7 @@ linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
         y1 = y2;
         x2 = x0 + (int)(radius * cos(theta + i*dphi));
         y2 = y0 + (int)(radius * sin(theta + i*dphi));
-        X11_DrawLine(x1, y1, x2, y2);
+        X11_DrawLine(x1, y1, x2, y2, FALSE);
     }
 }
 
