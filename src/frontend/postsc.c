@@ -277,8 +277,9 @@ PS_Clear(void)
 
 
 int
-PS_DrawLine(int x1, int y1, int x2, int y2)
+PS_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
+    NG_IGNORE(isgrid);
     /* note: this is not extendible to more than one graph
        => will have to give NewViewport a writeable graph XXX */
 
