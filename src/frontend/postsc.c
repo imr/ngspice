@@ -71,7 +71,8 @@ static double scale;  /* Used for fine tuning */
 static int xtadj;     /* text adjustment x */
 static int ytadj;     /* text adjustment y */
 static int hcopygraphid;
-
+static double linewidth;
+static double gridlinewidth;
 
 void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
@@ -126,6 +127,19 @@ int PS_Init(void)
         if (dispdev->height >= 10000)
             dispdev->height = 10000;
     }
+
+    /* get linewidth information from spinit */
+    if (!cp_getvar("xbrushwidth", CP_REAL, &linewidth))
+        linewidth = 0;
+    if (linewidth < 0)
+        linewidth = 0;
+
+    /* get linewidth for grid from spinit */
+    if (!cp_getvar("gridwidth", CP_REAL, &gridlinewidth))
+        gridlinewidth = linewidth;
+    if (gridlinewidth < 0)
+        gridlinewidth = 0;
+
 
     /* The following side effects have to be considered
      * when the printer is called by com_hardcopy !
@@ -283,7 +297,6 @@ int PS_Clear(void)
 int
 PS_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
-    NG_IGNORE(isgrid);
     /* note: this is not extendible to more than one graph
        => will have to give NewViewport a writeable graph XXX */
 
@@ -301,6 +314,10 @@ PS_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
     if (x1 != x2 || y1 != y2) {
         fprintf(plotfile, "%d %d lineto\n", x2 + xoff, y2 + yoff);
         DEVDEP(currentgraph).linecount += 1;
+        if(isgrid)
+            fprintf(plotfile, "%f setlinewidth\n", gridlinewidth);
+        else
+            fprintf(plotfile, "%f setlinewidth\n", linewidth);
     }
 
     DEVDEP(currentgraph).lastx = x2;
