@@ -33,6 +33,7 @@ typedef tWindowData *tpWindowData;       /* pointer to it */
 
 #ifndef X_DISPLAY_MISSING
 extern bool old_x11;
+extern int X11_GetLenStr(GRAPH *gr, char* instring);
 #endif
 
 #define RAD_TO_DEG      (180.0 / M_PI)
@@ -149,36 +150,71 @@ gr_redrawgrid(GRAPH *graph)
     SetLinestyle(1);
     /* draw labels */
     if (graph->grid.xlabel) {
-#if defined(EXT_ASC) || !defined  HAS_WINGUI
+#if defined(EXT_ASC) || (!defined  HAS_WINGUI && defined X_DISPLAY_MISSING)
         DevDrawText(graph->grid.xlabel,
             (int)(graph->absolute.width * 0.35),
             graph->fontheight, 0);
 #else
-        /* x axis centered to graphics on Windows */
-        /* utf-8: figure out the real length of the x label */
-        wchar_t *wtext;
-        wtext = TMALLOC(wchar_t, 2 * strlen(graph->grid.xlabel) + 1);
-        int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.xlabel, -1, wtext, 2 * strlen(graph->grid.xlabel) + 1);
-        if (wlen == 0) {
-            fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
-            fprintf(stderr, "%s could not be converted\n", graph->grid.xlabel);
+        if (eq(dispdev->name, "postscript"))
+        {
+            DevDrawText(graph->grid.xlabel,
+                (int)(graph->absolute.width * 0.35),
+                graph->fontheight, 0);
         }
         else {
-            SIZE sz;
-            TEXTMETRICW tmw;
-            tpWindowData wd = graph->devdep;
-            GetTextMetricsW(wd->hDC, &tmw);
-            GetTextExtentPoint32W(wd->hDC, wtext, wlen, &sz);
+#ifndef X_DISPLAY_MISSING
+
+            /* x axis centered to graphics on X11 */
+            /* utf-8: figure out the real length of the x label */
+            int wlen = 0, i = 0;
+            while (graph->grid.xlabel[i]) {
+                if ((graph->grid.xlabel[i] & 0xc0) != 0x80)
+                    wlen++;
+                i++;
+            }
+            /* string lenth in pixels */
+            int strsize = X11_GetLenStr(graph, graph->grid.xlabel);
             DevDrawText(graph->grid.xlabel,
-                (int)((graph->absolute.width -sz.cx + tmw.tmOverhang) / 2),
-                graph->fontheight, 0);
+                (int)((graph->absolute.width - strsize) / 2), graph->fontheight, 0);
             /* fix the position of the UNIT label */
-            if (RELPOSXUNIT * graph->absolute.width < (graph->absolute.width + sz.cx + tmw.tmOverhang) / 2)
-                unitshift = (int)((graph->absolute.width + sz.cx + tmw.tmOverhang) / 2 - RELPOSXUNIT * graph->absolute.width);
+            if (RELPOSXUNIT * graph->absolute.width < ((graph->absolute.width + strsize) / 2 + graph->fontwidth))
+                unitshift = (int)((graph->absolute.width + strsize) / 2
+                                   - RELPOSXUNIT * graph->absolute.width)
+                                   + graph->fontwidth;
             else
                 unitshift = 0; /* reset for next plot window */
         }
 #endif
+#ifdef HAS_WINGUI
+            /* x axis centered to graphics on Windows */
+            /* utf-8: figure out the real length of the x label */
+            wchar_t *wtext;
+            wtext = TMALLOC(wchar_t, 2 * strlen(graph->grid.xlabel) + 1);
+            int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.xlabel, -1, wtext, 2 * strlen(graph->grid.xlabel) + 1);
+            if (wlen == 0) {
+                fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
+                fprintf(stderr, "%s could not be converted\n", graph->grid.xlabel);
+            }
+            else {
+                SIZE sz;
+                TEXTMETRICW tmw;
+                tpWindowData wd = graph->devdep;
+                GetTextMetricsW(wd->hDC, &tmw);
+                GetTextExtentPoint32W(wd->hDC, wtext, wlen, &sz);
+                DevDrawText(graph->grid.xlabel,
+                    (int)((graph->absolute.width - sz.cx + tmw.tmOverhang) / 2),
+                    graph->fontheight, 0);
+                /* fix the position of the UNIT label */
+                if (RELPOSXUNIT * graph->absolute.width < (graph->absolute.width + sz.cx + tmw.tmOverhang) / 2 + graph->fontwidth)
+                    unitshift = (int)((graph->absolute.width + sz.cx + tmw.tmOverhang) / 2 
+                                       - RELPOSXUNIT * graph->absolute.width)
+                                       + graph->fontwidth;
+                else
+                    unitshift = 0; /* reset for next plot window */
+            }
+        }
+#endif
+#endif // EXT_ASC
     }
     /* y axis: vertical text, centered to graph */
     if (graph->grid.ylabel) {
