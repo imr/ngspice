@@ -1223,6 +1223,15 @@ Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* fonam
     return 0;
 }
 
+/* get the length of an utf-8 string in pixels */
+int
+X11_GetLenStr(GRAPH *gr, char* instring)
+{
+    int wl, wh;
+    Xget_str_length(instring, &wl, &wh, NULL, DEVDEP(gr).fname, DEVDEP(gr).fsize);
+    return wl;
+}
+
 #else
 
 int x11_dummy_symbol;
