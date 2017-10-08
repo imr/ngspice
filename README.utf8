@@ -2,13 +2,14 @@ use utf-8 for encoding of strings, this enables UNICODE
 international characters sets (of nearly any language)
 in titles, labels, file and folder names.
 
-Windows uses utf-16 and conversion function between utf-8
+Windows uses utf-16 and conversion functions between utf-8
 and utf-16, if access to Windows API functions is needed.
 A special fopen has been defined.
 
 In addition, plot labels on the y axis now are placed
-vertically, 90°, by using WWindows API or Linux Xft library.
+vertically, 90°, by using the Windows API or the Linux Xft library.
 
-Postscript plotting uses only a UNICODE subset, t.b.d..
+Postscript plotting uses only a UNICODE subset, namely
+ISO-8859-1/ISO-8859-15, that allows extended ascii.
 
-Better looking fonts are now used for labelling.
+Better looking fonts are now used for labelling the axes.
