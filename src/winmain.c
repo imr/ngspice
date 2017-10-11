@@ -283,7 +283,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
        DELTATIME given value, or if analysis has changed, else return */
     if (hwAnalyse && ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse))) {
         if (DecaPercent < 0) {
-            sprintf(s, "--ready--");
+            sprintf(s, "   -- ready --");
             sprintf(t, "%s", PACKAGE_STRING);
         }
         else if (DecaPercent == 0) {
@@ -510,7 +510,7 @@ Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
     /* Expand Status Elements */
     h = cy - LineHeight + StatusFrame - 2;
-    int statbegin = 3 * StatusFrame + QuitButtonLength + AnalyseLength + 20;
+    int statbegin = 3 * StatusFrame + QuitButtonLength + AnalyseLength + 4;
     MoveWindow(hwSource, StatusFrame, h, cx - statbegin - BorderSize, StatusElHeight, TRUE);
     MoveWindow( hwAnalyse, cx - statbegin, h, AnalyseLength, StatusElHeight, TRUE);
 
