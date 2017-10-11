@@ -13,7 +13,7 @@ Test for Scattering Parameters
 ** VCE 1 V, IE = 5mA
 ** QXXXXXXX nc nb ne
 ** model obtained from
-** http://141.69.160.32/~krausg/Spice_Model_CD/Vendor%20List/Motorola/Spice/RFBJT/
+** http://ltwiki.org/files/LTspiceIV/Vendor%20List/Motorola/Spice/RFBJT/
 *.include MRF5711.lib
 *XMRF5711 out in e  MRF5711
 *Ie e 0 5m
