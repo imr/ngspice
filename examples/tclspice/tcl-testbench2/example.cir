@@ -583,5 +583,5 @@ VARACTOR_V VARACTOR_V 0 DC 2.5
 .SAVE vddpower#branch 
 .SAVE vdd 
 .SAVE varactor_v 
-.TRAN 0.02n 3000n 0n 0.5n 
+.TRAN 0.02n 100n 0n 0.5n 
 .END
