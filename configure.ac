@@ -461,7 +461,10 @@ EOF
         AC_MSG_ERROR([Couldn't find BLT])
     fi
     rm -f conftest.tcl
-    
+
+    AC_SEARCH_LIBS([Blt_GetVector], [BLT BLT24 BLT25],,
+        [AC_MSG_ERROR([Couldnt find BLT library.])])
+
     AC_CHECK_LIB([pthread], [pthread_create])
     
     if test -n "$libdir" ; then
