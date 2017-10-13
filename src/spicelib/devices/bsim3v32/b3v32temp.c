@@ -868,11 +868,14 @@ int Size_Not_Found, error;
 
               /* process source/drain series resistance */
               /* ACM model */
+
+              double DrainResistance, SourceResistance;
+
               if (model->BSIM3v32acmMod == 0)
               {
-                  here->BSIM3v32drainConductance = model->BSIM3v32sheetResistance
+                  DrainResistance = model->BSIM3v32sheetResistance
                                                   * here->BSIM3v32drainSquares;
-                  here->BSIM3v32sourceConductance = model->BSIM3v32sheetResistance
+                  SourceResistance = model->BSIM3v32sheetResistance
                                                    * here->BSIM3v32sourceSquares;
               }
               else /* ACM > 0 */
@@ -894,21 +897,19 @@ int Size_Not_Found, error;
                   model->BSIM3v32rs,
                   model->BSIM3v32rsc,
                   here->BSIM3v32sourceSquares,
-                  &(here->BSIM3v32drainConductance),
-                  &(here->BSIM3v32sourceConductance)
+                  &DrainResistance,
+                  &SourceResistance
                   );
                   if (error)
                       return(error);
               }
-              if (here->BSIM3v32drainConductance > 0.0)
-                  here->BSIM3v32drainConductance = 1.0
-                                                / here->BSIM3v32drainConductance;
+              if (DrainResistance > 0.0)
+                  here->BSIM3v32drainConductance = 1.0 / DrainResistance;
               else
                   here->BSIM3v32drainConductance = 0.0;
 
-              if (here->BSIM3v32sourceConductance > 0.0)
-                  here->BSIM3v32sourceConductance = 1.0
-                                               / here->BSIM3v32sourceConductance;
+              if (SourceResistance > 0.0)
+                  here->BSIM3v32sourceConductance = 1.0 / SourceResistance;
               else
                   here->BSIM3v32sourceConductance = 0.0;
 

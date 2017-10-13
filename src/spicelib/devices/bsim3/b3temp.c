@@ -798,11 +798,14 @@ int Size_Not_Found, error;
 
               /* process source/drain series resistance */
               /* ACM model */
+
+              double drainResistance, sourceResistance;
+
               if (model->BSIM3acmMod == 0)
               {
-                  here->BSIM3drainConductance = model->BSIM3sheetResistance
+                  drainResistance = model->BSIM3sheetResistance
                                                   * here->BSIM3drainSquares;
-                  here->BSIM3sourceConductance = model->BSIM3sheetResistance
+                  sourceResistance = model->BSIM3sheetResistance
                                                * here->BSIM3sourceSquares;
               }
               else /* ACM > 0 */
@@ -824,23 +827,22 @@ int Size_Not_Found, error;
                   model->BSIM3rs,
                   model->BSIM3rsc,
                   here->BSIM3sourceSquares,
-                  &(here->BSIM3drainConductance),
-                  &(here->BSIM3sourceConductance)
+                  &drainResistance,
+                  &sourceResistance
                   );
                   if (error)
                       return(error);
               }
-              if (here->BSIM3drainConductance > 0.0)
-                  here->BSIM3drainConductance = 1.0
-                                              / here->BSIM3drainConductance;
+              if (drainResistance > 0.0)
+                  here->BSIM3drainConductance = 1.0 / drainResistance;
               else
                   here->BSIM3drainConductance = 0.0;
 
-              if (here->BSIM3sourceConductance > 0.0)
-                  here->BSIM3sourceConductance = 1.0
-                                               / here->BSIM3sourceConductance;
+              if (sourceResistance > 0.0)
+                  here->BSIM3sourceConductance = 1.0 / sourceResistance;
               else
                   here->BSIM3sourceConductance = 0.0;
+
               here->BSIM3cgso = pParam->BSIM3cgso;
               here->BSIM3cgdo = pParam->BSIM3cgdo;
 
