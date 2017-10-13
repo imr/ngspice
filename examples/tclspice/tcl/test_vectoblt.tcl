@@ -9,8 +9,8 @@ load ../../../src/.libs/libspice.so
 spice::source "diffpair.cir"
 spice::op
 spice::let Vd = V(5) - V(4)
-blt::vector imag
-blt::vector real
+blt::vector create imag
+blt::vector create real
 
 set ok 0
 ###################
