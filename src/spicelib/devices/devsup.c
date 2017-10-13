@@ -168,16 +168,16 @@ int sourceSquaresGiven,
 double RS,
 double RSC,
 double sourceSquares,
-double *drainConductance,
-double *sourceConductance
+double *drainResistance,
+double *sourceResistance
 )
 {
     switch (ACM)
     {
     case 1:
     case 11:
-        *drainConductance = (LD + LDIF)/(w * WMLT + XW)*RD + RSH*drainSquares + RDC;
-        *sourceConductance = (LD + LDIF)/(w * WMLT + XW)*RS + RSH*sourceSquares + RSC;
+        *drainResistance = (LD + LDIF)/(w * WMLT + XW)*RD + RSH*drainSquares + RDC;
+        *sourceResistance = (LD + LDIF)/(w * WMLT + XW)*RS + RSH*sourceSquares + RSC;
 
         break;
 
@@ -186,13 +186,13 @@ double *sourceConductance
     case 3:
     case 13:
         if (drainSquaresGiven)
-          *drainConductance = (LD + LDIF)/(w * WMLT + XW)*RD + RSH*drainSquares + RDC;
+          *drainResistance = (LD + LDIF)/(w * WMLT + XW)*RD + RSH*drainSquares + RDC;
         else
-          *drainConductance = ((LD + LDIF)*RD + (HDIF * WMLT)*RSH)/(w * WMLT + XW) + RDC;
+          *drainResistance = ((LD + LDIF)*RD + (HDIF * WMLT)*RSH)/(w * WMLT + XW) + RDC;
         if (sourceSquaresGiven)
-          *sourceConductance = (LD + LDIF)/(w * WMLT + XW)*RS + RSH*sourceSquares + RSC;
+          *sourceResistance = (LD + LDIF)/(w * WMLT + XW)*RS + RSH*sourceSquares + RSC;
         else
-          *sourceConductance = ((LD + LDIF)*RS + (HDIF * WMLT)*RSH)/(w * WMLT + XW) + RSC;
+          *sourceResistance = ((LD + LDIF)*RS + (HDIF * WMLT)*RSH)/(w * WMLT + XW) + RSC;
 
         break;
 
