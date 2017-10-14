@@ -281,7 +281,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             } else if (job->TRCVvType[i] == rcode) {
                 ((RESinstance *)(job->TRCVvElt[i]))->RESresist =
                     job->TRCVvStart[i];
-                RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]));
+                RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), FALSE);
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
             }
 
@@ -461,7 +461,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         } else if (job->TRCVvType[i] == rcode) { /* resistance */
             ((RESinstance*)(job->TRCVvElt[i]))->RESresist +=
                 job->TRCVvStep[i];
-            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]));
+            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), FALSE);
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
@@ -496,7 +496,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         } else  if (job->TRCVvType[i] == rcode) { /* Resistance */
             ((RESinstance*)(job->TRCVvElt[i]))->RESresist = job->TRCVvSave[i];
             ((RESinstance*)(job->TRCVvElt[i]))->RESresGiven = (job->TRCVgSave[i] != 0);
-            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]));
+            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), TRUE);
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) {
             ckt->CKTtemp = job->TRCVvSave[i];

@@ -187,6 +187,6 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 
 #include "resext.h"
 
-extern void RESupdate_conduct(RESinstance *);
+extern void RESupdate_conduct(RESinstance *, bool spill_warnings);
 
 #endif /*RES*/
