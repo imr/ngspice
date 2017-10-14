@@ -15,6 +15,7 @@
 #include "bsim3def.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
+#include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
 #define MAX_EXP 5.834617425e14
@@ -984,13 +985,46 @@ BSIM3instance **InstArray;
             if (!here->BSIM3mGiven)
                 here->BSIM3m = 1;
 
+            /* process source/drain series resistance */
+            /* ACM model */
+
+            double drainResistance, sourceResistance;
+
+            if (model->BSIM3acmMod == 0)
+            {
+                drainResistance = model->BSIM3sheetResistance
+                    * here->BSIM3drainSquares;
+                sourceResistance = model->BSIM3sheetResistance
+                    * here->BSIM3sourceSquares;
+            }
+            else /* ACM > 0 */
+            {
+                error = ACM_SourceDrainResistances(
+                    model->BSIM3acmMod,
+                    model->BSIM3ld,
+                    model->BSIM3ldif,
+                    model->BSIM3hdif,
+                    model->BSIM3wmlt,
+                    here->BSIM3w,
+                    model->BSIM3xw,
+                    model->BSIM3sheetResistance,
+                    here->BSIM3drainSquaresGiven,
+                    model->BSIM3rd,
+                    model->BSIM3rdc,
+                    here->BSIM3drainSquares,
+                    here->BSIM3sourceSquaresGiven,
+                    model->BSIM3rs,
+                    model->BSIM3rsc,
+                    here->BSIM3sourceSquares,
+                    &drainResistance,
+                    &sourceResistance
+                    );
+                if (error)
+                    return(error);
+            }
+
             /* process drain series resistance */
-            if (  ((model->BSIM3sheetResistance > 0.0) && (here->BSIM3drainSquares > 0.0))
-                ||((model->BSIM3sheetResistance > 0.0) && (model->BSIM3hdif > 0.0))
-                ||((model->BSIM3rd > 0.0) && (model->BSIM3ldif > 0.0))
-                ||((model->BSIM3rd > 0.0) && (model->BSIM3ld > 0.0))
-                ||((model->BSIM3rdc > 0.0))
-               )
+            if (drainResistance != 0.0)
             {
               if(here->BSIM3dNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"drain");
@@ -1011,12 +1045,7 @@ BSIM3instance **InstArray;
             }
 
             /* process source series resistance */
-            if (  ((model->BSIM3sheetResistance > 0.0) && (here->BSIM3sourceSquares > 0.0))
-                ||((model->BSIM3sheetResistance > 0.0) && (model->BSIM3hdif > 0.0))
-                ||((model->BSIM3rs > 0.0) && (model->BSIM3ldif > 0.0))
-                ||((model->BSIM3rs > 0.0) && (model->BSIM3ld > 0.0))
-                ||((model->BSIM3rsc > 0.0))
-               )
+            if (sourceResistance != 0.0)
             {
               if(here->BSIM3sNodePrime == 0) {
                 error = CKTmkVolt(ckt,&tmp,here->BSIM3name,"source");
