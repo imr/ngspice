@@ -42,7 +42,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
                     printf("%s: Instance temperature specified, dtemp ignored\n", here->RESname);
             }
 
-            RESupdate_conduct(here);
+            RESupdate_conduct(here, TRUE);
         }
     }
 
@@ -51,7 +51,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
 
 void
-RESupdate_conduct(RESinstance *here)
+RESupdate_conduct(RESinstance *here, bool spill_warnings)
 {
     RESmodel *model = here->RESmodPtr;
     double factor;
@@ -67,8 +67,9 @@ RESupdate_conduct(RESinstance *here)
         } else if (model->RESresGiven) {
             here->RESresist = model->RESres;
         } else {
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "%s: resistance to low, set to 1 mOhm", here->RESname);
+            if (spill_warnings)
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                                      "%s: resistance to low, set to 1 mOhm", here->RESname);
             here->RESresist = 1e-03;
         }
     }
