@@ -16,7 +16,6 @@ int
 RESload(GENmodel *inModel, CKTcircuit *ckt)
 {
     RESmodel *model = (RESmodel *)inModel;
-    double m;
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = model->RESnextModel ) {
@@ -29,12 +28,10 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
             here->REScurrentX = (*(ckt->CKTrhsOld+here->RESposNode) -
                                 *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESm * here->RESconduct;
 
-            m = (here->RESm);
-
-            *(here->RESposPosPtr) += m * here->RESconduct;
-            *(here->RESnegNegPtr) += m * here->RESconduct;
-            *(here->RESposNegPtr) -= m * here->RESconduct;
-            *(here->RESnegPosPtr) -= m * here->RESconduct;
+            *(here->RESposPosPtr) += here->RESm * here->RESconduct;
+            *(here->RESnegNegPtr) += here->RESm * here->RESconduct;
+            *(here->RESposNegPtr) -= here->RESm * here->RESconduct;
+            *(here->RESnegPosPtr) -= here->RESm * here->RESconduct;
         }
     }
     return(OK);

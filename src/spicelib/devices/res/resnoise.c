@@ -93,7 +93,7 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
                 
                        NevalSrcInstanceTemp(&noizDens[RESTHNOIZ],&lnNdens[RESTHNOIZ],
                                 ckt,THERMNOISE, inst->RESposNode,inst->RESnegNode,
-                                inst->RESconduct * inst->RESm, inst->RESdtemp); 
+                                inst->RESm * inst->RESconduct, inst->RESdtemp);
 
                        NevalSrcInstanceTemp(&noizDens[RESFLNOIZ], NULL, ckt,
                                 N_GAIN,inst->RESposNode, inst->RESnegNode,
