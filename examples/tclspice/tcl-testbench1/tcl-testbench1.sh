@@ -1,7 +1,6 @@
 #!/bin/sh
-# WishFix \
+# -*- mode: tcl -*- \
         exec wish -f "$0" ${1+"$@"}
-	###
 
 # old name:  analyse-20070504-0.tcl
 package require BLT

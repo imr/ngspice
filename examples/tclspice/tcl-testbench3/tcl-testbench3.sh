@@ -1,7 +1,6 @@
 #!/bin/sh
-# WishFix \
+# -*- mode: tcl -*- \
         exec wish -f "$0" ${1+"$@"}
-	###
 
 package require BLT
 load ../../../src/.libs/libspice.so
