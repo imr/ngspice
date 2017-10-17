@@ -2825,13 +2825,13 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct line *p = find_subckt(c->level, subckt_name)->line;
+                struct line_assoc *a = find_subckt(c->level, subckt_name);
 
-                if (p) {
-                    int num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
+                if (a) {
+                    int num_subckt_params = inp_get_params(a->line->li_line, subckt_param_names, subckt_param_values);
 
                     if (!found_mult_param(num_subckt_params, subckt_param_names)) {
-                        inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
+                        inp_fix_subckt_multiplier(subckt_w_params, a->line, num_subckt_params, subckt_param_names, subckt_param_values);
                         inp_fix_inst_calls_for_numparam(subckt_w_params, deck);
                     }
 
