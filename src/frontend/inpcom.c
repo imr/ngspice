@@ -2762,13 +2762,13 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
             char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct card *p = find_subckt(c->level, subckt_name)->line;
+                struct card_assoc *a = find_subckt(c->level, subckt_name);
 
-                if (p) {
-                    int num_subckt_params = inp_get_params(p->line, subckt_param_names, subckt_param_values);
+                if (a) {
+                    int num_subckt_params = inp_get_params(a->line->line, subckt_param_names, subckt_param_values);
 
                     if (!found_mult_param(num_subckt_params, subckt_param_names))
-                        inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
+                        inp_fix_subckt_multiplier(subckt_w_params, a->line, num_subckt_params, subckt_param_names, subckt_param_values);
 
                     for (i = 0; i < num_subckt_params; i++) {
                         tfree(subckt_param_names[i]);
@@ -2798,6 +2798,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
             if (find_name(subckt_w_params, subckt_name)) {
                 struct card *d;
 
+                /* fixme, this too ? */
                 d = find_subckt(c->level, subckt_name)->line;
                 {
                     char *subckt_line = d->line;
