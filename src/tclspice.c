@@ -828,10 +828,9 @@ _tcl_dispatch TCL_CMDPROCARGS(clientData, interp, argc, argv)
     int i;
     NG_IGNORE(clientData);
     save_interp();
-    /* Looks backwards through the first command and strips the :: part */
-    for (i = strlen(argv[0])-1; i > 0; i--)
-        if (argv[0][i] == *":")
-            argv[0] += i + 1;
+    char *prefix = strstr(argv[0], "spice::");
+    if (prefix)
+        argv[0] = prefix + 7;
     return _run(argc, (char **)argv);
 }
 
