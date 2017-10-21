@@ -1,0 +1,32 @@
+test subckt with multiplier
+* (exec-spice "ngspice %s" t)
+
+* test fail with m=1 on .subckt line
+* test success without m on .subckt line
+.subckt five_resistors 1 2 val=10k m=1
+R1 1 2 {val} m=5
+R2 1 2 2k
+.ends
+
+i1  1 0  dc=-1mA
+x1  1 0  five_resistors val=2k m=3
+*m=3
+
+.control
+op
+let v1_gold = 1mA / (3 * (5/2k + 1/2k))
+print all
+
+let relerr = v(1) / v1_gold - 1
+
+echo "Note: relerr = $&relerr"
+
+if abs(relerr) > 1e-9
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
