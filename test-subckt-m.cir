@@ -1,0 +1,66 @@
+test subckt with multiplier
+* (exec-spice "ngspice %s" t)
+
+.subckt six_resistors_a 1 2 val=10k m=17
+R1 1 2 {val} m=5
+R2 1 2 2k
+.ends
+i1a  1a 0  dc=-1mA
+x1a  1a 0  six_resistors_a val=2k m=3
+
+.subckt six_resistors_b 1 2 val=10k m=3
+R1 1 2 {val} m=5
+R2 1 2 2k
+.ends
+i1b  1b 0  dc=-1mA
+x1b  1b 0  six_resistors_b val=2k
+
+.subckt six_resistors_c 1 2 val=10k
+R1 1 2 {val} m=5
+R2 1 2 2k
+.ends
+i1c  1c 0  dc=-1mA
+x1c  1c 0  six_resistors_c val=2k m=3
+
+.subckt six_resistors_d 1 2 val=10k m=1
+.subckt nest_d 1 2
+R1 1 2 2k m=1
+.ends
+X1 1 2 nest_d m=3
+R1 1 2 {val} m=2
+R2 1 2 2k
+.ends
+i1d  1d 0  dc=-1mA
+x1d  1d 0  six_resistors_d val=2k m=3
+
+.subckt six_resistors_e 1 2 val=10k m=1
+.subckt nest_e 1 2  m=1
+R1 1 2 2k m=1
+.ends
+X1 1 2 nest_e m=3
+R1 1 2 {val} m=2
+R2 1 2 2k
+.ends
+i1e  1e 0  dc=-1mA
+x1e  1e 0  six_resistors_e val=2k m=3
+
+.control
+op
+let v1_gold = 1mA / (3 * (5/2k + 1/2k))
+print all
+
+compose them values v("1a") v("1b") v("1c") v("1d") v("1e")
+
+let relerr = vecmax(abs(them / v1_gold - 1))
+
+echo "Note: relerr = $&relerr"
+
+if abs(relerr) > 1e-9
+  echo "ERROR: test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
