@@ -1,35 +1,46 @@
-regression test for "stop" and "resume"
+regression test for "alter" with "stop" and "resume"
 
-* (exec-spice "ngspice -b %s" t)
+* (exec-spice "ngspice %s" t)
 
 * check wheter we can "stop" a transient simulation
+*   alter a resistance, its temperature coefficient a voltage
 *   and successfully "resume" from there
 *
 * charge a capacitor for 1ms
 *   (first order e^(-t/tau) response, with tau=1ms)
-* then stop, alter the voltage soure
-* then resume for another 1ms, discharging the capacitor
+* then stop, alter resistance, and voltage,
+* and resume from there.
 *
 * finally, compare the capacitor voltage against a golden trace
 
 v1 1 0 dc 5
 
-r1 1 2 1k
+r1 1 2 1k tc1=0.03125
 c2 2 0 1u
+
+.temp 91
 
 .control
 
 stop when time = 1ms
-tran 2u 2ms uic
+tran 0.2u 2ms uic
 alter v1=-5
+alter r1=100
+alter @r1[tc1] = 0.0625
 resume
 
 * calculate the golden response
-let tau = 1k * 1u
+let D_temp = 91 - 27
+let tc_fst = 0.03125
+let tc_snd = 0.0625
+
+let tau1 = 1u * 1k * (1 + D_temp * tc_fst)
+let tau2 = 1u * 100 * (1 + D_temp * tc_snd)
+
 let tstop = 1ms
-let vstop = 5 * (1 - exp(-tstop / tau))
-let trace1 = 5 * (1 - exp(-time / tau))
-let trace2 = vstop + (-5 - vstop) * (1 - exp(-(time - tstop) / tau))
+let vstop = 5 * (1 - exp(-tstop / tau1))
+let trace1 = 5 * (1 - exp(-time / tau1))
+let trace2 = vstop + (-5 - vstop) * (1 - exp(-(time - tstop) / tau2))
 let gold = (time le tstop) * trace1 + (time gt tstop) * trace2
 
 * plot v(2) gold
@@ -40,6 +51,7 @@ if maxerr > 2e-6
   echo "ERROR: test failed, excessive error, maxerr = $&maxerr"
   quit 1
 else
+  echo "Note: maxerr = $&maxerr"
   echo "INFO: success"
   quit 0
 end
