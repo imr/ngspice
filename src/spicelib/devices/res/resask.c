@@ -37,13 +37,13 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         value->rValue = fast->RESdtemp;
         return(OK);
     case RES_CONDUCT:
-        value->rValue = fast->RESconductX;
+        value->rValue = fast->RESconduct;
         return(OK);
     case RES_RESIST:
         value->rValue = fast->RESresist;
         return(OK);
     case RES_ACCONDUCT:
-        value->rValue = fast->RESacConductX;
+        value->rValue = fast->RESacConduct;
         return (OK);
     case RES_ACRESIST:
         value->rValue = fast->RESacResist;
@@ -144,7 +144,7 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         } else if (ckt->CKTrhsOld) {
             value->rValue = (*(ckt->CKTrhsOld + fast->RESposNode) -
                              *(ckt->CKTrhsOld + fast->RESnegNode));
-            value->rValue *= fast->RESconductX;
+            value->rValue *= fast->RESconduct;
             return(OK);
         } else {
             errMsg = tprintf("No current values available for %s", fast->RESname);
@@ -162,7 +162,7 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                              *(ckt->CKTrhsOld + fast->RESnegNode)) *
                             (*(ckt->CKTrhsOld + fast->RESposNode) -
                              *(ckt->CKTrhsOld + fast->RESnegNode));
-            value->rValue *= fast->RESconductX;
+            value->rValue *= fast->RESconduct;
             return(OK);
         } else {
             errMsg = tprintf("No power values available for %s", fast->RESname);

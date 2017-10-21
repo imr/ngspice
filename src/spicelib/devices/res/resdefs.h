@@ -30,12 +30,12 @@ typedef struct sRESinstance {
 
     double REStemp;     /* temperature at which this resistor operates */
     double RESdtemp;    /* delta-temperature of a particular instance  */
-    double RESconductX; /* conductance at current analysis temperature */
+    double RESconduct;  /* conductance at current analysis temperature */
     double RESresist;   /* resistance at temperature Tnom */
-    double REScurrentX; /* The dc current in the resistor */
+    double REScurrent;  /* The dc current in the resistor */
     /* serban */
     double RESacResist;             /* AC resistance, useful for fancy .ac analyses */
-    double RESacConductX;           /* AC conductance */
+    double RESacConduct;            /* AC conductance */
     double RESwidth;                /* width of the resistor */
     double RESlength;               /* length of the resistor */
     double RESscale;                /* Scale factor */

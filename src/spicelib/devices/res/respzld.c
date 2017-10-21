@@ -34,9 +34,9 @@ RESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                 here=here->RESnextInstance) {
 
             if (here->RESacresGiven)
-                g = here->RESacConductX;
+                g = here->RESacConduct;
             else
-                g = here->RESconductX;
+                g = here->RESconduct;
 
             *(here->RESposPosPtr) += g;
             *(here->RESnegNegPtr) += g;
