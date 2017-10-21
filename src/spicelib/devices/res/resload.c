@@ -25,13 +25,13 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances; here != NULL ;
                 here = here->RESnextInstance) {
 
-            here->REScurrentX = (*(ckt->CKTrhsOld+here->RESposNode) -
-                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconductX;
+            here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) -
+                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
 
-            *(here->RESposPosPtr) += here->RESconductX;
-            *(here->RESnegNegPtr) += here->RESconductX;
-            *(here->RESposNegPtr) -= here->RESconductX;
-            *(here->RESnegPosPtr) -= here->RESconductX;
+            *(here->RESposPosPtr) += here->RESconduct;
+            *(here->RESnegNegPtr) += here->RESconduct;
+            *(here->RESposNegPtr) -= here->RESconduct;
+            *(here->RESnegPosPtr) -= here->RESconduct;
         }
     }
     return(OK);
@@ -57,9 +57,9 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
              here = here->RESnextInstance) {
 
             if (here->RESacresGiven)
-                g = here->RESacConductX;
+                g = here->RESacConduct;
             else
-                g = here->RESconductX;
+                g = here->RESconduct;
 
             *(here->RESposPosPtr) += g;
             *(here->RESnegNegPtr) += g;

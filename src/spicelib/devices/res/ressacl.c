@@ -36,10 +36,10 @@ RESsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld+here->RESnegNode);
                 ivalue = *(ckt->CKTirhsOld+here->RESposNode) -
                     *(ckt->CKTirhsOld+here->RESnegNode);
-                value *= here->RESacConductX;
-                value *= here->RESacConductX;
-                ivalue *= here->RESacConductX;
-                ivalue *= here->RESacConductX;
+                value *= here->RESacConduct;
+                value *= here->RESacConduct;
+                ivalue *= here->RESacConduct;
+                ivalue *= here->RESacConduct;
 
                 /* load the RHS matrix */
                 *(ckt->CKTsenInfo->SEN_RHS[here->RESposNode] + 
