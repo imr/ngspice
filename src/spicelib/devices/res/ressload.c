@@ -33,8 +33,8 @@ RESsLoad(GENmodel *inModel, CKTcircuit *ckt)
                 double value;
                 value = *(ckt->CKTrhsOld+here->RESposNode) -
                     *(ckt->CKTrhsOld+here->RESnegNode);
-                value *= here->RESm * here->RESconduct;
-                value *= here->RESm * here->RESconduct;
+                value *= here->RESconductX;
+                value *= here->RESconductX;
 
                 /* load the RHS matrix */
                 *(ckt->CKTsenInfo->SEN_RHS[here->RESposNode] + 

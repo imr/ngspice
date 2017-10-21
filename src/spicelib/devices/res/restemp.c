@@ -98,13 +98,13 @@ RESupdate_conduct(RESinstance *here, bool spill_warnings)
     else
         factor = (((tc2 * difference) + tc1) * difference) + 1.0;
 
-    here->RESconduct = (1.0/(here->RESresist * factor * here->RESscale));
+    here->RESconductX = here->RESm / (here->RESresist * factor * here->RESscale);
 
     /* Paolo Nenzi:  AC value */
     if (here->RESacresGiven) {
         here->RESacConductX = here->RESm / (here->RESacResist * factor * here->RESscale);
     } else {
-        here->RESacConductX = here->RESm * here->RESconduct;
+        here->RESacConductX = here->RESconductX;
         here->RESacResist = here->RESresist;
     }
 }
