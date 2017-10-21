@@ -26,8 +26,8 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->RESinstances; here != NULL ;
                 here = here->RESnextInstance) {
 
-            here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) -
-                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESconduct;
+            here->REScurrentX = (*(ckt->CKTrhsOld+here->RESposNode) -
+                                *(ckt->CKTrhsOld+here->RESnegNode)) * here->RESm * here->RESconduct;
 
             m = (here->RESm);
 
