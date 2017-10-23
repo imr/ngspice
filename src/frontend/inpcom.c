@@ -587,6 +587,66 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
+        {
+            void moo(struct nscope *level) {
+
+                struct line_assoc *p = level->subckts;
+                fprintf(stderr, "nscope %p\n", level);
+
+                for (; p; p = p->next) {
+                    fprintf(stderr, "  n=%s line=%s scope=%p\n", p->name, p->line->li_line, p->line->level);
+                    char *curr_line = p->line->li_line;
+                    if (!strstr(curr_line, " m=")) {
+                        p->line->li_line = tprintf("%s m=1", curr_line);
+                        tfree(curr_line);
+                    }
+                    struct line *card = p->line->li_next;
+
+                    int nesting = 0;
+                    for (; card; card = card->li_next) {
+                        char *curr_line = card->li_line;
+                        if (ciprefix(".subckt", curr_line))
+                            nesting++;
+                        if (ciprefix(".ends", curr_line))
+                            nesting--;
+                        if (nesting < 0)
+                            break;
+                        if (nesting > 0)
+                            continue;
+                        /* no 'm' for comment line, B, V, E, H and some others that are not using 'm' in their model description */
+                        if (strchr("*bvehaknopstuwy", curr_line[0]))
+                            continue;
+                        /* no 'm' for model cards */
+                        if (ciprefix(".model", curr_line))
+                            continue;
+
+                        /* Get old and new 'm' parameters and multiply them */
+                        char *mpar = strstr(curr_line, " m=");
+                        if (mpar) {
+                            fprintf(stderr, "found one in %s\n", curr_line);
+                            char *mval = mpar + 3;
+                            char *oldmult = gettok(&mval);
+                            inp_strip_braces(oldmult);
+                            /* add the new 'm=valold*valnew' string at the end, thus override the previous m parameter */
+                            card->li_line = tprintf("%.*s m={(%s)*m} %s", (int)(mpar + 1 - curr_line), curr_line, oldmult, mval);
+                            tfree(oldmult);
+                        }
+                        else {
+                            card->li_line = tprintf("%s m={m}", curr_line);
+                        }
+                        tfree(curr_line);
+                    }
+
+                    /* be carefull if it is an empty .subckt/.ends block
+                     *  .subckt and .ends do have the level of the parent */
+                    if (level != p->line->li_next->level)
+                        moo(p->line->li_next->level);
+                }
+            }
+
+            moo(root);
+        }
+
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
         delete_names(subckt_w_params);
@@ -679,6 +739,11 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         if (ft_ngdebug)
             tprint(working, tpr++);
     }
+
+    struct line *tmp = cc;
+    for (; tmp; tmp = tmp->li_next)
+        if (*(tmp->li_line) != '*')
+            fprintf(stderr, "> %s\n",tmp->li_line);
 
     return cc;
 }
@@ -2727,81 +2792,6 @@ inp_fix_inst_line(char *inst_line,
 }
 
 
-/* If multiplier parameter 'm' is found on a X line, flag is set
-   to TRUE.
-   Function is called from inp_fix_inst_calls_for_numparam() */
-
-static bool
-found_mult_param(int num_params, char *param_names[])
-{
-    int i;
-
-    for (i = 0; i < num_params; i++)
-        if (strcmp(param_names[i], "m") == 0)
-            return TRUE;
-
-    return FALSE;
-}
-
-
-/* If a subcircuit invocation (X-line) is found, which contains the
-   multiplier parameter 'm', m is added to all lines inside
-   the corresponding subcircuit except of some excluded in the code below
-   Function is called from inp_fix_inst_calls_for_numparam() */
-
-static int
-inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_card,
-                          int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
-{
-    struct line *card;
-    char *new_str;
-
-    subckt_param_names[num_subckt_params]  = strdup("m");
-    subckt_param_values[num_subckt_params] = strdup("1");
-    num_subckt_params ++;
-
-    if (!strstr(subckt_card->li_line, "params:")) {
-        new_str = tprintf("%s params: m=1", subckt_card->li_line);
-        add_name(subckt_w_params, get_subckt_model_name(subckt_card->li_line));
-    } else {
-        new_str = tprintf("%s m=1", subckt_card->li_line);
-    }
-
-    tfree(subckt_card->li_line);
-    subckt_card->li_line = new_str;
-
-    for (card = subckt_card->li_next;
-         card && !ciprefix(".ends", card->li_line);
-         card = card->li_next) {
-        char *curr_line = card->li_line;
-        /* no 'm' for comment line, B, V, E, H and some others that are not using 'm' in their model description */
-        if (strchr("*bvehaknopstuwy", curr_line[0]))
-            continue;
-        /* no 'm' for model cards */
-        if (ciprefix(".model", curr_line))
-            continue;
-
-        /* Get old and new 'm' parameters and multiply them */
-        char *mpar = strstr(curr_line, " m=");
-        if (mpar) {
-            mpar += 3;
-            char *oldmult = gettok(&mpar);
-            inp_strip_braces(oldmult);
-            /* add the new 'm=valold*valnew' string at the end, thus override the previous m parameter */
-            new_str = tprintf("%s m={(%s)*m}", curr_line, oldmult);
-            tfree(oldmult);
-        }
-        else
-            new_str = tprintf("%s m={m}", curr_line);
-
-        tfree(card->li_line);
-        card->li_line = new_str;
-    }
-
-    return num_subckt_params;
-}
-
-
 static void
 inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck)
 {
@@ -2814,42 +2804,6 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
-    for (c = deck; c; c = c->li_next) {
-        char *inst_line = c->li_line;
-
-        if (*inst_line == '*')
-            continue;
-
-        if (ciprefix("x", inst_line)) {
-            int num_inst_params = inp_get_params(inst_line, inst_param_names, inst_param_values);
-            char *subckt_name   = inp_get_subckt_name(inst_line);
-
-            if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct line_assoc *a = find_subckt(c->level, subckt_name);
-
-                if (a) {
-                    int num_subckt_params = inp_get_params(a->line->li_line, subckt_param_names, subckt_param_values);
-
-                    if (!found_mult_param(num_subckt_params, subckt_param_names)) {
-                        inp_fix_subckt_multiplier(subckt_w_params, a->line, num_subckt_params, subckt_param_names, subckt_param_values);
-                        inp_fix_inst_calls_for_numparam(subckt_w_params, deck);
-                    }
-
-                    for (i = 0; i < num_subckt_params; i++) {
-                        tfree(subckt_param_names[i]);
-                        tfree(subckt_param_values[i]);
-                    }
-                }
-            }
-
-            tfree(subckt_name);
-            for (i = 0; i < num_inst_params; i++) {
-                tfree(inst_param_names[i]);
-                tfree(inst_param_values[i]);
-            }
-        }
-    }
-
     for (c = deck; c; c = c->li_next) {
         char *inst_line = c->li_line;
 
