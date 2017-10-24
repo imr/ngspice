@@ -489,6 +489,58 @@ find_back_assignment(const char *p, const char *start)
 }
 
 
+static void
+moo(struct nscope *level)
+{
+    struct line_assoc *p = level->subckts;
+
+    for (; p; p = p->next) {
+        char *curr_line = p->line->li_line;
+        if (!strstr(curr_line, "params:")) {
+            p->line->li_line = tprintf("%s params: m=1", curr_line);
+            tfree(curr_line);
+        } else if (!strstr(curr_line, " m=")) {
+            p->line->li_line = tprintf("%s m=1", curr_line);
+            tfree(curr_line);
+        }
+        struct line *card = p->line->li_next;
+
+        int nesting = 0;
+        for (; card; card = card->li_next) {
+            char *curr_line = card->li_line;
+            if (ciprefix(".subckt", curr_line))
+                nesting++;
+            if (ciprefix(".ends", curr_line))
+                nesting--;
+            if (nesting < 0)
+                break;
+            if (nesting > 0)
+                continue;
+            /* no 'm' for comment line, B, V, E, H and some others that are not using 'm' in their model description */
+            if (strchr("*bvehaknopstuwy.", curr_line[0]))
+                continue;
+
+            /* Get old and new 'm' parameters and multiply them */
+            char *mpar = strstr(curr_line, " m=");
+            if (mpar) {
+                char *mval = mpar + 3;
+                char *oldmult = gettok(&mval);
+                inp_strip_braces(oldmult);
+                /* add the new 'm=valold*valnew' string at the end, thus override the previous m parameter */
+                card->li_line = tprintf("%.*s m={(%s)*m} %s", (int)(mpar + 1 - curr_line), curr_line, oldmult, mval);
+                tfree(oldmult);
+            }
+            else {
+                card->li_line = tprintf("%s m={m}", curr_line);
+            }
+            tfree(curr_line);
+        }
+
+        moo(p->line->level);
+    }
+}
+
+
 /*-------------------------------------------------------------------------
   Read the entire input file and return  a pointer to the first line of
   the linked list of 'card' records in data.  The pointer is stored in
@@ -571,56 +623,6 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 //      tprint(working, tpr++);
         inp_rem_unused_models(root, working);
 //      tprint(working, tpr++);
-
-        void moo(struct nscope *level) {
-
-            struct line_assoc *p = level->subckts;
-
-            for (; p; p = p->next) {
-                char *curr_line = p->line->li_line;
-                if (!strstr(curr_line, "params:")) {
-                    p->line->li_line = tprintf("%s params: m=1", curr_line);
-                    tfree(curr_line);
-                } else if (!strstr(curr_line, " m=")) {
-                    p->line->li_line = tprintf("%s m=1", curr_line);
-                    tfree(curr_line);
-                }
-                struct line *card = p->line->li_next;
-
-                int nesting = 0;
-                for (; card; card = card->li_next) {
-                    char *curr_line = card->li_line;
-                    if (ciprefix(".subckt", curr_line))
-                        nesting++;
-                    if (ciprefix(".ends", curr_line))
-                        nesting--;
-                    if (nesting < 0)
-                        break;
-                    if (nesting > 0)
-                        continue;
-                    /* no 'm' for comment line, B, V, E, H and some others that are not using 'm' in their model description */
-                    if (strchr("*bvehaknopstuwy.", curr_line[0]))
-                        continue;
-
-                    /* Get old and new 'm' parameters and multiply them */
-                    char *mpar = strstr(curr_line, " m=");
-                    if (mpar) {
-                        char *mval = mpar + 3;
-                        char *oldmult = gettok(&mval);
-                        inp_strip_braces(oldmult);
-                        /* add the new 'm=valold*valnew' string at the end, thus override the previous m parameter */
-                        card->li_line = tprintf("%.*s m={(%s)*m} %s", (int)(mpar + 1 - curr_line), curr_line, oldmult, mval);
-                        tfree(oldmult);
-                    }
-                    else {
-                        card->li_line = tprintf("%s m={m}", curr_line);
-                    }
-                    tfree(curr_line);
-                }
-
-                moo(p->line->level);
-            }
-        }
 
         moo(root);
 

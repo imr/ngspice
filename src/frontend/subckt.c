@@ -181,6 +181,19 @@ free_global_nodes(void)
 }
 
 
+static void
+moo(struct nscope *level)
+{
+    struct line_assoc *p = level->subckts;
+
+    for (; p; p = p->next) {
+        struct line *c = p->line;
+        nupa_scan(c->li_line, c->li_linenum, TRUE, level);
+        moo(c->level);
+    }
+}
+
+
 /*-------------------------------------------------------------------
   inp_subcktexpand is the top level function which translates
   .subckts into mainlined code.   Note that there are several things
@@ -234,18 +247,6 @@ inp_subcktexpand(struct line *deck, struct nscope *root) {
 
         ok = nupa_signal(NUPADECKCOPY, NULL);
         /* get the subckt names from the deck */
-
-        void moo(struct nscope *level) {
-
-            struct line_assoc *p = level->subckts;
-
-            for (; p; p = p->next) {
-                struct line *c = p->line;
-                nupa_scan(c->li_line, c->li_linenum, TRUE, level);
-                moo(c->level);
-            }
-        }
-
         moo(root);
 
         /* now copy instances */
