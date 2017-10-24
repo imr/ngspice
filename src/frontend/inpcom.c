@@ -526,7 +526,7 @@ find_back_assignment(const char *p, const char *start)
   *-------------------------------------------------------------------------*/
 
 struct line *
-inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper_p)
+inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper_p, struct nscope **rootX)
 {
     struct line *cc;
     struct inp_read_t rv;
@@ -558,6 +558,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         delete_libs();
 
         struct nscope *root = inp_add_levels(working);
+        if (rootX)
+            *rootX = root;
 //#warning "should set the scope of the very first deck too, (for the insertion, scope copying mechanism)"
         inp_fix_for_numparam(subckt_w_params, working);
 

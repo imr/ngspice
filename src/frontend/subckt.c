@@ -203,7 +203,7 @@ free_global_nodes(void)
   are spliced in.
   -------------------------------------------------------------------*/
 struct line *
-inp_subcktexpand(struct line *deck) {
+inp_subcktexpand(struct line *deck, struct nscope *root) {
     struct line *c;
     int ok = 0;
     wordlist *modnames = NULL;
@@ -234,9 +234,20 @@ inp_subcktexpand(struct line *deck) {
 
         ok = nupa_signal(NUPADECKCOPY, NULL);
         /* get the subckt names from the deck */
-        for (c = deck; c; c = c->li_next)    /* first Numparam pass */
-            if (ciprefix(".subckt", c->li_line))
-                nupa_scan(c->li_line, c->li_linenum, TRUE, c->level);
+
+        void moo(struct nscope *level) {
+
+            struct line_assoc *p = level->subckts;
+
+            for (; p; p = p->next) {
+                struct line *c = p->line;
+                nupa_scan(c->li_line, c->li_linenum, TRUE, level);
+                moo(c->level);
+            }
+        }
+
+        moo(root);
+
         /* now copy instances */
         for (c = deck; c; c = c->li_next)  /* first Numparam pass */
             c->li_line = nupa_copy(c->li_line, c->li_linenum);

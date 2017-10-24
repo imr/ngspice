@@ -34,8 +34,9 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     wordlist *wl = NULL, *end = NULL;
     wordlist *controls = NULL;
     FILE *lastin, *lastout, *lasterr;
+    struct nscope *root;
 
-    deck = inp_readall(fp, NULL, comfile, FALSE, NULL); /* still to check if . or filename instead of NULL */
+    deck = inp_readall(fp, NULL, comfile, FALSE, NULL, &root); /* still to check if . or filename instead of NULL */
     if (!deck)
         return;
 
@@ -157,7 +158,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
              * deal with the commands.
              */
             if (!cp_getvar("nosubckt", CP_BOOL, NULL))
-                deck->li_next = inp_subcktexpand(deck->li_next);
+                deck->li_next = inp_subcktexpand(deck->li_next, root);
             deck->li_actual = realdeck;
             nutinp_dodeck(deck, tt, wl, FALSE, options, filename);
         }

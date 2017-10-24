@@ -413,6 +413,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     FILE *lastin, *lastout, *lasterr;
     double temperature_value;
     bool expr_w_temper = FALSE;
+    struct nscope *root;
 
     double startTime, endTime;
 
@@ -428,7 +429,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     /* inp_source() called with fp: load from file
        or fp == NULL, intfile == TRUE: load circarray */
     if (fp || intfile) {
-        deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
+        deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper, &root);
 
         /* here we check for .option seed=[val|random] and set the random number generator */
         eval_seed_opt(deck);
@@ -659,7 +660,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL))
-                if ((deck->li_next = inp_subcktexpand(deck->li_next)) == NULL) {
+                if ((deck->li_next = inp_subcktexpand(deck->li_next, root)) == NULL) {
                     line_free(realdeck, TRUE);
                     line_free(deck->li_actual, TRUE);
                     tfree(tt);
