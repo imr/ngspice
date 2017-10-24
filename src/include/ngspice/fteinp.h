@@ -21,7 +21,7 @@ struct line {
     char *li_error;
     struct line *li_next;
     struct line *li_actual;
-    struct nscope *levelX;
+    struct nscope *level;
 } ;
 
 /* Listing types. */

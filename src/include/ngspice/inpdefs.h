@@ -83,7 +83,7 @@ struct card{
     char *error;
     card *nextcard;
     card *actualLine;
-    struct nscope *levelX;
+    struct nscope *level;
 };
 
 /* structure used to save models in after they are read during pass 1 */
