@@ -23,10 +23,10 @@ i1c  1c 0  dc=-1mA
 x1c  1c 0  six_resistors_c val=2k m=3
 
 .subckt six_resistors_d 1 2 val=10k m=1
-.subckt nest 1 2
+.subckt nest_d 1 2
 R1 1 2 2k m=1
 .ends
-X1 1 2 nest m=3
+X1 1 2 nest_d m=3
 R1 1 2 {val} m=2
 R2 1 2 2k
 .ends
@@ -34,10 +34,10 @@ i1d  1d 0  dc=-1mA
 x1d  1d 0  six_resistors_d val=2k m=3
 
 .subckt six_resistors_e 1 2 val=10k m=1
-.subckt nest 1 2  m=1
+.subckt nest_e 1 2  m=1
 R1 1 2 2k m=1
 .ends
-X1 1 2 nest m=3
+X1 1 2 nest_e m=3
 R1 1 2 {val} m=2
 R2 1 2 2k
 .ends
