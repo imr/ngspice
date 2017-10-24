@@ -496,6 +496,11 @@ moo(struct nscope *level)
 
     for (; p; p = p->next) {
         char *curr_line = p->line->li_line;
+        /* .subckt line, if there is no m= at all, then add a m=1 */
+        /* FIXME, could it ever happen
+         *    to have assignments here without a "params:"
+         */
+        fprintf(stderr, ": %s\n", curr_line);
         if (!strstr(curr_line, "params:")) {
             p->line->li_line = tprintf("%s params: m=1", curr_line);
             tfree(curr_line);
@@ -503,6 +508,7 @@ moo(struct nscope *level)
             p->line->li_line = tprintf("%s m=1", curr_line);
             tfree(curr_line);
         }
+        fprintf(stderr, "> %s\n", p->line->li_line);
         struct line *card = p->line->li_next;
 
         int nesting = 0;
