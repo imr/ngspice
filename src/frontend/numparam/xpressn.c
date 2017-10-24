@@ -532,7 +532,7 @@ defsubckt(dico_t *dico, struct card *card)
 {
     const char *s = card->line;
     int w = card->linenum;
-    struct nscope *level = card->level;
+    struct nscope *level = card->levelX;
 
     bool err;
 

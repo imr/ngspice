@@ -181,7 +181,7 @@ insert_new_line(struct card *card, char *line, int linenum, int linenum_orig)
     x->line = line;
     x->linenum = linenum;
     x->linenum_orig = linenum_orig;
-    x->level = card ? card->level : NULL;
+    x->levelX = card ? card->levelX : NULL;
 
     if (card)
         card->nextcard = x;
@@ -422,7 +422,7 @@ inp_stitch_continuation_lines(struct card *working)
             } else {
                 prev->actualLine = insert_new_line(NULL, s, prev->linenum, 0);
 //#warning "scope, really ?, thats inside inp_read, there is no scope yet, simply drop this assignment !"
-                prev->actualLine->level = prev->level;
+                prev->actualLine->levelX = prev->levelX;
                 prev->actualLine->nextcard = working;
             }
             working = prev->nextcard;
@@ -2884,7 +2884,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
             char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct card_assoc *a = find_subckt(c->level, subckt_name);
+                struct card_assoc *a = find_subckt(c->levelX, subckt_name);
 
                 if (a) {
                     int num_subckt_params = inp_get_params(a->line->line, subckt_param_names, subckt_param_values);
@@ -2923,7 +2923,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
                 struct card *d;
 
                 /* fixme, this too ? */
-                d = find_subckt(c->level, subckt_name)->line;
+                d = find_subckt(c->levelX, subckt_name)->line;
                 {
                     char *subckt_line = d->line;
                     subckt_line = skip_non_ws(subckt_line);
@@ -6766,26 +6766,27 @@ inp_add_levels(struct card *deck)
         if (*curr_line == '.') {
             if (ciprefix(".subckt", curr_line)) {
                 add_subckt(lvl, card);
-                card->level = lvl;
-                lvl = TMALLOC(struct nscope, 1);
+                struct nscope *scope = TMALLOC(struct nscope, 1);
                 // lvl->name = ..., or just point to the deck
-                lvl->next = card->level;
-                lvl->subckts = NULL;
-                lvl->models = NULL;
+                scope->next = lvl;
+                scope->subckts = NULL;
+                scope->models = NULL;
+                lvl = card->levelX = scope;
             }
             else if (ciprefix(".ends", curr_line)) {
                 if (lvl == root) {
                     fprintf(stderr, ".suckt/.ends not balanced\n");
                     controlled_exit(1);
                 }
-                lvl = card->level = lvl->next;
+                card->levelX = lvl;
+                lvl = lvl->next;
             }
             else {
-                card->level = lvl;
+                card->levelX = lvl;
             }
         }
         else {
-            card->level = lvl;
+            card->levelX = lvl;
         }
     }
 
@@ -6872,10 +6873,7 @@ rem_unused_xxx(struct nscope *level)
 
     struct card_assoc *p = level->subckts;
     for (; p; p = p->next)
-        /* be carefull if it is an empty .subckt/.ends block
-         *  .subckt and .ends do have the level of the parent */
-        if (level != p->line->nextcard->level)
-            rem_unused_xxx(p->line->nextcard->level);
+        rem_unused_xxx(p->line->levelX);
 }
 
 
@@ -6925,8 +6923,8 @@ inp_rem_unused_models(struct nscope *root, struct card *deck)
             modl_new->modelname = get_subckt_model_name(curr_line);
             modl_new->model = card;
             modl_new->used = FALSE;
-            modl_new->next = card->level->models;
-            card->level->models = modl_new;
+            modl_new->next = card->levelX->models;
+            card->levelX->models = modl_new;
             tfree(model_type);
         }
     }
@@ -6984,11 +6982,11 @@ inp_rem_unused_models(struct nscope *root, struct card *deck)
              */
             if (is_a_modelname(elem_model_name)) {
 
-                struct modellist *m = find_model(card->level, elem_model_name);
+                struct modellist *m = find_model(card->levelX, elem_model_name);
                 if (m) {
                     if (*curr_line != m->elemb)
                         fprintf(stderr, "warning, model type mismatch\n");
-                    mark_all_binned(m->model->level, elem_model_name);
+                    mark_all_binned(m->model->levelX, elem_model_name);
                 } else {
                     fprintf(stderr, "warning, can't find model %s\n", elem_model_name);
                 }
