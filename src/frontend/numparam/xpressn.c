@@ -496,37 +496,37 @@ nupa_define(dico_t *dico,
     if (!entry)
         return message(dico, " Symbol table overflow\n");
 
-        if (entry->tp == 'P')
-            entry = entry->pointer; /* pointer indirection */
+    if (entry->tp == 'P')
+        entry = entry->pointer; /* pointer indirection */
 
-        if (entry)
-            c = entry->tp;
-        else
-            c = ' ';
+    if (entry)
+        c = entry->tp;
+    else
+        c = ' ';
 
-        if ((c == 'R') || (c == 'S') || (c == '?')) {
+    if ((c == 'R') || (c == 'S') || (c == '?')) {
 
-            entry->vl = z;
-            entry->tp = tpe;
-            entry->ivl = w;
-            entry->sbbase = base;
-            /* if ((c != '?') && (i <= dico->stack[dico->tos])) { */
-            if (c == '?')
-                entry->level = dico->stack_depth; /* promote! */
+        entry->vl = z;
+        entry->tp = tpe;
+        entry->ivl = w;
+        entry->sbbase = base;
+        /* if ((c != '?') && (i <= dico->stack[dico->tos])) { */
+        if (c == '?')
+            entry->level = dico->stack_depth; /* promote! */
 
-            /* warn about re-write to a global scope! */
-            if (entry->level < dico->stack_depth)
-                warn = message(dico, "%s:%d overwritten.\n", t, entry->level);
+        /* warn about re-write to a global scope! */
+        if (entry->level < dico->stack_depth)
+            warn = message(dico, "%s:%d overwritten.\n", t, entry->level);
 
-        } else {
-            /* suppress error message, resulting from multiple definition of
-               symbols (devices) in .model lines with same name, but in different subcircuits.
-               Subcircuit expansion is o.k., we have to deal with this numparam
-               behaviour later. (H. Vogt 090426)
-            */
-            if (0)
-                message(dico, "%s: cannot redefine\n", t);
-        }
+    } else {
+        /* suppress error message, resulting from multiple definition of
+           symbols (devices) in .model lines with same name, but in different subcircuits.
+           Subcircuit expansion is o.k., we have to deal with this numparam
+           behaviour later. (H. Vogt 090426)
+        */
+        if (0)
+            message(dico, "%s: cannot redefine\n", t);
+    }
 
     return 0;
 }
