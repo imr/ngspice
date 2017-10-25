@@ -26,13 +26,11 @@ extern const struct Tpe Tpe_Real_;
 extern const struct Tpe Tpe_String_;
 extern const struct Tpe Tpe_Subckt_;
 extern const struct Tpe Tpe_Unknown_;
-extern const struct Tpe Tpe_Model_;
 
 #define  TpeReal     (&Tpe_Real_)
 #define  TpeString   (&Tpe_String_)
 #define  TpeSubckt   (&Tpe_Subckt_)
 #define  TpeUnknown  (&Tpe_Unknown_)
-#define  TpeModel    (&Tpe_Model_)
 
 typedef const struct Tpe *entry_type;
 

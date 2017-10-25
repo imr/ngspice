@@ -1794,4 +1794,3 @@ const struct Tpe Tpe_Real_ = { "Tpe_Real" };
 const struct Tpe Tpe_String_ = { "Tpe_String" };
 const struct Tpe Tpe_Subckt_ = { "Tpe_Subckt" };
 const struct Tpe Tpe_Unknown_ = { "Tpe_Unknown" };
-const struct Tpe Tpe_Model_ = { "Tpe_Model" };
