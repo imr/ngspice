@@ -1110,7 +1110,7 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     int j, lq;
     nupa_type dt;
     entry_t *entry;
-    bool numeric, done, nolookup;
+    bool numeric, done;
     bool err;
 
     spice_dstring_reinit(qstr_p);
@@ -1121,12 +1121,10 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         /* string? */
         stupcase(t);
         entry = entrynb(dico, t);
-        nolookup = !entry;
 
         if (!entry)
             return message(dico,
-                           "\"%s\" not evaluated.%s\n", t,
-                           nolookup ? " Lookup failure." : "");
+                           "\"%s\" not evaluated. Lookup failure.\n", t);
 
         dt = entry->tp;
 
