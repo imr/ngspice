@@ -498,57 +498,57 @@ nupa_define(dico_t *dico,
     if (!entry)
         return message(dico, " Symbol table overflow\n");
 
-        if (entry->tp == 'P')
-            entry = entry->pointer; /* pointer indirection */
+    if (entry->tp == 'P')
+        entry = entry->pointer; /* pointer indirection */
 
-        if (entry)
-            c = entry->tp;
-        else
-            c = ' ';
+    if (entry)
+        c = entry->tp;
+    else
+        c = ' ';
 
-        if ((c == 'R') || (c == 'S') || (c == '?')) {
+    if ((c == 'R') || (c == 'S') || (c == '?')) {
 
-            entry->vl = z;
-            entry->tp = tpe;
-            entry->ivl = w;
-            entry->sbbase = base;
-            /* if ((c != '?') && (i <= dico->stack[dico->tos])) { */
-            if (c == '?')
-                entry->level = dico->stack_depth; /* promote! */
+        entry->vl = z;
+        entry->tp = tpe;
+        entry->ivl = w;
+        entry->sbbase = base;
+        /* if ((c != '?') && (i <= dico->stack[dico->tos])) { */
+        if (c == '?')
+            entry->level = dico->stack_depth; /* promote! */
 
-            /* warn about re-write to a global scope! */
-            if (entry->level < dico->stack_depth)
-                warn = message(dico, "%s:%d overwritten.\n", t, entry->level);
+        /* warn about re-write to a global scope! */
+        if (entry->level < dico->stack_depth)
+            warn = message(dico, "%s:%d overwritten.\n", t, entry->level);
 
-        } else {
-            /* FIXME: better do this recursively in a new function */
-            /* No new entry defined, but previous entry with same name returned
-               from function attrib(), compare levels, if not equal, o.k. (for now) */
+    } else {
+        /* FIXME: better do this recursively in a new function */
+        /* No new entry defined, but previous entry with same name returned
+           from function attrib(), compare levels, if not equal, o.k. (for now) */
 #if 0
-            unsigned short newlevel[NESTINGDEPTH];
-            unsigned short oldlevel[NESTINGDEPTH];
-            int i;
-            for (i = 0; i < NESTINGDEPTH; i++) {
-                newlevel[i] = level[i];
-                oldlevel[i] = entry->levelinfo[i];
-            }
-            /* top level */
-            if ((newlevel[0] > 0) && (oldlevel[0] > 0)
-                && (newlevel[1] == 0) && (oldlevel[1] == 0))
-                fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
-            /* second level */
-            else if ((newlevel[0] > 0) && (oldlevel[0] == newlevel[0])
-                && (newlevel[1] > 0) && (oldlevel[1] > 1)
-                && (newlevel[2] == 0) && (oldlevel[2] == 0))
-                fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
-            /* third level */
-            else if ((newlevel[0] > 0) && (oldlevel[0] == newlevel[0])
-                && (newlevel[1] > 0) && (oldlevel[1] == newlevel[1])
-                && (newlevel[2] > 0) && (oldlevel[2] > 1)
-                && (newlevel[3] == 0) && (oldlevel[3] == 0))
-                fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
-#endif
+        unsigned short newlevel[NESTINGDEPTH];
+        unsigned short oldlevel[NESTINGDEPTH];
+        int i;
+        for (i = 0; i < NESTINGDEPTH; i++) {
+            newlevel[i] = level[i];
+            oldlevel[i] = entry->levelinfo[i];
         }
+        /* top level */
+        if ((newlevel[0] > 0) && (oldlevel[0] > 0)
+            && (newlevel[1] == 0) && (oldlevel[1] == 0))
+            fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
+        /* second level */
+        else if ((newlevel[0] > 0) && (oldlevel[0] == newlevel[0])
+                 && (newlevel[1] > 0) && (oldlevel[1] > 1)
+                 && (newlevel[2] == 0) && (oldlevel[2] == 0))
+            fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
+        /* third level */
+        else if ((newlevel[0] > 0) && (oldlevel[0] == newlevel[0])
+                 && (newlevel[1] > 0) && (oldlevel[1] == newlevel[1])
+                 && (newlevel[2] > 0) && (oldlevel[2] > 1)
+                 && (newlevel[3] == 0) && (oldlevel[3] == 0))
+            fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
+#endif
+    }
 
     return 0;
 }
