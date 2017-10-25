@@ -483,7 +483,7 @@ nupa_define(dico_t *dico,
       we mark each id with its subckt level, and warn if write at higher one.
     */
     char c;
-    bool err, warn;
+    bool warn;
     entry_t *entry;             /* spice table entry */
     NGHASHPTR htable_p;         /* hash table */
 
@@ -494,13 +494,9 @@ nupa_define(dico_t *dico,
     htable_p = dico->symbols[dico->stack_depth];
 
     entry = attrib(dico, htable_p, t, op, level);
-    err = 0;
 
-    if (!entry) {
-
-        err = message(dico, " Symbol table overflow\n");
-
-    } else {
+    if (!entry)
+        return message(dico, " Symbol table overflow\n");
 
         if (entry->tp == 'P')
             entry = entry->pointer; /* pointer indirection */
@@ -553,9 +549,8 @@ nupa_define(dico_t *dico,
                 fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
 #endif
         }
-    }
 
-    return err;
+    return 0;
 }
 
 
