@@ -493,10 +493,7 @@ nupa_define(dico_t *dico,
     if (!entry)
         return message(dico, " Symbol table overflow\n");
 
-    if (entry)
-        c = entry->tp;
-    else
-        c = NUPA_SPACE;
+    c = entry->tp;
 
     if ((c == NUPA_REAL) || (c == NUPA_STRING) || (c == NUPA_UNKNOWN)) {
 
@@ -1779,4 +1776,3 @@ const struct nupa_type S_nupa_string = { "NUPA_STRING" };
 const struct nupa_type S_nupa_subckt = { "NUPA_SUBCKT" };
 const struct nupa_type S_nupa_unknown = { "NUPA_UNKNOWN" };
 const struct nupa_type S_nupa_model = { "NUPA_MODEL" };
-const struct nupa_type S_nupa_space = { "NUPA_SPACE" };
