@@ -1137,11 +1137,12 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         while (entry && (entry->tp == 'P'))
             entry = entry->pointer; /* follow pointer chain */
 
-        /* pointer chain */
-        if (entry)
-            dt = entry->tp;
-        else
-            dt = ' ';
+        if (!entry)
+            return message(dico,
+                           "\"%s\" not evaluated.%s\n", t,
+                           nolookup ? " Lookup failure." : "");
+
+        dt = entry->tp;
 
         /* data type: Real or String */
         if (dt == 'R') {
@@ -1168,11 +1169,6 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 
             } while (!done);
         }
-
-        if (!entry)
-            err = message(dico,
-                          "\"%s\" not evaluated.%s\n", t,
-                          nolookup ? " Lookup failure." : "");
     } else {
         u = formula(dico, t, t + strlen(t), &err);
         numeric = 1;
