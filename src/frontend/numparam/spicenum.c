@@ -538,7 +538,7 @@ nupa_done(void)
 void
 nupa_scan(char *s, int linenum, struct nscope *level)
 {
-    defsubckt(dicoS, s, linenum, TpeSubckt, level);
+    defsubckt(dicoS, s, linenum, level);
 }
 
 
