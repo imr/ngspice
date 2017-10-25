@@ -495,10 +495,7 @@ nupa_define(dico_t *dico,
     if (!entry)
         return message(dico, " Symbol table overflow\n");
 
-    if (entry)
-        c = entry->tp;
-    else
-        c = TpeSpace;
+    c = entry->tp;
 
     if ((c == TpeReal) || (c == TpeString) || (c == TpeUnknown)) {
 
@@ -1798,4 +1795,3 @@ const struct Tpe Tpe_String_ = { "Tpe_String" };
 const struct Tpe Tpe_Subckt_ = { "Tpe_Subckt" };
 const struct Tpe Tpe_Unknown_ = { "Tpe_Unknown" };
 const struct Tpe Tpe_Model_ = { "Tpe_Model" };
-const struct Tpe Tpe_Space_ = { "Tpe_Space" };
