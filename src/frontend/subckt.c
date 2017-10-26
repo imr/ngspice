@@ -372,7 +372,7 @@ inp_subcktexpand(struct card *deck) {
             if (ciprefix(".meas", c->line) && strstr(c->line, "param")) {
                 ;
             } else {
-                nupa_eval(c->line, c->linenum, c->linenum_orig);
+                nupa_eval(c);
             }
 
 #ifdef TRACE

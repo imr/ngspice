@@ -403,7 +403,7 @@ do_measure(
             fprintf(stdout, "%-20s=", resname);
 
         if (!chk_only) {
-            ok = nupa_eval(meas_card->line, meas_card->linenum, meas_card->linenum_orig);
+            ok = nupa_eval(meas_card);
 
             if (ok) {
                 str_ptr = strstr(meas_card->line, meastype);
