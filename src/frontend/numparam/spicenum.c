@@ -804,7 +804,7 @@ nupa_copy(char *s, int linenum)
 
 
 int
-nupa_eval(char *s, int linenum, int orig_linenum)
+nupa_eval(struct card *card)
 /* s points to a partially transformed line.
    compute variables if linenum points to a & or .param line.
    if ( the original is an X line,  compute actual params.;
@@ -812,6 +812,10 @@ nupa_eval(char *s, int linenum, int orig_linenum)
    All the X lines are preserved (commented out) in the expanded circuit.
 */
 {
+    char *s = card->line;
+    int linenum = card->linenum;
+    int orig_linenum = card->linenum_orig;
+
     int idef;                   /* subckt definition line */
     char c, keep, *ptr;
     SPICE_DSTRING subname;      /* dynamic string for subcircuit name */

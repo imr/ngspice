@@ -12,9 +12,10 @@
 #define  NUPAEVALDONE 3
 
 struct nscope;
+struct card;
 
 extern char  *nupa_copy(char *s, int linenum);
-extern int    nupa_eval(char *s, int linenum, int orig_linenum);
+extern int    nupa_eval(struct card *card);
 extern int    nupa_signal(int sig, char *info);
 extern void   nupa_scan(char * s, int linenum, int is_subckt, struct nscope *level);
 extern void   nupa_list_params(FILE *cp_out);
