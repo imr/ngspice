@@ -496,6 +496,8 @@ moo(struct nscope *level)
 
     for (; p; p = p->next) {
         char *curr_line = p->line->li_line;
+        if (curr_line[0] == '*')
+            continue;
         /* .subckt line, if there is no m= at all, then add a m=1 */
         /* FIXME, could it ever happen
          *    to have assignments here without a "params:"
