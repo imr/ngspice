@@ -90,7 +90,7 @@ ONEdopingValue(DOPprofile *pProfile, DOPtable *pTable, double x)
     if (argP > 10.0) {
       value = 0.0;
     } else {
-      value = pProfile->PEAK_CONC * erfc(-argP);
+      value = pProfile->PEAK_CONC * erfc(argP);
     }
     break;
   case LOOKUP:
