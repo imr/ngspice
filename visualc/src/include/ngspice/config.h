@@ -120,9 +120,6 @@
 /* Define to 1 if you have the `endpwent' function. */
 /* #undef HAVE_ENDPWENT */
 
-/* Define to 1 if you have the `erfc' function. */
-#define HAVE_ERFC 1
-
 /* Define to 1 if you have the <fcntl.h> header file. */
 #define HAVE_FCNTL_H 1
 

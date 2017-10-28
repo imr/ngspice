@@ -9,10 +9,6 @@ Copyright 1999 Emmanuel Rouat
 
 bool AlmostEqualUlps(double, double, int);
 
-#ifndef HAVE_ERFC
-extern double erfc(double);
-#endif
-
 #ifndef HAVE_LOGB
 extern double logb(double);
 #endif

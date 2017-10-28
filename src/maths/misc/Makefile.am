@@ -7,7 +7,6 @@ libmathmisc_la_SOURCES = \
 	accuracy.h	\
 	bernoull.h	\
 	bernoull.c	\
-	erfc.c		\
 	equality.c	\
 	isinf.c		\
 	isnan.c		\
@@ -18,7 +17,7 @@ libmathmisc_la_SOURCES = \
 	randnumb.c
 
 
-EXTRA_DIST = test_accuracy.c test_erfc.c
+EXTRA_DIST = test_accuracy.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
