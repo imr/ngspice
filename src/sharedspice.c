@@ -175,6 +175,7 @@ extern void create_circbyline(char *line);
 #ifdef XSPICE
 extern struct evt_shared_data *EVTshareddata(char *node_name);
 extern char** EVTallnodes(void);
+extern bool wantevtdata;
 #endif
 
 
@@ -231,7 +232,6 @@ static bool immediate = FALSE;
 static bool coquit = FALSE;
 static jmp_buf errbufm, errbufc;
 static int intermj = 1;
-bool wantevtdata = FALSE;
 static SendInitEvtData* sendinitevt;
 static SendEvtData* sendevt;
 static void* euserptr;

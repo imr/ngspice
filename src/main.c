@@ -87,6 +87,10 @@ bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've b
 bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
 char *ft_rawfile = "rawspice.raw";
 
+#ifdef XSPICE
+bool wantevtdata = FALSE;
+#endif
+
 #ifdef HAS_WINGUI
 extern void winmessage(char *new_msg); /* display a message box (defined in winmain.c)*/
 extern void SetSource(char *Name);    /* display the source file name in the source window */
