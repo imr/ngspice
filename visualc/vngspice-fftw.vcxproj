@@ -1540,7 +1540,6 @@ lib /machine:x64 /def:..\..\fftw-3.3.4-dll64\libfftw3-3.def /out:$(IntDir)libfft
     <ClCompile Include="..\src\maths\misc\accuracy.c" />
     <ClCompile Include="..\src\maths\misc\bernoull.c" />
     <ClCompile Include="..\src\maths\misc\equality.c" />
-    <ClCompile Include="..\src\maths\misc\erfc.c" />
     <ClCompile Include="..\src\maths\misc\logb.c" />
     <ClCompile Include="..\src\maths\misc\norm.c" />
     <ClCompile Include="..\src\maths\misc\randnumb.c" />
