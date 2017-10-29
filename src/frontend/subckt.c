@@ -239,7 +239,7 @@ inp_subcktexpand(struct card *deck) {
                 nupa_scan(c->line, c->linenum, TRUE, c->level);
         /* now copy instances */
         for (c = deck; c; c = c->nextcard)  /* first Numparam pass */
-            c->line = nupa_copy(c->line, c->linenum);
+            c->line = nupa_copy(c);
 
 #ifdef TRACE
         fprintf(stderr, "Numparams transformed deck:\n");

@@ -14,7 +14,7 @@
 struct nscope;
 struct card;
 
-extern char  *nupa_copy(char *s, int linenum);
+extern char  *nupa_copy(struct card *c);
 extern int    nupa_eval(struct card *card);
 extern int    nupa_signal(int sig, char *info);
 extern void   nupa_scan(char * s, int linenum, int is_subckt, struct nscope *level);
