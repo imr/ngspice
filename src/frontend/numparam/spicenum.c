@@ -784,7 +784,6 @@ nupa_copy(struct card *deck)
         dicoS->dyncategory[linenum] = c;
     } /* keep a local copy and mangle the string */
 
-    ls = spice_dstring_length(&u);
     t = strdup(spice_dstring_value(&u));
 
     if (t == NULL) {
