@@ -730,7 +730,7 @@ nupa_copy_inst_dico(void)
 
 
 char *
-nupa_copy(char *s, int linenum)
+nupa_copy(struct card *deck)
 /* returns a copy (not quite) of s in freshly allocated memory.
    linenum, for info only, is the source line number.
    origin pointer s is kept, memory is freed later in nupa_done.
@@ -744,6 +744,9 @@ nupa_copy(char *s, int linenum)
    - substitute placeholders for all {..} --> 10-digit numeric values.
 */
 {
+    char * const s = deck->line;
+    const int linenum = deck->linenum;
+
     char *t;
     int ls;
     char c, d;
@@ -762,7 +765,7 @@ nupa_copy(char *s, int linenum)
 
     if ((!inexpansionS) && (linenum >= 0) && (linenum <= dynmaxline)) {
         linecountS++;
-        dicoS->dynrefptr[linenum] = s;
+        dicoS->dynrefptr[linenum] = deck->line;
         c = transform(dicoS, &u, incontrolS, &keywd);
         if (c == 'C')
             incontrolS = 1;
