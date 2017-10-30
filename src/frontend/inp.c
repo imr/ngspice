@@ -274,9 +274,9 @@ inp_list(FILE *file, struct line *deck, struct line *extras, int type)
 
 /*
  * Free memory used by a line.
- * If recurse is TRUE then recursively free all lines linked via the li_next field.
+ * If recurse is TRUE then recursively free all lines linked via the ->li_next field.
  * If recurse is FALSE free only this line.
- * All lines linked via the li_actual field are always recursivly freed.
+ * All lines linked via the ->li_actual field are always recursivly freed.
  * SJB - 22nd May 2001
  */
 void
@@ -916,7 +916,7 @@ inp_dodeck(
     ft_curckt->FTEstats->FTESTATdeckNumLines = 0;
     /*----------------------------------------------------
      Now run through the deck and look to see if there are
-     errors on any line (message contained in li_error).
+     errors on any line (message contained in ->li_error).
 
      Error messages have been generated either by writing
      directly to ->li_error from a struct line or to
