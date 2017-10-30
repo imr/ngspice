@@ -1354,7 +1354,7 @@ com_alter_mod(wordlist *wl)
     char *filename = NULL, *eqword, *input, *modelline = NULL, *inptoken;
     int modno = 0, molineno = 0, i, j;
     wordlist *newcommand;
-    struct line *modeldeck, *tmpdeck;
+    struct card *modeldeck, *tmpdeck;
     char *readmode = "r";
     char **arglist;
     bool modelfound = FALSE;
@@ -1406,13 +1406,13 @@ com_alter_mod(wordlist *wl)
     tfree(input);
     tfree(filename);
     /* get all lines starting with *model */
-    for (tmpdeck = modeldeck; tmpdeck; tmpdeck = tmpdeck->li_next)
-        if (ciprefix("*model", tmpdeck->li_line)) {
+    for (tmpdeck = modeldeck; tmpdeck; tmpdeck = tmpdeck->nextcard)
+        if (ciprefix("*model", tmpdeck->line)) {
             if (molineno == MODLIM) {
                 fprintf(cp_err, "Error: more than %d models in deck, rest ignored\n", molineno);
                 break;
             }
-            modellines[molineno] = tmpdeck->li_line;
+            modellines[molineno] = tmpdeck->line;
             molineno++;
         }
     /* Check if all models named in altermod command are to be found in input deck.

@@ -265,7 +265,7 @@ if_dump(CKTcircuit *ckt, FILE *fp)
 
 /* -------------------------------------------------------------------------- */
 CKTcircuit *
-if_inpdeck(struct line *deck, INPtables **tab)
+if_inpdeck(struct card *deck, INPtables **tab)
 {
     NG_IGNORE(tab);
     NG_IGNORE(deck);
@@ -410,8 +410,8 @@ ipc_get_line(char *str, int *len, Ipc_Wait_t wait)
     return x;
 }
 
-struct line *
-ENHtranslate_poly(struct line *deck)
+struct card *
+ENHtranslate_poly(struct card *deck)
 {
     NG_IGNORE(deck);
     return NULL;

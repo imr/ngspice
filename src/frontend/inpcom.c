@@ -56,7 +56,7 @@ Author: 1985 Wayne A. Christopher
 static struct library {
     char *realpath;
     char *habitat;
-    struct line *deck;
+    struct card *deck;
 } libraries[N_LIBRARIES];
 
 static int  num_libraries;
@@ -88,7 +88,7 @@ struct func_temper
     struct func_temper *next;
 };
 
-extern void line_free_x(struct line *deck, bool recurse);
+extern void line_free_x(struct card *deck, bool recurse);
 
 static COMPATMODE_T inp_compat_mode;
 
@@ -103,50 +103,50 @@ long dynsubst; /* spicenum.c 221 */
 
 static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
-static void inp_stripcomments_deck(struct line *deck, bool cs);
+static void inp_stripcomments_deck(struct card *deck, bool cs);
 static void inp_stripcomments_line(char *s, bool cs);
-static void inp_fix_for_numparam(struct names *subckt_w_params, struct line *deck);
-static void inp_remove_excess_ws(struct line *deck);
-static void expand_section_references(struct line *deck, char *dir_name);
-static void inp_grab_func(struct function_env *, struct line *deck);
-static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck);
+static void inp_fix_for_numparam(struct names *subckt_w_params, struct card *deck);
+static void inp_remove_excess_ws(struct card *deck);
+static void expand_section_references(struct card *deck, char *dir_name);
+static void inp_grab_func(struct function_env *, struct card *deck);
+static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck);
 static void inp_expand_macros_in_func(struct function_env *);
-static struct line *inp_expand_macros_in_deck(struct function_env *, struct line *deck);
-static void inp_fix_param_values(struct line *deck);
-static void inp_reorder_params(struct names *subckt_w_params, struct line *list_head);
-static int  inp_split_multi_param_lines(struct line *deck, int line_number);
-static void inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct line *s_c, struct line *e_c);
+static struct card *inp_expand_macros_in_deck(struct function_env *, struct card *deck);
+static void inp_fix_param_values(struct card *deck);
+static void inp_reorder_params(struct names *subckt_w_params, struct card *list_head);
+static int  inp_split_multi_param_lines(struct card *deck, int line_number);
+static void inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct card *s_c, struct card *e_c);
 static char *inp_remove_ws(char *s);
-static void inp_compat(struct line *deck);
-static void inp_bsource_compat(struct line *deck);
-static bool inp_temper_compat(struct line *card);
-static void inp_dot_if(struct line *deck);
+static void inp_compat(struct card *deck);
+static void inp_bsource_compat(struct card *deck);
+static bool inp_temper_compat(struct card *card);
+static void inp_dot_if(struct card *deck);
 static char *inp_modify_exp(char* expression);
-static struct func_temper *inp_new_func(char *funcname, char *funcbody, struct line *card,
+static struct func_temper *inp_new_func(char *funcname, char *funcbody, struct card *card,
                                         int *sub_count, int subckt_depth);
 static void inp_delete_funcs(struct func_temper *funcs);
 
 static bool chk_for_line_continuation(char *line);
-static void comment_out_unused_subckt_models(struct line *start_card);
-static void inp_fix_macro_param_func_paren_io(struct line *begin_card);
-static void inp_fix_gnd_name(struct line *deck);
-static void inp_chk_for_multi_in_vcvs(struct line *deck, int *line_number);
-static void inp_add_control_section(struct line *deck, int *line_number);
+static void comment_out_unused_subckt_models(struct card *start_card);
+static void inp_fix_macro_param_func_paren_io(struct card *begin_card);
+static void inp_fix_gnd_name(struct card *deck);
+static void inp_chk_for_multi_in_vcvs(struct card *deck, int *line_number);
+static void inp_add_control_section(struct card *deck, int *line_number);
 static char *get_quoted_token(char *string, char **token);
 static void replace_token(char *string, char *token, int where, int total);
-static void inp_add_series_resistor(struct line *deck);
-static void subckt_params_to_param(struct line *deck);
-static void inp_fix_temper_in_param(struct line *deck);
+static void inp_add_series_resistor(struct card *deck);
+static void subckt_params_to_param(struct card *deck);
+static void inp_fix_temper_in_param(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
 
 static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
-void tprint(struct line *deck);
+void tprint(struct card *deck);
 
 struct inp_read_t
-{ struct line *cc;
+{ struct card *cc;
     int line_number;
 };
 
@@ -154,39 +154,39 @@ static struct inp_read_t inp_read(FILE *fp, int call_depth, char *dir_name, bool
 
 
 #ifndef XSPICE
-static void inp_poly_err(struct line *deck);
+static void inp_poly_err(struct card *deck);
 #endif
 
 
 /* insert a new card, just behind the given card */
-static struct line *
-insert_new_line(struct line *card, char *line, int linenum, int linenum_orig)
+static struct card *
+insert_new_line(struct card *card, char *line, int linenum, int linenum_orig)
 {
-    struct line *x = TMALLOC(struct line, 1);
+    struct card *x = TMALLOC(struct card, 1);
 
-    x->li_next = card ? card->li_next : NULL;
-    x->li_error = NULL;
-    x->li_actual = NULL;
-    x->li_line = line;
-    x->li_linenum = linenum;
-    x->li_linenum_orig = linenum_orig;
+    x->nextcard = card ? card->nextcard : NULL;
+    x->error = NULL;
+    x->actualLine = NULL;
+    x->line = line;
+    x->linenum = linenum;
+    x->linenum_orig = linenum_orig;
 
     if (card)
-        card->li_next = x;
+        card->nextcard = x;
 
     return x;
 }
 
 
 /* insert new_card, just behind the given card */
-static struct line *
-insert_deck(struct line *card, struct line *new_card)
+static struct card *
+insert_deck(struct card *card, struct card *new_card)
 {
     if (card) {
-        new_card->li_next = card->li_next;
-        card->li_next = new_card;
+        new_card->nextcard = card->nextcard;
+        card->nextcard = new_card;
     } else {
-        new_card->li_next = NULL;
+        new_card->nextcard = NULL;
     }
     return new_card;
 }
@@ -230,12 +230,12 @@ find_lib(char *name)
 }
 
 
-static struct line *
-find_section_definition(struct line *c, char *name)
+static struct card *
+find_section_definition(struct card *c, char *name)
 {
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        char *line = c->li_line;
+        char *line = c->line;
 
         if (ciprefix(".lib", line)) {
 
@@ -353,19 +353,19 @@ delete_names(struct names *p)
    */
 
 static void
-inp_stitch_continuation_lines(struct line *working)
+inp_stitch_continuation_lines(struct card *working)
 {
-    struct line *prev = NULL;
+    struct card *prev = NULL;
 
     while (working) {
         char *s, c, *buffer;
 
-        for (s = working->li_line; (c = *s) != '\0' && c <= ' '; s++)
+        for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
             ;
 
 #ifdef TRACE
         /* SDB debug statement */
-        printf("In inp_read, processing linked list element line = %d, s = %s . . . \n", working->li_linenum, s);
+        printf("In inp_read, processing linked list element line = %d, s = %s . . . \n", working->linenum, s);
 #endif
 
         switch (c) {
@@ -374,49 +374,49 @@ inp_stitch_continuation_lines(struct line *working)
         case '*':
         case '\0':
             /* skip these cards, and keep prev as the last regular card */
-            working = working->li_next;  /* for these chars, go to next card */
+            working = working->nextcard;  /* for these chars, go to next card */
             break;
 
         case '+':   /* handle continuation */
             if (!prev) {
-                working->li_error = copy("Illegal continuation line: ignored.");
-                working = working->li_next;
+                working->error = copy("Illegal continuation line: ignored.");
+                working = working->nextcard;
                 break;
             }
 
             /* We now may have lept over some comment lines, which are located among
             the continuation lines. We have to delete them here to prevent a memory leak */
-            while (prev->li_next != working) {
-                struct line *tmpl = prev->li_next->li_next;
-                line_free_x(prev->li_next, FALSE);
-                prev->li_next = tmpl;
+            while (prev->nextcard != working) {
+                struct card *tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
             }
 
             /* create buffer and write last and current line into it. */
-            buffer = tprintf("%s %s", prev->li_line, s + 1);
+            buffer = tprintf("%s %s", prev->line, s + 1);
 
-            /* replace prev->li_line by buffer */
-            s = prev->li_line;
-            prev->li_line = buffer;
-            prev->li_next = working->li_next;
-            working->li_next = NULL;
-            /* add original line to prev->li_actual */
-            if (prev->li_actual) {
-                struct line *end;
-                for (end = prev->li_actual; end->li_next; end = end->li_next)
+            /* replace prev->line by buffer */
+            s = prev->line;
+            prev->line = buffer;
+            prev->nextcard = working->nextcard;
+            working->nextcard = NULL;
+            /* add original line to prev->actualLine */
+            if (prev->actualLine) {
+                struct card *end;
+                for (end = prev->actualLine; end->nextcard; end = end->nextcard)
                     ;
-                end->li_next = working;
+                end->nextcard = working;
                 tfree(s);
             } else {
-                prev->li_actual = insert_new_line(NULL, s, prev->li_linenum, 0);
-                prev->li_actual->li_next = working;
+                prev->actualLine = insert_new_line(NULL, s, prev->linenum, 0);
+                prev->actualLine->nextcard = working;
             }
-            working = prev->li_next;
+            working = prev->nextcard;
             break;
 
         default:  /* regular one-line card */
             prev = working;
-            working = working->li_next;
+            working = working->nextcard;
             break;
         }
     }
@@ -512,10 +512,10 @@ find_back_assignment(const char *p, const char *start)
   debug printout to debug-out.txt
   *-------------------------------------------------------------------------*/
 
-struct line *
+struct card *
 inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper_p)
 {
-    struct line *cc;
+    struct card *cc;
     struct inp_read_t rv;
 
     num_libraries = 0;
@@ -525,7 +525,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
     cc = rv . cc;
 
     /* files starting with *ng_script are user supplied command files */
-    if (cc && ciprefix("*ng_script", cc->li_line))
+    if (cc && ciprefix("*ng_script", cc->line))
         comfile = TRUE;
 
     /* The following processing of an input file is not required for command files
@@ -535,10 +535,10 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 
         unsigned int no_braces; /* number of '{' */
         size_t max_line_length; /* max. line length in input deck */
-        struct line *tmp_ptr1;
+        struct card *tmp_ptr1;
         struct names *subckt_w_params = new_names();
 
-        struct line *working = cc->li_next;
+        struct card *working = cc->nextcard;
 
         delete_libs();
         inp_fix_for_numparam(subckt_w_params, working);
@@ -575,10 +575,10 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         bool expr_w_temper = FALSE;
         if (inp_compat_mode != COMPATMODE_SPICE3) {
             /* Do all the compatibility stuff here */
-            working = cc->li_next;
+            working = cc->nextcard;
             /* E, G, L, R, C compatibility transformations */
             inp_compat(working);
-            working = cc->li_next;
+            working = cc->nextcard;
             /* B source numparam compatibility transformation */
             inp_bsource_compat(working);
             inp_dot_if(working);
@@ -596,17 +596,17 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         dynmaxline = 0;
         max_line_length = 0;
         no_braces = 0;
-        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->li_next) {
+        for (tmp_ptr1 = cc; tmp_ptr1; tmp_ptr1 = tmp_ptr1->nextcard) {
             char *s;
             unsigned int braces_per_line = 0;
             /* count number of lines */
             dynmaxline++;
             /* renumber the lines of the processed input deck */
-            tmp_ptr1->li_linenum = dynmaxline;
-            if (max_line_length < strlen(tmp_ptr1->li_line))
-                max_line_length = strlen(tmp_ptr1->li_line);
+            tmp_ptr1->linenum = dynmaxline;
+            if (max_line_length < strlen(tmp_ptr1->line))
+                max_line_length = strlen(tmp_ptr1->line);
             /* count '{' */
-            for (s = tmp_ptr1->li_line; *s; s++)
+            for (s = tmp_ptr1->line; *s; s++)
                 if (*s == '{')
                     braces_per_line++;
             if (no_braces <  braces_per_line)
@@ -616,20 +616,20 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         if (ft_ngdebug) {
             /*debug: print into file*/
             FILE *fd = fopen("debug-out.txt", "w");
-            struct line *t;
+            struct card *t;
             fprintf(fd, "**************** uncommented deck **************\n\n");
             /* always print first line */
-            fprintf(fd, "%6d  %6d  %s\n", cc->li_linenum_orig, cc->li_linenum, cc->li_line);
+            fprintf(fd, "%6d  %6d  %s\n", cc->linenum_orig, cc->linenum, cc->line);
             /* here without out-commented lines */
-            for (t = cc->li_next; t; t = t->li_next) {
-                if (*(t->li_line) == '*')
+            for (t = cc->nextcard; t; t = t->nextcard) {
+                if (*(t->line) == '*')
                     continue;
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+                fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
             }
             fprintf(fd, "\n****************** complete deck ***************\n\n");
             /* now completely */
-            for (t = cc; t; t = t->li_next)
-                fprintf(fd, "%6d  %6d  %s\n", t->li_linenum_orig, t->li_linenum, t->li_line);
+            for (t = cc; t; t = t->nextcard)
+                fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
             fclose(fd);
 
             fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
@@ -651,7 +651,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 */
 {
     struct inp_read_t rv;
-    struct line *end = NULL, *cc = NULL;
+    struct card *end = NULL, *cc = NULL;
     char *buffer = NULL;
     /* segfault fix */
 #ifdef XSPICE
@@ -659,7 +659,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     int line_count = 0;
 #endif
     char *new_title = NULL;
-    int line_number = 1; /* sjb - renamed to avoid confusion with struct line */
+    int line_number = 1; /* sjb - renamed to avoid confusion with struct card */
     int line_number_orig = 1;
     int cirlinecount = 0; /* length of circarray */
     static int is_control = 0; /* We are reading from a .control section */
@@ -789,7 +789,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             char *y = NULL;
             char *s;
 
-            struct line *newcard;
+            struct card *newcard;
 
             inp_stripcomments_line(buffer, FALSE);
 
@@ -848,14 +848,14 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
             if (newcard) {
                 int line_number_inc = 1;
-                end->li_next = newcard;
+                end->nextcard = newcard;
                 /* Renumber the lines */
-                for (end = newcard; end && end->li_next; end = end->li_next) {
-                    end->li_linenum = line_number++;
-                    end->li_linenum_orig = line_number_inc++;
+                for (end = newcard; end && end->nextcard; end = end->nextcard) {
+                    end->linenum = line_number++;
+                    end->linenum_orig = line_number_inc++;
                 }
-                end->li_linenum = line_number++;        /* SJB - renumber the last line */
-                end->li_linenum_orig = line_number_inc++;       /* SJB - renumber the last line */
+                end->linenum = line_number++;        /* SJB - renumber the last line */
+                end->linenum_orig = line_number_inc++;       /* SJB - renumber the last line */
             }
 
             /* Fix the buffer up a bit. */
@@ -932,7 +932,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     }
 
     /* files starting with *ng_script are user supplied command files */
-    if (call_depth == 0 && ciprefix("*ng_script", cc->li_line))
+    if (call_depth == 0 && ciprefix("*ng_script", cc->line))
         comfile = TRUE;
 
     if (call_depth == 0 && !comfile) {
@@ -957,8 +957,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
     /* Replace first line with the new title, if available */
     if (call_depth == 0 && !comfile && new_title) {
-        tfree(cc->li_line);
-        cc->li_line = new_title;
+        tfree(cc->line);
+        cc->line = new_title;
     }
 
     /* Strip or convert end-of-line comments.
@@ -966,9 +966,9 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
        If the line only contains an end-of-line comment then it is converted
        into a normal comment with a '*' at the start.  Some special handling
        if this is a command file or called from within a .control section. */
-    inp_stripcomments_deck(cc->li_next, comfile || is_control);
+    inp_stripcomments_deck(cc->nextcard, comfile || is_control);
 
-    inp_stitch_continuation_lines(cc->li_next);
+    inp_stitch_continuation_lines(cc->nextcard);
 
     rv . line_number = line_number;
     rv . cc = cc;
@@ -1178,11 +1178,11 @@ readline(FILE *fd)
    Delimiters of gnd may be ' ' or ',' or '(' or ')' */
 
 static void
-inp_fix_gnd_name(struct line *c)
+inp_fix_gnd_name(struct card *c)
 {
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        char *gnd = c->li_line;
+        char *gnd = c->line;
 
         // if there is a comment or no gnd, go to next line
         if ((*gnd == '*') || !strstr(gnd, "gnd"))
@@ -1198,7 +1198,7 @@ inp_fix_gnd_name(struct line *c)
         }
 
         // now remove the extra white spaces around 0
-        c->li_line = inp_remove_ws(c->li_line);
+        c->line = inp_remove_ws(c->line);
     }
 }
 
@@ -1220,13 +1220,13 @@ inp_fix_gnd_name(struct line *c)
  */
 
 static void
-inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
+inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 {
     int skip_control = 0;
 
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        char *line = c->li_line;
+        char *line = c->line;
 
         /* there is no e source inside .control ... .endc */
         if (ciprefix(".control", line)) {
@@ -1356,7 +1356,7 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
                 tfree(xy_values2[0]);
                 tfree(xy_values2[1]);
 
-                *c->li_line = '*';
+                *c->line = '*';
                 c = insert_new_line(c, m_instance, (*line_number)++, 0);
                 c = insert_new_line(c, m_model, (*line_number)++, 0);
             }
@@ -1375,33 +1375,33 @@ inp_chk_for_multi_in_vcvs(struct line *c, int *line_number)
  *   .endc
  */
 static void
-inp_add_control_section(struct line *deck, int *line_number)
+inp_add_control_section(struct card *deck, int *line_number)
 {
-    struct line *c, *prev_card = NULL;
+    struct card *c, *prev_card = NULL;
     bool        found_control = FALSE, found_run = FALSE;
     bool        found_end = FALSE;
     char        *op_line  = NULL, rawfile[1000], *line;
 
-    for (c = deck; c; c = c->li_next) {
+    for (c = deck; c; c = c->nextcard) {
 
-        if (*c->li_line == '*')
+        if (*c->line == '*')
             continue;
 
-        if (ciprefix(".op ", c->li_line)) {
-            *c->li_line = '*';
-            op_line = c->li_line + 1;
+        if (ciprefix(".op ", c->line)) {
+            *c->line = '*';
+            op_line = c->line + 1;
         }
 
-        if (ciprefix(".end", c->li_line))
+        if (ciprefix(".end", c->line))
             found_end = TRUE;
 
-        if (found_control && ciprefix("run", c->li_line))
+        if (found_control && ciprefix("run", c->line))
             found_run = TRUE;
 
-        if (ciprefix(".control", c->li_line))
+        if (ciprefix(".control", c->line))
             found_control = TRUE;
 
-        if (ciprefix(".endc", c->li_line)) {
+        if (ciprefix(".endc", c->line)) {
             found_control = FALSE;
 
             if (!found_run) {
@@ -1467,33 +1467,33 @@ chk_for_line_continuation(char *line)
 //        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
 
 static void
-inp_fix_macro_param_func_paren_io(struct line *card)
+inp_fix_macro_param_func_paren_io(struct card *card)
 {
     char        *str_ptr, *new_str;
 
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        if (*card->li_line == '*')
+        if (*card->line == '*')
             continue;
 
-        if (ciprefix(".macro", card->li_line) || ciprefix(".eom", card->li_line)) {
-            str_ptr = skip_non_ws(card->li_line);
+        if (ciprefix(".macro", card->line) || ciprefix(".eom", card->line)) {
+            str_ptr = skip_non_ws(card->line);
 
-            if (ciprefix(".macro", card->li_line)) {
+            if (ciprefix(".macro", card->line)) {
                 new_str = tprintf(".subckt%s", str_ptr);
             } else {
                 new_str = tprintf(".ends%s", str_ptr);
             }
 
-            tfree(card->li_line);
-            card->li_line = new_str;
+            tfree(card->line);
+            card->line = new_str;
         }
 
-        if (ciprefix(".subckt", card->li_line) || ciprefix("x", card->li_line)) {
+        if (ciprefix(".subckt", card->line) || ciprefix("x", card->line)) {
             /* remove () */
-            str_ptr = skip_non_ws(card->li_line);  // skip over .subckt, instance name
+            str_ptr = skip_non_ws(card->line);  // skip over .subckt, instance name
             str_ptr = skip_ws(str_ptr);
-            if (ciprefix(".subckt", card->li_line)) {
+            if (ciprefix(".subckt", card->line)) {
                 str_ptr = skip_non_ws(str_ptr);  // skip over subckt name
                 str_ptr = skip_ws(str_ptr);
             }
@@ -1506,13 +1506,13 @@ inp_fix_macro_param_func_paren_io(struct line *card)
                     }
                     str_ptr++;
                 }
-                card->li_line = inp_remove_ws(card->li_line); /* remove the extra white spaces just introduced */
+                card->line = inp_remove_ws(card->line); /* remove the extra white spaces just introduced */
             }
         }
 
-        if (ciprefix(".para", card->li_line)) {
+        if (ciprefix(".para", card->line)) {
             bool is_func = FALSE;
-            str_ptr = skip_non_ws(card->li_line);  // skip over .param
+            str_ptr = skip_non_ws(card->line);  // skip over .param
             str_ptr = skip_ws(str_ptr);
             while (!isspace_c(*str_ptr) && *str_ptr != '=') {
                 if (*str_ptr == '(')
@@ -1521,10 +1521,10 @@ inp_fix_macro_param_func_paren_io(struct line *card)
             }
 
             if (is_func) {
-                str_ptr = strchr(card->li_line, '=');
+                str_ptr = strchr(card->line, '=');
                 if (str_ptr)
                     *str_ptr = ' ';
-                str_ptr = card->li_line + 1;
+                str_ptr = card->line + 1;
                 str_ptr[0] = 'f';
                 str_ptr[1] = 'u';
                 str_ptr[2] = 'n';
@@ -1726,19 +1726,19 @@ nlist_destroy(struct nlist *nlist)
 
 
 static void
-get_subckts_for_subckt(struct line *start_card, char *subckt_name,
+get_subckts_for_subckt(struct card *start_card, char *subckt_name,
                        struct nlist *used_subckts, struct nlist *used_models,
                        bool has_models)
 {
-    struct line *card;
+    struct card *card;
     int first_new_subckt = used_subckts->num_names;
 
     bool found_subckt = FALSE;
     int  i, fence;
 
-    for (card = start_card; card; card = card->li_next) {
+    for (card = start_card; card; card = card->nextcard) {
 
-        char *line = card->li_line;
+        char *line = card->line;
 
         if (*line == '*')
             continue;
@@ -1790,9 +1790,9 @@ get_subckts_for_subckt(struct line *start_card, char *subckt_name,
 */
 
 static void
-comment_out_unused_subckt_models(struct line *start_card)
+comment_out_unused_subckt_models(struct card *start_card)
 {
-    struct line *card;
+    struct card *card;
     struct nlist *used_subckts, *used_models;
     int  i = 0, fence;
     bool processing_subckt = FALSE, remove_subckt = FALSE, has_models = FALSE;
@@ -1801,18 +1801,18 @@ comment_out_unused_subckt_models(struct line *start_card)
     used_subckts = nlist_allocate(100);
     used_models = nlist_allocate(100);
 
-    for (card = start_card; card; card = card->li_next) {
-        if (ciprefix(".model", card->li_line))
+    for (card = start_card; card; card = card->nextcard) {
+        if (ciprefix(".model", card->line))
             has_models = TRUE;
-        if (ciprefix(".cmodel", card->li_line))
+        if (ciprefix(".cmodel", card->line))
             has_models = TRUE;
-        if (ciprefix(".para", card->li_line) && !strchr(card->li_line, '='))
-            *card->li_line = '*';
+        if (ciprefix(".para", card->line) && !strchr(card->line, '='))
+            *card->line = '*';
     }
 
-    for (card = start_card; card; card = card->li_next) {
+    for (card = start_card; card; card = card->nextcard) {
 
-        char *line = card->li_line;
+        char *line = card->line;
 
         if (*line == '*')
             continue;
@@ -1862,9 +1862,9 @@ comment_out_unused_subckt_models(struct line *start_card)
                                used_subckts, used_models, has_models);
 
     /* comment out any unused subckts, currently only at top level */
-    for (card = start_card; card; card = card->li_next) {
+    for (card = start_card; card; card = card->nextcard) {
 
-        char *line = card->li_line;
+        char *line = card->line;
 
         if (*line == '*')
             continue;
@@ -2016,16 +2016,16 @@ inp_casefix(char *string)
    and for .control sections only '$ ' is accepted as end-of-line comment,
    to avoid conflict with $variable definition, otherwise we accept '$'. */
 static void
-inp_stripcomments_deck(struct line *c, bool cf)
+inp_stripcomments_deck(struct card *c, bool cf)
 {
     bool found_control = FALSE;
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
         /* exclude lines between .control and .endc from removing white spaces */
-        if (ciprefix(".control", c->li_line))
+        if (ciprefix(".control", c->line))
             found_control = TRUE;
-        if (ciprefix(".endc", c->li_line))
+        if (ciprefix(".endc", c->line))
             found_control = FALSE;
-        inp_stripcomments_line(c->li_line, found_control|cf);
+        inp_stripcomments_line(c->line, found_control|cf);
     }
 }
 
@@ -2161,7 +2161,7 @@ find_name(struct names *p, char *name)
 static char*
 inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
-    struct line *head, *first_param_card, *c;
+    struct card *head, *first_param_card, *c;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str;
 
     equal = strchr(s, '=');
@@ -2212,11 +2212,11 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
 
         /* create new ordered parameter string for subckt call */
         new_str = NULL;
-        for (c = head->li_next; c; c = c->li_next)
+        for (c = head->nextcard; c; c = c->nextcard)
             if (new_str == NULL) {
-                new_str = strdup(c->li_line);
+                new_str = strdup(c->line);
             } else {
-                char *x = tprintf("%s %s", new_str, c->li_line);
+                char *x = tprintf("%s %s", new_str, c->line);
                 tfree(new_str);
                 new_str = x;
             }
@@ -2307,68 +2307,68 @@ inp_remove_ws(char *s)
 */
 
 static void
-inp_fix_for_numparam(struct names *subckt_w_params, struct line *c)
+inp_fix_for_numparam(struct names *subckt_w_params, struct card *c)
 {
     bool found_control = FALSE;
 
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        if (*(c->li_line) == '*' || ciprefix(".lib", c->li_line))
+        if (*(c->line) == '*' || ciprefix(".lib", c->line))
             continue;
 
         /* exclude lines between .control and .endc from getting quotes changed */
-        if (ciprefix(".control", c->li_line))
+        if (ciprefix(".control", c->line))
             found_control = TRUE;
-        if (ciprefix(".endc", c->li_line))
+        if (ciprefix(".endc", c->line))
             found_control = FALSE;
 
         if (found_control)
             continue;
 
-        inp_change_quotes(c->li_line);
+        inp_change_quotes(c->line);
 
         if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS))
-            if (ciprefix(".subckt", c->li_line) || ciprefix("x", c->li_line)) {
+            if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
-                char *str_ptr = strstr(c->li_line, "params:");
+                char *str_ptr = strstr(c->line, "params:");
                 if (str_ptr)
                     memcpy(str_ptr, "       ", 7);
             }
 
-        if (ciprefix(".subckt", c->li_line))
-            c->li_line = inp_fix_subckt(subckt_w_params, c->li_line);
+        if (ciprefix(".subckt", c->line))
+            c->line = inp_fix_subckt(subckt_w_params, c->line);
     }
 }
 
 
 static void
-inp_remove_excess_ws(struct line *c)
+inp_remove_excess_ws(struct card *c)
 {
     bool found_control = FALSE;
 
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        if (*c->li_line == '*')
+        if (*c->line == '*')
             continue;
 
         /* exclude echo lines between .control and .endc from removing white spaces */
-        if (ciprefix(".control", c->li_line))
+        if (ciprefix(".control", c->line))
             found_control = TRUE;
-        if (ciprefix(".endc", c->li_line))
+        if (ciprefix(".endc", c->line))
             found_control = FALSE;
 
-        if (found_control && ciprefix("echo", c->li_line))
+        if (found_control && ciprefix("echo", c->line))
             continue;
 
-        c->li_line = inp_remove_ws(c->li_line); /* freed in fcn */
+        c->line = inp_remove_ws(c->line); /* freed in fcn */
     }
 }
 
 
-static struct line *
-expand_section_ref(struct line *c, char *dir_name)
+static struct card *
+expand_section_ref(struct card *c, char *dir_name)
 {
-    char *line = c->li_line;
+    char *line = c->line;
 
     char *s, *s_e, *y;
 
@@ -2384,7 +2384,7 @@ expand_section_ref(struct line *c, char *dir_name)
     if (*y) {
         /* library section reference: `.lib <library-file> <section-name>' */
 
-        struct line *section_def;
+        struct card *section_def;
         char keep_char1, keep_char2;
         char *y_e;
         struct library *lib;
@@ -2412,11 +2412,11 @@ expand_section_ref(struct line *c, char *dir_name)
 
         /* recursively expand the refered section itself */
         {
-            struct line *t = section_def;
-            for (; t; t = t->li_next) {
-                if (ciprefix(".endl", t->li_line))
+            struct card *t = section_def;
+            for (; t; t = t->nextcard) {
+                if (ciprefix(".endl", t->line))
                     break;
-                if (ciprefix(".lib", t->li_line))
+                if (ciprefix(".lib", t->line))
                     t = expand_section_ref(t, lib->habitat);
             }
             if (!t) {
@@ -2427,16 +2427,16 @@ expand_section_ref(struct line *c, char *dir_name)
 
         /* insert the library section definition into `c' */
         {
-            struct line *t = section_def;
-            for (; t; t=t->li_next) {
-                c = insert_new_line(c, copy(t->li_line), t->li_linenum, t->li_linenum_orig);
+            struct card *t = section_def;
+            for (; t; t=t->nextcard) {
+                c = insert_new_line(c, copy(t->line), t->linenum, t->linenum_orig);
                 if (t == section_def) {
-                    c->li_line[0] = '*';
-                    c->li_line[1] = '<';
+                    c->line[0] = '*';
+                    c->line[1] = '<';
                 }
-                if(ciprefix(".endl", t->li_line)) {
-                    c->li_line[0] = '*';
-                    c->li_line[1] = '>';
+                if(ciprefix(".endl", t->line)) {
+                    c->line[0] = '*';
+                    c->line[1] = '>';
                     break;
                 }
             }
@@ -2464,10 +2464,10 @@ expand_section_ref(struct line *c, char *dir_name)
  */
 
 static void
-expand_section_references(struct line *c, char *dir_name)
+expand_section_references(struct card *c, char *dir_name)
 {
-    for (; c; c = c->li_next)
-        if (ciprefix(".lib", c->li_line))
+    for (; c; c = c->nextcard)
+        if (ciprefix(".lib", c->line))
             c = expand_section_ref(c, dir_name);
 }
 
@@ -2615,30 +2615,30 @@ found_mult_param(int num_params, char *param_names[])
    Function is called from inp_fix_inst_calls_for_numparam() */
 
 static int
-inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_card,
+inp_fix_subckt_multiplier(struct names *subckt_w_params, struct card *subckt_card,
                           int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
 {
-    struct line *card;
+    struct card *card;
     char *new_str;
 
     subckt_param_names[num_subckt_params]  = strdup("m");
     subckt_param_values[num_subckt_params] = strdup("1");
     num_subckt_params ++;
 
-    if (!strstr(subckt_card->li_line, "params:")) {
-        new_str = tprintf("%s params: m=1", subckt_card->li_line);
-        add_name(subckt_w_params, get_subckt_model_name(subckt_card->li_line));
+    if (!strstr(subckt_card->line, "params:")) {
+        new_str = tprintf("%s params: m=1", subckt_card->line);
+        add_name(subckt_w_params, get_subckt_model_name(subckt_card->line));
     } else {
-        new_str = tprintf("%s m=1", subckt_card->li_line);
+        new_str = tprintf("%s m=1", subckt_card->line);
     }
 
-    tfree(subckt_card->li_line);
-    subckt_card->li_line = new_str;
+    tfree(subckt_card->line);
+    subckt_card->line = new_str;
 
-    for (card = subckt_card->li_next;
-         card && !ciprefix(".ends", card->li_line);
-         card = card->li_next) {
-        char *curr_line = card->li_line;
+    for (card = subckt_card->nextcard;
+         card && !ciprefix(".ends", card->line);
+         card = card->nextcard) {
+        char *curr_line = card->line;
         /* no 'm' for B, V, E, H or comment line */
         if (strchr("*bveh", curr_line[0]))
             continue;
@@ -2647,8 +2647,8 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
             continue;
         new_str = tprintf("%s m={m}", curr_line);
 
-        tfree(card->li_line);
-        card->li_line = new_str;
+        tfree(card->line);
+        card->line = new_str;
     }
 
     return num_subckt_params;
@@ -2656,9 +2656,9 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct line *subckt_car
 
 
 static void
-inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck)
+inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck)
 {
-    struct line *c;
+    struct card *c;
     char *subckt_param_names[1000];
     char *subckt_param_values[1000];
     char *inst_param_names[1000];
@@ -2668,8 +2668,8 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
     // added to the subcircuit -- subsequent instances will then need this parameter as well
-    for (c = deck; c; c = c->li_next) {
-        char *inst_line = c->li_line;
+    for (c = deck; c; c = c->nextcard) {
+        char *inst_line = c->line;
 
         if (*inst_line == '*')
             continue;
@@ -2679,11 +2679,11 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct line *d, *p = NULL;
+                struct card *d, *p = NULL;
 
                 // iterate through the deck to find the subckt (last one defined wins)
-                for (d = deck; d; d = d->li_next) {
-                    char *subckt_line = d->li_line;
+                for (d = deck; d; d = d->nextcard) {
+                    char *subckt_line = d->line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
                         subckt_line = skip_ws(subckt_line);
@@ -2695,7 +2695,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
                 }
 
                 if (p) {
-                    int num_subckt_params = inp_get_params(p->li_line, subckt_param_names, subckt_param_values);
+                    int num_subckt_params = inp_get_params(p->line, subckt_param_names, subckt_param_values);
 
                     if (!found_mult_param(num_subckt_params, subckt_param_names))
                         inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
@@ -2715,8 +2715,8 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
         }
     }
 
-    for (c = deck; c; c = c->li_next) {
-        char *inst_line = c->li_line;
+    for (c = deck; c; c = c->nextcard) {
+        char *inst_line = c->line;
 
         if (*inst_line == '*')
             continue;
@@ -2726,14 +2726,14 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
             char *subckt_name = inp_get_subckt_name(inst_line);
 
             if (find_name(subckt_w_params, subckt_name)) {
-                struct line *d;
+                struct card *d;
 
                 /* find .subckt line */
 
                 sprintf(name_w_space, "%s ", subckt_name);
 
-                for (d = deck; d; d = d->li_next) {
-                    char *subckt_line = d->li_line;
+                for (d = deck; d; d = d->nextcard) {
+                    char *subckt_line = d->line;
                     if (ciprefix(".subckt", subckt_line)) {
                         subckt_line = skip_non_ws(subckt_line);
                         subckt_line = skip_ws(subckt_line);
@@ -2759,16 +2759,16 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct line *deck
 
                                 if (!found_param_match) {
                                     // comment out .subckt and continue
-                                    while (d != NULL && !ciprefix(".ends", d->li_line)) {
-                                        *(d->li_line) = '*';
-                                        d = d->li_next;
+                                    while (d != NULL && !ciprefix(".ends", d->line)) {
+                                        *(d->line) = '*';
+                                        d = d->nextcard;
                                     }
-                                    *(d->li_line) = '*';
+                                    *(d->line) = '*';
                                     continue;
                                 }
                             }
 
-                            c->li_line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
+                            c->line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
                             for (i = 0; i < num_subckt_params; i++) {
                                 tfree(subckt_param_names[i]);
                                 tfree(subckt_param_values[i]);
@@ -2945,18 +2945,18 @@ inp_get_func_from_line(struct function_env *env, char *line)
  */
 
 static void
-inp_grab_func(struct function_env *env, struct line *c)
+inp_grab_func(struct function_env *env, struct card *c)
 {
     int nesting = 0;
 
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        if (*c->li_line == '*')
+        if (*c->line == '*')
             continue;
 
-        if (ciprefix(".subckt", c->li_line))
+        if (ciprefix(".subckt", c->line))
             nesting++;
-        if (ciprefix(".ends", c->li_line))
+        if (ciprefix(".ends", c->line))
             nesting--;
 
         if (nesting < 0)
@@ -2965,9 +2965,9 @@ inp_grab_func(struct function_env *env, struct line *c)
         if (nesting > 0)
             continue;
 
-        if (ciprefix(".func", c->li_line)) {
-            inp_get_func_from_line(env, c->li_line);
-            *c->li_line = '*';
+        if (ciprefix(".func", c->line)) {
+            inp_get_func_from_line(env, c->line);
+            *c->line = '*';
         }
     }
 }
@@ -3242,8 +3242,8 @@ delete_function_env(struct function_env *env)
 }
 
 
-static struct line *
-inp_expand_macros_in_deck(struct function_env *env, struct line *c)
+static struct card *
+inp_expand_macros_in_deck(struct function_env *env, struct card *c)
 {
     env = new_function_env(env);
 
@@ -3251,26 +3251,26 @@ inp_expand_macros_in_deck(struct function_env *env, struct line *c)
 
     inp_expand_macros_in_func(env);
 
-    for (; c; c = c->li_next) {
+    for (; c; c = c->nextcard) {
 
-        if (*c->li_line == '*')
+        if (*c->line == '*')
             continue;
 
-        if (ciprefix(".subckt", c->li_line)) {
-            struct line *subckt = c;
-            c = inp_expand_macros_in_deck(env, c->li_next);
+        if (ciprefix(".subckt", c->line)) {
+            struct card *subckt = c;
+            c = inp_expand_macros_in_deck(env, c->nextcard);
             if (c)
                 continue;
 
             fprintf(stderr, "Error: line %d, missing .ends\n  %s\n",
-                    subckt->li_linenum_orig, subckt->li_line);
+                    subckt->linenum_orig, subckt->line);
             controlled_exit(EXIT_BAD);
         }
 
-        if (ciprefix(".ends", c->li_line))
+        if (ciprefix(".ends", c->line))
             break;
 
-        c->li_line = inp_expand_macro_in_str(env, c->li_line);
+        c->line = inp_expand_macro_in_str(env, c->line);
     }
 
     env = delete_function_env(env);
@@ -3294,7 +3294,7 @@ inp_expand_macros_in_deck(struct function_env *env, struct line *c)
    */
 
 static void
-inp_fix_param_values(struct line *c)
+inp_fix_param_values(struct card *c)
 {
     char *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
     char *vec_str, *tmp_str, *natok, *buffer, *newvec, *whereisgt;
@@ -3302,8 +3302,8 @@ inp_fix_param_values(struct line *c)
     wordlist *nwl;
     int parens;
 
-    for (; c; c = c->li_next) {
-        char *line = c->li_line;
+    for (; c; c = c->nextcard) {
+        char *line = c->line;
 
         if (*line == '*' || (ciprefix(".para", line) && strchr(line, '{')))
             continue;
@@ -3439,11 +3439,11 @@ inp_fix_param_values(struct line *c)
                 wl_free(nwl);
                 /* insert new vector into actual line */
                 *equal_ptr  = '\0';
-                new_str = tprintf("%s=[%s] %s", c->li_line, newvec, end_of_str+1);
+                new_str = tprintf("%s=[%s] %s", c->line, newvec, end_of_str+1);
                 tfree(newvec);
 
-                old_str    = c->li_line;
-                c->li_line = new_str;
+                old_str    = c->line;
+                c->line = new_str;
                 line = new_str + strlen(old_str) + 1;
                 tfree(old_str);
             } else if (*beg_of_str == '<') {
@@ -3481,11 +3481,11 @@ inp_fix_param_values(struct line *c)
                 wl_free(nwl);
                 /* insert new complex value into actual line */
                 *equal_ptr  = '\0';
-                new_str = tprintf("%s=<%s> %s", c->li_line, newvec, end_of_str+1);
+                new_str = tprintf("%s=<%s> %s", c->line, newvec, end_of_str+1);
                 tfree(newvec);
 
-                old_str    = c->li_line;
-                c->li_line = new_str;
+                old_str    = c->line;
+                c->line = new_str;
                 line = new_str + strlen(old_str) + 1;
                 tfree(old_str);
             } else {
@@ -3505,14 +3505,14 @@ inp_fix_param_values(struct line *c)
                 *equal_ptr  = '\0';
 
                 if (*end_of_str == '\0') {
-                    new_str = tprintf("%s={%s}", c->li_line, beg_of_str);
+                    new_str = tprintf("%s={%s}", c->line, beg_of_str);
 
                 } else {
                     *end_of_str = '\0';
-                    new_str = tprintf("%s={%s} %s", c->li_line, beg_of_str, end_of_str+1);
+                    new_str = tprintf("%s={%s} %s", c->line, beg_of_str, end_of_str+1);
                 }
-                old_str    = c->li_line;
-                c->li_line = new_str;
+                old_str    = c->line;
+                c->line = new_str;
 
                 line = new_str + strlen(old_str) + 1;
                 tfree(old_str);
@@ -3560,7 +3560,7 @@ struct dependency
     char *param_name;
     char *param_str;
     char *depends_on[100];
-    struct line *card;
+    struct card *card;
 };
 
 
@@ -3713,16 +3713,16 @@ get_number_terminals(char *c)
 static char *ya_search_identifier(char *str, const char *identifier, char *str_begin);
 
 
-static void inp_quote_params(struct line *s_c, struct line *e_c, struct dependency *deps, int num_params);
+static void inp_quote_params(struct card *s_c, struct card *e_c, struct dependency *deps, int num_params);
 
 /* sort parameters based on parameter dependencies */
 
 static void
-inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct line *s_c, struct line *e_c)
+inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct card *s_c, struct card *e_c)
 {
     int  i, j, num_params, ind = 0, max_level;
 
-    struct line *c;
+    struct card *c;
     int  skipped;
     int arr_size;
 
@@ -3734,21 +3734,21 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
     /* determine the number of lines with .param */
 
     arr_size = 0;
-    for (c = param_cards; c; c = c->li_next)
-        if (strchr(c->li_line, '='))
+    for (c = param_cards; c; c = c->nextcard)
+        if (strchr(c->line, '='))
             arr_size ++;
 
     deps = TMALLOC(struct dependency, arr_size);
 
     num_params = 0;
-    for (c = param_cards; c; c = c->li_next)
+    for (c = param_cards; c; c = c->nextcard)
         // ignore .param lines without '='
-        if (strchr(c->li_line, '=')) {
+        if (strchr(c->line, '=')) {
             deps[num_params].depends_on[0] = NULL;
             deps[num_params].level         = -1;
             deps[num_params].skip          = 0;
-            deps[num_params].param_name    = get_param_name(c->li_line); /* strdup in fcn */
-            deps[num_params].param_str     = strdup(get_param_str(c->li_line));
+            deps[num_params].param_name    = get_param_name(c->line); /* strdup in fcn */
+            deps[num_params].param_str     = strdup(get_param_str(c->line));
             deps[num_params].card          = c;
             num_params ++;
         }
@@ -3815,15 +3815,15 @@ inp_sort_params(struct line *param_cards, struct line *card_bf_start, struct lin
 
 
 static void
-inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card)
+inp_add_params_to_subckt(struct names *subckt_w_params, struct card *subckt_card)
 {
-    struct line *card        = subckt_card->li_next;
-    char        *subckt_line = subckt_card->li_line;
+    struct card *card        = subckt_card->nextcard;
+    char        *subckt_line = subckt_card->line;
     char        *new_line, *param_ptr, *subckt_name, *end_ptr;
 
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         if (!ciprefix(".para", curr_line))
             break;
@@ -3848,7 +3848,7 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
         *curr_line = '*';
     }
 
-    subckt_card->li_line = subckt_line;
+    subckt_card->line = subckt_line;
 }
 
 
@@ -3867,54 +3867,54 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct line *subckt_card
  *
  */
 
-static struct line *
-inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_card)
+static struct card *
+inp_reorder_params_subckt(struct names *subckt_w_params, struct card *subckt_card)
 {
-    struct line *first_param_card = NULL;
-    struct line *last_param_card = NULL;
+    struct card *first_param_card = NULL;
+    struct card *last_param_card = NULL;
 
-    struct line *prev_card = subckt_card;
-    struct line *c         = subckt_card->li_next;
+    struct card *prev_card = subckt_card;
+    struct card *c         = subckt_card->nextcard;
 
     /* move .param lines to beginning of deck */
     while (c != NULL) {
 
-        char *curr_line = c->li_line;
+        char *curr_line = c->line;
 
         if (*curr_line == '*') {
             prev_card = c;
-            c = c->li_next;
+            c = c->nextcard;
             continue;
         }
 
         if (ciprefix(".subckt", curr_line)) {
             prev_card = inp_reorder_params_subckt(subckt_w_params, c);
-            c         = prev_card->li_next;
+            c         = prev_card->nextcard;
             continue;
         }
 
         if (ciprefix(".ends", curr_line)) {
             if (first_param_card) {
-                inp_sort_params(first_param_card, subckt_card, subckt_card->li_next, c);
+                inp_sort_params(first_param_card, subckt_card, subckt_card->nextcard, c);
                 inp_add_params_to_subckt(subckt_w_params, subckt_card);
             }
             return c;
         }
 
         if (ciprefix(".para", curr_line)) {
-            prev_card->li_next = c->li_next;
+            prev_card->nextcard = c->nextcard;
 
             last_param_card = insert_deck(last_param_card, c);
 
             if (!first_param_card)
                 first_param_card = last_param_card;
 
-            c = prev_card->li_next;
+            c = prev_card->nextcard;
             continue;
         }
 
         prev_card = c;
-        c         = c->li_next;
+        c         = c->nextcard;
     }
 
     /* the terminating `.ends' deck wasn't found */
@@ -3923,28 +3923,28 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct line *subckt_car
 
 
 static void
-inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
+inp_reorder_params(struct names *subckt_w_params, struct card *list_head)
 {
-    struct line *first_param_card = NULL;
-    struct line *last_param_card = NULL;
+    struct card *first_param_card = NULL;
+    struct card *last_param_card = NULL;
 
-    struct line *prev_card = list_head;
-    struct line *c = prev_card->li_next;
+    struct card *prev_card = list_head;
+    struct card *c = prev_card->nextcard;
 
     /* move .param lines to beginning of deck */
     while (c != NULL) {
 
-        char *curr_line = c->li_line;
+        char *curr_line = c->line;
 
         if (*curr_line == '*') {
             prev_card = c;
-            c = c->li_next;
+            c = c->nextcard;
             continue;
         }
 
         if (ciprefix(".subckt", curr_line)) {
             prev_card = inp_reorder_params_subckt(subckt_w_params, c);
-            c         = prev_card->li_next;
+            c         = prev_card->nextcard;
             continue;
         }
 
@@ -3955,22 +3955,22 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
         }
 
         if (ciprefix(".para", curr_line)) {
-            prev_card->li_next = c->li_next;
+            prev_card->nextcard = c->nextcard;
 
             last_param_card = insert_deck(last_param_card, c);
 
             if (!first_param_card)
                 first_param_card = last_param_card;
 
-            c = prev_card->li_next;
+            c = prev_card->nextcard;
             continue;
         }
 
         prev_card = c;
-        c = c->li_next;
+        c = c->nextcard;
     }
 
-    inp_sort_params(first_param_card, list_head, list_head->li_next, NULL);
+    inp_sort_params(first_param_card, list_head, list_head->nextcard, NULL);
 }
 
 
@@ -3980,11 +3980,11 @@ inp_reorder_params(struct names *subckt_w_params, struct line *list_head)
 // afetr the current multi-param line in the deck
 
 static int
-inp_split_multi_param_lines(struct line *card, int line_num)
+inp_split_multi_param_lines(struct card *card, int line_num)
 {
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         if (*curr_line == '*')
             continue;
@@ -4005,7 +4005,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
             array = TMALLOC(char *, counter);
 
             // need to split multi param line
-            curr_line = card->li_line;
+            curr_line = card->line;
             counter   = 0;
             while ((equal_ptr = find_assignment(curr_line)) != NULL) {
 
@@ -4038,7 +4038,7 @@ inp_split_multi_param_lines(struct line *card, int line_num)
             }
 
             // comment out current multi-param line
-            *(card->li_line) = '*';
+            *(card->line) = '*';
             // insert new param lines immediately after current line
             for (i = 0; i < counter; i++)
                 card = insert_new_line(card, array[i], line_num++, 0);
@@ -4209,7 +4209,7 @@ search_plain_identifier(char *str, const char *identifier)
 */
 
 static void
-inp_compat(struct line *card)
+inp_compat(struct card *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
@@ -4222,9 +4222,9 @@ inp_compat(struct line *card)
     char *equation, *tc1_ptr = NULL, *tc2_ptr = NULL;
     double tc1 = 0.0, tc2 = 0.0;
 
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
@@ -4274,7 +4274,7 @@ inp_compat(struct line *card)
                 cut_line = skip_ws(cut_line);
                 if (!ciprefix("table", cut_line)) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 cut_line += 5;
@@ -4286,7 +4286,7 @@ inp_compat(struct line *card)
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 tfree(str_ptr);
@@ -4308,7 +4308,7 @@ inp_compat(struct line *card)
                 ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 firstno = copy(ffirstno);
@@ -4318,7 +4318,7 @@ inp_compat(struct line *card)
                 cut_line = strrchr(str_ptr, '(');
                 if (!cut_line) {
                     fprintf(stderr, "Error: bad syntax in line %d (missing parentheses)\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 /* replace '(' with ',' and ')' with ' ' */
@@ -4335,7 +4335,7 @@ inp_compat(struct line *card)
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
@@ -4343,7 +4343,7 @@ inp_compat(struct line *card)
                         midline, lnumber + delta, lastlastno);
 
                 // comment out current variable e line
-                *(card->li_line) = '*';
+                *(card->line) = '*';
                 // insert new B source line immediately after current line
                 for (i = 0; i < 2; i++)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4381,7 +4381,7 @@ inp_compat(struct line *card)
                         title_tok, title_tok, str_ptr);
 
                 // comment out current variable e line
-                *(card->li_line) = '*';
+                *(card->line) = '*';
                 // insert new B source line immediately after current line
                 for (i = 0; i < 2; i++)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4436,7 +4436,7 @@ inp_compat(struct line *card)
                 cut_line = skip_ws(cut_line);
                 if (!ciprefix("table", cut_line)) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 cut_line += 5;
@@ -4448,7 +4448,7 @@ inp_compat(struct line *card)
                 expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 tfree(str_ptr);
@@ -4470,7 +4470,7 @@ inp_compat(struct line *card)
                 ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 firstno = copy(ffirstno);
@@ -4492,7 +4492,7 @@ inp_compat(struct line *card)
                 lastlastno = gettok_node(&cut_line);
                 if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->li_linenum_orig, card->li_line);
+                            card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
                 /* BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2) */
@@ -4501,7 +4501,7 @@ inp_compat(struct line *card)
                         midline, lnumber + delta, lastlastno);
 
                 // comment out current variable e line
-                *(card->li_line) = '*';
+                *(card->line) = '*';
                 // insert new B source line immediately after current line
                 for (i = 0; i < 2; i++)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4551,7 +4551,7 @@ inp_compat(struct line *card)
                         title_tok, title_tok, str_ptr);
 
                 // comment out current variable g line
-                *(card->li_line) = '*';
+                *(card->line) = '*';
                 // insert new B source line immediately after current line
                 for (i = 0; i < 2; i++)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4597,7 +4597,7 @@ inp_compat(struct line *card)
                 ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
                         title_tok, title_tok);
                 // comment out current variable f line
-                *(card->li_line) = '*';
+                *(card->line) = '*';
                 // insert new three lines immediately after current line
                 for (i = 0; i < 3; i++)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4643,7 +4643,7 @@ inp_compat(struct line *card)
                 ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
                         title_tok, title_tok);
                 // comment out current variable h line
-                *(card->li_line) = '*';
+                *(card->line) = '*';
                 // insert new three lines immediately after current line
                 for (i = 0; i < 3; i++)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4719,7 +4719,7 @@ inp_compat(struct line *card)
             tc2_ptr = NULL;
 
             // comment out current old R line
-            *(card->li_line)   = '*';
+            *(card->line)   = '*';
             // insert new B source line immediately after current line
             card = insert_new_line(card, xline, 0, 0);
 
@@ -4797,7 +4797,7 @@ inp_compat(struct line *card)
             tc1_ptr = NULL;
             tc2_ptr = NULL;
             // comment out current variable capacitor line
-            *(card->li_line) = '*';
+            *(card->line) = '*';
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++)
                 card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -4877,7 +4877,7 @@ inp_compat(struct line *card)
             tc1_ptr = NULL;
             tc2_ptr = NULL;
             // comment out current variable inductor line
-            *(card->li_line) = '*';
+            *(card->line) = '*';
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++)
                 card = insert_new_line(card, ckt_array[i], 0, 0);
@@ -5020,7 +5020,7 @@ inp_compat(struct line *card)
                 if (pai == paui)
                     continue;
                 // remove white spaces
-                card->li_line = inp_remove_ws(curr_line);
+                card->line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
                 for (ii = paui; ii < pai; ii++)
                     card = insert_new_line(card, ckt_array[ii], 0, 0);
@@ -5112,7 +5112,7 @@ inp_compat(struct line *card)
                 if (pai == paui)
                     continue;
                 // remove white spaces
-                card->li_line = inp_remove_ws(curr_line);
+                card->line = inp_remove_ws(curr_line);
                 // comment out current variable capacitor line
                 // *(ckt_array[0]) = '*';
                 // insert new B source line immediately after current line
@@ -5172,14 +5172,14 @@ replace_token(char *string, char *token, int wherereplace, int total)
 */
 
 static void
-inp_bsource_compat(struct line *card)
+inp_bsource_compat(struct card *card)
 {
     char *equal_ptr, *str_ptr, *new_str, *final_str;
     int skip_control = 0;
 
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
@@ -5194,8 +5194,8 @@ inp_bsource_compat(struct line *card)
 
         if (*curr_line == 'b') {
             /* remove white spaces of everything inside {}*/
-            card->li_line = inp_remove_ws(card->li_line);
-            curr_line = card->li_line;
+            card->line = inp_remove_ws(card->line);
+            curr_line = card->line;
             /* store starting point for later parsing, beginning of {expression} */
             equal_ptr = strchr(curr_line, '=');
             /* check for errors */
@@ -5210,10 +5210,10 @@ inp_bsource_compat(struct line *card)
             final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line), curr_line, new_str);
 
             // comment out current line (old B source line)
-            *(card->li_line)   = '*';
+            *(card->line)   = '*';
             // insert new B source line immediately after current line
             /* Copy old line numbers into new B source line */
-            card = insert_new_line(card, final_str, card->li_linenum, card->li_linenum_orig);
+            card = insert_new_line(card, final_str, card->linenum, card->linenum_orig);
 
             tfree(new_str);
         } /* end of if 'b' */
@@ -5224,20 +5224,20 @@ inp_bsource_compat(struct line *card)
 /* Find all expressions containing the keyword 'temper',
  * except for B lines and some other exclusions. Prepare
  * these expressions by calling inp_modify_exp() and return
- * a modified card->li_line
+ * a modified card->line
  */
 
 static bool
-inp_temper_compat(struct line *card)
+inp_temper_compat(struct card *card)
 {
     int skip_control = 0;
     char *beg_str, *end_str, *beg_tstr, *end_tstr, *exp_str;
 
     bool with_temper = FALSE;
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
         char *new_str = NULL;
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         if (curr_line == NULL)
             continue;
@@ -5262,8 +5262,8 @@ inp_temper_compat(struct line *card)
             continue;
         /* now start processing of the remaining lines containing 'temper' */
         /* remove white spaces of everything inside {}*/
-        card->li_line = inp_remove_ws(card->li_line);
-        curr_line = card->li_line;
+        card->line = inp_remove_ws(card->line);
+        curr_line = card->line;
 
         beg_str = beg_tstr = curr_line;
         while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
@@ -5289,8 +5289,8 @@ inp_temper_compat(struct line *card)
         }
         if (*beg_str)
             new_str = INPstrCat(new_str, copy(beg_str), " ");
-        tfree(card->li_line);
-        card->li_line = inp_remove_ws(new_str);
+        tfree(card->line);
+        card->line = inp_remove_ws(new_str);
     }
     return with_temper;
 }
@@ -5480,14 +5480,14 @@ get_quoted_token(char *string, char **token)
  */
 
 static void
-inp_add_series_resistor(struct line *deck)
+inp_add_series_resistor(struct card *deck)
 {
     int skip_control = 0;
-    struct line *card;
+    struct card *card;
     char *rval = NULL;
 
-    for (card = deck; card; card = card->li_next) {
-        char *curr_line = card->li_line;
+    for (card = deck; card; card = card->nextcard) {
+        char *curr_line = card->line;
         if (*curr_line != '*' && strstr(curr_line, "option")) {
             char *t = strstr(curr_line, "rseries");
             if (t) {
@@ -5511,8 +5511,8 @@ inp_add_series_resistor(struct line *deck)
             "\nOption rseries given: \n"
             "resistor %s Ohms added in series to each inductor L\n\n", rval);
 
-    for (card = deck; card; card = card->li_next) {
-        char *cut_line = card->li_line;
+    for (card = deck; card; card = card->nextcard) {
+        char *cut_line = card->line;
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", cut_line)) {
@@ -5536,7 +5536,7 @@ inp_add_series_resistor(struct line *deck)
             char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok, title_tok, node2, rval);
 
             // comment out current L line
-            *(card->li_line) = '*';
+            *(card->line) = '*';
 
             // insert new new L and R lines immediately after current line
             card = insert_new_line(card, newL, 0, 0);
@@ -5561,10 +5561,10 @@ inp_add_series_resistor(struct line *deck)
  */
 
 static void
-subckt_params_to_param(struct line *card)
+subckt_params_to_param(struct card *card)
 {
-    for (; card; card = card->li_next) {
-        char *curr_line = card->li_line;
+    for (; card; card = card->nextcard) {
+        char *curr_line = card->line;
         if (ciprefix(".subckt", curr_line)) {
             char *cut_line, *new_line;
             cut_line = strstr(curr_line, "params:");
@@ -5574,10 +5574,10 @@ subckt_params_to_param(struct line *card)
             new_line = copy(cut_line);
             /* replace "params:" by ".param " */
             memcpy(new_line, ".param ", 7);
-            /* card->li_line ends with subcircuit name */
+            /* card->line ends with subcircuit name */
             cut_line[-1] = '\0';
-            /* insert new_line after card->li_line */
-            insert_new_line(card, new_line, card->li_linenum + 1, 0);
+            /* insert new_line after card->line */
+            insert_new_line(card, new_line, card->linenum + 1, 0);
         }
     }
 }
@@ -5589,13 +5589,13 @@ subckt_params_to_param(struct line *card)
 #ifndef XSPICE
 
 static void
-inp_poly_err(struct line *card)
+inp_poly_err(struct card *card)
 {
     size_t skip_control = 0;
 
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         if (*curr_line == '*')
             continue;
@@ -5622,8 +5622,8 @@ inp_poly_err(struct line *card)
             if (ciprefix("poly", curr_line)) {
                 fprintf(stderr,
                         "\nError: XSPICE is required to run the 'poly' option in line %d\n",
-                        card->li_linenum_orig);
-                fprintf(stderr, "  %s\n", card->li_line);
+                        card->linenum_orig);
+                fprintf(stderr, "  %s\n", card->line);
                 fprintf(stderr, "\nSee manual chapt. 31 for installation instructions\n");
                 controlled_exit(EXIT_BAD);
             }
@@ -5639,26 +5639,26 @@ inp_poly_err(struct line *card)
  * somewhere in function inp_readall() of this file to have
  *   a printout of the actual deck written to file "tprint-out.txt" */
 void
-tprint(struct line *t)
+tprint(struct card *t)
 {
-    struct line *tmp;
+    struct card *tmp;
 
     /*debug: print into file*/
     FILE *fd = fopen("tprint-out.txt", "w");
-    for (tmp = t; tmp; tmp = tmp->li_next)
-        if (*(tmp->li_line) != '*')
-            fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+    for (tmp = t; tmp; tmp = tmp->nextcard)
+        if (*(tmp->line) != '*')
+            fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum, tmp->line);
     fprintf(fd, "\n*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n\n");
-    for (tmp = t; tmp; tmp = tmp->li_next)
-        fprintf(fd, "%6d  %6d  %s\n", tmp->li_linenum_orig, tmp->li_linenum, tmp->li_line);
+    for (tmp = t; tmp; tmp = tmp->nextcard)
+        fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum, tmp->line);
     fprintf(fd, "\n*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n\n");
-    for (tmp = t; tmp; tmp = tmp->li_next)
-        if (*(tmp->li_line) != '*')
-            fprintf(fd, "%s\n",tmp->li_line);
+    for (tmp = t; tmp; tmp = tmp->nextcard)
+        if (*(tmp->line) != '*')
+            fprintf(fd, "%s\n",tmp->line);
     fclose(fd);
 }
 
@@ -5667,11 +5667,11 @@ tprint(struct line *t)
    .if(expression) --> .if{expression} */
 
 static void
-inp_dot_if(struct line *card)
+inp_dot_if(struct card *card)
 {
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         if (*curr_line == '*')
             continue;
@@ -5680,7 +5680,7 @@ inp_dot_if(struct line *card)
             char *firstbr = strchr(curr_line, '(');
             char *lastbr = strrchr(curr_line, ')');
             if ((!firstbr) || (!lastbr)) {
-                fprintf(cp_err, "Error in netlist line %d\n", card->li_linenum_orig);
+                fprintf(cp_err, "Error in netlist line %d\n", card->linenum_orig);
                 fprintf(cp_err, "   Bad syntax: %s\n\n", curr_line);
                 controlled_exit(EXIT_BAD);
             }
@@ -5705,12 +5705,12 @@ inp_dot_if(struct line *card)
 static char *inp_functionalise_identifier(char *curr_line, char *identifier);
 
 static void
-inp_fix_temper_in_param(struct line *deck)
+inp_fix_temper_in_param(struct card *deck)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
     char *funcbody, *funcname;
     struct func_temper *f, *funcs = NULL, **funcs_tail_ptr = &funcs;
-    struct line *card;
+    struct card *card;
 
     sub_count = TMALLOC(int, 16);
     for(j = 0; j < 16; j++)
@@ -5722,9 +5722,9 @@ inp_fix_temper_in_param(struct line *deck)
        .func xxx1() 'temper + 25'
     */
     card = deck;
-    for (; card; card = card->li_next) {
+    for (; card; card = card->nextcard) {
 
-        char *curr_line = card->li_line;
+        char *curr_line = card->line;
 
         if (*curr_line == '*')
             continue;
@@ -5789,7 +5789,7 @@ inp_fix_temper_in_param(struct line *deck)
                 fprintf(stderr,
                         "Error: you cannot assign a value to TEMPER\n"
                         "  Line no. %d, %s\n",
-                        card->li_linenum, curr_line);
+                        card->linenum, curr_line);
                 controlled_exit(EXIT_BAD);
             }
 
@@ -5819,10 +5819,10 @@ inp_fix_temper_in_param(struct line *deck)
             sub_count[j] = 0;
 
         card = deck;
-        for (; card; card = card->li_next) {
+        for (; card; card = card->nextcard) {
 
             char *new_str = NULL; /* string we assemble here */
-            char *curr_line = card->li_line;
+            char *curr_line = card->line;
             char *firsttok_str;
 
             if (*curr_line == '*')
@@ -5887,8 +5887,8 @@ inp_fix_temper_in_param(struct line *deck)
                 tfree(funcbody);
             } else {
                 /* Or just enter new line into deck */
-                insert_new_line(card, new_str, 0, card->li_linenum);
-                *card->li_line = '*';
+                insert_new_line(card, new_str, 0, card->linenum);
+                *card->line = '*';
             }
         }
     }
@@ -5929,7 +5929,7 @@ inp_functionalise_identifier(char *curr_line, char *identifier)
  */
 
 static struct func_temper *
-inp_new_func(char *funcname, char *funcbody, struct line *card,
+inp_new_func(char *funcname, char *funcbody, struct card *card,
              int *sub_count, int subckt_depth)
 {
     struct func_temper *f;
@@ -5944,8 +5944,8 @@ inp_new_func(char *funcname, char *funcbody, struct line *card,
     /* replace line in deck */
     new_str = tprintf(".func %s() %s", funcname, funcbody);
 
-    *card->li_line = '*';
-    insert_new_line(card, new_str, 0, card->li_linenum);
+    *card->line = '*';
+    insert_new_line(card, new_str, 0, card->linenum);
 
     return f;
 }
@@ -5966,15 +5966,15 @@ inp_delete_funcs(struct func_temper *f)
 /* look for unquoted parameters and quote them */
 /* FIXME, this function seems to be useless and/or buggy and/or naive */
 static void
-inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, int num_params)
+inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, int num_params)
 {
     bool in_control = FALSE;
 
-    for (; c && c != end_c; c = c->li_next) {
+    for (; c && c != end_c; c = c->nextcard) {
 
         int i, j, num_terminals;
 
-        char *curr_line = c->li_line;
+        char *curr_line = c->line;
 
         if (ciprefix(".control", curr_line)) {
             in_control = TRUE;
@@ -6033,8 +6033,8 @@ inp_quote_params(struct line *c, struct line *end_c, struct dependency *deps, in
                     curr_line = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, rest);
                     s = curr_line + prefix_len + strlen(deps[i].param_name) + 2;
 
-                    tfree(c->li_line);
-                    c->li_line = curr_line;
+                    tfree(c->line);
+                    c->line = curr_line;
                 } else {
                     s += strlen(deps[i].param_name);
                 }

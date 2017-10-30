@@ -209,7 +209,7 @@ do_measure(
     bool chk_only /*in: TRUE if checking for "autostop", FALSE otherwise*/
 )
 {
-    struct line *meas_card, *meas_results = NULL, *end = NULL, *newcard;
+    struct card *meas_card, *meas_results = NULL, *end = NULL, *newcard;
     char        *line, *an_name, *an_type, *resname, *meastype, *str_ptr, out_line[1000];
     int         ok = 0;
     int         fail;
@@ -261,8 +261,8 @@ do_measure(
        */
 
     /* first pass through .meas cards: evaluate everything except param|expr */
-    for (meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->li_next) {
-        line = meas_card->li_line;
+    for (meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->nextcard) {
+        line = meas_card->line;
 
         line = nexttok(line); /* discard .meas */
 
@@ -272,8 +272,8 @@ do_measure(
 
         if (chkAnalysisType(an_type) != TRUE) {
             if (!chk_only) {
-                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->li_linenum);
-                fprintf(cp_err, "       %s\n", meas_card->li_line);
+                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
+                fprintf(cp_err, "       %s\n", meas_card->line);
             }
 
             txfree(an_type);
@@ -305,13 +305,13 @@ do_measure(
         /* New way of processing measure statements using common code
            in fcn get_measure2() (com_measure2.c)*/
         out_line[0] = '\0';
-        measure_word_list = measure_parse_line(meas_card->li_line);
+        measure_word_list = measure_parse_line(meas_card->line);
         if (measure_word_list) {
             fail = get_measure2(measure_word_list, &result, out_line, chk_only);
             if (fail) {
                 measures_passed = FALSE;
                 if (!chk_only)
-                    fprintf(stderr, " %s failed!\n\n", meas_card->li_line);
+                    fprintf(stderr, " %s failed!\n\n", meas_card->line);
                 num_failed++;
                 if (chk_only) {
                     /* added for speed - cleanup last parse and break */
@@ -332,14 +332,14 @@ do_measure(
         }
 
         if (!chk_only) {
-            newcard          = TMALLOC(struct line, 1);
-            newcard->li_line = strdup(out_line);
-            newcard->li_next = NULL;
+            newcard          = TMALLOC(struct card, 1);
+            newcard->line = strdup(out_line);
+            newcard->nextcard = NULL;
 
             if (meas_results == NULL) {
                 meas_results = end = newcard;
             } else {
-                end->li_next = newcard;
+                end->nextcard = newcard;
                 end          = newcard;
             }
         }
@@ -356,8 +356,8 @@ do_measure(
     }
     /* second pass through .meas cards: now do param|expr .meas statements */
     newcard = meas_results;
-    for (meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->li_next) {
-        line = meas_card->li_line;
+    for (meas_card = ft_curckt->ci_meas; meas_card != NULL; meas_card = meas_card->nextcard) {
+        line = meas_card->line;
 
         line = nexttok(line); /* discard .meas */
 
@@ -367,8 +367,8 @@ do_measure(
 
         if (chkAnalysisType(an_type) != TRUE) {
             if (!chk_only) {
-                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->li_linenum);
-                fprintf(cp_err, "       %s\n", meas_card->li_line);
+                fprintf(cp_err, "Error: unrecognized analysis type '%s' for the following .meas statement on line %d:\n", an_type, meas_card->linenum);
+                fprintf(cp_err, "       %s\n", meas_card->line);
             }
 
             txfree(an_type);
@@ -386,11 +386,11 @@ do_measure(
         if (strncmp(meastype, "param", 5) != 0 && strncmp(meastype, "expr", 4) != 0) {
 
             if (!chk_only)
-                fprintf(stdout, "%s", newcard->li_line);
+                fprintf(stdout, "%s", newcard->line);
             end     = newcard;
-            newcard = newcard->li_next;
+            newcard = newcard->nextcard;
 
-            txfree(end->li_line);
+            txfree(end->line);
             txfree(end);
 
             txfree(an_type);
@@ -403,10 +403,10 @@ do_measure(
             fprintf(stdout, "%-20s=", resname);
 
         if (!chk_only) {
-            ok = nupa_eval(meas_card->li_line, meas_card->li_linenum, meas_card->li_linenum_orig);
+            ok = nupa_eval(meas_card->line, meas_card->linenum, meas_card->linenum_orig);
 
             if (ok) {
-                str_ptr = strstr(meas_card->li_line, meastype);
+                str_ptr = strstr(meas_card->line, meastype);
                 if (!get_double_value(&str_ptr, meastype, &result, chk_only)) {
                     if (!chk_only)
                         fprintf(stdout, "   failed\n");

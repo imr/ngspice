@@ -92,16 +92,16 @@ static int finddev_special(CKTcircuit *ckt, char *name, GENinstance **devptr, GE
 /* Input a single deck, and return a pointer to the circuit. */
 
 CKTcircuit *
-if_inpdeck(struct line *deck, INPtables **tab)
+if_inpdeck(struct card *deck, INPtables **tab)
 {
     CKTcircuit *ckt;
     int err, i;
-    struct line *ll;
+    struct card *ll;
     IFuid taskUid;
     IFuid optUid;
     int which = -1;
 
-    for (i = 0, ll = deck; ll; ll = ll->li_next)
+    for (i = 0, ll = deck; ll; ll = ll->nextcard)
         i++;
     *tab = INPtabInit(i);
     ft_curckt->ci_symtab = *tab;
@@ -160,16 +160,16 @@ if_inpdeck(struct line *deck, INPtables **tab)
 
     /* reset the model table, will be filled in anew in INPpas1() */
     modtab = NULL;
-    INPpas1(ckt, (card *) deck->li_next, *tab);
+    INPpas1(ckt, (card *) deck->nextcard, *tab);
     /* store the new model table in the current circuit */
     ft_curckt->ci_modtab = modtab;
-    INPpas2(ckt, (card *) deck->li_next, *tab, ft_curckt->ci_defTask);
+    INPpas2(ckt, (card *) deck->nextcard, *tab, ft_curckt->ci_defTask);
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
      * cards. These are left till INPpas3 so that we can check for
      * nodeset/ic of non-existant nodes.  */
 
-    INPpas3(ckt, (card *) deck->li_next,
+    INPpas3(ckt, (card *) deck->nextcard,
             *tab, ft_curckt->ci_defTask, ft_sim->nodeParms,
             ft_sim->numNodeParms);
 
@@ -197,7 +197,7 @@ int
 if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 {
     int err;
-    struct line deck;
+    struct card deck;
     char buf[BSIZE_SP];
     int which = -1;
     IFuid specUid, optUid;
@@ -226,10 +226,10 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
         (void) sprintf(buf, ".%s", s);
         tfree(s);
-        deck.li_next = deck.li_actual = NULL;
-        deck.li_error = NULL;
-        deck.li_linenum = 0;
-        deck.li_line = buf;
+        deck.nextcard = deck.actualLine = NULL;
+        deck.error = NULL;
+        deck.linenum = 0;
+        deck.line = buf;
 
         /*CDHW Delete any previous special task CDHW*/
 
@@ -302,8 +302,8 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
         INPpas2(ckt, (card *) &deck, tab, ft_curckt->ci_specTask);
 
-        if (deck.li_error) {
-            fprintf(cp_err, "Warning: %s\n", deck.li_error);
+        if (deck.error) {
+            fprintf(cp_err, "Warning: %s\n", deck.error);
             return 2;
         }
     }
