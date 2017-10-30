@@ -61,7 +61,7 @@ struct INPtables{
     GENmodel *defZmod;
 };
 
-struct card{
+struct card {
     int linenum;
     int linenum_orig;
     char *line;
