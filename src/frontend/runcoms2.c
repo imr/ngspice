@@ -29,7 +29,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #define RAWBUF_SIZE 32768
 extern char rawfileBuf[RAWBUF_SIZE];
-extern void line_free_x(struct line * deck, bool recurse);
+extern void line_free_x(struct card * deck, bool recurse);
 extern INPmodel *modtab;
 
 #define line_free(line, flag)                   \
@@ -209,7 +209,7 @@ void
 com_remcirc(wordlist *wl)
 {
     struct variable *v, *next;
-    struct line *dd;     /*in: the spice deck */
+    struct card *dd;     /*in: the spice deck */
     struct circ *p, *prev = NULL;
 #ifdef SHARED_MODULE
     TRANan *job;

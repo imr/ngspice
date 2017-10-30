@@ -72,7 +72,7 @@ struct nscope {
 
 struct line_assoc {
     const char *name;
-    struct line *line;
+    struct card *line;
     struct line_assoc *next;
 };
 

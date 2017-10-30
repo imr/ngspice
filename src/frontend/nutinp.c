@@ -27,8 +27,8 @@ Author: 1985 Wayne A. Christopher
 void
 inp_nutsource(FILE *fp, bool comfile, char *filename)
 {
-    struct line *deck, *dd, *ld;
-    struct line *realdeck, *options = NULL;
+    struct card *deck, *dd, *ld;
+    struct card *realdeck, *options = NULL;
     char *tt = NULL, name[BSIZE_SP], *s, *t;
     bool commands = FALSE;
     wordlist *wl = NULL, *end = NULL;
@@ -43,8 +43,8 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
 
     if (!comfile) {
         /* Save the title before INPgetTitle gets it. */
-        tt = copy(deck->li_line);
-        if (!deck->li_next)
+        tt = copy(deck->line);
+        if (!deck->nextcard)
             fprintf(cp_err, "Warning: no lines in deck...\n");
     }
     (void) fclose(fp);
@@ -74,80 +74,80 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
     if (comfile) {
         /* This is easy. */
         for (dd = deck; dd; dd = ld) {
-            ld = dd->li_next;
-            if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#'))
+            ld = dd->nextcard;
+            if ((dd->line[0] == '*') && (dd->line[1] != '#'))
                 continue;
-            if (!ciprefix(".control", dd->li_line) &&
-                !ciprefix(".endc", dd->li_line)) {
-                if (dd->li_line[0] == '*')
-                    (void) cp_evloop(dd->li_line + 2);
+            if (!ciprefix(".control", dd->line) &&
+                !ciprefix(".endc", dd->line)) {
+                if (dd->line[0] == '*')
+                    (void) cp_evloop(dd->line + 2);
                 else
-                    (void) cp_evloop(dd->li_line);
+                    (void) cp_evloop(dd->line);
             }
-            tfree(dd->li_line);
+            tfree(dd->line);
             tfree(dd);
         }
     } else {
-        for (dd = deck->li_next; dd; dd = ld->li_next) {
-            if ((dd->li_line[0] == '*') && (dd->li_line[1] != '#')) {
+        for (dd = deck->nextcard; dd; dd = ld->nextcard) {
+            if ((dd->line[0] == '*') && (dd->line[1] != '#')) {
                 ld = dd;
                 continue;
             }
-            (void) strncpy(name, dd->li_line, BSIZE_SP);
+            (void) strncpy(name, dd->line, BSIZE_SP);
             s = skip_ws(name);
             t = skip_non_ws(s);
             *t = '\0';
 
-            if (ciprefix(".control", dd->li_line)) {
-                ld->li_next = dd->li_next;
-                tfree(dd->li_line);
+            if (ciprefix(".control", dd->line)) {
+                ld->nextcard = dd->nextcard;
+                tfree(dd->line);
                 tfree(dd);
                 if (commands)
                     fprintf(cp_err, "Warning: redundant .control line\n");
                 else
                     commands = TRUE;
-            } else if (ciprefix(".endc", dd->li_line)) {
-                ld->li_next = dd->li_next;
-                tfree(dd->li_line);
+            } else if (ciprefix(".endc", dd->line)) {
+                ld->nextcard = dd->nextcard;
+                tfree(dd->line);
                 tfree(dd);
                 if (commands)
                     commands = FALSE;
                 else
                     fprintf(cp_err, "Warning: misplaced .endc line\n");
-            } else if (commands || prefix("*#", dd->li_line)) {
+            } else if (commands || prefix("*#", dd->line)) {
                 controls = wl_cons(NULL, controls);
                 wl = controls;
-                if (prefix("*#", dd->li_line))
-                    wl->wl_word = copy(dd->li_line + 2);
+                if (prefix("*#", dd->line))
+                    wl->wl_word = copy(dd->line + 2);
                 else
-                    wl->wl_word = dd->li_line;
-                ld->li_next = dd->li_next;
+                    wl->wl_word = dd->line;
+                ld->nextcard = dd->nextcard;
                 tfree(dd);
-            } else if (!*dd->li_line) {
+            } else if (!*dd->line) {
                 /* So blank lines in com files don't get
                  * considered as circuits.
                  */
-                ld->li_next = dd->li_next;
-                tfree(dd->li_line);
+                ld->nextcard = dd->nextcard;
+                tfree(dd->line);
                 tfree(dd);
             } else {
                 inp_casefix(s);
-                inp_casefix(dd->li_line);
+                inp_casefix(dd->line);
                 if (eq(s, ".width") || ciprefix(".four", s) ||
                     eq(s, ".plot")  ||
                     eq(s, ".print") ||
                     eq(s, ".save"))
                 {
-                    wl_append_word(&wl, &end, copy(dd->li_line));
-                    ld->li_next = dd->li_next;
-                    tfree(dd->li_line);
+                    wl_append_word(&wl, &end, copy(dd->line));
+                    ld->nextcard = dd->nextcard;
+                    tfree(dd->line);
                     tfree(dd);
                 } else {
                     ld = dd;
                 }
             }
         }
-        if (deck->li_next) {
+        if (deck->nextcard) {
             /* There is something left after the controls. */
             fprintf(cp_out, "\nCircuit: %s\n\n", tt);
             fprintf(stderr, "\nCircuit: %s\n\n", tt);
@@ -157,8 +157,8 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
              * deal with the commands.
              */
             if (!cp_getvar("nosubckt", CP_BOOL, NULL))
-                deck->li_next = inp_subcktexpand(deck->li_next);
-            deck->li_actual = realdeck;
+                deck->nextcard = inp_subcktexpand(deck->nextcard);
+            deck->actualLine = realdeck;
             nutinp_dodeck(deck, tt, wl, FALSE, options, filename);
         }
 
@@ -259,7 +259,7 @@ nutinp_source(char *file)
  */
 
 void
-nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse, struct line *options, char *filename)
+nutinp_dodeck(struct card *deck, char *tt, wordlist *end, bool reuse, struct card *options, char *filename)
 {
     NG_IGNORE(filename);
     NG_IGNORE(options);

@@ -206,22 +206,22 @@ extern bool gr_circular;
 
 /* inp.c */
 
-void inp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
-                struct line *options, char *filename);
+void inp_dodeck(struct card *deck, char *tt, wordlist *end, bool reuse,
+                struct card *options, char *filename);
 extern void inp_source(char *file);
 void inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
 extern void inp_casefix(char *string);
-extern void inp_list(FILE *file, struct line *deck, struct line *extras, int type);
-extern struct line *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper);
+extern void inp_list(FILE *file, struct card *deck, struct card *extras, int type);
+extern struct card *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper);
 extern FILE *inp_pathopen(char *name, char *mode);
 extern char *search_identifier(char *str, const char *identifier, char *str_begin);
 extern char *find_assignment(const char *s);
 extern char *find_back_assignment(const char *s, const char *start);
 
-extern struct line *line_nconc(struct line *head, struct line *rest);
-extern struct line *line_reverse(struct line *head);
+extern struct card *line_nconc(struct card *head, struct card *rest);
+extern struct card *line_reverse(struct card *head);
 extern void mc_free(void);
-void eval_seed_opt(struct line *deck);
+void eval_seed_opt(struct card *deck);
 
 extern char **circarray;
 extern void rem_tlist(struct pt_temper *p);
@@ -233,8 +233,8 @@ extern bool is_absolute_pathname(const char *p);
 /* nutinp.c */
 
 void inp_nutsource(FILE *fp, bool comfile, char *filename);
-void nutinp_dodeck(struct line *deck, char *tt, wordlist *end, bool reuse,
-                   struct line *options, char *filename);
+void nutinp_dodeck(struct card *deck, char *tt, wordlist *end, bool reuse,
+                   struct card *options, char *filename);
 extern void nutcom_source(wordlist *wl);
 
 /* interpolate.c */
@@ -260,8 +260,8 @@ extern bool ft_gidb;
 extern bool ft_controldb;
 extern bool ft_asyncdb;
 extern char *ft_setkwords[];
-extern struct line *inp_getopts(struct line *deck);
-extern struct line *inp_getoptsc(char *line, struct line *options);
+extern struct card *inp_getopts(struct card *deck);
+extern struct card *inp_getoptsc(char *line, struct card *options);
 extern bool ft_ngdebug;
 extern bool ft_stricterror;
 
