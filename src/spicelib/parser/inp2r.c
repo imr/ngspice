@@ -18,7 +18,7 @@ Remarks:  This code is based on a version written by Serban Popescu which
 /* undefine to add tracing to this file */
 /* #define TRACE */
 
-void INP2R(CKTcircuit *ckt, INPtables * tab, card * current)
+void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 /* parse a resistor card */
 /* Rname <node> <node> [<val>][<mname>][w=<val>][l=<val>][ac=<val>] */

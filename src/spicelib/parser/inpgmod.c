@@ -322,7 +322,7 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab)
 static int
 INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessage)
 {
-    card *txtCard;           /* Text description of a card */
+    struct card *txtCard;    /* Text description of a card */
     GENcard *tmpCard;        /* Processed description of a card */
     IFcardInfo *info = NULL; /* Info about the type of card located */
     char *cardName = NULL;   /* name of a card */

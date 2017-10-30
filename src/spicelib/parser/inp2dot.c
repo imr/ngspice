@@ -15,7 +15,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/tskdefs.h"
 
 static int
-dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
           TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int which;			/* which analysis we are performing */
@@ -114,7 +114,7 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_op(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
        TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int which;			/* which analysis we are performing */
@@ -136,7 +136,7 @@ dot_op(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
           TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int which;			/* which analysis we are performing */
@@ -172,7 +172,7 @@ dot_disto(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
        TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int error;			/* error code temporary */
@@ -204,7 +204,7 @@ dot_ac(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 }
 
 static int
-dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
        TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int error;			/* error code temporary */
@@ -241,7 +241,7 @@ dot_pz(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
        TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	char *name;			/* the resistor's name */
@@ -287,7 +287,7 @@ dot_dc(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
        TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	char *name;			/* the resistor's name */
@@ -348,7 +348,7 @@ dot_tf(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
          TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int error;			/* error code temporary */
@@ -398,7 +398,7 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 static int
-dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
          TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	char *name;			/* the resistor's name */
@@ -488,7 +488,7 @@ dot_sens(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 #ifdef WANT_SENSE2
 static int
-dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
           TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	int error;			/* error code temporary */
@@ -554,7 +554,7 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 #ifdef WITH_PSS
 /*SP: Steady State Analyis */
 static int
-dot_pss(char *line, void *ckt, INPtables *tab, card *current,
+dot_pss(char *line, void *ckt, INPtables *tab, struct card *current,
         void *task, void *gnode, JOB *foo)
 {
 	int error;			/* error code temporary */
@@ -613,7 +613,7 @@ dot_pss(char *line, void *ckt, INPtables *tab, card *current,
 #endif
 
 static int
-dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
+dot_options(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
             TSKtask *task, CKTnode *gnode, JOB *foo)
 {
 	NG_IGNORE(line);
@@ -630,7 +630,7 @@ dot_options(char *line, CKTcircuit *ckt, INPtables *tab, card *current,
 
 
 int
-INP2dot(CKTcircuit *ckt, INPtables *tab, card *current, TSKtask *task, CKTnode *gnode)
+INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CKTnode *gnode)
 {
 
 	/* .<something> Many possibilities */

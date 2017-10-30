@@ -21,7 +21,7 @@ void
 INPdoOpts(
     CKTcircuit *ckt,
     JOB *anal,
-    card *optCard,
+    struct card *optCard,
     INPtables *tab)
 {
     char *line;

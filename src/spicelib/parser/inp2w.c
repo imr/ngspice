@@ -11,7 +11,7 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
-void INP2W(CKTcircuit *ckt, INPtables * tab, card * current)
+void INP2W(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 
     /* Wname <node> <node> <vctrl> [<modname>] [IC] */

@@ -21,11 +21,11 @@ extern IFsimulator *ft_sim;
  * warning.  */
 
 void
-INPpas3(CKTcircuit *ckt, card *data, INPtables *tab, TSKtask *task,
+INPpas3(CKTcircuit *ckt, struct card *data, INPtables *tab, TSKtask *task,
         IFparm *nodeParms, int numNodeParms)
 {
 
-    card *current;
+    struct card *current;
     int error;			/* used by the macros defined above */
     char *line;			/* the part of the current line left
                                    to parse */

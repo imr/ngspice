@@ -29,7 +29,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
 {
     JOB *senseJob;
     JOB *opJob;
-    card *current;
+    struct card *current;
     IFvalue ptemp;
     IFvalue *parm;
     char buf[BSIZE_SP];
@@ -38,7 +38,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     char *steptype;
     char *name;
     char *line;
-    card deck;
+    struct card deck;
     int error;
     int save;
     int flag = 0;
@@ -53,7 +53,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     deck.linenum_orig = 0;
     deck.line         = buf;
 
-    current = (card *) &deck;
+    current = (struct card *) &deck;
     line = current->line;
     INPgetTok(&line, &token, 1);
 
