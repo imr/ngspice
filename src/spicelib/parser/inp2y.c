@@ -15,7 +15,7 @@ void
 INP2Y(
     CKTcircuit *ckt,
     INPtables *tab,
-    card *current)
+    struct card *current)
 
 {
 /* parse a txl card */

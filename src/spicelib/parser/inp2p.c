@@ -15,7 +15,7 @@ void
 INP2P(
     CKTcircuit *ckt,
     INPtables *tab,
-    card *current)
+    struct card *current)
 
 {
 

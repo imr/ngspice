@@ -12,7 +12,7 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "inpxx.h"
 
 
-void INP2O(CKTcircuit *ckt, INPtables * tab, card * current)
+void INP2O(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 
     /* Oname <node> <node> <node> <node> [IC=<val>,<val>,<val>,<val>] */

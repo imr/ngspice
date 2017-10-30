@@ -62,7 +62,7 @@ static void  MIFinit_inst(MIFmodel *mdfast, MIFinstance *fast);
 static void  MIFget_port_type(
     CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
-    card             *current,  /* MUST be named 'current' for spice macros     */
+    struct card      *current,  /* MUST be named 'current' for spice macros     */
     char             **line,
     char             **next_token,
     Mif_Token_Type_t *next_token_type,
@@ -75,7 +75,7 @@ static void  MIFget_port_type(
 static void MIFget_port(
     CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
-    card             *current,  /* MUST be named 'current' for spice macros     */
+    struct card      *current,  /* MUST be named 'current' for spice macros     */
     MIFinstance      *fast,     /* pointer to instance struct */
     char             **line,
     char             **next_token,
@@ -142,7 +142,7 @@ void
 MIF_INP2A (
     CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables    *tab,      /* symbol table for node names, etc.            */
-    card         *current ) /* the card we are to parse                     */
+    struct card  *current ) /* the card we are to parse                     */
 /* Must be called "current" for compatibility   */
 /* with macros                                  */
 {
@@ -682,7 +682,7 @@ static void
 MIFget_port_type(
     CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
-    card             *current,  /* MUST be named 'current' for spice macros     */
+    struct card      *current,  /* MUST be named 'current' for spice macros     */
     char             **line,
     char             **next_token,
     Mif_Token_Type_t *next_token_type,
@@ -777,7 +777,7 @@ static void
 MIFget_port(
     CKTcircuit       *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables        *tab,      /* symbol table for node names, etc.            */
-    card             *current,  /* MUST be named 'current' for spice macros     */
+    struct card      *current,  /* MUST be named 'current' for spice macros     */
     MIFinstance      *fast,     /* pointer to instance struct */
     char             **line,
     char             **next_token,

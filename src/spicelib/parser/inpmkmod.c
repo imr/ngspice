@@ -19,7 +19,7 @@ INPmodel *modtab = NULL;
  * Note that the model table INPmodel
  *--------------------------------------------------------------*/
 
-int INPmakeMod(char *token, int type, card * line)
+int INPmakeMod(char *token, int type, struct card *line)
 {
    register INPmodel **i;
 
