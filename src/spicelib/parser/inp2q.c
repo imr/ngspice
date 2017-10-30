@@ -28,7 +28,7 @@ model_numnodes(int type)
 }
 
 
-void INP2Q(CKTcircuit *ckt, INPtables * tab, card * current, CKTnode *gnode)
+void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnode)
 {
 
     /* Qname <node> <node> <node> [<node>] <model> [<val>] [OFF]

@@ -16,13 +16,13 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpdefs.h"
 #include "inpxx.h"
 
-extern void INPlist(FILE *file, card *deck, int type);  /* nowhere used function */
+extern void INPlist(FILE *file, struct card *deck, int type);  /* nowhere used function */
 
-void INPlist(FILE * file, card * deck, int type)
+void INPlist(FILE * file, struct card *deck, int type)
 {
 
-    card *here;
-    card *there;
+    struct card *here;
+    struct card *there;
 
     if (type == LOGICAL) {
 	for (here = deck; here != NULL; here = here->nextcard) {

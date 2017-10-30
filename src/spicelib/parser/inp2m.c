@@ -36,7 +36,7 @@ model_numnodes(int type)
 
 
 void
-INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
+INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
 {
     /* Mname <node> <node> <node> <node> <model> [L=<val>]
      *       [W=<val>] [AD=<val>] [AS=<val>] [PD=<val>]

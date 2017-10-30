@@ -160,16 +160,16 @@ if_inpdeck(struct card *deck, INPtables **tab)
 
     /* reset the model table, will be filled in anew in INPpas1() */
     modtab = NULL;
-    INPpas1(ckt, (card *) deck->nextcard, *tab);
+    INPpas1(ckt, (struct card *) deck->nextcard, *tab);
     /* store the new model table in the current circuit */
     ft_curckt->ci_modtab = modtab;
-    INPpas2(ckt, (card *) deck->nextcard, *tab, ft_curckt->ci_defTask);
+    INPpas2(ckt, (struct card *) deck->nextcard, *tab, ft_curckt->ci_defTask);
 
     /* INPpas2 has been modified to ignore .NODESET and .IC
      * cards. These are left till INPpas3 so that we can check for
      * nodeset/ic of non-existant nodes.  */
 
-    INPpas3(ckt, (card *) deck->nextcard,
+    INPpas3(ckt, (struct card *) deck->nextcard,
             *tab, ft_curckt->ci_defTask, ft_sim->nodeParms,
             ft_sim->numNodeParms);
 
@@ -300,7 +300,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
 
         /*CDHW ci_curTask and ci_specTask point to the interactive task AAA CDHW*/
 
-        INPpas2(ckt, (card *) &deck, tab, ft_curckt->ci_specTask);
+        INPpas2(ckt, (struct card *) &deck, tab, ft_curckt->ci_specTask);
 
         if (deck.error) {
             fprintf(cp_err, "Warning: %s\n", deck.error);

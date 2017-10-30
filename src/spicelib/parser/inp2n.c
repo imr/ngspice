@@ -16,7 +16,7 @@ University of Science and Technology of China
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
-void INP2N(CKTcircuit *ckt, INPtables * tab, card * current)
+void INP2N(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 /* parse a numerical device  card */
 /* Nname <node> <node> [<node> ...] [<mname>] */

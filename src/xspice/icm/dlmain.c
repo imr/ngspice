@@ -105,7 +105,7 @@ CM_EXPORT void *CMgetCoreItfPtr(void) {
 void MIF_INP2A(
     CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables    *tab,      /* symbol table for node names, etc.            */
-    card         *current   /* the card we are to parse                     */
+    struct card         *current   /* the card we are to parse                     */
 	) {
 	(coreitf->dllitf_MIF_INP2A)(ckt,tab,current);
 }

@@ -12,7 +12,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
-void INP2D(CKTcircuit *ckt, INPtables * tab, card * current)
+void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 
 /* Dname <node> <node> <model> [<val>] [OFF] [IC=<val>] */

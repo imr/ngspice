@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
-int INPgetTitle(CKTcircuit **ckt, card ** data)
+int INPgetTitle(CKTcircuit **ckt, struct card ** data)
 {
     int error;
 

@@ -12,7 +12,7 @@ Author: 1988 Thomas L. Quarles
 #include "inpxx.h"
 #include "ngspice/cktdefs.h"
 
-void INP2B(CKTcircuit *ckt, INPtables * tab, card * current)
+void INP2B(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 
     /* Bname <node> <node> [V=expr] [I=expr] */

@@ -15,7 +15,7 @@
 
 struct coreInfo_t {
 	/* MIF stuff */
-	void      ((*dllitf_MIF_INP2A)(CKTcircuit *, INPtables *, card *));
+	void      ((*dllitf_MIF_INP2A)(CKTcircuit *, INPtables *, struct card *));
 	char *    ((*dllitf_MIFgetMod)(CKTcircuit *, char *, INPmodel  **, INPtables *));
 	IFvalue * ((*dllitf_MIFgetValue)(CKTcircuit *, char **, int, INPtables *, char **));
 	int		  ((*dllitf_MIFsetup)(SMPmatrix *, GENmodel *, CKTcircuit *, int *));

@@ -15,7 +15,7 @@ Author: 1985 Thomas L. Quarles
  * Note that multi-line models are handled in the calling fcn
  * (INPpas1).
  *-------------------------------------------------------------*/
-char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
+char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 {
 
     char *modname;
