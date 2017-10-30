@@ -79,7 +79,8 @@ to new polynomial controlled source code model syntax.
 /*  out the old dependent  source.                                     */
 /*  It returns (a pointer to) the processed deck.                      */
 /*---------------------------------------------------------------------*/
-struct line * ENHtranslate_poly(
+struct line *
+ENHtranslate_poly(
     struct   line  *deck) {        /* Linked list of lines in input deck */
     struct   line  *d;
     struct   line  *l1;

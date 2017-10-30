@@ -712,7 +712,7 @@ inp_deckcopy(struct line *deck) {
 
 
 /*
- * Copy a deck, without the li_actual lines, without comment lines, and
+ * Copy a deck, without the ->li_actual lines, without comment lines, and
  * without .control section(s).
  * First line is always copied (except being .control).
  */
