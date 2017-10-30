@@ -53,7 +53,7 @@ NON-STANDARD FEATURES
 extern void MIF_INP2A(
     CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
     INPtables    *tab,      /* symbol table for node names, etc.            */
-    struct card         *current   /* the card we are to parse                     */
+    struct card  *current   /* the card we are to parse                     */
 );
 
 
