@@ -94,7 +94,7 @@ struct Enh_Ckt_Data {
 
 
 void ENHreport_conv_prob(Enh_Conv_Source_t type, char *name, char *msg);
-struct line *ENHtranslate_poly(struct line *deck);
+struct card *ENHtranslate_poly(struct card *deck);
 
 
 #endif

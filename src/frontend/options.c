@@ -136,20 +136,20 @@ cp_usrvars(void)
 
 /* Extract the .option lines from the deck */
 
-struct line *
-inp_getopts(struct line *deck)
+struct card *
+inp_getopts(struct card *deck)
 {
-    struct line *last = NULL, *opts = NULL, *dd, *next = NULL;
+    struct card *last = NULL, *opts = NULL, *dd, *next = NULL;
 
-    for (dd = deck->li_next; dd; dd = next) {
-        next = dd->li_next;
-        if (ciprefix(".opt", dd->li_line)) {
-            inp_casefix(dd->li_line);
+    for (dd = deck->nextcard; dd; dd = next) {
+        next = dd->nextcard;
+        if (ciprefix(".opt", dd->line)) {
+            inp_casefix(dd->line);
             if (last)
-                last->li_next = dd->li_next;
+                last->nextcard = dd->nextcard;
             else
-                deck->li_next = dd->li_next;
-            dd->li_next = opts;
+                deck->nextcard = dd->nextcard;
+            dd->nextcard = opts;
             opts = dd;
         } else {
             last = dd;
@@ -165,20 +165,20 @@ inp_getopts(struct line *deck)
  * substitute '.options' for 'option'
  * then put it in front of the given 'options' list */
 
-struct line *
-inp_getoptsc(char *line, struct line *options)
+struct card *
+inp_getoptsc(char *line, struct card *options)
 {
     line = nexttok(line);           /* skip option */
 
-    struct line *next = TMALLOC(struct line, 1);
+    struct card *next = TMALLOC(struct card, 1);
 
-    next->li_line    = tprintf(".options %s", line);
-    next->li_linenum = 0;
-    next->li_error   = NULL;
-    next->li_actual  = NULL;
+    next->line    = tprintf(".options %s", line);
+    next->linenum = 0;
+    next->error   = NULL;
+    next->actualLine  = NULL;
 
     /* put new line in front */
-    next->li_next = options;
+    next->nextcard = options;
 
     return next;
 }

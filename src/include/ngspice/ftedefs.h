@@ -35,11 +35,11 @@ struct circ {
     INPtables  *ci_symtab;    /* The INP symbol table. */
     INPmodel   *ci_modtab;    /* The INP model table. */
     struct dbcomm *ci_dbs;    /* The database storing save, iplot, stop data */
-    struct line *ci_deck;     /* The input deck. */
-    struct line *ci_origdeck; /* The input deck, before subckt expansion. */
-    struct line *ci_options;  /* The .option cards from the deck... */
-    struct line *ci_meas;     /* .measure commands to run after simulation */
-    struct line *ci_param;    /* .param statements found in deck */
+    struct card *ci_deck;     /* The input deck. */
+    struct card *ci_origdeck; /* The input deck, before subckt expansion. */
+    struct card *ci_options;  /* The .option cards from the deck... */
+    struct card *ci_meas;     /* .measure commands to run after simulation */
+    struct card *ci_param;    /* .param statements found in deck */
     struct variable *ci_vars; /* ... and the parsed versions. */
     bool ci_inprogress;       /* We are in a break now. */
     bool ci_runonce;          /* So com_run can to a reset if necessary... */
