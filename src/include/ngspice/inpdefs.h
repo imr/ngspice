@@ -65,14 +65,14 @@ struct modellist;
 
 struct nscope {
     struct nscope *next;
-    struct line_assoc *subckts;
+    struct card_assoc *subckts;
     struct modellist *models;
 };
 
-struct line_assoc {
+struct card_assoc {
     const char *name;
     struct card *line;
-    struct line_assoc *next;
+    struct card_assoc *next;
 };
 
 struct card {

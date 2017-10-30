@@ -149,7 +149,7 @@ void tprint(struct card *deck, int numb);
 static struct nscope *inp_add_levels(struct card *deck);
 static char inp_get_elem_ident(char *type);
 static void inp_rem_unused_models(struct nscope *root, struct card *deck);
-static struct line_assoc *find_subckt(struct nscope *scope, const char *name);
+static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
 static struct modellist *find_model(struct nscope *scope, const char *name);
 
 static bool inp_strip_braces(char *s);
@@ -2825,7 +2825,7 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
             char *subckt_name   = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct line_assoc *a = find_subckt(c->level, subckt_name);
+                struct card_assoc *a = find_subckt(c->level, subckt_name);
 
                 if (a) {
                     int num_subckt_params = inp_get_params(a->line->line, subckt_param_names, subckt_param_values);
@@ -6602,9 +6602,9 @@ inp_meas_current(struct card *deck)
 }
 
 
-static struct line_assoc *
+static struct card_assoc *
 find_subckt_1(struct nscope *scope, const char *name) {
-    struct line_assoc *p = scope->subckts;
+    struct card_assoc *p = scope->subckts;
     for (; p; p = p->next)
         if (eq(name, p->name))
             break;
@@ -6612,10 +6612,10 @@ find_subckt_1(struct nscope *scope, const char *name) {
 }
 
 
-static struct line_assoc *
+static struct card_assoc *
 find_subckt(struct nscope *scope, const char *name) {
     for(; scope; scope = scope->next) {
-        struct line_assoc *p = find_subckt_1(scope, name);
+        struct card_assoc *p = find_subckt_1(scope, name);
         if (p)
             return p;
     }
@@ -6632,7 +6632,7 @@ add_subckt(struct nscope *scope, struct card *subckt_line)
         fprintf(stderr, "redefinition of .subckt %s\n", name);
         controlled_exit(1);
     }
-    struct line_assoc *entry = TMALLOC(struct line_assoc, 1);
+    struct card_assoc *entry = TMALLOC(struct card_assoc, 1);
     entry->name = name;
     entry->line = subckt_line;
     entry->next = scope->subckts;
@@ -6811,7 +6811,7 @@ rem_unused_xxx(struct nscope *level)
     }
     level->models = NULL;
 
-    struct line_assoc *p = level->subckts;
+    struct card_assoc *p = level->subckts;
     for (; p; p = p->next)
         /* be carefull if it is an empty .subckt/.ends block
          *  .subckt and .ends do have the level of the parent */
