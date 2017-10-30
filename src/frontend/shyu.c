@@ -53,7 +53,7 @@ if_sens_run(CKTcircuit *ckt, wordlist *args, INPtables *tab)
     deck.linenum_orig = 0;
     deck.line         = buf;
 
-    current = (struct card *) &deck;
+    current = &deck;
     line = current->line;
     INPgetTok(&line, &token, 1);
 
