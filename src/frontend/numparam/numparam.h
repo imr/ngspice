@@ -19,15 +19,25 @@ typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
  * I believe the entry_t should be a union of type but I need more info.
  * ----------------------------------------------------------------- */
 
-#define  NUPA_REAL     'R'
-#define  NUPA_STRING   'S'
-#define  NUPA_POINTER  'P'
-#define  NUPA_SUBCKT   'U'
-#define  NUPA_SPACE    ' '
-#define  NUPA_UNKNOWN  '?'
-#define  NUPA_MODEL    'O'
+struct nupa_type;
 
-typedef char nupa_type;
+extern const struct nupa_type S_nupa_real;
+extern const struct nupa_type S_nupa_string;
+extern const struct nupa_type S_nupa_pointer;
+extern const struct nupa_type S_nupa_subckt;
+extern const struct nupa_type S_nupa_space;
+extern const struct nupa_type S_nupa_unknown;
+extern const struct nupa_type S_nupa_model;
+
+#define  NUPA_REAL     (&S_nupa_real)
+#define  NUPA_STRING   (&S_nupa_string)
+#define  NUPA_POINTER  (&S_nupa_pointer)
+#define  NUPA_SUBCKT   (&S_nupa_subckt)
+#define  NUPA_SPACE    (&S_nupa_space)
+#define  NUPA_UNKNOWN  (&S_nupa_unknown)
+#define  NUPA_MODEL    (&S_nupa_model)
+
+typedef const struct nupa_type *nupa_type;
 
 
 typedef struct entry_s {

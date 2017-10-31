@@ -1779,3 +1779,16 @@ nupa_subcktexit(dico_t *dico)
 {
     dicostack_pop(dico);
 }
+
+
+struct nupa_type {                    /* used as a type-checked enum */
+    const char *name;
+};
+
+const struct nupa_type S_nupa_real = { "NUPA_REAL" };
+const struct nupa_type S_nupa_string = { "NUPA_STRING" };
+const struct nupa_type S_nupa_pointer = { "NUPA_POINTER" };
+const struct nupa_type S_nupa_subckt = { "NUPA_SUBCKT" };
+const struct nupa_type S_nupa_unknown = { "NUPA_UNKNOWN" };
+const struct nupa_type S_nupa_model = { "NUPA_MODEL" };
+const struct nupa_type S_nupa_space = { "NUPA_SPACE" };
