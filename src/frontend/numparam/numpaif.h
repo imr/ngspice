@@ -11,7 +11,6 @@
 #define  NUPASUBDONE  2
 #define  NUPAEVALDONE 3
 
-struct nscope;
 struct card;
 
 extern char  *nupa_copy(struct card *c);

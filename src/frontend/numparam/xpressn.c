@@ -546,11 +546,15 @@ nupa_define(dico_t *dico,
 
 
 bool
-defsubckt(dico_t *dico, char *s, int w, struct nscope *level)
+defsubckt(dico_t *dico, struct card *card)
 /* called on 1st pass of spice source code,
    to enter subcircuit names
 */
 {
+    char *s = card->line;
+    int w = card->linenum;
+    struct nscope *level = card->level;
+
     bool err;
     int i, j, ls;
 

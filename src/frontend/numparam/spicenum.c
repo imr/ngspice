@@ -538,7 +538,7 @@ nupa_done(void)
 void
 nupa_scan(struct card *card)
 {
-    defsubckt(dicoS, card->line, card->linenum, card->level);
+    defsubckt(dicoS, card);
 }
 
 
