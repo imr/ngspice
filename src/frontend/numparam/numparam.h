@@ -24,7 +24,6 @@ struct Tpe;
 
 extern const struct Tpe Tpe_Real_;
 extern const struct Tpe Tpe_String_;
-extern const struct Tpe Tpe_P_;
 extern const struct Tpe Tpe_Subckt_;
 extern const struct Tpe Tpe_Space_;
 extern const struct Tpe Tpe_Unknown_;
@@ -32,7 +31,6 @@ extern const struct Tpe Tpe_Model_;
 
 #define  TpeReal     (&Tpe_Real_)
 #define  TpeString   (&Tpe_String_)
-#define  TpeP        (&Tpe_P_)
 #define  TpeSubckt   (&Tpe_Subckt_)
 #define  TpeSpace    (&Tpe_Space_)
 #define  TpeUnknown  (&Tpe_Unknown_)
