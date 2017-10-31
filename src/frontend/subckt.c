@@ -236,9 +236,9 @@ inp_subcktexpand(struct card *deck) {
         /* get the subckt/model names from the deck */
         for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
             if (ciprefix(".subckt", c->line))
-                nupa_scan(c->line, c->linenum, TRUE);
+                nupa_scan(c, TRUE);
             if (ciprefix(".model", c->line))
-                nupa_scan(c->line, c->linenum, FALSE);
+                nupa_scan(c, FALSE);
         }
         /* now copy instances */
         for (c = deck; c; c = c->nextcard)  /* first Numparam pass */
