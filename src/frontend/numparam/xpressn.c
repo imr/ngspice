@@ -398,7 +398,7 @@ getidtype(dico_t *dico, char *s)
     if (entry)
         return entry->tp;
 
-    return TpeQ;
+    return TpeUnknown;
 }
 
 
@@ -410,7 +410,7 @@ fetchnumentry(dico_t *dico, char *s, bool *perr)
     while (entry && (entry->tp == TpeP))
         entry = entry->pointer;
 
-    if (entry && (entry->tp == TpeR))
+    if (entry && (entry->tp == TpeReal))
         return entry->vl;
 
     *perr = message(dico, "Undefined number [%s]\n", s);
@@ -430,7 +430,7 @@ attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op, struct nscope *leveli
 
     entry = (entry_t *) nghash_find(htable_p, t);
     if (entry && (op == 'N') &&
-        (entry->level < dico->stack_depth) && (entry->tp != TpeQ))
+        (entry->level < dico->stack_depth) && (entry->tp != TpeUnknown))
     {
         entry = NULL;
     }
@@ -438,7 +438,7 @@ attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op, struct nscope *leveli
     if (!entry) {
         entry = TMALLOC(entry_t, 1);
         entry->symbol = strdup(t);
-        entry->tp = TpeQ;      /* signal Unknown */
+        entry->tp = TpeUnknown;      /* signal Unknown */
         entry->level = dico->stack_depth;
         entry->levelinfo = levelinfo;
         nghash_insert(htable_p, t, entry);
@@ -506,14 +506,14 @@ nupa_define(dico_t *dico,
     else
         c = TpeSpace;
 
-    if ((c == TpeR) || (c == TpeS) || (c == TpeQ)) {
+    if ((c == TpeReal) || (c == TpeString) || (c == TpeUnknown)) {
 
         entry->vl = z;
         entry->tp = tpe;
         entry->ivl = w;
         entry->sbbase = base;
         /* if ((c != '?') && (i <= dico->stack[dico->tos])) { */
-        if (c == TpeQ)
+        if (c == TpeUnknown)
             entry->level = dico->stack_depth; /* promote! */
 
         /* warn about re-write to a global scope! */
@@ -620,7 +620,7 @@ findsubckt(dico_t *dico, char *s, SPICE_DSTRINGPTR subname)
     pscopy_up(&ustr, s, k + 1, j - k);
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
-    if (entry && (entry->tp == TpeU)) {
+    if (entry && (entry->tp == TpeSubckt)) {
         line = entry->ivl;
         scopyd(subname, &ustr);
     } else {
@@ -1159,10 +1159,10 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         dt = entry->tp;
 
         /* data type: Real or String */
-        if (dt == TpeR) {
+        if (dt == TpeReal) {
             u = entry->vl;
             numeric = 1;
-        } else if (dt == TpeS) {
+        } else if (dt == TpeString) {
             /* suppose source text "..." at */
             j = entry->ivl;
             lq = 0;
@@ -1428,7 +1428,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
         while ((i < ls) && (s[i - 1] != '"'))
             i++;
 
-        tpe = TpeS;
+        tpe = TpeString;
 
         do
             i++;
@@ -1472,7 +1472,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
 
         } while (!(cpos (c, ",;)}") >= 0)); /* legal separators */
 
-        tpe = TpeR;
+        tpe = TpeReal;
     }
 
     pscopy(tstr_p, s, ia-1, i - ia);
@@ -1480,7 +1480,7 @@ getexpress(char *s, SPICE_DSTRINGPTR tstr_p, int *pi)
     if (s[i - 1] == '}')
         i++;
 
-    if (tpe == TpeS)
+    if (tpe == TpeString)
         i++;                    /* beyond quote */
 
     *pi = i;
@@ -1540,14 +1540,14 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
             dtype = getexpress(s, &ustr, &i);
 
-            if (dtype == TpeR) {
+            if (dtype == TpeReal) {
                 const char *tmp = spice_dstring_value(&ustr);
                 rval = formula(dico, tmp, tmp + strlen(tmp), &error);
                 if (error)
                     message(dico,
                             " Formula() error.\n"
                             "      %s\n", s);
-            } else if (dtype == TpeS) {
+            } else if (dtype == TpeString) {
                 wval = i;
             }
 
@@ -1804,10 +1804,10 @@ struct Tpe {
     const char *name;
 };
 
-const struct Tpe Tpe_R_ = { "Tpe_R" };
-const struct Tpe Tpe_S_ = { "Tpe_S" };
+const struct Tpe Tpe_Real_ = { "Tpe_Real" };
+const struct Tpe Tpe_String_ = { "Tpe_String" };
 const struct Tpe Tpe_P_ = { "Tpe_P" };
-const struct Tpe Tpe_U_ = { "Tpe_U" };
-const struct Tpe Tpe_Q_ = { "Tpe_Q" };
-const struct Tpe Tpe_O_ = { "Tpe_O" };
+const struct Tpe Tpe_Subckt_ = { "Tpe_Subckt" };
+const struct Tpe Tpe_Unknown_ = { "Tpe_Unknown" };
+const struct Tpe Tpe_Model_ = { "Tpe_Model" };
 const struct Tpe Tpe_Space_ = { "Tpe_Space" };

@@ -225,7 +225,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 cadd(&name, upcase(s[j]));
                 j++;
             }
-            found = (getidtype(dico, spice_dstring_value(&name)) == TpeU);
+            found = (getidtype(dico, spice_dstring_value(&name)) == TpeSubckt);
         }
     }
 
@@ -539,9 +539,9 @@ void
 nupa_scan(char *s, int linenum, int is_subckt, struct nscope *level)
 {
     if (is_subckt)
-        defsubckt(dicoS, s, linenum, TpeU, level);
+        defsubckt(dicoS, s, linenum, TpeSubckt, level);
     else
-        defsubckt(dicoS, s, linenum, TpeO, level);
+        defsubckt(dicoS, s, linenum, TpeModel, level);
 }
 
 
@@ -560,7 +560,7 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
          entry;
          entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
     {
-        if (entry->tp == TpeR) {
+        if (entry->tp == TpeReal) {
             spice_dstring_reinit(& dico->lookup_buf);
             scopy_lower(& dico->lookup_buf, entry->symbol);
             name = spice_dstring_value(& dico->lookup_buf);
@@ -667,7 +667,7 @@ nupa_add_param(char *param_name, double value)
     entry = attrib(dico, htable_p, up_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
-        entry->tp = TpeR;
+        entry->tp = TpeReal;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
@@ -694,7 +694,7 @@ nupa_add_inst_param(char *param_name, double value)
     entry = attrib(dico, dico->inst_symbols, up_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
-        entry->tp = TpeR;
+        entry->tp = TpeReal;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }

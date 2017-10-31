@@ -22,21 +22,21 @@ typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
 
 struct Tpe;
 
-extern const struct Tpe Tpe_R_;
-extern const struct Tpe Tpe_S_;
+extern const struct Tpe Tpe_Real_;
+extern const struct Tpe Tpe_String_;
 extern const struct Tpe Tpe_P_;
-extern const struct Tpe Tpe_U_;
+extern const struct Tpe Tpe_Subckt_;
 extern const struct Tpe Tpe_Space_;
-extern const struct Tpe Tpe_Q_;
-extern const struct Tpe Tpe_O_;
+extern const struct Tpe Tpe_Unknown_;
+extern const struct Tpe Tpe_Model_;
 
-#define  TpeR        (&Tpe_R_)
-#define  TpeS        (&Tpe_S_)
+#define  TpeReal     (&Tpe_Real_)
+#define  TpeString   (&Tpe_String_)
 #define  TpeP        (&Tpe_P_)
-#define  TpeU        (&Tpe_U_)
+#define  TpeSubckt   (&Tpe_Subckt_)
 #define  TpeSpace    (&Tpe_Space_)
-#define  TpeQ        (&Tpe_Q_)
-#define  TpeO        (&Tpe_O_)
+#define  TpeUnknown  (&Tpe_Unknown_)
+#define  TpeModel    (&Tpe_Model_)
 
 typedef const struct Tpe *entry_type;
 
