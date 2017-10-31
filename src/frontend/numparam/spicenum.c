@@ -532,9 +532,9 @@ void
 nupa_scan(struct card *card, int is_subckt)
 {
     if (is_subckt)
-        defsubckt(dicoS, card->line, card->linenum, 'U');
+        defsubckt(dicoS, card, 'U');
     else
-        defsubckt(dicoS, card->line, card->linenum, 'O');
+        defsubckt(dicoS, card, 'O');
 }
 
 
