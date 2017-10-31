@@ -512,9 +512,9 @@ nupa_define(dico_t *dico,
 
 
 bool
-defsubckt(dico_t *dico, struct card *card, nupa_type categ)
+defsubckt(dico_t *dico, struct card *card)
 /* called on 1st pass of spice source code,
-   to enter subcircuit (categ=U) and model (categ=O) names
+   to enter subcircuit names
 */
 {
     const char *s = card->line;
@@ -542,7 +542,7 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
         pscopy_up(&ustr, s, 0, (int) (s_end - s));
-        err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL);
+        err = nupa_define(dico, spice_dstring_value(&ustr), ' ', NUPA_SUBCKT, 0.0, w, NULL);
         spice_dstring_free(&ustr);
     } else {
         err = message(dico, "Subcircuit or Model without name.\n");
