@@ -469,7 +469,7 @@ nupa_define(dico_t *dico,
        double z,                /* float value if any */
        int w,                   /* integer value if any */
        char *base,              /* string pointer if any */
-       struct nscope *level)  /* level info */
+       struct nscope *level)    /* level info */
 {
     /*define t as real or integer,
       opcode= 'N' impose a new item under local conditions.
