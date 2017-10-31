@@ -497,7 +497,7 @@ nupa_define(dico_t *dico,
 
     c = entry->tp;
 
-    if ((c == TpeReal) || (c == TpeString) || (c == TpeUnknown)) {
+    if (c != TpeSubckt) {
 
         entry->vl = z;
         entry->tp = tpe;
