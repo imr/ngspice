@@ -474,7 +474,7 @@ nupa_define(dico_t *dico,
 
     c = entry->tp;
 
-    if ((c == NUPA_REAL) || (c == NUPA_STRING) || (c == NUPA_UNKNOWN)) {
+    if (c != NUPA_SUBCKT) {
 
         entry->vl = z;
         entry->tp = tpe;
