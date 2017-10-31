@@ -224,7 +224,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 cadd(&name, upcase(s[j]));
                 j++;
             }
-            found = (getidtype(dico, spice_dstring_value(&name)) == 'U');
+            found = (getidtype(dico, spice_dstring_value(&name)) == NUPA_SUBCKT);
         }
     }
 
@@ -532,9 +532,9 @@ void
 nupa_scan(struct card *card, int is_subckt)
 {
     if (is_subckt)
-        defsubckt(dicoS, card, 'U');
+        defsubckt(dicoS, card, NUPA_SUBCKT);
     else
-        defsubckt(dicoS, card, 'O');
+        defsubckt(dicoS, card, NUPA_MODEL);
 }
 
 
@@ -553,7 +553,7 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
          entry;
          entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
     {
-        if (entry->tp == 'R') {
+        if (entry->tp == NUPA_REAL) {
             spice_dstring_reinit(& dico->lookup_buf);
             scopy_lower(& dico->lookup_buf, entry->symbol);
             name = spice_dstring_value(& dico->lookup_buf);
@@ -660,7 +660,7 @@ nupa_add_param(char *param_name, double value)
     entry = attrib(dico, htable_p, up_name, 'N');
     if (entry) {
         entry->vl = value;
-        entry->tp = 'R';
+        entry->tp = NUPA_REAL;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
@@ -687,7 +687,7 @@ nupa_add_inst_param(char *param_name, double value)
     entry = attrib(dico, dico->inst_symbols, up_name, 'N');
     if (entry) {
         entry->vl = value;
-        entry->tp = 'R';
+        entry->tp = NUPA_REAL;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
