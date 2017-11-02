@@ -42,7 +42,6 @@ typedef struct entry_s {
     double vl;                  /* float value if defined */
     int  ivl;                   /* int value or string buffer index */
     char *sbbase;               /* string buffer base address if any */
-    struct entry_s *pointer;    /* pointer chain */
     struct nscope *levelinfo;
 } entry_t;
 
