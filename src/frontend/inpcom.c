@@ -317,8 +317,8 @@ read_a_lib(char *y, char *dir_name)
         fclose(newfp);
     }
 
-    free(yy);
-    free(y_resolved);
+    tfree(yy);
+    tfree(y_resolved);
 
     return lib;
 }

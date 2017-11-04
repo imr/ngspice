@@ -489,7 +489,7 @@ done:
     tfree(fdvec);
     tfree(win);
 
-    free(reald);
+    tfree(reald);
 
     free_pnode(names);
 }

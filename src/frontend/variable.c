@@ -678,20 +678,20 @@ cp_variablesubst(wordlist *wlist)
                 char *x = nwl->wl_word;
                 char *tail_ = copy(tail);
                 nwl->wl_word = tprintf("%.*s%s", prefix_len, wl->wl_word, nwl->wl_word);
-                free(x);
+                tfree(x);
                 if (wlist == wl)
                     wlist = nwl;
                 wl = wl_splice(wl, nwl);
                 i = (int) strlen(wl->wl_word);
                 x = wl->wl_word;
                 wl->wl_word = tprintf("%s%s", wl->wl_word, tail_);
-                free(x);
-                free(tail_);
+                tfree(x);
+                tfree(tail_);
             } else if (prefix_len || *tail) {
                 char *x = wl->wl_word;
                 wl->wl_word = tprintf("%.*s%s", prefix_len, wl->wl_word, tail);
                 i = prefix_len;
-                free(x);
+                tfree(x);
             } else {
                 wordlist *next = wl->wl_next;
                 if (wlist == wl)

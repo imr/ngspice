@@ -748,7 +748,7 @@ cx_sortorder(void *data, short int type, int length, int *newlength, short int *
             d[i] = array_amplitudes[i].index;
     }
 
-    free(array_amplitudes);
+    tfree(array_amplitudes);
 
     /* Otherwise it is 0, but tmalloc zeros the stuff already. */
     return ((void *) d);

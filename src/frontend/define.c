@@ -413,8 +413,8 @@ com_undefine(wordlist *wlist)
             struct udfunc *next = udf->ud_next;
             cp_remkword(CT_UDFUNCS, udf->ud_name);
             free_pnode(udf->ud_text);
-            free(udf->ud_name);
-            free(udf);
+            tfree(udf->ud_name);
+            tfree(udf);
             udf = next;
         }
         udfuncs = NULL;
@@ -432,8 +432,8 @@ com_undefine(wordlist *wlist)
                     udfuncs = udf->ud_next;
                 cp_remkword(CT_UDFUNCS, wlist->wl_word);
                 free_pnode(udf->ud_text);
-                free(udf->ud_name);
-                free(udf);
+                tfree(udf->ud_name);
+                tfree(udf);
             } else {
                 prev_udf = udf;
             }
