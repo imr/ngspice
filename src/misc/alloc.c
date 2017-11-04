@@ -217,7 +217,6 @@ tcalloc(size_t num, size_t stype)
 void mem_init(void) {
     memory_table = nghash_init_pointer(1024);
     gc_is_on = 1;
-    return OK;
 }
 
 /* add to counter and hash table if memory is allocated */
@@ -259,6 +258,5 @@ void mem_delete(void) {
     gc_is_on = 0;
     printf("mem allocated %d times, deleted %d times\n", mem_in, mem_out);
     nghash_free(memory_table, NULL, my_key_free);
-    return OK;
 }
 
