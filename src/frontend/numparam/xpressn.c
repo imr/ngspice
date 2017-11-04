@@ -1727,4 +1727,3 @@ const struct nupa_type S_nupa_real = { "NUPA_REAL" };
 const struct nupa_type S_nupa_string = { "NUPA_STRING" };
 const struct nupa_type S_nupa_subckt = { "NUPA_SUBCKT" };
 const struct nupa_type S_nupa_unknown = { "NUPA_UNKNOWN" };
-const struct nupa_type S_nupa_model = { "NUPA_MODEL" };
