@@ -20,23 +20,23 @@ typedef enum {Psp     = '{'} _nPsp;      /* Ps expression */
  * I believe the entry_t should be a union of type but I need more info.
  * ----------------------------------------------------------------- */
 
-struct Tpe;
+struct nupa_type;
 
-extern const struct Tpe Tpe_Real_;
-extern const struct Tpe Tpe_String_;
-extern const struct Tpe Tpe_Subckt_;
-extern const struct Tpe Tpe_Unknown_;
+extern const struct nupa_type S_nupa_real;
+extern const struct nupa_type S_nupa_string;
+extern const struct nupa_type S_nupa_subckt;
+extern const struct nupa_type S_nupa_unknown;
 
-#define  TpeReal     (&Tpe_Real_)
-#define  TpeString   (&Tpe_String_)
-#define  TpeSubckt   (&Tpe_Subckt_)
-#define  TpeUnknown  (&Tpe_Unknown_)
+#define  NUPA_REAL     (&S_nupa_real)
+#define  NUPA_STRING   (&S_nupa_string)
+#define  NUPA_SUBCKT   (&S_nupa_subckt)
+#define  NUPA_UNKNOWN  (&S_nupa_unknown)
 
-typedef const struct Tpe *entry_type;
+typedef const struct nupa_type *nupa_type;
 
 
 typedef struct entry_s {
-    entry_type tp;     /* type: I)nt R)eal S)tring F)unction M)acro P)ointer */
+    nupa_type tp;      /* type: I)nt R)eal S)tring F)unction M)acro P)ointer */
     char *symbol;
     int  level;                 /* subckt nesting level */
     double vl;                  /* float value if defined */
@@ -76,6 +76,6 @@ bool nupa_assignment(dico_t *, char *s, char mode);
 bool nupa_subcktcall(dico_t *, char *s, char *x, bool err);
 void nupa_subcktexit(dico_t *);
 dico_t *nupa_fetchinstance(void);
-entry_type getidtype(dico_t *, char *s);
+nupa_type getidtype(dico_t *, char *s);
 entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op, struct nscope *level);
 void del_attrib(void *);

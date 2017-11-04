@@ -225,7 +225,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 cadd(&name, upcase(s[j]));
                 j++;
             }
-            found = (getidtype(dico, spice_dstring_value(&name)) == TpeSubckt);
+            found = (getidtype(dico, spice_dstring_value(&name)) == NUPA_SUBCKT);
         }
     }
 
@@ -557,7 +557,7 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
          entry;
          entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
     {
-        if (entry->tp == TpeReal) {
+        if (entry->tp == NUPA_REAL) {
             spice_dstring_reinit(& dico->lookup_buf);
             scopy_lower(& dico->lookup_buf, entry->symbol);
             name = spice_dstring_value(& dico->lookup_buf);
@@ -664,7 +664,7 @@ nupa_add_param(char *param_name, double value)
     entry = attrib(dico, htable_p, up_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
-        entry->tp = TpeReal;
+        entry->tp = NUPA_REAL;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
@@ -691,7 +691,7 @@ nupa_add_inst_param(char *param_name, double value)
     entry = attrib(dico, dico->inst_symbols, up_name, 'N', NULL);
     if (entry) {
         entry->vl = value;
-        entry->tp = TpeReal;
+        entry->tp = NUPA_REAL;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
