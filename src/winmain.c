@@ -98,6 +98,7 @@ extern bool ft_batchmode;
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 extern void cp_doquit(void);
+extern void txfree(void *ptr);
 
 #include "winmain.h"
 
@@ -824,7 +825,7 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
  outahere:
     /*  free the working string if one was allocated */
     if (pWorkString)
-        free(pWorkString);
+        txfree(pWorkString);
 
     return status;
 }
