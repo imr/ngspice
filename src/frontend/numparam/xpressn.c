@@ -1087,9 +1087,8 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
 {
     /* transform t to result q. mode 0: expression, mode 1: simple variable */
     double u = 0.0;
-    int j, lq;
     entry_t *entry;
-    bool numeric, done;
+    bool numeric;
     bool err;
 
     spice_dstring_reinit(qstr_p);
@@ -1111,24 +1110,20 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
             numeric = 1;
         } else if (entry->tp == NUPA_STRING) {
             /* suppose source text "..." at */
-            j = entry->ivl;
-            lq = 0;
+            int j = entry->ivl;
 
-            do
-            {
+            for (;;) {
                 j++;
-                lq++;
                 char c = /* ibf->bf[j]; */ entry->sbbase[j];
 
                 if (cpos('3', spice_dstring_value(&dico->option)) <= 0)
                     c = upcase(c); /* spice-2 */
 
-                done = (c == '\"') || (c < ' ') || (lq > 99);
+                if ((c == '\"') || (c < ' '))
+                    break;
 
-                if (!done)
-                    cadd(qstr_p, c);
-
-            } while (!done);
+                cadd(qstr_p, c);
+            }
         }
     } else {
         u = formula(dico, t, t + strlen(t), &err);
