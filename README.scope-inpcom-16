@@ -25,7 +25,7 @@ scalable source window in Windows GUI
 new command 'setseed'
 update to random number generators, use variable 'rndseed'
 no automatic to lower case in titles for postscript plotting
-xspice add function cm_get_circuit to allow accessing ckt structure in a code model 
+xspice add function cm_get_circuit to allow accessing ckt structure in a code model
 variable 'noretraceplot' to prevent retracing of graph during plotting
 .options seedinfo: print new seed values on request
 enable .options seed=val||random to request random seed value or set fixed value val
@@ -51,8 +51,8 @@ bug fix 291 allow let xyz = [] let xyz = [3 -5.6 9] let xyz = [5 $rr -7.9]
 *** master up to here ***
 *updates*
 check for correct inductor coefficients
-add variable 'win_console' 
---enable-relpath configure flag to set preprocessor flag HAS_RELPATH 
+add variable 'win_console'
+--enable-relpath configure flag to set preprocessor flag HAS_RELPATH
    sets search path for spinit relativ to current directory
 shared ngspice: search path for spinit: current dir, HOME dir, USERPROFILE dir
 new function stddev to calculate the standard deviation of all elements of a vector
@@ -72,7 +72,7 @@ two new commands: edisplay and eprvcd
 XSPICE 2D and 3D table models
 add variable 'batchmode' which is set when command line option `-b' is active
 enable backquote substitution for Visual Studio console apps
-update how-to-ngspice-vstudio.txt 
+update how-to-ngspice-vstudio.txt
 update visualc directory and project files, add XSPICE code model generation by VS2015
 allow access to 4 GB memory of 32 bit ngspice on 64 bit Windows, 8 TB for 64 bit ngspice
 new variable `interactive'

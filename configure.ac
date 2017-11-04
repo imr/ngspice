@@ -186,7 +186,6 @@ AC_ARG_ENABLE([xgraph],
 # ngspice shared may want relative paths for spinit etc.
 AC_ARG_ENABLE([relpath],
     [AS_HELP_STRING([--enable-relpath], [Enable relative paths for spinit etc.])])
-
 # --with-readline:  Includes GNU readline support into CLI.  Default is "no".
 AC_ARG_WITH([readline],
     [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=no.])])

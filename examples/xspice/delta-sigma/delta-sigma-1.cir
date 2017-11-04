@@ -105,7 +105,7 @@ end
 * modulator dig out
 *eprvcd dv > digi1.vcd
 * 
-eprvcd dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10 
+eprvcd dlout1 dlout2 dlout3 dlout4 dlout5 dlout6 dlout7 dlout8 dlout9 dlout10
 + xsinc.dout1 xsinc.dout2 xsinc.dout3 xsinc.dout4 xsinc.dout5
 + xsinc.dout6 xsinc.dout7 xsinc.dout8 xsinc.dout9 xsinc.dout10 > digi4b.vcd
 

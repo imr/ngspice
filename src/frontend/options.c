@@ -93,6 +93,7 @@ cp_enqvar1(char *word)
     return (NULL);
 }
 
+
 struct variable *
 cp_enqvar2(char *word)
 {
@@ -111,7 +112,6 @@ cp_enqvar2(char *word)
 
     return (NULL);
 }
-
 
 
 /* Return $plots, $curplot, $curplottitle, $curplotname, $curplotdate */

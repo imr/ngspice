@@ -74,9 +74,9 @@ if test "$1" = "64"; then
 #  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug --enable-relpath prefix="C:/Progra~1/KiCad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
 # prefix path is used for assembling the dll, a path with writing permission is required (use forward slashes '/' !).
 # Relative paths in prefix are not allowed.
-# Installing is done by copying the dll and associated files to the final destination, e.g. C:\Programs\kicad (you will need admin rights).  
-# The following is o.k. for non-admin users (select a path of your choice where yo have write permission):  
-# ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="D:/Spice_general/ng-kicad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"  
+# Installing is done by copying the dll and associated files to the final destination, e.g. C:\Programs\kicad (you will need admin rights).
+# The following is o.k. for non-admin users (select a path of your choice where yo have write permission):
+# ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="D:/Spice_general/ng-kicad" CFLAGS="-m64 -O2"  LDFLAGS="-m64 -s"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi

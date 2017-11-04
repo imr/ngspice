@@ -58,7 +58,7 @@ if $__flag = 0
   codemodel ../../codemodels/{$configuration}/{$rord}/xtradev{$platform}.cm
   codemodel ../../codemodels/{$configuration}/{$rord}/xtraevt{$platform}.cm
   codemodel ../../codemodels/{$configuration}/{$rord}/table{$platform}.cm
-  
+
   echo ngspice{$platform} {$configuration} {$rord}
 end
 unset __flag
@@ -66,4 +66,3 @@ unset __flag1
 unset configuration
 unset rord
 unset platform
-

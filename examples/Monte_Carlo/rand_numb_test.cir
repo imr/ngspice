@@ -1,6 +1,6 @@
 *** random number test for scope-inpcom-8
 
-*** Start value of seed for random number generator: variable 'rndseed' is set to 1 
+*** Start value of seed for random number generator: variable 'rndseed' is set to 1
 *** and random number generator is seeded with this value.
 *** You may override this value by adding 'setseed 5' or similar to file .spiceinit.
 
