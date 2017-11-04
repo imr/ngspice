@@ -1101,48 +1101,57 @@ double_to_string(SPICE_DSTRINGPTR qstr_p, double value)
 }
 
 
+/* expand parameter in string `t' to result `q' */
 static bool
-evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
+evaluate_variable(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t)
 {
-    /* transform t to result q. mode 0: expression, mode 1: simple variable */
     entry_t *entry;
 
     spice_dstring_reinit(qstr_p);
 
-    if (mode == 1) {
-        /* string? */
-        stupcase(t);
-        entry = entrynb(dico, t);
+    stupcase(t);
+    entry = entrynb(dico, t);
 
-        if (!entry)
-            return message(dico,
-                           "\"%s\" not evaluated. Lookup failure.\n", t);
+    if (!entry)
+        return message(dico,
+                       "\"%s\" not evaluated. Lookup failure.\n", t);
 
-        /* data type: Real or String */
-        if (entry->tp == NUPA_REAL) {
-            double_to_string(qstr_p, entry->vl);
-            return 0;
-        } else if (entry->tp == NUPA_STRING) {
-            /* suppose source text "..." at */
-            int j = entry->ivl + 1;
-
-            for (;;) {
-                char c = entry->sbbase[j++];
-
-                if ((c == '\"') || (c < ' '))
-                    return 0;
-
-                cadd(qstr_p, c);
-            }
-        }
-    } else {
-        bool err = 0;
-        double u = formula(dico, t, t + strlen(t), &err);
-        if (err)
-            return err;
-        double_to_string(qstr_p, u);
-        return 0;
+    if (entry->tp == NUPA_REAL) {
+        double_to_string(qstr_p, entry->vl);
     }
+    else if (entry->tp == NUPA_STRING) {
+        /* suppose source text "..." at */
+        int j = entry->ivl + 1;
+
+        for (;;) {
+            char c = entry->sbbase[j++];
+
+            if ((c == '\"') || (c < ' '))
+                return 0;
+
+            cadd(qstr_p, c);
+        }
+    }
+
+    return 0;
+}
+
+
+/* transform exression in string `t' to result q */
+static bool
+evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t)
+{
+    bool err = 0;
+    double u;
+
+    spice_dstring_reinit(qstr_p);
+
+    u = formula(dico, t, t + strlen(t), &err);
+    if (err)
+        return err;
+
+    double_to_string(qstr_p, u);
+
     return 0;
 }
 
@@ -1233,7 +1242,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                     sadd(&qstr, "last");
                     err = 0;
                 } else {
-                    err = evaluate(dico, &qstr, spice_dstring_value(&tstr), 0);
+                    err = evaluate_expr(dico, &qstr, spice_dstring_value(&tstr));
                 }
             }
 
@@ -1280,7 +1289,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                     err = message(dico, "Closing \")\" not found.\n");
                 } else {
                     pscopy(&tstr, s, i, k - i - 1);
-                    err = evaluate(dico, &qstr, spice_dstring_value(&tstr), 0);
+                    err = evaluate_expr(dico, &qstr, spice_dstring_value(&tstr));
                 }
 
                 i = k;
@@ -1299,7 +1308,7 @@ nupa_substitute(dico_t *dico, char *s, char *r, bool err)
                 } while ((k <= ls) && (d > ' '));
 
                 pscopy(&tstr, s, i-1, k - i);
-                err = evaluate(dico, &qstr, spice_dstring_value(&tstr), 1);
+                err = evaluate_variable(dico, &qstr, spice_dstring_value(&tstr));
                 i = k - 1;
             }
 
