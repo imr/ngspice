@@ -150,4 +150,39 @@ txfree(const void *ptr)
 #endif
 }
 
+/* replace calloc() in SP_CALLOC from spdefs.h */
+void *
+tcalloc(size_t num, size_t stype)
+{
+    void *s;
+
+#ifdef TCL_MODULE
+    Tcl_Mutex *alloc;
+    alloc = Tcl_GetAllocMutex();
+#endif
+    if (!num)
+       return NULL;
+#ifdef TCL_MODULE
+    Tcl_MutexLock(alloc);
+#elif defined SHARED_MODULE
+    mutex_lock(&allocMutex);
+#endif
+    s = calloc(num, stype);
+#ifdef TCL_MODULE
+    Tcl_MutexUnlock(alloc);
+#elif defined SHARED_MODULE
+    mutex_unlock(&allocMutex);
+#endif
+    if (!s) {
+       fprintf(stderr, "calloc: Internal Error: can't allocate %ld bytes. \n", (long)num);
+#if defined HAS_WINGUI || defined SHARED_MODULE
+       controlled_exit(EXIT_FAILURE);
+#else
+       exit(EXIT_FAILURE);
+#endif
+    }
+//    memsaved(s);
+    return(s);
+}
+
 #endif
