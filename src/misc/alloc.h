@@ -7,8 +7,9 @@
 #define ngspice_ALLOC_H
 
 #ifndef HAVE_LIBGC
-void * tmalloc(size_t num);
-void * trealloc(const void *ptr, size_t num);
+void *tmalloc(size_t num);
+void *trealloc(const void *ptr, size_t num);
+void *tcalloc(size_t num, size_t stype);
 void txfree(const void *ptr);
 #endif
 
