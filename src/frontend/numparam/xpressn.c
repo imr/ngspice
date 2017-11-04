@@ -407,9 +407,6 @@ fetchnumentry(dico_t *dico, char *s, bool *perr)
 {
     entry_t *entry = entrynb(dico, s);
 
-    while (entry && (entry->tp == NUPA_POINTER))
-        entry = entry->pointer;
-
     if (entry && (entry->tp == NUPA_REAL))
         return entry->vl;
 
@@ -495,9 +492,6 @@ nupa_define(dico_t *dico,
 
     if (!entry)
         return message(dico, " Symbol table overflow\n");
-
-    if (entry->tp == NUPA_POINTER)
-        entry = entry->pointer; /* pointer indirection */
 
     if (entry)
         c = entry->tp;
@@ -1128,9 +1122,6 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
         stupcase(t);
         entry = entrynb(dico, t);
         nolookup = !entry;
-
-        while (entry && (entry->tp == NUPA_POINTER))
-            entry = entry->pointer; /* follow pointer chain */
 
         if (!entry)
             return message(dico,
@@ -1787,7 +1778,6 @@ struct nupa_type {                    /* used as a type-checked enum */
 
 const struct nupa_type S_nupa_real = { "NUPA_REAL" };
 const struct nupa_type S_nupa_string = { "NUPA_STRING" };
-const struct nupa_type S_nupa_pointer = { "NUPA_POINTER" };
 const struct nupa_type S_nupa_subckt = { "NUPA_SUBCKT" };
 const struct nupa_type S_nupa_unknown = { "NUPA_UNKNOWN" };
 const struct nupa_type S_nupa_model = { "NUPA_MODEL" };
