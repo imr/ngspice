@@ -39,7 +39,7 @@ extern mutexType allocMutex;
 int mem_init(void);
 int mem_delete(void);
 static int memsaved(void *ptr);
-static int memdeleted(void *ptr);
+static void memdeleted(const void *ptr);
 
 int gc_is_on = 0;
 
@@ -92,6 +92,7 @@ tmalloc(size_t num)
       exit(EXIT_FAILURE);
 #endif
     }
+    memsaved(s);
     return(s);
 }
 
@@ -100,28 +101,30 @@ void *
 trealloc(const void *ptr, size_t num)
 {
   void *s;
-/*saj*/
+
 #ifdef TCL_MODULE
   Tcl_Mutex *alloc;
   alloc = Tcl_GetAllocMutex();
 #endif
   if (!num) {
-    if (ptr)
-      free((void*) ptr);
+     if (ptr) {
+         memdeleted(ptr);
+         tfree(ptr);
+      }
     return NULL;
   }
 
   if (!ptr)
     s = tmalloc(num);
   else {
-/*saj*/
+
 #ifdef TCL_MODULE
     Tcl_MutexLock(alloc);
 #elif defined SHARED_MODULE
   mutex_lock(&allocMutex);
 #endif
     s = realloc((void*) ptr, num);
-/*saj*/
+
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);
 #elif defined SHARED_MODULE
@@ -136,6 +139,10 @@ trealloc(const void *ptr, size_t num)
       exit(EXIT_FAILURE);
 #endif
   }
+  if (s != ptr) {
+      memdeleted(ptr);
+      memsaved(s);
+  }
   return(s);
 }
 
@@ -143,7 +150,6 @@ trealloc(const void *ptr, size_t num)
 void
 txfree(const void *ptr)
 {
-/*saj*/
 #ifdef TCL_MODULE
   Tcl_Mutex *alloc;
   alloc = Tcl_GetAllocMutex();
@@ -152,9 +158,11 @@ txfree(const void *ptr)
 #ifdef SHARED_MODULE
   mutex_lock(&allocMutex);
 #endif
-	if (ptr)
-		free((void*) ptr);
-/*saj*/
+  if (ptr) {
+      memdeleted(ptr);
+      free((void*)ptr);
+  }
+
 #ifdef TCL_MODULE
   Tcl_MutexUnlock(alloc);
 #elif defined SHARED_MODULE
@@ -162,7 +170,7 @@ txfree(const void *ptr)
 #endif
 }
 
-/* replace calloc() in SP_CALLOC from spdefs.h */
+/* for replacing calloc() in SP_CALLOC from spdefs.h */
 void *
 tcalloc(size_t num, size_t stype)
 {
@@ -193,7 +201,7 @@ tcalloc(size_t num, size_t stype)
        exit(EXIT_FAILURE);
 #endif
     }
-//    memsaved(s);
+    memsaved(s);
     return(s);
 }
 
@@ -219,14 +227,13 @@ static int memsaved(void *ptr) {
 }
 
 /* add to counter and remove from hash table if memory is deleted */
-static int memdeleted(void *ptr) {
+static void memdeleted(const void *ptr) {
     if (gc_is_on) {
         gc_is_on = 0;
         mem_out++;
-        nghash_delete(memory_table, ptr);
+        nghash_delete(memory_table, (void*)ptr);
         gc_is_on = 1;
     }
-    return OK;
 }
 
 /* helper functions */
