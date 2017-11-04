@@ -1088,7 +1088,6 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
     /* transform t to result q. mode 0: expression, mode 1: simple variable */
     double u = 0.0;
     int j, lq;
-    nupa_type dt;
     entry_t *entry;
     bool numeric, done;
     bool err;
@@ -1106,13 +1105,11 @@ evaluate(dico_t *dico, SPICE_DSTRINGPTR qstr_p, char *t, unsigned char mode)
             return message(dico,
                            "\"%s\" not evaluated. Lookup failure.\n", t);
 
-        dt = entry->tp;
-
         /* data type: Real or String */
-        if (dt == NUPA_REAL) {
+        if (entry->tp == NUPA_REAL) {
             u = entry->vl;
             numeric = 1;
-        } else if (dt == NUPA_STRING) {
+        } else if (entry->tp == NUPA_STRING) {
             /* suppose source text "..." at */
             j = entry->ivl;
             lq = 0;
