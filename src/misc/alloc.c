@@ -11,6 +11,8 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
  * Memory alloction functions
  */
 #include "ngspice/ngspice.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/hash.h"
 
 
 #ifdef SHARED_MODULE
@@ -34,6 +36,16 @@ extern mutexType allocMutex;
 #endif
 #endif
 
+int mem_init(void);
+int mem_delete(void);
+static int memsaved(void *ptr);
+static int memdeleted(void *ptr);
+
+int gc_is_on = 0;
+
+static int mem_in = 0, mem_out = 0;
+
+NGHASHPTR memory_table;
 
 #ifndef HAVE_LIBGC
 
@@ -186,3 +198,55 @@ tcalloc(size_t num, size_t stype)
 }
 
 #endif
+
+/* initialize hash table to store allocated mem addresses */
+int mem_init(void) {
+    memory_table = nghash_init_pointer(1024);
+    gc_is_on = 1;
+    return OK;
+
+}
+
+/* add to counter and hash table if memory is allocated */
+static int memsaved(void *ptr) {
+    if (gc_is_on) {
+        gc_is_on = 0;
+        mem_in++;
+        nghash_insert(memory_table, ptr, NULL);
+        gc_is_on = 1;
+    }
+    return OK;
+}
+
+/* add to counter and remove from hash table if memory is deleted */
+static int memdeleted(void *ptr) {
+    if (gc_is_on) {
+        gc_is_on = 0;
+        mem_out++;
+        nghash_delete(memory_table, ptr);
+        gc_is_on = 1;
+    }
+    return OK;
+}
+
+/* helper functions */
+void my_free_func(void *data)
+{
+    if (data)
+        free(data);
+}
+
+void my_key_free(void * key)
+{
+    if (key)
+        free(key);
+}
+
+/* free hash table */
+int mem_delete(void) {
+    gc_is_on = 0;
+    printf("mem allocated %d times, deleted %d times\n", mem_in, mem_out);
+    nghash_free(memory_table, NULL, my_key_free);
+    return OK;
+}
+
