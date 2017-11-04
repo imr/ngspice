@@ -1,8 +1,8 @@
-/* ----------------------------------------------------------------- 
-FILE:	    nghash.h                                       
+/* -----------------------------------------------------------------
+FILE:	    nghash.h
 DESCRIPTION:Insert file for threaded hash routines.
             This code was donated from TimberWolf.
-CONTENTS:   
+CONTENTS:
 DATE:	    Jul 17, 1988 - original coding
 REVISIONS:  Aug 21, 2009 - adapted for ngspice
 ----------------------------------------------------------------- */
@@ -69,20 +69,20 @@ typedef struct nghashbox NGHASHBOX, *NGHASHPTR;
  * on all architecture types include 64bits.
  * ----------------------------------------------------------------- */
 typedef enum {
-  NGHASH_UNIQUE 	=  1 << 0,
-  NGHASH_POWER_OF_TWO 	=  1 << 1,
-  NGHASH_UNIQUE_TWO 	= NGHASH_UNIQUE | NGHASH_POWER_OF_TWO
+    NGHASH_UNIQUE 	=  1 << 0,
+    NGHASH_POWER_OF_TWO 	=  1 << 1,
+    NGHASH_UNIQUE_TWO 	= NGHASH_UNIQUE | NGHASH_POWER_OF_TWO
 } NGHASHFLAGS_T ;
 
 enum nghash_default_func_t {
-  NGHASH_FUNC_NUM	= -2,
-  NGHASH_FUNC_PTR	= -1,
-  NGHASH_FUNC_STR 	=  0
+    NGHASH_FUNC_NUM	= -2,
+    NGHASH_FUNC_PTR	= -1,
+    NGHASH_FUNC_STR 	=  0
 };
 
 
 typedef struct nghash_iter_rec {
-  struct ngtable_rec *position ;
+    struct ngtable_rec *position ;
 } NGHASHITER, *NGHASHITERPTR ;
 
 /* -----------------------------------------------------------------
@@ -265,9 +265,9 @@ Function:
     is pointer comparison.
 */
 
-extern NGHASHPTR nghash_init_with_parms( nghash_compare_func_t *comp_func, 
-    nghash_func_t *hash_func, int numentries, int max_density, 
-    double growth, NGHASHFLAGS_T flags ) ;
+extern NGHASHPTR nghash_init_with_parms( nghash_compare_func_t *comp_func,
+        nghash_func_t *hash_func, int numentries, int max_density,
+        double growth, NGHASHFLAGS_T flags ) ;
 /*
 Function:
     Returns a hash table with the given number of entries.
@@ -282,7 +282,7 @@ Function:
 
     You may use your own hash and compare functions provided they look like
     * INT hash(void * key) and
-    * UNSIGNED_INT compare(void * key1, void * key2). 
+    * UNSIGNED_INT compare(void * key1, void * key2).
     The hash function's return value should be in the interval [0, UINT_MAX].
     The compare should return zero if the two keys are equal and a non-zero
     value otherwise.
@@ -298,15 +298,15 @@ Function:
 extern int nghash_max_density(NGHASHPTR hashtable,int max_density) ;
 /*
 Function:
-    Changes the max_density limit in the hash table if max_density > 1.  
-    This function returns the current value of max_density. 
+    Changes the max_density limit in the hash table if max_density > 1.
+    This function returns the current value of max_density.
 */
 
 
 extern int nghash_table_get( NGHASHPTR  hashtable ) ;
 /*
 Function:
-    Returns the current size of hash table set by nghash_table_create 
+    Returns the current size of hash table set by nghash_table_create
 */
 
 extern int nghash_table_size( int num ) ;
@@ -357,7 +357,7 @@ extern void nghash_free(NGHASHPTR htabl,void (*del_data)(void *),void (*del_key)
 /*
 Function:
     Frees the memory associated with a hash table. The user make supply a
-    function which deletes the memory associated with the data field. 
+    function which deletes the memory associated with the data field.
     In addition, the user may free the memory stored at the key.
     This function must have the data pointer supplied by the hash add routines
     as an argument,ie.
@@ -419,7 +419,7 @@ extern void *nghash_enumeratek(NGHASHPTR hashtable,void **key_ret,BOOL flag) ;
 /*
 Function:
     Since this is a threaded hash table, we can enumerate the elements of
-    the hash table in O(n) time where n is the number of valid entries. 
+    the hash table in O(n) time where n is the number of valid entries.
     Returns the data and key associated with each entry. The flag is similar
     to the rbtree enumerate function.  This eliminates the need for writing
     the following:
