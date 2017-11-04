@@ -348,6 +348,11 @@ Function:
     nghash_init_pointer function first.
 */
 
+extern void * nghash_delete_special(NGHASHPTR hashtable, void * user_key);
+/*  if hashtable has been initialized with nghash_init_pointer( int numentries ),
+    use this function.
+    Returns NULL, if successful, otherwise returns user_key */
+
 /* -----------------------------------------------------------------
  * Convenience functions.
 ----------------------------------------------------------------- */
