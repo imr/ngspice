@@ -1580,6 +1580,7 @@ ATTRIBUTE_NORETURN void shared_exit(int status)
         bgtr(fl_exited, ng_ident, userptr);
         // set a flag that ngspice wants to be detached
         ngexit(status, FALSE, coquit, ng_ident, userptr);
+
         // finish and exit the worker thread
 #ifdef HAVE_LIBPTHREAD
         pthread_exit(NULL);
@@ -1899,3 +1900,41 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
         }
     }
 }
+
+/* main dll entry, used upon exiting dll */
+#if defined(_MSC_VER) || defined(__MINGW32__)
+BOOL
+WINAPI DllMain(
+    HINSTANCE hinstDLL,  // handle to DLL module
+    DWORD fdwReason,     // reason for calling function
+    LPVOID lpReserved)  // reserved
+{
+    NG_IGNORE(hinstDLL);
+    NG_IGNORE(lpReserved);
+
+    // Perform actions based on the reason for calling.
+    switch (fdwReason)
+    {
+        case DLL_PROCESS_ATTACH:
+            // Initialize once for each new process.
+            // Return FALSE to fail DLL load.
+            mem_init();
+            break;
+
+         case DLL_THREAD_ATTACH:
+             // Do thread-specific initialization.
+             break;
+
+         case DLL_THREAD_DETACH:
+             // Do thread-specific cleanup.
+             break;
+
+         case DLL_PROCESS_DETACH:
+         // Perform any necessary cleanup.
+         /* delete all memory dynamically allocated in dll */
+             mem_delete();
+             break;
+    }
+    return TRUE;  // Successful DLL_PROCESS_ATTACH.
+}
+#endif

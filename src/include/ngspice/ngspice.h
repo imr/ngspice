@@ -245,6 +245,14 @@ extern char *nexttok(const char *s);
 extern int get_l_paren(char **s);
 extern int get_r_paren(char **s);
 
+#if defined(SHARED_MODULE) && (!defined(_MSC_VER) && !defined(__MINGW32__))
+extern void __attribute__((constructor)) mem_init(void);
+extern void __attribute__((destructor)) mem_delete(void);
+#else
+extern void mem_init(void);
+extern void mem_delete(void);
+#endif
+
 /* Some external variables */
 
 extern char *Spice_Exec_Dir;

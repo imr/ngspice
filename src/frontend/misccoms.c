@@ -119,6 +119,8 @@ com_quit(wordlist *wl)
     /* add 1000 to notify that we exit from 'quit' */
     controlled_exit(1000 + exitcode);
 #else
+    /* delete all memory malloced since initialization */
+    mem_delete();
     exit(exitcode);
 #endif
 }

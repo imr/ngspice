@@ -846,6 +846,11 @@ main(int argc, char **argv)
     /* mwDoFlush(1); */
 #endif
 
+#ifndef SHARED_MODULE
+    /* initialize memory address storage for local gc */
+    mem_init();
+#endif
+
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
     {
         static int started = 0;

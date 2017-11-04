@@ -36,8 +36,14 @@ extern mutexType allocMutex;
 #endif
 #endif
 
-int mem_init(void);
-int mem_delete(void);
+#if defined(SHARED_MODULE) && (!defined(_MSC_VER) && !defined(__MINGW32__))
+void __attribute__((constructor)) mem_init(void);
+void __attribute__((destructor)) mem_delete(void);
+#else
+void mem_init(void);
+void mem_delete(void);
+#endif
+
 static int memsaved(void *ptr);
 static void memdeleted(const void *ptr);
 
@@ -208,11 +214,10 @@ tcalloc(size_t num, size_t stype)
 #endif
 
 /* initialize hash table to store allocated mem addresses */
-int mem_init(void) {
+void mem_init(void) {
     memory_table = nghash_init_pointer(1024);
     gc_is_on = 1;
     return OK;
-
 }
 
 /* add to counter and hash table if memory is allocated */
@@ -250,7 +255,7 @@ void my_key_free(void * key)
 }
 
 /* free hash table */
-int mem_delete(void) {
+void mem_delete(void) {
     gc_is_on = 0;
     printf("mem allocated %d times, deleted %d times\n", mem_in, mem_out);
     nghash_free(memory_table, NULL, my_key_free);
