@@ -23,7 +23,6 @@ struct nupa_type;
 
 extern const struct nupa_type S_nupa_real;
 extern const struct nupa_type S_nupa_string;
-extern const struct nupa_type S_nupa_pointer;
 extern const struct nupa_type S_nupa_subckt;
 extern const struct nupa_type S_nupa_space;
 extern const struct nupa_type S_nupa_unknown;
@@ -31,7 +30,6 @@ extern const struct nupa_type S_nupa_model;
 
 #define  NUPA_REAL     (&S_nupa_real)
 #define  NUPA_STRING   (&S_nupa_string)
-#define  NUPA_POINTER  (&S_nupa_pointer)
 #define  NUPA_SUBCKT   (&S_nupa_subckt)
 #define  NUPA_SPACE    (&S_nupa_space)
 #define  NUPA_UNKNOWN  (&S_nupa_unknown)
@@ -47,7 +45,6 @@ typedef struct entry_s {
     double vl;                  /* float value if defined */
     int  ivl;                   /* int value or string buffer index */
     char *sbbase;               /* string buffer base address if any */
-    struct entry_s *pointer;    /* pointer chain */
 } entry_t;
 
 
