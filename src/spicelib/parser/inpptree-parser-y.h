@@ -13,3 +13,6 @@ extern INPparseNode *PT_mksnode(const char *string, void *ckt);
 #if defined (_MSC_VER)
 # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
 #endif
+
+#define malloc tmalloc
+#define free txfree

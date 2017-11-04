@@ -14,3 +14,6 @@ extern struct pnode *PP_mksnode(const char *string);
 #if defined (_MSC_VER)
 # define __func__ __FUNCTION__ /* __func__ is C99, but MSC can't */
 #endif
+
+#define malloc tmalloc
+#define free txfree
