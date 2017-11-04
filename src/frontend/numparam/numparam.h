@@ -22,13 +22,11 @@ extern const struct nupa_type S_nupa_real;
 extern const struct nupa_type S_nupa_string;
 extern const struct nupa_type S_nupa_subckt;
 extern const struct nupa_type S_nupa_unknown;
-extern const struct nupa_type S_nupa_model;
 
 #define  NUPA_REAL     (&S_nupa_real)
 #define  NUPA_STRING   (&S_nupa_string)
 #define  NUPA_SUBCKT   (&S_nupa_subckt)
 #define  NUPA_UNKNOWN  (&S_nupa_unknown)
-#define  NUPA_MODEL    (&S_nupa_model)
 
 typedef const struct nupa_type *nupa_type;
 
