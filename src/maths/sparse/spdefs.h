@@ -380,7 +380,7 @@ extern void * trealloc(const void *, size_t);
 /* A new calloc */
 #ifndef HAVE_LIBGC
 #define SP_CALLOC(ptr,type,number)                           \
-{ ptr = (type *) calloc((size_t)(number), sizeof(type));     \
+{ ptr = (type *) tcalloc((size_t)(number), sizeof(type));     \
 }
 #else /* HAVE_LIBCG */
 #define SP_CALLOC(ptr,type,number)                           \

@@ -539,22 +539,22 @@ new_memory(int dim, int deg, int deg_o)
 
     for (i = 0; i < dim; i++)
         for (j = 0; j < dim; j++)
-            SiSv_1[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
+            SiSv_1[i][j] = (double *) tcalloc((size_t) (deg_o+1), sizeof(double));
 
     for (i = 0; i < dim; i++)
         for (j = 0; j < dim; j++)
-            Sip[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
+            Sip[i][j] = (double *) tcalloc((size_t) (deg_o+1), sizeof(double));
 
     for (i = 0; i < dim; i++)
         for (j = 0; j < dim; j++)
-            Si_1p[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
+            Si_1p[i][j] = (double *) tcalloc((size_t) (deg_o+1), sizeof(double));
 
     for (i = 0; i < dim; i++)
         for (j = 0; j < dim; j++)
-            Sv_1p[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
+            Sv_1p[i][j] = (double *) tcalloc((size_t) (deg_o+1), sizeof(double));
 
     for (i = 0; i < dim; i++)
-        W[i] = (double *) calloc(MAX_DEG, sizeof(double));
+        W[i] = (double *) tcalloc(MAX_DEG, sizeof(double));
 }
 
 /***
@@ -1355,7 +1355,7 @@ generate_out(int dim, int deg_o)
                     continue;
                 }
             }
-            p = SIV[i][j].Poly = (double *) calloc(7, sizeof(double));
+            p = SIV[i][j].Poly = (double *) tcalloc(7, sizeof(double));
             p[0] = c1;
             p[1] = c2;
             p[2] = c3;
@@ -1486,7 +1486,7 @@ matrix_p_mult(
         for (j = 0; j < dim; j++)
             for (k = 0; k < dim; k++) {
                 p = X[i][j].Poly[k] =
-                        (double *) calloc((size_t) (deg_o+1), sizeof(double));
+                        (double *) tcalloc((size_t) (deg_o+1), sizeof(double));
                 mult_p(A[i][k], T[k][j], p, deg, deg_o, deg_o);
                 t1 = X[i][j].C_0[k] = p[0];
                 if (t1 != 0.0) {

@@ -38,13 +38,13 @@ extern void txfree(const void *ptr);
 
 #define RALLOC(ptr, type, number)                                       \
     do {                                                                \
-        if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) \
+        if ((number) && (ptr = (type *)tcalloc((size_t)(number), sizeof(type))) == NULL) \
             return E_NOMEM;                                             \
     } while(0)
 
 #define XALLOC(ptr, type, number)                                       \
     do {                                                                \
-        if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
+        if ((number) && (ptr = (type *)tcalloc((size_t)(number), sizeof(type))) == NULL) { \
             SPfrontEnd->IFerrorf(E_PANIC, "Out of Memory");             \
             controlled_exit(1);                                         \
         }                                                               \
@@ -52,7 +52,7 @@ extern void txfree(const void *ptr);
 
 #define XCALLOC(ptr, type, number)                                      \
     do {                                                                \
-        if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
+        if ((number) && (ptr = (type *)tcalloc((size_t)(number), sizeof(type))) == NULL) { \
             fprintf(stderr, "Out of Memory\n");                         \
             controlled_exit(1);                                         \
         }                                                               \

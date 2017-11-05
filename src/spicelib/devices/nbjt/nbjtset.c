@@ -17,7 +17,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/meshext.h"
 
 #define TSCALLOC(var, size, type)\
-if (size && (var =(type *)calloc(1, (unsigned)(size)*sizeof(type))) == NULL) {\
+if (size && (var =(type *)tcalloc(1, (unsigned)(size)*sizeof(type))) == NULL) {\
    return(E_NOMEM);\
 }
 
