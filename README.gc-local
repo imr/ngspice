@@ -1,0 +1,12 @@
+Copyright 2017 Holger Vogt
+New BSD license.
+
+A local garbage collector, especially for shared ngspice (ngspice.dll)
+
+Experimental, and not yet tested under LINUX.
+
+All memory allocation and deallocation only via functions given in alloc.c.
+Each time any memory is allocated, an entry is made into a hash table, storing the address.
+Each time memory is freed, this entry is removed again. Reallocation uses both procedures.
+Function mem_init() initializes the setup.
+Function mem_delete() frees all memory with addresses still found in the hash table.
