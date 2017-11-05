@@ -627,6 +627,9 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /*timer*/
     init_time();
 
+    /* put mem_init here, FIXME why not in DllMain? */
+    mem_init();
+
     /*IFsimulator struct initilised*/
     SIMinit(&nutmeginfo, &ft_sim);
 
@@ -1918,7 +1921,8 @@ WINAPI DllMain(
         case DLL_PROCESS_ATTACH:
             // Initialize once for each new process.
             // Return FALSE to fail DLL load.
-            mem_init();
+            /* put mem_init out of here, FIXME why segfault? */
+//            mem_init();
             break;
 
          case DLL_THREAD_ATTACH:
