@@ -3,10 +3,6 @@
 #include "ngspice/cm.h"
 #include "ngspice/dllitf.h"
 
-/*how annoying!, needed for structure below*/
-static void *tcalloc(size_t a, size_t b) {
-  return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
-}
 
 #ifdef HAVE_LIBGC
 static void no_free(const void *p) {
