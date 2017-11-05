@@ -155,6 +155,10 @@ extern void SetAnalyse(char *Analyse, int Percent);
 #include <process.h> /* getpid() */
 #endif
 
+/* Use internal copy() function instead of strdup, to
+have memory allocation only by functions in alloc.c */
+#define strdup copy
+
 #if defined (_MSC_VER)
 #include <direct.h>
 #include <process.h>
@@ -172,7 +176,6 @@ extern double x_acosh(double);
 extern double x_atanh(double);
 #define hypot _hypot
 #endif
-#define strdup _strdup
 #define unlink _unlink
 #define fileno _fileno
 #define getcwd _getcwd
