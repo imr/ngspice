@@ -2,6 +2,25 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
+/* This is a test file including a local garbage collector and removal.
+It might be especially useful, if the ngspice shared library (.dll or .so)
+is loaded and unloaded several times by a master program.
+At ngspice initialization mem_init() is called setting up a hash table
+to store memory addresses.
+Each time calloc() is called, the resulting address is stored.
+Each time free() is called, the address is removed.
+For realloc(), the old address is deleted, the new one is stored,
+if there is a change in the address.
+Upon exiting the program, mem_delete() is called, deleting all memory
+at addresses still in the hash table, then the hash table itself is removed.
+The Windows dll uses DllMain() to call mem_delete() exit, the LINUX .so
+will use void __attribute__((destructor)) mem_delete(void) or atexit()
+(both are not tested so far).
+
+The master program has to make copies of all the data that have to be kept
+for further use before detaching the shared lib! */
+
+
 /* for thread handling */
 #if defined __MINGW32__ || defined _MSC_VER
 #include <windows.h>
@@ -253,7 +272,7 @@ void my_key_free(void * key)
         free(key);
 }
 
-/* free hash table */
+/* free hash table, all entries and then the table itself */
 void mem_delete(void) {
     gc_is_on = 0;
     printf("mem allocated %d times, deleted %d times\n", mem_in, mem_out);
