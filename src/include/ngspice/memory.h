@@ -11,6 +11,7 @@
 
 extern void *tmalloc(size_t num);
 extern void *trealloc(const void *str, size_t num);
+extern void *tcalloc(size_t num, size_t stype);
 extern void txfree(const void *ptr);
 
 #define tfree(x) (txfree(x), (x) = 0)
