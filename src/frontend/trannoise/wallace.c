@@ -93,8 +93,6 @@ initw(void)
     addrif = TMALLOC(unsigned int, (n + NOTRANS));
     addrib = TMALLOC(unsigned int, (n + NOTRANS));
 
-    atexit(destroy_wallace);
-
     /* fill the first pool with normally distributed values */
     PolarGauss(&pool1[0], &pool1[1]);
     for (i = 1; i < n>>1; i++)
