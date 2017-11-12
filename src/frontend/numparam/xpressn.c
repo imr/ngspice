@@ -1316,12 +1316,11 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 }
 
 
-static void
-getword(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
+static const char *
+getword(char * const s, SPICE_DSTRINGPTR tstr_p, const char *iptr)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
-    const char *iptr = *pi;
-    const char * const ls_ptr = s + (int) strlen(s);
+    char *ls_ptr = s + (int) strlen(s);
 
     do
         iptr++;
@@ -1334,7 +1333,7 @@ getword(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         iptr++;
     }
 
-    *pi = iptr;
+    return iptr;
 }
 
 
@@ -1462,7 +1461,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
     while ((i < ls) && !error) {
 
         const char *tmp = s + i;
-        getword(s, &tstr, &tmp);
+        tmp = getword(s, &tstr, tmp);
         i = (int) (tmp - s);
         t_p = spice_dstring_value(&tstr);
         if (t_p[0] == '\0')
