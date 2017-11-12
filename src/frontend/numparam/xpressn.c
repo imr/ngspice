@@ -1340,10 +1340,10 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
 
 static void
-getword(const char * const s, SPICE_DSTRINGPTR tstr_p, int *pi)
+getword(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 /* isolate a word from s after position "after". return i= last read+1 */
 {
-    int i = *pi;
+    int i = (int) (*pi - s);
     int ls;
 
     ls = (int) strlen(s);
@@ -1359,7 +1359,7 @@ getword(const char * const s, SPICE_DSTRINGPTR tstr_p, int *pi)
         i++;
     }
 
-    *pi = i;
+    *pi = s + i;
 }
 
 
@@ -1486,7 +1486,9 @@ nupa_assignment(dico_t *dico, char *s, char mode)
 
     while ((i < ls) && !error) {
 
-        getword(s, &tstr, &i);
+        const char *tmp = s + i;
+        getword(s, &tstr, &tmp);
+        i = (int) (tmp - s);
         t_p = spice_dstring_value(&tstr);
         if (t_p[0] == '\0')
             error = message(dico, " Identifier expected\n");
