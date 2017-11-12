@@ -1364,7 +1364,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 */
 {
     const char *iptr;
-    (iptr - s) = *pi - s;
+    iptr = *pi - s + s;
     int ia, ls, level;
     char c, d;
     nupa_type tpe;
@@ -1378,15 +1378,15 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     if (s[ia - 1] == '"') {
         /* string constant */
         ia++;
-        (iptr - s) = ia;
+        iptr = ia + s;
 
         while (((iptr - s) < ls) && (s[(iptr - s) - 1] != '"'))
-            (iptr - s)++;
+            iptr++;
 
         tpe = NUPA_STRING;
 
         do
-            (iptr - s)++;
+            iptr++;
         while (((iptr - s) <= ls) && (s[(iptr - s) - 1] <= ' '));
 
     } else {
@@ -1394,11 +1394,11 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         if (s[ia - 1] == '{')
             ia++;
 
-        (iptr - s) = ia - 1;
+        iptr = ia - 1 + s;
 
         do
         {
-            (iptr - s)++;
+            iptr++;
 
             if ((iptr - s) > ls)
                 c = ';';
@@ -1410,7 +1410,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                 level = 1;
                 do
                 {
-                    (iptr - s)++;
+                    iptr++;
 
                     if ((iptr - s) > ls)
                         d = '\0';
@@ -1433,10 +1433,10 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     pscopy(tstr_p, s, ia-1, (int) (iptr - s) - ia);
 
     if (s[(iptr - s) - 1] == '}')
-        (iptr - s)++;
+        iptr++;
 
     if (tpe == NUPA_STRING)
-        (iptr - s)++;                    /* beyond quote */
+        iptr++;                    /* beyond quote */
 
     *pi = s + (iptr - s);
 
