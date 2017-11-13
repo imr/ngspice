@@ -141,8 +141,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
                 cadd(&tstr, ' ');
 
             i = spice_dstring_length(&tstr);
-            pscopy(dstr_p, s, j, ls);
-            sadd(&tstr, s);
+            sadd(&tstr, s + j);
             scopyd(dstr_p, &tstr);
             s = spice_dstring_value(dstr_p);
             ls = spice_dstring_length(dstr_p);
