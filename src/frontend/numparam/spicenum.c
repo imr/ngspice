@@ -140,10 +140,11 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             if (s[j] >= ' ')
                 cadd(&tstr, ' ');
 
-            i = spice_dstring_length(&tstr);
+            int ilen = spice_dstring_length(&tstr);
             sadd(&tstr, s + j);
             scopyd(dstr_p, &tstr);
             s = spice_dstring_value(dstr_p);
+            i = ilen;
             ls = spice_dstring_length(dstr_p);
     }
 
