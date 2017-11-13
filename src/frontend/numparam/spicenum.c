@@ -94,7 +94,6 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 {
     int n, i, nest, ls, j;
     char *s;                    /* value of dynamic string */
-    char *t_p;                  /* value of t dynamic string */
     char *brace;
     SPICE_DSTRING tstr;         /* temporary dynamic string */
 
@@ -124,9 +123,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
             pscopy(&tstr, s, 0, i);
 
-            t_p = spice_dstring_value(&tstr);
-
-            if (t_p[i - 1] > ' ')
+            if (s[i - 1] > ' ')
                 cadd(&tstr, ' ');
 
             cadd(&tstr, ' ');
