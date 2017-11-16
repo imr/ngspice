@@ -94,14 +94,14 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 {
     int n, nest;
     char *s = spice_dstring_value(dstr_p);
-    char *brace;
+    char *p, *brace;
     SPICE_DSTRING tstr;         /* temporary dynamic string */
 
     n = 0;
     spice_dstring_init(&tstr);
-    s + i = s;
+    p = s;
 
-    while ((brace = strchr(s + i, '{')) != NULL) {
+    while ((brace = strchr(p, '{')) != NULL) {
 
             /* something to strip */
             const char *j_ptr = brace + 1;
@@ -136,7 +136,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             sadd(&tstr, j_ptr);
             scopyd(dstr_p, &tstr);
             s = spice_dstring_value(dstr_p);
-            s + i = s + ilen;
+            p = s + ilen;
     }
 
     dynsubst = placeholder;
