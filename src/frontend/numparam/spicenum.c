@@ -93,17 +93,18 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 {
     int n, i, nest, j;
-    char *s;                    /* value of dynamic string */
+    char *s0;                   /* value of dynamic string */
     char *brace;
     SPICE_DSTRING tstr;         /* temporary dynamic string */
 
     n = 0;
     spice_dstring_init(&tstr);
-    s = spice_dstring_value(dstr_p);
+    s0 = spice_dstring_value(dstr_p);
     i = 0;
 
-    while ((brace = strchr(s + i, '{')) != NULL) {
+    while ((brace = strchr(s0 + i, '{')) != NULL) {
 
+        char * const s = s0;
         i = (int) (brace - s);
 
 
@@ -139,7 +140,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             int ilen = spice_dstring_length(&tstr);
             sadd(&tstr, s + j);
             scopyd(dstr_p, &tstr);
-            s = spice_dstring_value(dstr_p);
+            s0 = spice_dstring_value(dstr_p);
             i = ilen;
     }
 
