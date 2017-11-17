@@ -1640,7 +1640,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
                 if (alfanum(t_p[(kp - t_p)]) || t_p[(kp - t_p)] == '.') {
                     /* number, identifier */
-                    int (hp - t_p) = (int) (kp - t_p);
+                    char *hp = t_p + (int) (kp - t_p);
                     while (t_p[(kp - t_p)] > ' ')
                         kp++;
                     pscopy(&ustr, t_p, (int) (hp - t_p), (int) (kp - t_p) - (int) (hp - t_p));
