@@ -1175,14 +1175,13 @@ insertnumber(dico_t *dico, char * const s, SPICE_DSTRINGPTR ustr_p)
 
 
 bool
-nupa_substitute(dico_t *dico, const char *s, char * const r__)
+nupa_substitute(dico_t *dico, const char *s, char *r)
 /* s: pointer to original source line.
    r: pointer to result line, already heavily modified wrt s
    anywhere we find a 10-char numstring in r, substitute it.
    bug: wont flag overflow!
 */
 {
-    char *r_ = r__;
     bool err = 0;
 
     SPICE_DSTRING qstr;         /* temp result dynamic string */
@@ -1230,7 +1229,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r__)
             }
 
             s = kptr + 1;
-            r_ = insertnumber(dico, r_, &qstr);
+            r = insertnumber(dico, r, &qstr);
 
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
@@ -1290,7 +1289,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r__)
                 s = kptr;
             }
 
-            r_ = insertnumber(dico, r_, &qstr);
+            r = insertnumber(dico, r, &qstr);
         }
     }
 
