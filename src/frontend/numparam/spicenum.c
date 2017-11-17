@@ -92,12 +92,11 @@ static int
 stripbraces(SPICE_DSTRINGPTR dstr_p)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 {
-    int n, nest;
+    int n = 0;
     char *s = spice_dstring_value(dstr_p);
     char *p, *brace;
     SPICE_DSTRING tstr;         /* temporary dynamic string */
 
-    n = 0;
     spice_dstring_init(&tstr);
     p = s;
 
@@ -105,7 +104,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
             /* something to strip */
             const char *j_ptr = brace + 1;
-            nest = 1;
+            int nest = 1;
             n++;
 
             while ((nest > 0) && *j_ptr) {
