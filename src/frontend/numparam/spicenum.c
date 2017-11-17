@@ -102,40 +102,40 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
     while ((brace = strchr(p, '{')) != NULL) {
 
-            /* something to strip */
-            const char *j_ptr = brace + 1;
-            int nest = 1;
-            n++;
+        /* something to strip */
+        const char *j_ptr = brace + 1;
+        int nest = 1;
+        n++;
 
-            while ((nest > 0) && *j_ptr) {
-                if (*j_ptr == '{')
-                    nest++;
-                else if (*j_ptr == '}')
-                    nest--;
-                j_ptr++;
-            }
+        while ((nest > 0) && *j_ptr) {
+            if (*j_ptr == '{')
+                nest++;
+            else if (*j_ptr == '}')
+                nest--;
+            j_ptr++;
+        }
 
-            pscopy(&tstr, s, 0, (int) (brace - s));
+        pscopy(&tstr, s, 0, (int) (brace - s));
 
-            if (brace[-1] > ' ')
-                cadd(&tstr, ' ');
-
-            cadd(&tstr, ' ');
-            {
-                char buf[25+1];
-                sprintf(buf, "numparm__________%08lx", ++placeholder);
-                sadd(&tstr, buf);
-            }
+        if (brace[-1] > ' ')
             cadd(&tstr, ' ');
 
-            if (*j_ptr >= ' ')
-                cadd(&tstr, ' ');
+        cadd(&tstr, ' ');
+        {
+            char buf[25+1];
+            sprintf(buf, "numparm__________%08lx", ++placeholder);
+            sadd(&tstr, buf);
+        }
+        cadd(&tstr, ' ');
 
-            int ilen = spice_dstring_length(&tstr);
-            sadd(&tstr, j_ptr);
-            scopyd(dstr_p, &tstr);
-            s = spice_dstring_value(dstr_p);
-            p = s + ilen;
+        if (*j_ptr >= ' ')
+            cadd(&tstr, ' ');
+
+        int ilen = spice_dstring_length(&tstr);
+        sadd(&tstr, j_ptr);
+        scopyd(dstr_p, &tstr);
+        s = spice_dstring_value(dstr_p);
+        p = s + ilen;
     }
 
     dynsubst = placeholder;
