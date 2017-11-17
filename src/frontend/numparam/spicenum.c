@@ -104,9 +104,6 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
     while ((brace = strchr(s0 + i, '{')) != NULL) {
 
-        char * const s = s0;
-
-
             /* something to strip */
             const char *j_ptr = brace + 1;
             nest = 1;
@@ -120,7 +117,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
                 j_ptr++;
             }
 
-            pscopy(&tstr, s, 0, (int) (brace - s));
+            pscopy(&tstr, s0, 0, (int) (brace - s0));
 
             if (brace[-1] > ' ')
                 cadd(&tstr, ' ');
