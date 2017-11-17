@@ -1645,11 +1645,11 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                         /* transform to braces... */
                         kp++;
                         t_p[(kp - t_p)] = '{';
-                        int (gp - t_p) = (int) (kp - t_p);
+                        char *gp = t_p + (int) (kp - t_p);
                         int nest = 1;
 
                         while ((nest > 0) && ((gp - t_p) < ls)) {
-                            (gp - t_p)++;
+                            gp++;
                             if (t_p[(gp - t_p)] == '(')
                                 nest++;
                             else if (t_p[(gp - t_p)] == ')')
