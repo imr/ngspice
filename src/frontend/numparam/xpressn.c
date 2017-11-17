@@ -1230,7 +1230,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r)
             }
 
             s = kptr + 1;
-            r_ = r_ + (int) (insertnumber(dico, r_, &qstr) - r_);
+            r_ = insertnumber(dico, r_, &qstr);
 
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
@@ -1290,7 +1290,7 @@ nupa_substitute(dico_t *dico, const char *s, char * const r)
                 s = kptr;
             }
 
-            r_ = r_ + (int) (insertnumber(dico, r_, &qstr) - r_);
+            r_ = insertnumber(dico, r_, &qstr);
         }
     }
 
