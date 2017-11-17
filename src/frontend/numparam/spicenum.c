@@ -109,16 +109,16 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 
 
             /* something to strip */
-            j_ptr - s = i + 1;
+            const char *j_ptr = s + i + 1;
             nest = 1;
             n++;
 
-            while ((nest > 0) && s[j_ptr - s]) {
-                if (s[j_ptr - s] == '{')
+            while ((nest > 0) && *j_ptr) {
+                if (*j_ptr == '{')
                     nest++;
-                else if (s[j_ptr - s] == '}')
+                else if (*j_ptr == '}')
                     nest--;
-                (j_ptr - s)++;
+                j_ptr++;
             }
 
             pscopy(&tstr, s, 0, i);
@@ -134,11 +134,11 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             }
             cadd(&tstr, ' ');
 
-            if (s[j_ptr - s] >= ' ')
+            if (*j_ptr >= ' ')
                 cadd(&tstr, ' ');
 
             int ilen = spice_dstring_length(&tstr);
-            sadd(&tstr, s + (j_ptr - s));
+            sadd(&tstr, j_ptr);
             scopyd(dstr_p, &tstr);
             s0 = spice_dstring_value(dstr_p);
             i = ilen;
