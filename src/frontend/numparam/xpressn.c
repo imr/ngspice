@@ -1357,13 +1357,14 @@ getword(const char *s, SPICE_DSTRINGPTR tstr_p)
 
 
 static nupa_type
-getexpress(const char * const ls_ptr, SPICE_DSTRINGPTR tstr_p, const char **pi)
+getexpress(SPICE_DSTRINGPTR tstr_p, const char **pi)
 /* returns expression-like string until next separator
    Input  i=position before expr, output  i=just after expr, on separator.
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
     const char *xia_ptr = *pi;
+    const char * const ls_ptr = xia_ptr + strlen(xia_ptr);
     const char *p;
     nupa_type tpe;
 
@@ -1486,7 +1487,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
                 error = message(dico, " = sign expected.\n");
 
             const char *tmp = s + i;
-            dtype = getexpress(s + strlen(s), &ustr, &tmp);
+            dtype = getexpress(&ustr, &tmp);
             i = (int) (tmp - s);
 
             if (dtype == NUPA_REAL) {
@@ -1695,7 +1696,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
                 } else if (t_p[k] == '{') {
                     char *aux = spice_dstring_value(&tstr);
                     const char *tmp = aux + j;
-                    getexpress(aux + strlen(aux), &ustr, &tmp);
+                    getexpress(&ustr, &tmp);
                     j = (int) (tmp - aux);
                     j--;       /* confusion: j was in Turbo Pascal convention */
                 } else {
