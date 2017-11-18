@@ -1350,10 +1350,10 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     ls_ptr = s + strlen(s);
     xia_ptr = (p + 1) + 1 - 1;
 
-    while (((xia_ptr + 1) < ls_ptr) && ((xia_ptr + 1)[-1] <= ' '))
+    while (((xia_ptr + 1) < ls_ptr) && (*xia_ptr <= ' '))
         xia_ptr++;              /*white space ? */
 
-    if ((xia_ptr + 1)[-1] == '"') {
+    if (*xia_ptr == '"') {
         /* string constant */
         xia_ptr++;
         p = (xia_ptr + 1) - 1;
@@ -1369,7 +1369,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
     } else {
 
-        if ((xia_ptr + 1)[-1] == '{')
+        if (*xia_ptr == '{')
             xia_ptr++;
 
         p = (xia_ptr + 1) - 1 - 1;
