@@ -1419,6 +1419,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 */
 {
     /* s has the format: ident = expression; ident= expression ...  */
+    const char * const s_end;
     const char *p = s;
     bool error, err;
     nupa_type dtype;
@@ -1430,10 +1431,10 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 
     spice_dstring_init(&tstr);
     spice_dstring_init(&ustr);
-    const int ls = (int) strlen(s);
+    (s_end - s) = (int) strlen(s);
     error = 0;
 
-    while (((p - s) < ls) && (*p <= ' '))
+    while (((p - s) < (s_end - s)) && (*p <= ' '))
         p++;
 
     if (*p == Intro)
@@ -1443,7 +1444,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
         while (*p > ' ')
             p++;
 
-    while (((p - s) < ls) && !error) {
+    while (((p - s) < (s_end - s)) && !error) {
 
         p = getword(p, &tstr) + 1;
         t_p = spice_dstring_value(&tstr);
@@ -1452,10 +1453,10 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 
         if (!error) {
             /* assignment expressions */
-            while (((p - s) <= ls) && (p[-1] != '='))
+            while (((p - s) <= (s_end - s)) && (p[-1] != '='))
                 p++;
 
-            if ((p - s) > ls)
+            if ((p - s) > (s_end - s))
                 error = message(dico, " = sign expected.\n");
 
             const char *tmp = s + (p - s);
@@ -1478,7 +1479,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
             error = error || err;
         }
 
-        if (((p - s) < ls) && (p[-1] != ';'))
+        if (((p - s) < (s_end - s)) && (p[-1] != ';'))
             error = message(dico, " ; sign expected.\n");
         /* else
            p++; */
