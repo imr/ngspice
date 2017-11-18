@@ -1408,12 +1408,8 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
             if (c == '(') {
                 /* sub-formula */
                 int level = 1;
-                do
-                {
-                    p++;
-
-                    if (p >= ls_ptr)
-                        break;
+                p++;
+                for (; p < ls_ptr; p++) {
 
                     d = *p;
 
@@ -1424,7 +1420,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
                     if (level <= 0)
                         break;
-                } while (1);
+                }
             }
 
         } while (!strchr(",;)}", c)); /* legal separators */
