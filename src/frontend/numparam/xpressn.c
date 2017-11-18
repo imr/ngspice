@@ -550,9 +550,8 @@ findsubckt(dico_t *dico, const char * const s)
     const char *name_e = s + strlen(s);
     const char *name_b;
 
-    entry_t *entry;             /* symbol table entry */
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
-    int line;                   /* stored line number */
+    entry_t *entry;             /* symbol table entry */
 
     spice_dstring_init(&ustr);
 
@@ -568,13 +567,11 @@ findsubckt(dico_t *dico, const char * const s)
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
-        line = entry->ivl;
+        return entry->ivl;
     } else {
-        line = 0;
         message(dico, "Cannot find subcircuit.\n");
+        return 0;
     }
-
-    return line;
 }
 
 
