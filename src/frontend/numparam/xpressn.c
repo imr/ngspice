@@ -1413,9 +1413,9 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                     p++;
 
                     if (p >= ls_ptr)
-                        d = '\0';
-                    else
-                        d = *p;
+                        break;
+
+                    d = *p;
 
                     if (d == '(')
                         level++;
