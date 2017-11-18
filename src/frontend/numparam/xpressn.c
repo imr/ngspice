@@ -571,19 +571,13 @@ findsubckt(dico_t *dico, const char * const s)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value */
 {
-    const char *name_e = s + strlen(s);
-    const char *name_b;
+    const char *name_e = skip_back_ws(s + strlen(s), s);
+    const char *name_b = skip_back_non_ws(name_e, s);
 
     SPICE_DSTRING ustr;         /* u= subckt name is last token in string s */
     entry_t *entry;             /* symbol table entry */
 
     spice_dstring_init(&ustr);
-
-    name_e = skip_back_ws(name_e, s);
-
-    name_b = name_e;
-
-    name_b = skip_back_non_ws(name_b, s);
 
     pscopy_up(&ustr, name_b, 0, (int) (name_e - name_b));
     entry = entrynb(dico, spice_dstring_value(&ustr));
