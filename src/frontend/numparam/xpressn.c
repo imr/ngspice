@@ -1434,26 +1434,26 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
     ls = (int) strlen(s);
     error = 0;
 
-    while (((p - s) < ls) && (s[(p - s)] <= ' '))
+    while (((p - s) < ls) && (*p <= ' '))
         p++;
 
-    if (s[(p - s)] == Intro)
+    if (*p == Intro)
         p++;
 
-    if (s[(p - s)] == '.')            /* skip any dot keyword */
-        while (s[(p - s)] > ' ')
+    if (*p == '.')            /* skip any dot keyword */
+        while (*p > ' ')
             p++;
 
     while (((p - s) < ls) && !error) {
 
-        p = getword(s + (p - s), &tstr) + 1;
+        p = getword(p, &tstr) + 1;
         t_p = spice_dstring_value(&tstr);
         if (t_p[0] == '\0')
             error = message(dico, " Identifier expected\n");
 
         if (!error) {
             /* assignment expressions */
-            while (((p - s) <= ls) && (s[(p - s) - 1] != '='))
+            while (((p - s) <= ls) && (p[-1] != '='))
                 p++;
 
             if ((p - s) > ls)
@@ -1479,7 +1479,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
             error = error || err;
         }
 
-        if (((p - s) < ls) && (s[(p - s) - 1] != ';'))
+        if (((p - s) < ls) && (p[-1] != ';'))
             error = message(dico, " ; sign expected.\n");
         /* else
            p++; */
