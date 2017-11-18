@@ -1381,14 +1381,14 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         ia_ptr++;
         p = ia_ptr - 1;
 
-        while (((p + 1) < ls_ptr) && ((p + 1)[-1] != '"'))
+        while (((p + 1) < ls_ptr) && (*p != '"'))
             p++;
 
         tpe = NUPA_STRING;
 
         do
             p++;
-        while (((p + 1) <= ls_ptr) && ((p + 1)[-1] <= ' '));
+        while (((p + 1) <= ls_ptr) && (*p <= ' '));
 
     } else {
 
@@ -1404,7 +1404,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
             if ((p + 1) > ls_ptr)
                 c = ';';
             else
-                c = (p + 1)[-1];
+                c = *p;
 
             if (c == '(') {
                 /* sub-formula */
@@ -1416,7 +1416,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                     if ((p + 1) > ls_ptr)
                         d = '\0';
                     else
-                        d = (p + 1)[-1];
+                        d = *p;
 
                     if (d == '(')
                         level++;
@@ -1433,7 +1433,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
     pscopy(tstr_p, ia_ptr - 1, 0, (int) (p + 1 - ia_ptr));
 
-    if ((p + 1)[-1] == '}')
+    if (*p == '}')
         p++;
 
     if (tpe == NUPA_STRING)
