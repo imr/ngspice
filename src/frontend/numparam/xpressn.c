@@ -1421,11 +1421,13 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
     /* s has the format: ident = expression; ident= expression ...  */
     const char * const s_end = s + strlen(s);
     const char *p = s;
+
     bool error = 0;
     nupa_type dtype;
     int wval = 0;
     double rval = 0.0;
     char *t_p;                  /* dstring contents value */
+
     SPICE_DSTRING tstr;         /* temporary dstring */
     SPICE_DSTRING ustr;         /* temporary dstring */
 
@@ -1451,41 +1453,39 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
             break;
         }
 
-            /* assignment expressions */
-            while ((p <= s_end) && (p[-1] != '='))
-                p++;
+        /* assignment expressions */
+        while ((p <= s_end) && (p[-1] != '='))
+            p++;
 
-            if (p > s_end) {
-                error = message(dico, " = sign expected.\n");
+        if (p > s_end) {
+            error = message(dico, " = sign expected.\n");
+            break;
+        }
+
+        p = getexpress(&dtype, &ustr, p) + 1;
+
+        if (dtype == NUPA_REAL) {
+            const char *tmp = spice_dstring_value(&ustr);
+            rval = formula(dico, tmp, tmp + strlen(tmp), &error);
+            if (error) {
+                message(dico,
+                        " Formula() error.\n"
+                        "      %s\n", s);
                 break;
             }
+        } else if (dtype == NUPA_STRING) {
+            wval = (int) (p - s);
+        }
 
-            p = getexpress(&dtype, &ustr, p) + 1;
-
-            if (dtype == NUPA_REAL) {
-                const char *tmp = spice_dstring_value(&ustr);
-                rval = formula(dico, tmp, tmp + strlen(tmp), &error);
-                if (error) {
-                    message(dico,
-                            " Formula() error.\n"
-                            "      %s\n", s);
-                    break;
-                }
-            } else if (dtype == NUPA_STRING) {
-                wval = (int) (p - s);
-            }
-
-            error = nupa_define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,
-                         dtype, rval, wval, NULL);
-            if (error)
-                break;
+        error = nupa_define(dico, spice_dstring_value(&tstr), mode /* was ' ' */ ,
+                            dtype, rval, wval, NULL);
+        if (error)
+            break;
 
         if ((p < s_end) && (p[-1] != ';')) {
             error = message(dico, " ; sign expected.\n");
             break;
         }
-        /* else
-           p++; */
     }
 
     spice_dstring_free(&tstr);
