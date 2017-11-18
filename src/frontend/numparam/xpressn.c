@@ -1240,20 +1240,20 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 goto Lend;
             }
 
-                /* exeption made for .meas */
-                if (s + 4 == kptr && strncasecmp(s, "LAST", 4) == 0) {
-                    spice_dstring_reinit(&qstr);
-                    sadd(&qstr, "last");
-                } else {
-                    err = evaluate_expr(dico, &qstr, s, kptr);
-                    if (err) {
-                        err = message(dico, "Cannot compute substitute\n");
-                        goto Lend;
-                    }
+            /* exeption made for .meas */
+            if (s + 4 == kptr && strncasecmp(s, "LAST", 4) == 0) {
+                spice_dstring_reinit(&qstr);
+                sadd(&qstr, "last");
+            } else {
+                err = evaluate_expr(dico, &qstr, s, kptr);
+                if (err) {
+                    err = message(dico, "Cannot compute substitute\n");
+                    goto Lend;
                 }
+            }
 
             s = kptr + 1;
-                ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
+            ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
 
         } else if (c == Intro) {
             /* skip "&&" which may occur in B source */
@@ -1289,7 +1289,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                     goto Lend;
                 }
 
-                    err = evaluate_expr(dico, &qstr, s, kptr);
+                err = evaluate_expr(dico, &qstr, s, kptr);
                 if (err) {
                     message(dico, "Cannot compute &(expression)\n");
                     goto Lend;
@@ -1313,7 +1313,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
                 s = kptr;
             }
 
-                ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
+            ir = ir + (int) (insertnumber(dico, r + ir, &qstr) - (r + ir));
         }
     }
 
