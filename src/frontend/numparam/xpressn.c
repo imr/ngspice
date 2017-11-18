@@ -1372,14 +1372,14 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     nupa_type tpe;
 
     ls_ptr = s + strlen(s);
-    (ia_ptr - s) = (int) (iptr - s) + 1;
+    ia_ptr = s + (iptr - s) + 1;
 
     while (((ia_ptr - s) < (ls_ptr - s)) && (s[(ia_ptr - s) - 1] <= ' '))
-        (ia_ptr - s)++;                   /*white space ? */
+        ia_ptr++;                   /*white space ? */
 
     if (s[(ia_ptr - s) - 1] == '"') {
         /* string constant */
-        (ia_ptr - s)++;
+        ia_ptr++;
         iptr = (ia_ptr - s) + s;
 
         while (((iptr - s) < (ls_ptr - s)) && (s[(iptr - s) - 1] != '"'))
@@ -1394,7 +1394,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     } else {
 
         if (s[(ia_ptr - s) - 1] == '{')
-            (ia_ptr - s)++;
+            ia_ptr++;
 
         iptr = (ia_ptr - s) - 1 + s;
 
