@@ -1481,9 +1481,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
             if (p > s_end)
                 error = message(dico, " = sign expected.\n");
 
-            const char *tmp = p;
-            tmp = getexpress(&dtype, &ustr, tmp) + 1;
-            p = tmp;
+            p = getexpress(&dtype, &ustr, p) + 1;
 
             if (dtype == NUPA_REAL) {
                 const char *tmp = spice_dstring_value(&ustr);
