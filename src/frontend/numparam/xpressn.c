@@ -1343,7 +1343,6 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     const char *xia_ptr;
     const char *ls_ptr;
     const char *p = *pi - 1;
-    int level;
     char c, d;
     nupa_type tpe;
 
@@ -1385,7 +1384,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
             if (c == '(') {
                 /* sub-formula */
-                level = 1;
+                int level = 1;
                 do
                 {
                     p++;
