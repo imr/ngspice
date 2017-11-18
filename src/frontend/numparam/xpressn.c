@@ -1340,11 +1340,11 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
-    const char * const ls_ptr = s + strlen(s);
+    const char * const s_end = s + strlen(s);
     const char *p;
     nupa_type tpe;
 
-    while ((s < ls_ptr - 1) && (*s <= ' '))
+    while ((s < s_end - 1) && (*s <= ' '))
         s++;                    /*white space ? */
 
     if (*s == '"') {            /* string constant */
@@ -1352,12 +1352,12 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
         s++;
         p = s;
 
-        while ((p < ls_ptr - 1) && (*p != '"'))
+        while ((p < s_end - 1) && (*p != '"'))
             p++;
 
         do
             p++;
-        while ((p < ls_ptr) && (*p <= ' '));
+        while ((p < s_end) && (*p <= ' '));
 
         tpe = NUPA_STRING;
 
@@ -1368,7 +1368,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
 
         p = s;
 
-        for (; p < ls_ptr; p++) {
+        for (; p < s_end; p++) {
 
             if (strchr(",;)}", *p)) /* legal separators */
                 break;
@@ -1377,7 +1377,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
                 /* sub-formula */
                 int level = 1;
                 p++;
-                for (; p < ls_ptr; p++) {
+                for (; p < s_end; p++) {
 
                     char d = *p;
 
