@@ -1370,37 +1370,33 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
     while ((s < ls_ptr - 1) && (*s <= ' '))
         s++;                    /*white space ? */
 
-    if (*s == '"') {
-        /* string constant */
+    if (*s == '"') {            /* string constant */
+
         s++;
         p = s;
 
         while ((p < ls_ptr - 1) && (*p != '"'))
             p++;
 
-        tpe = NUPA_STRING;
-
         do
             p++;
         while ((p < ls_ptr) && (*p <= ' '));
+
+        tpe = NUPA_STRING;
 
     } else {
 
         if (*s == '{')
             s++;
 
-        p = s - 1;
-
-        p++;
+        p = s;
 
         for (; p < ls_ptr; p++) {
 
-            char c = *p;
-
-            if (strchr(",;)}", c)) /* legal separators */
+            if (strchr(",;)}", *p)) /* legal separators */
                 break;
 
-            if (c == '(') {
+            if (*p == '(') {
                 /* sub-formula */
                 int level = 1;
                 p++;
