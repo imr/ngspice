@@ -535,22 +535,21 @@ defsubckt(dico_t *dico, struct card *card)
 
     bool err;
 
-    const char * const ls_ptr = s + strlen(s);
     const char *i_ptr, *j_ptr;
     i_ptr = s;
 
-    while ((i_ptr < ls_ptr) && (*i_ptr != '.'))
+    while (*i_ptr && (*i_ptr != '.'))
         i_ptr++;                /* skip 1st dotword */
 
-    while ((i_ptr < ls_ptr) && (*i_ptr > ' '))
+    while (*i_ptr && (*i_ptr > ' '))
         i_ptr++;
 
-    while ((i_ptr < ls_ptr) && (*i_ptr <= ' '))
+    while (*i_ptr && (*i_ptr <= ' '))
         i_ptr++;                /* skip blank */
 
     j_ptr = i_ptr;
 
-    while ((j_ptr < ls_ptr) && (*j_ptr > ' '))
+    while (*j_ptr && (*j_ptr > ' '))
         j_ptr++;
 
     if (j_ptr > i_ptr) {
