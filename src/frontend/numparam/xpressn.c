@@ -13,6 +13,7 @@
 #include "ngspice/dvec.h"
 #include "../frontend/variable.h"
 #include "ngspice/compatmode.h"
+#include "ngspice/stringskip.h"
 
 
 /* random numbers in /maths/misc/randnumb.c */
@@ -555,13 +556,11 @@ findsubckt(dico_t *dico, const char * const s)
 
     spice_dstring_init(&ustr);
 
-    while ((name_e > s) && (name_e[-1] <= ' '))
-        name_e--;
+    name_e = skip_back_ws(name_e, s);
 
     name_b = name_e;
 
-    while ((name_b > s) && (name_b[-1] > ' '))
-        name_b--;
+    name_b = skip_back_non_ws(name_b, s);
 
     pscopy_up(&ustr, name_b, 0, (int) (name_e - name_b));
     entry = entrynb(dico, spice_dstring_value(&ustr));
