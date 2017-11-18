@@ -582,7 +582,7 @@ findsubckt(dico_t *dico, const char * const s)
     while ((k_ptr - 1 >= s) && (*(k_ptr-1) <= ' '))
         k_ptr--;
 
-    name_e - 1 = k_ptr - 1;
+    name_e = k_ptr;
 
     while ((k_ptr - 1 >= s) && (*(k_ptr-1) > ' '))
         k_ptr--;
