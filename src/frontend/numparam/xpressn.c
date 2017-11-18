@@ -1446,7 +1446,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 
     while (p < s_end) {
 
-        p = getword(p, &tstr) + 1;
+        p = getword(p, &tstr);
         t_p = spice_dstring_value(&tstr);
         if (t_p[0] == '\0') {
             error = message(dico, " Identifier expected\n");
@@ -1454,15 +1454,15 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
         }
 
         /* assignment expressions */
-        while ((p <= s_end) && (p[-1] != '='))
+        while ((p < s_end) && (*p != '='))
             p++;
 
-        if (p > s_end) {
+        if (p >= s_end) {
             error = message(dico, " = sign expected.\n");
             break;
         }
 
-        p = getexpress(&dtype, &ustr, p) + 1;
+        p = getexpress(&dtype, &ustr, p + 1) + 1;
 
         if (dtype == NUPA_REAL) {
             const char *tmp = spice_dstring_value(&ustr);
