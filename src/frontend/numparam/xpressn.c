@@ -1363,7 +1363,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
-    const char *ia_ptr;
+    const char *xia_ptr;
     const char *ls_ptr;
     const char *p = *pi - 1;
     int level;
@@ -1371,15 +1371,15 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     nupa_type tpe;
 
     ls_ptr = s + strlen(s);
-    ia_ptr = (p + 1) + 1;
+    (xia_ptr + 1) = (p + 1) + 1;
 
-    while ((ia_ptr < ls_ptr) && (ia_ptr[-1] <= ' '))
-        ia_ptr++;                   /*white space ? */
+    while (((xia_ptr + 1) < ls_ptr) && ((xia_ptr + 1)[-1] <= ' '))
+        (xia_ptr + 1)++;                   /*white space ? */
 
-    if (ia_ptr[-1] == '"') {
+    if ((xia_ptr + 1)[-1] == '"') {
         /* string constant */
-        ia_ptr++;
-        p = ia_ptr - 1;
+        (xia_ptr + 1)++;
+        p = (xia_ptr + 1) - 1;
 
         while (((p + 1) < ls_ptr) && (*p != '"'))
             p++;
@@ -1392,10 +1392,10 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
     } else {
 
-        if (ia_ptr[-1] == '{')
-            ia_ptr++;
+        if ((xia_ptr + 1)[-1] == '{')
+            (xia_ptr + 1)++;
 
-        p = ia_ptr - 1 - 1;
+        p = (xia_ptr + 1) - 1 - 1;
 
         do
         {
@@ -1431,7 +1431,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         tpe = NUPA_REAL;
     }
 
-    pscopy(tstr_p, ia_ptr - 1, 0, (int) (p + 1 - ia_ptr));
+    pscopy(tstr_p, (xia_ptr + 1) - 1, 0, (int) (p + 1 - (xia_ptr + 1)));
 
     if (*p == '}')
         p++;
