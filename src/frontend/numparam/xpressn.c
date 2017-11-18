@@ -1343,7 +1343,6 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
     const char *xia_ptr;
     const char *ls_ptr;
     const char *p = *pi - 1;
-    char c, d;
     nupa_type tpe;
 
     ls_ptr = s + strlen(s);
@@ -1375,6 +1374,8 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
         do
         {
+            char c;
+
             p++;
 
             if (p >= ls_ptr)
@@ -1388,7 +1389,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                 p++;
                 for (; p < ls_ptr; p++) {
 
-                    d = *p;
+                    char d = *p;
 
                     if (d == '(')
                         level++;
@@ -1400,7 +1401,10 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                 }
             }
 
-        } while (!strchr(",;)}", c)); /* legal separators */
+            if (strchr(",;)}", c)) /* legal separators */
+                break;
+
+        } while (1);
 
         tpe = NUPA_REAL;
     }
