@@ -1372,16 +1372,11 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
         p = xia_ptr - 1;
 
-        do
-        {
-            char c;
+        p++;
 
-            p++;
+        for (; p < ls_ptr; p++) {
 
-            if (p >= ls_ptr)
-                break;
-
-            c = *p;
+            char c = *p;
 
             if (c == '(') {
                 /* sub-formula */
@@ -1403,8 +1398,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
             if (strchr(",;)}", c)) /* legal separators */
                 break;
-
-        } while (1);
+        }
 
         tpe = NUPA_REAL;
     }
