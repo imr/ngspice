@@ -1379,9 +1379,9 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
             p++;
 
             if (p >= ls_ptr)
-                c = ';';
-            else
-                c = *p;
+                break;
+
+            c = *p;
 
             if (c == '(') {
                 /* sub-formula */
