@@ -1363,13 +1363,12 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
-    const char *xia_ptr;
+    const char *xia_ptr = *pi;
     const char *ls_ptr;
-    const char *p = *pi - 1;
+    const char *p;
     nupa_type tpe;
 
     ls_ptr = s + strlen(s);
-    xia_ptr = p + 1;
 
     while ((xia_ptr < ls_ptr - 1) && (*xia_ptr <= ' '))
         xia_ptr++;              /*white space ? */
