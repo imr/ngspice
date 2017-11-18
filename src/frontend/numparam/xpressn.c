@@ -1205,8 +1205,8 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
    bug: wont flag overflow!
 */
 {
-    int level, nnest, ir = 0;
-    char c, d;
+    int ir = 0;
+    char d;
     bool err = 0;
 
     SPICE_DSTRING qstr;         /* temp result dynamic string */
@@ -1216,12 +1216,12 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
 
     while ((s < s_end) && !err) {
 
-        c = *s++;
+        char c = *s++;
 
         if (c == '{') {
             /* try ps expression syntax */
             const char *kptr = s;
-            nnest = 1;
+            int nnest = 1;
 
             do
             {
@@ -1268,7 +1268,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             if (s[-1] == '(') {
                 /* sub-formula */
                 const char *kptr = s;
-                level = 1;
+                int level = 1;
 
                 do
                 {
