@@ -1429,7 +1429,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
     if (type)
         *type = tpe;
 
-    return (char *) p + 1;
+    return (char *) p;
 }
 
 
@@ -1483,7 +1483,7 @@ nupa_assignment(dico_t *dico, char *s, char mode)
                 error = message(dico, " = sign expected.\n");
 
             const char *tmp = s + i;
-            tmp = getexpress(&dtype, &ustr, tmp);
+            tmp = getexpress(&dtype, &ustr, tmp) + 1;
             i = (int) (tmp - s);
 
             if (dtype == NUPA_REAL) {
@@ -1692,7 +1692,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
                 } else if (t_p[k] == '{') {
                     char *aux = spice_dstring_value(&tstr);
                     const char *tmp = aux + j;
-                    tmp = getexpress(NULL, &ustr, tmp);
+                    tmp = getexpress(NULL, &ustr, tmp) + 1;
                     j = (int) (tmp - aux);
                     j--;       /* confusion: j was in Turbo Pascal convention */
                 } else {
