@@ -539,24 +539,24 @@ defsubckt(dico_t *dico, struct card *card)
     const char *i_ptr, *j_ptr;
     i_ptr = s;
 
-    while (((i_ptr - s) < (ls_ptr - s)) && (s[(i_ptr - s)] != '.'))
+    while ((i_ptr < ls_ptr) && (*i_ptr != '.'))
         i_ptr++;                /* skip 1st dotword */
 
-    while (((i_ptr - s) < (ls_ptr - s)) && (s[(i_ptr - s)] > ' '))
+    while ((i_ptr < ls_ptr) && (*i_ptr > ' '))
         i_ptr++;
 
-    while (((i_ptr - s) < (ls_ptr - s)) && (s[(i_ptr - s)] <= ' '))
+    while ((i_ptr < ls_ptr) && (*i_ptr <= ' '))
         i_ptr++;                /* skip blank */
 
     j_ptr = i_ptr;
 
-    while (((j_ptr - s) < (ls_ptr - s)) && (s[(j_ptr - s)] > ' '))
+    while ((j_ptr < ls_ptr) && (*j_ptr > ' '))
         j_ptr++;
 
-    if ((j_ptr - s) > (i_ptr - s)) {
+    if (j_ptr > i_ptr) {
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
-        pscopy_up(&ustr, s, (int) (i_ptr - s), (int) (j_ptr - s) - (int) (i_ptr - s));
+        pscopy_up(&ustr, s, (int) (i_ptr - s), (int) (j_ptr - i_ptr));
         err = nupa_define(dico, spice_dstring_value(&ustr), ' ', NUPA_SUBCKT, 0.0, w, NULL, level);
         spice_dstring_free(&ustr);
     } else {
