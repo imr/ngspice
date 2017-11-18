@@ -1342,47 +1342,46 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 {
     const char *ia_ptr;
     const char *ls_ptr;
-    const char *iptr;
-    iptr = *pi - s + s;
+    const char *iptr = *pi;
     int level;
     char c, d;
     nupa_type tpe;
 
     ls_ptr = s + strlen(s);
-    ia_ptr = s + (iptr - s) + 1;
+    ia_ptr = iptr + 1;
 
-    while (((ia_ptr - s) < (ls_ptr - s)) && (s[(ia_ptr - s) - 1] <= ' '))
+    while ((ia_ptr < ls_ptr) && (ia_ptr[-1] <= ' '))
         ia_ptr++;                   /*white space ? */
 
-    if (s[(ia_ptr - s) - 1] == '"') {
+    if (ia_ptr[-1] == '"') {
         /* string constant */
         ia_ptr++;
-        iptr = (ia_ptr - s) + s;
+        iptr = ia_ptr;
 
-        while (((iptr - s) < (ls_ptr - s)) && (s[(iptr - s) - 1] != '"'))
+        while ((iptr < ls_ptr) && (iptr[-1] != '"'))
             iptr++;
 
         tpe = NUPA_STRING;
 
         do
             iptr++;
-        while (((iptr - s) <= (ls_ptr - s)) && (s[(iptr - s) - 1] <= ' '));
+        while ((iptr <= ls_ptr) && (iptr[-1] <= ' '));
 
     } else {
 
-        if (s[(ia_ptr - s) - 1] == '{')
+        if (ia_ptr[-1] == '{')
             ia_ptr++;
 
-        iptr = (ia_ptr - s) - 1 + s;
+        iptr = ia_ptr - 1;
 
         do
         {
             iptr++;
 
-            if ((iptr - s) > (ls_ptr - s))
+            if (iptr > ls_ptr)
                 c = ';';
             else
-                c = s[(iptr - s) - 1];
+                c = iptr[-1];
 
             if (c == '(') {
                 /* sub-formula */
@@ -1391,17 +1390,17 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                 {
                     iptr++;
 
-                    if ((iptr - s) > (ls_ptr - s))
+                    if (iptr > ls_ptr)
                         d = '\0';
                     else
-                        d = s[(iptr - s) - 1];
+                        d = iptr[-1];
 
                     if (d == '(')
                         level++;
                     else if (d == ')')
                         level--;
 
-                } while (((iptr - s) <= (ls_ptr - s)) && !((d == ')') && (level <= 0)));
+                } while ((iptr <= ls_ptr) && !((d == ')') && (level <= 0)));
             }
 
         } while (!strchr(",;)}", c)); /* legal separators */
@@ -1409,15 +1408,15 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         tpe = NUPA_REAL;
     }
 
-    pscopy(tstr_p, s, (int)(ia_ptr - s)-1, (int) (iptr - s) - (int) (ia_ptr - s));
+    pscopy(tstr_p, s, (int)(ia_ptr - s)-1, (int) (iptr - ia_ptr));
 
-    if (s[(iptr - s) - 1] == '}')
+    if (iptr[-1] == '}')
         iptr++;
 
     if (tpe == NUPA_STRING)
         iptr++;                    /* beyond quote */
 
-    *pi = s + (iptr - s);
+    *pi = iptr;
 
     return tpe;
 }
