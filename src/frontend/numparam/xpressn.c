@@ -587,7 +587,7 @@ findsubckt(dico_t *dico, const char * const s)
     while ((k_ptr >= s) && (*k_ptr > ' '))
         k_ptr--;
 
-    pscopy_up(&ustr, s, (int) (k_ptr - s) + 1, (int) (j_ptr - k_ptr));
+    pscopy_up(&ustr, s + (k_ptr - s) + 1, 0, (int) (j_ptr - k_ptr));
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
