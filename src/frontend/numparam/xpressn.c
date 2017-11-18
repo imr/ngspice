@@ -548,10 +548,10 @@ defsubckt(dico_t *dico, struct card *card)
     while (((i_ptr - s) < (ls_ptr - s)) && (s[(i_ptr - s)] <= ' '))
         i_ptr++;                /* skip blank */
 
-    (j_ptr - s) = (int) (i_ptr - s);
+    j_ptr = i_ptr;
 
     while (((j_ptr - s) < (ls_ptr - s)) && (s[(j_ptr - s)] > ' '))
-        (j_ptr - s)++;
+        j_ptr++;
 
     if ((j_ptr - s) > (i_ptr - s)) {
         SPICE_DSTRING ustr;     /* temp user string */
