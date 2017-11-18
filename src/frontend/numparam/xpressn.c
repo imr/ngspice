@@ -1388,7 +1388,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
 
         do
             p++;
-        while ((p <= ls_ptr - 1) && (*p <= ' '));
+        while ((p < ls_ptr) && (*p <= ' '));
 
     } else {
 
@@ -1401,7 +1401,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
         {
             p++;
 
-            if (p > ls_ptr - 1)
+            if (p >= ls_ptr)
                 c = ';';
             else
                 c = *p;
@@ -1413,7 +1413,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                 {
                     p++;
 
-                    if (p > ls_ptr - 1)
+                    if (p >= ls_ptr)
                         d = '\0';
                     else
                         d = *p;
@@ -1423,7 +1423,7 @@ getexpress(const char * const s, SPICE_DSTRINGPTR tstr_p, const char **pi)
                     else if (d == ')')
                         level--;
 
-                } while ((p <= ls_ptr - 1) && !((d == ')') && (level <= 0)));
+                } while ((p < ls_ptr) && !((d == ')') && (level <= 0)));
             }
 
         } while (!strchr(",;)}", c)); /* legal separators */
