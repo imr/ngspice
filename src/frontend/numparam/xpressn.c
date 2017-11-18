@@ -511,10 +511,9 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
     int w = card->linenum;
 
     bool err;
-    int j;
 
     const char * const ls_ptr = s + strlen(s);
-    const char *i_ptr;
+    const char *i_ptr, *j_ptr;
     i_ptr = s;
 
     while (((i_ptr - s) < (ls_ptr - s)) && (s[(i_ptr - s)] != '.'))
@@ -526,15 +525,15 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
     while (((i_ptr - s) < (ls_ptr - s)) && (s[(i_ptr - s)] <= ' '))
         i_ptr++;                /* skip blank */
 
-    j = (int) (i_ptr - s);
+    (j_ptr - s) = (int) (i_ptr - s);
 
-    while ((j < (ls_ptr - s)) && (s[j] > ' '))
-        j++;
+    while (((j_ptr - s) < (ls_ptr - s)) && (s[(j_ptr - s)] > ' '))
+        (j_ptr - s)++;
 
-    if (j > (i_ptr - s)) {
+    if ((j_ptr - s) > (i_ptr - s)) {
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
-        pscopy_up(&ustr, s, (int) (i_ptr - s), j - (int) (i_ptr - s));
+        pscopy_up(&ustr, s, (int) (i_ptr - s), (int) (j_ptr - s) - (int) (i_ptr - s));
         err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL);
         spice_dstring_free(&ustr);
     } else {
