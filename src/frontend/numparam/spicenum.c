@@ -145,7 +145,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
 }
 
 
-static int
+static void
 findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 /* truncate the parameterized subckt call to regular old Spice */
 /* scan a string from the end, skipping non-idents and {expressions} */
@@ -209,8 +209,6 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 
     if (found && (h < ls))
         pscopy(dstr_p, s, 0, h);
-
-    return h;
 }
 
 
@@ -339,7 +337,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
         category = 'P';
     } else if (toupper_c(s[0]) == 'X') {
         /* strip actual parameters */
-        findsubname(dico, dstr_p); /* i= index following last identifier in s */
+        findsubname(dico, dstr_p);
         category = 'X';
     } else if (s[0] == '+') {   /* continuation line */
         category = '+';
