@@ -1535,7 +1535,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
       skip over instance name -- fixes bug where instance 'x1' is
       same name as subckt 'x1'
     */
-    while (*x != ' ')
+    while (*x && *x != ' ')
         x++;
 
     /***** first, analyze the subckt definition line */
@@ -1552,7 +1552,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
         while ((j < ls) && (t_p[j] <= ' '))
             j++;
 
-        while (t_p[j] != ' ') {
+        while ((j < ls) && (t_p[j] != ' ')) {
             cadd(&subname, t_p[j]);
             j++;
         }
