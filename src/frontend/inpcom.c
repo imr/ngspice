@@ -1979,7 +1979,8 @@ get_subckts_for_subckt(struct card *start_card, char *subckt_name,
 
         char *line = card->line;
 
-        if (*line == '*')
+        /* no models embedded in these lines */
+        if (strchr("*vibefghkt", *line))
             continue;
 
         if ((ciprefix(".ends", line) || ciprefix(".eom", line)) && found_subckt)
@@ -2053,7 +2054,8 @@ comment_out_unused_subckt_models(struct card *start_card)
 
         char *line = card->line;
 
-        if (*line == '*')
+        /* no models embedded in these lines */
+        if (strchr("*vibefghkt", *line))
             continue;
 
         /* there is no .subckt, .model or .param inside .control ... .endc */
