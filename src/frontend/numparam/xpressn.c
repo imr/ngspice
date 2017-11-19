@@ -1497,7 +1497,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
     SPICE_DSTRING idlist;
     SPICE_DSTRING parsebuf;
     char *buf, *token;
-    char *t_p;
+    char *t_p1;
     char *u_p;
     bool found;
     bool err = 0;
@@ -1517,12 +1517,12 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
     if (j1 >= 0) {
         j1 = j1 + 6;              /* fetch its name - skip subckt */
-        t_p = spice_dstring_value(&tstr);
-        while (t_p[j1] && (t_p[j1] <= ' '))
+        t_p1 = spice_dstring_value(&tstr);
+        while (t_p1[j1] && (t_p1[j1] <= ' '))
             j1++;
 
-        while (t_p[j1] && (t_p[j1] != ' ')) {
-            cadd(&subname, t_p[j1]);
+        while (t_p1[j1] && (t_p1[j1] != ' ')) {
+            cadd(&subname, t_p1[j1]);
             j1++;
         }
     } else {
@@ -1584,6 +1584,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         scopy_up(&tstr, skip_non_ws(x));
         int j = 0;
 
+        char * const t_p = spice_dstring_value(&tstr);
         const int ls = spice_dstring_length(&tstr);
 
         spice_dstring_init(&parsebuf);
@@ -1609,7 +1610,6 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         if (found) {
             j = j + spice_dstring_length(&subname) + 1; /* 1st position of arglist: j */
 
-            t_p = spice_dstring_value(&tstr);
             while ((j < ls) && ((t_p[j] <= ' ') || (t_p[j] == ',')))
                 j++;
 
