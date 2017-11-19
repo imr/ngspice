@@ -1809,31 +1809,85 @@ get_adevice_model_name(char *line)
 
 
 /*
- * FIXME, this is a mere hack of the worst kind
- *   to distinguish modelname tokens from other tokens
- *   by a simple comparison for well known discrete device name patterns
+ *   To distinguish modelname tokens from other tokens
+ *   by checking if token is not a valid ngspice number
  */
-
 static int
 is_a_modelname(const char *s)
 {
+    char *st;
     /* first character of model name is character from alphabet */
     if (isalpha_c(s[0]))
         return TRUE;
+    /* first characters not allowed in model name (including '\0')*/
+    if (strchr("{*^@\\\'", s[0]))
+        return FALSE;
+    /* not beeing a valid number */
+    if (strtod(s, &st))
+        /* test if we have a true number */
+        if (*st == '\0' || isspace(*st))
+            return FALSE;
+        else {
+            /* look for the scale factor (alphabetic) and skip it.
+             * INPevaluate will not do it because is does not swallow
+             * the scale factor from the string.
+            */
+            switch (*st) {
+            case 't':
+            case 'T':
+            case 'g':
+            case 'G':
+            case 'k':
+            case 'K':
+            case 'u':
+            case 'U':
+            case 'n':
+            case 'N':
+            case 'p':
+            case 'P':
+            case 'f':
+            case 'F':
+                st = st + 1;
+                break;
+            case 'm':
+            case 'M':
+                if (((st[1] == 'E') || (st[1] == 'e')) &&
+                    ((st[2] == 'G') || (st[2] == 'g')))
+                {
+                    st = st + 3;  /* Meg */
+                }
+                else if (((st[1] == 'I') || (st[1] == 'i')) &&
+                    ((st[2] == 'L') || (st[2] == 'l')))
+                {
+                    st = st + 3;     /* Mil */
+                }
+                else {
+                    st = st + 1;  /* m, milli */
+                }
+                break;
+            default:
+                break;
+            }
+            /* test if we have a true scale factor */
+            if (*st == '\0' || isspace(*st))
+                return FALSE;
 
-    /* e.g. 1N4002, but do not accept floats (for example 1E2) */
-    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isdigit_c(s[2]) && toupper_c(s[1]) != 'E')
-        return TRUE;
+            /* test if people use Ohms, F, H for RLC, like pF or uOhms */
+            if (ciprefix("ohms", st))
+                st = st + 4;
+            else if  (ciprefix("farad", st))
+                st = st + 5;
+            else if  (ciprefix("henry", st))
+                st = st + 5;
+            else if ((*st == 'f') || (*st == 'h'))
+                st = st + 1;
 
-    /* e.g. 2SK456 */
-    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isalpha_c(s[2]) && isdigit_c(s[3]))
-        return TRUE;
+            if (*st == '\0' || isspace(*st))
+                return FALSE;
+        }
 
-    /* e.g. 1SMB4148 */
-    if (isdigit_c(s[0]) && isalpha_c(s[1]) && isalpha_c(s[2]) && isalpha_c(s[3]) && isdigit_c(s[4]))
-        return TRUE;
-
-    return FALSE;
+    /* token starts with non alphanum character */
+    return TRUE;
 }
 
 
