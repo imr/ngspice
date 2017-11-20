@@ -1,0 +1,64 @@
+resolution test for plotting
+.control
+let a = vector(4)
+let ac = vector(4)
+
+let ac[0] = 1.0
+let ac[1] = 1.0
+let ac[2] = 1.0
+let ac[3] = 1.0
+
+plot ac vs a title integer 1
+
+* 14 digits
+let ac[0] = 1.0
+let ac[1] = 1.00000000000001
+let ac[2] = 0.99999999999999
+let ac[3] = 1.0
+
+plot ac vs a title '15 digits'
+
+* 15 digits
+let ac[0] = 1.0
+let ac[1] = 1.000000000000001
+let ac[2] = 0.999999999999999
+let ac[3] = 1.0
+
+plot ac vs a title '15 digits'
+
+* 16 digits
+let ac[0] = 1.0
+let ac[1] = 1.0000000000000001
+let ac[2] = 0.9999999999999999
+let ac[3] = 1.0
+
+plot ac vs a title '16 digits'
+
+* 14 digits plus exponent
+let ac[0] = 1.0e-14
+let ac[1] = 1.00000000000001e-14
+let ac[2] = 0.99999999999999e-14
+let ac[3] = 1.0e-14
+
+plot ac vs a title '14 digits plus exponent'
+
+* 15 digits plus exponent
+let ac[0] = 1.0e-14
+let ac[1] = 1.000000000000001e-14
+let ac[2] = 0.999999999999999e-14
+let ac[3] = 1.0e-14
+
+plot ac vs a title '15 digits plus exponent'
+
+* 16 digits plus exponent
+let ac[0] = 1.0e-14
+let ac[1] = 1.0000000000000001e-14
+let ac[2] = 0.9999999999999999e-14
+let ac[3] = 1.0e-14
+
+plot ac vs a title '16 digits plus exponent'
+
+.endc
+
+.end
+
