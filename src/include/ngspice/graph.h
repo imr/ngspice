@@ -17,7 +17,7 @@ Author: 1988 Jeffrey M. Hsu
 
 struct _keyed;
 
-#define GRAPH_UNITS_LENGTH  16
+#define GRAPH_UNITS_LENGTH  20
 
 /* Device-independent data structure for plots. */
 
