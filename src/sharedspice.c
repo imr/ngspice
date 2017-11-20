@@ -218,6 +218,9 @@ static GetVSRCData* getvdat;
 static GetISRCData* getidat;
 static GetSyncData* getsync;
 static pvector_info myvec = NULL;
+#ifdef XSPICE
+static struct dvec *infovec = NULL;
+#endif
 char **allvecs = NULL;
 char **allplots = NULL;
 static bool noprintfwanted = FALSE;
@@ -779,6 +782,20 @@ bot:
     return 0;
 }
 
+
+/* to be called upon 'quit' */
+void
+sh_delete_myvec(void)
+{
+    tfree(myvec);
+#ifdef XSPICE
+    if (infovec) {
+        dvec_free(infovec->v_scale);
+        dvec_free(infovec);
+    }
+#endif
+}
+
 /* retrieve a ngspice command from caller and run it
 immediately */
 IMPEXP
@@ -813,6 +830,15 @@ pvector_info  ngGet_Vec_Info(char* vecname)
         return NULL;
     }
 
+#ifdef XSPICE
+    /* If vector is derived from event data, free it */
+    if (infovec) {
+        dvec_free(infovec->v_scale);
+        dvec_free(infovec);
+        infovec = NULL;
+    }
+#endif
+
     newvec = vec_get(vecname);
 
     if (newvec == NULL) {
@@ -830,6 +856,13 @@ pvector_info  ngGet_Vec_Info(char* vecname)
     myvec->v_realdata = newvec->v_realdata;
     myvec->v_compdata = newvec->v_compdata;
     myvec->v_length = newvec->v_length;
+
+#ifdef XSPICE
+    /* If we have a vector derived from event data, store its pointer */
+    if (newvec->v_scale && newvec->v_scale->v_name && eq(newvec->v_scale->v_name, "step"))
+        infovec = newvec;
+#endif
+
     return myvec;
 };
 
