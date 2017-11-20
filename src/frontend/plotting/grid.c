@@ -365,10 +365,10 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         buf[0] = '\0';
     }
 
-    if ((s = ft_typabbrev(type)) != NULL)
-        (void) strncat(buf, s, sizeof(buf) - strlen(buf) - 1);
-    else
-        (void) strncat(buf, "Units", sizeof(buf) - strlen(buf) - 1);
+    s = ft_typabbrev(type);
+    if (!s)
+        s = "Units";
+    strncat(buf, s, sizeof(buf) - strlen(buf) - 1);
 
     if (delta == 0.0) {
         int     i;
@@ -527,7 +527,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
         if (j == 0)
             SetLinestyle(1);
 
-        (void) sprintf(buf, "%.*f", digits + 1, m * mag / 100.0);
+        snprintf(buf, sizeof(buf), "%.*f", digits + 1, m * mag / 100.0);
 
         if (axis == x_axis)
             DevDrawText(buf, graph->viewportxoff + i -
@@ -629,10 +629,12 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
     dd[0] = pow(10.0, (double) lmt);
     dd[1] = pow(10.0, (double) hmt);
 
-    if ((s = ft_typabbrev(type)) != NULL)
-        (void) strcpy(buf, s);
-    else
-        (void) strcpy(buf, "Units");
+    buf[0] = '\0';
+
+    s = ft_typabbrev(type);
+    if (!s)
+        s = "Units";
+    strncat(buf, s, sizeof(buf) - strlen(buf) - 1);
 
     if (axis == x_axis) {
         (void) strcpy(graph->grid.xaxis.log.units, buf);

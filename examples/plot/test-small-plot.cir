@@ -1,0 +1,116 @@
+resolution test for plotting
+.control
+let xvar = vector(4)
+let yvar = vector(4)
+
+* --------------------
+* integer
+let yvar[0] = 1.0
+let yvar[1] = 1.0
+let yvar[2] = 1.0
+let yvar[3] = 1.0
+
+plot yvar vs xvar title integer 1
+
+* --------------------
+* 14 digits
+let yvar[0] = 1.0
+let yvar[1] = 1.00000000000001
+let yvar[2] = 0.99999999999999
+let yvar[3] = 1.0
+
+plot yvar vs xvar title '14 digits'
+
+* --------------------
+* 15 digits
+let yvar[0] = 1.0
+let yvar[1] = 1.000000000000001
+let yvar[2] = 0.999999999999999
+let yvar[3] = 1.0
+
+plot yvar vs xvar title '15 digits'
+
+* --------------------
+* 16 digits
+let yvar[0] = 1.0
+let yvar[1] = 1.0000000000000001
+let yvar[2] = 0.9999999999999999
+let yvar[3] = 1.0
+
+plot yvar vs xvar title '16 digits'
+
+* --------------------
+* 14 digits plus exponent
+let yvar[0] = 1.0e-14
+let yvar[1] = 1.00000000000001e-14
+let yvar[2] = 0.99999999999999e-14
+let yvar[3] = 1.0e-14
+
+plot yvar vs xvar title '14 digits plus exponent'
+
+* --------------------
+* 15 digits plus exponent
+let yvar[0] = 1.0e-14
+let yvar[1] = 1.000000000000001e-14
+let yvar[2] = 0.999999999999999e-14
+let yvar[3] = 1.0e-14
+
+plot yvar vs xvar title '15 digits plus exponent'
+
+* --------------------
+* 16 digits plus exponent
+let yvar[0] = 1.0e-14
+let yvar[1] = 1.0000000000000001e-14
+let yvar[2] = 0.9999999999999999e-14
+let yvar[3] = 1.0e-14
+
+plot yvar vs xvar title '16 digits plus exponent'
+
+* --------------------
+* negative 14 digits plus exponent
+let yvar[0] = -1.0e-14
+let yvar[1] = -1.00000000000001e-14
+let yvar[2] = -0.99999999999999e-14
+let yvar[3] = -1.0e-14
+
+plot yvar vs xvar title 'neg 14 digits plus exponent'
+
+* --------------------
+* negative 15 digits plus exponent
+let yvar[0] = -1.0e-14
+let yvar[1] = -1.000000000000001e-14
+let yvar[2] = -0.999999999999999e-14
+let yvar[3] = -1.0e-14
+
+plot yvar vs xvar title 'neg 15 digits plus exponent'
+
+* --------------------
+* negative 16 digits plus exponent
+let yvar[0] = -1.0e-14
+let yvar[1] = -1.0000000000000001e-14
+let yvar[2] = -0.9999999999999999e-14
+let yvar[3] = -1.0e-14
+
+plot yvar vs xvar title 'neg 16 digits plus exponent'
+
+* --------------------
+* 15 digits plus big exponent
+let yvar[0] = 1.0e-200
+let yvar[1] = 1.000000000000001e-200
+let yvar[2] = 0.999999999999999e-200
+let yvar[3] = 1.0e-200
+
+plot yvar vs xvar title '15 digits plus big exponent'
+
+* --------------------
+* negative 15 digits plus big exponent
+let yvar[0] = -1.0e-200
+let yvar[1] = -1.000000000000001e-200
+let yvar[2] = -0.999999999999999e-200
+let yvar[3] = -1.0e-200
+
+plot yvar vs xvar title 'neg 15 digits plus big exponent'
+
+.endc
+
+.end
