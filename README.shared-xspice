@@ -26,3 +26,6 @@ There is also a new feature: The 'save' command accepts the flag none of run in
 shared mode. Then there is no internal storage of analog output data, they are
 still available with the callback function ng_data. The above mentioned example
 file now includes a testrun2 to demonstrate this feature.
+
+The already existing fcn ngGet_Vec_Info(evtnode) will return an analog vector
+derived from event node evtnode containing 1 and 0.
