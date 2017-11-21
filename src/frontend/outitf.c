@@ -722,21 +722,17 @@ OUTwEnd(runDesc *plotPtr)
 int
 OUTendPlot(runDesc *plotPtr)
 {
-    runDesc *run = plotPtr;  // FIXME
-
-    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && run->writeOut) {
-        tfree(valueold);
-        tfree(valuenew);
-        fileEnd(run);
-    }
-    else if (run->writeOut) {
-        fileEnd(run);
+    if (plotPtr->writeOut) {
+        fileEnd(plotPtr);
     } else {
         gr_end_iplot();
-        plotEnd(run);
+        plotEnd(plotPtr);
     }
 
-    freeRun(run);
+    tfree(valueold);
+    tfree(valuenew);
+
+    freeRun(plotPtr);
 
     return (OK);
 }
@@ -933,7 +929,7 @@ fileInit_pass2(runDesc *run)
             rowbuflen *= 2;
         rowbuf = TMALLOC(double, rowbuflen);
     } else {
-        // fIXME rowbuflen = 0;
+        rowbuflen = 0;
         rowbuf = NULL;
     }
 }
@@ -1004,10 +1000,7 @@ fileEnd(runDesc *run)
 
     fflush(run->fp);
 
-    if (run->binary) {
-        /* deallocate row buffer */
-        tfree(rowbuf);
-    }
+    tfree(rowbuf);
 }
 
 
