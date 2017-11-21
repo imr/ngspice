@@ -724,14 +724,14 @@ OUTendPlot(runDesc *plotPtr)
 {
     runDesc *run = plotPtr;  // FIXME
 
-    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4 && run->writeOut) {
+    if (interpolated && run->circuit->CKTcurJob->JOBtype == 4) {
         tfree(valueold);
         tfree(valuenew);
-        fileEnd(run);
     }
-    else if (run->writeOut) {
+
+    if (run->writeOut)
         fileEnd(run);
-    } else {
+    else {
         gr_end_iplot();
         plotEnd(run);
     }
