@@ -174,11 +174,11 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                         nest--;
                     else if (p[-1] == '}')
                         nest++;
-
-                    p--;
                     if (nest <= 0) {
+                        p--;
                         break;
                     }
+                    p--;
                 }
                 p_end = p;      /* p_end points to '{' */
 
