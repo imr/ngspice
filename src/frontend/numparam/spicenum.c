@@ -193,8 +193,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 cadd(&name, toupper_c(*t));
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
-                if (p_end < ls_ptr)
-                    pscopy(dstr_p, s, 0, (int) (p_end - s));
+                spice_dstring_setlength(dstr_p, (int) (p_end - s));
                 return;
             }
         }
