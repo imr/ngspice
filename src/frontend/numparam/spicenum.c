@@ -153,9 +153,8 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 {
     SPICE_DSTRING name;         /* extract a name */
     char * const s = spice_dstring_value(dstr_p);
-    char * const ls_ptr = s + spice_dstring_length(dstr_p);
 
-    char *p = ls_ptr;
+    char *p = s + spice_dstring_length(dstr_p);
     spice_dstring_init(&name);
 
     while (p > s) {
