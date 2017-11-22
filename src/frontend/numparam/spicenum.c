@@ -204,6 +204,11 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             }
             entry = entrynb(dico, spice_dstring_value(&name));
             found = entry && (entry->tp == NUPA_SUBCKT);
+            if (found) {
+                if (found && (h < ls))
+                    pscopy(dstr_p, s, 0, h);
+                return;
+            }
         }
     }
 
