@@ -167,9 +167,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 
             if (p[-1] == '}') {
                 int nest = 1;
-                p--;
-
-                while (p > s) {
+                while (--p > s) {
                     if (p[-1] == '{')
                         nest--;
                     else if (p[-1] == '}')
@@ -178,7 +176,6 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                         p--;
                         break;
                     }
-                    p--;
                 }
                 p_end = p;      /* p_end points to '{' */
 
