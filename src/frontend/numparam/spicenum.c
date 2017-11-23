@@ -155,42 +155,42 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
     char * const s = spice_dstring_value(dstr_p);
     char * const ls_ptr = s + spice_dstring_length(dstr_p);
 
-    int k = (int) (ls_ptr - s) - 1;
+    int (p - s - 1) = (int) (ls_ptr - s) - 1;
     spice_dstring_init(&name);
 
-    while (k >= 0) {
+    while ((p - s - 1) >= 0) {
 
         /* skip space, then non-space */
-        while ((k >= 0) && (s[k] <= ' '))
-            k--;
+        while (((p - s - 1) >= 0) && (s[(p - s - 1)] <= ' '))
+            (p - s - 1)--;
 
-        int h = k + 1;          /* at h: space */
-        while ((k >= 0) && (s[k] > ' ')) {
+        int h = (int) (p - s - 1) + 1;              /* at h: space */
+        while (((p - s - 1) >= 0) && (s[(p - s - 1)] > ' ')) {
 
-            if (s[k] == '}') {
+            if (s[(p - s - 1)] == '}') {
                 int nest = 1;
-                k--;
+                (p - s - 1)--;
 
-                while ((nest > 0) && (k >= 0)) {
-                    if (s[k] == '{')
+                while ((nest > 0) && ((p - s - 1) >= 0)) {
+                    if (s[(p - s - 1)] == '{')
                         nest--;
-                    else if (s[k] == '}')
+                    else if (s[(p - s - 1)] == '}')
                         nest++;
 
-                    k--;
+                    (p - s - 1)--;
                 }
-                h = k + 1;      /* h points to '{' */
+                h = (int) (p - s - 1) + 1;      /* h points to '{' */
 
             } else {
-                k--;
+                (p - s - 1)--;
             }
         }
 
-        if ((k >= 0) && alfanum(s[k + 1])) { /* suppose an identifier */
+        if (((p - s - 1) >= 0) && alfanum(s[(p - s - 1) + 1])) { /* suppose an identifier */
             entry_t *entry;
             /* check for known subckt name */
             spice_dstring_reinit(&name);
-            int j = k + 1;
+            int j = (int) (p - s - 1) + 1;
             while (alfanum(s[j])) {
                 cadd(&name, toupper_c(s[j]));
                 j++;
