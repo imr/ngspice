@@ -187,14 +187,12 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
         }
 
         if ((p > s) && alfanum(*p)) { /* suppose an identifier */
+            char *t;
             entry_t *entry;
             /* check for known subckt name */
             spice_dstring_reinit(&name);
-            char *t = s + (int) (p - s - 1) + 1;
-            while (alfanum(s[(t - s)])) {
-                cadd(&name, toupper_c(s[(t - s)]));
-                t++;
-            }
+            for (t = p; alfanum(*t); t++)
+                cadd(&name, toupper_c(*t));
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
                 if (h < (int) (ls_ptr - s))
