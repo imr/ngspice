@@ -161,10 +161,8 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
     while (p > s) {
 
         /* skip space, then non-space */
-        while ((p > s) && (p[-1] <= ' '))
-            p--;
+        char *p_end = p = skip_back_ws(p, s); /* at p_end: space */
 
-        char *p_end = p;          /* at p_end: space */
         while ((p > s) && (p[-1] > ' ')) {
 
             if (p[-1] == '}') {
