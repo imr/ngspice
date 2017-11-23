@@ -155,21 +155,21 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
     char * const s = spice_dstring_value(dstr_p);
     char * const ls_ptr = s + spice_dstring_length(dstr_p);
 
-    int (p - s - 1) = (int) (ls_ptr - s) - 1;
+    char *p = s + 1 + (int) (ls_ptr - s) - 1;
     spice_dstring_init(&name);
 
     while ((p - s - 1) >= 0) {
 
         /* skip space, then non-space */
         while (((p - s - 1) >= 0) && (s[(p - s - 1)] <= ' '))
-            (p - s - 1)--;
+            p--;
 
         int h = (int) (p - s - 1) + 1;              /* at h: space */
         while (((p - s - 1) >= 0) && (s[(p - s - 1)] > ' ')) {
 
             if (s[(p - s - 1)] == '}') {
                 int nest = 1;
-                (p - s - 1)--;
+                p--;
 
                 while ((nest > 0) && ((p - s - 1) >= 0)) {
                     if (s[(p - s - 1)] == '{')
@@ -177,12 +177,12 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                     else if (s[(p - s - 1)] == '}')
                         nest++;
 
-                    (p - s - 1)--;
+                    p--;
                 }
                 h = (int) (p - s - 1) + 1;      /* h points to '{' */
 
             } else {
-                (p - s - 1)--;
+                p--;
             }
         }
 
