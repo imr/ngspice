@@ -164,7 +164,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
         while ((p > s) && (p[-1] <= ' '))
             p--;
 
-        int (p_end - s) = (int) (p - s - 1) + 1;          /* at p_end: space */
+        char *p_end = s + (int) (p - s - 1) + 1;          /* at p_end: space */
         while ((p > s) && (p[-1] > ' ')) {
 
             if (p[-1] == '}') {
@@ -179,7 +179,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 
                     p--;
                 }
-                (p_end - s) = (int) (p - s - 1) + 1;      /* p_end points to '{' */
+                p_end = s + (int) (p - s - 1) + 1;      /* p_end points to '{' */
 
             } else {
                 p--;
