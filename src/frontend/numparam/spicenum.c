@@ -152,12 +152,10 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 /* then truncate s after the last subckt(?) identifier */
 {
     SPICE_DSTRING name;         /* extract a name */
-    char *s;                    /* current dstring */
-    int k, ls;
+    char * const s = spice_dstring_value(dstr_p);
+    const int ls = spice_dstring_length(dstr_p);
 
-    ls = spice_dstring_length(dstr_p);
-    s = spice_dstring_value(dstr_p);
-    k = ls - 1;                 /* now a C - string */
+    int k = ls - 1;
     spice_dstring_init(&name);
 
     while (k >= 0) {
