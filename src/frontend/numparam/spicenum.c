@@ -155,26 +155,26 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
     char * const s = spice_dstring_value(dstr_p);
     char * const ls_ptr = s + spice_dstring_length(dstr_p);
 
-    char *p = s + 1 + (int) (ls_ptr - s) - 1;
+    char *p = ls_ptr;
     spice_dstring_init(&name);
 
-    while ((p - s - 1) >= 0) {
+    while (p > s) {
 
         /* skip space, then non-space */
-        while (((p - s - 1) >= 0) && (s[(p - s - 1)] <= ' '))
+        while ((p > s) && (p[-1] <= ' '))
             p--;
 
         int h = (int) (p - s - 1) + 1;              /* at h: space */
-        while (((p - s - 1) >= 0) && (s[(p - s - 1)] > ' ')) {
+        while ((p > s) && (p[-1] > ' ')) {
 
-            if (s[(p - s - 1)] == '}') {
+            if (p[-1] == '}') {
                 int nest = 1;
                 p--;
 
-                while ((nest > 0) && ((p - s - 1) >= 0)) {
-                    if (s[(p - s - 1)] == '{')
+                while ((nest > 0) && (p > s)) {
+                    if (p[-1] == '{')
                         nest--;
-                    else if (s[(p - s - 1)] == '}')
+                    else if (p[-1] == '}')
                         nest++;
 
                     p--;
@@ -186,7 +186,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             }
         }
 
-        if (((p - s - 1) >= 0) && alfanum(s[(p - s - 1) + 1])) { /* suppose an identifier */
+        if ((p > s) && alfanum(*p)) { /* suppose an identifier */
             entry_t *entry;
             /* check for known subckt name */
             spice_dstring_reinit(&name);
