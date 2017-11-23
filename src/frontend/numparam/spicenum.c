@@ -154,17 +154,15 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
     SPICE_DSTRING name;         /* extract a name */
     char *s;                    /* current dstring */
     int h, j, k, nest, ls;
-    int found;
 
     h = 0;
 
     ls = spice_dstring_length(dstr_p);
     s = spice_dstring_value(dstr_p);
     k = ls - 1;                 /* now a C - string */
-    found = 0;
     spice_dstring_init(&name);
 
-    while ((k >= 0) && (!found)) {
+    while (k >= 0) {
 
         /* skip space, then non-space */
         while ((k >= 0) && (s[k] <= ' '))
@@ -192,8 +190,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             }
         }
 
-        found = (k >= 0) && alfanum(s[k + 1]); /* suppose an identifier */
-        if (found) {
+        if ((k >= 0) && alfanum(s[k + 1])) { /* suppose an identifier */
             entry_t *entry;
             /* check for known subckt name */
             spice_dstring_reinit(&name);
@@ -203,17 +200,13 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 j++;
             }
             entry = entrynb(dico, spice_dstring_value(&name));
-            found = entry && (entry->tp == NUPA_SUBCKT);
-            if (found) {
-                if (found && (h < ls))
+            if (entry && (entry->tp == NUPA_SUBCKT)) {
+                if (h < ls)
                     pscopy(dstr_p, s, 0, h);
                 return;
             }
         }
     }
-
-    if (found && (h < ls))
-        pscopy(dstr_p, s, 0, h);
 }
 
 
