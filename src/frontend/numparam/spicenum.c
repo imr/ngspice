@@ -153,9 +153,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 {
     SPICE_DSTRING name;         /* extract a name */
     char *s;                    /* current dstring */
-    int h, j, k, nest, ls;
-
-    h = 0;
+    int k, ls;
 
     ls = spice_dstring_length(dstr_p);
     s = spice_dstring_value(dstr_p);
@@ -168,11 +166,11 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
         while ((k >= 0) && (s[k] <= ' '))
             k--;
 
-        h = k + 1;              /* at h: space */
+        int h = k + 1;          /* at h: space */
         while ((k >= 0) && (s[k] > ' ')) {
 
             if (s[k] == '}') {
-                nest = 1;
+                int nest = 1;
                 k--;
 
                 while ((nest > 0) && (k >= 0)) {
@@ -194,7 +192,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             entry_t *entry;
             /* check for known subckt name */
             spice_dstring_reinit(&name);
-            j = k + 1;
+            int j = k + 1;
             while (alfanum(s[j])) {
                 cadd(&name, toupper_c(s[j]));
                 j++;
