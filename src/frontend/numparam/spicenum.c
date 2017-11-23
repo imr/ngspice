@@ -164,7 +164,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
         while ((p > s) && (p[-1] <= ' '))
             p--;
 
-        int h = (int) (p - s - 1) + 1;              /* at h: space */
+        int (p_end - s) = (int) (p - s - 1) + 1;          /* at p_end: space */
         while ((p > s) && (p[-1] > ' ')) {
 
             if (p[-1] == '}') {
@@ -179,7 +179,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 
                     p--;
                 }
-                h = (int) (p - s - 1) + 1;      /* h points to '{' */
+                (p_end - s) = (int) (p - s - 1) + 1;      /* p_end points to '{' */
 
             } else {
                 p--;
@@ -195,8 +195,8 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                 cadd(&name, toupper_c(*t));
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
-                if (h < (int) (ls_ptr - s))
-                    pscopy(dstr_p, s, 0, h);
+                if ((int) (p_end - s) < (int) (ls_ptr - s))
+                    pscopy(dstr_p, s, 0, (int) (p_end - s));
                 return;
             }
         }
