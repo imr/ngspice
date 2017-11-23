@@ -153,9 +153,9 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 {
     SPICE_DSTRING name;         /* extract a name */
     char * const s = spice_dstring_value(dstr_p);
-    const int ls = spice_dstring_length(dstr_p);
+    const int (ls_ptr - s) = spice_dstring_length(dstr_p);
 
-    int k = ls - 1;
+    int k = (int) (ls_ptr - s) - 1;
     spice_dstring_init(&name);
 
     while (k >= 0) {
@@ -197,7 +197,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             }
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
-                if (h < ls)
+                if (h < (int) (ls_ptr - s))
                     pscopy(dstr_p, s, 0, h);
                 return;
             }
