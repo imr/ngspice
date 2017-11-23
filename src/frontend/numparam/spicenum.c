@@ -151,10 +151,11 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 /* scan a string from the end, skipping non-idents and {expressions} */
 /* then truncate s after the last subckt(?) identifier */
 {
-    SPICE_DSTRING name;         /* extract a name */
     char * const s = spice_dstring_value(dstr_p);
-
     char *p = s + spice_dstring_length(dstr_p);
+
+    SPICE_DSTRING name;         /* extract a name */
+
     spice_dstring_init(&name);
 
     while (p > s) {
@@ -162,8 +163,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
         /* skip space, then non-space */
         char *p_end = p = skip_back_ws(p, s); /* at p_end: space */
 
-        while ((p > s) && (p[-1] > ' ')) {
-
+        while ((p > s) && !isspace_c(p[-1]))
             if (p[-1] == '}') {
                 int nest = 1;
                 while (--p > s) {
@@ -177,11 +177,9 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
                     }
                 }
                 p_end = p;      /* p_end points to '{' */
-
             } else {
                 p--;
             }
-        }
 
         if ((p > s) && alfanum(*p)) { /* suppose an identifier */
             char *t;
