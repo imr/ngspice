@@ -1625,17 +1625,16 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         scopy_up(&tstr, skip_non_ws(x));
 
         char * const t_p = spice_dstring_value(&tstr);
-        char * const ls_ptr = t_p + spice_dstring_length(&tstr);
 
         char *p_subname = search_isolated_identifier(t_p, spice_dstring_value(&subname));
 
         if (p_subname) {
             char *jp = p_subname + spice_dstring_length(&subname); /* 1st position of arglist */
 
-            while ((jp < ls_ptr) && ((*jp <= ' ') || (*jp == ',')))
+            while (isspace_c(*jp) || (*jp == ','))
                 jp++;
 
-            while (jp < ls_ptr) {
+            while (*jp) {
 
                 /* try to fetch valid arguments */
                 char *kp = jp;
@@ -1653,7 +1652,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                         char *gp = kp;
                         int nest = 1;
 
-                        while ((nest > 0) && (gp < ls_ptr)) {
+                        while ((nest > 0) && *gp) {
                             gp++;
                             if (*gp == '(')
                                 nest++;
@@ -1661,7 +1660,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                                 nest--;
                         }
 
-                        if ((gp < ls_ptr) && (nest == 0))
+                        if (*gp && (nest == 0))
                             *gp = '}';
                     }
                 }
