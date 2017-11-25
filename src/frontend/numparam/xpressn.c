@@ -1543,7 +1543,6 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
     SPICE_DSTRING ustr;
     SPICE_DSTRING vstr;
     SPICE_DSTRING idlist;
-    SPICE_DSTRING parsebuf;
     bool err = 0;
 
     spice_dstring_init(&subname);
@@ -1628,16 +1627,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         char * const t_p = spice_dstring_value(&tstr);
         char * const ls_ptr = t_p + spice_dstring_length(&tstr);
 
-        spice_dstring_init(&parsebuf);
-        scopyd(&parsebuf, &tstr);
-        char * const buf = spice_dstring_value(&parsebuf);
-
-        const char *p_subname = search_isolated_identifier(buf, spice_dstring_value(&subname));
-
-        spice_dstring_free(&parsebuf);
+        char *p_subname = search_isolated_identifier(t_p, spice_dstring_value(&subname));
 
         if (p_subname) {
-            char *jp = t_p + (int)(p_subname - buf) + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
+            char *jp = p_subname + spice_dstring_length(&subname) + 1; /* 1st position of arglist */
 
             while ((jp < ls_ptr) && ((*jp <= ' ') || (*jp == ',')))
                 jp++;
