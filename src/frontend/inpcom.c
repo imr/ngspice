@@ -7007,11 +7007,7 @@ inp_rem_levels(struct nscope *root)
 {
     struct card_assoc *p = root->subckts;
     while (p) {
-        /* fixme, why can it happen to be identical !?
-         *   this shouldn't ever happen !
-         */
-        if (p->line->level != root)
-            inp_rem_levels(p->line->level);
+        inp_rem_levels(p->line->level);
         tfree(p->name);
         struct card_assoc *pn = p->next;
         tfree(p);
