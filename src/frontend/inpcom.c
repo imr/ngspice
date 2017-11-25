@@ -156,7 +156,6 @@ static void inp_rem_levels(struct nscope *root);
 static bool inp_strip_braces(char *s);
 
 
-
 struct inp_read_t
 { struct card *cc;
     int line_number;
@@ -7004,11 +7003,13 @@ inp_rem_unused_models(struct nscope *root, struct card *deck)
     rem_unused_xxx(root);
 }
 
+
 /* remove the level and subckts entries */
-static void inp_rem_levels(struct nscope *root)
+static void
+inp_rem_levels(struct nscope *root)
 {
     struct card_assoc *p = root->subckts;
-    while(p) {
+    while (p) {
         tfree(p->name);
         if (p->line->level != p->line->nextcard->level)
              tfree(p->line->nextcard->level);
