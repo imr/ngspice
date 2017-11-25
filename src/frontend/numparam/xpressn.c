@@ -1507,7 +1507,7 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 
 
 bool
-nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
+nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 /* s= a subckt define line, with formal params.
    x= a matching subckt call line, with actual params
 */
@@ -1605,8 +1605,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
           skip over instance name -- fixes bug where instance 'x1' is
           same name as subckt 'x1'
         */
-        x = skip_non_ws(x);
-        scopy_up(&tstr, x);
+        scopy_up(&tstr, skip_non_ws(x));
         j = 0;
 
         ls = spice_dstring_length(&tstr);
