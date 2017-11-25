@@ -1535,14 +1535,9 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
     const char *j2 = strstr(spice_dstring_value(&tstr), "SUBCKT");
     if (j2) {
-        j2 = j2 + 6;              /* fetch its name - skip subckt */
-        while (*j2 && (*j2 <= ' '))
-            j2++;
-
-        while (*j2 && (*j2 != ' ')) {
-            cadd(&subname, *j2);
-            j2++;
-        }
+        j2 = skip_ws(j2 + 6);     /* skip subckt and whitespace */
+        while (*j2 && (*j2 != ' '))
+            cadd(&subname, *j2++);
     } else {
         err = message(dico, " ! a subckt line!\n");
     }
