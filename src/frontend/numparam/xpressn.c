@@ -1607,7 +1607,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         char *p_subname = search_isolated_identifier(t_p, spice_dstring_value(&subname));
 
         if (p_subname) {
-            char *jp = p_subname + spice_dstring_length(&subname) + 1; /* 1st position of arglist */
+            char *jp = p_subname + spice_dstring_length(&subname); /* 1st position of arglist */
 
             while ((jp < ls_ptr) && ((*jp <= ' ') || (*jp == ',')))
                 jp++;
