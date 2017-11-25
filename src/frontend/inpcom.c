@@ -1771,7 +1771,7 @@ is_a_modelname(const char *s)
     if (strchr("{*^@\\\'", s[0]))
         return FALSE;
     /* not beeing a valid number */
-    if (strtod(s, &st))
+    if (strtod(s, &st))         /* fixme thats incorrect, returns a double not whether the conversion was succesfful, would need to look at st instead  */
         /* test if we have a true number */
         if (*st == '\0' || isspace(*st))
             return FALSE;
