@@ -1582,8 +1582,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
           skip over instance name -- fixes bug where instance 'x1' is
           same name as subckt 'x1'
         */
-        while (*x && *x != ' ')
-            x++;
+        x = skip_non_ws(x);
         scopy_up(&tstr, x);
         j = 0;
 
