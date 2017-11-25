@@ -1531,13 +1531,6 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
     spice_dstring_init(&vstr);
     spice_dstring_init(&idlist);
 
-    /*
-      skip over instance name -- fixes bug where instance 'x1' is
-      same name as subckt 'x1'
-    */
-    while (*x && *x != ' ')
-        x++;
-
     /***** first, analyze the subckt definition line */
     n = 0;                      /* number of parameters if any */
     ls = (int) strlen(s);
@@ -1608,6 +1601,12 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
     /***** next, analyze the circuit call line */
     if (!err) {
 
+        /*
+          skip over instance name -- fixes bug where instance 'x1' is
+          same name as subckt 'x1'
+        */
+        while (*x && *x != ' ')
+            x++;
         scopy_up(&tstr, x);
         j = 0;
 
