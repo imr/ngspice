@@ -7010,10 +7010,11 @@ static void inp_rem_levels(struct nscope *root)
     struct card_assoc *p = root->subckts;
     while(p) {
         tfree(p->name);
-        if (root != p->line->nextcard->level)
+        if (p->line->level != p->line->nextcard->level)
              tfree(p->line->nextcard->level);
         struct card_assoc *pn = p->next;
         tfree(p);
         p = pn;
     }
+    tfree(root);
 }
