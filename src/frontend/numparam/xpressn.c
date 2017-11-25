@@ -1602,10 +1602,10 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
         /*  make sure that subname followed by space */
         if (found) {
-            int (jp - t_p) = j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
+            char *jp = t_p + j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
 
             while (((jp - t_p) < ls) && ((t_p[(jp - t_p)] <= ' ') || (t_p[(jp - t_p)] == ',')))
-                (jp - t_p)++;
+                jp++;
 
             while ((jp - t_p) < ls) {
 
@@ -1644,11 +1644,11 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     while (t_p[k] > ' ')
                         k++;
                     pscopy(&ustr, t_p, h, k - h);
-                    (jp - t_p) = k;
+                    jp = t_p + k;
                 } else if (t_p[k] == '{') {
-                    (jp - t_p) = (int) (getexpress(NULL, &ustr, t_p + (jp - t_p)) - t_p);
+                    jp = t_p + (int) (getexpress(NULL, &ustr, t_p + (jp - t_p)) - t_p);
                 } else {
-                    (jp - t_p)++;
+                    jp++;
                     if (t_p[k] > ' ')
                         message(dico, "Subckt call, symbol %c not understood\n", t_p[k]);
                 }
