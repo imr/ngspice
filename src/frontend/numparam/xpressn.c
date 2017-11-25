@@ -1608,8 +1608,6 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
     /***** next, analyze the circuit call line */
     if (!err) {
 
-        narg = 0;
-
         scopy_up(&tstr, x);
         j = 0;
 
@@ -1694,7 +1692,6 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
                 u_p = spice_dstring_value(&ustr);
                 if (u_p[0]) {
                     char *dollar = strchr(spice_dstring_value(&idlist), '$');
-                    narg++;
                     if (dollar) {
                         k = (int) (dollar - spice_dstring_value(&idlist));
                         /* replace dollar with expression string u */
@@ -1704,6 +1701,7 @@ nupa_subcktcall(dico_t *dico, char *s, char *x, char *inst_name)
                         scopyd(&idlist, &vstr);
                         sadd(&idlist, spice_dstring_value(&ustr));
                     }
+                    narg++;
                 }
             }
         } else {
