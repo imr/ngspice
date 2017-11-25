@@ -151,6 +151,7 @@ static char inp_get_elem_ident(char *type);
 static void inp_rem_unused_models(struct nscope *root, struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
 static struct modellist *find_model(struct nscope *scope, const char *name);
+static void inp_rem_levels(struct nscope *root);
 
 static bool inp_strip_braces(char *s);
 
@@ -523,6 +524,7 @@ find_back_assignment(const char *p, const char *start)
   start preparation of input deck for numparam
   ...
   debug printout to debug-out.txt
+  remove the 'level' entries from each card
   *-------------------------------------------------------------------------*/
 
 struct card *
@@ -671,6 +673,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
                 (int)max_line_length, no_braces, dynmaxline);
         }
+        inp_rem_levels(root);
     }
     /* remove white spaces in command files */
     else if (comfile && cc) {
@@ -6996,4 +6999,20 @@ inp_rem_unused_models(struct nscope *root, struct card *deck)
 
     // disable unused .model lines, and free the models assoc lists
     rem_unused_xxx(root);
+}
+
+
+/* remove the level and subckts entries */
+static void
+inp_rem_levels(struct nscope *root)
+{
+    struct card_assoc *p = root->subckts;
+    while (p) {
+        inp_rem_levels(p->line->level);
+        tfree(p->name);
+        struct card_assoc *pn = p->next;
+        tfree(p);
+        p = pn;
+    }
+    tfree(root);
 }
