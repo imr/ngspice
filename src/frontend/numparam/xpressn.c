@@ -1602,8 +1602,17 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         scopy_up(&tstr, skip_non_ws(x));
 
         char * const t_p = spice_dstring_value(&tstr);
+        char *jp = NULL;
 
-        char *jp = search_isolated_identifier(t_p, spice_dstring_value(&subname));
+        /* search for the last occurence of `subname' in the given line */
+        for (;;) {
+            char *next_p =
+                search_isolated_identifier(jp ? jp + 1 : t_p,
+                                           spice_dstring_value(&subname));
+            if (!next_p)
+                break;
+            jp = next_p;
+        }
 
         if (jp) {
 
