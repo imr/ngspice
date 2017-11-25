@@ -1506,6 +1506,31 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
 }
 
 
+/*
+ * search for whitespace delimited occurence of `identifier' in str
+ *   delimited by whitespace or begin/end of string
+ */
+
+static char *
+search_isolated_identifier(char *str, const char *identifier)
+{
+    char *str_begin = str;
+
+    while ((str = strstr(str, identifier)) != NULL) {
+
+        if (str <= str_begin || isspace_c(str[-1])) {
+            char after = str[strlen(identifier)];
+            if (!after || isspace_c(after))
+                return str;
+        }
+
+        str += strlen(identifier);
+    }
+
+    return NULL;
+}
+
+
 bool
 nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 /* s= a subckt define line, with formal params.
@@ -1599,7 +1624,6 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
           same name as subckt 'x1'
         */
         scopy_up(&tstr, skip_non_ws(x));
-        int j0 = 0;
 
         char * const t_p = spice_dstring_value(&tstr);
         char * const ls_ptr = t_p + spice_dstring_length(&tstr);
@@ -1608,24 +1632,12 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         scopyd(&parsebuf, &tstr);
         char * const buf = spice_dstring_value(&parsebuf);
 
-        int found = 0, found_j = 0;
-        char *token = strtok(buf, " "); /* a bit more exact - but not sufficient everytime */
-        j0 = j0 + (int) strlen(token) + 1;
-        if (strcmp(token, spice_dstring_value(&subname)))
-            while ((token = strtok(NULL, " ")) != NULL) {
-                if (!strcmp(token, spice_dstring_value(&subname))) {
-                    found = 1;
-                    found_j = j0;
-                }
-                j0 = j0 + (int) strlen(token) + 1;
-            }
+        const char *p_subname = search_isolated_identifier(buf, spice_dstring_value(&subname));
 
-        j0 = found_j; /* last occurence of subname in buf */
         spice_dstring_free(&parsebuf);
 
-        /*  make sure that subname followed by space */
-        if (found) {
-            char *jp = t_p + j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
+        if (p_subname) {
+            char *jp = t_p + (int)(p_subname - buf) + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
 
             while ((jp < ls_ptr) && ((*jp <= ' ') || (*jp == ',')))
                 jp++;
