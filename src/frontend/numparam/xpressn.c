@@ -1603,13 +1603,16 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
         char * const t_p = spice_dstring_value(&tstr);
 
-        char *p_subname = search_isolated_identifier(t_p, spice_dstring_value(&subname));
+        char *jp = search_isolated_identifier(t_p, spice_dstring_value(&subname));
 
-        if (p_subname) {
-            char *jp = p_subname + spice_dstring_length(&subname); /* 1st position of arglist */
+        if (jp) {
+
+            jp += spice_dstring_length(&subname);
 
             while (isspace_c(*jp) || (*jp == ','))
                 jp++;
+
+            /* jp is pointing to the 1st position of arglist now */
 
             while (*jp) {
 
