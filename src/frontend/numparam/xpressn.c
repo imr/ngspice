@@ -1625,15 +1625,15 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
         /*  make sure that subname followed by space */
         if (found) {
-            int j = j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: j */
+            int (jp - t_p) = j0 + spice_dstring_length(&subname) + 1; /* 1st position of arglist: jp */
 
-            while ((j < ls) && ((t_p[j] <= ' ') || (t_p[j] == ',')))
-                j++;
+            while (((jp - t_p) < ls) && ((t_p[(jp - t_p)] <= ' ') || (t_p[(jp - t_p)] == ',')))
+                (jp - t_p)++;
 
-            while (j < ls) {
+            while ((jp - t_p) < ls) {
 
                 /* try to fetch valid arguments */
-                int k = j;
+                int k = (int) (jp - t_p);
                 spice_dstring_reinit(&ustr);
 
                 if (t_p[k] == Intro) {
@@ -1667,11 +1667,11 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     while (t_p[k] > ' ')
                         k++;
                     pscopy(&ustr, t_p, h, k - h);
-                    j = k;
+                    (jp - t_p) = k;
                 } else if (t_p[k] == '{') {
-                    j = (int) (getexpress(NULL, &ustr, t_p + j) - t_p);
+                    (jp - t_p) = (int) (getexpress(NULL, &ustr, t_p + (jp - t_p)) - t_p);
                 } else {
-                    j++;
+                    (jp - t_p)++;
                     if (t_p[k] > ' ')
                         message(dico, "Subckt call, symbol %c not understood\n", t_p[k]);
                 }
