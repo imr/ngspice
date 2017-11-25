@@ -1663,9 +1663,8 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
 
                 if (alfanum(*kp) || *kp == '.') {
                     /* number, identifier */
-                    char *hp = skip_non_ws(kp);
-                    pscopy(&ustr, kp, 0, (int) (hp - kp));
-                    jp = hp;
+                    jp = skip_non_ws(kp);
+                    pscopy(&ustr, kp, 0, (int) (jp - kp));
                 } else if (*kp == '{') {
                     jp = getexpress(NULL, &ustr, jp);
                 } else {
