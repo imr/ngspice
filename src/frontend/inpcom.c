@@ -7001,6 +7001,7 @@ inp_rem_unused_models(struct nscope *root, struct card *deck)
     rem_unused_xxx(root);
 }
 
+
 /* remove the level and subckts entries */
 static void
 inp_rem_levels(struct nscope *root)
