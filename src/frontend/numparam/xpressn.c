@@ -1081,44 +1081,6 @@ double_to_string(SPICE_DSTRINGPTR qstr_p, double value)
 }
 
 
-/* expand parameter in string `t' to result `q' */
-static bool
-evaluate_variable(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char * const t, const char * const t_end)
-{
-    entry_t *entry;
-
-    spice_dstring_reinit(qstr_p);
-
-    char *tx = copy_substring(t, t_end);
-    strtoupper(tx);
-    entry = entrynb(dico, tx);
-    tfree(tx);
-
-    if (!entry)
-        return message(dico,
-                       "\"%.*s\" not evaluated. Lookup failure.\n", (int) (t_end - t), t);
-
-    if (entry->tp == NUPA_REAL) {
-        double_to_string(qstr_p, entry->vl);
-    }
-    else if (entry->tp == NUPA_STRING) {
-        /* suppose source text "..." at */
-        int j = entry->ivl + 1;
-
-        for (;;) {
-            char c = entry->sbbase[j++];
-
-            if ((c == '\"') || (c < ' '))
-                return 0;
-
-            cadd(qstr_p, c);
-        }
-    }
-
-    return 0;
-}
-
-
 /* transform exression in string `t' to result q */
 static bool
 evaluate_expr(dico_t *dico, SPICE_DSTRINGPTR qstr_p, const char *t, const char * const t_end)
@@ -1231,69 +1193,6 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             s = kptr + 1;
             r = insertnumber(dico, r, &qstr);
 
-        } else if (c == Intro) {
-            /* skip "&&" which may occur in B source */
-
-            if ((s < s_end - 1) && (*s == Intro)) {
-                s++;
-                continue;
-            }
-
-            while ((s < s_end - 1) && (*s <= ' '))
-                s++;
-
-            if (*s == '(') {
-                /* sub-formula */
-                const char *kptr = s + 1;
-                int level = 1;
-
-                for (; *kptr; kptr++) {
-
-                    char d = *kptr;
-
-                    if (d == '(')
-                        level++;
-                    else if (d == ')')
-                        level--;
-
-                    if ((d == ')') && (level <= 0))
-                        break;
-                }
-
-                if (*kptr == '\0') {
-                    err = message(dico, "Closing \")\" not found.\n");
-                    goto Lend;
-                }
-
-                err = evaluate_expr(dico, &qstr, s + 1, kptr);
-                if (err) {
-                    message(dico, "Cannot compute &(expression)\n");
-                    goto Lend;
-                }
-
-                s = kptr + 1;
-
-            } else {
-                /* simple identifier may also be string? */
-
-                /* fixme, kptr might point behind the terminating '\0' here
-                 * causing serious troubles in evaluate_variable()
-                 *  and/or when updating s
-                 */
-                const char *kptr = s + 1;
-                for (; kptr < s_end; kptr++)
-                    if (*kptr <= ' ')
-                        break;
-
-                err = evaluate_variable(dico, &qstr, s, kptr);
-                if (err) {
-                    message(dico, "Cannot compute &identifier\n");
-                    goto Lend;
-                }
-                s = kptr;
-            }
-
-            r = insertnumber(dico, r, &qstr);
         }
     }
 
@@ -1423,9 +1322,6 @@ nupa_assignment(dico_t *dico, const char * const s, char mode)
     spice_dstring_init(&ustr);
 
     while ((p < s_end) && (*p <= ' '))
-        p++;
-
-    if (*p == Intro)
         p++;
 
     if (*p == '.')            /* skip any dot keyword */
@@ -1623,31 +1519,6 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                 /* try to fetch valid arguments */
                 char *kp = jp;
                 spice_dstring_reinit(&ustr);
-
-                if (*kp == Intro) {
-
-                    /* handle historical syntax... */
-                    if (alfa(kp[1])) {
-                        kp++;
-                    } else if (kp[1] == '(') {
-                        /* transform to braces... */
-                        kp++;
-                        *kp = '{';
-                        char *gp = kp;
-                        int nest = 1;
-
-                        while ((nest > 0) && *gp) {
-                            gp++;
-                            if (*gp == '(')
-                                nest++;
-                            else if (*gp == ')')
-                                nest--;
-                        }
-
-                        if (*gp && (nest == 0))
-                            *gp = '}';
-                    }
-                }
 
                 if (alfanum(*kp) || *kp == '.') {
                     /* number, identifier */
