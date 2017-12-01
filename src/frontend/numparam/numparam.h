@@ -10,9 +10,6 @@
 
 /***** numparam internals ********/
 
-typedef enum {Intro   = '&'} _nIntro;    /* Introduces preprocessor tokens */
-
-
 /* -----------------------------------------------------------------
  * I believe the entry_t should be a union of type but I need more info.
  * ----------------------------------------------------------------- */
