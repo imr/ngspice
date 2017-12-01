@@ -198,63 +198,6 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
 }
 
 
-static void
-modernizeex(SPICE_DSTRINGPTR dstr_p)
-/* old style expressions &(..) and &id --> new style with braces. */
-{
-    int i, state, ls;
-    char c, d;
-    char *s;                    /* current string */
-    SPICE_DSTRING t;            /* temporary dyna string */
-
-    i = 0;
-    state = 0;
-    ls = spice_dstring_length(dstr_p);
-    s = spice_dstring_value(dstr_p);
-
-    /* check if string might need modernizing */
-    if (!memchr(s, Intro, (size_t) ls))
-        return;
-
-    spice_dstring_init(&t);
-
-    while (i < ls) {
-        c = s[i];
-        d = s[i + 1];
-        if ((!state) && (c == Intro) && (i > 0)) {
-            if (d == '(') {
-                state = 1;
-                i++;
-                c = '{';
-            } else if (alfa(d)) {
-                cadd(&t, '{');
-                i++;
-                while (alfanum(s[i])) {
-                    cadd(&t, s[i]);
-                    i++;
-                }
-                c = '}';
-                i--;
-            }
-        } else if (state) {
-            if (c == '(')
-                state++;
-            else if (c == ')')
-                state--;
-
-            if (!state)         /* replace--) by terminator */
-                c = '}';
-        }
-
-        cadd(&t, c);
-        i++;
-    }
-
-    scopyd(dstr_p, &t);
-    spice_dstring_free(&t);
-}
-
-
 static char
 transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 /*         line s is categorized and crippled down to basic Spice
@@ -284,7 +227,6 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
     char *s;                    /* dstring value of dstr_p */
     char category;
     stripsomespace(dstr_p, incontrol);
-    modernizeex(dstr_p);        /* required for stripbraces count */
 
     s = spice_dstring_value(dstr_p);
 
@@ -317,10 +259,6 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
             if (stripbraces(dstr_p) > 0)
                 category = 'B'; /* priority category ! */
         }
-    } else if (s[0] == Intro) {
-        /* private style preprocessor line */
-        s[0] = '*';
-        category = 'P';
     } else if (toupper_c(s[0]) == 'X') {
         /* strip actual parameters */
         findsubname(dico, dstr_p);
