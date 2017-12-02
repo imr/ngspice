@@ -1,111 +1,105 @@
 12345678901234567890123456789012345678901234567890123456789012345678901234567890
-Ngspice 27
+Ngspice 27+
 Copyright (c) 2017,
 All rights reserved.
+license for this documant: CC-BY-SA v4.0
+
+**************************** ngspice license **********************************
+
+The ngspice source code has evolved over time by integrating contributions
+from various sources (e.g. Spice3f5, XSPICE, CIDER, numparam, tclspice and
+others). Thus a mixture of license statements prevails.
+
+The ngspice license is the `Modified BSD' license. This is adopted for all of
+its source code, test and example files except for the files listed below.
+
+CIDER is covered New BSD according to UCB officials, but this re-licensing is
+still under discussion
+(see https://lists.debian.org/debian-legal/2016/10/msg00022.html),
+and therefore CIDER may not be made available in all software distributions.
 
 
-Foreword:
-The name 'Spice' (Simulation Program with Integrated Circuit Emphasis)
-was originally chosen at the University of California, Berkeley. The
-original Berkeley code is covered under the modified BSD license and
-thus sets the basis for all other code added.
-As Spice is the basis of almost all circuit simulators, the major part of the
-analogue and mixed signals simulation's code is designed to fit with it.
-The *spices (generic name for its forks) are heterogeneous in many points due
-to the work of researchers, electronic designers, software editors, etc.
-The Ngspice team tries to collect work from the different sources and
-contribute new functionalities. Thus, the material we manipulate is
-heterogeneous in licenses. Keeping the licenses as is, but also keep it
-compatible with the new BSD license, is the way to live with that diversity.
+************** files with licenses different to 'Modified BSD' ****************
 
-Copyleft is a fundamental question in FOSS development. The choice of a
-copylefted contribution, or a non copylefted contribution is an important
-choice that should be respected. Ngspice branch as a whole will not be covered
-by a specific license. The Ngspice team wants to encourage contributions to
-ngspice. We let each new developer choose its position regarding copyleft,
-as we respect the position of the former developers. In order to keep things
-clear ngspice team proposes to follow the following guidelines:
+* ngspice/doc
+SPICEDOC, not compatible to DFSG
+considered outdated
 
-  Each piece of code should be kept under its original contributor's license.
-  As for any project, modifications made in sources covered by a less
-  restrictive license can be covered by a more restrictive license than new BSD.
-  We do not encourage it.
+* ngspice/contrib
+GPL, Public Domain
 
-  If you feel to add code in a file under a different license than the rest of
-  the file, please use comments to mark the boundaries of the modification, and
-  edit the comments at the beginning of the file with correct license and
-  copyright information.
+* ngspice/m4
+unnamed, compatible to DFSG
 
-  We encourage restrictive licenses to be chosen only for new functionalities,
-  written in distinct files, leading to distinct libraries that link depending
-  on a specific configure flag.
+* ngspice/src/tclspice.c
+LGPLv2
 
-  We encourage non proliferation of licenses (e.g. choosing either LGPL or
-  new BSD). GPL is not suitable for code to be directly linked into ngspice,
-  but may be used in shared object libraries only.
+* all files in ngspice\src\maths\sparse
+unnamed MIT license, compatible to New BSD
 
-This heterogeneous license status requires some effort to keep track on licenses
-applied. Please take care of knowing which license applies to the code you are
-editing, or conveying and not to commit license infringements, especially to
-GPL and LGPL which are quite restrictive.
+* ngspice/src/spicelib/devices/adms/ekv
+* ngspice/src/spicelib/devices/adms/hicum0
+* ngspice/src/spicelib/devices/adms/hicum2
+* ngspice/src/spicelib/devices/adms/psp102
+copyright info, but no license information given, vendor specific licenses
 
-On 2007, July 17th spice 3f5 changed from its original license to the new BSD
-license. (http://embedded.eecs.berkeley.edu/pubs/downloads/spice/index.htm)
+ngspice/src/spicelib/devices/adms/mextram
+Educational Community License version 1.0
 
-On 2008, December 1st, tclspice changes license from GPL to LGPLv2, in
-accordance with Multigig Ltd, the copyright holder.
+ngspice\src\spicelib\devices\adms\admst
+LGPLv2.1
 
-The original CIDER license (see below) does not contain the controversial
-advertisement clause and thus is compatible to the new BSD license. In addition
-this clause has been removed from all BSD licensed software originating from UCB
-(see statement below).
+ngspice\src\spicelib\devices\ndev
+public domain
 
-The following table is a summary of license status:
-          Author            License  Notes
+ngspice\src\xspice
+public domain
+except for
+ngspice\src\xspice\icm\table\
+GPLv2 or newer
 
-numparam  Georg Post        LGPL     Applies to the code in
-                                     frontend/numparam
-adms      Laurent Lemaitre  LGPL     Applies to scripts in the
-                                     spicelib/dev/adms
-tclspice  Stefan Jones      LGPL     TCL integration
-cider     U. of California  New BSD  Device level simulator
-xspice    Georgia Tech.     Public D Mixed signals
-spice     U. of California  New BSD  Analog circuit simulation
-table.cm  Holger Vogt       GPL      Code model shared library
-                                     containing GPLed code.
+ngspice\src\frontend\numparam
+LGPLv2 or newer
+
+ngspice\src\ciderlib
+UCB agreed to put this under New BSD, but still under discussion
+
+ngspice manual
+(see https://sourceforge.net/p/ngspice/ngspice-manuals/ci/master/tree/)
+Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0
 
 
---------------------------------- New BSD -----------------------------------
+-------------------------------------- ngspice ---------------------------------
+---------------------------------- 'Modified BSD' ------------------------------
 
-All `old' BSD licenses (of SPICE or CIDER) have been changed to the `modified'
-BSD license according to the following publication
-see [ftp://ftp.cs.berkeley.edu/pub/4bsd/README.Impt.License.Change]):
+Copyright 1985 - 2017, Regents of the University of California and others
 
-July 22, 1999
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
 
-To All Licensees, Distributors of Any Version of BSD:
+1. Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
 
-As you know, certain of the Berkeley Software Distribution (`BSD') source code
-files require that further distributions of products containing all or
-portions of the software, acknowledge within their advertising materials
-that such products contain software developed by UC Berkeley and its contributors.
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
 
-Specifically, the provision reads:
+3. Neither the name of the copyright holder nor the names of its
+contributors may be used to endorse or promote products derived from this
+software without specific prior written permission.
 
-`3. All advertising materials mentioning features or use of this software must
-display the following acknowledgment: This product includes software developed
-by the University of California, Berkeley and its contributors.'
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
-Effective immediately, licensees and distributors are no longer required to
-include the acknowledgment within advertising materials. Accordingly, the
-foregoing paragraph of those BSD Unix files containing it is hereby deleted
-in its entirety.
-
-William Hoskins
-
-Director, Office of Technology Licensing
-
-University of California, Berkeley
 
 ---------------------------------- Cider -----------------------------------
 
@@ -154,28 +148,25 @@ University of California, Berkeley
          documentation.
 
 
----------------------------------- Spice3f5 --------------------------------
+---------------------------------- Xspice --------------------------------
 
-Copyright (c) 1985-1991 The Regents of the University of California.
-All rights reserved.
+THE SOFTWARE PROGRAMS BELOW ARE IN THE PUBLIC DOMAIN AND ARE PROVIDED FREE OF
+ANY CHARGE. THE GEORGIA TECH RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF
+TECHNOLOGY, AND/OR OTHER PARTIES PROVIDE THIS SOFTWARE "AS IS" WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH THE USER.
+SHOULD THE PROGRAM PROVE DEFECTIVE, THE USER ASSUMES THE ENTIRE COST OF ALL
+NECESSARY SERVICING, REPAIR OR CORRECTION. IN NO EVENT WILL THE GEORGIA TECH
+RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF TECHNOLOGY, AND/OR OTHER PARTIES
+PROVIDING THE PROGRAMS BELOW BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR
+INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA
+BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS).
 
-Permission is hereby granted, without written agreement and without license
-or royalty fees, to use, copy, modify, and distribute this software and its
-documentation for any purpose, provided that the above copyright notice and
-the following two paragraphs appear in all copies of this software.
 
-IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
-DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
-OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
-CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN
-"AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-
--------------------------------- Tclspice --------------------------------
+---------------------------------- others --------------------------------
 
                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
@@ -234,7 +225,7 @@ modified by someone else and passed on, the recipients should know
 that what they have is not the original version, so that the original
 author's reputation will not be affected by problems that might be
 introduced by others.
-
+
   Finally, software patents pose a constant threat to the existence of
 any free program.  We wish to make sure that a company cannot
 effectively restrict the users of a free program by obtaining a
@@ -290,7 +281,7 @@ modification follow.  Pay close attention to the difference between a
 "work based on the library" and a "work that uses the library".  The
 former contains code derived from the library, whereas the latter must
 be combined with the library in order to run.
-
+
                   GNU LESSER GENERAL PUBLIC LICENSE
    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
@@ -337,7 +328,7 @@ Library.
   You may charge a fee for the physical act of transferring a copy,
 and you may at your option offer warranty protection in exchange for a
 fee.
-
+
   2. You may modify your copy or copies of the Library or any portion
 of it, thus forming a work based on the Library, and copy and
 distribute such modifications or work under the terms of Section 1
@@ -395,7 +386,7 @@ instead of to this License.  (If a newer version than version 2 of the
 ordinary GNU General Public License has appeared, then you can specify
 that version instead if you wish.)  Do not make any other change in
 these notices.
-
+
   Once this change is made in a given copy, it is irreversible for
 that copy, so the ordinary GNU General Public License applies to all
 subsequent copies and derivative works made from that copy.
@@ -446,7 +437,7 @@ Library will still fall under Section 6.)
 distribute the object code for the work under the terms of Section 6.
 Any executables containing that work also fall under Section 6,
 whether or not they are linked directly with the Library itself.
-
+
   6. As an exception to the Sections above, you may also combine or
 link a "work that uses the Library" with the Library to produce a
 work containing portions of the Library, and distribute that work
@@ -508,7 +499,7 @@ restrictions of other proprietary libraries that do not normally
 accompany the operating system.  Such a contradiction means you cannot
 use both them and the Library together in an executable that you
 distribute.
-
+
   7. You may place library facilities that are a work based on the
 Library side-by-side in a single library together with other library
 facilities not covered by this License, and distribute such a combined
@@ -549,7 +540,7 @@ subject to these terms and conditions.  You may not impose any further
 restrictions on the recipients' exercise of the rights granted herein.
 You are not responsible for enforcing compliance by third parties with
 this License.
-
+
   11. If, as a consequence of a court judgment or allegation of patent
 infringement or for any other reason (not limited to patent issues),
 conditions are imposed on you (whether by court order, agreement or
@@ -601,7 +592,7 @@ conditions either of that version or of any later version published by
 the Free Software Foundation.  If the Library does not specify a
 license version number, you may choose any version ever published by
 the Free Software Foundation.
-
+
   14. If you wish to incorporate parts of the Library into other free
 programs whose distribution conditions are incompatible with these,
 write to the author to ask for permission.  For software which is
@@ -634,18 +625,14 @@ FAILURE OF THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGES.
 
----------------------------------- Xspice --------------------------------
-THE SOFTWARE PROGRAMS BELOW ARE IN THE PUBLIC DOMAIN AND ARE PROVIDED FREE OF
-ANY CHARGE. THE GEORGIA TECH RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF
-TECHNOLOGY, AND/OR OTHER PARTIES PROVIDE THIS SOFTWARE "AS IS" WITHOUT WARRANTY
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
-ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH THE USER.
-SHOULD THE PROGRAM PROVE DEFECTIVE, THE USER ASSUMES THE ENTIRE COST OF ALL
-NECESSARY SERVICING, REPAIR OR CORRECTION. IN NO EVENT WILL THE GEORGIA TECH
-RESEARCH CORPORATION, THE GEORGIA INSTITUTE OF TECHNOLOGY, AND/OR OTHER PARTIES
-PROVIDING THE PROGRAMS BELOW BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR
-INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA
-BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
-FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS).
+
+----------------------------------- m4 -------------------------------------
+
+LICENSE
+
+ Copyright (c) 2008 Paolo Bonzini <bonzini@gnu.org>
+
+ Copying and distribution of this file, with or without modification, are
+ permitted in any medium without royalty provided the copyright notice
+ and this notice are preserved. This file is offered as-is, without any
+ warranty.
