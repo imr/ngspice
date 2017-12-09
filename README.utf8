@@ -14,6 +14,6 @@ ISO-8859-1/ISO-8859-15, that allows extended ascii.
 
 Better looking fonts are now used for labelling the axes.
 
-Variables xbrushwidth and gridlinewidth (to be set e.g. in
+Variables xbrushwidth and gridwidth (to be set e.g. in
 .spiceinit) allow setting separately the linewidths of the
-graph (xbrushwidth) and the grid (gridlinewidth).
+graph (xbrushwidth) and the grid (gridwidth).
