@@ -56,7 +56,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     double xval, yval, prev_xval, extrange;
-    int i, dir, numVecs, linewidth, err, terminal_type;
+    int i, dir, numVecs, linewidth, gridlinewidth, err, terminal_type;
     bool xlog, ylog, nogrid, markers;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
@@ -108,9 +108,16 @@ void ft_gnuplot(double *xlims, double *ylims,
         }
     }
 
+    /* get linewidth for plotting the graph from .spiceinit */
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
         linewidth = 1;
     if (linewidth < 1) linewidth = 1;
+    /* get linewidth for grid from .spiceinit */
+    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = linewidth;
+    if (gridlinewidth < 1)
+        gridlinewidth = 1;
+
 
     if (!cp_getvar("pointstyle", CP_STRING, pointstyle, sizeof(pointstyle))) {
         markers = FALSE;
@@ -188,8 +195,8 @@ void ft_gnuplot(double *xlims, double *ylims,
         tfree(text);
     }
     if (!nogrid) {
-        if (linewidth > 1)
-            fprintf(file, "set grid lw %d \n" , linewidth);
+        if (gridlinewidth > 1)
+            fprintf(file, "set grid lw %d \n" , gridlinewidth);
         else
             fprintf(file, "set grid\n");
     }
@@ -223,8 +230,8 @@ void ft_gnuplot(double *xlims, double *ylims,
     fprintf(file, "#set ytics 1\n");
     fprintf(file, "#set y2tics 1\n");
 
-    if (linewidth > 1)
-        fprintf(file, "set border lw %d\n", linewidth);
+    if (gridlinewidth > 1)
+        fprintf(file, "set border lw %d\n", gridlinewidth);
 
     if (plottype == PLOT_COMB) {
         strcpy(plotstyle, "boxes");
