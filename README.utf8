@@ -13,3 +13,7 @@ Postscript plotting uses only a UNICODE subset, namely
 ISO-8859-1/ISO-8859-15, that allows extended ascii.
 
 Better looking fonts are now used for labelling the axes.
+
+Variables xbrushwidth and gridlinewidth (to be set e.g. in
+.spiceinit) allow setting separately the linewidths of the
+graph (xbrushwidth) and the grid (gridlinewidth).
