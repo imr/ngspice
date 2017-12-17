@@ -24,6 +24,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     BJTinstance *here;
     double xfc;
     double vt;
+    double vtnom;
     double ratlog;
     double ratio1;
     double factlog;
@@ -40,6 +41,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = model->BJTnextModel ) {
 
         if(!model->BJTtnomGiven) model->BJTtnom = ckt->CKTnomTemp;
+        vtnom = CONSTKoverQ * model->BJTtnom;
         fact1 = model->BJTtnom/REFTEMP;
 
         if(!model->BJTleakBEcurrentGiven) {
@@ -101,6 +103,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
         for (here = model->BJTinstances; here != NULL ;
                 here=here->BJTnextInstance) {
 
+            double arg1, pbfact1, egfet1;
             if(!here->BJTdtempGiven)
                 here->BJTdtemp = 0.0;
 
@@ -162,6 +165,11 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             arg = -egfet/(2*CONSTboltz*here->BJTtemp)+
                     1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt*(1.5*log(fact2)+CHARGE*arg);
+            egfet1 = 1.16-(7.02e-4*model->BJTtnom*model->BJTtnom)/
+                    (model->BJTtnom+1108);
+            arg1 = -egfet1/(2*CONSTboltz*model->BJTtnom)+
+                    1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
+            pbfact1 = -2*vtnom*(1.5*log(fact1)+CHARGE*arg1);
 
             ratlog = log(here->BJTtemp/model->BJTtnom);
             ratio1 = here->BJTtemp/model->BJTtnom -1;
@@ -200,7 +208,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if (model->BJTtlevc == 0) {
-                pbo = (model->BJTpotentialBE-pbfact)/fact1;
+                pbo = (model->BJTpotentialBE-pbfact1)/fact1;
                 gmaold = (model->BJTpotentialBE-pbo)/pbo;
                 here->BJTtBEcap = model->BJTdepletionCapBE/
                     (1+here->BJTtjunctionExpBE*
@@ -215,7 +223,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->BJTtBEpot = model->BJTpotentialBE - model->BJTtvje*dt;
             }
             if (model->BJTtlevc == 0) {
-                pbo = (model->BJTpotentialBC-pbfact)/fact1;
+                pbo = (model->BJTpotentialBC-pbfact1)/fact1;
                 gmaold = (model->BJTpotentialBC-pbo)/pbo;
                 here->BJTtBCcap = model->BJTdepletionCapBC/
                     (1+here->BJTtjunctionExpBC*
@@ -230,7 +238,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->BJTtBCpot = model->BJTpotentialBC - model->BJTtvjc*dt;
             }
             if (model->BJTtlevc == 0) {
-                pbo = (model->BJTpotentialSubstrate-pbfact)/fact1;
+                pbo = (model->BJTpotentialSubstrate-pbfact1)/fact1;
                 gmaold = (model->BJTpotentialSubstrate-pbo)/pbo;
                 here->BJTtSubcap = model->BJTcapSub/
                         (1+here->BJTtjunctionExpSub*
