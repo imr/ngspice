@@ -1,0 +1,10 @@
+*
+.OPTION  GMIN=1E-14 tnom=27
+.PROBE
+.temp 127
+.AC dec 100 100 1000k
+
+VD1 In 0 Ac=1
+RL in out 100k
+D1 0 out D_PN
+.MODEL D_PN D (IS=1e-14 CJO=10p BV=11 IBV=10M RS=150 M=0.426 VJ=0.654)

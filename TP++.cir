@@ -1,0 +1,59 @@
+* NGspice simuliert CJ bezüglich T falsch. CJ nimmt mit steigenden T ab.
+* (exec-spice "ngspice %s" t)
+
+.OPTION  GMIN=1E-14 tnom=27
+
+V10 11 0 Ac=1
+R10 11 12 100k
+Q10 12 0 0 0 NX
+
+.MODEL NX NPN (IS=1.09e-16 NF=1.002 BF=135 VAF=70 IKF=1.2m ISE=5e-18 NE=1.25 CTS=100m
++ NR=1 BR=31 IKR=5u VAR=4 ISC=3e-16 NC=1.3
++ RC=1 RE=10 RB=920 RBM=305 IRB=20U
++ CJC=10F MJC=0.451 VJC=0.306
++ CJE=10F MJE=0.9 VJE=1.57
++ CJS=10p MJS=0.561 VJS=0.844
++ TR=2p TF=33.76p XTF=6.593 VTF=1.974 ITF=0.0002479 PTF=35
++ XTI=6.6 XTB=1.9 TIKF1=-4m AF=1.328 KF=29.39f)
+
+V20 21 0 Ac=1
+R20 21 22 100k
+D20 22 0 D_PN
+
+.model D_PN D (IS=1e-14 CJO=10p BV=11 IBV=10M RS=150 M=0.426 VJ=0.654)
+
+.control
+
+let k = 0
+let temper = (vector(9)-3) * 20 + 27
+let q_f3db = vector(9)
+let d_f3db = vector(9)
+
+setplot new
+set dt = $curplot
+
+foreach t $&temper
+  set temp = $t
+  ac dec 400 100k 200k
+  meas ac q_at when vdb(12)=-3
+  meas ac d_at when vdb(22)=-3
+  let q_f3db[k] = q_at
+  let d_f3db[k] = d_at
+  let k = k + 1
+end
+
+print {$dt}.q_f3db
+setplot $dt
+
+settype temp-sweep temper
+settype capacitance q_f3db
+settype capacitance d_f3db
+
+* plot q_f3db d_f3db vs temper
+* plot q_f3db/q_f3db[3] d_f3db/d_f3db[3] vs temper
+
+set gnuplot_terminal = png
+gnuplot t1 q_f3db d_f3db vs temper
+gnuplot t2 q_f3db/q_f3db[3] d_f3db/d_f3db[3] vs temper
+
+.endc

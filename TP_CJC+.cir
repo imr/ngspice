@@ -1,0 +1,35 @@
+*
+* (exec-spice "ngspice %s" t)
+
+v1  1 0 AC=1
+d1  1 0 D_PN
+
+.model D_PN D (IS=1e-14 CJO=10p BV=11 IBV=10M RS=150 M=0.426 VJ=0.654)
+
+.control
+
+let k = 0
+let temper = vector(6) * 5 + 25
+let cap = vector(6)
+
+setplot new
+set dt = $curplot
+
+foreach t $&temper
+  set temp = $t
+  ac lin 1 100kHz 100kHz
+* print i(v1)/(2*pi*100kHz)
+* print im(i(v1)/(2*pi*100kHz))
+  let cap[k] = - im(i(v1)/(2*pi*100kHz))
+  let k = k + 1
+end
+
+print {$dt}.cap
+setplot $dt
+
+settype temp-sweep temper
+settype capacitance cap
+
+plot cap vs temper
+
+.endc

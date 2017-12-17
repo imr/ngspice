@@ -1,0 +1,53 @@
+* compare diode and bjt capacity versus temperature sweep
+* (exec-spice "ngspice %s" t)
+
+v1  1 0  AC=1
+d1  1 0  D_PN
+
+.model D_PN D (IS=1e-14 CJO=10p BV=11 IBV=10M RS=150 M=0.426 VJ=0.654)
+
+
+v2  2 0      AC=1
+q2  2 0 0 0  NX
+
+.MODEL NX NPN (IS=1.09e-16 NF=1.002 BF=135 VAF=70 IKF=1.2m ISE=5e-18 NE=1.25 CTS=100m
++ NR=1 BR=31 IKR=5u VAR=4 ISC=3e-16 NC=1.3
++ RC=1 RE=10 RB=920 RBM=305 IRB=20U
++ CJC=10F MJC=0.451 VJC=0.306
++ CJE=10F MJE=0.9 VJE=1.57
++ CJS=10p MJS=0.561 VJS=0.844
++ TR=2p TF=33.76p XTF=6.593 VTF=1.974 ITF=0.0002479 PTF=35
++ XTI=6.6 XTB=1.9 TIKF1=-4m AF=1.328 KF=29.39f)
+* + tlev=1 tlevc=1 ctc=1.5e-3 cte=1.5e-3 cts=1.5e-3)
+
+.control
+
+let k = 0
+let temper = vector(16) * 5 - 25
+let cap_d = vector(16)
+let cap_q = vector(16)
+
+setplot new
+set dt = $curplot
+
+foreach t $&temper
+  set temp = $t
+  ac lin 1 100kHz 100kHz
+* print i(v1)/(2*pi*100kHz)
+* print im(i(v1)/(2*pi*100kHz))
+  let cap_d[k] = - im(i(v1)/(2*pi*100kHz))
+  let cap_q[k] = - im(i(v2)/(2*pi*100kHz))
+  let k = k + 1
+end
+
+setplot $dt
+
+settype temp-sweep temper
+settype capacitance cap_d
+settype capacitance cap_q
+
+plot cap_d cap_q vs temper
+
+showmod all
+
+.endc
