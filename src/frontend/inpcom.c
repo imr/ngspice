@@ -6526,7 +6526,7 @@ inp_meas_current(struct card *deck)
     if (rep == NULL)
       return;
 
-    /* scan through all the devices, search for xyz, modify node 1 by adding _vmeas,
+    /* scan through all the devices, search for xyz, modify node 1 by adding _<devicename>_vmeas,
        add a line with zero voltage v_xyz, having original node 1 and modified node 1.
        Do this within the top level or the same level of subcircuit only. */
     new_rep = rep;
@@ -6577,7 +6577,7 @@ inp_meas_current(struct card *deck)
                 /* Add _vmeas only once to first device node.
                    Continue if we already have modified device "tok" */
                 if (!strstr(node1, "_vmeas")) {
-                    new_line = tprintf("%s %s_vmeas %s", tok, node1, curr_line);
+                    new_line = tprintf("%s %s_%s_vmeas %s", tok, node1, tok, curr_line);
                     tfree(card->line);
                     card->line = new_line;
                 }
@@ -6586,7 +6586,7 @@ inp_meas_current(struct card *deck)
                 /* We have already added a line v_xyz to the deck */
                 if (!ciprefix(new_tok, card->nextcard->line)) {
                     /* add new line */
-                    new_line = tprintf("%s %s %s_vmeas 0", new_tok, node1, node1);
+                    new_line = tprintf("%s %s %s_%s_vmeas 0", new_tok, node1, node1, tok);
                     /* insert new_line after card->line */
                     insert_new_line(card, new_line, card->linenum + 1, 0);
                 }
