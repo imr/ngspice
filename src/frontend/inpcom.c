@@ -6474,8 +6474,12 @@ inp_meas_current(struct card *deck)
             s = u = strstr(s, "i(");
             /* we have found it, but not (in error) at the beginning of the line */
             if (s && s > v) {
+                /* get last character before actual s */
+                char *a = s - 1;
+                while (*a == ' ')
+                    a--;
                 /* '{' if at beginning of expression, '=' possible in B-line */
-                if (is_arith_char(s[-1]) || s[-1] == '{' || s[-1] == '=') {
+                if (is_arith_char(*a) || *a == '{' || *a == '=') {
                     s += 2;
                     if (*s == 'v') {
                         // printf("i(v...) found in\n%s\n not converted!\n\n", curr_line);
@@ -6487,7 +6491,7 @@ inp_meas_current(struct card *deck)
                         /* token containing name of devices to be measured */
                         t = copy_substring(s, --u);
                         if (ft_ngdebug)
-                            printf("i(%s) found in\n%s\n\n", t, curr_line);
+                            printf("i(%s) found in\n%s\n\n", t, card->line);
 
                         /* new entry to the end of struct rep */
                         new_rep = TMALLOC(struct replace_currm, 1);
@@ -6509,7 +6513,6 @@ inp_meas_current(struct card *deck)
                         tfree(curr_line);
                         tfree(v);
                         card->line = s = v = new_str;
-                        s++;
                         tfree(beg_str);
                     }
                 }
