@@ -641,10 +641,10 @@ nupa_copy(struct card *deck)
     SPICE_DSTRING u;
 
     spice_dstring_init(&u);
-    (s_end - s) = (int) strlen(s);
+    s_end = s + (int) strlen(s);
 
     while ((s_end - s > 0) && (s[s_end - s - 1] <= ' '))
-        (s_end - s)--;
+        s_end--;
 
     pscopy(&u, s, s + (s_end - s));       /* strip trailing space, CrLf and so on */
     dicoS->srcline = linenum;
