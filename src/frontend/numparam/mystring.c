@@ -195,7 +195,8 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int leng)
 
     } else {
 
-        s_p = spice_dstring_reinit(dstr_p);
+        s_p = _spice_dstring_setlength(dstr_p, 0);
+        s_p[0] = '\0';
 
     }
 
@@ -228,7 +229,8 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int leng)
 
     } else {
 
-        s_p = spice_dstring_reinit(dstr_p);
+        s_p = _spice_dstring_setlength(dstr_p, 0);
+        s_p[0] = '\0';
 
     }
 
