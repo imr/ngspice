@@ -692,7 +692,7 @@ nupa_copy(struct card *deck)
 */
 {
     char * const s = deck->line;
-    char *s_end;
+    char * const s_end = skip_back_ws(s + strlen(s), s);
     const int linenum = deck->linenum;
 
     char *t;
@@ -700,10 +700,6 @@ nupa_copy(struct card *deck)
     SPICE_DSTRING u;
 
     spice_dstring_init(&u);
-    s_end = s + (int) strlen(s);
-
-    while (s_end > s && s_end[-1] <= ' ')
-        s_end--;
 
     pscopy(&u, s, s_end);       /* strip trailing space, CrLf and so on */
     dicoS->srcline = linenum;
