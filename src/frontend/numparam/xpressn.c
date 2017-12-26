@@ -555,7 +555,7 @@ defsubckt(dico_t *dico, struct card *card)
     if (s_end > s) {
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
-        pscopy_up(&ustr, s, 0, (int) (s_end - s));
+        pscopy_up(&ustr, s, (int) (s_end - s));
         err = nupa_define(dico, spice_dstring_value(&ustr), ' ', NUPA_SUBCKT, 0.0, w, NULL, level);
         spice_dstring_free(&ustr);
     } else {
@@ -579,7 +579,7 @@ findsubckt(dico_t *dico, const char * const s)
 
     spice_dstring_init(&ustr);
 
-    pscopy_up(&ustr, name_b, 0, (int) (name_e - name_b));
+    pscopy_up(&ustr, name_b, (int) (name_e - name_b));
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
@@ -1305,7 +1305,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
         tpe = NUPA_REAL;
     }
 
-    pscopy(tstr_p, s, 0, (int) (p - s));
+    pscopy(tstr_p, s, (int) (p - s));
 
     if (*p == '}')
         p++;
@@ -1466,7 +1466,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
     if (i2) {
         const char *optr, *jptr;
 
-        pscopy(&tstr, i2 + 7, 0, (int) strlen(i2 + 7));
+        pscopy(&tstr, i2 + 7, (int) strlen(i2 + 7));
 
         /* search identifier to the left of '=' assignments */
 
@@ -1546,7 +1546,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                 if (alfanum(*kp) || *kp == '.') {
                     /* number, identifier */
                     jp = skip_non_ws(kp);
-                    pscopy(&ustr, kp, 0, (int) (jp - kp));
+                    pscopy(&ustr, kp, (int) (jp - kp));
                 } else if (*kp == '{') {
                     jp = getexpress(NULL, &ustr, jp);
                 } else {
@@ -1561,7 +1561,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
                     char *dollar = strchr(idlist_p, '$');
                     if (dollar) {
                         /* replace dollar with expression string u */
-                        pscopy(&vstr, idlist_p, 0, (int) (dollar - idlist_p));
+                        pscopy(&vstr, idlist_p, (int) (dollar - idlist_p));
                         sadd(&vstr, u_p);
                         sadd(&vstr, dollar + 1);
                         scopyd(&idlist, &vstr);

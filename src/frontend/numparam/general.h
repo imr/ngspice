@@ -9,8 +9,8 @@
 #include "ngspice/bool.h"
 
 
-char *pscopy(SPICE_DSTRINGPTR s, const char *a, int i, int j);
-char *pscopy_up(SPICE_DSTRINGPTR s, const char *a, int i, int j);
+char *pscopy(SPICE_DSTRINGPTR s, const char *str, int leng);
+char *pscopy_up(SPICE_DSTRINGPTR s, const char *str, int leng);
 void scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
 void scopys(SPICE_DSTRINGPTR a, const char *b);
 void scopy_up(SPICE_DSTRINGPTR a, const char *str);

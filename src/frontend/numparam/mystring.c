@@ -168,7 +168,7 @@ scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
 
 
 char *
-pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
+pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int leng)
 /* partial string copy, with C-based start - Because we now have a 0 based
  * start and string may copy outselves, we may need to restore the first
  * character of the original dstring because resetting string will wipe
@@ -180,16 +180,16 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 
     stop = (int) strlen(t);
 
-    if (start < stop) {         /* nothing! */
+    if (0 < stop) {         /* nothing! */
 
-        if (leng > stop - start)
-            leng = stop - start;
+        if (leng > stop)
+            leng = stop;
 
         _spice_dstring_setlength(dstr_p, leng);
         s_p = spice_dstring_value(dstr_p);
 
         for (i = 0; i < leng; i++)
-            s_p[i] = t[start + i];
+            s_p[i] = t[i];
 
         s_p[leng] = '\0';
 
@@ -204,7 +204,7 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 
 
 char *
-pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
+pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int leng)
 /* partial string copy to upper case, with C convention for start. */
 {
     int i;                      /* counter */
@@ -213,16 +213,16 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int start, int leng)
 
     stop = (int) strlen(t);
 
-    if (start < stop) {         /* nothing! */
+    if (0 < stop) {         /* nothing! */
 
-        if (leng > stop - start)
-            leng = stop - start;
+        if (leng > stop)
+            leng = stop;
 
         _spice_dstring_setlength(dstr_p, leng);
         s_p = spice_dstring_value(dstr_p);
 
         for (i = 0; i < leng; i++)
-            s_p[i] = toupper_c(t[start + i]);
+            s_p[i] = toupper_c(t[i]);
 
         s_p[leng] = '\0';
 
