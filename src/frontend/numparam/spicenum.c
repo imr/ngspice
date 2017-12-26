@@ -84,7 +84,7 @@ stripsomespace(SPICE_DSTRINGPTR dstr_p, bool incontrol)
         i++;
 
     if ((i > 0) && s[i] && strchr(markers, s[i]))
-        pscopy(dstr_p, s + i, (int) strlen(s + i));
+        pscopy(dstr_p, s + i, NULL);
 }
 
 
@@ -115,7 +115,7 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
             j_ptr++;
         }
 
-        pscopy(&tstr, s, (int) (brace - s));
+        pscopy(&tstr, s, brace);
 
         if (brace[-1] > ' ')
             cadd(&tstr, ' ');
@@ -245,7 +245,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
             /* split off any "params" tail */
             params = strstr(t, "PARAMS:");
             if (params)
-                pscopy(dstr_p, s, (int)(params - t));
+                pscopy(dstr_p, s, s + (params - t));
             spice_dstring_free(&tstr);
             category = 'S';
         } else if (ci_prefix(".CONTROL", s)) {
@@ -646,7 +646,7 @@ nupa_copy(struct card *deck)
     while ((ls > 0) && (s[ls - 1] <= ' '))
         ls--;
 
-    pscopy(&u, s, ls);       /* strip trailing space, CrLf and so on */
+    pscopy(&u, s, s + ls);       /* strip trailing space, CrLf and so on */
     dicoS->srcline = linenum;
 
     if ((!inexpansionS) && (linenum >= 0) && (linenum <= dynmaxline)) {
