@@ -633,20 +633,20 @@ nupa_copy(struct card *deck)
 */
 {
     char * const s = deck->line;
+    char *s_end;
     const int linenum = deck->linenum;
 
     char *t;
-    int ls;
     char c, d;
     SPICE_DSTRING u;
 
     spice_dstring_init(&u);
-    ls = (int) strlen(s);
+    (s_end - s) = (int) strlen(s);
 
-    while ((ls > 0) && (s[ls - 1] <= ' '))
-        ls--;
+    while ((s_end - s > 0) && (s[s_end - s - 1] <= ' '))
+        (s_end - s)--;
 
-    pscopy(&u, s, s + ls);       /* strip trailing space, CrLf and so on */
+    pscopy(&u, s, s + (s_end - s));       /* strip trailing space, CrLf and so on */
     dicoS->srcline = linenum;
 
     if ((!inexpansionS) && (linenum >= 0) && (linenum <= dynmaxline)) {
