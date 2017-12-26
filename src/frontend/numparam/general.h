@@ -11,7 +11,7 @@
 
 char *pscopy(SPICE_DSTRINGPTR s, const char *a, int i, int j);
 char *pscopy_up(SPICE_DSTRINGPTR s, const char *a, int i, int j);
-bool scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
+void scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
 void scopys(SPICE_DSTRINGPTR a, const char *b);
 void scopy_up(SPICE_DSTRINGPTR a, const char *str);
 void scopy_lower(SPICE_DSTRINGPTR a, const char *str);
