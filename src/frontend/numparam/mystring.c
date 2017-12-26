@@ -109,12 +109,11 @@ cadd(SPICE_DSTRINGPTR dstr_p, char c)
  * Create copy of the dynamic string.  Dynamic strings are always NULL
  * terminated.
  * ----------------------------------------------------------------- */
-bool
+void
 scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)  /* returns success flag */
 {
     spice_dstring_reinit(s);
     spice_dstring_append(s, spice_dstring_value(t), -1);
-    return 1; /* Dstrings expand to any length */
 }
 
 
