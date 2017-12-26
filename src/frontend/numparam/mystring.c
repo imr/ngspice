@@ -185,8 +185,7 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, int leng)
         if (leng > stop)
             leng = stop;
 
-        _spice_dstring_setlength(dstr_p, leng);
-        s_p = spice_dstring_value(dstr_p);
+        s_p = _spice_dstring_setlength(dstr_p, leng);
 
         for (i = 0; i < leng; i++)
             s_p[i] = t[i];
@@ -219,8 +218,7 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, int leng)
         if (leng > stop)
             leng = stop;
 
-        _spice_dstring_setlength(dstr_p, leng);
-        s_p = spice_dstring_value(dstr_p);
+        s_p = _spice_dstring_setlength(dstr_p, leng);
 
         for (i = 0; i < leng; i++)
             s_p[i] = toupper_c(t[i]);
