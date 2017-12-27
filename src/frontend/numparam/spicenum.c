@@ -289,12 +289,9 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 
 static int linecountS = 0;      /* global: number of lines received via nupa_copy */
 static int evalcountS = 0;      /* number of lines through nupa_eval() */
-static int nblogS = 0;          /* serial number of (debug) logfile */
 static bool inexpansionS = 0;   /* flag subckt expansion phase */
 static bool incontrolS = 0;     /* flag control code sections */
-static bool dologfileS = 0;     /* for debugging */
 static bool firstsignalS = 1;
-static FILE *logfileS = NULL;
 static dico_t *dicoS = NULL;
 static dico_t *dicos_list[100];
 
@@ -308,20 +305,8 @@ static dico_t *dicos_list[100];
 static void
 putlogfile(char c, int num, char *t)
 {
-    if (!dologfileS)
+    if (1)
         return;
-
-    if (!logfileS) {
-        char *fname = tprintf("logfile.%d", ++nblogS);
-        /* add user defined path (nname has to be freed after usage) */
-        char *nname = set_output_path(fname);
-        logfileS = fopen(nname, "w");
-        tfree(fname);
-        tfree(nname);
-    }
-
-    if (logfileS)
-        fprintf(logfileS, "%c%d: %s\n", c, num, t);
 }
 
 
@@ -377,11 +362,6 @@ nupa_done(void)
 {
     int nerrors = dicoS->errcount;
     int dictsize = donedico(dicoS);
-
-    if (logfileS) {
-        fclose(logfileS);
-        logfileS = NULL;
-    }
 
     /* We cannot remove dicoS here because numparam is used by
        the .measure statements, which are invoked only after the
