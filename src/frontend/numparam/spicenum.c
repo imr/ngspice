@@ -424,10 +424,9 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
 void
 nupa_list_params(FILE *fp)
 {
+    dico_t *dico = dicoS;       /* local copy for speed */
     int depth;                  /* nested subcircit depth */
-    dico_t *dico;               /* local copy for speed */
 
-    dico = dicoS;
     if (dico == NULL) {
         fprintf(cp_err, "\nWarning: No symbol table available for 'listing param'\n");
         return;
@@ -459,13 +458,12 @@ nupa_list_params(FILE *fp)
 double
 nupa_get_param(char *param_name, int *found)
 {
+    dico_t *dico = dicoS;       /* local copy for speed */
     int depth;                  /* nested subcircit depth */
     char *up_name;              /* current parameter upper case */
     entry_t *entry;             /* current entry */
-    dico_t *dico;               /* local copy for speed */
     double result = 0;          /* parameter value */
 
-    dico = dicoS;
     spice_dstring_reinit(& dico->lookup_buf);
     scopy_up(& dico->lookup_buf, param_name);
     up_name = spice_dstring_value(& dico->lookup_buf);
@@ -491,12 +489,11 @@ nupa_get_param(char *param_name, int *found)
 void
 nupa_add_param(char *param_name, double value)
 {
+    dico_t *dico = dicoS;       /* local copy for speed */
     char *up_name;              /* current parameter upper case */
     entry_t *entry;             /* current entry */
-    dico_t *dico;               /* local copy for speed */
     NGHASHPTR htable_p;         /* hash table of interest */
 
-    dico = dicoS;
     /* -----------------------------------------------------------------
      * We use a dynamic string here because most of the time we will
      * be using short names and no memory allocation will occur.
@@ -526,11 +523,10 @@ nupa_add_param(char *param_name, double value)
 void
 nupa_add_inst_param(char *param_name, double value)
 {
+    dico_t *dico = dicoS;       /* local copy for speed */
     char *up_name;              /* current parameter upper case */
     entry_t *entry;             /* current entry */
-    dico_t *dico;               /* local copy for speed */
 
-    dico = dicoS;
     spice_dstring_reinit(& dico->lookup_buf);
     scopy_up(& dico->lookup_buf, param_name);
     up_name = spice_dstring_value(& dico->lookup_buf);
@@ -558,11 +554,10 @@ nupa_add_inst_param(char *param_name, double value)
 void
 nupa_copy_inst_dico(void)
 {
+    dico_t *dico = dicoS;       /* local copy for speed */
     entry_t *entry;             /* current entry */
-    dico_t *dico;               /* local copy for speed */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
-    dico = dicoS;
     if (dico->inst_symbols) {
         /* We we perform this operation we should be in global scope */
         if (dico->stack_depth > 0)
