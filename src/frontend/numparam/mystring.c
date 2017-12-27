@@ -174,12 +174,12 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, const char *stop)
     char *s_p;
 
     if (!stop)
-      stop = strchr(t, '\0');
+        stop = strchr(t, '\0');
 
     s_p = _spice_dstring_setlength(dstr_p, (int)(stop - t));
 
     for (i = 0; t < stop;)
-      s_p[i++] = *t++;
+        s_p[i++] = *t++;
 
     s_p[i] = '\0';
 
@@ -194,12 +194,12 @@ pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, const char *stop)
     char *s_p;
 
     if (!stop)
-      stop = strchr(t, '\0');
+        stop = strchr(t, '\0');
 
     s_p = _spice_dstring_setlength(dstr_p, (int)(stop - t));
 
     for (i = 0; t < stop;)
-      s_p[i++] = toupper_c(*t++);
+        s_p[i++] = toupper_c(*t++);
 
     s_p[i] = '\0';
 
