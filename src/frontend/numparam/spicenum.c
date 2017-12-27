@@ -185,9 +185,10 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             char *t;
             entry_t *entry;
             /* check for known subckt name */
-            spice_dstring_reinit(&name);
             for (t = p; alfanum(*t); t++)
-                cadd(&name, *t);
+                ;
+            spice_dstring_reinit(&name);
+            pscopy(&name, p, t);
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
                 spice_dstring_setlength(dstr_p, (int) (p_end - s));
