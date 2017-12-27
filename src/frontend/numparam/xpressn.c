@@ -954,8 +954,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                 state = S_init;  /* S_init means: ignore for the moment */
             } else {
                 spice_dstring_reinit(&tstr);
-                while (s < s_next)
-                    cadd(&tstr, *s++);
+                pscopy(&tstr, s, s_next);
                 u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 state = S_atom;
             }
@@ -1206,14 +1205,17 @@ static const char *
 getword(const char *s, SPICE_DSTRINGPTR tstr_p)
 {
     const char *s_end = s + strlen(s);
+    const char *word;
 
     while ((s < s_end - 1) && !alfa(*s))
         s++;
 
-    spice_dstring_reinit(tstr_p);
+    word = s;
+    while (alfa(*s) || isdigit_c(*s))
+        s++;
 
-    while ((s < s_end) && (alfa(*s) || isdigit_c(*s)))
-        cadd(tstr_p, *s++);
+    spice_dstring_reinit(tstr_p);
+    pscopy(tstr_p, word, s);
 
     return s;
 }
@@ -1431,8 +1433,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
     const char *j2 = strstr(spice_dstring_value(&tstr), "subckt");
     if (j2) {
         j2 = skip_ws(j2 + 6);     /* skip subckt and whitespace */
-        while (*j2 && (*j2 != ' '))
-            cadd(&subname, *j2++);
+        pscopy(&subname, j2, skip_non_ws(j2));
     } else {
         err = message(dico, " ! a subckt line!\n");
     }
