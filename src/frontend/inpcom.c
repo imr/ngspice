@@ -6410,18 +6410,30 @@ struct replace_currm
     struct replace_currm *next;
 };
 
+/* check if fourth token of sname starts with POLY */
+static bool
+is_poly_source(char *sname)
+{
+    char *nstr = nexttok(sname);
+    nstr = nexttok(nstr);
+    nstr = nexttok(nstr);
+    if (ciprefix("POLY", nstr))
+        return TRUE;
+    else
+        return FALSE;
+}
 
-/* Measure current in node 1 of all devices, e.g. I, B, F, and G.
-   I(V...) will be ignored, however H, E nonlinear voltage
-   sources may be converted later
-   to B source, therefore we need to add current measurement here.
+/* Measure current in node 1 of all devices, e.g. I, B, F, G.
+   I(V...) will be ignored, I(E...) and I(H...) will be undone if
+   they are simple linear sources, however E nonlinear voltage
+   source will be converted later to B source,
+   therefore we need to add current measurement here.
    First find all ocurrencies of i(XYZ), store their cards, then
    search for XYZ, but only within respective subcircuit, or if
    all happens at top level. Other hierarchy is ignored for now.
    Replace I(XYZ) bx I(V_XYZ), add voltage source V_XYZ with
    suitable extra nodes.
 */
-
 static void
 inp_meas_current(struct card *deck)
 {
@@ -6573,6 +6585,24 @@ inp_meas_current(struct card *deck)
             if (eq(".ends", tok) && rep->s_start)
                 break;
             if (eq(rep->rtoken, tok)) {
+                /* special treatment if we have an e (VCVS) or h (CCVS) source:
+                check if it is a simple linear source, if yes, don't do a
+                replacement, instead undo the already done name conversion */
+                if (((tok[0] == 'e') || (tok[0] == 'h')) && !strchr(curr_line, '=') && !is_poly_source(card->line)) {
+                    /* simple linear e source */
+                    char *searchstr = tprintf("i(v_%s)", tok);
+                    char *thisline = rep->cline->line;
+                    char *findstr = strstr(thisline, searchstr);
+                    while (findstr) {
+                        if (prefix(searchstr, findstr))
+                            memcpy(findstr, "  i(", 4);
+                        findstr = strstr(thisline, searchstr);
+                        if (ft_ngdebug)
+                            printf("i(%s) moved back to i(%s) in\n%s\n\n", searchstr, tok, rep->cline->line);
+                    }
+                    tfree(searchstr);
+                    continue;
+                }
                 node1 = gettok(&curr_line);
                 /* Add _vmeas only once to first device node.
                    Continue if we already have modified device "tok" */
