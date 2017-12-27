@@ -82,9 +82,9 @@ limit(double nominal_val, double abs_variation)
 
 
 static const char *fmathS =     /* all math functions */
-    "SQR SQRT SIN COS EXP LN ARCTAN ABS POW PWR MAX MIN INT LOG LOG10 SINH COSH"
-    " TANH TERNARY_FCN AGAUSS SGN GAUSS UNIF AUNIF LIMIT CEIL FLOOR"
-    " ASIN ACOS ATAN ASINH ACOSH ATANH TAN NINT";
+    "sqr sqrt sin cos exp ln arctan abs pow pwr max min int log log10 sinh cosh"
+    " tanh ternary_fcn agauss sgn gauss unif aunif limit ceil floor"
+    " asin acos atan asinh acosh atanh tan nint";
 
 
 enum {
@@ -243,8 +243,6 @@ initdico(dico_t *dico)
 
     dico->srcline = -1;
     dico->errcount = 0;
-
-    spice_dstring_init(&(dico->lookup_buf));
 
     dico->symbols = TMALLOC(NGHASHPTR, asize);
     dico->inst_name = TMALLOC(char*, asize);
@@ -532,7 +530,7 @@ defsubckt(dico_t *dico, struct card *card, nupa_type categ)
     if (s_end > s) {
         SPICE_DSTRING ustr;     /* temp user string */
         spice_dstring_init(&ustr);
-        pscopy_up(&ustr, s, s_end);
+        pscopy(&ustr, s, s_end);
         err = nupa_define(dico, spice_dstring_value(&ustr), ' ', categ, 0.0, w, NULL);
         spice_dstring_free(&ustr);
     } else {
@@ -556,7 +554,7 @@ findsubckt(dico_t *dico, const char * const s)
 
     spice_dstring_init(&ustr);
 
-    pscopy_up(&ustr, name_b, name_e);
+    pscopy(&ustr, name_b, name_e);
     entry = entrynb(dico, spice_dstring_value(&ustr));
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
@@ -581,7 +579,7 @@ keyword(const char *keys, const char *s, const char *s_end)
 
     for (;;) {
         const char *p = s;
-        while ((p < s_end) && (toupper_c(*p) == *keys))
+        while ((p < s_end) && (*p == *keys))
             p++, keys++;
         if ((p >= s_end) && (*keys <= ' '))
             return j;
@@ -603,7 +601,7 @@ parseunit(const char *s)
     case 'T':  return 1e12;
     case 'G':  return 1e9;
     case 'K':  return 1e3;
-    case 'M':  return ci_prefix("MEG", s) ? 1e6 : 1e-3;
+    case 'M':  return ciprefix("MEG", s) ? 1e6 : 1e-3;
     case 'U':  return 1e-6;
     case 'N':  return 1e-9;
     case 'P':  return 1e-12;
@@ -956,7 +954,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             } else {
                 spice_dstring_reinit(&tstr);
                 while (s < s_next)
-                    cadd(&tstr, toupper_c(*s++));
+                    cadd(&tstr, *s++);
                 u = fetchnumentry(dico, spice_dstring_value(&tstr), &error);
                 state = S_atom;
             }
@@ -1214,7 +1212,7 @@ getword(const char *s, SPICE_DSTRINGPTR tstr_p)
     spice_dstring_reinit(tstr_p);
 
     while ((s < s_end) && (alfa(*s) || isdigit_c(*s)))
-        cadd(tstr_p, toupper_c(*s++));
+        cadd(tstr_p, *s++);
 
     return s;
 }
@@ -1427,9 +1425,9 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
     /***** first, analyze the subckt definition line */
     n = 0;                      /* number of parameters if any */
 
-    scopy_up(&tstr, s);
+    scopys(&tstr, s);
 
-    const char *j2 = strstr(spice_dstring_value(&tstr), "SUBCKT");
+    const char *j2 = strstr(spice_dstring_value(&tstr), "subckt");
     if (j2) {
         j2 = skip_ws(j2 + 6);     /* skip subckt and whitespace */
         while (*j2 && (*j2 != ' '))
@@ -1438,7 +1436,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
         err = message(dico, " ! a subckt line!\n");
     }
 
-    const char *i2 = strstr(spice_dstring_value(&tstr), "PARAMS:");
+    const char *i2 = strstr(spice_dstring_value(&tstr), "params:");
 
     if (i2) {
         const char *optr, *jptr;
@@ -1490,7 +1488,7 @@ nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
           skip over instance name -- fixes bug where instance 'x1' is
           same name as subckt 'x1'
         */
-        scopy_up(&tstr, skip_non_ws(x));
+        scopys(&tstr, skip_non_ws(x));
 
         char * const t_p = spice_dstring_value(&tstr);
         char *jp = NULL;

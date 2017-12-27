@@ -187,7 +187,7 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             /* check for known subckt name */
             spice_dstring_reinit(&name);
             for (t = p; alfanum(*t); t++)
-                cadd(&name, toupper_c(*t));
+                cadd(&name, *t);
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
                 spice_dstring_setlength(dstr_p, (int) (p_end - s));
@@ -232,34 +232,29 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
 
     if (s[0] == '.') {
         /* check PS parameter format */
-        if (ci_prefix(".PARAM", s)) {
+        if (prefix(".param", s)) {
             /* comment it out */
             /* s[0] = '*'; */
             category = 'P';
-        } else if (ci_prefix(".SUBCKT", s)) {
-            char *params, *t;
-            SPICE_DSTRING tstr;
-            spice_dstring_init(&tstr);
-            scopy_up(&tstr, s);
-            t = spice_dstring_value(&tstr);
+        } else if (prefix(".subckt", s)) {
+            char *params;
             /* split off any "params" tail */
-            params = strstr(t, "PARAMS:");
+            params = strstr(s, "params:");
             if (params)
-                pscopy(dstr_p, s, s + (params - t));
-            spice_dstring_free(&tstr);
+                pscopy(dstr_p, s, params);
             category = 'S';
-        } else if (ci_prefix(".CONTROL", s)) {
+        } else if (prefix(".control", s)) {
             category = 'C';
-        } else if (ci_prefix(".ENDC", s)) {
+        } else if (prefix(".endc", s)) {
             category = 'E';
-        } else if (ci_prefix(".ENDS", s)) {
+        } else if (prefix(".ends", s)) {
             category = 'U';
         } else {
             category = '.';
             if (stripbraces(dstr_p) > 0)
                 category = 'B'; /* priority category ! */
         }
-    } else if (toupper_c(s[0]) == 'X') {
+    } else if (s[0] == 'x') {
         /* strip actual parameters */
         findsubname(dico, dstr_p);
         category = 'X';
@@ -396,9 +391,8 @@ nupa_scan(struct card *card, int is_subckt)
  * Dump the contents of a symbol table.
  * ----------------------------------------------------------------- */
 static void
-dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
+dump_symbol_table(NGHASHPTR htable_p, FILE *fp)
 {
-    char *name;                 /* current symbol */
     entry_t *entry;             /* current entry */
     NGHASHITER iter;            /* hash iterator - thread safe */
 
@@ -407,13 +401,8 @@ dump_symbol_table(dico_t *dico, NGHASHPTR htable_p, FILE *fp)
          entry;
          entry = (entry_t *) nghash_enumerateRE(htable_p, &iter))
     {
-        if (entry->tp == NUPA_REAL) {
-            spice_dstring_reinit(& dico->lookup_buf);
-            scopy_lower(& dico->lookup_buf, entry->symbol);
-            name = spice_dstring_value(& dico->lookup_buf);
-            fprintf(fp, "       ---> %s = %g\n", name, entry->vl);
-            spice_dstring_free(& dico->lookup_buf);
-        }
+        if (entry->tp == NUPA_REAL)
+            fprintf(fp, "       ---> %s = %g\n", entry->symbol, entry->vl);
     }
 }
 
@@ -441,7 +430,7 @@ nupa_list_params(FILE *fp)
                 fprintf(fp, " local symbol definitions for: %s\n", dico->inst_name[depth]);
             else
                 fprintf(fp, " global symbol definitions:\n");
-            dump_symbol_table(dico, htable_p, fp);
+            dump_symbol_table(htable_p, fp);
         }
     }
 }
@@ -460,29 +449,20 @@ nupa_get_param(char *param_name, int *found)
 {
     dico_t *dico = dicoS;       /* local copy for speed */
     int depth;                  /* nested subcircit depth */
-    char *up_name;              /* current parameter upper case */
-    entry_t *entry;             /* current entry */
-    double result = 0;          /* parameter value */
 
-    spice_dstring_reinit(& dico->lookup_buf);
-    scopy_up(& dico->lookup_buf, param_name);
-    up_name = spice_dstring_value(& dico->lookup_buf);
-
-    *found = 0;
     for (depth = dico->stack_depth; depth >= 0; depth--) {
         NGHASHPTR htable_p = dico->symbols[depth];
         if (htable_p) {
-            entry = (entry_t *) nghash_find(htable_p, up_name);
+            entry_t *entry = (entry_t *) nghash_find(htable_p, param_name);
             if (entry) {
-                result = entry->vl;
                 *found = 1;
-                break;
+                return entry->vl;
             }
         }
     }
 
-    spice_dstring_free(& dico->lookup_buf);
-    return result;
+    *found = 0;
+    return 0;
 }
 
 
@@ -490,17 +470,8 @@ void
 nupa_add_param(char *param_name, double value)
 {
     dico_t *dico = dicoS;       /* local copy for speed */
-    char *up_name;              /* current parameter upper case */
     entry_t *entry;             /* current entry */
     NGHASHPTR htable_p;         /* hash table of interest */
-
-    /* -----------------------------------------------------------------
-     * We use a dynamic string here because most of the time we will
-     * be using short names and no memory allocation will occur.
-     * ----------------------------------------------------------------- */
-    spice_dstring_reinit(& dico->lookup_buf);
-    scopy_up(& dico->lookup_buf, param_name);
-    up_name = spice_dstring_value(& dico->lookup_buf);
 
     /* can't be lazy anymore */
     if (!(dico->symbols[dico->stack_depth]))
@@ -508,15 +479,13 @@ nupa_add_param(char *param_name, double value)
 
     htable_p = dico->symbols[dico->stack_depth];
 
-    entry = attrib(dico, htable_p, up_name, 'N');
+    entry = attrib(dico, htable_p, param_name, 'N');
     if (entry) {
         entry->vl = value;
         entry->tp = NUPA_REAL;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
-
-    spice_dstring_free(& dico->lookup_buf);
 }
 
 
@@ -524,25 +493,18 @@ void
 nupa_add_inst_param(char *param_name, double value)
 {
     dico_t *dico = dicoS;       /* local copy for speed */
-    char *up_name;              /* current parameter upper case */
     entry_t *entry;             /* current entry */
-
-    spice_dstring_reinit(& dico->lookup_buf);
-    scopy_up(& dico->lookup_buf, param_name);
-    up_name = spice_dstring_value(& dico->lookup_buf);
 
     if (!(dico->inst_symbols))
         dico->inst_symbols = nghash_init(NGHASH_MIN_SIZE);
 
-    entry = attrib(dico, dico->inst_symbols, up_name, 'N');
+    entry = attrib(dico, dico->inst_symbols, param_name, 'N');
     if (entry) {
         entry->vl = value;
         entry->tp = NUPA_REAL;
         entry->ivl = 0;
         entry->sbbase = NULL;
     }
-
-    spice_dstring_free(& dico->lookup_buf);
 }
 
 
@@ -676,8 +638,6 @@ nupa_eval(struct card *card)
         /* compute args of subcircuit, if required */
         char *inst_name = copy_substring(s, skip_non_ws(s));
         *inst_name = 'x';
-
-        strtoupper(inst_name);
 
         idef = findsubckt(dicoS, s);
         if (idef > 0)
