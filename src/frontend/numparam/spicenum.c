@@ -296,20 +296,6 @@ static dico_t *dicoS = NULL;
 static dico_t *dicos_list[100];
 
 
-/*  already part of dico : */
-/*
-  Open ouput to a log file.
-  takes no action if logging is disabled.
-  Open the log if not already open.
-*/
-static void
-putlogfile(char c, int num, char *t)
-{
-    if (1)
-        return;
-}
-
-
 static void
 nupa_init(void)
 {
@@ -648,12 +634,9 @@ nupa_copy(struct card *deck)
 
     t = strdup(spice_dstring_value(&u));
 
-    if (t == NULL) {
+    if (!t) {
         fputs("Fatal: String malloc crash in nupa_copy()\n", stderr);
         controlled_exit(EXIT_FAILURE);
-    } else {
-        if (!inexpansionS)
-            putlogfile(dicoS->dyncategory[linenum], linenum, t);
     }
 
     spice_dstring_free(&u);
@@ -705,12 +688,11 @@ nupa_eval(struct card *card)
         if (idef > 0)
             nupa_subcktcall(dicoS, dicoS->dynrefptr[idef], dicoS->dynrefptr[linenum], inst_name);
         else
-            putlogfile('?', linenum, "  illegal subckt call.");
+            fprintf(stderr, "Error, illegal subckt call.\n  %s\n", s);
     } else if (c == 'U') {              /*  release local symbols = parameters */
         nupa_subcktexit(dicoS);
     }
 
-    putlogfile('e', linenum, s);
     evalcountS++;
 
 #ifdef TRACE_NUMPARAMS
@@ -731,8 +713,6 @@ nupa_signal(int sig)
 /* warning: deckcopy may come inside a recursion ! substart no! */
 /* info is context-dependent string data */
 {
-    putlogfile('!', sig, " Nupa Signal");
-
     if (sig == NUPADECKCOPY) {
         if (firstsignalS) {
             nupa_init();
