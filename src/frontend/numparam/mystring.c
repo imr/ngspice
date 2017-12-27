@@ -52,21 +52,6 @@ yes_or_no(void)
 }
 
 
-bool
-ci_prefix(const char *p, const char *s)
-{
-    while (*p) {
-        if ((isupper_c(*p) ? tolower_c(*p) : *p) !=
-            (isupper_c(*s) ? tolower_c(*s) : *s))
-            return (0);
-        p++;
-        s++;
-    }
-
-    return (1);
-}
-
-
 /*******  Strings ************
  *  are 0-terminated char arrays with a 2-byte trailer: max length.
  *  the string mini-library is "overflow-safe" under these conditions:
@@ -129,44 +114,6 @@ scopys(SPICE_DSTRINGPTR s, const char *t)     /* returns success flag */
 }
 
 
-/* -----------------------------------------------------------------
- * Create an upper case copy of a string and store it in a dynamic string.
- * Dynamic strings are always NULL * terminated.
- * ----------------------------------------------------------------- */
-void
-scopy_up(SPICE_DSTRINGPTR dstr_p, const char *str)    /* returns success flag */
-{
-    char up[2];                 /* short string */
-    const char *ptr;            /* position in string */
-
-    spice_dstring_reinit(dstr_p);
-    up[1] = '\0';
-    for (ptr = str; ptr && *ptr; ptr++) {
-        up[0] = toupper_c(*ptr);
-        spice_dstring_append(dstr_p, up, 1);
-    }
-}
-
-
-/* -----------------------------------------------------------------
- * Create a lower case copy of a string and store it in a dynamic string.
- * Dynamic strings are always NULL * terminated.
- * ----------------------------------------------------------------- */
-void
-scopy_lower(SPICE_DSTRINGPTR dstr_p, const char *str) /* returns success flag */
-{
-    char low[2];                /* short string */
-    const char *ptr;            /* position in string */
-
-    spice_dstring_reinit(dstr_p);
-    low[1] = '\0';
-    for (ptr = str; ptr && *ptr; ptr++) {
-        low[0] = tolower_c(*ptr);
-        spice_dstring_append(dstr_p, low, 1);
-    }
-}
-
-
 char *
 pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, const char *stop)
 {
@@ -180,26 +127,6 @@ pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, const char *stop)
 
     for (i = 0; t < stop;)
         s_p[i++] = *t++;
-
-    s_p[i] = '\0';
-
-    return s_p;
-}
-
-
-char *
-pscopy_up(SPICE_DSTRINGPTR dstr_p, const char *t, const char *stop)
-{
-    int i;
-    char *s_p;
-
-    if (!stop)
-        stop = strchr(t, '\0');
-
-    s_p = _spice_dstring_setlength(dstr_p, (int)(stop - t));
-
-    for (i = 0; t < stop;)
-        s_p[i++] = toupper_c(*t++);
 
     s_p[i] = '\0';
 

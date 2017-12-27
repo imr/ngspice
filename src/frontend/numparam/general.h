@@ -10,14 +10,10 @@
 
 
 char *pscopy(SPICE_DSTRINGPTR s, const char *str, const char *stop);
-char *pscopy_up(SPICE_DSTRINGPTR s, const char *str, const char *stop);
 void scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
 void scopys(SPICE_DSTRINGPTR a, const char *b);
-void scopy_up(SPICE_DSTRINGPTR a, const char *str);
-void scopy_lower(SPICE_DSTRINGPTR a, const char *str);
 void sadd(SPICE_DSTRINGPTR s, const char *t);
 void cadd(SPICE_DSTRINGPTR s, char c);
-bool ci_prefix(const char *p, const char *s);
 
 bool alfa(char c);
 bool alfanum(char c);
