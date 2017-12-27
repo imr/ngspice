@@ -191,10 +191,13 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             entry = entrynb(dico, spice_dstring_value(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
                 spice_dstring_setlength(dstr_p, (int) (p_end - s));
+                spice_dstring_free(&name);
                 return;
             }
         }
     }
+
+    spice_dstring_free(&name);
 }
 
 

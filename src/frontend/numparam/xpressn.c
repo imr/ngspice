@@ -556,6 +556,7 @@ findsubckt(dico_t *dico, const char * const s)
 
     pscopy(&ustr, name_b, name_e);
     entry = entrynb(dico, spice_dstring_value(&ustr));
+    spice_dstring_free(&ustr);
 
     if (entry && (entry->tp == NUPA_SUBCKT)) {
         return entry->ivl;
