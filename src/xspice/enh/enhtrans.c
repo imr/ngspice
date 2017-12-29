@@ -215,6 +215,11 @@ static int count_tokens(
         newtoken = MIFgettok(&card);
         if ((i == 3) && ciprefix(newtoken, "poly"))
             has_poly = TRUE;
+        /* ingnore multiplier m= xxx */
+        if (has_poly && (*newtoken == 'm')) {
+            txfree(newtoken);
+            return (i);
+        }
         txfree(newtoken);
     }
     /* no translation, if 'poly' not in the line */
