@@ -6753,7 +6753,7 @@ inp_add_levels(struct card *deck)
             }
             else if (ciprefix(".ends", curr_line)) {
                 if (lvl == root) {
-                    fprintf(stderr, ".suckt/.ends not balanced\n");
+                    fprintf(stderr, ".subckt/.ends not balanced\n");
                     controlled_exit(1);
                 }
                 card->level = lvl;
