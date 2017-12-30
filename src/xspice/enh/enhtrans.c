@@ -218,7 +218,7 @@ static int count_tokens(
         /* ingnore multiplier m= xxx */
         if (has_poly && (*newtoken == 'm')) {
             txfree(newtoken);
-            return (i - 1);
+            return (i);
         }
         txfree(newtoken);
     }
