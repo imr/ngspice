@@ -5459,6 +5459,9 @@ inp_modify_exp(char* expr)
     s = expr;
     while (*(s = skip_ws(s))) {
 
+        static bool c_arith_prev = FALSE;
+        bool c_arith = FALSE;
+        char c_prev;
         char c = *s;
 
         wl_append_word(&wlist, &wl, NULL);
@@ -5471,10 +5474,26 @@ inp_modify_exp(char* expr)
             if ((c == '*') && (s[1] == '*')) {
                 wl->wl_word = tprintf("**");
                 s += 2;
+            } else if (c == '-' && c_arith_prev && c_prev != ')') {
+                /* enter whole number string if '-' is a sign */
+                int error1;
+                /* allow 100p, 5MEG etc. */
+                double dvalue = INPevaluate(&s, &error1, 0);
+                if(error1) {
+                    wl->wl_word = tprintf("%c", c);
+                    s++;
+                }
+                else {
+                    wl->wl_word = tprintf("%18.10e", dvalue);
+                    /* skip the `unit', FIXME INPevaluate() should do this */
+                    while (isalpha_c(*s))
+                        s++;
+                }
             } else {
                 wl->wl_word = tprintf("%c", c);
                 s++;
             }
+            c_arith = TRUE;
         } else if ((c == '>') || (c == '<') ||
                    (c == '!') || (c == '='))
         {
@@ -5549,6 +5568,8 @@ inp_modify_exp(char* expr)
             printf("Preparing expression for numparam\nWhat is this?\n%s\n", s);
             wl->wl_word = tprintf("%c", *s++);
         }
+        c_prev = c;
+        c_arith_prev = c_arith;
     }
 
     expr = wl_flatten(wlist);
