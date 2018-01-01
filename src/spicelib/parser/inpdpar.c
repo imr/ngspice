@@ -20,6 +20,19 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/fteext.h"
 #include "inpxx.h"
 
+static IFparm *
+find_instance_parameter(char *name, IFdevice *device)
+{
+    IFparm *p = device->instanceParms;
+    IFparm *p_end = p + *(device->numInstanceParms);
+
+    for (; p < p_end; p++)
+        if (strcmp(name, p->keyword) == 0)
+            return p;
+    return NULL;
+}
+
+
 char *
 INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
             double *leading, int *waslead, INPtables *tab)
@@ -58,14 +71,9 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
             goto quit;
         }
 
-        IFparm *p = device->instanceParms;
-        IFparm *p_end = p + *(device->numInstanceParms);
+        IFparm *p = find_instance_parameter(parm, device);
 
-        for (; p < p_end; p++)
-            if (strcmp(parm, p->keyword) == 0)
-                break;
-
-        if (p >= p_end) {
+        if (!p) {
             errbuf = tprintf(" unknown parameter (%s) \n", parm);
             rtn = errbuf;
             goto quit;
