@@ -25,11 +25,11 @@ B3SOIPDmodel *model = (B3SOIPDmodel*)inModel;
 B3SOIPDinstance **prev = NULL;
 B3SOIPDinstance *here;
 
-    for (; model ; model = model->B3SOIPDnextModel) 
-    {    prev = &(model->B3SOIPDinstances);
-         for (here = *prev; here ; here = *prev) 
-	 {    if (here->B3SOIPDname == name || (fast && here==*fast))
-	      {   *prev= here->B3SOIPDnextInstance;
+    for (; model ; model = model->B3SOIPDnextModel) {
+         prev = &(model->B3SOIPDinstances);
+         for (here = *prev; here ; here = *prev) {
+	      if (here->B3SOIPDname == name || (fast && here==*fast)) {
+	          *prev= here->B3SOIPDnextInstance;
                   FREE(here);
                   return(OK);
               }

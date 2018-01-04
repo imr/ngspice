@@ -33,11 +33,11 @@ B4SOImodel *model = (B4SOImodel*)inModel;
 B4SOIinstance **prev = NULL;
 B4SOIinstance *here;
 
-    for (; model ; model = model->B4SOInextModel) 
-    {    prev = &(model->B4SOIinstances);
-         for (here = *prev; here ; here = *prev) 
-         {    if (here->B4SOIname == name || (fast && here==*fast))
-              {   *prev= here->B4SOInextInstance;
+    for (; model ; model = model->B4SOInextModel) {
+         prev = &(model->B4SOIinstances);
+         for (here = *prev; here ; here = *prev) {
+              if (here->B4SOIname == name || (fast && here==*fast)) {
+                  *prev= here->B4SOInextInstance;
                   FREE(here);
                   return(OK);
               }

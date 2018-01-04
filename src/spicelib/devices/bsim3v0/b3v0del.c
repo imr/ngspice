@@ -21,11 +21,11 @@ BSIM3v0model *model = (BSIM3v0model*)inModel;
 BSIM3v0instance **prev = NULL;
 BSIM3v0instance *here;
 
-    for (; model ; model = model->BSIM3v0nextModel) 
-    {    prev = &(model->BSIM3v0instances);
-         for (here = *prev; here ; here = *prev) 
-	 {    if (here->BSIM3v0name == name || (fast && here==*fast))
-	      {   *prev= here->BSIM3v0nextInstance;
+    for (; model ; model = model->BSIM3v0nextModel) {
+         prev = &(model->BSIM3v0instances);
+         for (here = *prev; here ; here = *prev) {
+	      if (here->BSIM3v0name == name || (fast && here==*fast)) {
+	          *prev= here->BSIM3v0nextInstance;
                   FREE(here);
                   return(OK);
               }

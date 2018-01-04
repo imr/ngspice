@@ -28,11 +28,11 @@ BSIM4v7model *model = (BSIM4v7model*)inModel;
 BSIM4v7instance **prev = NULL;
 BSIM4v7instance *here;
 
-    for (; model ; model = model->BSIM4v7nextModel) 
-    {    prev = &(model->BSIM4v7instances);
-         for (here = *prev; here ; here = *prev) 
-	 {    if (here->BSIM4v7name == name || (fast && here==*fast))
-	      {   *prev= here->BSIM4v7nextInstance;
+    for (; model ; model = model->BSIM4v7nextModel) {
+         prev = &(model->BSIM4v7instances);
+         for (here = *prev; here ; here = *prev) {
+	      if (here->BSIM4v7name == name || (fast && here==*fast)) {
+	          *prev= here->BSIM4v7nextInstance;
                   FREE(here);
                   return(OK);
               }
