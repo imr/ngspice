@@ -3,14 +3,14 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2014 Hiroshima University & STARC
 
- MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
+ MODEL NAME : HiSIM_HV
+ ( VERSION : 2  SUBVERSION : 2  REVISION : 0 )
  Model Parameter 'VERSION' : 2.20
  FILE : hsmhvdel.c
 
  DATE : 2014.6.11
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -31,8 +31,8 @@ support. Hiroshima University or STARC and its employees are not liable
 for the condition or performance of the software.
 
 Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
+irrevocable, worldwide, non-exclusive, royalty-free license with respect
+to the software as set forth below.
 
 Hiroshima University and STARC hereby disclaims all implied warranties.
 
@@ -54,7 +54,7 @@ to others."
 Toshimasa Asahara, President, Hiroshima University
 Mitiko Miura-Mattausch, Professor, Hiroshima University
 Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
+June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
@@ -63,26 +63,28 @@ June 2008 (revised October 2011)
 #include "ngspice/gendefs.h"
 #include "ngspice/suffix.h"
 
-int HSMHV2delete(
-     GENmodel *inModel,
-     IFuid name,
-     GENinstance **inInst)
-{
-  HSMHV2instance **fast = (HSMHV2instance**)inInst;
-  HSMHV2model *model = (HSMHV2model*)inModel;
-  HSMHV2instance **prev = NULL;
-  HSMHV2instance *here;
 
-  for( ;model ;model = model->HSMHV2nextModel ) {
-    prev = &(model->HSMHV2instances);
-    for ( here = *prev ;here ;here = *prev ) {
-      if ( here->HSMHV2name == name || (fast && here==*fast) ) {
-	*prev= here->HSMHV2nextInstance;
-	FREE(here);
-	return(OK);
-      }
-      prev = &(here->HSMHV2nextInstance);
+int HSMHV2delete(
+                 GENmodel *inModel,
+                 IFuid name,
+                 GENinstance **inInst)
+{
+    HSMHV2instance **fast = (HSMHV2instance **) inInst;
+    HSMHV2model *model = (HSMHV2model *) inModel;
+    HSMHV2instance **prev = NULL;
+    HSMHV2instance *here;
+
+    for (; model; model = model->HSMHV2nextModel) {
+        prev = &(model->HSMHV2instances);
+        for (here = *prev; here; here = *prev) {
+            if (here->HSMHV2name == name || (fast && here == *fast)) {
+                *prev = here->HSMHV2nextInstance;
+                FREE(here);
+                return OK;
+            }
+            prev = &(here->HSMHV2nextInstance);
+        }
     }
-  }
-  return(E_NODEV);
+
+    return E_NODEV;
 }

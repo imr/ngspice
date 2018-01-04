@@ -5,12 +5,12 @@
 
  MODEL NAME : HiSIM
  ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
- 
+
  FILE : hsm2del.c
 
  Date : 2014.6.5
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -31,8 +31,8 @@ support. Hiroshima University or STARC and its employees are not liable
 for the condition or performance of the software.
 
 Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
+irrevocable, worldwide, non-exclusive, royalty-free license with respect
+to the software as set forth below.
 
 Hiroshima University and STARC hereby disclaim all implied warranties.
 
@@ -60,26 +60,28 @@ to others."
 #include "ngspice/gendefs.h"
 #include "ngspice/suffix.h"
 
-int HSM2delete(
-     GENmodel *inModel,
-     IFuid name,
-     GENinstance **inInst)
-{
-  HSM2instance **fast = (HSM2instance**)inInst;
-  HSM2model *model = (HSM2model*)inModel;
-  HSM2instance **prev = NULL;
-  HSM2instance *here;
 
-  for( ;model ;model = model->HSM2nextModel ) {
-    prev = &(model->HSM2instances);
-    for ( here = *prev ;here ;here = *prev ) {
-      if ( here->HSM2name == name || (fast && here==*fast) ) {
-	*prev= here->HSM2nextInstance;
-	FREE(here);
-	return(OK);
-      }
-      prev = &(here->HSM2nextInstance);
+int HSM2delete(
+               GENmodel *inModel,
+               IFuid name,
+               GENinstance **inInst)
+{
+    HSM2instance **fast = (HSM2instance **) inInst;
+    HSM2model *model = (HSM2model *) inModel;
+    HSM2instance **prev = NULL;
+    HSM2instance *here;
+
+    for (; model; model = model->HSM2nextModel) {
+        prev = &(model->HSM2instances);
+        for (here = *prev; here; here = *prev) {
+            if (here->HSM2name == name || (fast && here == *fast)) {
+                *prev = here->HSM2nextInstance;
+                FREE(here);
+                return OK;
+            }
+            prev = &(here->HSM2nextInstance);
+        }
     }
-  }
-  return(E_NODEV);
+
+    return E_NODEV;
 }

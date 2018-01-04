@@ -19,25 +19,26 @@
 
 int
 BSIM4v6delete(
-GENmodel *inModel,
-IFuid name,
-GENinstance **inInst)
+              GENmodel *inModel,
+              IFuid name,
+              GENinstance **inInst)
 {
-BSIM4v6instance **fast = (BSIM4v6instance**)inInst;
-BSIM4v6model *model = (BSIM4v6model*)inModel;
-BSIM4v6instance **prev = NULL;
-BSIM4v6instance *here;
+    BSIM4v6instance **fast = (BSIM4v6instance **) inInst;
+    BSIM4v6model *model = (BSIM4v6model *) inModel;
+    BSIM4v6instance **prev = NULL;
+    BSIM4v6instance *here;
 
-    for (; model ; model = model->BSIM4v6nextModel) {
-         prev = &(model->BSIM4v6instances);
-         for (here = *prev; here ; here = *prev) {
-	      if (here->BSIM4v6name == name || (fast && here==*fast)) {
-	          *prev= here->BSIM4v6nextInstance;
-                  FREE(here);
-                  return(OK);
-              }
-              prev = &(here->BSIM4v6nextInstance);
-         }
+    for (; model; model = model->BSIM4v6nextModel) {
+        prev = &(model->BSIM4v6instances);
+        for (here = *prev; here; here = *prev) {
+            if (here->BSIM4v6name == name || (fast && here == *fast)) {
+                *prev = here->BSIM4v6nextInstance;
+                FREE(here);
+                return OK;
+            }
+            prev = &(here->BSIM4v6nextInstance);
+        }
     }
-    return(E_NODEV);
+
+    return E_NODEV;
 }

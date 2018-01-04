@@ -8,24 +8,26 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+
 int
 LTRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-  LTRAinstance **fast = (LTRAinstance **) kill;
-  LTRAmodel *model = (LTRAmodel *) inModel;
-  LTRAinstance **prev = NULL;
-  LTRAinstance *here;
+    LTRAinstance **fast = (LTRAinstance **) kill;
+    LTRAmodel *model = (LTRAmodel *) inModel;
+    LTRAinstance **prev = NULL;
+    LTRAinstance *here;
 
-  for (; model; model = model->LTRAnextModel) {
-    prev = &(model->LTRAinstances);
-    for (here = *prev; here; here = *prev) {
-      if (here->LTRAname == name || (fast && here == *fast)) {
-	*prev = here->LTRAnextInstance;
-	FREE(here);
-	return (OK);
-      }
-      prev = &(here->LTRAnextInstance);
+    for (; model; model = model->LTRAnextModel) {
+        prev = &(model->LTRAinstances);
+        for (here = *prev; here; here = *prev) {
+            if (here->LTRAname == name || (fast && here == *fast)) {
+                *prev = here->LTRAnextInstance;
+                FREE(here);
+                return OK;
+            }
+            prev = &(here->LTRAnextInstance);
+        }
     }
-  }
-  return (E_NODEV);
+
+    return E_NODEV;
 }

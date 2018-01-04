@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "isrcdefs.h"
@@ -19,16 +17,17 @@ ISRCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
     ISRCinstance **prev = NULL;
     ISRCinstance *here;
 
-    for( ; model ; model = model->ISRCnextModel) {
+    for (; model; model = model->ISRCnextModel) {
         prev = &(model->ISRCinstances);
-        for(here = *prev; here ; here = *prev) {
-            if(here->ISRCname == name || (fast && here==*fast) ) {
-                *prev= here->ISRCnextInstance;
+        for (here = *prev; here; here = *prev) {
+            if (here->ISRCname == name || (fast && here == *fast)) {
+                *prev = here->ISRCnextInstance;
                 FREE(here);
-                return(OK);
+                return OK;
             }
             prev = &(here->ISRCnextInstance);
         }
     }
-    return(E_NODEV);
+
+    return E_NODEV;
 }

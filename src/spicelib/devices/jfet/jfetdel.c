@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "jfetdefs.h"
@@ -14,21 +12,22 @@ Author: 1985 Thomas L. Quarles
 int
 JFETdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
-    JFETmodel *model = (JFETmodel*)inModel;
-    JFETinstance **fast = (JFETinstance**)inst;
+    JFETmodel *model = (JFETmodel *) inModel;
+    JFETinstance **fast = (JFETinstance **) inst;
     JFETinstance **prev = NULL;
     JFETinstance *here;
 
-    for( ; model ; model = model->JFETnextModel) {
+    for (; model; model = model->JFETnextModel) {
         prev = &(model->JFETinstances);
-        for(here = *prev; here ; here = *prev) {
-            if(here->JFETname == name || (fast && here==*fast) ) {
-                *prev= here->JFETnextInstance;
+        for (here = *prev; here; here = *prev) {
+            if (here->JFETname == name || (fast && here == *fast)) {
+                *prev = here->JFETnextInstance;
                 FREE(here);
-                return(OK);
+                return OK;
             }
             prev = &(here->JFETnextInstance);
         }
     }
-    return(E_NODEV);
+
+    return E_NODEV;
 }

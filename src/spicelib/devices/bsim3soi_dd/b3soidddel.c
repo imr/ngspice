@@ -6,7 +6,7 @@ Modified by Paolo Nenzi 2002
 **********/
 
 /*
- * Revision 2.1  99/9/27 Pin Su 
+ * Revision 2.1  99/9/27 Pin Su
  * BSIMDD2.1 release
  */
 
@@ -20,23 +20,22 @@ Modified by Paolo Nenzi 2002
 int
 B3SOIDDdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
-B3SOIDDinstance **fast = (B3SOIDDinstance**)inInst;
-B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
-B3SOIDDinstance **prev = NULL;
-B3SOIDDinstance *here;
+    B3SOIDDinstance **fast = (B3SOIDDinstance **) inInst;
+    B3SOIDDmodel *model = (B3SOIDDmodel *) inModel;
+    B3SOIDDinstance **prev = NULL;
+    B3SOIDDinstance *here;
 
-    for (; model ; model = model->B3SOIDDnextModel) {
-         prev = &(model->B3SOIDDinstances);
-         for (here = *prev; here ; here = *prev) {
-	      if (here->B3SOIDDname == name || (fast && here==*fast)) {
-	          *prev= here->B3SOIDDnextInstance;
-                  FREE(here);
-                  return(OK);
-              }
-              prev = &(here->B3SOIDDnextInstance);
-         }
+    for (; model; model = model->B3SOIDDnextModel) {
+        prev = &(model->B3SOIDDinstances);
+        for (here = *prev; here; here = *prev) {
+            if (here->B3SOIDDname == name || (fast && here == *fast)) {
+                *prev = here->B3SOIDDnextInstance;
+                FREE(here);
+                return OK;
+            }
+            prev = &(here->B3SOIDDnextInstance);
+        }
     }
-    return(E_NODEV);
+
+    return E_NODEV;
 }
-
-

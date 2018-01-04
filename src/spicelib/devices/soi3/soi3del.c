@@ -15,9 +15,9 @@ With help from :   Bernard Tenbroek, Bill Redman-White, Mike Uren, Chris Edwards
 Acknowledgements : Rupert Howes and Pete Mole.
 **********/
 
-/********** 
-Modified by Paolo Nenzi 2002
-ngspice integration
+/**********
+           Modified by Paolo Nenzi 2002
+           ngspice integration
 **********/
 
 #include "ngspice/ngspice.h"
@@ -29,21 +29,22 @@ ngspice integration
 int
 SOI3delete(GENmodel *inModel, IFuid name, GENinstance **inst)
 {
-    SOI3model *model = (SOI3model *)inModel;
-    SOI3instance **fast = (SOI3instance **)inst;
+    SOI3model *model = (SOI3model *) inModel;
+    SOI3instance **fast = (SOI3instance **) inst;
     SOI3instance **prev = NULL;
     SOI3instance *here;
 
-    for( ; model ; model = model->SOI3nextModel) {
+    for (; model; model = model->SOI3nextModel) {
         prev = &(model->SOI3instances);
-        for(here = *prev; here ; here = *prev) {
-            if(here->SOI3name == name || (fast && here==*fast) ) {
-                *prev= here->SOI3nextInstance;
+        for (here = *prev; here; here = *prev) {
+            if (here->SOI3name == name || (fast && here == *fast)) {
+                *prev = here->SOI3nextInstance;
                 FREE(here);
-                return(OK);
+                return OK;
             }
             prev = &(here->SOI3nextInstance);
         }
     }
-    return(E_NODEV);
+
+    return E_NODEV;
 }
