@@ -18,23 +18,23 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 
 int
-VBICmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
+VBICmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
 {
-    GENmodel **oldmod;
+    GENmodel **prev = models;
+    GENmodel *model = *prev;
 
-    oldmod = model;
-    for (; *model; model = &((*model)->GENnextModel)) {
-        if ((*model)->GENmodName == modname || (kill && *model == kill))
+    for (; model; model = model->GENnextModel) {
+        if (model->GENmodName == modname || (kill && model == kill))
             goto delgot;
-        oldmod = model;
+        prev = &(model->GENnextModel);
     }
 
     return E_NOMOD;
 
  delgot:
-    if ((*model)->GENinstances)
+    if (model->GENinstances)
         return E_NOTEMPTY;
-    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
-    FREE(*model);
+    *prev = model->GENnextModel;
+    FREE(model);
     return OK;
 }

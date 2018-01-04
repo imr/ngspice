@@ -11,27 +11,27 @@ Author: 1992 Charles Hough
 
 
 int
-TXLmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
+TXLmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
 {
     GENinstance *here;
-    GENmodel **oldmod;
+    GENmodel **prev = models;
+    GENmodel *model = *prev;
 
-    oldmod = model;
-    for (; *model; model = &((*model)->GENnextModel)) {
-        if ((*model)->GENmodName == modname || (kill && *model == kill))
+    for (; model; model = model->GENnextModel) {
+        if (model->GENmodName == modname || (kill && model == kill))
             goto delgot;
-        oldmod = model;
+        prev = &(model->GENnextModel);
     }
 
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
-    for (here = (*model)->GENinstances; here;) {
+    *prev = model->GENnextModel;
+    for (here = model->GENinstances; here;) {
         GENinstance *next_instance = here->GENnextInstance;
         FREE(here);
         here = next_instance;
     }
-    FREE(*model);
+    FREE(model);
     return OK;
 }
