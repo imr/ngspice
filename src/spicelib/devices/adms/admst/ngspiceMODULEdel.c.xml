@@ -40,35 +40,29 @@
 <admst:template match="code">
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
-
 #include &quot;ngspice/ngspice.h&quot;
 #include &quot;$(module)defs.h&quot;
 #include &quot;ngspice/sperror.h&quot;
 #include &quot;ngspice/suffix.h&quot;
 
-int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
-
+int
+$(module)delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-  register $(module)model *model = ($(module)model*)inModel;
-  register $(module)instance **fast =($(module)instance**)inInst;
-  
-  $(module)instance **prev = NULL;
-  $(module)instance *here;
-  
-  for ( ; model ; model = model->$(module)nextModel ) {
-      prev = &amp;(model->$(module)instances);  
-      for (here = *prev; here ; here  = *prev) {
-          if(here->$(module)name == name || (fast &amp;&amp; here==*fast) ) {
-	      *prev = here->$(module)nextInstance;
-	      FREE(here);
-	      return(OK);
-	      }
-         
-    } 
-  } 
-  return(E_NODEV);
-}
+    for (; model; model = model-&gt;GENnextModel) {
+        GENinstance **prev = &amp;(model-&gt;GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here-&gt;GENname == name || (kill &amp;&amp; here == *kill)) {
+                *prev = here-&gt;GENnextInstance;
+                FREE(here);
+                return OK;
+            }
+            prev = &amp;(here-&gt;GENnextInstance);
+        }
+    }
 
+    return E_NODEV;
+}
 </admst:template>
 
 <admst:for-each select="/module">
