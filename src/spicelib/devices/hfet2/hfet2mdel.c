@@ -24,8 +24,8 @@ HFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->HFET2nextModel)) {
-        if ((*model)->HFET2modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->HFET2modName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -34,10 +34,12 @@ HFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->HFET2nextModel; /* cut deleted device out of list */
     for (here = (*model)->HFET2instances; here; here = here->HFET2nextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

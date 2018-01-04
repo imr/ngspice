@@ -20,8 +20,8 @@ URCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->URCnextModel)) {
-        if ((*model)->URCmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->URCmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ URCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->URCnextModel; /* cut deleted device out of list */
     for (here = (*model)->URCinstances; here; here = here->URCnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

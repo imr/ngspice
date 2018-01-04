@@ -24,8 +24,8 @@ JFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->JFET2nextModel)) {
-        if ((*model)->JFET2modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->JFET2modName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -34,10 +34,12 @@ JFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->JFET2nextModel; /* cut deleted device out of list */
     for (here = (*model)->JFET2instances; here; here = here->JFET2nextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

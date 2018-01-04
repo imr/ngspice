@@ -23,8 +23,7 @@ NUMOSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->NUMOSnextModel)) {
-        if ((*model)->NUMOSmodName == modname ||
-            (modfast && *model == modfast))
+        if ((*model)->NUMOSmodName == modname || (modfast && *model == modfast))
             goto delgot;
         oldmod = model;
     }

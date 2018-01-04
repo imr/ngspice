@@ -21,8 +21,8 @@ CAPmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->CAPnextModel)) {
-        if ((*model)->CAPmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->CAPmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -31,10 +31,12 @@ CAPmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->CAPnextModel; /* cut deleted device out of list */
     for (here = (*model)->CAPinstances; here; here = here->CAPnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

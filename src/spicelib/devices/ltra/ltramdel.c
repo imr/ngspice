@@ -20,8 +20,7 @@ LTRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->LTRAnextModel)) {
-        if ((*model)->LTRAmodName == modname ||
-            (modfast && *model == modfast))
+        if ((*model)->LTRAmodName == modname || (modfast && *model == modfast))
             goto delgot;
         oldmod = model;
     }

@@ -21,8 +21,8 @@ MUTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->MUTnextModel)) {
-        if ((*model)->MUTmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->MUTmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -31,10 +31,12 @@ MUTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->MUTnextModel; /* cut deleted device out of list */
     for (here = (*model)->MUTinstances; here; here = here->MUTnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

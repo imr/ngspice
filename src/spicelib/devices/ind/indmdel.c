@@ -20,8 +20,8 @@ INDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->INDnextModel)) {
-        if ((*model)->INDmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->INDmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ INDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->INDnextModel; /* cut deleted device out of list */
     for (here = (*model)->INDinstances; here; here = here->INDnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

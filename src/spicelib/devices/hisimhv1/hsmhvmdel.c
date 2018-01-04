@@ -21,10 +21,8 @@
 #include "ngspice/suffix.h"
 
 
-int HSMHVmDelete(
-                 GENmodel **inModel,
-                 IFuid modname,
-                 GENmodel *kill)
+int
+HSMHVmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     HSMHVmodel **model = (HSMHVmodel **) inModel;
     HSMHVmodel *modfast = (HSMHVmodel *) kill;
@@ -34,8 +32,8 @@ int HSMHVmDelete(
 
     oldmod = model;
     for (; *model; model = &((*model)->HSMHVnextModel)) {
-        if ((*model)->HSMHVmodName == modname ||
-             (modfast && *model == modfast)) goto delgot;
+        if ((*model)->HSMHVmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -43,12 +41,13 @@ int HSMHVmDelete(
 
  delgot:
     *oldmod = (*model)->HSMHVnextModel; /* cut deleted device out of list */
-    for (here = (*model)->HSMHVinstances;
-          here; here = here->HSMHVnextInstance) {
-        if (prev) FREE(prev);
+    for (here = (*model)->HSMHVinstances; here; here = here->HSMHVnextInstance) {
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

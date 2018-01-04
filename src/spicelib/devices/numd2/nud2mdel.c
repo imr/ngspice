@@ -20,8 +20,7 @@ NUMD2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->NUMD2nextModel)) {
-        if ((*model)->NUMD2modName == modname ||
-            (modfast && *model == modfast))
+        if ((*model)->NUMD2modName == modname || (modfast && *model == modfast))
             goto delgot;
         oldmod = model;
     }

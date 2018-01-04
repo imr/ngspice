@@ -24,15 +24,16 @@ BJTmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->BJTnextModel)) {
-        if ((*model)->BJTmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->BJTmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
     return E_NOMOD;
 
  delgot:
-    if ((*model)->BJTinstances) return E_NOTEMPTY;
+    if ((*model)->BJTinstances)
+        return E_NOTEMPTY;
     *oldmod = (*model)->BJTnextModel; /* cut deleted device out of list */
     FREE(*model);
     return OK;

@@ -20,8 +20,8 @@ SWmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->SWnextModel)) {
-        if ((*model)->SWmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->SWmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ SWmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->SWnextModel; /* cut deleted device out of list */
     for (here = (*model)->SWinstances; here; here = here->SWnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

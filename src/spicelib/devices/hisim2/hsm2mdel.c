@@ -60,10 +60,8 @@ to others."
 #include "ngspice/suffix.h"
 
 
-int HSM2mDelete(
-                GENmodel **inModel,
-                IFuid modname,
-                GENmodel *kill)
+int
+HSM2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     HSM2model **model = (HSM2model **) inModel;
     HSM2model *modfast = (HSM2model *) kill;
@@ -73,8 +71,8 @@ int HSM2mDelete(
 
     oldmod = model;
     for (; *model; model = &((*model)->HSM2nextModel)) {
-        if ((*model)->HSM2modName == modname ||
-             (modfast && *model == modfast)) goto delgot;
+        if ((*model)->HSM2modName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -82,12 +80,13 @@ int HSM2mDelete(
 
  delgot:
     *oldmod = (*model)->HSM2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->HSM2instances;
-          here; here = here->HSM2nextInstance) {
-        if (prev) FREE(prev);
+    for (here = (*model)->HSM2instances; here; here = here->HSM2nextInstance) {
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

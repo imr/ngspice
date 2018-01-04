@@ -20,8 +20,8 @@ B2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->B2nextModel)) {
-        if ((*model)->B2modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->B2modName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ B2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->B2nextModel; /* cut deleted device out of list */
     for (here = (*model)->B2instances; here; here = here->B2nextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

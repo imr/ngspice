@@ -26,8 +26,7 @@ BSIM3v32mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->BSIM3v32nextModel)) {
-        if ((*model)->BSIM3v32modName == modname ||
-            (modfast && *model == modfast))
+        if ((*model)->BSIM3v32modName == modname || (modfast && *model == modfast))
             goto delgot;
         oldmod = model;
     }
@@ -37,10 +36,12 @@ BSIM3v32mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->BSIM3v32nextModel; /* cut deleted device out of list */
     for (here = (*model)->BSIM3v32instances; here; here = here->BSIM3v32nextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

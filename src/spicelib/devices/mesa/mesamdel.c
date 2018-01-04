@@ -24,8 +24,8 @@ MESAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->MESAnextModel)) {
-        if ((*model)->MESAmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->MESAmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -34,10 +34,12 @@ MESAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->MESAnextModel; /* cut deleted device out of list */
     for (here = (*model)->MESAinstances; here; here = here->MESAnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

@@ -22,8 +22,8 @@ CPLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->CPLnextModel)) {
-        if ((*model)->CPLmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->CPLmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -32,10 +32,12 @@ CPLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->CPLnextModel; /* cut deleted device out of list */
     for (here = (*model)->CPLinstances; here; here = here->CPLnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

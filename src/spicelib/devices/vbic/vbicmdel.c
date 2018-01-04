@@ -26,15 +26,16 @@ VBICmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->VBICnextModel)) {
-        if ((*model)->VBICmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->VBICmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
     return E_NOMOD;
 
  delgot:
-    if ((*model)->VBICinstances) return E_NOTEMPTY;
+    if ((*model)->VBICinstances)
+        return E_NOTEMPTY;
     *oldmod = (*model)->VBICnextModel; /* cut deleted device out of list */
     FREE(*model);
     return OK;

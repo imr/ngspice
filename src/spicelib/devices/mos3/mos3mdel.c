@@ -20,8 +20,8 @@ MOS3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->MOS3nextModel)) {
-        if ((*model)->MOS3modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->MOS3modName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ MOS3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->MOS3nextModel; /* cut deleted device out of list */
     for (here = (*model)->MOS3instances; here; here = here->MOS3nextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

@@ -20,8 +20,8 @@ VSRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
 
     oldmod = model;
     for (; *model; model = &((*model)->VSRCnextModel)) {
-        if ((*model)->VSRCmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->VSRCmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ VSRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
  delgot:
     *oldmod = (*model)->VSRCnextModel; /* cut deleted device out of list */
     for (here = (*model)->VSRCinstances; here; here = here->VSRCnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

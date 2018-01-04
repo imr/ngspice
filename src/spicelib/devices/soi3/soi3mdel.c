@@ -37,8 +37,8 @@ SOI3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->SOI3nextModel)) {
-        if ((*model)->SOI3modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->SOI3modName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -47,10 +47,12 @@ SOI3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->SOI3nextModel; /* cut deleted device out of list */
     for (here = (*model)->SOI3instances; here; here = here->SOI3nextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

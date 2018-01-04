@@ -20,8 +20,8 @@ DIOmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->DIOnextModel)) {
-        if ((*model)->DIOmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->DIOmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ DIOmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->DIOnextModel; /* cut deleted device out of list */
     for (here = (*model)->DIOinstances; here; here = here->DIOnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

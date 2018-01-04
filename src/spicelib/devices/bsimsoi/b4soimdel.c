@@ -21,10 +21,7 @@
 
 
 int
-B4SOImDelete(
-             GENmodel **inModel,
-             IFuid modname,
-             GENmodel *kill)
+B4SOImDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     B4SOImodel **model = (B4SOImodel **) inModel;
     B4SOImodel *modfast = (B4SOImodel *) kill;
@@ -34,8 +31,7 @@ B4SOImDelete(
 
     oldmod = model;
     for (; *model; model = &((*model)->B4SOInextModel)) {
-        if ((*model)->B4SOImodName == modname ||
-            (modfast && *model == modfast))
+        if ((*model)->B4SOImodName == modname || (modfast && *model == modfast))
             goto delgot;
         oldmod = model;
     }
@@ -45,10 +41,12 @@ B4SOImDelete(
  delgot:
     *oldmod = (*model)->B4SOInextModel; /* cut deleted device out of list */
     for (here = (*model)->B4SOIinstances; here; here = here->B4SOInextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

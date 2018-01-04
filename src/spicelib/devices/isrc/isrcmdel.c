@@ -20,8 +20,8 @@ ISRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
 
     oldmod = model;
     for (; *model; model = &((*model)->ISRCnextModel)) {
-        if ((*model)->ISRCmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->ISRCmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -30,10 +30,12 @@ ISRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
  delgot:
     *oldmod = (*model)->ISRCnextModel; /* cut deleted device out of list */
     for (here = (*model)->ISRCinstances; here; here = here->ISRCnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

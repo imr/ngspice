@@ -10,10 +10,7 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NDEVmDelete(
-            GENmodel **inModel,
-            IFuid modname,
-            GENmodel *kill)
+NDEVmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     NG_IGNORE(inModel);
     NG_IGNORE(modname);

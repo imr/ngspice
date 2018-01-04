@@ -21,8 +21,8 @@ TXLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->TXLnextModel)) {
-        if ((*model)->TXLmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
+        if ((*model)->TXLmodName == modname || (modfast && *model == modfast))
+            goto delgot;
         oldmod = model;
     }
 
@@ -31,10 +31,12 @@ TXLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
  delgot:
     *oldmod = (*model)->TXLnextModel; /* cut deleted device out of list */
     for (here = (*model)->TXLinstances; here; here = here->TXLnextInstance) {
-        if (prev) FREE(prev);
+        if (prev)
+            FREE(prev);
         prev = here;
     }
-    if (prev) FREE(prev);
+    if (prev)
+        FREE(prev);
     FREE(*model);
     return OK;
 }

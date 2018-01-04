@@ -23,8 +23,7 @@ NBJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
     oldmod = model;
     for (; *model; model = &((*model)->NBJTnextModel)) {
-        if ((*model)->NBJTmodName == modname ||
-            (modfast && *model == modfast))
+        if ((*model)->NBJTmodName == modname || (modfast && *model == modfast))
             goto delgot;
         oldmod = model;
     }
