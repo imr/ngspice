@@ -67,7 +67,6 @@ int
 HSMHV2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
     GENinstance *here;
-    GENinstance *prev = NULL;
     GENmodel **oldmod;
 
     oldmod = model;
@@ -81,13 +80,11 @@ HSMHV2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 
  delgot:
     *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
-    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
-        if (prev)
-            FREE(prev);
-        prev = here;
+    for (here = (*model)->GENinstances; here;) {
+        GENinstance *next_instance = here->GENnextInstance;
+        FREE(here);
+        here = next_instance;
     }
-    if (prev)
-        FREE(prev);
     FREE(*model);
     return OK;
 }
