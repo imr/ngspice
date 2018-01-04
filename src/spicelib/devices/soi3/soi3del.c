@@ -27,22 +27,18 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+SOI3delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    SOI3model *model = (SOI3model *) inModel;
-    SOI3instance **fast = (SOI3instance **) kill;
-    SOI3instance **prev = NULL;
-    SOI3instance *here;
-
-    for (; model; model = model->SOI3nextModel) {
-        prev = &(model->SOI3instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->SOI3name == name || (fast && here == *fast)) {
-                *prev = here->SOI3nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->SOI3nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

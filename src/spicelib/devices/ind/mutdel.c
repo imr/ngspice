@@ -11,22 +11,18 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+MUTdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    MUTmodel *model = (MUTmodel *) inModel;
-    MUTinstance **fast = (MUTinstance **) kill;
-    MUTinstance **prev = NULL;
-    MUTinstance *here;
-
-    for (; model; model = model->MUTnextModel) {
-        prev = &(model->MUTinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->MUTname == name || (fast && here == *fast)) {
-                *prev = here->MUTnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->MUTnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

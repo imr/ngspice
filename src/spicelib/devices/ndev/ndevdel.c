@@ -11,22 +11,18 @@ University of Science and Technology of China
 
 
 int
-NDEVdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+NDEVdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    NDEVmodel *model = (NDEVmodel *) inModel;
-    NDEVinstance **fast = (NDEVinstance **) kill;
-    NDEVinstance **prev = NULL;
-    NDEVinstance *here;
-
-    for (; model; model = model->NDEVnextModel) {
-        prev = &(model->NDEVinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->NDEVname == name || (fast && here == *fast)) {
-                *prev = here->NDEVnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->NDEVnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

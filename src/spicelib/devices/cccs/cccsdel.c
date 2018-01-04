@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCCSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+CCCSdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    CCCSmodel *model = (CCCSmodel *) inModel;
-    CCCSinstance **fast = (CCCSinstance **) kill;
-    CCCSinstance **prev = NULL;
-    CCCSinstance *here;
-
-    for (; model; model = model->CCCSnextModel) {
-        prev = &(model->CCCSinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CCCSname == name || (fast && here == *fast)) {
-                *prev = here->CCCSnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->CCCSnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

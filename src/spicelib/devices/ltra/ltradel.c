@@ -10,22 +10,18 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 
 int
-LTRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+LTRAdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    LTRAinstance **fast = (LTRAinstance **) kill;
-    LTRAmodel *model = (LTRAmodel *) inModel;
-    LTRAinstance **prev = NULL;
-    LTRAinstance *here;
-
-    for (; model; model = model->LTRAnextModel) {
-        prev = &(model->LTRAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->LTRAname == name || (fast && here == *fast)) {
-                *prev = here->LTRAnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->LTRAnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

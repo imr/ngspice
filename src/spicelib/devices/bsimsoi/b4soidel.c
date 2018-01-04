@@ -21,22 +21,18 @@
 
 
 int
-B4SOIdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+B4SOIdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    B4SOIinstance **fast = (B4SOIinstance **) kill;
-    B4SOImodel *model = (B4SOImodel *) inModel;
-    B4SOIinstance **prev = NULL;
-    B4SOIinstance *here;
-
-    for (; model; model = model->B4SOInextModel) {
-        prev = &(model->B4SOIinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->B4SOIname == name || (fast && here == *fast)) {
-                *prev = here->B4SOInextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->B4SOInextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

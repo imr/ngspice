@@ -11,22 +11,18 @@ Author: 1992 Charles Hough
 
 
 int
-TXLdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+TXLdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    TXLmodel *model = (TXLmodel *) inModel;
-    TXLinstance **fast = (TXLinstance **) kill;
-    TXLinstance **prev = NULL;
-    TXLinstance *here;
-
-    for (; model; model = model->TXLnextModel) {
-        prev = &(model->TXLinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->TXLname == name || (fast && here == *fast)) {
-                *prev = here->TXLnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->TXLnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

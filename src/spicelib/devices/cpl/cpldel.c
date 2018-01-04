@@ -11,22 +11,18 @@ Author: 1992 Charles Hough
 
 
 int
-CPLdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+CPLdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    CPLmodel *model = (CPLmodel *) inModel;
-    CPLinstance **fast = (CPLinstance **) kill;
-    CPLinstance **prev = NULL;
-    CPLinstance *here;
-
-    for (; model; model = model->CPLnextModel) {
-        prev = &(model->CPLinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CPLname == name || (fast && here == *fast)) {
-                *prev = here->CPLnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->CPLnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

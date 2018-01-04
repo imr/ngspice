@@ -11,22 +11,18 @@ Modified: September 2003 Paolo Nenzi
 
 
 int
-CAPdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+CAPdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    CAPinstance **fast = (CAPinstance **) kill;
-    CAPmodel *model = (CAPmodel *) inModel;
-    CAPinstance **prev = NULL;
-    CAPinstance *here;
-
-    for (; model; model = model->CAPnextModel) {
-        prev = &(model->CAPinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CAPname == name || (fast && here == *fast)) {
-                *prev = here->CAPnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->CAPnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

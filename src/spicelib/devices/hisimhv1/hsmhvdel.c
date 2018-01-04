@@ -23,22 +23,18 @@
 
 
 int
-HSMHVdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+HSMHVdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    HSMHVinstance **fast = (HSMHVinstance **) kill;
-    HSMHVmodel *model = (HSMHVmodel *) inModel;
-    HSMHVinstance **prev = NULL;
-    HSMHVinstance *here;
-
-    for (; model; model = model->HSMHVnextModel) {
-        prev = &(model->HSMHVinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->HSMHVname == name || (fast && here == *fast)) {
-                *prev = here->HSMHVnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->HSMHVnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

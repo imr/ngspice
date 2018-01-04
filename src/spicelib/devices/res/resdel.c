@@ -10,22 +10,18 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 int
-RESdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+RESdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    RESmodel *model = (RESmodel *) inModel;
-    RESinstance **fast = (RESinstance **) kill;
-    RESinstance **prev = NULL;
-    RESinstance *here;
-
-    for (; model; model = model->RESnextModel) {
-        prev = &(model->RESinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->RESname == name || (fast && here == *fast)) {
-                *prev = here->RESnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->RESnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

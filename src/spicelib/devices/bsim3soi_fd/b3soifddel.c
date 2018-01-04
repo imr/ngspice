@@ -18,22 +18,18 @@ File: b3soifddel.c          98/5/01
 
 
 int
-B3SOIFDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+B3SOIFDdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    B3SOIFDinstance **fast = (B3SOIFDinstance **) kill;
-    B3SOIFDmodel *model = (B3SOIFDmodel *) inModel;
-    B3SOIFDinstance **prev = NULL;
-    B3SOIFDinstance *here;
-
-    for (; model; model = model->B3SOIFDnextModel) {
-        prev = &(model->B3SOIFDinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->B3SOIFDname == name || (fast && here == *fast)) {
-                *prev = here->B3SOIFDnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->B3SOIFDnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

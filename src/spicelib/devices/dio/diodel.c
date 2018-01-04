@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+DIOdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    DIOmodel *model = (DIOmodel *) inModel;
-    DIOinstance **fast = (DIOinstance **) kill;
-    DIOinstance **prev = NULL;
-    DIOinstance *here;
-
-    for (; model; model = model->DIOnextModel) {
-        prev = &(model->DIOinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->DIOname == name || (fast && here == *fast)) {
-                *prev = here->DIOnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->DIOnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

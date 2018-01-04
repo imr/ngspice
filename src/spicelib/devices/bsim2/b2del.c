@@ -11,22 +11,18 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+B2delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    B2instance **fast = (B2instance **) kill;
-    B2model *model = (B2model *) inModel;
-    B2instance **prev = NULL;
-    B2instance *here;
-
-    for (; model; model = model->B2nextModel) {
-        prev = &(model->B2instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->B2name == name || (fast && here == *fast)) {
-                *prev = here->B2nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->B2nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

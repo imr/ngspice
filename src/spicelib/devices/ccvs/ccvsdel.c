@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCVSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+CCVSdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    CCVSmodel *model = (CCVSmodel *) inModel;
-    CCVSinstance **fast = (CCVSinstance **) kill;
-    CCVSinstance **prev = NULL;
-    CCVSinstance *here;
-
-    for (; model; model = model->CCVSnextModel) {
-        prev = &(model->CCVSinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CCVSname == name || (fast && here == *fast)) {
-                *prev = here->CCVSnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->CCVSnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

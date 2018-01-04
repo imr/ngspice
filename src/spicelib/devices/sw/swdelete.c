@@ -10,22 +10,18 @@ Author: 1985 Gordon Jacobs
 
 
 int
-SWdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+SWdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    SWmodel *model = (SWmodel *) inModel;
-    SWinstance **fast = (SWinstance **) kill;
-    SWinstance **prev = NULL;
-    SWinstance *here;
-
-    for (; model; model = model->SWnextModel) {
-        prev = &(model->SWinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->SWname == name || (fast && here == *fast)) {
-                *prev = here->SWnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->SWnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

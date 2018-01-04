@@ -15,22 +15,18 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NBJT2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+NBJT2delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    NBJT2model *model = (NBJT2model *) inModel;
-    NBJT2instance **fast = (NBJT2instance **) kill;
-    NBJT2instance **prev = NULL;
-    NBJT2instance *here;
-
-    for (; model; model = model->NBJT2nextModel) {
-        prev = &(model->NBJT2instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->NBJT2name == name || (fast && here == *fast)) {
-                *prev = here->NBJT2nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->NBJT2nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

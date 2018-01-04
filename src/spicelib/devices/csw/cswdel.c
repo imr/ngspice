@@ -10,22 +10,18 @@ Author: 1985 Gordon Jacobs
 
 
 int
-CSWdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+CSWdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    CSWmodel *model = (CSWmodel *) inModel;
-    CSWinstance **fast = (CSWinstance **) kill;
-    CSWinstance **prev = NULL;
-    CSWinstance *here;
-
-    for (; model; model = model->CSWnextModel) {
-        prev = &(model->CSWinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CSWname == name || (fast && here == *fast)) {
-                *prev = here->CSWnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->CSWnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

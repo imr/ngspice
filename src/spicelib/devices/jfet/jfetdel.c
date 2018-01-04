@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+JFETdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    JFETmodel *model = (JFETmodel *) inModel;
-    JFETinstance **fast = (JFETinstance **) kill;
-    JFETinstance **prev = NULL;
-    JFETinstance *here;
-
-    for (; model; model = model->JFETnextModel) {
-        prev = &(model->JFETinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->JFETname == name || (fast && here == *fast)) {
-                *prev = here->JFETnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->JFETnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

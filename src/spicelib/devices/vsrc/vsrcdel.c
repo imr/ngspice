@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VSRCdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+VSRCdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    VSRCmodel *model = (VSRCmodel *) inModel;
-    VSRCinstance **fast = (VSRCinstance **) kill;
-    VSRCinstance **prev = NULL;
-    VSRCinstance *here;
-
-    for (; model; model = model->VSRCnextModel) {
-        prev = &(model->VSRCinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->VSRCname == name || (fast && here == *fast)) {
-                *prev = here->VSRCnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->VSRCnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

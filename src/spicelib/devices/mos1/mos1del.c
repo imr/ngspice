@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS1delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+MOS1delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    MOS1model *model = (MOS1model *) inModel;
-    MOS1instance **fast = (MOS1instance **) kill;
-    MOS1instance **prev = NULL;
-    MOS1instance *here;
-
-    for (; model; model = model->MOS1nextModel) {
-        prev = &(model->MOS1instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->MOS1name == name || (fast && here == *fast)) {
-                *prev = here->MOS1nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->MOS1nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

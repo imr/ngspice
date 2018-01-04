@@ -15,22 +15,18 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMOSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+NUMOSdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    NUMOSmodel *model = (NUMOSmodel *) inModel;
-    NUMOSinstance **fast = (NUMOSinstance **) kill;
-    NUMOSinstance **prev = NULL;
-    NUMOSinstance *here;
-
-    for (; model; model = model->NUMOSnextModel) {
-        prev = &(model->NUMOSinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->NUMOSname == name || (fast && here == *fast)) {
-                *prev = here->NUMOSnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->NUMOSnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

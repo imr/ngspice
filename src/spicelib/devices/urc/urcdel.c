@@ -10,22 +10,18 @@ Author: 1987 Thomas L. Quarles
 
 
 int
-URCdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+URCdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    URCmodel *model = (URCmodel *) inModel;
-    URCinstance **fast = (URCinstance **) kill;
-    URCinstance **prev = NULL;
-    URCinstance *here;
-
-    for (; model; model = model->URCnextModel) {
-        prev = &(model->URCinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->URCname == name || (fast && here == *fast)) {
-                *prev = here->URCnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->URCnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

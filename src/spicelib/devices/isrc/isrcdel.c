@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-ISRCdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+ISRCdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    ISRCmodel *model = (ISRCmodel *) inModel;
-    ISRCinstance **fast = (ISRCinstance **) kill;
-    ISRCinstance **prev = NULL;
-    ISRCinstance *here;
-
-    for (; model; model = model->ISRCnextModel) {
-        prev = &(model->ISRCinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->ISRCname == name || (fast && here == *fast)) {
-                *prev = here->ISRCnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->ISRCnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

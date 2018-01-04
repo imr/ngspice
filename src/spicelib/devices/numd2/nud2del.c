@@ -10,22 +10,18 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMD2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+NUMD2delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    NUMD2model *model = (NUMD2model *) inModel;
-    NUMD2instance **fast = (NUMD2instance **) kill;
-    NUMD2instance **prev = NULL;
-    NUMD2instance *here;
-
-    for (; model; model = model->NUMD2nextModel) {
-        prev = &(model->NUMD2instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->NUMD2name == name || (fast && here == *fast)) {
-                *prev = here->NUMD2nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->NUMD2nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

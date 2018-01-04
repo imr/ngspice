@@ -10,22 +10,18 @@ Author: 1985 S. Hwang
 
 
 int
-MESdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+MESdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    MESmodel *model = (MESmodel *) inModel;
-    MESinstance **fast = (MESinstance **) kill;
-    MESinstance **prev = NULL;
-    MESinstance *here;
-
-    for (; model; model = model->MESnextModel) {
-        prev = &(model->MESinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->MESname == name || (fast && here == *fast)) {
-                *prev = here->MESnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->MESnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

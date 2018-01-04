@@ -14,22 +14,18 @@ Author: 1985 S. Hwang
 
 
 int
-MESAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+MESAdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    MESAmodel *model = (MESAmodel *) inModel;
-    MESAinstance **fast = (MESAinstance **) kill;
-    MESAinstance **prev = NULL;
-    MESAinstance *here;
-
-    for (; model; model = model->MESAnextModel) {
-        prev = &(model->MESAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->MESAname == name || (fast && here == *fast)) {
-                *prev = here->MESAnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->MESAnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

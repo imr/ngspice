@@ -14,22 +14,18 @@ Author: 1985 S. Hwang
 
 
 int
-HFET2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+HFET2delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    HFET2model *model = (HFET2model *) inModel;
-    HFET2instance **fast = (HFET2instance **) kill;
-    HFET2instance **prev = NULL;
-    HFET2instance *here;
-
-    for (; model; model = model->HFET2nextModel) {
-        prev = &(model->HFET2instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->HFET2name == name || (fast && here == *fast)) {
-                *prev = here->HFET2nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->HFET2nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

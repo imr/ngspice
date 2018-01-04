@@ -18,22 +18,18 @@
 
 
 int
-BSIM4v6delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+BSIM4v6delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    BSIM4v6instance **fast = (BSIM4v6instance **) kill;
-    BSIM4v6model *model = (BSIM4v6model *) inModel;
-    BSIM4v6instance **prev = NULL;
-    BSIM4v6instance *here;
-
-    for (; model; model = model->BSIM4v6nextModel) {
-        prev = &(model->BSIM4v6instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->BSIM4v6name == name || (fast && here == *fast)) {
-                *prev = here->BSIM4v6nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->BSIM4v6nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

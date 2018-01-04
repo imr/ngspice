@@ -10,22 +10,18 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-TRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+TRAdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    TRAinstance **fast = (TRAinstance **) kill;
-    TRAmodel *model = (TRAmodel *) inModel;
-    TRAinstance **prev = NULL;
-    TRAinstance *here;
-
-    for (; model; model = model->TRAnextModel) {
-        prev = &(model->TRAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->TRAname == name || (fast && here == *fast)) {
-                *prev = here->TRAnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->TRAnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

@@ -18,22 +18,18 @@ Modified by Paolo Nenzi 2002
 
 
 int
-B3SOIDDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+B3SOIDDdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    B3SOIDDinstance **fast = (B3SOIDDinstance **) kill;
-    B3SOIDDmodel *model = (B3SOIDDmodel *) inModel;
-    B3SOIDDinstance **prev = NULL;
-    B3SOIDDinstance *here;
-
-    for (; model; model = model->B3SOIDDnextModel) {
-        prev = &(model->B3SOIDDinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->B3SOIDDname == name || (fast && here == *fast)) {
-                *prev = here->B3SOIDDnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->B3SOIDDnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

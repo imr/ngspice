@@ -11,22 +11,18 @@ Modified: Alan Gillespie
 
 
 int
-MOS9delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+MOS9delete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    MOS9model *model = (MOS9model *) inModel;
-    MOS9instance **fast = (MOS9instance **) kill;
-    MOS9instance **prev = NULL;
-    MOS9instance *here;
-
-    for (; model; model = model->MOS9nextModel) {
-        prev = &(model->MOS9instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->MOS9name == name || (fast && here == *fast)) {
-                *prev = here->MOS9nextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->MOS9nextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

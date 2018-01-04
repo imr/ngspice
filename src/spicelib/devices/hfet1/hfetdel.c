@@ -14,22 +14,18 @@ Author: 1985 S. Hwang
 
 
 int
-HFETAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+HFETAdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    HFETAmodel *model = (HFETAmodel *) inModel;
-    HFETAinstance **fast = (HFETAinstance **) kill;
-    HFETAinstance **prev = NULL;
-    HFETAinstance *here;
-
-    for (; model; model = model->HFETAnextModel) {
-        prev = &(model->HFETAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->HFETAname == name || (fast && here == *fast)) {
-                *prev = here->HFETAnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->HFETAnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

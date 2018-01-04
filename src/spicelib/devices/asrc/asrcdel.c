@@ -10,22 +10,18 @@ Author: 1987 Kanwar Jit Singh
 
 
 int
-ASRCdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+ASRCdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    ASRCinstance **fast = (ASRCinstance **) kill;
-    ASRCmodel *model = (ASRCmodel *) inModel;
-    ASRCinstance **prev = NULL;
-    ASRCinstance *here;
-
-    for (; model; model = model->ASRCnextModel) {
-        prev = &(model->ASRCinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->ASRCname == name || (fast && here == *fast)) {
-                *prev = here->ASRCnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->ASRCnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 

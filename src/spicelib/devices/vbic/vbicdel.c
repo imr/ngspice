@@ -17,22 +17,18 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 
 int
-VBICdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+VBICdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    VBICmodel *model = (VBICmodel *) inModel;
-    VBICinstance **fast = (VBICinstance **) kill;
-    VBICinstance **prev = NULL;
-    VBICinstance *here;
-
-    for (; model; model = model->VBICnextModel) {
-        prev = &(model->VBICinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->VBICname == name || (fast && here == *fast)) {
-                *prev = here->VBICnextInstance;
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
                 FREE(here);
                 return OK;
             }
-            prev = &(here->VBICnextInstance);
+            prev = &(here->GENnextInstance);
         }
     }
 
