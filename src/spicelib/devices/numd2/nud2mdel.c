@@ -14,7 +14,7 @@ NUMD2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     NUMD2model **model = (NUMD2model **) inModel;
     NUMD2model *modfast = (NUMD2model *) kill;
-    NUMD2instance *inst;
+    NUMD2instance *here;
     NUMD2instance *prev = NULL;
     NUMD2model **oldmod;
 
@@ -29,10 +29,10 @@ NUMD2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
  delgot:
     *oldmod = (*model)->NUMD2nextModel;   /* cut deleted device out of list */
-    for (inst = (*model)->NUMD2instances; inst; inst = inst->NUMD2nextInstance) {
+    for (here = (*model)->NUMD2instances; here; here = here->NUMD2nextInstance) {
         if (prev)
             FREE(prev);
-        prev = inst;
+        prev = here;
     }
     if (prev)
         FREE(prev);

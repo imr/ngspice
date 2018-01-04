@@ -18,9 +18,9 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 
 int
-VBICmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
+VBICmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
-    VBICmodel **model = (VBICmodel **) inModels;
+    VBICmodel **model = (VBICmodel **) inModel;
     VBICmodel *modfast = (VBICmodel *) kill;
     VBICmodel **oldmod;
 

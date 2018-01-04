@@ -16,9 +16,9 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
+BJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
-    BJTmodel **model = (BJTmodel **) inModels;
+    BJTmodel **model = (BJTmodel **) inModel;
     BJTmodel *modfast = (BJTmodel *) kill;
     BJTmodel **oldmod;
 

@@ -10,10 +10,10 @@ Author: 1987 Kanwar Jit Singh
 
 
 int
-ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
+ASRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
-    ASRCmodel **model = (ASRCmodel **) modList;
-    ASRCmodel *modfast = (ASRCmodel *) killModel;
+    ASRCmodel **model = (ASRCmodel **) inModel;
+    ASRCmodel *modfast = (ASRCmodel *) kill;
     ASRCinstance *here;
     ASRCinstance *prev = NULL;
     ASRCmodel **oldmod;

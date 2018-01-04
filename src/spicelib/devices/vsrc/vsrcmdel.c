@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VSRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *fast)
+VSRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
     VSRCmodel **model = (VSRCmodel **) inModel;
-    VSRCmodel *modfast = (VSRCmodel *) fast;
+    VSRCmodel *modfast = (VSRCmodel *) kill;
     VSRCinstance *here;
     VSRCinstance *prev = NULL;
     VSRCmodel **oldmod;
