@@ -33,8 +33,8 @@ B4SOIinstance *prev = NULL;
 B4SOImodel **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->B4SOInextModel)) 
-    {    if ((*model)->B4SOImodName == modname || 
+    for (; *model ; model = &((*model)->B4SOInextModel)) {
+         if ((*model)->B4SOImodName == modname || 
              (modfast && *model == modfast))
              goto delgot;
          oldmod = model;
@@ -43,8 +43,8 @@ B4SOImodel **oldmod;
 
 delgot:
     *oldmod = (*model)->B4SOInextModel; /* cut deleted device out of list */
-    for (here = (*model)->B4SOIinstances; here; here = here->B4SOInextInstance)
-    {
+    for (here = (*model)->B4SOIinstances; here; here = here->B4SOInextInstance) {
+     
          if(prev) FREE(prev);
          prev = here;
     }

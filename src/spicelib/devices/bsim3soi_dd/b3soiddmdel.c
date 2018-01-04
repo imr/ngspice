@@ -26,8 +26,8 @@ B3SOIDDinstance *prev = NULL;
 B3SOIDDmodel **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->B3SOIDDnextModel)) 
-    {    if ((*model)->B3SOIDDmodName == modname || 
+    for (; *model ; model = &((*model)->B3SOIDDnextModel)) {
+         if ((*model)->B3SOIDDmodName == modname || 
              (modfast && *model == modfast))
 	     goto delgot;
          oldmod = model;
@@ -36,8 +36,8 @@ B3SOIDDmodel **oldmod;
 
 delgot:
     *oldmod = (*model)->B3SOIDDnextModel; /* cut deleted device out of list */
-    for (here = (*model)->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance)
-    {    if(prev) FREE(prev);
+    for (here = (*model)->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance) {
+         if(prev) FREE(prev);
          prev = here;
     }
     if(prev) FREE(prev);

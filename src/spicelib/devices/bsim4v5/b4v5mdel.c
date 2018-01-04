@@ -26,8 +26,8 @@ BSIM4v5instance *prev = NULL;
 BSIM4v5model **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->BSIM4v5nextModel)) 
-    {    if ((*model)->BSIM4v5modName == modname || 
+    for (; *model ; model = &((*model)->BSIM4v5nextModel)) {
+         if ((*model)->BSIM4v5modName == modname || 
              (modfast && *model == modfast))
 	     goto delgot;
          oldmod = model;
@@ -36,8 +36,8 @@ BSIM4v5model **oldmod;
 
 delgot:
     *oldmod = (*model)->BSIM4v5nextModel; /* cut deleted device out of list */
-    for (here = (*model)->BSIM4v5instances; here; here = here->BSIM4v5nextInstance)
-    {    if(prev) FREE(prev);
+    for (here = (*model)->BSIM4v5instances; here; here = here->BSIM4v5nextInstance) {
+         if(prev) FREE(prev);
          prev = here;
     }
     if(prev) FREE(prev);
