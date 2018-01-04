@@ -10,17 +10,15 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+DIOmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    DIOmodel **model = (DIOmodel **) inModel;
-    DIOmodel *modfast = (DIOmodel *) kill;
-    DIOinstance *here;
-    DIOinstance *prev = NULL;
-    DIOmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->DIOnextModel)) {
-        if ((*model)->DIOmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ DIOmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->DIOnextModel; /* cut deleted device out of list */
-    for (here = (*model)->DIOinstances; here; here = here->DIOnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

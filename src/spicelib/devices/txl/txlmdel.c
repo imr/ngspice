@@ -11,17 +11,15 @@ Author: 1992 Charles Hough
 
 
 int
-TXLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+TXLmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    TXLmodel **model = (TXLmodel **) inModel;
-    TXLmodel *modfast = (TXLmodel *) kill;
-    TXLinstance *here;
-    TXLinstance *prev = NULL;
-    TXLmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->TXLnextModel)) {
-        if ((*model)->TXLmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -29,8 +27,8 @@ TXLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->TXLnextModel; /* cut deleted device out of list */
-    for (here = (*model)->TXLinstances; here; here = here->TXLnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

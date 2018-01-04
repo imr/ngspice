@@ -10,17 +10,15 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B1mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+B1mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    B1model **model = (B1model **) inModel;
-    B1model *modfast = (B1model *) kill;
-    B1instance *here;
-    B1instance *prev = NULL;
-    B1model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->B1nextModel)) {
-        if ((*model)->B1modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ B1mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->B1nextModel; /* cut deleted device out of list */
-    for (here = (*model)->B1instances; here; here = here->B1nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

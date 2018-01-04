@@ -27,17 +27,15 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+SOI3mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    SOI3model **model = (SOI3model **) inModel;
-    SOI3model *modfast = (SOI3model *) kill;
-    SOI3instance *here;
-    SOI3instance *prev = NULL;
-    SOI3model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->SOI3nextModel)) {
-        if ((*model)->SOI3modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -45,8 +43,8 @@ SOI3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->SOI3nextModel; /* cut deleted device out of list */
-    for (here = (*model)->SOI3instances; here; here = here->SOI3nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

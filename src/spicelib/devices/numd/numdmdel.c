@@ -10,17 +10,15 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+NUMDmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    NUMDmodel **model = (NUMDmodel **) inModel;
-    NUMDmodel *modfast = (NUMDmodel *) kill;
-    NUMDinstance *here;
-    NUMDinstance *prev = NULL;
-    NUMDmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->NUMDnextModel)) {
-        if ((*model)->NUMDmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ NUMDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->NUMDnextModel;    /* cut deleted device out of list */
-    for (here = (*model)->NUMDinstances; here; here = here->NUMDnextInstance) {
+    *oldmod = (*model)->GENnextModel;    /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

@@ -14,17 +14,15 @@ Author: 1985 S. Hwang
 
 
 int
-HFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+HFET2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    HFET2model **model = (HFET2model **) inModel;
-    HFET2model *modfast = (HFET2model *) kill;
-    HFET2instance *here;
-    HFET2instance *prev = NULL;
-    HFET2model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->HFET2nextModel)) {
-        if ((*model)->HFET2modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -32,8 +30,8 @@ HFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->HFET2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->HFET2instances; here; here = here->HFET2nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

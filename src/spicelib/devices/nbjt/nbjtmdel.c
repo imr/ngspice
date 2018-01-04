@@ -15,15 +15,13 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NBJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+NBJTmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    NBJTmodel **model = (NBJTmodel **) inModel;
-    NBJTmodel *modfast = (NBJTmodel *) kill;
-    NBJTmodel **oldmod;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->NBJTnextModel)) {
-        if ((*model)->NBJTmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -31,9 +29,9 @@ NBJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    if ((*model)->NBJTinstances)
+    if ((*model)->GENinstances)
         return E_NOTEMPTY;
-    *oldmod = (*model)->NBJTnextModel;    /* cut deleted device out of list */
+    *oldmod = (*model)->GENnextModel;    /* cut deleted device out of list */
     FREE(*model);
     return OK;
 }

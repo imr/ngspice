@@ -64,17 +64,15 @@ June 2008 (revised October 2011)
 
 
 int
-HSMHV2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+HSMHV2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    HSMHV2model **model = (HSMHV2model **) inModel;
-    HSMHV2model *modfast = (HSMHV2model *) kill;
-    HSMHV2instance *here;
-    HSMHV2instance *prev = NULL;
-    HSMHV2model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->HSMHV2nextModel)) {
-        if ((*model)->HSMHV2modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -82,8 +80,8 @@ HSMHV2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->HSMHV2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->HSMHV2instances; here; here = here->HSMHV2nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

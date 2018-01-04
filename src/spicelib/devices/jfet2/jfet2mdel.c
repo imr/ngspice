@@ -14,17 +14,15 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 
 
 int
-JFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+JFET2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    JFET2model **model = (JFET2model **) inModel;
-    JFET2model *modfast = (JFET2model *) kill;
-    JFET2instance *here;
-    JFET2instance *prev = NULL;
-    JFET2model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->JFET2nextModel)) {
-        if ((*model)->JFET2modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -32,8 +30,8 @@ JFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->JFET2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->JFET2instances; here; here = here->JFET2nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

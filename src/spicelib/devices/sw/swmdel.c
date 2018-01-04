@@ -10,17 +10,15 @@ Author: 1985 Gordon Jacobs
 
 
 int
-SWmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+SWmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    SWmodel **model = (SWmodel **) inModel;
-    SWmodel *modfast = (SWmodel *) kill;
-    SWinstance *here;
-    SWinstance *prev = NULL;
-    SWmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->SWnextModel)) {
-        if ((*model)->SWmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ SWmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->SWnextModel; /* cut deleted device out of list */
-    for (here = (*model)->SWinstances; here; here = here->SWnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

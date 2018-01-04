@@ -10,17 +10,15 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 
 int
-LTRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+LTRAmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    LTRAmodel **model = (LTRAmodel **) inModel;
-    LTRAmodel *modfast = (LTRAmodel *) kill;
-    LTRAinstance *here;
-    LTRAinstance *prev = NULL;
-    LTRAmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->LTRAnextModel)) {
-        if ((*model)->LTRAmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ LTRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->LTRAnextModel;    /* cut deleted device out of list */
-    for (here = (*model)->LTRAinstances; here; here = here->LTRAnextInstance) {
+    *oldmod = (*model)->GENnextModel;    /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

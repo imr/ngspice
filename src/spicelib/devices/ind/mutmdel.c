@@ -11,17 +11,15 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MUTmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    MUTmodel **model = (MUTmodel **) inModel;
-    MUTmodel *modfast = (MUTmodel *) kill;
-    MUTinstance *here;
-    MUTinstance *prev = NULL;
-    MUTmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->MUTnextModel)) {
-        if ((*model)->MUTmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -29,8 +27,8 @@ MUTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->MUTnextModel; /* cut deleted device out of list */
-    for (here = (*model)->MUTinstances; here; here = here->MUTnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

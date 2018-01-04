@@ -61,17 +61,15 @@ to others."
 
 
 int
-HSM2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+HSM2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    HSM2model **model = (HSM2model **) inModel;
-    HSM2model *modfast = (HSM2model *) kill;
-    HSM2instance *here;
-    HSM2instance *prev = NULL;
-    HSM2model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->HSM2nextModel)) {
-        if ((*model)->HSM2modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -79,8 +77,8 @@ HSM2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->HSM2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->HSM2instances; here; here = here->HSM2nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

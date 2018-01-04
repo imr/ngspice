@@ -10,17 +10,15 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MOS2mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    MOS2model **model = (MOS2model **) inModel;
-    MOS2model *modfast = (MOS2model *) kill;
-    MOS2instance *here;
-    MOS2instance *prev = NULL;
-    MOS2model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->MOS2nextModel)) {
-        if ((*model)->MOS2modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ MOS2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->MOS2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->MOS2instances; here; here = here->MOS2nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

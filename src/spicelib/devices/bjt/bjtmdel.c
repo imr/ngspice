@@ -16,15 +16,13 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+BJTmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    BJTmodel **model = (BJTmodel **) inModel;
-    BJTmodel *modfast = (BJTmodel *) kill;
-    BJTmodel **oldmod;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->BJTnextModel)) {
-        if ((*model)->BJTmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -32,9 +30,9 @@ BJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    if ((*model)->BJTinstances)
+    if ((*model)->GENinstances)
         return E_NOTEMPTY;
-    *oldmod = (*model)->BJTnextModel; /* cut deleted device out of list */
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
     FREE(*model);
     return OK;
 }

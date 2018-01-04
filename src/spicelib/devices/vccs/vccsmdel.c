@@ -10,17 +10,15 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VCCSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+VCCSmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    VCCSmodel **model = (VCCSmodel **) inModel;
-    VCCSmodel *modfast = (VCCSmodel *) kill;
-    VCCSinstance *here;
-    VCCSinstance *prev = NULL;
-    VCCSmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->VCCSnextModel)) {
-        if ((*model)->VCCSmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ VCCSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->VCCSnextModel; /* cut deleted device out of list */
-    for (here = (*model)->VCCSinstances; here; here = here->VCCSnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

@@ -10,17 +10,15 @@ Author: 1987 Thomas L. Quarles
 
 
 int
-URCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+URCmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    URCmodel **model = (URCmodel **) inModel;
-    URCmodel *modfast = (URCmodel *) kill;
-    URCinstance *here;
-    URCinstance *prev = NULL;
-    URCmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->URCnextModel)) {
-        if ((*model)->URCmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ URCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->URCnextModel; /* cut deleted device out of list */
-    for (here = (*model)->URCinstances; here; here = here->URCnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

@@ -14,17 +14,15 @@ Author: 1985 S. Hwang
 
 
 int
-MESAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MESAmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    MESAmodel **model = (MESAmodel **) inModel;
-    MESAmodel *modfast = (MESAmodel *) kill;
-    MESAinstance *here;
-    MESAinstance *prev = NULL;
-    MESAmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->MESAnextModel)) {
-        if ((*model)->MESAmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -32,8 +30,8 @@ MESAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->MESAnextModel; /* cut deleted device out of list */
-    for (here = (*model)->MESAinstances; here; here = here->MESAnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

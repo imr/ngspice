@@ -10,17 +10,15 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+JFETmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    JFETmodel **model = (JFETmodel **) inModel;
-    JFETmodel *modfast = (JFETmodel *) kill;
-    JFETinstance *here;
-    JFETinstance *prev = NULL;
-    JFETmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->JFETnextModel)) {
-        if ((*model)->JFETmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ JFETmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->JFETnextModel; /* cut deleted device out of list */
-    for (here = (*model)->JFETinstances; here; here = here->JFETnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

@@ -11,17 +11,15 @@ Modified: Spetember 2003 Paolo Nenzi
 
 
 int
-CAPmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+CAPmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    CAPmodel *modfast = (CAPmodel *) kill;
-    CAPmodel **model = (CAPmodel **) inModel;
-    CAPinstance *here;
-    CAPinstance *prev = NULL;
-    CAPmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->CAPnextModel)) {
-        if ((*model)->CAPmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -29,8 +27,8 @@ CAPmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->CAPnextModel; /* cut deleted device out of list */
-    for (here = (*model)->CAPinstances; here; here = here->CAPnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

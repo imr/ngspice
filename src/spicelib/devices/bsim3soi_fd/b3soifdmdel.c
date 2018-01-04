@@ -17,17 +17,15 @@ File: b3soifdmdel.c          98/5/01
 
 
 int
-B3SOIFDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+B3SOIFDmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    B3SOIFDmodel **model = (B3SOIFDmodel **) inModel;
-    B3SOIFDmodel *modfast = (B3SOIFDmodel *) kill;
-    B3SOIFDinstance *here;
-    B3SOIFDinstance *prev = NULL;
-    B3SOIFDmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->B3SOIFDnextModel)) {
-        if ((*model)->B3SOIFDmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -35,8 +33,8 @@ B3SOIFDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->B3SOIFDnextModel; /* cut deleted device out of list */
-    for (here = (*model)->B3SOIFDinstances; here; here = here->B3SOIFDnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

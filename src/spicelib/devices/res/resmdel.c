@@ -10,17 +10,15 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 int
-RESmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+RESmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    RESmodel **model = (RESmodel **) inModel;
-    RESmodel *modfast = (RESmodel *) kill;
-    RESinstance *here;
-    RESinstance *prev = NULL;
-    RESmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->RESnextModel)) {
-        if ((*model)->RESmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ RESmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->RESnextModel; /* cut deleted device out of list */
-    for (here = (*model)->RESinstances; here; here = here->RESnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

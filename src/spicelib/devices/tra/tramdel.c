@@ -10,17 +10,15 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-TRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+TRAmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    TRAmodel **model = (TRAmodel **) inModel;
-    TRAmodel *modfast = (TRAmodel *) kill;
-    TRAinstance *here;
-    TRAinstance *prev = NULL;
-    TRAmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->TRAnextModel)) {
-        if ((*model)->TRAmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ TRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->TRAnextModel; /* cut deleted device out of list */
-    for (here = (*model)->TRAinstances; here; here = here->TRAnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

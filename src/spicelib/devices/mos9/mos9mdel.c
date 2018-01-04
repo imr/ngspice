@@ -11,17 +11,15 @@ Modified: Alan Gillespie
 
 
 int
-MOS9mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MOS9mDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    MOS9model **model = (MOS9model **) inModel;
-    MOS9model *modfast = (MOS9model *) kill;
-    MOS9instance *here;
-    MOS9instance *prev = NULL;
-    MOS9model **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->MOS9nextModel)) {
-        if ((*model)->MOS9modName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -29,8 +27,8 @@ MOS9mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->MOS9nextModel; /* cut deleted device out of list */
-    for (here = (*model)->MOS9instances; here; here = here->MOS9nextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

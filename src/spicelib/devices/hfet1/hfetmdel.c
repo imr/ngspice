@@ -14,17 +14,15 @@ Author: 1985 S. Hwang
 
 
 int
-HFETAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+HFETAmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    HFETAmodel **model = (HFETAmodel **) inModel;
-    HFETAmodel *modfast = (HFETAmodel *) kill;
-    HFETAinstance *here;
-    HFETAinstance *prev = NULL;
-    HFETAmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->HFETAnextModel)) {
-        if ((*model)->HFETAmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -32,8 +30,8 @@ HFETAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->HFETAnextModel; /* cut deleted device out of list */
-    for (here = (*model)->HFETAinstances; here; here = here->HFETAnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

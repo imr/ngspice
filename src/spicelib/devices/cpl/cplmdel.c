@@ -12,17 +12,15 @@ Author: 1992 Charles Hough
 
 
 int
-CPLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+CPLmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    CPLmodel **model = (CPLmodel **) inModel;
-    CPLmodel *modfast = (CPLmodel *) kill;
-    CPLinstance *here;
-    CPLinstance *prev = NULL;
-    CPLmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->CPLnextModel)) {
-        if ((*model)->CPLmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -30,8 +28,8 @@ CPLmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->CPLnextModel; /* cut deleted device out of list */
-    for (here = (*model)->CPLinstances; here; here = here->CPLnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;

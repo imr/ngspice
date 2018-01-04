@@ -10,17 +10,15 @@ Author: 1987 Kanwar Jit Singh
 
 
 int
-ASRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+ASRCmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    ASRCmodel **model = (ASRCmodel **) inModel;
-    ASRCmodel *modfast = (ASRCmodel *) kill;
-    ASRCinstance *here;
-    ASRCinstance *prev = NULL;
-    ASRCmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->ASRCnextModel)) {
-        if ((*model)->ASRCmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -29,10 +27,10 @@ ASRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
  delgot:
 
-    *oldmod = (*model)->ASRCnextModel; /* cut deleted device out of list */
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
 
-    for (here = (*model)->ASRCinstances; here; here = here->ASRCnextInstance) {
-        FREE(here->ASRCacValues);
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
+        FREE(((ASRCinstance*)here)->ASRCacValues);
         if (prev)
             FREE(prev);
         prev = here;

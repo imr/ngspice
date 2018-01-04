@@ -10,17 +10,15 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-ISRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+ISRCmDelete(GENmodel **model, IFuid modname, GENmodel *kill)
 {
-    ISRCmodel **model = (ISRCmodel **) inModel;
-    ISRCmodel *modfast = (ISRCmodel *) kill;
-    ISRCinstance *here;
-    ISRCinstance *prev = NULL;
-    ISRCmodel **oldmod;
+    GENinstance *here;
+    GENinstance *prev = NULL;
+    GENmodel **oldmod;
 
     oldmod = model;
-    for (; *model; model = &((*model)->ISRCnextModel)) {
-        if ((*model)->ISRCmodName == modname || (modfast && *model == modfast))
+    for (; *model; model = &((*model)->GENnextModel)) {
+        if ((*model)->GENmodName == modname || (kill && *model == kill))
             goto delgot;
         oldmod = model;
     }
@@ -28,8 +26,8 @@ ISRCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
     return E_NOMOD;
 
  delgot:
-    *oldmod = (*model)->ISRCnextModel; /* cut deleted device out of list */
-    for (here = (*model)->ISRCinstances; here; here = here->ISRCnextInstance) {
+    *oldmod = (*model)->GENnextModel; /* cut deleted device out of list */
+    for (here = (*model)->GENinstances; here; here = here->GENnextInstance) {
         if (prev)
             FREE(prev);
         prev = here;
