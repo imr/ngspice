@@ -61,10 +61,8 @@ to others."
 #include "ngspice/suffix.h"
 
 
-int HSM2delete(
-               GENmodel *inModel,
-               IFuid name,
-               GENinstance **inInst)
+int
+HSM2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
     HSM2instance **fast = (HSM2instance **) inInst;
     HSM2model *model = (HSM2model *) inModel;

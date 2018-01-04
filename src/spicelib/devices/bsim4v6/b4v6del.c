@@ -18,10 +18,7 @@
 
 
 int
-BSIM4v6delete(
-              GENmodel *inModel,
-              IFuid name,
-              GENinstance **inInst)
+BSIM4v6delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
     BSIM4v6instance **fast = (BSIM4v6instance **) inInst;
     BSIM4v6model *model = (BSIM4v6model *) inModel;

@@ -64,10 +64,8 @@ June 2008 (revised October 2011)
 #include "ngspice/suffix.h"
 
 
-int HSMHV2delete(
-                 GENmodel *inModel,
-                 IFuid name,
-                 GENinstance **inInst)
+int
+HSMHV2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
     HSMHV2instance **fast = (HSMHV2instance **) inInst;
     HSMHV2model *model = (HSMHV2model *) inModel;

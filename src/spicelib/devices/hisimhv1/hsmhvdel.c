@@ -22,10 +22,8 @@
 #include "ngspice/suffix.h"
 
 
-int HSMHVdelete(
-                GENmodel *inModel,
-                IFuid name,
-                GENinstance **inInst)
+int
+HSMHVdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
     HSMHVinstance **fast = (HSMHVinstance **) inInst;
     HSMHVmodel *model = (HSMHVmodel *) inModel;

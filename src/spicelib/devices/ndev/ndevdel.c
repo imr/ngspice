@@ -11,11 +11,7 @@ University of Science and Technology of China
 
 
 int
-NDEVdelete(
-           GENmodel *inModel,
-           IFuid name,
-           GENinstance **kill)
-
+NDEVdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     NDEVmodel *model = (NDEVmodel *) inModel;
     NDEVinstance **fast = (NDEVinstance **) kill;
