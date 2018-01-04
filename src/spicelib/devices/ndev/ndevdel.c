@@ -32,7 +32,6 @@ NDEVdelete(
             prev = &(here->NDEVnextInstance);
         }
     }
-    return(E_NODEV);
  
   return (E_NODEV);
 }
