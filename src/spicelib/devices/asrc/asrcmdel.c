@@ -12,8 +12,8 @@ Author: 1987 Kanwar Jit Singh
 int
 ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
 {
-    ASRCmodel **model = (ASRCmodel**) modList;
-    ASRCmodel *modfast = (ASRCmodel*) killModel;
+    ASRCmodel **model = (ASRCmodel **) modList;
+    ASRCmodel *modfast = (ASRCmodel *) killModel;
     ASRCinstance *here;
     ASRCinstance *prev = NULL;
     ASRCmodel **oldmod;
@@ -25,7 +25,7 @@ ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
         oldmod = model;
     }
 
-    return(E_NOMOD);
+    return E_NOMOD;
 
  delgot:
 
@@ -41,5 +41,5 @@ ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
     if (prev)
         FREE(prev);
     FREE(*model);
-    return(OK);
+    return OK;
 }

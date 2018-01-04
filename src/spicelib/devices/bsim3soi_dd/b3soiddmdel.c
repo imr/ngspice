@@ -7,7 +7,7 @@ Modified by Paolo Nenzi 2002
 **********/
 
 /*
- * Revision 2.1  99/9/27 Pin Su 
+ * Revision 2.1  99/9/27 Pin Su
  * BSIMDD2.1 release
  */
 
@@ -16,34 +16,33 @@ Modified by Paolo Nenzi 2002
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+
 int
 B3SOIDDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
-B3SOIDDmodel **model = (B3SOIDDmodel**)inModel;
-B3SOIDDmodel *modfast = (B3SOIDDmodel*)kill;
-B3SOIDDinstance *here;
-B3SOIDDinstance *prev = NULL;
-B3SOIDDmodel **oldmod;
+    B3SOIDDmodel **model = (B3SOIDDmodel **) inModel;
+    B3SOIDDmodel *modfast = (B3SOIDDmodel *) kill;
+    B3SOIDDinstance *here;
+    B3SOIDDinstance *prev = NULL;
+    B3SOIDDmodel **oldmod;
 
     oldmod = model;
-    for (; *model ; model = &((*model)->B3SOIDDnextModel)) {
-         if ((*model)->B3SOIDDmodName == modname || 
-             (modfast && *model == modfast))
-	     goto delgot;
-         oldmod = model;
+    for (; *model; model = &((*model)->B3SOIDDnextModel)) {
+        if ((*model)->B3SOIDDmodName == modname ||
+            (modfast && *model == modfast))
+            goto delgot;
+        oldmod = model;
     }
-    return(E_NOMOD);
 
-delgot:
+    return E_NOMOD;
+
+ delgot:
     *oldmod = (*model)->B3SOIDDnextModel; /* cut deleted device out of list */
     for (here = (*model)->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance) {
-         if(prev) FREE(prev);
-         prev = here;
+        if (prev) FREE(prev);
+        prev = here;
     }
-    if(prev) FREE(prev);
+    if (prev) FREE(prev);
     FREE(*model);
-    return(OK);
+    return OK;
 }
-
-
-

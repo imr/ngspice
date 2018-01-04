@@ -8,33 +8,35 @@ Author: 1990 Jaijeet S. Roychowdhury
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+
 int
 LTRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
-  LTRAmodel **model = (LTRAmodel **) inModel;
-  LTRAmodel *modfast = (LTRAmodel *) kill;
-  LTRAinstance *here;
-  LTRAinstance *prev = NULL;
-  LTRAmodel **oldmod;
-  oldmod = model;
-  for (; *model; model = &((*model)->LTRAnextModel)) {
-    if ((*model)->LTRAmodName == modname ||
-	(modfast && *model == modfast))
-      goto delgot;
+    LTRAmodel **model = (LTRAmodel **) inModel;
+    LTRAmodel *modfast = (LTRAmodel *) kill;
+    LTRAinstance *here;
+    LTRAinstance *prev = NULL;
+    LTRAmodel **oldmod;
+
     oldmod = model;
-  }
-  return (E_NOMOD);
+    for (; *model; model = &((*model)->LTRAnextModel)) {
+        if ((*model)->LTRAmodName == modname ||
+            (modfast && *model == modfast))
+            goto delgot;
+        oldmod = model;
+    }
 
-delgot:
-  *oldmod = (*model)->LTRAnextModel;	/* cut deleted device out of list */
-  for (here = (*model)->LTRAinstances; here; here = here->LTRAnextInstance) {
+    return E_NOMOD;
+
+ delgot:
+    *oldmod = (*model)->LTRAnextModel;    /* cut deleted device out of list */
+    for (here = (*model)->LTRAinstances; here; here = here->LTRAnextInstance) {
+        if (prev)
+            FREE(prev);
+        prev = here;
+    }
     if (prev)
-      FREE(prev);
-    prev = here;
-  }
-  if (prev)
-    FREE(prev);
-  FREE(*model);
-  return (OK);
-
+        FREE(prev);
+    FREE(*model);
+    return OK;
 }

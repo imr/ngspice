@@ -1,6 +1,6 @@
 /**********
 Copyright 1992 Regents of the University of California.  All rights reserved.
-Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -13,27 +13,28 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+
 int
 NBJTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
+    NBJTmodel **model = (NBJTmodel **) inModel;
+    NBJTmodel *modfast = (NBJTmodel *) kill;
+    NBJTmodel **oldmod;
 
-  NBJTmodel **model = (NBJTmodel **) inModel;
-  NBJTmodel *modfast = (NBJTmodel *) kill;
-  NBJTmodel **oldmod;
-  oldmod = model;
-  for (; *model; model = &((*model)->NBJTnextModel)) {
-    if ((*model)->NBJTmodName == modname ||
-	(modfast && *model == modfast))
-      goto delgot;
     oldmod = model;
-  }
-  return (E_NOMOD);
+    for (; *model; model = &((*model)->NBJTnextModel)) {
+        if ((*model)->NBJTmodName == modname ||
+            (modfast && *model == modfast))
+            goto delgot;
+        oldmod = model;
+    }
 
-delgot:
-  if ((*model)->NBJTinstances)
-    return (E_NOTEMPTY);
-  *oldmod = (*model)->NBJTnextModel;	/* cut deleted device out of list */
-  FREE(*model);
-  return (OK);
+    return E_NOMOD;
 
+ delgot:
+    if ((*model)->NBJTinstances)
+        return E_NOTEMPTY;
+    *oldmod = (*model)->NBJTnextModel;    /* cut deleted device out of list */
+    FREE(*model);
+    return OK;
 }

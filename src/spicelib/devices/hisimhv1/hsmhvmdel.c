@@ -3,14 +3,14 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2012 Hiroshima University & STARC
 
- MODEL NAME : HiSIM_HV 
+ MODEL NAME : HiSIM_HV
  ( VERSION : 1  SUBVERSION : 2  REVISION : 4 )
  Model Parameter VERSION : 1.23
  FILE : hsmhvmdel.c
 
  DATE : 2013.04.30
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -20,34 +20,35 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-int HSMHVmDelete(
-     GENmodel **inModel,
-     IFuid modname,
-     GENmodel *kill)
-{
-  HSMHVmodel **model = (HSMHVmodel**)inModel;
-  HSMHVmodel *modfast = (HSMHVmodel*)kill;
-  HSMHVinstance *here;
-  HSMHVinstance *prev = NULL;
-  HSMHVmodel **oldmod;
 
-  oldmod = model;
-  for ( ;*model ;model = &((*model)->HSMHVnextModel) ) {
-    if ( (*model)->HSMHVmodName == modname || 
-	 (modfast && *model == modfast) ) goto delgot;
+int HSMHVmDelete(
+                 GENmodel **inModel,
+                 IFuid modname,
+                 GENmodel *kill)
+{
+    HSMHVmodel **model = (HSMHVmodel **) inModel;
+    HSMHVmodel *modfast = (HSMHVmodel *) kill;
+    HSMHVinstance *here;
+    HSMHVinstance *prev = NULL;
+    HSMHVmodel **oldmod;
+
     oldmod = model;
-  }
-  return(E_NOMOD);
+    for (; *model; model = &((*model)->HSMHVnextModel)) {
+        if ((*model)->HSMHVmodName == modname ||
+             (modfast && *model == modfast)) goto delgot;
+        oldmod = model;
+    }
+
+    return E_NOMOD;
 
  delgot:
-  *oldmod = (*model)->HSMHVnextModel; /* cut deleted device out of list */
-  for ( here = (*model)->HSMHVinstances ; 
-	here ;here = here->HSMHVnextInstance ) {
+    *oldmod = (*model)->HSMHVnextModel; /* cut deleted device out of list */
+    for (here = (*model)->HSMHVinstances;
+          here; here = here->HSMHVnextInstance) {
+        if (prev) FREE(prev);
+        prev = here;
+    }
     if (prev) FREE(prev);
-    prev = here;
-  }
-  if (prev) FREE(prev);
-  FREE(*model);
-  return(OK);
+    FREE(*model);
+    return OK;
 }
-
