@@ -10,9 +10,9 @@ Author: 1987 Kanwar Jit Singh
 
 
 int
-ASRCdelete(GENmodel *model, IFuid name, GENinstance **fast)
+ASRCdelete(GENmodel *model, IFuid name, GENinstance **kill)
 {
-    ASRCinstance **instPtr = (ASRCinstance **) fast;
+    ASRCinstance **instPtr = (ASRCinstance **) kill;
     ASRCmodel *modPtr = (ASRCmodel *) model;
     ASRCinstance **prev = NULL;
     ASRCinstance *here;

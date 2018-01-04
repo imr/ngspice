@@ -12,9 +12,9 @@ File: b3v0del.c
 
 
 int
-BSIM3v0delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+BSIM3v0delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    BSIM3v0instance **fast = (BSIM3v0instance **) inInst;
+    BSIM3v0instance **fast = (BSIM3v0instance **) kill;
     BSIM3v0model *model = (BSIM3v0model *) inModel;
     BSIM3v0instance **prev = NULL;
     BSIM3v0instance *here;

@@ -10,10 +10,10 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 int
-RESdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+RESdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     RESmodel *model = (RESmodel *) inModel;
-    RESinstance **fast = (RESinstance **) inst;
+    RESinstance **fast = (RESinstance **) kill;
     RESinstance **prev = NULL;
     RESinstance *here;
 

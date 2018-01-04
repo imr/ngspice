@@ -65,9 +65,9 @@ June 2008 (revised October 2011)
 
 
 int
-HSMHV2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+HSMHV2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    HSMHV2instance **fast = (HSMHV2instance **) inInst;
+    HSMHV2instance **fast = (HSMHV2instance **) kill;
     HSMHV2model *model = (HSMHV2model *) inModel;
     HSMHV2instance **prev = NULL;
     HSMHV2instance *here;

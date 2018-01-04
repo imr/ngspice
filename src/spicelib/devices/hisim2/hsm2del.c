@@ -62,9 +62,9 @@ to others."
 
 
 int
-HSM2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+HSM2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    HSM2instance **fast = (HSM2instance **) inInst;
+    HSM2instance **fast = (HSM2instance **) kill;
     HSM2model *model = (HSM2model *) inModel;
     HSM2instance **prev = NULL;
     HSM2instance *here;

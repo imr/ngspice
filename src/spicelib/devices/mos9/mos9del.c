@@ -11,10 +11,10 @@ Modified: Alan Gillespie
 
 
 int
-MOS9delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+MOS9delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     MOS9model *model = (MOS9model *) inModel;
-    MOS9instance **fast = (MOS9instance **) inst;
+    MOS9instance **fast = (MOS9instance **) kill;
     MOS9instance **prev = NULL;
     MOS9instance *here;
 

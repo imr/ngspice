@@ -10,10 +10,10 @@ Author: 1985 S. Hwang
 
 
 int
-MESdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+MESdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     MESmodel *model = (MESmodel *) inModel;
-    MESinstance **fast = (MESinstance **) inst;
+    MESinstance **fast = (MESinstance **) kill;
     MESinstance **prev = NULL;
     MESinstance *here;
 

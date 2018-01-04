@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCCSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+CCCSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     CCCSmodel *model = (CCCSmodel *) inModel;
-    CCCSinstance **fast = (CCCSinstance **) inst;
+    CCCSinstance **fast = (CCCSinstance **) kill;
     CCCSinstance **prev = NULL;
     CCCSinstance *here;
 

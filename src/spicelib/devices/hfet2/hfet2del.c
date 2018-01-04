@@ -14,10 +14,10 @@ Author: 1985 S. Hwang
 
 
 int
-HFET2delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+HFET2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     HFET2model *model = (HFET2model *) inModel;
-    HFET2instance **fast = (HFET2instance **) inst;
+    HFET2instance **fast = (HFET2instance **) kill;
     HFET2instance **prev = NULL;
     HFET2instance *here;
 

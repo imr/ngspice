@@ -10,10 +10,10 @@ Author: 1985 Gordon Jacobs
 
 
 int
-CSWdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+CSWdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     CSWmodel *model = (CSWmodel *) inModel;
-    CSWinstance **fast = (CSWinstance **) inst;
+    CSWinstance **fast = (CSWinstance **) kill;
     CSWinstance **prev = NULL;
     CSWinstance *here;
 

@@ -14,10 +14,10 @@ Author: 1985 S. Hwang
 
 
 int
-MESAdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+MESAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     MESAmodel *model = (MESAmodel *) inModel;
-    MESAinstance **fast = (MESAinstance **) inst;
+    MESAinstance **fast = (MESAinstance **) kill;
     MESAinstance **prev = NULL;
     MESAinstance *here;
 

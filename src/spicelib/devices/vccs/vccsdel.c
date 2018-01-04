@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VCCSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+VCCSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     VCCSmodel *model = (VCCSmodel *) inModel;
-    VCCSinstance **fast = (VCCSinstance **) inst;
+    VCCSinstance **fast = (VCCSinstance **) kill;
     VCCSinstance **prev = NULL;
     VCCSinstance *here;
 

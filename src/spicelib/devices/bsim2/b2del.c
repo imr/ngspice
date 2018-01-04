@@ -11,9 +11,9 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+B2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    B2instance **fast = (B2instance **) inInst;
+    B2instance **fast = (B2instance **) kill;
     B2model *model = (B2model *) inModel;
     B2instance **prev = NULL;
     B2instance *here;

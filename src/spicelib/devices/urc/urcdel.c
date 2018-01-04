@@ -10,10 +10,10 @@ Author: 1987 Thomas L. Quarles
 
 
 int
-URCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+URCdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     URCmodel *model = (URCmodel *) inModel;
-    URCinstance **fast = (URCinstance **) inst;
+    URCinstance **fast = (URCinstance **) kill;
     URCinstance **prev = NULL;
     URCinstance *here;
 

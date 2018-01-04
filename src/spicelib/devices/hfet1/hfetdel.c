@@ -14,10 +14,10 @@ Author: 1985 S. Hwang
 
 
 int
-HFETAdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+HFETAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     HFETAmodel *model = (HFETAmodel *) inModel;
-    HFETAinstance **fast = (HFETAinstance **) inst;
+    HFETAinstance **fast = (HFETAinstance **) kill;
     HFETAinstance **prev = NULL;
     HFETAinstance *here;
 

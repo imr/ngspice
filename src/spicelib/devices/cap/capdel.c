@@ -11,9 +11,9 @@ Modified: September 2003 Paolo Nenzi
 
 
 int
-CAPdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+CAPdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    CAPinstance **fast = (CAPinstance **) inst;
+    CAPinstance **fast = (CAPinstance **) kill;
     CAPmodel *model = (CAPmodel *) inModel;
     CAPinstance **prev = NULL;
     CAPinstance *here;

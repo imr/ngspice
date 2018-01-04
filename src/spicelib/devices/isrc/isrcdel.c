@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-ISRCdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+ISRCdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     ISRCmodel *model = (ISRCmodel *) inModel;
-    ISRCinstance **fast = (ISRCinstance **) inst;
+    ISRCinstance **fast = (ISRCinstance **) kill;
     ISRCinstance **prev = NULL;
     ISRCinstance *here;
 

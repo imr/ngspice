@@ -18,9 +18,9 @@
 
 
 int
-BSIM3v1delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+BSIM3v1delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    BSIM3v1instance **fast = (BSIM3v1instance **) inInst;
+    BSIM3v1instance **fast = (BSIM3v1instance **) kill;
     BSIM3v1model *model = (BSIM3v1model *) inModel;
     BSIM3v1instance **prev = NULL;
     BSIM3v1instance *here;

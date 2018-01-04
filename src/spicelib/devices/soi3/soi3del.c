@@ -27,10 +27,10 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+SOI3delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     SOI3model *model = (SOI3model *) inModel;
-    SOI3instance **fast = (SOI3instance **) inst;
+    SOI3instance **fast = (SOI3instance **) kill;
     SOI3instance **prev = NULL;
     SOI3instance *here;
 

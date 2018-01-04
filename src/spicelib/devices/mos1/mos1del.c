@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS1delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+MOS1delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     MOS1model *model = (MOS1model *) inModel;
-    MOS1instance **fast = (MOS1instance **) inst;
+    MOS1instance **fast = (MOS1instance **) kill;
     MOS1instance **prev = NULL;
     MOS1instance *here;
 

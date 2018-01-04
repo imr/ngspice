@@ -23,9 +23,9 @@
 
 
 int
-HSMHVdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+HSMHVdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    HSMHVinstance **fast = (HSMHVinstance **) inInst;
+    HSMHVinstance **fast = (HSMHVinstance **) kill;
     HSMHVmodel *model = (HSMHVmodel *) inModel;
     HSMHVinstance **prev = NULL;
     HSMHVinstance *here;

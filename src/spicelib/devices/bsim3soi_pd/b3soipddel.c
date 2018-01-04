@@ -18,9 +18,9 @@ Modified by Paolo Nenzi 2002
 
 
 int
-B3SOIPDdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+B3SOIPDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    B3SOIPDinstance **fast = (B3SOIPDinstance **) inInst;
+    B3SOIPDinstance **fast = (B3SOIPDinstance **) kill;
     B3SOIPDmodel *model = (B3SOIPDmodel *) inModel;
     B3SOIPDinstance **prev = NULL;
     B3SOIPDinstance *here;

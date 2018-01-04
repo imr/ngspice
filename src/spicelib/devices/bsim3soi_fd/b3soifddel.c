@@ -18,9 +18,9 @@ File: b3soifddel.c          98/5/01
 
 
 int
-B3SOIFDdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+B3SOIFDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    B3SOIFDinstance **fast = (B3SOIFDinstance **) inInst;
+    B3SOIFDinstance **fast = (B3SOIFDinstance **) kill;
     B3SOIFDmodel *model = (B3SOIFDmodel *) inModel;
     B3SOIFDinstance **prev = NULL;
     B3SOIFDinstance *here;

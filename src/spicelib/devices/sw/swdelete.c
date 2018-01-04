@@ -10,10 +10,10 @@ Author: 1985 Gordon Jacobs
 
 
 int
-SWdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+SWdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     SWmodel *model = (SWmodel *) inModel;
-    SWinstance **fast = (SWinstance **) inst;
+    SWinstance **fast = (SWinstance **) kill;
     SWinstance **prev = NULL;
     SWinstance *here;
 

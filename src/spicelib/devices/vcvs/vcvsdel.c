@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VCVSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+VCVSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     VCVSmodel *model = (VCVSmodel *) inModel;
-    VCVSinstance **fast = (VCVSinstance **) inst;
+    VCVSinstance **fast = (VCVSinstance **) kill;
     VCVSinstance **prev = NULL;
     VCVSinstance *here;
 

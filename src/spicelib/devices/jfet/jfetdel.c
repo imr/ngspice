@@ -10,10 +10,10 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-JFETdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+JFETdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     JFETmodel *model = (JFETmodel *) inModel;
-    JFETinstance **fast = (JFETinstance **) inst;
+    JFETinstance **fast = (JFETinstance **) kill;
     JFETinstance **prev = NULL;
     JFETinstance *here;
 

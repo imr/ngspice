@@ -21,9 +21,9 @@
 
 
 int
-B4SOIdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+B4SOIdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
-    B4SOIinstance **fast = (B4SOIinstance **) inInst;
+    B4SOIinstance **fast = (B4SOIinstance **) kill;
     B4SOImodel *model = (B4SOImodel *) inModel;
     B4SOIinstance **prev = NULL;
     B4SOIinstance *here;

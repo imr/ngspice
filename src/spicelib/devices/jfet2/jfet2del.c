@@ -14,10 +14,10 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 
 
 int
-JFET2delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+JFET2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
 {
     JFET2model *model = (JFET2model *) inModel;
-    JFET2instance **fast = (JFET2instance **) inst;
+    JFET2instance **fast = (JFET2instance **) kill;
     JFET2instance **prev = NULL;
     JFET2instance *here;
 
