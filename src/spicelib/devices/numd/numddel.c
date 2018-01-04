@@ -15,17 +15,17 @@ NUMDdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
     NUMDmodel *model = (NUMDmodel *) inModel;
     NUMDinstance **fast = (NUMDinstance **) kill;
     NUMDinstance **prev = NULL;
-    NUMDinstance *inst;
+    NUMDinstance *here;
 
     for (; model; model = model->NUMDnextModel) {
         prev = &(model->NUMDinstances);
-        for (inst = *prev; inst; inst = *prev) {
-            if (inst->NUMDname == name || (fast && inst == *fast)) {
-                *prev = inst->NUMDnextInstance;
-                FREE(inst);
+        for (here = *prev; here; here = *prev) {
+            if (here->NUMDname == name || (fast && here == *fast)) {
+                *prev = here->NUMDnextInstance;
+                FREE(here);
                 return OK;
             }
-            prev = &(inst->NUMDnextInstance);
+            prev = &(here->NUMDnextInstance);
         }
     }
 

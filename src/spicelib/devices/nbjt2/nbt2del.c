@@ -20,17 +20,17 @@ NBJT2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
     NBJT2model *model = (NBJT2model *) inModel;
     NBJT2instance **fast = (NBJT2instance **) kill;
     NBJT2instance **prev = NULL;
-    NBJT2instance *inst;
+    NBJT2instance *here;
 
     for (; model; model = model->NBJT2nextModel) {
         prev = &(model->NBJT2instances);
-        for (inst = *prev; inst; inst = *prev) {
-            if (inst->NBJT2name == name || (fast && inst == *fast)) {
-                *prev = inst->NBJT2nextInstance;
-                FREE(inst);
+        for (here = *prev; here; here = *prev) {
+            if (here->NBJT2name == name || (fast && here == *fast)) {
+                *prev = here->NBJT2nextInstance;
+                FREE(here);
                 return OK;
             }
-            prev = &(inst->NBJT2nextInstance);
+            prev = &(here->NBJT2nextInstance);
         }
     }
 

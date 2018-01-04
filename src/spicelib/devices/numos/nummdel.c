@@ -20,17 +20,17 @@ NUMOSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
     NUMOSmodel *model = (NUMOSmodel *) inModel;
     NUMOSinstance **fast = (NUMOSinstance **) kill;
     NUMOSinstance **prev = NULL;
-    NUMOSinstance *inst;
+    NUMOSinstance *here;
 
     for (; model; model = model->NUMOSnextModel) {
         prev = &(model->NUMOSinstances);
-        for (inst = *prev; inst; inst = *prev) {
-            if (inst->NUMOSname == name || (fast && inst == *fast)) {
-                *prev = inst->NUMOSnextInstance;
-                FREE(inst);
+        for (here = *prev; here; here = *prev) {
+            if (here->NUMOSname == name || (fast && here == *fast)) {
+                *prev = here->NUMOSnextInstance;
+                FREE(here);
                 return OK;
             }
-            prev = &(inst->NUMOSnextInstance);
+            prev = &(here->NUMOSnextInstance);
         }
     }
 
