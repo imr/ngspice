@@ -1577,6 +1577,9 @@ create_circbyline(char *line)
         is_script = ciprefix("*ng_script", line);
     if (!circarray)
         circarray = TMALLOC(char*, memlen);
+    char *p = skip_ws(line);
+    if (line < p)
+        memmove(line, p, strlen(p) + 1);
     circarray[linec++] = line;
     if (line == NULL) {
         inp_spsource(fp, is_script, "", TRUE);
