@@ -22,13 +22,13 @@ NBJT2mDelete(GENmodel **models, IFuid modname, GENmodel *kill)
 
     for (; model; model = model->GENnextModel) {
         if (model->GENmodName == modname || (kill && model == kill))
-            goto delgot;
+            break;
         prev = &(model->GENnextModel);
     }
 
-    return E_NOMOD;
+    if (!model)
+        return E_NOMOD;
 
- delgot:
     if (model->GENinstances)
         return E_NOTEMPTY;
     *prev = model->GENnextModel;

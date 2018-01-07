@@ -20,13 +20,13 @@ CPLmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
 
     for (; model; model = model->GENnextModel) {
         if (model->GENmodName == modname || (kill && model == kill))
-            goto delgot;
+            break;
         prev = &(model->GENnextModel);
     }
 
-    return E_NOMOD;
+    if (!model)
+        return E_NOMOD;
 
- delgot:
     *prev = model->GENnextModel;
     for (here = model->GENinstances; here;) {
         GENinstance *next_instance = here->GENnextInstance;
