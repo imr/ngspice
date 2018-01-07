@@ -89,21 +89,6 @@ MIFdelete(
     model = (MIFmodel *) inModel;
     fast  = (MIFinstance **) inst;
 
-    if ((*fast)->callback) {
-        Mif_Private_t       cm_data;
-
-        /* Prepare the structure to be passed to the code model */
-        cm_data.num_conn = (*fast)->num_conn;
-        cm_data.conn = (*fast)->conn;
-        cm_data.num_param = (*fast)->num_param;
-        cm_data.param = (*fast)->param;
-        cm_data.num_inst_var = (*fast)->num_inst_var;
-        cm_data.inst_var = (*fast)->inst_var;
-        cm_data.callback = &((*fast)->callback);
-
-        (*fast)->callback(&cm_data, MIF_CB_DESTROY);
-    }
-
     /*******************************************/
     /* Cut the instance out of the linked list */
     /*******************************************/
@@ -129,6 +114,24 @@ MIFdelete(
     if(!found)
         return(E_NODEV);
 
+    /*******************************************/
+    /* instance->callback(..., MIF_CB_DESTROY) */
+    /*******************************************/
+
+    if (here->callback) {
+        Mif_Private_t cm_data;
+
+        /* Prepare the structure to be passed to the code model */
+        cm_data.num_conn = here->num_conn;
+        cm_data.conn = here->conn;
+        cm_data.num_param = here->num_param;
+        cm_data.param = here->param;
+        cm_data.num_inst_var = here->num_inst_var;
+        cm_data.inst_var = here->inst_var;
+        cm_data.callback = &(here->callback);
+
+        here->callback(&cm_data, MIF_CB_DESTROY);
+    }
 
     /*******************************/
     /* Free the instance structure */
