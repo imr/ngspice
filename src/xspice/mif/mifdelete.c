@@ -50,8 +50,27 @@ NON-STANDARD FEATURES
 #endif
 
 #include "ngspice/suffix.h"
-
 #include "ngspice/devdefs.h"
+
+
+static MIFinstance *
+MIFdelete_instance(GENmodel *model, IFuid name, GENinstance **kill)
+{
+    for (; model; model = model->GENnextModel) {
+        GENinstance **prev = &(model->GENinstances);
+        GENinstance *here = *prev;
+        for (; here; here = *prev) {
+            if (here->GENname == name || (kill && here == *kill)) {
+                *prev = here->GENnextInstance;
+                return (MIFinstance *) here;
+            }
+            prev = &(here->GENnextInstance);
+        }
+    }
+
+    return NULL;
+}
+
 
 /*
 MIFdelete
@@ -61,21 +80,13 @@ of instance structures, freeing all dynamically allocated memory
 used by the instance structure.
 */
 
-
 int
 MIFdelete(
-    GENmodel    *inModel,   /* The head of the model list */
+    GENmodel    *model,     /* The head of the model list */
     IFuid       name,       /* The name of the instance to delete */
-    GENinstance **inst      /* The instance structure to delete */
+    GENinstance **kill      /* The instance structure to delete */
 )
 {
-    MIFmodel    *model;
-    MIFinstance **fast;
-    MIFinstance **prev;
-    MIFinstance *here=NULL;
-
-    Mif_Boolean_t  found;
-
     int         i;
     int         j;
     int         k;
@@ -84,34 +95,13 @@ MIFdelete(
     int         num_port;
     int         num_inst_var;
 
-
-    /* Convert generic pointers in arg list to MIF specific pointers */
-    model = (MIFmodel *) inModel;
-    fast  = (MIFinstance **) inst;
-
     /*******************************************/
     /* Cut the instance out of the linked list */
     /*******************************************/
 
-    /* Loop through all models */
-    for(found = MIF_FALSE; model; model = model->MIFnextModel) {
-        prev = &(model->MIFinstances);
-        /* Loop through all instances of this model */
-        for(here = *prev; here; here = here->MIFnextInstance) {
-            /* If name or pointer matches, cut it out and mark that its found */
-            if(here->MIFname == name || (fast && here == *fast) ) {
-                *prev= here->MIFnextInstance;
-                found = MIF_TRUE;
-                break;
-            }
-            prev = &(here->MIFnextInstance);
-        }
-        if(found)
-            break;
-    }
+    MIFinstance *here = MIFdelete_instance(model, name, kill);
 
-    /* Return error if not found */
-    if(!found)
+    if (!here)
         return(E_NODEV);
 
     /*******************************************/
