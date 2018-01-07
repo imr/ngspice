@@ -51,10 +51,10 @@ int $(module)acLoad(GENmodel *inModel, CKTcircuit *ckt)
 {
   register $(module)model *model = ($(module)model*)inModel;
   register $(module)instance *here;
-  for ( ; model != NULL; model = model->$(module)nextModel )
+  for ( ; model != NULL; model = $(module)nextModel(model) )
   {
     /* loop through all the instances of the model */
-    for (here = model->$(module)instances; here != NULL ; here = here->$(module)nextInstance)
+    for (here = $(module)instances(model); here != NULL ; here = here->$(module)nextInstance)
     {
 <admst:for-each select="jacobian[static='yes']">
   <admst:value-of select="column/name"/>

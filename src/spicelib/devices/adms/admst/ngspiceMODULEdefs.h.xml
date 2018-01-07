@@ -265,12 +265,12 @@ typedef struct s$(module)instance {
 /* per model data */
 
 typedef struct s$(module)model {         /* model structure */
-  int $(module)modType;        /* type index of this device type */
-  struct s$(module)model *$(module)nextModel; /* pointer to next possible model in linked list */
-  $(module)instance * $(module)instances;  /* pointer to list of instances that have this model */
-  IFuid $(module)modName;         /* pointer to the name of this model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define $(module)modType            gen.GENmodType
+#define $(module)nextModel(inst)    ((struct $(module)model*)((inst)->gen.GENnextModel))
+#define $(module)instances(inst)    ((struct $(module)instance*)((inst)->gen.GENinstances))
+#define $(module)modName            gen.GENmodName
 
   /* model parameters */
   <admst:for-each select="variable[parametertype='model' and input='yes']">
@@ -297,6 +297,7 @@ typedef struct s$(module)model {         /* model structure */
   </admst:for-each>
 
 } $(module)model;
+
 
   <admst:text format="  /* flags */\n"/>
   <admst:text format="typedef enum {\n"/>

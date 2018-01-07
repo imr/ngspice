@@ -58,12 +58,12 @@ int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
   register $(module)model *model = ($(module)model*)inModel;
   register $(module)instance *here;
   NG_IGNOREABLE(ckt);
-  for ( ; model != NULL; model = model->$(module)nextModel )
+  for ( ; model != NULL; model = $(module)nextModel(model) )
   {
 
 <admst:apply-templates select="analog" match="analog:initial_model" required="yes"/>
     /* loop through all the instances of the model */
-    for (here = model->$(module)instances; here != NULL ; here = here->$(module)nextInstance)
+    for (here = $(module)instances(model); here != NULL ; here = here->$(module)nextInstance)
     {
 
 <admst:apply-templates select="analog" match="analog:initial_instance" required="yes"/>

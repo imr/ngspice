@@ -54,11 +54,11 @@ void $(module)destroy(GENmodel **inModel)
   $(module)model *mod = *model;
   $(module)model *oldmod = NULL;
   
-  for ( ; mod ; mod = mod->$(module)nextModel ) {
+  for ( ; mod ; mod = $(module)nextModel(mod) ) {
       if (oldmod) FREE(oldmod);
       oldmod = mod;
       prev = ($(module)instance *)NULL;  
-      for (here = mod->$(module)instances; here ; here = here->$(module)nextInstance) {
+      for (here = $(module)instances(mod); here ; here = here->$(module)nextInstance) {
           if(prev) FREE(prev);
 	  prev = here;
 	  }

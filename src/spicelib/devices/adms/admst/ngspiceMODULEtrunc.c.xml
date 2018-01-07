@@ -56,10 +56,10 @@ int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     double debugtemp;
 #endif /* STEPDEBUG */  
   
-  for ( ; model != NULL; model = model->$(module)nextModel )
+  for ( ; model != NULL; model = $(module)nextModel(model) )
   {
     /* loop through all the instances of the model */
-    for (here = model->$(module)instances; here != NULL ; here = here->$(module)nextInstance)
+    for (here = $(module)instances(model); here != NULL ; here = here->$(module)nextInstance)
     {
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

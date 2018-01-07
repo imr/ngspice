@@ -194,10 +194,10 @@ int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
                  ((ckt->CKTmode &amp; MODETRANOP) &amp;&amp; (ckt->CKTmode &amp; MODEUIC)))
                  ? 1 : 0;
 
-  for ( ; model != NULL; model = model->$(module)nextModel )
+  for ( ; model != NULL; model = $(module)nextModel(model) )
   {
     /* loop through all the instances of the model */
-    for (here = model->$(module)instances; here != NULL ; here = here->$(module)nextInstance)
+    for (here = $(module)instances(model); here != NULL ; here = here->$(module)nextInstance)
     {
 {
 <admst:for-each select="jacobian[static='yes']">
