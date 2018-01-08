@@ -25,15 +25,6 @@ struct GENinstance {
                     /* carefull, thats overlayed into the actual device structs */
 };
 
-/* argh, terminals are counted from 1 */
-#define GENnode1 GENnode[0]
-#define GENnode2 GENnode[1]
-#define GENnode3 GENnode[2]
-#define GENnode4 GENnode[3]
-#define GENnode5 GENnode[4]
-#define GENnode6 GENnode[5]
-#define GENnode7 GENnode[6]
-
 
 /* per model data */
 
