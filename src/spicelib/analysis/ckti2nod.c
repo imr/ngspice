@@ -26,7 +26,7 @@ CKTinst2Node(CKTcircuit *ckt, void *instPtr, int terminal, CKTnode **node, IFuid
 
     if (*(DEVices[type]->DEVpublic.terms) >= terminal && terminal > 0) {
         /* argh, terminals are counted from 1 */
-        int nodenum = inst->GENnode[terminal - 1];
+        int nodenum = GENnode(inst)[terminal - 1];
 
         for (here = ckt->CKTnodes; here; here = here->next)
             if (here->number == nodenum) {

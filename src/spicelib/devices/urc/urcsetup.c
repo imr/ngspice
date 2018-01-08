@@ -302,7 +302,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 		return E_NOMOD;
 
 	    for (in = modfast->GENinstances; in; in = in->GENnextInstance)
-		CKTdltNNum(ckt, in->GENnode[0]);
+		CKTdltNNum(ckt, GENnode(in)[0]);
 
 	    CKTdltMod(ckt, modfast);	/* Does the elements too */
 

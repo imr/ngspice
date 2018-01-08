@@ -21,9 +21,20 @@ struct GENinstance {
                                      * current model*/
     IFuid GENname;  /* pointer to character string naming this instance */
     int GENstate;   /* state index number */
-    int GENnode[7]; /* node numbers to which this instance is connected to */
+
+    /* The actual devices have to place their node elements
+     *   right after the the end of struct GENinstance
+     *   where there can be accessed by generic GENnode()[]
+     * A notable exception is the XSPICE MIF device
+     */
+#if 0
+    int GENnode[];  /* node numbers to which this instance is connected to */
                     /* carefull, thats overlayed into the actual device structs */
+#endif
 };
+
+static inline int *GENnode(struct GENinstance *inst)
+{ return (int*)(inst + 1); }
 
 
 /* per model data */
