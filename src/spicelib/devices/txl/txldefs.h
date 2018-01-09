@@ -16,8 +16,8 @@ typedef struct sTXLinstance {
                                              * current model*/
 
     IFuid TXLname;  /* pointer to character string naming this instance */
-    
-        int dimensions; /* may we not need this but ... */
+    int TXLstates;  /* state info, unused */
+
 	int TXLposNode;
 	int TXLnegNode;
 	double TXLlength;

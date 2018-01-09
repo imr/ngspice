@@ -54,6 +54,7 @@ struct MIFinstance {
     struct MIFmodel     *MIFmodPtr;       /* backpointer to model */
     struct MIFinstance  *MIFnextInstance; /* pointer to next instance of current model */
     IFuid               MIFname;          /* pointer to character string naming this instance */
+    int                 MIFstates;        /* state info, unused */
 
     int                 num_conn;         /* number of connections on the code model */
     Mif_Conn_Data_t     **conn;           /* array of data structures for each connection */

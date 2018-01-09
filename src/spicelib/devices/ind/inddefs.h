@@ -127,6 +127,7 @@ struct sMUTinstance {
     MUTinstance *MUTnextInstance; /* pointer to next instance of
                                    * current model */
     IFuid MUTname;        /* pointer to character string naming this instance */
+    int MUTstates;        /* state info, unused */
     double MUTcoupling;   /* mutual inductance input by user */
     double MUTfactor;     /* mutual inductance scaled for internal use */
     IFuid MUTindName1;    /* name of coupled inductor 1 */
