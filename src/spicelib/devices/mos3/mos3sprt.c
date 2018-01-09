@@ -31,7 +31,7 @@ MOS3sPrint(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = MOS3instances(model); here != NULL ;
-                here=here->MOS3nextInstance) {
+                here=MOS3nextInstance(here)) {
 
             printf("    Instance name:%s\n",here->MOS3name);
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",

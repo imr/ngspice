@@ -170,7 +170,7 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     }
     /* loop through all the instances of the model */
     for (here = LTRAinstances(model); here != NULL;
-	here = here->LTRAnextInstance) {
+	here = LTRAnextInstance(here)) {
 
       if (here->LTRAbrEq1 == 0) {
 	error = CKTmkVolt(ckt, &tmp, here->LTRAname, "i1");
@@ -228,7 +228,7 @@ LTRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
   for (model = (LTRAmodel *) inModel; model != NULL;
       model = LTRAnextModel(model)) {
     for (here = LTRAinstances(model); here != NULL;
-	here = here->LTRAnextInstance) {
+	here = LTRAnextInstance(here)) {
       if (here->LTRAbrEq2 > 0)
 	CKTdltNNum(ckt, here->LTRAbrEq2);
       here->LTRAbrEq2 = 0;

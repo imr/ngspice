@@ -27,7 +27,7 @@ RESsLoad(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = RESinstances(model); here != NULL ;
-                here=here->RESnextInstance) {
+                here=RESnextInstance(here)) {
 
             if(here->RESsenParmNo){
                 double value;

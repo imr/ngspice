@@ -32,7 +32,7 @@ CCCSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
         /* loop through all the instances of the model */
         for (here = CCCSinstances(model); here != NULL ;
-                here=here->CCCSnextInstance) {
+                here=CCCSnextInstance(here)) {
 
             *(here->CCCSposContBrPtr) += here->CCCScoeff ;
             *(here->CCCSnegContBrPtr) -= here->CCCScoeff ;

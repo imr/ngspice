@@ -38,7 +38,7 @@ NUMD2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     TWOacDebug = model->NUMD2outputs->OUTPacDebug;
 
     for (inst = NUMD2instances(model); inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+	inst = NUMD2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

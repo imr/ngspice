@@ -876,7 +876,7 @@ IFuid tmpName;
 
         /* loop through all the instances of the model */
         for (here = B3SOIFDinstances(model); here != NULL ;
-             here=here->B3SOIFDnextInstance) 
+             here=B3SOIFDnextInstance(here)) 
 	{	
             /* allocate a chunk of the state vector */
             here->B3SOIFDstates = *states;
@@ -1349,7 +1349,7 @@ B3SOIFDunsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = B3SOIFDnextModel(model))
     {
         for (here = B3SOIFDinstances(model); here != NULL;
-                here=here->B3SOIFDnextInstance)
+                here=B3SOIFDnextInstance(here))
         {
             /* here for debugging purpose only */
             if (here->B3SOIFDdum5Node > 0)

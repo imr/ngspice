@@ -88,7 +88,7 @@ double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
 
     for (; model != NULL; model = BSIM4nextModel(model))
     {    for (here = BSIM4instances(model); here != NULL ;
-              here=here->BSIM4nextInstance) 
+              here=BSIM4nextInstance(here)) 
          {
               vds = model->BSIM4type
                   * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)

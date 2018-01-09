@@ -19,11 +19,12 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sISRCinstance {
-    struct sISRCmodel *ISRCmodPtr;  /* backpointer to model */
-    struct sISRCinstance *ISRCnextInstance;  /* pointer to next instance of
-                                              *current model */
-    IFuid ISRCname; /* pointer to character string naming this instance */
-    int ISRCstate;  /* not used */
+    struct GENinstance gen;
+
+#define ISRCmodPtr(inst)        ((struct sISRCmodel*)((inst)->gen.GENmodPtr))
+#define ISRCnextInstance(inst)  ((struct sISRCinstance*)((inst)->gen.GENnextInstance))
+#define ISRCname                gen.GENname
+#define ISRCstate               gen.GENstate
 
     const int ISRCnegNode;    /* number of negative node of source */
     const int ISRCposNode;    /* number of positive node of source */

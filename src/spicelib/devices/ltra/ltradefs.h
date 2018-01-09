@@ -18,11 +18,13 @@ Author: 1990 Jaijeet S. Roychowdhury
 /* information used to describe a single instance */
 
 typedef struct sLTRAinstance {
-    struct sLTRAmodel *LTRAmodPtr;    /* backpointer to model */
-    struct sLTRAinstance *LTRAnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid LTRAname;      /* pointer to character string naming this instance */
-    int LTRAstate;	 /* not used */
+    struct GENinstance gen;
+
+#define LTRAmodPtr(inst)        ((struct sLTRAmodel*)((inst)->gen.GENmodPtr))
+#define LTRAnextInstance(inst)  ((struct sLTRAinstance*)((inst)->gen.GENnextInstance))
+#define LTRAname                gen.GENname
+#define LTRAstate               gen.GENstate
+
     const int LTRAposNode1;    /* number of positive node of end 1 of t. line */
     const int LTRAnegNode1;    /* number of negative node of end 1 of t. line */
     const int LTRAposNode2;    /* number of positive node of end 2 of t. line */

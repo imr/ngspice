@@ -38,7 +38,7 @@ double m;
 
     for (; model != NULL; model = BSIM3v32nextModel(model))
     {    for (here = BSIM3v32instances(model); here!= NULL;
-              here = here->BSIM3v32nextInstance)
+              here = BSIM3v32nextInstance(here))
          {
               if (here->BSIM3v32mode >= 0)
               {   Gm = here->BSIM3v32gm;

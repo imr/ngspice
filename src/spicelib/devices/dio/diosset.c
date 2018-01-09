@@ -30,7 +30,7 @@ DIOsSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
-                here=here->DIOnextInstance) {
+                here=DIOnextInstance(here)) {
 
             if(here->DIOsenParmNo){
                 here->DIOsenParmNo = ++(info->SENparms);

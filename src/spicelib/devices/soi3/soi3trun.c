@@ -35,7 +35,7 @@ SOI3trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model != NULL; model = SOI3nextModel(model))
     {
-        for(here=SOI3instances(model);here!=NULL;here = here->SOI3nextInstance)
+        for(here=SOI3instances(model);here!=NULL;here = SOI3nextInstance(here))
         {
             CKTterr(here->SOI3qgf,ckt,timeStep);
             CKTterr(here->SOI3qd,ckt,timeStep);

@@ -49,7 +49,7 @@ for( ; model != NULL; model = MOS3nextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = MOS3instances(model); here != NULL ;
-	here=here->MOS3nextInstance) {
+	here=MOS3nextInstance(here)) {
 
     /* loading starts here */
 

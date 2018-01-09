@@ -58,7 +58,7 @@ MOS1noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	    coxSquared = model->MOS1oxideCapFactor;
         }
 	coxSquared *= coxSquared;
-	for (inst=MOS1instances(model); inst != NULL; inst=inst->MOS1nextInstance) {
+	for (inst=MOS1instances(model); inst != NULL; inst=MOS1nextInstance(inst)) {
         
 	    switch (operation) {
 

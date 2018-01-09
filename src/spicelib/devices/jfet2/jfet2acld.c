@@ -35,7 +35,7 @@ JFET2acLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = JFET2nextModel(model) ) {
         
         for( here = JFET2instances(model); here != NULL; 
-                here = here->JFET2nextInstance) {
+                here = JFET2nextInstance(here)) {
 
             gdpr=model->JFET2drainConduct * here->JFET2area;
             gspr=model->JFET2sourceConduct * here->JFET2area;

@@ -28,7 +28,7 @@ CCVSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = CCVSinstances(model); here != NULL ;
-                here=here->CCVSnextInstance) {
+                here=CCVSnextInstance(here)) {
 
             if(here->CCVSsenParmNo){
                 ic = *(ckt->CKTrhsOld + here->CCVScontBranch);

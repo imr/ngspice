@@ -45,7 +45,7 @@ B1convTest(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = B1instances(model); here != NULL ;
-                here=here->B1nextInstance) {
+                here=B1nextInstance(here)) {
 
             vbs = model->B1type * ( 
                 *(ckt->CKTrhsOld+here->B1bNode) -

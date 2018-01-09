@@ -104,7 +104,7 @@ LTRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     /* loop through all the instances of the model */
     for (here = LTRAinstances(model); here != NULL;
-	here = here->LTRAnextInstance) {
+	here = LTRAnextInstance(here)) {
 
       *(here->LTRAibr1Pos1Ptr + 0) += y0_r;
       *(here->LTRAibr1Pos1Ptr + 1) += y0_i;

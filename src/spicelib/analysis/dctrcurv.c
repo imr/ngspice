@@ -91,7 +91,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             RESmodel *model;
 
             for (model = (RESmodel *)ckt->CKThead[rcode]; model; model = RESnextModel(model))
-                for (here = RESinstances(model); here; here = here->RESnextInstance)
+                for (here = RESinstances(model); here; here = RESnextInstance(here))
                     if (here->RESname == job->TRCVvName[i]) {
                         job->TRCVvElt[i]  = (GENinstance *)here;
                         job->TRCVvSave[i] = here->RESresist;
@@ -110,7 +110,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             VSRCmodel *model;
 
             for (model = (VSRCmodel *)ckt->CKThead[vcode]; model; model = VSRCnextModel(model))
-                for (here = VSRCinstances(model); here; here = here->VSRCnextInstance)
+                for (here = VSRCinstances(model); here; here = VSRCnextInstance(here))
                     if (here->VSRCname == job->TRCVvName[i]) {
                         job->TRCVvElt[i]  = (GENinstance *)here;
                         job->TRCVvSave[i] = here->VSRCdcValue;
@@ -128,7 +128,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ISRCmodel *model;
 
             for (model = (ISRCmodel *)ckt->CKThead[icode]; model; model = ISRCnextModel(model))
-                for (here = ISRCinstances(model); here; here = here->ISRCnextInstance)
+                for (here = ISRCinstances(model); here; here = ISRCnextInstance(here))
                     if (here->ISRCname == job->TRCVvName[i]) {
                         job->TRCVvElt[i]  = (GENinstance *)here;
                         job->TRCVvSave[i] = here->ISRCdcValue;

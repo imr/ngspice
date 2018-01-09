@@ -210,7 +210,7 @@ int Size_Not_Found, error;
          /* loop through all the instances of the model */
                /* MCJ: Length and Width not initialized */
          for (here = BSIM3v32instances(model); here != NULL;
-              here = here->BSIM3v32nextInstance)
+              here = BSIM3v32nextInstance(here))
          {
               pSizeDependParamKnot = model->pSizeDependParamKnot;
               Size_Not_Found = 1;

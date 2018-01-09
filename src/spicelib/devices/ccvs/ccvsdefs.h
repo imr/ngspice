@@ -16,11 +16,12 @@ Author: 1985 Thomas L. Quarles
 /* information used to describe a single instance */
 
 typedef struct sCCVSinstance {
-    struct sCCVSmodel *CCVSmodPtr;  /* backpointer to model */
-    struct sCCVSinstance *CCVSnextInstance;     /* pointer to next instance of 
-                                                 *current model*/
-    IFuid CCVSname; /* pointer to character string naming this instance */
-    int CCVSstate; /* not used */
+    struct GENinstance gen;
+
+#define CCVSmodPtr(inst)        ((struct sCCVSmodel*)((inst)->gen.GENmodPtr))
+#define CCVSnextInstance(inst)  ((struct sCCVSinstance*)((inst)->gen.GENnextInstance))
+#define CCVSname                gen.GENname
+#define CCVSstate               gen.GENstate
 
     const int CCVSposNode;    /* number of positive node of source */
     const int CCVSnegNode;    /* number of negative node of source */

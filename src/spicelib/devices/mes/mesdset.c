@@ -59,7 +59,7 @@ MESdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = MESinstances(model); here != NULL ;
-                here=here->MESnextInstance) {
+                here=MESnextInstance(here)) {
 
             /*
              *  dc model parameters 

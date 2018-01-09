@@ -47,7 +47,7 @@ MOS2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     };
 
     for (model=firstModel; model != NULL; model=MOS2nextModel(model)) {
-	for (inst=MOS2instances(model); inst != NULL; inst=inst->MOS2nextInstance) {
+	for (inst=MOS2instances(model); inst != NULL; inst=MOS2nextInstance(inst)) {
 
 	    switch (operation) {
 

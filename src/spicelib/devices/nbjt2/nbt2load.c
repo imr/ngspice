@@ -95,7 +95,7 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
     }
     /* loop through all the instances of the model */
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       pDevice = inst->NBJT2pDevice;
 
@@ -480,7 +480,7 @@ NBJT2initSmSig(NBJT2instance *inst)
 {
   SPcomplex yIeVce, yIeVbe;
   SPcomplex yIcVce, yIcVbe;
-  double omega = inst->NBJT2modPtr->NBJT2methods->METHomega;
+  double omega = NBJT2modPtr(inst)->NBJT2methods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NBJT2admittance(inst->NBJT2pDevice, omega,

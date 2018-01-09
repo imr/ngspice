@@ -1000,7 +1000,7 @@ int HSMHV2setup(
 
     /* loop through all the instances of the model */
     for ( here = HSMHV2instances(model) ;here != NULL ;
-         here = here->HSMHV2nextInstance ) {
+         here = HSMHV2nextInstance(here) ) {
       /* allocate a chunk of the state vector */
       here->HSMHV2states = *states;
       if (model->HSMHV2_conqs)
@@ -1742,7 +1742,7 @@ HSMHV2unsetup(
             model = HSMHV2nextModel(model))
     {
         for (here = HSMHV2instances(model); here != NULL;
-                here=here->HSMHV2nextInstance)
+                here=HSMHV2nextInstance(here))
         {
             if (here->HSMHV2tempNode > 0 &&
                 here->HSMHV2tempNode != here->HSMHV2tempNodeExt &&

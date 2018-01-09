@@ -27,7 +27,7 @@ LTRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
   for (; model != NULL; model = LTRAnextModel(model)) {
     /* loop through all the instances of the model */
     for (here = LTRAinstances(model); here != NULL;
-	here = here->LTRAnextInstance) {
+	here = LTRAnextInstance(here)) {
 
       switch (model->LTRAspecialCase) {
 

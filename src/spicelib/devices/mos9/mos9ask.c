@@ -179,11 +179,11 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
         case MOS9_CAPGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS9capgs);
 /* add overlap capacitance */
-            value->rValue += (here->MOS9modPtr->MOS9gateSourceOverlapCapFactor)
+            value->rValue += (MOS9modPtr(here)->MOS9gateSourceOverlapCapFactor)
                              * here->MOS9m
                              * (here->MOS9w
-                                +here->MOS9modPtr->MOS9widthAdjust
-                                -2*(here->MOS9modPtr->MOS9widthNarrow));
+                                +MOS9modPtr(here)->MOS9widthAdjust
+                                -2*(MOS9modPtr(here)->MOS9widthNarrow));
             return(OK);
         case MOS9_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS9qgs);
@@ -194,11 +194,11 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
         case MOS9_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS9capgd);
 /* add overlap capacitance */
-            value->rValue += (here->MOS9modPtr->MOS9gateDrainOverlapCapFactor)
+            value->rValue += (MOS9modPtr(here)->MOS9gateDrainOverlapCapFactor)
                              * here->MOS9m
                              * (here->MOS9w
-                                +here->MOS9modPtr->MOS9widthAdjust
-                                -2*(here->MOS9modPtr->MOS9widthNarrow));
+                                +MOS9modPtr(here)->MOS9widthAdjust
+                                -2*(MOS9modPtr(here)->MOS9widthNarrow));
             return(OK);
         case MOS9_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS9qgd);
@@ -209,11 +209,11 @@ MOS9ask(CKTcircuit *ckt, GENinstance *inst, int which,
         case MOS9_CAPGB:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS9capgb);
 /* add overlap capacitance */
-            value->rValue += (here->MOS9modPtr->MOS9gateBulkOverlapCapFactor)
+            value->rValue += (MOS9modPtr(here)->MOS9gateBulkOverlapCapFactor)
                              * here->MOS9m
                              * (here->MOS9l
-                                +here->MOS9modPtr->MOS9lengthAdjust
-                                -2*(here->MOS9modPtr->MOS9latDiff));
+                                +MOS9modPtr(here)->MOS9lengthAdjust
+                                -2*(MOS9modPtr(here)->MOS9latDiff));
             return(OK);
         case MOS9_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS9qgb);

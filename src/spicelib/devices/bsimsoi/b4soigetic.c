@@ -31,7 +31,7 @@ B4SOImodel *model = (B4SOImodel*)inModel;
 B4SOIinstance *here;
 
     for (; model ; model = B4SOInextModel(model)) 
-    {    for (here = B4SOIinstances(model); here; here = here->B4SOInextInstance)
+    {    for (here = B4SOIinstances(model); here; here = B4SOInextInstance(here))
          {
               if(!here->B4SOIicVBSGiven) 
               {  here->B4SOIicVBS = *(ckt->CKTrhs + here->B4SOIbNode) 

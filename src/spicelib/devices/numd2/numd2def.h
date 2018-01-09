@@ -22,12 +22,12 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNUMD2instance {
-  struct sNUMD2model *NUMD2modPtr;	/* back pointer to model */
-  struct sNUMD2instance *NUMD2nextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NUMD2name;		/* pointer to character string naming this
-				 * instance */
-  int NUMD2state;		/* pointer to start of state vector for diode */
+  struct GENinstance gen;
+
+#define NUMD2modPtr(inst)        ((struct sNUMD2model*)((inst)->gen.GENmodPtr))
+#define NUMD2nextInstance(inst)  ((struct sNUMD2instance*)((inst)->gen.GENnextInstance))
+#define NUMD2name                gen.GENname
+#define NUMD2state               gen.GENstate
 
 #define NUMD2voltage NUMD2state
 #define NUMD2id NUMD2state+1

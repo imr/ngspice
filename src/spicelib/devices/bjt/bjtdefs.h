@@ -17,11 +17,12 @@ Author: 1985 Thomas L. Quarles
 /* data needed to describe a single instance */
 
 typedef struct sBJTinstance {
-    struct sBJTmodel *BJTmodPtr;    /* backpointer to model */
-    struct sBJTinstance *BJTnextInstance;   /* pointer to next instance of
-                                             * current model*/
-    IFuid BJTname;  /* pointer to character string naming this instance */
-    int BJTstate; /* pointer to start of state vector for bjt */
+    struct GENinstance gen;
+
+#define BJTmodPtr(inst)        ((struct sBJTmodel*)((inst)->gen.GENmodPtr))
+#define BJTnextInstance(inst)  ((struct sBJTinstance*)((inst)->gen.GENnextInstance))
+#define BJTname                gen.GENname
+#define BJTstate               gen.GENstate
 
     const int BJTcolNode;   /* number of collector node of bjt */
     const int BJTbaseNode;  /* number of base node of bjt */

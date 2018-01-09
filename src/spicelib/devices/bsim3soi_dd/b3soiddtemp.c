@@ -73,7 +73,7 @@ int Size_Not_Found;
          /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
          for (here = B3SOIDDinstances(model); here != NULL;
-              here = here->B3SOIDDnextInstance) 
+              here = B3SOIDDnextInstance(here)) 
 	 {	      
 	      here->B3SOIDDrbodyext = here->B3SOIDDbodySquares *
                                     model->B3SOIDDrbsh;

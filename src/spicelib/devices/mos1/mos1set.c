@@ -90,7 +90,7 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
         /* loop through all the instances of the model */
         for (here = MOS1instances(model); here != NULL ;
-                here=here->MOS1nextInstance) {
+                here=MOS1nextInstance(here)) {
 
             /* allocate a chunk of the state vector */
             here->MOS1states = *states;
@@ -221,7 +221,7 @@ MOS1unsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = MOS1nextModel(model))
     {
         for (here = MOS1instances(model); here != NULL;
-                here=here->MOS1nextInstance)
+                here=MOS1nextInstance(here))
 	{
 	    if (here->MOS1sNodePrime > 0
 		    && here->MOS1sNodePrime != here->MOS1sNode)

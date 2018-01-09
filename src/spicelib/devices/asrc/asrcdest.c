@@ -18,7 +18,7 @@ ASRCdestroy(GENmodel **inModel)
         ASRCmodel *next_mod = ASRCnextModel(mod);
         ASRCinstance *inst = ASRCinstances(mod);
         while (inst) {
-            ASRCinstance *next_inst = inst->ASRCnextInstance;
+            ASRCinstance *next_inst = ASRCnextInstance(inst);
             INPfreeTree(inst->ASRCtree);
             FREE(inst->ASRCacValues);
             FREE(inst->ASRCposPtr);

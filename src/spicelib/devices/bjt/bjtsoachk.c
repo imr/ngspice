@@ -32,7 +32,7 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = BJTnextModel(model)) {
 
-        for (here = BJTinstances(model); here; here=here->BJTnextInstance) {
+        for (here = BJTinstances(model); here; here=BJTnextInstance(here)) {
 
             vbe = fabs(ckt->CKTrhsOld [here->BJTbasePrimeNode] -
                        ckt->CKTrhsOld [here->BJTemitPrimeNode]);

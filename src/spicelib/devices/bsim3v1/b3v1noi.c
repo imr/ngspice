@@ -125,7 +125,7 @@ int i;
 
     for (; model != NULL; model = BSIM3v1nextModel(model))
     {    for (here = BSIM3v1instances(model); here != NULL;
-	      here = here->BSIM3v1nextInstance)
+	      here = BSIM3v1nextInstance(here))
 	 {
 	      pParam = here->pParam;
 	      switch (operation)

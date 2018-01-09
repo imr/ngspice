@@ -31,7 +31,7 @@ VCCSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
         /* loop through all the instances of the model */
         for (here = VCCSinstances(model); here != NULL ;
-                here=here->VCCSnextInstance) {
+                here=VCCSnextInstance(here)) {
             
             *(here->VCCSposContPosPtr) += here->VCCScoeff ;
             *(here->VCCSposContNegPtr) -= here->VCCScoeff ;

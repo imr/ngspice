@@ -55,7 +55,7 @@ NUMOStemp(GENmodel *inModel, CKTcircuit *ckt)
     OneCarrier = methods->METHoneCarrier;
 
     for (inst = NUMOSinstances(model); inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+	inst = NUMOSnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

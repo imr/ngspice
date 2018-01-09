@@ -22,7 +22,7 @@ CCVSfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
 
     for( ; model != NULL; model = CCVSnextModel(model)) {
         for (here = CCVSinstances(model); here != NULL;
-                here = here->CCVSnextInstance) {
+                here = CCVSnextInstance(here)) {
             if(here->CCVSname == name) {
                 if(here->CCVSbranch == 0) {
                     error = CKTmkCur(ckt,&tmp, here->CCVSname,"branch");

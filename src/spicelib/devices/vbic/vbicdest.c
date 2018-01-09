@@ -24,7 +24,7 @@ VBICdestroy(GENmodel **inModel)
         VBICmodel *next_mod = VBICnextModel(mod);
         VBICinstance *inst = VBICinstances(mod);
         while (inst) {
-            VBICinstance *next_inst = inst->VBICnextInstance;
+            VBICinstance *next_inst = VBICnextInstance(inst);
             FREE(inst->VBICsens);
             FREE(inst);
             inst = next_inst;

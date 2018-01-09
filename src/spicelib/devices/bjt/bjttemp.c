@@ -101,7 +101,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
-                here=here->BJTnextInstance) {
+                here=BJTnextInstance(here)) {
 
             double arg1, pbfact1, egfet1;
             if(!here->BJTdtempGiven)

@@ -20,11 +20,13 @@ Author: 1985 S. Hwang
 /* information used to describe a single instance */
 
 typedef struct sMESinstance {
-    struct sMESmodel *MESmodPtr;    /* backpointer to model */
-    struct sMESinstance *MESnextInstance; /* pointer to next instance of 
-                                             * current model*/
-    IFuid MESname; /* pointer to character string naming this instance */
-    int MESstate; /* pointer to start of state vector for mesfet */
+    struct GENinstance gen;
+
+#define MESmodPtr(inst)        ((struct sMESmodel*)((inst)->gen.GENmodPtr))
+#define MESnextInstance(inst)  ((struct sMESinstance*)((inst)->gen.GENnextInstance))
+#define MESname                gen.GENname
+#define MESstate               gen.GENstate
+
     const int MESdrainNode;  /* number of drain node of mesfet */
     const int MESgateNode;   /* number of gate node of mesfet */
     const int MESsourceNode; /* number of source node of mesfet */

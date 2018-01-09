@@ -161,7 +161,7 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = SOI3instances(model); here != NULL ;
-                here=here->SOI3nextInstance) {
+                here=SOI3nextInstance(here)) {
 
             vt = CONSTKoverQ * here->SOI3temp;
             Check=1;

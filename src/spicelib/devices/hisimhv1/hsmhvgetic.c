@@ -33,7 +33,7 @@ int HSMHVgetic(
    */
 
   for ( ;model ;model = HSMHVnextModel(model) ) {
-    for ( here = HSMHVinstances(model); here ;here = here->HSMHVnextInstance ) {
+    for ( here = HSMHVinstances(model); here ;here = HSMHVnextInstance(here) ) {
       if (!here->HSMHV_icVBS_Given) {
 	here->HSMHV_icVBS = 
 	  *(ckt->CKTrhs + here->HSMHVbNode) - 

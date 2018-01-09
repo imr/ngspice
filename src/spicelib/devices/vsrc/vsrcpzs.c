@@ -28,7 +28,7 @@ VSRCpzSetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
-	     here = here->VSRCnextInstance) {
+	     here = VSRCnextInstance(here)) {
             
             if (here->VSRCbranch == 0) {
                 error = CKTmkCur(ckt,&tmp,here->VSRCname,"branch");

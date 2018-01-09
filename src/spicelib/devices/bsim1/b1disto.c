@@ -50,7 +50,7 @@ for( ; model != NULL; model = B1nextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = B1instances(model); here != NULL ;
-      here=here->B1nextInstance) {
+      here=B1nextInstance(here)) {
 
     /* loading starts here */
 

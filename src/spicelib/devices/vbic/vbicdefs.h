@@ -19,11 +19,12 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 /* data needed to describe a single instance */
 
 typedef struct sVBICinstance {
-    struct sVBICmodel *VBICmodPtr;    /* backpointer to model */
-    struct sVBICinstance *VBICnextInstance;   /* pointer to next instance of
-                                                 current model*/
-    IFuid VBICname;  /* pointer to character string naming this instance */
-    int VBICstate;   /* pointer to start of state vector for vbic */
+    struct GENinstance gen;
+
+#define VBICmodPtr(inst)        ((struct sVBICmodel*)((inst)->gen.GENmodPtr))
+#define VBICnextInstance(inst)  ((struct sVBICinstance*)((inst)->gen.GENnextInstance))
+#define VBICname                gen.GENname
+#define VBICstate               gen.GENstate
 
     const int VBICcollNode;   /* number of collector node of vbic */
     const int VBICbaseNode;   /* number of base node of vbic */

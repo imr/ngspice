@@ -17,7 +17,7 @@ VCVSdestroy(GENmodel **inModel)
         VCVSmodel *next_mod = VCVSnextModel(mod);
         VCVSinstance *inst = VCVSinstances(mod);
         while (inst) {
-            VCVSinstance *next_inst = inst->VCVSnextInstance;
+            VCVSinstance *next_inst = VCVSnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

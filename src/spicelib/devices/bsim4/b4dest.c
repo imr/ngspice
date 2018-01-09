@@ -85,7 +85,7 @@ BSIM4destroy(GENmodel **inModel)
         }
         /** end of extra code **/
         while (inst) {
-            BSIM4instance *next_inst = inst->BSIM4nextInstance;
+            BSIM4instance *next_inst = BSIM4nextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

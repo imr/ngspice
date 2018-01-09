@@ -43,10 +43,10 @@ int NDEVsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states
 		
         /* loop through all the instances of the model */
         for (here = NDEVinstances(model); here != NULL ;
-                here=here->NDEVnextInstance) {
+                here=NDEVnextInstance(here)) {
             
 	    here->Ndevinfo.term = here->term;
-	    strncpy(here->Ndevinfo.NDEVname,here->NDEVname,32);
+	    strncpy(here->Ndevinfo.NDEVname, here->gen.GENname, 32);
 	    send(model->sock,&(here->Ndevinfo),sizeof(here->Ndevinfo),0);
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \

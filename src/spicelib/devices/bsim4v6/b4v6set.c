@@ -2052,7 +2052,7 @@ BSIM4v6instance **InstArray;
          */
 
         for (here = BSIM4v6instances(model); here != NULL ;
-             here=here->BSIM4v6nextInstance) 
+             here=BSIM4v6nextInstance(here)) 
         {   
             /* allocate a chunk of the state vector */
             here->BSIM4v6states = *states;
@@ -2437,7 +2437,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     {
         /* loop through all the instances of the model */
         for (here = BSIM4v6instances(model); here != NULL ;
-             here=here->BSIM4v6nextInstance) 
+             here=BSIM4v6nextInstance(here)) 
         { 
             InstCount++;
         }
@@ -2449,7 +2449,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     {
         /* loop through all the instances of the model */
         for (here = BSIM4v6instances(model); here != NULL ;
-             here=here->BSIM4v6nextInstance) 
+             here=BSIM4v6nextInstance(here)) 
         { 
             InstArray[idx] = here;
             idx++;
@@ -2474,7 +2474,7 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = BSIM4v6nextModel(model))
     {
         for (here = BSIM4v6instances(model); here != NULL;
-                here=here->BSIM4v6nextInstance)
+                here=BSIM4v6nextInstance(here))
         {
             if (here->BSIM4v6qNode > 0)
                 CKTdltNNum(ckt, here->BSIM4v6qNode);

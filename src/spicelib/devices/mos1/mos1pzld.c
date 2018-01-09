@@ -36,7 +36,7 @@ MOS1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for( ; model != NULL; model = MOS1nextModel(model)) {
         for(here = MOS1instances(model); here!= NULL;
-                here = here->MOS1nextInstance) {
+                here = MOS1nextInstance(here)) {
         
             if (here->MOS1mode < 0) {
                 xnrm=0;

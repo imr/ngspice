@@ -54,7 +54,7 @@ double m;
 
     for (; model != NULL; model = BSIM4v6nextModel(model)) 
     {    for (here = BSIM4v6instances(model); here!= NULL;
-              here = here->BSIM4v6nextInstance) 
+              here = BSIM4v6nextInstance(here)) 
          {
               pParam = here->pParam;
               capbd = here->BSIM4v6capbd;

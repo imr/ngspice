@@ -35,7 +35,7 @@ BSIM3soaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = BSIM3nextModel(model)) {
 
-        for (here = BSIM3instances(model); here; here = here->BSIM3nextInstance) {
+        for (here = BSIM3instances(model); here; here = BSIM3nextInstance(here)) {
 
             vgs = ckt->CKTrhsOld [here->BSIM3gNode] -
                   ckt->CKTrhsOld [here->BSIM3sNodePrime];

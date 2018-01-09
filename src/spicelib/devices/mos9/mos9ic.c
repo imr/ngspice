@@ -24,7 +24,7 @@ MOS9getic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = MOS9nextModel(model)) {
-        for(here = MOS9instances(model); here ; here = here->MOS9nextInstance) {
+        for(here = MOS9instances(model); here ; here = MOS9nextInstance(here)) {
 
             if(!here->MOS9icVBSGiven) {
                 here->MOS9icVBS = 

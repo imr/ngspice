@@ -22,7 +22,7 @@ MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model != NULL; model = MUTnextModel(model)) {
         for( here = MUTinstances(model);here != NULL; 
-                here = here->MUTnextInstance) {
+                here = MUTnextInstance(here)) {
     
             val = ckt->CKTomega * here->MUTfactor;
             *(here->MUTbr1br2Ptr +1) -= val;

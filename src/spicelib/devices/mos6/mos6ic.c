@@ -23,7 +23,7 @@ MOS6getic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = MOS6nextModel(model)) {
-        for(here = MOS6instances(model); here ; here = here->MOS6nextInstance) {
+        for(here = MOS6instances(model); here ; here = MOS6nextInstance(here)) {
         
             if(!here->MOS6icVBSGiven) {
                 here->MOS6icVBS = 

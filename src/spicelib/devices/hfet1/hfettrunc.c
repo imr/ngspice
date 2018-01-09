@@ -17,7 +17,7 @@ HFETAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     HFETAinstance *here;
 
     for( ; model != NULL; model = HFETAnextModel(model)) {
-        for(here=HFETAinstances(model);here!=NULL;here = here->HFETAnextInstance){
+        for(here=HFETAinstances(model);here!=NULL;here = HFETAnextInstance(here)){
 
             CKTterr(here->HFETAqgs,ckt,timeStep);
             CKTterr(here->HFETAqgd,ckt,timeStep);

@@ -31,7 +31,7 @@ VCCSsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = VCCSinstances(model); here != NULL ;
-                here=here->VCCSnextInstance) {
+                here=VCCSnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->VCCSname);
             printf("      Positive, negative nodes: %s, %s\n",

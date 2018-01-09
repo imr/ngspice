@@ -19,12 +19,13 @@ Modified: 2000 AlansFixes
 /* information used to describe a single instance */
 
 typedef struct sRESinstance {
-    struct sRESmodel *RESmodPtr;            /* backpointer to model */
-    struct sRESinstance *RESnextInstance;   /* pointer to next instance of
-                                             * current model*/
+    struct GENinstance gen;
 
-    IFuid RESname;      /* pointer to character string naming this instance */
-    int RESstate;       /* not used but needed for sructure consistency */
+#define RESmodPtr(inst)        ((struct sRESmodel*)((inst)->gen.GENmodPtr))
+#define RESnextInstance(inst)  ((struct sRESinstance*)((inst)->gen.GENnextInstance))
+#define RESname                gen.GENname
+#define RESstate               gen.GENstate
+
     const int RESposNode;     /* number of positive node of resistor */
     const int RESnegNode;     /* number of negative node of resistor */
 

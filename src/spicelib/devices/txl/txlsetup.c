@@ -115,7 +115,7 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
 
         /* loop through all the instances of the model */
         for (here = TXLinstances(model); here != NULL ;
-                here=here->TXLnextInstance) {
+                here=TXLnextInstance(here)) {
             
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -168,7 +168,7 @@ TXLunsetup(GENmodel *inModel, CKTcircuit *ckt)
   for (model = (TXLmodel *) inModel; model != NULL;
       model = TXLnextModel(model)) {
     for (here = TXLinstances(model); here != NULL;
-        here = here->TXLnextInstance) {
+        here = TXLnextInstance(here)) {
   
           if (here->TXLibr2) {
                CKTdltNNum(ckt, here->TXLibr2);
@@ -257,14 +257,14 @@ ReadTxL(TXLinstance *tx, CKTcircuit *ckt)
    t2->lsl = 0;
    l = 0.0;
 
-   R = tx->TXLmodPtr->R;
-   L = tx->TXLmodPtr->L;
+   R = TXLmodPtr(tx)->R;
+   L = TXLmodPtr(tx)->L;
    L = MAX(L, LL);
-   C = tx->TXLmodPtr->C;
-   G = tx->TXLmodPtr->G;
+   C = TXLmodPtr(tx)->C;
+   G = TXLmodPtr(tx)->G;
    if (tx->TXLlengthgiven == TRUE)
    		l = tx->TXLlength;
-   else l = tx->TXLmodPtr->length;	
+   else l = TXLmodPtr(tx)->length;	
 
 
    if (l == 0.0) {

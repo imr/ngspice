@@ -92,7 +92,7 @@ int HSMHV2pzLoad(
   
   for ( ;model != NULL ;model = HSMHV2nextModel(model) ) {
     for ( here = HSMHV2instances(model) ;here!= NULL ;
-	  here = here->HSMHV2nextInstance ) {
+	  here = HSMHV2nextInstance(here) ) {
 
       flg_nqs = model->HSMHV2_conqs ;
 

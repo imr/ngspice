@@ -116,7 +116,7 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
     
         /* loop through all instances of the model */
         for(here = MOS3instances(model); here!= NULL; 
-                here = here->MOS3nextInstance) {
+                here = MOS3nextInstance(here)) {
 
             double czbd;    /* zero voltage bulk-drain capacitance */
             double czbdsw;  /* zero voltage bulk-drain sidewall capacitance */

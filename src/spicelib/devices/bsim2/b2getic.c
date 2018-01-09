@@ -24,7 +24,7 @@ B2getic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = B2nextModel(model)) {
-        for(here = B2instances(model); here ; here = here->B2nextInstance) {
+        for(here = B2instances(model); here ; here = B2nextInstance(here)) {
         
             if(!here->B2icVBSGiven) {
                 here->B2icVBS = 

@@ -36,7 +36,7 @@ register B4SOIinstance *here;
 
     for (; model != NULL; model = B4SOInextModel(model))
     {    for (here = B4SOIinstances(model); here != NULL;
-              here = here->B4SOInextInstance)
+              here = B4SOInextInstance(here))
          {
 
 #ifdef STEPDEBUG

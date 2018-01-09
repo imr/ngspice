@@ -9,11 +9,13 @@
 
 
 typedef struct sHFET2instance {
-    struct sHFET2model *HFET2modPtr;
-    struct sHFET2instance *HFET2nextInstance;
-    IFuid HFET2name;
-    int HFET2state;   /* index into state table for this device */
-     
+    struct GENinstance gen;
+
+#define HFET2modPtr(inst)        ((struct sHFET2model*)((inst)->gen.GENmodPtr))
+#define HFET2nextInstance(inst)  ((struct sHFET2instance*)((inst)->gen.GENnextInstance))
+#define HFET2name                gen.GENname
+#define HFET2state               gen.GENstate
+
     int HFET2drainNode;
     int HFET2gateNode;
     int HFET2sourceNode;

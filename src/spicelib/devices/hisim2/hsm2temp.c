@@ -145,7 +145,7 @@ int HSM2temp(
 
     modelMKS = &model->modelMKS ;
 
-    for ( here = HSM2instances(model); here; here = here->HSM2nextInstance ) {
+    for ( here = HSM2instances(model); here; here = HSM2nextInstance(here) ) {
       pParam = &here->pParam ;
       hereMKS = &here->hereMKS ;
 

@@ -73,7 +73,7 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
-                here=here->INDnextInstance) {
+                here=INDnextInstance(here)) {
 
             here->INDflux = *states;
             *states += 2 ;
@@ -116,7 +116,7 @@ INDunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = INDnextModel(model))
     {
         for (here = INDinstances(model); here != NULL;
-                here=here->INDnextInstance)
+                here=INDnextInstance(here))
 	{
 	    if (here->INDbrEq > 0)
 		CKTdltNNum(ckt, here->INDbrEq);

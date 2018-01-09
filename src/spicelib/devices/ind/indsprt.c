@@ -30,7 +30,7 @@ INDsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
-                here=here->INDnextInstance) {
+                here=INDnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->INDname);
             printf("      Positive, negative nodes: %s, %s\n",

@@ -28,7 +28,7 @@ VCCSsSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = VCCSinstances(model); here != NULL ;
-                here=here->VCCSnextInstance) {
+                here=VCCSnextInstance(here)) {
 
             if(here->VCCSsenParmNo){
                 here->VCCSsenParmNo = ++(info->SENparms);

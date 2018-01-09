@@ -32,7 +32,7 @@ VCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = VCCSinstances(model); here != NULL ;
-                here=here->VCCSnextInstance) {
+                here=VCCSnextInstance(here)) {
             
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \

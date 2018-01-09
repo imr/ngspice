@@ -26,10 +26,12 @@ File: b4soidef.h
 
 typedef struct sB4SOIinstance
 {
-    struct sB4SOImodel *B4SOImodPtr;
-    struct sB4SOIinstance *B4SOInextInstance;
-    IFuid B4SOIname;
-    int B4SOIstates;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define B4SOImodPtr(inst)        ((struct sB4SOImodel*)((inst)->gen.GENmodPtr))
+#define B4SOInextInstance(inst)  ((struct sB4SOIinstance*)((inst)->gen.GENnextInstance))
+#define B4SOIname                gen.GENname
+#define B4SOIstates              gen.GENstate
 
     const int B4SOIdNode;
     const int B4SOIgNodeExt; /* v3.1 changed gNode to gNodeExt */

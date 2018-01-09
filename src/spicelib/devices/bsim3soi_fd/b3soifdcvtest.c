@@ -32,7 +32,7 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     for (; model != NULL; model = B3SOIFDnextModel(model))
     {    /* loop through all the instances of the model */
          for (here = B3SOIFDinstances(model); here != NULL ;
-              here=here->B3SOIFDnextInstance) 
+              here=B3SOIFDnextInstance(here)) 
 	 {	 
 	      vbs = model->B3SOIFDtype 
 		  * (*(ckt->CKTrhsOld+here->B3SOIFDbNode) 

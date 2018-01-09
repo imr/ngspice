@@ -53,7 +53,7 @@ double m;
     {    
 
       for (here = B3SOIPDinstances(model); here!= NULL;
-              here = here->B3SOIPDnextInstance) 
+              here = B3SOIPDnextInstance(here)) 
 	 {
               selfheat = (model->B3SOIPDshMod == 1) && (here->B3SOIPDrth0 != 0.0);
               if (here->B3SOIPDmode >= 0) 

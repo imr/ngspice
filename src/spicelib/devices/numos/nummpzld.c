@@ -37,7 +37,7 @@ NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     TWOacDebug = model->NUMOSoutputs->OUTPacDebug;
 
     for (inst = NUMOSinstances(model); inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+	inst = NUMOSnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

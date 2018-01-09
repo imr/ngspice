@@ -55,7 +55,7 @@ B1acLoad(GENmodel *inModel, CKTcircuit *ckt)
     omega = ckt->CKTomega;
     for( ; model != NULL; model = B1nextModel(model)) {
         for(here = B1instances(model); here!= NULL;
-                here = here->B1nextInstance) {
+                here = B1nextInstance(here)) {
         
             if (here->B1mode >= 0) {
                 xnrm=1;

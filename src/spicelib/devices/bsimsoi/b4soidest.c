@@ -28,7 +28,7 @@ B4SOIdestroy(GENmodel **inModel)
         B4SOImodel *next_mod = B4SOInextModel(mod);
         B4SOIinstance *inst = B4SOIinstances(mod);
         while (inst) {
-            B4SOIinstance *next_inst = inst->B4SOInextInstance;
+            B4SOIinstance *next_inst = B4SOInextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

@@ -38,7 +38,7 @@ NBJT2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     model->NBJT2pInfo->delta = deltaNorm;
     model->NBJT2pInfo->lteCoeff = computeLTECoeff(model->NBJT2pInfo);
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = TWOtrunc(inst->NBJT2pDevice, model->NBJT2pInfo,

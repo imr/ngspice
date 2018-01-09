@@ -99,7 +99,7 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = MESAinstances(model); here != NULL ;
-                here=here->MESAnextInstance) {
+                here=MESAnextInstance(here)) {
 
             /*
              *  dc model parameters 

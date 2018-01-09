@@ -161,7 +161,7 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /* loop through all the instances of the model */
     for (inst = NUMOSinstances(model); inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+	inst = NUMOSnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

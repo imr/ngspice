@@ -34,7 +34,7 @@ double m;
 
     for (; model != NULL; model = BSIM3v1nextModel(model)) 
     {    for (here = BSIM3v1instances(model); here!= NULL;
-              here = here->BSIM3v1nextInstance) 
+              here = BSIM3v1nextInstance(here)) 
 	 {
             if (here->BSIM3v1mode >= 0) 
 	    {   Gm = here->BSIM3v1gm;

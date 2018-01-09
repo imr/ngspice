@@ -30,7 +30,7 @@ MUTsSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = MUTinstances(model); here != NULL ;
-                here=here->MUTnextInstance) {
+                here=MUTnextInstance(here)) {
 
             if(here->MUTsenParmNo){
                 here->MUTsenParmNo = ++(info->SENparms);

@@ -78,7 +78,7 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = JFETinstances(model); here != NULL ;
-                here=here->JFETnextInstance) {
+                here=JFETnextInstance(here)) {
 
             if(!(here->JFETdtempGiven)) {
                 here->JFETdtemp = 0.0;

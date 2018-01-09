@@ -30,7 +30,7 @@ BSIM3instance *here;
 
     for (; model != NULL; model = BSIM3nextModel(model))
     {    for (here = BSIM3instances(model); here != NULL;
-	      here = here->BSIM3nextInstance)
+	      here = BSIM3nextInstance(here))
 	 {
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

@@ -54,7 +54,7 @@ for( ; model != NULL; model = MOS9nextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = MOS9instances(model); here != NULL ;
-            here=here->MOS9nextInstance) {
+            here=MOS9nextInstance(here)) {
 
     /* loading starts here */
 

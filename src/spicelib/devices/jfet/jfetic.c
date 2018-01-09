@@ -23,7 +23,7 @@ JFETgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = JFETnextModel(model)) {
-        for(here = JFETinstances(model); here ; here = here->JFETnextInstance) {
+        for(here = JFETinstances(model); here ; here = JFETnextInstance(here)) {
 
             if(!here->JFETicVDSGiven) {
                 here->JFETicVDS = 

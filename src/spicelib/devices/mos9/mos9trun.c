@@ -20,7 +20,7 @@ MOS9trunc(
     MOS9instance *here;
 
     for( ; model != NULL; model = MOS9nextModel(model)) {
-        for(here=MOS9instances(model);here!=NULL;here = here->MOS9nextInstance){
+        for(here=MOS9instances(model);here!=NULL;here = MOS9nextInstance(here)){
 
             CKTterr(here->MOS9qgs,ckt,timeStep);
             CKTterr(here->MOS9qgd,ckt,timeStep);

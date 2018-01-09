@@ -121,7 +121,7 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
    
     
     for (here = HFET2instances(model); here != NULL; 
-         here=here->HFET2nextInstance) {
+         here=HFET2nextInstance(here)) {
       
       CKTnode *tmpNode;
       IFuid tmpName;
@@ -214,7 +214,7 @@ HFET2unsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = HFET2nextModel(model))
     {
         for (here = HFET2instances(model); here != NULL;
-                here=here->HFET2nextInstance)
+                here=HFET2nextInstance(here))
         {
             if (here->HFET2drainPrimeNode > 0
                     && here->HFET2drainPrimeNode != here->HFET2drainNode)

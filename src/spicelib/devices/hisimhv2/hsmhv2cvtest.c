@@ -93,7 +93,7 @@ int HSMHV2convTest(
   for ( ; model != NULL; model = HSMHV2nextModel(model) ) {
     /* loop through all the instances of the model */
     for ( here = HSMHV2instances(model); here != NULL ;
-	  here = here->HSMHV2nextInstance ) {
+	  here = HSMHV2nextInstance(here) ) {
 
       vds = model->HSMHV2_type * 
             (*(ckt->CKTrhsOld+here->HSMHV2dNodePrime) -

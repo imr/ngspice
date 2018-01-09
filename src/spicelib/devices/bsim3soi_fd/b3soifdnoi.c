@@ -129,7 +129,7 @@ int i;
 
     for (; model != NULL; model = B3SOIFDnextModel(model))
     {    for (here = B3SOIFDinstances(model); here != NULL;
-	      here = here->B3SOIFDnextInstance)
+	      here = B3SOIFDnextInstance(here))
 	 {	 
 	      pParam = here->pParam;
 	      switch (operation)

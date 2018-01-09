@@ -34,7 +34,7 @@ HFETApzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model != NULL; model = HFETAnextModel(model) ) 
     {
         for( here = HFETAinstances(model); here != NULL; 
-             here = here->HFETAnextInstance) {
+             here = HFETAnextInstance(here)) {
 
             gm  = *(ckt->CKTstate0 + here->HFETAgm);
             gds = *(ckt->CKTstate0 + here->HFETAgds);

@@ -32,7 +32,7 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = VBICnextModel(model)) {
 
-        for (here = VBICinstances(model); here; here=here->VBICnextInstance) {
+        for (here = VBICinstances(model); here; here=VBICnextInstance(here)) {
 
             vbe = fabs(ckt->CKTrhsOld [here->VBICbaseNode] -
                        ckt->CKTrhsOld [here->VBICemitNode]);

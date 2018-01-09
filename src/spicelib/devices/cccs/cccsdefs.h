@@ -16,11 +16,12 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sCCCSinstance {
-    struct sCCCSmodel *CCCSmodPtr;  /* backpointer to model */
-    struct sCCCSinstance *CCCSnextInstance;  /* pointer to next instance of 
-                                             *current model*/
-    IFuid CCCSname; /* pointer to character string naming this instance */
-    int CCCSstate; /* not used */
+    struct GENinstance gen;
+
+#define CCCSmodPtr(inst)        ((struct sCCCSmodel*)((inst)->gen.GENmodPtr))
+#define CCCSnextInstance(inst)  ((struct sCCCSinstance*)((inst)->gen.GENnextInstance))
+#define CCCSname                gen.GENname
+#define CCCSstate               gen.GENstate
 
     const int CCCSposNode; /* number of positive node of source */
     const int CCCSnegNode; /* number of negative node of source */

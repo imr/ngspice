@@ -29,7 +29,7 @@ SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = SWinstances(model); here != NULL ;
-                here=here->SWnextInstance) {
+                here=SWnextInstance(here)) {
 
             /* In AC analysis, just propogate the state... */
 

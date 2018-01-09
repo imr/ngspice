@@ -127,7 +127,7 @@ int ByPass, Check, ChargeComputationNeeded = 0, error;
 
 for (; model != NULL; model = BSIM3v1nextModel(model))
 {    for (here = BSIM3v1instances(model); here != NULL; 
-          here = here->BSIM3v1nextInstance)
+          here = BSIM3v1nextInstance(here))
      {
 	  Check = 1;
           ByPass = 0;

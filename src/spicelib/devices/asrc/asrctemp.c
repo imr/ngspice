@@ -16,7 +16,7 @@ ASRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     ASRCinstance *here;
 
     for (; model; model = ASRCnextModel(model)) {
-        for (here = ASRCinstances(model); here; here = here->ASRCnextInstance) {
+        for (here = ASRCinstances(model); here; here = ASRCnextInstance(here)) {
 
             /* Default Value Processing for Source Instance */
 

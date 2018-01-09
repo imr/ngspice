@@ -121,7 +121,7 @@ int i;
 
     for (; model != NULL; model = BSIM4v5nextModel(model))
     {    for (here = BSIM4v5instances(model); here != NULL;
-              here = here->BSIM4v5nextInstance)
+              here = BSIM4v5nextInstance(here))
          {    pParam = here->pParam;
               switch (operation)
               {  case N_OPEN:

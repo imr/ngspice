@@ -812,7 +812,7 @@ int HSM2setup(
 
     /* loop through all the instances of the model */
     for ( here = HSM2instances(model) ;here != NULL ;
-	  here = here->HSM2nextInstance ) {
+	  here = HSM2nextInstance(here) ) {
       /* allocate a chunk of the state vector */
       here->HSM2states = *states;
       if (model->HSM2_conqs)
@@ -1271,7 +1271,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     {
         /* loop through all the instances of the model */
         for (here = HSM2instances(model); here != NULL ;
-             here = here->HSM2nextInstance)
+             here = HSM2nextInstance(here))
         {
             InstCount++;
         }
@@ -1283,7 +1283,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     {
         /* loop through all the instances of the model */
         for (here = HSM2instances(model); here != NULL ;
-             here = here->HSM2nextInstance)
+             here = HSM2nextInstance(here))
         {
             InstArray[idx] = here;
             idx++;
@@ -1310,7 +1310,7 @@ HSM2unsetup(
             model = HSM2nextModel(model))
     {
         for (here = HSM2instances(model); here != NULL;
-                here=here->HSM2nextInstance)
+                here=HSM2nextInstance(here))
         {
             if (here->HSM2sbNode > 0
                     && here->HSM2sbNode != here->HSM2bNode)

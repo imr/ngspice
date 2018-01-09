@@ -23,7 +23,7 @@ CAPacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model != NULL; model = CAPnextModel(model)) {
         for( here = CAPinstances(model); here != NULL;
-                here = here->CAPnextInstance) {
+                here = CAPnextInstance(here)) {
 
             m = here->CAPm;
 

@@ -443,7 +443,7 @@ int Size_Not_Found, i;
 
          /* loop through all the instances of the model */
          for (here = BSIM4instances(model); here != NULL;
-              here = here->BSIM4nextInstance)
+              here = BSIM4nextInstance(here))
          {
               pSizeDependParamKnot = model->pSizeDependParamKnot;
               Size_Not_Found = 1;

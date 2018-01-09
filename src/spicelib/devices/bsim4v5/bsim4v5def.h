@@ -20,10 +20,13 @@ File: bsim4v5def.h
 
 typedef struct sBSIM4v5instance
 {
-    struct sBSIM4v5model *BSIM4v5modPtr;
-    struct sBSIM4v5instance *BSIM4v5nextInstance;
-    IFuid BSIM4v5name;
-    int BSIM4v5states;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define BSIM4v5modPtr(inst)        ((struct sBSIM4v5model*)((inst)->gen.GENmodPtr))
+#define BSIM4v5nextInstance(inst)  ((struct sBSIM4v5instance*)((inst)->gen.GENnextInstance))
+#define BSIM4v5name                gen.GENname
+#define BSIM4v5states              gen.GENstate
+
     const int BSIM4v5dNode;
     const int BSIM4v5gNodeExt;
     const int BSIM4v5sNode;

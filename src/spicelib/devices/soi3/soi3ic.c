@@ -38,7 +38,7 @@ SOI3getic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = SOI3nextModel(model)) {
-        for(here = SOI3instances(model); here ; here = here->SOI3nextInstance) {
+        for(here = SOI3instances(model); here ; here = SOI3nextInstance(here)) {
 	    
 	    if(!here->SOI3icVBSGiven) {
                 here->SOI3icVBS =

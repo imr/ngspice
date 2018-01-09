@@ -34,7 +34,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
-                here=here->VSRCnextInstance) {
+                here=VSRCnextInstance(here)) {
 
             if(!(ckt->CKTmode & (MODETRAN | MODETRANOP))) {
                 /* not transient, so shouldn't be here */

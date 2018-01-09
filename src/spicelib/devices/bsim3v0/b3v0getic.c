@@ -18,7 +18,7 @@ BSIM3v0model *model = (BSIM3v0model*)inModel;
 BSIM3v0instance *here;
 
     for (; model ; model = BSIM3v0nextModel(model)) 
-    {    for (here = BSIM3v0instances(model); here; here = here->BSIM3v0nextInstance)
+    {    for (here = BSIM3v0instances(model); here; here = BSIM3v0nextInstance(here))
 	 {
 	      if(!here->BSIM3v0icVBSGiven) 
 	      {  here->BSIM3v0icVBS = *(ckt->CKTrhs + here->BSIM3v0bNode) 

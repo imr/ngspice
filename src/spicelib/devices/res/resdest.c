@@ -17,7 +17,7 @@ RESdestroy(GENmodel **inModel)
         RESmodel *next_mod = RESnextModel(mod);
         RESinstance *inst = RESinstances(mod);
         while (inst) {
-            RESinstance *next_inst = inst->RESnextInstance;
+            RESinstance *next_inst = RESnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

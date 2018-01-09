@@ -17,7 +17,7 @@ ISRCdestroy(GENmodel **inModel)
         ISRCmodel *next_mod = ISRCnextModel(mod);
         ISRCinstance *inst = ISRCinstances(mod);
         while (inst) {
-            ISRCinstance *next_inst = inst->ISRCnextInstance;
+            ISRCinstance *next_inst = ISRCnextInstance(inst);
             FREE(inst->ISRCcoeffs);
             FREE(inst);
             inst = next_inst;

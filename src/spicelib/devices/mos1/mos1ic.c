@@ -23,7 +23,7 @@ MOS1getic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = MOS1nextModel(model)) {
-        for(here = MOS1instances(model); here ; here = here->MOS1nextInstance) {
+        for(here = MOS1instances(model); here ; here = MOS1nextInstance(here)) {
         
             if(!here->MOS1icVBSGiven) {
                 here->MOS1icVBS = 

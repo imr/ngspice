@@ -136,7 +136,7 @@ double m;
              lnNdens[BSIM4v7CORLNOIZ] = N_MINLOG;
          }
          for (here = BSIM4v7instances(model); here != NULL;
-              here = here->BSIM4v7nextInstance)
+              here = BSIM4v7nextInstance(here))
          {    pParam = here->pParam;
               switch (operation)
               {  case N_OPEN:

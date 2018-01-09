@@ -36,7 +36,7 @@ MOS9acLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model != NULL; model = MOS9nextModel(model)) {
         for(here = MOS9instances(model); here!= NULL;
-                here = here->MOS9nextInstance) {
+                here = MOS9nextInstance(here)) {
 
             if (here->MOS9mode < 0) {
                 xnrm=0;

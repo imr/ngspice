@@ -17,7 +17,7 @@ MESAdestroy(GENmodel **inModel)
         MESAmodel *next_mod = MESAnextModel(mod);
         MESAinstance *inst = MESAinstances(mod);
         while (inst) {
-            MESAinstance *next_inst = inst->MESAnextInstance;
+            MESAinstance *next_inst = MESAnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

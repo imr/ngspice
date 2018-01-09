@@ -89,7 +89,7 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = CAPinstances(model); here != NULL ;
-                here=here->CAPnextInstance) {
+                here=CAPnextInstance(here)) {
 
             /* Default Value Processing for Capacitor Instance */
             if (!here->CAPlengthGiven) {

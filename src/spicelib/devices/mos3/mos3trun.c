@@ -16,7 +16,7 @@ MOS3trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     MOS3instance *here;
 
     for( ; model != NULL; model = MOS3nextModel(model)) {
-        for(here=MOS3instances(model);here!=NULL;here = here->MOS3nextInstance){
+        for(here=MOS3instances(model);here!=NULL;here = MOS3nextInstance(here)){
         
             CKTterr(here->MOS3qgs,ckt,timeStep);
             CKTterr(here->MOS3qgd,ckt,timeStep);

@@ -18,7 +18,7 @@ CPLdestroy(GENmodel **inModel)
         CPLmodel *next_mod = CPLnextModel(mod);
         CPLinstance *inst = CPLinstances(mod);
         while (inst) {
-            CPLinstance *next_inst = inst->CPLnextInstance;
+            CPLinstance *next_inst = CPLnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

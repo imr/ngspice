@@ -30,7 +30,7 @@ CAPsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = CAPnextModel(model)) {
 
-        for (here = CAPinstances(model); here; here = here->CAPnextInstance) {
+        for (here = CAPinstances(model); here; here = CAPnextInstance(here)) {
 
             vc = fabs(ckt->CKTrhsOld [here->CAPposNode] -
                       ckt->CKTrhsOld [here->CAPnegNode]);

@@ -77,7 +77,7 @@ int HSM2convTest(
   for ( ; model != NULL; model = HSM2nextModel(model) ) {
     /* loop through all the instances of the model */
     for ( here = HSM2instances(model); here != NULL ;
-	  here = here->HSM2nextInstance ) {
+	  here = HSM2nextInstance(here) ) {
       vbs = model->HSM2_type * 
 	(*(ckt->CKTrhsOld+here->HSM2bNode) - 
 	 *(ckt->CKTrhsOld+here->HSM2sNodePrime));

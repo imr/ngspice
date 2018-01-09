@@ -41,7 +41,7 @@ NBJT2acLoad(GENmodel *inModel, CKTcircuit *ckt)
     TWOacDebug = model->NBJT2outputs->OUTPacDebug;
 
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

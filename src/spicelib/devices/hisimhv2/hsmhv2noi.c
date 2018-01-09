@@ -108,7 +108,7 @@ int HSMHV2noise (
   
   for ( ;model != NULL; model = HSMHV2nextModel(model) ) {
     for ( here = HSMHV2instances(model); here != NULL;
-	  here = here->HSMHV2nextInstance ) {
+	  here = HSMHV2nextInstance(here) ) {
       switch (operation) {
       case N_OPEN:
 	/* see if we have to to produce a summary report */

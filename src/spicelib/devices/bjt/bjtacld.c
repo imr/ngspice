@@ -39,7 +39,7 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model != NULL; model = BJTnextModel(model)) {
         for( here = BJTinstances(model); here!= NULL;
-                here = here->BJTnextInstance) {
+                here = BJTnextInstance(here)) {
 
             m = here->BJTm;
 

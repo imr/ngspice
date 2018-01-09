@@ -17,7 +17,7 @@ INDdestroy(GENmodel **inModel)
         INDmodel *next_mod = INDnextModel(mod);
         INDinstance *inst = INDinstances(mod);
         while (inst) {
-            INDinstance *next_inst = inst->INDnextInstance;
+            INDinstance *next_inst = INDnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

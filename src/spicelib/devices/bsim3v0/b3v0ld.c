@@ -121,7 +121,7 @@ double m = 1.0;
 
 for (; model != NULL; model = BSIM3v0nextModel(model))
 {    for (here = BSIM3v0instances(model); here != NULL; 
-          here = here->BSIM3v0nextInstance)
+          here = BSIM3v0nextInstance(here))
      {
           Check = 1;
           ByPass = 0;

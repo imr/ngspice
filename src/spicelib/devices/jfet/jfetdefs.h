@@ -21,11 +21,13 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 /* information used to describe a single instance */
 
 typedef struct sJFETinstance {
-    struct sJFETmodel *JFETmodPtr;  /* backpointer to model */
-    struct sJFETinstance *JFETnextInstance; /* pointer to next instance of 
-                                             * current model*/
-    IFuid JFETname; /* pointer to character string naming this instance */
-    int JFETstate; /* pointer to start of state vector for jfet */
+    struct GENinstance gen;
+
+#define JFETmodPtr(inst)        ((struct sJFETmodel*)((inst)->gen.GENmodPtr))
+#define JFETnextInstance(inst)  ((struct sJFETinstance*)((inst)->gen.GENnextInstance))
+#define JFETname                gen.GENname
+#define JFETstate               gen.GENstate
+
     const int JFETdrainNode;  /* number of drain node of jfet */
     const int JFETgateNode;   /* number of gate node of jfet */
     const int JFETsourceNode; /* number of source node of jfet */

@@ -37,7 +37,7 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for( here = VBICinstances(model); here!= NULL; 
-                here = here->VBICnextInstance) {
+                here = VBICnextInstance(here)) {
 
             Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
             Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_Vbex);

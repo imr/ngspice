@@ -11,13 +11,13 @@
 /* information used to describe a single instance */
 
 typedef struct sTXLinstance {
-    struct sTXLmodel *TXLmodPtr;    /* backpointer to model */
-    struct sTXLinstance *TXLnextInstance;   /* pointer to next instance of 
-                                             * current model*/
+    struct GENinstance gen;
 
-    IFuid TXLname;  /* pointer to character string naming this instance */
-    int TXLstates;  /* state info, unused */
-    
+#define TXLmodPtr(inst)        ((struct sTXLmodel*)((inst)->gen.GENmodPtr))
+#define TXLnextInstance(inst)  ((struct sTXLinstance*)((inst)->gen.GENnextInstance))
+#define TXLname                gen.GENname
+#define TXLstates              gen.GENstate
+
         int dimensions; /* may we not need this but ... */
 	int TXLposNode;
 	int TXLnegNode;

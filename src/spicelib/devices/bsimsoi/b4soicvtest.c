@@ -39,7 +39,7 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     for (; model != NULL; model = B4SOInextModel(model))
     {    /* loop through all the instances of the model */
          for (here = B4SOIinstances(model); here != NULL ;
-              here=here->B4SOInextInstance) 
+              here=B4SOInextInstance(here)) 
          {
               vbs = model->B4SOItype 
                   * (*(ckt->CKTrhsOld+here->B4SOIbNode) 

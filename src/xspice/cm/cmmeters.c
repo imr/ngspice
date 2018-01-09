@@ -112,7 +112,7 @@ double cm_netlist_get_c(void)
     for(cap_model = cap_head; cap_model; cap_model = CAPnextModel(cap_model)) {
         for(cap_inst = CAPinstances(cap_model);
                 cap_inst;
-                cap_inst = cap_inst->CAPnextInstance) {
+                cap_inst = CAPnextInstance(cap_inst)) {
             if((cmeter_node == cap_inst->CAPposNode) ||
                     (cmeter_node == cap_inst->CAPnegNode)) {
                 c += cap_inst->CAPcapac;
@@ -139,7 +139,7 @@ double cm_netlist_get_c(void)
     for(vsrc_model = vsrc_head; vsrc_model; vsrc_model = VSRCnextModel(vsrc_model)) {
         for(vsrc_inst = VSRCinstances(vsrc_model);
                 vsrc_inst;
-                vsrc_inst = vsrc_inst->VSRCnextInstance) {
+                vsrc_inst = VSRCnextInstance(vsrc_inst)) {
 
             /* Skip to next if not DC source with value = 0.0 */
             if((vsrc_inst->VSRCfunctionType != 0) ||
@@ -163,7 +163,7 @@ double cm_netlist_get_c(void)
             for(cap_model = cap_head; cap_model; cap_model = CAPnextModel(cap_model)) {
                 for(cap_inst = CAPinstances(cap_model);
                         cap_inst;
-                        cap_inst = cap_inst->CAPnextInstance) {
+                        cap_inst = CAPnextInstance(cap_inst)) {
                     if((vsrc_node == cap_inst->CAPposNode) ||
                             (vsrc_node == cap_inst->CAPnegNode)) {
                         c += cap_inst->CAPcapac;
@@ -243,7 +243,7 @@ double cm_netlist_get_l(void)
     for(ind_model = ind_head; ind_model; ind_model = INDnextModel(ind_model)) {
         for(ind_inst = INDinstances(ind_model);
                 ind_inst;
-                ind_inst = ind_inst->INDnextInstance) {
+                ind_inst = INDnextInstance(ind_inst)) {
             if((lmeter_node == ind_inst->INDposNode) ||
                     (lmeter_node == ind_inst->INDnegNode)) {
                 l = 1.0 / ( (1.0 / l) + (1.0 / ind_inst->INDinduct) );
@@ -270,7 +270,7 @@ double cm_netlist_get_l(void)
     for(vsrc_model = vsrc_head; vsrc_model; vsrc_model = VSRCnextModel(vsrc_model)) {
         for(vsrc_inst = VSRCinstances(vsrc_model);
                 vsrc_inst;
-                vsrc_inst = vsrc_inst->VSRCnextInstance) {
+                vsrc_inst = VSRCnextInstance(vsrc_inst)) {
 
             /* Skip to next if not DC source with value = 0.0 */
             if((vsrc_inst->VSRCfunctionType != 0) ||
@@ -294,7 +294,7 @@ double cm_netlist_get_l(void)
             for(ind_model = ind_head; ind_model; ind_model = INDnextModel(ind_model)) {
                 for(ind_inst = INDinstances(ind_model);
                         ind_inst;
-                        ind_inst = ind_inst->INDnextInstance) {
+                        ind_inst = INDnextInstance(ind_inst)) {
                     if((vsrc_node == ind_inst->INDposNode) ||
                             (vsrc_node == ind_inst->INDnegNode)) {
                         l = 1.0 / ( (1.0 / l) + (1.0 / ind_inst->INDinduct) );

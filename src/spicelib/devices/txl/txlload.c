@@ -63,7 +63,7 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	for( ; model !=	NULL; model = TXLnextModel(model) ) {
 		for (here = TXLinstances(model); here != NULL ; 
-			here=here->TXLnextInstance) { 
+			here=TXLnextInstance(here)) { 
 
 			tx = here->txline;
 
@@ -110,7 +110,7 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
     model = (TXLmodel *)inModel;
     for( ; model != NULL; model	= TXLnextModel(model) )	{
 	for (here = TXLinstances(model); here != NULL ;	
-			here=here->TXLnextInstance) { 
+			here=TXLnextInstance(here)) { 
 
 			tx = here->txline;
 			tx2 = here->txline2;
@@ -132,7 +132,7 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 			if (cond1) {
 				if (here->TXLlengthgiven) 
 					g = model->R * here->TXLlength;
-				else g = model->R * here->TXLmodPtr->length;
+				else g = model->R * TXLmodPtr(here)->length;
 				*(here->TXLposIbr1Ptr) += 1.0;
 				*(here->TXLnegIbr2Ptr) += 1.0;
 				*(here->TXLibr1Ibr1Ptr)	+= 1.0;

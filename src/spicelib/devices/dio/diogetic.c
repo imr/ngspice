@@ -23,7 +23,7 @@ DIOgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = DIOnextModel(model)) {
-        for(here = DIOinstances(model); here ; here = here->DIOnextInstance) {
+        for(here = DIOinstances(model); here ; here = DIOnextInstance(here)) {
 
             if(!here->DIOinitCondGiven) {
                 here->DIOinitCond = 

@@ -44,7 +44,7 @@ for( ; model != NULL; model = JFETnextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = JFETinstances(model); here != NULL ;
- 		here=here->JFETnextInstance) {
+ 		here=JFETnextInstance(here)) {
 
     /* loading starts here */
 

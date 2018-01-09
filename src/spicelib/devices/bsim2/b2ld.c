@@ -134,7 +134,7 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = B2instances(model); here != NULL ;
-                here=here->B2nextInstance) {
+                here=B2nextInstance(here)) {
         
             EffectiveLength=here->B2l - model->B2deltaL * 1.e-6;/* m */
             DrainArea = here->B2drainArea;

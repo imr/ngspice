@@ -72,7 +72,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	for( ; model !=	NULL; model = CPLnextModel(model) ) {
 		for (here = CPLinstances(model); here != NULL ;
-			here=here->CPLnextInstance) {
+			here=CPLnextInstance(here)) {
 
 			cp = here->cplines;
 
@@ -127,7 +127,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	/* loop	through	all the	instances of the model */
 	for (here = CPLinstances(model); here != NULL ;
-			here=here->CPLnextInstance) {
+			here=CPLnextInstance(here)) {
 
 			double mintaul = 123456789.0;
 
@@ -157,7 +157,7 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 				for (m = 0; m <	noL; m++) {
 					if (here->CPLlengthGiven)
 						g = model->Rm[resindex]	* here->CPLlength;
-					else g = model->Rm[resindex] * here->CPLmodPtr->length;
+					else g = model->Rm[resindex] * CPLmodPtr(here)->length;
 					*(here->CPLposIbr1Ptr[m]) += 1.0;
 					*(here->CPLnegIbr2Ptr[m]) += 1.0;
 					*(here->CPLibr1Ibr1Ptr[m])	+= 1.0;

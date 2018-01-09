@@ -27,7 +27,7 @@ JFET2getic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = JFET2nextModel(model)) {
-        for(here = JFET2instances(model); here ; here = here->JFET2nextInstance) {
+        for(here = JFET2instances(model); here ; here = JFET2nextInstance(here)) {
             if(!here->JFET2icVDSGiven) {
                 here->JFET2icVDS = 
                         *(ckt->CKTrhs + here->JFET2drainNode) - 

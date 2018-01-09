@@ -111,7 +111,7 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
         /* loop through all the instances of the model */
         for (here = MOS6instances(model); here != NULL ;
-                here=here->MOS6nextInstance) {
+                here=MOS6nextInstance(here)) {
             CKTnode *tmpNode;
             IFuid tmpName;
 
@@ -231,7 +231,7 @@ MOS6unsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = MOS6nextModel(model))
     {
         for (here = MOS6instances(model); here != NULL;
-                here=here->MOS6nextInstance)
+                here=MOS6nextInstance(here))
 	{
 	    if (here->MOS6sNodePrime > 0
 		    && here->MOS6sNodePrime != here->MOS6sNode)

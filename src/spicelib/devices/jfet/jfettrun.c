@@ -19,7 +19,7 @@ JFETtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     JFETinstance *here;
 
     for( ; model != NULL; model = JFETnextModel(model)) {
-        for(here=JFETinstances(model);here!=NULL;here = here->JFETnextInstance){
+        for(here=JFETinstances(model);here!=NULL;here = JFETnextInstance(here)){
 
             CKTterr(here->JFETqgs,ckt,timeStep);
             CKTterr(here->JFETqgd,ckt,timeStep);

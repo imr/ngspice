@@ -19,11 +19,12 @@ Modified: 2000 AlansFixes
 /* information to describe each instance */
 
 typedef struct sSWinstance {
-    struct sSWmodel *SWmodPtr;  /* backpointer to model */
-    struct sSWinstance *SWnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid SWname;  /* pointer to character string naming this instance */
-    int SWstate;   /* pointer to start of switch's section of state vector */
+    struct GENinstance gen;
+
+#define SWmodPtr(inst)        ((struct sSWmodel*)((inst)->gen.GENmodPtr))
+#define SWnextInstance(inst)  ((struct sSWinstance*)((inst)->gen.GENnextInstance))
+#define SWname                gen.GENname
+#define SWstate               gen.GENstate
 
     const int SWposNode; /* number of positive node of switch */
     const int SWnegNode; /* number of negative node of switch */

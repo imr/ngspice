@@ -55,7 +55,7 @@ MOS1sUpdate(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = MOS1instances(model); here != NULL ;
-                here=here->MOS1nextInstance) {
+                here=MOS1nextInstance(here)) {
 
 #ifdef SENSDEBUG
             printf("senupdate instance name %s\n",here->MOS1name);

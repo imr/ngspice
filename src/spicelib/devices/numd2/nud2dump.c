@@ -59,7 +59,7 @@ NUMD2dump(GENmodel *inModel, CKTcircuit *ckt)
   for (; model != NULL; model = NUMD2nextModel(model)) {
     output = model->NUMD2outputs;
     for (inst = NUMD2instances(model); inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+	inst = NUMD2nextInstance(inst)) {
 
       if (inst->NUMD2printGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -146,7 +146,7 @@ NUMD2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   for (; model != NULL; model = NUMD2nextModel(model)) {
     output = model->NUMD2outputs;
     for (inst = NUMD2instances(model); inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+	inst = NUMD2nextInstance(inst)) {
 
       if (output->OUTPstats) {
 	TWOmemStats(file, inst->NUMD2pDevice);

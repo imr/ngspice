@@ -84,7 +84,7 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = JFETinstances(model); here != NULL ;
-                here=here->JFETnextInstance) {
+                here=JFETnextInstance(here)) {
 
             /*
              *  dc model parameters 

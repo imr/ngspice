@@ -22,15 +22,13 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNUMOSinstance {
-  struct sNUMOSmodel *NUMOSmodPtr;	/* back pointer to model */
-  struct sNUMOSinstance *NUMOSnextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NUMOSname;		/* pointer to character string naming this
-				 * instance */
-  int NUMOSstate;		/* pointer to start of state vector for
-				 * mosfet */
+  struct GENinstance gen;
 
-  /* entries in the state vector for mosfet: */
+#define NUMOSmodPtr(inst)        ((struct sNUMOSmodel*)((inst)->gen.GENmodPtr))
+#define NUMOSnextInstance(inst)  ((struct sNUMOSinstance*)((inst)->gen.GENnextInstance))
+#define NUMOSname                gen.GENname
+#define NUMOSstate               gen.GENstate
+
 #define NUMOSvdb NUMOSstate
 #define NUMOSvsb NUMOSstate+1
 #define NUMOSvgb NUMOSstate+2

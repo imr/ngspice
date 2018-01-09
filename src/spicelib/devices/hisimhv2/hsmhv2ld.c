@@ -413,7 +413,7 @@ int HSMHV2load(
     modelMKS = &model->modelMKS ;
 
     for (here = HSMHV2instances(model); here != NULL ;
-         here = here->HSMHV2nextInstance) {
+         here = HSMHV2nextInstance(here)) {
       
       hereMKS = &here->hereMKS ;
       pParam = &here->pParam ;

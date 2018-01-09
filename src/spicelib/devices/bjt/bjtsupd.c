@@ -47,7 +47,7 @@ BJTsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
-                here=here->BJTnextInstance) {
+                here=BJTnextInstance(here)) {
 
             sxpbe = 0;
             sxpbc = 0;

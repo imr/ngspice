@@ -26,7 +26,7 @@ double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
     for (; model != NULL; model = BSIM3v0nextModel(model))
     {    /* loop through all the instances of the model */
          for (here = BSIM3v0instances(model); here != NULL ;
-              here=here->BSIM3v0nextInstance) 
+              here=BSIM3v0nextInstance(here)) 
 	 {
 	      vbs = model->BSIM3v0type 
 		  * (*(ckt->CKTrhsOld+here->BSIM3v0bNode) 

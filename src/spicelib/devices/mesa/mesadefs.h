@@ -18,12 +18,13 @@ Author: Trond Ytterdal
 /* information used to describe a single instance */
 
 typedef struct sMESAinstance {
-    struct sMESAmodel *MESAmodPtr;    /* backpointer to model */
-    struct sMESAinstance *MESAnextInstance; /* pointer to next instance of 
-                                             * current model*/
-    IFuid MESAname; /* pointer to character string naming this instance */
-    int MESAstate; /* pointer to start of state vector for MESAfet */
-    
+    struct GENinstance gen;
+
+#define MESAmodPtr(inst)        ((struct sMESAmodel*)((inst)->gen.GENmodPtr))
+#define MESAnextInstance(inst)  ((struct sMESAinstance*)((inst)->gen.GENnextInstance))
+#define MESAname                gen.GENname
+#define MESAstate               gen.GENstate
+
     const int MESAdrainNode;  /* number of drain node of MESAfet */
     const int MESAgateNode;   /* number of gate node of MESAfet */
     const int MESAsourceNode; /* number of source node of MESAfet */

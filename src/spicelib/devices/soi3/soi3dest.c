@@ -34,7 +34,7 @@ SOI3destroy(GENmodel **inModel)
         SOI3model *next_mod = SOI3nextModel(mod);
         SOI3instance *inst = SOI3instances(mod);
         while (inst) {
-            SOI3instance *next_inst = inst->SOI3nextInstance;
+            SOI3instance *next_inst = SOI3nextInstance(inst);
             /* FREE(inst->SOI3sens); */
             FREE(inst);
             inst = next_inst;

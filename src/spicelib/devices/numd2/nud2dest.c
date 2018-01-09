@@ -25,7 +25,7 @@ NUMD2destroy(GENmodel **inModel)
         NUMD2model *next_mod  = NUMD2nextModel(mod);
         NUMD2instance *inst = NUMD2instances(mod);
         while (inst) {
-            NUMD2instance *next_inst = inst->NUMD2nextInstance;
+            NUMD2instance *next_inst = NUMD2nextInstance(inst);
             TWOdestroy(inst->NUMD2pDevice);
             FREE(inst);
             inst = next_inst;

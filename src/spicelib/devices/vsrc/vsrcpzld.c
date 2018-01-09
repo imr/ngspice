@@ -24,7 +24,7 @@ VSRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
-                here=here->VSRCnextInstance) {
+                here=VSRCnextInstance(here)) {
 
             if (!(here->VSRCacGiven)) {
                 /*a dc source*/

@@ -22,7 +22,7 @@ VSRCfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
 
     for( ; model != NULL; model = VSRCnextModel(model)) {
         for (here = VSRCinstances(model); here != NULL;
-                here = here->VSRCnextInstance) {
+                here = VSRCnextInstance(here)) {
             if(here->VSRCname == name) {
                 if(here->VSRCbranch == 0) {
                     error = CKTmkCur(ckt,&tmp,here->VSRCname,"branch");

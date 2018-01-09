@@ -35,7 +35,7 @@ B4SOIsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = B4SOInextModel(model)) {
 
-        for (here = B4SOIinstances(model); here; here = here->B4SOInextInstance) {
+        for (here = B4SOIinstances(model); here; here = B4SOInextInstance(here)) {
 
             vgs = ckt->CKTrhsOld [here->B4SOIgNode] -
                   ckt->CKTrhsOld [here->B4SOIsNodePrime];

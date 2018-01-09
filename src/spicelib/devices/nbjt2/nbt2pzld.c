@@ -38,7 +38,7 @@ NBJT2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     TWOacDebug = model->NBJT2outputs->OUTPacDebug;
 
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

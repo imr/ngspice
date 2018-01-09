@@ -67,7 +67,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
-                here=here->DIOnextInstance) {
+                here=DIOnextInstance(here)) {
 
             /*
              *     this routine loads diodes for dc and transient analyses.

@@ -92,7 +92,7 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
     }
     /* loop through all the instances of the model */
     for (inst = NUMOSinstances(model); inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+	inst = NUMOSnextInstance(inst)) {
 
       pDevice = inst->NUMOSpDevice;
 
@@ -594,7 +594,7 @@ int
 NUMOSinitSmSig(NUMOSinstance *inst)
 {
   struct mosAdmittances yAc;
-  double omega = inst->NUMOSmodPtr->NUMOSmethods->METHomega;
+  double omega = NUMOSmodPtr(inst)->NUMOSmethods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NUMOSadmittance(inst->NUMOSpDevice, omega, &yAc);

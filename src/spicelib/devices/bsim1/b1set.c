@@ -271,7 +271,7 @@ B1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
         /* loop through all the instances of the model */
         for (here = B1instances(model); here != NULL ;
-                here=here->B1nextInstance) {
+                here=B1nextInstance(here)) {
 
         CKTnode *tmpNode;
         IFuid tmpName;
@@ -410,7 +410,7 @@ B1unsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = B1nextModel(model))
     {
         for (here = B1instances(model); here != NULL;
-                here=here->B1nextInstance)
+                here=B1nextInstance(here))
 	{
 	    if (here->B1sNodePrime > 0
 		    && here->B1sNodePrime != here->B1sNode)

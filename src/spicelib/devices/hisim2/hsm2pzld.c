@@ -46,7 +46,7 @@ int HSM2pzLoad(
 
   for ( ;model != NULL ;model = HSM2nextModel(model) ) {
     for ( here = HSM2instances(model) ;here!= NULL ;
-	  here = here->HSM2nextInstance ) {
+	  here = HSM2nextInstance(here) ) {
       if ( here->HSM2_mode >= 0 ) {
 	gm = here->HSM2_gm;
 	gmbs = here->HSM2_gmbs;

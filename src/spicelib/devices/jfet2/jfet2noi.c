@@ -51,7 +51,7 @@ JFET2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
     };
 
     for (model=firstModel; model != NULL; model=JFET2nextModel(model)) {
-	for (inst=JFET2instances(model); inst != NULL; inst=inst->JFET2nextInstance) {
+	for (inst=JFET2instances(model); inst != NULL; inst=JFET2nextInstance(inst)) {
 
 	    switch (operation) {
 

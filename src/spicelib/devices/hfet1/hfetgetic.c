@@ -21,7 +21,7 @@ HFETAgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = HFETAnextModel(model)) {
-        for(here = HFETAinstances(model); here ; here = here->HFETAnextInstance) {
+        for(here = HFETAinstances(model); here ; here = HFETAnextInstance(here)) {
 
             if(!here->HFETAicVDSGiven) {
                 here->HFETAicVDS = 

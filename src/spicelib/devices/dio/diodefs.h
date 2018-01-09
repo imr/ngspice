@@ -18,11 +18,13 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 /* information needed per instance */
 
 typedef struct sDIOinstance {
-    struct sDIOmodel *DIOmodPtr;    /* backpointer to model */
-    struct sDIOinstance *DIOnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid DIOname;      /* pointer to character string naming this instance */
-    int DIOstate;   /* pointer to start of state vector for diode */
+    struct GENinstance gen;
+
+#define DIOmodPtr(inst)        ((struct sDIOmodel*)((inst)->gen.GENmodPtr))
+#define DIOnextInstance(inst)  ((struct sDIOinstance*)((inst)->gen.GENnextInstance))
+#define DIOname                gen.GENname
+#define DIOstate               gen.GENstate
+
     const int DIOposNode;     /* number of positive node of diode */
     const int DIOnegNode;     /* number of negative node of diode */
     int DIOposPrimeNode;    /* number of positive prime node of diode */

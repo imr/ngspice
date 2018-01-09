@@ -134,7 +134,7 @@ int HSMHV2temp(
       model->HSMHV2_qme12 = model->HSMHV2_qme1 / ( model->HSMHV2_qme2 * model->HSMHV2_qme2 ) ;
     }
 
-    for ( here = HSMHV2instances(model); here; here = here->HSMHV2nextInstance ) {
+    for ( here = HSMHV2instances(model); here; here = HSMHV2nextInstance(here) ) {
 
       pParam = &here->pParam ;
 

@@ -39,7 +39,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = ISRCinstances(model); here != NULL ;
-                here=here->ISRCnextInstance) {
+                here=ISRCnextInstance(here)) {
 
             m = here->ISRCmValue;
 

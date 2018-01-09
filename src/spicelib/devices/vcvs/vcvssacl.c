@@ -29,7 +29,7 @@ VCVSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = VCVSinstances(model); here != NULL ;
-                here=here->VCVSnextInstance) {
+                here=VCVSnextInstance(here)) {
 
 	    if(here->VCVSsenParmNo){
 

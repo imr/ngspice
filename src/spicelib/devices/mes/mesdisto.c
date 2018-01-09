@@ -44,7 +44,7 @@ for( ; model != NULL; model = MESnextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = MESinstances(model); here != NULL ;
-      here=here->MESnextInstance) {
+      here=MESnextInstance(here)) {
 
     /* loading starts here */
 

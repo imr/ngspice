@@ -142,7 +142,7 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = MOS3instances(model); here != NULL ;
-                here=here->MOS3nextInstance) {
+                here=MOS3nextInstance(here)) {
 
          CKTnode *tmpNode;
          IFuid tmpName;
@@ -269,7 +269,7 @@ MOS3unsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = MOS3nextModel(model))
     {
         for (here = MOS3instances(model); here != NULL;
-                here=here->MOS3nextInstance)
+                here=MOS3nextInstance(here))
 	{
 	    if (here->MOS3sNodePrime > 0
 		    && here->MOS3sNodePrime != here->MOS3sNode)

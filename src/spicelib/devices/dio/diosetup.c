@@ -162,7 +162,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
-                here=here->DIOnextInstance) {
+                here=DIOnextInstance(here)) {
 
             if(!here->DIOareaGiven) {
                 if((!here->DIOwGiven) && (!here->DIOlGiven))  {
@@ -253,7 +253,7 @@ DIOunsetup(
         model = DIOnextModel(model))
     {
         for (here = DIOinstances(model); here != NULL;
-                here=here->DIOnextInstance)
+                here=DIOnextInstance(here))
         {
 
             if (here->DIOposPrimeNode > 0

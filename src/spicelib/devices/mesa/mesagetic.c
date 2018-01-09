@@ -21,7 +21,7 @@ MESAgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = MESAnextModel(model)) {
-        for(here = MESAinstances(model); here ; here = here->MESAnextInstance) {
+        for(here = MESAinstances(model); here ; here = MESAnextInstance(here)) {
 
             if(!here->MESAicVDSGiven) {
                 here->MESAicVDS = 

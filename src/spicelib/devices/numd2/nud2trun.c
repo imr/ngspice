@@ -32,7 +32,7 @@ NUMD2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     model->NUMD2pInfo->delta = deltaNorm;
     model->NUMD2pInfo->lteCoeff = computeLTECoeff(model->NUMD2pInfo);
     for (inst = NUMD2instances(model); inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+	inst = NUMD2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = TWOtrunc(inst->NUMD2pDevice, model->NUMD2pInfo,

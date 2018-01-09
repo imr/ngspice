@@ -148,7 +148,7 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     /* loop through all the instances of the model */
     for (here = LTRAinstances(model); here != NULL;
-	here = here->LTRAnextInstance) {
+	here = LTRAnextInstance(here)) {
 
       here->LTRAv1 = NULL;
       here->LTRAi1 = NULL;

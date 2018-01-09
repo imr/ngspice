@@ -18,11 +18,13 @@ Author: 1985 Thomas L. Quarles
 /* information used to describe a single instance */
 
 typedef struct sTRAinstance {
-    struct sTRAmodel *TRAmodPtr;    /* backpointer to model */
-    struct sTRAinstance *TRAnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid TRAname;      /* pointer to character string naming this instance */
-    int TRAstate;	/* not used */
+    struct GENinstance gen;
+
+#define TRAmodPtr(inst)        ((struct sTRAmodel*)((inst)->gen.GENmodPtr))
+#define TRAnextInstance(inst)  ((struct sTRAinstance*)((inst)->gen.GENnextInstance))
+#define TRAname                gen.GENname
+#define TRAstate               gen.GENstate
+
     const int TRAposNode1;    /* number of positive node of end 1 of t. line */
     const int TRAnegNode1;    /* number of negative node of end 1 of t. line */
     const int TRAposNode2;    /* number of positive node of end 2 of t. line */

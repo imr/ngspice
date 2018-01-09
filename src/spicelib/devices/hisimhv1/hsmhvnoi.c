@@ -66,7 +66,7 @@ int HSMHVnoise (
   
   for ( ;model != NULL; model = HSMHVnextModel(model) ) {
     for ( here = HSMHVinstances(model); here != NULL;
-	  here = here->HSMHVnextInstance ) {
+	  here = HSMHVnextInstance(here) ) {
       switch (operation) {
       case N_OPEN:
 	/* see if we have to to produce a summary report */

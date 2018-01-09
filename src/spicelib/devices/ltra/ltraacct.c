@@ -47,7 +47,7 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
     }
     /* loop through all the instances of the model */
     for (here = LTRAinstances(model); here != NULL;
-	here = here->LTRAnextInstance) {
+	here = LTRAnextInstance(here)) {
 
       if (ckt->CKTmode & MODEINITTRAN) {
 	here->LTRAinstListSize = 10;
@@ -271,7 +271,7 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
     model = (LTRAmodel *) inModel;
     for (; model != NULL; model = LTRAnextModel(model)) {
       for (here = LTRAinstances(model); here != NULL;
-	  here = here->LTRAnextInstance) {
+	  here = LTRAnextInstance(here)) {
 	*(here->LTRAv1 + ckt->CKTtimeIndex - 1) = *(here->LTRAv1 +
 	    ckt->CKTtimeIndex);
 	*(here->LTRAv2 + ckt->CKTtimeIndex - 1) = *(here->LTRAv2 +

@@ -57,7 +57,7 @@ HFETAtemp(GENmodel *inModel, CKTcircuit *ckt)
           IN_VT1 = VTO+CHARGE*NMAX*DI/EPSI;
           
         for (here = HFETAinstances(model); here != NULL ;
-                here=here->HFETAnextInstance) {
+                here=HFETAnextInstance(here)) {
 
             if(!here->HFETAdtempGiven) {
                 here->HFETAdtemp = 0.0;

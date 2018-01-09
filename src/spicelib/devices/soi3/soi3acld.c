@@ -78,7 +78,7 @@ SOI3acLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = SOI3nextModel(model))
     {
         for(here = SOI3instances(model); here!= NULL;
-                here = here->SOI3nextInstance)
+                here = SOI3nextInstance(here))
         {
 	
             if (here->SOI3mode < 0)

@@ -228,7 +228,7 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = MESAinstances(model); here != NULL ;
-                here=here->MESAnextInstance) {
+                here=MESAnextInstance(here)) {
          
             if(!here->MESAlengthGiven) {
                 here->MESAlength = 1e-6;
@@ -417,7 +417,7 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = MESAnextModel(model))
     {
         for (here = MESAinstances(model); here != NULL;
-                here=here->MESAnextInstance)
+                here=MESAnextInstance(here))
         {
             if (here->MESAdrainPrmPrmNode > 0
                     && here->MESAdrainPrmPrmNode != here->MESAdrainPrimeNode)

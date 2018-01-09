@@ -27,7 +27,7 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
-                here=here->VSRCnextInstance) {
+                here=VSRCnextInstance(here)) {
 
             if(here->VSRCacGiven && !here->VSRCacMGiven) {
                 here->VSRCacMag = 1;

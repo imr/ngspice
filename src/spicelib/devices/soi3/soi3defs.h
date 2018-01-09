@@ -37,12 +37,12 @@ ngspice integration
 
 typedef struct sSOI3instance {
 
-    struct sSOI3model *SOI3modPtr; /* backpointer to model */
-    struct sSOI3instance *SOI3nextInstance;  /* pointer to next instance of
-                                              *current model*/
-    IFuid SOI3name;     /* pointer to character string naming this instance */
-    int SOI3states;     /* index into state table for this device */
+    struct GENinstance gen;
 
+#define SOI3modPtr(inst)        ((struct sSOI3model*)((inst)->gen.GENmodPtr))
+#define SOI3nextInstance(inst)  ((struct sSOI3instance*)((inst)->gen.GENnextInstance))
+#define SOI3name                gen.GENname
+#define SOI3states              gen.GENstate
 
     const int SOI3dNode;  /* number of the drain node of the mosfet */
     const int SOI3gfNode;  /* number of the front gate node of the mosfet */

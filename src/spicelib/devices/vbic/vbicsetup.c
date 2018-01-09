@@ -381,7 +381,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = VBICinstances(model); here != NULL ;
-                here=here->VBICnextInstance) {
+                here=VBICnextInstance(here)) {
             CKTnode *tmpNode;
             IFuid tmpName;
 
@@ -556,7 +556,7 @@ VBICunsetup(
         model = VBICnextModel(model))
     {
         for (here = VBICinstances(model); here != NULL;
-                here=here->VBICnextInstance)
+                here=VBICnextInstance(here))
         {
             if (here->VBICbaseBINode > 0)
                 CKTdltNNum(ckt, here->VBICbaseBINode);

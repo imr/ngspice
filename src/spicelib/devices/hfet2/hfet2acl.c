@@ -29,7 +29,7 @@ int HFET2acLoad(GENmodel *inModel, CKTcircuit *ckt)
   for( ; model != NULL; model = HFET2nextModel(model) ) 
   {
     for( here = HFET2instances(model); here != NULL; 
-         here = here->HFET2nextInstance) {
+         here = HFET2nextInstance(here)) {
 
       m = here->HFET2m;
 

@@ -27,7 +27,7 @@ CCVSsSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = CCVSinstances(model); here != NULL ;
-                here=here->CCVSnextInstance) {
+                here=CCVSnextInstance(here)) {
 
             if(here->CCVSsenParmNo){
                 here->CCVSsenParmNo = ++(info->SENparms);

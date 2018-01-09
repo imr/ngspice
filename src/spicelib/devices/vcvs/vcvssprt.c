@@ -30,7 +30,7 @@ VCVSsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = VCVSinstances(model); here != NULL ;
-                here=here->VCVSnextInstance) {
+                here=VCVSnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->VCVSname);
             printf("      Positive, negative nodes: %s, %s\n",

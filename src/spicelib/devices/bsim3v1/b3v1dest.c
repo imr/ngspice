@@ -24,7 +24,7 @@ BSIM3v1destroy(GENmodel **inModel)
         BSIM3v1model *next_mod = BSIM3v1nextModel(mod);
         BSIM3v1instance *inst = BSIM3v1instances(mod);
         while (inst) {
-            BSIM3v1instance *next_inst = inst->BSIM3v1nextInstance;
+            BSIM3v1instance *next_inst = BSIM3v1nextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

@@ -32,7 +32,7 @@ TRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
         /* loop through all the instances of the model */
         for (here = TRAinstances(model); here != NULL ;
-                here=here->TRAnextInstance) {
+                here=TRAnextInstance(here)) {
             
             if(here->TRAbrEq1==0) {
                 error = CKTmkVolt(ckt,&tmp,here->TRAname,"i1");
@@ -124,7 +124,7 @@ TRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = TRAnextModel(model))
     {
         for (here = TRAinstances(model); here != NULL;
-                here=here->TRAnextInstance)
+                here=TRAnextInstance(here))
 	{
 	    if (here->TRAintNode2 > 0)
 		CKTdltNNum(ckt, here->TRAintNode2);

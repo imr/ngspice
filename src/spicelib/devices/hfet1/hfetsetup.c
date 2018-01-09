@@ -230,7 +230,7 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         
         /* loop through all the instances of the model */
         for (here = HFETAinstances(model); here != NULL ;
-                here=here->HFETAnextInstance) {
+                here=HFETAnextInstance(here)) {
            
             if(!here->HFETAlengthGiven) {
                 here->HFETAlength = 1e-6;
@@ -410,7 +410,7 @@ HFETAunsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = HFETAnextModel(model))
     {
         for (here = HFETAinstances(model); here != NULL;
-                here=here->HFETAnextInstance)
+                here=HFETAnextInstance(here))
         {
 	    if (here->HFETAsourcePrmPrmNode > 0
         			&& here->HFETAsourcePrmPrmNode != here->HFETAsourcePrimeNode)

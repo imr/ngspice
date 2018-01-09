@@ -91,7 +91,7 @@ NUMD2load(GENmodel *inModel, CKTcircuit *ckt)
     }
     /* loop through all the instances of the model */
     for (inst = NUMD2instances(model); inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+	inst = NUMD2nextInstance(inst)) {
 
       pDevice = inst->NUMD2pDevice;
 
@@ -386,7 +386,7 @@ int
 NUMD2initSmSig(NUMD2instance *inst)
 {
   SPcomplex yd;
-  double omega = inst->NUMD2modPtr->NUMD2methods->METHomega;
+  double omega = NUMD2modPtr(inst)->NUMD2methods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NUMD2admittance(inst->NUMD2pDevice, omega, &yd);

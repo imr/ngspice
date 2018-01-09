@@ -74,7 +74,7 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = MESinstances(model); here != NULL ;
-                here=here->MESnextInstance) {
+                here=MESnextInstance(here)) {
             
             if(!here->MESareaGiven) {
                 here->MESarea = 1.0;
@@ -166,7 +166,7 @@ MESunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = MESnextModel(model))
     {
         for (here = MESinstances(model); here != NULL;
-                here=here->MESnextInstance)
+                here=MESnextInstance(here))
 	{
 	    if (here->MESdrainPrimeNode > 0
 		    && here->MESdrainPrimeNode != here->MESdrainNode)

@@ -15,11 +15,13 @@ File: bsim3v0def.h
 
 typedef struct sBSIM3v0instance
 {
-    struct sBSIM3v0model *BSIM3v0modPtr;
-    struct sBSIM3v0instance *BSIM3v0nextInstance;
-    IFuid BSIM3v0name;
-    int BSIM3v0states;     /* index into state table for this device */
-    
+    struct GENinstance gen;
+
+#define BSIM3v0modPtr(inst)        ((struct sBSIM3v0model*)((inst)->gen.GENmodPtr))
+#define BSIM3v0nextInstance(inst)  ((struct sBSIM3v0instance*)((inst)->gen.GENnextInstance))
+#define BSIM3v0name                gen.GENname
+#define BSIM3v0states              gen.GENstate
+
     const int BSIM3v0dNode;
     const int BSIM3v0gNode;
     const int BSIM3v0sNode;

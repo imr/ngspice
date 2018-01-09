@@ -39,7 +39,7 @@ JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = JFET2instances(model); here != NULL ;
-                here=here->JFET2nextInstance) {
+                here=JFET2nextInstance(here)) {
             
             if(!here->JFET2areaGiven) {
                 here->JFET2area = 1;
@@ -133,7 +133,7 @@ JFET2unsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = JFET2nextModel(model))
     {
         for (here = JFET2instances(model); here != NULL;
-                here=here->JFET2nextInstance)
+                here=JFET2nextInstance(here))
 	{
 	    if (here->JFET2drainPrimeNode > 0
 		    && here->JFET2drainPrimeNode != here->JFET2drainNode)

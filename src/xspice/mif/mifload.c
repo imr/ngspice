@@ -228,7 +228,7 @@ MIFload(
         /* ***************************************************************** */
         /* loop through all instances of this model */
         /* ***************************************************************** */
-        for(here = MIFinstances(model); here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
             /* If not an analog or hybrid instance, continue to next */
             if(! here->analog)
                 continue;

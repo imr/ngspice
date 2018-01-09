@@ -346,7 +346,7 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
-                here=here->BJTnextInstance) {
+                here=BJTnextInstance(here)) {
             CKTnode *tmpNode;
             IFuid tmpName;
 
@@ -479,7 +479,7 @@ BJTunsetup(
         model = BJTnextModel(model))
     {
         for (here = BJTinstances(model); here != NULL;
-                here=here->BJTnextInstance)
+                here=BJTnextInstance(here))
         {
            if (here->BJTemitPrimeNode > 0
                && here->BJTemitPrimeNode != here->BJTemitNode)

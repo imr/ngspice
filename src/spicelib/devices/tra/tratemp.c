@@ -30,7 +30,7 @@ TRAtemp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = TRAinstances(model); here != NULL ;
-                here=here->TRAnextInstance) {
+                here=TRAnextInstance(here)) {
             
             if(!here->TRAtdGiven) {
                 here->TRAtd = here->TRAnl/here->TRAf;

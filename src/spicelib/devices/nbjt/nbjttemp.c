@@ -54,7 +54,7 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     ConcDepMobility = models->MODLconcDepMobility;
 
     for (inst = NBJTinstances(model); inst != NULL;
-	inst = inst->NBJTnextInstance) {
+	inst = NBJTnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

@@ -161,7 +161,7 @@ B4SOItemp(
         /* loop through all the instances of the model */
         /* MCJ: Length and Width not initialized */
         for (here = B4SOIinstances(model); here != NULL;
-                here = here->B4SOInextInstance)
+                here = B4SOInextInstance(here))
         {
             here->B4SOIrbodyext = here->B4SOIbodySquares *
                 model->B4SOIrbsh;

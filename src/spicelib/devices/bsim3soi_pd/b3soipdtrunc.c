@@ -29,7 +29,7 @@ B3SOIPDinstance *here;
 
     for (; model != NULL; model = B3SOIPDnextModel(model))
     {    for (here = B3SOIPDinstances(model); here != NULL;
-	      here = here->B3SOIPDnextInstance)
+	      here = B3SOIPDnextInstance(here))
 	 {
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

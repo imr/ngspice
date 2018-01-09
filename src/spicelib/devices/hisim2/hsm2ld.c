@@ -247,7 +247,7 @@ int HSM2load(
 
 int HSM2LoadOMP(HSM2instance *here, CKTcircuit *ckt)
 {
-  HSM2model *model = here->HSM2modPtr;
+  HSM2model *model = HSM2modPtr(here);
 #else
   HSM2model *model = (HSM2model*)inModel;
   HSM2instance *here;
@@ -317,7 +317,7 @@ tm0 = gtodsecld() ;
     model->HSM2_bypass_enable = BYPASS_enable ;
 
     for (here = HSM2instances(model); here != NULL ;
-	 here = here->HSM2nextInstance) {
+	 here = HSM2nextInstance(here)) {
 #endif
 /*      pParam = &here->pParam ;*/
       showPhysVal = 0;
@@ -1502,7 +1502,7 @@ void HSM2LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for (idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
-       model = here->HSM2modPtr;
+       model = HSM2modPtr(here);
         /* Update b for Ax = b */
         *(ckt->CKTrhs + here->HSM2dNodePrime) += here->HSM2rhsdPrime;
         *(ckt->CKTrhs + here->HSM2gNodePrime) -= here->HSM2rhsgPrime;

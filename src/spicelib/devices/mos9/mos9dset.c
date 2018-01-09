@@ -65,7 +65,7 @@ MOS9dSetup(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = MOS9instances(model); here != NULL ;
-                here=here->MOS9nextInstance) {
+                here=MOS9nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS9temp;
 

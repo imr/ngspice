@@ -41,7 +41,7 @@ MESAtemp(GENmodel *inModel, CKTcircuit *ckt)
     model->MESAdeltaSqr = model->MESAdelta*model->MESAdelta;
     
     for (here = MESAinstances(model); here != NULL ;
-              here=here->MESAnextInstance) {
+              here=MESAnextInstance(here)) {
 
       vt                = CONSTKoverQ * here->MESAts;
       if(model->MESAmu1 == 0 && model->MESAmu2 == 0)

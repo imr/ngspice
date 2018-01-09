@@ -21,7 +21,7 @@ CAPtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     for( ; model!= NULL; model = CAPnextModel(model)) {
         for(here = CAPinstances(model) ; here != NULL ;
-                here = here->CAPnextInstance) {
+                here = CAPnextInstance(here)) {
 
             CKTterr(here->CAPqcap,ckt,timeStep);
         }

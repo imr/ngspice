@@ -36,7 +36,7 @@ BSIM3v32destroy (GENmodel **inModel)
         }
         /** end of extra code **/
         while (inst) {
-            BSIM3v32instance *next_inst = inst->BSIM3v32nextInstance;
+            BSIM3v32instance *next_inst = BSIM3v32nextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

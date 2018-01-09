@@ -780,7 +780,7 @@ int HSMHVsetup(
 
     /* loop through all the instances of the model */
     for ( here = HSMHVinstances(model) ;here != NULL ;
-         here = here->HSMHVnextInstance ) {
+         here = HSMHVnextInstance(here) ) {
       /* allocate a chunk of the state vector */
       here->HSMHVstates = *states;
       if (model->HSMHV_conqs)
@@ -1473,7 +1473,7 @@ HSMHVunsetup(
             model = HSMHVnextModel(model))
     {
         for (here = HSMHVinstances(model); here != NULL;
-                here=here->HSMHVnextInstance)
+                here=HSMHVnextInstance(here))
         {
             if (here->HSMHVqbNode > 0)
                 CKTdltNNum(ckt, here->HSMHVqbNode);

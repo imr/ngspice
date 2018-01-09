@@ -33,7 +33,7 @@ BJTsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
-                here=here->BJTnextInstance) {
+                here=BJTnextInstance(here)) {
 
             ckt->CKTsenInfo->SEN_parmVal[here->BJTsenParmNo] = here->BJTarea;
 

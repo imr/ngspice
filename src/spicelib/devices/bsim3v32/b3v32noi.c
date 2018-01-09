@@ -210,7 +210,7 @@ int i;
 
     for (; model != NULL; model = BSIM3v32nextModel(model))
     {    for (here = BSIM3v32instances(model); here != NULL;
-              here = here->BSIM3v32nextInstance)
+              here = BSIM3v32nextInstance(here))
          {    pParam = here->pParam;
               switch (operation)
               {  case N_OPEN:

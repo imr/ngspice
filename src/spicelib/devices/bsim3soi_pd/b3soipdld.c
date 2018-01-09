@@ -293,7 +293,7 @@ double m;
 
 for (; model != NULL; model = B3SOIPDnextModel(model))
 {    for (here = B3SOIPDinstances(model); here != NULL; 
-          here = here->B3SOIPDnextInstance)
+          here = B3SOIPDnextInstance(here))
      {
           Check = 0;
           ByPass = 0;

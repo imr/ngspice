@@ -101,7 +101,7 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = JFETinstances(model); here != NULL ;
-                here=here->JFETnextInstance) {
+                here=JFETnextInstance(here)) {
 
             if(!here->JFETareaGiven) {
                 here->JFETarea = 1;
@@ -193,7 +193,7 @@ JFETunsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = JFETnextModel(model))
     {
         for (here = JFETinstances(model); here != NULL;
-                here=here->JFETnextInstance)
+                here=JFETnextInstance(here))
         {
             if (here->JFETdrainPrimeNode > 0
                     && here->JFETdrainPrimeNode != here->JFETdrainNode)

@@ -29,7 +29,7 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
-                here=here->VSRCnextInstance) {
+                here=VSRCnextInstance(here)) {
             
             if(here->VSRCposNode == here->VSRCnegNode) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -68,7 +68,7 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = VSRCnextModel(model))
     {
         for (here = VSRCinstances(model); here != NULL;
-                here=here->VSRCnextInstance)
+                here=VSRCnextInstance(here))
 	{
 	    if (here->VSRCbranch > 0)
 		CKTdltNNum(ckt, here->VSRCbranch);

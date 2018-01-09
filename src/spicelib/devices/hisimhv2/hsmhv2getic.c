@@ -75,7 +75,7 @@ int HSMHV2getic(
    */
 
   for ( ;model ;model = HSMHV2nextModel(model) ) {
-    for ( here = HSMHV2instances(model); here ;here = here->HSMHV2nextInstance ) {
+    for ( here = HSMHV2instances(model); here ;here = HSMHV2nextInstance(here) ) {
       if (!here->HSMHV2_icVBS_Given) {
 	here->HSMHV2_icVBS = 
 	  *(ckt->CKTrhs + here->HSMHV2bNode) - 

@@ -16,11 +16,13 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sMOS6instance {
-    struct sMOS6model *MOS6modPtr; /* backpointer to model */
-    struct sMOS6instance *MOS6nextInstance;  /* pointer to next instance of
-                                              *current model*/
-    IFuid MOS6name; /* pointer to character string naming this instance */
-    int MOS6states;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define MOS6modPtr(inst)        ((struct sMOS6model*)((inst)->gen.GENmodPtr))
+#define MOS6nextInstance(inst)  ((struct sMOS6instance*)((inst)->gen.GENnextInstance))
+#define MOS6name                gen.GENname
+#define MOS6states              gen.GENstate
+
     const int MOS6dNode;  /* number of the gate node of the mosfet */
     const int MOS6gNode;  /* number of the gate node of the mosfet */
     const int MOS6sNode;  /* number of the source node of the mosfet */

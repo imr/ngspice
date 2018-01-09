@@ -54,7 +54,7 @@ NUMD2temp(GENmodel *inModel, CKTcircuit *ckt)
     OneCarrier = methods->METHoneCarrier;
 
     for (inst = NUMD2instances(model); inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+	inst = NUMD2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

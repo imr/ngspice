@@ -30,7 +30,7 @@ BJTgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = BJTnextModel(model)) {
-        for(here = BJTinstances(model); here ; here = here->BJTnextInstance) {
+        for(here = BJTinstances(model); here ; here = BJTnextInstance(here)) {
 
             if(!here->BJTicVBEGiven) {
                 here->BJTicVBE = 

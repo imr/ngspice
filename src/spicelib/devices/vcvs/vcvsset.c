@@ -30,7 +30,7 @@ VCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = VCVSinstances(model); here != NULL ;
-                here=here->VCVSnextInstance) {
+                here=VCVSnextInstance(here)) {
             
             if(here->VCVSposNode == here->VCVSnegNode) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -71,7 +71,7 @@ VCVSunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = VCVSnextModel(model))
     {
         for (here = VCVSinstances(model); here != NULL;
-                here=here->VCVSnextInstance)
+                here=VCVSnextInstance(here))
 	{
 	    if (here->VCVSbranch > 0)
 		CKTdltNNum(ckt, here->VCVSbranch);

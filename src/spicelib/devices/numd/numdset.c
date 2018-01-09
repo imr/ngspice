@@ -142,7 +142,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /* loop through all the instances of the model */
     for (inst = NUMDinstances(model); inst != NULL;
-	inst = inst->NUMDnextInstance) {
+	inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

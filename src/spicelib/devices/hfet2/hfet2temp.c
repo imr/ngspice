@@ -37,7 +37,7 @@ CKTcircuit *ckt)
       VT2 = VTO;
     DELTA2 = DELTA*DELTA;
     for (here = HFET2instances(model); here != NULL; 
-         here=here->HFET2nextInstance) {
+         here=HFET2nextInstance(here)) {
 
     if(!here->HFET2dtempGiven)
        here->HFET2dtemp = 0.0;

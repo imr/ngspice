@@ -46,7 +46,7 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = B1instances(model); here != NULL ;
-                here=here->B1nextInstance) {
+                here=B1nextInstance(here)) {
 
             if( (EffChanLength = here->B1l - model->B1deltaL *1e-6 )<=0) { 
                 SPfrontEnd->IFerrorf (ERR_FATAL,

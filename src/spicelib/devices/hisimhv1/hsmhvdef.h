@@ -213,11 +213,12 @@ typedef struct sHSMHVhereMKSParam {
 
 /* information needed for each instance */
 typedef struct sHSMHVinstance {
-  struct sHSMHVmodel *HSMHVmodPtr;           /* pointer to model */
-  struct sHSMHVinstance *HSMHVnextInstance;  /* pointer to next instance of 
-                                              current model*/
-  IFuid HSMHVname; /* pointer to character string naming this instance */
-  int HSMHVstates; /* index into state table for this device */
+  struct GENinstance gen;
+
+#define HSMHVmodPtr(inst)        ((struct sHSMHVmodel*)((inst)->gen.GENmodPtr))
+#define HSMHVnextInstance(inst)  ((struct sHSMHVinstance*)((inst)->gen.GENnextInstance))
+#define HSMHVname                gen.GENname
+#define HSMHVstates              gen.GENstate
 
   const int HSMHVdNode;      /* number of the drain node of the mosfet */
   const int HSMHVgNode;      /* number of the gate node of the mosfet */

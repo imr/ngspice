@@ -21,10 +21,12 @@ File: b3soifddef.h
 
 typedef struct sB3SOIFDinstance
 {
-    struct sB3SOIFDmodel *B3SOIFDmodPtr;
-    struct sB3SOIFDinstance *B3SOIFDnextInstance;
-    IFuid B3SOIFDname;
-    int B3SOIFDstates;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define B3SOIFDmodPtr(inst)        ((struct sB3SOIFDmodel*)((inst)->gen.GENmodPtr))
+#define B3SOIFDnextInstance(inst)  ((struct sB3SOIFDinstance*)((inst)->gen.GENnextInstance))
+#define B3SOIFDname                gen.GENname
+#define B3SOIFDstates              gen.GENstate
 
     const int B3SOIFDdNode;
     const int B3SOIFDgNode;

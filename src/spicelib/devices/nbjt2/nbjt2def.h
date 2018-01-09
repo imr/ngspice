@@ -22,14 +22,13 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNBJT2instance {
-  struct sNBJT2model *NBJT2modPtr;	/* back pointer to model */
-  struct sNBJT2instance *NBJT2nextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NBJT2name;		/* pointer to character string naming this
-				 * instance */
-  int NBJT2state;		/* pointer to start of state vector for bjt */
+  struct GENinstance gen;
 
-  /* entries in the state vector for bjt: */
+#define NBJT2modPtr(inst)        ((struct sNBJT2model*)((inst)->gen.GENmodPtr))
+#define NBJT2nextInstance(inst)  ((struct sNBJT2instance*)((inst)->gen.GENnextInstance))
+#define NBJT2name                gen.GENname
+#define NBJT2state               gen.GENstate
+
 #define NBJT2vbe NBJT2state
 #define NBJT2vce NBJT2state+1
 #define NBJT2ic NBJT2state+2

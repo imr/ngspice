@@ -99,7 +99,7 @@ MOS1load(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = MOS1instances(model); here != NULL ;
-	     here=here->MOS1nextInstance) {
+	     here=MOS1nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS1temp;
             Check=1;

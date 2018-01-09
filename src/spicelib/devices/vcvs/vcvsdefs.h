@@ -19,11 +19,12 @@ Author: 1985 Thomas L. Quarles
 /* information to describe a single instance */
 
 typedef struct sVCVSinstance {
-    struct sVCVSmodel *VCVSmodPtr;  /* backpointer to model */
-    struct sVCVSinstance *VCVSnextInstance;  /* pointer to next instance of 
-                                              *current model*/
-    IFuid VCVSname; /* pointer to character string naming this instance */
-    int VCVSstates; /* state info */
+    struct GENinstance gen;
+
+#define VCVSmodPtr(inst)        ((struct sVCVSmodel*)((inst)->gen.GENmodPtr))
+#define VCVSnextInstance(inst)  ((struct sVCVSinstance*)((inst)->gen.GENnextInstance))
+#define VCVSname                gen.GENname
+#define VCVSstates              gen.GENstate
 
     const int VCVSposNode;    /* number of positive node of source */
     const int VCVSnegNode;    /* number of negative node of source */

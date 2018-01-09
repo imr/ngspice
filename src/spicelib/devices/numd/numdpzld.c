@@ -36,7 +36,7 @@ NUMDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     ONEacDebug = model->NUMDoutputs->OUTPacDebug;
 
     for (inst = NUMDinstances(model); inst != NULL;
-	inst = inst->NUMDnextInstance) {
+	inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

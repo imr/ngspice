@@ -366,7 +366,7 @@ int HSMHVload(
 /*    modelMKS = &model->modelMKS ;*/
 
     for (here = HSMHVinstances(model); here != NULL ;
-         here = here->HSMHVnextInstance) {
+         here = HSMHVnextInstance(here)) {
       
 /*      hereMKS = &here->hereMKS ;*/
       pParam = &here->pParam ;

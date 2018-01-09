@@ -2102,7 +2102,7 @@ B4SOIinstance **InstArray;
             model->B4SOIpvoffcv = 0.0;
         /* loop through all the instances of the model */
         for (here = B4SOIinstances(model); here != NULL ;
-             here=here->B4SOInextInstance)
+             here=B4SOInextInstance(here))
         {   /* allocate a chunk of the state vector */
             here->B4SOIstates = *states;
             *states += B4SOInumStates;
@@ -2729,7 +2729,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     {
         /* loop through all the instances of the model */
         for (here = B4SOIinstances(model); here != NULL ;
-             here=here->B4SOInextInstance) 
+             here=B4SOInextInstance(here)) 
         { 
             InstCount++;
         }
@@ -2741,7 +2741,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     {
         /* loop through all the instances of the model */
         for (here = B4SOIinstances(model); here != NULL ;
-             here=here->B4SOInextInstance) 
+             here=B4SOInextInstance(here)) 
         { 
             InstArray[idx] = here;
             idx++;
@@ -2768,7 +2768,7 @@ B4SOIunsetup(
             model = B4SOInextModel(model))
     {
         for (here = B4SOIinstances(model); here != NULL;
-                here=here->B4SOInextInstance)
+                here=B4SOInextInstance(here))
         {
             /* here for debugging purpose only */
             if (here->B4SOIqjdNode > 0)

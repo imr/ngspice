@@ -26,7 +26,7 @@ MUTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for( ; model != NULL; model = MUTnextModel(model)) {
         for( here = MUTinstances(model);here != NULL; 
-                here = here->MUTnextInstance) {
+                here = MUTnextInstance(here)) {
     
             val =  here->MUTfactor;
             *(here->MUTbr1br2Ptr ) -= val * s->real;

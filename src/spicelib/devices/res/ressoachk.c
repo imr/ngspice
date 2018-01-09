@@ -30,7 +30,7 @@ RESsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = RESnextModel(model)) {
 
-        for (here = RESinstances(model); here; here = here->RESnextInstance) {
+        for (here = RESinstances(model); here; here = RESnextInstance(here)) {
 
             vr = fabs(ckt->CKTrhsOld [here->RESposNode] -
                       ckt->CKTrhsOld [here->RESnegNode]);

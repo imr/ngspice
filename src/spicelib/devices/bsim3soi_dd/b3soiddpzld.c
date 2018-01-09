@@ -36,7 +36,7 @@ double m;
 
     for (; model != NULL; model = B3SOIDDnextModel(model)) 
     {    for (here = B3SOIDDinstances(model); here!= NULL;
-              here = here->B3SOIDDnextInstance) 
+              here = B3SOIDDnextInstance(here)) 
 	 {
             if (here->B3SOIDDmode >= 0) 
 	    {   Gm = here->B3SOIDDgm;

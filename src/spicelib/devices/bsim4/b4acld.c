@@ -106,7 +106,7 @@ double m;
     omega = ckt->CKTomega;
     for (; model != NULL; model = BSIM4nextModel(model)) 
     {    for (here = BSIM4instances(model); here!= NULL;
-              here = here->BSIM4nextInstance) 
+              here = BSIM4nextInstance(here)) 
          {
               pParam = here->pParam;
               capbd = here->BSIM4capbd;

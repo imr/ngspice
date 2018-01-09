@@ -46,7 +46,7 @@ MESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
     };
 
     for (model=firstModel; model != NULL; model=MESnextModel(model)) {
-	for (inst=MESinstances(model); inst != NULL; inst=inst->MESnextInstance) {
+	for (inst=MESinstances(model); inst != NULL; inst=MESnextInstance(inst)) {
 
 	    switch (operation) {
 

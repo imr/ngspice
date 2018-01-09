@@ -39,16 +39,16 @@ LTRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
     value->iValue = here->LTRAnegNode2;
     return (OK);
   case LTRA_MOD_Z0:
-    value->rValue = here->LTRAmodPtr->LTRAimped;
+    value->rValue = LTRAmodPtr(here)->LTRAimped;
     return (OK);
   case LTRA_MOD_TD:
-    value->rValue = here->LTRAmodPtr->LTRAtd;
+    value->rValue = LTRAmodPtr(here)->LTRAtd;
     return (OK);
   case LTRA_MOD_NL:
-    value->rValue = here->LTRAmodPtr->LTRAnl;
+    value->rValue = LTRAmodPtr(here)->LTRAnl;
     return (OK);
   case LTRA_MOD_FREQ:
-    value->rValue = here->LTRAmodPtr->LTRAf;
+    value->rValue = LTRAmodPtr(here)->LTRAf;
     return (OK);
   case LTRA_V1:
     value->rValue = here->LTRAinitVolt1;
@@ -63,10 +63,10 @@ LTRAask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
     value->rValue = here->LTRAinitCur2;
     return (OK);
   case LTRA_MOD_RELTOL:
-    value->rValue = here->LTRAmodPtr->LTRAreltol;
+    value->rValue = LTRAmodPtr(here)->LTRAreltol;
     return (OK);
   case LTRA_MOD_ABSTOL:
-    value->rValue = here->LTRAmodPtr->LTRAabstol;
+    value->rValue = LTRAmodPtr(here)->LTRAabstol;
     return (OK);
   case LTRA_BR_EQ1:
     value->rValue = here->LTRAbrEq1;

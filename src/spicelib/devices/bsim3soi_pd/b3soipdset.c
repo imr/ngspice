@@ -1049,7 +1049,7 @@ IFuid tmpName;
 
         /* loop through all the instances of the model */
         for (here = B3SOIPDinstances(model); here != NULL ;
-             here=here->B3SOIPDnextInstance) 
+             here=B3SOIPDnextInstance(here)) 
 	{
             /* allocate a chunk of the state vector */
             here->B3SOIPDstates = *states;
@@ -1464,7 +1464,7 @@ B3SOIPDunsetup(
             model = B3SOIPDnextModel(model))
     {
         for (here = B3SOIPDinstances(model); here != NULL;
-                here=here->B3SOIPDnextInstance)
+                here=B3SOIPDnextInstance(here))
         {
             /* here for debugging purpose only */
             if (here->B3SOIPDqjdNode > 0)

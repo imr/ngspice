@@ -300,7 +300,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all instances of the model */
         for(here = SOI3instances(model); here!= NULL;
-                here = here->SOI3nextInstance)
+                here = SOI3nextInstance(here))
         {
 
             double czbd;    /* zero voltage bulk-drain capacitance */

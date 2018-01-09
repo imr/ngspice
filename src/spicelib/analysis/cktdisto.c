@@ -91,7 +91,7 @@ CKTdisto (CKTcircuit *ckt, int mode)
             for(model = (VSRCmodel *)ckt->CKThead[vcode];model != NULL;
                     model=VSRCnextModel(model)){
                 for(here=VSRCinstances(model);here!=NULL;
-                        here=here->VSRCnextInstance) {
+                        here=VSRCnextInstance(here)) {
 
 /* check if the source has a distortion input*/
 
@@ -127,7 +127,7 @@ if (((here->VSRCdF1given) && (mode == D_RHSF1)) ||
             for(model= (ISRCmodel *)ckt->CKThead[icode];model != NULL;
                     model=ISRCnextModel(model)){
                 for(here=ISRCinstances(model);here!=NULL;
-                        here=here->ISRCnextInstance) {
+                        here=ISRCnextInstance(here)) {
 
 /* check if the source has a distortion input*/
 

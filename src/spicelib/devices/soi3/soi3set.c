@@ -289,7 +289,7 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = SOI3instances(model); here != NULL ;
-                here=here->SOI3nextInstance) {
+                here=SOI3nextInstance(here)) {
 
 
             if(!here->SOI3icVBSGiven) {
@@ -672,7 +672,7 @@ SOI3unsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = SOI3nextModel(model))
     {
        for (here = SOI3instances(model); here != NULL;
-                here=here->SOI3nextInstance)
+                here=SOI3nextInstance(here))
 		 {
 	       if (here->SOI3tout4Node > 0)
 		       CKTdltNNum(ckt, here->SOI3tout4Node);

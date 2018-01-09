@@ -182,11 +182,11 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS3_CAPGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgs);
 /* add overlap capacitance */
-            value->rValue += (here->MOS3modPtr->MOS3gateSourceOverlapCapFactor)
+            value->rValue += (MOS3modPtr(here)->MOS3gateSourceOverlapCapFactor)
                              * here->MOS3m
                              * (here->MOS3w
-                                +here->MOS3modPtr->MOS3widthAdjust
-                                -2*(here->MOS3modPtr->MOS3widthNarrow));
+                                +MOS3modPtr(here)->MOS3widthAdjust
+                                -2*(MOS3modPtr(here)->MOS3widthNarrow));
             return(OK);
         case MOS3_QGS:
             value->rValue = *(ckt->CKTstate0 + here->MOS3qgs);
@@ -197,11 +197,11 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS3_CAPGD:
              value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgd);
 /* add overlap capacitance */
-            value->rValue += (here->MOS3modPtr->MOS3gateDrainOverlapCapFactor)
+            value->rValue += (MOS3modPtr(here)->MOS3gateDrainOverlapCapFactor)
                              * here->MOS3m
                              * (here->MOS3w
-                                +here->MOS3modPtr->MOS3widthAdjust
-                                -2*(here->MOS3modPtr->MOS3widthNarrow));
+                                +MOS3modPtr(here)->MOS3widthAdjust
+                                -2*(MOS3modPtr(here)->MOS3widthNarrow));
             return(OK);
         case MOS3_QGD:
             value->rValue = *(ckt->CKTstate0 + here->MOS3qgd);
@@ -212,11 +212,11 @@ MOS3ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS3_CAPGB:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS3capgb);
 /* add overlap capacitance */
-            value->rValue += (here->MOS3modPtr->MOS3gateBulkOverlapCapFactor)
+            value->rValue += (MOS3modPtr(here)->MOS3gateBulkOverlapCapFactor)
                              * here->MOS3m
                              * (here->MOS3l
-                                +here->MOS3modPtr->MOS3lengthAdjust
-                                -2*(here->MOS3modPtr->MOS3latDiff));
+                                +MOS3modPtr(here)->MOS3lengthAdjust
+                                -2*(MOS3modPtr(here)->MOS3latDiff));
             return(OK);
         case MOS3_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS3qgb);

@@ -35,7 +35,7 @@ HSMHV2soaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = HSMHV2nextModel(model)) {
 
-        for (here = HSMHV2instances(model); here; here = here->HSMHV2nextInstance) {
+        for (here = HSMHV2instances(model); here; here = HSMHV2nextInstance(here)) {
 
             vgs = ckt->CKTrhsOld [here->HSMHV2gNode] -
                   ckt->CKTrhsOld [here->HSMHV2sNodePrime];

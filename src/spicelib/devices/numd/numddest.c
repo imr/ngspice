@@ -24,7 +24,7 @@ NUMDdestroy(GENmodel **inModel)
         NUMDmodel *next_mod = NUMDnextModel(mod);
         NUMDinstance *inst = NUMDinstances(mod);
         while (inst) {
-            NUMDinstance *next_inst = inst->NUMDnextInstance;
+            NUMDinstance *next_inst = NUMDnextInstance(inst);
             ONEdestroy(inst->NUMDpDevice);
             FREE(inst);
             inst = next_inst;

@@ -19,7 +19,7 @@ INDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     INDinstance *here;
     for( ; model!= NULL; model = INDnextModel(model)) {
         for(here = INDinstances(model) ; here != NULL ;
-                here = here->INDnextInstance) {
+                here = INDnextInstance(here)) {
 
             CKTterr(here->INDflux,ckt,timeStep);
         }

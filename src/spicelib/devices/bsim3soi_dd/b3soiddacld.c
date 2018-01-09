@@ -52,7 +52,7 @@ double m;
     {    
 
       for (here = B3SOIDDinstances(model); here!= NULL;
-              here = here->B3SOIDDnextInstance) 
+              here = B3SOIDDnextInstance(here)) 
 	 {    
 	      selfheat = (model->B3SOIDDshMod == 1) && (here->B3SOIDDrth0 != 0.0);
               if (here->B3SOIDDdebugMod > 2)

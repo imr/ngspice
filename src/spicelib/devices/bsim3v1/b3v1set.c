@@ -776,7 +776,7 @@ IFuid tmpName;
             model->BSIM3v1kf = 0.0;
         /* loop through all the instances of the model */
         for (here = BSIM3v1instances(model); here != NULL ;
-             here=here->BSIM3v1nextInstance)
+             here=BSIM3v1nextInstance(here))
         {
             /* allocate a chunk of the state vector */
             here->BSIM3v1states = *states;
@@ -962,7 +962,7 @@ BSIM3v1unsetup(GENmodel *inModel, CKTcircuit *ckt)
             model = BSIM3v1nextModel(model))
     {
         for (here = BSIM3v1instances(model); here != NULL;
-                here=here->BSIM3v1nextInstance)
+                here=BSIM3v1nextInstance(here))
         {
             if (here->BSIM3v1qNode > 0)
                 CKTdltNNum(ckt, here->BSIM3v1qNode);

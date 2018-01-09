@@ -23,7 +23,7 @@ MESgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = MESnextModel(model)) {
-        for(here = MESinstances(model); here ; here = here->MESnextInstance) {
+        for(here = MESinstances(model); here ; here = MESnextInstance(here)) {
 
             if(!here->MESicVDSGiven) {
                 here->MESicVDS = 

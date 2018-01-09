@@ -27,7 +27,7 @@ MOS3sSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = MOS3instances(model); here != NULL ;
-                here=here->MOS3nextInstance) {
+                here=MOS3nextInstance(here)) {
 
             if(here->MOS3senParmNo){
                 if((here->MOS3sens_l)&&(here->MOS3sens_w)){

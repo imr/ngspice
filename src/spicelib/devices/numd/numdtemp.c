@@ -51,7 +51,7 @@ NUMDtemp(GENmodel *inModel, CKTcircuit *ckt)
     ConcDepMobility = models->MODLconcDepMobility;
 
     for (inst = NUMDinstances(model); inst != NULL;
-	inst = inst->NUMDnextInstance) {
+	inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

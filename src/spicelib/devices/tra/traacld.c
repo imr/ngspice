@@ -25,7 +25,7 @@ TRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = TRAinstances(model); here != NULL ;
-                here=here->TRAnextInstance) {
+                here=TRAnextInstance(here)) {
 
             real = cos(-ckt->CKTomega*here->TRAtd);
             imag = sin(-ckt->CKTomega*here->TRAtd);

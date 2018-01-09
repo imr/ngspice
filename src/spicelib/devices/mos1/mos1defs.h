@@ -18,11 +18,12 @@ Modified: 2000 AlansFixes
 /* information needed for each instance */
 
 typedef struct sMOS1instance {
-    struct sMOS1model *MOS1modPtr; /* backpointer to model */
-    struct sMOS1instance *MOS1nextInstance;  /* pointer to next instance of
-                                              *current model*/
-    IFuid MOS1name; /* pointer to character string naming this instance */
-    int MOS1states;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define MOS1modPtr(inst)        ((struct sMOS1model*)((inst)->gen.GENmodPtr))
+#define MOS1nextInstance(inst)  ((struct sMOS1instance*)((inst)->gen.GENnextInstance))
+#define MOS1name                gen.GENname
+#define MOS1states              gen.GENstate
 
     const int MOS1dNode;  /* number of the gate node of the mosfet */
     const int MOS1gNode;  /* number of the gate node of the mosfet */

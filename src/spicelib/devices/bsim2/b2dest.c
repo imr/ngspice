@@ -17,7 +17,7 @@ B2destroy(GENmodel **inModel)
         B2model *next_mod = B2nextModel(mod);
         B2instance *inst = B2instances(mod);
         while (inst) {
-            B2instance *next_inst = inst->B2nextInstance;
+            B2instance *next_inst = B2nextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

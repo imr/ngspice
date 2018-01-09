@@ -129,7 +129,7 @@ B1dSetup(GENmodel *inModel, CKTcircuit *ckt)
 
     /* loop through all the instances of the model */
     for (here = B1instances(model); here != NULL ;
-	 here=here->B1nextInstance) {
+	 here=B1nextInstance(here)) {
         
       EffectiveLength=here->B1l - model->B1deltaL * 1.e-6;/* m */
       DrainArea = here->B1m * here->B1drainArea;

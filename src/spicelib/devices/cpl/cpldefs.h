@@ -16,12 +16,12 @@ reserved.
 /* information used to describe a single instance */
 
 typedef struct sCPLinstance {
-    struct sCPLmodel *CPLmodPtr;    /* backpointer to model */
-    struct sCPLinstance *CPLnextInstance;   /* pointer to next instance of 
-                                             * current model*/
+    struct GENinstance gen;
 
-    IFuid CPLname;  /* pointer to character string naming this instance */
-    int CPLstate;   /* not used */
+#define CPLmodPtr(inst)        ((struct sCPLmodel*)((inst)->gen.GENmodPtr))
+#define CPLnextInstance(inst)  ((struct sCPLinstance*)((inst)->gen.GENnextInstance))
+#define CPLname                gen.GENname
+#define CPLstate               gen.GENstate
 
 	int *CPLposNodes;
 	int *CPLnegNodes;

@@ -276,7 +276,7 @@ double m;
 
 for (; model != NULL; model = B3SOIFDnextModel(model))
 {    for (here = B3SOIFDinstances(model); here != NULL; 
-          here = here->B3SOIFDnextInstance)
+          here = B3SOIFDnextInstance(here))
      {
           Check = 0;
           ByPass = 0;

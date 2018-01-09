@@ -45,7 +45,7 @@ double m;
     omega = ckt->CKTomega;
     for (; model != NULL; model = BSIM3nextModel(model)) 
     {    for (here = BSIM3instances(model); here!= NULL;
-              here = here->BSIM3nextInstance) 
+              here = BSIM3nextInstance(here)) 
 	 {
               Csd = -(here->BSIM3cddb + here->BSIM3cgdb + here->BSIM3cbdb);
               Csg = -(here->BSIM3cdgb + here->BSIM3cggb + here->BSIM3cbgb);

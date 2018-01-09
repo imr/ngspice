@@ -91,7 +91,7 @@ double tmp3, T7;
          /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
          for (here = B3SOIPDinstances(model); here != NULL;
-              here = here->B3SOIPDnextInstance) 
+              here = B3SOIPDnextInstance(here)) 
 	 {
               here->B3SOIPDrbodyext = here->B3SOIPDbodySquares *
                                     model->B3SOIPDrbsh;

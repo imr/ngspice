@@ -30,7 +30,7 @@ RESsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = RESinstances(model); here != NULL ;
-                here=here->RESnextInstance) {
+                here=RESnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->RESname);
             printf("      Positive, negative nodes: %s, %s\n",

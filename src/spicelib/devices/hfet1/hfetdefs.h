@@ -15,11 +15,13 @@ Modified: Paolo Nenzi
 #define HFETAnumStates 24
 
 typedef struct sHFETAinstance {
-    struct sHFETAmodel *HFETAmodPtr;
-    struct sHFETAinstance *HFETAnextInstance;
-    IFuid HFETAname;
-    int HFETAstate;   /* index into state table for this device */
-    
+    struct GENinstance gen;
+
+#define HFETAmodPtr(inst)        ((struct sHFETAmodel*)((inst)->gen.GENmodPtr))
+#define HFETAnextInstance(inst)  ((struct sHFETAinstance*)((inst)->gen.GENnextInstance))
+#define HFETAname                gen.GENname
+#define HFETAstate               gen.GENstate
+
     const int HFETAdrainNode;
     const int HFETAgateNode;
     const int HFETAsourceNode;

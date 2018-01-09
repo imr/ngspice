@@ -51,7 +51,7 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = B2instances(model); here != NULL ;
-                here=here->B2nextInstance) {
+                here=B2nextInstance(here)) {
 
 	    pSizeDependParamKnot = model->pSizeDependParamKnot;
 	    Size_Not_Found = 1;

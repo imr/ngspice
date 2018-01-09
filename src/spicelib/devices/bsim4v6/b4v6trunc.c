@@ -32,7 +32,7 @@ BSIM4v6instance *here;
 
     for (; model != NULL; model = BSIM4v6nextModel(model))
     {    for (here = BSIM4v6instances(model); here != NULL;
-	      here = here->BSIM4v6nextInstance)
+	      here = BSIM4v6nextInstance(here))
 	 {
 
 #ifdef STEPDEBUG

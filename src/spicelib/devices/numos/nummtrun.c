@@ -38,7 +38,7 @@ NUMOStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     model->NUMOSpInfo->delta = deltaNorm;
     model->NUMOSpInfo->lteCoeff = computeLTECoeff(model->NUMOSpInfo);
     for (inst = NUMOSinstances(model); inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+	inst = NUMOSnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = TWOtrunc(inst->NUMOSpDevice, model->NUMOSpInfo,

@@ -31,7 +31,7 @@ CCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = CCCSinstances(model); here != NULL ;
-                here=here->CCCSnextInstance) {
+                here=CCCSnextInstance(here)) {
             
             here->CCCScontBranch = CKTfndBranch(ckt,here->CCCScontName);
             if(here->CCCScontBranch == 0) {

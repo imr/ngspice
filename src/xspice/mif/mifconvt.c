@@ -107,7 +107,7 @@ int MIFconvTest(
     for( ; model != NULL; model = MIFnextModel(model)) {
 
         /* Loop through all instances of this model */
-        for(here = MIFinstances(model); here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
 
             /* Loop through all items registered for convergence */
             for(i = 0; i < here->num_conv; i++) {

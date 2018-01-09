@@ -46,7 +46,7 @@ B2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     };
 
     for (model=firstModel; model != NULL; model=B2nextModel(model)) {
-	for (inst=B2instances(model); inst != NULL; inst=inst->B2nextInstance) {
+	for (inst=B2instances(model); inst != NULL; inst=B2nextInstance(inst)) {
         
 	    switch (operation) {
 

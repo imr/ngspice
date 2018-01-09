@@ -41,7 +41,7 @@ for( ; model != NULL; model = DIOnextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = DIOinstances(model); here != NULL ;
-      here=here->DIOnextInstance) {
+      here=DIOnextInstance(here)) {
 
     /* loading starts here */
 

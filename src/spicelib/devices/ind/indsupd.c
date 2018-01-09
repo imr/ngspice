@@ -47,7 +47,7 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
-                here=here->INDnextInstance) {
+                here=INDnextInstance(here)) {
 
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
 
@@ -77,7 +77,7 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (muthere = MUTinstances(mutmodel); muthere != NULL ;
-                muthere=muthere->MUTnextInstance) {
+                muthere=MUTnextInstance(muthere)) {
 
 
             cind1 = *(ckt->CKTrhsOld + muthere->MUTind1->INDbrEq);
@@ -127,7 +127,7 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
-                here=here->INDnextInstance) {
+                here=INDnextInstance(here)) {
 #endif /* MUTUAL */
                 for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
 

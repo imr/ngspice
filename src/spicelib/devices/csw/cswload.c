@@ -35,7 +35,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here != NULL ;
-                here=here->CSWnextInstance) {
+                here=CSWnextInstance(here)) {
 			
 			old_current_state = *(ckt->CKTstates[0] + here->CSWstate);
 			previous_state = *(ckt->CKTstates[1] + here->CSWstate);

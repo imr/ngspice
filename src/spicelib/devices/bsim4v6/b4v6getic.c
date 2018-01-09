@@ -26,7 +26,7 @@ BSIM4v6model *model = (BSIM4v6model*)inModel;
 BSIM4v6instance *here;
 
     for (; model ; model = BSIM4v6nextModel(model)) 
-    {    for (here = BSIM4v6instances(model); here; here = here->BSIM4v6nextInstance)
+    {    for (here = BSIM4v6instances(model); here; here = BSIM4v6nextInstance(here))
           {
 	      if (!here->BSIM4v6icVDSGiven) 
 	      {   here->BSIM4v6icVDS = *(ckt->CKTrhs + here->BSIM4v6dNode) 

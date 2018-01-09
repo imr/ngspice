@@ -37,7 +37,7 @@ BSIM4v7destroy(GENmodel **inModel)
         }
         /** end of extra code **/
         while (inst) {
-            BSIM4v7instance *next_inst = inst->BSIM4v7nextInstance;
+            BSIM4v7instance *next_inst = BSIM4v7nextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

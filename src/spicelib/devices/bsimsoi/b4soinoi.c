@@ -149,7 +149,7 @@ double m;
 
     for (; model != NULL; model = B4SOInextModel(model))
     { for (here = B4SOIinstances(model); here != NULL;
-            here = here->B4SOInextInstance)
+            here = B4SOInextInstance(here))
             {
               m = here->B4SOIm;
 

@@ -25,7 +25,7 @@ BJTtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     BJTinstance *here;
 
     for( ; model != NULL; model = BJTnextModel(model)) {
-        for(here=BJTinstances(model);here!=NULL;here = here->BJTnextInstance){
+        for(here=BJTinstances(model);here!=NULL;here = BJTnextInstance(here)){
 
             CKTterr(here->BJTqbe,ckt,timeStep);
             CKTterr(here->BJTqbc,ckt,timeStep);

@@ -18,11 +18,13 @@ Author: 1985 Thomas L. Quarles
 /* information to describe a single instance */
 
 typedef struct sASRCinstance {
-    struct sASRCmodel *ASRCmodPtr;          /* backpointer to model */
-    struct sASRCinstance *ASRCnextInstance; /* pointer to next instance of
-                                             * current model */
-    IFuid ASRCname;            /* pointer to character string naming this instance */
-    int ASRCstates;            /* state info */
+    struct GENinstance gen;
+
+#define ASRCmodPtr(inst)        ((struct sASRCmodel*)((inst)->gen.GENmodPtr))
+#define ASRCnextInstance(inst)  ((struct sASRCinstance*)((inst)->gen.GENnextInstance))
+#define ASRCname                gen.GENname
+#define ASRCstates              gen.GENstate
+
     const int ASRCposNode;     /* number of positive node of source */
     const int ASRCnegNode;     /* number of negative node of source */
 

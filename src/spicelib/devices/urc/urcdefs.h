@@ -19,11 +19,13 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sURCinstance {
-    struct sURCmodel *URCmodPtr;    /* backpointer to model */
-    struct sURCinstance *URCnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid URCname;  /* pointer to character string naming this instance */
-    int URCstate;	/* not used */
+    struct GENinstance gen;
+
+#define URCmodPtr(inst)        ((struct sURCmodel*)((inst)->gen.GENmodPtr))
+#define URCnextInstance(inst)  ((struct sURCinstance*)((inst)->gen.GENnextInstance))
+#define URCname                gen.GENname
+#define URCstate               gen.GENstate
+
     const int URCposNode;   /* number of positive node of URC */
     const int URCnegNode;   /* number of negative node of URC */
     const int URCgndNode;   /* number of the "ground" node of the URC */

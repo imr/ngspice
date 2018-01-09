@@ -25,10 +25,12 @@ Modified by Paolo Nenzi 2002
 
 typedef struct sB3SOIPDinstance
 {
-    struct sB3SOIPDmodel *B3SOIPDmodPtr;
-    struct sB3SOIPDinstance *B3SOIPDnextInstance;
-    IFuid B3SOIPDname;
-    int B3SOIPDstates;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define B3SOIPDmodPtr(inst)        ((struct sB3SOIPDmodel*)((inst)->gen.GENmodPtr))
+#define B3SOIPDnextInstance(inst)  ((struct sB3SOIPDinstance*)((inst)->gen.GENnextInstance))
+#define B3SOIPDname                gen.GENname
+#define B3SOIPDstates              gen.GENstate
 
     const int B3SOIPDdNode;
     const int B3SOIPDgNode;

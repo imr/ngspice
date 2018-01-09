@@ -61,7 +61,7 @@ BSIM3v32load (GENmodel *inModel, CKTcircuit *ckt)
 
 
 int BSIM3v32LoadOMP(BSIM3v32instance *here, CKTcircuit *ckt) {
-    BSIM3v32model *model = here->BSIM3v32modPtr;
+    BSIM3v32model *model = BSIM3v32modPtr(here);
 #else
 BSIM3v32model *model = (BSIM3v32model*)inModel;
 BSIM3v32instance *here;
@@ -173,7 +173,7 @@ ChargeComputationNeeded =
 #ifndef USE_OMP
 for (; model != NULL; model = BSIM3v32nextModel(model))
 {    for (here = BSIM3v32instances(model); here != NULL;
-          here = here->BSIM3v32nextInstance)
+          here = BSIM3v32nextInstance(here))
      {
 #endif
                Check = 1;
@@ -3438,7 +3438,7 @@ void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for (idx = 0; idx < InstCount; idx++) {
         here = InstArray[idx];
-        model = here->BSIM3v32modPtr;
+        model = BSIM3v32modPtr(here);
         /* Update b for Ax = b */
         (*(ckt->CKTrhs + here->BSIM3v32gNode) -= here->BSIM3v32rhsG);
         (*(ckt->CKTrhs + here->BSIM3v32bNode) -= here->BSIM3v32rhsB);

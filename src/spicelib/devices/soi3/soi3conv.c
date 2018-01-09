@@ -59,7 +59,7 @@ SOI3convTest(GENmodel *inModel, CKTcircuit *ckt)
 
     for( ; model != NULL; model = SOI3nextModel(model)) {
         for(here = SOI3instances(model); here!= NULL;
-                here = here->SOI3nextInstance) {
+                here = SOI3nextInstance(here)) {
 
             vbs = model->SOI3type * (
                 *(ckt->CKTrhs+here->SOI3bNode) -

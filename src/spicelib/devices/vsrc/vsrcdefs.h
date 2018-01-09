@@ -21,11 +21,12 @@ struct trnoise_state;
 /* information needed for each instance */
 
 typedef struct sVSRCinstance {
-    struct sVSRCmodel *VSRCmodPtr;  /* backpointer to model */
-    struct sVSRCinstance *VSRCnextInstance;  /* pointer to next instance of
-                                              *current model */
-    IFuid VSRCname; /* pointer to character string naming this instance */
-    int VSRCstate;  /* not used */
+    struct GENinstance gen;
+
+#define VSRCmodPtr(inst)        ((struct sVSRCmodel*)((inst)->gen.GENmodPtr))
+#define VSRCnextInstance(inst)  ((struct sVSRCinstance*)((inst)->gen.GENnextInstance))
+#define VSRCname                gen.GENname
+#define VSRCstate               gen.GENstate
 
     const int VSRCposNode;    /* number of positive node of source */
     const int VSRCnegNode;    /* number of negative node of source */

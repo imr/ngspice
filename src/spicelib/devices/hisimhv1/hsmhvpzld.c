@@ -50,7 +50,7 @@ int HSMHVpzLoad(
   
   for ( ;model != NULL ;model = HSMHVnextModel(model) ) {
     for ( here = HSMHVinstances(model) ;here!= NULL ;
-	  here = here->HSMHVnextInstance ) {
+	  here = HSMHVnextInstance(here) ) {
 
       flg_nqs = model->HSMHV_conqs ;
 

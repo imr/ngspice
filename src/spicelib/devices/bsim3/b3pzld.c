@@ -39,7 +39,7 @@ double m;
 
     for (; model != NULL; model = BSIM3nextModel(model)) 
     {    for (here = BSIM3instances(model); here!= NULL;
-              here = here->BSIM3nextInstance) 
+              here = BSIM3nextInstance(here)) 
 	 {
 	      if (here->BSIM3mode >= 0) 
               {   Gm = here->BSIM3gm;

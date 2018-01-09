@@ -20,7 +20,7 @@ B1trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 #endif /* STEPDEBUG */
 
     for( ; model != NULL; model = B1nextModel(model)) {
-        for(here=B1instances(model);here!=NULL;here = here->B1nextInstance){
+        for(here=B1instances(model);here!=NULL;here = B1nextInstance(here)){
 
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

@@ -72,7 +72,7 @@ int HSM2getic(
    */
 
   for ( ;model ;model = HSM2nextModel(model) ) {
-    for ( here = HSM2instances(model); here ;here = here->HSM2nextInstance ) {
+    for ( here = HSM2instances(model); here ;here = HSM2nextInstance(here) ) {
       if (!here->HSM2_icVBS_Given) {
 	here->HSM2_icVBS = 
 	  *(ckt->CKTrhs + here->HSM2bNode) - 

@@ -56,7 +56,7 @@ NBJT2temp(GENmodel *inModel, CKTcircuit *ckt)
     OneCarrier = methods->METHoneCarrier;
 
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

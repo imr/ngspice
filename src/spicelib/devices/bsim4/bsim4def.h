@@ -69,10 +69,13 @@
 
 typedef struct sBSIM4instance
 {
-    struct sBSIM4model *BSIM4modPtr;
-    struct sBSIM4instance *BSIM4nextInstance;
-    IFuid BSIM4name;
-    int BSIM4states;     /* index into state table for this device */
+    struct GENinstance gen;
+
+#define BSIM4modPtr(inst)        ((struct sBSIM4model*)((inst)->gen.GENmodPtr))
+#define BSIM4nextInstance(inst)  ((struct sBSIM4instance*)((inst)->gen.GENnextInstance))
+#define BSIM4name                gen.GENname
+#define BSIM4states              gen.GENstate
+
     const int BSIM4dNode;
     const int BSIM4gNodeExt;
     const int BSIM4sNode;

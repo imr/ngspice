@@ -33,7 +33,7 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
 
     for( ; model != NULL; model = BJTnextModel(model)) {
-        for(here=BJTinstances(model);here!=NULL;here = here->BJTnextInstance){
+        for(here=BJTinstances(model);here!=NULL;here = BJTnextInstance(here)){
 
             vbe=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbasePrimeNode)-

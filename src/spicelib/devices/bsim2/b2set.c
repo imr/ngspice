@@ -432,7 +432,7 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = B2instances(model); here != NULL ;
-                here=here->B2nextInstance) {
+                here=B2nextInstance(here)) {
 
             /* allocate a chunk of the state vector */
             here->B2states = *states;
@@ -579,7 +579,7 @@ B2unsetup(
 	    model = B2nextModel(model))
     {
         for (here = B2instances(model); here != NULL;
-                here=here->B2nextInstance)
+                here=B2nextInstance(here))
 	{
 	    if (here->B2sNodePrime > 0
 		    && here->B2sNodePrime != here->B2sNode)

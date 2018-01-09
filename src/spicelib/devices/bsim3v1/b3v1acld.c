@@ -37,7 +37,7 @@ BSIM3v1acLoad (GENmodel * inModel, CKTcircuit * ckt)
 
 
       for (here = BSIM3v1instances(model); here != NULL;
-	   here = here->BSIM3v1nextInstance)
+	   here = BSIM3v1nextInstance(here))
 	{
 	  if (here->BSIM3v1mode >= 0)
 	    {

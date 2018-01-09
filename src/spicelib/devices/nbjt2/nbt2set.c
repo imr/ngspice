@@ -163,7 +163,7 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /* loop through all the instances of the model */
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

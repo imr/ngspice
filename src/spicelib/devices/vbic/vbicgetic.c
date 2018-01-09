@@ -29,7 +29,7 @@ VBICgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = VBICnextModel(model)) {
-        for(here = VBICinstances(model); here ; here = here->VBICnextInstance) {
+        for(here = VBICinstances(model); here ; here = VBICnextInstance(here)) {
 
             if(!here->VBICicVBEGiven) {
                 here->VBICicVBE = 

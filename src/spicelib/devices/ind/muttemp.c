@@ -43,7 +43,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     for (; model; model = MUTnextModel(model))
-        for (here = MUTinstances(model); here; here = here->MUTnextInstance) {
+        for (here = MUTinstances(model); here; here = MUTnextInstance(here)) {
 
             /* Value Processing for mutual inductors */
 

@@ -83,7 +83,7 @@ MOS1dSetup(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = MOS1nextModel(model) ) {
         /* loop through all the instances of the model */
         for (here = MOS1instances(model); here != NULL ;
-                here=here->MOS1nextInstance) {
+                here=MOS1nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS1temp;
             EffectiveLength=here->MOS1l - 2*model->MOS1latDiff;

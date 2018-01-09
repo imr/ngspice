@@ -17,7 +17,7 @@ LTRAdestroy(GENmodel **inModel)
         LTRAmodel *next_mod = LTRAnextModel(mod);
         LTRAinstance *inst = LTRAinstances(mod);
         while (inst) {
-            LTRAinstance *next_inst = inst->LTRAnextInstance;
+            LTRAinstance *next_inst = LTRAnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

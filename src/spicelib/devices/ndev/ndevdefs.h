@@ -24,12 +24,12 @@ University of Science and Technology of China
 
 /* information needed per instance */
 typedef struct sNDEVinstance {
-  struct sNDEVmodel *NDEVmodPtr;/* back pointer to model */
-  struct sNDEVinstance *NDEVnextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NDEVname;		/* pointer to character string naming this
-				 * instance */
-  int NDEVstate;		/* pointer to start of state vector for diode */
+  struct GENinstance gen;
+
+#define NDEVmodPtr(inst)        ((struct sNDEVmodel*)((inst)->gen.GENmodPtr))
+#define NDEVnextInstance(inst)  ((struct sNDEVinstance*)((inst)->gen.GENnextInstance))
+#define NDEVstate               gen.GENstate
+
   const int pin[7];                   /* max 7 terminals are allowed */
   int  term;                    /* the real number of terminals */
   CKTnode *node[7];		/* the array of CKT node's node pointer */

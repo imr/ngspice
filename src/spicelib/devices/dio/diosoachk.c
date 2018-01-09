@@ -31,7 +31,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     for (; model; model = DIOnextModel(model)) {
 
-        for (here = DIOinstances(model); here; here = here->DIOnextInstance) {
+        for (here = DIOinstances(model); here; here = DIOnextInstance(here)) {
 
             vd = ckt->CKTrhsOld [here->DIOposPrimeNode] -
                  ckt->CKTrhsOld [here->DIOnegNode];

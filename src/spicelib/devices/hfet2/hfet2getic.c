@@ -17,7 +17,7 @@ int HFET2getic(GENmodel *inModel, CKTcircuit *ckt)
   HFET2instance *here;
 
   for( ; model ; model = HFET2nextModel(model)) {
-    for(here = HFET2instances(model); here ; here = here->HFET2nextInstance) {
+    for(here = HFET2instances(model); here ; here = HFET2nextInstance(here)) {
 
       if(!here->HFET2icVDSGiven) {
         here->HFET2icVDS = *(ckt->CKTrhs + here->HFET2drainNode) - 

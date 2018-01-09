@@ -18,7 +18,7 @@ CAPdestroy(GENmodel **inModel)
         CAPmodel *next_mod = CAPnextModel(mod);
         CAPinstance *inst = CAPinstances(mod);
         while (inst) {
-            CAPinstance *next_inst = inst->CAPnextInstance;
+            CAPinstance *next_inst = CAPnextInstance(inst);
             FREE(inst);
             inst = next_inst;
         }

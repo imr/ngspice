@@ -49,7 +49,7 @@ for( ; model != NULL; model = MOS2nextModel(model) ) {
 
   /* loop through all the instances of the model */
   for (here = MOS2instances(model); here != NULL ;
-      here=here->MOS2nextInstance) {
+      here=MOS2nextInstance(here)) {
 
     /* loading starts here */
 

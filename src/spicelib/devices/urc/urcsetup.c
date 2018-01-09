@@ -75,7 +75,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
         /* loop through all the instances of the model */
         for (here = URCinstances(model); here != NULL ;
-                here=here->URCnextInstance)
+                here=URCnextInstance(here))
 	{
             p = model->URCk;
             r0 = here->URClength * model->URCrPerL;
@@ -277,7 +277,7 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
     for ( ; model; model = URCnextModel(model)) {
 	for (here = URCinstances(model); here;
-	     here = here->URCnextInstance)
+	     here = URCnextInstance(here))
 	{
 	    if(model->URCisPerLGiven) {
 		/* Diodes */

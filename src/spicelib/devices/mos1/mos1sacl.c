@@ -130,7 +130,7 @@ MOS1sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     info->SENstatus = PERTURBATION;
     for( ; model != NULL; model = MOS1nextModel(model)) {
         for(here = MOS1instances(model); here!= NULL;
-                here = here->MOS1nextInstance) {
+                here = MOS1nextInstance(here)) {
 
             /* save the unperturbed values in the state vector */
             for(i=0; i <= 16; i++)

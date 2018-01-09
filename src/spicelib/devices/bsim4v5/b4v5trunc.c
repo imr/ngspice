@@ -30,7 +30,7 @@ BSIM4v5instance *here;
 
     for (; model != NULL; model = BSIM4v5nextModel(model))
     {    for (here = BSIM4v5instances(model); here != NULL;
-	      here = here->BSIM4v5nextInstance)
+	      here = BSIM4v5nextInstance(here))
 	 {
 
 #ifdef STEPDEBUG

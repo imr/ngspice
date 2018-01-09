@@ -52,10 +52,12 @@ NON-STANDARD FEATURES
 
 struct MIFinstance {
 
-    struct MIFmodel     *MIFmodPtr;       /* backpointer to model */
-    struct MIFinstance  *MIFnextInstance; /* pointer to next instance of current model */
-    IFuid               MIFname;          /* pointer to character string naming this instance */
-    int                 MIFstates;        /* state info, unused */
+    struct GENinstance gen;
+
+#define MIFmodPtr(inst)        ((struct MIFmodel*)((inst)->gen.GENmodPtr))
+#define MIFnextInstance(inst)  ((struct MIFinstance*)((inst)->gen.GENnextInstance))
+#define MIFname                gen.GENname
+#define MIFstates              gen.GENstate
 
     int                 num_conn;         /* number of connections on the code model */
     Mif_Conn_Data_t     **conn;           /* array of data structures for each connection */

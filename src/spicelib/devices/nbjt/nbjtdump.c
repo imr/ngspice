@@ -58,7 +58,7 @@ NBJTdump(GENmodel *inModel, CKTcircuit *ckt)
   for (; model != NULL; model = NBJTnextModel(model)) {
     output = model->NBJToutputs;
     for (inst = NBJTinstances(model); inst != NULL;
-	inst = inst->NBJTnextInstance) {
+	inst = NBJTnextInstance(inst)) {
 
       if (inst->NBJTprintGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -158,7 +158,7 @@ NBJTacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   for (; model != NULL; model = NBJTnextModel(model)) {
     output = model->NBJToutputs;
     for (inst = NBJTinstances(model); inst != NULL;
-	inst = inst->NBJTnextInstance) {
+	inst = NBJTnextInstance(inst)) {
 
       if (output->OUTPstats) {
 	ONEmemStats(file, inst->NBJTpDevice);

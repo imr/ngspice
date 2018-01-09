@@ -46,7 +46,7 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
 
         /* loop through all the instances of the model */
         for (here = RESinstances(model); here != NULL ;
-                here=here->RESnextInstance) {
+                here=RESnextInstance(here)) {
 
             if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
             if(!here->RESlengthGiven)  here->RESlength = model->RESdefLength;

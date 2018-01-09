@@ -23,7 +23,7 @@ CAPgetic(GENmodel *inModel, CKTcircuit *ckt)
      */
 
     for( ; model ; model = CAPnextModel(model)) {
-        for(here = CAPinstances(model); here ; here = here->CAPnextInstance) {
+        for(here = CAPinstances(model); here ; here = CAPnextInstance(here)) {
                 
             if(!here->CAPicGiven) {
                 here->CAPinitCond = 

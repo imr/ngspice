@@ -26,11 +26,13 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 /* information used to describe a single instance */
 
 typedef struct sJFET2instance {
-    struct sJFET2model *JFET2modPtr;  /* backpointer to model */
-    struct sJFET2instance *JFET2nextInstance; /* pointer to next instance of 
-                                             * current model*/
-    IFuid JFET2name; /* pointer to character string naming this instance */
-    int JFET2state; /* pointer to start of state vector for jfet */
+    struct GENinstance gen;
+
+#define JFET2modPtr(inst)        ((struct sJFET2model*)((inst)->gen.GENmodPtr))
+#define JFET2nextInstance(inst)  ((struct sJFET2instance*)((inst)->gen.GENnextInstance))
+#define JFET2name                gen.GENname
+#define JFET2state               gen.GENstate
+
     const int JFET2drainNode;  /* number of drain node of jfet */
     const int JFET2gateNode;   /* number of gate node of jfet */
     const int JFET2sourceNode; /* number of source node of jfet */

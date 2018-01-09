@@ -26,7 +26,7 @@ MOS2sSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = MOS2instances(model); here != NULL ;
-                here=here->MOS2nextInstance) {
+                here=MOS2nextInstance(here)) {
 
             if(here->MOS2senParmNo){
                 if((here->MOS2sens_l)&&(here->MOS2sens_w)){

@@ -26,7 +26,7 @@ MOS1sSetup(SENstruct *info, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = MOS1instances(model); here != NULL ;
-                here=here->MOS1nextInstance) {
+                here=MOS1nextInstance(here)) {
 
             if(here->MOS1senParmNo){
                 if((here->MOS1sens_l)&&(here->MOS1sens_w)){

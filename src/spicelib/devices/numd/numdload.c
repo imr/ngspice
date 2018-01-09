@@ -90,7 +90,7 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
     }
     /* Now do instance things */
     for (inst = NUMDinstances(model); inst != NULL;
-	inst = inst->NUMDnextInstance) {
+	inst = NUMDnextInstance(inst)) {
 
       pDevice = inst->NUMDpDevice;
 
@@ -377,7 +377,7 @@ int
 NUMDinitSmSig(NUMDinstance *inst)
 {
   SPcomplex yd;
-  double omega = inst->NUMDmodPtr->NUMDmethods->METHomega;
+  double omega = NUMDmodPtr(inst)->NUMDmethods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NUMDadmittance(inst->NUMDpDevice, omega, &yd);

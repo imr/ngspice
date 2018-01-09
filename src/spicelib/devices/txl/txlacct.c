@@ -30,7 +30,7 @@ TXLaccept(CKTcircuit *ckt, GENmodel *inModel)
 
         /* loop through all the instances of the model */
         for (here = TXLinstances(model); here != NULL ;
-                here=here->TXLnextInstance) {
+                here=TXLnextInstance(here)) {
             
 			h = ckt->CKTdelta;
 			hint = (int) (h * 1e12);
@@ -61,7 +61,7 @@ TXLaccept(CKTcircuit *ckt, GENmodel *inModel)
 	model = (TXLmodel *)inModel;
 	for( ; model != NULL; model = TXLnextModel(model) ) {
 		for (here = TXLinstances(model); here != NULL ;
-			here=here->TXLnextInstance) {
+			here=TXLnextInstance(here)) {
 			nd = here->txline->in_node;
 			nd->dvtag = 0;
 			nd = here->txline->out_node;

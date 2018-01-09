@@ -59,7 +59,7 @@ NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
   for (; model != NULL; model = NBJT2nextModel(model)) {
     output = model->NBJT2outputs;
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       if (inst->NBJT2printGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -159,7 +159,7 @@ NBJT2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
   for (; model != NULL; model = NBJT2nextModel(model)) {
     output = model->NBJT2outputs;
     for (inst = NBJT2instances(model); inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+	inst = NBJT2nextInstance(inst)) {
 
       if (output->OUTPstats) {
 	TWOmemStats(file, inst->NBJT2pDevice);

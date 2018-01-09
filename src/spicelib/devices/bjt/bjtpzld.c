@@ -35,7 +35,7 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     for( ; model != NULL; model = BJTnextModel(model)) {
         for( here = BJTinstances(model); here!= NULL;
-                here = here->BJTnextInstance) {
+                here = BJTnextInstance(here)) {
 
             m = here->BJTm;
 

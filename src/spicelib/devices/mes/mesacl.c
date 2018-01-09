@@ -31,7 +31,7 @@ MESacLoad(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = MESnextModel(model) ) {
         
         for( here = MESinstances(model); here != NULL; 
-                here = here->MESnextInstance) {
+                here = MESnextInstance(here)) {
 
             m = here->MESm;
 

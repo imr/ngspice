@@ -29,7 +29,7 @@ CCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* loop through all the instances of the model */
         for (here = CCVSinstances(model); here != NULL ;
-                here=here->CCVSnextInstance) {
+                here=CCVSnextInstance(here)) {
             
             if(here->CCVSposNode == here->CCVSnegNode) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -75,7 +75,7 @@ CCVSunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    model = CCVSnextModel(model))
     {
         for (here = CCVSinstances(model); here != NULL;
-                here=here->CCVSnextInstance)
+                here=CCVSnextInstance(here))
 	{
 	    if (here->CCVSbranch) {
 		CKTdltNNum(ckt, here->CCVSbranch);

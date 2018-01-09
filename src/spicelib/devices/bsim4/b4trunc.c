@@ -80,7 +80,7 @@ BSIM4instance *here;
 
     for (; model != NULL; model = BSIM4nextModel(model))
     {    for (here = BSIM4instances(model); here != NULL;
-	      here = here->BSIM4nextInstance)
+	      here = BSIM4nextInstance(here))
 	      {
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
