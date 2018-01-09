@@ -188,10 +188,12 @@ if(isinf((double) var)) \\
 
 /* information needed for each instance */
 typedef struct s$(module)instance {
-  struct s$(module)model *$(module)modPtr;           /* pointer to model */
-  struct s$(module)instance *$(module)nextInstance;  /* pointer to next instance of current model*/
-  IFuid $(module)name; /* pointer to character string naming this instance */
-  int $(module)state; /* index into state table for this device */
+    struct GENinstance gen;
+
+#define $(module)modPtr(inst)        ((struct s$(module)model*)((inst)-&gt;gen.GENmodPtr))
+#define $(module)nextInstance(inst)  ((struct s$(module)instance*)((inst)-&gt;gen.GENnextInstance))
+#define $(module)name                gen.GENname
+#define $(module)states              gen.GENstate
 
   /* node */
 <admst:for-each select="node[grounded='no']">

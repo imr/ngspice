@@ -63,7 +63,7 @@ int $(module)temp(GENmodel *inModel, CKTcircuit *ckt)
 
 <admst:apply-templates select="analog" match="analog:initial_model" required="yes"/>
     /* loop through all the instances of the model */
-    for (here = $(module)instances(model); here != NULL ; here = here->$(module)nextInstance)
+    for (here = $(module)instances(model); here != NULL ; here = $(module)nextInstance(here))
     {
 
 <admst:apply-templates select="analog" match="analog:initial_instance" required="yes"/>
