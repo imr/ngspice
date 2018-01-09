@@ -18,7 +18,7 @@ Author: 1985 Thomas L. Quarles
 /* information to describe a single instance */
 
 typedef struct sASRCinstance {
-    struct sASRCmodel *ARRCmodPtr;          /* backpointer to model */
+    struct sASRCmodel *ASRCmodPtr;          /* backpointer to model */
     struct sASRCinstance *ASRCnextInstance; /* pointer to next instance of
                                              * current model */
     IFuid ASRCname;            /* pointer to character string naming this instance */

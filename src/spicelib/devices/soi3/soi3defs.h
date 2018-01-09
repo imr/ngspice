@@ -37,7 +37,7 @@ ngspice integration
 
 typedef struct sSOI3instance {
 
-    struct sSOI3model *sSOI3modPtr; /* backpointer to model */
+    struct sSOI3model *SOI3modPtr; /* backpointer to model */
     struct sSOI3instance *SOI3nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid SOI3name;     /* pointer to character string naming this instance */

@@ -18,7 +18,7 @@ Modified: 2000 AlansFixes
 /* information needed for each instance */
 
 typedef struct sMOS1instance {
-    struct sMOS1model *sMOS1modPtr; /* backpointer to model */
+    struct sMOS1model *MOS1modPtr; /* backpointer to model */
     struct sMOS1instance *MOS1nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid MOS1name; /* pointer to character string naming this instance */

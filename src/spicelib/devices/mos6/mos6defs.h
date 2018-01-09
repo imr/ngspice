@@ -16,7 +16,7 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sMOS6instance {
-    struct sMOS6model *sMOS6modPtr; /* backpointer to model */
+    struct sMOS6model *MOS6modPtr; /* backpointer to model */
     struct sMOS6instance *MOS6nextInstance;  /* pointer to next instance of
                                               *current model*/
     IFuid MOS6name; /* pointer to character string naming this instance */
