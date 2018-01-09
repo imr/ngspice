@@ -72,14 +72,12 @@ typedef struct sISRCinstance {
 /* per model data */
 
 typedef struct sISRCmodel {
-    int ISRCmodType;    /* type index of this device type */
-    struct sISRCmodel *ISRCnextModel;    /* pointer to next possible model
-                                          *in linked list */
-    ISRCinstance * ISRCinstances;    /* pointer to list of instances
-                                      * that have this model */
-    IFuid ISRCmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define ISRCmodType            gen.GENmodType
+#define ISRCnextModel(inst)    ((struct sISRCmodel*)((inst)->gen.GENnextModel))
+#define ISRCinstances(inst)    ((ISRCinstance*)((inst)->gen.GENinstances))
+#define ISRCmodName            gen.GENmodName
 
 } ISRCmodel;
 

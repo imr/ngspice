@@ -26,10 +26,10 @@ MUTsSetup(SENstruct *info, GENmodel *inModel)
     MUTinstance *here;
 
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->MUTnextModel ) {
+    for( ; model != NULL; model = MUTnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->MUTinstances; here != NULL ;
+        for (here = MUTinstances(model); here != NULL ;
                 here=here->MUTnextInstance) {
 
             if(here->MUTsenParmNo){

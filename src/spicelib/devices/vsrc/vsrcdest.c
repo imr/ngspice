@@ -14,8 +14,8 @@ VSRCdestroy(GENmodel **inModel)
     VSRCmodel *mod = *(VSRCmodel**) inModel;
 
     while (mod) {
-        VSRCmodel *next_mod = mod->VSRCnextModel;
-        VSRCinstance *inst = mod->VSRCinstances;
+        VSRCmodel *next_mod = VSRCnextModel(mod);
+        VSRCinstance *inst = VSRCinstances(mod);
         while (inst) {
             VSRCinstance *next_inst = inst->VSRCnextInstance;
             FREE(inst->VSRCcoeffs);

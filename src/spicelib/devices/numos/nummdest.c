@@ -21,8 +21,8 @@ NUMOSdestroy(GENmodel **inModel)
     NUMOSmodel *mod = *(NUMOSmodel **) inModel;
 
     while (mod) {
-        NUMOSmodel *next_mod = mod->NUMOSnextModel;
-        NUMOSinstance *inst = mod->NUMOSinstances;
+        NUMOSmodel *next_mod = NUMOSnextModel(mod);
+        NUMOSinstance *inst = NUMOSinstances(mod);
         while (inst) {
             NUMOSinstance *next_inst = inst->NUMOSnextInstance;
             TWOdestroy(inst->NUMOSpDevice);

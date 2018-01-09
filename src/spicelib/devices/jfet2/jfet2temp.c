@@ -40,7 +40,7 @@ JFET2temp(GENmodel *inModel, CKTcircuit *ckt)
     double cjfact,cjfact1;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->JFET2nextModel ) {
+    for( ; model != NULL; model = JFET2nextModel(model) ) {
 
         if(!(model->JFET2tnomGiven)) {
             model->JFET2tnom = ckt->CKTnomTemp;
@@ -78,7 +78,7 @@ JFET2temp(GENmodel *inModel, CKTcircuit *ckt)
         model->JFET2f3 = 1 - model->JFET2fc * (1 + .5);
 
         /* loop through all the instances of the model */
-        for (here = model->JFET2instances; here != NULL ;
+        for (here = JFET2instances(model); here != NULL ;
                 here=here->JFET2nextInstance) {
 
             if(!(here->JFET2dtempGiven)) {

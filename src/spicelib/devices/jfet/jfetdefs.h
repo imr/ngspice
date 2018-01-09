@@ -168,14 +168,12 @@ typedef struct sJFETinstance {
 /* per model data */
 
 typedef struct sJFETmodel {       /* model structure for a jfet */
-    int JFETmodType;    /* type index of this device type */
-    struct sJFETmodel *JFETnextModel;   /* pointer to next possible model in 
-                                         * linked list */
-    JFETinstance * JFETinstances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid JFETmodName; /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define JFETmodType            gen.GENmodType
+#define JFETnextModel(inst)    ((struct sJFETmodel*)((inst)->gen.GENnextModel))
+#define JFETinstances(inst)    ((JFETinstance*)((inst)->gen.GENinstances))
+#define JFETmodName            gen.GENmodName
 
     int JFETtype;
 

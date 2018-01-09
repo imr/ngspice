@@ -32,12 +32,12 @@ NUMOStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     deltaNorm[i] = ckt->CKTdeltaOld[i] / TNorm;
   }
 
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     OneCarrier = model->NUMOSmethods->METHoneCarrier;
     model->NUMOSpInfo->order = ckt->CKTorder;
     model->NUMOSpInfo->delta = deltaNorm;
     model->NUMOSpInfo->lteCoeff = computeLTECoeff(model->NUMOSpInfo);
-    for (inst = model->NUMOSinstances; inst != NULL;
+    for (inst = NUMOSinstances(model); inst != NULL;
 	inst = inst->NUMOSnextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

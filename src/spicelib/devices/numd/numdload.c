@@ -52,7 +52,7 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the diode models */
-  for (; model != NULL; model = model->NUMDnextModel) {
+  for (; model != NULL; model = NUMDnextModel(model)) {
     /* Do model things */
     FieldDepMobility = model->NUMDmodels->MODLfieldDepMobility;
     Srh = model->NUMDmodels->MODLsrh;
@@ -89,7 +89,7 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NUMDpInfo->intCoeff, deltaNorm);
     }
     /* Now do instance things */
-    for (inst = model->NUMDinstances; inst != NULL;
+    for (inst = NUMDinstances(model); inst != NULL;
 	inst = inst->NUMDnextInstance) {
 
       pDevice = inst->NUMDpDevice;

@@ -23,8 +23,8 @@ INDpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     NG_IGNORE(ckt);
 
-    for( ; model != NULL; model = model->INDnextModel) {
-        for( here = model->INDinstances;here != NULL; 
+    for( ; model != NULL; model = INDnextModel(model)) {
+        for( here = INDinstances(model);here != NULL; 
                 here = here->INDnextInstance) {
     
             val = here->INDinduct / here->INDm;

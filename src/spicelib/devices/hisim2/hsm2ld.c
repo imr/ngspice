@@ -307,7 +307,7 @@ tm0 = gtodsecld() ;
     model->HSM2_bypass_enable = BYPASS_enable ;
 #else
   /*  loop through all the HSM2 device models */
-  for ( ; model != NULL; model = model->HSM2nextModel ) {
+  for ( ; model != NULL; model = HSM2nextModel(model) ) {
     /* loop through all the instances of the model */
 
     reltol = ckt->CKTreltol * BYP_TOL_FACTOR ; 
@@ -316,7 +316,7 @@ tm0 = gtodsecld() ;
     BYPASS_enable = (BYP_TOL_FACTOR > 0.0 && ckt->CKTbypass) ;
     model->HSM2_bypass_enable = BYPASS_enable ;
 
-    for (here = model->HSM2instances; here != NULL ;
+    for (here = HSM2instances(model); here != NULL ;
 	 here = here->HSM2nextInstance) {
 #endif
 /*      pParam = &here->pParam ;*/

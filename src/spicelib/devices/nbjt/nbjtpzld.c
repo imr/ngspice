@@ -31,7 +31,7 @@ NBJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
   NG_IGNORE(ckt);
 
-  for (; model != NULL; model = model->NBJTnextModel) {
+  for (; model != NULL; model = NBJTnextModel(model)) {
     FieldDepMobility = model->NBJTmodels->MODLfieldDepMobility;
     Srh = model->NBJTmodels->MODLsrh;
     Auger = model->NBJTmodels->MODLauger;
@@ -40,7 +40,7 @@ NBJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     MobDeriv = model->NBJTmethods->METHmobDeriv;
     ONEacDebug = model->NBJToutputs->OUTPacDebug;
 
-    for (inst = model->NBJTinstances; inst != NULL;
+    for (inst = NBJTinstances(model); inst != NULL;
 	inst = inst->NBJTnextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

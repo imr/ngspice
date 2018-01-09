@@ -147,7 +147,7 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     NG_IGNORE(state);
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->CPLnextModel ) {
+    for( ; model != NULL; model = CPLnextModel(model) ) {
 
         if (!model->Rmgiven) {
             SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -176,7 +176,7 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->CPLinstances; here != NULL ;
+        for (here = CPLinstances(model); here != NULL ;
                 here=here->CPLnextInstance) {
 
             if (!here->CPLlengthGiven)
@@ -299,8 +299,8 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
     int noL;
 
     for (model = (CPLmodel *) inModel; model != NULL;
-            model = model->CPLnextModel) {
-        for (here = model->CPLinstances; here != NULL;
+            model = CPLnextModel(model)) {
+        for (here = CPLinstances(model); here != NULL;
                 here = here->CPLnextInstance) {
 
             noL = here->dimension;

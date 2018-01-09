@@ -14,8 +14,8 @@ TRAdestroy(GENmodel **inModel)
     TRAmodel *mod = *(TRAmodel **) inModel;
 
     while (mod) {
-        TRAmodel *next_mod = mod->TRAnextModel;
-        TRAinstance *inst = mod->TRAinstances;
+        TRAmodel *next_mod = TRAnextModel(mod);
+        TRAinstance *inst = TRAinstances(mod);
         while (inst) {
             TRAinstance *next_inst = inst->TRAnextInstance;
             FREE(inst);

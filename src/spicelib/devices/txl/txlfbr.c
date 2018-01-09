@@ -20,8 +20,8 @@ TXLfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
     int error;
     CKTnode *tmp;
 
-    for( ; model != NULL; model = model->TXLnextModel) {
-        for (here = model->TXLinstances; here != NULL;
+    for( ; model != NULL; model = TXLnextModel(model)) {
+        for (here = TXLinstances(model); here != NULL;
                 here = here->TXLnextInstance) {
             if(here->TXLname == name) {
                 if(here->TXLbranch == 0) {

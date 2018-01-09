@@ -315,14 +315,12 @@ typedef struct sBSIM1instance {
 /* per model data */
 
 typedef struct sBSIM1model {       /* model structure for a resistor */
-    int B1modType;    /* type index of this device type */
-    struct sBSIM1model *B1nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    B1instance * B1instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid B1modName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define B1modType            gen.GENmodType
+#define B1nextModel(inst)    ((struct sBSIM1model*)((inst)->gen.GENnextModel))
+#define B1instances(inst)    ((B1instance*)((inst)->gen.GENinstances))
+#define B1modName            gen.GENmodName
 
     int B1type;       /* device type : 1 = nmos,  -1 = pmos */
 

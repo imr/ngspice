@@ -416,14 +416,12 @@ typedef struct sSOI3instance {
 
 typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 
-    int SOI3modType;    /* type index to this device type */
-    struct sSOI3model *SOI3nextModel;    /* pointer to next possible model
-                                          *in linked list */
-    SOI3instance * SOI3instances; /* pointer to list of instances
-                                   * that have this model */
-    IFuid SOI3modName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define SOI3modType            gen.GENmodType
+#define SOI3nextModel(inst)    ((struct sSOI3model*)((inst)->gen.GENnextModel))
+#define SOI3instances(inst)    ((SOI3instance*)((inst)->gen.GENinstances))
+#define SOI3modName            gen.GENmodName
 
     int SOI3type;       /* device type : 1 = nsoi,  -1 = psoi */
     double SOI3tnom;        /* temperature at which parameters measured */

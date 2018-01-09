@@ -45,7 +45,7 @@ BSIM3v32instance **InstArray;
 #endif
 
     /*  loop through all the BSIM3v32 device models */
-    for( ; model != NULL; model = model->BSIM3v32nextModel )
+    for( ; model != NULL; model = BSIM3v32nextModel(model) )
     {
 /* Default value Processing for BSIM3v32 MOSFET Models */
         if (!model->BSIM3v32typeGiven)
@@ -936,7 +936,7 @@ BSIM3v32instance **InstArray;
             model->BSIM3v32vbdrMax = 1e99;
 
         /* loop through all the instances of the model */
-        for (here = model->BSIM3v32instances; here != NULL ;
+        for (here = BSIM3v32instances(model); here != NULL ;
              here=here->BSIM3v32nextInstance)
         {
             /* allocate a chunk of the state vector */
@@ -1141,10 +1141,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     /* loop through all the BSIM3 device models
     to count the number of instances */
 
-    for (; model != NULL; model = model->BSIM3v32nextModel)
+    for (; model != NULL; model = BSIM3v32nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM3v32instances; here != NULL;
+        for (here = BSIM3v32instances(model); here != NULL;
             here = here->BSIM3v32nextInstance)
         {
             InstCount++;
@@ -1153,10 +1153,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     InstArray = TMALLOC(BSIM3v32instance*, InstCount);
     model = (BSIM3v32model*)inModel;
     idx = 0;
-    for (; model != NULL; model = model->BSIM3v32nextModel)
+    for (; model != NULL; model = BSIM3v32nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM3v32instances; here != NULL;
+        for (here = BSIM3v32instances(model); here != NULL;
             here = here->BSIM3v32nextInstance)
         {
             InstArray[idx] = here;
@@ -1180,9 +1180,9 @@ BSIM3v32unsetup(
     BSIM3v32instance *here;
 
     for (model = (BSIM3v32model *)inModel; model != NULL;
-            model = model->BSIM3v32nextModel)
+            model = BSIM3v32nextModel(model))
     {
-        for (here = model->BSIM3v32instances; here != NULL;
+        for (here = BSIM3v32instances(model); here != NULL;
                 here=here->BSIM3v32nextInstance)
         {
             if (here->BSIM3v32qNode > 0)

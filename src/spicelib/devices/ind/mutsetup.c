@@ -34,8 +34,8 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     NG_IGNORE(states);
 
-    for (; model; model = model->MUTnextModel)
-        for (here = model->MUTinstances; here; here = here->MUTnextInstance) {
+    for (; model; model = MUTnextModel(model))
+        for (here = MUTinstances(model); here; here = here->MUTnextInstance) {
 
             int ktype = CKTtypelook("Inductor");
 

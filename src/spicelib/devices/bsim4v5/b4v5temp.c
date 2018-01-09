@@ -83,7 +83,7 @@ double kvsat, wlod, sceff, Wdrn;
 int Size_Not_Found, i;
 
     /*  loop through all the BSIM4v5 device models */
-    for (; model != NULL; model = model->BSIM4v5nextModel)
+    for (; model != NULL; model = BSIM4v5nextModel(model))
     {    Temp = ckt->CKTtemp;
          if (model->BSIM4v5SbulkJctPotential < 0.1)  
 	 {   model->BSIM4v5SbulkJctPotential = 0.1;
@@ -337,7 +337,7 @@ int Size_Not_Found, i;
 
 
          /* loop through all the instances of the model */
-         for (here = model->BSIM4v5instances; here != NULL;
+         for (here = BSIM4v5instances(model); here != NULL;
               here = here->BSIM4v5nextInstance) 
             {
               pSizeDependParamKnot = model->pSizeDependParamKnot;

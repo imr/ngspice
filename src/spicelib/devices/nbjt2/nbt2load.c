@@ -55,7 +55,7 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     FieldDepMobility = model->NBJT2models->MODLfieldDepMobility;
     TransDepMobility = model->NBJT2models->MODLtransDepMobility;
     SurfaceMobility = model->NBJT2models->MODLsurfaceMobility;
@@ -94,7 +94,7 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NBJT2pInfo->intCoeff, deltaNorm);
     }
     /* loop through all the instances of the model */
-    for (inst = model->NBJT2instances; inst != NULL;
+    for (inst = NBJT2instances(model); inst != NULL;
 	inst = inst->NBJT2nextInstance) {
 
       pDevice = inst->NBJT2pDevice;

@@ -95,10 +95,10 @@ MOS9sLoad(GENmodel *inModel, CKTcircuit *ckt)
     }
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = MOS9nextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS9instances; here != NULL ;
+        for (here = MOS9instances(model); here != NULL ;
                 here=here->MOS9nextInstance) {
 
 #ifdef SENSDEBUG

@@ -25,10 +25,10 @@ CCCSsLoad(GENmodel *inModel, CKTcircuit *ckt)
     double ic ;
 
     /*  loop through all the CCCS models */
-    for( ; model != NULL; model = model->CCCSnextModel ) {
+    for( ; model != NULL; model = CCCSnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->CCCSinstances; here != NULL ;
+        for (here = CCCSinstances(model); here != NULL ;
                 here=here->CCCSnextInstance) {
             if(here->CCCSsenParmNo){
 

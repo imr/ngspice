@@ -1080,12 +1080,12 @@ struct b4soiSizeDependParam
 
 typedef struct sB4SOImodel
 {
-    int B4SOImodType;
-    struct sB4SOImodel *B4SOInextModel;
-    B4SOIinstance *B4SOIinstances;
-    IFuid B4SOImodName;
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define B4SOImodType            gen.GENmodType
+#define B4SOInextModel(inst)    ((struct sB4SOImodel*)((inst)->gen.GENnextModel))
+#define B4SOIinstances(inst)    ((B4SOIinstance*)((inst)->gen.GENinstances))
+#define B4SOImodName            gen.GENmodName
 
     int B4SOItype;
 

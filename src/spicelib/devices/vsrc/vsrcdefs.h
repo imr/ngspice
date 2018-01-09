@@ -81,14 +81,12 @@ typedef struct sVSRCinstance {
 /* per model data */
 
 typedef struct sVSRCmodel {
-    int VSRCmodType;    /* type index of this device type */
-    struct sVSRCmodel *VSRCnextModel;    /* pointer to next possible model
-                                          *in linked list */
-    VSRCinstance * VSRCinstances;    /* pointer to list of instances
-                                      * that have this model */
-    IFuid VSRCmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define VSRCmodType            gen.GENmodType
+#define VSRCnextModel(inst)    ((struct sVSRCmodel*)((inst)->gen.GENnextModel))
+#define VSRCinstances(inst)    ((VSRCinstance*)((inst)->gen.GENinstances))
+#define VSRCmodName            gen.GENmodName
 
 } VSRCmodel;
 

@@ -22,7 +22,7 @@ HFETAtemp(GENmodel *inModel, CKTcircuit *ckt)
     double temp;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->HFETAnextModel ) {
+    for( ; model != NULL; model = HFETAnextModel(model) ) {
         if(model->HFETArd != 0) {
             model->HFETAdrainConduct = 1/model->HFETArd;
         } else {
@@ -56,7 +56,7 @@ HFETAtemp(GENmodel *inModel, CKTcircuit *ckt)
         if(!model->HFETAvt1Given)
           IN_VT1 = VTO+CHARGE*NMAX*DI/EPSI;
           
-        for (here = model->HFETAinstances; here != NULL ;
+        for (here = HFETAinstances(model); here != NULL ;
                 here=here->HFETAnextInstance) {
 
             if(!here->HFETAdtempGiven) {

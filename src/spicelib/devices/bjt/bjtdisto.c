@@ -52,11 +52,11 @@ BJTdisto(int mode, GENmodel *genmodel, CKTcircuit *ckt)
 	(mode == D_2F1MF2)) {
 
 	/* loop through all the BJT models */
-	for( ; model != NULL; model = model->BJTnextModel ) {
+	for( ; model != NULL; model = BJTnextModel(model) ) {
 	    td = model->BJTexcessPhaseFactor;
 
 	    /* loop through all the instances of the model */
-	    for (here = model->BJTinstances; here != NULL ;
+	    for (here = BJTinstances(model); here != NULL ;
 		 here=here->BJTnextInstance) {
 
 		/* getting Volterra kernels */

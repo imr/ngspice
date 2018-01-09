@@ -15,8 +15,8 @@ double *tiHFET2tep)
   HFET2model *model = (HFET2model*)inModel;
   HFET2instance *here;
 
-  for( ; model != NULL; model = model->HFET2nextModel) {
-    for(here=model->HFET2instances;here!=NULL;
+  for( ; model != NULL; model = HFET2nextModel(model)) {
+    for(here=HFET2instances(model);here!=NULL;
         here = here->HFET2nextInstance){
 
       CKTterr(here->HFET2qgs,ckt,tiHFET2tep);

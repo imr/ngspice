@@ -25,7 +25,7 @@ NUMD2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
   NG_IGNORE(ckt);
 
   /* loop through all the diode models */
-  for (; model != NULL; model = model->NUMD2nextModel) {
+  for (; model != NULL; model = NUMD2nextModel(model)) {
     FieldDepMobility = model->NUMD2models->MODLfieldDepMobility;
     TransDepMobility = model->NUMD2models->MODLtransDepMobility;
     SurfaceMobility = model->NUMD2models->MODLsurfaceMobility;
@@ -37,7 +37,7 @@ NUMD2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     MobDeriv = model->NUMD2methods->METHmobDeriv;
     TWOacDebug = model->NUMD2outputs->OUTPacDebug;
 
-    for (inst = model->NUMD2instances; inst != NULL;
+    for (inst = NUMD2instances(model); inst != NULL;
 	inst = inst->NUMD2nextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

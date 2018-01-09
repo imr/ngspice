@@ -14,8 +14,8 @@ JFETdestroy(GENmodel **inModel)
     JFETmodel *mod = *(JFETmodel**) inModel;
 
     while (mod) {
-        JFETmodel *next_mod = mod->JFETnextModel;
-        JFETinstance *inst = mod->JFETinstances;
+        JFETmodel *next_mod = JFETnextModel(mod);
+        JFETinstance *inst = JFETinstances(mod);
         while (inst) {
             JFETinstance *next_inst = inst->JFETnextInstance;
             FREE(inst);

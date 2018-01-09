@@ -24,12 +24,12 @@ CCVSsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("CURRENT CONTROLLED VOLTAGE SOURCES-----------------\n");
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->CCVSnextModel ) {
+    for( ; model != NULL; model = CCVSnextModel(model) ) {
 
         printf("Model name:%s\n",model->CCVSmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->CCVSinstances; here != NULL ;
+        for (here = CCVSinstances(model); here != NULL ;
                 here=here->CCVSnextInstance) {
             
             printf("    Instance name:%s\n",here->CCVSname);

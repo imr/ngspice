@@ -18,8 +18,8 @@ MEStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     MESmodel *model = (MESmodel*)inModel;
     MESinstance *here;
 
-    for( ; model != NULL; model = model->MESnextModel) {
-        for(here=model->MESinstances;here!=NULL;here = here->MESnextInstance){
+    for( ; model != NULL; model = MESnextModel(model)) {
+        for(here=MESinstances(model);here!=NULL;here = here->MESnextInstance){
 
             CKTterr(here->MESqgs,ckt,timeStep);
             CKTterr(here->MESqgd,ckt,timeStep);

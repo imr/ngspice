@@ -73,14 +73,12 @@ beginning of the array */
 /* data per model */
 
 typedef struct sCAPmodel {      /* model structure for a capacitor */
-    int CAPmodType; /* type index of this device type */
-    struct sCAPmodel *CAPnextModel; /* pointer to next possible model in
-                                     * linked list */
-    CAPinstance * CAPinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid CAPmodName;   /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define CAPmodType            gen.GENmodType
+#define CAPnextModel(inst)    ((struct sCAPmodel*)((inst)->gen.GENnextModel))
+#define CAPinstances(inst)    ((CAPinstance*)((inst)->gen.GENinstances))
+#define CAPmodName            gen.GENmodName
 
     double CAPtnom;       /* temperature at which capacitance measured */
     double CAPtempCoeff1; /* linear temperature coefficient */

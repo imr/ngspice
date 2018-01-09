@@ -90,9 +90,9 @@ int HSMHV2convTest(
 
 
   /*  loop through all the HSMHV2 device models */
-  for ( ; model != NULL; model = model->HSMHV2nextModel ) {
+  for ( ; model != NULL; model = HSMHV2nextModel(model) ) {
     /* loop through all the instances of the model */
-    for ( here = model->HSMHV2instances; here != NULL ;
+    for ( here = HSMHV2instances(model); here != NULL ;
 	  here = here->HSMHV2nextInstance ) {
 
       vds = model->HSMHV2_type * 

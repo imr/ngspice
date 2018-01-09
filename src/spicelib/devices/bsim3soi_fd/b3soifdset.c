@@ -47,7 +47,7 @@ IFuid tmpName;
 
 
     /*  loop through all the B3SOIFD device models */
-    for( ; model != NULL; model = model->B3SOIFDnextModel )
+    for( ; model != NULL; model = B3SOIFDnextModel(model) )
     {
 /* Default value Processing for B3SOIFD MOSFET Models */
 
@@ -875,7 +875,7 @@ IFuid tmpName;
             model->B3SOIFDnoif = 1.0;
 
         /* loop through all the instances of the model */
-        for (here = model->B3SOIFDinstances; here != NULL ;
+        for (here = B3SOIFDinstances(model); here != NULL ;
              here=here->B3SOIFDnextInstance) 
 	{	
             /* allocate a chunk of the state vector */
@@ -1346,9 +1346,9 @@ B3SOIFDunsetup(GENmodel *inModel, CKTcircuit *ckt)
     B3SOIFDinstance *here;
  
     for (model = (B3SOIFDmodel *)inModel; model != NULL;
-            model = model->B3SOIFDnextModel)
+            model = B3SOIFDnextModel(model))
     {
-        for (here = model->B3SOIFDinstances; here != NULL;
+        for (here = B3SOIFDinstances(model); here != NULL;
                 here=here->B3SOIFDnextInstance)
         {
             /* here for debugging purpose only */

@@ -46,8 +46,8 @@ MOS3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->MOS3nextModel) {
-	for (inst=model->MOS3instances; inst != NULL; inst=inst->MOS3nextInstance) {
+    for (model=firstModel; model != NULL; model=MOS3nextModel(model)) {
+	for (inst=MOS3instances(model); inst != NULL; inst=inst->MOS3nextInstance) {
         
 	    switch (operation) {
 

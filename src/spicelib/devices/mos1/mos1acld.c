@@ -33,8 +33,8 @@ MOS1acLoad(GENmodel *inModel, CKTcircuit *ckt)
     double GateSourceOverlapCap;
     double EffectiveLength;
 
-    for( ; model != NULL; model = model->MOS1nextModel) {
-        for(here = model->MOS1instances; here!= NULL;
+    for( ; model != NULL; model = MOS1nextModel(model)) {
+        for(here = MOS1instances(model); here!= NULL;
                 here = here->MOS1nextInstance) {
         
             if (here->MOS1mode < 0) {

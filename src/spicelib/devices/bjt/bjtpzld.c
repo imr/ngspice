@@ -33,8 +33,8 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double xcmcb;
     double m;
 
-    for( ; model != NULL; model = model->BJTnextModel) {
-        for( here = model->BJTinstances; here!= NULL;
+    for( ; model != NULL; model = BJTnextModel(model)) {
+        for( here = BJTinstances(model); here!= NULL;
                 here = here->BJTnextInstance) {
 
             m = here->BJTm;

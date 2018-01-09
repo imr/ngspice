@@ -14,8 +14,8 @@ DIOdestroy(GENmodel **inModel)
     DIOmodel *mod = *(DIOmodel**) inModel;
 
     while (mod) {
-        DIOmodel *next_mod = mod->DIOnextModel;
-        DIOinstance *inst = mod->DIOinstances;
+        DIOmodel *next_mod = DIOnextModel(mod);
+        DIOinstance *inst = DIOinstances(mod);
         while (inst) {
             DIOinstance *next_inst = inst->DIOnextInstance;
             FREE(inst);

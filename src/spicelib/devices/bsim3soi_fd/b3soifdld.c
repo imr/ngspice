@@ -274,8 +274,8 @@ char nanmessage [12];
 
 double m;
 
-for (; model != NULL; model = model->B3SOIFDnextModel)
-{    for (here = model->B3SOIFDinstances; here != NULL; 
+for (; model != NULL; model = B3SOIFDnextModel(model))
+{    for (here = B3SOIFDinstances(model); here != NULL; 
           here = here->B3SOIFDnextInstance)
      {
           Check = 0;

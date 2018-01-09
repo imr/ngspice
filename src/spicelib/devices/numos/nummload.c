@@ -52,7 +52,7 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     FieldDepMobility = model->NUMOSmodels->MODLfieldDepMobility;
     TransDepMobility = model->NUMOSmodels->MODLtransDepMobility;
     SurfaceMobility = model->NUMOSmodels->MODLsurfaceMobility;
@@ -91,7 +91,7 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NUMOSpInfo->intCoeff, deltaNorm);
     }
     /* loop through all the instances of the model */
-    for (inst = model->NUMOSinstances; inst != NULL;
+    for (inst = NUMOSinstances(model); inst != NULL;
 	inst = inst->NUMOSnextInstance) {
 
       pDevice = inst->NUMOSpDevice;

@@ -85,10 +85,10 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     double gqbeo, cqbeo, gqbco, cqbco, gbcx, cbcx;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->VBICnextModel ) {
+    for( ; model != NULL; model = VBICnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->VBICinstances; here != NULL ;
+        for (here = VBICinstances(model); here != NULL ;
                 here=here->VBICnextInstance) {
 
             vt = here->VBICtemp * CONSTKoverQ;

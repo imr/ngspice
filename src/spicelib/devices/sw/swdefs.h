@@ -56,14 +56,12 @@ typedef struct sSWinstance {
 #define SW_NUM_STATES 2   
 
 typedef struct sSWmodel {      /* model structure for a switch */
-    int SWmodType;  /* type index of this device type */
-    struct sSWmodel *SWnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    SWinstance *SWinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid SWmodName;   /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define SWmodType            gen.GENmodType
+#define SWnextModel(inst)    ((struct sSWmodel*)((inst)->gen.GENnextModel))
+#define SWinstances(inst)    ((SWinstance*)((inst)->gen.GENinstances))
+#define SWmodName            gen.GENmodName
 
     double SWonResistance;  /* switch "on" resistance */
     double SWoffResistance; /* switch "off" resistance */

@@ -69,8 +69,8 @@ SOI3noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->SOI3nextModel) {
-	for (inst=model->SOI3instances; inst != NULL; inst=inst->SOI3nextInstance) {
+    for (model=firstModel; model != NULL; model=SOI3nextModel(model)) {
+	for (inst=SOI3instances(model); inst != NULL; inst=inst->SOI3nextInstance) {
 	    
 	    switch (operation) {
 

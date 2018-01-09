@@ -46,7 +46,7 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
   /* loop through all the diode models */
-  for (; model != NULL; model = model->NBJTnextModel) {
+  for (; model != NULL; model = NBJTnextModel(model)) {
     if (!model->NBJTpInfo) {
       TSCALLOC(model->NBJTpInfo, 1, ONEtranInfo);
     }
@@ -146,7 +146,7 @@ NBJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     model->NBJTdopTables = dopTableList;
 
     /* loop through all the instances of the model */
-    for (inst = model->NBJTinstances; inst != NULL;
+    for (inst = NBJTinstances(model); inst != NULL;
 	inst = inst->NBJTnextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

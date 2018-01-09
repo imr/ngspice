@@ -46,7 +46,7 @@ double SDphi, SDgamma;
 int Size_Not_Found;
 
     /*  loop through all the B3SOIDD device models */
-    for (; model != NULL; model = model->B3SOIDDnextModel)
+    for (; model != NULL; model = B3SOIDDnextModel(model))
     {    Temp = ckt->CKTtemp;
          if (model->B3SOIDDGatesidewallJctPotential < 0.1)
              model->B3SOIDDGatesidewallJctPotential = 0.1;
@@ -72,7 +72,7 @@ int Size_Not_Found;
 
          /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
-         for (here = model->B3SOIDDinstances; here != NULL;
+         for (here = B3SOIDDinstances(model); here != NULL;
               here = here->B3SOIDDnextInstance) 
 	 {	      
 	      here->B3SOIDDrbodyext = here->B3SOIDDbodySquares *

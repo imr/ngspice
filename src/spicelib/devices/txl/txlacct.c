@@ -26,10 +26,10 @@ TXLaccept(CKTcircuit *ckt, GENmodel *inModel)
 	TXLine *tx;
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->TXLnextModel ) {
+    for( ; model != NULL; model = TXLnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->TXLinstances; here != NULL ;
+        for (here = TXLinstances(model); here != NULL ;
                 here=here->TXLnextInstance) {
             
 			h = ckt->CKTdelta;
@@ -59,8 +59,8 @@ TXLaccept(CKTcircuit *ckt, GENmodel *inModel)
 		}
     }
 	model = (TXLmodel *)inModel;
-	for( ; model != NULL; model = model->TXLnextModel ) {
-		for (here = model->TXLinstances; here != NULL ;
+	for( ; model != NULL; model = TXLnextModel(model) ) {
+		for (here = TXLinstances(model); here != NULL ;
 			here=here->TXLnextInstance) {
 			nd = here->txline->in_node;
 			nd->dvtag = 0;

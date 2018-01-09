@@ -25,7 +25,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->DIOnextModel ) {
+    for( ; model != NULL; model = DIOnextModel(model) ) {
 
         if(!model->DIOlevelGiven) {
             model->DIOlevel = 1;
@@ -161,7 +161,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->DIOinstances; here != NULL ;
+        for (here = DIOinstances(model); here != NULL ;
                 here=here->DIOnextInstance) {
 
             if(!here->DIOareaGiven) {
@@ -250,9 +250,9 @@ DIOunsetup(
     DIOinstance *here;
 
     for (model = (DIOmodel *)inModel; model != NULL;
-        model = model->DIOnextModel)
+        model = DIOnextModel(model))
     {
-        for (here = model->DIOinstances; here != NULL;
+        for (here = DIOinstances(model); here != NULL;
                 here=here->DIOnextInstance)
         {
 

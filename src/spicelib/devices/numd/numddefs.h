@@ -68,15 +68,12 @@ typedef struct sNUMDinstance {
 /* per model data */
 
 typedef struct sNUMDmodel {	/* model structure for a diode */
-  int NUMDmodType;		/* type index of this device type */
-  struct sNUMDmodel *NUMDnextModel;	/* pointer to next possible model in
-					 * linked list */
-  NUMDinstance *NUMDinstances;	/* pointer to list of instances that have
-				 * this model */
-  IFuid NUMDmodName;		/* pointer to character string naming this
-				 * model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define NUMDmodType            gen.GENmodType
+#define NUMDnextModel(inst)    ((struct sNUMDmodel*)((inst)->gen.GENnextModel))
+#define NUMDinstances(inst)    ((NUMDinstance*)((inst)->gen.GENinstances))
+#define NUMDmodName            gen.GENmodName
 
   /* Everything below here is numerical-device-specific */
   MESHcard *NUMDxMeshes;	/* list of xmesh cards */

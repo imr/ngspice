@@ -53,7 +53,7 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /****** the netlist to default values.                            ******/
 
     /*  loop through all the SOI3 device models */
-    for( ; model != NULL; model = model->SOI3nextModel ) {
+    for( ; model != NULL; model = SOI3nextModel(model) ) {
 
         if(!model->SOI3typeGiven) {
             model->SOI3type = NSOI3;
@@ -288,7 +288,7 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /****** in the netlist to default values.                         ******/
 
         /* loop through all the instances of the model */
-        for (here = model->SOI3instances; here != NULL ;
+        for (here = SOI3instances(model); here != NULL ;
                 here=here->SOI3nextInstance) {
 
 
@@ -669,9 +669,9 @@ SOI3unsetup(GENmodel *inModel, CKTcircuit *ckt)
     SOI3instance *here;
 
     for (model = (SOI3model *)inModel; model != NULL;
-	    model = model->SOI3nextModel)
+	    model = SOI3nextModel(model))
     {
-       for (here = model->SOI3instances; here != NULL;
+       for (here = SOI3instances(model); here != NULL;
                 here=here->SOI3nextInstance)
 		 {
 	       if (here->SOI3tout4Node > 0)

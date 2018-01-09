@@ -164,14 +164,12 @@ typedef struct sDIOinstance {
 /* per model data */
 
 typedef struct sDIOmodel {       /* model structure for a diode */
-    int DIOmodType; /* type index of this device type */
-    struct sDIOmodel *DIOnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    DIOinstance * DIOinstances; /* pointer to list of instances 
-                                * that have this model */
-    IFuid DIOmodName; /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define DIOmodType            gen.GENmodType
+#define DIOnextModel(inst)    ((struct sDIOmodel*)((inst)->gen.GENnextModel))
+#define DIOinstances(inst)    ((DIOinstance*)((inst)->gen.GENinstances))
+#define DIOmodName            gen.GENmodName
 
     unsigned DIOlevelGiven : 1;
     unsigned DIOsatCurGiven : 1;

@@ -587,12 +587,12 @@ struct b3soipdSizeDependParam
 
 typedef struct sB3SOIPDmodel 
 {
-    int B3SOIPDmodType;
-    struct sB3SOIPDmodel *B3SOIPDnextModel;
-    B3SOIPDinstance *B3SOIPDinstances;
-    IFuid B3SOIPDmodName; 
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define B3SOIPDmodType            gen.GENmodType
+#define B3SOIPDnextModel(inst)    ((struct sB3SOIPDmodel*)((inst)->gen.GENnextModel))
+#define B3SOIPDinstances(inst)    ((B3SOIPDinstance*)((inst)->gen.GENinstances))
+#define B3SOIPDmodName            gen.GENmodName
 
     int B3SOIPDtype;
 

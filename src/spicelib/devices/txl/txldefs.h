@@ -55,14 +55,12 @@ typedef struct sTXLinstance {
 /* per model data */
 
 typedef struct sTXLmodel {       /* model structure for a txl */
-    int TXLmodType; /* type index of this device type */
-    struct sTXLmodel *TXLnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    TXLinstance * TXLinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid TXLmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define TXLmodType            gen.GENmodType
+#define TXLnextModel(inst)    ((struct sTXLmodel*)((inst)->gen.GENnextModel))
+#define TXLinstances(inst)    ((TXLinstance*)((inst)->gen.GENinstances))
+#define TXLmodName            gen.GENmodName
 
 	double R;
 	double L;

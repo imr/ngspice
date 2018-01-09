@@ -36,7 +36,7 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
     double gmanew,gmaold;
     double ni_temp, nifact;
     /* loop through all the mosfet models */
-    for( ; model != NULL; model = model->MOS3nextModel) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
         
         if(!model->MOS3tnomGiven) {
             model->MOS3tnom = ckt->CKTnomTemp;
@@ -115,7 +115,7 @@ MOS3temp(GENmodel *inModel, CKTcircuit *ckt)
 
     
         /* loop through all instances of the model */
-        for(here = model->MOS3instances; here!= NULL; 
+        for(here = MOS3instances(model); here!= NULL; 
                 here = here->MOS3nextInstance) {
 
             double czbd;    /* zero voltage bulk-drain capacitance */

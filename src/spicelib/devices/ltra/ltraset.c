@@ -25,7 +25,7 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
   NG_IGNORE(state);
 
   /* loop through all the transmission line models */
-  for (; model != NULL; model = model->LTRAnextModel) {
+  for (; model != NULL; model = LTRAnextModel(model)) {
 
     if (!model->LTRAnlGiven) {
       model->LTRAnl = .25;
@@ -169,7 +169,7 @@ LTRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
       return (E_BADPARM);
     }
     /* loop through all the instances of the model */
-    for (here = model->LTRAinstances; here != NULL;
+    for (here = LTRAinstances(model); here != NULL;
 	here = here->LTRAnextInstance) {
 
       if (here->LTRAbrEq1 == 0) {
@@ -226,8 +226,8 @@ LTRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
   LTRAinstance *here;
 
   for (model = (LTRAmodel *) inModel; model != NULL;
-      model = model->LTRAnextModel) {
-    for (here = model->LTRAinstances; here != NULL;
+      model = LTRAnextModel(model)) {
+    for (here = LTRAinstances(model); here != NULL;
 	here = here->LTRAnextInstance) {
       if (here->LTRAbrEq2 > 0)
 	CKTdltNNum(ckt, here->LTRAbrEq2);

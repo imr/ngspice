@@ -35,8 +35,8 @@ MOS9pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double EffectiveLength;
     double EffectiveWidth;
 
-    for( ; model != NULL; model = model->MOS9nextModel) {
-        for(here = model->MOS9instances; here!= NULL;
+    for( ; model != NULL; model = MOS9nextModel(model)) {
+        for(here = MOS9instances(model); here!= NULL;
                 here = here->MOS9nextInstance) {
         
             if (here->MOS9mode < 0) {

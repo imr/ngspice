@@ -41,7 +41,7 @@ CKTnode *tmpNode;
 IFuid tmpName;
 
     /*  loop through all the BSIM3v1 device models */
-    for( ; model != NULL; model = model->BSIM3v1nextModel )
+    for( ; model != NULL; model = BSIM3v1nextModel(model) )
     {
 /* Default value Processing for BSIM3v1 MOSFET Models */
         if (!model->BSIM3v1typeGiven)
@@ -775,7 +775,7 @@ IFuid tmpName;
         if (!model->BSIM3v1kfGiven)
             model->BSIM3v1kf = 0.0;
         /* loop through all the instances of the model */
-        for (here = model->BSIM3v1instances; here != NULL ;
+        for (here = BSIM3v1instances(model); here != NULL ;
              here=here->BSIM3v1nextInstance)
         {
             /* allocate a chunk of the state vector */
@@ -959,9 +959,9 @@ BSIM3v1unsetup(GENmodel *inModel, CKTcircuit *ckt)
     BSIM3v1instance *here;
 
     for (model = (BSIM3v1model *)inModel; model != NULL;
-            model = model->BSIM3v1nextModel)
+            model = BSIM3v1nextModel(model))
     {
-        for (here = model->BSIM3v1instances; here != NULL;
+        for (here = BSIM3v1instances(model); here != NULL;
                 here=here->BSIM3v1nextInstance)
         {
             if (here->BSIM3v1qNode > 0)

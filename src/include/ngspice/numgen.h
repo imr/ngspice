@@ -19,12 +19,7 @@ Authors: 1991 David Gates
 #include "ngspice/carddefs.h"
 
 typedef struct sGENnumModel {	/* model structure for a numerical device */
-    int GENmodType;		/* type index of this device type */
-    struct sGENnumModel *GENnextModel;	/* pointer to next model in list */
-    GENinstance *GENinstances;	/* pointer to list of instances */
-    IFuid GENmodName;		/* pointer to string naming this model */
-
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
 
 /* Everything below here is numerical-device-specific */
     MESHcard *GENxMeshes;	/* list of xmesh cards */

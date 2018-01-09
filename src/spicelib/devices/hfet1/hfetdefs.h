@@ -128,12 +128,12 @@ typedef struct sHFETAinstance {
 /* per model data */
 
 typedef struct sHFETAmodel {
-    int HFETAmodType;
-    struct sHFETAmodel *HFETAnextModel; 
-    HFETAinstance *HFETAinstances;
-    IFuid HFETAmodName;
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define HFETAmodType            gen.GENmodType
+#define HFETAnextModel(inst)    ((struct sHFETAmodel*)((inst)->gen.GENnextModel))
+#define HFETAinstances(inst)    ((HFETAinstance*)((inst)->gen.GENinstances))
+#define HFETAmodName            gen.GENmodName
 
     int HFETAtype;
     int HFETAgatemod;

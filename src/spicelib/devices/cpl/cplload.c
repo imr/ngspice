@@ -70,8 +70,8 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	gmin = 0.1 * ckt->CKTgmin;     /* dc solution */
 
-	for( ; model !=	NULL; model = model->CPLnextModel ) {
-		for (here = model->CPLinstances; here != NULL ;
+	for( ; model !=	NULL; model = CPLnextModel(model) ) {
+		for (here = CPLinstances(model); here != NULL ;
 			here=here->CPLnextInstance) {
 
 			cp = here->cplines;
@@ -123,10 +123,10 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 
     model = (CPLmodel *)inModel;
     /*	loop through all the models */
-    for( ; model != NULL; model	= model->CPLnextModel )	{
+    for( ; model != NULL; model	= CPLnextModel(model) )	{
 
 	/* loop	through	all the	instances of the model */
-	for (here = model->CPLinstances; here != NULL ;
+	for (here = CPLinstances(model); here != NULL ;
 			here=here->CPLnextInstance) {
 
 			double mintaul = 123456789.0;

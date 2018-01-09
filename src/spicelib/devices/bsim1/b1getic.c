@@ -23,8 +23,8 @@ B1getic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->B1nextModel) {
-        for(here = model->B1instances; here ; here = here->B1nextInstance) {
+    for( ; model ; model = B1nextModel(model)) {
+        for(here = B1instances(model); here ; here = here->B1nextInstance) {
         
             if(!here->B1icVBSGiven) {
                 here->B1icVBS = 

@@ -32,7 +32,7 @@ NUMD2temp(GENmodel *inModel, CKTcircuit *ckt)
   double startTime;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NUMD2nextModel) {
+  for (; model != NULL; model = NUMD2nextModel(model)) {
     methods = model->NUMD2methods;
     models = model->NUMD2models;
     options = model->NUMD2options;
@@ -53,7 +53,7 @@ NUMD2temp(GENmodel *inModel, CKTcircuit *ckt)
     MatchingMobility = models->MODLmatchingMobility;
     OneCarrier = methods->METHoneCarrier;
 
-    for (inst = model->NUMD2instances; inst != NULL;
+    for (inst = NUMD2instances(model); inst != NULL;
 	inst = inst->NUMD2nextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

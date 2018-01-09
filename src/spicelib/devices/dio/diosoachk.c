@@ -29,9 +29,9 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     maxwarns = ckt->CKTsoaMaxWarns;
 
-    for (; model; model = model->DIOnextModel) {
+    for (; model; model = DIOnextModel(model)) {
 
-        for (here = model->DIOinstances; here; here = here->DIOnextInstance) {
+        for (here = DIOinstances(model); here; here = here->DIOnextInstance) {
 
             vd = ckt->CKTrhsOld [here->DIOposPrimeNode] -
                  ckt->CKTrhsOld [here->DIOnegNode];

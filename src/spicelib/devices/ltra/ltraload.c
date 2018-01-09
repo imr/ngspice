@@ -30,7 +30,7 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
   double max = 0.0, min = 0.0;
 
   /* loop through all the transmission line models */
-  for (; model != NULL; model = model->LTRAnextModel) {
+  for (; model != NULL; model = LTRAnextModel(model)) {
 
     if (ckt->CKTmode & MODEDC) {
       switch (model->LTRAspecialCase) {
@@ -219,7 +219,7 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
       }
     }
     /* loop through all the instances of the model */
-    for (here = model->LTRAinstances; here != NULL;
+    for (here = LTRAinstances(model); here != NULL;
 	here = here->LTRAnextInstance) {
 
       if ((ckt->CKTmode & MODEDC) ||

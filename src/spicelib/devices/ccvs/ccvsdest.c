@@ -14,8 +14,8 @@ CCVSdestroy(GENmodel **inModel)
     CCVSmodel *mod = *(CCVSmodel**) inModel;
 
     while (mod) {
-        CCVSmodel *next_mod = mod->CCVSnextModel;
-        CCVSinstance *inst = mod->CCVSinstances;
+        CCVSmodel *next_mod = CCVSnextModel(mod);
+        CCVSinstance *inst = CCVSinstances(mod);
         while (inst) {
             CCVSinstance *next_inst = inst->CCVSnextInstance;
             FREE(inst);

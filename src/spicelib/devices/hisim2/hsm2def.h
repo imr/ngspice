@@ -681,14 +681,12 @@ typedef struct sHSM2instance {
 /* per model data */
 
 typedef struct sHSM2model {       	/* model structure for a resistor */
-  int HSM2modType;    		/* type index of this device type */
-  struct sHSM2model *HSM2nextModel; /* pointer to next possible model 
-					 in linked list */
-  HSM2instance * HSM2instances;	/* pointer to list of instances 
-				   that have this model */
-  IFuid HSM2modName;       	/* pointer to the name of this model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define HSM2modType            gen.GENmodType
+#define HSM2nextModel(inst)    ((struct sHSM2model*)((inst)->gen.GENnextModel))
+#define HSM2instances(inst)    ((HSM2instance*)((inst)->gen.GENinstances))
+#define HSM2modName            gen.GENmodName
 
   int HSM2_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSM2_level;               /* level */

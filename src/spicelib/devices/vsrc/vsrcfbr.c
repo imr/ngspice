@@ -20,8 +20,8 @@ VSRCfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
     int error;
     CKTnode *tmp;
 
-    for( ; model != NULL; model = model->VSRCnextModel) {
-        for (here = model->VSRCinstances; here != NULL;
+    for( ; model != NULL; model = VSRCnextModel(model)) {
+        for (here = VSRCinstances(model); here != NULL;
                 here = here->VSRCnextInstance) {
             if(here->VSRCname == name) {
                 if(here->VSRCbranch == 0) {

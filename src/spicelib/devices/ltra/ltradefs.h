@@ -73,14 +73,12 @@ typedef struct sLTRAinstance {
 /* per model data */
 
 typedef struct sLTRAmodel {       /* model structure for a transmission lines */
-    int LTRAmodType; /* type index of this device type */
-    struct sLTRAmodel *LTRAnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    LTRAinstance * LTRAinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid LTRAmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define LTRAmodType            gen.GENmodType
+#define LTRAnextModel(inst)    ((struct sLTRAmodel*)((inst)->gen.GENnextModel))
+#define LTRAinstances(inst)    ((LTRAinstance*)((inst)->gen.GENinstances))
+#define LTRAmodName            gen.GENmodName
 
 	double LTRAh1dashFirstVal; /* first needed value of h1dasg at 
 									current timepoint */

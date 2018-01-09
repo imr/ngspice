@@ -30,8 +30,8 @@ BSIM4v7instance *here;
     double debugtemp;
 #endif /* STEPDEBUG */
 
-    for (; model != NULL; model = model->BSIM4v7nextModel)
-    {    for (here = model->BSIM4v7instances; here != NULL;
+    for (; model != NULL; model = BSIM4v7nextModel(model))
+    {    for (here = BSIM4v7instances(model); here != NULL;
 	      here = here->BSIM4v7nextInstance)
 	      {
 #ifdef STEPDEBUG

@@ -25,10 +25,10 @@ VCVSload(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->VCVSnextModel ) {
+    for( ; model != NULL; model = VCVSnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->VCVSinstances; here != NULL ;
+        for (here = VCVSinstances(model); here != NULL ;
                 here=here->VCVSnextInstance) {
             
             *(here->VCVSposIbrPtr) += 1.0 ;

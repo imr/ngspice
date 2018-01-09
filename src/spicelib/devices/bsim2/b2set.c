@@ -24,7 +24,7 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the B2 device models */
-    for( ; model != NULL; model = model->B2nextModel ) {
+    for( ; model != NULL; model = B2nextModel(model) ) {
     
 /* Default value Processing for B2 MOSFET Models */
         if( ! model->B2typeGiven) {
@@ -431,7 +431,7 @@ B2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->B2instances; here != NULL ;
+        for (here = B2instances(model); here != NULL ;
                 here=here->B2nextInstance) {
 
             /* allocate a chunk of the state vector */
@@ -576,9 +576,9 @@ B2unsetup(
     B2instance *here;
 
     for (model = (B2model *)inModel; model != NULL;
-	    model = model->B2nextModel)
+	    model = B2nextModel(model))
     {
-        for (here = model->B2instances; here != NULL;
+        for (here = B2instances(model); here != NULL;
                 here=here->B2nextInstance)
 	{
 	    if (here->B2sNodePrime > 0

@@ -32,12 +32,12 @@ NBJT2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     deltaNorm[i] = ckt->CKTdeltaOld[i] / TNorm;
   }
 
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     OneCarrier = model->NBJT2methods->METHoneCarrier;
     model->NBJT2pInfo->order = ckt->CKTorder;
     model->NBJT2pInfo->delta = deltaNorm;
     model->NBJT2pInfo->lteCoeff = computeLTECoeff(model->NBJT2pInfo);
-    for (inst = model->NBJT2instances; inst != NULL;
+    for (inst = NBJT2instances(model); inst != NULL;
 	inst = inst->NBJT2nextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

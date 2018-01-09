@@ -30,9 +30,9 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     maxwarns = ckt->CKTsoaMaxWarns;
 
-    for (; model; model = model->BJTnextModel) {
+    for (; model; model = BJTnextModel(model)) {
 
-        for (here = model->BJTinstances; here; here=here->BJTnextInstance) {
+        for (here = BJTinstances(model); here; here=here->BJTnextInstance) {
 
             vbe = fabs(ckt->CKTrhsOld [here->BJTbasePrimeNode] -
                        ckt->CKTrhsOld [here->BJTemitPrimeNode]);

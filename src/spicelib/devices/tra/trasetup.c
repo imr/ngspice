@@ -28,10 +28,10 @@ TRAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     NG_IGNORE(state);
 
     /*  loop through all the transmission line models */
-    for( ; model != NULL; model = model->TRAnextModel ) {
+    for( ; model != NULL; model = TRAnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->TRAinstances; here != NULL ;
+        for (here = TRAinstances(model); here != NULL ;
                 here=here->TRAnextInstance) {
             
             if(here->TRAbrEq1==0) {
@@ -121,9 +121,9 @@ TRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
     TRAinstance *here;
 
     for (model = (TRAmodel *)inModel; model != NULL;
-	    model = model->TRAnextModel)
+	    model = TRAnextModel(model))
     {
-        for (here = model->TRAinstances; here != NULL;
+        for (here = TRAinstances(model); here != NULL;
                 here=here->TRAnextInstance)
 	{
 	    if (here->TRAintNode2 > 0)

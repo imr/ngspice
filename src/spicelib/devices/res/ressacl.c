@@ -25,10 +25,10 @@ RESsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double ivalue;
 
     /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
+    for( ; model != NULL; model = RESnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
+        for (here = RESinstances(model); here != NULL ;
                 here=here->RESnextInstance) {
 
             if(here->RESsenParmNo){

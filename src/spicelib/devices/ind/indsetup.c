@@ -22,7 +22,7 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->INDnextModel ) {
+    for( ; model != NULL; model = INDnextModel(model) ) {
  
    /* Default Value Processing for Model Parameters */
         if (!model->INDmIndGiven) {
@@ -72,7 +72,7 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         
 	
         /* loop through all the instances of the model */
-        for (here = model->INDinstances; here != NULL ;
+        for (here = INDinstances(model); here != NULL ;
                 here=here->INDnextInstance) {
 
             here->INDflux = *states;
@@ -113,9 +113,9 @@ INDunsetup(GENmodel *inModel, CKTcircuit *ckt)
     INDinstance *here;
 
     for (model = (INDmodel *)inModel; model != NULL;
-	    model = model->INDnextModel)
+	    model = INDnextModel(model))
     {
-        for (here = model->INDinstances; here != NULL;
+        for (here = INDinstances(model); here != NULL;
                 here=here->INDnextInstance)
 	{
 	    if (here->INDbrEq > 0)

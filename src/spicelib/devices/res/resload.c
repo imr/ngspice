@@ -18,11 +18,11 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
     RESmodel *model = (RESmodel *)inModel;
 
     /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
+    for( ; model != NULL; model = RESnextModel(model) ) {
         RESinstance *here;
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
+        for (here = RESinstances(model); here != NULL ;
                 here = here->RESnextInstance) {
 
             here->REScurrent = (*(ckt->CKTrhsOld+here->RESposNode) -
@@ -49,11 +49,11 @@ RESacload(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
+    for( ; model != NULL; model = RESnextModel(model) ) {
         RESinstance *here;
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
+        for (here = RESinstances(model); here != NULL ;
              here = here->RESnextInstance) {
 
             if (here->RESacresGiven)

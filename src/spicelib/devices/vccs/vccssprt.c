@@ -25,12 +25,12 @@ VCCSsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("VOLTAGE CONTROLLED CURRENT SOURCES-----------------\n");
     /*  loop through all the source models */
-    for( ; model != NULL; model = model->VCCSnextModel ) {
+    for( ; model != NULL; model = VCCSnextModel(model) ) {
 
         printf("Model name:%s\n",model->VCCSmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->VCCSinstances; here != NULL ;
+        for (here = VCCSinstances(model); here != NULL ;
                 here=here->VCCSnextInstance) {
 
             printf("    Instance name:%s\n",here->VCCSname);

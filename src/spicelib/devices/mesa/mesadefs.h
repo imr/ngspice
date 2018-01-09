@@ -214,14 +214,12 @@ int MESAmode;
 /* per model data */
 
 typedef struct sMESAmodel {       /* model structure for a MESAfet */
-    int MESAmodType; /* type index of this device type */
-    struct sMESAmodel *MESAnextModel;   /* pointer to next possible model in 
-                                         * linked list */
-    MESAinstance * MESAinstances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MESAmodName; /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define MESAmodType            gen.GENmodType
+#define MESAnextModel(inst)    ((struct sMESAmodel*)((inst)->gen.GENnextModel))
+#define MESAinstances(inst)    ((MESAinstance*)((inst)->gen.GENinstances))
+#define MESAmodName            gen.GENmodName
 
     int MESAtype;
     

@@ -33,7 +33,7 @@ NUMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     methods = model->NUMOSmethods;
     models = model->NUMOSmodels;
     options = model->NUMOSoptions;
@@ -54,7 +54,7 @@ NUMOStemp(GENmodel *inModel, CKTcircuit *ckt)
     MatchingMobility = models->MODLmatchingMobility;
     OneCarrier = methods->METHoneCarrier;
 
-    for (inst = model->NUMOSinstances; inst != NULL;
+    for (inst = NUMOSinstances(model); inst != NULL;
 	inst = inst->NUMOSnextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

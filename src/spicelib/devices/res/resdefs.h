@@ -92,14 +92,12 @@ typedef struct sRESinstance {
 /* per model data */
 
 typedef struct sRESmodel {       /* model structure for a resistor */
-    int RESmodType; /* type index of this device type */
-    struct sRESmodel *RESnextModel; /* pointer to next possible model in
-                                     * linked list */
-    RESinstance * RESinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid RESmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define RESmodType            gen.GENmodType
+#define RESnextModel(inst)    ((struct sRESmodel*)((inst)->gen.GENnextModel))
+#define RESinstances(inst)    ((RESinstance*)((inst)->gen.GENinstances))
+#define RESmodName            gen.GENmodName
 
     double REStnom;         /* temperature at which resistance measured */
     double REStempCoeff1;   /* first temperature coefficient of resistors */

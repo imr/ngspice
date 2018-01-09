@@ -23,10 +23,10 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
     DIOinstance *here;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->DIOnextModel ) {
+    for( ; model != NULL; model = DIOnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->DIOinstances; here != NULL ;
+        for (here = DIOinstances(model); here != NULL ;
                 here=here->DIOnextInstance) {
             gspr=here->DIOtConductance*here->DIOarea;
             geq= *(ckt->CKTstate0 + here->DIOconduct);

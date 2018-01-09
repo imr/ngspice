@@ -64,7 +64,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
     double psi_delta0;
 
     /* loop through all the transistor models */
-    for( ; model != NULL; model = model->SOI3nextModel)
+    for( ; model != NULL; model = SOI3nextModel(model))
     {
 
         /* perform model defaulting */
@@ -299,7 +299,7 @@ SOI3temp(GENmodel *inModel, CKTcircuit *ckt)
 
 
         /* loop through all instances of the model */
-        for(here = model->SOI3instances; here!= NULL;
+        for(here = SOI3instances(model); here!= NULL;
                 here = here->SOI3nextInstance)
         {
 

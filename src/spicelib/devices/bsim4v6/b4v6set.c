@@ -73,7 +73,7 @@ BSIM4v6instance **InstArray;
     }
 
     /*  loop through all the BSIM4v6 device models */
-    for( ; model != NULL; model = model->BSIM4v6nextModel )
+    for( ; model != NULL; model = BSIM4v6nextModel(model) )
     {   /* process defaults of model parameters */
         if (!model->BSIM4v6typeGiven)
             model->BSIM4v6type = NMOS;     
@@ -2051,7 +2051,7 @@ BSIM4v6instance **InstArray;
          * through all the instances of the model
          */
 
-        for (here = model->BSIM4v6instances; here != NULL ;
+        for (here = BSIM4v6instances(model); here != NULL ;
              here=here->BSIM4v6nextInstance) 
         {   
             /* allocate a chunk of the state vector */
@@ -2433,10 +2433,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     /* loop through all the BSIM4v6 device models 
        to count the number of instances */
     
-    for( ; model != NULL; model = model->BSIM4v6nextModel )
+    for( ; model != NULL; model = BSIM4v6nextModel(model) )
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM4v6instances; here != NULL ;
+        for (here = BSIM4v6instances(model); here != NULL ;
              here=here->BSIM4v6nextInstance) 
         { 
             InstCount++;
@@ -2445,10 +2445,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     InstArray = TMALLOC(BSIM4v6instance*, InstCount);
     model = (BSIM4v6model*)inModel;
     idx = 0;
-    for( ; model != NULL; model = model->BSIM4v6nextModel )
+    for( ; model != NULL; model = BSIM4v6nextModel(model) )
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM4v6instances; here != NULL ;
+        for (here = BSIM4v6instances(model); here != NULL ;
              here=here->BSIM4v6nextInstance) 
         { 
             InstArray[idx] = here;
@@ -2471,9 +2471,9 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
     BSIM4v6instance *here;
 
     for (model = (BSIM4v6model *)inModel; model != NULL;
-            model = model->BSIM4v6nextModel)
+            model = BSIM4v6nextModel(model))
     {
-        for (here = model->BSIM4v6instances; here != NULL;
+        for (here = BSIM4v6instances(model); here != NULL;
                 here=here->BSIM4v6nextInstance)
         {
             if (here->BSIM4v6qNode > 0)

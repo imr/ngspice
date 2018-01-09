@@ -99,8 +99,8 @@ double ggidld, ggidlg, ggidlb, ggislg, ggislb, ggisls;
 
 double m;
 
-    for (; model != NULL; model = model->BSIM4nextModel)
-    {    for (here = model->BSIM4instances; here!= NULL;
+    for (; model != NULL; model = BSIM4nextModel(model))
+    {    for (here = BSIM4instances(model); here!= NULL;
               here = here->BSIM4nextInstance)
          {
               pParam = here->pParam;

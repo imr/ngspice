@@ -44,6 +44,7 @@ NON-STANDARD FEATURES
 
 
 #include  "ngspice/mifcmdat.h"
+#include  "ngspice/gendefs.h"
 #include "ngspice/ifsim.h"
 
 
@@ -89,12 +90,12 @@ struct MIFinstance {
 
 struct MIFmodel {
 
-    int              MIFmodType;      /* type index of this device type */
-    struct MIFmodel *MIFnextModel;    /* pointer to next possible model in linked list */
-    struct MIFinstance *MIFinstances; /* pointer to list of instances that have this model */
-    IFuid            MIFmodName;      /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define MIFmodType            gen.GENmodType
+#define MIFnextModel(inst)    ((struct MIFmodel*)((inst)->gen.GENnextModel))
+#define MIFinstances(inst)    ((struct MIFinstance*)((inst)->gen.GENinstances))
+#define MIFmodName            gen.GENmodName
 
     int              num_param;       /* number of parameters on the code model */
     Mif_Param_Data_t **param;         /* array of structs for each parameter */

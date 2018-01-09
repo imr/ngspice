@@ -26,10 +26,10 @@ VCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(states);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->VCVSnextModel ) {
+    for( ; model != NULL; model = VCVSnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->VCVSinstances; here != NULL ;
+        for (here = VCVSinstances(model); here != NULL ;
                 here=here->VCVSnextInstance) {
             
             if(here->VCVSposNode == here->VCVSnegNode) {
@@ -68,9 +68,9 @@ VCVSunsetup(GENmodel *inModel, CKTcircuit *ckt)
     VCVSinstance *here;
 
     for (model = (VCVSmodel *)inModel; model != NULL;
-	    model = model->VCVSnextModel)
+	    model = VCVSnextModel(model))
     {
-        for (here = model->VCVSinstances; here != NULL;
+        for (here = VCVSinstances(model); here != NULL;
                 here=here->VCVSnextInstance)
 	{
 	    if (here->VCVSbranch > 0)

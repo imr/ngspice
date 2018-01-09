@@ -813,12 +813,12 @@ struct bsim4SizeDependParam
 
 typedef struct sBSIM4v7model
 {
-    int BSIM4v7modType;
-    struct sBSIM4v7model *BSIM4v7nextModel;
-    BSIM4v7instance *BSIM4v7instances;
-    IFuid BSIM4v7modName;
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define BSIM4v7modType            gen.GENmodType
+#define BSIM4v7nextModel(inst)    ((struct sBSIM4v7model*)((inst)->gen.GENnextModel))
+#define BSIM4v7instances(inst)    ((BSIM4v7instance*)((inst)->gen.GENinstances))
+#define BSIM4v7modName            gen.GENmodName
 
     int BSIM4v7type;
 

@@ -40,10 +40,10 @@ if ((mode == D_TWOF1) || (mode == D_THRF1) ||
  (mode == D_2F1MF2)) {
 
  /* loop through all the MES models */
-for( ; model != NULL; model = model->MESnextModel ) {
+for( ; model != NULL; model = MESnextModel(model) ) {
 
   /* loop through all the instances of the model */
-  for (here = model->MESinstances; here != NULL ;
+  for (here = MESinstances(model); here != NULL ;
       here=here->MESnextInstance) {
 
     /* loading starts here */

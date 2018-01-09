@@ -14,8 +14,8 @@ SWdestroy(GENmodel **inModel)
     SWmodel *mod = *(SWmodel**) inModel;
 
     while (mod) {
-        SWmodel *next_mod = mod->SWnextModel;
-        SWinstance *inst = mod->SWinstances;
+        SWmodel *next_mod = SWnextModel(mod);
+        SWinstance *inst = SWinstances(mod);
         while (inst) {
             SWinstance *next_inst = inst->SWnextInstance;
             FREE(inst);

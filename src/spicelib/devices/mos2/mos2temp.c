@@ -37,7 +37,7 @@ MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
     double gmaold,gmanew;
     double capfact;
     /* loop through all the resistor models */
-    for( ; model != NULL; model = model->MOS2nextModel) {
+    for( ; model != NULL; model = MOS2nextModel(model)) {
         
         /* perform model defaulting */
 
@@ -121,7 +121,7 @@ MOS2temp(GENmodel *inModel, CKTcircuit *ckt)
 
         
         /* loop through all instances of the model */
-        for(here = model->MOS2instances; here!= NULL; 
+        for(here = MOS2instances(model); here!= NULL; 
                 here = here->MOS2nextInstance) {
             double czbd;    /* zero voltage bulk-drain capacitance */
             double czbdsw;  /* zero voltage bulk-drain sidewall capacitance */

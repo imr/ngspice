@@ -30,10 +30,10 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     NG_IGNORE(s);
 
     /*  loop through all the switch models */
-    for( ; model != NULL; model = model->CSWnextModel ) {
+    for( ; model != NULL; model = CSWnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->CSWinstances; here != NULL ;
+        for (here = CSWinstances(model); here != NULL ;
                 here=here->CSWnextInstance) {
 
             current_state = (int)*(ckt->CKTstate0 + here->CSWstate);

@@ -92,10 +92,10 @@ MIFtrunc(
 
 
     /* loop through all models of this type */
-    for( ; model != NULL; model = model->MIFnextModel) {
+    for( ; model != NULL; model = MIFnextModel(model)) {
 
         /* Loop through all instances of this model */
-        for(here = model->MIFinstances; here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = here->MIFnextInstance) {
 
             /* Loop through all integration states on the instance */
             for(i = 0; i < here->num_intgr; i++) {

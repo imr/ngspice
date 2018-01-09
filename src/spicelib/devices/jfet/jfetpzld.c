@@ -29,9 +29,9 @@ JFETpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     double m;
 
-    for( ; model != NULL; model = model->JFETnextModel ) {
+    for( ; model != NULL; model = JFETnextModel(model) ) {
         
-        for( here = model->JFETinstances; here != NULL; 
+        for( here = JFETinstances(model); here != NULL; 
                 here = here->JFETnextInstance) {
 
             m = here->JFETm;

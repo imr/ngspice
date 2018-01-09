@@ -33,7 +33,7 @@ MOS6temp(GENmodel *inModel, CKTcircuit *ckt)
     double fermis;
     double vfb;
     /* loop through all the resistor models */
-    for( ; model != NULL; model = model->MOS6nextModel) {
+    for( ; model != NULL; model = MOS6nextModel(model)) {
         
 
         /* perform model defaulting */
@@ -116,7 +116,7 @@ MOS6temp(GENmodel *inModel, CKTcircuit *ckt)
 
         
         /* loop through all instances of the model */
-        for(here = model->MOS6instances; here!= NULL; 
+        for(here = MOS6instances(model); here!= NULL; 
                 here = here->MOS6nextInstance) {
 
             double czbd;    /* zero voltage bulk-drain capacitance */

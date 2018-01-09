@@ -21,8 +21,8 @@ NBJTdestroy(GENmodel **inModel)
     NBJTmodel *mod = *(NBJTmodel **) inModel;
 
     while (mod) {
-        NBJTmodel *next_mod = mod->NBJTnextModel;
-        NBJTinstance *inst = mod->NBJTinstances;
+        NBJTmodel *next_mod = NBJTnextModel(mod);
+        NBJTinstance *inst = NBJTinstances(mod);
         while (inst) {
             NBJTinstance *next_inst = inst->NBJTnextInstance;
             ONEdestroy(inst->NBJTpDevice);

@@ -56,14 +56,12 @@ typedef struct sASRCinstance {
 /* per model data */
 
 typedef struct sASRCmodel {       /* model structure for a source */
-    int ASRCmodType;              /* type index of this device */
-    struct sASRCmodel *ASRCnextModel;   /* pointer to next possible model
-                                         * in linked list */
-    ASRCinstance *ASRCinstances;  /* pointer to list of instances
-                                   * that have this model */
-    IFuid ASRCmodName;            /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define ASRCmodType            gen.GENmodType
+#define ASRCnextModel(inst)    ((struct sASRCmodel*)((inst)->gen.GENnextModel))
+#define ASRCinstances(inst)    ((ASRCinstance*)((inst)->gen.GENinstances))
+#define ASRCmodName            gen.GENmodName
 
 } ASRCmodel;
 

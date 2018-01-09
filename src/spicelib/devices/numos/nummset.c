@@ -48,7 +48,7 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
   double startTime;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     if (!model->NUMOSpInfo) {
       TSCALLOC(model->NUMOSpInfo, 1, TWOtranInfo);
     }
@@ -160,7 +160,7 @@ NUMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     model->NUMOSdopTables = dopTableList;
 
     /* loop through all the instances of the model */
-    for (inst = model->NUMOSinstances; inst != NULL;
+    for (inst = NUMOSinstances(model); inst != NULL;
 	inst = inst->NUMOSnextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

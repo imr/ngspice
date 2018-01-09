@@ -41,10 +41,10 @@ B1convTest(GENmodel *inModel, CKTcircuit *ckt)
 
 
     /*  loop through all the B1 device models */
-    for( ; model != NULL; model = model->B1nextModel ) {
+    for( ; model != NULL; model = B1nextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->B1instances; here != NULL ;
+        for (here = B1instances(model); here != NULL ;
                 here=here->B1nextInstance) {
 
             vbs = model->B1type * ( 

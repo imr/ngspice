@@ -43,7 +43,7 @@ double Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 int Size_Not_Found;
 
     /*  loop through all the BSIM3v1 device models */
-    for (; model != NULL; model = model->BSIM3v1nextModel)
+    for (; model != NULL; model = BSIM3v1nextModel(model))
     {    Temp = ckt->CKTtemp;
          if (model->BSIM3v1bulkJctPotential < 0.1)  
 	     model->BSIM3v1bulkJctPotential = 0.1;
@@ -89,7 +89,7 @@ int Size_Not_Found;
 
          /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
-         for (here = model->BSIM3v1instances; here != NULL;
+         for (here = BSIM3v1instances(model); here != NULL;
               here = here->BSIM3v1nextInstance) 
 	 {
 	      pSizeDependParamKnot = model->pSizeDependParamKnot;

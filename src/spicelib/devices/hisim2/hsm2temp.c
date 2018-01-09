@@ -141,11 +141,11 @@ int HSM2temp(
   double T9, T9_dVb, Vgp, Vgs_min, Vfb, Vthp, Vth0;
 
 
-  for ( ;model ;model = model->HSM2nextModel ) {
+  for ( ;model ;model = HSM2nextModel(model) ) {
 
     modelMKS = &model->modelMKS ;
 
-    for ( here = model->HSM2instances; here; here = here->HSM2nextInstance ) {
+    for ( here = HSM2instances(model); here; here = here->HSM2nextInstance ) {
       pParam = &here->pParam ;
       hereMKS = &here->hereMKS ;
 

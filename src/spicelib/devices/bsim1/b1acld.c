@@ -53,8 +53,8 @@ B1acLoad(GENmodel *inModel, CKTcircuit *ckt)
     double m;     /* parallel multiplier */
 
     omega = ckt->CKTomega;
-    for( ; model != NULL; model = model->B1nextModel) {
-        for(here = model->B1instances; here!= NULL;
+    for( ; model != NULL; model = B1nextModel(model)) {
+        for(here = B1instances(model); here!= NULL;
                 here = here->B1nextInstance) {
         
             if (here->B1mode >= 0) {

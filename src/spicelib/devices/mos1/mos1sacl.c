@@ -128,8 +128,8 @@ MOS1sAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* SENSDEBUG */
     info = ckt->CKTsenInfo;
     info->SENstatus = PERTURBATION;
-    for( ; model != NULL; model = model->MOS1nextModel) {
-        for(here = model->MOS1instances; here!= NULL;
+    for( ; model != NULL; model = MOS1nextModel(model)) {
+        for(here = MOS1instances(model); here!= NULL;
                 here = here->MOS1nextInstance) {
 
             /* save the unperturbed values in the state vector */

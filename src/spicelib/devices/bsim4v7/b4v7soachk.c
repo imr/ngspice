@@ -33,9 +33,9 @@ BSIM4v7soaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     maxwarns = ckt->CKTsoaMaxWarns;
 
-    for (; model; model = model->BSIM4v7nextModel) {
+    for (; model; model = BSIM4v7nextModel(model)) {
 
-        for (here = model->BSIM4v7instances; here; here = here->BSIM4v7nextInstance) {
+        for (here = BSIM4v7instances(model); here; here = here->BSIM4v7nextInstance) {
 
             vgs = ckt->CKTrhsOld [here->BSIM4v7gNodePrime] -
                   ckt->CKTrhsOld [here->BSIM4v7sNodePrime];

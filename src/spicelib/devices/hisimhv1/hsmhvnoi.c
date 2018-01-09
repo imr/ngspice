@@ -64,8 +64,8 @@ int HSMHVnoise (
     ""                  /* total transistor noise */
   };
   
-  for ( ;model != NULL; model = model->HSMHVnextModel ) {
-    for ( here = model->HSMHVinstances; here != NULL;
+  for ( ;model != NULL; model = HSMHVnextModel(model) ) {
+    for ( here = HSMHVinstances(model); here != NULL;
 	  here = here->HSMHVnextInstance ) {
       switch (operation) {
       case N_OPEN:

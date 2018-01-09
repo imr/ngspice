@@ -37,14 +37,12 @@ typedef struct sURCinstance {
 /* per model data */
 
 typedef struct sURCmodel {       /* model structure for a resistor */
-    int URCmodType; /* type index of this device type */
-    struct sURCmodel *URCnextModel; /* pointer to next possible model 
-                                     * in linked list */
-    URCinstance * URCinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid URCmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define URCmodType            gen.GENmodType
+#define URCnextModel(inst)    ((struct sURCmodel*)((inst)->gen.GENnextModel))
+#define URCinstances(inst)    ((URCinstance*)((inst)->gen.GENinstances))
+#define URCmodName            gen.GENmodName
 
     double URCk;        /* propagation constant for URC */
     double URCfmax;     /* max frequence of interest */

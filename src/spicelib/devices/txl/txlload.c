@@ -61,8 +61,8 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 
 	gmin = 0.1 * ckt->CKTgmin;     /* dc solution */
 
-	for( ; model !=	NULL; model = model->TXLnextModel ) {
-		for (here = model->TXLinstances; here != NULL ; 
+	for( ; model !=	NULL; model = TXLnextModel(model) ) {
+		for (here = TXLinstances(model); here != NULL ; 
 			here=here->TXLnextInstance) { 
 
 			tx = here->txline;
@@ -108,8 +108,8 @@ TXLload(GENmodel *inModel, CKTcircuit *ckt)
 	}
 
     model = (TXLmodel *)inModel;
-    for( ; model != NULL; model	= model->TXLnextModel )	{
-	for (here = model->TXLinstances; here != NULL ;	
+    for( ; model != NULL; model	= TXLnextModel(model) )	{
+	for (here = TXLinstances(model); here != NULL ;	
 			here=here->TXLnextInstance) { 
 
 			tx = here->txline;

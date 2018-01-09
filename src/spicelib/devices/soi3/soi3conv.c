@@ -57,8 +57,8 @@ SOI3convTest(GENmodel *inModel, CKTcircuit *ckt)
     /* debug stuff */
     /*    FILE *fp,*fopen(); */
 
-    for( ; model != NULL; model = model->SOI3nextModel) {
-        for(here = model->SOI3instances; here!= NULL;
+    for( ; model != NULL; model = SOI3nextModel(model)) {
+        for(here = SOI3instances(model); here!= NULL;
                 here = here->SOI3nextInstance) {
 
             vbs = model->SOI3type * (

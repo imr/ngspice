@@ -21,8 +21,8 @@ B3SOIDDdestroy(GENmodel **inModel)
     B3SOIDDmodel *mod = *(B3SOIDDmodel**) inModel;
 
     while (mod) {
-        B3SOIDDmodel *next_mod = mod->B3SOIDDnextModel;
-        B3SOIDDinstance *inst = mod->B3SOIDDinstances;
+        B3SOIDDmodel *next_mod = B3SOIDDnextModel(mod);
+        B3SOIDDinstance *inst = B3SOIDDinstances(mod);
         while (inst) {
             B3SOIDDinstance *next_inst = inst->B3SOIDDnextInstance;
             FREE(inst);

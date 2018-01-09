@@ -31,10 +31,10 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 	/* switch is on or off while control value is in hysteresis region. */
 
     /*  loop through all the switch models */
-    for( ; model != NULL; model = model->CSWnextModel ) {
+    for( ; model != NULL; model = CSWnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->CSWinstances; here != NULL ;
+        for (here = CSWinstances(model); here != NULL ;
                 here=here->CSWnextInstance) {
 			
 			old_current_state = *(ckt->CKTstates[0] + here->CSWstate);

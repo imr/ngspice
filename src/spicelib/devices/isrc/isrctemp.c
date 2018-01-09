@@ -23,10 +23,10 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->ISRCnextModel ) {
+    for( ; model != NULL; model = ISRCnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->ISRCinstances; here != NULL ;
+        for (here = ISRCinstances(model); here != NULL ;
                 here=here->ISRCnextInstance) {
 
             if(here->ISRCacGiven && !here->ISRCacMGiven) {

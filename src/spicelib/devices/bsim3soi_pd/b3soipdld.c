@@ -291,8 +291,8 @@ double gigT;
 
 double m;
 
-for (; model != NULL; model = model->B3SOIPDnextModel)
-{    for (here = model->B3SOIPDinstances; here != NULL; 
+for (; model != NULL; model = B3SOIPDnextModel(model))
+{    for (here = B3SOIPDinstances(model); here != NULL; 
           here = here->B3SOIPDnextInstance)
      {
           Check = 0;

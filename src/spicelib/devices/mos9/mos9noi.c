@@ -46,8 +46,8 @@ MOS9noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->MOS9nextModel) {
-	for (inst=model->MOS9instances; inst != NULL; inst=inst->MOS9nextInstance) {
+    for (model=firstModel; model != NULL; model=MOS9nextModel(model)) {
+	for (inst=MOS9instances(model); inst != NULL; inst=inst->MOS9nextInstance) {
 
 	    switch (operation) {
 

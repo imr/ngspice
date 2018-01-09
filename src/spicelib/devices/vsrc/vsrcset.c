@@ -25,10 +25,10 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     NG_IGNORE(state);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->VSRCnextModel ) {
+    for( ; model != NULL; model = VSRCnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->VSRCinstances; here != NULL ;
+        for (here = VSRCinstances(model); here != NULL ;
                 here=here->VSRCnextInstance) {
             
             if(here->VSRCposNode == here->VSRCnegNode) {
@@ -65,9 +65,9 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     VSRCinstance *here;
 
     for (model = (VSRCmodel *)inModel; model != NULL;
-	    model = model->VSRCnextModel)
+	    model = VSRCnextModel(model))
     {
-        for (here = model->VSRCinstances; here != NULL;
+        for (here = VSRCinstances(model); here != NULL;
                 here=here->VSRCnextInstance)
 	{
 	    if (here->VSRCbranch > 0)

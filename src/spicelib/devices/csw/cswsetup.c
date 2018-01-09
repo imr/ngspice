@@ -23,7 +23,7 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CSWinstance *here;
 
     /*  loop through all the current source models */
-    for( ; model != NULL; model = model->CSWnextModel ) {
+    for( ; model != NULL; model = CSWnextModel(model) ) {
         /* Default Value Processing for Switch Model */
         if (!model->CSWthreshGiven) {
             model->CSWiThreshold = 0;
@@ -41,7 +41,7 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->CSWinstances; here != NULL ;
+        for (here = CSWinstances(model); here != NULL ;
                 here=here->CSWnextInstance) {
 
             /* Default Value Processing for Switch Instance */

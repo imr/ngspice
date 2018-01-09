@@ -30,8 +30,8 @@ CKTcircuit *ckt)
 B4SOImodel *model = (B4SOImodel*)inModel;
 B4SOIinstance *here;
 
-    for (; model ; model = model->B4SOInextModel) 
-    {    for (here = model->B4SOIinstances; here; here = here->B4SOInextInstance)
+    for (; model ; model = B4SOInextModel(model)) 
+    {    for (here = B4SOIinstances(model); here; here = here->B4SOInextInstance)
          {
               if(!here->B4SOIicVBSGiven) 
               {  here->B4SOIicVBS = *(ckt->CKTrhs + here->B4SOIbNode) 

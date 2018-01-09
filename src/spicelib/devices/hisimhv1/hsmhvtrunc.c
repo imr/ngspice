@@ -33,8 +33,8 @@ int HSMHVtrunc(
   double debugtemp=0.0 ;
 #endif /* STEPDEBUG */
   
-  for ( ;model != NULL ;model = model->HSMHVnextModel ) {
-    for ( here=model->HSMHVinstances ;here!=NULL ;
+  for ( ;model != NULL ;model = HSMHVnextModel(model) ) {
+    for ( here=HSMHVinstances(model) ;here!=NULL ;
 	  here = here->HSMHVnextInstance ) {
 #ifdef STEPDEBUG
       debugtemp = *timeStep;

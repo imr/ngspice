@@ -89,15 +89,12 @@ typedef struct sNBJT2instance {
 
 /* per model data */
 typedef struct sNBJT2model {	/* model structure for a bjt */
-  int NBJT2modType;		/* type index of this device type */
-  struct sNBJT2model *NBJT2nextModel;	/* pointer to next possible model in
-					 * linked list */
-  NBJT2instance *NBJT2instances;/* pointer to list of instances that have
-				 * this model */
-  IFuid NBJT2modName;		/* pointer to character string naming this
-				 * model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define NBJT2modType            gen.GENmodType
+#define NBJT2nextModel(inst)    ((struct sNBJT2model*)((inst)->gen.GENnextModel))
+#define NBJT2instances(inst)    ((NBJT2instance*)((inst)->gen.GENinstances))
+#define NBJT2modName            gen.GENmodName
 
   /* Everything below here is numerical-device-specific */
   MESHcard *NBJT2xMeshes;	/* list of xmesh cards */

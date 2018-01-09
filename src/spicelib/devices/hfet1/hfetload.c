@@ -86,8 +86,8 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
 
     double m;
 
-    for( ; model != NULL; model = model->HFETAnextModel ) {
-        for (here = model->HFETAinstances; here != NULL ;
+    for( ; model != NULL; model = HFETAnextModel(model) ) {
+        for (here = HFETAinstances(model); here != NULL ;
                 here=here->HFETAnextInstance) {
 
             vcrit = here->HFETAvcrit;

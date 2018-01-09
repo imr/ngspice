@@ -18,8 +18,8 @@ DIOtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
 
-    for( ; model != NULL; model = model->DIOnextModel) {
-        for(here=model->DIOinstances;here!=NULL;here = here->DIOnextInstance){
+    for( ; model != NULL; model = DIOnextModel(model)) {
+        for(here=DIOinstances(model);here!=NULL;here = here->DIOnextInstance){
             CKTterr(here->DIOcapCharge,ckt,timeStep);
         }
     }

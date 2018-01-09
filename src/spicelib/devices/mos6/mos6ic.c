@@ -22,8 +22,8 @@ MOS6getic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->MOS6nextModel) {
-        for(here = model->MOS6instances; here ; here = here->MOS6nextInstance) {
+    for( ; model ; model = MOS6nextModel(model)) {
+        for(here = MOS6instances(model); here ; here = here->MOS6nextInstance) {
         
             if(!here->MOS6icVBSGiven) {
                 here->MOS6icVBS = 

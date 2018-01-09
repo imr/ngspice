@@ -19,8 +19,8 @@ BJTdestroy(GENmodel **inModel)
     BJTmodel *mod = *(BJTmodel**) inModel;
 
     while (mod) {
-        BJTmodel *next_mod = mod->BJTnextModel;
-        BJTinstance *inst = mod->BJTinstances;
+        BJTmodel *next_mod = BJTnextModel(mod);
+        BJTinstance *inst = BJTinstances(mod);
         while (inst) {
             BJTinstance *next_inst = inst->BJTnextInstance;
             FREE(inst->BJTsens);

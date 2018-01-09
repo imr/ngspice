@@ -22,8 +22,8 @@ MESgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->MESnextModel) {
-        for(here = model->MESinstances; here ; here = here->MESnextInstance) {
+    for( ; model ; model = MESnextModel(model)) {
+        for(here = MESinstances(model); here ; here = here->MESnextInstance) {
 
             if(!here->MESicVDSGiven) {
                 here->MESicVDS = 

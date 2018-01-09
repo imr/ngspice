@@ -21,8 +21,8 @@ B3SOIFDdestroy(GENmodel **inModel)
     B3SOIFDmodel *mod = *(B3SOIFDmodel**) inModel;
 
     while (mod) {
-        B3SOIFDmodel *next_mod = mod->B3SOIFDnextModel;
-        B3SOIFDinstance *inst = mod->B3SOIFDinstances;
+        B3SOIFDmodel *next_mod = B3SOIFDnextModel(mod);
+        B3SOIFDinstance *inst = B3SOIFDinstances(mod);
         while (inst) {
             B3SOIFDinstance *next_inst = inst->B3SOIFDnextInstance;
             FREE(inst);

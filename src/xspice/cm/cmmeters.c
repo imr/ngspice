@@ -109,8 +109,8 @@ double cm_netlist_get_c(void)
     /* Scan through all capacitor instances and add in values */
     /* of any capacitors connected to cmeter input */
 
-    for(cap_model = cap_head; cap_model; cap_model = cap_model->CAPnextModel) {
-        for(cap_inst = cap_model->CAPinstances;
+    for(cap_model = cap_head; cap_model; cap_model = CAPnextModel(cap_model)) {
+        for(cap_inst = CAPinstances(cap_model);
                 cap_inst;
                 cap_inst = cap_inst->CAPnextInstance) {
             if((cmeter_node == cap_inst->CAPposNode) ||
@@ -136,8 +136,8 @@ double cm_netlist_get_c(void)
     /* Scan through all voltage source instances and add in values */
     /* of any capacitors connected to cmeter input through voltage source */
 
-    for(vsrc_model = vsrc_head; vsrc_model; vsrc_model = vsrc_model->VSRCnextModel) {
-        for(vsrc_inst = vsrc_model->VSRCinstances;
+    for(vsrc_model = vsrc_head; vsrc_model; vsrc_model = VSRCnextModel(vsrc_model)) {
+        for(vsrc_inst = VSRCinstances(vsrc_model);
                 vsrc_inst;
                 vsrc_inst = vsrc_inst->VSRCnextInstance) {
 
@@ -160,8 +160,8 @@ double cm_netlist_get_c(void)
             /* Scan through all capacitor instances and add in values */
             /* of any capacitors connected to the voltage source node */
 
-            for(cap_model = cap_head; cap_model; cap_model = cap_model->CAPnextModel) {
-                for(cap_inst = cap_model->CAPinstances;
+            for(cap_model = cap_head; cap_model; cap_model = CAPnextModel(cap_model)) {
+                for(cap_inst = CAPinstances(cap_model);
                         cap_inst;
                         cap_inst = cap_inst->CAPnextInstance) {
                     if((vsrc_node == cap_inst->CAPposNode) ||
@@ -240,8 +240,8 @@ double cm_netlist_get_l(void)
     /* Scan through all inductor instances and add in values */
     /* of any inductors connected to lmeter input */
 
-    for(ind_model = ind_head; ind_model; ind_model = ind_model->INDnextModel) {
-        for(ind_inst = ind_model->INDinstances;
+    for(ind_model = ind_head; ind_model; ind_model = INDnextModel(ind_model)) {
+        for(ind_inst = INDinstances(ind_model);
                 ind_inst;
                 ind_inst = ind_inst->INDnextInstance) {
             if((lmeter_node == ind_inst->INDposNode) ||
@@ -267,8 +267,8 @@ double cm_netlist_get_l(void)
     /* Scan through all voltage source instances and add in values */
     /* of any inductors connected to lmeter input through voltage source */
 
-    for(vsrc_model = vsrc_head; vsrc_model; vsrc_model = vsrc_model->VSRCnextModel) {
-        for(vsrc_inst = vsrc_model->VSRCinstances;
+    for(vsrc_model = vsrc_head; vsrc_model; vsrc_model = VSRCnextModel(vsrc_model)) {
+        for(vsrc_inst = VSRCinstances(vsrc_model);
                 vsrc_inst;
                 vsrc_inst = vsrc_inst->VSRCnextInstance) {
 
@@ -291,8 +291,8 @@ double cm_netlist_get_l(void)
             /* Scan through all inductor instances and add in values */
             /* of any inductors connected to the voltage source node */
 
-            for(ind_model = ind_head; ind_model; ind_model = ind_model->INDnextModel) {
-                for(ind_inst = ind_model->INDinstances;
+            for(ind_model = ind_head; ind_model; ind_model = INDnextModel(ind_model)) {
+                for(ind_inst = INDinstances(ind_model);
                         ind_inst;
                         ind_inst = ind_inst->INDnextInstance) {
                     if((vsrc_node == ind_inst->INDposNode) ||

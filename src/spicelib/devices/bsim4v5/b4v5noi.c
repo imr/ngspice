@@ -119,8 +119,8 @@ int i;
         ""                  /* total transistor noise */
     };
 
-    for (; model != NULL; model = model->BSIM4v5nextModel)
-    {    for (here = model->BSIM4v5instances; here != NULL;
+    for (; model != NULL; model = BSIM4v5nextModel(model))
+    {    for (here = BSIM4v5instances(model); here != NULL;
               here = here->BSIM4v5nextInstance)
          {    pParam = here->pParam;
               switch (operation)

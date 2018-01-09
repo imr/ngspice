@@ -911,14 +911,12 @@ typedef struct sHSMHVinstance {
 /* per model data */
 
 typedef struct sHSMHVmodel {     /* model structure for a resistor */
-  int HSMHVmodType;    		/* type index of this device type */
-  struct sHSMHVmodel *HSMHVnextModel; /* pointer to next possible model 
-					 in linked list */
-  HSMHVinstance * HSMHVinstances;	/* pointer to list of instances 
-				   that have this model */
-  IFuid HSMHVmodName;       	/* pointer to the name of this model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define HSMHVmodType            gen.GENmodType
+#define HSMHVnextModel(inst)    ((struct sHSMHVmodel*)((inst)->gen.GENnextModel))
+#define HSMHVinstances(inst)    ((HSMHVinstance*)((inst)->gen.GENinstances))
+#define HSMHVmodName            gen.GENmodName
 
   int HSMHV_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV_level;               /* level */

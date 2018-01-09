@@ -44,8 +44,8 @@ int HSM2pzLoad(
   
   NG_IGNORE(ckt);
 
-  for ( ;model != NULL ;model = model->HSM2nextModel ) {
-    for ( here = model->HSM2instances ;here!= NULL ;
+  for ( ;model != NULL ;model = HSM2nextModel(model) ) {
+    for ( here = HSM2instances(model) ;here!= NULL ;
 	  here = here->HSM2nextInstance ) {
       if ( here->HSM2_mode >= 0 ) {
 	gm = here->HSM2_gm;

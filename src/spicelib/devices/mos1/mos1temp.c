@@ -34,7 +34,7 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
     double fermis;
     double vfb;
     /* loop through all the resistor models */
-    for( ; model != NULL; model = model->MOS1nextModel) {
+    for( ; model != NULL; model = MOS1nextModel(model)) {
         
 
         /* perform model defaulting */
@@ -114,7 +114,7 @@ MOS1temp(GENmodel *inModel, CKTcircuit *ckt)
 
         
         /* loop through all instances of the model */
-        for(here = model->MOS1instances; here!= NULL; 
+        for(here = MOS1instances(model); here!= NULL; 
                 here = here->MOS1nextInstance) {
             double czbd;    /* zero voltage bulk-drain capacitance */
             double czbdsw;  /* zero voltage bulk-drain sidewall capacitance */

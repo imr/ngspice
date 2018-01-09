@@ -318,12 +318,12 @@ struct bsim3v0SizeDependParam
 
 typedef struct sBSIM3v0model 
 {
-    int BSIM3v0modType;
-    struct sBSIM3v0model *BSIM3v0nextModel;
-    BSIM3v0instance *BSIM3v0instances;
-    IFuid BSIM3v0modName; 
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define BSIM3v0modType            gen.GENmodType
+#define BSIM3v0nextModel(inst)    ((struct sBSIM3v0model*)((inst)->gen.GENnextModel))
+#define BSIM3v0instances(inst)    ((BSIM3v0instance*)((inst)->gen.GENinstances))
+#define BSIM3v0modName            gen.GENmodName
 
     int BSIM3v0type;
 

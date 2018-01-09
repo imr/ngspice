@@ -44,7 +44,7 @@ LTRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
    */
 
   /* loop through all the transmission line models */
-  for (; model != NULL; model = model->LTRAnextModel) {
+  for (; model != NULL; model = LTRAnextModel(model)) {
 
     switch (model->LTRAspecialCase) {
 
@@ -103,7 +103,7 @@ LTRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
     y0exp_i = y0_r * explambda_i + y0_i * explambda_r;
 
     /* loop through all the instances of the model */
-    for (here = model->LTRAinstances; here != NULL;
+    for (here = LTRAinstances(model); here != NULL;
 	here = here->LTRAnextInstance) {
 
       *(here->LTRAibr1Pos1Ptr + 0) += y0_r;

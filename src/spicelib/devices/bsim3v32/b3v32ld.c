@@ -171,8 +171,8 @@ ChargeComputationNeeded =
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
 #ifndef USE_OMP
-for (; model != NULL; model = model->BSIM3v32nextModel)
-{    for (here = model->BSIM3v32instances; here != NULL;
+for (; model != NULL; model = BSIM3v32nextModel(model))
+{    for (here = BSIM3v32instances(model); here != NULL;
           here = here->BSIM3v32nextInstance)
      {
 #endif

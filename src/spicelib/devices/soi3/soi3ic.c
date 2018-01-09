@@ -37,8 +37,8 @@ SOI3getic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->SOI3nextModel) {
-        for(here = model->SOI3instances; here ; here = here->SOI3nextInstance) {
+    for( ; model ; model = SOI3nextModel(model)) {
+        for(here = SOI3instances(model); here ; here = here->SOI3nextInstance) {
 	    
 	    if(!here->SOI3icVBSGiven) {
                 here->SOI3icVBS =

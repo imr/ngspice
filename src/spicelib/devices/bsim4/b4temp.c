@@ -128,7 +128,7 @@ double vtfbphi2eot, phieot, TempRatioeot, Vtm0eot, Vtmeot,vbieot;
 int Size_Not_Found, i;
 
     /*  loop through all the BSIM4 device models */
-    for (; model != NULL; model = model->BSIM4nextModel)
+    for (; model != NULL; model = BSIM4nextModel(model))
     {    Temp = ckt->CKTtemp;
          if (model->BSIM4SbulkJctPotential < 0.1)
          {   model->BSIM4SbulkJctPotential = 0.1;
@@ -442,7 +442,7 @@ int Size_Not_Found, i;
 
 
          /* loop through all the instances of the model */
-         for (here = model->BSIM4instances; here != NULL;
+         for (here = BSIM4instances(model); here != NULL;
               here = here->BSIM4nextInstance)
          {
               pSizeDependParamKnot = model->pSizeDependParamKnot;

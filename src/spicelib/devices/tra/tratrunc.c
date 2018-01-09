@@ -23,10 +23,10 @@ TRAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     double tmp;
 
     /*  loop through all the transmission line models */
-    for( ; model != NULL; model = model->TRAnextModel ) {
+    for( ; model != NULL; model = TRAnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->TRAinstances; here != NULL ;
+        for (here = TRAinstances(model); here != NULL ;
                 here=here->TRAnextInstance) {
 
             v1 = ( *(ckt->CKTrhsOld + here->TRAposNode2)

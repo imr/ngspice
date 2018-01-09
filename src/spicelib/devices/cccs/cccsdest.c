@@ -14,8 +14,8 @@ CCCSdestroy(GENmodel **inModel)
     CCCSmodel *mod = *(CCCSmodel**) inModel;
 
     while (mod) {
-        CCCSmodel *next_mod = mod->CCCSnextModel;
-        CCCSinstance *inst = mod->CCCSinstances;
+        CCCSmodel *next_mod = CCCSnextModel(mod);
+        CCCSinstance *inst = CCCSinstances(mod);
         while (inst) {
             CCCSinstance *next_inst = inst->CCCSnextInstance;
             FREE(inst);

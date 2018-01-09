@@ -29,8 +29,8 @@ MOS1convTest(GENmodel *inModel, CKTcircuit *ckt)
     double vgdo;
     double tol;
 
-    for( ; model != NULL; model = model->MOS1nextModel) {
-        for(here = model->MOS1instances; here!= NULL;
+    for( ; model != NULL; model = MOS1nextModel(model)) {
+        for(here = MOS1instances(model); here!= NULL;
                 here = here->MOS1nextInstance) {
         
             vbs = model->MOS1type * ( 

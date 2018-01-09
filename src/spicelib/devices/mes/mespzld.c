@@ -29,9 +29,9 @@ MESpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     double m;
 
-    for( ; model != NULL; model = model->MESnextModel ) {
+    for( ; model != NULL; model = MESnextModel(model) ) {
         
-        for( here = model->MESinstances; here != NULL; 
+        for( here = MESinstances(model); here != NULL; 
                 here = here->MESnextInstance) {
 
             m = here->MESm;

@@ -23,7 +23,7 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
   NG_IGNORE(ckt);
 
   /* loop through all the transmission line models */
-  for (; model != NULL; model = model->LTRAnextModel) {
+  for (; model != NULL; model = LTRAnextModel(model)) {
     /*
      * if(!model->LTRAtdGiven) { model->LTRAtd = model->LTRAnl/model->LTRAf;
      * }
@@ -147,7 +147,7 @@ LTRAtemp(GENmodel *inModel, CKTcircuit *ckt)
     }
 
     /* loop through all the instances of the model */
-    for (here = model->LTRAinstances; here != NULL;
+    for (here = LTRAinstances(model); here != NULL;
 	here = here->LTRAnextInstance) {
 
       here->LTRAv1 = NULL;

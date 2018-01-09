@@ -80,10 +80,10 @@ JFETload(GENmodel *inModel, CKTcircuit *ckt)
     double m;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->JFETnextModel ) {
+    for( ; model != NULL; model = JFETnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->JFETinstances; here != NULL ;
+        for (here = JFETinstances(model); here != NULL ;
                 here=here->JFETnextInstance) {
 
             /*

@@ -55,7 +55,7 @@ NBJTload(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NBJTnextModel) {
+  for (; model != NULL; model = NBJTnextModel(model)) {
     FieldDepMobility = model->NBJTmodels->MODLfieldDepMobility;
     Srh = model->NBJTmodels->MODLsrh;
     Auger = model->NBJTmodels->MODLauger;
@@ -91,7 +91,7 @@ NBJTload(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NBJTpInfo->intCoeff, deltaNorm);
     }
     /* loop through all the instances of the model */
-    for (inst = model->NBJTinstances; inst != NULL;
+    for (inst = NBJTinstances(model); inst != NULL;
 	inst = inst->NBJTnextInstance) {
 
       pDevice = inst->NBJTpDevice;

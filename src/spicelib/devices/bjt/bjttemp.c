@@ -38,7 +38,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     double dt;
 
     /*  loop through all the bipolar models */
-    for( ; model != NULL; model = model->BJTnextModel ) {
+    for( ; model != NULL; model = BJTnextModel(model) ) {
 
         if(!model->BJTtnomGiven) model->BJTtnom = ckt->CKTnomTemp;
         vtnom = CONSTKoverQ * model->BJTtnom;
@@ -100,7 +100,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 (1 + model->BJTjunctionExpBC);
 
         /* loop through all the instances of the model */
-        for (here = model->BJTinstances; here != NULL ;
+        for (here = BJTinstances(model); here != NULL ;
                 here=here->BJTnextInstance) {
 
             double arg1, pbfact1, egfet1;

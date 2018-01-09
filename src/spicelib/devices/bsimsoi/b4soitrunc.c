@@ -34,8 +34,8 @@ register B4SOIinstance *here;
     double debugtemp;
 #endif /* STEPDEBUG */
 
-    for (; model != NULL; model = model->B4SOInextModel)
-    {    for (here = model->B4SOIinstances; here != NULL;
+    for (; model != NULL; model = B4SOInextModel(model))
+    {    for (here = B4SOIinstances(model); here != NULL;
               here = here->B4SOInextInstance)
          {
 

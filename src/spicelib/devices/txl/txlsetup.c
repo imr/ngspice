@@ -85,7 +85,7 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
   NG_IGNORE(state);
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->TXLnextModel ) {
+    for( ; model != NULL; model = TXLnextModel(model) ) {
 
         if (!model->Rgiven) {
            SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -114,7 +114,7 @@ TXLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->TXLinstances; here != NULL ;
+        for (here = TXLinstances(model); here != NULL ;
                 here=here->TXLnextInstance) {
             
 /* macro to make elements with built in test for out of memory */
@@ -166,8 +166,8 @@ TXLunsetup(GENmodel *inModel, CKTcircuit *ckt)
   TXLinstance *here;
   
   for (model = (TXLmodel *) inModel; model != NULL;
-      model = model->TXLnextModel) {
-    for (here = model->TXLinstances; here != NULL;
+      model = TXLnextModel(model)) {
+    for (here = TXLinstances(model); here != NULL;
         here = here->TXLnextInstance) {
   
           if (here->TXLibr2) {

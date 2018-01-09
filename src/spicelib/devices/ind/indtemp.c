@@ -24,10 +24,10 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
     double tc1, tc2;
 
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->INDnextModel ) {
+    for( ; model != NULL; model = INDnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->INDinstances; here != NULL ;
+        for (here = INDinstances(model); here != NULL ;
                 here=here->INDnextInstance) {
 
             /* Default Value Processing for Inductor Instance */

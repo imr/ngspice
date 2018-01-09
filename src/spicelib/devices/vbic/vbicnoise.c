@@ -58,8 +58,8 @@ VBICnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *
         ""                  /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->VBICnextModel) {
-        for (inst=model->VBICinstances; inst != NULL;
+    for (model=firstModel; model != NULL; model=VBICnextModel(model)) {
+        for (inst=VBICinstances(model); inst != NULL;
                 inst=inst->VBICnextInstance) {
 
             switch (operation) {

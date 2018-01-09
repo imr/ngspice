@@ -56,9 +56,9 @@ NUMD2dump(GENmodel *inModel, CKTcircuit *ckt)
     return;
   }
 
-  for (; model != NULL; model = model->NUMD2nextModel) {
+  for (; model != NULL; model = NUMD2nextModel(model)) {
     output = model->NUMD2outputs;
-    for (inst = model->NUMD2instances; inst != NULL;
+    for (inst = NUMD2instances(model); inst != NULL;
 	inst = inst->NUMD2nextInstance) {
 
       if (inst->NUMD2printGiven) {
@@ -143,9 +143,9 @@ NUMD2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 
   NG_IGNORE(ckt);
 
-  for (; model != NULL; model = model->NUMD2nextModel) {
+  for (; model != NULL; model = NUMD2nextModel(model)) {
     output = model->NUMD2outputs;
-    for (inst = model->NUMD2instances; inst != NULL;
+    for (inst = NUMD2instances(model); inst != NULL;
 	inst = inst->NUMD2nextInstance) {
 
       if (output->OUTPstats) {

@@ -56,9 +56,9 @@ NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
     return;
   }
 
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     output = model->NBJT2outputs;
-    for (inst = model->NBJT2instances; inst != NULL;
+    for (inst = NBJT2instances(model); inst != NULL;
 	inst = inst->NBJT2nextInstance) {
 
       if (inst->NBJT2printGiven) {
@@ -156,9 +156,9 @@ NBJT2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 
   NG_IGNORE(ckt);
 
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     output = model->NBJT2outputs;
-    for (inst = model->NBJT2instances; inst != NULL;
+    for (inst = NBJT2instances(model); inst != NULL;
 	inst = inst->NBJT2nextInstance) {
 
       if (output->OUTPstats) {

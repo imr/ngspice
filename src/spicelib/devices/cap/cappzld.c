@@ -26,8 +26,8 @@ CAPpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     NG_IGNORE(ckt);
 
-    for( ; model != NULL; model = model->CAPnextModel) {
-        for( here = model->CAPinstances;here != NULL; 
+    for( ; model != NULL; model = CAPnextModel(model)) {
+        for( here = CAPinstances(model);here != NULL; 
                 here = here->CAPnextInstance) {
     
             val = here->CAPcapac;

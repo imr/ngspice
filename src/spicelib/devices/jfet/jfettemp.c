@@ -35,7 +35,7 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
     double cjfact,cjfact1;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->JFETnextModel ) {
+    for( ; model != NULL; model = JFETnextModel(model) ) {
 
         if(!(model->JFETtnomGiven)) {
             model->JFETtnom = ckt->CKTnomTemp;
@@ -77,7 +77,7 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* end Sydney University mod */
 
         /* loop through all the instances of the model */
-        for (here = model->JFETinstances; here != NULL ;
+        for (here = JFETinstances(model); here != NULL ;
                 here=here->JFETnextInstance) {
 
             if(!(here->JFETdtempGiven)) {

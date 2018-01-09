@@ -17,10 +17,10 @@ ISRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
     ISRCinstance *here;
     double m;
 
-    for( ; model != NULL; model = model->ISRCnextModel ) {
+    for( ; model != NULL; model = ISRCnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->ISRCinstances; here != NULL ;
+        for (here = ISRCinstances(model); here != NULL ;
                 here=here->ISRCnextInstance) {
 
             double acReal, acImag;

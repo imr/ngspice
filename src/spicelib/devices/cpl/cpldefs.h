@@ -63,14 +63,12 @@ typedef struct sCPLinstance {
 /* per model data */
 
 typedef struct sCPLmodel {       /* model structure for a cpl */
-    int CPLmodType; /* type index of this device type */
-    struct sCPLmodel *CPLnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    CPLinstance * CPLinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid CPLmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define CPLmodType            gen.GENmodType
+#define CPLnextModel(inst)    ((struct sCPLmodel*)((inst)->gen.GENnextModel))
+#define CPLinstances(inst)    ((CPLinstance*)((inst)->gen.GENinstances))
+#define CPLmodName            gen.GENmodName
 
 	double *Rm;
         int Rm_counter;

@@ -34,10 +34,10 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
     double value = 0.0;
 
     /*  loop through all the source models */
-    for( ; model != NULL; model = model->VSRCnextModel ) {
+    for( ; model != NULL; model = VSRCnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->VSRCinstances; here != NULL ;
+        for (here = VSRCinstances(model); here != NULL ;
                 here=here->VSRCnextInstance) {
 
             *(here->VSRCposIbrPtr) += 1.0 ;

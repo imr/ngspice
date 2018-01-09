@@ -243,14 +243,12 @@ typedef struct sMOS6instance {
 
 
 typedef struct sMOS6model {       /* model structure for a resistor */
-    int MOS6modType;    /* type index to this device type */
-    struct sMOS6model *MOS6nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    MOS6instance * MOS6instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MOS6modName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define MOS6modType            gen.GENmodType
+#define MOS6nextModel(inst)    ((struct sMOS6model*)((inst)->gen.GENnextModel))
+#define MOS6instances(inst)    ((MOS6instance*)((inst)->gen.GENinstances))
+#define MOS6modName            gen.GENmodName
 
     int MOS6type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS6tnom;        /* temperature at which parameters measured */

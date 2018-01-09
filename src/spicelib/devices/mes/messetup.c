@@ -24,7 +24,7 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->MESnextModel ) {
+    for( ; model != NULL; model = MESnextModel(model) ) {
 
         if( (model->MEStype != NMF) && (model->MEStype != PMF) ) {
             model->MEStype = NMF;
@@ -73,7 +73,7 @@ MESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	}
 
         /* loop through all the instances of the model */
-        for (here = model->MESinstances; here != NULL ;
+        for (here = MESinstances(model); here != NULL ;
                 here=here->MESnextInstance) {
             
             if(!here->MESareaGiven) {
@@ -163,9 +163,9 @@ MESunsetup(GENmodel *inModel, CKTcircuit *ckt)
     MESinstance *here;
 
     for (model = (MESmodel *)inModel; model != NULL;
-	    model = model->MESnextModel)
+	    model = MESnextModel(model))
     {
-        for (here = model->MESinstances; here != NULL;
+        for (here = MESinstances(model); here != NULL;
                 here=here->MESnextInstance)
 	{
 	    if (here->MESdrainPrimeNode > 0

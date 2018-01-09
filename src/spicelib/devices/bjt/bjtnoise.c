@@ -50,8 +50,8 @@ BJTnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total transistor noise */
     };
 
-for (model=firstModel; model != NULL; model=model->BJTnextModel) {
-	for (inst=model->BJTinstances; inst != NULL;
+for (model=firstModel; model != NULL; model=BJTnextModel(model)) {
+	for (inst=BJTinstances(model); inst != NULL;
 		inst=inst->BJTnextInstance) {
 
 	    switch (operation) {

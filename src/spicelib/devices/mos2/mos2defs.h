@@ -320,14 +320,12 @@ typedef struct sMOS2instance {
          */
 
 typedef struct sMOS2model {       /* model structure for a resistor */
-    int MOS2modType;    /* type index of this device type */
-    struct sMOS2model *MOS2nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    MOS2instance * MOS2instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MOS2modName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define MOS2modType            gen.GENmodType
+#define MOS2nextModel(inst)    ((struct sMOS2model*)((inst)->gen.GENnextModel))
+#define MOS2instances(inst)    ((MOS2instance*)((inst)->gen.GENinstances))
+#define MOS2modName            gen.GENmodName
 
     int MOS2type;       /* device type : 1 = nmos,  -1 = pmos */
     int MOS2gateType;

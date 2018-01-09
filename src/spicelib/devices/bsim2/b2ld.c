@@ -130,10 +130,10 @@ B2load(GENmodel *inModel, CKTcircuit *ckt)
 
 
     /*  loop through all the B2 device models */
-    for( ; model != NULL; model = model->B2nextModel ) {
+    for( ; model != NULL; model = B2nextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->B2instances; here != NULL ;
+        for (here = B2instances(model); here != NULL ;
                 here=here->B2nextInstance) {
         
             EffectiveLength=here->B2l - model->B2deltaL * 1.e-6;/* m */

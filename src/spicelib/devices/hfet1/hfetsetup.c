@@ -29,7 +29,7 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->HFETAnextModel ) {
+    for( ; model != NULL; model = HFETAnextModel(model) ) {
         if( (model->HFETAtype != NHFET) && (model->HFETAtype != PHFET) ) {
             model->HFETAtype = NHFET;
         }
@@ -229,7 +229,7 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
          KVTO = 0;
         
         /* loop through all the instances of the model */
-        for (here = model->HFETAinstances; here != NULL ;
+        for (here = HFETAinstances(model); here != NULL ;
                 here=here->HFETAnextInstance) {
            
             if(!here->HFETAlengthGiven) {
@@ -407,9 +407,9 @@ HFETAunsetup(GENmodel *inModel, CKTcircuit *ckt)
     HFETAinstance *here;
  
     for (model = (HFETAmodel *)inModel; model != NULL;
-            model = model->HFETAnextModel)
+            model = HFETAnextModel(model))
     {
-        for (here = model->HFETAinstances; here != NULL;
+        for (here = HFETAinstances(model); here != NULL;
                 here=here->HFETAnextInstance)
         {
 	    if (here->HFETAsourcePrmPrmNode > 0

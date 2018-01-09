@@ -31,10 +31,10 @@ CAPsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double ival;
 
     /*  loop through all the capacitor models */
-    for( ; model != NULL; model = model->CAPnextModel ) {
+    for( ; model != NULL; model = CAPnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->CAPinstances; here != NULL ;
+        for (here = CAPinstances(model); here != NULL ;
                     here=here->CAPnextInstance) {
 
             if(here->CAPsenParmNo){

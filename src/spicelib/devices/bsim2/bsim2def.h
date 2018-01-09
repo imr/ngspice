@@ -237,14 +237,12 @@ struct bsim2SizeDependParam
 /* per model data */
 
 typedef struct sBSIM2model {       	/* model structure for a resistor */
-    int B2modType;    		/* type index of this device type */
-    struct sBSIM2model *B2nextModel; /* pointer to next possible model 
-                                         *in linked list */
-    B2instance * B2instances;	/* pointer to list of instances 
-                                   	 * that have this model */
-    IFuid B2modName;       		/* pointer to the name of this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define B2modType            gen.GENmodType
+#define B2nextModel(inst)    ((struct sBSIM2model*)((inst)->gen.GENnextModel))
+#define B2instances(inst)    ((B2instance*)((inst)->gen.GENinstances))
+#define B2modName            gen.GENmodName
 
     int B2type;       		/* device type: 1 = nmos,  -1 = pmos */
     int pad;

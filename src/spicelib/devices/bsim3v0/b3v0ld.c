@@ -119,8 +119,8 @@ struct bsim3v0SizeDependParam *pParam;
 int ByPass, Check, ChargeComputationNeeded = 0, error;
 double m = 1.0;
 
-for (; model != NULL; model = model->BSIM3v0nextModel)
-{    for (here = model->BSIM3v0instances; here != NULL; 
+for (; model != NULL; model = BSIM3v0nextModel(model))
+{    for (here = BSIM3v0instances(model); here != NULL; 
           here = here->BSIM3v0nextInstance)
      {
           Check = 1;

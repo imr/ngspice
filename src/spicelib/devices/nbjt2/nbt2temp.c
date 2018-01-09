@@ -33,7 +33,7 @@ NBJT2temp(GENmodel *inModel, CKTcircuit *ckt)
 
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     methods = model->NBJT2methods;
     models = model->NBJT2models;
     options = model->NBJT2options;
@@ -55,7 +55,7 @@ NBJT2temp(GENmodel *inModel, CKTcircuit *ckt)
     MatchingMobility = models->MODLmatchingMobility;
     OneCarrier = methods->METHoneCarrier;
 
-    for (inst = model->NBJT2instances; inst != NULL;
+    for (inst = NBJT2instances(model); inst != NULL;
 	inst = inst->NBJT2nextInstance) {
 
       startTime = SPfrontEnd->IFseconds();

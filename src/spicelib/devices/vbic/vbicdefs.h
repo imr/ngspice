@@ -350,15 +350,12 @@ typedef struct sVBICinstance {
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
-    int VBICmodType;                  /* type index of this device type */
-    struct sVBICmodel *VBICnextModel; /* pointer to next possible model in 
-                                         linked list */
-    VBICinstance * VBICinstances;     /* pointer to list of instances that have
-                                         this model */
-    IFuid VBICmodName;                /* pointer to character string naming 
-                                         this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define VBICmodType            gen.GENmodType
+#define VBICnextModel(inst)    ((struct sVBICmodel*)((inst)->gen.GENnextModel))
+#define VBICinstances(inst)    ((VBICinstance*)((inst)->gen.GENinstances))
+#define VBICmodName            gen.GENmodName
 
     int VBICtype;
 

@@ -23,8 +23,8 @@ VBICtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     VBICmodel *model = (VBICmodel*)inModel;
     VBICinstance *here;
 
-    for( ; model != NULL; model = model->VBICnextModel) {
-        for(here=model->VBICinstances;here!=NULL;
+    for( ; model != NULL; model = VBICnextModel(model)) {
+        for(here=VBICinstances(model);here!=NULL;
             here = here->VBICnextInstance){
 
             CKTterr(here->VBICqbe,ckt,timeStep);

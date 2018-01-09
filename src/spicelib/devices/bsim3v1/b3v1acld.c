@@ -32,11 +32,11 @@ BSIM3v1acLoad (GENmodel * inModel, CKTcircuit * ckt)
   double m;
 
   omega = ckt->CKTomega;
-  for (; model != NULL; model = model->BSIM3v1nextModel)
+  for (; model != NULL; model = BSIM3v1nextModel(model))
     {
 
 
-      for (here = model->BSIM3v1instances; here != NULL;
+      for (here = BSIM3v1instances(model); here != NULL;
 	   here = here->BSIM3v1nextInstance)
 	{
 	  if (here->BSIM3v1mode >= 0)

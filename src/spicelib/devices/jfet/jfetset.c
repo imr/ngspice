@@ -27,7 +27,7 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->JFETnextModel ) {
+    for( ; model != NULL; model = JFETnextModel(model) ) {
 
         if( (model->JFETtype != NJF) && (model->JFETtype != PJF) ) {
             model->JFETtype = NJF;
@@ -100,7 +100,7 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->JFETinstances; here != NULL ;
+        for (here = JFETinstances(model); here != NULL ;
                 here=here->JFETnextInstance) {
 
             if(!here->JFETareaGiven) {
@@ -190,9 +190,9 @@ JFETunsetup(GENmodel *inModel, CKTcircuit *ckt)
     JFETinstance *here;
 
     for (model = (JFETmodel *)inModel; model != NULL;
-            model = model->JFETnextModel)
+            model = JFETnextModel(model))
     {
-        for (here = model->JFETinstances; here != NULL;
+        for (here = JFETinstances(model); here != NULL;
                 here=here->JFETnextInstance)
         {
             if (here->JFETdrainPrimeNode > 0

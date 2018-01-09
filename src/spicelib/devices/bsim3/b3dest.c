@@ -24,8 +24,8 @@ BSIM3destroy(GENmodel **inModel)
     #endif
 
     while (mod) {
-        BSIM3model *next_mod = mod->BSIM3nextModel;
-        BSIM3instance *inst = mod->BSIM3instances;
+        BSIM3model *next_mod = BSIM3nextModel(mod);
+        BSIM3instance *inst = BSIM3instances(mod);
 
         /** added to get rid of link list pSizeDependParamKnot **/
         struct bsim3SizeDependParam *p = mod->pSizeDependParamKnot;

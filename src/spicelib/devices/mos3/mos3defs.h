@@ -316,14 +316,12 @@ typedef struct sMOS3instance {
      */
 
 typedef struct sMOS3model {       /* model structure for a resistor */
-    int MOS3modType;    /* type index of this device type */
-    struct sMOS3model *MOS3nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    MOS3instance * MOS3instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MOS3modName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define MOS3modType            gen.GENmodType
+#define MOS3nextModel(inst)    ((struct sMOS3model*)((inst)->gen.GENnextModel))
+#define MOS3instances(inst)    ((MOS3instance*)((inst)->gen.GENinstances))
+#define MOS3modName            gen.GENmodName
 
     int MOS3type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS3tnom;        /* temperature at which parameters measured */

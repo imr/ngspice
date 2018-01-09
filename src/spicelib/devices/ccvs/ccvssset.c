@@ -23,10 +23,10 @@ CCVSsSetup(SENstruct *info, GENmodel *inModel)
     CCVSinstance *here;
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->CCVSnextModel ) {
+    for( ; model != NULL; model = CCVSnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->CCVSinstances; here != NULL ;
+        for (here = CCVSinstances(model); here != NULL ;
                 here=here->CCVSnextInstance) {
 
             if(here->CCVSsenParmNo){

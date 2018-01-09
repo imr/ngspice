@@ -71,8 +71,8 @@ int HSM2getic(
    * external nodes to get values
    */
 
-  for ( ;model ;model = model->HSM2nextModel ) {
-    for ( here = model->HSM2instances; here ;here = here->HSM2nextInstance ) {
+  for ( ;model ;model = HSM2nextModel(model) ) {
+    for ( here = HSM2instances(model); here ;here = here->HSM2nextInstance ) {
       if (!here->HSM2_icVBS_Given) {
 	here->HSM2_icVBS = 
 	  *(ckt->CKTrhs + here->HSM2bNode) - 

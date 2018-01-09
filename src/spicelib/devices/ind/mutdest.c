@@ -16,8 +16,8 @@ MUTdestroy(GENmodel **inModel)
     MUTmodel *mod = *(MUTmodel**) inModel;
 
     while (mod) {
-        MUTmodel *next_mod = mod->MUTnextModel;
-        MUTinstance *inst = mod->MUTinstances;
+        MUTmodel *next_mod = MUTnextModel(mod);
+        MUTinstance *inst = MUTinstances(mod);
         while (inst) {
             MUTinstance *next_inst = inst->MUTnextInstance;
             FREE(inst);

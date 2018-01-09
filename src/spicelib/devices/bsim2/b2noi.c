@@ -45,8 +45,8 @@ B2noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total transistor noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->B2nextModel) {
-	for (inst=model->B2instances; inst != NULL; inst=inst->B2nextInstance) {
+    for (model=firstModel; model != NULL; model=B2nextModel(model)) {
+	for (inst=B2instances(model); inst != NULL; inst=inst->B2nextInstance) {
         
 	    switch (operation) {
 

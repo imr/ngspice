@@ -33,10 +33,10 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
            XQbcp_Vbcp;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->VBICnextModel) {
+    for( ; model != NULL; model = VBICnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for( here = model->VBICinstances; here!= NULL; 
+        for( here = VBICinstances(model); here!= NULL; 
                 here = here->VBICnextInstance) {
 
             Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);

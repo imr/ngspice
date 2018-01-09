@@ -22,8 +22,8 @@ MOS2getic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->MOS2nextModel) {
-        for(here = model->MOS2instances; here ; here = here->MOS2nextInstance) {
+    for( ; model ; model = MOS2nextModel(model)) {
+        for(here = MOS2instances(model); here ; here = here->MOS2nextInstance) {
 
             if(!here->MOS2icVBSGiven) {
                 here->MOS2icVBS = 

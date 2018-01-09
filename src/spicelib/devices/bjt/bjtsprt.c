@@ -27,12 +27,12 @@ BJTsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("BJTS-----------------\n");
     /*  loop through all the BJT models */
-    for( ; model != NULL; model = model->BJTnextModel ) {
+    for( ; model != NULL; model = BJTnextModel(model) ) {
 
         printf("Model name:%s\n",model->BJTmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->BJTinstances; here != NULL ;
+        for (here = BJTinstances(model); here != NULL ;
                 here=here->BJTnextInstance) {
 
             ckt->CKTsenInfo->SEN_parmVal[here->BJTsenParmNo] = here->BJTarea;

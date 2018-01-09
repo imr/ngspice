@@ -15,8 +15,8 @@ NDEVdestroy(GENmodel **inModel)
     NDEVmodel *mod = *(NDEVmodel **) inModel;
 
     while (mod) {
-        NDEVmodel *next_mod = mod->NDEVnextModel;
-        NDEVinstance *inst = mod->NDEVinstances;
+        NDEVmodel *next_mod = NDEVnextModel(mod);
+        NDEVinstance *inst = NDEVinstances(mod);
         while (inst) {
             NDEVinstance *next_inst = inst->NDEVnextInstance;
             FREE(inst);

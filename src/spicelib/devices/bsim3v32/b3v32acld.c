@@ -36,8 +36,8 @@ double ScalingFactor = 1.0e-9;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->BSIM3v32nextModel)
-    {    for (here = model->BSIM3v32instances; here!= NULL;
+    for (; model != NULL; model = BSIM3v32nextModel(model))
+    {    for (here = BSIM3v32instances(model); here!= NULL;
               here = here->BSIM3v32nextInstance)
          {
               if (here->BSIM3v32mode >= 0)

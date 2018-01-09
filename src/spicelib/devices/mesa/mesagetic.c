@@ -20,8 +20,8 @@ MESAgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->MESAnextModel) {
-        for(here = model->MESAinstances; here ; here = here->MESAnextInstance) {
+    for( ; model ; model = MESAnextModel(model)) {
+        for(here = MESAinstances(model); here ; here = here->MESAnextInstance) {
 
             if(!here->MESAicVDSGiven) {
                 here->MESAicVDS = 

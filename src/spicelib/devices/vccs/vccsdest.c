@@ -14,8 +14,8 @@ VCCSdestroy(GENmodel **inModel)
     VCCSmodel *mod = *(VCCSmodel**) inModel;
 
     while (mod) {
-        VCCSmodel *next_mod = mod->VCCSnextModel;
-        VCCSinstance *inst = mod->VCCSinstances;
+        VCCSmodel *next_mod = VCCSnextModel(mod);
+        VCCSinstance *inst = VCCSinstances(mod);
         while (inst) {
             VCCSinstance *next_inst = inst->VCCSnextInstance;
             FREE(inst);

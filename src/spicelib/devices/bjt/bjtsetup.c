@@ -32,7 +32,7 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->BJTnextModel ) {
+    for( ; model != NULL; model = BJTnextModel(model) ) {
 
         if(model->BJTtype != NPN && model->BJTtype != PNP) {
             model->BJTtype = NPN;
@@ -345,7 +345,7 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
  */
 
         /* loop through all the instances of the model */
-        for (here = model->BJTinstances; here != NULL ;
+        for (here = BJTinstances(model); here != NULL ;
                 here=here->BJTnextInstance) {
             CKTnode *tmpNode;
             IFuid tmpName;
@@ -476,9 +476,9 @@ BJTunsetup(
     BJTinstance *here;
 
     for (model = (BJTmodel *)inModel; model != NULL;
-        model = model->BJTnextModel)
+        model = BJTnextModel(model))
     {
-        for (here = model->BJTinstances; here != NULL;
+        for (here = BJTinstances(model); here != NULL;
                 here=here->BJTnextInstance)
         {
            if (here->BJTemitPrimeNode > 0

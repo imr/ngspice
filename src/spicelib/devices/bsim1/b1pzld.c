@@ -53,8 +53,8 @@ B1pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     double m;
 
-    for( ; model != NULL; model = model->B1nextModel) {
-        for(here = model->B1instances; here!= NULL;
+    for( ; model != NULL; model = B1nextModel(model)) {
+        for(here = B1instances(model); here!= NULL;
                 here = here->B1nextInstance) {
         
             if (here->B1mode >= 0) {

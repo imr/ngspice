@@ -23,10 +23,10 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->VSRCnextModel ) {
+    for( ; model != NULL; model = VSRCnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->VSRCinstances; here != NULL ;
+        for (here = VSRCinstances(model); here != NULL ;
                 here=here->VSRCnextInstance) {
 
             if(here->VSRCacGiven && !here->VSRCacMGiven) {

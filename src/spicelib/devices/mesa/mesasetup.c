@@ -27,7 +27,7 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->MESAnextModel ) {
+    for( ; model != NULL; model = MESAnextModel(model) ) {
         if( (model->MESAtype != NMF) ) {
             fprintf(stderr, "Only nmf model type supported, set to nmf\n");
             model->MESAtype = NMF;
@@ -227,7 +227,7 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         model->MESAvcrit = 0.; /* until model has changed */
 
         /* loop through all the instances of the model */
-        for (here = model->MESAinstances; here != NULL ;
+        for (here = MESAinstances(model); here != NULL ;
                 here=here->MESAnextInstance) {
          
             if(!here->MESAlengthGiven) {
@@ -414,9 +414,9 @@ MESAunsetup(GENmodel *inModel, CKTcircuit *ckt)
     MESAinstance *here;
  
     for (model = (MESAmodel *)inModel; model != NULL;
-            model = model->MESAnextModel)
+            model = MESAnextModel(model))
     {
-        for (here = model->MESAinstances; here != NULL;
+        for (here = MESAinstances(model); here != NULL;
                 here=here->MESAnextInstance)
         {
             if (here->MESAdrainPrmPrmNode > 0

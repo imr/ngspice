@@ -29,8 +29,8 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
     double difference;
     double factor;
 
-    for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here; here=here->ASRCnextInstance) {
+    for (; model; model = ASRCnextModel(model)) {
+        for (here = ASRCinstances(model); here; here=here->ASRCnextInstance) {
 
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
             factor = 1.0

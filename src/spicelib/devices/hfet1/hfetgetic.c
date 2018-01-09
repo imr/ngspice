@@ -20,8 +20,8 @@ HFETAgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->HFETAnextModel) {
-        for(here = model->HFETAinstances; here ; here = here->HFETAnextInstance) {
+    for( ; model ; model = HFETAnextModel(model)) {
+        for(here = HFETAinstances(model); here ; here = here->HFETAnextInstance) {
 
             if(!here->HFETAicVDSGiven) {
                 here->HFETAicVDS = 

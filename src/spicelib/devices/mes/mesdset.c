@@ -55,10 +55,10 @@ MESdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	    Dderivs d_p, d_q, d_r, d_zero;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->MESnextModel ) {
+    for( ; model != NULL; model = MESnextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->MESinstances; here != NULL ;
+        for (here = MESinstances(model); here != NULL ;
                 here=here->MESnextInstance) {
 
             /*

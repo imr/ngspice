@@ -59,14 +59,12 @@ typedef struct sVCVSinstance {
 /* per model data */
 
 typedef struct sVCVSmodel {       /* model structure for a source */
-    int VCVSmodType;    /* type index of this device type */
-    struct sVCVSmodel *VCVSnextModel;   /* pointer to next possible model 
-                                         *in linked list */
-    VCVSinstance * VCVSinstances;    /* pointer to list of instances 
-                                      * that have this model */
-    IFuid VCVSmodName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define VCVSmodType            gen.GENmodType
+#define VCVSnextModel(inst)    ((struct sVCVSmodel*)((inst)->gen.GENnextModel))
+#define VCVSinstances(inst)    ((VCVSinstance*)((inst)->gen.GENinstances))
+#define VCVSmodName            gen.GENmodName
 
 } VCVSmodel;
 

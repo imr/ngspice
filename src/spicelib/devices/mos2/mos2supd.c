@@ -51,10 +51,10 @@ MOS2sUpdate(GENmodel *inModel, CKTcircuit *ckt)
     dummy2 = 0;
 
     /*  loop through all the MOS2 models */
-    for( ; model != NULL; model = model->MOS2nextModel ) {
+    for( ; model != NULL; model = MOS2nextModel(model) ) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS2instances; here != NULL ;
+        for (here = MOS2instances(model); here != NULL ;
                 here=here->MOS2nextInstance) {
 
 #ifdef SENSDEBUG

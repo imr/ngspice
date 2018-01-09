@@ -36,8 +36,8 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
     int current_state;
 
 
-    for (model=firstModel; model != NULL; model=model->SWnextModel) {
-	for (inst=model->SWinstances; inst != NULL; inst=inst->SWnextInstance) {
+    for (model=firstModel; model != NULL; model=SWnextModel(model)) {
+	for (inst=SWinstances(model); inst != NULL; inst=inst->SWnextInstance) {
 
 	    switch (operation) {
 

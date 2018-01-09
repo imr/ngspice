@@ -118,12 +118,12 @@ typedef struct sNUMOSinstance {
 
 /* per model data */
 typedef struct sNUMOSmodel {	/* model structure for a numerical device */
-  int NUMOSmodType;		/* type index of this device type */
-  struct sNUMOSmodel *NUMOSnextModel;	/* pointer to next model in list */
-  NUMOSinstance *NUMOSinstances;/* pointer to list of instances */
-  IFuid NUMOSmodName;		/* pointer to string naming this model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define NUMOSmodType            gen.GENmodType
+#define NUMOSnextModel(inst)    ((struct sNUMOSmodel*)((inst)->gen.GENnextModel))
+#define NUMOSinstances(inst)    ((NUMOSinstance*)((inst)->gen.GENinstances))
+#define NUMOSmodName            gen.GENmodName
 
   /* Everything below here is numerical-device-specific */
   MESHcard *NUMOSxMeshes;	/* list of xmesh cards */
