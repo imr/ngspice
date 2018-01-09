@@ -92,11 +92,11 @@ typedef struct sNBJTmodel {	/* model structure for a bjt */
 					 * linked list */
   NBJTinstance *NBJTinstances;	/* pointer to list of instances that have
 				 * this model */
+  IFuid NBJTmodName;		/* pointer to character string naming this
+				 * model */
 
   /* --- end of generic struct GENmodel --- */
 
-  IFuid NBJTmodName;		/* pointer to character string naming this
-				 * model */
   /* Everything below here is numerical-device-specific */
   MESHcard *NBJTxMeshes;	/* list of xmesh cards */
   MESHcard *NBJTyMeshes;	/* list of ymesh cards */
