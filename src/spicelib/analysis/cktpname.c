@@ -28,13 +28,15 @@ int
 CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinstance **fast)
 {
     IFdevice *device = &(DEVices[dev]->DEVpublic);
-    int i;
+
+    IFparm *p = device->instanceParms;
+    IFparm *p_end = p + *(device->numInstanceParms);
 
     NG_IGNORE(name);
 
-    for (i = 0; i < *(device->numInstanceParms); i++)
-        if (!strcmp(parm, device->instanceParms[i].keyword))
-            return CKTparam(ckt, *fast, device->instanceParms[i].id, val, NULL);
+    for (; p < p_end; p++)
+        if (!strcmp(parm, p->keyword))
+            return CKTparam(ckt, *fast, p->id, val, NULL);
 
     return E_BADPARM;
 }
