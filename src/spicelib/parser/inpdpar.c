@@ -67,8 +67,6 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
             goto quit;
         } else {
 
-                int type;
-
                 val = INPgetValue(ckt, line,
                                   ft_sim->devices[dev]->instanceParms[i].dataType,
                                   tab);
@@ -85,12 +83,16 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
                 }
 
                 /* delete the union val */
-                type = ft_sim->devices[dev]->instanceParms[i].dataType;
-                type &= IF_VARTYPES;
-                if (type == IF_REALVEC)
+                switch (ft_sim->devices[dev]->instanceParms[i].dataType & IF_VARTYPES) {
+                case IF_REALVEC:
                     tfree(val->v.vec.rVec);
-                else if (type == IF_INTVEC)
+                    break;
+                case IF_INTVEC:
                     tfree(val->v.vec.iVec);
+                    break;
+                default:
+                    break;
+                }
 
         }
         FREE(parm);
