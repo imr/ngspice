@@ -85,11 +85,6 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
         }
 
         for (j = 0; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
-
-            if (strcmp(parm, "txl") == 0)
-                if (strcmp("cpl", ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0)
-                    strcpy(parm, "cpl");
-
             if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0)
                 break;
         }

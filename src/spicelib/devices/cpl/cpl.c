@@ -23,7 +23,11 @@ IFparm CPLmPTable[] = { /* model parameters */
  IOP( "c",    CPL_C, IF_REALVEC,"capacitance per length"),
  IOP( "g",    CPL_G, IF_REALVEC,"conductance per length"),
  IOP( "length",    CPL_length, IF_REAL,"length"),
+ /* txl can transformed to cpl in inpdomod.c
+  * then we need to be able to swallow the 'txl' flag on a 'cpl' .model line
+  */
  IP( "cpl",  CPL_MOD_R,   IF_FLAG,"Device is a cpl model"),
+ IPR( "txl",  CPL_MOD_R,   IF_FLAG,"Device is a cpl model"),
 };
 
 char *CPLnames[] = {
