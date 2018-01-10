@@ -27,13 +27,14 @@ Author: 1985 Thomas L. Quarles
 int
 CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinstance **fast)
 {
+    IFdevice *device = &(DEVices[dev]->DEVpublic);
     int i;
 
     NG_IGNORE(name);
 
-    for (i = 0; i < *(DEVices[dev]->DEVpublic.numInstanceParms); i++)
-        if (!strcmp(parm, DEVices[dev]->DEVpublic.instanceParms[i].keyword))
-            return CKTparam(ckt, *fast, DEVices[dev]->DEVpublic.instanceParms[i].id, val, NULL);
+    for (i = 0; i < *(device->numInstanceParms); i++)
+        if (!strcmp(parm, device->instanceParms[i].keyword))
+            return CKTparam(ckt, *fast, device->instanceParms[i].id, val, NULL);
 
     return E_BADPARM;
 }
