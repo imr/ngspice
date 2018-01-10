@@ -34,6 +34,20 @@ static int INPfindParm(char *name, IFparm *table, int numParms);
 extern INPmodel *modtab;
 
 
+static IFparm *
+find_model_parameter(const char *name, IFdevice *device)
+{
+    IFparm *p = device->modelParms;
+    IFparm *p_end = p + *(device->numModelParms);
+
+    for (; p < p_end; p++)
+        if (strcmp(name, p->keyword) == 0)
+            return p;
+
+    return NULL;
+}
+
+
 /*
  * code moved from INPgetMod
  */
@@ -86,15 +100,9 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             continue;
         }
 
-        IFparm *p = device->modelParms;
-        IFparm *p_end = p + *(device->numModelParms);
+        IFparm *p = find_model_parameter(parm, device);
 
-        for (; p < p_end; p++) {
-            if (strcmp(parm, p->keyword) == 0)
-                break;
-        }
-
-        if (p < p_end) {
+        if (p) {
             IFvalue *val = INPgetValue(ckt, &line, p->dataType, tab);
             error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id, val, NULL);
             if (error)
