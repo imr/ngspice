@@ -44,6 +44,7 @@ struct GENmodel {       /* model structure for a resistor */
     GENinstance *GENinstances;  /* pointer to list of instances that have this
                                  * model */
     IFuid GENmodName;           /* pointer to character string naming this model */
+    struct wordlist *defaults;  /* default instance parameters */
 };
 
 

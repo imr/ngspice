@@ -14,6 +14,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/devdefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
+#include "ngspice/wordlist.h"
 
 
 
@@ -31,6 +32,7 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
     if (!model)
         return E_NOMEM;
 
+    model->defaults = NULL;
     model->GENmodType = type;
     model->GENmodName = name;
     model->GENnextModel = ckt->CKThead[type];
@@ -54,5 +56,6 @@ GENinstanceFree(GENinstance *inst)
 void
 GENmodelFree(GENmodel *model)
 {
+    wl_free(model->defaults);
     txfree(model);
 }
