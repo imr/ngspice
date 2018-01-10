@@ -105,7 +105,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             }
         }
 
-        if (strcmp(parm, "level") == 0) {
+        if (j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms) && strcmp(parm, "level") == 0) {
             /* just grab the level number and throw away */
             /* since we already have that info from pass1 */
             val = INPgetValue(ckt, &line, IF_REAL, tab);
