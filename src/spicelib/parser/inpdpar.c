@@ -35,7 +35,6 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
     int error;                  /* int to store evaluate error return codes in */
     char *parm = NULL;
     char *errbuf;
-    int i;
     IFvalue *val;
     char *rtn = NULL;
 
@@ -58,34 +57,33 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
             rtn  = INPerror(error);
             goto quit;
         }
-        for (i = 0; i < *(device->numInstanceParms); i++) {
-            if (strcmp(parm, device->instanceParms[i].keyword) == 0) {
+
+        IFparm *p = device->instanceParms;
+        IFparm *p_end = p + *(device->numInstanceParms);
+
+        for (; p < p_end; p++)
+            if (strcmp(parm, p->keyword) == 0)
                 break;
-            }
-        }
-        if (i >= *(device->numInstanceParms)) {
+
+        if (p >= p_end) {
             errbuf = tprintf(" unknown parameter (%s) \n", parm);
             rtn = errbuf;
             goto quit;
         }
 
-        val = INPgetValue(ckt, line,
-                          device->instanceParms[i].dataType,
-                          tab);
+        val = INPgetValue(ckt, line, p->dataType, tab);
         if (!val) {
             rtn = INPerror(E_PARMVAL);
             goto quit;
         }
-        error = ft_sim->setInstanceParm (ckt, fast,
-                                         device->instanceParms[i].id,
-                                         val, NULL);
+        error = ft_sim->setInstanceParm (ckt, fast, p->id, val, NULL);
         if (error) {
             rtn = INPerror(error);
             goto quit;
         }
 
         /* delete the union val */
-        switch (device->instanceParms[i].dataType & IF_VARTYPES) {
+        switch (p->dataType & IF_VARTYPES) {
         case IF_REALVEC:
             tfree(val->v.vec.rVec);
             break;
