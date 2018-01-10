@@ -2,7 +2,7 @@
    Autor: Wolfgang Muees
    Stand: 28.10.97
    Autor: Holger Vogt
-   Stand: 01.10.2017
+   Stand: 09.01.2018
 */
 
 #include "ngspice/config.h"
@@ -264,7 +264,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 
     WaitForIdle();
 
-    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
+    if (((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) || !strcmp(Analyse, "or"))
         return;
 
     /* get actual time */
