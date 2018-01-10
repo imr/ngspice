@@ -48,6 +48,20 @@ find_model_parameter(const char *name, IFdevice *device)
 }
 
 
+static IFparm *
+find_instance_parameter(const char *name, IFdevice *device)
+{
+    IFparm *p = device->instanceParms;
+    IFparm *p_end = p + *(device->numInstanceParms);
+
+    for (; p < p_end; p++)
+        if (strcmp(name, p->keyword) == 0)
+            return p;
+
+    return NULL;
+}
+
+
 /*
  * code moved from INPgetMod
  */
@@ -113,6 +127,18 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             INPgetValue(ckt, &line, IF_REAL, tab);
         } else {
 
+            p = find_instance_parameter(parm, device);
+
+            if (p) {
+                char *value;
+                INPgetTok(&line, &value, 1);
+
+                modtmp->INPmodfast->defaults =
+                    wl_cons(copy(parm),
+                            wl_cons(value,
+                                    modtmp->INPmodfast->defaults));
+            } else {
+
             double dval;
 
             /* want only the parameter names in output - not the values */
@@ -127,6 +153,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
                 err = INPerrCat(err,
                                 tprintf("unrecognized parameter (%s) - ignored",
                                         parm));
+            }
         }
         FREE(parm);
     }

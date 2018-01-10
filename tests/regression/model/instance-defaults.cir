@@ -1,0 +1,20 @@
+* check whether .model accepts instance defaults
+
+v1  1 0  dc=1
+r1  1 0  myres
+
+.model myres r(resistance=2k)
+
+.control
+
+op
+
+if abs(i(v1)/-0.5mA - 1) > 1e-9
+  echo "ERROR: check failed"
+  quit 1
+else
+  echo "INFO: ok"
+  quit 0
+end
+
+.endc

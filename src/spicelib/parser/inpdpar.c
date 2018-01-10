@@ -60,6 +60,44 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
     else
         *leading = 0.0;
 
+    wordlist *x = fast->GENmodPtr->defaults;
+    for (; x; x = x->wl_next->wl_next) {
+        char *parameter = x->wl_word;
+        char *value = x->wl_next->wl_word;
+
+        IFparm *p = find_instance_parameter(parameter, device);
+
+        if (!p) {
+            errbuf = tprintf(" unknown parameter (%s) \n", parameter);
+            rtn = errbuf;
+            goto quit;
+        }
+
+        val = INPgetValue(ckt, &value, p->dataType, tab);
+        if (!val) {
+            rtn = INPerror(E_PARMVAL);
+            goto quit;
+        }
+
+        error = ft_sim->setInstanceParm (ckt, fast, p->id, val, NULL);
+        if (error) {
+            rtn = INPerror(error);
+            goto quit;
+        }
+
+        /* delete the union val */
+        switch (p->dataType & IF_VARTYPES) {
+        case IF_REALVEC:
+            tfree(val->v.vec.rVec);
+            break;
+        case IF_INTVEC:
+            tfree(val->v.vec.iVec);
+            break;
+        default:
+            break;
+        }
+    }
+
     while (**line != '\0') {
         error = INPgetTok(line, &parm, 1);
         if (!*parm) {
