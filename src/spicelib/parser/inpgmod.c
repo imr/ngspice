@@ -88,9 +88,8 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
         for (j = 0; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
 
-            if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
+            if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0)
                 break;
-            }
         }
 
         if (j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
@@ -101,12 +100,11 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
                                          val, NULL);
             if (error)
                 return error;
-        }
-        if (j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms) && strcmp(parm, "level") == 0) {
+        } else if (strcmp(parm, "level") == 0) {
             /* just grab the level number and throw away */
             /* since we already have that info from pass1 */
             val = INPgetValue(ckt, &line, IF_REAL, tab);
-        } else if (j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
+        } else {
 
             /* want only the parameter names in output - not the values */
             errno = 0;    /* To distinguish success/failure after call */
