@@ -30,21 +30,22 @@ CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinst
                            /* direct pointer to device being parsed */
 
 {
+    IFdevice *device = &(DEVices[dev]->DEVpublic);
     int error;  /* int to store evaluate error return codes in */
     int i;
 
     NG_IGNORE(name);
 
-    for(i = 0 ; i < *(DEVices[dev]->DEVpublic.numInstanceParms) ; i++) {
-        if(!strcmp(parm, DEVices[dev]->DEVpublic.instanceParms[i].keyword)) {
+    for(i = 0 ; i < *(device->numInstanceParms) ; i++) {
+        if(!strcmp(parm, device->instanceParms[i].keyword)) {
             error = CKTparam(ckt, *fast,
-                    DEVices[dev]->DEVpublic.instanceParms[i].id, val,
+                    device->instanceParms[i].id, val,
                     NULL);
             if(error) return(error);
             break;
         }
     }
-    if(i == *(DEVices[dev]->DEVpublic.numInstanceParms)) {
+    if(i == *(device->numInstanceParms)) {
         return(E_BADPARM);
     }
     return(OK);
