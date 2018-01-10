@@ -58,6 +58,14 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
         }
         for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
             if (strcmp(parm, ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
+                break;
+            }
+        }
+        if (i >= *(ft_sim->devices[dev]->numInstanceParms)) {
+            errbuf = tprintf(" unknown parameter (%s) \n", parm);
+            rtn = errbuf;
+            goto quit;
+        } else {
 
                 int type;
 
@@ -84,13 +92,6 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
                 else if (type == IF_INTVEC)
                     tfree(val->v.vec.iVec);
 
-                break;
-            }
-        }
-        if (i == *(ft_sim->devices[dev]->numInstanceParms)) {
-            errbuf = tprintf(" unknown parameter (%s) \n", parm);
-            rtn = errbuf;
-            goto quit;
         }
         FREE(parm);
     }
