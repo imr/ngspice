@@ -41,7 +41,7 @@ static int
 create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 {
     char    *err = NULL, *line, *parm, *endptr;
-    int     error, j;
+    int     error;
 
     /* not already defined, so create & give parameters */
     error = ft_sim->newModel(ckt, modtmp->INPmodType, &(modtmp->INPmodfast), modtmp->INPmodName);
@@ -86,17 +86,17 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             continue;
         }
 
-        for (j = 0; j < *(device->numModelParms); j++) {
-            if (strcmp(parm, device->modelParms[j].keyword) == 0)
+        IFparm *p = device->modelParms;
+        IFparm *p_end = p + *(device->numModelParms);
+
+        for (; p < p_end; p++) {
+            if (strcmp(parm, p->keyword) == 0)
                 break;
         }
 
-        if (j < *(device->numModelParms)) {
-            IFvalue *val = INPgetValue(ckt, &line, device->modelParms[j].dataType, tab);
-
-            error = ft_sim->setModelParm(ckt, modtmp->INPmodfast,
-                                         device->modelParms[j].id,
-                                         val, NULL);
+        if (p < p_end) {
+            IFvalue *val = INPgetValue(ckt, &line, p->dataType, tab);
+            error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id, val, NULL);
             if (error)
                 return error;
         } else if (strcmp(parm, "level") == 0) {
