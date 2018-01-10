@@ -65,36 +65,35 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
             errbuf = tprintf(" unknown parameter (%s) \n", parm);
             rtn = errbuf;
             goto quit;
-        } else {
-
-                val = INPgetValue(ckt, line,
-                                  ft_sim->devices[dev]->instanceParms[i].dataType,
-                                  tab);
-                if (!val) {
-                    rtn = INPerror(E_PARMVAL);
-                    goto quit;
-                }
-                error = ft_sim->setInstanceParm (ckt, fast,
-                                                 ft_sim->devices[dev]->instanceParms[i].id,
-                                                 val, NULL);
-                if (error) {
-                    rtn = INPerror(error);
-                    goto quit;
-                }
-
-                /* delete the union val */
-                switch (ft_sim->devices[dev]->instanceParms[i].dataType & IF_VARTYPES) {
-                case IF_REALVEC:
-                    tfree(val->v.vec.rVec);
-                    break;
-                case IF_INTVEC:
-                    tfree(val->v.vec.iVec);
-                    break;
-                default:
-                    break;
-                }
-
         }
+
+        val = INPgetValue(ckt, line,
+                          ft_sim->devices[dev]->instanceParms[i].dataType,
+                          tab);
+        if (!val) {
+            rtn = INPerror(E_PARMVAL);
+            goto quit;
+        }
+        error = ft_sim->setInstanceParm (ckt, fast,
+                                         ft_sim->devices[dev]->instanceParms[i].id,
+                                         val, NULL);
+        if (error) {
+            rtn = INPerror(error);
+            goto quit;
+        }
+
+        /* delete the union val */
+        switch (ft_sim->devices[dev]->instanceParms[i].dataType & IF_VARTYPES) {
+        case IF_REALVEC:
+            tfree(val->v.vec.rVec);
+            break;
+        case IF_INTVEC:
+            tfree(val->v.vec.iVec);
+            break;
+        default:
+            break;
+        }
+
         FREE(parm);
     }
 
