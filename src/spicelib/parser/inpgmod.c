@@ -93,18 +93,19 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
                     strcpy(parm, "cpl");
 
             if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0) {
-
-                val = INPgetValue(ckt, &line, ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType, tab);
-
-                error = ft_sim->setModelParm(ckt, modtmp->INPmodfast,
-                                             ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
-                                             val, NULL);
-                if (error)
-                    return error;
                 break;
             }
         }
 
+        if (j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
+            val = INPgetValue(ckt, &line, ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType, tab);
+
+            error = ft_sim->setModelParm(ckt, modtmp->INPmodfast,
+                                         ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
+                                         val, NULL);
+            if (error)
+                return error;
+        }
         if (j >= *(ft_sim->devices[modtmp->INPmodType]->numModelParms) && strcmp(parm, "level") == 0) {
             /* just grab the level number and throw away */
             /* since we already have that info from pass1 */
