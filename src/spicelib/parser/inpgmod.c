@@ -64,6 +64,8 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
     }
 #endif
 
+    IFdevice *device = ft_sim->devices[modtmp->INPmodType];
+
     /* parameter isolation, identification, binding */
 
     line = modtmp->INPmodLine->line;
@@ -84,17 +86,16 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             continue;
         }
 
-        for (j = 0; j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms); j++) {
-
-            if (strcmp(parm, ft_sim->devices[modtmp->INPmodType]->modelParms[j].keyword) == 0)
+        for (j = 0; j < *(device->numModelParms); j++) {
+            if (strcmp(parm, device->modelParms[j].keyword) == 0)
                 break;
         }
 
-        if (j < *(ft_sim->devices[modtmp->INPmodType]->numModelParms)) {
-            IFvalue *val = INPgetValue(ckt, &line, ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType, tab);
+        if (j < *(device->numModelParms)) {
+            IFvalue *val = INPgetValue(ckt, &line, device->modelParms[j].dataType, tab);
 
             error = ft_sim->setModelParm(ckt, modtmp->INPmodfast,
-                                         ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
+                                         device->modelParms[j].id,
                                          val, NULL);
             if (error)
                 return error;
