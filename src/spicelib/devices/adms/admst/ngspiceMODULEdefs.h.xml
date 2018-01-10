@@ -190,8 +190,8 @@ if(isinf((double) var)) \\
 typedef struct s$(module)instance {
     struct GENinstance gen;
 
-#define $(module)modPtr(inst)        ((struct s$(module)model*)((inst)-&gt;gen.GENmodPtr))
-#define $(module)nextInstance(inst)  ((struct s$(module)instance*)((inst)-&gt;gen.GENnextInstance))
+#define $(module)modPtr(inst)        (($(module)model*)((inst)-&gt;gen.GENmodPtr))
+#define $(module)nextInstance(inst)  (($(module)instance*)((inst)-&gt;gen.GENnextInstance))
 #define $(module)name                gen.GENname
 #define $(module)states              gen.GENstate
 
@@ -270,8 +270,8 @@ typedef struct s$(module)model {         /* model structure */
   struct GENmodel gen;
 
 #define $(module)modType            gen.GENmodType
-#define $(module)nextModel(inst)    ((struct $(module)model*)((inst)->gen.GENnextModel))
-#define $(module)instances(inst)    ((struct $(module)instance*)((inst)->gen.GENinstances))
+#define $(module)nextModel(inst)    (($(module)model*)((inst)->gen.GENnextModel))
+#define $(module)instances(inst)    (($(module)instance*)((inst)->gen.GENinstances))
 #define $(module)modName            gen.GENmodName
 
   /* model parameters */
