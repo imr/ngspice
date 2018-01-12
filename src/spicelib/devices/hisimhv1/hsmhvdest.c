@@ -30,10 +30,10 @@ HSMHVdestroy(GENmodel **inModel)
         HSMHVinstance *inst = HSMHVinstances(mod);
         while (inst) {
             HSMHVinstance *next_inst = HSMHVnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

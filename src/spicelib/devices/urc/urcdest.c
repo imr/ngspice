@@ -18,10 +18,10 @@ URCdestroy(GENmodel **inModel)
         URCinstance *inst = URCinstances(mod);
         while (inst) {
             URCinstance *next_inst = URCnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

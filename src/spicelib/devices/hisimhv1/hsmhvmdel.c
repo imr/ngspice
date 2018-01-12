@@ -40,9 +40,9 @@ HSMHVmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
     *prev = model->GENnextModel;
     for (here = model->GENinstances; here;) {
         GENinstance *next_instance = here->GENnextInstance;
-        FREE(here);
+        GENinstanceFree(here);
         here = next_instance;
     }
-    FREE(model);
+    GENmodelFree(model);
     return OK;
 }

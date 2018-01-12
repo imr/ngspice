@@ -23,10 +23,10 @@ ASRCdestroy(GENmodel **inModel)
             FREE(inst->ASRCacValues);
             FREE(inst->ASRCposPtr);
             FREE(inst->ASRCvars);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

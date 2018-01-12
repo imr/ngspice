@@ -18,10 +18,10 @@ CSWdestroy(GENmodel **inModel)
         CSWinstance *inst = CSWinstances(mod);
         while (inst) {
             CSWinstance *next_inst = CSWnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

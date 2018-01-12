@@ -38,12 +38,12 @@ BSIM4v7destroy(GENmodel **inModel)
         /** end of extra code **/
         while (inst) {
             BSIM4v7instance *next_inst = BSIM4v7nextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
         /* mod->BSIM4v7modName to be freed in INPtabEnd() */
         FREE(mod->BSIM4v7version);
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

@@ -18,10 +18,10 @@ HFETAdestroy(GENmodel **inModel)
         HFETAinstance *inst = HFETAinstances(mod);
         while (inst) {
             HFETAinstance *next_inst = HFETAnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

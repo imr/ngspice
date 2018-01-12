@@ -25,10 +25,10 @@ B3SOIFDdestroy(GENmodel **inModel)
         B3SOIFDinstance *inst = B3SOIFDinstances(mod);
         while (inst) {
             B3SOIFDinstance *next_inst = B3SOIFDnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

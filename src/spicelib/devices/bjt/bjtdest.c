@@ -24,10 +24,10 @@ BJTdestroy(GENmodel **inModel)
         while (inst) {
             BJTinstance *next_inst = BJTnextInstance(inst);
             FREE(inst->BJTsens);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

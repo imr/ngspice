@@ -215,7 +215,7 @@ MIFdelete(
 
 
     /* Finally, free the instance struct itself */
-    FREE(here);
+    GENinstanceFree(GENinstanceOf(here));
 
     return(OK);
 }

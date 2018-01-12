@@ -20,7 +20,7 @@ BSIM3v0delete(GENmodel *model, IFuid name, GENinstance **kill)
         for (; here; here = *prev) {
             if (here->GENname == name || (kill && here == *kill)) {
                 *prev = here->GENnextInstance;
-                FREE(here);
+                GENinstanceFree(here);
                 return OK;
             }
             prev = &(here->GENnextInstance);

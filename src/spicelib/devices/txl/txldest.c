@@ -19,10 +19,10 @@ TXLdestroy(GENmodel **inModel)
         TXLinstance *inst = TXLinstances(mod);
         while (inst) {
             TXLinstance *next_inst = TXLnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

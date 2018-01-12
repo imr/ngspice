@@ -38,13 +38,13 @@ BSIM3destroy(GENmodel **inModel)
 
         while (inst) {
             BSIM3instance *next_inst = BSIM3nextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
 
         /* mod->BSIM3modName to be freed in INPtabEnd() */
         FREE(mod->BSIM3version);
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

@@ -54,10 +54,10 @@ $(module)destroy(GENmodel **inModel)
         $(module)instance *inst = $(module)instances(mod);
         while (inst) {
             $(module)instance *next_inst = $(module)nextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

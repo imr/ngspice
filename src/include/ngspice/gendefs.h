@@ -48,4 +48,12 @@ struct GENmodel {       /* model structure for a resistor */
     IFuid GENmodName;           /* pointer to character string naming this model */
 };
 
+
+void GENinstanceFree(GENinstance *);
+void GENmodelFree(GENmodel *);
+
+#define GENmodelOf(p)    &((p)->gen)
+#define GENinstanceOf(p) &((p)->gen)
+
+
 #endif

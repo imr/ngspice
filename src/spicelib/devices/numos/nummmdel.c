@@ -32,6 +32,6 @@ NUMOSmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
     if (model->GENinstances)
         return E_NOTEMPTY;
     *prev = model->GENnextModel;
-    FREE(model);
+    GENmodelFree(model);
     return OK;
 }

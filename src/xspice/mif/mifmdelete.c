@@ -99,6 +99,6 @@ int MIFmDelete(
     FREE(here->param);
 
     /* Free the model and return */
-    FREE(here);
+    GENmodelFree(GENmodelOf(here));
     return(OK);
 }

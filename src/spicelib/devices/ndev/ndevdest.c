@@ -19,12 +19,12 @@ NDEVdestroy(GENmodel **inModel)
         NDEVinstance *inst = NDEVinstances(mod);
         while (inst) {
             NDEVinstance *next_inst = NDEVnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
         close(mod->sock);
         printf("Disconnect to remote NDEV server %s:%d\n", mod->host, mod->port);
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

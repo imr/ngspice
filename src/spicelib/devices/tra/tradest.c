@@ -18,10 +18,10 @@ TRAdestroy(GENmodel **inModel)
         TRAinstance *inst = TRAinstances(mod);
         while (inst) {
             TRAinstance *next_inst = TRAnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

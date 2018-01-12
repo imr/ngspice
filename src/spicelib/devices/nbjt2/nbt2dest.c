@@ -26,10 +26,10 @@ NBJT2destroy(GENmodel **inModel)
         while (inst) {
             NBJT2instance *next_inst = NBJT2nextInstance(inst);
             TWOdestroy(inst->NBJT2pDevice);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

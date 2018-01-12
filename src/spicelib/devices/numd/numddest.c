@@ -26,10 +26,10 @@ NUMDdestroy(GENmodel **inModel)
         while (inst) {
             NUMDinstance *next_inst = NUMDnextInstance(inst);
             ONEdestroy(inst->NUMDpDevice);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

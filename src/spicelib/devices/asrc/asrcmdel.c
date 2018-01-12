@@ -30,10 +30,10 @@ ASRCmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
     for (here = model->GENinstances; here;) {
         GENinstance *next_instance = here->GENnextInstance;
         FREE(((ASRCinstance*)here)->ASRCacValues);
-        FREE(here);
+        GENinstanceFree(here);
         here = next_instance;
     }
 
-    FREE(model);
+    GENmodelFree(model);
     return OK;
 }

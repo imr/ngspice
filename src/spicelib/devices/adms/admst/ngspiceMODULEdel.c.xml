@@ -54,7 +54,7 @@ $(module)delete(GENmodel *model, IFuid name, GENinstance **kill)
         for (; here; here = *prev) {
             if (here-&gt;GENname == name || (kill &amp;&amp; here == *kill)) {
                 *prev = here-&gt;GENnextInstance;
-                FREE(here);
+                GENinstanceFree(here);
                 return OK;
             }
             prev = &amp;(here-&gt;GENnextInstance);

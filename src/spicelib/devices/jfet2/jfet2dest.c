@@ -22,10 +22,10 @@ JFET2destroy(GENmodel **inModel)
         JFET2instance *inst = JFET2instances(mod);
         while (inst) {
             JFET2instance *next_inst = JFET2nextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

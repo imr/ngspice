@@ -86,11 +86,11 @@ BSIM4destroy(GENmodel **inModel)
         /** end of extra code **/
         while (inst) {
             BSIM4instance *next_inst = BSIM4nextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
         FREE(mod->BSIM4version);
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

@@ -20,10 +20,10 @@ MUTdestroy(GENmodel **inModel)
         MUTinstance *inst = MUTinstances(mod);
         while (inst) {
             MUTinstance *next_inst = MUTnextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

@@ -19,10 +19,10 @@ MOS2destroy(GENmodel **inModel)
         while (inst) {
             MOS2instance *next_inst = MOS2nextInstance(inst);
             FREE(inst->MOS2sens);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 

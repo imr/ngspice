@@ -72,10 +72,10 @@ HSMHV2destroy(GENmodel **inModel)
         HSMHV2instance *inst = HSMHV2instances(mod);
         while (inst) {
             HSMHV2instance *next_inst = HSMHV2nextInstance(inst);
-            FREE(inst);
+            GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
-        FREE(mod);
+        GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
     }
 
