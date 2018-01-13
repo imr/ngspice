@@ -46,22 +46,10 @@
 #include &quot;ngspice/suffix.h&quot;
 
 int
-$(module)delete(GENmodel *model, IFuid name, GENinstance **kill)
+$(module)delete(GENinstance *inst)
 {
-    for (; model; model = model-&gt;GENnextModel) {
-        GENinstance **prev = &amp;(model-&gt;GENinstances);
-        GENinstance *here = *prev;
-        for (; here; here = *prev) {
-            if (here-&gt;GENname == name || (kill &amp;&amp; here == *kill)) {
-                *prev = here-&gt;GENnextInstance;
-                GENinstanceFree(here);
-                return OK;
-            }
-            prev = &amp;(here-&gt;GENnextInstance);
-        }
-    }
-
-    return E_NODEV;
+    GENinstanceFree(inst);
+    return OK;
 }
 </admst:template>
 

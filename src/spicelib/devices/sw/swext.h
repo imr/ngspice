@@ -6,7 +6,7 @@ Modified: 2000 AlansFixes
 
 extern int SWacLoad(GENmodel*,CKTcircuit*);
 extern int SWask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int SWdelete(GENmodel*,IFuid,GENinstance**);
+extern int SWdelete(GENinstance*);
 extern void SWdestroy(GENmodel**);
 extern int SWload(GENmodel*,CKTcircuit*);
 extern int SWmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);

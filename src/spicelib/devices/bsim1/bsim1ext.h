@@ -8,7 +8,7 @@ Modified: 2000 AlansFixes
 extern int B1acLoad(GENmodel *,CKTcircuit*);
 extern int B1ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B1convTest(GENmodel *,CKTcircuit*);
-extern int B1delete(GENmodel*,IFuid,GENinstance**);
+extern int B1delete(GENinstance*);
 extern void B1destroy(GENmodel**);
 extern int B1getic(GENmodel*,CKTcircuit*);
 extern int B1load(GENmodel*,CKTcircuit*);

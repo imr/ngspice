@@ -8,7 +8,7 @@ Modifed by Paolo Nenzi 2002
 extern int B3SOIDDacLoad(GENmodel *,CKTcircuit*);
 extern int B3SOIDDask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B3SOIDDconvTest(GENmodel *,CKTcircuit*);
-extern int B3SOIDDdelete(GENmodel*,IFuid,GENinstance**);
+extern int B3SOIDDdelete(GENinstance*);
 extern void B3SOIDDdestroy(GENmodel**);
 extern int B3SOIDDgetic(GENmodel*,CKTcircuit*);
 extern int B3SOIDDload(GENmodel*,CKTcircuit*);

@@ -8,7 +8,7 @@ File: bsim4v5ext.h
 extern int BSIM4v5acLoad(GENmodel *,CKTcircuit*);
 extern int BSIM4v5ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int BSIM4v5convTest(GENmodel *,CKTcircuit*);
-extern int BSIM4v5delete(GENmodel*,IFuid,GENinstance**);
+extern int BSIM4v5delete(GENinstance*);
 extern void BSIM4v5destroy(GENmodel**);
 extern int BSIM4v5getic(GENmodel*,CKTcircuit*);
 extern int BSIM4v5load(GENmodel*,CKTcircuit*);

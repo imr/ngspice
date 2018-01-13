@@ -5,7 +5,7 @@ reserved.
 
 /* extern int CPLaccept(CKTcircuit*, GENmodel*); */
 extern int CPLask(CKTcircuit*, GENinstance*, int, IFvalue*, IFvalue*);
-extern int CPLdelete(GENmodel*, IFuid,GENinstance**);
+extern int CPLdelete(GENinstance*);
 extern void CPLdestroy(GENmodel**);
 extern int CPLload(GENmodel*, CKTcircuit*);
 extern int CPLmAsk(CKTcircuit*, GENmodel*, int, IFvalue*);

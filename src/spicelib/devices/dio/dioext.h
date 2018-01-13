@@ -7,7 +7,7 @@ Modified: 2000 AlansFixes
 extern int DIOacLoad(GENmodel*,CKTcircuit*);
 extern int DIOask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int DIOconvTest(GENmodel *,CKTcircuit*);
-extern int DIOdelete(GENmodel*,IFuid,GENinstance**);
+extern int DIOdelete(GENinstance*);
 extern void DIOdestroy(GENmodel**);
 extern int DIOgetic(GENmodel*,CKTcircuit*);
 extern int DIOload(GENmodel*,CKTcircuit*);

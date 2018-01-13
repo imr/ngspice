@@ -5,7 +5,7 @@ Author: Trond Ytterdal
 
 extern int  HFET2acLoad(GENmodel*,CKTcircuit*);
 extern int  HFET2ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int  HFET2delete(GENmodel*,IFuid,GENinstance**);
+extern int  HFET2delete(GENinstance*);
 extern void HFET2destroy(GENmodel**);
 extern int  HFET2getic(GENmodel*,CKTcircuit*);
 extern int  HFET2load(GENmodel*,CKTcircuit*);

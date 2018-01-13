@@ -5,7 +5,7 @@ Author: 1985 Thomas L. Quarles
 
 
 extern int CCCSask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int CCCSdelete(GENmodel*,IFuid,GENinstance**);
+extern int CCCSdelete(GENinstance*);
 extern void CCCSdestroy(GENmodel**);
 extern int CCCSload(GENmodel*,CKTcircuit*);
 extern int CCCSmDelete(GENmodel**,IFuid,GENmodel*);

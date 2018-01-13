@@ -18,7 +18,7 @@
 extern int HSM2acLoad(GENmodel *,CKTcircuit*);
 extern int HSM2ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int HSM2convTest(GENmodel *,CKTcircuit*);
-extern int HSM2delete(GENmodel*,IFuid,GENinstance**);
+extern int HSM2delete(GENinstance*);
 extern void HSM2destroy(GENmodel**);
 extern int HSM2getic(GENmodel*,CKTcircuit*);
 extern int HSM2load(GENmodel*,CKTcircuit*);

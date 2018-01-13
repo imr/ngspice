@@ -10,20 +10,8 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 int
-RESdelete(GENmodel *model, IFuid name, GENinstance **kill)
+RESdelete(GENinstance *inst)
 {
-    for (; model; model = model->GENnextModel) {
-        GENinstance **prev = &(model->GENinstances);
-        GENinstance *here = *prev;
-        for (; here; here = *prev) {
-            if (here->GENname == name || (kill && here == *kill)) {
-                *prev = here->GENnextInstance;
-                GENinstanceFree(here);
-                return OK;
-            }
-            prev = &(here->GENnextInstance);
-        }
-    }
-
-    return E_NODEV;
+    GENinstanceFree(inst);
+    return OK;
 }

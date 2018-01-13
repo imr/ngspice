@@ -7,7 +7,7 @@ Modified: 2000 AlansFixes
 extern int MOS3acLoad(GENmodel*,CKTcircuit*);
 extern int MOS3ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS3convTest(GENmodel *,CKTcircuit *);
-extern int MOS3delete(GENmodel*,IFuid,GENinstance**);
+extern int MOS3delete(GENinstance*);
 extern void MOS3destroy(GENmodel**);
 extern int MOS3getic(GENmodel*,CKTcircuit*);
 extern int MOS3load(GENmodel*,CKTcircuit*);

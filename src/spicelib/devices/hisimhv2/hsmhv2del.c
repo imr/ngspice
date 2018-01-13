@@ -65,20 +65,8 @@ June 2008 (revised October 2011)
 
 
 int
-HSMHV2delete(GENmodel *model, IFuid name, GENinstance **kill)
+HSMHV2delete(GENinstance *inst)
 {
-    for (; model; model = model->GENnextModel) {
-        GENinstance **prev = &(model->GENinstances);
-        GENinstance *here = *prev;
-        for (; here; here = *prev) {
-            if (here->GENname == name || (kill && here == *kill)) {
-                *prev = here->GENnextInstance;
-                GENinstanceFree(here);
-                return OK;
-            }
-            prev = &(here->GENnextInstance);
-        }
-    }
-
-    return E_NODEV;
+    GENinstanceFree(inst);
+    return OK;
 }

@@ -6,7 +6,7 @@ Modified: 2000 AlansFixes
 
 extern int MESacLoad(GENmodel*,CKTcircuit*);
 extern int MESask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int MESdelete(GENmodel*,IFuid,GENinstance**);
+extern int MESdelete(GENinstance*);
 extern void MESdestroy(GENmodel**);
 extern int MESgetic(GENmodel*,CKTcircuit*);
 extern int MESload(GENmodel*,CKTcircuit*);

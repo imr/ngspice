@@ -53,25 +53,6 @@ NON-STANDARD FEATURES
 #include "ngspice/devdefs.h"
 
 
-static MIFinstance *
-MIFdelete_instance(GENmodel *model, IFuid name, GENinstance **kill)
-{
-    for (; model; model = model->GENnextModel) {
-        GENinstance **prev = &(model->GENinstances);
-        GENinstance *here = *prev;
-        for (; here; here = *prev) {
-            if (here->GENname == name || (kill && here == *kill)) {
-                *prev = here->GENnextInstance;
-                return (MIFinstance *) here;
-            }
-            prev = &(here->GENnextInstance);
-        }
-    }
-
-    return NULL;
-}
-
-
 /*
 MIFdelete
 
@@ -82,9 +63,7 @@ used by the instance structure.
 
 int
 MIFdelete(
-    GENmodel    *model,     /* The head of the model list */
-    IFuid       name,       /* The name of the instance to delete */
-    GENinstance **kill      /* The instance structure to delete */
+    GENinstance *inst       /* The instance structure to delete */
 )
 {
     int         i;
@@ -95,14 +74,7 @@ MIFdelete(
     int         num_port;
     int         num_inst_var;
 
-    /*******************************************/
-    /* Cut the instance out of the linked list */
-    /*******************************************/
-
-    MIFinstance *here = MIFdelete_instance(model, name, kill);
-
-    if (!here)
-        return(E_NODEV);
+    MIFinstance *here = (MIFinstance *) inst;
 
     /*******************************************/
     /* instance->callback(..., MIF_CB_DESTROY) */

@@ -84,8 +84,11 @@ int MIFmDelete(
     /* Free the instances under this model if any */
     /* by removing from the head of the linked list */
     /* until the head is null */
-    while (model->GENinstances)
-        MIFdelete(model, model->GENinstances->GENname, &(model->GENinstances));
+    while (model->GENinstances) {
+        GENinstance *next_inst = model->GENinstances->GENnextInstance;
+        MIFdelete(model->GENinstances);
+        model->GENinstances = next_inst;
+    }
 
     MIFmodel *here = (MIFmodel*) model;
     int       i;
