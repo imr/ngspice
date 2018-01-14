@@ -2441,9 +2441,14 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         { 
             InstCount++;
         }
+        model->BSIM4v6InstCount = 0;
+        model->BSIM4v6InstanceArray = NULL;
     }
     InstArray = TMALLOC(BSIM4v6instance*, InstCount);
     model = (BSIM4v6model*)inModel;
+    /* store this in the first model only */
+    model->BSIM4v6InstCount = InstCount;
+    model->BSIM4v6InstanceArray = InstArray;
     idx = 0;
     for( ; model != NULL; model = model->BSIM4v6nextModel )
     {
@@ -2454,9 +2459,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             InstArray[idx] = here;
             idx++;
         }
-        /* set the array pointer and instance count into each model */
-        model->BSIM4v6InstCount = InstCount;
-        model->BSIM4v6InstanceArray = InstArray;		
     }
 #endif
 

@@ -24,11 +24,6 @@ B4SOIdestroy(GENmodel **inModel)
 {
     B4SOImodel *mod = *(B4SOImodel**) inModel;
 
-#ifdef USE_OMP
-    /* free just once for all models */
-    FREE(mod->B4SOIInstanceArray);
-#endif
-
     while (mod) {
         B4SOImodel *next_mod = mod->B4SOInextModel;
         B4SOIinstance *inst = mod->B4SOIinstances;
@@ -37,6 +32,11 @@ B4SOIdestroy(GENmodel **inModel)
             FREE(inst);
             inst = next_inst;
         }
+
+#ifdef USE_OMP
+        FREE(mod->B4SOIInstanceArray);
+#endif
+
         FREE(mod);
         mod = next_mod;
     }

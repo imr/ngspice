@@ -20,11 +20,6 @@ BSIM4v7destroy(GENmodel **inModel)
 {
     BSIM4v7model *mod = *(BSIM4v7model**) inModel;
 
-#ifdef USE_OMP
-    /* free just once for all models */
-    FREE(mod->BSIM4v7InstanceArray);
-#endif
-
     while (mod) {
         BSIM4v7model *next_mod = mod->BSIM4v7nextModel;
         BSIM4v7instance *inst = mod->BSIM4v7instances;
@@ -41,6 +36,11 @@ BSIM4v7destroy(GENmodel **inModel)
             FREE(inst);
             inst = next_inst;
         }
+
+#ifdef USE_OMP
+        FREE(mod->BSIM4v7InstanceArray);
+#endif
+
         /* mod->BSIM4v7modName to be freed in INPtabEnd() */
         FREE(mod->BSIM4v7version);
         FREE(mod);

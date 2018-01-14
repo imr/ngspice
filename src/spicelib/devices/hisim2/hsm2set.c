@@ -1275,9 +1275,14 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
         {
             InstCount++;
         }
+        model->HSM2InstCount = 0;
+        model->HSM2InstanceArray = NULL;
     }
     InstArray = TMALLOC(HSM2instance*, InstCount);
     model = (HSM2model*)inModel;
+    /* store this in the first model only */
+    model->HSM2InstCount = InstCount;
+    model->HSM2InstanceArray = InstArray;
     idx = 0;
     for ( ; model != NULL; model = model->HSM2nextModel )
     {
@@ -1288,9 +1293,6 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             InstArray[idx] = here;
             idx++;
         }
-        /* set the array pointer and instance count into each model */
-        model->HSM2InstCount = InstCount;
-        model->HSM2InstanceArray = InstArray;
     }
 #endif
 
