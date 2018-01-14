@@ -17,6 +17,8 @@ Author: 1985 Thomas L. Quarles
 int
 BJTdelete(GENinstance *inst)
 {
+    BJTinstance *here = (BJTinstance*) inst;
+    FREE(here->BJTsens);
     GENinstanceFree(inst);
     return OK;
 }

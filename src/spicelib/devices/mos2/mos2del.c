@@ -12,6 +12,8 @@ Author: 1985 Thomas L. Quarles
 int
 MOS2delete(GENinstance *inst)
 {
+    MOS2instance *here = (MOS2instance *) inst;
+    FREE(here->MOS2sens);
     GENinstanceFree(inst);
     return OK;
 }

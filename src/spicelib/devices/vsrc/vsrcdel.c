@@ -12,6 +12,8 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCdelete(GENinstance *inst)
 {
+    VSRCinstance *here = (VSRCinstance *) inst;
+    FREE(here->VSRCcoeffs);
     GENinstanceFree(inst);
     return OK;
 }

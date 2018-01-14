@@ -18,10 +18,10 @@ HFET2destroy(GENmodel **inModel)
         HFET2instance *inst = HFET2instances(mod);
         while (inst) {
             HFET2instance *next_inst = HFET2nextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            HFET2delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        HFET2mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

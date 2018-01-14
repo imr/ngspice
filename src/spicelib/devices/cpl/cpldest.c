@@ -19,10 +19,10 @@ CPLdestroy(GENmodel **inModel)
         CPLinstance *inst = CPLinstances(mod);
         while (inst) {
             CPLinstance *next_inst = CPLnextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            CPLdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        CPLmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

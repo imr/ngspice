@@ -63,6 +63,11 @@ to others."
 int
 HSM2mDelete(GENmodel *model)
 {
+#ifdef USE_OMP
+    HSM2model *mod = (HSM2model*) model;
+    FREE(mod->HSM2InstanceArray);
+#endif
+
     GENmodelFree(model);
     return OK;
 }

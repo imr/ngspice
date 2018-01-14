@@ -29,15 +29,10 @@ B4SOIdestroy(GENmodel **inModel)
         B4SOIinstance *inst = B4SOIinstances(mod);
         while (inst) {
             B4SOIinstance *next_inst = B4SOInextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            B4SOIdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-
-#ifdef USE_OMP
-        FREE(mod->B4SOIInstanceArray);
-#endif
-
-        GENmodelFree(GENmodelOf(mod));
+        B4SOImDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

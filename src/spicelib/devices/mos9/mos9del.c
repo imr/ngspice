@@ -13,6 +13,8 @@ Modified: Alan Gillespie
 int
 MOS9delete(GENinstance *inst)
 {
+    MOS9instance *here = (MOS9instance *) inst;
+    FREE(here->MOS9sens);
     GENinstanceFree(inst);
     return OK;
 }

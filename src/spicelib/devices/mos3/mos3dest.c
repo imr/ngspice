@@ -18,11 +18,10 @@ MOS3destroy(GENmodel **inModel)
         MOS3instance *inst = MOS3instances(mod);
         while (inst) {
             MOS3instance *next_inst = MOS3nextInstance(inst);
-            FREE(inst->MOS3sens);
-            GENinstanceFree(GENinstanceOf(inst));
+            MOS3delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        MOS3mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

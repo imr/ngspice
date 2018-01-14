@@ -10,6 +10,7 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "nbjtdefs.h"
+#include "../../../ciderlib/oned/onedext.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -17,6 +18,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NBJTdelete(GENinstance *inst)
 {
+    NBJTinstance *here = (NBJTinstance *) inst;
+    ONEdestroy(here->NBJTpDevice);
     GENinstanceFree(inst);
     return OK;
 }

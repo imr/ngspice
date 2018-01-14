@@ -10,6 +10,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "nbjt2def.h"
+#include "../../../ciderlib/twod/twoddefs.h"
+#include "../../../ciderlib/twod/twodext.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -17,6 +19,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NBJT2delete(GENinstance *inst)
 {
+    NBJT2instance *here = (NBJT2instance *) inst;
+    TWOdestroy(here->NBJT2pDevice);
     GENinstanceFree(inst);
     return OK;
 }

@@ -18,10 +18,10 @@ RESdestroy(GENmodel **inModel)
         RESinstance *inst = RESinstances(mod);
         while (inst) {
             RESinstance *next_inst = RESnextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            RESdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        RESmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

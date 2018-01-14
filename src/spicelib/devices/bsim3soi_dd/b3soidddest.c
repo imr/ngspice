@@ -25,10 +25,10 @@ B3SOIDDdestroy(GENmodel **inModel)
         B3SOIDDinstance *inst = B3SOIDDinstances(mod);
         while (inst) {
             B3SOIDDinstance *next_inst = B3SOIDDnextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            B3SOIDDdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        B3SOIDDmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

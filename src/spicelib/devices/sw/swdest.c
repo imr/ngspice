@@ -18,10 +18,10 @@ SWdestroy(GENmodel **inModel)
         SWinstance *inst = SWinstances(mod);
         while (inst) {
             SWinstance *next_inst = SWnextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            SWdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        SWmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

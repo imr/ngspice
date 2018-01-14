@@ -23,6 +23,11 @@
 int
 B4SOImDelete(GENmodel *model)
 {
+#ifdef USE_OMP
+    B4SOImodel *mod = (B4SOImodel*) model;
+    FREE(mod->B4SOIInstanceArray);
+#endif
+
     GENmodelFree(model);
     return OK;
 }

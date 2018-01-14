@@ -12,6 +12,8 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3delete(GENinstance *inst)
 {
+    MOS3instance *here = (MOS3instance *) inst;
+    FREE(here->MOS3sens);
     GENinstanceFree(inst);
     return OK;
 }

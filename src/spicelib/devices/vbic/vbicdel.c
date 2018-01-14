@@ -19,6 +19,8 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 int
 VBICdelete(GENinstance *inst)
 {
+    VBICinstance *here = (VBICinstance *) inst;
+    FREE(here->VBICsens);
     GENinstanceFree(inst);
     return OK;
 }

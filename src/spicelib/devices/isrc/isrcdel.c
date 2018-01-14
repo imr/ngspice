@@ -12,6 +12,8 @@ Author: 1985 Thomas L. Quarles
 int
 ISRCdelete(GENinstance *inst)
 {
+    ISRCinstance *here = (ISRCinstance *) inst;
+    FREE(here->ISRCcoeffs);
     GENinstanceFree(inst);
     return OK;
 }

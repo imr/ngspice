@@ -69,15 +69,10 @@ HSM2destroy(GENmodel **inModel)
         HSM2instance *inst = HSM2instances(mod);
         while (inst) {
             HSM2instance *next_inst = HSM2nextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            HSM2delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-
-#ifdef USE_OMP
-        FREE(mod->HSM2InstanceArray);
-#endif
-
-        GENmodelFree(GENmodelOf(mod));
+        HSM2mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

@@ -23,26 +23,12 @@ BSIM4v6destroy(GENmodel **inModel)
     while (mod) {
         BSIM4v6model *next_mod = BSIM4v6nextModel(mod);
         BSIM4v6instance *inst = BSIM4v6instances(mod);
-        /** added to get rid of link list pSizeDependParamKnot **/
-        struct bsim4v6SizeDependParam *p = mod->pSizeDependParamKnot;
-        while (p) {
-            struct bsim4v6SizeDependParam *next_p = p->pNext;
-            FREE(p);
-            p = next_p;
-        }
-        /** end of extra code **/
         while (inst) {
             BSIM4v6instance *next_inst = BSIM4v6nextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            BSIM4v6delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-
-#ifdef USE_OMP
-        FREE(mod->BSIM4v6InstanceArray);
-#endif
-
-        FREE(mod->BSIM4v6version);
-        GENmodelFree(GENmodelOf(mod));
+        BSIM4v6mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

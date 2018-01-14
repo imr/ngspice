@@ -18,11 +18,10 @@ MOS6destroy(GENmodel **inModel)
         MOS6instance *inst = MOS6instances(mod);
         while (inst) {
             MOS6instance *next_inst = MOS6nextInstance(inst);
-            FREE(inst->MOS6sens);
-            GENinstanceFree(GENinstanceOf(inst));
+            MOS6delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        MOS6mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

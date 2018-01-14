@@ -10,8 +10,6 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "numosdef.h"
-#include "../../../ciderlib/twod/twoddefs.h"
-#include "../../../ciderlib/twod/twodext.h"
 #include "ngspice/suffix.h"
 
 
@@ -25,11 +23,10 @@ NUMOSdestroy(GENmodel **inModel)
         NUMOSinstance *inst = NUMOSinstances(mod);
         while (inst) {
             NUMOSinstance *next_inst = NUMOSnextInstance(inst);
-            TWOdestroy(inst->NUMOSpDevice);
-            GENinstanceFree(GENinstanceOf(inst));
+            NUMOSdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        NUMOSmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

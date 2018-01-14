@@ -19,10 +19,10 @@ CAPdestroy(GENmodel **inModel)
         CAPinstance *inst = CAPinstances(mod);
         while (inst) {
             CAPinstance *next_inst = CAPnextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            CAPdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        CAPmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

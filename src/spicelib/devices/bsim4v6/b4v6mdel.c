@@ -19,6 +19,22 @@
 int
 BSIM4v6mDelete(GENmodel *model)
 {
+    BSIM4v6model *mod = (BSIM4v6model*) model;
+
+#ifdef USE_OMP
+    /* free just once for all models */
+    FREE(mod->BSIM4v6InstanceArray);
+#endif
+
+    struct bsim4v6SizeDependParam *p = mod->pSizeDependParamKnot;
+    while (p) {
+        struct bsim4v6SizeDependParam *next_p = p->pNext;
+        FREE(p);
+        p = next_p;
+    }
+
+    FREE(mod->BSIM4v6version);
+
     GENmodelFree(model);
     return OK;
 }

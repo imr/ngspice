@@ -10,7 +10,6 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "numddefs.h"
-#include "../../../ciderlib/oned/onedext.h"
 #include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
@@ -25,11 +24,10 @@ NUMDdestroy(GENmodel **inModel)
         NUMDinstance *inst = NUMDinstances(mod);
         while (inst) {
             NUMDinstance *next_inst = NUMDnextInstance(inst);
-            ONEdestroy(inst->NUMDpDevice);
-            GENinstanceFree(GENinstanceOf(inst));
+            NUMDdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        NUMDmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

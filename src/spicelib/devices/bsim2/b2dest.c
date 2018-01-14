@@ -18,10 +18,10 @@ B2destroy(GENmodel **inModel)
         B2instance *inst = B2instances(mod);
         while (inst) {
             B2instance *next_inst = B2nextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            B2delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        B2mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

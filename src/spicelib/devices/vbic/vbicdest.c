@@ -25,11 +25,10 @@ VBICdestroy(GENmodel **inModel)
         VBICinstance *inst = VBICinstances(mod);
         while (inst) {
             VBICinstance *next_inst = VBICnextInstance(inst);
-            FREE(inst->VBICsens);
-            GENinstanceFree(GENinstanceOf(inst));
+            VBICdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        VBICmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

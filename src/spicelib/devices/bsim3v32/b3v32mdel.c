@@ -18,6 +18,21 @@
 int
 BSIM3v32mDelete(GENmodel *model)
 {
+    BSIM3v32model *mod = (BSIM3v32model*) model;
+
+#ifdef USE_OMP
+    FREE(mod->BSIM3v32InstanceArray);
+#endif
+
+    struct bsim3v32SizeDependParam *p = mod->pSizeDependParamKnot;
+    while (p) {
+        struct bsim3v32SizeDependParam *next_p = p->pNext;
+        FREE(p);
+        p = next_p;
+    }
+
+    FREE(mod->BSIM3v32version);
+
     GENmodelFree(model);
     return OK;
 }

@@ -22,26 +22,13 @@ BSIM3v32destroy (GENmodel **inModel)
     while (mod) {
         BSIM3v32model *next_mod = BSIM3v32nextModel(mod);
         BSIM3v32instance *inst = BSIM3v32instances(mod);
-        /** added to get rid of link list pSizeDependParamKnot **/
-        struct bsim3v32SizeDependParam *p =  mod->pSizeDependParamKnot;
-        while (p) {
-            struct bsim3v32SizeDependParam *next_p = p->pNext;
-            FREE(p);
-            p = next_p;
-        }
-        /** end of extra code **/
         while (inst) {
             BSIM3v32instance *next_inst = BSIM3v32nextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            BSIM3v32delete(GENinstanceOf(inst));
             inst = next_inst;
         }
 
-#ifdef USE_OMP
-        FREE(mod->BSIM3v32InstanceArray);
-#endif
-
-        FREE(mod->BSIM3v32version);
-        GENmodelFree(GENmodelOf(mod));
+        BSIM3v32mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

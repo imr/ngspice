@@ -35,11 +35,10 @@ SOI3destroy(GENmodel **inModel)
         SOI3instance *inst = SOI3instances(mod);
         while (inst) {
             SOI3instance *next_inst = SOI3nextInstance(inst);
-            /* FREE(inst->SOI3sens); */
-            GENinstanceFree(GENinstanceOf(inst));
+            SOI3delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        SOI3mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

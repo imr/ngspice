@@ -12,6 +12,8 @@ Author: 1985 Thomas L. Quarles
 int
 MOS6delete(GENinstance *inst)
 {
+    MOS6instance *here = (MOS6instance *) inst;
+    FREE(here->MOS6sens);
     GENinstanceFree(inst);
     return OK;
 }

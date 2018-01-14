@@ -19,10 +19,10 @@ BSIM3v0destroy(GENmodel **inModel)
         BSIM3v0instance *inst = BSIM3v0instances(mod);
         while (inst) {
             BSIM3v0instance *next_inst = BSIM3v0nextInstance(inst);
-            GENinstanceFree(GENinstanceOf(inst));
+            BSIM3v0delete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        BSIM3v0mDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 

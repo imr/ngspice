@@ -29,6 +29,7 @@ Acknowledgements : Rupert Howes and Pete Mole.
 int
 SOI3delete(GENinstance *inst)
 {
+    /* FREE(inst->SOI3sens); */
     GENinstanceFree(inst);
     return OK;
 }

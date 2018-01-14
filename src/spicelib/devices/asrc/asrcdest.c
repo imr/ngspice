@@ -6,7 +6,6 @@ Author: 1987 Kanwar Jit Singh
 #include "ngspice/ngspice.h"
 #include "asrcdefs.h"
 #include "ngspice/suffix.h"
-#include "ngspice/inpdefs.h"
 
 
 void
@@ -19,14 +18,10 @@ ASRCdestroy(GENmodel **inModel)
         ASRCinstance *inst = ASRCinstances(mod);
         while (inst) {
             ASRCinstance *next_inst = ASRCnextInstance(inst);
-            INPfreeTree(inst->ASRCtree);
-            FREE(inst->ASRCacValues);
-            FREE(inst->ASRCposPtr);
-            FREE(inst->ASRCvars);
-            GENinstanceFree(GENinstanceOf(inst));
+            ASRCdelete(GENinstanceOf(inst));
             inst = next_inst;
         }
-        GENmodelFree(GENmodelOf(mod));
+        ASRCmDelete(GENmodelOf(mod));
         mod = next_mod;
     }
 
