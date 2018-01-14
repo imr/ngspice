@@ -10,21 +10,6 @@ Author: 1992 Charles Hough
 
 
 void
-CPLdestroy(GENmodel **inModel)
+CPLdestroy(void)
 {
-    CPLmodel *mod = *(CPLmodel **) inModel;
-
-    while (mod) {
-        CPLmodel *next_mod = CPLnextModel(mod);
-        CPLinstance *inst = CPLinstances(mod);
-        while (inst) {
-            CPLinstance *next_inst = CPLnextInstance(inst);
-            CPLdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        CPLmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

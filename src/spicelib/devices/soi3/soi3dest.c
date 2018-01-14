@@ -26,21 +26,6 @@ ngspice integration
 
 
 void
-SOI3destroy(GENmodel **inModel)
+SOI3destroy(void)
 {
-    SOI3model *mod = *(SOI3model**) inModel;
-
-    while (mod) {
-        SOI3model *next_mod = SOI3nextModel(mod);
-        SOI3instance *inst = SOI3instances(mod);
-        while (inst) {
-            SOI3instance *next_inst = SOI3nextInstance(inst);
-            SOI3delete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        SOI3mDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

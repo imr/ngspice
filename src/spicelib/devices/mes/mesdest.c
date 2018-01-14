@@ -9,21 +9,6 @@ Author: 1985 S. Hwang
 
 
 void
-MESdestroy(GENmodel **inModel)
+MESdestroy(void)
 {
-    MESmodel *mod = *(MESmodel**) inModel;
-
-    while (mod) {
-        MESmodel *next_mod = MESnextModel(mod);
-        MESinstance *inst = MESinstances(mod);
-        while (inst) {
-            MESinstance *next_inst = MESnextInstance(inst);
-            MESdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        MESmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

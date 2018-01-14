@@ -11,7 +11,7 @@ extern int BJTacLoad(GENmodel *,CKTcircuit*);
 extern int BJTask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int BJTconvTest(GENmodel*,CKTcircuit*);
 extern int BJTdelete(GENinstance*);
-extern void BJTdestroy(GENmodel**);
+extern void BJTdestroy(void);
 extern int BJTgetic(GENmodel*,CKTcircuit*);
 extern int BJTload(GENmodel*,CKTcircuit*);
 extern int BJTmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);

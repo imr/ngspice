@@ -7,7 +7,7 @@ extern int TRAacLoad(GENmodel*,CKTcircuit*);
 extern int TRAaccept(CKTcircuit*,GENmodel*);
 extern int TRAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int TRAdelete(GENinstance*);
-extern void TRAdestroy(GENmodel**);
+extern void TRAdestroy(void);
 extern int TRAload(GENmodel*,CKTcircuit*);
 extern int TRAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
 extern int TRAmDelete(GENmodel*);

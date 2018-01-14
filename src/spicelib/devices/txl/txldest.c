@@ -10,21 +10,6 @@ Author: 1992 Charles Hough
 
 
 void
-TXLdestroy(GENmodel **inModel)
+TXLdestroy(void)
 {
-    TXLmodel *mod = *(TXLmodel **) inModel;
-
-    while (mod) {
-        TXLmodel *next_mod = TXLnextModel(mod);
-        TXLinstance *inst = TXLinstances(mod);
-        while (inst) {
-            TXLinstance *next_inst = TXLnextInstance(inst);
-            TXLdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        TXLmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

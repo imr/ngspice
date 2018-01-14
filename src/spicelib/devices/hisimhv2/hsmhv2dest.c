@@ -63,21 +63,6 @@ June 2008 (revised October 2011)
 
 
 void
-HSMHV2destroy(GENmodel **inModel)
+HSMHV2destroy(void)
 {
-    HSMHV2model *mod = *(HSMHV2model**) inModel;
-
-    while (mod) {
-        HSMHV2model *next_mod = HSMHV2nextModel(mod);
-        HSMHV2instance *inst = HSMHV2instances(mod);
-        while (inst) {
-            HSMHV2instance *next_inst = HSMHV2nextInstance(inst);
-            HSMHV2delete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        HSMHV2mDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

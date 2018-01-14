@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-MOS2destroy(GENmodel **inModel)
+MOS2destroy(void)
 {
-    MOS2model *mod = *(MOS2model **) inModel;
-
-    while (mod) {
-        MOS2model *next_mod = MOS2nextModel(mod);
-        MOS2instance *inst = MOS2instances(mod);
-        while (inst) {
-            MOS2instance *next_inst = MOS2nextInstance(inst);
-            MOS2delete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        MOS2mDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

@@ -10,7 +10,7 @@ Author: 1987 Karti Mayaram
 extern int NDEVacLoad(GENmodel *, CKTcircuit *);
 extern int NDEVask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int NDEVdelete(GENinstance *);
-extern void NDEVdestroy(GENmodel **);
+extern void NDEVdestroy(void);
 extern int NDEVgetic(GENmodel *, CKTcircuit *);
 extern int NDEVload(GENmodel *, CKTcircuit *);
 extern int NDEVaccept(CKTcircuit *, GENmodel *);

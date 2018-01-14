@@ -16,21 +16,6 @@ Modified by Paolo Nenzi 2002
 
 
 void
-B3SOIPDdestroy(GENmodel **inModel)
+B3SOIPDdestroy(void)
 {
-    B3SOIPDmodel *mod = *(B3SOIPDmodel**) inModel;
-
-    while (mod) {
-        B3SOIPDmodel *next_mod = B3SOIPDnextModel(mod);
-        B3SOIPDinstance *inst = B3SOIPDinstances(mod);
-        while (inst) {
-            B3SOIPDinstance *next_inst = B3SOIPDnextInstance(inst);
-            B3SOIPDdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        B3SOIPDmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

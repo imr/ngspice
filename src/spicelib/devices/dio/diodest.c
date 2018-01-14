@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-DIOdestroy(GENmodel **inModel)
+DIOdestroy(void)
 {
-    DIOmodel *mod = *(DIOmodel**) inModel;
-
-    while (mod) {
-        DIOmodel *next_mod = DIOnextModel(mod);
-        DIOinstance *inst = DIOinstances(mod);
-        while (inst) {
-            DIOinstance *next_inst = DIOnextInstance(inst);
-            DIOdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        DIOmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

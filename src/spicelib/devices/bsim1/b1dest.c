@@ -9,21 +9,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 void
-B1destroy(GENmodel **inModel)
+B1destroy(void)
 {
-    B1model *mod = *(B1model**) inModel;
-
-    while (mod) {
-        B1model *next_mod = B1nextModel(mod);
-        B1instance *inst = B1instances(mod);
-        while (inst) {
-            B1instance *next_inst = B1nextInstance(inst);
-            B1delete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        B1mDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

@@ -10,21 +10,6 @@ Modified: Alan Gillespie
 
 
 void
-MOS9destroy(GENmodel **inModel)
+MOS9destroy(void)
 {
-    MOS9model *mod = *(MOS9model **) inModel;
-
-    while (mod) {
-        MOS9model *next_mod = MOS9nextModel(mod);
-        MOS9instance *inst = MOS9instances(mod);
-        while (inst) {
-            MOS9instance *next_inst = MOS9nextInstance(inst);
-            MOS9delete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        MOS9mDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

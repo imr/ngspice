@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-ISRCdestroy(GENmodel **inModel)
+ISRCdestroy(void)
 {
-    ISRCmodel *mod = *(ISRCmodel**) inModel;
-
-    while (mod) {
-        ISRCmodel *next_mod = ISRCnextModel(mod);
-        ISRCinstance *inst = ISRCinstances(mod);
-        while (inst) {
-            ISRCinstance *next_inst = ISRCnextInstance(inst);
-            ISRCdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        ISRCmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

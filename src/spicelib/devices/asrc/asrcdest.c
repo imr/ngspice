@@ -9,25 +9,9 @@ Author: 1987 Kanwar Jit Singh
 
 
 void
-ASRCdestroy(GENmodel **inModel)
+ASRCdestroy(void)
 {
-    ASRCmodel *mod = *(ASRCmodel**) inModel;
-
-    while (mod) {
-        ASRCmodel *next_mod = ASRCnextModel(mod);
-        ASRCinstance *inst = ASRCinstances(mod);
-        while (inst) {
-            ASRCinstance *next_inst = ASRCnextInstance(inst);
-            ASRCdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        ASRCmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
     FREE(asrc_vals);
     FREE(asrc_derivs);
     asrc_nvals = 0;
-
-    *inModel = NULL;
 }

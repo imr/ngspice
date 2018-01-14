@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-VCCSdestroy(GENmodel **inModel)
+VCCSdestroy(void)
 {
-    VCCSmodel *mod = *(VCCSmodel**) inModel;
-
-    while (mod) {
-        VCCSmodel *next_mod = VCCSnextModel(mod);
-        VCCSinstance *inst = VCCSinstances(mod);
-        while (inst) {
-            VCCSinstance *next_inst = VCCSnextInstance(inst);
-            VCCSdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        VCCSmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

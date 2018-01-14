@@ -9,7 +9,7 @@ extern int B3SOIPDacLoad(GENmodel *,CKTcircuit*);
 extern int B3SOIPDask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B3SOIPDconvTest(GENmodel *,CKTcircuit*);
 extern int B3SOIPDdelete(GENinstance*);
-extern void B3SOIPDdestroy(GENmodel**);
+extern void B3SOIPDdestroy(void);
 extern int B3SOIPDgetic(GENmodel*,CKTcircuit*);
 extern int B3SOIPDload(GENmodel*,CKTcircuit*);
 extern int B3SOIPDmAsk(CKTcircuit*,GENmodel *,int, IFvalue*);

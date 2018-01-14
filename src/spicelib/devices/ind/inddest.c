@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-INDdestroy(GENmodel **inModel)
+INDdestroy(void)
 {
-    INDmodel *mod = *(INDmodel**) inModel;
-
-    while (mod) {
-        INDmodel *next_mod = INDnextModel(mod);
-        INDinstance *inst = INDinstances(mod);
-        while (inst) {
-            INDinstance *next_inst = INDnextInstance(inst);
-            INDdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        INDmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

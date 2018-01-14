@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-CCCSdestroy(GENmodel **inModel)
+CCCSdestroy(void)
 {
-    CCCSmodel *mod = *(CCCSmodel**) inModel;
-
-    while (mod) {
-        CCCSmodel *next_mod = CCCSnextModel(mod);
-        CCCSinstance *inst = CCCSinstances(mod);
-        while (inst) {
-            CCCSinstance *next_inst = CCCSnextInstance(inst);
-            CCCSdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        CCCSmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

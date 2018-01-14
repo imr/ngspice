@@ -37,11 +37,23 @@ CKTdestroy(CKTcircuit *ckt)
     }
 #endif
 
-    for (i=0;i<DEVmaxnum;i++) {
-        if ( DEVices[i] && DEVices[i]->DEVdestroy && ckt->CKThead[i] ) {
-            DEVices[i]->DEVdestroy (&(ckt->CKThead[i]));
+    for (i = 0; i < DEVmaxnum; i++)
+        if (DEVices[i]) {
+            GENmodel *model = ckt->CKThead[i];
+            while (model) {
+                GENmodel *next_model = model->GENnextModel;
+                GENinstance *inst = model->GENinstances;
+                while (inst) {
+                    GENinstance *next_inst = inst->GENnextInstance;
+                    DEVices[i]->DEVdelete(inst);
+                    inst = next_inst;
+                }
+                DEVices[i]->DEVmodDelete(model);
+                model = next_model;
+            }
+            if (DEVices[i]->DEVdestroy)
+                DEVices[i]->DEVdestroy();
         }
-    }
     for(i=0;i<=ckt->CKTmaxOrder+1;i++){
         FREE(ckt->CKTstates[i]);
     }

@@ -15,21 +15,6 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 void
-NBJTdestroy(GENmodel **inModel)
+NBJTdestroy(void)
 {
-    NBJTmodel *mod = *(NBJTmodel **) inModel;
-
-    while (mod) {
-        NBJTmodel *next_mod = NBJTnextModel(mod);
-        NBJTinstance *inst = NBJTinstances(mod);
-        while (inst) {
-            NBJTinstance *next_inst = NBJTnextInstance(inst);
-            NBJTdelete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-        NBJTmDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

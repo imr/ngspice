@@ -15,22 +15,6 @@
 
 
 void
-BSIM3v32destroy (GENmodel **inModel)
+BSIM3v32destroy (void)
 {
-    BSIM3v32model *mod = *(BSIM3v32model**) inModel;
-
-    while (mod) {
-        BSIM3v32model *next_mod = BSIM3v32nextModel(mod);
-        BSIM3v32instance *inst = BSIM3v32instances(mod);
-        while (inst) {
-            BSIM3v32instance *next_inst = BSIM3v32nextInstance(inst);
-            BSIM3v32delete(GENinstanceOf(inst));
-            inst = next_inst;
-        }
-
-        BSIM3v32mDelete(GENmodelOf(mod));
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

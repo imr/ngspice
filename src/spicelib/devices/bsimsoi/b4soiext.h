@@ -11,7 +11,7 @@ extern int B4SOIacLoad(GENmodel *,CKTcircuit*);
 extern int B4SOIask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B4SOIconvTest(GENmodel *,CKTcircuit*);
 extern int B4SOIdelete(GENinstance*);
-extern void B4SOIdestroy(GENmodel**);
+extern void B4SOIdestroy(void);
 extern int B4SOIgetic(GENmodel*,CKTcircuit*);
 extern int B4SOIload(GENmodel*,CKTcircuit*);
 extern int B4SOImAsk(CKTcircuit*,GENmodel *,int, IFvalue*);

@@ -133,7 +133,7 @@ extern int MIFmDelete(
 );
 
 extern void MIFdestroy(
-    GENmodel **inModel
+    void
 );
 
 extern char  *MIFgettok(
