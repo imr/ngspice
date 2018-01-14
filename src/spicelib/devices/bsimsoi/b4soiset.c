@@ -2733,9 +2733,14 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
         { 
             InstCount++;
         }
+        model->B4SOIInstCount = 0;
+        model->B4SOIInstanceArray = NULL;
     }
     InstArray = TMALLOC(B4SOIinstance*, InstCount);
     model = (B4SOImodel*)inModel;
+    /* store this in the first model only */
+    model->B4SOIInstCount = InstCount;
+    model->B4SOIInstanceArray = InstArray;
     idx = 0;
     for( ; model != NULL; model = B4SOInextModel(model) )
     {
@@ -2746,9 +2751,6 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
             InstArray[idx] = here;
             idx++;
         }
-        /* set the array pointer and instance count into each model */
-        model->B4SOIInstCount = InstCount;
-        model->B4SOIInstanceArray = InstArray;		
     }
 #endif
 

@@ -20,11 +20,6 @@ BSIM4v6destroy(GENmodel **inModel)
 {
     BSIM4v6model *mod = *(BSIM4v6model**) inModel;
 
-#ifdef USE_OMP
-    /* free just once for all models */
-    FREE(mod->BSIM4v6InstanceArray);
-#endif
-
     while (mod) {
         BSIM4v6model *next_mod = BSIM4v6nextModel(mod);
         BSIM4v6instance *inst = BSIM4v6instances(mod);
@@ -41,6 +36,11 @@ BSIM4v6destroy(GENmodel **inModel)
             GENinstanceFree(GENinstanceOf(inst));
             inst = next_inst;
         }
+
+#ifdef USE_OMP
+        FREE(mod->BSIM4v6InstanceArray);
+#endif
+
         FREE(mod->BSIM4v6version);
         GENmodelFree(GENmodelOf(mod));
         mod = next_mod;
