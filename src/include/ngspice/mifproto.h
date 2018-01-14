@@ -129,8 +129,6 @@ extern int MIFdelete(
 );
 
 extern int MIFmDelete(
-    GENmodel **inModel,
-    IFuid    modname,
     GENmodel *model
 );
 

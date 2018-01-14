@@ -60,36 +60,8 @@ model structure.  It calls MIFdelete as needed to delete all
 instances of the specified model.
 */
 
-int MIFmDelete(
-    GENmodel **models,   /* The head of the model list */
-    IFuid    modname,    /* The name of the model to delete */
-    GENmodel *kill       /* The model structure to be deleted */
-)
+int MIFmDelete(GENmodel *model)
 {
-    GENmodel **prev = models;
-    GENmodel *model = *prev;
-
-    /* Locate the model by name or pointer and cut it out of the list */
-    for (; model; model = model->GENnextModel) {
-        if (model->GENmodName == modname || (kill && model == kill))
-            break;
-        prev = &(model->GENnextModel);
-    }
-
-    if (!model)
-        return(E_NOMOD);
-
-    *prev = model->GENnextModel;
-
-    /* Free the instances under this model if any */
-    /* by removing from the head of the linked list */
-    /* until the head is null */
-    while (model->GENinstances) {
-        GENinstance *next_inst = model->GENinstances->GENnextInstance;
-        MIFdelete(model->GENinstances);
-        model->GENinstances = next_inst;
-    }
-
     MIFmodel *here = (MIFmodel*) model;
     int       i;
 

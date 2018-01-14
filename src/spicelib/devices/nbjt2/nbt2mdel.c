@@ -15,23 +15,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NBJT2mDelete(GENmodel **models, IFuid modname, GENmodel *kill)
+NBJT2mDelete(GENmodel *model)
 {
-    GENmodel **prev = models;
-    GENmodel *model = *prev;
-
-    for (; model; model = model->GENnextModel) {
-        if (model->GENmodName == modname || (kill && model == kill))
-            break;
-        prev = &(model->GENnextModel);
-    }
-
-    if (!model)
-        return E_NOMOD;
-
-    if (model->GENinstances)
-        return E_NOTEMPTY;
-    *prev = model->GENnextModel;
     GENmodelFree(model);
     return OK;
 }

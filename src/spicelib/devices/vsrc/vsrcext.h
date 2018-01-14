@@ -11,7 +11,7 @@ extern void VSRCdestroy(GENmodel**);
 extern int VSRCfindBr(CKTcircuit*,GENmodel*,IFuid);
 extern int VSRCload(GENmodel*,CKTcircuit*);
 extern int VSRCmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int VSRCmDelete(GENmodel**,IFuid,GENmodel*);
+extern int VSRCmDelete(GENmodel*);
 extern int VSRCparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int VSRCpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int VSRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);

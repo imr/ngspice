@@ -10,7 +10,7 @@ extern int CSWdelete(GENinstance*);
 extern void CSWdestroy(GENmodel**);
 extern int CSWload(GENmodel*,CKTcircuit*);
 extern int CSWmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int CSWmDelete(GENmodel**,IFuid,GENmodel*);
+extern int CSWmDelete(GENmodel*);
 extern int CSWmParam(int,IFvalue*,GENmodel*);
 extern int CSWparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int CSWpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

@@ -10,7 +10,7 @@ extern void MOS6destroy(GENmodel**);
 extern int MOS6getic(GENmodel*,CKTcircuit*);
 extern int MOS6load(GENmodel*,CKTcircuit*);
 extern int MOS6mAsk(CKTcircuit *,GENmodel *,int,IFvalue*);
-extern int MOS6mDelete(GENmodel**,IFuid,GENmodel*);
+extern int MOS6mDelete(GENmodel*);
 extern int MOS6mParam(int,IFvalue*,GENmodel*);
 extern int MOS6param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int MOS6pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

@@ -15,7 +15,7 @@ extern void B4SOIdestroy(GENmodel**);
 extern int B4SOIgetic(GENmodel*,CKTcircuit*);
 extern int B4SOIload(GENmodel*,CKTcircuit*);
 extern int B4SOImAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int B4SOImDelete(GENmodel**,IFuid,GENmodel*);
+extern int B4SOImDelete(GENmodel*);
 extern int B4SOImParam(int,IFvalue*,GENmodel*);
 extern void B4SOImosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,

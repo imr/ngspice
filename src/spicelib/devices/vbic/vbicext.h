@@ -16,7 +16,7 @@ extern void VBICdestroy(GENmodel**);
 extern int VBICgetic(GENmodel*,CKTcircuit*);
 extern int VBICload(GENmodel*,CKTcircuit*);
 extern int VBICmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int VBICmDelete(GENmodel**,IFuid,GENmodel*);
+extern int VBICmDelete(GENmodel*);
 extern int VBICmParam(int,IFvalue*,GENmodel*);
 extern int VBICparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int VBICpzLoad(GENmodel*, CKTcircuit*, SPcomplex*);

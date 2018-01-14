@@ -11,7 +11,7 @@ extern void MESdestroy(GENmodel**);
 extern int MESgetic(GENmodel*,CKTcircuit*);
 extern int MESload(GENmodel*,CKTcircuit*);
 extern int MESmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int MESmDelete(GENmodel**,IFuid,GENmodel*);
+extern int MESmDelete(GENmodel*);
 extern int MESmParam(int,IFvalue*,GENmodel*);
 extern int MESparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int MESpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

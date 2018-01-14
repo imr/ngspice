@@ -203,11 +203,9 @@ int MIFdelete(
 }
 
 int MIFmDelete(
-    GENmodel **inModel,
-    IFuid    modname,
     GENmodel *model
 	) {
-	return (coreitf->dllitf_MIFmDelete)(inModel,modname,model);
+	return (coreitf->dllitf_MIFmDelete)(model);
 }
 
 void MIFdestroy(

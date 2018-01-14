@@ -64,9 +64,9 @@ void MIFdestroy(
     /* the head is null */
 
     while(*inModel) {
-        MIFmDelete(inModel,
-                   (*inModel)->GENmodName,
-                   *inModel);
+        GENmodel *next_model = (*inModel)->GENnextModel;
+        MIFmDelete(*inModel);
+        *inModel = next_model;
     }
 
 }

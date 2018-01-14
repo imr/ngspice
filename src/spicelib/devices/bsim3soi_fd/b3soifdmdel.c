@@ -17,27 +17,8 @@ File: b3soifdmdel.c          98/5/01
 
 
 int
-B3SOIFDmDelete(GENmodel **models, IFuid modname, GENmodel *kill)
+B3SOIFDmDelete(GENmodel *model)
 {
-    GENinstance *here;
-    GENmodel **prev = models;
-    GENmodel *model = *prev;
-
-    for (; model; model = model->GENnextModel) {
-        if (model->GENmodName == modname || (kill && model == kill))
-            break;
-        prev = &(model->GENnextModel);
-    }
-
-    if (!model)
-        return E_NOMOD;
-
-    *prev = model->GENnextModel;
-    for (here = model->GENinstances; here;) {
-        GENinstance *next_instance = here->GENnextInstance;
-        GENinstanceFree(here);
-        here = next_instance;
-    }
     GENmodelFree(model);
     return OK;
 }
