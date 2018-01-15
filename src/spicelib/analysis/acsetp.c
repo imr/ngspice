@@ -22,8 +22,8 @@ ACsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     switch(which) {
 
     case AC_START:
-	if (value->rValue <= 0.0) {
-	    errMsg = copy("Frequency of 0 is invalid for AC start");
+	if (value->rValue < 0.0) {
+	    errMsg = copy("Frequency of < 0 is invalid for AC start");
             job->ACstartFreq = 1.0;
 	    return(E_PARMVAL);
 	}
@@ -32,8 +32,8 @@ ACsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         break;
 
     case AC_STOP:
-	if (value->rValue <= 0.0) {
-	    errMsg = copy("Frequency of 0 is invalid for AC stop");
+	if (value->rValue < 0.0) {
+	    errMsg = copy("Frequency of < 0 is invalid for AC stop");
             job->ACstartFreq = 1.0;
 	    return(E_PARMVAL);
 	}

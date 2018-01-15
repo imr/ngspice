@@ -1,0 +1,27 @@
+* whether .ac works for freq=0
+*
+* (exec-spice "ngspice -b %s" t)
+
+v1  1 0  dc=0 ac=1
+r1  1 2  1k
+l1  2 3  1uH
+r3  3 0  1k
+c3  3 0  1uF
+
+.control
+
+ac lin 1 0Hz 0Hz
+
+let v3_gold = 0.5
+
+let err = abs(v(3)/v3_gold - 1)
+
+if err > 1e-15
+  echo "ERROR: test failed, excessive error, err = $&err"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+
+.endc
