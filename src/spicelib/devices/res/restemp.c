@@ -128,6 +128,9 @@ RESupdate_conduct(RESinstance *here, bool spill_warnings)
     else
         factor = (((tc2 * difference) + tc1) * difference) + 1.0;
 
+    if (!here->RESscaleGiven)
+        here->RESscale = 1;
+
     here->RESconduct = here->RESm / (here->RESresist * factor * here->RESscale);
 
     /* Paolo Nenzi:  AC value */
