@@ -17,5 +17,6 @@ void cadd(SPICE_DSTRINGPTR s, char c);
 
 bool alfa(char c);
 bool alfanum(char c);
+bool alfanumps(char c);
 
 int yes_or_no(void);

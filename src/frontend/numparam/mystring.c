@@ -149,3 +149,11 @@ alfanum(char c)
 {
     return alfa(c) || ((c >= '0') && (c <= '9'));
 }
+
+
+/* Additionally '-' allowed in subckt name if ps compatible */
+bool
+alfanumps(char c)
+{
+    return alfa(c) || ((c >= '0') && (c <= '9')) || c == '-';
+}

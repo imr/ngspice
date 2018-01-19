@@ -28,6 +28,7 @@ Todo:
 
 #include "ngspice/fteext.h"
 #include "ngspice/stringskip.h"
+#include "ngspice/compatmode.h"
 
 #ifdef SHARED_MODULE
 extern ATTRIBUTE_NORETURN void shared_exit(int status);
@@ -185,8 +186,12 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             char *t;
             entry_t *entry;
             /* check for known subckt name */
-            for (t = p; alfanum(*t); t++)
-                ;
+            if (inp_compat_mode == COMPATMODE_PS)
+                for (t = p; alfanumps(*t); t++)
+                    ;
+            else
+                for (t = p; alfanum(*t); t++)
+                    ;
             spice_dstring_reinit(&name);
             pscopy(&name, p, t);
             entry = entrynb(dico, spice_dstring_value(&name));
