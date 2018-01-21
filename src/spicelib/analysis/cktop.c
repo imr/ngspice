@@ -183,7 +183,7 @@ dynamic_gmin (CKTcircuit *ckt, long int firstmode,
             }
 
             if (iters > (3 * ckt->CKTdcTrcvMaxIter / 4))
-                factor = sqrt (factor);
+                factor = MAX(sqrt (factor), 1.00005);
 
             OldGmin = ckt->CKTdiagGmin;
 
