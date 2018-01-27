@@ -1648,7 +1648,9 @@ inp_parse_temper(struct card *card, struct pt_temper **modtlist_p, struct pt_tem
             }
             /* go back over param name */
             char *end_param = skip_back_ws(eq_ptr, curr_line);
-            char *beg_param = skip_back_non_ws(end_param, curr_line);
+            char *beg_param = eq_ptr;
+            while (beg_param > curr_line && !isspace_c(beg_param[-1]) && beg_param[-1] != '(')
+                beg_param--;
             /* find end of expression string */
             char *beg_expr = skip_ws(eq_ptr + 1);
             char *end_expr = find_assignment(beg_expr);
