@@ -38,7 +38,7 @@ void INP2I(CKTcircuit *ckt, INPtables * tab, struct card *current)
         }
     }
     line = current->line;
-    INPgetTok(&line, &name, 1);
+    INPgetNetTok(&line, &name, 1);
     INPinsert(&name, tab);
     INPgetNetTok(&line, &nname1, 1);
     INPtermInsert(ckt, &nname1, tab, &node1);

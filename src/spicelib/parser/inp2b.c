@@ -42,7 +42,7 @@ void INP2B(CKTcircuit *ckt, INPtables * tab, struct card *current)
         ckt->CKTvarHertz = 1;
         
     line = current->line;
-    INPgetTok(&line, &name, 1);
+    INPgetNetTok(&line, &name, 1);
     INPinsert(&name, tab);
 
     INPgetNetTok(&line, &nname1, 1);
