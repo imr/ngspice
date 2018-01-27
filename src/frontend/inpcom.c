@@ -4509,7 +4509,9 @@ inp_compat(struct card *card)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
 
                 tfree(firstno);
+                tfree(secondno);
                 tfree(lastlastno);
+                tfree(expression);
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
