@@ -619,21 +619,25 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (ft_ngdebug) {
                 /*debug: print into file*/
                 FILE *fdo = fopen("debug-out2.txt", "w");
-                struct card *t = NULL;
-                fprintf(fdo, "**************** uncommented deck **************\n\n");
-                /* always print first line */
-                fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
-                /* here without out-commented lines */
-                for (t = deck->nextcard; t; t = t->nextcard) {
-                    if (*(t->line) == '*')
-                        continue;
-                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                if (fdo) {
+                    struct card *t = NULL;
+                    fprintf(fdo, "**************** uncommented deck **************\n\n");
+                    /* always print first line */
+                    fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
+                    /* here without out-commented lines */
+                    for (t = deck->nextcard; t; t = t->nextcard) {
+                        if (*(t->line) == '*')
+                            continue;
+                        fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                    }
+                    fprintf(fdo, "\n****************** complete deck ***************\n\n");
+                    /* now completely */
+                    for (t = deck; t; t = t->nextcard)
+                        fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                    fclose(fdo);
                 }
-                fprintf(fdo, "\n****************** complete deck ***************\n\n");
-                /* now completely */
-                for (t = deck; t; t = t->nextcard)
-                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
-                fclose(fdo);
+                else
+                    fprintf(stderr, "Warning: Cannot open file debug-out2.txt for saving debug info\n");
             }
             for (dd = deck; dd; dd = dd->nextcard) {
                 /* get csparams and create vectors, being
@@ -761,21 +765,25 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         if (ft_ngdebug) {
             /*debug: print into file*/
             FILE *fdo = fopen("debug-out3.txt", "w");
-            struct card *t = NULL;
-            fprintf(fdo, "**************** uncommented deck **************\n\n");
-            /* always print first line */
-            fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
-            /* here without out-commented lines */
-            for (t = deck->nextcard; t; t = t->nextcard) {
-                if (*(t->line) == '*')
-                    continue;
-                fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+            if (fdo) {
+                struct card *t = NULL;
+                fprintf(fdo, "**************** uncommented deck **************\n\n");
+                /* always print first line */
+                fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
+                /* here without out-commented lines */
+                for (t = deck->nextcard; t; t = t->nextcard) {
+                    if (*(t->line) == '*')
+                        continue;
+                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                }
+                fprintf(fdo, "\n****************** complete deck ***************\n\n");
+                /* now completely */
+                for (t = deck; t; t = t->nextcard)
+                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                fclose(fdo);
             }
-            fprintf(fdo, "\n****************** complete deck ***************\n\n");
-            /* now completely */
-            for (t = deck; t; t = t->nextcard)
-                fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
-            fclose(fdo);
+            else
+                fprintf(stderr, "Warning: Cannot open file debug-out3.txt for saving debug info\n");
         }
 
         /* Now the circuit is defined, so generate the parse trees */

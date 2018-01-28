@@ -620,26 +620,30 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         }
 
         if (ft_ngdebug) {
-            /*debug: print into file*/
             FILE *fd = fopen("debug-out.txt", "w");
-            struct card *t;
-            fprintf(fd, "**************** uncommented deck **************\n\n");
-            /* always print first line */
-            fprintf(fd, "%6d  %6d  %s\n", cc->linenum_orig, cc->linenum, cc->line);
-            /* here without out-commented lines */
-            for (t = cc->nextcard; t; t = t->nextcard) {
-                if (*(t->line) == '*')
-                    continue;
-                fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
-            }
-            fprintf(fd, "\n****************** complete deck ***************\n\n");
-            /* now completely */
-            for (t = cc; t; t = t->nextcard)
-                fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
-            fclose(fd);
+            if (fd) {
+                /*debug: print into file*/
+                struct card *t;
+                fprintf(fd, "**************** uncommented deck **************\n\n");
+                /* always print first line */
+                fprintf(fd, "%6d  %6d  %s\n", cc->linenum_orig, cc->linenum, cc->line);
+                /* here without out-commented lines */
+                for (t = cc->nextcard; t; t = t->nextcard) {
+                    if (*(t->line) == '*')
+                        continue;
+                    fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                }
+                fprintf(fd, "\n****************** complete deck ***************\n\n");
+                /* now completely */
+                for (t = cc; t; t = t->nextcard)
+                    fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                fclose(fd);
 
-            fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                    (int) max_line_length, no_braces, dynmaxline);
+                fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
+                    (int)max_line_length, no_braces, dynmaxline);
+            }
+            else
+                fprintf(stderr, "Warning: Cannot open file debug-out.txt for saving debug info\n");
         }
     }
 
