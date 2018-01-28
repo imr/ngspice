@@ -6981,7 +6981,7 @@ inp_rem_unused_models(struct nscope *root, struct card *deck)
                 struct modellist *m = find_model(card->level, elem_model_name);
                 if (m) {
                     if (*curr_line != m->elemb)
-                        fprintf(stderr, "warning, model type mismatch\n");
+                        fprintf(stderr, "warning, model type mismatch in line\n    %s\n", curr_line);
                     mark_all_binned(m->model->level, elem_model_name);
                 } else {
                     fprintf(stderr, "warning, can't find model %s\n", elem_model_name);
