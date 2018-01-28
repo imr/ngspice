@@ -374,8 +374,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     char *dir_name = ngdirname(filename ? filename : ".");
 
     startTime = seconds();
-    /* inp_source() called with fp: load from file */
-    if (fp) {
+    /* inp_source() called with fp: load from file, */
+    /* called with *fp == NULL and intfile: we want to load circuit from circarray */
+    if (fp || intfile) {
         deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
 
         /* files starting with *ng_script are user supplied command files */
@@ -388,7 +389,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             mc_deck = inp_deckcopy_oc(deck);
         }
     }
-    /* inp_spsource() called with *fp == NULL: we want to reload circuit for MC simulation */
+    /* called with *fp == NULL and not intfile: we want to reload circuit from mc_deck */
     else {
         if (mc_deck)
             deck = inp_deckcopy(mc_deck);
