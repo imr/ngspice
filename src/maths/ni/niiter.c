@@ -237,6 +237,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
             if (ckt->CKTnoncon == 0) {
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(OldCKTstate0);
+                SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
                 return(OK);
             }
         } else if (ckt->CKTmode & MODEINITJCT) {
