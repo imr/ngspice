@@ -33,6 +33,7 @@ NInzIter(CKTcircuit *ckt, int posDrive, int negDrive)
     ckt->CKTrhs [negDrive] = -1.0;
     SMPcaSolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTirhs, ckt->CKTrhsSpare,
 	    ckt->CKTirhsSpare);
-    *ckt->CKTrhs = 0.0;
-    *ckt->CKTirhs = 0.0;
+
+    ckt->CKTrhs [0] = 0.0;
+    ckt->CKTirhs [0] = 0.0;
 }

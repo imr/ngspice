@@ -69,12 +69,12 @@ skip:
             ckt->CKTirhs, ckt->CKTrhsSpare,
             ckt->CKTirhsSpare);
 
-    *ckt->CKTrhs = 0;
-    *ckt->CKTrhsSpare = 0;
-    *ckt->CKTrhsOld = 0;
-    *ckt->CKTirhs = 0;
-    *ckt->CKTirhsSpare = 0;
-    *ckt->CKTirhsOld = 0;
+    ckt->CKTrhs[0] = 0;
+    ckt->CKTrhsSpare[0] = 0;
+    ckt->CKTrhsOld[0] = 0;
+    ckt->CKTirhs[0] = 0;
+    ckt->CKTirhsSpare[0] = 0;
+    ckt->CKTirhsOld[0] = 0;
 
     SWAP(double *, ckt->CKTirhs, ckt->CKTirhsOld);
 
