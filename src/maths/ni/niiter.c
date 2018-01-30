@@ -258,6 +258,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
                  * CKTrhs won't be used
                  */
                 SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
+                /* explicitly destroy CKTrhs for test purpose
+                 */
+                for (i = SMPmatSize(ckt->CKTmatrix); --i >= 0;)
+                    ckt->CKTrhs[i] = 0.0 / 0.0;
                 return(OK);
             }
         } else if (ckt->CKTmode & MODEINITJCT) {
