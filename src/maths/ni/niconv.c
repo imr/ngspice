@@ -17,6 +17,9 @@ Author: 1985 Thomas L. Quarles
 extern bool ft_ngdebug;
 
 
+/* here:
+ *   CKTrhs is newest solution, CKTrhsOld the previous solution
+ */
 int
 NIconvTest(CKTcircuit *ckt)
 {

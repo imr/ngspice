@@ -65,6 +65,9 @@ skip:
             return(error); /* can't handle E_BADMATRIX, so let caller */
         }
     } 
+    /* solve(CKTmatrix . x = CKTrhs), then assign CKTrhs <== x
+     * CKTrhsSpare is not used
+     */
     SMPcSolve(ckt->CKTmatrix,ckt->CKTrhs, 
             ckt->CKTirhs, ckt->CKTrhsSpare,
             ckt->CKTirhsSpare);

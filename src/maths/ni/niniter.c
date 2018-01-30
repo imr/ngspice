@@ -31,6 +31,9 @@ NInzIter(CKTcircuit *ckt, int posDrive, int negDrive)
 
     ckt->CKTrhs [posDrive] = 1.0;     /* apply unit current excitation */
     ckt->CKTrhs [negDrive] = -1.0;
+    /* solve(CKTmatrix^T . x = CKTrhs), then assign CKTrhs <== x
+     * CKTrhsSpare is not used
+     */
     SMPcaSolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTirhs, ckt->CKTrhsSpare,
 	    ckt->CKTirhsSpare);
 

@@ -64,6 +64,9 @@ retry:
         }
     } 
     startTime = SPfrontEnd->IFseconds();
+    /* solve(CKTmatrix . x = CKTrhs), then assign CKTrhs <== x
+     * CKTrhsSpare is not used
+     */
     SMPcSolve(ckt->CKTmatrix,ckt->CKTrhs, 
             ckt->CKTirhs, ckt->CKTrhsSpare,
             ckt->CKTirhsSpare);

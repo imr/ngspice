@@ -36,6 +36,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
         maxIter = 100;
 
     if ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
+        /* save current CKTrhs (the last solution) in CKTrhsOld
+         * CKTrhs will be zeroed and then DEVload'ed in CKTload(),
+         *   and later overwritten with the next solution
+         */
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         error = CKTload(ckt);
         if (error)
@@ -52,6 +56,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
 #endif
 
     if (ckt->CKTniState & NIUNINITIALIZED) {
+        /* CKTrhs, CKTrhsOld and CKTrhsSpare
+         *   are zeroed in NIreinit()
+         */
         error = NIreinit(ckt);
         if (error) {
 #ifdef STEPDEBUG
@@ -72,6 +79,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
 #endif
         {
 
+            /* CKTrhs is zeroed, and then DEVload'ed in CKTload()
+             */
             error = CKTload(ckt);
             /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
             /* fflush(stdout); */
@@ -159,6 +168,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
                    (size_t) ckt->CKTnumStates * sizeof(double));
 
             startTime = SPfrontEnd->IFseconds();
+            /* solve(CKTmatrix . x = CKTrhs), then assign CKTrhs <== x
+             * CKTrhsSpare is not used
+             */
             SMPsolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
             ckt->CKTstat->STATsolveTime +=
                 SPfrontEnd->IFseconds() - startTime;
@@ -189,6 +201,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 return(E_ITERLIM);
             }
 
+            /* we have the newest solution CKTrhs,
+             *   and the previous in CKTrhsOld
+             * when calling NIconvTest()
+             */
             if ((ckt->CKTnoncon == 0) && (iterno != 1))
                 ckt->CKTnoncon = NIconvTest(ckt);
             else
@@ -237,6 +253,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
             if (ckt->CKTnoncon == 0) {
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(OldCKTstate0);
+                /* now copy the newest solution over to CKTrhsOld
+                 *   where it will be expected when returning this function
+                 * CKTrhs won't be used
+                 */
                 SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
                 return(OK);
             }
@@ -266,6 +286,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
         }
 
         /* build up the lvnim1 array from the lvn array */
+        /* save the newest solution in CKRrhsOld
+         * CKTrhs is unused now and ready to be zeroed and DEVload'ed
+         * in the next CKTload() invocation
+         */
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
         /* printf("after loading, after solving\n"); */
         /* CKTdump(ckt); */
