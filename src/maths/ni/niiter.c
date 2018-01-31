@@ -26,6 +26,7 @@ int
 NIiter(CKTcircuit *ckt, int maxIter)
 {
     double startTime, *OldCKTstate0 = NULL;
+    int old_noncon;
     int error, i, j;
 
     int iterno = 0;
@@ -66,6 +67,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
     for (;;) {
 
+        old_noncon = ckt->CKTnoncon;
         ckt->CKTnoncon = 0;
 
 #ifdef NEWPRED
@@ -240,7 +242,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     ckt->CKTnoncon = ipass;
                 ipass = 0;
             }
-            if (ckt->CKTnoncon == 0) {
+            if (ckt->CKTnoncon == 0 && old_noncon == 0) {
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(OldCKTstate0);
                 printf("niiter[%d], accepted and return\n", iterno);
