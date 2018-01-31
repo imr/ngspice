@@ -359,6 +359,7 @@ MIFload(
                                         fast->input.rvalue = last_input + conv_limit;
                                     else
                                         fast->input.rvalue = last_input - conv_limit;
+                                    printf("MIFload: not yet valid, setting CKTnoncon\n");
                                     (ckt->CKTnoncon)++;
                                     /* report convergence problem if last call */
                                     if(ckt->enh->conv_debug.report_conv_probs) {

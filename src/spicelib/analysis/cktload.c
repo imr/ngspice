@@ -39,6 +39,7 @@ CKTload(CKTcircuit *ckt)
     int noncon;
 #endif /* STEPDEBUG */
 
+    printf("\n-----------------\nCKTload\n");
 #ifdef XSPICE
     /* gtri - begin - Put resistors to ground at all nodes */
     /*   SMPmatrix  *matrix; maschmann : deleted , because unused */

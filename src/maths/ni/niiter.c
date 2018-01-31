@@ -31,6 +31,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
     int iterno = 0;
     int ipass = 0;
 
+    printf("\n\n-------------------------------------------------\n");
     /* some convergence issues that get resolved by increasing max iter */
     if (maxIter < 100)
         maxIter = 100;
@@ -160,6 +161,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
             startTime = SPfrontEnd->IFseconds();
             SMPsolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
+            printf("niiter[%d], solving\n", iterno);
             ckt->CKTstat->STATsolveTime +=
                 SPfrontEnd->IFseconds() - startTime;
 #ifdef STEPDEBUG
@@ -189,10 +191,13 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 return(E_ITERLIM);
             }
 
-            if ((ckt->CKTnoncon == 0) && (iterno != 1))
+            if ((ckt->CKTnoncon == 0) && (iterno != 1)) {
                 ckt->CKTnoncon = NIconvTest(ckt);
-            else
+                printf("niiter[%d], NIconvTest->%d\n", iterno, ckt->CKTnoncon);
+            } else {
+                printf("niiter[%d], skipping NIconvTest\n", iterno);
                 ckt->CKTnoncon = 1;
+            }
 
 #ifdef STEPDEBUG
             printf("noncon is %d\n", ckt->CKTnoncon);
@@ -205,6 +210,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
         {
             CKTnode *node;
             double diff, maxdiff = 0;
+            printf("niiter[%d], nodedamping\n", iterno);
             for (node = ckt->CKTnodes->next; node; node = node->next)
                 if (node->type == SP_VOLTAGE) {
                     diff = ckt->CKTrhs[node->number] - ckt->CKTrhsOld[node->number];
@@ -237,6 +243,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
             if (ckt->CKTnoncon == 0) {
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(OldCKTstate0);
+                printf("niiter[%d], accepted and return\n", iterno);
                 return(OK);
             }
         } else if (ckt->CKTmode & MODEINITJCT) {
