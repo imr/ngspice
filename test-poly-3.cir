@@ -1,0 +1,27 @@
+.title niiter + spice2poly issue
+
+* (compile "SPICE_SCRIPTS=$(pwd)/test-poly ../w32/src/ngspice test-poly-3.cir" t)
+
+v1  in 0  dc=0
+E1  out 0  poly(1)  in 0   0.0 0.0 1.0
+
+.control
+dc v1 1 2 1
+
+let out_gold = v(in) * v(in)
+
+print v(out) - v(out_gold)
+
+let abs_err_e1 = vecmax(abs(v(out) - v(out_gold)))
+
+echo "Note: abs_err_e1 = $&abs_err_e1"
+
+if abs_err_e1 > 1e-12
+  echo "ERROR: mismatch"
+end
+
+.endc
+
+.end
+
+
