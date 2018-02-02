@@ -52,8 +52,8 @@ SPICEdev MOS6info = {
  /* DEVacLoad     */ NULL, /* MOS6acLoad, XXX */
  /* DEVaccept     */ NULL,
  /* DEVdestroy    */ MOS6destroy,
- /* DEVmodDelete  */ NULL,
- /* DEVdelete     */ NULL,
+ /* DEVmodDelete  */ MOS6mDelete,
+ /* DEVdelete     */ MOS6delete,
  /* DEVsetic      */ MOS6getic,
  /* DEVask        */ MOS6ask,
  /* DEVmodAsk     */ MOS6mAsk,
