@@ -40,35 +40,29 @@
 <admst:template match="code">
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
-
 #include &quot;ngspice/ngspice.h&quot;
 #include &quot;$(module)defs.h&quot;
 #include &quot;ngspice/suffix.h&quot;
 
-void $(module)destroy(GENmodel **inModel)
-
+void
+$(module)destroy(GENmodel **inModel)
 {
-  register $(module)model **model = ($(module)model**)inModel;
-  register $(module)instance *here;
-  $(module)instance *prev = NULL;
-  $(module)model *mod = *model;
-  $(module)model *oldmod = NULL;
-  
-  for ( ; mod ; mod = mod->$(module)nextModel ) {
-      if (oldmod) FREE(oldmod);
-      oldmod = mod;
-      prev = ($(module)instance *)NULL;  
-      for (here = mod->$(module)instances; here ; here = here->$(module)nextInstance) {
-          if(prev) FREE(prev);
-	  prev = here;
-	  }
-          if(prev) FREE(prev);
-    } 
-    if(oldmod) FREE(oldmod);
-    *model = NULL;
-  return;
-}
+    $(module)model *mod = *($(module)model**) inModel;
 
+    while (mod) {
+        $(module)model *next_mod = mod->$(module)nextModel;
+        $(module)instance *inst = mod->$(module)instances;
+        while (inst) {
+            $(module)instance *next_inst = inst-&gt;$(module)nextInstance;
+            FREE(inst);
+            inst = next_inst;
+        }
+        FREE(mod);
+        mod = next_mod;
+    }
+
+    *inModel = NULL;
+}
 </admst:template>
 
 <admst:for-each select="/module">
