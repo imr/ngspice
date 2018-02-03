@@ -43,12 +43,8 @@ CKTpName(char *parm, IFvalue *val, CKTcircuit *ckt, int dev, char *name, GENinst
             error = CKTparam(ckt, *fast,
                     p->id, val,
                     NULL);
-            if(error) return(error);
-            break;
+            return error;
         }
     }
-    if(p >= p_end) {
-        return(E_BADPARM);
-    }
-    return(OK);
+    return E_BADPARM;
 }
