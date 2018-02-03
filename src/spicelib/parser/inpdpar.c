@@ -30,6 +30,8 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
 /* the optional leading numeric parameter */
 /* flag - 1 if leading double given, 0 otherwise */
 {
+    IFdevice *device = ft_sim->devices[dev];
+
     int error;                  /* int to store evaluate error return codes in */
     char *parm = NULL;
     char *errbuf;
@@ -57,27 +59,27 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
             goto quit;
         }
 
-        for (i = 0; i < *(ft_sim->devices[dev]->numInstanceParms); i++) {
-            if (strcmp(parm, ft_sim->devices[dev]->instanceParms[i].keyword) == 0) {
+        for (i = 0; i < *(device->numInstanceParms); i++) {
+            if (strcmp(parm, device->instanceParms[i].keyword) == 0) {
                 break;
             }
         }
 
-        if (i >= *(ft_sim->devices[dev]->numInstanceParms)) {
+        if (i >= *(device->numInstanceParms)) {
             errbuf = tprintf(" unknown parameter (%s) \n", parm);
             rtn = errbuf;
             goto quit;
         }
 
         val = INPgetValue(ckt, line,
-                          ft_sim->devices[dev]->instanceParms[i].dataType,
+                          device->instanceParms[i].dataType,
                           tab);
         if (!val) {
             rtn = INPerror(E_PARMVAL);
             goto quit;
         }
         error = ft_sim->setInstanceParm (ckt, fast,
-                                         ft_sim->devices[dev]->instanceParms[i].id,
+                                         device->instanceParms[i].id,
                                          val, NULL);
         if (error) {
             rtn = INPerror(error);
@@ -85,7 +87,7 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
         }
 
         /* delete the union val */
-        switch (ft_sim->devices[dev]->instanceParms[i].dataType & IF_VARTYPES) {
+        switch (device->instanceParms[i].dataType & IF_VARTYPES) {
         case IF_REALVEC:
             tfree(val->v.vec.rVec);
             break;
