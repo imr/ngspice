@@ -63,6 +63,7 @@ int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 	      FREE(here);
 	      return(OK);
 	      }
+	  prev = &amp;(here->$(module)nextInstance);
          
     } 
   } 
