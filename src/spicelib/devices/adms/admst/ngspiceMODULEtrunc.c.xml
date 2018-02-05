@@ -49,8 +49,8 @@
 
 int $(module)trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
-  register $(module)model *model = ($(module)model*)inModel;
-  register $(module)instance *here;
+  $(module)model *model = ($(module)model*)inModel;
+  $(module)instance *here;
 
 #ifdef STEPDEBUG
     double debugtemp;

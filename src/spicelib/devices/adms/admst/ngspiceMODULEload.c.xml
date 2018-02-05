@@ -187,8 +187,8 @@ int $(module)load(GENmodel *inModel, CKTcircuit *ckt)
       * sparse matrix previously provided 
       */
 {
-  register $(module)model *model = ($(module)model*)inModel;
-  register $(module)instance *here;
+  $(module)model *model = ($(module)model*)inModel;
+  $(module)instance *here;
   int ChargeComputationNeeded =  
                  ((ckt->CKTmode &amp; (MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode &amp; MODETRANOP) &amp;&amp; (ckt->CKTmode &amp; MODEUIC)))

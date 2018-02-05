@@ -49,8 +49,8 @@
 int $(module)mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 
 {
-  register $(module)model **model = ($(module)model**)inModel;
-  register $(module)model *modfast =($(module)model*)kill;
+  $(module)model **model = ($(module)model**)inModel;
+  $(module)model *modfast =($(module)model*)kill;
   $(module)instance *here;
   $(module)instance *prev = NULL;
   $(module)model **oldmod;

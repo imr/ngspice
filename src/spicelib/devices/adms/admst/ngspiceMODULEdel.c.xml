@@ -49,8 +49,8 @@
 int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 
 {
-  register $(module)model *model = ($(module)model*)inModel;
-  register $(module)instance **fast =($(module)instance**)inInst;
+  $(module)model *model = ($(module)model*)inModel;
+  $(module)instance **fast =($(module)instance**)inInst;
   
   $(module)instance **prev = NULL;
   $(module)instance *here;

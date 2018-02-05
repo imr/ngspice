@@ -55,8 +55,8 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
       * for fast matrix loading 
       */
 {
-  register $(module)model *model = ($(module)model*)inModel;
-  register $(module)instance *here;
+  $(module)model *model = ($(module)model*)inModel;
+  $(module)instance *here;
   
   /*  loop through all the $(module) device models */
   for ( ;model != NULL ;model = model->$(module)nextModel )

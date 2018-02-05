@@ -50,8 +50,8 @@
 
 int $(module)pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 {
-  register $(module)model *model = ($(module)model*)inModel;
-  register $(module)instance *here;
+  $(module)model *model = ($(module)model*)inModel;
+  $(module)instance *here;
   NG_IGNOREABLE(ckt);
   for ( ; model != NULL; model = model->$(module)nextModel )
   {
