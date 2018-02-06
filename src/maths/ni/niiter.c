@@ -193,11 +193,15 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 return(E_ITERLIM);
             }
 
-            if ((ckt->CKTnoncon == 0) && (iterno != 1)) {
-                ckt->CKTnoncon = NIconvTest(ckt);
-                printf("niiter[%d], NIconvTest->%d\n", iterno, ckt->CKTnoncon);
+            if ((ckt->CKTnoncon == 0) && (iterno > 1)) {
+                if (old_noncon == 0) {
+                    ckt->CKTnoncon = NIconvTest(ckt);
+                    printf("niiter[%d], NIconvTest->%d\n", iterno, ckt->CKTnoncon);
+                } else {
+                    printf("niiter[%d], skipping NIconvTest - CKTnoncon: %d\n", iterno, ckt->CKTnoncon);
+                }
             } else {
-                printf("niiter[%d], skipping NIconvTest\n", iterno);
+                printf("niiter[%d], skipping NIconvTest - CKTnoncon: %d\n", iterno, ckt->CKTnoncon);
                 ckt->CKTnoncon = 1;
             }
 
@@ -242,7 +246,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     ckt->CKTnoncon = ipass;
                 ipass = 0;
             }
-            if (ckt->CKTnoncon == 0 && old_noncon == 0) {
+            if ((ckt->CKTnoncon == 0) && (old_noncon == 0)) {
                 ckt->CKTstat->STATnumIter += iterno;
                 FREE(OldCKTstate0);
                 printf("niiter[%d], accepted and return\n", iterno);
