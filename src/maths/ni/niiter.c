@@ -76,6 +76,12 @@ NIiter(CKTcircuit *ckt, int maxIter)
         {
 
             error = CKTload(ckt);
+
+            /* moved it to here as if xspice is included then CKTload changes
+               CKTnumStates the first time it is run */
+            if (!OldCKTstate0)
+                OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
+
             /* printf("loaded, noncon is %d\n", ckt->CKTnoncon); */
             /* fflush(stdout); */
             iterno++;
@@ -154,13 +160,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 }
             }
 
-            /* moved it to here as if xspice is included then CKTload changes
-               CKTnumStates the first time it is run */
-            if (!OldCKTstate0)
-                OldCKTstate0 = TMALLOC(double, ckt->CKTnumStates + 1);
-            memcpy(OldCKTstate0, ckt->CKTstate0,
-                   (size_t) ckt->CKTnumStates * sizeof(double));
-
             startTime = SPfrontEnd->IFseconds();
             SMPsolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
             printf("niiter[%d], solving\n", iterno);
@@ -198,10 +197,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     ckt->CKTnoncon = NIconvTest(ckt);
                     printf("niiter[%d], NIconvTest->%d\n", iterno, ckt->CKTnoncon);
                 } else {
-                    printf("niiter[%d], skipping NIconvTest - CKTnoncon: %d\n", iterno, ckt->CKTnoncon);
+                    printf("niiter[%d], skipping NIconvTest 1 - CKTnoncon: %d\n", iterno, ckt->CKTnoncon);
                 }
             } else {
-                printf("niiter[%d], skipping NIconvTest - CKTnoncon: %d\n", iterno, ckt->CKTnoncon);
+                printf("niiter[%d], skipping NIconvTest 2 - CKTnoncon: %d\n", iterno, ckt->CKTnoncon);
                 ckt->CKTnoncon = 1;
             }
 
@@ -279,6 +278,10 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
         /* build up the lvnim1 array from the lvn array */
         SWAP(double *, ckt->CKTrhs, ckt->CKTrhsOld);
+
+        if (ckt->CKTnodeDamping != 0)
+            memcpy(OldCKTstate0, ckt->CKTstate0, (size_t) ckt->CKTnumStates * sizeof(double));
+
         /* printf("after loading, after solving\n"); */
         /* CKTdump(ckt); */
     }
