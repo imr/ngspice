@@ -17,6 +17,7 @@ Author: 1985 Thomas L. Quarles
 int
 BJTdelete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    BJTinstance *inst = (BJTinstance *) gen_inst;
+    FREE(inst->BJTsens);
     return OK;
 }

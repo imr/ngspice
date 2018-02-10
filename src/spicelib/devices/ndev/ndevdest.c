@@ -22,8 +22,6 @@ NDEVdestroy(GENmodel **inModel)
             FREE(inst);
             inst = next_inst;
         }
-        close(mod->sock);
-        printf("Disconnect to remote NDEV server %s:%d\n", mod->host, mod->port);
         FREE(mod);
         mod = next_mod;
     }

@@ -12,6 +12,7 @@ Author: 1985 Thomas L. Quarles
 int
 MOS3delete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    MOS3instance *inst = (MOS3instance *) gen_inst;
+    FREE(inst->MOS3sens);
     return OK;
 }

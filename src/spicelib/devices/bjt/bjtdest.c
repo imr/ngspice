@@ -23,7 +23,6 @@ BJTdestroy(GENmodel **inModel)
         BJTinstance *inst = mod->BJTinstances;
         while (inst) {
             BJTinstance *next_inst = inst->BJTnextInstance;
-            FREE(inst->BJTsens);
             FREE(inst);
             inst = next_inst;
         }

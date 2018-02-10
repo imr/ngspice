@@ -19,7 +19,6 @@ MOS9destroy(GENmodel **inModel)
         MOS9instance *inst = mod->MOS9instances;
         while (inst) {
             MOS9instance *next_inst = inst->MOS9nextInstance;
-            FREE(inst->MOS9sens);
             FREE(inst);
             inst = next_inst;
         }

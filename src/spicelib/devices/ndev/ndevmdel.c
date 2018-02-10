@@ -12,6 +12,10 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NDEVmDelete(GENmodel *gen_model)
 {
-    NG_IGNORE(gen_model);
+    NDEVmodel *model = (NDEVmodel *) gen_model;
+
+    close(model->sock);
+    printf("Disconnect to remote NDEV server %s:%d\n", model->host, model->port);
+
     return OK;
 }

@@ -23,26 +23,12 @@ BSIM4v7destroy(GENmodel **inModel)
     while (mod) {
         BSIM4v7model *next_mod = mod->BSIM4v7nextModel;
         BSIM4v7instance *inst = mod->BSIM4v7instances;
-        /** added to get rid of link list pSizeDependParamKnot **/
-        struct bsim4SizeDependParam *p = mod->pSizeDependParamKnot;
-        while (p) {
-            struct bsim4SizeDependParam *next_p = p->pNext;
-            FREE(p);
-            p = next_p;
-        }
-        /** end of extra code **/
         while (inst) {
             BSIM4v7instance *next_inst = inst->BSIM4v7nextInstance;
             FREE(inst);
             inst = next_inst;
         }
 
-#ifdef USE_OMP
-        FREE(mod->BSIM4v7InstanceArray);
-#endif
-
-        /* mod->BSIM4v7modName to be freed in INPtabEnd() */
-        FREE(mod->BSIM4v7version);
         FREE(mod);
         mod = next_mod;
     }

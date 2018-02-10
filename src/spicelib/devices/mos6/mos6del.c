@@ -12,6 +12,7 @@ Author: 1985 Thomas L. Quarles
 int
 MOS6delete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    MOS6instance *inst = (MOS6instance *) gen_inst;
+    FREE(inst->MOS6sens);
     return OK;
 }

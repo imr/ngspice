@@ -18,6 +18,20 @@
 int
 BSIM3v32mDelete(GENmodel *gen_model)
 {
-    NG_IGNORE(gen_model);
+    BSIM3v32model *model = (BSIM3v32model *) gen_model;
+
+#ifdef USE_OMP
+    FREE(model->BSIM3v32InstanceArray);
+#endif
+
+    struct bsim3v32SizeDependParam *p =  model->pSizeDependParamKnot;
+    while (p) {
+        struct bsim3v32SizeDependParam *next_p = p->pNext;
+        FREE(p);
+        p = next_p;
+    }
+
+    FREE(model->BSIM3v32version);
+
     return OK;
 }

@@ -10,8 +10,6 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "nbjtdefs.h"
-#include "../../../ciderlib/oned/onedext.h"
-#include "ngspice/cidersupt.h"
 #include "ngspice/suffix.h"
 
 
@@ -25,7 +23,6 @@ NBJTdestroy(GENmodel **inModel)
         NBJTinstance *inst = mod->NBJTinstances;
         while (inst) {
             NBJTinstance *next_inst = inst->NBJTnextInstance;
-            ONEdestroy(inst->NBJTpDevice);
             FREE(inst);
             inst = next_inst;
         }

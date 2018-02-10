@@ -73,10 +73,6 @@ HSM2destroy(GENmodel **inModel)
             inst = next_inst;
         }
 
-#ifdef USE_OMP
-        FREE(mod->HSM2InstanceArray);
-#endif
-
         FREE(mod);
         mod = next_mod;
     }
