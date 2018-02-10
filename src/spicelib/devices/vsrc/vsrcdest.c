@@ -18,7 +18,6 @@ VSRCdestroy(GENmodel **inModel)
         VSRCinstance *inst = mod->VSRCinstances;
         while (inst) {
             VSRCinstance *next_inst = inst->VSRCnextInstance;
-            FREE(inst->VSRCcoeffs);
             FREE(inst);
             inst = next_inst;
         }

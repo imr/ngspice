@@ -67,6 +67,20 @@
 int
 BSIM4mDelete(GENmodel *gen_model)
 {
-    NG_IGNORE(gen_model);
+    BSIM4model *model = (BSIM4model *) gen_model;
+
+#ifdef USE_OMP
+    FREE(model->BSIM4InstanceArray);
+#endif
+
+    struct bsim4SizeDependParam *p = model->pSizeDependParamKnot;
+    while (p) {
+        struct bsim4SizeDependParam *next_p = p->pNext;
+        FREE(p);
+        p = next_p;
+    }
+
+    FREE(model->BSIM4version);
+
     return OK;
 }

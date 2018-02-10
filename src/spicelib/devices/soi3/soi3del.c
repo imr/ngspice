@@ -30,5 +30,10 @@ int
 SOI3delete(GENinstance *gen_inst)
 {
     NG_IGNORE(gen_inst);
+#if 0
+    /* fixme, why not ? */
+    SOI3instance *inst = (SOI3instance *) gen_inst;
+    FREE(inst->SOI3sens);
+#endif
     return OK;
 }

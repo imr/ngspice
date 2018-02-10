@@ -12,6 +12,9 @@ Author: 1985 Thomas L. Quarles
 int
 ISRCdelete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    ISRCinstance *inst = (ISRCinstance *) gen_inst;
+
+    FREE(inst->ISRCcoeffs);
+
     return OK;
 }

@@ -5,6 +5,7 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "numddefs.h"
+#include "../../../ciderlib/oned/onedext.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -12,6 +13,9 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 int
 NUMDdelete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    NUMDinstance *inst = (NUMDinstance *) gen_inst;
+
+    ONEdestroy(inst->NUMDpDevice);
+
     return OK;
 }

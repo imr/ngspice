@@ -12,6 +12,9 @@ Author: 1985 Thomas L. Quarles
 int
 VSRCdelete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    VSRCinstance *inst = (VSRCinstance *) gen_inst;
+
+    FREE(inst->VSRCcoeffs);
+
     return OK;
 }

@@ -19,6 +19,7 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 int
 VBICdelete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    VBICinstance *inst = (VBICinstance *) gen_inst;
+    FREE(inst->VBICsens);
     return OK;
 }

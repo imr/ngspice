@@ -24,5 +24,11 @@ int
 B4SOImDelete(GENmodel *gen_model)
 {
     NG_IGNORE(gen_model);
+
+#ifdef USE_OMP
+    B4SOImodel *model = (B4SOImodel *) gen_model;
+    FREE(model->B4SOIInstanceArray);
+#endif
+
     return OK;
 }

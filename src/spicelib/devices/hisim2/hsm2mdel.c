@@ -64,5 +64,11 @@ int
 HSM2mDelete(GENmodel *gen_model)
 {
     NG_IGNORE(gen_model);
+
+#ifdef USE_OMP
+    HSM2model *model = (HSM2model *) gen_model;
+    FREE(model->HSM2InstanceArray);
+#endif
+
     return OK;
 }

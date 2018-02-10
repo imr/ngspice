@@ -13,6 +13,7 @@ Modified: Alan Gillespie
 int
 MOS9delete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    MOS9instance *inst = (MOS9instance *) gen_inst;
+    FREE(inst->MOS9sens);
     return OK;
 }
