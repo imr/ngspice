@@ -27,7 +27,7 @@ struct coreInfo_t {
 	int       ((*dllitf_MIFtrunc)(GENmodel *, CKTcircuit *, double *));
 	int       ((*dllitf_MIFconvTest)(GENmodel *, CKTcircuit *));
 	int       ((*dllitf_MIFdelete)(GENinstance *));
-	int       ((*dllitf_MIFmDelete)(GENmodel **, IFuid, GENmodel *));
+	int       ((*dllitf_MIFmDelete)(GENmodel *));
 	void      ((*dllitf_MIFdestroy)(GENmodel **));
 	char *    ((*dllitf_MIFgettok)(char **));
 	char *    ((*dllitf_MIFget_token)(char **, Mif_Token_Type_t *));

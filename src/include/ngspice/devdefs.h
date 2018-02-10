@@ -71,8 +71,8 @@ typedef struct SPICEdev {
         /* subroutine to call on acceptance of a timepoint */
     void (*DEVdestroy)(GENmodel**);   
         /* subroutine to destroy all models and instances */
-    int (*DEVmodDelete)(GENmodel**,IFuid,GENmodel*);  
-        /* subroutine to delete a model and all instances */
+    int (*DEVmodDelete)(GENmodel*);
+        /* subroutine to delete a model */
     int (*DEVdelete)(GENinstance*);
         /* subroutine to delete an instance */
     int (*DEVsetic)(GENmodel*,CKTcircuit*);  

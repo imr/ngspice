@@ -63,10 +63,21 @@ void MIFdestroy(
     /* models from the head of the linked list until   */
     /* the head is null */
 
-    while(*inModel) {
-        MIFmDelete(inModel,
-                   (*inModel)->GENmodName,
-                   *inModel);
+    GENmodel *model = *inModel;
+
+    while (model) {
+        GENmodel *next_model = model->GENnextModel;
+        GENinstance *inst = model->GENinstances;
+        while (inst) {
+            GENinstance *next_instance = inst->GENnextInstance;
+            MIFdelete(inst);
+            FREE(inst);
+            inst = next_instance;
+        }
+        MIFmDelete(model);
+        FREE(model);
+        model = next_model;
     }
 
+    *inModel = NULL;
 }
