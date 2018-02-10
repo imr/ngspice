@@ -69,8 +69,8 @@ typedef struct SPICEdev {
         /* ac analysis loading function */
     int (*DEVaccept)(CKTcircuit*,GENmodel*); 
         /* subroutine to call on acceptance of a timepoint */
-    void (*DEVdestroy)(GENmodel**);   
-        /* subroutine to destroy all models and instances */
+    void (*DEVdestroy)(void);
+        /* subroutine to delete device specfic extra data */
     int (*DEVmodDelete)(GENmodel*);
         /* subroutine to delete a model */
     int (*DEVdelete)(GENinstance*);

@@ -28,7 +28,7 @@ struct coreInfo_t {
 	int       ((*dllitf_MIFconvTest)(GENmodel *, CKTcircuit *));
 	int       ((*dllitf_MIFdelete)(GENinstance *));
 	int       ((*dllitf_MIFmDelete)(GENmodel *));
-	void      ((*dllitf_MIFdestroy)(GENmodel **));
+	void      ((*dllitf_MIFdestroy)(void));
 	char *    ((*dllitf_MIFgettok)(char **));
 	char *    ((*dllitf_MIFget_token)(char **, Mif_Token_Type_t *));
 	Mif_Cntl_Src_Type_t ((*dllitf_MIFget_cntl_src_type)(Mif_Port_Type_t, Mif_Port_Type_t));

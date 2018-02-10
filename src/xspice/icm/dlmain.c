@@ -209,9 +209,9 @@ int MIFmDelete(
 }
 
 void MIFdestroy(
-    GENmodel **inModel
+    void
 	) {
-	(coreitf->dllitf_MIFdestroy)(inModel);
+	(coreitf->dllitf_MIFdestroy)();
 }
 
 char  *MIFgettok(

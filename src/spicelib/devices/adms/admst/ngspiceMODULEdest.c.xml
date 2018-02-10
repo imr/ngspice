@@ -45,23 +45,8 @@
 #include &quot;ngspice/suffix.h&quot;
 
 void
-$(module)destroy(GENmodel **inModel)
+$(module)destroy(void)
 {
-    $(module)model *mod = *($(module)model**) inModel;
-
-    while (mod) {
-        $(module)model *next_mod = mod->$(module)nextModel;
-        $(module)instance *inst = mod->$(module)instances;
-        while (inst) {
-            $(module)instance *next_inst = inst-&gt;$(module)nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }
 </admst:template>
 

@@ -51,7 +51,7 @@ extern int $(module)noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int $(module)pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int $(module)trunc(GENmodel*,CKTcircuit*,double*);
 extern int $(module)unsetup(GENmodel*,CKTcircuit*);
-extern void $(module)destroy(GENmodel**);
+extern void $(module)destroy(void);
 
 #endif
 

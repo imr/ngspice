@@ -49,35 +49,8 @@ NON-STANDARD FEATURES
 
 /*
 MIFdestroy
-
-This function deletes all models and all instances of a specified
-device type.  It traverses the linked list of model structures
-for that type and calls MIFmDelete on each model.
 */
 
-void MIFdestroy(
-    GENmodel **inModel)    /* The head of the list of models to delete */
+void MIFdestroy(void)
 {
-
-    /* Free all models of this device type by removing */
-    /* models from the head of the linked list until   */
-    /* the head is null */
-
-    GENmodel *model = *inModel;
-
-    while (model) {
-        GENmodel *next_model = model->GENnextModel;
-        GENinstance *inst = model->GENinstances;
-        while (inst) {
-            GENinstance *next_instance = inst->GENnextInstance;
-            MIFdelete(inst);
-            FREE(inst);
-            inst = next_instance;
-        }
-        MIFmDelete(model);
-        FREE(model);
-        model = next_model;
-    }
-
-    *inModel = NULL;
 }
