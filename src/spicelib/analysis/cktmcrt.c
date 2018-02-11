@@ -42,3 +42,17 @@ CKTmodCrt(CKTcircuit *ckt, int type, GENmodel **modfast, IFuid name)
 
     return OK;
 }
+
+
+void
+GENinstanceFree(GENinstance *inst)
+{
+    txfree(inst);
+}
+
+
+void
+GENmodelFree(GENmodel *model)
+{
+    txfree(model);
+}
