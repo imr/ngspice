@@ -22,11 +22,6 @@ typedef struct sGENnumModel {	/* model structure for a numerical device */
 
     struct GENmodel gen;
 
-#define GENmodType gen.GENmodType
-#define GENnextModel(inst) ((struct sGENnumModel *)((inst)->gen.GENnextModel))
-#define GENinstances(inst) ((GENinstance *)((inst)->gen.GENinstances))
-#define GENmodName gen.GENmodName
-
     MESHcard *GENxMeshes;	/* list of xmesh cards */
     MESHcard *GENyMeshes;	/* list of ymesh cards */
     DOMNcard *GENdomains;	/* list of domain cards */

@@ -188,10 +188,13 @@ if(isinf((double) var)) \\
 
 /* information needed for each instance */
 typedef struct s$(module)instance {
-  struct s$(module)model *$(module)modPtr;           /* pointer to model */
-  struct s$(module)instance *$(module)nextInstance;  /* pointer to next instance of current model*/
-  IFuid $(module)name; /* pointer to character string naming this instance */
-  int $(module)state; /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define $(module)modPtr(inst) (($(module)model *)((inst)-&gt;gen.GENmodPtr))
+#define $(module)nextInstance(inst) (($(module)instance *)((inst)-&gt;gen.GENnextInstance))
+#define $(module)name gen.GENname
+#define $(module)states gen.GENstate
 
   /* node */
 <admst:for-each select="node[grounded='no']">
@@ -265,12 +268,12 @@ typedef struct s$(module)instance {
 /* per model data */
 
 typedef struct s$(module)model {         /* model structure */
-  int $(module)modType;        /* type index of this device type */
-  struct s$(module)model *$(module)nextModel; /* pointer to next possible model in linked list */
-  $(module)instance * $(module)instances;  /* pointer to list of instances that have this model */
-  IFuid $(module)modName;         /* pointer to the name of this model */
+  struct GENmodel gen;
 
-  /* --- end of generic struct GENmodel --- */
+#define $(module)modType            gen.GENmodType
+#define $(module)nextModel(inst)    (($(module)model*)((inst)->gen.GENnextModel))
+#define $(module)instances(inst)    (($(module)instance*)((inst)->gen.GENinstances))
+#define $(module)modName            gen.GENmodName
 
   /* model parameters */
   <admst:for-each select="variable[parametertype='model' and input='yes']">
