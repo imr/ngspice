@@ -32,14 +32,17 @@ ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
     *oldmod = (*model)->ASRCnextModel; /* cut deleted device out of list */
 
     for (here = (*model)->ASRCinstances; here; here = here->ASRCnextInstance) {
-        FREE(here->ASRCacValues);
-        if (prev)
+        if (prev) {
+            ASRCdelete((GENinstance *) prev);
             FREE(prev);
+        }
         prev = here;
     }
 
-    if (prev)
+    if (prev) {
+        ASRCdelete((GENinstance *) prev);
         FREE(prev);
+    }
     FREE(*model);
     return(OK);
 }
