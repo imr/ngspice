@@ -29,7 +29,6 @@ typedef struct sNDEVinstance {
 
 #define NDEVmodPtr(inst) ((struct sNDEVmodel *)((inst)->gen.GENmodPtr))
 #define NDEVnextInstance(inst) ((struct sNDEVinstance *)((inst)->gen.GENnextInstance))
-#define NDEVname gen.GENname
 #define NDEVstate gen.GENstate
 
   const int pin[7];                   /* max 7 terminals are allowed */

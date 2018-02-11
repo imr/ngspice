@@ -26,7 +26,7 @@ CKTbindNode(CKTcircuit *ckt, GENinstance *instance, int term, CKTnode *node)
 
     if (*(devs[type]->DEVpublic.terms) >= term && term > 0) {
         /* argh, terminals are counted from 1 */
-        instance->GENnode[term - 1] = node->number;
+        GENnode(instance)[term - 1] = node->number;
         return OK;
     } else {
         return E_NOTERM;

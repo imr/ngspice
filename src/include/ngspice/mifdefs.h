@@ -44,6 +44,7 @@ NON-STANDARD FEATURES
 
 
 #include  "ngspice/mifcmdat.h"
+#include  "ngspice/gendefs.h"
 #include "ngspice/ifsim.h"
 
 

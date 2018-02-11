@@ -142,7 +142,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
         if (i < numnodes)
             IFC (bindNode, (ckt, fast, i + 1, node[i]));
         else
-            fast->GENnode[i] = -1;
+            GENnode(fast)[i] = -1;
 
     PARSECALL ((&line, ckt, type, fast, &leadval, &waslead, tab));
     if (waslead)
