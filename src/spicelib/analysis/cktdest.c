@@ -47,12 +47,12 @@ CKTdestroy(CKTcircuit *ckt)
                     GENinstance *next_inst = inst->GENnextInstance;
                     if (DEVices[i]->DEVdelete)
                         DEVices[i]->DEVdelete(inst);
-                    FREE(inst);
+                    GENinstanceFree(inst);
                     inst = next_inst;
                 }
                 if (DEVices[i]->DEVmodDelete)
                     DEVices[i]->DEVmodDelete(model);
-                FREE(model);
+                GENmodelFree(model);
                 model = next_model;
             }
             if (DEVices[i]->DEVdestroy)
