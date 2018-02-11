@@ -48,9 +48,9 @@ $(module)noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Nd
   $(module)model *firstModel = ($(module)model *) genmodel;
   $(module)model *model;
   $(module)instance *inst;
-  for (model=firstModel; model != NULL; model=model-&gt;$(module)nextModel)
+  for (model=firstModel; model != NULL; model=$(module)nextModel(model))
   {
-    for (inst=model-&gt;$(module)instances; inst != NULL; inst=inst->$(module)nextInstance)
+    for (inst=$(module)instances(model); inst != NULL; inst=$(module)nextInstance(inst))
     {
       switch (operation)
       {
