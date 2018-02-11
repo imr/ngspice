@@ -12,6 +12,8 @@ Author: 1987 Kanwar Jit Singh
 int
 ASRCdelete(GENinstance *gen_inst)
 {
-    NG_IGNORE(gen_inst);
+    ASRCinstance *inst = (ASRCinstance *) gen_inst;
+
+    FREE(inst->ASRCacValues);
     return OK;
 }
