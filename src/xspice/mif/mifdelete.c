@@ -62,19 +62,8 @@ used by the instance structure.
 */
 
 int
-MIFdelete(
-    GENmodel    *inModel,   /* The head of the model list */
-    IFuid       name,       /* The name of the instance to delete */
-    GENinstance **inst      /* The instance structure to delete */
-)
+MIFdelete(GENinstance *gen_inst)
 {
-    MIFmodel    *model;
-    MIFinstance **fast;
-    MIFinstance **prev;
-    MIFinstance *here=NULL;
-
-    Mif_Boolean_t  found;
-
     int         i;
     int         j;
     int         k;
@@ -83,34 +72,7 @@ MIFdelete(
     int         num_port;
     int         num_inst_var;
 
-    /* Convert generic pointers in arg list to MIF specific pointers */
-    model = (MIFmodel *) inModel;
-    fast  = (MIFinstance **) inst;
-
-    /*******************************************/
-    /* Cut the instance out of the linked list */
-    /*******************************************/
-
-    /* Loop through all models */
-    for (found = MIF_FALSE; model; model = model->MIFnextModel) {
-        prev = &(model->MIFinstances);
-        /* Loop through all instances of this model */
-        for (here = *prev; here; here = here->MIFnextInstance) {
-            /* If name or pointer matches, cut it out and mark that its found */
-            if (here->MIFname == name || (fast && here == *fast)) {
-                *prev = here->MIFnextInstance;
-                found = MIF_TRUE;
-                break;
-            }
-            prev = &(here->MIFnextInstance);
-        }
-        if (found)
-            break;
-    }
-
-    /* Return error if not found */
-    if (!found)
-        return(E_NODEV);
+    MIFinstance *here = (MIFinstance *) gen_inst;
 
     /*******************************************/
     /* instance->callback(..., MIF_CB_DESTROY) */
@@ -221,9 +183,5 @@ MIFdelete(
     if (here->num_conv && here->conv)
         FREE(here->conv);
 
-
-    /* Finally, free the instance struct itself */
-    FREE(here);
-
-    return(OK);
+    return OK;
 }
