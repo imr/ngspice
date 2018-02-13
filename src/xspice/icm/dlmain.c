@@ -197,11 +197,9 @@ int MIFconvTest(
 }
 
 int MIFdelete(
-    GENmodel *inModel,
-    IFuid    name,
-    GENinstance  **inst
+    GENinstance  *inst
 	) {
-	return (coreitf->dllitf_MIFdelete)(inModel,name,inst);
+	return (coreitf->dllitf_MIFdelete)(inst);
 }
 
 int MIFmDelete(

@@ -44,7 +44,7 @@ extern int $(module)ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int $(module)mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
 extern int $(module)acLoad(GENmodel *,CKTcircuit*);
 extern int $(module)convTest(GENmodel *,CKTcircuit*);
-extern int $(module)delete(GENmodel*,IFuid,GENinstance**);
+extern int $(module)delete(GENinstance*);
 extern int $(module)getic(GENmodel*,CKTcircuit*);
 extern int $(module)mDelete(GENmodel**,IFuid,GENmodel*);
 extern int $(module)noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);

@@ -125,9 +125,7 @@ extern int MIFconvTest(
 );
 
 extern int MIFdelete(
-    GENmodel *inModel,
-    IFuid    name,
-    GENinstance  **inst
+    GENinstance  *inst
 );
 
 extern int MIFmDelete(

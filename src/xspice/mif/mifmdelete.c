@@ -95,13 +95,11 @@ int MIFmDelete(
     if (!found)
         return(E_NOMOD);
 
-    /* Free the instances under this model if any */
-    /* by removing from the head of the linked list */
-    /* until the head is null */
     while (here->MIFinstances) {
-        MIFdelete((GENmodel *) here,
-                  here->MIFinstances->MIFname,
-                  (GENinstance **) &(here->MIFinstances));
+        MIFinstance *next_instance = here->MIFinstances->MIFnextInstance;
+        MIFdelete((GENinstance *) here->MIFinstances);
+        FREE(here->MIFinstances);
+        here->MIFinstances = next_instance;
     }
 
     /* Free the model params stuff allocated in MIFget_mod */

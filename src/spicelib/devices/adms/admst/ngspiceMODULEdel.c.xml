@@ -45,27 +45,11 @@
 #include &quot;ngspice/sperror.h&quot;
 #include &quot;ngspice/suffix.h&quot;
 
-int $(module)delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+int
+$(module)delete(GENinstance *gen_inst)
 {
-    $(module)model *model = ($(module)model*)inModel;
-    $(module)instance **fast =($(module)instance**)inInst;
-
-    $(module)instance **prev = NULL;
-    $(module)instance *here;
-
-    for (; model; model = model->$(module)nextModel) {
-        prev = &amp;(model->$(module)instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->$(module)name == name || (fast &amp;&amp; here == *fast)) {
-                *prev = here->$(module)nextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &amp;(here->$(module)nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }
 </admst:template>
 

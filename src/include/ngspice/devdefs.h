@@ -73,7 +73,7 @@ typedef struct SPICEdev {
         /* subroutine to destroy all models and instances */
     int (*DEVmodDelete)(GENmodel**,IFuid,GENmodel*);  
         /* subroutine to delete a model and all instances */
-    int (*DEVdelete)(GENmodel*,IFuid,GENinstance**); 
+    int (*DEVdelete)(GENinstance*);
         /* subroutine to delete an instance */
     int (*DEVsetic)(GENmodel*,CKTcircuit*);  
         /* routine to pick up device init conds from rhs */
