@@ -28,7 +28,7 @@ MOS9setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the MOS9 device models */
-    for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
 
         /* perform model defaulting */
         if(!model->MOS9typeGiven) {
@@ -141,8 +141,8 @@ MOS9setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	}
 
         /* loop through all the instances of the model */
-        for (here = model->MOS9instances; here != NULL ;
-                here=here->MOS9nextInstance) {
+        for (here = MOS9instances(model); here != NULL ;
+                here=MOS9nextInstance(here)) {
 
             CKTnode *tmpNode;
             IFuid tmpName;
@@ -266,10 +266,10 @@ MOS9unsetup(GENmodel *inModel, CKTcircuit *ckt)
     MOS9instance *here;
 
     for (model = (MOS9model *)inModel; model != NULL;
-	    model = model->MOS9nextModel)
+	    model = MOS9nextModel(model))
     {
-        for (here = model->MOS9instances; here != NULL;
-                here=here->MOS9nextInstance)
+        for (here = MOS9instances(model); here != NULL;
+                here=MOS9nextInstance(here))
 	{
 	    if (here->MOS9sNodePrime > 0
 		    && here->MOS9sNodePrime != here->MOS9sNode)

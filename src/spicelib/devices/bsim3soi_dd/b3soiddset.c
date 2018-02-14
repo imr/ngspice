@@ -47,7 +47,7 @@ IFuid tmpName;
 
 
     /*  loop through all the B3SOIDD device models */
-    for( ; model != NULL; model = model->B3SOIDDnextModel )
+    for( ; model != NULL; model = B3SOIDDnextModel(model))
     {
 /* Default value Processing for B3SOIDD MOSFET Models */
 
@@ -874,8 +874,8 @@ IFuid tmpName;
             model->B3SOIDDnoif = 1.0;
 
         /* loop through all the instances of the model */
-        for (here = model->B3SOIDDinstances; here != NULL ;
-             here=here->B3SOIDDnextInstance) 
+        for (here = B3SOIDDinstances(model); here != NULL ;
+             here=B3SOIDDnextInstance(here)) 
 	{
             /* allocate a chunk of the state vector */
             here->B3SOIDDstates = *states;
@@ -1357,10 +1357,10 @@ B3SOIDDunsetup(GENmodel *inModel, CKTcircuit *ckt)
     B3SOIDDinstance *here;
  
     for (model = (B3SOIDDmodel *)inModel; model != NULL;
-            model = model->B3SOIDDnextModel)
+            model = B3SOIDDnextModel(model))
     {
-        for (here = model->B3SOIDDinstances; here != NULL;
-                here=here->B3SOIDDnextInstance)
+        for (here = B3SOIDDinstances(model); here != NULL;
+                here=B3SOIDDnextInstance(here))
         {
             /* here for debugging purpose only */
             if (here->B3SOIDDdum5Node > 0)

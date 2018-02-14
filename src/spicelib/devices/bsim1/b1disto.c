@@ -46,11 +46,11 @@ if ((mode == D_TWOF1) || (mode == D_THRF1) ||
  (mode == D_2F1MF2)) {
 
  /* loop through all the B1 models */
-for( ; model != NULL; model = model->B1nextModel ) {
+for( ; model != NULL; model = B1nextModel(model)) {
 
   /* loop through all the instances of the model */
-  for (here = model->B1instances; here != NULL ;
-      here=here->B1nextInstance) {
+  for (here = B1instances(model); here != NULL ;
+       here=B1nextInstance(here)) {
 
     /* loading starts here */
 

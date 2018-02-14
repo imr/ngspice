@@ -29,8 +29,8 @@ BJTgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->BJTnextModel) {
-        for(here = model->BJTinstances; here ; here = here->BJTnextInstance) {
+    for( ; model ; model = BJTnextModel(model)) {
+        for(here = BJTinstances(model); here ; here = BJTnextInstance(here)) {
 
             if(!here->BJTicVBEGiven) {
                 here->BJTicVBE = 

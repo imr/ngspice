@@ -32,7 +32,7 @@ NUMDtemp(GENmodel *inModel, CKTcircuit *ckt)
 
 
   /* loop through all the diode models */
-  for (; model != NULL; model = model->NUMDnextModel) {
+  for (; model != NULL; model = NUMDnextModel(model)) {
     methods = model->NUMDmethods;
     models = model->NUMDmodels;
     options = model->NUMDoptions;
@@ -50,8 +50,8 @@ NUMDtemp(GENmodel *inModel, CKTcircuit *ckt)
     TempDepMobility = models->MODLtempDepMobility;
     ConcDepMobility = models->MODLconcDepMobility;
 
-    for (inst = model->NUMDinstances; inst != NULL;
-	inst = inst->NUMDnextInstance) {
+    for (inst = NUMDinstances(model); inst != NULL;
+         inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

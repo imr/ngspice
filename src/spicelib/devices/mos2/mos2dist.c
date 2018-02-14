@@ -45,11 +45,11 @@ if ((mode == D_TWOF1) || (mode == D_THRF1) ||
  (mode == D_2F1MF2)) {
 
  /* loop through all the MOS2 models */
-for( ; model != NULL; model = model->MOS2nextModel ) {
+for( ; model != NULL; model = MOS2nextModel(model)) {
 
   /* loop through all the instances of the model */
-  for (here = model->MOS2instances; here != NULL ;
-      here=here->MOS2nextInstance) {
+  for (here = MOS2instances(model); here != NULL ;
+       here=MOS2nextInstance(here)) {
 
     /* loading starts here */
 

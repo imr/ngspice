@@ -27,11 +27,11 @@ TRAload(GENmodel *inModel, CKTcircuit *ckt)
     int i;
 
     /*  loop through all the transmission line models */
-    for( ; model != NULL; model = model->TRAnextModel ) {
+    for( ; model != NULL; model = TRAnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->TRAinstances; here != NULL ;
-                here=here->TRAnextInstance) {
+        for (here = TRAinstances(model); here != NULL ;
+                here=TRAnextInstance(here)) {
             
             *(here->TRApos1Pos1Ptr) += here->TRAconduct;
             *(here->TRApos1Int1Ptr) -= here->TRAconduct;

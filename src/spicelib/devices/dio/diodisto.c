@@ -37,11 +37,11 @@ if ((mode == D_TWOF1) || (mode == D_THRF1) ||
  (mode == D_2F1MF2)) {
 
  /* loop through all the DIO models */
-for( ; model != NULL; model = model->DIOnextModel ) {
+for( ; model != NULL; model = DIOnextModel(model)) {
 
   /* loop through all the instances of the model */
-  for (here = model->DIOinstances; here != NULL ;
-      here=here->DIOnextInstance) {
+  for (here = DIOinstances(model); here != NULL ;
+       here=DIOnextInstance(here)) {
 
     /* loading starts here */
 

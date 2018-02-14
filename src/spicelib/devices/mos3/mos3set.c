@@ -28,7 +28,7 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the MOS3 device models */
-    for( ; model != NULL; model = model->MOS3nextModel ) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
 
         /* perform model defaulting */
         if(!model->MOS3typeGiven) {
@@ -141,8 +141,8 @@ MOS3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	}
 
         /* loop through all the instances of the model */
-        for (here = model->MOS3instances; here != NULL ;
-                here=here->MOS3nextInstance) {
+        for (here = MOS3instances(model); here != NULL ;
+                here=MOS3nextInstance(here)) {
 
          CKTnode *tmpNode;
          IFuid tmpName;
@@ -266,10 +266,10 @@ MOS3unsetup(GENmodel *inModel, CKTcircuit *ckt)
     MOS3instance *here;
 
     for (model = (MOS3model *)inModel; model != NULL;
-	    model = model->MOS3nextModel)
+	    model = MOS3nextModel(model))
     {
-        for (here = model->MOS3instances; here != NULL;
-                here=here->MOS3nextInstance)
+        for (here = MOS3instances(model); here != NULL;
+                here=MOS3nextInstance(here))
 	{
 	    if (here->MOS3sNodePrime > 0
 		    && here->MOS3sNodePrime != here->MOS3sNode)

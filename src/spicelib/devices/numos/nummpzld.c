@@ -24,7 +24,7 @@ NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
   NG_IGNORE(ckt);
 
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     FieldDepMobility = model->NUMOSmodels->MODLfieldDepMobility;
     TransDepMobility = model->NUMOSmodels->MODLtransDepMobility;
     SurfaceMobility = model->NUMOSmodels->MODLsurfaceMobility;
@@ -36,8 +36,8 @@ NUMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     MobDeriv = model->NUMOSmethods->METHmobDeriv;
     TWOacDebug = model->NUMOSoutputs->OUTPacDebug;
 
-    for (inst = model->NUMOSinstances; inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+    for (inst = NUMOSinstances(model); inst != NULL;
+         inst = NUMOSnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

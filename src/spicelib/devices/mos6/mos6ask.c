@@ -209,7 +209,7 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
         case MOS6_CAPGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgs);
             /* add overlap capacitance */
-            value->rValue += (here->MOS6modPtr->MOS6gateSourceOverlapCapFactor)
+            value->rValue += (MOS6modPtr(here)->MOS6gateSourceOverlapCapFactor)
                              * (here->MOS6w);
             value->rValue *= here->MOS6m;
             return(OK);
@@ -224,7 +224,7 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
         case MOS6_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgd);
             /* add overlap capacitance */
-            value->rValue += (here->MOS6modPtr->MOS6gateSourceOverlapCapFactor)
+            value->rValue += (MOS6modPtr(here)->MOS6gateSourceOverlapCapFactor)
                              * (here->MOS6w);
             value->rValue *= here->MOS6m;
             return(OK);
@@ -239,9 +239,9 @@ MOS6ask(CKTcircuit *ckt, GENinstance *inst, int which,
         case MOS6_CAPGB:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS6capgb);
             /* add overlap capacitance */
-            value->rValue += (here->MOS6modPtr->MOS6gateBulkOverlapCapFactor)
+            value->rValue += (MOS6modPtr(here)->MOS6gateBulkOverlapCapFactor)
                              * (here->MOS6l
-                                -2*(here->MOS6modPtr->MOS6latDiff));
+                                -2*(MOS6modPtr(here)->MOS6latDiff));
             value->rValue *= here->MOS6m;
             return(OK);
         case MOS6_QGB:

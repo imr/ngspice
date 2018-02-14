@@ -134,7 +134,7 @@ MIFsetup(
 
     /* loop through all models of this type */
 
-    for( ; model != NULL; model = model->MIFnextModel) {
+    for( ; model != NULL; model = MIFnextModel(model)) {
 
 
         /* For each parameter not given explicitly on the .model */
@@ -157,7 +157,7 @@ MIFsetup(
                     /* Since several instances may share this model, we have to create an array    */
                     /* big enough for the instance with the biggest connection array               */
                     max_size = 0;
-                    for(here = model->MIFinstances; here != NULL; here = here->MIFnextInstance) {
+                    for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
                         size = here->conn[param_info->conn_ref]->size;
                         if(size > max_size)
                             max_size = size;
@@ -204,7 +204,7 @@ MIFsetup(
 
         /* For each instance, initialize stuff used by cm_... functions */
 
-        for(here = model->MIFinstances; here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
 
             here->num_state = 0;
             here->state = NULL;
@@ -220,7 +220,7 @@ MIFsetup(
         /* For each instance, allocate runtime structs for output connections/ports */
         /* and grab a place in the state vector for all input connections/ports */
 
-        for(here = model->MIFinstances; here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
 	  /* Skip these expensive allocations if the instance is not analog */
 	  if(! here->analog)
 	    continue;
@@ -267,7 +267,7 @@ MIFsetup(
         /* Loop through all instances of this model and for each port of each connection */
         /* create current equations, matrix entries, and matrix pointers as necessary.   */
 	
-        for(here = model->MIFinstances; here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
 	  /* Skip these expensive allocations if the instance is not analog */
 	  if(! here->analog)
 	    continue;
@@ -455,9 +455,9 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
 
 
     for (model = (MIFmodel *)inModel; model != NULL;
-                              model = model->MIFnextModel)
+                              model = MIFnextModel(model))
     {
-        for(here = model->MIFinstances; here != NULL; here = here->MIFnextInstance) {
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
 	  /* Skip these expensive allocations if the instance is not analog */
 	  if(! here->analog)
 	    continue;

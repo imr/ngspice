@@ -52,7 +52,7 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the diode models */
-  for (; model != NULL; model = model->NUMDnextModel) {
+  for (; model != NULL; model = NUMDnextModel(model)) {
     /* Do model things */
     FieldDepMobility = model->NUMDmodels->MODLfieldDepMobility;
     Srh = model->NUMDmodels->MODLsrh;
@@ -89,8 +89,8 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NUMDpInfo->intCoeff, deltaNorm);
     }
     /* Now do instance things */
-    for (inst = model->NUMDinstances; inst != NULL;
-	inst = inst->NUMDnextInstance) {
+    for (inst = NUMDinstances(model); inst != NULL;
+         inst = NUMDnextInstance(inst)) {
 
       pDevice = inst->NUMDpDevice;
 
@@ -377,7 +377,7 @@ int
 NUMDinitSmSig(NUMDinstance *inst)
 {
   SPcomplex yd;
-  double omega = inst->NUMDmodPtr->NUMDmethods->METHomega;
+  double omega = NUMDmodPtr(inst)->NUMDmethods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NUMDadmittance(inst->NUMDpDevice, omega, &yd);

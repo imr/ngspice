@@ -29,10 +29,10 @@ double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
 double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
     /*  loop through all the B3SOIFD device models */
-    for (; model != NULL; model = model->B3SOIFDnextModel)
+    for (; model != NULL; model = B3SOIFDnextModel(model))
     {    /* loop through all the instances of the model */
-         for (here = model->B3SOIFDinstances; here != NULL ;
-              here=here->B3SOIFDnextInstance) 
+         for (here = B3SOIFDinstances(model); here != NULL ;
+              here=B3SOIFDnextInstance(here)) 
 	 {	 
 	      vbs = model->B3SOIFDtype 
 		  * (*(ckt->CKTrhsOld+here->B3SOIFDbNode) 

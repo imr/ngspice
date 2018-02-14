@@ -74,10 +74,10 @@ int HSM2convTest(
   double Ibtot, cbhat, Igstot, cgshat, Igdtot, cgdhat, Igbtot, cgbhat;
 
   /*  loop through all the HSM2 device models */
-  for ( ; model != NULL; model = model->HSM2nextModel ) {
+  for ( ; model != NULL; model = HSM2nextModel(model)) {
     /* loop through all the instances of the model */
-    for ( here = model->HSM2instances; here != NULL ;
-	  here = here->HSM2nextInstance ) {
+    for ( here = HSM2instances(model); here != NULL ;
+	  here = HSM2nextInstance(here)) {
       vbs = model->HSM2_type * 
 	(*(ckt->CKTrhsOld+here->HSM2bNode) - 
 	 *(ckt->CKTrhsOld+here->HSM2sNodePrime));

@@ -109,7 +109,7 @@ BSIM4instance **InstArray;
     }
 
     /*  loop through all the BSIM4 device models */
-    for( ; model != NULL; model = model->BSIM4nextModel )
+    for( ; model != NULL; model = BSIM4nextModel(model))
     {   /* process defaults of model parameters */
         if (!model->BSIM4typeGiven)
             model->BSIM4type = NMOS;     
@@ -2335,8 +2335,8 @@ BSIM4instance **InstArray;
          * through all the instances of the model
          */
 
-        for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+        for (here = BSIM4instances(model); here != NULL ;
+             here=BSIM4nextInstance(here)) 
         {
             /* allocate a chunk of the state vector */
             here->BSIM4states = *states;
@@ -2720,11 +2720,11 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     /* loop through all the BSIM4 device models 
        to count the number of instances */
     
-    for( ; model != NULL; model = model->BSIM4nextModel )
+    for( ; model != NULL; model = BSIM4nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+        for (here = BSIM4instances(model); here != NULL ;
+             here=BSIM4nextInstance(here)) 
         { 
             InstCount++;
         }
@@ -2737,11 +2737,11 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     model->BSIM4InstCount = InstCount;
     model->BSIM4InstanceArray = InstArray;
     idx = 0;
-    for( ; model != NULL; model = model->BSIM4nextModel )
+    for( ; model != NULL; model = BSIM4nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM4instances; here != NULL ;
-             here=here->BSIM4nextInstance) 
+        for (here = BSIM4instances(model); here != NULL ;
+             here=BSIM4nextInstance(here)) 
         { 
             InstArray[idx] = here;
             idx++;
@@ -2762,10 +2762,10 @@ CKTcircuit *ckt)
     BSIM4instance *here;
 
     for (model = (BSIM4model *)inModel; model != NULL;
-            model = model->BSIM4nextModel)
+            model = BSIM4nextModel(model))
     {
-        for (here = model->BSIM4instances; here != NULL;
-                here=here->BSIM4nextInstance)
+        for (here = BSIM4instances(model); here != NULL;
+                here=BSIM4nextInstance(here))
         {
             if (here->BSIM4qNode > 0)
                 CKTdltNNum(ckt, here->BSIM4qNode);

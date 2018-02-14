@@ -29,9 +29,9 @@ MOS3convTest(GENmodel *inModel, CKTcircuit *ckt)
     double vgdo;
     double tol;
 
-    for( ; model != NULL; model = model->MOS3nextModel) {
-        for(here = model->MOS3instances; here!= NULL;
-                here = here->MOS3nextInstance) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
+        for(here = MOS3instances(model); here!= NULL;
+                here = MOS3nextInstance(here)) {
         
             vbs = model->MOS3type * ( 
                 *(ckt->CKTrhs+here->MOS3bNode) -

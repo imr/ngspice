@@ -71,9 +71,9 @@ int HSM2trunc(
   double debugtemp;
 #endif /* STEPDEBUG */
   
-  for ( ;model != NULL ;model = model->HSM2nextModel ) {
-    for ( here=model->HSM2instances ;here!=NULL ;
-	  here = here->HSM2nextInstance ) {
+  for ( ;model != NULL ;model = HSM2nextModel(model)) {
+    for ( here=HSM2instances(model);here!=NULL ;
+	  here = HSM2nextInstance(here)) {
 #ifdef STEPDEBUG
       debugtemp = *timeStep;
 #endif /* STEPDEBUG */

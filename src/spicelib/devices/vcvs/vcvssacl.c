@@ -25,11 +25,11 @@ VCVSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double   ivc;
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->VCVSnextModel ) {
+    for( ; model != NULL; model = VCVSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->VCVSinstances; here != NULL ;
-                here=here->VCVSnextInstance) {
+        for (here = VCVSinstances(model); here != NULL ;
+                here=VCVSnextInstance(here)) {
 
 	    if(here->VCVSsenParmNo){
 

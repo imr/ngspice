@@ -92,7 +92,7 @@ int MIFask(
     inst = (MIFinstance *) inInst;
 
     /* Arrange for access to MIF specific data in the model */
-    model = inst->MIFmodPtr;
+    model = MIFmodPtr(inst);
 
 
     /* Get model type */

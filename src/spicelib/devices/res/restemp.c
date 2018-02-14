@@ -24,11 +24,11 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 
 
     /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
+    for( ; model != NULL; model = RESnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
-                here=here->RESnextInstance) {
+        for (here = RESinstances(model); here != NULL ;
+                here=RESnextInstance(here)) {
 
             /* Default Value Processing for Resistor Instance */
 
@@ -53,7 +53,7 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
 void
 RESupdate_conduct(RESinstance *here, bool spill_warnings)
 {
-    RESmodel *model = here->RESmodPtr;
+    RESmodel *model = RESmodPtr(here);
     double factor;
     double difference;
     double tc1, tc2, tce;

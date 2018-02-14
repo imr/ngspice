@@ -49,7 +49,7 @@ BSIM3instance **InstArray;
 
 
     /*  loop through all the BSIM3 device models */
-    for( ; model != NULL; model = model->BSIM3nextModel )
+    for( ; model != NULL; model = BSIM3nextModel(model))
     {
 /* Default value Processing for BSIM3 MOSFET Models */
         if (!model->BSIM3typeGiven)
@@ -920,8 +920,8 @@ BSIM3instance **InstArray;
             model->BSIM3vbdrMax = 1e99;
 
         /* loop through all the instances of the model */
-        for (here = model->BSIM3instances; here != NULL ;
-             here=here->BSIM3nextInstance)
+        for (here = BSIM3instances(model); here != NULL ;
+             here=BSIM3nextInstance(here))
         {
             /* allocate a chunk of the state vector */
             here->BSIM3states = *states;
@@ -1129,11 +1129,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     /* loop through all the BSIM3 device models
        to count the number of instances */
 
-    for( ; model != NULL; model = model->BSIM3nextModel )
+    for( ; model != NULL; model = BSIM3nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM3instances; here != NULL ;
-             here=here->BSIM3nextInstance)
+        for (here = BSIM3instances(model); here != NULL ;
+             here=BSIM3nextInstance(here))
         {
             InstCount++;
         }
@@ -1146,11 +1146,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     model->BSIM3InstCount = InstCount;
     model->BSIM3InstanceArray = InstArray;
     idx = 0;
-    for( ; model != NULL; model = model->BSIM3nextModel )
+    for( ; model != NULL; model = BSIM3nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->BSIM3instances; here != NULL ;
-             here=here->BSIM3nextInstance)
+        for (here = BSIM3instances(model); here != NULL ;
+             here=BSIM3nextInstance(here))
         {
             InstArray[idx] = here;
             idx++;
@@ -1170,10 +1170,10 @@ BSIM3unsetup(
     BSIM3instance *here;
 
     for (model = (BSIM3model *)inModel; model != NULL;
-            model = model->BSIM3nextModel)
+            model = BSIM3nextModel(model))
     {
-        for (here = model->BSIM3instances; here != NULL;
-                here=here->BSIM3nextInstance)
+        for (here = BSIM3instances(model); here != NULL;
+                here=BSIM3nextInstance(here))
         {
             if (here->BSIM3qNode > 0)
                 CKTdltNNum(ckt, here->BSIM3qNode);

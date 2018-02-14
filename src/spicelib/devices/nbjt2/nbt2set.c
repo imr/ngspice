@@ -50,7 +50,7 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
  
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     if (!model->NBJT2pInfo) {
       TSCALLOC(model->NBJT2pInfo, 1, TWOtranInfo);
     }
@@ -162,8 +162,8 @@ NBJT2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     model->NBJT2dopTables = dopTableList;
 
     /* loop through all the instances of the model */
-    for (inst = model->NBJT2instances; inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+    for (inst = NBJT2instances(model); inst != NULL;
+         inst = NBJT2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

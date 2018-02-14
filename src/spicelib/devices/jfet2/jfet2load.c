@@ -60,11 +60,11 @@ JFET2load(GENmodel *inModel, CKTcircuit *ckt)
     double m;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->JFET2nextModel ) {
+    for( ; model != NULL; model = JFET2nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->JFET2instances; here != NULL ;
-                here=here->JFET2nextInstance) {
+        for (here = JFET2instances(model); here != NULL ;
+                here=JFET2nextInstance(here)) {
             /*
              *  dc model parameters 
              */

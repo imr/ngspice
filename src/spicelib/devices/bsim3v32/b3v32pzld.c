@@ -36,9 +36,9 @@ double T1, CoxWL, qcheq, Cdg, Cdd, Cds, Csg, Csd, Css;
 double ScalingFactor = 1.0e-9;
 double m;
 
-    for (; model != NULL; model = model->BSIM3v32nextModel)
-    {    for (here = model->BSIM3v32instances; here!= NULL;
-              here = here->BSIM3v32nextInstance)
+    for (; model != NULL; model = BSIM3v32nextModel(model))
+    {    for (here = BSIM3v32instances(model); here!= NULL;
+              here = BSIM3v32nextInstance(here))
          {
               if (here->BSIM3v32mode >= 0)
               {   Gm = here->BSIM3v32gm;

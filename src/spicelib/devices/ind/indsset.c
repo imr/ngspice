@@ -23,11 +23,11 @@ INDsSetup(SENstruct *info, GENmodel *inModel)
     INDinstance *here;
 
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->INDnextModel ) {
+    for( ; model != NULL; model = INDnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->INDinstances; here != NULL ;
-                here=here->INDnextInstance) {
+        for (here = INDinstances(model); here != NULL ;
+                here=INDnextInstance(here)) {
 
 	    if(here->INDsenParmNo){
                 here->INDsenParmNo = ++(info->SENparms);

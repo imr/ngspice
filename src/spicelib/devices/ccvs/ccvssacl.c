@@ -24,11 +24,11 @@ CCVSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     double   ic,i_ic;
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->CCVSnextModel ) {
+    for( ; model != NULL; model = CCVSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->CCVSinstances; here != NULL ;
-                here=here->CCVSnextInstance) {
+        for (here = CCVSinstances(model); here != NULL ;
+                here=CCVSnextInstance(here)) {
 
             if(here->CCVSsenParmNo){
                 ic = *(ckt->CKTrhsOld + here->CCVScontBranch);

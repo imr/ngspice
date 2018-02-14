@@ -20,7 +20,7 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
   int error;
   CKTnode *tmp;
 
-  for( ; model != NULL; model = model->HFET2nextModel ) {
+  for( ; model != NULL; model = HFET2nextModel(model)) {
     if((TYPE != NHFET) && (TYPE != PHFET) )
       TYPE = NHFET;
     if(!model->HFET2cfGiven)
@@ -120,8 +120,8 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
     /* loop through all the instances of the model */
    
     
-    for (here = model->HFET2instances; here != NULL; 
-         here=here->HFET2nextInstance) {
+    for (here = HFET2instances(model); here != NULL; 
+         here=HFET2nextInstance(here)) {
       
       CKTnode *tmpNode;
       IFuid tmpName;
@@ -211,10 +211,10 @@ HFET2unsetup(GENmodel *inModel, CKTcircuit *ckt)
     HFET2instance *here;
  
     for (model = (HFET2model *)inModel; model != NULL;
-            model = model->HFET2nextModel)
+            model = HFET2nextModel(model))
     {
-        for (here = model->HFET2instances; here != NULL;
-                here=here->HFET2nextInstance)
+        for (here = HFET2instances(model); here != NULL;
+                here=HFET2nextInstance(here))
         {
             if (here->HFET2drainPrimeNode > 0
                     && here->HFET2drainPrimeNode != here->HFET2drainNode)

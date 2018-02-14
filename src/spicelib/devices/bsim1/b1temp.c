@@ -30,7 +30,7 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the B1 device models */
-    for( ; model != NULL; model = model->B1nextModel ) {
+    for( ; model != NULL; model = B1nextModel(model)) {
     
 /* Default value Processing for B1 MOSFET Models */
         /* Some Limiting for Model Parameters */
@@ -45,8 +45,8 @@ B1temp(GENmodel *inModel, CKTcircuit *ckt)
         model->B1Cox = Cox;     /* unit:  F/cm**2  */
 
         /* loop through all the instances of the model */
-        for (here = model->B1instances; here != NULL ;
-                here=here->B1nextInstance) {
+        for (here = B1instances(model); here != NULL ;
+                here=B1nextInstance(here)) {
 
             if( (EffChanLength = here->B1l - model->B1deltaL *1e-6 )<=0) { 
                 SPfrontEnd->IFerrorf (ERR_FATAL,

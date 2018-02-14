@@ -33,9 +33,9 @@ double m;
 
     NG_IGNORE(ckt);
 
-    for (; model != NULL; model = model->B3SOIPDnextModel) 
-    {    for (here = model->B3SOIPDinstances; here!= NULL;
-              here = here->B3SOIPDnextInstance) 
+    for (; model != NULL; model = B3SOIPDnextModel(model)) 
+    {    for (here = B3SOIPDinstances(model); here!= NULL;
+              here = B3SOIPDnextInstance(here)) 
 	 {
             if (here->B3SOIPDmode >= 0) 
 	    {   Gm = here->B3SOIPDgm;

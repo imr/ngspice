@@ -49,8 +49,8 @@ int HSMHVacLoad(
 
 
   omega = ckt->CKTomega;
-  for ( ; model != NULL; model = model->HSMHVnextModel ) {
-    for ( here = model->HSMHVinstances; here!= NULL; here = here->HSMHVnextInstance ) {
+  for ( ; model != NULL; model = HSMHVnextModel(model)) {
+    for ( here = HSMHVinstances(model); here!= NULL; here = HSMHVnextInstance(here)) {
 
       flg_nqs = model->HSMHV_conqs ;
       flg_subNode = here->HSMHVsubNode ; /* if flg_subNode > 0, external(/internal) substrate node exists */

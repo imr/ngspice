@@ -26,12 +26,12 @@ NUMDtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
   for (i = 0; i <= ckt->CKTmaxOrder; i++) {
     deltaNorm[i] = ckt->CKTdeltaOld[i] / TNorm;
   }
-  for (; model != NULL; model = model->NUMDnextModel) {
+  for (; model != NULL; model = NUMDnextModel(model)) {
     model->NUMDpInfo->order = ckt->CKTorder;
     model->NUMDpInfo->delta = deltaNorm;
     model->NUMDpInfo->lteCoeff = computeLTECoeff(model->NUMDpInfo);
-    for (inst = model->NUMDinstances; inst != NULL;
-	inst = inst->NUMDnextInstance) {
+    for (inst = NUMDinstances(model); inst != NULL;
+         inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = ONEtrunc(inst->NUMDpDevice, model->NUMDpInfo, ckt->CKTdelta);

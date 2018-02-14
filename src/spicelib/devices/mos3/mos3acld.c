@@ -34,9 +34,9 @@ MOS3acLoad(GENmodel *inModel, CKTcircuit *ckt)
     double GateDrainOverlapCap;
     double GateSourceOverlapCap;
 
-    for( ; model != NULL; model = model->MOS3nextModel) {
-        for(here = model->MOS3instances; here!= NULL;
-                here = here->MOS3nextInstance) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
+        for(here = MOS3instances(model); here!= NULL;
+                here = MOS3nextInstance(here)) {
         
             if (here->MOS3mode < 0) {
                 xnrm=0;

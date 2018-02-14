@@ -52,7 +52,7 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     FieldDepMobility = model->NUMOSmodels->MODLfieldDepMobility;
     TransDepMobility = model->NUMOSmodels->MODLtransDepMobility;
     SurfaceMobility = model->NUMOSmodels->MODLsurfaceMobility;
@@ -91,8 +91,8 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NUMOSpInfo->intCoeff, deltaNorm);
     }
     /* loop through all the instances of the model */
-    for (inst = model->NUMOSinstances; inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+    for (inst = NUMOSinstances(model); inst != NULL;
+         inst = NUMOSnextInstance(inst)) {
 
       pDevice = inst->NUMOSpDevice;
 
@@ -594,7 +594,7 @@ int
 NUMOSinitSmSig(NUMOSinstance *inst)
 {
   struct mosAdmittances yAc;
-  double omega = inst->NUMOSmodPtr->NUMOSmethods->METHomega;
+  double omega = NUMOSmodPtr(inst)->NUMOSmethods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NUMOSadmittance(inst->NUMOSpDevice, omega, &yAc);

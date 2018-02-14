@@ -44,7 +44,7 @@ double Nvtm, SourceSatCurrent, DrainSatCurrent;
 int Size_Not_Found, error;
 
 /*  loop through all the BSIM3 device models */
-    for (; model != NULL; model = model->BSIM3nextModel)
+    for (; model != NULL; model = BSIM3nextModel(model))
     {    Temp = ckt->CKTtemp;
          if (model->BSIM3bulkJctPotential < 0.1)
          {   model->BSIM3bulkJctPotential = 0.1;
@@ -143,8 +143,8 @@ int Size_Not_Found, error;
 
          /* loop through all the instances of the model */
          /* MCJ: Length and Width not initialized */
-         for (here = model->BSIM3instances; here != NULL;
-              here = here->BSIM3nextInstance)
+         for (here = BSIM3instances(model); here != NULL;
+              here = BSIM3nextInstance(here))
          {
               pSizeDependParamKnot = model->pSizeDependParamKnot;
               Size_Not_Found = 1;

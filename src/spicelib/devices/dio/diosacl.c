@@ -72,11 +72,11 @@ DIOsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
     info = ckt->CKTsenInfo;
     info->SENstatus = PERTURBATION;
     /*  loop through all the models */
-    for( ; model != NULL; model = model->DIOnextModel ) {
+    for( ; model != NULL; model = DIOnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->DIOinstances; here != NULL ;
-                here=here->DIOnextInstance) {
+        for (here = DIOinstances(model); here != NULL ;
+                here=DIOnextInstance(here)) {
 
             /* save the unperturbed values in the state vector */
             for(i=0; i <= 4; i++) {

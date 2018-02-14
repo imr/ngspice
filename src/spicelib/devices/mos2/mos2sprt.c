@@ -24,13 +24,13 @@ MOS2sPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("LEVEL 2 MOSFETS-----------------\n");
     /*  loop through all the MOS2 models */
-    for( ; model != NULL; model = model->MOS2nextModel ) {
+    for( ; model != NULL; model = MOS2nextModel(model)) {
 
         printf("Model name:%s\n",model->MOS2modName);
 
         /* loop through all the instances of the model */
-        for (here = model->MOS2instances; here != NULL ;
-                here=here->MOS2nextInstance) {
+        for (here = MOS2instances(model); here != NULL ;
+                here=MOS2nextInstance(here)) {
 
             printf("    Instance name:%s\n",here->MOS2name);
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",

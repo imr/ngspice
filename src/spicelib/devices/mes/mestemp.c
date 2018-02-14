@@ -24,7 +24,7 @@ MEStemp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->MESnextModel ) {
+    for( ; model != NULL; model = MESnextModel(model)) {
 
         if(model->MESdrainResist != 0) {
             model->MESdrainConduct = 1/model->MESdrainResist;

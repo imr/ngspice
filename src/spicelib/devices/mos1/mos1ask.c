@@ -182,7 +182,7 @@ MOS1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS1_CAPGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgs);
             /* add overlap capacitance */
-            value->rValue += (here->MOS1modPtr->MOS1gateSourceOverlapCapFactor)
+            value->rValue += (MOS1modPtr(here)->MOS1gateSourceOverlapCapFactor)
                              * here->MOS1m
                              * (here->MOS1w);
             return(OK);
@@ -195,7 +195,7 @@ MOS1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS1_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgd);
             /* add overlap capacitance */
-            value->rValue += (here->MOS1modPtr->MOS1gateDrainOverlapCapFactor)
+            value->rValue += (MOS1modPtr(here)->MOS1gateDrainOverlapCapFactor)
                              * here->MOS1m
                              * (here->MOS1w);
             return(OK);
@@ -208,10 +208,10 @@ MOS1ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case MOS1_CAPGB:
             value->rValue = 2* *(ckt->CKTstate0 + here->MOS1capgb);
             /* add overlap capacitance */
-            value->rValue += (here->MOS1modPtr->MOS1gateBulkOverlapCapFactor)
+            value->rValue += (MOS1modPtr(here)->MOS1gateBulkOverlapCapFactor)
                              * here->MOS1m
                              * (here->MOS1l
-                                -2*(here->MOS1modPtr->MOS1latDiff));
+                                -2*(MOS1modPtr(here)->MOS1latDiff));
             return(OK);
         case MOS1_QGB:
             value->rValue = *(ckt->CKTstate0 + here->MOS1qgb);

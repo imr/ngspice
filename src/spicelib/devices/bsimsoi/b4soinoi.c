@@ -147,9 +147,9 @@ double m;
         ""                  /* total transistor noise */
     };
 
-    for (; model != NULL; model = model->B4SOInextModel)
-    { for (here = model->B4SOIinstances; here != NULL;
-            here = here->B4SOInextInstance)
+    for (; model != NULL; model = B4SOInextModel(model))
+    { for (here = B4SOIinstances(model); here != NULL;
+            here = B4SOInextInstance(here))
             {
               m = here->B4SOIm;
 

@@ -26,13 +26,13 @@ NUMD2trunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     deltaNorm[i] = ckt->CKTdeltaOld[i] / TNorm;
   }
 
-  for (; model != NULL; model = model->NUMD2nextModel) {
+  for (; model != NULL; model = NUMD2nextModel(model)) {
     OneCarrier = model->NUMD2methods->METHoneCarrier;
     model->NUMD2pInfo->order = ckt->CKTorder;
     model->NUMD2pInfo->delta = deltaNorm;
     model->NUMD2pInfo->lteCoeff = computeLTECoeff(model->NUMD2pInfo);
-    for (inst = model->NUMD2instances; inst != NULL;
-	inst = inst->NUMD2nextInstance) {
+    for (inst = NUMD2instances(model); inst != NULL;
+         inst = NUMD2nextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = TWOtrunc(inst->NUMD2pDevice, model->NUMD2pInfo,

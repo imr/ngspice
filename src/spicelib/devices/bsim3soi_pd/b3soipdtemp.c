@@ -64,7 +64,7 @@ double tmp3, T7;
 
 
     /*  loop through all the B3SOIPD device models */
-    for (; model != NULL; model = model->B3SOIPDnextModel)
+    for (; model != NULL; model = B3SOIPDnextModel(model))
     {    Temp = ckt->CKTtemp;
          if (model->B3SOIPDGatesidewallJctPotential < 0.1)
              model->B3SOIPDGatesidewallJctPotential = 0.1;
@@ -90,8 +90,8 @@ double tmp3, T7;
 
          /* loop through all the instances of the model */
 	 /* MCJ: Length and Width not initialized */
-         for (here = model->B3SOIPDinstances; here != NULL;
-              here = here->B3SOIPDnextInstance) 
+         for (here = B3SOIPDinstances(model); here != NULL;
+              here = B3SOIPDnextInstance(here)) 
 	 {
               here->B3SOIPDrbodyext = here->B3SOIPDbodySquares *
                                     model->B3SOIPDrbsh;

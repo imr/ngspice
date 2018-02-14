@@ -48,10 +48,10 @@ int HSMHVconvTest(
 
 
   /*  loop through all the HSMHV device models */
-  for ( ; model != NULL; model = model->HSMHVnextModel ) {
+  for ( ; model != NULL; model = HSMHVnextModel(model)) {
     /* loop through all the instances of the model */
-    for ( here = model->HSMHVinstances; here != NULL ;
-	  here = here->HSMHVnextInstance ) {
+    for ( here = HSMHVinstances(model); here != NULL ;
+	  here = HSMHVnextInstance(here)) {
 
       vds = model->HSMHV_type * 
             (*(ckt->CKTrhsOld+here->HSMHVdNodePrime) -

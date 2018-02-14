@@ -31,8 +31,8 @@ ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     NG_IGNORE(states);
 
-    for (; model; model = model->ASRCnextModel) {
-        for (here = model->ASRCinstances; here; here=here->ASRCnextInstance) {
+    for (; model; model = ASRCnextModel(model)) {
+        for (here = ASRCinstances(model); here; here=ASRCnextInstance(here)) {
 
             if (!here->ASRCtree)
                 return E_PARMVAL;
@@ -126,8 +126,8 @@ ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     ASRCmodel *model = (ASRCmodel *) inModel;
     ASRCinstance *here;
 
-    for (; model; model = model->ASRCnextModel)
-        for (here = model->ASRCinstances; here; here = here->ASRCnextInstance) {
+    for (; model; model = ASRCnextModel(model))
+        for (here = ASRCinstances(model); here; here = ASRCnextInstance(here)) {
             if (here->ASRCbranch > 0)
                 CKTdltNNum(ckt, here->ASRCbranch);
             here->ASRCbranch = 0;

@@ -95,11 +95,11 @@ MOS6load(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* CAPBYPASS */ 
 
     /*  loop through all the MOS6 device models */
-    for( ; model != NULL; model = model->MOS6nextModel ) {
+    for( ; model != NULL; model = MOS6nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS6instances; here != NULL ;
-                here=here->MOS6nextInstance) {
+        for (here = MOS6instances(model); here != NULL ;
+                here=MOS6nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS6temp;
             Check=1;

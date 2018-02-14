@@ -28,10 +28,10 @@ HFETAacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     double m;
 
-    for( ; model != NULL; model = model->HFETAnextModel ) 
+    for( ; model != NULL; model = HFETAnextModel(model)) 
     {
-        for( here = model->HFETAinstances; here != NULL; 
-             here = here->HFETAnextInstance) {
+        for( here = HFETAinstances(model); here != NULL; 
+             here = HFETAnextInstance(here)) {
 
             gm  = *(ckt->CKTstate0 + here->HFETAgm);
             gds = *(ckt->CKTstate0 + here->HFETAgds);

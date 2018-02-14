@@ -25,7 +25,7 @@ B1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     CKTnode *tmp;
 
     /*  loop through all the B1 device models */
-    for( ; model != NULL; model = model->B1nextModel ) {
+    for( ; model != NULL; model = B1nextModel(model)) {
     
 /* Default value Processing for B1 MOSFET Models */
         if( ! model->B1typeGiven) {
@@ -270,8 +270,8 @@ B1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         }
 
         /* loop through all the instances of the model */
-        for (here = model->B1instances; here != NULL ;
-                here=here->B1nextInstance) {
+        for (here = B1instances(model); here != NULL ;
+                here=B1nextInstance(here)) {
 
         CKTnode *tmpNode;
         IFuid tmpName;
@@ -407,10 +407,10 @@ B1unsetup(GENmodel *inModel, CKTcircuit *ckt)
     B1instance *here;
 
     for (model = (B1model *)inModel; model != NULL;
-	    model = model->B1nextModel)
+	    model = B1nextModel(model))
     {
-        for (here = model->B1instances; here != NULL;
-                here=here->B1nextInstance)
+        for (here = B1instances(model); here != NULL;
+                here=B1nextInstance(here))
 	{
 	    if (here->B1sNodePrime > 0
 		    && here->B1sNodePrime != here->B1sNode)

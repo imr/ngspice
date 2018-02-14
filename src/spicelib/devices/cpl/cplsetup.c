@@ -147,7 +147,7 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     NG_IGNORE(state);
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->CPLnextModel ) {
+    for( ; model != NULL; model = CPLnextModel(model)) {
 
         if (!model->Rmgiven) {
             SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -176,8 +176,8 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->CPLinstances; here != NULL ;
-                here=here->CPLnextInstance) {
+        for (here = CPLinstances(model); here != NULL ;
+                here=CPLnextInstance(here)) {
 
             if (!here->CPLlengthGiven)
                 here->CPLlength=0.0;
@@ -299,9 +299,9 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
     int noL;
 
     for (model = (CPLmodel *) inModel; model != NULL;
-            model = model->CPLnextModel) {
-        for (here = model->CPLinstances; here != NULL;
-                here = here->CPLnextInstance) {
+            model = CPLnextModel(model)) {
+        for (here = CPLinstances(model); here != NULL;
+                here = CPLnextInstance(here)) {
 
             noL = here->dimension;
 
@@ -418,18 +418,18 @@ ReadCpL(CPLinstance *here, CKTcircuit *ckt)
                 C_m[i][j] = C_m[j][i];
                 L_m[i][j] = L_m[j][i];
             } else {
-                f = here->CPLmodPtr->Rm[counter];
-                R_m[i][j] = here->CPLmodPtr->Rm[counter] = MAX(f, 1.0e-4);
-                G_m[i][j] = here->CPLmodPtr->Gm[counter];
-                L_m[i][j] = here->CPLmodPtr->Lm[counter];
-                C_m[i][j] = here->CPLmodPtr->Cm[counter];
+                f = CPLmodPtr(here)->Rm[counter];
+                R_m[i][j] = CPLmodPtr(here)->Rm[counter] = MAX(f, 1.0e-4);
+                G_m[i][j] = CPLmodPtr(here)->Gm[counter];
+                L_m[i][j] = CPLmodPtr(here)->Lm[counter];
+                C_m[i][j] = CPLmodPtr(here)->Cm[counter];
                 counter++;
             }
         }
     }
     if (here->CPLlengthGiven)
         length = here->CPLlength;
-    else length = here->CPLmodPtr->length;
+    else length = CPLmodPtr(here)->length;
 
     for (i = 0; i < noL; i++)
         lines[i]->g = 1.0 / (R_m[i][i] * length);

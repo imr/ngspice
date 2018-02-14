@@ -23,7 +23,7 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     NG_IGNORE(ckt);
 
     /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
+    for( ; model != NULL; model = RESnextModel(model)) {
 
         /* Default Value Processing for Resistor Models */
         if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
@@ -45,8 +45,8 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
             model->RESbv_max = 1e99;
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
-                here=here->RESnextInstance) {
+        for (here = RESinstances(model); here != NULL ;
+                here=RESnextInstance(here)) {
 
             if(!here->RESwidthGiven)   here->RESwidth  = model->RESdefWidth;
             if(!here->RESlengthGiven)  here->RESlength = model->RESdefLength;

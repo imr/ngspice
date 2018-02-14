@@ -75,11 +75,11 @@ double gdtot, gdtotd, gdtotg, gdtots, gdtotb;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->B4SOInextModel) 
+    for (; model != NULL; model = B4SOInextModel(model)) 
     {    
 
-      for (here = model->B4SOIinstances; here!= NULL;
-              here = here->B4SOInextInstance) 
+      for (here = B4SOIinstances(model); here!= NULL;
+              here = B4SOInextInstance(here)) 
          {
               selfheat = (model->B4SOIshMod == 1) && (here->B4SOIrth0 != 0.0);
               if (here->B4SOImode >= 0) 

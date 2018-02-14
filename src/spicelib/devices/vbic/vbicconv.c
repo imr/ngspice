@@ -45,8 +45,8 @@ VBICconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double Vbei, Vbex, Vbci, Vbcx, Vbep, Vrci, Vrbi, Vrbp, Vbcp;
     double Ibe, Ibex, Itzf, Itzr, Ibc, Ibep, Irci, Irbi, Irbp, Ibcp, Iccp;
 
-    for( ; model != NULL; model = model->VBICnextModel) {
-        for(here=model->VBICinstances;here!=NULL;here = here->VBICnextInstance) {
+    for( ; model != NULL; model = VBICnextModel(model)) {
+        for(here=VBICinstances(model);here!=NULL;here = VBICnextInstance(here)) {
 
             Vbei=model->VBICtype*(
                 *(ckt->CKTrhsOld+here->VBICbaseBINode)-

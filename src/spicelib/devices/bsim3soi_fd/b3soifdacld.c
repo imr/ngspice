@@ -49,11 +49,11 @@ FILE *fpdebug = NULL;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->B3SOIFDnextModel) 
+    for (; model != NULL; model = B3SOIFDnextModel(model)) 
     {    
 
-      for (here = model->B3SOIFDinstances; here!= NULL;
-              here = here->B3SOIFDnextInstance) 
+      for (here = B3SOIFDinstances(model); here!= NULL;
+              here = B3SOIFDnextInstance(here)) 
 	 {	      
 	      selfheat = (model->B3SOIFDshMod == 1) && (here->B3SOIFDrth0 != 0.0);
               if (here->B3SOIFDdebugMod > 2)

@@ -21,11 +21,11 @@ TRAacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double imag;
 
     /*  loop through all the transmission line models */
-    for( ; model != NULL; model = model->TRAnextModel ) {
+    for( ; model != NULL; model = TRAnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->TRAinstances; here != NULL ;
-                here=here->TRAnextInstance) {
+        for (here = TRAinstances(model); here != NULL ;
+                here=TRAnextInstance(here)) {
 
             real = cos(-ckt->CKTomega*here->TRAtd);
             imag = sin(-ckt->CKTomega*here->TRAtd);

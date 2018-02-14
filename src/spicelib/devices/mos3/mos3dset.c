@@ -61,11 +61,11 @@ MOS3dSetup(GENmodel *inModel, CKTcircuit *ckt)
 
 
     /*  loop through all the MOS3 device models */
-    for( ; model != NULL; model = model->MOS3nextModel ) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS3instances; here != NULL ;
-                here=here->MOS3nextInstance) {
+        for (here = MOS3instances(model); here != NULL ;
+                here=MOS3nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS3temp;
 

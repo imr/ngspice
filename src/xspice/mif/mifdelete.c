@@ -159,7 +159,7 @@ MIFdelete(GENinstance *gen_inst)
        FIXME
        Finally one has to free the memory in the same module where allocated. */
 #if defined(_MSC_VER) || defined(__MINGW32__)
-            if (!DEVices[here->MIFmodPtr->MIFmodType]->DEVpublic.inst_var[i].is_array)
+            if (!DEVices[MIFmodPtr(here)->MIFmodType]->DEVpublic.inst_var[i].is_array)
 #endif
                 FREE(here->inst_var[i]->element);
         }

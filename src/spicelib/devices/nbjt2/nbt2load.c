@@ -55,7 +55,7 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
   char *initStateName;
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     FieldDepMobility = model->NBJT2models->MODLfieldDepMobility;
     TransDepMobility = model->NBJT2models->MODLtransDepMobility;
     SurfaceMobility = model->NBJT2models->MODLsurfaceMobility;
@@ -94,8 +94,8 @@ NBJT2load(GENmodel *inModel, CKTcircuit *ckt)
 	  model->NBJT2pInfo->intCoeff, deltaNorm);
     }
     /* loop through all the instances of the model */
-    for (inst = model->NBJT2instances; inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+    for (inst = NBJT2instances(model); inst != NULL;
+         inst = NBJT2nextInstance(inst)) {
 
       pDevice = inst->NBJT2pDevice;
 
@@ -480,7 +480,7 @@ NBJT2initSmSig(NBJT2instance *inst)
 {
   SPcomplex yIeVce, yIeVbe;
   SPcomplex yIcVce, yIcVbe;
-  double omega = inst->NBJT2modPtr->NBJT2methods->METHomega;
+  double omega = NBJT2modPtr(inst)->NBJT2methods->METHomega;
 
   AcAnalysisMethod = SOR_ONLY;
   (void) NBJT2admittance(inst->NBJT2pDevice, omega,

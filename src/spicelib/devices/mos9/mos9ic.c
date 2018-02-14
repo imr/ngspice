@@ -23,8 +23,8 @@ MOS9getic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->MOS9nextModel) {
-        for(here = model->MOS9instances; here ; here = here->MOS9nextInstance) {
+    for( ; model ; model = MOS9nextModel(model)) {
+        for(here = MOS9instances(model); here ; here = MOS9nextInstance(here)) {
 
             if(!here->MOS9icVBSGiven) {
                 here->MOS9icVBS = 

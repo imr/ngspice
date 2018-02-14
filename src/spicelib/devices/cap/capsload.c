@@ -52,11 +52,11 @@ CAPsLoad(GENmodel *inModel, CKTcircuit *ckt)
     }
 
     /*  loop through all the capacitor models */
-    for( ; model != NULL; model = model->CAPnextModel ) {
+    for( ; model != NULL; model = CAPnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->CAPinstances; here != NULL ;
-                here=here->CAPnextInstance) {
+        for (here = CAPinstances(model); here != NULL ;
+                here=CAPnextInstance(here)) {
 
 #ifdef SENSDEBUG
             printf("senload instance name %s\n",here->CAPname);

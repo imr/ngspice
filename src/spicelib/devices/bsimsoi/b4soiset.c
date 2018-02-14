@@ -59,7 +59,7 @@ B4SOIinstance **InstArray;
 #endif
 
     /*  loop through all the B4SOI device models */
-    for( ; model != NULL; model = model->B4SOInextModel )
+    for( ; model != NULL; model = B4SOInextModel(model))
     {
 /* Default value Processing for B4SOI MOSFET Models */
 
@@ -2101,8 +2101,8 @@ B4SOIinstance **InstArray;
         if (!model->B4SOIpvoffcvGiven)
             model->B4SOIpvoffcv = 0.0;
         /* loop through all the instances of the model */
-        for (here = model->B4SOIinstances; here != NULL ;
-             here=here->B4SOInextInstance)
+        for (here = B4SOIinstances(model); here != NULL ;
+             here=B4SOInextInstance(here))
         {   /* allocate a chunk of the state vector */
             here->B4SOIstates = *states;
             *states += B4SOInumStates;
@@ -2725,11 +2725,11 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     /* loop through all the B4SOI device models 
        to count the number of instances */
     
-    for( ; model != NULL; model = model->B4SOInextModel )
+    for( ; model != NULL; model = B4SOInextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->B4SOIinstances; here != NULL ;
-             here=here->B4SOInextInstance) 
+        for (here = B4SOIinstances(model); here != NULL ;
+             here=B4SOInextInstance(here)) 
         { 
             InstCount++;
         }
@@ -2742,11 +2742,11 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     model->B4SOIInstCount = InstCount;
     model->B4SOIInstanceArray = InstArray;
     idx = 0;
-    for( ; model != NULL; model = model->B4SOInextModel )
+    for( ; model != NULL; model = B4SOInextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->B4SOIinstances; here != NULL ;
-             here=here->B4SOInextInstance) 
+        for (here = B4SOIinstances(model); here != NULL ;
+             here=B4SOInextInstance(here)) 
         { 
             InstArray[idx] = here;
             idx++;
@@ -2767,10 +2767,10 @@ B4SOIunsetup(
     B4SOIinstance *here;
 
     for (model = (B4SOImodel *)inModel; model != NULL;
-            model = model->B4SOInextModel)
+            model = B4SOInextModel(model))
     {
-        for (here = model->B4SOIinstances; here != NULL;
-                here=here->B4SOInextInstance)
+        for (here = B4SOIinstances(model); here != NULL;
+                here=B4SOInextInstance(here))
         {
             /* here for debugging purpose only */
             if (here->B4SOIqjdNode > 0)

@@ -33,7 +33,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
     double tBreakdownVoltage;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->DIOnextModel ) {
+    for( ; model != NULL; model = DIOnextModel(model)) {
         if(!model->DIOnomTempGiven) {
             model->DIOnomTemp = ckt->CKTnomTemp;
         }
@@ -70,7 +70,7 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
         xfc=log(1-model->DIOdepletionCapCoeff);
         xfcs=log(1-model->DIOdepletionSWcapCoeff);
 
-        for(here=model->DIOinstances;here;here=here->DIOnextInstance) {
+        for(here=DIOinstances(model);here;here=DIOnextInstance(here)) {
             double egfet1,arg1,fact1,pbfact1,pbo,gmaold,pboSW,gmaSWold;
             double fact2,pbfact,arg,egfet,gmanew,gmaSWnew;
             /* loop through all the instances */

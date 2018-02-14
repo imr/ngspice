@@ -25,13 +25,13 @@ MOS9sPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("LEVEL 9 MOSFETS (AG) -----------------\n");
     /*  loop through all the MOS9 models */
-    for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
 
         printf("Model name:%s\n",model->MOS9modName);
 
         /* loop through all the instances of the model */
-        for (here = model->MOS9instances; here != NULL ;
-                here=here->MOS9nextInstance) {
+        for (here = MOS9instances(model); here != NULL ;
+                here=MOS9nextInstance(here)) {
 
             printf("    Instance name:%s\n",here->MOS9name);
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",

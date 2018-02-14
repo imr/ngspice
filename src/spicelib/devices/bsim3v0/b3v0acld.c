@@ -26,12 +26,12 @@ double dxpart, sxpart, cqgb, cqdb, cqsb, cqbb, xcqgb, xcqdb, xcqsb, xcqbb;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->BSIM3v0nextModel) 
+    for (; model != NULL; model = BSIM3v0nextModel(model)) 
     {    
 
 
-      for (here = model->BSIM3v0instances; here!= NULL;
-              here = here->BSIM3v0nextInstance) 
+      for (here = BSIM3v0instances(model); here!= NULL;
+              here = BSIM3v0nextInstance(here)) 
 	 {
 	      if (here->BSIM3v0mode >= 0) 
 	      {   Gm = here->BSIM3v0gm;

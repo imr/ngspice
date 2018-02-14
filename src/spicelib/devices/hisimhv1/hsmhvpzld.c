@@ -48,9 +48,9 @@ int HSMHVpzLoad(
 #define qbNode      12
 
   
-  for ( ;model != NULL ;model = model->HSMHVnextModel ) {
-    for ( here = model->HSMHVinstances ;here!= NULL ;
-	  here = here->HSMHVnextInstance ) {
+  for ( ;model != NULL ;model = HSMHVnextModel(model)) {
+    for ( here = HSMHVinstances(model);here!= NULL ;
+	  here = HSMHVnextInstance(here)) {
 
       flg_nqs = model->HSMHV_conqs ;
 

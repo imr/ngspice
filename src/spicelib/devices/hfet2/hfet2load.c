@@ -64,9 +64,9 @@ int HFET2load(GENmodel *inModel, CKTcircuit *ckt)
 
   double m;
 
-  for( ; model != NULL; model = model->HFET2nextModel ) {
-    for(here = model->HFET2instances; here != NULL; 
-        here=here->HFET2nextInstance) {
+  for( ; model != NULL; model = HFET2nextModel(model)) {
+    for(here = HFET2instances(model); here != NULL; 
+        here=HFET2nextInstance(here)) {
 
       gdpr = model->HFET2drainConduct;
       gspr = model->HFET2sourceConduct;

@@ -30,9 +30,9 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     maxwarns = ckt->CKTsoaMaxWarns;
 
-    for (; model; model = model->VBICnextModel) {
+    for (; model; model = VBICnextModel(model)) {
 
-        for (here = model->VBICinstances; here; here=here->VBICnextInstance) {
+        for (here = VBICinstances(model); here; here=VBICnextInstance(here)) {
 
             vbe = fabs(ckt->CKTrhsOld [here->VBICbaseNode] -
                        ckt->CKTrhsOld [here->VBICemitNode]);

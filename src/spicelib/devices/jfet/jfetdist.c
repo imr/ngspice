@@ -40,11 +40,11 @@ if ((mode == D_TWOF1) || (mode == D_THRF1) ||
  (mode == D_2F1MF2)) {
 
  /* loop through all the JFET models */
-for( ; model != NULL; model = model->JFETnextModel ) {
+for( ; model != NULL; model = JFETnextModel(model)) {
 
   /* loop through all the instances of the model */
-  for (here = model->JFETinstances; here != NULL ;
- 		here=here->JFETnextInstance) {
+  for (here = JFETinstances(model); here != NULL ;
+ 		here=JFETnextInstance(here)) {
 
     /* loading starts here */
 

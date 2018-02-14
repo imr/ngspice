@@ -33,9 +33,9 @@ HSMHVsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     maxwarns = ckt->CKTsoaMaxWarns;
 
-    for (; model; model = model->HSMHVnextModel) {
+    for (; model; model = HSMHVnextModel(model)) {
 
-        for (here = model->HSMHVinstances; here; here = here->HSMHVnextInstance) {
+        for (here = HSMHVinstances(model); here; here = HSMHVnextInstance(here)) {
 
             vgs = ckt->CKTrhsOld [here->HSMHVgNode] -
                   ckt->CKTrhsOld [here->HSMHVsNodePrime];

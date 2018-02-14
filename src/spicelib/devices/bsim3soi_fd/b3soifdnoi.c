@@ -127,9 +127,9 @@ int i;
 	""                  /* total transistor noise */
     };
 
-    for (; model != NULL; model = model->B3SOIFDnextModel)
-    {    for (here = model->B3SOIFDinstances; here != NULL;
-	      here = here->B3SOIFDnextInstance)
+    for (; model != NULL; model = B3SOIFDnextModel(model))
+    {    for (here = B3SOIFDinstances(model); here != NULL;
+	      here = B3SOIFDnextInstance(here))
 	 {	 
 	      pParam = here->pParam;
 	      switch (operation)

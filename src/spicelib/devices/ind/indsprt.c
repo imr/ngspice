@@ -24,13 +24,13 @@ INDsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("INDUCTORS----------\n");
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->INDnextModel ) {
+    for( ; model != NULL; model = INDnextModel(model)) {
 
         printf("Model name:%s\n",model->INDmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->INDinstances; here != NULL ;
-                here=here->INDnextInstance) {
+        for (here = INDinstances(model); here != NULL ;
+                here=INDnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->INDname);
             printf("      Positive, negative nodes: %s, %s\n",

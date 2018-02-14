@@ -27,11 +27,11 @@ CCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(states);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->CCCSnextModel ) {
+    for( ; model != NULL; model = CCCSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->CCCSinstances; here != NULL ;
-                here=here->CCCSnextInstance) {
+        for (here = CCCSinstances(model); here != NULL ;
+                here=CCCSnextInstance(here)) {
             
             here->CCCScontBranch = CKTfndBranch(ckt,here->CCCScontName);
             if(here->CCCScontBranch == 0) {

@@ -70,11 +70,11 @@ double gmbds;
     Dderivs d_cdrain;
 
     /*  loop through all the MOS2 device models */
-    for( ; model != NULL; model = model->MOS2nextModel ) {
+    for( ; model != NULL; model = MOS2nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS2instances; here != NULL ;
-                here=here->MOS2nextInstance) {
+        for (here = MOS2instances(model); here != NULL ;
+                here=MOS2nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS2temp;
 

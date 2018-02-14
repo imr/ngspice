@@ -21,9 +21,9 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
     double   lastChange, maxChange, maxStep, ref;
 
-    for( ; model!= NULL; model = model->CSWnextModel) {
-        for(here = model->CSWinstances ; here != NULL ;
-                here = here->CSWnextInstance) {
+    for( ; model!= NULL; model = CSWnextModel(model)) {
+        for(here = CSWinstances(model); here != NULL ;
+                here = CSWnextInstance(here)) {
             lastChange = *(ckt->CKTstate0+(here->CSWstate+1)) -
                           *(ckt->CKTstate1+(here->CSWstate+1));
             if (*(ckt->CKTstate0+(here->CSWstate))==0) {

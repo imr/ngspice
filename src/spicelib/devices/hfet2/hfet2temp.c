@@ -22,7 +22,7 @@ CKTcircuit *ckt)
   double vt;
   double tdiff;
 
-  for( ; model != NULL; model = model->HFET2nextModel ) {
+  for( ; model != NULL; model = HFET2nextModel(model)) {
     if(model->HFET2rd != 0)
       model->HFET2drainConduct = 1/model->HFET2rd;
     else
@@ -36,8 +36,8 @@ CKTcircuit *ckt)
     if(!model->HFET2vt2Given)
       VT2 = VTO;
     DELTA2 = DELTA*DELTA;
-    for (here = model->HFET2instances; here != NULL; 
-         here=here->HFET2nextInstance) {
+    for (here = HFET2instances(model); here != NULL; 
+         here=HFET2nextInstance(here)) {
 
     if(!here->HFET2dtempGiven)
        here->HFET2dtemp = 0.0;

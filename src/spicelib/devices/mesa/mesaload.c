@@ -95,11 +95,11 @@ MESAload(GENmodel *inModel, CKTcircuit *ckt)
     double m;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->MESAnextModel ) {
+    for( ; model != NULL; model = MESAnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MESAinstances; here != NULL ;
-                here=here->MESAnextInstance) {
+        for (here = MESAinstances(model); here != NULL ;
+                here=MESAnextInstance(here)) {
 
             /*
              *  dc model parameters 

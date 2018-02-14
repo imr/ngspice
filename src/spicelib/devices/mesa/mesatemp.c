@@ -25,7 +25,7 @@ MESAtemp(GENmodel *inModel, CKTcircuit *ckt)
   double d;
   
 
-  for( ; model != NULL; model = model->MESAnextModel ) {
+  for( ; model != NULL; model = MESAnextModel(model)) {
     if(!model->MESAlambdahfGiven)
       model->MESAlambdahf = model->MESAlambda;
     if(model->MESAlevel == 2)
@@ -40,8 +40,8 @@ MESAtemp(GENmodel *inModel, CKTcircuit *ckt)
     }
     model->MESAdeltaSqr = model->MESAdelta*model->MESAdelta;
     
-    for (here = model->MESAinstances; here != NULL ;
-              here=here->MESAnextInstance) {
+    for (here = MESAinstances(model); here != NULL ;
+              here=MESAnextInstance(here)) {
 
       vt                = CONSTKoverQ * here->MESAts;
       if(model->MESAmu1 == 0 && model->MESAmu2 == 0)

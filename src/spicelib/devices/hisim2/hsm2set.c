@@ -120,7 +120,7 @@ int HSM2setup(
 #endif
 
   /*  loop through all the HSM2 device models */
-  for ( ;model != NULL ;model = model->HSM2nextModel ) {
+  for ( ;model != NULL ;model = HSM2nextModel(model)) {
     /* Default value Processing for HSM2 MOSFET Models */
     if ( !model->HSM2_type_Given )
       model->HSM2_type = NMOS ;
@@ -811,8 +811,8 @@ int HSM2setup(
     modelMKS = &model->modelMKS ;
 
     /* loop through all the instances of the model */
-    for ( here = model->HSM2instances ;here != NULL ;
-	  here = here->HSM2nextInstance ) {
+    for ( here = HSM2instances(model);here != NULL ;
+	  here = HSM2nextInstance(here)) {
       /* allocate a chunk of the state vector */
       here->HSM2states = *states;
       if (model->HSM2_conqs)
@@ -1267,11 +1267,11 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     /* loop through all the HSM2 device models
        to count the number of instances */
 
-    for ( ; model != NULL; model = model->HSM2nextModel )
+    for ( ; model != NULL; model = HSM2nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->HSM2instances; here != NULL ;
-             here = here->HSM2nextInstance)
+        for (here = HSM2instances(model); here != NULL ;
+             here = HSM2nextInstance(here))
         {
             InstCount++;
         }
@@ -1284,11 +1284,11 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     model->HSM2InstCount = InstCount;
     model->HSM2InstanceArray = InstArray;
     idx = 0;
-    for ( ; model != NULL; model = model->HSM2nextModel )
+    for ( ; model != NULL; model = HSM2nextModel(model))
     {
         /* loop through all the instances of the model */
-        for (here = model->HSM2instances; here != NULL ;
-             here = here->HSM2nextInstance)
+        for (here = HSM2instances(model); here != NULL ;
+             here = HSM2nextInstance(here))
         {
             InstArray[idx] = here;
             idx++;
@@ -1309,10 +1309,10 @@ HSM2unsetup(
     HSM2instance *here;
  
     for (model = (HSM2model *)inModel; model != NULL;
-            model = model->HSM2nextModel)
+            model = HSM2nextModel(model))
     {
-        for (here = model->HSM2instances; here != NULL;
-                here=here->HSM2nextInstance)
+        for (here = HSM2instances(model); here != NULL;
+                here=HSM2nextInstance(here))
         {
             if (here->HSM2sbNode > 0
                     && here->HSM2sbNode != here->HSM2bNode)

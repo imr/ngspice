@@ -33,7 +33,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the transistor models */
-    for( ; model != NULL; model = model->VBICnextModel ) {
+    for( ; model != NULL; model = VBICnextModel(model)) {
 
         if(model->VBICtype != NPN && model->VBICtype != PNP) {
             model->VBICtype = NPN;
@@ -380,8 +380,8 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->VBICinstances; here != NULL ;
-                here=here->VBICnextInstance) {
+        for (here = VBICinstances(model); here != NULL ;
+                here=VBICnextInstance(here)) {
             CKTnode *tmpNode;
             IFuid tmpName;
 
@@ -553,10 +553,10 @@ VBICunsetup(
     VBICinstance *here;
 
     for (model = (VBICmodel *)inModel; model != NULL;
-        model = model->VBICnextModel)
+        model = VBICnextModel(model))
     {
-        for (here = model->VBICinstances; here != NULL;
-                here=here->VBICnextInstance)
+        for (here = VBICinstances(model); here != NULL;
+                here=VBICnextInstance(here))
         {
             if (here->VBICbaseBINode > 0)
                 CKTdltNNum(ckt, here->VBICbaseBINode);

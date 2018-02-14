@@ -25,7 +25,7 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     CKTnode *tmp;
 
     /*  loop through all the MOS6 device models */
-    for( ; model != NULL; model = model->MOS6nextModel ) {
+    for( ; model != NULL; model = MOS6nextModel(model)) {
 
         if(!model->MOS6typeGiven) {
             model->MOS6type = NMOS;
@@ -110,8 +110,8 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         }
 
         /* loop through all the instances of the model */
-        for (here = model->MOS6instances; here != NULL ;
-                here=here->MOS6nextInstance) {
+        for (here = MOS6instances(model); here != NULL ;
+                here=MOS6nextInstance(here)) {
             CKTnode *tmpNode;
             IFuid tmpName;
 
@@ -228,10 +228,10 @@ MOS6unsetup(GENmodel *inModel, CKTcircuit *ckt)
     MOS6instance *here;
 
     for (model = (MOS6model *)inModel; model != NULL;
-	    model = model->MOS6nextModel)
+	    model = MOS6nextModel(model))
     {
-        for (here = model->MOS6instances; here != NULL;
-                here=here->MOS6nextInstance)
+        for (here = MOS6instances(model); here != NULL;
+                here=MOS6nextInstance(here))
 	{
 	    if (here->MOS6sNodePrime > 0
 		    && here->MOS6sNodePrime != here->MOS6sNode)

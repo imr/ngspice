@@ -127,7 +127,7 @@ B4SOIload(
 }
 
 int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
-    B4SOImodel *model = here->B4SOImodPtr;
+    B4SOImodel *model = B4SOImodPtr(here);
 #else
     register B4SOImodel *model = (B4SOImodel*)inModel;
     register B4SOIinstance *here;
@@ -489,9 +489,9 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
     double m;
 
 #ifndef USE_OMP
-    for (; model != NULL; model = model->B4SOInextModel)
-    {    for (here = model->B4SOIinstances; here != NULL;
-            here = here->B4SOInextInstance)
+    for (; model != NULL; model = B4SOInextModel(model))
+    {    for (here = B4SOIinstances(model); here != NULL;
+              here = B4SOInextInstance(here))
          {    
 
 #endif        
@@ -10969,7 +10969,7 @@ void B4SOILoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for(idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
-       model = here->B4SOImodPtr;
+       model = B4SOImodPtr(here);
         /* Update b for Ax = b */
 
             /* v3.1 */

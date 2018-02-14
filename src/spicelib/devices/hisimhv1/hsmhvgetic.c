@@ -32,8 +32,8 @@ int HSMHVgetic(
    * external nodes to get values
    */
 
-  for ( ;model ;model = model->HSMHVnextModel ) {
-    for ( here = model->HSMHVinstances; here ;here = here->HSMHVnextInstance ) {
+  for ( ;model ;model = HSMHVnextModel(model)) {
+    for ( here = HSMHVinstances(model); here ;here = HSMHVnextInstance(here)) {
       if (!here->HSMHV_icVBS_Given) {
 	here->HSMHV_icVBS = 
 	  *(ckt->CKTrhs + here->HSMHVbNode) - 

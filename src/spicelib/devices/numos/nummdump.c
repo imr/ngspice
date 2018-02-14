@@ -56,10 +56,10 @@ NUMOSdump(GENmodel *inModel, CKTcircuit *ckt)
     return;
   }
 
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     output = model->NUMOSoutputs;
-    for (inst = model->NUMOSinstances; inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+    for (inst = NUMOSinstances(model); inst != NULL;
+         inst = NUMOSnextInstance(inst)) {
 
       if (inst->NUMOSprintGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -157,10 +157,10 @@ NUMOSacct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 
   NG_IGNORE(ckt);
 
-  for (; model != NULL; model = model->NUMOSnextModel) {
+  for (; model != NULL; model = NUMOSnextModel(model)) {
     output = model->NUMOSoutputs;
-    for (inst = model->NUMOSinstances; inst != NULL;
-	inst = inst->NUMOSnextInstance) {
+    for (inst = NUMOSinstances(model); inst != NULL;
+         inst = NUMOSnextInstance(inst)) {
 
       if (output->OUTPstats) {
 	TWOmemStats(file, inst->NUMOSpDevice);

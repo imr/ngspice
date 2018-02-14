@@ -20,9 +20,9 @@ INDacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double m;
     INDinstance *here;
 
-    for( ; model != NULL; model = model->INDnextModel) {
-        for( here = model->INDinstances;here != NULL; 
-                here = here->INDnextInstance) {
+    for( ; model != NULL; model = INDnextModel(model)) {
+        for( here = INDinstances(model);here != NULL; 
+                here = INDnextInstance(here)) {
     
             m = (here->INDm);
 

@@ -28,8 +28,8 @@ VBICgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->VBICnextModel) {
-        for(here = model->VBICinstances; here ; here = here->VBICnextInstance) {
+    for( ; model ; model = VBICnextModel(model)) {
+        for(here = VBICinstances(model); here ; here = VBICnextInstance(here)) {
 
             if(!here->VBICicVBEGiven) {
                 here->VBICicVBE = 
