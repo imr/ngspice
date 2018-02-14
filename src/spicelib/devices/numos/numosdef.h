@@ -22,15 +22,14 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNUMOSinstance {
-  struct sNUMOSmodel *NUMOSmodPtr;	/* back pointer to model */
-  struct sNUMOSinstance *NUMOSnextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NUMOSname;		/* pointer to character string naming this
-				 * instance */
-  int NUMOSstate;		/* pointer to start of state vector for
-				 * mosfet */
 
-  /* entries in the state vector for mosfet: */
+  struct GENinstance gen;
+
+#define NUMOSmodPtr(inst) ((struct sNUMOSmodel *)((inst)->gen.GENmodPtr))
+#define NUMOSnextInstance(inst) ((struct sNUMOSinstance *)((inst)->gen.GENnextInstance))
+#define NUMOSname gen.GENname
+#define NUMOSstate gen.GENstate
+
 #define NUMOSvdb NUMOSstate
 #define NUMOSvsb NUMOSstate+1
 #define NUMOSvgb NUMOSstate+2
@@ -118,14 +117,14 @@ typedef struct sNUMOSinstance {
 
 /* per model data */
 typedef struct sNUMOSmodel {	/* model structure for a numerical device */
-  int NUMOSmodType;		/* type index of this device type */
-  struct sNUMOSmodel *NUMOSnextModel;	/* pointer to next model in list */
-  NUMOSinstance *NUMOSinstances;/* pointer to list of instances */
-  IFuid NUMOSmodName;		/* pointer to string naming this model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
 
-  /* Everything below here is numerical-device-specific */
+#define NUMOSmodType gen.GENmodType
+#define NUMOSnextModel(inst) ((struct sNUMOSmodel *)((inst)->gen.GENnextModel))
+#define NUMOSinstances(inst) ((NUMOSinstance *)((inst)->gen.GENinstances))
+#define NUMOSmodName gen.GENmodName
+
   MESHcard *NUMOSxMeshes;	/* list of xmesh cards */
   MESHcard *NUMOSyMeshes;	/* list of ymesh cards */
   DOMNcard *NUMOSdomains;	/* list of domain cards */

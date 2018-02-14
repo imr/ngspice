@@ -19,11 +19,14 @@ Modified: September 2003 Paolo Nenzi
 /* information to describe each instance */
 
 typedef struct sCAPinstance {
-    struct sCAPmodel *CAPmodPtr;    /* backpointer to model */
-    struct sCAPinstance *CAPnextInstance;   /* pointer to next instance of
-                                             * current model*/
-    IFuid CAPname;  /* pointer to character string naming this instance */
-    int CAPstate;   /* pointer to start of capacitor state vector */
+
+    struct GENinstance gen;
+
+#define CAPmodPtr(inst) ((struct sCAPmodel *)((inst)->gen.GENmodPtr))
+#define CAPnextInstance(inst) ((struct sCAPinstance *)((inst)->gen.GENnextInstance))
+#define CAPname gen.GENname
+#define CAPstate gen.GENstate
+
     const int CAPposNode; /* number of positive node of capacitor */
     const int CAPnegNode; /* number of negative node of capacitor */
 
@@ -73,14 +76,13 @@ beginning of the array */
 /* data per model */
 
 typedef struct sCAPmodel {      /* model structure for a capacitor */
-    int CAPmodType; /* type index of this device type */
-    struct sCAPmodel *CAPnextModel; /* pointer to next possible model in
-                                     * linked list */
-    CAPinstance * CAPinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid CAPmodName;   /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define CAPmodType gen.GENmodType
+#define CAPnextModel(inst) ((struct sCAPmodel *)((inst)->gen.GENnextModel))
+#define CAPinstances(inst) ((CAPinstance *)((inst)->gen.GENinstances))
+#define CAPmodName gen.GENmodName
 
     double CAPtnom;       /* temperature at which capacitance measured */
     double CAPtempCoeff1; /* linear temperature coefficient */

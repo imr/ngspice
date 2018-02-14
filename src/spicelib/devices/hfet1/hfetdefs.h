@@ -15,11 +15,14 @@ Modified: Paolo Nenzi
 #define HFETAnumStates 24
 
 typedef struct sHFETAinstance {
-    struct sHFETAmodel *HFETAmodPtr;
-    struct sHFETAinstance *HFETAnextInstance;
-    IFuid HFETAname;
-    int HFETAstate;   /* index into state table for this device */
-    
+
+    struct GENinstance gen;
+
+#define HFETAmodPtr(inst) ((struct sHFETAmodel *)((inst)->gen.GENmodPtr))
+#define HFETAnextInstance(inst) ((struct sHFETAinstance *)((inst)->gen.GENnextInstance))
+#define HFETAname gen.GENname
+#define HFETAstate gen.GENstate
+
     const int HFETAdrainNode;
     const int HFETAgateNode;
     const int HFETAsourceNode;
@@ -128,12 +131,13 @@ typedef struct sHFETAinstance {
 /* per model data */
 
 typedef struct sHFETAmodel {
-    int HFETAmodType;
-    struct sHFETAmodel *HFETAnextModel; 
-    HFETAinstance *HFETAinstances;
-    IFuid HFETAmodName;
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define HFETAmodType gen.GENmodType
+#define HFETAnextModel(inst) ((struct sHFETAmodel *)((inst)->gen.GENnextModel))
+#define HFETAinstances(inst) ((HFETAinstance *)((inst)->gen.GENinstances))
+#define HFETAmodName gen.GENmodName
 
     int HFETAtype;
     int HFETAgatemod;

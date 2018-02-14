@@ -11,12 +11,13 @@
 /* information used to describe a single instance */
 
 typedef struct sTXLinstance {
-    struct sTXLmodel *TXLmodPtr;    /* backpointer to model */
-    struct sTXLinstance *TXLnextInstance;   /* pointer to next instance of 
-                                             * current model*/
 
-    IFuid TXLname;  /* pointer to character string naming this instance */
-    int TXLstates;  /* state info, unused */
+    struct GENinstance gen;
+
+#define TXLmodPtr(inst) ((struct sTXLmodel *)((inst)->gen.GENmodPtr))
+#define TXLnextInstance(inst) ((struct sTXLinstance *)((inst)->gen.GENnextInstance))
+#define TXLname gen.GENname
+#define TXLstates gen.GENstate
 
 	int TXLposNode;
 	int TXLnegNode;
@@ -55,14 +56,13 @@ typedef struct sTXLinstance {
 /* per model data */
 
 typedef struct sTXLmodel {       /* model structure for a txl */
-    int TXLmodType; /* type index of this device type */
-    struct sTXLmodel *TXLnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    TXLinstance * TXLinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid TXLmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define TXLmodType gen.GENmodType
+#define TXLnextModel(inst) ((struct sTXLmodel *)((inst)->gen.GENnextModel))
+#define TXLinstances(inst) ((TXLinstance *)((inst)->gen.GENinstances))
+#define TXLmodName gen.GENmodName
 
 	double R;
 	double L;

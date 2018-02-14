@@ -29,10 +29,14 @@ Modified by Wenwei Yang, 07/31/2008.
 
 typedef struct sBSIM4v6instance
 {
-    struct sBSIM4v6model *BSIM4v6modPtr;
-    struct sBSIM4v6instance *BSIM4v6nextInstance;
-    IFuid BSIM4v6name;
-    int BSIM4v6states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define BSIM4v6modPtr(inst) ((struct sBSIM4v6model *)((inst)->gen.GENmodPtr))
+#define BSIM4v6nextInstance(inst) ((struct sBSIM4v6instance *)((inst)->gen.GENnextInstance))
+#define BSIM4v6name gen.GENname
+#define BSIM4v6states gen.GENstate
+
     const int BSIM4v6dNode;
     const int BSIM4v6gNodeExt;
     const int BSIM4v6sNode;
@@ -795,12 +799,13 @@ struct bsim4v6SizeDependParam
 
 typedef struct sBSIM4v6model 
 {
-    int BSIM4v6modType;
-    struct sBSIM4v6model *BSIM4v6nextModel;
-    BSIM4v6instance *BSIM4v6instances;
-    IFuid BSIM4v6modName; 
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define BSIM4v6modType gen.GENmodType
+#define BSIM4v6nextModel(inst) ((struct sBSIM4v6model *)((inst)->gen.GENnextModel))
+#define BSIM4v6instances(inst) ((BSIM4v6instance *)((inst)->gen.GENinstances))
+#define BSIM4v6modName gen.GENmodName
 
     int BSIM4v6type;
 

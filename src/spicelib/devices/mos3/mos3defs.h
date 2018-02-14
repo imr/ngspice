@@ -18,11 +18,14 @@ Modified: 2000 AlanFixes
 /* information needed for each instance */
 
 typedef struct sMOS3instance {
-    struct sMOS3model *MOS3modPtr;  /* backpointer to model */
-    struct sMOS3instance *MOS3nextInstance;  /* pointer to next instance of 
-                                              *current model*/
-    IFuid MOS3name; /* pointer to character string naming this instance */
-    int MOS3states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define MOS3modPtr(inst) ((struct sMOS3model *)((inst)->gen.GENmodPtr))
+#define MOS3nextInstance(inst) ((struct sMOS3instance *)((inst)->gen.GENnextInstance))
+#define MOS3name gen.GENname
+#define MOS3states gen.GENstate
+
     const int MOS3dNode;  /* number of the gate node of the mosfet */
     const int MOS3gNode;  /* number of the gate node of the mosfet */
     const int MOS3sNode;  /* number of the source node of the mosfet */
@@ -316,14 +319,13 @@ typedef struct sMOS3instance {
      */
 
 typedef struct sMOS3model {       /* model structure for a resistor */
-    int MOS3modType;    /* type index of this device type */
-    struct sMOS3model *MOS3nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    MOS3instance * MOS3instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MOS3modName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define MOS3modType gen.GENmodType
+#define MOS3nextModel(inst) ((struct sMOS3model *)((inst)->gen.GENnextModel))
+#define MOS3instances(inst) ((MOS3instance *)((inst)->gen.GENinstances))
+#define MOS3modName gen.GENmodName
 
     int MOS3type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS3tnom;        /* temperature at which parameters measured */

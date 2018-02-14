@@ -19,11 +19,13 @@ Author: 1985 Thomas L. Quarles
 /* information to describe a single instance */
 
 typedef struct sVCVSinstance {
-    struct sVCVSmodel *VCVSmodPtr;  /* backpointer to model */
-    struct sVCVSinstance *VCVSnextInstance;  /* pointer to next instance of 
-                                              *current model*/
-    IFuid VCVSname; /* pointer to character string naming this instance */
-    int VCVSstates; /* state info */
+
+    struct GENinstance gen;
+
+#define VCVSmodPtr(inst) ((struct sVCVSmodel *)((inst)->gen.GENmodPtr))
+#define VCVSnextInstance(inst) ((struct sVCVSinstance *)((inst)->gen.GENnextInstance))
+#define VCVSname gen.GENname
+#define VCVSstates gen.GENstate
 
     const int VCVSposNode;    /* number of positive node of source */
     const int VCVSnegNode;    /* number of negative node of source */
@@ -59,14 +61,13 @@ typedef struct sVCVSinstance {
 /* per model data */
 
 typedef struct sVCVSmodel {       /* model structure for a source */
-    int VCVSmodType;    /* type index of this device type */
-    struct sVCVSmodel *VCVSnextModel;   /* pointer to next possible model 
-                                         *in linked list */
-    VCVSinstance * VCVSinstances;    /* pointer to list of instances 
-                                      * that have this model */
-    IFuid VCVSmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define VCVSmodType gen.GENmodType
+#define VCVSnextModel(inst) ((struct sVCVSmodel *)((inst)->gen.GENnextModel))
+#define VCVSinstances(inst) ((VCVSinstance *)((inst)->gen.GENinstances))
+#define VCVSmodName gen.GENmodName
 
 } VCVSmodel;
 

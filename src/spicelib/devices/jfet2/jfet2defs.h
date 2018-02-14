@@ -26,11 +26,14 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 /* information used to describe a single instance */
 
 typedef struct sJFET2instance {
-    struct sJFET2model *JFET2modPtr;  /* backpointer to model */
-    struct sJFET2instance *JFET2nextInstance; /* pointer to next instance of 
-                                             * current model*/
-    IFuid JFET2name; /* pointer to character string naming this instance */
-    int JFET2state; /* pointer to start of state vector for jfet */
+
+    struct GENinstance gen;
+
+#define JFET2modPtr(inst) ((struct sJFET2model *)((inst)->gen.GENmodPtr))
+#define JFET2nextInstance(inst) ((struct sJFET2instance *)((inst)->gen.GENnextInstance))
+#define JFET2name gen.GENname
+#define JFET2state gen.GENstate
+
     const int JFET2drainNode;  /* number of drain node of jfet */
     const int JFET2gateNode;   /* number of gate node of jfet */
     const int JFET2sourceNode; /* number of source node of jfet */
@@ -180,14 +183,13 @@ typedef struct sJFET2instance {
 /* per model data */
 
 typedef struct sJFET2model {       /* model structure for a jfet */
-    int JFET2modType;    /* type index of this device type */
-    struct sJFET2model *JFET2nextModel;   /* pointer to next possible model in 
-                                         * linked list */
-    JFET2instance * JFET2instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid JFET2modName; /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define JFET2modType gen.GENmodType
+#define JFET2nextModel(inst) ((struct sJFET2model *)((inst)->gen.GENnextModel))
+#define JFET2instances(inst) ((JFET2instance *)((inst)->gen.GENinstances))
+#define JFET2modName gen.GENmodName
 
     int JFET2type;
 

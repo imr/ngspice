@@ -21,11 +21,13 @@ struct trnoise_state;
 /* information needed for each instance */
 
 typedef struct sVSRCinstance {
-    struct sVSRCmodel *VSRCmodPtr;  /* backpointer to model */
-    struct sVSRCinstance *VSRCnextInstance;  /* pointer to next instance of
-                                              *current model */
-    IFuid VSRCname; /* pointer to character string naming this instance */
-    int VSRCstate;  /* not used */
+
+    struct GENinstance gen;
+
+#define VSRCmodPtr(inst) ((struct sVSRCmodel *)((inst)->gen.GENmodPtr))
+#define VSRCnextInstance(inst) ((struct sVSRCinstance *)((inst)->gen.GENnextInstance))
+#define VSRCname gen.GENname
+#define VSRCstate gen.GENstate
 
     const int VSRCposNode;    /* number of positive node of source */
     const int VSRCnegNode;    /* number of negative node of source */
@@ -81,14 +83,13 @@ typedef struct sVSRCinstance {
 /* per model data */
 
 typedef struct sVSRCmodel {
-    int VSRCmodType;    /* type index of this device type */
-    struct sVSRCmodel *VSRCnextModel;    /* pointer to next possible model
-                                          *in linked list */
-    VSRCinstance * VSRCinstances;    /* pointer to list of instances
-                                      * that have this model */
-    IFuid VSRCmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define VSRCmodType gen.GENmodType
+#define VSRCnextModel(inst) ((struct sVSRCmodel *)((inst)->gen.GENnextModel))
+#define VSRCinstances(inst) ((VSRCinstance *)((inst)->gen.GENinstances))
+#define VSRCmodName gen.GENmodName
 
 } VSRCmodel;
 

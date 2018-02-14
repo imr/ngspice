@@ -21,11 +21,14 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 /* information used to describe a single instance */
 
 typedef struct sJFETinstance {
-    struct sJFETmodel *JFETmodPtr;  /* backpointer to model */
-    struct sJFETinstance *JFETnextInstance; /* pointer to next instance of 
-                                             * current model*/
-    IFuid JFETname; /* pointer to character string naming this instance */
-    int JFETstate; /* pointer to start of state vector for jfet */
+
+    struct GENinstance gen;
+
+#define JFETmodPtr(inst) ((struct sJFETmodel *)((inst)->gen.GENmodPtr))
+#define JFETnextInstance(inst) ((struct sJFETinstance *)((inst)->gen.GENnextInstance))
+#define JFETname gen.GENname
+#define JFETstate gen.GENstate
+
     const int JFETdrainNode;  /* number of drain node of jfet */
     const int JFETgateNode;   /* number of gate node of jfet */
     const int JFETsourceNode; /* number of source node of jfet */
@@ -168,14 +171,13 @@ typedef struct sJFETinstance {
 /* per model data */
 
 typedef struct sJFETmodel {       /* model structure for a jfet */
-    int JFETmodType;    /* type index of this device type */
-    struct sJFETmodel *JFETnextModel;   /* pointer to next possible model in 
-                                         * linked list */
-    JFETinstance * JFETinstances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid JFETmodName; /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define JFETmodType gen.GENmodType
+#define JFETnextModel(inst) ((struct sJFETmodel *)((inst)->gen.GENnextModel))
+#define JFETinstances(inst) ((JFETinstance *)((inst)->gen.GENinstances))
+#define JFETmodName gen.GENmodName
 
     int JFETtype;
 

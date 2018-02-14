@@ -18,11 +18,14 @@ Modified: 2000 AlansFIxes
 /* information needed for each instance */
 
 typedef struct sMOS2instance {
-    struct sMOS2model *MOS2modPtr;  /* backpointer to model */
-    struct sMOS2instance *MOS2nextInstance;  /* pointer to next instance of
-                                              *current model*/
-    IFuid MOS2name; /* pointer to character string naming this instance */
-    int MOS2states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define MOS2modPtr(inst) ((struct sMOS2model *)((inst)->gen.GENmodPtr))
+#define MOS2nextInstance(inst) ((struct sMOS2instance *)((inst)->gen.GENnextInstance))
+#define MOS2name gen.GENname
+#define MOS2states gen.GENstate
+
     const int MOS2dNode;  /* number of the gate node of the mosfet */
     const int MOS2gNode;  /* number of the gate node of the mosfet */
     const int MOS2sNode;  /* number of the source node of the mosfet */
@@ -320,14 +323,13 @@ typedef struct sMOS2instance {
          */
 
 typedef struct sMOS2model {       /* model structure for a resistor */
-    int MOS2modType;    /* type index of this device type */
-    struct sMOS2model *MOS2nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    MOS2instance * MOS2instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MOS2modName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define MOS2modType gen.GENmodType
+#define MOS2nextModel(inst) ((struct sMOS2model *)((inst)->gen.GENnextModel))
+#define MOS2instances(inst) ((MOS2instance *)((inst)->gen.GENinstances))
+#define MOS2modName gen.GENmodName
 
     int MOS2type;       /* device type : 1 = nmos,  -1 = pmos */
     int MOS2gateType;

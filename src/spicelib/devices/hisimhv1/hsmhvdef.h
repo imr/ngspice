@@ -213,11 +213,13 @@ typedef struct sHSMHVhereMKSParam {
 
 /* information needed for each instance */
 typedef struct sHSMHVinstance {
-  struct sHSMHVmodel *HSMHVmodPtr;           /* pointer to model */
-  struct sHSMHVinstance *HSMHVnextInstance;  /* pointer to next instance of 
-                                              current model*/
-  IFuid HSMHVname; /* pointer to character string naming this instance */
-  int HSMHVstates; /* index into state table for this device */
+
+  struct GENinstance gen;
+
+#define HSMHVmodPtr(inst) ((struct sHSMHVmodel *)((inst)->gen.GENmodPtr))
+#define HSMHVnextInstance(inst) ((struct sHSMHVinstance *)((inst)->gen.GENnextInstance))
+#define HSMHVname gen.GENname
+#define HSMHVstates gen.GENstate
 
   const int HSMHVdNode;      /* number of the drain node of the mosfet */
   const int HSMHVgNode;      /* number of the gate node of the mosfet */
@@ -911,14 +913,13 @@ typedef struct sHSMHVinstance {
 /* per model data */
 
 typedef struct sHSMHVmodel {     /* model structure for a resistor */
-  int HSMHVmodType;    		/* type index of this device type */
-  struct sHSMHVmodel *HSMHVnextModel; /* pointer to next possible model 
-					 in linked list */
-  HSMHVinstance * HSMHVinstances;	/* pointer to list of instances 
-				   that have this model */
-  IFuid HSMHVmodName;       	/* pointer to the name of this model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
+
+#define HSMHVmodType gen.GENmodType
+#define HSMHVnextModel(inst) ((struct sHSMHVmodel *)((inst)->gen.GENnextModel))
+#define HSMHVinstances(inst) ((HSMHVinstance *)((inst)->gen.GENinstances))
+#define HSMHVmodName gen.GENmodName
 
   int HSMHV_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV_level;               /* level */

@@ -18,11 +18,14 @@ Author: 1990 Jaijeet S. Roychowdhury
 /* information used to describe a single instance */
 
 typedef struct sLTRAinstance {
-    struct sLTRAmodel *LTRAmodPtr;    /* backpointer to model */
-    struct sLTRAinstance *LTRAnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid LTRAname;      /* pointer to character string naming this instance */
-    int LTRAstate;	 /* not used */
+
+    struct GENinstance gen;
+
+#define LTRAmodPtr(inst) ((struct sLTRAmodel *)((inst)->gen.GENmodPtr))
+#define LTRAnextInstance(inst) ((struct sLTRAinstance *)((inst)->gen.GENnextInstance))
+#define LTRAname gen.GENname
+#define LTRAstate gen.GENstate
+
     const int LTRAposNode1;    /* number of positive node of end 1 of t. line */
     const int LTRAnegNode1;    /* number of negative node of end 1 of t. line */
     const int LTRAposNode2;    /* number of positive node of end 2 of t. line */
@@ -73,14 +76,13 @@ typedef struct sLTRAinstance {
 /* per model data */
 
 typedef struct sLTRAmodel {       /* model structure for a transmission lines */
-    int LTRAmodType; /* type index of this device type */
-    struct sLTRAmodel *LTRAnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    LTRAinstance * LTRAinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid LTRAmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define LTRAmodType gen.GENmodType
+#define LTRAnextModel(inst) ((struct sLTRAmodel *)((inst)->gen.GENnextModel))
+#define LTRAinstances(inst) ((LTRAinstance *)((inst)->gen.GENinstances))
+#define LTRAmodName gen.GENmodName
 
 	double LTRAh1dashFirstVal; /* first needed value of h1dasg at 
 									current timepoint */

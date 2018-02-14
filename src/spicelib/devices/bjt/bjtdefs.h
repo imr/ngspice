@@ -17,11 +17,13 @@ Author: 1985 Thomas L. Quarles
 /* data needed to describe a single instance */
 
 typedef struct sBJTinstance {
-    struct sBJTmodel *BJTmodPtr;    /* backpointer to model */
-    struct sBJTinstance *BJTnextInstance;   /* pointer to next instance of
-                                             * current model*/
-    IFuid BJTname;  /* pointer to character string naming this instance */
-    int BJTstate; /* pointer to start of state vector for bjt */
+
+    struct GENinstance gen;
+
+#define BJTmodPtr(inst) ((struct sBJTmodel *)((inst)->gen.GENmodPtr))
+#define BJTnextInstance(inst) ((struct sBJTinstance *)((inst)->gen.GENnextInstance))
+#define BJTname gen.GENname
+#define BJTstate gen.GENstate
 
     const int BJTcolNode;   /* number of collector node of bjt */
     const int BJTbaseNode;  /* number of base node of bjt */
@@ -323,14 +325,13 @@ typedef struct sBJTinstance {
 
 /* per model data */
 typedef struct sBJTmodel {          /* model structure for a bjt */
-    int BJTmodType; /* type index of this device type */
-    struct sBJTmodel *BJTnextModel; /* pointer to next possible model in
-                                     * linked list */
-    BJTinstance * BJTinstances; /* pointer to list of instances
-                                 * that have this model */
-    IFuid BJTmodName; /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define BJTmodType gen.GENmodType
+#define BJTnextModel(inst) ((struct sBJTmodel *)((inst)->gen.GENnextModel))
+#define BJTinstances(inst) ((BJTinstance *)((inst)->gen.GENinstances))
+#define BJTmodName gen.GENmodName
 
     int BJTtype;
     int BJTsubs;

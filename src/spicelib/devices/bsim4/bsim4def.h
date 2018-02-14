@@ -69,10 +69,14 @@
 
 typedef struct sBSIM4instance
 {
-    struct sBSIM4model *BSIM4modPtr;
-    struct sBSIM4instance *BSIM4nextInstance;
-    IFuid BSIM4name;
-    int BSIM4states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define BSIM4modPtr(inst) ((struct sBSIM4model *)((inst)->gen.GENmodPtr))
+#define BSIM4nextInstance(inst) ((struct sBSIM4instance *)((inst)->gen.GENnextInstance))
+#define BSIM4name gen.GENname
+#define BSIM4states gen.GENstate
+
     const int BSIM4dNode;
     const int BSIM4gNodeExt;
     const int BSIM4sNode;
@@ -857,12 +861,13 @@ struct bsim4SizeDependParam
 
 typedef struct sBSIM4model
 {
-    int BSIM4modType;
-    struct sBSIM4model *BSIM4nextModel;
-    BSIM4instance *BSIM4instances;
-    IFuid BSIM4modName;
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define BSIM4modType gen.GENmodType
+#define BSIM4nextModel(inst) ((struct sBSIM4model *)((inst)->gen.GENnextModel))
+#define BSIM4instances(inst) ((BSIM4instance *)((inst)->gen.GENinstances))
+#define BSIM4modName gen.GENmodName
 
     int BSIM4type;
 

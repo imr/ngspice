@@ -16,11 +16,13 @@ Author: 1985 Thomas L. Quarles
 /* information used to describe a single instance */
 
 typedef struct sCCVSinstance {
-    struct sCCVSmodel *CCVSmodPtr;  /* backpointer to model */
-    struct sCCVSinstance *CCVSnextInstance;     /* pointer to next instance of 
-                                                 *current model*/
-    IFuid CCVSname; /* pointer to character string naming this instance */
-    int CCVSstate; /* not used */
+
+    struct GENinstance gen;
+
+#define CCVSmodPtr(inst) ((struct sCCVSmodel *)((inst)->gen.GENmodPtr))
+#define CCVSnextInstance(inst) ((struct sCCVSinstance *)((inst)->gen.GENnextInstance))
+#define CCVSname gen.GENname
+#define CCVSstate gen.GENstate
 
     const int CCVSposNode;    /* number of positive node of source */
     const int CCVSnegNode;    /* number of negative node of source */
@@ -51,14 +53,13 @@ typedef struct sCCVSinstance {
 /* per model data */
 
 typedef struct sCCVSmodel {       /* model structure for a CCVsource */
-    int CCVSmodType;    /* type index of this device type */
-    struct sCCVSmodel *CCVSnextModel;   /* pointer to next possible model 
-                                         *in linked list */
-    CCVSinstance * CCVSinstances;    /* pointer to list of instances 
-                                             that have this model */
-    IFuid CCVSmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define CCVSmodType gen.GENmodType
+#define CCVSnextModel(inst) ((struct sCCVSmodel *)((inst)->gen.GENnextModel))
+#define CCVSinstances(inst) ((CCVSinstance *)((inst)->gen.GENinstances))
+#define CCVSmodName gen.GENmodName
 
 } CCVSmodel;
 
