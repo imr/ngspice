@@ -1,6 +1,6 @@
 /**********
 Copyright 1991 Regents of the University of California.  All rights reserved.
-Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
+Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 **********/
 
 /*
@@ -13,27 +13,28 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+
 int
 NUMOSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
 {
+    NUMOSmodel **model = (NUMOSmodel **) inModel;
+    NUMOSmodel *modfast = (NUMOSmodel *) kill;
+    NUMOSmodel **oldmod;
 
-  NUMOSmodel **model = (NUMOSmodel **) inModel;
-  NUMOSmodel *modfast = (NUMOSmodel *) kill;
-  NUMOSmodel **oldmod;
-  oldmod = model;
-  for (; *model; model = &((*model)->NUMOSnextModel)) {
-    if ((*model)->NUMOSmodName == modname ||
-	(modfast && *model == modfast))
-      goto delgot;
     oldmod = model;
-  }
-  return (E_NOMOD);
+    for (; *model; model = &((*model)->NUMOSnextModel)) {
+        if ((*model)->NUMOSmodName == modname ||
+            (modfast && *model == modfast))
+            goto delgot;
+        oldmod = model;
+    }
 
-delgot:
-  if ((*model)->NUMOSinstances)
-    return (E_NOTEMPTY);
-  *oldmod = (*model)->NUMOSnextModel;	/* cut deleted device out of list */
-  FREE(*model);
-  return (OK);
+    return(E_NOMOD);
 
+ delgot:
+    if ((*model)->NUMOSinstances)
+        return(E_NOTEMPTY);
+    *oldmod = (*model)->NUMOSnextModel;   /* cut deleted device out of list */
+    FREE(*model);
+    return(OK);
 }

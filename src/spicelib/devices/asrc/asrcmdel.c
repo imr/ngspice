@@ -12,8 +12,8 @@ Author: 1987 Kanwar Jit Singh
 int
 ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
 {
-    ASRCmodel **model = (ASRCmodel**) modList;
-    ASRCmodel *modfast = (ASRCmodel*) killModel;
+    ASRCmodel **model = (ASRCmodel **) modList;
+    ASRCmodel *modfast = (ASRCmodel *) killModel;
     ASRCinstance *here;
     ASRCinstance *prev = NULL;
     ASRCmodel **oldmod;

@@ -40,41 +40,39 @@
 <admst:template match="code">
 <admst:value-of select="attribute[name='ngspicename']/value"/>
 <admst:variable name="module" select="%s"/>
-
 #include &quot;ngspice/ngspice.h&quot;
 #include &quot;$(module)defs.h&quot;
 #include &quot;ngspice/sperror.h&quot;
 #include &quot;ngspice/suffix.h&quot;
 
 int $(module)mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
-
 {
-  $(module)model **model = ($(module)model**)inModel;
-  $(module)model *modfast =($(module)model*)kill;
-  $(module)instance *here;
-  $(module)instance *prev = NULL;
-  $(module)model **oldmod;
-  
-  oldmod = model;
-  for ( ; *model ; model = &amp;((*model)->$(module)nextModel)) {
-      if ((*model)->$(module)modName == modname ||
-          (modfast &amp;&amp; *model == modfast))
-	  goto delgot;
-      oldmod = model;   
-  } 
-  return(E_NOMOD);
-  
-  delgot:
+    $(module)model **model = ($(module)model**)inModel;
+    $(module)model *modfast =($(module)model*)kill;
+    $(module)instance *here;
+    $(module)instance *prev = NULL;
+    $(module)model **oldmod;
+
+    oldmod = model;
+    for (; *model; model = &amp;((*model)->$(module)nextModel)) {
+        if ((*model)->$(module)modName == modname ||
+            (modfast &amp;&amp; *model == modfast))
+	    goto delgot;
+        oldmod = model;
+    }
+
+    return(E_NOMOD);
+
+ delgot:
     *oldmod = (*model)->$(module)nextModel; /* cut deleted device out of list */
     for (here = (*model)->$(module)instances; here; here = here->$(module)nextInstance)
-    {    if(prev) FREE(prev);
-         prev = here;
+    {   if (prev) FREE(prev);
+        prev = here;
     }
-    if(prev) FREE(prev);
+    if (prev) FREE(prev);
     FREE(*model);
     return(OK);
 }
-
 </admst:template>
 
 <admst:for-each select="/module">

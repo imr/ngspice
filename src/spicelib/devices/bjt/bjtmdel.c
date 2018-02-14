@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
-/*
- */
 
 /*
  * This routine deletes a BJT model from the circuit and frees
@@ -20,22 +18,22 @@ Author: 1985 Thomas L. Quarles
 int
 BJTmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
 {
-    BJTmodel **model = (BJTmodel**)inModels;
-    BJTmodel *modfast = (BJTmodel*)kill;
-
+    BJTmodel **model = (BJTmodel **) inModels;
+    BJTmodel *modfast = (BJTmodel *) kill;
     BJTmodel **oldmod;
+
     oldmod = model;
-    for( ; *model ; model = &((*model)->BJTnextModel)) {
-        if( (*model)->BJTmodName == modname || 
-                (modfast && *model == modfast) ) goto delgot;
+    for (; *model; model = &((*model)->BJTnextModel)) {
+        if ((*model)->BJTmodName == modname ||
+            (modfast && *model == modfast)) goto delgot;
         oldmod = model;
     }
+
     return(E_NOMOD);
 
-delgot:
-    if( (*model)->BJTinstances ) return(E_NOTEMPTY);
+ delgot:
+    if ((*model)->BJTinstances) return(E_NOTEMPTY);
     *oldmod = (*model)->BJTnextModel; /* cut deleted device out of list */
     FREE(*model);
     return(OK);
-
 }

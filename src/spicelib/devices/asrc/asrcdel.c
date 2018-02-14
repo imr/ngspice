@@ -12,15 +12,14 @@ Author: 1987 Kanwar Jit Singh
 int
 ASRCdelete(GENmodel *model, IFuid name, GENinstance **fast)
 {
-    ASRCinstance **instPtr = (ASRCinstance**) fast;
-    ASRCmodel *modPtr = (ASRCmodel*) model;
-
+    ASRCinstance **instPtr = (ASRCinstance **) fast;
+    ASRCmodel *modPtr = (ASRCmodel *) model;
     ASRCinstance **prev = NULL;
     ASRCinstance *here;
 
-    for (; modPtr ; modPtr = modPtr->ASRCnextModel) {
+    for (; modPtr; modPtr = modPtr->ASRCnextModel) {
         prev = &(modPtr->ASRCinstances);
-        for (here = *prev; here ; here = *prev) {
+        for (here = *prev; here; here = *prev) {
             if (here->ASRCname == name || (instPtr && here == *instPtr)) {
                 *prev = here->ASRCnextInstance;
                 FREE(here);

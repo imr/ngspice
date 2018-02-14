@@ -3,14 +3,14 @@
  HiSIM (Hiroshima University STARC IGFET Model)
  Copyright (C) 2014 Hiroshima University & STARC
 
- MODEL NAME : HiSIM_HV 
- ( VERSION : 2  SUBVERSION : 2  REVISION : 0 ) 
+ MODEL NAME : HiSIM_HV
+ ( VERSION : 2  SUBVERSION : 2  REVISION : 0 )
  Model Parameter 'VERSION' : 2.20
  FILE : hsmhvmdel.c
 
  DATE : 2014.6.11
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -31,8 +31,8 @@ support. Hiroshima University or STARC and its employees are not liable
 for the condition or performance of the software.
 
 Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
+irrevocable, worldwide, non-exclusive, royalty-free license with respect
+to the software as set forth below.
 
 Hiroshima University and STARC hereby disclaims all implied warranties.
 
@@ -54,7 +54,7 @@ to others."
 Toshimasa Asahara, President, Hiroshima University
 Mitiko Miura-Mattausch, Professor, Hiroshima University
 Katsuhiro Shimohigashi, President&CEO, STARC
-June 2008 (revised October 2011) 
+June 2008 (revised October 2011)
 *************************************************************************/
 
 #include "ngspice/ngspice.h"
@@ -62,34 +62,36 @@ June 2008 (revised October 2011)
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-int HSMHV2mDelete(
-     GENmodel **inModel,
-     IFuid modname,
-     GENmodel *kill)
-{
-  HSMHV2model **model = (HSMHV2model**)inModel;
-  HSMHV2model *modfast = (HSMHV2model*)kill;
-  HSMHV2instance *here;
-  HSMHV2instance *prev = NULL;
-  HSMHV2model **oldmod;
 
-  oldmod = model;
-  for ( ;*model ;model = &((*model)->HSMHV2nextModel) ) {
-    if ( (*model)->HSMHV2modName == modname || 
-	 (modfast && *model == modfast) ) goto delgot;
+int
+HSMHV2mDelete(
+                  GENmodel **inModel,
+                  IFuid modname,
+                  GENmodel *kill)
+{
+    HSMHV2model **model = (HSMHV2model **) inModel;
+    HSMHV2model *modfast = (HSMHV2model *) kill;
+    HSMHV2instance *here;
+    HSMHV2instance *prev = NULL;
+    HSMHV2model **oldmod;
+
     oldmod = model;
-  }
-  return(E_NOMOD);
+    for (; *model; model = &((*model)->HSMHV2nextModel)) {
+        if ((*model)->HSMHV2modName == modname ||
+             (modfast && *model == modfast)) goto delgot;
+        oldmod = model;
+    }
+
+    return(E_NOMOD);
 
  delgot:
-  *oldmod = (*model)->HSMHV2nextModel; /* cut deleted device out of list */
-  for ( here = (*model)->HSMHV2instances ; 
-	here ;here = here->HSMHV2nextInstance ) {
+    *oldmod = (*model)->HSMHV2nextModel; /* cut deleted device out of list */
+    for (here = (*model)->HSMHV2instances;
+         here; here = here->HSMHV2nextInstance) {
+        if (prev) FREE(prev);
+        prev = here;
+    }
     if (prev) FREE(prev);
-    prev = here;
-  }
-  if (prev) FREE(prev);
-  FREE(*model);
-  return(OK);
+    FREE(*model);
+    return(OK);
 }
-

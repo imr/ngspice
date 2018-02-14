@@ -50,8 +50,6 @@ NON-STANDARD FEATURES
 /* #include "suffix.h" */
 
 
-
-
 /*
 MIFmDelete
 
@@ -62,7 +60,6 @@ model structure.  It calls MIFdelete as needed to delete all
 instances of the specified model.
 */
 
-
 int MIFmDelete(
     GENmodel **inModel,  /* The head of the model list */
     IFuid    modname,    /* The name of the model to delete */
@@ -72,12 +69,11 @@ int MIFmDelete(
     MIFmodel **model;
     MIFmodel *modfast;
     MIFmodel **oldmod;
-    MIFmodel *here=NULL;
+    MIFmodel *here = NULL;
 
     Mif_Boolean_t  found;
 
     int         i;
-
 
     /* Convert the generic pointers to MIF specific pointers */
     model = (MIFmodel **) inModel;
@@ -85,9 +81,9 @@ int MIFmDelete(
 
     /* Locate the model by name or pointer and cut it out of the list */
     oldmod = model;
-    for(found = MIF_FALSE; *model; model = &((*model)->MIFnextModel)) {
-        if( (*model)->MIFmodName == modname ||
-                (modfast && *model == modfast) ) {
+    for (found = MIF_FALSE; *model; model = &((*model)->MIFnextModel)) {
+        if ((*model)->MIFmodName == modname ||
+            (modfast && *model == modfast)) {
             here = *model;
             *oldmod = (*model)->MIFnextModel;
             found = MIF_TRUE;
@@ -96,21 +92,21 @@ int MIFmDelete(
         oldmod = model;
     }
 
-    if(! found)
+    if (!found)
         return(E_NOMOD);
 
     /* Free the instances under this model if any */
     /* by removing from the head of the linked list */
     /* until the head is null */
-    while(here->MIFinstances) {
+    while (here->MIFinstances) {
         MIFdelete((GENmodel *) here,
                   here->MIFinstances->MIFname,
                   (GENinstance **) &(here->MIFinstances));
     }
 
     /* Free the model params stuff allocated in MIFget_mod */
-    for(i = 0; i < here->num_param; i++) {
-        if(here->param[i]->element)
+    for (i = 0; i < here->num_param; i++) {
+        if (here->param[i]->element)
             FREE(here->param[i]->element);
         FREE(here->param[i]);
     }
@@ -119,5 +115,4 @@ int MIFmDelete(
     /* Free the model and return */
     FREE(here);
     return(OK);
-
 }

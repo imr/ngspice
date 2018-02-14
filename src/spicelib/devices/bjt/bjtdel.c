@@ -16,24 +16,23 @@ Author: 1985 Thomas L. Quarles
 
 int
 BJTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
-
 {
-    BJTmodel *model = (BJTmodel*)inModel;
-    BJTinstance **fast = (BJTinstance**)kill;
-
+    BJTmodel *model = (BJTmodel *) inModel;
+    BJTinstance **fast = (BJTinstance **) kill;
     BJTinstance **prev = NULL;
     BJTinstance *here;
 
-    for( ; model ; model = model->BJTnextModel) {
+    for (; model; model = model->BJTnextModel) {
         prev = &(model->BJTinstances);
-        for(here = *prev; here ; here = *prev) {
-            if(here->BJTname == name || (fast && here==*fast) ) {
-                *prev= here->BJTnextInstance;
+        for (here = *prev; here; here = *prev) {
+            if (here->BJTname == name || (fast && here == *fast)) {
+                *prev = here->BJTnextInstance;
                 FREE(here);
                 return(OK);
             }
             prev = &(here->BJTnextInstance);
         }
     }
+
     return(E_NODEV);
 }

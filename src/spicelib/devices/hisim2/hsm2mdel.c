@@ -5,12 +5,12 @@
 
  MODEL NAME : HiSIM
  ( VERSION : 2  SUBVERSION : 8  REVISION : 0 )
- 
+
  FILE : hsm2mdel.c
 
  Date : 2014.6.5
 
- released by 
+ released by
                 Hiroshima University &
                 Semiconductor Technology Academic Research Center (STARC)
 ***********************************************************************/
@@ -31,8 +31,8 @@ support. Hiroshima University or STARC and its employees are not liable
 for the condition or performance of the software.
 
 Hiroshima University and STARC own the copyright and grant users a perpetual,
-irrevocable, worldwide, non-exclusive, royalty-free license with respect 
-to the software as set forth below.   
+irrevocable, worldwide, non-exclusive, royalty-free license with respect
+to the software as set forth below.
 
 Hiroshima University and STARC hereby disclaim all implied warranties.
 
@@ -59,34 +59,36 @@ to others."
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-int HSM2mDelete(
-     GENmodel **inModel,
-     IFuid modname,
-     GENmodel *kill)
-{
-  HSM2model **model = (HSM2model**)inModel;
-  HSM2model *modfast = (HSM2model*)kill;
-  HSM2instance *here;
-  HSM2instance *prev = NULL;
-  HSM2model **oldmod;
 
-  oldmod = model;
-  for ( ;*model ;model = &((*model)->HSM2nextModel) ) {
-    if ( (*model)->HSM2modName == modname || 
-	 (modfast && *model == modfast) ) goto delgot;
+int
+HSM2mDelete(
+                GENmodel **inModel,
+                IFuid modname,
+                GENmodel *kill)
+{
+    HSM2model **model = (HSM2model **) inModel;
+    HSM2model *modfast = (HSM2model *) kill;
+    HSM2instance *here;
+    HSM2instance *prev = NULL;
+    HSM2model **oldmod;
+
     oldmod = model;
-  }
-  return(E_NOMOD);
+    for (; *model; model = &((*model)->HSM2nextModel)) {
+        if ((*model)->HSM2modName == modname ||
+             (modfast && *model == modfast)) goto delgot;
+        oldmod = model;
+    }
+
+    return(E_NOMOD);
 
  delgot:
-  *oldmod = (*model)->HSM2nextModel; /* cut deleted device out of list */
-  for ( here = (*model)->HSM2instances ; 
-	here ;here = here->HSM2nextInstance ) {
+    *oldmod = (*model)->HSM2nextModel; /* cut deleted device out of list */
+    for (here = (*model)->HSM2instances;
+         here; here = here->HSM2nextInstance) {
+        if (prev) FREE(prev);
+        prev = here;
+    }
     if (prev) FREE(prev);
-    prev = here;
-  }
-  if (prev) FREE(prev);
-  FREE(*model);
-  return(OK);
+    FREE(*model);
+    return(OK);
 }
-

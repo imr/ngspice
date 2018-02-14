@@ -6,7 +6,7 @@ File: b3soifddel.c          98/5/01
 **********/
 
 /*
- * Revision 2.1  99/9/27 Pin Su 
+ * Revision 2.1  99/9/27 Pin Su
  * BSIMFD2.1 release
  */
 
@@ -20,23 +20,22 @@ File: b3soifddel.c          98/5/01
 int
 B3SOIFDdelete(GENmodel *inModel, IFuid name, GENinstance **inInst)
 {
-B3SOIFDinstance **fast = (B3SOIFDinstance**)inInst;
-B3SOIFDmodel *model = (B3SOIFDmodel*)inModel;
-B3SOIFDinstance **prev = NULL;
-B3SOIFDinstance *here;
+    B3SOIFDinstance **fast = (B3SOIFDinstance **) inInst;
+    B3SOIFDmodel *model = (B3SOIFDmodel *) inModel;
+    B3SOIFDinstance **prev = NULL;
+    B3SOIFDinstance *here;
 
-    for (; model ; model = model->B3SOIFDnextModel) 
-    {    prev = &(model->B3SOIFDinstances);
-         for (here = *prev; here ; here = *prev) 
-	 {    if (here->B3SOIFDname == name || (fast && here==*fast))
-	      {   *prev= here->B3SOIFDnextInstance;
-                  FREE(here);
-                  return(OK);
-              }
-              prev = &(here->B3SOIFDnextInstance);
-         }
+    for (; model; model = model->B3SOIFDnextModel)
+    {   prev = &(model->B3SOIFDinstances);
+        for (here = *prev; here; here = *prev)
+        {   if (here->B3SOIFDname == name || (fast && here == *fast))
+            {   *prev = here->B3SOIFDnextInstance;
+                FREE(here);
+                return(OK);
+            }
+            prev = &(here->B3SOIFDnextInstance);
+        }
     }
+
     return(E_NODEV);
 }
-
-
