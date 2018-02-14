@@ -8,7 +8,7 @@ Modified: 2000 AlansFixes
 extern int LTRAaccept(CKTcircuit*,GENmodel*);
 extern int LTRAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int LTRAacLoad(GENmodel*,CKTcircuit*);
-extern int LTRAdelete(GENmodel*,IFuid,GENinstance**);
+extern int LTRAdelete(GENinstance*);
 extern void LTRAdestroy(GENmodel**);
 extern int LTRAload(GENmodel*,CKTcircuit*);
 extern int LTRAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);

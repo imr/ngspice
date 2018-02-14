@@ -4,7 +4,7 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 extern int CCVSask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int CCVSdelete(GENmodel*,IFuid,GENinstance**);
+extern int CCVSdelete(GENinstance*);
 extern void CCVSdestroy(GENmodel**);
 extern int CCVSfindBr(CKTcircuit*,GENmodel*,IFuid);
 extern int CCVSload(GENmodel*,CKTcircuit*);

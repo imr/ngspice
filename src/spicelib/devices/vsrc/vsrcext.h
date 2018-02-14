@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 extern int VSRCaccept(CKTcircuit*,GENmodel*);
 extern int VSRCacLoad(GENmodel*,CKTcircuit*);
 extern int VSRCask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int VSRCdelete(GENmodel*,IFuid,GENinstance**);
+extern int VSRCdelete(GENinstance*);
 extern void VSRCdestroy(GENmodel**);
 extern int VSRCfindBr(CKTcircuit*,GENmodel*,IFuid);
 extern int VSRCload(GENmodel*,CKTcircuit*);

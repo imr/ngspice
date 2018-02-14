@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 extern int ISRCaccept(CKTcircuit*,GENmodel*);
 extern int ISRCacLoad(GENmodel*,CKTcircuit*);
 extern int ISRCask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int ISRCdelete(GENmodel*,IFuid,GENinstance**);
+extern int ISRCdelete(GENinstance*);
 extern void ISRCdestroy(GENmodel**);
 extern int ISRCload(GENmodel*,CKTcircuit*);
 extern int ISRCmDelete(GENmodel**,IFuid,GENmodel*);

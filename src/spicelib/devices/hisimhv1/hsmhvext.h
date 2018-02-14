@@ -18,7 +18,7 @@
 extern int HSMHVacLoad(GENmodel *,CKTcircuit*);
 extern int HSMHVask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int HSMHVconvTest(GENmodel *,CKTcircuit*);
-extern int HSMHVdelete(GENmodel*,IFuid,GENinstance**);
+extern int HSMHVdelete(GENinstance*);
 extern void HSMHVdestroy(GENmodel**);
 extern int HSMHVgetic(GENmodel*,CKTcircuit*);
 extern int HSMHVload(GENmodel*,CKTcircuit*);

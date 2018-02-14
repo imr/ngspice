@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 extern int INDacLoad(GENmodel*,CKTcircuit*);
 extern int INDask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int INDmAsk(CKTcircuit*, GENmodel*, int, IFvalue*);
-extern int INDdelete(GENmodel*,IFuid,GENinstance**);
+extern int INDdelete(GENinstance*);
 extern void INDdestroy(GENmodel**);
 extern int INDload(GENmodel*,CKTcircuit*);
 extern int INDmDelete(GENmodel**,IFuid,GENmodel*);
@@ -27,7 +27,7 @@ extern int INDtrunc(GENmodel*,CKTcircuit*,double*);
 
 extern int MUTacLoad(GENmodel*,CKTcircuit*);
 extern int MUTask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int MUTdelete(GENmodel*,IFuid,GENinstance**);
+extern int MUTdelete(GENinstance*);
 extern void MUTdestroy(GENmodel**);
 extern int MUTmDelete(GENmodel**,IFuid,GENmodel*);
 extern int MUTparam(int,IFvalue*,GENinstance*,IFvalue*);

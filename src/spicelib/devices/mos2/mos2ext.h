@@ -8,7 +8,7 @@ extern int MOS2acLoad(GENmodel*,CKTcircuit*);
 extern int MOS2ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS2mAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
 extern int MOS2convTest(GENmodel*,CKTcircuit*);
-extern int MOS2delete(GENmodel*,IFuid,GENinstance**);
+extern int MOS2delete(GENinstance*);
 extern void MOS2destroy(GENmodel**);
 extern int MOS2getic(GENmodel*,CKTcircuit*);
 extern int MOS2load(GENmodel*,CKTcircuit*);

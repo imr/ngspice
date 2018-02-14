@@ -66,27 +66,8 @@
 
 
 int
-BSIM4delete(
-            GENmodel *inModel,
-            IFuid name,
-            GENinstance **inInst)
+BSIM4delete(GENinstance *gen_inst)
 {
-    BSIM4instance **fast = (BSIM4instance **) inInst;
-    BSIM4model *model = (BSIM4model *) inModel;
-    BSIM4instance **prev = NULL;
-    BSIM4instance *here;
-
-    for (; model; model = model->BSIM4nextModel)
-    {   prev = &(model->BSIM4instances);
-        for (here = *prev; here; here = *prev)
-        {   if (here->BSIM4name == name || (fast && here == *fast))
-            {   *prev = here->BSIM4nextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->BSIM4nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

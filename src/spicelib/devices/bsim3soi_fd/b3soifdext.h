@@ -8,7 +8,7 @@ File: b3soifdext.h
 extern int B3SOIFDacLoad(GENmodel *,CKTcircuit*);
 extern int B3SOIFDask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B3SOIFDconvTest(GENmodel *,CKTcircuit*);
-extern int B3SOIFDdelete(GENmodel*,IFuid,GENinstance**);
+extern int B3SOIFDdelete(GENinstance*);
 extern void B3SOIFDdestroy(GENmodel**);
 extern int B3SOIFDgetic(GENmodel*,CKTcircuit*);
 extern int B3SOIFDload(GENmodel*,CKTcircuit*);

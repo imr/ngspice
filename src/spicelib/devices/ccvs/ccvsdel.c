@@ -10,24 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCVSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+CCVSdelete(GENinstance *gen_inst)
 {
-    CCVSmodel *model = (CCVSmodel *) inModel;
-    CCVSinstance **fast = (CCVSinstance **) kill;
-    CCVSinstance **prev = NULL;
-    CCVSinstance *here;
-
-    for (; model; model = model->CCVSnextModel) {
-        prev = &(model->CCVSinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CCVSname == name || (fast && here == *fast)) {
-                *prev = here->CCVSnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->CCVSnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

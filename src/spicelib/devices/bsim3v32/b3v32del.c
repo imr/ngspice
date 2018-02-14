@@ -18,24 +18,8 @@
 
 
 int
-BSIM3v32delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+BSIM3v32delete(GENinstance *gen_inst)
 {
-    BSIM3v32instance **fast = (BSIM3v32instance **) inInst;
-    BSIM3v32model *model = (BSIM3v32model *) inModel;
-    BSIM3v32instance **prev = NULL;
-    BSIM3v32instance *here;
-
-    for (; model; model = model->BSIM3v32nextModel)
-    {   prev = &(model->BSIM3v32instances);
-        for (here = *prev; here; here = *prev)
-        {   if (here->BSIM3v32name == name || (fast && here == *fast))
-            {   *prev = here->BSIM3v32nextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->BSIM3v32nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

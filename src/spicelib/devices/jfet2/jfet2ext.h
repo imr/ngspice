@@ -9,7 +9,7 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
 extern int JFET2acLoad(GENmodel*,CKTcircuit*);
 extern int JFET2ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int JFET2delete(GENmodel*,IFuid,GENinstance**);
+extern int JFET2delete(GENinstance*);
 extern void JFET2destroy(GENmodel**);
 extern int JFET2getic(GENmodel*,CKTcircuit*);
 extern int JFET2load(GENmodel*,CKTcircuit*);
