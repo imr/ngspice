@@ -16,9 +16,9 @@ MESAtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     MESAmodel *model = (MESAmodel*)inModel;
     MESAinstance *here;
 
-    for( ; model != NULL; model = model->MESAnextModel) {
-        for(here=model->MESAinstances;here!=NULL;
-            here = here->MESAnextInstance){
+    for( ; model != NULL; model = MESAnextModel(model)) {
+        for(here=MESAinstances(model);here!=NULL;
+            here = MESAnextInstance(here)){
 
             CKTterr(here->MESAqgs,ckt,timeStep);
             CKTterr(here->MESAqgd,ckt,timeStep);

@@ -50,11 +50,11 @@ if ((mode == D_TWOF1) || (mode == D_THRF1) ||
  (mode == D_2F1MF2)) {
 
  /* loop through all the MOS9 models */
-for( ; model != NULL; model = model->MOS9nextModel ) {
+for( ; model != NULL; model = MOS9nextModel(model)) {
 
   /* loop through all the instances of the model */
-  for (here = model->MOS9instances; here != NULL ;
-            here=here->MOS9nextInstance) {
+  for (here = MOS9instances(model); here != NULL ;
+            here=MOS9nextInstance(here)) {
 
     /* loading starts here */
 

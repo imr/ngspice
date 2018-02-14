@@ -25,11 +25,11 @@ CCVSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(states);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->CCVSnextModel ) {
+    for( ; model != NULL; model = CCVSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->CCVSinstances; here != NULL ;
-                here=here->CCVSnextInstance) {
+        for (here = CCVSinstances(model); here != NULL ;
+                here=CCVSnextInstance(here)) {
             
             if(here->CCVSposNode == here->CCVSnegNode) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -72,10 +72,10 @@ CCVSunsetup(GENmodel *inModel, CKTcircuit *ckt)
     CCVSinstance *here;
 
     for (model = (CCVSmodel *)inModel; model != NULL;
-	    model = model->CCVSnextModel)
+	    model = CCVSnextModel(model))
     {
-        for (here = model->CCVSinstances; here != NULL;
-                here=here->CCVSnextInstance)
+        for (here = CCVSinstances(model); here != NULL;
+                here=CCVSnextInstance(here))
 	{
 	    if (here->CCVSbranch) {
 		CKTdltNNum(ckt, here->CCVSbranch);

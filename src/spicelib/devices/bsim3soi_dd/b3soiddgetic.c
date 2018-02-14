@@ -23,8 +23,8 @@ B3SOIDDgetic(GENmodel *inModel, CKTcircuit *ckt)
 B3SOIDDmodel *model = (B3SOIDDmodel*)inModel;
 B3SOIDDinstance *here;
 
-    for (; model ; model = model->B3SOIDDnextModel) 
-    {    for (here = model->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance)
+    for (; model ; model = B3SOIDDnextModel(model)) 
+    {    for (here = B3SOIDDinstances(model); here; here = B3SOIDDnextInstance(here))
 	 {
 	      if(!here->B3SOIDDicVBSGiven) 
 	      {  here->B3SOIDDicVBS = *(ckt->CKTrhs + here->B3SOIDDbNode) 

@@ -20,9 +20,9 @@ MUTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double val;
     MUTinstance *here;
 
-    for( ; model != NULL; model = model->MUTnextModel) {
-        for( here = model->MUTinstances;here != NULL; 
-                here = here->MUTnextInstance) {
+    for( ; model != NULL; model = MUTnextModel(model)) {
+        for( here = MUTinstances(model);here != NULL; 
+                here = MUTnextInstance(here)) {
     
             val = ckt->CKTomega * here->MUTfactor;
             *(here->MUTbr1br2Ptr +1) -= val;

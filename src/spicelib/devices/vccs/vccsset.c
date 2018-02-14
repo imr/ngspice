@@ -28,11 +28,11 @@ VCCSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     NG_IGNORE(ckt);
 
     /*  loop through all the current source models */
-    for( ; model != NULL; model = model->VCCSnextModel ) {
+    for( ; model != NULL; model = VCCSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->VCCSinstances; here != NULL ;
-                here=here->VCCSnextInstance) {
+        for (here = VCCSinstances(model); here != NULL ;
+                here=VCCSnextInstance(here)) {
             
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \

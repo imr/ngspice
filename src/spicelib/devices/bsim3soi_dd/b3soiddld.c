@@ -304,9 +304,9 @@ char nanmessage [12];
 double m;
 
 
- for (; model != NULL; model = model->B3SOIDDnextModel)
-{    for (here = model->B3SOIDDinstances; here != NULL; 
-          here = here->B3SOIDDnextInstance)
+ for (; model != NULL; model = B3SOIDDnextModel(model))
+{    for (here = B3SOIDDinstances(model); here != NULL; 
+          here = B3SOIDDnextInstance(here))
      {     
           Check = 0;
           ByPass = 0;

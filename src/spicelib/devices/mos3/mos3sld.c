@@ -95,11 +95,11 @@ MOS3sLoad(GENmodel *inModel, CKTcircuit *ckt)
     }
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->MOS3nextModel ) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS3instances; here != NULL ;
-                here=here->MOS3nextInstance) {
+        for (here = MOS3instances(model); here != NULL ;
+                here=MOS3nextInstance(here)) {
 
 #ifdef SENSDEBUG
             printf("senload instance name %s\n",here->MOS3name);

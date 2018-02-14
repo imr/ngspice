@@ -35,7 +35,7 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
 
 
   /* loop through all the bjt models */
-  for (; model != NULL; model = model->NBJTnextModel) {
+  for (; model != NULL; model = NBJTnextModel(model)) {
     methods = model->NBJTmethods;
     models = model->NBJTmodels;
     options = model->NBJToptions;
@@ -53,8 +53,8 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
     TempDepMobility = models->MODLtempDepMobility;
     ConcDepMobility = models->MODLconcDepMobility;
 
-    for (inst = model->NBJTinstances; inst != NULL;
-	inst = inst->NBJTnextInstance) {
+    for (inst = NBJTinstances(model); inst != NULL;
+         inst = NBJTnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

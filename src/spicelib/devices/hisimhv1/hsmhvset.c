@@ -64,7 +64,7 @@ int HSMHVsetup(
   double Lbin=0.0, Wbin=0.0, LWbin =0.0; /* binning */
   
   /*  loop through all the HSMHV device models */
-  for ( ;model != NULL ;model = model->HSMHVnextModel ) {
+  for ( ;model != NULL ;model = HSMHVnextModel(model)) {
     /* Default value Processing for HVMOS Models */
     if ( !model->HSMHV_type_Given )
       model->HSMHV_type = NMOS ;
@@ -779,8 +779,8 @@ int HSMHVsetup(
     modelMKS = &model->modelMKS ;
 
     /* loop through all the instances of the model */
-    for ( here = model->HSMHVinstances ;here != NULL ;
-         here = here->HSMHVnextInstance ) {
+    for ( here = HSMHVinstances(model);here != NULL ;
+         here = HSMHVnextInstance(here)) {
       /* allocate a chunk of the state vector */
       here->HSMHVstates = *states;
       if (model->HSMHV_conqs)
@@ -1470,10 +1470,10 @@ HSMHVunsetup(
     HSMHVinstance *here;
  
     for (model = (HSMHVmodel *)inModel; model != NULL;
-            model = model->HSMHVnextModel)
+            model = HSMHVnextModel(model))
     {
-        for (here = model->HSMHVinstances; here != NULL;
-                here=here->HSMHVnextInstance)
+        for (here = HSMHVinstances(model); here != NULL;
+                here=HSMHVnextInstance(here))
         {
             if (here->HSMHVqbNode > 0)
                 CKTdltNNum(ckt, here->HSMHVqbNode);

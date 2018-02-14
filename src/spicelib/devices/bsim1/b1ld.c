@@ -129,11 +129,11 @@ B1load(GENmodel *inModel, CKTcircuit *ckt)
     double m; /* parallel multiplier */
 
     /*  loop through all the B1 device models */
-    for( ; model != NULL; model = model->B1nextModel ) {
+    for( ; model != NULL; model = B1nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->B1instances; here != NULL ;
-                here=here->B1nextInstance) {
+        for (here = B1instances(model); here != NULL ;
+                here=B1nextInstance(here)) {
         
             EffectiveLength=here->B1l - model->B1deltaL * 1.e-6;/* m */
             DrainArea = here->B1drainArea;

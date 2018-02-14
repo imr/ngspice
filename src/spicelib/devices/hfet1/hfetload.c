@@ -86,9 +86,9 @@ int HFETAload(GENmodel *inModel, CKTcircuit *ckt)
 
     double m;
 
-    for( ; model != NULL; model = model->HFETAnextModel ) {
-        for (here = model->HFETAinstances; here != NULL ;
-                here=here->HFETAnextInstance) {
+    for( ; model != NULL; model = HFETAnextModel(model)) {
+        for (here = HFETAinstances(model); here != NULL ;
+                here=HFETAnextInstance(here)) {
 
             vcrit = here->HFETAvcrit;
             vt  = CONSTKoverQ * here->HFETAtemp;

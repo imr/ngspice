@@ -86,9 +86,9 @@ double Isestot, cseshat, Idedtot, cdedhat;
 double Igstot, cgshat, Igdtot, cgdhat, Igbtot, cgbhat;
 double tol0, tol1, tol2, tol3, tol4, tol5, tol6;
 
-    for (; model != NULL; model = model->BSIM4nextModel)
-    {    for (here = model->BSIM4instances; here != NULL ;
-              here=here->BSIM4nextInstance) 
+    for (; model != NULL; model = BSIM4nextModel(model))
+    {    for (here = BSIM4instances(model); here != NULL ;
+              here=BSIM4nextInstance(here)) 
          {
               vds = model->BSIM4type
                   * (*(ckt->CKTrhsOld + here->BSIM4dNodePrime)

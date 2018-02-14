@@ -30,11 +30,11 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
     int error;
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->ISRCnextModel ) {
+    for( ; model != NULL; model = ISRCnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->ISRCinstances; here != NULL ;
-                here=here->ISRCnextInstance) {
+        for (here = ISRCinstances(model); here != NULL ;
+                here=ISRCnextInstance(here)) {
 
             if(!(ckt->CKTmode & (MODETRAN | MODETRANOP))) {
                 /* not transient, so shouldn't be here */

@@ -24,13 +24,13 @@ RESsPrint(GENmodel *inModel, CKTcircuit *ckt)
     printf("RESISTORS-----------------\n");
 
     /*  loop through all the resistor models */
-    for( ; model != NULL; model = model->RESnextModel ) {
+    for( ; model != NULL; model = RESnextModel(model)) {
 
         printf("Model name:%s\n",model->RESmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->RESinstances; here != NULL ;
-                here=here->RESnextInstance) {
+        for (here = RESinstances(model); here != NULL ;
+                here=RESnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->RESname);
             printf("      Positive, negative nodes: %s, %s\n",

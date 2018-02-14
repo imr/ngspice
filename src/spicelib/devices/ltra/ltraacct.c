@@ -22,7 +22,7 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
 
 
   /* loop through all the transmission line models */
-  for (; model != NULL; model = model->LTRAnextModel) {
+  for (; model != NULL; model = LTRAnextModel(model)) {
 
     if (ckt->CKTmode & MODEINITTRAN) {
 
@@ -46,8 +46,8 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
       model->LTRAh3dashCoeffs = TREALLOC(double, model->LTRAh3dashCoeffs, model->LTRAmodelListSize);
     }
     /* loop through all the instances of the model */
-    for (here = model->LTRAinstances; here != NULL;
-	here = here->LTRAnextInstance) {
+    for (here = LTRAinstances(model); here != NULL;
+         here = LTRAnextInstance(here)) {
 
       if (ckt->CKTmode & MODEINITTRAN) {
 	here->LTRAinstListSize = 10;
@@ -269,9 +269,9 @@ LTRAaccept(CKTcircuit *ckt, GENmodel *inModel)
      */
 
     model = (LTRAmodel *) inModel;
-    for (; model != NULL; model = model->LTRAnextModel) {
-      for (here = model->LTRAinstances; here != NULL;
-	  here = here->LTRAnextInstance) {
+    for (; model != NULL; model = LTRAnextModel(model)) {
+      for (here = LTRAinstances(model); here != NULL;
+           here = LTRAnextInstance(here)) {
 	*(here->LTRAv1 + ckt->CKTtimeIndex - 1) = *(here->LTRAv1 +
 	    ckt->CKTtimeIndex);
 	*(here->LTRAv2 + ckt->CKTtimeIndex - 1) = *(here->LTRAv2 +

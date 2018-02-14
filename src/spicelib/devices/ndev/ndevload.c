@@ -23,11 +23,11 @@ NDEVload(GENmodel * inModel, CKTcircuit * ckt)
   int i,j;
     
     /*  loop through all the ndev models */
-    for( ; model != NULL; model = model->NDEVnextModel ) 
+    for( ; model != NULL; model = NDEVnextModel(model)) 
     {
 
         /* loop through all the instances of the model */
-        for (here = model->NDEVinstances; here != NULL ; here=here->NDEVnextInstance) 
+        for (here = NDEVinstances(model); here != NULL ; here=NDEVnextInstance(here)) 
 	{
 	     /* sent ckt information to device simulator */
 	     here->CKTInfo.DEV_CALL = NDEV_LOAD; 
@@ -50,11 +50,11 @@ NDEVload(GENmodel * inModel, CKTcircuit * ckt)
 
     /*  loop through all the ndev models */
     
-    for(model = (NDEVmodel *)inModel; model != NULL; model = model->NDEVnextModel ) 
+    for(model = (NDEVmodel *)inModel; model != NULL; model = NDEVnextModel(model)) 
     {
 	
         /* loop through all the instances of the model */
-        for (here = model->NDEVinstances; here != NULL ; here=here->NDEVnextInstance) 
+        for (here = NDEVinstances(model); here != NULL ; here=NDEVnextInstance(here)) 
 	{
              /* reveive terminal current and conductional matrix from device simulator */
 	     for(i=0;i<here->term;i++)  
@@ -84,8 +84,8 @@ int NDEVgetic(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("set ic\n");
      
-    for( ; model ; model = model->NDEVnextModel) {
-        for(here = model->NDEVinstances; here ; here = here->NDEVnextInstance) {
+    for( ; model ; model = NDEVnextModel(model)) {
+        for(here = NDEVinstances(model); here ; here = NDEVnextInstance(here)) {
 /*
             if(!here->DIOinitCondGiven) {
                 here->DIOinitCond = 

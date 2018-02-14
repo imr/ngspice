@@ -120,7 +120,7 @@ int HSMHV2temp(
   const double dlt_rd23 = 1.0e-6 / C_m2cm ;
   const double large_arg = 80 ;
 
-  for ( ;model ;model = model->HSMHV2nextModel ) {
+  for ( ;model ;model = HSMHV2nextModel(model)) {
 
     modelMKS = &model->modelMKS ;
 
@@ -134,7 +134,7 @@ int HSMHV2temp(
       model->HSMHV2_qme12 = model->HSMHV2_qme1 / ( model->HSMHV2_qme2 * model->HSMHV2_qme2 ) ;
     }
 
-    for ( here = model->HSMHV2instances; here; here = here->HSMHV2nextInstance ) {
+    for ( here = HSMHV2instances(model); here; here = HSMHV2nextInstance(here)) {
 
       pParam = &here->pParam ;
 

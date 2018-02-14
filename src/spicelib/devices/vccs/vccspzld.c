@@ -27,11 +27,11 @@ VCCSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     NG_IGNORE(ckt);
 
     /*  loop through all the source models */
-    for( ; model != NULL; model = model->VCCSnextModel ) {
+    for( ; model != NULL; model = VCCSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->VCCSinstances; here != NULL ;
-                here=here->VCCSnextInstance) {
+        for (here = VCCSinstances(model); here != NULL ;
+                here=VCCSnextInstance(here)) {
             
             *(here->VCCSposContPosPtr) += here->VCCScoeff ;
             *(here->VCCSposContNegPtr) -= here->VCCScoeff ;

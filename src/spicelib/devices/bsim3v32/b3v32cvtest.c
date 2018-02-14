@@ -28,10 +28,10 @@ double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
 double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
     /*  loop through all the BSIM3v32 device models */
-    for (; model != NULL; model = model->BSIM3v32nextModel)
+    for (; model != NULL; model = BSIM3v32nextModel(model))
     {    /* loop through all the instances of the model */
-         for (here = model->BSIM3v32instances; here != NULL ;
-              here=here->BSIM3v32nextInstance)
+         for (here = BSIM3v32instances(model); here != NULL ;
+              here=BSIM3v32nextInstance(here))
          {
               vbs = model->BSIM3v32type
                   * (*(ckt->CKTrhsOld+here->BSIM3v32bNode)

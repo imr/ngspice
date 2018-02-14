@@ -23,7 +23,7 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     SWinstance *here;
 
     /*  loop through all the current source models */
-    for( ; model != NULL; model = model->SWnextModel ) {
+    for( ; model != NULL; model = SWnextModel(model)) {
         /* Default Value Processing for Switch Model */
         if (!model->SWthreshGiven) {
             model->SWvThreshold = 0;
@@ -41,8 +41,8 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->SWinstances; here != NULL ;
-                here=here->SWnextInstance) {
+        for (here = SWinstances(model); here != NULL ;
+                here=SWnextInstance(here)) {
 
             here->SWstate = *states;
             *states += SW_NUM_STATES;

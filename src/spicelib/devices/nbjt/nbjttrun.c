@@ -30,12 +30,12 @@ NBJTtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
   for (i = 0; i <= ckt->CKTmaxOrder; i++) {
     deltaNorm[i] = ckt->CKTdeltaOld[i] / TNorm;
   }
-  for (; model != NULL; model = model->NBJTnextModel) {
+  for (; model != NULL; model = NBJTnextModel(model)) {
     model->NBJTpInfo->order = ckt->CKTorder;
     model->NBJTpInfo->delta = deltaNorm;
     model->NBJTpInfo->lteCoeff = computeLTECoeff(model->NBJTpInfo);
-    for (inst = model->NBJTinstances; inst != NULL;
-	inst = inst->NBJTnextInstance) {
+    for (inst = NBJTinstances(model); inst != NULL;
+         inst = NBJTnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       deltaNew = ONEtrunc(inst->NBJTpDevice, model->NBJTpInfo,

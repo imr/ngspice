@@ -32,9 +32,9 @@ double m;
 
     NG_IGNORE(ckt);
 
-    for (; model != NULL; model = model->BSIM3v1nextModel) 
-    {    for (here = model->BSIM3v1instances; here!= NULL;
-              here = here->BSIM3v1nextInstance) 
+    for (; model != NULL; model = BSIM3v1nextModel(model)) 
+    {    for (here = BSIM3v1instances(model); here!= NULL;
+              here = BSIM3v1nextInstance(here)) 
 	 {
             if (here->BSIM3v1mode >= 0) 
 	    {   Gm = here->BSIM3v1gm;

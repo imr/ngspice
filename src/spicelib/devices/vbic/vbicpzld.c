@@ -33,11 +33,11 @@ VBICpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
            XQbcp_Vbcp;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->VBICnextModel) {
+    for( ; model != NULL; model = VBICnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for( here = model->VBICinstances; here!= NULL; 
-                here = here->VBICnextInstance) {
+        for( here = VBICinstances(model); here!= NULL; 
+                here = VBICnextInstance(here)) {
 
             Ibe_Vbei  = *(ckt->CKTstate0 + here->VBICibe_Vbei);
             Ibex_Vbex = *(ckt->CKTstate0 + here->VBICibex_Vbex);

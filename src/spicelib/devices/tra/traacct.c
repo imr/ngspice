@@ -25,11 +25,11 @@ TRAaccept(CKTcircuit *ckt, GENmodel *inModel)
 
 
     /*  loop through all the transmission line models */
-    for( ; model != NULL; model = model->TRAnextModel ) {
+    for( ; model != NULL; model = TRAnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->TRAinstances; here != NULL ;
-                here=here->TRAnextInstance) {
+        for (here = TRAinstances(model); here != NULL ;
+                here=TRAnextInstance(here)) {
             
             if( (ckt->CKTtime - here->TRAtd) > *(here->TRAdelays+6)) {
                 /* shift! */

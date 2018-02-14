@@ -43,11 +43,11 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
     if(ckt->CKTmode & MODEINITTRAN) return(OK);
 
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->INDnextModel ) {
+    for( ; model != NULL; model = INDnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->INDinstances; here != NULL ;
-                here=here->INDnextInstance) {
+        for (here = INDinstances(model); here != NULL ;
+                here=INDnextInstance(here)) {
 
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
 
@@ -73,11 +73,11 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
     ktype = CKTtypelook("mutual");
     mutmodel = (MUTmodel *)(ckt->CKThead[ktype]);
     /*  loop through all the mutual inductor models */
-    for( ; mutmodel != NULL; mutmodel = mutmodel->MUTnextModel ) {
+    for( ; mutmodel != NULL; mutmodel = MUTnextModel(mutmodel)) {
 
         /* loop through all the instances of the model */
-        for (muthere = mutmodel->MUTinstances; muthere != NULL ;
-                muthere=muthere->MUTnextInstance) {
+        for (muthere = MUTinstances(mutmodel); muthere != NULL ;
+                muthere=MUTnextInstance(muthere)) {
 
 
             cind1 = *(ckt->CKTrhsOld + muthere->MUTind1->INDbrEq);
@@ -123,11 +123,11 @@ INDsUpdate(GENmodel *inModel, CKTcircuit *ckt)
     itype = CKTtypelook("Inductor");
     model = (INDmodel *)(ckt->CKThead[itype]);
     /*  loop through all the inductor models */
-    for( ; model != NULL; model = model->INDnextModel ) {
+    for( ; model != NULL; model = INDnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->INDinstances; here != NULL ;
-                here=here->INDnextInstance) {
+        for (here = INDinstances(model); here != NULL ;
+                here=INDnextInstance(here)) {
 #endif /* MUTUAL */
                 for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
 

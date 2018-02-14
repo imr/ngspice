@@ -407,13 +407,13 @@ int HSMHV2load(
   }
 
   /*  loop through all the HSMHV2 device models */
-  for ( ; model != NULL; model = model->HSMHV2nextModel ) {
+  for ( ; model != NULL; model = HSMHV2nextModel(model)) {
     /* loop through all the instances of the model */
 
     modelMKS = &model->modelMKS ;
 
-    for (here = model->HSMHV2instances; here != NULL ;
-         here = here->HSMHV2nextInstance) {
+    for (here = HSMHV2instances(model); here != NULL ;
+         here = HSMHV2nextInstance(here)) {
       
       hereMKS = &here->hereMKS ;
       pParam = &here->pParam ;

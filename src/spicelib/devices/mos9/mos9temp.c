@@ -36,7 +36,7 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
     double gmanew,gmaold;
     double ni_temp, nifact;
     /* loop through all the mosfet models */
-    for( ; model != NULL; model = model->MOS9nextModel) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
 
         if(!model->MOS9tnomGiven) {
             model->MOS9tnom = ckt->CKTnomTemp;
@@ -119,8 +119,8 @@ MOS9temp(GENmodel *inModel, CKTcircuit *ckt)
 
 
         /* loop through all instances of the model */
-        for(here = model->MOS9instances; here!= NULL;
-                here = here->MOS9nextInstance) {
+        for(here = MOS9instances(model); here!= NULL;
+                here = MOS9nextInstance(here)) {
 
             double czbd;    /* zero voltage bulk-drain capacitance */
             double czbdsw;  /* zero voltage bulk-drain sidewall capacitance */

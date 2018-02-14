@@ -43,11 +43,11 @@ BJTsUpdate(GENmodel *inModel, CKTcircuit *ckt)
     printf("CKTtime = %.5e\n",ckt->CKTtime);
 #endif /* SENSDEBUG */
     /*  loop through all the BJT models */
-    for( ; model != NULL; model = model->BJTnextModel ) {
+    for( ; model != NULL; model = BJTnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->BJTinstances; here != NULL ;
-                here=here->BJTnextInstance) {
+        for (here = BJTinstances(model); here != NULL ;
+                here=BJTnextInstance(here)) {
 
             sxpbe = 0;
             sxpbc = 0;

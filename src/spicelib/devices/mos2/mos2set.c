@@ -24,7 +24,7 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CKTnode *tmp;
 
     /*  loop through all the MOS2 device models */
-    for( ; model != NULL; model = model->MOS2nextModel ) {
+    for( ; model != NULL; model = MOS2nextModel(model)) {
 
         if(!model->MOS2typeGiven) {
             model->MOS2type = NMOS;
@@ -118,8 +118,8 @@ MOS2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 	}
 
         /* loop through all the instances of the model */
-        for (here = model->MOS2instances; here != NULL ;
-                here=here->MOS2nextInstance) {
+        for (here = MOS2instances(model); here != NULL ;
+                here=MOS2nextInstance(here)) {
          
          CKTnode *tmpNode;
          IFuid tmpName;
@@ -241,10 +241,10 @@ MOS2unsetup(GENmodel *inModel, CKTcircuit *ckt)
     MOS2instance *here;
 
     for (model = (MOS2model *)inModel; model != NULL;
-	    model = model->MOS2nextModel)
+	    model = MOS2nextModel(model))
     {
-        for (here = model->MOS2instances; here != NULL;
-                here=here->MOS2nextInstance)
+        for (here = MOS2instances(model); here != NULL;
+                here=MOS2nextInstance(here))
 	{
 	    if (here->MOS2sNodePrime > 0
 		    && here->MOS2sNodePrime != here->MOS2sNode)

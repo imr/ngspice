@@ -30,7 +30,7 @@ NBJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
   SPcomplex yIcVce, yIcVbe;
   double startTime;
 
-  for (; model != NULL; model = model->NBJTnextModel) {
+  for (; model != NULL; model = NBJTnextModel(model)) {
     FieldDepMobility = model->NBJTmodels->MODLfieldDepMobility;
     Srh = model->NBJTmodels->MODLsrh;
     Auger = model->NBJTmodels->MODLauger;
@@ -39,8 +39,8 @@ NBJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     MobDeriv = model->NBJTmethods->METHmobDeriv;
     ONEacDebug = model->NBJToutputs->OUTPacDebug;
 
-    for (inst = model->NBJTinstances; inst != NULL;
-	inst = inst->NBJTnextInstance) {
+    for (inst = NBJTinstances(model); inst != NULL;
+         inst = NBJTnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

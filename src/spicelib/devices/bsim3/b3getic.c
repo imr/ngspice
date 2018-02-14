@@ -23,8 +23,8 @@ CKTcircuit *ckt)
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
 
-    for (; model ; model = model->BSIM3nextModel) 
-    {    for (here = model->BSIM3instances; here; here = here->BSIM3nextInstance)
+    for (; model ; model = BSIM3nextModel(model)) 
+    {    for (here = BSIM3instances(model); here; here = BSIM3nextInstance(here))
 	 {
               if (!here->BSIM3icVBSGiven) 
 	      {  here->BSIM3icVBS = *(ckt->CKTrhs + here->BSIM3bNode) 

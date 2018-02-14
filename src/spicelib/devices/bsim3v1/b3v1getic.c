@@ -23,8 +23,8 @@ BSIM3v1getic(GENmodel *inModel, CKTcircuit *ckt)
 BSIM3v1model *model = (BSIM3v1model*)inModel;
 BSIM3v1instance *here;
 
-    for (; model ; model = model->BSIM3v1nextModel) 
-    {    for (here = model->BSIM3v1instances; here; here = here->BSIM3v1nextInstance)
+    for (; model ; model = BSIM3v1nextModel(model)) 
+    {    for (here = BSIM3v1instances(model); here; here = BSIM3v1nextInstance(here))
 	 {
 	      if(!here->BSIM3v1icVBSGiven) 
 	      {  here->BSIM3v1icVBS = *(ckt->CKTrhs + here->BSIM3v1bNode) 

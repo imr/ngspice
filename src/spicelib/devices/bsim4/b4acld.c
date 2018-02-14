@@ -104,9 +104,9 @@ double ggidld, ggidlg, ggidlb, ggislg, ggislb, ggisls;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->BSIM4nextModel) 
-    {    for (here = model->BSIM4instances; here!= NULL;
-              here = here->BSIM4nextInstance) 
+    for (; model != NULL; model = BSIM4nextModel(model)) 
+    {    for (here = BSIM4instances(model); here!= NULL;
+              here = BSIM4nextInstance(here)) 
          {
               pParam = here->pParam;
               capbd = here->BSIM4capbd;

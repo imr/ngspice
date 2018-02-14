@@ -28,9 +28,9 @@ CAPsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
     maxwarns = ckt->CKTsoaMaxWarns;
 
-    for (; model; model = model->CAPnextModel) {
+    for (; model; model = CAPnextModel(model)) {
 
-        for (here = model->CAPinstances; here; here = here->CAPnextInstance) {
+        for (here = CAPinstances(model); here; here = CAPnextInstance(here)) {
 
             vc = fabs(ckt->CKTrhsOld [here->CAPposNode] -
                       ckt->CKTrhsOld [here->CAPnegNode]);

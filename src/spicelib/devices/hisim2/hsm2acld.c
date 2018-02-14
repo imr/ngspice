@@ -110,8 +110,8 @@ int HSM2acLoad(
   double cdbs_imag, cgbs_imag, csbs_imag, cbbs_imag;
 
   omega = ckt->CKTomega;
-  for ( ; model != NULL; model = model->HSM2nextModel ) {
-    for ( here = model->HSM2instances; here!= NULL; here = here->HSM2nextInstance ) {
+  for ( ; model != NULL; model = HSM2nextModel(model)) {
+    for ( here = HSM2instances(model); here!= NULL; here = HSM2nextInstance(here)) {
 
       gdpr = here->HSM2drainConductance;
       gspr = here->HSM2sourceConductance;

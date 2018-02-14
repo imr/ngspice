@@ -27,11 +27,11 @@ VCCSsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
 
 
     /*  loop through all the source models */
-    for( ; model != NULL; model = model->VCCSnextModel ) {
+    for( ; model != NULL; model = VCCSnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->VCCSinstances; here != NULL ;
-                here=here->VCCSnextInstance) {
+        for (here = VCCSinstances(model); here != NULL ;
+                here=VCCSnextInstance(here)) {
 
 	    if (here->VCCSsenParmNo){
                 vc = *(ckt->CKTrhsOld + here->VCCScontPosNode)

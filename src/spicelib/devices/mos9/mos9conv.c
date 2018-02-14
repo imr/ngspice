@@ -31,9 +31,9 @@ MOS9convTest(GENmodel *inModel, CKTcircuit *ckt)
     double vgdo;
     double tol;
 
-    for( ; model != NULL; model = model->MOS9nextModel) {
-        for(here = model->MOS9instances; here!= NULL;
-                here = here->MOS9nextInstance) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
+        for(here = MOS9instances(model); here!= NULL;
+                here = MOS9nextInstance(here)) {
         
             vbs = model->MOS9type * ( 
                 *(ckt->CKTrhs+here->MOS9bNode) -

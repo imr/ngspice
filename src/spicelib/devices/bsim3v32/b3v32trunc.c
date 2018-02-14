@@ -26,9 +26,9 @@ BSIM3v32instance *here;
     double debugtemp;
 #endif /* STEPDEBUG */
 
-    for (; model != NULL; model = model->BSIM3v32nextModel)
-    {    for (here = model->BSIM3v32instances; here != NULL;
-              here = here->BSIM3v32nextInstance)
+    for (; model != NULL; model = BSIM3v32nextModel(model))
+    {    for (here = BSIM3v32instances(model); here != NULL;
+              here = BSIM3v32nextInstance(here))
          {
 #ifdef STEPDEBUG
             debugtemp = *timeStep;

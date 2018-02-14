@@ -26,11 +26,11 @@ DIOsSetup(SENstruct *info, GENmodel *inModel)
     DIOinstance *here;
 
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->DIOnextModel ) {
+    for( ; model != NULL; model = DIOnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->DIOinstances; here != NULL ;
-                here=here->DIOnextInstance) {
+        for (here = DIOinstances(model); here != NULL ;
+                here=DIOnextInstance(here)) {
 
             if(here->DIOsenParmNo){
                 here->DIOsenParmNo = ++(info->SENparms);

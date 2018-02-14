@@ -49,11 +49,11 @@ double xcedb, xcesb;
 double m;
 
     omega = ckt->CKTomega;
-    for (; model != NULL; model = model->B3SOIPDnextModel) 
+    for (; model != NULL; model = B3SOIPDnextModel(model)) 
     {    
 
-      for (here = model->B3SOIPDinstances; here!= NULL;
-              here = here->B3SOIPDnextInstance) 
+      for (here = B3SOIPDinstances(model); here!= NULL;
+              here = B3SOIPDnextInstance(here)) 
 	 {
               selfheat = (model->B3SOIPDshMod == 1) && (here->B3SOIPDrth0 != 0.0);
               if (here->B3SOIPDmode >= 0) 

@@ -50,11 +50,11 @@ MOS9sUpdate(GENmodel *inModel, CKTcircuit *ckt)
     dummy2 = 0;
 
     /*  loop through all the MOS9 models */
-    for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS9instances; here != NULL ;
-                here=here->MOS9nextInstance) {
+        for (here = MOS9instances(model); here != NULL ;
+                here=MOS9nextInstance(here)) {
 
 #ifdef SENSDEBUG
             printf("senupdate instance name %s\n",here->MOS9name);

@@ -61,7 +61,7 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     ctype = CKTtypelook("Capacitor");
     dtype = CKTtypelook("Diode");
     /*  loop through all the URC models */
-    for( ; model != NULL; model = model->URCnextModel ) {
+    for( ; model != NULL; model = URCnextModel(model)) {
 	if(!model->URCkGiven)
 	    model->URCk = 1.5;
 	if(!model->URCfmaxGiven)
@@ -74,8 +74,8 @@ URCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 /* may need to put in limits:  k>=1.1, freq <=1e9, rperl >=.1 */
 
         /* loop through all the instances of the model */
-        for (here = model->URCinstances; here != NULL ;
-                here=here->URCnextInstance)
+        for (here = URCinstances(model); here != NULL ;
+                here=URCnextInstance(here))
 	{
             p = model->URCk;
             r0 = here->URClength * model->URCrPerL;
@@ -275,9 +275,9 @@ URCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
     /* Delete models, devices, and intermediate nodes; */
 
-    for ( ; model; model = model->URCnextModel) {
-	for (here = model->URCinstances; here;
-	     here = here->URCnextInstance)
+    for ( ; model; model = URCnextModel(model)) {
+	for (here = URCinstances(model); here;
+	     here = URCnextInstance(here))
 	{
 	    if(model->URCisPerLGiven) {
 		/* Diodes */

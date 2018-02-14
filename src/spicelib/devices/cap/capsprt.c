@@ -28,13 +28,13 @@ CAPsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("CAPACITORS-----------------\n");
     /*  loop through all the capacitor models */
-    for( ; model != NULL; model = model->CAPnextModel ) {
+    for( ; model != NULL; model = CAPnextModel(model)) {
 
         printf("Model name:%s\n",model->CAPmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->CAPinstances; here != NULL ;
-                here=here->CAPnextInstance) {
+        for (here = CAPinstances(model); here != NULL ;
+                here=CAPnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->CAPname);
             printf("      Positive, negative nodes: %s, %s\n",

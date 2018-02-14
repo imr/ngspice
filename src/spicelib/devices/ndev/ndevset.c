@@ -36,14 +36,14 @@ int NDEVsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states
   NG_IGNORE(states);
 
     /*  loop through all the ndev models */
-    for( ; model != NULL; model = model->NDEVnextModel ) {
+    for( ; model != NULL; model = NDEVnextModel(model)) {
 
         /* connect to remote device simulator */ 
 	if(NDEVmodelConnect(model)) return E_PRIVATE;
 		
         /* loop through all the instances of the model */
-        for (here = model->NDEVinstances; here != NULL ;
-                here=here->NDEVnextInstance) {
+        for (here = NDEVinstances(model); here != NULL ;
+                here=NDEVnextInstance(here)) {
             
 	    here->Ndevinfo.term = here->term;
 	    strncpy(here->Ndevinfo.NDEVname,here->NDEVname,32);

@@ -22,8 +22,8 @@ CAPgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->CAPnextModel) {
-        for(here = model->CAPinstances; here ; here = here->CAPnextInstance) {
+    for( ; model ; model = CAPnextModel(model)) {
+        for(here = CAPinstances(model); here ; here = CAPnextInstance(here)) {
                 
             if(!here->CAPicGiven) {
                 here->CAPinitCond = 

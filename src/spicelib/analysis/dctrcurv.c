@@ -90,8 +90,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             RESinstance *here;
             RESmodel *model;
 
-            for (model = (RESmodel *)ckt->CKThead[rcode]; model; model = model->RESnextModel)
-                for (here = model->RESinstances; here; here = here->RESnextInstance)
+            for (model = (RESmodel *)ckt->CKThead[rcode]; model; model = RESnextModel(model))
+                for (here = RESinstances(model); here; here = RESnextInstance(here))
                     if (here->RESname == job->TRCVvName[i]) {
                         job->TRCVvElt[i]  = (GENinstance *)here;
                         job->TRCVvSave[i] = here->RESresist;
@@ -109,8 +109,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             VSRCinstance *here;
             VSRCmodel *model;
 
-            for (model = (VSRCmodel *)ckt->CKThead[vcode]; model; model = model->VSRCnextModel)
-                for (here = model->VSRCinstances; here; here = here->VSRCnextInstance)
+            for (model = (VSRCmodel *)ckt->CKThead[vcode]; model; model = VSRCnextModel(model))
+                for (here = VSRCinstances(model); here; here = VSRCnextInstance(here))
                     if (here->VSRCname == job->TRCVvName[i]) {
                         job->TRCVvElt[i]  = (GENinstance *)here;
                         job->TRCVvSave[i] = here->VSRCdcValue;
@@ -127,8 +127,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ISRCinstance *here;
             ISRCmodel *model;
 
-            for (model = (ISRCmodel *)ckt->CKThead[icode]; model; model = model->ISRCnextModel)
-                for (here = model->ISRCinstances; here; here = here->ISRCnextInstance)
+            for (model = (ISRCmodel *)ckt->CKThead[icode]; model; model = ISRCnextModel(model))
+                for (here = ISRCinstances(model); here; here = ISRCnextInstance(here))
                     if (here->ISRCname == job->TRCVvName[i]) {
                         job->TRCVvElt[i]  = (GENinstance *)here;
                         job->TRCVvSave[i] = here->ISRCdcValue;

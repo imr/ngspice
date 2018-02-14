@@ -47,7 +47,7 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
   /* loop through all the models */
-  for (; model != NULL; model = model->NUMDnextModel) {
+  for (; model != NULL; model = NUMDnextModel(model)) {
     if (!model->NUMDpInfo) {
       TSCALLOC(model->NUMDpInfo, 1, ONEtranInfo);
     }
@@ -141,8 +141,8 @@ NUMDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     model->NUMDdopTables = dopTableList;
 
     /* loop through all the instances of the model */
-    for (inst = model->NUMDinstances; inst != NULL;
-	inst = inst->NUMDnextInstance) {
+    for (inst = NUMDinstances(model); inst != NULL;
+         inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
 

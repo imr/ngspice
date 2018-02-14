@@ -24,11 +24,11 @@ MOS9sSetup(SENstruct *info, GENmodel *inModel)
     MOS9instance *here;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS9instances; here != NULL ;
-                here=here->MOS9nextInstance) {
+        for (here = MOS9instances(model); here != NULL ;
+                here=MOS9nextInstance(here)) {
 
             if(here->MOS9senParmNo){
                 if((here->MOS9sens_l)&&(here->MOS9sens_w)){

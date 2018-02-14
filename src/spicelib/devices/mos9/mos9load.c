@@ -103,11 +103,11 @@ MOS9load(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the MOS9 device models */
 next: 
-    for( ; model != NULL; model = model->MOS9nextModel ) {
+    for( ; model != NULL; model = MOS9nextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->MOS9instances; here != NULL ;
-                here=here->MOS9nextInstance) {
+        for (here = MOS9instances(model); here != NULL ;
+                here=MOS9nextInstance(here)) {
 
             vt = CONSTKoverQ * here->MOS9temp;
             Check=1;

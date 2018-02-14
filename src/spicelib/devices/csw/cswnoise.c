@@ -36,8 +36,8 @@ CSWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
     int current_state;
 
 
-    for (model=firstModel; model != NULL; model=model->CSWnextModel) {
-	for (inst=model->CSWinstances; inst != NULL; inst=inst->CSWnextInstance) {
+    for (model=firstModel; model != NULL; model=CSWnextModel(model)) {
+	for (inst=CSWinstances(model); inst != NULL; inst=CSWnextInstance(inst)) {
 
 	    switch (operation) {
 

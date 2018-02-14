@@ -109,9 +109,9 @@ int HSM2noise (
     ""                  /* total transistor noise */
   };
   
-  for ( ;model != NULL; model = model->HSM2nextModel ) {
-    for ( here = model->HSM2instances; here != NULL;
-	  here = here->HSM2nextInstance ) {
+  for ( ;model != NULL; model = HSM2nextModel(model)) {
+    for ( here = HSM2instances(model); here != NULL;
+	  here = HSM2nextInstance(here)) {
       switch (operation) {
       case N_OPEN:
 	/* see if we have to to produce a summary report */

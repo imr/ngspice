@@ -31,9 +31,9 @@ MESApzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     double m;
 
-    for( ; model != NULL; model = model->MESAnextModel ) {
-        for( here = model->MESAinstances; here != NULL; 
-             here = here->MESAnextInstance) {
+    for( ; model != NULL; model = MESAnextModel(model)) {
+        for( here = MESAinstances(model); here != NULL; 
+             here = MESAnextInstance(here)) {
 
             f      = ckt->CKTomega/2/M_PI;
             if(here->MESAdelf == 0)

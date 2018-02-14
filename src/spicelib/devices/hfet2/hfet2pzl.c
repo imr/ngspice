@@ -28,10 +28,10 @@ int HFET2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
   double m;
 
-  for( ; model != NULL; model = model->HFET2nextModel ) 
+  for( ; model != NULL; model = HFET2nextModel(model)) 
   {
-    for( here = model->HFET2instances; here != NULL; 
-         here = here->HFET2nextInstance) {
+    for( here = HFET2instances(model); here != NULL; 
+         here = HFET2nextInstance(here)) {
 
       m = here->HFET2m;
 

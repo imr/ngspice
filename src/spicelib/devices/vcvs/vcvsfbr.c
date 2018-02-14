@@ -21,9 +21,9 @@ VCVSfindBr(CKTcircuit *ckt, GENmodel *inModel, IFuid name)
     int error;
     CKTnode *tmp;
 
-    for( ; model != NULL; model = model->VCVSnextModel) {
-        for (here = model->VCVSinstances; here != NULL;
-                here = here->VCVSnextInstance) {
+    for( ; model != NULL; model = VCVSnextModel(model)) {
+        for (here = VCVSinstances(model); here != NULL;
+                here = VCVSnextInstance(here)) {
             if(here->VCVSname == name) {
                 if(here->VCVSbranch == 0) {
                     error = CKTmkCur(ckt,&tmp,here->VCVSname,"branch");

@@ -22,8 +22,8 @@ DIOgetic(GENmodel *inModel, CKTcircuit *ckt)
      * external nodes to get values
      */
 
-    for( ; model ; model = model->DIOnextModel) {
-        for(here = model->DIOinstances; here ; here = here->DIOnextInstance) {
+    for( ; model ; model = DIOnextModel(model)) {
+        for(here = DIOinstances(model); here ; here = DIOnextInstance(here)) {
 
             if(!here->DIOinitCondGiven) {
                 here->DIOinitCond = 

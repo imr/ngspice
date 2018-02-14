@@ -30,7 +30,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     double vt;
 
     /*  loop through all the bipolar models */
-    for( ; model != NULL; model = model->VBICnextModel ) {
+    for( ; model != NULL; model = VBICnextModel(model)) {
 
         if(!model->VBICtnomGiven) model->VBICtnom = ckt->CKTnomTemp - CONSTCtoK;
 
@@ -69,8 +69,8 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
         }
 
         /* loop through all the instances of the model */
-        for (here = model->VBICinstances; here != NULL ;
-                here=here->VBICnextInstance) {
+        for (here = VBICinstances(model); here != NULL ;
+                here=VBICnextInstance(here)) {
 
             if(!here->VBICtempGiven) here->VBICtemp = ckt->CKTtemp;
 

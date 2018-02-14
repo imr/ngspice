@@ -30,7 +30,7 @@ NUMDacLoad(GENmodel *inModel, CKTcircuit *ckt)
   double startTime;
 
   /* loop through all the diode models */
-  for (; model != NULL; model = model->NUMDnextModel) {
+  for (; model != NULL; model = NUMDnextModel(model)) {
     FieldDepMobility = model->NUMDmodels->MODLfieldDepMobility;
     Srh = model->NUMDmodels->MODLsrh;
     Auger = model->NUMDmodels->MODLauger;
@@ -39,8 +39,8 @@ NUMDacLoad(GENmodel *inModel, CKTcircuit *ckt)
     MobDeriv = model->NUMDmethods->METHmobDeriv;
     ONEacDebug = model->NUMDoutputs->OUTPacDebug;
 
-    for (inst = model->NUMDinstances; inst != NULL;
-	inst = inst->NUMDnextInstance) {
+    for (inst = NUMDinstances(model); inst != NULL;
+         inst = NUMDnextInstance(inst)) {
 
       startTime = SPfrontEnd->IFseconds();
       /* Get Temp.-Dep. Global Parameters */

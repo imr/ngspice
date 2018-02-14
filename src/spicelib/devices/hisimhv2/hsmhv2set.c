@@ -124,7 +124,7 @@ int HSMHV2setup(
   
   
   /*  loop through all the HSMHV2 device models */
-  for ( ;model != NULL ;model = model->HSMHV2nextModel ) {
+  for ( ;model != NULL ;model = HSMHV2nextModel(model)) {
     /* Default value Processing for HVMOS Models */
     if ( !model->HSMHV2_type_Given )
       model->HSMHV2_type = NMOS ;
@@ -999,8 +999,8 @@ int HSMHV2setup(
     modelMKS = &model->modelMKS ;
 
     /* loop through all the instances of the model */
-    for ( here = model->HSMHV2instances ;here != NULL ;
-         here = here->HSMHV2nextInstance ) {
+    for ( here = HSMHV2instances(model);here != NULL ;
+         here = HSMHV2nextInstance(here)) {
       /* allocate a chunk of the state vector */
       here->HSMHV2states = *states;
       if (model->HSMHV2_conqs)
@@ -1739,10 +1739,10 @@ HSMHV2unsetup(
     HSMHV2instance *here;
  
     for (model = (HSMHV2model *)inModel; model != NULL;
-            model = model->HSMHV2nextModel)
+            model = HSMHV2nextModel(model))
     {
-        for (here = model->HSMHV2instances; here != NULL;
-                here=here->HSMHV2nextInstance)
+        for (here = HSMHV2instances(model); here != NULL;
+                here=HSMHV2nextInstance(here))
         {
             if (here->HSMHV2tempNode > 0 &&
                 here->HSMHV2tempNode != here->HSMHV2tempNodeExt &&

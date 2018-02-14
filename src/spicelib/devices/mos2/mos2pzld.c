@@ -34,9 +34,9 @@ MOS2pzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double GateSourceOverlapCap;
     double EffectiveLength;
 
-    for( ; model != NULL; model = model->MOS2nextModel) {
-        for(here = model->MOS2instances; here!= NULL;
-                here = here->MOS2nextInstance) {
+    for( ; model != NULL; model = MOS2nextModel(model)) {
+        for(here = MOS2instances(model); here!= NULL;
+                here = MOS2nextInstance(here)) {
 
             if (here->MOS2mode < 0) {
                 xnrm=0;

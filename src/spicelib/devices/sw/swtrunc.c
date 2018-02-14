@@ -19,9 +19,9 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     SWinstance *here;
     double   lastChange, maxChange, maxStep, ref;
 
-    for( ; model!= NULL; model = model->SWnextModel) {
-        for(here = model->SWinstances ; here != NULL ;
-                here = here->SWnextInstance) {
+    for( ; model!= NULL; model = SWnextModel(model)) {
+        for(here = SWinstances(model); here != NULL ;
+                here = SWnextInstance(here)) {
             lastChange = *(ckt->CKTstate0+(here->SWstate+1)) -
                           *(ckt->CKTstate1+(here->SWstate+1));
             if (*(ckt->CKTstate0+(here->SWstate))==0) {

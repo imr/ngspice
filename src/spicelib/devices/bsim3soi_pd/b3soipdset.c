@@ -47,7 +47,7 @@ IFuid tmpName;
 
 
     /*  loop through all the B3SOIPD device models */
-    for( ; model != NULL; model = model->B3SOIPDnextModel )
+    for( ; model != NULL; model = B3SOIPDnextModel(model))
     {
 /* Default value Processing for B3SOIPD MOSFET Models */
 
@@ -1048,8 +1048,8 @@ IFuid tmpName;
             model->B3SOIPDnoif = 1.0;
 
         /* loop through all the instances of the model */
-        for (here = model->B3SOIPDinstances; here != NULL ;
-             here=here->B3SOIPDnextInstance) 
+        for (here = B3SOIPDinstances(model); here != NULL ;
+             here=B3SOIPDnextInstance(here)) 
 	{
             /* allocate a chunk of the state vector */
             here->B3SOIPDstates = *states;
@@ -1461,10 +1461,10 @@ B3SOIPDunsetup(
     B3SOIPDinstance *here;
  
     for (model = (B3SOIPDmodel *)inModel; model != NULL;
-            model = model->B3SOIPDnextModel)
+            model = B3SOIPDnextModel(model))
     {
-        for (here = model->B3SOIPDinstances; here != NULL;
-                here=here->B3SOIPDnextInstance)
+        for (here = B3SOIPDinstances(model); here != NULL;
+                here=B3SOIPDnextInstance(here))
         {
             /* here for debugging purpose only */
             if (here->B3SOIPDqjdNode > 0)

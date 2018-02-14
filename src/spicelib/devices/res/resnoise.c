@@ -52,9 +52,9 @@ RESnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
     };
 
     
-    for (model = firstModel; model != NULL; model = model->RESnextModel) {
-        for (inst = model->RESinstances; inst != NULL; 
-                inst = inst->RESnextInstance) {
+    for (model = firstModel; model != NULL; model = RESnextModel(model)) {
+        for (inst = RESinstances(model); inst != NULL; 
+                inst = RESnextInstance(inst)) {
 
             if(!inst->RESnoisy) continue; /* Quiet resistors are skipped */
             

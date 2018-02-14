@@ -83,7 +83,7 @@ B4SOItemp(
 
 
     /*  loop through all the B4SOI device models */
-    for (; model != NULL; model = model->B4SOInextModel)
+    for (; model != NULL; model = B4SOInextModel(model))
     {    Temp = ckt->CKTtemp;
         if (model->B4SOIGatesidewallJctSPotential < 0.1)        /* v4.0 */
             model->B4SOIGatesidewallJctSPotential = 0.1;
@@ -160,8 +160,8 @@ B4SOItemp(
 
         /* loop through all the instances of the model */
         /* MCJ: Length and Width not initialized */
-        for (here = model->B4SOIinstances; here != NULL;
-                here = here->B4SOInextInstance)
+        for (here = B4SOIinstances(model); here != NULL;
+                here = B4SOInextInstance(here))
         {
             here->B4SOIrbodyext = here->B4SOIbodySquares *
                 model->B4SOIrbsh;

@@ -25,11 +25,11 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     NG_IGNORE(state);
 
     /*  loop through all the voltage source models */
-    for( ; model != NULL; model = model->VSRCnextModel ) {
+    for( ; model != NULL; model = VSRCnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->VSRCinstances; here != NULL ;
-                here=here->VSRCnextInstance) {
+        for (here = VSRCinstances(model); here != NULL ;
+                here=VSRCnextInstance(here)) {
             
             if(here->VSRCposNode == here->VSRCnegNode) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
@@ -65,10 +65,10 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
     VSRCinstance *here;
 
     for (model = (VSRCmodel *)inModel; model != NULL;
-	    model = model->VSRCnextModel)
+	    model = VSRCnextModel(model))
     {
-        for (here = model->VSRCinstances; here != NULL;
-                here=here->VSRCnextInstance)
+        for (here = VSRCinstances(model); here != NULL;
+                here=VSRCnextInstance(here))
 	{
 	    if (here->VSRCbranch > 0)
 		CKTdltNNum(ckt, here->VSRCbranch);

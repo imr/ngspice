@@ -25,13 +25,13 @@ MOS3sPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("LEVEL 3 MOSFETS-----------------\n");
     /*  loop through all the MOS3 models */
-    for( ; model != NULL; model = model->MOS3nextModel ) {
+    for( ; model != NULL; model = MOS3nextModel(model)) {
 
         printf("Model name:%s\n",model->MOS3modName);
 
         /* loop through all the instances of the model */
-        for (here = model->MOS3instances; here != NULL ;
-                here=here->MOS3nextInstance) {
+        for (here = MOS3instances(model); here != NULL ;
+                here=MOS3nextInstance(here)) {
 
             printf("    Instance name:%s\n",here->MOS3name);
             printf("      Drain, Gate , Source nodes: %s, %s ,%s\n",

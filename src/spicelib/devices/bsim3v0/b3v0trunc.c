@@ -21,9 +21,9 @@ BSIM3v0instance *here;
     double debugtemp;
 #endif /* STEPDEBUG */
 
-    for (; model != NULL; model = model->BSIM3v0nextModel)
-    {    for (here = model->BSIM3v0instances; here != NULL;
-	      here = here->BSIM3v0nextInstance)
+    for (; model != NULL; model = BSIM3v0nextModel(model))
+    {    for (here = BSIM3v0instances(model); here != NULL;
+	      here = BSIM3v0nextInstance(here))
 	 {
 
 #ifdef STEPDEBUG

@@ -52,9 +52,9 @@ double ggidld, ggidlg, ggidlb, ggislg, ggislb, ggisls;
 
 double m;
 
-    for (; model != NULL; model = model->BSIM4v6nextModel) 
-    {    for (here = model->BSIM4v6instances; here!= NULL;
-              here = here->BSIM4v6nextInstance) 
+    for (; model != NULL; model = BSIM4v6nextModel(model)) 
+    {    for (here = BSIM4v6instances(model); here!= NULL;
+              here = BSIM4v6nextInstance(here)) 
          {
               pParam = here->pParam;
               capbd = here->BSIM4v6capbd;

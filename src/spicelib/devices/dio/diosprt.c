@@ -27,13 +27,13 @@ DIOsPrint(GENmodel *inModel, CKTcircuit *ckt)
 
     printf("DIOS-----------------\n");
     /*  loop through all the diode models */
-    for( ; model != NULL; model = model->DIOnextModel ) {
+    for( ; model != NULL; model = DIOnextModel(model)) {
 
         printf("Model name:%s\n",model->DIOmodName);
 
         /* loop through all the instances of the model */
-        for (here = model->DIOinstances; here != NULL ;
-                here=here->DIOnextInstance) {
+        for (here = DIOinstances(model); here != NULL ;
+                here=DIOnextInstance(here)) {
 
             printf("    Instance name:%s\n",here->DIOname);
             printf("      Positive, negative nodes: %s, %s\n",

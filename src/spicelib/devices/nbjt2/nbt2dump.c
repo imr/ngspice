@@ -56,10 +56,10 @@ NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
     return;
   }
 
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     output = model->NBJT2outputs;
-    for (inst = model->NBJT2instances; inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+    for (inst = NBJT2instances(model); inst != NULL;
+         inst = NBJT2nextInstance(inst)) {
 
       if (inst->NBJT2printGiven) {
 	if ((ckt->CKTmode & MODETRAN) &&
@@ -156,10 +156,10 @@ NBJT2acct(GENmodel *inModel, CKTcircuit *ckt, FILE *file)
 
   NG_IGNORE(ckt);
 
-  for (; model != NULL; model = model->NBJT2nextModel) {
+  for (; model != NULL; model = NBJT2nextModel(model)) {
     output = model->NBJT2outputs;
-    for (inst = model->NBJT2instances; inst != NULL;
-	inst = inst->NBJT2nextInstance) {
+    for (inst = NBJT2instances(model); inst != NULL;
+         inst = NBJT2nextInstance(inst)) {
 
       if (output->OUTPstats) {
 	TWOmemStats(file, inst->NBJT2pDevice);

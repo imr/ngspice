@@ -168,14 +168,14 @@ double m;
         ""                  /* total transistor noise */
     };
 
-    for (; model != NULL; model = model->BSIM4nextModel)
+    for (; model != NULL; model = BSIM4nextModel(model))
     {
          if(model->BSIM4tnoiMod != 2) {
              noizDens[BSIM4CORLNOIZ] = 0.0;
              lnNdens[BSIM4CORLNOIZ] = N_MINLOG;
          }
-         for (here = model->BSIM4instances; here != NULL;
-              here = here->BSIM4nextInstance)
+         for (here = BSIM4instances(model); here != NULL;
+              here = BSIM4nextInstance(here))
          {    pParam = here->pParam;
               switch (operation)
               {  case N_OPEN:

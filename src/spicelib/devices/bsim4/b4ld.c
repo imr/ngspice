@@ -131,7 +131,7 @@ CKTcircuit *ckt)
 
 
 int BSIM4LoadOMP(BSIM4instance *here, CKTcircuit *ckt) {
-BSIM4model *model = here->BSIM4modPtr;
+BSIM4model *model = BSIM4modPtr(here);
 #else
 BSIM4model *model = (BSIM4model*)inModel;
 BSIM4instance *here;
@@ -286,9 +286,9 @@ ChargeComputationNeeded =
                  ? 1 : 0;
 
 #ifndef USE_OMP
-for (; model != NULL; model = model->BSIM4nextModel)
-{    for (here = model->BSIM4instances; here != NULL; 
-          here = here->BSIM4nextInstance)
+for (; model != NULL; model = BSIM4nextModel(model))
+{    for (here = BSIM4instances(model); here != NULL; 
+          here = BSIM4nextInstance(here))
      {
 #endif
 
@@ -5456,7 +5456,7 @@ void BSIM4LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 
     for(idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
-       model = here->BSIM4modPtr;
+       model = BSIM4modPtr(here);
         /* Update b for Ax = b */
            (*(ckt->CKTrhs + here->BSIM4dNodePrime) += here->BSIM4rhsdPrime);
            (*(ckt->CKTrhs + here->BSIM4gNodePrime) -= here->BSIM4rhsgPrime);

@@ -26,11 +26,11 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
     int current_state;
 
     /*  loop through all the switch models */
-    for( ; model != NULL; model = model->CSWnextModel ) {
+    for( ; model != NULL; model = CSWnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->CSWinstances; here != NULL ;
-                here=here->CSWnextInstance) {
+        for (here = CSWinstances(model); here != NULL ;
+                here=CSWnextInstance(here)) {
 
             current_state = (int)*(ckt->CKTstate0 + here->CSWstate);
 

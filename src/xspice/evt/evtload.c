@@ -232,7 +232,7 @@ int EVTload(
     /* Call the code model */
     /* ******************* */
 
-    mod_type = inst->MIFmodPtr->MIFmodType;
+    mod_type = MIFmodPtr(inst)->MIFmodType;
     DEVices[mod_type]->DEVpublic.cm_func (&cm_data);
 
 

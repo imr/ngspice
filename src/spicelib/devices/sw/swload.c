@@ -31,11 +31,11 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 //    double current_region = -1;
 
     /*  loop through all the switch models */
-    for( ; model != NULL; model = model->SWnextModel ) {
+    for( ; model != NULL; model = SWnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->SWinstances; here != NULL ;
-                here=here->SWnextInstance) {
+        for (here = SWinstances(model); here != NULL ;
+                here=SWnextInstance(here)) {
 	     
 			old_current_state = *(ckt->CKTstates[0] + here->SWstate);
 			previous_state = *(ckt->CKTstates[1] + here->SWstate);

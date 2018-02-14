@@ -30,7 +30,7 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
     /*  loop through all the B2 device models */
-    for( ; model != NULL; model = model->B2nextModel ) {
+    for( ; model != NULL; model = B2nextModel(model)) {
     
 /* Default value Processing for B2 MOSFET Models */
         /* Some Limiting for Model Parameters */
@@ -50,8 +50,8 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
 	pLastKnot = NULL;
 
         /* loop through all the instances of the model */
-        for (here = model->B2instances; here != NULL ;
-                here=here->B2nextInstance) {
+        for (here = B2instances(model); here != NULL ;
+                here=B2nextInstance(here)) {
 
 	    pSizeDependParamKnot = model->pSizeDependParamKnot;
 	    Size_Not_Found = 1;

@@ -46,8 +46,8 @@ DIOnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 	""                  /* total diode noise */
     };
 
-    for (model=firstModel; model != NULL; model=model->DIOnextModel) {
-	for (inst=model->DIOinstances; inst != NULL; inst=inst->DIOnextInstance) {
+    for (model=firstModel; model != NULL; model=DIOnextModel(model)) {
+	for (inst=DIOinstances(model); inst != NULL; inst=DIOnextInstance(inst)) {
 
 	    switch (operation) {
 

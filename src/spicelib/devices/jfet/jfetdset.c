@@ -67,11 +67,11 @@ JFETdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double vgst;
 
     /*  loop through all the models */
-    for( ; model != NULL; model = model->JFETnextModel ) {
+    for( ; model != NULL; model = JFETnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = model->JFETinstances; here != NULL ;
-                here=here->JFETnextInstance) {
+        for (here = JFETinstances(model); here != NULL ;
+                here=JFETnextInstance(here)) {
 
             /*
              *  dc model parameters 
